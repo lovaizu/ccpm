@@ -45,7 +45,7 @@ Context is full, or you're done for the day. Run it and your work is committed /
 ```console
 > /rn:bb
 
-● Committed #1 — "complete task #1 — reproduction test"
+● Committed #1 — "test: complete task #1 — reproduction test"
   Last completed: #1 reproduction test
   Up next:        #2 find the root cause and fix it
 

@@ -10,10 +10,11 @@ Start a goal-driven work session. Understand the user's goal, turn it into verif
 `steering.md`, open a draft PR so the plan can be read comfortably, then execute task #1 once
 approved.
 
-All user interactions are **proposals, not questions**: propose a concrete option — written so it
-makes sense without prior context (plain language, no internal jargon) — and proceed on
-confirmation. Restate the goal as a faithful understanding of what the user wants — never add scope
-or invent intent; the user confirms it in the PR review.
+All user interactions are **proposals, not open-ended questions**: lead with a concrete recommended
+option — written so it makes sense without prior context (plain language, no internal jargon) — and
+proceed on confirmation (`AskUserQuestion` is fine when one of the options is your recommendation).
+Restate the goal as a faithful understanding of what the user wants — never add scope or invent
+intent; the user confirms it in the PR review.
 
 ## Phase 1: Define — fix the goal and where it lives
 
@@ -34,7 +35,8 @@ or invent intent; the user confirms it in the PR review.
   - a kebab-case work name derived from the goal (e.g. "fix the payment screen bug" →
     `fix-payment-bug`)
 - Propose **one recommended slug plus the alternatives** and let the user confirm or pick (you may
-  use `AskUserQuestion` for this). Use the confirmed slug for the path.
+  use `AskUserQuestion` for this). When already on a non-default branch, recommend that branch's
+  name as the slug so the slug and the PR branch stay aligned. Use the confirmed slug for the path.
 
 ## Phase 2: Plan — turn the goal into verifiable tasks
 
@@ -49,10 +51,11 @@ or invent intent; the user confirms it in the PR review.
 
 **Step 4 — Decompose tasks**
 
-- Work **backwards from the Verification end state**.
+- Work **backwards from the Verification end state** (e.g. Verification = "payments complete";
+  working back: regression check ← root-cause fix ← failing reproduction test).
 - Give each task a `Purpose`, `Prerequisites`, `Steps` (including the verify-phase review steps as
-  `- [ ]` checkboxes), and `Completion criteria` — following **all** the task definition
-  requirements in the template, not a subset.
+  `- [ ]` checkboxes), and `Completion criteria` — following both the inline `Completion criteria`
+  rules and the `Task definition requirements` table in the template, in full.
 
 ## Phase 3: Launch — open for review, then start
 

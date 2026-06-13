@@ -65,7 +65,7 @@ Markdown collapses the fields onto one line.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: paused
+- **Status**: not suspended
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
@@ -84,3 +84,4 @@ Markdown collapses the fields onto one line.
 | Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
 | Criteria vs steps | Completion criteria state outcomes/end-state only (the bar); actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable |
 | Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert / user review) are its gate |
+| Verify steps | Keep the verify-phase review steps as `- [ ]` in every task's Steps so status shows, but `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
