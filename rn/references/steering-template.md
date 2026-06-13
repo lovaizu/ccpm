@@ -9,7 +9,7 @@ populated (`Tasks`, `Decisions`, `State` start empty and are filled later).
 ```markdown
 # Goal
 
-<user's exact words — never paraphrase>
+<a clear, faithful restatement of what the user wants to achieve — full intent, no added scope>
 
 ## Verification
 

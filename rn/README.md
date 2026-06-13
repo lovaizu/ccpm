@@ -19,23 +19,24 @@ Say you want to push through "fix the bug in the payment screen."
 
 ### 1. Start — `/rn:gm`
 
-Tell it your goal. It records the goal in your exact words, breaks it into verifiable tasks, and shows you the plan.
+Tell it your goal. It restates the goal as it understands it, breaks it into verifiable tasks, and opens a draft PR with the full plan for you to review — too much to read comfortably in the console.
 
 ```console
 > /rn:gm fix the bug in the payment screen
 
-● Recorded your goal (in your exact words):
-    "fix the bug in the payment screen"
+● Captured your goal as I understand it:
+    "Fix the bug on the payment screen so payments complete successfully"
 
   Location: .rn/payment-fix/steering.md
     □ #1  Write a test that reproduces the payment failure
     □ #2  Find the root cause and fix it
     □ #3  Check for regressions
 
-  Start with #1 on this plan?
+  Opened a draft PR with the full plan: https://github.com/you/repo/pull/42
+  Review the steering there and approve to start #1.
 ```
 
-Approve, and it begins the first task. Every task goes through review before it's committed.
+Read the plan on the PR, approve, and it begins the first task. Every task goes through review before it's committed, and adds to the same PR.
 
 ### 2. Step away — `/rn:bb`
 

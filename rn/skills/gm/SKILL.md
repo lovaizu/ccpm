@@ -1,23 +1,27 @@
 ---
 name: gm
-description: Start a new rn work session from a goal. Use when the user states something they want to accomplish, typically via /rn:gm. Captures the goal verbatim, decomposes it into verifiable tasks in a steering.md, and begins task #1. This skill has side effects (writes files, commits to git) — only run it on explicit user invocation.
+description: Start a new rn work session from a goal. Use when the user states something they want to accomplish, typically via /rn:gm. Restates the goal as a faithful understanding, decomposes it into verifiable tasks in a steering.md, opens a draft PR so the plan can be reviewed, and begins task #1 once approved. This skill has side effects (writes files, commits, pushes, opens a PR) — only run it on explicit user invocation.
 disable-model-invocation: true
 ---
 
 # /rn:gm — Start a session
 
-Start a goal-driven work session. Capture the user's goal exactly, turn it into verifiable tasks
-inside a `steering.md`, get approval, then execute task #1.
+Start a goal-driven work session. Understand the user's goal, turn it into verifiable tasks inside a
+`steering.md`, open a draft PR so the plan can be read comfortably, then execute task #1 once
+approved.
 
 All user interactions are **proposals, not questions**: propose a concrete option and proceed on
-confirmation. Never paraphrase or reinterpret the goal.
+confirmation. Restate the goal as a faithful understanding of what the user wants — never add scope
+or invent intent; the user confirms it in the PR review.
 
 ## Phase 1: Define — fix the goal and where it lives
 
-**Step 1 — Hear the goal**
+**Step 1 — Understand the goal**
 
-- Use the user's message or `$ARGUMENTS` as the goal. If neither is present, ask for it.
-- Record the user's **exact words**. Never paraphrase.
+- Take the goal from the user's message or `$ARGUMENTS`. If neither is present, ask for it.
+- Restate it as a **clear, faithful understanding** of what the user wants to achieve — capture the
+  full intent, but never add scope or invent goals. If the intent is ambiguous, propose your
+  restatement and let the user correct it. This restatement is what goes in `Goal`.
 
 **Step 2 — Propose the location**
 
@@ -49,15 +53,22 @@ confirmation. Never paraphrase or reinterpret the goal.
   task definition requirements in the template (one-sentence purpose; specific, not "implement X";
   third-party-verifiable criteria; explicit prerequisites).
 
-## Phase 3: Launch — get approval and start
+## Phase 3: Launch — open for review, then start
 
-**Step 5 — Present and approve**
+**Step 5 — Persist and open a draft PR**
 
-- Show the complete `steering.md`.
+- Write the completed `steering.md` to `.rn/{slug}/steering.md`.
+- Commit it: `chore: start session — {slug}`.
+- Ensure the work is on a branch — a PR needs one. If on the default branch, create `{slug}` first.
+- Push the branch, then open a **draft PR** (`gh pr create --draft`) titled from the goal, with a
+  body that points to `.rn/{slug}/steering.md` so the plan can be read on GitHub. This is the
+  session's PR — later tasks add commits to it.
+- Report the PR link and a one-line task list, and ask the user to review the plan on the PR. The
+  steering is too long to review in the console — **the PR is where it gets read**.
+- If push or PR creation fails, report it and fall back to presenting the plan in the console.
 - **CRITICAL: DO NOT proceed without explicit user approval.**
 
 **Step 6 — Begin task #1**
 
-- After approval, write the completed `steering.md` to `.rn/{slug}/steering.md`.
-- Commit it: `chore: start session — {slug}`.
-- Read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute task #1 following it.
+- After approval, read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute task #1
+  following it.
