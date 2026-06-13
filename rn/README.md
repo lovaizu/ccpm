@@ -2,6 +2,17 @@
 
 Start by naming a goal, and pick up right where you left off after any break. One task at a time, with quality built in as you go.
 
+## Install
+
+`rn` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the plugin:
+
+```console
+> /plugin marketplace add lovaizu/ccpm
+> /plugin install rn@ccpm
+```
+
+That makes `/rn:gm`, `/rn:bb`, and `/rn:hi` available.
+
 ## Getting started
 
 Say you want to push through "fix the bug in the payment screen."
