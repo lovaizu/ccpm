@@ -1,61 +1,68 @@
 # rn — Right Now
 
-ゴールを掲げて始め、中断しても続きから戻れる。1タスクずつ、品質を作り込みながら。
+Start by naming a goal, and pick up right where you left off after any break. One task at a time, with quality built in as you go.
 
-## はじめに
+## Getting started
 
-例えば「決済画面のバグを直す」をやり切りたいとき。
+Say you want to push through "fix the bug in the payment screen."
 
-### 1. 始める — `/rn:gm`
+### 1. Start — `/rn:gm`
 
-ゴールを伝えると、あなたの言葉のまま記録し、検証できるタスクに分解して見せます。
+Tell it your goal. It records the goal in your exact words, breaks it into verifiable tasks, and shows you the plan.
 
 ```console
-> /rn:gm 決済画面のバグを直す
+> /rn:gm fix the bug in the payment screen
 
-● ゴールを記録しました（あなたの言葉のまま）:
-    「決済画面のバグを直す」
+● Recorded your goal (in your exact words):
+    "fix the bug in the payment screen"
 
-  置き場所: .rn/payment-fix/steering.md
-    □ #1  決済失敗を再現するテストを書く
-    □ #2  原因を特定して修正する
-    □ #3  リグレッションがないか確認する
+  Location: .rn/payment-fix/steering.md
+    □ #1  Write a test that reproduces the payment failure
+    □ #2  Find the root cause and fix it
+    □ #3  Check for regressions
 
-  この計画で #1 から始めますか？
+  Start with #1 on this plan?
 ```
 
-承認すると最初のタスクに着手。各タスクはレビューを通してから commit されます。
+Approve, and it begins the first task. Every task goes through review before it's committed.
 
-### 2. 中断する — `/rn:bb`
+### 2. Step away — `/rn:bb`
 
-コンテキストが一杯、今日はここまで。打てば作業を commit / push し、続きのメモを残します。
+Context is full, or you're done for the day. Run it and your work is committed / pushed, with a note left for next time.
 
 ```console
 > /rn:bb
 
-● #1 を commit しました — "complete task #1 — 再現テスト"
-  最後に完了:   #1 再現テスト
-  次にやること: #2 原因を特定して修正
+● Committed #1 — "complete task #1 — reproduction test"
+  Last completed: #1 reproduction test
+  Up next:        #2 find the root cause and fix it
 
-  /clear してから、新しい会話で /rn:hi を実行してください。
+  Run /clear, then start a fresh conversation with /rn:hi.
 ```
 
-### 3. 戻る — `/rn:hi`
+### 3. Come back — `/rn:hi`
 
-新しい会話で打つと、中断したところを git から見つけて、続きから始めます。
+Run it in a fresh conversation. It finds where you stopped from git and resumes from there.
 
 ```console
 > /rn:hi
 
-● 中断中のセッションを見つけました: payment-fix
-  git ログと突き合わせ — #1 は完了済み。
+● Found a suspended session: payment-fix
+  Reconciled with the git log — #1 is done.
 
-● #2 から再開します: 原因を特定して修正する
+● Resuming from #2: find the root cause and fix it
 ```
 
 ---
 
-`gm` は最初の一度だけ。あとは中断のたびに **`bb` → `/clear` → `hi`** を挟むだけで、
-ゴールを満たすまで作業が途切れません。
+`gm` is just once, at the very start. After that, each break is just **`bb` → `/clear` → `hi`**, and your work stays unbroken until the goal is met.
 
-> `/rn:bb` のあとの `/clear` は手動で実行してください（プラグインからは消せないため）。
+> Run `/clear` yourself after `/rn:bb` — a plugin can't clear the context for you.
+
+## Why gm / bb / hi?
+
+They're the greetings you'd naturally say at each moment, so they're easy to remember:
+
+- **`gm`** — *good morning.* You sit down and start on a goal.
+- **`bb`** — *bye-bye.* You step away for now.
+- **`hi`** — *hi again.* You're back; pick up where you left off.
