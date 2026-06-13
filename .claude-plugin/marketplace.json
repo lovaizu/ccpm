@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "ccpm",
+  "description": "Claude Code plugin marketplace for lovaizu projects",
+  "owner": { "name": "lovaizu" },
+  "plugins": [
+    {
+      "name": "rn",
+      "description": "Goal-driven work sessions: capture a goal verbatim, decompose it into reviewed tasks, and resume across conversations via a git-tracked steering.md.",
+      "source": "./rn",
+      "category": "development"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "rn",
+  "description": "Goal-driven work sessions: capture a goal verbatim, decompose it into reviewed tasks, and resume across conversations via a git-tracked steering.md.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}
