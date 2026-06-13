@@ -2,7 +2,9 @@
 
 Read this file when creating a new `steering.md`. Copy the structure below verbatim, then
 fill the sections. Keep every heading; leave a section's placeholder in place if it is not yet
-populated (`Tasks`, `Decisions`, `State` start empty and are filled later).
+populated (`Tasks`, `Decisions`, `State` start empty and are filled later). **Keep the blank lines
+between fields** (`Purpose` / `Prerequisites` / `Steps` / `Completion criteria`) — without them
+Markdown collapses the fields onto one line.
 
 ---
 
@@ -31,8 +33,11 @@ populated (`Tasks`, `Decisions`, `State` start empty and are filled later).
 ### #1: <task name>
 
 **Purpose**: what to achieve, 1-2 sentences
+
 **Prerequisites**: tasks that must be completed first (or "none")
+
 **Steps**:
+
 - [ ] specific step 1
 - [ ] specific step 2
 - [ ] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
@@ -42,6 +47,7 @@ populated (`Tasks`, `Decisions`, `State` start empty and are filled later).
 - [ ] user review
 
 **Completion criteria**:
+
 - objectively verifiable by a third party
 - no vague terms ("appropriate", "correct")
 
