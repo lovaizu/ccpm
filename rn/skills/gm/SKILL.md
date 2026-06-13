@@ -49,9 +49,9 @@ or invent intent; the user confirms it in the PR review.
 **Step 4 — Decompose tasks**
 
 - Work **backwards from the Verification end state**.
-- Give each task a `Purpose`, `Prerequisites`, `Steps`, and `Completion criteria`, following the
-  task definition requirements in the template (one-sentence purpose; specific, not "implement X";
-  third-party-verifiable criteria; explicit prerequisites).
+- Give each task a `Purpose`, `Prerequisites`, `Steps` (including the verify-phase review steps as
+  `- [ ]` checkboxes), and `Completion criteria` — following **all** the task definition
+  requirements in the template, not a subset.
 
 ## Phase 3: Launch — open for review, then start
 
