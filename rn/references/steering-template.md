@@ -50,6 +50,7 @@ Markdown collapses the fields onto one line.
 
 - objectively verifiable by a third party
 - no vague terms ("appropriate", "correct")
+- outcomes / end-state only — never actions, reviews, or gates (those belong in Steps)
 
 # Decisions
 
@@ -79,3 +80,5 @@ Markdown collapses the fields onto one line.
 | Specificity | Not "implement" but "implement `methodName()` in `ClassName`" |
 | Objectivity | Completion criteria judgeable by a third party |
 | Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
+| Criteria vs steps | Completion criteria state outcomes/end-state only (the bar); actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable |
+| Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert / user review) are its gate |
