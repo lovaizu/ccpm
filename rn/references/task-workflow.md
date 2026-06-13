@@ -20,6 +20,8 @@ Choose the Verify-phase steps by task type:
 **Step — Do the work**
 
 - Carry out the task's Steps from `steering.md` until each step is complete.
+- (code) Write the test first — a failing test that captures the expected behavior — then implement
+  until it passes. The work is a hypothesis; it is not done until its tests pass.
 - Stay within the task's scope. Do not start adjacent tasks.
 
 ## Phase: Verify
@@ -33,17 +35,20 @@ Choose the Verify-phase steps by task type:
 
 **Step — QA review (subagent)**, then the expert reviews for code tasks. Each reviewer runs as an
 independent subagent (Agent tool, no conversation history), so all context must be passed in the
-prompt.
+prompt. That independence is the safeguard against bias — protect it.
 
-- Build the review prompt with 5 elements:
-  1. **Role** — the reviewer persona (QA engineer / language expert / software engineer).
+- Build the review prompt with 6 elements:
+  1. **Role** — the reviewer persona (QA engineer / language expert / software engineer), told to
+     review **adversarially**: assume defects exist and actively try to break the artifact
+     (boundaries, error paths, integration, missed cases) instead of confirming it works.
   2. **Artifact** — the full content or diff under review.
   3. **Criteria** — the reviewer checklist below.
   4. **Completion criteria** — the task's Completion criteria copied verbatim from `steering.md`.
-  5. **Output format** — OK/NG per criterion with evidence, plus an overall pass/fail.
+  5. **Output format** — OK/NG per criterion with concrete evidence, plus an overall pass/fail.
+  6. **Neutral framing** — present the artifact and criteria only. Do not reveal your own
+     conclusions or self-check verdict, defend the choices made, or hint at the verdict you expect.
+     Don't lead the reviewer; let the evidence decide.
 - Dispatch the subagent and collect the verdict.
-- Apply the iteration protocol: any NG → fix → re-run the same reviewer; max 3 iterations; still
-  NG after 3 → record the findings and escalate to user review with the unresolved items.
 
 Reviewer checklists:
 
@@ -54,11 +59,15 @@ Reviewer checklists:
 - **Software engineer** (code only): separation of concerns; system-wide integrity (interface
   contracts, API compatibility); maintainability (no duplication, deep nesting, magic numbers).
 
-Review policy (all reviewers):
+Triage every finding (all reviewers) — judge it, don't swallow review feedback wholesale:
 
-- Address every finding. Never skip one as "minor" or "low priority".
-- To skip a finding, get user confirmation first.
-- Only dismiss a finding when it contains a factual error, and state the evidence.
+- Assess each finding on its merits: is it factually correct, and does acting on it serve the goal?
+- **Valid** → fix it, then re-run the same reviewer. Max 3 iterations; valid findings still NG after
+  3 → record them and escalate to user review with the unresolved items.
+- **Invalid** (factual error, out of scope, or not aligned with the goal) → reject it and state the
+  rationale and evidence for rejecting. Never accept a finding just because a reviewer raised it.
+- Every finding ends in an explicit fix or a reasoned rejection — never silently dropped, never
+  blindly accepted. To drop a *valid* finding without fixing it, get user confirmation first.
 
 ## Phase: Complete
 

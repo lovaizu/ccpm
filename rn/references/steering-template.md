@@ -55,9 +55,11 @@ Markdown collapses the fields onto one line.
 # Decisions
 
 ## D-N: <what was decided>
+- **Issue**: <the decision being made — understandable without background>
 - **Conclusion**: <the decision>
-- **Rationale**: <why>
+- **Rationale**: <the judgment reasoning that supports the conclusion — no facts here>
 - **Evidence**: <facts/numbers backing the rationale>
+- **Sources**: <where each piece of evidence comes from>
 
 # State
 

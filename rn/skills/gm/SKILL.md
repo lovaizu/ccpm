@@ -10,7 +10,8 @@ Start a goal-driven work session. Understand the user's goal, turn it into verif
 `steering.md`, open a draft PR so the plan can be read comfortably, then execute task #1 once
 approved.
 
-All user interactions are **proposals, not questions**: propose a concrete option and proceed on
+All user interactions are **proposals, not questions**: propose a concrete option — written so it
+makes sense without prior context (plain language, no internal jargon) — and proceed on
 confirmation. Restate the goal as a faithful understanding of what the user wants — never add scope
 or invent intent; the user confirms it in the PR review.
 
