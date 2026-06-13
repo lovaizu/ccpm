@@ -2,6 +2,11 @@
 
 Source: based on facts confirmed in the official docs (plugins-reference / plugin-marketplaces / skills at code.claude.com/docs).
 
+## Language
+
+- **Artifacts default to English** unless instructed otherwise — code, docs, READMEs, rule files, commit messages, and the like. Rationale: English reaches the widest audience, and it is a language AI models are heavily trained on.
+- **Communication matches the other party's language** — PR descriptions, review comments, and console exchanges follow whatever language the person is using. Rationale: lower the communication cost for the people involved.
+
 ## Version number
 
 - **Write `version` in exactly one place: `plugin.json`.** Do not put `version` in `marketplace.json`.
