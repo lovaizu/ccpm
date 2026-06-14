@@ -167,9 +167,14 @@ and the root README.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-06-14
-- **Last completed**: none
-- **Next**: #1 Author the `up` skill
-- **Notes**: branch `worktree-techting`; instruction source of record at `.rn/techting/instruction.md`
-  (kept verbatim in Japanese by design)
+- **Last completed**: none (session just started; plan opened as draft PR #5, awaiting approval)
+- **Next**: #1 Author the `up` skill (`techting/skills/up/SKILL.md`)
+- **Notes**: Branch `worktree-techting`, draft PR https://github.com/lovaizu/ccpm/pull/5 — review the
+  plan there before starting #1. No task work has begun. Names are settled: plugin `techting`, skill
+  `up`, invoked `/techting:up`; scope is brushing up an existing draft (input = draft, output =
+  revision + reasons). Skill must be model-invocable (no `disable-model-invocation`) — see D-2.
+  Instruction source of record at `.rn/techting/instruction.md`, kept verbatim in Japanese by design
+  (the one artifact exempt from the English rule). All other artifacts are English. When resuming:
+  if the plan is approved, start #1 per task-workflow.md; if not yet approved, ask for approval first.
