@@ -20,6 +20,8 @@ Choose the Verify-phase steps by task type:
 **Step — Do the work**
 
 - Carry out the task's Steps from `steering.md` until each step is complete.
+- (code) Write the test first — a failing test that captures the expected behavior — then implement
+  until it passes. The work is a hypothesis; it is not done until its tests pass.
 - Stay within the task's scope. Do not start adjacent tasks.
 
 ## Phase: Verify
@@ -32,18 +34,26 @@ Choose the Verify-phase steps by task type:
 - Write results to `{steering_dir}/checks/{task-id}.md` using the Check file format below.
 
 **Step — QA review (subagent)**, then the expert reviews for code tasks. Each reviewer runs as an
-independent subagent (Agent tool, no conversation history), so all context must be passed in the
-prompt.
+independent subagent (Agent tool, no conversation history), so all context the reviewer needs must
+be passed in the prompt — but only that (element 6 says what to withhold). That independence is the
+safeguard against bias — protect it.
 
-- Build the review prompt with 5 elements:
-  1. **Role** — the reviewer persona (QA engineer / language expert / software engineer).
+- Build the review prompt with 6 elements:
+  1. **Role** — the reviewer persona (QA engineer / language expert / software engineer), told to
+     review **adversarially**: assume defects exist and actively try to break the artifact
+     (boundaries, error paths, integration, missed cases) instead of confirming it works.
   2. **Artifact** — the full content or diff under review.
   3. **Criteria** — the reviewer checklist below.
   4. **Completion criteria** — the task's Completion criteria copied verbatim from `steering.md`.
-  5. **Output format** — OK/NG per criterion with evidence, plus an overall pass/fail.
+     These are the bar to clear, not a verdict; passing them verbatim is required and is not
+     "leading" — what you withhold is *your* assessment of whether the artifact meets them.
+  5. **Output format** — OK/NG per criterion with concrete evidence, plus an overall pass/fail.
+  6. **Neutral framing** — pass only what the reviewer needs to judge independently: goal, artifact,
+     Completion criteria, and the checklist. **Never** pass the self-check file
+     (`checks/{task-id}.md`) or any OK/NG verdict, do not defend the choices made, and do not hint
+     at the verdict you expect. "All context" means the task context, not your conclusions — don't
+     lead the reviewer; let the evidence decide.
 - Dispatch the subagent and collect the verdict.
-- Apply the iteration protocol: any NG → fix → re-run the same reviewer; max 3 iterations; still
-  NG after 3 → record the findings and escalate to user review with the unresolved items.
 
 Reviewer checklists:
 
@@ -54,11 +64,19 @@ Reviewer checklists:
 - **Software engineer** (code only): separation of concerns; system-wide integrity (interface
   contracts, API compatibility); maintainability (no duplication, deep nesting, magic numbers).
 
-Review policy (all reviewers):
+Triage every finding (all reviewers) — judge it, don't swallow review feedback wholesale:
 
-- Address every finding. Never skip one as "minor" or "low priority".
-- To skip a finding, get user confirmation first.
-- Only dismiss a finding when it contains a factual error, and state the evidence.
+- Assess each finding on its merits: is it factually correct, and does acting on it serve the goal?
+- **Valid** → fix it, then re-run the same reviewer. Max 3 iterations; valid findings still NG after
+  3 → record them and escalate to user review with the unresolved items.
+- **Invalid** → reject it, citing the evidence. A finding is Invalid **only** when it rests on a
+  factual error, or falls outside a scope boundary written in the task's Completion criteria — cite
+  the specific fact or criterion. Never accept a finding just because a reviewer raised it.
+- Anything else — "valid but I'd rather not act on it", "not aligned with the goal", "minor" — is a
+  *valid finding you want to drop*: get user confirmation first. You produced the artifact, so you
+  do not get to dismiss criticism of it on your own judgment alone.
+- Every finding ends in an explicit fix, an evidence-cited rejection, or a user-confirmed drop —
+  never silently dropped, never blindly accepted.
 
 ## Phase: Complete
 
@@ -69,14 +87,15 @@ Review policy (all reviewers):
 **Step — Commit**
 
 - Check off the task in `steering.md`.
-- Commit with the message: `docs: complete task #{id} — {description}`.
-  (This exact `complete task #{id}` phrasing is what `/rn:hi` matches against `git log` when it
-  reconciles tasks — keep the format.)
+- Commit with the message: `{type}: complete task #{id} — {description}`, where `{type}` matches the
+  change (`feat` / `fix` / `docs` / `refactor` / `test` / …).
+  (The exact `complete task #{id}` substring is what `/rn:hi` matches against `git log` when it
+  reconciles tasks — keep that substring regardless of the prefix.)
 
 **Step — Advance**
 
 - Begin the next unchecked task immediately, restarting at Phase: Execute.
-- If all tasks are done, propose running the `steering.md` Verification criteria.
+- If all tasks are done, propose running the `steering.md` Acceptance criteria.
 
 ## Check file format
 
@@ -99,6 +118,8 @@ Write to `{steering_dir}/checks/{task-id}.md`:
 | Edge case coverage | OK / NG | |
 
 ## Expert Reviews (code changes only)
+
+(Experts assess the aspects below, not each completion criterion — QA is the per-criterion gate.)
 
 ### Language Expert
 

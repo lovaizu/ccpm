@@ -32,7 +32,9 @@ then `/rn:hi` in a fresh conversation to resume.
 **Step 3 — Write State**
 
 - Check off completed task steps. Add any new tasks or decisions discovered during the work.
-- Write the `State` section: `Status`, `Date`, `Last completed`, `Next`, `Notes`.
+- Write the `State` section: set `Status` to `paused`, then `Date`, `Last completed`, `Next`,
+  `Notes`. (`paused` is the signal `/rn:hi` and `/rn:bb` search for; the template's reset value is
+  `not suspended`, so only a genuinely suspended session reads `paused`.)
 - **Notes must carry enough context for `/rn:hi` to resume without this conversation**: current
   work, blockers, pending decisions, and the next concrete action.
 
