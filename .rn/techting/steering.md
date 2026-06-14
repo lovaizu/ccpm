@@ -72,17 +72,17 @@ the heart of the plugin.
 
 **Steps**:
 
-- [ ] Write the frontmatter: `name: up`, a model-invocable description (fires for a human or Claude
+- [x] Write the frontmatter: `name: up`, a model-invocable description (fires for a human or Claude
       itself when a document is being written or revised), and no `disable-model-invocation`
-- [ ] Write the body procedure: reader definition (who / what to decide-or-do / how they read) →
+- [x] Write the body procedure: reader definition (who / what to decide-or-do / how they read) →
       pick axis and outline (the five axes) → show structure and flow as mermaid → pre-output
       self-check
-- [ ] State the brush-up frame: input = an existing draft, output = the revised document plus "what
+- [x] State the brush-up frame: input = an existing draft, output = the revised document plus "what
       was changed and why"
-- [ ] Cross-check against instruction.md item by item so no pillar or point is dropped (do not sample)
-- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/1.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review
+- [x] Cross-check against instruction.md item by item so no pillar or point is dropped (do not sample)
+- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/1.md`)
+- [x] QA engineer review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
@@ -91,8 +91,7 @@ the heart of the plugin.
 - The body contains all four pillars (reader definition / five-axis outline / mermaid diagrams /
   pre-output self-check)
 - The input = existing draft, output = revision + reasons frame is stated in the body
-
-### #2: Package the plugin and register it in the marketplace
+ Package the plugin and register it in the marketplace
 
 **Purpose**: Make techting a standalone plugin and make it reachable from both the ccpm marketplace
 and the root README.
