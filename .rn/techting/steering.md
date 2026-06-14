@@ -1,0 +1,175 @@
+# Goal
+
+Package the "technical-writing instruction" into a Claude Code plugin `techting` (skill `up`,
+invoked `/techting:up`) so its reader-first procedure — define the reader, then derive tone,
+diagrams, closing, and outline — can be applied on demand without pasting the instruction each
+time. It must be invocable by a human or by Claude itself. Primary mode is brushing up an existing
+draft (authoring from scratch runs through the same procedure but is secondary). The verbatim
+instruction is preserved at `.rn/techting/instruction.md` as the source of record, and the skill
+body is derived from it.
+
+# Acceptance criteria
+
+- `techting/skills/up/SKILL.md` exists and its body covers all four pillars of the instruction:
+  reader definition (who / what they must decide-or-do / how they read), the five outline axes
+  (article, guide, reference, record-ADR, evaluation), structure-and-flow shown as mermaid
+  diagrams, and a pre-output self-check.
+- The skill states the brush-up use case explicitly: input = an existing draft, output = the
+  revised document plus "what was changed and why".
+- The SKILL.md frontmatter is model-invocable (no `disable-model-invocation`) and its description is
+  written so it can fire for a human or for Claude itself.
+- `techting/.claude-plugin/plugin.json` has name, description, version (semver), and author, and the
+  version lives only in plugin.json (no version field in marketplace.json).
+- `techting/README.md` exists and shows how to use `/techting:up` in a scenario + real-console style.
+- `.claude-plugin/marketplace.json` has a techting entry (name / description / source `./techting` /
+  category) and the root `README.md` Plugins list also links to techting (the two stay in sync).
+- `claude plugin validate ./techting --strict` and `claude plugin validate . --strict` both pass.
+- `claude -p "/techting:up …" --plugin-dir ./techting` loads the skill and starts the brush-up
+  procedure, confirmed headlessly.
+- All shipped artifacts (plugin.json / SKILL.md / README / commit messages / PR) are in English.
+
+# Assumptions
+
+- Fact (verified on disk): official skills are model-invocable by default. `rn`'s skills set
+  `disable-model-invocation: true` because they are meant for a human to drive; this skill is meant
+  for a human or AI.
+- Fact (verified): skills are invoked as `/{plugin}:{skill}`. Plugin name and skill name are
+  independent slots — they need not relate or match (`rn:gm` is the precedent). So plugin `techting`
+  + skill `up` is valid.
+- Fact (ccpm rules): version lives only in plugin.json; marketplace.json and root README stay in
+  sync; shipped artifacts are English; README is scenario-style.
+- Assumption (unverified): the marketplace entry `category` is a free string. Use `"writing"` (the
+  existing entry uses `"development"`).
+- Assumption (unverified): `claude plugin validate` and `claude -p … --plugin-dir` are available in
+  this environment. If not, #3 falls back to manual verification.
+- Scope: exactly one plugin `techting` and one skill `up`. The procedure lives inline in SKILL.md;
+  it is not split into separate reference files (rn uses references, but this skill is self-contained
+  in one file).
+- Source-of-record exception: `.rn/techting/instruction.md` stays in its original Japanese — it is
+  the user's verbatim instruction, so translating it would corrupt the source. This is the one
+  artifact exempt from the English rule.
+
+# Rules
+
+- 1 task = 1 commit
+- Shipped artifacts (plugin.json / SKILL.md / README / commit messages / PR) are in English,
+  including this steering.md
+- The version lives only in `techting/.claude-plugin/plugin.json` (no version in marketplace.json)
+- On any add / rename / remove, update `.claude-plugin/marketplace.json` and root `README.md` in the
+  same commit
+- README is scenario + real-console style, not a mechanical list
+- The SKILL.md description is written to be model-invocable (no `disable-model-invocation`)
+- The skill body is derived from `instruction.md` and must not drop any of the four pillars
+
+# Tasks
+
+### #1: Author the `up` skill (techting/skills/up/SKILL.md)
+
+**Purpose**: Turn the instruction into a single-file "brush up an existing document" skill. This is
+the heart of the plugin.
+
+**Prerequisites**: none (instruction.md was saved in the session-start commit)
+
+**Steps**:
+
+- [ ] Write the frontmatter: `name: up`, a model-invocable description (fires for a human or Claude
+      itself when a document is being written or revised), and no `disable-model-invocation`
+- [ ] Write the body procedure: reader definition (who / what to decide-or-do / how they read) →
+      pick axis and outline (the five axes) → show structure and flow as mermaid → pre-output
+      self-check
+- [ ] State the brush-up frame: input = an existing draft, output = the revised document plus "what
+      was changed and why"
+- [ ] Cross-check against instruction.md item by item so no pillar or point is dropped (do not sample)
+- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/1.md`)
+- [ ] QA engineer review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- `techting/skills/up/SKILL.md` frontmatter has `name: up` and a description, and no
+  `disable-model-invocation`
+- The body contains all four pillars (reader definition / five-axis outline / mermaid diagrams /
+  pre-output self-check)
+- The input = existing draft, output = revision + reasons frame is stated in the body
+
+### #2: Package the plugin and register it in the marketplace
+
+**Purpose**: Make techting a standalone plugin and make it reachable from both the ccpm marketplace
+and the root README.
+
+**Prerequisites**: #1
+
+**Steps**:
+
+- [ ] Create `techting/.claude-plugin/plugin.json` (name `techting`, description, version `0.1.0`,
+      author lovaizu)
+- [ ] Create `techting/README.md` (scenario + real-console style showing `/techting:up`)
+- [ ] Add a techting entry to `.claude-plugin/marketplace.json` (name / description / source
+      `./techting` / category `"writing"`, no version field)
+- [ ] Add techting to the root `README.md` Plugins list (link to `./techting/README.md` + one-line
+      description)
+- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/2.md`)
+- [ ] QA engineer review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- `techting/.claude-plugin/plugin.json` has a version and `marketplace.json` has no version field
+- Both `marketplace.json` and root `README.md` contain techting
+- The root `README.md` techting entry links to `./techting/README.md`
+
+### #3: Validate strict and verify headless invocation
+
+**Purpose**: Confirm structural validity and real invocation by measurement, and fix whatever fails.
+
+**Prerequisites**: #2
+
+**Steps**:
+
+- [ ] Run `claude plugin validate ./techting --strict` and clear every warning/error
+- [ ] Run `claude plugin validate . --strict` (marketplace root) and clear every warning/error
+- [ ] Run `claude -p "/techting:up …" --plugin-dir ./techting` and confirm the skill loads and starts
+- [ ] If the CLI is unavailable, switch to manual verification and record that fact and the result
+- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/3.md`)
+- [ ] QA engineer review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- `claude plugin validate ./techting --strict` and `claude plugin validate . --strict` both pass
+- `claude -p … --plugin-dir ./techting` loads and starts the `up` skill (or, if the CLI is absent,
+  there is a record of manual verification confirming the equivalent)
+
+# Decisions
+
+## D-1: Plugin `techting` / skill `up` (not the same name)
+- **Issue**: For a single-skill plugin, how to name the plugin vs the skill. The official convention
+  is to use the same name for both.
+- **Conclusion**: Plugin `techting` (technical writing), skill `up`. Invoked `/techting:up`.
+- **Rationale**: The skill name is typed often, so keep it short. Plugin name and skill name are
+  independent slots and need not match (`rn:gm` is the precedent). Brushing an existing draft up a
+  level is the primary mode, so the verb `up` fits the content.
+- **Evidence**: Official single-skill plugins mostly use the same name (`frontend-design` etc.), but
+  `rn` works fine with unrelated short names (`gm/bb/hi`). Skill invocation form is `/{plugin}:{skill}`.
+- **Sources**: `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/*`, this repo's
+  `rn/skills/*`, the Skill tool spec.
+
+## D-2: Make it model-invocable (the opposite of rn)
+- **Issue**: Whether to set `disable-model-invocation: true` on the skill.
+- **Conclusion**: Do not set it (let it fire for a human or for Claude itself).
+- **Rationale**: The distinguishing axis is not side effects but who the skill is meant for. This
+  skill is meant for a human or an AI.
+- **Evidence**: `rn`'s skills are meant for a human and set `disable-model-invocation: true`.
+  Official skills are model-invocable by default.
+- **Sources**: this repo's `rn/skills/*/SKILL.md`, the official plugins.
+
+# State
+
+(written by /rn:bb, read and reset to this placeholder by /rn:hi)
+
+- **Status**: not suspended
+- **Date**: 2026-06-14
+- **Last completed**: none
+- **Next**: #1 Author the `up` skill
+- **Notes**: branch `worktree-techting`; instruction source of record at `.rn/techting/instruction.md`
+  (kept verbatim in Japanese by design)
