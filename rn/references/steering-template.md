@@ -11,17 +11,18 @@ Markdown collapses the fields onto one line.
 ```markdown
 # Goal
 
-<a clear, faithful restatement of what the user wants to achieve — full intent, no added scope>
+<why this is being done and what the user wants to change — the full intent, no added scope>
 
-## Verification
+# Acceptance criteria
 
-- <how to verify the goal is achieved>
+- <the states / conditions by which the goal is judged achieved>
 - <two axes: goal alignment + quality>
+- <write these exhaustively, never sample — the complete set is what defines scope (in / out)>
 
 # Assumptions
 
+- <things taken to be true in pursuit of the goal — if one proves false, the plan changes>
 - <distinguish facts from assumptions — state explicitly if unverified>
-- <define complete scope, never sample>
 
 # Rules
 

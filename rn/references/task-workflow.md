@@ -95,7 +95,7 @@ Triage every finding (all reviewers) — judge it, don't swallow review feedback
 **Step — Advance**
 
 - Begin the next unchecked task immediately, restarting at Phase: Execute.
-- If all tasks are done, propose running the `steering.md` Verification criteria.
+- If all tasks are done, propose running the `steering.md` Acceptance criteria.
 
 ## Check file format
 

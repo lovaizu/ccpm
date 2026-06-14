@@ -1,6 +1,6 @@
 {
   "name": "rn",
   "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into reviewed tasks, open a draft PR for the plan, and resume across conversations via a git-tracked steering.md.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": { "name": "lovaizu" }
 }

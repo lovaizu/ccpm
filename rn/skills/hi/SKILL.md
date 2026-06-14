@@ -52,4 +52,4 @@ next unchecked task.
 
 - Read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute the next unchecked task
   following it.
-- If all tasks are already done, propose running the `steering.md` Verification criteria.
+- If all tasks are already done, propose running the `steering.md` Acceptance criteria.

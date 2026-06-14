@@ -43,15 +43,16 @@ intent; the user confirms it in the PR review.
 **Step 3 — Create steering.md**
 
 - Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md`.
-- Fill `Goal`, `Verification`, `Assumptions`, and `Rules`. Leave `Tasks`, `Decisions`, and `State`
-  as their placeholders for now.
-- In `Verification`, define how the goal is checked along two axes: goal alignment + quality.
-- In `Assumptions`, separate facts from assumptions, mark anything unverified, and define the
-  complete scope — never sample.
+- Fill `Goal`, `Acceptance criteria`, `Assumptions`, and `Rules`. Leave `Tasks`, `Decisions`, and
+  `State` as their placeholders for now.
+- In `Acceptance criteria`, define how the goal is judged achieved along two axes: goal alignment +
+  quality. Write them exhaustively, never sample — the complete set is what defines scope (in / out).
+- In `Assumptions`, separate facts from assumptions and mark anything unverified — these are the
+  things taken to be true in pursuit of the goal; if one proves false, the plan changes.
 
 **Step 4 — Decompose tasks**
 
-- Work **backwards from the Verification end state** (e.g. Verification = "payments complete";
+- Work **backwards from the Acceptance criteria end state** (e.g. acceptance = "payments complete";
   working back: regression check ← root-cause fix ← failing reproduction test).
 - Give each task a `Purpose`, `Prerequisites`, `Steps` (including the verify-phase review steps as
   `- [ ]` checkboxes), and `Completion criteria` — following both the inline `Completion criteria`
