@@ -9,7 +9,8 @@ Source: based on facts confirmed in the official docs (plugins-reference / plugi
   - The top-level `version` in the marketplace is "manifest metadata" and is not used to detect updates for users.
 - **Always set `version` in `plugin.json`** (semver, e.g. `0.1.0`).
   - `claude plugin validate --strict` warns and then fails when `version` is unset.
-- **What it means (from the user's side):** pinning a version means users receive an update **only when you bump it**. Raise the version with each release.
+- **What it means (from the user's side):** pinning a version means users receive an update **only when you bump it**.
+- **Bump only on an explicit release instruction.** There is no automatic bump — not even on merge to `main`. Without an instruction, user-facing changes wait under CHANGELOG's `## [Unreleased]` and `plugin.json` stays put; the version rises only when the user says to cut a release.
   - Omitting it makes every commit a new release (the commit-SHA strategy, suited to active development), but to pass `--strict` this repo's policy is to keep `version` in `plugin.json`.
 
 ### How much to bump (semver increment)
@@ -28,7 +29,7 @@ Decide the increment by the largest change in the release, judged from the user'
 - **How to write each entry** — one line that states *what changed* and *the benefit to the user*, in terms a user understands (not commit or implementation language). Keep it concise: `<what changed> — <why it helps the user>`.
 - **Where the entry goes:**
   - No release instruction → add the line under `## [Unreleased]` (the pending next release).
-  - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD`, bump `version` in `plugin.json` to match, and open a fresh empty `## [Unreleased]`. On this repo `main` is the release channel, so cut the version when shipping to `main`.
+  - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD`, bump `version` in `plugin.json` to match, and open a fresh empty `## [Unreleased]`. Merging to `main` does not by itself bump the version — the bump happens only on this instruction.
 
 ## Validation gate
 
