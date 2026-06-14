@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `/rn:gm` now restates your goal in its own words and opens a draft PR with the full plan — you can review and correct the direction before any work starts.
-- Every task now passes an adversarial review before it is committed — finished work clears a tougher quality bar instead of being taken at face value.
+- `/rn:gm` restates your goal in its own words and opens a draft PR with the full plan, so you can review and fix the direction before any work starts.
+- Each task is now checked by a reviewer that deliberately looks for problems before the work is committed, so mistakes are caught early instead of after the fact.
 
 ### Changed
 
-- `steering.md` is easier to review: flat sections, with a clear **Acceptance criteria** (was "Verification") that states when the goal is done and what is in or out of scope.
+- The plan in `steering.md` is clearer to review on the PR: a single **Acceptance criteria** section (previously "Verification") spells out when the goal is done and what is in or out of scope.
 
 ## [0.1.0] - 2026-06-13
 
