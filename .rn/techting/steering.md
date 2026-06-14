@@ -163,4 +163,22 @@ and the root README.
 
 # State
 
-(written by /rn:bb, read and reset to this placeholder by /rn:hi)
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: #3 Validate strict and verify headless invocation (all three tasks #1–#3 done,
+  each self-checked + QA-reviewed PASS, committed and pushed)
+- **Next**: All tasks are checked off. Run the `Acceptance criteria` pass (top of this file) as the
+  final gate, then the work is ready to merge.
+- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still draft).
+  The plugin is complete and shipped on the branch:
+  - `techting/skills/up/SKILL.md` (the `up` skill — four pillars derived from instruction.md),
+    `techting/.claude-plugin/plugin.json` (version 0.1.0, only place with version),
+    `techting/README.md` (scenario style), registered in `.claude-plugin/marketplace.json`
+    (category `writing`, no version) and linked from root `README.md`.
+  - Verified by measurement: `claude plugin validate ./techting --strict` and `claude plugin
+    validate . --strict` both pass clean; `claude -p "/techting:up …" --plugin-dir ./techting` loads
+    and runs the skill end to end (reader → guide axis → mermaid → what-changed note) and stops-and-
+    asks on underspecified input. Check records in `.rn/techting/checks/{1,2,3}.md`.
+  - PR #5 body was trimmed to link to steering.md only (no duplicated Goal/Tasks) per user request.
+  - When resuming: run the Acceptance criteria as a final self-check, report results, and if the user
+    approves, mark PR #5 ready and merge. No code work remains unless Acceptance surfaces a gap.
