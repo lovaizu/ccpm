@@ -31,6 +31,12 @@ Decide the increment by the largest change in the release, judged from the user'
   - No release instruction → add the line under `## [Unreleased]` (the pending next release).
   - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD`, bump `version` in `plugin.json` to match, and open a fresh empty `## [Unreleased]`. Merging to `main` does not by itself bump the version — the bump happens only on this instruction.
 
+## Tags and GitHub Releases
+
+- **Tag each release on `main`** with an annotated, plugin-scoped tag `<plugin>-v<version>` (e.g. `rn-v0.2.0`). The name is prefixed because each plugin in this marketplace versions independently; the `-` separator avoids colliding with the `plugin@marketplace` install syntax (the same prefix-by-package convention as Lerna `pkg@x.y.z` or Go `path/vx.y.z`).
+- **Publish a GitHub Release** for that tag, using the CHANGELOG's matching section as the notes.
+- **Read release timing from tags / Releases, not from merge commits.** The merge to `main` delivers the code; the tag records which commit is which version, and when.
+
 ## Validation gate
 
 - Structural validation must pass both `claude plugin validate <plugin-path> --strict` and `claude plugin validate <marketplace-root> --strict`.
