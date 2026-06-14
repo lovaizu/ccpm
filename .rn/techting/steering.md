@@ -125,13 +125,13 @@ and the root README.
 
 **Steps**:
 
-- [ ] Run `claude plugin validate ./techting --strict` and clear every warning/error
-- [ ] Run `claude plugin validate . --strict` (marketplace root) and clear every warning/error
-- [ ] Run `claude -p "/techting:up …" --plugin-dir ./techting` and confirm the skill loads and starts
-- [ ] If the CLI is unavailable, switch to manual verification and record that fact and the result
-- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/3.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review
+- [x] Run `claude plugin validate ./techting --strict` and clear every warning/error
+- [x] Run `claude plugin validate . --strict` (marketplace root) and clear every warning/error
+- [x] Run `claude -p "/techting:up …" --plugin-dir ./techting` and confirm the skill loads and starts
+- [x] If the CLI is unavailable, switch to manual verification and record that fact and the result
+- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/3.md`)
+- [x] QA engineer review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
@@ -139,7 +139,6 @@ and the root README.
 - `claude -p … --plugin-dir ./techting` loads and starts the `up` skill (or, if the CLI is absent,
   there is a record of manual verification confirming the equivalent)
 
-# Decisions
 
 ## D-1: Plugin `techting` / skill `up` (not the same name)
 - **Issue**: For a single-skill plugin, how to name the plugin vs the skill. The official convention
