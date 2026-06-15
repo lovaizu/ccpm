@@ -42,9 +42,9 @@ Markdown collapses the fields onto one line.
 - [ ] specific step 1
 - [ ] specific step 2
 - [ ] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
-- [ ] QA engineer review (subagent)
+- [ ] QA expert review (subagent)
 - [ ] (code changes only) language expert review (subagent)
-- [ ] (code changes only) software engineer review (subagent)
+- [ ] (code changes only) software-engineering expert review (subagent)
 - [ ] user review
 
 **Completion criteria**:
