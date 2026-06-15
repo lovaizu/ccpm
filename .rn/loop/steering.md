@@ -104,20 +104,20 @@ by appending a state-file write to the existing statusline script, without chang
 
 **Steps**:
 
-- [ ] Copy the current `~/.claude/scripts/statusline.sh` into `loop/statusline.sh` as the spike copy.
-- [ ] Append a block that writes JSON to a per-surface state file (e.g.
+- [x] Copy the current `~/.claude/scripts/statusline.sh` into `loop/statusline.sh` as the spike copy.
+- [x] Append a block that writes JSON to a per-surface state file (e.g.
       `~/.rn/ctx/${CMUX_SURFACE_ID}.json`) containing at least: context percentage, raw token total,
       `context_window_size`, `CMUX_SURFACE_ID`, `CMUX_WORKSPACE_ID`, repo cwd
       (`.workspace.current_dir`), and an epoch timestamp.
-- [ ] Confirm the existing display output (the `printf '%s | %s | %s'` line) is unchanged.
-- [ ] Trigger a render (point settings at the spike copy or run it with a captured statusline JSON)
+- [x] Confirm the existing display output (the `printf '%s | %s | %s'` line) is unchanged.
+- [x] Trigger a render (point settings at the spike copy or run it with a captured statusline JSON)
       and confirm the file appears with a percentage matching the displayed `C:xx%` and a populated
       `CMUX_SURFACE_ID` (proves A1).
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA engineer review (subagent)
-- [ ] language expert review (subagent)
-- [ ] software engineer review (subagent)
-- [ ] user review
+- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [x] QA engineer review (subagent)
+- [x] language expert review (subagent)
+- [x] software engineer review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
