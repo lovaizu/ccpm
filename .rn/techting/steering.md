@@ -140,6 +140,44 @@ and the root README.
 - `claude -p … --plugin-dir ./techting` loads and starts the `up` skill (or, if the CLI is absent,
   there is a record of manual verification confirming the equivalent)
 
+### #4: Rebuild SKILL.md from source and correct the acceptance criteria (D-3)
+
+**Purpose**: The shipped `SKILL.md` embodies the category error in D-3 (a mermaid diagram embedded
+in the prompt body). Rebuild it from source with the two layers separated, and fix the criteria so
+the diagram requirement targets the produced document, not the prompt. Keep the validated packaging.
+
+**Prerequisites**: #1–#3 (packaging stays; only SKILL.md + criteria change). User's go to rebuild.
+
+**Steps**:
+
+- [ ] Rewrite `techting/skills/up/SKILL.md` from `.rn/techting/instruction.md`, fresh — do not patch
+      the old file. Frontmatter: third-person description with brush-up-first trigger phrases,
+      model-invocable, version. Body in imperative form, lean (<2,000 words), single file.
+- [ ] Separate the two layers in the body: process (model instructions) vs output rules (constraints
+      on the produced document). Put the mermaid rule only in output rules, with an explicit
+      addressee sentence. No mermaid diagram embedded in the prompt body.
+- [ ] Carry every source pillar (reader definition + ask-or-infer gate, base/house-style, the five
+      axes with no-mixing, voice-by-reader, pre-output self-check) — cross-check item by item.
+- [ ] Add the missing self-check item "each document is a single axis (not mixed)" (Expert C's one
+      fidelity gap). Optionally wire derivation: "how-they-read → axis", "table is an example, §1 is
+      the source of truth".
+- [ ] Replace the old mermaid acceptance criterion with the corrected Level A / Level B criteria
+      from D-3.
+- [ ] Add `techting/CHANGELOG.md` (Keep a Changelog; `## [0.1.0]` Added line; rn is the precedent).
+- [ ] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood with two
+      different reader definitions to confirm Level B (voice/axis change).
+- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/4.md`)
+- [ ] QA engineer review (subagent)
+- [ ] user review (on the PR)
+
+**Completion criteria**:
+
+- `SKILL.md` body separates process from output rules, contains no embedded mermaid diagram, and
+  carries an addressee sentence on the diagram rule.
+- All source pillars present; the self-check includes the single-axis (no-mixing) item.
+- The steering acceptance criteria use the Level A / Level B split from D-3.
+- `CHANGELOG.md` exists; both strict validations pass; the two-reader dogfood shows voice/axis change.
+
 
 ## D-1: Plugin `techting` / skill `up` (not the same name)
 - **Issue**: For a single-skill plugin, how to name the plugin vs the skill. The official convention
@@ -162,30 +200,80 @@ and the root README.
   Official skills are model-invocable by default.
 - **Sources**: this repo's `rn/skills/*/SKILL.md`, the official plugins.
 
+## D-3: The category error — output-document rules vs the prompt's own format (overturns the old SKILL.md)
+- **Issue**: The acceptance criterion read "its body covers ... structure-and-flow shown as mermaid
+  diagrams", which made *the SKILL.md prompt itself* required to contain a mermaid diagram. The old
+  SKILL.md duly embedded a procedure flowchart. The user flagged this as a category error.
+- **Conclusion**: The instruction's "render structure/flow as mermaid" is a rule for the **document
+  the writer produces**, not a property of the SKILL.md prompt. The skill body must NOT embed a
+  diagram. Two layers must be physically separated in the body: (a) **process** = instructions to
+  the model running the skill (define reader, ask-or-infer, self-check); (b) **output rules** =
+  constraints on the produced document (md, dry, mermaid-for-structure, voice-by-reader, the five
+  axes). The mermaid rule belongs only to layer (b).
+- **Decision on scope**: Do NOT delete the whole plugin. The packaging (plugin.json, marketplace
+  entry, root README) is sound and validated (Expert B). The intent mapping was audited faithful
+  (Expert C: 0 drops). Only the one file that embodies the misunderstanding — `SKILL.md` — is
+  rebuilt from source. Rebuilding the 82-line source is cheaper than patching a base we didn't fully
+  understand, and yields a base we can stand behind line by line.
+- **Best-practice basis (grounded, not asserted)**: official `skill-development` guide at
+  `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev/skills/skill-development/SKILL.md`.
+  Binding rules for techting: third-person `description` with concrete trigger phrases; body in
+  imperative form (no second person); lean 1,500–2,000 words; progressive disclosure with NO
+  duplication across files. skill-creator notes writing/subjective skills don't need evals.
+- **Structure decision**: single `SKILL.md`, no `references/`. The source is ~650 chars; the body
+  stays under 2,000 words, and "define reader → pick axis → derive → self-check" is one continuous
+  procedure — splitting the five axes into references would force cross-file reads mid-procedure.
+  Split later only if an axis grows heavy.
+- **Corrected acceptance criteria (replace the old mermaid criterion during #4)**: split into two
+  levels. **Level A — the SKILL.md artifact**: frontmatter name/description(third-person triggers,
+  brush-up first)/version; model-invocable; imperative & lean; all source intent present; **no
+  mermaid diagram embedded in the prompt body or in the criteria**; §output-rules carries an
+  explicit addressee sentence ("this is an instruction to the produced document, not to this
+  prompt"). **Level B — the document the skill produces (dogfood-verified)**: structure/flow shown
+  as mermaid where there is order/branching with no diagram/prose duplication; feeding two different
+  reader definitions changes the output's voice and axis (proves derivation, not memorization);
+  single axis, no mixing. Every diagram criterion's subject is "the produced document".
+- **Sources**: official skill-development guide (path above); `.rn/techting/instruction.md` (source
+  of record); three expert subagent reports captured in this session.
+
 # State
 
 - **Status**: paused
 - **Date**: 2026-06-15
-- **Last completed**: Dogfooded `/techting:up` end-to-end on a deliberately flawed draft, found and
-  fixed a real design gap in the skill, then rebased the branch onto origin/main and force-pushed.
-- **Next**: Wait for the user's own PR review of #5. No code work remains unless their review
-  surfaces a gap. When they say go, `gh pr ready 5` then merge to main.
-- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**,
-  by the user's choice — they review it themselves before ready/merge). Tip `0c8034b`.
-  - Tasks #1–#3 all complete and reconciled; all 9 Acceptance criteria previously verified by
-    measurement (PASS). The plugin is shipped on the branch: `techting/skills/up/SKILL.md` (four
-    pillars), `plugin.json` (version 0.1.0, only place with a version), `techting/README.md`
-    (scenario style), registered in `.claude-plugin/marketplace.json` (category `writing`, no
-    version) and linked from root README.
-  - **This session's change** (`0c8034b`): a dogfood simulation of `/techting:up` surfaced that
-    step 1's safety valve ("can't pin the reader → ask the user") assumed a human in the loop,
-    contradicting the skill's model-invocable design. Fixed to **ask-else-infer** across the three
-    places that must agree — step-1 prose, the procedure mermaid ASK node, and the pre-output
-    self-check (new item: declare an inferred reader). Also clarified step-2 axis purity for small
-    documents (keep a minimal inline version + link the exhaustive one out, instead of spawning a
-    file for a few entries). `claude plugin validate ./techting --strict` and `validate . --strict`
-    both still pass clean.
-  - Branch was rebased onto origin/main (10 commits replayed, no conflicts) and force-pushed with
-    `--force-with-lease`.
-  - When resuming: nothing to build. Either (a) the user approves → `gh pr ready 5` then merge, or
-    (b) the user reports review feedback → fix, re-run the relevant Acceptance checks, re-commit.
+- **Last completed**: Reversed the prior "done, awaiting PR review" conclusion. The user flagged a
+  category error: the acceptance criterion required the SKILL.md *prompt* to contain a mermaid
+  diagram, conflating an output-document rule with the prompt's own format. Consulted three
+  independent expert subagents (prompt-design / packaging / intent-fidelity) and grounded
+  best-practices in the official `skill-development` guide. Recorded the finding and the rebuild
+  plan as decision **D-3** and new task **#4**.
+- **Next**: Get the user's explicit go to rebuild, then execute **task #4** — rewrite
+  `techting/skills/up/SKILL.md` from `.rn/techting/instruction.md` (don't patch), fix the
+  acceptance criteria to the Level A / Level B split, add `CHANGELOG.md`, re-validate, dogfood with
+  two readers. The user suspended right after I asked "rebuild the base from source — OK?", so the
+  go is still pending.
+- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (**draft**). The
+  PR is now KNOWN-DEFECTIVE — do not mark it ready/merge until #4 lands.
+  - **What changed this session is understanding, not code** — the tree carried only this steering
+    update (D-3 + task #4 + this State). No plugin files were touched yet.
+  - **The defect (read D-3 in full)**: `SKILL.md` embeds a procedure flowchart in the prompt body.
+    That is the category error made physical. The instruction's "render structure/flow as mermaid"
+    is a rule for the *document the writer produces*, never a property of the prompt. The rebuild
+    separates two layers — process (model instructions) vs output rules (constraints on the produced
+    doc) — and puts the mermaid rule only in output rules, with no diagram in the prompt itself.
+  - **Scope decision**: rebuild ONLY `SKILL.md`. Keep packaging — `plugin.json` (0.1.0, sole version
+    site), `marketplace.json` (category `writing`), root README link — all validated by Expert B
+    (`validate ./techting --strict`, `validate . --strict`, headless `-p` all passed). Only gap on
+    the packaging side: `techting/CHANGELOG.md` is missing (folded into #4).
+  - **Best-practice source** (don't re-derive from memory): official
+    `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev/skills/skill-development/SKILL.md`
+    — third-person trigger description, imperative body, lean 1,500–2,000 words, progressive
+    disclosure with no duplication. Structure decision: single SKILL.md, no references/ (source is
+    short and the procedure is continuous).
+  - **Expert C's one fidelity gap to fix in #4**: the self-check is missing a "single axis, not
+    mixed" item (the no-mixing rule is in the axis section but not in the check). Optional: wire the
+    derivation so axis/voice are read off the reader definition, not memorized.
+  - **Trust note**: the user lost confidence because I treated the mis-worded criterion as
+    authoritative and conflated the two layers myself. The recovery is to rebuild from source so the
+    base is one we can defend line by line — not to patch.
+  - When resuming: confirm the go, then run task #4 via task-workflow. The corrected criteria live
+    in D-3; apply them while doing #4.
