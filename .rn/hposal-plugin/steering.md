@@ -238,14 +238,3 @@
 # State
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
-
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: none（着手前）
-- **Next**: #1 元キットをベースとしてセッションフォルダにコピーする
-- **Notes**: 計画 steering を draft PR #8 (https://github.com/lovaizu/ccpm/pull/8) で提示済み、
-  まだ未着手。再開時はまず PR でのユーザー承認の有無を確認すること（承認前なら #1 に入らない）。
-  確認待ちの判断は D-1（1スキル `/hposal:propose` で4フェーズ駆動・スキル名 propose でよいか）と
-  D-3（version 0.1.0 を置くがタグ/Release はスコープ外）。元キットパス＝Google Drive
-  `.../【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。承認が出たら #1（`.rn/hposal-plugin/
-  corporate-site-kit/` へ再帰コピー）から task-workflow.md に沿って実行。
