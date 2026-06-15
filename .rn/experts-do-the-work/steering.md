@@ -193,21 +193,8 @@ change for users.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: none checked off. #1 is executed + verified and **at the user-review gate** (not approved → no `complete task #1` marker yet, per D-1).
-- **Next**: Get user approval of #1 on PR #10. If approved → check off #1's `user review` step in steering + commit the check-off with the single `complete task #1` marker (the canonical marker; deliverable commits stay plain), then start #2. If not yet approved → re-present #1 at the gate. After #1: execute #2.
-- **Notes**:
-  **#1 (task-workflow.md) state.** Done through self-check + QA (PASS), awaiting approval. Three accumulated deliverable commits on `experts-do-the-work` (all plain, no marker, pushed): `651fd09` division rewrite (all hands-on work → implementation expert; coordinator keeps only its ledger) → `dcd6dbb` three simulation-found fixes (Verify reads the *committed* diff since the expert commits before Verify; push-only coordinator fallback if a subagent can't push; check-file = coordinator's ledger) → `227be48` instruction-following pass (directive-first; the split / single-marker / check-file-ownership each stated once canonically + referenced; every behavioral invariant verbatim; 259→246 lines). Self-check + QA verdicts in `checks/1.md`.
-  **#2 scope was EXPANDED this session** (flat prompt-engineering review of all rn docs → findings folded into Acceptance criteria + #2 steps). All confirmed first-hand (line refs):
-    - `steering-template.md:29` `- 1 task = 1 commit` → reword to "one completion marker" (contradicts new model).
-    - `README.md:52` "without involving an expert" (stale delegate-or-do-it-yourself model) + `README.md:61` bb sample commit shows `complete task #1` marker on a deliverable commit (wrong convention) → both fix.
-    - `bb/SKILL.md:29-30` add explicit guard: a suspend-time commit must NOT contain `complete task #{id}` (implicit invariant hi:37 reconciliation depends on); replace the State/`paused` re-explanation with a reference to steering-template.
-    - `gm/SKILL.md` best-practice trim: stop re-teaching content steering-template/task-workflow already own (single source); dedup 2 steering-template requirement-table rows.
-    - `plugin.json` `description` → mention coordinator/experts execution (keep version 0.3.0).
-    - `.claude/rules/push-and-review.md:8` "One task is one commit" → reword.
-    - `CHANGELOG.md` add `## [Unreleased]` line (deliverable now authored/committed by the implementation expert; one completion marker per task).
-    - Then `claude plugin validate ./rn --strict` and `claude plugin validate . --strict`.
-  Flat best-practice verdict on the *other* prompts (so #2 is correctness, not restructure): hi exemplary, bb/gm good — issues are stale-model contradictions + one implicit-guard gap + minor single-source dup, NOT task-workflow's rationale-repetition problem.
-  **Dogfooding note.** This session ran under the *current* 0.3.0 task-workflow (coordinator commits at Complete after review): the implementation expert produced deliverables but did NOT commit; the coordinator committed plain (no marker) and pushed *before* review per push-and-review.md. The unverified "subagent can `git push`" assumption was therefore never exercised.
-  **User instruction this session:** "あるべき姿にして" applied to all of rn. PR #10, branch `experts-do-the-work`.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
