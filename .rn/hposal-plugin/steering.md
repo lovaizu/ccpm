@@ -144,14 +144,14 @@
 
 **Steps**:
 
-- [ ] `hposal/.claude-plugin/plugin.json` を作成（`name: hposal` / 英語 description / `version: 0.1.0` /
+- [x] `hposal/.claude-plugin/plugin.json` を作成（`name: hposal` / 英語 description / `version: 0.1.0` /
       `author: lovaizu`）
-- [ ] `hposal/CHANGELOG.md` を Keep a Changelog 形式で作成（`## [Unreleased]` に初期内容）
-- [ ] `hposal/README.md` を作成（冒頭で一度だけ「HP（corporate site）」、何をするか、marketplace add →
+- [x] `hposal/CHANGELOG.md` を Keep a Changelog 形式で作成（`## [Unreleased]` に初期内容）
+- [x] `hposal/README.md` を作成（冒頭で一度だけ「HP（corporate site）」、何をするか、marketplace add →
       plugin install、始め方）
-- [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/4.md` に記録）
-- [ ] QA engineer review（subagent）
-- [ ] user review
+- [x] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/4.md` に記録）
+- [x] QA engineer review（subagent）
+- [x] user review
 
 **Completion criteria**:
 
