@@ -242,21 +242,10 @@
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: #6（構造検証＋ヘッドレス起動）。全6タスク完了・PR #8 に push 済み。
-- **Next**: PR #8 でユーザーのまとめレビューを仰ぐ段階で中断。再開時は (1) PR #8 のレビュー状況を確認し、
-  指摘があれば該当タスクに戻って反映。(2) 承認済みなら steering の Acceptance criteria を最終確認（提案
-  済みだが未実施）。(3) 別途リリース指示が出たら D-3 のタグ付け・GitHub Release（CHANGELOG の
-  `[Unreleased]` を確定版へ）。ユーザーは「とりあえず作成を進めて、動くとこまで」と指示し各タスクの
-  user review ゲートを一括化済み。
-- **Notes**:
-  - 【重要】元キットは Google Drive 上だが**このMacに同期されており、ローカルパスから直接読める。MCP 認証は
-    不要**。元パス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/
-    【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。
-  - 成果物: `hposal/`（plugin.json / skills/up/SKILL.md / references/templates 5本 / README.md /
-    CHANGELOG.md）＋ marketplace.json・root README に登録。検証は `claude plugin validate hposal --strict`
-    と `claude plugin validate . --strict` の両方が ✔、`/hposal:up` ヘッドレス起動 exit 0 を確認（checks/6.md）。
-  - 言語の判断: plugin.json description・marketplace description・CHANGELOG は英語、SKILL.md・templates・
-    README は日本語（README は冒頭1回だけ「HP（corporate site）」併記）。D-2 準拠＋ README は criterion 準拠で日本語。
-  - 未了（別指示待ち）: タグ付け・GitHub Release は D-3 によりスコープ外。CHANGELOG は `[Unreleased]` のまま。
+(written by /rn:bb, read and reset to this placeholder by /rn:hi)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
