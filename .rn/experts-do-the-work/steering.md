@@ -160,17 +160,8 @@ and record the change for users.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: none (plan only)
-- **Next**: #1 Rewrite task-workflow.md to delegate all hands-on work to the implementation expert
-- **Notes**: Plan is approved by the user through D-1 (case B: deliverable commits accumulate freely,
-  no force-push; the single `complete task #N` marker rides on the coordinator's post-approval steering
-  check-off commit). PR #10 (branch `experts-do-the-work`) is the session PR.
-  **User instruction for resume: "proceed as far as possible" (動かせるとこまで進めて)** — on `/rn:hi`,
-  run task #1 then #2 autonomously through the full Execute → Verify chain (dispatch the implementation
-  expert; this session dogfoods the *current* 0.3.0 task-workflow.md, where generation-with-trial-and-
-  error is delegated and the coordinator commits at Complete). Push everything; pause only at each task's
-  user-review gate or a genuine blocker. Two tasks total; both are docs (non-code) → verify chain is
-  self-check → QA expert → user review. Watch the unverified assumption that a subagent can `git
-  push` — if it cannot, the coordinator pushes and notes it.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
