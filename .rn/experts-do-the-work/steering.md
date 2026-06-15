@@ -180,27 +180,27 @@ robust to the failure modes the simulation exposed.
 
 **Steps**:
 
-- [ ] **Fix 1 (internal contradiction)**: the Verify "Read the committed diff" step claims the working
+- [x] **Fix 1 (internal contradiction)**: the Verify "Read the committed diff" step claims the working
   tree is clean / `git status` shows nothing. False — the expert wrote `checks/{task-id}.md` and did not
   commit it (Execute element 5), and that file is tracked, so `git status` shows it. Correct the wording:
   the *deliverable* is committed (no uncommitted deliverable change), the only uncommitted thing in the
   tree is the check-file ledger; inspect the committed change via `git show <sha>` / range diff
-- [ ] **Fix 2 (missing fallback branch)**: Execute element 6's fallback covers "expert cannot push" but
+- [x] **Fix 2 (missing fallback branch)**: Execute element 6's fallback covers "expert cannot push" but
   not "expert cannot commit". Add the commit-unavailable case, symmetric to the push-only fallback: the
   expert reports it produced the change but its environment blocks `git commit`; the coordinator then runs
   the commit mechanically over the expert's already-written change (git mechanics only — the content stays
   the expert's, the coordinator never authors/edits the deliverable). Note commit/push capability is
   verified available via the Agent tool, so this is a last-resort path for capability-less environments
-- [ ] **Fix 3 (selective-staging fragility)**: Execute element 6 says "stage the deliverable change only
+- [x] **Fix 3 (selective-staging fragility)**: Execute element 6 says "stage the deliverable change only
   (not the check file)" but a habitual `git add -A` / `git add .` would sweep the coordinator's check-file
   ledger into a plain deliverable commit. Add an explicit guard: stage the deliverable paths explicitly;
   never `git add -A` / `git add .`, so the check file is never committed by the expert
-- [ ] **Fix 4 (uncaptured starting commit)**: Verify offers `git diff <task's starting commit>..HEAD` for
+- [x] **Fix 4 (uncaptured starting commit)**: Verify offers `git diff <task's starting commit>..HEAD` for
   the cumulative change, but nothing tells the coordinator to record that starting commit. Add a one-line
   instruction in Execute (before dispatch) to capture the task's starting commit (HEAD before the first
   deliverable commit) so the range diff is computable across feedback rounds
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA expert review (subagent)
+- [x] self-check (OK/NG per completion criterion, record in checks/3.md)
+- [x] QA expert review (subagent)
 - [ ] user review
 
 **Completion criteria**:
@@ -244,13 +244,8 @@ robust to the failure modes the simulation exposed.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: #1 (marker `a05e109`) and #2 (marker `f89b444`) both complete and approved. #3 is executed + QA-PASS and **at the user-review gate** (not approved → no `complete task #3` marker yet, per D-1).
-- **Next**: Get user approval of #3 on PR #10. If approved → check off #3's `user review` step in steering and commit that check-off with the single `complete task #3` marker (`checks/3.md` is already committed in the suspend commit below, so the check-off commit carries only the steering check-off + marker; deliverable commit `f612906` stays plain). If not yet approved → re-present #3 at the gate. After #3: all tasks done → the Acceptance criteria were already run and PASSED for #1/#2; re-confirm only the one item #3 touched — "task-workflow.md has no internal contradiction" — which #3 fixed (the false "working tree is clean" claim), then the session is complete and PR #10 is mergeable.
-- **Notes**:
-  **#3 (task-workflow.md simulation fixes) state.** A post-#2 end-to-end simulation of the rewritten task-workflow.md surfaced 4 defects (logged as task #3 in Tasks): (1) Verify falsely claimed a clean tree though the expert leaves `checks/{id}.md` uncommitted; (2) the Execute element-6 fallback covered "can't push" but not "can't commit"; (3) `git add -A` could sweep the check-file ledger into a deliverable commit; (4) the Verify range diff needed a starting commit nobody captured. All 4 fixed in `rn/references/task-workflow.md`, committed by the implementation expert as **plain** commit `f612906` (no marker, pushed). Self-check + QA (PASS, all 6 criteria OK, all 5 invariants verbatim) recorded in `checks/3.md` (committed in the suspend commit below to keep the tree clean — it is the coordinator's ledger, carries no marker).
-  **First real dogfood of the new model.** #3 was the first task run under the NEW model (the cached plugin is still old 0.3.0, but I drove #3 by the repo's rewritten task-workflow.md): the implementation expert committed + pushed the deliverable itself and left the check file for the coordinator; `git status` after Execute showed exactly `?? checks/3.md` — empirically confirming Fix 1's corrected wording.
-  **Unverified assumption now VERIFIED.** Empirically probed (throwaway branch `wf-capability-probe`, since deleted local+remote): a subagent dispatched via the Agent tool **can** `git commit` (succeeded) and `git push` (exit 0, no sandbox/auth denial). steering Assumptions updated from "unverified" to "Fact (verified 2026-06-15)". The redesign's load-bearing premise holds.
-  **Prior session context.** #1 = rewrite task-workflow.md to delegate all hands-on work to the implementation expert. #2 = reconcile gm/hi/bb/README/steering-template/plugin.json/push-and-review/CHANGELOG with the new model + best-practice trim. Both approved on PR #10. Branch `experts-do-the-work`. No release instruction given → `version` stays `0.3.0`, CHANGELOG delta waits under `## [Unreleased]`.
-  **User instruction this session:** "あるべき姿にして" applied to all of rn; then "シミュレーションして" → found the 4 #3 defects; then "全部直したら" → #3.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
