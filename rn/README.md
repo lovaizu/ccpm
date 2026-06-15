@@ -13,6 +13,19 @@ Start by naming a goal, and pick up right where you left off after any break. On
 
 That makes `/rn:gm`, `/rn:bb`, and `/rn:hi` available.
 
+## How it works
+
+```mermaid
+flowchart TD
+  G([Your goal]) --> P[Reviewed plan on a PR<br/>one task at a time]
+  P --> W[Assistant runs a task]
+  W -->|heavy work, kept out of sight| X[Expert does it<br/>reviewers try to break it]
+  X -->|only the finished change| Y([You approve])
+  Y -->|added to the same PR| W
+```
+
+One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. What reaches you is the finished change — and nothing lands until you approve.
+
 ## Getting started
 
 Say you want to push through "fix the bug in the payment screen."
@@ -36,7 +49,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
   Review the steering there and approve to start #1.
 ```
 
-Read the plan on the PR, approve, and the assistant begins the first task. You stay in the conversation with one assistant the whole time. When a task carries real back-and-forth, the assistant hands the work off to an expert in that area, then sends that draft to reviewers who specialize in catching what's wrong, and only brings you the finished result — keeping that trial-and-error out of sight so the conversation stays light; smaller, one-step changes it just makes itself. What reaches you is the change itself, ready to approve. Nothing is committed until you say so, so you get a say at the end of every task. Each approved task adds to the same PR.
+Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each approved task added to the same PR. (Smaller, one-step changes the assistant just makes itself, without involving an expert.)
 
 ### 2. Step away — `/rn:bb`
 
