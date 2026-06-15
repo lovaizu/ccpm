@@ -219,6 +219,54 @@ robust to the failure modes the simulation exposed.
   rule all stand verbatim. Each fix is additive/corrective wording, not a model change.
 - `claude plugin validate ./rn --strict` and `claude plugin validate . --strict` both report success.
 
+### #4: Fix three more task-workflow.md defects surfaced by a second end-to-end simulation
+
+**Purpose**: A second end-to-end simulation (run after #3's fixes, by the coordinator plus an
+independent QA subagent) surfaced three more defects — all in the multi-round fix loop and the fallback
+paths, the same class #3 targeted but in corners the first simulation never reached. Close them so the
+document is robust across feedback rounds and last-resort paths, without altering any behavioral
+invariant.
+
+**Prerequisites**: #1, #3
+
+**Steps**:
+
+- [ ] **Fix A (check-file ledger overwritten on fix rounds)**: on a Verify fix round the implementation
+  expert is re-dispatched with the original work-order, whose Execute element 5 tells it to write
+  `checks/{task-id}.md` — overwriting the QA verdicts the coordinator already recorded there (Verify
+  step), while Fix 1's "only the check file is dirty = normal" reasoning hides the corruption. Make the
+  ownership unambiguous across rounds: the implementation expert only ever writes the **self-check
+  columns** and never the review-verdict sections, and/or the re-dispatch narrows element 5 — so the
+  coordinator's recorded verdicts are never clobbered and the check file stays the coordinator's ledger
+- [ ] **Fix B (cannot-commit fallback: missing staging guard + missing push)**: Execute element 6's
+  "expert cannot commit" fallback tells the coordinator to commit mechanically but neither re-asserts
+  the explicit-path staging guard (so a habitual `git add -A` could sweep the check file into the
+  deliverable commit — the very failure Fix 3 closes for the expert) nor ends by pushing. Add the
+  staging guard to the fallback (stage deliverable paths explicitly; never `git add -A` / `git add .`)
+  and have it end by pushing, symmetric to the "cannot push" branch
+- [ ] **Fix C (starting-commit re-capture ambiguity)**: "reuse the original work-order … dispatch the
+  implementation expert" in the Triage Valid branch can be read as re-entering the Execute dispatch step
+  and re-capturing the starting commit, collapsing the range diff. Add a one-line note that on fix
+  rounds the starting commit is **not** re-captured — it stays anchored at the task's original starting
+  commit
+- [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- On a Verify fix round, no instruction causes the implementation expert to overwrite the coordinator's
+  recorded review verdicts in `checks/{task-id}.md`; the check file stays the coordinator's ledger
+  across all rounds, with element 5 / the re-dispatch wording making the column ownership unambiguous.
+- Execute element 6's "cannot commit" fallback re-asserts explicit-path staging (never `git add -A` /
+  `git add .`) and ends by pushing, symmetric to the "cannot push" fallback.
+- The document states the starting commit is captured once before the first deliverable commit and is
+  not re-captured on fix rounds.
+- **No behavioral invariant is altered**: the deliverable/ledger split, one-marker-per-task, the
+  `complete task #{id}` substring rule, the neutral-framing withhold-list, and the 3-iteration counting
+  rule all stand verbatim. Each fix is additive/corrective wording, not a model change.
+- `claude plugin validate ./rn --strict` and `claude plugin validate . --strict` both report success.
+
 # Decisions
 
 ## D-1: Deliverable commits accumulate; the completion marker rides on the steering check-off commit
