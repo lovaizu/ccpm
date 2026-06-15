@@ -134,17 +134,17 @@ command, and read pane output for a chosen surface — the riskiest unknowns, re
 
 **Steps**:
 
-- [ ] Determine the exact ESC key name for `cmux send-key` (e.g. `Escape`) and confirm, live, that
+- [x] Determine the exact ESC key name for `cmux send-key` (e.g. `Escape`) and confirm, live, that
       sending it to a surface running an in-progress CC response stops it (proves A2/AC3). Use a
       second pane or surface to drive a test pane so this session is not the one interrupted.
-- [ ] Determine how to type a slash command and submit it: confirm `cmux send <text>` then
+- [x] Determine how to type a slash command and submit it: confirm `cmux send <text>` then
       `cmux send-key … Enter` lands and runs the command (proves A3/A4).
-- [ ] Confirm `cmux read-screen`/`capture-pane --surface <id>` returns the target pane's text (used
+- [x] Confirm `cmux read-screen`/`capture-pane --surface <id>` returns the target pane's text (used
       later for observation/logging, not as the gate).
-- [ ] Record the confirmed commands and surface-targeting form in `loop/cmux-notes.md`.
-- [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
-- [ ] QA engineer review (subagent)
-- [ ] user review
+- [x] Record the confirmed commands and surface-targeting form in `loop/cmux-notes.md`.
+- [x] self-check (OK/NG per completion criterion, record in checks/2.md)
+- [x] QA engineer review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
