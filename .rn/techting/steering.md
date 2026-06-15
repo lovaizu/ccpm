@@ -166,23 +166,26 @@ and the root README.
 
 - **Status**: paused
 - **Date**: 2026-06-15
-- **Last completed**: Acceptance criteria final pass — all tasks #1–#3 done and reconciled; every
-  Acceptance criterion verified by measurement (PASS).
+- **Last completed**: Dogfooded `/techting:up` end-to-end on a deliberately flawed draft, found and
+  fixed a real design gap in the skill, then rebased the branch onto origin/main and force-pushed.
 - **Next**: Wait for the user's own PR review of #5. No code work remains unless their review
-  surfaces a gap. When they say go, mark PR #5 ready-for-review and merge to main.
+  surfaces a gap. When they say go, `gh pr ready 5` then merge to main.
 - **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**,
-  by the user's choice — they opted to review it themselves before ready/merge).
-  - The plugin is complete and shipped on the branch: `techting/skills/up/SKILL.md` (four pillars
-    derived from instruction.md), `techting/.claude-plugin/plugin.json` (version 0.1.0, only place
-    with a version), `techting/README.md` (scenario style), registered in
-    `.claude-plugin/marketplace.json` (category `writing`, no version) and linked from root README.
-  - Acceptance pass results (all 9 PASS, by measurement): four pillars present + cross-checked vs
-    instruction.md item by item; brush-up frame stated; model-invocable frontmatter; plugin.json
-    has name/desc/semver/author with version only there; README scenario+console style; marketplace
-    + root README in sync; `claude plugin validate ./techting --strict` and `validate . --strict`
-    both pass clean; `claude -p "/techting:up …" --plugin-dir ./techting` loads and runs the skill
-    (reader → guide axis → stop-and-ask on the `the thing` placeholder); zero CJK in techting/
-    (instruction.md is the lone Japanese source-of-record, by design).
-  - `/reload-plugins` this session loaded techting as 1 plugin cleanly.
+  by the user's choice — they review it themselves before ready/merge). Tip `0c8034b`.
+  - Tasks #1–#3 all complete and reconciled; all 9 Acceptance criteria previously verified by
+    measurement (PASS). The plugin is shipped on the branch: `techting/skills/up/SKILL.md` (four
+    pillars), `plugin.json` (version 0.1.0, only place with a version), `techting/README.md`
+    (scenario style), registered in `.claude-plugin/marketplace.json` (category `writing`, no
+    version) and linked from root README.
+  - **This session's change** (`0c8034b`): a dogfood simulation of `/techting:up` surfaced that
+    step 1's safety valve ("can't pin the reader → ask the user") assumed a human in the loop,
+    contradicting the skill's model-invocable design. Fixed to **ask-else-infer** across the three
+    places that must agree — step-1 prose, the procedure mermaid ASK node, and the pre-output
+    self-check (new item: declare an inferred reader). Also clarified step-2 axis purity for small
+    documents (keep a minimal inline version + link the exhaustive one out, instead of spawning a
+    file for a few entries). `claude plugin validate ./techting --strict` and `validate . --strict`
+    both still pass clean.
+  - Branch was rebased onto origin/main (10 commits replayed, no conflicts) and force-pushed with
+    `--force-with-lease`.
   - When resuming: nothing to build. Either (a) the user approves → `gh pr ready 5` then merge, or
     (b) the user reports review feedback → fix, re-run the relevant Acceptance checks, re-commit.
