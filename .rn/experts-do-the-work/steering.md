@@ -201,7 +201,7 @@ robust to the failure modes the simulation exposed.
   deliverable commit) so the range diff is computable across feedback rounds
 - [x] self-check (OK/NG per completion criterion, record in checks/3.md)
 - [x] QA expert review (subagent)
-- [ ] user review
+- [x] user review (approved on PR #10)
 
 **Completion criteria**:
 
