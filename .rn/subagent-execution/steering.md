@@ -136,12 +136,12 @@ coordinator directs and the user approves at each task boundary, in the file's s
 
 **Steps**:
 
-- [ ] Add or adjust README content to convey the coordinator / experts model where it helps the reader
+- [x] Add or adjust README content to convey the coordinator / experts model where it helps the reader
       (e.g. the "Why" section or the getting-started flow), in plain scenario language
-- [ ] Keep to README's existing style — no mechanical lists or control-noun labels
-- [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Keep to README's existing style — no mechanical lists or control-noun labels
+- [x] self-check (OK/NG per completion criterion, record in checks/2.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
@@ -193,7 +193,24 @@ user-facing benefit, without bumping the version.
 
 # Decisions
 
-(none yet)
+## D-1: Give the coordinator an explicit quality bar so it stops bouncing decidable calls to the user
+- **Issue**: The triage step let the coordinator send minor-but-valid quality findings to the user for
+  a decision, instead of deciding them itself.
+- **Conclusion**: The coordinator holds an explicit bar — the artifact's *proper form* (correct,
+  clear, consistent with the codebase's standards, in service of the goal). Valid improvements
+  (including minor ones) are applied by re-dispatching the implementation expert without asking;
+  escalate to the user *only* for decisions genuinely theirs (scope expansion, agreed direction or
+  taste, an effort-vs-benefit tradeoff only they can weigh) or valid findings unresolved after the
+  3-iteration cap.
+- **Rationale**: Without a standard, every do/don't leaks to the user as a question. A clear bar lets
+  the coordinator judge, reserving the user's involvement for real ownership calls; the end-of-task
+  user-review gate stays as the final safeguard, so coordinator autonomy mid-verify does not remove
+  the user from the loop.
+- **Evidence**: This session, a minor pronoun-ambiguity finding on the README was reflexively bounced
+  to the user as an "A: keep / B: polish" choice; the user pointed out this happened for lack of a
+  judgment criterion ("あるべき姿にして欲しい、だと判断できない？").
+- **Sources**: conversation 2026-06-15; `rn/references/task-workflow.md` → "Step — Triage and
+  re-instruct".
 
 # State
 

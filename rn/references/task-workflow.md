@@ -111,21 +111,27 @@ Expert checklists:
 
 **Step — Triage and re-instruct**
 
-Triage every finding (all experts) — judge it, don't swallow review feedback wholesale:
+The coordinator holds **the bar**: the artifact should reach the form it ought to take to serve the
+goal — correct, clear, and consistent with the codebase's standards (its **proper form**). Triage
+every finding against that bar — don't swallow review feedback wholesale, and **don't bounce a
+decidable call to the user for lack of a standard**.
 
-- Assess each finding on its merits: is it factually correct, and does acting on it serve the goal?
+- Assess each finding on its merits: is it factually correct, and does acting on it move the artifact
+  toward its proper form for the goal?
 - **Valid** → the coordinator writes improvement instructions and **re-dispatches the implementation
   expert** to fix it (the coordinator does not edit the artifact itself), then re-runs the same review
-  expert. Max 3 iterations; valid findings still NG after 3 → record them and escalate to user review
-  with the unresolved items.
+  expert. **This includes minor improvements: if the fix is correct and makes the artifact better,
+  just apply it — do not ask the user.** Max 3 iterations; valid findings still NG after 3 → record
+  them and escalate to user review with the unresolved items.
 - **Invalid** → reject it, citing the evidence. A finding is Invalid **only** when it rests on a
   factual error, or falls outside a scope boundary written in the task's Completion criteria — cite
   the specific fact or criterion. Never accept a finding just because an expert raised it.
-- Anything else — "valid but I'd rather not act on it", "not aligned with the goal", "minor" — is a
-  *valid finding you want to drop*: get user confirmation first. The implementation expert produced
-  the artifact, so the coordinator does not get to dismiss criticism of it on its own judgment alone.
-- Every finding ends in an explicit fix, an evidence-cited rejection, or a user-confirmed drop —
-  never silently dropped, never blindly accepted.
+- **User's call** → escalate to the user *only* when the decision is genuinely theirs: it would
+  expand scope, change the agreed direction or a matter of taste, or trade effort against benefit in a
+  way only the user can weigh. "It's minor, so I'll just ask" is **not** a reason — decide it against
+  the bar.
+- Every finding ends in an explicit fix, an evidence-cited rejection, or a user-owned decision —
+  never silently dropped, never blindly accepted, never bounced for lack of a standard.
 
 Record the review verdicts into `{steering_dir}/checks/{task-id}.md` (the coordinator already has them
 from dispatching the experts — this is bookkeeping, not artifact editing).
