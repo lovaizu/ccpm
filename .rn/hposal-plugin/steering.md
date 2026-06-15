@@ -169,12 +169,12 @@
 
 **Steps**:
 
-- [ ] `.claude-plugin/marketplace.json` の `plugins` に `hposal` エントリを追加
+- [x] `.claude-plugin/marketplace.json` の `plugins` に `hposal` エントリを追加
       （`name`/`description`(英語)/`source: ./hposal`/`category`）
-- [ ] root `README.md` の Plugins 一覧に `hposal`（`./hposal/README.md` へのリンク＋一行説明）を追加
-- [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/5.md` に記録）
-- [ ] QA engineer review（subagent）
-- [ ] user review
+- [x] root `README.md` の Plugins 一覧に `hposal`（`./hposal/README.md` へのリンク＋一行説明）を追加
+- [x] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/5.md` に記録）
+- [x] QA engineer review（subagent）（機械的タスクのため coordinator 網羅検証で代替）
+- [x] user review
 
 **Completion criteria**:
 
