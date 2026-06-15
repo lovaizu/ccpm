@@ -91,7 +91,8 @@ the heart of the plugin.
 - The body contains all four pillars (reader definition / five-axis outline / mermaid diagrams /
   pre-output self-check)
 - The input = existing draft, output = revision + reasons frame is stated in the body
- Package the plugin and register it in the marketplace
+
+### #2: Package the plugin and register it in the marketplace
 
 **Purpose**: Make techting a standalone plugin and make it reachable from both the ccpm marketplace
 and the root README.
@@ -100,16 +101,16 @@ and the root README.
 
 **Steps**:
 
-- [ ] Create `techting/.claude-plugin/plugin.json` (name `techting`, description, version `0.1.0`,
+- [x] Create `techting/.claude-plugin/plugin.json` (name `techting`, description, version `0.1.0`,
       author lovaizu)
-- [ ] Create `techting/README.md` (scenario + real-console style showing `/techting:up`)
-- [ ] Add a techting entry to `.claude-plugin/marketplace.json` (name / description / source
+- [x] Create `techting/README.md` (scenario + real-console style showing `/techting:up`)
+- [x] Add a techting entry to `.claude-plugin/marketplace.json` (name / description / source
       `./techting` / category `"writing"`, no version field)
-- [ ] Add techting to the root `README.md` Plugins list (link to `./techting/README.md` + one-line
+- [x] Add techting to the root `README.md` Plugins list (link to `./techting/README.md` + one-line
       description)
-- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/2.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review
+- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/2.md`)
+- [x] QA engineer review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
@@ -163,22 +164,8 @@ and the root README.
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: #3 Validate strict and verify headless invocation (all three tasks #1–#3 done,
-  each self-checked + QA-reviewed PASS, committed and pushed)
-- **Next**: All tasks are checked off. Run the `Acceptance criteria` pass (top of this file) as the
-  final gate, then the work is ready to merge.
-- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still draft).
-  The plugin is complete and shipped on the branch:
-  - `techting/skills/up/SKILL.md` (the `up` skill — four pillars derived from instruction.md),
-    `techting/.claude-plugin/plugin.json` (version 0.1.0, only place with version),
-    `techting/README.md` (scenario style), registered in `.claude-plugin/marketplace.json`
-    (category `writing`, no version) and linked from root `README.md`.
-  - Verified by measurement: `claude plugin validate ./techting --strict` and `claude plugin
-    validate . --strict` both pass clean; `claude -p "/techting:up …" --plugin-dir ./techting` loads
-    and runs the skill end to end (reader → guide axis → mermaid → what-changed note) and stops-and-
-    asks on underspecified input. Check records in `.rn/techting/checks/{1,2,3}.md`.
-  - PR #5 body was trimmed to link to steering.md only (no duplicated Goal/Tasks) per user request.
-  - When resuming: run the Acceptance criteria as a final self-check, report results, and if the user
-    approves, mark PR #5 ready and merge. No code work remains unless Acceptance surfaces a gap.
+- **Status**: <!-- paused | active -->
+- **Date**: <!-- YYYY-MM-DD -->
+- **Last completed**: <!-- task id + title -->
+- **Next**: <!-- task id + title, or the next action -->
+- **Notes**: <!-- blockers, decisions, anything the next session needs -->
