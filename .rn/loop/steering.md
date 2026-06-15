@@ -304,15 +304,8 @@ is it fragile, and what does that imply for the deferred packaging decision.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: none — gm finished (steering written, draft PR opened)
-- **Next**: #1 statusline → state-file write
-- **Notes**: Session goal is a **feasibility verdict (PoC)**; packaging (plugin vs plain scripts) is
-  deferred to a later session. Draft PR: lovaizu/ccpm#6 (body links to `.rn/loop/steering.md`).
-  No task work has started yet — #1 is blocked on user approval of the plan on the PR. On resume,
-  first confirm the plan is approved, then begin #1 per task-workflow. Already-verified facts are in
-  Assumptions F1–F5 (cmux `send`/`send-key`/`read-screen --surface`, env `CMUX_SURFACE_ID`; existing
-  `~/.claude/scripts/statusline.sh` computes real ctx%; bb writes committed `Status: paused`, hi
-  resets it). Spike artifacts go under repo-root `loop/`. Do not modify rn; interactive billing only
-  (no `claude -p`/SDK).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
