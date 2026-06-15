@@ -84,7 +84,7 @@
 - [x] コピー後のファイル数・相対構成が元と一致することを確認する
 - [x] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/1.md` に記録）
 - [x] QA engineer review（subagent）
-- [ ] user review
+- [x] user review
 
 **Completion criteria**:
 
