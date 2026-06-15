@@ -312,33 +312,3 @@ task boundary, and routine fixes are decided against a quality bar), without bum
 # State
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
-
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: **All tasks #1–#6 done.** This session pivoted mid-way: dogfooding the
-  coordinator/experts model exposed that "coordinator does no domain work" was an over-strict *means*,
-  not the goal — corrected to **delegate-by-payoff** (D-2). Tasks were re-planned and the three
-  artifacts re-aligned to the corrected model. Commits (all pushed): #3 `task-workflow.md`
-  delegate-by-payoff, #4 README, #5 CHANGELOG, #6 validation gates (both `--strict` pass). #1/#2 were
-  the v1 of the model (earlier in session); D-2 steering rewrite committed too.
-- **Next**: **Verify the steering Acceptance criteria end-to-end**, then wrap up the PR. No code/feature
-  work remains.
-- **Notes**:
-  - **Acceptance criteria not yet formally walked.** On resume, go through the `# Acceptance criteria`
-    section and confirm each bullet against the current files (`rn/references/task-workflow.md`,
-    `rn/README.md`, `rn/CHANGELOG.md`, `rn/.claude-plugin/plugin.json`). Two criteria pre-date the D-2
-    pivot and now read against the *old* absolute ("the coordinator performs no domain work itself");
-    the Goal/criteria bullets were rewritten to delegate-by-payoff, so verify against the **corrected**
-    wording (the Goal-alignment bullets and Quality bullets as they now stand). `version` stays `0.2.0`
-    — no release this session.
-  - **`version` / release**: no bump this session; `[Unreleased]` holds the two `Changed` lines. A
-    release (tag `rn-v…` + GitHub Release) is a separate explicit instruction per `.claude/rules/plugin.md`.
-  - **Dogfooding outcome (for the手応え write-up if asked again)**: quality + user-in-loop clearly
-    worked (QA caught real issues each task; user gated every boundary). The delegate-by-payoff
-    correction itself was dogfooded — #4/#5/#6 small fixes were done coordinator-direct (no expert
-    dispatch), which is exactly the ceremony the old absolute forced. Context-lightness still unproven
-    on a *large* iteration-heavy code task (none in this session). Open future ideas NOT taken in:
-    improvement-2 (stop classifying findings as "taste" mid-verify; let the final user gate own it) —
-    left for a future `/rn:gm` session.
-  - **Bootstrapping caveat**: the delegate-by-payoff workflow only takes effect when `task-workflow.md`
-    is read fresh; this session executed #3–#6 partly under the older in-context model.
