@@ -79,11 +79,11 @@
 
 **Steps**:
 
-- [ ] Google Drive の `corporate-site-kit`（README.md / workflow.md / templates/ 5本）を
+- [x] Google Drive の `corporate-site-kit`（README.md / workflow.md / templates/ 5本）を
       `.rn/hposal-plugin/corporate-site-kit/` に再帰コピーする
-- [ ] コピー後のファイル数・相対構成が元と一致することを確認する
-- [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/1.md` に記録）
-- [ ] QA engineer review（subagent）
+- [x] コピー後のファイル数・相対構成が元と一致することを確認する
+- [x] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/1.md` に記録）
+- [x] QA engineer review（subagent）
 - [ ] user review
 
 **Completion criteria**:
@@ -242,4 +242,19 @@
 
 # State
 
-(written by /rn:bb, read and reset to this placeholder by /rn:hi)
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: #1 の成果物は完成・QA通過（ただし user review 未承認のため #1 は未クローズ）
+- **Next**: #1 の user review を仰ぐ。承認が出たら `docs: complete task #1 …` でコミット&push し #2 へ。
+  承認が出なければ指摘を反映してから再度レビュー。
+- **Notes**:
+  - 計画 steering は PR #8（draft）。本セッションでユーザー承認を得て #1 に着手済み。D-1 はスキル名を
+    `propose`→`up`（「提案を起こす」、rn の gm/bb/hi 流儀）に変更済み。D-3（version 0.1.0・タグ/Release
+    はスコープ外）も承認済み。ブランチは origin/main に rebase 済み（force-push 済み）。
+  - 【重要】元キットは Google Drive 上だが**このMacに同期されており、ローカルパスから直接読める。MCP 認証は
+    不要**。元パス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/
+    【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。
+  - #1 状態: `.rn/hposal-plugin/corporate-site-kit/` に7ファイル（README.md / workflow.md /
+    templates 5本）をコピー済み。self-check + QA とも byte一致を確認済み（`checks/1.md` に記録）。
+    残るは user review のみ。本コミットは user review 前なので `wip:` で記録した。
+  - 次タスク #2 は workflow.md → `hposal/skills/up/SKILL.md` 変換（スキル名は `up`）。
