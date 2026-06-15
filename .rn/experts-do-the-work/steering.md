@@ -141,17 +141,17 @@ change for users.
 
 **Steps**:
 
-- [ ] Scan `gm` / `hi` / `bb` SKILL.md, `README.md`, and `steering-template.md` for statements that contradict the new division (commit ownership, who generates, the `complete task #{id}` match) and fix any
-- [ ] Fix `README.md`: the bb sample commit must carry a plain/`wip:` message (not `complete task #{id}`); remove the "the assistant just makes it itself, without involving an expert" line (stale delegate-or-do-it-yourself model)
-- [ ] Reword "1 task = 1 commit" in `steering-template.md` (`Rules` placeholder) and `.claude/rules/push-and-review.md` to "commit and push every change; one completion marker per task" (keeping push-and-review's primary "commit/push every change" intent)
-- [ ] Harden `bb` SKILL.md: state explicitly that a suspend-time commit must not contain `complete task #{id}`; replace the State/`paused` re-explanation with a reference to `steering-template.md`
-- [ ] Best-practice trim (no behavioral change): in `gm` SKILL.md remove re-teaching that `steering-template.md` / `task-workflow.md` already own (criteria axes, task fields, goal-restatement) and hand off; dedup the two overlapping `steering-template.md` requirement rows
-- [ ] Update `plugin.json` `description` to reflect the current model (executing each task via a coordinator that delegates hands-on work to domain experts and reviews it before approval); keep `version` `0.3.0`
-- [ ] Add a user-facing line under `## [Unreleased]` in `CHANGELOG.md` (scoped to the new delta: the deliverable is now authored/committed by the implementation expert; one completion marker per task)
-- [ ] Run `claude plugin validate ./rn --strict` and `claude plugin validate . --strict`
-- [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Scan `gm` / `hi` / `bb` SKILL.md, `README.md`, and `steering-template.md` for statements that contradict the new division (commit ownership, who generates, the `complete task #{id}` match) and fix any
+- [x] Fix `README.md`: the bb sample commit must carry a plain/`wip:` message (not `complete task #{id}`); remove the "the assistant just makes it itself, without involving an expert" line (stale delegate-or-do-it-yourself model)
+- [x] Reword "1 task = 1 commit" in `steering-template.md` (`Rules` placeholder) and `.claude/rules/push-and-review.md` to "commit and push every change; one completion marker per task" (keeping push-and-review's primary "commit/push every change" intent)
+- [x] Harden `bb` SKILL.md: state explicitly that a suspend-time commit must not contain `complete task #{id}`; replace the State/`paused` re-explanation with a reference to `steering-template.md`
+- [x] Best-practice trim (no behavioral change): in `gm` SKILL.md remove re-teaching that `steering-template.md` / `task-workflow.md` already own (criteria axes, task fields, goal-restatement) and hand off; dedup the two overlapping `steering-template.md` requirement rows
+- [x] Update `plugin.json` `description` to reflect the current model (executing each task via a coordinator that delegates hands-on work to domain experts and reviews it before approval); keep `version` `0.3.0`
+- [x] Add a user-facing line under `## [Unreleased]` in `CHANGELOG.md` (scoped to the new delta: the deliverable is now authored/committed by the implementation expert; one completion marker per task)
+- [x] Run `claude plugin validate ./rn --strict` and `claude plugin validate . --strict`
+- [x] self-check (OK/NG per completion criterion, record in checks/2.md)
+- [x] QA expert review (subagent)
+- [x] user review (approved on PR #10)
 
 **Completion criteria**:
 
