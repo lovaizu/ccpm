@@ -31,6 +31,20 @@ Decide the increment by the largest change in the release, judged from the user'
   - No release instruction → add the line under `## [Unreleased]` (the pending next release).
   - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD`, bump `version` in `plugin.json` to match, and open a fresh empty `## [Unreleased]`. Merging to `main` does not by itself bump the version — the bump happens only on this instruction.
 
+## Release procedure (who does what)
+
+On a release instruction, the assistant does every step **except the merge** — the merge to `main` is
+the user's, because `main` is protected and only the user holds the privileges to clear its required
+review. The order:
+
+1. **Assistant** — bump `version` in `plugin.json` and finalize `CHANGELOG.md` (rename `## [Unreleased]`
+   to the chosen `## [x.y.z] - YYYY-MM-DD`, open a fresh empty `## [Unreleased]`), commit, and **push**.
+2. **Assistant** — **request the user to merge** the PR to `main`. The assistant **never merges to
+   `main` itself** and never uses `--admin` to bypass branch protection.
+3. **User** — merges the PR to `main` and tells the assistant it is merged.
+4. **Assistant** — once told the merge is done, **tags `main` and publishes the GitHub Release** as
+   below (this part stays the assistant's).
+
 ## Tags and GitHub Releases
 
 - **Tag each release on `main`** with an annotated, plugin-scoped tag `<plugin>-v<version>` (e.g. `rn-v0.2.0`). The name is prefixed because each plugin in this marketplace versions independently; the `-` separator avoids colliding with the `plugin@marketplace` install syntax (the same prefix-by-package convention as Lerna `pkg@x.y.z` or Go `path/vx.y.z`).
