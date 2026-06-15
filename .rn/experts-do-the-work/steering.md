@@ -111,7 +111,7 @@ orchestration plus its own ledger.
 - [x] Tighten the document for instruction-following (best-practice pass): lead each phase with the imperative; demote rationale to ≤1 `Why:` per phase; state the deliverable/ledger split, the single-marker rule, and the check-file ownership **once canonically** and reference them thereafter (no 3–4× full restatement). Preserve every behavioral invariant **verbatim** — the split line, the neutral-framing withhold-list, the 3-iteration counting rule, the `complete task #{id}` substring rule. Not a length target; clarity is the goal
 - [x] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [x] QA expert review (subagent)
-- [ ] user review ← AT THIS GATE (deliverable pushed, QA PASS; awaiting approval on PR #10 — not yet checked off, no `complete task #1` marker)
+- [x] user review (approved on PR #10)
 
 **Completion criteria**:
 
