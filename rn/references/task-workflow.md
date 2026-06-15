@@ -18,8 +18,8 @@ the check file), and the commits of those — these carry no trial-and-error to 
 coordinator does them directly. It never touches the deliverable or its git history.
 
 - **Coordinator** — the main agent (the one in the conversation). Decomposes the goal, decides *which
-  domain's expert* each piece of work needs, dispatches them, reviews what comes back against
-  `git diff`, triages findings, re-instructs, updates `steering.md`, and talks with the user. It owns
+  domain's expert* each piece of work needs, dispatches them, reviews what comes back against the
+  committed diff, triages findings, re-instructs, updates `steering.md`, and talks with the user. It owns
   orchestration and dialogue plus its own ledger — never the deliverable.
 - **Experts** — subagents (Agent tool, no conversation history), each specialized in one domain and
   each applying **its domain's best practices**. The coordinator dispatches the right one for the job
@@ -75,12 +75,17 @@ history, so the work-order must carry everything it needs — but only that:
 5. **Self-check** — verify each completion criterion (OK/NG with specific evidence); (code) measure
    coverage with a project-appropriate tool (Jest, pytest, JaCoCo, gcov, etc.) and record line/branch
    coverage and uncovered areas. Write the results to `{steering_dir}/checks/{task-id}.md` using the
-   Check file format below.
-6. **Commit & push the deliverable** — stage the deliverable change, commit with a plain conventional
-   message (`feat:` / `fix:` / `docs:` / … matching the change), and push so it lands on the session
-   PR. The message must **not** contain the string `complete task #` — that marker belongs to the
-   coordinator's check-off commit (see Phase: Complete). Commits accumulate freely across feedback
-   rounds within the task; push each as made and **never force-push**.
+   Check file format below. That check file is the **coordinator's ledger** — write the self-check into
+   it but **do not commit it** (the coordinator commits it later with the review verdicts it adds).
+6. **Commit & push the deliverable** — stage the **deliverable change only** (not the check file),
+   commit with a plain conventional message (`feat:` / `fix:` / `docs:` / … matching the change), and
+   push so it lands on the session PR. The message must **not** contain the string `complete task #` —
+   that marker belongs to the coordinator's check-off commit (see Phase: Complete). Commits accumulate
+   freely across feedback rounds within the task; push each as made and **never force-push**. **If the
+   expert cannot push** in its environment (sandbox/auth), it says so in its return summary and leaves
+   the commit in place; the coordinator then pushes that already-made commit — a push only, the commit
+   stays the expert's (plain message, no `complete task #`, marker still on the later check-off), never
+   the coordinator authoring or amending the deliverable.
 7. **Return** — report back a **compact summary** only: what changed (files/functions touched), the
    self-check result, and the commit SHA(s) plus that the deliverable was pushed. Do **not** paste full
    file contents or the trial-and-error — the diff is on disk for the coordinator to read.
@@ -93,17 +98,20 @@ history, so the work-order must carry everything it needs — but only that:
 
 ## Phase: Verify — coordinator reviews independently
 
-**Step — Read the diff**
+**Step — Read the committed diff**
 
-- The coordinator inspects `git diff` (and `git status`) itself — its own look at the artifact, not
-  the expert's report. Confirm the change matches the task's scope and Completion criteria before
-  spending review experts on it.
+- The expert already committed and pushed the deliverable during Execute (work-order element 6), so
+  the working tree is clean — plain `git diff` / `git status` show nothing. The coordinator instead
+  inspects the **committed** deliverable change: `git show <sha>` for the SHA(s) the expert returned,
+  or `git diff <task's starting commit>..HEAD` for this task's cumulative change. This is its own look
+  at the artifact, not the expert's report. Confirm the change matches the task's scope and Completion
+  criteria before spending review experts on it.
 
 **Step — QA expert review (subagent)**, then the language and software-engineering experts for code
 tasks. Each review expert runs as an independent subagent (Agent tool, no conversation history) —
 like the implementation expert, but for judging, not producing. All context the expert needs must be
-passed in the prompt — but only that (element 6 says what to withhold). That independence is the
-safeguard against bias — protect it.
+passed in the prompt — but only that (the review prompt's Neutral framing element below says what to
+withhold). That independence is the safeguard against bias — protect it.
 
 - Build the review prompt with 6 elements:
   1. **Role** — the expert's domain (QA / language / software-engineering), told to review
@@ -198,9 +206,12 @@ from dispatching the experts — this is bookkeeping, not artifact editing).
 
 ## Check file format
 
-Write to `{steering_dir}/checks/{task-id}.md`. The implementation expert fills the Completion Criteria
-self-check columns (it always produces the deliverable); the coordinator fills the review verdicts it
-collected. Same file, written by whoever holds the data.
+Write to `{steering_dir}/checks/{task-id}.md`. This file is the **coordinator's ledger**: the
+implementation expert writes the Completion Criteria self-check columns into it (it always produces the
+deliverable) but **does not commit it** — element 6 commits the deliverable only. The coordinator fills
+the review verdicts it collected and commits the file as part of its ledger (the post-approval steering
+check-off commit is the natural place). Same file, written by whoever holds the data; committed by the
+coordinator.
 
 ```markdown
 # {task-id} Completion Check
