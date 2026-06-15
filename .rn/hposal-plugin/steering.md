@@ -53,8 +53,8 @@
   「HP（corporate site）」と補う。
 - 〔判断・要レビュー〕1スキルで4フェーズ全体を駆動する（フェーズごとに別スキルへ割らない）。workflow は
   ★ゲートで区切られた一続きの工程だから（D-1）。
-- 〔判断・要レビュー〕スキル名＝コマンド名は `propose`（`/hposal:propose`）。提案書を作るキットの中心動作
-  だから（D-1）。
+- 〔判断・要レビュー〕スキル名＝コマンド名は `up`（`/hposal:up`）。「提案を起こす」を表す短い合図で、
+  `rn` の `gm`/`bb`/`hi` の流儀に揃える（D-1）。
 - 〔判断・方針〕初期 version は `0.1.0`。タグ付け／GitHub Release は別の明示指示で行う作業で、本セッションの
   スコープ外（D-3、plugin.md の「リリース指示があるときだけ昇格」に従う）。
 
@@ -91,7 +91,7 @@
 - `.rn/hposal-plugin/corporate-site-kit/` に `README.md`・`workflow.md`・`templates/` の5本が存在する。
 - コピー先の各ファイルの内容が Google Drive 上の原本とバイト一致している。
 
-### #2: workflow.md をスキル `hposal/skills/propose/SKILL.md` に変換する
+### #2: workflow.md をスキル `hposal/skills/up/SKILL.md` に変換する
 
 **Purpose**: 唯一の手順書 `workflow.md` を、frontmatter を備え `${CLAUDE_PLUGIN_ROOT}/references/` を指す
 正しい SKILL.md に作り変える。フェーズ・ルール・⚠️・★ゲートは欠落なく保つ。
@@ -100,7 +100,7 @@
 
 **Steps**:
 
-- [ ] `hposal/skills/propose/SKILL.md` を作成し、`name: propose` と description を持つ frontmatter を付ける
+- [ ] `hposal/skills/up/SKILL.md` を作成し、`name: up` と description を持つ frontmatter を付ける
 - [ ] `workflow.md` の本文（4フェーズ・共通ルール・たどれるようにする・全 ⚠️・★ゲート）を本体に移し、
       テンプレ参照箇所を `${CLAUDE_PLUGIN_ROOT}/references/templates/...` の実パスに置き換える
 - [ ] 元 `workflow.md` のフェーズ/ルール/⚠️ を1件ずつ突き合わせ、取りこぼしゼロを数えて確認する
@@ -110,7 +110,7 @@
 
 **Completion criteria**:
 
-- `hposal/skills/propose/SKILL.md` が存在し、`name` と `description` を含む有効な frontmatter を持つ。
+- `hposal/skills/up/SKILL.md` が存在し、`name` と `description` を含む有効な frontmatter を持つ。
 - 元 `workflow.md` の4フェーズ・各フェーズの完了条件・全 ⚠️ 落とし穴・★人間ゲートが SKILL.md に
   すべて含まれている（`.rn/hposal-plugin/corporate-site-kit/workflow.md` との項目突き合わせで漏れゼロ）。
 - テンプレへの参照が `${CLAUDE_PLUGIN_ROOT}/references/templates/` 配下の実在パスを指している。
@@ -192,7 +192,7 @@
 
 - [ ] `claude plugin validate hposal --strict` を実行し、通るまで直す
 - [ ] `claude plugin validate .`（マーケットルート）を実行し、通るまで直す
-- [ ] `claude -p "/hposal:propose" --plugin-dir hposal` でスキルが読み込まれることを確認する
+- [ ] `claude -p "/hposal:up" --plugin-dir hposal` でスキルが読み込まれることを確認する
 - [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/6.md` に記録）
 - [ ] QA engineer review（subagent）
 - [ ] user review
@@ -201,19 +201,24 @@
 
 - `claude plugin validate hposal --strict` がエラー・警告なしで完了する。
 - `claude plugin validate .` がエラー・警告なしで完了する。
-- `claude -p "/hposal:propose" --plugin-dir hposal` が、スキルを認識した出力で正常終了する。
+- `claude -p "/hposal:up" --plugin-dir hposal` が、スキルを認識した出力で正常終了する。
 
 # Decisions
 
-## D-1: 1スキル `propose` で4フェーズ全体を駆動する
+## D-1: 1スキル `up` で4フェーズ全体を駆動する
 - **Issue**: workflow の4フェーズを、1スキルにまとめるか、フェーズごとに別スキル（4コマンド）へ割るか。
-- **Conclusion**: 1スキル `/hposal:propose` に `workflow.md` 全体を載せる。
+  また、その1スキル（コマンド）の名前をどうするか。
+- **Conclusion**: 1スキル `/hposal:up` に `workflow.md` 全体を載せる。
 - **Rationale**: workflow は ★人間ゲートで区切られた一続きの工程で、前フェーズの文書が次の入力になる
   依存連鎖。独立に呼ぶ4コマンドではなく、上から順に通す1手順として呼ぶのが元キットの使い方に忠実。
+  名前は `up`＝「提案を起こす」を表す短い合図。名前空間 `hposal`（HP proposal）が用途を示すので、
+  コマンド側は動作の合図で足り、`rn` の `gm`/`bb`/`hi` という短い口語コマンドの流儀に揃う。
+  自己説明性の低さは README 冒頭の一文で補う。
 - **Evidence**: `workflow.md` は「上から順に進める」一本道。`README.md` も「workflow.md に従って作って」と
   1ファイルを指す。rn が3スキルなのは start/suspend/resume という独立した3場面があるからで、hposal には
-  そうした分岐がない。
-- **Sources**: 元キット `workflow.md` 1–10行・`README.md` 27行／お手本 `rn/skills/`。
+  そうした分岐がない。rn のコマンドは `gm`/`bb`/`hi` と短い口語で統一されている。
+- **Sources**: 元キット `workflow.md` 1–10行・`README.md` 27行／お手本 `rn/skills/`（`gm`/`bb`/`hi`）／
+  ユーザー確認（本セッション：`up`＝「起こす」）。
 
 ## D-2: 中身は日本語維持・説明文のみ英語・README で HP を一度補う
 - **Issue**: language.md は成果物の既定を英語とするが、本キットは意図的に日本語で書かれている。
