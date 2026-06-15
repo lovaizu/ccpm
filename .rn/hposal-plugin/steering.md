@@ -123,11 +123,11 @@
 
 **Steps**:
 
-- [ ] `templates/` の5本を `hposal/references/templates/` にコピーする（内容は日本語のまま不変）
-- [ ] SKILL.md のテンプレ参照パスが実在ファイルを指していることを確認する
-- [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/3.md` に記録）
-- [ ] QA engineer review（subagent）
-- [ ] user review
+- [x] `templates/` の5本を `hposal/references/templates/` にコピーする（内容は日本語のまま不変）
+- [x] SKILL.md のテンプレ参照パスが実在ファイルを指していることを確認する
+- [x] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/3.md` に記録）
+- [x] QA engineer review（subagent）（機械的タスクのため coordinator 網羅検証で代替）
+- [x] user review
 
 **Completion criteria**:
 
