@@ -242,12 +242,14 @@
 
 # State
 
-- **Status**: tasks complete — awaiting bulk user review on PR #8
+- **Status**: paused
 - **Date**: 2026-06-15
-- **Last completed**: #6（構造検証＋ヘッドレス起動）。全6タスク完了。
-- **Next**: ユーザーが「とりあえず作成を進めて、動くとこまで」と指示し、各タスクの user review ゲートを
-  一括化。全6タスクを self-check＋QA（機械的/検証タスクは coordinator 網羅検証で代替）で通し PR #8 に push 済み。
-  PR #8 でまとめてレビューを仰ぐ。承認後は Acceptance criteria の最終確認。
+- **Last completed**: #6（構造検証＋ヘッドレス起動）。全6タスク完了・PR #8 に push 済み。
+- **Next**: PR #8 でユーザーのまとめレビューを仰ぐ段階で中断。再開時は (1) PR #8 のレビュー状況を確認し、
+  指摘があれば該当タスクに戻って反映。(2) 承認済みなら steering の Acceptance criteria を最終確認（提案
+  済みだが未実施）。(3) 別途リリース指示が出たら D-3 のタグ付け・GitHub Release（CHANGELOG の
+  `[Unreleased]` を確定版へ）。ユーザーは「とりあえず作成を進めて、動くとこまで」と指示し各タスクの
+  user review ゲートを一括化済み。
 - **Notes**:
   - 【重要】元キットは Google Drive 上だが**このMacに同期されており、ローカルパスから直接読める。MCP 認証は
     不要**。元パス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/
