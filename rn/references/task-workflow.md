@@ -136,11 +136,25 @@ decidable call to the user for lack of a standard**.
 
 - Assess each finding on its merits: is it factually correct, and does acting on it move the artifact
   toward its proper form for the goal?
-- **Valid** → the coordinator writes improvement instructions and **re-dispatches the implementation
-  expert** to fix it (the coordinator does not edit the artifact itself), then re-runs the same review
-  expert. **This includes minor improvements: if the fix is correct and makes the artifact better,
-  just apply it — do not ask the user.** Max 3 iterations; valid findings still NG after 3 → record
-  them and escalate to user review with the unresolved items.
+- **Valid** → fix it. Route the fix by the same test Execute used — *is there real trial-and-error to
+  isolate?* — judged on the fix itself, not inherited from the first pass: if there is (exploration,
+  several attempts), the implementation expert does it; if there isn't, the coordinator does it
+  directly, whatever the fix's size. Usually this matches the first pass, but it can flip either way —
+  a one-line correction to delegated work the coordinator just makes itself, while a supposedly-trivial
+  edit whose fix turns out to need real exploration goes to an expert. **Delegating the fix:** write
+  improvement instructions and dispatch the implementation expert (a fresh subagent, no memory of the
+  first pass) rather than taking over its domain work — reuse the original work-order if the first pass
+  was delegated, or write one now if the first pass was a direct edit (no work-order exists yet), and
+  in both cases point it at the current on-disk state to build on, not regenerate from scratch.
+  **Fixing it directly:** the coordinator just applies it; spinning up an expert with no trial-and-error
+  to isolate would only add ceremony. **This includes minor improvements: if the fix is correct and
+  makes the artifact better, just apply it — do not ask the user.** Whichever route applied the fix —
+  delegated or direct — re-run the same review expert on the result before closing the finding; and if
+  the fix could plausibly affect a dimension another expert already cleared (e.g. a correctness fix that
+  reshapes design or wording), re-run that expert too, not only the originating one. Cap this at 3
+  iterations, where one iteration is a single fix and all its re-reviews (the originating expert plus
+  any regression re-runs count together as one, not separately); valid findings still NG after 3 →
+  record them and escalate to user review with the unresolved items.
 - **Invalid** → reject it, citing the evidence. A finding is Invalid **only** when it rests on a
   factual error, or falls outside a scope boundary written in the task's Completion criteria — cite
   the specific fact or criterion. Never accept a finding just because an expert raised it.
