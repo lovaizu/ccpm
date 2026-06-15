@@ -242,10 +242,21 @@
 
 # State
 
-(written by /rn:bb, read and reset to this placeholder by /rn:hi)
-
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: #6（構造検証＋ヘッドレス起動）。全6タスク完了。本セッションで Acceptance criteria を
+  実物で全項目検証し、すべて充足を確認した。
+- **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
+  （`hposal-v0.1.0` タグ + GitHub Release）まで進める。(B) の場合は D-3 に従い CHANGELOG の
+  `[Unreleased]` を `## [0.1.0] - YYYY-MM-DD` へ確定、`plugin.json` の version 据え置き（既に 0.1.0）、
+  `hposal-v0.1.0` 注釈付きタグを main に打ち、CHANGELOG 該当節を notes に Release 公開。
+- **Notes**:
+  - Acceptance 検証結果（本セッション実走・全項目 ✅）: `validate hposal --strict` ✔ / `validate . --strict`
+    ✔ / `/hposal:up` ヘッドレス exit 0・フェーズ1起動 / SKILL frontmatter 有効 / 4フェーズ・共通ルール・
+    1枚絵あり / ⚠️ base27=SKILL27・★ base15=SKILL本文15（取りこぼしゼロ） / テンプレ5本 references に実在・
+    参照解決・base とバイト一致 / plugin.json(name=hposal,英語desc,0.1.0,author=lovaizu) / README 冒頭
+    「HP（corporate site）」1回 / marketplace.json + root README 同期登録 / 言語方針 D-2 準拠。
+  - PR #8（OPEN・reviewDecision=REVIEW_REQUIRED・レビュー未着手）に全コミット push 済み。未 push なし。
+  - 元キットのローカルパス（MCP 不要・Mac 同期済）＝`/Users/kiyo/Library/CloudStorage/
+    GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。
+  - 未了（別指示待ち）: タグ付け・GitHub Release は D-3 によりスコープ外。CHANGELOG は `[Unreleased]` のまま。
