@@ -239,12 +239,12 @@ task boundary, and routine fixes are decided against a quality bar), without bum
 
 **Steps**:
 
-- [ ] Rewrite the `[Unreleased]` `Changed` entry to state the corrected delegate-by-payoff benefit in
+- [x] Rewrite the `[Unreleased]` `Changed` entry to state the corrected delegate-by-payoff benefit in
       user-facing terms (a single coherent entry, not v1 + correction)
-- [ ] Confirm `version` in `plugin.json` is unchanged at `0.2.0`
-- [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Confirm `version` in `plugin.json` is unchanged at `0.2.0`
+- [x] self-check (OK/NG per completion criterion, record in checks/5.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
