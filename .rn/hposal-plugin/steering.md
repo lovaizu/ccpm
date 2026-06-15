@@ -100,13 +100,13 @@
 
 **Steps**:
 
-- [ ] `hposal/skills/up/SKILL.md` を作成し、`name: up` と description を持つ frontmatter を付ける
-- [ ] `workflow.md` の本文（4フェーズ・共通ルール・たどれるようにする・全 ⚠️・★ゲート）を本体に移し、
+- [x] `hposal/skills/up/SKILL.md` を作成し、`name: up` と description を持つ frontmatter を付ける
+- [x] `workflow.md` の本文（4フェーズ・共通ルール・たどれるようにする・全 ⚠️・★ゲート）を本体に移し、
       テンプレ参照箇所を `${CLAUDE_PLUGIN_ROOT}/references/templates/...` の実パスに置き換える
-- [ ] 元 `workflow.md` のフェーズ/ルール/⚠️ を1件ずつ突き合わせ、取りこぼしゼロを数えて確認する
-- [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/2.md` に記録）
-- [ ] QA engineer review（subagent）
-- [ ] user review
+- [x] 元 `workflow.md` のフェーズ/ルール/⚠️ を1件ずつ突き合わせ、取りこぼしゼロを数えて確認する
+- [x] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/2.md` に記録）
+- [x] QA engineer review（subagent）
+- [x] user review
 
 **Completion criteria**:
 
