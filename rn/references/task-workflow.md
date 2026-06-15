@@ -4,10 +4,19 @@ The shared execution loop for a single task, run by a **coordinator** who delega
 `gm` and `hi` read this file when they reach task execution. Run one task at a time.
 **1 task = 1 commit.**
 
+The loop exists to **keep the coordinator's context light while preserving quality and keeping the
+user in the loop at every task boundary**. An expert's trial-and-error must not pile up in the
+coordinator's context; the coordinator stays on as reviewer so the user always has a place to step in.
+**Delegation is the means, governed by payoff — not an absolute.** The coordinator delegates a piece
+of work *when delegation pays off*: when the work carries real trial-and-error or exploration that
+should stay out of its context (code, research, multi-attempt work). For trivial single-step edits and
+pure bookkeeping there is no trial-and-error to isolate, and delegation would only add ceremony — the
+coordinator does those directly.
+
 - **Coordinator** — the main agent (the one in the conversation). Decomposes the goal, decides *which
   domain's expert* each piece of work needs, dispatches them, reviews what comes back against
-  `git diff`, triages findings, and talks with the user. The coordinator **does no domain work
-  itself** — it routes work to the expert who owns that domain.
+  `git diff`, triages findings, and talks with the user. It routes work that carries trial-and-error to
+  the expert who owns that domain, and handles trivial edits and bookkeeping itself.
 - **Experts** — subagents (Agent tool, no conversation history), each specialized in one domain and
   each applying **its domain's best practices**. The coordinator dispatches the right one for the job
   and gets back a **compact summary**. The experts in this loop:
@@ -22,18 +31,20 @@ the subagent, so the coordinator's context holds only the diff, the verdicts, an
 And because the coordinator stays on to review rather than fully delegating, the user keeps a place to
 weigh in at every task boundary (full delegation would run start-to-finish with nowhere to step in).
 
-What the coordinator may write directly: `steering.md` and the check file (`checks/{task-id}.md`) —
-session bookkeeping only. Everything that is the task's deliverable is written by the implementation
-expert.
+What the coordinator may write directly: `steering.md`, the check file (`checks/{task-id}.md`), trivial
+single-step edits, and the bookkeeping commit — session bookkeeping plus work with no trial-and-error
+to isolate. Everything that carries real trial-and-error or exploration is written by the
+implementation expert.
 
 `{steering_dir}` below is the directory that holds the active `steering.md` (e.g.
 `.rn/{slug}/`). Write check files under `{steering_dir}/checks/`.
 
 ## Process selection
 
-The verification chain by task type (in order). Self-check is produced by the implementation expert
-in Execute (work-order element 5); the QA / language / software-engineering reviews are run by the
-coordinator in Verify; user review is the final gate in Complete.
+The verification chain by task type (in order). Self-check is produced in Execute (work-order element
+5) — by the implementation expert when the work is delegated, or by the coordinator when it edited
+directly; the QA / language / software-engineering reviews are run by the coordinator in Verify; user
+review is the final gate in Complete.
 
 | Task type | Verification chain |
 |---|---|
@@ -41,6 +52,13 @@ coordinator in Verify; user review is the final gate in Complete.
 | Code changes | Self-check → QA expert review → Language expert review → Software-engineering expert review → User review |
 
 ## Phase: Execute — coordinator dispatches the implementation expert
+
+**Decide: delegate or act directly.** The trigger is whether there is trial-and-error to isolate from
+the coordinator's context. If the work carries real trial-and-error or exploration — code, research,
+multi-attempt work — dispatch the implementation expert (the steps below). If it is a trivial
+single-step edit with no exploration, the coordinator makes the edit itself, performs the self-check
+itself (work-order element 5, recorded in the check file), and proceeds to Verify; spinning up an
+expert would only add ceremony. Either way the Verify chain (QA review onward) is unchanged.
 
 **Step — Write the work-order**
 
@@ -143,10 +161,11 @@ from dispatching the experts — this is bookkeeping, not artifact editing).
 - The coordinator presents the results to the user. **DO NOT proceed without user approval.** This
   gate is what keeps the user in the conversation at every task boundary.
 
-**Step — Commit and push (subagent)**
+**Step — Commit and push (coordinator bookkeeping)**
 
 - The coordinator checks off the task in `steering.md` (bookkeeping).
-- The coordinator dispatches a subagent to commit and push: stage the change, commit with the message
+- The coordinator commits and pushes directly — there is no trial-and-error to isolate, so this is its
+  own bookkeeping: stage the change, commit with the message
   `{type}: complete task #{id} — {description}` (where `{type}` matches the change — `feat` / `fix` /
   `docs` / `refactor` / `test` / …), then push so the commit lands on the session PR. (The exact
   `complete task #{id}` substring is what `/rn:hi` matches against `git log` when it reconciles
@@ -159,9 +178,9 @@ from dispatching the experts — this is bookkeeping, not artifact editing).
 
 ## Check file format
 
-Write to `{steering_dir}/checks/{task-id}.md`. The implementation expert fills the Completion Criteria
-self-check columns; the coordinator fills the review verdicts it collected. Same file, written by
-whoever holds the data.
+Write to `{steering_dir}/checks/{task-id}.md`. Whoever did the work fills the Completion Criteria
+self-check columns (the implementation expert when delegated, the coordinator when it edited directly);
+the coordinator fills the review verdicts it collected. Same file, written by whoever holds the data.
 
 ```markdown
 # {task-id} Completion Check

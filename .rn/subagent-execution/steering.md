@@ -181,18 +181,18 @@ Per D-2.
 
 **Steps**:
 
-- [ ] Reframe the intro to lead with the purpose (light context / quality / user-in-loop) and state
+- [x] Reframe the intro to lead with the purpose (light context / quality / user-in-loop) and state
       that delegation is a means governed by payoff, not an absolute
-- [ ] Execute phase: delegate the implementation expert for work carrying real trial-and-error; permit
+- [x] Execute phase: delegate the implementation expert for work carrying real trial-and-error; permit
       the coordinator to do trivial single-step edits directly, with the trigger stated
-- [ ] Complete phase: make commit/push coordinator bookkeeping (remove the mandatory commit subagent),
+- [x] Complete phase: make commit/push coordinator bookkeeping (remove the mandatory commit subagent),
       keeping the user-review gate and the `complete task #{id}` message convention
-- [ ] Keep "what the coordinator may write directly" consistent with the corrected means
+- [x] Keep "what the coordinator may write directly" consistent with the corrected means
       (steering / check files, trivial edits, bookkeeping commits)
-- [ ] Preserve the review-expert independence and 6-element neutral-framing safeguards
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Preserve the review-expert independence and 6-element neutral-framing safeguards
+- [x] self-check (OK/NG per completion criterion, record in checks/3.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
