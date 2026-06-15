@@ -216,12 +216,12 @@ scenario style.
 
 **Steps**:
 
-- [ ] Adjust the README wording so the delegate-by-payoff model reads accurately (no absolute "doesn't
+- [x] Adjust the README wording so the delegate-by-payoff model reads accurately (no absolute "doesn't
       do the work itself"), keeping the user-approval-at-each-boundary point
-- [ ] Keep README's existing scenario / plain-language style — no mechanical lists or control-noun labels
-- [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Keep README's existing scenario / plain-language style — no mechanical lists or control-noun labels
+- [x] self-check (OK/NG per completion criterion, record in checks/4.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 

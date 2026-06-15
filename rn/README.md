@@ -36,7 +36,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
   Review the steering there and approve to start #1.
 ```
 
-Read the plan on the PR, approve, and the assistant begins the first task. You stay in the conversation with one assistant the whole time, but it doesn't do the work itself — for each task it hands the writing off to an expert in that area, then sends that draft to reviewers who specialize in catching what's wrong, and only brings you the finished result. That keeps the conversation light: the trial-and-error happens out of sight, and what reaches you is the change itself, ready to approve. Nothing is committed until you say so, so you get a say at the end of every task. Each approved task adds to the same PR.
+Read the plan on the PR, approve, and the assistant begins the first task. You stay in the conversation with one assistant the whole time. When a task carries real back-and-forth, the assistant hands the work off to an expert in that area, then sends that draft to reviewers who specialize in catching what's wrong, and only brings you the finished result — keeping that trial-and-error out of sight so the conversation stays light; smaller, one-step changes it just makes itself. What reaches you is the change itself, ready to approve. Nothing is committed until you say so, so you get a say at the end of every task. Each approved task adds to the same PR.
 
 ### 2. Step away — `/rn:bb`
 
