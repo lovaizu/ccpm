@@ -164,8 +164,25 @@ and the root README.
 
 # State
 
-- **Status**: <!-- paused | active -->
-- **Date**: <!-- YYYY-MM-DD -->
-- **Last completed**: <!-- task id + title -->
-- **Next**: <!-- task id + title, or the next action -->
-- **Notes**: <!-- blockers, decisions, anything the next session needs -->
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: Acceptance criteria final pass — all tasks #1–#3 done and reconciled; every
+  Acceptance criterion verified by measurement (PASS).
+- **Next**: Wait for the user's own PR review of #5. No code work remains unless their review
+  surfaces a gap. When they say go, mark PR #5 ready-for-review and merge to main.
+- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**,
+  by the user's choice — they opted to review it themselves before ready/merge).
+  - The plugin is complete and shipped on the branch: `techting/skills/up/SKILL.md` (four pillars
+    derived from instruction.md), `techting/.claude-plugin/plugin.json` (version 0.1.0, only place
+    with a version), `techting/README.md` (scenario style), registered in
+    `.claude-plugin/marketplace.json` (category `writing`, no version) and linked from root README.
+  - Acceptance pass results (all 9 PASS, by measurement): four pillars present + cross-checked vs
+    instruction.md item by item; brush-up frame stated; model-invocable frontmatter; plugin.json
+    has name/desc/semver/author with version only there; README scenario+console style; marketplace
+    + root README in sync; `claude plugin validate ./techting --strict` and `validate . --strict`
+    both pass clean; `claude -p "/techting:up …" --plugin-dir ./techting` loads and runs the skill
+    (reader → guide axis → stop-and-ask on the `the thing` placeholder); zero CJK in techting/
+    (instruction.md is the lone Japanese source-of-record, by design).
+  - `/reload-plugins` this session loaded techting as 1 plugin cleanly.
+  - When resuming: nothing to build. Either (a) the user approves → `gh pr ready 5` then merge, or
+    (b) the user reports review feedback → fix, re-run the relevant Acceptance checks, re-commit.
