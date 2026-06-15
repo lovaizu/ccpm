@@ -80,9 +80,10 @@ Out of scope:
   178-186).
 - Fact: `/rn:hi` matches a task to a commit by the `complete task #{id}` substring (verified: hi Step 4).
 - Fact: `push-and-review.md` requires "push on every change" and "review happens on the PR."
-- Assumption (unverified): a subagent dispatched via the Agent tool can run `git commit` / `git push`.
-  If it cannot, the "expert commits/pushes" model needs an alternative; this only manifests when rn is
-  *used*, not when these docs are edited, so it does not block this session.
+- Fact (verified 2026-06-15 by empirical probe): a subagent dispatched via the Agent tool **can** run
+  `git commit` and `git push` — commit succeeded, `git push` returned exit 0 with no sandbox/permission
+  denial. The "expert commits/pushes" model is therefore viable in this environment. The remaining
+  fallback need is only for an environment that lacks the capability, not this one.
 
 # Rules
 
@@ -166,6 +167,56 @@ change for users.
   behavioral directive is lost in the trim.
 - `plugin.json` `description` reflects the coordinator/experts execution model; `version` is `0.3.0`.
 - `CHANGELOG.md` has a new line under `## [Unreleased]` describing the change in user terms.
+- `claude plugin validate ./rn --strict` and `claude plugin validate . --strict` both report success.
+
+### #3: Fix four task-workflow.md defects surfaced by an end-to-end simulation
+
+**Purpose**: An end-to-end simulation of the rewritten `task-workflow.md` (run after #1/#2 were approved)
+surfaced one internal contradiction and three gaps the flat acceptance pass missed. Fix all four in
+`task-workflow.md` without altering any behavioral invariant, so the document is self-consistent and
+robust to the failure modes the simulation exposed.
+
+**Prerequisites**: #1
+
+**Steps**:
+
+- [ ] **Fix 1 (internal contradiction)**: the Verify "Read the committed diff" step claims the working
+  tree is clean / `git status` shows nothing. False — the expert wrote `checks/{task-id}.md` and did not
+  commit it (Execute element 5), and that file is tracked, so `git status` shows it. Correct the wording:
+  the *deliverable* is committed (no uncommitted deliverable change), the only uncommitted thing in the
+  tree is the check-file ledger; inspect the committed change via `git show <sha>` / range diff
+- [ ] **Fix 2 (missing fallback branch)**: Execute element 6's fallback covers "expert cannot push" but
+  not "expert cannot commit". Add the commit-unavailable case, symmetric to the push-only fallback: the
+  expert reports it produced the change but its environment blocks `git commit`; the coordinator then runs
+  the commit mechanically over the expert's already-written change (git mechanics only — the content stays
+  the expert's, the coordinator never authors/edits the deliverable). Note commit/push capability is
+  verified available via the Agent tool, so this is a last-resort path for capability-less environments
+- [ ] **Fix 3 (selective-staging fragility)**: Execute element 6 says "stage the deliverable change only
+  (not the check file)" but a habitual `git add -A` / `git add .` would sweep the coordinator's check-file
+  ledger into a plain deliverable commit. Add an explicit guard: stage the deliverable paths explicitly;
+  never `git add -A` / `git add .`, so the check file is never committed by the expert
+- [ ] **Fix 4 (uncaptured starting commit)**: Verify offers `git diff <task's starting commit>..HEAD` for
+  the cumulative change, but nothing tells the coordinator to record that starting commit. Add a one-line
+  instruction in Execute (before dispatch) to capture the task's starting commit (HEAD before the first
+  deliverable commit) so the range diff is computable across feedback rounds
+- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- The Verify step no longer claims the working tree is clean / `git status` shows nothing; it correctly
+  states the deliverable is committed and only the check-file ledger is uncommitted, and directs the
+  coordinator to inspect the committed change.
+- Execute element 6 has a "cannot commit" fallback symmetric to the "cannot push" one, preserving "the
+  coordinator never authors/edits the deliverable" (git mechanics only).
+- Execute element 6 explicitly forbids `git add -A` / `git add .` and requires staging the deliverable
+  paths explicitly, so the check file is never swept into a deliverable commit.
+- Execute instructs the coordinator to capture the task's starting commit before dispatch, making the
+  Verify range diff computable.
+- **No behavioral invariant is altered**: the deliverable/ledger split, one-marker-per-task, the
+  `complete task #{id}` substring rule, the neutral-framing withhold-list, and the 3-iteration counting
+  rule all stand verbatim. Each fix is additive/corrective wording, not a model change.
 - `claude plugin validate ./rn --strict` and `claude plugin validate . --strict` both report success.
 
 # Decisions
