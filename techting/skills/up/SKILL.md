@@ -18,7 +18,7 @@ procedure writes from scratch, but the primary mode is brushing up an existing d
 
 ```mermaid
 flowchart TD
-    R[Define the reader<br/>who · decide-or-do · how they read] -->|can't pin it down| ASK[Stop and ask the user]
+    R[Define the reader<br/>who · decide-or-do · how they read] -->|can't pin it down| ASK[Ask the user; if none is reachable,<br/>infer from context & state the assumption]
     R -->|defined| A[Pick the axis & outline<br/>one of five]
     A --> T[Derive tone, diagrams, closing<br/>from the reader]
     T --> D[Render structure & flow as mermaid]
@@ -30,8 +30,10 @@ flowchart TD
 
 ### 1. Define the reader — everything starts here
 
-Before writing, state each of these in one line. If you cannot pin them down, **do not write — ask
-the user.**
+Before writing, state each of these in one line. If you cannot pin them down, **do not guess — ask
+the user.** When no user is reachable — the skill fired model-invocably, or a headless run — infer
+the reader from the draft's own context and **state that assumption in one line at the top** before
+writing. Never silently guess, and never stall: ask when you can, infer-and-declare when you can't.
 
 - **Who** is the reader of this document?
 - **What** must the reader be able to decide or do after reading?
@@ -45,7 +47,9 @@ between document types from this definition; do not memorize them as rules.
 Use the outline that matches the reader you defined. **Give each document a single role — do not mix
 axes;** mixing is the biggest cause of a confusing document. Adapt the headings to the content
 (don't paste them verbatim), but don't add items that make the document heavier — push deep dives out
-to a separate document.
+to a separate document. Exception for small documents: when a split would cost the reader more than
+it saves, keep a minimal inline version (e.g. only the required fields) and link the exhaustive one
+out, rather than spawning a separate file for a handful of entries.
 
 - **Article / explanation** — for someone reading to understand.
   1. What you'll learn (subject and premise, in 1–2 sentences)
@@ -123,6 +127,7 @@ These hold across every axis — they are how the content is written, not what s
 Run this before delivering. If any item fails, fix it and re-check — don't ship until all pass.
 
 - [ ] Do the tone, diagrams, closing, and outline match the reader defined at the top?
+- [ ] If the reader was inferred (no user to ask), is that assumption stated at the top?
 - [ ] Do the headings alone carry the argument?
 - [ ] Are structure and flow shown as diagrams, with no diagram/prose duplication?
 - [ ] Can the reader tell fact from hypothesis, with the unverified marked?
