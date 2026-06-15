@@ -65,9 +65,12 @@ intent; the user confirms it in the PR review.
 - Write the completed `steering.md` to `.rn/{slug}/steering.md`.
 - Commit it: `chore: start session — {slug}`.
 - Ensure the work is on a branch — a PR needs one. If on the default branch, create `{slug}` first.
-- Push the branch, then open a **draft PR** (`gh pr create --draft`) titled from the goal, with a
-  body that points to `.rn/{slug}/steering.md` so the plan can be read on GitHub. This is the
-  session's PR — later tasks add commits to it.
+- Push the branch, then open a **draft PR** (`gh pr create --draft`) titled from the goal. The PR
+  **body is a single link to the steering file and nothing else** — do not copy the Goal, the tasks,
+  or any plan content into it. The plan lives in `steering.md`; duplicating it into the body only
+  drifts. Use a branch-ref blob link so it tracks the latest plan throughout review:
+  `See [steering](https://github.com/{owner}/{repo}/blob/{branch}/.rn/{slug}/steering.md).`
+  This is the session's PR — later tasks add commits to it.
 - Report the PR link and a one-line task list, and ask the user to review the plan on the PR. The
   steering is too long to review in the console — **the PR is where it gets read**.
 - If push or PR creation fails, report it and fall back to presenting the plan in the console.
