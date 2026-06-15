@@ -71,15 +71,15 @@ intent-first and in the existing rule-file style, so it auto-loads as a ccpm pro
 
 **Steps**:
 
-- [ ] Draft `.claude/rules/output.md` with `# Output convention (ccpm)` and sections: Structure,
+- [x] Draft `.claude/rules/output.md` with `# Output convention (ccpm)` and sections: Structure,
       Banned expressions, Plan output, Code & files, Verification, Precedence
-- [ ] Lead each rule with its principle + `Rationale:`; keep the numeric limits as the bar
-- [ ] Add the composition note tying language choice to `language.md`, density to this rule
-- [ ] Re-read `language.md` to confirm no conflict (language vs structure are orthogonal)
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA expert review (subagent)
-- [ ] language expert review (subagent) — file is prose/docs
-- [ ] user review
+- [x] Lead each rule with its principle + `Rationale:`; keep the numeric limits as the bar
+- [x] Add the composition note tying language choice to `language.md`, density to this rule
+- [x] Re-read `language.md` to confirm no conflict (language vs structure are orthogonal)
+- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [x] QA expert review (subagent) — 2 iterations; proper-form pass after user challenge
+- [x] language expert review — N/A (non-code; prose craft folded into QA)
+- [x] user review — on PR #9
 
 **Completion criteria**:
 
@@ -92,9 +92,44 @@ intent-first and in the existing rule-file style, so it auto-loads as a ccpm pro
 - The composition note with `language.md` is present
 - No file other than `.claude/rules/output.md` is added or modified to make the rule take effect
 
+### #2: Write `.claude/rules/push-and-review.md`
+
+**Purpose**: Add a process rule capturing two working conventions the user asked for — push on every
+change, and conduct user review/approval on the PR rather than the console.
+
+**Prerequisites**: none
+
+**Steps**:
+
+- [x] Draft `.claude/rules/push-and-review.md` with `# Push and review (ccpm)`, sections: Push on
+      every change; Review happens on the PR
+- [x] Note how it composes with the `rn` console review gate (gate moves to the PR)
+- [x] self-check (OK/NG per completion criterion, record in checks/2.md)
+- [ ] QA expert review — folded into PR review per the new rule
+- [x] user review — on PR #9
+
+**Completion criteria**:
+
+- `.claude/rules/push-and-review.md` exists, English, titled `# Push and review (ccpm)`, existing
+  rule-file style
+- Encodes "commit and push on every change, without asking first"
+- Encodes "user review and approval happen on the PR, not the console", and states how it relocates a
+  workflow's console review gate
+- No file other than the rule file is added or modified for it to take effect
+
 # Decisions
 
-(none yet)
+## D-1: User review moves from the console to the PR; changes are pushed on every commit
+- **Issue**: rn's task-workflow gates each task with a console user-review before commit/push. The user
+  wants changes pushed as they happen and confirmation done on the PR instead.
+- **Conclusion**: Push every commit immediately; conduct user review/approval on PR #9. The task
+  boundary gate still exists — it relocates to the PR. Codified as `.claude/rules/push-and-review.md`.
+- **Rationale**: The PR renders real artifacts (diffs, long docs, figures) that the console cannot;
+  relocating the gate preserves the step-in point while reviewing the rendered form. Pushing on change
+  keeps the shared branch the single source of truth.
+- **Evidence**: User instruction "変更したらプッシュする / ユーザー確認はPRで行う"; matches working-style
+  memory (push-without-asking, review-rendered-artifacts-on-pr).
+- **Sources**: This session's conversation; `.claude/rules/push-and-review.md`.
 
 # State
 
@@ -102,6 +137,6 @@ intent-first and in the existing rule-file style, so it auto-loads as a ccpm pro
 
 - **Status**: not suspended
 - **Date**: 2026-06-15
-- **Last completed**: none
-- **Next**: #1 Write `.claude/rules/output.md`
-- **Notes**: on branch `worktree-output-rule`; slug `output-rule`
+- **Last completed**: #2 Write `.claude/rules/push-and-review.md`
+- **Next**: none — all tasks done; propose running Acceptance criteria
+- **Notes**: on branch `worktree-output-rule`; slug `output-rule`; review on PR #9
