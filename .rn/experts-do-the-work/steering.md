@@ -45,6 +45,25 @@ Quality:
 - `claude plugin validate ./rn --strict` and `claude plugin validate . --strict` both pass.
 - Wording and style stay consistent with the existing rn docs (English; existing heading structure).
 
+Prompt quality (best-practice pass over all rn docs — added 2026-06-15 after a flat prompt-engineering review):
+
+- `task-workflow.md` reads directive-first: each phase leads with the imperative, rationale is demoted to
+  at most one `Why:` per phase, and the deliverable/ledger split, the single-marker rule, and the
+  check-file ownership are each stated **once canonically** and referenced thereafter (no full restatement
+  3–4×). **Every behavioral invariant is preserved verbatim** — the split line, the neutral-framing
+  withhold-list, the 3-iteration counting rule, the `complete task #{id}` substring rule. Goal is
+  instruction-following clarity, not a length target.
+- `README.md` contains no stale-model statement: the bb sample commit carries a plain/`wip:` message
+  (never `complete task #{id}`), and no line says the assistant makes changes "without involving an
+  expert" (the unconditional-delegation model holds).
+- `bb` SKILL.md states explicitly that a suspend-time commit must **not** contain `complete task #{id}`
+  (so `/rn:hi` reconciliation cannot be tripped by a half-done task), and references `steering-template.md`
+  for the `State`/`paused` semantics instead of re-explaining them.
+- `gm` SKILL.md does not re-teach what `steering-template.md` / `task-workflow.md` already own (Acceptance
+  criteria axes, task fields, the goal-restatement rule appear once and hand off to the reference).
+- `plugin.json` `description` reflects the current model (it mentions executing each task via a
+  coordinator that delegates hands-on work to domain experts and reviews it before approval).
+
 Out of scope:
 
 - Version bump, tag, or GitHub Release (not until an explicit release instruction).
@@ -89,6 +108,7 @@ orchestration plus its own ledger.
 - [ ] Update "What the coordinator may write directly" to: `steering.md`, the review verdicts it already holds (into the check file), and the commits of those — nothing of the deliverable
 - [ ] Rewrite the Verify/triage section so every deliverable-touching fix is re-dispatched to the implementation expert (remove the coordinator-direct-fix branch for deliverables)
 - [ ] Update the Complete phase, the Process selection note, and the Check file format to the new ownership and `push-and-review.md`: the deliverable is pushed before user review, and the `complete task #{id}` marker lands on the coordinator's post-approval steering check-off commit
+- [ ] Tighten the document for instruction-following (best-practice pass): lead each phase with the imperative; demote rationale to ≤1 `Why:` per phase; state the deliverable/ledger split, the single-marker rule, and the check-file ownership **once canonically** and reference them thereafter (no 3–4× full restatement). Preserve every behavioral invariant **verbatim** — the split line, the neutral-framing withhold-list, the 3-iteration counting rule, the `complete task #{id}` substring rule. Not a length target; clarity is the goal
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] user review
@@ -106,20 +126,28 @@ orchestration plus its own ledger.
   coordinator-direct-fix path for deliverables.
 - The intro, Process selection, Execute, Verify, Complete, and Check file format sections are mutually
   consistent under the new division, and the user-review gate matches `push-and-review.md`.
+- The document is directive-first: the split / single-marker / check-file-ownership are each stated once
+  canonically and referenced thereafter, rationale is ≤1 `Why:` per phase, and every behavioral invariant
+  above is preserved verbatim.
 
-### #2: Reconcile the skills, template, changelog, and project rules with the new model
+### #2: Reconcile the rest of rn with the new model and run a best-practice pass
 
-**Purpose**: Ensure the rest of the rn docs and the project rules do not contradict the new division,
-and record the change for users.
+**Purpose**: Ensure every other rn doc and the project rules agree with the new division, fix the
+stale-model contradictions the flat review found (including `README.md`, missed by the original plan),
+harden the one implicit cross-file invariant, trim the cross-file/duplicated prose, and record the
+change for users.
 
 **Prerequisites**: #1
 
 **Steps**:
 
-- [ ] Scan `gm` / `hi` / `bb` SKILL.md and `steering-template.md` for statements that contradict the new division (commit ownership, who generates, the `complete task #{id}` match) and fix any
-- [ ] Reword "1 task = 1 commit" in `steering-template.md` and `.claude/rules/push-and-review.md` to "commit and push every change; one completion marker per task" (keeping push-and-review's primary "commit/push every change" intent)
-- [ ] Add a user-facing line under `## [Unreleased]` in `CHANGELOG.md`
-- [ ] Confirm `plugin.json` `version` stays `0.3.0`
+- [ ] Scan `gm` / `hi` / `bb` SKILL.md, `README.md`, and `steering-template.md` for statements that contradict the new division (commit ownership, who generates, the `complete task #{id}` match) and fix any
+- [ ] Fix `README.md`: the bb sample commit must carry a plain/`wip:` message (not `complete task #{id}`); remove the "the assistant just makes it itself, without involving an expert" line (stale delegate-or-do-it-yourself model)
+- [ ] Reword "1 task = 1 commit" in `steering-template.md` (`Rules` placeholder) and `.claude/rules/push-and-review.md` to "commit and push every change; one completion marker per task" (keeping push-and-review's primary "commit/push every change" intent)
+- [ ] Harden `bb` SKILL.md: state explicitly that a suspend-time commit must not contain `complete task #{id}`; replace the State/`paused` re-explanation with a reference to `steering-template.md`
+- [ ] Best-practice trim (no behavioral change): in `gm` SKILL.md remove re-teaching that `steering-template.md` / `task-workflow.md` already own (criteria axes, task fields, goal-restatement) and hand off; dedup the two overlapping `steering-template.md` requirement rows
+- [ ] Update `plugin.json` `description` to reflect the current model (executing each task via a coordinator that delegates hands-on work to domain experts and reviews it before approval); keep `version` `0.3.0`
+- [ ] Add a user-facing line under `## [Unreleased]` in `CHANGELOG.md` (scoped to the new delta: the deliverable is now authored/committed by the implementation expert; one completion marker per task)
 - [ ] Run `claude plugin validate ./rn --strict` and `claude plugin validate . --strict`
 - [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
 - [ ] QA expert review (subagent)
@@ -127,12 +155,17 @@ and record the change for users.
 
 **Completion criteria**:
 
-- `gm` / `hi` / `bb` SKILL.md and `steering-template.md` contain no statement that contradicts the new
-  division.
+- `gm` / `hi` / `bb` SKILL.md, `README.md`, and `steering-template.md` contain no statement that
+  contradicts the new division (including the README bb-commit example and the "without involving an
+  expert" line).
 - Neither `steering-template.md` nor `.claude/rules/push-and-review.md` states "1 task = 1 commit"; each
   states "commit and push every change; one completion marker per task."
+- `bb` SKILL.md explicitly forbids `complete task #{id}` in a suspend-time commit and references
+  `steering-template.md` for the `State`/`paused` semantics.
+- `gm` SKILL.md does not re-teach content owned by `steering-template.md` / `task-workflow.md`; no
+  behavioral directive is lost in the trim.
+- `plugin.json` `description` reflects the coordinator/experts execution model; `version` is `0.3.0`.
 - `CHANGELOG.md` has a new line under `## [Unreleased]` describing the change in user terms.
-- `plugin.json` `version` is `0.3.0`.
 - `claude plugin validate ./rn --strict` and `claude plugin validate . --strict` both report success.
 
 # Decisions
