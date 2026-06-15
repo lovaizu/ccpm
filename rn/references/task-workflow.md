@@ -2,68 +2,61 @@
 
 The shared execution loop for a single task, run by a **coordinator** who delegates to **experts**.
 `gm` and `hi` read this file when they reach task execution. Run one task at a time.
-**1 task = 1 commit.**
 
-The loop exists to **keep the coordinator's context light while preserving quality and keeping the
-user in the loop at every task boundary**. An expert's trial-and-error must not pile up in the
-coordinator's context; the coordinator stays on as reviewer so the user always has a place to step in.
-**Delegation is the means, governed by payoff — not an absolute.** The coordinator delegates a piece
-of work *when delegation pays off*: when the work carries real trial-and-error or exploration that
-should stay out of its context (code, research, multi-attempt work). For trivial single-step edits and
-pure bookkeeping there is no trial-and-error to isolate, and delegation would only add ceremony — the
-coordinator does those directly.
+**The deliverable/ledger split (canonical statement).** All hands-on work on the deliverable —
+generating it, fixing it, committing and pushing it — is the **implementation expert's**, by default
+and unconditionally. The split line is *does it carry exploration or trial-and-error*, not *does it
+write to the repo*. The only direct-write carve-out is the coordinator's **own ledger**: `steering.md`,
+the review verdicts it already holds (recorded into the check file), and the commits of those — these
+carry no trial-and-error to isolate, so the coordinator does them directly. It never touches the
+deliverable or its git history.
+
+> Why: the coordinator's context stays light (an expert's trial-and-error stays in the subagent), and
+> because the coordinator stays on as reviewer rather than fully delegating, the user keeps a place to
+> step in at every task boundary.
+
+**One task = one completion marker.** Deliverable commits accumulate freely on the branch, each pushed
+as made; the single `complete task #{id}` marker rides on the coordinator's post-approval steering
+check-off commit — so exactly one marker exists per task (canonical rule in Phase: Complete).
 
 - **Coordinator** — the main agent (the one in the conversation). Decomposes the goal, decides *which
-  domain's expert* each piece of work needs, dispatches them, reviews what comes back against
-  `git diff`, triages findings, and talks with the user. It routes work that carries trial-and-error to
-  the expert who owns that domain, and handles trivial edits and bookkeeping itself.
+  domain's expert* each piece of work needs, dispatches them, reviews what comes back against the
+  committed diff, triages findings, re-instructs, updates `steering.md`, and talks with the user. Owns
+  orchestration, dialogue, and its own ledger — never the deliverable (per the split above).
 - **Experts** — subagents (Agent tool, no conversation history), each specialized in one domain and
   each applying **its domain's best practices**. The coordinator dispatches the right one for the job
   and gets back a **compact summary**. The experts in this loop:
-  - **Implementation expert** — produces the task's deliverable (code/docs).
+  - **Implementation expert** — produces, fixes, and commits/pushes the task's deliverable (code/docs).
   - **QA expert** — adversarially verifies the result.
   - **Language expert** (code only) — judges language-level craft.
   - **Software-engineering expert** (code only) — judges design and system integrity.
-
-This is a division by domain, not a chain of command: the coordinator delegates *because that expert
-owns the domain*, not by rank. Two things fall out of it. The expert's trial-and-error stays inside
-the subagent, so the coordinator's context holds only the diff, the verdicts, and the conversation.
-And because the coordinator stays on to review rather than fully delegating, the user keeps a place to
-weigh in at every task boundary (full delegation would run start-to-finish with nowhere to step in).
-
-What the coordinator may write directly: `steering.md`, the check file (`checks/{task-id}.md`), trivial
-single-step edits, and the bookkeeping commit — session bookkeeping plus work with no trial-and-error
-to isolate. Everything that carries real trial-and-error or exploration is written by the
-implementation expert.
 
 `{steering_dir}` below is the directory that holds the active `steering.md` (e.g.
 `.rn/{slug}/`). Write check files under `{steering_dir}/checks/`.
 
 ## Process selection
 
-The verification chain by task type (in order). Self-check is produced in Execute (work-order element
-5) — by the implementation expert when the work is delegated, or by the coordinator when it edited
-directly; the QA / language / software-engineering reviews are run by the coordinator in Verify; user
-review is the final gate in Complete.
+The verification chain by task type, in order:
 
 | Task type | Verification chain |
 |---|---|
 | Non-code (docs, config, design) | Self-check → QA expert review → User review |
 | Code changes | Self-check → QA expert review → Language expert review → Software-engineering expert review → User review |
 
+Self-check is produced in Execute (work-order element 5) by the implementation expert; the QA /
+language / software-engineering reviews run in Verify; user review is the final gate in Complete, on
+the pushed deliverable.
+
 ## Phase: Execute — coordinator dispatches the implementation expert
 
-**Decide: delegate or act directly.** The trigger is whether there is trial-and-error to isolate from
-the coordinator's context. If the work carries real trial-and-error or exploration — code, research,
-multi-attempt work — dispatch the implementation expert (the steps below). If it is a trivial
-single-step edit with no exploration, the coordinator makes the edit itself, performs the self-check
-itself (work-order element 5, recorded in the check file), and proceeds to Verify; spinning up an
-expert would only add ceremony. Either way the Verify chain (QA review onward) is unchanged.
+**Dispatch the implementation expert for the deliverable, unconditionally.** There is no "delegate or
+act directly" decision (the coordinator never produces the deliverable — per the split). Write the
+work-order, dispatch, wait for the summary.
 
 **Step — Write the work-order**
 
-The coordinator builds a work-order for the implementation expert. The expert has no conversation
-history, so the work-order must carry everything it needs — but only that:
+The expert has no conversation history, so the work-order must carry everything it needs — but only
+that:
 
 1. **Task** — the task's Purpose, Steps, and Completion criteria, copied from `steering.md`.
 2. **Scope** — stay within this task; do not start adjacent tasks; the files expected to be in play.
@@ -74,30 +67,69 @@ history, so the work-order must carry everything it needs — but only that:
 5. **Self-check** — verify each completion criterion (OK/NG with specific evidence); (code) measure
    coverage with a project-appropriate tool (Jest, pytest, JaCoCo, gcov, etc.) and record line/branch
    coverage and uncovered areas. Write the results to `{steering_dir}/checks/{task-id}.md` using the
-   Check file format below.
-6. **Return** — report back a **compact summary** only: what changed (files/functions touched), the
-   self-check result, and anything the coordinator needs in order to review. Do **not** paste full
+   Check file format below, filling in **only the per-criterion Self-check and Evidence columns** (and
+   the Overall Verdict "Self-check" line). **Never write or overwrite the review-verdict sections** —
+   the QA / Expert Review / Overall-Verdict review lines and the QA columns are the coordinator's; leave
+   them untouched on every round, including fix rounds where they may already hold the coordinator's
+   recorded verdicts. **Do not commit the file** — it is the coordinator's ledger (see Check file
+   format).
+6. **Commit & push the deliverable** — stage the deliverable **paths explicitly** (`git add
+   <path>…`); **never `git add -A` or `git add .`**, which would sweep the check-file ledger
+   (`checks/{task-id}.md`) into a plain deliverable commit and break "the check file is the
+   coordinator's ledger, committed by the coordinator." Commit with a plain conventional message
+   (`feat:` / `fix:` / `docs:` / … matching the change), and push so it lands on the session PR. The
+   message must **not** contain the string `complete task #` (that marker belongs to the coordinator's
+   check-off — see Phase: Complete). Commits accumulate freely across feedback rounds within the task;
+   push each as made and **never force-push**. Subagent commit and push capability has been verified
+   available via the Agent tool, so the expert does this itself; the fallbacks below are last-resort
+   paths for capability-less environments, not the normal flow. **If the expert cannot push** in its
+   environment (sandbox/auth), it says so in its return summary and leaves the commit in place; the
+   coordinator then pushes that already-made commit — a push only, the commit stays the expert's, never
+   the coordinator authoring or amending the deliverable. **If the expert cannot commit at all** (its
+   environment blocks `git commit`), it says so and reports that it produced the change, left in the
+   working tree; the coordinator then commits and pushes it **mechanically** over the expert's
+   already-written change — staging the deliverable **paths explicitly** (`git add <path>…`; **never
+   `git add -A` or `git add .`**, which would sweep `checks/{task-id}.md` into the commit), committing
+   with the plain conventional message, and pushing so it lands on the session PR (symmetric to the
+   "cannot push" branch). Git mechanics only — the content stays the expert's, and the coordinator never
+   authors, edits, or regenerates the deliverable.
+7. **Return** — report back a **compact summary** only: what changed (files/functions touched), the
+   self-check result, and the commit SHA(s) plus that the deliverable was pushed. Do **not** paste full
    file contents or the trial-and-error — the diff is on disk for the coordinator to read.
 
 **Step — Dispatch the expert**
 
+- Capture the task's **starting commit** — current `HEAD`, just before the expert's first deliverable
+  commit — so Verify's `git diff <task's starting commit>..HEAD` is computable across feedback rounds.
+  Capture it **once**, before the first deliverable commit; **do not re-capture it on fix rounds** — it
+  stays anchored at the task's original starting commit, so the diff range keeps spanning every round's
+  commits.
 - Dispatch the implementation expert with the work-order and wait for its summary.
 - The expert's intermediate work stays in the subagent; only its summary enters the coordinator's
   context.
 
 ## Phase: Verify — coordinator reviews independently
 
-**Step — Read the diff**
+**Step — Read the committed diff**
 
-- The coordinator inspects `git diff` (and `git status`) itself — its own look at the artifact, not
-  the expert's report. Confirm the change matches the task's scope and Completion criteria before
-  spending review experts on it.
+- The expert already committed and pushed the **deliverable** during Execute (work-order element 6),
+  so there is no uncommitted deliverable change in the tree — but the expert also wrote the self-check
+  columns of `checks/{task-id}.md` and left it uncommitted (Execute element 5), and that file is
+  tracked, so `git status` will show it. Expect exactly that: `git status` showing only the check-file
+  ledger is normal, not a deliverable change. The expert touches only that file's self-check columns
+  and never its review-verdict sections (element 5), so any review verdicts the coordinator has already
+  recorded into it stay intact across fix rounds. The coordinator inspects the **committed** deliverable change
+  instead: `git show <sha>` for the SHA(s) the expert returned, or `git diff <task's starting
+  commit>..HEAD` for this task's cumulative change. This is its own look at the artifact, not the
+  expert's report. Confirm the change matches the task's scope and Completion criteria before spending
+  review experts on it.
 
 **Step — QA expert review (subagent)**, then the language and software-engineering experts for code
-tasks. Each review expert runs as an independent subagent (Agent tool, no conversation history) —
-like the implementation expert, but for judging, not producing. All context the expert needs must be
-passed in the prompt — but only that (element 6 says what to withhold). That independence is the
-safeguard against bias — protect it.
+tasks. Each review expert runs as an independent subagent (Agent tool, no conversation history) — for
+judging, not producing. Pass all context it needs in the prompt — but only that.
+
+Why: independence is the safeguard against bias; the Neutral framing element (6, below) says what to
+withhold so you do not lead the expert.
 
 - Build the review prompt with 6 elements:
   1. **Role** — the expert's domain (QA / language / software-engineering), told to review
@@ -129,32 +161,27 @@ Expert checklists:
 
 **Step — Triage and re-instruct**
 
-The coordinator holds **the bar**: the artifact should reach the form it ought to take to serve the
-goal — correct, clear, and consistent with the codebase's standards (its **proper form**). Triage
-every finding against that bar — don't swallow review feedback wholesale, and **don't bounce a
-decidable call to the user for lack of a standard**.
+**Triage every finding against the bar** — the form the artifact ought to take to serve the goal:
+correct, clear, and consistent with the codebase's standards (its **proper form**). Don't swallow
+review feedback wholesale, and **don't bounce a decidable call to the user for lack of a standard**.
+Assess each finding on its merits: is it factually correct, and does acting on it move the artifact
+toward its proper form? Each finding ends in exactly one of:
 
-- Assess each finding on its merits: is it factually correct, and does acting on it move the artifact
-  toward its proper form for the goal?
-- **Valid** → fix it. Route the fix by the same test Execute used — *is there real trial-and-error to
-  isolate?* — judged on the fix itself, not inherited from the first pass: if there is (exploration,
-  several attempts), the implementation expert does it; if there isn't, the coordinator does it
-  directly, whatever the fix's size. Usually this matches the first pass, but it can flip either way —
-  a one-line correction to delegated work the coordinator just makes itself, while a supposedly-trivial
-  edit whose fix turns out to need real exploration goes to an expert. **Delegating the fix:** write
+- **Valid** → fix it. **Every deliverable-touching fix goes to the implementation expert** — no matter
+  its size, because every line of the deliverable and its git history is the expert's. Write
   improvement instructions and dispatch the implementation expert (a fresh subagent, no memory of the
-  first pass) rather than taking over its domain work — reuse the original work-order if the first pass
-  was delegated, or write one now if the first pass was a direct edit (no work-order exists yet), and
-  in both cases point it at the current on-disk state to build on, not regenerate from scratch.
-  **Fixing it directly:** the coordinator just applies it; spinning up an expert with no trial-and-error
-  to isolate would only add ceremony. **This includes minor improvements: if the fix is correct and
-  makes the artifact better, just apply it — do not ask the user.** Whichever route applied the fix —
-  delegated or direct — re-run the same review expert on the result before closing the finding; and if
-  the fix could plausibly affect a dimension another expert already cleared (e.g. a correctness fix that
-  reshapes design or wording), re-run that expert too, not only the originating one. Cap this at 3
-  iterations, where one iteration is a single fix and all its re-reviews (the originating expert plus
-  any regression re-runs count together as one, not separately); valid findings still NG after 3 →
-  record them and escalate to user review with the unresolved items.
+  first pass) rather than taking over its domain work: reuse the original work-order (its element 5 still binds — the
+  expert writes only the self-check columns of `checks/{task-id}.md` and never touches the review-verdict
+  sections, so the coordinator's recorded verdicts already in the file survive the fix round), point it at
+  the current on-disk state to build on (not regenerate from scratch), and have it commit/push the fix as a
+  fresh deliverable commit (work-order element 6 — accumulating, never force-pushed). **This includes
+  minor improvements: if the fix is correct and makes the artifact better, dispatch it — do not ask the
+  user.** After the expert returns, re-run the same review expert on the result before closing the
+  finding; and if the fix could plausibly affect a dimension another expert already cleared (e.g. a
+  correctness fix that reshapes design or wording), re-run that expert too, not only the originating
+  one. Cap this at 3 iterations, where one iteration is a single fix and all its re-reviews (the
+  originating expert plus any regression re-runs count together as one, not separately); valid findings
+  still NG after 3 → record them and escalate to user review with the unresolved items.
 - **Invalid** → reject it, citing the evidence. A finding is Invalid **only** when it rests on a
   factual error, or falls outside a scope boundary written in the task's Completion criteria — cite
   the specific fact or criterion. Never accept a finding just because an expert raised it.
@@ -162,28 +189,30 @@ decidable call to the user for lack of a standard**.
   expand scope, change the agreed direction or a matter of taste, or trade effort against benefit in a
   way only the user can weigh. "It's minor, so I'll just ask" is **not** a reason — decide it against
   the bar.
-- Every finding ends in an explicit fix, an evidence-cited rejection, or a user-owned decision —
-  never silently dropped, never blindly accepted, never bounced for lack of a standard.
 
-Record the review verdicts into `{steering_dir}/checks/{task-id}.md` (the coordinator already has them
-from dispatching the experts — this is bookkeeping, not artifact editing).
+Never silently drop, blindly accept, or bounce a finding for lack of a standard. Record the review
+verdicts into the check file — the coordinator's ledger, not artifact editing (see Check file format).
 
 ## Phase: Complete
 
-**Step — User review**
+**Step — User review (on the PR)**
 
-- The coordinator presents the results to the user. **DO NOT proceed without user approval.** This
-  gate is what keeps the user in the conversation at every task boundary.
+- The deliverable is already committed and pushed (by the implementation expert, during Execute and
+  any Verify fix rounds), so the user reviews it on the session PR — where diffs and long documents
+  render properly, per `.claude/rules/push-and-review.md`. The coordinator points the user there and
+  presents the results. **DO NOT proceed without user approval** — this gate keeps the user in the loop
+  at every task boundary.
 
-**Step — Commit and push (coordinator bookkeeping)**
+**Step — Check off steering (coordinator's ledger)**
 
-- The coordinator checks off the task in `steering.md` (bookkeeping).
-- The coordinator commits and pushes directly — there is no trial-and-error to isolate, so this is its
-  own bookkeeping: stage the change, commit with the message
-  `{type}: complete task #{id} — {description}` (where `{type}` matches the change — `feat` / `fix` /
-  `docs` / `refactor` / `test` / …), then push so the commit lands on the session PR. (The exact
-  `complete task #{id}` substring is what `/rn:hi` matches against `git log` when it reconciles
-  tasks — keep that substring regardless of the prefix.)
+- After approval, check off the task in `steering.md` directly (coordinator's ledger, no
+  trial-and-error to isolate).
+- **Commit that check-off with the single completion marker** — message `{type}: complete task #{id} —
+  {description}` (`{type}` matches the change — `feat` / `fix` / `docs` / `refactor` / `test` / …), then
+  push to the session PR. This is the **canonical, single completion marker** for the task: deliverable
+  commits carry plain messages, and only this check-off commit carries the `complete task #{id}`
+  substring. That exact substring is what `/rn:hi` matches against `git log` when it reconciles tasks —
+  keep it regardless of the prefix.
 
 **Step — Advance**
 
@@ -192,9 +221,17 @@ from dispatching the experts — this is bookkeeping, not artifact editing).
 
 ## Check file format
 
-Write to `{steering_dir}/checks/{task-id}.md`. Whoever did the work fills the Completion Criteria
-self-check columns (the implementation expert when delegated, the coordinator when it edited directly);
-the coordinator fills the review verdicts it collected. Same file, written by whoever holds the data.
+Write to `{steering_dir}/checks/{task-id}.md`. **This file is the coordinator's ledger (canonical
+ownership rule).** Column ownership is split and holds across every round, including fix rounds: the
+implementation expert writes **only** the Completion Criteria **Self-check** and **Evidence** columns
+(and the Overall Verdict "Self-check" line) and **never** writes or overwrites the review-verdict
+sections — the QA / Expert Review / other Overall-Verdict lines and the QA columns are the
+coordinator's. The expert **does not commit it** (Execute element 6 commits the deliverable only). The
+coordinator fills in the review verdicts it collected and commits the file as part of its ledger —
+naturally on the post-approval steering check-off commit. Same file, disjoint columns written by
+whoever holds the data; committed by the coordinator. Because the expert never touches the
+review-verdict sections, a re-dispatched expert on a fix round cannot clobber verdicts the coordinator
+has already recorded.
 
 ```markdown
 # {task-id} Completion Check

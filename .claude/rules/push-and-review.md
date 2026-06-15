@@ -5,8 +5,9 @@ local branch, never gated in the console.
 
 ## Push on every change
 
-- **Commit and push as soon as a change is made — do not ask first.** One task is one commit; the
-  moment it is committed, push it. Never sit on local commits, and never ask "may I push?".
+- **Commit and push as soon as a change is made — do not ask first.** Commit and push every change;
+  one completion marker per task. The moment a change is committed, push it. Never sit on local
+  commits, and never ask "may I push?".
   - Rationale: the pushed branch is the shared truth. Work the user cannot see cannot be reviewed,
     built on, or recovered — pushing is what makes it real.
 

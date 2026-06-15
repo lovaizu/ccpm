@@ -49,7 +49,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
   Review the steering there and approve to start #1.
 ```
 
-Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each approved task added to the same PR. (Smaller, one-step changes the assistant just makes itself, without involving an expert.)
+Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each approved task added to the same PR.
 
 ### 2. Step away — `/rn:bb`
 
@@ -58,7 +58,7 @@ Context is full, or you're done for the day. Run it and your work is committed /
 ```console
 > /rn:bb
 
-● Committed #1 — "test: complete task #1 — reproduction test"
+● Committed and pushed — "test: add reproduction test for payment failure"
   Last completed: #1 reproduction test
   Up next:        #2 find the root cause and fix it
 

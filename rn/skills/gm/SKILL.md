@@ -42,21 +42,16 @@ intent; the user confirms it in the PR review.
 
 **Step 3 — Create steering.md**
 
-- Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md`.
-- Fill `Goal`, `Acceptance criteria`, `Assumptions`, and `Rules`. Leave `Tasks`, `Decisions`, and
-  `State` as their placeholders for now.
-- In `Acceptance criteria`, define how the goal is judged achieved along two axes: goal alignment +
-  quality. Write them exhaustively, never sample — the complete set is what defines scope (in / out).
-- In `Assumptions`, separate facts from assumptions and mark anything unverified — these are the
-  things taken to be true in pursuit of the goal; if one proves false, the plan changes.
+- Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md` and follow its per-section guidance.
+- Fill `Goal`, `Acceptance criteria`, `Assumptions`, and `Rules` per that guidance. Leave `Tasks`,
+  `Decisions`, and `State` as their placeholders for now.
 
 **Step 4 — Decompose tasks**
 
 - Work **backwards from the Acceptance criteria end state** (e.g. acceptance = "payments complete";
   working back: regression check ← root-cause fix ← failing reproduction test).
-- Give each task a `Purpose`, `Prerequisites`, `Steps` (including the verify-phase review steps as
-  `- [ ]` checkboxes), and `Completion criteria` — following both the inline `Completion criteria`
-  rules and the `Task definition requirements` table in the template, in full.
+- Define each task following the template's `Tasks` structure, inline `Completion criteria` rules,
+  and `Task definition requirements` table in full.
 
 ## Phase 3: Launch — open for review, then start
 
