@@ -304,8 +304,28 @@ is it fragile, and what does that imply for the deferred packaging decision.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: #1 statusline → state-file write (committed `d928928`, pushed to PR #6; live
+  A1 proof done — a real CC render wrote this session's `~/.rn/ctx/<surface>.json`). All 3 expert
+  reviews PASS. State-file location decided: keep `~/.rn/ctx/` (git-external, forced by AC5; not
+  repo `.rn/loop/`). XDG convention noted as a deferred packaging option.
+- **Next**: #2 cmux drive primitives (ESC, type+submit, read) — record findings in
+  `loop/cmux-notes.md`.
+- **Notes**: #2 IN PROGRESS, approach approved by user ("進めてOK"). Proceed without re-asking.
+  **cmux facts found**: `cmux send --surface <id> <text>`, `cmux send-key --surface <id> <key>`
+  (keys lowercase: `enter`, `ctrl+c`; ESC likely `escape` — CONFIRM), `cmux read-screen --surface
+  <id> --lines <n>` / `capture-pane`. Default target = own surface, so ALWAYS pass `--surface`.
+  My own surface is `surface:12` (CMUX_SURFACE_ID F73F5BA5-…, workspace "loop") — never target it.
+  Use `cmux tree`/`list-pane-surfaces`/`surface-health` to find ids. **GOTCHA**: a freshly
+  `new-workspace`/`new-surface` terminal does NOT spawn a PTY while hidden (`surface-health` shows
+  `in_window=false`, and `read-screen`/`send` return `invalid_params: Surface is not a terminal`).
+  Selecting it (`select-workspace`) flips `in_window=true` but the PTY still needs real wall-clock
+  time to attach — must wait (foreground `sleep` is blocked; use `cmux wait-for` or a background
+  wait) and likely keep it frontmost. Earlier `looptest` (workspace:20) attempt failed on this and
+  was closed. **Approved 2-stage plan**: (A, no quota) on a throwaway focused pane, confirm
+  send+enter submits a slash command (A3/A4), `read-screen` returns text, and the exact ESC key
+  name; then close it and restore view to workspace:12. (B, uses Max quota — approved) dedicate a
+  pane, `cmux send … 'claude'`+enter to launch interactive claude (NO `-p`/SDK — interactive
+  billing only), make it generate, send ESC, and observe via `read-screen` that it stops (A2/AC3).
+  Always restore focus to workspace:12 and clean up test workspaces/panes after.
