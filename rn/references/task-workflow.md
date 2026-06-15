@@ -69,20 +69,31 @@ that:
    coverage and uncovered areas. Write the results to `{steering_dir}/checks/{task-id}.md` using the
    Check file format below, but **do not commit it** — that file is the coordinator's ledger (see Check
    file format).
-6. **Commit & push the deliverable** — stage the **deliverable change only** (not the check file),
-   commit with a plain conventional message (`feat:` / `fix:` / `docs:` / … matching the change), and
-   push so it lands on the session PR. The message must **not** contain the string `complete task #`
-   (that marker belongs to the coordinator's check-off — see Phase: Complete). Commits accumulate
-   freely across feedback rounds within the task; push each as made and **never force-push**. **If the
-   expert cannot push** in its environment (sandbox/auth), it says so in its return summary and leaves
-   the commit in place; the coordinator then pushes that already-made commit — a push only, the commit
-   stays the expert's, never the coordinator authoring or amending the deliverable.
+6. **Commit & push the deliverable** — stage the deliverable **paths explicitly** (`git add
+   <path>…`); **never `git add -A` or `git add .`**, which would sweep the check-file ledger
+   (`checks/{task-id}.md`) into a plain deliverable commit and break "the check file is the
+   coordinator's ledger, committed by the coordinator." Commit with a plain conventional message
+   (`feat:` / `fix:` / `docs:` / … matching the change), and push so it lands on the session PR. The
+   message must **not** contain the string `complete task #` (that marker belongs to the coordinator's
+   check-off — see Phase: Complete). Commits accumulate freely across feedback rounds within the task;
+   push each as made and **never force-push**. Subagent commit and push capability has been verified
+   available via the Agent tool, so the expert does this itself; the fallbacks below are last-resort
+   paths for capability-less environments, not the normal flow. **If the expert cannot push** in its
+   environment (sandbox/auth), it says so in its return summary and leaves the commit in place; the
+   coordinator then pushes that already-made commit — a push only, the commit stays the expert's, never
+   the coordinator authoring or amending the deliverable. **If the expert cannot commit at all** (its
+   environment blocks `git commit`), it says so and reports that it produced the change, left in the
+   working tree; the coordinator then runs the commit **mechanically** over the expert's already-written
+   change — git mechanics only, the content stays the expert's, and the coordinator never authors,
+   edits, or regenerates the deliverable.
 7. **Return** — report back a **compact summary** only: what changed (files/functions touched), the
    self-check result, and the commit SHA(s) plus that the deliverable was pushed. Do **not** paste full
    file contents or the trial-and-error — the diff is on disk for the coordinator to read.
 
 **Step — Dispatch the expert**
 
+- Capture the task's **starting commit** — current `HEAD`, just before the expert's first deliverable
+  commit — so Verify's `git diff <task's starting commit>..HEAD` is computable across feedback rounds.
 - Dispatch the implementation expert with the work-order and wait for its summary.
 - The expert's intermediate work stays in the subagent; only its summary enters the coordinator's
   context.
@@ -91,12 +102,15 @@ that:
 
 **Step — Read the committed diff**
 
-- The expert already committed and pushed the deliverable during Execute (work-order element 6), so
-  the working tree is clean — plain `git diff` / `git status` show nothing. The coordinator instead
-  inspects the **committed** deliverable change: `git show <sha>` for the SHA(s) the expert returned,
-  or `git diff <task's starting commit>..HEAD` for this task's cumulative change. This is its own look
-  at the artifact, not the expert's report. Confirm the change matches the task's scope and Completion
-  criteria before spending review experts on it.
+- The expert already committed and pushed the **deliverable** during Execute (work-order element 6),
+  so there is no uncommitted deliverable change in the tree — but the expert also wrote
+  `checks/{task-id}.md` and left it uncommitted (Execute element 5), and that file is tracked, so
+  `git status` will show it. Expect exactly that: `git status` showing only the check-file ledger is
+  normal, not a deliverable change. The coordinator inspects the **committed** deliverable change
+  instead: `git show <sha>` for the SHA(s) the expert returned, or `git diff <task's starting
+  commit>..HEAD` for this task's cumulative change. This is its own look at the artifact, not the
+  expert's report. Confirm the change matches the task's scope and Completion criteria before spending
+  review experts on it.
 
 **Step — QA expert review (subagent)**, then the language and software-engineering experts for code
 tasks. Each review expert runs as an independent subagent (Agent tool, no conversation history) — for
