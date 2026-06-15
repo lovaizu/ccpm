@@ -54,8 +54,9 @@ Goal alignment — coherence and scope:
 - The coordinator / experts workflow is defined once and authoritatively in `task-workflow.md`; `gm` and
   `hi` keep reaching task execution only through it, with no duplicated or divergent workflow text
   added to the skill files.
-- Scope is explicit: this session changes the per-task execution loop in `task-workflow.md`. The
-  session-lifecycle commits/pushes in `bb` and `hi` are left unchanged.
+- Scope is explicit: this session changes the per-task execution loop in `task-workflow.md`, plus a
+  small `gm` follow-up that makes the session PR body a single link to `steering.md` (no duplicated
+  plan). The session-lifecycle commits/pushes in `bb` and `hi` are left unchanged.
 
 Quality:
 
