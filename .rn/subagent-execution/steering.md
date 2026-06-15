@@ -313,3 +313,28 @@ task boundary, and routine fixes are decided against a quality bar), without bum
 # State
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
+
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: **All tasks #1–#6 done and the Acceptance criteria walked end-to-end on resume —
+  all met.** Both `--strict` validation gates pass; `version` stays `0.2.0` (no release). PR #7
+  refreshed to the coordinator/experts + delegate-by-payoff model and **marked ready for review**.
+  Follow-up after the walk: PR #7 body slimmed to a **single branch-ref link** to `steering.md` (no
+  duplicated plan), and `gm` SKILL Step 5 updated so it **emits that link-only PR body by default**
+  (commit `bf4d7ec`); steering scope note updated to include this gm follow-up. No CHANGELOG entry for
+  it (PR-body presentation polish, not a tracked behavior change).
+- **Next**: **Nothing required — the session goal is met.** Open item for the user: decide when to
+  **merge PR #7** (repo allows squash-merge only; `deleteBranchOnMerge:false`). A release (tag
+  `rn-v…` + GitHub Release) remains a separate explicit instruction — not done this session.
+- **Notes**:
+  - **PR #7 body is a branch-ref link** (`blob/subagent-execution/…/steering.md`), chosen over a
+    SHA-permalink (freezes + needs re-paste on every edit) and a main-ref (404 until merged). It
+    tracks the latest plan during review; its only failure is 404 after merge+branch-delete, when the
+    same content lives on main — acceptable. `gm` now bakes this form in.
+  - **`version` / release**: no bump; `[Unreleased]` holds the two `Changed` lines (delegate-by-payoff
+    benefit + quality-bar triage). Release is a separate explicit instruction per `.claude/rules/plugin.md`.
+  - **Dogfooding outcome**: quality + user-in-loop clearly worked (QA caught real issues each task;
+    user gated every boundary; the gm follow-up was done coordinator-direct, exactly the trivial-edit
+    case delegate-by-payoff intends). Context-lightness still unproven on a *large* iteration-heavy
+    code task (none this session). Open future idea NOT taken in: improvement-2 (stop classifying
+    findings as "taste" mid-verify; let the final user gate own it) — left for a future `/rn:gm`.
