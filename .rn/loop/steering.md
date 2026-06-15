@@ -161,19 +161,20 @@ watcher never sends `/clear` prematurely and can re-fire after `/rn:hi`.
 
 **Steps**:
 
-- [ ] In `loop/gate.sh`, implement `bb_done`: true when the repo tree is clean **and** HEAD's
+- [x] In `loop/gate.sh`, implement `bb_done`: true when the repo tree is clean **and** HEAD's
       `steering.md` State shows `Status: paused` (read via `git show HEAD:<path>`), per F4/F5.
-- [ ] Implement `rearmed`: true when HEAD's `steering.md` State `Status` is no longer `paused` (reset
-      by `/rn:hi`).
-- [ ] Implement steering-file resolution for the target repo (single active session, A6): locate
-      `.rn/*/steering.md`, preferring the most recent / `Status: paused`.
-- [ ] Test the predicates against real commits produced by an actual `/rn:bb` then `/rn:hi` run, and
+- [x] Implement `rearmed`: true when HEAD's `steering.md` State `Status` is no longer `paused` (reset
+      by `/rn:hi`). (Tightened to a POSITIVE match on `not suspended` per D-3 — fails closed.)
+- [x] Implement steering-file resolution for the target repo (single active session, A6): locate
+      `.rn/*/steering.md`, preferring the most recent / `Status: paused`. (Plus `STEERING_PATH`
+      override — the watcher MUST pin its session; glob warns on >1 session.)
+- [x] Test the predicates against real commits produced by an actual `/rn:bb` then `/rn:hi` run, and
       record the before/after verdicts.
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA engineer review (subagent)
-- [ ] language expert review (subagent)
-- [ ] software engineer review (subagent)
-- [ ] user review
+- [x] self-check (OK/NG per completion criterion, record in checks/3.md)
+- [x] QA engineer review (subagent)
+- [x] language expert review (subagent)
+- [x] software engineer review (subagent)
+- [ ] user review  ← PENDING (suspended here; resume at this step)
 
 **Completion criteria**:
 
@@ -304,8 +305,35 @@ is it fragile, and what does that imply for the deferred packaging decision.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-06-15
+- **Last completed**: #2 cmux drive primitives (committed `0b8cb94`, pushed). #1 also done.
+- **Next**: **#3 — USER REVIEW ONLY (the one pending step).** The gate code is fully implemented and
+  ALL THREE expert reviews PASS; only the user-review gate remains. On resume: present the task #3
+  result and ask the user to approve, then check off the `user review` step and make the
+  `complete task #3` commit. After that → #4 watcher loop.
+- **Notes**:
+  **Task #3 status — DONE pending user review.** Deliverables (uncommitted at HEAD `0b8cb94`; this
+  bb commits them as `wip:` because user review isn't checked): `loop/gate.sh`, `loop/gate.test.sh`,
+  `loop/checks/3.md`. Predicates: `bb_done [ref]` (tree clean AND committed `Status: paused`),
+  `rearmed [ref]` (committed Status == exactly `not suspended`), CLI exit **0=true/1=false/2=error**,
+  `STEERING_PATH` env (repo-relative) pins the gated session. Suite **12/12 on a clean tree** (run
+  `./loop/gate.test.sh`; with the gate files uncommitted the 2 clean-tree cases fail honestly →
+  10/12 — that is the live-tree half of bb_done, not a defect; verify clean via a temp commit).
+  **Review history (all resolved):** initial reviews converged on 3 real defects — rearmed
+  fail-open, bad-ref exit 128, session-resolution diverging from rn — all fixed (FIX 1–4 in
+  checks/3.md), re-reviewed PASS by QA + language + SWE. SWE follow-ups C1/C2 applied: header says
+  watcher MUST set `STEERING_PATH`, `steering_path` warns on stderr when >1 session, and a TOCTOU
+  note (bb_done is a point-in-time sample; the watcher must re-check it right before `/clear`).
+  Caveat: shellcheck not installed (no static lint).
+  **Carry-forward into #4 (watcher loop) — gate contract the watcher depends on:** set
+  `STEERING_PATH` to the driven session's repo-relative steering path; call `gate.sh bb_done`
+  (exit 0 ⇒ send `/clear`) and `gate.sh rearmed` (exit 0 ⇒ re-arm); treat non-zero as
+  not-yet/keep-waiting; re-check `bb_done` immediately before `/clear` (no lock held). Use ONLY
+  `cmux …` + git in #4 — no `claude -p`, no SDK (AC11).
+  **cmux primitives from #2 (in loop/cmux-notes.md):** interrupt `cmux send-key --surface <id>
+  escape`; submit `cmux send --surface <id> '<text>'` then `cmux send-key --surface <id> enter`;
+  read `cmux read-screen --surface <id>`. ALWAYS pass `--surface` (default hits the caller's own
+  surface). This session's own surface is `surface:12` / `CMUX_SURFACE_ID F73F5BA5-…` — never
+  target it. PTY-attach gotcha for new test panes: create with `--focus true`, wait real wall-clock,
+  confirm `❯` via read-screen before typing (foreground `sleep` is blocked).
