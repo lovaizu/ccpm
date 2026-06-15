@@ -260,11 +260,11 @@ task boundary, and routine fixes are decided against a quality bar), without bum
 
 **Steps**:
 
-- [ ] Run `claude plugin validate rn --strict`
-- [ ] Run `claude plugin validate <marketplace-root> --strict`
-- [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Run `claude plugin validate rn --strict`
+- [x] Run `claude plugin validate <marketplace-root> --strict`
+- [x] self-check (OK/NG per completion criterion, record in checks/6.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
