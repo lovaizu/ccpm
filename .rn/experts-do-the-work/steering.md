@@ -251,7 +251,7 @@ invariant.
   commit
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
-- [ ] user review
+- [x] user review (approved on PR #10)
 
 **Completion criteria**:
 
