@@ -1,35 +1,51 @@
 # Goal
 
-Reshape rn's task-execution model into a **coordinator / experts** division. The coordinator (the
-main agent) does the directing — decomposes the goal, decides *which domain's expert* each piece of
-work needs, dispatches them, reviews results against `git diff`, re-instructs for fixes, and talks
-with the user — while the actual work, the reviews, and the commit/push are carried out by **expert
-subagents**, each applying its own domain's best practices. This is a division by domain, not a chain
-of command: the coordinator delegates because that expert owns the domain, not by rank. The intent:
-the coordinator's context holds only the diff, the verdicts, and the conversation with the user, so
-an expert's trial-and-error never piles up in the coordinator. Crucially, the coordinator stays in
-the loop as a reviewer rather than fully delegating — that is what keeps the user in the conversation
-at every task boundary (full delegation would run start-to-finish with no place for the user to weigh
-in).
+Reshape rn's task-execution model into a **coordinator / experts** division whose real purpose is to
+**keep the coordinator's context light, keep quality high, and keep the user present at every task
+boundary**. The coordinator (the main agent) directs — decomposes the goal, decides *which domain's
+expert* each piece of work needs, dispatches them, reviews results against `git diff`, re-instructs
+for fixes, and talks with the user. Domain work — the writing, the reviews — is carried out by
+**expert subagents**, each applying its own domain's best practices.
+
+Delegation is a **means, not the end.** The coordinator delegates **when delegation pays off — when a
+piece of work carries real trial-and-error or exploration that should stay out of the coordinator's
+context** (typically code, research, or any work expected to need several attempts). The point is
+that an expert's dead-ends never pile up in the coordinator; its context holds only the diff, the
+verdicts, and the conversation with the user. For trivial, single-step work (e.g. a one-line doc
+edit) and pure session bookkeeping (commit/push, `steering.md`, check files) — where there is no
+trial-and-error to isolate — the coordinator acts directly; delegating there would add ceremony
+without serving the purpose.
+
+This is a division by domain, not a chain of command: the coordinator delegates because that expert
+owns the domain, not by rank. And crucially the coordinator stays in the loop as a reviewer rather
+than fully delegating — that is what keeps the user in the conversation at every task boundary (full
+delegation would run start-to-finish with no place for the user to weigh in).
 
 # Acceptance criteria
 
 Goal alignment — the coordinator / experts division (all defined in `task-workflow.md`):
 
-- The Execute phase has the coordinator write a work-order and dispatch an **implementation expert
-  subagent** to do the actual work; the coordinator performs no domain work itself.
-- The implementation expert does the work plus its own self-check and returns only a **compact
-  summary** to the coordinator; the expert's full output and trial-and-error stay inside the
-  subagent, not in the coordinator's context.
+- The purpose leads and is explicit: the model exists to keep the coordinator's context to the diff,
+  the verdicts, and the user conversation — an expert's trial-and-error must not pile up in the
+  coordinator — with quality and the user-in-loop preserved alongside it.
+- Delegation is a means governed by **payoff, not an absolute**: the Execute phase has the coordinator
+  write a work-order and dispatch an **implementation expert** for work that carries real
+  trial-and-error or exploration (e.g. code, substantial writing); it may do trivial single-step edits
+  and pure bookkeeping directly. The bar is whether trial-and-error is isolated from the coordinator's
+  context, not whether the coordinator ever touches an artifact.
+- When an implementation expert is dispatched, it does the work plus its own self-check and returns
+  only a **compact summary**; the expert's full output and trial-and-error stay inside the subagent,
+  not in the coordinator's context.
 - The Verify phase has the coordinator review each task independently: it inspects `git diff` itself
   and dispatches the adversarial review experts (QA / language / software-engineering), then triages
   the findings.
-- When fixes are needed, the coordinator writes improvement instructions and **re-dispatches the
-  implementation expert**; the coordinator does not edit the artifact itself. This review →
-  re-instruct loop repeats until the bar is cleared.
+- When fixes are needed on delegated work, the coordinator writes improvement instructions and
+  **re-dispatches the implementation expert** rather than silently taking over its domain work. This
+  review → re-instruct loop repeats until the bar is cleared.
 - User review stays a required gate before any commit: the coordinator presents the result and waits
   for the user's approval, so the user is present at every task boundary.
-- After approval, **commit and push are carried out by a subagent**, not by the coordinator.
+- Commit/push and `steering.md` / check files are session bookkeeping the coordinator does directly
+  (no trial-and-error to isolate); delegating them would add ceremony without serving the purpose.
 - Each expert is told to apply **its domain's best practices** (the implementation expert in its
   work-order; the review experts in their review prompts).
 
@@ -46,10 +62,13 @@ Quality:
 - The review-expert safeguards already in `task-workflow.md` (independence, the 6-element
   neutral-framing prompt, withholding the self-check file and any verdict from reviewers) are
   preserved, not weakened.
-- `README.md` conveys the coordinator / experts model to a reader in the file's existing scenario /
-  plain-language style — no mechanical lists or control-noun labels.
-- `CHANGELOG.md` has an `[Unreleased]` entry stating the change as a user-facing benefit, per the
-  changelog rules; `version` in `plugin.json` stays `0.2.0` (no release this session).
+- `README.md` conveys the corrected model — experts carry out the work that warrants it while the
+  coordinator directs (handling trivial and bookkeeping steps itself) and the user approves at each
+  task boundary — in the file's existing scenario / plain-language style, with no mechanical lists or
+  control-noun labels.
+- `CHANGELOG.md` has a single `[Unreleased]` entry stating the change as a user-facing benefit (the
+  corrected delegate-by-payoff model, not the superseded absolute), per the changelog rules; `version`
+  in `plugin.json` stays `0.2.0` (no release this session).
 - `claude plugin validate rn --strict` and `claude plugin validate <marketplace-root> --strict` both
   pass.
 
@@ -150,39 +169,100 @@ coordinator directs and the user approves at each task boundary, in the file's s
 - the wording follows README's existing scenario / plain-language style, with no mechanical
   enumeration or control-noun labels
 
-### #3: Record the change in CHANGELOG.md
+### #3: Correct task-workflow.md from "coordinator does no domain work" to "delegate by payoff"
 
-**Purpose**: Add an `[Unreleased]` entry describing the coordinator / experts execution as a
-user-facing benefit, without bumping the version.
+**Purpose**: Revise `references/task-workflow.md` so delegation is governed by payoff — the coordinator
+dispatches an implementation expert for work that carries real trial-and-error / exploration, and
+handles trivial single-step edits and pure bookkeeping (incl. commit/push) directly — aligning the
+document with the corrected Goal (light context is the end; "no domain work" was an over-strict means).
+Per D-2.
 
 **Prerequisites**: #1
 
 **Steps**:
 
-- [x] Add a line under `## [Unreleased]` (in the right Added/Changed group) stating the benefit to
-      the user
-- [x] Confirm `version` in `plugin.json` is unchanged
-- [x] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [x] QA expert review (subagent)
-- [ ] user review  ← AWAITING USER APPROVAL (work done, QA passed; resume here)
+- [ ] Reframe the intro to lead with the purpose (light context / quality / user-in-loop) and state
+      that delegation is a means governed by payoff, not an absolute
+- [ ] Execute phase: delegate the implementation expert for work carrying real trial-and-error; permit
+      the coordinator to do trivial single-step edits directly, with the trigger stated
+- [ ] Complete phase: make commit/push coordinator bookkeeping (remove the mandatory commit subagent),
+      keeping the user-review gate and the `complete task #{id}` message convention
+- [ ] Keep "what the coordinator may write directly" consistent with the corrected means
+      (steering / check files, trivial edits, bookkeeping commits)
+- [ ] Preserve the review-expert independence and 6-element neutral-framing safeguards
+- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
 
 **Completion criteria**:
 
-- `CHANGELOG.md` `[Unreleased]` contains a line stating the change in user-facing benefit terms, per
+- `task-workflow.md` leads with the purpose and frames delegation as payoff-governed, not "the
+  coordinator performs no domain work itself"
+- the Execute phase delegates work carrying real trial-and-error and permits coordinator-direct trivial
+  edits, with the trigger stated
+- the Complete phase performs commit/push as coordinator bookkeeping (no mandatory subagent) and keeps
+  the user-review gate and the `complete task #{id}` message convention
+- the review-expert independence and neutral-framing safeguards are present and unweakened
+- `gm` and `hi` still reach task execution solely through `task-workflow.md`
+
+### #4: Align README.md with the corrected model
+
+**Purpose**: Adjust `README.md` so it does not overstate that the assistant "never does the work
+itself"; convey that experts carry out the work that warrants it while the coordinator directs
+(handling trivial and bookkeeping steps) and the user approves at each task boundary — in README's
+scenario style.
+
+**Prerequisites**: #3
+
+**Steps**:
+
+- [ ] Adjust the README wording so the delegate-by-payoff model reads accurately (no absolute "doesn't
+      do the work itself"), keeping the user-approval-at-each-boundary point
+- [ ] Keep README's existing scenario / plain-language style — no mechanical lists or control-noun labels
+- [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- `README.md` conveys that experts carry out the work that warrants it while the coordinator directs and
+  the user approves at each task boundary, without claiming the coordinator never does any work itself
+- the wording follows README's existing scenario / plain-language style
+
+### #5: Update CHANGELOG.md to the corrected user benefit
+
+**Purpose**: Replace the superseded `[Unreleased]` lines with an entry stating the corrected model's
+benefit (a lighter conversation because real iteration stays out of sight, you still approve at every
+task boundary, and routine fixes are decided against a quality bar), without bumping the version.
+
+**Prerequisites**: #3
+
+**Steps**:
+
+- [ ] Rewrite the `[Unreleased]` `Changed` entry to state the corrected delegate-by-payoff benefit in
+      user-facing terms (a single coherent entry, not v1 + correction)
+- [ ] Confirm `version` in `plugin.json` is unchanged at `0.2.0`
+- [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- `CHANGELOG.md` `[Unreleased]` states the corrected model's change in user-facing benefit terms, per
   the changelog rules
 - `plugin.json` `version` is unchanged at `0.2.0`
 
-### #4: Pass the validation gates
+### #6: Pass the validation gates
 
 **Purpose**: Confirm the plugin and the marketplace still validate strictly after the changes.
 
-**Prerequisites**: #1, #2, #3
+**Prerequisites**: #1, #2, #3, #4, #5
 
 **Steps**:
 
 - [ ] Run `claude plugin validate rn --strict`
 - [ ] Run `claude plugin validate <marketplace-root> --strict`
-- [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
+- [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
 - [ ] QA expert review (subagent)
 - [ ] user review
 
@@ -212,9 +292,27 @@ user-facing benefit, without bumping the version.
 - **Sources**: conversation 2026-06-15; `rn/references/task-workflow.md` → "Step — Triage and
   re-instruct".
 
+## D-2: "Coordinator does no domain work" was an over-strict means; the goal is light context, so delegate by payoff
+- **Issue**: The Goal and Acceptance criteria encoded "the coordinator performs no domain work itself"
+  as if it were the objective. Dogfooding #1–#3 exposed the cost: a one-line CHANGELOG edit was
+  dispatched to an implementation expert, and commit/push to a separate subagent — dispatch ceremony
+  heavier than the task, serving no purpose because such trivial work has no trial-and-error to isolate.
+- **Conclusion**: The objective is to keep the coordinator's context light (the expert's trial-and-error
+  stays in the subagent), with quality and the user-in-loop preserved. "No domain work" is demoted to a
+  means and corrected: delegate when the work carries real trial-and-error / exploration to isolate
+  (code, research, multi-attempt work); the coordinator acts directly on trivial single-step edits and
+  pure bookkeeping (commit/push, `steering.md`, check files).
+- **Rationale**: A trivial edit has nothing to isolate, so doing it directly costs the coordinator no
+  context — while delegating it adds a full agent briefing and dispatch. Tying delegation to payoff
+  serves the goal that the absolute rule was mistakenly standing in for.
+- **Evidence**: This session the user challenged the framing — "実作業をしない、が目的？本当？" — and the
+  Goal's own *狙い* names light context and the user-in-loop, with "no domain work" only the mechanism.
+- **Sources**: conversation 2026-06-15; this `steering.md` Goal; `rn/references/task-workflow.md`.
+
 # State
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
 - **Status**: active
-- **Next**: #3 user review → complete-commit (subagent); then #4 validation gates.
+- **Next**: #3 — correct `task-workflow.md` to delegate-by-payoff (per D-2); then #4 README, #5
+  CHANGELOG, #6 validation.
