@@ -28,13 +28,15 @@ then `/rn:hi` in a fresh conversation to resume.
 - Dirty tree:
   - all of the current task's steps checked → normal commit.
   - some steps unchecked → commit with a `wip:` prefix.
+- Either way, this is a plain commit — its message must **not** contain `complete task #{id}`. That
+  marker rides only on the coordinator's post-approval check-off commit (one per task, per
+  `task-workflow.md` Phase: Complete); a suspend-time commit is never a task-completion marker.
 
 **Step 3 — Write State**
 
 - Check off completed task steps. Add any new tasks or decisions discovered during the work.
 - Write the `State` section: set `Status` to `paused`, then `Date`, `Last completed`, `Next`,
-  `Notes`. (`paused` is the signal `/rn:hi` and `/rn:bb` search for; the template's reset value is
-  `not suspended`, so only a genuinely suspended session reads `paused`.)
+  `Notes`, per the `State` field semantics in `steering-template.md`.
 - **Notes must carry enough context for `/rn:hi` to resume without this conversation**: current
   work, blockers, pending decisions, and the next concrete action.
 

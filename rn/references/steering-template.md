@@ -26,7 +26,7 @@ Markdown collapses the fields onto one line.
 
 # Rules
 
-- 1 task = 1 commit
+- commit and push every change; one completion marker per task
 - <task-specific conventions>
 
 # Tasks
@@ -64,7 +64,9 @@ Markdown collapses the fields onto one line.
 
 # State
 
-(written by /rn:bb, read and reset to this placeholder by /rn:hi)
+(written by /rn:bb, read and reset to this placeholder by /rn:hi. `Status` is `paused` while a
+session is suspended — the signal /rn:hi and /rn:bb search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
 
 - **Status**: not suspended
 - **Date**: YYYY-MM-DD
@@ -83,6 +85,5 @@ Markdown collapses the fields onto one line.
 | Specificity | Not "implement" but "implement `methodName()` in `ClassName`" |
 | Objectivity | Completion criteria judgeable by a third party |
 | Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
-| Criteria vs steps | Completion criteria state outcomes/end-state only (the bar); actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable |
+| Criteria vs steps | Completion criteria state outcomes/end-state only (the bar); actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
 | Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert / user review) are its gate |
-| Verify steps | Keep the verify-phase review steps as `- [ ]` in every task's Steps so status shows, but `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
