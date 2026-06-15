@@ -310,31 +310,55 @@ task boundary, and routine fixes are decided against a quality bar), without bum
   Goal's own *狙い* names light context and the user-in-loop, with "no domain work" only the mechanism.
 - **Sources**: conversation 2026-06-15; this `steering.md` Goal; `rn/references/task-workflow.md`.
 
+## D-3: Simulating the new loop end-to-end closed real gaps in the Triage re-instruct path
+- **Issue**: On final review (post task #6), walking the coordinator/experts loop mentally over a
+  trivial-direct edit and a fix-after-delegation surfaced gaps the per-task reviews had missed: the
+  Triage "Valid" path assumed an implementation expert always existed (so a fix to a coordinator-direct
+  edit forced spinning up an unused expert); a re-dispatched expert is a fresh subagent yet was handed
+  only "improvement instructions"; and where a direct edit's fix needs delegation, no work-order exists
+  to hand over.
+- **Conclusion**: Route each *fix* by payoff (is there real trial-and-error to isolate?), not by the
+  first pass's route nor by size; re-dispatch carries the original work-order (or a freshly written one
+  when the first pass was direct) plus a pointer to the current on-disk state; after a fix, also re-run
+  any other expert whose cleared dimension the fix could regress; and the 3-iteration cap counts one
+  fix-plus-its-re-reviews as one iteration. Committed in `07a654f`.
+- **Rationale**: These align the re-instruct loop with D-2 (delegate by payoff): the old "re-dispatch
+  the implementation expert" was itself an absolute that broke on the trivial-direct case. The fixes
+  were themselves trivial coordinator-direct edits, each verified by an independent QA expert — the loop
+  converged over three narrowing rounds, which is direct dogfood evidence the loop works *and* that the
+  3-iteration cap + escalate is the right backstop.
+- **Evidence**: conversation 2026-06-15 — user asked for an end-to-end self-simulation ("ゴールを達成する
+  手応えはあるか／新たな問題は出ないか"); the simulation found the gaps and the user chose to fix them
+  before merging PR #7.
+- **Sources**: conversation 2026-06-15; `rn/references/task-workflow.md` → "Step — Triage and
+  re-instruct"; commit `07a654f`.
+
 # State
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
 - **Status**: paused
 - **Date**: 2026-06-15
-- **Last completed**: **All tasks #1–#6 done and the Acceptance criteria walked end-to-end on resume —
-  all met.** Both `--strict` validation gates pass; `version` stays `0.2.0` (no release). PR #7
-  refreshed to the coordinator/experts + delegate-by-payoff model and **marked ready for review**.
-  Follow-up after the walk: PR #7 body slimmed to a **single branch-ref link** to `steering.md` (no
-  duplicated plan), and `gm` SKILL Step 5 updated so it **emits that link-only PR body by default**
-  (commit `bf4d7ec`); steering scope note updated to include this gm follow-up. No CHANGELOG entry for
-  it (PR-body presentation polish, not a tracked behavior change).
-- **Next**: **Nothing required — the session goal is met.** Open item for the user: decide when to
-  **merge PR #7** (repo allows squash-merge only; `deleteBranchOnMerge:false`). A release (tag
+- **Last completed**: All tasks #1–#6 done, Acceptance criteria walked and met, both `--strict` gates
+  pass, `version` stays `0.2.0`. On final review the user asked for an **end-to-end self-simulation**
+  of the new loop; it surfaced real gaps in the Triage re-instruct path, fixed and recorded as **D-3**
+  (commit `07a654f`): route a *fix* by payoff (not by first-pass route or size); re-dispatch carries
+  the original or a freshly-written work-order plus a current-on-disk pointer; after a fix also re-run
+  any other expert the fix could regress; the 3-iteration cap counts one fix-plus-its-re-reviews as one
+  iteration. Each fix was a coordinator-direct edit, QA-verified by an independent subagent; the loop
+  converged over three narrowing rounds. No CHANGELOG entry (internal coherence of the unreleased
+  delegate-by-payoff change).
+- **Next**: **Nothing required — the session goal is met (now with D-3 folded in).** Open item for the
+  user: decide when to **merge PR #7** (squash-merge only; `deleteBranchOnMerge:false`). A release (tag
   `rn-v…` + GitHub Release) remains a separate explicit instruction — not done this session.
 - **Notes**:
-  - **PR #7 body is a branch-ref link** (`blob/subagent-execution/…/steering.md`), chosen over a
-    SHA-permalink (freezes + needs re-paste on every edit) and a main-ref (404 until merged). It
-    tracks the latest plan during review; its only failure is 404 after merge+branch-delete, when the
-    same content lives on main — acceptable. `gm` now bakes this form in.
+  - **PR #7 body is a branch-ref link** to `steering.md`; `gm` now emits that link-only body by
+    default (`bf4d7ec`). Tracks the latest plan during review; only failure is a 404 after
+    merge+branch-delete, when the same content is on main — acceptable.
   - **`version` / release**: no bump; `[Unreleased]` holds the two `Changed` lines (delegate-by-payoff
     benefit + quality-bar triage). Release is a separate explicit instruction per `.claude/rules/plugin.md`.
-  - **Dogfooding outcome**: quality + user-in-loop clearly worked (QA caught real issues each task;
-    user gated every boundary; the gm follow-up was done coordinator-direct, exactly the trivial-edit
-    case delegate-by-payoff intends). Context-lightness still unproven on a *large* iteration-heavy
-    code task (none this session). Open future idea NOT taken in: improvement-2 (stop classifying
-    findings as "taste" mid-verify; let the final user gate own it) — left for a future `/rn:gm`.
+  - **Dogfooding outcome**: quality + user-in-loop clearly worked (QA caught real issues every round;
+    user gated every boundary; trivial fixes done coordinator-direct, exactly the delegate-by-payoff
+    case). The D-3 simulation is itself the strongest evidence: an independent QA pass found gaps a
+    solo author would likely have missed, and the loop converged. Context-lightness still unproven on a
+    *large* iteration-heavy code task (none this session).
