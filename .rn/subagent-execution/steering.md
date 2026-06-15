@@ -216,12 +216,5 @@ user-facing benefit, without bumping the version.
 
 (written by /rn:bb, read and reset to this placeholder by /rn:hi)
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: #2 (README reflects coordinator/experts model) + follow-up D-1 (quality bar in triage). Committed & pushed: #1 `1dd44fc`, #2 `93b8065`, D-1 `98a9779`.
-- **Next**: #3 — present the CHANGELOG entry for user approval, then complete-commit it; then #4.
-- **Notes**:
-  - **#3 work is DONE, not re-do** — `rn/CHANGELOG.md` `[Unreleased]` already has the two `Changed` lines (delegation+approval benefit; D-1 quality-bar benefit), tightened/corrected after QA PASS; `plugin.json` stays `0.2.0`. These changes are saved in the `wip:` commit made by this `/rn:bb`. On resume: just present #3 for approval (the only unchecked step), then make the proper `docs: complete task #3 — CHANGELOG …` commit (via a subagent, per task-workflow Complete) and check off "user review".
-  - **#4 remaining** — run `claude plugin validate rn --strict` and `claude plugin validate <marketplace-root> --strict`; both must pass. (steering Acceptance criteria final gate.)
-  - **Workflow note**: this session is dogfooding the new coordinator/experts model on its own tasks — keep doing #3 commit and #4 via subagents (commit/push delegated). bb/hi lifecycle commits are out of scope and done directly.
-  - **USER REQUEST FOR RESUME (answer this first on `/rn:hi`, before finishing tasks):** give an honest "手応え" assessment of the new model — (1) **Will the goal actually be achieved?** i.e. does coordinator/experts genuinely lower main-context use while keeping quality + the user in the loop, judged from how tasks #1–#3 actually ran. (2) **Will new problems arise?** surface real risks the dogfooding exposed (e.g. cost/latency of many subagent dispatches, accuracy of compact summaries vs. the coordinator's own diff read, check-file write ownership, the "proper form vs taste" grey zone in D-1, bootstrapping — the new workflow only takes effect once read fresh). Base it on observed evidence from this session, not theory.
+- **Status**: active
+- **Next**: #3 user review → complete-commit (subagent); then #4 validation gates.
