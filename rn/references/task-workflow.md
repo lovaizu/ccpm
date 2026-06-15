@@ -67,8 +67,12 @@ that:
 5. **Self-check** — verify each completion criterion (OK/NG with specific evidence); (code) measure
    coverage with a project-appropriate tool (Jest, pytest, JaCoCo, gcov, etc.) and record line/branch
    coverage and uncovered areas. Write the results to `{steering_dir}/checks/{task-id}.md` using the
-   Check file format below, but **do not commit it** — that file is the coordinator's ledger (see Check
-   file format).
+   Check file format below, filling in **only the per-criterion Self-check and Evidence columns** (and
+   the Overall Verdict "Self-check" line). **Never write or overwrite the review-verdict sections** —
+   the QA / Expert Review / Overall-Verdict review lines and the QA columns are the coordinator's; leave
+   them untouched on every round, including fix rounds where they may already hold the coordinator's
+   recorded verdicts. **Do not commit the file** — it is the coordinator's ledger (see Check file
+   format).
 6. **Commit & push the deliverable** — stage the deliverable **paths explicitly** (`git add
    <path>…`); **never `git add -A` or `git add .`**, which would sweep the check-file ledger
    (`checks/{task-id}.md`) into a plain deliverable commit and break "the check file is the
@@ -83,9 +87,12 @@ that:
    coordinator then pushes that already-made commit — a push only, the commit stays the expert's, never
    the coordinator authoring or amending the deliverable. **If the expert cannot commit at all** (its
    environment blocks `git commit`), it says so and reports that it produced the change, left in the
-   working tree; the coordinator then runs the commit **mechanically** over the expert's already-written
-   change — git mechanics only, the content stays the expert's, and the coordinator never authors,
-   edits, or regenerates the deliverable.
+   working tree; the coordinator then commits and pushes it **mechanically** over the expert's
+   already-written change — staging the deliverable **paths explicitly** (`git add <path>…`; **never
+   `git add -A` or `git add .`**, which would sweep `checks/{task-id}.md` into the commit), committing
+   with the plain conventional message, and pushing so it lands on the session PR (symmetric to the
+   "cannot push" branch). Git mechanics only — the content stays the expert's, and the coordinator never
+   authors, edits, or regenerates the deliverable.
 7. **Return** — report back a **compact summary** only: what changed (files/functions touched), the
    self-check result, and the commit SHA(s) plus that the deliverable was pushed. Do **not** paste full
    file contents or the trial-and-error — the diff is on disk for the coordinator to read.
@@ -94,6 +101,9 @@ that:
 
 - Capture the task's **starting commit** — current `HEAD`, just before the expert's first deliverable
   commit — so Verify's `git diff <task's starting commit>..HEAD` is computable across feedback rounds.
+  Capture it **once**, before the first deliverable commit; **do not re-capture it on fix rounds** — it
+  stays anchored at the task's original starting commit, so the diff range keeps spanning every round's
+  commits.
 - Dispatch the implementation expert with the work-order and wait for its summary.
 - The expert's intermediate work stays in the subagent; only its summary enters the coordinator's
   context.
@@ -103,10 +113,12 @@ that:
 **Step — Read the committed diff**
 
 - The expert already committed and pushed the **deliverable** during Execute (work-order element 6),
-  so there is no uncommitted deliverable change in the tree — but the expert also wrote
-  `checks/{task-id}.md` and left it uncommitted (Execute element 5), and that file is tracked, so
-  `git status` will show it. Expect exactly that: `git status` showing only the check-file ledger is
-  normal, not a deliverable change. The coordinator inspects the **committed** deliverable change
+  so there is no uncommitted deliverable change in the tree — but the expert also wrote the self-check
+  columns of `checks/{task-id}.md` and left it uncommitted (Execute element 5), and that file is
+  tracked, so `git status` will show it. Expect exactly that: `git status` showing only the check-file
+  ledger is normal, not a deliverable change. The expert touches only that file's self-check columns
+  and never its review-verdict sections (element 5), so any review verdicts the coordinator has already
+  recorded into it stay intact across fix rounds. The coordinator inspects the **committed** deliverable change
   instead: `git show <sha>` for the SHA(s) the expert returned, or `git diff <task's starting
   commit>..HEAD` for this task's cumulative change. This is its own look at the artifact, not the
   expert's report. Confirm the change matches the task's scope and Completion criteria before spending
@@ -158,8 +170,10 @@ toward its proper form? Each finding ends in exactly one of:
 - **Valid** → fix it. **Every deliverable-touching fix goes to the implementation expert** — no matter
   its size, because every line of the deliverable and its git history is the expert's. Write
   improvement instructions and dispatch the implementation expert (a fresh subagent, no memory of the
-  first pass) rather than taking over its domain work: reuse the original work-order, point it at the
-  current on-disk state to build on (not regenerate from scratch), and have it commit/push the fix as a
+  first pass) rather than taking over its domain work: reuse the original work-order (its element 5 still binds — the
+  expert writes only the self-check columns of `checks/{task-id}.md` and never touches the review-verdict
+  sections, so the coordinator's recorded verdicts already in the file survive the fix round), point it at
+  the current on-disk state to build on (not regenerate from scratch), and have it commit/push the fix as a
   fresh deliverable commit (work-order element 6 — accumulating, never force-pushed). **This includes
   minor improvements: if the fix is correct and makes the artifact better, dispatch it — do not ask the
   user.** After the expert returns, re-run the same review expert on the result before closing the
@@ -208,11 +222,16 @@ verdicts into the check file — the coordinator's ledger, not artifact editing 
 ## Check file format
 
 Write to `{steering_dir}/checks/{task-id}.md`. **This file is the coordinator's ledger (canonical
-ownership rule).** The implementation expert writes the Completion Criteria self-check columns into it
-but **does not commit it** (Execute element 6 commits the deliverable only). The coordinator fills in
-the review verdicts it collected and commits the file as part of its ledger — naturally on the
-post-approval steering check-off commit. Same file, written by whoever holds the data; committed by the
-coordinator.
+ownership rule).** Column ownership is split and holds across every round, including fix rounds: the
+implementation expert writes **only** the Completion Criteria **Self-check** and **Evidence** columns
+(and the Overall Verdict "Self-check" line) and **never** writes or overwrites the review-verdict
+sections — the QA / Expert Review / other Overall-Verdict lines and the QA columns are the
+coordinator's. The expert **does not commit it** (Execute element 6 commits the deliverable only). The
+coordinator fills in the review verdicts it collected and commits the file as part of its ledger —
+naturally on the post-approval steering check-off commit. Same file, disjoint columns written by
+whoever holds the data; committed by the coordinator. Because the expert never touches the
+review-verdict sections, a re-dispatched expert on a fix round cannot clobber verdicts the coordinator
+has already recorded.
 
 ```markdown
 # {task-id} Completion Check
