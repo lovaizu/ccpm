@@ -1,0 +1,29 @@
+{
+  "model": {
+    "display_name": "Claude Opus 4.8",
+    "id": "claude-opus-4-8"
+  },
+  "effort": {
+    "level": "high"
+  },
+  "context_window": {
+    "context_window_size": 200000,
+    "current_usage": {
+      "input_tokens": 12000,
+      "output_tokens": 3000,
+      "cache_creation_input_tokens": 5000,
+      "cache_read_input_tokens": 30000
+    }
+  },
+  "workspace": {
+    "current_dir": "/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/loop"
+  },
+  "rate_limits": {
+    "five_hour": {
+      "used_percentage": 42.3
+    },
+    "seven_day": {
+      "used_percentage": 7.8
+    }
+  }
+}
