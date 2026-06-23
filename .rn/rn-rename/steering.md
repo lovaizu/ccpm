@@ -64,13 +64,13 @@ names.
 
 **Steps**:
 
-- [ ] `git mv skills/gm skills/rdy`, `git mv skills/bb skills/brb`, `git mv skills/hi skills/bak`
-- [ ] set each `SKILL.md` `name:` to match its new directory (`rdy` / `brb` / `bak`)
-- [ ] update each `SKILL.md` body heading, `typically via /rn:…` text, and descriptions to the new names
-- [ ] repoint internal cross-references: `brb` → resume with `bak`; `bak` → started by `rdy`
-- [ ] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] `git mv skills/gm skills/rdy`, `git mv skills/bb skills/brb`, `git mv skills/hi skills/bak`
+- [x] set each `SKILL.md` `name:` to match its new directory (`rdy` / `brb` / `bak`)
+- [x] update each `SKILL.md` body heading, `typically via /rn:…` text, and descriptions to the new names
+- [x] repoint internal cross-references: `brb` → resume with `bak`; `bak` → started by `rdy`
+- [x] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
