@@ -1,59 +1,59 @@
-# Proposal design
+# 提案整理
 
-Internal document. The bridge between the requirements and the work breakdown.
+内部文書。要件整理と作業リストの橋渡し。
 
-## What this document is for
-- Lay out the proposal's **stories (p1…pN), one at a time**, and for each decide its "**method**" and "**basis** (research result, selection reason, premise q, where to confirm)." `p_n` = proposal story #n (same number as the proposal chapter).
-- This becomes the source for the work breakdown (03), and the **source of truth for premises and the estimate model** is here.
-- **The trace source of truth is the requirement list (01).** Requirement → p is held by 01's `proposal design (p)` column. **02 holds no back-reference (p → requirement)** (no duplication).
-- Give concrete items for design/build/migration an **ID (p6-n etc.)** at a granularity 03 can pull as work (no abstract phrasing). For image-sourced specs, reference the image (don't make a degraded copy).
-
----
-
-## p1 [story name]
-
-**Method**
-
-**Basis**
-
-(…repeat for p2, p3 … one per proposal story. A p3/p4 contrast can be one table. Write design/build/migration p's with the ID-bearing item table below.)
-
-### Item-table form (p6 how to build, p7 how to migrate, etc.)
-
-For an HP, list as concrete items: **IA (sections & menus) / page templates (how many kinds, what gets poured into each) / new design vs rework vs reuse / list search & filter / content migration (from which old site, by which method) and redirects (301) / the CMS handed over.**
-
-> **Always split "build" from "carry"**: new build / rework (rebuild) / reuse / **migration (carry existing content)** / feature. One section mixes both (cases = new menu, existing content migrated, etc.), so don't let a bare count read as "all new."
-
-| ID | item | kind | content (count) | basis / premise |
-|---|---|---|---|---|
-| p6-1 |  | new / rework / reuse / migration (existing) / feature |  |  |
+## このドキュメントの役割
+- 提案書の**ストーリー（p1〜pN）を1つずつ立て**、各ストーリーで「**実現方法**」と「**根拠（調査結果・選定理由・前提q・確認先）**」を決める。`p_n`＝提案書ストーリー#n（提案書の章と同番号）。
+- これが作業リスト（03）の元になり、**前提・見積モデルの正**はここ。
+- **トレースの正は要件リスト（01）**。要件 → p は01の「提案整理(p)」列が持つ。**02は逆参照（p→要件）を持たない**（重複させない）。
+- デザイン・実装・移行など具体アイテムには **ID（p6-n 等）** を振り、03が作業として引ける粒度にする（抽象表現は使わない）。スライド由来の仕様は画像参照（劣化版を作らない）。
 
 ---
 
-## Estimate model (source of truth)
-> Decided once here; 03 and 04 follow it. (The model's rules and pitfalls — two-layer subcontracting, double-tax, separate annual costs, rounding, contract granularity — are defined in the skill. Record this engagement's chosen values below.)
+## p1 〔ストーリー名〕
 
-- **Day rate** (internal value, non-disclosed): [currency/day]
-- **Direction (PM) markup**: [%]
-- **Two-layer model (when subcontracting)**: in-house = effort × day rate × (1 + direction %) / subcontracted = the subcontractor quote (actual-cost source of truth) × (1 + your direction %)
-- **Subcontractor-cost tax**: quote [tax-included / tax-excluded] / invoice/tax status / how it loads (markup on tax-excluded actual cost, tax the whole once at the end)
-- **Annual / operating costs (separate category from initial)**: assign each to [counted in initial / separate under post-launch operation / human to confirm]
-- **Rounding**: effort uncertainty rounds up (Fibonacci). The presented-amount rounding/contingency is the human's call at ★ (built-up = internal truth / presented = external)
-- **Contract form & amount granularity**: [quasi-mandate = total only / contract-for-work (fixed scope) = per-category summary + total]
+**実現方法**
 
-## Premises / exclusions / terms
-> The conditions this estimate stands on, the scope line, and the deal terms. Flows to the proposal (04).
+**根拠**
 
-- **Premises (conditions the amount stands on)**:
-- **Exclusions (out of estimate scope)**:
-- **Terms (payment / acceptance / warranty / rights)**:
-- **What the client prepares / decides with us**:
+（…p2, p3 … と提案書の全ストーリー分くり返す。p3/p4のような対比は1つの表にまとめてよい。デザイン・実装・移行のpは下記のID付きアイテム表で書く）
 
-## TODO (research & confirm)
-> Things to decide to firm up the method and the estimate basis. For each TODO, write out what to research and **get a ★ human review before** researching.
+### 具体アイテム表の型（p6どう作る・p7どう移す等）
 
-| # | aspect | what to decide | related p | status |
+HPでは、**IA（セクション・メニュー）／ページテンプレ（何種類・各テンプレに何を流し込むか）／新規デザイン・アレンジ・流用の別／一覧の検索・絞り込み／コンテンツ移行（どの旧サイトから・どの方式）と転送(301)／引き渡すCMS** を具体アイテムとして並べる。
+
+> **種別は「作る」と「運ぶ」を必ず分ける**：新規制作／アレンジ（作り直し）／流用／**移行（既存コンテンツを運ぶ）**／機能。1セクションに両方が混在する（事例＝メニューは新規・中身は既存移行 等）ので、件数だけで「全部新規」と読ませない。
+
+| ID | アイテム | 種別 | 内容（件数） | 根拠・前提 |
 |---|---|---|---|---|
-| t1 | requirement |  |  | open |
-| t2 | method |  |  | open |
-| t3 | estimate |  |  | open |
+| p6-1 |  | 新規／アレンジ／流用／移行（既存）／機能 |  |  |
+
+---
+
+## 見積モデル（正）
+> ここで一度だけ決める。03・04はこれに従う。（モデルのルールと落とし穴 — 二層外注・二重課税・年額の別建て・丸め・契約粒度 — はスキルで定義。本案件で採用する値を下に記録する。）
+
+- **作業単価**（内部値・非開示）：〔円/日〕
+- **進行管理（ディレクション）上乗せ**：〔%〕
+- **二層モデル（外注がある場合）**：当方分＝工数(人日)×作業単価×(1＋進行管理%)／外注分＝外注先の見積（実費の正）×(1＋ディレクション%)
+- **外注費の税**：見積が〔税込／税抜〕／外注先のインボイス・課税区分／載せ方（税抜実費に掛率→全体へ一度だけ課税）
+- **年額・運用費（初期費用と別カテゴリ）**：各費用を〔初期に計上／公開後の運用で別途／人間が確定〕のどれかに割り付ける
+- **丸め**：工数の不確実は上に丸める（フィボナッチ）。お客様提示額の丸め・予備上乗せは人間が★で確定（積み上げ＝内部の正／提示＝対外）
+- **契約形態と金額の粒度**：〔準委任＝総額のみ／請負（スコープ固定）＝分類別サマリ＋総額〕
+
+## 前提・含まないもの・取引条件
+> この見積が成り立つ条件、スコープの線引き、取引条件。提案書（04）へ流す。
+
+- **前提（この金額が成り立つ条件）**：
+- **含まないもの（見積対象外）**：
+- **取引条件（支払・検収・保証・権利）**：
+- **お客様に準備/一緒に決めてもらうこと**：
+
+## TODO（調査・確定）
+> 実現方法・見積の根拠を固めるために決めること。各TODOは**調べる内容を書き出し、★人間レビューを受けてから**調査する。
+
+| # | 観点 | 何を決めるか | 関連p | 状態 |
+|---|---|---|---|---|
+| t1 | 要件 |  |  | 未 |
+| t2 | 実現方法 |  |  | 未 |
+| t3 | 見積 |  |  | 未 |

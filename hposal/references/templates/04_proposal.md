@@ -1,24 +1,24 @@
-# Proposal (chapter structure)
+# 提案書（骨格）
 
-The client-facing deliverable. Built in HTML and exported to PDF for handover (deliverable = PDF). Each chapter number = the same story `p_n` in 02. **Lead with value (what the client gets)**; keep technical terms small and behind the value. (The rendered deck is in the client's language — default Japanese; the slide skeleton carrying that copy is `04_proposal.html`.)
+お客様向けの提出物。HTMLで作り、PDFに書き出して渡す（提出物＝PDF）。各章番号＝02のストーリー`p_n`と同じ。**価値（お客様が得るもの）を主役**にし、技術用語は価値の後ろに小さく添えるだけにする。（書き出すスライドはお客様の言語＝日本語。そのコピーを載せる骨格が `04_proposal.html`。）
 
-| flow | # | content |
+| 全体の流れ | # | 内容 |
 |---|---|---|
-| **What is this, and how to read it?** | 1 | **Cover**: this proposal in one line |
-| | 2 | **How to read it**: what the structure is and where to look / the client's requests and the page that answers each |
-| **Where are we now, where are we headed?** | 3 | **As-is**: how it is now and what's wasteful (facts) = the shared starting point |
-| | 4 | **To-be**: what we want to become (what changes, how) |
-| | 5 | **What you gain (the aim) ★ the lead**: the value of that state (one aim per slide) |
-| **How do we make it happen?** | 6 | **How we build it**: structure (IA), design, features |
-| | 7 | **How we migrate & launch**: content migration, redirects (301), launch [per engagement] |
-| | 8 | **Post-launch care**: handling defects and minor fixes for a while after launch |
-| | 9 | **Why us**: the design thinking and strengths behind delivery |
-| | 10 | **Process & schedule**: the sequence and the rhythm of checks |
-| **How much, on what terms?** | 11 | **Estimate**: the total, and what this budget buys |
-| | 12 | **Premises & exclusions**: the scope line |
-| | 13 | **Estimate breakdown**: what costs what by category (line items in the separate work breakdown) |
-| | 14 | **Terms**: validity, payment, acceptance, warranty, rights |
-| **What do we start with next?** | 15 | **Next step & preparation**: what to provide / decide together / the next move |
-| | 16 | **Contact**: where inquiries land |
+| **何の話で、どう読むか？** | 1 | **表紙**：このご提案を一言で |
+| | 2 | **読み方のご提案**：どんな構成で、どこを見てほしいか／いただいたご要望とお答えするページ |
+| **今どうで、どこを目指すか？** | 3 | **いまの姿**：今どうで、どこがもったいないか（事実）＝共通の出発点 |
+| | 4 | **目指す姿**：こうなりたい（何がどう変わるか） |
+| | 5 | **得られること（ねらい）★主役**：その姿で得る価値（1ねらい1枚） |
+| **どうやって実現するか？** | 6 | **どう作るか**：構成(IA)・デザイン・機能 |
+| | 7 | **どう移す・公開するか**：コンテンツ移行・転送(301)・公開〔案件により〕 |
+| | 8 | **公開後の見守り**：公開してしばらく、不具合・軽微な修正に対応 |
+| | 9 | **なぜ私たちか**：実現を支える設計思想・強み |
+| | 10 | **進め方・期間**：段取りと確認のリズム |
+| **いくらで、どんな条件か？** | 11 | **お見積**：総額と、この予算で得るもの |
+| | 12 | **前提・含まないもの**：線引き |
+| | 13 | **見積内訳**：分類ごとに何にいくら（明細は別紙の作業リスト） |
+| | 14 | **取引条件**：有効期限・支払・検収・保証・権利 |
+| **次に何から始めるか？** | 15 | **次の一歩・ご準備**：ご提供／一緒に決めること／次の動き |
+| | 16 | **連絡先**：問い合わせの受け皿 |
 
-> Appendix candidates: a **glossary page** (a one-line gloss for each first-use proper noun / term; place it just before the breakdown) and the **work breakdown (draft)** (the external columns of 03; show or omit amounts per contract form).
+> 付録の候補：**用語集ページ**（初めて出る固有名・用語の1行説明。明細の直前に置く）と、**作業明細（案）**（作業リストの外部列。契約形態に応じて金額を載せる／載せず項目だけ）。

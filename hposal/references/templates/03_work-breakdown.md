@@ -1,41 +1,41 @@
-# Work breakdown (estimate)
+# 作業リスト（見積）
 
-Internal document. The source of truth for the amount.
+内部文書。金額の正。
 
-> Give each task a **work ID (w1, w2…)**. The requirement → work trace is 01's `work` column pointing at this ID (**03 holds no back-reference**). Work content lands the p's (method / concrete items) from 02. Classify by HP stage = **requirements/IA → design → build → migration/launch → post-launch care**.
+> 各作業に**作業ID（w1, w2…）**を振る。要件 → 作業のトレースは01の「作業リスト」列がこのIDを指す（**03は逆参照を持たない**）。作業内容は02のp（実現方法・具体アイテム）を落とし込む。分類はHPの段階＝**要件定義/IA → デザイン → 制作 → 移行・公開 → 見守り**。
 
-## Line items
+## 明細
 
-| work ID | category | task | content | qty | unit | effort (person-days) | day rate (/day) | work estimate | estimated amount | status | comment |
+| 作業ID | 作業分類 | 作業名 | 作業内容 | 数量 | 単位 | 作業工数(人日) | 作業単価(円/日) | 作業見積(円) | 見積金額(円) | ステータス | コメント |
 |---|---|---|---|--:|:-:|--:|--:|--:|--:|:-:|---|
-| w1 | **requirements** | requirements & IA | sitemap, etc. | – | set | – | – | – | – | – | – |
-| w2 | **design** | top / lower-page design | – | – | item | – | – | – | – | – | – |
-| w3 | **build** | page production (template pour-in) | – | – | page | – | – | – | – | – | – |
-| w4 | | features | contact form / search & filter, etc. | – | set | – | – | – | – | – | – |
-| w5 | **migration/launch** | content migration / redirects (301) / launch | – | – | item/set | – | – | – | – | – | – |
-| w6 | **post-launch care** | handling defects & minor fixes for a while after launch | – | – | month | – | – | – | – | – | – |
-| w7 | [other] | copywriting / photography, etc. | – | – | set | – | – | – | – | – | – |
-| | | | **subtotal (ex-tax)** | | | | | – | – | | |
-| | | | **consumption tax** | | | | | | – | | |
-| | | | **total (inc-tax)** | | | | | | – | | |
+| w1 | **要件定義** | 要件整理・サイト構成(IA) | サイトマップ作成 等 | – | 式 | – | – | – | – | – | – |
+| w2 | **デザイン** | トップ／下層 デザイン | – | – | 点 | – | – | – | – | – | – |
+| w3 | **制作・実装** | ページ制作（テンプレ流し込み） | – | – | ページ | – | – | – | – | – | – |
+| w4 | | 機能 | 問い合わせフォーム・検索/絞り込み 等 | – | 式 | – | – | – | – | – | – |
+| w5 | **移行・公開** | コンテンツ移行・転送(301)・公開作業 | – | – | 件/式 | – | – | – | – | – | – |
+| w6 | **見守り** | 公開後しばらくの不具合・軽微な修正への対応 | – | – | ヶ月 | – | – | – | – | – | – |
+| w7 | 〔その他〕 | 原稿・撮影 等 | – | – | 式 | – | – | – | – | – | – |
+| | | | **小計（税抜）** | | | | | – | – | | |
+| | | | **消費税** | | | | | | – | | |
+| | | | **合計（税込）** | | | | | | – | | |
 
-> If part of the build is subcontracted, set that row's amount as the subcontractor quote (actual cost) × (1 + direction %), and roll it up in a separate "subcontract detail" block at the end. Estimate model: see 02.
+> 制作の一部を外注する場合は、その行の金額を外注見積（実費）×(1＋ディレクション%)で立て、末尾に別途「外注明細」ブロックで集計する。見積モデルは02を参照。
 
-## Internal vs external columns
-Only some columns go to the client.
+## 内部列と外部列
+お客様に出すのは一部の列だけ。
 
-| column | shown to the client (proposal appendix)? |
+| 列 | 外部（提案書の巻末明細）に出す？ |
 |---|:-:|
-| category / task / content / qty / unit | shown |
-| estimated amount / total | shown |
-| **effort (person-days) / day rate / work estimate** | **not shown (internal)** |
-| **work ID / status / comment** | **not shown (internal)** |
+| 作業分類／作業名／作業内容／数量／単位 | 出す |
+| 見積金額／合計 | 出す |
+| **作業工数(人日)／作業単価(円/日)／作業見積** | **出さない（内部）** |
+| **作業ID／ステータス／コメント** | **出さない（内部）** |
 
-- **Don't expose the day rate.** It reveals the person-day rate and invites back-calculation (qty × rate) into a negotiation lever. The client only needs scale from qty/unit and the estimated amount.
-- Whether to add "*direction included*" on the external table is per engagement (do as decided in 02).
+- **単価（円/日）を外部に出さない**。人日レートの露出になり、数量×単価で逆算されて交渉の的になる。お客様は数量・単位で規模感、見積金額で金額が分かれば足りる。
+- 外部の表に「※ディレクション込み」と添えるかは案件ごと（02で決めたとおりにする）。
 
-## Estimate premises / risks
-- **Premises (conditions the amount stands on)**:
-- **Risks (what moves the amount)**:
-- **Awaiting confirmation (to firm up premises)**:
-- **Out of scope (not stacked)**:
+## 見積前提・リスク
+- **前提（この金額が成り立つ条件）**：
+- **リスク（金額が動く要因）**：
+- **確認待ち（前提を固める）**：
+- **対象外（積まない）**：
