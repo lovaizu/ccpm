@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>{{案件名}} ご提案書</title>
+<style>
+  :root{
+    --main:#4EB0EA;          /* メインカラー */
+    --main-d:#2a8fcc;        /* 濃いめ（文字・線） */
+    --main-dd:#1d6a9c;       /* さらに濃い */
+    --ink:#1b2733; --sub:#54657a; --off:#9aa7b4;
+    --accent:#f2994a;        /* 差し色（新設・注意） */
+    --line:#dbe3ec; --soft:#f3f8fc; --soft2:#eaf4fb; --paper:#fff;
+    --good:#36a36b;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  @page{ size:338.7mm 190.5mm; margin:0; }    /* 16:9 ワイド */
+  .idc{ color:var(--off); font-size:8pt; white-space:nowrap; }   /* 内部ID列（会話用）。提出PDFでは非表示 */
+  @media print{ .idc{ display:none; } }
+  html,body{
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+    color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    word-break:auto-phrase; line-break:strict; overflow-wrap:break-word;
+  }
+  .slide{
+    position:relative; width:338.7mm; height:190.5mm; overflow:hidden;
+    background:var(--paper); page-break-after:always;
+    padding:16mm 20mm 14mm; display:flex; flex-direction:column;
+  }
+  .slide:last-child{ page-break-after:auto; }
+  @media screen{
+    body{ background:#dde4ec; padding:9mm 0; }
+    .slide{ margin:0 auto 9mm; box-shadow:0 3px 16px rgba(27,39,51,.18); }
+    .slide:last-child{ margin-bottom:0; }
+  }
+
+  /* 共通見出し */
+  .eyebrow{ font-size:10pt; letter-spacing:.22em; color:var(--main-d); font-weight:800; text-transform:uppercase; }
+  .ttl{ font-size:25pt; font-weight:800; color:var(--ink); margin-top:4mm; line-height:1.28; letter-spacing:.01em; }
+  .lead{ font-size:11.5pt; color:var(--sub); margin-top:3.5mm; line-height:1.7; }
+  .lead b{ color:var(--main-dd); }
+  .body{ flex:1; margin-top:6mm; display:flex; flex-direction:column; }
+  .brandbar{ position:absolute; left:0; top:0; width:100%; height:5mm; background:linear-gradient(90deg,var(--main-dd),var(--main) 70%,#8fd0f3); }
+  .pg{ position:absolute; right:16mm; bottom:7mm; font-size:9pt; color:var(--off); letter-spacing:.08em; }
+  .footmark{ position:absolute; left:20mm; bottom:7mm; font-size:8.5pt; color:var(--off); letter-spacing:.1em; }
+
+  b{ color:var(--main-dd); }
+  .ink{ color:var(--ink)!important; }
+  .todo{ display:inline-block; font-size:9pt; font-weight:800; color:#9a5a1e; background:#fdf3e8; border:1px dashed var(--accent); border-radius:1mm; padding:.2mm 2mm; }
+
+  /* 表紙 */
+  .cover{ justify-content:center; padding-left:26mm;
+    background:radial-gradient(1200px 620px at 82% -12%,rgba(78,176,234,.30),transparent 60%),linear-gradient(135deg,#0e3a59 0%,#1d6a9c 55%,#2a8fcc 100%); color:#fff; }
+  .cover .eyebrow{ color:#cdeafb; }
+  .cover h1{ font-size:44pt; font-weight:900; line-height:1.2; margin-top:8mm; }
+  .cover .sub{ font-size:15pt; margin-top:9mm; color:#eaf6ff; font-weight:600; }
+  .cover .desc{ font-size:11.5pt; margin-top:6mm; color:#cfe7f6; line-height:1.85; max-width:230mm; }
+  .cover .desc b{ color:#fff; }
+  .cover .who{ margin-top:13mm; font-size:11pt; color:#eaf6ff; }
+  .cover .who b{ color:#fff; }
+
+  /* カード（3〜4枚） */
+  .cards{ display:flex; gap:7mm; margin-top:auto; margin-bottom:auto; }
+  .card{ flex:1; background:var(--soft); border:1px solid var(--line); border-radius:3mm; padding:7mm 6mm; }
+  .card .num{ font-size:13pt; font-weight:800; color:#fff; background:var(--main); width:9mm; height:9mm; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .card h3{ font-size:13pt; color:var(--ink); margin:4mm 0 3mm; font-weight:800; white-space:nowrap; }
+  .card p{ font-size:10.5pt; color:var(--sub); line-height:1.7; }
+  .card p b{ color:var(--main-dd); }
+
+  /* 値箱（お客様／自社） */
+  .vrow{ display:flex; gap:6mm; }
+  .vbox{ flex:1; background:var(--soft); border:1px solid var(--line); border-left:4px solid var(--main); border-radius:0 2mm 2mm 0; padding:4mm 5.5mm; }
+  .vbox .vh{ font-size:9.5pt; color:var(--main-d); font-weight:800; letter-spacing:.04em; }
+  .vbox .vt{ font-size:11pt; color:var(--ink); margin-top:1.8mm; line-height:1.55; font-weight:600; }
+  .vbox .vt b{ color:var(--main-dd); }
+  .vbox.b{ border-left-color:var(--accent); }
+  .vbox.b .vh{ color:#c9772a; }
+
+  /* リスト */
+  ul.pl{ list-style:none; margin-top:3mm; }
+  ul.pl li{ font-size:11pt; color:var(--ink); line-height:1.6; padding:2mm 0 2mm 7mm; position:relative; }
+  ul.pl li:before{ content:""; position:absolute; left:0; top:3.8mm; width:3.2mm; height:3.2mm; border-radius:50%; background:var(--main); }
+  ul.pl b{ color:var(--main-dd); }
+  ul.li{ list-style:none; }
+  ul.li li{ font-size:10pt; color:var(--ink); line-height:1.5; padding:1.6mm 0 1.6mm 6mm; position:relative; }
+  ul.li li:before{ content:""; position:absolute; left:0; top:3.1mm; width:2.6mm; height:2.6mm; border-radius:50%; background:var(--main); }
+  ul.li.off li:before{ background:var(--off); }
+  ul.li b{ color:var(--main-dd); }
+  ul.chk{ list-style:none; }
+  ul.chk li{ font-size:10.2pt; color:var(--ink); line-height:1.55; padding:1.6mm 0 1.6mm 7mm; position:relative; }
+  ul.chk li:before{ content:"✓"; position:absolute; left:0; color:var(--main-d); font-weight:900; }
+  ul.chk b{ color:var(--main-dd); }
+
+  .note{ font-size:10.5pt; color:var(--main-dd); background:var(--soft2); border-left:3px solid var(--main); padding:3.4mm 5mm; border-radius:0 2mm 2mm 0; line-height:1.6; }
+  .note.warn{ color:#9a5a1e; background:#fdf3e8; border-color:var(--accent); }
+  .note b{ color:var(--main-dd); }
+  .note.warn b{ color:#9a5a1e; }
+
+  /* 現状4サイト地図 */
+  .snwrap{ display:flex; gap:4mm; }
+  .snbox{ flex:1; border:1px solid var(--line); border-radius:2mm; background:#fff; display:flex; flex-direction:column; overflow:hidden; }
+  .snbox .hd{ background:var(--soft); border-bottom:1px solid var(--line); padding:2.8mm 3.6mm; }
+  .snbox .nm{ font-size:12pt; font-weight:800; color:var(--ink); }
+  .snbox .cms{ display:inline-block; font-size:7.6pt; font-weight:800; color:var(--main-d); background:var(--soft2); border:1px solid #bfe0f5; border-radius:1mm; padding:.4mm 1.8mm; margin-top:1.6mm; }
+  .snbox .cms.dr{ color:#9a5a1e; background:#fdf3e8; border-color:#f0d9b8; }
+  .snbox ul{ list-style:none; padding:2.6mm 3.6mm; flex:1; }
+  .snbox li{ font-size:9pt; color:var(--ink); line-height:1.7; padding-left:3.2mm; position:relative; }
+  .snbox li:before{ content:"·"; position:absolute; left:.4mm; color:var(--off); font-weight:900; }
+  .snbox li b{ color:var(--main-dd); }
+  .snbox.base{ border-color:var(--main); }
+  .snbox.base .hd{ background:var(--soft2); border-bottom-color:#bfe0f5; }
+
+  /* 統合後マップ（タイル） */
+  .gmap{ border:1.4px solid var(--main); border-radius:2.5mm; overflow:hidden; }
+  .gmap .gmhd{ background:var(--soft2); border-bottom:1px solid #bfe0f5; padding:2.6mm 4mm; font-size:12.5pt; font-weight:800; color:var(--ink); }
+  .gmlabel{ font-size:8pt; font-weight:800; color:var(--sub); padding:2.6mm 4mm 0; }
+  .gmgrid{ display:flex; gap:2mm; padding:1.5mm 4mm 4mm; }
+  .gt{ flex:1; border-radius:1.8mm; border:1px solid var(--line); background:var(--soft); padding:3mm 1.4mm; text-align:center; font-size:9.4pt; font-weight:800; color:var(--ink); line-height:1.25; min-height:20mm; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.4mm; }
+  .gt small{ display:block; font-size:7.2pt; font-weight:700; color:var(--sub); }
+  .gt.new{ border:1.6px dashed var(--accent); background:#fdf6ee; color:#c9772a; }
+  .gt.new small{ color:#c9772a; }
+  .gmfound{ display:flex; align-items:center; gap:3mm; margin:0 4mm 4mm; padding:3mm 4mm; border-radius:2mm; background:linear-gradient(135deg,#0e3a59,#1d6a9c); color:#fff; }
+  .gmfound .fl{ font-size:10.5pt; font-weight:800; white-space:nowrap; }
+  .gmfound .ft{ flex:1; font-size:8.8pt; font-weight:600; color:#cfe7f6; line-height:1.45; }
+
+  /* テーブル */
+  table.t{ width:100%; border-collapse:collapse; margin-top:2mm; font-size:10pt; }
+  table.t th{ background:var(--main-dd); color:#fff; padding:2.8mm 3.6mm; text-align:left; font-weight:700; }
+  table.t td{ border-bottom:1px solid var(--line); padding:2.6mm 3.6mm; vertical-align:top; line-height:1.55; }
+  table.t tr:nth-child(even) td{ background:#fafdff; }
+  table.t td.r,table.t th.r{ text-align:right; white-space:nowrap; }
+  table.t td.c,table.t th.c{ text-align:center; }
+  .pill{ display:inline-block; font-size:7.6pt; font-weight:800; color:#fff; background:var(--accent); border-radius:1mm; padding:.3mm 1.6mm; vertical-align:.4mm; }
+
+  /* ====== 画面ワイヤーフレーム ====== */
+  .screen{ border:1.5px solid #c3cfdb; border-radius:2.5mm; overflow:hidden; background:#fff; box-shadow:0 1px 6px rgba(27,39,51,.08); }
+  .scbar{ background:#e9eef4; padding:1.6mm 3mm; display:flex; align-items:center; gap:1.4mm; border-bottom:1px solid #d4dde6; }
+  .scbar .d{ width:2.4mm; height:2.4mm; border-radius:50%; background:#c6d0db; }
+  .scbar .url{ flex:1; background:#fff; border:1px solid #d4dde6; border-radius:1.2mm; font-size:7.8pt; color:#90a0b0; padding:.8mm 2.4mm; margin-left:2mm; }
+  .topnav{ display:flex; align-items:center; background:#fff; border-bottom:2px solid var(--main); font-size:8pt; padding:0 3mm; }
+  .topnav .logo{ font-weight:900; color:var(--main-dd); padding:2.4mm 3mm 2.4mm 1mm; font-size:10pt; }
+  .topnav .n{ padding:2.4mm 2.2mm; color:var(--sub); white-space:nowrap; }
+  .topnav .n.active{ color:var(--ink); font-weight:800; border-bottom:2px solid var(--main); margin-bottom:-2px; }
+  .topnav .n.new{ color:var(--accent); font-weight:800; }
+  .crumb{ font-size:8pt; color:var(--sub); padding:1.8mm 3mm; background:#fafcfe; border-bottom:1px solid var(--line); }
+  .crumb b{ color:var(--ink); }
+  .lay{ display:flex; }
+  .side{ flex:0 0 34%; background:#fafcfe; border-right:1px solid var(--line); padding:2.6mm 3mm; }
+  .side.filter{ background:var(--soft2); }
+  .side .sh{ font-weight:800; font-size:8.2pt; color:var(--ink); margin:2.4mm 0 1mm; }
+  .side .sh:first-child{ margin-top:0; }
+  /* サービスツリー＝1列の表（階層を色で分けたアコーディオン） */
+  .tree{ list-style:none; font-size:8pt; line-height:1.3; border:1px solid #cfdbe6; border-radius:1.4mm; overflow:hidden; }
+  .tree li{ padding:1.4mm 2mm; border-bottom:1px solid #e3ebf3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tree li:last-child{ border-bottom:none; }
+  .tree .l1{ font-weight:800; background:var(--main-dd); color:#fff; }
+  .tree .l2{ font-weight:700; background:var(--soft2); color:var(--ink); padding-left:5mm; }
+  .tree .l3{ background:var(--soft); color:var(--ink); padding-left:8.5mm; }
+  .tree .l4{ background:#fff; color:var(--sub); padding-left:12mm; }
+  .tree .cur{ background:var(--accent); color:#fff; font-weight:800; }
+  .fw{ display:block; background:#fff; border:1px solid #cdd8e3; border-radius:1.2mm; color:#9aa7b4; padding:1mm 2mm; font-size:8pt; margin:.6mm 0 2mm; }
+  .ck{ display:block; font-size:8.2pt; margin:.6mm 0; color:var(--ink); }
+  .ck input{ transform:scale(.8); margin-right:1mm; vertical-align:middle; }
+  .tagrow{ margin-top:.6mm; }
+  .tg{ display:inline-block; font-size:7.4pt; color:var(--sub); background:#fff; border:1px solid var(--line); border-radius:3mm; padding:.2mm 1.8mm; margin:.4mm .4mm 0 0; }
+  .tg.on{ background:var(--main); color:#fff; border-color:var(--main); font-weight:700; }
+  .main2{ flex:1; padding:2.8mm 3.6mm; }
+  .rhd{ font-weight:800; font-size:9pt; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1.8mm; }
+  .rhd .cnt{ font-weight:400; font-size:8pt; color:var(--sub); }
+  .mega{ display:grid; grid-template-columns:repeat(4,1fr); gap:2mm; background:#fff; border:1px solid #bfe0f5; border-radius:1.6mm; padding:2.2mm; font-size:8pt; margin-bottom:2.4mm; }
+  .mega b{ display:block; color:var(--main-dd); font-size:8.2pt; margin-bottom:.8mm; }
+  .mega span{ display:block; color:var(--sub); font-size:7.6pt; line-height:1.5; }
+  .cardsg{ display:grid; grid-template-columns:1fr 1fr; gap:2.4mm; }
+  .rc{ border:1px solid var(--line); border-radius:1.6mm; padding:2mm; background:#fff; }
+  .rc .th{ height:7mm; background:#eef3f8; border-radius:1mm; margin-bottom:1.6mm; }
+  .rc .ct{ font-weight:800; font-size:8pt; line-height:1.4; margin-bottom:1mm; color:var(--ink); }
+  .rc .cg{ font-size:7pt; }
+  .rc .cg .b2{ display:inline-block; background:var(--soft2); color:var(--main-d); border-radius:1mm; padding:0 1.4mm; margin:.4mm .4mm 0 0; font-weight:700; }
+  .relbox{ border:1px dashed var(--main); border-radius:1.6mm; background:var(--soft2); padding:2.2mm; margin-top:2.4mm; }
+  .relbox .rh2{ font-size:8pt; font-weight:800; color:var(--main-dd); margin-bottom:1.6mm; }
+  .reltiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.6mm; }
+  .reltile{ background:#fff; border:1px solid #bfe0f5; border-radius:1.2mm; height:8.4mm; font-size:7pt; color:var(--sub); display:flex; align-items:center; justify-content:center; text-align:center; padding:1mm; line-height:1.3; }
+  .smp{ font-size:8.6pt; font-weight:800; color:#fff; background:var(--accent); border:none; border-radius:1.2mm; padding:.7mm 2.8mm; white-space:nowrap; box-shadow:0 1px 3px rgba(242,153,74,.4); }
+  /* p4〜6：画面イメージである旨の注意（実デザインと異なる）を目立たせる */
+  .imgnote{ font-size:10pt; color:#c9772a; font-weight:800; margin-top:2mm; }
+  .imgnote:before{ content:"🖼 "; }
+
+  /* 4つの入口フロー */
+  .flow4{ display:flex; gap:3mm; }
+  .f4{ flex:1; border:1px solid #bfe0f5; border-radius:1.8mm; background:#fff; padding:2.4mm 3mm; }
+  .f4 .n{ font-size:8.2pt; font-weight:800; color:#fff; background:var(--main); border-radius:50%; width:5mm; height:5mm; display:inline-flex; align-items:center; justify-content:center; margin-bottom:1.4mm; }
+  .f4 .t{ font-weight:800; font-size:9.4pt; color:var(--ink); }
+  .f4 .d{ font-size:8.4pt; color:var(--sub); line-height:1.45; margin-top:.6mm; }
+
+  /* 工程フロー＋タイムライン */
+  .flow{ display:flex; gap:2.5mm; margin-top:4mm; }
+  .step{ flex:1; min-width:0; text-align:center; position:relative; padding:0 1mm; }
+  .step .dot{ width:10mm; height:10mm; border-radius:50%; background:var(--main-dd); color:#fff; font-weight:800; font-size:11pt; display:flex; align-items:center; justify-content:center; margin:0 auto 2.6mm; }
+  .step h5{ font-size:10pt; color:var(--ink); font-weight:800; }
+  .step p{ font-size:8.4pt; color:var(--sub); margin-top:1.2mm; line-height:1.4; }
+  .step .dur{ display:inline-block; font-size:7.8pt; color:#fff; background:var(--main); border-radius:1.4mm; padding:.5mm 2mm; margin-top:1.8mm; font-weight:700; }
+  .step:not(:last-child):after{ content:""; position:absolute; top:5mm; right:-50%; width:100%; height:2px; background:var(--line); z-index:-1; }
+  .tl{ display:flex; gap:2.5mm; height:9mm; margin-top:7mm; }
+  .tlseg{ flex-basis:0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; border-radius:1.5mm; box-shadow:0 1px 4px rgba(27,39,51,.12); }
+  .tlseg .ph{ font-size:8.2pt; font-weight:700; }
+  .tlseg .wk{ font-size:7.2pt; opacity:.9; }
+  .s1{ background:#0e3a59; } .s2{ background:#1d6a9c; } .s3{ background:#2a8fcc; } .s4{ background:#3da3dd; } .s5{ background:#4EB0EA; } .s6{ background:#6bc0ef; }
+  .tlnote{ margin-top:3mm; font-size:10.5pt; color:var(--sub); line-height:1.65; }
+  .tlnote b{ color:var(--main-dd); }
+  .tlnote .mk{ color:var(--accent); font-weight:800; }
+  .tlnote ul{ list-style:none; margin:0; padding:0; }
+  .tlnote li{ position:relative; padding:0.8mm 0 0.8mm 4mm; }
+  .tlnote li:before{ content:""; position:absolute; left:0; top:2.4mm; width:1.6mm; height:1.6mm; border-radius:50%; background:var(--accent); }
+  .tlnote li ul{ margin:0.6mm 0 0; }
+  .tlnote li li{ padding:0.4mm 0 0.4mm 4mm; font-size:9.6pt; }
+  .tlnote li li:before{ top:2.1mm; width:1.2mm; height:1.2mm; background:transparent; border:0.3mm solid var(--accent); }
+
+  /* 見積 */
+  .est{ display:flex; gap:10mm; margin-top:2mm; }
+  .price{ width:105mm; background:linear-gradient(135deg,#0e3a59,#1d6a9c); color:#fff; border-radius:3mm; padding:10mm 9mm; }
+  .price .cap{ font-size:10.5pt; letter-spacing:.08em; color:#cdeafb; }
+  .price .big{ font-size:30pt; font-weight:900; margin-top:3mm; white-space:nowrap; }
+  .price .tax{ font-size:12pt; color:#cfe7f6; margin-top:1mm; }
+  .price .meta{ margin-top:8mm; font-size:10pt; color:#cfe7f6; line-height:1.9; }
+  .price .meta b{ color:#fff; }
+  .incl{ flex:1; }
+  .incl h4{ font-size:12pt; color:var(--ink); font-weight:800; margin-bottom:3mm; }
+
+  /* 2カラム */
+  .cols{ display:flex; gap:10mm; }
+  .col{ flex:1; }
+  .col h4{ font-size:11.5pt; color:var(--ink); font-weight:800; padding-bottom:2mm; border-bottom:2px solid var(--main); margin-bottom:3mm; display:inline-block; }
+  .col.off h4{ border-color:var(--off); color:var(--sub); }
+
+  /* 明細 */
+  .estd-t td{ font-size:9.4pt; line-height:1.35; padding-top:1.7mm; padding-bottom:1.7mm; }
+  .estd-t td:first-child{ white-space:nowrap; }
+  .estd-t tfoot td{ font-weight:800; color:var(--ink); border-top:2px solid var(--main-dd); background:var(--soft2); padding:2.4mm 3.6mm; }
+  .estd-t tfoot tr.tot td{ background:var(--main-dd); color:#fff; font-size:11.5pt; }
+  /* 付録の一覧表：1スライドに収めるコンパクト版（行が途中で切れないよう分割して使う） */
+  table.t.apx td{ font-size:8.6pt; line-height:1.25; padding-top:0.9mm; padding-bottom:0.9mm; }
+  table.t.apx .catrow td{ padding-top:0.8mm; padding-bottom:0.8mm; font-size:9pt; }
+  table.t.apx th{ padding-top:1.6mm; padding-bottom:1.6mm; }
+  ul.li.tight li{ padding-top:.5mm; padding-bottom:.5mm; font-size:9pt; line-height:1.45; }
+  ul.li.tight li:before{ top:2.3mm; }
+
+  /* 次の一歩 */
+  .nx{ display:flex; gap:6mm; margin-top:3mm; }
+  .nx .s{ flex:1; background:var(--soft); border:1px solid var(--line); border-radius:2.5mm; padding:5mm; }
+  .nx .s .num{ font-size:11pt; font-weight:800; color:#fff; background:var(--main); width:8mm; height:8mm; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .nx .s h3{ font-size:12pt; margin:3mm 0 2mm; font-weight:800; color:var(--ink); }
+  .nx .s p{ font-size:9.5pt; color:var(--sub); line-height:1.6; }
+
+  .closing{ background:linear-gradient(135deg,#0e3a59,#1d6a9c 60%,#2a8fcc); color:#fff; }
+  .closing .ttl,.closing .eyebrow{ color:#fff; }
+  .closing .eyebrow{ color:#cdeafb; }
+  .closing .col h4{ color:#fff; border-color:#8fd0f3; }
+  .closing ul.li li{ color:#eaf6ff; } .closing ul.li b{ color:#fff; }
+  .closing .end{ position:absolute; right:20mm; bottom:13mm; text-align:right; }
+  .closing .end .l{ font-size:13pt; font-weight:800; color:#eaf6ff; }
+  .closing .end .b{ font-size:11pt; color:#cdeafb; margin-top:2mm; }
+
+  /* ===== 縦詰め調整（フッターとの干渉回避） ===== */
+  /* 長い表（p3/目指す姿）を詰める */
+  .tbl-tight th{ padding:1.7mm 3.6mm; }
+  .tbl-tight td{ padding:1.4mm 3.6mm; }
+  #p3map td:nth-child(6){ white-space:nowrap; }   /* 統合後メニュー列＝折り返さない */
+  /* p5 のメニュータイルを低くする */
+  .gt{ min-height:14mm; padding:2mm 1.4mm; }
+  /* 画面モック（p6〜8）の各要素を圧縮 */
+  .screen .scbar{ padding:1.2mm 3mm; }
+  .screen .crumb{ padding:1.4mm 3mm; }
+  .screen .side, .screen .main2{ padding-top:2.2mm; padding-bottom:2.2mm; }
+  .screen .side .sh{ margin:.5mm 0 .3mm; }
+  .screen .tree li{ padding:.85mm 2mm; }
+  .screen .ck{ margin:0; }
+  .screen .cardsg{ gap:1.6mm; }
+  .screen .rc{ padding:1.3mm; }
+  .screen .rc .th{ height:3.5mm; margin-bottom:.9mm; }
+  .screen .mega{ padding:1.8mm; margin-bottom:1.8mm; }
+  .screen .relbox{ padding:1.7mm; margin-top:1.8mm; }
+  .screen .reltile{ height:7mm; }
+  /* p6 の「4つの入口」カード */
+  .flow4{ gap:2.4mm; }
+  .f4{ padding:1.8mm 2.6mm; }
+  .f4 .n{ width:4.6mm; height:4.6mm; margin-bottom:1mm; }
+  /* 画面スライド下部の価値ボックス */
+  .screen ~ .vrow .vbox{ padding:3mm 5mm; }
+  /* 巻末明細：ページ跨ぎで行を割らない */
+  .estd-t tr{ break-inside:avoid; }
+  /* 合計行を tbody 内で tfoot 同等に見せる（ページ跨ぎでの繰り返しを防ぐ） */
+  .estd-t .sumrow td{ font-weight:800; color:var(--ink); border-top:2px solid var(--main-dd); background:var(--soft2); padding:2.4mm 3.6mm; }
+  .estd-t .sumrow.tot td{ background:var(--main-dd); color:#fff; font-size:11.5pt; }
+  /* p3（dense）：行数が多い表を実圧縮し、最下部の注記をフッター上に収める */
+  .dense .lead{ margin-top:2.6mm; }
+  .dense table.t th{ padding-top:1.3mm; padding-bottom:1.3mm; }
+  .dense table.t td{ padding-top:1.0mm; padding-bottom:1.0mm; }
+  .dense .note{ padding:2.6mm 5mm; line-height:1.5; }
+  .dense .body{ margin-top:2.5mm; }
+  /* p3：表と下の注記がくっつかないよう最小の余白を確保 */
+  .dense table.t{ margin-bottom:4mm; }
+  /* 画面スライド（scr）：先頭を少し上に詰めて画面＋価値ボックスをフッター上に収める */
+  .scr .lead{ margin-top:2.6mm; }
+  .scr .body{ margin-top:4mm; }
+  /* p4〜6：画面イメージと下の価値ボックスの間に必ず余白を出す（auto任せにしない） */
+  .scr .screen{ margin-bottom:6mm; }
+  /* 巻末明細：分類は帯行（rowspan廃止で自然にページ送り） */
+  .estd-t .catrow td{ background:var(--soft2); color:var(--main-dd); font-weight:800; font-size:9.6pt; padding:1.5mm 3.6mm; border-top:1.5px solid var(--main); }
+  /* P.8（移行）：分担注記を足したぶん、下部2カラムの行間を詰めてフッターに収める */
+  #mig ul.li li{ padding-top:.9mm; padding-bottom:.9mm; }
+  #mig .col h4{ margin-bottom:2mm; }
+  #mig .body{ margin-top:3mm; }
+  #mig table.t th{ padding-top:1.3mm; padding-bottom:1.3mm; }
+  #mig table.t td{ padding-top:1.1mm; padding-bottom:1.1mm; }
+  #mig table.t tfoot td{ padding-top:1.6mm; padding-bottom:1.6mm; }
+  #mig .note{ padding:2.4mm 5mm; line-height:1.45; }
+  /* P.8（価値）：4枚のカードでインパクトを出す */
+  .vcards{ display:grid; grid-template-columns:1fr 1fr; gap:6mm; flex:1; align-content:center; }
+  .vcard{ background:var(--soft); border:1px solid var(--line); border-top:5px solid var(--main); border-radius:0 0 2.5mm 2.5mm; padding:7mm 7mm; display:flex; flex-direction:column; }
+  .vcard .vch{ font-size:13.5pt; font-weight:800; color:var(--main-dd); margin-bottom:3mm; letter-spacing:.02em; }
+  .vcard .vcb{ font-size:11.5pt; color:var(--ink); line-height:1.75; }
+  .vcard .vcb b{ color:var(--main-dd); }
+  /* P.9（進め方）：各フェーズの下にポイントを配置（タイムラインと同じ 1:2:1 で揃える） */
+  .phpts{ display:flex; gap:2.5mm; margin-top:4mm; }
+  .php{ flex-basis:0; min-width:0; background:var(--soft); border:1px solid var(--line); border-top:3px solid var(--main); border-radius:0 0 2mm 2mm; padding:3mm 3.6mm; }
+  .php .phh{ font-size:10.5pt; font-weight:800; color:var(--main-dd); margin-bottom:1.6mm; }
+  .php ul{ list-style:none; }
+  .php li{ font-size:9.4pt; color:var(--ink); line-height:1.5; padding:.9mm 0 .9mm 4mm; position:relative; }
+  .php li:before{ content:""; position:absolute; left:0; top:2.6mm; width:1.6mm; height:1.6mm; border-radius:50%; background:var(--main); }
+  .php li b{ color:var(--main-dd); }
+  /* P.10（お見積）：余白が大きいのでコンテンツを大きく */
+  #estimate .est{ margin-top:6mm; }
+  #estimate .price{ padding:13mm 11mm; }
+  #estimate .price .cap{ font-size:11.5pt; }
+  #estimate .price .big{ font-size:30pt; }
+  #estimate .price .tax{ font-size:13pt; }
+  #estimate .price .meta{ font-size:11.5pt; margin-top:10mm; line-height:2; }
+  #estimate .incl h4{ font-size:14.5pt; margin-bottom:5mm; }
+  #estimate ul.chk li{ font-size:12pt; padding:2.7mm 0 2.7mm 8mm; }
+  #estimate .note{ font-size:11.5pt; }
+  /* P.13（お願いすること）：項目を増やした分、表の行間を詰めてフッターに収める */
+  #ask .lead{ margin-top:2.6mm; }
+  #ask table.t th{ padding-top:1.8mm; padding-bottom:1.8mm; }
+  #ask table.t td{ padding-top:1.7mm; padding-bottom:1.7mm; line-height:1.45; }
+  #ask .note{ padding:2.6mm 5mm; }
+  /* P.6（講座検索）：サイドバーの絞り込み項目が多く画面が高い → 画面内を実圧縮し値ボックスをフッター上に収める */
+  #crs .body{ margin-top:3mm; }
+  #crs .screen .side .sh{ margin:.2mm 0 .2mm; font-size:8pt; }
+  #crs .screen .ck{ font-size:7.9pt; line-height:1.2; }
+  #crs .screen .fw{ margin:.4mm 0 1.2mm; }
+  #crs .screen .tagrow{ margin-top:.3mm; }
+  #crs .screen .rc .th{ height:3mm; margin-bottom:.7mm; }
+  #crs .screen .cardsg{ gap:1.3mm; }
+  #crs .screen ~ .vrow .vbox{ padding:2.6mm 5mm; }
+  /* ===== 画面イメージ注記の追加分を吸収＋フッター被り解消（全ページ） ===== */
+  .imgnote{ margin-top:1.2mm; font-size:9.2pt; }
+  .scr .screen{ margin-bottom:3.6mm; }
+  .scr .body{ margin-top:2.6mm; }
+  /* p6 講座（最もタイト） */
+  #crs .imgnote{ margin-top:.8mm; font-size:8.8pt; }
+  #crs .screen{ margin-bottom:2.6mm; }
+  #crs .body{ margin-top:2mm; }
+  #crs .screen ~ .vrow .vbox{ padding:2.2mm 5mm; }
+  /* p7 移行：詰まりすぎと被りの中間（1ページに収まる範囲で余白を出す） */
+  #mig .ttl{ margin-top:3mm; }
+  #mig .lead{ margin-top:2.6mm; }
+  #mig .body{ margin-top:3.2mm; }
+  #mig table.t{ margin-top:1.2mm; }
+  #mig table.t th{ padding-top:1.4mm; padding-bottom:1.4mm; }
+  #mig table.t td{ padding-top:1.2mm; padding-bottom:1.2mm; }
+  #mig .note{ margin-top:2.4mm!important; padding:2.4mm 5mm!important; line-height:1.48; }
+  #mig .cols{ margin-top:2.4mm!important; }
+  #mig ul.li li{ padding-top:.9mm!important; padding-bottom:.9mm!important; }
+</style>
+</head>
+<body>
+<!--
+  ============================================================================
+  04_proposal.html — 提案書テンプレート（16:9 スライド・HTML→PDF）
+  ============================================================================
+  使い方：
+  - このファイルをコピーして `04_proposal.html` を作り、{{ }} のプレースホルダと
+    「例…」と書いた見本行（コメント）を、02（提案整理）・03（作業リスト）の中身で置き換える。
+  - 上の <style> は触らずに使える「デザインシステム」。ブランド色を変えるなら
+    :root の --main / --main-d / --main-dd だけ差し替える（他は連動する）。
+  - スライドは「お客様が得る価値を主役」に。専門用語は価値の後ろに小さく添える。
+  - 章立ては 04_proposal.md（骨格）に対応。案件により章の足し引き・並べ替えは可。
+    この見本は「価値（得られること）を“作り方・移し方”の後に回収する」並びを採用。
+  - 各 <section class="slide"> が1ページ。.pg のページ番号と「N / 総数」を実数に直す。
+  - .footmark は提出ブランド（{{宛先}} / {{提案者}}）。全ページ共通で差し替える。
+  - 内部ID列（.idc）は会話用。@media print で自動的に隠れる（提出PDFには出ない）。
+  ============================================================================
+-->
+
+<!-- 1. 表紙 ｜ 04_proposal.md 第1章：このご提案を一言で -->
+<section class="slide cover">
+  <div style="position:absolute;top:14mm;right:20mm;text-align:right;font-size:10.5pt;color:#cfe7f6;line-height:1.9">
+    発行日：{{発行日}}<br>
+    見積有効期限：{{有効期限}}
+  </div>
+  <div class="eyebrow">{{英語ラベル 例: Website Renewal Proposal}}</div>
+  <!-- 表紙コピー＝最重視テーマを一言で。表紙・現状・目指す姿に同じ軸を通す -->
+  <h1>{{表紙コピー 例: ○○を、<br>ひとつに。}}</h1>
+  <div class="sub">{{提案サブタイトル 例: ○○サイト構築のご提案}}</div>
+  <div class="desc">
+    {{背景の一文：いま何が起きていて、なぜ今変えるか}}<br>
+    <b>{{引き継ぐ資産・前提}}</b>を活かしながら、{{目指す状態}}へ。<br>
+    ねらいは、<b>{{価値① 例: 探している人が迷わず見つけられること}}</b>。そして<b>{{価値②}}</b>。
+  </div>
+  <div class="who">提案：<b>{{提案者}}</b>　／　宛先：<b>{{宛先}} 御中</b></div>
+</section>
+
+<!-- 2. 読み方 ｜ 第2章：どんな構成で、どこを見てほしいか／ご要望とお答えするページ -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Contents</div>
+  <div class="ttl">この提案書の構成と、読み方</div>
+  <div class="lead">「<b>いまの姿 → 目指す姿</b>」を出発点に、<b>どう作り・どう移すか</b>を具体の画面でご説明し、その先に <b>得られる価値 → お見積・条件</b> へと進みます。</div>
+  <div class="body">
+    <div class="cols" style="margin-top:1mm">
+      <div class="col"><h4>本編 ― ご提案</h4>
+        <ul class="li" style="margin-top:1mm">
+          <!-- 章タイトルと実ページ番号に差し替え。行数は案件に合わせる -->
+          <li><b>いまの姿から、目指す姿へ</b>　<span style="color:var(--off)">P.3</span></li>
+          <li><b>{{画面① 例: サービスメニュー}}</b>　<span style="color:var(--off)">P.4</span></li>
+          <li><b>{{画面② 例: 事例検索}}</b>　<span style="color:var(--off)">P.5</span></li>
+          <li><b>{{画面③}}</b>　<span style="color:var(--off)">P.6</span></li>
+          <li><b>{{移行・公開}}</b>　<span style="color:var(--off)">P.7</span></li>
+          <li><b>{{得られること（価値★）}}</b>　<span style="color:var(--off)">P.8</span></li>
+        </ul>
+      </div>
+      <div class="col"><h4>本編 ― お見積・条件</h4>
+        <ul class="li" style="margin-top:1mm">
+          <li><b>進め方・期間</b>　<span style="color:var(--off)">P.9</span></li>
+          <li><b>お見積もり</b>　<span style="color:var(--off)">P.10</span></li>
+          <li><b>この金額の前提と、含まないもの</b>　<span style="color:var(--off)">P.11</span></li>
+          <li><b>お取引の条件</b>　<span style="color:var(--off)">P.12</span></li>
+          <li><b>{{宛先}}様にお願いすること</b>　<span style="color:var(--off)">P.13</span></li>
+        </ul>
+      </div>
+      <div class="col"><h4>付録 ― 補足資料</h4>
+        <ul class="li" style="margin-top:1mm">
+          <li><b>用語</b>　<span style="color:var(--off)">P.15</span></li>
+          <li><b>{{ページ一覧（案）}}</b>　<span style="color:var(--off)">P.16-17</span></li>
+          <li><b>作業明細（案）</b>　<span style="color:var(--off)">P.18-19</span></li>
+        </ul>
+      </div>
+    </div>
+    <!-- お客様の「ご要望」と、それに答えるページの対応表。インプットの要望をそのまま引く -->
+    <div style="margin-top:5mm;border:1px solid var(--line);border-left:4px solid var(--main);border-radius:0 2mm 2mm 0;background:var(--soft);padding:3.6mm 5mm">
+      <div style="font-size:10pt;font-weight:800;color:var(--main-d);margin-bottom:1.6mm">{{宛先}}様からいただいたご要望と、お答えするページ</div>
+      <ul class="li" style="margin-top:0">
+        <li>{{要望① 例: 実施項目・費用・期間を示してほしい}}　<span style="color:var(--off)">→ {{対応ページ}}</span></li>
+        <li>{{要望②}}　<span style="color:var(--off)">→ {{対応ページ}}</span></li>
+        <li>{{要望③}}　<span style="color:var(--off)">→ {{対応ページ}}</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">2 / {{総ページ数}}</div>
+</section>
+
+<!-- 3. いまの姿 → 目指す姿 ｜ 第3-4章：共通の出発点（事実）＋こうなりたい -->
+<!-- 移行案件向けの「現行→統合後」対応表の例。新規構築なら表を要件サマリに置換可 -->
+<section class="slide dense">
+  <div class="brandbar"></div>
+  <div class="eyebrow">As-is &rarr; To-be</div>
+  <div class="ttl">いまの姿から、目指す姿へ</div>
+  <div class="lead">{{現状の要約}}を、<b>{{目指す状態}}</b> にします。デザインを新しくするのは <b>{{刷新の中心}}</b> が中心。<br>各ページは <b>{{N}}種類の「型（テンプレート＝ページのひな形）」</b> に内容を流し込んで作るので、<b>ページが増えてもデザインは増えません</b>。</div>
+  <div class="body">
+    <div class="gmlabel" style="padding-left:0;margin:1mm 0 0">作り方　<span style="color:var(--accent);font-weight:800">■ 新規デザイン</span>　<span style="color:var(--main-d);font-weight:800">■ アレンジ</span>　<span style="color:var(--off);font-weight:800">■ 流用／外部</span>　／　<span style="color:var(--off)">取り消し線 ＝ 目指す姿のページ数に数えない（統合・移行しない）</span></div>
+    <table id="p3map" class="t tbl-tight" style="font-size:8.8pt;margin-top:1.5mm">
+      <thead>
+        <tr>
+          <th rowspan="2">コンテンツ</th>
+          <th colspan="3" class="c" style="background:var(--main)">いまの姿（現行のページ数）</th>
+          <th colspan="3" class="c">目指す姿</th>
+        </tr>
+        <tr>
+          <th class="r" style="background:var(--main)">{{現行A}}</th><th class="r" style="background:var(--main)">{{現行B}}</th><th class="r" style="background:var(--main)">{{現行C}}</th>
+          <th style="width:44mm">統合後メニュー</th>
+          <th class="c" style="width:14mm">ページ数</th>
+          <th>作り方</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 例：1行＝1コンテンツ群。〔流用/アレンジ/新規〕の区分を必ず添える -->
+        <tr><td>{{コンテンツ 例: ニュース}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td>{{統合後メニュー}}</td><td class="c">{{合計}}</td><td><span style="color:var(--off);font-weight:800">流用</span>（{{補足}}）</td></tr>
+        <tr><td>{{コンテンツ}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td>{{メニュー}} <span class="pill" style="background:var(--accent)">新規</span></td><td class="c">{{合計}}</td><td><span style="color:var(--accent);font-weight:800">新規デザイン</span>（{{補足}}）</td></tr>
+        <tr><td>{{コンテンツ}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td>{{メニュー}}</td><td class="c">{{合計}}</td><td><span style="color:var(--main-d);font-weight:800">アレンジ</span>（{{補足}}）</td></tr>
+        <tr><td>{{対象外の例}}</td><td class="r">–</td><td class="r"><s style="color:var(--off)">{{数}}</s></td><td class="r">–</td><td class="ink" style="color:var(--off)">（対象外）</td><td class="c">—</td><td><span style="color:var(--off);font-weight:800">移行しない</span>（{{理由}}）</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:auto">
+      <b>{{CMS等の用語}}</b> ＝ {{1行説明}}。<b>{{山場の説明}}</b>。<br>
+      {{まとめ：探し方の方針など}}。新サイトに用意する<b>ページの一覧</b>は巻末<b>「ページ一覧（案）」</b>をご覧ください。
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">3 / {{総ページ数}}</div>
+</section>
+
+<!-- 4. 画面① ｜ 第6章：どう作るか（構成・デザイン・機能）をワイヤーフレームで -->
+<!-- ⚠️ サンプルイメージは「実デザインは異なる」と必ず明記（.imgnote） -->
+<section class="slide scr">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Screen 1 &mdash; {{画面名}}</div>
+  <div class="ttl">{{画面①の名前 例: サービス・製品メニュー}}</div>
+  <div class="lead">{{この画面で実現する価値の一文}}</div>
+  <div class="imgnote">下の画面は<b>使い勝手をご説明するためのイメージ</b>です。実際のデザインは異なります。</div>
+  <div class="body">
+    <div class="screen">
+      <div class="scbar"><span class="d"></span><span class="d"></span><span class="d"></span>
+        <span class="url">{{example.com / path / …}}</span>
+        <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
+      <div class="topnav">
+        <span class="logo">{{ロゴ}}</span>
+        <!-- グローバルナビ。.active=現在地、.new=新設メニュー -->
+        <span class="n">{{ナビ}}</span><span class="n active">{{現在地 ▾}}</span>
+        <span class="n new">{{新設}}</span><span class="n">{{ナビ}}</span><span class="n">{{ナビ}}</span>
+      </div>
+      <div class="crumb">ホーム &rsaquo; {{親}} &rsaquo; <b>{{現在地}}</b></div>
+      <div class="lay">
+        <div class="side">
+          <div class="sh">{{左ナビの説明 例: サービス階層ナビ}}</div>
+          <!-- 階層ツリー。l1/l2/l3/l4 で深さ、cur で現在地 -->
+          <ul class="tree">
+            <li class="l1">▾ {{第1階層}}</li>
+            <li class="l2">▾ {{第2階層}}</li>
+            <li class="l3 cur">{{現在地（第3階層）}}</li>
+            <li class="l4">{{第4階層}}</li>
+            <li class="l2">▸ {{第2階層}}</li>
+            <li class="l1">▸ {{第1階層}}</li>
+          </ul>
+        </div>
+        <div class="main2">
+          <div class="rhd">{{見出し}}</div>
+          <div style="font-size:8.4pt;color:var(--sub);margin-bottom:1.6mm">{{説明文}}</div>
+          <div class="relbox">
+            <div class="rh2">{{関連表示の見出し 例: このサービスの関連事例（自動表示）}}</div>
+            <div class="reltiles">
+              <div class="reltile">{{関連①}}</div>
+              <div class="reltile">{{関連②}}</div>
+              <div class="reltile">{{関連③}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 価値ボックス：左=お客様にとって／右(.b)={{宛先}}にとって。効果で締める -->
+    <div class="vrow" style="margin-top:auto">
+      <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値}}</div></div>
+      <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値}}</div></div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">4 / {{総ページ数}}</div>
+</section>
+
+<!-- 5. 画面② ｜ 第6章：絞り込み検索パターン（事例・実績など） -->
+<section class="slide scr">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Screen 2 &mdash; {{画面名}}</div>
+  <div class="ttl">{{画面②の名前 例: 事例検索}}</div>
+  <div class="lead">{{この画面で実現する価値の一文。左の絞り込みで再読込なしに結果が絞れる、など}}</div>
+  <div class="imgnote">下の画面は<b>使い勝手をご説明するためのイメージ</b>です。実際のデザインは異なります。</div>
+  <div class="body">
+    <div class="screen">
+      <div class="scbar"><span class="d"></span><span class="d"></span><span class="d"></span><span class="url">{{example.com / cases}}</span>
+        <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
+      <div class="topnav">
+        <span class="logo">{{ロゴ}}</span>
+        <span class="n">{{ナビ}}</span><span class="n active new">{{現在地}}</span><span class="n">{{ナビ}}</span>
+      </div>
+      <div class="crumb">ホーム &rsaquo; <b>{{現在地}}</b></div>
+      <div class="lay">
+        <div class="side filter">
+          <div class="sh">🔍 絞り込み</div>
+          <span class="fw">フリーワードで探す</span>
+          <!-- 絞り込み軸＝1見出し(.sh)＋チェック(.ck)。02で決めたタクソノミーを置く -->
+          <div class="sh">{{絞り込み軸① 例: 業種業態}}</div>
+          <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
+          <label class="ck"><input type="checkbox">{{選択肢}}</label>
+          <div class="sh">{{絞り込み軸②}}</div>
+          <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
+          <label class="ck"><input type="checkbox">{{選択肢}}</label>
+        </div>
+        <div class="main2">
+          <div class="rhd"><span>{{一覧名}}</span><span class="cnt">{{全件}}件中 {{表示}}件を表示</span></div>
+          <!-- 結果カード(.rc)。.th=サムネ、.ct=タイトル、.b2=タグ -->
+          <div class="cardsg">
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vrow" style="margin-top:auto">
+      <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値}}</div></div>
+      <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値}}</div></div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">5 / {{総ページ数}}</div>
+</section>
+
+<!-- 6. 画面③ ｜ 第6章：同じ操作感の流用画面（任意。画面が2つなら削除可） -->
+<section class="slide scr" id="crs">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Screen 3 &mdash; {{画面名}}</div>
+  <div class="ttl">{{画面③の名前 例: 講座検索}}</div>
+  <div class="lead">{{価値の一文。例: 同じ操作感の検索ページに統合}}</div>
+  <div class="imgnote">下の画面は<b>使い勝手をご説明するためのイメージ</b>です。実際のデザインは異なります。</div>
+  <div class="body">
+    <div class="screen">
+      <div class="scbar"><span class="d"></span><span class="d"></span><span class="d"></span><span class="url">{{example.com / path}}</span>
+        <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
+      <div class="topnav">
+        <span class="logo">{{ロゴ}}</span>
+        <span class="n">{{ナビ}}</span><span class="n active">{{現在地}}</span><span class="n new">{{新設}}</span><span class="n">{{ナビ}}</span>
+      </div>
+      <div class="crumb">ホーム &rsaquo; {{親}} &rsaquo; <b>{{現在地}}</b></div>
+      <div class="lay">
+        <div class="side filter">
+          <div class="sh">🔍 絞り込み</div>
+          <span class="fw">フリーワードで探す</span>
+          <div class="sh">{{絞り込み軸①}}</div>
+          <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
+          <label class="ck"><input type="checkbox">{{選択肢}}</label>
+          <div class="sh">{{絞り込み軸②}}</div>
+          <!-- タグ型の絞り込みは .tagrow / .tg（.on=選択中）も使える -->
+          <div class="tagrow"><span class="tg on">{{タグ}}</span><span class="tg">{{タグ}}</span><span class="tg">{{タグ}}</span></div>
+        </div>
+        <div class="main2">
+          <div class="rhd"><span>{{一覧名}}</span><span class="cnt">{{全件}}件中 {{表示}}件を表示</span></div>
+          <div class="cardsg">
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vrow" style="margin-top:auto">
+      <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値}}</div></div>
+      <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値}}</div></div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">6 / {{総ページ数}}</div>
+</section>
+
+<!-- 7. どう移す・公開 ｜ 第7章：コンテンツ移行・転送(301)・公開〔案件により〕 -->
+<!-- ⚠️ 「誰が」担当か（当方/お客様）を必ず列に。301対応表・テスト主体・多言語の抜けに注意 -->
+<section class="slide" id="mig">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Migration &amp; launch</div>
+  <div class="ttl">{{移行の見出し 例: 10年分の資産を、失わずに引き継ぐ}}</div>
+  <div class="lead">移行は単純コピーでなく、新サイトの仕組みに合わせた <b>項目の整理・引っ越し</b>。<b>{{最重要の移行対象}}</b>です。</div>
+  <div class="body">
+    <table class="t tbl-tight">
+      <thead><tr><th>移行するもの</th><th class="c">担当</th><th>対象（内訳）</th><th class="r">件数計</th><th>進め方</th></tr></thead>
+      <tbody>
+        <tr><td>{{移行元A}}</td><td class="c">当方</td><td>{{内訳}}</td><td class="r">{{件数}}</td><td>{{方法}}</td></tr>
+        <tr><td>{{移行元B}} <span class="pill">最重要</span></td><td class="c">当方＋{{宛先}}</td><td>{{内訳}}</td><td class="r">{{件数}}</td><td>{{方法}}</td></tr>
+        <tr><td>{{移行元C}}</td><td class="c">当方</td><td>{{内訳}}</td><td class="r">{{件数}}</td><td>{{方法}}</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3" style="font-weight:800;color:var(--ink);border-top:2px solid var(--main-dd);background:var(--soft2)">合計（移行ページ数の目安）</td><td class="r" style="font-weight:800;color:#fff;background:var(--main-dd);border-top:2px solid var(--main-dd)">約{{合計}}</td><td style="border-top:2px solid var(--main-dd);background:var(--soft2)"></td></tr></tfoot>
+    </table>
+    <div style="font-size:8.6pt;color:var(--sub);margin-top:1.5mm">※ 約{{合計}}件は<b>引き継ぐコンテンツの件数</b>。新しく作る<b>画面デザインは{{N}}種類</b>で、件数が増えてもデザイン費は増えません。</div>
+    <div class="note" style="margin-top:2.5mm">
+      <b>{{宛先}}様にお願いすること</b>（「当方＋{{宛先}}」の中身）<br>
+      <b>① {{依頼①}}</b>　{{補足}}<br>
+      <b>② {{依頼②}}</b>　{{補足}}<br>
+      <span style="color:var(--sub)">それ以外の取込・変換・品質チェックは当方で行います。</span>
+    </div>
+    <div class="cols" style="margin-top:2.5mm">
+      <div class="col"><h4>公開準備</h4>
+        <ul class="li" style="margin-top:-1mm">
+          <li><b>旧URL→新URL</b>を全件自動転送（301）。{{流入を切らさない説明}}</li>
+          <li>{{基盤集約など}}</li>
+        </ul>
+      </div>
+      <div class="col"><h4>検証（公開前）</h4>
+        <ul class="li" style="margin-top:-1mm">
+          <li>機械チェック ＝ <b>全件</b>（件数・リンク・転送・エラー）</li>
+          <li>目視 ＝ テンプレ×主要ブラウザで <b>代表ページ</b></li>
+          <li>フォーム ＝ <b>全件実送信</b>で到達確認</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">7 / {{総ページ数}}</div>
+</section>
+
+<!-- 8. 得られること（価値★）｜ 第5章：その姿で得る価値。作り方・移し方の後に回収 -->
+<!-- ★主役。利用者ごとに「いま不便 → 何ができるようになるか」。手段でなく効果で締める -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">The value ★</div>
+  <div class="ttl">{{価値の見出し 例: この統合で、利用者が得られること}}</div>
+  <div class="lead">ここまでの<b>作り方・移し方</b>は、すべてこの価値のためのものです。利用者ごとに <b>「いま不便 → 何ができるようになるか」</b> を整理しました。</div>
+  <div class="body" style="margin-top:2mm">
+    <!-- 価値カード（2×2）。1ねらい1枚。最重視テーマを先頭に -->
+    <div class="vcards">
+      <div class="vcard"><div class="vch">{{利用者① 例: 顧客・パートナー}}</div><div class="vcb">{{いま不便だったこと}}。{{これからできるようになること}}（<b>効果</b>で締める）。</div></div>
+      <div class="vcard"><div class="vch">{{利用者②}}</div><div class="vcb">{{いま不便}} → <b>{{効果}}</b>。</div></div>
+      <div class="vcard"><div class="vch">{{利用者③}}</div><div class="vcb">{{いま不便}} → <b>{{効果}}</b>。</div></div>
+      <div class="vcard"><div class="vch">{{利用者④}}</div><div class="vcb">{{いま不便}} → <b>{{効果}}</b>。</div></div>
+    </div>
+    <div class="note" style="margin-top:5mm">この価値を実現する<b>進め方とお見積</b>を、次ページ以降でご説明します。</div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">8 / {{総ページ数}}</div>
+</section>
+
+<!-- 9. 進め方・期間 ｜ 第10章：段取りと確認のリズム -->
+<!-- .flow=工程ステップ／.tl=帯タイムライン／.phpts=各フェーズのポイント。flex-grow を期間比で揃える -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">How we work</div>
+  <div class="ttl">進め方・期間</div>
+  <div class="lead"><b>確認はこまめに＝まとめて最後にしない</b>ことで手戻りを防ぎます。<b>各期間は目安</b>で、対象のボリュームにより前後します。</div>
+  <div class="body">
+    <div class="flow">
+      <div class="step" style="flex-grow:1"><div class="dot">1</div><h5>{{フェーズ1 例: 要件定義}}</h5><p>{{内容}}</p><span class="dur">{{期間}}</span></div>
+      <div class="step" style="flex-grow:2"><div class="dot">2</div><h5>{{フェーズ2}}</h5><p>{{内容}}</p><span class="dur">{{期間}}</span></div>
+      <div class="step" style="flex-grow:1"><div class="dot">3</div><h5>{{フェーズ3}}</h5><p>{{内容}}</p><span class="dur">{{期間}}</span></div>
+    </div>
+    <div class="tl">
+      <div class="tlseg s1" style="flex-grow:1"><span class="ph">{{フェーズ1}}</span><span class="wk">{{期間}}</span></div>
+      <div class="tlseg s3" style="flex-grow:2"><span class="ph">{{フェーズ2}}</span><span class="wk">{{期間}}</span></div>
+      <div class="tlseg s5" style="flex-grow:1"><span class="ph">{{フェーズ3}}</span><span class="wk">{{期間}}</span></div>
+    </div>
+    <div class="phpts">
+      <div class="php" style="flex-grow:1">
+        <div class="phh">{{フェーズ1}}のポイント</div>
+        <ul><li>{{ポイント}}</li><li>{{ポイント}}</li></ul>
+      </div>
+      <div class="php" style="flex-grow:2">
+        <div class="phh">{{フェーズ2}}のポイント</div>
+        <ul><li>{{ポイント}}</li><li>{{ポイント}}</li></ul>
+      </div>
+      <div class="php" style="flex-grow:1">
+        <div class="phh">{{フェーズ3}}のポイント</div>
+        <ul><li>{{ポイント}}</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">9 / {{総ページ数}}</div>
+</section>
+
+<!-- 10. お見積 ｜ 第11章：総額と、この予算で得るもの -->
+<!-- ⚠️ 内部の値（単価・人日・%）は出さない。提示額は03の積み上げ基準（★で丸め確定があればその額） -->
+<section class="slide" id="estimate">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Estimate</div>
+  <div class="ttl">お見積もり</div>
+  <div class="body">
+    <div class="est">
+      <div class="price">
+        <div class="cap">お見積総額（税込）</div>
+        <div class="big">¥{{税込総額}}</div>
+        <div class="tax">税抜 ¥{{税抜}}<br>消費税 ¥{{消費税}}</div>
+        <div class="meta"><b>想定期間</b>：約{{期間}}<br><b>見積有効期限</b>：{{有効期限}}<br><b>公開後</b>：{{見守りの扱い}}</div>
+      </div>
+      <div class="incl">
+        <h4>このご予算で想定するスコープ</h4>
+        <ul class="chk">
+          <!-- スコープ＝価値の言葉で。02のストーリー/03の作業を「得られるもの」に翻訳 -->
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:auto"><b>{{調整方針 例: 予算と公開時期を優先し、範囲は優先度に応じて調整}}</b>します。金額には<b>進行管理の費用を含みます</b>。作業の内容は<b>巻末「作業明細（案）」</b>をご覧ください。</div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">10 / {{総ページ数}}</div>
+</section>
+
+<!-- 11. 前提・含まないもの ｜ 第12章：線引き -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Assumptions</div>
+  <div class="ttl">この金額の前提と、含まないもの</div>
+  <div class="lead"><b>前提と違う点や「含まないもの」を実施したい場合は、その分だけ金額・期間を調整</b>します。</div>
+  <div class="body">
+    <div class="cols" style="margin-top:2mm">
+      <div class="col"><h4>前提（こう想定しています）</h4>
+        <ul class="li">
+          <li>{{前提}}</li>
+          <li>{{前提}}</li>
+          <li>{{前提}}</li>
+          <li>ここに挙げた前提に限らず、<b>本提案書の想定と実際が異なる場合</b>は、優先度に応じて範囲を判断、または別途ご相談・調整します</li>
+        </ul>
+      </div>
+      <div class="col off"><h4>含まないもの（対象外・別途）</h4>
+        <ul class="li off">
+          <li>{{対象外}}</li>
+          <li>{{対象外}}</li>
+          <li>公開後の<b>運用・保守</b>（別途）</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note warn" style="margin-top:auto">
+      <b>早めのご協力が、確実・スムーズな進行につながります</b>。ご準備・ご対応いただきたいことは <b>P.13「{{宛先}}様にお願いすること」</b> にまとめています。
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">11 / {{総ページ数}}</div>
+</section>
+
+<!-- 12. お取引の条件 ｜ 第14章：有効期限・支払・検収・保証・権利 -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Terms</div>
+  <div class="ttl">お取引の条件</div>
+  <div class="lead">契約時に「思っていたのと違う」が起きないよう、<b>進め方・お支払い・条件を先にお示し</b>します。</div>
+  <div class="body">
+    <div class="note" style="margin-top:0;line-height:1.55">
+      <b class="ink" style="font-size:11pt">契約形態：{{契約形態 例: 履行割合型の準委任契約}}</b>
+      <ul class="li" style="margin-top:2mm">
+        <li>{{なぜこの契約形態か}}</li>
+        <li>{{進め方の補足}}</li>
+        <li>優先度は <b class="ink">{{優先順 例: 予算 ＞ 公開時期 ＞ スコープ}}</b> の順を想定し、{{確実に導く一文}}。</li>
+      </ul>
+    </div>
+    <div class="cols" style="margin-top:5mm">
+      <div class="col" style="flex:1"><h4>取引条件</h4>
+        <ul class="li" style="margin-top:-1mm">
+          <li><b>お支払い</b>：{{支払条件}}</li>
+          <li>{{保証・瑕疵担保の扱い}}</li>
+          <li>公開後の<b>運用・保守・追加対応</b>が必要な場合は、内容に応じて<b>別途お見積り・ご相談</b>します</li>
+          <li>成果物・権利は<b>{{宛先}}様へ譲渡</b>します</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">12 / {{総ページ数}}</div>
+</section>
+
+<!-- 13. お願いすること／次の一歩 ｜ 第15章：ご提供・一緒に決めること・次の動き -->
+<section class="slide" id="ask">
+  <div class="brandbar"></div>
+  <div class="eyebrow">What we ask of you</div>
+  <div class="ttl">{{宛先}}様にお願いすること</div>
+  <div class="lead">{{進行をスムーズにするため、ご準備・ご対応いただきたいことを時期ごとに整理した一文}}</div>
+  <div class="body">
+    <table class="t" style="font-size:10.5pt">
+      <thead><tr><th style="width:48mm">時期</th><th>{{宛先}}様にお願いすること</th></tr></thead>
+      <tbody>
+        <tr><td><b>ご契約・着手時</b></td><td>{{依頼内容（権限・アクセス提供など）}}</td></tr>
+        <tr><td><b>要件定義まで</b><br><span style="color:var(--sub);font-size:9pt">（最初の約{{期間}}）</span></td><td>{{依頼内容（範囲合意・FB・期限内決定など）}}</td></tr>
+        <tr><td><b>移行まで</b><br><span style="color:var(--sub);font-size:9pt">（構築・移行フェーズ）</span></td><td>{{依頼内容（分類入力・統合判断・素材提供など）}}</td></tr>
+        <tr><td><b>公開前</b><br><span style="color:var(--sub);font-size:9pt">（検証・公開フェーズ）</span></td><td>{{依頼内容（受入・検収）}}</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:auto"><b>早めのご準備・ご決定が、確実でスムーズな進行につながります</b>。</div>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">13 / {{総ページ数}}</div>
+</section>
+
+<!-- 14. 付録 扉（任意）｜ 付録セクションの仕切り -->
+<section class="slide cover" style="justify-content:center;padding-left:26mm">
+  <div class="eyebrow">Appendix</div>
+  <h1 style="font-size:40pt;margin-top:8mm">付録 ― 補足資料</h1>
+  <div class="desc" style="margin-top:9mm;max-width:210mm">
+    ここからは、本編を補足する資料です。<br>
+    <b>用語</b> ／ <b>{{ページ一覧（案）}}</b> ／ <b>作業明細（案）</b> を収録しています。
+  </div>
+  <div class="pg" style="color:#cfe7f6">14 / {{総ページ数}}</div>
+</section>
+
+<!-- 15. 用語集 ｜ 付録：初出の固有名・用語の1行説明 -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Appendix &mdash; Glossary</div>
+  <div class="ttl">用語</div>
+  <div class="lead">本書で使う呼び方の整理です。</div>
+  <div class="body">
+    <table class="t" style="font-size:10pt">
+      <tbody>
+        <tr><td style="width:42mm"><b>{{用語}}</b></td><td>{{1行説明}}</td></tr>
+        <tr><td><b>{{用語}}</b></td><td>{{1行説明}}</td></tr>
+        <tr><td><b>{{用語}}</b></td><td>{{1行説明}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">15 / {{総ページ数}}</div>
+</section>
+
+<!-- 16-17. ページ一覧（案）｜ 付録：新サイトに用意するページ。長ければ複数スライドに分割 -->
+<!-- 種別＝固定ページ/投稿(量産)/共通パーツ/外部リンク。つくり方＝新規/アレンジ/流用 -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Appendix &mdash; Pages (draft)</div>
+  <div class="ttl">{{ページ一覧（案）}}</div>
+  <div class="lead">統合後の新サイトに用意するページの一覧です。</div>
+  <ul class="li tight" style="margin-top:2mm">
+    <li><b>固定ページ</b>＝1枚ずつ作り込むページ</li>
+    <li><b>投稿（量産）</b>＝同じ型に内容を入れていく仕組み（一覧・検索・関連表示が自動）</li>
+    <li><b>件数は目安</b>。要件定義で確定します</li>
+  </ul>
+  <div class="body">
+    <table class="t estd-t apx" style="font-size:9pt">
+      <thead><tr><th>ページ</th><th class="c">種別</th><th class="c">つくり方</th><th class="r">件数</th><th>移行元</th></tr></thead>
+      <tbody>
+        <tr class="catrow"><td colspan="5">{{分類 例: 共通・トップ}}</td></tr>
+        <tr><td>{{ページ}}</td><td class="c">固定ページ</td><td class="c">流用</td><td class="r">{{件数}}</td><td>{{移行元}}</td></tr>
+        <tr><td>{{ページ}}</td><td class="c">投稿（量産）</td><td class="c">新規</td><td class="r">{{件数}}</td><td>{{移行元}}</td></tr>
+        <tr class="catrow"><td colspan="5">{{分類}}</td></tr>
+        <tr><td>{{ページ}}</td><td class="c">投稿（量産）</td><td class="c">アレンジ</td><td class="r">{{件数}}</td><td>{{移行元}}</td></tr>
+        <tr><td>{{ページ}}</td><td class="c">外部リンク</td><td class="c">リンク設置</td><td class="r">—</td><td>外部サイト</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">16 / {{総ページ数}}</div>
+</section>
+
+<!-- 18-19. 作業明細（案）｜ 付録：作業リスト(03)の外部列。長ければ複数スライドに分割 -->
+<!-- ⚠️ 内部の値（単価・人日・%）は出さない。ID列(.idc)は会話用で提出PDFでは自動的に隠れる -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Appendix &mdash; Work breakdown (draft)</div>
+  <div class="ttl">作業明細（案）</div>
+  <div class="lead">本提案時点で想定する作業の一覧です（進行管理を含む）。<b>スコープの確定に応じて変動します</b>。</div>
+  <div class="body">
+    <table class="t estd-t apx" style="font-size:9pt">
+      <thead><tr><th class="idc">ID</th><th>作業名</th><th>作業内容</th></tr></thead>
+      <tbody>
+        <tr class="catrow"><td colspan="3">① {{フェーズ 例: 要件定義（設計を含む）}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr class="catrow"><td colspan="3">② {{フェーズ 例: 構築}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr class="catrow"><td colspan="3">③ {{フェーズ 例: 移行}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr class="catrow"><td colspan="3">④ {{フェーズ 例: 検証・公開}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footmark">{{宛先}} / {{提案者}}</div>
+  <div class="pg">{{総ページ数}} / {{総ページ数}}</div>
+</section>
+
+</body>
+</html>

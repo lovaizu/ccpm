@@ -24,7 +24,7 @@ disable-model-invocation: true
 | `01_requirements.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/01_requirements.md` |
 | `02_proposal-design.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/02_proposal-design.md` |
 | `03_work-breakdown.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/03_work-breakdown.md` |
-| `04_proposal.html` | `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.md` |
+| `04_proposal.html` | `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html`（16:9スライドのデザイン済み雛形）＋ `04_proposal.md`（章立て・各章の意図） |
 | `inventory/<site>.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/site-inventory.md` |
 
 ## フェーズの回し方（AIと人間の分担）
@@ -125,7 +125,7 @@ disable-model-invocation: true
 
 ## フェーズ4 — 提案書
 
-**入力**：`02`＋`03`。 **出力**：`04_proposal.html` → `04_proposal.pdf`。骨格＝`${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.md` をコピーして記入。
+**入力**：`02`＋`03`。 **出力**：`04_proposal.html` → `04_proposal.pdf`。骨格＝`${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html`（16:9スライドのデザイン済み雛形＝CSSとレイアウトが入った `{{ }}` 記入式）をコピーし、`{{ }}` プレースホルダと `<!-- 例 -->` の見本行を 02・03 の中身で置き換える。章立て・各章の意図は `04_proposal.md` を参照。
 
 1. **提案書を組み立てる**＝HTMLで、価値を主役に、専門用語は小さく価値の後ろに置く（「Ajax検索」→「欲しいものにすぐたどり着ける」／「301」→「検索順位を保つ」）。作り手の言葉を、お客様が得るものへ翻訳する。網羅を点検＝全要件(r)がどこかで語られている（対象外は明記）。用語を統一し、用語集ページを足す。
    - ⚠️ **お客様が最重視する課題を価値の先頭に置く**（インプットで一番ページ/熱量を割いているテーマ＝採用・ブランド等）。価値カードは**効果で締め、手段（IA・タクソノミー・301…）は後ろに小さく**。手段の説明で閉じると「機能紹介」に戻り価値主役が形だけになる。
