@@ -64,8 +64,8 @@ Markdown collapses the fields onto one line.
 
 # State
 
-(written by /rn:bb, read and reset to this placeholder by /rn:hi. `Status` is `paused` while a
-session is suspended — the signal /rn:hi and /rn:bb search for — and resets to `not suspended` here,
+(written by /rn:brb, read and reset to this placeholder by /rn:bak. `Status` is `paused` while a
+session is suspended — the signal /rn:bak and /rn:brb search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
 - **Status**: not suspended

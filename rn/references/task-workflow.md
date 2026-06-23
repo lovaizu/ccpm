@@ -1,7 +1,7 @@
 # Task Workflow
 
 The shared execution loop for a single task, run by a **coordinator** who delegates to **experts**.
-`gm` and `hi` read this file when they reach task execution. Run one task at a time.
+`rdy` and `bak` read this file when they reach task execution. Run one task at a time.
 
 **The deliverable/ledger split (canonical statement).** All hands-on work on the deliverable —
 generating it, fixing it, committing and pushing it — is the **implementation expert's**, by default
@@ -211,7 +211,7 @@ verdicts into the check file — the coordinator's ledger, not artifact editing 
   {description}` (`{type}` matches the change — `feat` / `fix` / `docs` / `refactor` / `test` / …), then
   push to the session PR. This is the **canonical, single completion marker** for the task: deliverable
   commits carry plain messages, and only this check-off commit carries the `complete task #{id}`
-  substring. That exact substring is what `/rn:hi` matches against `git log` when it reconciles tasks —
+  substring. That exact substring is what `/rn:bak` matches against `git log` when it reconciles tasks —
   keep it regardless of the prefix.
 
 **Step — Advance**
