@@ -1,61 +1,63 @@
-# hposal — HP（corporate site）の見積・提案書
+# hposal — corporate-site (HP) estimates & proposals
 
-お客様のインプット資料と現行サイトから、HP（コーポレートサイト）の見積と提案書を、要件整理から提出物まで一気通貫で組み立てます。AI が起案・自己レビューし、各フェーズの節目であなたがゲートを通します。
+From the client's input material and the current site, build a corporate-site (HP) estimate and proposal end to end — from organizing requirements to the final deliverable. The AI drafts and self-reviews; you pass a gate at each phase.
 
-向いているのは、会社情報・サービス・事例・ニュース・採用などが並ぶ多セクションの情報サイトです。多くは旧サイトからのコンテンツ移行や情報設計を伴います。単一ページの LP や、認証・業務ロジックを持つ Web アプリは扱いません（後者は実装の複雑さが見積の主役になるため、別の手法が要ります）。
+It fits multi-section information sites — company info, services, cases, news, careers, and the like. Most involve content migration from an old site and information architecture. It does not handle single-page LPs or web apps with auth/business logic (there, implementation complexity drives the estimate, which needs a different method).
+
+> **Output language.** The deliverables and the conversation default to **Japanese** (the proposal is read by a Japanese client); this kit's own files are in English. The console snippets below are shown in English for documentation.
 
 ## Install
 
-`hposal` は `ccpm` マーケットプレイスから配布します。Claude Code で一度マーケットプレイスを追加し、プラグインをインストールします。
+`hposal` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the plugin:
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install hposal@ccpm
 ```
 
-これで `/hposal:up` が使えるようになります。
+Now `/hposal:up` is available.
 
 ## How it works
 
-`/hposal:up` を起動すると、4 つのフェーズを上から順に回します。各フェーズが内部文書を 1 つ生み、最後のフェーズがお客様への提出物（PDF）を生みます。
+`/hposal:up` runs four phases top to bottom. Each produces one internal document; the last produces the client deliverable (PDF).
 
 ```
-01 要件整理 → 02 提案整理 → 03 作業リスト → 04 提案書
-  （内部）      （内部）        （内部）        （提出物）
+01 requirements → 02 proposal design → 03 work breakdown → 04 proposal
+   (internal)        (internal)           (internal)          (deliverable)
 ```
 
-どのフェーズも同じループです。AI が下書きし、エキスパート役のサブエージェントで自己レビューして直せるところを直し、そこで止まってあなたのレビューを待ちます。あなたが OK を出すまで次へは進みません。成果物の出力言語は指示に従います（既定は日本語）。
+Every phase is the same loop: the AI drafts, self-reviews with an expert-role subagent and fixes what it can, then stops for your review. It does not advance until you say OK.
 
 ## Getting started
 
-たとえば「現行サイトを刷新して提案書を出したい」という案件を進めるとします。
+Say you want to renew a current site and produce a proposal.
 
-`/hposal:up` を起動し、インプット資料の場所と現行サイトの URL を渡します。AI はまず現行サイトをクロールして件数を数え、要件を整理し、★であなたに確認を上げます。
+Launch `/hposal:up` and pass where the input material is and the current site URL. The AI first crawls the site and counts pages, organizes the requirements, and raises a ★ for your confirmation.
 
 ```console
-> /hposal:up リニューアル案件。input/ に資料、現行サイトは https://example.co.jp
+> /hposal:up Renewal engagement. Material in input/, current site https://example.co.jp
 
-● フェーズ1 要件整理 — 下書きとセルフレビューを終えました。
-    台帳: work/inventory/example.md（全 312 URL／実数 312・お客様申告「約280」とズレ）
-    要件: r1〜r24（全行に出自と区分あり／不明点 q1〜q6 は仮決め済み）
+● Phase 1 Requirements — draft and self-review done.
+    Ledger: work/inventory/example.md (312 URLs total / real 312 — client said "about 280")
+    Requirements: r1–r24 (every row has an origin and a category / open questions q1–q6 provisionally settled)
 
-  ★ 人間レビューをお願いします。先に確認したい論点:
-    ① 移行する/しないの線引き（新発見ページ 18 件の扱い）
-    ② ニュースの移行起点（いつ以降を移すか）
+  ★ Please review. Points to confirm first:
+    ① the migrate/don't-migrate line (how to handle the 18 newly found pages)
+    ② the news migration origin (from when to migrate)
 
-  OK をもらえたらフェーズ2 提案整理へ進みます。
+  On your OK, I proceed to Phase 2 Proposal design.
 ```
 
-ここで内容を読み、フィードバックを返します。OK を出すと提案整理へ進み、同じ要領で提案ストーリーと見積モデルを固め、作業リストで金額を積み上げ、最後に提案書を HTML で組み立てて PDF に書き出します。各フェーズの ★ がそのまま区切りになるので、方向がずれたまま先へ進むことはありません。
+You read it and give feedback. On OK it moves to proposal design, firms up the stories and the estimate model the same way, builds up the amount in the work breakdown, and finally assembles the proposal in HTML and exports it to PDF. Each phase's ★ is the break, so it never advances in the wrong direction.
 
 ```console
-● フェーズ4 提案書 — 04_proposal.pdf を書き出しました（output/2026-06-15/）。
-    要件 r1〜r24 すべてが提案書のどこかで語られています（数えて確認済み）。
-    内部の値（単価・人日・%）は提出物に出していません。
+● Phase 4 Proposal — exported 04_proposal.pdf (output/2026-06-15/).
+    Every requirement r1–r24 is told somewhere in the proposal (checked by counting).
+    Internal values (rate, person-days, %) are not shown in the deliverable.
 
-  ★ 最終レビュー（納品の前）をお願いします。
+  ★ Please do the final review (before delivery).
 ```
 
 ---
 
-各フェーズで AI が守るルールやテンプレートの中身は、起動後に AI が読む手順書側にあります。この README は入口です。
+The rules the AI follows in each phase and the template contents live in the procedure the AI reads after launch (`skills/up/SKILL.md`). This README is the entry point.
