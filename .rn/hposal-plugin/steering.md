@@ -311,24 +311,24 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 
 # State
 
-- **Status**: in-progress（D-6 言語方針の反映中）
+- **Status**: paused（D-6 言語方針を反映・push 済）
 - **Date**: 2026-06-23
 - **Last completed**: 本体7タスクに加え、本セッションで2系統の追加作業を完了・push（6b39104 まで）。
   (1) 言語をルール通りに再決定（D-5：成果物＝英語／ユーザー接点＝日本語、rn 準拠）し、SKILL.md・
   テンプレ5本・README・`04_proposal.html` のコメント/ヘッダを英語化（メタ4ファイルは元から英語）。
   (2) 見直し指摘を反映：出力先定義＋再開モデル追加／トレース・見積モデルを SKILL に一本化しテンプレの
   重複散文を削除／⚠️ を Pitfalls 従属に整理。
-- **Next（D-6 反映）**: 利用者が読む成果物を日本語へ戻す — (i) `README.md`／(ii) `references/templates/` の
-  テンプレ本文5本／(iii) `04_proposal.html` の記入ガイド・コメント。SKILL.md とメタは英語のまま。英語化前の
-  日本語原本（`.rn/hposal-plugin/corporate-site-kit/templates/`）を言い回しの土台にしつつ、efdc540/D-5 の構造改善
-  （重複手順の SKILL 一本化）は保持する。その後に元の分岐 — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
+- **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
   （D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・`plugin.json` の version 据え置き 0.1.0・
   `hposal-v0.1.0` 注釈タグを main に・CHANGELOG 該当節を notes に GitHub Release 公開）。
 - **Notes**:
-  - 言語の最終形（D-5）：英語＝SKILL.md／references テンプレ本文（01-03・site-inventory・04_proposal.md）／
-    README／plugin.json・marketplace.json・CHANGELOG／`04_proposal.html` のコメント＋使い方ヘッダ。
-    日本語＝`04_proposal.html` のクライアント可視コピー＋`{{}}`（提出物そのもの）、実行時生成の中間文書・
-    コンソール会話。CSS（1–374行）は原本バイト一致のまま不変。
+  - 言語の最終形（**D-6**・hposal＝日本限定）：日本語＝README／references テンプレ本文5本（01-03・
+    site-inventory・04_proposal.md）／`04_proposal.html` の使い方ヘッダ＋記入ガイドコメント＋クライアント
+    可視コピー＋`{{}}`（提出物）／実行時生成物・コンソール会話。英語＝SKILL.md／plugin.json・
+    marketplace.json・CHANGELOG／root README 一覧行。CSS（1–374行）は原本バイト一致のまま不変。
+  - D-6 反映の実走確認：利用者向け6ファイルの先頭=日本語・AI/メタ=英語を網羅チェック✔／html の英語ガイド
+    コメント残留ゼロ（grep）／`validate hposal --strict` ✔。html コメント/ヘッダは 74c006a・c835814 を revert
+    して原本日本語を正確復元（SKILL.md は英語のまま参照リテラルだけ `<!-- 例 -->` に戻る）。
   - 英語化のドリフトゼロ検証（本セッション実走）：⚠️ 26/26・フェーズ4・完了条件4・★ゲート保持／
     `validate hposal --strict` ✔・`validate . --strict` ✔／.md・.json の散文日本語ゼロ（SKILL の `<!-- e.g. … -->`
     参照のみ）／可視コピー保持（grep 34件）／`04.html` 差分はコメント＋ヘッダのみ（≥379行・CSS無改変）。
