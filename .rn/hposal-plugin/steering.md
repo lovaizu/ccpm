@@ -376,7 +376,8 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
   - 元キットのローカルパス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/
     マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。元 deck＝同 `…/mz-hp/work/04_提案書.html`。
   - 〔dogfood 作業フォルダ〕`/Users/kiyo/work/private/ikuko-hp/`（公開リポジトリ外・PII を含むため成果物本体は持ち込まない）。
-    `01_requirements.md`・`02_proposal-design.md`・`inventory/`・`input/` と、dogfood 専用の rn ステアリング
-    （`/Users/kiyo/work/private/ikuko-hp/steering.md`）が在る。
+    `01_requirements.md`・`02_proposal-design.md`・`inventory/`・`input/`（hposal の「作業フォルダ直下」仕様）と、
+    その提案書セッションを包む rn ステアリング（slug=`ikuko-hp`）が rn 規約どおり
+    `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md` に在る。
     phase 2 ★承認済み → **phase 3（作業リスト）から再開**。dogfood で得た plugin 改善メモは一般化（PII 無し）して
     `.rn/hposal-plugin/dogfood-notes.md` に持ち帰る。次の resume はこのパスを辿れば private 側ステアリングで続きが分かる。
