@@ -367,6 +367,11 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
     参照のみ）／可視コピー保持（grep 34件）／`04.html` 差分はコメント＋ヘッダのみ（≥379行・CSS無改変）。
   - CHANGELOG `[Unreleased]` に追加挙動（出力先・再開）を1行追記済み。提案書テンプレ追加分も同 `[Unreleased]`。
   - D-2 は D-5 にスーパーシード（「中身は日本語維持」を撤回）。Acceptance/Rules/Assumptions の該当行も更新済み。
-  - PR #8（OPEN・レビュー未着手）に全コミット push 済み。未 push なし。
+  - PR #8（OPEN・レビュー未着手）に全コミット push 済み。未 push なし（task #8 の 92e899b・8cebd66 含む）。
+  - 〔本セッション〕シミュレーション評価で初回実走の事故ポイント4点を特定→task #8 で対処：A 内部見積前提の前倒し収集
+    （単価等は捏造せず q）／B フェーズ4 export 前に `{{ }}`・`<!--…例…-->` 残留ゼロを grep ゲート／C 対応表整合＋
+    D-クロール代替⚠️／C2 欠落必須スライドを HTML骨格に内包。`04_proposal.html` は **20ページ**（P8見守り〔任意〕・
+    P10なぜ私たちか〔必須〕・P16連絡先〔任意〕を追加）。CSS 1–374行はバイト不変のまま（diff確認）。16:9・20ページ書き出し＋
+    新3ページPNG目視で破綻なしを実走確認。残課題なし＝次は当初の分岐（PR #8 レビュー or リリース）。
   - 元キットのローカルパス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/
     マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。元 deck＝同 `…/mz-hp/work/04_提案書.html`。
