@@ -1,146 +1,157 @@
 ---
 name: up
-description: HP（コーポレートサイト）の見積・提案書を、要件整理→提案整理→作業リスト→提案書の4フェーズで作る。典型的に /hposal:up 経由で起動。各フェーズに★人間レビューのゲートがあり、AIが起案・自己レビューし人間がゲートでFBする。ファイル作成等の副作用があるため、明示起動のときだけ走らせる。
+description: Build a corporate-site (HP) estimate and client proposal across four phases — requirements → proposal design → work breakdown → proposal — each ending in a human review gate (★). Typically launched via /hposal:up. Drives the AI to draft, self-review, and stop for human feedback at each gate. Has side effects (creates files), so run it only on explicit invocation.
 disable-model-invocation: true
 ---
 
-# 進め方（ワークフロー）
+# How this works (the workflow)
 
-このファイルが、AIが作業するときの**唯一の手順書**。考え方・落とし穴は別ファイルにせず、すべてこのファイルの各ステップに作業指示として埋め込んである（切り出すと実行時に守られないため）。人間向けの「なぜ」は `README.md`。
+This file is the **single procedure** the AI follows. The reasoning and the pitfalls are not split into other files — they are embedded into each step as work instructions, because anything split out is not honored at run time. The "why" for humans lives in `README.md`.
 
-4つのフェーズ。各フェーズが内部文書を1つ生み、最後のフェーズがお客様への提出物を生む。ファイル名の先頭番号＝読む順・作る順。
+**Output language.** This kit (this file, the templates' structure and guidance) is written in **English** — it is the tool. The **deliverables and the conversation are in the language the user works in — default Japanese**, because the proposal is read by a Japanese client and reviewed by a Japanese proposer. Language is a run-time choice about the output, not part of the method. The one exception that is fixed in a template: the client-facing copy inside `04_proposal.html` (slide text, section titles shown in the PDF) is Japanese, because that file *is* the client touchpoint.
+
+Four phases. Each phase produces one internal document; the last phase produces the deliverable handed to the client. The leading number in each filename = the order to read and to build.
 
 ```
-01 要件整理 → 02 提案整理 → 03 作業リスト → 04 提案書 (.html → .pdf)
-  （内部）      （内部）        （内部）        （外部 → 納品）
+01 requirements → 02 proposal design → 03 work breakdown → 04 proposal (.html → .pdf)
+   (internal)        (internal)            (internal)          (external → delivered)
 ```
 
-## 記入用テンプレート
+## Where the work lives (set up once)
 
-各フェーズの出力は、`${CLAUDE_PLUGIN_ROOT}/references/templates/` 配下の空の骨格をコピーして記入する。出力ファイルとテンプレの対応：
+Before phase 1, fix where the working files go, so they don't scatter across runs.
 
-| 出力ファイル | 骨格テンプレ |
+- Propose a **project folder** named from the engagement (e.g. the client or site name) and confirm it with the user in one line. All working files live under it:
+  `01_requirements.md`, `02_proposal-design.md`, `03_work-breakdown.md`, `inventory/<site>.md`, and `04_proposal.html` → `04_proposal.pdf`.
+- Put the final exported PDF (and only the PDF) under a **dated subfolder** of the project folder. Keep internal files (`.md`, spreadsheets) out of the delivery folder.
+- **Resuming.** `/hposal:up` is one long run broken by ★ gates, so it can stop mid-way. To pick up: the **presence of each output file plus an approved ★ gate** tells you how far you got. Resume at the **first phase whose output file is missing, or whose ★ gate the human has not yet approved**. Never silently redo an approved phase.
+
+## Fill-in templates
+
+Each phase's output is made by copying the empty skeleton under `${CLAUDE_PLUGIN_ROOT}/references/templates/` and filling it in. Output-to-template mapping:
+
+| Output file | Skeleton template |
 |---|---|
 | `01_requirements.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/01_requirements.md` |
 | `02_proposal-design.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/02_proposal-design.md` |
 | `03_work-breakdown.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/03_work-breakdown.md` |
-| `04_proposal.html` | `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html`（16:9スライドのデザイン済み雛形）＋ `04_proposal.md`（章立て・各章の意図） |
+| `04_proposal.html` | `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html` (designed 16:9 slide skeleton) + `04_proposal.md` (chapter structure & intent) |
 | `inventory/<site>.md` | `${CLAUDE_PLUGIN_ROOT}/references/templates/site-inventory.md` |
 
-## フェーズの回し方（AIと人間の分担）
+## How each phase runs (the AI/human split)
 
-どのフェーズも同じループで回す。このキットは **AIが作業し、人間が指示とフィードバックを出す** ことを前提にする。
+Every phase runs the same loop. This kit assumes **the AI does the work and the human gives direction and feedback**.
 
-1. **AIが下書きする**。入力から、下記の手順に沿ってそのフェーズの成果物を作る。
-2. **AIが自己レビューする**。エキスパート役のサブエージェント（新しい視点で正確さと網羅性を点検する）でレビューし、自分で直せるものは直す。
-3. **★人間レビュー＝ゲート**。人間が読んでフィードバックを出す。人間がOKと言うまでフェーズは進まない。OKが出るまで改善する。
+1. **The AI drafts.** From the input, it produces that phase's deliverable following the steps below.
+2. **The AI self-reviews.** It reviews with an expert-role subagent (a fresh perspective checking accuracy and completeness) and fixes what it can fix itself.
+3. **★ Human review = gate.** The human reads and gives feedback. The phase does not advance until the human says OK; keep improving until then.
 
-> **出力言語**。このキット自体は日本語で書く（人間がレビューできるように）。成果物は人間が指示した言語で作る（既定＝日本語）。言語は実行時の選択であって、方法の一部ではない。
+## Rules for every step (read before you start)
 
-## 全フェーズ共通ルール（着手前に必ず読む）
+Hold this stance whenever you run any step.
 
-どのステップを実行するときも、この構えを守る。
+- **Confirm the purpose first.** Don't jump to editing or creating. Before starting, agree the purpose of that document/task with the human in one line. Starting without a settled purpose causes rework. ← always.
+- **Don't over-confirm.** Lead with the conclusion; decide details from the purpose and declare them as assumptions. Confirm only the branches that would cause real rework (don't become an order-taker). This is separate from confirming the purpose: always take the purpose; turn details into assumptions.
+- **Fact-based.** Don't invent numbers or premises that aren't in the input. Count real things (script / crawl) = don't take a stated number on faith. Where you can't confirm, make it an open question (q), settle it provisionally, and verify before building on it (don't be naively optimistic, and don't pad either).
+- **Don't make the human's call.** Tag each fact with a category — [input] / [AI inference] / [needs human decision]. **Leave unconfirmed judgments as q and never let the AI claim "decided (X)"** — the migrate/don't-migrate line, the count denominator, the reading of a request are decided by the human at ★. Don't demote an input fact to a "hypothesis," and don't promote a pure AI inference to a "fact" — keep the category distinction sharp.
+- **One fact, one place (single source of truth).** Each fact has exactly one source of truth: counts in 01 (the ledger) / estimate model & premises in 02 / amounts in 03 / terms in 04. **Everything else references that source and never re-counts or re-calculates** (02/03/04/design quote the ledger's value instead of counting again). The source points downstream, so 02/03/04 hold no back-references. Before each ★, reconcile the same metric (counts, amounts, durations) across documents — a split means something re-calculated.
+- **Separate internal from external.** Day rates, person-days, %, actual subcontractor costs, and rationale must never appear in the client deliverable (html/PDF). The client needs only quantity/unit (scale), amount, and value.
+- **Lead with value.** What the client wants to know is that "the problem is solved and the desired result is reached." Translate the maker's words into what the client gets. Build shared understanding starting from the present state, and include only elements that serve the goal. Don't flatly reject the client's existing ideas.
+- **Documents show only the should-be.** Write only the current truth. Don't write history ("error → fixed," "old wording"), source tags, or slide-number lists (leave history to git / the conversation). Resolve a contradiction by rewriting the document to the truth, not by adding a note.
+- **Console: conclusions only.** Report results; offer detail when asked.
 
-- **目的を先に確認する**。編集・作成に飛びつかない。着手前に「その文書/作業の目的」を人間と1行で合意する。目的を決めずに進めると手戻りになる。← 常に。
-- **確認しすぎない**。結論を先に答え、細部は目的から判断して前提として宣言する。実際に大きな手戻りになる分岐だけ確認する（御用聞きにならない）。※目的の確認とは別物：目的は必ず取る／細部は前提化。
-- **事実ベース**。インプットに無い数値・前提を作らない。実数は数える（スクリプト／クロール）＝言われた数字をうのみにしない。確認できないところは不明点(q)にして仮決めし、裏どりしてから積む（安直な楽観も過小見積もしない）。
-- **人間の判断を代行しない**。各事実に区分〔インプット〕〔AI推測〕〔要・人間確定〕を付ける。**未確認の判断は q のまま残し、AIが「確定（◯◯）」を自称しない**（移行する/しないの線引き・件数の母数・要望の解釈は人間が★で決める）。インプットに書いてある事実を「仮説」に落とさず、純粋なAI推測を「事実」に上げない＝区分の弁別を効かせる。
-- **1つの事実は1か所**。各事実の正（唯一の出どころ）は1つ＝件数は01（台帳）／見積モデル・前提は02／金額は03／取引条件は04。**他はそこを参照し、再カウント・再計算しない**（02・03・04・design は件数を数え直さず台帳の値を引く）。母艦が下流を指すので、02・03・04は逆参照を持たない。同じ指標（件数・金額・期間）が複数文書で**一致しているかを各★前に突き合わせる**（分裂＝どこかが再計算した証拠）。
-- **内部と外部を分ける**。作業単価・人日・%・実費・根拠は、お客様への提出物（html/PDF）に決して出さない。お客様に要るのは数量/単位（規模感）・金額・価値だけ。
-- **価値を主役に**。お客様が知りたいのは「課題が解決し望む結果が得られる」こと。作り手の言葉を得るものへ翻訳する。現状起点で共通認識を作り、目的に資する要素だけ入れる。お客様の既存案を断定否定しない。
-- **文書は常にあるべき姿だけ**。最新の正だけを書き、履歴（「誤り→修正済」「旧表記」等）・出典符牒・slide番号の羅列は書かない（履歴はgit／会話に委ねる）。矛盾は注記でなく文書自体を正へ書き換える。
-- **コンソールは結論のみ**。結果を報告し、詳細は聞かれたら出す。
+## Traceability (the single picture)
 
-## たどれるようにする（1枚絵）
-
-要件リスト（01）が **母艦**。全行に番号を振り、そこから外へ辿る。各つなぎ目で列を数え、漏れがゼロであることを証明する（印象は漏らす、列は漏らさない）。
+The **requirement list (01) is the hub.** Number every row and trace outward from it. At each junction, count the columns and prove the gaps are zero (impressions leak; columns don't).
 
 ```
-インプット台帳(i) ──→ 要件(r) 〔母艦〕 ──→ 提案ストーリー(p, 02/04) ／ 作業(w, 03)
-   見たもの             作る/直すもの            どう語るか             いくらか
-不明点(q) ─仮決めFIX→ 要件(r) に織り込む
+input ledger (i) ──→ requirement (r) 〔hub〕 ──→ proposal story (p, 02/04) / work (w, 03)
+   what was seen        what to make/fix            how it's told           how much
+open question (q) ─provisional FIX→ folded into requirement (r)
 ```
 
-各要件は上流に `出自`（どの i／どのヒアリング由来か）を持ち、下流に `p`＋`w` を持つ。だから各フェーズの最後に、網羅を **印象ではなく数えて** 点検する：出自の無い要件＝迷子の思いつき／`w` の無い要件＝作り漏れ／`p` の無い要件＝語り漏れ。対象外は黙って落とさず明記する。
+Each requirement has, upstream, an `origin` (which i / which interview), and downstream, a `p` + `w`. So at the end of each phase, check completeness **by counting, not by impression**: a requirement with no origin = a stray idea; with no `w` = a build gap; with no `p` = a story gap. Out-of-scope items are stated explicitly, never silently dropped.
+
+This hub-and-trace model is defined **here, once**. The templates carry only the column that implements it; they do not re-explain it.
 
 ---
 
-## フェーズ1 — 要件整理
+## Phase 1 — Requirements
 
-**入力**：お客様のインプット資料、現行サイト。 **出力**：`01_requirements.md`（＋`inventory/*.md`）。骨格＝`${CLAUDE_PLUGIN_ROOT}/references/templates/01_requirements.md`（＋`${CLAUDE_PLUGIN_ROOT}/references/templates/site-inventory.md`）をコピーして記入。
+**Input**: the client's input material, the current site. **Output**: `01_requirements.md` (+ `inventory/*.md`). Skeleton = copy and fill `${CLAUDE_PLUGIN_ROOT}/references/templates/01_requirements.md` (+ `${CLAUDE_PLUGIN_ROOT}/references/templates/site-inventory.md`).
 
-1. **インプット台帳を作り、本物を数える**。見るものを最小単位（ページ・画面）で全件挙げる。各現行サイトは **全URLを1ページ＝1行** で `inventory/<site>.md` にクロールし、各ページのセクション（会社／サービス／事例／ニュース／採用／問合せ…）を分類する。実数を、お客様が言った数と突き合わせ、ズレを全件記録する。
-   - ⚠️ **言われた件数と実数はズレる**（「約100」が実は130／「11件表示」が実は14）。移行は1ページ＝1工数なので、**大きいほうの実数** を分母に取り、ズレを不明点(q)に残す。
-   - ⚠️ **件数の起点定義を台帳で固定し、全件で同一にする**（例：複数サイトのニュースを「○年○月以降のみ移行」とするなら全サイト同じ起点で数える）。起点が混ざると同じ「ニュース件数」が文書ごとに別の値になる。**台帳が件数の唯一の正**。以降の 02・03・04・`design/` は台帳の値を**引用するだけ**で、独自に数え直さない。
-   - ⚠️ **目視でなくクロール**（sitemap.xml／クローラ／スクリプト）。目視は必ず取りこぼし、着手後に表面化する。
-   - ⚠️ **件数は機械カウントで数える**。URL総数・セクション別件数は要約ツール（WebFetch等）でなく機械カウント（`curl … | grep '<loc>'`／sitemap索引なら子sitemapを合算）で確定する＝要約は件数を揺らす（同じサイトで660/1023/1088のように振れる）。なお、投稿日で起点を切る場合（○年○月以降のみ移行）はURLだけでは判定できず、公開日メタの取得が要る＝この限界も1行明記しておくと往復が締まる。
-   - ⚠️ **インプット画像はフル解像度で読む**。スライド/PDFを直接読むと低解像度で誤読する。画像由来の仕様は画像を参照し、文章に書き起こして劣化コピーを作らない。
-2. **要件を構造化して番号を振る**。確定／不明点／仮説に仕分ける。各要件に番号(r)と `出自` を付ける。事実と仮説は分けておく。リニューアル／統合では、**目指す情報設計（新セクションとメニューが旧ページにどう対応するか）** を要件として捉える。
-   - ⚠️ **数量の意味を混同しない**。「テンプレに流し込むページ数」「サイト総ページ数」「移行件数」は別の数字。同じ「ページ」でも分母が違う。1行ごとに「1単位が何を数えるか」を固定する。
-3. **仮説の要件を足す**＝事実から導ける潜在ニーズを、事実と区別できるよう「仮説」と明記して書き出す。
-4. **不明点を仮決めする**。要件に混ぜず、q として「仮決め＋根拠＋確認先」で管理する。仮決めを要件に織り込んで見積を進められる状態にし、残る確認先は 02 の根拠欄へ引き継ぐ。
+1. **Build the input ledger and count the real thing.** List everything you'll look at at its smallest unit (page, screen). Crawl each current site **one page = one row** into `inventory/<site>.md`, and classify each page's section (company / services / cases / news / careers / contact …). Reconcile the real count against what the client stated, and record every discrepancy.
+   - ⚠️ **Stated counts and real counts diverge** ("about 100" is really 130; "11 shown" is really 14). Migration is one page = one unit of work, so take **the larger real number** as the denominator and leave the gap as an open question (q).
+   - ⚠️ **Fix the counting origin in the ledger and keep it identical across all sites** (e.g. if news is "migrate only from YYYY-MM on," count every site from the same origin). Mixed origins make the same "news count" differ per document. **The ledger is the single source of truth for counts.** 02/03/04 and `design/` only *quote* its value; they never re-count.
+   - ⚠️ **Crawl, don't eyeball** (sitemap.xml / crawler / script). Eyeballing always misses pages, which surface after work starts.
+   - ⚠️ **Count mechanically.** Get total URLs and per-section counts by machine count (`curl … | grep '<loc>'` / sum child sitemaps for a sitemap index), not a summarization tool (e.g. WebFetch) — summaries make counts wobble (the same site swings 660/1023/1088). Note: cutting by publish date ("migrate only from YYYY-MM on") can't be judged from URLs alone — you need the published-date metadata. State this limit in one line to tighten the round-trips.
+   - ⚠️ **Read input images at full resolution.** Reading slides/PDFs directly renders them low-res and misreads them. Reference the image for image-sourced specs; don't transcribe into prose and make a degraded copy.
+2. **Structure the requirements and number them.** Sort into confirmed / open / hypothesis. Give each requirement a number (r) and an `origin`. Keep facts and hypotheses apart. For a renewal/consolidation, capture the **target information architecture (how new sections and menus map onto old pages)** as a requirement.
+   - ⚠️ **Don't conflate what a quantity means.** "Pages poured into a template," "total site pages," and "pages migrated" are different numbers. Even the same word "page" has a different denominator. Per row, fix what one unit counts.
+3. **Add hypothesis requirements** = latent needs derivable from the facts, written so they're distinguishable from facts — mark them "hypothesis."
+4. **Settle the open questions provisionally.** Don't mix them into requirements; manage them as q with "provisional decision + basis + where to confirm." Fold the provisional decision into the requirements so the estimate can proceed, and hand the remaining confirmation targets to 02's basis column.
 
-**完了条件**：台帳の件数が実数と一致（ページの見落としゼロ）／全要件に出自と区分がある／全不明点が仮決めされている（見積が止まらない）／事実・推測・要確認が混ざっていない。
+**Completion criteria**: the ledger's counts match the real counts (zero missed pages) / every requirement has an origin and a category / every open question is provisionally settled (the estimate isn't blocked) / facts, inferences, and needs-confirmation are not mixed.
 
-> **★前に必ず人間へ確認する定番論点リスト**（毎案件で問われる＝AIが先回りでまとめて1回で聞く）：①移行する/しないの線引き（新発見ページ・対象外候補）／②件数の母数と起点（どこからを数えるか）／③統合で吸収・廃止する範囲／④ニュース等の移行起点（いつ以降）／⑤お客様要望の解釈（言い換えが原意とズレていないか）。これらはAIが「確定」と決めず、q のまま★へ上げる。
+> **Standard topics to confirm with the human before ★** (asked on every engagement, so the AI gathers them and asks once): ① the migrate/don't-migrate line (newly found pages, out-of-scope candidates) / ② the count denominator and origin (from where do we count) / ③ what the consolidation absorbs vs retires / ④ the migration origin for news etc. (from when) / ⑤ the reading of the client's request (does the paraphrase drift from the original intent). The AI does not "decide" these; it raises them as q to ★.
 
-**★人間レビュー＝ゲート**。
+**★ Human review = gate.**
 
-## フェーズ2 — 提案整理
+## Phase 2 — Proposal design
 
-**入力**：`01_requirements.md`。 **出力**：`02_proposal-design.md`。骨格＝`${CLAUDE_PLUGIN_ROOT}/references/templates/02_proposal-design.md` をコピーして記入。
+**Input**: `01_requirements.md`. **Output**: `02_proposal-design.md`. Skeleton = copy and fill `${CLAUDE_PLUGIN_ROOT}/references/templates/02_proposal-design.md`.
 
-1. **全ストーリー（p1…pN）を立て、各pの実現方法＋根拠を決める**。コーポレートサイトでは次を必ず含める：**情報設計**（セクションとメニュー）／**ページテンプレート**（何種類で、各テンプレに何を流し込むか）／各ページ・コンテンツが**新規制作・作り直し（アレンジ）・流用・既存コンテンツの移行**のどれか（区分を必ず添える）／**一覧の検索・絞り込み**（事例・ニュース・講座）／**コンテンツ移行**（何をどの旧サイトからどの方法で）と **転送（301）**（旧URL→新URL）／引き渡す **CMS（サイト管理システム）**／テストの方法 ── に加え、目指す姿・ねらい（得る価値）・進め方・見積・前提／含まないもの・取引条件・次の一歩。具体アイテムにはID(p6-n 等)を振る。01 の `提案整理(p)` 列を全要件で埋める（対象外は明記）＝拾い漏れゼロ。
-   - ⚠️ **「既存を運ぶ」と「新しく作る」を必ず区別する**。移行案件は1つのセクションに両方が混在する（例：事例＝メニューは新規だがコンテンツは既存21件の移行／サービス＝既存ページの再配置＋新規扉の制作）。区別せず件数だけ並べると下流（テンプレ数・デザイン工数・検証）で「全部新規制作」と誤読され、工数の質を取り違える。件数を出すたびに〔既存移行／新規制作／流用アレンジ〕を添える。
-   - ⚠️ **移行で漏れやすい定番作業チェックリスト**（各項目「該当する/しない＋根拠」を必ず書く＝抜けが受注後の赤字になる）：〔**301の新旧URL対応表は誰が作るか**（実装と別作業・台帳規模の実工数）〕〔**テスト実行の主体と工数**（チェックシート作成と実行は別物）〕〔**多言語**＝言語切替の仕組みとして作るのか1ページ流用なのか（グローバルナビにENがあるなら機能として要設計）〕〔**複数ドメイン→1ドメインのクロスドメイン転送**・旧サブドメイン廃止後の扱い〕〔**終了予定のSNS・媒体の導線移行**（note/Wantedly等の引っ越し先）〕〔**付随ページ型**＝404・検索結果・サイトHTMLマップ・フォーム完了画面・製品詳細〕。
-2. **見積モデルをここで決める**（作業単価＝円/日、進行管理%、外注時の二層構成、丸め、契約形態と金額の粒度）＝これが正（唯一の出どころ）。
-   - 外注時は二層：自社分＝工数×作業単価×(1＋進行管理%)／外注分＝外注見積を実費の正として ×(1＋自社のディレクション%)。
-   - ⚠️ **外注費の税の扱いを先に決める**＝外注見積が税込か税抜か・外注先のインボイス/課税区分・当方総額への載せ方。**税抜実費に掛率を乗せ、最後に全体へ一度だけ課税**する（税込実費に掛けてさらに課税＝二重課税にしない）。前提が空ならインプット不足として q に出す。
-   - ⚠️ **「必須に近い任意費用」「価格変動オプション」は採否を確定してから計上**（プラグイン年額・アニメ実装等を「別途」に逃がして総額を低く見せない）。
-   - ⚠️ **年額・ライセンス・運用費は初期費用と別カテゴリで明示**。初期費用（当方工数＋外注）に紛れ込ませると金額表のどこにも現れず提示額との関係が宙に浮く（例：プラグイン年額を「計上方針」と書くだけで額が見えない）。各費用を〔初期に計上／公開後の運用で別途／人間が確定〕のどれかに必ず割り付ける。
-   - 金額の粒度は契約形態に合わせる：準委任（履行割合）→総額のみ（項目別固定額は請負と誤読させる）／請負（スコープ固定）→分類別小計＋総額。
-3. **まだ決められないことをTODOに出す**＝何を決めるかを明示し、調査方針に★人間レビューを受けてから調べ、結果を反映する。
+1. **Lay out all stories (p1…pN), and for each decide its method + basis.** For a corporate site, always include: **information architecture** (sections and menus) / **page templates** (how many kinds, and what gets poured into each) / for each page or piece of content, whether it is **new build / rebuild (rework) / reuse / migration of existing content** (always add the category) / **list search & filter** (cases, news, courses) / **content migration** (what, from which old site, by which method) and **redirects (301)** (old URL → new URL) / the **CMS (site management system)** handed over / the test method — plus the target state, the aim (value gained), the process, the estimate, premises / exclusions, the terms, and the next step. Give concrete items an ID (p6-n etc.). Fill 01's `proposal design (p)` column for every requirement (state out-of-scope explicitly) = zero misses.
+   - ⚠️ **Always distinguish "carry the existing" from "build new."** A migration mixes both within one section (cases = new menu but migration of 21 existing items / services = re-placing existing pages + building a new gateway). Listing counts alone gets misread downstream (template count, design effort, verification) as "all newly built," getting the *nature* of the effort wrong. Whenever you give a count, add [existing migration / new build / reuse-rework].
+   - ⚠️ **Migration's commonly-missed standard-work checklist** (for each item, write "applies / doesn't + basis" — a gap here becomes a loss after winning the deal): 〔**who builds the 301 old→new URL map** (separate from implementation — real effort at ledger scale)〕〔**who runs the tests, and the effort** (writing the checklist and running it are different)〕〔**multilingual** = built as a language-switch mechanism, or one reused page? (if the global nav has EN it must be designed as a feature)〕〔**cross-domain redirects** from several domains → one, and the handling of retired subdomains〕〔**migrating the path off ending SNS/media** (where note/Wantedly etc. move to)〕〔**ancillary page types** = 404 / search results / HTML sitemap / form-complete screen / product detail〕.
+2. **Decide the estimate model here** (day rate = currency/day, direction %, two-layer structure when subcontracting, rounding, contract form and amount granularity) = this is the source of truth. 03 and 04 follow it.
+   - When subcontracting, two layers: in-house = effort × day rate × (1 + direction %) / subcontracted = the subcontractor's quote as the actual-cost source of truth, × (1 + your direction %).
+   - ⚠️ **Decide the subcontractor-cost tax treatment up front** = is the subcontractor quote tax-included or tax-excluded, the subcontractor's invoice/tax status, and how it loads onto your total. **Apply the markup to the tax-excluded actual cost, then tax the whole once at the end** (don't apply a markup to a tax-included cost and tax it again = double taxation). If the premise is empty, raise it as q (insufficient input).
+   - ⚠️ **"Near-mandatory optional costs" and "variable-price options": cost them only after the in/out decision is fixed** (don't park a plugin annual fee or animation work in "separate" to make the total look lower).
+   - ⚠️ **Annual / license / operating costs are a separate category from the initial cost.** Folded into the initial cost (in-house effort + subcontracting), the amount appears nowhere in the figure table and floats free of the quoted price (e.g. writing "plugin annual fee" only as a "costing policy" with no amount shown). Assign each cost to exactly one of [counted in the initial cost / separate under post-launch operation / human to confirm].
+   - Match amount granularity to the contract form: quasi-mandate (effort-ratio) → total only (per-item fixed amounts get misread as a contract-for-work) / contract-for-work (fixed scope) → per-category subtotals + total.
+3. **Put what can't yet be decided into TODOs** = state what is to be decided, get a ★ human review of the research plan, then research, then reflect the result.
 
-**完了条件**：全pに具体の実現方法がある／全要件の `p` 列が埋まっている（対象外は明記）／見積モデル・前提・含まないもの・取引条件が書かれている。
+**Completion criteria**: every p has a concrete method / every requirement's `p` column is filled (out-of-scope stated) / the estimate model, premises, exclusions, and terms are written.
 
-**★人間レビュー＝ゲート**（各TODOの調査方針にも★レビュー）。
+**★ Human review = gate** (the research plan of each TODO also gets a ★ review).
 
-## フェーズ3 — 作業リスト
+## Phase 3 — Work breakdown
 
-**入力**：`02_proposal-design.md`。 **出力**：`03_work-breakdown.md`。骨格＝`${CLAUDE_PLUGIN_ROOT}/references/templates/03_work-breakdown.md` をコピーして記入。
+**Input**: `02_proposal-design.md`. **Output**: `03_work-breakdown.md`. Skeleton = copy and fill `${CLAUDE_PLUGIN_ROOT}/references/templates/03_work-breakdown.md`.
 
-1. **作業を分解する**＝コーポレートサイトの分類に沿って：**要件定義/情報設計 → デザイン → 構築 → 移行/公開 → 公開後の対応**。各p（実現方法／具体アイテム）を作業ID(w)・数量・単位を持つ作業に落とす。01 の `作業リスト` 列を全要件で埋める（対象外は明記）＝作り漏れゼロ。検索・絞り込みと各フォームは独立行に立て、工数を埋もれさせない。コンテンツ移行と転送（301）はURL台帳を根拠に独立行で扱う。F2の「移行で漏れやすい定番作業チェックリスト」で該当とした項目（301対応表の作成・テスト実行・多言語・クロスドメイン転送・付随ページ型）は、それぞれ独立行で工数を持たせる。
-   - ⚠️ **移行境界作業の役割分担マトリクスを埋める**＝〔301対応表の作成／テスト実行／品質チェック／データ抽出・取込〕×〔外注／当方／お客様〕で、誰が担当し何人日かを1表で確定する。外注が「自動生成」「チェックシート作成のみ」とした作業は、その先の実行・対応表づくりが当方か客に振られている＝そこに工数を独立計上する。空欄＝見積漏れの赤信号（受注後の赤字の主因）。
-2. **自社工数に錨を置く**＝外注は外注見積という錨があり再現できるが、**自社工数は錨が無く、過大にも過小にも振れる**。(a)体制（誰がどれだけ関与＝専従/兼務）を先に決める／(b)外注がある作業は当方を「指示・受入・進行」に限定し、実装工数を二重に積まない／(c)積んだ総人日を**体制×月数で上下両方向にサニティチェック**（例：4か月で当方70人日＝ほぼ専従か実態か／逆に数人日＝外注成果物の受入・テストに足りるか）。
-3. **金額を積み上げる**＝工数(人日)×作業単価＝作業見積。モデルに沿って進行管理／ディレクション%を乗せて見積金額にする。分類ごとと全体の合計を出す。
-   - ⚠️ **「作成だけ」は古典的な過小見積**。各行に「作成＋レビュー＋フィードバック」を積む。全ページ手動テストは重い＝主要ページは手動・残りは自動チェックに分ける。
-   - ⚠️ **移行と公開後の対応を忘れない**（お客様の不安「自分のコンテンツは生き残るか／公開後はどうなるか」に直結）。
-   - ⚠️ **工数の不確実は切り上げる**（フィボナッチ・切り上げ）。後で説明できるよう1行の理由を残す。
-   - ⚠️ **外注見積＝実費**。安く見せるために割り引かない＝着手後に響く。
-   - ⚠️ **積み上げ総額（03＝内部の正）とお客様提示額（04）は別物**。提示額の丸め・予備の上乗せは人間（営業）が★で確定する＝AIは03で勝手に丸めない／逆に「丸めない」と断定もしない。差は予備として内部に残す。★前に「提示額は積み上げのままでよいか／丸めるか」を1問だけ人間へ上げる。
+1. **Decompose the work** along corporate-site stages: **requirements/IA → design → build → migration/launch → post-launch care**. Turn each p (method / concrete items) into work with a work ID (w), quantity, and unit. Fill 01's `work` column for every requirement (state out-of-scope) = zero build gaps. Put search & filter and each form on their own rows so their effort isn't buried. Handle content migration and redirects (301) on independent rows backed by the URL ledger. The items marked "applies" in phase 2's migration checklist (building the 301 map, running tests, multilingual, cross-domain redirects, ancillary page types) each get their own row with effort.
+   - ⚠️ **Fill the migration-boundary responsibility matrix** = 〔building the 301 map / running tests / quality check / data extract & load〕 × 〔subcontractor / us / client〕, settling in one table who owns each and for how many person-days. Where the subcontractor scoped a task as "auto-generated" or "checklist only," the downstream execution and map-building fall to us or the client — count that effort on its own row. A blank cell is the red flag of a missed estimate (the main cause of post-deal losses).
+2. **Anchor in-house effort** = subcontracting has an anchor (the quote) and is reproducible, but **in-house effort has no anchor and swings high or low**. (a) Decide the staffing (who is involved how much = dedicated/shared) first / (b) where there's subcontracting, limit your side to "direct, accept, manage" and don't double-count implementation effort / (c) sanity-check the total person-days **both ways against staffing × months** (e.g. 70 in-house person-days over 4 months = nearly dedicated, or realistic? conversely a few person-days = enough to accept and test the subcontractor's output?).
+3. **Build up the amount** = effort (person-days) × day rate = work estimate. Per the model, apply direction % to reach the estimated amount. Produce per-category and overall totals.
+   - ⚠️ **"Create only" is the classic underestimate.** Stack "create + review + feedback" on each row. Manually testing every page is heavy = test the main pages manually, the rest with automated checks.
+   - ⚠️ **Don't forget migration and post-launch care** (directly tied to the client's anxiety: "will my content survive / what happens after launch").
+   - ⚠️ **Round effort uncertainty up** (Fibonacci, round up). Leave a one-line reason so you can explain it later.
+   - ⚠️ **Subcontractor quote = actual cost.** Don't discount it to look cheap = it bites after work starts.
+   - ⚠️ **The built-up total (03 = internal truth) and the amount presented to the client (04) are different.** Rounding the presented amount and adding contingency is the human's (sales) call, fixed at ★ = the AI doesn't round on its own in 03, nor does it assert "no rounding." Keep the difference internally as contingency. Before ★, raise one question to the human: "present the built-up amount as-is, or round it?"
 
-**完了条件**：全要件がいずれかの作業でカバーされている（対象外は明記）／各行が「作成＋レビュー＋フィードバック」の工数を持つ／分類別と全体の合計が出ている／金額がお客様の予算感と突き合わせ済み。
+**Completion criteria**: every requirement is covered by some work (out-of-scope stated) / each row carries "create + review + feedback" effort / per-category and overall totals exist / the amount has been reconciled against the client's budget sense.
 
-**★人間レビュー＝ゲート**。
+**★ Human review = gate.**
 
-## フェーズ4 — 提案書
+## Phase 4 — Proposal
 
-**入力**：`02`＋`03`。 **出力**：`04_proposal.html` → `04_proposal.pdf`。骨格＝`${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html`（16:9スライドのデザイン済み雛形＝CSSとレイアウトが入った `{{ }}` 記入式）をコピーし、`{{ }}` プレースホルダと `<!-- 例 -->` の見本行を 02・03 の中身で置き換える。章立て・各章の意図は `04_proposal.md` を参照。
+**Input**: `02` + `03`. **Output**: `04_proposal.html` → `04_proposal.pdf`. Skeleton = copy `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html` (the designed 16:9 slide skeleton = a `{{ }}` fill-in form with CSS and layout built in) and replace the `{{ }}` placeholders and the `<!-- 例 -->` sample rows with the content of 02 and 03. For the chapter structure and each chapter's intent, see `04_proposal.md`.
 
-1. **提案書を組み立てる**＝HTMLで、価値を主役に、専門用語は小さく価値の後ろに置く（「Ajax検索」→「欲しいものにすぐたどり着ける」／「301」→「検索順位を保つ」）。作り手の言葉を、お客様が得るものへ翻訳する。網羅を点検＝全要件(r)がどこかで語られている（対象外は明記）。用語を統一し、用語集ページを足す。
-   - ⚠️ **お客様が最重視する課題を価値の先頭に置く**（インプットで一番ページ/熱量を割いているテーマ＝採用・ブランド等）。価値カードは**効果で締め、手段（IA・タクソノミー・301…）は後ろに小さく**。手段の説明で閉じると「機能紹介」に戻り価値主役が形だけになる。
-   - ⚠️ **最重視テーマは「価値カード」だけでなく提案書の通底軸として貫く**＝表紙コピー・現状(なぜ今変えるか)・目指す姿の3点に同じテーマを通す。カード1枚に最重視テーマを置いても、冒頭〜現状が「探しやすさ・運用効率」だけだと主役が立たず脇役に見える（採用競争力が一番の関心なら、表紙・現状・目指す姿からそれを主役にする）。
-   - ⚠️ **「提案者の実績・体制」セクションを必ず置く**＝誰が・どんな体制で・類似実績（特に技術リスクの高い移行の経験）。お客様は相手の素性が分からないと任せられない。インプットに実績情報が無ければ捏造せず**枠だけ用意（placeholder）して人間に埋めてもらう**。
-   - ⚠️ **サンプル画像はサンプルと明記**。画面/デザインの試作を見せるなら「サンプルイメージ＝実デザインは異なる」とはっきり書き、下書きを完成品と誤解させない。
-   - ⚠️ **専門用語を機械置換しない**。用語統一は良いが全置換は意味を壊す（製品名・コード識別子・正式な規格名は据え置き、用語集で説明）。固有名詞・初出用語は本文で繰り返さず用語集に寄せる。
-2. **金額と契約形態を合わせる**＝契約形態に合わせて「総額のみ」か「分類別小計＋総額」を出す。内部の値（単価・人日・%）は出さない。提案書の数字は作業リスト(03)を基準に置くが、**提示額は積み上げ総額そのままとは限らない**＝人間が★で丸め・予備上乗せを確定した場合はその額を載せ、差は内部に残す（積み上げ＝内部の正、提示額＝対外。両者が違っても矛盾ではない）。
-3. **燃やし切りチェック**（新たなエキスパート役で読む）＝ヒアリング項目／お客様インプットを1件ずつ提案書と突き合わせる── ✅カバー済（どのページか）／⚠️一部／❌欠落。母艦の列を数えて相互チェックする。穴を埋め、決められないものは不明点へ回す。
-   - ⚠️ **提案書の「やります」と見積スコープを1対1で照合する**＝提案書で「対応する／含む」と書いた作業が、03に工数として積まれているか、またはスコープ判断（含む/別途見積）として明示されているかを突き合わせる。価値を語るほど提案書は作業を約束しがちで、見積に積んでいない約束（例：「公開直後の軽微な修正に対応します」と書いたが見守りは計上していない）が灰色で残る。灰色は★前に1問上げて人間に確定させる。
-4. **PDFに書き出し、1ページずつ目視する**＝画面で問題なくてもPDFで崩れる（フッター被り・表の切れ・はみ出し）。**画面プレビューを信じず、書き出したPDF自体を見る**。書き出しは人間の指示があるときだけ。
-   - ⚠️ **ヘッドレス書き出しはハングしがち**（例：Chrome `--print-to-pdf`）。バックグラウンドで起動し、ファイルサイズが安定するまでポーリングしてから `kill` する。
-   - ⚠️ **画像化して検証**：PDFをPNG化（`pdftoppm -png`）して目視、ページ数を確認（`pdfinfo`）。お客様より先に崩れを捕まえる。
-   - ⚠️ **提出は1ファイルにまとめる**。内部ファイル（md／表計算）を混ぜない。出力は日付フォルダ配下に置く。
+1. **Assemble the proposal** = in HTML, value as the lead, with jargon kept small and placed behind the value ("Ajax search" → "find what you want right away" / "301" → "keep your search ranking"). Translate the maker's words into what the client gets. Check completeness = every requirement (r) is told somewhere (state out-of-scope). Unify terms and add a glossary page.
+   - ⚠️ **Put the client's most-valued problem at the head of the value** (the theme they spend the most pages/energy on in the input = hiring, brand, etc.). Close value cards **with the effect; keep the means (IA, taxonomy, 301…) small and behind**. Closing on the means reverts to a "feature tour" and makes value-first only nominal.
+   - ⚠️ **Run the most-valued theme as the through-line, not just one value card** = thread the same theme through the cover copy, the as-is (why change now), and the to-be. Even with the top theme on one card, if the opening through the as-is is only "findability / operational efficiency," the lead doesn't stand and the theme looks like a supporting role (if hiring competitiveness is the top concern, make it the lead from the cover, as-is, and to-be).
+   - ⚠️ **Always include a "proposer's track record & team" section** = who, with what team, and similar experience (especially experience with high-risk migrations). The client can't entrust the work without knowing who you are. If the input has no track-record info, don't fabricate it — leave a placeholder for the human to fill.
+   - ⚠️ **Label sample images as samples.** If you show a screen/design draft, write clearly "sample image = the real design will differ," so a draft isn't mistaken for the finished product.
+   - ⚠️ **Don't machine-replace jargon.** Unifying terms is good, but a blanket replace breaks meaning (leave product names, code identifiers, and formal standard names as-is; explain them in the glossary). Don't repeat proper nouns and first-use terms in the body; move them to the glossary.
+2. **Match the amount and contract form** = per the contract form, present either "total only" or "per-category subtotals + total." Don't show internal values (rate, person-days, %). The proposal's figures are based on the work breakdown (03), but **the presented amount isn't necessarily the built-up total as-is** = if the human fixed rounding / contingency at ★, show that amount and keep the difference internal (built-up = internal truth, presented = external; a difference between them is not a contradiction).
+3. **Burn-down check** (read with a fresh expert role) = match each hearing item / client input against the proposal one by one — ✅ covered (which page) / ⚠️ partial / ❌ missing. Cross-check by counting the hub's columns. Fill the holes; route what can't be decided to open questions.
+   - ⚠️ **Map the proposal's "we will do X" 1:1 to the estimate scope** = check that work the proposal says it "handles / includes" is either stacked as effort in 03 or stated explicitly as a scope call (included / separately quoted). The more you sell value, the more the proposal tends to promise work, and a promise not in the estimate (e.g. "we'll handle minor fixes right after launch," but post-launch care isn't costed) stays gray. Raise the gray ones to the human before ★.
+4. **Export to PDF and eyeball it page by page** = even if the screen looks fine, the PDF breaks (footer overlap, cut tables, overflow). **Don't trust the screen preview; look at the exported PDF itself.** Export only when the human says to.
+   - ⚠️ **Headless export tends to hang** (e.g. Chrome `--print-to-pdf`). Launch it in the background, poll until the file size is stable, then `kill` it.
+   - ⚠️ **Verify by rasterizing**: render the PDF to PNG (`pdftoppm -png`) and eyeball it, and check the page count (`pdfinfo`). Catch the breakage before the client does.
+   - ⚠️ **Submit as a single file.** Don't mix in internal files (md / spreadsheets). Put the output under the dated folder.
 
-**完了条件**：提案書の数字が作業リストと一致／ヒアリング項目・要件に未対応がない（印象でなく数えて確認）／内部の値が漏れていない／書き出したPDFが崩れていない。
+**Completion criteria**: the proposal's figures match the work breakdown / no hearing item or requirement is unaddressed (checked by counting, not impression) / no internal value leaks / the exported PDF isn't broken.
 
-**★人間レビュー＝ゲート**（最終・納品の前）。
+**★ Human review = gate** (final, before delivery).
