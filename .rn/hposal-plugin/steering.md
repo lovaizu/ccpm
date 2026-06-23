@@ -203,6 +203,28 @@
 - `claude plugin validate .` がエラー・警告なしで完了する。
 - `claude -p "/hposal:up" --plugin-dir hposal` が、スキルを認識した出力で正常終了する。
 
+### #7: 提案書のスライドHTMLテンプレを用意する（追加スコープ）
+
+**Purpose**: フェーズ4の出力 `04_proposal.html` は「HTMLで作る」方針だけで雛形が無かった。実在の完成 deck
+（豆蔵向け `work/04_提案書.html`）を**汎用テンプレ化**し、CSSデザインシステムとスライド構造を引き継ぐ。
+ccpm は公開マーケットなので実案件データは持ち込まない（D-4）。
+
+**Prerequisites**: #3
+
+**Steps**:
+
+- [x] 元 deck の CSS（1–374行）をバイト不変で `hposal/references/templates/04_proposal.html` に温存
+- [x] 17スライド本体を `{{ }}` プレースホルダ＋見本行＋記入ガイドに汎用化（豆蔵固有データを全除去）
+- [x] SKILL.md フェーズ4を HTML テンプレ参照に更新（章立ては 04_proposal.md を併記）
+- [x] CHANGELOG `[Unreleased]` に追記
+- [x] self-check（CSS原本一致 diff・実データ残留ゼロ grep・PDF 17ページ・代表3ページ目視）
+
+**Completion criteria**:
+
+- `hposal/references/templates/04_proposal.html` が存在し、CSS が元 deck とバイト一致、実案件データ残留ゼロ。
+- ヘッドレス Chrome で 16:9・17ページに書き出せ、表紙/画面モック/見積が崩れず描画される。
+- SKILL.md フェーズ4が HTML テンプレを骨格として指す。
+
 # Decisions
 
 ## D-1: 1スキル `up` で4フェーズ全体を駆動する
@@ -240,12 +262,22 @@
   release on main」。
 - **Sources**: .claude/rules/plugin.md。
 
+## D-4: スライドHTMLは汎用テンプレ化（実案件データを公開リポジトリに持ち込まない）
+- **Issue**: 完成 deck（豆蔵 `work/04_提案書.html`）を雛形にする際、(A)汎用テンプレ化／(B)丸ごと見本同梱／
+  (C)両方 のどれにするか。ccpm は公開マーケットプレイス。
+- **Conclusion**: A。CSSデザインシステムと全スライド構造は引き継ぎ、豆蔵固有の中身（社名・実額¥3,080,000・
+  件数・提案者名）は `{{ }}` プレースホルダ＋見本行＋記入ガイドに置換。
+- **Rationale**: 再利用資産の本体は CSS とレイアウトで、中身は案件固有。B/C は実在クライアントの見積・社名を
+  公開リポジトリに残すため不採用。A なら設計資産を完全継承しつつ実データ流出を避けられる。
+- **Evidence**: 元 deck の CSS は実データを含まず（コメントも汎用）、温存してバイト一致を確認。
+- **Sources**: 元 deck `work/04_提案書.html`／ユーザー確認（本セッション：A を選択）／.claude/rules/marketplace.md。
+
 # State
 
 - **Status**: paused
 - **Date**: 2026-06-15
-- **Last completed**: #6（構造検証＋ヘッドレス起動）。全6タスク完了。本セッションで Acceptance criteria を
-  実物で全項目検証し、すべて充足を確認した。
+- **Last completed**: #7（提案書スライドHTMLテンプレ・追加スコープ）。コミット 89ebcdd で push 済み。
+  本体6タスクは既に完了・Acceptance 検証済み。
 - **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
   （`hposal-v0.1.0` タグ + GitHub Release）まで進める。(B) の場合は D-3 に従い CHANGELOG の
   `[Unreleased]` を `## [0.1.0] - YYYY-MM-DD` へ確定、`plugin.json` の version 据え置き（既に 0.1.0）、
@@ -259,4 +291,8 @@
   - PR #8（OPEN・reviewDecision=REVIEW_REQUIRED・レビュー未着手）に全コミット push 済み。未 push なし。
   - 元キットのローカルパス（MCP 不要・Mac 同期済）＝`/Users/kiyo/Library/CloudStorage/
     GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。
-  - 未了（別指示待ち）: タグ付け・GitHub Release は D-3 によりスコープ外。CHANGELOG は `[Unreleased]` のまま。
+  - #7 検証（本セッション実走）: CSS 原本とバイト一致（diff空）／実案件データ残留ゼロ（grep）／ヘッドレス
+    Chrome で 16:9・**17ページ**／表紙・画面モック・見積の3ページ目視で崩れなし／`validate hposal --strict`・
+    `validate . --strict` 双方 ✔。元 deck＝`…/mz-hp/work/04_提案書.html`（豆蔵向け完成19ページ）。
+  - 未了（別指示待ち）: タグ付け・GitHub Release は D-3 によりスコープ外。CHANGELOG は `[Unreleased]` のまま
+    （提案書テンプレ追加分を含む）。
