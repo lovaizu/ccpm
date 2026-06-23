@@ -339,7 +339,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 
 # State
 
-- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件で `/hposal:up` を実走し改善所見を収集中・**まだ回しきっていない**）。dogfood はフェーズ4提案書までドラフト→ユーザーレビューで複数FB適用→**さらに「先方希望＝WordPress」で基盤反転＝02〜04 を全面見直しに突入**（private 側 steering D-7／State 参照）。dogfood 所見は `dogfood-notes.md` に #1〜#18 蓄積（#16 準委任で固定見守りは矛盾・#17 sourcing語を客先に出すな・#18 工数化前に基盤/移行元のプラットフォーム制約を確認）。**残り＝dogfood を WP前提で回しきる → 所見を plugin（SKILL/テンプレ）へ反映 → 本体の分岐（PR #8 or リリース）**。
+- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件 `ikuko-hp` で `/hposal:up` を実走し改善所見を収集中・**まだ回しきっていない**）。基盤は「Studio第一推奨→WP反転→**Studio/WordPress.com フラット両論併記**」に再々確定（private 側 steering **D-8**／State 参照）。本セッションで **02・03 を2案フラットに組み直し完了**（共通工数1回＋基盤分岐2本、2案の税込概算を併記、前回FB全反映、算術＋明細⇄役割別集計の突合✔）。dogfood 所見は `dogfood-notes.md` に **#1〜#20＋#9再実証** 蓄積（新規＝#19 複数基盤フラット併記の再利用パターン・#20「WordPress」は.com/.org確定後に見積・#9再実証＝フェーズ3の金額突合ゲートが有効と実証）。**残り＝dogfood で D-8の施主★→04再フィル(純粋比較1スライド＋2案総額)→PDF まで回しきる → 所見を plugin（SKILL/テンプレ）へ反映 → 本体の分岐（PR #8 or リリース）**。
 - **Date**: 2026-06-23
 - **Last completed**: **task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
   A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
