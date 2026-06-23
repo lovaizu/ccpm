@@ -136,7 +136,7 @@ This hub-and-trace model is defined **here, once**. The templates carry only the
 
 ## Phase 4 — Proposal
 
-**Input**: `02` + `03`. **Output**: `04_proposal.html` → `04_proposal.pdf`. Skeleton = copy `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html` (the designed 16:9 slide skeleton = a `{{ }}` fill-in form with CSS and layout built in) and replace the `{{ }}` placeholders and the `<!-- 例 -->` sample rows with the content of 02 and 03. For the chapter structure and each chapter's intent, see `04_proposal.md`.
+**Input**: `02` + `03`. **Output**: `04_proposal.html` → `04_proposal.pdf`. Skeleton = copy `${CLAUDE_PLUGIN_ROOT}/references/templates/04_proposal.html` (the designed 16:9 slide skeleton = a `{{ }}` fill-in form with CSS and layout built in) and replace the `{{ }}` placeholders and the example rows (the `<!-- e.g. … -->` samples) with the content of 02 and 03. For the chapter structure and each chapter's intent, see `04_proposal.md`.
 
 1. **Assemble the proposal** = in HTML, value as the lead, with jargon kept small and placed behind the value ("Ajax search" → "find what you want right away" / "301" → "keep your search ranking"). Translate the maker's words into what the client gets. Check completeness = every requirement (r) is told somewhere (state out-of-scope). Unify terms and add a glossary page.
    - ⚠️ **Put the client's most-valued problem at the head of the value** (the theme they spend the most pages/energy on in the input = hiring, brand, etc.). Close value cards **with the effect; keep the means (IA, taxonomy, 301…) small and behind**. Closing on the means reverts to a "feature tour" and makes value-first only nominal.
