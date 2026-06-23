@@ -32,15 +32,16 @@
 
 **品質**
 
-- キットの中身（SKILL.md・templates）は日本語のまま。英語にするのは plugin.json の description と
-  marketplace.json の description（マーケットの並びに合わせる）だけ。
+- 言語は D-5 に従う：成果物（道具）＝英語、ユーザー接点＝日本語。英語＝SKILL.md・テンプレ本文・
+  README・plugin.json/marketplace.json/CHANGELOG。日本語＝`04_proposal.html` のクライアント可視
+  コピー＋`{{}}`（提出物そのもの）と、実行時に生成する中間文書・コンソール会話。
 - `claude plugin validate hposal --strict` と `claude plugin validate .`（マーケットルート）の両方が
   通る。
 - ヘッドレス確認 `claude -p "/hposal:<name>" --plugin-dir hposal` でスキルが読み込まれて起動する。
 - 内容ドリフトがない：変換後のスキル/テンプレが元キットの意図と一致し、ルールの取りこぼしや、参照の
   受け渡し点に挿入された要約が無い（`.rn/hposal-plugin/` のベースコピーと差分照合できる）。
 - リポジトリのルールに沿う：plugin.md（version は plugin.json のみ・CHANGELOG を置く）／marketplace.md
-  （2か所に登録）／language.md（成果物は英語既定。ただしキット中身は方針として日本語を維持）。
+  （2か所に登録）／language.md（成果物は英語既定。「指示があれば別」に従いユーザー接点のみ日本語＝D-5）。
 
 # Assumptions
 
@@ -49,8 +50,8 @@
   `references/`／`README.md`／`CHANGELOG.md`。`skills/<フォルダ名>` がコマンド名になる。
 - 〔事実・確認済〕現状 `marketplace.json` と root `README.md` は `rn` のみを載せている。
 - 〔事実・確認済〕Google Drive 上の元キットパスは読み取り可能（コピー可能）。
-- 〔事実・ユーザー確認済〕名前は `hposal`。中身は日本語維持、説明文は英語。README 冒頭で一度だけ
-  「HP（corporate site）」と補う。
+- 〔事実・ユーザー確認済〕名前は `hposal`。言語は D-5（成果物＝英語／ユーザー接点＝日本語、rn 準拠）。
+  README 冒頭で一度だけ「HP（corporate site）」を補う。
 - 〔判断・要レビュー〕1スキルで4フェーズ全体を駆動する（フェーズごとに別スキルへ割らない）。workflow は
   ★ゲートで区切られた一続きの工程だから（D-1）。
 - 〔判断・要レビュー〕スキル名＝コマンド名は `up`（`/hposal:up`）。「提案を起こす」を表す短い合図で、
@@ -61,8 +62,8 @@
 # Rules
 
 - 1 task = 1 commit
-- キット中身（workflow→SKILL.md、templates）は日本語のまま。英語にするのは plugin.json と
-  marketplace.json の description のみ。
+- 言語は D-5：成果物（SKILL.md・テンプレ本文・README・メタ）＝英語、ユーザー接点
+  （`04_proposal.html` の可視コピー＝提出物・実行時生成物・コンソール）＝日本語。
 - version は `plugin.json` の1か所だけ（marketplace.json には書かない）。
 - `marketplace.json` と root `README.md` は同じ変更内で同期させる。
 - 内容ドリフト禁止：`workflow.md` の全フェーズ・全ルール・全 ⚠️・★ゲートを保つ。参照の受け渡し点
@@ -243,6 +244,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
   ユーザー確認（本セッション：`up`＝「起こす」）。
 
 ## D-2: 中身は日本語維持・説明文のみ英語・README で HP を一度補う
+- **⚠️ SUPERSEDED by D-5（2026-06-23）**：「キット中身を日本語維持」は撤回。layout は残すが結論は D-5 が正。
 - **Issue**: language.md は成果物の既定を英語とするが、本キットは意図的に日本語で書かれている。
 - **Conclusion**: SKILL.md・templates は日本語のまま。英語にするのは plugin.json と marketplace.json の
   description のみ。README は冒頭で一度だけ「HP（corporate site）」と補う。
@@ -272,27 +274,41 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 - **Evidence**: 元 deck の CSS は実データを含まず（コメントも汎用）、温存してバイト一致を確認。
 - **Sources**: 元 deck `work/04_提案書.html`／ユーザー確認（本セッション：A を選択）／.claude/rules/marketplace.md。
 
+## D-5: 言語はルール通り＝成果物（道具）は英語・ユーザー接点は日本語（D-2 を撤回）
+- **Issue**: 「全部日本語」は中途半端。language.md（成果物は英語既定・指示があれば別）をどう正しく適用するか。
+- **Conclusion**: お手本 `rn`（SKILL.md も README も英語）に揃え、**道具＝英語／ユーザー接点＝日本語**。
+  英語：SKILL.md・テンプレ本文（01-03・site-inventory・04_proposal.md）・README・plugin.json・
+  marketplace.json・CHANGELOG・`04_proposal.html` のコメント/使い方ヘッダ。日本語：`04_proposal.html`
+  のクライアント可視コピー＋`{{}}`（提出物そのもの）と、実行時に生成する中間文書・コンソール会話。
+- **Rationale**: language.md の狙い（広い読者・AI学習量）は「道具」で効く。日本語であるべきは人が読む出力＝
+  クライアント提出物とレビュー会話だけ。AI向け作業指示は英語の方が安定し、language.md「指示があれば別」に
+  も合致。`rn` の steering（英語見出し＋日本語中身）と同じ層分け。
+- **Evidence**: `rn/skills/gm/SKILL.md`・`rn/README.md` が英語。CSS（1–374行）は実データを含まず原本
+  バイト一致のまま温存。本セッションで英語化後、⚠️ 26/26・フェーズ4・★ゲート保持を実数検証。
+- **Sources**: .claude/rules/language.md／お手本 `rn`／ユーザー確認（本セッション：「ルール通り」）。
+
 # State
 
 - **Status**: paused
 - **Date**: 2026-06-23
-- **Last completed**: #7（提案書スライドHTMLテンプレ・追加スコープ）。コミット 89ebcdd で push 済み。
-  本体6タスクは既に完了・Acceptance 検証済み。
+- **Last completed**: 本体7タスクに加え、本セッションで2系統の追加作業を完了・push（6b39104 まで）。
+  (1) 言語をルール通りに再決定（D-5：成果物＝英語／ユーザー接点＝日本語、rn 準拠）し、SKILL.md・
+  テンプレ5本・README・`04_proposal.html` のコメント/ヘッダを英語化（メタ4ファイルは元から英語）。
+  (2) 見直し指摘を反映：出力先定義＋再開モデル追加／トレース・見積モデルを SKILL に一本化しテンプレの
+  重複散文を削除／⚠️ を Pitfalls 従属に整理。
 - **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
-  （`hposal-v0.1.0` タグ + GitHub Release）まで進める。(B) の場合は D-3 に従い CHANGELOG の
-  `[Unreleased]` を `## [0.1.0] - YYYY-MM-DD` へ確定、`plugin.json` の version 据え置き（既に 0.1.0）、
-  `hposal-v0.1.0` 注釈付きタグを main に打ち、CHANGELOG 該当節を notes に Release 公開。
+  （D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・`plugin.json` の version 据え置き 0.1.0・
+  `hposal-v0.1.0` 注釈タグを main に・CHANGELOG 該当節を notes に GitHub Release 公開）。
 - **Notes**:
-  - Acceptance 検証結果（本セッション実走・全項目 ✅）: `validate hposal --strict` ✔ / `validate . --strict`
-    ✔ / `/hposal:up` ヘッドレス exit 0・フェーズ1起動 / SKILL frontmatter 有効 / 4フェーズ・共通ルール・
-    1枚絵あり / ⚠️ base27=SKILL27・★ base15=SKILL本文15（取りこぼしゼロ） / テンプレ5本 references に実在・
-    参照解決・base とバイト一致 / plugin.json(name=hposal,英語desc,0.1.0,author=lovaizu) / README 冒頭
-    「HP（corporate site）」1回 / marketplace.json + root README 同期登録 / 言語方針 D-2 準拠。
-  - PR #8（OPEN・reviewDecision=REVIEW_REQUIRED・レビュー未着手）に全コミット push 済み。未 push なし。
-  - 元キットのローカルパス（MCP 不要・Mac 同期済）＝`/Users/kiyo/Library/CloudStorage/
-    GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。
-  - #7 検証（本セッション実走）: CSS 原本とバイト一致（diff空）／実案件データ残留ゼロ（grep）／ヘッドレス
-    Chrome で 16:9・**17ページ**／表紙・画面モック・見積の3ページ目視で崩れなし／`validate hposal --strict`・
-    `validate . --strict` 双方 ✔。元 deck＝`…/mz-hp/work/04_提案書.html`（豆蔵向け完成19ページ）。
-  - 未了（別指示待ち）: タグ付け・GitHub Release は D-3 によりスコープ外。CHANGELOG は `[Unreleased]` のまま
-    （提案書テンプレ追加分を含む）。
+  - 言語の最終形（D-5）：英語＝SKILL.md／references テンプレ本文（01-03・site-inventory・04_proposal.md）／
+    README／plugin.json・marketplace.json・CHANGELOG／`04_proposal.html` のコメント＋使い方ヘッダ。
+    日本語＝`04_proposal.html` のクライアント可視コピー＋`{{}}`（提出物そのもの）、実行時生成の中間文書・
+    コンソール会話。CSS（1–374行）は原本バイト一致のまま不変。
+  - 英語化のドリフトゼロ検証（本セッション実走）：⚠️ 26/26・フェーズ4・完了条件4・★ゲート保持／
+    `validate hposal --strict` ✔・`validate . --strict` ✔／.md・.json の散文日本語ゼロ（SKILL の `<!-- e.g. … -->`
+    参照のみ）／可視コピー保持（grep 34件）／`04.html` 差分はコメント＋ヘッダのみ（≥379行・CSS無改変）。
+  - CHANGELOG `[Unreleased]` に追加挙動（出力先・再開）を1行追記済み。提案書テンプレ追加分も同 `[Unreleased]`。
+  - D-2 は D-5 にスーパーシード（「中身は日本語維持」を撤回）。Acceptance/Rules/Assumptions の該当行も更新済み。
+  - PR #8（OPEN・レビュー未着手）に全コミット push 済み。未 push なし。
+  - 元キットのローカルパス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/
+    マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。元 deck＝同 `…/mz-hp/work/04_提案書.html`。
