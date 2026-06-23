@@ -376,32 +376,30 @@
 <body>
 <!--
   ============================================================================
-  04_proposal.html — proposal template (16:9 slides, HTML → PDF)
+  04_proposal.html — 提案書テンプレート（16:9 スライド・HTML→PDF）
   ============================================================================
-  How to use:
-  - Copy this file to `04_proposal.html`, and replace the {{ }} placeholders and
-    the sample rows (comments marked "例…") with the content of 02 (proposal
-    design) and 03 (work breakdown).
-  - The <style> above is a ready-to-use "design system." To change the brand
-    color, swap only :root's --main / --main-d / --main-dd (the rest follow).
-  - Slides lead with "the value the client gets"; keep jargon small and behind it.
-  - Chapters map to 04_proposal.md (the skeleton). Add/drop/reorder per engagement.
-    This sample cashes in "value (what you gain)" AFTER the "how we build / migrate".
-  - Each <section class="slide"> is one page. Fix .pg's page number and "N / total".
-  - .footmark is the delivery brand ({{宛先}} / {{提案者}}); replace it on every page.
-  - The internal ID column (.idc) is for conversation; @media print hides it
-    automatically (it does not appear in the delivered PDF).
+  使い方：
+  - このファイルをコピーして `04_proposal.html` を作り、{{ }} のプレースホルダと
+    「例…」と書いた見本行（コメント）を、02（提案整理）・03（作業リスト）の中身で置き換える。
+  - 上の <style> は触らずに使える「デザインシステム」。ブランド色を変えるなら
+    :root の --main / --main-d / --main-dd だけ差し替える（他は連動する）。
+  - スライドは「お客様が得る価値を主役」に。専門用語は価値の後ろに小さく添える。
+  - 章立ては 04_proposal.md（骨格）に対応。案件により章の足し引き・並べ替えは可。
+    この見本は「価値（得られること）を“作り方・移し方”の後に回収する」並びを採用。
+  - 各 <section class="slide"> が1ページ。.pg のページ番号と「N / 総数」を実数に直す。
+  - .footmark は提出ブランド（{{宛先}} / {{提案者}}）。全ページ共通で差し替える。
+  - 内部ID列（.idc）は会話用。@media print で自動的に隠れる（提出PDFには出ない）。
   ============================================================================
 -->
 
-<!-- 1. Cover | 04_proposal.md ch.1: this proposal in one line -->
+<!-- 1. 表紙 ｜ 04_proposal.md 第1章：このご提案を一言で -->
 <section class="slide cover">
   <div style="position:absolute;top:14mm;right:20mm;text-align:right;font-size:10.5pt;color:#cfe7f6;line-height:1.9">
     発行日：{{発行日}}<br>
     見積有効期限：{{有効期限}}
   </div>
   <div class="eyebrow">{{英語ラベル 例: Website Renewal Proposal}}</div>
-  <!-- Cover copy = the top theme in one line. Thread the same axis through cover, as-is, to-be -->
+  <!-- 表紙コピー＝最重視テーマを一言で。表紙・現状・目指す姿に同じ軸を通す -->
   <h1>{{表紙コピー 例: ○○を、<br>ひとつに。}}</h1>
   <div class="sub">{{提案サブタイトル 例: ○○サイト構築のご提案}}</div>
   <div class="desc">
@@ -412,7 +410,7 @@
   <div class="who">提案：<b>{{提案者}}</b>　／　宛先：<b>{{宛先}} 御中</b></div>
 </section>
 
-<!-- 2. How to read | ch.2: the structure and where to look / requests and the answering pages -->
+<!-- 2. 読み方 ｜ 第2章：どんな構成で、どこを見てほしいか／ご要望とお答えするページ -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">Contents</div>
@@ -422,7 +420,7 @@
     <div class="cols" style="margin-top:1mm">
       <div class="col"><h4>本編 ― ご提案</h4>
         <ul class="li" style="margin-top:1mm">
-          <!-- Replace with chapter titles and real page numbers; row count per engagement -->
+          <!-- 章タイトルと実ページ番号に差し替え。行数は案件に合わせる -->
           <li><b>いまの姿から、目指す姿へ</b>　<span style="color:var(--off)">P.3</span></li>
           <li><b>{{画面① 例: サービスメニュー}}</b>　<span style="color:var(--off)">P.4</span></li>
           <li><b>{{画面② 例: 事例検索}}</b>　<span style="color:var(--off)">P.5</span></li>
@@ -448,7 +446,7 @@
         </ul>
       </div>
     </div>
-    <!-- Map the client's requests to the answering page. Quote the input requests verbatim -->
+    <!-- お客様の「ご要望」と、それに答えるページの対応表。インプットの要望をそのまま引く -->
     <div style="margin-top:5mm;border:1px solid var(--line);border-left:4px solid var(--main);border-radius:0 2mm 2mm 0;background:var(--soft);padding:3.6mm 5mm">
       <div style="font-size:10pt;font-weight:800;color:var(--main-d);margin-bottom:1.6mm">{{宛先}}様からいただいたご要望と、お答えするページ</div>
       <ul class="li" style="margin-top:0">
@@ -462,8 +460,8 @@
   <div class="pg">2 / {{総ページ数}}</div>
 </section>
 
-<!-- 3. As-is → to-be | ch.3-4: the shared starting point (facts) + what we want to become -->
-<!-- Example "current → consolidated" map for a migration; for new build, replace with a requirements summary -->
+<!-- 3. いまの姿 → 目指す姿 ｜ 第3-4章：共通の出発点（事実）＋こうなりたい -->
+<!-- 移行案件向けの「現行→統合後」対応表の例。新規構築なら表を要件サマリに置換可 -->
 <section class="slide dense">
   <div class="brandbar"></div>
   <div class="eyebrow">As-is &rarr; To-be</div>
@@ -486,7 +484,7 @@
         </tr>
       </thead>
       <tbody>
-        <!-- e.g. one row = one content group; always add the [reuse / rework / new] category -->
+        <!-- 例：1行＝1コンテンツ群。〔流用/アレンジ/新規〕の区分を必ず添える -->
         <tr><td>{{コンテンツ 例: ニュース}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td>{{統合後メニュー}}</td><td class="c">{{合計}}</td><td><span style="color:var(--off);font-weight:800">流用</span>（{{補足}}）</td></tr>
         <tr><td>{{コンテンツ}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td>{{メニュー}} <span class="pill" style="background:var(--accent)">新規</span></td><td class="c">{{合計}}</td><td><span style="color:var(--accent);font-weight:800">新規デザイン</span>（{{補足}}）</td></tr>
         <tr><td>{{コンテンツ}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td class="r">{{数}}</td><td>{{メニュー}}</td><td class="c">{{合計}}</td><td><span style="color:var(--main-d);font-weight:800">アレンジ</span>（{{補足}}）</td></tr>
@@ -502,8 +500,8 @@
   <div class="pg">3 / {{総ページ数}}</div>
 </section>
 
-<!-- 4. Screen ① | ch.6: how we build it (structure, design, features) as a wireframe -->
-<!-- ⚠️ Always label sample images "the real design will differ" (.imgnote) -->
+<!-- 4. 画面① ｜ 第6章：どう作るか（構成・デザイン・機能）をワイヤーフレームで -->
+<!-- ⚠️ サンプルイメージは「実デザインは異なる」と必ず明記（.imgnote） -->
 <section class="slide scr">
   <div class="brandbar"></div>
   <div class="eyebrow">Screen 1 &mdash; {{画面名}}</div>
@@ -517,7 +515,7 @@
         <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
       <div class="topnav">
         <span class="logo">{{ロゴ}}</span>
-        <!-- Global nav. .active = current location, .new = newly added menu -->
+        <!-- グローバルナビ。.active=現在地、.new=新設メニュー -->
         <span class="n">{{ナビ}}</span><span class="n active">{{現在地 ▾}}</span>
         <span class="n new">{{新設}}</span><span class="n">{{ナビ}}</span><span class="n">{{ナビ}}</span>
       </div>
@@ -525,7 +523,7 @@
       <div class="lay">
         <div class="side">
           <div class="sh">{{左ナビの説明 例: サービス階層ナビ}}</div>
-          <!-- Hierarchy tree. l1/l2/l3/l4 = depth, cur = current location -->
+          <!-- 階層ツリー。l1/l2/l3/l4 で深さ、cur で現在地 -->
           <ul class="tree">
             <li class="l1">▾ {{第1階層}}</li>
             <li class="l2">▾ {{第2階層}}</li>
@@ -549,7 +547,7 @@
         </div>
       </div>
     </div>
-    <!-- Value box: left = for the client / right (.b) = for {{宛先}}. Close with the effect -->
+    <!-- 価値ボックス：左=お客様にとって／右(.b)={{宛先}}にとって。効果で締める -->
     <div class="vrow" style="margin-top:auto">
       <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値}}</div></div>
       <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値}}</div></div>
@@ -559,7 +557,7 @@
   <div class="pg">4 / {{総ページ数}}</div>
 </section>
 
-<!-- 5. Screen ② | ch.6: filtered-search pattern (cases, track record, etc.) -->
+<!-- 5. 画面② ｜ 第6章：絞り込み検索パターン（事例・実績など） -->
 <section class="slide scr">
   <div class="brandbar"></div>
   <div class="eyebrow">Screen 2 &mdash; {{画面名}}</div>
@@ -579,7 +577,7 @@
         <div class="side filter">
           <div class="sh">🔍 絞り込み</div>
           <span class="fw">フリーワードで探す</span>
-          <!-- Filter axis = one heading (.sh) + checkboxes (.ck). Place the taxonomy decided in 02 -->
+          <!-- 絞り込み軸＝1見出し(.sh)＋チェック(.ck)。02で決めたタクソノミーを置く -->
           <div class="sh">{{絞り込み軸① 例: 業種業態}}</div>
           <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
           <label class="ck"><input type="checkbox">{{選択肢}}</label>
@@ -589,7 +587,7 @@
         </div>
         <div class="main2">
           <div class="rhd"><span>{{一覧名}}</span><span class="cnt">{{全件}}件中 {{表示}}件を表示</span></div>
-          <!-- Result card (.rc). .th = thumbnail, .ct = title, .b2 = tags -->
+          <!-- 結果カード(.rc)。.th=サムネ、.ct=タイトル、.b2=タグ -->
           <div class="cardsg">
             <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
             <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
@@ -608,7 +606,7 @@
   <div class="pg">5 / {{総ページ数}}</div>
 </section>
 
-<!-- 6. Screen ③ | ch.6: a reused screen with the same feel (optional; delete if only two screens) -->
+<!-- 6. 画面③ ｜ 第6章：同じ操作感の流用画面（任意。画面が2つなら削除可） -->
 <section class="slide scr" id="crs">
   <div class="brandbar"></div>
   <div class="eyebrow">Screen 3 &mdash; {{画面名}}</div>
@@ -632,7 +630,7 @@
           <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
           <label class="ck"><input type="checkbox">{{選択肢}}</label>
           <div class="sh">{{絞り込み軸②}}</div>
-          <!-- Tag-style filtering can also use .tagrow / .tg (.on = selected) -->
+          <!-- タグ型の絞り込みは .tagrow / .tg（.on=選択中）も使える -->
           <div class="tagrow"><span class="tg on">{{タグ}}</span><span class="tg">{{タグ}}</span><span class="tg">{{タグ}}</span></div>
         </div>
         <div class="main2">
@@ -655,8 +653,8 @@
   <div class="pg">6 / {{総ページ数}}</div>
 </section>
 
-<!-- 7. Migrate & launch | ch.7: content migration, redirects (301), launch [per engagement] -->
-<!-- ⚠️ Always put "who owns it" (us / client) in a column. Watch for gaps in the 301 map, test owner, multilingual -->
+<!-- 7. どう移す・公開 ｜ 第7章：コンテンツ移行・転送(301)・公開〔案件により〕 -->
+<!-- ⚠️ 「誰が」担当か（当方/お客様）を必ず列に。301対応表・テスト主体・多言語の抜けに注意 -->
 <section class="slide" id="mig">
   <div class="brandbar"></div>
   <div class="eyebrow">Migration &amp; launch</div>
@@ -699,15 +697,15 @@
   <div class="pg">7 / {{総ページ数}}</div>
 </section>
 
-<!-- 8. What you gain (value ★) | ch.5: the value of that state. Cash it in after the build/migration -->
-<!-- ★ The lead. Per user: "inconvenient now → what becomes possible." Close with the effect, not the means -->
+<!-- 8. 得られること（価値★）｜ 第5章：その姿で得る価値。作り方・移し方の後に回収 -->
+<!-- ★主役。利用者ごとに「いま不便 → 何ができるようになるか」。手段でなく効果で締める -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">The value ★</div>
   <div class="ttl">{{価値の見出し 例: この統合で、利用者が得られること}}</div>
   <div class="lead">ここまでの<b>作り方・移し方</b>は、すべてこの価値のためのものです。利用者ごとに <b>「いま不便 → 何ができるようになるか」</b> を整理しました。</div>
   <div class="body" style="margin-top:2mm">
-    <!-- Value cards (2×2). One aim per card. Put the top theme first -->
+    <!-- 価値カード（2×2）。1ねらい1枚。最重視テーマを先頭に -->
     <div class="vcards">
       <div class="vcard"><div class="vch">{{利用者① 例: 顧客・パートナー}}</div><div class="vcb">{{いま不便だったこと}}。{{これからできるようになること}}（<b>効果</b>で締める）。</div></div>
       <div class="vcard"><div class="vch">{{利用者②}}</div><div class="vcb">{{いま不便}} → <b>{{効果}}</b>。</div></div>
@@ -720,8 +718,8 @@
   <div class="pg">8 / {{総ページ数}}</div>
 </section>
 
-<!-- 9. Process & schedule | ch.10: the sequence and the rhythm of checks -->
-<!-- .flow = process steps / .tl = band timeline / .phpts = points per phase. Match flex-grow to the duration ratio -->
+<!-- 9. 進め方・期間 ｜ 第10章：段取りと確認のリズム -->
+<!-- .flow=工程ステップ／.tl=帯タイムライン／.phpts=各フェーズのポイント。flex-grow を期間比で揃える -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">How we work</div>
@@ -757,8 +755,8 @@
   <div class="pg">9 / {{総ページ数}}</div>
 </section>
 
-<!-- 10. Estimate | ch.11: the total and what this budget buys -->
-<!-- ⚠️ Don't show internal values (rate, person-days, %). The presented amount is based on 03's build-up (or the rounded amount if fixed at ★) -->
+<!-- 10. お見積 ｜ 第11章：総額と、この予算で得るもの -->
+<!-- ⚠️ 内部の値（単価・人日・%）は出さない。提示額は03の積み上げ基準（★で丸め確定があればその額） -->
 <section class="slide" id="estimate">
   <div class="brandbar"></div>
   <div class="eyebrow">Estimate</div>
@@ -774,7 +772,7 @@
       <div class="incl">
         <h4>このご予算で想定するスコープ</h4>
         <ul class="chk">
-          <!-- Scope in the language of value. Translate 02's stories / 03's work into "what you get" -->
+          <!-- スコープ＝価値の言葉で。02のストーリー/03の作業を「得られるもの」に翻訳 -->
           <li>{{スコープ項目}}</li>
           <li>{{スコープ項目}}</li>
           <li>{{スコープ項目}}</li>
@@ -789,7 +787,7 @@
   <div class="pg">10 / {{総ページ数}}</div>
 </section>
 
-<!-- 11. Premises & exclusions | ch.12: the scope line -->
+<!-- 11. 前提・含まないもの ｜ 第12章：線引き -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">Assumptions</div>
@@ -821,7 +819,7 @@
   <div class="pg">11 / {{総ページ数}}</div>
 </section>
 
-<!-- 12. Terms | ch.14: validity, payment, acceptance, warranty, rights -->
+<!-- 12. お取引の条件 ｜ 第14章：有効期限・支払・検収・保証・権利 -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">Terms</div>
@@ -851,7 +849,7 @@
   <div class="pg">12 / {{総ページ数}}</div>
 </section>
 
-<!-- 13. What we ask / next step | ch.15: what to provide, decide together, the next move -->
+<!-- 13. お願いすること／次の一歩 ｜ 第15章：ご提供・一緒に決めること・次の動き -->
 <section class="slide" id="ask">
   <div class="brandbar"></div>
   <div class="eyebrow">What we ask of you</div>
@@ -873,7 +871,7 @@
   <div class="pg">13 / {{総ページ数}}</div>
 </section>
 
-<!-- 14. Appendix divider (optional) | the appendix section break -->
+<!-- 14. 付録 扉（任意）｜ 付録セクションの仕切り -->
 <section class="slide cover" style="justify-content:center;padding-left:26mm">
   <div class="eyebrow">Appendix</div>
   <h1 style="font-size:40pt;margin-top:8mm">付録 ― 補足資料</h1>
@@ -884,7 +882,7 @@
   <div class="pg" style="color:#cfe7f6">14 / {{総ページ数}}</div>
 </section>
 
-<!-- 15. Glossary | appendix: a one-line gloss for each first-use proper noun / term -->
+<!-- 15. 用語集 ｜ 付録：初出の固有名・用語の1行説明 -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">Appendix &mdash; Glossary</div>
@@ -903,8 +901,8 @@
   <div class="pg">15 / {{総ページ数}}</div>
 </section>
 
-<!-- 16-17. Page list (draft) | appendix: pages to prepare for the new site. Split across slides if long -->
-<!-- type = fixed page / post (mass) / shared part / external link. build = new / rework / reuse -->
+<!-- 16-17. ページ一覧（案）｜ 付録：新サイトに用意するページ。長ければ複数スライドに分割 -->
+<!-- 種別＝固定ページ/投稿(量産)/共通パーツ/外部リンク。つくり方＝新規/アレンジ/流用 -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">Appendix &mdash; Pages (draft)</div>
@@ -932,8 +930,8 @@
   <div class="pg">16 / {{総ページ数}}</div>
 </section>
 
-<!-- 18-19. Work detail (draft) | appendix: the external columns of the work breakdown (03). Split across slides if long -->
-<!-- ⚠️ Don't show internal values (rate, person-days, %). The ID column (.idc) is for conversation and is auto-hidden in the delivered PDF -->
+<!-- 18-19. 作業明細（案）｜ 付録：作業リスト(03)の外部列。長ければ複数スライドに分割 -->
+<!-- ⚠️ 内部の値（単価・人日・%）は出さない。ID列(.idc)は会話用で提出PDFでは自動的に隠れる -->
 <section class="slide">
   <div class="brandbar"></div>
   <div class="eyebrow">Appendix &mdash; Work breakdown (draft)</div>
