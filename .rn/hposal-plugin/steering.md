@@ -32,9 +32,10 @@
 
 **品質**
 
-- 言語は D-5 に従う：成果物（道具）＝英語、ユーザー接点＝日本語。英語＝SKILL.md・テンプレ本文・
-  README・plugin.json/marketplace.json/CHANGELOG。日本語＝`04_proposal.html` のクライアント可視
-  コピー＋`{{}}`（提出物そのもの）と、実行時に生成する中間文書・コンソール会話。
+- 言語は D-6 に従う（hposal＝日本限定）：利用者が読む成果物＝日本語、AI/メタ＝英語。日本語＝README・
+  テンプレ本文（01-03・site-inventory・04_proposal.md）・`04_proposal.html` の記入ガイド/コメント＋
+  クライアント可視コピー＋`{{}}`（提出物）＋実行時生成物/コンソール。英語＝SKILL.md・plugin.json・
+  marketplace.json・CHANGELOG・root README 一覧行・コミット/PR。
 - `claude plugin validate hposal --strict` と `claude plugin validate .`（マーケットルート）の両方が
   通る。
 - ヘッドレス確認 `claude -p "/hposal:<name>" --plugin-dir hposal` でスキルが読み込まれて起動する。
@@ -50,7 +51,7 @@
   `references/`／`README.md`／`CHANGELOG.md`。`skills/<フォルダ名>` がコマンド名になる。
 - 〔事実・確認済〕現状 `marketplace.json` と root `README.md` は `rn` のみを載せている。
 - 〔事実・確認済〕Google Drive 上の元キットパスは読み取り可能（コピー可能）。
-- 〔事実・ユーザー確認済〕名前は `hposal`。言語は D-5（成果物＝英語／ユーザー接点＝日本語、rn 準拠）。
+- 〔事実・ユーザー確認済〕名前は `hposal`。言語は D-6（読者層＝日本限定／利用者が読む成果物＝日本語・AI/メタ＝英語）。
   README 冒頭で一度だけ「HP（corporate site）」を補う。
 - 〔判断・要レビュー〕1スキルで4フェーズ全体を駆動する（フェーズごとに別スキルへ割らない）。workflow は
   ★ゲートで区切られた一続きの工程だから（D-1）。
@@ -62,8 +63,8 @@
 # Rules
 
 - 1 task = 1 commit
-- 言語は D-5：成果物（SKILL.md・テンプレ本文・README・メタ）＝英語、ユーザー接点
-  （`04_proposal.html` の可視コピー＝提出物・実行時生成物・コンソール）＝日本語。
+- 言語は D-6（hposal＝日本限定）：利用者が読む成果物（README・テンプレ本文・`04_proposal.html` の記入
+  ガイド/可視コピー）＝日本語、AI向け SKILL.md とメタ（plugin.json/marketplace.json/CHANGELOG/root README）＝英語。
 - version は `plugin.json` の1か所だけ（marketplace.json には書かない）。
 - `marketplace.json` と root `README.md` は同じ変更内で同期させる。
 - 内容ドリフト禁止：`workflow.md` の全フェーズ・全ルール・全 ⚠️・★ゲートを保つ。参照の受け渡し点
@@ -275,6 +276,8 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 - **Sources**: 元 deck `work/04_提案書.html`／ユーザー確認（本セッション：A を選択）／.claude/rules/marketplace.md。
 
 ## D-5: 言語はルール通り＝成果物（道具）は英語・ユーザー接点は日本語（D-2 を撤回）
+- **⚠️ SUPERSEDED by D-6（2026-06-23）**：軸が「道具 vs ユーザー接点」では粗い。正しい軸は「プラグインの読者層が
+  日本に限定されるか」。hposal は限定されるので、利用者が読む README・テンプレ本文も日本語が正。結論は D-6。
 - **Issue**: 「全部日本語」は中途半端。language.md（成果物は英語既定・指示があれば別）をどう正しく適用するか。
 - **Conclusion**: お手本 `rn`（SKILL.md も README も英語）に揃え、**道具＝英語／ユーザー接点＝日本語**。
   英語：SKILL.md・テンプレ本文（01-03・site-inventory・04_proposal.md）・README・plugin.json・
@@ -287,16 +290,38 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
   バイト一致のまま温存。本セッションで英語化後、⚠️ 26/26・フェーズ4・★ゲート保持を実数検証。
 - **Sources**: .claude/rules/language.md／お手本 `rn`／ユーザー確認（本セッション：「ルール通り」）。
 
+## D-6: 言語はプラグインの読者層で分岐＝hposal は日本限定なので利用者が読む成果物は日本語（D-5 を撤回）
+- **Issue**: D-5 は README・テンプレ本文まで英語化した。だが hposal の利用者は「日本語クライアント向け提案を作る
+  日本語話者」に限定される。README を読み・テンプレを記入するその人が日本語話者なら、英語化はコストを上げるだけで
+  到達は広がらない。正しい軸は「道具 vs ユーザー接点」ではなく「**プラグインの読者層が一言語に限定されるか**」。
+- **Conclusion**: language.md の例外に従い、**利用者が読む成果物は日本語**にする。
+  - 日本語：`hposal/README.md`／`references/templates/` のテンプレ本文（01_requirements・02_proposal-design・
+    03_work-breakdown・04_proposal.md・site-inventory）／`04_proposal.html` の記入ガイド・コメント＋クライアント
+    可視コピー＋`{{}}`（提出物そのもの）／実行時生成の中間文書・コンソール会話。
+  - 英語のまま：`SKILL.md`（AI向け作業指示）／`plugin.json`・`marketplace.json` とその description／`CHANGELOG.md`／
+    root `README.md` のプラグイン一覧行／コミット・PR 文。
+- **Rationale**: hposal は日本語クライアント向け提案でのみ意味を持つ＝利用者は日本に限定される（読者層の確定）。
+  language.md の「読者が一言語に限定されるプラグインは、その利用者が読む成果物をその言語で書く」例外がそのまま当てはまる。
+  AI向けプロンプトと機械/マーケット向けメタは広い読者を保つので英語のまま。
+- **Audience decision（要・作成前確認）**: hposal の読者層＝**日本限定**（2026-06-23 ユーザー確認済）。今後の
+  プラグインは作成前にこの読者層を確定し、ここに明示する（language.md の手続き規定）。
+- **Evidence**: ユーザー指示（2026-06-23：「今回のプラグインは利用者が読む成果物は日本語、rn とかは利用者を日本に
+  限定してない」）。英語化前の日本語原本が `.rn/hposal-plugin/corporate-site-kit/templates/` に現存し復元の土台になる。
+- **Sources**: .claude/rules/language.md（本セッションで追記した例外節）／ユーザー確認（本セッション）。
+
 # State
 
-- **Status**: paused
+- **Status**: in-progress（D-6 言語方針の反映中）
 - **Date**: 2026-06-23
 - **Last completed**: 本体7タスクに加え、本セッションで2系統の追加作業を完了・push（6b39104 まで）。
   (1) 言語をルール通りに再決定（D-5：成果物＝英語／ユーザー接点＝日本語、rn 準拠）し、SKILL.md・
   テンプレ5本・README・`04_proposal.html` のコメント/ヘッダを英語化（メタ4ファイルは元から英語）。
   (2) 見直し指摘を反映：出力先定義＋再開モデル追加／トレース・見積モデルを SKILL に一本化しテンプレの
   重複散文を削除／⚠️ を Pitfalls 従属に整理。
-- **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
+- **Next（D-6 反映）**: 利用者が読む成果物を日本語へ戻す — (i) `README.md`／(ii) `references/templates/` の
+  テンプレ本文5本／(iii) `04_proposal.html` の記入ガイド・コメント。SKILL.md とメタは英語のまま。英語化前の
+  日本語原本（`.rn/hposal-plugin/corporate-site-kit/templates/`）を言い回しの土台にしつつ、efdc540/D-5 の構造改善
+  （重複手順の SKILL 一本化）は保持する。その後に元の分岐 — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
   （D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・`plugin.json` の version 据え置き 0.1.0・
   `hposal-v0.1.0` 注釈タグを main に・CHANGELOG 該当節を notes に GitHub Release 公開）。
 - **Notes**:
