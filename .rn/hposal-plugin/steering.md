@@ -339,7 +339,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 
 # State
 
-- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件で `/hposal:up` を実走し改善所見を収集中）。dogfood は **フェーズ3 ★ 解決済み（提示額＝レンジ確定）／フェーズ4 着手（提案書テンプレ複製のみ・流し込み未）**。
+- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件で `/hposal:up` を実走し改善所見を収集中）。dogfood は **フェーズ1〜4 すべて完走**（フェーズ4＝提案書HTML流し込み→export ゲート→ヘッドレスPDF 20ページ→専門家レビュー→[BLOCKER]/[SHOULD]修正まで完了・★ は private 側で保留）。**残り＝dogfood 由来の改善を plugin（SKILL/テンプレ）へ反映 → 本体の分岐（PR #8 レビュー or リリース）**。
 - **Date**: 2026-06-23
 - **Last completed**: **task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
   A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
@@ -351,10 +351,10 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
   hposal＝日本限定として README＋テンプレ5本を日本語化、`04_proposal.html` のコメント/ヘッダは 74c006a・c835814 を
   revert して原本日本語を復元。SKILL.md・メタは英語維持。`validate --strict` ✔・全層の言語振り分け網羅確認✔。
   〔前セッションまで〕本体7タスク＋(1) D-5 で道具を英語化（D-6 が撤回）(2) 出力先/再開モデル追加・SKILL 一本化。
-- **Next（dogfood を回しきる — ユーザー指示「フェーズ3・4まで回しきってステアリング更新」）**:
-  1. ~~**dogfood フェーズ3の★**~~ → **解決済み**（ユーザー回答＝レンジ提示）。提示額＝**税込 概算レンジ 約105万〜116万円**（上限≈¥1,163,800 積上げそのまま／下限≈¥1,049,950＝省略候補〔見守り・付随ページ〕を外した額）。private 03 の★節と両面検算（stale「11.5」→12.5）を更新済み。
-  2. **dogfood フェーズ4を流し込みから**（提案書 `04_proposal.html`→PDF）。テンプレは作業フォルダに複製済み（CSS 1–374行不変・`{{ }}` 231個未填）。through-line＝施主の第一価値「指名検索/信頼の見た目」。お見積はレンジ・内部値非開示（D-6）。t1〜t6 と提案者名/連絡先は捏造せず前提/fill-marker。**export 前ゲート**＝`grep '{{'`・`grep '<!--…例'` 両方0→ヘッドレスChrome→`pdftoppm`/`pdfinfo` でページ数・PNG目視。詳細は private steering `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md` の State。
-  3. dogfood 完走後、`.rn/hposal-plugin/dogfood-notes.md` の所見（特に #9 フェーズ3金額突合ゲート・#8 契約形態・#7 テンプレ罠・#1-3 移行落とし穴・#5 規模別省略／**新規候補＝grep ゲートと「人間が埋めるプレースホルダ」の両立＝fill-marker は `{{}}` 構文を使わない規約が要るか**）を **SKILL.md へ最小追記＋CHANGELOG `[Unreleased]`**。
+- **Next（dogfood は回しきった＝ユーザー指示「フェーズ3・4まで回しきってステアリング更新」完了。残りは plugin 反映と本体分岐）**:
+  1. ~~**dogfood フェーズ3の★**~~ → **解決済み**（レンジ提示＝税込概算 約105〜116万円）。
+  2. ~~**dogfood フェーズ4**~~ → **完走**。提案書 `04_proposal.html` の231プレースホルダを流し込み→export ゲート 0→ヘッドレスPDF `20260623/04_proposal.pdf`＝20ページ16:9→専門家レビューで [BLOCKER]ページ数整合・[SHOULD]301二重計上を検出→修正。CSS 1–374行バイト不変。private 側で **★（最終・納品前）保留中**。
+  3. **dogfood 所見を plugin へ反映**：`.rn/hposal-plugin/dogfood-notes.md`（#1-3 移行落とし穴・#5 規模別省略・#8 契約形態・#9 フェーズ3金額突合ゲート・**#14 母数≠新サイト規模**・**#15 fill-marker は `{{}}` を使わない規約**）を **SKILL.md へ最小追記＋CHANGELOG `[Unreleased]`**（#10-13 はテンプレ改修＝別途検討、#4 と同枠）。
   4. その後にプラグイン本体の分岐＝**(A)** PR #8 レビュー・マージ、または **(B)** リリース（D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・version 0.1.0 据置・`hposal-v0.1.0` 注釈タグ・GitHub Release）。dogfood 由来の SKILL 改善を取り込んでからリリースするのが筋。
 - **Notes**:
   - 言語の最終形（**D-6**・hposal＝日本限定）：日本語＝README／references テンプレ本文5本（01-03・
