@@ -92,15 +92,15 @@ explanation to the new derivations.
 
 **Steps**:
 
-- [ ] `README.md`: install line, the three example sections, the flow line, and the "Why gm/bb/hi?"
+- [x] `README.md`: install line, the three example sections, the flow line, and the "Why gm/bb/hi?"
       mnemonic section rewritten to `rdy` = ready / `brb` = be right back / `bak` = back
-- [ ] `references/steering-template.md`: the State note (`bb` / `hi` → `brb` / `bak`)
-- [ ] `references/task-workflow.md`: opening line and resume reference (`gm` / `hi` → `rdy` / `bak`)
-- [ ] check the root `README.md` for any old command references and update if present
-- [ ] `CHANGELOG.md`: add the rename entry under `[Unreleased]`
-- [ ] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] `references/steering-template.md`: the State note (`bb` / `hi` → `brb` / `bak`)
+- [x] `references/task-workflow.md`: opening line and resume reference (`gm` / `hi` → `rdy` / `bak`)
+- [x] check the root `README.md` for any old command references and update if present
+- [x] `CHANGELOG.md`: add the rename entry under `[Unreleased]`
+- [x] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
