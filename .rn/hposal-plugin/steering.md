@@ -339,7 +339,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 
 # State
 
-- **Status**: paused（task #8 仕上げを反映・push 済）
+- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件で `/hposal:up` を実走し改善所見を収集中）。
 - **Date**: 2026-06-23
 - **Last completed**: **task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
   A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
@@ -351,9 +351,11 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
   hposal＝日本限定として README＋テンプレ5本を日本語化、`04_proposal.html` のコメント/ヘッダは 74c006a・c835814 を
   revert して原本日本語を復元。SKILL.md・メタは英語維持。`validate --strict` ✔・全層の言語振り分け網羅確認✔。
   〔前セッションまで〕本体7タスク＋(1) D-5 で道具を英語化（D-6 が撤回）(2) 出力先/再開モデル追加・SKILL 一本化。
-- **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
-  （D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・`plugin.json` の version 据え置き 0.1.0・
-  `hposal-v0.1.0` 注釈タグを main に・CHANGELOG 該当節を notes に GitHub Release 公開）。
+- **Next（dogfood を回しきる — ユーザー指示「フェーズ3・4まで回しきってステアリング更新」）**:
+  1. **dogfood フェーズ3の★**（private 側 task #3 の最後の未了ステップ）＝提示額を「積上げそのまま」か「丸め/レンジ」か、施主に1問。AI推奨=レンジ（税込上限 約¥116万）。**ユーザーは未回答のまま bb で中断＝再開時この1問から**。詳細は private steering `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md` の State。
+  2. **dogfood フェーズ4**（提案書 `04_proposal.html`→PDF）を回す。grep 残留ゲート→ヘッドレス書き出し→PNG目視。
+  3. dogfood 完走後、`.rn/hposal-plugin/dogfood-notes.md` の所見（特に #9 フェーズ3金額突合ゲート・#8 契約形態・#7 テンプレ罠・#1-3 移行落とし穴・#5 規模別省略）を **SKILL.md へ最小追記＋CHANGELOG `[Unreleased]`**。
+  4. その後にプラグイン本体の分岐＝**(A)** PR #8 レビュー・マージ、または **(B)** リリース（D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・version 0.1.0 据置・`hposal-v0.1.0` 注釈タグ・GitHub Release）。dogfood 由来の SKILL 改善を取り込んでからリリースするのが筋。
 - **Notes**:
   - 言語の最終形（**D-6**・hposal＝日本限定）：日本語＝README／references テンプレ本文5本（01-03・
     site-inventory・04_proposal.md）／`04_proposal.html` の使い方ヘッダ＋記入ガイドコメント＋クライアント
@@ -379,5 +381,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
     `01_requirements.md`・`02_proposal-design.md`・`inventory/`・`input/`（hposal の「作業フォルダ直下」仕様）と、
     その提案書セッションを包む rn ステアリング（slug=`ikuko-hp`）が rn 規約どおり
     `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md` に在る。
-    phase 2 ★承認済み → **phase 3（作業リスト）から再開**。dogfood で得た plugin 改善メモは一般化（PII 無し）して
-    `.rn/hposal-plugin/dogfood-notes.md` に持ち帰る。次の resume はこのパスを辿れば private 側ステアリングで続きが分かる。
+    **phase 3（作業リスト）はドラフト+専門家レビュー+修正まで完了**（`03_work-breakdown.md`・内部積み上げ 税込約¥116万。
+    専門家レビューで役割別集計の¥40k 誤記を検出→修正）。残り＝**phase 3 の★（丸め/レンジ1問・未回答）→ phase 4（提案書）**。
+    dogfood で得た plugin 改善メモは一般化（PII 無し）して `.rn/hposal-plugin/dogfood-notes.md` に持ち帰る（#9 フェーズ3金額突合ゲート等を追記済み）。
+    次の resume はこのパスを辿れば private 側ステアリングで続きが分かる。
