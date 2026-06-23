@@ -1,16 +1,16 @@
-# サイト台帳 — 〔サイト名〕
+# Site inventory — [site name]
 
-現行サイト1本の全URL台帳。**1ページ＝1行で全件。** 「サイト全体を実際に見た」証拠であり、移行ボリュームの母数の正。目視でなくクロール（sitemap.xml／クローラ／スクリプト）で集める＝事実を数える、推測しない。
+The full-URL ledger for one current site. **One page = one row, every page.** It is the evidence that "the whole site was actually looked at," and the source of truth for the migration-volume denominator. Collect it by crawling (sitemap.xml / crawler / script), not by eyeballing = count facts, don't guess.
 
-サイトごとに1ファイル（`inventory/<サイト>.md`）。`01_requirements.md` の集計はここを参照する。
+One file per site (`inventory/<site>.md`). The roll-up in `01_requirements.md` references this.
 
-- **出どころ**：〔sitemap.xml／クロール日／数え方〕
-- **総ページ数**：〔n〕 ← お客様が言った件数と突き合わせ、食い違いを記録する
+- **Source**: [sitemap.xml / crawl date / counting method]
+- **Total pages**: [n] ← reconcile against the client's stated count and record any discrepancy
 
-| # | URL | ページ名／種別 | セクション | 移行 | 備考 |
+| # | URL | page name / type | section | migrate | note |
 |---|---|---|---|:-:|---|
 | 1 |  |  |  |  |  |
 | 2 |  |  |  |  |  |
 
-> `移行`＝する／しない／TBD。お客様の言う件数と実数が違うときは、**多い方の実数**を母数とし、差は01の不明点(q)に残す。
-> `セクション`＝会社情報／サービス／事例／ニュース／採用／問い合わせ … HPの新IAへの振り分けに使う。
+> `migrate` = yes / no / TBD. When the client's stated count differs from the real count, take **the larger real number** as the denominator and leave the gap as an open question (q) in 01.
+> `section` = company / services / cases / news / careers / contact … used to sort into the new HP IA.
