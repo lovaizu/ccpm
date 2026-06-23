@@ -1,10 +1,10 @@
 ---
-name: hi
-description: Resume a suspended rn work session in a fresh conversation. Use when the user returns to continue earlier work, typically via /rn:hi. Finds the steering.md from git history, reconciles task state against the commit log, and resumes the next task. This skill has side effects (commits, executes tasks) — only run it on explicit user invocation.
+name: bak
+description: Resume a suspended rn work session in a fresh conversation. Use when the user returns to continue earlier work, typically via /rn:bak. Finds the steering.md from git history, reconciles task state against the commit log, and resumes the next task. This skill has side effects (commits, executes tasks) — only run it on explicit user invocation.
 disable-model-invocation: true
 ---
 
-# /rn:hi — Resume a session
+# /rn:bak — Resume a session
 
 Reconstruct the prior session state, align it with git reality, and continue execution from the
 next unchecked task.
@@ -23,7 +23,7 @@ next unchecked task.
   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`.
 - Keep files that still exist on disk. One result → use it. Multiple → rank by (a) `State` showing
   `Status: paused`, then (b) most recent commit, and propose the top candidate. Zero → tell the
-  user "No steering.md found. Run `/rn:gm` to start."
+  user "No steering.md found. Run `/rn:rdy` to start."
 
 **Step 3 — Read State**
 
