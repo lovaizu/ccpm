@@ -313,11 +313,11 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 
 - **Status**: paused（D-6 言語方針を反映・push 済）
 - **Date**: 2026-06-23
-- **Last completed**: 本体7タスクに加え、本セッションで2系統の追加作業を完了・push（6b39104 まで）。
-  (1) 言語をルール通りに再決定（D-5：成果物＝英語／ユーザー接点＝日本語、rn 準拠）し、SKILL.md・
-  テンプレ5本・README・`04_proposal.html` のコメント/ヘッダを英語化（メタ4ファイルは元から英語）。
-  (2) 見直し指摘を反映：出力先定義＋再開モデル追加／トレース・見積モデルを SKILL に一本化しテンプレの
-  重複散文を削除／⚠️ を Pitfalls 従属に整理。
+- **Last completed**: 言語方針を **D-6** に再決定し反映・push（02636e3 まで）。読者層で分岐するルールを
+  `.claude/rules/language.md` に追記（Japan限定プラグインは利用者向け成果物を当該言語で・作成前に確認しsteeringへ明示）。
+  hposal＝日本限定として README＋テンプレ5本を日本語化、`04_proposal.html` のコメント/ヘッダは 74c006a・c835814 を
+  revert して原本日本語を復元。SKILL.md・メタは英語維持。`validate --strict` ✔・全層の言語振り分け網羅確認✔。
+  〔前セッションまで〕本体7タスク＋(1) D-5 で道具を英語化（D-6 が撤回）(2) 出力先/再開モデル追加・SKILL 一本化。
 - **Next**: ユーザーの分岐選択待ち — **(A)** PR #8 をレビュー・マージ、または **(B)** リリース
   （D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・`plugin.json` の version 据え置き 0.1.0・
   `hposal-v0.1.0` 注釈タグを main に・CHANGELOG 該当節を notes に GitHub Release 公開）。
