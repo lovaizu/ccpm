@@ -339,7 +339,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 
 # State
 
-- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件で `/hposal:up` を実走し改善所見を収集中）。dogfood は **フェーズ1〜4 すべて完走**（フェーズ4＝提案書HTML流し込み→export ゲート→ヘッドレスPDF 20ページ→専門家レビュー→[BLOCKER]/[SHOULD]修正まで完了・★ は private 側で保留）。**残り＝dogfood 由来の改善を plugin（SKILL/テンプレ）へ反映 → 本体の分岐（PR #8 レビュー or リリース）**。
+- **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件で `/hposal:up` を実走し改善所見を収集中・**まだ回しきっていない**）。dogfood はフェーズ4提案書までドラフト→ユーザーレビューで複数FB適用→**さらに「先方希望＝WordPress」で基盤反転＝02〜04 を全面見直しに突入**（private 側 steering D-7／State 参照）。dogfood 所見は `dogfood-notes.md` に #1〜#18 蓄積（#16 準委任で固定見守りは矛盾・#17 sourcing語を客先に出すな・#18 工数化前に基盤/移行元のプラットフォーム制約を確認）。**残り＝dogfood を WP前提で回しきる → 所見を plugin（SKILL/テンプレ）へ反映 → 本体の分岐（PR #8 or リリース）**。
 - **Date**: 2026-06-23
 - **Last completed**: **task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
   A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
