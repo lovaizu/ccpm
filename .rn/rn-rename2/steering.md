@@ -18,8 +18,9 @@ preserved, not rewritten.
   skill directory is renamed (`rn/skills/on`, `rn/skills/dn`, `rn/skills/up`) and its `name:`
   front-matter equals the directory name.
 - No occurrence of the old command tokens `rdy`, `brb`, or `bak` remains anywhere under `rn/`, with
-  one exception: the historical `## [0.5.0]` entry in `rn/CHANGELOG.md`, which records the previous
-  rename and stays verbatim.
+  one exception: `rn/CHANGELOG.md`, which records release history — the `## [0.5.0]` entry stays
+  verbatim, and the new release entry legitimately names the old commands as the source of the rename
+  (the same convention as `0.5.0` naming the prior `gm`/`bb`/`hi`).
 - Cross-references resolve to the new names: `/rn:dn` tells the user to resume with `/rn:up`;
   `/rn:up`'s "no session found" guidance points to `/rn:on`; `rn/references/task-workflow.md` and
   `rn/references/steering-template.md` name `on`/`dn`/`up` (and `/rn:up` / `/rn:dn`) wherever they
@@ -153,8 +154,8 @@ entry under `## [Unreleased]` in `rn/CHANGELOG.md` describing the rename in user
 
 **Steps**:
 
-- [ ] Grep `rn/` for `\b(rdy|brb|bak)\b`; confirm the only hit is the historical `## [0.5.0]`
-      CHANGELOG entry
+- [ ] Grep `rn/` for `\b(rdy|brb|bak)\b`; confirm every remaining hit is in `rn/CHANGELOG.md`
+      (release history) and none is in `rn/skills/`, `rn/references/`, or `rn/README.md`
 - [ ] Run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
 - [ ] self-check (OK/NG per completion criterion, record in checks/task-4.md)
 - [ ] QA expert review (subagent)
@@ -162,8 +163,8 @@ entry under `## [Unreleased]` in `rn/CHANGELOG.md` describing the rename in user
 
 **Completion criteria**:
 
-- A repository-wide search under `rn/` finds no `rdy`/`brb`/`bak` token except the historical
-  `## [0.5.0]` CHANGELOG entry.
+- A repository-wide search under `rn/` finds no `rdy`/`brb`/`bak` token outside `rn/CHANGELOG.md`
+  (where release history — the `0.5.0` entry and the new rename entry — legitimately names them).
 - Both `claude plugin validate rn --strict` and `claude plugin validate . --strict` exit with no
   error.
 - The three skill directories `on`, `dn`, `up` exist and each `name:` matches its directory.
