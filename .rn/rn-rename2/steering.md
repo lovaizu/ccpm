@@ -128,16 +128,16 @@ entry under `## [Unreleased]` in `rn/CHANGELOG.md` describing the rename in user
 
 **Steps**:
 
-- [ ] Replace all `rdy`/`brb`/`bak` (and `/rn:…`) mentions in `rn/README.md` with `on`/`dn`/`up`,
+- [x] Replace all `rdy`/`brb`/`bak` (and `/rn:…`) mentions in `rn/README.md` with `on`/`dn`/`up`,
       keeping the surrounding prose coherent with the start / down / up framing
-- [ ] Add a `## [Unreleased]` → `Changed` line in `rn/CHANGELOG.md`: commands renamed
+- [x] Add a `## [Unreleased]` → `Changed` line in `rn/CHANGELOG.md`: commands renamed
       `rdy`→`on`, `brb`→`dn`, `bak`→`up`, in user-facing terms; leave the `## [0.5.0]` entry untouched
-- [ ] Confirm `version` in `rn/.claude-plugin/plugin.json` is unchanged
-- [ ] self-check (OK/NG per completion criterion, record in checks/task-3.md)
-- [ ] QA expert review (subagent)
-- [ ] language expert review (subagent)
-- [ ] software-engineering expert review (subagent)
-- [ ] user review
+- [x] Confirm `version` in `rn/.claude-plugin/plugin.json` is unchanged
+- [x] self-check (OK/NG per completion criterion, record in checks/task-3.md)
+- [x] QA expert review (subagent)
+- [x] language expert review (subagent)
+- [x] software-engineering expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
