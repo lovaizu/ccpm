@@ -179,17 +179,17 @@ and (after the user merges) tag `main` and publish the GitHub Release.
 
 **Steps**:
 
-- [ ] Bump `version` in `rn/.claude-plugin/plugin.json` to `0.6.0`
-- [ ] In `rn/CHANGELOG.md`, rename `## [Unreleased]` to `## [0.6.0] - 2026-06-24`; **do not leave an
+- [x] Bump `version` in `rn/.claude-plugin/plugin.json` to `0.6.0`
+- [x] In `rn/CHANGELOG.md`, rename `## [Unreleased]` to `## [0.6.0] - 2026-06-24`; **do not leave an
       empty `## [Unreleased]` heading** (released changelog starts at `## [0.6.0]`); leave `## [0.5.0]`
       unchanged
-- [ ] Align `.claude/rules/plugin.md` with the directive: remove every instruction to "open a fresh
+- [x] Align `.claude/rules/plugin.md` with the directive: remove every instruction to "open a fresh
       empty `## [Unreleased]`" on release; state that a released changelog leaves no empty
       `## [Unreleased]`, and the section is re-created only when the next change lands
-- [ ] Re-run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
-- [ ] self-check (OK/NG per completion criterion, record in checks/task-5.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Re-run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
+- [x] self-check (OK/NG per completion criterion, record in checks/task-5.md)
+- [x] QA expert review (subagent)
+- [x] user review
 - [ ] Commit and push; ask the user to merge the PR to `main` (assistant does not merge)
 - [ ] After the user confirms the merge: tag `main` with annotated `rn-v0.6.0` and publish a GitHub
       Release using the `## [0.6.0]` notes
