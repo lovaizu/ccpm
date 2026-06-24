@@ -74,16 +74,16 @@ preserved, not rewritten.
 
 **Steps**:
 
-- [ ] `git mv rn/skills/rdy rn/skills/on`, `rn/skills/brb rn/skills/dn`, `rn/skills/bak rn/skills/up`
-- [ ] In each `SKILL.md`, update the `name:` field to match its new directory
-- [ ] Replace every `/rn:rdy` → `/rn:on`, `/rn:brb` → `/rn:dn`, `/rn:bak` → `/rn:up` (descriptions,
+- [x] `git mv rn/skills/rdy rn/skills/on`, `rn/skills/brb rn/skills/dn`, `rn/skills/bak rn/skills/up`
+- [x] In each `SKILL.md`, update the `name:` field to match its new directory
+- [x] Replace every `/rn:rdy` → `/rn:on`, `/rn:brb` → `/rn:dn`, `/rn:bak` → `/rn:up` (descriptions,
       headings, body, and cross-references — e.g. `dn` pointing the user to `/rn:up`, `up`'s
       "no steering.md found" message pointing to `/rn:on`)
-- [ ] self-check (OK/NG per completion criterion, record in checks/task-1.md)
-- [ ] QA expert review (subagent)
-- [ ] language expert review (subagent)
-- [ ] software-engineering expert review (subagent)
-- [ ] user review
+- [x] self-check (OK/NG per completion criterion, record in checks/task-1.md)
+- [x] QA expert review (subagent)
+- [x] language expert review (subagent)
+- [x] software-engineering expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
