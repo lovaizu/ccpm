@@ -1,16 +1,16 @@
 ---
-name: brb
-description: Suspend the current rn work session. Use when the user needs to stop — context is nearly full, taking a break, or ending for the day — typically via /rn:brb. Commits and pushes the work, records resume context in the steering.md State section, and hands off to a manual /clear. This skill has side effects (commits, pushes) — only run it on explicit user invocation.
+name: dn
+description: Suspend the current rn work session. Use when the user needs to stop — context is nearly full, taking a break, or ending for the day — typically via /rn:dn. Commits and pushes the work, records resume context in the steering.md State section, and hands off to a manual /clear. This skill has side effects (commits, pushes) — only run it on explicit user invocation.
 disable-model-invocation: true
 ---
 
-# /rn:brb — Suspend a session
+# /rn:dn — Suspend a session
 
 Record where the work stands so it survives across conversations, then hand off. This skill does
 **not** execute tasks — it only captures and persists state.
 
-After `/rn:brb` finishes, the user must run `/clear` manually (a skill cannot trigger `/clear`),
-then `/rn:bak` in a fresh conversation to resume.
+After `/rn:dn` finishes, the user must run `/clear` manually (a skill cannot trigger `/clear`),
+then `/rn:up` in a fresh conversation to resume.
 
 ## Phase 1: Capture — record where work stands
 
@@ -37,7 +37,7 @@ then `/rn:bak` in a fresh conversation to resume.
 - Check off completed task steps. Add any new tasks or decisions discovered during the work.
 - Write the `State` section: set `Status` to `paused`, then `Date`, `Last completed`, `Next`,
   `Notes`, per the `State` field semantics in `steering-template.md`.
-- **Notes must carry enough context for `/rn:bak` to resume without this conversation**: current
+- **Notes must carry enough context for `/rn:up` to resume without this conversation**: current
   work, blockers, pending decisions, and the next concrete action.
 
 ## Phase 2: Persist — push and confirm
@@ -54,4 +54,4 @@ then `/rn:bak` in a fresh conversation to resume.
 **Step 6 — Report**
 
 - Output: last completed task, next task, and the branch name.
-- Remind the user to run `/clear`, then `/rn:bak` in a new conversation.
+- Remind the user to run `/clear`, then `/rn:up` in a new conversation.
