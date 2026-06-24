@@ -88,6 +88,6 @@ Run it in a fresh conversation. It finds where you stopped from git and resumes 
 
 They're a two-letter power set — on / down / up — easy to keep straight because they track the session's own state:
 
-- **`on`** — *on.* Power on: you sit down and start a session.
+- **`on`** — *power on.* You sit down and start a session.
 - **`dn`** — *down.* You take the session down for now — a pause, not quitting. ("down" trimmed to two letters to match.)
-- **`up`** — *up.* You bring it back up and pick up where you left off.
+- **`up`** — *up.* You bring the session back up and pick up where you left off.
