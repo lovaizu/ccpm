@@ -28,8 +28,9 @@ preserved, not rewritten.
 - `rn/README.md` uses the new names throughout and reads coherently — the start / down / up framing
   is internally consistent, with no leftover sentence that assumes an old name.
 - `rn/CHANGELOG.md` records the rename under a `## [0.6.0] - 2026-06-24` section (the former
-  `## [Unreleased]`, renamed and dated), with a fresh empty `## [Unreleased]` above it; the
-  `## [0.5.0]` entry is unchanged.
+  `## [Unreleased]`, renamed and dated) sitting directly after the intro — **no empty
+  `## [Unreleased]` heading is left in a released changelog** (per the user's directive; one is
+  re-added only when there is new unreleased content); the `## [0.5.0]` entry is unchanged.
 - `version` in `rn/.claude-plugin/plugin.json` is `0.6.0`.
 - `claude plugin validate rn --strict` and `claude plugin validate . --strict` (marketplace root)
   both pass with no error.
@@ -179,8 +180,12 @@ and (after the user merges) tag `main` and publish the GitHub Release.
 **Steps**:
 
 - [ ] Bump `version` in `rn/.claude-plugin/plugin.json` to `0.6.0`
-- [ ] In `rn/CHANGELOG.md`, rename `## [Unreleased]` to `## [0.6.0] - 2026-06-24` and add a fresh
-      empty `## [Unreleased]` above it; leave `## [0.5.0]` unchanged
+- [ ] In `rn/CHANGELOG.md`, rename `## [Unreleased]` to `## [0.6.0] - 2026-06-24`; **do not leave an
+      empty `## [Unreleased]` heading** (released changelog starts at `## [0.6.0]`); leave `## [0.5.0]`
+      unchanged
+- [ ] Align `.claude/rules/plugin.md` with the directive: remove every instruction to "open a fresh
+      empty `## [Unreleased]`" on release; state that a released changelog leaves no empty
+      `## [Unreleased]`, and the section is re-created only when the next change lands
 - [ ] Re-run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
 - [ ] self-check (OK/NG per completion criterion, record in checks/task-5.md)
 - [ ] QA expert review (subagent)
@@ -192,8 +197,10 @@ and (after the user merges) tag `main` and publish the GitHub Release.
 **Completion criteria**:
 
 - `version` in `rn/.claude-plugin/plugin.json` is `0.6.0`.
-- `rn/CHANGELOG.md` has `## [0.6.0] - 2026-06-24` containing the rename entry, a fresh empty
-  `## [Unreleased]` above it, and an unchanged `## [0.5.0]`.
+- `rn/CHANGELOG.md` has `## [0.6.0] - 2026-06-24` containing the rename entry directly after the
+  intro (no empty `## [Unreleased]` heading left), and an unchanged `## [0.5.0]`.
+- `.claude/rules/plugin.md` no longer instructs opening a fresh empty `## [Unreleased]` on release,
+  and instead states that a released changelog leaves none.
 - Both `claude plugin validate rn --strict` and `claude plugin validate . --strict` exit with no
   error.
 - After the user's merge, `main` carries the annotated tag `rn-v0.6.0` and a published GitHub Release
