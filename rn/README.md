@@ -11,7 +11,7 @@ Start by naming a goal, and pick up right where you left off after any break. On
 > /plugin install rn@ccpm
 ```
 
-That makes `/rn:rdy`, `/rn:brb`, and `/rn:bak` available.
+That makes `/rn:on`, `/rn:dn`, and `/rn:up` available.
 
 ## How it works
 
@@ -30,12 +30,12 @@ One assistant stays with you the whole time; the experts and reviewers work behi
 
 Say you want to push through "fix the bug in the payment screen."
 
-### 1. Start — `/rn:rdy`
+### 1. Start — `/rn:on`
 
 Tell it your goal. It restates the goal as it understands it, breaks it into verifiable tasks, and opens a draft PR with the full plan for you to review — too much to read comfortably in the console.
 
 ```console
-> /rn:rdy fix the bug in the payment screen
+> /rn:on fix the bug in the payment screen
 
 ● Captured your goal as I understand it:
     "Fix the bug on the payment screen so payments complete successfully"
@@ -51,26 +51,26 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 
 Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each approved task added to the same PR.
 
-### 2. Step away — `/rn:brb`
+### 2. Step away — `/rn:dn`
 
 Context is full, or you're done for the day. Run it and your work is committed / pushed, with a note left for next time.
 
 ```console
-> /rn:brb
+> /rn:dn
 
 ● Committed and pushed — "test: add reproduction test for payment failure"
   Last completed: #1 reproduction test
   Up next:        #2 find the root cause and fix it
 
-  Run /clear, then start a fresh conversation with /rn:bak.
+  Run /clear, then start a fresh conversation with /rn:up.
 ```
 
-### 3. Come back — `/rn:bak`
+### 3. Come back — `/rn:up`
 
 Run it in a fresh conversation. It finds where you stopped from git and resumes from there.
 
 ```console
-> /rn:bak
+> /rn:up
 
 ● Found a suspended session: payment-fix
   Reconciled with the git log — #1 is done.
@@ -80,14 +80,14 @@ Run it in a fresh conversation. It finds where you stopped from git and resumes 
 
 ---
 
-`rdy` is just once, at the very start. After that, each break is just **`brb` → `/clear` → `bak`**, and your work stays unbroken until the goal is met.
+`on` is just once, at the very start. After that, each break is just **`dn` → `/clear` → `up`**, and your work stays unbroken until the goal is met.
 
-> Run `/clear` yourself after `/rn:brb` — a plugin can't clear the context for you.
+> Run `/clear` yourself after `/rn:dn` — a plugin can't clear the context for you.
 
-## Why rdy / brb / bak?
+## Why on / dn / up?
 
-They're the chat shorthand you'd naturally type at each moment, so they're easy to remember — and all three letters:
+They're a two-letter power set — on / down / up — easy to keep straight because they track the session's own state:
 
-- **`rdy`** — *ready.* You sit down and start on a goal.
-- **`brb`** — *be right back.* You step away for now — a break, not quitting.
-- **`bak`** — *back.* You're back; pick up where you left off. ("back" trimmed to three letters to match.)
+- **`on`** — *on.* Power on: you sit down and start a session.
+- **`dn`** — *down.* You take the session down for now — a pause, not quitting. ("down" trimmed to two letters to match.)
+- **`up`** — *up.* You bring it back up and pick up where you left off.
