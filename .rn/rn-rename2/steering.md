@@ -26,21 +26,27 @@ preserved, not rewritten.
   referred to the old commands.
 - `rn/README.md` uses the new names throughout and reads coherently — the start / down / up framing
   is internally consistent, with no leftover sentence that assumes an old name.
-- `rn/CHANGELOG.md` has a `## [Unreleased]` entry under `Changed` describing the rename in
-  user-facing terms; `version` in `rn/.claude-plugin/plugin.json` is unchanged (no release was
-  requested).
+- `rn/CHANGELOG.md` records the rename under a `## [0.6.0] - 2026-06-24` section (the former
+  `## [Unreleased]`, renamed and dated), with a fresh empty `## [Unreleased]` above it; the
+  `## [0.5.0]` entry is unchanged.
+- `version` in `rn/.claude-plugin/plugin.json` is `0.6.0`.
 - `claude plugin validate rn --strict` and `claude plugin validate . --strict` (marketplace root)
   both pass with no error.
 - The prior session record under `.rn/rn-rename/` is left unmodified.
+- After the PR merges to `main`, `main` carries an annotated tag `rn-v0.6.0` and a GitHub Release is
+  published from the `## [0.6.0]` notes. (Gated on the user's merge — the merge itself is the user's.)
 
 # Assumptions
 
 - Skills are discovered by directory under `rn/skills/`; neither `plugin.json` nor `marketplace.json`
   embeds command names, so renaming directories + `name:` fields is sufficient to rename the
   commands. (Verified by inspection: both files describe `rn` only, with no command tokens.)
-- This is a command rename — a breaking change — but `rn` is pre-1.0 (`0.x`), so it lands as a future
-  **minor** bump. No version bump happens now; the change waits under `## [Unreleased]` until a
-  release is explicitly requested.
+- This is a command rename — a breaking change — but `rn` is pre-1.0 (`0.x`), so per the plugin rules
+  it lands as a **minor** bump: `0.5.0` → `0.6.0`. The user has requested the release, so this session
+  bumps the version and finalizes the changelog after the rename is verified.
+- `main` is protected: the assistant does every release step except the merge. The assistant pushes
+  the bump + finalized changelog and asks the user to merge; the user merges; then the assistant tags
+  `main` (`rn-v0.6.0`) and publishes the GitHub Release.
 - The `.rn/rn-rename2/` slug aligns with this worktree; the PR is raised from the current
   `worktree-rn-rename2` branch.
 
@@ -50,7 +56,10 @@ preserved, not rewritten.
 - artifacts (skills, references, docs, commit messages, PR) are written in English
 - preserve history: do not edit the shipped `## [0.5.0]` CHANGELOG entry or anything under
   `.rn/rn-rename/`
-- do not bump `version` in `plugin.json`; the rename goes under `## [Unreleased]` only
+- the version bump (`0.6.0`) and changelog finalization happen only in the release task (#5), after
+  the rename is verified — not before
+- the assistant never merges to `main` and never uses `--admin`; it requests the user's merge, and
+  tags + publishes the Release only after the user confirms the merge
 - in commit bodies, never write the literal phrase that the resume command matches in `git log` (the
   task-completion marker) as prose — it would falsely register a task as done
 
@@ -159,6 +168,36 @@ entry under `## [Unreleased]` in `rn/CHANGELOG.md` describing the rename in user
   error.
 - The three skill directories `on`, `dn`, `up` exist and each `name:` matches its directory.
 
+### #5: Release 0.6.0
+
+**Purpose**: Cut the `0.6.0` release for the rename: bump the version, finalize the changelog, push,
+and (after the user merges) tag `main` and publish the GitHub Release.
+
+**Prerequisites**: #4
+
+**Steps**:
+
+- [ ] Bump `version` in `rn/.claude-plugin/plugin.json` to `0.6.0`
+- [ ] In `rn/CHANGELOG.md`, rename `## [Unreleased]` to `## [0.6.0] - 2026-06-24` and add a fresh
+      empty `## [Unreleased]` above it; leave `## [0.5.0]` unchanged
+- [ ] Re-run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
+- [ ] self-check (OK/NG per completion criterion, record in checks/task-5.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
+- [ ] Commit and push; ask the user to merge the PR to `main` (assistant does not merge)
+- [ ] After the user confirms the merge: tag `main` with annotated `rn-v0.6.0` and publish a GitHub
+      Release using the `## [0.6.0]` notes
+
+**Completion criteria**:
+
+- `version` in `rn/.claude-plugin/plugin.json` is `0.6.0`.
+- `rn/CHANGELOG.md` has `## [0.6.0] - 2026-06-24` containing the rename entry, a fresh empty
+  `## [Unreleased]` above it, and an unchanged `## [0.5.0]`.
+- Both `claude plugin validate rn --strict` and `claude plugin validate . --strict` exit with no
+  error.
+- After the user's merge, `main` carries the annotated tag `rn-v0.6.0` and a published GitHub Release
+  named for it. (This step is gated on the user's merge.)
+
 # Decisions
 
 ## D-1: rdy → on (over `go` / `new`)
@@ -178,6 +217,16 @@ entry under `## [Unreleased]` in `rn/CHANGELOG.md` describing the rename in user
   bring-down / bring-up framing for a service.
 - **Evidence**: user correction in this session.
 - **Sources**: this session's opening exchange.
+
+## D-3: release as 0.6.0 (minor) this session
+- **Issue**: whether to bump the version, and by how much.
+- **Conclusion**: bump `0.5.0` → `0.6.0` (minor) and release in this session.
+- **Rationale**: a command rename is a breaking change, but `rn` is pre-1.0, where the plugin rules
+  route breaking changes to a minor bump; the user explicitly asked to include the version update, so
+  the release happens now rather than waiting under `## [Unreleased]`.
+- **Evidence**: current `version` is `0.5.0`; user instruction "バージョン更新も入れて" (include the
+  version update) on 2026-06-24.
+- **Sources**: `rn/.claude-plugin/plugin.json`; this session.
 
 # State
 
