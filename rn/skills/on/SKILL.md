@@ -1,10 +1,10 @@
 ---
-name: rdy
-description: Start a new rn work session from a goal. Use when the user states something they want to accomplish, typically via /rn:rdy. Restates the goal as a faithful understanding, decomposes it into verifiable tasks in a steering.md, opens a draft PR so the plan can be reviewed, and begins task #1 once approved. This skill has side effects (writes files, commits, pushes, opens a PR) — only run it on explicit user invocation.
+name: on
+description: Start a new rn work session from a goal. Use when the user states something they want to accomplish, typically via /rn:on. Restates the goal as a faithful understanding, decomposes it into verifiable tasks in a steering.md, opens a draft PR so the plan can be reviewed, and begins task #1 once approved. This skill has side effects (writes files, commits, pushes, opens a PR) — only run it on explicit user invocation.
 disable-model-invocation: true
 ---
 
-# /rn:rdy — Start a session
+# /rn:on — Start a session
 
 Start a goal-driven work session. Understand the user's goal, turn it into verifiable tasks inside a
 `steering.md`, open a draft PR so the plan can be read comfortably, then execute task #1 once
