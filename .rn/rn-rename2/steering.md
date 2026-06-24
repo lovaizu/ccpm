@@ -102,15 +102,15 @@ mention of the old commands uses `on` / `dn` / `up`.
 
 **Steps**:
 
-- [ ] In `steering-template.md`, update the `State`-section note (`written by /rn:brb`, `read … by
+- [x] In `steering-template.md`, update the `State`-section note (`written by /rn:brb`, `read … by
       /rn:bak`, "the signal /rn:bak and /rn:brb search for") to `/rn:dn` / `/rn:up`
-- [ ] In `task-workflow.md`, update line ~4 (`rdy` and `bak` read this file) to `on` and `up`, and
+- [x] In `task-workflow.md`, update line ~4 (`rdy` and `bak` read this file) to `on` and `up`, and
       the `/rn:bak` mention (~line 214) to `/rn:up`
-- [ ] self-check (OK/NG per completion criterion, record in checks/task-2.md)
-- [ ] QA expert review (subagent)
-- [ ] language expert review (subagent)
-- [ ] software-engineering expert review (subagent)
-- [ ] user review
+- [x] self-check (OK/NG per completion criterion, record in checks/task-2.md)
+- [x] QA expert review (subagent)
+- [x] language expert review (subagent)
+- [x] software-engineering expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
