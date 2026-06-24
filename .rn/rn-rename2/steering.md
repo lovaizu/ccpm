@@ -154,12 +154,12 @@ entry under `## [Unreleased]` in `rn/CHANGELOG.md` describing the rename in user
 
 **Steps**:
 
-- [ ] Grep `rn/` for `\b(rdy|brb|bak)\b`; confirm every remaining hit is in `rn/CHANGELOG.md`
+- [x] Grep `rn/` for `\b(rdy|brb|bak)\b`; confirm every remaining hit is in `rn/CHANGELOG.md`
       (release history) and none is in `rn/skills/`, `rn/references/`, or `rn/README.md`
-- [ ] Run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
-- [ ] self-check (OK/NG per completion criterion, record in checks/task-4.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [x] Run `claude plugin validate rn --strict` and `claude plugin validate . --strict`
+- [x] self-check (OK/NG per completion criterion, record in checks/task-4.md)
+- [x] QA expert review (subagent)
+- [x] user review
 
 **Completion criteria**:
 
