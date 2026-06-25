@@ -1,0 +1,28 @@
+<!-- ╔═ PART: work-detail ═╗ 付録｜作業明細（案）。作業リスト(03)の外部列＝この提案時点で想定する作業の一覧。
+     ⚠️ 内部の値（単価・人日・%）は出さない。ID列(.idc)は会話用で提出PDFでは自動的に隠れる。長ければこのパーツを複数回使い分割する。
+     #19：基盤が複数候補の案件では、行を「共通フェーズ＋基盤分岐」で組む＝共通工数（要件・デザイン・コンテンツ整え）を1回置き、
+          作り方が基盤で分かれる行だけ案ごと（◯◯案／◯◯案）に別建てする。 -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Appendix &mdash; Work breakdown (draft)</div>
+  <div class="ttl">作業明細（案）</div>
+  <div class="lead">本提案時点で想定する作業の一覧です（進行管理を含む）。<b>スコープの確定に応じて変動します</b>。</div>
+  <div class="body">
+    <table class="t estd-t apx" style="font-size:9pt">
+      <thead><tr><th class="idc">ID</th><th>作業名</th><th>作業内容</th></tr></thead>
+      <tbody>
+        <tr class="catrow"><td colspan="3">① {{フェーズ 例: 要件定義（設計を含む）}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr class="catrow"><td colspan="3">② {{フェーズ 例: 構築}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr class="catrow"><td colspan="3">③ {{フェーズ 例: 移行}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+        <tr class="catrow"><td colspan="3">④ {{フェーズ 例: 検証・公開}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td>{{作業内容}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>
