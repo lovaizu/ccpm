@@ -65,6 +65,8 @@ but any one left in marks the text as machine-written. Run the full checklist:
 - **Reflexive bulleting** — listing what should be prose. Use a list only when items are genuinely
   parallel; otherwise write the sentence.
 - **A wavering voice** — register or stance that drifts mid-document. Hold one voice.
+- **Hedging** — "it is thought that…", "generally…", non-committal qualifiers. If you can't assert
+  it, give the evidence or write `[unverified]`.
 
 This floor is the precondition for the ceiling steps below — do not start them until it is clear.
 
@@ -90,7 +92,7 @@ memorize; the reader definition is the source of truth.
 Run this before delivering. On any failure, fix it and re-check — do not ship until all pass.
 
 - [ ] **Floor cleared**: are all the AI tells absent — no padding, no restatement, no retreat into
-  generalities, no flavorless connectives, no reflexive bulleting, no wavering voice?
+  generalities, no flavorless connectives, no reflexive bulleting, no wavering voice, no hedging?
 - [ ] **Order followed**: was the floor cleared before any axis/voice/structure was derived?
 - [ ] Do voice, diagrams, closing, and outline match the reader defined at the top?
 - [ ] Does the document hold a single axis (axes not mixed)?
@@ -114,24 +116,24 @@ instructions to the output. Hold the delivered document to them; the self-check 
 
 The document must clear the floor, then reach for the ceiling. Holds across every axis.
 
-**Floor (b) — table-stakes; none of these AI tells present.** Failing any one reads as machine-written:
+**Floor — table-stakes; none of these AI tells present.** Failing any one reads as machine-written:
 
 - No padding or throat-clearing — lead with the point, not an announcement of it.
 - No restatement — never say the same thing twice in different words.
 - No retreat into generalities — a name, number, or example where one belongs.
 - No flavorless connectives — "moreover", "furthermore", "in addition" with no real link behind them.
 - No reflexive bulleting — prose stays prose; a list only for genuinely parallel items.
-- No wavering voice — one register, one stance, held throughout.
+- No wavering voice — register and stance do not drift mid-document.
 - No hedging ("it is thought that…", "generally…"). If you can't assert it, give the evidence or
   write `[unverified]`.
 
-**Ceiling (a) — what makes a cleared draft worth reading:**
+**Ceiling — what makes a cleared draft worth reading:**
 
 - **Density and concreteness** — names, numbers, examples; cut anything the reader would feel as noise.
 - **A single load-bearing thread** — conclusion first, ordered so the **headings alone** carry the
   argument top to bottom.
 - **Earned diagrams and lists** — each used only where it beats prose (see the mermaid rule below).
-- **A consistent voice** — derived from the reader, held without drift.
+- **A consistent voice** — derived from the reader: distinct and deliberate, not a default register.
 
 Throughout, write in Markdown; let the reader tell **fact from hypothesis and judgment** (mark the
 unverified `[unverified]`, don't fill gaps with guesses); and don't hide what doesn't work, the costs,
