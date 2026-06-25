@@ -306,21 +306,23 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 
 - [x] CSS を共有 head パーツ `references/templates/parts/_head.html` に切り出し（+ `_foot.html`）、
       元モノリス CSS（6–374行）とバイト一致を確認（diff＝OK）
-- [~] 既存20スライドを1スライド=1パーツへ分解し `references/templates/parts/` に配置。変種別ファイル：
+- [x] 既存20スライドを1スライド=1パーツへ分解し `references/templates/parts/` に配置。変種別ファイル：
       現状→目指す姿〔single｜multi〕(#10)／画面〔service-cta｜search-filter｜tree-nav〕(#11)／見積〔total｜range｜compare〕(#12)。
-      **残り＝`work-detail.html`（付録の作業明細）1本のみ未作成**（他は作成済）
+      `work-detail.html`（付録の作業明細）も作成済＝全26パーツ
 - [x] 第3層 2列比較パーツを private 22スライド deck から一般化して追加：基盤比較（ニュートラル・推奨マーク
       なし）／作り方(2列)／運用保守(2列)／見積compare（複数額フラット併記）(#19・#21)＝PII除去で作成済
-- [ ] `04_proposal.md` を**アウトライン＝組み立て仕様**に書き換え：3層の背骨・スロット順・各スロットがどの
+- [x] `04_proposal.md` を**アウトライン＝組み立て仕様**に書き換え：3層の背骨・スロット順・各スロットがどの
       パーツ変種を採るか・層→レイアウト（1–2層=1列／3層=2列比較）・`.pg`は組み立て時採番（#21）
-- [ ] SKILL.md フェーズ4を「アウトライン順にパーツを選び連結→埋める→export」に更新（#21 の SKILL 側）。
+- [x] SKILL.md フェーズ4を「アウトライン順にパーツを選び連結→埋める→export」に更新（#21 の SKILL 側）。
       フェーズ2に #4（基盤未定なら2–3案を同軸＝初期・ランニング・更新主体・拡張性・保守 で比較し★で選ぶ）
-- [ ] 組み立て検証：代表アウトライン（単一サイト＋2基盤比較）で全パーツ連結→単一 HTML→ヘッドレス Chrome
-      16:9 書き出し、新スライド目視・export ゲート（`{{`/`例` 残留0）clean・CSS バイト不変（diff）
-- [ ] CHANGELOG `[Unreleased]` に追記し `validate hposal --strict`・`validate . --strict` 両方
-- [ ] self-check（CSS diff・grep・PDF・代表スライド目視・パーツ網羅を OK/NG 判定し `.rn/hposal-plugin/checks/10.md`）
-- [ ] QA engineer review（subagent）
-- [ ] user review（PR）
+- [x] 旧モノリス `04_proposal.html` を削除（パーツが置換）。ソーステンプレ参照は parts/outline へ向け直し済
+- [x] #13（`.dense` 表が5–6行超でフッターに被る注記）を両 as-is/to-be パーツに追加（fix round）
+- [x] 組み立て検証：代表アウトライン（単一サイト＋2基盤比較）で全パーツ連結→単一 HTML→ヘッドレス Chrome
+      16:9 書き出し（20ページ・960×540pt）、新スライド目視・export ゲート（`{{`/`例` 残留0）clean・CSS バイト不変（diff空）
+- [x] CHANGELOG `[Unreleased]` に追記し `validate hposal --strict`・`validate . --strict` 両方✔
+- [x] self-check（CSS diff・grep・PDF・代表スライド目視・パーツ網羅を OK/NG 判定し `.rn/hposal-plugin/checks/10.md`）
+- [x] QA engineer review（subagent）＝PASS-with-notes→2 MED 修正済（#13・CHANGELOG）。再 validate ✔
+- [ ] user review（PR #8）
 
 **Completion criteria**:
 
