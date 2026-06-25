@@ -10,10 +10,20 @@ body is derived from it.
 
 # Acceptance criteria
 
-- `techting/skills/up/SKILL.md` exists and its body covers all four pillars of the instruction:
-  reader definition (who / what they must decide-or-do / how they read), the five outline axes
-  (article, guide, reference, record-ADR, evaluation), structure-and-flow shown as mermaid
-  diagrams, and a pre-output self-check.
+- **Level A — the `SKILL.md` artifact (the prompt itself):** `techting/skills/up/SKILL.md` exists
+  and carries all source intent — reader definition (who / what they must decide-or-do / how they
+  read), the five outline axes (article, guide, reference, record-ADR, evaluation), and a pre-output
+  self-check. The body separates two layers: **process** (instructions to the model running the
+  skill) from **output rules** (constraints on the produced document), with the §output-rules layer
+  carrying an explicit addressee sentence stating its rules target the produced document, not this
+  prompt. The body is imperative and lean (<2,000 words). **No mermaid diagram is embedded in the
+  prompt body** (and none is required by these criteria) — the mermaid rule lives only in
+  §output-rules as a directive to the produced document.
+- **Level B — the document the skill produces (dogfood-verified):** running `up` on a draft yields
+  output whose structure/flow is shown as mermaid wherever there is order or branching, with no
+  diagram/prose duplication; feeding two different reader definitions changes the output's voice and
+  axis (proving the procedure derives, not memorizes); each produced document holds a single axis,
+  not mixed.
 - The skill states the brush-up use case explicitly: input = an existing draft, output = the
   revised document plus "what was changed and why".
 - The SKILL.md frontmatter is model-invocable (no `disable-model-invocation`) and its description is
