@@ -79,18 +79,6 @@ so only a genuinely suspended session reads `paused`.)
 
 ---
 
-## Fill rules
-
-- **Goal**: state why this is being done and what the user wants to change — the full intent. Add no scope.
-- **Acceptance criteria**: write the states/conditions that judge the goal achieved. Cover two axes — goal alignment and quality. List exhaustively, never sample; the complete set defines scope (in/out).
-- **Assumptions**: list what is taken to be true in pursuit of the goal (if one proves false, the plan changes). Distinguish facts from assumptions; mark unverified ones explicitly.
-- **Rules**: keep `commit and push every change; one completion marker per task`. Add task-specific conventions.
-- **Tasks**: number flat `#1`, `#2`, … (no phases). Work backward from the acceptance criteria. Per task fill `Purpose` (1-2 sentences), `Prerequisites` (tasks that must finish first, or "none"), `Steps`, `Completion criteria`.
-- **Steps**: list specific `- [ ]` items. Include self-check (OK/NG per completion criterion, record in `checks/{task-id}.md`), QA expert review (subagent), and for code changes language + software-engineering expert reviews (subagents), then user review.
-- **Completion criteria**: write outcomes / end-state only. Objectively verifiable by a third party. No vague terms ("appropriate", "correct"). Never actions, reviews, or gates — those go in Steps.
-- **Decisions**: per decision fill `Issue` (understandable without background), `Conclusion`, `Rationale` (judgment only, no facts), `Evidence` (facts/numbers), `Sources`.
-- **State**: written by `/rn:dn`, reset to the placeholder by `/rn:up`. `Status` is `paused` only while suspended (the signal `/rn:up` and `/rn:dn` search for); resets to `not suspended`.
-
 ## Task definition requirements
 
 | Requirement | Rule |
