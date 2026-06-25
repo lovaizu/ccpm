@@ -149,8 +149,9 @@ failure modes absent) rather than its *result*.
       objective-vs-result reframe is still needed and, if so, its minimal form (the original #2 plan:
       three lenses + a contrast example, keeping existing constraints, aligning `task-workflow`)
       → **CHANGE, minimal form** (D-3b)
-- [ ] Apply any decided change via the implementation expert, or record a decision to leave as-is
-- [ ] self-check + QA expert review + user review
+- [x] Apply any decided change via the implementation expert, or record a decision to leave as-is
+      → both applied in commit `7233d51`
+- [x] self-check (checks/3.md) + [x] QA expert review (PASS) + [ ] user review
 
 **Completion criteria**:
 
