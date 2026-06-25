@@ -254,6 +254,31 @@ consistent after all edits.
   (branch); D-1 (this file); task #2's own criteria use the target objective form.
 - **Sources**: this session's re-judgment of `rn/skills/dn/SKILL.md` and `rn/references/steering-template.md` on `rn-update`.
 
+## D-4: Completion-criteria final form — two questions, each with grounds (refines D-3b)
+- **Issue**: Reviewing D-3b's applied three-lens form, the user observed it reduces to two questions —
+  "is the objective achieved?" and "are new problems absent?" — and that each must be answerable **with
+  grounds (根拠)**. D-3b's bullets required third-party *verifiability* but never required the writer/
+  verifier to *state the grounds*, so a criterion could still stand as a bare assertion. Applied
+  reflexively to this session's own task #3, the QA "PASS" was trace-based, not execution-based — the
+  grounds were weak — which is exactly what this gap lets slip through.
+- **Conclusion**: Reframe the `steering-template.md` completion-criteria guidance as **two questions a
+  third party answers with grounds**: ① is the objective achieved (the objective met, not that an
+  output was produced — includes the intended behavior observably present), ② are new problems absent
+  (name the representative failure modes, require their absence). Keep the objective-vs-result contrast
+  example and all three prior constraints. **Grounds live in the verification, not in the criterion
+  text** — the criterion states the end-state (means-vs-end), and the `checks/{id}.md` Self-check
+  Evidence / QA Evidence columns are where the grounds are recorded; the guidance just requires the
+  criterion be *phrased so the two questions are answerable with grounds*. This supersedes D-3b's
+  three-lens wording.
+- **Rationale**: Two questions — confirmation (does it achieve the aim?) and falsification (does it
+  break anything?) — are a tighter, harder-to-game form than three lenses, and "objective achieved" vs
+  "behavior observed" were really one positive axis. Making grounds mandatory turns criteria from
+  assertions into checkable claims. Keeping grounds in the verification (not the criterion text) avoids
+  re-introducing means into the criterion (the means-vs-end anti-pattern).
+- **Evidence**: D-3b applied form (`steering-template.md` lines 54-59, branch); this session's task #3
+  QA verdict was trace-based (no execution of the new `dn`), exposing the missing-grounds gap.
+- **Sources**: user feedback this session; D-3b (above).
+
 # State
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up.)
