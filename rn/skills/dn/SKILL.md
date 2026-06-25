@@ -42,31 +42,44 @@ then `/rn:up` in a fresh conversation to resume.
 
 ## Phase 2: Persist — push and confirm
 
-**Step 4 — Resolve residue**
+**Step 4 — Resolve untracked residue (edit `.gitignore` only; never delete)**
 
-- Run `git status --porcelain`. For each remaining untracked or tracked-dirty path, classify and act
-  so the tree can reach a true clean state:
-  - **Recurring test/build artifacts** (caches, coverage output, compiled/temp output a future test
-    or build run regenerates — e.g. `.pytest_cache/`, `.coverage`, `__pycache__/`, `dist/`) → add a
-    matching rule to `.gitignore` and **commit the `.gitignore`**, so the same residue does not
-    re-dirty the tree on a later run. Do not commit the artifacts themselves.
-  - **Clearly-transient residue** that should be neither tracked nor ignored → remove it.
-  - **Anything not clearly test/build residue** → **never auto-delete**. Surface it to the user
-    (report the path, ask how to handle it) and let them decide. User-authored content is never
-    silently removed.
+- Phase 1 already committed the tracked dirty changes, so the entries remaining here are **untracked**
+  (`??` in `git status --porcelain`). Run `git status --porcelain` and handle each `??` path:
+  - **Recurring test/build artifact** a future test or build run regenerates — e.g. `.pytest_cache/`,
+    `.coverage`, `htmlcov/`, `coverage.xml`, `__pycache__/`, `dist/`, `node_modules/`, `.tox/` → append
+    a matching rule to the **repo-root `.gitignore`** (create it if absent). This hides the path from
+    `git status`. Do **not** delete it and do **not** commit the artifact itself. **Do not commit
+    `.gitignore` here** — Step 5 carries that commit.
+  - **Anything else** (not clearly a regenerable artifact) → **never delete and never gitignore**.
+    Surface the path to the user and let them decide: commit it, gitignore it, delete it themselves,
+    or keep it. If the user defers or no answer is available, this is the terminal-escape case in
+    Step 6 — do not loop.
+- The agent **never** deletes a file on its own. Deletion is only ever the user's explicit choice.
+- Gitignore applies only to untracked residue. A tracked-dirty path at this point is a deliverable to
+  commit (Phase 1 / Step 5), not residue — gitignore is a no-op on a tracked path.
 
 **Step 5 — Commit and push**
 
-- `git commit` the `State` changes (and any `.gitignore` rule from Step 4), then `git push`. If push
-  fails, continue (the user can push later).
+- `git commit` the `State` changes **and** any `.gitignore` edit from Step 4 — together, in a **single
+  commit**. Then `git push`. If push fails, continue (the user can push later), but **record that the
+  push did not succeed** so Step 7 can warn.
 
-**Step 6 — Verify clean**
+**Step 6 — Verify, with a terminal escape (never wedge)**
 
-- Run `git status --porcelain`; after Step 4 resolved residue, its output **must be empty**. A
-  non-empty output means residue is unresolved — return to Step 4, do not declare the session
-  suspended.
+- Run `git status --porcelain`. If empty, the tree is clean — proceed to Step 7.
+- If non-empty because a gitignore rule was just added but not yet committed, finish Step 5's commit,
+  then re-check once.
+- If an untracked path is left **unresolved** (the user deferred, or no answer is available), do
+  **not** loop back forever — `/rn:dn` exists to hand off and stop. Instead **record the unresolved
+  path(s) under `State` → `Notes`** (so `/rn:up` sees them), commit and push that note, then **suspend
+  anyway** and carry a clear warning into Step 7. The suspend always completes.
 
 **Step 7 — Report**
 
 - Output: last completed task, next task, and the branch name.
+- If the push did **not** succeed (Step 5), state clearly that the commits are **local-only and must be
+  pushed before they are safe** — do not let the user walk away believing the work is pushed.
+- If any untracked path was left unresolved (Step 6 terminal escape), name it and note it is recorded
+  in `State` → `Notes` for `/rn:up`.
 - Remind the user to run `/clear`, then `/rn:up` in a new conversation.
