@@ -54,18 +54,23 @@ then `/rn:up` in a fresh conversation to resume.
   - **Anything you are not sure is a regenerable artifact** → **never delete, never gitignore**.
     Surface the path to the user and let them decide: commit it, gitignore it, delete it themselves,
     or keep it. For any such path the user does **not** resolve (defers, or no answer is available),
-    **append it to `State` → `Notes` now**. The `State` section is still uncommitted at this point —
+    **append it to `State` → `Notes` now**, recording the **exact path as it appears in
+    `git status --porcelain`** (the literal porcelain string, not a paraphrase) so Step 6 can match it
+    exactly. The `State` section is still uncommitted at this point —
     Phase 1 wrote it but Step 5 has not committed it yet — so this just adds to the same pending
     change; do **not** create a separate commit for it.
 - The agent **never** deletes a file on its own. Deletion is only ever the user's explicit choice.
 - Gitignore applies only to untracked residue. A tracked-dirty path at this point is a deliverable to
   commit (Phase 1 / Step 5), not residue — gitignore is a no-op on a tracked path.
 
-**Step 5 — Commit and push (single commit)**
+**Step 5 — Commit and push (one commit per pass)**
 
 - `git commit` the `State` changes (including any unresolved-path notes from Step 4) **and** any
-  `.gitignore` edit — together, in a **single commit**. Then `git push`. If push fails, continue (the
-  user can push later), but **record that the push did not succeed** so Step 7 can warn.
+  `.gitignore` edit — together, in **one commit** per pass. Do not scatter the `State` + `.gitignore`
+  of a single pass across multiple commits. Then `git push`. If push fails, continue (the user can push
+  later), but **record that the push did not succeed** so Step 7 can warn.
+- If Step 6 sends the flow back for a correction and the corrected change re-enters this step, making a
+  **follow-up commit is fine** — do **not** amend the previous commit, and do **not** force-push.
 
 **Step 6 — Verify (bounded, never wedge)**
 
@@ -75,16 +80,27 @@ then `/rn:up` in a fresh conversation to resume.
     user-deferred** → this is the accepted terminal state (the user chose to keep these). Do **not**
     loop. Go to Step 7; it names them.
   - **Non-empty with a path that is NOT a recorded user-deferred path** (e.g. a `.gitignore` rule that
-    didn't actually match its artifact) → it was mis-resolved. Return to Step 4 **once** to handle it
-    (fix the rule, or escalate it as ambiguous). This back-step is bounded: a path can only end up
-    (a) gitignored away or (b) recorded as user-deferred — after one corrective pass every path is in
-    one of those two terminal buckets, so the flow cannot loop forever.
+    didn't actually match its artifact) → it was mis-resolved. A `.gitignore` rule that failed to clear
+    its artifact may be corrected **at most once for that path**. Return to Step 4 to make that single
+    corrective attempt (fix the rule). If, after that one corrective attempt, the **same path** still
+    appears in `git status --porcelain`, **stop trying to fix it**: reclassify it as ambiguous and
+    **record it in `State → Notes` as user-deferred** (literal porcelain path, per Step 4) — it then
+    becomes an accepted terminal state like any other deferred path. Do **not** attempt a second fix of
+    the same path.
+- **Termination invariant (structural, no global counter):** every untracked path ends in exactly one
+  of two terminal buckets — (a) gitignored away (rule verified to clear it from porcelain), or
+  (b) recorded in `State → Notes` as user-deferred. A path reaches a terminal bucket after **at most one
+  corrective attempt**, so with finitely many paths the flow always terminates. The bound is per-path,
+  not a prose "once" on the whole loop — it is what makes re-entering Step 4 impossible to loop on.
 
 **Step 7 — Report**
 
 - Output: last completed task, next task, and the branch name.
-- If the push did **not** succeed (Step 5), state clearly that the commits are **local-only and must be
-  pushed before they are safe** — do not let the user walk away believing the work is pushed.
+- Report the push status of the **last** Step 5 execution (Step 5 may run twice — an original pass and a
+  corrective pass). A push that failed on the first pass but succeeded on the corrective pass counts as
+  succeeded, and vice-versa; never carry a stale warning from an earlier pass. If that last push did
+  **not** succeed, state clearly that the commits are **local-only and must be pushed before they are
+  safe** — do not let the user walk away believing the work is pushed.
 - If any untracked path was left unresolved (user-deferred, recorded in Step 4), name it and note it
   is recorded in `State` → `Notes` for `/rn:up`.
 - Remind the user to run `/clear`, then `/rn:up` in a new conversation.
