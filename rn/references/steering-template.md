@@ -51,6 +51,9 @@ Read when creating a new `steering.md`.
 
 **Completion criteria**:
 
+- state the objective achieved, not that an output was produced — write "the residue no longer keeps the tree dirty", not "DESIGN.md exists"
+- the intended behavior is observably present — a third party can verify it actually occurs
+- the representative failure modes are absent — name them
 - objectively verifiable by a third party
 - no vague terms ("appropriate", "correct")
 - outcomes / end-state only — never actions, reviews, or gates (those belong in Steps)
@@ -87,5 +90,5 @@ so only a genuinely suspended session reads `paused`.)
 | Specificity | Not "implement" but "implement `methodName()` in `ClassName`" |
 | Objectivity | Completion criteria judgeable by a third party |
 | Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
-| Criteria vs steps | Completion criteria state outcomes/end-state only (the bar); actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
+| Criteria vs steps | Completion criteria state the objective met / behavior observed (the bar) — not that an artifact was produced; actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
 | Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert / user review) are its gate |

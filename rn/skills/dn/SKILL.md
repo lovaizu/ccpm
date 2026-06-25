@@ -37,19 +37,16 @@ Records resume state and hands off. Does not execute tasks.
      For any path the user does not resolve, append its exact `git status --porcelain` string to
      `State → Notes`.
    - Never delete a file yourself.
-   - On a corrective re-entry from step 7: act only on the returned path, and annotate it in
-     `State → Notes` as having used its one correction.
 
 6. **Commit and push.** Commit the `State` changes and any `.gitignore` edit together in one commit,
-   then `git push`. If push fails, continue and record that it failed (for step 8). A corrective pass
-   adds a follow-up commit — never amend, never force-push.
+   then `git push`. If push fails, continue and record that it failed (for step 8). Never amend, never
+   force-push.
 
 7. **Verify clean.** Run `git status --porcelain`:
    - Empty → go to step 8.
-   - Non-empty, every path already recorded in `State → Notes` as user-deferred → go to step 8.
-   - A path not recorded as user-deferred → if `State → Notes` does not already annotate it as having
-     used its correction, return to step 5 to fix its `.gitignore` rule once; otherwise record it in
-     `State → Notes` as user-deferred. Never fix the same path twice.
+   - Non-empty → for each remaining (non-gitignored) untracked path, if its exact
+     `git status --porcelain` string is not already recorded in `State → Notes` from step 5, record it
+     there as user-deferred; then go to step 8. Never loop back to step 5. Never delete a file.
 
 8. **Report.** Output last completed task, next task, and the branch name. If the last push did not
    succeed, state that the commits are local-only and must be pushed. Name any user-deferred paths

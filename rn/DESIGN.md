@@ -44,17 +44,16 @@ when requirements change. One note per step or decision, keyed to the procedure 
   `git status` and stops it re-dirtying the tree on a later run, without touching the file.
 - **Step 5 records the literal `git status --porcelain` string** — step 7 matches a remaining path
   against `Notes`; a paraphrase would not match.
-- **Steps 5–7 bound the gitignore retry per path and persist the marker in `Notes`** — `/rn:dn`
-  exists to cross the context boundary, so the "retry a wrong rule at most once" bound must hold from
-  persisted state, not agent memory; otherwise a compaction mid-suspend could let the verify loop
-  re-fix the same path forever. Each path ends gitignored-away or recorded-deferred, so it terminates.
-- **Step 6 makes one commit per pass and never force-pushes** — keeps the branch history clean and
+- **Step 6 makes one commit and never force-pushes** — keeps the branch history clean and
   recoverable, reviewed by the user on the PR.
-- **Step 7 reaches a terminal state, never wedges** — the user runs `/rn:dn` precisely to stop and
-  leave; an unresolved path is recorded and the suspend completes rather than blocking on a departing
-  user.
-- **Step 8 reports the last push's status** — step 6 may run twice; a stale warning from an earlier
-  pass would mislead the user about whether work is safe.
+- **Step 7 is a single forward pass, never a retry loop** — `/rn:dn` exists to cross the context
+  boundary and let the user leave, so the verify step must terminate unconditionally. A retry that
+  re-fixes a just-written gitignore rule was dropped: step 5 has no guidance to write a *better* rule
+  the second time, so a retry falls through to "record as deferred" anyway — identical to one pass,
+  minus the correction-marker bookkeeping. Any path still present is recorded user-deferred and the
+  suspend completes; it never wedges on a departing user.
+- **Step 8 reports the push's status** — a failed push must be surfaced so the user knows the commits
+  are local-only and whether work is safe.
 
 ## up (`/rn:up` — resume)
 
@@ -133,6 +132,13 @@ when requirements change. One note per step or decision, keyed to the procedure 
 - **Completion criteria state outcomes/end-state only, third-party verifiable, no vague terms** — a
   criterion naming an action/review/gate or using words like "appropriate"/"correct" cannot be checked
   independently; actions/reviews/gates live in Steps as `- [ ]` so their status stays trackable.
+- **Completion criteria express the objective achieved across three lenses, not that an output was
+  produced** — "outcomes/end-state only" was being read as "the artifact exists" (e.g. "DESIGN.md
+  exists"), which passes while the goal is unmet. The three lenses force the bar onto the objective:
+  the objective achieved (a contrast example pins this down — "the residue no longer keeps the tree
+  dirty", not "the file exists"), the intended behavior observably present, and the representative
+  failure modes named and absent. This keeps the criteria as a real review bar consistent with
+  `task-workflow`'s use of them, while retaining the three existing constraints.
 - **Decisions keep Rationale (judgment) separate from Evidence (facts) and Sources** — mixing
   reasoning with facts hides which part is opinion and which is verifiable.
 - **State `Status` is `paused` only while suspended, else `not suspended`** — `paused` is the signal
