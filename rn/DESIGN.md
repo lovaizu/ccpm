@@ -76,7 +76,8 @@ when requirements change. One note per step or decision, keyed to the procedure 
   retiring it on ship loses nothing while stopping `Decisions` from accumulating shipped-work
   decisions across repeated `/rn:up`/`/rn:dn` cycles. The `Governs` field makes retirement a
   mechanical check (structure, not a remembered rule); a `Governs: —` decision is cross-cutting and
-  kept for the session's life.
+  kept for the session's life. A decision with no `Governs` field (written before the field existed)
+  defaults to keep for back-compat, since retiring it would lose it from the live file.
 - **Step 6 resets `State` to the placeholder and commits** — once reconciled, the stale resume state
   is consumed; clearing it stops a later resume acting on outdated notes.
 - **Step 7 executes via task-workflow.md** — `/rn:up` only restores position; the actual execution

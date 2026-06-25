@@ -25,7 +25,7 @@ Reconstructs prior session state, aligns it with git, and continues from the nex
 
 5. **Check blockers.** If `State` notes mention a blocker, investigate and find an alternative approach before removing any task.
 
-6. **Retire shipped decisions, then clean up State.** In the `Decisions` section, remove any decision whose every `Governs` task is checked off in steering.md and has its `complete task #{id}` marker in `git log` (per Step 4). Keep a decision that still governs an unchecked task, and keep any decision whose `Governs` is `—`. Then replace the `State` section with its template placeholder and commit the reconciliation.
+6. **Retire shipped decisions, then clean up State.** In the `Decisions` section, remove any decision whose every `Governs` task is checked off in steering.md and has its `complete task #{id}` marker in `git log` (per Step 4). Keep a decision that still governs an unchecked task, and keep any decision whose `Governs` is `—`. A decision with no `Governs` field is treated as `Governs: —` (kept). Then replace the `State` section with its template placeholder and commit the reconciliation.
 
 7. **Begin the next task.** Read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute the next unchecked task following it.
    - All tasks already done → propose running the `steering.md` Acceptance criteria.

@@ -81,7 +81,7 @@ so only a genuinely suspended session reads `paused`.)
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths; not a re-narration of the session (that lives in `git log`)
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet recorded as a `D-N`; not a re-narration of the session (that lives in `git log`)
 ```
 
 ---
