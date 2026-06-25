@@ -51,6 +51,11 @@ then `/rn:up` in a fresh conversation to resume.
     `.tox/` → append a matching rule to the **repo-root `.gitignore`** (create it if absent). This
     hides the path from `git status`. Only paths you are *sure* are regenerable — **any doubt → treat
     as the next bullet**. Do **not** delete it, and do **not** commit yet (Step 5 carries the commit).
+    If this is a **corrective re-entry** from Step 6 (fixing a rule that failed to clear its path),
+    **annotate that path in `State` → `Notes` as having spent its one correction** (e.g. a brief note
+    next to the literal porcelain path) so the per-path bound holds from persisted `State`, not memory.
+  - **On a corrective re-entry, act only on the returned path(s).** Paths already recorded in
+    `State` → `Notes` as user-deferred are settled — do **not** re-surface or re-classify them.
   - **Anything you are not sure is a regenerable artifact** → **never delete, never gitignore**.
     Surface the path to the user and let them decide: commit it, gitignore it, delete it themselves,
     or keep it. For any such path the user does **not** resolve (defers, or no answer is available),
@@ -81,17 +86,22 @@ then `/rn:up` in a fresh conversation to resume.
     loop. Go to Step 7; it names them.
   - **Non-empty with a path that is NOT a recorded user-deferred path** (e.g. a `.gitignore` rule that
     didn't actually match its artifact) → it was mis-resolved. A `.gitignore` rule that failed to clear
-    its artifact may be corrected **at most once for that path**. Return to Step 4 to make that single
-    corrective attempt (fix the rule). If, after that one corrective attempt, the **same path** still
-    appears in `git status --porcelain`, **stop trying to fix it**: reclassify it as ambiguous and
-    **record it in `State → Notes` as user-deferred** (literal porcelain path, per Step 4) — it then
-    becomes an accepted terminal state like any other deferred path. Do **not** attempt a second fix of
-    the same path.
+    its artifact may be corrected **at most once for that path**. Whether that one correction is already
+    spent is read from **persisted `State` → `Notes`** (Step 4 annotates the path on the corrective
+    attempt), so the bound survives a context compaction — not from agent memory. If the path carries no
+    such annotation, return to Step 4 to make that single corrective attempt (fix the rule; Step 4
+    records the annotation). If the path is **already annotated** as having spent its correction, or the
+    **same path** still appears in `git status --porcelain` after that attempt, **stop trying to fix
+    it**: reclassify it as ambiguous and **record it in `State → Notes` as user-deferred** (literal
+    porcelain path, per Step 4) — it then becomes an accepted terminal state like any other deferred
+    path. Do **not** attempt a second fix of the same path.
 - **Termination invariant (structural, no global counter):** every untracked path ends in exactly one
   of two terminal buckets — (a) gitignored away (rule verified to clear it from porcelain), or
   (b) recorded in `State → Notes` as user-deferred. A path reaches a terminal bucket after **at most one
   corrective attempt**, so with finitely many paths the flow always terminates. The bound is per-path,
-  not a prose "once" on the whole loop — it is what makes re-entering Step 4 impossible to loop on.
+  not a prose "once" on the whole loop — it is what makes re-entering Step 4 impossible to loop on. Both
+  buckets are **persisted in `State` → `Notes`** (the spent-correction annotation as well as the
+  user-deferred record), so the bound holds even if the conversation is compacted mid-suspend.
 
 **Step 7 — Report**
 
