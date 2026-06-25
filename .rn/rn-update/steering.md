@@ -284,8 +284,38 @@ consistent after all edits.
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up.)
 
-- **Status**:
-- **Date**:
-- **Last completed**:
-- **Next**:
+- **Status**: paused
+- **Date**: 2026-06-26
+- **Last completed**: #3 — re-judged both feedback items on the clean base (D-3: dn residue = TRIM,
+  completion criteria = CHANGE), applied them (`7233d51`), then refined the criteria to the
+  two-questions-with-grounds final form (D-4, `eab36f3`). QA PASS; the dn trim was **empirically
+  validated** by sandbox execution. Implementation + QA done on #1, #2, #3 — all three are user-review
+  pending on PR #14.
+- **Next**: user review of #1 + #2 + #3 on PR #14. After approval, task #4 — write `## [Unreleased]` in
+  `rn/CHANGELOG.md` (one user-facing line each for: dn residue handling, pure-procedure rewrite,
+  completion-criteria two-questions+grounds reframe) and grep-verify cross-doc consistency.
 - **Notes**:
+  - **Branch** `rn-update`, **PR #14** (draft). Everything committed and pushed. At suspend the only
+    uncommitted path was `checks/3.md` (coordinator ledger), committed alongside this State.
+  - **Session shape**: dogfooding rn on the rn plugin. Goal = 2 usage-feedback fixes (dn residue,
+    completion criteria), judged on a proceduralized base (D-2). Tasks #1, #2, #3 done through QA;
+    user review pending. #4 not started.
+  - **What happened this session (resume → now)**: resumed via /rn:up (reset State, reconciled — no
+    `complete task #` markers in git). Did task #3: recorded D-3 (dn=trim / criteria=change), applied
+    both (`7233d51`), QA PASS. User then sharpened the criteria: completion criteria should answer two
+    questions — ① is the objective achieved? ② are new problems absent? — **each with grounds**. That
+    became D-4 (`eab36f3`): reframed `steering-template.md` criteria guidance to that form (kept the
+    objective-vs-result contrast + all 3 prior constraints; grounds recorded at verification, not in
+    the criterion text). Applying the stricter bar reflexively, executed the branch `dn` in a sandbox
+    for real grounds: scenario "residue only" → `git status --porcelain` ends **empty**; "ambiguous
+    path" → file survives, recorded deferred, single forward pass, no loop, no deletion.
+  - **Next concrete action on resume**: (1) confirm the user has reviewed/approved #1 + #2 + #3 on
+    PR #14; (2) start task #4 — CHANGELOG `## [Unreleased]` (3 lines: dn residue; proceduralization;
+    criteria two-questions+grounds) + grep cross-doc consistency + confirm `plugin.json` is `0.6.0`.
+    In #4, also dogfood-check that this steering's OWN completion criteria follow D-4's two-question
+    form.
+  - **Decisions this session**: D-3 (re-judge: dn=trim, criteria=change), D-4 (criteria final form =
+    two questions + grounds, supersedes D-3b's three-lens wording).
+  - **Constraints**: `plugin.json` stays `0.6.0` (no release instruction). Rationale/intent must never
+    re-enter a runtime file — it lives in `rn/DESIGN.md`.
+  - **Caveat**: the `/rn:dn` running this suspend is the cached v0.6.0, not the branch's procedural dn.
