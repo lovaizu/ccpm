@@ -42,44 +42,49 @@ then `/rn:up` in a fresh conversation to resume.
 
 ## Phase 2: Persist — push and confirm
 
-**Step 4 — Resolve untracked residue (edit `.gitignore` only; never delete)**
+**Step 4 — Classify untracked residue (gitignore or escalate; never delete)**
 
 - Phase 1 already committed the tracked dirty changes, so the entries remaining here are **untracked**
-  (`??` in `git status --porcelain`). Run `git status --porcelain` and handle each `??` path:
-  - **Recurring test/build artifact** a future test or build run regenerates — e.g. `.pytest_cache/`,
-    `.coverage`, `htmlcov/`, `coverage.xml`, `__pycache__/`, `dist/`, `node_modules/`, `.tox/` → append
-    a matching rule to the **repo-root `.gitignore`** (create it if absent). This hides the path from
-    `git status`. Do **not** delete it and do **not** commit the artifact itself. **Do not commit
-    `.gitignore` here** — Step 5 carries that commit.
-  - **Anything else** (not clearly a regenerable artifact) → **never delete and never gitignore**.
+  (`??` in `git status --porcelain`). Run `git status --porcelain` and classify **each** `??` path:
+  - **Clearly a recurring test/build artifact** a future test or build run regenerates — e.g.
+    `.pytest_cache/`, `.coverage`, `htmlcov/`, `coverage.xml`, `__pycache__/`, `dist/`, `node_modules/`,
+    `.tox/` → append a matching rule to the **repo-root `.gitignore`** (create it if absent). This
+    hides the path from `git status`. Only paths you are *sure* are regenerable — **any doubt → treat
+    as the next bullet**. Do **not** delete it, and do **not** commit yet (Step 5 carries the commit).
+  - **Anything you are not sure is a regenerable artifact** → **never delete, never gitignore**.
     Surface the path to the user and let them decide: commit it, gitignore it, delete it themselves,
-    or keep it. If the user defers or no answer is available, this is the terminal-escape case in
-    Step 6 — do not loop.
+    or keep it. For any such path the user does **not** resolve (defers, or no answer is available),
+    **append it to `State` → `Notes` now**. The `State` section is still uncommitted at this point —
+    Phase 1 wrote it but Step 5 has not committed it yet — so this just adds to the same pending
+    change; do **not** create a separate commit for it.
 - The agent **never** deletes a file on its own. Deletion is only ever the user's explicit choice.
 - Gitignore applies only to untracked residue. A tracked-dirty path at this point is a deliverable to
   commit (Phase 1 / Step 5), not residue — gitignore is a no-op on a tracked path.
 
-**Step 5 — Commit and push**
+**Step 5 — Commit and push (single commit)**
 
-- `git commit` the `State` changes **and** any `.gitignore` edit from Step 4 — together, in a **single
-  commit**. Then `git push`. If push fails, continue (the user can push later), but **record that the
-  push did not succeed** so Step 7 can warn.
+- `git commit` the `State` changes (including any unresolved-path notes from Step 4) **and** any
+  `.gitignore` edit — together, in a **single commit**. Then `git push`. If push fails, continue (the
+  user can push later), but **record that the push did not succeed** so Step 7 can warn.
 
-**Step 6 — Verify, with a terminal escape (never wedge)**
+**Step 6 — Verify (bounded, never wedge)**
 
-- Run `git status --porcelain`. If empty, the tree is clean — proceed to Step 7.
-- If non-empty because a gitignore rule was just added but not yet committed, finish Step 5's commit,
-  then re-check once.
-- If an untracked path is left **unresolved** (the user deferred, or no answer is available), do
-  **not** loop back forever — `/rn:dn` exists to hand off and stop. Instead **record the unresolved
-  path(s) under `State` → `Notes`** (so `/rn:up` sees them), commit and push that note, then **suspend
-  anyway** and carry a clear warning into Step 7. The suspend always completes.
+- Run `git status --porcelain`.
+  - **Empty** → the tree is clean; go to Step 7.
+  - **Non-empty, and every remaining path was already recorded in `State` → `Notes` as
+    user-deferred** → this is the accepted terminal state (the user chose to keep these). Do **not**
+    loop. Go to Step 7; it names them.
+  - **Non-empty with a path that is NOT a recorded user-deferred path** (e.g. a `.gitignore` rule that
+    didn't actually match its artifact) → it was mis-resolved. Return to Step 4 **once** to handle it
+    (fix the rule, or escalate it as ambiguous). This back-step is bounded: a path can only end up
+    (a) gitignored away or (b) recorded as user-deferred — after one corrective pass every path is in
+    one of those two terminal buckets, so the flow cannot loop forever.
 
 **Step 7 — Report**
 
 - Output: last completed task, next task, and the branch name.
 - If the push did **not** succeed (Step 5), state clearly that the commits are **local-only and must be
   pushed before they are safe** — do not let the user walk away believing the work is pushed.
-- If any untracked path was left unresolved (Step 6 terminal escape), name it and note it is recorded
-  in `State` → `Notes` for `/rn:up`.
+- If any untracked path was left unresolved (user-deferred, recorded in Step 4), name it and note it
+  is recorded in `State` → `Notes` for `/rn:up`.
 - Remind the user to run `/clear`, then `/rn:up` in a new conversation.
