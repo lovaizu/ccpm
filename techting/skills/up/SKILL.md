@@ -11,9 +11,14 @@ diagrams, closing, and outline are not memorized per document type — they all 
 definition. The same procedure authors from scratch, but the primary mode is brushing up an existing
 draft.
 
+Quality comes in two tiers, cleared in order. The **floor** is table-stakes: clearing it earns no
+praise, but failing it instantly reads as "an AI wrote this." The **ceiling** is what makes a cleared
+draft worth reading. Clear the floor first; adding ceiling onto an uncleared floor is wasted.
+
 - **Input**: an existing draft to revise. With no draft, author from scratch through the same steps.
-- **Output**: the revised document, plus a short **what was changed and why** note that ties each
-  change back to the reader definition (step 1) or a house-style rule (the output rules below).
+- **Output**: the revised document, plus a short **what was changed and why** note. The note lists
+  **floor fixes first** (which AI tells were removed), then **ceiling lifts** (which attractive
+  qualities were added), each tied to the reader definition (step 1) or an output rule below.
 
 This file has two layers, kept separate on purpose:
 
@@ -24,7 +29,10 @@ Run the procedure. Hold the produced document to the output rules. Do not confus
 
 ## The procedure
 
-Steps run in order. The pre-output self-check gates delivery: on any failure, fix and re-check.
+Steps run in one fixed order: **reader definition → floor (remove AI tells) → ceiling (derive and add
+attractive qualities)**. The floor pass runs before any derivation of axis, voice, or structure —
+adding ceiling onto an uncleared floor is wasted. The pre-output self-check gates delivery: on any
+failure, fix and re-check.
 
 ### 1. Define the reader — everything starts here
 
@@ -42,7 +50,25 @@ user is reachable — the skill fired model-invocably, or a headless run — inf
 draft's own context and **state that assumption in one line at the top** of the output before
 writing. Ask when possible; infer-and-declare when not; never silently guess, never stall.
 
-### 2. Pick the axis and outline
+### 2. Clear the floor — scrub the AI tells
+
+Before deriving anything, inspect the draft and remove every AI tell. These cost nothing to clear,
+but any one left in marks the text as machine-written. Run the full checklist:
+
+- **Padding / throat-clearing** — abstract preambles, openers that announce intent instead of stating
+  the point. Cut them; lead with the finding.
+- **Restatement** — saying the same thing twice in different words. Keep one.
+- **Retreat into generalities** — vague claims where a name, number, or example belongs. Make it
+  concrete or cut it.
+- **Flavorless connectives** — "moreover", "furthermore", "in addition" strung between sentences that
+  carry no real link. Remove or replace with the real logical join.
+- **Reflexive bulleting** — listing what should be prose. Use a list only when items are genuinely
+  parallel; otherwise write the sentence.
+- **A wavering voice** — register or stance that drifts mid-document. Hold one voice.
+
+This floor is the precondition for the ceiling steps below — do not start them until it is clear.
+
+### 3. Pick the axis and outline
 
 Use the outline matching the defined reader. The five axes and their outlines are in **The five
 axes** (output rules) below. Read the axis off the reader definition, not from memory.
@@ -53,48 +79,63 @@ make the document heavier — push deep dives out to a separate document. Small-
 when a split would cost the reader more than it saves, keep a minimal inline version (e.g. only the
 required fields) and link the exhaustive one out, rather than spawning a file for a few entries.
 
-### 3. Derive voice from the reader
+### 4. Derive voice from the reader
 
 Choose voice, closing, and diagram emphasis for the reader defined in step 1 — do not fix them as
 rules. The **Voice by reader** table (output rules) is an example to derive from, not a list to
 memorize; the reader definition is the source of truth.
 
-### 4. Run the pre-output self-check
+### 5. Run the pre-output self-check
 
 Run this before delivering. On any failure, fix it and re-check — do not ship until all pass.
 
+- [ ] **Floor cleared**: are all the AI tells absent — no padding, no restatement, no retreat into
+  generalities, no flavorless connectives, no reflexive bulleting, no wavering voice?
+- [ ] **Order followed**: was the floor cleared before any axis/voice/structure was derived?
 - [ ] Do voice, diagrams, closing, and outline match the reader defined at the top?
 - [ ] Does the document hold a single axis (axes not mixed)?
 - [ ] If the reader was inferred (no user to ask), is that assumption stated at the top?
 - [ ] Do the headings alone carry the argument?
 - [ ] Are structure and flow shown as diagrams, with no diagram/prose duplication?
 - [ ] Can the reader tell fact from hypothesis, with the unverified marked?
-- [ ] Are hedging, boilerplate AI vocabulary, and noise all gone?
 
-### 5. Deliver
+### 6. Deliver
 
-Hand back the revised document together with the **what changed and why** note. Each entry names the
-change and ties it to the reader definition (step 1) or a house-style output rule.
+Hand back the revised document together with the **what changed and why** note. List **floor fixes
+first** (AI tells removed), then **ceiling lifts** (attractive qualities added), in that order. Each
+entry names the change and ties it to the reader definition (step 1) or an output rule below.
 
 ## Rules for the produced document
 
 **These rules govern the document this skill produces — not this SKILL.md prompt.** They are
 instructions to the output. Hold the delivered document to them; the self-check above tests them.
 
-### House style — how the content is written
+### Two tiers — the floor and the ceiling
 
-Holds across every axis.
+The document must clear the floor, then reach for the ceiling. Holds across every axis.
 
-- Write in Markdown.
-- Order it so the reader understands reading top to bottom. Check that the **headings alone** carry
-  the argument.
-- Stay dry — don't explain the same thing twice.
-- Cut anything the reader would feel as noise. If it isn't on the main line, remove it.
-- Let the reader tell **fact from hypothesis and judgment.** Mark the unverified `[unverified]` —
-  don't fill gaps with guesses; show how far you confirmed.
-- Avoid hedging ("it is thought that…", "generally…") and boilerplate AI phrasing. If you can't
-  assert it, give the evidence or write `[unverified]`.
-- Don't hide what doesn't work, the costs, the limits. Honesty over the appearance of polish.
+**Floor (b) — table-stakes; none of these AI tells present.** Failing any one reads as machine-written:
+
+- No padding or throat-clearing — lead with the point, not an announcement of it.
+- No restatement — never say the same thing twice in different words.
+- No retreat into generalities — a name, number, or example where one belongs.
+- No flavorless connectives — "moreover", "furthermore", "in addition" with no real link behind them.
+- No reflexive bulleting — prose stays prose; a list only for genuinely parallel items.
+- No wavering voice — one register, one stance, held throughout.
+- No hedging ("it is thought that…", "generally…"). If you can't assert it, give the evidence or
+  write `[unverified]`.
+
+**Ceiling (a) — what makes a cleared draft worth reading:**
+
+- **Density and concreteness** — names, numbers, examples; cut anything the reader would feel as noise.
+- **A single load-bearing thread** — conclusion first, ordered so the **headings alone** carry the
+  argument top to bottom.
+- **Earned diagrams and lists** — each used only where it beats prose (see the mermaid rule below).
+- **A consistent voice** — derived from the reader, held without drift.
+
+Throughout, write in Markdown; let the reader tell **fact from hypothesis and judgment** (mark the
+unverified `[unverified]`, don't fill gaps with guesses); and don't hide what doesn't work, the costs,
+or the limits — honesty over the appearance of polish.
 
 ### Render structure and flow as mermaid
 
