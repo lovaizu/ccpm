@@ -1,0 +1,36 @@
+<!-- ╔═ PART: estimate.compare ═╗ 第3層・実現手段の提案④｜お見積（複数案・フラット併記／#19・#21）。
+     やること（スコープ）は全案共通、違いはおもに作り方（基盤）に由来。⚠️ 推奨マークは置かない。
+     ⚠️ 内部の値（単価・人日・%）は出さない。準委任なら「概算（実稼働で精算）」と明記。N案なら列を増やす。 -->
+<section class="slide" id="estimate">
+  <div class="brandbar"></div>
+  <div class="eyebrow">How &mdash; 実現手段のご提案 ④</div>
+  <div class="ttl">お見積もり（{{N}}案）</div>
+  <div class="lead"><b>やること（スコープ）は{{N}}案とも同じ</b>です。違いはおもに<b>作り方（基盤）</b>に由来します。<b>推奨マークは置きません</b>。{{契約形態の一言 例: 準委任のため、想定工数にもとづく概算です（実稼働で精算）}}。</div>
+  <div class="body">
+    <table class="t" style="font-size:10.4pt;margin-top:1mm">
+      <thead><tr><th style="width:40mm"></th><th class="c" style="width:62mm">{{基盤A名}} 案</th><th class="c" style="width:62mm">{{基盤B名}} 案</th></tr></thead>
+      <tbody>
+        <tr><td><b>お見積（税込・概算）</b></td><td class="c" style="font-size:15pt;font-weight:800;color:var(--main-dd)">{{A:見積額}}</td><td class="c" style="font-size:15pt;font-weight:800;color:var(--main-dd)">{{B:見積額}}</td></tr>
+        <tr><td><b>ランニング（月）</b></td><td class="c">{{A:月額}}</td><td class="c">{{B:月額}}</td></tr>
+        <tr><td><b>作り方の重心</b></td><td class="c">{{A:重心}}</td><td class="c">{{B:重心}}</td></tr>
+        <tr><td><b>拡張性（将来）</b></td><td class="c">{{A:拡張性}}</td><td class="c">{{B:拡張性}}</td></tr>
+        <tr><td><b>公開後サポート</b></td><td class="c">{{A:公開後サポート}}</td><td class="c">{{B:公開後サポート}}</td></tr>
+      </tbody>
+    </table>
+    <h4 style="margin-top:3mm;margin-bottom:0">{{N}}案に共通して含むスコープ</h4>
+    <div class="cols" style="margin-top:0">
+      <div class="col"><ul class="li" style="margin-top:1mm;font-size:9.4pt">
+          <li>{{共通スコープ①}}</li>
+          <li>{{共通スコープ②}}</li>
+          <li>{{共通スコープ③}}</li>
+        </ul></div>
+      <div class="col"><ul class="li" style="margin-top:1mm;font-size:9.4pt">
+          <li>{{共通スコープ④}}</li>
+          <li>{{共通スコープ⑤}}</li>
+        </ul></div>
+    </div>
+    <div class="note" style="margin-top:auto"><b>金額には進行管理の費用を含みます</b>。コストを優先される場合は、範囲を優先度に応じて段階化することも可能です。作業の内容は<b>巻末「作業明細（案）」</b>をご覧ください。<b>見積有効期限</b>：{{有効期限}}。</div>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>

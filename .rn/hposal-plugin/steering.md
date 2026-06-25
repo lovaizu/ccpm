@@ -304,13 +304,13 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 
 **Steps**:
 
-- [ ] CSS を共有 head パーツ `references/templates/parts/_base.html`（または `_head.html`）に切り出し、
-      元モノリス 1–376行とバイト一致を確認（diff）
-- [ ] 既存20スライドを1スライド=1パーツへ分解し `references/templates/parts/` に配置。変種が要るものは
-      変種別ファイル：現状→目指す姿〔single｜multi〕(#10)／画面モック〔service-cta｜search-filter｜generic〕(#11)／
-      見積〔total｜range｜compare〕(#12)。密表パーツに「内容5〜6行＋リード2行が目安」注記(#13)
-- [ ] 第3層 2列比較パーツを private 22スライド deck から一般化して追加：基盤比較（ニュートラル・推奨マーク
-      なし）／作り方(2列)／運用保守(2列)／見積compare（複数額フラット併記）(#19・#21)
+- [x] CSS を共有 head パーツ `references/templates/parts/_head.html` に切り出し（+ `_foot.html`）、
+      元モノリス CSS（6–374行）とバイト一致を確認（diff＝OK）
+- [~] 既存20スライドを1スライド=1パーツへ分解し `references/templates/parts/` に配置。変種別ファイル：
+      現状→目指す姿〔single｜multi〕(#10)／画面〔service-cta｜search-filter｜tree-nav〕(#11)／見積〔total｜range｜compare〕(#12)。
+      **残り＝`work-detail.html`（付録の作業明細）1本のみ未作成**（他は作成済）
+- [x] 第3層 2列比較パーツを private 22スライド deck から一般化して追加：基盤比較（ニュートラル・推奨マーク
+      なし）／作り方(2列)／運用保守(2列)／見積compare（複数額フラット併記）(#19・#21)＝PII除去で作成済
 - [ ] `04_proposal.md` を**アウトライン＝組み立て仕様**に書き換え：3層の背骨・スロット順・各スロットがどの
       パーツ変種を採るか・層→レイアウト（1–2層=1列／3層=2列比較）・`.pg`は組み立て時採番（#21）
 - [ ] SKILL.md フェーズ4を「アウトライン順にパーツを選び連結→埋める→export」に更新（#21 の SKILL 側）。
@@ -436,10 +436,10 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 
 # State
 
-- **Status**: in-progress。プラグイン本体8タスク＋dogfood 完了。dogfood 所見の plugin 反映を **task #9（SKILL 最小追記）/#10（テンプレ3層改修）** として形式化し、**#9 に着手中**。〔以下は dogfood 完走時点の記録〕**現在の活動スレッド＝hposal の dogfood**（実案件 `ikuko-hp` で `/hposal:up` を実走し改善所見を収集中）。**本セッションで dogfood フェーズ4を「3層構造」に再構築まで完走**：施主が提案書の構造像を訂正（要件→オリジナルの提案→**実現手段としての提案**の3層・実現手段に本物の基盤選択がある時は比較を1スライドでなく“層”として2列で通す）。これを受け private 側で 01 再トレース（w列を新ID体系へ・q1 に WP→.com 確定）／02 を3層に書き換え／**04 を22スライド3層比較デッキへ再構築・16:9 PDF化（CSS 1–376行バイト不変・目視✔）**。dogfood 所見は `dogfood-notes.md` に **#1〜#21＋#9再実証** 蓄積（**本セッション新規＝#21 提案書3層構造・元テンプレに「実現手段の提案」層が無い＝04テンプレ/SKILLの中核改善**）。**残り＝(a) private 側で施主の最終★（提案書レビュー・額/並び順確定）→納品、(b) dogfood 所見を plugin（SKILL/テンプレ）へ反映、(c) 本体の分岐（PR #8 or リリース）**。
-- **Date**: 2026-06-25
-- **Last completed**: 〔本セッション 2026-06-25〕dogfood フェーズ4を**3層構造**へ再構築まで完走。施主が提案書の構造像を訂正したのを受け、private `ikuko-hp` で 01 再トレース（B案＝作業ID列を新 c/s/p 体系へ・q1 に WP→.com Business 確定を追記）／02 を3層に書き換え（p4＝「実現手段の提案」層の起点・「比較は1スライドに畳む」を撤回）／**04 を22スライド3層比較デッキへ再構築**（要件→何をする〔共通1列〕→実現手段〔2列比較 Studio｜WordPress.com：基盤比較→作り方→運用保守→見積 約89万/約130万〕→締め〔共通1列〕）。16:9 PDF `20260625/04_proposal.pdf`・CSS 1–376行バイト不変・目次＋比較4スライド目視＋はみ出し2件（slide2/slide12）修正・export ゲート clean。`dogfood-notes.md` に **#21**（提案書3層構造・元テンプレに「実現手段の提案」層が無い＝04テンプレ/SKILL の中核改善）を回収。ccpm 側 push 済み（private はリポジトリ外・未追跡）。
-  〔前セッション〕**task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
+- **Status**: paused。dogfood 所見の plugin 反映中。**task #9（SKILL 最小追記）＝完了・push 済み（PR #8）。QA subagent PASS**。**task #10（テンプレのパーツ化＝D-9）を実装中で中断**。パーツ分解は **24スライド part ＋ `_head.html`/`_foot.html` を作成済**（CSS は `_head.html` に切り出し元モノリス 6–374行とバイト一致を diff で確認）。**残り part は `work-detail.html`（付録の作業明細）1本のみ**。その先＝`04_proposal.md` をアウトライン化／SKILL フェーズ4を「パーツ選択→連結→埋める→export」に更新＋フェーズ2 #4／組み立て検証（ヘッドレス Chrome 16:9）／旧モノリス `04_proposal.html` の扱い（パーツへ置換＝削除予定）／CHANGELOG＋validate／self-check・QA・user review。
+- **Date**: 2026-06-26
+- **Last completed**: 〔本セッション 2026-06-26〕**task #9 完了**（dogfood #1-3・5・7-9・14・15・17-20 と #19 の SKILL 側を SKILL.md に1行ずつ追記＝構造変更なし・grep 13/13 OK・`validate --strict` 両方✔・QA subagent PASS・PR #8 へ push）。続けて **task #10 をパーツ化方針（D-9）で着手**：ユーザーが「テンプレはパーツに（アウトライン＋要素ごとの変種）」「1パーツ＝1スライド」を確定→ D-9 を steering に記録、#10 を「モノリス改修」から「パーツ分解＋組み立て」へ書き換え。`hposal/references/templates/parts/` に `_head.html`(CSSバイト不変)・`_foot.html`＋24スライド part を作成（cover/read-guide〔3層明示〕/as-is-to-be〔single・multi〕/screen〔tree-nav・search-filter・service-cta〕/migration/value/第3層比較〔compare-basis・compare-build・compare-operation〕/estimate〔total・range・compare〕/why-us/process/premises/terms/ask/post-launch-care/contact/appendix-cover/glossary/page-list）。第3層比較4種は private 22スライド deck を **PII 除去して一般化**（基盤名→`{{基盤A名}}`等・実額→`{{ }}`）。各 part は先頭にパーツ名＋層＋⚠️ を注記、`.pg`=`{{頁}}`（組み立て時採番）・footmark の提案者は `（提案者）`（#15）。**未完了＝`work-detail.html`／アウトライン化／SKILL更新／組み立て検証／validate**。
+  〔前セッションまで〕dogfood フェーズ4を3層構造へ再構築（private・公開外）。**task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
   A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
   D=フェーズ1クロール代替⚠️。**C2（「やらない理由は？」を受け実施）**：欠落していた必須/任意3スライドを HTML骨格に内包（P8見守り・
   P10なぜ私たちか〔必須〕・P16連絡先）、CSS 1–374行不変・全20ページ採番・16:9で20ページ書き出し＋新3ページPNG目視✔。
@@ -449,14 +449,36 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
   hposal＝日本限定として README＋テンプレ5本を日本語化、`04_proposal.html` のコメント/ヘッダは 74c006a・c835814 を
   revert して原本日本語を復元。SKILL.md・メタは英語維持。`validate --strict` ✔・全層の言語振り分け網羅確認✔。
   〔前セッションまで〕本体7タスク＋(1) D-5 で道具を英語化（D-6 が撤回）(2) 出力先/再開モデル追加・SKILL 一本化。
-- **Next（ユーザー指示＝「再開後、ドッグフードのFBから hposal を改善して」）**:
-  1. **【最優先】dogfood 所見を hposal 本体へ反映**。`dogfood-notes.md` の **反映方針** 節に従う：
-     - **(i) SKILL.md へ最小追記（構造変更なし・1行ずつ効く）**＝#1-3 移行落とし穴／#5 規模別省略可否／#8 契約形態（準委任 vs 固定）／#9 フェーズ3の金額突合ゲート（実証済）／#14 母数≠新サイト規模／#15 fill-marker は `{{}}` を使わない規約／#18・#20 プラットフォーム/基盤の実態ゲート（`.com`/`.org` 確定）。
-     - **(ii) テンプレ改修（中核）**＝**#21 提案書を「要件→オリジナルの提案→実現手段の提案」の3層にし、実現手段に本物の選択がある時は比較を1スライドでなく“層”として2列で通す**＋#19 共通工数1回＋基盤分岐N本＋比較を層で（04テンプレに 2列比較の 基盤比較/作り方/運用保守/見積 スライド枠を用意）。#10-13 もテンプレ枠。実装の見本＝private `ikuko-hp/04_proposal.html`（PII を外して一般化して持ち込む）。
-     - 反映後＝CHANGELOG `[Unreleased]` に追記し `validate hposal --strict`・`validate . --strict` 両方。
-  2. その後に本体の分岐＝**(A)** PR #8 レビュー・マージ、または **(B)** リリース 0.1.0（D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・version 据置・`hposal-v0.1.0` 注釈タグ・GitHub Release）。dogfood 由来の改善を取り込んでからリリースするのが筋。
-  3. 〔別スレッド・private／公開リポジトリ外〕施主の最終★＝提案書 `/Users/kiyo/work/private/ikuko-hp/20260625/04_proposal.pdf`（22ページ・3層）のレビューと額/並び順の確定→納品。ccpm の作業対象ではない。
+- **Next（task #10 のパーツ化を続行＝D-9）**:
+  1. **`work-detail.html`（付録・作業明細）を作成**して 25 パーツを揃える。元モノリス `04_proposal.html` の
+     1016–1041行（作業明細スライド）を雛形に、`.pg`=`{{頁}}`・footmark=`（提案者）`へ正規化。
+     ⚠️ private 22スライド deck の「作業明細＝共通＋基盤2案の分岐」を踏まえ、比較案件向けに「共通フェーズ＋
+     基盤分岐」の行構成にできる注記を入れる（#19）。
+  2. **`04_proposal.md` をアウトライン＝組み立て仕様に書き換え**：3層の背骨（要件／何をする・共通1列／実現手段・
+     2列比較／締め）・スロット順・各スロットが採る part 変種・層→レイアウト・`.pg` は組み立て時採番。2層案件
+     （実現手段の分岐なし）は第3層 part 群を使わず estimate.total/range を採る、と明示。
+  3. **SKILL.md を更新**：フェーズ4を「アウトライン順に part を選び連結→`{{ }}`/`（…）`を埋める→export ゲート→
+     ヘッドレス Chrome 16:9」に書き換え（旧「モノリスを複製して埋める」を置換）。フェーズ2に #4（基盤未定なら
+     2–3案を同軸＝初期・ランニング・更新主体・拡張性・保守 で比較し★で選ぶ）。
+  4. **旧モノリス `04_proposal.html` の扱いを決めて実行**：パーツが置き換えるので削除が筋（SKILL/`04_proposal.md`
+     の参照を parts へ向け直す。`04_proposal.md` の `04_proposal.html(20ページ)` 記述も更新）。
+  5. **組み立て検証**：代表アウトライン（単一サイト＋2基盤比較）で `_head`＋選んだ part＋`_foot` を1つの HTML に
+     連結→ヘッドレス Chrome で 16:9 書き出し→新スライド（service-cta・compare 4種・estimate.range）目視＋
+     export ゲート（`{{`/`例` 残留0）＋CSS バイト不変（diff）。
+  6. **CHANGELOG `[Unreleased]` に追記**し `validate hposal --strict`・`validate . --strict` 両方。self-check
+     （`.rn/hposal-plugin/checks/10.md`）→ QA subagent → PR #8 で user review。
+  7. その後に本体の分岐＝**(A)** PR #8 マージ、または **(B)** リリース 0.1.0（D-3）。dogfood 改善を取り込んでから。
+  8. 〔別スレッド・private／公開外〕施主の最終★＝`/Users/kiyo/work/private/ikuko-hp/20260625/04_proposal.pdf`の
+     レビューと額/並び順確定→納品。ccpm の作業対象ではない。
 - **Notes**:
+  - 〔task #10 パーツ化・本セッション〕**parts 規約**：1ファイル＝1スライド（`<section class="slide">…</section>`）。
+    組み立て＝`_head.html`（DOCTYPE→`<body>`・`<style>` 内蔵＝CSS バイト不変）＋アウトライン順に選んだ part を連結＋
+    `_foot.html`（`</body></html>`）→単一 HTML→ヘッドレス Chrome で PDF。各 part 先頭に `╔═ PART: 名前 ═╗`＋層＋
+    使い分け⚠️ をコメント。`.pg`=`{{頁}} / {{総ページ数}}`（組み立て時採番）、footmark=`{{宛先}} / （提案者）`
+    （提案者は人間記入＝#15 で `（…）`）。**変種**：as-is-to-be〔single｜multi〕／screen〔tree-nav｜search-filter｜
+    service-cta〕／estimate〔total｜range｜compare〕。**第3層比較**は compare-basis→compare-build→compare-operation→
+    estimate.compare の4枚（実現手段に本物の分岐がある時だけ立てる）。CSS バイト不変の検証＝
+    `diff <(sed -n '6,374p' 旧モノリス) <(sed -n '6,374p' parts/_head.html)`。
   - 言語の最終形（**D-6**・hposal＝日本限定）：日本語＝README／references テンプレ本文5本（01-03・
     site-inventory・04_proposal.md）／`04_proposal.html` の使い方ヘッダ＋記入ガイドコメント＋クライアント
     可視コピー＋`{{}}`（提出物）／実行時生成物・コンソール会話。英語＝SKILL.md／plugin.json・

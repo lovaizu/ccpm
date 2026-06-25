@@ -1,0 +1,53 @@
+<!-- ╔═ PART: screen.tree-nav ═╗ 第2層・何をするか｜画面モック：階層ツリーのナビ（サービス/製品の多階層メニュー）。
+     中〜大規模・多階層サイト向け。⚠️ サンプルは「実デザインは異なる」と必ず明記（.imgnote）。 -->
+<section class="slide scr">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Screen &mdash; {{画面名}}</div>
+  <div class="ttl">{{画面の名前 例: サービス・製品メニュー}}</div>
+  <div class="lead">{{この画面で実現する価値の一文}}</div>
+  <div class="imgnote">下の画面は<b>使い勝手をご説明するためのイメージ</b>です。実際のデザインは異なります。</div>
+  <div class="body">
+    <div class="screen">
+      <div class="scbar"><span class="d"></span><span class="d"></span><span class="d"></span>
+        <span class="url">{{example.com / path / …}}</span>
+        <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
+      <div class="topnav">
+        <span class="logo">{{ロゴ}}</span>
+        <span class="n">{{ナビ}}</span><span class="n active">{{現在地 ▾}}</span>
+        <span class="n new">{{新設}}</span><span class="n">{{ナビ}}</span><span class="n">{{ナビ}}</span>
+      </div>
+      <div class="crumb">ホーム &rsaquo; {{親}} &rsaquo; <b>{{現在地}}</b></div>
+      <div class="lay">
+        <div class="side">
+          <div class="sh">{{左ナビの説明 例: サービス階層ナビ}}</div>
+          <ul class="tree">
+            <li class="l1">▾ {{第1階層}}</li>
+            <li class="l2">▾ {{第2階層}}</li>
+            <li class="l3 cur">{{現在地（第3階層）}}</li>
+            <li class="l4">{{第4階層}}</li>
+            <li class="l2">▸ {{第2階層}}</li>
+            <li class="l1">▸ {{第1階層}}</li>
+          </ul>
+        </div>
+        <div class="main2">
+          <div class="rhd">{{見出し}}</div>
+          <div style="font-size:8.4pt;color:var(--sub);margin-bottom:1.6mm">{{説明文}}</div>
+          <div class="relbox">
+            <div class="rh2">{{関連表示の見出し 例: このサービスの関連事例（自動表示）}}</div>
+            <div class="reltiles">
+              <div class="reltile">{{関連①}}</div>
+              <div class="reltile">{{関連②}}</div>
+              <div class="reltile">{{関連③}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vrow" style="margin-top:auto">
+      <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値}}</div></div>
+      <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値}}</div></div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>

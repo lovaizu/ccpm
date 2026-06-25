@@ -1,0 +1,32 @@
+<!-- ╔═ PART: estimate.range ═╗ お見積｜概算レンジ（準委任・実稼働精算向け／#12）。
+     ⚠️ 準委任は「総額／レンジで提示」。総額1点の estimate.total だと .price .big（nowrap・固定幅）からレンジがはみ出て
+        末尾が切れる→ここでは .big を小さめ・折り返し可にし、税内訳行は「概算・内訳非開示」に差し替える。
+     ⚠️ 内部の値（単価・人日・%）は出さない。下限=省略後・上限=フル積み上げ、を★で握って提示（#5）。 -->
+<section class="slide" id="estimate">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Estimate</div>
+  <div class="ttl">お見積もり</div>
+  <div class="body">
+    <div class="est">
+      <div class="price">
+        <div class="cap">お見積（税込・概算レンジ）</div>
+        <div class="big" style="font-size:22pt;white-space:normal;line-height:1.3">約 {{下限}} 〜 {{上限}}<span style="font-size:14pt;font-weight:800"> 万円</span></div>
+        <div class="tax">準委任のため、想定工数にもとづく<b>概算</b>です（実稼働で精算）。税内訳は概算のため非開示。</div>
+        <div class="meta"><b>想定期間</b>：約{{期間}}<br><b>見積有効期限</b>：{{有効期限}}<br><b>公開後</b>：{{見守りの扱い 例: 別途（稼働ベース）}}</div>
+      </div>
+      <div class="incl">
+        <h4>このご予算で想定するスコープ</h4>
+        <ul class="chk">
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:auto"><b>下限はスコープを段階化した場合・上限はフル</b>の目安です。コストを優先される場合は、範囲を優先度に応じて段階化（{{段階化候補 例: 付随ページ・toC初期スコープ}}）できます。金額には<b>進行管理の費用を含みます</b>。作業の内容は<b>巻末「作業明細（案）」</b>をご覧ください。</div>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>
