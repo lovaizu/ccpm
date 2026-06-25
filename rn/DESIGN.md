@@ -132,13 +132,22 @@ when requirements change. One note per step or decision, keyed to the procedure 
 - **Completion criteria state outcomes/end-state only, third-party verifiable, no vague terms** — a
   criterion naming an action/review/gate or using words like "appropriate"/"correct" cannot be checked
   independently; actions/reviews/gates live in Steps as `- [ ]` so their status stays trackable.
-- **Completion criteria express the objective achieved across three lenses, not that an output was
-  produced** — "outcomes/end-state only" was being read as "the artifact exists" (e.g. "DESIGN.md
-  exists"), which passes while the goal is unmet. The three lenses force the bar onto the objective:
-  the objective achieved (a contrast example pins this down — "the residue no longer keeps the tree
-  dirty", not "the file exists"), the intended behavior observably present, and the representative
-  failure modes named and absent. This keeps the criteria as a real review bar consistent with
-  `task-workflow`'s use of them, while retaining the three existing constraints.
+- **Completion criteria are framed as two questions a third party answers with grounds, not that an
+  output was produced** — "outcomes/end-state only" was being read as "the artifact exists" (e.g.
+  "DESIGN.md exists"), which passes while the goal is unmet. Each criterion must let a third party
+  answer two questions: ① is the objective achieved? (the objective met, not the output produced — a
+  contrast example pins this down: "the residue no longer keeps the tree dirty", not "the file
+  exists"; this subsumes the intended behavior being observably present) and ② are new problems
+  absent? (the representative failure modes named and required absent). Two questions beat the earlier
+  three lenses because they pair confirmation with falsification — a tighter frame that is harder to
+  game than a checklist of three positive lenses, since ② actively hunts for what the change broke.
+  The grounds are mandatory because they turn an assertion ("the behavior occurs") into a checkable
+  claim (the evidence that shows it occurs). Crucially the grounds live in the verification — the
+  `checks/{task-id}.md` Evidence columns recorded at self-check and review — not in the criterion
+  text; writing the grounds into the criterion would smuggle a means (how it is checked) into a bar
+  that should state only the end (means-vs-end anti-pattern). This keeps the criteria a real review
+  bar consistent with `task-workflow`'s use of them, while retaining the three existing constraints
+  (third-party verifiable, no vague terms, end-state not actions).
 - **Decisions keep Rationale (judgment) separate from Evidence (facts) and Sources** — mixing
   reasoning with facts hides which part is opinion and which is verifiable.
 - **State `Status` is `paused` only while suspended, else `not suspended`** — `paused` is the signal
