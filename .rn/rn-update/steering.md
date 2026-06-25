@@ -225,33 +225,8 @@ consistent after all edits.
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up.)
 
-- **Status**: paused
-- **Date**: 2026-06-25
-- **Last completed**: #2 proceduralize all rn prompts + assemble `rn/DESIGN.md` (implementation done;
-  QA over the conversion set + user review still pending). #1 (dn residue) also implementation+QA done,
-  user review pending.
-- **Next**: #3 — re-judge the two feedback requirements (dn residue behavior; completion-criteria
-  objective-vs-result reframe) on the clean, proceduralized base.
+- **Status**:
+- **Date**:
+- **Last completed**:
+- **Next**:
 - **Notes**:
-  - **Branch** `rn-update`, **PR #14** (draft). Everything is committed and pushed; tree clean at
-    suspend except `checks/1.md` committed alongside this State.
-  - **Session shape**: dogfooding rn on the rn plugin itself. Original goal = 2 usage-feedback fixes
-    (Goal §1 dn residue, §2 completion criteria). Mid-session the user pivoted (D-2): proceduralize all
-    rn prompts first, then re-judge the 2 requirements on the clean base.
-  - **Done so far**: Task #1 dn residue handling — `rn/skills/dn/SKILL.md`, QA round-4 PASS after 3 fix
-    iterations, ledger in `checks/1.md`. Task #2 proceduralization — all five files
-    (`dn`/`on`/`up`/`task-workflow`/`steering-template`) converted to pure procedure; intent assembled
-    into `rn/DESIGN.md`; `steering-template` `Fill rules` duplication removed; the fenced template block
-    is byte-for-byte unchanged.
-  - **Open decision the user has NOT answered** (asked just before they ran /rn:dn): in which order to
-    proceed — (A) user reviews the proceduralization on PR #14 first, (B) update steering to the new
-    plan [now done], (C) re-judge the 2 requirements. On resume, ask the user to confirm the order;
-    default suggestion: have them review the conversion on PR #14, then start #3.
-  - **Next concrete action on resume**: (1) confirm the user has reviewed the proceduralization on
-    PR #14 and approves #1 + #2; (2) run a QA expert pass over the conversion set if not yet done;
-    (3) start #3 — re-judge dn-residue and completion-criteria on the clean base, recording a
-    keep/trim/change decision for each; (4) then #4 CHANGELOG + consistency.
-  - **Constraints**: `plugin.json` stays at `0.6.0` (no release instruction). Intent must never go back
-    into a runtime file — it lives in `rn/DESIGN.md`.
-  - **Caveat**: the `/rn:dn` that ran this suspend is the cached v0.6.0 (old) skill, not the new
-    procedural `dn` on the branch; the branch version is not yet the active installed plugin.
