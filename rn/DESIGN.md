@@ -31,9 +31,11 @@ when requirements change. One note per step or decision, keyed to the procedure 
 
 - **Step 1 fallback searches commit history** — a suspend may run in a fresh conversation that never
   saw the path; the `Status: paused` marker distinguishes a suspended session from a finished one.
-- **Step 3 puts resume context in `Notes`** — a suspend has to survive a new conversation and a
-  context compaction; the next `/rn:up` resumes from `Notes` alone, so anything not written there is
-  lost.
+- **Step 3 caps `Notes` to a bounded forward pointer** — a suspend has to survive a new conversation
+  and a context compaction, and `/rn:up` resumes from `Notes` alone, so it must hold what a resume
+  needs: branch/PR, next concrete action, open blockers, user-deferred paths. But the per-resume cost
+  is the *narrative* `dn` re-writes each cycle, which `git log` already holds; capping `Notes` to the
+  forward pointer keeps the resume working while stopping per-resume bloat from returning.
 - **Step 4 forbids `complete task #` in the message** — that exact substring is the single
   task-completion marker `/rn:up` matches in `git log`; a suspend is not a completion. (`wip:` flags
   an unfinished task for the reader.)
@@ -68,6 +70,13 @@ when requirements change. One note per step or decision, keyed to the procedure 
   what is actually done versus what the file claims.
 - **Step 5 adapts the approach rather than dropping a blocked task** — the goal is fixed; a blocker
   changes the means, not the objective.
+- **Step 6 retires shipped decisions, then resets `State`** — steering is a forward contract for the
+  remaining work, not the session's archive. A decision whose every `Governs` task is checked off and
+  shipped is no longer needed to finish, and its "why" is preserved in the recording commit + PR, so
+  retiring it on ship loses nothing while stopping `Decisions` from accumulating shipped-work
+  decisions across repeated `/rn:up`/`/rn:dn` cycles. The `Governs` field makes retirement a
+  mechanical check (structure, not a remembered rule); a `Governs: —` decision is cross-cutting and
+  kept for the session's life.
 - **Step 6 resets `State` to the placeholder and commits** — once reconciled, the stale resume state
   is consumed; clearing it stops a later resume acting on outdated notes.
 - **Step 7 executes via task-workflow.md** — `/rn:up` only restores position; the actual execution
@@ -150,5 +159,10 @@ when requirements change. One note per step or decision, keyed to the procedure 
   (third-party verifiable, no vague terms, end-state not actions).
 - **Decisions keep Rationale (judgment) separate from Evidence (facts) and Sources** — mixing
   reasoning with facts hides which part is opinion and which is verifiable.
+- **`Decisions` is a live working set with a `Governs` field, and `State → Notes` is a forward
+  pointer** — the structure itself encodes the non-accumulation property: `Governs` ties each decision
+  to the tasks it serves so `/rn:up` can retire it once they ship, and a `Notes` capped to the forward
+  pointer keeps `git log` as the narrative. Putting both in the template means a writer meets the rule
+  by filling the structure, not by remembering a convention.
 - **State `Status` is `paused` only while suspended, else `not suspended`** — `paused` is the signal
   `/rn:up` and `/rn:dn` search for, so only a genuinely suspended session must read it.

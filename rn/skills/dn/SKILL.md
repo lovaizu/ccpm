@@ -19,8 +19,9 @@ Records resume state and hands off. Does not execute tasks.
    decisions discovered during the work.
 
 3. **Write the `State` section** (fields per `steering-template.md`): `Status: paused`, `Date`,
-   `Last completed`, `Next`, `Notes`. Write `Notes` so `/rn:up` can resume without this conversation:
-   current work, blockers, pending decisions, next concrete action.
+   `Last completed`, `Next`, `Notes`. Cap `Notes` to a bounded forward pointer — branch/PR, next
+   concrete action, open blockers, user-deferred paths — not a multi-paragraph re-narration of the
+   session (the narrative is in `git log`).
 
 4. **Commit the work.**
    - Tree clean → skip this commit.

@@ -59,7 +59,12 @@ Read when creating a new `steering.md`.
 
 # Decisions
 
+(live working set, not an archive: /rn:up retires a decision once every task it `Governs` is checked
+off and shipped — its rationale persists in the recording commit + PR. A decision with `Governs: —` is
+kept for the session's life.)
+
 ## D-N: <what was decided>
+- **Governs**: <#N, or — if cross-cutting>
 - **Issue**: <the decision being made — understandable without background>
 - **Conclusion**: <the decision>
 - **Rationale**: <the judgment reasoning that supports the conclusion — no facts here>
@@ -76,7 +81,7 @@ so only a genuinely suspended session reads `paused`.)
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Notes**: context needed for resume
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths; not a re-narration of the session (that lives in `git log`)
 ```
 
 ---
