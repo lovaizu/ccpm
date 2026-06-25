@@ -16,6 +16,12 @@ Apply two improvements to the `rn` plugin that surfaced from real usage:
 The change set is documentation/prompt edits to the `rn` plugin's skill and reference files. No
 runtime code is involved.
 
+**Mid-session pivot (2026-06-25, see D-2).** While reviewing the dn change, the user judged the rn
+prompts too noisy to assess the two requirements against. New direction: first rewrite every rn
+skill/reference as **pure procedural work-instructions** (no rationale/rules-as-prose; intent moved
+to a non-runtime `rn/DESIGN.md`), then re-judge the two feedback items on that clean base. The two
+items above stay the goal; the proceduralization is the precondition for judging them.
+
 # Acceptance criteria
 
 - Running `/rn:dn` from a worktree that contains test-run residue ends with `git status --porcelain`
@@ -60,24 +66,25 @@ runtime code is involved.
 
 # Tasks
 
-### #1: `/rn:dn` ends with a genuinely clean worktree
+### #1: `/rn:dn` ends with a genuinely clean worktree — DONE (user review pending)
 
 **Purpose**: Rewrite the `dn` skill so a suspend resolves test-run residue and finishes with a truly
 clean tree, without ever silently deleting user-authored files.
+
+**Status**: implementation + QA done — `checks/1.md`, QA round-4 PASS after 3 fix iterations. User
+review still pending on PR #14 (the user pivoted to #2 before approving).
 
 **Prerequisites**: none
 
 **Steps**:
 
-- [ ] In `rn/skills/dn/SKILL.md`, revise the residue handling: before declaring clean, inspect
-      `git status --porcelain`; for untracked residue, add a committed `.gitignore` rule for
-      recurring test/build artifacts, and only remove clearly-transient residue
-- [ ] Add the guard that any untracked path not clearly test/build residue is surfaced to the user,
-      never auto-deleted
-- [ ] Make Step 5 ("Verify clean") assert `git status --porcelain` is empty as the end-state, after
-      the residue is resolved (not before)
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA expert review (subagent)
+- [x] In `rn/skills/dn/SKILL.md`, resolve untracked residue: gitignore recurring test/build artifacts
+      (repo-root `.gitignore`, committed); ambiguous paths surfaced to the user
+- [x] Guard: any untracked path not clearly residue is surfaced to the user, never auto-deleted
+- [x] Verify step asserts `git status --porcelain` empty as the end-state, after residue is resolved;
+      bounded per-path retry (persisted marker) so the suspend never wedges
+- [x] self-check (checks/1.md)
+- [x] QA expert review (subagent) — round-4 PASS
 - [ ] user review
 
 **Completion criteria**:
@@ -95,61 +102,83 @@ clean tree, without ever silently deleting user-authored files.
   is recorded in `State → Notes` and the session suspends anyway (representative failure mode:
   `/rn:dn` hanging when the user is trying to leave). See D-1.
 
-### #2: Reframe completion-criteria guidance to be objective-based
+### #2: Proceduralize all rn prompts; move intent to DESIGN.md — DONE (QA + user review pending)
 
-**Purpose**: Rewrite the completion-criteria guidance so it directs criteria that verify the
-objective is met, intended behavior occurs, and representative failure modes are absent — not that an
-output was produced.
+**Purpose**: Rewrite every rn skill/reference as pure procedural work-instructions — no rationale or
+rules-as-prose — preserving all behavior, and relocate the "why" to a non-runtime `rn/DESIGN.md`.
+
+**Status**: all five files converted and the design notes assembled; coordinator-reviewed. A QA pass
+over the conversion set and user review are still pending.
 
 **Prerequisites**: none
 
 **Steps**:
 
-- [ ] In `rn/references/steering-template.md`, rewrite the `Completion criteria` guidance block to
-      state the three lenses (objective achieved / intended behavior observed / representative failure
-      modes absent), keeping the existing valid constraints
-- [ ] Add a short contrast example distinguishing a result-style criterion from an objective-style one
-- [ ] Update the `Task definition requirements` table rows (Objectivity / Criteria vs steps) to match
-- [ ] In `rn/references/task-workflow.md`, align any description of completion criteria as the review
-      bar with the new framing (no contradiction)
-- [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
-- [ ] QA expert review (subagent)
+- [x] Convert `dn`, `on`, `up`, `task-workflow`, `steering-template` to pure numbered procedure
+- [x] Assemble `rn/DESIGN.md` (one intent note per step/decision; not read at runtime)
+- [x] Remove duplication (dropped the `steering-template` `Fill rules` section; template block kept
+      byte-for-byte)
+- [x] Coordinator review of each converted file — behavior preserved (read all five)
+- [ ] QA expert review of the conversion set (subagent) — not yet run
 - [ ] user review
 
 **Completion criteria**:
 
-- `steering-template.md`'s completion-criteria guidance states all three verification lenses and
-  contrasts an objective-style criterion against a result-style one (objective: a reader can tell the
-  two apart from the guidance alone).
-- Every existing valid constraint (third-party verifiable, no vague terms, outcomes-not-actions)
-  remains present (representative failure mode: silently dropping a still-valid rule).
-- No statement in `task-workflow.md` or `steering-template.md` contradicts the new framing
-  (representative failure mode: two rn docs disagreeing on what a completion criterion is).
+- Each rn skill/reference is pure numbered procedure: no rationale, "Why", or rule-justification
+  prose; every prior behavior, branch, and fallback survives as a step (representative failure mode: a
+  dropped rule).
+- `rn/DESIGN.md` carries the removed intent, one note per step/decision, and is not read at runtime.
+- The runtime prompt surface drops materially with no behavior change (measured: 616 → 393 lines).
+- The fenced `steering.md` template block is byte-for-byte unchanged and completion-criteria semantics
+  are unchanged (so #3 can judge them on a faithful base).
 
-### #3: Record the changes and verify cross-doc consistency
+### #3: Re-judge the two feedback requirements on the clean base — NOT STARTED
 
-**Purpose**: Record both changes in the CHANGELOG and confirm the rn docs are internally consistent
-after the edits.
+**Purpose**: With the noise removed, decide whether each original feedback change is warranted and
+correctly shaped: (a) the dn residue/clean-tree behavior (#1); (b) the completion-criteria reframe —
+expressing the work's *objective* (objective achieved / intended behavior observed / representative
+failure modes absent) rather than its *result*.
 
-**Prerequisites**: #1, #2
+**Prerequisites**: #2
+
+**Steps**:
+
+- [ ] Re-read the now-procedural `dn` and decide: is the residue behavior right, over-built, or in
+      need of trimming? Record the decision.
+- [ ] Re-read `steering-template`'s completion-criteria guidance on the clean base; decide whether the
+      objective-vs-result reframe is still needed and, if so, its minimal form (the original #2 plan:
+      three lenses + a contrast example, keeping existing constraints, aligning `task-workflow`)
+- [ ] Apply any decided change via the implementation expert, or record a decision to leave as-is
+- [ ] self-check + QA expert review + user review
+
+**Completion criteria**:
+
+- A recorded decision (in Decisions) for each feedback item — keep / trim / change — with rationale
+  judged on the clean base.
+- Any applied change preserves the pure-procedure form and is reflected in `rn/DESIGN.md`
+  (representative failure mode: re-introducing rationale prose into a runtime file).
+
+### #4: Record the changes and verify cross-doc consistency — NOT STARTED
+
+**Purpose**: Record the shipped changes in the CHANGELOG and confirm the rn docs are internally
+consistent after all edits.
+
+**Prerequisites**: #1, #2, #3
 
 **Steps**:
 
 - [ ] Create `## [Unreleased]` at the top of `rn/CHANGELOG.md` with one user-facing `Changed` line per
-      change (dn cleanliness; objective-based criteria)
-- [ ] Grep the rn docs for stale references to the old completion-criteria framing and the old
-      dn-cleanliness wording; confirm none now contradicts the new guidance
+      shipped change (dn residue handling; pure-procedure rewrite; any #3 change)
+- [ ] Grep the rn docs for stale/contradictory wording; confirm none contradicts the current docs
 - [ ] Confirm `version` in `plugin.json` is still `0.6.0`
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA expert review (subagent)
-- [ ] user review
+- [ ] self-check + QA expert review + user review
 
 **Completion criteria**:
 
-- `rn/CHANGELOG.md` has an `## [Unreleased]` section carrying one user-facing line per change, written
+- `rn/CHANGELOG.md` has an `## [Unreleased]` section carrying one user-facing line per shipped change,
   in user terms (objective: a user reading the changelog learns what changed and why it helps).
-- A grep over the rn docs finds no surviving statement that contradicts the new completion-criteria or
-  dn-cleanliness guidance (representative failure mode: leftover stale instruction).
+- A grep over the rn docs finds no surviving statement that contradicts the current docs
+  (representative failure mode: leftover stale instruction).
 - `version` in `rn/.claude-plugin/plugin.json` is `0.6.0` — unchanged (representative failure mode:
   accidentally cutting a release).
 
@@ -176,12 +205,53 @@ after the edits.
   deletion.
 - **Sources**: `rn/skills/dn/SKILL.md`; the task #1 QA reviews in this session.
 
+## D-2: Proceduralize the rn prompts before re-judging the requirements
+- **Issue**: The rn prompts had grown heavy with rationale and repeated rules (task-workflow alone was
+  279 lines / ~2,700 words). The user found them too noisy to assess whether the two feedback changes
+  (dn residue, completion criteria) were warranted, and asked to make them pure work-instructions
+  first.
+- **Conclusion**: Rewrite every rn skill/reference as pure numbered procedure an LLM follows without
+  needing any "why"; move the intent to a separate `rn/DESIGN.md` that is **not read at runtime**,
+  with one note per step/decision. Then re-judge the two requirements on the clean base.
+- **Rationale**: Two readers with different needs were conflated in one file — the executing LLM needs
+  only steps (rationale is noise that blocks judgment), while the maintainer needs the intent (means
+  alone can't be judged). Separating by reader removes the noise without losing the "why". Dropping
+  the intent entirely was rejected — the user explicitly needs it to judge requirements.
+- **Evidence**: Runtime prompt surface dropped 616 → 393 lines (−36%) with behavior preserved; intent
+  preserved in `rn/DESIGN.md` (139 lines).
+- **Sources**: this session's conversation; the conversion commits `3f0e435`..`e8ebcf7` on `rn-update`.
+
 # State
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up.)
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-06-25
-- **Last completed**: none
-- **Next**: #1 dn ends with a genuinely clean worktree
-- **Notes**: context needed for resume
+- **Last completed**: #2 proceduralize all rn prompts + assemble `rn/DESIGN.md` (implementation done;
+  QA over the conversion set + user review still pending). #1 (dn residue) also implementation+QA done,
+  user review pending.
+- **Next**: #3 — re-judge the two feedback requirements (dn residue behavior; completion-criteria
+  objective-vs-result reframe) on the clean, proceduralized base.
+- **Notes**:
+  - **Branch** `rn-update`, **PR #14** (draft). Everything is committed and pushed; tree clean at
+    suspend except `checks/1.md` committed alongside this State.
+  - **Session shape**: dogfooding rn on the rn plugin itself. Original goal = 2 usage-feedback fixes
+    (Goal §1 dn residue, §2 completion criteria). Mid-session the user pivoted (D-2): proceduralize all
+    rn prompts first, then re-judge the 2 requirements on the clean base.
+  - **Done so far**: Task #1 dn residue handling — `rn/skills/dn/SKILL.md`, QA round-4 PASS after 3 fix
+    iterations, ledger in `checks/1.md`. Task #2 proceduralization — all five files
+    (`dn`/`on`/`up`/`task-workflow`/`steering-template`) converted to pure procedure; intent assembled
+    into `rn/DESIGN.md`; `steering-template` `Fill rules` duplication removed; the fenced template block
+    is byte-for-byte unchanged.
+  - **Open decision the user has NOT answered** (asked just before they ran /rn:dn): in which order to
+    proceed — (A) user reviews the proceduralization on PR #14 first, (B) update steering to the new
+    plan [now done], (C) re-judge the 2 requirements. On resume, ask the user to confirm the order;
+    default suggestion: have them review the conversion on PR #14, then start #3.
+  - **Next concrete action on resume**: (1) confirm the user has reviewed the proceduralization on
+    PR #14 and approves #1 + #2; (2) run a QA expert pass over the conversion set if not yet done;
+    (3) start #3 — re-judge dn-residue and completion-criteria on the clean base, recording a
+    keep/trim/change decision for each; (4) then #4 CHANGELOG + consistency.
+  - **Constraints**: `plugin.json` stays at `0.6.0` (no release instruction). Intent must never go back
+    into a runtime file — it lives in `rn/DESIGN.md`.
+  - **Caveat**: the `/rn:dn` that ran this suspend is the cached v0.6.0 (old) skill, not the new
+    procedural `dn` on the branch; the branch version is not yet the active installed plugin.
