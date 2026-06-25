@@ -1,12 +1,32 @@
 # Goal
 
-Package the "technical-writing instruction" into a Claude Code plugin `techting` (skill `up`,
-invoked `/techting:up`) so its reader-first procedure — define the reader, then derive tone,
-diagrams, closing, and outline — can be applied on demand without pasting the instruction each
-time. It must be invocable by a human or by Claude itself. Primary mode is brushing up an existing
-draft (authoring from scratch runs through the same procedure but is secondary). The verbatim
-instruction is preserved at `.rn/techting/instruction.md` as the source of record, and the skill
-body is derived from it.
+Make a document read as if a person wrote it — not an AI — so the reader takes it in with the least
+effort. Package this as a Claude Code plugin `techting` (skill `up`, invoked `/techting:up`) so the
+procedure can be applied on demand to any draft, by a human or by Claude itself. Primary mode is
+brushing up an existing draft; authoring from scratch runs through the same procedure but is
+secondary. The verbatim instruction is preserved at `.rn/techting/instruction.md` as the source of
+record, and the skill body is derived from it.
+
+**Purpose (the end):** a human-readable document. Concretely — the reader's cognitive load is low,
+it goes in when read top to bottom, and its structure is graspable at a glance through diagrams and
+lists.
+
+**Quality, in two tiers:**
+
+- **Floor — table-stakes quality (b):** clearing it earns no praise, but failing it instantly reads
+  as "an AI wrote this." Scrub the fingerprints: padding and throat-clearing, restatement, retreat
+  into generalities, flavorless connectives, reflexive bulleting, a wavering voice.
+- **Ceiling — attractive quality (a):** on a cleared floor, what makes it worth reading — density,
+  concreteness (names, numbers, examples), a single load-bearing thread (conclusion first), diagrams
+  and lists that earn their place, a consistent voice. Adding ceiling onto an uncleared floor is
+  wasted.
+
+So the skill works in that order: **first clear the floor** (inspect and remove the AI tells), **then
+reach for the ceiling** (derive and add the attractive qualities).
+
+**Means (not the end):** reader-first derivation — define the reader (who they are / what they must
+decide or do / how they read), then derive the axis, voice, and structure from that definition
+rather than from memory.
 
 # Acceptance criteria
 
