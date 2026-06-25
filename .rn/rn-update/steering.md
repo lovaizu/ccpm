@@ -143,11 +143,12 @@ failure modes absent) rather than its *result*.
 
 **Steps**:
 
-- [ ] Re-read the now-procedural `dn` and decide: is the residue behavior right, over-built, or in
-      need of trimming? Record the decision.
-- [ ] Re-read `steering-template`'s completion-criteria guidance on the clean base; decide whether the
+- [x] Re-read the now-procedural `dn` and decide: is the residue behavior right, over-built, or in
+      need of trimming? Record the decision. → **TRIM** (D-3a)
+- [x] Re-read `steering-template`'s completion-criteria guidance on the clean base; decide whether the
       objective-vs-result reframe is still needed and, if so, its minimal form (the original #2 plan:
       three lenses + a contrast example, keeping existing constraints, aligning `task-workflow`)
+      → **CHANGE, minimal form** (D-3b)
 - [ ] Apply any decided change via the implementation expert, or record a decision to leave as-is
 - [ ] self-check + QA expert review + user review
 
@@ -220,6 +221,37 @@ consistent after all edits.
 - **Evidence**: Runtime prompt surface dropped 616 → 393 lines (−36%) with behavior preserved; intent
   preserved in `rn/DESIGN.md` (139 lines).
 - **Sources**: this session's conversation; the conversion commits `3f0e435`..`e8ebcf7` on `rn-update`.
+
+## D-3: Re-judge the two feedback requirements on the clean base (task #3)
+- **Issue**: With the rn prompts now pure procedure, decide for each original feedback item whether the
+  change is warranted and correctly shaped: (a) the `dn` residue / clean-tree behavior; (b) the
+  completion-criteria objective-vs-result reframe.
+- **Conclusion**:
+  - **(a) TRIM.** Keep the core — gitignore recurring test/build residue (`dn` step 5), ask-never-delete
+    on ambiguous untracked paths, record user-deferred paths, always complete. **Remove** step 7's
+    retry-once-per-path correction-marker loop and the step-5 "corrective re-entry" bullet that only
+    serves it. Step 7 becomes a single forward pass: verify `git status --porcelain`; record any
+    still-present non-gitignored path as user-deferred in `State → Notes`; proceed.
+  - **(b) CHANGE — apply, minimal form.** Reframe the `steering-template.md` completion-criteria
+    guidance to three lenses (objective achieved / intended behavior observed / representative failure
+    modes absent) plus one objective-vs-result ("the output exists") contrast example; keep all three
+    existing constraints (third-party verifiable, no vague terms, outcomes-not-actions); clarify the
+    `Criteria vs steps` table row (line 90) so "outcomes/end-state only" is not read as "the artifact
+    was produced," keeping it consistent with `task-workflow`'s use of criteria as the review bar.
+- **Rationale**:
+  - (a) D-1's "never wedge" guarantee does not require a retry loop — a single forward pass never loops
+    at all. The retry guards only the case of a gitignore rule the agent itself just wrote failing to
+    match, and in that case step 5 has no guidance to write a *better* rule the second time, so it falls
+    through to "record as deferred" — identical to dropping the loop, minus the correction-marker
+    bookkeeping. The mechanism does not earn its runtime complexity.
+  - (b) The "read as 'the output exists'" gap survives the proceduralization: the template still says
+    only "outcomes / end-state only," the exact wording the feedback flagged. This session's own task
+    criteria already use the better form (`representative failure mode:` annotations) but the template
+    never directs a writer to. The three-lens + contrast form is the minimal change that closes the gap
+    without dropping any existing constraint.
+- **Evidence**: `dn/SKILL.md` steps 5–7 (branch); `steering-template.md` lines 52–56 and line 90
+  (branch); D-1 (this file); task #2's own criteria use the target objective form.
+- **Sources**: this session's re-judgment of `rn/skills/dn/SKILL.md` and `rn/references/steering-template.md` on `rn-update`.
 
 # State
 
