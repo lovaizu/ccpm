@@ -340,8 +340,9 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 # State
 
 - **Status**: paused。プラグイン本体8タスクは完了（PR #8 OPEN）。**現在の活動スレッド＝hposal の dogfood**（実案件 `ikuko-hp` で `/hposal:up` を実走し改善所見を収集中）。**本セッションで dogfood フェーズ4を「3層構造」に再構築まで完走**：施主が提案書の構造像を訂正（要件→オリジナルの提案→**実現手段としての提案**の3層・実現手段に本物の基盤選択がある時は比較を1スライドでなく“層”として2列で通す）。これを受け private 側で 01 再トレース（w列を新ID体系へ・q1 に WP→.com 確定）／02 を3層に書き換え／**04 を22スライド3層比較デッキへ再構築・16:9 PDF化（CSS 1–376行バイト不変・目視✔）**。dogfood 所見は `dogfood-notes.md` に **#1〜#21＋#9再実証** 蓄積（**本セッション新規＝#21 提案書3層構造・元テンプレに「実現手段の提案」層が無い＝04テンプレ/SKILLの中核改善**）。**残り＝(a) private 側で施主の最終★（提案書レビュー・額/並び順確定）→納品、(b) dogfood 所見を plugin（SKILL/テンプレ）へ反映、(c) 本体の分岐（PR #8 or リリース）**。
-- **Date**: 2026-06-23
-- **Last completed**: **task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
+- **Date**: 2026-06-25
+- **Last completed**: 〔本セッション 2026-06-25〕dogfood フェーズ4を**3層構造**へ再構築まで完走。施主が提案書の構造像を訂正したのを受け、private `ikuko-hp` で 01 再トレース（B案＝作業ID列を新 c/s/p 体系へ・q1 に WP→.com Business 確定を追記）／02 を3層に書き換え（p4＝「実現手段の提案」層の起点・「比較は1スライドに畳む」を撤回）／**04 を22スライド3層比較デッキへ再構築**（要件→何をする〔共通1列〕→実現手段〔2列比較 Studio｜WordPress.com：基盤比較→作り方→運用保守→見積 約89万/約130万〕→締め〔共通1列〕）。16:9 PDF `20260625/04_proposal.pdf`・CSS 1–376行バイト不変・目次＋比較4スライド目視＋はみ出し2件（slide2/slide12）修正・export ゲート clean。`dogfood-notes.md` に **#21**（提案書3層構造・元テンプレに「実現手段の提案」層が無い＝04テンプレ/SKILL の中核改善）を回収。ccpm 側 push 済み（private はリポジトリ外・未追跡）。
+  〔前セッション〕**task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
   A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
   D=フェーズ1クロール代替⚠️。**C2（「やらない理由は？」を受け実施）**：欠落していた必須/任意3スライドを HTML骨格に内包（P8見守り・
   P10なぜ私たちか〔必須〕・P16連絡先）、CSS 1–374行不変・全20ページ採番・16:9で20ページ書き出し＋新3ページPNG目視✔。
@@ -351,11 +352,13 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
   hposal＝日本限定として README＋テンプレ5本を日本語化、`04_proposal.html` のコメント/ヘッダは 74c006a・c835814 を
   revert して原本日本語を復元。SKILL.md・メタは英語維持。`validate --strict` ✔・全層の言語振り分け網羅確認✔。
   〔前セッションまで〕本体7タスク＋(1) D-5 で道具を英語化（D-6 が撤回）(2) 出力先/再開モデル追加・SKILL 一本化。
-- **Next（dogfood は回しきった＝ユーザー指示「フェーズ3・4まで回しきってステアリング更新」完了。残りは plugin 反映と本体分岐）**:
-  1. ~~**dogfood フェーズ3の★**~~ → **解決済み**（レンジ提示＝税込概算 約105〜116万円）。
-  2. ~~**dogfood フェーズ4**~~ → **完走**。提案書 `04_proposal.html` の231プレースホルダを流し込み→export ゲート 0→ヘッドレスPDF `20260623/04_proposal.pdf`＝20ページ16:9→専門家レビューで [BLOCKER]ページ数整合・[SHOULD]301二重計上を検出→修正。CSS 1–374行バイト不変。private 側で **★（最終・納品前）保留中**。
-  3. **dogfood 所見を plugin へ反映**：`.rn/hposal-plugin/dogfood-notes.md`（#1-3 移行落とし穴・#5 規模別省略・#8 契約形態・#9 フェーズ3金額突合ゲート・**#14 母数≠新サイト規模**・**#15 fill-marker は `{{}}` を使わない規約**）を **SKILL.md へ最小追記＋CHANGELOG `[Unreleased]`**（#10-13 はテンプレ改修＝別途検討、#4 と同枠）。
-  4. その後にプラグイン本体の分岐＝**(A)** PR #8 レビュー・マージ、または **(B)** リリース（D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・version 0.1.0 据置・`hposal-v0.1.0` 注釈タグ・GitHub Release）。dogfood 由来の SKILL 改善を取り込んでからリリースするのが筋。
+- **Next（ユーザー指示＝「再開後、ドッグフードのFBから hposal を改善して」）**:
+  1. **【最優先】dogfood 所見を hposal 本体へ反映**。`dogfood-notes.md` の **反映方針** 節に従う：
+     - **(i) SKILL.md へ最小追記（構造変更なし・1行ずつ効く）**＝#1-3 移行落とし穴／#5 規模別省略可否／#8 契約形態（準委任 vs 固定）／#9 フェーズ3の金額突合ゲート（実証済）／#14 母数≠新サイト規模／#15 fill-marker は `{{}}` を使わない規約／#18・#20 プラットフォーム/基盤の実態ゲート（`.com`/`.org` 確定）。
+     - **(ii) テンプレ改修（中核）**＝**#21 提案書を「要件→オリジナルの提案→実現手段の提案」の3層にし、実現手段に本物の選択がある時は比較を1スライドでなく“層”として2列で通す**＋#19 共通工数1回＋基盤分岐N本＋比較を層で（04テンプレに 2列比較の 基盤比較/作り方/運用保守/見積 スライド枠を用意）。#10-13 もテンプレ枠。実装の見本＝private `ikuko-hp/04_proposal.html`（PII を外して一般化して持ち込む）。
+     - 反映後＝CHANGELOG `[Unreleased]` に追記し `validate hposal --strict`・`validate . --strict` 両方。
+  2. その後に本体の分岐＝**(A)** PR #8 レビュー・マージ、または **(B)** リリース 0.1.0（D-3：CHANGELOG `[Unreleased]`→`## [0.1.0] - YYYY-MM-DD`・version 据置・`hposal-v0.1.0` 注釈タグ・GitHub Release）。dogfood 由来の改善を取り込んでからリリースするのが筋。
+  3. 〔別スレッド・private／公開リポジトリ外〕施主の最終★＝提案書 `/Users/kiyo/work/private/ikuko-hp/20260625/04_proposal.pdf`（22ページ・3層）のレビューと額/並び順の確定→納品。ccpm の作業対象ではない。
 - **Notes**:
   - 言語の最終形（**D-6**・hposal＝日本限定）：日本語＝README／references テンプレ本文5本（01-03・
     site-inventory・04_proposal.md）／`04_proposal.html` の使い方ヘッダ＋記入ガイドコメント＋クライアント
@@ -381,7 +384,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
     `01_requirements.md`・`02_proposal-design.md`・`inventory/`・`input/`（hposal の「作業フォルダ直下」仕様）と、
     その提案書セッションを包む rn ステアリング（slug=`ikuko-hp`）が rn 規約どおり
     `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md` に在る。
-    **phase 3（作業リスト）はドラフト+専門家レビュー+修正まで完了**（`03_work-breakdown.md`・内部積み上げ 税込約¥116万。
-    専門家レビューで役割別集計の¥40k 誤記を検出→修正）。残り＝**phase 3 の★（丸め/レンジ1問・未回答）→ phase 4（提案書）**。
-    dogfood で得た plugin 改善メモは一般化（PII 無し）して `.rn/hposal-plugin/dogfood-notes.md` に持ち帰る（#9 フェーズ3金額突合ゲート等を追記済み）。
-    次の resume はこのパスを辿れば private 側ステアリングで続きが分かる。
+    **phase 1–4 すべて完了**。基盤は Studio／WordPress.com のフラット両論併記（private D-8）に確定し、03 を共通工数1回＋基盤分岐2本で積算（Studio 税込約89万／WordPress.com 税込約130万）。
+    **phase 4＝04 を3層構造の22スライド比較デッキへ再構築・16:9 PDF `20260625/04_proposal.pdf` まで完了**（CSS 1–376行バイト不変・目視✔）。残り＝**施主の最終★（提案書レビュー・額/並び順の確定）→納品**（private 側・公開リポジトリ外）。
+    dogfood で得た plugin 改善メモは一般化（PII 無し）して `.rn/hposal-plugin/dogfood-notes.md` に持ち帰り済み（#1〜#21＋#9再実証）。
+    次の resume はこのパスを辿れば private 側ステアリング（`/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md`）で続きが分かる。
