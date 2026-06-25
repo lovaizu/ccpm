@@ -42,16 +42,31 @@ then `/rn:up` in a fresh conversation to resume.
 
 ## Phase 2: Persist — push and confirm
 
-**Step 4 — Commit and push**
+**Step 4 — Resolve residue**
 
-- `git commit` the `State` changes, then `git push`. If push fails, continue (the user can push
-  later).
+- Run `git status --porcelain`. For each remaining untracked or tracked-dirty path, classify and act
+  so the tree can reach a true clean state:
+  - **Recurring test/build artifacts** (caches, coverage output, compiled/temp output a future test
+    or build run regenerates — e.g. `.pytest_cache/`, `.coverage`, `__pycache__/`, `dist/`) → add a
+    matching rule to `.gitignore` and **commit the `.gitignore`**, so the same residue does not
+    re-dirty the tree on a later run. Do not commit the artifacts themselves.
+  - **Clearly-transient residue** that should be neither tracked nor ignored → remove it.
+  - **Anything not clearly test/build residue** → **never auto-delete**. Surface it to the user
+    (report the path, ask how to handle it) and let them decide. User-authored content is never
+    silently removed.
 
-**Step 5 — Verify clean**
+**Step 5 — Commit and push**
 
-- Run `git status`; the tree must be clean.
+- `git commit` the `State` changes (and any `.gitignore` rule from Step 4), then `git push`. If push
+  fails, continue (the user can push later).
 
-**Step 6 — Report**
+**Step 6 — Verify clean**
+
+- Run `git status --porcelain`; after Step 4 resolved residue, its output **must be empty**. A
+  non-empty output means residue is unresolved — return to Step 4, do not declare the session
+  suspended.
+
+**Step 7 — Report**
 
 - Output: last completed task, next task, and the branch name.
 - Remind the user to run `/clear`, then `/rn:up` in a new conversation.
