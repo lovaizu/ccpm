@@ -24,6 +24,8 @@ runtime code is involved.
   later test run does not re-dirty the tree (the residue problem does not recur).
 - The `dn` instructions never direct removing an untracked path that is not clearly test/build
   residue without first surfacing it to the user — user-authored content is never silently deleted.
+- `/rn:dn` always completes the handoff — it never loops/wedges; an untracked path the user leaves
+  unresolved is recorded in `State → Notes` and the suspend proceeds (see D-1).
 - The completion-criteria guidance in `steering-template.md` directs writing criteria along three
   verification lenses — objective achieved, intended behavior observed, representative failure modes
   absent — and explicitly contrasts an objective-style criterion against a result-style ("the output
@@ -80,13 +82,18 @@ clean tree, without ever silently deleting user-authored files.
 
 **Completion criteria**:
 
-- The revised `dn` instructions guarantee that, given a worktree with test-run residue, the session
-  ends with `git status --porcelain` empty (objective: clean tree achieved, verifiable by reading the
-  flow).
-- The instructions direct adding a committed `.gitignore` rule for recurring test/build artifacts, so
-  the same residue does not re-dirty the tree on a later run (representative failure mode: recurrence).
-- The instructions never direct deleting an untracked path that is not clearly test/build residue
-  without user confirmation (representative failure mode: destroying user work).
+- Given a worktree whose only residue is recurring test/build artifacts, the revised `dn` flow ends
+  with `git status --porcelain` empty — the residue is gitignored away (objective: the residue the
+  feedback is about no longer keeps the tree dirty; verifiable by reading the flow).
+- The instructions direct adding a committed repo-root `.gitignore` rule for recurring test/build
+  artifacts, so the same residue does not re-dirty the tree on a later run (representative failure
+  mode: recurrence).
+- The agent never deletes any untracked path on its own; an untracked path that is not clearly a
+  regenerable artifact is surfaced to the user, never auto-deleted or auto-gitignored (representative
+  failure mode: destroying or silencing user work). See D-1.
+- The suspend always completes — it never loops/wedges. An untracked path the user leaves unresolved
+  is recorded in `State → Notes` and the session suspends anyway (representative failure mode:
+  `/rn:dn` hanging when the user is trying to leave). See D-1.
 
 ### #2: Reframe completion-criteria guidance to be objective-based
 
@@ -148,7 +155,26 @@ after the edits.
 
 # Decisions
 
-(none yet)
+## D-1: Reconcile "tree ends clean" with "suspend never wedges"
+- **Issue**: The first review of task #1 required a terminal escape so `/rn:dn` never loops forever
+  (the user runs `dn` precisely to leave). But task #1's original criterion 1 demanded the tree end
+  with `git status --porcelain` *empty* unconditionally. For an untracked path that is genuinely
+  ambiguous (not clearly regenerable residue) and that the user defers on, those two goals conflict —
+  ending empty would force an autonomous delete/gitignore, which the never-silently-destroy rule
+  forbids.
+- **Conclusion**: Split the bar. (a) For *recurring test/build residue* — the case the feedback is
+  about — the tree ends genuinely empty, because such residue is gitignored away. (b) For an
+  *ambiguous untracked path*, the agent never acts autonomously; it surfaces the path to the user, and
+  any path the user defers is recorded in `State → Notes` and the suspend completes anyway. The tree
+  may then end non-empty by the user's own choice, which is correct, not a failure.
+- **Rationale**: The feedback's intent is "test residue should stop keeping the worktree dirty," which
+  (a) satisfies fully. Forcing (b) to also end empty would require the agent to delete or hide files it
+  cannot safely classify — trading a clean tree for the worse failure of destroying user work or
+  wedging the handoff. Honesty (record + warn) beats a false guarantee.
+- **Evidence**: `/rn:dn` is invoked to stop and hand off (skill purpose, `dn/SKILL.md` Phase 1);
+  recurring artifacts are silenced by a gitignore rule, removing them from `git status` output without
+  deletion.
+- **Sources**: `rn/skills/dn/SKILL.md`; the task #1 QA reviews in this session.
 
 # State
 
