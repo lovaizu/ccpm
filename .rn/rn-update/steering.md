@@ -1,6 +1,6 @@
 # Goal
 
-Apply two improvements to the `rn` plugin that surfaced from real usage:
+Apply three improvements to the `rn` plugin that surfaced from real usage:
 
 1. **`/rn:dn` must end with a genuinely clean worktree.** Today `dn` commits only tracked changes
    and then asserts `git status` is clean (Step 5), but test runs during a session leave untracked
@@ -12,6 +12,13 @@ Apply two improvements to the `rn` plugin that surfaced from real usage:
    describe work done rather than goal met. Reframe the guidance so criteria verify three things:
    the objective is achieved, the intended behavior actually occurs, and representative failure
    modes are absent.
+3. **`steering.md` must not accumulate across repeated `/rn:up`/`/rn:dn` cycles** (surfaced
+   2026-06-26, see D-5). Redefine steering's purpose as the *forward contract for the remaining work*
+   — the minimum a resuming agent needs to finish the goal correctly — not the session's archive.
+   The durable record of what was decided and why already lives in git commits and the PR, so two
+   accumulation vectors are cut: (a) `Decisions` becomes a live working set — `/rn:up` retires a
+   decision once the tasks it governs are shipped; (b) `/rn:dn` caps `State → Notes` to a forward
+   pointer (branch/PR, next action, open blockers/deferred paths), not a session re-narration.
 
 The change set is documentation/prompt edits to the `rn` plugin's skill and reference files. No
 runtime code is involved.
@@ -40,8 +47,24 @@ items above stay the goal; the proceduralization is the precondition for judging
   outcomes-not-actions); none is dropped or contradicted.
 - `task-workflow.md`'s use of completion criteria as the review bar stays consistent with the new
   guidance — no rn doc contradicts another after the change (grep-verified).
-- `rn/CHANGELOG.md` records both changes under `## [Unreleased]`, one user-facing line each, in user
-  terms; `version` in `plugin.json` is unchanged (no release is being cut).
+- `/rn:up`'s reconcile retires a decision from `Decisions` once every task it governs is checked off
+  and shipped (its `complete task #` marker is in git), and keeps a decision that still governs an
+  unchecked task — so the `Decisions` section does not accumulate shipped-work decisions across
+  cycles (representative failure mode: a stale shipped decision lingers; or a still-governing decision
+  is wrongly dropped). The retired decision's rationale remains recoverable from the commit that
+  recorded it and from the PR.
+- A `Governs: #N` field on each decision makes retirement determinable without re-reading the
+  decision's prose; a cross-cutting decision with no single task uses `Governs: —` and is kept for the
+  session's life.
+- `/rn:dn` writes `State → Notes` as a bounded forward pointer — branch/PR, next concrete action,
+  open blockers, user-deferred paths — not a multi-paragraph re-narration of the session
+  (representative failure mode: the per-resume narrative bloat returns).
+- `steering-template.md` encodes both as structure: the `Decisions` template carries the `Governs`
+  field and states the live-working-set retirement rule; the `State` template directs `Notes` to the
+  forward-pointer form. The redefinition rationale lives in `rn/DESIGN.md`, not in the runtime
+  prompt files (representative failure mode: rationale prose re-enters a runtime file).
+- `rn/CHANGELOG.md` records all three changes under `## [Unreleased]`, one user-facing line each, in
+  user terms; `version` in `plugin.json` is unchanged (no release is being cut).
 
 # Assumptions
 
@@ -161,17 +184,61 @@ failure modes absent) rather than its *result*.
 - Any applied change preserves the pure-procedure form and is reflected in `rn/DESIGN.md`
   (representative failure mode: re-introducing rationale prose into a runtime file).
 
-### #4: Record the changes and verify cross-doc consistency — NOT STARTED
+### #4: Redefine steering's purpose so it does not accumulate across cycles — NOT STARTED
+
+**Purpose**: Make `steering.md` the forward contract for the *remaining* work, not the session's
+archive, so repeated `/rn:up`/`/rn:dn` cycles do not pile up content. Two structural changes:
+`Decisions` becomes a live working set retired on ship (Lever A), and `/rn:dn` caps `State → Notes`
+to a forward pointer (Lever B). See D-5.
+
+**Prerequisites**: none
+
+**Steps**:
+
+- [ ] In `rn/skills/up/SKILL.md` Step 6, add decision retirement to the reconcile: drop any decision
+      whose every `Governs` task is checked off and shipped (its `complete task #` marker is in
+      git); keep decisions that still govern an unchecked task or use `Governs: —`
+- [ ] In `rn/references/steering-template.md`, add the `Governs: #N / —` field to the `Decisions`
+      template and state the live-working-set retirement rule; direct `State → Notes` to the
+      bounded forward-pointer form (branch/PR, next action, open blockers, user-deferred paths)
+- [ ] In `rn/skills/dn/SKILL.md` Step 3, cap what is written to `Notes` to the forward pointer — not
+      a multi-paragraph session re-narration
+- [ ] Record the redefinition rationale in `rn/DESIGN.md` (up Step 6 retirement; dn Step 3 cap;
+      template Decisions live-working-set + Governs; State Notes forward pointer) — runtime files
+      stay pure procedure
+- [ ] self-check (checks/4.md)
+- [ ] QA expert review (subagent)
+- [ ] user review
+
+**Completion criteria**:
+
+- `/rn:up`'s reconcile retires a decision once every task it `Governs` is checked off and shipped,
+  and keeps one that still governs an unchecked task (objective: the `Decisions` section stops
+  accumulating shipped-work decisions across cycles; representative failure mode: a stale shipped
+  decision lingers, or a still-governing decision is wrongly dropped). The retired decision's
+  rationale remains recoverable from its recording commit and the PR.
+- `steering-template.md`'s `Decisions` template carries the `Governs` field and states the
+  retirement rule; its `State` template directs `Notes` to the forward-pointer form (objective:
+  the structure itself encodes both levers; representative failure mode: the rule is documented
+  nowhere a writer reads).
+- `/rn:dn` Step 3 writes `Notes` as a bounded forward pointer, not a session re-narration
+  (representative failure mode: per-resume narrative bloat returns).
+- The redefinition rationale lives in `rn/DESIGN.md`; no rationale prose enters the runtime files,
+  which stay pure numbered procedure (representative failure mode: "why" leaks back into a runtime
+  file). No rn doc contradicts another after the change (grep-verified).
+
+### #5: Record the changes and verify cross-doc consistency — NOT STARTED
 
 **Purpose**: Record the shipped changes in the CHANGELOG and confirm the rn docs are internally
 consistent after all edits.
 
-**Prerequisites**: #1, #2, #3
+**Prerequisites**: #1, #2, #3, #4
 
 **Steps**:
 
 - [ ] Create `## [Unreleased]` at the top of `rn/CHANGELOG.md` with one user-facing `Changed` line per
-      shipped change (dn residue handling; pure-procedure rewrite; any #3 change)
+      shipped change (dn residue handling; pure-procedure rewrite; any #3 change; steering
+      non-accumulation from #4)
 - [ ] Grep the rn docs for stale/contradictory wording; confirm none contradicts the current docs
 - [ ] Confirm `version` in `plugin.json` is still `0.6.0`
 - [ ] self-check + QA expert review + user review
@@ -188,6 +255,7 @@ consistent after all edits.
 # Decisions
 
 ## D-1: Reconcile "tree ends clean" with "suspend never wedges"
+- **Governs**: #1
 - **Issue**: The first review of task #1 required a terminal escape so `/rn:dn` never loops forever
   (the user runs `dn` precisely to leave). But task #1's original criterion 1 demanded the tree end
   with `git status --porcelain` *empty* unconditionally. For an untracked path that is genuinely
@@ -209,6 +277,7 @@ consistent after all edits.
 - **Sources**: `rn/skills/dn/SKILL.md`; the task #1 QA reviews in this session.
 
 ## D-2: Proceduralize the rn prompts before re-judging the requirements
+- **Governs**: #2
 - **Issue**: The rn prompts had grown heavy with rationale and repeated rules (task-workflow alone was
   279 lines / ~2,700 words). The user found them too noisy to assess whether the two feedback changes
   (dn residue, completion criteria) were warranted, and asked to make them pure work-instructions
@@ -225,6 +294,7 @@ consistent after all edits.
 - **Sources**: this session's conversation; the conversion commits `3f0e435`..`e8ebcf7` on `rn-update`.
 
 ## D-3: Re-judge the two feedback requirements on the clean base (task #3)
+- **Governs**: #3
 - **Issue**: With the rn prompts now pure procedure, decide for each original feedback item whether the
   change is warranted and correctly shaped: (a) the `dn` residue / clean-tree behavior; (b) the
   completion-criteria objective-vs-result reframe.
@@ -256,6 +326,7 @@ consistent after all edits.
 - **Sources**: this session's re-judgment of `rn/skills/dn/SKILL.md` and `rn/references/steering-template.md` on `rn-update`.
 
 ## D-4: Completion-criteria final form — two questions, each with grounds (refines D-3b)
+- **Governs**: #3
 - **Issue**: Reviewing D-3b's applied three-lens form, the user observed it reduces to two questions —
   "is the objective achieved?" and "are new problems absent?" — and that each must be answerable **with
   grounds (根拠)**. D-3b's bullets required third-party *verifiability* but never required the writer/
@@ -280,42 +351,47 @@ consistent after all edits.
   QA verdict was trace-based (no execution of the new `dn`), exposing the missing-grounds gap.
 - **Sources**: user feedback this session; D-3b (above).
 
+## D-5: steering.md is a forward contract, not an archive — retire decisions on ship, cap State Notes
+- **Governs**: #4
+- **Issue**: The user asked whether repeating `/rn:up`/`/rn:dn` makes `steering.md` grow without
+  bound, and to redefine its purpose so it does not. Measuring all six on-disk steering files settled
+  what actually accumulates: `Decisions` is append-only (`dn` adds, nothing removes) but stays small
+  in practice (1–4 per session, max 4); `State` is overwritten each cycle so it does **not** pile up
+  across cycles, yet `dn` writes a multi-paragraph `Notes` (29–39 lines when paused) that every
+  resume re-reads. So there are two distinct vectors: a slow cross-cycle one (`Decisions`) and a
+  per-resume one (verbose `Notes`).
+- **Conclusion**: Redefine `steering.md` as the **forward contract for the remaining work** — the
+  minimum a resuming agent needs to finish the goal correctly — not the session's archive. Cut both
+  vectors structurally: **(A)** `Decisions` becomes a live working set; each decision carries a
+  `Governs: #N` (or `—`) field, and `/rn:up`'s reconcile (Step 6) drops any decision whose every
+  `Governs` task is checked off and shipped. **(B)** `/rn:dn` Step 3 caps `State → Notes` to a bounded
+  forward pointer (branch/PR, next concrete action, open blockers, user-deferred paths), not a session
+  re-narration. The redefinition rationale goes to `rn/DESIGN.md`; the runtime files stay pure
+  procedure. **Delete-on-ship** was chosen over archiving to a side file or keeping-but-skipping,
+  because each decision is already committed when recorded (`record D-N …`), so git history + the PR
+  are the durable system of record — an in-file archive would duplicate them.
+- **Rationale**: A resuming agent needs only what is required to finish correctly; a decision whose
+  work has shipped is no longer required for that, and its "why" is preserved in the commit that
+  recorded it. The `Governs` field makes retirement a mechanical check (no prose re-reading) — the
+  property is enforced by structure, not by a rule the agent must remember. Capping `Notes` removes
+  the larger per-resume cost the data exposed: the narrative `dn` re-writes each cycle, which `git
+  log` already holds. Keeping the rationale in `DESIGN.md` preserves D-2's pure-procedure runtime form.
+- **Evidence**: Six on-disk steering files measured — `Decisions` count 1/1/2/3/3/4; completed
+  sessions (`rn-rename2`, `experts-do-the-work`) show `State` reset to the 9–11-line placeholder
+  (self-cleaning confirmed), while paused sessions show `State` at 29 (`subagent-execution`) and 39
+  (`rn-update`) lines of narrative `Notes`. Each decision in this session was committed when recorded
+  (`git log`: `record D-3`, `record D-4`), so deletion stays recoverable from history.
+- **Sources**: user feedback this session (2026-06-26); measurement of `.rn/*/steering.md` on
+  `rn-update`; `dn/SKILL.md` Step 3, `up/SKILL.md` Step 6, `steering-template.md` (branch).
+
 # State
 
-(written by /rn:dn, read and reset to this placeholder by /rn:up.)
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-06-26
-- **Last completed**: #3 — re-judged both feedback items on the clean base (D-3: dn residue = TRIM,
-  completion criteria = CHANGE), applied them (`7233d51`), then refined the criteria to the
-  two-questions-with-grounds final form (D-4, `eab36f3`). QA PASS; the dn trim was **empirically
-  validated** by sandbox execution. Implementation + QA done on #1, #2, #3 — all three are user-review
-  pending on PR #14.
-- **Next**: user review of #1 + #2 + #3 on PR #14. After approval, task #4 — write `## [Unreleased]` in
-  `rn/CHANGELOG.md` (one user-facing line each for: dn residue handling, pure-procedure rewrite,
-  completion-criteria two-questions+grounds reframe) and grep-verify cross-doc consistency.
-- **Notes**:
-  - **Branch** `rn-update`, **PR #14** (draft). Everything committed and pushed. At suspend the only
-    uncommitted path was `checks/3.md` (coordinator ledger), committed alongside this State.
-  - **Session shape**: dogfooding rn on the rn plugin. Goal = 2 usage-feedback fixes (dn residue,
-    completion criteria), judged on a proceduralized base (D-2). Tasks #1, #2, #3 done through QA;
-    user review pending. #4 not started.
-  - **What happened this session (resume → now)**: resumed via /rn:up (reset State, reconciled — no
-    `complete task #` markers in git). Did task #3: recorded D-3 (dn=trim / criteria=change), applied
-    both (`7233d51`), QA PASS. User then sharpened the criteria: completion criteria should answer two
-    questions — ① is the objective achieved? ② are new problems absent? — **each with grounds**. That
-    became D-4 (`eab36f3`): reframed `steering-template.md` criteria guidance to that form (kept the
-    objective-vs-result contrast + all 3 prior constraints; grounds recorded at verification, not in
-    the criterion text). Applying the stricter bar reflexively, executed the branch `dn` in a sandbox
-    for real grounds: scenario "residue only" → `git status --porcelain` ends **empty**; "ambiguous
-    path" → file survives, recorded deferred, single forward pass, no loop, no deletion.
-  - **Next concrete action on resume**: (1) confirm the user has reviewed/approved #1 + #2 + #3 on
-    PR #14; (2) start task #4 — CHANGELOG `## [Unreleased]` (3 lines: dn residue; proceduralization;
-    criteria two-questions+grounds) + grep cross-doc consistency + confirm `plugin.json` is `0.6.0`.
-    In #4, also dogfood-check that this steering's OWN completion criteria follow D-4's two-question
-    form.
-  - **Decisions this session**: D-3 (re-judge: dn=trim, criteria=change), D-4 (criteria final form =
-    two questions + grounds, supersedes D-3b's three-lens wording).
-  - **Constraints**: `plugin.json` stays `0.6.0` (no release instruction). Rationale/intent must never
-    re-enter a runtime file — it lives in `rn/DESIGN.md`.
-  - **Caveat**: the `/rn:dn` running this suspend is the cached v0.6.0, not the branch's procedural dn.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
