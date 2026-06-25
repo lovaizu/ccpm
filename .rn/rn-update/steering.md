@@ -150,8 +150,9 @@ failure modes absent) rather than its *result*.
       three lenses + a contrast example, keeping existing constraints, aligning `task-workflow`)
       → **CHANGE, minimal form** (D-3b)
 - [x] Apply any decided change via the implementation expert, or record a decision to leave as-is
-      → both applied in commit `7233d51`
-- [x] self-check (checks/3.md) + [x] QA expert review (PASS) + [ ] user review
+      → D-3a/D-3b in `7233d51`; criteria refined to two-questions+grounds final form (D-4) in `eab36f3`
+- [x] self-check (checks/3.md) + [x] QA expert review (PASS; dn trim empirically validated by sandbox
+      execution — residue tree ends `git status --porcelain` empty, no loop, no deletion) + [ ] user review
 
 **Completion criteria**:
 
