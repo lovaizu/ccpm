@@ -160,24 +160,25 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 
 **Steps**:
 
-- [ ] Rewrite `techting/skills/up/SKILL.md` from `.rn/techting/instruction.md`, fresh — do not patch
+- [x] Rewrite `techting/skills/up/SKILL.md` from `.rn/techting/instruction.md`, fresh — do not patch
       the old file. Frontmatter: third-person description with brush-up-first trigger phrases,
       model-invocable, version. Body in imperative form, lean (<2,000 words), single file.
-- [ ] Separate the two layers in the body: process (model instructions) vs output rules (constraints
+- [x] Separate the two layers in the body: process (model instructions) vs output rules (constraints
       on the produced document). Put the mermaid rule only in output rules, with an explicit
       addressee sentence. No mermaid diagram embedded in the prompt body.
-- [ ] Carry every source pillar (reader definition + ask-or-infer gate, base/house-style, the five
+- [x] Carry every source pillar (reader definition + ask-or-infer gate, base/house-style, the five
       axes with no-mixing, voice-by-reader, pre-output self-check) — cross-check item by item.
-- [ ] Add the missing self-check item "each document is a single axis (not mixed)" (Expert C's one
+- [x] Add the missing self-check item "each document is a single axis (not mixed)" (Expert C's one
       fidelity gap). Optionally wire derivation: "how-they-read → axis", "table is an example, §1 is
       the source of truth".
-- [ ] Replace the old mermaid acceptance criterion with the corrected Level A / Level B criteria
+- [x] Replace the old mermaid acceptance criterion with the corrected Level A / Level B criteria
       from D-3.
-- [ ] Add `techting/CHANGELOG.md` (Keep a Changelog; `## [0.1.0]` Added line; rn is the precedent).
-- [ ] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood with two
+- [x] Add `techting/CHANGELOG.md` (Keep a Changelog; `## [Unreleased]` Added line — not a dated
+      `## [0.1.0]`, since no release instruction has been given; promotes on release).
+- [x] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood with two
       different reader definitions to confirm Level B (voice/axis change).
-- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/4.md`)
-- [ ] QA engineer review (subagent)
+- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/4.md`)
+- [x] QA engineer review (subagent)
 - [ ] user review (on the PR)
 
 **Completion criteria**:
@@ -248,12 +249,30 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 
 # State
 
-(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
-session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
-so only a genuinely suspended session reads `paused`.)
-
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-06-25
+- **Last completed**: Task **#4** deliverable — rebuilt `techting/skills/up/SKILL.md` from source
+  (commit `9188602`), added `techting/CHANGELOG.md`, updated the steering acceptance criteria to the
+  D-3 Level A / Level B split. Self-check + QA expert review both PASS (recorded in
+  `.rn/techting/checks/4.md`). All #4 steps checked **except** the final user-review gate.
+- **Next**: Get the user's approval of **task #4 on PR #5**, then check it off with the completion
+  marker commit (`{type}: complete task #4 — …`) and push. After that, all four tasks are done —
+  propose running the steering **Acceptance criteria** as the final gate (the only remaining items
+  are the goal-level criteria, not a new task).
+- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**).
+  - **The #4 marker is NOT yet written** — user review is pending. Do not commit `complete task #4`
+    until the user approves on the PR. `.rn/techting/checks/4.md` is committed (coordinator ledger)
+    via this suspend's `wip:` commit, with the QA verdicts already filled in.
+  - **The category-error defect is fixed**: SKILL.md no longer embeds a mermaid diagram in the
+    prompt body; the body is split into `## The procedure` (process / model instructions) and
+    `## Rules for the produced document` (output rules), the latter opening with the explicit
+    addressee sentence "These rules govern the document this skill produces — not this SKILL.md
+    prompt." Verified: `grep -c '```mermaid'` on SKILL.md = 0; both `claude plugin validate
+    ./techting --strict` and `. --strict` pass.
+  - **CHANGELOG decision**: entry sits under `## [Unreleased]`, not a dated `## [0.1.0]`, because no
+    release instruction has been given (ccpm rule: bump only on explicit release). It promotes to a
+    dated section when the user cuts the release — at which point also tag `techting-v0.1.0` and mark
+    PR #5 ready.
+  - **When the PR is approved**: this is the last task, so after the #4 check-off, the natural close
+    is to run the Acceptance criteria, then (on a release instruction) cut 0.1.0 — bump plugin.json
+    stays 0.1.0 already, promote CHANGELOG, tag, publish Release, mark PR ready/merge.
