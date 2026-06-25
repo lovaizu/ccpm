@@ -15,3 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Before exporting the proposal PDF, the workflow now machine-checks that no unfilled `{{ }}` placeholder or sample row remains — so the client never receives a deck with leftover template text or fake sample data.
 - The proposal slide template now ships with ready-made slides for "why us" (proposer track record & team), post-launch care, and contact, and the chapter guide maps every chapter to the deck — so the required "who we are" section is built in instead of reconstructed each time, and optional slides are simply deleted when out of scope.
 - Site crawling in phase 1 now has a fallback for sites with no sitemap or a JavaScript-rendered menu — so page counting doesn't stall or under-count on common real-world sites.
+
+### Changed
+
+- The workflow now guards the pitfalls found while using the kit on a real migration project: it confirms SEO/301 preservation as a requirement, flags 301 limits on subdomain-hosted source sites and toC legal pages, pins down an ambiguous basis (e.g. WordPress.com vs .org) and what a no-code basis absorbs before pricing, treats the contract form as the client's call rather than assuming it, machine-checks that the work-breakdown totals reconcile, keeps the current-page count separate from the new-site size, and keeps internal sourcing terms out of the proposal — so the first real run is less likely to mis-scope or mis-price.
