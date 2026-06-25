@@ -436,74 +436,12 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 
 # State
 
-- **Status**: paused。dogfood 所見の plugin 反映中。**task #9（SKILL 最小追記）＝完了・push 済み（PR #8）。QA subagent PASS**。**task #10（テンプレのパーツ化＝D-9）を実装中で中断**。パーツ分解は **24スライド part ＋ `_head.html`/`_foot.html` を作成済**（CSS は `_head.html` に切り出し元モノリス 6–374行とバイト一致を diff で確認）。**残り part は `work-detail.html`（付録の作業明細）1本のみ**。その先＝`04_proposal.md` をアウトライン化／SKILL フェーズ4を「パーツ選択→連結→埋める→export」に更新＋フェーズ2 #4／組み立て検証（ヘッドレス Chrome 16:9）／旧モノリス `04_proposal.html` の扱い（パーツへ置換＝削除予定）／CHANGELOG＋validate／self-check・QA・user review。
-- **Date**: 2026-06-26
-- **Last completed**: 〔本セッション 2026-06-26〕**task #9 完了**（dogfood #1-3・5・7-9・14・15・17-20 と #19 の SKILL 側を SKILL.md に1行ずつ追記＝構造変更なし・grep 13/13 OK・`validate --strict` 両方✔・QA subagent PASS・PR #8 へ push）。続けて **task #10 をパーツ化方針（D-9）で着手**：ユーザーが「テンプレはパーツに（アウトライン＋要素ごとの変種）」「1パーツ＝1スライド」を確定→ D-9 を steering に記録、#10 を「モノリス改修」から「パーツ分解＋組み立て」へ書き換え。`hposal/references/templates/parts/` に `_head.html`(CSSバイト不変)・`_foot.html`＋24スライド part を作成（cover/read-guide〔3層明示〕/as-is-to-be〔single・multi〕/screen〔tree-nav・search-filter・service-cta〕/migration/value/第3層比較〔compare-basis・compare-build・compare-operation〕/estimate〔total・range・compare〕/why-us/process/premises/terms/ask/post-launch-care/contact/appendix-cover/glossary/page-list）。第3層比較4種は private 22スライド deck を **PII 除去して一般化**（基盤名→`{{基盤A名}}`等・実額→`{{ }}`）。各 part は先頭にパーツ名＋層＋⚠️ を注記、`.pg`=`{{頁}}`（組み立て時採番）・footmark の提案者は `（提案者）`（#15）。**未完了＝`work-detail.html`／アウトライン化／SKILL更新／組み立て検証／validate**。
-  〔前セッションまで〕dogfood フェーズ4を3層構造へ再構築（private・公開外）。**task #8**（シミュレーション評価由来の仕上げ）を SKILL.md・`04_proposal.md`・`04_proposal.html`・CHANGELOG に反映。
-  A=内部見積前提インテイク節／B=フェーズ4 export 前の `{{ }}`・`例` 残留 grep ゲート／C=`04_proposal.md` 対応表書き換え＋三者ドリフト解消／
-  D=フェーズ1クロール代替⚠️。**C2（「やらない理由は？」を受け実施）**：欠落していた必須/任意3スライドを HTML骨格に内包（P8見守り・
-  P10なぜ私たちか〔必須〕・P16連絡先）、CSS 1–374行不変・全20ページ採番・16:9で20ページ書き出し＋新3ページPNG目視✔。
-  `validate hposal --strict`・`validate . --strict` ✔。
-  〔前セッションまで〕言語方針を **D-6** に再決定し反映・push（02636e3 まで）。読者層で分岐するルールを
-  `.claude/rules/language.md` に追記（Japan限定プラグインは利用者向け成果物を当該言語で・作成前に確認しsteeringへ明示）。
-  hposal＝日本限定として README＋テンプレ5本を日本語化、`04_proposal.html` のコメント/ヘッダは 74c006a・c835814 を
-  revert して原本日本語を復元。SKILL.md・メタは英語維持。`validate --strict` ✔・全層の言語振り分け網羅確認✔。
-  〔前セッションまで〕本体7タスク＋(1) D-5 で道具を英語化（D-6 が撤回）(2) 出力先/再開モデル追加・SKILL 一本化。
-- **Next（task #10 のパーツ化を続行＝D-9）**:
-  1. **`work-detail.html`（付録・作業明細）を作成**して 25 パーツを揃える。元モノリス `04_proposal.html` の
-     1016–1041行（作業明細スライド）を雛形に、`.pg`=`{{頁}}`・footmark=`（提案者）`へ正規化。
-     ⚠️ private 22スライド deck の「作業明細＝共通＋基盤2案の分岐」を踏まえ、比較案件向けに「共通フェーズ＋
-     基盤分岐」の行構成にできる注記を入れる（#19）。
-  2. **`04_proposal.md` をアウトライン＝組み立て仕様に書き換え**：3層の背骨（要件／何をする・共通1列／実現手段・
-     2列比較／締め）・スロット順・各スロットが採る part 変種・層→レイアウト・`.pg` は組み立て時採番。2層案件
-     （実現手段の分岐なし）は第3層 part 群を使わず estimate.total/range を採る、と明示。
-  3. **SKILL.md を更新**：フェーズ4を「アウトライン順に part を選び連結→`{{ }}`/`（…）`を埋める→export ゲート→
-     ヘッドレス Chrome 16:9」に書き換え（旧「モノリスを複製して埋める」を置換）。フェーズ2に #4（基盤未定なら
-     2–3案を同軸＝初期・ランニング・更新主体・拡張性・保守 で比較し★で選ぶ）。
-  4. **旧モノリス `04_proposal.html` の扱いを決めて実行**：パーツが置き換えるので削除が筋（SKILL/`04_proposal.md`
-     の参照を parts へ向け直す。`04_proposal.md` の `04_proposal.html(20ページ)` 記述も更新）。
-  5. **組み立て検証**：代表アウトライン（単一サイト＋2基盤比較）で `_head`＋選んだ part＋`_foot` を1つの HTML に
-     連結→ヘッドレス Chrome で 16:9 書き出し→新スライド（service-cta・compare 4種・estimate.range）目視＋
-     export ゲート（`{{`/`例` 残留0）＋CSS バイト不変（diff）。
-  6. **CHANGELOG `[Unreleased]` に追記**し `validate hposal --strict`・`validate . --strict` 両方。self-check
-     （`.rn/hposal-plugin/checks/10.md`）→ QA subagent → PR #8 で user review。
-  7. その後に本体の分岐＝**(A)** PR #8 マージ、または **(B)** リリース 0.1.0（D-3）。dogfood 改善を取り込んでから。
-  8. 〔別スレッド・private／公開外〕施主の最終★＝`/Users/kiyo/work/private/ikuko-hp/20260625/04_proposal.pdf`の
-     レビューと額/並び順確定→納品。ccpm の作業対象ではない。
-- **Notes**:
-  - 〔task #10 パーツ化・本セッション〕**parts 規約**：1ファイル＝1スライド（`<section class="slide">…</section>`）。
-    組み立て＝`_head.html`（DOCTYPE→`<body>`・`<style>` 内蔵＝CSS バイト不変）＋アウトライン順に選んだ part を連結＋
-    `_foot.html`（`</body></html>`）→単一 HTML→ヘッドレス Chrome で PDF。各 part 先頭に `╔═ PART: 名前 ═╗`＋層＋
-    使い分け⚠️ をコメント。`.pg`=`{{頁}} / {{総ページ数}}`（組み立て時採番）、footmark=`{{宛先}} / （提案者）`
-    （提案者は人間記入＝#15 で `（…）`）。**変種**：as-is-to-be〔single｜multi〕／screen〔tree-nav｜search-filter｜
-    service-cta〕／estimate〔total｜range｜compare〕。**第3層比較**は compare-basis→compare-build→compare-operation→
-    estimate.compare の4枚（実現手段に本物の分岐がある時だけ立てる）。CSS バイト不変の検証＝
-    `diff <(sed -n '6,374p' 旧モノリス) <(sed -n '6,374p' parts/_head.html)`。
-  - 言語の最終形（**D-6**・hposal＝日本限定）：日本語＝README／references テンプレ本文5本（01-03・
-    site-inventory・04_proposal.md）／`04_proposal.html` の使い方ヘッダ＋記入ガイドコメント＋クライアント
-    可視コピー＋`{{}}`（提出物）／実行時生成物・コンソール会話。英語＝SKILL.md／plugin.json・
-    marketplace.json・CHANGELOG／root README 一覧行。CSS（1–374行）は原本バイト一致のまま不変。
-  - D-6 反映の実走確認：利用者向け6ファイルの先頭=日本語・AI/メタ=英語を網羅チェック✔／html の英語ガイド
-    コメント残留ゼロ（grep）／`validate hposal --strict` ✔。html コメント/ヘッダは 74c006a・c835814 を revert
-    して原本日本語を正確復元（SKILL.md は英語のまま参照リテラルだけ `<!-- 例 -->` に戻る）。
-  - 英語化のドリフトゼロ検証（本セッション実走）：⚠️ 26/26・フェーズ4・完了条件4・★ゲート保持／
-    `validate hposal --strict` ✔・`validate . --strict` ✔／.md・.json の散文日本語ゼロ（SKILL の `<!-- e.g. … -->`
-    参照のみ）／可視コピー保持（grep 34件）／`04.html` 差分はコメント＋ヘッダのみ（≥379行・CSS無改変）。
-  - CHANGELOG `[Unreleased]` に追加挙動（出力先・再開）を1行追記済み。提案書テンプレ追加分も同 `[Unreleased]`。
-  - D-2 は D-5 にスーパーシード（「中身は日本語維持」を撤回）。Acceptance/Rules/Assumptions の該当行も更新済み。
-  - PR #8（OPEN・レビュー未着手）に全コミット push 済み。未 push なし（task #8 の 92e899b・8cebd66 含む）。
-  - 〔本セッション〕シミュレーション評価で初回実走の事故ポイント4点を特定→task #8 で対処：A 内部見積前提の前倒し収集
-    （単価等は捏造せず q）／B フェーズ4 export 前に `{{ }}`・`<!--…例…-->` 残留ゼロを grep ゲート／C 対応表整合＋
-    D-クロール代替⚠️／C2 欠落必須スライドを HTML骨格に内包。`04_proposal.html` は **20ページ**（P8見守り〔任意〕・
-    P10なぜ私たちか〔必須〕・P16連絡先〔任意〕を追加）。CSS 1–374行はバイト不変のまま（diff確認）。16:9・20ページ書き出し＋
-    新3ページPNG目視で破綻なしを実走確認。残課題なし＝次は当初の分岐（PR #8 レビュー or リリース）。
-  - 元キットのローカルパス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/
-    マイドライブ/mz/【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。元 deck＝同 `…/mz-hp/work/04_提案書.html`。
-  - 〔dogfood 作業フォルダ〕`/Users/kiyo/work/private/ikuko-hp/`（公開リポジトリ外・PII を含むため成果物本体は持ち込まない）。
-    `01_requirements.md`・`02_proposal-design.md`・`inventory/`・`input/`（hposal の「作業フォルダ直下」仕様）と、
-    その提案書セッションを包む rn ステアリング（slug=`ikuko-hp`）が rn 規約どおり
-    `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md` に在る。
-    **phase 1–4 すべて完了**。基盤は Studio／WordPress.com のフラット両論併記（private D-8）に確定し、03 を共通工数1回＋基盤分岐2本で積算（Studio 税込約89万／WordPress.com 税込約130万）。
-    **phase 4＝04 を3層構造の22スライド比較デッキへ再構築・16:9 PDF `20260625/04_proposal.pdf` まで完了**（CSS 1–376行バイト不変・目視✔）。残り＝**施主の最終★（提案書レビュー・額/並び順の確定）→納品**（private 側・公開リポジトリ外）。
-    dogfood で得た plugin 改善メモは一般化（PII 無し）して `.rn/hposal-plugin/dogfood-notes.md` に持ち帰り済み（#1〜#21＋#9再実証）。
-    次の resume はこのパスを辿れば private 側ステアリング（`/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md`）で続きが分かる。
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
