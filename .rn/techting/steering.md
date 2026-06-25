@@ -238,42 +238,12 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-06-15
-- **Last completed**: Reversed the prior "done, awaiting PR review" conclusion. The user flagged a
-  category error: the acceptance criterion required the SKILL.md *prompt* to contain a mermaid
-  diagram, conflating an output-document rule with the prompt's own format. Consulted three
-  independent expert subagents (prompt-design / packaging / intent-fidelity) and grounded
-  best-practices in the official `skill-development` guide. Recorded the finding and the rebuild
-  plan as decision **D-3** and new task **#4**.
-- **Next**: Get the user's explicit go to rebuild, then execute **task #4** — rewrite
-  `techting/skills/up/SKILL.md` from `.rn/techting/instruction.md` (don't patch), fix the
-  acceptance criteria to the Level A / Level B split, add `CHANGELOG.md`, re-validate, dogfood with
-  two readers. The user suspended right after I asked "rebuild the base from source — OK?", so the
-  go is still pending.
-- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (**draft**). The
-  PR is now KNOWN-DEFECTIVE — do not mark it ready/merge until #4 lands.
-  - **What changed this session is understanding, not code** — the tree carried only this steering
-    update (D-3 + task #4 + this State). No plugin files were touched yet.
-  - **The defect (read D-3 in full)**: `SKILL.md` embeds a procedure flowchart in the prompt body.
-    That is the category error made physical. The instruction's "render structure/flow as mermaid"
-    is a rule for the *document the writer produces*, never a property of the prompt. The rebuild
-    separates two layers — process (model instructions) vs output rules (constraints on the produced
-    doc) — and puts the mermaid rule only in output rules, with no diagram in the prompt itself.
-  - **Scope decision**: rebuild ONLY `SKILL.md`. Keep packaging — `plugin.json` (0.1.0, sole version
-    site), `marketplace.json` (category `writing`), root README link — all validated by Expert B
-    (`validate ./techting --strict`, `validate . --strict`, headless `-p` all passed). Only gap on
-    the packaging side: `techting/CHANGELOG.md` is missing (folded into #4).
-  - **Best-practice source** (don't re-derive from memory): official
-    `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev/skills/skill-development/SKILL.md`
-    — third-person trigger description, imperative body, lean 1,500–2,000 words, progressive
-    disclosure with no duplication. Structure decision: single SKILL.md, no references/ (source is
-    short and the procedure is continuous).
-  - **Expert C's one fidelity gap to fix in #4**: the self-check is missing a "single axis, not
-    mixed" item (the no-mixing rule is in the axis section but not in the check). Optional: wire the
-    derivation so axis/voice are read off the reader definition, not memorized.
-  - **Trust note**: the user lost confidence because I treated the mis-worded criterion as
-    authoritative and conflated the two layers myself. The recovery is to rebuild from source so the
-    base is one we can defend line by line — not to patch.
-  - When resuming: confirm the go, then run task #4 via task-workflow. The corrected criteria live
-    in D-3; apply them while doing #4.
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
