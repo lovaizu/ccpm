@@ -39,13 +39,25 @@ rather than from memory.
   prompt. The body is imperative and lean (<2,000 words). **No mermaid diagram is embedded in the
   prompt body** (and none is required by these criteria) — the mermaid rule lives only in
   §output-rules as a directive to the produced document.
+- **Level A — the two-tier quality is encoded:** the process instructs the **floor-then-ceiling
+  order** — first inspect the draft and remove the AI tells (the floor), then derive and add the
+  attractive qualities (the ceiling) — and names the floor checklist (padding / throat-clearing,
+  restatement, retreat into generalities, flavorless connectives, reflexive bulleting, a wavering
+  voice). The §output-rules layer states **both tiers**: floor (b) = none of those AI tells present;
+  ceiling (a) = density, concreteness (names / numbers / examples), a single load-bearing thread
+  (conclusion first), diagrams and lists that earn their place, a consistent voice.
 - **Level B — the document the skill produces (dogfood-verified):** running `up` on a draft yields
   output whose structure/flow is shown as mermaid wherever there is order or branching, with no
   diagram/prose duplication; feeding two different reader definitions changes the output's voice and
   axis (proving the procedure derives, not memorizes); each produced document holds a single axis,
   not mixed.
+- **Level B — the floor is cleared before the ceiling is reached:** the produced document carries
+  none of the named AI tells (floor cleared), and the "what was changed and why" report separates
+  **floor fixes** (AI tells removed) from **ceiling lifts** (attractive qualities added), in that
+  order.
 - The skill states the brush-up use case explicitly: input = an existing draft, output = the
-  revised document plus "what was changed and why".
+  revised document plus "what was changed and why" (the latter split into floor fixes then ceiling
+  lifts).
 - The SKILL.md frontmatter is model-invocable (no `disable-model-invocation`) and its description is
   written so it can fire for a human or for Claude itself.
 - `techting/.claude-plugin/plugin.json` has name, description, version (semver), and author, and the
@@ -209,6 +221,44 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 - The steering acceptance criteria use the Level A / Level B split from D-3.
 - `CHANGELOG.md` exists; both strict validations pass; the two-reader dogfood shows voice/axis change.
 
+### #5: Add the floor (table-stakes) layer and the floor→ceiling order to SKILL.md
+
+**Purpose**: The rebuilt `SKILL.md` (#4) carries reader-first derivation but not the **floor** — the
+pass that removes AI tells — nor the **floor-then-ceiling order** the revised Goal now requires. Add
+both so the skill clears the floor before it reaches for the ceiling. Without this, the skill can add
+polish onto text that still reads as AI-written, which the Goal forbids.
+
+**Prerequisites**: #4 (the process / output-rules split stands; this extends it, it does not rebuild
+it). The Goal reframing (two-tier quality) and the revised acceptance criteria are the source.
+
+**Steps**:
+
+- [ ] Add a **floor pass** to the process: first inspect the draft for AI tells and remove them,
+      before any derivation. Name the floor checklist (padding / throat-clearing, restatement,
+      retreat into generalities, flavorless connectives, reflexive bulleting, a wavering voice).
+- [ ] Make the procedure order **explicit**: floor (remove AI tells) → ceiling (derive and add the
+      attractive qualities). State that adding ceiling onto an uncleared floor is wasted.
+- [ ] In §output-rules, state **both tiers**: floor (b) = none of the named AI tells; ceiling (a) =
+      density, concreteness, single load-bearing thread, earned diagrams/lists, consistent voice.
+- [ ] Make the "what was changed and why" report **separate floor fixes from ceiling lifts**, in
+      that order.
+- [ ] Cross-check the result against the revised Goal and acceptance criteria item by item (do not
+      sample); keep the body lean (<2,000 words) and the addressee sentence intact.
+- [ ] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood a draft
+      to confirm the floor is cleared and the report separates floor from ceiling.
+- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/5.md`)
+- [ ] QA engineer review (subagent)
+- [ ] user review (on the PR)
+
+**Completion criteria**:
+
+- `SKILL.md` process instructs the floor-scrub **before** any derivation and names the AI-tell
+  checklist; the floor→ceiling order is explicit.
+- §output-rules states both tiers and keeps the addressee sentence; the body stays <2,000 words.
+- The acceptance-criteria floor items (Level A and Level B) are all satisfied; both strict
+  validations pass; the dogfood shows the AI tells removed and the report split into floor then
+  ceiling.
+
 
 ## D-1: Plugin `techting` / skill `up` (not the same name)
 - **Issue**: For a single-skill plugin, how to name the plugin vs the skill. The official convention
@@ -267,32 +317,49 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 - **Sources**: official skill-development guide (path above); `.rn/techting/instruction.md` (source
   of record); three expert subagent reports captured in this session.
 
+## D-4: Purpose reframed — human-readable end, two-tier quality (floor / ceiling)
+- **Issue**: The old Goal framed techting as "a reader-first procedure." The user reframed the
+  **purpose**: the end is a document that reads as if a person wrote it (not an AI), taken in with
+  the least reader effort. The reader-first procedure is the *means*, not the end.
+- **Conclusion**: Purpose = a human-readable document. Quality is **two tiers**: **floor (b) =
+  table-stakes** — clearing it earns no praise, but failing it instantly reads as AI-written, so the
+  skill must scrub the AI tells (padding / throat-clearing, restatement, retreat into generalities,
+  flavorless connectives, reflexive bulleting, a wavering voice); **ceiling (a) = attractive** —
+  density, concreteness, a single load-bearing thread, earned figures, a consistent voice. The skill
+  works **floor-then-ceiling**: adding ceiling onto an uncleared floor is wasted.
+- **Why two tiers, in the user's words**: (a) is 魅力 (the charm that earns praise), (b) is 当たり前
+  (table-stakes whose absence reads as AI). A human document needs both, in order.
+- **Scope note (important)**: the floor (b) **extends beyond `instruction.md`**. The verbatim source
+  covers reader-first + tone / diagrams / closing / outline, not an AI-tell scrub. Floor (b) is a
+  deliberate session-level expansion of the goal, recorded here; `instruction.md` stays verbatim and
+  is no longer the *sole* source — this Decision and the revised Goal are the source for the floor.
+- **Consequence**: task #4 (the process / output-rules split, no embedded mermaid) still stands; it
+  is necessary but no longer sufficient. Task **#5** adds the floor layer and the floor→ceiling order
+  on top of it. Both are reviewed together on PR #5.
+- **Sources**: this session's exchange (2026-06-26); the revised Goal and acceptance criteria above.
+
 # State
 
 - **Status**: paused
-- **Date**: 2026-06-25
-- **Last completed**: Task **#4** deliverable — rebuilt `techting/skills/up/SKILL.md` from source
-  (commit `9188602`), added `techting/CHANGELOG.md`, updated the steering acceptance criteria to the
-  D-3 Level A / Level B split. Self-check + QA expert review both PASS (recorded in
-  `.rn/techting/checks/4.md`). All #4 steps checked **except** the final user-review gate.
-- **Next**: Get the user's approval of **task #4 on PR #5**, then check it off with the completion
-  marker commit (`{type}: complete task #4 — …`) and push. After that, all four tasks are done —
-  propose running the steering **Acceptance criteria** as the final gate (the only remaining items
-  are the goal-level criteria, not a new task).
+- **Date**: 2026-06-26
+- **Last completed**: Re-planned the session under the reframed Goal. Updated the **Goal** to the
+  three-layer model (purpose = human-readable document / quality = floor (b) + ceiling (a) / means =
+  reader-first derivation) (commit `71e8edf`), extended the **acceptance criteria** with the
+  floor/ceiling items (Level A + Level B), added **task #5** (floor layer + floor→ceiling order), and
+  recorded **D-4**. Task **#4** deliverable stands (rebuilt SKILL.md, `9188602`) but is now
+  *necessary-not-sufficient*; its user-review gate is still open.
+- **Next**: Execute **task #5** — add the floor pass (scrub AI tells) and the floor→ceiling order to
+  `techting/skills/up/SKILL.md`, per task-workflow.md. It extends #4's split; it does not rebuild it.
+  #4 and #5 are reviewed **together** on PR #5 (the SKILL.md keeps evolving, so a single final review
+  covers both). After #5, propose running the steering **Acceptance criteria** as the final gate.
 - **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**).
-  - **The #4 marker is NOT yet written** — user review is pending. Do not commit `complete task #4`
-    until the user approves on the PR. `.rn/techting/checks/4.md` is committed (coordinator ledger)
-    via this suspend's `wip:` commit, with the QA verdicts already filled in.
-  - **The category-error defect is fixed**: SKILL.md no longer embeds a mermaid diagram in the
-    prompt body; the body is split into `## The procedure` (process / model instructions) and
-    `## Rules for the produced document` (output rules), the latter opening with the explicit
-    addressee sentence "These rules govern the document this skill produces — not this SKILL.md
-    prompt." Verified: `grep -c '```mermaid'` on SKILL.md = 0; both `claude plugin validate
-    ./techting --strict` and `. --strict` pass.
-  - **CHANGELOG decision**: entry sits under `## [Unreleased]`, not a dated `## [0.1.0]`, because no
-    release instruction has been given (ccpm rule: bump only on explicit release). It promotes to a
-    dated section when the user cuts the release — at which point also tag `techting-v0.1.0` and mark
-    PR #5 ready.
-  - **When the PR is approved**: this is the last task, so after the #4 check-off, the natural close
-    is to run the Acceptance criteria, then (on a release instruction) cut 0.1.0 — bump plugin.json
-    stays 0.1.0 already, promote CHANGELOG, tag, publish Release, mark PR ready/merge.
+  - **Neither #4 nor #5 marker is written yet** — both await the user's review on PR #5. Do not commit
+    `complete task #4` / `complete task #5` until then.
+  - **The category-error defect (D-3) is already fixed in SKILL.md**: no embedded mermaid; body split
+    into `## The procedure` and `## Rules for the produced document` with the addressee sentence.
+    `grep -c '```mermaid'` = 0; both strict validations pass. Task #5 must preserve all of this.
+  - **The floor (b) extends beyond `instruction.md`** (see D-4): it is a session-level scope
+    expansion, so the source for #5 is the revised Goal + criteria + D-4, not the verbatim
+    instruction.
+  - **CHANGELOG**: entry stays under `## [Unreleased]` (no release instruction yet); add a #5 line
+    when its deliverable lands. Promote + tag `techting-v0.1.0` only on an explicit release.
