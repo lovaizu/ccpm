@@ -184,30 +184,33 @@ failure modes absent) rather than its *result*.
 - Any applied change preserves the pure-procedure form and is reflected in `rn/DESIGN.md`
   (representative failure mode: re-introducing rationale prose into a runtime file).
 
-### #4: Redefine steering's purpose so it does not accumulate across cycles — NOT STARTED
+### #4: Redefine steering's purpose so it does not accumulate across cycles — DONE (user review pending)
 
 **Purpose**: Make `steering.md` the forward contract for the *remaining* work, not the session's
 archive, so repeated `/rn:up`/`/rn:dn` cycles do not pile up content. Two structural changes:
 `Decisions` becomes a live working set retired on ship (Lever A), and `/rn:dn` caps `State → Notes`
 to a forward pointer (Lever B). See D-5.
 
+**Status**: implementation + QA done. QA round-2 PASS after round-1 found D1/D2, fixed in `87f63cf`.
+User review pending on PR #14.
+
 **Prerequisites**: none
 
 **Steps**:
 
-- [ ] In `rn/skills/up/SKILL.md` Step 6, add decision retirement to the reconcile: drop any decision
+- [x] In `rn/skills/up/SKILL.md` Step 6, add decision retirement to the reconcile: drop any decision
       whose every `Governs` task is checked off and shipped (its `complete task #` marker is in
       git); keep decisions that still govern an unchecked task or use `Governs: —`
-- [ ] In `rn/references/steering-template.md`, add the `Governs: #N / —` field to the `Decisions`
+- [x] In `rn/references/steering-template.md`, add the `Governs: #N / —` field to the `Decisions`
       template and state the live-working-set retirement rule; direct `State → Notes` to the
       bounded forward-pointer form (branch/PR, next action, open blockers, user-deferred paths)
-- [ ] In `rn/skills/dn/SKILL.md` Step 3, cap what is written to `Notes` to the forward pointer — not
+- [x] In `rn/skills/dn/SKILL.md` Step 3, cap what is written to `Notes` to the forward pointer — not
       a multi-paragraph session re-narration
-- [ ] Record the redefinition rationale in `rn/DESIGN.md` (up Step 6 retirement; dn Step 3 cap;
+- [x] Record the redefinition rationale in `rn/DESIGN.md` (up Step 6 retirement; dn Step 3 cap;
       template Decisions live-working-set + Governs; State Notes forward pointer) — runtime files
       stay pure procedure
-- [ ] self-check (checks/4.md)
-- [ ] QA expert review (subagent)
+- [x] self-check (checks/4.md)
+- [x] QA expert review (subagent) — round-2 PASS (round-1 found D1/D2, fixed `87f63cf`)
 - [ ] user review
 
 **Completion criteria**:
@@ -390,8 +393,20 @@ consistent after all edits.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-06-26
+- **Last completed**: #4 — steering redefined as a forward contract (D-5): `/rn:up` retires decisions
+  whose `Governs` tasks shipped, `/rn:dn` caps `State → Notes`. Impl `f6af460`, QA-fix `87f63cf`; QA
+  round-2 PASS.
+- **Next**: user review of #1 + #2 + #3 + #4 on PR #14. On approval, check off each + commit its
+  `complete task #{id}` marker (with `checks/{id}.md`). Then task #5 — CHANGELOG `## [Unreleased]`
+  (one line each: dn residue; proceduralization; criteria two-questions+grounds; steering
+  non-accumulation) + grep cross-doc consistency + confirm `plugin.json` is `0.6.0`.
+- **Notes**:
+  - Branch `rn-update`, PR #14 (draft). All pushed through `87f63cf`. Uncommitted at suspend:
+    `checks/4.md` (coordinator ledger), committed with this State.
+  - Open: #1–#4 all done-through-QA, user-review pending on PR #14 — confirm approval before any
+    check-off marker. No blockers.
+  - Pending decisions not yet recorded: none.
+  - Constraint: `plugin.json` stays `0.6.0` (no release). Rationale lives in `rn/DESIGN.md`, never in
+    a runtime file.
