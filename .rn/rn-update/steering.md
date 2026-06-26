@@ -123,7 +123,7 @@ forward pass. See `checks/3.md`.
 - The trimmed `dn` flow is a single forward pass that still ends clean and never wedges (failure mode
   absent: a residue tree left dirty, or a suspend that loops).
 
-### #4: steering is a lean forward contract; design becomes a whole-structure doc from a template — NOT STARTED
+### #4: steering is a lean forward contract; design becomes a whole-structure doc from a template — DONE through QA; awaiting consolidated PR review
 
 **Purpose**: Make `steering.md` carry only what a resuming agent needs — Goal, Acceptance criteria,
 Rules, remaining Tasks, State, and a one-line `design.md` pointer — with design intent in an external
@@ -162,9 +162,11 @@ stored, not pruned. See `rn/docs/design.md`.
 - [x] Rewrite `rn/docs/design.md` as a conforming instance of `design-template` (whole-structure),
       dropping all per-step memos — including the `up`/`task-workflow` memos that describe the
       now-removed retire/collapse machinery; runtime files stay pure procedure.
-- [ ] self-check (`checks/4.md`) + QA expert review (subagent) + grep cross-doc consistency (no stray
+- [x] self-check (`checks/4.md`) + QA expert review (subagent) + grep cross-doc consistency (no stray
       `Decisions` / per-task `user review` / retire-collapse references). — self-check done; QA round 1
-      PASS (`17e2cfe`), two minor fixes in `30f8fc1`; **re-QA of the fixes + user review still pending**.
+      PASS (`17e2cfe`), two minor fixes in `30f8fc1`; QA round 2 PASS, nit fixed in `ace2f07`, re-review
+      PASS. User review batched to the consolidated PR review (per user direction) — completion marker
+      held until then.
 
 **Completion criteria**:
 
