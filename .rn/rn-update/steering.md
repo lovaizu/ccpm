@@ -356,12 +356,13 @@ infers no verdict.
 
 **Steps**:
 
-- [ ] In `rn/skills/on/SKILL.md`, `rn/skills/up/SKILL.md`, `rn/references/task-workflow.md`: state that
+- [x] In `rn/skills/on/SKILL.md`, `rn/skills/up/SKILL.md`, `rn/references/task-workflow.md`: state that
       each gate's sign-off is taken via `/rn:ty` (approve) or `/rn:gm` (revise), not an inferred yes/no.
-- [ ] State the resolve-by-author rule where PR review threads are processed (`pr-feedback-workflow.md`,
-      and the `push-and-review` rule if it touches resolution).
-- [ ] self-check (`checks/10.md`) + QA expert review (subagent) + grep cross-doc consistency (every gate
-      references `gm`/`ty`; no confirmation point left with a bespoke verdict).
+- [x] State the resolve-by-author rule where PR review threads are processed (`pr-feedback-workflow.md`;
+      the `push-and-review` rule is in `.claude/rules/`, out of the rn-plugin scope, so left untouched).
+- [x] self-check (`checks/10.md`) + QA expert review (subagent) + grep cross-doc consistency (every gate
+      references `gm`/`ty`; no confirmation point left with a bespoke verdict). — self-check OK; QA PASS
+      (`a99c532`), no defects.
 
 **Completion criteria**:
 
