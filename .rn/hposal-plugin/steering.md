@@ -466,41 +466,12 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 
 # State
 
-- **Status**: paused。**task #10（テンプレのパーツ化＝D-9）＝実装・検証完了、PR #8 で user review 待ち**（最終ゲートのみ未了）。
-  本セッションで新指示：**再開後にゼロベース dogfood をやり直す（既存 dogfood を全削除・メインエージェントが利用者役）＝task #11 として登録**。
-- **Date**: 2026-06-26
-- **Last completed**: 〔本セッション 2026-06-26〕**task #10 を実装→QA→fix round まで完了**（実装担当 subagent が `b70f9a3`、
-  fix round `87787be`）。スライド26パーツ＋`_head`/`_foot`、`04_proposal.md` をアウトライン化、SKILL フェーズ4を
-  「パーツ選択→連結→埋める→export」に・フェーズ2に #4（基盤比較）追加、旧モノリス `04_proposal.html` 削除。CSS は
-  `_head.html` 1か所・旧モノリスとバイト一致（diff空）、代表アウトラインを 16:9・20ページで書き出し・export ゲート clean、
-  `validate --strict` 両方✔。QA＝**PASS-with-notes**→中程度2点（dogfood #13 抜け／CHANGELOG 自己矛盾）を fix round で修正・
-  再検証済み。coordinator 判定を `.rn/hposal-plugin/checks/10.md` に記録。**task #10 のステップは user review 以外すべて [x]**。
-  〔本セッション冒頭〕`/rn:up` で復旧・整合（git とチェックボックス一致）、`State` をプレースホルダにリセット（`4f65909`）。
-- **Next**:
-  1. **task #11＝ゼロベース dogfood（メインエージェントが利用者役）を実行**＝**この再開の主目的**（ユーザー指示）。
-     着手前に★で2点を会話確定：(a) 削除範囲（`dogfood-notes.md` のみか他も含むか／private `ikuko-hp` は公開外＝原則対象外）、
-     (b)「利用者役」の運用（`/hposal:up` は AI 起草＋人間★レビューの建て付け。main が利用者＝レビュー役なら AI 起草側を
-     subagent に回す等を決める）。確定後：旧 dogfood 削除→架空案件（PII なし）用意→`/hposal:up` を phase1→4 実走→新所見記録。
-  2. task #10 の最終ゲート＝**PR #8 で user review**。承認されたら check-off（`complete task #10` マーカー）。
-     ※ #11 のゼロベース dogfood と #10 のレビュー/マージはどちらを先にするかも再開時に確認（dogfood で出た所見を #10 マージ前に
-     取り込みたいか）。
-  3. その後の本体分岐＝**(A)** PR #8 マージ、または **(B)** リリース 0.1.0（D-3）。
-- **Notes**:
-  - **task #11 の出どころ**＝ユーザー指示（2026-06-26）「再開後、ドッグフードを全て削除、ドッグフードをゼロベースで
-    やりましょう、メインエージェントが利用者役で」。前回 dogfood は人間が実案件 private `ikuko-hp` で実走し所見を
-    `.rn/hposal-plugin/dogfood-notes.md` に一般化して持ち帰った形。今回はパーツ化後のプラグインを AI が利用者役で
-    直接検証する。**削除は破壊的なので /rn:up 実行時に範囲を必ず確認してから**（dn は capture only＝本セッションでは未削除）。
-  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN）。task #10 の全コミット push 済み（`b70f9a3`・`87787be`・台帳コミット）。
-  - parts 規約（task #10）：1ファイル=1スライド（`<section class="slide">`）。組み立て＝`_head.html`（CSS内蔵・バイト不変）＋
-    アウトライン順の part＋`_foot.html`→単一 HTML→ヘッドレス Chrome で PDF。`.pg`=`{{頁}} / {{総ページ数}}`（組み立て時採番）、
-    footmark=`{{宛先}} / （提案者）`。`{{ }}`=AI 流し込み・`（…）`=人間記入（#15）。変種＝as-is-to-be〔single｜multi〕／
-    screen〔tree-nav｜search-filter｜service-cta〕／estimate〔total｜range｜compare〕。第3層比較＝compare-basis→compare-build→
-    compare-operation→estimate.compare（実現手段に本物の分岐がある時だけ立てる）。CSS バイト不変の検証＝
-    `diff <(git show <旧commit>:…/04_proposal.html | sed -n '6,374p') <(sed -n '6,374p' parts/_head.html)`。
-  - 言語（D-6・hposal＝日本限定）：日本語＝README／references テンプレ本文（01-03・site-inventory・04_proposal.md）／
-    parts の本文・記入ガイド・クライアント可視コピー＋`{{}}`／実行時生成物・コンソール。英語＝SKILL.md／plugin.json・
-    marketplace.json・CHANGELOG／root README 一覧行／コミット・PR。
-  - 元キットのローカルパス＝`/Users/kiyo/Library/CloudStorage/GoogleDrive-kiyohito.itoh@gmail.com/マイドライブ/mz/
-    【豆蔵様】HPリニューアル/mz-hp/corporate-site-kit`。
-  - 〔前回 dogfood・public 外〕`/Users/kiyo/work/private/ikuko-hp/`（PII を含む実案件・公開リポジトリ外）。包む rn ステアリング＝
-    `/Users/kiyo/work/private/ikuko-hp/.rn/ikuko-hp/steering.md`。phase 1–4 完了・施主★→納品が残るが ccpm の作業対象外。
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
