@@ -78,6 +78,16 @@ when requirements change. One note per step or decision, keyed to the procedure 
   mechanical check (structure, not a remembered rule); a `Governs: —` decision is cross-cutting and
   kept for the session's life. A decision with no `Governs` field (written before the field existed)
   defaults to keep for back-compat, since retiring it would lose it from the live file.
+- **Step 6 collapses a shipped task to a one-line `SHIPPED` pointer, rather than deleting it** —
+  `Tasks` is the largest section, and once a task ships its full Steps / Completion criteria are dead
+  weight that `/rn:up`/`/rn:dn` would otherwise carry across every cycle. A shipped decision is
+  *deleted* because it is pure rationale, fully recoverable from the recording commit + PR; a shipped
+  task is *collapsed*, not deleted, because the `Tasks` section is a map other tasks index into —
+  numbering must stay stable so a later `Prerequisites: #N` still resolves, and a resuming agent needs
+  an at-a-glance sense of what is already done. The one-liner keeps both (the number and a name) while
+  the body, recoverable from the `complete task #{id}` commit it cites, is dropped. The trigger reuses
+  Lever A's two-part shipped test (box checked AND marker in `git log`) so collapse and decision-retire
+  run off one mechanical check in the same reconcile pass.
 - **Step 6 resets `State` to the placeholder and commits** — once reconciled, the stale resume state
   is consumed; clearing it stops a later resume acting on outdated notes.
 - **Step 7 executes via task-workflow.md** — `/rn:up` only restores position; the actual execution
@@ -165,5 +175,11 @@ when requirements change. One note per step or decision, keyed to the procedure 
   to the tasks it serves so `/rn:up` can retire it once they ship, and a `Notes` capped to the forward
   pointer keeps `git log` as the narrative. Putting both in the template means a writer meets the rule
   by filling the structure, not by remembering a convention.
+- **`Tasks` carries the same non-accumulation note: a shipped task collapses to a one-line `SHIPPED`
+  pointer** — the parenthetical on the `Tasks` section documents that `/rn:up` replaces a shipped
+  task's whole block with `### #N: … — SHIPPED (#N in <sha>)`, parallel to the Decisions/Notes note,
+  so the encoding lives where the writer reads it. The note states the number is preserved because the
+  section is a map other tasks reference by `#N`; that is the structural reason a task collapses where
+  a decision deletes.
 - **State `Status` is `paused` only while suspended, else `not suspended`** — `paused` is the signal
   `/rn:up` and `/rn:dn` search for, so only a genuinely suspended session must read it.

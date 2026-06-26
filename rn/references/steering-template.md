@@ -33,6 +33,10 @@ Read when creating a new `steering.md`.
 
 # Tasks
 
+(a task is collapsed once shipped: /rn:up replaces a checked-off, shipped task's whole block with the
+one-line pointer `### #N: <task name> — SHIPPED (#N in <sha>)`, dropping its Steps / Completion
+criteria — the number stays so other tasks' `Prerequisites: #N` still resolve.)
+
 ### #1: <task name>
 
 **Purpose**: what to achieve, 1-2 sentences
