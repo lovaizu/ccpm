@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Completion criteria in a plan are now written as two questions anyone can answer with evidence — is the goal actually achieved, and are new problems absent — so a criterion can't pass just because some file was produced.
-- `steering.md` no longer piles up across pause/resume cycles: on resume, decisions whose work has shipped are retired and finished tasks are collapsed to a one-line note, and a pause records only a short forward pointer instead of a full session retelling — so the plan stays focused on the remaining work (the history lives in git).
+- `steering.md` stays a lean plan for the remaining work: design intent and decisions now live in a separate `design.md` it points to, finished-task detail and deliberation stay in git and the PR, and a pause records only a short forward pointer — so the plan never piles up across pause/resume cycles.
 
 ### Fixed
 

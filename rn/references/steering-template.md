@@ -5,12 +5,24 @@ Read when creating a new `steering.md`.
 ## Steps
 
 1. **Copy the template block below verbatim.** Keep every heading. Keep the blank lines between fields (`Purpose` / `Prerequisites` / `Steps` / `Completion criteria`).
-2. **Leave placeholders in unpopulated sections.** `Tasks`, `Decisions`, `State` start empty; fill later.
+2. **Leave placeholders in unpopulated sections.** `Tasks`, `State` start empty; fill later.
 3. **Fill each section per the rules below.**
+
+## Doc-division rule
+
+Allocate content by kind, so steering stays a lean forward contract:
+
+- **Requirements & acceptance criteria → `steering.md`** — the goal, the bar it is judged against, and the remaining tasks.
+- **Structure & decisions (how the parts fit, and why) → `design.md`** — the whole-structure design; rationale lives only here, at the decision level.
+- **User-facing UX → `README`** — what a user sees and does.
+
+A decision lands in a task, in `design.md`, or in a rule. Deliberation and history live in git + the PR — never in steering.
 
 ---
 
 ```markdown
+Design: <path to the session's design.md>
+
 # Goal
 
 <why this is being done and what the user wants to change — the full intent, no added scope>
@@ -32,10 +44,6 @@ Read when creating a new `steering.md`.
 - <task-specific conventions>
 
 # Tasks
-
-(a task is collapsed once shipped: /rn:up replaces a checked-off, shipped task's whole block with the
-one-line pointer `### #N: <task name> — SHIPPED (#N in <sha>)`, dropping its Steps / Completion
-criteria — the number stays so other tasks' `Prerequisites: #N` still resolve.)
 
 ### #1: <task name>
 
@@ -61,20 +69,6 @@ criteria — the number stays so other tasks' `Prerequisites: #N` still resolve.
 - objectively verifiable by a third party; no vague terms ("appropriate", "correct")
 - state the end-state, never actions/reviews/gates (those belong in Steps); the grounds are recorded at verification (checks/{task-id}.md Evidence columns), not written into the criterion text
 
-# Decisions
-
-(live working set, not an archive: /rn:up retires a decision once every task it `Governs` is checked
-off and shipped — its rationale persists in the recording commit + PR. A decision with `Governs: —` is
-kept for the session's life.)
-
-## D-N: <what was decided>
-- **Governs**: <#N, or — if cross-cutting>
-- **Issue**: <the decision being made — understandable without background>
-- **Conclusion**: <the decision>
-- **Rationale**: <the judgment reasoning that supports the conclusion — no facts here>
-- **Evidence**: <facts/numbers backing the rationale>
-- **Sources**: <where each piece of evidence comes from>
-
 # State
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
@@ -85,7 +79,7 @@ so only a genuinely suspended session reads `paused`.)
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet recorded as a `D-N`; not a re-narration of the session (that lives in `git log`)
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
 ```
 
 ---

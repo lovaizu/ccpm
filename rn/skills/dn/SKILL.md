@@ -21,7 +21,7 @@ Records resume state and hands off. Does not execute tasks.
 3. **Write the `State` section** (fields per `steering-template.md`): `Status: paused`, `Date`,
    `Last completed`, `Next`, `Notes`. Cap `Notes` to a bounded forward pointer — branch/PR, next
    concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet
-   recorded as a `D-N` — not a multi-paragraph re-narration of the session (the narrative is in
+   captured in `design.md` — not a multi-paragraph re-narration of the session (the narrative is in
    `git log`).
 
 4. **Commit the work.**
