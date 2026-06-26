@@ -23,26 +23,38 @@ coordinator pass — not the QA-expert / multi-round chain of [`task-workflow.md
    gh pr view --json number,url
    ```
 
-   Record `number` (the PR number) and `url`. Capture `owner`/`repo` from the remote:
+   If this exits non-zero or reports "no pull requests found" for the branch, **stop and report** — do
+   not fabricate a PR number or proceed into the GraphQL call.
+
+   Record `number` (the PR number) and `url`. Capture `owner` and `repo` as **two separate** values:
 
    ```bash
-   gh repo view --json owner,name -q '.owner.login + " " + .name'
+   owner=$(gh repo view --json owner,name -q '.owner.login')
+   repo=$(gh repo view --json owner,name -q '.name')
    ```
 
 ## Phase: Collect threads
 
-1. **Fetch all review threads** via GraphQL:
+1. **Fetch all review threads** via GraphQL, **paginating** `reviewThreads` until exhausted. Run this
+   with `cursor` set to `null` for the first page:
 
    ```bash
-   gh api graphql -f owner='{owner}' -f repo='{repo}' -F pr={number} -f query='
-   query($owner:String!,$repo:String!,$pr:Int!){
+   gh api graphql -f owner="$owner" -f repo="$repo" -F pr={number} -F cursor=null -f query='
+   query($owner:String!,$repo:String!,$pr:Int!,$cursor:String){
      repository(owner:$owner,name:$repo){
        pullRequest(number:$pr){
-         reviewThreads(first:100){
+         reviewThreads(first:100, after:$cursor){
+           pageInfo{ hasNextPage endCursor }
            nodes{
              isResolved
+             firstComment: comments(first:1){
+               nodes{ databaseId author{login} path line }
+             }
+             lastComment: comments(last:1){
+               nodes{ author{login} }
+             }
              comments(first:100){
-               nodes{ databaseId author{login} body path line }
+               nodes{ body author{login} }
              }
            }
          }
@@ -51,14 +63,19 @@ coordinator pass — not the QA-expert / multi-round chain of [`task-workflow.md
    }'
    ```
 
+   **Repeat** the call while `reviewThreads.pageInfo.hasNextPage` is true, passing the previous
+   response's `endCursor` as `-F cursor=<endCursor>`, and **accumulate** `nodes` across pages. Stop when
+   `hasNextPage` is false.
+
 2. **Build the queue.** Keep a thread **only** when both hold:
    - `isResolved == false`, AND
-   - the **last** comment's `author.login` equals the **first** comment's `author.login` (the reviewer
-     has the last word — the assistant has not replied, or the reviewer replied after the assistant).
+   - the **last** comment's author (`lastComment.nodes[0].author.login`) equals the **first** comment's
+     author (`firstComment.nodes[0].author.login`) — the reviewer has the last word (the assistant has
+     not replied, or the reviewer replied after the assistant).
 
    Drop every other thread (resolved, or the assistant has the last word). For each kept thread record:
-   the **first** comment's `databaseId` (the reply target), its `path` and `line`, and the full comment
-   bodies (the discussion to act on).
+   the **first** comment's `databaseId`, `path` and `line` (the reply target, from `firstComment`), and
+   the comment bodies from `comments` (the discussion to act on — best-effort context).
 
 ## Phase: Dispatch (sequential, one thread at a time)
 
@@ -75,9 +92,14 @@ For each thread, dispatch one execution subagent with a work-order containing:
    3. Commit with a plain conventional message (`feat:` / `fix:` / `docs:` / … matching the change).
       The message must **not** contain `complete task #`.
    4. Push to the session PR. Never force-push.
-   5. Get the commit's permalink: `gh browse <sha> -n` (prints the URL; `-n` = no browser).
-   6. **Reply to the thread** with a short summary of what was done plus the commit link, in-reply-to
-      the thread's first comment:
+   5. **If the commit or push fails, do not post a Done reply** (its permalink would point at an
+      unpushed, dead commit). Return the failure in the summary so the coordinator resolves the git
+      mechanics (stage the explicit paths, push); post the reply only once the commit is confirmed
+      pushed.
+   6. Once the commit is pushed, get its permalink: `gh browse <sha> -n` (prints the URL; `-n` = no
+      browser).
+   7. **Reply to the thread** with a short summary of what was done plus the commit link, in-reply-to
+      the thread's first comment — **only after the commit is pushed**:
 
       ```bash
       gh api repos/{owner}/{repo}/pulls/{number}/comments/{first_comment_databaseId}/replies \
