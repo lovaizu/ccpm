@@ -6,196 +6,176 @@ version: 0.1.0
 
 # Brush a technical document up
 
-Raise a technical document a level by deriving everything from one decision: **who reads it.** Voice,
-diagrams, closing, and outline are not memorized per document type — they all follow from the reader
-definition. The same procedure authors from scratch, but the primary mode is brushing up an existing
-draft.
+Raise a technical document a level so it reads as if a person wrote it, not an AI. Everything derives
+from one decision — **who reads it** — and the work runs in a fixed order, each step emitting an
+artifact you can check before the next begins.
 
-Quality comes in two tiers, cleared in order. The **floor** is table-stakes: clearing it earns no
-praise, but failing it instantly reads as "an AI wrote this." The **ceiling** is what makes a cleared
-draft worth reading. Clear the floor first; adding ceiling onto an uncleared floor is wasted.
+Quality clears in two tiers. The **floor** is table-stakes: remove the AI tells, or the text instantly
+reads as machine-written. The **ceiling** is what makes a cleared draft worth reading. Clear the floor
+first — ceiling added onto an uncleared floor is wasted.
 
-- **Input**: an existing draft to revise. With no draft, author from scratch through the same steps.
-- **Output**: the revised document, plus a short **what was changed and why** note. The note lists
-  **floor fixes first** (which AI tells were removed), then **ceiling lifts** (which attractive
-  qualities were added), each tied to the reader definition (step 1) or an output rule below.
+- **Input**: an existing draft. With no draft, author from scratch through the same steps.
+- **Output**: the revised document plus a **what-changed note** — the floor scrub table (step 2) first,
+  then the ceiling lifts (step 5), each tied to the reader (step 1) or an output rule.
 
-This file has two layers, kept separate on purpose:
+This file is two layers, kept apart on purpose:
 
-- **The procedure** — what to do, step by step, when running this skill (process layer).
-- **Rules for the produced document** — constraints on the document handed back (output-rules layer).
+- **The procedure** — the operations you run while this skill is active.
+- **Rules for the produced document** — constraints on the document you hand back.
 
-Run the procedure. Hold the produced document to the output rules. Do not confuse the two.
+Run the procedure; hold the produced document to the output rules. Do not confuse the two.
 
 ## The procedure
 
-Steps run in one fixed order: **reader definition → floor (remove AI tells) → ceiling (derive and add
-attractive qualities)**. The floor pass runs before any derivation of axis, voice, or structure —
-adding ceiling onto an uncleared floor is wasted. The pre-output self-check gates delivery: on any
-failure, fix and re-check.
+Run these in order: **reader → floor → axis → voice → restructure → self-check → deliver.** Each step
+states what to emit. Do not start a step until the previous step's artifact exists.
 
-### 1. Define the reader — everything starts here
+### 1. Define the reader
 
-State each of these in one line before writing:
+Write these three lines before touching the draft:
 
-- **Who** is the reader of this document?
-- **What** must the reader be able to decide or do after reading?
-- **How** does the reader read — top to bottom in one pass, or looking up the part they need?
+- **Who** reads this document?
+- **What** must they decide or do after reading?
+- **How** do they read — straight through once, or looking up the part they need?
 
-These three regulate the voice, diagrams, closing, and outline that follow. Derive the differences
-between document types from this definition — do not memorize them as rules.
+If the reader can't be pinned down, **do not guess.** Ask the user. When no user is reachable (a
+model-invoked or headless run), infer the reader from the draft and state that assumption in one line
+at the top of the output. Ask when you can; infer-and-declare when you can't; never silently guess.
 
-**Ask-or-infer gate.** If the reader cannot be pinned down, **do not guess.** Ask the user. When no
-user is reachable — the skill fired model-invocably, or a headless run — infer the reader from the
-draft's own context and **state that assumption in one line at the top** of the output before
-writing. Ask when possible; infer-and-declare when not; never silently guess, never stall.
+**Emit**: the three lines (plus the inferred-reader line if you inferred).
 
-### 2. Clear the floor — scrub the AI tells
+### 2. Clear the floor
 
-Before deriving anything, inspect the draft and remove every AI tell. These cost nothing to clear,
-but any one left in marks the text as machine-written. Run the full checklist:
+Inspect **every sentence** of the draft against these seven tells. This is the single definition of
+the floor; later steps refer back here.
 
-- **Padding / throat-clearing** — abstract preambles, openers that announce intent instead of stating
-  the point. Cut them; lead with the finding.
-- **Restatement** — saying the same thing twice in different words. Keep one.
-- **Retreat into generalities** — vague claims where a name, number, or example belongs. Make it
-  concrete or cut it.
-- **Flavorless connectives** — "moreover", "furthermore", "in addition" strung between sentences that
-  carry no real link. Remove or replace with the real logical join.
-- **Reflexive bulleting** — listing what should be prose. Use a list only when items are genuinely
-  parallel; otherwise write the sentence.
-- **A wavering voice** — register or stance that drifts mid-document. Hold one voice.
-- **Hedging** — "it is thought that…", "generally…", non-committal qualifiers. If you can't assert
-  it, give the evidence or write `[unverified]`.
+| Tell | How to spot it | Fix |
+|---|---|---|
+| Padding / throat-clearing | Opener announces intent instead of stating the point | Cut it; lead with the finding |
+| Restatement | The same thing said twice in different words | Keep one |
+| Retreat into generalities | A vague claim where a name, number, or example belongs | Make it concrete, or cut |
+| Flavorless connectives | "moreover", "furthermore", "in addition" with no real link behind them | Remove, or write the real join |
+| Reflexive bulleting | A list where the items aren't genuinely parallel | Write it as prose |
+| Wavering voice | Register or stance drifts mid-document | Hold one voice |
+| Hedging | "it is thought that…", "generally…", non-committal qualifiers | Assert with evidence, or mark `[unverified]` |
 
-This floor is the precondition for the ceiling steps below — do not start them until it is clear.
+**Emit**: a scrub table, one row per tell you found — `| tell | quote from the draft | fix applied |`.
+A tell with no row means you read for it and confirmed it absent. Do not proceed until all seven are
+fixed or confirmed absent.
 
-### 3. Pick the axis and outline
+### 3. Pick one axis
 
-Use the outline matching the defined reader. The five axes and their outlines are in **The five
-axes** (output rules) below. Read the axis off the reader definition, not from memory.
+Read the axis off the reader, not from memory. Choose exactly one of the five (their outlines are in
+**The five axes**, output rules). **One document, one axis** — mixing axes is the top cause of a
+confusing document. Push deep dives out to a separate document rather than padding this one.
 
-**Give each document a single role — do not mix axes.** Mixing is the biggest cause of a confusing
-document. Adapt the headings to the content (don't paste them verbatim), but don't add items that
-make the document heavier — push deep dives out to a separate document. Small-document exception:
-when a split would cost the reader more than it saves, keep a minimal inline version (e.g. only the
-required fields) and link the exhaustive one out, rather than spawning a file for a few entries.
+**Emit**: the axis name, and one line on why it follows from the reader.
 
-### 4. Derive voice from the reader
+### 4. Derive voice
 
-Choose voice, closing, and diagram emphasis for the reader defined in step 1 — do not fix them as
-rules. The **Voice by reader** table (output rules) is an example to derive from, not a list to
-memorize; the reader definition is the source of truth.
+Choose voice, closing, and diagram emphasis for the reader from step 1. The **Voice by reader** table
+(output rules) is an example to derive from — the reader is the source of truth, not the table.
 
-### 5. Run the pre-output self-check
+**Emit**: one line naming the voice and closing you'll use.
 
-Run this before delivering. On any failure, fix it and re-check — do not ship until all pass.
+### 5. Restructure and lift the ceiling
 
-- [ ] **Floor cleared**: are all the AI tells absent — no padding, no restatement, no retreat into
-  generalities, no flavorless connectives, no reflexive bulleting, no wavering voice, no hedging?
-- [ ] **Order followed**: was the floor cleared before any axis/voice/structure was derived?
-- [ ] Do voice, diagrams, closing, and outline match the reader defined at the top?
-- [ ] Does the document hold a single axis (axes not mixed)?
-- [ ] If the reader was inferred (no user to ask), is that assumption stated at the top?
-- [ ] Do the headings alone carry the argument?
-- [ ] Are structure and flow shown as diagrams, with no diagram/prose duplication?
-- [ ] Can the reader tell fact from hypothesis, with the unverified marked?
+Reorder the draft to the axis outline, then add the ceiling: density and concreteness (names, numbers,
+examples), a single load-bearing thread (conclusion first, headings that carry the argument), diagrams
+where they beat prose, one consistent voice.
 
-### 6. Deliver
+**Emit**: the revised document.
 
-Hand back the revised document together with the **what changed and why** note. List **floor fixes
-first** (AI tells removed), then **ceiling lifts** (attractive qualities added), in that order. Each
-entry names the change and ties it to the reader definition (step 1) or an output rule below.
+### 6. Self-check
+
+Emit each line below with a **PASS/FAIL** verdict. Any FAIL → fix it and re-run this step. Ship only
+when every line passes.
+
+- [ ] **Floor**: the step-2 scrub table shows all seven tells fixed or confirmed absent.
+- [ ] **Order**: the floor was cleared before any axis/voice/structure work.
+- [ ] **Reader fit**: voice, diagrams, closing, and outline match the reader from step 1.
+- [ ] **Single axis**: the document holds one axis, not a mix.
+- [ ] **Inferred reader**: if you inferred the reader, that assumption is stated at the top.
+- [ ] **Headings**: the headings alone carry the argument top to bottom.
+- [ ] **Diagrams**: structure and flow are shown as mermaid, with no diagram/prose duplication.
+- [ ] **Honesty**: fact is distinguishable from hypothesis; the unverified is marked.
+
+### 7. Deliver
+
+Hand back the revised document and the **what-changed note**: the step-2 scrub table (floor fixes)
+first, then a list of ceiling lifts, in that order. Each entry names the change and ties it to the
+reader (step 1) or an output rule below.
 
 ## Rules for the produced document
 
 **These rules govern the document this skill produces — not this SKILL.md prompt.** They are
-instructions to the output. Hold the delivered document to them; the self-check above tests them.
+instructions to the output; the step-6 self-check tests them.
 
-### Two tiers — the floor and the ceiling
+### The two tiers
 
-The document must clear the floor, then reach for the ceiling. Holds across every axis.
+- **Floor** — the produced document contains none of the seven AI tells the step-2 scrub removes.
+  Failing any one reads as machine-written.
+- **Ceiling** — density and concreteness (names, numbers, examples; cut what reads as noise); a single
+  load-bearing thread (conclusion first; the headings alone carry the argument); diagrams and lists
+  only where each beats prose; one consistent voice, derived from the reader.
 
-**Floor — table-stakes; none of these AI tells present.** Failing any one reads as machine-written:
-
-- No padding or throat-clearing — lead with the point, not an announcement of it.
-- No restatement — never say the same thing twice in different words.
-- No retreat into generalities — a name, number, or example where one belongs.
-- No flavorless connectives — "moreover", "furthermore", "in addition" with no real link behind them.
-- No reflexive bulleting — prose stays prose; a list only for genuinely parallel items.
-- No wavering voice — register and stance do not drift mid-document.
-- No hedging ("it is thought that…", "generally…"). If you can't assert it, give the evidence or
-  write `[unverified]`.
-
-**Ceiling — what makes a cleared draft worth reading:**
-
-- **Density and concreteness** — names, numbers, examples; cut anything the reader would feel as noise.
-- **A single load-bearing thread** — conclusion first, ordered so the **headings alone** carry the
-  argument top to bottom.
-- **Earned diagrams and lists** — each used only where it beats prose (see the mermaid rule below).
-- **A consistent voice** — derived from the reader: distinct and deliberate, not a default register.
-
-Throughout, write in Markdown; let the reader tell **fact from hypothesis and judgment** (mark the
-unverified `[unverified]`, don't fill gaps with guesses); and don't hide what doesn't work, the costs,
-or the limits — honesty over the appearance of polish.
+Throughout: write in Markdown; let the reader tell fact from hypothesis (mark the unverified
+`[unverified]`, don't fill gaps with guesses); don't hide what doesn't work, the costs, or the limits.
 
 ### Render structure and flow as mermaid
 
-- Show **structure** (how components relate, hierarchy) and **flow** (order of steps, state
-  transitions, dependencies) as a diagram so the reader grasps them at a glance — don't explain them
-  in prose paragraph after paragraph.
-- Write diagrams in **mermaid**. Don't repeat in prose what the diagram already shows — let the
-  diagram carry it and keep prose to supplements.
+- Show **structure** (how parts relate) and **flow** (order of steps, transitions, dependencies) as a
+  diagram, so the reader grasps them at a glance instead of from paragraph after paragraph.
+- Write diagrams in **mermaid**. Don't repeat in prose what the diagram already carries.
 - Choose by what's faster for the reader: a diagram for anything with order or branching, prose for a
   simple fact.
 
 ### The five axes
 
-Each axis has a single role. **Do not mix axes** in one document.
+One role each. **Do not mix axes** in one document.
 
 - **Article / explanation** — for someone reading to understand.
-  1. What you'll learn (subject and premise, in 1–2 sentences)
-  2. The substance (one step at a time: stumbling point → why → what to do, each with its reason)
+  1. What you'll learn (subject and premise, 1–2 sentences)
+  2. The substance (one step at a time: stumbling point → why → what to do)
   3. In closing (what you gained, the limits, the next step)
 
-  Don't cram in explanation. Link side-trips out to another article.
+  Link side-trips out to another article rather than cramming them in.
 
 - **Guide / procedure** — for someone doing it right now.
-  1. Goal and prerequisites (what gets accomplished, what you need)
-  2. Steps (in order; each states its expected result; show branches as a diagram)
+  1. Goal and prerequisites (what gets done, what you need)
+  2. Steps in order (each states its expected result; show branches as a diagram)
   3. Verification and troubleshooting (confirm it worked; common snags)
 
   Don't mix in teaching-style explanation.
 
 - **Reference** — for someone looking things up.
-  1. The whole picture (a structure diagram: components and relationships)
+  1. The whole picture (a structure diagram: parts and relationships)
   2. Each element (easy to look up, unique, exhaustive: input / output / constraints / defaults)
-  3. Errors and terms (conditions and behavior; leave no ambiguity)
+  3. Errors and terms (conditions and behavior; no ambiguity)
 
   No intro, no story. Structure it for lookup, not for reading through.
 
 - **Record / ADR** — for someone tracing how a decision was reached.
   1. Background and the decision (what was decided, and why)
-  2. The options considered (the rejected ones and the reasons are the main act)
-  3. The outcome (both the good and the bad)
+  2. The options considered (the rejected ones and their reasons are the main act)
+  3. The outcome (the good and the bad)
 
   Don't list only the good outcomes.
 
 - **Evaluation / survey** — for someone making a call.
   1. Conclusion / recommendation (what to choose, what not to)
   2. Criteria (what is measured, and why those criteria)
-  3. Comparison (measurements stated neutrally; don't collect only the facts favoring one side;
-     separate fact from judgment)
+  3. Comparison (measurements stated neutrally; separate fact from judgment)
   4. Evidence and the next step
 
 ### Voice by reader
 
-Derive the document's voice from the reader. This table is an example to derive from, not a fixed
-rulebook — the reader definition (step 1) is the source of truth.
+Derive the voice from the reader. This table is an example to derive from, not a fixed rulebook — the
+reader definition (step 1) is the source of truth.
 
 | Reader | Voice | Closing |
 |---|---|---|
-| Reads through (article / guide) | Warm and plain; put an easy motive before each term | What was learned, and the limits |
+| Reads through (article / guide) | Warm and plain; an easy motive before each term | What was learned, and the limits |
 | Looks things up (reference) | Uniqueness and coverage first; drop warmth and intros | None — skip the closing generality |
-| Traces the history (record / postmortem) | Separate fact from analysis; replace personal names with roles | Action items |
-| Makes a call (evaluation / survey) | Separate measurements from judgment; lay them out neutrally | A recommendation |
+| Traces the history (record / postmortem) | Separate fact from analysis; names → roles | Action items |
+| Makes a call (evaluation / survey) | Separate measurement from judgment; lay them out neutrally | A recommendation |
