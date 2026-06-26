@@ -35,7 +35,14 @@ Say you've got a rough README section and you want it to land. Point `/techting:
   plain, since they're reading along. Here's the revised docs/setup.md:
   …
 
-● What I changed, and why:
+● What I changed, and why — the floor first (what made it read AI-written), then
+  the lifts:
+
+  Floor — AI tells removed:
+    · Cut the "In modern development workflows…" preamble and three "it's
+      generally recommended" hedges — padding and hedging, the plainest AI tells.
+
+  Ceiling — what makes it land:
     · Led with "you'll have X running" + prerequisites — a guide reader needs the
       goal and what to have ready before step 1 (was buried at the bottom).
     · Turned the install paragraph into ordered steps, each with its expected
