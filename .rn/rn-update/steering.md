@@ -15,10 +15,12 @@ Apply three improvements to the `rn` plugin that surfaced from real usage:
 3. **`steering.md` must not accumulate across repeated `/rn:up`/`/rn:dn` cycles** (surfaced
    2026-06-26, see D-5). Redefine steering's purpose as the *forward contract for the remaining work*
    — the minimum a resuming agent needs to finish the goal correctly — not the session's archive.
-   The durable record of what was decided and why already lives in git commits and the PR, so two
+   The durable record of what was decided and why already lives in git commits and the PR, so three
    accumulation vectors are cut: (a) `Decisions` becomes a live working set — `/rn:up` retires a
    decision once the tasks it governs are shipped; (b) `/rn:dn` caps `State → Notes` to a forward
-   pointer (branch/PR, next action, open blockers/deferred paths), not a session re-narration.
+   pointer (branch/PR, next action, open blockers/deferred paths), not a session re-narration;
+   (c) `/rn:up` collapses a shipped task to a one-line `SHIPPED` pointer, so the `Tasks` section — the
+   largest — stops carrying finished tasks' full Steps and Completion criteria across cycles.
 
 The change set is documentation/prompt edits to the `rn` plugin's skill and reference files. No
 runtime code is involved.
@@ -56,6 +58,13 @@ items above stay the goal; the proceduralization is the precondition for judging
 - A `Governs: #N` field on each decision makes retirement determinable without re-reading the
   decision's prose; a cross-cutting decision with no single task uses `Governs: —` and is kept for the
   session's life.
+- `/rn:up`'s reconcile collapses a shipped task (its box is checked and its `complete task #` marker
+  is in git) to a one-line `SHIPPED` pointer carrying the task number, name, and marker SHA, dropping
+  its Steps and Completion criteria — so the `Tasks` section, the largest, does not carry finished
+  tasks' full bodies across cycles (representative failure mode: a shipped task keeps its full
+  Steps/criteria and `Tasks` grows unbounded; or an unshipped/in-progress task is wrongly collapsed).
+  The collapsed task's detail remains recoverable from its `complete task #` commit, its
+  `checks/{id}.md`, and the PR; the next-task scan still treats a `SHIPPED` task as done.
 - `/rn:dn` writes `State → Notes` as a bounded forward pointer — branch/PR, next concrete action,
   open blockers, user-deferred paths — not a multi-paragraph re-narration of the session
   (representative failure mode: the per-resume narrative bloat returns).
@@ -184,15 +193,17 @@ failure modes absent) rather than its *result*.
 - Any applied change preserves the pure-procedure form and is reflected in `rn/DESIGN.md`
   (representative failure mode: re-introducing rationale prose into a runtime file).
 
-### #4: Redefine steering's purpose so it does not accumulate across cycles — DONE (user review pending)
+### #4: Redefine steering's purpose so it does not accumulate across cycles — IN PROGRESS (Lever C)
 
 **Purpose**: Make `steering.md` the forward contract for the *remaining* work, not the session's
-archive, so repeated `/rn:up`/`/rn:dn` cycles do not pile up content. Two structural changes:
-`Decisions` becomes a live working set retired on ship (Lever A), and `/rn:dn` caps `State → Notes`
-to a forward pointer (Lever B). See D-5.
+archive, so repeated `/rn:up`/`/rn:dn` cycles do not pile up content. Three structural changes:
+`Decisions` becomes a live working set retired on ship (Lever A), `/rn:dn` caps `State → Notes`
+to a forward pointer (Lever B), and `/rn:up` collapses a shipped task to a one-line `SHIPPED` pointer
+(Lever C). See D-5.
 
-**Status**: implementation + QA done. QA round-2 PASS after round-1 found D1/D2, fixed in `87f63cf`.
-User review pending on PR #14.
+**Status**: Levers A+B implemented and QA-PASS (round-2; `87f63cf`), user review pending on PR #14.
+Lever C added 2026-06-26 after `/rn:up` measured this steering at 412 lines and found `Tasks` (the
+largest section) untouched by A/B — impl + QA for Lever C pending.
 
 **Prerequisites**: none
 
@@ -209,9 +220,20 @@ User review pending on PR #14.
 - [x] Record the redefinition rationale in `rn/DESIGN.md` (up Step 6 retirement; dn Step 3 cap;
       template Decisions live-working-set + Governs; State Notes forward pointer) — runtime files
       stay pure procedure
-- [x] self-check (checks/4.md)
-- [x] QA expert review (subagent) — round-2 PASS (round-1 found D1/D2, fixed `87f63cf`)
-- [ ] user review
+- [x] self-check + QA expert review of Levers A+B (checks/4.md) — round-2 PASS (round-1 found D1/D2,
+      fixed `87f63cf`)
+- [ ] Lever C: in `rn/skills/up/SKILL.md` Step 6, add task collapse — collapse any shipped task (box
+      checked + `complete task #` marker in git) to a one-line `### #N: <name> — SHIPPED (#N in
+      <sha>)` heading, dropping its Steps and Completion criteria; in-progress/unshipped tasks
+      untouched
+- [ ] Lever C: in `rn/references/steering-template.md`, note the shipped-task collapse on the `Tasks`
+      section (parallel to the `Decisions` live-working-set note) so the structure encodes it
+- [ ] Lever C: in `rn/skills/up/SKILL.md` Step 7, make the next-task scan treat a `SHIPPED` task as done
+- [ ] Lever C: record the collapse rationale and the collapse-vs-delete distinction in `rn/DESIGN.md`
+      (up Step 6; steering-template) — runtime files stay pure procedure
+- [ ] self-check of Lever C (checks/4.md)
+- [ ] QA expert review of Lever C (subagent)
+- [ ] user review (whole of #4: Levers A+B+C)
 
 **Completion criteria**:
 
@@ -226,6 +248,14 @@ User review pending on PR #14.
   nowhere a writer reads).
 - `/rn:dn` Step 3 writes `Notes` as a bounded forward pointer, not a session re-narration
   (representative failure mode: per-resume narrative bloat returns).
+- `/rn:up`'s reconcile collapses a shipped task to a one-line `SHIPPED` pointer and leaves an
+  in-progress/unshipped task fully intact, and `steering-template.md` records the collapse on the
+  `Tasks` section (objective: the `Tasks` section stops carrying shipped tasks' full Steps/criteria
+  across cycles, and the structure encodes the rule; representative failure modes: a shipped task is
+  not collapsed and `Tasks` grows unbounded; an unshipped task is wrongly collapsed and its remaining
+  Steps are lost; the next-task scan skips a not-yet-done task or re-runs a collapsed one). The
+  collapsed task's detail stays recoverable from its `complete task #` commit, `checks/{id}.md`, and
+  the PR.
 - The redefinition rationale lives in `rn/DESIGN.md`; no rationale prose enters the runtime files,
   which stay pure numbered procedure (representative failure mode: "why" leaks back into a runtime
   file). No rn doc contradicts another after the change (grep-verified).
@@ -362,28 +392,47 @@ consistent after all edits.
   in practice (1–4 per session, max 4); `State` is overwritten each cycle so it does **not** pile up
   across cycles, yet `dn` writes a multi-paragraph `Notes` (29–39 lines when paused) that every
   resume re-reads. So there are two distinct vectors: a slow cross-cycle one (`Decisions`) and a
-  per-resume one (verbose `Notes`).
+  per-resume one (verbose `Notes`). A later `/rn:up` (2026-06-26) measured this session's own steering
+  at 412 lines and found a **third** vector that Levers A+B leave untouched: `Tasks` (168 lines, the
+  largest section) keeps every shipped task's full Purpose/Steps/Completion criteria, so finished work
+  accumulates in the file's biggest section.
 - **Conclusion**: Redefine `steering.md` as the **forward contract for the remaining work** — the
-  minimum a resuming agent needs to finish the goal correctly — not the session's archive. Cut both
-  vectors structurally: **(A)** `Decisions` becomes a live working set; each decision carries a
+  minimum a resuming agent needs to finish the goal correctly — not the session's archive. Cut all
+  three vectors structurally: **(A)** `Decisions` becomes a live working set; each decision carries a
   `Governs: #N` (or `—`) field, and `/rn:up`'s reconcile (Step 6) drops any decision whose every
   `Governs` task is checked off and shipped. **(B)** `/rn:dn` Step 3 caps `State → Notes` to a bounded
   forward pointer (branch/PR, next concrete action, open blockers, user-deferred paths), not a session
-  re-narration. The redefinition rationale goes to `rn/DESIGN.md`; the runtime files stay pure
-  procedure. **Delete-on-ship** was chosen over archiving to a side file or keeping-but-skipping,
-  because each decision is already committed when recorded (`record D-N …`), so git history + the PR
-  are the durable system of record — an in-file archive would duplicate them.
+  re-narration. **(C)** `/rn:up`'s reconcile collapses a shipped task (box checked + `complete task #`
+  marker in git) to a one-line `### #N: <name> — SHIPPED (#N in <sha>)` heading, dropping its Steps
+  and Completion criteria; the next-task scan treats a `SHIPPED` task as done. The redefinition
+  rationale goes to `rn/DESIGN.md`; the runtime files stay pure procedure.
+  - **Delete-on-ship** was chosen for decisions (A) over archiving to a side file or
+    keeping-but-skipping, because each decision is already committed when recorded (`record D-N …`),
+    so git history + the PR are the durable system of record — an in-file archive would duplicate them.
+  - **Collapse, not delete, for tasks (C).** A shipped *decision* is pure rationale with zero forward
+    value once its work lands, so it is removed entirely. A shipped *task* is part of the goal's map:
+    other tasks reference it (`Prerequisites: #N`), the numbering must stay stable, and a resuming
+    agent needs the at-a-glance sense of what is already done. So a task is collapsed to a one-line
+    `SHIPPED` pointer — kept as a map entry, its full body recoverable from the `complete task #`
+    commit, `checks/{id}.md`, and the PR — rather than deleted.
 - **Rationale**: A resuming agent needs only what is required to finish correctly; a decision whose
   work has shipped is no longer required for that, and its "why" is preserved in the commit that
   recorded it. The `Governs` field makes retirement a mechanical check (no prose re-reading) — the
   property is enforced by structure, not by a rule the agent must remember. Capping `Notes` removes
   the larger per-resume cost the data exposed: the narrative `dn` re-writes each cycle, which `git
-  log` already holds. Keeping the rationale in `DESIGN.md` preserves D-2's pure-procedure runtime form.
+  log` already holds. Collapsing shipped tasks (C) closes the same loophole on the largest section by
+  the same logic — a finished task's Steps and criteria are not needed to finish the *remaining* work,
+  and the same trigger Lever A uses (box checked + marker in git) drives it, so one reconcile pass
+  prunes both. Keeping the rationale in `DESIGN.md` preserves D-2's pure-procedure runtime form.
 - **Evidence**: Six on-disk steering files measured — `Decisions` count 1/1/2/3/3/4; completed
   sessions (`rn-rename2`, `experts-do-the-work`) show `State` reset to the 9–11-line placeholder
   (self-cleaning confirmed), while paused sessions show `State` at 29 (`subagent-execution`) and 39
   (`rn-update`) lines of narrative `Notes`. Each decision in this session was committed when recorded
-  (`git log`: `record D-3`, `record D-4`), so deletion stays recoverable from history.
+  (`git log`: `record D-3`, `record D-4`), so deletion stays recoverable from history. The third
+  vector (C) was measured 2026-06-26 on this steering at 412 lines: `Tasks` 168 lines (largest),
+  `Decisions` 132, with #1–#4 all shipped-but-uncollapsed — Levers A+B leave the largest section
+  untouched, and no `complete task #` marker is in git yet (nothing retired/collapsed), so 412 is the
+  expected pre-ship peak, not unbounded growth.
 - **Sources**: user feedback this session (2026-06-26); measurement of `.rn/*/steering.md` on
   `rn-update`; `dn/SKILL.md` Step 3, `up/SKILL.md` Step 6, `steering-template.md` (branch).
 
@@ -393,20 +442,8 @@ consistent after all edits.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
+- **Status**: not suspended
 - **Date**: 2026-06-26
-- **Last completed**: #4 — steering redefined as a forward contract (D-5): `/rn:up` retires decisions
-  whose `Governs` tasks shipped, `/rn:dn` caps `State → Notes`. Impl `f6af460`, QA-fix `87f63cf`; QA
-  round-2 PASS.
-- **Next**: user review of #1 + #2 + #3 + #4 on PR #14. On approval, check off each + commit its
-  `complete task #{id}` marker (with `checks/{id}.md`). Then task #5 — CHANGELOG `## [Unreleased]`
-  (one line each: dn residue; proceduralization; criteria two-questions+grounds; steering
-  non-accumulation) + grep cross-doc consistency + confirm `plugin.json` is `0.6.0`.
-- **Notes**:
-  - Branch `rn-update`, PR #14 (draft). All pushed through `87f63cf`. Uncommitted at suspend:
-    `checks/4.md` (coordinator ledger), committed with this State.
-  - Open: #1–#4 all done-through-QA, user-review pending on PR #14 — confirm approval before any
-    check-off marker. No blockers.
-  - Pending decisions not yet recorded: none.
-  - Constraint: `plugin.json` stays `0.6.0` (no release). Rationale lives in `rn/DESIGN.md`, never in
-    a runtime file.
+- **Last completed**: —
+- **Next**: —
+- **Notes**: —
