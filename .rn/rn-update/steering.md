@@ -197,7 +197,7 @@ consistent. The existing `## [Unreleased]` lines (`checks/5.md`) are reconciled 
   modes absent: a refactor listed or a real change missing; a surviving contradiction; an accidental
   release).
 
-### #6: Review gates → plan/design/evaluation; escalation as a separate channel — NOT STARTED
+### #6: Review gates → plan/design/evaluation; escalation as a separate channel — DONE through QA; awaiting consolidated PR review
 
 **Purpose**: Move the workflow's user-review gates to the three points where human judgment is
 irreplaceable (plan, design, evaluation), remove the per-task user gate, and specify escalation as a
@@ -207,21 +207,24 @@ distinct always-open channel.
 
 **Steps**:
 
-- [ ] In `rn/references/task-workflow.md`, remove the per-task user-review gate from Phase: Complete; a
+- [x] In `rn/references/task-workflow.md`, remove the per-task user-review gate from Phase: Complete; a
       task completes via self-check + QA/expert + coordinator review + check-off. Keep the coordinator's
       independent diff review and the expert reviews intact.
-- [ ] Generalize the existing "User's call" triage into an explicit **escalation** channel: any
+- [x] Generalize the existing "User's call" triage into an explicit **escalation** channel: any
       execution discovery/blocker/call that would change the agreed plan or design is surfaced to the
       user immediately, wherever it occurs — stated as a channel distinct from the gates, not an
       exception to one.
-- [ ] Add the **design gate**: a scheduled user sign-off on the approach/key decisions before they are
+- [x] Add the **design gate**: a scheduled user sign-off on the approach/key decisions before they are
       built on, distinct from reviewing a task's deliverable (folds into the plan gate when design is
       settled at plan time; a separate stop before heavy build when it is not).
-- [ ] Strengthen the **evaluation gate**: make the end-of-session Acceptance-criteria run a user
+- [x] Strengthen the **evaluation gate**: make the end-of-session Acceptance-criteria run a user
       sign-off in `on`/`up`/`task-workflow` advance, not a bare proposal.
-- [ ] Confirm the **plan gate** in `rn/skills/on/SKILL.md` stays and is named as one of the three.
-- [ ] Record the gate-vs-escalation model in `rn/design.md`; runtime files stay pure procedure.
-- [ ] self-check (`checks/6.md`) + QA expert review (subagent) + grep cross-doc consistency.
+- [x] Confirm the **plan gate** in `rn/skills/on/SKILL.md` stays and is named as one of the three.
+- [x] Record the gate-vs-escalation model in `rn/docs/design.md`; runtime files stay pure procedure.
+- [x] self-check (`checks/6.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
+      OK; QA round 1 NG (1 blocking README defect + 1 nit, both fixed in `de1f835`), round 2 PASS;
+      coordinator review PASS. User review batched to the consolidated PR review (per user direction) —
+      completion marker held until then.
 
 **Completion criteria**:
 
