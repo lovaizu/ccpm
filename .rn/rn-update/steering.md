@@ -1,4 +1,4 @@
-Design: rn/DESIGN.md
+Design: rn/docs/design.md
 
 # Goal
 
@@ -142,8 +142,9 @@ content, the heavy content is never stored. See D-redesign in `design.md` (to be
       `design.md` location with the user — propose a default `.rn/{slug}/design.md` (lowercase) and
       write the confirmed path into `steering.md`'s `Design:` line.
 - [ ] Keep the `dn` State→Notes forward-pointer cap (the one part of the earlier work that survives).
-- [ ] Rename `rn/DESIGN.md` → `rn/design.md`; update every reference (skills, references, README).
-- [ ] Record the redesign intent in `rn/design.md`; runtime files stay pure procedure.
+- [x] Relocate the plugin design doc to `rn/docs/design.md` (done — lowercase, under `docs/`).
+- [ ] Record the redesign intent in `rn/docs/design.md` and remove the now-obsolete notes (the
+      non-accumulation levers); runtime files stay pure procedure.
 - [ ] self-check (`checks/4.md`) + QA expert review (subagent).
 
 **Completion criteria**:
@@ -154,8 +155,8 @@ content, the heavy content is never stored. See D-redesign in `design.md` (to be
   because the content is never stored (failure modes absent: a resume blocked by missing context;
   steering re-growing into a design doc/archive).
 - A reader finds the session's design at the path steering names — decided with the user at `/rn:on` —
-  not inside steering, and `rn/design.md` exists (renamed) with every reference resolving (failure mode
-  absent: a dangling design reference, or design content left in steering).
+  not inside steering, and the plugin design doc lives at `rn/docs/design.md` with every reference
+  resolving (failure mode absent: a dangling design reference, or design content left in steering).
 
 ### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6
 
