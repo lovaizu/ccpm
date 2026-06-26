@@ -324,13 +324,15 @@ coordinator pass (not the QA-expert/multi-round chain); threads are resolved onl
 
 **Steps**:
 
-- [ ] Add `rn/references/pr-feedback-workflow.md` as pure numbered procedure: **Collect** (GitHub review
+- [x] Add `rn/references/pr-feedback-workflow.md` as pure numbered procedure: **Collect** (GitHub review
       threads that are unresolved and whose last comment is the author's, via the API), **Dispatch** (one
       execution subagent per thread, sequential), the subagent's two allowed outcomes
       (address+push+reply-with-commit-link | reply-with-question), the coordinator review-before-next
       gate, the single-pass verification note, and the resolve-by-author rule.
-- [ ] Keep it rationale-free (proceduralize rule); the intent goes to `rn/docs/design.md` (#5).
-- [ ] self-check (`checks/9.md`) + QA expert review (subagent) + grep cross-doc consistency.
+- [x] Keep it rationale-free (proceduralize rule); the intent goes to `rn/docs/design.md` (#5).
+- [x] self-check (`checks/9.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
+      OK; QA round 1 FAIL (pagination / push-fail / no-PR / owner-repo), all fixed (`b62ab33`); QA
+      round 2 PASS (validated live against PR #14). Cosmetic `{owner}` nit accepted.
 
 **Completion criteria**:
 
