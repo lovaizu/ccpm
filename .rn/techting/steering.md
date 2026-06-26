@@ -344,38 +344,46 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 # State
 
 - **Status**: paused
-- **Date**: 2026-06-26
-- **Last completed**: Built and verified **task #5's deliverable** (Level A). `techting/skills/up/SKILL.md`
-  now has the **floor pass** (new step 2 — scrub the AI tells before any derivation) and the explicit
-  **floor→ceiling order**; §output-rules states **both tiers**; the "what changed and why" report
-  separates floor fixes from ceiling lifts. Deliverable commits: `b538e7b` (floor pass), `e87496c`
-  (fix round — aligned the floor checklist to the **same seven tells** across procedure / self-check /
-  rules: hedging added; dropped the unexplained (a)/(b) labels; de-duplicated the voice wording),
-  `53a6661` (CHANGELOG notes the human-not-AI floor-then-ceiling behavior). Self-check + QA expert
-  review both **PASS** (QA: one fix round, 1 Medium + 2 Low, all resolved; re-review PASS) — recorded
-  in `.rn/techting/checks/5.md`. Invariants hold: `grep -c '```mermaid'` = 0, body 1,900 words (<2,000),
-  addressee sentence + two-layer split intact, both `claude plugin validate --strict` pass.
-- **Next**: **User review of #4 + #5 on PR #5** (still draft). On approval, write the two completion
-  markers — one check-off commit each: `{type}: complete task #4 — …` and `{type}: complete task #5 — …`
-  (per task-workflow Phase: Complete, one marker per task) — and push. Then **only Level B remains**:
-  run the steering **Acceptance criteria** as the final gate, which is where the **Level B dogfood**
-  happens (run `/techting:up` on a real draft; feed two different reader definitions to confirm
-  voice/axis change; confirm the produced doc clears the floor and its report splits floor→ceiling).
-  After that, on an explicit release instruction, cut 0.1.0 (promote CHANGELOG, tag `techting-v0.1.0`,
-  mark PR ready, merge).
+- **Date**: 2026-06-27
+- **Last completed**: **Rebuilt the form of `techting/skills/up/SKILL.md` from a descriptive guide into a
+  gated step-by-step runbook.** Across this session the user rejected the prior SKILL.md twice with the
+  same complaint — "全然手順になってない" (it describes good writing instead of instructing the work).
+  Three commits: `8fc2bbf` (first pass — added per-step `Emit:` artifacts, still too prose-y),
+  `8801ff4` (README worked example now shows the **floor→ceiling split** the skill emits), `29906fa`
+  (a prompt-engineering **expert subagent** rewrote the body into a runbook: `reader → floor → axis →
+  voice → restructure → self-check → deliver`, **each step imperative with a named Artifact + a hard
+  Gate**). The reproducibility lever is step 2 — a fixed-schema floor table `| Tell | Found? | Quote |
+  Fix |` requiring **all seven tells as rows**, a `yes` needing a verbatim draft quote, a `no` meaning
+  read-and-confirmed-absent. A faked scrub can't produce it. Invariants re-verified independently:
+  `grep -c '```mermaid'` = 0, body **1,378 words** (<2,000), addressee sentence + two-layer
+  (`## The procedure` / `## Output rules`) split intact, the seven tells **defined once** and
+  anchor-referenced (no restatement), `claude plugin validate ./techting --strict` and `. --strict`
+  both pass.
+- **Next**: **User review of #4 + #5 on PR #5** (still draft) — the user said "レビューします". On
+  approval, write the two completion markers — one check-off commit each: `{type}: complete task #4 — …`
+  and `{type}: complete task #5 — …` (per task-workflow Phase: Complete) — and push. **Before that,
+  resolve the stale-records question (see Notes):** `checks/5.md` and the *old* State described the
+  superseded 1,900-word SKILL.md; the user was asked "refresh now or after you read the new file?" and
+  has not answered. Then **only Level B remains**: run the steering **Acceptance criteria** as the final
+  gate — the **Level B dogfood** (run `/techting:up` on a real draft; two different reader definitions
+  to confirm voice/axis change; confirm the produced doc clears the floor and its report splits
+  floor→ceiling). After that, on an explicit release instruction, cut 0.1.0 (promote CHANGELOG, tag
+  `techting-v0.1.0`, mark PR ready, merge).
 - **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**).
   - **No completion marker is written for #4 or #5 yet** — both await the user's review on PR #5. Do
-    not commit `complete task #4` / `complete task #5` until the user approves. `.rn/techting/checks/5.md`
-    is committed via this suspend's `wip:` commit, with the QA verdicts already filled in by the
-    coordinator (Self-check + QA columns + Overall = OK / Ready: Yes).
-  - **Level B dogfood is NOT done.** #5 verified the *prompt* (Level A: structure, word count, strict
-    validations, QA of the SKILL.md text) but did **not** run the skill on a real document. The #5
-    "Re-validate" step's dogfood half stays unchecked; Level B is the goal-level gate, run during the
-    Acceptance criteria — do not claim #5 is dogfood-verified.
-  - **The category-error defect (D-3) stays fixed**: no embedded mermaid; `## The procedure` /
-    `## Rules for the produced document` split with the addressee sentence. The #5 edits preserved all
-    of it (re-verified: mermaid=0, both validations pass).
+    not commit `complete task #4` / `complete task #5` until the user approves.
+  - **`checks/5.md` is STALE** — it records the QA/self-check of the *superseded* 1,900-word SKILL.md
+    (it calls the 3× restatement and 1,900 words "intended"). The current file is the 1,378-word runbook.
+    Pending user call: refresh `checks/5.md` (re-run self-check + QA on the runbook) before their PR
+    review, or after. Do not treat the existing `checks/5.md` verdicts as covering the current file.
+  - **Level B dogfood is NOT done.** Every check so far is Level A (structure, word count, strict
+    validations) — the skill has **not** been run on a real document. Level B is the goal-level gate,
+    run during the Acceptance criteria — do not claim the skill is dogfood-verified.
+  - **The category-error defect (D-3) stays fixed**: no embedded mermaid; two-layer split with the
+    addressee sentence "These rules govern the document this skill produces — not this SKILL.md prompt."
+    The runbook rewrite preserved all of it (re-verified: mermaid=0, both validations pass).
   - **The floor (b) extends beyond `instruction.md`** (see D-4): the source for the floor is the
     revised Goal + criteria + D-4, not the verbatim instruction.
-  - **CHANGELOG**: entry stays under `## [Unreleased]` (the floor line landed in `53a6661`); no
-    version bump. Promote + tag `techting-v0.1.0` only on an explicit release instruction.
+  - **CHANGELOG**: entries stay under `## [Unreleased]`; the runbook rewrite is a form/reliability
+    change (no new user-facing line needed — the Unreleased lines already promise floor-then-ceiling).
+    No version bump. Promote + tag `techting-v0.1.0` only on an explicit release instruction.
