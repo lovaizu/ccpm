@@ -222,17 +222,18 @@ largest section) untouched by A/B — impl + QA for Lever C pending.
       stay pure procedure
 - [x] self-check + QA expert review of Levers A+B (checks/4.md) — round-2 PASS (round-1 found D1/D2,
       fixed `87f63cf`)
-- [ ] Lever C: in `rn/skills/up/SKILL.md` Step 6, add task collapse — collapse any shipped task (box
+- [x] Lever C: in `rn/skills/up/SKILL.md` Step 6, add task collapse — collapse any shipped task (box
       checked + `complete task #` marker in git) to a one-line `### #N: <name> — SHIPPED (#N in
-      <sha>)` heading, dropping its Steps and Completion criteria; in-progress/unshipped tasks
-      untouched
-- [ ] Lever C: in `rn/references/steering-template.md`, note the shipped-task collapse on the `Tasks`
+      <sha>)` heading, dropping its body; in-progress/unshipped tasks untouched (`f72018a`; boundary
+      made structural in `a1fb624`)
+- [x] Lever C: in `rn/references/steering-template.md`, note the shipped-task collapse on the `Tasks`
       section (parallel to the `Decisions` live-working-set note) so the structure encodes it
-- [ ] Lever C: in `rn/skills/up/SKILL.md` Step 7, make the next-task scan treat a `SHIPPED` task as done
-- [ ] Lever C: record the collapse rationale and the collapse-vs-delete distinction in `rn/DESIGN.md`
+- [x] Lever C: in `rn/skills/up/SKILL.md` Step 7, make the next-task scan treat a `SHIPPED` task as done
+- [x] Lever C: record the collapse rationale and the collapse-vs-delete distinction in `rn/DESIGN.md`
       (up Step 6; steering-template) — runtime files stay pure procedure
-- [ ] self-check of Lever C (checks/4.md)
-- [ ] QA expert review of Lever C (subagent)
+- [x] self-check of Lever C (checks/4.md)
+- [x] QA expert review of Lever C (subagent) — round-1 found the phantom-`Status` defect, fixed
+      `a1fb624`; re-check PASS
 - [ ] user review (whole of #4: Levers A+B+C)
 
 **Completion criteria**:
@@ -260,23 +261,28 @@ largest section) untouched by A/B — impl + QA for Lever C pending.
   which stay pure numbered procedure (representative failure mode: "why" leaks back into a runtime
   file). No rn doc contradicts another after the change (grep-verified).
 
-### #5: Record the changes and verify cross-doc consistency — NOT STARTED
+### #5: Record the changes and verify cross-doc consistency — DONE (user review pending)
 
 **Purpose**: Record the shipped changes in the CHANGELOG and confirm the rn docs are internally
 consistent after all edits.
+
+**Status**: CHANGELOG `## [Unreleased]` written (`10a3bc4`), grep + version verified; self-check +
+QA round-1 PASS (no defects, `checks/5.md`). User review pending on PR #14. Prerequisites #1–#4 are
+done-through-QA but not yet checked off (their user review is also pending) — #5 was done ahead on
+the user's instruction; if PR review changes #1–#4, the CHANGELOG lines get reconciled.
 
 **Prerequisites**: #1, #2, #3, #4
 
 **Steps**:
 
-- [ ] Create `## [Unreleased]` at the top of `rn/CHANGELOG.md`, one user-facing line per user-impacting
+- [x] Create `## [Unreleased]` at the top of `rn/CHANGELOG.md`, one user-facing line per user-impacting
       change: dn residue/clean-tree (#1, `Fixed`); completion criteria as two questions + grounds (#3,
       `Changed`); steering non-accumulation (#4 — retire shipped decisions, collapse shipped tasks, cap
       Notes; `Changed`). The #2 pure-procedure rewrite gets NO entry — it is behavior-preserving and
       invisible to a user (plugin.md: refactors are not changelog-worthy)
-- [ ] Grep the rn docs for stale/contradictory wording; confirm none contradicts the current docs
-- [ ] Confirm `version` in `plugin.json` is still `0.6.0`
-- [ ] self-check + QA expert review + user review
+- [x] Grep the rn docs for stale/contradictory wording; confirm none contradicts the current docs
+- [x] Confirm `version` in `plugin.json` is still `0.6.0`
+- [x] self-check + QA expert review (round-1 PASS, no defects) — [ ] user review
 
 **Completion criteria**:
 
@@ -446,8 +452,13 @@ consistent after all edits.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-06-26
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Last completed**: #5 — CHANGELOG `## [Unreleased]` written; #4 extended with Lever C (collapse
+  shipped tasks). All done-through-QA.
+- **Next**: user review of #1–#5 on PR #14. On approval, check off each + commit its `complete task
+  #{id}` marker (with `checks/{id}.md`), then run `steering.md` Acceptance criteria.
+- **Notes**: branch `rn-update`, PR #14 (draft), all pushed. Uncommitted ledger committed with this
+  suspend: `checks/4.md`, `checks/5.md`. Open: #1–#5 user-review-pending — confirm approval before any
+  check-off marker; no `complete task #` in git yet. No blockers. After approval, one `/rn:up` pass
+  will fire Levers A/B/C (dogfood Lever C: shipped tasks collapse, D-1..D-5 retire).
