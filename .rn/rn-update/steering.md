@@ -377,19 +377,25 @@ infers no verdict.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-06-27
-- **Last completed**: #1–#6 deliverables done-through-QA on the branch. PR #14's consolidated review
-  returned **CHANGES_REQUESTED** with 10 inline comments — the review gate fired; the verdict is revise.
-- **Next**: **Plan gate** on this expanded steering (thread C adds `gm`/`ty` + `pr-feedback-workflow`).
-  On the user's `/rn:ty`, implement #9 → #7/#8 → #10 (build the loop, then the commands, then wire the
-  gates), then run the new FB loop to process PR #14's 10 comments; #5 records everything last. No
-  `complete task #` markers until the work passes its gates.
-- **Notes**: branch `rn-update`, PR #14. The 10 FB comments become work while the loop processes them —
-  notable ones: split `task-workflow.md` into execute/verify; mermaid (not ASCII) diagrams in
-  `design-template`; broaden/rebalance the reviewer experts so they match Implementation; move
-  review-gate wording out of `task-workflow` into a planning step; date-prefix the session slug
-  (`yyyymmdd-slug`); `on` SKILL opening should state purpose, not duplicate the steps; **`dn/SKILL.md`
-  frontmatter YAML error** breaks GitHub rendering (pre-existing, also flagged by `claude plugin
-  validate`). `version` stays `0.6.0` (no release). Some of #4/#6's already-`[x]` steps will be reopened
-  by this FB (e.g. ASCII→mermaid in `design-template`).
+- **Last completed**: Thread C built and checked off — #7 (`gm`), #8 (`ty`), #9
+  (`pr-feedback-workflow.md`), #10 (gates wired to `gm`/`ty`), each self-check + QA PASS + coordinator
+  review, markers pushed (`d555916` / `7e77677` / `2b774db` / `acbbb58`). The plan gate was approved
+  verbally — the user noted `/rn:ty` is not released yet, so it cannot be invoked.
+- **Next**: **Run `pr-feedback-workflow.md` on PR #14's 10 review threads** (the dogfood). A user
+  decision is pending: I proposed **auto-addressing the 4 concrete comments** — `dn` YAML error;
+  design-template ASCII→mermaid ×2 (lines 38 & 42); `on` opening should state purpose — **and escalating
+  the 6 design-level comments** rather than auto-implementing them: expert restructuring (tw:17); split
+  `task-workflow.md` into execute/verify (tw:1); review-gates→planning workflow (tw:24); date-prefix the
+  slug `yyyymmdd-slug` (on:17); guidance-into-templates vs steps (on:26); design-gate-as-a-decomposition-task
+  (on:36). Confirm this split (or discuss the 6 design items first), then run the loop. **After** the FB
+  is processed, do **#5** last (CHANGELOG + `rn/docs/design.md` for the verdict-command/FB-workflow
+  structure + cross-doc consistency).
+- **Notes**: branch `rn-update`, PR #14; tree clean, all pushed. The loop collects threads where
+  `isResolved == false` AND the last comment is the author (kiyohome) — all 10 currently qualify; only
+  the author resolves them. #1–#6 remain done-through-QA without per-task completion markers (their
+  sign-off folds into the evaluation gate). The 6 design comments change the agreed design → escalation
+  channel, hence surfaced to the user rather than auto-applied. Some #4/#6 `[x]` steps get reopened by
+  this FB (e.g. ASCII→mermaid). `version` stays `0.6.0` (no release). checks/{7,8,9,10}.md were committed
+  with their markers.
