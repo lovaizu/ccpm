@@ -21,13 +21,27 @@ All deliverable work (produce/fix/commit/push) goes to the implementation expert
 Each review expert runs as an independent subagent (Agent tool, no conversation history) and returns a
 compact summary.
 
+## Review gates
+
+The user signs off at exactly **three** scheduled gates, never per task:
+
+- **Plan gate** — the draft-PR plan approval in `on` before any task runs.
+- **Design gate** — sign-off on the approach / key decisions before they are built on (folds into the
+  plan gate when the design is settled at plan time; a separate stop before heavy build otherwise).
+- **Evaluation gate** — the end-of-session run of the `steering.md` Acceptance criteria.
+
+The per-task boundary is **not** a user gate. Per-task quality is caught by self-check + QA/expert
+review + the coordinator's independent review. Mid-flight, **Escalation** (Verify, Triage) is a
+separate always-open channel — not a gate.
+
 ## Process selection
 
-- **Non-code task** (docs, config, design): Self-check → QA → User review.
-- **Code task**: Self-check → QA → Language expert → Software-engineering expert → User review.
+- **Non-code task** (docs, config, design): Self-check → QA → coordinator review → check-off.
+- **Code task**: Self-check → QA → Language expert → Software-engineering expert → coordinator review
+  → check-off.
 
 Self-check is produced in Execute by the implementation expert; QA / language / software-engineering
-reviews run in Verify; user review is the final gate in Complete on the pushed deliverable.
+reviews run in Verify; the coordinator's independent review then clears the task into its check-off.
 
 ## Phase: Execute
 
@@ -100,28 +114,36 @@ reviews run in Verify; user review is the final gate in Complete on the pushed d
      fix as a fresh deliverable commit (element 6, accumulating, never force-pushed). After it returns,
      re-run the same review expert; if the fix could affect a dimension another expert already cleared,
      re-run that expert too. Cap at 3 iterations (one iteration = a single fix plus all its re-reviews);
-     valid findings still NG after 3 → record them and escalate to user review with the unresolved items.
+     valid findings still NG after 3 → record them and escalate to the user with the unresolved items.
    - **Invalid** → reject it, citing evidence. Invalid **only** when it rests on a factual error or falls
      outside a scope boundary written in the Completion criteria — cite the specific fact or criterion.
-   - **User's call** → escalate **only** when the decision is genuinely the user's: it expands scope,
-     changes the agreed direction or a matter of taste, or trades effort against benefit only the user
-     can weigh. "It's minor, so I'll just ask" is not a reason.
+   - **Escalation** → raise to the user. A normal in-scope finding is **not** escalated — it is decided
+     against the bar (Valid/Invalid) above. Escalate **only** when the decision is genuinely the user's:
+     it expands scope, changes the agreed direction or a matter of taste, or trades effort against
+     benefit only the user can weigh. "It's minor, so I'll just ask" is not a reason.
 
    Never silently drop, blindly accept, or bounce a finding for lack of a standard. Record the review
    verdicts into the check file.
 
+   **Escalation is an always-open channel, not a triage step.** Any execution discovery, blocker, or
+   decision that would change the **agreed plan or design** is raised to the user **immediately,
+   wherever it surfaces** — in Execute, Verify, or anywhere else — never deferred to a gate. It is
+   distinct from the three scheduled gates (plan / design / evaluation) and counts as none of them.
+
 ## Phase: Complete
 
-1. **User review (on the PR).** The deliverable is already committed and pushed; point the user to the
-   session PR and present the results. **DO NOT proceed without user approval.**
-2. **Check off steering.** After approval, check off the task in `steering.md` directly.
-3. **Commit the check-off with the single completion marker** — message `{type}: complete task #{id} —
+There is no per-task user gate: once Verify clears (all expert reviews plus the coordinator's
+independent review), the coordinator checks the task off directly.
+
+1. **Check off steering.** With Verify cleared, check off the task in `steering.md` directly.
+2. **Commit the check-off with the single completion marker** — message `{type}: complete task #{id} —
    {description}` (`{type}` matches the change: `feat` / `fix` / `docs` / `refactor` / `test` / …), then
    push to the session PR. This is the one completion marker for the task: deliverable commits carry
    plain messages; only this check-off commit carries the `complete task #{id}` substring. Keep that
    exact substring regardless of the prefix.
-4. **Advance.** Begin the next unchecked task immediately at Phase: Execute. If all tasks are done,
-   propose running the `steering.md` Acceptance criteria.
+3. **Advance.** Begin the next unchecked task immediately at Phase: Execute. If all tasks are done, run
+   the **evaluation gate**: propose running the `steering.md` Acceptance criteria and get the user's
+   sign-off on the result — do not close the session without it.
 
 ## Check file format
 
@@ -130,7 +152,7 @@ rounds: the implementation expert writes **only** the Completion Criteria Self-c
 columns (and the Overall Verdict "Self-check" line) and never the review-verdict sections (QA / Expert
 Review / other Overall-Verdict lines and QA columns, which are the coordinator's). The expert does not
 commit it. The coordinator fills in the review verdicts it collected and commits the file as part of its
-ledger — on the post-approval steering check-off commit.
+ledger — on the post-Verify steering check-off commit.
 
 ```markdown
 # {task-id} Completion Check
@@ -174,5 +196,5 @@ ledger — on the post-approval steering check-off commit.
 - QA: OK / NG
 - Language expert: OK / NG / N/A
 - Software-engineering expert: OK / NG / N/A
-- Ready for user review: Yes / No (reason)
+- Ready to check off: Yes / No (reason)
 ```

@@ -28,4 +28,4 @@ Reconstructs prior session state, aligns it with git, and continues from the nex
 6. **Clean up State.** Replace the `State` section with its template placeholder and commit the reconciliation.
 
 7. **Begin the next task.** Read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute the next unchecked task following it.
-   - All tasks already done → propose running the `steering.md` Acceptance criteria.
+   - All tasks already done → run the **evaluation gate**: propose running the `steering.md` Acceptance criteria and get the user's sign-off on the result. This is the last of the three scheduled gates (plan / design / evaluation); do not close the session without it.

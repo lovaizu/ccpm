@@ -43,10 +43,25 @@ Constraints that follow from that:
   `design.md`, UX → `README`. Chosen over letting each document accrete whatever is convenient: a fixed
   home per kind is what keeps steering lean structurally, instead of by a discipline someone has to
   remember.
-- **Gates only where judgment is irreplaceable** — the per-task loop gates on QA and on user review
-  (on the PR); planning gates on user approval before any task runs. Chosen over gating every step:
-  a gate the agent can clear mechanically adds ceremony without adding judgment. (Gate placement is
-  still being refined — see Open questions.)
+- **Three scheduled gates, plus escalation as a separate channel** — the user signs off at exactly
+  three points where human judgment is irreplaceable: **plan** (the draft-PR approval before any task
+  runs), **design** (the approach / key decisions before anything is built on them), and **evaluation**
+  (the end-of-session Acceptance-criteria run). Chosen over the earlier *gate every task* model: a
+  per-task user gate fires on every boundary regardless of whether a decision is actually waiting,
+  which is ceremony the agent cannot add judgment to — and most task boundaries carry no decision the
+  user must make. Those three, by contrast, are exactly the moments where what to build, how to build
+  it, and whether it is done are genuinely the user's call. Per-task quality does not need a user: it
+  is caught by self-check + QA/expert review + the coordinator's independent review of the committed
+  diff. Design folds into the plan gate when it is settled at plan time (one stop), and stands alone
+  only when the design needs separate work before heavy build — so it is one of the three, never a
+  fourth, and never silently dropped.
+- **Escalation is a channel, not a gate** — any execution discovery, blocker, or decision that would
+  change the *agreed plan or design* is raised to the user immediately, wherever it surfaces, rather
+  than held until the next gate. Chosen over folding it into triage as an exception: a gate fires on a
+  schedule, but a plan-changing discovery can land anywhere and must not wait — and if it were merely a
+  triage exception, a mid-flight change could ship before the next gate, unseen. So escalation is
+  always open and counts as none of the three gates; a normal in-scope finding is still decided against
+  the bar (Valid/Invalid), not escalated.
 
 ## Structure
 
@@ -89,23 +104,26 @@ Constraints that follow from that:
 
 1. **`/rn:on`** restates the goal, decides the `{slug}` and the `design.md` location with the user,
    writes `steering.md` (allocating content per the doc-division) and any `design.md`, decomposes the
-   goal into flat tasks, and opens a draft PR — then waits for approval.
+   goal into flat tasks, and opens a draft PR — then waits for approval. This is the **plan gate** (with
+   the **design gate** folded in when the design is settled at plan time; otherwise the design gate is a
+   separate sign-off before heavy build).
 2. **Task loop** (per `task-workflow.md`): the coordinator dispatches the implementation expert,
    reviews the returned diff, dispatches QA (and, for code, the language and software-engineering
-   experts), records verdicts in `checks/{task-id}.md`, and takes the result to user review on the PR.
-   One completion marker (`complete task #{id}`) lands per task.
+   experts), records verdicts in `checks/{task-id}.md`, and — once its own independent review clears —
+   checks the task off. No user gate fires per task; one completion marker (`complete task #{id}`) lands
+   per task. Mid-flight, any discovery that would change the agreed plan or design is escalated to the
+   user immediately via the always-open escalation channel.
 3. **`/rn:dn`** suspends: it checks off progress, writes the `State` section (`Status: paused` plus a
    bounded forward pointer in `Notes`), commits and pushes, and hands off to a manual `/clear`.
 4. **`/rn:up`** resumes cold in a fresh conversation: finds `steering.md` from git history, reconciles
    the checked-off tasks against the commit log, resets `State`, and continues from the next unchecked
    task via `task-workflow.md`.
-5. The loop repeats across as many suspend/resume cycles as the work takes, until every task is done
-   and the acceptance criteria pass.
+5. The loop repeats across as many suspend/resume cycles as the work takes, until every task is done.
+   Then the **evaluation gate**: the end-of-session run of the `steering.md` Acceptance criteria, with
+   the user signing off on the result before the session closes.
 
 ## Open questions
 
-- **Gate placement.** Where judgment-gates belong (and where they are ceremony) is still being
-  refined; the description above states what is true today and deliberately does not over-specify.
 - **Where session-spanning `design.md` lives by default.** Sessions default to `.rn/{slug}/design.md`,
   but a plugin like rn keeps its own design under `rn/docs/`; whether that exception generalizes is
   open.

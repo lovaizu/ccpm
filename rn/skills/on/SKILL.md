@@ -27,12 +27,13 @@ Treat every user interaction as a proposal: lead with one concrete recommended o
 
 4. **Decompose tasks.** Work backwards from the Acceptance criteria end state (e.g. acceptance = "payments complete"; working back: regression check ← root-cause fix ← failing reproduction test). Define each task following the template's `Tasks` structure, inline `Completion criteria` rules, and `Task definition requirements` table in full.
 
-5. **Persist and open a draft PR.**
+5. **Persist and open a draft PR — the plan gate.** This is the first of the three scheduled user sign-offs (plan / design / evaluation).
    - Write the completed `steering.md` to `.rn/{slug}/steering.md`.
    - Commit it: `chore: start session — {slug}`.
    - Ensure the work is on a branch — if on the default branch, create `{slug}` first.
    - Push the branch, then open a draft PR (`gh pr create --draft`) titled from the goal. The PR body is a single link to the steering file and nothing else — do not copy the Goal, tasks, or any plan content into it. Use a branch-ref blob link: `See [steering](https://github.com/{owner}/{repo}/blob/{branch}/.rn/{slug}/steering.md).` This is the session's PR — later tasks add commits to it.
    - Report the PR link and a one-line task list, and ask the user to review the plan on the PR.
+   - **Design gate.** A sign-off on the approach / key decisions before any task builds on them. When the design is settled at plan time, fold it into this plan-gate approval (one stop). When it is not — the design needs separate work before heavy build — get a separate user sign-off on `design.md` before that build begins.
    - If push or PR creation fails, report it and fall back to presenting the plan in the console.
    - **CRITICAL: DO NOT proceed without explicit user approval.**
 

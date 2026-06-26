@@ -61,7 +61,6 @@ Design: <path to the session's design.md — omit this whole line if the session
 - [ ] QA expert review (subagent)
 - [ ] (code changes only) language expert review (subagent)
 - [ ] (code changes only) software-engineering expert review (subagent)
-- [ ] user review
 
 **Completion criteria**:
 
@@ -95,4 +94,4 @@ so only a genuinely suspended session reads `paused`.)
 | Objectivity | Completion criteria judgeable by a third party |
 | Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
 | Criteria vs steps | Completion criteria are written so a third party can answer, with grounds, ① is the objective achieved and ② are new problems absent (the bar) — not that an artifact was produced; actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
-| Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert / user review) are its gate |
+| Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert review + the coordinator's review) are its gate. The user signs off only at the three scheduled gates (plan / design / evaluation), never per task |
