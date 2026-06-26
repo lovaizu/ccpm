@@ -301,10 +301,11 @@ flow advances.
 
 **Steps**:
 
-- [ ] Add `rn/skills/ty/SKILL.md`: frontmatter (`name: ty`, one-line `description`); procedure — register
+- [x] Add `rn/skills/ty/SKILL.md`: frontmatter (`name: ty`, one-line `description`); procedure — register
       approval of the pending confirmation and proceed (pass the gate / mark the reviewed item accepted).
-- [ ] Confirm the skill resolves as `/rn:ty`.
-- [ ] self-check (`checks/8.md`) + QA expert review (subagent) + grep cross-doc consistency.
+- [x] Confirm the skill resolves as `/rn:ty`. — frontmatter matches the `on`/`dn` shape; YAML clean.
+- [x] self-check (`checks/8.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
+      OK; QA PASS with one should-fix (ambiguous approval target), fixed in `0a09993`.
 
 **Completion criteria**:
 
