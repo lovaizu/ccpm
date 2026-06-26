@@ -10,7 +10,7 @@ Approves the pending rn confirmation and advances the flow. Performs no revision
 
 ## Steps
 
-1. **Identify the pending confirmation.** Find the most recent thing the assistant asked the user to sign off — a scheduled gate (plan / design / evaluation) or a reviewed deliverable.
+1. **Identify the pending approval.** Find the most recent approval / sign-off request — a scheduled gate (plan / design / evaluation) or a reviewed deliverable. Exclude weigh-in / escalation questions; those get answered, not approved here. State the identified target back. Proceed only if it is unambiguous; if more than one approval is plausibly pending, or it is unclear what is being approved, ask the user which before recording approval.
 
 2. **Record it as approved.** Register the pending confirmation as accepted.
 
