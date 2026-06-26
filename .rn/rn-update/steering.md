@@ -21,6 +21,14 @@ Apply three improvements to the `rn` plugin that surfaced from real usage:
    pointer (branch/PR, next action, open blockers/deferred paths), not a session re-narration;
    (c) `/rn:up` collapses a shipped task to a one-line `SHIPPED` pointer, so the `Tasks` section — the
    largest — stops carrying finished tasks' full Steps and Completion criteria across cycles.
+4. **Review gates must sit where human judgment is irreplaceable, not on every task** (surfaced
+   2026-06-26, see D-6). Today every task ends with a user-review gate (`task-workflow.md` Phase:
+   Complete) — N tasks, N gates — while design has no dedicated gate and evaluation is only a weak
+   "propose running Acceptance criteria." Rebalance to exactly three scheduled gates — **plan,
+   design, evaluation** — and remove the per-task user gate; per-task quality stays covered by the
+   self-check + QA/expert + coordinator chain. Separately, as a **different category (not a gate, not
+   a gate's exception)**, specify **escalation**: an always-open channel where any execution discovery
+   that would change the agreed plan or design is raised to the user immediately, wherever it occurs.
 
 The change set is documentation/prompt edits to the `rn` plugin's skill and reference files. No
 runtime code is involved.
@@ -74,6 +82,24 @@ items above stay the goal; the proceduralization is the precondition for judging
   prompt files (representative failure mode: rationale prose re-enters a runtime file).
 - `rn/CHANGELOG.md` records all three changes under `## [Unreleased]`, one user-facing line each, in
   user terms; `version` in `plugin.json` is unchanged (no release is being cut).
+- `task-workflow.md` no longer carries a per-task user-review gate; a task completes via the
+  self-check + QA/expert + coordinator chain and the check-off, with no per-task user sign-off
+  (objective: the per-task gate is gone; representative failure mode: a per-task user gate survives
+  anywhere in `task-workflow`/`on`/`up`).
+- The workflow defines exactly three scheduled user gates — plan (`/rn:on`), design, and evaluation —
+  and no others (objective: the three gates are the complete set; representative failure mode: a
+  fourth scheduled gate, or one of the three missing).
+- The design gate gives the user a sign-off on the approach/key decisions before they are built on,
+  distinct from reviewing a task's deliverable; the evaluation gate makes the end-of-session
+  Acceptance-criteria run a user sign-off, not a bare proposal (objective: design and evaluation are
+  gated; representative failure mode: either remains ungated).
+- Escalation is specified as a separate always-open channel, not a gate's exception: any execution
+  discovery/blocker/call that would change the agreed plan or design is surfaced to the user
+  immediately (objective: the loop stays honest between gates; representative failure mode: escalation
+  is written as a special case of a gate, collapsing the two categories).
+- `rn/DESIGN.md` records the gate-vs-escalation model and the rebalance rationale; the runtime files
+  stay pure procedure; `rn/CHANGELOG.md` gains one user-facing line under `## [Unreleased]`; no rn
+  doc contradicts another after the change (grep-verified).
 
 # Assumptions
 
@@ -295,6 +321,49 @@ the user's instruction; if PR review changes #1–#4, the CHANGELOG lines get re
 - `version` in `rn/.claude-plugin/plugin.json` is `0.6.0` — unchanged (representative failure mode:
   accidentally cutting a release).
 
+### #6: Rebalance review gates to plan/design/evaluation; escalation as a separate channel — NOT STARTED
+
+**Purpose**: Move the workflow's user-review gates to the three points where human judgment is
+irreplaceable (plan, design, evaluation), remove the per-task user gate, and specify escalation as a
+distinct always-open channel. See D-6.
+
+**Prerequisites**: #2 (edits land on the pure-procedure base)
+
+**Steps**:
+
+- [ ] In `rn/references/task-workflow.md`, remove the per-task user-review gate from Phase: Complete;
+      a task completes via self-check + QA/expert + coordinator review + check-off, no per-task user
+      sign-off. The coordinator's independent diff review and the expert reviews stay intact.
+- [ ] Generalize the existing "User's call" triage (`task-workflow.md` Triage step) into an explicit
+      **escalation** channel: any execution discovery/blocker/call that would change the agreed plan
+      or design is surfaced to the user immediately, wherever in the flow it occurs — stated as a
+      channel distinct from the gates, not an exception to one.
+- [ ] Add the **design gate**: a scheduled user sign-off on the approach/key decisions before they
+      are built on, distinct from reviewing a task's deliverable (folds into the plan gate when design
+      is settled at plan time; a separate stop before heavy build when it is not).
+- [ ] Strengthen the **evaluation gate**: make the end-of-session Acceptance-criteria run a user
+      sign-off in `on`/`up`/`task-workflow` advance, not a bare proposal.
+- [ ] Confirm the **plan gate** in `rn/skills/on/SKILL.md` stays and is named as one of the three.
+- [ ] Record the gate-vs-escalation model and rebalance rationale in `rn/DESIGN.md`; runtime files
+      stay pure procedure.
+- [ ] Add one user-facing line to `rn/CHANGELOG.md` under `## [Unreleased]`.
+- [ ] self-check (checks/6.md) + QA expert review (subagent) + grep cross-doc consistency
+
+**Completion criteria**:
+
+- `task-workflow.md` has no per-task user-review gate; a task completes via the self-check + QA/expert
+  + coordinator chain and the check-off (objective: the per-task gate is gone; representative failure
+  mode: a per-task user gate survives in `task-workflow`/`on`/`up`).
+- Exactly three scheduled user gates exist — plan, design, evaluation — and escalation is specified as
+  a separate always-open channel, not an exception to a gate (objective: the model is encoded as the
+  user defined it; representative failure modes: a fourth scheduled gate; a missing gate; escalation
+  written as a gate's special case).
+- The design gate signs off the approach before it is built on, and the evaluation gate makes the
+  Acceptance-criteria run a user sign-off (objective: design and evaluation are gated; representative
+  failure mode: either remains ungated).
+- `rn/DESIGN.md` carries the model + rationale; the runtime files stay pure numbered procedure;
+  `rn/CHANGELOG.md` has one user-facing line; no rn doc contradicts another (grep-verified).
+
 # Decisions
 
 ## D-1: Reconcile "tree ends clean" with "suspend never wedges"
@@ -446,19 +515,45 @@ the user's instruction; if PR review changes #1–#4, the CHANGELOG lines get re
 - **Sources**: user feedback this session (2026-06-26); measurement of `.rn/*/steering.md` on
   `rn-update`; `dn/SKILL.md` Step 3, `up/SKILL.md` Step 6, `steering-template.md` (branch).
 
+## D-6: Review gates sit at plan/design/evaluation; escalation is a separate always-open channel
+- **Governs**: #6
+- **Issue**: The user observed that user-review gates appear at every task (`task-workflow.md` Phase:
+  Complete — N tasks, N gates) and judged this too many. Reading the actual gates confirmed a deeper
+  imbalance: the plan has a strong gate (`on/SKILL.md` Step 5), but design has no dedicated gate and
+  evaluation is only a weak "propose running Acceptance criteria" (`task-workflow.md` advance step).
+  The workflow over-reviews execution increments and under-reviews the two judgments where human input
+  is irreplaceable.
+- **Conclusion**: Gate the points where human judgment is irreplaceable and a late error is expensive
+  — **plan** (right problem/scope/breakdown), **design** (right approach/key decisions), **evaluation**
+  (goal actually achieved). Exactly three scheduled gates; the per-task user gate is removed, because
+  per-task quality is already covered independently by self-check + QA expert (+ language/SWE for code)
+  + the coordinator's own diff review — the per-task user gate was redundant with that chain.
+  **Gate and escalation are different categories, not rule-and-exception.** A *gate* is a scheduled
+  stop-and-sign-off built into the flow. *Escalation* is an always-open, event-driven channel: whenever
+  execution surfaces something that would change the agreed plan or design — a discovery, blocker, or
+  scope/direction/taste call — the coordinator raises it to the user immediately, wherever it occurs.
+  The two coexist; escalation is not a special case of a gate.
+- **Rationale**: The per-task gate spent the user's attention on "is it done right" (which the expert
+  chain answers) instead of "are we doing the right thing" (which only the user answers) — and the
+  latter is exactly plan/design/evaluation. Removing it cuts the N-gate tax without losing oversight:
+  the three gates cover direction and acceptance, and escalation — as its own channel — catches any
+  mid-flight change to the agreed plan/design, so nothing important waits silently until evaluation.
+  Keeping escalation distinct from gates (the user's correction) prevents re-smuggling a per-task gate
+  back in as "the exception."
+- **Evidence**: `task-workflow.md` Phase: Complete (per-task user gate); `on/SKILL.md` Step 5 (plan
+  gate exists); `task-workflow.md` advance step (evaluation is a bare proposal); `task-workflow.md`
+  Triage step's "User's call" branch (the seed of the escalation channel, today scoped only to review
+  findings).
+- **Sources**: user feedback this session (2026-06-26); the gate read above on `rn-update`.
+
 # State
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-06-26
-- **Last completed**: #5 — CHANGELOG `## [Unreleased]` written; #4 extended with Lever C (collapse
-  shipped tasks). All done-through-QA.
-- **Next**: user review of #1–#5 on PR #14. On approval, check off each + commit its `complete task
-  #{id}` marker (with `checks/{id}.md`), then run `steering.md` Acceptance criteria.
-- **Notes**: branch `rn-update`, PR #14 (draft), all pushed. Uncommitted ledger committed with this
-  suspend: `checks/4.md`, `checks/5.md`. Open: #1–#5 user-review-pending — confirm approval before any
-  check-off marker; no `complete task #` in git yet. No blockers. After approval, one `/rn:up` pass
-  will fire Levers A/B/C (dogfood Lever C: shipped tasks collapse, D-1..D-5 retire).
+- **Status**: not suspended
+- **Date**: —
+- **Last completed**: —
+- **Next**: —
+- **Notes**: —
