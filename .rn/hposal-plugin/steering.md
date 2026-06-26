@@ -350,12 +350,15 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
       (b) **「利用者役」の運用**＝確定（D-10）：二者構成。subagent が `/hposal:up`（＝`hposal/skills/up/SKILL.md`）を起草実走、
       main が利用者/レビュー役で★ゲート・質問に応じる（架空でない実ブリーフだが内部単価等の未提供入力は main が PII なしで供給）。
 - [x] 確定した範囲で既存 dogfood 記録を削除する（`ikuko-hp` 下流成果物＋旧 steering、公開側 `dogfood-notes.md`）
-- [ ] **実ブリーフ**（`ikuko-hp/input/ホームページリニューアル要件.md`）を唯一の入力に、private フォルダで実走（PII 境界＝
+- [x] **実ブリーフ**（`ikuko-hp/input/ホームページリニューアル要件.md`）を唯一の入力に、private フォルダで実走（PII 境界＝
       生成物 01–04 は private に留め、公開リポジトリに戻すのは PII を除いた一般化所見のみ）
-- [ ] メインエージェントが利用者役で `/hposal:up` を phase 1→4 実走する（subagent 起草・main ★レビュー）
-- [ ] 実走で見つかった所見を新しい dogfood ノート（一般化・PII なし）に記録する
-- [ ] 所見の plugin 反映方針を整理する（SKILL/テンプレ/README のどれにどう効くか）
+- [x] メインエージェントが利用者役で `/hposal:up` を phase 1→4 実走する（subagent 起草・main ★レビュー）。各フェーズ★PASS：
+      P1 要件15・実URL10機械検証 ／ P2 p1–12・基盤2案比較・WP.com価格は q 保持 ／ P3 32/37人日・機械突合一致 ／
+      P4 22pp PDF・ゲート0/0・CSSバイト一致・burn-down15/15・内部値素抜け0
+- [x] 実走で見つかった所見を新しい dogfood ノート（一般化・PII なし）に記録する（`dogfood-notes.md`・F1–F14＋T1–T3）
+- [x] 所見の plugin 反映方針を整理する（SKILL/テンプレ/パーツ/outline/execution-only に HOW＋優先度でマップ）
 - [ ] self-check → QA engineer review（subagent）→ user review（PR）
+      ＝self-check OK・QA **PASS**（trivial 1件 fix 済 `6348c89`）。**残るは PR #8 上の user review のみ**
 
 **Completion criteria**:
 
@@ -492,7 +495,19 @@ session is suspended — the signal /rn:up and /rn:dn search for — and resets 
 so only a genuinely suspended session reads `paused`.)
 
 - **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Date**: 2026-06-26
+- **Last completed**: task #11 ゼロベース dogfood の**実装・QA まで完了**（user review 前）。★ゲート2点確定（D-10）→旧 dogfood 削除
+  （private `ikuko-hp` は生ブリーフ以外削除・公開 `dogfood-notes.md` を `0c5b056` で clear）→二者構成で `/hposal:up` を
+  phase 1→4 実走（subagent 起草・main 利用者★レビュー、各フェーズ PASS、実 22pp PDF 産出）→所見 F1–F14＋T1–T3 を新
+  `dogfood-notes.md`（PII なし）に記録＋反映方針表（`b6334a3`、T2 精緻化 `6348c89`）。QA＝**PASS**（trivial 1件 fix 済）。
+  検証台帳＝`.rn/hposal-plugin/checks/11.md`。
+- **Next**:
+  1. **task #11 の最終ゲート＝PR #8 で user review**。承認されたら check-off（`complete task #11` マーカー commit、
+     checks/11.md も同 commit でコミット）。
+  2. task #10 も PR #8 上で user review 待ち（実装・QA 完了済み）。#10・#11 まとめてレビュー→承認の流れでよい。
+  3. その後の本体分岐＝(A) PR #8 マージ、または (B) リリース 0.1.0（D-3）。dogfood の followup（反映方針の followup 群＝
+     T1 テンプレ2本・T2 work-detail パーツペア・SKILL の F1/F4/F5・outline F12）を別タスクで起こすかも選択。
+- **Notes**:
+  - dogfood 反映方針は `dogfood-notes.md` の「反映方針」節に集約。**followup**＝次の plugin タスクで束ねて実施／**minor**＝隣接編集で畳み込む。
+  - dogfood 実走の生成物（01–04・PDF）は public 外の `/Users/kiyo/work/private/ikuko-hp/` に残る（PII 含む・ccpm 作業対象外）。
+  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN）。task #11 の deliverable コミット push 済み（`b6334a3`・`6348c89`）。
