@@ -344,13 +344,15 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 
 **Steps**:
 
-- [ ] ★ 着手前に2点を会話で確定（fuzzy なので多択でなく対話で）：(a) **削除範囲**＝`.rn/hposal-plugin/dogfood-notes.md`
-      だけか、他の dogfood 記録も含むか（破壊的なので実行前に必ず確認）。private `ikuko-hp` は公開外の実案件＝原則対象外。
-      (b) **「利用者役」の運用**＝`/hposal:up` は「AI が起草／人間が★レビュー」の建て付け。メインエージェントが利用者（＝人間/
-      レビュー側）を演じるなら、AI 起草側を誰が回すか（subagent に起草させ main が★を打つ／main が両役を切り替える 等）を決める。
-- [ ] 確定した範囲で既存 dogfood 記録を削除する
-- [ ] PII を含まない**架空の案件設定**をゼロベースで用意（公開リポジトリ前提）
-- [ ] メインエージェントが利用者役で `/hposal:up` を phase 1→4 実走する
+- [x] ★ 着手前に2点を会話で確定（fuzzy なので多択でなく対話で）：(a) **削除範囲**＝確定（D-10）：private `ikuko-hp` は
+      生ブリーフ `input/ホームページリニューアル要件.md` 以外すべて削除（git 外＝不可逆だが「今の出来では使えず hposal で
+      要件から再現可能」とのユーザー判断で完全削除）／公開側 `.rn/hposal-plugin/dogfood-notes.md` も削除。
+      (b) **「利用者役」の運用**＝確定（D-10）：二者構成。subagent が `/hposal:up`（＝`hposal/skills/up/SKILL.md`）を起草実走、
+      main が利用者/レビュー役で★ゲート・質問に応じる（架空でない実ブリーフだが内部単価等の未提供入力は main が PII なしで供給）。
+- [x] 確定した範囲で既存 dogfood 記録を削除する（`ikuko-hp` 下流成果物＋旧 steering、公開側 `dogfood-notes.md`）
+- [ ] **実ブリーフ**（`ikuko-hp/input/ホームページリニューアル要件.md`）を唯一の入力に、private フォルダで実走（PII 境界＝
+      生成物 01–04 は private に留め、公開リポジトリに戻すのは PII を除いた一般化所見のみ）
+- [ ] メインエージェントが利用者役で `/hposal:up` を phase 1→4 実走する（subagent 起草・main ★レビュー）
 - [ ] 実走で見つかった所見を新しい dogfood ノート（一般化・PII なし）に記録する
 - [ ] 所見の plugin 反映方針を整理する（SKILL/テンプレ/README のどれにどう効くか）
 - [ ] self-check → QA engineer review（subagent）→ user review（PR）
@@ -463,6 +465,25 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 - **Evidence**: dogfood-notes #10/#11/#12/#19/#21。第3層 2列比較の実装見本＝private `ikuko-hp/04_proposal.html`
   （22スライド3層デッキ）。元モノリス CSS 1–376行は実データを含まず、共有パーツへバイト一致で温存できる。
 - **Sources**: dogfood-notes.md（#10–13・#19・#21）／private `ikuko-hp/04_proposal.html`／ユーザー確認（本セッション 2026-06-26）。
+
+## D-10: ゼロベース dogfood は実ブリーフ起点・二者構成（subagent 起草／main 利用者役）で回す
+- **Issue**: task #11 の★ゲート2点 — (a) 何を削除して何を起点にするか、(b)「メインエージェントが利用者役」をどう運用するか。
+  当初案は「PII なしの架空案件をゼロベースで用意」だったが、ユーザーは実案件のブリーフを起点にすると判断。
+- **Conclusion**:
+  - **(a) 起点＝実ブリーフ**：private `ikuko-hp/input/ホームページリニューアル要件.md`（施主の生要件）だけを残し、前回 dogfood の
+    下流成果物（01–04・inventory・書き出し・旧 `.rn` steering）と公開側 `dogfood-notes.md` を削除。生成物は hposal が要件から
+    いつでも再現できる前提なので完全削除でよい（git 外＝不可逆を承知の上）。
+  - **(b) 二者構成**：subagent が `/hposal:up`（＝`hposal/skills/up/SKILL.md`）を起草実走し、★ゲート/質問で main に返す。main は
+    利用者/レビュー役として質問に答え（内部単価など未提供入力は PII なしの仮値を供給）、ドラフトを批判的にレビューし承認/差し戻す。
+- **Rationale**: (a) dogfood の目的は「生ブリーフ1枚→完成提案を `/hposal:up` が導けるか」の検証。実ブリーフの方が架空より現実の歪みを
+  あぶり出す。再現性向上を何度も dogfood して積む狙いにも、実案件起点が合う。(b)「利用者役」の素直な実装は main＝人間（レビュー）側・
+  起草 AI は別エージェント。★ゲートと質問機構＝AI↔利用者のやり取りを実際に動かして初めて「AI が訊くべきを訊いたか／ゲートが分かるか」を
+  測れる。main 単独の自己起草・自己承認では独立チェックが効かない。
+- **PII 境界**: 実走は private フォルダで行い生成物 01–04 は private に留める。公開リポジトリ（ccpm）に戻すのは PII を除いた一般化所見の
+  新 `dogfood-notes.md` のみ。
+- **Evidence**: ユーザー指示（2026-06-26）「今の出来では使えないので消して大丈夫／hposal があればいつでも再現できる、そのために
+  プラグインを作っている／これから何度も dogfood して再現性を高める」「利用者役は案1（二者構成）」。
+- **Sources**: ユーザー確認（本セッション 2026-06-26）／task-workflow.md（coordinator＝main／implementation expert＝subagent）。
 
 # State
 
