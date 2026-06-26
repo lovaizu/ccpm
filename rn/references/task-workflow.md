@@ -125,10 +125,12 @@ reviews run in Verify; the coordinator's independent review then clears the task
    Never silently drop, blindly accept, or bounce a finding for lack of a standard. Record the review
    verdicts into the check file.
 
-   **Escalation is an always-open channel, not a triage step.** Any execution discovery, blocker, or
-   decision that would change the **agreed plan or design** is raised to the user **immediately,
+   **Escalation is an always-open channel, not confined to triage.** This Triage outcome is **one
+   place** it fires — during Verify. The same channel is always open: any execution discovery, blocker,
+   or decision that would change the **agreed plan or design** is raised to the user **immediately,
    wherever it surfaces** — in Execute, Verify, or anywhere else — never deferred to a gate. It is
-   distinct from the three scheduled gates (plan / design / evaluation) and counts as none of them.
+   distinct from the three scheduled gates (plan / design / evaluation) and counts as none of them; a
+   change to the agreed plan or design cannot ship unseen.
 
 ## Phase: Complete
 
