@@ -23,6 +23,20 @@ Make the `rn` plugin lighter, and fix three issues that surfaced from real usage
    evaluation** — not on every task. **Escalation** is a separate always-open channel: any execution
    discovery that would change the agreed plan or design is raised to the user immediately.
 
+**C — Add the verdict commands and the PR-feedback workflow:**
+
+6. Every rn user-confirmation is answered with two console commands: **`ty`** (approve what was asked)
+   and **`gm`** ("good, more" — revise). `gm`'s feedback is its argument; with no argument, the feedback
+   is the PR's review comments. They are the single accept/revise vocabulary at every gate and
+   confirmation point — the verdict is the user's, so it is a command the user runs, never something the
+   system infers.
+7. PR feedback is processed by a documented light loop (`pr-feedback-workflow.md`): collect the
+   unresolved review threads whose last comment is the author's, hand them to an execution subagent one
+   at a time — each either addresses the thread, pushes, and replies with the commit link, or replies
+   with a question — and the coordinator reviews each result before the next. Verification is
+   deliberately light (one coordinator pass, not the QA-expert/multi-round chain). A thread is resolved
+   only by its author.
+
 The change set is documentation/prompt edits to the `rn` plugin only. No runtime code.
 
 # Acceptance criteria
@@ -67,6 +81,22 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
   change and why it helps; no rn doc contradicts another; `version` stays `0.6.0`. (Failure modes
   absent: a behavior-preserving refactor listed or a real change missing; a surviving contradictory
   instruction; an accidental release.)
+- **Two-command verdict vocabulary.** `ty` and `gm` exist as rn skills: `ty` registers approval of what
+  was asked; `gm` registers a revise verdict whose feedback is its argument, or — with no argument — the
+  PR's review comments. Every scheduled gate (plan/design/evaluation) and every assistant-asks-to-confirm
+  point resolves through these two, and the assistant records no verdict the user did not issue. (Failure
+  modes absent: a verdict command that performs nothing; `gm` ignoring its argument or failing to locate
+  the PR comments; a confirmation point still using a bespoke yes/no.)
+- **PR feedback runs as a light, reviewable loop.** `pr-feedback-workflow.md` drives it: collect the
+  unresolved review threads whose last comment is the author's; dispatch one at a time to an execution
+  subagent; each thread ends either addressed-pushed-and-replied-with-its-commit-link or answered with a
+  question; the coordinator reviews each subagent result before the next is dispatched, and the loop
+  re-runs safely to pick up the author's follow-ups. (Failure modes absent: parallel dispatch dropping
+  the per-item review gate; a thread changed but left without a reply; the QA-expert/multi-round chain
+  creeping back into this loop.)
+- **Threads are resolved only by their author.** No assistant or subagent marks a review thread
+  resolved; resolution is the reviewer's act, and the loop treats GitHub's unresolved state as its queue.
+  (Failure mode absent: the assistant auto-resolving a thread it answered.)
 
 # Rules
 
@@ -76,6 +106,8 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 - prose/prompt edits only (no executable code) → non-code verification chain (self-check → QA expert →
   the gates)
 - this steering must itself follow the lean form it introduces (dogfood B4)
+- `ty`/`gm` are the only verdict vocabulary at every confirmation point; the assistant never infers a verdict the user did not issue
+- only a review thread's author resolves it; the assistant/subagent never resolves a thread
 
 # Tasks
 
@@ -182,20 +214,22 @@ stored, not pruned. See `rn/docs/design.md`.
   modes absent: a dangling or empty design reference; per-step memos returning; design content left in
   steering; the doc-division contradicting across `on` / `steering-template` / README).
 
-### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6
+### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6–#10
 
-**Purpose**: Record the user-facing changes in `rn/CHANGELOG.md` and confirm the rn docs are internally
-consistent. The existing `## [Unreleased]` lines (`checks/5.md`) are reconciled to the final shape of
-#3/#4/#6.
+**Purpose**: Record the user-facing changes in `rn/CHANGELOG.md` (including the `gm`/`ty` commands and
+the PR-feedback loop), record the verdict-command + FB-workflow structure in `rn/docs/design.md`, and
+confirm the rn docs are internally consistent. The existing `## [Unreleased]` lines (`checks/5.md`) are
+reconciled to the final shape of #3/#4/#6–#10.
 
-**Prerequisites**: #1, #2, #3, #4, #6
+**Prerequisites**: #1, #2, #3, #4, #6, #7, #8, #9, #10
 
 **Completion criteria**:
 
-- A user reading `rn/CHANGELOG.md` learns each user-facing change and why it helps, with the
-  behavior-preserving #2 rewrite absent; no rn doc contradicts another; `version` is `0.6.0` (failure
-  modes absent: a refactor listed or a real change missing; a surviving contradiction; an accidental
-  release).
+- A user reading `rn/CHANGELOG.md` learns each user-facing change and why it helps — the `gm`/`ty`
+  commands and the PR-feedback loop included, the behavior-preserving #2 rewrite excluded;
+  `rn/docs/design.md` records the verdict-command + FB-workflow structure; no rn doc contradicts another;
+  `version` is `0.6.0` (failure modes absent: a refactor listed or a real change missing; a surviving
+  contradiction; an accidental release).
 
 ### #6: Review gates → plan/design/evaluation; escalation as a separate channel — DONE through QA; awaiting consolidated PR review
 
@@ -234,33 +268,123 @@ distinct always-open channel.
   QA/expert + coordinator review (failure modes absent: a surviving per-task user gate; a fourth or
   missing scheduled gate; escalation collapsed into an exception so a mid-flight change ships unseen).
 
+### #7: `gm` skill — the revise / feedback verdict command
+
+**Purpose**: Add `rn/skills/gm/SKILL.md`, the "good, more" verdict command. With an argument, the
+argument is the feedback to act on; with no argument, the feedback source is the current PR's review
+comments and the command runs `pr-feedback-workflow.md`. Either way it registers a revise verdict at the
+pending confirmation point.
+
+**Prerequisites**: #9 (no-argument `gm` routes into the FB workflow)
+
+**Steps**:
+
+- [ ] Add `rn/skills/gm/SKILL.md`: frontmatter (`name: gm`, one-line `description`); procedure — argument
+      present → treat it as the feedback and act on it; argument absent → run `pr-feedback-workflow.md`
+      against the current PR's review comments.
+- [ ] Confirm the skill resolves as `/rn:gm` (plugin skill namespace = `rn`).
+- [ ] self-check (`checks/7.md`) + QA expert review (subagent) + grep cross-doc consistency.
+
+**Completion criteria**:
+
+- `/rn:gm <text>` acts on `<text>` as the feedback; `/rn:gm` with no argument processes the current PR's
+  review comments through the FB workflow; both register a revise verdict and drop nothing (failure modes
+  absent: the argument ignored; no-argument `gm` not locating/processing the PR comments; `gm` a no-op).
+
+### #8: `ty` skill — the approve verdict command
+
+**Purpose**: Add `rn/skills/ty/SKILL.md`, the approve verdict command. Running it registers approval of
+whatever the assistant last asked the user to confirm — a gate sign-off or a reviewed result — and the
+flow advances.
+
+**Prerequisites**: none
+
+**Steps**:
+
+- [ ] Add `rn/skills/ty/SKILL.md`: frontmatter (`name: ty`, one-line `description`); procedure — register
+      approval of the pending confirmation and proceed (pass the gate / mark the reviewed item accepted).
+- [ ] Confirm the skill resolves as `/rn:ty`.
+- [ ] self-check (`checks/8.md`) + QA expert review (subagent) + grep cross-doc consistency.
+
+**Completion criteria**:
+
+- `/rn:ty` registers approval of the pending confirmation and the flow advances (the gate passes / the
+  item is accepted), with no revision performed (failure modes absent: `ty` a no-op; `ty` triggering a
+  revise).
+
+### #9: `pr-feedback-workflow.md` — the light PR-feedback loop
+
+**Purpose**: Add `rn/references/pr-feedback-workflow.md`, a sibling of `task-workflow.md` that processes
+PR review feedback: collect unresolved threads whose last comment is the author's; dispatch one at a time
+to an execution subagent; each subagent either addresses→pushes→replies-with-the-commit-link or
+replies-with-a-question; the coordinator reviews each result before the next. Verification is one
+coordinator pass (not the QA-expert/multi-round chain); threads are resolved only by their author.
+
+**Prerequisites**: none
+
+**Steps**:
+
+- [ ] Add `rn/references/pr-feedback-workflow.md` as pure numbered procedure: **Collect** (GitHub review
+      threads that are unresolved and whose last comment is the author's, via the API), **Dispatch** (one
+      execution subagent per thread, sequential), the subagent's two allowed outcomes
+      (address+push+reply-with-commit-link | reply-with-question), the coordinator review-before-next
+      gate, the single-pass verification note, and the resolve-by-author rule.
+- [ ] Keep it rationale-free (proceduralize rule); the intent goes to `rn/docs/design.md` (#5).
+- [ ] self-check (`checks/9.md`) + QA expert review (subagent) + grep cross-doc consistency.
+
+**Completion criteria**:
+
+- An agent runs the loop from the reference alone: it collects exactly the unresolved threads whose last
+  comment is the author's, processes them one at a time with a coordinator review between each, and each
+  thread ends addressed-and-replied-with-its-commit-link or answered with a question; resolution is left
+  to the author; verification is the single coordinator pass (failure modes absent: a thread dispatched
+  past the review gate in parallel; a thread changed without a reply; the heavy QA chain present; the
+  assistant resolving a thread).
+
+### #10: Wire the gates + escalation to `gm`/`ty`; state the resolve-by-author rule
+
+**Purpose**: Connect the three scheduled gates (plan/design/evaluation) and the escalation channel to the
+`gm`/`ty` verdict vocabulary across `on`/`up`/`task-workflow`, and state the resolve-by-author rule where
+review threads are handled. The user approves with `ty` and asks for revision with `gm`; the assistant
+infers no verdict.
+
+**Prerequisites**: #7, #8
+
+**Steps**:
+
+- [ ] In `rn/skills/on/SKILL.md`, `rn/skills/up/SKILL.md`, `rn/references/task-workflow.md`: state that
+      each gate's sign-off is taken via `/rn:ty` (approve) or `/rn:gm` (revise), not an inferred yes/no.
+- [ ] State the resolve-by-author rule where PR review threads are processed (`pr-feedback-workflow.md`,
+      and the `push-and-review` rule if it touches resolution).
+- [ ] self-check (`checks/10.md`) + QA expert review (subagent) + grep cross-doc consistency (every gate
+      references `gm`/`ty`; no confirmation point left with a bespoke verdict).
+
+**Completion criteria**:
+
+- Every scheduled gate and confirmation point in `on`/`up`/`task-workflow` resolves through `/rn:ty` or
+  `/rn:gm`, the assistant records no verdict the user did not issue, and the resolve-by-author rule is
+  stated where threads are handled (failure modes absent: a gate with an inferred or bespoke verdict; a
+  thread the docs let the assistant resolve).
+
 # State
 
 (written by `/rn:dn`, read and reset to this placeholder by `/rn:up`. `Status` is `paused` while a
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-06-26
-- **Last completed**: #6 deliverable + fixes, through QA round 2 PASS + coordinator review
-  (`5b00aa9`, `de1f835`, ledger `0914228`). #4 likewise done-through-QA (`17e2cfe`/`30f8fc1`/`ace2f07`).
-  #5 CHANGELOG line for #6 added (`88b513d`).
-- **Next**: Finish #5's QA. (1) **Re-run the QA expert (subagent) on the current 4-line
-  `rn/CHANGELOG.md` `[Unreleased]`** — the prior #5 QA only covered the pre-#6 3-line version; the #6
-  line is unreviewed (the QA subagent died on an API ConnectionRefused). Use #5's three completion
-  criteria; record the verdict in `checks/5.md` QA columns + QA Expert Review (currently marked STALE).
-  (2) Then the **consolidated user review on PR #14** — the batched plan/evaluation sign-off the user
-  asked for (per their direction: don't gate per task; review #4 + #6 + #5 together on the PR). DO NOT
-  write any `complete task #` marker for #4/#5/#6 until the user approves on the PR; then check all
-  three off (one marker commit each).
-- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. **User directive in force:**
-  review is batched to the PR (the three scheduled gates), NOT per task — #4 and #6 are
-  done-through-QA with their completion markers deliberately held; #5 is the last task (CHANGELOG +
-  cross-doc consistency). No `complete task #` markers in git yet for #1–#6. #1–#3 were
-  done-through-QA earlier on the branch; under the new #6 gate model they no longer need a per-task
-  user gate — fold their sign-off into the consolidated PR review. Cross-doc consistency already swept
-  clean this session (no old command names outside CHANGELOG; no Decisions/Governs/SHIPPED leftovers
-  in runtime; every "user sign-off" hit is a legitimate one of the three gates). `version` stays
-  `0.6.0` (no release). Pre-existing, out-of-scope: `claude plugin validate rn --strict` fails on
-  `rn/skills/dn/SKILL.md` frontmatter YAML (reproduces without this session's changes) — separate fix.
-  checks/{4,5,6}.md are the coordinator's ledgers (committed with this suspend).
+- **Status**: not suspended
+- **Date**: 2026-06-27
+- **Last completed**: #1–#6 deliverables done-through-QA on the branch. PR #14's consolidated review
+  returned **CHANGES_REQUESTED** with 10 inline comments — the review gate fired; the verdict is revise.
+- **Next**: **Plan gate** on this expanded steering (thread C adds `gm`/`ty` + `pr-feedback-workflow`).
+  On the user's `/rn:ty`, implement #9 → #7/#8 → #10 (build the loop, then the commands, then wire the
+  gates), then run the new FB loop to process PR #14's 10 comments; #5 records everything last. No
+  `complete task #` markers until the work passes its gates.
+- **Notes**: branch `rn-update`, PR #14. The 10 FB comments become work while the loop processes them —
+  notable ones: split `task-workflow.md` into execute/verify; mermaid (not ASCII) diagrams in
+  `design-template`; broaden/rebalance the reviewer experts so they match Implementation; move
+  review-gate wording out of `task-workflow` into a planning step; date-prefix the session slug
+  (`yyyymmdd-slug`); `on` SKILL opening should state purpose, not duplicate the steps; **`dn/SKILL.md`
+  frontmatter YAML error** breaks GitHub rendering (pre-existing, also flagged by `claude plugin
+  validate`). `version` stays `0.6.0` (no release). Some of #4/#6's already-`[x]` steps will be reopened
+  by this FB (e.g. ASCII→mermaid in `design-template`).
