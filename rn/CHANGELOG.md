@@ -4,6 +4,17 @@ All notable, user-facing changes to the `rn` plugin are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Completion criteria in a plan are now written as two questions anyone can answer with evidence — is the goal actually achieved, and are new problems absent — so a criterion can't pass just because some file was produced.
+- `steering.md` no longer piles up across pause/resume cycles: on resume, decisions whose work has shipped are retired and finished tasks are collapsed to a one-line note, and a pause records only a short forward pointer instead of a full session retelling — so the plan stays focused on the remaining work (the history lives in git).
+
+### Fixed
+
+- `/rn:dn` (pause) now finishes with a genuinely clean worktree — leftover test/build files are git-ignored so they stop keeping the tree dirty, anything ambiguous is shown to you rather than deleted, and the pause always completes instead of getting stuck.
+
 ## [0.6.0] - 2026-06-24
 
 ### Changed
