@@ -234,9 +234,18 @@ distinct always-open channel.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred
-  paths, open questions; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-06-26
+- **Last completed**: Plan gate passed — user approved the expanded #4 (design-template +
+  doc-division rule + whole-structure design.md) on PR #14. No task implemented yet.
+- **Next**: Implement #4. Order: (1) add `rn/references/design-template.md` (5 sections,
+  no preamble guard — why-less tables + numbered Flow); (2) `steering-template.md` — add doc-division
+  rule, remove Decisions/Governs/SHIPPED-collapse; (3) `skills/up/SKILL.md` — drop Step 6
+  retire/collapse; (4) `skills/on/SKILL.md` — design.md location + read template/rule + drop
+  "Decisions" from Step 3 placeholder; (5) rewrite `rn/docs/design.md` as a design-template instance,
+  dropping all per-step memos; (6) self-check `checks/4.md` + QA expert subagent + grep consistency
+  (no stray `Decisions` / per-task `user review` / retire-collapse). Then #6 (gates), then #5 (record).
+- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. No `complete task #` markers
+  in git yet. #1–#3 done-through-QA, re-verify under new gates. #4 design-template outline informed by
+  2025–26 design-doc trends (lean/living, decisions+structure not steps, C4/ADR, spec-driven). User
+  directive: proceed with the work on resume (plan already approved).
