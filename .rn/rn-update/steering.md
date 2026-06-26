@@ -1,4 +1,4 @@
-Design: rn/DESIGN.md (→ rn/design.md, renamed in #4)
+Design: rn/DESIGN.md
 
 # Goal
 
@@ -27,32 +27,42 @@ The change set is documentation/prompt edits to the `rn` plugin only. No runtime
 
 # Acceptance criteria
 
-(Terse end-states; the grounds for each are recorded in `checks/{id}.md`, per A2.)
+(Each is an objective to confirm — the aim achieved and new problems absent — not a description of the
+edit made. The means are in the tasks' Steps; the grounds are recorded in `checks/{id}.md`, per A2.)
 
-- `/rn:dn` from a worktree with test-run residue ends with `git status --porcelain` empty; recurring
-  test/build artifacts are gitignored (committed) so residue does not recur; no untracked path that is
-  not clearly residue is auto-deleted — ambiguous paths are surfaced, user-deferred ones recorded in
-  State, and the suspend always completes.
-- `steering-template.md`'s completion-criteria guidance directs the two-questions-with-grounds form and
-  contrasts an objective criterion against a result ("the output exists") one, keeping the existing
-  constraints (third-party verifiable, no vague terms, outcomes-not-actions); `task-workflow.md`'s use
-  of criteria as the review bar stays consistent.
-- Every rn skill/reference is pure numbered procedure (no rationale or rule-justification prose); all
-  prior behavior survives; the intent lives in `design.md`, not read at runtime.
-- `steering.md` carries exactly Goal, Acceptance criteria, Rules, Tasks (remaining only), State, and a
-  one-line `design.md` pointer — no Decisions section, no completed-task bodies, no change narration;
-  `steering-template.md` encodes this shape. The earlier Governs field, SHIPPED-collapse, and
-  retire-on-ship machinery are gone — the content is simply not stored, so nothing manages it.
-- `/rn:on` decides the session's `design.md` location with the user (proposes a default, e.g.
-  `.rn/{slug}/design.md`, lowercase filename) and writes its path into `steering.md`; design content
-  goes there, not into steering. A session with no design leaves it absent and the design gate folds
-  into the plan gate.
-- The workflow has exactly three scheduled user gates — plan (`/rn:on`), design, evaluation — and no
-  per-task user gate; per-task quality is covered by self-check + QA/expert + coordinator review.
-  Escalation is specified as a separate always-open channel, not a gate's exception.
-- `rn/design.md` (renamed from `DESIGN.md`) carries all intent; `rn/CHANGELOG.md` records the
-  user-facing changes under `## [Unreleased]`, one line each; `version` in `plugin.json` stays `0.6.0`;
-  no rn doc contradicts another (grep-verified).
+- **dn clean tree.** Running `/rn:dn` in a worktree dirtied only by test/build residue leaves the tree
+  genuinely clean (`git status --porcelain` empty) and a later test run does not re-dirty it; the
+  suspend still completes when an untracked path is left unresolved, and no untracked path the user did
+  not approve is deleted. (Failure modes absent: residue keeps the tree dirty; the suspend wedges; user
+  work is destroyed.)
+- **Criteria verify objectives.** Completion criteria written under the revised guidance read as
+  objective-achievement (aim met + new problems absent), not as "the output was produced" —
+  demonstrable on this steering's own criteria. The prior constraints still hold (third-party
+  verifiable, no vague terms, outcomes-not-actions) and `task-workflow.md` still uses criteria as the
+  review bar. (Failure mode absent: a criterion satisfied by the artifact merely existing.)
+- **Prompts run without rationale.** An agent can execute any rn skill/reference with no rationale prose
+  present, and the workflow behaves exactly as before the rewrite; the intent stays recoverable from
+  `design.md`. (Failure mode absent: a rule/branch/fallback lost in the conversion.)
+- **steering is a sufficient, minimal forward contract.** A resuming agent can finish the goal correctly
+  from `steering.md` plus what it points to (git, PR, `design.md`), with nothing required missing, while
+  steering holds no design rationale, no completed-task bodies, and no change narration; the template
+  enforces this shape and no accumulation-managing machinery exists, because the content is never stored
+  — demonstrable on this steering. (Failure modes absent: a resume blocked by missing context; steering
+  re-growing into a design doc/archive.)
+- **Design lives where the user chose.** For an rn session, the design is found at a path the user
+  agreed at start and named in steering, not inside steering; a session with no design has none and the
+  design gate folds into the plan gate. (Failure mode absent: design content scattered into steering, or
+  an empty `design.md` forced on a session that has none.)
+- **The user is consulted only where judgment is irreplaceable.** The user signs off at plan, design,
+  and evaluation only — not per task — and no change to the agreed plan or design proceeds without
+  reaching the user mid-flight via escalation; per-task quality is still caught by self-check +
+  QA/expert + coordinator review. (Failure modes absent: a surviving per-task user gate; a fourth or
+  missing scheduled gate; escalation collapsed into a gate's exception so a mid-flight change ships
+  unseen.)
+- **The record is honest and consistent.** A user reading `rn/CHANGELOG.md` learns each user-facing
+  change and why it helps; no rn doc contradicts another; `version` stays `0.6.0`. (Failure modes
+  absent: a behavior-preserving refactor listed or a real change missing; a surviving contradictory
+  instruction; an accidental release.)
 
 # Rules
 
@@ -89,9 +99,9 @@ relocated to `design.md`, not read at runtime. See `checks/2.md` (assembled).
 
 **Completion criteria**:
 
-- Each rn skill/reference is pure procedure; every prior behavior, branch, and fallback survives.
-- `design.md` carries the removed intent and is not read at runtime; the runtime prompt surface drops
-  materially with no behavior change.
+- An agent executes any rn skill/reference with no rationale prose present and the workflow behaves as
+  before the rewrite (failure mode absent: a lost rule/branch/fallback); the intent stays recoverable
+  from `design.md`, which is not read at runtime.
 
 ### #3: Completion criteria as two questions + grounds — DONE through QA
 
@@ -101,9 +111,12 @@ forward pass. See `checks/3.md`.
 
 **Completion criteria**:
 
-- The guidance directs the two-questions-with-grounds form plus an objective-vs-result contrast, keeps
-  all three existing constraints, and stays consistent with `task-workflow.md`'s review-bar use.
-- Any applied change keeps the pure-procedure form and is reflected in `design.md`.
+- Completion criteria written under the revised guidance verify objective-achievement, not result
+  (demonstrable on this steering's own criteria), keeping the three prior constraints and staying
+  consistent with `task-workflow.md` (failure mode absent: a criterion met by the artifact merely
+  existing).
+- The trimmed `dn` flow is a single forward pass that still ends clean and never wedges (failure mode
+  absent: a residue tree left dirty, or a suspend that loops).
 
 ### #4: steering is a lean forward contract; design moves to an external design.md — NOT STARTED
 
@@ -135,10 +148,14 @@ content, the heavy content is never stored. See D-redesign in `design.md` (to be
 
 **Completion criteria**:
 
-- `steering-template.md` encodes the 5-section + `Design:` pointer shape with no Decisions section; the
-  earlier `Governs`/collapse/retire machinery is removed from the template and `up/SKILL.md`.
-- `/rn:on` decides and records the `design.md` path with the user; design content lives there, not in
-  steering; `rn/design.md` exists (renamed) with all references updated.
+- A resuming agent finishes the goal from the new `steering.md` plus what it points to, nothing required
+  missing, while steering holds no design rationale, no completed-task bodies, and no change narration;
+  the template enforces the shape and the earlier `Governs`/collapse/retire machinery no longer exists
+  because the content is never stored (failure modes absent: a resume blocked by missing context;
+  steering re-growing into a design doc/archive).
+- A reader finds the session's design at the path steering names — decided with the user at `/rn:on` —
+  not inside steering, and `rn/design.md` exists (renamed) with every reference resolving (failure mode
+  absent: a dangling design reference, or design content left in steering).
 
 ### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6
 
@@ -150,10 +167,10 @@ consistent. The existing `## [Unreleased]` lines (`checks/5.md`) are reconciled 
 
 **Completion criteria**:
 
-- `rn/CHANGELOG.md` has one user-facing line per user-impacting change under `## [Unreleased]`, in user
-  terms; the behavior-preserving #2 rewrite gets no entry.
-- A grep over the rn docs finds no statement contradicting the current docs; `version` in
-  `plugin.json` is `0.6.0`.
+- A user reading `rn/CHANGELOG.md` learns each user-facing change and why it helps, with the
+  behavior-preserving #2 rewrite absent; no rn doc contradicts another; `version` is `0.6.0` (failure
+  modes absent: a refactor listed or a real change missing; a surviving contradiction; an accidental
+  release).
 
 ### #6: Review gates → plan/design/evaluation; escalation as a separate channel — NOT STARTED
 
@@ -183,11 +200,11 @@ distinct always-open channel.
 
 **Completion criteria**:
 
-- `task-workflow.md` has no per-task user-review gate; a task completes via the self-check + QA/expert +
-  coordinator chain and the check-off.
-- Exactly three scheduled user gates exist — plan, design, evaluation — and escalation is specified as a
-  separate always-open channel, not an exception to a gate; the design and evaluation gates each sign
-  off their object before/at the right moment.
+- The user is consulted only at plan, design, and evaluation — not per task — and no change to the
+  agreed plan or design proceeds without reaching the user mid-flight via escalation, a separate
+  always-open channel and not a gate's exception; per-task quality is still caught by self-check +
+  QA/expert + coordinator review (failure modes absent: a surviving per-task user gate; a fourth or
+  missing scheduled gate; escalation collapsed into an exception so a mid-flight change ships unseen).
 
 # State
 
