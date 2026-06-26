@@ -18,6 +18,8 @@ Allocate content by kind, so steering stays a lean forward contract:
 
 A decision lands in a task, in `design.md`, or in a rule. Deliberation and history live in git + the PR — never in steering.
 
+The top `Design:` line points to the session's `design.md`. A session with no design omits this line entirely (no file, no pointer) — copy the rest of the block as-is.
+
 ---
 
 ```markdown

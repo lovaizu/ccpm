@@ -15,8 +15,8 @@ Records resume state and hands off. Does not execute tasks.
    paths that exist on disk, and take the one whose `State` shows `Status: paused`, else the most
    recent.
 
-2. **Check off progress.** In steering.md, check off completed task steps and add any tasks or
-   decisions discovered during the work.
+2. **Check off progress.** In steering.md, check off completed task steps and add any tasks
+   discovered during the work.
 
 3. **Write the `State` section** (fields per `steering-template.md`): `Status: paused`, `Date`,
    `Last completed`, `Next`, `Notes`. Cap `Notes` to a bounded forward pointer — branch/PR, next
