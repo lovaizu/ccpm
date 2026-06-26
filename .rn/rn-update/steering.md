@@ -240,8 +240,27 @@ distinct always-open channel.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-06-26
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Last completed**: #6 deliverable + fixes, through QA round 2 PASS + coordinator review
+  (`5b00aa9`, `de1f835`, ledger `0914228`). #4 likewise done-through-QA (`17e2cfe`/`30f8fc1`/`ace2f07`).
+  #5 CHANGELOG line for #6 added (`88b513d`).
+- **Next**: Finish #5's QA. (1) **Re-run the QA expert (subagent) on the current 4-line
+  `rn/CHANGELOG.md` `[Unreleased]`** — the prior #5 QA only covered the pre-#6 3-line version; the #6
+  line is unreviewed (the QA subagent died on an API ConnectionRefused). Use #5's three completion
+  criteria; record the verdict in `checks/5.md` QA columns + QA Expert Review (currently marked STALE).
+  (2) Then the **consolidated user review on PR #14** — the batched plan/evaluation sign-off the user
+  asked for (per their direction: don't gate per task; review #4 + #6 + #5 together on the PR). DO NOT
+  write any `complete task #` marker for #4/#5/#6 until the user approves on the PR; then check all
+  three off (one marker commit each).
+- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. **User directive in force:**
+  review is batched to the PR (the three scheduled gates), NOT per task — #4 and #6 are
+  done-through-QA with their completion markers deliberately held; #5 is the last task (CHANGELOG +
+  cross-doc consistency). No `complete task #` markers in git yet for #1–#6. #1–#3 were
+  done-through-QA earlier on the branch; under the new #6 gate model they no longer need a per-task
+  user gate — fold their sign-off into the consolidated PR review. Cross-doc consistency already swept
+  clean this session (no old command names outside CHANGELOG; no Decisions/Governs/SHIPPED leftovers
+  in runtime; every "user sign-off" hit is a legitimate one of the three gates). `version` stays
+  `0.6.0` (no release). Pre-existing, out-of-scope: `claude plugin validate rn --strict` fails on
+  `rn/skills/dn/SKILL.md` frontmatter YAML (reproduces without this session's changes) — separate fix.
+  checks/{4,5,6}.md are the coordinator's ledgers (committed with this suspend).
