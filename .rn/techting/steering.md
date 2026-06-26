@@ -233,21 +233,24 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 
 **Steps**:
 
-- [ ] Add a **floor pass** to the process: first inspect the draft for AI tells and remove them,
+- [x] Add a **floor pass** to the process: first inspect the draft for AI tells and remove them,
       before any derivation. Name the floor checklist (padding / throat-clearing, restatement,
       retreat into generalities, flavorless connectives, reflexive bulleting, a wavering voice).
-- [ ] Make the procedure order **explicit**: floor (remove AI tells) → ceiling (derive and add the
+      Done: new step 2 "Clear the floor"; checklist runs to **seven** (hedging added in the fix round).
+- [x] Make the procedure order **explicit**: floor (remove AI tells) → ceiling (derive and add the
       attractive qualities). State that adding ceiling onto an uncleared floor is wasted.
-- [ ] In §output-rules, state **both tiers**: floor (b) = none of the named AI tells; ceiling (a) =
+- [x] In §output-rules, state **both tiers**: floor (b) = none of the named AI tells; ceiling (a) =
       density, concreteness, single load-bearing thread, earned diagrams/lists, consistent voice.
-- [ ] Make the "what was changed and why" report **separate floor fixes from ceiling lifts**, in
+- [x] Make the "what was changed and why" report **separate floor fixes from ceiling lifts**, in
       that order.
-- [ ] Cross-check the result against the revised Goal and acceptance criteria item by item (do not
-      sample); keep the body lean (<2,000 words) and the addressee sentence intact.
-- [ ] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood a draft
-      to confirm the floor is cleared and the report separates floor from ceiling.
-- [ ] self-check (record OK/NG per criterion in `.rn/techting/checks/5.md`)
-- [ ] QA engineer review (subagent)
+- [x] Cross-check the result against the revised Goal and acceptance criteria item by item (do not
+      sample); keep the body lean (<2,000 words) and the addressee sentence intact. Done: 1,900 words.
+- [ ] Re-validate: `claude plugin validate ./techting --strict` and `. --strict` — **done, both
+      pass** (Level A). **Level B dogfood (run the skill on a real draft) NOT yet done** — deferred
+      to the Acceptance-criteria run, since Level B is a goal-level gate, not a step #5 can finish in
+      isolation. This box stays open until that dogfood runs.
+- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/5.md`)
+- [x] QA engineer review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
 - [ ] user review (on the PR)
 
 **Completion criteria**:
@@ -342,24 +345,37 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 
 - **Status**: paused
 - **Date**: 2026-06-26
-- **Last completed**: Re-planned the session under the reframed Goal. Updated the **Goal** to the
-  three-layer model (purpose = human-readable document / quality = floor (b) + ceiling (a) / means =
-  reader-first derivation) (commit `71e8edf`), extended the **acceptance criteria** with the
-  floor/ceiling items (Level A + Level B), added **task #5** (floor layer + floor→ceiling order), and
-  recorded **D-4**. Task **#4** deliverable stands (rebuilt SKILL.md, `9188602`) but is now
-  *necessary-not-sufficient*; its user-review gate is still open.
-- **Next**: Execute **task #5** — add the floor pass (scrub AI tells) and the floor→ceiling order to
-  `techting/skills/up/SKILL.md`, per task-workflow.md. It extends #4's split; it does not rebuild it.
-  #4 and #5 are reviewed **together** on PR #5 (the SKILL.md keeps evolving, so a single final review
-  covers both). After #5, propose running the steering **Acceptance criteria** as the final gate.
+- **Last completed**: Built and verified **task #5's deliverable** (Level A). `techting/skills/up/SKILL.md`
+  now has the **floor pass** (new step 2 — scrub the AI tells before any derivation) and the explicit
+  **floor→ceiling order**; §output-rules states **both tiers**; the "what changed and why" report
+  separates floor fixes from ceiling lifts. Deliverable commits: `b538e7b` (floor pass), `e87496c`
+  (fix round — aligned the floor checklist to the **same seven tells** across procedure / self-check /
+  rules: hedging added; dropped the unexplained (a)/(b) labels; de-duplicated the voice wording),
+  `53a6661` (CHANGELOG notes the human-not-AI floor-then-ceiling behavior). Self-check + QA expert
+  review both **PASS** (QA: one fix round, 1 Medium + 2 Low, all resolved; re-review PASS) — recorded
+  in `.rn/techting/checks/5.md`. Invariants hold: `grep -c '```mermaid'` = 0, body 1,900 words (<2,000),
+  addressee sentence + two-layer split intact, both `claude plugin validate --strict` pass.
+- **Next**: **User review of #4 + #5 on PR #5** (still draft). On approval, write the two completion
+  markers — one check-off commit each: `{type}: complete task #4 — …` and `{type}: complete task #5 — …`
+  (per task-workflow Phase: Complete, one marker per task) — and push. Then **only Level B remains**:
+  run the steering **Acceptance criteria** as the final gate, which is where the **Level B dogfood**
+  happens (run `/techting:up` on a real draft; feed two different reader definitions to confirm
+  voice/axis change; confirm the produced doc clears the floor and its report splits floor→ceiling).
+  After that, on an explicit release instruction, cut 0.1.0 (promote CHANGELOG, tag `techting-v0.1.0`,
+  mark PR ready, merge).
 - **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**).
-  - **Neither #4 nor #5 marker is written yet** — both await the user's review on PR #5. Do not commit
-    `complete task #4` / `complete task #5` until then.
-  - **The category-error defect (D-3) is already fixed in SKILL.md**: no embedded mermaid; body split
-    into `## The procedure` and `## Rules for the produced document` with the addressee sentence.
-    `grep -c '```mermaid'` = 0; both strict validations pass. Task #5 must preserve all of this.
-  - **The floor (b) extends beyond `instruction.md`** (see D-4): it is a session-level scope
-    expansion, so the source for #5 is the revised Goal + criteria + D-4, not the verbatim
-    instruction.
-  - **CHANGELOG**: entry stays under `## [Unreleased]` (no release instruction yet); add a #5 line
-    when its deliverable lands. Promote + tag `techting-v0.1.0` only on an explicit release.
+  - **No completion marker is written for #4 or #5 yet** — both await the user's review on PR #5. Do
+    not commit `complete task #4` / `complete task #5` until the user approves. `.rn/techting/checks/5.md`
+    is committed via this suspend's `wip:` commit, with the QA verdicts already filled in by the
+    coordinator (Self-check + QA columns + Overall = OK / Ready: Yes).
+  - **Level B dogfood is NOT done.** #5 verified the *prompt* (Level A: structure, word count, strict
+    validations, QA of the SKILL.md text) but did **not** run the skill on a real document. The #5
+    "Re-validate" step's dogfood half stays unchecked; Level B is the goal-level gate, run during the
+    Acceptance criteria — do not claim #5 is dogfood-verified.
+  - **The category-error defect (D-3) stays fixed**: no embedded mermaid; `## The procedure` /
+    `## Rules for the produced document` split with the addressee sentence. The #5 edits preserved all
+    of it (re-verified: mermaid=0, both validations pass).
+  - **The floor (b) extends beyond `instruction.md`** (see D-4): the source for the floor is the
+    revised Goal + criteria + D-4, not the verbatim instruction.
+  - **CHANGELOG**: entry stays under `## [Unreleased]` (the floor line landed in `53a6661`); no
+    version bump. Promote + tag `techting-v0.1.0` only on an explicit release instruction.
