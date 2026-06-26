@@ -366,6 +366,33 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 - メインエージェントが利用者役で全フェーズを実走した記録が残っている。
 - 新しい所見が PII なしで記録され、plugin への反映方針が整理されている。
 
+### #12: 改善↔dogfood を「安定するまで」反復する（dogfood 反映方針の適用）
+
+**Purpose**: dogfood で検知した所見（#11 の `dogfood-notes.md` 反映方針）を plugin に**適用**し、再び dogfood して
+**新たな所見が出なくなる＝安定するまで「改善→dogfood」を繰り返す**。dogfood は「直す対象を検知する手段」であり、検知した
+followup を当て→また回す、を収束まで続けるのがこのタスク。ユーザー指示（2026-06-26）：「ドッグフードで検知すること＝その通り。
+安定するまで改善とドッグフードを繰り返して。再開後に作業して」。
+
+**Prerequisites**: #11
+
+**Steps**:
+
+- [ ] 反映方針の **followup 群を plugin に適用**：T1＝テンプレ2本（`02_proposal-design.md` に移行標準作業チェックリスト＋
+      プラットフォーム実態ゲートの空スロット／`03_work-breakdown.md` に「共通＋基盤分岐＋基盤ごと総額」＋役割別突合の空骨格）／
+      T2＝パーツ（`work-detail.common`/`work-detail.branch` ペア新設・`estimate.compare` 注記の長さ予算・ページ総数の組み立て時
+      一括置換を outline に文書化）／SKILL の F1・F4・F5・F7・F9 のエッジケース1–2行追記／outline の F12（title は組み立て fill）・
+      F14。CHANGELOG `[Unreleased]` 追記・`validate hposal --strict`／`validate . --strict` 両方
+- [ ] 反映後に**再び dogfood**（同じ二者構成・main 利用者役・PII なし・架空/一般化案件で可）を phase 1→4 実走し新所見を集める
+- [ ] 「適用→dogfood」を**新所見が出なくなる/軽微に収束＝安定するまで反復**（各周回で `dogfood-notes.md` を更新し、
+      何周で何が収束したかを残す）
+- [ ] self-check → QA engineer review（subagent）→ user review（PR）
+
+**Completion criteria**:
+
+- 反映方針の followup が plugin（SKILL／テンプレ／パーツ／outline）に適用され、`validate --strict`（plugin/marketplace 両方）が通る。
+- 反映後の再 dogfood が実走され、**新所見が安定（出なくなる/軽微のみ）に収束**したことが `dogfood-notes.md` に記録されている。
+- 各周回の所見と反映が PII なしで残る。
+
 # Decisions
 
 ## D-1: 1スキル `up` で4フェーズ全体を駆動する
@@ -494,20 +521,27 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-06-26
 - **Last completed**: task #11 ゼロベース dogfood の**実装・QA まで完了**（user review 前）。★ゲート2点確定（D-10）→旧 dogfood 削除
   （private `ikuko-hp` は生ブリーフ以外削除・公開 `dogfood-notes.md` を `0c5b056` で clear）→二者構成で `/hposal:up` を
   phase 1→4 実走（subagent 起草・main 利用者★レビュー、各フェーズ PASS、実 22pp PDF 産出）→所見 F1–F14＋T1–T3 を新
   `dogfood-notes.md`（PII なし）に記録＋反映方針表（`b6334a3`、T2 精緻化 `6348c89`）。QA＝**PASS**（trivial 1件 fix 済）。
-  検証台帳＝`.rn/hposal-plugin/checks/11.md`。
+  検証台帳＝`.rn/hposal-plugin/checks/11.md`。**本中断時に新方針確定**：dogfood は「直す所を検知する手段」＝検知した followup を
+  当て→また dogfood、を**安定するまで反復する**＝**task #12 として登録**（再開後に着手）。
 - **Next**:
-  1. **task #11 の最終ゲート＝PR #8 で user review**。承認されたら check-off（`complete task #11` マーカー commit、
-     checks/11.md も同 commit でコミット）。
-  2. task #10 も PR #8 上で user review 待ち（実装・QA 完了済み）。#10・#11 まとめてレビュー→承認の流れでよい。
-  3. その後の本体分岐＝(A) PR #8 マージ、または (B) リリース 0.1.0（D-3）。dogfood の followup（反映方針の followup 群＝
-     T1 テンプレ2本・T2 work-detail パーツペア・SKILL の F1/F4/F5・outline F12）を別タスクで起こすかも選択。
+  1. **task #12＝改善↔dogfood を安定まで反復**＝**この再開の主目的**（ユーザー指示）。まず `dogfood-notes.md` の反映方針 followup を
+     plugin に適用（T1 テンプレ2本／T2 パーツ＝work-detail common/branch ペア等／SKILL F1/F4/F5/F7/F9／outline F12/F14）→
+     `validate --strict` 両方→**再 dogfood**（二者構成・main 利用者役・PII なし）→新所見が出なくなる＝安定まで「適用→dogfood」を反復。
+  2. task #10・#11 の最終ゲート＝**PR #8 で user review**（両方 実装・QA 完了済み）。#12 の反復で出た改善も同 PR に乗るので、
+     **レビュー/マージは安定後にまとめて**でよい（承認されたら #10・#11 を `complete task #` マーカーで check-off、checks/*.md も同 commit）。
+  3. その後の本体分岐＝(A) PR #8 マージ、または (B) リリース 0.1.0（D-3）。安定が確認できてからが妥当。
 - **Notes**:
-  - dogfood 反映方針は `dogfood-notes.md` の「反映方針」節に集約。**followup**＝次の plugin タスクで束ねて実施／**minor**＝隣接編集で畳み込む。
-  - dogfood 実走の生成物（01–04・PDF）は public 外の `/Users/kiyo/work/private/ikuko-hp/` に残る（PII 含む・ccpm 作業対象外）。
-  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN）。task #11 の deliverable コミット push 済み（`b6334a3`・`6348c89`）。
+  - **task #12 の出どころ**＝ユーザー指示（2026-06-26 /rn:dn 時）「ドッグフードで検知すること＝その通り。安定するまで改善とドッグ
+    フードを繰り返して。再開後に作業して」。→ #11 は「1周目の dogfood＋反映方針の整理」まで。#12 が「反映を当てて再 dogfood、を収束まで」。
+  - dogfood 反映方針は `dogfood-notes.md` の「反映方針」節に集約。**followup**＝#12 で束ねて適用／**minor**＝隣接編集で畳み込む。
+    優先 followup の芯＝T1（02/03 テンプレのスロット）・T2（work-detail パーツペア）・SKILL F1/F4/F5・outline F12。
+  - 再 dogfood の案件：#11 は実ブリーフ（private `ikuko-hp`）起点だった。#12 の再 dogfood は PII なしの架空/一般化案件でも可
+    （公開リポジトリ前提）。生成物は引き続き private（`/Users/kiyo/work/private/ikuko-hp/` 等・PII 含む・ccpm 対象外）に留める。
+  - `.rn/hposal-plugin/checks/11.md` は本中断コミットで一緒にコミット済み（#11 承認時の check-off マーカーは steering 側の
+    check-off に乗る）。PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN）。#11 deliverable push 済み（`b6334a3`・`6348c89`）。
