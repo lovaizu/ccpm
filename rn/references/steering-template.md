@@ -23,7 +23,7 @@ The top `Design:` line points to the session's `design.md`. A session with no de
 ---
 
 ```markdown
-Design: <path to the session's design.md>
+Design: <path to the session's design.md — omit this whole line if the session has no design>
 
 # Goal
 
