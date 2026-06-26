@@ -1,0 +1,22 @@
+---
+name: ty
+description: Approve the pending rn confirmation — sign off whatever the assistant last asked the user to confirm (a plan, design, or evaluation gate, or a reviewed result) and advance the flow with no revision. Has side effects (continues the workflow) and is user-invoked — run only on explicit /rn:ty.
+disable-model-invocation: true
+---
+
+# /rn:ty — Approve
+
+Approves the pending rn confirmation and advances the flow. Performs no revision.
+
+## Steps
+
+1. **Identify the pending confirmation.** Find the most recent thing the assistant asked the user to sign off — a scheduled gate (plan / design / evaluation) or a reviewed deliverable.
+
+2. **Record it as approved.** Register the pending confirmation as accepted.
+
+3. **Advance the workflow.** Proceed from the approved point:
+   - a plan or design gate passes — execution proceeds to the next task;
+   - an evaluation gate passes — the session can close;
+   - a reviewed item is accepted — it stands as final.
+
+4. **Nothing pending.** If nothing is actually awaiting approval, say so and do nothing else.
