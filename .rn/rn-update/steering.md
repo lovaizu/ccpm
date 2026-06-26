@@ -235,22 +235,8 @@ distinct always-open channel.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
+- **Status**: not suspended
 - **Date**: 2026-06-26
-- **Last completed**: #4 deliverable + both fix rounds, pushed. Commits `17e2cfe` (lean steering +
-  design-template + design.md rewrite) and `30f8fc1` (two QA fixes: dn Step 2 adds tasks only;
-  no-design omits the `Design:` line). Self-check + QA round 1 (PASS, both criteria) recorded in
-  `checks/4.md`.
-- **Next**: Finish #4's verify step. (1) Re-run the QA expert (subagent) on just the two fixes in
-  `30f8fc1` — dn Step 2 wording and the no-design `Design:`-line omission — to close round 2; record
-  the verdict in `checks/4.md` QA columns. (2) Then user review on PR #14 (the task gate, on the PR
-  per push-and-review rule) — DO NOT mark #4 complete or write the `complete task #4` marker until the
-  user approves. After #4: #6 (move review gates to plan/design/evaluation + escalation channel), then
-  #5 (CHANGELOG + cross-doc consistency).
-- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. No `complete task #` markers
-  in git yet (none of #1–#6 formally checked off). #1–#3 done-through-QA on the branch, re-verify under
-  the new gates when #6 lands. checks/4.md is the coordinator's ledger (committed with this suspend).
-  Pre-existing, out-of-scope: `claude plugin validate rn --strict` fails on `rn/skills/dn/SKILL.md`
-  frontmatter YAML (reproduces without #4's changes) — flag for a separate fix, not part of #4. The
-  CHANGELOG `[Unreleased]` line was updated in `17e2cfe` to drop the removed-machinery description;
-  #5 still owns final CHANGELOG reconciliation across #3/#4/#6.
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
