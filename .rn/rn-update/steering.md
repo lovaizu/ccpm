@@ -139,31 +139,32 @@ stored, not pruned. See `rn/docs/design.md`.
 
 **Steps**:
 
-- [ ] In `rn/references/steering-template.md`, reduce the template to Goal, Acceptance criteria, Rules,
+- [x] In `rn/references/steering-template.md`, reduce the template to Goal, Acceptance criteria, Rules,
       Tasks, State + a top `Design:` pointer line; **remove the Decisions section** and its 5-field
       format; **add the doc-division working rule** (requirements/criteria → steering, structure →
       `design.md`, UX → README); state that a decision lands in a task / `design.md` / a rule, and
       deliberation lives in git + the PR.
-- [ ] Remove the earlier non-accumulation machinery: the `Governs` field and live-working-set/
+- [x] Remove the earlier non-accumulation machinery: the `Governs` field and live-working-set/
       SHIPPED-collapse notes in `steering-template.md`, and the decision-retirement + task-collapse
       steps added to `rn/skills/up/SKILL.md` Step 6. `/rn:up` no longer manages accumulation — the
       content isn't there to manage.
-- [ ] Add `rn/references/design-template.md` (new): five sections — **Context & constraints** /
+- [x] Add `rn/references/design-template.md` (new): five sections — **Context & constraints** /
       **Approach** (decisions + rejected alternative) / **Structure** (actors + wiring, with a diagram)
       / **Flow** / **Open questions**. No preamble guard — each section's form (why-less tables, a
       numbered sequence) forecloses per-step memos structurally.
-- [ ] In `rn/skills/on/SKILL.md`: alongside the slug, decide the session's `design.md` location
+- [x] In `rn/skills/on/SKILL.md`: alongside the slug, decide the session's `design.md` location
       (default `.rn/{slug}/design.md`, lowercase) and write it into the `Design:` line; read the
       doc-division rule + `design-template` and allocate content at planning; drop `Decisions` from
       Step 3's placeholder line; force no empty `design.md` on a session that has none (its design gate
       folds into the plan gate).
-- [ ] Keep the `dn` State→Notes forward-pointer cap (the one part of the earlier work that survives).
+- [x] Keep the `dn` State→Notes forward-pointer cap (the one part of the earlier work that survives).
 - [x] Relocate the plugin design doc to `rn/docs/design.md` (done — lowercase, under `docs/`).
-- [ ] Rewrite `rn/docs/design.md` as a conforming instance of `design-template` (whole-structure),
+- [x] Rewrite `rn/docs/design.md` as a conforming instance of `design-template` (whole-structure),
       dropping all per-step memos — including the `up`/`task-workflow` memos that describe the
       now-removed retire/collapse machinery; runtime files stay pure procedure.
 - [ ] self-check (`checks/4.md`) + QA expert review (subagent) + grep cross-doc consistency (no stray
-      `Decisions` / per-task `user review` / retire-collapse references).
+      `Decisions` / per-task `user review` / retire-collapse references). — self-check done; QA round 1
+      PASS (`17e2cfe`), two minor fixes in `30f8fc1`; **re-QA of the fixes + user review still pending**.
 
 **Completion criteria**:
 
@@ -234,8 +235,22 @@ distinct always-open channel.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet recorded as a `D-N`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-06-26
+- **Last completed**: #4 deliverable + both fix rounds, pushed. Commits `17e2cfe` (lean steering +
+  design-template + design.md rewrite) and `30f8fc1` (two QA fixes: dn Step 2 adds tasks only;
+  no-design omits the `Design:` line). Self-check + QA round 1 (PASS, both criteria) recorded in
+  `checks/4.md`.
+- **Next**: Finish #4's verify step. (1) Re-run the QA expert (subagent) on just the two fixes in
+  `30f8fc1` — dn Step 2 wording and the no-design `Design:`-line omission — to close round 2; record
+  the verdict in `checks/4.md` QA columns. (2) Then user review on PR #14 (the task gate, on the PR
+  per push-and-review rule) — DO NOT mark #4 complete or write the `complete task #4` marker until the
+  user approves. After #4: #6 (move review gates to plan/design/evaluation + escalation channel), then
+  #5 (CHANGELOG + cross-doc consistency).
+- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. No `complete task #` markers
+  in git yet (none of #1–#6 formally checked off). #1–#3 done-through-QA on the branch, re-verify under
+  the new gates when #6 lands. checks/4.md is the coordinator's ledger (committed with this suspend).
+  Pre-existing, out-of-scope: `claude plugin validate rn --strict` fails on `rn/skills/dn/SKILL.md`
+  frontmatter YAML (reproduces without #4's changes) — flag for a separate fix, not part of #4. The
+  CHANGELOG `[Unreleased]` line was updated in `17e2cfe` to drop the removed-machinery description;
+  #5 still owns final CHANGELOG reconciliation across #3/#4/#6.
