@@ -269,17 +269,21 @@ consistent after all edits.
 
 **Steps**:
 
-- [ ] Create `## [Unreleased]` at the top of `rn/CHANGELOG.md` with one user-facing `Changed` line per
-      shipped change (dn residue handling; pure-procedure rewrite; any #3 change; steering
-      non-accumulation from #4)
+- [ ] Create `## [Unreleased]` at the top of `rn/CHANGELOG.md`, one user-facing line per user-impacting
+      change: dn residue/clean-tree (#1, `Fixed`); completion criteria as two questions + grounds (#3,
+      `Changed`); steering non-accumulation (#4 — retire shipped decisions, collapse shipped tasks, cap
+      Notes; `Changed`). The #2 pure-procedure rewrite gets NO entry — it is behavior-preserving and
+      invisible to a user (plugin.md: refactors are not changelog-worthy)
 - [ ] Grep the rn docs for stale/contradictory wording; confirm none contradicts the current docs
 - [ ] Confirm `version` in `plugin.json` is still `0.6.0`
 - [ ] self-check + QA expert review + user review
 
 **Completion criteria**:
 
-- `rn/CHANGELOG.md` has an `## [Unreleased]` section carrying one user-facing line per shipped change,
-  in user terms (objective: a user reading the changelog learns what changed and why it helps).
+- `rn/CHANGELOG.md` has an `## [Unreleased]` section carrying one user-facing line per user-impacting
+  change, in user terms (objective: a user reading the changelog learns what changed and why it helps;
+  representative failure mode: a behavior-preserving refactor like the #2 proceduralization is listed,
+  or a user-visible change is missing). A behavior-preserving refactor is excluded per plugin.md.
 - A grep over the rn docs finds no surviving statement that contradicts the current docs
   (representative failure mode: leftover stale instruction).
 - `version` in `rn/.claude-plugin/plugin.json` is `0.6.0` — unchanged (representative failure mode:
