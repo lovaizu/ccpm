@@ -49,10 +49,14 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
   enforces this shape and no accumulation-managing machinery exists, because the content is never stored
   — demonstrable on this steering. (Failure modes absent: a resume blocked by missing context; steering
   re-growing into a design doc/archive.)
-- **Design lives where the user chose.** For an rn session, the design is found at a path the user
-  agreed at start and named in steering, not inside steering; a session with no design has none and the
-  design gate folds into the plan gate. (Failure mode absent: design content scattered into steering, or
-  an empty `design.md` forced on a session that has none.)
+- **Design lives where the user chose, in whole-structure form.** For an rn session, the design is found
+  at a path the user agreed at start and named in steering, not inside steering, and is a whole-structure
+  doc — decisions and how the parts fit, produced from a design template, not per-step rationale. The
+  doc-division (requirements/criteria → steering, structure → `design.md`, UX → README) lives in
+  `steering-template` and `/rn:on` applies it at planning; a session with no design has none and the
+  design gate folds into the plan gate. (Failure modes absent: design content scattered into steering; an
+  empty `design.md` forced on a session that has none; per-step memos returning; the doc-division
+  contradicting across `on` / `steering-template` / README.)
 - **The user is consulted only where judgment is irreplaceable.** The user signs off at plan, design,
   and evaluation only — not per task — and no change to the agreed plan or design proceeds without
   reaching the user mid-flight via escalation; per-task quality is still caught by self-check +
@@ -95,7 +99,8 @@ deleting user-authored files. See `checks/1.md`.
 ### #2: Proceduralize all rn prompts; move intent to design.md — DONE through QA
 
 **Purpose**: Every rn skill/reference is pure numbered procedure with behavior preserved; the "why" is
-relocated to `design.md`, not read at runtime. See `checks/2.md` (assembled).
+relocated to `design.md` (whole-structure form per #4 / `design-template`, not per-step memos), not read
+at runtime. See `checks/2.md` (assembled).
 
 **Completion criteria**:
 
@@ -118,13 +123,17 @@ forward pass. See `checks/3.md`.
 - The trimmed `dn` flow is a single forward pass that still ends clean and never wedges (failure mode
   absent: a residue tree left dirty, or a suspend that loops).
 
-### #4: steering is a lean forward contract; design moves to an external design.md — NOT STARTED
+### #4: steering is a lean forward contract; design becomes a whole-structure doc from a template — NOT STARTED
 
 **Purpose**: Make `steering.md` carry only what a resuming agent needs — Goal, Acceptance criteria,
-Rules, remaining Tasks, State, and a one-line `design.md` pointer — with all design intent in an
-external `design.md` whose location `/rn:on` decides with the user. This **replaces** the earlier
-non-accumulation approach (Governs / SHIPPED-collapse / retire-on-ship): instead of machinery to prune
-content, the heavy content is never stored. See D-redesign in `design.md` (to be written).
+Rules, remaining Tasks, State, and a one-line `design.md` pointer — with design intent in an external
+`design.md` whose location `/rn:on` decides with the user. Introduce a **design-doc template** so every
+`design.md` is a *whole-structure* doc (context/constraints → approach → actors + structure → flow →
+open questions) — decisions and how the parts fit, never per-step rationale. The **doc-division** rule
+(requirements/criteria → `steering`, structure → `design.md`, UX → `README`) lives in
+`steering-template` and `/rn:on` applies it when allocating content at planning. This **replaces** the
+earlier non-accumulation approach (Governs / SHIPPED-collapse / retire-on-ship): heavy content is never
+stored, not pruned. See `rn/docs/design.md`.
 
 **Prerequisites**: #2 (lands on the pure-procedure base)
 
@@ -132,20 +141,29 @@ content, the heavy content is never stored. See D-redesign in `design.md` (to be
 
 - [ ] In `rn/references/steering-template.md`, reduce the template to Goal, Acceptance criteria, Rules,
       Tasks, State + a top `Design:` pointer line; **remove the Decisions section** and its 5-field
-      format; state that a decision lands in a task / `design.md` / a rule, and deliberation lives in
-      git + the PR.
+      format; **add the doc-division working rule** (requirements/criteria → steering, structure →
+      `design.md`, UX → README); state that a decision lands in a task / `design.md` / a rule, and
+      deliberation lives in git + the PR.
 - [ ] Remove the earlier non-accumulation machinery: the `Governs` field and live-working-set/
       SHIPPED-collapse notes in `steering-template.md`, and the decision-retirement + task-collapse
       steps added to `rn/skills/up/SKILL.md` Step 6. `/rn:up` no longer manages accumulation — the
       content isn't there to manage.
-- [ ] In `rn/skills/on/SKILL.md`, add a step (alongside the slug decision) to decide the session's
-      `design.md` location with the user — propose a default `.rn/{slug}/design.md` (lowercase) and
-      write the confirmed path into `steering.md`'s `Design:` line.
+- [ ] Add `rn/references/design-template.md` (new): five sections — **Context & constraints** /
+      **Approach** (decisions + rejected alternative) / **Structure** (actors + wiring, with a diagram)
+      / **Flow** / **Open questions**. No preamble guard — each section's form (why-less tables, a
+      numbered sequence) forecloses per-step memos structurally.
+- [ ] In `rn/skills/on/SKILL.md`: alongside the slug, decide the session's `design.md` location
+      (default `.rn/{slug}/design.md`, lowercase) and write it into the `Design:` line; read the
+      doc-division rule + `design-template` and allocate content at planning; drop `Decisions` from
+      Step 3's placeholder line; force no empty `design.md` on a session that has none (its design gate
+      folds into the plan gate).
 - [ ] Keep the `dn` State→Notes forward-pointer cap (the one part of the earlier work that survives).
 - [x] Relocate the plugin design doc to `rn/docs/design.md` (done — lowercase, under `docs/`).
-- [ ] Record the redesign intent in `rn/docs/design.md` and remove the now-obsolete notes (the
-      non-accumulation levers); runtime files stay pure procedure.
-- [ ] self-check (`checks/4.md`) + QA expert review (subagent).
+- [ ] Rewrite `rn/docs/design.md` as a conforming instance of `design-template` (whole-structure),
+      dropping all per-step memos — including the `up`/`task-workflow` memos that describe the
+      now-removed retire/collapse machinery; runtime files stay pure procedure.
+- [ ] self-check (`checks/4.md`) + QA expert review (subagent) + grep cross-doc consistency (no stray
+      `Decisions` / per-task `user review` / retire-collapse references).
 
 **Completion criteria**:
 
@@ -154,9 +172,12 @@ content, the heavy content is never stored. See D-redesign in `design.md` (to be
   the template enforces the shape and the earlier `Governs`/collapse/retire machinery no longer exists
   because the content is never stored (failure modes absent: a resume blocked by missing context;
   steering re-growing into a design doc/archive).
-- A reader finds the session's design at the path steering names — decided with the user at `/rn:on` —
-  not inside steering, and the plugin design doc lives at `rn/docs/design.md` with every reference
-  resolving (failure mode absent: a dangling design reference, or design content left in steering).
+- The session's design is found at the path steering names — decided with the user at `/rn:on` — not
+  inside steering, and is a whole-structure doc produced from `design-template` (decisions + how the
+  parts fit, no per-step rationale); `rn/docs/design.md` is a conforming instance with every reference
+  resolving, and the doc-division rule lives in `steering-template` with `/rn:on` applying it (failure
+  modes absent: a dangling or empty design reference; per-step memos returning; design content left in
+  steering; the doc-division contradicting across `on` / `steering-template` / README).
 
 ### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6
 
@@ -213,30 +234,9 @@ distinct always-open channel.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-06-26
-- **Last completed**: Plan rewritten to the lean B-thread design (3 gates + escalation, lean steering,
-  external design.md) and criteria recast to objective-achievement form; plugin design doc relocated to
-  `rn/docs/design.md`. No task implemented this session (#1–#3 are done-through-QA on the branch from
-  earlier work; #4/#6 not started).
-- **Next**: Before implementing #4, re-examine what `design.md` should be — the user judges the current
-  `rn/docs/design.md` (per-step "why" memos) is NOT a design doc. See the open direction in Notes,
-  then revise #4 (and #2's design.md relocation) before proceeding.
-- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. No `complete task #` markers
-  in git yet.
-
-  OPEN DIRECTION — user, 2026-06-26, "review after resume": `rn/docs/design.md`'s current form is
-  wrong.
-  - It is per-step "why?" memos → becomes noise, drifts out of sync, fossilizes; step-by-step rationale
-    is far too fine-grained to be tenable.
-  - A design doc should reveal the **whole structure**: requirements + assumptions/constraints →
-    approach (solution policy) → overall flow → actors (登場人物) → the overall structure that ties them.
-  - The **README's guide is the UX** — that role is already covered there.
-  - Implementation *within* that framework is optimized locally per piece and need **not** be recorded
-    or kept.
-  - Hypothesis: the large memo pile exists *because* there is no big-picture; a whole-structure design
-    removes the need to justify each step.
-  → On resume: redefine `design.md` as a real design doc (requirements/constraints → approach → flow →
-    actors → structure), with README as UX; drop the per-step rationale approach. This also reshapes #2
-    (which relocated per-step intent into design.md) and #4 (which records redesign intent there). Then
-    proceed with #4 (lean steering) and #6 (gates).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred
+  paths, open questions; not a re-narration of the session (that lives in `git log`)
