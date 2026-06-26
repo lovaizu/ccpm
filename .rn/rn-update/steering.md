@@ -279,11 +279,12 @@ pending confirmation point.
 
 **Steps**:
 
-- [ ] Add `rn/skills/gm/SKILL.md`: frontmatter (`name: gm`, one-line `description`); procedure — argument
+- [x] Add `rn/skills/gm/SKILL.md`: frontmatter (`name: gm`, one-line `description`); procedure — argument
       present → treat it as the feedback and act on it; argument absent → run `pr-feedback-workflow.md`
       against the current PR's review comments.
-- [ ] Confirm the skill resolves as `/rn:gm` (plugin skill namespace = `rn`).
-- [ ] self-check (`checks/7.md`) + QA expert review (subagent) + grep cross-doc consistency.
+- [x] Confirm the skill resolves as `/rn:gm` (plugin skill namespace = `rn`). — frontmatter matches `on`/`dn`; YAML clean.
+- [x] self-check (`checks/7.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
+      OK; QA PASS, two minor edge guards (blank-arg trim, cold-run fallback) added in `0e88ea8`.
 
 **Completion criteria**:
 
