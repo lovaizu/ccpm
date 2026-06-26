@@ -30,6 +30,9 @@ The user signs off at exactly **three** scheduled gates, never per task:
   plan gate when the design is settled at plan time; a separate stop before heavy build otherwise).
 - **Evaluation gate** — the end-of-session run of the `steering.md` Acceptance criteria.
 
+All three gates resolve through the user's verdict commands — `/rn:ty` (approve) or `/rn:gm` (revise);
+the assistant never records a verdict the user did not issue.
+
 The per-task boundary is **not** a user gate. Per-task quality is caught by self-check + QA/expert
 review + the coordinator's independent review. Mid-flight, **Escalation** (Verify, Triage) is a
 separate always-open channel — not a gate.
@@ -145,7 +148,8 @@ independent review), the coordinator checks the task off directly.
    exact substring regardless of the prefix.
 3. **Advance.** Begin the next unchecked task immediately at Phase: Execute. If all tasks are done, run
    the **evaluation gate**: propose running the `steering.md` Acceptance criteria and get the user's
-   sign-off on the result — do not close the session without it.
+   sign-off on the result, taken via `/rn:ty` (approve) or `/rn:gm` (revise) — do not close the session
+   without it.
 
 ## Check file format
 

@@ -35,6 +35,7 @@ Treat every user interaction as a proposal: lead with one concrete recommended o
    - Report the PR link and a one-line task list, and ask the user to review the plan on the PR.
    - **Design gate.** A sign-off on the approach / key decisions before any task builds on them. When the design is settled at plan time, fold it into this plan-gate approval (one stop). When it is not — the design needs separate work before heavy build — get a separate user sign-off on `design.md` before that build begins.
    - If push or PR creation fails, report it and fall back to presenting the plan in the console.
+   - **Take the sign-off via the user's verdict commands** — both the plan-gate approval and the design-gate sign-off come through `/rn:ty` (approve → proceed) or `/rn:gm` (revise → address and re-present); never infer approval and never record a verdict the user did not issue.
    - **CRITICAL: DO NOT proceed without explicit user approval.**
 
 6. **Begin task #1.** After approval, read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute task #1 following it.
