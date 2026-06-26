@@ -1,0 +1,43 @@
+<!-- ╔═ PART: screen.service-cta ═╗ 第2層・何をするか｜画面モック：サービス紹介＋予約/問い合わせ CTA。
+     #11：10ページ規模・個人事業・toC（カウンセリング等）向けの素直な型＝ヒーロー＋要点＋CTAボタン。
+     絞り込み検索が過剰な小規模サイトで使う。既存クラス流用（CSS は不変）。 -->
+<section class="slide scr">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Screen &mdash; {{画面名}}</div>
+  <div class="ttl">{{画面の名前 例: サービス紹介＋ご予約}}</div>
+  <div class="lead">{{この画面で実現する価値の一文 例: 何のサービスかが一目で伝わり、迷わず予約・問い合わせに進める}}</div>
+  <div class="imgnote">下の画面は<b>使い勝手をご説明するためのイメージ</b>です。実際のデザインは異なります。</div>
+  <div class="body">
+    <div class="screen">
+      <div class="scbar"><span class="d"></span><span class="d"></span><span class="d"></span><span class="url">{{example.com / service}}</span>
+        <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
+      <div class="topnav">
+        <span class="logo">{{ロゴ}}</span>
+        <span class="n">{{ナビ}}</span><span class="n active">{{現在地}}</span><span class="n new">{{新設 例: ご予約}}</span><span class="n">{{ナビ}}</span>
+      </div>
+      <!-- ヒーロー：価値の一言＋CTA。背景はブランドグラデを流用 -->
+      <div style="background:linear-gradient(135deg,#0e3a59,#1d6a9c 60%,#2a8fcc);color:#fff;padding:6mm 7mm;display:flex;align-items:center;gap:6mm">
+        <div style="flex:1">
+          <div style="font-size:13pt;font-weight:900;line-height:1.35">{{ヒーロー見出し 例: あなたに合う◯◯を、無理なく}}</div>
+          <div style="font-size:8.6pt;color:#cfe7f6;margin-top:2mm;line-height:1.6">{{ヒーロー補足の一文}}</div>
+          <span class="smp" style="margin-top:3mm;display:inline-block;font-size:9.6pt;padding:1.6mm 5mm">{{CTA 例: まずは無料相談を予約する}}</span>
+        </div>
+        <div style="flex:0 0 38mm;height:24mm;background:rgba(255,255,255,.18);border:1px dashed rgba(255,255,255,.5);border-radius:1.6mm;display:flex;align-items:center;justify-content:center;font-size:7.6pt;color:#eaf6ff">{{写真／イメージ}}</div>
+      </div>
+      <div class="main2" style="padding:3mm 3.6mm">
+        <div class="rhd">{{サービスの要点見出し 例: ご提供できること}}</div>
+        <div class="flow4" style="margin-top:1mm">
+          <div class="f4"><span class="n">1</span><div class="t">{{要点①}}</div><div class="d">{{一言説明}}</div></div>
+          <div class="f4"><span class="n">2</span><div class="t">{{要点②}}</div><div class="d">{{一言説明}}</div></div>
+          <div class="f4"><span class="n">3</span><div class="t">{{要点③}}</div><div class="d">{{一言説明}}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="vrow" style="margin-top:auto">
+      <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値 例: 何を頼めるか・いくらかが分かり、すぐ予約できる}}</div></div>
+      <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値 例: 問い合わせの質が上がり、対応がラクになる}}</div></div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>

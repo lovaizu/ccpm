@@ -1,0 +1,31 @@
+<!-- ╔═ PART: estimate.total ═╗ お見積｜総額1点（請負・スコープ固定向け）。
+     ⚠️ 内部の値（単価・人日・%）は出さない。提示額は03の積み上げ基準（★で丸め確定があればその額）。
+     レンジで出すなら estimate.range、複数基盤をフラット併記するなら estimate.compare を使う。 -->
+<section class="slide" id="estimate">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Estimate</div>
+  <div class="ttl">お見積もり</div>
+  <div class="body">
+    <div class="est">
+      <div class="price">
+        <div class="cap">お見積総額（税込）</div>
+        <div class="big">¥{{税込総額}}</div>
+        <div class="tax">税抜 ¥{{税抜}}<br>消費税 ¥{{消費税}}</div>
+        <div class="meta"><b>想定期間</b>：約{{期間}}<br><b>見積有効期限</b>：{{有効期限}}<br><b>公開後</b>：{{見守りの扱い}}</div>
+      </div>
+      <div class="incl">
+        <h4>このご予算で想定するスコープ</h4>
+        <ul class="chk">
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+          <li>{{スコープ項目}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:auto"><b>{{調整方針 例: 予算と公開時期を優先し、範囲は優先度に応じて調整}}</b>します。金額には<b>進行管理の費用を含みます</b>。作業の内容は<b>巻末「作業明細（案）」</b>をご覧ください。</div>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>

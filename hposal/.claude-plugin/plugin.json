@@ -1,0 +1,6 @@
+{
+  "name": "hposal",
+  "description": "Build estimates and client proposals for corporate-site (HP) renewals — a four-phase workflow from requirements to a deliverable proposal, with a human review gate at each phase.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}
