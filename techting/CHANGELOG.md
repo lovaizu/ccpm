@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/techting:up` brushes a technical document up by deriving its voice, diagrams, and outline from
   who reads it — primarily revising an existing draft and handing it back with a note of what changed
   and why, so each edit traces to the reader rather than to taste.
-- It first clears the floor — scrubbing the AI tells (padding, restatement, vague generalities,
-  flavorless connectives, reflexive bullets, hedging) — then reaches for the ceiling with the
-  qualities that make writing land, so the draft reads as written by a person, not an AI.
+- Rather than editing the draft in place, it rebuilds the document fresh from the input's intent
+  through an ordered writing procedure, so the AI tells (padding, restatement, vague generalities,
+  flavorless connectives, reflexive bullets, wavering voice, hedging) never take hold — a final pass
+  nets any stragglers — and the result reads as written by a person, not an AI.

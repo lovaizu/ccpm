@@ -1,122 +1,105 @@
 ---
 name: up
-description: This skill should be used when brushing up, revising, polishing, or de-AI-ifying a technical document so it reads as if a person wrote it — an article/explanation, guide/procedure, reference, record/ADR, or evaluation/survey. It fires on requests like "brush this up", "make this not read like AI", "revise this doc", "polish this README/ADR", and it fires for Claude itself while drafting or revising such a document. It defines the reader first, then removes AI tells, then raises density and structure, returning the revised document plus a what-changed note.
+description: This skill should be used when brushing up, revising, polishing, or de-AI-ifying a technical document so it reads as if a person wrote it — an article/explanation, guide/procedure, reference, record/ADR, or evaluation/survey. It fires on requests like "brush this up", "make this not read like AI", "revise this doc", "polish this README/ADR", and it fires for Claude itself while drafting or revising such a document. It takes only the input's intent, defines the reader, and builds the document fresh through an ordered writing procedure so the AI tells never take hold, returning the rebuilt document plus a what-changed note.
 version: 0.1.0
 ---
 
 # Brush a technical document up
 
-Input: a draft (or, with no draft, the topic to author). Output: the revised document plus a what-changed note. Run the procedure below in order. Each step has a gate; do not start a step until the prior step's artifact exists and its gate passes.
+Input: a draft to revise, or a topic to author. Output: the rebuilt document plus a what-changed note.
 
-This file has two layers, kept apart:
+Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must get across; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
 
-- **The procedure** (next section) — operations to execute now, while this skill is active.
-- **Output rules** (last section) — constraints on the document being handed back.
+Two layers, kept apart:
 
-Execute the procedure. Hold the produced document to the output rules.
+- **The procedure** (next) — what to do now, while this skill runs.
+- **Reference** (last section) — the outlines, voice, forms, and AI-tell list the steps draw on, and the bar the produced document must clear. The steps point to it by name.
 
 ## The procedure
 
-Order: **reader → floor → axis → voice → restructure → self-check → deliver.**
+Order: **understand → reader → outline → fill → story-check → voice & form → write → brush up → clear the floor → self-check & deliver.**
 
-### 1. Define the reader
+### 1. Understand the input
 
-Write these three lines:
+Say, in your own words: what the document is about, and the one thing it must convey (伝えたいこと). For an existing draft, read for intent — you will not reuse its sentences.
 
-- WHO reads this document.
-- WHAT they must decide or do after reading.
-- HOW they read — straight through, or looking up one part.
+Emit: `Subject: … / Must convey: …`
 
-Gate: if any line cannot be answered from the draft, stop and ask the user. If no user is reachable (headless / model-invoked run), infer each line from the draft and prepend one line to the output: `Assumed reader: <who> / <what> / <how>`. Never leave a line blank; never guess silently.
+### 2. Define the reader and the purpose
 
-### 2. Clear the floor
+Write three lines: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do once they have read it.
 
-Read **every sentence** of the draft against the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells) (output rules). Produce this table — one row per tell, all seven present:
+Gate: if a line cannot be answered from the input, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>` to the output. Never leave a line blank.
 
-```
-| Tell | Found? | Quote from draft | Fix applied |
-```
+### 3. Build the outline from the purpose
 
-Rules for the table: every one of the seven tells gets a row. `Found? = no` means the draft was read for that tell and it is absent (quote column: `—`). `Found? = yes` requires a verbatim quote and the concrete fix. A tell may not be marked `no` without having read for it.
+Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. One axis only — route off-axis material to its own document.
 
-Gate: all seven rows present; every `yes` row has a quote and a fix. Apply every fix to the draft before step 3.
+Emit: the outline headings, specialized to this content.
 
-### 3. Pick one axis
+### 4. Fill the outline with what you want to convey
 
-Match the reader (step 1) to exactly one of the five axes in [The five axes](#the-five-axes) (output rules). Write: `Axis: <name> — because the reader <quote the relevant part of step 1>`.
+Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. This is content, not prose yet. A heading with nothing concrete to hold gets cut.
 
-Gate: exactly one axis named, justified by the step-1 reader. Mixing axes is forbidden; route any out-of-axis material to a separate document and note it.
+### 5. Read it as the reader; check the story
 
-### 4. Set voice and closing
+Become the reader from step 2 and read the filled outline top to bottom. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move.
 
-Derive voice and closing from the reader, using [Voice by reader](#voice-by-reader) (output rules) as a starting table, not a fixed answer. Write: `Voice: <one phrase>. Closing: <one phrase>.`
+Gate: a reader reaches the purpose reading straight down.
 
-Gate: both named, consistent with the step-1 reader.
+### 6. Decide voice and form from purpose and story
 
-### 5. Restructure and lift the ceiling
+With the story standing, choose:
 
-Reorder the floor-cleared draft to the step-3 axis outline. Then apply the ceiling (defined in [The two tiers](#the-two-tiers), output rules): conclusion first, density and concreteness (names / numbers / examples), one load-bearing thread, earned diagrams and lists, one voice. Render structure and flow as mermaid per the output rules.
+- **Voice and closing** — Reference → [voice by reader](#voice-by-reader), as a start, not a verdict.
+- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)). Pick each for the reader's speed. Choosing form deliberately here is what stops lists from breeding and keeps a diagram where structure belongs.
 
-Artifact: the revised document.
+Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
-Gate: the document follows the step-3 outline and obeys every output rule.
+### 7. Write it out
 
-### 6. Self-check
+Render the outline into the document in the chosen voice and forms. Lead each part with its point. Render structure and flow as mermaid wherever step 6 chose a diagram.
 
-Mark each line PASS or FAIL. Any FAIL → fix and re-run this step. Ship only when all PASS.
+### 8. Brush up to the ceiling
 
-- [ ] Floor — every tell in the step-2 table is `no`, or its `yes` row shows a fix now applied.
-- [ ] Order — floor was cleared (step 2) before axis / voice / restructure.
-- [ ] Single axis — the document holds the one step-3 axis, no mixing.
-- [ ] Reader fit — voice, closing, diagrams, outline match step 1.
-- [ ] Assumed-reader line — present at top iff the reader was inferred (step 1).
-- [ ] Headings — reading headings top to bottom carries the argument.
-- [ ] Mermaid — structure and flow are mermaid; no diagram/prose duplication.
-- [ ] Honesty — fact separable from hypothesis; unverified marked `[unverified]`.
+Raise what makes it worth reading (Reference → [the two tiers](#the-two-tiers), ceiling): density and concreteness, one load-bearing thread with the conclusion first, headings that carry the argument read alone, one voice held throughout.
 
-### 7. Deliver
+### 9. Clear the floor (the net)
 
-Hand back two things:
+Read the finished document once against the seven AI tells (Reference → [floor checklist](#floor-checklist-the-seven-ai-tells)). For each tell present, name it, quote the line, apply the fix. Most should be absent — the procedure kept them out; this catches the stragglers.
 
-1. The revised document.
-2. The **what-changed note**, in this order:
-   - **Floor fixes** — the step-2 table (its `yes` rows).
-   - **Ceiling lifts** — a list of step-5 changes, each tied to the reader (step 1) or a named output rule.
+### 10. Self-check and deliver
+
+Mark each PASS or FAIL; any FAIL, fix and re-check. Ship only when all PASS.
+
+- [ ] Single axis (step 3), no mixing.
+- [ ] A reader reaches the purpose reading top to bottom (step 5).
+- [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
+- [ ] None of the seven tells remain (step 9).
+- [ ] Headings alone carry the argument.
+- [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
+- [ ] Fact separable from hypothesis; the unverified marked `[unverified]`.
+
+Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then a short line on any AI tells step 9 caught.
 
 ---
 
-## Output rules
+## Reference
 
-**These rules govern the document this skill produces — not this SKILL.md prompt.** The step-6 self-check tests them against the produced document.
+**These rules govern the document this skill produces — not this SKILL.md prompt.** The step-10 self-check tests them against the produced document.
 
 ### The two tiers
 
-- **Floor** — the produced document contains none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Any one present reads as machine-written.
-- **Ceiling** — density and concreteness (names, numbers, examples; cut noise); a single load-bearing thread, conclusion first, headings alone carrying the argument; diagrams and lists only where each beats prose; one consistent voice.
+What "good" means, in two tiers the procedure builds toward.
+
+- **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
+- **Ceiling (attractive)** — density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread, conclusion first, headings carrying the argument alone; figures and lists only where each beats prose; one consistent voice.
 
 Throughout: Markdown; mark the unverified `[unverified]` and do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
-### Floor checklist (the seven AI tells)
-
-| # | Tell | Spot it | Fix |
-|---|---|---|---|
-| 1 | Padding / throat-clearing | Opener announces intent instead of stating the point | Cut it; lead with the finding |
-| 2 | Restatement | The same thing said twice in different words | Keep one |
-| 3 | Retreat into generalities | A vague claim where a name, number, or example belongs | Make it concrete, or cut |
-| 4 | Flavorless connectives | "moreover" / "furthermore" / "in addition" with no real link | Remove, or write the real join |
-| 5 | Reflexive bulleting | A list whose items are not genuinely parallel | Write it as prose |
-| 6 | Wavering voice | Register or stance drifts mid-document | Hold one voice |
-| 7 | Hedging | "it is thought that" / "generally" / non-committal qualifiers | Assert with evidence, or mark `[unverified]` |
-
-### Render structure and flow as mermaid
-
-- Show **structure** (how parts relate) and **flow** (order, transitions, dependencies) as a **mermaid** diagram, so the reader grasps them at a glance.
-- Do not repeat in prose what the diagram carries.
-- Choose by speed for the reader: diagram for order or branching, prose for a simple fact.
-
 ### The five axes
 
-One role each. **Do not mix axes** in one document. Specialize the outline headings to the content; do not add items that bloat the document; route deep dives to a separate document.
+One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; route deep dives to a separate document.
 
 - **Article / explanation** — for someone reading to understand.
   1. What you'll learn (subject and premise, 1–2 sentences)
@@ -144,9 +127,19 @@ One role each. **Do not mix axes** in one document. Specialize the outline headi
   3. Comparison (measurements stated neutrally; fact separated from judgment)
   4. Evidence and the next step
 
+### Form
+
+Choose each part's form for the reader's speed.
+
+- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance. Do not repeat in prose what the diagram carries.
+- **List** — only when the items are genuinely parallel; otherwise write prose.
+- **Table** — for several items compared on the same fields.
+- **Graph** — for a trend or distribution that lives in the numbers.
+- **Prose** — for a line of reasoning.
+
 ### Voice by reader
 
-Starting point, not a rulebook — the step-1 reader is the source of truth.
+Starting point, not a rulebook — the step-2 reader is the source of truth.
 
 | Reader | Voice | Closing |
 |---|---|---|
@@ -154,3 +147,15 @@ Starting point, not a rulebook — the step-1 reader is the source of truth.
 | Looks things up (reference) | Uniqueness and coverage first; drop warmth and intros | None |
 | Traces history (record / ADR) | Separate fact from analysis; names → roles | Action items |
 | Makes a call (evaluation / survey) | Separate measurement from judgment; lay them out neutrally | A recommendation |
+
+### Floor checklist (the seven AI tells)
+
+| # | Tell | Spot it | Fix |
+|---|---|---|---|
+| 1 | Padding / throat-clearing | Opener announces intent instead of stating the point | Cut it; lead with the finding |
+| 2 | Restatement | The same thing said twice in different words | Keep one |
+| 3 | Retreat into generalities | A vague claim where a name, number, or example belongs | Make it concrete, or cut |
+| 4 | Flavorless connectives | "moreover" / "furthermore" / "in addition" with no real link | Remove, or write the real join |
+| 5 | Reflexive bulleting | A list whose items are not genuinely parallel | Write it as prose |
+| 6 | Wavering voice | Register or stance drifts mid-document | Hold one voice |
+| 7 | Hedging | "it is thought that" / "generally" / non-committal qualifiers | Assert with evidence, or mark `[unverified]` |

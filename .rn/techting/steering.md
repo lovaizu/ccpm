@@ -21,12 +21,16 @@ lists.
   and lists that earn their place, a consistent voice. Adding ceiling onto an uncleared floor is
   wasted.
 
-So the skill works in that order: **first clear the floor** (inspect and remove the AI tells), **then
-reach for the ceiling** (derive and add the attractive qualities).
+The skill **builds both tiers in by construction, then verifies**: it does not edit the input draft
+in place (that drags the old wording along and reads as patched) but rebuilds the document fresh
+through an ordered writing procedure, so the AI tells never take hold. The floor is a **final net**
+for stragglers, not a pre-scrub; the ceiling is what the writing actively builds.
 
-**Means (not the end):** reader-first derivation — define the reader (who they are / what they must
-decide or do / how they read), then derive the axis, voice, and structure from that definition
-rather than from memory.
+**Means (not the end):** rebuild from intent — take from the input only its content and what it must
+convey, define the reader (who they are / what they must decide or do / how they read), then build
+the document through ordered writing steps (outline from purpose → fill with the message → check the
+story as the reader → decide voice and form → write → brush up → clear the floor), deriving the axis,
+voice, and form from the reader and purpose rather than from memory or the old draft.
 
 # Acceptance criteria
 
@@ -39,25 +43,27 @@ rather than from memory.
   prompt. The body is imperative and lean (<2,000 words). **No mermaid diagram is embedded in the
   prompt body** (and none is required by these criteria) — the mermaid rule lives only in
   §output-rules as a directive to the produced document.
-- **Level A — the two-tier quality is encoded:** the process instructs the **floor-then-ceiling
-  order** — first inspect the draft and remove the AI tells (the floor), then derive and add the
-  attractive qualities (the ceiling) — and names the floor checklist (padding / throat-clearing,
-  restatement, retreat into generalities, flavorless connectives, reflexive bulleting, a wavering
-  voice). The §output-rules layer states **both tiers**: floor (b) = none of those AI tells present;
-  ceiling (a) = density, concreteness (names / numbers / examples), a single load-bearing thread
-  (conclusion first), diagrams and lists that earn their place, a consistent voice.
+- **Level A — the two-tier quality is encoded:** the process is an **ordered writing procedure that
+  builds the document fresh from the input's intent** (rather than editing the draft in place), so
+  the AI tells do not take hold; the floor scrub is the **final net** (name / quote / fix the seven
+  tells) after the writing, not a pre-edit of the draft. The process names the floor checklist
+  (padding / throat-clearing, restatement, retreat into generalities, flavorless connectives,
+  reflexive bulleting, a wavering voice, hedging). The §output-rules layer states **both tiers**:
+  floor (b) = none of those AI tells present; ceiling (a) = density, concreteness (names / numbers /
+  examples), a single load-bearing thread (conclusion first), diagrams and lists that earn their
+  place, a consistent voice.
 - **Level B — the document the skill produces (dogfood-verified):** running `up` on a draft yields
   output whose structure/flow is shown as mermaid wherever there is order or branching, with no
   diagram/prose duplication; feeding two different reader definitions changes the output's voice and
   axis (proving the procedure derives, not memorizes); each produced document holds a single axis,
   not mixed.
-- **Level B — the floor is cleared before the ceiling is reached:** the produced document carries
-  none of the named AI tells (floor cleared), and the "what was changed and why" report separates
-  **floor fixes** (AI tells removed) from **ceiling lifts** (attractive qualities added), in that
-  order.
-- The skill states the brush-up use case explicitly: input = an existing draft, output = the
-  revised document plus "what was changed and why" (the latter split into floor fixes then ceiling
-  lifts).
+- **Level B — the floor is clear in the rebuilt document:** the produced document carries none of
+  the named AI tells, and the "what was changed and why" report leads with the **substance** (the
+  structure, story, and voice built, each tied to the reader or purpose) and closes with a short line
+  on any **AI tells the final-net step caught**.
+- The skill states the brush-up use case explicitly: input = an existing draft (read for intent, not
+  reused verbatim), output = the rebuilt document plus "what was changed and why" (substance first,
+  then the tells the net caught).
 - The SKILL.md frontmatter is model-invocable (no `disable-model-invocation`) and its description is
   written so it can fire for a human or for Claude itself.
 - `techting/.claude-plugin/plugin.json` has name, description, version (semver), and author, and the
@@ -341,49 +347,74 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
   on top of it. Both are reviewed together on PR #5.
 - **Sources**: this session's exchange (2026-06-26); the revised Goal and acceptance criteria above.
 
+## D-5: SKILL.md reshaped — build fresh from intent, floor as a net (supersedes the edit-the-draft runbook)
+- **Issue**: The runbook form of `SKILL.md` (#5, `reader → floor → axis → voice → restructure →
+  deliver`) was structured to **edit the input draft in place** — step 2 scrubbed the draft, step 5
+  reordered it. The user flagged two faults: (a) editing in place drags the old wording along and
+  reads as patched (継ぎ足し); (b) it is a checklist, not a **writing procedure** — following it does
+  not itself produce the document.
+- **Conclusion**: Rebuild the document **fresh from the input's intent**, through an ordered writing
+  procedure, so the AI tells never take hold. The floor scrub moves from a pre-edit to a **final net**
+  for stragglers. The procedure is: understand the input → define reader & purpose → outline from the
+  purpose → fill the outline with the message as bullets → read as the reader and check the story →
+  decide voice & form from purpose+story → write it out → brush up to the ceiling → clear the floor
+  (net) → self-check & deliver.
+- **Key reorders from the runbook**: floor goes last (was 2nd); voice & **form** (prose / list /
+  table / diagram / graph) is decided **after** the story stands (was an early step), derived from
+  purpose+story — this dissolves reflexive bulleting (form is chosen deliberately) and folds in the
+  mermaid rule as "diagram where structure/branching lives". Quality is **built in during writing**,
+  not scrubbed on after ([[build-quality-in]]).
+- **What stays**: the two-layer split (process vs §Reference/output-rules) and the addressee sentence
+  (D-3); no embedded mermaid; the five axes, voice table, and seven tells (reused as reference the
+  steps point to, reordered into work-order, not deleted); lean (<2,000 words; the rebuilt file is
+  ~1,631).
+- **Consequence**: the Goal's "first clear the floor, then reach for the ceiling" wording and the
+  acceptance criteria that mandated a floor pre-scrub and a "floor-fixes-then-ceiling-lifts" note are
+  revised above to "build in, then net" and "substance first, then the tells the net caught".
+- **Sources**: this session's exchange (2026-06-27); the rebuilt `techting/skills/up/SKILL.md`.
+
 # State
 
 - **Status**: paused
 - **Date**: 2026-06-27
-- **Last completed**: **Rebuilt the form of `techting/skills/up/SKILL.md` from a descriptive guide into a
-  gated step-by-step runbook.** Across this session the user rejected the prior SKILL.md twice with the
-  same complaint — "全然手順になってない" (it describes good writing instead of instructing the work).
-  Three commits: `8fc2bbf` (first pass — added per-step `Emit:` artifacts, still too prose-y),
-  `8801ff4` (README worked example now shows the **floor→ceiling split** the skill emits), `29906fa`
-  (a prompt-engineering **expert subagent** rewrote the body into a runbook: `reader → floor → axis →
-  voice → restructure → self-check → deliver`, **each step imperative with a named Artifact + a hard
-  Gate**). The reproducibility lever is step 2 — a fixed-schema floor table `| Tell | Found? | Quote |
-  Fix |` requiring **all seven tells as rows**, a `yes` needing a verbatim draft quote, a `no` meaning
-  read-and-confirmed-absent. A faked scrub can't produce it. Invariants re-verified independently:
-  `grep -c '```mermaid'` = 0, body **1,378 words** (<2,000), addressee sentence + two-layer
-  (`## The procedure` / `## Output rules`) split intact, the seven tells **defined once** and
-  anchor-referenced (no restatement), `claude plugin validate ./techting --strict` and `. --strict`
-  both pass.
-- **Next**: **User review of #4 + #5 on PR #5** (still draft) — the user said "レビューします". On
-  approval, write the two completion markers — one check-off commit each: `{type}: complete task #4 — …`
-  and `{type}: complete task #5 — …` (per task-workflow Phase: Complete) — and push. **Before that,
-  resolve the stale-records question (see Notes):** `checks/5.md` and the *old* State described the
-  superseded 1,900-word SKILL.md; the user was asked "refresh now or after you read the new file?" and
-  has not answered. Then **only Level B remains**: run the steering **Acceptance criteria** as the final
-  gate — the **Level B dogfood** (run `/techting:up` on a real draft; two different reader definitions
-  to confirm voice/axis change; confirm the produced doc clears the floor and its report splits
-  floor→ceiling). After that, on an explicit release instruction, cut 0.1.0 (promote CHANGELOG, tag
-  `techting-v0.1.0`, mark PR ready, merge).
+- **Last completed**: **Reshaped `techting/skills/up/SKILL.md` from an edit-the-draft runbook into a
+  build-fresh-from-intent writing procedure (D-5).** The runbook (`reader → floor → axis → voice →
+  restructure → deliver`) edited the input draft in place: step 2 scrubbed it, step 5 reordered it.
+  The user flagged two faults — editing in place drags the old wording along and reads as patched
+  (継ぎ足し); and it is a checklist, not a writing procedure that *produces* the document. Rewrote it
+  fresh (not patched) as a 10-step writing procedure: **understand → reader & purpose → outline from
+  purpose → fill with the message (bullets) → read as the reader & check the story → decide voice &
+  form → write → brush up (ceiling) → clear the floor (net) → self-check & deliver**. Floor moved from
+  step 2 to step 9 (a net for stragglers, since rebuilding fresh means the tells never take hold);
+  voice & **form** (prose/list/table/diagram/graph) decided **after** the story stands, from
+  purpose+story — folding the mermaid rule in and dissolving reflexive bulleting. Invariants
+  re-verified: `grep -c '```mermaid'` = 0, **1,631 words** (<2,000), addressee sentence present,
+  two-layer split (`## The procedure` / `## Reference`) intact, seven tells defined once as a
+  reference table the steps point to. Steering Goal + acceptance criteria + D-5 updated to match.
+- **Next**: **Re-validate, then user review of the reshaped SKILL.md on PR #5** (still draft). Run
+  `claude plugin validate ./techting --strict` and `. --strict` (not yet re-run after the reshape).
+  Then the user reviews on the PR. On approval, write the completion markers for #4 and #5 (one
+  check-off commit each, per task-workflow Phase: Complete) and push. **Then only Level B remains**:
+  run the steering **Acceptance criteria** — the **Level B dogfood** (run `/techting:up` on a real
+  draft; two different reader definitions to confirm voice/axis change; confirm the rebuilt doc clears
+  the floor and its what-changed note leads with substance then the tells the net caught). After that,
+  on an explicit release instruction, cut 0.1.0 (promote CHANGELOG, tag `techting-v0.1.0`, mark PR
+  ready, merge).
 - **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**).
   - **No completion marker is written for #4 or #5 yet** — both await the user's review on PR #5. Do
     not commit `complete task #4` / `complete task #5` until the user approves.
-  - **`checks/5.md` is STALE** — it records the QA/self-check of the *superseded* 1,900-word SKILL.md
-    (it calls the 3× restatement and 1,900 words "intended"). The current file is the 1,378-word runbook.
-    Pending user call: refresh `checks/5.md` (re-run self-check + QA on the runbook) before their PR
-    review, or after. Do not treat the existing `checks/5.md` verdicts as covering the current file.
-  - **Level B dogfood is NOT done.** Every check so far is Level A (structure, word count, strict
-    validations) — the skill has **not** been run on a real document. Level B is the goal-level gate,
-    run during the Acceptance criteria — do not claim the skill is dogfood-verified.
+  - **`checks/4.md` and `checks/5.md` are STALE** — they record self-check/QA of superseded SKILL.md
+    forms (the 1,900-word file and the 1,378-word runbook). The current file is the 1,631-word
+    build-fresh procedure. Re-run self-check + QA against the current file before treating any check as
+    covering it.
+  - **Re-validation is NOT re-run after the reshape**, and **Level B dogfood is NOT done.** Every
+    check is Level A (structure, word count). The skill has not been run on a real document. Do not
+    claim the skill is validated or dogfood-verified until both are re-run.
   - **The category-error defect (D-3) stays fixed**: no embedded mermaid; two-layer split with the
     addressee sentence "These rules govern the document this skill produces — not this SKILL.md prompt."
-    The runbook rewrite preserved all of it (re-verified: mermaid=0, both validations pass).
+    The reshape preserved all of it (re-verified: mermaid=0).
   - **The floor (b) extends beyond `instruction.md`** (see D-4): the source for the floor is the
     revised Goal + criteria + D-4, not the verbatim instruction.
-  - **CHANGELOG**: entries stay under `## [Unreleased]`; the runbook rewrite is a form/reliability
-    change (no new user-facing line needed — the Unreleased lines already promise floor-then-ceiling).
-    No version bump. Promote + tag `techting-v0.1.0` only on an explicit release instruction.
+  - **CHANGELOG**: entries stay under `## [Unreleased]`; the reshape is a form/reliability change (no
+    new user-facing line needed — the Unreleased lines already promise the de-AI brush-up). No version
+    bump. Promote + tag `techting-v0.1.0` only on an explicit release instruction.

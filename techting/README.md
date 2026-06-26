@@ -2,9 +2,9 @@
 
 A draft reads badly when it forgets who's reading it. `techting` fixes that the way a good editor
 would: it pins down the reader first — who they are, what they need to walk away able to do, and how
-they read — and then derives the tone, the diagrams, the closing, and the outline from that. One
-skill, `/techting:up`, brushes an existing draft up a level (or writes one from scratch through the
-same steps).
+they read — and then **builds the document fresh** from that reader, deriving the outline, the tone,
+the diagrams, and the closing, rather than patching the old wording. One skill, `/techting:up`,
+brushes an existing draft up a level (or writes one from scratch through the same steps).
 
 ## Install
 
@@ -35,14 +35,10 @@ Say you've got a rough README section and you want it to land. Point `/techting:
   plain, since they're reading along. Here's the revised docs/setup.md:
   …
 
-● What I changed, and why — the floor first (what made it read AI-written), then
-  the lifts:
+● What I changed, and why — the substance first, then the AI tells the final
+  pass caught:
 
-  Floor — AI tells removed:
-    · Cut the "In modern development workflows…" preamble and three "it's
-      generally recommended" hedges — padding and hedging, the plainest AI tells.
-
-  Ceiling — what makes it land:
+  What I built:
     · Led with "you'll have X running" + prerequisites — a guide reader needs the
       goal and what to have ready before step 1 (was buried at the bottom).
     · Turned the install paragraph into ordered steps, each with its expected
@@ -51,6 +47,10 @@ Say you've got a rough README section and you want it to land. Point `/techting:
       "X needs Y" is a diagram, not prose.
     · Cut the architecture tangent — noise for someone who just wants it running;
       linked it out instead.
+
+  AI tells the final pass caught:
+    · A leftover "in modern development workflows…" preamble and an "it's generally
+      recommended" hedge — padding and hedging, removed.
 ```
 
 It won't guess past a blank. If it can't tell who the reader is, it stops and asks rather than
