@@ -1,0 +1,24 @@
+<!-- ╔═ PART: work-detail.branch ═╗ 付録｜作業明細（案）・基盤分岐（#11）。work-detail.common と対のパーツ。
+     基盤で作り方が分かれる作業だけを案ごと（◯◯案／◯◯案）に並べる＝estimate.compare と同じく N案なら列を増やす。
+     ⚠️ 内部の値（単価・人日・%）は出さない。ID列(.idc)は会話用で提出PDFでは自動的に隠れる。長ければこのパーツを複数回使い分割する。
+     #19：共通工数は work-detail.common に1回置く。ここは「作り方が基盤で分かれる行」だけ。 -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Appendix &mdash; Work breakdown (draft) ② 基盤分岐</div>
+  <div class="ttl">作業明細（案）― 基盤で分かれる作業</div>
+  <div class="lead"><b>作り方が基盤で分かれる</b>作業の一覧です。共通の作業は前ページ。<b>スコープの確定に応じて変動します</b>。</div>
+  <div class="body">
+    <table class="t estd-t apx" style="font-size:9pt">
+      <thead><tr><th class="idc">ID</th><th>作業名</th><th class="c">{{基盤A名}} 案</th><th class="c">{{基盤B名}} 案</th></tr></thead>
+      <tbody>
+        <tr class="catrow"><td colspan="4">④ {{フェーズ 例: 構築（基盤ごとの作り方）}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td class="c">{{A:内容}}</td><td class="c">{{B:内容}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td class="c">{{A:内容}}</td><td class="c">{{B:内容}}</td></tr>
+        <tr class="catrow"><td colspan="4">⑤ {{フェーズ 例: 移行・検証・公開（基盤差分）}}</td></tr>
+        <tr><td class="idc">{{id}}</td><td>{{作業名}}</td><td class="c">{{A:内容}}</td><td class="c">{{B:内容}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>
