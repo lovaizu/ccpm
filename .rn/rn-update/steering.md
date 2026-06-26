@@ -213,8 +213,30 @@ distinct always-open channel.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-06-26
+- **Last completed**: Plan rewritten to the lean B-thread design (3 gates + escalation, lean steering,
+  external design.md) and criteria recast to objective-achievement form; plugin design doc relocated to
+  `rn/docs/design.md`. No task implemented this session (#1–#3 are done-through-QA on the branch from
+  earlier work; #4/#6 not started).
+- **Next**: Before implementing #4, re-examine what `design.md` should be — the user judges the current
+  `rn/docs/design.md` (per-step "why" memos) is NOT a design doc. See the open direction in Notes,
+  then revise #4 (and #2's design.md relocation) before proceeding.
+- **Notes**: branch `rn-update`, PR #14 (draft), all pushed; tree clean. No `complete task #` markers
+  in git yet.
+
+  OPEN DIRECTION — user, 2026-06-26, "review after resume": `rn/docs/design.md`'s current form is
+  wrong.
+  - It is per-step "why?" memos → becomes noise, drifts out of sync, fossilizes; step-by-step rationale
+    is far too fine-grained to be tenable.
+  - A design doc should reveal the **whole structure**: requirements + assumptions/constraints →
+    approach (solution policy) → overall flow → actors (登場人物) → the overall structure that ties them.
+  - The **README's guide is the UX** — that role is already covered there.
+  - Implementation *within* that framework is optimized locally per piece and need **not** be recorded
+    or kept.
+  - Hypothesis: the large memo pile exists *because* there is no big-picture; a whole-structure design
+    removes the need to justify each step.
+  → On resume: redefine `design.md` as a real design doc (requirements/constraints → approach → flow →
+    actors → structure), with README as UX; drop the per-step rationale approach. This also reshapes #2
+    (which relocated per-step intent into design.md) and #4 (which records redesign intent there). Then
+    proceed with #4 (lean steering) and #6 (gates).
