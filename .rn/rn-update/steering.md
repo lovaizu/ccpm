@@ -377,25 +377,8 @@ infers no verdict.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-06-27
-- **Last completed**: Thread C built and checked off — #7 (`gm`), #8 (`ty`), #9
-  (`pr-feedback-workflow.md`), #10 (gates wired to `gm`/`ty`), each self-check + QA PASS + coordinator
-  review, markers pushed (`d555916` / `7e77677` / `2b774db` / `acbbb58`). The plan gate was approved
-  verbally — the user noted `/rn:ty` is not released yet, so it cannot be invoked.
-- **Next**: **Run `pr-feedback-workflow.md` on PR #14's 10 review threads** (the dogfood). A user
-  decision is pending: I proposed **auto-addressing the 4 concrete comments** — `dn` YAML error;
-  design-template ASCII→mermaid ×2 (lines 38 & 42); `on` opening should state purpose — **and escalating
-  the 6 design-level comments** rather than auto-implementing them: expert restructuring (tw:17); split
-  `task-workflow.md` into execute/verify (tw:1); review-gates→planning workflow (tw:24); date-prefix the
-  slug `yyyymmdd-slug` (on:17); guidance-into-templates vs steps (on:26); design-gate-as-a-decomposition-task
-  (on:36). Confirm this split (or discuss the 6 design items first), then run the loop. **After** the FB
-  is processed, do **#5** last (CHANGELOG + `rn/docs/design.md` for the verdict-command/FB-workflow
-  structure + cross-doc consistency).
-- **Notes**: branch `rn-update`, PR #14; tree clean, all pushed. The loop collects threads where
-  `isResolved == false` AND the last comment is the author (kiyohome) — all 10 currently qualify; only
-  the author resolves them. #1–#6 remain done-through-QA without per-task completion markers (their
-  sign-off folds into the evaluation gate). The 6 design comments change the agreed design → escalation
-  channel, hence surfaced to the user rather than auto-applied. Some #4/#6 `[x]` steps get reopened by
-  this FB (e.g. ASCII→mermaid). `version` stays `0.6.0` (no release). checks/{7,8,9,10}.md were committed
-  with their markers.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
