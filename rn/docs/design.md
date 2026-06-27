@@ -23,32 +23,6 @@ Constraints that follow:
 - **The user stays in the loop where judgment is irreplaceable** — sign-off on the PR, where diffs and
   long documents render properly.
 
-## Structure
-
-```mermaid
-flowchart TD
-  subgraph execution["Execution model"]
-    cmd["Commands (UI)<br/>/rn:on · /rn:dn · /rn:up"] --> coord["Coordinator<br/>(main agent)"]
-    coord --> exp["Experts<br/>(sub agents)"]
-  end
-  subgraph support["Support"]
-    steer["steering.md"] -. points to .-> dsgn["design.md"]
-  end
-  cmd -. read / write .-> steer
-  coord -. read / write .-> steer
-  exp -. commits .-> pr["PR"]
-```
-
-| Actor | Responsibility |
-|---|---|
-| Commands (UI) | The user's interface — start, suspend, resume a session. |
-| Coordinator (main agent) | Decomposes the goal, picks the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
-| Experts (sub agents) | Implementation builds and commits the deliverable; QA — and, for code, language and software-engineering — review it adversarially. |
-| `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, and the `Design:` pointer. |
-| `design.md` | The whole-structure design (this doc) that `steering.md` points to. |
-
-The per-task coordinator/expert loop is defined in `task-workflow.md`.
-
 ## Approach
 
 - **Coordinator / expert split** — the coordinator delegates all deliverable work to fresh subagent
@@ -74,6 +48,32 @@ The per-task coordinator/expert loop is defined in `task-workflow.md`.
   is raised to the user immediately, wherever it surfaces. Chosen over folding it into triage as an
   exception: a gate fires on a schedule, but a plan-changing discovery can land anywhere and must not
   wait for the next one.
+
+## Structure
+
+```mermaid
+flowchart TD
+  subgraph execution["Execution model"]
+    cmd["Commands (UI)"] --> coord["Coordinator<br/>(main agent)"]
+    coord --> exp["Experts<br/>(sub agents)"]
+  end
+  subgraph support["Support"]
+    steer["steering.md"] -. points to .-> dsgn["design.md"]
+  end
+  cmd -. read / write .-> steer
+  coord -. read / write .-> steer
+  exp -. commits .-> pr["PR"]
+```
+
+| Actor | Responsibility |
+|---|---|
+| Commands (UI) | The user's interface — start, suspend, resume a session. |
+| Coordinator (main agent) | Decomposes the goal, picks the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
+| Experts (sub agents) | Implementation builds and commits the deliverable; QA — and, for code, language and software-engineering — review it adversarially. |
+| `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, and the `Design:` pointer. |
+| `design.md` | The whole-structure design (this doc) that `steering.md` points to. |
+
+The per-task coordinator/expert loop is defined in `task-workflow.md`.
 
 ## Flow
 
