@@ -25,14 +25,11 @@ Constraints that follow:
 
 ## Structure
 
-Two layers: an **execution model** that does the work, and the **support** artifacts it reads and
-writes.
-
 ```mermaid
 flowchart TD
   subgraph execution["Execution model"]
-    cmd["/rn:on · /rn:dn · /rn:up"] --> coord["Coordinator"]
-    coord --> exp["Experts<br/>(implementation + review)"]
+    cmd["Commands (UI)<br/>/rn:on · /rn:dn · /rn:up"] --> coord["Coordinator<br/>(main agent)"]
+    coord --> exp["Experts<br/>(sub agents)"]
   end
   subgraph support["Support"]
     steer["steering.md"] -. points to .-> dsgn["design.md"]
@@ -42,23 +39,15 @@ flowchart TD
   exp -. commits .-> pr["PR"]
 ```
 
-**Execution model** — the doers:
-
 | Actor | Responsibility |
 |---|---|
-| Commands (`/rn:on`, `/rn:dn`, `/rn:up`) | Start, suspend, and resume a session. |
-| Coordinator | Main conversation agent: decomposes the goal, picks the expert per task, reviews returned work against the committed diff, records verdicts. Never touches the deliverable. |
-| Experts (subagents) | Implementation produces and commits the deliverable; QA — and, for code, language and software-engineering — review it adversarially. |
+| Commands (UI) | The user's interface — start, suspend, resume a session. |
+| Coordinator (main agent) | Decomposes the goal, picks the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
+| Experts (sub agents) | Implementation builds and commits the deliverable; QA — and, for code, language and software-engineering — review it adversarially. |
+| `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, and the `Design:` pointer. |
+| `design.md` | The whole-structure design (this doc) that `steering.md` points to. |
 
-**Support** — what execution reads and writes:
-
-| Artifact | Role |
-|---|---|
-| `steering.md` | Forward contract: goal, acceptance criteria, rules, remaining tasks, state, and the `Design:` pointer. |
-| `design.md` | The whole-structure design (this doc's shape) that `steering.md` points to. |
-
-The per-task loop the coordinator runs is defined in `task-workflow.md`, read at runtime by `on` and
-`up`.
+The per-task coordinator/expert loop is defined in `task-workflow.md`.
 
 ## Approach
 
@@ -88,21 +77,15 @@ The per-task loop the coordinator runs is defined in `task-workflow.md`, read at
 
 ## Flow
 
-1. **`/rn:on`** restates the goal, decides the `{slug}` and `design.md` location with the user, writes
-   `steering.md` (content allocated by the doc-division) and any `design.md`, decomposes the goal into
-   flat tasks, and opens a draft PR — the **plan gate** (with the **design gate** folded in when the
-   design is settled at plan time; otherwise a separate sign-off before heavy build).
-2. **Task loop** (`task-workflow.md`): the coordinator dispatches the implementation expert, reviews the
-   returned diff, dispatches QA (and, for code, language and software-engineering experts), records
-   verdicts in `checks/{task-id}.md`, and — once its own review clears — checks the task off. No user
-   gate per task; one `complete task #{id}` marker per task. Any plan-changing discovery escalates
-   immediately.
-3. **`/rn:dn`** suspends: checks off progress, writes `State` (`Status: paused` plus a bounded forward
-   pointer), commits, pushes, and hands off to a manual `/clear`.
-4. **`/rn:up`** resumes cold: finds `steering.md` from git history, reconciles checked-off tasks against
-   the commit log, resets `State`, and continues from the next unchecked task.
-5. The loop repeats across as many suspend/resume cycles as the work takes. Then the **evaluation
-   gate**: the end-of-session run of the Acceptance criteria, with the user signing off before close.
+```mermaid
+flowchart TD
+  on["/rn:on"] -->|plan + design gate| loop["Task loop · task-workflow.md<br/>build → review → check off"]
+  loop -.->|suspend| dn["/rn:dn"]
+  dn -.->|resume cold| up["/rn:up"]
+  up --> loop
+  loop -->|all tasks done| eval["Evaluation gate<br/>run Acceptance criteria"]
+  loop -.->|plan-changing discovery| esc["Escalation → user"]
+```
 
 ## Open questions
 
