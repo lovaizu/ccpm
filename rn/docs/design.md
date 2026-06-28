@@ -53,18 +53,47 @@ The per-task loop is defined in `task-workflow.md`.
 
 ## Flow
 
-A goal driven to *done* across context resets — plan once, tasks one at a time, evaluate at the end.
-The defining loop is **suspend → resume**: the work continues across as many context boundaries as it
-takes.
+Two loops at two altitudes.
+
+**Session lifecycle** — a goal driven to *done* across context resets. `steering.md` is the durable
+spine: `/rn:on` and `/rn:dn` write it, `/rn:up` and the task loop read it, so the work survives any
+number of context boundaries.
 
 ```mermaid
-flowchart LR
-  on["/rn:on<br/>plan + design gate"] --> task["Do next task<br/>(task-workflow.md)"]
-  task -->|more tasks| task
-  task -->|context runs out| dn["/rn:dn suspend"]
-  dn --> up["/rn:up resume"]
-  up --> task
-  task -->|all tasks done| eval["Evaluation gate<br/>Acceptance criteria"]
+flowchart TD
+  on["/rn:on<br/>plan + design gate"]
+  loop["Task loop<br/>(per task)"]
+  dn["/rn:dn suspend"]
+  up["/rn:up resume"]
+  eval["Evaluation gate<br/>Acceptance criteria"]
+  steer[("steering.md")]
+  dsgn[("design.md")]
+
+  on -->|writes| steer
+  on -->|writes| dsgn
+  steer -. points to .-> dsgn
+  on --> loop
+  loop <-->|read / check off| steer
+  loop -->|context runs out| dn
+  dn -->|writes State| steer
+  dn --> up
+  up -->|reads| steer
+  up --> loop
+  loop -->|all tasks done| eval
+```
+
+**Task loop** — how one task is built and its quality made. Coordinator-driven, no command; the
+defect is caught at the task that introduced it. Only the shape is here — the steps live in
+`task-workflow.md`.
+
+```mermaid
+flowchart TD
+  pick["Pick next task<br/>from steering.md"] --> impl["Implementation expert builds"]
+  impl --> review["Review experts<br/>(QA / language / SWE)"]
+  review -->|defect| impl
+  review -->|clean| cr["Coordinator review"]
+  cr --> done["Check off in steering.md<br/>+ commit to PR"]
+  done -->|next task| pick
 ```
 
 ## Open questions
