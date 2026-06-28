@@ -377,8 +377,32 @@ infers no verdict.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-06-28
+- **Last completed**: Refined `rn/docs/design.md` across `54e8184..b4bc017` (8 commits). Now key-ideas +
+  mechanism only: two-layer **Structure** (execution = Commands(entry points) → Coordinator(main agent)
+  → Experts(sub agents); support = steering.md / design.md, mermaid not ASCII), **Approach** = 4
+  decisions with the gate→artifact map (plan→`steering.md`, design→`design.md`, evaluation→AC run + task
+  checks), **Flow** = one diagram foregrounding the `/rn:dn`→`/rn:up` suspend/resume loop (per-task
+  review cycle dropped — that's task-workflow's altitude). Section order Context → Approach → Structure
+  → Flow.
+- **Next**: **User will give more FB on `rn/docs/design.md` after resume** ("再開後にFBします") — collect
+  it, refine further until they're satisfied. This is **thread (1)** of an agreed order: finish design.md
+  to a clean baseline FIRST, then **(2)** do the architecture redesign from PR #14's 6 design comments.
+  Do NOT start (2) until (1) is settled (rationale: redesigning on an un-refined design doc worsens it —
+  user's call, recorded).
+- **Notes**: branch `rn-update`, PR #14, tree clean & pushed, `version` stays `0.6.0`.
+  **How to work here** (learned + in memory): each FB is a *thinking trigger*, not a literal patch order
+  — work from the artifact's purpose, don't surface-patch ([[fb-is-a-thinking-trigger]]); do NOT prompt
+  the user to run `/rn:ty`·`/rn:gm` (unreleased on this branch — take verdicts verbally)
+  ([[no-tyg-m-prompt-when-unreleased]]). **PR #14 still has 10 unresolved threads** (last comment the
+  author's; only the author resolves). Per the user's choice we're handling the **6 design comments by
+  direct conversation/escalation**, not the light `pr-feedback-workflow.md` loop. None replied/resolved
+  yet. The **(2) redesign** the 6 point to: split `task-workflow.md` into plan/execute/verify (tw:1,
+  tw:24); experts by implementation domain not code-only Language/SWE (tw:17); gates inserted as tasks at
+  decomposition (on:36, tw:24); push "what/why/when to write" guidance into templates where feasible —
+  judge per item (on:26); slug → `yyyymmdd-slug` (on:17). The **4 concrete** comments to auto-address:
+  `dn` YAML error (dn:3); `design-template.md` ASCII→mermaid ×2 (:38, :42); `on` opening should state
+  purpose (on:9). **#5 stays last** (CHANGELOG + record the verdict-command/FB-workflow structure in
+  design.md + cross-doc consistency). #1–#6 remain done-through-QA (sign-off folds into the evaluation
+  gate).
