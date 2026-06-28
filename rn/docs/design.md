@@ -1,53 +1,26 @@
 # rn — design notes
 
-Not read at runtime — the skill and reference files are pure procedure. This file is for whoever
-maintains them and needs to judge whether a step is still right when requirements change. It records
-the design's decisions and how the parts fit, not a memo per step.
+Not read at runtime — for whoever maintains the procedures and needs to judge whether a step is still
+right when requirements change. Records the key ideas and the mechanism, not every detail.
 
 ## Context & constraints
 
-rn helps a user drive a goal to *done* across context boundaries — a conversation fills up, a day
-ends, a `/clear` wipes the thread — one task at a time, with quality built in rather than inspected in
-at the end. A single conversation cannot hold a real piece of work end to end, and what the agent
-"remembers" is lost the moment the thread resets. So the design must survive being picked up cold by a
-fresh agent that saw none of the prior conversation.
-
-Constraints that follow:
-
-- **The durable record is on disk and in git, not in the agent's head** — anything a resume needs is
-  reconstructable from `steering.md`, the commit log, and the PR.
-- **`steering.md` is read cold every resume** — small enough to re-read in full, a forward contract for
-  the remaining work, not an archive of the finished work.
-- **Quality cannot be a final inspection** — each task carries its own verification, so a defect is
-  caught at the task that introduced it.
-- **The user stays in the loop where judgment is irreplaceable** — sign-off on the PR, where diffs and
-  long documents render properly.
+rn drives a goal to *done* across context resets — a conversation fills up, a `/clear` wipes the
+thread, a day ends. A fresh agent picks the work up cold, so the durable record lives in `steering.md`,
+git, and the PR (never in the agent's memory), and `steering.md` stays small enough to re-read in full
+every resume.
 
 ## Approach
 
-- **Coordinator / expert split** — the coordinator delegates all deliverable work to fresh subagent
-  experts instead of doing it itself. Chosen over one agent that both builds and reviews: a builder
-  reviewing its own output is not independent, and keeping each expert's trial-and-error inside a
-  subagent keeps the coordinator's context light.
-- **Lean forward contract, heavy content externalized — not pruned** — `steering.md` holds only
-  requirements, criteria, remaining tasks, and resume state; design intent lives in `design.md`,
-  history in git + the PR. Chosen over a *store-then-prune* model: pruning is machinery that can
-  mis-fire and still lets steering swell between prunes, whereas never storing the heavy content leaves
-  nothing to prune and nothing to regrow into an archive.
-- **Doc-division by kind** — requirements & criteria → `steering.md`, structure & decisions →
-  `design.md`, UX → `README`. Chosen over letting each document accrete whatever is convenient: a fixed
-  home per kind keeps steering lean structurally, not by a discipline someone must remember.
-- **Three scheduled gates** — the user signs off at exactly the three points where judgment is
-  irreplaceable: **plan** (the draft-PR approval), **design** (the approach before anything builds on
-  it), **evaluation** (the end-of-session criteria run). Chosen over a *gate-every-task* model, which
-  fires on every boundary whether or not a decision is waiting — ceremony the agent cannot add judgment
-  to. Per-task quality is caught instead by self-check + QA/expert review + the coordinator's
-  independent review. Design folds into the plan gate when settled at plan time, so it is one of the
-  three, never a fourth.
-- **Escalation is a channel, not a gate** — any discovery that would change the *agreed plan or design*
-  is raised to the user immediately, wherever it surfaces. Chosen over folding it into triage as an
-  exception: a gate fires on a schedule, but a plan-changing discovery can land anywhere and must not
-  wait for the next one.
+- **Coordinator / expert split** — the coordinator delegates every deliverable to fresh subagent
+  experts and never builds or reviews its own output. Keeps reviews independent and its context light.
+- **`steering.md` is a lean forward contract** — goal, criteria, remaining tasks, and resume state
+  only; rationale → `design.md`, UX → `README`, history → git + the PR. Heavy content is never stored,
+  so steering can't drift or regrow into an archive.
+- **Quality per task, not a final inspection** — each task is gated by self-check + QA/expert review +
+  the coordinator's independent diff review, so a defect is caught where it is introduced.
+- **Three user gates + escalation** — the user signs off only at plan, design, and evaluation, never
+  per task; any discovery that changes the agreed plan or design is escalated immediately, anytime.
 
 ## Structure
 
@@ -68,9 +41,9 @@ flowchart TD
 | Actor | Responsibility |
 |---|---|
 | Commands (entry points) | The user's interface — start, suspend, resume a session. |
-| Coordinator (main agent) | Decomposes the goal, picks the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
-| Experts (sub agents) | Implementation builds and commits the deliverable; QA — and, for code, language and software-engineering — review it adversarially. |
-| `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, and the `Design:` pointer. |
+| Coordinator (main agent) | Decomposes the goal, dispatches the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
+| Experts (sub agents) | Implementation builds and commits; QA — and, for code, language and software-engineering — review adversarially. |
+| `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, `Design:` pointer. |
 | `design.md` | The whole-structure design (this doc) that `steering.md` points to. |
 
 The per-task coordinator/expert loop is defined in `task-workflow.md`.
@@ -89,6 +62,5 @@ flowchart TD
 
 ## Open questions
 
-- **Where session-spanning `design.md` lives by default.** Sessions default to `.rn/{slug}/design.md`,
-  but a plugin like rn keeps its own design under `rn/docs/`; whether that exception generalizes is
-  open.
+- **Default home for a session's `design.md`.** Sessions default to `.rn/{slug}/design.md`, but rn
+  keeps its own under `rn/docs/`; whether that exception generalizes is open.
