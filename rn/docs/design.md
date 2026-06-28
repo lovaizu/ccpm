@@ -60,26 +60,21 @@ spine: `/rn:on` and `/rn:dn` write it, `/rn:up` and the task loop read it, so th
 number of context boundaries.
 
 ```mermaid
-flowchart TD
-  on["/rn:on<br/>plan + design gate"]
-  loop["Task loop<br/>(per task)"]
-  dn["/rn:dn suspend"]
-  up["/rn:up resume"]
-  eval["Evaluation gate<br/>Acceptance criteria"]
+flowchart LR
+  on["/rn:on<br/>plan + design gate"] --> loop["Task loop<br/>(per task)"]
+  loop -->|context runs out| dn["/rn:dn suspend"]
+  dn --> up["/rn:up resume"]
+  up --> loop
+  loop -->|all tasks done| eval["Evaluation gate<br/>Acceptance criteria"]
+
   steer[("steering.md")]
   dsgn[("design.md")]
-
   on -->|writes| steer
   on -->|writes| dsgn
   steer -. points to .-> dsgn
-  on --> loop
   loop <-->|read / check off| steer
-  loop -->|context runs out| dn
   dn -->|writes State| steer
-  dn --> up
   up -->|reads| steer
-  up --> loop
-  loop -->|all tasks done| eval
 ```
 
 **Task loop** — how one task is built and its quality made. Coordinator-driven, no command; the
@@ -87,7 +82,7 @@ defect is caught at the task that introduced it. Only the shape is here — the 
 `task-workflow.md`.
 
 ```mermaid
-flowchart TD
+flowchart LR
   pick["Pick next task<br/>from steering.md"] --> impl["Implementation expert builds"]
   impl --> review["Review experts<br/>(QA / language / SWE)"]
   review -->|defect| impl
