@@ -54,7 +54,7 @@ Constraints that follow:
 ```mermaid
 flowchart TD
   subgraph execution["Execution model"]
-    cmd["Commands (UI)"] --> coord["Coordinator<br/>(main agent)"]
+    cmd["Commands (entry points)"] --> coord["Coordinator<br/>(main agent)"]
     coord --> exp["Experts<br/>(sub agents)"]
   end
   subgraph support["Support"]
@@ -67,7 +67,7 @@ flowchart TD
 
 | Actor | Responsibility |
 |---|---|
-| Commands (UI) | The user's interface — start, suspend, resume a session. |
+| Commands (entry points) | The user's interface — start, suspend, resume a session. |
 | Coordinator (main agent) | Decomposes the goal, picks the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
 | Experts (sub agents) | Implementation builds and commits the deliverable; QA — and, for code, language and software-engineering — review it adversarially. |
 | `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, and the `Design:` pointer. |
