@@ -12,26 +12,39 @@ agent can then resume from `steering.md`, which stays small enough to re-read in
 
 ## Approach
 
-The key decisions, each over the alternative it beat:
+Two organizing ideas, with the rest following from them.
+
+**(A) A skill orchestrates; each work-instruction is a fixed spec.** A procedure controls only the
+*order* in which work-instructions fire. The detail of each one lives in its own spec, in one place:
+*what / why / when* to write a `steering.md`, a `design.md`, or a task → that artifact's template; how a
+task is built or verified → its workflow. From this follow, rather than as separate inventions:
+
+- **Planning, execution, and verification are separate workflows** — each a single work-instruction
+  (`planning-workflow`, `task-execute-workflow`, `task-verify-workflow`).
+- **A user gate is a sign-off work-instruction the planner places in the task sequence** — not a
+  checkpoint hardcoded into execution. Its timing is a planning decision, visible in the task list.
+- **Authoring guidance lives in templates, not scattered across procedure steps** — where duplicated
+  guidance drifts and is hard to keep consistent.
+
+**(B) Experts fit the artifact, and build and review mirror each other.** Experts are chosen per task by
+what it produces — **design**, **craft** (coding / writing / visual, per medium), **verification** (test
+/ fact-check / dry-run) — with **QA** (does it meet the objective?) across all. Over a fixed code-centric
+trio (language / software-engineering), which neither fits prose, prompts, or slides nor mirrors what was
+built. The same axes build and review, so a reviewer shares the builder's viewpoint and fewer defects
+survive; only the axes a task needs are spawned, so coverage widens without weight.
+
+The standing decisions these build on:
 
 - **Coordinator / expert split** — over one agent that builds *and* reviews its own work, which is not
   independent.
 - **steering.md is a lean forward contract** — heavy content lives elsewhere (rationale → `design.md`,
   UX → `README`, history → git + PR). Never stored, so it can't drift or grow into an archive.
-- **Procedures orchestrate; each artifact's detail lives in its template** — a skill controls only the
-  *order* in which work-instructions fire; *what / why / when* to write a `steering.md`, a `design.md`,
-  or a task is fixed in that artifact's template, in one place. Over the same guidance scattered across
-  procedure steps, which drifts and is hard to keep consistent.
-- **Experts are chosen per task by the artifact's domain, and the same domains build and review** — over
-  a fixed code-centric review trio (language / software-engineering), which neither fits prose, prompts,
-  or slides nor mirrors what was built. Builder and reviewer sharing a domain means fewer defects
-  survive to review. QA — does it meet the objective? — is the constant check across domains.
 - **Quality built into each task** — over a final inspection: a defect is caught at the task that
   introduced it.
-- **The user gates only plan / design / evaluation**, and those sign-offs are woven into the task
-  sequence at planning, as sign-off *tasks* placed at their right timing — not checkpoints hardcoded
-  into execution. Each evaluates one thing: plan → `steering.md`, design → `design.md`, evaluation →
-  the end results (the Acceptance-criteria run and the task checks). Over a gate on every task, which is
+- **The user gates only plan / design / evaluation** — each evaluating one thing: plan → `steering.md`,
+  design → `design.md`, evaluation → the end results (the Acceptance-criteria run and the task checks).
+  The design and evaluation gates are sign-off tasks (per A); the plan gate is planning's own closing
+  hand-off, since a plan can't carry a task that approves itself. Over a gate on every task, which is
   ceremony where no decision is waiting. Escalation is a separate, always-open channel for anything that
   changes the agreed plan or design.
 
@@ -55,7 +68,7 @@ flowchart TD
 |---|---|
 | Commands (entry points) | `/rn:on`, `/rn:dn`, `/rn:up` — start, suspend, resume a session. |
 | Coordinator (main agent) | The conversation agent that plans, dispatches, reviews, and records. |
-| Experts (sub agents) | Chosen per task by the artifact's domain; the same domains build and review, with QA checking the objective. |
+| Experts (sub agents) | Chosen per task — design, craft (per medium), verification — with QA across all; the same axes build and review. |
 | `steering.md` | The session's forward contract. |
 | `design.md` | The whole-structure design (this doc). |
 
@@ -69,8 +82,8 @@ Two loops at two altitudes.
 
 **Session lifecycle** — a goal driven to *done* across context resets. `/rn:on` runs planning once;
 the task loop then runs each task, suspending and resuming across context boundaries. `steering.md` is
-the durable spine: planning and `/rn:dn` write it, `/rn:up` and the loop read it. The plan / design /
-evaluation sign-offs are tasks in the sequence, placed by planning.
+the durable spine: planning and `/rn:dn` write it, `/rn:up` and the loop read it. The design and
+evaluation sign-offs are tasks placed by planning; the plan sign-off is planning's own closing hand-off.
 
 ```mermaid
 flowchart LR
@@ -109,9 +122,8 @@ flowchart LR
 
 ## Open questions
 
-- **The expert domains.** "Chosen per task by domain" needs a concrete palette. Candidate: **Design /
-  Coding / Test**, instantiated per medium (code, prose, prompt, slide), with **QA** cross-cutting — the
-  same axes for build and review. Whether that set covers the artifacts rn produces, or needs another
-  axis, is open.
+- **The craft / verification specializations.** The axes are design / craft / verification + QA; how
+  craft and verification instantiate per medium (coding↔test, writing↔fact-check, visual↔dry-run) is
+  sketched, not pinned — whether the medium list is complete is open.
 - **Default home for a session's `design.md`.** Sessions default to `.rn/{slug}/design.md`, but rn
   keeps its own under `rn/docs/`; whether that exception generalizes is open.
