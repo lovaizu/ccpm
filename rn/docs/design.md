@@ -20,9 +20,10 @@ The key decisions, each over the alternative it beat:
   UX → `README`, history → git + PR). Never stored, so it can't drift or grow into an archive.
 - **Quality built into each task** — over a final inspection: a defect is caught at the task that
   introduced it.
-- **The user gates only plan / design / evaluation** — over a gate on every task, which is ceremony
-  where no decision is waiting. Escalation is a separate, always-open channel for anything that changes
-  the agreed plan or design.
+- **The user gates only plan / design / evaluation** — each evaluating one thing: plan → `steering.md`,
+  design → `design.md`, evaluation → the end results (the Acceptance-criteria run and the task checks).
+  Over a gate on every task, which is ceremony where no decision is waiting. Escalation is a separate,
+  always-open channel for anything that changes the agreed plan or design.
 
 ## Structure
 
@@ -53,13 +54,22 @@ The per-task loop is defined in `task-workflow.md`.
 ## Flow
 
 ```mermaid
+flowchart LR
+  on["/rn:on"] -->|plan + design gate| loop["Task loop"]
+  loop -->|all tasks done · evaluation gate| eval["Acceptance criteria run"]
+```
+
+**Task loop** — one task at a time, per `task-workflow.md`:
+
+```mermaid
 flowchart TD
-  on["/rn:on"] -->|plan + design gate| loop["Task loop · task-workflow.md<br/>build → review → check off"]
-  loop -.->|suspend| dn["/rn:dn"]
-  dn -.->|resume cold| up["/rn:up"]
-  up --> loop
-  loop -->|all tasks done| eval["Evaluation gate<br/>run Acceptance criteria"]
-  loop -.->|plan-changing discovery| esc["Escalation → user"]
+  build["Implementation expert<br/>builds + commits"] --> review["QA / expert review"]
+  review -->|findings| build
+  review -->|clear| coord["Coordinator review"]
+  coord -->|clear| off["Check off → next task"]
+  off --> build
+  build -. suspend / resume .-> dnup["/rn:dn → /rn:up"]
+  review -. plan-changing discovery .-> esc["Escalation → user"]
 ```
 
 ## Open questions
