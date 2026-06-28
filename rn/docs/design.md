@@ -53,23 +53,18 @@ The per-task loop is defined in `task-workflow.md`.
 
 ## Flow
 
+A goal driven to *done* across context resets — plan once, tasks one at a time, evaluate at the end.
+The defining loop is **suspend → resume**: the work continues across as many context boundaries as it
+takes.
+
 ```mermaid
 flowchart LR
-  on["/rn:on"] -->|plan + design gate| loop["Task loop"]
-  loop -->|all tasks done · evaluation gate| eval["Acceptance criteria run"]
-```
-
-**Task loop** — one task at a time, per `task-workflow.md`:
-
-```mermaid
-flowchart TD
-  build["Implementation expert<br/>builds + commits"] --> review["QA / expert review"]
-  review -->|findings| build
-  review -->|clear| coord["Coordinator review"]
-  coord -->|clear| off["Check off → next task"]
-  off --> build
-  build -. suspend / resume .-> dnup["/rn:dn → /rn:up"]
-  review -. plan-changing discovery .-> esc["Escalation → user"]
+  on["/rn:on<br/>plan + design gate"] --> task["Do next task<br/>(task-workflow.md)"]
+  task -->|more tasks| task
+  task -->|context runs out| dn["/rn:dn suspend"]
+  dn --> up["/rn:up resume"]
+  up --> task
+  task -->|all tasks done| eval["Evaluation gate<br/>Acceptance criteria"]
 ```
 
 ## Open questions
