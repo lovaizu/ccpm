@@ -1,26 +1,28 @@
 # rn — design notes
 
-Not read at runtime — for whoever maintains the procedures and needs to judge whether a step is still
-right when requirements change. Records the key ideas and the mechanism, not every detail.
+Not read at runtime — for whoever maintains the procedures and must judge whether a step is still
+right when requirements change. Key ideas and mechanism only.
 
 ## Context & constraints
 
-rn drives a goal to *done* across context resets — a conversation fills up, a `/clear` wipes the
-thread, a day ends. A fresh agent picks the work up cold, so the durable record lives in `steering.md`,
-git, and the PR (never in the agent's memory), and `steering.md` stays small enough to re-read in full
-every resume.
+A piece of real work outlives any single conversation: context runs out, `/clear` wipes the thread,
+days pass. So rn keeps the durable state on disk — `steering.md` + git + the PR, never the agent's
+memory — and a coordinator drives fresh expert subagents through the work one task at a time. A cold
+agent can then resume from `steering.md`, which stays small enough to re-read in full each time.
 
 ## Approach
 
-- **Coordinator / expert split** — the coordinator delegates every deliverable to fresh subagent
-  experts and never builds or reviews its own output. Keeps reviews independent and its context light.
-- **`steering.md` is a lean forward contract** — goal, criteria, remaining tasks, and resume state
-  only; rationale → `design.md`, UX → `README`, history → git + the PR. Heavy content is never stored,
-  so steering can't drift or regrow into an archive.
-- **Quality per task, not a final inspection** — each task is gated by self-check + QA/expert review +
-  the coordinator's independent diff review, so a defect is caught where it is introduced.
-- **Three user gates + escalation** — the user signs off only at plan, design, and evaluation, never
-  per task; any discovery that changes the agreed plan or design is escalated immediately, anytime.
+The key decisions, each over the alternative it beat:
+
+- **Coordinator / expert split** — over one agent that builds *and* reviews its own work, which is not
+  independent.
+- **steering.md is a lean forward contract** — heavy content lives elsewhere (rationale → `design.md`,
+  UX → `README`, history → git + PR). Never stored, so it can't drift or grow into an archive.
+- **Quality built into each task** — over a final inspection: a defect is caught at the task that
+  introduced it.
+- **The user gates only plan / design / evaluation** — over a gate on every task, which is ceremony
+  where no decision is waiting. Escalation is a separate, always-open channel for anything that changes
+  the agreed plan or design.
 
 ## Structure
 
@@ -38,15 +40,15 @@ flowchart TD
   exp -. commits .-> pr["PR"]
 ```
 
-| Actor | Responsibility |
+| Actor | What it is |
 |---|---|
-| Commands (entry points) | The user's interface — start, suspend, resume a session. |
-| Coordinator (main agent) | Decomposes the goal, dispatches the expert per task, reviews returned work, records verdicts. Never touches the deliverable. |
-| Experts (sub agents) | Implementation builds and commits; QA — and, for code, language and software-engineering — review adversarially. |
-| `steering.md` | Forward contract: goal, criteria, rules, remaining tasks, state, `Design:` pointer. |
-| `design.md` | The whole-structure design (this doc) that `steering.md` points to. |
+| Commands (entry points) | `/rn:on`, `/rn:dn`, `/rn:up` — start, suspend, resume a session. |
+| Coordinator (main agent) | The conversation agent that decomposes, dispatches, reviews, and records. |
+| Experts (sub agents) | Implementation builds; QA and (for code) language and software-engineering review. |
+| `steering.md` | The session's forward contract. |
+| `design.md` | The whole-structure design (this doc). |
 
-The per-task coordinator/expert loop is defined in `task-workflow.md`.
+The per-task loop is defined in `task-workflow.md`.
 
 ## Flow
 
