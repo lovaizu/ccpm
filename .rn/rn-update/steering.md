@@ -112,8 +112,10 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 # Tasks
 
 (#1–#3 are done through QA on the branch, awaiting the new gates — kept compact, full bodies in their
-`checks/{id}.md` and git. #4 and #6 carry the B-thread redesign. #5 reconciles the record. Numbering is
-preserved so `checks/{id}.md` stay aligned.)
+`checks/{id}.md` and git. #4 and #6 carry the B-thread redesign. #5 reconciles the record. #15 is the
+session's own Evaluation sign-off task, placed last per #14's rule, added by escalation during `/rn:up`
+since planning (`/rn:on`, before #14 existed) predates that rule. Numbering is preserved so
+`checks/{id}.md` stay aligned.)
 
 ### #1: `/rn:dn` ends with a genuinely clean worktree — DONE through QA
 
@@ -223,6 +225,28 @@ reconciled to the final shape of #3/#4/#6–#14.
 
 **Prerequisites**: #1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12, #13, #14
 
+**Steps**:
+
+- [ ] In `rn/CHANGELOG.md`'s `## [Unreleased]` section, add entries for the two currently-undocumented
+      user-facing changes: the `/rn:ty`/`/rn:gm` verdict commands (the accept/revise vocabulary at every
+      gate and confirmation point) and the `pr-feedback-workflow.md` PR-feedback loop (collects unresolved
+      review threads the author last commented on, addresses or asks one at a time). Re-check the existing
+      three entries (three sign-off points, two-question completion criteria, lean `steering.md`/`design.md`
+      split, `dn` clean-tree fix) still match the shipped shape after #6/#11–#14 (sign-off tasks placed by
+      planning, not hardcoded gates). Exclude behavior-preserving internal restructuring (#2's
+      proceduralization, #11/#12's file splits, #13's expert-axis rename) — no entry unless it changes what
+      the user sees or does.
+- [ ] In `rn/docs/design.md`, record the verdict-command + PR-feedback-loop structure in whole-structure
+      form consistent with the doc's existing sections (no per-step memo): `/rn:ty`/`/rn:gm` as the single
+      accept/revise vocabulary wired to every gate and confirmation point, and `pr-feedback-workflow.md`'s
+      collect → dispatch-one-at-a-time → coordinator-review-between-each → resolve-by-author-only shape.
+      Fold into `Approach`/`Structure` as fits the existing prose rather than appending a new section.
+- [ ] Grep cross-doc consistency across `rn/`: no doc contradicts another (stale references to removed
+      mechanisms, old expert names, or the old per-task gate); `version` in `rn/.claude-plugin/plugin.json`
+      is still `0.6.0`.
+- [ ] self-check (`checks/5.md`) + QA expert review (subagent) + Craft(writing) expert review (subagent) +
+      Verification(fact-check) expert review (subagent) + coordinator review.
+
 **Completion criteria**:
 
 - A user reading `rn/CHANGELOG.md` learns each user-facing change and why it helps — the `gm`/`ty`
@@ -230,6 +254,28 @@ reconciled to the final shape of #3/#4/#6–#14.
   `rn/docs/design.md` records the verdict-command + FB-workflow structure; no rn doc contradicts another;
   `version` is `0.6.0` (failure modes absent: a refactor listed or a real change missing; a surviving
   contradiction; an accidental release).
+
+### #15: Evaluation sign-off — user approves the Acceptance criteria run
+
+**Purpose**: This session's closing user gate, placed last per its own #14 rule: present the Acceptance
+criteria run result and take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the
+feedback, re-present).
+
+**Prerequisites**: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13, #14
+
+**Steps**:
+
+- [ ] Run this `steering.md`'s Acceptance criteria section against the current state of the branch/PR
+      and record the result per criterion (achieved / not, with grounds — failure modes present or
+      absent).
+- [ ] Present the result to the user and take the verdict via `/rn:ty` (approve → session done) or
+      `/rn:gm` (revise → address the feedback, re-run the affected criteria, re-present).
+
+**Completion criteria**:
+
+- The user has reviewed the Acceptance-criteria run and approved via `/rn:ty`, or the revise/re-present
+  loop ran until approved (failure modes absent: the session closing without this sign-off; a verdict
+  recorded that the user did not issue).
 
 ### #6: Review gates → plan/design/evaluation; escalation as a separate channel — DONE through QA; awaiting consolidated PR review
 
@@ -529,26 +575,8 @@ phase is the file being amended)
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-07-02
-- **Last completed**: #14 — Reposition design/evaluation gates as sign-off tasks placed by planning
-- **Next**: #5 — Record the changes and verify cross-doc consistency
-- **Notes**: Two things to resolve before/while executing #5, neither yet done:
-  1. **Open escalation, unresolved.** This session's own task list (#1-#14, #5 last) has no
-     "Evaluation sign-off" task, but #14 — which this session itself built — requires every
-     session to end with one; `task-verify-workflow.md`'s Phase: Complete treats finishing with no
-     such task as a planning defect to escalate, not close silently. Proposed to the user but not
-     yet confirmed: add a final task **#15 — Evaluation sign-off**, gated on `/rn:ty`/`/rn:gm` over
-     the Acceptance-criteria run, matching #14's own shape. Get the user's answer first.
-  2. **#5 itself not yet executed** (no CHANGELOG/design.md edits committed) — and its `steering.md`
-     entry is missing a **Steps** section (only Purpose/Prerequisites/Completion criteria); add one
-     matching the other tasks' shape before dispatch, since `task-execute-workflow.md`'s work-order
-     needs Steps copied verbatim. An earlier attempt this session edited `CHANGELOG.md`/
-     `docs/design.md`/`README.md` directly as coordinator — against this project's own
-     coordinator/expert split (`task-execute-workflow.md` Roles: all deliverable work goes to the
-     implementation expert, every time) — and was reverted; redo #5 through the normal dispatch
-     (self-check → QA → Craft(writing) → Verification(fact-check) → coordinator review), not by
-     editing the docs directly.
-  Tasks #4 and #6 are DONE through QA but still say "awaiting consolidated PR review" — that
-  consolidated review is the user's PR review on this branch, not a further task here. No other
-  blockers. `version` stays `0.6.0` — no release instruction is in scope.
+- **Status**: not suspended
+- **Date**: —
+- **Last completed**: —
+- **Next**: —
+- **Notes**: —
