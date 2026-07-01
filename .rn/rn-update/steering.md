@@ -529,8 +529,17 @@ phase is the file being amended)
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-01
+- **Last completed**: #14 — Reposition design/evaluation gates as sign-off tasks placed by planning
+- **Next**: #5 — Record the changes and verify cross-doc consistency
+- **Notes**: #14 is the last of its prerequisites (`#1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12,
+  #13, #14`), so #5 is now the session's only remaining task. #5's job: update `rn/CHANGELOG.md`
+  (the `gm`/`ty` commands and the PR-feedback loop as user-facing entries; the #2 proceduralize
+  rewrite is behavior-preserving so it's excluded), record the verdict-command + FB-workflow
+  structure in `rn/docs/design.md`, and grep/read every `rn/` doc for cross-doc contradictions
+  (especially now that #11-#14 changed `on`/`planning-workflow.md`/`task-execute-workflow.md`/
+  `task-verify-workflow.md`'s shape). `version` stays `0.6.0` — no release instruction is in scope.
+  Tasks #4 and #6 are DONE through QA but still say "awaiting consolidated PR review" — that
+  consolidated review is the user's PR review on this branch, not a further task here; #5 doesn't
+  need to chase it, just needs the record to be accurate once #1-#14 are all done. No blockers.
