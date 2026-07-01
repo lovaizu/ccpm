@@ -371,7 +371,7 @@ infers no verdict.
   stated where threads are handled (failure modes absent: a gate with an inferred or bespoke verdict; a
   thread the docs let the assistant resolve).
 
-### #11: Extract `planning-workflow.md`; `on` becomes a thin orchestrator
+### #11: Extract `planning-workflow.md`; `on` becomes a thin orchestrator — DONE through QA
 
 **Purpose**: Per `rn/docs/design.md` root (A), a skill should only orchestrate order — the planning
 procedure's own detail (what/why/when) belongs in a dedicated workflow reference, mirroring how task
@@ -385,14 +385,18 @@ sign-off task using the split verify/execute vocabulary)
 
 **Steps**:
 
-- [ ] Add `rn/references/planning-workflow.md` containing Steps 1–5 verbatim from `on/SKILL.md` (goal
+- [x] Add `rn/references/planning-workflow.md` containing Steps 1–5 verbatim from `on/SKILL.md` (goal
       understanding, slug + design.md location, `steering.md` creation via `steering-template.md`, task
       decomposition, persist/PR/plan-gate sign-off via `/rn:ty`/`/rn:gm`).
-- [ ] Rewrite `rn/skills/on/SKILL.md` to: parse the goal/`$ARGUMENTS`, read and run
+- [x] Rewrite `rn/skills/on/SKILL.md` to: parse the goal/`$ARGUMENTS`, read and run
       `planning-workflow.md`, then begin task #1 per `task-execute-workflow.md` (#12). No planning detail
       stays in `SKILL.md` itself.
-- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (no orphaned reference to
-      the old inline steps; `up`'s pointers to `on` still resolve).
+- [x] self-check + QA/Design/Craft(writing)/Verification(fact-check) expert review (subagent, all 4 —
+      task revises structure) + grep cross-doc consistency (no orphaned reference to the old inline
+      steps; `up`'s pointers to `on` still resolve). — self-check OK (`checks/11.md`); round 1: all 4
+      axes independently found the same defect (`on/SKILL.md` Step 1 duplicated `planning-workflow.md`'s
+      goal-taking clause and inline-summarized its steps, instead of pure delegation) — fixed in
+      `81ec8f4`; round 2 re-review: all 4 axes PASS.
 
 **Completion criteria**:
 
