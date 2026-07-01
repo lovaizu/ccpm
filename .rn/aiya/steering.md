@@ -234,39 +234,25 @@ contradiction; a different phase. Apply on resume (the user said "再開後に�
 
 - **Status**: paused
 - **Date**: 2026-07-01
-- **Last completed**: **Memo layer retired and folded into `design.md`** (this session, `78d258d`,
-  pushed) — see the Notes bullet below for what was deleted and what was folded in. Task #1 itself is
-  still **awaiting user review** (not yet checked off); `design.md` grew by the fold-in, so the PR diff
-  to review now includes both the prior pure-design rewrite and today's additions. Prior session's
-  changes, all pushed to PR #1:
-  1. **Rewrote to pure design** (`48e6da6` parent / earlier commit this session): dropped the Form-A/B
-     contrast, the PoC numbers (~800–950 chars, +18% creep, round-1 sin), and the
-     "make-or-break / discharge the burden / honest scope" defensive framing. New structure:
-     **Requirements → Approach → Structure & flow → Details → Decisions**, intent woven in. Flow split
-     into **three horizontal (LR) stage diagrams** (was one tall TD chart). A/B history stays only in
-     steering Decisions (D-1), not in the shipped doc.
-  2. **CCS format = YAML** (`48e6da6`), not the bespoke `type(contents)` "TOON-style"/"type-fixed
-     Markdown" notation. Rationale settled with the user: CCS is "named components, each a bulleted
-     list" = exactly YAML; every LLM writes it fluently each Turn, it stays compact + greppable, and
-     real YAML **parses** (`yq`) for the retrospective/backtrack reads. TOON rejected after a concrete
-     side-by-side (its density needs uniform tabular arrays the CCS lacks; free-form commas/colons
-     break its CSV rows; written less reliably). The colon stays on BOTH component keys and type keys —
-     it is what makes them `yq`-addressable; dropping it abandons YAML.
-  3. **Added a cast-and-relations diagram at the top of §3** (`13b9ed1`), then **simplified it**
-     (`5d8151e`) after the user said it was too busy: now just **4 actors (Human, Conductor, Turns,
-     artifacts) + the 2 boundaries** (human steers only at gates; Conductor walled off from raw
-     output). Whole→detail: this diagram → parts table (splits Turns into generate/verify) → 3 stage
-     diagrams. File/edge detail lives only in the later layers.
-  Head of PR #1 = `5d8151e`. Ledger `.rn/aiya/checks/1.md` was written before this session's rewrite —
-  **it is now stale** (still references the old structure / TOON); re-validate or rewrite it at `/ty`.
+- **Last completed**: **Memo layer retired and folded into `design.md`, then the branch history
+  squashed into one commit.** This session's full arc — the pure-design rewrite (dropped Form-A/B
+  contrast, PoC numbers, defensive framing; new structure Requirements → Approach → Structure & flow →
+  Details → Decisions), the **CCS format = YAML** decision, the cast-and-relations diagram (added then
+  simplified to 4 actors + 2 boundaries), and the memo-layer retirement/fold-in (see the Notes bullet
+  below for exactly what was deleted and what was folded in) — now all lives in a **single squashed
+  commit `a18a3f7`** at the head of `feature/smith-plugin` (force-pushed at the user's explicit request;
+  the prior multi-commit history no longer exists, so do not reference old hashes). Task #1 itself is
+  still **awaiting user review** (not yet checked off) on PR #1. Ledger `.rn/aiya/checks/1.md` was
+  written before this session's rewrite — **it is now stale** (still references the old structure /
+  TOON); re-validate or rewrite it at `/ty`.
 - **Next**:
-  1. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — now
-     including today's fold-in from the retired memo layer, on top of the prior pure-design rewrite.
-     On `/ty`: check off Task #1's "user review" step and commit the **single completion marker**
-     (`docs: complete task #1 — …`) per `task-workflow.md` Phase: Complete; **first re-validate/rewrite
-     the stale ledger `.rn/aiya/checks/1.md`** against the current doc (it predates both the pure-design
-     rewrite and today's fold-in), and let it ride on that check-off commit. On `/gm`: re-aim per the
-     feedback.
+  1. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — the single
+     squashed commit `a18a3f7` includes the pure-design rewrite, CCS=YAML, the diagram, and today's
+     memo-layer fold-in. On `/ty`: check off Task #1's "user review" step and commit the **single
+     completion marker** (`docs: complete task #1 — …`) per `task-workflow.md` Phase: Complete; **first
+     re-validate/rewrite the stale ledger `.rn/aiya/checks/1.md`** against the current doc (it predates
+     both the pure-design rewrite and today's fold-in), and let it ride on that check-off commit. On
+     `/gm`: re-aim per the feedback.
   2. Then start **Task #2** — author the aiya Conductor skill `aiya/skills/<verb>/SKILL.md`
      (prompt-driven, no JS loop), realizing the cycle from the revised `design.md`. Follow
      `task-workflow.md`.
