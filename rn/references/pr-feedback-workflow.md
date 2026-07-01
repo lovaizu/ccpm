@@ -2,7 +2,9 @@
 
 The light loop to process PR review feedback. A **coordinator** dispatches one **execution subagent**
 per review thread, sequentially, and reviews each result before the next. Verification is a single
-coordinator pass — not the QA-expert / multi-round chain of [`task-workflow.md`](./task-workflow.md).
+coordinator pass — not the QA-expert / multi-round chain of
+[`task-execute-workflow.md`](./task-execute-workflow.md) /
+[`task-verify-workflow.md`](./task-verify-workflow.md).
 
 `/rn:gm` with no argument enters this loop (the feedback source is the PR's review comments).
 `/rn:gm <text>` instead acts on `<text>` directly and does **not** enter this loop.

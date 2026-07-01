@@ -38,4 +38,4 @@ Treat every user interaction as a proposal: lead with one concrete recommended o
    - **Take the sign-off via the user's verdict commands** — both the plan-gate approval and the design-gate sign-off come through `/rn:ty` (approve → proceed) or `/rn:gm` (revise → address and re-present); never infer approval and never record a verdict the user did not issue.
    - **CRITICAL: DO NOT proceed without explicit user approval.**
 
-6. **Begin task #1.** After approval, read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute task #1 following it.
+6. **Begin task #1.** After approval, read `${CLAUDE_PLUGIN_ROOT}/references/task-execute-workflow.md` then `${CLAUDE_PLUGIN_ROOT}/references/task-verify-workflow.md` and execute task #1 following them in sequence.
