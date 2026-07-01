@@ -5,11 +5,26 @@ as requirements → approach → structure and flow → the details that matter 
 
 ## 1. Requirements
 
-aiya runs **one goal across many AI work-streams and keeps them converging on it**, so a person can
-direct the work without watching every turn. One agent — the **Conductor** — holds the goal, hands the
-domain work to subagents, and steers; the human steps in only at a few phase boundaries.
+Three layers, each raising the next: the goal, what reaching it requires, and what an AI-agent attempt
+at those requirements runs into.
 
-For that to scale, two properties must hold:
+**The goal.** Raise an expert's productivity **by an order of magnitude** through AI agents — one
+person delivering what used to take a team.
+
+**What that requires.** aiya's hypothesis is that the jump comes from running **one goal across many
+AI work-streams and keeping them converging on it**, which holds only if:
+
+- the work **always tracks the goal** — many fast streams are worthless if they converge on the wrong
+  thing;
+- the human is **freed from babysitting** — directing the work, not watching every turn;
+- human–AI coordination happens at **a few gates**, not continuously.
+
+So one agent — the **Conductor** — holds the goal, hands the domain work to subagents, and steers; the
+human steps in only at a few phase boundaries.
+
+**What an AI-agent attempt runs into.** Trying to build that with AI agents surfaces two
+implementation challenges — **context bloat** and **drift** — and answering them is what these two
+properties name:
 
 - **Bounded context.** The Conductor's working state must stay **bounded — sub-linear, not growing
   linearly — with the number of work-streams.** If it grew linearly, every added stream would cost more
@@ -20,10 +35,12 @@ For that to scale, two properties must hold:
 Everything below exists to make these two hold **by structure**, under a prompt-driven loop with no
 controller program.
 
-**Why these two, concretely.** `rn` (this repo's quick coordinator) is the simplified version of the
-same pattern — a coordinator dispatches subagents and steers — but with neither property it caps at
-2–4 work-streams: the human must watch continuously, and quality depends on who was watching and what
-they remembered to check. And bounded state is the only remedy that holds both requirements at once:
+**Why these two, concretely.** `rn` (this repo's quick coordinator) shows what happens when neither is
+addressed. Its purpose is **session-lifecycle management**; that it made the conductor-and-experts
+pattern usable at all was incidental — it never targeted context bloat or drift. The result — a cap of
+~2 concurrent streams, a human who never escapes babysitting, quality depending on who was watching and
+what they remembered to check — is a **consequence of those concerns being out of scope**, not a
+deliberate simplification. And bounded state is the only remedy that holds both requirements at once:
 replaying the full transcript each Turn grows context linearly and replays early mistakes; retrieval
 over history avoids the growth but drifts, because semantic-similarity search does not match what task
 control actually needs.
