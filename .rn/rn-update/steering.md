@@ -214,14 +214,14 @@ stored, not pruned. See `rn/docs/design.md`.
   modes absent: a dangling or empty design reference; per-step memos returning; design content left in
   steering; the doc-division contradicting across `on` / `steering-template` / README).
 
-### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6–#10
+### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6–#14
 
 **Purpose**: Record the user-facing changes in `rn/CHANGELOG.md` (including the `gm`/`ty` commands and
 the PR-feedback loop), record the verdict-command + FB-workflow structure in `rn/docs/design.md`, and
 confirm the rn docs are internally consistent. The existing `## [Unreleased]` lines (`checks/5.md`) are
-reconciled to the final shape of #3/#4/#6–#10.
+reconciled to the final shape of #3/#4/#6–#14.
 
-**Prerequisites**: #1, #2, #3, #4, #6, #7, #8, #9, #10
+**Prerequisites**: #1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12, #13, #14
 
 **Completion criteria**:
 
@@ -370,6 +370,139 @@ infers no verdict.
   `/rn:gm`, the assistant records no verdict the user did not issue, and the resolve-by-author rule is
   stated where threads are handled (failure modes absent: a gate with an inferred or bespoke verdict; a
   thread the docs let the assistant resolve).
+
+### #11: Extract `planning-workflow.md`; `on` becomes a thin orchestrator
+
+**Purpose**: Per `rn/docs/design.md` root (A), a skill should only orchestrate order — the planning
+procedure's own detail (what/why/when) belongs in a dedicated workflow reference, mirroring how task
+execution already defers to `task-workflow.md`. Extract `rn/skills/on/SKILL.md` Steps 1–5 (understand
+goal, propose location, create `steering.md`, decompose tasks, persist + open the draft PR + take the
+plan-gate sign-off) into a new `rn/references/planning-workflow.md`; `on/SKILL.md` keeps only the entry
+steps (parse `$ARGUMENTS`, hand off) and Step 6 (begin task #1).
+
+**Prerequisites**: #4 (design-template + doc-division already exist), #12 (planning places the design
+sign-off task using the split verify/execute vocabulary)
+
+**Steps**:
+
+- [ ] Add `rn/references/planning-workflow.md` containing Steps 1–5 verbatim from `on/SKILL.md` (goal
+      understanding, slug + design.md location, `steering.md` creation via `steering-template.md`, task
+      decomposition, persist/PR/plan-gate sign-off via `/rn:ty`/`/rn:gm`).
+- [ ] Rewrite `rn/skills/on/SKILL.md` to: parse the goal/`$ARGUMENTS`, read and run
+      `planning-workflow.md`, then begin task #1 per `task-execute-workflow.md` (#12). No planning detail
+      stays in `SKILL.md` itself.
+- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (no orphaned reference to
+      the old inline steps; `up`'s pointers to `on` still resolve).
+
+**Completion criteria**:
+
+- Running `/rn:on` behaves exactly as before the extraction (same prompts, same plan-gate sign-off via
+  `/rn:ty`/`/rn:gm`, same `steering.md` produced) with all planning detail now living in
+  `planning-workflow.md` and `on/SKILL.md` reduced to order-only orchestration (failure modes absent: a
+  planning step lost in the move; `on/SKILL.md` still carrying step-level rationale or detail).
+
+### #12: Split `task-workflow.md` into `task-execute-workflow.md` + `task-verify-workflow.md`
+
+**Purpose**: Per root (A), execution and verification are separate work-instructions. Split the current
+`task-workflow.md` along its existing Phase boundaries: **Phase: Execute** → `task-execute-workflow.md`;
+**Phase: Verify** + **Phase: Complete** (check-off, advance, evaluation-gate trigger) →
+`task-verify-workflow.md`. The Roles / Review gates / Process selection sections and the Check file
+format are shared context — duplicated into both files' tops (not a third shared file, per the
+lean-steering precedent of never inventing accumulation machinery for a two-file split).
+
+**Prerequisites**: #13 (split lands on the new expert axes, not the old language/software-engineering
+pair, so the split doesn't happen twice)
+
+**Steps**:
+
+- [ ] Add `rn/references/task-execute-workflow.md`: Roles, Review gates, Process selection (shared
+      header) + the current Phase: Execute steps verbatim (work-order, starting-commit capture, dispatch).
+- [ ] Add `rn/references/task-verify-workflow.md`: same shared header + the current Phase: Verify +
+      Phase: Complete steps verbatim (dispatch review experts, triage, escalation channel, check-off,
+      commit marker, advance/evaluation-gate) + the Check file format.
+- [ ] Delete `rn/references/task-workflow.md`; update every reference to it (`on/SKILL.md`,
+      `planning-workflow.md` (#11), `up/SKILL.md`, `pr-feedback-workflow.md` if it names it) to point to
+      `task-execute-workflow.md` then `task-verify-workflow.md` in sequence.
+- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (no dangling
+      `task-workflow.md` reference anywhere in `rn/`).
+
+**Completion criteria**:
+
+- A coordinator runs one task end-to-end by reading `task-execute-workflow.md` then
+  `task-verify-workflow.md` in sequence, with behavior identical to the pre-split `task-workflow.md`
+  (same gates, same escalation channel, same check-off marker); no file in `rn/` still points at the
+  deleted `task-workflow.md` (failure modes absent: a rule/step dropped at the seam; a dangling
+  reference).
+
+### #13: Redefine the expert set — design / craft (per medium) / verification (per medium) + QA
+
+**Purpose**: Per root (B), replace the fixed code-centric trio (QA / language expert / software-engineering
+expert) with function-axis experts — **design**, **craft** (per medium: coding, writing, visual),
+**verification** (per medium: test, fact-check, dry-run) — with **QA** cross-cutting every task. Only the
+axes a task needs are spawned. Update every place experts are named: `task-workflow.md`'s Roles/Process
+selection/Check file format (ahead of #12's split, so the split lands on the new set directly), and the
+task-execution work-order/review-prompt elements that name "language expert"/"software-engineering expert".
+
+**Prerequisites**: none (lands before #12 per #12's own prerequisite)
+
+**Steps**:
+
+- [ ] In `rn/references/task-workflow.md` Roles: replace "Language expert" / "Software-engineering
+      expert" with **Craft expert** (per medium: coding/writing/visual — judges medium-specific best
+      practice) and **Verification expert** (per medium: test/fact-check/dry-run — judges whether the
+      artifact was actually checked) and add **Design expert** (judges whether the approach/structure
+      fits, for tasks that produce or revise structure); QA stays cross-cutting on every task.
+- [ ] Update Process selection: which axes spawn is a per-task judgment (task states its medium/whether
+      it touches structure), not a fixed code-vs-non-code branch — state the rule and give the
+      code-task/docs-task examples as instances, not the only two branches.
+- [ ] Update the Check file format's per-expert tables (replace "Language Expert"/"Software-engineering
+      Expert" sections with Craft/Verification/Design, each keyed to its medium).
+- [ ] Update Execute's work-order element 4 ("Best practices") and Verify's review-prompt elements
+      (Role/Criteria/checklists) to name the new axes instead of language/software-engineering.
+- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (no surviving
+      "language expert"/"software-engineering expert" reference in `rn/`).
+
+**Completion criteria**:
+
+- Every place `rn/` names a review expert uses the design/craft/verification+QA axes, with which axes
+  spawn stated as a per-task judgment keyed to what the task produces (not a fixed code/non-code
+  branch); no reference to "language expert" or "software-engineering expert" survives, and the same
+  axes that build a task also review it (failure modes absent: the old trio surviving anywhere; an axis
+  that never fits prose/prompts/slides forced onto a non-code task).
+
+### #14: Reposition design/evaluation gates as sign-off tasks placed by planning
+
+**Purpose**: Per the standing decision in `rn/docs/design.md`, the design and evaluation gates become
+**sign-off tasks** that `planning-workflow.md` (#11) places explicitly in the task sequence — not logic
+hardcoded into `on`'s Step 5 or `task-verify-workflow.md`'s Phase: Complete. The plan gate stays
+planning's own closing hand-off (never a task — a plan can't carry a task that approves itself).
+
+**Prerequisites**: #11 (planning-workflow exists to place the tasks), #12 (verify-workflow's Complete
+phase is the file being amended)
+
+**Steps**:
+
+- [ ] In `planning-workflow.md` (#11)'s task-decomposition step: when the session has a `design.md` not
+      settled at plan time, place an explicit **"Design sign-off"** task in the sequence (Completion
+      criteria: user approves via `/rn:ty`/`/rn:gm`) at the point heavy build would otherwise start on an
+      unapproved design; when design is settled at plan time, fold it into the plan-gate hand-off instead
+      (no separate task).
+- [ ] Always place a final **"Evaluation sign-off"** task (Completion criteria: user approves the
+      Acceptance-criteria run via `/rn:ty`/`/rn:gm`) as the session's last task.
+- [ ] In `task-verify-workflow.md` (#12)'s Phase: Complete, remove the special-cased "if all tasks are
+      done, propose the evaluation gate" branch — Advance just moves to the next task, which is the
+      Evaluation sign-off task when planning placed it last; a sign-off task's own Steps carry the
+      `ty`/`gm` gate mechanics (per design.md's task-loop: "sign-off task? → user gate").
+- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (every session's task list
+      carries an Evaluation sign-off task at its end; no leftover hardcoded gate branch in
+      `on`/`task-verify-workflow.md`).
+
+**Completion criteria**:
+
+- A session's `steering.md` carries the design sign-off (when needed) and evaluation sign-off as
+  ordinary tasks placed by planning, each gated on `/rn:ty`/`/rn:gm`; `on`/`task-verify-workflow.md`
+  contain no hardcoded gate branch for either (failure modes absent: a session finishing without an
+  evaluation sign-off task; the plan gate turned into a self-approving task).
 
 # State
 
