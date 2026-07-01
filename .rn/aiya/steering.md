@@ -233,26 +233,24 @@ contradiction; a different phase. Apply on resume (the user said "再開後に�
 # State
 
 - **Status**: paused
-- **Date**: 2026-07-01
-- **Last completed**: **Memo layer retired and folded into `design.md`, then the branch history
-  squashed into one commit.** This session's full arc — the pure-design rewrite (dropped Form-A/B
-  contrast, PoC numbers, defensive framing; new structure Requirements → Approach → Structure & flow →
-  Details → Decisions), the **CCS format = YAML** decision, the cast-and-relations diagram (added then
-  simplified to 4 actors + 2 boundaries), and the memo-layer retirement/fold-in (see the Notes bullet
-  below for exactly what was deleted and what was folded in) — now all lives in a **single squashed
-  commit `a18a3f7`** at the head of `feature/smith-plugin` (force-pushed at the user's explicit request;
-  the prior multi-commit history no longer exists, so do not reference old hashes). Task #1 itself is
-  still **awaiting user review** (not yet checked off) on PR #1. Ledger `.rn/aiya/checks/1.md` was
-  written before this session's rewrite — **it is now stale** (still references the old structure /
-  TOON); re-validate or rewrite it at `/ty`.
+- **Date**: 2026-07-02
+- **Last completed**: **Ledger `.rn/aiya/checks/1.md` re-validated on `/rn:up`** (it was stale — written
+  before the pure-design rewrite, still referencing the old §1–§8 structure and TOON). Two independent
+  QA subagent rounds ran against the current `aiya/docs/design.md`: round 1 found 3 internal-consistency
+  defects (the §5 boundedness bullet overclaimed all three mechanisms as equally "structural"; §1's
+  "must not grow" contradicted §4.1 rule 2's "sub-linear"; the Stage③ mermaid let a 4th, unverified
+  regenerate fire before the attempt cap). All 3 were triaged as valid, fixed, and pushed
+  (`1098ff9`). Round-2 regression QA confirmed the fixes and surfaced one further ambiguity (the "1 Step
+  = 1 Turn" invariant didn't acknowledge re-aim's extra work-Turns); fixed and pushed (`2160899`),
+  coordinator-verified via `git show`. The ledger's QA columns were rewritten to match (previously
+  described a pre-rewrite round referencing retired `acc.md`/`tc.md`). Task #1 itself is still
+  **awaiting user review** (not yet checked off) on PR #1 — 2 of the 3 allowed fix iterations used.
 - **Next**:
-  1. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — the single
-     squashed commit `a18a3f7` includes the pure-design rewrite, CCS=YAML, the diagram, and today's
-     memo-layer fold-in. On `/ty`: check off Task #1's "user review" step and commit the **single
-     completion marker** (`docs: complete task #1 — …`) per `task-workflow.md` Phase: Complete; **first
-     re-validate/rewrite the stale ledger `.rn/aiya/checks/1.md`** against the current doc (it predates
-     both the pure-design rewrite and today's fold-in), and let it ride on that check-off commit. On
-     `/gm`: re-aim per the feedback.
+  1. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — commits
+     `a18a3f7` (squashed rewrite) → `1098ff9` (3 consistency fixes) → `2160899` (1-Step-1-Turn
+     clarification) are all on the PR. Ledger is current. On `/ty`: check off Task #1's "user review"
+     step and commit the **single completion marker** (`docs: complete task #1 — …`) per
+     `task-workflow.md` Phase: Complete. On `/gm`: re-aim per the feedback.
   2. Then start **Task #2** — author the aiya Conductor skill `aiya/skills/<verb>/SKILL.md`
      (prompt-driven, no JS loop), realizing the cycle from the revised `design.md`. Follow
      `task-workflow.md`.
@@ -280,13 +278,16 @@ contradiction; a different phase. Apply on resume (the user said "再開後に�
   - **Tasks restructured per D-2** (final-deliverable-first): old design-memo #1 retired; work builds
     the real plugin artifacts. README is its own task (#3), authored **after** SKILL.md settles.
     Dogfood is #5. Don't relitigate D-2.
-  - The design substance (now authoritative in `aiya/docs/design.md`): 1 Step = 1 work-Turn
-    (generate+folded-compress), then an independent discarded verify-Turn; **CCS = YAML**, 9 components,
-    artifacts by path never inlined, soft size cap, Conductor reads only latest CCS + verdict;
-    verify-Turn fresh-context with the true goal sourced from the **immutable gate-approved goal.md**
-    (not the running CCS); re-aim cap 3 → escalation as an exception outside the 6 gates (carries the
-    ≤3-gap failure history); boundedness enforced structurally (return contract + read-restriction +
-    size-budget/grep), default+observable rather than guaranteed (proof = the dogfood, #5).
+  - The design substance (now authoritative in `aiya/docs/design.md`): 1 Step = 1 work-Turn on the
+    normal path (generate+folded-compress) — a failing Step re-dispatches via re-aim, adding further
+    work-Turns within the same Step, capped at 3 — then an independent discarded verify-Turn; **CCS =
+    YAML**, 9 components, artifacts by path never inlined, soft size cap, Conductor reads only latest
+    CCS + verdict; verify-Turn fresh-context with the true goal sourced from the **immutable
+    gate-approved goal.md** (not the running CCS); re-aim cap 3 → escalation as an exception outside the
+    6 gates (carries the ≤3-gap failure history); boundedness rests on 3 levers of different strength —
+    the subagent return contract (structural-by-construction), the Conductor's read-restriction (a
+    stated procedural rule, not a technical block), and the CCS size budget (a bounding convention) —
+    default+observable rather than guaranteed (proof = the dogfood, #5).
   - 6 gates = 3 phases (Goal/Approach/Delivery) × {Planning IN, Output OUT}; steer on `/ty` approve,
     `/gm` redirect; surface = async chat.
   - PoC proved ACC/TC *when scripted* (`poc.md`, measurements only — raw artifacts deleted). The
