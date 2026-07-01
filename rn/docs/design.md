@@ -23,15 +23,15 @@ task is built or verified → its workflow. From this follow, rather than as sep
   (`planning-workflow`, `task-execute-workflow`, `task-verify-workflow`).
 - **A user gate is a sign-off work-instruction the planner places in the task sequence** — not a
   checkpoint hardcoded into execution. Its timing is a planning decision, visible in the task list.
-- **All gates and confirmations resolve through one verdict vocabulary** — `/rn:ty` (approve) and
-  `/rn:gm` (revise) are wired to every sign-off task and every ad hoc confirmation, so the coordinator
-  never infers a verdict from prose.
+- **Sign-off tasks and reviewed deliverables resolve through one verdict vocabulary** — `/rn:ty`
+  (approve) and `/rn:gm` (revise) cover the plan/design/evaluation gates and any reviewed result, so the
+  coordinator never infers a verdict from prose; escalation and weigh-in questions fall outside this
+  vocabulary and get answered directly.
 - **Authoring guidance lives in templates, not scattered across procedure steps** — where duplicated
   guidance drifts and is hard to keep consistent.
 - **PR review feedback runs its own, lighter loop** (`pr-feedback-workflow`), separate from the task
-  loop. `/rn:gm` with no argument collects the PR's unresolved threads the reviewer still has the last
-  word on, dispatches one execution subagent per thread in sequence with a coordinator review between
-  each, and never resolves a thread itself — resolution is the reviewing author's act on GitHub.
+  loop. `/rn:gm` with no argument invokes it against the PR's unresolved threads and never resolves one
+  itself — resolution is the reviewing author's act on GitHub.
 
 **(B) Experts fit the artifact, and build and review mirror each other.** Experts are chosen per task by
 what it produces — **design**, **craft** (coding / writing / visual, per medium), **verification** (test
