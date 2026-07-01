@@ -401,7 +401,7 @@ sign-off task using the split verify/execute vocabulary)
   `planning-workflow.md` and `on/SKILL.md` reduced to order-only orchestration (failure modes absent: a
   planning step lost in the move; `on/SKILL.md` still carrying step-level rationale or detail).
 
-### #12: Split `task-workflow.md` into `task-execute-workflow.md` + `task-verify-workflow.md`
+### #12: Split `task-workflow.md` into `task-execute-workflow.md` + `task-verify-workflow.md` — DONE through QA
 
 **Purpose**: Per root (A), execution and verification are separate work-instructions. Split the current
 `task-workflow.md` along its existing Phase boundaries: **Phase: Execute** → `task-execute-workflow.md`;
@@ -415,16 +415,21 @@ pair, so the split doesn't happen twice)
 
 **Steps**:
 
-- [ ] Add `rn/references/task-execute-workflow.md`: Roles, Review gates, Process selection (shared
+- [x] Add `rn/references/task-execute-workflow.md`: Roles, Review gates, Process selection (shared
       header) + the current Phase: Execute steps verbatim (work-order, starting-commit capture, dispatch).
-- [ ] Add `rn/references/task-verify-workflow.md`: same shared header + the current Phase: Verify +
+- [x] Add `rn/references/task-verify-workflow.md`: same shared header + the current Phase: Verify +
       Phase: Complete steps verbatim (dispatch review experts, triage, escalation channel, check-off,
       commit marker, advance/evaluation-gate) + the Check file format.
-- [ ] Delete `rn/references/task-workflow.md`; update every reference to it (`on/SKILL.md`,
-      `planning-workflow.md` (#11), `up/SKILL.md`, `pr-feedback-workflow.md` if it names it) to point to
-      `task-execute-workflow.md` then `task-verify-workflow.md` in sequence.
-- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (no dangling
-      `task-workflow.md` reference anywhere in `rn/`).
+- [x] Delete `rn/references/task-workflow.md`; update every reference to it (`on/SKILL.md`,
+      `up/SKILL.md`, `pr-feedback-workflow.md`, `steering-template.md`) to point to
+      `task-execute-workflow.md` then `task-verify-workflow.md` in sequence. (`planning-workflow.md` (#11)
+      doesn't exist yet — nothing to update there until #11 lands.)
+- [x] self-check + QA/Design/Craft(writing)/Verification(fact-check) expert review (subagent, all 4 —
+      task revises structure) + grep cross-doc consistency (no dangling `task-workflow.md` reference
+      anywhere in `rn/`). — self-check OK (`checks/12.md`); round 1: QA/Design/Verification PASS, Craft
+      found 2 findings (capitalization typo in `steering-template.md:97`; unanchored "Execute element
+      5/6" cross-reference in `task-verify-workflow.md`) — fixed in `e710e9f`; round 2 re-review
+      (Craft + Verification): both PASS.
 
 **Completion criteria**:
 
