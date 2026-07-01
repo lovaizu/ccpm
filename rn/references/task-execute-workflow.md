@@ -46,8 +46,9 @@ separate always-open channel — not a gate.
 ## Process selection
 
 Which axes spawn is a per-task judgment: the task states its medium (coding / writing / visual) and
-whether it produces or revises structure/approach. QA always spawns. Craft and Verification spawn for
-the task's medium. Design spawns only when the task produces or revises structure/approach.
+whether it produces or revises structure/approach, or that it is a sign-off task. QA always spawns for a
+task that builds something; a sign-off task spawns none. Craft and Verification spawn for the task's
+medium. Design spawns only when the task produces or revises structure/approach.
 
 - **Code task** (instance): Self-check → QA → Craft (coding) → Verification (test) → coordinator review
   → check-off; add Design when the task also changes structure/approach.
@@ -55,9 +56,16 @@ the task's medium. Design spawns only when the task produces or revises structur
   review → check-off; add Design when the task also changes structure/approach.
 - **Visual/diagram task** (instance): Self-check → QA → Craft (visual) → Verification (dry-run) →
   coordinator review → check-off; add Design when the task also changes structure/approach.
+- **Sign-off task** (instance): no axes spawn — no implementation expert builds it, no QA/Design/Craft/
+  Verification review runs. It skips Phase: Execute and Phase: Verify entirely: go straight from picking
+  the task to the gate. Its own Steps (written by planning) are the gate itself — present the thing
+  being signed off (`design.md`, or the Acceptance-criteria run result) to the user and take the verdict
+  via `/rn:ty` (approve → check off) or `/rn:gm` (revise → address the feedback, re-present), then check
+  off in `steering.md`.
 
 Self-check is produced in Execute by the implementation expert; QA / Design / Craft / Verification
-reviews run in Verify; the coordinator's independent review then clears the task into its check-off.
+reviews run in Verify; the coordinator's independent review then clears the task into its check-off. A
+sign-off task has no self-check or review round — the gate verdict itself is what clears it.
 
 ## Check file format
 
