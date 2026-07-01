@@ -59,8 +59,9 @@ Design: <path to the session's design.md — omit this whole line if the session
 - [ ] specific step 2
 - [ ] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
 - [ ] QA expert review (subagent)
-- [ ] (code changes only) language expert review (subagent)
-- [ ] (code changes only) software-engineering expert review (subagent)
+- [ ] Craft expert review (subagent, per the task's medium)
+- [ ] Verification expert review (subagent, per the task's medium)
+- [ ] (tasks that produce or revise structure/approach only) Design expert review (subagent)
 
 **Completion criteria**:
 

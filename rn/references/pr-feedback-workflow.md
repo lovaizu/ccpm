@@ -144,4 +144,4 @@ When the queue is empty, the loop is done.
 ## Verification
 
 One coordinator pass per item (Phase: Coordinator review) is the whole of verification. No QA expert,
-no language or software-engineering experts, no multi-round iteration cap.
+no Design / Craft / Verification experts, no multi-round iteration cap.
