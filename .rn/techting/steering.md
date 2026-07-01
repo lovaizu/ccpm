@@ -375,46 +375,12 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-06-27
-- **Last completed**: **Reshaped `techting/skills/up/SKILL.md` from an edit-the-draft runbook into a
-  build-fresh-from-intent writing procedure (D-5).** The runbook (`reader → floor → axis → voice →
-  restructure → deliver`) edited the input draft in place: step 2 scrubbed it, step 5 reordered it.
-  The user flagged two faults — editing in place drags the old wording along and reads as patched
-  (継ぎ足し); and it is a checklist, not a writing procedure that *produces* the document. Rewrote it
-  fresh (not patched) as a 10-step writing procedure: **understand → reader & purpose → outline from
-  purpose → fill with the message (bullets) → read as the reader & check the story → decide voice &
-  form → write → brush up (ceiling) → clear the floor (net) → self-check & deliver**. Floor moved from
-  step 2 to step 9 (a net for stragglers, since rebuilding fresh means the tells never take hold);
-  voice & **form** (prose/list/table/diagram/graph) decided **after** the story stands, from
-  purpose+story — folding the mermaid rule in and dissolving reflexive bulleting. Invariants
-  re-verified: `grep -c '```mermaid'` = 0, **1,631 words** (<2,000), addressee sentence present,
-  two-layer split (`## The procedure` / `## Reference`) intact, seven tells defined once as a
-  reference table the steps point to. Steering Goal + acceptance criteria + D-5 updated to match.
-- **Next**: **Re-validate, then user review of the reshaped SKILL.md on PR #5** (still draft). Run
-  `claude plugin validate ./techting --strict` and `. --strict` (not yet re-run after the reshape).
-  Then the user reviews on the PR. On approval, write the completion markers for #4 and #5 (one
-  check-off commit each, per task-workflow Phase: Complete) and push. **Then only Level B remains**:
-  run the steering **Acceptance criteria** — the **Level B dogfood** (run `/techting:up` on a real
-  draft; two different reader definitions to confirm voice/axis change; confirm the rebuilt doc clears
-  the floor and its what-changed note leads with substance then the tells the net caught). After that,
-  on an explicit release instruction, cut 0.1.0 (promote CHANGELOG, tag `techting-v0.1.0`, mark PR
-  ready, merge).
-- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (still **draft**).
-  - **No completion marker is written for #4 or #5 yet** — both await the user's review on PR #5. Do
-    not commit `complete task #4` / `complete task #5` until the user approves.
-  - **`checks/4.md` and `checks/5.md` are STALE** — they record self-check/QA of superseded SKILL.md
-    forms (the 1,900-word file and the 1,378-word runbook). The current file is the 1,631-word
-    build-fresh procedure. Re-run self-check + QA against the current file before treating any check as
-    covering it.
-  - **Re-validation is NOT re-run after the reshape**, and **Level B dogfood is NOT done.** Every
-    check is Level A (structure, word count). The skill has not been run on a real document. Do not
-    claim the skill is validated or dogfood-verified until both are re-run.
-  - **The category-error defect (D-3) stays fixed**: no embedded mermaid; two-layer split with the
-    addressee sentence "These rules govern the document this skill produces — not this SKILL.md prompt."
-    The reshape preserved all of it (re-verified: mermaid=0).
-  - **The floor (b) extends beyond `instruction.md`** (see D-4): the source for the floor is the
-    revised Goal + criteria + D-4, not the verbatim instruction.
-  - **CHANGELOG**: entries stay under `## [Unreleased]`; the reshape is a form/reliability change (no
-    new user-facing line needed — the Unreleased lines already promise the de-AI brush-up). No version
-    bump. Promote + tag `techting-v0.1.0` only on an explicit release instruction.
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
