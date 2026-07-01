@@ -434,7 +434,7 @@ pair, so the split doesn't happen twice)
   deleted `task-workflow.md` (failure modes absent: a rule/step dropped at the seam; a dangling
   reference).
 
-### #13: Redefine the expert set — design / craft (per medium) / verification (per medium) + QA
+### #13: Redefine the expert set — design / craft (per medium) / verification (per medium) + QA — DONE through QA
 
 **Purpose**: Per root (B), replace the fixed code-centric trio (QA / language expert / software-engineering
 expert) with function-axis experts — **design**, **craft** (per medium: coding, writing, visual),
@@ -447,20 +447,24 @@ task-execution work-order/review-prompt elements that name "language expert"/"so
 
 **Steps**:
 
-- [ ] In `rn/references/task-workflow.md` Roles: replace "Language expert" / "Software-engineering
+- [x] In `rn/references/task-workflow.md` Roles: replace "Language expert" / "Software-engineering
       expert" with **Craft expert** (per medium: coding/writing/visual — judges medium-specific best
       practice) and **Verification expert** (per medium: test/fact-check/dry-run — judges whether the
       artifact was actually checked) and add **Design expert** (judges whether the approach/structure
       fits, for tasks that produce or revise structure); QA stays cross-cutting on every task.
-- [ ] Update Process selection: which axes spawn is a per-task judgment (task states its medium/whether
+- [x] Update Process selection: which axes spawn is a per-task judgment (task states its medium/whether
       it touches structure), not a fixed code-vs-non-code branch — state the rule and give the
       code-task/docs-task examples as instances, not the only two branches.
-- [ ] Update the Check file format's per-expert tables (replace "Language Expert"/"Software-engineering
+- [x] Update the Check file format's per-expert tables (replace "Language Expert"/"Software-engineering
       Expert" sections with Craft/Verification/Design, each keyed to its medium).
-- [ ] Update Execute's work-order element 4 ("Best practices") and Verify's review-prompt elements
+- [x] Update Execute's work-order element 4 ("Best practices") and Verify's review-prompt elements
       (Role/Criteria/checklists) to name the new axes instead of language/software-engineering.
-- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (no surviving
-      "language expert"/"software-engineering expert" reference in `rn/`).
+- [x] self-check + QA/Craft/Verification/Design expert review (subagent, all 4 — task revises
+      structure/approach) + grep cross-doc consistency (no surviving "language expert"/
+      "software-engineering expert" reference in `rn/`). — self-check OK (`checks/13.md`); round 1: all
+      4 axes found real defects (build-time Verification axis code-only; QA/Design wrongly scoped "per
+      medium"; stale "non-code vs code" reference in `steering-template.md`; QA/Verification "edge case
+      coverage" jurisdiction overlap) — fixed in `5a5aa72`; round 2 re-review: all 4 axes PASS.
 
 **Completion criteria**:
 
