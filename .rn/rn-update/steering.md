@@ -268,7 +268,7 @@ distinct always-open channel.
   QA/expert + coordinator review (failure modes absent: a surviving per-task user gate; a fourth or
   missing scheduled gate; escalation collapsed into an exception so a mid-flight change ships unseen).
 
-### #7: `gm` skill — the revise / feedback verdict command
+### #7: `gm` skill — the revise / feedback verdict command — DONE through QA
 
 **Purpose**: Add `rn/skills/gm/SKILL.md`, the "good, more" verdict command. With an argument, the
 argument is the feedback to act on; with no argument, the feedback source is the current PR's review
@@ -292,7 +292,7 @@ pending confirmation point.
   review comments through the FB workflow; both register a revise verdict and drop nothing (failure modes
   absent: the argument ignored; no-argument `gm` not locating/processing the PR comments; `gm` a no-op).
 
-### #8: `ty` skill — the approve verdict command
+### #8: `ty` skill — the approve verdict command — DONE through QA
 
 **Purpose**: Add `rn/skills/ty/SKILL.md`, the approve verdict command. Running it registers approval of
 whatever the assistant last asked the user to confirm — a gate sign-off or a reviewed result — and the
@@ -314,7 +314,7 @@ flow advances.
   item is accepted), with no revision performed (failure modes absent: `ty` a no-op; `ty` triggering a
   revise).
 
-### #9: `pr-feedback-workflow.md` — the light PR-feedback loop
+### #9: `pr-feedback-workflow.md` — the light PR-feedback loop — DONE through QA
 
 **Purpose**: Add `rn/references/pr-feedback-workflow.md`, a sibling of `task-workflow.md` that processes
 PR review feedback: collect unresolved threads whose last comment is the author's; dispatch one at a time
@@ -345,7 +345,7 @@ coordinator pass (not the QA-expert/multi-round chain); threads are resolved onl
   past the review gate in parallel; a thread changed without a reply; the heavy QA chain present; the
   assistant resolving a thread).
 
-### #10: Wire the gates + escalation to `gm`/`ty`; state the resolve-by-author rule
+### #10: Wire the gates + escalation to `gm`/`ty`; state the resolve-by-author rule — DONE through QA
 
 **Purpose**: Connect the three scheduled gates (plan/design/evaluation) and the escalation channel to the
 `gm`/`ty` verdict vocabulary across `on`/`up`/`task-workflow`, and state the resolve-by-author rule where
@@ -377,38 +377,8 @@ infers no verdict.
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-07-01
-- **Last completed**: `rn/docs/design.md` thread (1) is done — user confirmed the baseline OK, then
-  approved reflecting the PR #14 architecture FB into it (thread (2)'s design half). Two commits:
-  first pass folded the 6 design comments in as a flat list (Flow got a two-altitude LR split: session
-  lifecycle with `steering.md` as spine, plus a separate task-loop diagram); user pushed back that this
-  was transcription, not synthesis, and asked "is this the best solution for the purpose?" — second pass
-  restructured Approach around **two roots**: **(A)** a skill orchestrates only order, each
-  work-instruction's *what/why/when* is fixed in its own template/workflow (workflow split,
-  gate-as-task, template-guidance all derive from this, instead of sitting as siblings); **(B)** experts
-  are chosen per task by **function axis** — design / craft (per medium: coding, writing, visual) /
-  verification (test, fact-check, dry-run) — with QA cross-cutting, only the needed axes spawned (fixed
-  an early misstep where "Coding" leaked back into the axis list, reproducing the code-bias tw:17
-  criticized). Also corrected: the plan gate can't be a sign-off *task* (self-approving), so it's
-  planning's own closing hand-off; only design/evaluation are sign-off tasks. Final commit
-  `65e57ab`-equivalent (see `git log rn/docs/design.md`), pushed.
-- **Next**: Thread (2)'s remaining half — **carry this redesign into `steering.md`'s Tasks (#1–#10)**:
-  add a `planning-workflow.md` task, split `task-workflow.md` into `task-execute-workflow.md` +
-  `task-verify-workflow.md`, redefine the expert set (design/craft/verification+QA replacing
-  language/software-engineering) across `task-workflow.md` and wherever experts are named, and move the
-  3 gates so design/evaluation are sign-off tasks placed by planning while plan stays planning's
-  hand-off. Also still pending from PR #14 (not yet touched): slug → `yyyymmdd-slug` (on:17), `dn` YAML
-  error (dn:3), `design-template.md` ASCII→mermaid ×2 (:38/:42), `on` opening should state purpose
-  (on:9) — these are runtime/template fixes, not design.md content, and were deliberately deferred
-  until the design-level redesign (this thread) lands, so the task rewrite doesn't happen twice.
-- **Notes**: branch `rn-update`, PR #14, tree clean & pushed, `version` stays `0.6.0`.
-  **How to work here** (in memory): each FB is a *thinking trigger* — work from the artifact's purpose,
-  don't surface-patch, and when asked "is this the best solution?" actually re-derive from the goal
-  rather than defending the transcription ([[fb-is-a-thinking-trigger]]); do NOT prompt the user to run
-  `/rn:ty`·`/rn:gm` (unreleased on this branch — take verdicts verbally)
-  ([[no-tyg-m-prompt-when-unreleased]]). **PR #14 still has 10 unresolved threads** (last comment the
-  author's; only the author resolves) — handling the 6 design comments by direct conversation, not the
-  `pr-feedback-workflow.md` loop; none replied/resolved yet (reply once the corresponding task/edit
-  lands). **#5 stays last** (CHANGELOG + record the verdict-command/FB-workflow structure in design.md +
-  cross-doc consistency). #1–#6 remain done-through-QA (sign-off folds into the evaluation gate).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
