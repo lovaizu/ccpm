@@ -12,10 +12,15 @@ files under `{steering_dir}/checks/`.
   piece needs, dispatches, reviews against the committed diff, triages findings, re-instructs, updates
   `steering.md`, talks with the user. Writes directly **only** `steering.md` and `checks/{task-id}.md`;
   never edits the deliverable or its git history.
-- **Implementation expert** — subagent. Produces, fixes, and commits/pushes the deliverable (code/docs).
-- **QA expert** — subagent. Adversarially verifies the result.
-- **Language expert** (code only) — subagent. Judges language-level craft.
-- **Software-engineering expert** (code only) — subagent. Judges design and system integrity.
+- **Implementation expert** — subagent. Produces, fixes, and commits/pushes the deliverable (code/docs/
+  visual).
+- **QA expert** — subagent, every task. Adversarially verifies the result meets the objective.
+- **Design expert** (tasks that produce or revise structure/approach) — subagent. Judges whether the
+  approach/structure fits.
+- **Craft expert** (per medium: coding / writing / visual) — subagent. Judges medium-specific best
+  practice.
+- **Verification expert** (per medium: test / fact-check / dry-run) — subagent. Judges whether the
+  artifact was actually checked.
 
 All deliverable work (produce/fix/commit/push) goes to the implementation expert, every time, any size.
 Each review expert runs as an independent subagent (Agent tool, no conversation history) and returns a
@@ -39,11 +44,18 @@ separate always-open channel — not a gate.
 
 ## Process selection
 
-- **Non-code task** (docs, config, design): Self-check → QA → coordinator review → check-off.
-- **Code task**: Self-check → QA → Language expert → Software-engineering expert → coordinator review
-  → check-off.
+Which axes spawn is a per-task judgment: the task states its medium (coding / writing / visual) and
+whether it produces or revises structure/approach. QA always spawns. Craft and Verification spawn for
+the task's medium. Design spawns only when the task produces or revises structure/approach.
 
-Self-check is produced in Execute by the implementation expert; QA / language / software-engineering
+- **Code task** (instance): Self-check → QA → Craft (coding) → Verification (test) → coordinator review
+  → check-off; add Design when the task also changes structure/approach.
+- **Docs task** (instance): Self-check → QA → Craft (writing) → Verification (fact-check) → coordinator
+  review → check-off; add Design when the task also changes structure/approach.
+- **Visual/diagram task** (instance): Self-check → QA → Craft (visual) → Verification (dry-run) →
+  coordinator review → check-off; add Design when the task also changes structure/approach.
+
+Self-check is produced in Execute by the implementation expert; QA / Design / Craft / Verification
 reviews run in Verify; the coordinator's independent review then clears the task into its check-off.
 
 ## Phase: Execute
@@ -54,8 +66,11 @@ reviews run in Verify; the coordinator's independent review then clears the task
    2. **Scope** — stay within this task; do not start adjacent tasks; name the files expected in play.
    3. **Method** — (code) write the test first: a failing test capturing the expected behavior, then
       implement until it passes. Not done until its tests pass.
-   4. **Best practices** — apply the domain's best practices (code: language/framework conventions,
-      error handling, naming, no duplication; docs: the repo's existing style).
+   4. **Best practices** — apply the axes the task needs: **Craft** (medium-specific best practice —
+      coding: language/framework conventions, error handling, naming, no duplication; writing: prose
+      clarity, style consistency with the repo's existing voice; visual: diagram clarity, notation
+      consistency) and, when the task produces or revises structure/approach, **Design** (does the
+      approach/structure fit, system-wide integrity).
    5. **Self-check** — verify each completion criterion (OK/NG with specific evidence); (code) measure
       coverage with a project-appropriate tool (Jest, pytest, JaCoCo, gcov, etc.) and record
       line/branch coverage and uncovered areas. Write results to `{steering_dir}/checks/{task-id}.md`
@@ -89,11 +104,12 @@ reviews run in Verify; the coordinator's independent review then clears the task
    - Inspect the committed deliverable: `git show <sha>` for the returned SHA(s), or `git diff <task's
      starting commit>..HEAD` for the cumulative change.
    - Confirm the change matches the task's scope and Completion criteria before spending review experts.
-2. **Dispatch the review experts as independent subagents** — QA always; for code, also language and
-   software-engineering. Build each review prompt with 6 elements:
-   1. **Role** — the expert's domain (QA / language / software-engineering), told to review
-      **adversarially** from its domain's best practices: assume defects exist and try to break the
-      artifact (boundaries, error paths, integration, missed cases).
+2. **Dispatch the review experts as independent subagents** — QA always; Craft and Verification for the
+   task's medium (coding / writing / visual); Design when the task produces or revises structure/
+   approach. Build each review prompt with 6 elements:
+   1. **Role** — the expert's domain (QA / Design / Craft / Verification, per the task's medium), told to
+      review **adversarially** from its domain's best practices: assume defects exist and try to break
+      the artifact (boundaries, error paths, integration, missed cases).
    2. **Artifact** — the full content or diff under review.
    3. **Criteria** — the expert checklist below.
    4. **Completion criteria** — the task's Completion criteria copied **verbatim** from `steering.md`.
@@ -105,11 +121,17 @@ reviews run in Verify; the coordinator's independent review then clears the task
    Expert checklists:
    - **QA expert**: tests/verifications meaningful to the purpose (not just "passed"); edge cases
      covered (boundary, error, empty, max, type conversion).
-   - **Language expert** (code only): best practices (naming, error handling, null/thread safety);
-     consistency with existing codebase style; test code in GWT (Given/When/Then) format.
-   - **Software-engineering expert** (code only): separation of concerns; system-wide integrity
-     (interface contracts, API compatibility); maintainability (no duplication, deep nesting, magic
-     numbers).
+   - **Design expert** (tasks that produce or revise structure/approach): does the approach/structure
+     fit; separation of concerns; system-wide integrity (interface contracts, API compatibility,
+     cross-doc consistency).
+   - **Craft expert** — coding: best practices (naming, error handling, null/thread safety), no
+     duplication, consistency with existing codebase style. writing: prose clarity and correctness,
+     consistency with the doc's existing voice/terminology. visual: diagram/notation clarity and
+     consistency with the doc's existing conventions.
+   - **Verification expert** — test: tests are meaningful and in GWT (Given/When/Then) format, coverage
+     of the change. fact-check: every claim/reference verified against its source, no unverified
+     assertion stated as fact. dry-run: the diagram/flow traced step by step against the described
+     behavior and confirmed to match.
 3. **Triage every finding.** Each ends in exactly one of:
    - **Valid** → fix it. Dispatch the implementation expert (fresh subagent) — every deliverable-touching
      fix, no matter its size, including minor improvements. Reuse the original work-order (element 5 still
@@ -176,31 +198,38 @@ ledger — on the post-Verify steering check-off commit.
 | Meaningful tests/verification | OK / NG | |
 | Edge case coverage | OK / NG | |
 
-## Expert Reviews (code changes only)
+## Expert Reviews (axes the task needs)
 
-(Experts assess the aspects below, not each completion criterion — QA is the per-criterion gate.)
+(Experts assess the aspects below, not each completion criterion — QA is the per-criterion gate. Include
+only the sections for the axes this task spawned.)
 
-### Language Expert
-
-| Aspect | Verdict | Evidence / Improvement |
-|---|---|---|
-| Best practices | OK / NG | |
-| Codebase style consistency | OK / NG | |
-| GWT test format | OK / NG | |
-
-### Software-engineering Expert
+### Design Expert (tasks that produce or revise structure/approach)
 
 | Aspect | Verdict | Evidence / Improvement |
 |---|---|---|
-| Separation of concerns | OK / NG | |
-| System integrity | OK / NG | |
-| Maintainability | OK / NG | |
+| Approach/structure fits | OK / NG | |
+| System-wide integrity (interfaces, cross-doc consistency) | OK / NG | |
+
+### Craft Expert (coding / writing / visual — per the task's medium)
+
+| Aspect | Verdict | Evidence / Improvement |
+|---|---|---|
+| Medium-specific best practice | OK / NG | |
+| Consistency with existing style | OK / NG | |
+
+### Verification Expert (test / fact-check / dry-run — per the task's medium)
+
+| Aspect | Verdict | Evidence / Improvement |
+|---|---|---|
+| Artifact actually checked (tests run / claims verified / flow traced) | OK / NG | |
+| Coverage (edge cases / claims / steps) | OK / NG | |
 
 ## Overall Verdict
 
 - Self-check: OK / NG
 - QA: OK / NG
-- Language expert: OK / NG / N/A
-- Software-engineering expert: OK / NG / N/A
+- Design expert: OK / NG / N/A
+- Craft expert: OK / NG / N/A
+- Verification expert: OK / NG / N/A
 - Ready to check off: Yes / No (reason)
 ```
