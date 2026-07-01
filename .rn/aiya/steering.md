@@ -234,24 +234,35 @@ contradiction; a different phase. Apply on resume (the user said "再開後に�
 
 - **Status**: paused
 - **Date**: 2026-07-02
-- **Last completed**: **Ledger `.rn/aiya/checks/1.md` re-validated on `/rn:up`** (it was stale — written
-  before the pure-design rewrite, still referencing the old §1–§8 structure and TOON). Two independent
-  QA subagent rounds ran against the current `aiya/docs/design.md`: round 1 found 3 internal-consistency
-  defects (the §5 boundedness bullet overclaimed all three mechanisms as equally "structural"; §1's
-  "must not grow" contradicted §4.1 rule 2's "sub-linear"; the Stage③ mermaid let a 4th, unverified
-  regenerate fire before the attempt cap). All 3 were triaged as valid, fixed, and pushed
-  (`1098ff9`). Round-2 regression QA confirmed the fixes and surfaced one further ambiguity (the "1 Step
-  = 1 Turn" invariant didn't acknowledge re-aim's extra work-Turns); fixed and pushed (`2160899`),
-  coordinator-verified via `git show`. The ledger's QA columns were rewritten to match (previously
-  described a pre-rewrite round referencing retired `acc.md`/`tc.md`). Task #1 itself is still
-  **awaiting user review** (not yet checked off) on PR #1 — 2 of the 3 allowed fix iterations used.
+- **Last completed**: Live user-review discussion of `aiya/docs/design.md` §1 (Requirements), console-only —
+  **no doc edits applied yet, tree stayed clean all session.** Two threads:
+  1. Traced steering's "check for silent instruction-drift" open-risk note (see Notes below) back to
+     `design.md:328-336` §5 — confirmed it names exactly the two of three boundedness mechanisms that are
+     *not* structurally enforced (Conductor read-restriction; verify-Turn's goal source). Sound, just
+     under-referenced; low-priority polish, not required.
+  2. **Substantive: user reframed §1's Requirements as under-layered.** Proposed chain: (a) the real goal,
+     stated nowhere in the doc (confirmed — `grep -i "productiv|expert|order of magnitude"` on
+     `design.md` = 0 hits): raise expert productivity an order of magnitude via AI agents; (b) hypothesis-level
+     requirements toward that goal: always track the goal, be freed from babysitting, coordinate via gates;
+     (c) AI-agent-specific implementation challenges once you try (b): context bloat, drift — today's §1
+     bounded-context/drift-detection pair. Today's §1 states (c) as if it were the goal itself, and never
+     states (a). **Also corrected the `rn` characterization at `design.md:23-25`**: `rn` is not "the
+     simplified version of the same pattern" — its actual purpose is session-lifecycle management; making
+     the conductor/expert AI-agent pattern usable was incidental, and it never targeted context
+     bloat/drift, so capping at ~2 concurrent streams and never escaping babysitting is a **consequence of
+     out-of-scope**, not a deliberate simplification. Confirmed as valid; **awaiting the user's go-ahead to
+     write it into `design.md`** (asked, not yet answered when `/rn:dn` was run).
 - **Next**:
-  1. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — commits
+  1. **Get go-ahead, then rewrite `design.md` §1** into the 3-layer structure above (goal → 3 hypothesis
+     requirements → 2 AI-agent challenges), and fix the `rn` line (`design.md:23-25`) per the correction
+     above. This is still part of Task #1's existing review cycle, not a new task.
+  2. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — commits
      `a18a3f7` (squashed rewrite) → `1098ff9` (3 consistency fixes) → `2160899` (1-Step-1-Turn
-     clarification) are all on the PR. Ledger is current. On `/ty`: check off Task #1's "user review"
-     step and commit the **single completion marker** (`docs: complete task #1 — …`) per
-     `task-workflow.md` Phase: Complete. On `/gm`: re-aim per the feedback.
-  2. Then start **Task #2** — author the aiya Conductor skill `aiya/skills/<verb>/SKILL.md`
+     clarification) are on the PR; add the §1 rewrite from step 1 once written. Ledger is current except
+     for that pending rewrite. On `/ty`: check off Task #1's "user review" step and commit the **single
+     completion marker** (`docs: complete task #1 — …`) per `task-workflow.md` Phase: Complete. On `/gm`:
+     re-aim per the feedback.
+  3. Then start **Task #2** — author the aiya Conductor skill `aiya/skills/<verb>/SKILL.md`
      (prompt-driven, no JS loop), realizing the cycle from the revised `design.md`. Follow
      `task-workflow.md`.
 - **Notes**:
