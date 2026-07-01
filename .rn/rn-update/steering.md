@@ -530,16 +530,25 @@ session is suspended — the signal `/rn:up` and `/rn:dn` search for — and res
 here, so only a genuinely suspended session reads `paused`.)
 
 - **Status**: paused
-- **Date**: 2026-07-01
+- **Date**: 2026-07-02
 - **Last completed**: #14 — Reposition design/evaluation gates as sign-off tasks placed by planning
 - **Next**: #5 — Record the changes and verify cross-doc consistency
-- **Notes**: #14 is the last of its prerequisites (`#1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12,
-  #13, #14`), so #5 is now the session's only remaining task. #5's job: update `rn/CHANGELOG.md`
-  (the `gm`/`ty` commands and the PR-feedback loop as user-facing entries; the #2 proceduralize
-  rewrite is behavior-preserving so it's excluded), record the verdict-command + FB-workflow
-  structure in `rn/docs/design.md`, and grep/read every `rn/` doc for cross-doc contradictions
-  (especially now that #11-#14 changed `on`/`planning-workflow.md`/`task-execute-workflow.md`/
-  `task-verify-workflow.md`'s shape). `version` stays `0.6.0` — no release instruction is in scope.
+- **Notes**: Two things to resolve before/while executing #5, neither yet done:
+  1. **Open escalation, unresolved.** This session's own task list (#1-#14, #5 last) has no
+     "Evaluation sign-off" task, but #14 — which this session itself built — requires every
+     session to end with one; `task-verify-workflow.md`'s Phase: Complete treats finishing with no
+     such task as a planning defect to escalate, not close silently. Proposed to the user but not
+     yet confirmed: add a final task **#15 — Evaluation sign-off**, gated on `/rn:ty`/`/rn:gm` over
+     the Acceptance-criteria run, matching #14's own shape. Get the user's answer first.
+  2. **#5 itself not yet executed** (no CHANGELOG/design.md edits committed) — and its `steering.md`
+     entry is missing a **Steps** section (only Purpose/Prerequisites/Completion criteria); add one
+     matching the other tasks' shape before dispatch, since `task-execute-workflow.md`'s work-order
+     needs Steps copied verbatim. An earlier attempt this session edited `CHANGELOG.md`/
+     `docs/design.md`/`README.md` directly as coordinator — against this project's own
+     coordinator/expert split (`task-execute-workflow.md` Roles: all deliverable work goes to the
+     implementation expert, every time) — and was reverted; redo #5 through the normal dispatch
+     (self-check → QA → Craft(writing) → Verification(fact-check) → coordinator review), not by
+     editing the docs directly.
   Tasks #4 and #6 are DONE through QA but still say "awaiting consolidated PR review" — that
-  consolidated review is the user's PR review on this branch, not a further task here; #5 doesn't
-  need to chase it, just needs the record to be accurate once #1-#14 are all done. No blockers.
+  consolidated review is the user's PR review on this branch, not a further task here. No other
+  blockers. `version` stays `0.6.0` — no release instruction is in scope.
