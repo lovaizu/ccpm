@@ -122,9 +122,10 @@ only the sections for the axes this task spawned.)
 ## Phase: Verify
 
 1. **Read the committed diff yourself.**
-   - The deliverable is already committed and pushed (Execute element 6); the only uncommitted change is
-     the check file the expert wrote (Execute element 5). Expect `git status` to show **only** that
-     tracked check file — that is normal, not a deliverable change.
+   - The deliverable is already committed and pushed (`task-execute-workflow.md` Execute element 6); the
+     only uncommitted change is the check file the expert wrote (`task-execute-workflow.md` Execute
+     element 5). Expect `git status` to show **only** that tracked check file — that is normal, not a
+     deliverable change.
    - Inspect the committed deliverable: `git show <sha>` for the returned SHA(s), or `git diff <task's
      starting commit>..HEAD` for the cumulative change.
    - Confirm the change matches the task's scope and Completion criteria before spending review experts.
