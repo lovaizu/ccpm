@@ -23,10 +23,9 @@ task is built or verified → its workflow. From this follow, rather than as sep
   (`planning-workflow`, `task-execute-workflow`, `task-verify-workflow`).
 - **A user gate is a sign-off work-instruction the planner places in the task sequence** — not a
   checkpoint hardcoded into execution. Its timing is a planning decision, visible in the task list.
-- **Sign-off tasks and reviewed deliverables resolve through one verdict vocabulary** — `/rn:ty`
-  (approve) and `/rn:gm` (revise) cover the plan/design/evaluation gates and any reviewed result, so the
-  coordinator never infers a verdict from prose; escalation and weigh-in questions fall outside this
-  vocabulary and get answered directly.
+- **Sign-off tasks and any reviewed result share one verdict vocabulary** — `/rn:ty` (approve) and
+  `/rn:gm` (revise) cover the plan / design / evaluation gates and any reviewed result; escalation and
+  weigh-in questions are answered directly, not through these commands.
 - **Authoring guidance lives in templates, not scattered across procedure steps** — where duplicated
   guidance drifts and is hard to keep consistent.
 - **PR review feedback runs its own, lighter loop** (`pr-feedback-workflow`), separate from the task
