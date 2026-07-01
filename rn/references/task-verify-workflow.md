@@ -29,19 +29,23 @@ compact summary.
 
 ## Review gates
 
-The user signs off at exactly **three** scheduled gates, never per task:
+The user signs off at exactly **three** scheduled gates, never on any other task:
 
 - **Plan gate** — the draft-PR plan approval in `on` before any task runs.
 - **Design gate** — sign-off on the approach / key decisions before they are built on (folds into the
-  plan gate when the design is settled at plan time; a separate stop before heavy build otherwise).
-- **Evaluation gate** — the end-of-session run of the `steering.md` Acceptance criteria.
+  plan gate when the design is settled at plan time; a separate stop before heavy build otherwise —
+  realized as the Design sign-off task below).
+- **Evaluation gate** — the end-of-session run of the `steering.md` Acceptance criteria (realized as the
+  Evaluation sign-off task below).
 
 All three gates resolve through the user's verdict commands — `/rn:ty` (approve) or `/rn:gm` (revise);
 the assistant never records a verdict the user did not issue.
 
-The per-task boundary is **not** a user gate. Per-task quality is caught by self-check + QA/expert
-review + the coordinator's independent review. Mid-flight, **Escalation** (Verify, Triage) is a
-separate always-open channel — not a gate.
+The per-task boundary is **not** a user gate for ordinary build tasks — the two sign-off tasks (Design
+sign-off, Evaluation sign-off) are the exception: their own per-task boundary **is** the design/
+evaluation gate itself. Per-task quality on every other task is caught by self-check + QA/expert review +
+the coordinator's independent review. Mid-flight, **Escalation** (Verify, Triage) is a separate
+always-open channel — not a gate.
 
 ## Process selection
 
