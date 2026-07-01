@@ -177,6 +177,12 @@ and stay in sync; version lives only in plugin.json.
 **Purpose**: Prove the two properties hold under prompt control (Level B). This is the point of the
 whole build.
 
+> Measurement-design note (PR-review discussion, 2026-07-02): check for **silent instruction-drift**
+> — the Conductor reading raw Turn output, or the verify-Turn sourcing the goal from the running
+> CCS's `goal_orientation` instead of the gate-approved `goal.md` — not just CCS-size numbers.
+> Nothing in the design technically blocks either; boundedness and goal-provenance rest on prompt
+> adherence (design.md §5 is honest about this: default+observable, not guaranteed).
+
 **Prerequisites**: #4.
 
 **Steps**:
@@ -232,88 +238,12 @@ contradiction; a different phase. Apply on resume (the user said "再開後に�
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-07-02
-- **Last completed**: Live user-review discussion of `aiya/docs/design.md` §1 (Requirements), console-only —
-  **no doc edits applied yet, tree stayed clean all session.** Two threads:
-  1. Traced steering's "check for silent instruction-drift" open-risk note (see Notes below) back to
-     `design.md:328-336` §5 — confirmed it names exactly the two of three boundedness mechanisms that are
-     *not* structurally enforced (Conductor read-restriction; verify-Turn's goal source). Sound, just
-     under-referenced; low-priority polish, not required.
-  2. **Substantive: user reframed §1's Requirements as under-layered.** Proposed chain: (a) the real goal,
-     stated nowhere in the doc (confirmed — `grep -i "productiv|expert|order of magnitude"` on
-     `design.md` = 0 hits): raise expert productivity an order of magnitude via AI agents; (b) hypothesis-level
-     requirements toward that goal: always track the goal, be freed from babysitting, coordinate via gates;
-     (c) AI-agent-specific implementation challenges once you try (b): context bloat, drift — today's §1
-     bounded-context/drift-detection pair. Today's §1 states (c) as if it were the goal itself, and never
-     states (a). **Also corrected the `rn` characterization at `design.md:23-25`**: `rn` is not "the
-     simplified version of the same pattern" — its actual purpose is session-lifecycle management; making
-     the conductor/expert AI-agent pattern usable was incidental, and it never targeted context
-     bloat/drift, so capping at ~2 concurrent streams and never escaping babysitting is a **consequence of
-     out-of-scope**, not a deliberate simplification. Confirmed as valid; **awaiting the user's go-ahead to
-     write it into `design.md`** (asked, not yet answered when `/rn:dn` was run).
-- **Next**:
-  1. **Get go-ahead, then rewrite `design.md` §1** into the 3-layer structure above (goal → 3 hypothesis
-     requirements → 2 AI-agent challenges), and fix the `rn` line (`design.md:23-25`) per the correction
-     above. This is still part of Task #1's existing review cycle, not a new task.
-  2. **User reviews `aiya/docs/design.md` on PR #1** (the only unchecked step of Task #1) — commits
-     `a18a3f7` (squashed rewrite) → `1098ff9` (3 consistency fixes) → `2160899` (1-Step-1-Turn
-     clarification) are on the PR; add the §1 rewrite from step 1 once written. Ledger is current except
-     for that pending rewrite. On `/ty`: check off Task #1's "user review" step and commit the **single
-     completion marker** (`docs: complete task #1 — …`) per `task-workflow.md` Phase: Complete. On `/gm`:
-     re-aim per the feedback.
-  3. Then start **Task #2** — author the aiya Conductor skill `aiya/skills/<verb>/SKILL.md`
-     (prompt-driven, no JS loop), realizing the cycle from the revised `design.md`. Follow
-     `task-workflow.md`.
-- **Notes**:
-  - **Memo layer retired (2026-07-01), one step further than D-2.** `.rn/aiya/core.md` and
-    `.rn/smith/{acc,tc,approach,design,steering}.md` are deleted — the untracked `smith/` plugin stub
-    too. Every point in them worth keeping was exhaustively diffed against `design.md` and folded in
-    where missing: the `rn`-comparison / bounded-state-vs-alternatives rationale (§1), the
-    never-nest-Turns invariant (§3), the CCS bloat symptom table (§4.1), the verify-Turn's 3 check
-    targets + mechanical-first + simulation method (§4.2), the phase-authoring-split hypothesis + the
-    `.aiya/<issue>/` storage layout + the Chain→CCS component mapping (§4.4). What did **not** carry
-    over: PoC evaluation numbers/paper citations (already-decided defensive-framing exclusion), the
-    external `agents-in-your-area` product-vision links, the obsolete `/hi`/`/go` CLI surface, and
-    smith's own plan-ahead/domain-expert-registry axis (out of scope now that aiya absorbed smith's
-    role). `design.md` is the only design doc left; nothing else needs consulting for design content.
-  - Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Review milestones
-    on the PR, not the console — but this session the user reviewed design content turn-by-turn in the
-    console and had each fix pushed immediately; PR is where the rendered diagrams/tables are confirmed.
-  - **`design.md` is now the source of truth for the design**, and it diverged from the older `.rn/`
-    memos this session. Where they conflict, `design.md` wins. Specifically:
-    - **CCS = YAML** (NOT TOON). Any note saying "CCS = 9-component TOON" (incl. the old bullet below,
-      `core.md`, `acc.md`) is **superseded** — only the format changed; the 9 components + `type` vocab
-      + by-path/soft-cap/Conductor-reads-only-CCS rules carry over.
-    - The doc no longer contains Form-A/B or PoC framing; that history is steering-only (D-1/D-2).
-  - **Tasks restructured per D-2** (final-deliverable-first): old design-memo #1 retired; work builds
-    the real plugin artifacts. README is its own task (#3), authored **after** SKILL.md settles.
-    Dogfood is #5. Don't relitigate D-2.
-  - The design substance (now authoritative in `aiya/docs/design.md`): 1 Step = 1 work-Turn on the
-    normal path (generate+folded-compress) — a failing Step re-dispatches via re-aim, adding further
-    work-Turns within the same Step, capped at 3 — then an independent discarded verify-Turn; **CCS =
-    YAML**, 9 components, artifacts by path never inlined, soft size cap, Conductor reads only latest
-    CCS + verdict; verify-Turn fresh-context with the true goal sourced from the **immutable
-    gate-approved goal.md** (not the running CCS); re-aim cap 3 → escalation as an exception outside the
-    6 gates (carries the ≤3-gap failure history); boundedness rests on 3 levers of different strength —
-    the subagent return contract (structural-by-construction), the Conductor's read-restriction (a
-    stated procedural rule, not a technical block), and the CCS size budget (a bounding convention) —
-    default+observable rather than guaranteed (proof = the dogfood, #5).
-  - 6 gates = 3 phases (Goal/Approach/Delivery) × {Planning IN, Output OUT}; steer on `/ty` approve,
-    `/gm` redirect; surface = async chat.
-  - PoC proved ACC/TC *when scripted* (`poc.md`, measurements only — raw artifacts deleted). The
-    prompt-driven form's burden = show they hold under prompt control; proof is the dogfood (#5).
-  - The dogfood builds techting to a throwaway/compare location, never over the real techting worktree
-    (branch `worktree-techting`, its own PR #5).
-  - Working method: 1問ずつ・素の対話で合意してから書く（全体→詳細）. Artifacts in English, console in 敬体.
-  - **Open risk flagged during PR review discussion (2026-07-02), not a design.md defect — a note for
-    Task #5.** The QA rounds cleared design.md's internal logic, but the coordinator's own assessment is
-    that the doc's honest §5 framing ("a stated procedural rule, not a technical block" for the
-    Conductor's read-restriction) exposes the real open question: **nothing described in the design
-    technically stops the Conductor from reading the artifact directly or the verify-Turn from reading
-    the running CCS's `goal_orientation` instead of the gate-approved `goal.md`** — both boundedness and
-    goal-provenance currently rest on the Conductor/verify-Turn following prompt instructions, not on an
-    enforced mechanism. `design.md` itself is already honest about this (default+observable, proof
-    deferred to the dogfood) — so this is not something to fix in the doc, but worth keeping in mind
-    when designing Task #5's ACC/TC measurement: check for silent instruction-drift (Conductor reading
-    raw output, verify-Turn reading the wrong goal source), not just CCS-size numbers.
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
