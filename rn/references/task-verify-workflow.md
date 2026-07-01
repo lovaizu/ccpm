@@ -45,10 +45,11 @@ separate always-open channel — not a gate.
 
 ## Process selection
 
-Which axes spawn is a per-task judgment: the task states its medium (coding / writing / visual) and
-whether it produces or revises structure/approach, or that it is a sign-off task. QA always spawns for a
-task that builds something; a sign-off task spawns none. Craft and Verification spawn for the task's
-medium. Design spawns only when the task produces or revises structure/approach.
+Which axes spawn is a per-task judgment: first, whether the task is a sign-off task or a build task; for
+a build task, its medium (coding / writing / visual) and whether it produces or revises structure/
+approach. QA always spawns for a task that builds something; a sign-off task spawns none. Craft and
+Verification spawn for the task's medium. Design spawns only when the task produces or revises structure/
+approach.
 
 - **Code task** (instance): Self-check → QA → Craft (coding) → Verification (test) → coordinator review
   → check-off; add Design when the task also changes structure/approach.
@@ -57,11 +58,11 @@ medium. Design spawns only when the task produces or revises structure/approach.
 - **Visual/diagram task** (instance): Self-check → QA → Craft (visual) → Verification (dry-run) →
   coordinator review → check-off; add Design when the task also changes structure/approach.
 - **Sign-off task** (instance): no axes spawn — no implementation expert builds it, no QA/Design/Craft/
-  Verification review runs. It skips Phase: Execute and Phase: Verify entirely: go straight from picking
-  the task to the gate. Its own Steps (written by planning) are the gate itself — present the thing
-  being signed off (`design.md`, or the Acceptance-criteria run result) to the user and take the verdict
-  via `/rn:ty` (approve → check off) or `/rn:gm` (revise → address the feedback, re-present), then check
-  off in `steering.md`.
+  Verification review runs. It skips Phase: Execute and Phase: Verify entirely, going straight from
+  picking the task to the gate. Its own Steps (written by planning) are the gate itself — present the
+  thing being signed off (`design.md`, or the Acceptance criteria run result) to the user and take the
+  verdict via `/rn:ty` (approve → check off in `steering.md`) or `/rn:gm` (revise → address the feedback
+  and re-present the gate; no check-off until later approved).
 
 Self-check is produced in Execute by the implementation expert; QA / Design / Craft / Verification
 reviews run in Verify; the coordinator's independent review then clears the task into its check-off. A
@@ -193,10 +194,12 @@ only the sections for the axes this task spawned.)
 
 ## Phase: Complete
 
-There is no per-task user gate: once Verify clears (all expert reviews plus the coordinator's
-independent review), the coordinator checks the task off directly.
+There is no per-task user gate for a normal task: once Verify clears (all expert reviews plus the
+coordinator's independent review) — or, for a sign-off task, once the user's gate verdict resolves as
+approved — the coordinator checks the task off directly.
 
-1. **Check off steering.** With Verify cleared, check off the task in `steering.md` directly.
+1. **Check off steering.** With Verify cleared — or, for a sign-off task, once its gate verdict is
+   approved — check off the task in `steering.md` directly.
 2. **Commit the check-off with the single completion marker** — message `{type}: complete task #{id} —
    {description}` (`{type}` matches the change: `feat` / `fix` / `docs` / `refactor` / `test` / …), then
    push to the session PR. This is the one completion marker for the task: deliverable commits carry
@@ -204,4 +207,7 @@ independent review), the coordinator checks the task off directly.
    exact substring regardless of the prefix.
 3. **Advance.** Begin the next unchecked task immediately — a sign-off task goes straight to the gate per
    the Process selection rule above; any other task begins at Phase: Execute
-   (`task-execute-workflow.md`).
+   (`task-execute-workflow.md`). If no unchecked tasks remain and no "Evaluation sign-off" task was ever
+   encountered in this session, that is a planning defect (a session must always close via the
+   Evaluation sign-off task) — escalate to the user immediately via the same always-open Escalation
+   channel described in Triage above; do not close the session silently.
