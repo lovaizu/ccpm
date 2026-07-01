@@ -483,32 +483,38 @@ task-execution work-order/review-prompt elements that name "language expert"/"so
   axes that build a task also review it (failure modes absent: the old trio surviving anywhere; an axis
   that never fits prose/prompts/slides forced onto a non-code task).
 
-### #14: Reposition design/evaluation gates as sign-off tasks placed by planning
+### #14: Reposition design/evaluation gates as sign-off tasks placed by planning — DONE through QA
 
 **Purpose**: Per the standing decision in `rn/docs/design.md`, the design and evaluation gates become
 **sign-off tasks** that `planning-workflow.md` (#11) places explicitly in the task sequence — not logic
 hardcoded into `on`'s Step 5 or `task-verify-workflow.md`'s Phase: Complete. The plan gate stays
 planning's own closing hand-off (never a task — a plan can't carry a task that approves itself).
+See `checks/14.md`.
 
 **Prerequisites**: #11 (planning-workflow exists to place the tasks), #12 (verify-workflow's Complete
 phase is the file being amended)
 
 **Steps**:
 
-- [ ] In `planning-workflow.md` (#11)'s task-decomposition step: when the session has a `design.md` not
+- [x] In `planning-workflow.md` (#11)'s task-decomposition step: when the session has a `design.md` not
       settled at plan time, place an explicit **"Design sign-off"** task in the sequence (Completion
       criteria: user approves via `/rn:ty`/`/rn:gm`) at the point heavy build would otherwise start on an
       unapproved design; when design is settled at plan time, fold it into the plan-gate hand-off instead
       (no separate task).
-- [ ] Always place a final **"Evaluation sign-off"** task (Completion criteria: user approves the
+- [x] Always place a final **"Evaluation sign-off"** task (Completion criteria: user approves the
       Acceptance-criteria run via `/rn:ty`/`/rn:gm`) as the session's last task.
-- [ ] In `task-verify-workflow.md` (#12)'s Phase: Complete, remove the special-cased "if all tasks are
+- [x] In `task-verify-workflow.md` (#12)'s Phase: Complete, remove the special-cased "if all tasks are
       done, propose the evaluation gate" branch — Advance just moves to the next task, which is the
       Evaluation sign-off task when planning placed it last; a sign-off task's own Steps carry the
       `ty`/`gm` gate mechanics (per design.md's task-loop: "sign-off task? → user gate").
-- [ ] self-check + QA expert review (subagent) + grep cross-doc consistency (every session's task list
+- [x] self-check + QA expert review (subagent) + grep cross-doc consistency (every session's task list
       carries an Evaluation sign-off task at its end; no leftover hardcoded gate branch in
-      `on`/`task-verify-workflow.md`).
+      `on`/`task-verify-workflow.md`). — self-check OK (`checks/14.md`); round 1: all 4 axes dispatched —
+      Verification found a real regression (removing the hardcoded branch left no replacement backstop),
+      Design found 3 defects, Craft found 2 — all fixed in `3824f7c`; round 2 re-review (all 4 axes):
+      Design found a further contradiction (stale "Review gates" wording vs. the new sign-off-task
+      exception), QA+Craft converged on a minor "this step" ambiguity — fixed in `7e9d007`; round 3
+      re-review (Design + Craft, the two affected axes): both PASS.
 
 **Completion criteria**:
 
