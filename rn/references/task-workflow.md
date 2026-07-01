@@ -14,7 +14,7 @@ files under `{steering_dir}/checks/`.
   never edits the deliverable or its git history.
 - **Implementation expert** — subagent. Produces, fixes, and commits/pushes the deliverable (code/docs/
   visual).
-- **QA expert** — subagent, every task. Adversarially verifies the result meets the objective.
+- **QA expert** (every task) — subagent. Adversarially verifies the result meets the objective.
 - **Design expert** (tasks that produce or revise structure/approach) — subagent. Judges whether the
   approach/structure fits.
 - **Craft expert** (per medium: coding / writing / visual) — subagent. Judges medium-specific best
@@ -64,16 +64,21 @@ reviews run in Verify; the coordinator's independent review then clears the task
    only that, with these 7 elements:
    1. **Task** — Purpose, Steps, Completion criteria copied from `steering.md`.
    2. **Scope** — stay within this task; do not start adjacent tasks; name the files expected in play.
-   3. **Method** — (code) write the test first: a failing test capturing the expected behavior, then
-      implement until it passes. Not done until its tests pass.
+   3. **Method** — apply the task's Verification method as you build, not only after: coding — write the
+      test first, a failing test capturing the expected behavior, then implement until it passes, not
+      done until its tests pass; writing — verify each claim/reference against its source as you draft,
+      not done until every claim is checked; visual — trace the diagram/flow step by step against the
+      described behavior as you build it, not done until it holds end to end.
    4. **Best practices** — apply the axes the task needs: **Craft** (medium-specific best practice —
       coding: language/framework conventions, error handling, naming, no duplication; writing: prose
       clarity, style consistency with the repo's existing voice; visual: diagram clarity, notation
       consistency) and, when the task produces or revises structure/approach, **Design** (does the
       approach/structure fit, system-wide integrity).
-   5. **Self-check** — verify each completion criterion (OK/NG with specific evidence); (code) measure
-      coverage with a project-appropriate tool (Jest, pytest, JaCoCo, gcov, etc.) and record
-      line/branch coverage and uncovered areas. Write results to `{steering_dir}/checks/{task-id}.md`
+   5. **Self-check** — verify each completion criterion (OK/NG with specific evidence), plus confirm the
+      Method above was actually applied: coding — measure coverage with a project-appropriate tool
+      (Jest, pytest, JaCoCo, gcov, etc.) and record line/branch coverage and uncovered areas; writing —
+      confirm every claim was checked against its source and record which; visual — confirm the flow was
+      traced end to end and record where. Write results to `{steering_dir}/checks/{task-id}.md`
       using the Check file format below, filling **only** the per-criterion Self-check and Evidence
       columns and the Overall Verdict "Self-check" line. Never write or overwrite the review-verdict
       sections (QA / Expert Review / other Overall-Verdict lines and QA columns) — leave them untouched
@@ -107,9 +112,9 @@ reviews run in Verify; the coordinator's independent review then clears the task
 2. **Dispatch the review experts as independent subagents** — QA always; Craft and Verification for the
    task's medium (coding / writing / visual); Design when the task produces or revises structure/
    approach. Build each review prompt with 6 elements:
-   1. **Role** — the expert's domain (QA / Design / Craft / Verification, per the task's medium), told to
-      review **adversarially** from its domain's best practices: assume defects exist and try to break
-      the artifact (boundaries, error paths, integration, missed cases).
+   1. **Role** — the expert's domain (QA / Design / Craft / Verification — Craft and Verification scoped
+      to the task's medium), told to review **adversarially** from its domain's best practices: assume
+      defects exist and try to break the artifact (boundaries, error paths, integration, missed cases).
    2. **Artifact** — the full content or diff under review.
    3. **Criteria** — the expert checklist below.
    4. **Completion criteria** — the task's Completion criteria copied **verbatim** from `steering.md`.
@@ -119,8 +124,8 @@ reviews run in Verify; the coordinator's independent review then clears the task
       OK/NG verdict; do not defend the choices or hint at the verdict you expect.
 
    Expert checklists:
-   - **QA expert**: tests/verifications meaningful to the purpose (not just "passed"); edge cases
-     covered (boundary, error, empty, max, type conversion).
+   - **QA expert**: the verification approach is meaningful to the actual objective — does it check the
+     right thing, not just "it ran"/"it passed"; no rubber-stamped or purpose-mismatched check.
    - **Design expert** (tasks that produce or revise structure/approach): does the approach/structure
      fit; separation of concerns; system-wide integrity (interface contracts, API compatibility,
      cross-doc consistency).
@@ -128,10 +133,11 @@ reviews run in Verify; the coordinator's independent review then clears the task
      duplication, consistency with existing codebase style. writing: prose clarity and correctness,
      consistency with the doc's existing voice/terminology. visual: diagram/notation clarity and
      consistency with the doc's existing conventions.
-   - **Verification expert** — test: tests are meaningful and in GWT (Given/When/Then) format, coverage
-     of the change. fact-check: every claim/reference verified against its source, no unverified
-     assertion stated as fact. dry-run: the diagram/flow traced step by step against the described
-     behavior and confirmed to match.
+   - **Verification expert** — test: tests are meaningful and in GWT (Given/When/Then) format, and cover
+     the change's edge cases (boundary, error, empty, max, type conversion). fact-check: every
+     claim/reference verified against its source, no unverified assertion stated as fact, and completeness
+     of claim coverage — no material claim left unchecked. dry-run: the diagram/flow traced step by step
+     against the described behavior and confirmed to match, covering every step/branch.
 3. **Triage every finding.** Each ends in exactly one of:
    - **Valid** → fix it. Dispatch the implementation expert (fresh subagent) — every deliverable-touching
      fix, no matter its size, including minor improvements. Reuse the original work-order (element 5 still
@@ -195,8 +201,7 @@ ledger — on the post-Verify steering check-off commit.
 
 | Aspect | Verdict | Evidence / Improvement |
 |---|---|---|
-| Meaningful tests/verification | OK / NG | |
-| Edge case coverage | OK / NG | |
+| Verification approach meaningful to the objective (checks the right thing, not just "passed") | OK / NG | |
 
 ## Expert Reviews (axes the task needs)
 

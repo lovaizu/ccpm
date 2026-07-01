@@ -124,6 +124,8 @@ flowchart LR
 
 - **The craft / verification specializations.** The axes are design / craft / verification + QA; how
   craft and verification instantiate per medium (coding↔test, writing↔fact-check, visual↔dry-run) is
-  sketched, not pinned — whether the medium list is complete is open.
+  sketched, not pinned — whether the medium list is complete is open. Also open: a task spanning more
+  than one medium (e.g. code plus an accompanying diagram) — whether it spawns one Craft/Verification
+  instance per medium it touches is unresolved.
 - **Default home for a session's `design.md`.** Sessions default to `.rn/{slug}/design.md`, but rn
   keeps its own under `rn/docs/`; whether that exception generalizes is open.
