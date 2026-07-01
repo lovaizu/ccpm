@@ -83,7 +83,8 @@ Two boundaries carry the whole design; the rest of this section just details the
 
 **Invariant — 1 Step = 1 Turn.** A Step is counted by its one **work** (generate) Turn. The verify-Turn
 that follows is a discarded measurement Turn whose context does not accumulate, so the count stays at one
-work-Turn per Step.
+work-Turn per Step **on the normal, passing path**; a failing Step re-dispatches the work-Turn via re-aim
+(Stage ③ below), adding further work-Turns within that same Step, capped at 3 attempts total (§4.3).
 
 **Invariant — Turns never nest.** Only the Conductor spawns; a Turn cannot itself spawn another
 subagent. A unit too big for one Turn is split into **more flat Turns**, never nested ones. This is why
