@@ -11,9 +11,9 @@ domain work to subagents, and steers; the human steps in only at a few phase bou
 
 For that to scale, two properties must hold:
 
-- **Bounded context.** The Conductor's working state must **not grow with the number of work-streams.**
-  If it did, every added stream would cost more context and re-process old mistakes, and the whole point
-  — directing many streams cheaply — collapses.
+- **Bounded context.** The Conductor's working state must stay **bounded — sub-linear, not growing
+  linearly — with the number of work-streams.** If it grew linearly, every added stream would cost more
+  context and re-process old mistakes, and the whole point — directing many streams cheaply — collapses.
 - **Drift detection.** The work must stay **traceable to the goal**, and deviation must be **caught**,
   not discovered at the end. Without this, many fast streams just drift fast.
 
@@ -123,10 +123,10 @@ the artifact directly and is blind to the worker's self-report.
 ```mermaid
 flowchart LR
     J{"verdict?"} -->|"pass & closer to goal"| B{"phase boundary?"}
-    J -->|"fail"| RA["re-aim: re-generate<br/>with gap as correction · attempt++"]
-    RA --> CAP{"attempt > 3?"}
-    CAP -->|"no"| V2["re-verify (Stage ②)"]
+    J -->|"fail"| CAP{"attempt >= 3?"}
     CAP -->|"yes"| ESC[["escalate to human<br/>(exception · carries failure history)"]]
+    CAP -->|"no"| RA["re-aim: re-generate<br/>with gap as correction · attempt++"]
+    RA --> V2["re-verify (Stage ②)"]
     B -->|"no"| NS["next Step → Stage ①"]
     B -->|"yes"| GATE[["phase gate (async chat)"]]
 ```
@@ -324,7 +324,12 @@ stay orthogonal.
   would be marginally denser but only pays off on uniform tabular arrays (which the CCS is not) and is
   written less reliably; a bespoke `type(contents)` notation buys no real density over YAML while losing
   its parseability — so neither is worth it.
-- **Boundedness is enforced structurally**, by the subagent return contract (a Turn returns only the CCS
-  path + status), the Conductor's read-restriction (§4.1 rule 4), and the CCS size budget + grep
-  invariant (§4.1 rules 1–2). *Intent:* make the bounded path the default and adherence observable —
-  rather than relying on the Conductor's diligence.
+- **The bounded path is the default, and adherence is observable** (§2), through three mechanisms of
+  different strength — not all equally enforced. The **subagent return contract** is structural by
+  construction: a Turn's return channel carries only the CCS path + status, so raw output cannot cross
+  the push channel regardless of Turn behavior. The Conductor's **read-restriction** (§4.1 rule 4) is a
+  stated procedural rule, not a technical block — the Conductor is instructed never to open an artifact
+  file, and following that instruction is what keeps the pull channel closed. The **CCS size budget and
+  grep invariant** (§4.1 rules 1–2) is a bounding convention: exceeding the soft cap is a visible health
+  signal, not a hard stop. *Intent:* make the default path cheap to follow and any drift from it cheap to
+  notice, without claiming an enforcement mechanism the design does not have.
