@@ -216,7 +216,7 @@ stored, not pruned. See `rn/docs/design.md`.
   modes absent: a dangling or empty design reference; per-step memos returning; design content left in
   steering; the doc-division contradicting across `on` / `steering-template` / README).
 
-### #5: Record the changes and verify cross-doc consistency — to reconcile after #1–#4, #6–#14
+### #5: Record the changes and verify cross-doc consistency — DONE through QA
 
 **Purpose**: Record the user-facing changes in `rn/CHANGELOG.md` (including the `gm`/`ty` commands and
 the PR-feedback loop), record the verdict-command + FB-workflow structure in `rn/docs/design.md`, and
@@ -227,7 +227,7 @@ reconciled to the final shape of #3/#4/#6–#14.
 
 **Steps**:
 
-- [ ] In `rn/CHANGELOG.md`'s `## [Unreleased]` section, add entries for the two currently-undocumented
+- [x] In `rn/CHANGELOG.md`'s `## [Unreleased]` section, add entries for the two currently-undocumented
       user-facing changes: the `/rn:ty`/`/rn:gm` verdict commands (the accept/revise vocabulary at every
       gate and confirmation point) and the `pr-feedback-workflow.md` PR-feedback loop (collects unresolved
       review threads the author last commented on, addresses or asks one at a time). Re-check the existing
@@ -236,16 +236,21 @@ reconciled to the final shape of #3/#4/#6–#14.
       planning, not hardcoded gates). Exclude behavior-preserving internal restructuring (#2's
       proceduralization, #11/#12's file splits, #13's expert-axis rename) — no entry unless it changes what
       the user sees or does.
-- [ ] In `rn/docs/design.md`, record the verdict-command + PR-feedback-loop structure in whole-structure
+- [x] In `rn/docs/design.md`, record the verdict-command + PR-feedback-loop structure in whole-structure
       form consistent with the doc's existing sections (no per-step memo): `/rn:ty`/`/rn:gm` as the single
       accept/revise vocabulary wired to every gate and confirmation point, and `pr-feedback-workflow.md`'s
       collect → dispatch-one-at-a-time → coordinator-review-between-each → resolve-by-author-only shape.
       Fold into `Approach`/`Structure` as fits the existing prose rather than appending a new section.
-- [ ] Grep cross-doc consistency across `rn/`: no doc contradicts another (stale references to removed
+- [x] Grep cross-doc consistency across `rn/`: no doc contradicts another (stale references to removed
       mechanisms, old expert names, or the old per-task gate); `version` in `rn/.claude-plugin/plugin.json`
       is still `0.6.0`.
-- [ ] self-check (`checks/5.md`) + QA expert review (subagent) + Craft(writing) expert review (subagent) +
-      Verification(fact-check) expert review (subagent) + coordinator review.
+- [x] self-check (`checks/5.md`) + QA expert review (subagent) + Craft(writing) expert review (subagent) +
+      Verification(fact-check) expert review (subagent) + coordinator review. — self-check OK; QA round 1
+      PASS on content (a process-state observation triaged Invalid); Verification round 1 found a real
+      contradiction (verdict-vocabulary bullet overclaiming escalation coverage) fixed in `23bc3db`,
+      re-verification PASS; Craft round 1 flagged pr-feedback bullet terseness (fixed in `23bc3db`), round 2
+      flagged slash spacing/terminology/weight on the fixed bullet (fixed in `61d1e29`); coordinator review
+      PASS.
 
 **Completion criteria**:
 
