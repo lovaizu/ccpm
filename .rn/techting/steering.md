@@ -38,7 +38,8 @@ voice, and form from the reader and purpose rather than from memory or the old d
   and carries all source intent — reader definition (who / what they must decide-or-do / how they
   read), the five outline axes (article, guide, reference, record-ADR, evaluation), and a pre-output
   self-check. The body separates two layers: **process** (instructions to the model running the
-  skill) from **output rules** (constraints on the produced document), with the §output-rules layer
+  skill) from **output rules** (constraints on the produced document; "§output-rules" here names the
+  layer realized as the file's `## Reference` section — D-5), with the §output-rules layer
   carrying an explicit addressee sentence stating its rules target the produced document, not this
   prompt. The body is imperative and lean (<2,000 words). **No mermaid diagram is embedded in the
   prompt body** (and none is required by these criteria) — the mermaid rule lives only in
