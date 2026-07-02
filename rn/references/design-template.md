@@ -39,9 +39,7 @@ right when requirements change.
 
 ## Flow
 
-1. <first thing that happens>
-2. <next>
-3. <…>
+<mermaid diagram — flowchart or sequence diagram — of the end-to-end path>
 
 ## Open questions
 
@@ -61,6 +59,6 @@ right when requirements change.
 - **Structure** — the actors and how they wire together: a table of actor → responsibility, plus a
   mermaid diagram (GitHub renders it; ASCII art does not survive rewrapping). Descriptive only — say what each actor *is* and does, not why; the why is already in
   Approach.
-- **Flow** — the end-to-end path as a numbered sequence of what happens, in order. A step states what
-  occurs, not its justification.
+- **Flow** — the end-to-end path as a mermaid diagram (flowchart or sequence diagram) of what happens,
+  in order. A node states what occurs, not its justification.
 - **Open questions** — what is unresolved or deliberately deferred, so a maintainer knows the edges.
