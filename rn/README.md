@@ -40,8 +40,8 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 
 ● ── payment-fix: payments complete on the payment screen ──
   👉 plan sign-off ── asking now: review the plan on the draft PR, approve to start #1
-  ⬜ #1–#3   reproduction test / root-cause fix / regression check
-  (after approval, tasks run one by one without stopping to ask)
+  ⬜ #1–#4   reproduction test / root-cause fix / regression check / evaluation sign-off
+  (after approval, tasks run one by one without stopping to ask, until #4 — the evaluation sign-off)
 
   Captured your goal as I understand it:
     "Fix the bug on the payment screen so payments complete successfully"
@@ -50,7 +50,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
   Draft PR with the full plan: https://github.com/you/repo/pull/42
 ```
 
-That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input, so you always see where the session stands without opening steering.md.
+That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input once a session is underway, so you always see where the session stands without opening steering.md.
 
 Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met.
 

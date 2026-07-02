@@ -1,13 +1,20 @@
 # Session-Status Display
 
-The compact session map that opens every message stopping for user input. Read wherever a stop point
-instructs "open the message with the session-status block per `status-display.md`". The block comes
-first in that message — before the ask and anything else.
+The compact session map that opens every message stopping for user input while a session is active.
+Read wherever a stop point instructs "open the message with the session-status block per
+`status-display.md`". The block comes first in that message — before the ask and anything else.
 
 ## Rules
 
+- **Emit only while a session is active** — its `steering.md` exists and is identified. A stop before
+  that carries no block: planning's goal / slug / design-location asks before `steering.md` is
+  persisted, `/rn:up` before a suspended `steering.md` is identified (including its
+  multiple-candidates proposal), `/rn:gm` with no active session.
 - **Derive the block fresh from the active `steering.md` at emit time** — its `Goal`, task list, and
   check-offs are the only source; never reuse an earlier block.
+- **A task counts ✅ when `steering.md` records it complete** — checked off, or carrying an explicit
+  done annotation on the task. Done-but-awaiting (e.g. a review still pending) still counts ✅; the
+  pending item goes on the outlook line when it affects what follows.
 - **Write the block in the user's conversation language.** This spec and its examples are English; the
   emitted block follows the conversation.
 - **Markers are fixed**: ✅ completed / 👉 current / ⬜ remaining.
@@ -24,7 +31,8 @@ first in that message — before the ask and anything else.
 
 - **Header** — `── {slug}: {goal one-liner} ──`: the session's slug (the steering directory name,
   date prefix dropped) and a one-line compression of steering's `Goal`.
-- **✅ completed** — the checked-off tasks. Group consecutive ids into ranges (e.g. `#1–#6`) with a
+- **✅ completed** — the completed tasks (per the ✅-membership rule above). Group consecutive ids
+  into ranges (e.g. `#1–#6`) and comma-separate non-consecutive groups (e.g. `#1–#14, #16`), with a
   short label per task, `/`-separated; several ✅ lines are fine when one grows long. No completed
   tasks yet → no ✅ lines.
 - **👉 current** — exactly one line: the task the session is stopped on, plus what is being asked of
@@ -38,14 +46,14 @@ first in that message — before the ask and anything else.
 
 ## Examples
 
-Mid-session, tasks remaining:
+Mid-session, tasks remaining (an `/rn:dn` untracked-path ask):
 
 ```
 ── payment-fix: payments complete on the payment screen ──
 ✅ #1–#2   reproduction test / root-cause fix
 👉 #3      regression check ── asking now: how to handle the untracked `perf-notes.txt`
 ⬜ #4      evaluation sign-off
-(after your answer, #3 resumes; #4 then closes the session)
+(after your answer the suspend completes; #3 resumes on /rn:up)
 ```
 
 Last task, nothing remaining (⬜ omitted):

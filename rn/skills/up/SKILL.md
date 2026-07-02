@@ -12,7 +12,7 @@ Reconstructs prior session state, aligns it with git, and continues from the nex
 
 1. **Handle a dirty tree.**
    - Tree clean → proceed.
-   - Tree dirty → propose a `wip:` commit or a discard, and wait for confirmation before touching the working tree.
+   - Tree dirty → run step 2's discovery first, read-only, to identify the suspended steering.md; then propose a `wip:` commit or a discard, opening the message with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md` (no single steering.md identified → no block, per that spec's active-session boundary), and wait for confirmation before touching the working tree.
 
 2. **Find steering.md.** Run `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5` and keep the paths that exist on disk.
    - One result → use it.

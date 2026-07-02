@@ -26,7 +26,8 @@ coordinator pass — not the QA-expert / multi-round chain of
    ```
 
    If this exits non-zero or reports "no pull requests found" for the branch, **stop and report** — do
-   not fabricate a PR number or proceed into the GraphQL call.
+   not fabricate a PR number or proceed into the GraphQL call. When a session `steering.md` is active,
+   open that report with the session-status block per [`status-display.md`](./status-display.md).
 
    Record `number` (the PR number) and `url`. Capture `owner` and `repo` as **two separate** values:
 

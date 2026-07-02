@@ -65,8 +65,8 @@ approach.
 - **Sign-off task** (instance): no axes spawn — no implementation expert builds it, no QA/Design/Craft/
   Verification review runs. It skips Phase: Execute and Phase: Verify entirely, going straight from
   picking the task to the gate. Its own Steps (written by planning) are the gate itself — present the
-  thing being signed off (`design.md`, or the Acceptance criteria run result) to the user — opening
-  the message with the session-status block per [`status-display.md`](./status-display.md) — and take
+  thing being signed off (`design.md`, or the Acceptance criteria run result) to the user, opening
+  the message with the session-status block per [`status-display.md`](./status-display.md), and take
   the verdict via `/rn:ty` (approve → check off in `steering.md`) or `/rn:gm` (revise → address the
   feedback and re-present the gate; no check-off until later approved).
 
