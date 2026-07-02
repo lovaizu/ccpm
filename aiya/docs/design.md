@@ -32,6 +32,15 @@ properties name:
 Neither is hypothetical: `rn`, this repo's earlier quick coordinator, addressed neither — and capped
 out at ~2 concurrent streams with the human never escaping babysitting.
 
+**Non-goals.** Three things this design deliberately does not target:
+
+- **Parallel dispatch.** "Many work-streams" means many units of work under one goal, not simultaneous
+  execution — Turns run sequentially, 1 Step = 1 Turn (§3). Concurrency is out of scope at this stage.
+- **Measuring the 10× itself.** The order-of-magnitude goal directs the design; what the design is
+  verified against is the two properties above, not a productivity measurement.
+- **A general-purpose orchestrator.** aiya conducts goal-directed build work through this one cycle; it
+  is not a framework for arbitrary multi-agent topologies.
+
 Everything below exists to make these two hold **by structure**, under a prompt-driven loop with no
 controller program.
 
