@@ -38,17 +38,19 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 ```console
 > /rn:on fix the bug in the payment screen
 
-● Captured your goal as I understand it:
+● ── payment-fix: payments complete on the payment screen ──
+  👉 plan sign-off ── asking now: review the plan on the draft PR, approve to start #1
+  ⬜ #1–#3   reproduction test / root-cause fix / regression check
+  (after approval, tasks run one by one without stopping to ask)
+
+  Captured your goal as I understand it:
     "Fix the bug on the payment screen so payments complete successfully"
 
-  Location: .rn/20260702-payment-fix/steering.md
-    □ #1  Write a test that reproduces the payment failure
-    □ #2  Find the root cause and fix it
-    □ #3  Check for regressions
-
-  Opened a draft PR with the full plan: https://github.com/you/repo/pull/42
-  Review the steering there and approve to start #1.
+  Steering: .rn/20260702-payment-fix/steering.md
+  Draft PR with the full plan: https://github.com/you/repo/pull/42
 ```
+
+That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input, so you always see where the session stands without opening steering.md.
 
 Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met.
 

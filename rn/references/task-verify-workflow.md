@@ -45,7 +45,8 @@ The per-task boundary is **not** a user gate for ordinary build tasks — the tw
 sign-off, Evaluation sign-off) are the exception: their own per-task boundary **is** the design/
 evaluation gate itself. Per-task quality on every other task is caught by self-check + QA/expert review +
 the coordinator's independent review. Mid-flight, **Escalation** (Verify, Triage) is a separate
-always-open channel — not a gate.
+always-open channel — not a gate; an escalation message opens with the session-status block per
+[`status-display.md`](./status-display.md).
 
 ## Process selection
 
@@ -64,9 +65,10 @@ approach.
 - **Sign-off task** (instance): no axes spawn — no implementation expert builds it, no QA/Design/Craft/
   Verification review runs. It skips Phase: Execute and Phase: Verify entirely, going straight from
   picking the task to the gate. Its own Steps (written by planning) are the gate itself — present the
-  thing being signed off (`design.md`, or the Acceptance criteria run result) to the user and take the
-  verdict via `/rn:ty` (approve → check off in `steering.md`) or `/rn:gm` (revise → address the feedback
-  and re-present the gate; no check-off until later approved).
+  thing being signed off (`design.md`, or the Acceptance criteria run result) to the user — opening
+  the message with the session-status block per [`status-display.md`](./status-display.md) — and take
+  the verdict via `/rn:ty` (approve → check off in `steering.md`) or `/rn:gm` (revise → address the
+  feedback and re-present the gate; no check-off until later approved).
 
 Self-check is produced in Execute by the implementation expert; QA / Design / Craft / Verification
 reviews run in Verify; the coordinator's independent review then clears the task into its check-off. A
@@ -194,7 +196,8 @@ only the sections for the axes this task spawned.)
    or decision that would change the **agreed plan or design** is raised to the user **immediately,
    wherever it surfaces** — in Execute, Verify, or anywhere else — never deferred to a gate. It is
    distinct from the three scheduled gates (plan / design / evaluation) and counts as none of them; a
-   change to the agreed plan or design cannot ship unseen.
+   change to the agreed plan or design cannot ship unseen. Wherever it fires, open the escalation
+   message with the session-status block per [`status-display.md`](./status-display.md).
 
 ## Phase: Complete
 

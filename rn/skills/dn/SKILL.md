@@ -35,9 +35,10 @@ Records resume state and hands off. Does not execute tasks.
    - Regenerable test/build artifact — e.g. `.pytest_cache/`, `.coverage`, `htmlcov/`,
      `coverage.xml`, `__pycache__/`, `dist/`, `node_modules/`, `.tox/` → append a matching rule to the
      repo-root `.gitignore` (create it if absent). Any doubt → handle as the next item instead.
-   - Anything else → ask the user how to handle it (commit / gitignore / delete themselves / keep).
-     For any path the user does not resolve, append its exact `git status --porcelain` string to
-     `State → Notes`.
+   - Anything else → ask the user how to handle it (commit / gitignore / delete themselves / keep),
+     opening the message with the session-status block per
+     `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`. For any path the user does not resolve,
+     append its exact `git status --porcelain` string to `State → Notes`.
    - Never delete a file yourself.
 
 6. **Commit and push.** Commit the `State` changes and any `.gitignore` edit together in one commit,

@@ -32,7 +32,8 @@ Treat every user interaction as a proposal: lead with one concrete recommended o
    - Commit it: `chore: start session — {slug}`.
    - Ensure the work is on a branch — if on the default branch, create `{slug}` first.
    - Push the branch, then open a draft PR (`gh pr create --draft`) titled from the goal. The PR body is a single link to the steering file and nothing else — do not copy the Goal, tasks, or any plan content into it. Use a branch-ref blob link: `See [steering](https://github.com/{owner}/{repo}/blob/{branch}/.rn/{yyyymmdd}-{slug}/steering.md).` This is the session's PR — later tasks add commits to it.
-   - Report the PR link and a one-line task list, and ask the user to review the plan on the PR.
+   - Open the message with the session-status block per [`status-display.md`](./status-display.md),
+     then report the PR link and ask the user to review the plan on the PR.
    - **Design gate.** A sign-off on the approach / key decisions before any task builds on them. When the design is settled at plan time, fold it into this plan-gate approval (one stop). When it is not, Step 4 placed a **Design sign-off** task earlier in the sequence — that task carries the separate user sign-off on `design.md` before heavy build begins.
    - If push or PR creation fails, report it and fall back to presenting the plan in the console.
    - **Take the sign-off via the user's verdict commands** — both the plan-gate approval and the design-gate sign-off come through `/rn:ty` (approve → proceed) or `/rn:gm` (revise → address and re-present); never infer approval and never record a verdict the user did not issue.
