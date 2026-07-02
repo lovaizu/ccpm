@@ -29,18 +29,11 @@ properties name:
 - **Drift detection.** The work must stay **traceable to the goal**, and deviation must be **caught**,
   not discovered at the end. Without this, many fast streams just drift fast.
 
+Neither is hypothetical: `rn`, this repo's earlier quick coordinator, addressed neither — and capped
+out at ~2 concurrent streams with the human never escaping babysitting.
+
 Everything below exists to make these two hold **by structure**, under a prompt-driven loop with no
 controller program.
-
-**Why these two, concretely.** `rn` (this repo's quick coordinator) shows what happens when neither is
-addressed. Its purpose is **session-lifecycle management**; that it made the conductor-and-experts
-pattern usable at all was incidental — it never targeted context bloat or drift. The result — a cap of
-~2 concurrent streams, a human who never escapes babysitting, quality depending on who was watching and
-what they remembered to check — is a **consequence of those concerns being out of scope**, not a
-deliberate simplification. And bounded state is the only remedy that answers both challenges at once:
-replaying the full transcript each Turn grows context linearly and replays early mistakes; retrieval
-over history avoids the growth but drifts, because semantic-similarity search does not match what task
-control actually needs.
 
 ## 2. Approach
 
@@ -330,6 +323,11 @@ stay orthogonal.
   imperative Markdown; the cycle, the cap, the CCS contract, and the gates are all carried by procedure
   prose and the narrow subagent return channel. *Intent:* this is aiya's target form, and it avoids
   depending on a controller program.
+- **Bounded state handed between Turns — not transcript replay, not retrieval.** Replaying the full
+  transcript each Turn grows context linearly and replays early mistakes; retrieval over history avoids
+  the growth but drifts — semantic-similarity search does not match what task control needs. *Intent:*
+  of the remedies considered, a bounded state rewritten each Turn is the only one that answers both
+  challenges at once.
 - **1 Step = 1 Turn; compression folded into the generate-Turn.** Compression is not a separate Turn.
   *Intent:* independence is needed for *verification*, not for *compression* — the Conductor only ever
   reads the bounded CCS regardless of who wrote it, so a separate compression Turn would only add cost.
