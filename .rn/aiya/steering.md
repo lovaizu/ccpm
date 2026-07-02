@@ -181,7 +181,7 @@ whole build.
 > — the Conductor reading raw Turn output, or the verify-Turn sourcing the goal from the running
 > CCS's `goal_orientation` instead of the gate-approved `goal.md` — not just CCS-size numbers.
 > Nothing in the design technically blocks either; boundedness and goal-provenance rest on prompt
-> adherence (design.md §5 is honest about this: default+observable, not guaranteed).
+> adherence (design.md §5.1's last entry is honest about this: default+observable, not guaranteed).
 
 **Prerequisites**: #4.
 
@@ -210,7 +210,7 @@ result is recorded.
 ### D-1: Conductor form A (prompt-driven), not B (scripted)
 
 Decided 2026-06-26 (originally recorded in the now-retired `core.md` §10 D-1; the settled design lives
-in `aiya/docs/design.md` §5). Summary: the shipped Conductor is the main agent running a prompt-driven
+in `aiya/docs/design.md` §5.1). Summary: the shipped Conductor is the main agent running a prompt-driven
 workflow skill with ACC/TC dissolved into Markdown steps; the JS Workflow tool (PoC round-2 substrate)
 is not the delivery form. Rationale: A is the target form; deliberately differentiate from the field's
 B trend; avoid future `claude -p` plan limits. The dogfood (#5) must show ACC/TC hold under prompt
@@ -236,52 +236,35 @@ that "PoC/feasibility first" was about *proving the mechanism* (now done, round 
 about *building the plugin* — for that phase, work from the final artifacts, not separate memos. Not a
 contradiction; a different phase. Apply on resume (the user said "再開後に軌道修正して").
 
-### D-3: Design-doc format — question headings + explicit epistemic status (user, 2026-07-02)
+### D-3: Design-doc format — canonical h2 sections, question h3s, explicit epistemic status (user, 2026-07-02)
 
-Settled during the PR #1 user review of `design.md`. (a) **Section headings are the questions the
-section must answer**: six fixed h2s (why build this / what is given / core idea / pieces and flow /
-each part exactly / why this shape); h3s are fixed sub-questions where invariant (§1/§2/§4),
-component-named where subject-driven (§5/§6), with a **closure check** that every part named in the
-structure section has a stated contract home. Pure questions, no noun labels — the section numbers
-carry cross-references. (b) **Every claim's status is explicit**: facts carry their source, hypotheses
-carry a "hypothesis / not yet shown" marker, decisions live in the decisions section with *Intent:*.
-Rationale: noun-label headings let a reader pass a section they did not actually understand, and
-unmarked hypotheses get read as facts; question headings make "is this answered?" mechanically
-checkable (検討漏れ防止). Applied to `design.md` in `08ba166` + `7c8a79e`. Candidate to fold into
-aiya's own gate artifacts (`goal.md` / `approach.md`) when authoring SKILL.md in #2.
+Settled during the PR #1 user review of `design.md`; **revised the same day** after the user challenged
+the first version's derivation (its question h2s were retrofitted from the text already written, and the
+detailed-design h3s were noun labels again). The settled form:
+
+- (a) **h2s are the canonical design-document sections** — Background & Goals / Assumptions &
+  Constraints / Design overview / Detailed design / Alternatives considered. The canon fixes *which
+  sections a complete design has* and makes the skeleton reusable across designs.
+- (b) **h3s are the questions the section must answer**, derived **viewpoint-first**: per h2, first list
+  what a design must convey there, then phrase each item as a question — never derive the questions from
+  existing prose. Detailed design repeats one fixed question per part — "What is \<part\>'s contract,
+  and how is a breach caught?" — with a coverage lead-in mapping every part in the overview's parts
+  table to its contract home (closure check).
+- (c) **No lone h3**: group the canon so every h2 carries ≥2 questions (Non-goals folds into
+  Background & Goals; the overview question opens Design overview).
+- (d) **Every claim's status is explicit** (unchanged from the first version): facts carry their source,
+  hypotheses carry a "hypothesis / not yet shown" marker, decisions live in Alternatives with *Intent:*.
+
+Rationale: noun labels alone let a reader pass a section they did not actually understand; question
+headings retrofitted from the text inherit its blind spots. Deriving the questions from "what must a
+design convey" makes coverage mechanically checkable (検討漏れ防止) and the template portable to other
+designs. First version applied in `08ba166` + `7c8a79e`; revised form in `f914855`. Candidate to fold
+into aiya's own gate artifacts (`goal.md` / `approach.md`) when authoring SKILL.md in #2.
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-07-02
-- **Last completed**: Live user-review session on `aiya/docs/design.md` (Task #1's user-review step,
-  ongoing on PR #1). Five feedback-driven revisions, all pushed:
-  1. `402227c` — §1's content-free structural opener deleted; same-lens sweep of all other section
-     openers found no other instance.
-  2. `1f9653c` — §1's "Why these two, concretely." paragraph dissolved: `rn` evidence kept as one
-     sentence in §1; the bounded-state-vs-replay/retrieval rationale moved to Decisions with "only
-     remedy" softened to "of the remedies considered".
-  3. `2ad0638` — Non-goals added to §1 (sequential dispatch / 10× directs but is not measured / not a
-     general-purpose orchestrator).
-  4. `08ba166` — whole doc restructured into the question-heading format (see D-3): six h2 questions,
-     fixed h3 sub-questions under §1/§2/§4, component h3s under §5 with a coverage lead-in (closure
-     check), and a **newly authored §2 "What is given, and what binds us?"** (premises & constraints).
-     All cross-refs renumbered and exhaustively verified.
-  5. `7c8a79e` — fact/hypothesis/decision statuses made explicit (D-3b); exhaustive sweep marked 4
-     spots (§2.1 LLM-competence sourcing; §4.1 + §5.4 scaling claims tied to §1.2's hypothesis;
-     §5.1 symptom table labeled working heuristics).
-  All rounds recorded in `.rn/aiya/checks/1.md` (user-review rounds 1–3 bullets).
-- **Next**: user continues reviewing `design.md` on PR #1 — Task #1's "user review (on the PR)" step
-  stays unchecked until approval. On approval: check it off, commit the single completion marker per
-  `task-workflow.md` Phase: Complete, then start Task #2 (author `aiya/skills/<verb>/SKILL.md`;
-  consider folding D-3's format rules into the gate artifacts it demands). On further feedback: agree
-  on the story first, then edit; re-sweep the whole doc with the same lens, not just the flagged spot.
-- **Notes**:
-  - Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Review happens on
-    the PR; user feedback has been arriving in console — both are fine.
-  - Newly authored §2 (premises & constraints) is the part the user has not explicitly reviewed yet —
-    flagged to them as the priority check.
-  - `/ty` and `/gm` inside design.md are aiya's own gate commands (design content, fine); rn 0.6.0
-    itself ships only on/up/dn — never tell the user to run `/rn:ty` or `/rn:gm`.
-  - User-review revisions were user-directed; no QA re-run this session (rounds logged in checks/1.md).
-  - Console replies in 敬体 (bullet endings too); artifacts in English.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
