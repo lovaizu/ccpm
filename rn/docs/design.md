@@ -134,5 +134,5 @@ flowchart LR
   sketched, not pinned — whether the medium list is complete is open. Also open: a task spanning more
   than one medium (e.g. code plus an accompanying diagram) — whether it spawns one Craft/Verification
   instance per medium it touches is unresolved.
-- **Default home for a session's `design.md`.** Sessions default to `.rn/{slug}/design.md`, but rn
+- **Default home for a session's `design.md`.** Sessions default to `.rn/{yyyymmdd}-{slug}/design.md`, but rn
   keeps its own under `rn/docs/`; whether that exception generalizes is open.

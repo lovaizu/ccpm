@@ -4,7 +4,7 @@ The first half of the loop to execute one task: produces the deliverable and its
 together with `task-verify-workflow.md` (the second half — review, triage, check-off) in sequence:
 `on` and `up` read both files at task execution, this one first. Run one task at a time.
 
-`{steering_dir}` = the directory holding the active `steering.md` (e.g. `.rn/{slug}/`). Write check
+`{steering_dir}` = the directory holding the active `steering.md` (e.g. `.rn/{yyyymmdd}-{slug}/`). Write check
 files under `{steering_dir}/checks/`.
 
 ## Roles

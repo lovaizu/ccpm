@@ -41,7 +41,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 ● Captured your goal as I understand it:
     "Fix the bug on the payment screen so payments complete successfully"
 
-  Location: .rn/payment-fix/steering.md
+  Location: .rn/20260702-payment-fix/steering.md
     □ #1  Write a test that reproduces the payment failure
     □ #2  Find the root cause and fix it
     □ #3  Check for regressions
