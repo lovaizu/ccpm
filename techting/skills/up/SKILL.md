@@ -58,7 +58,7 @@ Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
 ### 7. Write it out
 
-Render the outline into the document in the chosen voice and forms. Lead each part with its point. Render structure and flow as mermaid wherever step 6 chose a diagram.
+Render the outline into the document in the chosen voice and forms. Lead each part with its point.
 
 ### 8. Brush up to the ceiling
 
@@ -66,7 +66,7 @@ Raise what makes it worth reading (Reference → [the two tiers](#the-two-tiers)
 
 ### 9. Clear the floor (the net)
 
-Read the finished document once against the seven AI tells (Reference → [floor checklist](#floor-checklist-the-seven-ai-tells)). For each tell present, name it, quote the line, apply the fix. Most should be absent — the procedure kept them out; this catches the stragglers.
+Read the finished document once against the seven AI tells (Reference → [floor checklist](#floor-checklist-the-seven-ai-tells)). For each tell present, name it, quote the line, apply the fix.
 
 ### 10. Self-check and deliver
 
@@ -80,7 +80,7 @@ Mark each PASS or FAIL; any FAIL, fix and re-check. Ship only when all PASS.
 - [ ] None of the seven tells remain (step 9).
 - [ ] Headings alone carry the argument.
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
-- [ ] Fact separable from hypothesis; the unverified marked `[unverified]`.
+- [ ] Every claim carries its status — fact with source, hypothesis marked and testable, decision with intent; no unmarked assertion (Reference → [the two tiers](#the-two-tiers)).
 
 Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then any off-axis material step 3 left out and where it belongs, then a short line on any AI tells step 9 caught. When the input was a topic, not a draft, nothing changed — the note reports the choices made instead: reader, axis, voice, each tied to why.
 
@@ -97,7 +97,7 @@ What "good" means, in two tiers the procedure builds toward.
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
 - **Ceiling (attractive)** — density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread, conclusion first, headings carrying the argument alone; figures and lists only where each beats prose; one consistent voice.
 
-Throughout: Markdown; mark the unverified `[unverified]`, state the scope actually verified, and do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly with its source and the scope actually verified; a **hypothesis** is marked as such ("hypothesis" / "not yet shown" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent (why it was chosen), never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 
@@ -133,7 +133,7 @@ One role each. **Do not mix axes** in one document. Specialize the headings to t
 
 Choose each part's form for the reader's speed.
 
-- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance. Do not repeat in prose what the diagram carries.
+- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance; when prose reads faster — a short linear sequence — skip the diagram. Do not repeat in prose what the diagram carries.
 - **List** — only when the items are genuinely parallel; otherwise write prose.
 - **Table** — for several items compared on the same fields.
 - **Graph** — for a trend or distribution that lives in the numbers.

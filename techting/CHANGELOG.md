@@ -15,3 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   through an ordered writing procedure, so the AI tells (padding, restatement, vague generalities,
   flavorless connectives, reflexive bullets, wavering voice, hedging) never take hold — a final pass
   nets any stragglers — and the result reads as written by a person, not an AI.
+- Produced documents now mark every claim's epistemic status — fact (with source), hypothesis
+  (marked and testable), or decision (with intent) — so readers know how far they can rely on
+  each statement.
