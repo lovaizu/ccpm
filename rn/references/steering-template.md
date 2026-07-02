@@ -1,14 +1,30 @@
 # steering.md template
 
-Read this file when creating a new `steering.md`. Copy the structure below verbatim, then
-fill the sections. Keep every heading; leave a section's placeholder in place if it is not yet
-populated (`Tasks`, `Decisions`, `State` start empty and are filled later). **Keep the blank lines
-between fields** (`Purpose` / `Prerequisites` / `Steps` / `Completion criteria`) — without them
-Markdown collapses the fields onto one line.
+Read when creating a new `steering.md`.
+
+## Steps
+
+1. **Copy the template block below verbatim.** Keep every heading. Keep the blank lines between fields (`Purpose` / `Prerequisites` / `Steps` / `Completion criteria`).
+2. **Leave placeholders in unpopulated sections.** `Tasks`, `State` start empty; fill later.
+3. **Fill each section per the rules below.**
+
+## Doc-division rule
+
+Allocate content by kind, so steering stays a lean forward contract:
+
+- **Requirements & acceptance criteria → `steering.md`** — the goal, the bar it is judged against, and the remaining tasks.
+- **Structure & decisions (how the parts fit, and why) → `design.md`** — the whole-structure design; rationale lives only here, at the decision level.
+- **User-facing UX → `README`** — what a user sees and does.
+
+A decision lands in a task, in `design.md`, or in a rule. Deliberation and history live in git + the PR — never in steering.
+
+The top `Design:` line points to the session's `design.md`. A session with no design omits this line entirely (no file, no pointer) — copy the rest of the block as-is.
 
 ---
 
 ```markdown
+Design: <path to the session's design.md — omit this whole line if the session has no design>
+
 # Goal
 
 <why this is being done and what the user wants to change — the full intent, no added scope>
@@ -43,24 +59,17 @@ Markdown collapses the fields onto one line.
 - [ ] specific step 2
 - [ ] self-check (OK/NG per completion criterion, record in checks/{task-id}.md)
 - [ ] QA expert review (subagent)
-- [ ] (code changes only) language expert review (subagent)
-- [ ] (code changes only) software-engineering expert review (subagent)
-- [ ] user review
+- [ ] Craft expert review (subagent, per the task's medium)
+- [ ] Verification expert review (subagent, per the task's medium)
+- [ ] (tasks that produce or revise structure/approach only) Design expert review (subagent)
 
 **Completion criteria**:
 
-- objectively verifiable by a third party
-- no vague terms ("appropriate", "correct")
-- outcomes / end-state only — never actions, reviews, or gates (those belong in Steps)
-
-# Decisions
-
-## D-N: <what was decided>
-- **Issue**: <the decision being made — understandable without background>
-- **Conclusion**: <the decision>
-- **Rationale**: <the judgment reasoning that supports the conclusion — no facts here>
-- **Evidence**: <facts/numbers backing the rationale>
-- **Sources**: <where each piece of evidence comes from>
+- write each criterion so a third party can answer two questions about it, each with grounds:
+  - ① is the objective achieved? — the objective met, not that an output was produced (write "the residue no longer keeps the tree dirty", not "DESIGN.md exists"); includes the intended behavior being observably present
+  - ② are new problems absent? — name the representative failure modes and require their absence
+- objectively verifiable by a third party; no vague terms ("appropriate", "correct")
+- state the end-state, never actions/reviews/gates (those belong in Steps); the grounds are recorded at verification (checks/{task-id}.md Evidence columns), not written into the criterion text
 
 # State
 
@@ -72,7 +81,7 @@ so only a genuinely suspended session reads `paused`.)
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Notes**: context needed for resume
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
 ```
 
 ---
@@ -85,5 +94,5 @@ so only a genuinely suspended session reads `paused`.)
 | Specificity | Not "implement" but "implement `methodName()` in `ClassName`" |
 | Objectivity | Completion criteria judgeable by a third party |
 | Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
-| Criteria vs steps | Completion criteria state outcomes/end-state only (the bar); actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. `task-workflow.md` Process selection (non-code vs code) is the source of *which* reviews apply — keep the two in sync |
-| Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert / user review) are its gate |
+| Criteria vs steps | Completion criteria are written so a third party can answer, with grounds, ① is the objective achieved and ② are new problems absent (the bar) — not that an artifact was produced; actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. The task-execution references' (`task-execute-workflow.md` / `task-verify-workflow.md`) shared Process selection section — a per-task judgment of the task's medium (coding / writing / visual) and whether it produces or revises structure/approach — is the source of *which* reviews apply — keep the two in sync |
+| Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert review + the coordinator's review) are its gate. The user signs off only at the three scheduled gates (plan / design / evaluation), never per task |

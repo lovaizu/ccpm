@@ -17,14 +17,15 @@ That makes `/rn:on`, `/rn:dn`, and `/rn:up` available.
 
 ```mermaid
 flowchart TD
-  G([Your goal]) --> P[Reviewed plan on a PR<br/>one task at a time]
+  G([Your goal]) --> P([You approve the plan<br/>on the draft PR])
   P --> W[Assistant runs a task]
   W -->|heavy work, kept out of sight| X[Expert does it<br/>reviewers try to break it]
-  X -->|only the finished change| Y([You approve])
-  Y -->|added to the same PR| W
+  X -->|cleared, added to the same PR| W
+  W -.->|only when the call is yours| C([You weigh in])
+  W ==>|all tasks done| D([You confirm the goal is met])
 ```
 
-One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. What reaches you is the finished change — and nothing lands until you approve.
+One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. You sign off on the plan up front, then the assistant works through the tasks without stopping to ask you for each one — they pile up on the same PR as the reviewers clear them. It pulls you back in only when a call is genuinely yours, and at the very end you confirm the goal is actually met before the session closes.
 
 ## Getting started
 
@@ -37,19 +38,21 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 ```console
 > /rn:on fix the bug in the payment screen
 
-● Captured your goal as I understand it:
+● ── payment-fix: payments complete on the payment screen ──
+  👉 plan sign-off ── asking now: review the plan on the draft PR, approve to start #1
+  ⬜ #1–#3   reproduction test / root-cause fix / regression check
+  (after approval, tasks run one by one without stopping to ask)
+
+  Captured your goal as I understand it:
     "Fix the bug on the payment screen so payments complete successfully"
 
-  Location: .rn/payment-fix/steering.md
-    □ #1  Write a test that reproduces the payment failure
-    □ #2  Find the root cause and fix it
-    □ #3  Check for regressions
-
-  Opened a draft PR with the full plan: https://github.com/you/repo/pull/42
-  Review the steering there and approve to start #1.
+  Steering: .rn/20260702-payment-fix/steering.md
+  Draft PR with the full plan: https://github.com/you/repo/pull/42
 ```
 
-Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each approved task added to the same PR.
+That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input, so you always see where the session stands without opening steering.md.
+
+Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met.
 
 ### 2. Step away — `/rn:dn`
 

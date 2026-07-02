@@ -1,55 +1,30 @@
 ---
 name: up
-description: Resume a suspended rn work session in a fresh conversation. Use when the user returns to continue earlier work, typically via /rn:up. Finds the steering.md from git history, reconciles task state against the commit log, and resumes the next task. This skill has side effects (commits, executes tasks) — only run it on explicit user invocation.
+description: Resume a suspended rn work session in a fresh conversation. Use when the user returns to continue earlier work, typically via /rn:up. Finds steering.md from git history, reconciles task state against the commit log, and resumes the next task. Has side effects (commits, executes tasks) — run only on explicit /rn:up.
 disable-model-invocation: true
 ---
 
 # /rn:up — Resume a session
 
-Reconstruct the prior session state, align it with git reality, and continue execution from the
-next unchecked task.
+Reconstructs prior session state, aligns it with git, and continues from the next unchecked task.
 
-## Phase 1: Recover — reconstruct the prior state
+## Steps
 
-**Step 1 — Handle a dirty tree**
+1. **Handle a dirty tree.**
+   - Tree clean → proceed.
+   - Tree dirty → propose a `wip:` commit or a discard, and wait for confirmation before touching the working tree.
 
-- Clean tree → proceed.
-- Dirty tree → propose a `wip:` commit or a discard. **Wait for confirmation before touching the
-  working tree.**
+2. **Find steering.md.** Run `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5` and keep the paths that exist on disk.
+   - One result → use it.
+   - Multiple → rank by `State` showing `Status: paused`, then most recent commit, and propose the top candidate.
+   - Zero → tell the user "No steering.md found. Run `/rn:on` to start." and stop.
 
-**Step 2 — Find steering.md**
+3. **Read State.** Read the `State` section: last completed task, next task, and notes.
 
-- Search commit history:
-  `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`.
-- Keep files that still exist on disk. One result → use it. Multiple → rank by (a) `State` showing
-  `Status: paused`, then (b) most recent commit, and propose the top candidate. Zero → tell the
-  user "No steering.md found. Run `/rn:on` to start."
+4. **Sync tasks.** Cross-check `git log` against the unchecked tasks. A commit matches a task when its message contains `complete task #{id}`; check that task off in steering.md.
 
-**Step 3 — Read State**
+5. **Check blockers.** If `State` notes mention a blocker, investigate and find an alternative approach before removing any task.
 
-- Read the `State` section: last completed task, next task, and notes.
+6. **Clean up State.** Replace the `State` section with its template placeholder and commit the reconciliation.
 
-## Phase 2: Reconcile — align the file with git reality
-
-**Step 4 — Sync tasks**
-
-- Cross-check `git log` against the unchecked tasks. A commit matches a task when its message
-  contains `complete task #{id}` (the format written by task-workflow Complete). Check that task
-  off in `steering.md`.
-
-**Step 5 — Check blockers**
-
-- If the `State` notes mention a blocker, investigate and find an alternative approach **before**
-  removing any task. The goal is fixed; means adapt.
-
-**Step 6 — Clean up State**
-
-- Replace the `State` section with its template placeholder. Commit the reconciliation.
-
-## Phase 3: Resume — continue execution
-
-**Step 7 — Begin the next task**
-
-- Read `${CLAUDE_PLUGIN_ROOT}/references/task-workflow.md` and execute the next unchecked task
-  following it.
-- If all tasks are already done, propose running the `steering.md` Acceptance criteria.
+7. **Begin the next task.** Read `${CLAUDE_PLUGIN_ROOT}/references/task-execute-workflow.md` then `${CLAUDE_PLUGIN_ROOT}/references/task-verify-workflow.md` and execute the next unchecked task following them in sequence.

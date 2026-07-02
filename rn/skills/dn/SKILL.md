@@ -1,57 +1,56 @@
 ---
 name: dn
-description: Suspend the current rn work session. Use when the user needs to stop — context is nearly full, taking a break, or ending for the day — typically via /rn:dn. Commits and pushes the work, records resume context in the steering.md State section, and hands off to a manual /clear. This skill has side effects (commits, pushes) — only run it on explicit user invocation.
+description: "Suspend the current rn work session — commit and push the work, record resume context in steering.md, and hand off to a manual /clear. Use when stopping: context nearly full, a break, or end of day, typically via /rn:dn. Has side effects (commits, pushes) — run only on explicit /rn:dn."
 disable-model-invocation: true
 ---
 
 # /rn:dn — Suspend a session
 
-Record where the work stands so it survives across conversations, then hand off. This skill does
-**not** execute tasks — it only captures and persists state.
+Records resume state and hands off. Does not execute tasks.
 
-After `/rn:dn` finishes, the user must run `/clear` manually (a skill cannot trigger `/clear`),
-then `/rn:up` in a fresh conversation to resume.
+## Steps
 
-## Phase 1: Capture — record where work stands
+1. **Locate steering.md.** Use the path known from this session. If unknown: run
+   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep the
+   paths that exist on disk, and take the one whose `State` shows `Status: paused`, else the most
+   recent.
 
-**Step 1 — Find steering.md**
+2. **Check off progress.** In steering.md, check off completed task steps and add any tasks
+   discovered during the work.
 
-- Use the `steering.md` path already known from this session.
-- Fallback (path unknown): search commit history —
-  `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep files
-  that still exist on disk, and prefer one whose `State` shows `Status: paused`, else the most
-  recent.
+3. **Write the `State` section** (fields per `steering-template.md`): `Status: paused`, `Date`,
+   `Last completed`, `Next`, `Notes`. Cap `Notes` to a bounded forward pointer — branch/PR, next
+   concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet
+   captured in `design.md` — not a multi-paragraph re-narration of the session (the narrative is in
+   `git log`).
 
-**Step 2 — Commit work**
+4. **Commit the work.**
+   - Tree clean → skip this commit.
+   - Current task's steps all checked → commit normally.
+   - Some steps unchecked → commit with a `wip:` prefix.
+   - The message must not contain `complete task #`.
 
-- Clean tree → skip the commit.
-- Dirty tree:
-  - all of the current task's steps checked → normal commit.
-  - some steps unchecked → commit with a `wip:` prefix.
-- Either way, this is a plain commit — its message must **not** contain `complete task #{id}`. That
-  marker rides only on the coordinator's post-approval check-off commit (one per task, per
-  `task-workflow.md` Phase: Complete); a suspend-time commit is never a task-completion marker.
+5. **Resolve untracked residue.** Run `git status --porcelain`; the remaining entries are untracked
+   (`??`). Handle each `??` path:
+   - Regenerable test/build artifact — e.g. `.pytest_cache/`, `.coverage`, `htmlcov/`,
+     `coverage.xml`, `__pycache__/`, `dist/`, `node_modules/`, `.tox/` → append a matching rule to the
+     repo-root `.gitignore` (create it if absent). Any doubt → handle as the next item instead.
+   - Anything else → ask the user how to handle it (commit / gitignore / delete themselves / keep),
+     opening the message with the session-status block per
+     `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`. For any path the user does not resolve,
+     append its exact `git status --porcelain` string to `State → Notes`.
+   - Never delete a file yourself.
 
-**Step 3 — Write State**
+6. **Commit and push.** Commit the `State` changes and any `.gitignore` edit together in one commit,
+   then `git push`. If push fails, continue and record that it failed (for step 8). Never amend, never
+   force-push.
 
-- Check off completed task steps. Add any new tasks or decisions discovered during the work.
-- Write the `State` section: set `Status` to `paused`, then `Date`, `Last completed`, `Next`,
-  `Notes`, per the `State` field semantics in `steering-template.md`.
-- **Notes must carry enough context for `/rn:up` to resume without this conversation**: current
-  work, blockers, pending decisions, and the next concrete action.
+7. **Verify clean.** Run `git status --porcelain`:
+   - Empty → go to step 8.
+   - Non-empty → for each remaining (non-gitignored) untracked path, if its exact
+     `git status --porcelain` string is not already recorded in `State → Notes` from step 5, record it
+     there as user-deferred; then go to step 8. Never loop back to step 5. Never delete a file.
 
-## Phase 2: Persist — push and confirm
-
-**Step 4 — Commit and push**
-
-- `git commit` the `State` changes, then `git push`. If push fails, continue (the user can push
-  later).
-
-**Step 5 — Verify clean**
-
-- Run `git status`; the tree must be clean.
-
-**Step 6 — Report**
-
-- Output: last completed task, next task, and the branch name.
-- Remind the user to run `/clear`, then `/rn:up` in a new conversation.
+8. **Report.** Output last completed task, next task, and the branch name. If the last push did not
+   succeed, state that the commits are local-only and must be pushed. Name any user-deferred paths
+   recorded in `State → Notes`. Tell the user to run `/clear`, then `/rn:up` in a new conversation.
