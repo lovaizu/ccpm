@@ -101,31 +101,32 @@ Throughout: Markdown; every claim carries one of three statuses — a **fact** i
 
 ### The five axes
 
-One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; deep dives stay out — name them in the what-changed note where they belong, do not author them.
+One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; deep dives stay out — name them in the what-changed note where they belong, do not author them. A tutorial is the guide axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
-  1. What you'll learn (subject and premise, 1–2 sentences)
-  2. The substance (one step at a time: stumbling point → why → what to do)
-  3. In closing (what was gained, the limits, the next step)
+  1. The question (the why-question this document answers, 1–2 sentences)
+  2. The substance (per unit: claim → why → implications and connections; alternatives and background welcome, instructions are not)
+  3. In closing (what was gained, the limits, pointers onward)
 
 - **Guide / procedure** — for someone doing it now.
   1. Goal and prerequisites (what gets done, what is needed)
-  2. Steps in order (each states its expected result; branches as a diagram)
-  3. Verification and troubleshooting (confirm it worked; common snags)
+  2. Steps in order (imperative, location before action, each states its expected result; one best path — branch only where the reader's context genuinely differs, branches as a diagram)
+  3. Verification and troubleshooting (confirm it worked; common snags; cleanup or rollback when steps are destructive)
 
 - **Reference** — for someone looking things up.
-  1. The whole picture (a structure diagram: parts and relationships)
-  2. Each element (lookup-friendly, unique, exhaustive: input / output / constraints / defaults)
+  1. The map (structure mirrors the product's own, so the reader navigates code and docs in parallel; a structure diagram where it helps)
+  2. Each element (consistent fields: input / output / constraints / defaults; neutral, terse examples allowed)
   3. Errors and terms (conditions and behavior; no ambiguity)
 
 - **Record / ADR** — for someone tracing how a decision was reached.
-  1. Background and the decision (what was decided, and why)
-  2. The options considered (the rejected ones and their reasons are the main act)
-  3. The outcome (the good and the bad)
+  1. Status (proposed / accepted / superseded) and date; the context and the problem
+  2. The decision and its drivers (the chosen option and why — the headline)
+  3. Options considered (pros and cons of each, the rejected included)
+  4. Consequences (the good and the bad)
 
 - **Evaluation / survey** — for someone making a call.
   1. Conclusion / recommendation (what to choose, what not to)
-  2. Criteria (what is measured, and why those criteria)
+  2. Criteria (what is measured, and why those criteria; state weights when they conflict)
   3. Comparison (measurements stated neutrally; fact separated from judgment)
   4. Evidence and the next step
 

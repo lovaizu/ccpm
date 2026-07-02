@@ -18,3 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Produced documents now mark every claim's epistemic status — fact (with source), hypothesis
   (marked and testable), or decision (with intent) — so readers know how far they can rely on
   each statement.
+- The five outline axes now follow current authoritative practice (Diátaxis, MADR 4.0,
+  Google/Microsoft style guides) — ADRs gain a status/date line, guides a single best path with
+  cleanup, explanations stay free of how-to steps — so each produced document matches what its
+  readers expect of the genre.
