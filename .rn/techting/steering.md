@@ -376,42 +376,12 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-07-02
-- **Last completed**: **Full verification chain re-run for tasks #4/#5 against the current
-  build-fresh SKILL.md, with two QA fix rounds landed.** (1) Both strict validations re-run and PASS
-  (twice: post-reshape and post-fixes). (2) Implementation expert refreshed the stale self-checks in
-  `checks/4.md` / `5.md` — all criteria OK except the Level B dogfood (NG/deferred, expected).
-  (3) Independent QA adversarial review: **PASS** with 7 findings. Triage: findings 1–5 valid
-  (two instruction.md fidelity gaps — step-10 self-check missed reader-fit of voice/closing and
-  diagram/prose duplication; verified-scope clause dropped; off-axis routing unexecutable;
-  what-changed note undefined for topic-only input) → fixed in deliverable commit **f476506**;
-  finding 6 (headless detection) rejected — "Never leave a line blank" already forces resolution;
-  finding 7 (steering says "§output-rules", file heading is "## Reference") → steering clarification
-  commit **7bdba38**. (4) QA re-review: PASS, 5/5 closed, 3 new low/info findings → NEW-1 (step-10
-  note spec missing the off-axis line step 3 promises) and NEW-2 (five-axes preamble kept old
-  ambiguous "route deep dives" phrasing) fixed in deliverable commit **23dff57**; NEW-3 rejected
-  (checkbox cites step 6, whose §Form rule anchors form to reader speed). (5) Focused QA re-check on
-  23dff57: **PASS**, both closed, no new findings. File now: 1,627 body words (<2,000), 0 mermaid
-  fences, addressee sentence exactly once, all anchors resolve.
-- **Next**: **Finish recording the QA verdicts into `checks/4.md` and `checks/5.md`, then user
-  review of #4+#5 on PR #5** (still draft). The recording was interrupted mid-edit: in `4.md` the
-  header note and criterion row 1's QA cells are done; rows 2–7 QA cells are still empty and the
-  "QA Expert Review" + "Overall Verdict" sections still describe the OLD (pre-reshape) rounds; in
-  `5.md` nothing of today's QA is recorded yet (its QA sections also describe old rounds). Record
-  the verdicts summarized in "Last completed" above, commit the ledger, push, then point the user
-  at PR #5. On approval: completion-marker check-off commits for #4 and #5 (one each, per
-  task-workflow Phase: Complete). **Then only Level B remains**: the Acceptance-criteria dogfood
-  (run `/techting:up` on a real draft; two reader definitions → voice/axis change; floor clear;
-  note = substance first, then tells caught). Release 0.1.0 only on an explicit instruction.
-- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (**draft**).
-  - **No completion marker for #4 or #5 yet** — do not commit `complete task #4` / `complete task
-    #5` until the user approves on the PR.
-  - Session commits, all pushed: 607c19e (reconcile State), 7bdba38 (steering §output-rules
-    naming clarification), f476506 + 23dff57 (SKILL.md fixes), b48c8b3 (wip: in-progress ledger).
-  - The #5 step box "Re-validate … Level B dogfood NOT yet done" stays **open by design** until the
-    Acceptance-criteria dogfood runs; validation itself is green as of 2026-07-02 on 23dff57.
-  - `checks/4.md` / `5.md` **self-check columns are current** (re-run 2026-07-02 by the
-    implementation expert against the post-fix file); only the QA-verdict parts await recording.
-  - CHANGELOG: entries stay under `## [Unreleased]`; no version bump without an explicit release
-    instruction (then: promote, tag `techting-v0.1.0`, mark PR ready, merge).
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
