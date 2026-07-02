@@ -35,7 +35,7 @@ right when requirements change.
 |---|---|
 | <actor> | <what it is responsible for> |
 
-<diagram — mermaid or ASCII — of how the actors wire together>
+<mermaid diagram of how the actors wire together>
 
 ## Flow
 
@@ -59,7 +59,7 @@ right when requirements change.
   never a per-line "because this step does X" memo. If a "why" is about a single step rather than a
   design decision, it does not belong here (or anywhere in this doc).
 - **Structure** — the actors and how they wire together: a table of actor → responsibility, plus a
-  diagram. Descriptive only — say what each actor *is* and does, not why; the why is already in
+  mermaid diagram (GitHub renders it; ASCII art does not survive rewrapping). Descriptive only — say what each actor *is* and does, not why; the why is already in
   Approach.
 - **Flow** — the end-to-end path as a numbered sequence of what happens, in order. A step states what
   occurs, not its justification.
