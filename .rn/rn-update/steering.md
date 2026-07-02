@@ -580,8 +580,35 @@ phase is the file being amended)
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-07-02
+- **Last completed**: #5 (record + cross-doc consistency, `checks/5.md` complete)
+- **Next**: #15 (Evaluation sign-off) — Step 1 (run Acceptance criteria) is done; awaiting the
+  user's `/rn:ty`/`/rn:gm` verdict on the result already presented in-conversation (Step 2).
+- **Notes**: Acceptance-criteria run result, presented to the user, not yet verdicted:
+  - Criteria 1, 2, 6, 7, 8, 9, 10 — OK, clean.
+  - Criterion 3 (prompts run without rationale) — OK, with one evidence-trail caveat: task #2's
+    steering.md line ~137 references `checks/2.md` ("See `checks/2.md` (assembled)"), but that file
+    does not exist anywhere in this branch's history (`git log --all -- '.rn/rn-update/checks/2.md'`
+    → zero hits; only files under other, unrelated `.rn/*/checks/2.md` sessions match). The rule
+    content itself was independently verified clean by direct inspection of the current skills/
+    references, so this is a missing QA-trail artifact for #2, not a content defect.
+  - Criterion 4 (steering is a sufficient, minimal forward contract) — **NG**. This steering.md's
+    own Tasks section (currently ~465 of ~590 lines) retains the full Purpose/Steps/Completion
+    criteria body for every one of the 13 already-completed tasks, including multi-round QA
+    narration inline (e.g. #4, #5, #6, #11–#14's Steps list "round 1 PASS ... round 2 re-review
+    ... round 3 ..." histories) and, in #4's Purpose, design rationale that belongs in `design.md`'s
+    Approach per the doc-division. This violates both the criterion's own "no completed-task
+    bodies, no change narration" clause and this steering's own dogfood rule (line ~108: "this
+    steering must itself follow the lean form it introduces"). No compaction step exists anywhere
+    in `task-verify-workflow.md`'s Phase: Complete to trim a task once checked off.
+  - Criterion 5 — OK, clean (verified independently: `design.md` conforms to `design-template.md`'s
+    five sections, no scattered rationale, doc-division applied once and consistently).
+  - This result (9 OK, 1 NG on criterion 4, 1 caveat on criterion 3) was presented to the user
+    in-conversation; the user ran `/rn:dn` before issuing a verdict.
+  - **Next concrete action on resume**: re-present this same result (nothing has changed since) and
+    take the verdict via `/rn:ty` (approve as-is → session done) or `/rn:gm` (revise → likely means
+    compacting steering.md's Tasks section for the 13 completed tasks down to a short record per
+    task, addressing criterion 4, then re-running criterion 4 — and deciding whether the missing
+    `checks/2.md` needs a backfilled QA record or is an acceptable gap — before re-presenting).
+  - Do not re-run criteria 1, 2, 6–10 unless the fix touches them; they are independently clean.
