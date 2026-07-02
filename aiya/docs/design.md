@@ -88,15 +88,31 @@ Three things this design deliberately does not target:
 
 ### 3.1 What is the core idea, and why does it solve the problem?
 
-The core idea, in one pass:
+The core idea, in one image — a steering loop where the steering agent only ever receives **bounded,
+independently verified** information, and the human touches it only at phase boundaries:
 
-- The **Conductor** holds the goal and does **no domain work**. It dispatches each unit of work, reads a
-  **compressed report** of what came back, measures the gap to the goal, and steers.
-- A **Turn** is a subagent that does one unit of domain work. It writes its real output to disk and
-  hands the Conductor only a **bounded state**, never its raw output.
-- A separate **verify-Turn** measures whether the work actually got closer to the goal — judging the
-  artifact against the goal directly, blind to the worker's own report.
-- A **human steers at phase boundaries** (gates), redirecting the work rather than babysitting each Turn.
+```mermaid
+flowchart LR
+    H["👤 Human<br/>owns the goal"]
+    C["Conductor<br/>main agent · holds the goal<br/>no domain work"]
+    G["generate-Turn<br/>(subagent)<br/>one unit of work"]
+    V["verify-Turn<br/>(subagent, fresh context)"]
+    A[("artifact<br/>on disk")]
+
+    H <-->|"steers only at phase gates"| C
+    C -->|"① dispatch"| G
+    G -->|"writes the real output"| A
+    G -->|"② bounded CCS —<br/>never raw output"| C
+    C -->|"③ true goal + artifact path<br/>(blind to the self-report)"| V
+    V -->|"inspects directly"| A
+    V -->|"④ verdict: pass / fail + gap"| C
+    C -. "never reads raw output" .-> A
+```
+
+- The **Conductor** runs the loop: dispatch one unit of work (①), read back only a **bounded state** —
+  the CCS, never the raw output (②) — have an independent **verify-Turn** judge the artifact against the
+  goal, blind to the worker's self-report (③–④), then steer — advance, or re-aim on a gap.
+- The **human** steers at **phase gates**, redirecting the work rather than babysitting each Turn.
 
 Two mechanisms make this answer §1.3's two properties and are dissolved into the Conductor's procedure
 (not a program): a **bounded state handed between Turns** (the CCS, §4.1) answers bounded context, and a
@@ -105,22 +121,8 @@ on-target path is the **default** path, and adherence is **observable**.
 
 ### 3.2 What are the pieces, and what is each responsible for?
 
-**The cast, at a glance** — four actors, and the two boundaries that make the design work.
-
-```mermaid
-flowchart LR
-    H["👤 Human"]
-    C["Conductor<br/>main agent"]
-    T["Turns<br/>generate · verify<br/>(subagents)"]
-    A[("artifacts<br/>on disk")]
-
-    H <-->|"steers only at gates"| C
-    C <-->|"dispatch  ⇄  bounded state"| T
-    T -->|"do the real work"| A
-    C -. "never reads raw output" .-> A
-```
-
-Two boundaries carry the whole design; the rest of this section just details them:
+§3.1's figure shows the cast; this section states what each part is responsible for. Two boundaries
+carry the whole design; the rest of this section just details them:
 
 - **The human is outside the loop** — owns the goal and steers **only at gates** (`/ty`, `/gm`), not
   Turn by Turn. That sparseness is what would let one person direct many streams — §1.3's hypothesis,
