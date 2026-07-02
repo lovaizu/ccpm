@@ -1,6 +1,6 @@
 ---
 name: dn
-description: Suspend the current rn work session — commit and push the work, record resume context in steering.md, and hand off to a manual /clear. Use when stopping: context nearly full, a break, or end of day, typically via /rn:dn. Has side effects (commits, pushes) — run only on explicit /rn:dn.
+description: "Suspend the current rn work session — commit and push the work, record resume context in steering.md, and hand off to a manual /clear. Use when stopping: context nearly full, a break, or end of day, typically via /rn:dn. Has side effects (commits, pushes) — run only on explicit /rn:dn."
 disable-model-invocation: true
 ---
 
