@@ -40,7 +40,7 @@ addressed. Its purpose is **session-lifecycle management**; that it made the con
 pattern usable at all was incidental — it never targeted context bloat or drift. The result — a cap of
 ~2 concurrent streams, a human who never escapes babysitting, quality depending on who was watching and
 what they remembered to check — is a **consequence of those concerns being out of scope**, not a
-deliberate simplification. And bounded state is the only remedy that holds both requirements at once:
+deliberate simplification. And bounded state is the only remedy that answers both challenges at once:
 replaying the full transcript each Turn grows context linearly and replays early mistakes; retrieval
 over history avoids the growth but drifts, because semantic-similarity search does not match what task
 control actually needs.

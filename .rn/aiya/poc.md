@@ -10,7 +10,8 @@
 > linter `.mjs` files, the round-2 workflow script, and `poc2/ccs/t001..t005.md`) have served their
 > purpose and were deleted. The measurements they produced — CCS sizes, the +18% creep, the redirect
 > re-convergence — are recorded in this document, which is the evidence of record. The form-A design
-> that builds on them is [`conductor.md`](./conductor.md).
+> that builds on them now lives in [`aiya/docs/design.md`](../../aiya/docs/design.md) (the
+> `conductor.md` memo it originally pointed to was retired and folded in there).
 
 ## What was run
 
