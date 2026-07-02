@@ -5,9 +5,6 @@ as requirements → approach → structure and flow → the details that matter 
 
 ## 1. Requirements
 
-Three layers, each raising the next: the goal, what reaching it requires, and what an AI-agent attempt
-at those requirements runs into.
-
 **The goal.** Raise an expert's productivity **by an order of magnitude** through AI agents — one
 person delivering what used to take a team.
 
