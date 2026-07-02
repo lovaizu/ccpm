@@ -37,6 +37,13 @@ Make the `rn` plugin lighter, and fix three issues that surfaced from real usage
    deliberately light (one coordinator pass, not the QA-expert/multi-round chain). A thread is resolved
    only by its author.
 
+**D — Reduce the user's context load at stops:**
+
+8. Every point rn stops for the user's input opens with a compact session-status block — goal
+   one-liner, ✅ completed tasks (grouped), 👉 the current task and what is being asked, ⬜ remaining
+   tasks (omitted when none) with a parenthesized outlook — so the user grasps the session's
+   before/after without reading `steering.md` or asking.
+
 The change set is documentation/prompt edits to the `rn` plugin only. No runtime code.
 
 # Acceptance criteria
@@ -97,6 +104,11 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 - **Threads are resolved only by their author.** No assistant or subagent marks a review thread
   resolved; resolution is the reviewer's act, and the loop treats GitHub's unresolved state as its queue.
   (Failure mode absent: the assistant auto-resolving a thread it answered.)
+- **Session status arrives at every stop.** Every point rn stops for the user's input opens with the
+  session-status block (✅ completed grouped / 👉 current task + the ask / ⬜ remaining, omitted when
+  empty, with a parenthesized outlook), derived from `steering.md` at emit time — demonstrable on this
+  session's own #15 re-presentation. (Failure modes absent: a stop that asks without the block; a block
+  whose content still sends the user to `steering.md`; a block contradicting steering's actual state.)
 
 # Rules
 
@@ -114,8 +126,9 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 (#1–#3 are done through QA on the branch, awaiting the new gates — kept compact, full bodies in their
 `checks/{id}.md` and git. #4 and #6 carry the B-thread redesign. #5 reconciles the record. #15 is the
 session's own Evaluation sign-off task, placed last per #14's rule, added by escalation during `/rn:up`
-since planning (`/rn:on`, before #14 existed) predates that rule. Numbering is preserved so
-`checks/{id}.md` stay aligned.)
+since planning (`/rn:on`, before #14 existed) predates that rule. #16 is the session-status block,
+added by escalation on user request during the PR-feedback stage; it runs before #15 so the sign-off
+re-presentation carries the block. Numbering is preserved so `checks/{id}.md` stay aligned.)
 
 ### #1: `/rn:dn` ends with a genuinely clean worktree — DONE through QA
 
@@ -260,13 +273,49 @@ reconciled to the final shape of #3/#4/#6–#14.
   `version` is `0.6.0` (failure modes absent: a refactor listed or a real change missing; a surviving
   contradiction; an accidental release).
 
+### #16: Session-status block at every user stop
+
+**Purpose**: Open every rn stop for user input with a compact session map (✅ done / 👉 now / ⬜ ahead)
+so the user grasps what was done, where they are, and what remains — without reading `steering.md` or
+asking. Added by escalation (user request during the PR-feedback stage).
+
+**Prerequisites**: #11, #12 (the stop points live in `planning-workflow.md` and the split task workflows)
+
+**Steps**:
+
+- [ ] Add `rn/references/status-display.md`: the block's format — header `── {slug}: {goal one-liner} ──`;
+      ✅ lines for completed tasks, grouped in ranges with short labels; one 👉 line for the current task
+      plus what is being asked of the user right now; ⬜ lines for remaining tasks, **omitted entirely
+      when none remain**; a closing parenthesized outlook line (what follows this stop). Derived fresh
+      from the active `steering.md` at emit time; written in the user's conversation language.
+- [ ] Wire one emit instruction ("open the message with the session-status block per
+      `status-display.md`") into every user-facing stop: the plan-gate sign-off in
+      `planning-workflow.md`, the sign-off-task gate (Process selection instance in both
+      `task-execute-workflow.md` and `task-verify-workflow.md`), the escalation channel
+      (`task-verify-workflow.md`), and `dn`'s untracked-path confirmation.
+- [ ] Per doc-division: update `rn/README.md`'s scenario where it shows a stop (UX); add a
+      `rn/CHANGELOG.md` `[Unreleased]` Added entry; record the structure in `rn/docs/design.md`
+      (whole-structure form, no per-step memo).
+- [ ] self-check (`checks/16.md`) + QA + Craft (writing) + Verification (dry-run) + Design expert review
+      (subagent) + grep cross-doc consistency.
+
+**Completion criteria**:
+
+- Every rn stop for user input opens with the status block per `status-display.md` — no stop asks
+  without it, and the block alone conveys done / current / remaining plus the ask (failure modes
+  absent: a stop missing the block; a block that still requires opening `steering.md`; the ⬜ section
+  rendered when nothing remains).
+- The record is consistent: CHANGELOG lists the feature, `design.md` records the structure, README's
+  scenario shows it, and no rn doc contradicts another (failure mode absent: a stop-point instruction
+  left contradicting `status-display.md`).
+
 ### #15: Evaluation sign-off — user approves the Acceptance criteria run
 
 **Purpose**: This session's closing user gate, placed last per its own #14 rule: present the Acceptance
 criteria run result and take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the
 feedback, re-present).
 
-**Prerequisites**: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13, #14
+**Prerequisites**: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13, #14, #16
 
 **Steps**:
 
