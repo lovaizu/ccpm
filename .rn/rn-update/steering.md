@@ -104,11 +104,14 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 - **Threads are resolved only by their author.** No assistant or subagent marks a review thread
   resolved; resolution is the reviewer's act, and the loop treats GitHub's unresolved state as its queue.
   (Failure mode absent: the assistant auto-resolving a thread it answered.)
-- **Session status arrives at every stop.** Every point rn stops for the user's input opens with the
-  session-status block (✅ completed grouped / 👉 current task + the ask / ⬜ remaining, omitted when
-  empty, with a parenthesized outlook), derived from `steering.md` at emit time — demonstrable on this
-  session's own #15 re-presentation. (Failure modes absent: a stop that asks without the block; a block
-  whose content still sends the user to `steering.md`; a block contradicting steering's actual state.)
+- **Session status arrives at every stop.** Every point rn stops for the user's input while a session
+  is active (its `steering.md` exists and is identified) opens with the session-status block
+  (✅ completed grouped / 👉 current task + the ask / ⬜ remaining, omitted when empty, with a
+  parenthesized outlook), derived from `steering.md` at emit time — demonstrable on this session's own
+  #15 re-presentation; stops before a session's steering exists are explicitly scoped out in the spec.
+  (Failure modes absent: an in-session stop that asks without the block; a block whose content still
+  sends the user to `steering.md`; a block contradicting steering's actual state; docs claiming
+  coverage the wiring does not deliver.)
 
 # Rules
 
@@ -301,10 +304,12 @@ asking. Added by escalation (user request during the PR-feedback stage).
 
 **Completion criteria**:
 
-- Every rn stop for user input opens with the status block per `status-display.md` — no stop asks
-  without it, and the block alone conveys done / current / remaining plus the ask (failure modes
-  absent: a stop missing the block; a block that still requires opening `steering.md`; the ⬜ section
-  rendered when nothing remains).
+- Every rn stop for user input while a session is active (its `steering.md` exists and is identified)
+  opens with the status block per `status-display.md` — no in-session stop asks without it, the block
+  alone conveys done / current / remaining plus the ask, and stops outside an active session (before
+  steering exists, or none identified) are explicitly scoped out in the spec (failure modes absent: an
+  in-session stop missing the block; a block that still requires opening `steering.md`; the ⬜ section
+  rendered when nothing remains; a doc claiming coverage the wiring does not deliver).
 - The record is consistent: CHANGELOG lists the feature, `design.md` records the structure, README's
   scenario shows it, and no rn doc contradicts another (failure mode absent: a stop-point instruction
   left contradicting `status-display.md`).
