@@ -82,7 +82,7 @@ Mark each PASS or FAIL; any FAIL, fix and re-check. Ship only when all PASS.
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
 - [ ] Fact separable from hypothesis; the unverified marked `[unverified]`.
 
-Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then a short line on any AI tells step 9 caught. When the input was a topic, not a draft, nothing changed — the note reports the choices made instead: reader, axis, voice, each tied to why.
+Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then any off-axis material step 3 left out and where it belongs, then a short line on any AI tells step 9 caught. When the input was a topic, not a draft, nothing changed — the note reports the choices made instead: reader, axis, voice, each tied to why.
 
 ---
 
@@ -101,7 +101,7 @@ Throughout: Markdown; mark the unverified `[unverified]`, state the scope actual
 
 ### The five axes
 
-One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; route deep dives to a separate document.
+One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; deep dives stay out — name them in the what-changed note where they belong, do not author them.
 
 - **Article / explanation** — for someone reading to understand.
   1. What you'll learn (subject and premise, 1–2 sentences)
