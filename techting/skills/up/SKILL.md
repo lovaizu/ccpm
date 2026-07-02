@@ -97,7 +97,7 @@ What "good" means, in two tiers the procedure builds toward.
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
 - **Ceiling (attractive)** — density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread, conclusion first, headings carrying the argument alone; figures and lists only where each beats prose; one consistent voice.
 
-Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly with its source and the scope actually verified; a **hypothesis** is marked as such ("hypothesis" / "not yet shown" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent (why it was chosen), never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope actually verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked as such ("hypothesis" / "not yet shown" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent (why it was chosen), never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 
@@ -160,4 +160,4 @@ Starting point, not a rulebook — the step-2 reader is the source of truth.
 | 4 | Flavorless connectives | "moreover" / "furthermore" / "in addition" with no real link | Remove, or write the real join |
 | 5 | Reflexive bulleting | A list whose items are not genuinely parallel | Write it as prose |
 | 6 | Wavering voice | Register or stance drifts mid-document | Hold one voice |
-| 7 | Hedging | "it is thought that" / "generally" / non-committal qualifiers | Assert with evidence, or mark `[unverified]` |
+| 7 | Hedging | "it is thought that" / "generally" / non-committal qualifiers | Assert with source, mark as hypothesis with grounds, or write as a decision with intent |
