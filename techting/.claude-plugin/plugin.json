@@ -1,0 +1,6 @@
+{
+  "name": "techting",
+  "description": "Reader-first technical-writing brush-up: define who reads the document, then derive its tone, diagrams, closing, and outline from that. Revises an existing draft (or writes from scratch) via /techting:up, returning the revised document plus what changed and why.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}

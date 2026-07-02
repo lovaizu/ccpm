@@ -9,6 +9,12 @@
       "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into reviewed tasks, open a draft PR for the plan, and resume across conversations via a git-tracked steering.md.",
       "source": "./rn",
       "category": "development"
+    },
+    {
+      "name": "techting",
+      "description": "Reader-first technical-writing brush-up: define who reads the document, then derive its tone, diagrams, closing, and outline from that. Revises an existing draft (or writes from scratch) via /techting:up.",
+      "source": "./techting",
+      "category": "writing"
     }
   ]
 }
