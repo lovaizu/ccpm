@@ -115,7 +115,7 @@ One role each. **Do not mix axes** in one document. Specialize the headings to t
 
 - **Reference** — for someone looking things up.
   1. The map (structure mirrors the product's own, so the reader navigates code and docs in parallel; a structure diagram where it helps)
-  2. Each element (consistent fields: input / output / constraints / defaults; neutral, terse examples allowed)
+  2. Each element (consistent fields: input / output / constraints / defaults; unique and exhaustive; neutral, terse examples allowed)
   3. Errors and terms (conditions and behavior; no ambiguity)
 
 - **Record / ADR** — for someone tracing how a decision was reached.
