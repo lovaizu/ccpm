@@ -238,12 +238,40 @@ contradiction; a different phase. Apply on resume (the user said "再開後に�
 
 # State
 
-(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
-session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
-so only a genuinely suspended session reads `paused`.)
-
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-02
+- **Last completed**: The §1 rewrite that was pending user go-ahead at the last suspend was **applied
+  this session** (resume proceeded without re-asking, per push-and-review: the review gate is the PR).
+  Chain of commits, all pushed to PR #1:
+  1. `8d594c6` — /rn:up reconciliation: State reset; the silent-instruction-drift measurement note
+     moved from State into Task #5's body (it now lives there, not here).
+  2. `436a69c` — `design.md` §1 restructured into the agreed 3-layer chain (goal: order-of-magnitude
+     expert productivity via AI agents → 3 hypothesis requirements: track the goal / no babysitting /
+     coordinate at a few gates → 2 AI-agent implementation challenges: context bloat, drift = the two
+     properties), and the `rn` characterization corrected (purpose = session-lifecycle management;
+     pattern enablement incidental; ~2-stream cap + babysitting = consequence of out-of-scope, not
+     deliberate simplification). Implementation-expert commit.
+  3. QA round 3 on the rewrite: conditional FAIL — 2 valid findings, fixed in `e656fd9` ("both
+     requirements" re-bound to "answers both challenges"; `poc.md:13` dangling `conductor.md` link
+     repointed to `aiya/docs/design.md`). Round 4 re-review: **PASS**. Two observations rejected as
+     pre-existing non-defects (the "So one agent" connective; the concurrent-vs-sequential
+     "work-streams" reading — the latter may matter when authoring SKILL.md in #2 and the #5
+     measurement design).
+  4. `588013f` — round-3/4 verdicts recorded in the ledger `checks/1.md`.
+- **Next**: **User reviews `aiya/docs/design.md` on PR #1** — the only unchecked step of Task #1.
+  The §1 revision to review = `436a69c` + `e656fd9` (earlier milestones `a18a3f7` → `1098ff9` →
+  `2160899` already on the PR). On `/ty`: check off Task #1's "user review" step and commit the
+  **single completion marker** (`docs: complete task #1 — …`) per `task-workflow.md` Phase: Complete,
+  then start **Task #2** (author `aiya/skills/<verb>/SKILL.md`, prompt-driven, no JS loop, following
+  `task-workflow.md`). On `/gm`: re-aim per the feedback.
+- **Notes**:
+  - Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Review milestones
+    on the PR, not the console.
+  - `aiya/docs/design.md` is the sole design source of truth (memo layer retired 2026-07-01; CCS =
+    YAML, 9 components; details in the doc itself — consult it, not old memos).
+  - QA fix-iteration budget for the §1-rewrite cycle: 1 of 3 used; no NG findings remain.
+  - Task #5's measurement-design note (silent instruction-drift) now lives in Task #5's body — do not
+    look for it here.
+  - The dogfood (#5) builds techting to a throwaway/compare location, never the real techting worktree.
+  - Working method: 1問ずつ・素の対話で合意してから書く（全体→詳細）. Artifacts in English; console
+    replies in 敬体 — including bullet endings (no 体言止め; user re-flagged 2026-07-02).
