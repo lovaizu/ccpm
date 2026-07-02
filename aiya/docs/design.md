@@ -66,8 +66,9 @@ Three things this design deliberately does not target:
   holding under prompt control — the bet this design makes, and why adherence is made observable rather
   than assumed (§6, last entry).
 - **LLM competence at the three per-Turn skills.** A model can compress its own work into a fixed-shape
-  state, judge an artifact against a goal handed to it cold, and write YAML reliably. Every Turn
-  exercises all three.
+  state, judge an artifact against a goal handed to it cold, and write YAML reliably. The first two are
+  exactly the skills the scripted runs above exercised; the third is common ground for current models.
+  Every Turn exercises all three.
 
 ### 2.2 What binds the solution?
 
@@ -118,7 +119,8 @@ flowchart LR
 Two boundaries carry the whole design; the rest of this section just details them:
 
 - **The human is outside the loop** — owns the goal and steers **only at gates** (`/ty`, `/gm`), not
-  Turn by Turn. That sparseness lets one person direct many streams.
+  Turn by Turn. That sparseness is what would let one person direct many streams — §1.2's hypothesis,
+  not yet a measured result.
 - **The Conductor is walled off from raw output** — its only intake is the bounded handoff (the CCS plus
   the verify verdict); it never reads the artifact. The Turns do the heavy read/write on disk. That wall
   is what keeps the Conductor's context from growing.
@@ -269,7 +271,8 @@ Four rules keep the CCS bounded:
    verdict — so raw work cannot enter its context by either the push channel (what a Turn returns) or a
    pull channel (opening a file).
 
-**Reading the symptom.** Which component bloats says what is wrong with the Turn's scope:
+**Reading the symptom** — working heuristics, not measured rules; refine in use. Which component bloats
+suggests what is wrong with the Turn's scope:
 
 | Symptom | Likely cause | Remedy |
 |---|---|---|
@@ -366,7 +369,7 @@ stay orthogonal.
   and re-aims on `/gm` (redirect with feedback). The human **redirects** the work, not merely approves.
 - **Sparse by design.** In the normal run the human steers **only at these 6 gates**; between them the
   Conductor self-steers at the Turn level (§4.2 Stage ③). That sparseness — 6 boundary decisions instead
-  of per-turn watching — is the scaling lever.
+  of per-turn watching — is the scaling lever (§1.2's hypothesis: designed for, not yet measured).
 
 ## 6. Why this shape, and not another?
 
