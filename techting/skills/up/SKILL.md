@@ -33,7 +33,7 @@ Gate: if a line cannot be answered from the input, ask the user. On a headless r
 
 ### 3. Build the outline from the purpose
 
-Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. One axis only — route off-axis material to its own document.
+Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. One axis only — off-axis material stays out of this document; name it in the what-changed note (what was left out, and where it belongs).
 
 Emit: the outline headings, specialized to this content.
 
@@ -75,12 +75,14 @@ Mark each PASS or FAIL; any FAIL, fix and re-check. Ship only when all PASS.
 - [ ] Single axis (step 3), no mixing.
 - [ ] A reader reaches the purpose reading top to bottom (step 5).
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
+- [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
+- [ ] Voice and closing fit the step-2 reader (step 6) — one wrong voice held throughout still fails.
 - [ ] None of the seven tells remain (step 9).
 - [ ] Headings alone carry the argument.
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
 - [ ] Fact separable from hypothesis; the unverified marked `[unverified]`.
 
-Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then a short line on any AI tells step 9 caught.
+Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then a short line on any AI tells step 9 caught. When the input was a topic, not a draft, nothing changed — the note reports the choices made instead: reader, axis, voice, each tied to why.
 
 ---
 
@@ -95,7 +97,7 @@ What "good" means, in two tiers the procedure builds toward.
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
 - **Ceiling (attractive)** — density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread, conclusion first, headings carrying the argument alone; figures and lists only where each beats prose; one consistent voice.
 
-Throughout: Markdown; mark the unverified `[unverified]` and do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout: Markdown; mark the unverified `[unverified]`, state the scope actually verified, and do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 
