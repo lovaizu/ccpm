@@ -276,7 +276,7 @@ reconciled to the final shape of #3/#4/#6–#14.
   `version` is `0.6.0` (failure modes absent: a refactor listed or a real change missing; a surviving
   contradiction; an accidental release).
 
-### #16: Session-status block at every user stop
+### #16: Session-status block at every user stop — DONE through QA
 
 **Purpose**: Open every rn stop for user input with a compact session map (✅ done / 👉 now / ⬜ ahead)
 so the user grasps what was done, where they are, and what remains — without reading `steering.md` or
@@ -301,11 +301,12 @@ asking. Added by escalation (user request during the PR-feedback stage).
 - [x] Per doc-division: update `rn/README.md`'s scenario where it shows a stop (UX); add a
       `rn/CHANGELOG.md` `[Unreleased]` Added entry; record the structure in `rn/docs/design.md`
       (whole-structure form, no per-step memo).
-- [ ] self-check (`checks/16.md`) + QA + Craft (writing) + Verification (dry-run) + Design expert review
-      (subagent) + grep cross-doc consistency. — round 1: all 4 axes NG (unwired stops, pre-steering
-      boundary unstated, README/spec contradictions), fixed in `5fbeac0`; round 2: Design PASS (3 Low
-      findings pending triage), QA/Craft/Verification re-reviews aborted mid-run by session limit — not
-      yet re-run.
+- [x] self-check (`checks/16.md`) + QA + Craft (writing) + Verification (dry-run) + Design expert review
+      (subagent) + grep cross-doc consistency. — round 1: all 4 axes NG, fixed in `5fbeac0`; round 2:
+      all 4 PASS with minor findings, fixed in `bf66076`; round 3: all 4 FAIL (the new report-stop rule
+      exposed two unwired report stops — pr-feedback loop-completion, session-close — and the class's
+      extension/format grammar), fixed in `cd47339`; round 4: all 4 axes PASS — residual Low/Nit
+      findings recorded as accepted in `checks/16.md`.
 
 **Completion criteria**:
 
