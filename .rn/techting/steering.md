@@ -376,12 +376,59 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 
 # State
 
-(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
-session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
-so only a genuinely suspended session reads `paused`.)
-
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-04
+- **Last completed**: **QA-verdict ledger recorded, then two user-approved improvement rounds on
+  SKILL.md, all pushed.** (1) Ledger: QA verdicts for #4/#5 recorded into `checks/4.md` / `5.md`
+  (commit 1a7eba1). (2) **Round A — evaluation fixes + three-status rule** (user approved during
+  review): ba884d5 landed four edits — step-7 mermaid restatement removed, net framing unified
+  (intro keeps the sole occurrence), §Form "skip the diagram when prose reads faster" guard, and
+  the **fact / hypothesis / decision** epistemic-status rule (§Throughout line + step-10 checkbox
+  + CHANGELOG line). Focused QA: PASS, 2 valid findings → fixed in f8136b3 (tell-7 Fix cell routes
+  all three statuses; fact-source scoped to non-obvious/load-bearing claims); QA re-check: PASS,
+  both CLOSED, 2 Info (no action). Ledger updated (15b1d3d). (3) **Round B — five axes aligned
+  with researched best practice** (user asked "おすすめの構成に・最新動向を検索して"): research
+  agent read Diátaxis (explanation/reference/tutorials), MADR 4.0, AWS ADR guidance,
+  Google/Microsoft procedure style guides, GitLab task type, Google SRE postmortem. a3f803c
+  rewrote the five skeletons: article = why-question / claim→why→implications (no instructions);
+  guide = one best path + location-before-action + cleanup/rollback; reference = structure mirrors
+  the product; ADR = Status+date / decision-as-headline / options / consequences (4 items);
+  evaluation = +weights-when-criteria-conflict; preamble notes tutorial = specialized guide,
+  postmortem = specialized record. c375c74 restored "unique and exhaustive" (dropped by my
+  work-order). QA on the round: **PASS with 3 valid Low findings + 3 Info (rejected with
+  evidence)**. File at c375c74: 1,791 body words (<2,000), 0 mermaid fences, addressee sentence
+  once, anchors resolve, both strict validations PASS.
+- **Next**: **Dispatch the 3 QA Low fixes to the implementation expert** — the dispatch was written
+  and sent but died on a session rate limit; nothing was committed. The three fixes (full
+  work-order text is reproducible from this list): (1) voice-table Record/ADR Closing cell
+  "Action items" → "Consequences; action items when any follow" (now points past the MADR-aligned
+  skeleton); (2) §Form diagram skip-guard extended to structure — "a short linear sequence, or a
+  structure a sentence can carry — skip the diagram" (reference axis says "diagram where it helps"
+  but §Form/checkbox only excuse flow); (3) ADR item 3 restores the rejected-options emphasis —
+  "pros and cons of each — the rejected ones and their reasons are what the tracing reader came
+  for" (lost in the MADR realignment; item 2 stays the headline). One commit, SKILL.md only, no
+  CHANGELOG line; commit msg: "fix: align voice-table closing, form skip-guard, and ADR emphasis
+  with the new axes". Then: focused QA re-check on that commit → **write steering D-6** (five-axes
+  skeletons' source of truth is now the 2026-07-02 research round — Diátaxis / MADR 4.0 / AWS /
+  Google / Microsoft / GitLab / SRE — a deliberate departure from instruction.md's verbatim
+  outlines, same pattern as D-4's floor expansion) → record rounds A+B in `checks/4.md` / `5.md`
+  ledger → then user review of #4+#5 on PR #5 (draft). On approval: completion markers for #4 and
+  #5. Then the Level B dogfood (Acceptance criteria). Release 0.1.0 only on explicit instruction.
+- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (**draft**).
+  - **No completion marker for #4 or #5 yet** — do not commit `complete task #4` / `#5` until the
+    user approves on the PR.
+  - Session commits, all pushed: a3f982b (reconcile), 1a7eba1 (QA-verdict ledger), ba884d5 +
+    f8136b3 (round A), 15b1d3d (round-A ledger), a3f803c + c375c74 (round B). Rounds A and B are
+    **user-approved in conversation** but still land on PR #5 for the formal review gate.
+  - **Round B is NOT yet recorded in the checks ledger and D-6 is NOT yet written** — both queued
+    in Next. The QA Info findings rejected with evidence: ADR date on headless runs (harness
+    supplies the date; no-guessing rule covers unknown status), "explanation linked out" dangling
+    links (no-authoring rule covers content side), "lookup-friendly"/"premise" drops (covered by
+    voice table row + step 2).
+  - The three-status rule (fact/hypothesis/decision) came from the user's cross-session design
+    discussion; "decision has no truth value" is the key distinction, uniform vocabulary makes QA
+    mechanically checkable.
+  - `instruction.md` is no longer the sole source for the five axes (pending D-6) — same
+    deliberate-expansion pattern as D-4 (floor) and D-5 (build-fresh).
+  - CHANGELOG: three entries under `## [Unreleased]`; no version bump without explicit release
+    instruction (then: promote, tag `techting-v0.1.0`, mark PR ready, merge).
