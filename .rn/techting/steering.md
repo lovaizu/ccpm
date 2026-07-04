@@ -374,6 +374,26 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
   revised above to "build in, then net" and "substance first, then the tells the net caught".
 - **Sources**: this session's exchange (2026-06-27); the rebuilt `techting/skills/up/SKILL.md`.
 
+## D-6: The five-axes skeletons re-sourced to researched best practice (supersedes instruction.md's verbatim outlines)
+- **Issue**: The five outline-axis skeletons in `SKILL.md` (article, guide, reference, record-ADR,
+  evaluation) were derived verbatim from `instruction.md`. The user asked for the recommended
+  structures instead, grounded in current best practice ("おすすめの構成に・最新動向を検索して").
+- **Conclusion**: The skeletons' source of truth is now the 2026-07-02 research round — Diátaxis
+  (explanation / reference / tutorials), MADR 4.0, AWS ADR guidance, Google and Microsoft procedure
+  style guides, GitLab task type, Google SRE postmortem — not `instruction.md`'s outlines. Landed as
+  a3f803c (rewrite) + c375c74 (restore "unique and exhaustive" to the reference axis) + 9a43913
+  (re-align voice table, form skip-guard, and ADR emphasis with the new skeletons).
+- **What the research changed**: article = why-question / claim→why→implications (no instructions);
+  guide = one best path + location-before-action + cleanup/rollback; reference = structure mirrors
+  the product; ADR = Status+date / decision-as-headline / options with rejected-and-why / consequences;
+  evaluation = weights when criteria conflict; preamble notes tutorial = specialized guide,
+  postmortem = specialized record.
+- **Scope note**: this is a deliberate departure from `instruction.md`, the same pattern as D-4 (the
+  floor expansion) and D-5 (build-fresh): `instruction.md` stays verbatim as the source of record for
+  the pillars, but for the five skeletons this Decision and the researched sources are the source.
+- **Sources**: the 2026-07-02 research-agent round (Diátaxis, MADR 4.0, AWS, Google, Microsoft,
+  GitLab, SRE); this session's exchange; commits a3f803c / c375c74 / 9a43913.
+
 # State
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
