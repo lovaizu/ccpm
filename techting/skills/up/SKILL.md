@@ -121,7 +121,7 @@ One role each. **Do not mix axes** in one document. Specialize the headings to t
 - **Record / ADR** — for someone tracing how a decision was reached.
   1. Status (proposed / accepted / superseded) and date; the context and the problem
   2. The decision and its drivers (the chosen option and why — the headline)
-  3. Options considered (pros and cons of each, the rejected included)
+  3. Options considered (pros and cons of each — the rejected ones and their reasons are what the tracing reader came for)
   4. Consequences (the good and the bad)
 
 - **Evaluation / survey** — for someone making a call.
@@ -134,7 +134,7 @@ One role each. **Do not mix axes** in one document. Specialize the headings to t
 
 Choose each part's form for the reader's speed.
 
-- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance; when prose reads faster — a short linear sequence — skip the diagram. Do not repeat in prose what the diagram carries.
+- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance; when prose reads faster — a short linear sequence, or a structure a sentence can carry — skip the diagram. Do not repeat in prose what the diagram carries.
 - **List** — only when the items are genuinely parallel; otherwise write prose.
 - **Table** — for several items compared on the same fields.
 - **Graph** — for a trend or distribution that lives in the numbers.
@@ -148,7 +148,7 @@ Starting point, not a rulebook — the step-2 reader is the source of truth.
 |---|---|---|
 | Reads through (article / guide) | Warm and plain; an easy motive before each term | What was learned, and the limits |
 | Looks things up (reference) | Uniqueness and coverage first; drop warmth and intros | None |
-| Traces history (record / ADR) | Separate fact from analysis; names → roles | Action items |
+| Traces history (record / ADR) | Separate fact from analysis; names → roles | Consequences; action items when any follow |
 | Makes a call (evaluation / survey) | Separate measurement from judgment; lay them out neutrally | A recommendation |
 
 ### Floor checklist (the seven AI tells)
