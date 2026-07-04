@@ -400,8 +400,36 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-04
+- **Last completed**: **All queued follow-up work from the prior session dispatched and closed.**
+  (1) The 3 QA Low fixes from round B landed in 9a43913 (implementation expert; SKILL.md only, 3
+  lines: voice-table Record/ADR closing → "Consequences; action items when any follow"; §Form
+  diagram skip-guard extended to "a structure a sentence can carry"; ADR item 3 rejected-options
+  emphasis restored). (2) Focused QA re-check on 9a43913: PASS — all three CLOSED, 1 Info rejected
+  (step-10 form checkbox does not restate the widened skip-guard; it defers to step 6 / §Form where
+  the guard lives — no action). Invariants at 9a43913: 1,814 body words (<2,000), 0 mermaid fences,
+  addressee sentence exactly once, both strict validations PASS. (3) Steering **D-6 written** (five
+  axes re-sourced to the 2026-07-02 research round — Diátaxis / MADR 4.0 / AWS / Google / Microsoft
+  / GitLab / SRE — deliberate departure from instruction.md, same pattern as D-4/D-5). (4) Round B
+  + the QA-fix round recorded in `checks/4.md` / `5.md` ledgers. Ledger commit b9296fe; all pushed.
+- **Next**: **User review of #4+#5 on PR #5 (draft)** — https://github.com/lovaizu/ccpm/pull/5.
+  Everything up to the review gate is done; the user was pointed at the PR and has not yet
+  approved. On approval: check off the remaining `user review` boxes and commit the completion
+  markers for #4 and #5 (one check-off commit each, message containing `complete task #4` /
+  `complete task #5`, per task-workflow Phase: Complete). Then the **Level B dogfood**
+  (Acceptance-criteria run: `/techting:up` on a real draft; two reader definitions → voice/axis
+  change; floor clear; note = substance first, then tells caught — this also closes #5's open
+  "Re-validate / Level B" step box). Release 0.1.0 only on an explicit instruction (then: promote
+  CHANGELOG Unreleased, bump plugin.json, tag `techting-v0.1.0`, mark PR ready, merge).
+- **Notes**: Branch `worktree-techting`, PR https://github.com/lovaizu/ccpm/pull/5 (**draft**).
+  - **No completion marker for #4 or #5 yet** — do not commit `complete task #4` / `#5` until the
+    user approves on the PR.
+  - This session's commits, all pushed: d08b02e (reconcile State), 9a43913 (3 QA Low fixes,
+    implementation expert), b9296fe (D-6 + round-B ledger).
+  - The check ledgers (`checks/4.md` / `5.md`) are fully current through the 9a43913 re-check;
+    nothing is pending recording.
+  - The #5 step box "Re-validate … Level B dogfood NOT yet done" stays **open by design** until
+    the Acceptance-criteria dogfood runs; validation itself is green as of 2026-07-04 on 9a43913.
+  - CHANGELOG: three entries under `## [Unreleased]` (the 3-line fix round added none — internal
+    wording, not user-visible); no version bump without an explicit release instruction.
