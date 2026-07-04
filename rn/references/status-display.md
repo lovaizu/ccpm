@@ -10,10 +10,10 @@ Read wherever a stop point instructs opening the message with the session-status
   that carries no block: e.g. planning's goal / slug / design-location asks before `steering.md` is
   persisted, `/rn:up` before a suspended `steering.md` is identified (including its
   multiple-candidates proposal), `/rn:gm` or `/rn:ty` with no active session.
-- **Asks and flow-ending reports both count as stops** — a message that halts the flow awaiting the
-  user's next move (a suspend report, an abort report, a nothing-pending reply) opens with the block
-  too; on such a report the 👉 line states where the session halted and the user's next move instead
-  of an ask.
+- **Asks and flow-ending reports both count as stops** — the class is any message that halts the
+  flow awaiting the user's next move (e.g. a suspend report, an abort or loop-completion report, a
+  nothing-pending reply, a session-close report); such a message opens with the block too, and on a
+  report the 👉 line states where the session stands and the user's next move instead of an ask.
 - **Derive the block fresh from the active `steering.md` at emit time** — its `Goal`, task list, and
   check-offs are the only source; never reuse an earlier block.
 - **A task counts ✅ when `steering.md` records it complete** — checked off, or carrying an explicit
@@ -41,7 +41,9 @@ Read wherever a stop point instructs opening the message with the session-status
   short label per task, `/`-separated; several ✅ lines are fine when one grows long. No completed
   tasks yet → no ✅ lines.
 - **👉 current** — exactly one line: the task the session is stopped on, plus what is being asked of
-  the user right now — the verdict, answer, or decision this stop waits for. A stop not tied to a
+  the user right now — the verdict, answer, or decision this stop waits for. On a report stop the 👉
+  line replaces `asking now:` with where the session stands and the user's next move (e.g.
+  `👉 #2   root-cause fix ── suspended here; next move: /clear, then /rn:up`). A stop not tied to a
   numbered task (the plan gate; an escalation that spans tasks) names the gate or moment instead of an
   id.
 - **⬜ remaining** — the unchecked tasks ahead, labeled and ranged as for ✅. **No remaining tasks →
@@ -68,4 +70,14 @@ Last task, nothing remaining (⬜ omitted):
 ✅ #1–#3   reproduction test / root-cause fix / regression check
 👉 #4      evaluation sign-off ── asking now: your verdict via /rn:ty or /rn:gm
 (#4 is the last task; after approval only the merge remains)
+```
+
+Report form (the `/rn:dn` suspend report — the 👉 line carries the next move, no ask):
+
+```
+── payment-fix: payments complete on the payment screen ──
+✅ #1      reproduction test
+👉 #2      root-cause fix ── suspended here; next move: /clear, then /rn:up
+⬜ #3–#4   regression check / evaluation sign-off
+(#2 starts on /rn:up)
 ```

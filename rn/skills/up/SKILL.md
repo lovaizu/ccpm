@@ -19,6 +19,8 @@ Reconstructs prior session state, aligns it with git, and continues from the nex
    - Multiple → rank by `State` showing `Status: paused`, then most recent commit, and propose the top candidate.
    - Zero → tell the user "No steering.md found. Run `/rn:on` to start." and stop.
 
+   From step 3 on, any message stopping for user input opens with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`.
+
 3. **Read State.** Read the `State` section: last completed task, next task, and notes.
 
 4. **Sync tasks.** Cross-check `git log` against the unchecked tasks. A commit matches a task when its message contains `complete task #{id}`; check that task off in steering.md.

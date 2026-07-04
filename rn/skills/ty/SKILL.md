@@ -19,4 +19,6 @@ Approves the pending rn confirmation and advances the flow. Performs no revision
    - an evaluation gate passes — the session can close;
    - a reviewed item is accepted — it stands as final.
 
-4. **Nothing pending.** If nothing is actually awaiting approval, say so and do nothing else; when a session is active, open that reply with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`.
+   When the advance ends the flow (an evaluation gate passes and the session closes, or an accepted item with nothing following), open that closing report with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`.
+
+4. **Nothing pending.** If nothing is actually awaiting approval, open the reply with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md` (subject to that spec's active-session boundary), say so, and do nothing else.

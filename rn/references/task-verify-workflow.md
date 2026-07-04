@@ -214,7 +214,9 @@ approved — the coordinator checks the task off directly.
    exact substring regardless of the prefix.
 3. **Advance.** Begin the next unchecked task immediately — a sign-off task goes straight to the gate per
    the Process selection rule above; any other task begins at Phase: Execute
-   (`task-execute-workflow.md`). If no unchecked tasks remain and no "Evaluation sign-off" task was ever
-   encountered in this session, that is a planning defect (a session must always close via the
-   Evaluation sign-off task) — escalate to the user immediately via the same always-open Escalation
-   channel described in Triage above; do not close the session silently.
+   (`task-execute-workflow.md`). If no unchecked tasks remain and the Evaluation sign-off was approved,
+   the session closes — open that session-close report with the session-status block per
+   [`status-display.md`](./status-display.md). If no unchecked tasks remain and no "Evaluation
+   sign-off" task was ever encountered in this session, that is a planning defect (a session must
+   always close via the Evaluation sign-off task) — escalate to the user immediately via the same
+   always-open Escalation channel described in Triage above; do not close the session silently.

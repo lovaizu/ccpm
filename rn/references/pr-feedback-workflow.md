@@ -26,8 +26,9 @@ coordinator pass — not the QA-expert / multi-round chain of
    ```
 
    If this exits non-zero or reports "no pull requests found" for the branch, **stop and report** — do
-   not fabricate a PR number or proceed into the GraphQL call. When a session `steering.md` is active,
-   open that report with the session-status block per [`status-display.md`](./status-display.md).
+   not fabricate a PR number or proceed into the GraphQL call. Open that report with the
+   session-status block per [`status-display.md`](./status-display.md) (subject to that spec's
+   active-session boundary).
 
    Record `number` (the PR number) and `url`. Capture `owner` and `repo` as **two separate** values:
 
@@ -132,7 +133,9 @@ After each subagent returns, before dispatching the next thread:
 2. **OK → dispatch the next thread.** Continue the queue.
 3. **Problem → re-instruct the same subagent on the same thread.** Do not advance until it is right.
 
-When the queue is empty, the loop is done.
+When the queue is empty, the loop is done — report the loop result (the threads processed, or that
+there were none to process), opening that report with the session-status block per
+[`status-display.md`](./status-display.md) (subject to that spec's active-session boundary).
 
 ## Phase: Resolve-by-author
 

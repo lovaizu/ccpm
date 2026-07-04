@@ -7,7 +7,7 @@ task execution then continues via [`task-execute-workflow.md`](./task-execute-wo
 
 ## Steps
 
-Treat every user interaction as a proposal: lead with one concrete recommended option in plain language (no internal jargon), and proceed on confirmation. `AskUserQuestion` is fine when one option is your recommendation. At a stop wired with the session-status block, the block precedes the proposal.
+Treat every user interaction as a proposal: lead with one concrete recommended option in plain language (no internal jargon), and proceed on confirmation. `AskUserQuestion` is fine when one option is your recommendation. At a stop that instructs opening with the session-status block, the block precedes the proposal.
 
 1. **Understand the goal.** Take it from the user's message or `$ARGUMENTS`; if neither is present, ask for it. Restate it as a clear, faithful understanding of what the user wants — capture full intent, never add scope or invent goals. If ambiguous, propose your restatement and let the user correct it. This restatement becomes `Goal`.
 
