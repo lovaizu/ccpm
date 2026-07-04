@@ -263,8 +263,33 @@ into aiya's own gate artifacts (`goal.md` / `approach.md`) when authoring SKILL.
 
 # State
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-04
+- **Last completed**: Task #1 user-review revisions through round 5 (the "user review (on the PR)"
+  step itself stays unchecked). This session's commits, all pushed: `f914855` (headings re-derived —
+  h2 = canonical sections, h3 = viewpoint-first questions; §1 reordered; old §3+§4 merged into Design
+  overview; per-part contract questions in Detailed design; new §5.2 trade-offs), `8d3cb26` (D-3
+  revised to the h2-canon/h3-question template; §5→§5.1 refs fixed), `df15bb7` + `b877aa2` (§3.1 now
+  leads with a figure; first cut was a numbered flow, corrected to actors-and-relations; §3.2's
+  near-identical cast diagram removed). Rounds 4–5 logged in `.rn/aiya/checks/1.md`.
+- **Next**: Task #1 — address the round-6 figure feedback (received at suspend, **not yet applied,
+  story not yet agreed**). The user's points: (1) §3.1's core figure shows the Human but §3.2's parts
+  table has no Human — inconsistent; the core figure's purpose is to convey the core concept to a
+  reader with zero context, so decide the cast from that purpose. (2) §3.3's flow should read as one
+  connected flow *starting from the human*, not three detached stage details. (3) Overall verdict:
+  the figures lack メリハリ — no per-figure focus. On resume: agree the story first (state what each
+  figure teaches: §3.1 = core concept for a newcomer, §3.3 = end-to-end flow from the human, §3.2 =
+  responsibilities), then redraw all figures with that single lens — not just the flagged ones. Note
+  the related casting drift to reconcile: the parts table lists CCS and phase gate but not
+  Human/artifact, while §3.1's figure shows Human/artifact with CCS only as an edge label. Then user
+  review continues on PR #1.
+- **Notes**:
+  - Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Review on the PR;
+    feedback keeps arriving in console — both fine.
+  - D-3 (revised) is the design-doc template: h2 = canonical sections, h3 = questions derived
+    viewpoint-first; candidate to fold into aiya's gate artifacts when authoring SKILL.md in #2.
+  - `/ty` and `/gm` inside design.md are aiya's own gate commands (design content, fine); rn 0.6.0
+    ships only on/up/dn — never tell the user to run `/rn:ty` or `/rn:gm`.
+  - User-review revisions are user-directed; no QA re-run these sessions (rounds logged in
+    checks/1.md).
+  - Console replies in 敬体 (bullet endings too); artifacts in English.
