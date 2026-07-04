@@ -286,21 +286,26 @@ asking. Added by escalation (user request during the PR-feedback stage).
 
 **Steps**:
 
-- [ ] Add `rn/references/status-display.md`: the block's format — header `── {slug}: {goal one-liner} ──`;
+- [x] Add `rn/references/status-display.md`: the block's format — header `── {slug}: {goal one-liner} ──`;
       ✅ lines for completed tasks, grouped in ranges with short labels; one 👉 line for the current task
       plus what is being asked of the user right now; ⬜ lines for remaining tasks, **omitted entirely
       when none remain**; a closing parenthesized outlook line (what follows this stop). Derived fresh
       from the active `steering.md` at emit time; written in the user's conversation language.
-- [ ] Wire one emit instruction ("open the message with the session-status block per
+- [x] Wire one emit instruction ("open the message with the session-status block per
       `status-display.md`") into every user-facing stop: the plan-gate sign-off in
       `planning-workflow.md`, the sign-off-task gate (Process selection instance in both
       `task-execute-workflow.md` and `task-verify-workflow.md`), the escalation channel
-      (`task-verify-workflow.md`), and `dn`'s untracked-path confirmation.
-- [ ] Per doc-division: update `rn/README.md`'s scenario where it shows a stop (UX); add a
+      (`task-verify-workflow.md`), and `dn`'s untracked-path confirmation. (Fix round 1 extended the
+      wiring to `up`'s dirty-tree ask, `ty`'s disambiguation ask, `pr-feedback`'s no-PR report, and the
+      plan-gate console fallback, and stated the active-session boundary in the spec.)
+- [x] Per doc-division: update `rn/README.md`'s scenario where it shows a stop (UX); add a
       `rn/CHANGELOG.md` `[Unreleased]` Added entry; record the structure in `rn/docs/design.md`
       (whole-structure form, no per-step memo).
 - [ ] self-check (`checks/16.md`) + QA + Craft (writing) + Verification (dry-run) + Design expert review
-      (subagent) + grep cross-doc consistency.
+      (subagent) + grep cross-doc consistency. — round 1: all 4 axes NG (unwired stops, pre-steering
+      boundary unstated, README/spec contradictions), fixed in `5fbeac0`; round 2: Design PASS (3 Low
+      findings pending triage), QA/Craft/Verification re-reviews aborted mid-run by session limit — not
+      yet re-run.
 
 **Completion criteria**:
 
@@ -634,8 +639,26 @@ phase is the file being amended)
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-07-04
+- **Last completed**: #5 (last check-off; #7–#14 also done — see Tasks)
+- **Next**: #16 (session-status block) — mid-Verify. Then #15 (evaluation sign-off re-present).
+- **Notes**: branch `rn-update`, PR #14.
+  - **PR feedback loop: done.** All 10 unresolved review threads replied (4 with fixes pushed:
+    `908e705` dated slugs, `d9f703c` dn YAML, `0636f9e`/`eb62193` mermaid; 6 already-addressed with
+    commit references). Resolution is the reviewer's; re-running `pr-feedback-workflow.md` picks up
+    any follow-ups.
+  - **#16 state**: deliverable committed (`0665c96` feature, `5fbeac0` fix round 1); criteria scoped
+    to in-session stops in `be3e639`; self-check OK (`checks/16.md`, committed as wip `4e212f9`).
+    Verify round 2: Design PASS; QA/Craft/Verification re-reviews **aborted by session limit
+    (resets 12:20am Asia/Tokyo) — zero output, must be re-dispatched**.
+  - **Next concrete action**: re-dispatch QA + Craft(writing) + Verification(dry-run) re-reviews on
+    `git diff 0e368eb..HEAD -- rn/` against #16's completion criteria; triage them together with
+    Design round-2's 3 Low findings (design.md:87 stop enumeration under-counts the wiring; spec
+    opening "every message stopping" wider than the wired ask-class; up/SKILL.md:15 inline boundary
+    paraphrase). Fix round 2 if Valid findings; then Complete (#16 check-off + marker commit), then
+    #15: re-run affected criteria (incl. the new status-block criterion) and re-present with the
+    session-status block (dogfood).
+  - **#15 context**: prior acceptance run = 9 OK / criterion 4 **NG** (this steering's completed-task
+    bodies; user has not yet verdicted) / criterion 3 caveat (missing `checks/2.md` QA trail).
+    Criteria 1, 2, 6–10 need no re-run unless touched.
