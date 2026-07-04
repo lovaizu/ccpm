@@ -61,10 +61,13 @@ Context is full, or you're done for the day. Run it and your work is committed /
 ```console
 > /rn:dn
 
-● Committed and pushed — "test: add reproduction test for payment failure"
-  Last completed: #1 reproduction test
-  Up next:        #2 find the root cause and fix it
+● ── payment-fix: payments complete on the payment screen ──
+  ✅ #1      reproduction test
+  👉 #2      root-cause fix ── suspended here; next move: /clear, then /rn:up
+  ⬜ #3–#4   regression check / evaluation sign-off
+  (#2 starts on /rn:up)
 
+  Committed and pushed — "test: add reproduction test for payment failure"
   Run /clear, then start a fresh conversation with /rn:up.
 ```
 

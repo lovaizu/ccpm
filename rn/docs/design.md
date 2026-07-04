@@ -84,12 +84,13 @@ places the plan / design / evaluation sign-offs among them; **task-execute-workf
 `/rn:gm` with no argument invokes it directly against the PR's review threads.
 
 Every stop for user input while a session is active (its `steering.md` exists and is identified) —
-the plan gate, the design / evaluation sign-off gates, an escalation, `/rn:dn`'s untracked-path
-confirmation — opens with a **session-status block**: ✅ completed / 👉 current plus the ask /
-⬜ remaining (omitted when nothing remains), derived fresh from `steering.md` at emit time, in the
-user's conversation language. Its format — and the boundary for stops outside an active session —
-lives in one reference, **status-display**; each stop point only cites it (per A) — so the block
-cannot drift per stop, and the user orients at any stop without opening `steering.md`.
+asks and flow-halting reports alike, among them the plan gate, the design / evaluation sign-off
+gates, an escalation, `/rn:dn`'s untracked-path confirmation — opens with a **session-status
+block**: ✅ completed / 👉 current plus the ask / ⬜ remaining (omitted when nothing remains),
+derived fresh from `steering.md` at emit time, in the user's conversation language. Its format —
+and the boundary for stops outside an active session — lives in one reference, **status-display**;
+each stop point only cites it (per A) — so the block cannot drift per stop, and the user orients at
+any stop without opening `steering.md`.
 
 ## Flow
 

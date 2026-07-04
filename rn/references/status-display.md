@@ -1,20 +1,25 @@
 # Session-Status Display
 
 The compact session map that opens every message stopping for user input while a session is active.
-Read wherever a stop point instructs "open the message with the session-status block per
-`status-display.md`". The block comes first in that message — before the ask and anything else.
+Read wherever a stop point instructs opening the message with the session-status block per
+`status-display.md`. The block comes first in that message — before the ask and anything else.
 
 ## Rules
 
 - **Emit only while a session is active** — its `steering.md` exists and is identified. A stop before
-  that carries no block: planning's goal / slug / design-location asks before `steering.md` is
+  that carries no block: e.g. planning's goal / slug / design-location asks before `steering.md` is
   persisted, `/rn:up` before a suspended `steering.md` is identified (including its
-  multiple-candidates proposal), `/rn:gm` with no active session.
+  multiple-candidates proposal), `/rn:gm` or `/rn:ty` with no active session.
+- **Asks and flow-ending reports both count as stops** — a message that halts the flow awaiting the
+  user's next move (a suspend report, an abort report, a nothing-pending reply) opens with the block
+  too; on such a report the 👉 line states where the session halted and the user's next move instead
+  of an ask.
 - **Derive the block fresh from the active `steering.md` at emit time** — its `Goal`, task list, and
   check-offs are the only source; never reuse an earlier block.
 - **A task counts ✅ when `steering.md` records it complete** — checked off, or carrying an explicit
-  done annotation on the task. Done-but-awaiting (e.g. a review still pending) still counts ✅; the
-  pending item goes on the outlook line when it affects what follows.
+  done annotation on the task (e.g. a "DONE …" note in its heading). Done-but-awaiting (e.g. a review
+  still pending) still counts ✅; the pending item goes on the outlook line when it affects what
+  follows.
 - **Write the block in the user's conversation language.** This spec and its examples are English; the
   emitted block follows the conversation.
 - **Markers are fixed**: ✅ completed / 👉 current / ⬜ remaining.

@@ -19,4 +19,4 @@ Approves the pending rn confirmation and advances the flow. Performs no revision
    - an evaluation gate passes — the session can close;
    - a reviewed item is accepted — it stands as final.
 
-4. **Nothing pending.** If nothing is actually awaiting approval, say so and do nothing else.
+4. **Nothing pending.** If nothing is actually awaiting approval, say so and do nothing else; when a session is active, open that reply with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`.

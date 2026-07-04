@@ -51,6 +51,8 @@ Records resume state and hands off. Does not execute tasks.
      `git status --porcelain` string is not already recorded in `State → Notes` from step 5, record it
      there as user-deferred; then go to step 8. Never loop back to step 5. Never delete a file.
 
-8. **Report.** Output last completed task, next task, and the branch name. If the last push did not
-   succeed, state that the commits are local-only and must be pushed. Name any user-deferred paths
-   recorded in `State → Notes`. Tell the user to run `/clear`, then `/rn:up` in a new conversation.
+8. **Report.** Open the report with the session-status block per
+   `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`, then output the branch name. If the last
+   push did not succeed, state that the commits are local-only and must be pushed. Name any
+   user-deferred paths recorded in `State → Notes`. Tell the user to run `/clear`, then `/rn:up` in
+   a new conversation.
