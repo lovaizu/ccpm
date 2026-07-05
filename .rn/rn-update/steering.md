@@ -126,12 +126,11 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 
 # Tasks
 
-(#1–#3 are done through QA on the branch, awaiting the new gates — kept compact, full bodies in their
-`checks/{id}.md` and git. #4 and #6 carry the B-thread redesign. #5 reconciles the record. #15 is the
-session's own Evaluation sign-off task, placed last per #14's rule, added by escalation during `/rn:up`
-since planning (`/rn:on`, before #14 existed) predates that rule. #16 is the session-status block,
-added by escalation on user request during the PR-feedback stage; it runs before #15 so the sign-off
-re-presentation carries the block. Numbering is preserved so `checks/{id}.md` stay aligned.)
+(Completed tasks are kept compact — full bodies and QA trails live in their `checks/{id}.md` and git.
+#15 is the session's own Evaluation sign-off task, placed last per #14's rule, added by escalation
+during `/rn:up`; #16 was added by escalation on user request during the PR-feedback stage and ran
+before #15 so the sign-off re-presentation carries the block. Numbering is preserved so
+`checks/{id}.md` stay aligned.)
 
 ### #1: `/rn:dn` ends with a genuinely clean worktree — DONE through QA
 
@@ -175,48 +174,10 @@ forward pass. See `checks/3.md`.
 
 ### #4: steering is a lean forward contract; design becomes a whole-structure doc from a template — DONE through QA; awaiting consolidated PR review
 
-**Purpose**: Make `steering.md` carry only what a resuming agent needs — Goal, Acceptance criteria,
-Rules, remaining Tasks, State, and a one-line `design.md` pointer — with design intent in an external
-`design.md` whose location `/rn:on` decides with the user. Introduce a **design-doc template** so every
-`design.md` is a *whole-structure* doc (context/constraints → approach → actors + structure → flow →
-open questions) — decisions and how the parts fit, never per-step rationale. The **doc-division** rule
-(requirements/criteria → `steering`, structure → `design.md`, UX → `README`) lives in
-`steering-template` and `/rn:on` applies it when allocating content at planning. This **replaces** the
-earlier non-accumulation approach (Governs / SHIPPED-collapse / retire-on-ship): heavy content is never
-stored, not pruned. See `rn/docs/design.md`.
-
-**Prerequisites**: #2 (lands on the pure-procedure base)
-
-**Steps**:
-
-- [x] In `rn/references/steering-template.md`, reduce the template to Goal, Acceptance criteria, Rules,
-      Tasks, State + a top `Design:` pointer line; **remove the Decisions section** and its 5-field
-      format; **add the doc-division working rule** (requirements/criteria → steering, structure →
-      `design.md`, UX → README); state that a decision lands in a task / `design.md` / a rule, and
-      deliberation lives in git + the PR.
-- [x] Remove the earlier non-accumulation machinery: the `Governs` field and live-working-set/
-      SHIPPED-collapse notes in `steering-template.md`, and the decision-retirement + task-collapse
-      steps added to `rn/skills/up/SKILL.md` Step 6. `/rn:up` no longer manages accumulation — the
-      content isn't there to manage.
-- [x] Add `rn/references/design-template.md` (new): five sections — **Context & constraints** /
-      **Approach** (decisions + rejected alternative) / **Structure** (actors + wiring, with a diagram)
-      / **Flow** / **Open questions**. No preamble guard — each section's form (why-less tables, a
-      numbered sequence) forecloses per-step memos structurally.
-- [x] In `rn/skills/on/SKILL.md`: alongside the slug, decide the session's `design.md` location
-      (default `.rn/{slug}/design.md`, lowercase) and write it into the `Design:` line; read the
-      doc-division rule + `design-template` and allocate content at planning; drop `Decisions` from
-      Step 3's placeholder line; force no empty `design.md` on a session that has none (its design gate
-      folds into the plan gate).
-- [x] Keep the `dn` State→Notes forward-pointer cap (the one part of the earlier work that survives).
-- [x] Relocate the plugin design doc to `rn/docs/design.md` (done — lowercase, under `docs/`).
-- [x] Rewrite `rn/docs/design.md` as a conforming instance of `design-template` (whole-structure),
-      dropping all per-step memos — including the `up`/`task-workflow` memos that describe the
-      now-removed retire/collapse machinery; runtime files stay pure procedure.
-- [x] self-check (`checks/4.md`) + QA expert review (subagent) + grep cross-doc consistency (no stray
-      `Decisions` / per-task `user review` / retire-collapse references). — self-check done; QA round 1
-      PASS (`17e2cfe`), two minor fixes in `30f8fc1`; QA round 2 PASS, nit fixed in `ace2f07`, re-review
-      PASS. User review batched to the consolidated PR review (per user direction) — completion marker
-      held until then.
+**Purpose**: Reduce `steering.md` to the forward contract (Goal, Acceptance criteria, Rules, Tasks,
+State + a `Design:` pointer), move design intent to an external whole-structure `design.md` built from
+the new `design-template.md`, and place the doc-division rule in `steering-template.md` — replacing the
+earlier non-accumulation machinery (heavy content is never stored, not pruned). See `checks/4.md`.
 
 **Completion criteria**:
 
@@ -234,39 +195,9 @@ stored, not pruned. See `rn/docs/design.md`.
 
 ### #5: Record the changes and verify cross-doc consistency — DONE through QA
 
-**Purpose**: Record the user-facing changes in `rn/CHANGELOG.md` (including the `gm`/`ty` commands and
-the PR-feedback loop), record the verdict-command + FB-workflow structure in `rn/docs/design.md`, and
-confirm the rn docs are internally consistent. The existing `## [Unreleased]` lines (`checks/5.md`) are
-reconciled to the final shape of #3/#4/#6–#14.
-
-**Prerequisites**: #1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12, #13, #14
-
-**Steps**:
-
-- [x] In `rn/CHANGELOG.md`'s `## [Unreleased]` section, add entries for the two currently-undocumented
-      user-facing changes: the `/rn:ty`/`/rn:gm` verdict commands (the accept/revise vocabulary at every
-      gate and confirmation point) and the `pr-feedback-workflow.md` PR-feedback loop (collects unresolved
-      review threads the author last commented on, addresses or asks one at a time). Re-check the existing
-      three entries (three sign-off points, two-question completion criteria, lean `steering.md`/`design.md`
-      split, `dn` clean-tree fix) still match the shipped shape after #6/#11–#14 (sign-off tasks placed by
-      planning, not hardcoded gates). Exclude behavior-preserving internal restructuring (#2's
-      proceduralization, #11/#12's file splits, #13's expert-axis rename) — no entry unless it changes what
-      the user sees or does.
-- [x] In `rn/docs/design.md`, record the verdict-command + PR-feedback-loop structure in whole-structure
-      form consistent with the doc's existing sections (no per-step memo): `/rn:ty`/`/rn:gm` as the single
-      accept/revise vocabulary wired to every gate and confirmation point, and `pr-feedback-workflow.md`'s
-      collect → dispatch-one-at-a-time → coordinator-review-between-each → resolve-by-author-only shape.
-      Fold into `Approach`/`Structure` as fits the existing prose rather than appending a new section.
-- [x] Grep cross-doc consistency across `rn/`: no doc contradicts another (stale references to removed
-      mechanisms, old expert names, or the old per-task gate); `version` in `rn/.claude-plugin/plugin.json`
-      is still `0.6.0`.
-- [x] self-check (`checks/5.md`) + QA expert review (subagent) + Craft(writing) expert review (subagent) +
-      Verification(fact-check) expert review (subagent) + coordinator review. — self-check OK; QA round 1
-      PASS on content (a process-state observation triaged Invalid); Verification round 1 found a real
-      contradiction (verdict-vocabulary bullet overclaiming escalation coverage) fixed in `23bc3db`,
-      re-verification PASS; Craft round 1 flagged pr-feedback bullet terseness (fixed in `23bc3db`), round 2
-      flagged slash spacing/terminology/weight on the fixed bullet (fixed in `61d1e29`); coordinator review
-      PASS.
+**Purpose**: Record the user-facing changes in `rn/CHANGELOG.md` (the `gm`/`ty` commands and the
+PR-feedback loop included), record the verdict-command + FB-workflow structure in `rn/docs/design.md`,
+and verify cross-doc consistency. See `checks/5.md`.
 
 **Completion criteria**:
 
@@ -278,35 +209,9 @@ reconciled to the final shape of #3/#4/#6–#14.
 
 ### #16: Session-status block at every user stop — DONE through QA
 
-**Purpose**: Open every rn stop for user input with a compact session map (✅ done / 👉 now / ⬜ ahead)
-so the user grasps what was done, where they are, and what remains — without reading `steering.md` or
-asking. Added by escalation (user request during the PR-feedback stage).
-
-**Prerequisites**: #11, #12 (the stop points live in `planning-workflow.md` and the split task workflows)
-
-**Steps**:
-
-- [x] Add `rn/references/status-display.md`: the block's format — header `── {slug}: {goal one-liner} ──`;
-      ✅ lines for completed tasks, grouped in ranges with short labels; one 👉 line for the current task
-      plus what is being asked of the user right now; ⬜ lines for remaining tasks, **omitted entirely
-      when none remain**; a closing parenthesized outlook line (what follows this stop). Derived fresh
-      from the active `steering.md` at emit time; written in the user's conversation language.
-- [x] Wire one emit instruction ("open the message with the session-status block per
-      `status-display.md`") into every user-facing stop: the plan-gate sign-off in
-      `planning-workflow.md`, the sign-off-task gate (Process selection instance in both
-      `task-execute-workflow.md` and `task-verify-workflow.md`), the escalation channel
-      (`task-verify-workflow.md`), and `dn`'s untracked-path confirmation. (Fix round 1 extended the
-      wiring to `up`'s dirty-tree ask, `ty`'s disambiguation ask, `pr-feedback`'s no-PR report, and the
-      plan-gate console fallback, and stated the active-session boundary in the spec.)
-- [x] Per doc-division: update `rn/README.md`'s scenario where it shows a stop (UX); add a
-      `rn/CHANGELOG.md` `[Unreleased]` Added entry; record the structure in `rn/docs/design.md`
-      (whole-structure form, no per-step memo).
-- [x] self-check (`checks/16.md`) + QA + Craft (writing) + Verification (dry-run) + Design expert review
-      (subagent) + grep cross-doc consistency. — round 1: all 4 axes NG, fixed in `5fbeac0`; round 2:
-      all 4 PASS with minor findings, fixed in `bf66076`; round 3: all 4 FAIL (the new report-stop rule
-      exposed two unwired report stops — pr-feedback loop-completion, session-close — and the class's
-      extension/format grammar), fixed in `cd47339`; round 4: all 4 axes PASS — residual Low/Nit
-      findings recorded as accepted in `checks/16.md`.
+**Purpose**: Open every rn stop for user input with a compact session map (✅ done / 👉 now / ⬜ ahead),
+specified in `rn/references/status-display.md` and wired into every stop point. Added by escalation
+(user request during the PR-feedback stage). See `checks/16.md`.
 
 **Completion criteria**:
 
@@ -345,32 +250,9 @@ feedback, re-present).
 
 ### #6: Review gates → plan/design/evaluation; escalation as a separate channel — DONE through QA; awaiting consolidated PR review
 
-**Purpose**: Move the workflow's user-review gates to the three points where human judgment is
-irreplaceable (plan, design, evaluation), remove the per-task user gate, and specify escalation as a
-distinct always-open channel.
-
-**Prerequisites**: #2, #4 (lands on the lean-steering + pure-procedure base)
-
-**Steps**:
-
-- [x] In `rn/references/task-workflow.md`, remove the per-task user-review gate from Phase: Complete; a
-      task completes via self-check + QA/expert + coordinator review + check-off. Keep the coordinator's
-      independent diff review and the expert reviews intact.
-- [x] Generalize the existing "User's call" triage into an explicit **escalation** channel: any
-      execution discovery/blocker/call that would change the agreed plan or design is surfaced to the
-      user immediately, wherever it occurs — stated as a channel distinct from the gates, not an
-      exception to one.
-- [x] Add the **design gate**: a scheduled user sign-off on the approach/key decisions before they are
-      built on, distinct from reviewing a task's deliverable (folds into the plan gate when design is
-      settled at plan time; a separate stop before heavy build when it is not).
-- [x] Strengthen the **evaluation gate**: make the end-of-session Acceptance-criteria run a user
-      sign-off in `on`/`up`/`task-workflow` advance, not a bare proposal.
-- [x] Confirm the **plan gate** in `rn/skills/on/SKILL.md` stays and is named as one of the three.
-- [x] Record the gate-vs-escalation model in `rn/docs/design.md`; runtime files stay pure procedure.
-- [x] self-check (`checks/6.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
-      OK; QA round 1 NG (1 blocking README defect + 1 nit, both fixed in `de1f835`), round 2 PASS;
-      coordinator review PASS. User review batched to the consolidated PR review (per user direction) —
-      completion marker held until then.
+**Purpose**: Move the user-review gates to the three points where human judgment is irreplaceable
+(plan, design, evaluation), remove the per-task user gate, and specify escalation as a distinct
+always-open channel. See `checks/6.md`.
 
 **Completion criteria**:
 
@@ -382,21 +264,9 @@ distinct always-open channel.
 
 ### #7: `gm` skill — the revise / feedback verdict command — DONE through QA
 
-**Purpose**: Add `rn/skills/gm/SKILL.md`, the "good, more" verdict command. With an argument, the
-argument is the feedback to act on; with no argument, the feedback source is the current PR's review
-comments and the command runs `pr-feedback-workflow.md`. Either way it registers a revise verdict at the
-pending confirmation point.
-
-**Prerequisites**: #9 (no-argument `gm` routes into the FB workflow)
-
-**Steps**:
-
-- [x] Add `rn/skills/gm/SKILL.md`: frontmatter (`name: gm`, one-line `description`); procedure — argument
-      present → treat it as the feedback and act on it; argument absent → run `pr-feedback-workflow.md`
-      against the current PR's review comments.
-- [x] Confirm the skill resolves as `/rn:gm` (plugin skill namespace = `rn`). — frontmatter matches `on`/`dn`; YAML clean.
-- [x] self-check (`checks/7.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
-      OK; QA PASS, two minor edge guards (blank-arg trim, cold-run fallback) added in `0e88ea8`.
+**Purpose**: Add `rn/skills/gm/SKILL.md`, the "good, more" revise verdict command — its argument is the
+feedback to act on; with no argument, the current PR's review comments via `pr-feedback-workflow.md`.
+See `checks/7.md`.
 
 **Completion criteria**:
 
@@ -406,19 +276,8 @@ pending confirmation point.
 
 ### #8: `ty` skill — the approve verdict command — DONE through QA
 
-**Purpose**: Add `rn/skills/ty/SKILL.md`, the approve verdict command. Running it registers approval of
-whatever the assistant last asked the user to confirm — a gate sign-off or a reviewed result — and the
-flow advances.
-
-**Prerequisites**: none
-
-**Steps**:
-
-- [x] Add `rn/skills/ty/SKILL.md`: frontmatter (`name: ty`, one-line `description`); procedure — register
-      approval of the pending confirmation and proceed (pass the gate / mark the reviewed item accepted).
-- [x] Confirm the skill resolves as `/rn:ty`. — frontmatter matches the `on`/`dn` shape; YAML clean.
-- [x] self-check (`checks/8.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
-      OK; QA PASS with one should-fix (ambiguous approval target), fixed in `0a09993`.
+**Purpose**: Add `rn/skills/ty/SKILL.md`, the approve verdict command — registers approval of whatever
+the assistant last asked the user to confirm, and the flow advances. See `checks/8.md`.
 
 **Completion criteria**:
 
@@ -428,25 +287,9 @@ flow advances.
 
 ### #9: `pr-feedback-workflow.md` — the light PR-feedback loop — DONE through QA
 
-**Purpose**: Add `rn/references/pr-feedback-workflow.md`, a sibling of `task-workflow.md` that processes
-PR review feedback: collect unresolved threads whose last comment is the author's; dispatch one at a time
-to an execution subagent; each subagent either addresses→pushes→replies-with-the-commit-link or
-replies-with-a-question; the coordinator reviews each result before the next. Verification is one
-coordinator pass (not the QA-expert/multi-round chain); threads are resolved only by their author.
-
-**Prerequisites**: none
-
-**Steps**:
-
-- [x] Add `rn/references/pr-feedback-workflow.md` as pure numbered procedure: **Collect** (GitHub review
-      threads that are unresolved and whose last comment is the author's, via the API), **Dispatch** (one
-      execution subagent per thread, sequential), the subagent's two allowed outcomes
-      (address+push+reply-with-commit-link | reply-with-question), the coordinator review-before-next
-      gate, the single-pass verification note, and the resolve-by-author rule.
-- [x] Keep it rationale-free (proceduralize rule); the intent goes to `rn/docs/design.md` (#5).
-- [x] self-check (`checks/9.md`) + QA expert review (subagent) + grep cross-doc consistency. — self-check
-      OK; QA round 1 FAIL (pagination / push-fail / no-PR / owner-repo), all fixed (`b62ab33`); QA
-      round 2 PASS (validated live against PR #14). Cosmetic `{owner}` nit accepted.
+**Purpose**: Add `rn/references/pr-feedback-workflow.md`, the light PR-feedback loop: collect the
+unresolved threads whose last comment is the author's, dispatch one at a time to an execution subagent,
+coordinator review between each, resolution left to the author. See `checks/9.md`.
 
 **Completion criteria**:
 
@@ -459,22 +302,9 @@ coordinator pass (not the QA-expert/multi-round chain); threads are resolved onl
 
 ### #10: Wire the gates + escalation to `gm`/`ty`; state the resolve-by-author rule — DONE through QA
 
-**Purpose**: Connect the three scheduled gates (plan/design/evaluation) and the escalation channel to the
-`gm`/`ty` verdict vocabulary across `on`/`up`/`task-workflow`, and state the resolve-by-author rule where
-review threads are handled. The user approves with `ty` and asks for revision with `gm`; the assistant
-infers no verdict.
-
-**Prerequisites**: #7, #8
-
-**Steps**:
-
-- [x] In `rn/skills/on/SKILL.md`, `rn/skills/up/SKILL.md`, `rn/references/task-workflow.md`: state that
-      each gate's sign-off is taken via `/rn:ty` (approve) or `/rn:gm` (revise), not an inferred yes/no.
-- [x] State the resolve-by-author rule where PR review threads are processed (`pr-feedback-workflow.md`;
-      the `push-and-review` rule is in `.claude/rules/`, out of the rn-plugin scope, so left untouched).
-- [x] self-check (`checks/10.md`) + QA expert review (subagent) + grep cross-doc consistency (every gate
-      references `gm`/`ty`; no confirmation point left with a bespoke verdict). — self-check OK; QA PASS
-      (`a99c532`), no defects.
+**Purpose**: Connect the three scheduled gates and the escalation channel to the `gm`/`ty` verdict
+vocabulary across `on`/`up`/`task-workflow`, and state the resolve-by-author rule where review threads
+are handled. See `checks/10.md`.
 
 **Completion criteria**:
 
@@ -485,30 +315,9 @@ infers no verdict.
 
 ### #11: Extract `planning-workflow.md`; `on` becomes a thin orchestrator — DONE through QA
 
-**Purpose**: Per `rn/docs/design.md` root (A), a skill should only orchestrate order — the planning
-procedure's own detail (what/why/when) belongs in a dedicated workflow reference, mirroring how task
-execution already defers to `task-workflow.md`. Extract `rn/skills/on/SKILL.md` Steps 1–5 (understand
-goal, propose location, create `steering.md`, decompose tasks, persist + open the draft PR + take the
-plan-gate sign-off) into a new `rn/references/planning-workflow.md`; `on/SKILL.md` keeps only the entry
-steps (parse `$ARGUMENTS`, hand off) and Step 6 (begin task #1).
-
-**Prerequisites**: #4 (design-template + doc-division already exist), #12 (planning places the design
-sign-off task using the split verify/execute vocabulary)
-
-**Steps**:
-
-- [x] Add `rn/references/planning-workflow.md` containing Steps 1–5 verbatim from `on/SKILL.md` (goal
-      understanding, slug + design.md location, `steering.md` creation via `steering-template.md`, task
-      decomposition, persist/PR/plan-gate sign-off via `/rn:ty`/`/rn:gm`).
-- [x] Rewrite `rn/skills/on/SKILL.md` to: parse the goal/`$ARGUMENTS`, read and run
-      `planning-workflow.md`, then begin task #1 per `task-execute-workflow.md` (#12). No planning detail
-      stays in `SKILL.md` itself.
-- [x] self-check + QA/Design/Craft(writing)/Verification(fact-check) expert review (subagent, all 4 —
-      task revises structure) + grep cross-doc consistency (no orphaned reference to the old inline
-      steps; `up`'s pointers to `on` still resolve). — self-check OK (`checks/11.md`); round 1: all 4
-      axes independently found the same defect (`on/SKILL.md` Step 1 duplicated `planning-workflow.md`'s
-      goal-taking clause and inline-summarized its steps, instead of pure delegation) — fixed in
-      `81ec8f4`; round 2 re-review: all 4 axes PASS.
+**Purpose**: Extract `on/SKILL.md`'s planning Steps 1–5 into `rn/references/planning-workflow.md`;
+`on/SKILL.md` becomes an order-only orchestrator (parse the goal, run planning, begin task #1). See
+`checks/11.md`.
 
 **Completion criteria**:
 
@@ -519,33 +328,9 @@ sign-off task using the split verify/execute vocabulary)
 
 ### #12: Split `task-workflow.md` into `task-execute-workflow.md` + `task-verify-workflow.md` — DONE through QA
 
-**Purpose**: Per root (A), execution and verification are separate work-instructions. Split the current
-`task-workflow.md` along its existing Phase boundaries: **Phase: Execute** → `task-execute-workflow.md`;
-**Phase: Verify** + **Phase: Complete** (check-off, advance, evaluation-gate trigger) →
-`task-verify-workflow.md`. The Roles / Review gates / Process selection sections and the Check file
-format are shared context — duplicated into both files' tops (not a third shared file, per the
-lean-steering precedent of never inventing accumulation machinery for a two-file split).
-
-**Prerequisites**: #13 (split lands on the new expert axes, not the old language/software-engineering
-pair, so the split doesn't happen twice)
-
-**Steps**:
-
-- [x] Add `rn/references/task-execute-workflow.md`: Roles, Review gates, Process selection (shared
-      header) + the current Phase: Execute steps verbatim (work-order, starting-commit capture, dispatch).
-- [x] Add `rn/references/task-verify-workflow.md`: same shared header + the current Phase: Verify +
-      Phase: Complete steps verbatim (dispatch review experts, triage, escalation channel, check-off,
-      commit marker, advance/evaluation-gate) + the Check file format.
-- [x] Delete `rn/references/task-workflow.md`; update every reference to it (`on/SKILL.md`,
-      `up/SKILL.md`, `pr-feedback-workflow.md`, `steering-template.md`) to point to
-      `task-execute-workflow.md` then `task-verify-workflow.md` in sequence. (`planning-workflow.md` (#11)
-      doesn't exist yet — nothing to update there until #11 lands.)
-- [x] self-check + QA/Design/Craft(writing)/Verification(fact-check) expert review (subagent, all 4 —
-      task revises structure) + grep cross-doc consistency (no dangling `task-workflow.md` reference
-      anywhere in `rn/`). — self-check OK (`checks/12.md`); round 1: QA/Design/Verification PASS, Craft
-      found 2 findings (capitalization typo in `steering-template.md:97`; unanchored "Execute element
-      5/6" cross-reference in `task-verify-workflow.md`) — fixed in `e710e9f`; round 2 re-review
-      (Craft + Verification): both PASS.
+**Purpose**: Split `task-workflow.md` along its Phase boundaries into `task-execute-workflow.md` and
+`task-verify-workflow.md` (shared header duplicated into both, no third file), updating every reference
+to the deleted file. See `checks/12.md`.
 
 **Completion criteria**:
 
@@ -557,35 +342,9 @@ pair, so the split doesn't happen twice)
 
 ### #13: Redefine the expert set — design / craft (per medium) / verification (per medium) + QA — DONE through QA
 
-**Purpose**: Per root (B), replace the fixed code-centric trio (QA / language expert / software-engineering
-expert) with function-axis experts — **design**, **craft** (per medium: coding, writing, visual),
-**verification** (per medium: test, fact-check, dry-run) — with **QA** cross-cutting every task. Only the
-axes a task needs are spawned. Update every place experts are named: `task-workflow.md`'s Roles/Process
-selection/Check file format (ahead of #12's split, so the split lands on the new set directly), and the
-task-execution work-order/review-prompt elements that name "language expert"/"software-engineering expert".
-
-**Prerequisites**: none (lands before #12 per #12's own prerequisite)
-
-**Steps**:
-
-- [x] In `rn/references/task-workflow.md` Roles: replace "Language expert" / "Software-engineering
-      expert" with **Craft expert** (per medium: coding/writing/visual — judges medium-specific best
-      practice) and **Verification expert** (per medium: test/fact-check/dry-run — judges whether the
-      artifact was actually checked) and add **Design expert** (judges whether the approach/structure
-      fits, for tasks that produce or revise structure); QA stays cross-cutting on every task.
-- [x] Update Process selection: which axes spawn is a per-task judgment (task states its medium/whether
-      it touches structure), not a fixed code-vs-non-code branch — state the rule and give the
-      code-task/docs-task examples as instances, not the only two branches.
-- [x] Update the Check file format's per-expert tables (replace "Language Expert"/"Software-engineering
-      Expert" sections with Craft/Verification/Design, each keyed to its medium).
-- [x] Update Execute's work-order element 4 ("Best practices") and Verify's review-prompt elements
-      (Role/Criteria/checklists) to name the new axes instead of language/software-engineering.
-- [x] self-check + QA/Craft/Verification/Design expert review (subagent, all 4 — task revises
-      structure/approach) + grep cross-doc consistency (no surviving "language expert"/
-      "software-engineering expert" reference in `rn/`). — self-check OK (`checks/13.md`); round 1: all
-      4 axes found real defects (build-time Verification axis code-only; QA/Design wrongly scoped "per
-      medium"; stale "non-code vs code" reference in `steering-template.md`; QA/Verification "edge case
-      coverage" jurisdiction overlap) — fixed in `5a5aa72`; round 2 re-review: all 4 axes PASS.
+**Purpose**: Replace the fixed code-centric expert trio with function-axis experts — design / craft
+(per medium) / verification (per medium) — with QA cross-cutting every task; which axes spawn is a
+per-task judgment. See `checks/13.md`.
 
 **Completion criteria**:
 
@@ -597,36 +356,9 @@ task-execution work-order/review-prompt elements that name "language expert"/"so
 
 ### #14: Reposition design/evaluation gates as sign-off tasks placed by planning — DONE through QA
 
-**Purpose**: Per the standing decision in `rn/docs/design.md`, the design and evaluation gates become
-**sign-off tasks** that `planning-workflow.md` (#11) places explicitly in the task sequence — not logic
-hardcoded into `on`'s Step 5 or `task-verify-workflow.md`'s Phase: Complete. The plan gate stays
-planning's own closing hand-off (never a task — a plan can't carry a task that approves itself).
-See `checks/14.md`.
-
-**Prerequisites**: #11 (planning-workflow exists to place the tasks), #12 (verify-workflow's Complete
-phase is the file being amended)
-
-**Steps**:
-
-- [x] In `planning-workflow.md` (#11)'s task-decomposition step: when the session has a `design.md` not
-      settled at plan time, place an explicit **"Design sign-off"** task in the sequence (Completion
-      criteria: user approves via `/rn:ty`/`/rn:gm`) at the point heavy build would otherwise start on an
-      unapproved design; when design is settled at plan time, fold it into the plan-gate hand-off instead
-      (no separate task).
-- [x] Always place a final **"Evaluation sign-off"** task (Completion criteria: user approves the
-      Acceptance-criteria run via `/rn:ty`/`/rn:gm`) as the session's last task.
-- [x] In `task-verify-workflow.md` (#12)'s Phase: Complete, remove the special-cased "if all tasks are
-      done, propose the evaluation gate" branch — Advance just moves to the next task, which is the
-      Evaluation sign-off task when planning placed it last; a sign-off task's own Steps carry the
-      `ty`/`gm` gate mechanics (per design.md's task-loop: "sign-off task? → user gate").
-- [x] self-check + QA expert review (subagent) + grep cross-doc consistency (every session's task list
-      carries an Evaluation sign-off task at its end; no leftover hardcoded gate branch in
-      `on`/`task-verify-workflow.md`). — self-check OK (`checks/14.md`); round 1: all 4 axes dispatched —
-      Verification found a real regression (removing the hardcoded branch left no replacement backstop),
-      Design found 3 defects, Craft found 2 — all fixed in `3824f7c`; round 2 re-review (all 4 axes):
-      Design found a further contradiction (stale "Review gates" wording vs. the new sign-off-task
-      exception), QA+Craft converged on a minor "this step" ambiguity — fixed in `7e9d007`; round 3
-      re-review (Design + Craft, the two affected axes): both PASS.
+**Purpose**: Make the design and evaluation gates sign-off tasks placed by `planning-workflow.md`, not
+logic hardcoded in `on` or `task-verify-workflow.md`; the plan gate stays planning's own closing
+hand-off (never a task). See `checks/14.md`.
 
 **Completion criteria**:
 
