@@ -330,9 +330,10 @@ feedback, re-present).
 
 **Steps**:
 
-- [ ] Run this `steering.md`'s Acceptance criteria section against the current state of the branch/PR
+- [x] Run this `steering.md`'s Acceptance criteria section against the current state of the branch/PR
       and record the result per criterion (achieved / not, with grounds — failure modes present or
-      absent).
+      absent). — run posted as PR #14 comment (10 OK / 1 NG on criterion 4):
+      https://github.com/lovaizu/ccpm/pull/14#issuecomment-4880711175
 - [ ] Present the result to the user and take the verdict via `/rn:ty` (approve → session done) or
       `/rn:gm` (revise → address the feedback, re-run the affected criteria, re-present).
 
@@ -640,8 +641,17 @@ phase is the file being amended)
 session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
 here, so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-07-05
+- **Last completed**: #16 session-status block at every user stop (checked off in `8aaa49c`; 4 review rounds, residual Low/Nit findings accepted in `checks/16.md`)
+- **Next**: #15 Evaluation sign-off — step 2 only: take the user's verdict on the Acceptance-criteria run
+- **Notes**: branch `rn-update`, PR #14. The Acceptance run (10 OK / 1 NG) is posted at
+  https://github.com/lovaizu/ccpm/pull/14#issuecomment-4880711175 and was presented in-console with the
+  session-status block (criterion 11 dogfood); the session suspended before the user answered. Next
+  concrete action: re-present that run (re-verify nothing on the branch changed since `8aaa49c`; if it
+  did, re-run only the affected criteria) and take the verdict **verbally** — `/rn:ty`/`/rn:gm` are
+  unreleased during rn-update, so do not instruct them. Pending user decisions: (a) criterion 4 NG —
+  accept completed-task bodies #4–#14/#16 in this steering as the check trail, or compact them like
+  #1–#3; (b) criterion 3 carries a standing caveat (checks/2.md QA trail missing). On approve → session
+  done; only the consolidated PR #14 review and the user's merge to main remain (no release: version
+  stays 0.6.0).
