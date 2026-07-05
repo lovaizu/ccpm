@@ -85,13 +85,13 @@ for every question, no silent drops.
 
 **Steps**:
 
-- [ ] rewrite `rn/references/design-template.md`'s template block and per-section guidance
-- [ ] remove the "a section with nothing to record can be dropped" allowance; replace with "state the
+- [x] rewrite `rn/references/design-template.md`'s template block and per-section guidance
+- [x] remove the "a section with nothing to record can be dropped" allowance; replace with "state the
       decision and the reasoning even when the answer is 'not applicable' or 'not considered'"
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
-- [ ] Design expert review (subagent)
+- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
