@@ -80,6 +80,8 @@ Inputs of record:
   loop in the plugin.** Form B stays a PoC substrate only.
 - ACC and TC must be **structural** (built into the procedure) and **measured by running**, not
   asserted.
+- The verify-Turn standard viewpoint catalog (task #2, per D-5) is curated from established skills/
+  plugins and industry best-practice checklists per domain — not authored from a blank page.
 
 # Tasks
 
@@ -145,6 +147,11 @@ PR #1 since #1 closed, most recently the round-6 figure-story feedback (see [`St
       concrete trigger phrases; third-person; version-agnostic).
 - [ ] Write the body: imperative Markdown, the Conductor cycle from #1's `design.md`, ACC and TC
       dissolved into the steps, the iteration cap and escalation stated. Lean.
+- [ ] Author the standard viewpoint catalog (per D-5) as a reference doc the skill points to: per
+      domain (coding / writing / visual), curate the base viewpoint set from established skills/
+      plugins and industry best-practice checklists (e.g. this repo's own `code-review` /
+      `security-review` skills, `rn`'s own Craft/Verification checklists in
+      `task-verify-workflow.md`) — do not invent the catalog from a blank page.
 - [ ] Cross-check item by item against `design.md` and `acc.md` / `tc.md` so no pillar is dropped (do
       not sample).
 - [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/2.md`)
@@ -328,6 +335,46 @@ Rationale: this is exactly the process the currently-installed `rn` runs session
 session on the pre-0.7.0 per-task-approval shape would silently diverge from how `/rn:up` now executes
 tasks #2–#6. No re-litigation of already-closed work: #1's own steps are unchanged (it closed under the
 old shape); only the still-open items move to the new one.
+
+### D-5: verify-Turn decomposes per viewpoint, dispatched flat by the Conductor (user, 2026-07-05)
+
+Raised during #1b's design review (console, PR #1 still open). §4.2 originally specified **one**
+verify-Turn per Step, checking three targets — the goal, the approach's spec, stated rules — in
+priority order inside that single call. The user's concern: bundling several checks into one verifier
+reproduces the exact "reviewed together, something slips through" failure mode this session already
+sees in its own PR-review loop (round-6's figure issues took several rounds for a human to catch).
+
+**Decision**: verify-Turn decomposes into **one independent, flat, Conductor-dispatched Turn per
+viewpoint** — a viewpoint being any independently-checkable concern (an Acceptance Scenario, a stated
+rule, or a domain concern like class/method decomposition, naming, thread-safety, memory-leak for
+code). The Conductor aggregates mechanically (pass only if every viewpoint's verdict is `pass`; the
+gap is the union of the failing viewpoints' gaps) — aggregation is control flow, not domain work, so it
+does not breach the Conductor's no-domain-work wall.
+
+- **No nesting.** This does not put a subagent inside a Turn — §3.2's "Turns never nest, only the
+  Conductor spawns" invariant is unchanged. What changes is that Stage ②'s "the verify-Turn" (singular)
+  becomes **N flat, Conductor-dispatched verify-Turns** (N = the viewpoint count for that Step), still
+  all direct children of the Conductor.
+- **Viewpoint set = standard catalog (by domain) + Conductor-added, Step-specific ones.** A standard
+  viewpoint catalog is curated per domain (coding / writing / visual) from established skills/plugins
+  and industry best-practice checklists (task #2's new step; see Rules) — not invented from a blank
+  page. At runtime the Conductor pulls the Step's domain's standard set from the catalog and adds any
+  Step-specific viewpoint the catalog would not anticipate.
+
+Rationale: this generalizes §5.1's existing independence argument (verify-Turn is separate from
+generate-Turn so it cannot be fooled by a laundered self-report) one level finer — a verifier
+concentrating on one narrow viewpoint is less likely to miss it than one juggling several at once. It
+is not a new, unproven idea: this very session's own `rn` process already runs on the same shape
+(`task-verify-workflow.md`'s per-axis QA/Design/Craft/Verification dispatch, each an independent
+subagent concentrated on one lens) — D-5 brings that same shape down one level, into aiya's own
+verify-Turn, at finer (per-viewpoint, not per-axis) grain.
+
+**Design.md sections affected** (updated under #1b, before re-presenting for `/rn:ty`): §3.2 (the
+"1 Step = 1 Turn" invariant's verify-Turn wording, singular → per-viewpoint plural, still uncounted),
+§3.3 (Stage ② redrawn as a fan-out to N verify-Turns, Conductor aggregates), §4.2 (verify-Turn's
+contract redefined per-viewpoint; the catalog-plus-runtime-addition rule stated; the catalog's actual
+content is task #2's job, not design.md's), §5.2 (verification cost restated as scaling with viewpoint
+count, still discarded/non-accumulating per Turn).
 
 # State
 
