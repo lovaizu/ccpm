@@ -1,0 +1,6 @@
+{
+  "name": "aiya",
+  "description": "A prompt-driven Conductor that drives a goal to delivery through subagent Turns — bounded context via a compressed-state contract, drift caught by independent per-viewpoint verify-Turns, and human sign-off only at phase gates.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}
