@@ -172,12 +172,12 @@ behavior (user choice: README is a separate, later task — not bundled with the
 
 **Steps**:
 
-- [ ] Write `aiya/README.md` in scenario + real-console style (not a mechanical list; no controlling
+- [x] Write `aiya/README.md` in scenario + real-console style (not a mechanical list; no controlling
       noun labels like "管理").
-- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/3.md`)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
+- [x] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/3.md`)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check)
 
 **Completion criteria**: `aiya/README.md` exists, scenario + real-console style, and matches the shipped
 skill's actual behavior.
@@ -379,9 +379,8 @@ count, still discarded/non-accumulating per Turn).
 # State
 
 - **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred
-  paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the
-  session (that lives in `git log`)
+- **Date**: 2026-07-05
+- **Last completed**: #3 `aiya/README.md` — 3 review-fix rounds (`bc32d01`, `b2dd67a`, `bc8335b`) to
+  close a Verification FAIL, now QA/Craft/Verification all PASS
+- **Next**: #4 Package aiya and register it in the marketplace
+- **Notes**: branch `feature/smith-plugin`, PR #1. No open blockers.
