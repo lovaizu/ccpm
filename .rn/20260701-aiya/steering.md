@@ -1,3 +1,5 @@
+Design: aiya/docs/design.md
+
 # Goal
 
 Build **`aiya`** — a Claude Code plugin whose core is a **prompt-driven Conductor** (form **A**; see
@@ -84,7 +86,13 @@ Inputs of record:
 > Restructured per **D-2** (final-deliverable-first) on resume 2026-06-26. The old #1
 > "design the procedure as a memo (`conductor.md`)" is retired; the salvageable design folds into the
 > real artifact `aiya/docs/design.md`. README is split into its own task, written **after** SKILL.md
-> settles (user choice: `design.md` first, alone). See [`State`](#state) and D-2.
+> settles (user choice: `design.md` first, alone).
+>
+> Re-aligned per **D-4** to `rn` 0.7.0's coordinator/experts process on 2026-07-05: per-task
+> "user review (on the PR)" is dropped (the user now signs off only at the plan / design / evaluation
+> gates); a standalone **Design sign-off** task (#1b) and a closing **Evaluation sign-off** task (#6)
+> carry those two gates explicitly; build tasks close on self-check + QA/Craft/Verification/Design
+> expert review instead. See [`State`](#state) and D-4.
 
 ### #1: Scaffold `aiya/` and author the design document (`docs/design.md`)
 
@@ -103,19 +111,33 @@ retire the memo. `design.md` only; README is task #3.
       **dispatch→generate→verify→re-aim→gate cycle**, the **6 gates**, and the
       **compression-forcing mechanism** (so ACC is structural, not advisory).
 - [x] Retire `conductor.md`; stop using `core.md` as a working design doc (keep it as background).
-- [x] self-check (record OK/NG per criterion in `.rn/aiya/checks/1.md`)
-- [x] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [x] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/1.md`)
+- [x] QA expert review (subagent)
 
 **Completion criteria**: `aiya/docs/design.md` exists, intent-first, internally consistent, and relies
 on no script to hold the loop; the salvageable design is preserved in the real artifact; `conductor.md`
 is retired.
 
+### #1b: Design sign-off
+
+**Purpose**: Take the user's sign-off on `aiya/docs/design.md` — the design gate — before heavy build
+(#2's `SKILL.md`) starts on it. Not settled at plan time: the design has been under user review on
+PR #1 since #1 closed, most recently the round-6 figure-story feedback (see [`State`](#state)).
+
+**Prerequisites**: #1.
+
+**Steps**:
+
+- [ ] Present `aiya/docs/design.md` to the user (on PR #1) and take the verdict via `/rn:ty` (approve)
+      or `/rn:gm` (revise → address the feedback, re-present). Repeat until approved.
+
+**Completion criteria**: `aiya/docs/design.md` is approved by the user.
+
 ### #2: Author the aiya Conductor skill (SKILL.md)
 
 **Purpose**: Turn #1's design into the actual prompt-driven skill — the heart of the plugin.
 
-**Prerequisites**: #1.
+**Prerequisites**: #1b.
 
 **Steps**:
 
@@ -125,9 +147,11 @@ is retired.
       dissolved into the steps, the iteration cap and escalation stated. Lean.
 - [ ] Cross-check item by item against `design.md` and `acc.md` / `tc.md` so no pillar is dropped (do
       not sample).
-- [ ] self-check (record OK/NG per criterion in `.rn/aiya/checks/2.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/2.md`)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check)
+- [ ] Design expert review (subagent — this task produces the Conductor's structure/approach)
 
 **Completion criteria**: `aiya/skills/<verb>/SKILL.md` exists, is prompt-driven (no embedded JS loop),
 and encodes the bounded-CCS / verify-Turn / re-aim / phase-gate cycle with a stated cap.
@@ -143,9 +167,10 @@ behavior (user choice: README is a separate, later task — not bundled with the
 
 - [ ] Write `aiya/README.md` in scenario + real-console style (not a mechanical list; no controlling
       noun labels like "管理").
-- [ ] self-check (record OK/NG per criterion in `.rn/aiya/checks/3.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/3.md`)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check)
 
 **Completion criteria**: `aiya/README.md` exists, scenario + real-console style, and matches the shipped
 skill's actual behavior.
@@ -165,9 +190,10 @@ the root README.
       root `README.md` Plugins list — in the same commit.
 - [ ] Run `claude plugin validate ./aiya --strict` and `claude plugin validate . --strict`; clear every
       warning/error (or record manual verification if the CLI is absent).
-- [ ] self-check (record OK/NG per criterion in `.rn/aiya/checks/4.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/4.md`)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check — validate output confirmed, not assumed)
 
 **Completion criteria**: both strict validations pass; marketplace.json and root README both list aiya
 and stay in sync; version lives only in plugin.json.
@@ -196,14 +222,29 @@ whole build.
 - [ ] Exercise the human phase-gate for real at least once.
 - [ ] Check the produced techting against techting's own acceptance criteria; compare to the hand-built
       techting and record the delta.
-- [ ] Write the result to `.rn/aiya/dogfood.md` (honest scope: what was measured vs. asserted).
-- [ ] self-check (record OK/NG per criterion in `.rn/aiya/checks/5.md`)
-- [ ] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [ ] Write the result to `.rn/20260701-aiya/dogfood.md` (honest scope: what was measured vs. asserted).
+- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/5.md`)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check — measurements verified, not asserted)
 
 **Completion criteria**: the dogfood result shows ACC bounded-context and TC drift-catch-and-reconverge
 **by measurement** under prompt control; the produced techting meets its own criteria; the honest-scope
 result is recorded.
+
+### #6: Evaluation sign-off
+
+**Purpose**: Take the user's sign-off on the Acceptance criteria run — the session's closing gate.
+
+**Prerequisites**: #5.
+
+**Steps**:
+
+- [ ] Present the Acceptance criteria run result (Level A + Level B, per #5's dogfood measurement) to
+      the user and take the verdict via `/rn:ty` (approve → session closes) or `/rn:gm` (revise →
+      address the feedback, re-present).
+
+**Completion criteria**: the Acceptance criteria run is approved.
 
 # Decisions
 
@@ -261,6 +302,33 @@ design convey" makes coverage mechanically checkable (検討漏れ防止) and th
 designs. First version applied in `08ba166` + `7c8a79e`; revised form in `f914855`. Candidate to fold
 into aiya's own gate artifacts (`goal.md` / `approach.md`) when authoring SKILL.md in #2.
 
+Note this is **`aiya`'s own design-doc format**, a decision this session made for its one artifact — a
+narrower, deliberate choice, not a claim that `rn`'s generic `design-template.md` (Context & constraints /
+Approach / Structure / Flow / Open questions, one level of headings) is wrong for `rn`'s own sessions.
+
+### D-4: Re-align task structure to `rn` 0.7.0's coordinator/experts process (2026-07-05)
+
+`rn` was updated (merged to `main` in `ebf3f49`…`d58e8e3`, now installed at 0.7.0) while this session was
+suspended. Brought current in three parts:
+
+- **Session directory renamed** `.rn/aiya/` → `.rn/20260701-aiya/` (date-prefixed, per `rn`'s
+  `.rn/{yyyymmdd}-{slug}/` convention) — `20260701` is this session's actual start date (`a18a3f7`).
+- **`Design:` line added** at the top of this file, pointing to `aiya/docs/design.md` — required by the
+  current `steering-template.md`; this session already treated that file as its design.md in substance,
+  only the pointer line was missing.
+- **Task structure re-aligned**: every task's dangling "user review (on the PR)" step is replaced by the
+  axis-based expert reviews (`task-execute-workflow.md` / `task-verify-workflow.md`): self-check → QA
+  (always) → Craft + Verification (per the task's medium) → Design (only for #2, which produces the
+  Conductor's structure) → coordinator review. The user's sign-off is now carried by two dedicated
+  tasks instead — **#1b: Design sign-off** (was the open item in #1) and the new closing **#6:
+  Evaluation sign-off** — the only two points, alongside the plan gate already taken when this session
+  opened, where the user's verdict (`/rn:ty` / `/rn:gm`) is asked for.
+
+Rationale: this is exactly the process the currently-installed `rn` runs sessions with; keeping this
+session on the pre-0.7.0 per-task-approval shape would silently diverge from how `/rn:up` now executes
+tasks #2–#6. No re-litigation of already-closed work: #1's own steps are unchanged (it closed under the
+old shape); only the still-open items move to the new one.
+
 # State
 
 - **Status**: paused
@@ -274,19 +342,24 @@ into aiya's own gate artifacts (`goal.md` / `approach.md`) when authoring SKILL.
   the Human (replacing the current three detached per-stage diagrams) — with the explicit meaning
   that §3.1 draws relations only (no sequence) and §3.3 draws sequence only (no responsibility
   detail), so the two do not duplicate. This has **not yet been put to the user for agreement**.
-- **Next**: Task #1 — put the per-figure story (above) to the user for agreement. If agreed, redraw
-  all three of §3.1/§3.2/§3.3 with that lens (not just the previously-flagged parts): update
-  §3.2's parts table to add Human and artifact rows; redraw §3.3 as one connected
+  Session directory renamed and task structure re-aligned to `rn` 0.7.0 (D-4) — no design.md content
+  change.
+- **Next**: Task #1b (Design sign-off) — put the per-figure story (above) to the user for agreement.
+  If agreed, redraw all three of §3.1/§3.2/§3.3 with that lens (not just the previously-flagged parts):
+  update §3.2's parts table to add Human and artifact rows; redraw §3.3 as one connected
   Human→Conductor→generate-Turn→verify-Turn→(advance/re-aim capped at 3/escalate)→gate→Human flow,
   removing the three separate per-stage diagrams (their prose content, if load-bearing, folds into
-  the single figure's surrounding text). Then continue user review on PR #1.
+  the single figure's surrounding text). Then continue user review on PR #1, closing #1b on `/rn:ty`.
 - **Notes**:
   - Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Review on the PR;
     feedback keeps arriving in console — both fine.
   - D-3 (revised) is the design-doc template: h2 = canonical sections, h3 = questions derived
     viewpoint-first; candidate to fold into aiya's gate artifacts when authoring SKILL.md in #2.
-  - `/ty` and `/gm` inside design.md are aiya's own gate commands (design content, fine); rn 0.6.0
-    ships only on/up/dn — never tell the user to run `/rn:ty` or `/rn:gm`.
+  - `/ty` and `/gm` inside `design.md` are **aiya's own** Conductor gate vocabulary (an inner loop, to
+    be namespaced e.g. `/aiya:ty` / `/aiya:gm` in #2) — a different thing from `rn`'s session-level
+    gates. As of `rn` 0.7.0 those are real, shipped commands too: `/rn:ty` (approve) / `/rn:gm`
+    (revise) — used directly by tasks #1b and #6 above. Keep the two vocabularies straight by
+    namespace, not by one existing and the other not.
   - User-review revisions are user-directed; no QA re-run these sessions (rounds logged in
     checks/1.md).
   - Console replies in 敬体 (bullet endings too); artifacts in English.
