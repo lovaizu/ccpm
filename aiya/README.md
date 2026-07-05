@@ -7,8 +7,9 @@ An AI-agent build that fans out across many streams tends to fail one of two way
 agent's own working state grows with every stream until it collapses under its own context, or the
 work quietly stops tracking the goal and the drift only surfaces at the end. aiya's answer is one
 agent — the **Conductor** — that holds the goal, hands the actual work to subagents, and reads back
-only a compressed, independently-verified account of what happened. You steer at a handful of phase
-gates; the Step-by-Step grind in between is the Conductor's problem, not yours.
+only a compressed account of what happened plus an independent check on whether that account is
+actually true. You steer at a handful of phase gates; the Step-by-Step grind in between is the
+Conductor's problem, not yours.
 
 ## How it works
 
@@ -29,7 +30,7 @@ flowchart LR
 
 The Conductor never opens `A` itself — its only reads are the compressed state a generate-Turn hands
 back, the verdict a verify-Turn hands back, and the phase documents (`goal.md`, `approach.md`,
-`delivery.md`) it drafts and gates. That wall is what keeps its context bounded no matter how many
+`delivery.md`) that mark each gate. That wall is what keeps its context bounded no matter how many
 Steps the goal takes.
 
 ## A walkthrough: adding a health-check endpoint
