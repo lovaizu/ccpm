@@ -1,11 +1,13 @@
+Design: .rn/20260614-techting/design.md
+
 # Goal
 
 Make a document read as if a person wrote it — not an AI — so the reader takes it in with the least
 effort. Package this as a Claude Code plugin `techting` (skill `up`, invoked `/techting:up`) so the
 procedure can be applied on demand to any draft, by a human or by Claude itself. Primary mode is
 brushing up an existing draft; authoring from scratch runs through the same procedure but is
-secondary. The verbatim instruction is preserved at `.rn/techting/instruction.md` as the source of
-record, and the skill body is derived from it.
+secondary. The verbatim instruction is preserved at `.rn/20260614-techting/instruction.md` as the
+source of record, and the skill body is derived from it.
 
 **Purpose (the end):** a human-readable document. Concretely — the reader's cognitive load is low,
 it goes in when read top to bottom, and its structure is graspable at a glance through diagrams and
@@ -94,8 +96,8 @@ voice, and form from the reader and purpose rather than from memory or the old d
 - Scope: exactly one plugin `techting` and one skill `up`. The procedure lives inline in SKILL.md;
   it is not split into separate reference files (rn uses references, but this skill is self-contained
   in one file).
-- Source-of-record exception: `.rn/techting/instruction.md` stays in its original Japanese — it is
-  the user's verbatim instruction, so translating it would corrupt the source. This is the one
+- Source-of-record exception: `.rn/20260614-techting/instruction.md` stays in its original Japanese —
+  it is the user's verbatim instruction, so translating it would corrupt the source. This is the one
   artifact exempt from the English rule.
 
 # Rules
@@ -129,7 +131,7 @@ the heart of the plugin.
 - [x] State the brush-up frame: input = an existing draft, output = the revised document plus "what
       was changed and why"
 - [x] Cross-check against instruction.md item by item so no pillar or point is dropped (do not sample)
-- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/1.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/1.md`)
 - [x] QA engineer review (subagent)
 - [x] user review
 
@@ -157,7 +159,7 @@ and the root README.
       `./techting` / category `"writing"`, no version field)
 - [x] Add techting to the root `README.md` Plugins list (link to `./techting/README.md` + one-line
       description)
-- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/2.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/2.md`)
 - [x] QA engineer review (subagent)
 - [x] user review
 
@@ -179,7 +181,7 @@ and the root README.
 - [x] Run `claude plugin validate . --strict` (marketplace root) and clear every warning/error
 - [x] Run `claude -p "/techting:up …" --plugin-dir ./techting` and confirm the skill loads and starts
 - [x] If the CLI is unavailable, switch to manual verification and record that fact and the result
-- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/3.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/3.md`)
 - [x] QA engineer review (subagent)
 - [x] user review
 
@@ -199,7 +201,7 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 
 **Steps**:
 
-- [x] Rewrite `techting/skills/up/SKILL.md` from `.rn/techting/instruction.md`, fresh — do not patch
+- [x] Rewrite `techting/skills/up/SKILL.md` from `.rn/20260614-techting/instruction.md`, fresh — do not patch
       the old file. Frontmatter: third-person description with brush-up-first trigger phrases,
       model-invocable, version. Body in imperative form, lean (<2,000 words), single file.
 - [x] Separate the two layers in the body: process (model instructions) vs output rules (constraints
@@ -216,7 +218,7 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
       `## [0.1.0]`, since no release instruction has been given; promotes on release).
 - [x] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood with two
       different reader definitions to confirm Level B (voice/axis change).
-- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/4.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/4.md`)
 - [x] QA engineer review (subagent)
 - [ ] user review (on the PR)
 
@@ -256,7 +258,7 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
       pass** (Level A). **Level B dogfood (run the skill on a real draft) NOT yet done** — deferred
       to the Acceptance-criteria run, since Level B is a goal-level gate, not a step #5 can finish in
       isolation. This box stays open until that dogfood runs.
-- [x] self-check (record OK/NG per criterion in `.rn/techting/checks/5.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/5.md`)
 - [x] QA engineer review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
 - [ ] user review (on the PR)
 
@@ -268,131 +270,6 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 - The acceptance-criteria floor items (Level A and Level B) are all satisfied; both strict
   validations pass; the dogfood shows the AI tells removed and the report split into floor then
   ceiling.
-
-
-## D-1: Plugin `techting` / skill `up` (not the same name)
-- **Issue**: For a single-skill plugin, how to name the plugin vs the skill. The official convention
-  is to use the same name for both.
-- **Conclusion**: Plugin `techting` (technical writing), skill `up`. Invoked `/techting:up`.
-- **Rationale**: The skill name is typed often, so keep it short. Plugin name and skill name are
-  independent slots and need not match (`rn:gm` is the precedent). Brushing an existing draft up a
-  level is the primary mode, so the verb `up` fits the content.
-- **Evidence**: Official single-skill plugins mostly use the same name (`frontend-design` etc.), but
-  `rn` works fine with unrelated short names (`gm/bb/hi`). Skill invocation form is `/{plugin}:{skill}`.
-- **Sources**: `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/*`, this repo's
-  `rn/skills/*`, the Skill tool spec.
-
-## D-2: Make it model-invocable (the opposite of rn)
-- **Issue**: Whether to set `disable-model-invocation: true` on the skill.
-- **Conclusion**: Do not set it (let it fire for a human or for Claude itself).
-- **Rationale**: The distinguishing axis is not side effects but who the skill is meant for. This
-  skill is meant for a human or an AI.
-- **Evidence**: `rn`'s skills are meant for a human and set `disable-model-invocation: true`.
-  Official skills are model-invocable by default.
-- **Sources**: this repo's `rn/skills/*/SKILL.md`, the official plugins.
-
-## D-3: The category error — output-document rules vs the prompt's own format (overturns the old SKILL.md)
-- **Issue**: The acceptance criterion read "its body covers ... structure-and-flow shown as mermaid
-  diagrams", which made *the SKILL.md prompt itself* required to contain a mermaid diagram. The old
-  SKILL.md duly embedded a procedure flowchart. The user flagged this as a category error.
-- **Conclusion**: The instruction's "render structure/flow as mermaid" is a rule for the **document
-  the writer produces**, not a property of the SKILL.md prompt. The skill body must NOT embed a
-  diagram. Two layers must be physically separated in the body: (a) **process** = instructions to
-  the model running the skill (define reader, ask-or-infer, self-check); (b) **output rules** =
-  constraints on the produced document (md, dry, mermaid-for-structure, voice-by-reader, the five
-  axes). The mermaid rule belongs only to layer (b).
-- **Decision on scope**: Do NOT delete the whole plugin. The packaging (plugin.json, marketplace
-  entry, root README) is sound and validated (Expert B). The intent mapping was audited faithful
-  (Expert C: 0 drops). Only the one file that embodies the misunderstanding — `SKILL.md` — is
-  rebuilt from source. Rebuilding the 82-line source is cheaper than patching a base we didn't fully
-  understand, and yields a base we can stand behind line by line.
-- **Best-practice basis (grounded, not asserted)**: official `skill-development` guide at
-  `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev/skills/skill-development/SKILL.md`.
-  Binding rules for techting: third-person `description` with concrete trigger phrases; body in
-  imperative form (no second person); lean 1,500–2,000 words; progressive disclosure with NO
-  duplication across files. skill-creator notes writing/subjective skills don't need evals.
-- **Structure decision**: single `SKILL.md`, no `references/`. The source is ~650 chars; the body
-  stays under 2,000 words, and "define reader → pick axis → derive → self-check" is one continuous
-  procedure — splitting the five axes into references would force cross-file reads mid-procedure.
-  Split later only if an axis grows heavy.
-- **Corrected acceptance criteria (replace the old mermaid criterion during #4)**: split into two
-  levels. **Level A — the SKILL.md artifact**: frontmatter name/description(third-person triggers,
-  brush-up first)/version; model-invocable; imperative & lean; all source intent present; **no
-  mermaid diagram embedded in the prompt body or in the criteria**; §output-rules carries an
-  explicit addressee sentence ("this is an instruction to the produced document, not to this
-  prompt"). **Level B — the document the skill produces (dogfood-verified)**: structure/flow shown
-  as mermaid where there is order/branching with no diagram/prose duplication; feeding two different
-  reader definitions changes the output's voice and axis (proves derivation, not memorization);
-  single axis, no mixing. Every diagram criterion's subject is "the produced document".
-- **Sources**: official skill-development guide (path above); `.rn/techting/instruction.md` (source
-  of record); three expert subagent reports captured in this session.
-
-## D-4: Purpose reframed — human-readable end, two-tier quality (floor / ceiling)
-- **Issue**: The old Goal framed techting as "a reader-first procedure." The user reframed the
-  **purpose**: the end is a document that reads as if a person wrote it (not an AI), taken in with
-  the least reader effort. The reader-first procedure is the *means*, not the end.
-- **Conclusion**: Purpose = a human-readable document. Quality is **two tiers**: **floor (b) =
-  table-stakes** — clearing it earns no praise, but failing it instantly reads as AI-written, so the
-  skill must scrub the AI tells (padding / throat-clearing, restatement, retreat into generalities,
-  flavorless connectives, reflexive bulleting, a wavering voice); **ceiling (a) = attractive** —
-  density, concreteness, a single load-bearing thread, earned figures, a consistent voice. The skill
-  works **floor-then-ceiling**: adding ceiling onto an uncleared floor is wasted.
-- **Why two tiers, in the user's words**: (a) is 魅力 (the charm that earns praise), (b) is 当たり前
-  (table-stakes whose absence reads as AI). A human document needs both, in order.
-- **Scope note (important)**: the floor (b) **extends beyond `instruction.md`**. The verbatim source
-  covers reader-first + tone / diagrams / closing / outline, not an AI-tell scrub. Floor (b) is a
-  deliberate session-level expansion of the goal, recorded here; `instruction.md` stays verbatim and
-  is no longer the *sole* source — this Decision and the revised Goal are the source for the floor.
-- **Consequence**: task #4 (the process / output-rules split, no embedded mermaid) still stands; it
-  is necessary but no longer sufficient. Task **#5** adds the floor layer and the floor→ceiling order
-  on top of it. Both are reviewed together on PR #5.
-- **Sources**: this session's exchange (2026-06-26); the revised Goal and acceptance criteria above.
-
-## D-5: SKILL.md reshaped — build fresh from intent, floor as a net (supersedes the edit-the-draft runbook)
-- **Issue**: The runbook form of `SKILL.md` (#5, `reader → floor → axis → voice → restructure →
-  deliver`) was structured to **edit the input draft in place** — step 2 scrubbed the draft, step 5
-  reordered it. The user flagged two faults: (a) editing in place drags the old wording along and
-  reads as patched (継ぎ足し); (b) it is a checklist, not a **writing procedure** — following it does
-  not itself produce the document.
-- **Conclusion**: Rebuild the document **fresh from the input's intent**, through an ordered writing
-  procedure, so the AI tells never take hold. The floor scrub moves from a pre-edit to a **final net**
-  for stragglers. The procedure is: understand the input → define reader & purpose → outline from the
-  purpose → fill the outline with the message as bullets → read as the reader and check the story →
-  decide voice & form from purpose+story → write it out → brush up to the ceiling → clear the floor
-  (net) → self-check & deliver.
-- **Key reorders from the runbook**: floor goes last (was 2nd); voice & **form** (prose / list /
-  table / diagram / graph) is decided **after** the story stands (was an early step), derived from
-  purpose+story — this dissolves reflexive bulleting (form is chosen deliberately) and folds in the
-  mermaid rule as "diagram where structure/branching lives". Quality is **built in during writing**,
-  not scrubbed on after ([[build-quality-in]]).
-- **What stays**: the two-layer split (process vs §Reference/output-rules) and the addressee sentence
-  (D-3); no embedded mermaid; the five axes, voice table, and seven tells (reused as reference the
-  steps point to, reordered into work-order, not deleted); lean (<2,000 words; the rebuilt file is
-  ~1,631).
-- **Consequence**: the Goal's "first clear the floor, then reach for the ceiling" wording and the
-  acceptance criteria that mandated a floor pre-scrub and a "floor-fixes-then-ceiling-lifts" note are
-  revised above to "build in, then net" and "substance first, then the tells the net caught".
-- **Sources**: this session's exchange (2026-06-27); the rebuilt `techting/skills/up/SKILL.md`.
-
-## D-6: The five-axes skeletons re-sourced to researched best practice (supersedes instruction.md's verbatim outlines)
-- **Issue**: The five outline-axis skeletons in `SKILL.md` (article, guide, reference, record-ADR,
-  evaluation) were derived verbatim from `instruction.md`. The user asked for the recommended
-  structures instead, grounded in current best practice ("おすすめの構成に・最新動向を検索して").
-- **Conclusion**: The skeletons' source of truth is now the 2026-07-02 research round — Diátaxis
-  (explanation / reference / tutorials), MADR 4.0, AWS ADR guidance, Google and Microsoft procedure
-  style guides, GitLab task type, Google SRE postmortem — not `instruction.md`'s outlines. Landed as
-  a3f803c (rewrite) + c375c74 (restore "unique and exhaustive" to the reference axis) + 9a43913
-  (re-align voice table, form skip-guard, and ADR emphasis with the new skeletons).
-- **What the research changed**: article = why-question / claim→why→implications (no instructions);
-  guide = one best path + location-before-action + cleanup/rollback; reference = structure mirrors
-  the product; ADR = Status+date / decision-as-headline / options with rejected-and-why / consequences;
-  evaluation = weights when criteria conflict; preamble notes tutorial = specialized guide,
-  postmortem = specialized record.
-- **Scope note**: this is a deliberate departure from `instruction.md`, the same pattern as D-4 (the
-  floor expansion) and D-5 (build-fresh): `instruction.md` stays verbatim as the source of record for
-  the pillars, but for the five skeletons this Decision and the researched sources are the source.
-- **Sources**: the 2026-07-02 research-agent round (Diátaxis, MADR 4.0, AWS, Google, Microsoft,
-  GitLab, SRE); this session's exchange; commits a3f803c / c375c74 / 9a43913.
 
 # State
 
