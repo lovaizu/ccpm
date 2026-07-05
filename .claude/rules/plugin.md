@@ -23,13 +23,13 @@ Decide the increment by the largest change in the release, judged from the user'
 
 ## CHANGELOG
 
-- **Keep `CHANGELOG.md` in the plugin root**, in [Keep a Changelog](https://keepachangelog.com) format: reverse-chronological, a `## [Unreleased]` section on top, then one `## [x.y.z] - YYYY-MM-DD` section per release. Group lines under `Added` / `Changed` / `Fixed` / `Removed`, using only the ones that apply.
+- **Keep `CHANGELOG.md` in the plugin root**, in [Keep a Changelog](https://keepachangelog.com) format: reverse-chronological, a `## [Unreleased]` section on top **while changes are pending** (absent in a freshly released changelog), then one `## [x.y.z] - YYYY-MM-DD` section per release. Group lines under `Added` / `Changed` / `Fixed` / `Removed`, using only the ones that apply.
 - **Write an entry for every user-impacting change** — a new, changed, or removed behavior of a command or skill, or of what the user reads and approves.
   - **Skip noise**: typo fixes, refactors, internal docs, pure formatting — anything a user would not notice gets no entry.
 - **How to write each entry** — one line that states *what changed* and *the benefit to the user*, in terms a user understands (not commit or implementation language). Keep it concise: `<what changed> — <why it helps the user>`.
 - **Where the entry goes:**
-  - No release instruction → add the line under `## [Unreleased]` (the pending next release).
-  - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD`, bump `version` in `plugin.json` to match, and open a fresh empty `## [Unreleased]`. Merging to `main` does not by itself bump the version — the bump happens only on this instruction.
+  - No release instruction → add the line under `## [Unreleased]` (the pending next release), creating that `## [Unreleased]` section at the top if the previous action was a release and it is absent.
+  - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD` and bump `version` in `plugin.json` to match. **Do not leave an empty `## [Unreleased]` heading behind** — a released changelog starts at its latest version section; the `## [Unreleased]` section is re-created at the top only when the next user-facing change lands. Merging to `main` does not by itself bump the version — the bump happens only on this instruction.
 
 ## Release procedure (who does what)
 
@@ -38,7 +38,7 @@ the user's, because `main` is protected and only the user holds the privileges t
 review. The order:
 
 1. **Assistant** — bump `version` in `plugin.json` and finalize `CHANGELOG.md` (rename `## [Unreleased]`
-   to the chosen `## [x.y.z] - YYYY-MM-DD`, open a fresh empty `## [Unreleased]`), commit, and **push**.
+   to the chosen `## [x.y.z] - YYYY-MM-DD`, leaving no empty `## [Unreleased]` behind), commit, and **push**.
 2. **Assistant** — **request the user to merge** the PR to `main`. The assistant **never merges to
    `main` itself** and never uses `--admin` to bypass branch protection.
 3. **User** — merges the PR to `main` and tells the assistant it is merged.
