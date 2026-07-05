@@ -8,4 +8,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `conduct` skill — hand it a goal and it drives that goal to delivery through a chain of subagent Turns, checking in with you only at phase gates instead of at every Turn.
+- `conduct` skill — hand it a goal and it drives that goal to delivery through a chain of subagents, checking in with you only at phase gates instead of at every step.

@@ -1,6 +1,6 @@
 {
   "name": "aiya",
-  "description": "A prompt-driven Conductor that drives a goal to delivery through subagent Turns — bounded context via a compressed-state contract, drift caught by independent per-viewpoint verify-Turns, and human sign-off only at phase gates.",
+  "description": "A prompt-driven Conductor that hands your goal to a chain of subagent Turns — one Turn drafts the work for each Step, an independent verify-Turn checks it against the goal, and you approve only at phase gates (goal, approach, delivery) instead of every Turn — while the Conductor itself reads back only a compressed account of what happened, so its own context stays small no matter how long the build runs.",
   "version": "0.1.0",
   "author": { "name": "lovaizu" }
 }
