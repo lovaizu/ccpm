@@ -4,61 +4,92 @@ Read when creating a session's `design.md` — the whole-structure design doc th
 to from its top `Design:` line. **Not read at runtime**: it records decisions and how the parts fit so
 whoever maintains the work can judge whether a change is still right.
 
+The h2 sections below are the canonical design-document sections; under each, the h3 headings are the
+questions that section must answer — a section is done when its questions are answered, not when its
+heading merely exists.
+
 ## Steps
 
-1. **Copy the template block below verbatim.** Keep every heading and the order of the five sections.
-2. **Fill each section per the guidance below.** A section with nothing to record can be dropped — but
-   if there is no design to record at all, write no `design.md` (an empty file is worse than none).
-3. **Keep rationale in Approach only.** Structure and Flow describe *what is*; Approach holds *why*, at
-   the decision level.
+1. **Copy the template block below verbatim.** Keep every heading, numbering, and section order — the
+   five h2 sections and the h3 questions under them are the contract.
+2. **Answer every h3 question with a decision and the reasoning behind it** — not just what is, but why
+   it is that way. If a question does not apply, say so *and say why* — "not applicable" is itself an
+   answer, and it gets the same decision-plus-reasoning treatment as any other. Nothing here licenses a
+   section with a question left silently unanswered.
+3. **In Detailed design, repeat `4.N` once per mechanism or component the design introduces** — not a
+   fixed four; add or drop subsections to match what the design actually contains.
+4. **The whole document is optional, not any one section within it.** If there is no design to record at
+   all, write no `design.md` (an empty file is worse than none). But once you are writing one, no
+   section may be skipped for having "nothing to record" — an empty-seeming section still owes step 2's
+   decision-plus-reasoning answer, even if that answer is "not applicable."
 
 ---
 
 ```markdown
 # <name> — design notes
 
-Not read at runtime — for whoever maintains the procedures and needs to judge whether a step is still
+Not read at runtime — for whoever maintains the design and needs to judge whether a decision is still
 right when requirements change.
 
-## Context & constraints
+## 1. Background & Goals
 
-<the problem/situation this design addresses, and the fixed constraints it must respect>
+### 1.1 What is the goal?
 
-## Approach
+### 1.2 What goes wrong without this?
 
-- **<decision>** — chosen over <rejected alternative>, which lost because <reason>.
-- **<decision>** — chosen over <rejected alternative>, which lost because <reason>.
+### 1.3 What does reaching it require?
 
-## Structure
+### 1.4 What is out of scope?
 
-| Actor | Responsibility |
-|---|---|
-| <actor> | <what it is responsible for> |
+## 2. Assumptions & Constraints
 
-<mermaid diagram of how the actors wire together>
+### 2.1 What do we take as true?
 
-## Flow
+### 2.2 What binds the solution?
 
-<mermaid diagram — flowchart or sequence diagram — of the end-to-end path>
+## 3. Design overview
 
-## Open questions
+### 3.1 What is the core idea, and why does it solve the problem?
 
-- <unresolved question / deferred decision>
+### 3.2 What are the pieces, and what is each responsible for?
+
+### 3.3 How does work move?
+
+## 4. Detailed design
+
+<one 4.N subsection per mechanism/component the design introduces — repeat, do not cap at a fixed count>
+
+### 4.1 What is <mechanism>'s contract, and how is a breach caught?
+
+## 5. Alternatives considered
+
+### 5.1 Why this shape, and not another?
+
+### 5.2 What did we trade away?
 ```
 
 ---
 
 ## Per-section guidance
 
-- **Context & constraints** — state the problem and the fixed constraints plainly. This frames every
-  decision below; a reader who skips it should still be able to from here.
-- **Approach** — the key decisions, each paired with the alternative it beat and why. This is the
-  *one* place rationale lives, and it lives at the whole-structure level — a decision about the design,
-  never a per-line "because this step does X" memo. If a "why" is about a single step rather than a
-  design decision, it does not belong here (or anywhere in this doc).
-- **Structure** — the actors and how they wire together: a table of actor → responsibility, plus a
-  mermaid diagram (GitHub renders it; ASCII art does not survive rewrapping). Descriptive only — say what each actor *is* and does, not why; the why is already in
-  Approach.
-- **Flow** — the end-to-end path as a mermaid diagram (flowchart or sequence diagram) of what happens,
-  in order. A node states what occurs, not its justification.
-- **Open questions** — what is unresolved or deliberately deferred, so a maintainer knows the edges.
+- **Background & Goals** — the goal (1.1), what fails without it (1.2), what achieving it demands
+  (1.3), and what is deliberately out of scope (1.4). This frames every decision below; a reader who
+  reads only this section should already understand why the rest of the design exists.
+- **Assumptions & Constraints** — what is taken as true without re-litigating it (2.1), and what fixed
+  limits bind the solution (2.2 — platform limits, resource bounds, no-extra-infrastructure rules,
+  whatever actually constrains this design). This is the ground the Design overview stands on.
+- **Design overview** — the core idea and why it solves the problem (3.1), the pieces and what each is
+  responsible for (3.2), and how work moves between them (3.3). Answer at the level of the whole design,
+  not implementation detail — that belongs in Detailed design.
+- **Detailed design** — one `4.N` subsection per mechanism or component the design introduces (a queue, a
+  cache, a state file, a retry policy — whatever this design actually contains). Every subsection asks
+  the same pair of questions of its mechanism: what does it guarantee, and how is a breach of that
+  guarantee caught? Add or remove `4.N` entries to match what the design introduces — this is a
+  repeatable pattern, not a fixed count.
+- **Alternatives considered** — why this shape was chosen over another (5.1), and what was knowingly
+  traded away by choosing it (5.2). This is where costs the design does not solve get named as accepted
+  decisions, not left to be discovered later as oversights.
+
+Every question above follows the same rule from Steps step 2: answer with a decision and the reasoning
+behind it, and treat "not applicable" as an answer that still needs that reasoning — never as a reason
+to leave the question out.
