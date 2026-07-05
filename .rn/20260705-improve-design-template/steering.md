@@ -258,31 +258,8 @@ version-tracking/migration mechanism) under `design-template.md`'s new five-sect
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-07-05
-- **Last completed**: #1 — restructure design-template.md (checked off, `checks/1.md` finalized)
-- **Next**: #2 — finish verification. Round-1 fixes are committed (`984e3fe`); round-2 re-review came
-  back QA PASS, Craft FAIL, Design FAIL. Concrete fixes still needed in
-  `rn/references/design-template.md`'s "Updating an existing design.md" section before finalizing
-  `checks/2.md`:
-  1. The sentence "this reconciliation may already be current if `migration-workflow.md` has run since
-     the document's last version-mismatch" (~line 123) is factually wrong: per task #3/#4's actual
-     design, `Rn version:` lives on `steering.md` only — `design.md` has no version stamp of its own —
-     and migration only fires for an active session with a stale stamp, so a dormant/closed session
-     (e.g. `.rn/20260625-rn-lean/`) never re-triggers it. Remove/rewrite this claim rather than assert a
-     per-document "last version-mismatch" that doesn't exist. Doing this also resolves Craft's dangling
-     `migration-workflow.md` reference finding — no separate Invalid triage needed once the sentence is
-     gone.
-  2. Step 5's open-content routing (~lines 126-133) branches on "if there is no session `steering.md`
-     exists" — but the whole Updating procedure is only ever invoked from inside an active session's
-     `planning-workflow.md` Step 2, so a `steering.md` always exists at the moment it runs; that branch
-     is dead code (self-contradicting), confirmed against `rn/docs/design.md`'s own task #6. Replace the
-     branch condition with "is this `design.md` scoped to the current session alone, vs a canonical
-     doc shared across sessions past and future (e.g. `rn/docs/design.md`)" — session-scoped → that
-     session's `steering.md` Notes; canonical/cross-session → track outside `design.md` (e.g. a repo
-     issue), since no single session's Notes survives once that session closes.
-  This is iteration 2 of task #2's fix-triage cycle (cap 3). Next action on resume: dispatch the
-  implementation expert with these two fixes, then re-run Craft + Design + QA (QA's criterion-3
-  evidence quotes the exact prose being changed), then finalize `checks/2.md` and check off task #2.
-- **Notes**: PR #16, branch `worktree-improve-design-template`. Tasks #3-#7 not yet started
-  (prerequisites on #2). No open blockers beyond the task #2 fix above; no user-deferred paths.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
