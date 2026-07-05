@@ -263,8 +263,30 @@ into aiya's own gate artifacts (`goal.md` / `approach.md`) when authoring SKILL.
 
 # State
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-05
+- **Last completed**: Task #1 reconciled on `/rn:up` (`0f483ea`, State reset only — no design.md
+  change this session). Round-6 figure feedback (logged at the prior suspend) is still **proposed,
+  not applied**: the assistant answered "agree the story first" with a per-figure story —
+  §3.1 = core concept for a zero-context reader (keep Human in the cast; CCS stays an edge label,
+  not a node), §3.2 = responsibilities only, fixed by adding Human/artifact rows to the parts table
+  so it matches §3.1's cast (no new diagram), §3.3 = one connected end-to-end flow starting from
+  the Human (replacing the current three detached per-stage diagrams) — with the explicit meaning
+  that §3.1 draws relations only (no sequence) and §3.3 draws sequence only (no responsibility
+  detail), so the two do not duplicate. This has **not yet been put to the user for agreement**.
+- **Next**: Task #1 — put the per-figure story (above) to the user for agreement. If agreed, redraw
+  all three of §3.1/§3.2/§3.3 with that lens (not just the previously-flagged parts): update
+  §3.2's parts table to add Human and artifact rows; redraw §3.3 as one connected
+  Human→Conductor→generate-Turn→verify-Turn→(advance/re-aim capped at 3/escalate)→gate→Human flow,
+  removing the three separate per-stage diagrams (their prose content, if load-bearing, folds into
+  the single figure's surrounding text). Then continue user review on PR #1.
+- **Notes**:
+  - Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Review on the PR;
+    feedback keeps arriving in console — both fine.
+  - D-3 (revised) is the design-doc template: h2 = canonical sections, h3 = questions derived
+    viewpoint-first; candidate to fold into aiya's gate artifacts when authoring SKILL.md in #2.
+  - `/ty` and `/gm` inside design.md are aiya's own gate commands (design content, fine); rn 0.6.0
+    ships only on/up/dn — never tell the user to run `/rn:ty` or `/rn:gm`.
+  - User-review revisions are user-directed; no QA re-run these sessions (rounds logged in
+    checks/1.md).
+  - Console replies in 敬体 (bullet endings too); artifacts in English.
