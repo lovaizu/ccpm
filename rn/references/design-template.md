@@ -73,6 +73,31 @@ right when requirements change.
 
 ---
 
+## Updating an existing design.md
+
+Follow this instead of the Steps above when `planning-workflow.md`'s location check (Step 2) points
+`Design:` at an existing `design.md` rather than a fresh path — e.g. a plugin's own canonical
+`design.md` already covers the session's work area.
+
+1. **Read the existing document in full before touching it.** Identify which h3 questions the
+   session's work actually changes, and which answers remain accurate as written.
+2. **Revise only what changed.** Rewrite the decision-plus-reasoning answer for each h3 question the
+   work changes; leave every other section's existing text untouched. Carrying forward unchanged text
+   is correct, not lazy — do not discard and rewrite sections that still hold.
+3. **The question+decision+intent contract from fresh authoring still applies to whatever you touch.**
+   A revised h3 still needs a decision and the reasoning behind it, and "not applicable" still needs
+   the same treatment (say so, and say why) — updating does not relax this.
+4. **If the document predates the five-section shape** (e.g. it still uses an older Context &
+   constraints/Approach/Structure/Flow/Open questions shape), reconcile it toward the current
+   five-section shape as part of this update: map each old section to the h2/h3 it now corresponds to,
+   carry forward what is still accurate under its new heading, and only re-derive the questions whose
+   answers the session's work actually changes. Reconciling structural drift across many documents at
+   once is a separate concern from this per-document update judgment call.
+5. **Add or drop `4.N` subsections to match what changed** (per Steps step 3 above) — a new mechanism
+   gets a new subsection, a removed one loses its subsection instead of being left stale.
+
+---
+
 ## Per-section guidance
 
 - **Background & Goals** — the goal (1.1), what fails without it (1.2), what achieving it demands
