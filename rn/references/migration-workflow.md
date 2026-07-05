@@ -39,8 +39,11 @@ which is where the remaining forward-looking work is actually tracked.
    Leave every already-checked-off task untouched — reconciliation targets the forward-looking
    remainder, not the record of what already happened. If a remaining task already has in-progress
    work recorded — a `checks/{task-id}.md` file exists for it, or `steering.md`'s `State` section names
-   it as the current task — reconcile it as usual, but flag that any already-recorded self-check/review
-   evidence must be re-validated against the reconciled criteria before check-off.
+   it as the current task — reconcile it as usual, then record in that task's `checks/{task-id}.md`
+   Overall Verdict a `Ready to check off: No — criteria reconciled, self-check/review must re-run` line;
+   `task-verify-workflow.md`'s Phase: Complete only checks off once Verify has cleared with `Ready to
+   check off` reading Yes, so this line blocks check-off on the now-stale evidence until it is
+   re-validated against the reconciled criteria.
 
 ## No user gate; then stamp the version
 
