@@ -218,14 +218,14 @@ version-tracking/migration mechanism) under `design-template.md`'s new five-sect
 
 **Steps**:
 
-- [ ] follow `design-template.md`'s update procedure (from #2) to revise `rn/docs/design.md`
-- [ ] record, with decision + intent per question: why the question-driven contract replaces the old
+- [x] follow `design-template.md`'s update procedure (from #2) to revise `rn/docs/design.md`
+- [x] record, with decision + intent per question: why the question-driven contract replaces the old
       thin template; why an existing-design.md-update branch was missing and how it's closed; why
       version-tracking has no user gate; what open questions remain
-- [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
-- [ ] Design expert review (subagent)
+- [x] self-check (OK/NG per completion criterion, record in checks/6.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
