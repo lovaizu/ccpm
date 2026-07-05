@@ -112,16 +112,16 @@ from-scratch authoring.
 
 **Steps**:
 
-- [ ] add a check to `planning-workflow.md`'s design-location step: look for an existing design.md
+- [x] add a check to `planning-workflow.md`'s design-location step: look for an existing design.md
       already covering the work's area; if found, point `Design:` at it and treat the work as an
       update
-- [ ] add an "updating an existing design.md" procedure to `design-template.md`, distinct from the
+- [x] add an "updating an existing design.md" procedure to `design-template.md`, distinct from the
       "copy the template verbatim" fresh-authoring steps, preserving the question+decision+intent
       contract while revising only what changed
-- [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
-- [ ] Design expert review (subagent)
+- [x] self-check (OK/NG per completion criterion, record in checks/2.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
