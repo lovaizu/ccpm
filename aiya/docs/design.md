@@ -161,47 +161,43 @@ wall exists to prevent.
 ### 3.3 How does work move?
 
 One connected loop, traced start to end: Human → Conductor → generate-Turn → verify-Turns (one per
-viewpoint, fanned out) → advance / re-aim / gate → back to Human. §3.1 draws the relations only, with no
-sequence; this figure draws the sequence only, with no per-part responsibility detail — that's §3.2:
+viewpoint, fanned out) → aggregate → advance / re-aim / gate → back to Human. §3.1 draws the relations
+only, with no sequence; §4 gives each part's contract, with no cross-part order; this figure draws only
+the order and branching between hops — what each hop carries is §4's job, not this figure's:
 
 ```mermaid
 flowchart TD
-    H["👤 Human"] -->|"approves/redirects at gates"| C["Conductor"]
-    C -->|"work-order: CCS_{N-1} path<br/>+ Step instructions"| G["generate-Turn"]
-    G -->|"do work · write artifact to disk<br/>· write CCS_N (compress work into it)"| O["CCS_N on disk"]
-    O -->|"returns: CCS_N path<br/>+ 1-line status only"| C
-    C -->|"true goal (gate-approved goal.md)<br/>+ artifact path + 1 viewpoint each"| V1["verify-Turn<br/>viewpoint 1 (fresh context)"]
-    C -->|"..."| VN["verify-Turn<br/>viewpoint N (fresh context)"]
-    V1 -->|"verdict: pass/fail, gap"| AGG{"Conductor aggregates:<br/>AND across viewpoints,<br/>gap = union of failing gaps"}
-    VN -->|"verdict: pass/fail, gap"| AGG
+    H["👤 Human"] -->|"approve / redirect at gate"| C["Conductor"]
+    C -->|"dispatch"| G["generate-Turn"]
+    G -->|"done"| C
+    C -->|"N verify-Turns, one per viewpoint"| V1["verify-Turn 1"]
+    C -->|"..."| VN["verify-Turn N"]
+    V1 -->|"verdict"| AGG{"aggregate:<br/>pass only if all pass"}
+    VN -->|"verdict"| AGG
     AGG -->|"fail"| CAP{"attempt >= 3?"}
-    CAP -->|"yes"| ESC[["escalate to human<br/>(carries failure history)"]]
-    CAP -->|"no"| RA["re-aim: re-generate<br/>with gap as correction · attempt++"]
+    CAP -->|"yes"| ESC[["escalate"]]
+    CAP -->|"no"| RA["re-aim, attempt++"]
     RA --> G
     AGG -->|"pass"| B{"phase boundary?"}
     B -->|"no"| NS["next Step"]
     NS --> C
-    B -->|"yes"| GATE[["phase gate (async chat)"]]
+    B -->|"yes"| GATE[["phase gate"]]
     GATE --> H
     ESC --> H
 ```
 
-**Stage ① — dispatch → generate + compress.** The Conductor hands a generate-Turn the previous
-`CCS_{N-1}` by path plus Step instructions. The Turn does the work, writes its artifact, and compresses
-it into a fresh `CCS_N`. Compression is folded into this same Turn — not a separate Turn — and only the
-`CCS_N` path plus a one-line status returns to the Conductor.
+**Stage ① — dispatch → generate.** The Conductor dispatches one generate-Turn per Step (the "1 Step = 1
+Turn" invariant, §3.2); it does the work and returns to the Conductor. Compression is folded into this
+same Turn, not a separate one, so this stage stays a single hop (contract: §4.1).
 
-**Stage ② — read → verify, per viewpoint.** The Conductor reads only the bounded `CCS_N`, then dispatches
-one independent, flat verify-Turn per viewpoint (§4.2) — each told only its one viewpoint, the true goal,
-and the artifact path, and blind to the worker's self-report. All verify-Turns are direct children of the
-Conductor; Turns never nest (§3.2), so fanning out to N viewpoints does not create a nested spawn. The
-Conductor then aggregates the verdicts **mechanically**: the Step passes only if every viewpoint's
-verdict is `pass`; on any failure, the gap is the **union** of the failing viewpoints' gaps.
+**Stage ② — fan out → verify, per viewpoint.** The Conductor dispatches one flat verify-Turn per
+viewpoint (§4.2), all direct children of the Conductor — fanning out to N viewpoints is not nesting
+(§3.2's "Turns never nest"). It then aggregates the verdicts mechanically: the Step passes only if every
+viewpoint passes; on any failure, the gap is the union of the failing viewpoints' gaps (contract: §4.2).
 
 **Stage ③ — advance / re-aim / gate.** On an aggregate `pass`, the Conductor advances — to the next Step,
-or to the gate at a phase boundary. On `fail` it **re-aims** — re-generates with the aggregated gap as a
-corrective instruction — capped at **3 attempts**, then escalates to the human (carrying the failure
-history) rather than spinning.
+or to the gate at a phase boundary. On `fail` it re-aims — retries generate with the gap as a corrective
+instruction — capped at 3 attempts, then escalates to the human rather than spinning (contract: §4.3).
 
 ## 4. Detailed design
 
