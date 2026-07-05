@@ -228,8 +228,8 @@ questions), whose per-section guidance allowed "a section with nothing to record
 silently — a reader of a `design.md` under that shape could never tell whether a topic was actually
 considered and rejected, or simply never asked. The new contract (`design-template.md`) fixes five
 sections — Background & Goals / Assumptions & Constraints / Design overview / Detailed design /
-Alternatives considered — each with explicit h3 questions, generalized from aiya's design.md (2.1) with
-its Conductor/CCS/Turn-specific content stripped. It guarantees every h3 question gets a
+Alternatives considered — each with explicit h3 questions, generalized from aiya's design.md (2.1). It
+guarantees every h3 question gets a
 decision-plus-reasoning answer, including "not applicable" stated with why. A breach — an h3 left
 silently blank — is caught because the h3 headings are fixed and enumerable: a reader (or reviewer) can
 diff the actual document against the canonical list and see exactly which question has no answer, which
