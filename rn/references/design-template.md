@@ -119,17 +119,21 @@ Follow this instead of the Steps above when `planning-workflow.md`'s location ch
    heading, and only re-derive the questions whose answers the session's work actually changes —
    reconciling shape is reorganizing and completing what already exists, not license to rewrite
    unrelated, still-accurate content. Reconciling structural drift across many documents at once is a
-   separate concern from this per-document update judgment call, and this reconciliation may already be
-   current if `migration-workflow.md` has run since the document's last version-mismatch — this step
-   exists for updating a document's content that hasn't yet been reconciled, not as a duplicate
-   mechanism.
+   separate concern from this per-document update judgment call: `migration-workflow.md` reconciles a
+   session's own `design.md` automatically, but only while that session is active and its `steering.md`
+   `Rn version:` has gone stale — `design.md` carries no version stamp of its own, so a dormant or
+   closed session's `design.md` is never revisited that way, and this step remains the mechanism for
+   bringing such a document's shape current whenever this update procedure runs on it.
 5. **Give genuinely open content a destination outside `design.md`.** An old "Open questions" section
    (or similarly open-ended content) has no analog in the new shape, since every h3 here needs a
    decision-plus-reasoning answer. Resolve each item one of two ways: make the decision now, as part of
    this update, or, if it is genuinely still undecided, relocate it — it does not belong in `design.md`
-   under the new contract. Put it in the session's `steering.md` Notes field if one exists (per
-   steering-template.md's Notes guidance), or, if there is no session `steering.md` (e.g. a plugin's own
-   canonical design.md, not tied to a session), track it outside `design.md` (e.g. a repo issue) rather
-   than inventing an "open" placeholder inside the document.
+   under the new contract. Where it goes depends on whether this `design.md` is scoped to the current
+   session alone or is a canonical document shared across sessions past and future (e.g.
+   `rn/docs/design.md`). Session-scoped: put it in that session's `steering.md` Notes field (per
+   steering-template.md's Notes guidance) — it will be reviewed and closed out along with the session.
+   Canonical/cross-session: track it outside `design.md` instead (e.g. a repo issue), since no single
+   session's Notes field survives once that session closes, and a canonical document's open questions
+   need to outlive any one session.
 6. **Add or drop `4.N` subsections to match what changed** (per Steps step 3 above) — a new mechanism
    gets a new subsection, a removed one loses its subsection instead of being left stale.
