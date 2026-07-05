@@ -11,66 +11,71 @@ Start by naming a goal, and pick up right where you left off after any break. On
 > /plugin install rn@ccpm
 ```
 
-That makes `/rn:gm`, `/rn:bb`, and `/rn:hi` available.
+That makes `/rn:on`, `/rn:dn`, and `/rn:up` available, plus the two verdict commands you answer sign-offs with: `/rn:ty` (approve) and `/rn:gm` (revise).
 
 ## How it works
 
 ```mermaid
 flowchart TD
-  G([Your goal]) --> P[Reviewed plan on a PR<br/>one task at a time]
+  G([Your goal]) --> P([You approve the plan<br/>on the draft PR])
   P --> W[Assistant runs a task]
   W -->|heavy work, kept out of sight| X[Expert does it<br/>reviewers try to break it]
-  X -->|only the finished change| Y([You approve])
-  Y -->|added to the same PR| W
+  X -->|cleared, added to the same PR| W
+  W -.->|only when the call is yours| C([You weigh in])
+  W ==>|all tasks done| D([You confirm the goal is met])
 ```
 
-One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. What reaches you is the finished change — and nothing lands until you approve.
+One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. You sign off on the plan up front, then the assistant works through the tasks without stopping to ask you for each one — they pile up on the same PR as the reviewers clear them. It pulls you back in only when a call is genuinely yours, and at the very end you confirm the goal is actually met before the session closes.
 
 ## Getting started
 
 Say you want to push through "fix the bug in the payment screen."
 
-### 1. Start — `/rn:gm`
+### 1. Start — `/rn:on`
 
 Tell it your goal. It restates the goal as it understands it, breaks it into verifiable tasks, and opens a draft PR with the full plan for you to review — too much to read comfortably in the console.
 
 ```console
-> /rn:gm fix the bug in the payment screen
+> /rn:on fix the bug in the payment screen
 
-● Captured your goal as I understand it:
+● ── payment-fix: payments complete on the payment screen ──
+  👉 plan sign-off ── asking now: review the plan on the draft PR — /rn:ty to approve and start #1
+  ⬜ #1–#4   reproduction test / root-cause fix / regression check / evaluation sign-off
+  (after approval, tasks run one by one without stopping to ask, until #4 — the evaluation sign-off)
+
+  Captured your goal as I understand it:
     "Fix the bug on the payment screen so payments complete successfully"
 
-  Location: .rn/payment-fix/steering.md
-    □ #1  Write a test that reproduces the payment failure
-    □ #2  Find the root cause and fix it
-    □ #3  Check for regressions
-
-  Opened a draft PR with the full plan: https://github.com/you/repo/pull/42
-  Review the steering there and approve to start #1.
+  Steering: .rn/20260702-payment-fix/steering.md
+  Draft PR with the full plan: https://github.com/you/repo/pull/42
 ```
 
-Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each approved task added to the same PR. (Smaller, one-step changes the assistant just makes itself, without involving an expert.)
+That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input once a session is underway, so you always see where the session stands without opening `steering.md`.
 
-### 2. Step away — `/rn:bb`
+Read the plan on the PR and answer with a verdict command — `/rn:ty` approves it as is; `/rn:gm <feedback>` asks for changes first (and plain `/rn:gm` picks your review comments up off the PR). On approval the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met. The same two commands answer every sign-off, so you never have to guess how to reply.
+
+### 2. Step away — `/rn:dn`
 
 Context is full, or you're done for the day. Run it and your work is committed / pushed, with a note left for next time.
 
 ```console
-> /rn:bb
+> /rn:dn
 
-● Committed #1 — "test: complete task #1 — reproduction test"
-  Last completed: #1 reproduction test
-  Up next:        #2 find the root cause and fix it
+● ── payment-fix: payments complete on the payment screen ──
+  ✅ #1      reproduction test
+  👉 #2      root-cause fix ── suspended here; next move: /clear, then /rn:up
+  ⬜ #3–#4   regression check / evaluation sign-off
+  (#2 starts on /rn:up)
 
-  Run /clear, then start a fresh conversation with /rn:hi.
+  Committed and pushed — "test: add reproduction test for payment failure"
 ```
 
-### 3. Come back — `/rn:hi`
+### 3. Come back — `/rn:up`
 
 Run it in a fresh conversation. It finds where you stopped from git and resumes from there.
 
 ```console
-> /rn:hi
+> /rn:up
 
 ● Found a suspended session: payment-fix
   Reconciled with the git log — #1 is done.
@@ -80,14 +85,14 @@ Run it in a fresh conversation. It finds where you stopped from git and resumes 
 
 ---
 
-`gm` is just once, at the very start. After that, each break is just **`bb` → `/clear` → `hi`**, and your work stays unbroken until the goal is met.
+`on` is just once, at the very start. After that, each break is just **`dn` → `/clear` → `up`**, and your work stays unbroken until the goal is met.
 
-> Run `/clear` yourself after `/rn:bb` — a plugin can't clear the context for you.
+> Run `/clear` yourself after `/rn:dn` — a plugin can't clear the context for you.
 
-## Why gm / bb / hi?
+## Why on / dn / up?
 
-They're the greetings you'd naturally say at each moment, so they're easy to remember:
+They're a two-letter power set — on / down / up — easy to keep straight because they track the session's own state:
 
-- **`gm`** — *good morning.* You sit down and start on a goal.
-- **`bb`** — *bye-bye.* You step away for now.
-- **`hi`** — *hi again.* You're back; pick up where you left off.
+- **`on`** — *power on.* You sit down and start a session.
+- **`dn`** — *down.* You take the session down for now — a pause, not quitting. ("down" trimmed to two letters to match.)
+- **`up`** — *up.* You bring the session back up and pick up where you left off.
