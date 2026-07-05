@@ -7,9 +7,9 @@ An AI-agent build that fans out across many streams tends to fail one of two way
 agent's own working state grows with every stream until it collapses under its own context, or the
 work quietly stops tracking the goal and the drift only surfaces at the end. aiya's answer is one
 agent — the **Conductor** — that holds the goal, hands the actual work to subagents, and reads back
-only a compressed account of what happened plus an independent check on whether that account is
-actually true. You steer at a handful of phase gates; the Step-by-Step grind in between is the
-Conductor's problem, not yours.
+only a compressed account of what happened, an independent check on whether that account is
+actually true, and the phase documents it steers by. You steer at a handful of phase gates; the
+Step-by-Step grind in between is the Conductor's problem, not yours.
 
 ## How it works
 
