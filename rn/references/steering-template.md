@@ -18,11 +18,18 @@ Allocate content by kind, so steering stays a lean forward contract:
 
 A decision lands in a task, in `design.md`, or in a rule. Deliberation and history live in git + the PR — never in steering.
 
-The top `Design:` line points to the session's `design.md`. A session with no design omits this line entirely (no file, no pointer) — copy the rest of the block as-is.
+The top `Rn version:` line stamps the `rn` plugin version the session was authored under, so a later
+mismatch against the installed plugin is detectable. It is written once, at creation, from the
+installed plugin's version — never user-edited afterward (see `migration-workflow.md` for how it gets
+updated on a mismatch).
+
+The `Design:` line below it points to the session's `design.md`. A session with no design omits this
+line entirely (no file, no pointer) — copy the rest of the block as-is.
 
 ---
 
 ```markdown
+Rn version: <the installed rn plugin's version, e.g. 0.7.0 — stamped at creation, not user-edited>
 Design: <path to the session's design.md — omit this whole line if the session has no design>
 
 # Goal
