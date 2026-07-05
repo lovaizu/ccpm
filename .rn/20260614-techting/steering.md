@@ -277,8 +277,16 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: context needed for resume
+- **Status**: paused
+- **Date**: 2026-07-05
+- **Last completed**: Housekeeping (not a numbered task) — merged the rn plugin update (0.3.0 →
+  0.7.0) into this branch, then migrated this session to rn 0.7.0 conventions: renamed the session
+  dir to date-prefixed `.rn/20260614-techting/`, and split the D-1..D-6 decision log out of
+  `steering.md` into `techting/docs/design.md` (following rn's own precedent of keeping a plugin's
+  design doc under the plugin's `docs/`, not the session dir). Task-level state is unchanged: #1–#3
+  done; #4 and #5 done except `[ ] user review (on the PR)`, both awaiting review on PR #5.
+- **Next**: User reviews PR #5 (tasks #4 and #5). Once approved, #5's remaining open box — the Level
+  B dogfood (run `up` on a real draft with two different reader definitions, confirming voice/axis
+  change) — still needs to run before the Acceptance-criteria run can close the session.
+- **Notes**: Branch `worktree-techting`; PR #5 is open and unreviewed. No blockers beyond the
+  pending review and the deferred Level B dogfood.
