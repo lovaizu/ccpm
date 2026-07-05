@@ -37,13 +37,19 @@ which is where the remaining forward-looking work is actually tracked.
    the task directly to close any drift (e.g. a Completion criterion phrased as an action instead of an
    end-state, or a Steps list missing a review step the current Process selection section now requires).
    Leave every already-checked-off task untouched — reconciliation targets the forward-looking
-   remainder, not the record of what already happened. If a remaining task already has in-progress
-   work recorded — a `checks/{task-id}.md` file exists for it, or `steering.md`'s `State` section names
-   it as the current task — reconcile it as usual, then record in that task's `checks/{task-id}.md`
-   Overall Verdict a `Ready to check off: No — criteria reconciled, self-check/review must re-run` line;
-   `task-verify-workflow.md`'s Phase: Complete only checks off once Verify has cleared with `Ready to
-   check off` reading Yes, so this line blocks check-off on the now-stale evidence until it is
-   re-validated against the reconciled criteria.
+   remainder, not the record of what already happened. This next part only applies when reconciling a
+   remaining task actually changed its Completion criteria — if a task's Purpose/Prerequisites/Steps/
+   Completion criteria already matched current convention, there is nothing to guard against and no
+   further action for it. For a task whose Completion criteria did change, check for a
+   `checks/{task-id}.md` file: if one already exists — whether because work was already in progress or
+   because `steering.md`'s `State` section names it as the current task and Execute already wrote one —
+   record in its Overall Verdict a `Ready to check off: No — criteria reconciled, self-check/review must
+   re-run` line; `task-verify-workflow.md`'s Phase: Complete only checks off once Verify has cleared with
+   `Ready to check off` reading Yes, so this line blocks check-off on the now-stale evidence until it is
+   re-validated against the reconciled criteria. If no such file exists yet — e.g. the task is merely
+   named current in `State` but Execute has not yet run — there is no stale evidence to invalidate, so
+   nothing needs to be written; Execute will simply self-check against the reconciled criteria when it
+   eventually runs.
 
 ## No user gate; then stamp the version
 
