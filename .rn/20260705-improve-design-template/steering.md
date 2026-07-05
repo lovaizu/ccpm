@@ -194,12 +194,12 @@ is found, using LLM judgment rather than per-version bookkeeping.
 
 **Steps**:
 
-- [ ] add a one-line step to `rn/skills/on/SKILL.md`, `dn/SKILL.md`, `up/SKILL.md`, `ty/SKILL.md`,
+- [x] add a one-line step to `rn/skills/on/SKILL.md`, `dn/SKILL.md`, `up/SKILL.md`, `ty/SKILL.md`,
       `gm/SKILL.md`: compare the active session's `Rn version:` to the installed plugin's version;
       on a mismatch, run `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first
-- [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
+- [x] self-check (OK/NG per completion criterion, record in checks/5.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
 
 **Completion criteria**:
 
