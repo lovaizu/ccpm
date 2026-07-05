@@ -137,16 +137,20 @@ carry the whole design; the rest of this section just details them:
 
 | Part | Role |
 |---|---|
+| **Human** | Owns the goal; steers only at phase gates (`/ty` approve, `/gm` redirect); no Turn-by-Turn babysitting. |
 | **Conductor** | Holds the goal; dispatches Turns; reads only bounded handoffs; steers. Does no domain work. |
 | **generate-Turn** | Does one unit of work; writes the artifact to disk; writes a fresh CCS. |
 | **verify-Turn** | Fresh-context check of the artifact against the goal; returns a bounded verdict. |
+| **artifact** | The real work product on disk; written by generate-Turn; read directly only by verify-Turn — never by the Conductor. |
 | **CCS** | The bounded state handed Turn-to-Turn — the only bridge the Conductor reads (§4.1). |
 | **phase gate** | A boundary where the human approves or redirects (§4.4). |
 
-**Invariant — 1 Step = 1 Turn.** A Step is counted by its one **work** (generate) Turn. The verify-Turn
-that follows is a discarded measurement Turn whose context does not accumulate, so the count stays at one
-work-Turn per Step **on the normal, passing path**; a failing Step re-dispatches the work-Turn via re-aim
-(Stage ③, §3.3), adding further work-Turns within that same Step, capped at 3 attempts total (§4.3).
+**Invariant — 1 Step = 1 Turn.** A Step is counted by its one **work** (generate) Turn. The verify-Turns
+that follow it — one flat, Conductor-dispatched Turn per viewpoint (§4.2) — are discarded measurement
+Turns whose context does not accumulate, so the count stays at one work-Turn per Step **on the normal,
+passing path** regardless of how many viewpoints are checked; a failing Step re-dispatches the work-Turn
+via re-aim (Stage ③, §3.3), adding further work-Turns within that same Step, capped at 3 attempts total
+(§4.3).
 
 **Invariant — Turns never nest.** Only the Conductor spawns; a Turn cannot itself spawn another
 subagent. A unit too big for one Turn is split into **more flat Turns**, never nested ones. This is why
@@ -156,49 +160,48 @@ wall exists to prevent.
 
 ### 3.3 How does work move?
 
-The loop runs in three stages. Each stands on its own:
-
-**Stage ① — dispatch → generate + compress**
+One connected loop, traced start to end: Human → Conductor → generate-Turn → verify-Turns (one per
+viewpoint, fanned out) → advance / re-aim / gate → back to Human. §3.1 draws the relations only, with no
+sequence; this figure draws the sequence only, with no per-part responsibility detail — that's §3.2:
 
 ```mermaid
-flowchart LR
-    C["Conductor"] -->|"work-order: CCS_{N-1} by path<br/>+ Step instructions"| G["generate-Turn"]
+flowchart TD
+    H["👤 Human"] -->|"approves/redirects at gates"| C["Conductor"]
+    C -->|"work-order: CCS_{N-1} path<br/>+ Step instructions"| G["generate-Turn"]
     G -->|"do work · write artifact to disk<br/>· write CCS_N (compress work into it)"| O["CCS_N on disk"]
-    O -->|"returns to Conductor:<br/>CCS_N path + 1-line status only"| C
-```
-
-The Turn does the work, writes its artifact, and compresses it into a fresh `CCS_N`. **Compression is
-folded into this same Turn** — not a separate Turn — and only the `CCS_N` path plus a one-line status
-returns.
-
-**Stage ② — read → verify**
-
-```mermaid
-flowchart LR
-    C["Conductor reads CCS_N<br/>(bounded — and only CCS_N)"] -->|"true goal (from gate-approved goal.md)<br/>+ artifact path · NOT the self-report"| V["verify-Turn<br/>(fresh context)"]
-    V -->|"inspects the artifact directly"| Vr["verdict: {pass | fail, gap}"]
-    Vr -->|"bounded"| C
-```
-
-The Conductor reads only the bounded CCS, then dispatches an **independent** verify-Turn that inspects
-the artifact directly and is blind to the worker's self-report.
-
-**Stage ③ — advance / re-aim / gate**
-
-```mermaid
-flowchart LR
-    J{"verdict?"} -->|"pass & closer to goal"| B{"phase boundary?"}
-    J -->|"fail"| CAP{"attempt >= 3?"}
-    CAP -->|"yes"| ESC[["escalate to human<br/>(exception · carries failure history)"]]
+    O -->|"returns: CCS_N path<br/>+ 1-line status only"| C
+    C -->|"true goal (gate-approved goal.md)<br/>+ artifact path + 1 viewpoint each"| V1["verify-Turn<br/>viewpoint 1 (fresh context)"]
+    C -->|"..."| VN["verify-Turn<br/>viewpoint N (fresh context)"]
+    V1 -->|"verdict: pass/fail, gap"| AGG{"Conductor aggregates:<br/>AND across viewpoints,<br/>gap = union of failing gaps"}
+    VN -->|"verdict: pass/fail, gap"| AGG
+    AGG -->|"fail"| CAP{"attempt >= 3?"}
+    CAP -->|"yes"| ESC[["escalate to human<br/>(carries failure history)"]]
     CAP -->|"no"| RA["re-aim: re-generate<br/>with gap as correction · attempt++"]
-    RA --> V2["re-verify (Stage ②)"]
-    B -->|"no"| NS["next Step → Stage ①"]
+    RA --> G
+    AGG -->|"pass"| B{"phase boundary?"}
+    B -->|"no"| NS["next Step"]
+    NS --> C
     B -->|"yes"| GATE[["phase gate (async chat)"]]
+    GATE --> H
+    ESC --> H
 ```
 
-On `pass` the Conductor advances (to the next Step, or to the gate at a phase boundary). On `fail` it
-**re-aims** — re-generates with the gap as a corrective instruction — capped at **3 attempts**, then
-escalates rather than spinning.
+**Stage ① — dispatch → generate + compress.** The Conductor hands a generate-Turn the previous
+`CCS_{N-1}` by path plus Step instructions. The Turn does the work, writes its artifact, and compresses
+it into a fresh `CCS_N`. Compression is folded into this same Turn — not a separate Turn — and only the
+`CCS_N` path plus a one-line status returns to the Conductor.
+
+**Stage ② — read → verify, per viewpoint.** The Conductor reads only the bounded `CCS_N`, then dispatches
+one independent, flat verify-Turn per viewpoint (§4.2) — each told only its one viewpoint, the true goal,
+and the artifact path, and blind to the worker's self-report. All verify-Turns are direct children of the
+Conductor; Turns never nest (§3.2), so fanning out to N viewpoints does not create a nested spawn. The
+Conductor then aggregates the verdicts **mechanically**: the Step passes only if every viewpoint's
+verdict is `pass`; on any failure, the gap is the **union** of the failing viewpoints' gaps.
+
+**Stage ③ — advance / re-aim / gate.** On an aggregate `pass`, the Conductor advances — to the next Step,
+or to the gate at a phase boundary. On `fail` it **re-aims** — re-generates with the aggregated gap as a
+corrective instruction — capped at **3 attempts**, then escalates to the human (carrying the failure
+history) rather than spinning.
 
 ## 4. Detailed design
 
@@ -298,25 +301,44 @@ one-off converter is needed.
 
 ### 4.2 What is the verify-Turn's contract, and how is a breach caught?
 
-The verify-Turn runs in a **fresh context** and is told only the **true goal / Step intent + the
-artifact path** — never the generator's self-report — so it cannot be fooled by a laundered claim. It
-inspects the artifact directly and returns a bounded verdict `{pass | fail, gap}`.
+Verification is **per viewpoint**: a **viewpoint** is any independently-checkable concern — an
+Acceptance Scenario, a stated rule, or a domain concern (for code, e.g. class/method decomposition,
+naming, thread-safety, memory-leak). A Step dispatches one flat, Conductor-spawned verify-Turn **per
+viewpoint** — not one verify-Turn checking everything at once. All of them are direct children of the
+Conductor; this is not nesting (§3.2's "Turns never nest" is unchanged — each viewpoint's verify-Turn is
+still a Turn the Conductor itself spawns, not one verify-Turn spawning others).
 
-**What it checks.** Three targets, in priority order: the goal itself, the approach's spec, and any
-stated rules (e.g. coverage). Mechanical checks carry as much of this as they can; an LLM judgment is
-only the thin last layer for what a mechanical check cannot decide. Where the goal names a concrete
-outcome, verification **simulates** it — the artifact is actually run against scenarios drawn from the
-goal's Acceptance Scenarios, fixed *before* generation (test-first) — rather than judged on whether it
-"looks right".
+Each verify-Turn runs in a **fresh context** and is told only **its one viewpoint** plus the **true goal
+/ Step intent + the artifact path** — never the generator's self-report — so it cannot be fooled by a
+laundered claim. It inspects the artifact directly and returns a bounded verdict `{pass | fail, gap}`
+scoped to that one viewpoint.
 
-**Goal provenance.** The "true goal" handed to it comes from the **immutable, gate-approved goal
-artifact** (the phase's `goal.md`, or the Step intent fixed at its gate), **not** from the mutable
+**The viewpoint set.** A Step's viewpoints come from a **standard catalog, curated per domain** (coding /
+writing / visual — from established skills/plugins and industry best-practice checklists), **plus** any
+Step-specific viewpoint the Conductor adds at runtime that the catalog would not anticipate. (The
+catalog's actual contents are out of scope for this document — authored separately, as a reference doc.)
+
+**Aggregation.** The Conductor combines the per-viewpoint verdicts **mechanically**: the Step passes only
+if every viewpoint's verdict is `pass`; on any failure, the gap is the **union** of the failing
+viewpoints' gaps. This aggregation is control flow over already-bounded verdicts, not inspection of the
+artifact — so it does not breach the Conductor's no-domain-work wall (§3.1, §3.2).
+
+**What it checks** (per viewpoint). Three targets, in priority order: the goal itself, the approach's
+spec, and any stated rules (e.g. coverage). Mechanical checks carry as much of this as they can; an LLM
+judgment is only the thin last layer for what a mechanical check cannot decide. Where the goal names a
+concrete outcome, verification **simulates** it — the artifact is actually run against scenarios drawn
+from the goal's Acceptance Scenarios, fixed *before* generation (test-first) — rather than judged on
+whether it "looks right".
+
+**Goal provenance.** The "true goal" handed to each verify-Turn comes from the **immutable, gate-approved
+goal artifact** (the phase's `goal.md`, or the Step intent fixed at its gate), **not** from the mutable
 running CCS. Checking against a drifted CCS would measure against a corrupted yardstick; reading the
 yardstick from the fixed gate output is what closes that path.
 
-**Boundedness.** The verify-Turn does read the full artifact, but it is a **discarded single-shot Turn**
-— only its bounded verdict returns, and its context does not accumulate across Steps. An artifact too
-large for one verify-Turn is the same "scope too broad" signal: split the Step, do not grow the verifier.
+**Boundedness.** Each verify-Turn does read the full artifact, but it is a **discarded single-shot Turn**
+— only its bounded, per-viewpoint verdict returns, and its context does not accumulate across Steps. An
+artifact too large for one verify-Turn is the same "scope too broad" signal: split the Step, do not grow
+the verifier.
 
 ### 4.3 What is the re-aim path's contract, and how is a breach caught?
 
@@ -404,6 +426,11 @@ stay orthogonal.
   would be marginally denser but only pays off on uniform tabular arrays (which the CCS is not) and is
   written less reliably; a bespoke `type(contents)` notation buys no real density over YAML while losing
   its parseability — so neither is worth it.
+- **verify-Turn decomposes per viewpoint, not just per Step.** A Step dispatches one flat verify-Turn per
+  viewpoint (§4.2) rather than one verify-Turn checking every viewpoint in a single pass; the Conductor
+  aggregates the verdicts mechanically. *Intent:* this generalizes the independence argument one level
+  finer — a verifier concentrating on one narrow, independent viewpoint is less likely to miss it than
+  one juggling several checks at once.
 - **The bounded path is the default, and adherence is observable** (§3.1), through three mechanisms of
   different strength — not all equally enforced. The **subagent return contract** is structural by
   construction: a Turn's return channel carries only the CCS path + status, so raw output cannot cross
@@ -423,5 +450,6 @@ The costs accepted with this shape, stated so they are not mistaken for oversigh
   adherence suffices is the bet the dogfood must settle.
 - **Concurrency.** Turns run sequentially (§1.4) — throughput is traded for a loop simple enough to be
   carried by procedure prose and a single walled context.
-- **Per-Step verification cost.** Every Step pays one extra discarded verify-Turn (§4.2); the
-  independence that makes the verdict trustworthy is bought with that overhead.
+- **Per-Step verification cost.** Every Step pays **N discarded verify-Turns, one per viewpoint** (§4.2)
+  — not just one; the independence that makes each verdict trustworthy is bought with that overhead,
+  scaling with the Step's viewpoint count.
