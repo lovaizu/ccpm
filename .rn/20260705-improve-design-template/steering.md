@@ -254,9 +254,12 @@ version-tracking/migration mechanism) under `design-template.md`'s new five-sect
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-07-05
-- **Last completed**: none
-- **Next**: #1
-- **Notes**: branch `worktree-improve-design-template`, PR https://github.com/lovaizu/ccpm/pull/16 —
-  awaiting plan-gate approval (`/rn:ty` or `/rn:gm`) before task #1 begins.
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
