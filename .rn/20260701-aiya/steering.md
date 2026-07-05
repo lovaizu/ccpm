@@ -378,12 +378,21 @@ count, still discarded/non-accumulating per Turn).
 
 # State
 
-(written by `/rn:dn`, read and reset to this placeholder by `/rn:up`. `Status` is `paused` while a
-session is suspended — the signal `/rn:up` and `/rn:dn` search for — and resets to `not suspended`
-here, so only a genuinely suspended session reads `paused`.)
-
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-07-05
+- **Last completed**: The round-6 figure story (§3.2 Human/artifact rows, §3.3 single connected
+  flowchart) and D-5 (verify-Turn decomposes per viewpoint, flat/Conductor-dispatched, mechanical
+  aggregation, catalog-plus-runtime-addition rule) are both folded into `aiya/docs/design.md`
+  (`9e1a6a9`, pushed to PR #1). `steering.md` itself records D-5 and adds a task #2 step + Rule that
+  the viewpoint catalog is curated from established skills/plugins, not built zero-based (`bf3e683`).
+- **Next**: Task #1b (Design sign-off) continues — the revised `design.md` was presented to the user
+  on this turn (console summary of the diff + a pointer to PR #1 for the rendered Mermaid figures) and
+  is awaiting their verdict via `/rn:ty` (approve → check off #1b, proceed to #2) or `/rn:gm` (revise →
+  address the feedback, re-present). No verdict has been given yet.
+- **Notes**: Branch `feature/smith-plugin`, PR #1 (https://github.com/lovaizu/ccpm/pull/1). Console
+  replies in 敬体; artifacts in English. User-review revisions during #1b are user-directed — the
+  coordinator does not spin up QA/Craft/etc. for them (sign-off tasks spawn no review axes); the
+  deliverable edit itself still goes through an implementation-expert subagent, never edited directly
+  by the coordinator. D-3 (design-doc template: h2 canonical sections, h3 questions derived
+  viewpoint-first) and D-5 (verify-Turn per-viewpoint decomposition) are both recorded in this file's
+  Decisions section — read there before continuing #1b's review loop.
