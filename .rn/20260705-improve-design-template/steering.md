@@ -165,16 +165,16 @@ is found, using LLM judgment rather than per-version bookkeeping.
 
 **Steps**:
 
-- [ ] write `rn/references/migration-workflow.md`: compare `steering.md` against
+- [x] write `rn/references/migration-workflow.md`: compare `steering.md` against
       `steering-template.md`, then `design.md` (if present) against `design-template.md`, then each
       remaining task against `task definition requirements`, in that order; for each, judge what has
       drifted from current convention and reconcile it
-- [ ] specify: apply the reconciling edits and commit them directly — no user gate — then update the
+- [x] specify: apply the reconciling edits and commit them directly — no user gate — then update the
       session's `Rn version:` line to the installed plugin version
-- [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
-- [ ] Design expert review (subagent)
+- [x] self-check (OK/NG per completion criterion, record in checks/4.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
