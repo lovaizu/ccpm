@@ -1,4 +1,4 @@
-Design: .rn/20260614-techting/design.md
+Design: techting/docs/design.md
 
 # Goal
 
