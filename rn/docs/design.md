@@ -125,7 +125,7 @@ artifact is caught by someone who actually understands that artifact's shape.
 | Coordinator (main agent) | The conversation agent that plans, dispatches, reviews, and records. |
 | Experts (sub agents) | Chosen per task — design, craft (per medium), verification — with QA across all; the same axes build and review. |
 | `steering.md` | The session's forward contract: `Goal` / `Acceptance criteria` / `Assumptions` / `Rules` / `Tasks` / `State`, plus the `Rn version:` and `Design:` header lines. Doc-division rule: requirements & acceptance criteria live here; structure & decisions live in `design.md`; user-facing UX lives in the README — this keeps `steering.md` lean enough to re-read in full every time (2.1). |
-| `design.md` | The whole-structure design — this doc, for `rn`'s own work. A session's `design.md` defaults to `.rn/{yyyymmdd}-{slug}/design.md`, but that default is not unconditional: `planning-workflow.md`'s design-location step checks first whether an existing `design.md` already covers the session's work area, and if so points `Design:` at it and treats the work as an update instead of fresh authoring (4.5). `rn/docs/design.md` living at `rn/docs/` rather than under a per-session `.rn/` path is not a special-cased exception to that default — it is the ordinary outcome of that check: this canonical doc already covers `rn`'s own work area, so any `rn` session (including this one) whose work touches it is "updating," not authoring fresh. This resolves the prior open question on this point; there is nothing further to leave open here. |
+| `design.md` | The whole-structure design — this doc, for `rn`'s own work. A session's `design.md` defaults to `.rn/{yyyymmdd}-{slug}/design.md`, but that default is not unconditional: `planning-workflow.md`'s design-location step checks first whether an existing `design.md` already covers the session's work area, and if so points `Design:` at it and treats the work as an update instead of fresh authoring (resolved in 4.5). |
 | `migration-workflow.md` | The reconciliation procedure a version mismatch triggers — coordinator-only, no expert spawn (4.6). |
 
 The coordinator follows four procedures for the normal session flow, plus a fifth for drift:
@@ -228,9 +228,8 @@ questions), whose per-section guidance allowed "a section with nothing to record
 silently — a reader of a `design.md` under that shape could never tell whether a topic was actually
 considered and rejected, or simply never asked. The new contract (`design-template.md`) fixes five
 sections — Background & Goals / Assumptions & Constraints / Design overview / Detailed design /
-Alternatives considered — each with explicit h3 questions, generalized from aiya's design.md
-(https://github.com/lovaizu/ccpm/blob/feature/smith-plugin/aiya/docs/design.md) with its
-Conductor/CCS/Turn-specific content stripped. It guarantees every h3 question gets a
+Alternatives considered — each with explicit h3 questions, generalized from aiya's design.md (2.1) with
+its Conductor/CCS/Turn-specific content stripped. It guarantees every h3 question gets a
 decision-plus-reasoning answer, including "not applicable" stated with why. A breach — an h3 left
 silently blank — is caught because the h3 headings are fixed and enumerable: a reader (or reviewer) can
 diff the actual document against the canonical list and see exactly which question has no answer, which
@@ -248,10 +247,18 @@ judgment call on scope overlap (not a mechanical file-existence check), whether 
 already covers the session's work area — this repo/plugin's own canonical `design.md`, or another active
 session's overlapping one — before defaulting to the per-session path. If one covers the area, `Design:`
 points at it and the work follows `design-template.md`'s "Updating an existing design.md" procedure
-(4.4's sibling procedure) instead of fresh authoring. A breach (planning creating a fresh, duplicate
-`design.md` when an existing one already covers the area) is caught because it manifests concretely as
-two overlapping `design.md` files with conflicting content — visible to whoever reviews the plan or the
-PR, not merely a latent risk.
+(4.4's sibling procedure) instead of fresh authoring.
+
+This same check also settles a question this document previously left open: whether `rn/docs/design.md`
+living at `rn/docs/` rather than under a per-session `.rn/` path is a special-cased exception to the
+per-session default. It is not — it is the ordinary outcome of this check: this canonical doc already
+covers `rn`'s own work area, so any `rn` session (including this one) whose work touches it is
+"updating," not authoring fresh. This resolves the prior open question on this point; there is nothing
+further to leave open here.
+
+A breach (planning creating a fresh, duplicate `design.md` when an existing one already covers the
+area) is caught because it manifests concretely as two overlapping `design.md` files with conflicting
+content — visible to whoever reviews the plan or the PR, not merely a latent risk.
 
 ### 4.6 What does version-tracking + migration guarantee, and how is a breach caught?
 

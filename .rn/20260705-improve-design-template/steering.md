@@ -263,4 +263,7 @@ so only a genuinely suspended session reads `paused`.)
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Notes**: Carried-forward open question, deliberately not written into `design.md`: whether the
+  craft/verification medium list (coding / writing / visual) is complete, and whether a task spanning
+  more than one medium spawns one Craft/Verification instance per medium it touches, is unresolved and
+  out of this session's scope — pick it up in a future session touching `rn/docs/design.md` §3.1/§4.
