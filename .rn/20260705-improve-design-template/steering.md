@@ -254,8 +254,9 @@ version-tracking/migration mechanism) under `design-template.md`'s new five-sect
 
 # State
 
-- **Status**: not suspended
+- **Status**: paused
 - **Date**: 2026-07-05
 - **Last completed**: none
 - **Next**: #1
-- **Notes**: none
+- **Notes**: branch `worktree-improve-design-template`, PR https://github.com/lovaizu/ccpm/pull/16 —
+  awaiting plan-gate approval (`/rn:ty` or `/rn:gm`) before task #1 begins.
