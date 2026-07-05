@@ -11,15 +11,16 @@ heading merely exists.
 ## Steps
 
 1. **Copy the template block below verbatim.** Keep every heading, numbering, and section order — the
-   five h2 sections and the h3 questions under them are the contract.
+   five h2 sections and the h3 questions under them are the contract (Detailed design's `4.N` repeats
+   per mechanism — see step 3).
 2. **Answer every h3 question with a decision and the reasoning behind it** — not just what is, but why
-   it is that way. If a question does not apply, say so *and say why* — "not applicable" is itself an
+   it is that way. If a question does not apply, say so **and say why** — "not applicable" is itself an
    answer, and it gets the same decision-plus-reasoning treatment as any other. Nothing here licenses a
    section with a question left silently unanswered.
 3. **In Detailed design, repeat `4.N` once per mechanism or component the design introduces** — not a
    fixed four; add or drop subsections to match what the design actually contains.
-4. **The whole document is optional, not any one section within it.** If there is no design to record at
-   all, write no `design.md` (an empty file is worse than none). But once you are writing one, no
+4. **Treat the whole document as optional, not any section within it.** If there is no design to record
+   at all, write no `design.md` (an empty file is worse than none). But once you are writing one, no
    section may be skipped for having "nothing to record" — an empty-seeming section still owes step 2's
    decision-plus-reasoning answer, even if that answer is "not applicable."
 
@@ -30,6 +31,8 @@ heading merely exists.
 
 Not read at runtime — for whoever maintains the design and needs to judge whether a decision is still
 right when requirements change.
+
+<every h3 below needs a decision-plus-reasoning answer — "not applicable" is an answer only when it says why>
 
 ## 1. Background & Goals
 
@@ -59,7 +62,7 @@ right when requirements change.
 
 <one 4.N subsection per mechanism/component the design introduces — repeat, do not cap at a fixed count>
 
-### 4.1 What is <mechanism>'s contract, and how is a breach caught?
+### 4.1 What does <mechanism> guarantee, and how is a breach caught?
 
 ## 5. Alternatives considered
 
@@ -84,12 +87,7 @@ right when requirements change.
 - **Detailed design** — one `4.N` subsection per mechanism or component the design introduces (a queue, a
   cache, a state file, a retry policy — whatever this design actually contains). Every subsection asks
   the same pair of questions of its mechanism: what does it guarantee, and how is a breach of that
-  guarantee caught? Add or remove `4.N` entries to match what the design introduces — this is a
-  repeatable pattern, not a fixed count.
+  guarantee caught?
 - **Alternatives considered** — why this shape was chosen over another (5.1), and what was knowingly
   traded away by choosing it (5.2). This is where costs the design does not solve get named as accepted
   decisions, not left to be discovered later as oversights.
-
-Every question above follows the same rule from Steps step 2: answer with a decision and the reasoning
-behind it, and treat "not applicable" as an answer that still needs that reasoning — never as a reason
-to leave the question out.
