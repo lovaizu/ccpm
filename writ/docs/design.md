@@ -1,4 +1,4 @@
-# techting — design notes
+# writ — design notes
 
 Not read at runtime — for whoever maintains the `up` skill and must judge whether a step is still
 right when the instruction or the target axes change.
@@ -6,18 +6,18 @@ right when the instruction or the target axes change.
 ## Context & constraints
 
 The end is a document that reads as if a person wrote it, not an AI — least reader effort, taken in
-top to bottom, graspable at a glance. This is packaged as a Claude Code plugin `techting` (skill
+top to bottom, graspable at a glance. This is packaged as a Claude Code plugin `writ` (skill
 `up`) so the procedure applies on demand to any draft, run by a human or by Claude itself. Primary
 mode is brushing up an existing draft; authoring from scratch runs the same procedure but is
 secondary. `instruction.md` is the verbatim source of record the skill body is derived from — except
 where a later decision below deliberately supersedes it (D-4, D-5, D-6). Constraints inherited from
-the repo: version lives only in `techting/.claude-plugin/plugin.json`; shipped artifacts are English
+the repo: version lives only in `writ/.claude-plugin/plugin.json`; shipped artifacts are English
 except `instruction.md` itself; `README.md` is scenario-style; the skill is self-contained in one
 file (source is short, one continuous procedure, no `references/` split).
 
 ## Approach
 
-- **(D-1) Plugin `techting` / skill `up`, not matching names** — chosen over the official same-name
+- **(D-1) Plugin `writ` / skill `up`, not matching names** — chosen over the official same-name
   convention, because the skill name is typed often (keep it short) and plugin/skill names are
   independent slots (`rn:gm` is the precedent); "up" fits the primary brush-up-a-level mode.
 - **(D-2) Model-invocable (no `disable-model-invocation`)** — chosen over `rn`'s pattern of disabling
@@ -45,6 +45,12 @@ file (source is short, one continuous procedure, no `references/` split).
   now Diátaxis (explanation/reference/tutorials), MADR 4.0, AWS ADR guidance, Google/Microsoft
   procedure style guides, GitLab task types, and Google SRE postmortems — not instruction.md.
   `instruction.md` stays the source of record for the other pillars; only the five skeletons deviate.
+- **(D-7) Renamed `techting` → `writ`, skill stays `up`** — chosen over keeping the name and just
+  rewording the framing, because the plugin name itself was the one thing still narrowing scope to
+  "technical" writing. D-6's sourcing (Diátaxis/MADR/ADR/style-guide research) already showed the
+  five axes are general document genres, not technical-writing-specific — the mechanism was general
+  from the start, only the label lagged. `writ` + skill `up` gives `/writ:up`, read as "write it up",
+  with no redundant "up up".
 
 ## Structure
 
