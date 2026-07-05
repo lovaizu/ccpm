@@ -28,8 +28,9 @@ flowchart LR
 ```
 
 The Conductor never opens `A` itself — its only reads are the compressed state a generate-Turn hands
-back and the verdict a verify-Turn hands back. That wall is what keeps its context bounded no matter
-how many Steps the goal takes.
+back, the verdict a verify-Turn hands back, and the phase documents (`goal.md`, `approach.md`,
+`delivery.md`) it drafts and gates. That wall is what keeps its context bounded no matter how many
+Steps the goal takes.
 
 ## A walkthrough: adding a health-check endpoint
 
@@ -126,10 +127,11 @@ latest CCS and the failing viewpoint's gap as a corrective instruction.
 
 All four pass. `t002.yaml` is not built by patching `t001.yaml` — it's a fresh, whole replacement, and
 it's the one the Conductor treats as its entire working memory of this Step from here on; `t001.yaml`
-stays on disk as part of the CCS trail but is never read back into the running state. Had this hit
-three failed attempts instead of resolving on the second, the Conductor would have stopped re-aiming
-and escalated to you instead, carrying the gaps from all three attempts so you have evidence to judge
-from.
+stays on disk as part of the CCS trail, not folded back into what the Conductor is actively working from
+at the next Step — though the trail itself stays there to read later, for a retrospective or a
+`/gm`-style backtrack. Had this hit three failed attempts instead of resolving on the second, the
+Conductor would have stopped re-aiming and escalated to you instead, carrying the gaps from all three
+attempts so you have evidence to judge from.
 
 ### 5. Delivery closes — G3
 
@@ -146,9 +148,9 @@ other gate:
 ```
 
 That closes the goal. Coming back to an in-progress run — after a break, or to pick a Step back up —
-works the same way: say "continue the aiya Conductor loop" or "resume the Step loop," and it re-reads
-whichever phase document and CCS file are on disk and carries on from there, skipping any phase already
-approved.
+works the same way: say "continue the aiya Conductor loop" or "resume the Step loop," and invoking aiya
+again on the same issue skips any phase already gate-approved and continues from the next undone Step
+in `delivery.md`.
 
 ## What's on disk when it's done
 
