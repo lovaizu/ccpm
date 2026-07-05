@@ -85,9 +85,10 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
   missing scheduled gate; escalation collapsed into a gate's exception so a mid-flight change ships
   unseen.)
 - **The record is honest and consistent.** A user reading `rn/CHANGELOG.md` learns each user-facing
-  change and why it helps; no rn doc contradicts another; `version` stays `0.6.0`. (Failure modes
-  absent: a behavior-preserving refactor listed or a real change missing; a surviving contradictory
-  instruction; an accidental release.)
+  change and why it helps; no rn doc contradicts another; `version` is `0.7.0` matching the finalized
+  `## [0.7.0] - 2026-07-05` CHANGELOG section (release instructed 2026-07-05). (Failure modes absent:
+  a behavior-preserving refactor listed or a real change missing; a surviving contradictory
+  instruction; a version/CHANGELOG mismatch or an empty `## [Unreleased]` left behind.)
 - **Two-command verdict vocabulary.** `ty` and `gm` exist as rn skills: `ty` registers approval of what
   was asked; `gm` registers a revise verdict whose feedback is its argument, or — with no argument — the
   PR's review comments. Every scheduled gate (plan/design/evaluation) and every assistant-asks-to-confirm
@@ -116,7 +117,9 @@ edit made. The means are in the tasks' Steps; the grounds are recorded in `check
 # Rules
 
 - edits stay within the `rn/` plugin (skills, references, `design.md`, CHANGELOG); touch no other plugin
-- do not bump `version` in `plugin.json` — no release instruction is in scope (stays `0.6.0`)
+- release instructed by the user on 2026-07-05: `version` bumps `0.6.0` → `0.7.0` and the CHANGELOG's
+  `## [Unreleased]` finalizes to `## [0.7.0] - 2026-07-05` per `plugin.md` (supersedes the original
+  "no release in scope" rule)
 - the plugin set is unchanged, so `marketplace.json` and the root `README.md` need no update
 - prose/prompt edits only (no executable code) → non-code verification chain (self-check → QA expert →
   the gates)
