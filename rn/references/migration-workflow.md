@@ -12,8 +12,10 @@ The coordinator reads each artifact, judges drift, and edits it directly.
 
 ## Steps
 
-Reconcile the three artifacts below **in this order** — steering, then design, then tasks — since a
-task's own drift can only be judged correctly once `steering.md`'s structure itself is current.
+Reconcile the three artifacts below **in this order** — steering, then design, then tasks. Steering
+must be reconciled first since design's location is read from its `Design:` line (step 2 depends on
+that line already being current), and both steering and design must be settled before judging tasks,
+which is where the remaining forward-looking work is actually tracked.
 
 1. **Reconcile `steering.md` against [`steering-template.md`](./steering-template.md).** Compare the
    session's `steering.md` — its header block (`Rn version:` / `Design:`), and its `Goal` / `Acceptance
@@ -35,7 +37,10 @@ task's own drift can only be judged correctly once `steering.md`'s structure its
    the task directly to close any drift (e.g. a Completion criterion phrased as an action instead of an
    end-state, or a Steps list missing a review step the current Process selection section now requires).
    Leave every already-checked-off task untouched — reconciliation targets the forward-looking
-   remainder, not the record of what already happened.
+   remainder, not the record of what already happened. If a remaining task already has in-progress
+   work recorded — a `checks/{task-id}.md` file exists for it, or `steering.md`'s `State` section names
+   it as the current task — reconcile it as usual, but flag that any already-recorded self-check/review
+   evidence must be re-validated against the reconciled criteria before check-off.
 
 ## No user gate; then stamp the version
 
