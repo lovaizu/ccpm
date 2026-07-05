@@ -143,22 +143,22 @@ PR #1 since #1 closed, most recently the round-6 figure-story feedback (see [`St
 
 **Steps**:
 
-- [ ] Pick the skill verb (`/aiya:<verb>`) and write the frontmatter (model-invocable description with
+- [x] Pick the skill verb (`/aiya:<verb>`) and write the frontmatter (model-invocable description with
       concrete trigger phrases; third-person; version-agnostic).
-- [ ] Write the body: imperative Markdown, the Conductor cycle from #1's `design.md`, ACC and TC
+- [x] Write the body: imperative Markdown, the Conductor cycle from #1's `design.md`, ACC and TC
       dissolved into the steps, the iteration cap and escalation stated. Lean.
-- [ ] Author the standard viewpoint catalog (per D-5) as a reference doc the skill points to: per
+- [x] Author the standard viewpoint catalog (per D-5) as a reference doc the skill points to: per
       domain (coding / writing / visual), curate the base viewpoint set from established skills/
       plugins and industry best-practice checklists (e.g. this repo's own `code-review` /
       `security-review` skills, `rn`'s own Craft/Verification checklists in
       `task-verify-workflow.md`) — do not invent the catalog from a blank page.
-- [ ] Cross-check item by item against `design.md` and `acc.md` / `tc.md` so no pillar is dropped (do
+- [x] Cross-check item by item against `design.md` and `acc.md` / `tc.md` so no pillar is dropped (do
       not sample).
-- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/2.md`)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent — this task produces the Conductor's structure/approach)
+- [x] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/2.md`)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check)
+- [x] Design expert review (subagent — this task produces the Conductor's structure/approach)
 
 **Completion criteria**: `aiya/skills/<verb>/SKILL.md` exists, is prompt-driven (no embedded JS loop),
 and encodes the bounded-CCS / verify-Turn / re-aim / phase-gate cycle with a stated cap.
