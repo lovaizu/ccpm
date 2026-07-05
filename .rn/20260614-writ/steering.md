@@ -330,25 +330,8 @@ not a rebuild).
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-07-05
-- **Last completed**: Task #6 — renamed the plugin `techting` → `writ` (skill stays `up`, invocation
-  `/writ:up`) and reworded every "technical document"/"technical writing" occurrence to plain
-  "document"/"writing" across `plugin.json`, `SKILL.md`, `README.md`, `CHANGELOG.md`, `design.md`
-  (new D-7), the root marketplace/README, and PR #5's title. Prompted by the user noticing the
-  design content (reader definition, five axes sourced from Diátaxis/MADR/ADR guidance) was never
-  technical-writing-specific — only the name/framing narrowed it. QA independently confirmed the
-  rename preserved git history and left the SKILL.md procedure byte-identical in substance (no scope
-  creep), and caught a pre-existing stale-link defect in PR #5's body (`.rn/techting/...` → 404),
-  fixed to `.rn/20260614-writ/...`. Both strict validations pass. The branch itself was then renamed
-  `worktree-techting` → `worktree-writ` — an earlier attempt via GitHub's branch-rename API
-  unexpectedly closed the PR instead of retargeting it, so the fix was to recreate it: PR #15
-  supersedes closed PR #5 with identical content. Task-level state: #1–#4 done; #5 and #6 done except
-  `[ ] user review (on the PR)`, both awaiting review on PR #15.
-- **Next**: User reviews PR #15 (tasks #5 and #6). Once approved, #5's remaining open box — the Level
-  B dogfood (run `up` on a real draft with two different reader definitions, confirming voice/axis
-  change) — still needs to run before the Acceptance-criteria run can close the session.
-- **Notes**: Branch `worktree-writ` (renamed from `worktree-techting`; PR #15 supersedes closed PR
-  #5 — same content, recreated after an earlier GitHub branch-rename attempt unexpectedly closed #5).
-  PR #15 is open and unreviewed. No blockers beyond the
-  pending review and the deferred Level B dogfood.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: context needed for resume
