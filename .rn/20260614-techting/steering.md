@@ -1,9 +1,9 @@
-Design: techting/docs/design.md
+Design: writ/docs/design.md
 
 # Goal
 
 Make a document read as if a person wrote it — not an AI — so the reader takes it in with the least
-effort. Package this as a Claude Code plugin `techting` (skill `up`, invoked `/techting:up`) so the
+effort. Package this as a Claude Code plugin `writ` (skill `up`, invoked `/writ:up`) so the
 procedure can be applied on demand to any draft, by a human or by Claude itself. Primary mode is
 brushing up an existing draft; authoring from scratch runs through the same procedure but is
 secondary. The verbatim instruction is preserved at `.rn/20260614-techting/instruction.md` as the
@@ -36,7 +36,7 @@ voice, and form from the reader and purpose rather than from memory or the old d
 
 # Acceptance criteria
 
-- **Level A — the `SKILL.md` artifact (the prompt itself):** `techting/skills/up/SKILL.md` exists
+- **Level A — the `SKILL.md` artifact (the prompt itself):** `writ/skills/up/SKILL.md` exists
   and carries all source intent — reader definition (who / what they must decide-or-do / how they
   read), the five outline axes (article, guide, reference, record-ADR, evaluation), and a pre-output
   self-check. The body separates two layers: **process** (instructions to the model running the
@@ -69,13 +69,13 @@ voice, and form from the reader and purpose rather than from memory or the old d
   then the tells the net caught).
 - The SKILL.md frontmatter is model-invocable (no `disable-model-invocation`) and its description is
   written so it can fire for a human or for Claude itself.
-- `techting/.claude-plugin/plugin.json` has name, description, version (semver), and author, and the
+- `writ/.claude-plugin/plugin.json` has name, description, version (semver), and author, and the
   version lives only in plugin.json (no version field in marketplace.json).
-- `techting/README.md` exists and shows how to use `/techting:up` in a scenario + real-console style.
-- `.claude-plugin/marketplace.json` has a techting entry (name / description / source `./techting` /
-  category) and the root `README.md` Plugins list also links to techting (the two stay in sync).
-- `claude plugin validate ./techting --strict` and `claude plugin validate . --strict` both pass.
-- `claude -p "/techting:up …" --plugin-dir ./techting` loads the skill and starts the brush-up
+- `writ/README.md` exists and shows how to use `/writ:up` in a scenario + real-console style.
+- `.claude-plugin/marketplace.json` has a writ entry (name / description / source `./writ` /
+  category) and the root `README.md` Plugins list also links to writ (the two stay in sync).
+- `claude plugin validate ./writ --strict` and `claude plugin validate . --strict` both pass.
+- `claude -p "/writ:up …" --plugin-dir ./writ` loads the skill and starts the brush-up
   procedure, confirmed headlessly.
 - All shipped artifacts (plugin.json / SKILL.md / README / commit messages / PR) are in English.
 
@@ -85,7 +85,7 @@ voice, and form from the reader and purpose rather than from memory or the old d
   `disable-model-invocation: true` because they are meant for a human to drive; this skill is meant
   for a human or AI.
 - Fact (verified): skills are invoked as `/{plugin}:{skill}`. Plugin name and skill name are
-  independent slots — they need not relate or match (`rn:gm` is the precedent). So plugin `techting`
+  independent slots — they need not relate or match (`rn:gm` is the precedent). So plugin `writ`
   + skill `up` is valid.
 - Fact (ccpm rules): version lives only in plugin.json; marketplace.json and root README stay in
   sync; shipped artifacts are English; README is scenario-style.
@@ -93,19 +93,23 @@ voice, and form from the reader and purpose rather than from memory or the old d
   existing entry uses `"development"`).
 - Assumption (unverified): `claude plugin validate` and `claude -p … --plugin-dir` are available in
   this environment. If not, #3 falls back to manual verification.
-- Scope: exactly one plugin `techting` and one skill `up`. The procedure lives inline in SKILL.md;
+- Scope: exactly one plugin `writ` and one skill `up`. The procedure lives inline in SKILL.md;
   it is not split into separate reference files (rn uses references, but this skill is self-contained
   in one file).
 - Source-of-record exception: `.rn/20260614-techting/instruction.md` stays in its original Japanese —
   it is the user's verbatim instruction, so translating it would corrupt the source. This is the one
   artifact exempt from the English rule.
+- Historical-record exception: Tasks #1–#5 below narrate work done under the plugin's original name
+  `techting` (renamed to `writ` in task #6) — their Steps/Completion-criteria text keeps the
+  `techting` paths as an accurate record of what was done at the time; only forward-looking sections
+  (Goal, Acceptance criteria, Assumptions, Rules, task #6 onward) use the current name `writ`.
 
 # Rules
 
 - 1 task = 1 commit
 - Shipped artifacts (plugin.json / SKILL.md / README / commit messages / PR) are in English,
   including this steering.md
-- The version lives only in `techting/.claude-plugin/plugin.json` (no version in marketplace.json)
+- The version lives only in `writ/.claude-plugin/plugin.json` (no version in marketplace.json)
 - On any add / rename / remove, update `.claude-plugin/marketplace.json` and root `README.md` in the
   same commit
 - README is scenario + real-console style, not a mechanical list
@@ -287,27 +291,28 @@ not a rebuild).
 
 **Steps**:
 
-- [ ] `git mv techting writ` (directory rename, preserves history)
-- [ ] `writ/.claude-plugin/plugin.json`: `name` → `writ`; description drops "technical-writing" →
+- [x] `git mv techting writ` (directory rename, preserves history)
+- [x] `writ/.claude-plugin/plugin.json`: `name` → `writ`; description drops "technical-writing" →
       "reader-first document brush-up"
-- [ ] `writ/skills/up/SKILL.md`: frontmatter description and H1 drop "technical document" → "document";
+- [x] `writ/skills/up/SKILL.md`: frontmatter description and H1 drop "technical document" → "document";
       confirm no other "technical" wording remains in the body (Reference section already generic)
-- [ ] `writ/README.md`: title, intro, install command (`writ@ccpm`), and invocation examples
+- [x] `writ/README.md`: title, intro, install command (`writ@ccpm`), and invocation examples
       (`/writ:up`) updated; drop "technical" from the title/intro line
-- [ ] `writ/CHANGELOG.md`: reword the `[Unreleased]` entries' "technical document" → "document"
+- [x] `writ/CHANGELOG.md`: reword the `[Unreleased]` entries' "technical document" → "document"
       (still unreleased, no need to preserve old wording as history)
-- [ ] `writ/docs/design.md`: rename references to `writ`/`/writ:up` throughout; add **(D-7) Renamed
+- [x] `writ/docs/design.md`: rename references to `writ`/`/writ:up` throughout; add **(D-7) Renamed
       `techting` → `writ`, skill stays `up`** documenting that the content was general-purpose from
       the start (D-6's sourcing already proves this) and only the name/framing lagged
-- [ ] `.claude-plugin/marketplace.json`: `name` → `writ`, `source` → `./writ`, description reworded
+- [x] `.claude-plugin/marketplace.json`: `name` → `writ`, `source` → `./writ`, description reworded
       (drop "technical-writing")
-- [ ] Root `README.md` Plugins list: link → `./writ/README.md`, entry text drops "Technical writing, up
+- [x] Root `README.md` Plugins list: link → `./writ/README.md`, entry text drops "Technical writing, up
       a level" → a general document-brush-up description
-- [ ] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`
-- [ ] Update PR #5's title and description to drop "technical-writing" framing and reflect the new
-      plugin name
-- [ ] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/6.md`)
-- [ ] QA engineer review (subagent)
+- [x] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`
+- [x] Update PR #5's title and description to drop "technical-writing" framing and reflect the new
+      plugin name (QA also caught stale session-dir links in the body — `.rn/techting/...` → 404 —
+      fixed to `.rn/20260614-techting/...`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/6.md`)
+- [x] QA engineer review (subagent)
 - [ ] user review (on the PR)
 
 **Completion criteria**:
@@ -327,13 +332,17 @@ so only a genuinely suspended session reads `paused`.)
 
 - **Status**: paused
 - **Date**: 2026-07-05
-- **Last completed**: Housekeeping (not a numbered task) — merged the rn plugin update (0.3.0 →
-  0.7.0) into this branch, then migrated this session to rn 0.7.0 conventions: renamed the session
-  dir to date-prefixed `.rn/20260614-techting/`, and split the D-1..D-6 decision log out of
-  `steering.md` into `techting/docs/design.md` (following rn's own precedent of keeping a plugin's
-  design doc under the plugin's `docs/`, not the session dir). Task-level state is unchanged: #1–#3
-  done; #4 and #5 done except `[ ] user review (on the PR)`, both awaiting review on PR #5.
-- **Next**: User reviews PR #5 (tasks #4 and #5). Once approved, #5's remaining open box — the Level
+- **Last completed**: Task #6 — renamed the plugin `techting` → `writ` (skill stays `up`, invocation
+  `/writ:up`) and reworded every "technical document"/"technical writing" occurrence to plain
+  "document"/"writing" across `plugin.json`, `SKILL.md`, `README.md`, `CHANGELOG.md`, `design.md`
+  (new D-7), the root marketplace/README, and PR #5's title. Prompted by the user noticing the
+  design content (reader definition, five axes sourced from Diátaxis/MADR/ADR guidance) was never
+  technical-writing-specific — only the name/framing narrowed it. QA independently confirmed the
+  rename preserved git history and left the SKILL.md procedure byte-identical in substance (no scope
+  creep), and caught a pre-existing stale-link defect in PR #5's body (`.rn/techting/...` → 404),
+  fixed to `.rn/20260614-techting/...`. Both strict validations pass. Task-level state: #1–#4 done;
+  #5 and #6 done except `[ ] user review (on the PR)`, both awaiting review on PR #5.
+- **Next**: User reviews PR #5 (tasks #5 and #6). Once approved, #5's remaining open box — the Level
   B dogfood (run `up` on a real draft with two different reader definitions, confirming voice/axis
   change) — still needs to run before the Acceptance-criteria run can close the session.
 - **Notes**: Branch `worktree-techting`; PR #5 is open and unreviewed. No blockers beyond the
