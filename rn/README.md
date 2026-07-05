@@ -11,7 +11,7 @@ Start by naming a goal, and pick up right where you left off after any break. On
 > /plugin install rn@ccpm
 ```
 
-That makes `/rn:on`, `/rn:dn`, and `/rn:up` available.
+That makes `/rn:on`, `/rn:dn`, and `/rn:up` available, plus the two verdict commands you answer sign-offs with: `/rn:ty` (approve) and `/rn:gm` (revise).
 
 ## How it works
 
@@ -39,7 +39,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 > /rn:on fix the bug in the payment screen
 
 ● ── payment-fix: payments complete on the payment screen ──
-  👉 plan sign-off ── asking now: review the plan on the draft PR, approve to start #1
+  👉 plan sign-off ── asking now: review the plan on the draft PR — /rn:ty to approve and start #1
   ⬜ #1–#4   reproduction test / root-cause fix / regression check / evaluation sign-off
   (after approval, tasks run one by one without stopping to ask, until #4 — the evaluation sign-off)
 
@@ -52,7 +52,7 @@ Tell it your goal. It restates the goal as it understands it, breaks it into ver
 
 That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input once a session is underway, so you always see where the session stands without opening `steering.md`.
 
-Read the plan on the PR, approve, and the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met.
+Read the plan on the PR and answer with a verdict command — `/rn:ty` approves it as is; `/rn:gm <feedback>` asks for changes first (and plain `/rn:gm` picks your review comments up off the PR). On approval the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met. The same two commands answer every sign-off, so you never have to guess how to reply.
 
 ### 2. Step away — `/rn:dn`
 

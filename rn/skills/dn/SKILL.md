@@ -18,11 +18,9 @@ Records resume state and hands off. Does not execute tasks.
 2. **Check off progress.** In steering.md, check off completed task steps and add any tasks
    discovered during the work.
 
-3. **Write the `State` section** (fields per `steering-template.md`): `Status: paused`, `Date`,
-   `Last completed`, `Next`, `Notes`. Cap `Notes` to a bounded forward pointer — branch/PR, next
-   concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet
-   captured in `design.md` — not a multi-paragraph re-narration of the session (the narrative is in
-   `git log`).
+3. **Write the `State` section** per `steering-template.md`'s State placeholder: `Status: paused`,
+   `Date`, `Last completed`, `Next`, `Notes` — cap `Notes` to the bounded forward pointer the
+   placeholder's `Notes` line defines, never a re-narration of the session.
 
 4. **Commit the work.**
    - Tree clean → skip this commit.
