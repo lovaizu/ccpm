@@ -29,4 +29,6 @@ Reconstructs prior session state, aligns it with git, and continues from the nex
 
 6. **Clean up State.** Replace the `State` section with its template placeholder and commit the reconciliation.
 
-7. **Begin the next task.** Read `${CLAUDE_PLUGIN_ROOT}/references/task-execute-workflow.md` then `${CLAUDE_PLUGIN_ROOT}/references/task-verify-workflow.md` and execute the next unchecked task following them in sequence.
+7. **Check version.** Compare `steering.md`'s `Rn version:` line to the installed plugin's version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`'s `version` field); on a mismatch, run `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first — on a match, do nothing.
+
+8. **Begin the next task.** Read `${CLAUDE_PLUGIN_ROOT}/references/task-execute-workflow.md` then `${CLAUDE_PLUGIN_ROOT}/references/task-verify-workflow.md` and execute the next unchecked task following them in sequence.
