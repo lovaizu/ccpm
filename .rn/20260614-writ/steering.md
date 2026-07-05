@@ -6,7 +6,7 @@ Make a document read as if a person wrote it — not an AI — so the reader tak
 effort. Package this as a Claude Code plugin `writ` (skill `up`, invoked `/writ:up`) so the
 procedure can be applied on demand to any draft, by a human or by Claude itself. Primary mode is
 brushing up an existing draft; authoring from scratch runs through the same procedure but is
-secondary. The verbatim instruction is preserved at `.rn/20260614-techting/instruction.md` as the
+secondary. The verbatim instruction is preserved at `.rn/20260614-writ/instruction.md` as the
 source of record, and the skill body is derived from it.
 
 **Purpose (the end):** a human-readable document. Concretely — the reader's cognitive load is low,
@@ -96,7 +96,7 @@ voice, and form from the reader and purpose rather than from memory or the old d
 - Scope: exactly one plugin `writ` and one skill `up`. The procedure lives inline in SKILL.md;
   it is not split into separate reference files (rn uses references, but this skill is self-contained
   in one file).
-- Source-of-record exception: `.rn/20260614-techting/instruction.md` stays in its original Japanese —
+- Source-of-record exception: `.rn/20260614-writ/instruction.md` stays in its original Japanese —
   it is the user's verbatim instruction, so translating it would corrupt the source. This is the one
   artifact exempt from the English rule.
 - Historical-record exception: Tasks #1–#5 below narrate work done under the plugin's original name
@@ -135,7 +135,7 @@ the heart of the plugin.
 - [x] State the brush-up frame: input = an existing draft, output = the revised document plus "what
       was changed and why"
 - [x] Cross-check against instruction.md item by item so no pillar or point is dropped (do not sample)
-- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/1.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/1.md`)
 - [x] QA engineer review (subagent)
 - [x] user review
 
@@ -163,7 +163,7 @@ and the root README.
       `./techting` / category `"writing"`, no version field)
 - [x] Add techting to the root `README.md` Plugins list (link to `./techting/README.md` + one-line
       description)
-- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/2.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/2.md`)
 - [x] QA engineer review (subagent)
 - [x] user review
 
@@ -185,7 +185,7 @@ and the root README.
 - [x] Run `claude plugin validate . --strict` (marketplace root) and clear every warning/error
 - [x] Run `claude -p "/techting:up …" --plugin-dir ./techting` and confirm the skill loads and starts
 - [x] If the CLI is unavailable, switch to manual verification and record that fact and the result
-- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/3.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/3.md`)
 - [x] QA engineer review (subagent)
 - [x] user review
 
@@ -205,7 +205,7 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 
 **Steps**:
 
-- [x] Rewrite `techting/skills/up/SKILL.md` from `.rn/20260614-techting/instruction.md`, fresh — do not patch
+- [x] Rewrite `techting/skills/up/SKILL.md` from `.rn/20260614-writ/instruction.md`, fresh — do not patch
       the old file. Frontmatter: third-person description with brush-up-first trigger phrases,
       model-invocable, version. Body in imperative form, lean (<2,000 words), single file.
 - [x] Separate the two layers in the body: process (model instructions) vs output rules (constraints
@@ -222,7 +222,7 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
       `## [0.1.0]`, since no release instruction has been given; promotes on release).
 - [x] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood with two
       different reader definitions to confirm Level B (voice/axis change).
-- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/4.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/4.md`)
 - [x] QA engineer review (subagent)
 - [ ] user review (on the PR)
 
@@ -262,7 +262,7 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
       pass** (Level A). **Level B dogfood (run the skill on a real draft) NOT yet done** — deferred
       to the Acceptance-criteria run, since Level B is a goal-level gate, not a step #5 can finish in
       isolation. This box stays open until that dogfood runs.
-- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/5.md`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/5.md`)
 - [x] QA engineer review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
 - [ ] user review (on the PR)
 
@@ -310,8 +310,8 @@ not a rebuild).
 - [x] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`
 - [x] Update PR #5's title and description to drop "technical-writing" framing and reflect the new
       plugin name (QA also caught stale session-dir links in the body — `.rn/techting/...` → 404 —
-      fixed to `.rn/20260614-techting/...`)
-- [x] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/6.md`)
+      fixed to `.rn/20260614-writ/...`)
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/6.md`)
 - [x] QA engineer review (subagent)
 - [ ] user review (on the PR)
 
@@ -340,7 +340,7 @@ so only a genuinely suspended session reads `paused`.)
   technical-writing-specific — only the name/framing narrowed it. QA independently confirmed the
   rename preserved git history and left the SKILL.md procedure byte-identical in substance (no scope
   creep), and caught a pre-existing stale-link defect in PR #5's body (`.rn/techting/...` → 404),
-  fixed to `.rn/20260614-techting/...`. Both strict validations pass. Task-level state: #1–#4 done;
+  fixed to `.rn/20260614-writ/...`. Both strict validations pass. Task-level state: #1–#4 done;
   #5 and #6 done except `[ ] user review (on the PR)`, both awaiting review on PR #5.
 - **Next**: User reviews PR #5 (tasks #5 and #6). Once approved, #5's remaining open box — the Level
   B dogfood (run `up` on a real draft with two different reader definitions, confirming voice/axis
