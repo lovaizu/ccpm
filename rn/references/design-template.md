@@ -106,7 +106,7 @@ Follow this instead of the Steps above when `planning-workflow.md`'s location ch
 2. **Revise only what changed.** Rewrite the decision-plus-reasoning answer for each h3 question the
    work changes; leave every other section's existing text untouched. Carrying forward unchanged text
    is correct, not lazy — do not discard and rewrite sections that still hold.
-3. **The question+decision+intent contract from fresh authoring still applies to whatever you touch.**
+3. **The decision-plus-reasoning contract from fresh authoring still applies to whatever you touch.**
    A revised h3 still owes the decision-plus-reasoning answer from Steps step 2 — updating does not
    relax it.
 4. **If the document predates the five-section shape** (e.g. it still uses an older Context &
