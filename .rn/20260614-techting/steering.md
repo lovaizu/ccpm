@@ -271,6 +271,54 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
   validations pass; the dogfood shows the AI tells removed and the report split into floor then
   ceiling.
 
+### #6: Rename the plugin `techting` → `writ` (skill stays `up`) and drop the "technical document" framing
+
+**Purpose**: The design content was never actually technical-writing-specific — the reader definition,
+five axes (sourced from Diátaxis/MADR/ADR guidance, D-6), and floor/ceiling AI-tell scrub apply to any
+document a person writes. Only the naming and framing narrowed it: plugin name `techting`, the title
+"technical writing, up a level", and "brush a **technical** document up" wording in `SKILL.md`,
+`plugin.json`, `CHANGELOG.md`, root `README.md`, and the marketplace entry. Rename the plugin to `writ`
+so `/writ:up` reads as "write it up" with no redundant "up up", and reword every "technical
+document"/"technical writing" occurrence to plain "document"/"writing" so the shipped artifacts match
+what the skill actually does.
+
+**Prerequisites**: #1–#5 (the packaging and SKILL.md content stand; this is a rename + rewording pass,
+not a rebuild).
+
+**Steps**:
+
+- [ ] `git mv techting writ` (directory rename, preserves history)
+- [ ] `writ/.claude-plugin/plugin.json`: `name` → `writ`; description drops "technical-writing" →
+      "reader-first document brush-up"
+- [ ] `writ/skills/up/SKILL.md`: frontmatter description and H1 drop "technical document" → "document";
+      confirm no other "technical" wording remains in the body (Reference section already generic)
+- [ ] `writ/README.md`: title, intro, install command (`writ@ccpm`), and invocation examples
+      (`/writ:up`) updated; drop "technical" from the title/intro line
+- [ ] `writ/CHANGELOG.md`: reword the `[Unreleased]` entries' "technical document" → "document"
+      (still unreleased, no need to preserve old wording as history)
+- [ ] `writ/docs/design.md`: rename references to `writ`/`/writ:up` throughout; add **(D-7) Renamed
+      `techting` → `writ`, skill stays `up`** documenting that the content was general-purpose from
+      the start (D-6's sourcing already proves this) and only the name/framing lagged
+- [ ] `.claude-plugin/marketplace.json`: `name` → `writ`, `source` → `./writ`, description reworded
+      (drop "technical-writing")
+- [ ] Root `README.md` Plugins list: link → `./writ/README.md`, entry text drops "Technical writing, up
+      a level" → a general document-brush-up description
+- [ ] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`
+- [ ] Update PR #5's title and description to drop "technical-writing" framing and reflect the new
+      plugin name
+- [ ] self-check (record OK/NG per criterion in `.rn/20260614-techting/checks/6.md`)
+- [ ] QA engineer review (subagent)
+- [ ] user review (on the PR)
+
+**Completion criteria**:
+
+- No file under `writ/`, `.claude-plugin/marketplace.json`, or root `README.md` contains "techting" or
+  "technical document"/"technical writing" in a scope-narrowing sense
+- `/writ:up` is the invocation shown everywhere (README, root README, plugin descriptions)
+- `claude plugin validate ./writ --strict` and `claude plugin validate . --strict` both pass
+- `design.md` records the rename decision (D-7) and its rationale
+- PR #5 title/description reflect the new name and general-document framing
+
 # State
 
 (written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
