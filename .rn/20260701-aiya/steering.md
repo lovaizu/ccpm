@@ -191,16 +191,16 @@ the root README.
 
 **Steps**:
 
-- [ ] Create `aiya/.claude-plugin/plugin.json` (name / description / version `0.1.0` / author).
-- [ ] Create `aiya/CHANGELOG.md` (`## [Unreleased]` on top).
-- [ ] Add an aiya entry to `.claude-plugin/marketplace.json` (no version field) and link aiya in the
+- [x] Create `aiya/.claude-plugin/plugin.json` (name / description / version `0.1.0` / author).
+- [x] Create `aiya/CHANGELOG.md` (`## [Unreleased]` on top).
+- [x] Add an aiya entry to `.claude-plugin/marketplace.json` (no version field) and link aiya in the
       root `README.md` Plugins list — in the same commit.
-- [ ] Run `claude plugin validate ./aiya --strict` and `claude plugin validate . --strict`; clear every
+- [x] Run `claude plugin validate ./aiya --strict` and `claude plugin validate . --strict`; clear every
       warning/error (or record manual verification if the CLI is absent).
-- [ ] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/4.md`)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check — validate output confirmed, not assumed)
+- [x] self-check (record OK/NG per criterion in `.rn/20260701-aiya/checks/4.md`)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check — validate output confirmed, not assumed)
 
 **Completion criteria**: both strict validations pass; marketplace.json and root README both list aiya
 and stay in sync; version lives only in plugin.json.
@@ -380,7 +380,9 @@ count, still discarded/non-accumulating per Turn).
 
 - **Status**: not suspended
 - **Date**: 2026-07-05
-- **Last completed**: #3 `aiya/README.md` — 3 review-fix rounds (`bc32d01`, `b2dd67a`, `bc8335b`) to
-  close a Verification FAIL, now QA/Craft/Verification all PASS
-- **Next**: #4 Package aiya and register it in the marketplace
+- **Last completed**: #4 Package aiya and register it in the marketplace — plugin.json/CHANGELOG.md
+  created, registered in marketplace.json + root README, both strict validations pass; one Craft
+  fix round (`36c279f`) replaced a fabricated term ("compressed-state contract") with plain,
+  README-traceable wording
+- **Next**: #5 Dogfood — build techting via aiya, measure ACC & TC under prompt control
 - **Notes**: branch `feature/smith-plugin`, PR #1. No open blockers.
