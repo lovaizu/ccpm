@@ -18,15 +18,17 @@ Treat every user interaction as a proposal: lead with one concrete recommended o
 
    Propose one recommended slug plus the alternatives and let the user confirm or pick (`AskUserQuestion` is fine). When already on a non-default branch, recommend that branch's name as the slug. Use the confirmed slug for the path.
 
-   Alongside the slug, decide the session's `design.md` location with the user. Before defaulting to a
-   new path, check whether an existing `design.md` already covers the session's work area — e.g. a
-   plugin's own canonical `docs/design.md`, or another session's `design.md` whose scope already
-   includes what this session designs. This is a judgment call on scope overlap, not a mechanical
-   file-existence check. If one covers the area, point this session's `Design:` line at it and treat
-   the work on it as an update — following design-template.md's "Updating an existing design.md"
-   procedure, not fresh authoring (e.g. this plugin's own session points at `rn/docs/design.md` rather
-   than authoring a new one). If none covers the area, default to `.rn/{yyyymmdd}-{slug}/design.md`
-   (lowercase), as usual.
+   Alongside the slug, decide the session's `design.md` location with the user. **Check for an existing
+   design.md first.** Before defaulting to a new path, check whether an existing `design.md` already
+   covers the session's work area — check this repo/plugin's own canonical `design.md` (e.g. this
+   plugin's own session points at `rn/docs/design.md`), and any other active session's `design.md` whose
+   `Design:` scope might overlap. This is a judgment call on scope overlap, not a mechanical
+   file-existence check. Coverage need not be complete: if an existing design.md covers the core of the
+   work's area, treat it as the update target and record the session's new-but-related content under the
+   sections it belongs to (adding new h3-level content is still "updating," not authoring fresh). If one
+   covers the area, point this session's `Design:` line at it and treat the work on it as an update —
+   following design-template.md's "Updating an existing design.md" procedure, not fresh authoring. If
+   none covers the area, default to `.rn/{yyyymmdd}-{slug}/design.md` (lowercase), as usual.
 
 3. **Create steering.md.** Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md` and follow its per-section guidance. Write the chosen design.md path into the template's top `Design:` line. Read the doc-division rule (in the template) and `${CLAUDE_PLUGIN_ROOT}/references/design-template.md`, then **allocate content at planning** per the doc-division: requirements & acceptance criteria → steering, structure & decisions → `design.md`, user-facing UX → README. Fill `Goal`, `Acceptance criteria`, `Assumptions`, and `Rules`. Leave `Tasks` and `State` as their placeholders for now. **Force no empty `design.md`**: a session with no design to record creates no `design.md` and omits the `Design:` line entirely (no file, no pointer), folding its design gate into the plan gate (Step 5) — never write an empty file and never leave a dangling pointer.
 
