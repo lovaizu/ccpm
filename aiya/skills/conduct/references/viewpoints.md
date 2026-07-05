@@ -9,15 +9,17 @@ with another entry into the same Turn — that is the point of deciding per view
 
 Curated from this repo's own review practice rather than invented from a blank page: `rn`'s Craft /
 Verification expert checklists (`task-verify-workflow.md`), the `code-modernization` plugin's
-`security-auditor` agent (OWASP/CWE-shaped coverage), the `pr-review-toolkit` / `feature-dev` plugins'
-`code-reviewer` agent, and standard technical-writing style-guide practice (e.g. Google's developer
-documentation style guide) for the writing set.
+`security-auditor` agent (OWASP/CWE-shaped coverage), and the `pr-review-toolkit` / `feature-dev` plugins'
+`code-reviewer` agent, for the coding set. The writing set draws on standard technical-writing
+style-guide practice (e.g. Google's developer documentation style guide).
 
 ## Coding
 
 Correctness and quality (from `task-verify-workflow.md`'s Craft/Verification checklists and the
 `code-reviewer` agent):
 
+- Class/method decomposition — a unit doing too much that should split, or an unnecessary split that
+  should merge.
 - Naming clarity and consistency with the codebase's existing conventions.
 - Error handling: failure paths handled, no silently swallowed errors.
 - Null / boundary handling: empty, max, and type-conversion cases.

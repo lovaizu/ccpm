@@ -135,8 +135,9 @@ domain concern (for code: e.g. decomposition, naming, thread-safety, a memory le
    N viewpoints is not nesting. Each runs in a **fresh context** and is told only:
    - its one viewpoint;
    - the **true goal** — read from the gate-approved `goal.md` / the Step intent fixed at the delivery
-     gate, **never** from the running CCS's `goal_orientation`. The CCS can drift; the gate-approved
-     document cannot silently drift under it, so it is the only trustworthy yardstick.
+     gate, **never** from the running CCS's `goal_orientation`. The gate-approved document stays fixed;
+     the CCS is what can drift, so the document is the only trustworthy yardstick.
+   - `approach.md`'s path, so it can check the approach's spec;
    - the artifact's path.
 
    Never pass it the generate-Turn's self-report, its CCS, or any hint of the expected verdict — it
@@ -196,7 +197,8 @@ met; present that confirmation at the gate like any other.
 - Never accumulate a CCS — always a fresh `tNNN.yaml`, never an append.
 - Never source a verify-Turn's "true goal" from the running CCS — always the gate-approved `goal.md` /
   fixed Step intent.
-- Never exceed 3 re-aim attempts on a Step without escalating to the human.
+- Never let a Step's total generate attempts (initial + re-aims) exceed 3 without escalating to the
+  human.
 
 ## Reference
 
