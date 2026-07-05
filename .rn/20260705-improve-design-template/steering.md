@@ -140,19 +140,20 @@ later mismatch is detectable.
 
 **Steps**:
 
-- [ ] add an `Rn version: <version>` line to `steering-template.md`'s template block, alongside
+- [x] add an `Rn version: <version>` line to `steering-template.md`'s template block, alongside
       `Design:`
-- [ ] update `planning-workflow.md`'s persist step (Step 5) to stamp this line with the currently
-      installed plugin's version when writing a new `steering.md`
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
+- [x] update `planning-workflow.md`'s field-filling step (Step 3, "Create steering.md" — where
+      `Design:` itself is already filled, not Step 5's disk/PR persist step) to stamp this line with
+      the currently installed plugin's version when writing a new `steering.md`
+- [x] self-check (OK/NG per completion criterion, record in checks/3.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
 
 **Completion criteria**:
 
 - `steering-template.md`'s template block includes `Rn version:` and per-field guidance for it
-- `planning-workflow.md`'s persist step names where the stamped value comes from (the installed
-  plugin's version)
+- `planning-workflow.md`'s field-filling step (Step 3) names where the stamped value comes from (the
+  installed plugin's version)
 
 ### #4: Author `migration-workflow.md`
 
