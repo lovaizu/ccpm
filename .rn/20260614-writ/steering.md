@@ -262,10 +262,11 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
       that order.
 - [x] Cross-check the result against the revised Goal and acceptance criteria item by item (do not
       sample); keep the body lean (<2,000 words) and the addressee sentence intact. Done: 1,900 words.
-- [ ] Re-validate: `claude plugin validate ./techting --strict` and `. --strict` — **done, both
-      pass** (Level A). **Level B dogfood (run the skill on a real draft) NOT yet done** — deferred
-      to the Acceptance-criteria run, since Level B is a goal-level gate, not a step #5 can finish in
-      isolation. This box stays open until that dogfood runs.
+- [x] Re-validate: `claude plugin validate ./techting --strict` and `. --strict` — both pass (Level A).
+      **Level B dogfood — done 2026-07-07**: ran `up` on a throwaway draft through two contrasting
+      reader definitions (see `checks/5.md`) — different axis and voice each time, mermaid rendered
+      when branching genuinely warranted it and skipped when a sentence carried the structure just as
+      fast, single axis held, floor clean in both runs.
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/5.md`)
 - [x] QA expert review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
 - [x] Craft expert review (subagent, writing)
