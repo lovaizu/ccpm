@@ -330,17 +330,8 @@ not a rebuild).
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-07-05
-- **Last completed**: Task #6 (renamed `techting` → `writ`, both strict validations pass) — no task
-  progress since the last suspend; this cycle only answered the user's question confirming
-  `writ/docs/design.md` conforms to `rn` 0.7.0's `design-template.md` and is consistent with `rn`'s
-  own `design.md` (matching table header wording, decision-labeling style). No doc edits resulted.
-- **Next**: User reviews PR #15 (tasks #4, #5, #6's outstanding `[ ] user review (on the PR)`). Once
-  approved, #5's remaining open box — the Level B dogfood (run `up` on a real draft with two
-  different reader definitions, confirming voice/axis change) — still needs to run before the
-  Acceptance-criteria run can close the session.
-- **Notes**: Branch `worktree-writ` (renamed from `worktree-techting`; PR #15 supersedes closed PR
-  #5 — same content, recreated after an earlier GitHub branch-rename attempt unexpectedly closed #5).
-  PR #15 is open, draft, unreviewed (confirmed via `gh pr view 15`). No blockers beyond the pending
-  review and the deferred Level B dogfood.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
