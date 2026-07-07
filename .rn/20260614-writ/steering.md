@@ -225,9 +225,9 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
       different reader definitions to confirm Level B (voice/axis change).
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/4.md`)
 - [x] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
@@ -236,6 +236,7 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 - All source pillars present; the self-check includes the single-axis (no-mixing) item.
 - The steering acceptance criteria use the Level A / Level B split from D-3.
 - `CHANGELOG.md` exists; both strict validations pass; the two-reader dogfood shows voice/axis change.
+  (dogfood deferred to the session's Level B acceptance run, per `checks/4.md`)
 
 ### #5: Add the floor (table-stakes) layer and the floor→ceiling order to SKILL.md
 
