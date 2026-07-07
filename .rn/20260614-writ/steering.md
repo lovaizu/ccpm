@@ -268,9 +268,9 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
       isolation. This box stays open until that dogfood runs.
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/5.md`)
 - [x] QA expert review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
