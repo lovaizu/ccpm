@@ -338,8 +338,18 @@ not a rebuild).
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-07-08
+- **Last completed**: #6 (rename to `writ`) and #5's Level B dogfood — all 6 tasks in steering.md are
+  now checked off; no unchecked task remains.
+- **Next**: No task remains, but no "Evaluation sign-off" task was ever defined in this steering.md —
+  per the rn workflow, finishing with zero unchecked tasks and no Evaluation sign-off task ever
+  encountered is a planning defect that must not close silently. On resume, escalate this to the user
+  before closing the session: either add a #7 Evaluation sign-off task (presenting the Level B
+  dogfood result + acceptance criteria for a `/rn:ty`/`/rn:gm` verdict), or present that same result
+  directly as the closing gate without a retroactive task. This choice was asked once already this
+  session and interrupted by `/rn:dn` — ask again on resume.
+- **Notes**: branch `worktree-writ`; live PR is **#15** (open; supersedes closed #5, which used the
+  stale `worktree-techting` branch name). User-deferred untracked path: `.rn/20260614-writ/dogfood/`
+  (this session's disposable two-reader dogfood test material — a throwaway draft the user described
+  as meant to be discarded; left untracked, not gitignored or committed, pending user direction).
