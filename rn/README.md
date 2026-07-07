@@ -1,6 +1,6 @@
 # rn — Right Now
 
-Start by naming a goal, and pick up right where you left off after any break. One task at a time, with quality built in as you go.
+Most AI agents need a carefully written prompt and constant watching to actually get a task done. `rn` doesn't — give it a goal, roughly, with `/rn:on`, and it takes over from there. You only come back in at the moments that are genuinely yours to decide; everything else just gets handled. That's the whole idea behind the name: you can start right now, with nothing prepared.
 
 ## Install
 
