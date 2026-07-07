@@ -1,6 +1,6 @@
 {
   "name": "rn",
   "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into verifiable tasks, open a draft PR for the plan, and execute task by task — a coordinator delegates hands-on work to domain experts and has each task reviewed behind the scenes, while you sign off only at plan, design, and evaluation (/rn:ty approve, /rn:gm revise) — resuming across conversations via a git-tracked steering.md.",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": { "name": "lovaizu" }
 }
