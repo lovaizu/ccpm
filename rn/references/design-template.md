@@ -4,61 +4,136 @@ Read when creating a session's `design.md` — the whole-structure design doc th
 to from its top `Design:` line. **Not read at runtime**: it records decisions and how the parts fit so
 whoever maintains the work can judge whether a change is still right.
 
+The h2 sections below are the canonical design-document sections; under each, the h3 headings are the
+questions that section must answer — a section is done when its questions are answered, not when its
+heading merely exists.
+
 ## Steps
 
-1. **Copy the template block below verbatim.** Keep every heading and the order of the five sections.
-2. **Fill each section per the guidance below.** A section with nothing to record can be dropped — but
-   if there is no design to record at all, write no `design.md` (an empty file is worse than none).
-3. **Keep rationale in Approach only.** Structure and Flow describe *what is*; Approach holds *why*, at
-   the decision level.
+This is the fresh-authoring path, for a `design.md` that doesn't exist yet — to update an existing one,
+skip to "Updating an existing design.md" at the end of this file instead.
+
+1. **Copy the template block below verbatim.** Keep every heading, numbering, and section order — the
+   five h2 sections and the h3 questions under them are the contract (Detailed design's `4.N` repeats
+   per mechanism — see step 3).
+2. **Answer every h3 question with a decision and the reasoning behind it** — not just what is, but why
+   it is that way. If a question does not apply, say so **and say why** — "not applicable" is itself an
+   answer, and it gets the same decision-plus-reasoning treatment as any other. Nothing here licenses a
+   section with a question left silently unanswered.
+3. **In Detailed design, repeat `4.N` once per mechanism or component the design introduces** — not a
+   fixed four; add or drop subsections to match what the design actually contains.
+4. **Treat the whole document as optional, not any section within it.** If there is no design to record
+   at all, write no `design.md` (an empty file is worse than none). But once you are writing one, no
+   section may be skipped for having "nothing to record" — an empty-seeming section still owes step 2's
+   decision-plus-reasoning answer, even if that answer is "not applicable."
 
 ---
 
 ```markdown
 # <name> — design notes
 
-Not read at runtime — for whoever maintains the procedures and needs to judge whether a step is still
+Not read at runtime — for whoever maintains the design and needs to judge whether a decision is still
 right when requirements change.
 
-## Context & constraints
+<every h3 below needs a decision-plus-reasoning answer — "not applicable" is an answer only when it says why>
 
-<the problem/situation this design addresses, and the fixed constraints it must respect>
+## 1. Background & Goals
 
-## Approach
+### 1.1 What is the goal?
 
-- **<decision>** — chosen over <rejected alternative>, which lost because <reason>.
-- **<decision>** — chosen over <rejected alternative>, which lost because <reason>.
+### 1.2 What goes wrong without this?
 
-## Structure
+### 1.3 What does reaching it require?
 
-| Actor | Responsibility |
-|---|---|
-| <actor> | <what it is responsible for> |
+### 1.4 What is out of scope?
 
-<mermaid diagram of how the actors wire together>
+## 2. Assumptions & Constraints
 
-## Flow
+### 2.1 What do we take as true?
 
-<mermaid diagram — flowchart or sequence diagram — of the end-to-end path>
+### 2.2 What binds the solution?
 
-## Open questions
+## 3. Design overview
 
-- <unresolved question / deferred decision>
+### 3.1 What is the core idea, and why does it solve the problem?
+
+### 3.2 What are the pieces, and what is each responsible for?
+
+### 3.3 How does work move?
+
+## 4. Detailed design
+
+<one 4.N subsection per mechanism/component the design introduces — repeat, do not cap at a fixed count>
+
+### 4.1 What does <mechanism> guarantee, and how is a breach caught?
+
+## 5. Alternatives considered
+
+### 5.1 Why this shape, and not another?
+
+### 5.2 What did we trade away?
 ```
 
 ---
 
 ## Per-section guidance
 
-- **Context & constraints** — state the problem and the fixed constraints plainly. This frames every
-  decision below; a reader who skips it should still be able to from here.
-- **Approach** — the key decisions, each paired with the alternative it beat and why. This is the
-  *one* place rationale lives, and it lives at the whole-structure level — a decision about the design,
-  never a per-line "because this step does X" memo. If a "why" is about a single step rather than a
-  design decision, it does not belong here (or anywhere in this doc).
-- **Structure** — the actors and how they wire together: a table of actor → responsibility, plus a
-  mermaid diagram (GitHub renders it; ASCII art does not survive rewrapping). Descriptive only — say what each actor *is* and does, not why; the why is already in
-  Approach.
-- **Flow** — the end-to-end path as a mermaid diagram (flowchart or sequence diagram) of what happens,
-  in order. A node states what occurs, not its justification.
-- **Open questions** — what is unresolved or deliberately deferred, so a maintainer knows the edges.
+- **Background & Goals** — the goal (1.1), what fails without it (1.2), what achieving it demands
+  (1.3), and what is deliberately out of scope (1.4). This frames every decision below; a reader who
+  reads only this section should already understand why the rest of the design exists.
+- **Assumptions & Constraints** — what is taken as true without re-litigating it (2.1), and what fixed
+  limits bind the solution (2.2 — platform limits, resource bounds, no-extra-infrastructure rules,
+  whatever actually constrains this design). This is the ground the Design overview stands on.
+- **Design overview** — the core idea and why it solves the problem (3.1), the pieces and what each is
+  responsible for (3.2), and how work moves between them (3.3). Answer at the level of the whole design,
+  not implementation detail — that belongs in Detailed design.
+- **Detailed design** — one `4.N` subsection per mechanism or component the design introduces (a queue, a
+  cache, a state file, a retry policy — whatever this design actually contains). Every subsection asks
+  the same pair of questions of its mechanism: what does it guarantee, and how is a breach of that
+  guarantee caught?
+- **Alternatives considered** — why this shape was chosen over another (5.1), and what was knowingly
+  traded away by choosing it (5.2). This is where costs the design does not solve get named as accepted
+  decisions, not left to be discovered later as oversights.
+
+## Updating an existing design.md
+
+Follow this instead of the Steps above when `planning-workflow.md`'s location check (Step 2) points
+`Design:` at an existing `design.md` rather than a fresh path — e.g. a plugin's own canonical
+`design.md` already covers the session's work area.
+
+1. **Read the existing document in full before touching it.** Identify which h3 questions the
+   session's work actually changes, and which answers remain accurate as written.
+2. **Revise only what changed.** Rewrite the decision-plus-reasoning answer for each h3 question the
+   work changes; leave every other section's existing text untouched. Carrying forward unchanged text
+   is correct, not lazy — do not discard and rewrite sections that still hold.
+3. **The decision-plus-reasoning contract from fresh authoring still applies to whatever you touch.**
+   A revised h3 still owes the decision-plus-reasoning answer from Steps step 2 — updating does not
+   relax it.
+4. **If the document predates the five-section shape** (e.g. it still uses an older Context &
+   constraints/Approach/Structure/Flow/Open questions shape), reconcile it toward the current
+   five-section shape as part of this update. Mapping to the new shape sometimes means relocating
+   content to the section it actually belongs to, not just renaming the heading it currently sits
+   under — e.g. trade-off/rejected-alternative reasoning that's currently embedded in an old
+   "Approach"-style section belongs under Alternatives considered, not Design overview, even though it
+   wasn't separated out before. Carry forward what is still accurate under its new (or relocated)
+   heading, and only re-derive the questions whose answers the session's work actually changes —
+   reconciling shape is reorganizing and completing what already exists, not license to rewrite
+   unrelated, still-accurate content. Reconciling structural drift across many documents at once is a
+   separate concern from this per-document update judgment call: `migration-workflow.md` reconciles a
+   session's own `design.md` automatically, but only while that session is active and its `steering.md`
+   `Rn version:` has gone stale — `design.md` carries no version stamp of its own, so a dormant or
+   closed session's `design.md` is never revisited that way, and this step remains the mechanism for
+   bringing such a document's shape current whenever this update procedure runs on it.
+5. **Give genuinely open content a destination outside `design.md`.** An old "Open questions" section
+   (or similarly open-ended content) has no analog in the new shape, since every h3 here needs a
+   decision-plus-reasoning answer. Resolve each item one of two ways: make the decision now, as part of
+   this update, or, if it is genuinely still undecided, relocate it — it does not belong in `design.md`
+   under the new contract. Where it goes depends on whether this `design.md` is scoped to the current
+   session alone or is a canonical document shared across sessions past and future (e.g.
+   `rn/docs/design.md`). Session-scoped: put it in that session's `steering.md` Notes field (per
+   steering-template.md's Notes guidance) — it will be reviewed and closed out along with the session.
+   Canonical/cross-session: track it outside `design.md` instead (e.g. a repo issue), since no single
+   session's Notes field survives once that session closes, and a canonical document's open questions
+   need to outlive any one session.
+6. **Add or drop `4.N` subsections to match what changed** (per Steps step 3 above) — a new mechanism
+   gets a new subsection, a removed one loses its subsection instead of being left stale.
