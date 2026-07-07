@@ -319,8 +319,8 @@ not a rebuild).
       fixed to `.rn/20260614-writ/...`)
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/6.md`)
 - [x] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check)
 
 **Completion criteria**:
 
