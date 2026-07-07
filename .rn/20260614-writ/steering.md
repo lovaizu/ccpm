@@ -1,3 +1,4 @@
+Rn version: 0.8.0
 Design: writ/docs/design.md
 
 # Goal
@@ -223,8 +224,10 @@ the diagram requirement targets the produced document, not the prompt. Keep the 
 - [x] Re-validate: `claude plugin validate ./techting --strict` and `. --strict`; dogfood with two
       different reader definitions to confirm Level B (voice/axis change).
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/4.md`)
-- [x] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [x] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check)
+- [ ] Design expert review (subagent)
 
 **Completion criteria**:
 
@@ -263,8 +266,10 @@ it). The Goal reframing (two-tier quality) and the revised acceptance criteria a
       to the Acceptance-criteria run, since Level B is a goal-level gate, not a step #5 can finish in
       isolation. This box stays open until that dogfood runs.
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/5.md`)
-- [x] QA engineer review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
-- [ ] user review (on the PR)
+- [x] QA expert review (subagent) — re-review PASS after one fix round (6-vs-7 floor mismatch fixed)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check)
+- [ ] Design expert review (subagent)
 
 **Completion criteria**:
 
@@ -312,8 +317,9 @@ not a rebuild).
       plugin name (QA also caught stale session-dir links in the body — `.rn/techting/...` → 404 —
       fixed to `.rn/20260614-writ/...`)
 - [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/6.md`)
-- [x] QA engineer review (subagent)
-- [ ] user review (on the PR)
+- [x] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check)
 
 **Completion criteria**:
 
@@ -330,8 +336,27 @@ not a rebuild).
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-07-07
+- **Last completed**: rn 0.7.0→0.8.0 migration reconciliation — stamped `Rn version: 0.8.0`; tasks
+  #4–#6's obsolete "user review (on the PR)" step replaced with the current convention's Craft
+  expert review + Verification expert review (+ Design expert review for #4 and #5, which revise
+  structure/approach) per `steering-template.md`'s Task definition requirements; `writ/docs/design.md`
+  reshaped from the old Context&constraints/Approach/Structure/Flow/Open-questions layout to 0.8.0's
+  Background & Goals / Assumptions & Constraints / Design overview / Detailed design / Alternatives
+  considered (h3-question) shape, carrying forward the existing D-1..D-7 decisions without inventing
+  new ones.
+- **Next**: Run the newly-required Craft/Verification/Design expert reviews for tasks #4–#6, then the
+  still-open Level B dogfood for task #5 (feed `up` a real draft — a disposable blog post about `rn`
+  — through two contrasting reader definitions: "developer who doesn't know rn yet" vs "existing rn
+  user reading a deep-dive," confirming voice/axis change, mermaid usage, single axis, and a clean
+  floor). User was mid-conversation clarifying this is the same test as the session's overall
+  Acceptance-criteria run, not a narrower task-#5-only check.
+- **Notes**: Branch `worktree-writ`, PR #15 (open, draft, `REVIEW_REQUIRED`,
+  https://github.com/lovaizu/ccpm/pull/15). Open structural gap: `steering.md` has no "Evaluation
+  sign-off" task, which the current 3-gate model (`task-verify-workflow.md`) requires to formally
+  close a session — undecided whether to add one now or fold its gate into presenting the
+  Acceptance-criteria dogfood result directly. PR #15's own per-task "user review" expectation is now
+  superseded by the reconciliation above; the user only signs off at the Evaluation gate, not per
+  task. The dogfood blog post is explicitly throwaway (user's words: "捨てる") — home is
+  `.rn/20260614-writ/dogfood/`, no permanent destination needed.
