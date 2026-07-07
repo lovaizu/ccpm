@@ -62,7 +62,7 @@ Render the outline into the document in the chosen voice and forms. Lead each pa
 
 ### 8. Brush up to the ceiling
 
-Raise it to the ceiling (Reference → [the two tiers](#the-two-tiers)) — this is where density, concreteness, and a single load-bearing thread come from.
+Raise the document to the ceiling (Reference → [the two tiers](#the-two-tiers), ceiling).
 
 ### 9. Clear the floor (the net)
 
