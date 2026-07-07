@@ -336,27 +336,8 @@ not a rebuild).
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-07-07
-- **Last completed**: rn 0.7.0→0.8.0 migration reconciliation — stamped `Rn version: 0.8.0`; tasks
-  #4–#6's obsolete "user review (on the PR)" step replaced with the current convention's Craft
-  expert review + Verification expert review (+ Design expert review for #4 and #5, which revise
-  structure/approach) per `steering-template.md`'s Task definition requirements; `writ/docs/design.md`
-  reshaped from the old Context&constraints/Approach/Structure/Flow/Open-questions layout to 0.8.0's
-  Background & Goals / Assumptions & Constraints / Design overview / Detailed design / Alternatives
-  considered (h3-question) shape, carrying forward the existing D-1..D-7 decisions without inventing
-  new ones.
-- **Next**: Run the newly-required Craft/Verification/Design expert reviews for tasks #4–#6, then the
-  still-open Level B dogfood for task #5 (feed `up` a real draft — a disposable blog post about `rn`
-  — through two contrasting reader definitions: "developer who doesn't know rn yet" vs "existing rn
-  user reading a deep-dive," confirming voice/axis change, mermaid usage, single axis, and a clean
-  floor). User was mid-conversation clarifying this is the same test as the session's overall
-  Acceptance-criteria run, not a narrower task-#5-only check.
-- **Notes**: Branch `worktree-writ`, PR #15 (open, draft, `REVIEW_REQUIRED`,
-  https://github.com/lovaizu/ccpm/pull/15). Open structural gap: `steering.md` has no "Evaluation
-  sign-off" task, which the current 3-gate model (`task-verify-workflow.md`) requires to formally
-  close a session — undecided whether to add one now or fold its gate into presenting the
-  Acceptance-criteria dogfood result directly. PR #15's own per-task "user review" expectation is now
-  superseded by the reconciliation above; the user only signs off at the Evaluation gate, not per
-  task. The dogfood blog post is explicitly throwaway (user's words: "捨てる") — home is
-  `.rn/20260614-writ/dogfood/`, no permanent destination needed.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
