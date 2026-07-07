@@ -8,7 +8,7 @@ version: 0.1.0
 
 Input: a draft to revise, or a topic to author. Output: the rebuilt document plus a what-changed note.
 
-Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must get across; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
+Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
 
 Two layers, kept apart:
 
@@ -33,7 +33,7 @@ Gate: if a line cannot be answered from the input, ask the user. On a headless r
 
 ### 3. Build the outline from the purpose
 
-Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. One axis only — off-axis material stays out of this document; name it in the what-changed note (what was left out, and where it belongs).
+Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. Off-axis material stays out of this document — name it in the what-changed note (what was left out, and where it belongs).
 
 Emit: the outline headings, specialized to this content.
 
@@ -45,14 +45,14 @@ Under each heading, drop the points it must carry as terse bullets — concrete 
 
 Become the reader from step 2 and read the filled outline top to bottom. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move.
 
-Gate: a reader reaches the purpose reading straight down.
+Gate: a reader reaches the purpose reading top to bottom.
 
 ### 6. Decide voice and form from purpose and story
 
 With the story standing, choose:
 
 - **Voice and closing** — Reference → [voice by reader](#voice-by-reader), as a start, not a verdict.
-- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)). Pick each for the reader's speed. Choosing form deliberately here is what stops lists from breeding and keeps a diagram where structure belongs.
+- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)). Pick each for the reader's speed. Choosing form deliberately here is what stops lists from breeding and keeps diagrams confined to where structure genuinely lives.
 
 Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
@@ -62,11 +62,11 @@ Render the outline into the document in the chosen voice and forms. Lead each pa
 
 ### 8. Brush up to the ceiling
 
-Raise what makes it worth reading (Reference → [the two tiers](#the-two-tiers), ceiling): density and concreteness, one load-bearing thread with the conclusion first, headings that carry the argument read alone, one voice held throughout.
+Raise it to the ceiling (Reference → [the two tiers](#the-two-tiers)) — this is where density, concreteness, and a single load-bearing thread come from.
 
 ### 9. Clear the floor (the net)
 
-Read the finished document once against the seven AI tells (Reference → [floor checklist](#floor-checklist-the-seven-ai-tells)). For each tell present, name it, quote the line, apply the fix.
+Read the finished document once against the seven AI tells (Reference → [floor checklist](#floor-checklist-the-seven-ai-tells)). For each tell present, name it, quote the line, apply the fix, and carry a one-line summary into the what-changed note.
 
 ### 10. Self-check and deliver
 
@@ -78,7 +78,7 @@ Mark each PASS or FAIL; any FAIL, fix and re-check. Ship only when all PASS.
 - [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
 - [ ] Voice and closing fit the step-2 reader (step 6) — one wrong voice held throughout still fails.
 - [ ] None of the seven tells remain (step 9).
-- [ ] Headings alone carry the argument.
+- [ ] Headings alone carry the argument (step 8).
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
 - [ ] Every claim carries its status — fact with source, hypothesis marked and testable, decision with intent; no unmarked assertion (Reference → [the two tiers](#the-two-tiers)).
 
@@ -101,7 +101,7 @@ Throughout: Markdown; every claim carries one of three statuses — a **fact** i
 
 ### The five axes
 
-One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; deep dives stay out — name them in the what-changed note where they belong, do not author them. A tutorial is the guide axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record axis specialized for an incident.
+One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
   1. The question (the why-question this document answers, 1–2 sentences)
