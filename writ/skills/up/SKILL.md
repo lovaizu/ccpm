@@ -161,4 +161,4 @@ Starting point, not a rulebook — the step-2 reader is the source of truth.
 | 4 | Flavorless connectives | "moreover" / "furthermore" / "in addition" with no real link | Remove, or write the real join |
 | 5 | Reflexive bulleting | A list whose items are not genuinely parallel | Write it as prose |
 | 6 | Wavering voice | Register or stance drifts mid-document | Hold one voice |
-| 7 | Hedging | "it is thought that" / "generally" / non-committal qualifiers | Assert, mark hypothesis, or state as decision (Reference → the two tiers) |
+| 7 | Hedging | "it is thought that" / "generally" / non-committal qualifiers | State it as fact, hypothesis, or decision |
