@@ -1,3 +1,4 @@
+Rn version: 0.8.0
 Design: aiya/docs/design.md
 
 # Goal
