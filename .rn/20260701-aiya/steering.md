@@ -379,11 +379,15 @@ count, still discarded/non-accumulating per Turn).
 
 # State
 
-- **Status**: not suspended
-- **Date**: 2026-07-05
+- **Status**: paused
+- **Date**: 2026-07-08
 - **Last completed**: #4 Package aiya and register it in the marketplace — plugin.json/CHANGELOG.md
   created, registered in marketplace.json + root README, both strict validations pass; one Craft
   fix round (`36c279f`) replaced a fabricated term ("compressed-state contract") with plain,
   README-traceable wording
 - **Next**: #5 Dogfood — build techting via aiya, measure ACC & TC under prompt control
-- **Notes**: branch `feature/smith-plugin`, PR #1. No open blockers.
+- **Notes**: branch `feature/smith-plugin`, PR #1. Mid-#5: acting as the aiya Conductor directly in
+  session (its gates need a live human, not a one-shot subagent) — the dogfood build lives at
+  `.aiya/techting/` (`goal.md` copied from `techting-requirements.md`, `approach.md` drafted).
+  Paused at aiya's own **G2 gate** on `.aiya/techting/approach.md` — resume by re-presenting that
+  gate; once approved, draft `delivery.md` next. No open blockers.
