@@ -379,15 +379,12 @@ count, still discarded/non-accumulating per Turn).
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-07-08
-- **Last completed**: #4 Package aiya and register it in the marketplace — plugin.json/CHANGELOG.md
-  created, registered in marketplace.json + root README, both strict validations pass; one Craft
-  fix round (`36c279f`) replaced a fabricated term ("compressed-state contract") with plain,
-  README-traceable wording
-- **Next**: #5 Dogfood — build techting via aiya, measure ACC & TC under prompt control
-- **Notes**: branch `feature/smith-plugin`, PR #1. Mid-#5: acting as the aiya Conductor directly in
-  session (its gates need a live human, not a one-shot subagent) — the dogfood build lives at
-  `.aiya/techting/` (`goal.md` copied from `techting-requirements.md`, `approach.md` drafted).
-  Paused at aiya's own **G2 gate** on `.aiya/techting/approach.md` — resume by re-presenting that
-  gate; once approved, draft `delivery.md` next. No open blockers.
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
