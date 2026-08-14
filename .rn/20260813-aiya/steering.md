@@ -83,12 +83,19 @@ later artifact answers to.
 
 **Steps**:
 
-- [ ] Agree this task's work steps with the user, then replace this line with them.
-- [ ] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/1.md`)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent)
+The experience was authored outside this session and confirmed sentence by sentence with the user,
+landing as `aiya/README.md` (the experience) and `aiya/docs/design.md`. This task therefore reduces to
+the one criterion the delivered set cannot self-certify: that nothing it shows rests on a mechanism
+that was not confirmed to exist.
+
+- [ ] Extract every platform-dependent claim the delivered set makes — what it asserts Claude Code can do
+- [ ] Settle each against real evidence: official documentation, the official plugin sources on disk,
+      and a headless probe where neither decides it
+- [ ] Record OK/NG per claim, with its evidence, in `.rn/20260813-aiya/checks/1.md`
+- [ ] For each NG, propose the fix with its rationale and trade-offs, and take the user's ruling before
+      any edit — `README.md` and `design.md` are not touched until then
+- [ ] ~~QA / Craft / Design expert reviews~~ — not run: they propose wording and structure changes to a
+      set the owner already ratified sentence by sentence
 
 **Completion criteria**:
 
