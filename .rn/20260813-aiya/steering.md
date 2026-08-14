@@ -158,9 +158,19 @@ built on them.
 
 **Prerequisites**: #3.
 
-**Steps**:
+**Steps** (agreed 2026-08-15 — the Conductor ships as a Claude-only skill, `user-invocable: false`,
+confirmed against the official skills reference; the five command words are thin entries into it;
+design §2's part inventory is amended to match, per the user's ruling in-session):
 
-- [ ] Agree this task's work steps with the user, then replace this line with them.
+- [ ] Skeleton: `aiya/.claude-plugin/plugin.json` (version 0.1.0) and `aiya/CHANGELOG.md`, per
+      `.claude/rules/plugin.md`
+- [ ] Three Turn definitions in `aiya/agents/` — generate / verify / brief — tools pinned per design
+      §2/§4.4/§5.1: no spawn tool, no user-question tool, bounded returns
+- [ ] Conductor skill (`user-invocable: false`) carrying §4's procedure, plus five thin entry skills
+      `on` / `ty` / `gm` / `dn` / `up`
+- [ ] Amend design §2's part inventory: six skills (five command words + the Claude-only conductor)
+- [ ] Trace every design contract to where it ships (recorded as evidence in checks/4.md)
+- [ ] Validate: `claude plugin validate aiya --strict` passes; headless probe of one skill
 - [ ] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
