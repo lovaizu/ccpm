@@ -162,16 +162,24 @@ built on them.
 confirmed against the official skills reference; the five command words are thin entries into it;
 design §2's part inventory is amended to match, per the user's ruling in-session):
 
-- [ ] Skeleton: `aiya/.claude-plugin/plugin.json` (version 0.1.0) and `aiya/CHANGELOG.md`, per
-      `.claude/rules/plugin.md`
-- [ ] Three Turn definitions in `aiya/agents/` — generate / verify / brief — tools pinned per design
-      §2/§4.4/§5.1: no spawn tool, no user-question tool, bounded returns
-- [ ] Conductor skill (`user-invocable: false`) carrying §4's procedure, plus five thin entry skills
-      `on` / `ty` / `gm` / `dn` / `up`
-- [ ] Amend design §2's part inventory: six skills (five command words + the Claude-only conductor)
-- [ ] Trace every design contract to where it ships (recorded as evidence in checks/4.md)
-- [ ] Validate: `claude plugin validate aiya --strict` passes; headless probe of one skill
-- [ ] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`)
+- [x] Skeleton: `aiya/.claude-plugin/plugin.json` (version 0.1.0) and `aiya/CHANGELOG.md`, per
+      `.claude/rules/plugin.md` (5b8f4c3)
+- [x] Three Turn definitions in `aiya/agents/` — turn-generate / turn-verify / turn-brief (naming
+      ruled 2026-08-15) — tools pinned per design §2/§4.4/§5.1: no spawn tool, no user-question
+      tool, bounded returns (5b8f4c3)
+- [x] Conductor skill (`user-invocable: false`) carrying §4's procedure, plus five thin entry skills
+      `on` / `ty` / `gm` / `dn` / `up` (5b8f4c3)
+- [x] Amend design §2's part inventory: six skills (five command words + the Claude-only conductor)
+      (f1d870f)
+- [x] Trace every design contract to where it ships (recorded as evidence in checks/4.md; one patch
+      round for §5.4's symptom→remedy table, 2ee0d49)
+- [x] Validate: `claude plugin validate aiya --strict` passes; headless probe of one skill
+      (both passed; validate re-run by the coordinator, no warnings)
+- [ ] Rule on the three escalated defaults the build surfaced — branch/PR mechanics, where approved
+      versions are recorded, entry-skill invocation control — and apply the rulings via the
+      implementation expert (user chose to discuss each rather than pick from options)
+- [x] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`) — written by the
+      implementation expert, all three criteria OK; review columns await the Verify round
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
 - [ ] Verification expert review (subagent, fact-check)
@@ -249,4 +257,15 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
+- **Status**: paused
+- **Date**: 2026-08-15
+- **Last completed**: #3 Design sign-off
+- **Next**: #4 Build the plugin so it runs (build done and pushed; three escalated defaults await
+  discussion, then Verify)
+- **Notes**: branch `worktree-aiya`, PR #19. Plugin built by the implementation expert (5b8f4c3,
+  f1d870f, 2ee0d49; validate --strict clean, headless probe passed); checks/4.md self-check done,
+  review columns empty. Pending: user discussion of the three escalated defaults — (1) branch/PR
+  creation (when/naming; console presented three shapes, discussion of this one was opened),
+  (2) where approved versions (G1-v1) are recorded, (3) `disable-model-invocation` on the five entry
+  skills. On resume: continue that discussion one point at a time starting with (1); after rulings,
+  apply via implementation expert, then run QA/Design/Craft/Verification reviews.
