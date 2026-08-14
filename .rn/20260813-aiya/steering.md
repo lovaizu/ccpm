@@ -238,8 +238,12 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-08-15
+- **Last completed**: #2 Complete the design against that experience
+- **Next**: #3 Design sign-off (gate presented, verdict pending)
+- **Notes**: branch `worktree-aiya`, PR #19. The 11 rulings were applied (5eddb5e), re-checked, and
+  the task-#2 ledger committed (0008469). The design gate was presented in console 2026-08-15:
+  README.md (experience) + docs/design.md (design) on PR #19, verdict via `/rn:ty` or `/rn:gm`. On
+  resume, re-present that gate — task #3 is a sign-off task, no build work precedes it. No blockers,
+  no user-deferred paths.
