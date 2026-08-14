@@ -88,13 +88,14 @@ landing as `aiya/README.md` (the experience) and `aiya/docs/design.md`. This tas
 the one criterion the delivered set cannot self-certify: that nothing it shows rests on a mechanism
 that was not confirmed to exist.
 
-- [ ] Extract every platform-dependent claim the delivered set makes — what it asserts Claude Code can do
-- [ ] Settle each against real evidence: official documentation, the official plugin sources on disk,
+- [x] Extract every platform-dependent claim the delivered set makes — what it asserts Claude Code can do
+- [x] Settle each against real evidence: official documentation, the official plugin sources on disk,
       and a headless probe where neither decides it
-- [ ] Record OK/NG per claim, with its evidence, in `.rn/20260813-aiya/checks/1.md`
-- [ ] For each NG, propose the fix with its rationale and trade-offs, and take the user's ruling before
-      any edit — `README.md` and `design.md` are not touched until then
-- [ ] ~~QA / Craft / Design expert reviews~~ — not run: they propose wording and structure changes to a
+- [x] Record OK/NG per claim, with its evidence, in `.rn/20260813-aiya/checks/1.md`
+- [x] For each NG, propose the fix with its rationale and trade-offs, and take the user's ruling before
+      any edit — `README.md` and `design.md` are not touched until then (ruled 2026-08-14: NG-3 → A
+      plus a hardening line in Trade-offs; NG-7 → resolved by citation; the rest as proposed)
+- [x] ~~QA / Craft / Design expert reviews~~ — not run: they propose wording and structure changes to a
       set the owner already ratified sentence by sentence
 
 **Completion criteria**:
