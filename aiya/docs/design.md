@@ -38,7 +38,7 @@ flowchart LR
 **There are two walls.**
 
 - **The Conductor never touches the real work.** It reads only a bounded state that folds up the preceding work (**CCS**), judgments (**Verdict**), approved phase documents, and paths. It does not read even the contents of a worker's first-person report (**Report**). This wall is what keeps the Conductor's context from growing with the work — half the answer to bounded context.
-- **Turns never nest.** Only the Conductor spawns. A Turn starts from a fresh context, returns something bounded, and is discarded. Nesting would place work outside the Conductor's sight, where neither the attempt cap nor the return contract can reach.
+- **Turns never nest.** Only the Conductor spawns. A Turn starts from a fresh context, returns something bounded, and is discarded. Nesting would place work outside the Conductor's sight, where neither the attempt cap nor the return contract can reach. The platform itself permits nesting by default — aiya's Turn definitions omit the spawn tool, so a Turn has nothing to spawn with.
 
 The walls are built from platform facts: a subagent starts from a fresh context, and the only thing that reaches the caller is what it returns. These are not invented boundaries. No controller program is written — the loop is carried by procedural prose — so any rule that cannot be made structural is at best **default and observable** (cheapest to follow, and leaving a trace when broken), never guaranteed.
 
@@ -160,7 +160,7 @@ flowchart LR
 
 ### 4.2 Waves — Bundle and run together
 
-**Steps with no unmet dependency form a wave and may be dispatched together.** A wave of width one is the sequential case. Waves have no file — they are a runtime fact derived each time from the Plan's consumes.
+**Steps with no unmet dependency form a wave and may be dispatched together.** A wave of width one is the sequential case. Waves have no file — they are a runtime fact derived each time from the Plan's consumes. The platform caps concurrently running Turns (20 by default); a wave wider than the cap is dispatched in slices as slots free up. Slicing changes throughput, not correctness — Turn(brief) still runs once per wave, after every Step has settled.
 
 Progress is a **per-Step pipeline**. Each Step advances independently through generate → verify → (re-aim if needed); Step A's verify can run while Step B's generate runs. The wave does not march in lockstep.
 
@@ -196,7 +196,7 @@ Three phases connect intent to execution. Each phase has a Plan (drafted and re-
 
 **The yardstick is fixed per phase.** Delivery is verified against Purpose and Approach; Approach against Purpose. Purpose has no prior document — it is the head of the chain — so it is verified for **evidential soundness** instead: every claim has a source, contradictions are surfaced rather than silently resolved, the unknown is declared unknown, and the success criteria are decidable as written. Research is verified by the same standard — "outside the gates" means not subject to human approval, not unexamined.
 
-**Drafting the Purpose is divided.** Elicitation is the Conductor's own touchpoint at the chat surface — holding the purpose includes asking for it, and Turns cannot talk to people. But the Conductor **does not draft**: answers are written to file on the spot (under research/ — never existing only in the Conductor's context), passed along with investigation findings as paths, and Turn(generate) drafts the Purpose. Whoever writes a document must read it, and the Conductor does neither. Until the human approves at G1, it is not the purpose.
+**Drafting the Purpose is divided.** Elicitation is the Conductor's own touchpoint at the chat surface — holding the purpose includes asking for it, and Turns do not talk to people: the user-question tool is excluded from all three Turn definitions. But the Conductor **does not draft**: answers are written to file on the spot (under research/ — never existing only in the Conductor's context), passed along with investigation findings as paths, and Turn(generate) drafts the Purpose. Whoever writes a document must read it, and the Conductor does neither. Until the human approves at G1, it is not the purpose.
 
 **Gates: 3 phases × {in, out} = six.** G is short for Gate; only the outputs — later referenced as yardsticks — carry the numbers G1–G3:
 
@@ -206,7 +206,7 @@ Three phases connect intent to execution. Each phase has a Plan (drafted and re-
 | **Approach** | The Steps that will produce the Approach | **G2** — Approach approved |
 | **Delivery** | The Steps and their dependencies | **G3** — verification confirms the success criteria; the human accepts |
 
-At every gate the Conductor stops, posts a bounded summary on the existing async chat surface, and waits. The human corrects course rather than rubber-stamping. Between gates the Conductor self-runs — re-planning included.
+At every gate the Conductor stops, posts a bounded summary in the console, points to the artifact on the PR, and waits — the summary is for deciding to look, the PR is where the document is actually read. The human corrects course rather than rubber-stamping. Between gates the Conductor self-runs within a dispatch round — re-planning included; across rounds the loop re-enters from file state (§4.5's resume point), which is why a stop between rounds loses nothing.
 
 **Approvals carry versions.** A document re-approved after a `/gm` is a new version, and **Verdicts measured against the old version are invalidated** — the affected Steps are re-verified, and only a fail against the new yardstick triggers a re-aim. A Verdict records for itself which version it measured against, so finding the invalidated ones takes a grep.
 
@@ -230,7 +230,7 @@ Every Turn keeps five rules:
 4. **Returns something bounded.** Turn(generate): paths to product and Report plus one line of completion. Turn(verify): the Verdict. Turn(brief): the CCS path. Never raw output, never a transcript.
 5. **Leaves no context behind.** Its context does not survive it — what remains is the bounded return and what it wrote to disk. Born for one job, returns, and is gone.
 
-**Catching breaches.** Rules 1–2 are structural — fresh contexts come from the platform, and a work order that spawns nothing cannot nest. Rule 4 the Conductor checks on every return: it is bounded, or it is not.
+**Catching breaches.** Rule 1 is structural — fresh contexts come from the platform. Rule 2 is structural once made — the spawn tool is absent from every Turn definition, and a tool left out of a definition is not in the Turn's session at all. Rule 4 the Conductor checks on every return: it is bounded, or it is not.
 
 ### 5.2 Turn(generate) — Product and Report
 
@@ -383,7 +383,7 @@ Worked example: references/plan.md.
 
 **Never does**: domain work. Read the real work (including Report contents). Draft products (not even the Purpose — whoever writes must read). Interfere with a Turn's judgment (never pass the expected verdict). Change a yardstick.
 
-**Doubt becomes a Step.** If it can be written as a viewpoint, add it and re-measure; if it is an open question, put an investigation Step on the Plan. Investigating by oneself will, at some moment, feel faster than delegating — this rule exists for that moment. Where the implementation allows, read-class tools may be cut off from the Conductor — part of this wall can be made physical.
+**Doubt becomes a Step.** If it can be written as a viewpoint, add it and re-measure; if it is an open question, put an investigation Step on the Plan. Investigating by oneself will, at some moment, feel faster than delegating — this rule exists for that moment. This wall cannot be made physical: the Conductor's own working state is files, so it cannot lose the ability to read. The wall is an instruction — kept by pinning each Turn's tools in its definition while the Conductor's stay open, and observable when broken (the tell below).
 
 **The complete intake list**: the latest CCS, bounded Verdicts, approved phase documents, the current Plan, and paths. Anything else in its context means a broken wall — and the trace is the Conductor mentioning content that no return contained.
 
@@ -414,7 +414,7 @@ This measures the loop's efficiency, not human productivity — 10× itself is n
 
 **Costs paid.** Stated so they are read as accepted, not overlooked:
 
-- **Guaranteed enforcement.** Rules are default and observable, never technically blocked. That prompt compliance suffices is the bet.
+- **Guaranteed enforcement.** Rules are default and observable, never technically blocked. That prompt compliance suffices is the bet. If dogfooding falsifies it, a hook that blocks the Conductor's reads of the real work by path is the hardening to reach for — after measuring, not before.
 - **Turn cost per Step.** N verifies plus one brief per wave, and a re-aim pays the round again. Independence is bought with this overhead, and the instruments keep the bill visible.
 - **First-person fidelity.** A third-person record thins the lived detail of the work. The Report carries some of it into the CCS, but second-hand by construction.
 - **Correctness of declared independence.** A wave is only as safe as its dependency declarations; one missed dependency corrupts the whole wave at once. That is the price of parallelism, and why dependencies are verified in the Plan and reviewed at the gate rather than inferred.
