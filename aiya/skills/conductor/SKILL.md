@@ -78,6 +78,8 @@ Each Step runs its own pipeline, advancing independently of its wave-mates:
 
 Once every Step in the wave has settled, dispatch **one Turn(brief)** — however wide the wave — with the wave's product and Report paths, the fixed yardstick, the aggregated Verdicts, the Plan path, and the next `ccs/tNNN.yaml` path. It returns one CCS path. Your working state *is* that latest CCS — keep no growing summary of your own.
 
+A bloated CCS is a health signal about Step scope, and the symptom names the remedy: too many `focal_entities` → split the Step; a tangled `relational_map` → narrow the scope; a piling `uncertainty_signal` → insert a Step whose product is that resolution.
+
 Then read the CCS and ask three things, in order: **Are we closer to the purpose?** (position against the yardstick). **What was discovered?** (an inventory of facts). **What is the shortest Plan from here?** — plan **from zero** out of the current position and the discoveries, never by amending the current Plan. A fresh plan that matches the current one means proceed; where it differs, the difference is the revision (recorded and re-verified per §4). Never let the current Plan become the default with discoveries bearing the burden of proof. Then decide: the next wave, or the phase's gate.
 
 ## 7. The Purpose phase's split drafting
