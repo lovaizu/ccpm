@@ -233,11 +233,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-14
-- **Last completed**: #1 Decide what using aiya is like
-- **Next**: #2 Complete the design against that experience
-- **Notes**: branch `worktree-aiya`, PR #19. #2's work steps are agreed and recorded in its Steps —
-  start executing them directly. Fact-check evidence and the seven rulings live in
-  `.rn/20260813-aiya/checks/1.md`; the C-option (path-scoped read-block hook) is deliberately deferred
-  to post-dogfood hardening, noted in design.md §7. No blockers, no user-deferred paths.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
