@@ -257,15 +257,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-15
-- **Last completed**: #3 Design sign-off
-- **Next**: #4 Build the plugin so it runs (build done and pushed; three escalated defaults await
-  discussion, then Verify)
-- **Notes**: branch `worktree-aiya`, PR #19. Plugin built by the implementation expert (5b8f4c3,
-  f1d870f, 2ee0d49; validate --strict clean, headless probe passed); checks/4.md self-check done,
-  review columns empty. Pending: user discussion of the three escalated defaults — (1) branch/PR
-  creation (when/naming; console presented three shapes, discussion of this one was opened),
-  (2) where approved versions (G1-v1) are recorded, (3) `disable-model-invocation` on the five entry
-  skills. On resume: continue that discussion one point at a time starting with (1); after rulings,
-  apply via implementation expert, then run QA/Design/Craft/Verification reviews.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
