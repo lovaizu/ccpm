@@ -223,14 +223,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-13
-- **Last completed**: none — no task has started; this steering was rewritten before #1
-- **Next**: #1 Decide what using aiya is like
-- **Notes**: branch `worktree-aiya`, PR #19, single commit. **Next action: agree #1's work steps with
-  the user** — per the Rules, #1 cannot start before that. **One pending decision:** the task list was
-  cut from 8 to 7 by folding the old "viewpoint catalog" task into #4, and the user has not ruled on
-  it. Nothing about the UX is decided: `design.md`'s `/ty` `/gm`, `.aiya/<issue>/` and its 6 gates are
-  carried forward but unratified, and a string on disk is not a decision (see Rules). An earlier
-  `aiya/README.md` and a PoC write-up were deliberately deleted — do not restore them. No blockers, no
-  deferred paths.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
