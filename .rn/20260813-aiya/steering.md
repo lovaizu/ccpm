@@ -115,13 +115,17 @@ that was not confirmed to exist.
 **Steps** (agreed 2026-08-14 — the body is owner-ratified, so this task is cross-checking, not
 authoring; NGs are proposed with rationale and ruled on before any edit):
 
-- [ ] Term check, exhaustive: every load-bearing term in `design.md` defined before first use, and
+- [x] Term check, exhaustive: every load-bearing term in `design.md` defined before first use, and
       naming aligned with the seven formats in `references/`
-- [ ] README ↔ design contradiction check: every behavior the README promises (6 gates, two words,
+- [x] README ↔ design contradiction check: every behavior the README promises (6 gates, two words,
       five commands, 3-strikes escalation, …) is carried by the design
-- [ ] Ripple check on the seven ruled fixes from #1: the inserted sentences do not collide with their
+- [x] Ripple check on the seven ruled fixes from #1: the inserted sentences do not collide with their
       surroundings
-- [ ] Record OK/NG in `.rn/20260813-aiya/checks/2.md`; NGs await the user's ruling
+- [x] Record OK/NG in `.rn/20260813-aiya/checks/2.md`; NGs await the user's ruling (recorded:
+      49 OK / 11 NG, all proposals only, `README.md`/`design.md` untouched; coordinator verified every
+      cited line)
+- [ ] Take the user's ruling on the 11 NGs, apply the ruled fixes via the implementation expert, and
+      re-check the fix sites against their surroundings
 
 **Completion criteria**:
 
@@ -233,8 +237,13 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-15
+- **Last completed**: #1 Decide what using aiya is like
+- **Next**: #2 Complete the design against that experience (in progress — awaiting rulings)
+- **Notes**: branch `worktree-aiya`, PR #19. #2's three checks are done and recorded in
+  `.rn/20260813-aiya/checks/2.md` (commit 2955605): 49 OK / 11 NG, proposals only, `README.md` and
+  `design.md` untouched. Next concrete action: take the user's ruling on the 11 NGs (summary was
+  presented in console 2026-08-14; NG-10 addendum — `references/plan.md:3` carries the same "alone"
+  phrasing, ruling should cover whether it changes too), then dispatch the implementation expert to
+  apply the ruled fixes and re-check the fix sites. No blockers, no user-deferred paths.
