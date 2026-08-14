@@ -124,8 +124,9 @@ authoring; NGs are proposed with rationale and ruled on before any edit):
 - [x] Record OK/NG in `.rn/20260813-aiya/checks/2.md`; NGs await the user's ruling (recorded:
       49 OK / 11 NG, all proposals only, `README.md`/`design.md` untouched; coordinator verified every
       cited line)
-- [ ] Take the user's ruling on the 11 NGs, apply the ruled fixes via the implementation expert, and
-      re-check the fix sites against their surroundings
+- [x] Take the user's ruling on the 11 NGs, apply the ruled fixes via the implementation expert, and
+      re-check the fix sites against their surroundings (ruled 2026-08-15: all 11 as proposed, NG-9
+      design-side, NG-6 at 2,000 bytes, NG-10 covering plan.md:3; applied in 5eddb5e, re-checked)
 
 **Completion criteria**:
 
