@@ -270,7 +270,7 @@ evidence: tests/export_boundary — 1 of 5 patterns failing
 
 ### 5.4 Turn(brief) — The CCS
 
-The **CCS (Compressed Cognitive State)** is the bounded state carried between Steps — the Conductor's working state, and the only thing a re-aimed or subsequent Turn inherits. One file per Turn(brief), **replacement semantics**: a fresh file each time, never appended.
+The **CCS (Compressed Cognitive State)** is the bounded state carried between Steps — the Conductor's working state, and the only thing a re-aimed or subsequent Turn inherits. The name and the nine-component schema below are adopted from Bousetouane, ["AI Agents Need Memory Control Over More Context"](https://arxiv.org/abs/2601.11653) (2026). One file per Turn(brief), **replacement semantics**: a fresh file each time, never appended.
 
 **Written by Turn(brief), after verification.** Two consequences follow, and both are the point:
 
@@ -410,7 +410,7 @@ This measures the loop's efficiency, not human productivity — 10× itself is n
 - **A catalog of content-specific agents** — growing agent definitions per kind of work (reviewer, designer, …). Discarded because: the catalog multiplies without bound, and definition contents shape work quality outside the Conductor's sight. Roles stop at three — generate / verify / brief — and the content travels as parameters.
 - **Improvised work orders** — writing each Turn's instructions from scratch. Discarded because: drafting stays with the Conductor as a temptation to stray, long instructions fatten the history, and wording variance makes verification's independence depend on how orders happen to be written. Passing fill-ins to three static definitions is faster, thinner, steadier.
 - **Conductor-drafted products** — discarded because whoever writes must read, and the no-reading wall is credible only when the Conductor has no reason to read.
-- **State recorded by its author** — having Turn(generate) write the CCS. Discarded because: the Conductor's entire picture of the run would pass through an interested party's account, and the verdict would be pushed into a second channel beside the CCS. The nine-component cognitive structure of the CCS is adopted from research literature; aiya's contribution is the operating rules — post-verdict, third-person, replacement, product-wins, invalidation.
+- **State recorded by its author** — having Turn(generate) write the CCS. Discarded because: the Conductor's entire picture of the run would pass through an interested party's account, and the verdict would be pushed into a second channel beside the CCS. The nine-component cognitive structure of the CCS is adopted from Bousetouane's CCS schema (arXiv:2601.11653, cited in §5.4); aiya's contribution is the operating rules — post-verdict, third-person, replacement, product-wins, invalidation.
 
 **Costs paid.** Stated so they are read as accepted, not overlooked:
 
