@@ -1,6 +1,6 @@
 # Writing the Plan
 
-Each phase's execution plan. **One per phase — but a living document, re-planned while running.** One shared format across the three phases, and the single thing the human reviews at a Planning Gate. The whole point: **whether items may be bundled and run at the same time is decided mechanically, from the consumes lines alone.**
+Each phase's execution plan. **One per phase — but a living document, re-planned while running.** One shared format across the three phases, and the single thing the human reviews at a Planning Gate. The whole point: **whether items may be bundled and run at the same time is decided mechanically, from the consumes lines — plus one guard: two items that write the same file are never bundled.**
 
 ## What each line is for
 

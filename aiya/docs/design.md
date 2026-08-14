@@ -40,7 +40,7 @@ flowchart LR
 - **The Conductor never touches the real work.** It reads only a bounded state that folds up the preceding work (**CCS**), judgments (**Verdict**), approved phase documents, and paths. It does not read even the contents of a worker's first-person report (**Report**). This wall is what keeps the Conductor's context from growing with the work — half the answer to bounded context.
 - **Turns never nest.** Only the Conductor spawns. A Turn starts from a fresh context, returns something bounded, and is discarded. Nesting would place work outside the Conductor's sight, where neither the attempt cap nor the return contract can reach. The platform itself permits nesting by default — aiya's Turn definitions omit the spawn tool, so a Turn has nothing to spawn with.
 
-The walls are built from platform facts: a subagent starts from a fresh context, and the only thing that reaches the caller is what it returns. These are not invented boundaries. No controller program is written — the loop is carried by procedural prose — so any rule that cannot be made structural is at best **default and observable** (cheapest to follow, and leaving a trace when broken), never guaranteed.
+The walls are built from platform facts: a subagent starts from a fresh context, and the only thing that reaches the caller is what it returns. These are not invented boundaries. No controller program is written — the loop is carried by procedural prose — so any rule that cannot be made structural is at best **default and observable** (cheapest to follow, and leaving a trace when broken), never guaranteed. On that platform the plugin is exactly three kinds of part: five skills (the command words, §3.1) plus three agent definitions (the Turns) plus the references/ formats. The Conductor is the main session executing the skills' procedural prose. There is no other executable part.
 
 That is the borrowed skeleton. aiya stands on three claims above it.
 
@@ -56,11 +56,11 @@ The two properties are answered by two mechanisms that implement these claims. F
 
 ### 3.1 Parts and vocabulary — Phase / Plan / Step / Turn
 
-**Work proceeds in three Phases.** Purpose (why) → Approach (how) → Delivery (execution). Each Phase holds one **Plan** — its Steps and their dependencies — and a **Step** is one Plan item, whose work is carried by exactly one Turn(generate).
+**Work proceeds in three Phases.** Purpose (why) → Approach (how) → Delivery (execution). Each Phase holds one **Plan** — its Steps and their dependencies — and a **Step** is one Plan item, whose work is carried by one Turn(generate) per attempt.
 
 **Turns are one kind; work orders come in three types.** Turn(generate) makes, Turn(verify) judges, Turn(brief) writes the state the next work starts from. The three correspond one-to-one to the three skills assumed of an LLM — do a unit of domain work and report on it; judge with no prior context; consolidate several accounts into one fixed-shape state — and every Turn exercises exactly one. A work order is dispatched by passing minimal parameters (paths and a few lines of instruction) into one of three static definitions: the procedure is static, the content is parameters. Work too big for one Turn is split into more flat Turns, never nested ones.
 
-**There are six gates.** Three phases × {review the Plan on the way in, review the product on the way out}. The human replies with two words — `/ty` (approve) and `/gm` (send back). Fix the vocabulary here: **machines verify (pass/fail against a fixed yardstick); humans review (approve or redirect — correcting direction)**. Humans do not verify — that is a Turn's job.
+**There are six gates.** Three phases × {review the Plan on the way in, review the product on the way out}. The human replies with two words — `ty` (approve) and `gm` (send back): two of the plugin's five command words, with the suspend/resume pair `dn` / `up` (§4.5) and the start word `on` — the full forms are the README's vocabulary. Fix the vocabulary here: **machines verify (pass/fail against a fixed yardstick); humans review (approve or redirect — correcting direction)**. Humans do not verify — that is a Turn's job.
 
 **Investigation is first-class work.** Eliciting a vague intent, surveying an existing system, spiking a technology — each is work with a product, not a preamble to work. This premise shapes everything that follows.
 
@@ -88,9 +88,9 @@ Beside the chain, execution leaves records. **They never become yardsticks.**
 | Record | What it is | Written by |
 |---|---|---|
 | **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) |
-| **Verdict** | One viewpoint's judgment: pass/fail with a gap, and evidence | Turn(verify), itself |
+| **Verdict** | One viewpoint's judgment (a viewpoint is one independently checkable concern — §5.3): pass/fail with a gap, and evidence | Turn(verify), itself |
 | **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) |
-| **Research** | The product of an investigation Step, verified for evidential soundness | Turn(generate) |
+| **Research** | The product of an investigation Step, verified for evidential soundness (§4.4) | Turn(generate) |
 
 ### 3.4 The ownership ledger
 
@@ -98,7 +98,7 @@ Beside the chain, execution leaves records. **They never become yardsticks.**
 
 | Product | Written by | Verified by (machine) | Reviewed and owned by (human) |
 |---|---|---|---|
-| Plan ×3 | Conductor | Turn(verify) — aiya's fixed viewpoints | Human (Planning Gate) |
+| Plan ×3 | Conductor | Turn(verify) — aiya's fixed viewpoints | Human (Planning Gate — each phase's in-gate, §4.4) |
 | Purpose | Turn(generate) | Turn(verify) — evidential soundness | Human (G1) |
 | Approach | Turn(generate) | Turn(verify) — against Purpose | Human (G2) |
 | Deliverable | Turn(generate) | Turn(verify) — Purpose + Approach + the Step's pass condition (done when) | Human (G3) |
@@ -133,7 +133,7 @@ Logical names map to physical layout exactly once, here. One directory per unit 
   research/   investigation products     # Research, referenced by path
 ```
 
-Formats and worked examples for every product are in references/ — Purpose / Approach / Decision / Plan / Report per unit of work, and UX / Design per product (Design being this document's own format).
+Formats and worked examples are in references/ — Purpose / Approach / Decision / Plan / Report per unit of work, and UX / Design per product (Design being this document's own format). Research alone has no fixed format, deliberately: an investigation's product is free-form, verified for evidential soundness (§4.4), and referenced by path.
 
 ## 4. Behavior — How work flows
 
@@ -160,7 +160,7 @@ flowchart LR
 
 ### 4.2 Waves — Bundle and run together
 
-**Steps with no unmet dependency form a wave and may be dispatched together.** A wave of width one is the sequential case. Waves have no file — they are a runtime fact derived each time from the Plan's consumes. The platform caps concurrently running Turns (20 by default); a wave wider than the cap is dispatched in slices as slots free up. Slicing changes throughput, not correctness — Turn(brief) still runs once per wave, after every Step has settled.
+**Steps with no unmet dependency form a wave and may be dispatched together.** A wave of width one is the sequential case. Waves have no file — they are a runtime fact derived each time from the Plan's consumes — each item's declared inputs (§5.5). The platform caps concurrently running Turns (20 by default); a wave wider than the cap is dispatched in slices as slots free up. Slicing changes throughput, not correctness — Turn(brief) still runs once per wave, after every Step has settled.
 
 Progress is a **per-Step pipeline**. Each Step advances independently through generate → verify → (re-aim if needed); Step A's verify can run while Step B's generate runs. The wave does not march in lockstep.
 
@@ -206,15 +206,15 @@ Three phases connect intent to execution. Each phase has a Plan (drafted and re-
 | **Approach** | The Steps that will produce the Approach | **G2** — Approach approved |
 | **Delivery** | The Steps and their dependencies | **G3** — verification confirms the success criteria; the human accepts |
 
-At every gate the Conductor stops, posts a bounded summary in the console, points to the artifact on the PR, and waits — the summary is for deciding to look, the PR is where the document is actually read. The human corrects course rather than rubber-stamping. Between gates the Conductor self-runs within a dispatch round — re-planning included; across rounds the loop re-enters from file state (§4.5's resume point), which is why a stop between rounds loses nothing.
+At every gate the Conductor stops, posts a bounded summary in the console, points to the artifact on the PR, and waits — the summary is for deciding to look, the PR is where the document is actually read. The human corrects course rather than rubber-stamping. With no argument, `gm` takes the PR's review comments as the send-back feedback. Between gates the Conductor self-runs within a **dispatch round** — one continuous run between two stops (a gate, or `dn`): within it the Conductor keeps dispatching and re-planning on its own; a round ends when the Conductor stops and waits, and the next one re-enters from file state (§4.5's resume point), which is why a stop between rounds loses nothing. Between gates the Conductor also keeps a progress board current on the console — waves, running items, attempts.
 
-**Approvals carry versions.** A document re-approved after a `/gm` is a new version, and **Verdicts measured against the old version are invalidated** — the affected Steps are re-verified, and only a fail against the new yardstick triggers a re-aim. A Verdict records for itself which version it measured against, so finding the invalidated ones takes a grep.
+**Approvals carry versions.** A document re-approved after a `gm` is a new version, and **Verdicts measured against the old version are invalidated** — the affected Steps are re-verified, and only a fail against the new yardstick triggers a re-aim. A Verdict records for itself which version it measured against, so finding the invalidated ones takes a grep.
 
 ### 4.5 Suspend and resume
 
 **The latest CCS + the approved phase documents + the current Plan are the entire resume point.** A run suspended mid-way and reopened in a fresh conversation re-reads exactly what the next wave would have read, and continues. Resume is not a special case bolted on — it is the between-wave handoff exercised across a conversation boundary, which is why nothing extra is saved on stopping.
 
-**What is bounded is the working state, not the history.** The Conductor's transcript grows with the number of Turns — filled-in work orders and bounded returns accumulate. The design can only minimize the coefficient (returns are paths and Verdicts only; Report contents never pass through), and the cycling is carried by `dn` → `/clear` → `up`. Because the resume point is complete in the three items above, `/clear` loses nothing — suspension is routine operation, not exception handling.
+**What is bounded is the working state, not the history.** The Conductor's transcript grows with the number of Turns — filled-in work orders and bounded returns accumulate. The design can only minimize the coefficient (returns are paths and Verdicts only; Report contents never pass through), and the cycling is carried by `dn` → `/clear` → `up`. `dn` commits and pushes the run records, so the resume point survives the machine as well as the conversation. Because the resume point is complete in the three items above, `/clear` loses nothing — suspension is routine operation, not exception handling.
 
 ## 5. Rules — Each part's rules, and how breaches are caught
 
@@ -335,7 +335,7 @@ retrieved_artifacts:
 **Four rules keep it bounded:**
 
 1. **Real work by path, never inlined.** No source, transcript, or full log is pasted in. Grep-checkable.
-2. **A stated size budget (soft cap).** Exceeding it is a health signal, not a license to grow. A list that grows monotonically across Steps is a property of the product: carry a count or a path, never the enumeration. The CCS is bounded and sub-linear, not byte-constant.
+2. **A stated size budget (soft cap).** As a starting heuristic — to be refined in use, not a measured rule — the cap is 2,000 bytes. Exceeding it is a health signal, not a license to grow. A list that grows monotonically across Steps is a property of the product: carry a count or a path, never the enumeration. The CCS is bounded and sub-linear, not byte-constant.
 3. **The Conductor's intake is the latest CCS plus bounded Verdicts, nothing more.** Its working state *is* the latest CCS; it keeps no growing summary of its own.
 4. **One CCS per wave, however wide.** Convergence happens inside Turn(brief), where reading several products is allowed.
 
@@ -375,7 +375,7 @@ Worked example: references/plan.md.
 
 **The split rule.** An item found too big for one Turn is split into new items. New items' attempt counters start fresh; partial products may be counted in the new items' consumes. The original item's history lives in the change log.
 
-**Catching breaches.** Format breaks and consumes lies are caught by the fixed-viewpoint verify. Unrecorded change shows as a mismatch between the Plan's version and its change log. Crossing the discretion line — the Conductor rewriting a yardstick — is prevented by the yardstick itself being an approved, non-replaceable file: change requires a gate, and gates have humans.
+**Catching breaches.** Format breaks and consumes lies are caught by the fixed-viewpoint verify. Unrecorded change shows as a mismatch between the Plan's version and its change log. Crossing the discretion line — the Conductor rewriting a yardstick — is caught, not blocked: a yardstick is changed legitimately only through a gate, so an edition with no gate approval behind it — no new approved version, no `gm`/`ty` exchange — is observable in the document's version and the file's history.
 
 ### 5.6 Conductor — What it does, what it never does
 

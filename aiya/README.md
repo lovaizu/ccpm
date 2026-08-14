@@ -75,6 +75,13 @@ These criteria become the yardstick for everything verified afterward. To adjust
 
 ### 2. The approach settles
 
+Approve with `/aiya:ty`, and the next stop arrives at once — the plan for settling the approach.
+
+```console
+● 👉 Confirm the plan for settling the approach ── 3 investigations, 2 bundled
+  If this looks right, /aiya:ty
+```
+
 After your `/aiya:ty`, the investigations that decide the approach run. Again, you just wait.
 
 ```console
@@ -100,7 +107,7 @@ Reply `/aiya:ty` and the delivery plan appears. Pieces with no dependency on eac
   👉 If this works, /aiya:ty
 ```
 
-> The plan format is in [references/plan.md](references/plan.md) — whether items may be bundled is decided by their consumes lines alone.
+> The plan format is in [references/plan.md](references/plan.md) — whether items may be bundled is decided by their consumes lines — plus one guard: two items that write the same file are never bundled.
 
 Approve it, and nothing stops until the success criteria are met. Progress is always visible like this:
 
