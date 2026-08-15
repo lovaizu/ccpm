@@ -314,16 +314,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-16
-- **Last completed**: #3 Design sign-off (#4 in progress: rulings (iii)–(vi) and review rounds 2–3
-  applied and pushed through d741e39; rulings (vii)(viii) pending)
-- **Next**: #4 — re-present ruling (vii) (resume/completion mechanics: branch recorded at `on` /
-  restored at `up` / verified by record before commit; `closed` marker at G3 final settle;
-  `dn` mid-wave records only what settled — proposal already presented, verdict pending), apply if
-  approved; then present ruling (viii) (three README fixes listed in the task step), apply if
-  approved
-- **Notes**: branch `worktree-aiya`, PR #19. After (vii)(viii): targeted re-review of all fix
-  sites from rounds 2–3 and rulings (iv)–(viii), fill the review columns in `checks/4.md`, then
-  check off #4. `checks/4.md` self-check columns are current through the gate-stop fix; review
-  columns still empty.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
