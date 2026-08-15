@@ -45,7 +45,7 @@ A rough purpose is fine.
   If this looks right, /aiya:ty — the interview starts immediately
 ```
 
-Reply `/aiya:ty`, and you get asked first.
+Reply `/aiya:ty`, and you are asked before anything is researched.
 
 ```console
 ● Just three questions.
@@ -56,7 +56,7 @@ Reply `/aiya:ty`, and you get asked first.
 > For tax filing — handing it to my accountant. It must open in Excel as-is. The memo field must never be exported.
 
 ● Thank you. Running 2 investigations at once — demand inventory ∥ data survey
-  (purpose.md will be drafted to the PR when they finish)
+  (purpose.md will be drafted and pushed to the PR when they finish)
 ```
 
 A little later, the first big checkpoint arrives. Your words and the research findings have become a document with success criteria.
@@ -69,13 +69,13 @@ A little later, the first big checkpoint arrives. Your words and the research fi
   ⬜ Approach / Delivery
 ```
 
-> The format and a worked example of the purpose.md you read here are in [references/purpose.md](references/purpose.md) — including what each chapter is for.
+> The format and a worked example of the purpose.md you review at G1 are in [references/purpose.md](references/purpose.md) — including what each chapter is for.
 
 These criteria become the yardstick for everything verified afterward. To adjust, just reply with one line: `/aiya:gm last 3 years of data is enough`.
 
 ### 2. The approach settles
 
-Approve with `/aiya:ty`, and the next stop arrives at once — the plan for settling the approach.
+Approve with `/aiya:ty`, and the next checkpoint arrives at once — the plan for settling the approach.
 
 ```console
 ● 👉 Confirm the plan for settling the approach ── 3 investigations, 2 bundled
@@ -86,7 +86,7 @@ After your `/aiya:ty`, the investigations that decide the approach run. Again, y
 
 ```console
 ● Settling the approach. 3 investigations (2 at once):
-  data-volume measurement ∥ encoding behavior in real Excel / streaming-write spike
+  data-volume measurement ∥ encoding behavior in real Excel → streaming-write spike
   → approach.md will be drafted and shown at G2
 
 ● 👉 G2: approve approach.md ── encoding is UTF-8 with BOM, output is streamed.
@@ -104,10 +104,10 @@ Reply `/aiya:ty` and the delivery plan appears. Pieces with no dependency on eac
   Wave 1  #1 query & streaming base ∥ #2 CSV serialization & encoding ∥ #3 download UI
   Wave 2  #4 export API (after #1 #2)
   Wave 3  #5 integration & full-criteria verification (after #3 #4)
-  👉 If this works, /aiya:ty
+  👉 If this looks right, /aiya:ty
 ```
 
-> The plan format is in [references/plan.md](references/plan.md) — whether items may be bundled is decided by their consumes lines — plus one guard: two items that write the same file are never bundled.
+> The plan format is in [references/plan.md](references/plan.md) — whether items may be bundled is decided by each item's `consumes` line — the inputs it takes from earlier items — plus one guard: two items that write the same file are never bundled.
 
 Approve it, and nothing stops until the success criteria are met. Progress is always visible like this:
 
@@ -119,14 +119,14 @@ Approve it, and nothing stops until the success criteria are met. Progress is al
   ⬜ Wave 3  #5
 ```
 
-Failures and redos are things you are told about after the fact — your hands are not needed. Only when the same item fails three straight times does the decision come to you, failure record attached.
+Failures and redos are things you are told about after the fact — your hands are not needed. Only when the same item fails three times in a row does the decision come to you, with the failure history attached.
 
 The final checkpoint is the very success criteria you approved at the start.
 
 ```console
 ● 👉 G3: success-criteria verification ── all 4 pass (evidence on the PR)
      count & amount reconcile ✓ / opens clean in real Excel ✓ / 120k rows in 21s ✓ / memo field: 0 hits ✓
-  /aiya:ty completes the session
+  /aiya:ty completes the job
 ```
 
 ### 4. Pause and resume — `/aiya:dn` and `/aiya:up`
@@ -158,11 +158,11 @@ Every checkpoint takes the same two-word vocabulary:
 
 Six checkpoints, one way to answer. No room left to wonder how to reply.
 
-The walkthrough above shows GitHub, but the run works the same on GitLab — or with no git at all, reviewing the files right on your disk. Exactly two things need more than a disk: `/aiya:gm` with no argument picks up comments only where there's a PR or MR to hold them, and surviving a lost machine takes a remote. Everything else is identical.
+The walkthrough above shows GitHub, but the run works the same on GitLab — or with no git at all, reviewing the files right on your disk. Exactly two things need more than a disk: `/aiya:gm` alone needs a PR or MR to hold the comments it picks up, and surviving a lost machine needs a remote. Everything else is identical.
 
 ## About the name
 
-**aiya** is *Agents In Your Area* — the feel of hiring the builders down the street. Tell them the goal, and they come by to ask questions, show you the work plan, put a crew in at the same time, pass inspection, and hand it over. And yes — in Chinese, *aiya* (哎呀) is the little cry for when something goes sideways. We know. For a tool this relaxed, it fits.
+**aiya** is *Agents In Your Area* — the feel of hiring the builders down the street. Tell them the goal, and they come by to ask questions, show you the work plan, put a whole crew in at once, pass inspection, and hand it over. And yes — in Chinese, *aiya* (哎呀) is the little cry for when something goes sideways. We know. For a tool this relaxed, it fits.
 
 Five command words, that's all:
 
