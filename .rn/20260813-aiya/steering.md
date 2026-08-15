@@ -201,16 +201,23 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       mechanical findings triaged Valid and applied (5e56a18); install-instructions finding deferred
       to #5 (its whole purpose); remaining findings resolved into the ruled fix and pending rulings
       below
-- [ ] Apply the ruled gate-stop fix (implementation expert): ① conductor/on — the Conductor drafts
+- [x] Apply the ruled gate-stop fix (implementation expert): ① conductor/on — the Conductor drafts
       the Plan, then dispatches Turn(record) to push it, then stops at the gate (no new machinery;
       Turn ordering only; ruled 2026-08-15 — the history/-universalization and approval-marker
       proposals were rejected: git backends read approval from git, `history/` stays local-only,
       approval needs no dedicated record); ② up — when "at the gate" vs "just approved" cannot be
-      told apart from files, re-present the pending gate (safe side, costs one `ty`)
+      told apart from files, re-present the pending gate (safe side, costs one `ty`) (applied in
+      ff609f4: conductor §3/§8/§9, on, up, design §4.4/§5.5/§4.5)
 - [ ] Take the remaining small rulings, one at a time: (i) README wording ×3 (Craft F13–15;
-      owner-ratified text, needs approval), (ii) whether the bare-`gm` comments file joins the
-      Conductor's intake list (Design F5), (iii) softening the design's "new backend never touches
-      the Conductor's procedure" claim (Design F6)
+      owner-ratified text, needs approval) — round-1 texts were lost with the conversation, so
+      re-derived by a README-scoped Craft scan: 14 findings, ruled 2026-08-15 as 11 apply / 3 reject
+      (taste-level rewrites of ratified voice rejected), applied in 69331bc; (ii) whether the
+      bare-`gm` comments file joins the Conductor's intake list (Design F5) — ruled 2026-08-15:
+      yes, gate feedback (the `gm` line and the fetched comments file) becomes the sixth intake
+      item, steering input not work content, applied in 7f09188 (conductor §1/§8, design §2/§5.7);
+      (iii) softening the design's "new backend never touches the Conductor's procedure" claim
+      (Design F6) — proposal presented (design.md:63/:252: the loop stays untouched, but a new
+      backend registers itself in the Conductor's detection roster), awaiting the user's verdict
 - [ ] QA expert review (subagent) — re-run on the fixed state
 - [ ] Craft expert review (subagent, writing) — re-run on the fixed state
 - [ ] Verification expert review (subagent, fact-check) — re-run on the fixed state
@@ -288,8 +295,15 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-15
+- **Last completed**: #3 Design sign-off (#4 in progress: gate-stop fix and rulings (i)(ii) applied
+  and pushed; ruling (iii) presented, verdict pending)
+- **Next**: #4 — take the user's verdict on ruling (iii) (soften design.md:63/:252 "never a change
+  to the Conductor's procedure" → the loop stays untouched but a new backend registers in the
+  Conductor's detection roster; proposal already presented, re-present it on resume), apply if
+  approved, then re-run the four expert reviews
+- **Notes**: branch `worktree-aiya`, PR #19. After ruling (iii): re-run QA / Craft (writing) /
+  Verification (fact-check) / Design expert reviews on the fixed state, triage, fill the review
+  columns in `checks/4.md`, then check off #4. `checks/4.md` self-check columns are current through
+  the gate-stop fix (committed in this suspend's wip commit).
