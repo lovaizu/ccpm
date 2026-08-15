@@ -184,8 +184,8 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       `on`, wave-settle commit after brief, gate commits and `gm` comment fetch, `dn` sweep); only
       record ever commits, at wave granularity, so every commit is a complete resume point — (1)'s
       branch/PR timing is absorbed into record-github
-- [ ] Amend `aiya/docs/design.md` to carry those rulings (implementation expert), push, and take the
-      user's review on the PR
+- [x] Amend `aiya/docs/design.md` to carry those rulings (implementation expert), push, and take the
+      user's review on the PR (applied in b1a1237; approved 2026-08-15, "設計改訂はOK")
 - [ ] Ripple the amended design into the build: conductor skill, agents (add turn-record adapters),
       entry skills, README mode note (implementation expert)
 - [ ] Rule on the remaining escalated defaults — (2) where approved versions (G1-v1) are recorded,
@@ -269,8 +269,13 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-08-15
+- **Last completed**: #3 Design sign-off
+- **Next**: #4 Build the plugin so it runs (design amendment b1a1237 approved; next step is the
+  build ripple)
+- **Notes**: branch `worktree-aiya`, PR #19. The record-role architecture ruling and the approved
+  design amendment are recorded in this task's step list above. On resume: dispatch the
+  implementation expert for the build ripple (conductor skill, three `turn-record-*` adapters, entry
+  skills, README mode note — per design §3.1/§3.5/§4.2/§4.5/§5.5), then discuss remaining escalated
+  defaults (2) and (3) one at a time, then run the QA/Design/Craft/Verification reviews.
