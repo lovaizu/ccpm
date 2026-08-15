@@ -31,7 +31,8 @@ One directory per unit of work, named with a short slug of the purpose (e.g. `cs
   ccs/        tNNN.yaml                  # CCS chain (replacement semantics; one chain per run)
   verdicts/   one file per judgment      # step, viewpoint, attempt readable from the filename
   reports/    one file per Turn          # item number and attempt readable from the filename
-  research/   investigation products     # free-form, referenced by path
+  research/   investigation products,    # free-form, referenced by path
+              elicit answers             # written by you (§7)
   history/    purpose@G1-v1.md, …        # approved editions, archived at gate resolution (written under the local backend)
 ```
 
@@ -41,7 +42,7 @@ One directory per unit of work, named with a short slug of the purpose (e.g. `cs
 
 ## 3. Phases and gates
 
-Work proceeds Purpose (why) → Approach (how) → Delivery (execution). Each phase holds one Plan; a Step is one Plan item, carried by one Turn(generate) per attempt. Investigation is first-class work in every phase — eliciting, surveying, spiking each have a product.
+Work proceeds Purpose (why) → Approach (how) → Delivery (execution). Each phase holds one Plan; a Step is one Plan item. Plan items come in two kinds, split by the wall: an item whose work produces an on-disk product is carried by one Turn(generate) per attempt; an item whose work **is** conversation with the human — an elicit item — is carried by you at the chat surface, the one seat that can talk to a person (Turns ship without the user-question tool), and its product is the answer files you write under `research/` (§7). Verify, the attempt cap, and the keep rate apply only to Turn-carried items. Investigation is first-class work in every phase — eliciting, surveying, spiking each have a product.
 
 Six gates = 3 phases × {Planning Gate on the way in (reviews the Plan), Output Gate on the way out (reviews the product)}. Only the outputs carry numbers: **G1** Purpose approved, **G2** Approach approved, **G3** verification confirms the success criteria and the human accepts. At every gate: stop, post a bounded console summary, point at the artifact on the review surface (§2), and wait for `ty` (approve) or `gm` (send back). A gate points only at an artifact already on the surface: an Output Gate's product got there with its wave's Turn(record) (§6), but a freshly drafted or reworked Plan has no wave settle behind it — so before stopping at a Planning Gate, dispatch the run's Turn(record) with the Plan's path (the explicit-path shape of a wave settle, with no CCS yet to hand it) to carry the Plan into the durable record and onto the surface: committed and pushed under github/gitlab; confirmed and reported under local, where the file on disk is the surface. Humans review — they correct direction; they never verify — pass/fail against a yardstick is always a Turn(verify)'s job.
 
@@ -68,9 +69,9 @@ The yardstick passed with these checks follows §5's rule: for Plan(Purpose) it 
 
 ## 5. Dispatching a wave
 
-**Steps with no unmet dependency form a wave** and may be dispatched together. Waves have no file — derive them each time from the Plan's consumes lines, with one guard: two items that write the same file are never bundled. The platform caps concurrent subagents (20 by default); a wider wave is dispatched in slices as slots free — slicing changes throughput, not correctness.
+**Steps with no unmet dependency form a wave** and may be dispatched together. Waves have no file — derive them each time from the Plan's consumes lines, with one guard: two items that write the same file are never bundled. The platform caps concurrent subagents (20 by default); a wider wave is dispatched in slices as slots free — slicing changes throughput, not correctness. An elicit item takes none of the pipeline below: you conduct the interview yourself at the chat surface and write the answers under `research/` (§7).
 
-Each Step runs its own pipeline, advancing independently of its wave-mates:
+Each Turn-carried Step runs its own pipeline, advancing independently of its wave-mates:
 
 1. **Turn(generate)** — dispatch with the Step's three lines, the yardstick paths, input paths, item and attempt numbers, and the Report path. It returns product and Report paths plus one line.
 2. **Turn(verify) × viewpoint, independent and in parallel** — one flat Turn per viewpoint. The default viewpoints are two — the Step's done when, and the relevant criteria of the phase yardstick — plus each viewpoint the Plan item declares. Each is told its one viewpoint, the fixed yardstick, the product's path, and the dispatch identifiers — step and attempt numbers, and the Verdict path to write to — never the Report, never the expected judgment. The yardstick is passed as `path@G<n>-vN` from G1 on; in the Purpose phase, and for any Research product, no gate-approved document exists yet, so pass `evidential-soundness` in its place — the verifier records it as `yardstick: evidential-soundness`. It writes its Verdict itself and returns the same content.
@@ -114,6 +115,6 @@ Three ratios, all readable after a run from `verdicts/` (attempts in filenames a
 | **Escalation rate** | Steps stopped at the cap ÷ all Steps. |
 | **Verification overhead** | (Turn(verify)s + Turn(brief)s + Turn(record)s) ÷ Turn(generate)s. |
 
-Turn(record) enters the overhead ratio deliberately: it is run-keeping like brief, and every Turn the loop pays beyond generate belongs in the bill it must justify. Turn(record)s are the commit history itself — one commit per wave plus the `on` / gate / `dn` events and the pre-Planning-Gate Plan pushes, one per Plan draft or Planning-Gate rework; under the local backend, which commits nothing, the same count is the CCS chain's length plus those events.
+Turn(record) enters the overhead ratio deliberately: it is run-keeping like brief, and every Turn the loop pays beyond generate belongs in the bill it must justify. Elicit items (§3) dispatch no Turn(generate) and carry no attempt cap, so they enter none of the three counts. Turn(record)s are the commit history itself — one commit per wave plus the `on` / gate / `dn` events and the pre-Planning-Gate Plan pushes, one per Plan draft or Planning-Gate rework; under the local backend, which commits nothing, the same count is the CCS chain's length plus those events.
 
 As a starting heuristic, a keep rate below 50% means the loop costs more than it saves — the remedy is narrower Steps, not more attempts. These measure the loop, not the human; the design's own yardsticks are bounded context and drift detection.

@@ -56,7 +56,7 @@ The two properties are answered by two mechanisms that implement these claims. F
 
 ### 3.1 Parts and vocabulary — Phase / Plan / Step / Turn
 
-**Work proceeds in three Phases.** Purpose (why) → Approach (how) → Delivery (execution). Each Phase holds one **Plan** — its Steps and their dependencies — and a **Step** is one Plan item, whose work is carried by one Turn(generate) per attempt.
+**Work proceeds in three Phases.** Purpose (why) → Approach (how) → Delivery (execution). Each Phase holds one **Plan** — its Steps and their dependencies — and a **Step** is one Plan item. Plan items come in two kinds, and the wall decides who carries each: an item whose work produces an on-disk product is carried by one Turn(generate) per attempt; an item whose work **is** conversation with the human — an **elicit** item — is carried by the Conductor itself at the chat surface, the one seat that can talk to a person (Turns ship without the user-question tool — §5.1). An elicit item's product is the answer files the Conductor writes under `research/` (§4.4); verify, the attempt cap, and the keep rate apply only to Turn-carried items.
 
 **Turns are one kind; roles come in three families.** **generate** makes the work, **verify** measures it, and **run-keeping** sustains the run itself. The run-keeping family holds two roles: **brief**, the cognitive record — writing the state (CCS) the next work starts from — and **record**, the physical record — performing every operation against the run's platform backend (§3.5 defines backends and the review surface): commits, pushes, upkeep of the review surface. Each role exercises one skill assumed of an LLM — do a unit of domain work and report on it; judge with no prior context; consolidate several accounts into one fixed-shape state; operate a platform without touching content — and every Turn exercises exactly one.
 
@@ -92,9 +92,9 @@ Beside the chain, execution leaves records. **They never become yardsticks.**
 | **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) |
 | **Verdict** | One viewpoint's judgment (a viewpoint is one independently checkable concern — §5.3): pass/fail with a gap, and evidence | Turn(verify), itself |
 | **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) |
-| **Research** | The product of an investigation Step, verified for evidential soundness (§4.4) | Turn(generate) |
+| **Research** | The product of an investigation Step, verified for evidential soundness (§4.4) — elicit answers excepted (§3.1) | Turn(generate); elicit answers, the Conductor |
 
-Each record is written to disk by the Turn named; carrying them all into the durable record — the commits and pushes of §3.5's backend — is Turn(record)'s job alone (§5.5).
+Each record is written to disk by the party named; carrying them all into the durable record — the commits and pushes of §3.5's backend — is Turn(record)'s job alone (§5.5).
 
 ### 3.4 The ownership ledger
 
@@ -109,7 +109,7 @@ Each record is written to disk by the Turn named; carrying them all into the dur
 | CCS | Turn(brief) | Mechanical rules + the next verification catches lies | — (consumed by the Conductor) |
 | Verdict | Turn(verify) | — (it is itself the check; evidence keeps it falsifiable) | — (aggregated by the Conductor) |
 | Report | Turn(generate) | — (Turn(brief) checks it against the product) | — |
-| Research | Turn(generate) | Turn(verify) — evidential soundness | — (not subject to approval) |
+| Research | Turn(generate); elicit answers, Conductor (§4.4) | Turn(verify) — evidential soundness; elicit answers exempt (§3.1) | — (not subject to approval) |
 
 The **reverse side** of responsibility — what each role is *not* responsible for:
 
@@ -136,7 +136,8 @@ Logical names map to physical layout exactly once, here. One directory per unit 
   ccs/        tNNN.yaml                  # CCS chain (replacement semantics; one chain per run)
   verdicts/   one file per judgment      # Verdict; step, viewpoint and attempt readable from the filename
   reports/    one file per Turn          # Report; item number and attempt readable from the filename
-  research/   investigation products     # Research, referenced by path
+  research/   investigation products,    # Research, referenced by path
+              elicit answers             # written by the Conductor (§4.4)
   history/    purpose@G1-v1.md, …        # approved editions, archived at gate resolution (written under the local backend — §5.5)
 ```
 
@@ -150,7 +151,7 @@ Formats and worked examples are in [references/](../references/) — Purpose / A
 
 ### 4.1 The life of one Step
 
-Count by **1 Step = 1 Turn(generate)**. The Turn(verify)s around it, and the wave's Turn(brief) and Turn(record), are ephemeral measurement and run-keeping.
+Count by **1 Step = 1 Turn(generate)**; an elicit item (§3.1) dispatches none and takes none of this pipeline. The Turn(verify)s around it, and the wave's Turn(brief) and Turn(record), are ephemeral measurement and run-keeping.
 
 ```mermaid
 flowchart LR
@@ -435,7 +436,7 @@ The bounded path must also be the cheap path, and cheapness is not self-evident:
 | **Escalation rate** | Steps stopped at the cap ÷ all Steps. |
 | **Verification overhead** | (Turn(verify)s + Turn(brief)s + Turn(record)s) ÷ Turn(generate)s. |
 
-Turn(record) enters the overhead ratio deliberately, alongside Turn(brief): both are run-keeping, and every Turn the loop pays beyond generate belongs in the bill it must justify. These are readable because Verdicts sit in verdicts/ with their attempt, attempts are recorded in the CCS under `episodic_trace: reaim`, and Turn(record)s are the commit history itself — one commit per wave plus the `on` / gate / `dn` events and the pre-Planning-Gate Plan pushes, one per Plan draft or Planning-Gate rework (under the local backend, which commits nothing, the same count is the CCS chain's length plus those events). Nothing else is instrumented. As a starting heuristic — to be refined in use, not a measured rule — a loop below 50% keep rate is costing more than the work it saves, and the remedy is narrower Steps, not more attempts.
+Turn(record) enters the overhead ratio deliberately, alongside Turn(brief): both are run-keeping, and every Turn the loop pays beyond generate belongs in the bill it must justify. Elicit items (§3.1) dispatch no Turn(generate) and carry no attempt cap, so they enter none of the three counts. These are readable because Verdicts sit in verdicts/ with their attempt, attempts are recorded in the CCS under `episodic_trace: reaim`, and Turn(record)s are the commit history itself — one commit per wave plus the `on` / gate / `dn` events and the pre-Planning-Gate Plan pushes, one per Plan draft or Planning-Gate rework (under the local backend, which commits nothing, the same count is the CCS chain's length plus those events). Nothing else is instrumented. As a starting heuristic — to be refined in use, not a measured rule — a loop below 50% keep rate is costing more than the work it saves, and the remedy is narrower Steps, not more attempts.
 
 This measures the loop's efficiency, not human productivity — 10× itself is not a measurement target; the design is verified against the two properties: bounded context and drift detection.
 
