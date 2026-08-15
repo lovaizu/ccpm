@@ -12,4 +12,4 @@ disable-model-invocation: true
 
 1. **Load the Conductor's procedure.** Invoke the `aiya:conductor` skill and follow it.
 
-2. **Enter at the pending gate with a send-back verdict** (conductor §3, §8). Rework the artifact through the same pipeline — Turns make, Turns verify; you never draft — and return to the gate. Re-approval mints a new version, and Verdicts measured against the old version are invalidated and re-verified per conductor §3. Every piece of feedback is acted on; none is dropped.
+2. **Enter at the pending gate with a send-back verdict** (conductor §3, §8). Rework the artifact through the same pipeline — Turns make, Turns verify; you never draft — and return to the gate. The reworked document carries the next version, bumped by the rewriting Turn(generate); re-approval fixes it as the yardstick, and Verdicts measured against the old version are invalidated and re-verified per conductor §3. Every piece of feedback is acted on; none is dropped.
