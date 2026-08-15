@@ -229,18 +229,25 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
 - [x] Review round 3 (post-(iv)(v)(vi); all four ran 2026-08-16, all four overall PASS —
       Verification fully clean): 14 mechanical findings triaged Valid and applied (d741e39);
       remaining findings resolved into the two pending rulings below
-- [ ] Take ruling (vii) — resume/completion mechanics (QA high/medium): record the run branch in
-      state at `on`, `up` restores git posture, record verifies the branch before committing (stop
-      and report on mismatch); a `closed` marker written at G3's final settle, honored by `on`/`up`;
-      `dn` mid-wave records only what settled — unsettled Steps re-dispatch on `up` (Turns are
-      stateless). Proposal presented 2026-08-16, verdict pending; apply on approval
+- [ ] Structural rework, ruled 2026-08-16 (supersedes ruling (vii), which is withdrawn as
+      piecemeal patching): the run's lifecycle state becomes a first-class design concept — one
+      run-state file written by the Conductor at boundary events (`on`: backend + run branch; each
+      gate verdict; `closed` at G3), committed by Turn(record) the same way the Plan is; the
+      `backend` file is absorbed as one field of it; the term "backend" itself stays (ruled apt,
+      Terraform-backend precedent). Diagnosis agreed with the user: post-sign-off judgments split
+      into structure-derived (sound) vs invented-ad-hoc (gate-stop ②, (vi), (vii)) — the ad-hoc
+      cluster all patches the same hole, boundary events leaving no record to derive from. Steps:
+      (1) amend `design.md` to carry the concept — owner, home, write triggers;
+      (2) re-derive **every** post-sign-off judgment from it — full audit: arch ruling (1),
+      rulings (2)(3), gate-stop ①②, (i)–(vi), review rounds 1–3 — fixing any whose answer changes;
+      (3) present the design revision at the gate for re-approval before rippling into the build
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
       backend/PR antecedent; README:22-27 mermaid shows five human touchpoints against the text's
       six checkpoints (Delivery Planning Gate missing). Apply on approval
-- [ ] Targeted re-review of all fix sites from rounds 2–3 and rulings (iv)–(viii), then fill the
-      review columns in `checks/4.md`
+- [ ] Targeted re-review of all fix sites from rounds 2–3, rulings (iv)–(vi), the structural
+      rework, and ruling (viii), then fill the review columns in `checks/4.md`
 
 **Completion criteria**:
 
@@ -314,8 +321,18 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-16
+- **Last completed**: #3 Design sign-off (#4 in progress: structural-rework direction ruled
+  2026-08-16 — run-lifecycle state becomes first-class, ruling (vii) withdrawn as superseded;
+  no build/design files touched yet this session)
+- **Next**: #4 — execute the structural-rework steps in order: (1) amend `design.md` with the
+  run-state concept (Conductor-written file at boundary events, record commits it, `backend` file
+  absorbed), (2) re-derive every post-sign-off judgment from it (full audit listed in the task
+  step), (3) re-present the design revision at the gate; after approval ripple into the build,
+  then ruling (viii), then the targeted re-review
+- **Notes**: branch `worktree-aiya`, PR #19. Key agreements 2026-08-16: state cannot live in the
+  CCS (cadence/writer/nature mismatch — recorded in conversation, restate in design §4.5 rationale
+  if useful); Conductor owns the run-state file because it alone attends every boundary event
+  (record is absent at Planning-Gate approvals); term "backend" kept. `checks/4.md` review columns
+  still empty.
