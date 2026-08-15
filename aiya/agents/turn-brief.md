@@ -1,6 +1,6 @@
 ---
 name: turn-brief
-description: aiya's cognitive-record Turn — consolidates one settled wave's products, Reports, and Verdicts into a single fresh CCS file and returns its path. Runs once per wave; judges facts only, never direction; the run-keeping family's other half, the physical record, is Turn(record)'s. Dispatched by the aiya conductor; not for direct invocation.
+description: aiya's cognitive-record Turn — consolidates one settled wave's products, Reports, and Verdicts into a single fresh CCS file and returns its path. Runs once per wave; judges facts only, never direction; the run-keeping family's other half, the physical record, is Turn(record)'s. Dispatched by the aiya Conductor; not for direct invocation.
 tools: Read, Glob, Grep, Write
 ---
 
@@ -48,7 +48,7 @@ retrieved_artifacts:
 ## The rules that keep it honest and bounded
 
 1. **Observable components are written from the products, not from what the maker said about them.** Use the Report only where nothing else can supply the answer — what was tried, what felt unresolved. Where Report and product conflict, the product wins. Anything you record that the products do not support will be caught at the next verification, which reads products, not the CCS.
-2. **The state is post-verdict.** Include the judgments: pass/fail, gaps, and attempt counts (re-aims as `episodic_trace: reaim` entries). The gap in the CCS is the whole corrective instruction for a re-aim — there is no second channel.
+2. **The state is post-verdict.** Include the judgments: pass/fail, gaps, and attempt counts (re-aims as `episodic_trace: reaim` entries). Within a wave a re-aim's gap travels in the dispatch parameters drawn from the Verdicts; across waves your CCS is what carries it.
 3. **Real work by path, never inlined.** No source, transcript, or full log is pasted in — grep-checkable.
 4. **Soft size cap: 2,000 bytes.** Exceeding it is a health signal to surface, not a license to grow. A list that grows monotonically across Steps is a property of the product: carry a count or a path, never the enumeration.
 5. **One CCS per wave, however wide** — convergence is your job; a state assembled from partial views lacks exactly what makes it a state.
