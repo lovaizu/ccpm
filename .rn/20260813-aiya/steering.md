@@ -189,8 +189,12 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
 - [x] Ripple the amended design into the build: conductor skill, agents (add turn-record adapters),
       entry skills, README mode note (implementation expert; applied in 117fe57, validated strict,
       coordinator reviewed every hunk)
-- [ ] Rule on the remaining escalated defaults — (2) where approved versions (G1-v1) are recorded,
-      (3) `disable-model-invocation` on the five entry skills — and apply the rulings
+- [x] Rule on the remaining escalated defaults — (2) where approved versions (G1-v1) are recorded,
+      (3) `disable-model-invocation` on the five entry skills — and apply the rulings (ruled
+      2026-08-15: (2) a `version: vN (YYYY-MM-DD HH:MM:SS)` header line written and bumped by
+      Turn(generate) — no Conductor ledger, no record stamping — with record-local archiving approved
+      editions into `history/` at gate resolution, applied in 21f0b16 + d5586b8; (3) all five entry
+      skills keep `disable-model-invocation: true`, contract recorded in design §2 in 58c336c)
 - [x] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`) — written by the
       implementation expert, all three criteria OK; review columns await the Verify round
 - [ ] QA expert review (subagent)
