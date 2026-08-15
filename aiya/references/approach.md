@@ -17,10 +17,12 @@ What changes, and what does not. Constraints — anything written here is carrie
 
 ## Worked example
 
-The scenario: adding CSV export of transaction history to an expense-tracking app.
+The scenario: adding CSV export of transaction history to an expense-tracking app. The `version` header line is the edition's identifier — written as `v1` by the drafting Turn(generate), and bumped (+1, fresh timestamp) by the rewriting Turn(generate) on each rework after a send-back.
 
 ```markdown
 # approach — CSV export of transaction history
+
+version: v1 (2026-08-16 14:22:48)
 
 ## Testing
 

@@ -18,10 +18,12 @@ Written to be runnable: these sentences are executed as-is at the final verifica
 
 ## Worked example
 
-The scenario: adding CSV export of transaction history to an expense-tracking app.
+The scenario: adding CSV export of transaction history to an expense-tracking app. The `version` header line is the edition's identifier — written as `v1` by the drafting Turn(generate), and bumped (+1, fresh timestamp) by the rewriting Turn(generate) on each rework after a send-back.
 
 ```markdown
 # purpose — CSV export of transaction history
+
+version: v1 (2026-08-15 09:41:07)
 
 ## Situation
 

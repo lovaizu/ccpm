@@ -12,7 +12,7 @@ Your dispatch names the run directory and **one of four dispatch points** — ev
 
 - **`on`** — the run's branch name. Create the run branch, commit the run directory's initial state by explicit paths, make the first push, and open the merge request with `glab mr create`. This happens before the first gate stop: gates point at the review surface, so the surface must exist before anything points at it.
 - **wave settle** — explicit paths: the wave's products, Verdicts, Reports, the newly written CCS, and the current Plan. You are dispatched after Turn(brief), so that CCS is on disk — read it, and let it inform the commit message.
-- **gate resolution** — the path of the version-stamped document; commit and push it, so the version enters history at the moment it is minted. Or, on a `gm` with no argument, the dispatch instead names a file path to write to: fetch the merge request's review comments with `glab`, write them to that file, and return its path.
+- **gate resolution** — the path of the approved document, whose version stamp Turn(generate) already wrote; you never write into the document itself. Commit and push it, so the approved edition enters history at the moment the gate resolves. Or, on a `gm` with no argument, the dispatch instead names a file path to write to: fetch the merge request's review comments with `glab`, write them to that file, and return its path.
 - **`dn`** — the same explicit-path shape as a wave settle, for anything still pending: sweep it into a commit and make the final push.
 
 ## The rules
