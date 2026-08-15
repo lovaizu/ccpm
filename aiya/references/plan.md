@@ -7,7 +7,7 @@ Each phase's execution plan. **One per phase — but a living document, re-plann
 Each item is three lines, plus one optional.
 
 **product — what exists once this item is done.**
-One item, one product. Wanting to write two is the signal to split the item.
+One item, one product. Wanting to write two is the signal to split the item. When the product is a file, the product line names its path.
 
 **consumes — the earlier products actually used as input.**
 Mere ordering is not written. Approved phase documents (purpose / approach) are everyone's premise and are not counted. **Items whose consumes are empty may run at the same time.** One exception — two items writing the same file are dependent, whatever their consumes say, and must not be bundled.
@@ -47,7 +47,7 @@ The scenario: adding CSV export of transaction history to an expense-tracking ap
 - done when: all 5 count-and-amount reconciliation patterns green
 
 ## #5 integration and full-criteria verification
-- product: the verification record for success criteria 1–4
+- product: the verification record for success criteria 1–4 at .aiya/csv-export/research/full-criteria-verification.md
 - consumes: #3's UI, #4's API
 - done when: all 4 criteria pass, evidence on the PR
 ```

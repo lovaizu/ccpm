@@ -42,7 +42,7 @@ episodic_trace:
 uncertainty_signal:
   - unverified: broker behaviour under partition — not reproduced
 retrieved_artifacts:
-  - doc: .aiya/123/purpose/purpose.md
+  - doc: .aiya/csv-export/purpose/purpose.md
 ```
 
 ## The rules that keep it honest and bounded

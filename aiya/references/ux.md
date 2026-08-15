@@ -20,4 +20,4 @@ Command names, on-screen words, and their meanings. Every name a user's eyes wil
 
 ## Worked example
 
-The worked example of this format is aiya itself — aiya's README is this UX format dressed as a repository's face. The mapping: the opening paragraph and "aiya or rn" = users; "Install" = install; "Try it" = usage; "Two words" and "About the name" = vocabulary.
+The worked example of this format is aiya itself — [aiya's README](../README.md) is this UX format dressed as a repository's face. The mapping: the opening paragraph and "aiya or rn" = users; "Install" = install; "Try it" = usage; "Two words" and "About the name" = vocabulary.

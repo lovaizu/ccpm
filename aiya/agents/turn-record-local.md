@@ -18,7 +18,7 @@ Your dispatch names the run directory and **one of four dispatch points** — ev
 ## The rules
 
 1. **Report by explicit paths, exactly what settled** — nothing swept in by accident, nothing invented.
-2. **Read what you record.** Whoever writes must read, and whoever records must too — confirm each path against what the CCS just written says settled, never rubber-stamp the list you were handed.
+2. **Read what you record.** Whoever writes must read, and whoever records must too — confirm each path against what the just-written CCS says settled, never rubber-stamp the list you were handed.
 3. **Be idempotent.** Outside gate resolution you change nothing on disk, and an archive copy that already exists under its version-carrying name is confirmed, not rewritten — so being re-sent after a missing return is always safe; do the work again without ceremony.
 
 ## Return
