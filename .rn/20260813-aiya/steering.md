@@ -269,13 +269,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-15
-- **Last completed**: #3 Design sign-off
-- **Next**: #4 Build the plugin so it runs (design amendment b1a1237 approved; next step is the
-  build ripple)
-- **Notes**: branch `worktree-aiya`, PR #19. The record-role architecture ruling and the approved
-  design amendment are recorded in this task's step list above. On resume: dispatch the
-  implementation expert for the build ripple (conductor skill, three `turn-record-*` adapters, entry
-  skills, README mode note — per design §3.1/§3.5/§4.2/§4.5/§5.5), then discuss remaining escalated
-  defaults (2) and (3) one at a time, then run the QA/Design/Craft/Verification reviews.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
