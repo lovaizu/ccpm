@@ -186,8 +186,9 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       branch/PR timing is absorbed into record-github
 - [x] Amend `aiya/docs/design.md` to carry those rulings (implementation expert), push, and take the
       user's review on the PR (applied in b1a1237; approved 2026-08-15, "設計改訂はOK")
-- [ ] Ripple the amended design into the build: conductor skill, agents (add turn-record adapters),
-      entry skills, README mode note (implementation expert)
+- [x] Ripple the amended design into the build: conductor skill, agents (add turn-record adapters),
+      entry skills, README mode note (implementation expert; applied in 117fe57, validated strict,
+      coordinator reviewed every hunk)
 - [ ] Rule on the remaining escalated defaults — (2) where approved versions (G1-v1) are recorded,
       (3) `disable-model-invocation` on the five entry skills — and apply the rulings
 - [x] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`) — written by the
