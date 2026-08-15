@@ -175,9 +175,21 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       round for §5.4's symptom→remedy table, 2ee0d49)
 - [x] Validate: `claude plugin validate aiya --strict` passes; headless probe of one skill
       (both passed; validate re-run by the coordinator, no warnings)
-- [ ] Rule on the three escalated defaults the build surfaced — branch/PR mechanics, where approved
-      versions are recorded, entry-skill invocation control — and apply the rulings via the
-      implementation expert (user chose to discuss each rather than pick from options)
+- [x] Rule on escalated default (1) branch/PR mechanics — ruled 2026-08-15, and the discussion grew
+      into an architecture ruling: git/PR is not an essential dependency but one backend of two roles
+      (durable record / review surface), shipped as three backends (github / gitlab / local); the
+      swap point is a Turn — the Turn-definition *count* is not a contract, the Turn common contract
+      is; roles regroup into three families (generate / verify / run-keeping = brief + record); a new
+      record role (`turn-record-{github|gitlab|local}`) owns all platform operations (branch/PR at
+      `on`, wave-settle commit after brief, gate commits and `gm` comment fetch, `dn` sweep); only
+      record ever commits, at wave granularity, so every commit is a complete resume point — (1)'s
+      branch/PR timing is absorbed into record-github
+- [ ] Amend `aiya/docs/design.md` to carry those rulings (implementation expert), push, and take the
+      user's review on the PR
+- [ ] Ripple the amended design into the build: conductor skill, agents (add turn-record adapters),
+      entry skills, README mode note (implementation expert)
+- [ ] Rule on the remaining escalated defaults — (2) where approved versions (G1-v1) are recorded,
+      (3) `disable-model-invocation` on the five entry skills — and apply the rulings
 - [x] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`) — written by the
       implementation expert, all three criteria OK; review columns await the Verify round
 - [ ] QA expert review (subagent)
