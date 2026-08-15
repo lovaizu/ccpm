@@ -295,15 +295,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-15
-- **Last completed**: #3 Design sign-off (#4 in progress: gate-stop fix and rulings (i)(ii) applied
-  and pushed; ruling (iii) presented, verdict pending)
-- **Next**: #4 — take the user's verdict on ruling (iii) (soften design.md:63/:252 "never a change
-  to the Conductor's procedure" → the loop stays untouched but a new backend registers in the
-  Conductor's detection roster; proposal already presented, re-present it on resume), apply if
-  approved, then re-run the four expert reviews
-- **Notes**: branch `worktree-aiya`, PR #19. After ruling (iii): re-run QA / Craft (writing) /
-  Verification (fact-check) / Design expert reviews on the fixed state, triage, fill the review
-  columns in `checks/4.md`, then check off #4. `checks/4.md` self-check columns are current through
-  the gate-stop fix (committed in this suspend's wip commit).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
