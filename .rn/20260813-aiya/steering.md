@@ -288,14 +288,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-15
-- **Last completed**: #3 Design sign-off (#4 in progress: build ripple, two escalated-default
-  rulings, and review round 1's mechanical fixes all applied and pushed)
-- **Next**: #4 — apply the ruled gate-stop fix (①Plan → record push → stop; ②up re-presents the
-  gate when ambiguous), then the three small rulings, then re-run the four expert reviews
-- **Notes**: branch `worktree-aiya`, PR #19. User instructed "再開後に進めて" — on resume, proceed
-  without re-asking: dispatch the implementation expert for the ruled fix (details in the #4 step
-  list), then take rulings (i)–(iii) one at a time, then re-run QA/Craft/Verification/Design, triage,
-  fill the review columns in `checks/4.md`, and check off #4. `checks/4.md` self-check columns are
-  current as of 5e56a18 (committed in this suspend's wip commit).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
