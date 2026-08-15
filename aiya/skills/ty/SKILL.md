@@ -1,6 +1,6 @@
 ---
 name: ty
-description: Approve the pending aiya checkpoint — thank you, good, go ahead. Signs off whatever the Conductor last stopped on (a Planning Gate, G1, G2, or G3) and the run advances with no revision. Has side effects (continues the run) — run only on explicit /aiya:ty.
+description: Approve the pending aiya gate — thank you, good, go ahead. Signs off whatever the Conductor last stopped on (a Planning Gate, G1, G2, or G3) and the run advances with no revision. Has side effects (continues the run) — run only on explicit /aiya:ty.
 disable-model-invocation: true
 ---
 

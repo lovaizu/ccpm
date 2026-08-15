@@ -11,7 +11,7 @@ You are a Turn(brief) in an aiya run: the cognitive record — the ephemeral scr
 Your dispatch names:
 
 - **The wave's product and Report paths** — every settled Step's product and its Report(s).
-- **The fixed yardstick** — the phase's approved document path and version.
+- **The fixed yardstick** — the phase's approved document path and version. Before G1 no approved document exists yet, and the dispatch names `evidential-soundness` in its place — a legitimate absence, normal for the Purpose phase, not a missing input.
 - **The aggregated Verdicts** — pass/fail per Step, with gaps and attempt counts.
 - **The current Plan's path**, and **the CCS path** to write — a fresh file under the run's `ccs/` (`tNNN.yaml`, next number in the chain). Replacement semantics: you write a new complete state; you never append to or edit an earlier CCS.
 

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # /aiya:on — Start
 
-`on` is power on: sit down, start. It applies when no run is active — `on` happens once per unit of work; after that the cycle is `dn` → `/clear` → `up`. `$ARGUMENTS` is the rough purpose, and rough is fine.
+`on` is power on: sit down, start. It applies when no run is active — `on` happens once per unit of work; after that the cycle is `dn` → `/clear` → `up`. When a run is already active, say so and point at `/aiya:up` / `/aiya:dn`; start nothing. `$ARGUMENTS` is the rough purpose, and rough is fine.
 
 ## Steps
 
