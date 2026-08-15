@@ -158,6 +158,8 @@ Every checkpoint takes the same two-word vocabulary:
 
 Six checkpoints, one way to answer. No room left to wonder how to reply.
 
+The walkthrough above shows GitHub, but the run works the same on GitLab — or with no git at all, reviewing the files right on your disk. Exactly two things need more than a disk: `/aiya:gm` with no argument picks up comments only where there's a PR or MR to hold them, and surviving a lost machine takes a remote. Everything else is identical.
+
 ## About the name
 
 **aiya** is *Agents In Your Area* — the feel of hiring the builders down the street. Tell them the goal, and they come by to ask questions, show you the work plan, put a crew in at the same time, pass inspection, and hand it over. And yes — in Chinese, *aiya* (哎呀) is the little cry for when something goes sideways. We know. For a tool this relaxed, it fits.
