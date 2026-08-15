@@ -208,7 +208,7 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       approval needs no dedicated record); ② up — when "at the gate" vs "just approved" cannot be
       told apart from files, re-present the pending gate (safe side, costs one `ty`) (applied in
       ff609f4: conductor §3/§8/§9, on, up, design §4.4/§5.5/§4.5)
-- [ ] Take the remaining small rulings, one at a time: (i) README wording ×3 (Craft F13–15;
+- [x] Take the remaining small rulings, one at a time: (i) README wording ×3 (Craft F13–15;
       owner-ratified text, needs approval) — round-1 texts were lost with the conversation, so
       re-derived by a README-scoped Craft scan: 14 findings, ruled 2026-08-15 as 11 apply / 3 reject
       (taste-level rewrites of ratified voice rejected), applied in 69331bc; (ii) whether the
@@ -216,12 +216,31 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       yes, gate feedback (the `gm` line and the fetched comments file) becomes the sixth intake
       item, steering input not work content, applied in 7f09188 (conductor §1/§8, design §2/§5.7);
       (iii) softening the design's "new backend never touches the Conductor's procedure" claim
-      (Design F6) — proposal presented (design.md:63/:252: the loop stays untouched, but a new
-      backend registers itself in the Conductor's detection roster), awaiting the user's verdict
-- [ ] QA expert review (subagent) — re-run on the fixed state
-- [ ] Craft expert review (subagent, writing) — re-run on the fixed state
-- [ ] Verification expert review (subagent, fact-check) — re-run on the fixed state
-- [ ] Design expert review (subagent) — re-run on the fixed state
+      (Design F6) — ruled 2026-08-15 as proposed (the loop stays untouched, but a new backend
+      registers in the Conductor's detection roster), applied in 64122d2
+- [x] Review round 2 (post-(iii); QA / Craft / Verification / Design, all four ran 2026-08-15):
+      12 mechanical findings triaged Valid and applied (3b1e7b1); marketplace registration deferred
+      to #5 (all four flagged it; it is #5's purpose); three findings escalated and ruled
+      2026-08-15: (iv) elicit items are the Conductor's own — Plan items come in two kinds, the
+      wall decides who carries each (ccb615a); (v) the no-nest wall is structural for the spawn
+      tool, default-and-observable where Bash ships (182869f); (vi) G3's record dispatch is a
+      final settle, the PR/MR stays open for the human — aiya never merges — and the dispatch-point
+      count is uniformly five (32fc8ad)
+- [x] Review round 3 (post-(iv)(v)(vi); all four ran 2026-08-16, all four overall PASS —
+      Verification fully clean): 14 mechanical findings triaged Valid and applied (d741e39);
+      remaining findings resolved into the two pending rulings below
+- [ ] Take ruling (vii) — resume/completion mechanics (QA high/medium): record the run branch in
+      state at `on`, `up` restores git posture, record verifies the branch before committing (stop
+      and report on mismatch); a `closed` marker written at G3's final settle, honored by `on`/`up`;
+      `dn` mid-wave records only what settled — unsettled Steps re-dispatch on `up` (Turns are
+      stateless). Proposal presented 2026-08-16, verdict pending; apply on approval
+- [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
+      presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
+      leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
+      backend/PR antecedent; README:22-27 mermaid shows five human touchpoints against the text's
+      six checkpoints (Delivery Planning Gate missing). Apply on approval
+- [ ] Targeted re-review of all fix sites from rounds 2–3 and rulings (iv)–(viii), then fill the
+      review columns in `checks/4.md`
 
 **Completion criteria**:
 
@@ -295,8 +314,16 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-16
+- **Last completed**: #3 Design sign-off (#4 in progress: rulings (iii)–(vi) and review rounds 2–3
+  applied and pushed through d741e39; rulings (vii)(viii) pending)
+- **Next**: #4 — re-present ruling (vii) (resume/completion mechanics: branch recorded at `on` /
+  restored at `up` / verified by record before commit; `closed` marker at G3 final settle;
+  `dn` mid-wave records only what settled — proposal already presented, verdict pending), apply if
+  approved; then present ruling (viii) (three README fixes listed in the task step), apply if
+  approved
+- **Notes**: branch `worktree-aiya`, PR #19. After (vii)(viii): targeted re-review of all fix
+  sites from rounds 2–3 and rulings (iv)–(viii), fill the review columns in `checks/4.md`, then
+  check off #4. `checks/4.md` self-check columns are current through the gate-stop fix; review
+  columns still empty.
