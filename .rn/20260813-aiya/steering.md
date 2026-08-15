@@ -197,10 +197,24 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       skills keep `disable-model-invocation: true`, contract recorded in design §2 in 58c336c)
 - [x] self-check (record OK/NG per criterion in `.rn/20260813-aiya/checks/4.md`) — written by the
       implementation expert, all three criteria OK; review columns await the Verify round
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent)
+- [x] Review round 1: all four experts ran 2026-08-15 (QA / Craft / Verification / Design) — 15
+      mechanical findings triaged Valid and applied (5e56a18); install-instructions finding deferred
+      to #5 (its whole purpose); remaining findings resolved into the ruled fix and pending rulings
+      below
+- [ ] Apply the ruled gate-stop fix (implementation expert): ① conductor/on — the Conductor drafts
+      the Plan, then dispatches Turn(record) to push it, then stops at the gate (no new machinery;
+      Turn ordering only; ruled 2026-08-15 — the history/-universalization and approval-marker
+      proposals were rejected: git backends read approval from git, `history/` stays local-only,
+      approval needs no dedicated record); ② up — when "at the gate" vs "just approved" cannot be
+      told apart from files, re-present the pending gate (safe side, costs one `ty`)
+- [ ] Take the remaining small rulings, one at a time: (i) README wording ×3 (Craft F13–15;
+      owner-ratified text, needs approval), (ii) whether the bare-`gm` comments file joins the
+      Conductor's intake list (Design F5), (iii) softening the design's "new backend never touches
+      the Conductor's procedure" claim (Design F6)
+- [ ] QA expert review (subagent) — re-run on the fixed state
+- [ ] Craft expert review (subagent, writing) — re-run on the fixed state
+- [ ] Verification expert review (subagent, fact-check) — re-run on the fixed state
+- [ ] Design expert review (subagent) — re-run on the fixed state
 
 **Completion criteria**:
 
@@ -274,8 +288,14 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-08-15
+- **Last completed**: #3 Design sign-off (#4 in progress: build ripple, two escalated-default
+  rulings, and review round 1's mechanical fixes all applied and pushed)
+- **Next**: #4 — apply the ruled gate-stop fix (①Plan → record push → stop; ②up re-presents the
+  gate when ambiguous), then the three small rulings, then re-run the four expert reviews
+- **Notes**: branch `worktree-aiya`, PR #19. User instructed "再開後に進めて" — on resume, proceed
+  without re-asking: dispatch the implementation expert for the ruled fix (details in the #4 step
+  list), then take rulings (i)–(iii) one at a time, then re-run QA/Craft/Verification/Design, triage,
+  fill the review columns in `checks/4.md`, and check off #4. `checks/4.md` self-check columns are
+  current as of 5e56a18 (committed in this suspend's wip commit).
