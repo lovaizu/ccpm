@@ -324,16 +324,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-17
-- **Last completed**: #3 Design sign-off (#4 in progress: structural rework steps (1)(2) done —
-  run-state concept in badd0c7, audit fixes in 0764c7e; step (3) presented on PR #19, verdict
-  pending)
-- **Next**: #4 — take the design-gate verdict on the run-state revision (PR #19 comment of
-  2026-08-16); on `/rn:ty` ripple into the build (conductor skill, turn-record adapters, entry
-  skills — incl. up locating the run via `run.yaml` instead of the absorbed `backend` file), then
-  ruling (viii), then the targeted re-review; on `/rn:gm` address the feedback and re-present
-- **Notes**: branch `worktree-aiya`, PR #19. Four proposed concrete values await ratification in
-  the gate verdict: filename `run.yaml`; fields `backend`/`branch`/`gates`(`gate`/`verdict`/
-  `edition`)/`status`; Planning-Gate identifiers (`purpose-planning` style); example branch name.
-  `checks/4.md` review columns still empty.
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
