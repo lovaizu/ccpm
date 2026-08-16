@@ -321,18 +321,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-16
-- **Last completed**: #3 Design sign-off (#4 in progress: structural-rework direction ruled
-  2026-08-16 — run-lifecycle state becomes first-class, ruling (vii) withdrawn as superseded;
-  no build/design files touched yet this session)
-- **Next**: #4 — execute the structural-rework steps in order: (1) amend `design.md` with the
-  run-state concept (Conductor-written file at boundary events, record commits it, `backend` file
-  absorbed), (2) re-derive every post-sign-off judgment from it (full audit listed in the task
-  step), (3) re-present the design revision at the gate; after approval ripple into the build,
-  then ruling (viii), then the targeted re-review
-- **Notes**: branch `worktree-aiya`, PR #19. Key agreements 2026-08-16: state cannot live in the
-  CCS (cadence/writer/nature mismatch — recorded in conversation, restate in design §4.5 rationale
-  if useful); Conductor owns the run-state file because it alone attends every boundary event
-  (record is absent at Planning-Gate approvals); term "backend" kept. `checks/4.md` review columns
-  still empty.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
