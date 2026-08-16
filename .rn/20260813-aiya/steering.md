@@ -241,6 +241,9 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       (2) re-derive **every** post-sign-off judgment from it — full audit: arch ruling (1),
       rulings (2)(3), gate-stop ①②, (i)–(vi), review rounds 1–3 — fixing any whose answer changes;
       (3) present the design revision at the gate for re-approval before rippling into the build
+      (progress 2026-08-16: (1) applied in badd0c7; (2) audited — 7 changed answers fixed in
+      0764c7e, 5 dispatch points and ruling (vi) unchanged; (3) presented on PR #19 — awaiting
+      verdict; after approval the ripple includes up's run discovery via run.yaml, ex-`backend` file)
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
@@ -321,8 +324,16 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-08-16
+- **Last completed**: #3 Design sign-off (#4 in progress: structural rework steps (1)(2) done —
+  run-state concept in badd0c7, audit fixes in 0764c7e; step (3) presented on PR #19, verdict
+  pending)
+- **Next**: #4 — take the design-gate verdict on the run-state revision (PR #19 comment of
+  2026-08-16); on `/rn:ty` ripple into the build (conductor skill, turn-record adapters, entry
+  skills — incl. up locating the run via `run.yaml` instead of the absorbed `backend` file), then
+  ruling (viii), then the targeted re-review; on `/rn:gm` address the feedback and re-present
+- **Notes**: branch `worktree-aiya`, PR #19. Four proposed concrete values await ratification in
+  the gate verdict: filename `run.yaml`; fields `backend`/`branch`/`gates`(`gate`/`verdict`/
+  `edition`)/`status`; Planning-Gate identifiers (`purpose-planning` style); example branch name.
+  `checks/4.md` review columns still empty.
