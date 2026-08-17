@@ -37,10 +37,10 @@ flowchart LR
 
 **There are two walls.**
 
-- **The Conductor never touches the real work.** It reads only a bounded state that folds up the preceding work (**CCS**, Compressed Cognitive State), judgments (**Verdict**), approved phase documents, the current Plan, the run's lifecycle facts (the **run-state file**, §3.5 — which the Conductor itself writes), and paths — plus the human's gate feedback at a send-back (§4.4): steering input, not work content. It does not read even the contents of a worker's first-person report (**Report**). This wall is what keeps the Conductor's context from growing with the work — half the answer to bounded context.
-- **Turns never nest.** Only the Conductor spawns. A Turn starts from a fresh context, returns something bounded, and is discarded. Nesting would place work outside the Conductor's sight, where neither the attempt cap (§4.1) nor the return contract can reach. The agent platform itself permits nesting by default — aiya's Turn definitions omit the spawn tool, so no Turn can spawn directly. Where a definition carries Bash for its work, an indirect escape remains — Bash can start a fresh agent-platform session — so there the wall is default and observable, not absolute.
+- **The Conductor never touches the real work.** It reads only a bounded state that folds up the preceding work (**CCS**, Compressed Cognitive State), judgments (**Verdict**), approved phase documents, the current Plan, the run's lifecycle facts (the **run-state file**, §3.4 — which the Conductor itself writes), and paths — plus the human's gate feedback at a send-back (§4.4): steering input, not work content. It does not read even the contents of a worker's first-person report (**Report**). This wall is what keeps the Conductor's context from growing with the work — half the answer to bounded context.
+- **Turns never nest.** Only the Conductor spawns. A Turn starts from a fresh context, returns something bounded, and is discarded. Nesting would place work outside the Conductor's sight, where neither the attempt cap (§4.1) nor the return contract can reach. The agent platform permits nesting by default; aiya's Turn definitions omit the spawn tool, so no Turn can spawn directly.
 
-The walls are built from agent-platform facts: a subagent starts from a fresh context, and the only thing that reaches the caller is what it returns. These are not invented boundaries. No controller program is written — the loop is carried by procedural prose — so any rule that cannot be made structural is at best **default and observable** (cheapest to follow, and leaving a trace when broken), never guaranteed. On that platform the plugin is skills, Turn definitions, and formats: six skills — five command-word entry skills (§3.1) plus one Claude-only conductor skill (`user-invocable: false`) carrying the Conductor's procedure — plus the Turn definitions (static shipped artifacts; how many ship is not a contract — §3.1) plus the [references/](../references/) formats. The five entry skills are explicit-invocation only (`disable-model-invocation`): the model never launches one on its own, because every one carries side effects and `ty` / `gm` are the human's gate verdict itself — a verdict the human types, never one inferred from conversation. The Conductor is the main session executing the skills' procedural prose. There is no other executable part.
+The walls are built from agent-platform facts: a subagent starts from a fresh context, and the only thing that reaches the caller is what it returns. These are not invented boundaries. But no controller program is written — the loop is carried by procedural prose — so any rule that cannot be made structural is at best **default and observable**: cheapest to follow, and leaving a trace when broken, never guaranteed. Which rules are which, and what the trace is, is stated part by part in §5; the cost of accepting this is §8's.
 
 That is the borrowed skeleton. aiya stands on three claims above it.
 
@@ -56,11 +56,11 @@ The two properties are answered by two mechanisms that implement these claims. F
 
 ### 3.1 Parts and vocabulary — Phase / Plan / Step / Turn
 
-**Work proceeds in three Phases.** Purpose (why) → Approach (how) → Delivery (execution). Each Phase holds one **Plan** — its Steps and their dependencies — and a **Step** is one Plan item. Plan items come in two kinds, and the wall decides who carries each: an item whose work produces an on-disk product is carried by one Turn(generate) per attempt; an item whose work **is** conversation with the human — an **elicit** item — is carried by the Conductor itself at the chat surface, the one seat that can talk to a person (Turns ship without the user-question tool — §5.1). An elicit item's product is the answer files the Conductor writes under `research/` (§4.4); verify, the attempt cap (§4.1), and the keep rate (§6) apply only to Turn-carried items.
+**Work proceeds in three Phases.** Purpose (why) → Approach (how) → Delivery (execution). Each Phase holds one **Plan** — its Steps and their dependencies — and a **Step** is one Plan item. Plan items come in two kinds, and the wall decides who carries each: an item whose work produces an on-disk product is carried by one Turn(generate) per attempt; an item whose work **is** conversation with the human — an **elicit** item — is carried by the Conductor itself at the chat surface, the one seat that can talk to a person (Turns ship without the user-question tool — §5.1). An elicit item's product is the answer files the Conductor writes under `research/` (§4.4); verify, the attempt cap (§4.1), and the keep rate (§7) apply only to Turn-carried items.
 
-**Turns are one kind; roles come in three families.** **generate** makes the work, **verify** measures it, and **run-keeping** sustains the run itself. The run-keeping family holds two roles: **brief**, the cognitive record — writing the state (CCS) the next work starts from — and **record**, the physical record — performing every operation against the run's platform backend (§3.5 defines backends and the review surface): commits, pushes, upkeep of the review surface. Each role exercises one skill assumed of an LLM — do a unit of domain work and report on it; judge with no prior context; consolidate several accounts into one fixed-shape state; operate a platform without touching content — and every Turn exercises exactly one.
+**Turns are one kind; roles come in three families.** **generate** makes the work, **verify** measures it, and **run-keeping** sustains the run itself. The run-keeping family holds two roles: **brief**, the cognitive record — writing the state (CCS) the next work starts from — and **record**, the physical record — performing every operation against the run's platform backend (§3.4 defines backends and the review surface): commits, pushes, upkeep of the review surface. Each role exercises one skill assumed of an LLM — do a unit of domain work and report on it; judge with no prior context; consolidate several accounts into one fixed-shape state; operate a platform without touching content — and every Turn exercises exactly one.
 
-A work order is dispatched by passing minimal parameters (paths and a few lines of instruction) into a static shipped definition: the procedure is static, the content is parameters. **The count of definitions is not a contract.** The invariants are the Turn common contract (§5.1) — definitions are static shipped artifacts, never improvised at runtime, and every one obeys the same rules — and that only the Conductor dispatches. The definitions are aiya's extension and substitution point: a role in the loop is filled by a definition, and a platform variant (record ships as three — §5.5) or a future extension is a new definition — the Conductor's dispatch loop stays untouched, though a new backend also registers in the Conductor's backend-detection roster (the detection at `on`, §3.5). Work too big for one Turn is split into more flat Turns, never nested ones.
+A work order is dispatched by passing minimal parameters (paths and a few lines of instruction) into a static shipped definition: the procedure is static, the content is parameters. **The count of definitions is not a contract.** The invariants are the Turn common contract (§5.1) — definitions are static shipped artifacts, never improvised at runtime, and every one obeys the same rules — and that only the Conductor dispatches. The definitions are aiya's extension and substitution point: a role in the loop is filled by a definition, and a platform variant (record ships as three — §5.5) or a future extension is a new definition, with the Conductor's dispatch loop untouched (§5.1). Work too big for one Turn is split into more flat Turns, never nested ones.
 
 **There are six gates** — the README's user-facing word for them is **checkpoint**; the two terms name the same stops. Three phases × {review the Plan on the way in, review the product on the way out}. The human replies with two words — `ty` (approve) and `gm` (send back): two of the plugin's five command words, with the suspend/resume pair `dn` / `up` (§4.5) and the start word `on` — the mnemonics behind the five words and their `/aiya:` command forms live in the README. Fix the vocabulary here: **machines verify (pass/fail against a fixed yardstick); humans review (approve or redirect — correcting direction)**. Humans do not verify — that is a Turn's job.
 
@@ -83,35 +83,23 @@ The dotted edges are the **adaptive translation layer** — each phase's Plan. I
 
 This two-layer structure is the substance of drift detection. Every Step traces through its Plan to a yardstick, and every yardstick to the reason the work exists. Drift appears as "a Step that cannot be justified by the link above it," and when a link breaks — a product that no longer supports what it was derived from — the process stops at that phase's gate instead of carrying the break downstream.
 
-### 3.3 Run records — An ephemeral lineage that moves the chain forward
+### 3.3 Who writes, who verifies, who owns
 
-Beside the chain, execution leaves records. **They never become yardsticks.**
+Beside the chain, execution leaves **records** — an ephemeral lineage that moves the chain forward. **Records never become yardsticks.** Chain products and records together, listed once: what each is, who writes it, what machine-checks it, and who owns it.
 
-| Record | What it is | Written by |
-|---|---|---|
-| **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) |
-| **Verdict** | One viewpoint's judgment (a viewpoint is one independently checkable concern — §5.3): pass/fail with a gap, and evidence | Turn(verify), itself |
-| **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) |
-| **Research** | The product of an investigation Step, verified for evidential soundness (§4.4) — elicit answers excepted (§3.1) | Turn(generate); elicit answers, the Conductor |
-| **Run-state** | The run's lifecycle facts — backend, run branch, gate verdicts, closure (§3.5) | Conductor |
+| Product / record | What it is | Written by | Verified by (machine) | Reviewed and owned by (human) |
+|---|---|---|---|---|
+| **Plan** ×3 | The phase's Steps and their dependencies — the translation layer (§3.2) | Conductor | Turn(verify) — aiya's fixed viewpoints | Human (Planning Gate — each phase's in-gate, §4.4) |
+| **Purpose** | What success means — the head of the chain | Turn(generate) | Turn(verify) — evidential soundness | Human (G1) |
+| **Approach** | How that success will be reached | Turn(generate) | Turn(verify) — against Purpose | Human (G2) |
+| **Deliverable** | The working real thing | Turn(generate) | Turn(verify) — Purpose + Approach + the Step's pass condition (done when) | Human (G3) |
+| **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) | Mechanical rules + the next verification catches lies | — (consumed by the Conductor) |
+| **Verdict** | One viewpoint's judgment (a viewpoint is one independently checkable concern — §5.3): pass/fail with a gap, and evidence | Turn(verify), itself | — (it is itself the check; evidence keeps it falsifiable) | — (aggregated by the Conductor) |
+| **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) | — (Turn(brief) checks it against the product) | — |
+| **Research** | An investigation Step's product, elicit answers included (§3.1) | Turn(generate); elicit answers, the Conductor | Turn(verify) — evidential soundness; elicit answers exempt | — (not subject to approval) |
+| **Run-state** | The run's lifecycle facts — backend, run branch, gate verdicts, closure (§3.4) | Conductor | — (every entry mirrors a command or verdict the human typed) | — (not subject to approval) |
 
-Each record is written to disk by the party named; carrying them all into the durable record — the commits and pushes of §3.5's backend — is Turn(record)'s job alone (§5.5).
-
-### 3.4 The ownership ledger
-
-**Who writes, who verifies, who reviews and owns** — listed for every product.
-
-| Product | Written by | Verified by (machine) | Reviewed and owned by (human) |
-|---|---|---|---|
-| Plan ×3 | Conductor | Turn(verify) — aiya's fixed viewpoints | Human (Planning Gate — each phase's in-gate, §4.4) |
-| Purpose | Turn(generate) | Turn(verify) — evidential soundness | Human (G1) |
-| Approach | Turn(generate) | Turn(verify) — against Purpose | Human (G2) |
-| Deliverable | Turn(generate) | Turn(verify) — Purpose + Approach + the Step's pass condition (done when) | Human (G3) |
-| CCS | Turn(brief) | Mechanical rules + the next verification catches lies | — (consumed by the Conductor) |
-| Verdict | Turn(verify) | — (it is itself the check; evidence keeps it falsifiable) | — (aggregated by the Conductor) |
-| Report | Turn(generate) | — (Turn(brief) checks it against the product) | — |
-| Research | Turn(generate); elicit answers, Conductor (§4.4) | Turn(verify) — evidential soundness; elicit answers exempt (§3.1) | — (not subject to approval) |
-| Run-state | Conductor (§3.5) | — (every entry mirrors a command or verdict the human typed) | — (not subject to approval) |
+Each is written to disk by the party named; carrying them all into the durable record — the commits and pushes of §3.4's backend — is Turn(record)'s job alone (§5.5).
 
 The **reverse side** of responsibility — what each role is *not* responsible for:
 
@@ -124,13 +112,13 @@ The **reverse side** of responsibility — what each role is *not* responsible f
 | Turn(brief) | Fidelity of the state to the facts | Direction; judging quality |
 | Turn(record) | The physical record — committing and pushing exactly what settled; upkeep of the review surface | Content quality; direction; deciding what settles |
 
-### 3.5 Where things live
+### 3.4 Where things live
 
 Logical names map to physical layout exactly once, here. One directory per unit of work:
 
 ```
 .aiya/<slug>/
-  run.yaml    # run-state file — lifecycle facts: backend, run branch, gate verdicts, closure (Conductor-written)
+  run.yaml    # run-state file — the run's lifecycle facts, Conductor-written (defined below)
   purpose/    plan.md, purpose.md        # Plan(Purpose), Purpose
   approach/   plan.md, approach.md,      # Plan(Approach), Approach body
               decisions/                 # Decision — one file per decision (0 or more)
@@ -159,9 +147,21 @@ gates:
 status: open                   # open | closed — closed at G3 resolution
 ```
 
-**The file exists because boundary events used to leave no record.** `on`, gate verdicts, and close happened only in conversation: nothing on disk could derive behavior from them, so every behavior that needed one was patched ad hoc — resume, unable to tell a gate still awaiting its verdict from one just approved, could only re-present the gate (§4.5). With the run-state file, every boundary event is derivable from disk. The CCS cannot absorb this, on three mismatches: **cadence** — the CCS is written per wave settle, and boundary events are not wave settles; **writer** — Turn(brief) writes the CCS, the Conductor attends the boundaries; **nature** — the CCS is cognitive working state for the next work, run-state is lifecycle fact. Turn(record) carries the file into the durable record as it carries the Plan — by explicit path at its existing dispatch points (§5.5) — and never writes into it: the Conductor records the event, record makes it durable, the same division as everywhere.
+**The file exists because boundary events used to leave no record.** `on`, gate verdicts, and close happened only in conversation, so nothing on disk could derive behavior from them and every behavior that needed one was patched ad hoc — resume, unable to tell a gate still awaiting its verdict from one just approved, could only re-present the gate (§4.5). The CCS cannot absorb the job, on three mismatches: **cadence** — the CCS is written per wave settle, and boundary events are not wave settles; **writer** — Turn(brief) writes the CCS, the Conductor attends the boundaries; **nature** — the CCS is cognitive working state for the next work, run-state is lifecycle fact. Turn(record) carries the file into the durable record as it carries the Plan (§5.5), and never writes into it.
 
-**Degradation across backends is explicit, never hidden.** The core loop — the six gates, the per-Step pipeline, the CCS, resume — is identical under every backend. Exactly two things vary: `gm` with no argument (picking up review comments — §4.4) exists only where a PR/MR exists, while `gm <one line>` works everywhere; and durability against machine loss requires a remote (§4.5). The rationale for making git swappable rather than required is a stated trade-off (§7).
+**Degradation across backends is explicit, never hidden.** The core loop — the six gates, the per-Step pipeline, the CCS, resume — is identical under every backend. Exactly two things vary: `gm` with no argument (picking up review comments — §4.4) exists only where a PR/MR exists, while `gm <one line>` works everywhere; and durability against machine loss requires a remote (§4.5). The rationale for making git swappable rather than required is a stated trade-off (§8).
+
+### 3.5 What ships
+
+On the agent platform, the plugin is three kinds of artifact and nothing else:
+
+- **Six skills** — five command-word entry skills (`on` / `ty` / `gm` / `dn` / `up` — §3.1), plus one Claude-only conductor skill (`user-invocable: false`) carrying the Conductor's procedure.
+- **Turn definitions** — static shipped artifacts, one per role or platform variant. How many ship is not a contract; the Turn common contract is (§5.1).
+- **Formats** — the worked examples in [references/](../references/).
+
+The five entry skills are **explicit-invocation only** (`disable-model-invocation`): the model never launches one on its own, because every one carries side effects, and `ty` / `gm` are the human's gate verdict itself — a verdict the human types, never one inferred from conversation.
+
+**The Conductor is the main session executing the conductor skill's procedural prose. There is no other executable part** — that is the bet of §2, made concrete.
 
 ## 4. Behavior — How work flows
 
@@ -238,17 +238,27 @@ Three phases connect intent to execution. Each phase has a Plan (drafted and re-
 | **Approach** | The Steps that will produce the Approach | **G2** — Approach approved |
 | **Delivery** | The Steps and their dependencies | **G3** — verification confirms the success criteria; the human accepts |
 
-At every gate the Conductor stops, posts a bounded summary in the console, points to the artifact on the review surface (§3.5) — the PR or MR under a remote backend, the files themselves under local — and waits: the summary is for deciding to look, the review surface is where the document is actually read. The surface exists before the first gate points at it, because Turn(record) opens it at `on` (§5.5) — and it holds the artifact under review: an Output Gate's product arrives with its wave's Turn(record) (§4.2), while a freshly drafted or reworked Plan has no wave settle behind it, so the Conductor dispatches Turn(record) to carry the Plan onto the surface before stopping at a Planning Gate (§5.5). The human corrects course rather than rubber-stamping. `gm <one line>` carries the send-back feedback under every backend; with no argument, `gm` takes the PR/MR's review comments as the feedback — Turn(record) fetches them to a file and returns the path (§5.5) — and so exists only where a PR/MR exists: under local, feedback always rides the argument. Between gates the Conductor self-runs within a **dispatch round** — one continuous run between two stops (a gate, or `dn`): within it the Conductor keeps dispatching and re-planning on its own; a round ends when the Conductor stops and waits, and the next one re-enters from file state (§4.5's resume point), which is why a stop between rounds loses nothing. Throughout a round the Conductor also keeps a progress board current on the console — waves, running items, attempts.
+**Stopping at a gate.** The Conductor posts a bounded summary in the console, points to the artifact on the review surface (§3.4), and waits. The two are not redundant: the summary is for deciding to look, the review surface is where the document is actually read. The human corrects course rather than rubber-stamping.
 
-**Approvals carry versions.** Each gate-approved yardstick document carries a version line in its header — `version: vN (YYYY-MM-DD HH:MM:SS)`, to the second, because under the local backend there is no git to name editions and this line is the edition's identifier. Turn(generate) writes it: v1 on the first draft, and on each rework after a `gm` the rewriting Turn(generate) reads the current document and bumps the version itself (+1, fresh timestamp) — the Conductor passes no version number in the work order and keeps no version ledger. A document re-approved after a `gm` is a new version, and **Verdicts measured against the old version are invalidated** — the affected Steps are re-verified, and only a fail against the new yardstick triggers a re-aim. A Verdict records for itself which version it measured against (`purpose.md@G1-v2` — the G number fixed by the document's phase, the vN read from its header), so finding the invalidated ones takes a grep. When G1 or G2 resolves, Turn(record) carries the document — its stamp already written by generate — into the durable record: the remote adapters commit and push it, the local adapter archives it into the run's `history/` (§5.5). G3's product is the Deliverable, which carries no version header — its record dispatch is a final settle, and the PR/MR is left open for the human (§5.5). Record never writes into the document; the approved edition enters the durable record at the moment the gate resolves. The verdict itself lands at the same moment in the run-state file — every gate's, approval and send-back alike, written by the Conductor (§3.5) — whose `edition` entries record after the fact what was ruled: version assignment stays Turn(generate)'s, read from the document's own header, and the run-state file is a log, not a ledger anything reads a next version from.
+**The surface always holds what the gate points at.** It exists before the first gate needs it, because Turn(record) opens it at `on` (§5.5). An Output Gate's product arrives there with its wave's Turn(record) (§4.2). A freshly drafted or reworked Plan has no wave settle behind it, so before stopping at a Planning Gate the Conductor dispatches Turn(record) to carry the Plan onto the surface (§5.5).
+
+**Two forms of send-back.** `gm <one line>` carries the feedback in the argument and works under every backend. Bare `gm` takes the PR/MR's review comments as the feedback instead — Turn(record) fetches them to a file and returns the path (§5.5) — so it exists only where a PR/MR exists; under local, feedback always rides the argument.
+
+**Between gates the Conductor self-runs, in dispatch rounds.** A **dispatch round** is one continuous run between two stops (a gate, or `dn`). Within it the Conductor keeps dispatching and re-planning on its own; the round ends when it stops and waits, and the next one re-enters from file state (§4.5's resume point) — which is why a stop between rounds loses nothing. Throughout a round the Conductor keeps a progress board current on the console: waves, running items, attempts.
+
+**Approvals carry versions.** Each gate-approved yardstick document carries a version line in its header — `version: vN (YYYY-MM-DD HH:MM:SS)`, to the second, because under the local backend there is no git to name editions and this line is the edition's identifier. Turn(generate) writes it, and only it: v1 on the first draft, and on each rework after a `gm` the rewriting Turn(generate) reads the current document and bumps the version itself (+1, fresh timestamp). The Conductor passes no version number in the work order and keeps no version ledger.
+
+**A new version invalidates what was measured against the old one.** A document re-approved after a `gm` is a new version, so **Verdicts measured against the previous one no longer hold** — the affected Steps are re-verified, and only a fail against the new yardstick triggers a re-aim. Each Verdict records for itself which version it measured against (`purpose.md@G1-v2` — the G number fixed by the document's phase, the vN read from its header), so finding the invalidated ones takes a grep.
+
+**What happens the moment a gate resolves.** Two writes, by two parties. Turn(record) carries the approved document — its stamp already written by generate, never by record — into the durable record: at G1 and G2 the remote adapters commit and push it, the local adapter archives it into the run's `history/` (§5.5); at G3 the product is the Deliverable, which carries no version header, so the dispatch is a final settle and the PR/MR is left open for the human (§5.5). The Conductor, meanwhile, writes the verdict itself into the run-state file — every gate's, approval and send-back alike (§3.4). Its `edition` entries record after the fact what was ruled: version assignment stays Turn(generate)'s, and the run-state file is a log, not a ledger anything reads a next version from.
 
 ### 4.5 Suspend and resume
 
-**The latest CCS + the approved phase documents + the current Plan + the run-state file are the entire resume point.** A run suspended mid-way and reopened in a fresh conversation re-reads exactly what the next wave would have read, and continues. The run-state file's gate entries (§3.5) tell resume where the gates stand — a gate still awaiting its verdict and one just approved are read from disk, not guessed. Re-presenting the gate survives only as the explicit degradation for the one window where the record can be stale: a boundary event written but not yet carried into the durable record is lost with the machine (§5.5 — a Planning-Gate approval waits for the next dispatch point), and a resume from the durable record then re-presents the pending gate — the safe side, costing at most one redundant `ty`. Resume is not a special case bolted on — it is the between-wave handoff exercised across a conversation boundary, which is why nothing extra is saved on stopping.
+**The latest CCS + the approved phase documents + the current Plan + the run-state file are the entire resume point.** A run suspended mid-way and reopened in a fresh conversation re-reads exactly what the next wave would have read, and continues. The run-state file's gate entries (§3.4) tell resume where the gates stand — a gate still awaiting its verdict and one just approved are read from disk, not guessed. Re-presenting the gate survives only as the explicit degradation for the one window where the record can be stale: a boundary event written but not yet carried into the durable record is lost with the machine (§5.5 — a Planning-Gate approval waits for the next dispatch point), and a resume from the durable record then re-presents the pending gate — the safe side, costing at most one redundant `ty`. Resume is not a special case bolted on — it is the between-wave handoff exercised across a conversation boundary, which is why nothing extra is saved on stopping.
 
 **What is bounded is the working state, not the history.** The Conductor's transcript grows with the number of Turns — filled-in work orders and bounded returns accumulate. The design can only minimize the coefficient (returns are paths and Verdicts only; Report contents never pass through), and the cycling is carried by `dn` → `/clear` → `up`. Because the resume point is complete in the four items above, `/clear` loses nothing — suspension is routine operation, not exception handling.
 
-**Persistence is continuous, not an event at the end.** Turn(record) commits and pushes at every wave settle (§4.2), and the four items of the resume point land together in each commit — so **every commit in history is a complete resume point**, and suspending costs nothing extra because nothing was ever unpersisted. `dn`'s job is to confirm, not to persist: it dispatches a final Turn(record) to sweep anything pending, then stops. Under a remote backend (github, gitlab) the resume point survives the machine as well as the conversation; under local it survives the conversation only — durability against machine loss is exactly what a remote buys (§3.5, §7).
+**Persistence is continuous, not an event at the end.** Turn(record) commits and pushes at every wave settle, and the four items of the resume point land together in each commit — which is what makes every commit a complete resume point (§4.2). Suspending therefore costs nothing extra, because nothing was ever unpersisted. `dn`'s job is to confirm, not to persist: it dispatches a final Turn(record) to sweep anything pending, then stops. Under a remote backend (github, gitlab) the resume point survives the machine as well as the conversation; under local it survives the conversation only — durability against machine loss is exactly what a remote buys (§3.4, §8).
 
 ## 5. Rules — Each part's rules, and how breaches are caught
 
@@ -264,9 +274,9 @@ Every Turn keeps five rules:
 4. **Returns something bounded.** Turn(generate): paths to product and Report plus one line of completion. Turn(verify): the Verdict. Turn(brief): the CCS path. Turn(record): a few lines naming what was committed and pushed — or, on a `gm` comment fetch, the path of the comments file (§5.5). Never raw output, never a transcript.
 5. **Leaves no context behind.** Its context does not survive it — what remains is the bounded return and what it wrote to disk. Born for one job, returns, and is gone. A Turn is stateless, so re-sending one whose return went missing is always safe (§4.1).
 
-**Catching breaches.** Rule 1 is structural — fresh contexts come from the agent platform. Rule 2 is structural for the spawn tool — it is absent from every Turn definition, and a tool left out of a definition is not in the Turn's session at all (the user-question tool is left out the same way — Turns never talk to people); for the definitions that carry Bash, which could in principle start a nested agent-platform session, the rule is default and observable (§2), not absolute. Rule 4 the Conductor checks on every return: it is bounded, or it is not.
+**Catching breaches.** Rule 1 is structural — fresh contexts come from the agent platform. Rule 2 is structural for the spawn tool: it is absent from every Turn definition, and a tool left out of a definition is not in the Turn's session at all (the user-question tool is left out the same way — Turns never talk to people). Where a definition carries Bash for its work an indirect route remains, so for those definitions rule 2 is default and observable (§2), not absolute — the trace being the nested session's own transcript, which no bounded return ever reports. Rule 4 the Conductor checks on every return: it is bounded, or it is not.
 
-**This contract, not the count of definitions, is the invariant.** Definitions are static shipped artifacts, never improvised at runtime; every definition obeys these rules; whoever writes must read what it writes; only the Conductor dispatches. A new role, or a platform variant of an existing one, enters as a new definition under the same contract (§3.1) — the dispatch loop never changes; the one Conductor-side touch is registering a new backend in the detection roster at `on` (§3.5).
+**This contract, not the count of definitions, is the invariant.** Definitions are static shipped artifacts, never improvised at runtime; every definition obeys these rules; whoever writes must read what it writes; only the Conductor dispatches. A new role, or a platform variant of an existing one, enters as a new definition under the same contract (§3.1) — the dispatch loop never changes; the one Conductor-side touch is registering a new backend in the detection roster at `on` (§3.4).
 
 ### 5.2 Turn(generate) — Product and Report
 
@@ -389,12 +399,12 @@ A Turn(brief) that recorded something the products do not support is caught at t
 
 ### 5.5 Turn(record) — The physical record
 
-Turn(record) owns every platform operation. It ships as three definitions — `turn-record-github`, `turn-record-gitlab`, `turn-record-local` — the per-backend **adapters**: one definition per backend (§3.5), same role and same dispatch points, different platform verbs. It runs at five points, every one structurally serial:
+Turn(record) owns every platform operation. It ships as three definitions — `turn-record-github`, `turn-record-gitlab`, `turn-record-local` — the per-backend **adapters**: one definition per backend (§3.4), same role and same dispatch points, different platform verbs. It runs at five points, every one structurally serial:
 
-- **At `on`** — create the run branch, make the first push — carrying the run-state file the Conductor has just written (backend and run branch — §3.5) — and open the PR/MR. This happens before the first gate stop, because gates point at the review surface (§4.4): the surface must exist before anything points at it.
+- **At `on`** — create the run branch, make the first push — carrying the run-state file the Conductor has just written (backend and run branch — §3.4) — and open the PR/MR. This happens before the first gate stop, because gates point at the review surface (§4.4): the surface must exist before anything points at it.
 - **At each wave settle** — dispatched after Turn(brief), so the just-written CCS is available to it (§4.2); commits the wave's products, Verdicts, Reports, the new CCS, the current Plan, and the run-state file, then pushes. Staging is by explicit paths, never `add -A` — a commit contains exactly what settled, nothing swept in by accident.
 - **At each pre-Planning-Gate Plan push** — a freshly drafted or reworked Plan has no wave settle behind it, so before stopping at a Planning Gate the Conductor dispatches Turn(record) with the Plan's path plus its Plan-check Verdict paths — the same explicit-path shape as a wave settle, with no CCS yet to name (§4.4). The remote adapters commit and push them; the local adapter confirms and reports them — the surface must already hold what the gate points at.
-- **At a gate verdict** — on approval, carries the approved document, whose version stamp Turn(generate) already wrote (§4.4), and the run-state file — its fresh verdict entry just written by the Conductor (§3.5) — into the durable record: the remote adapters commit and push them; the local adapter archives the document into the run's `history/`. At G3 the approved artifact is the Deliverable — no version header, not necessarily a single document — so the dispatch is a **final settle** instead: commit and push any unrecorded state — the run-state file among it, now carrying `status: closed` — then report the review surface's final state; nothing is archived, and under local there is no `history/` edition to write — the adapter confirms and reports the run directory's final state. The PR/MR stays open, handed to the human as ready: merging or closing it is the human's act, outside aiya — aiya never merges. On a bare-`gm` send-back, it fetches the PR/MR's review comments, writes them to a file, and returns the path — the bounded-return rule holds even here.
+- **At a gate verdict** — on approval, carries the approved document, whose version stamp Turn(generate) already wrote (§4.4), and the run-state file — its fresh verdict entry just written by the Conductor (§3.4) — into the durable record: the remote adapters commit and push them; the local adapter archives the document into the run's `history/`. At G3 the approved artifact is the Deliverable — no version header, not necessarily a single document — so the dispatch is a **final settle** instead: commit and push any unrecorded state — the run-state file among it, now carrying `status: closed` — then report the review surface's final state; nothing is archived, and under local there is no `history/` edition to write — the adapter confirms and reports the run directory's final state. The PR/MR stays open, handed to the human as ready: merging or closing it is the human's act, outside aiya — aiya never merges. On a bare-`gm` send-back, it fetches the PR/MR's review comments, writes them to a file, and returns the path — the bounded-return rule holds even here.
 - **At `dn`** — sweeps anything pending and makes the final push.
 
 A Planning-Gate approval dispatches no Turn(record) — its run-state entry becomes durable at the next dispatch point (§4.5) — so the five points stay five.
@@ -435,17 +445,39 @@ Worked example: [references/plan.md](../references/plan.md).
 
 ### 5.7 Conductor — What it does, what it never does
 
-**Does**: hold the purpose. Elicit (its only human touchpoint). Draft the Plan and re-plan every wave. Author and dispatch work orders. Aggregate Verdicts mechanically and derive waves. Keep the run-state file current at every boundary event (§3.5). Advance, re-aim, escalate, wait at gates.
+**Does**: hold the purpose. Elicit (its only human touchpoint). Draft the Plan and re-plan every wave. Author and dispatch work orders. Aggregate Verdicts mechanically and derive waves. Keep the run-state file current at every boundary event (§3.4). Advance, re-aim, escalate, wait at gates.
 
 **Never does**: domain work. Read the real work (including Report contents). Draft products (not even the Purpose — whoever writes must read). Interfere with a Turn's judgment (never pass the expected verdict). Change a yardstick. Commit or push — every platform operation is Turn(record)'s (§5.5).
 
 **Doubt becomes a Step.** If it can be written as a viewpoint, add it and re-measure; if it is an open question, put an investigation Step on the Plan. Investigating by oneself will, at some moment, feel faster than delegating — this rule exists for that moment. This wall cannot be made physical: the Conductor's own working state is files, so it cannot lose the ability to read. The wall is an instruction — kept by pinning each Turn's tools in its definition while the Conductor's stay open, and observable when broken (the tell below).
 
-**The complete intake list**: the latest CCS, bounded Verdicts, approved phase documents, the current Plan, the run-state file (§3.5), gate feedback, the elicit exchange (the chat-surface answers the Conductor itself collects and writes under `research/` — §4.4), and paths. Gate feedback enters as its arrival and path — the `gm` line, or the comments file a bare `gm` has Turn(record) fetch: steering from the human, not work content; at an Output Gate the file's content flows to the rework Turn without the Conductor reading it. Anything else in its context means a broken wall — and the trace is the Conductor mentioning content that no return contained.
+**The complete intake list**: the latest CCS, bounded Verdicts, approved phase documents, the current Plan, the run-state file (§3.4), gate feedback, the elicit exchange (the chat-surface answers the Conductor itself collects and writes under `research/` — §4.4), and paths. Gate feedback enters as its arrival and path — the `gm` line, or the comments file a bare `gm` has Turn(record) fetch: steering from the human, not work content; at an Output Gate the file's content flows to the rework Turn without the Conductor reading it. Anything else in its context means a broken wall — and the trace is the Conductor mentioning content that no return contained.
 
-## 6. Observability — Is the loop earning its keep?
+## 6. Closing — How the two properties are answered
 
-The bounded path must also be the cheap path, and cheapness is not self-evident: every Step pays N Turn(verify)s, every wave one Turn(brief) and one Turn(record), and every re-aim pays another round. Three ratios — all readable after a run from verdicts/, the CCS chain, and the commit history (under the local backend, which has no git, from what the disk holds: verdicts/, the CCS chain, the `history/` archives, and the run-state file) — make it visible:
+§1 fixed two properties the design must guarantee, and §2 named the mechanism for each. Both are now defined, so each can be closed. Nothing new is introduced here.
+
+**Bounded context** — the Conductor's working state stays bounded in the number of work streams. Three things carry it, and none scales with the work:
+
+- **The no-reading wall** (§2) caps *what kind* of thing may enter — the intake list is closed and enumerated in §5.7. Products and first-person Reports are not on it; the Conductor holds their paths.
+- **The CCS** (§5.4) caps *how much*: one file per wave, replaced rather than appended, real work carried by path, under a stated size budget.
+- **One CCS per wave, however wide** (§4.2) cuts the last link to scale. Doubling a wave's width does not double what the Conductor reads, which is why parallel width and bounded context stop being in tension.
+
+What is bounded is the working state, not the transcript: the history still grows with the number of Turns, and that residue is paid by `dn` → `/clear` → `up` (§4.5), listed as a cost in §8.
+
+**Drift detection** — the work stays traceable to the purpose, and deviation is caught in flight. Also three, one per form the problem takes:
+
+- **The two-layer chain** (§3.2) makes drift an object rather than a feeling. Every Step traces through its Plan to a yardstick, so a Step that cannot be justified by the link above it *is* the drift, visible without anyone having to notice a mood.
+- **Verification against a gate-approved yardstick** (§5.3) catches the first form — work the purpose never asked for — at the Step, before its wave settles. Per viewpoint, pinned by version, so a revised yardstick re-opens exactly what it invalidates.
+- **Re-planning from zero every wave** (§4.3) catches the second and harder form — completing the plan while ignoring what was discovered. A plan rebuilt from the current position cannot silently inherit a stale one.
+
+Correction that exceeds the Conductor's discretion is not absorbed: a doubt about a yardstick itself goes back to the human at a gate (§4.3).
+
+Both answers are structural rather than asserted — but structure is not evidence that the loop is worth its cost. That is the next section's job.
+
+## 7. Observability — Is the loop earning its keep?
+
+The bounded path must also be the cheap path, and cheapness is not self-evident: every Step pays N Turn(verify)s, every wave one Turn(brief) and one Turn(record), and every re-aim pays another round. Three ratios, all countable after a run from what it left behind, make it visible:
 
 | Measure | Definition |
 |---|---|
@@ -453,11 +485,15 @@ The bounded path must also be the cheap path, and cheapness is not self-evident:
 | **Escalation rate** | Steps stopped at the cap ÷ all Steps. |
 | **Verification overhead** | (Turn(verify)s + Turn(brief)s + Turn(record)s) ÷ Turn(generate)s. |
 
-Turn(record) enters the overhead ratio deliberately, alongside Turn(brief): both are run-keeping, and every Turn the loop pays beyond generate belongs in the bill it must justify. Elicit items (§3.1) dispatch no Turn(generate) and carry no attempt cap, so they enter none of the three counts. These are readable because Verdicts sit in verdicts/ with their attempt, attempts are recorded in the CCS under `episodic_trace: reaim`, and Turn(record)s are the commit history itself — one commit per wave plus the `on` / gate / `dn` events and the pre-Planning-Gate Plan pushes, one per Plan draft or Planning-Gate rework (under the local backend, which commits nothing, the wave dispatches are countable as the CCS chain's length, and the `on` event and every gate verdict — Planning Gates included — are readable from the run-state file's entries (§3.5); only the `dn` dispatch leaves no on-disk trace there). Nothing else is instrumented. As a starting heuristic — to be refined in use, not a measured rule — a loop below 50% keep rate is costing more than the work it saves, and the remedy is narrower Steps, not more attempts.
+Turn(record) enters the overhead ratio deliberately, alongside Turn(brief): both are run-keeping, and every Turn the loop pays beyond generate belongs in the bill it must justify. Elicit items (§3.1) dispatch no Turn(generate) and carry no attempt cap, so they enter none of the three counts.
 
-This measures the loop's efficiency, not human productivity — 10× itself is not a measurement target; the design is verified against the two properties: bounded context and drift detection.
+**Nothing is instrumented for this.** The counts come from what the run already writes: Verdicts sit in `verdicts/` carrying their attempt, re-aims are recorded in the CCS under `episodic_trace: reaim`, and Turn(record) dispatches are the commit history itself — one per wave, plus the `on` / gate / `dn` events and one per Plan draft or Planning-Gate rework. Under the local backend, which commits nothing, the same counts come off the disk: wave dispatches as the CCS chain's length, and the `on` event and every gate verdict — Planning Gates included — from the run-state file's entries (§3.4). Only the `dn` dispatch leaves no trace there.
 
-## 7. Trade-offs — Shapes discarded, costs paid
+As a starting heuristic — to be refined in use, not a measured rule — a loop below 50% keep rate is costing more than the work it saves, and the remedy is narrower Steps, not more attempts.
+
+This measures the loop's efficiency, not human productivity. 10× itself is not a measurement target — what the design answers for is the two properties, closed in §6; what these ratios answer for is whether answering them was worth the Turns it cost.
+
+## 8. Trade-offs — Shapes discarded, costs paid
 
 **Shapes discarded.**
 
@@ -466,7 +502,7 @@ This measures the loop's efficiency, not human productivity — 10× itself is n
 - **A catalog of content-specific agents** — growing agent definitions per kind of work (reviewer, designer, …). Discarded because: the catalog multiplies without bound, and definition contents shape work quality outside the Conductor's sight. Roles stop at the three families — generate, verify, run-keeping — and the content travels as parameters. What may grow is the platform axis, not the content axis: a new backend adds a record adapter (§5.5), and a record definition carries no content to shape.
 - **Improvised work orders** — writing each Turn's instructions from scratch. Discarded because: drafting stays with the Conductor as a temptation to stray, long instructions fatten the history, and wording variance makes verification's independence depend on how orders happen to be written. Passing fill-ins to static shipped definitions is faster, thinner, steadier.
 - **Conductor-drafted products** — discarded because whoever writes must read, and the no-reading wall is credible only when the Conductor has no reason to read.
-- **A hard git dependency** — requiring a repository and a remote to run at all. Discarded because: what the design actually needs is two roles — a durable record and a review surface (§3.5) — and git-plus-PR is one implementation of them, not their definition. Making the backend swappable keeps the core loop identical everywhere and makes the degradation honest: what a remote buys — comments to fetch for a bare `gm`, durability against machine loss — is named per backend instead of silently assumed.
+- **A hard git dependency** — requiring a repository and a remote to run at all. Discarded because: what the design actually needs is two roles — a durable record and a review surface (§3.4) — and git-plus-PR is one implementation of them, not their definition. Making the backend swappable keeps the core loop identical everywhere and makes the degradation honest: what a remote buys — comments to fetch for a bare `gm`, durability against machine loss — is named per backend instead of silently assumed.
 - **State recorded by its author** — having Turn(generate) write the CCS. Discarded because: the Conductor's entire picture of the run would pass through an interested party's account, and the verdict would be pushed into a second channel beside the CCS. The nine-component cognitive structure of the CCS is adopted from Bousetouane's CCS schema (arXiv:2601.11653, cited in §5.4); aiya's contribution is the operating rules — post-verdict, third-person, replacement, product-wins, invalidation.
 
 **Costs paid.** Stated so they are read as accepted, not overlooked:
