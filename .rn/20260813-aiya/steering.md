@@ -353,8 +353,17 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-19
+- **Last completed**: #3 Design sign-off (#4 in progress: writ rebuild of design.md done and
+  audited — 486a1af + note 672778c; design gate re-presented on PR #19, verdict pending)
+- **Next**: #4 — take the design-gate verdict on PR #19, covering the run-state file revision
+  (badd0c7 + 0764c7e), the writ rebuild (486a1af), and the §4.3 goal-statement correction. On
+  `/rn:ty` ripple the revised design into the build (conductor skill, turn-record adapters, entry
+  skills — incl. up locating the run via `run.yaml` instead of the absorbed `backend` file), then
+  ruling (viii), then the targeted re-review; on `/rn:gm` address the feedback and re-present
+- **Notes**: branch `worktree-aiya`, PR #19 (gate comment posted). Four proposed concrete values
+  await ratification in the verdict: filename `run.yaml`; fields `backend`/`branch`/`gates`
+  (`gate`/`verdict`/`edition`)/`status`; Planning-Gate identifiers (`purpose-planning` style);
+  example branch name. writ lives on PR #15 (`origin/worktree-writ`), used as the rebuild
+  instrument. `checks/4.md` review columns still empty.
