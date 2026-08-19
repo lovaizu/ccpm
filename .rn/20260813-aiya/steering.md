@@ -254,9 +254,21 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       new §6 discharges the two properties. Observability/Trade-offs renumbered §7/§8, all 14
       cross-refs re-resolved. Net +365 words (the estimated −2,000 was wrong — the moves were
       placement, and §6 added 382); density is untouched and is the open question below
-- [ ] Take the verdict on the design revision — now covering both the run-state file (badd0c7 +
-      0764c7e) and the restructure (a5ffde5) — and rule on whether a density-compression pass
-      follows (§4.4 still 1,137 words, §5.4 943; target −1,500 to −2,000 words, decisions kept)
+- [x] Density ruled 2026-08-19 (user): the document's job is understanding, not coverage — the
+      essential thread is drowned by enumerated contracts, diagrams are scarce; "decisions kept"
+      is withdrawn as the bar (many restated decisions are themselves the breeding ground for
+      duplication and contradiction). New bar: few load-bearing principles stated once, with final
+      decisions reading simply from them; contract detail that serves lookup lives in the shipped
+      artifacts (checks/4.md's contract trace shows where), not restated in prose. Instrument:
+      writ (né techting), alive on PR #15 (`origin/worktree-writ`) — its `/writ:up` build-fresh
+      procedure, landing on `aiya/references/design.md`'s own seven-chapter shape (chapters 1–4
+      story / 5–7 consulted reference; whole-in-one-diagram, one-diagram-one-claim), which
+      design.md is declared the worked example of and currently diverges from
+- [ ] Rebuild `design.md` by the writ procedure (implementation expert); what-changed note to
+      `checks/4-writ-note.md`; coordinator cross-checks the rebuilt document against checks/4.md's
+      contract trace — every dropped clause either ships in the build or is named in the note
+- [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
+      (a5ffde5), and the writ rebuild — on PR #19
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
