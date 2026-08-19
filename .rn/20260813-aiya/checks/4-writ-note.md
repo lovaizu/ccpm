@@ -69,6 +69,10 @@ pending proposal). §4 step-pipeline diagram, **new** wave-pipeline diagram, pha
 - **The run-state proposal kept recognizable as pending**: `run.yaml` marked "(proposed)" in
   §3.3, with fields `backend`/`branch`/`gates`/`status`, the Planning-Gate identifier
   (`purpose-planning`), and the example branch `aiya/csv-export` all verbatim.
+- **§4.3's goal statement corrected**: the rebuilt §4.3 states "The goal is the purpose, not
+  completing the Plan" where the old §4.3 said "The goal is 10×, not completing the Plan" —
+  a deliberate correction, not a loss: the run-level goal is the run's purpose; 10× is the
+  design-level goal and stays in §1. Flagged for the design gate.
 
 ## Disposition list — every contract-bearing clause that did not survive verbatim
 
@@ -108,6 +112,16 @@ compressed but intact.
 - "writing run files is not new to it: it already writes elicit answers under `research/`" —
   **dropped**: supporting argument for the writer choice; the choice and its load-bearing
   reason (only party present at every boundary event) survive in §3.3.
+- The seven-formats enumeration ("Purpose / Approach / Decision / Plan / Report per unit of
+  work, and UX / Design per product (Design being this document's own format)") — **carried**:
+  the `aiya/references/` directory itself ships exactly those seven files (approach, decision,
+  design, plan, purpose, report, ux); the rebuilt §3.3 keeps the pointer.
+- The backend-detection tests ("is this a git repo, what host does the remote name, is the CLI
+  available") — **carried**: `aiya/skills/conductor/SKILL.md` §2 states the three tests
+  verbatim.
+- "(Turn(record) is not dispatched at a Planning-Gate approval, so record could not keep the
+  file complete)" — **derivable** from the rebuilt §5.5 ("A Planning-Gate approval dispatches
+  no Turn(record)") plus §3.3's writer choice (only party present at every boundary event).
 
 ### Old §4.2 (waves)
 
@@ -137,6 +151,17 @@ compressed but intact.
   §5.2 prose.
 - "It is never machine-processed … so it is not YAML" — **dropped**: format-choice rationale;
   the facts it argued from (only brief reads it; it is Markdown) survive.
+
+### Old §5.3 (Turn(verify))
+
+- The domain-concern examples ("for code: decomposition, naming, thread safety, leaks; for
+  documents: sources resolving, figures consistent, terminology uniform") — **dropped** as
+  illustrative; the gist is **carried** by `aiya/references/plan.md` line 19 ("performance,
+  thread safety, and the like; for a document item, 'every cited source resolves'").
+- "success criteria fixed before generation" — **derivable**: done-when is fixed in the Plan,
+  the Plan is approved at a Planning Gate before the phase's Steps run (rebuilt §4.4, §5.6),
+  and the yardstick layer is immutable (§3.1), so every criterion predates the generation it
+  measures.
 
 ### Old §5.4 (Turn(brief) / CCS)
 
