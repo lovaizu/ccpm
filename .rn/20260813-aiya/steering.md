@@ -244,6 +244,19 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       (progress 2026-08-16: (1) applied in badd0c7; (2) audited — 7 changed answers fixed in
       0764c7e, 5 dispatch points and ruling (vi) unchanged; (3) presented on PR #19 — awaiting
       verdict; after approval the ripple includes up's run discovery via run.yaml, ex-`backend` file)
+- [x] Whole-document restructure, ruled 2026-08-17 after the user judged design.md patchwork —
+      diagnosis agreed: the spine (2 problems → 2 properties → 2 mechanisms) is sound but buried
+      under contract material each review round appended in place, and the argument §1 opens is
+      never closed. Six moves applied in a5ffde5, no decision removed: §2 carries the bet only
+      (inventory → new §3.5 "What ships"); enforcement-strength consolidated (§2 defines once,
+      §5.1 owns the no-nest scope and names its trace); §3.3+§3.4 merged into one table;
+      §4.4's two monster paragraphs split by topic; backend/local quarantined to §3.4/§5.5;
+      new §6 discharges the two properties. Observability/Trade-offs renumbered §7/§8, all 14
+      cross-refs re-resolved. Net +365 words (the estimated −2,000 was wrong — the moves were
+      placement, and §6 added 382); density is untouched and is the open question below
+- [ ] Take the verdict on the design revision — now covering both the run-state file (badd0c7 +
+      0764c7e) and the restructure (a5ffde5) — and rule on whether a density-compression pass
+      follows (§4.4 still 1,137 words, §5.4 943; target −1,500 to −2,000 words, decisions kept)
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
@@ -324,8 +337,16 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: -
-- **Last completed**: -
-- **Next**: -
-- **Notes**: -
+- **Status**: paused
+- **Date**: 2026-08-19
+- **Last completed**: #3 Design sign-off (#4 in progress: run-state revision badd0c7 + 0764c7e and
+  the whole-document restructure a5ffde5 both applied and presented on PR #19; verdict pending)
+- **Next**: #4 — take the design-gate verdict on PR #19, now covering three things: the run-state
+  file revision, the restructure, and whether a density-compression pass follows. On `/rn:ty`
+  ripple into the build (conductor skill, turn-record adapters, entry skills — incl. up locating
+  the run via `run.yaml` instead of the absorbed `backend` file), then ruling (viii), then the
+  targeted re-review; on `/rn:gm` address the feedback and re-present
+- **Notes**: branch `worktree-aiya`, PR #19. Four proposed concrete values still await ratification
+  in the verdict: filename `run.yaml`; fields `backend`/`branch`/`gates`(`gate`/`verdict`/
+  `edition`)/`status`; Planning-Gate identifiers (`purpose-planning` style); example branch name.
+  `checks/4.md` review columns still empty.
