@@ -264,9 +264,13 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       procedure, landing on `aiya/references/design.md`'s own seven-chapter shape (chapters 1–4
       story / 5–7 consulted reference; whole-in-one-diagram, one-diagram-one-claim), which
       design.md is declared the worked example of and currently diverges from
-- [ ] Rebuild `design.md` by the writ procedure (implementation expert); what-changed note to
+- [x] Rebuild `design.md` by the writ procedure (implementation expert); what-changed note to
       `checks/4-writ-note.md`; coordinator cross-checks the rebuilt document against checks/4.md's
       contract trace — every dropped clause either ships in the build or is named in the note
+      (rebuilt in 486a1af: 10,612 → 7,269 words, 3 → 5 diagrams, seven-chapter shape restored;
+      coordinator audited old vs new end to end — zero ratified decisions lost, all carried
+      claims verified against the shipped files; note completed in 672778c with five added
+      dispositions and the §4.3 goal-statement correction, flagged for the gate)
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), and the writ rebuild — on PR #19
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
