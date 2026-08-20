@@ -79,6 +79,17 @@ voice, and form from the reader and purpose rather than from memory or the old d
 - `claude -p "/writ:up …" --plugin-dir ./writ` loads the skill and starts the brush-up
   procedure, confirmed headlessly.
 - All shipped artifacts (plugin.json / SKILL.md / README / commit messages / PR) are in English.
+- **FB round (2026-08-20, PR #15 comment 5353396410):** `SKILL.md` admits content only through the
+  step-2 reader's path to the purpose — at both heading and point level; content serving another
+  reader is routed out and reported in the what-changed note, and an unjustifiable external-template
+  slot is escalated as an axis-side conflict, never silently filled. Experiential verification
+  (reaches the purpose top to bottom; headings carry the argument) runs in a fresh-context subagent
+  given only the document and the step-2 reader definition, and its pass gates delivery; mechanical
+  checks stay with the author. The ceiling names minimal reader effort to the purpose as the target
+  (density a means, not the end) and requires the few load-bearing claims to be distinguishable at a
+  glance; the one-voice rule and the seven-tell floor stand unchanged. Dogfood evidence: the
+  fresh-reader check flags the three noise spots the FB named in the aiya document (486a1af), and
+  the slot-justification test flags its "Out of scope" slot.
 
 # Assumptions
 
@@ -331,6 +342,82 @@ not a rebuild).
 - `claude plugin validate ./writ --strict` and `claude plugin validate . --strict` both pass
 - `design.md` records the rename decision (D-7) and its rationale
 - PR #5 title/description reflect the new name and general-document framing
+
+### #7: Encode the PR #15 field feedback — reader as content gate, verification independence
+
+**Purpose**: A real run (PR #15 comment 5353396410) produced a document its owner judged
+noise-ridden while every writ check passed. Root cause: the step-2 reader governs only form (axis,
+voice), not **content admission** — sentences and slots serving other readers (re-reader, past
+reviewer, approver) pass through — and the experiential checks are run by the author, whom the
+curse of knowledge blinds. Build both properties into the construction instead of adding nets:
+the reader becomes the admission filter for content (dissolves Findings 1 and 3), and experiential
+verification moves to a fresh-context subagent (dissolves Finding 2). Finding 4 resolves as a
+consequence: the ceiling's target is minimal reader effort; density is a means.
+
+**Prerequisites**: #6. The user approved the two-structural-change proposal (2026-08-20).
+
+**Steps**:
+
+- [ ] Steps 3–4 of `SKILL.md`: make the step-2 reader the **admission criterion for content** — a
+      heading or point enters only if that reader needs it to reach the purpose; content serving
+      another reader stays out and is reported in the what-changed note (whose it is, where it
+      belongs). External-template slots pass the same test; an unjustifiable slot is reported to
+      the user as an axis-side conflict (headless: recorded in the what-changed note), never
+      silently filled.
+- [ ] Split step 10: mechanical checks (single axis, `Assumed reader:` line, claim statuses) stay
+      with the author; **experiential checks** (reaches the purpose top to bottom, headings carry
+      the argument) move to a fresh-context subagent given **only** the document and the step-2
+      reader definition, reporting where it stumbled; its pass gates delivery, and stumbles come
+      back as fixes.
+- [ ] Reference: restate the ceiling around **minimal reader effort to the purpose** — density
+      becomes a means; add "the few load-bearing claims are distinguishable at a glance"; leave
+      the one-voice rule and the seven-tell floor table unchanged.
+- [ ] Keep the body <2,000 words by trimming existing text (no relaxing the budget); keep the
+      addressee sentence; update `writ/CHANGELOG.md` `[Unreleased]`.
+- [ ] Dogfood against the field evidence: run the new fresh-reader check on the aiya document
+      (`486a1af:aiya/docs/design.md`, reader definition from
+      `486a1af:.rn/20260813-aiya/checks/4-writ-note.md`) — it must flag the three noise spots the
+      FB named (opening abstract, §1 "Out of scope", §2 provenance opener); run the
+      slot-justification test over its seven-chapter axis — it must flag the "Out of scope" slot.
+- [ ] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`.
+- [ ] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/7.md`)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing)
+- [ ] Verification expert review (subagent, fact-check)
+- [ ] Design expert review (subagent)
+
+**Completion criteria**:
+
+- `SKILL.md` admits content solely through the step-2 reader's path to the purpose, at both heading
+  and point level, with routed-out content reported in the what-changed note and unjustifiable
+  external slots escalated, not filled.
+- Experiential self-check items run in a fresh-context subagent (document + reader definition only)
+  whose pass gates delivery; mechanical items remain self-checked.
+- The ceiling names minimal reader effort as the target, density as a means, and load-bearing
+  claims distinguishable at a glance; one voice and the seven-tell floor stand unchanged.
+- Body <2,000 words; addressee sentence intact; both strict validations pass; CHANGELOG updated.
+- The dogfood flags the FB's three named noise spots and the unjustified "Out of scope" slot.
+
+### #8: Evaluation sign-off
+
+**Purpose**: Close the session through the Evaluation gate — run the steering Acceptance criteria
+end to end and take the user's verdict. Fills the planning gap noted at suspend ("Evaluation
+sign-off gap open"): the original plan had no Evaluation sign-off task, which the rn workflow
+requires for a session to close.
+
+**Prerequisites**: #7
+
+**Steps**:
+
+- [ ] Run every Acceptance criteria item against the shipped artifacts and record the result per
+      item
+- [ ] Present the run result to the user (on PR #15, per push-and-review) and take the verdict via
+      `/rn:ty` or `/rn:gm`
+
+**Completion criteria**:
+
+- Every acceptance criterion has a recorded pass, or the user has explicitly accepted the exception
+- The user's `/rn:ty` verdict is recorded
 
 # State
 
