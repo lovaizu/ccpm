@@ -13,11 +13,11 @@ Do not edit the draft in place. Editing drags the old wording along, and the res
 Two layers, kept apart:
 
 - **The procedure** (next) — what to do now, while this skill runs.
-- **Reference** (last section) — the outlines, voice, forms, and AI-tell list the steps draw on, and the bar the produced document must clear. The steps point to it by name.
+- **Reference** (last section) — the outlines, voice, forms, and AI-tell list the steps draw on, and the bar the produced document must clear.
 
 ## The procedure
 
-Order: **understand → reader → outline → fill → story-check → voice & form → write → brush up → clear the floor → self-check & deliver.**
+Order: **understand → reader → outline → fill → story-check → voice & form → write → brush up → clear the floor → self-check → reader trial & deliver.**
 
 ### 1. Understand the input
 
@@ -33,26 +33,24 @@ Gate: if a line cannot be answered from the input, ask the user. On a headless r
 
 ### 3. Build the outline from the purpose
 
-Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. Off-axis material stays out of this document — name it in the what-changed note (what was left out, and where it belongs).
+Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. The step-2 reader admits every heading: it stays only if that reader needs it to reach the purpose. A heading serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the what-changed note (whose it is, where it belongs). A user-supplied outline or format passes the same test slot by slot; an unjustifiable slot is an axis conflict — raise it with the user (headless: record it in the note), never fill it silently.
 
 Emit: the outline headings, specialized to this content.
 
 ### 4. Fill the outline with what you want to convey
 
-Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. This is content, not prose yet. A heading with nothing concrete to hold gets cut.
+Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. The step-3 admission holds per point: one the step-2 reader does not need goes to the what-changed note instead. This is content, not prose yet. A heading with nothing concrete to hold gets cut.
 
 ### 5. Read it as the reader; check the story
 
 Become the reader from step 2 and read the filled outline top to bottom. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move.
-
-Gate: a reader reaches the purpose reading top to bottom.
 
 ### 6. Decide voice and form from purpose and story
 
 With the story standing, choose:
 
 - **Voice and closing** — Reference → [voice by reader](#voice-by-reader), as a start, not a verdict.
-- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)). Pick each for the reader's speed. Choosing form deliberately here is what stops lists from breeding and keeps diagrams confined to where structure genuinely lives.
+- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)). Pick each for the reader's speed.
 
 Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
@@ -68,40 +66,41 @@ Raise the document to the ceiling (Reference → [the two tiers](#the-two-tiers)
 
 Read the finished document once against the seven AI tells (Reference → [floor checklist](#floor-checklist-the-seven-ai-tells)). For each tell present, name it, quote the line, apply the fix, and carry it into the what-changed note.
 
-### 10. Self-check and deliver
+### 10. Self-check the mechanics
 
-Mark each PASS or FAIL; any FAIL, fix and re-check. Ship only when all PASS.
+Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 - [ ] Single axis (step 3), no mixing.
-- [ ] A reader reaches the purpose reading top to bottom (step 5).
+- [ ] Every heading and point admitted by the step-2 reader (steps 3–4); routed-out content named in the what-changed note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
 - [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
 - [ ] Voice and closing fit the step-2 reader (step 6) — one wrong voice held throughout still fails.
 - [ ] None of the seven tells remain (step 9).
-- [ ] Headings alone carry the argument (step 8).
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
 - [ ] Every claim carries its status — fact with source, hypothesis marked and testable, decision with intent; no unmarked assertion (Reference → [the two tiers](#the-two-tiers)).
 
-Deliver two things: the rebuilt document, and the **what-changed note** — first the substance (the structure, story, and voice you built, each tied to the reader or purpose), then any off-axis material step 3 left out and where it belongs, then a short line on any AI tells step 9 caught. When the input was a topic, not a draft, nothing changed — the note reports the choices made instead: reader, axis, voice, each tied to why.
+### 11. Reader trial, then deliver
+
+The author cannot simulate ignorance. Launch a fresh-context subagent with ONLY the produced document and the step-2 reader definition — no outline, no draft, no conversation history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble. Fix every stumble and rerun. A clean pass gates delivery.
+
+Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content steps 3–4 kept out (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. When the input was a topic, not a draft, the note reports the choices instead: reader, axis, voice, each tied to why.
 
 ---
 
 ## Reference
 
-**These rules govern the document this skill produces — not this SKILL.md prompt.** The step-10 self-check tests them against the produced document.
+**These rules govern the document this skill produces — not this SKILL.md prompt.** Steps 10–11 test them against the produced document.
 
 ### The two tiers
 
-What "good" means, in two tiers the procedure builds toward.
-
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
-- **Ceiling (attractive)** — density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread with the conclusion first; headings carrying the argument alone; figures and lists only where each beats prose; one consistent voice.
+- **Ceiling (attractive)** — the reader reaches the purpose with minimal effort. Means, not ends: density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread with the conclusion first; headings carrying the argument alone; the few load-bearing claims distinguishable at a glance — placement, a heading, a lead sentence, not decoration; figures and lists only where each beats prose; one consistent voice.
 
 Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope actually verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked as such ("hypothesis" / "not yet shown" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent (why it was chosen), never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 
-One role each. **Do not mix axes** in one document. Specialize the headings to the content; do not add items that bloat the document; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record/ADR axis specialized for an incident.
+One role each. **Do not mix axes** in one document. Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
   1. The question (the why-question this document answers, 1–2 sentences)

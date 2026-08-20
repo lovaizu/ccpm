@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Content is now admitted solely by the defined reader's path to the purpose, at both heading and
+  point level — sentences written for someone else (a re-reader, a past reviewer, an approver) are
+  routed to the what-changed note instead of shipping as noise.
+- A user-supplied outline or format is no longer filled unconditionally — a slot the reader does not
+  need is raised as a conflict (or recorded in the note on headless runs), so templates cannot force
+  noise into the document.
+- The final reader check now runs in a fresh-context subagent that sees only the document and the
+  reader definition, and its pass gates delivery — the check is no longer blinded by the author's own
+  knowledge of the draft.
+- The quality ceiling now targets minimal reader effort to the purpose, with density as a means and
+  load-bearing claims distinguishable at a glance — dense-but-flat documents no longer pass as done.
+
 ### Added
 
 - `/writ:up` brushes a document up by deriving its voice, diagrams, and outline from
