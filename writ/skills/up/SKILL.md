@@ -33,7 +33,7 @@ Gate: if a line cannot be answered from the input, ask the user. On a headless r
 
 ### 3. Build the outline from the purpose
 
-Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. The step-2 reader admits every heading: it stays only if that reader needs it to reach the purpose. A heading serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the what-changed note (whose it is, where it belongs). A user-supplied outline or format passes the same test slot by slot; an unjustifiable slot is an axis conflict — raise it with the user (headless: record it in the note), never fill it silently.
+Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. Every heading must earn admission from the step-2 reader: it stays only if that reader needs it to reach the purpose. A heading serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the what-changed note (whose it is, where it belongs). A user-supplied outline or format faces the same test slot by slot; an unjustifiable slot is an axis conflict — raise it with the user (headless: record it in the note), never fill it silently.
 
 Emit: the outline headings, specialized to this content.
 
@@ -41,9 +41,9 @@ Emit: the outline headings, specialized to this content.
 
 Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. The step-3 admission holds per point: one the step-2 reader does not need goes to the what-changed note instead. This is content, not prose yet. A heading with nothing concrete to hold gets cut.
 
-### 5. Read it as the reader; check the story
+### 5. Check the story in the reader's order
 
-Become the reader from step 2 and read the filled outline top to bottom. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move.
+Walk the filled outline top to bottom in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move. This is the author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
 
@@ -56,11 +56,11 @@ Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
 ### 7. Write it out
 
-Render the outline into the document in the chosen voice and forms. Lead each part with its point.
+Render the outline into the document in the chosen voice and forms. Lead each part with its point. Rendering adds no content the filled outline does not carry — a sentence that appears only at this step faces the same step-3 admission.
 
 ### 8. Brush up to the ceiling
 
-Raise the document to the ceiling (Reference → [the two tiers](#the-two-tiers), ceiling).
+Raise the document to the ceiling (Reference → [the two tiers](#the-two-tiers), ceiling). Anything added here — an example, a number — faces the same step-3 admission.
 
 ### 9. Clear the floor (the net)
 
@@ -71,7 +71,7 @@ Read the finished document once against the seven AI tells (Reference → [floor
 Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 - [ ] Single axis (step 3), no mixing.
-- [ ] Every heading and point admitted by the step-2 reader (steps 3–4); routed-out content named in the what-changed note.
+- [ ] Every heading and point admitted by the step-2 reader (steps 3–4); content kept out named in the what-changed note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
 - [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
 - [ ] Voice and closing fit the step-2 reader (step 6) — one wrong voice held throughout still fails.
@@ -81,9 +81,9 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 ### 11. Reader trial, then deliver
 
-The author cannot simulate ignorance. Launch a fresh-context subagent with ONLY the produced document and the step-2 reader definition — no outline, no draft, no conversation history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble. Fix every stumble and rerun. A clean pass gates delivery.
+The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no conversation history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble; what content it did not need to reach the purpose (and, if tellable, whom it seems to serve). Fix every stumble and rerun with a new fresh-context subagent. A clean pass gates delivery.
 
-Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content steps 3–4 kept out (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. When the input was a topic, not a draft, the note reports the choices instead: reader, axis, voice, each tied to why.
+Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content that steps 3–4 kept out (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. When the input was a topic, not a draft, the note reports the choices instead: reader, axis, voice, each tied to why.
 
 ---
 

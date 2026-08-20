@@ -82,4 +82,6 @@ picks the one that fits your reader and commits to it:
 
 Whichever it picks, the same finish applies: headings that carry the argument on their own, structure
 and flow shown as diagrams instead of prose, fact kept separate from hypothesis, and no hedging or
-filler left behind. You get the revised document and a short note of what moved and why.
+filler left behind. Before handing anything back, it puts the document in front of a fresh reader —
+a subagent that knows nothing but the document and who it's for — and delivery waits until that
+reader gets through clean. You get the revised document and a short note of what moved and why.

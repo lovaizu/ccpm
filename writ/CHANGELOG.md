@@ -6,20 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- Content is now admitted solely by the defined reader's path to the purpose, at both heading and
-  point level — sentences written for someone else (a re-reader, a past reviewer, an approver) are
-  routed to the what-changed note instead of shipping as noise.
-- A user-supplied outline or format is no longer filled unconditionally — a slot the reader does not
-  need is raised as a conflict (or recorded in the note on headless runs), so templates cannot force
-  noise into the document.
-- The final reader check now runs in a fresh-context subagent that sees only the document and the
-  reader definition, and its pass gates delivery — the check is no longer blinded by the author's own
-  knowledge of the draft.
-- The quality ceiling now targets minimal reader effort to the purpose, with density as a means and
-  load-bearing claims distinguishable at a glance — dense-but-flat documents no longer pass as done.
-
 ### Added
 
 - `/writ:up` brushes a document up by deriving its voice, diagrams, and outline from
@@ -29,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   through an ordered writing procedure, so the AI tells (padding, restatement, vague generalities,
   flavorless connectives, reflexive bullets, wavering voice, hedging) never take hold — a final pass
   nets any stragglers — and the result reads as written by a person, not an AI.
+- Content is admitted only where the defined reader needs it to reach the purpose, at both heading
+  and point level — sentences written for someone else (a re-reader, a past reviewer, an approver)
+  are routed to the what-changed note instead of shipping as noise.
+- A user-supplied outline or format is not filled unconditionally — a slot the reader does not need
+  is raised as a conflict (or recorded in the note on headless runs), so templates cannot force
+  noise into the document.
+- The final reader check runs in a fresh-context subagent that sees only the document and the
+  reader definition, and its pass gates delivery — so the check is not blinded by the author's own
+  knowledge of the draft.
+- The quality ceiling targets minimal reader effort to the purpose, with density as a means and
+  load-bearing claims distinguishable at a glance — a dense-but-flat document does not pass as done.
 - Produced documents now mark every claim's epistemic status — fact (with source), hypothesis
   (marked and testable), or decision (with intent) — so readers know how far they can rely on
   each statement.
