@@ -43,7 +43,7 @@ Under each heading, drop the points it must carry as terse bullets — concrete 
 
 ### 5. Check the story in the reader's order
 
-Walk the filled outline top to bottom in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move. This is the author's structure check — a real reader reads at step 11.
+Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move. This is the author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
 
@@ -71,7 +71,7 @@ Read the finished document once against the seven AI tells (Reference → [floor
 Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 - [ ] Single axis (step 3), no mixing.
-- [ ] Every heading and point admitted by the step-2 reader (steps 3–4); content kept out named in the what-changed note.
+- [ ] Every heading and point admitted by the step-2 reader (steps 3–4, 7–8); content kept out named in the what-changed note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
 - [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
 - [ ] Voice and closing fit the step-2 reader (step 6) — one wrong voice held throughout still fails.
@@ -81,9 +81,9 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 ### 11. Reader trial, then deliver
 
-The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no conversation history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble; what content it did not need to reach the purpose (and, if tellable, whom it seems to serve). Fix every stumble and rerun with a new fresh-context subagent. A clean pass gates delivery.
+The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no conversation history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble; what content did it not need — and, when it can tell, whom that content serves. Fix every stumble; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then rerun with a new fresh-context subagent. A clean pass — no stumbles, no unneeded content — gates delivery.
 
-Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content that steps 3–4 kept out (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. When the input was a topic, not a draft, the note reports the choices instead: reader, axis, voice, each tied to why.
+Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content kept out at any admission point, steps 3–4 or 7–8 (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. When the input was a topic, not a draft, the note reports the choices instead: reader, axis, voice, each tied to why.
 
 ---
 
