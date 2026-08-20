@@ -271,8 +271,15 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       coordinator audited old vs new end to end — zero ratified decisions lost, all carried
       claims verified against the shipped files; note completed in 672778c with five added
       dispositions and the §4.3 goal-statement correction, flagged for the gate)
+- [x] Refine design.md by the writ-feedback lens (directed in-console 2026-08-20): four findings
+      fed back to writ as a PR #15 comment (whom-does-each-sentence-serve; fresh-reader check must
+      be independent of the author; axis slots need per-reader justification; weight hierarchy);
+      FB1/FB4 applied — 7,269 → 6,239 words, wrong-reader material cut or re-homed, every cut
+      grep-verified into a shipped home (dispositions in `checks/4-refine-note.md`); FB2 run as
+      designed — a zero-context reader read chapters 1–4 straight through, verdict YES, its four
+      stumbles fixed; FB3 (format-side cuts) deferred to a future format ruling (edcf1b4)
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
-      (a5ffde5), and the writ rebuild — on PR #19
+      (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
@@ -353,8 +360,17 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-20
+- **Last completed**: #3 Design sign-off (#4 in progress: design.md refined by the writ-FB lens,
+  edcf1b4 — noise cut, fresh-reader verified; design-gate verdict pending on PR #19)
+- **Next**: #4 — take the design-gate verdict on PR #19, now covering the run-state file revision
+  (badd0c7 + 0764c7e), the writ rebuild (486a1af), and the noise refinement (edcf1b4). On `/rn:ty`
+  ripple the revised design into the build (conductor skill, turn-record adapters, entry skills —
+  incl. up locating the run via `run.yaml` instead of the absorbed `backend` file), then ruling
+  (viii), then the targeted re-review; on `/rn:gm` address the feedback and re-present
+- **Notes**: branch `worktree-aiya`, PR #19 (gate comment predates edcf1b4; the PR diff includes
+  it). Four proposed values still await ratification in the verdict: filename `run.yaml`; fields
+  `backend`/`branch`/`gates`/`status`; Planning-Gate identifiers (`purpose-planning` style);
+  example branch name. writ feedback posted for the writ session at PR #15
+  (issuecomment-5353396410). `checks/4.md` review columns still empty.
