@@ -360,34 +360,34 @@ consequence: the ceiling's target is minimal reader effort; density is a means.
 
 **Steps**:
 
-- [ ] Steps 3–4 of `SKILL.md`: make the step-2 reader the **admission criterion for content** — a
+- [x] Steps 3–4 of `SKILL.md`: make the step-2 reader the **admission criterion for content** — a
       heading or point enters only if that reader needs it to reach the purpose; content serving
       another reader stays out and is reported in the what-changed note (whose it is, where it
       belongs). External-template slots pass the same test; an unjustifiable slot is reported to
       the user as an axis-side conflict (headless: recorded in the what-changed note), never
       silently filled.
-- [ ] Split step 10: mechanical checks (single axis, `Assumed reader:` line, claim statuses) stay
+- [x] Split step 10: mechanical checks (single axis, `Assumed reader:` line, claim statuses) stay
       with the author; **experiential checks** (reaches the purpose top to bottom, headings carry
       the argument) move to a fresh-context subagent given **only** the document and the step-2
       reader definition, reporting where it stumbled; its pass gates delivery, and stumbles come
       back as fixes.
-- [ ] Reference: restate the ceiling around **minimal reader effort to the purpose** — density
+- [x] Reference: restate the ceiling around **minimal reader effort to the purpose** — density
       becomes a means; add "the few load-bearing claims are distinguishable at a glance"; leave
       the one-voice rule and the seven-tell floor table unchanged.
-- [ ] Keep the body <2,000 words by trimming existing text (no relaxing the budget); keep the
+- [x] Keep the body <2,000 words by trimming existing text (no relaxing the budget); keep the
       addressee sentence; update `writ/CHANGELOG.md` `[Unreleased]`.
-- [ ] Dogfood against the field evidence: run the new fresh-reader check on the aiya document
+- [x] Dogfood against the field evidence: run the new fresh-reader check on the aiya document
       (`486a1af:aiya/docs/design.md`, reader definition from
       `486a1af:.rn/20260813-aiya/checks/4-writ-note.md`) — it must flag the three noise spots the
       FB named (opening abstract, §1 "Out of scope" — a paragraph, so caught at point level via
       the trial's content-not-needed report — and the §2 provenance opener); run the
       slot-justification test over the heading structure for the heading-level admission.
-- [ ] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`.
-- [ ] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/7.md`)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent)
+- [x] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`.
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/7.md`)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing)
+- [x] Verification expert review (subagent, fact-check)
+- [x] Design expert review (subagent)
 
 **Completion criteria**:
 
@@ -425,6 +425,13 @@ requires for a session to close.
 
 # State
 
-(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
-session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
-so only a genuinely suspended session reads `paused`.)
+Status: paused
+Date: 2026-08-20
+Last completed: task #6 checked off; task #7 executed end to end (3 fix rounds, all steps checked,
+all four expert axes OK — ledger `checks/7.md`, deliverable HEAD a1087d9, PR #15) but not yet
+checked off: it stopped at the coordinator's escalation on the dogfood criterion and six residual
+findings.
+Next: task #7 close-out per the user's verdict "(a)", given at suspend: treat the dogfood criterion
+as met in substance, run one fold round for residual findings 1–5 in `checks/7.md` (+ compact
+re-review), then check off #7 and proceed to task #8 (Evaluation sign-off).
+Notes: user instruction at suspend — "再開後にaを進めて" (= proceed with option (a) on resume).
