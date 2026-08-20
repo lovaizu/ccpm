@@ -8,11 +8,11 @@ version: 0.1.0
 
 Input: a draft to revise, or a topic to author. Output: the rebuilt document plus a what-changed note.
 
-Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
+Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the tells get no foothold — step 9 is a net for stragglers, not the main tool.
 
 Two layers, kept apart:
 
-- **The procedure** (next) — what to do now, while this skill runs.
+- **The procedure** (next) — what to do now.
 - **Reference** (last section) — the outlines, voice, forms, and AI-tell list the steps draw on, and the bar the produced document must clear.
 
 ## The procedure
@@ -21,13 +21,13 @@ Order: **understand → reader → outline → fill → story-check → voice & 
 
 ### 1. Understand the input
 
-Say, in your own words: what the document is about, and the one thing it must convey (伝えたいこと). For an existing draft, read for intent — you will not reuse its sentences.
+Say, in your own words: what the document is about, and the one thing it must convey. For an existing draft, read for intent — you will not reuse its sentences.
 
 Emit: `Subject: … / Must convey: …`
 
 ### 2. Define the reader and the purpose
 
-Write three lines: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do once they have read it.
+Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do once they have read it. If the input implies several audiences, pick the primary; the admissions (steps 3–4) keep the others' needs out, and the what-changed note names them — a bundled reader admits everything.
 
 Gate: if a line cannot be answered from the input, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>` to the output. Never leave a line blank.
 
@@ -39,18 +39,18 @@ Emit: the outline headings, specialized to this content.
 
 ### 4. Fill the outline with what you want to convey
 
-Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. The step-3 admission holds per point: one the step-2 reader does not need goes to the what-changed note instead. This is content, not prose yet. A heading with nothing concrete to hold gets cut.
+Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. The step-3 admission holds per point: one the step-2 reader does not need goes to the what-changed note instead. Content, not prose yet. A heading with nothing concrete to hold gets cut.
 
 ### 5. Check the story in the reader's order
 
-Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix the order and the gaps now, while it is still bullets and cheap to move. This is the author's structure check — a real reader reads at step 11.
+Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while it is still bullets and cheap to move. The author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
 
 With the story standing, choose:
 
 - **Voice and closing** — Reference → [voice by reader](#voice-by-reader), as a start, not a verdict.
-- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)). Pick each for the reader's speed.
+- **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)).
 
 Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
@@ -81,9 +81,9 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 ### 11. Reader trial, then deliver
 
-The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no conversation history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble; what content did it not need — and, when it can tell, whom that content serves. Fix every stumble; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then rerun with a new fresh-context subagent. A clean pass — no stumbles, no unneeded content — gates delivery.
+The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble; what content did it not need — and, when it can tell, whom that content serves. Fix every stumble; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then rerun with a fresh-context subagent. A clean pass — no stumbles, no unneeded content — gates delivery.
 
-Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content kept out at any admission point, steps 3–4 or 7–8 (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. When the input was a topic, not a draft, the note reports the choices instead: reader, axis, voice, each tied to why.
+Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content kept out at any admission point, steps 3–4 or 7–8 (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. For a topic input, the note reports the choices instead: reader, axis, voice, each tied to why.
 
 ---
 
@@ -96,11 +96,11 @@ Deliver the rebuilt document and the **what-changed note** — the structure, st
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
 - **Ceiling (attractive)** — the reader reaches the purpose with minimal effort. Means, not ends: density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread with the conclusion first; headings carrying the argument alone; the few load-bearing claims distinguishable at a glance — placement, a heading, a lead sentence, not decoration; figures and lists only where each beats prose; one consistent voice.
 
-Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope actually verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked as such ("hypothesis" / "not yet shown" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent (why it was chosen), never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope actually verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked as such ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 
-One role each. **Do not mix axes** in one document. Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record/ADR axis specialized for an incident.
+One role each. **Do not mix axes.** Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
   1. The question (the why-question this document answers, 1–2 sentences)
@@ -133,7 +133,7 @@ One role each. **Do not mix axes** in one document. Specialize the headings to t
 
 Choose each part's form for the reader's speed.
 
-- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance; when prose reads faster — a short linear sequence, or a structure a sentence can carry — skip the diagram. Do not repeat in prose what the diagram carries.
+- **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance; when prose reads faster — a short linear sequence, or a structure a sentence can carry — skip it. Do not repeat in prose what the diagram carries.
 - **List** — only when the items are genuinely parallel; otherwise write prose.
 - **Table** — for several items compared on the same fields.
 - **Graph** — for a trend or distribution that lives in the numbers.
