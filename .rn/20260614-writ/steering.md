@@ -88,8 +88,10 @@ voice, and form from the reader and purpose rather than from memory or the old d
   checks stay with the author. The ceiling names minimal reader effort to the purpose as the target
   (density a means, not the end) and requires the few load-bearing claims to be distinguishable at a
   glance; the one-voice rule and the seven-tell floor stand unchanged. Dogfood evidence: the
-  fresh-reader check flags the three noise spots the FB named in the aiya document (486a1af), and
-  the slot-justification test flags its "Out of scope" slot.
+  fresh-context dogfood flags the three noise spots the FB named in the aiya document (486a1af).
+  (Corrected 2026-08-20: "Out of scope" is a paragraph in §1, not a heading — verified against
+  486a1af — so it is caught at point level by the trial's content-not-needed report, not by the
+  heading-slot test as first written.)
 
 # Assumptions
 
@@ -377,8 +379,9 @@ consequence: the ceiling's target is minimal reader effort; density is a means.
 - [ ] Dogfood against the field evidence: run the new fresh-reader check on the aiya document
       (`486a1af:aiya/docs/design.md`, reader definition from
       `486a1af:.rn/20260813-aiya/checks/4-writ-note.md`) — it must flag the three noise spots the
-      FB named (opening abstract, §1 "Out of scope", §2 provenance opener); run the
-      slot-justification test over its seven-chapter axis — it must flag the "Out of scope" slot.
+      FB named (opening abstract, §1 "Out of scope" — a paragraph, so caught at point level via
+      the trial's content-not-needed report — and the §2 provenance opener); run the
+      slot-justification test over the heading structure for the heading-level admission.
 - [ ] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`.
 - [ ] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/7.md`)
 - [ ] QA expert review (subagent)
@@ -396,7 +399,8 @@ consequence: the ceiling's target is minimal reader effort; density is a means.
 - The ceiling names minimal reader effort as the target, density as a means, and load-bearing
   claims distinguishable at a glance; one voice and the seven-tell floor stand unchanged.
 - Body <2,000 words; addressee sentence intact; both strict validations pass; CHANGELOG updated.
-- The dogfood flags the FB's three named noise spots and the unjustified "Out of scope" slot.
+- The dogfood flags the FB's three named noise spots ("Out of scope" at point level — it is a
+  paragraph, not a heading).
 
 ### #8: Evaluation sign-off
 
