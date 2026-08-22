@@ -278,9 +278,15 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       grep-verified into a shipped home (dispositions in `checks/4-refine-note.md`); FB2 run as
       designed — a zero-context reader read chapters 1–4 straight through, verdict YES, its four
       stumbles fixed; FB3 (format-side cuts) deferred to a future format ruling (edcf1b4)
-- [ ] Re-run the writ build-fresh procedure on `design.md` with the FB-updated writ (the PR #15
+- [x] Re-run the writ build-fresh procedure on `design.md` with the FB-updated writ (the PR #15
       feedback is now incorporated upstream) — directed at suspend 2026-08-22; if the document
-      changes, the gate object moves to the new commit and the gate is re-presented
+      changes, the gate object moves to the new commit and the gate is re-presented (run
+      2026-08-22: steps 1–10 a fixed point — the edcf1b4 refinement had pre-applied what the
+      updated writ codifies, note in `checks/4-writ-rerun-note.md`, ca46a66; the new step-11
+      fresh-reader trial then drove three fix rounds — 041413c, a14c010, b2712f2, 6,239 →
+      6,448 words — purpose YES on all four trials; loop closed at the 3-iteration cap with
+      two residuals flagged for the gate (§4.6 "structural" overclaim, UX/Design docs
+      unanchored), 5555337; gate object moves to b2712f2)
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
 - [ ] Adopt the grilling interview method (mattpocock/skills, `skills/productivity/grilling`) as
