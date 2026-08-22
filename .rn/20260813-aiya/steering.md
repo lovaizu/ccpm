@@ -280,6 +280,16 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       stumbles fixed; FB3 (format-side cuts) deferred to a future format ruling (edcf1b4)
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
+- [ ] Adopt the grilling interview method (mattpocock/skills, `skills/productivity/grilling`) as
+      the elicit-item procedure — ruled 2026-08-22, relentlessness kept deliberately: both AI and
+      humans run optimistically past ambiguity, which is exactly what Purpose elicitation must not
+      do. Specify in conductor §7 (the "Interview the human at the chat surface" sentence, the
+      one unspecified how): design-tree / frontier / rounds, numbered questions each with a
+      recommended answer; a frontier question needing a fact becomes an investigation Step on the
+      Plan (never the human's homework, never the Conductor's own digging — aiya-native form of
+      grilling's sub-agent rule); termination = frontier empty and intent decidable. Cite the
+      source and check its license; design.md carries at most one sentence (density bar). Apply
+      after the PR #19 verdict so the pending gate object stays stable
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
