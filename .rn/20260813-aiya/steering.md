@@ -278,6 +278,9 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       grep-verified into a shipped home (dispositions in `checks/4-refine-note.md`); FB2 run as
       designed — a zero-context reader read chapters 1–4 straight through, verdict YES, its four
       stumbles fixed; FB3 (format-side cuts) deferred to a future format ruling (edcf1b4)
+- [ ] Re-run the writ build-fresh procedure on `design.md` with the FB-updated writ (the PR #15
+      feedback is now incorporated upstream) — directed at suspend 2026-08-22; if the document
+      changes, the gate object moves to the new commit and the gate is re-presented
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
 - [ ] Adopt the grilling interview method (mattpocock/skills, `skills/productivity/grilling`) as
@@ -374,8 +377,10 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-08-22
+- **Last completed**: #4 in progress — grilling adoption and its delivery ruling recorded
+  (266c54b, e98e474); design gate re-presented on PR #19 (comment 2026-08-22), verdict not taken
+- **Next**: #4 — re-run writ (FB-updated, PR #15) on `design.md`; then the PR #19 gate verdict
+- **Notes**: writ upstream (`origin/worktree-writ`, PR #15) now carries the FB from edcf1b4's
+  refinement — rebuild `design.md` with that updated procedure before re-presenting the gate
