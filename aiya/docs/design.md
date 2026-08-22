@@ -37,17 +37,17 @@ flowchart LR
 
 **Two walls keep the roles apart.**
 
-- **The Conductor never touches the real work.** Its intake is a short, closed list of bounded state (§5.7); it reads no product — not even a worker's first-person Report. This wall caps what *kind* of thing can enter its context.
-- **Turns never nest.** Only the Conductor spawns. Two platform facts carry the wall: a subagent starts from a fresh context, and only what it returns reaches the caller — so a Turn is born clean, returns something bounded, and is discarded. Nesting would place work beyond the attempt cap and the return contract; Turn definitions therefore omit the spawn tool.
+- **The Conductor never touches the real work.** Its intake is a short, closed list of bounded state (§5.7); it reads no product — not even a worker's first-person Report, its own account of what it did (§5.2). This wall caps what *kind* of thing can enter its context.
+- **Turns never nest.** Only the Conductor spawns. Two platform facts carry the wall: a subagent starts from a fresh context, and only what it returns reaches the caller — so a Turn is born clean, returns something bounded, and is discarded. Nesting would place work beyond the attempt cap (three attempts per Step, §4.1) and the return contract; Turn definitions therefore omit the spawn tool.
 
 **Vocabulary, fixed here.**
 
 - **Phase** — work proceeds in three: Purpose (why) → Approach (how) → Delivery (execution).
 - **Plan / Step** — each Phase holds one Plan; a Step is one Plan item.
-- **Turn roles** — Turns are one kind with three role families: **generate** makes the work, **verify** measures it, and **run-keeping** sustains the run itself, as two roles — **brief** (the cognitive record: writes the CCS) and **record** (the physical record: performs every platform operation).
+- **Turn roles** — Turns are one kind with three role families: **generate** makes the work, **verify** measures it, and **run-keeping** sustains the run itself, as two roles — **brief** (the cognitive record: writes the CCS, the Compressed Cognitive State) and **record** (the physical record: performs every platform operation).
 - **Work order** — minimal parameters passed into a static shipped definition: the procedure is static, the content is parameters.
 - **Elicit item** — the one kind of Plan item whose work *is* conversation with the human, carried by the Conductor itself — the one seat that can talk to a person.
-- **Gates** — six stops where the human rules: each Phase's Plan on the way in (a **Planning Gate**) and its product on the way out (**G1** / **G2** / **G3**). Answered with two of the five command words: `ty` approve, `gm` send back (`on` / `dn` / `up` run the session; mnemonics in the README).
+- **Gates** — six stops where the human rules: each Phase's Plan on the way in (a **Planning Gate**) and its product on the way out (**G1** / **G2** / **G3**). Answered with two of the five command words: `ty` approve, `gm` send back (`on` / `dn` / `up` — start, suspend, resume — run the session; mnemonics in the README).
 - **Viewpoint** — one independently checkable concern; a Step's product gets one Turn(verify) per viewpoint (§5.3).
 - **Machines verify, humans review** — pass/fail against a fixed yardstick is a machine's job; approving or redirecting is a human's. This line holds throughout.
 - **Investigation is first-class work** — eliciting a vague intent, surveying a system, spiking a technology: each is a Step with a product, not a preamble to work.
@@ -87,7 +87,7 @@ Beside the chain, execution leaves **records** — an ephemeral lineage that mov
 | **Purpose** | What success means — the head of the chain | Turn(generate) | Turn(verify) — evidential soundness | G1 |
 | **Approach** | How that success will be reached | Turn(generate) | Turn(verify) — against Purpose | G2 |
 | **Deliverable** | The working real thing | Turn(generate) | Turn(verify) — against Purpose + Approach + the Step's done-when | G3 |
-| **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) | Mechanical rules; the next verification catches lies | — (consumed by the Conductor) |
+| **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) | Mechanical compression rules (§5.4); a claim the products don't support is caught by the next verification, which reads products, not the CCS | — (consumed by the Conductor) |
 | **Verdict** | One viewpoint's judgment: pass/fail, gap, evidence | Turn(verify) | — it is itself the check; evidence keeps it falsifiable | — (aggregated by the Conductor) |
 | **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) | — Turn(brief) checks it against the product | — |
 | **Research** | An investigation Step's product, elicit answers included | Turn(generate); elicit answers, the Conductor | Turn(verify) — evidential soundness; elicit answers exempt | — (not subject to approval) |
@@ -114,7 +114,7 @@ Logical names map to physical layout exactly once, here:
 
 Formats and worked examples are in [references/](../references/). Research alone has no fixed format, deliberately: an investigation's product is free-form, verified for evidential soundness (§4.4), and referenced by path.
 
-**Persistence has two roles — durable record and review surface — and a backend fills both.** Three ship: **github** (branch and PR, via `gh`), **gitlab** (branch and MR, via `glab`), **local** (no git at all — the disk is the record, and the human opens the files directly). The backend is detected at `on`, recorded in the run-state file, and reread at `up`. The core loop is identical under every backend; exactly two things degrade under local, both named, never hidden: bare `gm` (there is no comment stream to fetch) and durability against machine loss (§7). Why git is swappable rather than required is a stated trade-off (§7).
+**Persistence has two roles — durable record and review surface — and a backend fills both.** Three ship: **github** (branch and PR, via `gh`), **gitlab** (branch and MR, via `glab`), **local** (no git at all — the disk is the record, and the human opens the files directly). The backend is detected at `on`, recorded in the run-state file, and reread at `up`. The core loop is identical under every backend; exactly two things degrade under local, both named, never hidden: bare `gm` (the argument-less send-back reads feedback from PR/MR review comments, §4.4 — under local there is no comment stream to fetch) and durability against machine loss (§7). Why git is swappable rather than required is a stated trade-off (§7).
 
 **The run-state file, `run.yaml` (proposed).** The run's lifecycle facts — backend, run branch, gate verdicts, closure. It exists so that resume can read the gates' standing from disk instead of guessing (§4.5). The **Conductor** writes it and no one else does — it is the one party present at every boundary event: at `on`, at each gate verdict, at G3 resolution. Turn(record) carries it into the durable record and never writes into it.
 
@@ -136,7 +136,7 @@ Three kinds of artifact and nothing else: **six skills** — five entry skills f
 
 ### 4.1 A Step — generate, verify, re-aim, escalate
 
-Count by **1 Step = 1 Turn(generate)** per attempt; an elicit item (§2) dispatches none and skips this pipeline — verification, the attempt cap, and §6's counts apply only to Turn-carried items.
+**Each attempt at a Step dispatches exactly one Turn(generate)**; an elicit item (§2) dispatches none and skips this pipeline — verification, the attempt cap, and §6's counts apply only to Turn-carried items.
 
 ```mermaid
 flowchart LR
@@ -206,7 +206,7 @@ flowchart LR
     g2 --> p3{{"Plan gate"}} --> W3["Delivery phase"] --> g3{{"G3<br/>criteria met, accepted"}}
 ```
 
-Six stops: three phases × {Plan on the way in, product on the way out}. Only the outputs carry numbers, because G1's and G2's products become yardsticks and G3's — the Deliverable — never does.
+Six stops: three phases × {Plan on the way in, product on the way out}; only the outputs — G1, G2, G3, in phase order — carry numbers.
 
 **Stopping at a gate**, the Conductor posts a bounded console summary and points at the artifact on the review surface — the summary is for deciding to look; the surface is where the document is read. The surface always already holds what the gate points at: Turn(record) opens it at `on`, a product arrives with its wave's settle, and a freshly drafted or reworked Plan is carried there by a pre-Planning-Gate record dispatch (§5.5). Send-back has two forms: `gm <one line>` carries the feedback in the argument and works everywhere; bare `gm` takes the PR/MR's review comments — Turn(record) fetches them to a file and returns the path. Between stops the Conductor self-runs in **dispatch rounds** — one continuous run from one stop to the next, typically spanning several waves — a progress board kept current on the console, each round re-entering from file state (§4.5) — which is why a stop loses nothing.
 
@@ -220,7 +220,7 @@ Six stops: three phases × {Plan on the way in, product on the way out}. Only th
 
 Persistence is continuous, not an event at the end: every wave settle commits and pushes the four items together, so suspension is routine operation, not exception handling — `dn`'s job is to confirm, not to persist. What is bounded is the working state, not the transcript: the Conductor's history still grows with the number of Turns; the design minimizes the coefficient (returns are paths and Verdicts only), and the residue is cycled by `dn` → `/clear` → `up`. Under a remote backend the resume point survives the machine as well as the conversation; under local, the conversation only (§7).
 
-### 4.6 The two properties, discharged
+### 4.6 Bounded context and drift detection, discharged
 
 Bounded context is carried by three things, none scaling with the work: the no-reading wall caps what *kind* of thing enters (§2); the CCS caps *how much* — one file per wave, replaced not appended, real work by path (§5.4); and one brief per wave cuts the last link to scale — doubling a wave's width does not double what the Conductor reads (§4.2). Drift detection likewise, one answer per form the problem takes: the chain makes drift an object — a Step unjustifiable by the link above it — visible without anyone noticing a mood (§3.1); verification against version-pinned, gate-approved yardsticks catches unasked-for work at the Step, before its wave settles (§4.4); and re-planning from zero catches the stale plan — a plan rebuilt from the current position cannot silently inherit the old one (§4.3). What exceeds the Conductor's discretion is not absorbed: a doubt about a yardstick goes to a human at a gate. Both answers are structural rather than asserted — but structure is not evidence that the loop is worth its cost; that is §6's question.
 

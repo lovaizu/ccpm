@@ -139,3 +139,43 @@ Verification scope: the full document was re-walked point by point against the s
 listed above re-read at the cited lines. Not re-verified: the shipped artifacts end to end —
 trusted per `checks/4.md`'s Design Contract Trace plus the empty `aiya/` log since edcf1b4.
 Step 11 (fresh-context reader trial) is the coordinator's, run after this note.
+
+## Reader trial (step 11, updated spec)
+
+A fresh-context evaluator (the ratified step-2 reader) read chapters 1–4 straight through and
+ruled on the document's one question. **Verdict: YES** — the two mechanisms discharge the two
+properties as argued; purpose lands, and the headings carry the thread with **one gap** (no
+heading named the two properties before §4.6 closed the loop on them). 8 first-read stumbles
+were reported alongside. All 9 findings fixed in place, surgical edits only, zero ratified
+decisions moved; 6,239 → 6,284 words (+45).
+
+| # | Finding | Fix applied |
+|---|---|---|
+| 1 | Headings gap: no heading opens the two-properties loop that §4.6 closes | §4.6 heading renamed to "Bounded context and drift detection, discharged" — properties now named in the heading track; no renumbering |
+| 2 | §2 wall 1: `Report` used as a defined term before its definition | glossed at first use: "not even a worker's first-person Report, its own account of what it did (§5.2)" |
+| 3 | §2 wall 2: `attempt cap` undefined until the §4.1 diagram | glossed at first use: "the attempt cap (three attempts per Step, §4.1)" |
+| 4 | §2 vocabulary: acronym CCS never expanded in ch1–4 | expanded at first use: "writes the CCS, the Compressed Cognitive State"; §5.4 stays the full definition |
+| 5 | §3.2 ledger, CCS row: "Mechanical rules; the next verification catches lies" cryptic before §5.4 | cell now stands alone: "Mechanical compression rules (§5.4); a claim the products don't support is caught by the next verification, which reads products, not the CCS" — verified against §5.4's product-wins rule |
+| 6 | §3.3: bare `gm` / comment stream unexplained until §4.4 | glossed at point of use: "(the argument-less send-back reads feedback from PR/MR review comments, §4.4 — under local there is no comment stream to fetch)"; list parallelism kept |
+| 7 | §4.1: "Count by **1 Step = 1 Turn(generate)** per attempt" read as self-contradictory | stated plainly per §4.1's actual meaning: "Each attempt at a Step dispatches exactly one Turn(generate)" |
+| 8 | §4.4: "because G1's and G2's products become yardsticks and G3's … never does" undercuts itself (G3 is numbered) | false "because" dropped; the sentence now states only what the document supports: "only the outputs — G1, G2, G3, in phase order — carry numbers" |
+| 9 | §2: `on` / `dn` / `up` named with no semantics | glossed inline: "(`on` / `dn` / `up` — start, suspend, resume — run the session; mnemonics in the README)"; README pointer kept |
+
+**Unneeded-content report — recorded, not applied.** The trial flagged content in ch3–4 that
+the step-2 evaluator does not need, each serving another reader: §3.3 in full
+(builder/operator), §3.4 (installer), §4.4 gate operations (operator), §4.1 side paths
+(builder), §4.5 dn/clear/up cycle (operator), §2 command roster (operator). All are
+format-mandated slots and stay per the ratified seven-chapter format; they join the standing
+FB3 flags awaiting a future format ruling. The trial's estimate: roughly a third of chapters
+3–4 serves readers other than the step-2 evaluator.
+
+**Step-10 re-check after the edits — all nine items PASS.** Re-walked against the edited
+document: reader/axis/voice/closing unchanged (items 1, 2, 6, 8); every edit is a gloss or
+correction admitted by the step-2 reader — each removes a first-read stumble the trial
+observed, the same ruling as the refine pass's four sentences (item 3); forms untouched, list
+parallelism in §3.3 preserved (item 4); the one gloss that names a number a diagram carries —
+"(three attempts per Step, §4.1)" — is a first-use binding with pointer, not a restatement of
+the pipeline (item 5); the new sentences carry no announcing openers, no hedges, one voice
+(item 7); finding 8 removed a false claim and added none, so every remaining claim keeps its
+status (item 9). Section pointers introduced or touched (§4.1, §4.4, §5.2, §5.4) grep-verified
+against existing headings; the stale phrase "1 Step = 1" greps to zero.
