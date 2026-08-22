@@ -13,7 +13,7 @@ Delegate naively, and the bigger the job, the more human hands it takes. Delegat
 
 So the design must guarantee exactly two properties, and everything that follows is verified against them:
 
-- **Bounded context** — the Conductor's working state stays sub-linear in the number of work streams.
+- **Bounded context** — the working state of the directing agent (aiya's Conductor, §2) stays sub-linear in the number of work streams.
 - **Drift detection** — the work stays traceable to the purpose, and deviation is caught mid-flight, not at the end.
 
 Out of scope: measuring the 10× itself.
@@ -48,6 +48,7 @@ flowchart LR
 - **Work order** — minimal parameters passed into a static shipped definition: the procedure is static, the content is parameters.
 - **Elicit item** — the one kind of Plan item whose work *is* conversation with the human, carried by the Conductor itself — the one seat that can talk to a person.
 - **Gates** — six stops where the human rules: each Phase's Plan on the way in (a **Planning Gate**) and its product on the way out (**G1** / **G2** / **G3**). Answered with two of the five command words: `ty` approve, `gm` send back. The other three — `on` / `dn` / `up`: start, suspend, resume — run the session, not gates; mnemonics in the README.
+- **Yardstick** — a gate-approved product everything downstream is verified against; the chain of them is §3.1.
 - **Viewpoint** — one independently checkable concern; a Step's product gets one Turn(verify) per viewpoint (§5.3).
 - **Machines verify, humans review** — pass/fail against a fixed yardstick is a machine's job; approving or redirecting is a human's. This line holds throughout.
 - **Investigation is first-class work** — eliciting a vague intent, surveying a system, spiking a technology: each is a Step with a product, not a preamble to work.
@@ -87,7 +88,7 @@ Beside the chain, execution leaves **records** — an ephemeral lineage that mov
 | **Purpose** | What success means — the head of the chain | Turn(generate) | Turn(verify) — evidential soundness | G1 |
 | **Approach** | How that success will be reached | Turn(generate) | Turn(verify) — against Purpose | G2 |
 | **Deliverable** | The working real thing | Turn(generate) | Turn(verify) — against Purpose + Approach + the Step's done-when | G3 |
-| **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) | Mechanical compression rules (§5.4); a claim the products don't support is caught by the next verification, which reads products, not the CCS | — (consumed by the Conductor) |
+| **CCS** | The bounded state carried between waves, one file per wave — the Conductor's working state itself | Turn(brief) | Mechanical compression rules (§5.4); a claim the products don't support is caught by the next verification, which reads products, not the CCS | — (consumed by the Conductor) |
 | **Verdict** | One viewpoint's judgment: pass/fail, gap, evidence | Turn(verify) | — it is itself the check; evidence keeps it falsifiable | — (aggregated by the Conductor) |
 | **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) | — Turn(brief) checks it against the product | — |
 | **Research** | An investigation Step's product, elicit answers included | Turn(generate) — elicit answers: the Conductor | Turn(verify) — evidential soundness; elicit answers exempt | — (not subject to approval) |
@@ -149,7 +150,7 @@ flowchart LR
     AGG -->|"fail<br/>attempt = 3"| ESC[["escalate<br/>to the human, with the failure history"]]
 ```
 
-Turn(generate) writes product and Report to disk and returns paths — never raw output. Aggregation is a mechanical AND; on failure the re-aim carries the union of the failing gaps as the corrective instruction. For an investigation Step nothing is "wrong" — evidence is merely insufficient, and re-aim digs further instead of rebuilding. Escalation is not a gate but an exception interrupt: rare, unplanned, carrying at most three gaps for the human to adjudicate. Two side paths: a **missing return** is re-sent — a Turn is stateless, so re-sending is always safe, and an accident is not an attempt; a **missing viewpoint** re-verifies only — the product is untouched, so the attempt count does not grow.
+Turn(generate) writes product and Report to disk and returns paths — never raw output. Aggregation is a mechanical AND; on failure the re-aim carries the union of the failing gaps as the corrective instruction. For an investigation Step nothing is "wrong" — evidence is merely insufficient, and re-aim digs further instead of rebuilding. Escalation is not a gate but an exception interrupt: rare, unplanned, carrying at most three gaps for the human to adjudicate. Two side paths: a **missing return** is re-sent — a Turn is stateless, so re-sending is always safe, and an accident is not an attempt; a **missing viewpoint** — a concern noticed absent from the check set — is added to the Plan and re-verified only: the product is untouched, so the attempt count does not grow.
 
 ### 4.2 A wave — parallel width, one CCS
 
@@ -181,11 +182,11 @@ Each time a wave settles, it reads the CCS and asks three questions, in order: a
 
 **Discretion has a line.** Re-planning may move all of the Plan — add, remove, split, rewire, reorder. It never touches Purpose or Approach: a discovery that casts doubt on a yardstick itself is not absorbed into the Plan but sent back to a gate, up to the human.
 
-**The steering verbs are finite**: Plan surgery within that line, re-aim, re-verify, adding an investigation Step, sending back to a gate, re-sending a missing return. Anything outside the set — above all, investigating by oneself — is a breach of the wall. A doubt that can be written as a viewpoint becomes a re-verify; an open question becomes an investigation Step on the Plan. And aggregation has an attribution test — *does it require reading the real work?* No: the Conductor's (control). Yes: a Turn's (inspection).
+**The steering verbs are finite**: Plan surgery within that line, re-aim, re-verify, adding an investigation Step, sending back to a gate, re-sending a missing return. Anything outside the set — above all, investigating by oneself — is a breach of the wall. A doubt that can be written as a viewpoint becomes a re-verify; an open question becomes an investigation Step on the Plan. And aggregation has an attribution test — *does this act require reading the real work?* If not, the act is the Conductor's: control, like the AND over Verdicts. If so, it is a Turn's: inspection, like consolidating state.
 
 ### 4.4 Gates — six stops, versioned approvals
 
-Three phases connect intent to execution. Each has a Plan (drafted and re-planned by the Conductor) and a product (made by Turns, never the Conductor):
+Three phases connect intent to execution. Each has a Plan (drafted and re-planned by the Conductor — the translation layer, not a phase product) and a product (made by Turns, never the Conductor):
 
 | Phase | The question it answers | Product | Typical Steps |
 |---|---|---|---|
@@ -193,11 +194,11 @@ Three phases connect intent to execution. Each has a Plan (drafted and re-planne
 | **Approach** | How will we get there? | Approach — Testing, Technology, Design | Survey the existing system; investigate technologies; spike the risky part |
 | **Delivery** | In what order do we execute? | The working Deliverable | Implementation |
 
-**Generation needs prerequisites** — purpose, UX, design, plan — or a Turn has nothing to build against and be verified against. What the project lacks, the Plan grows Steps to produce in aiya's formats ([references/](../references/)). Investigation Steps exist in every phase, and it is on them that compression and independent checking pay most: an unbounded pile of reading yields a few lines of understanding nothing on disk would otherwise remember.
+**Generation needs prerequisites** — the run's own Purpose and Plan, plus the product's UX and Design documents (per-product foundations, not phase products) — or a Turn has nothing to build against and be verified against. What the project lacks, the Plan grows Steps to produce in aiya's formats ([references/](../references/)). Investigation Steps exist in every phase, and it is on them that compression and independent checking pay most: an unbounded pile of reading yields a few lines of understanding nothing on disk would otherwise remember.
 
 **The yardstick is fixed per phase.** Approach is verified against Purpose; Delivery against both. Purpose is the head of the chain — no prior document exists — so it is verified for **evidential soundness** instead: every claim has a source, contradictions are surfaced rather than silently resolved, the unknown is declared unknown, and the success criteria are decidable as written. Research is held to the same standard — outside the gates means not subject to approval, not unexamined.
 
-**Drafting the Purpose is divided.** Elicitation is the Conductor's one touchpoint at the chat surface — holding the purpose includes asking for it, and Turns cannot talk to people. But the Conductor does not draft: answers are written under `research/` on the spot, and Turn(generate) drafts from those paths. Whoever writes must read, and the Conductor may not read — so it drafts nothing. Until the human approves at G1, it is not the purpose.
+**Drafting the Purpose is divided.** Elicitation is the Conductor's one touchpoint at the chat surface — holding the purpose includes asking for it, and Turns cannot talk to people. But the Conductor does not draft: answers are written under `research/` on the spot, and Turn(generate) drafts from those paths. Whoever writes must read, and the Conductor may not read — so it drafts nothing: transcribing the human's answers verbatim is not drafting, and the elicit exchange sits inside its closed intake (§5.7). Until the human approves at G1, it is not the purpose.
 
 ```mermaid
 flowchart LR
@@ -216,7 +217,7 @@ Six stops: three phases × {Plan on the way in, product on the way out}; only th
 
 ### 4.5 Suspend and resume — every commit is a resume point
 
-**The latest CCS + the approved phase documents + the current Plan + the run-state file are the entire resume point.** A run suspended mid-way and reopened in a fresh conversation re-reads exactly what the next wave would have read, and continues; the run-state file says where the gates stand — read from disk, not guessed. One window degrades: a boundary event not yet carried into the durable record is lost with the machine, and a resume then re-presents the pending gate — the safe side, costing at most one redundant `ty`.
+**The latest CCS + the approved phase documents + the current Plan + the run-state file are the entire resume point.** A run suspended mid-way and reopened in a fresh conversation re-reads exactly what the next wave would have read, and continues; the run-state file says where the gates stand — read from disk, not guessed. One window degrades: a boundary event not yet carried into the durable record is lost with the machine, and a resume then re-presents the pending gate — the safe side: a lost approval costs one redundant `ty`; a lost send-back, giving the feedback again.
 
 Persistence is continuous, not an event at the end: every wave settle commits and pushes the four items together, so suspension is routine operation, not exception handling — `dn`'s job is to confirm, not to persist. What is bounded is the working state, not the transcript: the Conductor's history still grows with the number of Turns; the design minimizes the coefficient (returns are paths and Verdicts only), and the residue is cycled by `dn` → `/clear` → `up`. Under a remote backend the resume point survives the machine as well as the conversation; under local, the conversation only (§7).
 
@@ -258,7 +259,7 @@ Mechanical checks run first; the LLM is the thin last layer — which is why suc
 
 ### 5.4 Turn(brief) — the CCS, bounded by construction
 
-The **CCS (Compressed Cognitive State)** is the bounded state carried between Steps — the Conductor's working state itself, and the only thing a re-aimed or subsequent Turn inherits. The nine-component YAML schema is adopted from Bousetouane, ["AI Agents Need Memory Control Over More Context"](https://arxiv.org/abs/2601.11653) (2026); aiya's contribution is the operating rules:
+The **CCS (Compressed Cognitive State)** is the bounded state carried between waves — the Conductor's working state itself, and the only thing a re-aimed or subsequent Turn inherits. The nine-component YAML schema is adopted from Bousetouane, ["AI Agents Need Memory Control Over More Context"](https://arxiv.org/abs/2601.11653) (2026); aiya's contribution is the operating rules:
 
 - **Third-person** — written by Turn(brief), after verification: the party with a stake in the outcome does not write its record.
 - **Post-verdict** — what a Step is worth is known only after judgment, so the carried state includes the judgment.

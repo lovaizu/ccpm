@@ -235,3 +235,62 @@ grep-verified against the heading list; stale phrases ("Turn-carried", "does nei
 "serial by construction", the spliced Research cell, the old §4.2 heading) grep to zero;
 `aiya/skills/conductor/SKILL.md` §8 read before writing fix 9's gloss. Not re-verified: the
 shipped artifacts end to end (unchanged since edcf1b4).
+
+## Reader trial round 3 and loop close-out
+
+A third fresh-context trial of the same step-2 reader over the round-2-fixed document.
+**Verdict: purpose YES** — the third consecutive — and **headings qualified YES**. 9 minor
+stumbles reported. All 9 fixed in place, surgical edits only, zero ratified decisions moved;
+6,342 → 6,448 words (+106).
+
+| # | Finding | Fix applied |
+|---|---|---|
+| 1 | §1 uses "Conductor" before §2 defines it | first use tied to the already-bound noun: "the working state of the directing agent (aiya's Conductor, §2)" |
+| 2 | "yardstick" (first used §2 bet paragraph) absent from the vocabulary block that promises "Vocabulary, fixed here" — and used inside the block itself ("Machines verify") | one-line entry added before Viewpoint: "**Yardstick** — a gate-approved product everything downstream is verified against; the chain of them is §3.1." |
+| 3 | §4.1 "a **missing viewpoint** re-verifies only" elliptical | ellipsis made explicit per the ratified meaning: "a **missing viewpoint** — a concern noticed absent from the check set — is added to the Plan and re-verified only". The trial's parenthetical read (a lost Turn(verify) return) was checked against `SKILL.md` §5 step 4 ("On noticing a missing viewpoint, add it to the Plan and re-verify only") and is not the ratified semantics — a lost verify return is the other side path (missing return, re-sent); the fix states the overlooked-concern meaning |
+| 4 | §4.3 attribution test clipped ("No: the Conductor's (control). Yes: a Turn's (inspection).") | elided nouns restored, subject confirmed as aggregation per SKILL.md §1: "does this act require reading the real work? If not, the act is the Conductor's: control, like the AND over Verdicts. If so, it is a Turn's: inspection, like consolidating state." |
+| 5 | §4.4 prerequisites "purpose, UX, design, plan" — UX and this "design" absent from the three-phase product scheme | names verified as the shipped artifact names (`SKILL.md:53`; `references/design.md:5` "only when purpose, UX, design, and plan exist"; `references/ux.md:3` "One per product … One of generation's prerequisites"; `references/` ships `ux.md` and `design.md`), so anchored, not replaced: "the run's own Purpose and Plan, plus the product's UX and Design documents (per-product foundations, not phase products)" |
+| 6 | §4.4 "answers are written under `research/`" vs "the Conductor may not read — so it drafts nothing" reads as a contradiction | resolved at the tension point: "so it drafts nothing: transcribing the human's answers verbatim is not drafting, and the elicit exchange sits inside its closed intake (§5.7)" |
+| 7 | §3.2 header "Product / record" lists the Conductor-written Plan while §4.4 says a phase's product is "made by Turns, never the Conductor" | one clause in §4.4 removes the collision: "a Plan (drafted and re-planned by the Conductor — the translation layer, not a phase product)" — header untouched |
+| 8 | §3.2 CCS cell "carried between Steps" vs §4.2's fixed one-per-wave granularity | cell aligned to the ratified per-wave semantics (§4.2 one brief → one CCS per wave; §5.4 replacement each wave): "The bounded state carried between waves, one file per wave". §5.4's opening carried the same "between Steps" phrase and was aligned in the same stroke ("carried between waves") so the two do not now disagree with each other |
+| 9 | §4.5 "costing at most one redundant `ty`" true only when the lost verdict was an approval | cost claim scoped, intent (safe side) kept: "the safe side: a lost approval costs one redundant `ty`; a lost send-back, giving the feedback again" |
+
+**Convergence.** Three trials, three disjoint sets of minor stumbles, severity declining across
+rounds, and purpose YES every time — the document's argument is stable; what each fresh reader
+still trips on is local phrasing, not structure.
+
+**Unneeded-content report — repeated, not new.** The trial's list again matched the standing
+FB3 flag cluster (§3.3, §3.4, §4.4 gate operations, §4.1 side paths, §4.5 operator half, §2
+command roster, §4.4 history-audit lines) with no new items. The cluster stands as recorded:
+format-mandated, kept, awaiting a future format ruling.
+
+**Loop close-out.** This is the final fix iteration under the 3-iteration cap. Any stumbles a
+further trial surfaces are recorded as residual and ruled at the design gate, not fixed in
+another round.
+
+**Step-10 re-check after the round-3 edits — all nine items PASS.**
+
+- Reader: one person, one stance — unchanged; every edit removes a first-read stumble the
+  trial observed. **PASS**
+- Single axis — seven-chapter format untouched, no headings changed, no renumbering. **PASS**
+- Every heading/point admitted; kept-out content named — nothing added beyond glosses and one
+  vocabulary line the block's own promise requires; nothing cut; the FB3 cluster re-named
+  above. **PASS**
+- Form fits content — diagrams/tables untouched; fix 8 edits one table cell in place; the
+  vocabulary entry keeps the list's one-line parallel form. **PASS**
+- No prose repeats a diagram — no edit restates a diagram; fix 3's wording names no number the
+  §4.1 diagram carries. **PASS**
+- Voice and closing — declarative decision-language in every new clause; closing untouched. **PASS**
+- No AI tells — no announcing openers, hedges, or restatement; fix 4 replaced clipped fragments
+  with two plain declarative sentences. **PASS**
+- `Assumed reader:` absent (reader ratified) — unchanged. **PASS**
+- Every claim keeps its status — fix 9 narrowed an overbroad cost claim to the supported one;
+  fix 5 anchors names the shipped artifacts verifiably carry; no new unsourced claim. **PASS**
+
+Verification scope this round: the 9 findings fixed and each edit re-read in its full
+paragraph; § pointers introduced or touched (§2, §3.1, §5.7) grep-verified against the heading
+list; stale phrases ("carried between Steps", "purpose, UX, design, plan", "No: the
+Conductor's", "costing at most one redundant", "so it drafts nothing. Until") grep to zero;
+finding 3 checked against `aiya/skills/conductor/SKILL.md` §5 step 4 and finding 5 against
+`SKILL.md:53`, `references/design.md:5`, `references/ux.md:3` before writing. Not re-verified:
+the shipped artifacts end to end (unchanged since edcf1b4).
