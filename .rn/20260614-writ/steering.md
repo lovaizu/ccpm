@@ -425,13 +425,8 @@ requires for a session to close.
 
 # State
 
-Status: paused
-Date: 2026-08-20
-Last completed: task #6 checked off; task #7 executed end to end (3 fix rounds, all steps checked,
-all four expert axes OK — ledger `checks/7.md`, deliverable HEAD a1087d9, PR #15) but not yet
-checked off: it stopped at the coordinator's escalation on the dogfood criterion and six residual
-findings.
-Next: task #7 close-out per the user's verdict "(a)", given at suspend: treat the dogfood criterion
-as met in substance, run one fold round for residual findings 1–5 in `checks/7.md` (+ compact
-re-review), then check off #7 and proceed to task #8 (Evaluation sign-off).
-Notes: user instruction at suspend — "再開後にaを進めて" (= proceed with option (a) on resume).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
