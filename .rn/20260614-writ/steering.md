@@ -425,8 +425,14 @@ requires for a session to close.
 
 # State
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-22
+- **Last completed**: #6 (checked off). #7 steps all done through review (ledger `checks/7.md`); its
+  close-out per the user's verdict "(a)" is in progress: this session reconciled State (488a81c) and
+  dispatched the fold round for residual findings 1–5, but the round was stopped before any commit at
+  this suspend — no fold changes exist yet.
+- **Next**: #7 close-out — re-dispatch the fold round for residual findings 1–5 in `checks/7.md`
+  (+ compact re-review), treat the dogfood criterion as met in substance per the user's "(a)", check
+  off #7, then #8 (Evaluation sign-off).
+- **Notes**: branch `worktree-writ`, PR #15. The user's "(a)" verdict on the dogfood criterion stands
+  recorded (2026-08-20) and needs no re-asking.
