@@ -377,10 +377,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-22
-- **Last completed**: #4 in progress — grilling adoption and its delivery ruling recorded
-  (266c54b, e98e474); design gate re-presented on PR #19 (comment 2026-08-22), verdict not taken
-- **Next**: #4 — re-run writ (FB-updated, PR #15) on `design.md`; then the PR #19 gate verdict
-- **Notes**: writ upstream (`origin/worktree-writ`, PR #15) now carries the FB from edcf1b4's
-  refinement — rebuild `design.md` with that updated procedure before re-presenting the gate
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
