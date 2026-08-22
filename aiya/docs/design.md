@@ -37,8 +37,8 @@ flowchart LR
 
 **Two walls keep the roles apart.**
 
-- **The Conductor never touches the real work.** Its intake is a short, closed list of bounded state (§5.7); it reads no product — not even a worker's first-person Report, its own account of what it did (§5.2). This wall caps what *kind* of thing can enter its context.
-- **Turns never nest.** Only the Conductor spawns. Two platform facts carry the wall: a subagent starts from a fresh context, and only what it returns reaches the caller — so a Turn is born clean, returns something bounded, and is discarded. Nesting would place work beyond the attempt cap (three attempts per Step, §4.1) and the return contract; Turn definitions therefore omit the spawn tool.
+- **The Conductor never touches the real work.** Its intake is a short, closed list of bounded state (§5.7); it reads no product — not even a worker's first-person Report, the worker's own account of what it did (§5.2). This wall caps what *kind* of thing can enter its context.
+- **Turns never nest.** Only the Conductor spawns. Two platform facts carry the wall: a subagent starts from a fresh context, and only what it returns reaches the caller — so a Turn is born clean, returns something bounded, and is discarded. Nesting would place work beyond the attempt cap (three attempts per Step, §4.1) and the return contract (the bounded return every Turn owes, §5.1); Turn definitions therefore omit the spawn tool.
 
 **Vocabulary, fixed here.**
 
@@ -47,7 +47,7 @@ flowchart LR
 - **Turn roles** — Turns are one kind with three role families: **generate** makes the work, **verify** measures it, and **run-keeping** sustains the run itself, as two roles — **brief** (the cognitive record: writes the CCS, the Compressed Cognitive State) and **record** (the physical record: performs every platform operation).
 - **Work order** — minimal parameters passed into a static shipped definition: the procedure is static, the content is parameters.
 - **Elicit item** — the one kind of Plan item whose work *is* conversation with the human, carried by the Conductor itself — the one seat that can talk to a person.
-- **Gates** — six stops where the human rules: each Phase's Plan on the way in (a **Planning Gate**) and its product on the way out (**G1** / **G2** / **G3**). Answered with two of the five command words: `ty` approve, `gm` send back (`on` / `dn` / `up` — start, suspend, resume — run the session; mnemonics in the README).
+- **Gates** — six stops where the human rules: each Phase's Plan on the way in (a **Planning Gate**) and its product on the way out (**G1** / **G2** / **G3**). Answered with two of the five command words: `ty` approve, `gm` send back. The other three — `on` / `dn` / `up`: start, suspend, resume — run the session, not gates; mnemonics in the README.
 - **Viewpoint** — one independently checkable concern; a Step's product gets one Turn(verify) per viewpoint (§5.3).
 - **Machines verify, humans review** — pass/fail against a fixed yardstick is a machine's job; approving or redirecting is a human's. This line holds throughout.
 - **Investigation is first-class work** — eliciting a vague intent, surveying a system, spiking a technology: each is a Step with a product, not a preamble to work.
@@ -90,7 +90,7 @@ Beside the chain, execution leaves **records** — an ephemeral lineage that mov
 | **CCS** | The bounded state carried between Steps — the Conductor's working state itself | Turn(brief) | Mechanical compression rules (§5.4); a claim the products don't support is caught by the next verification, which reads products, not the CCS | — (consumed by the Conductor) |
 | **Verdict** | One viewpoint's judgment: pass/fail, gap, evidence | Turn(verify) | — it is itself the check; evidence keeps it falsifiable | — (aggregated by the Conductor) |
 | **Report** | Turn(generate)'s first-person record: did / tried / unsure | Turn(generate) | — Turn(brief) checks it against the product | — |
-| **Research** | An investigation Step's product, elicit answers included | Turn(generate); elicit answers, the Conductor | Turn(verify) — evidential soundness; elicit answers exempt | — (not subject to approval) |
+| **Research** | An investigation Step's product, elicit answers included | Turn(generate) — elicit answers: the Conductor | Turn(verify) — evidential soundness; elicit answers exempt | — (not subject to approval) |
 | **Run-state** | The run's lifecycle facts (§3.3) | Conductor | — every entry mirrors a command or verdict the human typed | — |
 
 Carrying it all into the durable record — the commits and pushes — is Turn(record)'s job alone. What each role must *not* do follows from one role, one skill, and is written into each shipped definition; the Conductor's never-list is §5.7.
@@ -109,7 +109,7 @@ Logical names map to physical layout exactly once, here:
   verdicts/   # one file per judgment; step, viewpoint, attempt readable from the filename
   reports/    # one file per Turn(generate); item and attempt readable from the filename
   research/   # investigation products and elicit answers, referenced by path
-  history/    # approved editions, archived at gate resolution under the local backend (§5.5)
+  history/    # approved editions (gate-approved versions, §4.4), archived at gate resolution under the local backend (§5.5)
 ```
 
 Formats and worked examples are in [references/](../references/). Research alone has no fixed format, deliberately: an investigation's product is free-form, verified for evidential soundness (§4.4), and referenced by path.
@@ -136,7 +136,7 @@ Three kinds of artifact and nothing else: **six skills** — five entry skills f
 
 ### 4.1 A Step — generate, verify, re-aim, escalate
 
-**Each attempt at a Step dispatches exactly one Turn(generate)**; an elicit item (§2) dispatches none and skips this pipeline — verification, the attempt cap, and §6's counts apply only to Turn-carried items.
+**Each attempt at a Step dispatches exactly one Turn(generate)**; an elicit item (§2) dispatches none and skips this pipeline — verification, the attempt cap, and §6's counts apply only to items whose work a Turn performs.
 
 ```mermaid
 flowchart LR
@@ -151,7 +151,7 @@ flowchart LR
 
 Turn(generate) writes product and Report to disk and returns paths — never raw output. Aggregation is a mechanical AND; on failure the re-aim carries the union of the failing gaps as the corrective instruction. For an investigation Step nothing is "wrong" — evidence is merely insufficient, and re-aim digs further instead of rebuilding. Escalation is not a gate but an exception interrupt: rare, unplanned, carrying at most three gaps for the human to adjudicate. Two side paths: a **missing return** is re-sent — a Turn is stateless, so re-sending is always safe, and an accident is not an attempt; a **missing viewpoint** re-verifies only — the product is untouched, so the attempt count does not grow.
 
-### 4.2 A wave — parallel width, one bounded state
+### 4.2 A wave — parallel width, one CCS
 
 **Steps with no unmet dependency form a wave and run together**; width one is the sequential case. Waves have no file — they are derived each time from the Plan's `consumes` (§5.6).
 
@@ -171,7 +171,7 @@ flowchart LR
 
 However wide the wave, **one Turn(brief) folds what actually happened into a single CCS** — the Conductor's intake stays at one bounded state per wave, so parallel width and bounded context stop being in tension. Turn(record) runs after brief so it can read the fresh CCS — commit messages are content-aware, not mechanical.
 
-**Only record ever commits** — never the Conductor, never generate / verify / brief. Record runs where the loop is serial by construction, so no two writers meet at the shared git index; and it is a Turn, so it reads what it commits — nobody commits content unread, where the Conductor may not read at all. Commit granularity is the wave, plus the `on` / gate / `dn` events (§5.5) — so **every commit in history is a complete resume point** (§4.5), and git history reads as the run's state machine.
+**Only record ever commits** — never the Conductor, never generate / verify / brief. Record runs at the loop's serial point — by construction, after the wave has settled into one brief — so no two writers meet at the shared git index; and it is a Turn, so it reads what it commits — nobody commits content unread, where the Conductor may not read at all. Commit granularity is the wave, plus the `on` / gate / `dn` events (§5.5) — so **every commit in history is a complete resume point** (§4.5), and git history reads as the run's state machine.
 
 ### 4.3 Steering — re-plan from zero, every wave
 
@@ -197,7 +197,7 @@ Three phases connect intent to execution. Each has a Plan (drafted and re-planne
 
 **The yardstick is fixed per phase.** Approach is verified against Purpose; Delivery against both. Purpose is the head of the chain — no prior document exists — so it is verified for **evidential soundness** instead: every claim has a source, contradictions are surfaced rather than silently resolved, the unknown is declared unknown, and the success criteria are decidable as written. Research is held to the same standard — outside the gates means not subject to approval, not unexamined.
 
-**Drafting the Purpose is divided.** Elicitation is the Conductor's one touchpoint at the chat surface — holding the purpose includes asking for it, and Turns cannot talk to people. But the Conductor does not draft: answers are written under `research/` on the spot, and Turn(generate) drafts from those paths. Whoever writes must read, and the Conductor does neither. Until the human approves at G1, it is not the purpose.
+**Drafting the Purpose is divided.** Elicitation is the Conductor's one touchpoint at the chat surface — holding the purpose includes asking for it, and Turns cannot talk to people. But the Conductor does not draft: answers are written under `research/` on the spot, and Turn(generate) drafts from those paths. Whoever writes must read, and the Conductor may not read — so it drafts nothing. Until the human approves at G1, it is not the purpose.
 
 ```mermaid
 flowchart LR
@@ -208,7 +208,7 @@ flowchart LR
 
 Six stops: three phases × {Plan on the way in, product on the way out}; only the outputs — G1, G2, G3, in phase order — carry numbers.
 
-**Stopping at a gate**, the Conductor posts a bounded console summary and points at the artifact on the review surface — the summary is for deciding to look; the surface is where the document is read. The surface always already holds what the gate points at: Turn(record) opens it at `on`, a product arrives with its wave's settle, and a freshly drafted or reworked Plan is carried there by a pre-Planning-Gate record dispatch (§5.5). Send-back has two forms: `gm <one line>` carries the feedback in the argument and works everywhere; bare `gm` takes the PR/MR's review comments — Turn(record) fetches them to a file and returns the path. Between stops the Conductor self-runs in **dispatch rounds** — one continuous run from one stop to the next, typically spanning several waves — a progress board kept current on the console, each round re-entering from file state (§4.5) — which is why a stop loses nothing.
+**Stopping at a gate**, the Conductor posts a bounded console summary and points at the artifact on the review surface — the summary is for deciding to look; the surface is where the document is read. The surface always already holds what the gate points at: Turn(record) opens it at `on`, a product arrives with its wave's settle, and a freshly drafted or reworked Plan is carried there by a pre-Planning-Gate record dispatch (§5.5). Send-back has two forms: `gm <one line>` carries the feedback in the argument and works everywhere; bare `gm` takes the PR/MR's review comments — Turn(record) fetches them to a file and returns the path. Between stops the Conductor self-runs in **dispatch rounds** — one continuous run from one stop to the next, typically spanning several waves — a progress board kept current on the console (each wave's items shown as done, running with attempts and any re-aim's gap, or ahead), each round re-entering from file state (§4.5) — which is why a stop loses nothing.
 
 **Approvals carry versions.** Each gate-approved yardstick carries a `version: vN (timestamp)` header line, written and bumped only by Turn(generate) — under local, where no git names editions, this line *is* the edition's identifier. **A new version invalidates what was measured against the old one**: each Verdict pins the edition it measured (§5.3), so the invalidated ones are found mechanically, the affected Steps re-verified, and only a fail against the new yardstick triggers a re-aim. The mechanics ship in the conductor skill and the Turn definitions.
 
@@ -263,7 +263,7 @@ The **CCS (Compressed Cognitive State)** is the bounded state carried between St
 - **Third-person** — written by Turn(brief), after verification: the party with a stake in the outcome does not write its record.
 - **Post-verdict** — what a Step is worth is known only after judgment, so the carried state includes the judgment.
 - **Replacement semantics** — a fresh file each wave, never appended.
-- **Product wins** — observable components are written from the products, not from what Turn(generate) said about them; the Report supplies only what nothing else can (tried, unsure). A CCS recording what the products do not support is caught at the next verification, which reads products, not the CCS.
+- **Product wins** — observable components are written from the products, not from what Turn(generate) said about them; the Report supplies only what nothing else can (tried, unsure). A CCS that claims more than its products show does not survive: the next verification reads the products themselves, never the CCS, so the unsupported claim surfaces there.
 - **One per wave, never decomposed** — verify splits per viewpoint because narrowing sharpens judgment; a state assembled from partial views lacks exactly what makes it a state. It judges, but only about facts — never direction.
 
 Boundedness: real work travels by path, never inlined; a soft size cap's breach is a health signal, not a license to grow — which component bloats diagnoses the Step's scope (split it, narrow it, or add a Step that resolves the pile-up); and the Conductor keeps no growing summary of its own — its intake is the latest CCS plus bounded Verdicts. The CCS is bounded and sub-linear, not byte-constant. Schema, component roles, cap, and worked example: the Turn definition.

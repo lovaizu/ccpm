@@ -179,3 +179,59 @@ the pipeline (item 5); the new sentences carry no announcing openers, no hedges,
 (item 7); finding 8 removed a false claim and added none, so every remaining claim keeps its
 status (item 9). Section pointers introduced or touched (§4.1, §4.4, §5.2, §5.4) grep-verified
 against existing headings; the stale phrase "1 Step = 1" greps to zero.
+
+## Reader re-trial (round 2)
+
+A second fresh-context trial of the same step-2 reader over the round-1-fixed document.
+**Verdict: purpose YES** (the two mechanisms discharge the two properties as argued) and
+**headings qualified YES** — the thread carries, with one observation: the CCS/bounded-context
+mechanism stays invisible in ch1–4 headings until §4.6 (the chain half is visible in §3.1's).
+10 re-read-cost stumbles reported. All 10 fixed in place plus the headings observation acted
+on — surgical edits only, zero ratified decisions moved; 6,284 → 6,342 words (+58).
+
+| # | Finding | Fix applied |
+|---|---|---|
+| 1 | §2 wall 1: "its own account" briefly binds "its" to the Conductor | pronoun bound: "not even a worker's first-person Report, the worker's own account of what it did (§5.2)" |
+| 2 | §2 wall 2: "the return contract" undefined until §5.1 | glossed with pointer: "and the return contract (the bounded return every Turn owes, §5.1)" |
+| 3 | §2 Gates entry: the `on`/`dn`/`up` parenthetical splices three non-gate words into the two-gate-words sentence | split into its own sentence: "…`ty` approve, `gm` send back. The other three — `on` / `dn` / `up`: start, suspend, resume — run the session, not gates; mnemonics in the README." |
+| 4 | §3.2 Research row: "Turn(generate); elicit answers, the Conductor" comma-splices | cell now parses in one read: "Turn(generate) — elicit answers: the Conductor" |
+| 5 | §3.3 tree / run.yaml: "edition" used before §4.4 defines it | glossed at first use (the tree comment): "history/    # approved editions (gate-approved versions, §4.4), archived at gate resolution under the local backend (§5.5)"; the `run.yaml` `edition:` key follows the now-bound term |
+| 6 | §4.1: "Turn-carried items" — coinage defined nowhere | replaced with its meaning: "apply only to items whose work a Turn performs" (vs the elicit item already contrasted in the same sentence) |
+| 7 | §4.2: "Record runs where the loop is serial by construction" — "where" reads as a conditional | stated as a position: "Record runs at the loop's serial point — by construction, after the wave has settled into one brief — so no two writers meet at the shared git index" (verified against §4.2's brief-then-record order) |
+| 8 | §4.4 "Whoever writes must read, and the Conductor does neither" clashes with the maxim's earlier one-sided use (grep resolves the trial's ~96 to line 174, §4.2 — "nobody commits content unread, where the Conductor may not read at all", the only prior use) — and "neither" (= writes nothing) also collides with the ledger's Conductor-written rows (run-state, elicit answers) | second occurrence now extends the first instead of overreaching: "Whoever writes must read, and the Conductor may not read — so it drafts nothing." — derives no-drafting from the read wall, one-directional, consistent with the Conductor writing bounded records |
+| 9 | §4.4: "a progress board kept current on the console" introduced nowhere | glossed at point of use, matching `aiya/skills/conductor/SKILL.md` §8 (read before writing): "(each wave's items shown as done, running with attempts and any re-aim's gap, or ahead)" |
+| 10 | §3.2 CCS cell and §5.4 carry the CCS-verification argument verbatim | §5.4 reworded in its own words — "A CCS that claims more than its products show does not survive: the next verification reads the products themselves, never the CCS, so the unsupported claim surfaces there." — the round-1 cell kept intact (compact, self-standing), no substance deleted |
+| 11 | Headings: CCS mechanism invisible in ch1–4 headings until §4.6 | **Decision: fix applied.** §4.2 heading renamed "A wave — parallel width, one CCS" (was "…one bounded state") — names the one-brief-per-wave compression in the heading track, reads natural (the section's thesis sentence is exactly this), no renumbering, no distortion; CCS is bound at §2's vocabulary so the acronym is defined before the heading is reached. Other ch1–4 candidates read forced and were not touched. |
+
+**Unneeded-content report — repeated, not new.** The trial's list re-flagged the same
+format-mandated cluster already recorded as FB3 flags in round 1 (§3.3, §3.4, §4.4 gate
+operations, §4.1 side paths, §2 command roster). The only additions beyond that standing list —
+§4.5's operator half (dn/clear/up cycling, durability window) and §4.4's history-audit lines —
+are hereby folded into the standing FB3 flag list: format-mandated, kept, awaiting the same
+future format ruling.
+
+**Step-10 re-check after the round-2 edits — all nine items PASS.**
+
+- Reader: one person, one stance — unchanged; every edit serves the step-2 evaluator's first
+  read. **PASS**
+- Single axis — seven-chapter format untouched, no renumbering (§4.2 rename only). **PASS**
+- Every heading/point admitted; kept-out content named — no content added or cut beyond glosses;
+  the two newly flagged slots are named above with reader and standing. **PASS**
+- Form fits content — diagrams/tables/prose unchanged; fix 3 turned a spliced parenthetical
+  into prose, fix 4 restored a table cell's one-read parse. **PASS**
+- No prose repeats a diagram — none of the edits restates a diagram; fix 10 removed a
+  prose-prose duplication. **PASS**
+- Voice and closing — declarative decision-language held in every new sentence; closing
+  untouched. **PASS**
+- No AI tells — no announcing openers, hedges, or restatement in the new text; fix 10
+  eliminated a verbatim repetition. **PASS**
+- `Assumed reader:` absent (reader ratified) — unchanged. **PASS**
+- Every claim keeps its status — no new claim added; fix 8 replaced an overreaching "neither"
+  with the supported one-directional claim; fix 9's gloss matches SKILL.md §8 exactly. **PASS**
+
+Verification scope this round: the 11 findings were fixed and each edit re-read in its full
+paragraph; every § pointer introduced or touched (§4.1, §4.4, §4.5, §5.1, §5.2, §5.4, §5.5)
+grep-verified against the heading list; stale phrases ("Turn-carried", "does neither",
+"serial by construction", the spliced Research cell, the old §4.2 heading) grep to zero;
+`aiya/skills/conductor/SKILL.md` §8 read before writing fix 9's gloss. Not re-verified: the
+shipped artifacts end to end (unchanged since edcf1b4).
