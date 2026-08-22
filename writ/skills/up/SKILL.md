@@ -8,7 +8,7 @@ version: 0.1.0
 
 Input: a draft to revise, or a topic to author. Output: the rebuilt document plus a what-changed note.
 
-Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the tells get no foothold — step 9 is a net for stragglers, not the main tool.
+Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
 
 Two layers, kept apart:
 
@@ -27,9 +27,9 @@ Emit: `Subject: … / Must convey: …`
 
 ### 2. Define the reader and the purpose
 
-Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do once they have read it. If the input implies several audiences, pick the primary; the admissions (steps 3–4) keep the others' needs out, and the what-changed note names them — a bundled reader admits everything.
+Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do after reading. If the input implies several audiences, pick the primary; the step-3 admission keeps the others' needs out, and the what-changed note names them — a bundled reader admits everything.
 
-Gate: if a line cannot be answered from the input, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>` to the output. Never leave a line blank.
+Gate: if a line cannot be answered from the input, or can be answered several ways, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>`. Never leave a line blank.
 
 ### 3. Build the outline from the purpose
 
@@ -43,13 +43,13 @@ Under each heading, drop the points it must carry as terse bullets — concrete 
 
 ### 5. Check the story in the reader's order
 
-Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while it is still bullets and cheap to move. The author's structure check — a real reader reads at step 11.
+Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. The author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
 
 With the story standing, choose:
 
-- **Voice and closing** — Reference → [voice by reader](#voice-by-reader), as a start, not a verdict.
+- **Voice and closing** — Reference → [voice by reader](#voice-by-reader).
 - **The form of each part** — prose, list, table, diagram, or graph (Reference → [form](#form)).
 
 Emit: `Voice: … / Closing: …`, and the form chosen per section.
@@ -70,6 +70,7 @@ Read the finished document once against the seven AI tells (Reference → [floor
 
 Mark each PASS or FAIL; any FAIL, fix and re-check.
 
+- [ ] Reader is one person in one reading stance (step 2).
 - [ ] Single axis (step 3), no mixing.
 - [ ] Every heading and point admitted by the step-2 reader (steps 3–4, 7–8); content kept out named in the what-changed note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
@@ -96,11 +97,11 @@ Deliver the rebuilt document and the **what-changed note** — the structure, st
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
 - **Ceiling (attractive)** — the reader reaches the purpose with minimal effort. Means, not ends: density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread with the conclusion first; headings carrying the argument alone; the few load-bearing claims distinguishable at a glance — placement, a heading, a lead sentence, not decoration; figures and lists only where each beats prose; one consistent voice.
 
-Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope actually verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked as such ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 
-One role each. **Do not mix axes.** Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem is the record/ADR axis specialized for an incident.
+One role each. **Do not mix axes.** Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem, the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
   1. The question (the why-question this document answers, 1–2 sentences)

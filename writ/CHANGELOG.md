@@ -16,8 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   flavorless connectives, reflexive bullets, wavering voice, hedging) never take hold — a final pass
   nets any stragglers — and the result reads as written by a person, not an AI.
 - The reader definition names one person in one reading stance — when the input implies several
-  audiences, the primary one is chosen and the rest are routed to their own place — so a document
-  cannot quietly serve three audiences at once.
+  audiences, the primary one is chosen and the others' needs are routed to the what-changed note —
+  so a document cannot quietly serve several audiences at once.
 - Content is admitted only where the defined reader needs it to reach the purpose, at both heading
   and point level — sentences written for someone else (a re-reader, a past reviewer, an approver)
   are routed to the what-changed note instead of shipping as noise.
