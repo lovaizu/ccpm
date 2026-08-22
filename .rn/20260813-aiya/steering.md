@@ -360,17 +360,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-20
-- **Last completed**: #3 Design sign-off (#4 in progress: design.md refined by the writ-FB lens,
-  edcf1b4 — noise cut, fresh-reader verified; design-gate verdict pending on PR #19)
-- **Next**: #4 — take the design-gate verdict on PR #19, now covering the run-state file revision
-  (badd0c7 + 0764c7e), the writ rebuild (486a1af), and the noise refinement (edcf1b4). On `/rn:ty`
-  ripple the revised design into the build (conductor skill, turn-record adapters, entry skills —
-  incl. up locating the run via `run.yaml` instead of the absorbed `backend` file), then ruling
-  (viii), then the targeted re-review; on `/rn:gm` address the feedback and re-present
-- **Notes**: branch `worktree-aiya`, PR #19 (gate comment predates edcf1b4; the PR diff includes
-  it). Four proposed values still await ratification in the verdict: filename `run.yaml`; fields
-  `backend`/`branch`/`gates`/`status`; Planning-Gate identifiers (`purpose-planning` style);
-  example branch name. writ feedback posted for the writ session at PR #15
-  (issuecomment-5353396410). `checks/4.md` review columns still empty.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
