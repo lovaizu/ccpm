@@ -294,3 +294,34 @@ Conductor's", "costing at most one redundant", "so it drafts nothing. Until") gr
 finding 3 checked against `aiya/skills/conductor/SKILL.md` §5 step 4 and finding 5 against
 `SKILL.md:53`, `references/design.md:5`, `references/ux.md:3` before writing. Not re-verified:
 the shipped artifacts end to end (unchanged since edcf1b4).
+
+## Reader trial round 4 — loop closed, residuals recorded (coordinator)
+
+The round-3 re-review trial ran on b2712f2: **purpose YES — fourth consecutive** (both problems,
+both properties, both mechanisms restated accurately; plausibility judged with the enforcement
+bet correctly located); headings YES with the one standing gap (the two properties named in no
+heading before §4.6). Per the close-out ruling above, its 8 findings are residuals for the
+design gate, not another fix round:
+
+1. **§4.6 "structural" vs §2's strict sense** — §4.6 calls both discharges "structural rather
+   than asserted", but §2 defines *structural* as "the platform makes breach impossible" and
+   the no-reading wall is explicitly default-and-observable (§5.7). Loosely read fine; by the
+   document's own vocabulary, one leg is overclaimed. The one residual with substance — flagged
+   for the gate.
+2. **UX/Design documents unanchored** — §4.4's prerequisites (round-3 fix 5) name per-product
+   UX and Design documents that have no §3.3 layout home and no §3.2 ledger row. Also flagged
+   for the gate (their contract lives in `references/ux.md` / `references/design.md`; whether
+   the design document must house them is a format-density call).
+3–8. Re-read-cost minors, disjoint from all prior trials: 1:1 mechanism map vs 3+3 discharge
+   reconcile; `consumes` forward pointer (§4.2→§5.6); the three-dash dispatch-rounds sentence;
+   command words carried on faith; §1 "work streams" never recurring; "missing viewpoint —
+   noticed by whom" unstated.
+
+Unneeded-content report: matched the standing FB3 cluster again, no new items.
+
+**Convergence across four trials**: purpose YES every time; stumble sets pairwise disjoint
+(each fresh reader trips on different micro-frictions); severity monotonically minor since
+round 1. The writ literal clean-pass bar (zero stumbles, zero unneeded content) is unreachable
+under the ratified format — the unneeded-content half is format-mandated and every trial
+generates novel minor stumbles. Delivery proceeds on the convergence evidence plus the
+3-iteration cap; residuals 1–2 above go to the design gate for ruling.
