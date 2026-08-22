@@ -287,9 +287,13 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       one unspecified how): design-tree / frontier / rounds, numbered questions each with a
       recommended answer; a frontier question needing a fact becomes an investigation Step on the
       Plan (never the human's homework, never the Conductor's own digging — aiya-native form of
-      grilling's sub-agent rule); termination = frontier empty and intent decidable. Cite the
-      source and check its license; design.md carries at most one sentence (density bar). Apply
-      after the PR #19 verdict so the pending gate object stays stable
+      grilling's sub-agent rule); termination = frontier empty and intent decidable. Delivery ruled
+      2026-08-22: curation, not an external-plugin dependency — the method is adapted into
+      conductor §7 with attribution (mattpocock/skills, MIT — license confirmed), because aiya
+      must stand alone (#4 completion criterion), no plugin-dependency mechanism exists, and the
+      sub-agent rule needs the wall-conforming rewrite anyway; design.md carries at most one
+      sentence (density bar). Apply after the PR #19 verdict so the pending gate object stays
+      stable
 - [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
       presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
       leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
