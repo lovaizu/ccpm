@@ -27,9 +27,9 @@ Emit: `Subject: … / Must convey: …`
 
 ### 2. Define the reader and the purpose
 
-Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do after reading. If the input implies several audiences, pick the primary; the step-3 admission keeps the others' needs out, and the what-changed note names them — a bundled reader admits everything.
+Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do after reading. With several implied audiences, the Gate below picks the primary; the step-3 admission keeps the others' needs out, and the what-changed note names them — a bundled reader admits everything.
 
-Gate: if a line cannot be answered from the input, or can be answered several ways, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>`. Never leave a line blank.
+Gate: if the input cannot answer a line, or answers it several ways, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>` to the output. Never leave a line blank.
 
 ### 3. Build the outline from the purpose
 
