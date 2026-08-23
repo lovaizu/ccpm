@@ -425,11 +425,8 @@ requires for a session to close.
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-08-23
-- **Last completed**: #7 reader-as-content-gate FB round (marker 7171a6d)
-- **Next**: #8 Evaluation sign-off — verdict only
-- **Notes**: branch `worktree-writ` / PR #15. Criteria run done: 13/13 PASS in `checks/8.md`
-  (7157792); result presented on PR #15 (comment 5378442501). Awaiting the user's verdict via
-  `/rn:ty` or `/rn:gm` — nothing else remains; after approval only the PR merge follows. The
-  2026-08-20 FB comment (5353396410) is confirmed addressed by #7.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
