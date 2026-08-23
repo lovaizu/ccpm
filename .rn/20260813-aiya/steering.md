@@ -383,8 +383,12 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-08-23
+- **Last completed**: #4 in progress — writ re-run done (fixed point + 3 reader-trial fix
+  rounds, 6,239 → 6,448 words, checked off in 5aee169); design gate re-presented on PR #19
+  (comment 2026-08-22, object b2712f2), verdict not taken
+- **Next**: #4 — take the PR #19 gate verdict; two residuals ride the verdict (§4.6
+  "structural" overclaim, UX/Design docs unanchored — see `checks/4-writ-rerun-note.md`)
+- **Notes**: after approval, the order is grilling adoption → ruling (viii) → ripple into the
+  build → targeted re-review
