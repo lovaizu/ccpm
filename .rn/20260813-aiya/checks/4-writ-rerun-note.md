@@ -9,6 +9,29 @@ to this document by hand. Every step below was executed; what the updated proced
 demands turned out to be note-level obligations — per-slot justification of the supplied
 outline and the naming of excluded content — discharged here.
 
+**How the run deviated from writ's letter (disclosed 2026-08-23).** writ step 7 says to render
+the filled outline into the document fresh, never editing the draft in place; that literal
+blank-page rebuild is what 486a1af did (10,612 → 7,269 words, whole text replaced). This
+re-run did steps 1–6 as re-derivation — the narrowed one-reader definition drove a fresh
+admission audit of every heading and point — but executed step 7 as an **audit against the
+existing text** rather than a blank-page re-render: each admitted point was checked to be
+carried by a sentence already present, and none was rewritten. A byte-identical result is
+itself the evidence — a true re-render would have shifted surface wording even at identical
+content. The reason for the deviation: parts of this document are owner-ratified sentence by
+sentence, and re-rendering ratified wording when the content is unchanged would replace
+approved text with unapproved text for no gain. The claim "fixed point" is therefore about
+content, not about the letter of step 7. writ has no stated semantics for re-applying itself
+to a document it already produced; that gap is FB for writ, recorded below.
+
+**FB owed upstream to writ (open, not yet sent).** Two gaps this run hit, neither fixable in
+this document: (a) step 11's delivery gate — "a clean pass, no stumbles, no unneeded content" —
+was unreachable here: four fresh-reader trials each produced a *disjoint* set of novel minor
+stumbles, and the unneeded-content half is format-mandated, so the gate never closes; writ
+needs a convergence criterion (declining severity + repeated purpose YES + an iteration cap)
+instead of a zero bar. The 3-iteration cap used here is this session's invention, not writ's.
+(b) re-application semantics — the audit-mode question above. Whether to send these to PR #15
+awaits the user's ruling.
+
 ## Which upstream writ changes bit, and where
 
 - **One person in one reading stance (a1087d9)** — bit the reader definition. The old run's
