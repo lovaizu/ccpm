@@ -383,16 +383,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-24
-- **Last completed**: #4 in progress — nothing built this session; the writ re-run's audit-mode
-  deviation from writ step 7 disclosed in `checks/4-writ-rerun-note.md` (was overstated as a
-  plain fixed point), together with the two writ-side gaps it exposed
-- **Next**: #4 — take the PR #19 gate verdict on b2712f2 (`aiya/docs/design.md`)
-- **Notes**: branch `worktree-aiya`, PR #19 (gate) / PR #15 (writ). Two residuals ride the
-  verdict, both design-side: §4.6 calls both discharges "structural" though §2's own definition
-  makes the no-reading wall default-and-observable; §4.4's per-product UX/Design documents have
-  no §3.3 layout home or §3.2 ledger row. Pending user ruling, not yet made: whether to send the
-  two writ-side gaps (step 11's unreachable clean-pass gate; undefined re-application semantics)
-  to PR #15 as FB. After the verdict: grilling adoption → ruling (viii) → ripple into the build
-  → targeted re-review
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
