@@ -1,6 +1,6 @@
 # Writing the UX
 
-The document that fixes the product as its users see it. **One per product.** One of generation's prerequisites — until who uses it and how they touch it are fixed, neither the Deliverable's shape nor the Success Criteria can be written. If the project has no UX, write one in this format before running.
+The document that fixes the product as its users see it. **One per product.** One of generation's prerequisites — until who uses it and how they touch it are fixed, neither the Deliverable's shape nor the Success Criteria can be written. If the project has no UX, write one in this format before running. A product with no screens still has a surface: a library's is its public API, a CLI's its command vocabulary — that is what this document fixes.
 
 Public presentation — a README, a docs site — does not belong here: that is a delivery format, the project's own business. If needed, put a conversion Step at the end of Delivery that consumes this UX.
 
