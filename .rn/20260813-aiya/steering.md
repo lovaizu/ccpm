@@ -287,6 +287,33 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       6,448 words — purpose YES on all four trials; loop closed at the 3-iteration cap with
       two residuals flagged for the gate (§4.6 "structural" overclaim, UX/Design docs
       unanchored), 5555337; gate object moves to b2712f2)
+- [x] Fix the eight round-4 residuals in the current document before rebuilding — directed by the
+      user 2026-08-26 ("先に残課題を現行に反映したら？"), so the rebuild takes its intent from a
+      corrected source and the comparison measures the procedure, not known defects. Ruled and
+      applied in d7b63f9: R1 §4.6's "structural" overclaim; R2 the product's UX/Design documents
+      given a home (§3.3, `docs/ux.md` / `docs/design.md` by default, redirected at the Planning
+      Gate — chosen over a ledger row because they are per-product, not per-run); R3–R8 the six
+      reader stumbles. Three further rulings taken in the same exchange: §3.3's write-side rule
+      ("physical layout exactly once") replaced with `One directory per run:` — it served the
+      document's author, not its reader; `run.yaml` → `state.yaml` (the directory already says
+      *run*, the document's own term is *run-state*, and Terraform/Airflow/Temporal all use *state*
+      for this with *status* as a field inside it); `references/ux.md` gains one line saying a
+      screenless product's surface is its API or command vocabulary
+- [x] Rebuild `design.md` from a blank page by the writ procedure in a subagent, into a separate
+      file, then evaluate current vs. rebuilt from the purpose — directed by the user 2026-08-26,
+      the honest re-run of the step-7 deviation disclosed in `checks/4-writ-rerun-note.md`. Done:
+      the rebuild ran writ steps 1–10 blank-page into `checks/4-rebuild/design.md` (8,334 words)
+      plus `note.md`; step 11 was then run as a **head-to-head** — the same fresh-context reader
+      prompt, the ratified reader, neutral filenames — over the current document (d7b63f9, 6,557
+      words) and the rebuild, recorded in `checks/4-rebuild/trials.md`
+- [ ] Write the comparison evaluation from the purpose to `checks/4-rebuild-eval.md`, push, and put
+      the adoption question to the user on PR #19. Evidence already in hand (`trials.md`): both
+      documents QUALIFIED, the rebuild easier to read (effort 3 vs 4) with a better heading thread
+      despite +27% length; six objections raised independently against both, so they are design
+      gaps no rewrite removes; the rebuild's +1,777 words include contract detail the 2026-08-19
+      density ruling puts in the shipped artifacts; adopting it wholesale discards sentence-by-
+      sentence owner ratification. Leaning: keep the current document as the base and port the
+      rebuild's identified wins, rather than swap — the user rules
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
 - [ ] Adopt the grilling interview method (mattpocock/skills, `skills/productivity/grilling`) as
@@ -383,8 +410,16 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: -
-- **Last completed**: -
-- **Next**: -
-- **Notes**: -
+- **Status**: paused
+- **Date**: 2026-08-26
+- **Last completed**: #4 — the eight round-4 residuals applied to the current design (d7b63f9), the
+  blank-page writ rebuild produced in a subagent (`checks/4-rebuild/`), and both documents put to
+  the same fresh-context reader trial (`checks/4-rebuild/trials.md`)
+- **Next**: #4 — write `checks/4-rebuild-eval.md` from `trials.md`, push, and put the adoption
+  question on PR #19
+- **Notes**: branch `worktree-aiya`, PR #19 (gate) / PR #15 (writ). Two of today's fixes drew
+  findings and need re-ruling before the gate: R3's added "two supports" clause made the count
+  worse, not better (both readers prescribe striking §2's one-mechanism-each claim instead), and
+  R1's structural examples name Turn-contract properties that are not legs of either discharge.
+  Still pending from before: the grilling adoption, ruling (viii), the ripple into the build, the
+  targeted re-review, and whether to send the two writ-side gaps to PR #15 as FB.
