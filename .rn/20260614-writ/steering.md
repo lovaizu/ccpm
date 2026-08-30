@@ -426,8 +426,15 @@ requires for a session to close.
 
 # State
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-30
+- **Last completed**: #7 encode the PR #15 field feedback — reader as content gate, verification independence
+- **Next**: #8 evaluation sign-off — take the user's verdict on PR #15
+- **Notes**: Branch `worktree-writ`, PR #15 open. The criteria run (13/13) is presented on PR #15
+  (comment 2026-08-22); only the verdict is outstanding — resume by asking for `/rn:ty` or `/rn:gm`.
+  Three fixes landed after that run and are not in the PR comment: CHANGELOG collapsed to one
+  initial-release line (746928b), README + design.md realigned with the shipped skill (18a76b7),
+  step-11 no-subagent fallback added and the 2,000-word cap retired as D-9 (1f457a6) — the amended
+  acceptance criterion 1 was re-run and recorded in `checks/8.md`. Open question for the sign-off:
+  acceptance criterion 9 tests only marketplace/README sync, not README-vs-implementation agreement,
+  which is what let the README drift — decide whether to add that criterion or accept the gap.
