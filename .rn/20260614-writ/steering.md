@@ -489,15 +489,11 @@ with mechanisms rather than replacing them).
 
 - **Status**: paused
 - **Date**: 2026-08-30
-- **Last completed**: #9 encode the PR #15 round-2 field feedback — mechanisms for the standing
-  instructions, and a legal composite (user review outstanding)
-- **Next**: #9 user review on PR #15, then #8 — re-run the acceptance criteria against the amended
-  set and take the verdict
-- **Notes**: Branch `worktree-writ`, PR #15 open. Five of the FB's six findings are taken and
-  recorded in `checks/9.md` (18/18 clauses); the sixth — a produced-vs-input length measure — is
-  declined, with the reasoning in `design.md` D-10. Task #8's earlier criteria run (13/13,
-  `checks/8.md`) predates both the three sign-off fixes and this round, so it is re-run before the
-  verdict. Still open for the sign-off: acceptance criterion 9 tests only marketplace/README sync,
-  not README-vs-implementation agreement, which is what let the README drift — decide whether to
-  add that criterion or accept the gap. The aiya side holds its adopt-doc-A-or-doc-B decision until
-  writ's response lands, then re-runs the rebuild.
+- **Last completed**: #9 encode the PR #15 round-2 field feedback (PR review outstanding)
+- **Next**: #8 evaluation sign-off — re-run the acceptance criteria against the amended set, then
+  take the verdict
+- **Notes**: Branch `worktree-writ`, PR #15 open; the round-2 reply is comment 5469137594. The
+  earlier criteria run (`checks/8.md`, 13/13) predates the three sign-off fixes and task #9, so it
+  is re-run before the verdict. One question for the sign-off: acceptance criterion 9 tests only
+  marketplace/README sync, not README-vs-implementation agreement — add that criterion or accept
+  the gap. The aiya side re-runs its rebuild against this version before deciding doc-A vs doc-B.
