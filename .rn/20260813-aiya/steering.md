@@ -306,14 +306,18 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       plus `note.md`; step 11 was then run as a **head-to-head** — the same fresh-context reader
       prompt, the ratified reader, neutral filenames — over the current document (d7b63f9, 6,557
       words) and the rebuild, recorded in `checks/4-rebuild/trials.md`
-- [ ] Write the comparison evaluation from the purpose to `checks/4-rebuild-eval.md`, push, and put
-      the adoption question to the user on PR #19. Evidence already in hand (`trials.md`): both
-      documents QUALIFIED, the rebuild easier to read (effort 3 vs 4) with a better heading thread
-      despite +27% length; six objections raised independently against both, so they are design
-      gaps no rewrite removes; the rebuild's +1,777 words include contract detail the 2026-08-19
-      density ruling puts in the shipped artifacts; adopting it wholesale discards sentence-by-
-      sentence owner ratification. Leaning: keep the current document as the base and port the
-      rebuild's identified wins, rather than swap — the user rules
+- [x] Write the comparison evaluation from the purpose to `checks/4-rebuild-eval.md`, push, and put
+      the adoption question to the user on PR #19. Written and pushed in a3324b2; question posed on
+      PR #19. Two things the writing changed from the evidence as summarized: (a) the re-run is
+      **not** a clean measurement of the writ procedure — the rebuild's own step-9 disclosure has it
+      drafted directly after a full read of the current document (127 shared 8-token spans, reduced
+      to a 7.3% identifier-only residue), so it answers "is this document better", not "does
+      blank-page writ produce a better document"; (b) `trials.md`'s claim that the +1,777 words are
+      contract detail does not survive measurement — per-chapter counts show uniform +17–59% growth
+      with §5 taking 23.6% of it against a 24.9% share, so the trade is density-vs-ambiguity, not
+      prose-vs-contracts. Recommendation recorded: keep the current document, port P1–P4; ten
+      design-level findings (six raised independently by both readers) survive either adoption and
+      need their own disposition; R3 and R1 need re-ruling — awaiting the user's verdict
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
 - [ ] Adopt the grilling interview method (mattpocock/skills, `skills/productivity/grilling`) as
