@@ -1,5 +1,6 @@
 ---
 name: up
+compatibility: Step 11 launches a fresh-context subagent to read the produced document. Where subagents are unavailable, the reader trial is skipped and the delivery note says so.
 description: This skill should be used when brushing up, revising, polishing, or de-AI-ifying a document so it reads as if a person wrote it — an article/explanation, guide/procedure, reference, record/ADR, or evaluation/survey. It fires on requests like "brush this up", "make this not read like AI", "revise this doc", "polish this README/ADR", and it fires for Claude itself while drafting or revising such a document. It takes only the input's intent, defines the reader, and builds the document fresh through an ordered writing procedure so the AI tells never take hold, returning the rebuilt document plus a what-changed note.
 ---
 
@@ -81,7 +82,16 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 ### 11. Reader trial, then deliver
 
-The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no history. It reads as that reader, top to bottom, and reports: did it reach the purpose; do the headings alone carry the argument; where did it stumble; what content did it not need — and, when it can tell, whom that content serves. Fix every stumble; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then rerun with a fresh-context subagent. A clean pass — no stumbles, no unneeded content — gates delivery.
+The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no history. It reads as that reader, top to bottom, and reports:
+
+- Did it reach the purpose?
+- Do the headings alone carry the argument?
+- Where did it stumble?
+- What content did it not need — and, when it can tell, whom does that content serve?
+
+Fix every stumble; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then reruns with a new fresh-context subagent. A clean pass — no stumbles, no unneeded content — gates delivery.
+
+If this environment cannot launch a subagent, the gate cannot run. Do not stand in for it — reading it yourself is exactly what this step exists to replace. Deliver anyway, and say plainly in the note that the reader trial did not run, so the document is unverified against a fresh reader.
 
 Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content kept out at any admission point, steps 3–4 or 7–8 (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. For a topic input, the note reports the choices instead: reader, axis, voice, each tied to why.
 

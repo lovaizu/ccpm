@@ -170,6 +170,11 @@ claim statuses) stay with the author, where knowledge of the draft is no handica
 trial run with extra context, or its stumbles waved through — shows up as the same field failure 4.5
 records: checks pass, the reader still struggles.
 
+Where the environment cannot launch a subagent at all, the gate cannot run. Step 11 forbids the
+author standing in for it — that substitution is precisely what the step exists to prevent — and
+requires the delivery note to state that the trial did not run, so an unverified document is never
+mistaken for a gated one. The frontmatter's `compatibility` field declares the dependency.
+
 ## 5. Alternatives considered
 
 ### 5.1 Why this shape, and not another?
@@ -202,6 +207,14 @@ records: checks pass, the reader still struggles.
   experiential checks move to a fresh-context subagent whose pass gates delivery (4.6). Consequence:
   the ceiling's target is restated as minimal reader effort to the purpose, with density demoted to a
   means.
+- **(D-9) Retire the self-imposed 2,000-word cap, keep the official <500-line bound** — chosen over
+  holding the cap, because it had no external basis and had started driving the edits: task #7 paid
+  for its additions with twelve meaning-preserving trims and a three-word recast (`checks/7.md`), and
+  step 11 had compressed into a single 670-character paragraph. Official guidance is 1,000–3,000
+  words and under 500 lines; the body sits at 159 lines, a third of that bound, so the constraint
+  that actually protects the reader is the line count, not a word budget two thirds tighter than the
+  ceiling. Traded away: an explicit stop against creeping length — replaced by a bound with room to
+  say things once, clearly.
 
 ### 5.2 What did we trade away?
 
@@ -211,7 +224,7 @@ records: checks pass, the reader still struggles.
   split that makes "cleared but unremarkable" a distinct, nameable state from "actually worth
   reading."
 - Choosing a single inline `SKILL.md` (2.2) over a `references/`-split structure trades some
-  file-size headroom (capped at <2,000 words) for a self-contained skill that reads start to finish
+  file-size headroom (bounded by the official <500-line guidance; 159 lines today) for a self-contained skill that reads start to finish
   without following links — appropriate while the procedure is one continuous flow, at the cost of
   needing to re-split if it grows substantially.
 - Re-sourcing the five axes to external best practice (D-6) trades fidelity to the user's original

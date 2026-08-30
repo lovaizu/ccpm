@@ -44,7 +44,8 @@ voice, and form from the reader and purpose rather than from memory or the old d
   skill) from **output rules** (constraints on the produced document; "§output-rules" here names the
   layer realized as the file's `## Reference` section — D-5), with the §output-rules layer
   carrying an explicit addressee sentence stating its rules target the produced document, not this
-  prompt. The body is imperative and lean (<2,000 words). **No mermaid diagram is embedded in the
+  prompt. The body is imperative and lean, within the official skill guidance — under 500 lines and
+  1,000–3,000 words (the self-imposed 2,000-word cap is retired; see design.md D-9). **No mermaid diagram is embedded in the
   prompt body** (and none is required by these criteria) — the mermaid rule lives only in
   §output-rules as a directive to the produced document.
 - **Level A — the two-tier quality is encoded:** the process is an **ordered writing procedure that
