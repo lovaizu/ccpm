@@ -233,12 +233,8 @@ it — the plan itself.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-30
-- **Last completed**: none — planning only; no task has been started
-- **Next**: #1 Decide the new plan shape and record it in `rn/docs/design.md`
-- **Notes**: branch `worktree-issue-17`, draft PR https://github.com/lovaizu/ccpm/pull/21. The plan
-  gate is still open — the user has not issued a `/rn:ty` or `/rn:gm` verdict on this plan yet, so
-  take that verdict before starting #1. The four moves agreed with the user (question-driven fields,
-  two named tests, completion↔acceptance traceability, a review before the plan gate) are the
-  approach; their concrete wording is deliberately undecided and is #1's job.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
