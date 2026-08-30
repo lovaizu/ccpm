@@ -316,8 +316,13 @@ split it by task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-08-30
+- **Last completed**: none — no task has started
+- **Next**: #1 Measure how a string actually reaches the JSONL
+- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
+  **Blocker**: the plan gate is still open — the user has not yet given a `/rn:ty` or `/rn:gm`
+  verdict on this steering, so #1 must not start until they do. The two-stage shape agreed in
+  planning (silent collection at `/rn:dn`, user-invoked stocktake proposing only recurring friction)
+  is recorded in the Goal and is input to #2's design work; it is not yet written into
+  `rn/docs/design.md`. No user-deferred paths.
