@@ -318,6 +318,17 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       prose-vs-contracts. Recommendation recorded: keep the current document, port P1–P4; ten
       design-level findings (six raised independently by both readers) survive either adoption and
       need their own disposition; R3 and R1 need re-ruling — awaiting the user's verdict
+- [ ] Re-run the rebuild once writ is strengthened, then settle adoption on the result — ruled by the
+      user 2026-08-30: writ exists to produce the document, so an output that loses is writ's defect,
+      not grounds for hand-patching the current document; "keep doc-A and port the wins" is withdrawn
+      as the recommendation. Six procedure gaps the head-to-head exposed were fed to the writ session
+      as a PR #15 comment (blank-page carryover unmeasured; no status pass over the input, which is
+      why the pending run-state design was dropped whole; step 11 patching subject defects as prose,
+      which is how R3 backfired; a delivery gate that has never opened; a fill with a drop rule and
+      no add rule; the five axes unable to express the ratified article+reference shape). The
+      adoption question posed on PR #19 is held open until writ responds; the rebuild is then re-run
+      and the result adopted or rejected on its own merits
+
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
 - [ ] Adopt the grilling interview method (mattpocock/skills, `skills/productivity/grilling`) as
