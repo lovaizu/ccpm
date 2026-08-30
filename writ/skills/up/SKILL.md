@@ -1,7 +1,6 @@
 ---
 name: up
 description: This skill should be used when brushing up, revising, polishing, or de-AI-ifying a document so it reads as if a person wrote it — an article/explanation, guide/procedure, reference, record/ADR, or evaluation/survey. It fires on requests like "brush this up", "make this not read like AI", "revise this doc", "polish this README/ADR", and it fires for Claude itself while drafting or revising such a document. It takes only the input's intent, defines the reader, and builds the document fresh through an ordered writing procedure so the AI tells never take hold, returning the rebuilt document plus a what-changed note.
-version: 0.1.0
 ---
 
 # Brush a document up

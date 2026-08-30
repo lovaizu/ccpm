@@ -71,7 +71,8 @@ writing for no one in particular:
 `/writ:up` won't mix roles in one document — a mixed role is the fastest way to lose a reader. It
 picks the one that fits your reader and commits to it:
 
-- **Article** — someone reading to understand. Stumbling point → why → what to do.
+- **Article** — someone reading to understand. The why-question it answers → the substance, claim by
+  claim → what was gained and where the limits are. No instructions; those are a guide's job.
 - **Guide** — someone doing it right now. Ordered steps, each with its expected result.
 - **Reference** — someone looking a thing up. Unique, exhaustive, built for lookup, not for reading
   through.
@@ -81,7 +82,9 @@ picks the one that fits your reader and commits to it:
   recommendation.
 
 Whichever it picks, the same finish applies: headings that carry the argument on their own, structure
-and flow shown as diagrams instead of prose, fact kept separate from hypothesis, and no hedging or
-filler left behind. Before handing anything back, it puts the document in front of a fresh reader —
-a subagent that knows nothing but the document and who it's for — and waits until that
+and flow drawn as diagrams wherever a diagram beats prose, fact kept separate from hypothesis, and no
+hedging or filler left behind. Nothing gets in that your reader doesn't need to reach the purpose — a
+paragraph written for a past reviewer, a template slot nobody reads: it stays out and gets named in
+the note rather than quietly filled. Before handing anything back, it puts the document in front of a
+fresh reader — a subagent that knows nothing but the document and who it's for — and waits until that
 reader gets through clean. You get the revised document and a short note of what moved and why.

@@ -69,24 +69,33 @@ the output actually varies with who is reading rather than reproducing one memor
 | Actor | What it is |
 |---|---|
 | `instruction.md` | Verbatim source of record for the skill's pillars (except the five-axis skeletons, superseded by D-6 research). |
-| `SKILL.md` — process layer | Instructions to the model running the skill: understand → define reader → outline → fill → check story → decide voice/form → write → brush up → clear floor → self-check. |
+| `SKILL.md` — process layer | Instructions to the model running the skill: understand → define reader → outline → fill → check story → decide voice/form → write → brush up → clear floor → self-check → reader trial & deliver. |
 | `SKILL.md` — §Reference (output rules) | Constraints on the produced document: the two tiers, the five axes, form, voice by reader, the seven-tell floor checklist — with an explicit addressee sentence naming the produced document, not the prompt. |
 | The writer (human or Claude) | Runs the skill against an input draft (or a topic, from scratch), producing the document plus a "what changed and why" note. |
+| Fresh-context reader (subagent) | Reads the produced document as the step-2 reader, given only the document and that reader definition; reports stumbles and content the reader did not need. Its clean pass gates delivery (D-8). |
 | Produced document | The end artifact judged against the floor/ceiling bar — never the prompt itself. |
 
 ### 3.3 How does work move?
 
 ```mermaid
 flowchart TD
-  a["Understand the input"] --> b["Define reader & purpose"]
+  a["Understand the input"] --> b["Define reader & purpose<br/>(one person, one reading stance)"]
   b --> c["Outline from purpose<br/>(pick one of five axes, no mixing)"]
   c --> d["Fill outline with the message"]
   d --> e["Check the story as the reader"]
   e --> f["Decide voice & form<br/>(derived from purpose+story)"]
   f --> g["Write"]
-  g --> h["Brush up to the ceiling<br/>(density, concreteness, one thread, earned figures)"]
+  g --> h["Brush up to the ceiling<br/>(minimal reader effort to the purpose)"]
   h --> i["Clear the floor (final net)<br/>scrub the seven AI tells"]
-  i --> j["Self-check & deliver<br/>substance first, then tells the net caught"]
+  i --> j["Self-check the mechanics"]
+  j --> k["Reader trial<br/>fresh-context subagent: document + reader only"]
+  k -->|"stumble or unneeded content"| l["Fix, re-run steps 10–11"]
+  l --> j
+  k -->|"clean pass"| m["Deliver<br/>document + what-changed note"]
+  b -. "admission gate<br/>(headings, points, rendering, ceiling)" .-> c
+  b -. .-> d
+  b -. .-> g
+  b -. .-> h
 ```
 
 ## 4. Detailed design
@@ -132,6 +141,35 @@ blank. A breach — an inferred-but-undisclosed reader, or a document whose voic
 its stated reader — is caught by step 10's self-check items "Assumed reader: line present iff the
 reader was inferred" and "Voice and closing fit the step-2 reader."
 
+### 4.5 What does reader-gated content admission guarantee, and how is a breach caught?
+
+Guarantees that no sentence ships because someone once wanted it there. The step-2 reader is not
+only the source of voice and axis (4.4) but the **admission criterion for content**: a heading
+(step 3), a point (step 4), a sentence that first appears at rendering (step 7), or an example added
+while reaching for the ceiling (step 8) enters only if that reader needs it to reach the purpose.
+Material serving a different reader — a re-reader, a past reviewer, an approver — is routed to the
+what-changed note (whose it is, where it belongs) instead of shipping as noise. A user-supplied
+outline or format faces the same test slot by slot: an unjustifiable slot is an axis conflict, raised
+with the user (headless: recorded in the note) and never silently filled. A breach — noise surviving
+into the delivered document — is caught twice: by step 10's admission self-check item, and by the
+step-11 reader trial reporting content it did not need.
+
+Origin: a real run (PR #15 comment 5353396410) delivered a document its owner judged noise-ridden
+while every writ check passed — because the reader governed only form, so content for other readers
+passed straight through.
+
+### 4.6 What does verification independence guarantee, and how is a breach caught?
+
+Guarantees that the experiential claims — the document reaches the purpose read top to bottom, and
+the headings alone carry the argument — are judged by someone the curse of knowledge cannot blind.
+The author, having built the outline, cannot un-know it, so those two checks move out of step 10 and
+into step 11: a fresh-context subagent given **only** the produced document and the step-2 reader
+definition — no outline, no draft, no history. Its clean pass gates delivery; stumbles come back as
+fixes and the document re-runs steps 10–11. Mechanical checks (single axis, `Assumed reader:` line,
+claim statuses) stay with the author, where knowledge of the draft is no handicap. A breach — the
+trial run with extra context, or its stumbles waved through — shows up as the same field failure 4.5
+records: checks pass, the reader still struggles.
+
 ## 5. Alternatives considered
 
 ### 5.1 Why this shape, and not another?
@@ -157,6 +195,13 @@ reader was inferred" and "Voice and closing fit the step-2 reader."
   "technical" writing. D-6's sourcing already showed the five axes are general document genres, not
   technical-writing-specific — the mechanism was general from the start; only the label lagged.
   `writ` + skill `up` gives `/writ:up`, read as "write it up", with no redundant "up up".
+- **(D-8) The reader gates content, and a fresh reader gates delivery** — chosen over adding more
+  checks to the author's own self-check list, after a real run (PR #15) shipped a noise-ridden
+  document with every check passing. Two structural changes rather than nets: the step-2 reader
+  becomes the admission criterion for content, not just the source of voice and axis (4.5), and the
+  experiential checks move to a fresh-context subagent whose pass gates delivery (4.6). Consequence:
+  the ceiling's target is restated as minimal reader effort to the purpose, with density demoted to a
+  means.
 
 ### 5.2 What did we trade away?
 
