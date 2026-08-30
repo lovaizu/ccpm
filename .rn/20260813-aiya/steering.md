@@ -425,13 +425,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-30
-- **Last completed**: #4 — the rebuild evaluation written to `checks/4-rebuild-eval.md` (a3324b2) and
-  the six writ procedure gaps sent to PR #15 as feedback
-- **Next**: #4 — wait for the writ session's response to the PR #15 feedback, then re-run the
-  blank-page rebuild with the strengthened writ and settle adoption on the result
-- **Notes**: branch `worktree-aiya`, PR #19 (aiya gate) / PR #15 (writ). The adoption question posed
-  on PR #19 is held open — do not settle it by hand-patching the current document. R3 and R1 still
-  need re-ruling. Still pending from before: the grilling adoption, ruling (viii), the ripple into
-  the build, the targeted re-review.
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
