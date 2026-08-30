@@ -23,7 +23,9 @@ Order: **understand → reader → outline → fill → story-check → voice & 
 
 Say, in your own words: what the document is about, and the one thing it must convey. For an existing draft, read for intent — you will not reuse its sentences.
 
-Emit: `Subject: … / Must convey: …`
+Then sort what the input asserts, by status: what is **in force** (already true, already built), what is **proposed** (put forward, not yet in force), what is a **hypothesis**. A proposal is not an error to correct against the world — carry its status forward, and never drop a point because reality has not caught up with it yet. Content leaves only through the step-3 admission.
+
+Emit: `Subject: … / Must convey: … / Proposed, not in force: …`
 
 ### 2. Define the reader and the purpose
 
@@ -35,11 +37,13 @@ Gate: if the input cannot answer a line, or answers it several ways, ask the use
 
 Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. Every heading must earn admission from the step-2 reader: it stays only if that reader needs it to reach the purpose. A heading serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the what-changed note (whose it is, where it belongs). A user-supplied outline or format faces the same test slot by slot; an unjustifiable slot is an axis conflict — raise it with the user (headless: record it in the note), never fill it silently.
 
+When the content genuinely needs two axes — an argument to read through, plus an inventory to look things up in — it is two documents. Say so and split them: that is the first answer. If the owner keeps them in one file, declare the parts rather than blending them — each part carries its own step-2 reader line and its own axis at its head, and every admission below runs per part against that part's reader. Never blend two readers inside one part. The what-changed note records the composite and why the split was refused.
+
 Emit: the outline headings, specialized to this content.
 
 ### 4. Fill the outline with what you want to convey
 
-Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. The step-3 admission holds per point: one the step-2 reader does not need goes to the what-changed note instead. Content, not prose yet. A heading with nothing concrete to hold gets cut.
+Under each heading, drop the points it must carry as terse bullets — concrete (names, numbers, examples), one fact per bullet. Write every bullet in your own words; one that reads like the draft's own sentence was copied, not rebuilt. The step-3 admission holds per point: one the step-2 reader does not need goes to the what-changed note instead. Content, not prose yet. A heading with nothing concrete to hold gets cut.
 
 ### 5. Check the story in the reader's order
 
@@ -56,7 +60,7 @@ Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
 ### 7. Write it out
 
-Render the outline into the document in the chosen voice and forms. Lead each part with its point. Rendering adds no content the filled outline does not carry — a sentence that appears only at this step faces the same step-3 admission.
+Close the input. From here the filled outline is your only source — the draft is not open, not consulted, not quoted. Render the outline into the document in the chosen voice and forms. Lead each part with its point. Rendering adds no content the filled outline does not carry — a sentence that appears only at this step faces the same step-3 admission.
 
 ### 8. Brush up to the ceiling
 
@@ -71,7 +75,8 @@ Read the finished document once against the seven AI tells (Reference → [floor
 Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 - [ ] Reader is one person in one reading stance (step 2).
-- [ ] Single axis (step 3), no mixing.
+- [ ] One axis, no mixing (step 3) — a declared composite instead carries one axis and one reader per part, stated at its head.
+- [ ] Nothing carried over from the input's wording but names, identifiers, defined terms, and material quoted on purpose — read the two side by side and confirm it. Having been told to rebuild is not evidence that you did.
 - [ ] Every heading and point admitted by the step-2 reader (steps 3–4, 7–8); content kept out named in the what-changed note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
 - [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
@@ -82,14 +87,19 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 
 ### 11. Reader trial, then deliver
 
-The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no history. It reads as that reader, top to bottom, and reports:
+The author cannot simulate ignorance. Launch a fresh-context subagent with **only** the produced document and the step-2 reader definition — no outline, no draft, no history. A declared composite gets one trial per part, each given only that part and that part's reader. It reads as that reader, top to bottom, and reports:
 
 - Did it reach the purpose?
 - Do the headings alone carry the argument?
 - Where did it stumble?
 - What content did it not need — and, when it can tell, whom does that content serve?
 
-Fix every stumble; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then reruns with a new fresh-context subagent. A clean pass — no stumbles, no unneeded content — gates delivery.
+Sort each stumble before touching it:
+
+- **Prose defect** — the document says it badly. Yours to fix.
+- **Subject defect** — the document reports the thing accurately and the thing itself is what the reader trips on: a count that does not add up, a rule with a hole, two claims that contradict each other. No rewrite removes it, and a clause that smooths it over only makes the document lie fluently. Do not patch it. Name it in the what-changed note for whoever owns the subject, and leave the claim standing — or strike it, if it was never this document's to assert.
+
+Fix the prose defects; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then reruns with a new fresh reader. Delivery is gated on **no prose defect remaining** — outstanding subject defects do not block it, they ship named. Stop after three trial rounds either way: a prose defect that survives three rewrites is not going to be fixed by a fourth, so deliver and name it too.
 
 If this environment cannot launch a subagent, the gate cannot run. Do not stand in for it — reading it yourself is exactly what this step exists to replace. Deliver anyway, and say plainly in the note that the reader trial did not run, so the document is unverified against a fresh reader.
 
@@ -106,7 +116,7 @@ Deliver the rebuilt document and the **what-changed note** — the structure, st
 - **Floor (table-stakes)** — the document carries none of the seven tells in the [floor checklist](#floor-checklist-the-seven-ai-tells). Clearing it earns no praise; any one tell present reads as machine-written.
 - **Ceiling (attractive)** — the reader reaches the purpose with minimal effort. Means, not ends: density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread with the conclusion first; headings carrying the argument alone; the few load-bearing claims distinguishable at a glance — placement, a heading, a lead sentence, not decoration; figures and lists only where each beats prose; one consistent voice.
 
-Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout: Markdown; every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth, and one not yet in force says so. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### The five axes
 

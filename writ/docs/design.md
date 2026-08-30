@@ -72,7 +72,7 @@ the output actually varies with who is reading rather than reproducing one memor
 | `SKILL.md` — process layer | Instructions to the model running the skill: understand → define reader → outline → fill → check story → decide voice/form → write → brush up → clear floor → self-check → reader trial & deliver. |
 | `SKILL.md` — §Reference (output rules) | Constraints on the produced document: the two tiers, the five axes, form, voice by reader, the seven-tell floor checklist — with an explicit addressee sentence naming the produced document, not the prompt. |
 | The writer (human or Claude) | Runs the skill against an input draft (or a topic, from scratch), producing the document plus a "what changed and why" note. |
-| Fresh-context reader (subagent) | Reads the produced document as the step-2 reader, given only the document and that reader definition; reports stumbles and content the reader did not need. Its clean pass gates delivery (D-8). |
+| Fresh-context reader (subagent) | Reads the produced document as the step-2 reader (one per part, for a declared composite), given only the document and that reader definition; reports stumbles and content the reader did not need. Delivery is gated on its prose defects being cleared (D-8, D-10). |
 | Produced document | The end artifact judged against the floor/ceiling bar — never the prompt itself. |
 
 ### 3.3 How does work move?
@@ -89,9 +89,10 @@ flowchart TD
   h --> i["Clear the floor (final net)<br/>scrub the seven AI tells"]
   i --> j["Self-check the mechanics"]
   j --> k["Reader trial<br/>fresh-context subagent: document + reader only"]
-  k -->|"stumble or unneeded content"| l["Fix, re-run steps 10–11"]
+  k -->|"prose defect<br/>or unneeded content"| l["Fix, re-run steps 10–11<br/>(three rounds at most)"]
   l --> j
-  k -->|"clean pass"| m["Deliver<br/>document + what-changed note"]
+  k -->|"subject defect"| m
+  k -->|"no prose defect left"| m["Deliver<br/>document + what-changed note<br/>(subject defects named, not patched)"]
   b -. "admission gate<br/>(headings, points, rendering, ceiling)" .-> c
   b -. .-> d
   b -. .-> g
@@ -125,9 +126,10 @@ any tell the net caught.
 
 Guarantees the document has one coherent shape suited to how its reader actually reads (through, or
 looking one thing up) rather than a blend of incompatible structures. Guaranteed by step 3 ("exactly
-one axis... off-axis material stays out"). A breach — a document mixing axes, or carrying off-axis
-material — is caught by step 10's self-check item "Single axis (step 3), no mixing," and off-axis
-material is named (not authored) in the what-changed note.
+one axis... off-axis material stays out"), with 4.11's declared composite as the one sanctioned
+exception — parts, each with its own reader and axis, never a blend. A breach — a document mixing
+axes inside a part, or carrying off-axis material — is caught by step 10's self-check item "One axis,
+no mixing," and off-axis material is named (not authored) in the what-changed note.
 
 ### 4.4 What does the reader-definition gate guarantee, and how is a breach caught?
 
@@ -164,8 +166,8 @@ Guarantees that the experiential claims — the document reaches the purpose rea
 the headings alone carry the argument — are judged by someone the curse of knowledge cannot blind.
 The author, having built the outline, cannot un-know it, so those two checks move out of step 10 and
 into step 11: a fresh-context subagent given **only** the produced document and the step-2 reader
-definition — no outline, no draft, no history. Its clean pass gates delivery; stumbles come back as
-fixes and the document re-runs steps 10–11. Mechanical checks (single axis, `Assumed reader:` line,
+definition — no outline, no draft, no history. Its prose stumbles come back as fixes and the
+document re-runs steps 10–11 until none remain (4.9 sorts them; 4.10 bounds the loop). Mechanical checks (single axis, `Assumed reader:` line,
 claim statuses) stay with the author, where knowledge of the draft is no handicap. A breach — the
 trial run with extra context, or its stumbles waved through — shows up as the same field failure 4.5
 records: checks pass, the reader still struggles.
@@ -174,6 +176,79 @@ Where the environment cannot launch a subagent at all, the gate cannot run. Step
 author standing in for it — that substitution is precisely what the step exists to prevent — and
 requires the delivery note to state that the trial did not run, so an unverified document is never
 mistaken for a gated one. The frontmatter's `compatibility` field declares the dependency.
+
+### 4.7 What makes "build fresh" a mechanism rather than an intention, and how is a breach caught?
+
+Step 1's "you will not reuse its sentences" is an instruction, and an instruction is not a
+mechanism. A controlled rebuild measured what actually happened: **127 maximal shared 8-token spans
+with the source, several 15–24 tokens long** — whole clauses reproduced verbatim by a run that had
+been told to build fresh. Three things now carry the load the instruction was carrying alone. Step 4
+requires the outline's bullets to be in the writer's own words, so the input's phrasing has no
+vehicle into the draft. Step 7 **closes the input**: from rendering onward the filled outline is the
+only source, the draft is not open. Step 10 adds a mechanical item that reads the two texts side by
+side and confirms nothing survives but names, identifiers, defined terms, and deliberate quotation —
+"having been told to rebuild is not evidence that you did." A breach is caught at that item, by an
+author for whom this check carries no curse of knowledge.
+
+Stakes: a rebuild that silently carries its source's wording is not independent of the source, so a
+comparison between the two measures the document, not the procedure.
+
+### 4.8 What does reading the input's claim statuses guarantee, and how is a breach caught?
+
+Guarantees that a proposal in the input survives as a proposal, instead of being deleted for failing
+to match a world that has not caught up with it. The asymmetry was live: §Reference already demanded
+that every claim in the **produced** document carry a status (fact / hypothesis / decision), with no
+counterpart for reading the **input**. In the field run, the rebuild checked a design's claims
+against the shipped plugin, found the described file absent from disk, and dropped a design that was
+deliberately ahead of the build and awaiting approval — a filename, a ledger row, four fields, six
+rules, gone. Step 1 now sorts the input's assertions into in force / proposed / hypothesis and emits
+the proposed ones, and states that content leaves only through the step-3 reader admission — never
+on the ground that reality has not caught up. §Reference's decision status gained "and one not yet
+in force says so," so the status survives into the output. A breach — a proposal dropped, or shipped
+unmarked — is caught by step 10's claim-status item and by the note's list of what was kept out.
+
+### 4.9 What does stumble triage guarantee, and how is a breach caught?
+
+Guarantees the procedure never smooths over a defect in the thing being described. Step 11 said "fix
+every stumble," which forces a rewrite onto stumbles no rewrite can reach. The field run shows the
+failure exactly: a reader reported that a mechanism count did not add up, a reconciling clause was
+added, and the next fresh reader flagged **that clause** as its own stumble — *"So the 'two
+mechanisms' I was just handed are six legs"* — while a second reader, on a different document and
+unable to see the first, prescribed the real fix: strike the claim, do not gloss it. Six further
+objections came back identically from two readers who could not see each other's document; they are
+properties of the subject, and no rewrite of either document removes one. Step 11 now sorts each
+stumble into **prose defect** (writ's, fix it) and **subject defect** (named in the note for whoever
+owns the subject, left standing or struck, never patched). A breach — a subject defect quietly
+glossed — surfaces as the same thing it surfaced as here: the next fresh reader stumbling on the
+gloss.
+
+### 4.10 What gives the delivery gate a termination, and how is a breach caught?
+
+Guarantees the gate can actually open. "A clean pass — no stumbles, no unneeded content — gates
+delivery" had never once been reached: under a head-to-head prompt two readers reported **20 and 18
+stumbles**, and an earlier run had to invent a 3-iteration cap locally and close with two residuals
+flagged, because writ offered no termination rule. A gate that never opens is not the gate — the
+operator's improvised cap is, which means the real rule lived outside the procedure and varied by
+run. Two changes make it terminate: delivery is gated on **no prose defect remaining**, so subject
+defects (4.9) ship named rather than blocking forever; and the fix-and-retrial loop stops after
+three rounds either way, delivering with any survivor named. A breach — an unbounded loop, or
+delivery with an unnamed prose defect — is caught by the note, which must carry every residual.
+
+### 4.11 What does the declared composite guarantee, and how is a breach caught?
+
+Guarantees writ has a legal answer for a document that genuinely serves two readers, instead of
+failing by design. "Match the reader and purpose to exactly one axis. Do not mix axes" met a
+ratified design document that is argument in its first half and reference in its second: the
+rebuild's own step-10 self-check recorded a **FAIL it declared unfixable at that level**, and both
+readers, on both documents, rejected the same chapters as not theirs. A self-check that fails by
+design tells the author nothing. Step 3 now names the split as the first answer — two axes means two
+documents, say so — and, where the owner keeps one file, sanctions a **declared composite**: each
+part carries its own step-2 reader line and its own axis at its head, every admission runs per part
+against that part's reader, and step 11 runs one trial per part given only that part. Readers are
+never blended inside a part. Step 10's axis item was rewritten to accept exactly this shape and
+nothing looser. A breach — a blended part, or an undeclared mix — is caught by that item, and by the
+per-part trial reporting material its reader did not need.
+
 
 ## 5. Alternatives considered
 
@@ -207,6 +282,23 @@ mistaken for a gated one. The frontmatter's `compatibility` field declares the d
   experiential checks move to a fresh-context subagent whose pass gates delivery (4.6). Consequence:
   the ceiling's target is restated as minimal reader effort to the purpose, with density demoted to a
   means.
+- **(D-10) Field round 2 — turn the standing instructions into mechanisms, and give writ a legal
+  composite** — chosen after a controlled experiment (PR #15 comment 5469096123) in which a
+  blank-page writ rebuild was judged against the hand-patched document by two fresh readers under an
+  identical prompt: both QUALIFIED, and **the rebuild read easier — effort 3 vs 4 — despite being 27%
+  longer**. The procedure's output won on the thing the procedure exists for, so the five changes
+  taken are about the places it got there despite writ. Three of them are the same shape — an
+  instruction with no mechanism behind it — and are fixed by giving each one: "build fresh" (4.7),
+  "fix every stumble" (4.9), "a clean pass gates delivery" (4.10). The other two are about what the
+  input actually is: its claims have statuses writ never read (4.8), and its shape may legitimately
+  serve two readers, which writ forbade without offering an alternative (4.11).
+  **Not taken — a length measure.** The evidence offered for it is the same 27% growth, uniform
+  across all seven chapters (+59/24/17/31/26/41/21%), which no step in the procedure noticed. But the
+  document that grew is the one that read *easier*, so the growth was the good case, and the reader
+  trial is already the instrument that told the two cases apart. A recorded length ratio with no bar
+  attached would put a proxy next to the real target — minimal reader effort — where it can only
+  compete with it. The add rules that matter already exist: steps 7 and 8 admit nothing the filled
+  outline does not carry, and the ceiling says "noise cut."
 - **(D-9) Retire the self-imposed 2,000-word cap, keep the official <500-line bound** — chosen over
   holding the cap, because it had no external basis and had started driving the edits: task #7 paid
   for its additions with twelve meaning-preserving trims and a three-word recast (`checks/7.md`), and

@@ -81,10 +81,17 @@ picks the one that fits your reader and commits to it:
 - **Evaluation** — someone making a call. Measurements and judgment kept apart, closing on a
   recommendation.
 
+When your content really is two documents — an argument to read through plus a table to look things
+up in — it says so and offers you the split rather than quietly blending them. Keep them in one file
+anyway and it labels each part with its own reader, instead of pretending one reader wants both.
+
 Whichever it picks, the same finish applies: headings that carry the argument on their own, structure
 and flow drawn as diagrams wherever a diagram beats prose, fact kept separate from hypothesis, and no
 hedging or filler left behind. Nothing gets in that your reader doesn't need to reach the purpose — a
 paragraph written for a past reviewer, a template slot nobody reads: it stays out and gets named in
 the note rather than quietly filled. Before handing anything back, it puts the document in front of a
-fresh reader — a subagent that knows nothing but the document and who it's for — and waits until that
-reader gets through clean. You get the revised document and a short note of what moved and why.
+fresh reader — a subagent that knows nothing but the document and who it's for. Where that reader
+trips on the writing, it rewrites and tries again. Where the reader trips on the *subject* — a count
+that doesn't add up, a rule with a hole — it won't smooth that over with an extra clause; it hands
+the problem back to you by name. You get the revised document, and a short note of what moved, what
+stayed out, and anything the writing can't fix.

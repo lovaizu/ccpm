@@ -93,6 +93,17 @@ voice, and form from the reader and purpose rather than from memory or the old d
   (Corrected 2026-08-20: "Out of scope" is a paragraph in §1, not a heading — verified against
   486a1af — so it is caught at point level by the trial's content-not-needed report, not by the
   heading-slot test as first written.)
+- **FB round 2 (2026-08-30, PR #15 comment 5469096123):** `SKILL.md` backs its three standing
+  instructions with mechanisms — "build fresh" (step 4 writes bullets in the writer's own words,
+  step 7 closes the input, step 10 confirms no carried-over wording side by side), "fix every
+  stumble" (step 11 sorts prose defect from subject defect and forbids patching the latter), and
+  the delivery gate (gated on no prose defect remaining, loop bounded at three trial rounds, every
+  residual named in the note). Step 1 reads the input's claims by status (in force / proposed /
+  hypothesis) and forbids dropping a point because reality has not caught up; §Reference carries
+  the status into the output. Step 3 answers a two-axis document with a split first and a declared
+  composite second — each part with its own reader line and axis, admissions and the step-11 trial
+  running per part, no blending inside a part. Deliberately not taken: a produced-vs-input length
+  measure (D-10 records why).
 
 # Assumptions
 
@@ -410,7 +421,8 @@ end to end and take the user's verdict. Fills the planning gap noted at suspend 
 sign-off gap open"): the original plan had no Evaluation sign-off task, which the rn workflow
 requires for a session to close.
 
-**Prerequisites**: #7
+**Prerequisites**: #7, then #9 — the FB round 2 work landed after the first criteria run, so the run
+is re-done against the amended criteria before the verdict is taken.
 
 **Steps**:
 
@@ -424,17 +436,68 @@ requires for a session to close.
 - Every acceptance criterion has a recorded pass, or the user has explicitly accepted the exception
 - The user's `/rn:ty` verdict is recorded
 
+### #9: Encode the PR #15 round-2 field feedback — mechanisms for the standing instructions, and a legal composite
+
+**Purpose**: A controlled experiment (PR #15 comment 5469096123) rebuilt a real design document from
+a blank page with `/writ:up` and judged it against the hand-patched original with two fresh readers
+under an identical prompt. The rebuild won — both QUALIFIED, effort 3 vs 4, better headings-only pass
+— so the procedure works; the six findings are about where it got there *despite* writ. Five are
+taken. Three of them share one shape: an instruction standing where a mechanism belongs ("build
+fresh", "fix every stumble", "a clean pass gates delivery"), each measurably unenforced — 127 shared
+8-token spans with the source, a reconciling clause that became the next reader's own stumble, a gate
+that has never once opened. The other two are about reading the input honestly: its claims have
+statuses writ never asked for (a pending proposal was deleted for not being built yet), and its shape
+may legitimately serve two readers, which step 3 forbade while offering no alternative.
+
+**Prerequisites**: #7 (the reader-as-content-gate and the fresh-reader trial stand; this backs them
+with mechanisms rather than replacing them).
+
+**Steps**:
+
+- [x] Step 1 of `SKILL.md`: sort the input's assertions by status (in force / proposed / hypothesis),
+      emit the proposed ones, and bar dropping a point because reality has not caught up — content
+      leaves only through the step-3 admission. §Reference: a decision not yet in force says so.
+- [x] Make "build fresh" a mechanism: step 4 bullets in the writer's own words, step 7 closes the
+      input (outline is the only source from rendering on), step 10 gains a side-by-side carryover
+      check.
+- [x] Step 11: sort each stumble into prose defect (fix) and subject defect (named for the subject's
+      owner, left standing or struck, never patched).
+- [x] Give the gate a termination: delivery gated on no prose defect remaining, subject defects ship
+      named, loop stops after three trial rounds with any survivor named.
+- [x] Step 3: a two-axis document is two documents — offer the split first; where the owner keeps one
+      file, declare the parts (own reader line and axis each, admissions and the step-11 trial per
+      part, no blending inside a part). Step 10's axis item accepts exactly that shape.
+- [x] Decline the length measure and record why (D-10): the document that grew 27% is the one that
+      read easier, the reader trial already discriminates, and a ratio with no bar competes with the
+      real target.
+- [x] Realign `writ/README.md` and `writ/docs/design.md` (4.7–4.11, D-10, §3.2 table, §3.3 diagram,
+      4.3 and 4.6 cross-references) with the shipped skill.
+- [x] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`.
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/9.md`)
+- [ ] user review (on PR #15, per push-and-review)
+
+**Completion criteria**:
+
+- Every clause of the FB-round-2 acceptance criterion above is present in `SKILL.md`.
+- `README.md` and `design.md` describe the shipped behavior — no "waits until that reader gets
+  through clean", no unqualified "won't mix roles".
+- Both strict validations pass; the body stays under the official 500-line bound and inside
+  1,000–3,000 words.
+- The declined finding is recorded with its reasoning in `design.md` (D-10).
+
 # State
 
 - **Status**: paused
 - **Date**: 2026-08-30
-- **Last completed**: #7 encode the PR #15 field feedback — reader as content gate, verification independence
-- **Next**: #8 evaluation sign-off — take the user's verdict on PR #15
-- **Notes**: Branch `worktree-writ`, PR #15 open. The criteria run (13/13) is presented on PR #15
-  (comment 2026-08-22); only the verdict is outstanding — resume by asking for `/rn:ty` or `/rn:gm`.
-  Three fixes landed after that run and are not in the PR comment: CHANGELOG collapsed to one
-  initial-release line (746928b), README + design.md realigned with the shipped skill (18a76b7),
-  step-11 no-subagent fallback added and the 2,000-word cap retired as D-9 (1f457a6) — the amended
-  acceptance criterion 1 was re-run and recorded in `checks/8.md`. Open question for the sign-off:
-  acceptance criterion 9 tests only marketplace/README sync, not README-vs-implementation agreement,
-  which is what let the README drift — decide whether to add that criterion or accept the gap.
+- **Last completed**: #9 encode the PR #15 round-2 field feedback — mechanisms for the standing
+  instructions, and a legal composite (user review outstanding)
+- **Next**: #9 user review on PR #15, then #8 — re-run the acceptance criteria against the amended
+  set and take the verdict
+- **Notes**: Branch `worktree-writ`, PR #15 open. Five of the FB's six findings are taken and
+  recorded in `checks/9.md` (18/18 clauses); the sixth — a produced-vs-input length measure — is
+  declined, with the reasoning in `design.md` D-10. Task #8's earlier criteria run (13/13,
+  `checks/8.md`) predates both the three sign-off fixes and this round, so it is re-run before the
+  verdict. Still open for the sign-off: acceptance criterion 9 tests only marketplace/README sync,
+  not README-vs-implementation agreement, which is what let the README drift — decide whether to
+  add that criterion or accept the gap. The aiya side holds its adopt-doc-A-or-doc-B decision until
+  writ's response lands, then re-runs the rebuild.
