@@ -327,7 +327,20 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       which is how R3 backfired; a delivery gate that has never opened; a fill with a drop rule and
       no add rule; the five axes unable to express the ratified article+reference shape). The
       adoption question posed on PR #19 is held open until writ responds; the rebuild is then re-run
-      and the result adopted or rejected on its own merits
+      and the result adopted or rejected on its own merits (writ responded 2026-08-30 in 4787745 —
+      five findings taken, the length measure declined as D-10; re-run done in 46833b3. **The
+      measurement is clean this time**: writ's new step-10 carryover item failed the first render at
+      177 spans / 70.87% and forced a rebuild from meaning, ending at 6 spans / 0.64%, so round 1's
+      effort-3 win is void — it was measured on a document carrying most of its predecessor's
+      phrasing. Round 2 is the first honest comparison and it is a tie: both QUALIFIED, both
+      effort 4, the rebuild 43% longer. Recommendation written to `checks/4-rebuild2-eval.md` —
+      **adopt neither**, because the single change all four readers across both rounds prescribe,
+      "put the discharge at the front", is one neither document may make: `aiya/references/design.md`
+      assigns chapter 1 the properties and their discharge to no chapter, and says chapter 5 holds
+      format definitions while both documents defer every schema out of it. Two format defects, each
+      confirmed by readers on two independently-written documents. Question posed on PR #19: fix the
+      format, then rebuild once against it and settle adoption there — awaiting the verdict. Five
+      writ findings sent to PR #15)
 
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
