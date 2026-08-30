@@ -410,16 +410,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-08-26
-- **Last completed**: #4 — the eight round-4 residuals applied to the current design (d7b63f9), the
-  blank-page writ rebuild produced in a subagent (`checks/4-rebuild/`), and both documents put to
-  the same fresh-context reader trial (`checks/4-rebuild/trials.md`)
-- **Next**: #4 — write `checks/4-rebuild-eval.md` from `trials.md`, push, and put the adoption
-  question on PR #19
-- **Notes**: branch `worktree-aiya`, PR #19 (gate) / PR #15 (writ). Two of today's fixes drew
-  findings and need re-ruling before the gate: R3's added "two supports" clause made the count
-  worse, not better (both readers prescribe striking §2's one-mechanism-each claim instead), and
-  R1's structural examples name Turn-contract properties that are not legs of either discharge.
-  Still pending from before: the grilling adoption, ruling (viii), the ripple into the build, the
-  targeted re-review, and whether to send the two writ-side gaps to PR #15 as FB.
+- **Status**: not suspended
+- **Date**: (date)
+- **Last completed**: (task)
+- **Next**: (task)
+- **Notes**: (notes)
