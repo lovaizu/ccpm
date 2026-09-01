@@ -37,86 +37,60 @@ voice, and form from the reader and purpose rather than from memory or the old d
 
 # Acceptance criteria
 
-- **Level A — the `SKILL.md` artifact (the prompt itself):** `writ/skills/up/SKILL.md` exists
-  and carries all source intent — reader definition (who / what they must decide-or-do / how they
-  read), the five outline axes (article, guide, reference, record-ADR, evaluation), and a pre-output
-  self-check. The body separates two layers: **process** (instructions to the model running the
-  skill) from **output rules** (constraints on the produced document; "§output-rules" here names the
-  layer realized as the file's `## Reference` section — D-5), with the §output-rules layer
-  carrying an explicit addressee sentence stating its rules target the produced document, not this
-  prompt. The body is imperative and lean, within the official skill guidance — under 500 lines and
-  1,000–3,000 words (the self-imposed 2,000-word cap is retired; see design.md D-9). **No mermaid diagram is embedded in the
-  prompt body** (and none is required by these criteria) — the mermaid rule lives only in
-  §output-rules as a directive to the produced document.
-- **Level A — the two-tier quality is encoded:** the process is an **ordered writing procedure that
-  builds the document fresh from the input's intent** (rather than editing the draft in place), so
-  the AI tells do not take hold; the floor scrub is the **final net** (name / quote / fix the seven
-  tells) after the writing, not a pre-edit of the draft. The process names the floor checklist
-  (padding / throat-clearing, restatement, retreat into generalities, flavorless connectives,
-  reflexive bulleting, a wavering voice, hedging). The §output-rules layer states **both tiers**:
-  floor (b) = none of those AI tells present; ceiling (a) = density, concreteness (names / numbers /
-  examples), a single load-bearing thread (conclusion first), diagrams and lists that earn their
-  place, a consistent voice.
-- **Level B — the document the skill produces (dogfood-verified):** running `up` on a draft yields
-  output whose structure/flow is shown as mermaid wherever there is order or branching, with no
-  diagram/prose duplication; feeding two different reader definitions changes the output's voice and
-  axis (proving the procedure derives, not memorizes); each produced document holds a single axis,
-  not mixed.
-- **Level B — the floor is clear in the rebuilt document:** the produced document carries none of
-  the named AI tells, and the "what was changed and why" report leads with the **substance** (the
-  structure, story, and voice built, each tied to the reader or purpose) and closes with a short line
-  on any **AI tells the final-net step caught**.
-- The skill states the brush-up use case explicitly: input = an existing draft (read for intent, not
-  reused verbatim), output = the rebuilt document plus "what was changed and why" (substance first,
-  then the tells the net caught).
-- The SKILL.md frontmatter is model-invocable (no `disable-model-invocation`) and its description is
-  written so it can fire for a human or for Claude itself.
-- `writ/.claude-plugin/plugin.json` has name, description, version (semver), and author, and the
-  version lives only in plugin.json (no version field in marketplace.json).
-- `writ/README.md` exists and shows how to use `/writ:up` in a scenario + real-console style.
-- `.claude-plugin/marketplace.json` has a writ entry (name / description / source `./writ` /
-  category) and the root `README.md` Plugins list also links to writ (the two stay in sync).
-- `claude plugin validate ./writ --strict` and `claude plugin validate . --strict` both pass.
-- `claude -p "/writ:up …" --plugin-dir ./writ` loads the skill and starts the brush-up
-  procedure, confirmed headlessly.
-- All shipped artifacts (plugin.json / SKILL.md / README / commit messages / PR) are in English.
-- **FB round (2026-08-20, PR #15 comment 5353396410):** `SKILL.md` admits content only through the
-  step-2 reader's path to the purpose — at both heading and point level; content serving another
-  reader is routed out and reported in the what-changed note, and an unjustifiable external-template
-  slot is escalated as an axis-side conflict, never silently filled. Experiential verification
-  (reaches the purpose top to bottom; headings carry the argument) runs in a fresh-context subagent
-  given only the document and the step-2 reader definition, and its pass gates delivery; mechanical
-  checks stay with the author. The ceiling names minimal reader effort to the purpose as the target
-  (density a means, not the end) and requires the few load-bearing claims to be distinguishable at a
-  glance; the one-voice rule and the seven-tell floor stand unchanged. Dogfood evidence: the
-  fresh-context dogfood flags the three noise spots the FB named in the aiya document (486a1af).
-  (Corrected 2026-08-20: "Out of scope" is a paragraph in §1, not a heading — verified against
-  486a1af — so it is caught at point level by the trial's content-not-needed report, not by the
-  heading-slot test as first written.)
-- **FB round 2 (2026-08-30, PR #15 comment 5469096123):** `SKILL.md` backs its three standing
-  instructions with mechanisms — "build fresh" (step 4 writes bullets in the writer's own words,
-  step 7 closes the input, step 10 confirms no carried-over wording side by side), "fix every
-  stumble" (step 11 sorts prose defect from subject defect and forbids patching the latter), and
-  the delivery gate (gated on no prose defect remaining, loop bounded at three trial rounds, every
-  residual named in the note). Step 1 reads the input's claims by status (in force / proposed /
-  hypothesis) and forbids dropping a point because reality has not caught up; §Reference carries
-  the status into the output. Step 3 answers a two-axis document with a split first and a declared
-  composite second — each part with its own reader line and axis, admissions and the step-11 trial
-  running per part, no blending inside a part. Deliberately not taken: a produced-vs-input length
-  measure (D-10 records why).
-- **FB round 3 (2026-09-01, `worktree-aiya:.rn/20260813-aiya/writ-feedback-3.md`):** step 3's
-  admission test runs **both ways** — a slot no reader needs goes out, and a reader need no slot
-  carries (a slot that defers the thing elsewhere does not carry it) is raised as a **proposed slot**
-  with its position and the reader evidence, never absorbed as prose under the nearest heading;
-  headless, it is placed and recorded. Step 11 sorts a **format defect** as its own class and routes
-  it to that proposed slot; step 10's admission item is stated in both directions. The article axis
-  leads with the answer and its closing is not a recap. The carryover measurement runs at step 5
-  against the filled outline, with step 10's side-by-side as the backstop. The reader trial's brief
-  asks what read as machine-written. The trial loop **ends on a trial, never on an edit** — a fix
-  after the cap gets a changed-passages-only read, and whatever is unconfirmed ships named. Step 10
-  records produced-vs-input size and requires the growth to be argued (no bar — D-10 reopened as
-  record-and-argue). A declared composite is tested for separability at step 5. The body stays under
-  500 lines and inside 1,000–3,000 words.
+Stated as ends — what is true once writ works. The mechanisms that reach them (the ordered steps, the
+two layers, the axis skeletons, the length bound) are decisions, and they live in `writ/docs/design.md`:
+§4 for what each guarantees and how a breach is caught, §5 for why it was chosen over the
+alternatives. A criterion here never names a step number or a section of `SKILL.md` — one that does
+has become a means, and belongs in the design notes.
+
+**How these are judged.** Criteria 1–8 are read off a real run's output and its what-changed note, and
+the experiential ones (1 and 2) are judged by a fresh-context reader given only the document and the
+reader definition, never by the author's own reading. Criterion 9 is judged by installing and
+invoking the plugin.
+
+## What a run produces
+
+1. **The reader reaches the purpose.** Given a draft (or a topic) and a reader, the delivered document
+   carries that reader to what they must decide or do, read top to bottom.
+2. **It reads as a person wrote it, at the least cost to that reader.** No AI tell survives — padding,
+   restatement, retreat into generalities, flavorless connectives, reflexive bulleting, a wavering
+   voice, hedging. The answer comes first, the headings alone carry the argument, the load-bearing
+   claims stand out at a glance, and figures and lists appear only where each beats prose.
+3. **One document, one shape.** The output holds a single axis for a single reader. Where the content
+   genuinely serves two readers, the run says so and offers the split; if the owner keeps one file,
+   each part stands alone — its reader reaches its purpose without crossing into the other.
+4. **Voice and shape are derived, not remembered.** The same content under two different reader
+   definitions comes back with a different voice and a different axis.
+5. **The input's claims survive with their status.** What was proposed stays proposed, a hypothesis
+   stays marked, a decision keeps its intent — and nothing is dropped for not being true yet.
+6. **Only what the reader needs gets in, and everything they need has somewhere to go.** Content
+   serving someone else stays out and is named in the note: whose it is, where it belongs. A need the
+   supplied format has no slot for is surfaced with its reader evidence and the place it belongs,
+   never buried under the nearest heading.
+7. **A defect in the subject is handed back, not smoothed over.** Where the reader trips on the thing
+   itself rather than on the writing, the document gains no reconciling clause; the defect ships named
+   for whoever owns it.
+8. **Nothing ships unread or unexplained.** Delivery ends on a reading, not on an edit, and whatever
+   is left unverified or unresolved is named as such. What ships is the rebuilt document plus a
+   what-changed note that leads with the substance — structure, story and voice, each tied to the
+   reader or the purpose — and closes with the tells the final net caught.
+
+## Reach
+
+9. **It can be applied on demand, by a human or by Claude itself.** `/writ:up` installs from the ccpm
+   marketplace, loads and starts the procedure when invoked, and fires unprompted while Claude is
+   drafting or revising a document. Evidence: both strict validations pass and a headless invocation
+   starts the procedure. The repo rules that keep this true — version in `plugin.json` only,
+   marketplace and root README in sync, English artifacts, scenario-style README — are in `# Rules`,
+   where compliance is checked as a rule rather than as a criterion.
+
+## Traceability
+
+The three field-feedback rounds are folded into the criteria above instead of standing as their own
+mechanism checklists. What each round changed and why is in `design.md` — round 1 in 4.5–4.6 and D-8,
+round 2 in 4.7–4.11 and D-10, round 3 in 4.3, 4.5–4.7 and 4.9–4.11 and D-11 — and what was verified at
+the time is in `checks/7.md`, `checks/9.md` and `checks/10.md`. The clause-by-clause mapping from the
+previous means-based criteria to these ends is in `checks/11.md`.
 
 # Assumptions
 
@@ -132,9 +106,9 @@ voice, and form from the reader and purpose rather than from memory or the old d
   existing entry uses `"development"`).
 - Assumption (unverified): `claude plugin validate` and `claude -p … --plugin-dir` are available in
   this environment. If not, #3 falls back to manual verification.
-- Scope: exactly one plugin `writ` and one skill `up`. The procedure lives inline in SKILL.md;
-  it is not split into separate reference files (rn uses references, but this skill is self-contained
-  in one file).
+- Scope: exactly one plugin `writ` and one skill `up`. How the skill body is laid out — one file, or
+  a body plus `references/` — is a design decision, not a scope constraint: `design.md` §5.2 owns it
+  and it is free to change without touching this steering.
 - Source-of-record exception: `.rn/20260614-writ/instruction.md` stays in its original Japanese —
   it is the user's verbatim instruction, so translating it would corrupt the source. This is the one
   artifact exempt from the English rule.
@@ -434,8 +408,9 @@ end to end and take the user's verdict. Fills the planning gap noted at suspend 
 sign-off gap open"): the original plan had no Evaluation sign-off task, which the rn workflow
 requires for a session to close.
 
-**Prerequisites**: #7, then #9 and #10 — the FB round-2 and round-3 work landed after the first
-criteria run, so the run is re-done against the amended criteria before the verdict is taken.
+**Prerequisites**: #7, then #9, #10 and #11 — the FB round-2 and round-3 work, and the rewrite of the
+criteria into ends, all landed after the first criteria run, so the run is re-done against the current
+criteria before the verdict is taken.
 
 **Steps**:
 
@@ -545,18 +520,53 @@ the trial loop, and the declared composite that #7 and #9 built).
   admission test and the reopened length measure.
 - Both strict validations pass; the body stays under 500 lines and inside 1,000–3,000 words.
 
+### #11: Restate the acceptance criteria as ends, and move the means to the design notes
+
+**Purpose**: The criteria had accreted implementation. Of sixteen items, ten described how `SKILL.md`
+is built — a physically separated `## Reference` section, a 1,000–3,000 word body, no mermaid in the
+prompt, and three field-feedback rounds written as step-numbered mechanism checklists — rather than
+what writ achieves. Means in the criteria have a cost: any change to the skill's construction fails
+the criteria and forces them to be rewritten, so the shape of the prompt is frozen by the document
+that was supposed to judge its results. Criteria state the end; `design.md` holds the intent and the
+decisions; the implementation follows the decisions.
+
+**Prerequisites**: #10 (round 3 is the last content folded in).
+
+**Steps**:
+
+- [x] Rewrite `# Acceptance criteria` as nine ends — eight on what a run produces, one on reach —
+      naming no step number and no section of `SKILL.md`, with the judging method stated up front.
+- [x] Fold the three FB rounds into those ends and point traceability at `design.md` and the
+      `checks/` files instead of restating their mechanisms.
+- [x] Drop the repo-rule items (version placement, marketplace/README sync, English artifacts,
+      README style) from the criteria — `# Rules` already governs them.
+- [x] Realign `design.md`: 4.1's breach-catch no longer cites a criterion that no longer exists, and
+      D-12 records this decision and its cost.
+- [x] Map every clause of the previous sixteen criteria to its new home, so nothing is lost
+      (`checks/11.md`).
+- [ ] user review (on PR #15, per push-and-review)
+
+**Completion criteria**:
+
+- No criterion names a step number, a `SKILL.md` section, or a length bound.
+- Every clause of the previous criteria is either restated as an end or located in `design.md` /
+  `# Rules`, with the mapping recorded.
+- `design.md` carries the decision (D-12) and no longer points at a deleted criterion.
+
 # State
 
 - **Status**: in progress
 - **Date**: 2026-09-01
-- **Last completed**: #10 encode the round-3 field feedback (PR review outstanding)
-- **Next**: #8 evaluation sign-off — re-run the acceptance criteria against the amended set
-  (now including FB round 3), then take the verdict
+- **Last completed**: #11 restate the acceptance criteria as ends (PR review outstanding)
+- **Next**: #8 evaluation sign-off — run the nine end-based criteria against a real run, then take
+  the verdict. This needs a live `/writ:up` run to judge criteria 1–8; the earlier runs were
+  inspections of the prompt.
 - **Notes**: Branch `worktree-writ`, PR #15 open; #9's review is also outstanding. The earlier
   criteria run (`checks/8.md`, 13/13) predates the three sign-off fixes, task #9 and task #10, so it
   is re-run before the verdict. Two questions for the sign-off: (a) acceptance criterion 9 tests only
   marketplace/README sync, not README-vs-implementation agreement — add that criterion or accept the
-  gap; (b) the body is at 2,994 words against the official 1,000–3,000 band, so the next addition has
+  gap — note that #11 removed the length and structure criteria, so (a) is now about whether README
+  agreement is an end worth stating at all; (b) the body is at 2,994 words against the official 1,000–3,000 band, so the next addition has
   to be paid for by a trim or by splitting §Reference into `references/` (§5.2 records this; the
   split reverses the single-file scope assumption). The aiya side rebuilds against this version and
   judges the result on its own merits.

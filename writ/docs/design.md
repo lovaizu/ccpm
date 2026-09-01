@@ -108,8 +108,10 @@ never misread as a property of the *prompt itself* — the original SKILL.md emb
 flowchart in its own body, which was exactly this category error (D-3). §Reference carries an
 explicit addressee sentence stating its rules target the produced document. A breach — a diagram or
 output-only rule creeping back into the process layer, or the addressee sentence going missing — is
-caught by the acceptance criteria's Level A check that no mermaid diagram is embedded in the prompt
-body.
+caught by the per-task self-check (`.rn/20260614-writ/checks/*.md`), which reads the shipped prompt
+for both: an output-only rule sitting in the process layer, and an addressee that has gone missing.
+It is deliberately not an acceptance criterion — the criteria state what a run achieves, and where
+the addressee sentence physically sits is a decision, not an end (D-12).
 
 ### 4.2 What does the floor-as-final-net ordering guarantee, and how is a breach caught?
 
@@ -403,6 +405,19 @@ right one.
   for**, which surfaces the growth during the run, while a fill can still be un-admitted, instead of
   after delivery. Step 10 records it; there is nothing to pass or fail, and growth no one can argue
   for is unadmitted fill.
+
+- **(D-12) Acceptance criteria state ends; the means live here** — chosen after the criteria had
+  accreted ten implementation clauses out of sixteen: a physically separated `## Reference` section, a
+  1,000–3,000 word body, no mermaid in the prompt body, and three field-feedback rounds written as
+  step-numbered checklists of `SKILL.md`. Means in a criterion invert the relationship they are
+  supposed to serve: any change to how the skill is built fails the criteria, so the document that
+  judges the results ends up freezing the construction. The criteria are now nine ends — eight on what
+  a run produces, one on reach — and every mechanism they used to name lives in this file, §4 for what
+  it guarantees and §5 for why it was chosen. Traded away: the criteria are no longer checkable by
+  reading `SKILL.md`, so the sign-off needs a real run to judge criteria 1–8, and each field round has
+  to be traced through §4 and the `checks/` files rather than read off its own criterion line. That is
+  the intended cost — a criterion satisfiable by inspecting the prompt was never evidence that a
+  reader was served.
 
 ### 5.2 What did we trade away?
 
