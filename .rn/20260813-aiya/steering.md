@@ -340,7 +340,24 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       format definitions while both documents defer every schema out of it. Two format defects, each
       confirmed by readers on two independently-written documents. Question posed on PR #19: fix the
       format, then rebuild once against it and settle adoption there — awaiting the verdict. Five
-      writ findings sent to PR #15)
+      writ findings sent to PR #15). **Superseded in-session 2026-09-01 by the user's ruling**: do not
+      fix the format by hand — fix writ, then re-apply. Diagnosis that carried it: writ *detected* the
+      heading break in all three trial rounds and could not act, because step 3's slot-by-slot test is
+      subtractive only — every verdict it can return is "keep the slot" or "drop it / raise a conflict
+      and proceed", with none for "the reader needs a slot this format has not got". Routing the format
+      defect through writ rather than a hand edit is what the user's standing principle requires. Two
+      further findings recorded: writ's own article axis (question → substance → closing) disagrees
+      with its own ceiling ("conclusion first"); the composite's parts were not separable. Consolidated
+      round-3 feedback written to `.rn/20260813-aiya/writ-feedback-3.md` (42f3cfe), posted to PR #15,
+      and **delivered directly to the writ session** `techting-bb` (worktree `.claude/worktrees/techting`,
+      branch `worktree-writ`) 2026-09-01
+
+- [ ] Re-run `/writ:up` on `design.md` once writ has taken the round-3 feedback, and settle adoption on
+      that result — same protocol as round 2 (blank page, subagent, separate file, head-to-head against
+      the current document with the verbatim prompt now fixed in `checks/4-rebuild2/trials.md`).
+      `aiya/docs/design.md` stays at `d7b63f9` until then and is not hand-patched. The targeted
+      re-review of the round-2/3 fix sites waits for this too — running it against a document about to
+      be rebuilt would be wasted
 
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
@@ -438,8 +455,14 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: -
-- **Last completed**: -
-- **Next**: -
-- **Notes**: -
+- **Status**: paused
+- **Date**: 2026-09-01
+- **Last completed**: #4 — the round-2 re-run, its evaluation (`checks/4-rebuild2-eval.md`), and the
+  round-3 writ feedback sent to PR #15 and to the writ session directly
+- **Next**: #4 — present ruling (viii)'s three README fixes for approval (the only item not blocked on
+  writ), and check whether the writ session has responded; when it has, re-run `/writ:up` on
+  `design.md` and settle adoption on that result
+- **Notes**: branch `worktree-aiya`, PR #19 (aiya gate) / PR #15 (writ). Do not hand-patch
+  `design.md` or `aiya/references/design.md` — the format defect is routed through writ by the user's
+  2026-09-01 ruling. Still pending behind the rebuild: the PR #19 verdict, the grilling adoption, the
+  ripple into the build, the targeted re-review.
