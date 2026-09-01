@@ -31,6 +31,11 @@ retrospective with nothing to say naturally says nothing.
   share it.
 - Every task's interval boundary is discoverable inside the JSONL by grep alone — no correlation
   against `git log` timestamps.
+- A boundary marker names its task from the marker line alone — which session, and which task —
+  without consulting `steering.md` at any revision or any commit history. A bare task number does
+  not satisfy this.
+- The same holds for a collected friction record: it names its task without depending on
+  `steering.md`'s task list as it stands later.
 - Sessions running concurrently against worktrees of one repository are distinguishable by grepping
   their JSONLs.
 - All of the above hold mid-session, before the session ends — not only after it closes.
@@ -58,6 +63,11 @@ retrospective with nothing to say naturally says nothing.
 - Claude Code itself cannot be modified; every marker must be produced by `rn`'s own procedures
   through ordinary agent output or tool calls.
 - The `chore: start session` commit gives each session a value that is unique by construction.
+- A task number is **not** a stable identifier. `steering.md`'s task list is revised during a session
+  (`/rn:gm` re-does work and can rewrite or add tasks), so `#1` at one moment and `#1` later need not
+  be the same task. Git history is not a fallback either: PRs land on `main` squashed, so the
+  intermediate `steering.md` revisions that would say what `#1` meant do not survive — observed on
+  `.rn/20260705-improve-design-template/steering.md`, which has exactly one commit on `main`.
 - An `rn` session spans several conversations, so one session maps to N JSONL files.
 - Reading and analysing a JSONL is delegated to a subagent, so it does not consume the coordinator's
   remaining context — which is what makes collection affordable at `/rn:dn`, where context is by
@@ -116,6 +126,8 @@ live conversation JSONL and can be grepped while the conversation is still open.
 
 - [ ] decide the session marker's value and textual form, from #1's measurements
 - [ ] decide the task-boundary marker's form, and at which points it is emitted
+- [ ] decide how a marker names its task so it stays readable after the task list has been revised —
+      the marker describes what was being worked on, not a row in a document that moves
 - [ ] decide where collected friction facts are stored, and their record shape
 - [ ] decide the bar for what counts as a friction fact worth recording
 - [ ] decide the stocktake command's name and its call sites (user invocation, `/rn:dn`, session end)
@@ -135,6 +147,8 @@ live conversation JSONL and can be grepped while the conversation is still open.
 - No statement in `design.md` contradicts #1's measured results.
 - The document reads as one design, not as a new section bolted onto the old one — the existing
   sections that the new mechanism touches are updated rather than duplicated.
+- The marker form and the friction record shape both survive a revised task list: `design.md` states
+  what each carries to stay self-describing, and why a bare task number was rejected.
 
 ### #3: Design sign-off
 
