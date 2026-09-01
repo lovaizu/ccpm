@@ -116,6 +116,7 @@ its own addressee where the reader meets it. A breach — a diagram or output-on
 no marker, or a marker going missing — is caught by the per-task self-check
 (`.rn/20260614-writ/checks/*.md`), which greps the shipped prompt for the marker and reads every rule
 block against it.
+
 It is deliberately not an acceptance criterion — the criteria state what a run achieves, and where
 the addressee sentence physically sits is a decision, not an end (D-12).
 
