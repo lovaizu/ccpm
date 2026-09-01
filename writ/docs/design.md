@@ -503,10 +503,11 @@ right one.
   offered: step 3 reads `references/axes.md` before it picks an axis, and step 10 re-reads it to check
   the outline against the skeleton. Body: 137 of the official 500 lines.
 - Round 3 had left the body at 2,864 words against the official 1,000–3,000 band, with the next
-  addition owing a trim. D-13's rebuild spent that debt rather than deferring it: 2,602 words and 137
-  lines (body only — the whole file, frontmatter included, is 2,705 words and 141 lines), with the 362
-  words of axis skeletons in `references/axes.md`. Word count is no longer the binding constraint on
-  what the body may say.
+  addition owing a trim. D-13's rebuild spent that debt rather than deferring it, landing the body at
+  2,439 words with the 362 words of axis skeletons moved to `references/axes.md`; the fix round that
+  followed 4.1 and 4.3 brought it back to 2,602 words over 137 lines (body only — the whole file,
+  frontmatter included, is 2,705 words and 141 lines). Word count is no longer the binding constraint
+  on what the body may say.
 - Re-sourcing the five axes to external best practice (D-6) trades fidelity to the user's original
   verbatim `instruction.md` outlines for current, externally-validated structures — accepted because
   the user explicitly asked for the current recommended shapes over the original wording.
