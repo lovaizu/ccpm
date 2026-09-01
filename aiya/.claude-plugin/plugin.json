@@ -1,0 +1,6 @@
+{
+  "name": "aiya",
+  "description": "Hand one purpose to a conductor of AI agents: it pins the purpose down through interview and research, settles the approach, builds independent pieces in parallel with independent fresh-eyes verification and automatic redo, and carries the job until the approved success criteria are met — you steer only at six checkpoints (/aiya:ty approve, /aiya:gm send back), pausing and resuming across conversations with /aiya:dn and /aiya:up via durable run records (on GitHub, GitLab, or plain disk).",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}
