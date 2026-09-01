@@ -31,10 +31,10 @@ Hand work to agents without a shape for it and the headcount comes back as the j
 
 Two properties follow from those two failures. Every later decision here is checked against them, and §1.4 is where the check itself is written down.
 
-- **Bounded context.** The working state of whichever agent is directing grows more slowly than the number of work streams running at once. Those streams are waves (§4.2).
+- **Bounded context.** The working state of whichever agent is directing grows more slowly than the number of work streams running at once — how many run at once being the width of a **wave**, the set of Steps whose inputs are all ready (§4.2).
 - **Drift detection.** Any piece of work can be traced back to the purpose, and a departure surfaces while the run is still live.
 
-### 1.4 The answer — two mechanisms, six legs
+### 1.4 The answer — the CCS bounds context, the yardstick chain catches drift
 
 One mechanism per property. The **CCS** — Compressed Cognitive State — answers bounded context. The **two-layer yardstick chain** answers drift detection.
 
@@ -46,9 +46,9 @@ Three parties do the work, and the rest of Part I is about them. The **Conductor
 |---|---|---|
 | The Conductor opens no artifact | The **kind** of thing that can get in — what it may take is a short, closed list | §2, §5.7 |
 | One CCS per wave, rewritten each time, artifacts named by path | The **amount** — the shipped Turn(brief) definition puts a soft ceiling of 2,000 bytes on the file and treats an overrun as a symptom to report rather than a budget to raise | §5.4 |
-| A wave of any width converges on exactly one CCS | The **count** — ten Steps in flight cost the Conductor the same read as one | §4.2 |
+| A wave of any width converges on exactly one CCS | The **carry-forward** — a wave leaves one state to be read at the next wave, not one per Step | §4.2 |
 
-The third leg is what makes the property sub-linear rather than merely small. Without it, parallel width and boundedness would pull against each other.
+**What this bounds, and what it does not.** Three things enter the Conductor and they do not scale alike. The CCS carried from one wave into the next is one file however wide the wave — the third leg, and the only part that is flat in the width. The Verdicts of the wave being aggregated scale with Steps × viewpoints inside that wave (§4.1). And the Conductor's conversation transcript lengthens with every Turn dispatched, bounded by nothing; it is cleared by hand at `dn` → `/clear` → `up` (§4.5). §1.3's property is a claim about the first of the three. The second and third are stated where they arise and are not covered by it.
 
 **Drift detection stands on three legs**, one for each shape the failure takes.
 
@@ -58,7 +58,7 @@ The third leg is what makes the property sub-linear rather than merely small. Wi
 | A separate Turn measures each product against the approved yardstick at a pinned version, before its wave closes | Output nobody asked for, caught at the Step instead of at hand-off | §4.1, §4.4 |
 | At every wave close the Plan is derived again from the position now, starting from nothing | The stale plan. Yesterday's plan cannot ride along unexamined | §4.3 |
 
-**What qualifies all six legs.** Nothing supervises them. There is no controller program; the loop is prose that a model follows, so every one of the six is a **default that leaves a trace** — taking it is the cheapest route, and breaking it leaves evidence, which chapter 5 names part by part. Nothing stops a breach.
+**What qualifies all six legs.** Nothing supervises them. There is no controller program; the loop is prose that a model follows, so all six are **defaults**: taking one is the cheapest route, and nothing stops a breach. Five of the six leave a trace, and chapter 5 names each. The sixth does not — §5.6's breach traces catch a broken format, a false `consumes`, an unlogged revision, and an edition no gate approved, and none of them tells a Plan re-derived from zero apart from a Plan edited. That leg is a norm with no check behind it.
 
 What the platform does enforce sits one level below the legs, in the Turn contract (§5.1): a subagent begins with an empty context, and the tool for delegating work is absent from every Turn definition (the `tools:` line of all six files under `agents/` carries none). Those two facts hold the wall between the roles. They do not hold the six legs.
 
@@ -70,7 +70,7 @@ Chapter 2 gives the roles and the two walls, chapter 3 the chain, chapter 4 the 
 
 ### Two roles, and no third
 
-The **Conductor** keeps the purpose, decides what happens next, and touches no artifact. A **Turn** does the artifact work, holds no purpose, and is discarded after one job. The human sits outside both: the purpose is theirs, and they show up only at gates.
+Two roles, because the design needs exactly one party that holds the purpose and never touches the work, and exactly one that touches the work and never holds the purpose. The human is neither.
 
 ```mermaid
 flowchart LR
@@ -107,7 +107,7 @@ flowchart LR
 
 ### The bet
 
-Judgment, steering, and the last layer of measurement all sit with the model. Written as code, a capability freezes at the understanding of the day it was written; left to the model, it improves as models do. The design is therefore an allocation: hold the coded skeleton down to walls and records, and leave everything else where it can get better on its own.
+Judgment, steering, and the final layer of measurement — the one that runs after every mechanical check has run (§5.3) — all sit with the model. Written as code, a capability freezes at the understanding of the day it was written; left to the model, it improves as models do. The design is therefore an allocation: hold the coded skeleton down to walls and records, and leave everything else where it can get better on its own.
 
 Dispatching to fresh subagents and taking small returns back is ordinary practice, not something aiya invented. aiya's addition is that every judgment ties back, version attached, to something a human approved — and that only doubts about those approved things travel back to the human.
 
@@ -136,7 +136,7 @@ Execution leaves **records**. They move the chain along and never become yardsti
 | **Purpose** | The definition of success, and the chain's head | Turn(generate) | Turn(verify), on evidential soundness | G1 |
 | **Approach** | The route to that success | Turn(generate) | Turn(verify), against Purpose | G2 |
 | **Deliverable** | The thing that works | Turn(generate) | Turn(verify), against Purpose, Approach, and the Step's `done when` | G3 |
-| **CCS** | The small state carried wave to wave — the Conductor's working state itself | Turn(brief) | The compression rules of §5.4. An unsupported line is caught at the next measurement, which reads artifacts and not the CCS | — (the Conductor consumes it) |
+| **CCS** | The small state carried wave to wave — the Conductor's working state itself | Turn(brief) | **Nobody.** §5.4's rules tell brief how to write it; nothing checks what it wrote. A false line cannot corrupt a Verdict, since the next measurement reads artifacts and never the CCS — but it does reach the Conductor's steering (§4.3) unchallenged | — (the Conductor consumes it) |
 | **Verdict** | One viewpoint's ruling: pass or fail, the gap, the evidence | Turn(verify) | — it is the check. Its evidence is what keeps it falsifiable | — (the Conductor aggregates it) |
 | **Report** | What the maker says it did: did / tried / unsure | Turn(generate) | — Turn(brief) holds it up against the artifact | — |
 | **Research** | An investigation Step's output, elicit answers among it | Turn(generate); the Conductor for elicit answers | Turn(verify), on evidential soundness; elicit answers exempt | — (never approved) |
@@ -197,9 +197,9 @@ Artifacts come in three kinds and no more.
 
 The conductor skill's prose runs in the main session, and nothing else in aiya executes at all. That is §2's bet at its most concrete, and it is the reason §1.4's qualifier reads the way it does.
 
-## 4. Behavior — The loop, at three scales
+## 4. Behavior — How the loop actually runs
 
-### 4.1 A Step — the innermost cycle
+### 4.1 A Step — where independent measurement happens
 
 An attempt at a Step sends out exactly one Turn(generate). An elicit item (§2) sends none and bypasses this pipeline entirely — the attempt ceiling and chapter 6's counts along with it.
 
@@ -264,6 +264,8 @@ Three phases connect intent to execution. Each holds a Plan, drafted and re-deri
 | **Approach** | By what route do we get there? | Approach — Testing, Technology, Design |
 | **Delivery** | In what order do we build it? | The Deliverable, working |
 
+Six halts, being three phases times two — the Plan going in, the product coming out. Only the three outputs carry a number, G1 to G3; a Planning Gate is named by its phase, as `purpose-planning` in §3.3's sample.
+
 ```mermaid
 flowchart LR
     ON(["on"]) --> p1{{"Plan gate"}} --> W1["Purpose phase"] --> g1{{"G1<br/>Purpose approved"}}
@@ -271,9 +273,7 @@ flowchart LR
     g2 --> p3{{"Plan gate"}} --> W3["Delivery phase"] --> g3{{"G3<br/>criteria met, accepted"}}
 ```
 
-Six halts, being three phases times two — the Plan going in, the product coming out. Numbers are given to the outputs alone.
-
-**Four things must already exist before anything can be generated**: the run's Purpose and its Plan, and the product's UX and Design documents. Lacking them, a Turn has nothing to build toward and nothing to be measured against. Where a project is missing any of the four, Steps go on the Plan to write them in aiya's formats.
+**Four things must already exist before Approach or Delivery work can be generated**: the run's approved Purpose and its Plan, and the product's UX and Design documents. Lacking them, a Turn has nothing to build toward and nothing to be measured against. The Purpose phase is the one exception, and it has to be: nothing is approved ahead of it, so its work is measured for evidential soundness instead. Where a project is missing any of the four, Steps go on the Plan to write them in aiya's formats.
 
 **A phase's yardstick is fixed.** Approach is measured against Purpose, and Delivery against both. Purpose has nothing ahead of it, so its bar is **evidential soundness**: every claim sourced, contradictions surfaced instead of smoothed away, the unknown declared unknown, and success criteria a check could actually decide. Research meets the same bar — sitting outside the gates makes it unapproved, not unexamined.
 
@@ -299,11 +299,13 @@ One window is lossy. A boundary event that has not reached storage dies with the
 
 # Part II — The reference
 
-Per-part promises, the measures, and the shapes discarded. Find the entry you need. Vocabulary is chapter 2's and is not repeated.
+Per-part promises, the measures, and the shapes discarded. Find the entry you need.
+
+Two conventions hold here. Chapter 2 fixes the vocabulary and this part does not repeat it, so an entry may use a term it does not define. Anything marked *(proposed)* is design that is not built — §3.3 says what ships in its place.
 
 ## 5. Rules — Promises, part by part
 
-Every entry states a promise and the trace a breach leaves behind (§1.4's qualifier). Schemas, vocabularies, and worked examples travel with the Turn definitions and [references/](../references/); they are not reproduced here.
+Each entry states what a part promises and, where breaking that promise leaves evidence, what the evidence is. Two of the seven leave none and say so. Vocabularies and worked examples travel with the Turn definitions and [references/](../references/).
 
 ### 5.1 The Turn contract — five rules that never vary
 
@@ -313,9 +315,9 @@ Every entry states a promise and the trace a breach leaves behind (§1.4's quali
 4. **Hands back something small.** Paths and a line, a ruling, a CCS path, a few lines naming what got committed — no raw output, no transcript.
 5. **Leaves nothing behind.** One job, one return, gone. Being stateless is exactly what makes a re-send harmless (§4.1).
 
-Rules 1 and 2 are structural: the platform supplies the fresh context, and the delegation tool — like the tool for questioning a user — is missing from every definition. Where a definition carries Bash an indirect escape remains, so rule 2 is a traceable default there instead of a block; the evidence would be the nested session's own transcript, which no small return will ever mention. Rule 4 the Conductor checks on each return.
+Rules 1 and 2 are structural: the platform supplies the fresh context, and the delegation tool — like the tool for questioning a user — is missing from every definition. Four of the six definitions carry Bash: generate, verify, and the two remote record adapters. There an indirect escape through the platform's own CLI remains, so for those four rule 2 is a norm and not a block. **Breach trace:** the nested session's transcript, which no bounded return reports — so nobody inside the loop ever sees it. Rule 4 the Conductor checks on each return.
 
-**The invariant is this contract, not how many definitions exist.** Definitions ship static and are never improvised mid-run; dispatching is the Conductor's alone; an author reads what it writes. A new role, or a platform variant of one already present, joins under the same contract and leaves the dispatch loop untouched. The single change on the Conductor's side is one more entry in the backend roster it checks at `on`.
+**The invariant is this contract, not how many definitions exist.** Definitions ship static and are never improvised mid-run. A new role, or a platform variant of one already present, joins under the same contract and leaves the dispatch loop untouched; the only Conductor-side change is one more backend in the roster it checks at `on` to pick the matching record adapter (§5.5).
 
 ### 5.2 Turn(generate) — makes the thing, then says what happened
 
@@ -325,27 +327,46 @@ The Report is what the maker says it did — did / tried / unsure — with Turn(
 
 On a yardstick document it stamps the version (§4.4): `v1` for a first draft, read-then-increment on a rework. No other party writes a version anywhere in aiya.
 
+**Breach trace: none.** A Turn(generate) that writes a flattering Report leaves nothing that distinguishes it from an honest one. What limits the damage is that Turn(brief) takes the artifact over the Report wherever the two disagree (§5.4) — a containment, not a check.
+
 ### 5.3 Turn(verify) — one concern, one checkable ruling
 
 A **viewpoint** is one concern checkable on its own, and a Step sends out one flat verifier per viewpoint: a judge holding a single narrow question overlooks less than one juggling several. The concerns come by default from the Step's `done when` and whichever criteria of the phase yardstick apply; a Plan item may add domain concerns of its own.
 
-Its dispatch names four things and no more: the viewpoint, the fixed yardstick, the path to the product, and the dispatch identifiers. The Report never reaches it, nor does the answer expected of it. It writes its ruling to disk before returning and then hands back that same text, which is what makes a ruling convenient to the Conductor impossible to invent after the fact. `evidence` is required, so that the gap's own claim stays checkable afterwards, and the ruling names the edition it judged (`purpose.md@G1-v2`) — the hook §4.4's invalidation reaches for.
+Its dispatch names four things and no more: the viewpoint, the fixed yardstick, the path to the product, and the dispatch identifiers — the Step and attempt numbers, plus the path to write the ruling at. The Report never reaches it, nor does the answer expected of it. It writes its ruling to disk before it returns and then hands back that same text, so the record exists before the Conductor has seen a word of it and a ruling that would suit the Conductor cannot be arranged afterwards. `evidence` is required, so that the gap's own claim stays checkable afterwards, and the ruling names the edition it judged (`purpose.md@G1-v2`) — the hook §4.4's invalidation reaches for.
 
-**What it measures against never moves**: always the phase's approved, frozen document. Never a live CCS, never the moving Plan — a ruler that may have shifted measures nothing. At the chain's head, `evidential-soundness` stands in for a document. Offered a moving state, the verifier refuses: it files a fail whose evidence names the breach.
+**What it measures against never moves**: always the phase's approved, frozen document. Never a live CCS, never the moving Plan — a ruler that may have shifted measures nothing. At the head of the yardstick chain — the Purpose, and every Research product — nothing is approved yet, so the dispatch names `evidential-soundness` where a document would go: claims sourced, contradictions surfaced, the unknown declared unknown, criteria decidable as written. **Breach trace:** offered a moving state, the verifier refuses by filing a fail whose evidence names the breach, which leaves the attempt visible in `verdicts/`.
 
-Whatever can be run gets run first, with the model as a thin layer over the top, and that is why success criteria must be written to be runnable. A product no single verifier can read through signals an oversized Step: split it rather than enlarging the verifier. Schema and worked example travel with the Turn definition.
+The verifier runs whatever can be run — the tests, the command, the count — and reads only for what no check could have decided. That is why success criteria have to be written so they can be run. A product no single verifier can read through signals an oversized Step: split it rather than enlarging the verifier. Schema and worked example travel with the Turn definition.
 
 ### 5.4 Turn(brief) — writing the CCS, and what keeps it small
 
-The **CCS (Compressed Cognitive State)** is the small state carried from one wave to the next. It is the Conductor's working state itself, and the only thing a re-aimed or later Turn inherits. Its schema — nine YAML components — comes from Bousetouane, ["AI Agents Need Memory Control Over More Context"](https://arxiv.org/abs/2601.11653) (2026). What aiya adds is the way it is operated:
+The **CCS (Compressed Cognitive State)** is the small state carried from one wave to the next. It is the Conductor's working state itself, and the only thing a re-aimed or later Turn inherits. Its schema — nine YAML components — comes from Bousetouane, ["AI Agents Need Memory Control Over More Context"](https://arxiv.org/abs/2601.11653) (2026). The components, and where a Turn(brief) reads each one from:
+
+| Component | What it holds | Read from |
+|---|---|---|
+| `episodic_trace` | The events of the wave just settled | Reports and Verdicts |
+| `semantic_gist` | What the run is fundamentally doing | The phase documents |
+| `focal_entities` | The things being worked on | The artifacts |
+| `relational_map` | How those things stand to one another | The artifacts |
+| `goal_orientation` | The end being aimed at | The phase's fixed yardstick |
+| `constraints` | What must not be done | The phase documents |
+| `predictive_cue` | What comes next | The Plan and the Verdicts |
+| `uncertainty_signal` | What is still open | Reports and Verdicts |
+| `retrieved_artifacts` | Where the information came from | Paths |
+
+What aiya adds is the way it is operated:
 
 - **Third person.** A party with no stake in the outcome writes it, which is why brief writes it and generate does not.
 - **After the ruling.** What a Step turned out to be worth is unknown until it has been judged, so the carried state includes the judgment.
 - **Replaced, not appended.** Each wave gets a whole new file.
 - **The artifact wins.** Observable components are read off the artifacts, not off what the maker said about them; the Report contributes only what nothing else holds — what was attempted, what stayed unresolved. A CCS that overclaims will not last, because the next measurement reads the artifacts and never the CCS.
-- **One per wave, never split.** Measurement narrows deliberately, but a state pieced together from partial views has lost the very thing that made it a state. Brief judges facts alone, and never direction.
+- **One per wave, never split.** Measurement narrows deliberately, but a state pieced together from partial views has lost the very thing that made it a state.
+- **Facts only.** Brief judges which of a conflicting Report and artifact to trust, and what to leave declared unresolved. It never judges direction and never judges quality.
 
-Three things keep it small: real work travels by path and is never pasted in; a soft ceiling of 2,000 bytes, where the component that pushed past it is itself the diagnosis of the Step's scope; and the Conductor keeps no rolling summary of its own, taking in the newest CCS plus small rulings and nothing more. Small and sub-linear, not fixed in size. Schema, component roles, ceiling, and worked example travel with the Turn definition.
+Three things keep it small: real work travels by path and is never pasted in; a ceiling of 2,000 bytes, where the component that pushed past it is itself the diagnosis of the Step's scope; and the Conductor keeps no rolling summary of its own, taking in the newest CCS plus small rulings and nothing more. The ceiling is advisory, not enforced — so the honest claim is that the file stays small and grows sub-linearly with the run, not that it has a fixed size.
+
+**Breach trace:** a CCS claiming more than its artifacts support is contradicted at the next measurement — which reads the artifacts, never the CCS, so the contradiction surfaces there and not in the file itself. Nothing inspects the CCS directly.
 
 ### 5.5 Turn(record) — the only writer to storage
 
@@ -354,18 +375,22 @@ Every platform operation belongs to Turn(record). It ships as three per-backend 
 - **At `on`.** Create the run branch, push for the first time, open the pull or merge request. The surface has to exist before anything points at it.
 - **At every wave settle.** After brief, so the current CCS can be read. Commits the wave's products, rulings, Reports, the new CCS, the standing Plan, and the run-state file by explicit path, then pushes.
 - **At every pre-Planning-Gate Plan push.** Carries a newly drafted or reworked Plan and its check rulings onto the surface (§4.4).
-- **At a gate ruling.** Moves the approved document, whose version stamp came from generate and never from record, along with the run-state file, into durable storage. G3 makes this a closing settle: whatever is unrecorded goes in, `status: closed` among it, and the request stays open. A bare-`gm` send-back has it fetch the review comments to a file and hand back the path.
+- **At a gate ruling.** Moves the approved document (§5.2 stamped it) and the run-state file into durable storage. G3 makes this a closing settle: whatever is unrecorded goes in, `status: closed` among it, and the request stays open. A bare-`gm` send-back has it fetch the review comments to a file and hand back the path.
 - **At `dn`.** Sweeps up whatever is pending and pushes last.
 
 A Planning Gate's approval sends out no record dispatch at all; its run-state line becomes durable at whichever dispatch point comes next *(proposed, along with the run-state file)*.
 
-Re-sending stays safe because at this granularity the operations do nothing twice: a path already committed stages nothing, and a push with nothing new behind it moves nothing. The **local adapter** runs no git whatsoever — the disk is the record already — while keeping the same five points and the same return. Its single write files the approved edition into `history/` under a name carrying its version, so approved editions outlive later reworks with no git in play. Breach trace: a commit no record dispatch produced stands out in the history.
+Re-sending stays safe because at this granularity the operations do nothing twice: a path already committed stages nothing, and a push with nothing new behind it moves nothing.
+
+The **local adapter** runs no git whatsoever — the disk is the record already — and keeps the same five points and the same return. At `on`, at a wave settle, at a Plan push and at `dn` it confirms that every named path exists as claimed and reports the paths that make up the review surface; it writes nothing at all. Its one write comes at a gate approval: a copy of the approved edition into `history/` under a name carrying its version, as `history/purpose@G1-v1.md`, so approved editions outlive later reworks with no git in play. A copy already sitting under that name is confirmed rather than rewritten, which is what makes a re-send safe here too. A bare `gm` never reaches this adapter — local has no comment stream, so feedback always rides the argument.
+
+**Breach trace:** a commit no record dispatch produced stands out in the history. Under local there is no history to stand out in, and this trace is unavailable.
 
 ### 5.6 The Plan — three lines an item, and how it may change
 
-An item is three lines, optionally four. **product** is what exists once it is done. **consumes** lists the earlier products genuinely taken as input — a dependency, not an ordering. **done when** is the item's own pass condition, written so it can be run. **viewpoints** is optional and names domain concerns, each drawing its own verifier. Semantics and worked example: [references/plan.md](../references/plan.md).
+An item is three required lines and one optional. **product** is what exists once it is done. **consumes** lists the earlier products genuinely taken as input — a dependency, not an ordering. **done when** is the item's own pass condition, written so it can be run. **viewpoints** is optional and names domain concerns, each drawing its own verifier. Semantics and worked example: [references/plan.md](../references/plan.md).
 
-**The Plan is measured too**, against four viewpoints aiya fixes rather than the Conductor — a Conductor authoring the criteria for its own Plan would be approving itself. The four: every item carries its three lines; `consumes` reflects real consumption, same-file writes included; `done when` can be run; and the items, held up against the phase yardstick, add up to that phase's product exactly, with nothing over and nothing missing.
+**The Plan is measured too**, against four viewpoints aiya fixes rather than the Conductor — a Conductor authoring the criteria for its own Plan would be approving itself. The four: every item carries all three required lines; `consumes` reflects real consumption, same-file writes included; `done when` can be run; and the items, held up against the phase yardstick, add up to that phase's product exactly, with nothing over and nothing missing.
 
 **Three things make a revision safe.** Staying inside the discretion line (§4.3). Appending to a change record what moved, what discovery moved it, and which waves have already gone out, so the next gate puts the diff and the rationale in front of the human together. And re-running the four fixed viewpoints on every revision. An item that will not fit inside one Turn is broken into several, and each of them restarts its attempt count.
 
@@ -373,17 +398,17 @@ Breach traces: a broken format, or a `consumes` line that lies, is caught by the
 
 ### 5.7 The Conductor — the two lists
 
-**Does.** Holds the purpose. Elicits, its one human touchpoint. Drafts the Plan and derives it again each wave. Writes and dispatches work orders. ANDs the rulings together and computes waves. Keeps the run-state file current at every boundary event *(proposed)*. Advances, re-aims, escalates, and waits at gates.
+**Does.** Holds the purpose. Elicits, its one human touchpoint. Drafts the Plan and derives it again each wave. Writes and dispatches work orders. Combines the wave's rulings with a plain AND, and computes each wave from the Plan's `consumes` lines. Keeps the run-state file current at every boundary event *(proposed)*. Advances, re-aims, escalates, and waits at gates.
 
 **Never.** Domain work. Opening the real work, Report contents included. Drafting a product, the Purpose among them — an author reads. Steering a Turn's judgment, which includes handing it an expected ruling. Altering a yardstick. Committing or pushing anything; every platform operation is Turn(record)'s.
 
 **A doubt becomes a Step** (§4.3). The rule exists for the moment when checking directly looks faster than delegating.
 
-This wall admits no physical form: the Conductor's whole state is files, so nothing can remove its ability to read. It holds as a traceable default because what may enter is short and closed — the newest CCS, small rulings, the approved phase documents, the standing Plan, the run-state file, gate feedback as an arrival and a path, the elicit exchange it writes under `research/`, and paths. Anything beyond that list means the wall broke, and the tell is the Conductor citing content that no return delivered.
+Nothing inside the loop can take reading away from the Conductor: its whole state is files, and the tool that reads them is the tool it works with. A block would have to come from outside the loop, and §7 names the one to reach for first; as shipped, there is none. So the wall holds as a traceable default, because what may enter is short and closed — the newest CCS, small rulings, the approved phase documents, the standing Plan, the run-state file, gate feedback as an arrival and a path, the elicit exchange it writes under `research/`, and paths. Anything beyond that list means the wall broke, and the tell is the Conductor citing content that no return delivered.
 
 ## 6. Observability — What the loop costs to run
 
-Being the bounded path is not the same as being the cheap one, and cheapness needs showing. Each Step buys N verifiers, each wave a brief and a record, and each re-aim a second run of the round. Three ratios keep the bill visible, and every one of them can be counted after a run from what the run left on disk.
+Being the bounded path is not the same as being the cheap one, and cheapness needs showing. Each Step buys one verifier per viewpoint, each wave a brief and a record, and each re-aim a second run of the round. Three ratios keep the bill visible, and every one of them can be counted after a run from what the run left on disk.
 
 | Measure | Definition |
 |---|---|
@@ -403,7 +428,7 @@ These three measure the loop's efficiency, not a human's productivity. §1.4 ans
 
 **Shapes discarded**, each with its reason:
 
-- **A controller program.** It retires the compliance bet, and it fixes the ceiling wherever understanding happened to stand on the day somebody wrote it (§2). Whether prose alone can carry the cycle, the attempt ceiling, and the gates gets settled in dogfooding. If it cannot, the loop moves into code and nothing else does — formats, chain, and measures cross over unchanged.
+- **A controller program.** It would retire the compliance bet — the wager that a model following prose is enough (§1.4) — and that is the argument for it. Against it: code fixes the ceiling wherever understanding happened to stand on the day somebody wrote it (§2). Whether prose alone can carry the cycle, the attempt ceiling, and the gates gets settled in dogfooding. If it cannot, the loop moves into code and nothing else does — formats, chain, and measures cross over unchanged.
 - **Transcript replay, and retrieval.** The two usual ways to carry state forward. Replay grows with the run and drags old mistakes along; retrieval sheds that growth but wanders, since closeness in meaning is not the relation task control needs. Only a small state rewritten each time answers both.
 - **A catalog of agents per kind of work** — a reviewer, a designer, and onward. Such a catalog has no natural size, and the quality of the work would come to rest on definition text nobody in the loop can see. Roles stop at the three families and content arrives as parameters. One axis may grow: a new backend adds one record adapter, and an adapter carries no content.
 - **Work orders improvised per Turn.** Writing them keeps the urge to stray with the Conductor, long instructions swell the history, and a verifier's independence would end up resting on how each order happened to be worded.
@@ -413,7 +438,7 @@ These three measure the loop's efficiency, not a human's productivity. §1.4 ans
 
 **Costs paid.** Set down here so they read as chosen rather than missed:
 
-- **Enforcement is not guaranteed.** Rules are defaults with traces and never blocks, and the bet is that a model following prose is enough (§1.4). Falsified in dogfooding, the first hardening to try is a hook refusing the Conductor's reads by path — after the measurement, not ahead of it.
+- **Enforcement is not guaranteed.** Rules are defaults and never blocks, most of them leaving a trace and one leaving none (§1.4). Falsified in dogfooding, the first hardening to try is a hook refusing the Conductor's reads by path — after the measurement, not ahead of it.
 - **Turns cost, per Step.** N verifiers and a brief per wave, with a re-aim buying the round twice. That overhead is the price of independence, and chapter 6 keeps it in view.
 - **First-person fidelity thins.** A third-person record loses the texture of having done the work. The Report carries part of it onward, second-hand by construction.
 - **Declared independence has to be right.** A wave is exactly as safe as its `consumes` lines, and a single missed dependency spoils the whole wave at once. That is what parallelism costs, and why `consumes` gets measured in the Plan and read at the gate rather than guessed at.
