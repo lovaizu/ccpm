@@ -408,9 +408,9 @@ end to end and take the user's verdict. Fills the planning gap noted at suspend 
 sign-off gap open"): the original plan had no Evaluation sign-off task, which the rn workflow
 requires for a session to close.
 
-**Prerequisites**: #7, then #9, #10 and #11 — the FB round-2 and round-3 work, and the rewrite of the
-criteria into ends, all landed after the first criteria run, so the run is re-done against the current
-criteria before the verdict is taken.
+**Prerequisites**: #7, then #9, #10, #11 and #12 — the field-feedback work, the rewrite of the
+criteria into ends, and the rebuild of the skill body all landed after the first criteria run, so the
+run is re-done against the current criteria, on a live run, before the verdict is taken.
 
 **Steps**:
 
@@ -553,20 +553,52 @@ decisions; the implementation follows the decisions.
   `# Rules`, with the mapping recorded.
 - `design.md` carries the decision (D-12) and no longer points at a deleted criterion.
 
+### #12: Rebuild `SKILL.md` as one continuous work procedure, with each rule at the moment it is used
+
+**Purpose**: The rules the procedure applies sit in a catalog (`## Reference`) that the steps point
+at, so applying them is an act the run can skip, shorten, or do from memory — the drift the plugin
+exists to fight, in the plugin itself. A skill prompt should be the procedure a person actually thinks
+through: at each moment, what to do and what to do it with, in the same place. Where a block is too
+long to inline, it moves to `references/` and the step orders it read — with **no summary at the
+pointer**, since a summary at a handoff point is what lets the run skip the read.
+
+**Prerequisites**: #11 (the criteria no longer fix the body's shape, so the rebuild is free to change
+it).
+
+**Steps**:
+
+- [ ] Map every `## Reference` block to the step that uses it, and record which are used once (the
+      five axes, at step 3) and which are used at several steps (the two tiers, at 8 / 10 / 11).
+- [ ] Rewrite the steps so each carries what it uses: short blocks inline at their moment; the five
+      axes moved to `references/` with the step ordering the read and the pointer carrying no summary.
+- [ ] Keep the addressee guarantee (`design.md` 4.1): every block of rules for the produced document
+      says so where it sits, so it is never read as a rule about this prompt.
+- [ ] Walk `design.md` §4 (4.1–4.11) item by item and confirm each guarantee still has a mechanism and
+      a breach-catch in the rebuilt body; update `design.md` where a mechanism moved.
+- [ ] Re-validate: both strict validations, and a headless invocation that starts the procedure.
+- [ ] Dogfood: run `/writ:up` on a real draft and judge ends 1–8 against the result.
+- [ ] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/12.md`)
+- [ ] user review (on PR #15, per push-and-review)
+
+**Completion criteria**:
+
+- Reading the body top to bottom is doing the work: no step defers to a rules section for what it
+  needs, and where a step points at a file, the pointer carries no summary and the step orders the
+  read.
+- Every `design.md` §4 guarantee still names a mechanism and a breach-catch in the rebuilt body.
+- No new problems: a live run reaches ends 1–8 no worse than before the rebuild, evidenced by the
+  dogfood run recorded in `checks/12.md`.
+
 # State
 
-- **Status**: in progress
+- **Status**: paused
 - **Date**: 2026-09-01
 - **Last completed**: #11 restate the acceptance criteria as ends (PR review outstanding)
-- **Next**: #8 evaluation sign-off — run the nine end-based criteria against a real run, then take
-  the verdict. This needs a live `/writ:up` run to judge criteria 1–8; the earlier runs were
-  inspections of the prompt.
-- **Notes**: Branch `worktree-writ`, PR #15 open; #9's review is also outstanding. The earlier
-  criteria run (`checks/8.md`, 13/13) predates the three sign-off fixes, task #9 and task #10, so it
-  is re-run before the verdict. Two questions for the sign-off: (a) acceptance criterion 9 tests only
-  marketplace/README sync, not README-vs-implementation agreement — add that criterion or accept the
-  gap — note that #11 removed the length and structure criteria, so (a) is now about whether README
-  agreement is an end worth stating at all; (b) the body is at 2,994 words against the official 1,000–3,000 band, so the next addition has
-  to be paid for by a trim or by splitting §Reference into `references/` (§5.2 records this; the
-  split reverses the single-file scope assumption). The aiya side rebuilds against this version and
-  judges the result on its own merits.
+- **Next**: #12 rebuild `SKILL.md` as one continuous work procedure — start from the block-to-step
+  map, then the rewrite
+- **Notes**: Branch `worktree-writ`, PR #15 open; reviews for #9, #10 and #11 are outstanding there.
+  #12 was agreed in conversation: the rules catalog dissolves into the steps, long blocks go to
+  `references/` with no summary at the pointer. #8 now needs a live `/writ:up` run to judge ends 1–8;
+  `checks/8.md` (13/13) predates everything from #9 on and does not carry over. Open question for the
+  sign-off: whether README-vs-implementation agreement should be stated as an end at all. The aiya
+  side rebuilds against the round-3 skill and judges the result on its own merits — no reply owed.
