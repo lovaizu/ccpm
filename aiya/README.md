@@ -40,8 +40,9 @@ A rough purpose is fine.
 ```console
 > /aiya:on I want to export the expense tracker's transactions as CSV
 
+● Branch aiya/csv-export pushed, PR opened — that is where you read and comment
+
 ● ── csv-export: make transaction history exportable as CSV ──
-  Branch aiya/csv-export pushed, PR opened — that is where you read and comment
   👉 Confirm the plan for pinning down the purpose ── interview → 2 investigations at once (demand inventory ∥ data survey) → draft purpose.md
   ⬜ Approach / Delivery
   If this looks right, /aiya:ty — the interview starts immediately
