@@ -91,6 +91,9 @@ statement in `rn`, whether breaking it becomes visible, stops the flow, or passe
       extract every normative statement
 - [ ] judge each one: visible on breach / stops the flow / neither — naming the mechanism where one
       exists
+- [ ] check each rule against what past sessions actually produced (`.rn/*/steering.md`, their
+      `design.md` and `checks/`), not only against the rule text — the `Verification expert review`
+      case shows a breach is visible in the output and invisible in the rule
 - [ ] record the judgement in `.rn/20260830-issue-17/rule-inventory.md`, one row per rule, with its
       source location
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
