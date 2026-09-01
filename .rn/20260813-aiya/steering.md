@@ -363,7 +363,19 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       the current document with the verbatim prompt now fixed in `checks/4-rebuild2/trials.md`).
       `aiya/docs/design.md` stays at `d7b63f9` until then and is not hand-patched. The targeted
       re-review of the round-2/3 fix sites waits for this too — running it against a document about to
-      be rebuilt would be wasted
+      be rebuilt would be wasted (writ took all seven findings 2026-09-01 in `397ff9d`; round 3 run
+      the same day into `checks/4-rebuild3/`, four commits `adfa335`…`310ca41`. **The additive
+      admission test fired on its first field run and on exactly the defect it was built for**: one
+      proposed slot — chapter 1 closes with the discharge — realized as §1.4, format file untouched.
+      Carryover clean and independently re-measured by the coordinator (1.77% against the run's 2.79%).
+      Effort tied at 4 for the second round running, so measured reader effort justifies nothing; what
+      moved is the verdict's quality. Evaluation in `checks/4-rebuild3-eval.md` (7dbb8a5),
+      **recommending adoption** with two conditions — an old-vs-new decision audit before the file is
+      swapped, and the split ruled separately. Question posed on PR #19 — awaiting the verdict. The run
+      also produced a second format finding (the Design document should be two files: three trial
+      rounds overturned Part II's separability), nine design-side subject defects, and one writ finding
+      for round 4 (the step-10 render pulled the input's phrasing back from memory, so closing the
+      input at step 7 protects nothing))
 
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
