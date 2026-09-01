@@ -9,11 +9,9 @@ Input: a draft to revise, or a topic to author. Output: the rebuilt document plu
 
 Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
 
-The imperatives address you; none of them acts on this prompt. Every other statement — here, and in the files these steps order you to read — describes **the document you produce**. Steps 10 and 11 test that document, not this file.
+The imperatives address you; none of them acts on this prompt. Read every rule — here, and in the files these steps order you to read — as a rule for the work: **the document you produce**, or the outline you build it from, never for this file. Steps 10 and 11 test that document.
 
 ## The procedure
-
-Order: **understand → reader → outline → fill → story-check → voice & form → write → brush up → clear the floor → self-check → reader trial & deliver.**
 
 ### 1. Understand the input
 
@@ -25,24 +23,24 @@ Emit: `Subject: … / Must convey: … / Proposed, not in force: …`
 
 ### 2. Define the reader and the purpose
 
-Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do after reading. With several implied audiences, the Gate below picks the primary; the step-3 admission keeps the others' needs out, and the what-changed note names them — a bundled reader admits everything.
+Write three lines about **one person in one reading stance**: WHO reads this, WHAT they must decide or do afterward, HOW they read (straight through, or looking one thing up). The purpose is what they can do after reading. With several implied audiences, take one as primary through the Gate below; the step-3 admission keeps the others' needs out, and the what-changed note names them — a bundled reader admits everything.
 
 Gate: if the input cannot answer a line, or answers it several ways, ask the user. On a headless run, infer it and prepend `Assumed reader: <who> / <what> / <how>` to the output. Never leave a line blank.
 
 ### 3. Build the outline from the purpose
 
-Read `${CLAUDE_SKILL_DIR}/references/axes.md`. Match the reader and purpose to exactly one axis; its skeleton is your outline. Then test the outline against the step-2 reader **both ways**.
+Read `${CLAUDE_SKILL_DIR}/references/axes.md`; if that read fails, take the failure branch below. Match the reader and purpose to exactly one axis; its skeleton is your outline. Then test the outline against the step-2 reader **both ways** — the **step-3 admission** the later steps refer back to.
 
 - **Slot → reader.** A heading stays only if that reader needs it to reach the purpose. One serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the note (whose it is, where it belongs).
 - **Reader → slot.** List what that reader must have to reach the purpose and name the slot carrying each; a slot that defers the thing elsewhere does not carry it. A need with no slot — most often the answer itself, which step 8's ceiling puts first — is the same conflict in the other direction. Raise it as a **proposed slot**: where it belongs, and the reader evidence for it. Never absorb it as prose under the nearest heading; that is how the answer ends up at the back.
 
-A user-supplied outline or format faces both tests. Either verdict is an axis conflict — raise it with the user; never fill an unjustifiable slot silently, never bury an unslotted need. Headless: leave that slot unfilled, place the proposed one where the reader needs it, and record both in the note.
+A user-supplied outline or format faces both tests. A failure either way is an axis conflict — raise it with the user; never fill an unjustifiable slot silently, never bury an unslotted need. Headless: leave that slot unfilled, place the proposed one where the reader needs it, and record both in the note.
 
 When the content genuinely needs two axes — an argument to read through, plus an inventory to look things up in — it is two documents. Say so and split them: that is the first answer. If the owner keeps them in one file, declare the parts rather than blending them — each part carries its own step-2 reader line and its own axis at its head, and every admission below runs per part against that part's reader. Never blend two readers inside one part. A composite has to be two documents in fact, which step 5 tests. The what-changed note records the composite and why the split was refused.
 
 If the `axes.md` read failed, do not supply the skeletons from memory. Say the read failed and ask the user for the file; on a headless run, outline anyway, quote no slots, and record in the note that the outline is unverified against `axes.md`.
 
-Emit: the axis chosen, its skeleton's slots quoted from `axes.md` as they stand there, then the outline headings specialized to this content, each departure from those slots carrying the admission that argued for it.
+Emit: the axis chosen — one per part for a declared composite — with each skeleton's slots quoted from `axes.md` as they stand there, then the outline headings specialized to this content, each departure from those slots carrying the admission that argued for it.
 
 ### 4. Fill the outline with what you want to convey
 
@@ -50,7 +48,7 @@ Under each heading, drop the points it must carry as terse bullets — concrete 
 
 ### 5. Check the story in the reader's order
 
-Walk the filled outline in the step-2 reader's order. Walk a declared composite one part at a time, each in its own reader's order: a part whose reader cannot reach its purpose without crossing into the other is not a part, and the split goes back to the owner as the answer. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. Then set the filled outline beside the input: a bullet carrying the input's phrasing was transcribed, not written — re-fill it from meaning now, where the fix costs one bullet instead of a whole render. The author's structure check — a real reader reads at step 11.
+Walk the filled outline in the step-2 reader's order. Walk a declared composite one part at a time, each in its own reader's order: a part whose reader cannot reach its purpose without crossing into the other is not a part, and the split goes back to the owner as the answer. Does the walk reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. Then set the filled outline beside the input: a bullet carrying the input's phrasing was transcribed, not written — re-fill it from meaning now, where the fix costs one bullet instead of a whole render. The author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
 
@@ -77,7 +75,7 @@ Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
 Close the input. From here the filled outline is your only source — the draft is not open, not consulted, not quoted. Render the outline into the document in the chosen voice and forms. Lead each part with its point. Rendering adds no content the filled outline does not carry — a sentence that appears only at this step faces the same step-3 admission.
 
-Throughout the document: Markdown, and every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth, and one not yet in force says so. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+The document is Markdown throughout, and every claim carries one of three statuses — a **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth, and one not yet in force says so. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### 8. Brush up to the ceiling
 
@@ -105,11 +103,11 @@ Read the finished document once against that table. For each tell present, name 
 
 ### 10. Self-check the mechanics
 
-Mark each PASS or FAIL; any FAIL, fix and re-check. An item whose evidence an unreadable file puts out of reach is marked UNVERIFIED and named in the note — never settled from memory.
+Mark each PASS or FAIL; any FAIL, fix and re-check. An item whose evidence sits in a file you cannot read is marked UNVERIFIED and named in the note — never settled from memory.
 
 - [ ] Reader is one person in one reading stance (step 2).
 - [ ] One axis, no mixing (step 3) — a declared composite instead carries one axis and one reader per part, stated at its head.
-- [ ] The slots quoted at step 3 are `axes.md`'s own — re-read the file and compare the quotation word for word. Every departure of the outline from those slots is one the step-3 admission argued for (step 3).
+- [ ] Every skeleton quoted at step 3 — one per part for a declared composite — carries `axes.md`'s own slots: re-read the file and compare each quotation word for word. Every departure of the outline from those slots is one the step-3 admission argued for (step 3).
 - [ ] Nothing carried over from the input's wording but names, identifiers, defined terms, and material quoted on purpose — read the two side by side and confirm it. Having been told to rebuild is not evidence that you did.
 - [ ] Every heading and point admitted by the step-2 reader, and every reader need carried by a slot (step 3, both directions); content kept out, and slots proposed, named in the note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).

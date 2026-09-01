@@ -128,6 +128,8 @@ previous means-based criteria to these ends is in `checks/11.md`.
 - README is scenario + real-console style, not a mechanical list
 - The SKILL.md description is written to be model-invocable (no `disable-model-invocation`)
 - The skill body is derived from `instruction.md` and must not drop any of the four pillars
+- The validation gate is `claude plugin validate ./writ --strict`, `claude plugin validate . --strict`,
+  and an empty ````grep -rn '```mermaid' writ/skills/```` — no diagram may sit in the prompt body
 
 # Tasks
 
