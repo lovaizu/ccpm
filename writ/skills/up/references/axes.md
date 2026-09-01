@@ -1,6 +1,6 @@
 # The five axes
 
-One role each. **Do not mix axes.** Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem, the record/ADR axis specialized for an incident.
+One role each. **Do not mix axes.** The numbered items under an axis are its slots; specialize their headings to the content, and keep deep dives out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem, the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
   1. The question and its answer (the why-question this document answers, and the answer to it, in 1–2 sentences)
