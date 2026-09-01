@@ -56,6 +56,12 @@ own artifacts; neither is restated here.
 - **A decision the user has not made is not a decision.** Where a task must pick a name, a surface, a
   default or a policy, it is put to the user — never inferred. A string already on disk is not evidence
   that anyone chose it.
+- **Intent is confirmed; implementation is decided.** The converse of the rule above, and its limit: a
+  choice the user would not recognize as theirs is not put to them. Wording, which sentence carries a
+  fact, and any fix that only makes an artifact agree with a decision already taken are the assistant's
+  to make and to report — not to ask about. That an artifact's text was ratified sentence by sentence is
+  not a reason to re-ask; it is a reason to keep its voice while fixing it. Ruled 2026-09-01: asking at
+  that grain costs the user more than doing the work themselves would.
 - 1 task = 1 commit; commit and push every change; one completion marker per task.
 - **UX first, then design, then implementation.** The experience decides the surface; the design answers
   to it; the build implements the design. A lower layer never silently overrides a higher one — a
