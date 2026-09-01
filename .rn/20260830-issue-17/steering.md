@@ -27,6 +27,12 @@ treatment as one instance among them.
 - A planner writing a `steering.md` after this change cannot land an acceptance criterion phrased as
   an artifact existing without visibly leaving something unanswered — the failure that started this
   session is caught while the plan is still being written, not after it ships.
+- Before a plan reaches the user, the coordinator has judged it against a small fixed set of
+  purpose-derived questions and the user is shown that judgement as a conclusion with its grounds —
+  so a shallow judgement is visible as shallow rather than hidden behind a passed check.
+- Every mandated review in `rn` can be answered for: what it catches that the surrounding structure
+  does not. Any review kept only because it was already there is either justified against that
+  question or dropped — the plan itself is where "is this step worth its cost?" gets asked.
 - Someone using `rn` has nothing new to learn and nothing new to do: same commands, same three gates
   (plan / design / evaluation), same `/rn:ty` `/rn:gm` verdicts, and no additional point where the
   session stops for them.
@@ -94,6 +100,9 @@ statement in `rn`, whether breaking it becomes visible, stops the flow, or passe
 - [ ] check each rule against what past sessions actually produced (`.rn/*/steering.md`, their
       `design.md` and `checks/`), not only against the rule text — the `Verification expert review`
       case shows a breach is visible in the output and invisible in the rule
+- [ ] for each step `rn` mandates unconditionally — the per-task QA / Craft / Verification / Design
+      reviews above all — record what it catches that nothing else would, and whether it is worth its
+      cost on a small task
 - [ ] record the judgement in `.rn/20260830-issue-17/rule-inventory.md`, one row per rule, with its
       source location
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
@@ -106,6 +115,8 @@ statement in `rn`, whether breaking it becomes visible, stops the flow, or passe
 - every normative statement in the 13 files carries a judgement with grounds; a reader can take any
   line of any of those files and find it accounted for
 - the unenforced set is separated from the enforced set, so #2 has a definite list to work from
+- every unconditionally mandated step has an answer to "what does this catch that the rest of the
+  structure does not" — including the ones that turn out not to earn their place
 - no row asserts a mechanism that does not exist — each named mechanism is quoted from the file that
   implements it
 
@@ -120,6 +131,11 @@ purpose — with the reasoning recorded where reasoning belongs.
 
 - [ ] group the unenforced rules by the device that fits (question in place of a blank field, a second
       reader, a mechanical check, a named link that leaves orphans visible, a checkbox, a gate)
+- [ ] settle the fixed set of questions the coordinator puts to a plan before the gate, deriving them
+      from how a plan fails its purpose rather than from failures already seen — and keep the set
+      small enough that answering it stays an act of judgement, not a checklist to clear
+- [ ] decide what changes about the unconditional per-task reviews: which stay, which become
+      conditional, which go — answered against what each catches, not against precedent
 - [ ] decide the acceptance-criteria case explicitly — it is the session's originating instance
 - [ ] record each decision with its reasoning in `rn/docs/design.md`, following
       `design-template.md`'s "updating an existing design.md" procedure
@@ -172,8 +188,12 @@ that failed and started this session.
 - [ ] apply the decided devices to `steering-template.md`
 - [ ] apply them to `planning-workflow.md`, so template and workflow ask the same questions in the
       same terms
-- [ ] put the plan in front of a reviewer before the plan-gate ask, applying the same tests the writer
-      was given, with revisions handled by the coordinator rather than a new user stop
+- [ ] make the coordinator judge the plan before the plan-gate ask, against the fixed purpose-derived
+      questions settled in #2 — does the goal survive every task completing; what has to be run for
+      the result to be felt; which assumptions are load-bearing; what is missing and what is
+      over-specified
+- [ ] have that judgement reach the user with the plan, as a conclusion plus its grounds per question
+      — not a passed/failed stamp, and not a fourth gate
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
@@ -185,7 +205,10 @@ no new user steps)
 
 - an artifact-existence acceptance criterion cannot be written without leaving something visibly
   unanswered
-- no path through `planning-workflow.md` reaches the plan-gate ask with the plan unread by a reviewer
+- no path through `planning-workflow.md` reaches the plan-gate ask without the coordinator's
+  judgement, and the user never sees a plan without seeing that judgement's grounds
+- a plan whose result could only be confirmed by reading — with nothing to run — is named as such by
+  the judgement rather than passing quietly
 - a planner reading the template and the workflow is never told two different things
 - the user still sees one plan gate, with the same commands and verdicts
 - re-reading this session's own `steering.md` against the finished files turns up nothing that fails
