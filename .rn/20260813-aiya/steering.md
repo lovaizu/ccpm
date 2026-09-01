@@ -381,11 +381,20 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       sub-agent rule needs the wall-conforming rewrite anyway; design.md carries at most one
       sentence (density bar). Apply after the PR #19 verdict so the pending gate object stays
       stable
-- [ ] Take ruling (viii) — README-touching fixes (owner-ratified text, needs approval, not yet
-      presented): README:161 "Exactly two things" vs design:462's third local degradation (drafts
-      leave no history; mirrors design:148, CHANGELOG:12); README:59 "the PR" used before any
-      backend/PR antecedent; README:22-27 mermaid shows five human touchpoints against the text's
-      six checkpoints (Delivery Planning Gate missing). Apply on approval
+- [x] Fix the three README fidelity defects once known as ruling (viii). Presented for approval
+      2026-09-01 and the presentation itself was ruled wrong: the user's answer was that confirming at
+      this grain costs more than doing the work alone, which became the Rules' intent-vs-implementation
+      boundary. So they were decided, not asked. (a) README:161 "Exactly two things" against
+      design:336's third local consequence (drafts leave no history) — the "two things" shape kept and
+      the second widened to history as a whole, CHANGELOG:12 likewise; (b) README:59's "the PR" with no
+      antecedent — the run branch and PR introduced at `on`, where design:278 and the shipped `on` /
+      conductor skills create them; (c) README:22-27's figure showing no Delivery-phase checkpoint —
+      Delivery given its own checkpoints edge, the 3-strikes escalation kept separate, and one prose
+      sentence added so six is derivable as three phases × {plan in, product out}. Applied in d59e936;
+      one coordinator fix-round in ab7902c (the new `on` line had broken the status block's marker-only
+      shape). Open and design-side, not fixed: neither design:278 nor the shipped skills say the PR is
+      opened **as a draft**, so the README says "PR opened" — if a draft is intended, the design owes
+      the word
 - [ ] Targeted re-review of all fix sites from rounds 2–3, rulings (iv)–(vi), the structural
       rework, and ruling (viii), then fill the review columns in `checks/4.md`
 
