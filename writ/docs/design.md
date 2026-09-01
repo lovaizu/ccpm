@@ -29,8 +29,8 @@ problems) along.
 ### 1.4 What is out of scope?
 
 One plugin (`writ`), one skill (`up`), one continuous procedure in `SKILL.md` carrying every rule at
-the step that applies it, with the axis skeletons beside it in `references/axes.md` (D-13). Not a general prose generator: it does not
-originate content on its own; it takes only the input's intent and what it must convey, and derives
+the step that applies it, with the axis skeletons beside it in `references/axes.md` (D-13). Not a
+general prose generator: it does not originate content on its own; it takes only the input's intent and what it must convey, and derives
 structure/voice from a reader definition rather than memorizing a template's wording.
 
 ## 2. Assumptions & Constraints
@@ -48,9 +48,8 @@ structure/voice from a reader definition rather than memorizing a template's wor
 
 Inherited from the repo: version lives only in `writ/.claude-plugin/plugin.json` (not
 `marketplace.json`); shipped artifacts are English except `instruction.md` itself, kept verbatim as
-the source of record; `README.md` is scenario-style; the skill body stays one continuous procedure, with reference material
-beside it rather than catalogued inside it (D-13).
-Marketplace `category` is a free string (unverified assumption) — used `"writing"`. `claude plugin
+the source of record; `README.md` is scenario-style; the skill body stays one continuous procedure, with reference
+material beside it rather than catalogued inside it (D-13). Marketplace `category` is a free string (unverified assumption) — used `"writing"`. `claude plugin
 validate` / `claude -p … --plugin-dir` availability in the environment is likewise an unverified
 assumption; task #3 falls back to manual verification if absent.
 
@@ -58,9 +57,11 @@ assumption; task #3 falls back to manual verification if absent.
 
 ### 3.1 What is the core idea, and why does it solve the problem?
 
-A two-layer `SKILL.md` — process (instructions to the model) and output rules (constraints on the
-produced document) — drives an ordered writing procedure that rebuilds the document fresh from the
-input's intent, rather than editing it in place. Building fresh means the AI tells never take hold in
+An ordered writing procedure in `SKILL.md` rebuilds the document fresh from the input's intent
+rather than editing it in place. Instructions to the model and rules for the produced document stay
+distinguishable — every rule states which of the two it governs where it sits (4.1) — but they are
+not separated into layers: each rule sits at the step that applies it, so reading the body top to
+bottom is doing the work (D-13). Building fresh means the AI tells never take hold in
 the first place; a final floor-net pass (after the ceiling is built) catches only the stragglers.
 Voice, form, and axis are all derived from a reader definition captured early in the procedure, so
 the output actually varies with who is reading rather than reproducing one memorized shape.
@@ -343,7 +344,9 @@ right one.
   model invocation, because the distinguishing axis is who the skill is for, not side effects: `rn`
   is meant for a human to drive, `up` is meant for a human or Claude itself.
 - **(D-3) Two layers physically separated in the body** — chosen over the original SKILL.md, which
-  embedded a procedure flowchart in the prompt body (see 4.1).
+  embedded a procedure flowchart in the prompt body (see 4.1). **Superseded by D-13:** the
+  process/output distinction stands, but the physical separation is gone — each rule now states its
+  addressee at the step that applies it.
 - **(D-5) Rebuild fresh from the input's intent, floor as a final net** — chosen over an edit-the-
   draft-in-place runbook (scrub first, reorder later), which drags the old wording along, reads as
   patched, and behaves as a checklist rather than a writing procedure.
