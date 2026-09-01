@@ -23,10 +23,11 @@ flowchart TD
   D --> G([Success criteria met — handover])
   P -.->|checkpoints only| Y
   A -.->|checkpoints only| Y
+  D -.->|checkpoints only| Y
   D -.->|only when truly stuck| Y
 ```
 
-Before anything is built, the *why* and the *how* become documents, and you read them at the checkpoints. Once building starts, independent pieces are bundled and run at the same time, and every piece is checked by eyes other than the ones that made it. Failures are redone automatically — you are not called. Only when the same piece fails three times in a row does the decision come to you, with the failure history attached.
+Before anything is built, the *why* and the *how* become documents, and you read them at the checkpoints. Every phase stops the same way — you approve the plan going in and the product coming out. Once building starts, independent pieces are bundled and run at the same time, and every piece is checked by eyes other than the ones that made it. Failures are redone automatically — you are not called. Only when the same piece fails three times in a row does the decision come to you, with the failure history attached.
 
 ## Try it
 
@@ -40,6 +41,7 @@ A rough purpose is fine.
 > /aiya:on I want to export the expense tracker's transactions as CSV
 
 ● ── csv-export: make transaction history exportable as CSV ──
+  Branch aiya/csv-export pushed, PR opened — that is where you read and comment
   👉 Confirm the plan for pinning down the purpose ── interview → 2 investigations at once (demand inventory ∥ data survey) → draft purpose.md
   ⬜ Approach / Delivery
   If this looks right, /aiya:ty — the interview starts immediately
@@ -158,7 +160,7 @@ Every checkpoint takes the same two-word vocabulary:
 
 Six checkpoints, one way to answer. No room left to wonder how to reply.
 
-The walkthrough above shows GitHub, but the run works the same on GitLab — or with no git at all, reviewing the files right on your disk. Exactly two things need more than a disk: `/aiya:gm` alone needs a PR or MR to hold the comments it picks up, and surviving a lost machine needs a remote. Everything else is identical.
+The walkthrough above shows GitHub, but the run works the same on GitLab — or with no git at all, reviewing the files right on your disk. Exactly two things need more than a disk: `/aiya:gm` alone needs a PR or MR to hold the comments it picks up, and keeping history needs a remote — on disk you keep every edition you approved, but not the drafts in between, and nothing at all if the machine goes. Everything else is identical.
 
 ## About the name
 
