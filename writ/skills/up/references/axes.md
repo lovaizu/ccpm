@@ -1,7 +1,5 @@
 # The five axes
 
-**These are properties of the document you produce, not of this prompt.** Step 3 picks exactly one axis and specializes its headings.
-
 One role each. **Do not mix axes.** Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem, the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.

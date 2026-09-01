@@ -1,6 +1,5 @@
 ---
 name: up
-compatibility: Step 11 launches a fresh-context subagent to read the produced document. Where subagents are unavailable, the reader trial is skipped and the delivery note says so.
 description: This skill should be used when brushing up, revising, polishing, or de-AI-ifying a document so it reads as if a person wrote it — an article/explanation, guide/procedure, reference, record/ADR, or evaluation/survey. It fires on requests like "brush this up", "make this not read like AI", "revise this doc", "polish this README/ADR", and it fires for Claude itself while drafting or revising such a document. It takes only the input's intent, defines the reader, and builds the document fresh through an ordered writing procedure so the AI tells never take hold, returning the rebuilt document plus a what-changed note.
 ---
 
@@ -9,6 +8,8 @@ description: This skill should be used when brushing up, revising, polishing, or
 Input: a draft to revise, or a topic to author. Output: the rebuilt document plus a what-changed note.
 
 Do not edit the draft in place. Editing drags the old wording along, and the result reads as patched. Take from the input only its content and the one thing it must convey; then **build the document fresh** through the steps below, in order. Built this way, the AI tells get no foothold — step 9 is a net for stragglers, not the main tool.
+
+Every rule below about how a document should read — its shape, its voice and form, its claim statuses, the ceiling, the floor — constrains **the document you produce**, never this prompt; the same holds for the files these steps order you to read. Steps 10 and 11 test them against that document.
 
 ## The procedure
 
@@ -30,16 +31,16 @@ Gate: if the input cannot answer a line, or answers it several ways, ask the use
 
 ### 3. Build the outline from the purpose
 
-Read `${CLAUDE_SKILL_DIR}/references/axes.md`. Match the reader and purpose to exactly one axis; its skeleton is your outline. Then test it against the step-2 reader **both ways**.
+Read `${CLAUDE_SKILL_DIR}/references/axes.md`. Match the reader and purpose to exactly one axis; its skeleton is your outline. If that read fails, do not supply the skeletons from memory — say the read failed, ask the user for the file, and on a headless run outline anyway and record in the note that the outline is unverified against `axes.md`. Then test the outline against the step-2 reader **both ways**.
 
 - **Slot → reader.** A heading stays only if that reader needs it to reach the purpose. One serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the note (whose it is, where it belongs).
-- **Reader → slot.** List what that reader must have to reach the purpose and name the slot carrying each; a slot that defers the thing elsewhere does not carry it. A need with no slot — most often the answer itself, which the ceiling puts first — is the same conflict in the other direction. Raise it as a **proposed slot**: where it belongs, and the reader evidence for it. Never absorb it as prose under the nearest heading; that is how the answer ends up at the back.
+- **Reader → slot.** List what that reader must have to reach the purpose and name the slot carrying each; a slot that defers the thing elsewhere does not carry it. A need with no slot — most often the answer itself, which step 8's ceiling puts first — is the same conflict in the other direction. Raise it as a **proposed slot**: where it belongs, and the reader evidence for it. Never absorb it as prose under the nearest heading; that is how the answer ends up at the back.
 
 A user-supplied outline or format faces both tests. Either verdict is an axis conflict — raise it with the user; never fill an unjustifiable slot silently, never bury an unslotted need. Headless: leave that slot unfilled, place the proposed one where the reader needs it, and record both in the note.
 
-When the content genuinely needs two axes — an argument to read through, plus an inventory to look things up in — it is two documents. Say so and split them: that is the first answer. If the owner keeps them in one file, declare the parts rather than blending them — each part carries its own step-2 reader line and its own axis at its head, and every admission below runs per part against that part's reader. Never blend two readers inside one part. A composite has to be two documents in fact: at step 5, walk each part alone — a part whose reader cannot reach its purpose without crossing into the other is not a part, and the split goes back to the owner as the answer. The what-changed note records the composite and why the split was refused.
+When the content genuinely needs two axes — an argument to read through, plus an inventory to look things up in — it is two documents. Say so and split them: that is the first answer. If the owner keeps them in one file, declare the parts rather than blending them — each part carries its own step-2 reader line and its own axis at its head, and every admission below runs per part against that part's reader. Never blend two readers inside one part. A composite has to be two documents in fact, which step 5 tests. The what-changed note records the composite and why the split was refused.
 
-Emit: the outline headings, specialized to this content.
+Emit: the axis chosen, its skeleton's slots quoted from `axes.md` as they stand there, then the outline headings specialized to this content — one per slot, so the specialization is readable against its source.
 
 ### 4. Fill the outline with what you want to convey
 
@@ -47,11 +48,9 @@ Under each heading, drop the points it must carry as terse bullets — concrete 
 
 ### 5. Check the story in the reader's order
 
-Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. Then set the filled outline beside the input: a bullet carrying the input's phrasing was transcribed, not written — re-fill it from meaning now, where the fix costs one bullet instead of a whole render. The author's structure check — a real reader reads at step 11.
+Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. A declared composite is walked one part at a time, each in its own reader's order: a part whose reader cannot reach its purpose without crossing into the other is not a part — the split was the answer, and it goes back to the owner as one. Then set the filled outline beside the input: a bullet carrying the input's phrasing was transcribed, not written — re-fill it from meaning now, where the fix costs one bullet instead of a whole render. The author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
-
-With the story standing, choose the voice and closing, then the form of each part. **These are properties of the document you produce, not of this prompt.**
 
 **Voice** — a starting point, not a rulebook; the step-2 reader is the source of truth.
 
@@ -62,7 +61,7 @@ With the story standing, choose the voice and closing, then the form of each par
 | Traces history (record / ADR) | Separate fact from analysis; names → roles | Consequences; action items when any follow |
 | Makes a call (evaluation / survey) | Separate measurement from judgment; lay them out neutrally | A recommendation |
 
-**Form** — choose each part's form for the reader's speed.
+**Form** — choose the form of each part of the document you produce, for the reader's speed.
 
 - **Diagram (mermaid)** — for structure (how parts relate) and flow (order, branching, dependencies), so the reader grasps them at a glance; when prose reads faster — a short linear sequence, or a structure a sentence can carry — skip it. Do not repeat in prose what the diagram carries.
 - **List** — only when the items are genuinely parallel; otherwise write prose.
@@ -76,13 +75,11 @@ Emit: `Voice: … / Closing: …`, and the form chosen per section.
 
 Close the input. From here the filled outline is your only source — the draft is not open, not consulted, not quoted. Render the outline into the document in the chosen voice and forms. Lead each part with its point. Rendering adds no content the filled outline does not carry — a sentence that appears only at this step faces the same step-3 admission.
 
-Throughout: Markdown, and every claim carrying one of three statuses. **These are properties of the document you produce, not of this prompt.**
-
-A **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth, and one not yet in force says so. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
+Throughout the document: Markdown, and every claim carrying one of three statuses — a **fact** is asserted plainly, with its source and the scope verified where the claim is non-obvious or load-bearing; a **hypothesis** is marked ("hypothesis" / `[unverified]`) with its grounds and what would confirm it; a **decision** is written as a choice with its intent, never dressed as a truth, and one not yet in force says so. Do not fill gaps with guesses; do not hide what fails, the costs, or the limits.
 
 ### 8. Brush up to the ceiling
 
-Raise the document to the **ceiling** — attractive quality: the reader reaches the purpose with minimal effort. **These are properties of the document you produce, not of this prompt.**
+Raise the document to the **ceiling** — attractive quality: the reader reaches the purpose with minimal effort.
 
 Means, not ends: density and concreteness (names, numbers, examples; noise cut); a single load-bearing thread with the conclusion first; headings carrying the argument alone; the few load-bearing claims distinguishable at a glance — placement, a heading, a lead sentence, not decoration; figures and lists only where each beats prose; one consistent voice.
 
@@ -90,7 +87,7 @@ Anything added here — an example, a number — faces the same step-3 admission
 
 ### 9. Clear the floor (the net)
 
-The **floor** is table-stakes: the document carries none of the seven AI tells in the table below. Clearing it earns no praise; any one tell present reads as machine-written. **These are properties of the document you produce, not of this prompt.**
+The **floor** is table-stakes and the counterpart to step 8's ceiling: the document carries none of the seven AI tells in the table below. Clearing it earns no praise; any one tell present reads as machine-written.
 
 Read the finished document once against that table. For each tell present, name it, quote the line, apply the fix, and carry it into the what-changed note.
 
@@ -106,10 +103,11 @@ Read the finished document once against that table. For each tell present, name 
 
 ### 10. Self-check the mechanics
 
-Mark each PASS or FAIL; any FAIL, fix and re-check.
+Mark each PASS or FAIL against the produced document; any FAIL, fix and re-check.
 
 - [ ] Reader is one person in one reading stance (step 2).
 - [ ] One axis, no mixing (step 3) — a declared composite instead carries one axis and one reader per part, stated at its head.
+- [ ] The outline's slots match that axis's skeleton in `references/axes.md` slot for slot — re-read the file and compare against the step-3 emit. A skeleton recalled from memory is not the skeleton (step 3).
 - [ ] Nothing carried over from the input's wording but names, identifiers, defined terms, and material quoted on purpose — read the two side by side and confirm it. Having been told to rebuild is not evidence that you did.
 - [ ] Every heading and point admitted by the step-2 reader, and every reader need carried by a slot (step 3, both directions); content kept out, and slots proposed, named in the note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
@@ -119,6 +117,7 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
 - [ ] Produced size against the input's is recorded and any growth named as something the step-2 reader needed. No bar — growth you cannot argue for is unadmitted fill.
 - [ ] Every claim carries its status — fact with source, hypothesis marked and testable, decision with intent; no unmarked assertion (step 7).
+- [ ] Every rule above was judged against the produced document — the ceiling, the floor, the forms, the claim statuses — never against this prompt or the working outline.
 
 ### 11. Reader trial, then deliver
 

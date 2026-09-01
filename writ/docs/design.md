@@ -28,9 +28,9 @@ problems) along.
 
 ### 1.4 What is out of scope?
 
-One plugin (`writ`), one skill (`up`), one continuous procedure in `SKILL.md` carrying every rule at
-the step that applies it, with the axis skeletons beside it in `references/axes.md` (D-13). Not a
-general prose generator: it does not originate content on its own; it takes only the input's intent and what it must convey, and derives
+One plugin (`writ`), one skill (`up`). How the body is laid out — one file, or a body plus
+`references/` — is not a scope line; §5 owns it (D-13). Not a general prose generator: it does not
+originate content on its own; it takes only the input's intent and what it must convey, and derives
 structure/voice from a reader definition rather than memorizing a template's wording.
 
 ## 2. Assumptions & Constraints
@@ -48,20 +48,21 @@ structure/voice from a reader definition rather than memorizing a template's wor
 
 Inherited from the repo: version lives only in `writ/.claude-plugin/plugin.json` (not
 `marketplace.json`); shipped artifacts are English except `instruction.md` itself, kept verbatim as
-the source of record; `README.md` is scenario-style; the skill body stays one continuous procedure, with reference
-material beside it rather than catalogued inside it (D-13). Marketplace `category` is a free string (unverified assumption) — used `"writing"`. `claude plugin
-validate` / `claude -p … --plugin-dir` availability in the environment is likewise an unverified
-assumption; task #3 falls back to manual verification if absent.
+the source of record; `README.md` is scenario-style. Marketplace `category` is a free string
+(unverified assumption) — used `"writing"`. `claude plugin validate` / `claude -p … --plugin-dir`
+availability in the environment is likewise an unverified assumption; task #3 falls back to manual
+verification if absent.
 
 ## 3. Design overview
 
 ### 3.1 What is the core idea, and why does it solve the problem?
 
 An ordered writing procedure in `SKILL.md` rebuilds the document fresh from the input's intent
-rather than editing it in place. Instructions to the model and rules for the produced document stay
-distinguishable — every rule states which of the two it governs where it sits (4.1) — but they are
+rather than editing it in place. Instructions to the model and rules for the produced document are
 not separated into layers: each rule sits at the step that applies it, so reading the body top to
-bottom is doing the work (D-13). Building fresh means the AI tells never take hold in
+bottom is doing the work (D-13). One line before the first step puts every rule in the body under the
+same addressee — the document produced, never the prompt — so no rule needs a local marker to be read
+correctly (4.1). Building fresh means the AI tells never take hold in
 the first place; a final floor-net pass (after the ceiling is built) catches only the stragglers.
 Voice, form, and axis are all derived from a reader definition captured early in the procedure, so
 the output actually varies with who is reading rather than reproducing one memorized shape.
@@ -71,8 +72,8 @@ the output actually varies with who is reading rather than reproducing one memor
 | Actor | What it is |
 |---|---|
 | `instruction.md` | Verbatim source of record for the skill's pillars (except the five-axis skeletons, superseded by D-6 research). |
-| `SKILL.md` — process layer | Instructions to the model running the skill: understand → define reader → outline → fill → check story → decide voice/form → write → brush up → clear floor → self-check → reader trial & deliver. |
-| `SKILL.md` — the rules inside the steps | Constraints on the produced document, each carried by the step that applies it: voice and form at step 6, the three claim statuses at step 7, the ceiling at step 8, the seven-tell floor at step 9. Every such block carries the same addressee marker naming the produced document, not the prompt. |
+| `SKILL.md` — the ordered steps | Instructions to the model running the skill: understand → define reader → outline → fill → check story → decide voice/form → write → brush up → clear floor → self-check → reader trial & deliver. |
+| `SKILL.md` — the rules inside the steps | Constraints on the produced document, each carried by the step that applies it: voice and form at step 6, the three claim statuses at step 7, the ceiling at step 8, the seven-tell floor at step 9. One line before step 1 puts all of them under the same addressee — the produced document, not the prompt. |
 | `references/axes.md` | The five axis skeletons. Step 3 orders the read; the pointer carries no summary. |
 | The writer (human or Claude) | Runs the skill against an input draft (or a topic, from scratch), producing the document plus a "what changed and why" note. |
 | Fresh-context reader (subagent) | Reads the produced document as the step-2 reader (one per part, for a declared composite), given only the document and that reader definition; reports stumbles and content the reader did not need. Delivery is gated on its prose defects being cleared (D-8, D-10). |
@@ -104,19 +105,33 @@ flowchart TD
 
 ## 4. Detailed design
 
-### 4.1 What does the process/output-rules separation guarantee, and how is a breach caught?
+### 4.1 What keeps a rule about the produced document from being read as a rule about this prompt?
 
 Guarantees that a rule about the *produced document* (e.g. "render structure/flow as mermaid") is
 never misread as a property of the *prompt itself* — the original SKILL.md embedded a procedure
-flowchart in its own body, which was exactly this category error (D-3). The guarantee used to rest on
-one sentence at the head of `## Reference`; since D-13 distributed the rules into the steps, it rests
-on a marker repeated verbatim at every block that carries them — steps 6, 7, 8, 9 and the head of
-`references/axes.md`: *These are properties of the document you produce, not of this prompt.* One
-sentence at the top of a catalog cannot reach a block sitting eleven steps away, so each block states
-its own addressee where the reader meets it. A breach — a diagram or output-only rule appearing with
-no marker, or a marker going missing — is caught by the per-task self-check
-(`.rn/20260614-writ/checks/*.md`), which greps the shipped prompt for the marker and reads every rule
-block against it.
+flowchart in its own body, which was exactly this category error (D-3). The guarantee first rested on
+one sentence at the head of `## Reference`, which D-13 dissolved with the section; it then rested on
+that sentence repeated verbatim at five blocks, which cost more than it bought. Five identical bolded
+sentences are the restatement the floor's tell 2 forbids and the decoration step 8 rules against, one
+of them had no antecedent to attach to, and enumeration still missed three rule blocks: the
+composite's per-part reader and axis heads, step 10's checklist, and step 11's reader brief.
+
+It now rests on **scope rather than enumeration**. `SKILL.md:12`, before the first step, states once
+that every rule below about how a document should read constrains the document you produce, never
+this prompt, and that the same holds for the files the steps order read — so no block can sit outside
+the statement, including blocks added later, and `references/axes.md` needs no head note of its own.
+The clause the rebuild had dropped is restored with it: *Steps 10 and 11 test them against that
+document.* Where the misreading actually happened the addressee also rides in the rule's own
+sentence, at no repetition cost: the form rule that produced D-3 reads "choose the form of each part
+of **the document you produce**" (`:64`), and step 10's lead marks its items "against the produced
+document" (`:106`).
+
+The breach-catch is in the body, where completion criterion 2 requires it: step 10's last item
+(`:120`) makes the run confirm that every rule above was judged against the produced document, never
+against this prompt or the working outline. Two greps back it from outside the run — the scope
+sentence present exactly once (`grep -c "never this prompt" SKILL.md` = 1) and no verbatim addressee
+marker left anywhere under `writ/skills/` (`grep -r "not of this prompt" .` exits 1, no match) — but
+neither is what the guarantee rests on.
 
 It is deliberately not an acceptance criterion — the criteria state what a run achieves, and where
 the addressee sentence physically sits is a decision, not an end (D-12).
@@ -148,6 +163,16 @@ question **and its answer**; "In closing" is limits and pointers, explicitly not
 four were re-checked under the same lens and already lead with their answer — the guide with the
 goal, the reference with the map, the ADR with the decision as the headline, the evaluation with the
 recommendation.
+
+That fix lives in `references/axes.md:6` alone, and the skeletons are the one block a model can
+produce a plausible version of from memory (D-13) — a from-memory article skeleton reverts slot 1
+while "One axis, no mixing" still passes. So the skeleton is now quoted, not recalled: step 3's emit
+(`:43`) carries the chosen axis's slots **as they stand in the file**, next to the headings
+specialized from them, and step 10 (`:110`) re-reads `axes.md` and compares slot for slot. A breach —
+a confabulated skeleton — is visible in the produced run's own output, since the quoted slots and the
+file can be set side by side by anyone reading the transcript. Where the read itself fails, step 3
+(`:34`) forbids falling back on memory silently: say so, ask for the file, and headless, record the
+outline as unverified against `axes.md`.
 
 ### 4.4 What does the reader-definition gate guarantee, and how is a breach caught?
 
@@ -208,8 +233,9 @@ the headings alone carry the argument — are judged by someone the curse of kno
 The author, having built the outline, cannot un-know it, so those two checks move out of step 10 and
 into step 11: a fresh-context subagent given **only** the produced document and the step-2 reader
 definition — no outline, no draft, no history. Its prose stumbles come back as fixes and the
-document re-runs steps 10–11 until none remain (4.9 sorts them; 4.10 bounds the loop). Mechanical checks (single axis, `Assumed reader:` line,
-claim statuses) stay with the author, where knowledge of the draft is no handicap. A breach — the
+document re-runs steps 10–11 until none remain (4.9 sorts them; 4.10 bounds the loop). Mechanical
+checks (single axis, skeleton fidelity, `Assumed reader:` line, claim statuses) stay with the author,
+where knowledge of the draft is no handicap. A breach — the
 trial run with extra context, or its stumbles waved through — shows up as the same field failure 4.5
 records: checks pass, the reader still struggles.
 
@@ -223,7 +249,12 @@ own pass.
 Where the environment cannot launch a subagent at all, the gate cannot run. Step 11 forbids the
 author standing in for it — that substitution is precisely what the step exists to prevent — and
 requires the delivery note to state that the trial did not run, so an unverified document is never
-mistaken for a gated one. The frontmatter's `compatibility` field declares the dependency.
+mistaken for a gated one — `SKILL.md:139` carries that fallback. The frontmatter used to restate it
+in a `compatibility:` field, which has been removed: the field never reaches the run. A probe skill
+carrying a unique token in `compatibility:`, invoked headlessly, reported the token absent from its
+instructions and quoted those instructions as beginning at its `description`. Only `name` and
+`description` are injected, so no frontmatter field can declare a runtime dependency to the run —
+a dependency has to be stated in the body, and this one is.
 
 ### 4.7 What makes "build fresh" a mechanism rather than an intention, and how is a breach caught?
 
@@ -255,8 +286,9 @@ comparison between the two measures the document, not the procedure.
 Guarantees that a proposal in the input survives as a proposal, instead of being deleted for failing
 to match a world that has not caught up with it. The asymmetry was live: the output rules already
 demanded that every claim in the **produced** document carry a status (fact / hypothesis /
-decision), with no counterpart for reading the **input**. In the field run, the rebuild checked a design's claims
-against the shipped plugin, found the described file absent from disk, and dropped a design that was
+decision), with no counterpart for reading the **input**. In the field run, the rebuild checked a
+design's claims against the shipped plugin, found the described file absent from disk, and dropped a
+design that was
 deliberately ahead of the build and awaiting approval — a filename, a ledger row, four fields, six
 rules, gone. Step 1 now sorts the input's assertions into in force / proposed / hypothesis and emits
 the proposed ones, and states that content leaves only through the step-3 reader admission — never
@@ -326,9 +358,11 @@ Declaring the parts made the boundary explicit without making the parts separabl
 rebuild, part 1 deferred into chapter 5 about two dozen times (§5.1, §5.3–§5.7), and the part-1
 reader's *first* stumble was that: "I had to decide on every deferral whether the argument was still
 complete without it." Both part-1 readers, in both rounds, then left chapters 1–4 unable to decide,
-because the bound they needed sat in §5.4. So the composite now has to earn its declaration: step 5
-walks each part alone, and a part whose reader cannot reach its purpose without crossing into the
-other is not a part — the split was the answer, and it goes back to the owner as one. Without that
+because the bound they needed sat in §5.4. So the composite now has to earn its declaration: step 5 (`:51`)
+walks each part alone in its own reader's order, and a part whose reader cannot reach its purpose
+without crossing into the other is not a part — the split was the answer, and it goes back to the
+owner as one. The rule is written at step 5, where it is performed; step 3 (`:41`) only says a
+composite has to be two documents in fact, and names the step that tests it. Without that
 test, "declared composite" is available as the cheaper option at exactly the moment the split is the
 right one.
 
@@ -345,8 +379,9 @@ right one.
   is meant for a human to drive, `up` is meant for a human or Claude itself.
 - **(D-3) Two layers physically separated in the body** — chosen over the original SKILL.md, which
   embedded a procedure flowchart in the prompt body (see 4.1). **Superseded by D-13:** the
-  process/output distinction stands, but the physical separation is gone — each rule now states its
-  addressee at the step that applies it.
+  process/output distinction stands, but the physical separation is gone — and so is the per-block
+  marker that briefly replaced it. One scope line before step 1 now addresses every rule in the body
+  (4.1).
 - **(D-5) Rebuild fresh from the input's intent, floor as a final net** — chosen over an edit-the-
   draft-in-place runbook (scrub first, reorder later), which drags the old wording along, reads as
   patched, and behaves as a checklist rather than a writing procedure.
@@ -434,15 +469,27 @@ right one.
   to go fetch is a rule the run can shorten, skip, or supply from memory, which is the drift writ
   exists to fight running inside writ itself. Each block now sits at its moment: voice and form at
   step 6, the three claim statuses at step 7, the ceiling at step 8, the seven-tell floor at step 9.
-  The five axis skeletons were the one block long enough to crowd the procedure and the only one used
-  at a single step, so they moved to `references/axes.md`, which step 3 orders read before it picks an
-  axis — the pointer names the file and says nothing about its contents, since a summary at a handoff
-  is exactly what lets the read be skipped. The addressee guarantee moved with the rules: 4.1 now
-  rests on a marker repeated at each block rather than one sentence atop a catalog. Traded away:
+  The five axis skeletons moved out to `references/axes.md`, which step 3 orders read before it picks
+  an axis — the pointer names the file and says nothing about its contents, since a summary at a
+  handoff is exactly what lets the read be skipped.
+  **The criterion for what may move out is memory-substitution risk, not length.** Length and a
+  single use-site were what this decision first recorded, and they answer a different question: the
+  risk a split runs is the fetched block being supplied from recall instead of read. Ranked by that
+  risk the axes are the *worst* candidate on offer, not the best. The seven tells, the voice table and
+  the ceiling are writ-specific lists a model cannot confabulate, so a split would have been cheap
+  there; the five skeletons are Diátaxis/MADR-shaped, so a plausible reconstruction is precisely what
+  a model can produce — and it would silently revert 4.3's slot-1 fix with every check still passing.
+  What buys the split is therefore not the size argument but the fidelity check taken with it (4.3):
+  step 3 quotes the chosen skeleton's slots as they stand in the file, step 10 re-reads and compares
+  slot for slot, and a failed read may not fall back on memory silently. Exposure is bounded on the
+  other side too: the frontmatter `description` already names all five axes, so the pointer withholds
+  only the skeletons — the names stay in the description, since skill discovery depends on them.
+  The addressee guarantee did not move with the rules; it moved to scope (4.1). Traded away:
   reading every output rule in one place — recoverable only by reading the procedure, which is the
-  point. Measured effect: 190 lines / 2,994 words → 142 / 2,569, against the official bounds of under
-  500 lines (`skill-creator/skills/skill-creator/SKILL.md`) and 1,000–3,000 words
-  (`plugin-dev/agents/skill-reviewer.md`).
+  point. Measured effect on the body (everything after the closing `---`): 185 lines / 2,864 words →
+  137 / 2,602, against the official bounds of under 500 lines
+  (`skill-creator/skills/skill-creator/SKILL.md`) and 1,000–3,000 words for the body
+  (`plugin-dev/agents/skill-reviewer.md:68`).
 
 ### 5.2 What did we trade away?
 
@@ -453,12 +500,13 @@ right one.
   reading."
 - Splitting the axis skeletons out (D-13) trades a skill that reads start to finish without following
   a link for a body that carries every rule at the step that applies it. The one link is ordered, not
-  offered: step 3 reads `references/axes.md` before it picks an axis. Body: 142 of the official 500
-  lines.
-- Round 3 had left the body at 2,994 words against the official 1,000–3,000 band, with the next
-  addition owing a trim. D-13's rebuild spent that debt rather than deferring it: 2,569 words and 142
-  lines, with the 384 words of axis skeletons in `references/axes.md`. Word count is no longer the
-  binding constraint on what the body may say.
+  offered: step 3 reads `references/axes.md` before it picks an axis, and step 10 re-reads it to check
+  the outline against the skeleton. Body: 137 of the official 500 lines.
+- Round 3 had left the body at 2,864 words against the official 1,000–3,000 band, with the next
+  addition owing a trim. D-13's rebuild spent that debt rather than deferring it: 2,602 words and 137
+  lines (body only — the whole file, frontmatter included, is 2,705 words and 141 lines), with the 362
+  words of axis skeletons in `references/axes.md`. Word count is no longer the binding constraint on
+  what the body may say.
 - Re-sourcing the five axes to external best practice (D-6) trades fidelity to the user's original
   verbatim `instruction.md` outlines for current, externally-validated structures — accepted because
   the user explicitly asked for the current recommended shapes over the original wording.
