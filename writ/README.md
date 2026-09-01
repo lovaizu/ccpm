@@ -71,8 +71,9 @@ writing for no one in particular:
 `/writ:up` won't mix roles in one document — a mixed role is the fastest way to lose a reader. It
 picks the one that fits your reader and commits to it:
 
-- **Article** — someone reading to understand. The why-question it answers → the substance, claim by
-  claim → what was gained and where the limits are. No instructions; those are a guide's job.
+- **Article** — someone reading to understand. The why-question it answers and the answer, up front →
+  the substance, claim by claim → the limits and what it leaves open. No instructions; those are a
+  guide's job.
 - **Guide** — someone doing it right now. Ordered steps, each with its expected result.
 - **Reference** — someone looking a thing up. Unique, exhaustive, built for lookup, not for reading
   through.
@@ -83,13 +84,18 @@ picks the one that fits your reader and commits to it:
 
 When your content really is two documents — an argument to read through plus a table to look things
 up in — it says so and offers you the split rather than quietly blending them. Keep them in one file
-anyway and it labels each part with its own reader, instead of pretending one reader wants both.
+anyway and it labels each part with its own reader, instead of pretending one reader wants both — and
+then checks that each part actually stands alone. A part that keeps sending your reader into the
+other half isn't a part, and it'll say the split was the answer after all.
 
 Whichever it picks, the same finish applies: headings that carry the argument on their own, structure
 and flow drawn as diagrams wherever a diagram beats prose, fact kept separate from hypothesis, and no
 hedging or filler left behind. Nothing gets in that your reader doesn't need to reach the purpose — a
 paragraph written for a past reviewer, a template slot nobody reads: it stays out and gets named in
-the note rather than quietly filled. Before handing anything back, it puts the document in front of a
+the note rather than quietly filled. The test runs the other way too. If your reader needs something
+your format has no place for — usually the answer itself, which belongs at the front — it comes back
+as a proposed slot with the reader's own words behind it, rather than being buried as a paragraph in
+whatever section was nearest. Before handing anything back, it puts the document in front of a
 fresh reader — a subagent that knows nothing but the document and who it's for. Where that reader
 trips on the writing, it rewrites and tries again. Where the reader trips on the *subject* — a count
 that doesn't add up, a rule with a hole — it won't smooth that over with an extra clause; it hands

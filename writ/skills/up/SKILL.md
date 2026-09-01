@@ -35,9 +35,14 @@ Gate: if the input cannot answer a line, or answers it several ways, ask the use
 
 ### 3. Build the outline from the purpose
 
-Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. Every heading must earn admission from the step-2 reader: it stays only if that reader needs it to reach the purpose. A heading serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the what-changed note (whose it is, where it belongs). A user-supplied outline or format faces the same test slot by slot; an unjustifiable slot is an axis conflict — raise it with the user (headless: record it in the note), never fill it silently.
+Match the reader and purpose to exactly one axis (Reference → [the five axes](#the-five-axes)); its skeleton is your outline. Then test it against the step-2 reader **both ways**.
 
-When the content genuinely needs two axes — an argument to read through, plus an inventory to look things up in — it is two documents. Say so and split them: that is the first answer. If the owner keeps them in one file, declare the parts rather than blending them — each part carries its own step-2 reader line and its own axis at its head, and every admission below runs per part against that part's reader. Never blend two readers inside one part. The what-changed note records the composite and why the split was refused.
+- **Slot → reader.** A heading stays only if that reader needs it to reach the purpose. One serving anyone else — a re-reader, a past reviewer, an approver — or off-axis material stays out; name it in the note (whose it is, where it belongs).
+- **Reader → slot.** List what that reader must have to reach the purpose and name the slot carrying each; a slot that defers the thing elsewhere does not carry it. A need with no slot — most often the answer itself, which the ceiling puts first — is the same conflict in the other direction. Raise it as a **proposed slot**: where it belongs, and the reader evidence for it. Never absorb it as prose under the nearest heading; that is how the answer ends up at the back.
+
+A user-supplied outline or format faces both tests. Either verdict is an axis conflict — raise it with the user; never fill an unjustifiable slot silently, never bury an unslotted need. Headless: leave that slot unfilled, place the proposed one where the reader needs it, and record both in the note.
+
+When the content genuinely needs two axes — an argument to read through, plus an inventory to look things up in — it is two documents. Say so and split them: that is the first answer. If the owner keeps them in one file, declare the parts rather than blending them — each part carries its own step-2 reader line and its own axis at its head, and every admission below runs per part against that part's reader. Never blend two readers inside one part. A composite has to be two documents in fact: at step 5, walk each part alone — a part whose reader cannot reach its purpose without crossing into the other is not a part, and the split goes back to the owner as the answer. The what-changed note records the composite and why the split was refused.
 
 Emit: the outline headings, specialized to this content.
 
@@ -47,7 +52,7 @@ Under each heading, drop the points it must carry as terse bullets — concrete 
 
 ### 5. Check the story in the reader's order
 
-Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. The author's structure check — a real reader reads at step 11.
+Walk the filled outline in the step-2 reader's order. Does it reach the purpose with no gap, no repeat, no detour? Fix order and gaps now, while still bullets and cheap to move. Then set the filled outline beside the input: a bullet carrying the input's phrasing was transcribed, not written — re-fill it from meaning now, where the fix costs one bullet instead of a whole render. The author's structure check — a real reader reads at step 11.
 
 ### 6. Decide voice and form from purpose and story
 
@@ -77,12 +82,13 @@ Mark each PASS or FAIL; any FAIL, fix and re-check.
 - [ ] Reader is one person in one reading stance (step 2).
 - [ ] One axis, no mixing (step 3) — a declared composite instead carries one axis and one reader per part, stated at its head.
 - [ ] Nothing carried over from the input's wording but names, identifiers, defined terms, and material quoted on purpose — read the two side by side and confirm it. Having been told to rebuild is not evidence that you did.
-- [ ] Every heading and point admitted by the step-2 reader (steps 3–4, 7–8); content kept out named in the what-changed note.
+- [ ] Every heading and point admitted by the step-2 reader, and every reader need carried by a slot (step 3, both directions); content kept out, and slots proposed, named in the note.
 - [ ] Form fits content — mermaid for structure/branching, a list only when items are parallel (step 6).
 - [ ] No prose repeats what a diagram carries (step 6, Reference → [form](#form)).
 - [ ] Voice and closing fit the step-2 reader (step 6) — one wrong voice held throughout still fails.
 - [ ] None of the seven tells remain (step 9).
 - [ ] `Assumed reader:` line present iff the reader was inferred (step 2).
+- [ ] Produced size against the input's is recorded and any growth named as something the step-2 reader needed. No bar — growth you cannot argue for is unadmitted fill.
 - [ ] Every claim carries its status — fact with source, hypothesis marked and testable, decision with intent; no unmarked assertion (Reference → [the two tiers](#the-two-tiers)).
 
 ### 11. Reader trial, then deliver
@@ -91,19 +97,20 @@ The author cannot simulate ignorance. Launch a fresh-context subagent with **onl
 
 - Did it reach the purpose?
 - Do the headings alone carry the argument?
-- Where did it stumble?
+- Where did it stumble — including anything that read as machine-written: a sentence you had already read, a figure that disagrees with the prose?
 - What content did it not need — and, when it can tell, whom does that content serve?
 
 Sort each stumble before touching it:
 
 - **Prose defect** — the document says it badly. Yours to fix.
 - **Subject defect** — the document reports the thing accurately and the thing itself is what the reader trips on: a count that does not add up, a rule with a hole, two claims that contradict each other. No rewrite removes it, and a clause that smooths it over only makes the document lie fluently. Do not patch it. Name it in the what-changed note for whoever owns the subject, and leave the claim standing — or strike it, if it was never this document's to assert.
+- **Format defect** — the document is arranged as a supplied format demands, and the reader needs an arrangement that format cannot express; the answer stranded at the back is the standard case. Rewriting inside the slots cannot reach it, and renaming a heading moves nothing. Raise it as step 3's proposed slot, with the reader's own words as evidence.
 
-Fix the prose defects; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then reruns with a new fresh reader. Delivery is gated on **no prose defect remaining** — outstanding subject defects do not block it, they ship named. Stop after three trial rounds either way: a prose defect that survives three rewrites is not going to be fixed by a fourth, so deliver and name it too.
+Fix the prose defects; cut or move out reported unneeded content under the step-3 admission, named in the what-changed note. A fixed document re-passes step 10, then reruns with a new fresh reader. Delivery is gated on **no prose defect remaining** — subject defects, and a proposed slot the owner has not ruled on, ship named instead of blocking. Stop after three trial rounds either way: a prose defect that survives three rewrites is not going to be fixed by a fourth, so deliver and name it too. End on a trial, never on an edit — when the cap falls after a fix, hand a fresh reader the changed passages and only those; whatever that read cannot confirm ships named as unverified.
 
-If this environment cannot launch a subagent, the gate cannot run. Do not stand in for it — reading it yourself is exactly what this step exists to replace. Deliver anyway, and say plainly in the note that the reader trial did not run, so the document is unverified against a fresh reader.
+If this environment cannot launch a subagent, the gate cannot run. Do not stand in for it — reading it yourself is what this step exists to replace. Deliver, and say plainly in the note that the trial did not run, so the document is unverified against a fresh reader.
 
-Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content kept out at any admission point, steps 3–4 or 7–8 (whose reader it served, where it belongs) and any template slots left unfilled; any tells step 9 caught. For a topic input, the note reports the choices instead: reader, axis, voice, each tied to why.
+Deliver the rebuilt document and the **what-changed note** — the structure, story, and voice built, each tied to the reader or purpose; content kept out at any admission point, steps 3–4 or 7–8 (whose reader it served, where it belongs); any slot proposed or left unfilled, with its evidence; any tells step 9 caught. For a topic input, the note reports the choices instead: reader, axis, voice, each tied to why.
 
 ---
 
@@ -123,9 +130,9 @@ Throughout: Markdown; every claim carries one of three statuses — a **fact** i
 One role each. **Do not mix axes.** Specialize the headings to the content; deep dives stay out of scope. A tutorial is the guide/procedure axis specialized for learning (a visible result at every step; explanation linked out, not inlined); a postmortem, the record/ADR axis specialized for an incident.
 
 - **Article / explanation** — for someone reading to understand.
-  1. The question (the why-question this document answers, 1–2 sentences)
+  1. The question and its answer (the why-question this document answers, and the answer to it, in 1–2 sentences)
   2. The substance (per unit: claim → why → implications and connections; alternatives and background welcome, instructions are not)
-  3. In closing (what was gained, the limits, pointers onward)
+  3. In closing (the limits, what it does not settle, pointers onward — not a recap of the answer)
 
 - **Guide / procedure** — for someone doing it now.
   1. Goal and prerequisites (what gets done, what is needed)

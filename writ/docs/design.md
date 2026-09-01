@@ -131,6 +131,14 @@ exception — parts, each with its own reader and axis, never a blend. A breach 
 axes inside a part, or carrying off-axis material — is caught by step 10's self-check item "One axis,
 no mixing," and off-axis material is named (not authored) in the what-changed note.
 
+One skeleton contradicted the ceiling it serves. The article axis read *the question → the substance
+→ in closing*, which distributes the answer through the middle and sums it at the end, while
+§Reference's ceiling in the same file asks for "the conclusion first." Slot 1 now carries the
+question **and its answer**; "In closing" is limits and pointers, explicitly not a recap. The other
+four were re-checked under the same lens and already lead with their answer — the guide with the
+goal, the reference with the map, the ADR with the decision as the headline, the evaluation with the
+recommendation.
+
 ### 4.4 What does the reader-definition gate guarantee, and how is a breach caught?
 
 Guarantees voice, form, and axis are derived from an actual reader rather than assumed or memorized —
@@ -156,9 +164,32 @@ with the user (headless: recorded in the note) and never silently filled. A brea
 into the delivered document — is caught twice: by step 10's admission self-check item, and by the
 step-11 reader trial reporting content it did not need.
 
+**The test runs both ways.** As first written every verdict it could return was removal, so a reader
+need the format had no slot for had nowhere to go. Four fresh readers, across two rounds and two
+independently written documents, then prescribed the same single change in near-identical words —
+put the discharge at the front — and writ *detected* it every time: step 11's headings question, all
+three trial rounds, the ceiling's own "conclusion first." What it could not do was act. The supplied
+format assigned the properties to chapter 1 and their discharge to no chapter at all, so the run did
+what writ said — recorded three axis conflicts and proceeded — and its only structural repair was
+renaming a heading inside chapter 2, which the reader answered with "contradicted by its own second
+sentence."
+
+Step 3 now tests in both directions. *Slot → reader* is the original subtraction. *Reader → slot*
+lists what the reader must have to reach the purpose and names the slot carrying each — and a slot
+that defers the thing elsewhere does not carry it, which is the same field failure in its second
+form: a chapter declared "Format definitions live here" that both documents emptied, and both
+readers dead-ended in. A need with no slot is raised as a **proposed slot**, with its position and
+the reader evidence attached; headless, it is placed where the reader needs it and recorded as a
+proposal on the format. Step 11 gained the matching stumble class (4.9) so a trial's finding routes
+there instead of being absorbed as prose under the nearest heading. A breach — an unslotted need
+buried — is caught by step 10's admission item, now stated in both directions, and by the next
+trial reporting the same stumble.
+
 Origin: a real run (PR #15 comment 5353396410) delivered a document its owner judged noise-ridden
 while every writ check passed — because the reader governed only form, so content for other readers
-passed straight through.
+passed straight through. The additive direction came from the round-3 re-run
+(`worktree-aiya:.rn/20260813-aiya/writ-feedback-3.md`), where a defect survived every round of a
+procedure that correctly diagnosed it.
 
 ### 4.6 What does verification independence guarantee, and how is a breach caught?
 
@@ -171,6 +202,13 @@ document re-runs steps 10–11 until none remain (4.9 sorts them; 4.10 bounds th
 claim statuses) stay with the author, where knowledge of the draft is no handicap. A breach — the
 trial run with extra context, or its stumbles waved through — shows up as the same field failure 4.5
 records: checks pass, the reader still struggles.
+
+The trial's brief also asks what read as machine-written. A delivered document that had passed step
+9, step 10 and three trial rounds still carried, for a fresh reader, a sentence repeated near-verbatim
+thirty words later in the same paragraph and a mermaid arrow running the wrong way in a diagram the
+last round had just edited. Both are the class the curse of knowledge hides — the author re-reads the
+intended sentence, not the written one — so noticing them belongs with the reader, not the author's
+own pass.
 
 Where the environment cannot launch a subagent at all, the gate cannot run. Step 11 forbids the
 author standing in for it — that substitution is precisely what the step exists to prevent — and
@@ -189,6 +227,15 @@ only source, the draft is not open. Step 10 adds a mechanical item that reads th
 side and confirms nothing survives but names, identifiers, defined terms, and deliberate quotation —
 "having been told to rebuild is not evidence that you did." A breach is caught at that item, by an
 author for whom this check carries no curse of knowledge.
+
+The measurement then moved earlier. Built as above it worked: the step-10 item **failed a rebuild's
+first render** — 177 maximal shared 8-token spans, the longest 312 tokens, 70.87% of the document
+inside a shared span — and forced a second render from meaning that ended at 6 spans, longest 13
+tokens, 0.64%. But the leak was in step 4, not step 7: the outline had been filled with the input
+open and had transcribed the source's sentences, so closing the input at step 7 protected nothing
+already inside the outline. Step 5 now reads the filled outline against the input, where a failure
+costs one re-fill; step 10's side-by-side stays as the backstop, and is the expensive one — by then
+a whole document has been rendered from the leak, and a second render is what a tired run skips.
 
 Stakes: a rebuild that silently carries its source's wording is not independent of the source, so a
 comparison between the two measures the document, not the procedure.
@@ -222,6 +269,12 @@ owns the subject, left standing or struck, never patched). A breach — a subjec
 glossed — surfaces as the same thing it surfaced as here: the next fresh reader stumbling on the
 gloss.
 
+A third class followed from 4.5. A **format defect** is a document arranged as a supplied format
+demands where the reader needs an arrangement that format cannot express — the answer stranded at the
+back being the standard case. No rewrite inside the slots reaches it, and the field attempt at one, a
+heading rename, drew "contradicted by its own second sentence." It routes to 4.5's proposed slot,
+carrying the reader's own words as evidence, and ships named if the owner has not ruled on it.
+
 ### 4.10 What gives the delivery gate a termination, and how is a breach caught?
 
 Guarantees the gate can actually open. "A clean pass — no stumbles, no unneeded content — gates
@@ -233,6 +286,16 @@ run. Two changes make it terminate: delivery is gated on **no prose defect remai
 defects (4.9) ship named rather than blocking forever; and the fix-and-retrial loop stops after
 three rounds either way, delivering with any survivor named. A breach — an unbounded loop, or
 delivery with an unnamed prose defect — is caught by the note, which must carry every residual.
+
+The cap then showed its own edge: as written it permitted the last action of a run to be an
+**unverified edit**. A field run repaired a width-versus-size contradiction after round 3 reported
+it, with no fourth trial; the later head-to-head found the repair had not worked — one line said a
+2,000-byte ceiling governs the file "however wide the wave was — it fails nothing", the next that
+growth stays sub-linear "under a ceiling that stays put" — and the reader called it the sharpest
+confusion in the document, sitting on the very property it was asked to judge. The loop now ends on a
+trial, never on an edit: when the cap falls after a fix, one fresh reader gets the changed passages
+and only those, and whatever that read cannot confirm ships named as unverified. The last round's
+stumbles are the hardest ones, which is exactly why the last edit must not go out unread.
 
 ### 4.11 What does the declared composite guarantee, and how is a breach caught?
 
@@ -248,6 +311,16 @@ against that part's reader, and step 11 runs one trial per part given only that 
 never blended inside a part. Step 10's axis item was rewritten to accept exactly this shape and
 nothing looser. A breach — a blended part, or an undeclared mix — is caught by that item, and by the
 per-part trial reporting material its reader did not need.
+
+Declaring the parts made the boundary explicit without making the parts separable. In the round-3
+rebuild, part 1 deferred into chapter 5 about two dozen times (§5.1, §5.3–§5.7), and the part-1
+reader's *first* stumble was that: "I had to decide on every deferral whether the argument was still
+complete without it." Both part-1 readers, in both rounds, then left chapters 1–4 unable to decide,
+because the bound they needed sat in §5.4. So the composite now has to earn its declaration: step 5
+walks each part alone, and a part whose reader cannot reach its purpose without crossing into the
+other is not a part — the split was the answer, and it goes back to the owner as one. Without that
+test, "declared composite" is available as the cheaper option at exactly the moment the split is the
+right one.
 
 
 ## 5. Alternatives considered
@@ -292,21 +365,44 @@ per-part trial reporting material its reader did not need.
   "fix every stumble" (4.9), "a clean pass gates delivery" (4.10). The other two are about what the
   input actually is: its claims have statuses writ never read (4.8), and its shape may legitimately
   serve two readers, which writ forbade without offering an alternative (4.11).
-  **Not taken — a length measure.** The evidence offered for it is the same 27% growth, uniform
+  **Then declined — a length measure.** The evidence offered for it was the same 27% growth, uniform
   across all seven chapters (+59/24/17/31/26/41/21%), which no step in the procedure noticed. But the
-  document that grew is the one that read *easier*, so the growth was the good case, and the reader
+  document that grew was the one that read *easier*, so the growth was the good case, and the reader
   trial is already the instrument that told the two cases apart. A recorded length ratio with no bar
   attached would put a proxy next to the real target — minimal reader effort — where it can only
-  compete with it. The add rules that matter already exist: steps 7 and 8 admit nothing the filled
-  outline does not carry, and the ceiling says "noise cut."
+  compete with it. The decline named the evidence that would reopen it: growth the reader trial
+  passes that a human still judges bloated. **Round 3 produced it** — see D-11.
 - **(D-9) Retire the self-imposed 2,000-word cap, keep the official <500-line bound** — chosen over
   holding the cap, because it had no external basis and had started driving the edits: task #7 paid
   for its additions with twelve meaning-preserving trims and a three-word recast (`checks/7.md`), and
   step 11 had compressed into a single 670-character paragraph. Official guidance is 1,000–3,000
-  words and under 500 lines; the body sits at 159 lines, a third of that bound, so the constraint
+  words and under 500 lines; the body sits at 190 lines, well inside that bound, so the constraint
   that actually protects the reader is the line count, not a word budget two thirds tighter than the
   ceiling. Traded away: an explicit stop against creeping length — replaced by a bound with room to
   say things once, clearly.
+
+- **(D-11) Field round 3 — the admission test runs in both directions, and each check moves to where
+  its failure is cheap** — chosen after the round-2 re-run
+  (`worktree-aiya:.rn/20260813-aiya/writ-feedback-3.md`), the first honest head-to-head writ has had.
+  D-10's carryover mechanism is what made it honest: it failed the rebuild's first render at 70.87%
+  shared text and forced a rebuild from meaning, which also retired round 1's "the rebuild won on
+  effort 3" — that document had silently inherited most of its predecessor's phrasing, so the number
+  measured the source, not the procedure. The honest comparison is **a tie**: both QUALIFIED, both
+  effort 4, the rebuild 43% longer. Six changes follow, and the first is the one the tie is about.
+  The admission test was subtractive only, so a defect four readers named in near-identical words
+  survived every round of a procedure that diagnosed it correctly (4.5); writ's own article skeleton
+  disagreed with its own ceiling about where the answer goes (4.3); the carryover measurement sat one
+  step downstream of the leak (4.7); the trial's brief left floor-level tells to the author who cannot
+  see them (4.6); the three-round cap let a run end on an unverified edit (4.10); and a declared
+  composite could be declared without being separable (4.11).
+  **Reopened from D-10 — record the size and argue for it, still no bar.** The same procedure that
+  bought easier reading with 27% in round 1 spent **43% for no gain at all** in round 2 — effort 4
+  against effort 4, and the story chapters grew fastest (+52/58/19/54/46/32/11%), so this was not
+  contract detail. The argument against a *bar* stands unchanged: a number competing with reader
+  effort is a bad instrument. What the round supports is a **recorded ratio the author must argue
+  for**, which surfaces the growth during the run, while a fill can still be un-admitted, instead of
+  after delivery. Step 10 records it; there is nothing to pass or fail, and growth no one can argue
+  for is unadmitted fill.
 
 ### 5.2 What did we trade away?
 
@@ -316,9 +412,14 @@ per-part trial reporting material its reader did not need.
   split that makes "cleared but unremarkable" a distinct, nameable state from "actually worth
   reading."
 - Choosing a single inline `SKILL.md` (2.2) over a `references/`-split structure trades some
-  file-size headroom (bounded by the official <500-line guidance; 159 lines today) for a self-contained skill that reads start to finish
+  file-size headroom (bounded by the official <500-line guidance; 190 lines today) for a self-contained skill that reads start to finish
   without following links — appropriate while the procedure is one continuous flow, at the cost of
   needing to re-split if it grows substantially.
+- Round 3's six changes leave the body at 2,994 words against the official 1,000–3,000 band: the
+  line count (190 of 500) still has room, the word count no longer does. The next round that adds
+  anything has to buy it with a trim, or split §Reference into a `references/` file and reverse the
+  single-file choice below. Recorded rather than acted on, because splitting changes the skill's
+  shape, not its procedure.
 - Re-sourcing the five axes to external best practice (D-6) trades fidelity to the user's original
   verbatim `instruction.md` outlines for current, externally-validated structures — accepted because
   the user explicitly asked for the current recommended shapes over the original wording.

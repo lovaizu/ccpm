@@ -104,6 +104,19 @@ voice, and form from the reader and purpose rather than from memory or the old d
   composite second — each part with its own reader line and axis, admissions and the step-11 trial
   running per part, no blending inside a part. Deliberately not taken: a produced-vs-input length
   measure (D-10 records why).
+- **FB round 3 (2026-09-01, `worktree-aiya:.rn/20260813-aiya/writ-feedback-3.md`):** step 3's
+  admission test runs **both ways** — a slot no reader needs goes out, and a reader need no slot
+  carries (a slot that defers the thing elsewhere does not carry it) is raised as a **proposed slot**
+  with its position and the reader evidence, never absorbed as prose under the nearest heading;
+  headless, it is placed and recorded. Step 11 sorts a **format defect** as its own class and routes
+  it to that proposed slot; step 10's admission item is stated in both directions. The article axis
+  leads with the answer and its closing is not a recap. The carryover measurement runs at step 5
+  against the filled outline, with step 10's side-by-side as the backstop. The reader trial's brief
+  asks what read as machine-written. The trial loop **ends on a trial, never on an edit** — a fix
+  after the cap gets a changed-passages-only read, and whatever is unconfirmed ships named. Step 10
+  records produced-vs-input size and requires the growth to be argued (no bar — D-10 reopened as
+  record-and-argue). A declared composite is tested for separability at step 5. The body stays under
+  500 lines and inside 1,000–3,000 words.
 
 # Assumptions
 
@@ -421,8 +434,8 @@ end to end and take the user's verdict. Fills the planning gap noted at suspend 
 sign-off gap open"): the original plan had no Evaluation sign-off task, which the rn workflow
 requires for a session to close.
 
-**Prerequisites**: #7, then #9 — the FB round 2 work landed after the first criteria run, so the run
-is re-done against the amended criteria before the verdict is taken.
+**Prerequisites**: #7, then #9 and #10 — the FB round-2 and round-3 work landed after the first
+criteria run, so the run is re-done against the amended criteria before the verdict is taken.
 
 **Steps**:
 
@@ -485,15 +498,65 @@ with mechanisms rather than replacing them).
   1,000–3,000 words.
 - The declined finding is recorded with its reasoning in `design.md` (D-10).
 
+### #10: Encode the round-3 field feedback — an admission test that can add, and checks moved to where failure is cheap
+
+**Purpose**: The round-2 re-run (`worktree-aiya:.rn/20260813-aiya/writ-feedback-3.md`) is the first
+honest head-to-head writ has had — task #9's carryover mechanism failed the rebuild's first render at
+70.87% shared text and forced a rebuild from meaning, which also retired round 1's effort-3 "win" as
+a measurement of the source rather than of the procedure. Honest, the comparison is a **tie**: both
+documents QUALIFIED, both effort 4, the rebuild 43% longer. The finding the tie is about: four fresh
+readers, two rounds, two independently written documents prescribed the same change in near-identical
+words — put the answer at the front — and writ detected it every time without being able to act,
+because step 3's slot-by-slot test can only return removal. Five smaller findings put existing checks
+one step away from where their failure is cheap or visible.
+
+**Prerequisites**: #9 (this extends the admission gate, the carryover mechanism, the stumble triage,
+the trial loop, and the declared composite that #7 and #9 built).
+
+**Steps**:
+
+- [x] Step 3: run the admission test both ways — reader → slot alongside slot → reader; an unslotted
+      need becomes a proposed slot with its position and reader evidence; a slot that defers the thing
+      elsewhere does not carry it. Step 10's admission item restated in both directions.
+- [x] Step 11: add **format defect** as a third stumble class, routed to step 3's proposed slot; an
+      unruled proposed slot ships named rather than blocking delivery.
+- [x] Five axes: the article skeleton leads with the answer, its closing is not a recap; the other
+      four re-checked against the ceiling.
+- [x] Step 5: read the filled outline against the input, where a carryover failure costs one re-fill;
+      step 10's side-by-side stays as the backstop.
+- [x] Step 11: the reader's stumble question asks what read as machine-written (a sentence already
+      read, a figure that disagrees with the prose).
+- [x] Step 11: end on a trial, never on an edit — a post-cap fix gets a changed-passages-only read,
+      and whatever is unconfirmed ships named as unverified.
+- [x] Step 10: record produced-vs-input size and argue the growth (no bar). D-10 reopened as
+      record-and-argue with the round-2 evidence (+43% for no gain).
+- [x] Step 3: a declared composite is walked part by part at step 5; a part that cannot reach its
+      purpose without the other is the split answer.
+- [x] Realign `writ/docs/design.md` (4.3, 4.5, 4.6, 4.7, 4.9, 4.10, 4.11, D-10, D-11, §5.2) and
+      `writ/README.md` with the shipped skill.
+- [x] Re-validate: `claude plugin validate ./writ --strict` and `claude plugin validate . --strict`.
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/10.md`)
+- [ ] user review (on PR #15, per push-and-review)
+
+**Completion criteria**:
+
+- Every clause of the FB-round-3 acceptance criterion above is present in `SKILL.md`.
+- `README.md` and `design.md` describe the shipped behavior, including the additive direction of the
+  admission test and the reopened length measure.
+- Both strict validations pass; the body stays under 500 lines and inside 1,000–3,000 words.
+
 # State
 
-- **Status**: paused
-- **Date**: 2026-08-30
-- **Last completed**: #9 encode the PR #15 round-2 field feedback (PR review outstanding)
-- **Next**: #8 evaluation sign-off — re-run the acceptance criteria against the amended set, then
-  take the verdict
-- **Notes**: Branch `worktree-writ`, PR #15 open; the round-2 reply is comment 5469137594. The
-  earlier criteria run (`checks/8.md`, 13/13) predates the three sign-off fixes and task #9, so it
-  is re-run before the verdict. One question for the sign-off: acceptance criterion 9 tests only
-  marketplace/README sync, not README-vs-implementation agreement — add that criterion or accept
-  the gap. The aiya side re-runs its rebuild against this version before deciding doc-A vs doc-B.
+- **Status**: in progress
+- **Date**: 2026-09-01
+- **Last completed**: #10 encode the round-3 field feedback (PR review outstanding)
+- **Next**: #8 evaluation sign-off — re-run the acceptance criteria against the amended set
+  (now including FB round 3), then take the verdict
+- **Notes**: Branch `worktree-writ`, PR #15 open; #9's review is also outstanding. The earlier
+  criteria run (`checks/8.md`, 13/13) predates the three sign-off fixes, task #9 and task #10, so it
+  is re-run before the verdict. Two questions for the sign-off: (a) acceptance criterion 9 tests only
+  marketplace/README sync, not README-vs-implementation agreement — add that criterion or accept the
+  gap; (b) the body is at 2,994 words against the official 1,000–3,000 band, so the next addition has
+  to be paid for by a trim or by splitting §Reference into `references/` (§5.2 records this; the
+  split reverses the single-file scope assumption). The aiya side rebuilds against this version and
+  judges the result on its own merits.
