@@ -455,14 +455,8 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-01
-- **Last completed**: #4 — the round-2 re-run, its evaluation (`checks/4-rebuild2-eval.md`), and the
-  round-3 writ feedback sent to PR #15 and to the writ session directly
-- **Next**: #4 — present ruling (viii)'s three README fixes for approval (the only item not blocked on
-  writ), and check whether the writ session has responded; when it has, re-run `/writ:up` on
-  `design.md` and settle adoption on that result
-- **Notes**: branch `worktree-aiya`, PR #19 (aiya gate) / PR #15 (writ). Do not hand-patch
-  `design.md` or `aiya/references/design.md` — the format defect is routed through writ by the user's
-  2026-09-01 ruling. Still pending behind the rebuild: the PR #19 verdict, the grilling adoption, the
-  ripple into the build, the targeted re-review.
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
