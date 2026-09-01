@@ -53,6 +53,14 @@ treatment as one instance among them.
   lives only in `design.md`"), the deviation-escalation rule ("raise anything that would change the
   agreed plan or design"). The devices needed to fix the second group are therefore already proven
   inside `rn`; none has to be invented.
+- **Verified fact.** The failure repeats one level up, inside this session. `steering-template.md`'s
+  Steps block requires a `Verification expert review` on every task; it appears zero times in
+  `.rn/20260625-rn-lean/steering.md`, zero in `.rn/20260705-improve-design-template/steering.md`, and
+  zero in the first draft of this document. Nothing compares a written Steps list against the
+  template, and each session was written by copying the previous session's shape rather than the
+  template — so the omission propagated across three sessions unnoticed. This is a second confirmed
+  instance of the same mechanism, and #1 checks the whole file set for others of its kind.
+
 - **Unverified.** The rules that turn out to be unenforced can be covered by the devices `rn` already
   uses, without inventing a new kind of enforcement. If the sweep turns up a rule that none of them
   fits, task #2 decides what to do about that rule specifically.
@@ -88,6 +96,7 @@ statement in `rn`, whether breaking it becomes visible, stops the flow, or passe
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 
 **Completion criteria** (serves: exhaustive judgement)
 
@@ -118,6 +127,7 @@ purpose — with the reasoning recorded where reasoning belongs.
 - [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 - [ ] Design expert review (subagent)
 
 **Completion criteria** (serves: concrete event per rule, exhaustive judgement, no new user steps)
@@ -164,6 +174,7 @@ that failed and started this session.
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 - [ ] Design expert review (subagent)
 
 **Completion criteria** (serves: originating failure caught while writing, concrete event per rule,
@@ -191,6 +202,7 @@ of all the deviation-escalation rule, which today fires only if someone happens 
 - [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 - [ ] Design expert review (subagent)
 
 **Completion criteria** (serves: concrete event per rule, no new user steps)
@@ -214,6 +226,7 @@ workflows that happened to fail.
 - [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 - [ ] Design expert review (subagent)
 
 **Completion criteria** (serves: exhaustive judgement, backward compatibility, no new user steps)
@@ -245,6 +258,7 @@ were built for, and close whatever still slips through.
 - [ ] self-check (OK/NG per completion criterion, record in checks/7.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 
 **Completion criteria** (serves: shown to work by being run, originating failure caught while writing,
 concrete event per rule)
@@ -271,6 +285,7 @@ concrete event per rule)
 - [ ] self-check (OK/NG per completion criterion, record in checks/8.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Verification expert review (subagent, writing medium)
 
 **Completion criteria** (serves: changelog entries)
 
