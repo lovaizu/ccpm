@@ -3,217 +3,242 @@ Design: rn/docs/design.md
 
 # Goal
 
-When someone runs `/rn:on`, the plan it produces should aim at what that person actually wants, and
-the session must not be able to end with every box ticked while the goal itself is unmet. Today it
-can: the previous `rn` session's own acceptance criteria read like "`design-template.md`'s five
-sections each carry explicit h3 questions" — a check on an artifact, which can hold while the person
-who asked for the work is still unserved. The advice against exactly that is *already written* in
-`steering-template.md` ("write 'the residue no longer keeps the tree dirty', not 'DESIGN.md exists'")
-and was still not followed. So the change is to the shape the planner fills in and to who reads the
-plan before the user does — not to the wording of the advice.
+`rn` states good rules that nothing enforces. When one is broken, no blank is left behind, no second
+reader sees it, no command fails, no gate holds — so it is simply not followed. The previous session
+is the proof: `steering-template.md` already said "write 'the residue no longer keeps the tree
+dirty', not 'DESIGN.md exists'", and that session's acceptance criteria were written as artifacts
+existing anyway, reaching the user with nobody having noticed.
+
+So the fix is not more advice, and it is not confined to acceptance criteria. This session sweeps
+every rule `rn` states, asks of each one **"if this is broken, does it become visible or does it
+stop?"**, and rebuilds the ones that answer neither. The acceptance-criteria failure gets the same
+treatment as one instance among them.
 
 # Acceptance criteria
 
-- Reading a `steering.md` written after this change, a third party can say for each acceptance
-  criterion **whose situation changes and how**; none of them is satisfied by an artifact merely
-  existing.
-- No acceptance criterion can hold while the goal is unmet — each one survives the question "could
-  this be true and the person still not have what they asked for?"
-- A planner cannot park a conclusion that a task is supposed to reach in `Assumptions`: whatever a
-  task is meant to determine has a home outside that section, and each surviving assumption is marked
-  as verified fact or as unverified.
-- Each task's completion criteria state the condition under which that task's **purpose** is
-  fulfilled and name which acceptance criterion it serves, so a task that serves none is visible as
-  such rather than passing unnoticed.
-- The `steering.md` a user is shown at the plan gate has already been read once by a reviewer applying
-  these same tests; an unreviewed plan never reaches the user.
-- Someone using `rn` has nothing new to learn: the commands, the three gates (plan / design /
-  evaluation) and the `/rn:ty` `/rn:gm` verdicts are unchanged.
-- Sessions planned before this change keep working: their `steering.md` stays readable, and it is
-  brought up to date only through the existing version-mismatch path — nobody has to run a migration
-  by hand.
-- `CHANGELOG.md`'s `## [Unreleased]` section carries one entry per user-facing change here, written as
-  the benefit to the person using `rn`.
-- This session's own `steering.md` passes every test above — it is the first plan written under them,
-  and re-reading it under the finished tests turns up nothing to fix.
+- Someone maintaining `rn` can point at any rule it states and be told what happens when it is
+  broken: either the mechanism that makes the breach visible or stops the flow, or a recorded reason
+  why that rule is deliberately left unenforced. Every normative statement in `rn/references/*.md`
+  and `rn/skills/*/SKILL.md` has one of the two — none was left unjudged, and none was judged by
+  sampling a file rather than reading it.
+- For each rule that was rebuilt, a third party can name the concrete event that now follows a
+  breach — a blank that stays unfilled, a reviewer who reads it, a command that fails, a gate that
+  holds. No rule was "fixed" by being restated more firmly.
+- A planner writing a `steering.md` after this change cannot land an acceptance criterion phrased as
+  an artifact existing without visibly leaving something unanswered — the failure that started this
+  session is caught while the plan is still being written, not after it ships.
+- Someone using `rn` has nothing new to learn and nothing new to do: same commands, same three gates
+  (plan / design / evaluation), same `/rn:ty` `/rn:gm` verdicts, and no additional point where the
+  session stops for them.
+- Sessions planned before this change keep working: their `steering.md` stays readable and is brought
+  up to date only through the existing version-mismatch path, with no hand-run migration.
+- `CHANGELOG.md`'s `## [Unreleased]` carries one entry per change a user of `rn` would notice,
+  written as the benefit to them.
+- This document is the first plan written under the finished rules, and re-reading it under them at
+  the end turns up nothing to fix.
 
 # Assumptions
 
 - **Verified fact.** `.rn/20260705-improve-design-template/steering.md` states its acceptance criteria
-  as artifact-existence statements, while `rn/references/steering-template.md` already forbids that
-  shape. The guidance failed in use, not by being absent — so adding more advice text is not the fix.
-- **Unverified.** The question-driven shape that replaced `design.md`'s free-form sections in 0.8.0
-  works here for the same reason it worked there. Only one session has run under it, so there is no
-  comparison to draw on.
-- **Unverified.** One extra subagent review between drafting the plan and showing it to the user is an
-  acceptable cost at the plan gate — it is the only place in `rn` where an artifact currently reaches
-  the user with no expert having read it.
-- **Not an assumption — a question this session answers.** Which questions replace the free-form
-  fields, how the two tests are worded, how a completion criterion is tied to an acceptance criterion,
-  and which expert axis reviews the plan are all undecided here on purpose. Task #1 decides them and
-  task #2 takes the user's sign-off; nothing below is built on a guess about them.
+  as artifacts existing, while `rn/references/steering-template.md` already forbids that shape. The
+  guidance was present and still failed, so adding advice text is not the fix.
+- **Verified fact.** `rn` already contains both kinds of rule. Enforced: the `Rn version:` stamp
+  (a mismatch is detected mechanically and triggers migration), the `complete task #N` commit marker
+  (`/rn:up` reconciles it against `git log`), the explicit `/rn:ty` `/rn:gm` verdicts (approval cannot
+  be inferred). Unenforced: the acceptance-criteria shape rule, the doc-division rule ("rationale
+  lives only in `design.md`"), the deviation-escalation rule ("raise anything that would change the
+  agreed plan or design"). The devices needed to fix the second group are therefore already proven
+  inside `rn`; none has to be invented.
+- **Unverified.** The rules that turn out to be unenforced can be covered by the devices `rn` already
+  uses, without inventing a new kind of enforcement. If the sweep turns up a rule that none of them
+  fits, task #2 decides what to do about that rule specifically.
+- **Unverified.** One extra subagent read between drafting a plan and showing it to the user is an
+  acceptable cost. The plan is currently the only artifact in `rn` that reaches the user with no
+  expert having read it.
 
 # Rules
 
 - commit and push every change; one completion marker per task
-- do not solve this by adding advice text alone — that approach is already in the file and already
-  failed
-- this session's own `steering.md` is the dogfood: as each test lands, re-read this document under it
+- do not close a gap by rewording the rule — every fix names the event that follows a breach
+- read each file end to end when judging it; a rule missed by skimming is a rule left unenforced
+- this document is the dogfood: as each rule lands, re-read this document under it
 - keep `claude plugin validate rn --strict` and `claude plugin validate . --strict` passing
 
 # Tasks
 
-### #1: Decide the new plan shape and record it in `rn/docs/design.md`
+### #1: Sweep every rule `rn` states and judge whether anything enforces it
 
-**Purpose**: Settle what the planner is asked instead of a blank field, how the two tests are worded,
-how a completion criterion is tied to an acceptance criterion, and where the plan review sits — and
-record each decision with its reasoning in `rn`'s canonical design doc.
+**Purpose**: Produce the exhaustive judgement the whole session builds on — for each normative
+statement in `rn`, whether breaking it becomes visible, stops the flow, or passes unnoticed.
 
 **Prerequisites**: none
 
 **Steps**:
 
-- [ ] establish why the existing guidance did not take effect (compare what `steering-template.md`
-      already says against what the last two sessions' `steering.md` actually wrote)
-- [ ] update `rn/docs/design.md` via `design-template.md`'s "updating an existing design.md"
-      procedure, recording the four decisions with their reasoning
+- [ ] read each of `rn/references/*.md` (8 files) and `rn/skills/*/SKILL.md` (5 files) end to end and
+      extract every normative statement
+- [ ] judge each one: visible on breach / stops the flow / neither — naming the mechanism where one
+      exists
+- [ ] record the judgement in `.rn/20260830-issue-17/rule-inventory.md`, one row per rule, with its
+      source location
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
-- [ ] Design expert review (subagent)
 
-**Completion criteria** (serves: falsification test, assumptions, traceability, reviewer):
+**Completion criteria** (serves: exhaustive judgement)
 
-- `rn/docs/design.md` answers, with reasoning, all four: what the planner is asked in place of each
-  free-form field, how the two tests are stated so writer and reviewer apply the same one, how a
-  completion criterion is tied to an acceptance criterion, and at what point the plan is reviewed
-- a reader who was not in this conversation can tell from the doc why "write clearer advice" was
-  rejected as the fix, and what is expected to make the new shape hold where advice did not
-- no decision below (#3–#5) is left to improvisation: each has a stated shape to build to
+- every normative statement in the 13 files carries a judgement with grounds; a reader can take any
+  line of any of those files and find it accounted for
+- the unenforced set is separated from the enforced set, so #2 has a definite list to work from
+- no row asserts a mechanism that does not exist — each named mechanism is quoted from the file that
+  implements it
 
-### #2: Design sign-off
+### #2: Decide what to do with each unenforced rule, and record it in `rn/docs/design.md`
 
-**Purpose**: The user approves the plan's new shape before the templates and workflow are rewritten to
-it.
+**Purpose**: Settle, per unenforced rule, which device carries it — or that it stays unenforced on
+purpose — with the reasoning recorded where reasoning belongs.
 
 **Prerequisites**: #1
 
 **Steps**:
 
-- [ ] present `rn/docs/design.md`'s new/changed sections to the user on the PR
-- [ ] take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)
+- [ ] group the unenforced rules by the device that fits (question in place of a blank field, a second
+      reader, a mechanical check, a named link that leaves orphans visible, a checkbox, a gate)
+- [ ] decide the acceptance-criteria case explicitly — it is the session's originating instance
+- [ ] record each decision with its reasoning in `rn/docs/design.md`, following
+      `design-template.md`'s "updating an existing design.md" procedure
+- [ ] record, for each rule deliberately left unenforced, why enforcing it costs more than it saves
+- [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing medium)
+- [ ] Design expert review (subagent)
 
-**Completion criteria** (serves: every criterion below depends on this shape being the agreed one):
+**Completion criteria** (serves: concrete event per rule, exhaustive judgement, no new user steps)
 
-- the shape recorded in `rn/docs/design.md` is the user's, confirmed by an explicit `/rn:ty` verdict —
-  no part of #3–#5 rests on a shape the user has not seen
+- every rule #1 marked unenforced has either a named device or a recorded reason for staying that way
+- for each device, the doc states the event that follows a breach — a reader can describe what
+  happens without reading the implementation
+- a reader who was not in this conversation can tell why "write the advice more clearly" was rejected
+- nothing in #4–#6 is left to improvisation: each has a stated shape to build to
+- no decision adds a stop the user has to attend
 
-### #3: Turn `steering-template.md`'s free-form fields into questions the planner must answer
+### #3: Design sign-off
 
-**Purpose**: Make it unnatural to answer with an artifact's name — the planner is asked what changes
-for whom, not asked to fill a section called "Acceptance criteria".
+**Purpose**: The user approves the devices and their placement before any file is rewritten to them.
 
 **Prerequisites**: #2
 
 **Steps**:
 
-- [ ] rewrite the template block and per-section guidance to the shape approved in #2
-- [ ] state the two tests by name in the template, so the writer and the #5 reviewer apply the same
-      wording
-- [ ] require each completion criterion to name the acceptance criterion it serves
-- [ ] give whatever a task must discover a home outside `Assumptions`, and require each remaining
-      assumption to be marked verified or unverified
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
-- [ ] Design expert review (subagent)
+- [ ] present `rn/docs/design.md`'s new and changed sections to the user on the PR
+- [ ] take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)
 
-**Completion criteria** (serves: "whose situation changes", falsification test, assumptions,
-traceability):
+**Completion criteria** (serves: every criterion below depends on this being the agreed shape)
 
-- a planner following the template cannot produce an acceptance criterion phrased as an artifact
-  existing without visibly leaving a question unanswered
-- the two tests appear in the template in the exact wording the reviewer will use — one place, not two
-- `Assumptions` has no room for a conclusion a task is meant to reach: the template says where such an
-  item goes instead
-- re-reading this session's own `steering.md` against the finished template turns up nothing that
-  fails the new tests
+- the recorded shape is the user's, confirmed by an explicit `/rn:ty` verdict — no part of #4–#6 rests
+  on a shape the user has not seen
 
-### #4: Rewrite `planning-workflow.md` to walk the planner through those questions
+### #4: Enforce the planning rules — `steering-template.md` and `planning-workflow.md`
 
-**Purpose**: The procedure that produces a plan asks the questions in order and does not let a
-free-form field come back in through the workflow's own wording.
+**Purpose**: Make the rules that govern how a plan is written hold on their own, including the one
+that failed and started this session.
 
 **Prerequisites**: #3
 
 **Steps**:
 
-- [ ] revise the goal / criteria / assumptions / decomposition steps to drive from the questions in
-      #3 rather than from field names
-- [ ] remove or rewrite any step wording that invites artifact-shaped answers
+- [ ] apply the decided devices to `steering-template.md`
+- [ ] apply them to `planning-workflow.md`, so template and workflow ask the same questions in the
+      same terms
+- [ ] put the plan in front of a reviewer before the plan-gate ask, applying the same tests the writer
+      was given, with revisions handled by the coordinator rather than a new user stop
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
 - [ ] Design expert review (subagent)
 
-**Completion criteria** (serves: "whose situation changes", falsification test, assumptions):
+**Completion criteria** (serves: originating failure caught while writing, concrete event per rule,
+no new user steps)
 
-- the workflow's planning steps and the template ask the same questions in the same terms — a planner
-  reading both is never told two different things
-- the workflow no longer contains guidance that only exhorts ("state the end-state, never actions")
-  without a question or test that makes the failure visible
+- an artifact-existence acceptance criterion cannot be written without leaving something visibly
+  unanswered
+- no path through `planning-workflow.md` reaches the plan-gate ask with the plan unread by a reviewer
+- a planner reading the template and the workflow is never told two different things
+- the user still sees one plan gate, with the same commands and verdicts
+- re-reading this session's own `steering.md` against the finished files turns up nothing that fails
 
-### #5: Put a review between the drafted plan and the plan gate
+### #5: Enforce the execution and verification rules — `task-execute-workflow.md` and `task-verify-workflow.md`
 
-**Purpose**: Close the one place in `rn` where an artifact reaches the user with no expert having read
-it — the plan itself.
+**Purpose**: Make the rules governing how a task is carried out and checked hold on their own — most
+of all the deviation-escalation rule, which today fires only if someone happens to notice.
 
 **Prerequisites**: #3
 
 **Steps**:
 
-- [ ] add the review step to `planning-workflow.md` before the plan-gate ask, with the reviewer
-      applying the two tests from #3 and the traceability link
-- [ ] specify what happens on a finding: the coordinator revises the plan and re-reviews before the
-      user sees it — no new user gate is introduced
+- [ ] apply the decided devices to `task-execute-workflow.md`
+- [ ] apply them to `task-verify-workflow.md`
+- [ ] give the escalation rule a trigger that does not depend on noticing
 - [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
 - [ ] Design expert review (subagent)
 
-**Completion criteria** (serves: reviewer before the gate, nothing new to learn):
+**Completion criteria** (serves: concrete event per rule, no new user steps)
 
-- no path through `planning-workflow.md` reaches the plan-gate ask without the plan having been
-  reviewed
-- the user's experience is unchanged: still three gates, same commands, same verdicts — the review is
-  not a fourth stop
-- `claude plugin validate rn --strict` and `claude plugin validate . --strict` both pass
+- each rule these two files state either has a named device or is recorded as deliberately unenforced
+- a change to the agreed plan or design cannot reach the user's branch without having been surfaced
+- the per-task review structure the user never sees is unchanged in what it costs them: still no
+  per-task sign-off
 
-### #6: Record the change in `CHANGELOG.md`
+### #6: Enforce the session-operation rules — `status-display.md`, the five `SKILL.md`s, `design-template.md`, `migration-workflow.md`, `pr-feedback-workflow.md`
 
-**Purpose**: Someone reading the changelog learns what is different for them, in their terms.
+**Purpose**: Close the remaining files so the sweep is whole rather than confined to the two
+workflows that happened to fail.
 
-**Prerequisites**: #3, #4, #5
+**Prerequisites**: #3
 
 **Steps**:
 
-- [ ] add one entry per user-facing change under `## [Unreleased]`, in `<what changed> — <why it helps
-      the user>` form
+- [ ] apply the decided devices to each of the nine remaining files
+- [ ] leave a recorded reason wherever a rule is kept unenforced
 - [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
+- [ ] Design expert review (subagent)
 
-**Completion criteria** (serves: changelog entries):
+**Completion criteria** (serves: exhaustive judgement, backward compatibility, no new user steps)
 
-- each entry names a difference the person using `rn` will notice, with no reference to file names or
-  internal steps they never see
-- no entry exists for a change nobody notices (refactors, wording-only edits)
+- no rule in these nine files is left both unenforced and unexplained
+- a `steering.md` written before this change still reads correctly and still updates only through the
+  version-mismatch path
+- `claude plugin validate rn --strict` and `claude plugin validate . --strict` both pass
 
-### #7: Evaluation sign-off
+### #7: Record the change in `CHANGELOG.md`
+
+**Purpose**: Someone reading the changelog learns what is different for them, in their terms.
+
+**Prerequisites**: #4, #5, #6
+
+**Steps**:
+
+- [ ] add one entry per user-noticeable change under `## [Unreleased]`, as `<what changed> — <why it
+      helps the user>`
+- [ ] self-check (OK/NG per completion criterion, record in checks/7.md)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing medium)
+
+**Completion criteria** (serves: changelog entries)
+
+- each entry names a difference the person using `rn` will notice, with no file names or internal
+  steps they never see
+- no entry exists for a change nobody notices
+
+### #8: Evaluation sign-off
 
 **Purpose**: Present the Acceptance criteria run to the user and take their verdict.
 
-**Prerequisites**: #1, #2, #3, #4, #5, #6
+**Prerequisites**: #1, #2, #3, #4, #5, #6, #7
 
 **Steps**:
 
@@ -221,10 +246,10 @@ it — the plan itself.
 - [ ] present the results to the user
 - [ ] take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)
 
-**Completion criteria** (serves: the goal itself):
+**Completion criteria** (serves: the goal itself)
 
-- every Acceptance criteria item has recorded evidence, including the dogfood item — this document
-  read back under the finished tests
+- every Acceptance criteria item has recorded evidence, the dogfood item included — this document read
+  back under the finished rules
 - the user has issued an explicit `/rn:ty` verdict on the run
 
 # State
