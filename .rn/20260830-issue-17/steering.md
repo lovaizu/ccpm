@@ -34,6 +34,10 @@ treatment as one instance among them.
   up to date only through the existing version-mismatch path, with no hand-run migration.
 - `CHANGELOG.md`'s `## [Unreleased]` carries one entry per change a user of `rn` would notice,
   written as the benefit to them.
+- The fix is shown to work by being run, not by being read: a rule that was actually broken in a past
+  session, replayed under the rebuilt files, is visibly caught — and a planner who was not part of
+  this session, writing under them for the first time, is caught too. Where a replay still slips
+  through, that is recorded and closed rather than left as a known miss.
 - This document is the first plan written under the finished rules, and re-reading it under them at
   the end turns up nothing to fix.
 
@@ -108,6 +112,9 @@ purpose — with the reasoning recorded where reasoning belongs.
 - [ ] record each decision with its reasoning in `rn/docs/design.md`, following
       `design-template.md`'s "updating an existing design.md" procedure
 - [ ] record, for each rule deliberately left unenforced, why enforcing it costs more than it saves
+- [ ] desk-replay each candidate device against the known failure in
+      `.rn/20260705-improve-design-template/steering.md` — state what would have happened there — and
+      drop any device that would have let it through
 - [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
@@ -119,6 +126,8 @@ purpose — with the reasoning recorded where reasoning belongs.
 - for each device, the doc states the event that follows a breach — a reader can describe what
   happens without reading the implementation
 - a reader who was not in this conversation can tell why "write the advice more clearly" was rejected
+- no device survives that would have let the known past failure through — each is answered against
+  that case before anything is built on it
 - nothing in #4–#6 is left to improvisation: each has a stated shape to build to
 - no decision adds a stop the user has to attend
 
@@ -214,17 +223,52 @@ workflows that happened to fail.
   version-mismatch path
 - `claude plugin validate rn --strict` and `claude plugin validate . --strict` both pass
 
-### #7: Record the change in `CHANGELOG.md`
+### #7: Run the rebuilt rules and see whether they actually catch what advice did not
 
-**Purpose**: Someone reading the changelog learns what is different for them, in their terms.
+**Purpose**: Establish by execution — not by reading — that the rebuilt rules stop the failures they
+were built for, and close whatever still slips through.
 
 **Prerequisites**: #4, #5, #6
 
 **Steps**:
 
+- [ ] replay the known failure: take the goal of `.rn/20260705-improve-design-template` and write its
+      plan again under the rebuilt template and workflow, then compare what comes out against the
+      artifact-existence criteria that session actually shipped
+- [ ] run a planner that was not part of this session — `claude -p "/rn:on <a small throwaway goal>"
+      --plugin-dir rn` — and read the `steering.md` it produces cold
+- [ ] try to break each rebuilt rule on purpose and record what happens: which blank stays unfilled,
+      which reviewer objects, which command fails, which gate holds
+- [ ] walk a deviation scenario through `task-verify-workflow.md` and point at the line where the
+      escalation trigger fires
+- [ ] record every miss, fix it in the file it belongs to, and re-run that replay
+- [ ] self-check (OK/NG per completion criterion, record in checks/7.md)
+- [ ] QA expert review (subagent)
+- [ ] Craft expert review (subagent, writing medium)
+
+**Completion criteria** (serves: shown to work by being run, originating failure caught while writing,
+concrete event per rule)
+
+- the replayed past failure is caught under the rebuilt files, and the transcript shows where — a
+  reader can see the point at which the old plan could no longer have been written
+- the cold planner's `steering.md`, read by someone applying the new tests, has no acceptance
+  criterion satisfied by an artifact merely existing
+- every deliberate breach produced a named, observed event; any rule whose breach produced nothing was
+  fixed and re-run, and none is left recorded as a known miss
+- the run's limits are stated — one replay and one cold run are evidence, not proof, and the record
+  says so rather than overclaiming
+
+### #8: Record the change in `CHANGELOG.md`
+
+**Purpose**: Someone reading the changelog learns what is different for them, in their terms.
+
+**Prerequisites**: #4, #5, #6, #7
+
+**Steps**:
+
 - [ ] add one entry per user-noticeable change under `## [Unreleased]`, as `<what changed> — <why it
       helps the user>`
-- [ ] self-check (OK/NG per completion criterion, record in checks/7.md)
+- [ ] self-check (OK/NG per completion criterion, record in checks/8.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
 
@@ -234,11 +278,11 @@ workflows that happened to fail.
   steps they never see
 - no entry exists for a change nobody notices
 
-### #8: Evaluation sign-off
+### #9: Evaluation sign-off
 
 **Purpose**: Present the Acceptance criteria run to the user and take their verdict.
 
-**Prerequisites**: #1, #2, #3, #4, #5, #6, #7
+**Prerequisites**: #1, #2, #3, #4, #5, #6, #7, #8
 
 **Steps**:
 
@@ -248,7 +292,7 @@ workflows that happened to fail.
 
 **Completion criteria** (serves: the goal itself)
 
-- every Acceptance criteria item has recorded evidence, the dogfood item included — this document read
+- every Acceptance criteria item has recorded evidence, the dogfood and replay items included — this document read
   back under the finished rules
 - the user has issued an explicit `/rn:ty` verdict on the run
 
