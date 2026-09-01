@@ -62,8 +62,8 @@ rather than editing it in place. Instructions to the model and rules for the pro
 not separated into layers: each rule sits at the step that applies it, so reading the body top to
 bottom is doing the work (D-13). One line before the first step puts every rule in the body under the
 same addressee — the document produced, never the prompt — so no rule needs a local marker to be read
-correctly (4.1). Building fresh means the AI tells never take hold in
-the first place; a final floor-net pass (after the ceiling is built) catches only the stragglers.
+correctly (4.1). Building fresh means the AI tells never take hold in the first place; a final
+floor-net pass (after the ceiling is built) catches only the stragglers.
 Voice, form, and axis are all derived from a reader definition captured early in the procedure, so
 the output actually varies with who is reading rather than reproducing one memorized shape.
 
@@ -74,7 +74,7 @@ the output actually varies with who is reading rather than reproducing one memor
 | `instruction.md` | Verbatim source of record for the skill's pillars (except the five-axis skeletons, superseded by D-6 research). |
 | `SKILL.md` — the ordered steps | Instructions to the model running the skill: understand → define reader → outline → fill → check story → decide voice/form → write → brush up → clear floor → self-check → reader trial & deliver. |
 | `SKILL.md` — the rules inside the steps | Constraints on the produced document, each carried by the step that applies it: voice and form at step 6, the three claim statuses at step 7, the ceiling at step 8, the seven-tell floor at step 9. One line before step 1 puts all of them under the same addressee — the produced document, not the prompt. |
-| `references/axes.md` | The five axis skeletons. Step 3 orders the read; the pointer carries no summary. |
+| `references/axes.md` | The five axis skeletons. Step 3 orders the read and quotes the chosen skeleton's slots; step 10 re-reads it and compares the outline slot for slot. The pointer carries no summary. |
 | The writer (human or Claude) | Runs the skill against an input draft (or a topic, from scratch), producing the document plus a "what changed and why" note. |
 | Fresh-context reader (subagent) | Reads the produced document as the step-2 reader (one per part, for a declared composite), given only the document and that reader definition; reports stumbles and content the reader did not need. Delivery is gated on its prose defects being cleared (D-8, D-10). |
 | Produced document | The end artifact judged against the floor/ceiling bar — never the prompt itself. |
