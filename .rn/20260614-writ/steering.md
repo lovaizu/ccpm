@@ -591,14 +591,12 @@ it).
 
 # State
 
-- **Status**: paused
-- **Date**: 2026-09-01
-- **Last completed**: #11 restate the acceptance criteria as ends (PR review outstanding)
-- **Next**: #12 rebuild `SKILL.md` as one continuous work procedure — start from the block-to-step
-  map, then the rewrite
-- **Notes**: Branch `worktree-writ`, PR #15 open; reviews for #9, #10 and #11 are outstanding there.
-  #12 was agreed in conversation: the rules catalog dissolves into the steps, long blocks go to
-  `references/` with no summary at the pointer. #8 now needs a live `/writ:up` run to judge ends 1–8;
-  `checks/8.md` (13/13) predates everything from #9 on and does not carry over. Open question for the
-  sign-off: whether README-vs-implementation agreement should be stated as an end at all. The aiya
-  side rebuilds against the round-3 skill and judges the result on its own merits — no reply owed.
+(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
+session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
+so only a genuinely suspended session reads `paused`.)
+
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
