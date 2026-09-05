@@ -9,6 +9,12 @@
       "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into reviewed tasks, open a draft PR for the plan, and resume across conversations via a git-tracked steering.md.",
       "source": "./rn",
       "category": "development"
+    },
+    {
+      "name": "writ",
+      "description": "Reader-first document brush-up: define who reads the document, then derive its tone, diagrams, closing, and outline from that. Revises an existing draft (or writes from scratch) via /writ:up.",
+      "source": "./writ",
+      "category": "writing"
     }
   ]
 }
