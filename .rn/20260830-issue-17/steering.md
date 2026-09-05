@@ -343,8 +343,16 @@ concrete event per rule)
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-05
+- **Last completed**: none — planning only; no task has been started
+- **Next**: #1 Sweep every rule `rn` states and judge whether anything enforces it
+- **Notes**: branch `worktree-issue-17`, draft PR https://github.com/lovaizu/ccpm/pull/21. The plan
+  gate is still open — no `/rn:ty` or `/rn:gm` verdict yet; take it before starting #1. One decision
+  is pending with the user: a named coordinator check before each user gate — proposed name
+  `preflight`, four viewpoints shared across the three gates (Sufficiency / Evidence / Assumptions /
+  Fit) with the question reworded per gate, and an output format of `observation → action or
+  remaining limit` per viewpoint rather than an OK/NG stamp, so an unperformed check shows as an
+  empty line. The user asked for the name, the viewpoints and the format to be settled; the proposal
+  is in the conversation but not yet in any file. On approval it becomes #2's decision content and
+  #4's build target, and `rn/docs/design.md` records it.
