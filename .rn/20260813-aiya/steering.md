@@ -375,7 +375,25 @@ design §2's part inventory is amended to match, per the user's ruling in-sessio
       also produced a second format finding (the Design document should be two files: three trial
       rounds overturned Part II's separability), nine design-side subject defects, and one writ finding
       for round 4 (the step-10 render pulled the input's phrasing back from memory, so closing the
-      input at step 7 protects nothing))
+      input at step 7 protects nothing). **The adoption question is withdrawn as posed** — the user
+      pointed out 2026-09-01 that five findings had just gone to writ, so settling adoption on the
+      round-3 output contradicts the standing principle that an output which loses is writ's defect.
+      Round-4 feedback written to `.rn/20260813-aiya/writ-feedback-4.md` (ae0b4cf), posted to PR #15
+      and delivered to the writ session `techting-bb`)
+
+- [ ] Rule the two format questions round 3 produced, then run round 4 against the corrected format —
+      the order matters and is what round 3 taught: rebuilding against a format known to be defective
+      reproduces the defect, and the second question is one no rebuild can answer from inside
+      (`aiya/references/design.md` fixes seven chapters in one file). (a) chapter 1 gains a closing
+      discharge section — recommended, on four readers across two documents and round 3's confirmation
+      that it landed; (b) the Design document becomes two files, an argument and a reference —
+      recommended but wider, because `references/design.md` is a **shipped** format aiya hands to its
+      users' products, so the change reaches every product built with aiya, not just this document.
+      Evidence for (b): three trial rounds overturned Part II's separability and round 1's mitigation
+      moved nothing. Then: amend the format, let writ take the round-4 feedback, rebuild, and settle
+      adoption there. **Stopping rule proposed**: the bar is a reader reaching a leg-by-leg verdict,
+      met at round 3; round 3 is also the first round leaving no "neither document may do this"
+      finding, so round 4 is planned as the last
 
 - [ ] Take the verdict on the design revision — run-state file (badd0c7 + 0764c7e), restructure
       (a5ffde5), the writ rebuild (486a1af), and the noise refinement (edcf1b4) — on PR #19
@@ -482,8 +500,13 @@ whole build.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: -
-- **Last completed**: -
-- **Next**: -
-- **Notes**: -
+- **Status**: paused
+- **Date**: 2026-09-05
+- **Last completed**: #4 — the round-3 rebuild (`checks/4-rebuild3/`), its evaluation
+  (`checks/4-rebuild3-eval.md`), the three README fidelity fixes, and the round-4 writ feedback
+- **Next**: #4 — take the user's ruling on the two format questions (chapter 1's discharge slot; one
+  file or two), amend `aiya/references/design.md`, then rebuild and settle adoption on that result
+- **Notes**: branch `worktree-aiya`, PR #19 (aiya gate) / PR #15 (writ). `aiya/docs/design.md` stays
+  at `d7b63f9` and is not hand-patched. Do not re-run the rebuild before the format is ruled. Still
+  pending behind it: the PR #19 verdict, the grilling adoption, the ripple into the build, the
+  targeted re-review, and the nine design-side defects in `checks/4-rebuild3-eval.md`.
