@@ -446,18 +446,23 @@ followup を当て→また回す、を収束まで続けるのがこのタス�
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-05
-- **Last completed**: #12 の **適用ラウンド2**（`c7272f0`／ledger `473668e`）。本セッションではその前に
-  **rn 0.8.0 へのマイグレーション**（`376fa3b`）も実施＝`design.md` 新設（旧 `# Decisions` の D-1〜D-10 を移設）・
-  タスク単位の user review ステップ廃止・#12 の完了基準を到達状態に書き直し・**#13 評価サインオフを新設**。
-- **Next**: #12 の **再 dogfood 2周目**。**ユーザーが案件のブリーフを提供するのを待っている状態**（前回同様の
-  二者構成＝subagent が `/hposal:up` 起草・main が利用者役で★ゲート応答）。前回未到達の **Phase 4（パーツ組み立て
-  →export→PDF）まで必ず回す**＝outline/parts 側の followup は Phase 4 を通すまで保留のまま。
-- **Notes**:
-  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN・レビュー待ち）。`473668e` まで push 済み・tree clean。
-    #9〜#12 の user review は **#13（評価サインオフ）に集約**＝この PR 上で一度に受ける。
-  - `checks/12.md` は `Ready to check off: No`（マイグレで完了基準を書き換えたため、旧基準の self-check は根拠として
-    使えない）。#12 の self-check と QA/Craft/Verification/Design レビューは収束後に**再実行**が要る。
-  - dogfood 生成物は scratchpad（公開リポジトリ外・揮発）に置き、ccpm に戻すのは PII を除いた一般化所見のみ。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+```
+
+---
+
+## Task definition requirements
+
+| Requirement | Rule |
+|---|---|
+| Granularity | Purpose expressible in one sentence; split if it grows |
+| Specificity | Not "implement" but "implement `methodName()` in `ClassName`" |
+| Objectivity | Completion criteria judgeable by a third party |
+| Prerequisites | List dependencies explicitly; enables parallel/sequential judgment |
+| Criteria vs steps | Completion criteria are written so a third party can answer, with grounds, ① is the objective achieved and ② are new problems absent (the bar) — not that an artifact was produced; actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. The task-execution references' (`task-execute-workflow.md` / `task-verify-workflow.md`) shared Process selection section — a per-task judgment of the task's medium (coding / writing / visual) and whether it produces or revises structure/approach — is the source of *which* reviews apply — keep the two in sync |
+| Flat tasks | Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates — each task's own verify steps (QA / expert review + the coordinator's review) are its gate. The user signs off only at the three scheduled gates (plan / design / evaluation), never per task |
+| Done annotation | A task that is done but awaiting an external gate (e.g. a batched PR review) may carry an explicit done annotation in its heading (e.g. `— DONE through QA`); such a task counts as completed for the session-status display |
