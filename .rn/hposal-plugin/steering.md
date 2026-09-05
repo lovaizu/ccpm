@@ -391,9 +391,11 @@ followup を当て→また回す、を収束まで続けるのがこのタス�
 - [x] **再 dogfood 1周目**（`dogfood-notes.md` の「Round 2」節）：二者構成・架空案件（学習塾12pp・基盤2案・
       toC リードフォーム・小予算・独自ドメイン+301）で phase 1→3 実走。新所見 G1–G5・H1–H4・J1–J4 を収集
       （commit `b2859c8`）。**Phase 4 は未実走**＝次周に畳む
-- [ ] **適用ラウンド2**：`dogfood-notes.md` の「反映方針（apply-round-2 の followup 群）」を当てる。
-      とくに **J1＝F8 の未完部分**（03 に役割別突合表は入ったが、SKILL が必須とする移行の責任分担マトリクスが未）。
-      CHANGELOG `[Unreleased]` 追記・`validate hposal --strict`／`validate . --strict` 両方
+- [x] **適用ラウンド2**：`dogfood-notes.md` の「反映方針（apply-round-2 の followup 群）」を適用（commit `c7272f0`）。
+      01＝★ゲート枠(G1)／母数4欄(G4+H3)／`要件化` 列削除(G2)、site-inventory＝`作り直し` 値(G3)、
+      02＝スケジュール story 枠(H1)／ランニング費は相互参照(H4)、03＝責任分担マトリクス(J1＝F8 完成)／
+      標準項目チェックリスト(J3)／見本行分離(J2)／2バンド表(J4)、SKILL＝p↔スロット別系統(H2)／2バンド命名(J4)。
+      G5 は低価値のため意図的に不適用。CHANGELOG `[Unreleased]` 追記・`validate` 両方 ✔（ledger `473668e`）
 - [ ] **再 dogfood 2周目**：別案件（ユーザー提供・二者構成・main 利用者役・PII なし）で phase 1→4 を
       最後まで実走し、新所見を `dogfood-notes.md` に追記する
 - [ ] 「適用→dogfood」を**新所見が軽微に収束するまで反復**する（各周回で `dogfood-notes.md` を更新し、
@@ -444,8 +446,18 @@ followup を当て→また回す、を収束まで続けるのがこのタス�
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-05
+- **Last completed**: #12 の **適用ラウンド2**（`c7272f0`／ledger `473668e`）。本セッションではその前に
+  **rn 0.8.0 へのマイグレーション**（`376fa3b`）も実施＝`design.md` 新設（旧 `# Decisions` の D-1〜D-10 を移設）・
+  タスク単位の user review ステップ廃止・#12 の完了基準を到達状態に書き直し・**#13 評価サインオフを新設**。
+- **Next**: #12 の **再 dogfood 2周目**。**ユーザーが案件のブリーフを提供するのを待っている状態**（前回同様の
+  二者構成＝subagent が `/hposal:up` 起草・main が利用者役で★ゲート応答）。前回未到達の **Phase 4（パーツ組み立て
+  →export→PDF）まで必ず回す**＝outline/parts 側の followup は Phase 4 を通すまで保留のまま。
+- **Notes**:
+  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN・レビュー待ち）。`473668e` まで push 済み・tree clean。
+    #9〜#12 の user review は **#13（評価サインオフ）に集約**＝この PR 上で一度に受ける。
+  - `checks/12.md` は `Ready to check off: No`（マイグレで完了基準を書き換えたため、旧基準の self-check は根拠として
+    使えない）。#12 の self-check と QA/Craft/Verification/Design レビューは収束後に**再実行**が要る。
+  - dogfood 生成物は scratchpad（公開リポジトリ外・揮発）に置き、ccpm に戻すのは PII を除いた一般化所見のみ。
+  - 未解決の user-deferred パス：なし。
