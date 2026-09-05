@@ -569,17 +569,20 @@ it).
 
 **Steps**:
 
-- [ ] Map every `## Reference` block to the step that uses it, and record which are used once (the
+- [x] Map every `## Reference` block to the step that uses it, and record which are used once (the
       five axes, at step 3) and which are used at several steps (the two tiers, at 8 / 10 / 11).
-- [ ] Rewrite the steps so each carries what it uses: short blocks inline at their moment; the five
+- [x] Rewrite the steps so each carries what it uses: short blocks inline at their moment; the five
       axes moved to `references/` with the step ordering the read and the pointer carrying no summary.
-- [ ] Keep the addressee guarantee (`design.md` 4.1): every block of rules for the produced document
+- [x] Keep the addressee guarantee (`design.md` 4.1): every block of rules for the produced document
       says so where it sits, so it is never read as a rule about this prompt.
-- [ ] Walk `design.md` §4 (4.1–4.11) item by item and confirm each guarantee still has a mechanism and
+- [x] Walk `design.md` §4 (4.1–4.11) item by item and confirm each guarantee still has a mechanism and
       a breach-catch in the rebuilt body; update `design.md` where a mechanism moved.
-- [ ] Re-validate: both strict validations, and a headless invocation that starts the procedure.
-- [ ] Dogfood: run `/writ:up` on a real draft and judge ends 1–8 against the result.
-- [ ] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/12.md`)
+- [x] Re-validate: both strict validations, and a headless invocation that starts the procedure.
+- [x] Dogfood: run `/writ:up` on a real draft and judge ends 1–8 against the result. Run at
+      `2f290a9` against the body at `d2660dd`, all eleven steps recorded, three reader
+      reports committed verbatim. Ends graded independently, in the split steering requires: 1, 2, 3, 5
+      PASS; 4 NOT EXERCISED; 6, 7, 8 FAIL. Not re-run for fix round 3.
+- [x] self-check (record OK/NG per criterion in `.rn/20260614-writ/checks/12.md`)
 - [ ] user review (on PR #15, per push-and-review)
 
 **Completion criteria**:
@@ -593,12 +596,19 @@ it).
 
 # State
 
-(written by /rn:dn, read and reset to this placeholder by /rn:up. `Status` is `paused` while a
-session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
-so only a genuinely suspended session reads `paused`.)
-
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-05
+- **Last completed**: #12 steps done through self-check; the task is **not checked off** — criterion 3
+  is unmet and the decision on how to close it is with the user
+- **Next**: the user's answer on the order — then either close #12 and open #13, or go straight to #8
+- **Notes**: Branch `worktree-writ`, PR #15 open; reviews for #9, #10, #11 and #12 are outstanding
+  there. **One question is pending**: proceed #12 → #13 → #8? #12's criteria 1 and 2 are met and
+  criterion 3 is not — independent grading returned ends 1, 2, 3, 5 PASS, 4 NOT EXERCISED, 6, 7, 8
+  FAIL, and its comparative half has no baseline, since ends 1–8 were created at `727bde1`. The three
+  failures are the run departing from rules the body states but cannot detect; the triage cap of three
+  fix rounds is reached, so this was recorded and escalated rather than fixed again. Verdicts and the
+  full grading are in `checks/12.md`; nine carried writ gaps are listed there, headed by the
+  non-converging trial loop (step 11's brief can only report excess; the dogfood went 6 → 6 → 7
+  stumbles with every reported defect fixed in between). #13, if approved, is those nine plus the
+  round-4 field feedback at `worktree-aiya:.rn/20260813-aiya/writ-feedback-4.md` (`ae0b4cf`) — no reply
+  is owed to the aiya side. Round 3's fixes (`142441f`) are unreviewed: the cap fell first.
