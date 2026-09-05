@@ -330,8 +330,23 @@ split it by task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-05
+- **Last completed**: none — no task has started
+- **Next**: #1, but only after the steering rewrite below and the plan-gate verdict
+- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
+  **Blocker**: the plan gate is still open — no `/rn:ty` or `/rn:gm` verdict on this steering.
+  **Pending decision, asked and unanswered**: whether to rewrite this steering to drop the
+  invent-a-marker route. The discussion converged on adding nothing: `cwd` / `gitBranch` already
+  carry `issue-18`, so the conversation log is locatable by grep, and rn's session-status block
+  already prints session, task ids and task labels at every stop, so intervals are readable by
+  collecting those blocks in time order. Cost of that route: blocks appear only at stop points, so a
+  task finishing without stopping leaves no boundary. Under it, #1 changes from "measure whether a
+  new string reaches the JSONL" to "prove the existing log alone yields this conversation's
+  friction", and the Acceptance criteria plus #2 / #4 need rewriting — as written they still
+  describe the invent-a-marker route, including the `cf13fc9` additions.
+  **Unverified premise that survives either route**: whether entries are written to the JSONL before
+  the conversation ends. Measured so far: `assistant` entries do exist in stored logs (26 in
+  `8dca6935`), but this conversation's own file had not yet appeared in
+  `~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm/`. Worktrees of this repo share that one project
+  directory. No user-deferred paths.
