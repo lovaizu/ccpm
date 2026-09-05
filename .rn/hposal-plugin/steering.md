@@ -1,3 +1,6 @@
+Rn version: 0.8.0
+Design: .rn/hposal-plugin/design.md
+
 # Goal
 
 `corporate-site-kit`（HP＝コーポレートサイトの見積・提案書を作る、日本語の「読み物キット」：README＋
@@ -5,10 +8,11 @@
 プラグイン **`hposal`**（HP proposal）に作り変え、この `ccpm` マーケットプレイスに `rn` と並べて
 `/plugin install` で導入できるようにする。
 
-お手本は完成済みの `rn` プラグイン（`rn/` 配下の構成をそのまま型として踏襲する）。キットの中身（手順・
-テンプレ）は日本語のまま保ち、マーケット一覧に出る説明文だけ英語にする。着手の前に、元キット一式を本
-セッションのステアリングと同じフォルダにベース素材としてコピーしておく（原本は Google Drive にあり、
-リポジトリ内に変換のたたき台と「変換前」の比較対象を持つため）。
+お手本は完成済みの `rn` プラグイン（`rn/` 配下の構成をそのまま型として踏襲する）。言語は読者層で分岐させ、
+利用者が読む成果物（README・テンプレ本文・提案書の可視コピー）は日本語、AI 向け SKILL.md と機械/マーケット
+向けメタは英語にする（design.md 4.2 / D-6）。着手の前に、元キット一式を本セッションのステアリングと同じ
+フォルダにベース素材としてコピーしておく（原本は Google Drive にあり、リポジトリ内に変換のたたき台と
+「変換前」の比較対象を持つため）。
 
 # Acceptance criteria
 
@@ -42,9 +46,12 @@
 - 内容ドリフトがない：変換後のスキル/テンプレが元キットの意図と一致し、ルールの取りこぼしや、参照の
   受け渡し点に挿入された要約が無い（`.rn/hposal-plugin/` のベースコピーと差分照合できる）。
 - リポジトリのルールに沿う：plugin.md（version は plugin.json のみ・CHANGELOG を置く）／marketplace.md
-  （2か所に登録）／language.md（成果物は英語既定。「指示があれば別」に従いユーザー接点のみ日本語＝D-5）。
+  （2か所に登録）／language.md（読者層が一言語に限定されるプラグインの例外に従い、利用者が読む成果物は
+  日本語＝D-6）。
 
 # Assumptions
+
+（`D-n` は本セッションの決定。実体は `design.md`（Design: 行の指す先）に置いてある。）
 
 - 〔事実・確認済〕元キット＝`README.md`＋`workflow.md`（128行）＋`templates/` 5本、すべて日本語。
 - 〔事実・確認済〕`rn` がプラグインの型：`.claude-plugin/plugin.json`／`skills/<name>/SKILL.md`／
@@ -62,7 +69,7 @@
 
 # Rules
 
-- 1 task = 1 commit
+- 変更のたびに commit & push する。完了マーカー（`complete task #{id}`）は1タスクにつき1つ。
 - 言語は D-6（hposal＝日本限定）：利用者が読む成果物（README・テンプレ本文・`04_proposal.html` の記入
   ガイド/可視コピー）＝日本語、AI向け SKILL.md とメタ（plugin.json/marketplace.json/CHANGELOG/root README）＝英語。
 - version は `plugin.json` の1か所だけ（marketplace.json には書かない）。
@@ -255,7 +262,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 - `04_proposal.md` が17ページ対応表＋欠落必須章セクションを持つ。
 - `validate --strict`（plugin/marketplace 両方）が通る。
 
-### #9: dogfood 所見を SKILL.md へ最小追記する（構造変更なし）
+### #9: dogfood 所見を SKILL.md へ最小追記する（構造変更なし） — DONE through QA
 
 **Purpose**: 実案件 dogfood で見つけた頻出落とし穴を、`hposal/skills/up/SKILL.md` に1行ずつ追記して潰す。
 構造（フェーズ・章立て）は変えず、既存のルール/⚠️/完了条件に項目を足すだけ。`dogfood-notes.md` の
@@ -283,7 +290,6 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 - [x] CHANGELOG `[Unreleased]` に追記し `validate hposal --strict`・`validate . --strict` 両方
 - [x] self-check（追記12点の有無を grep/目視で OK/NG 判定し `.rn/hposal-plugin/checks/9.md` に記録）
 - [x] QA engineer review（subagent）＝PASS（13所見すべて忠実・追記のみ・矛盾なし、低重要度メモのみ）
-- [ ] user review（PR 上で実施＝push-and-review ルール）
 
 **Completion criteria**:
 
@@ -292,7 +298,7 @@ ccpm は公開マーケットなので実案件データは持ち込まない（
 - 既存のフェーズ構成・章立て・既存ルールは変わっていない（追記のみ）。
 - CHANGELOG `[Unreleased]` に該当行があり、`validate --strict`（plugin/marketplace 両方）が通る。
 
-### #10: 提案書テンプレをパーツ化する（アウトライン＋1パーツ1スライド・中核／D-9）
+### #10: 提案書テンプレをパーツ化する（アウトライン＋1パーツ1スライド・中核／D-9） — DONE through QA
 
 **Purpose**: 1044行モノリス（`{{ }}`＋任意スライド削除＋`.pg`手振り）を、**アウトライン＋パーツ**へ作り直す。
 dogfood の歪み（複数サイト統合前提・総額1点前提・実現手段の比較層が無い・変種が「削って作り直し」）を、
@@ -322,7 +328,6 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 - [x] CHANGELOG `[Unreleased]` に追記し `validate hposal --strict`・`validate . --strict` 両方✔
 - [x] self-check（CSS diff・grep・PDF・代表スライド目視・パーツ網羅を OK/NG 判定し `.rn/hposal-plugin/checks/10.md`）
 - [x] QA engineer review（subagent）＝PASS-with-notes→2 MED 修正済（#13・CHANGELOG）。再 validate ✔
-- [ ] user review（PR #8）
 
 **Completion criteria**:
 
@@ -333,7 +338,7 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
 - 代表アウトラインで単一 HTML に組み立て→ヘッドレス Chrome 16:9 書き出しが破綻なく、export ゲート clean。
 - CHANGELOG `[Unreleased]` に該当行があり、`validate --strict`（plugin/marketplace 両方）が通る。
 
-### #11: ゼロベース dogfood をやり直す（メインエージェントが利用者役）
+### #11: ゼロベース dogfood をやり直す（メインエージェントが利用者役） — DONE through QA
 
 **Purpose**: 既存の dogfood 記録を一旦すべて消し、パーツ化後（#10）の hposal を対象に、**メインエージェント自身が
 「プラグイン利用者」役**となって `/hposal:up` を頭から実走し、新しい改善所見をゼロベースで集め直す。前回の dogfood は
@@ -357,8 +362,8 @@ PII 除去して一般化。`dogfood-notes.md` 反映方針 (ii)＝#4・#10–13
       P4 22pp PDF・ゲート0/0・CSSバイト一致・burn-down15/15・内部値素抜け0
 - [x] 実走で見つかった所見を新しい dogfood ノート（一般化・PII なし）に記録する（`dogfood-notes.md`・F1–F14＋T1–T3）
 - [x] 所見の plugin 反映方針を整理する（SKILL/テンプレ/パーツ/outline/execution-only に HOW＋優先度でマップ）
-- [ ] self-check → QA engineer review（subagent）→ user review（PR）
-      ＝self-check OK・QA **PASS**（trivial 1件 fix 済 `6348c89`）。**残るは PR #8 上の user review のみ**
+- [x] self-check → QA expert review（subagent）＝self-check OK・QA **PASS**
+      （trivial 1件 fix 済 `6348c89`）
 
 **Completion criteria**:
 
@@ -377,143 +382,61 @@ followup を当て→また回す、を収束まで続けるのがこのタス�
 
 **Steps**:
 
-- [ ] 反映方針の **followup 群を plugin に適用**：T1＝テンプレ2本（`02_proposal-design.md` に移行標準作業チェックリスト＋
-      プラットフォーム実態ゲートの空スロット／`03_work-breakdown.md` に「共通＋基盤分岐＋基盤ごと総額」＋役割別突合の空骨格）／
-      T2＝パーツ（`work-detail.common`/`work-detail.branch` ペア新設・`estimate.compare` 注記の長さ予算・ページ総数の組み立て時
-      一括置換を outline に文書化）／SKILL の F1・F4・F5・F7・F9 のエッジケース1–2行追記／outline の F12（title は組み立て fill）・
-      F14。CHANGELOG `[Unreleased]` 追記・`validate hposal --strict`／`validate . --strict` 両方
-- [ ] 反映後に**再び dogfood**（同じ二者構成・main 利用者役・PII なし・架空/一般化案件で可）を phase 1→4 実走し新所見を集める
-- [ ] 「適用→dogfood」を**新所見が出なくなる/軽微に収束＝安定するまで反復**（各周回で `dogfood-notes.md` を更新し、
-      何周で何が収束したかを残す）
-- [ ] self-check → QA engineer review（subagent）→ user review（PR）
+- [x] **適用ラウンド1**（Round 1 dogfood の反映方針）：T1＝テンプレ2本（`02_proposal-design.md` に移行標準作業
+      チェックリスト＋プラットフォーム実態ゲートの空スロット／`03_work-breakdown.md` に「共通＋基盤分岐＋基盤ごと
+      総額」＋役割別突合の空骨格）／T2＝パーツ（`work-detail.common`/`work-detail.branch` ペア新設・
+      `estimate.compare` 注記の長さ予算・ページ総数の組み立て時一括置換を outline に文書化）／SKILL の
+      F1・F4・F5・F7・F9 のエッジケース追記／outline の F12・F14。CHANGELOG `[Unreleased]` 追記・
+      `validate` 両方 ✔（commit `4b5712a`）
+- [x] **再 dogfood 1周目**（`dogfood-notes.md` の「Round 2」節）：二者構成・架空案件（学習塾12pp・基盤2案・
+      toC リードフォーム・小予算・独自ドメイン+301）で phase 1→3 実走。新所見 G1–G5・H1–H4・J1–J4 を収集
+      （commit `b2859c8`）。**Phase 4 は未実走**＝次周に畳む
+- [ ] **適用ラウンド2**：`dogfood-notes.md` の「反映方針（apply-round-2 の followup 群）」を当てる。
+      とくに **J1＝F8 の未完部分**（03 に役割別突合表は入ったが、SKILL が必須とする移行の責任分担マトリクスが未）。
+      CHANGELOG `[Unreleased]` 追記・`validate hposal --strict`／`validate . --strict` 両方
+- [ ] **再 dogfood 2周目**：別案件（ユーザー提供・二者構成・main 利用者役・PII なし）で phase 1→4 を
+      最後まで実走し、新所見を `dogfood-notes.md` に追記する
+- [ ] 「適用→dogfood」を**新所見が軽微に収束するまで反復**する（各周回で `dogfood-notes.md` を更新し、
+      何周で何が閉じたかを残す）
+- [ ] self-check（各完了基準を OK/NG で判定し `.rn/hposal-plugin/checks/12.md` に記録）
+- [ ] QA expert review（subagent）
+- [ ] Craft expert review（subagent・writing）
+- [ ] Verification expert review（subagent・fact-check）
+- [ ] Design expert review（subagent・SKILL/テンプレ/パーツの構造を改訂するため）
 
 **Completion criteria**:
 
-- 反映方針の followup が plugin（SKILL／テンプレ／パーツ／outline）に適用され、`validate --strict`（plugin/marketplace 両方）が通る。
-- 反映後の再 dogfood が実走され、**新所見が安定（出なくなる/軽微のみ）に収束**したことが `dogfood-notes.md` に記録されている。
-- 各周回の所見と反映が PII なしで残る。
+- `dogfood-notes.md` の各周回の所見が、反映先ファイルまで辿れる状態で閉じている（どこにも反映されないまま
+  残っている所見がゼロ）。
+- 最終周回の dogfood が phase 1→4 を最後まで通り、新所見が軽微のみ（手順・テンプレの**構造**変更を要する所見が
+  ゼロ）に収束している。何周で何が閉じたかが `dogfood-notes.md` から読める。
+- 反映によるリグレッションが無い：`claude plugin validate hposal --strict` と `claude plugin validate . --strict`
+  が通り、Phase 4 の export ゲート（`{{`・見本行の残留ゼロ）が clean、CSS は `parts/_head.html` の1か所のまま
+  バイト不変。
+- 公開リポジトリ側に PII が無い：`dogfood-notes.md` と `hposal/` 配下に実案件の社名・実額・個人名が残っていない。
+- 既存の到達経路が壊れていない：`marketplace.json` と root `README.md` が同期したままで、`/hposal:up` が
+  ヘッドレスで起動する。
 
-# Decisions
+### #13: 評価サインオフ（Acceptance criteria の実走 → ユーザー承認）
 
-## D-1: 1スキル `up` で4フェーズ全体を駆動する
-- **Issue**: workflow の4フェーズを、1スキルにまとめるか、フェーズごとに別スキル（4コマンド）へ割るか。
-  また、その1スキル（コマンド）の名前をどうするか。
-- **Conclusion**: 1スキル `/hposal:up` に `workflow.md` 全体を載せる。
-- **Rationale**: workflow は ★人間ゲートで区切られた一続きの工程で、前フェーズの文書が次の入力になる
-  依存連鎖。独立に呼ぶ4コマンドではなく、上から順に通す1手順として呼ぶのが元キットの使い方に忠実。
-  名前は `up`＝「提案を起こす」を表す短い合図。名前空間 `hposal`（HP proposal）が用途を示すので、
-  コマンド側は動作の合図で足り、`rn` の `gm`/`bb`/`hi` という短い口語コマンドの流儀に揃う。
-  自己説明性の低さは README 冒頭の一文で補う。
-- **Evidence**: `workflow.md` は「上から順に進める」一本道。`README.md` も「workflow.md に従って作って」と
-  1ファイルを指す。rn が3スキルなのは start/suspend/resume という独立した3場面があるからで、hposal には
-  そうした分岐がない。rn のコマンドは `gm`/`bb`/`hi` と短い口語で統一されている。
-- **Sources**: 元キット `workflow.md` 1–10行・`README.md` 27行／お手本 `rn/skills/`（`gm`/`bb`/`hi`）／
-  ユーザー確認（本セッション：`up`＝「起こす」）。
+**Purpose**: `steering.md` の Acceptance criteria を最後に通しで実物確認し、その結果をユーザーに提示して
+セッションを閉じる。rn の3つの scheduled gate のうち **evaluation gate** にあたるサインオフタスク
+（実装/レビューの subagent は立てず、このタスクの Steps 自体がゲート）。
 
-## D-2: 中身は日本語維持・説明文のみ英語・README で HP を一度補う
-- **⚠️ SUPERSEDED by D-5（2026-06-23）**：「キット中身を日本語維持」は撤回。layout は残すが結論は D-5 が正。
-- **Issue**: language.md は成果物の既定を英語とするが、本キットは意図的に日本語で書かれている。
-- **Conclusion**: SKILL.md・templates は日本語のまま。英語にするのは plugin.json と marketplace.json の
-  description のみ。README は冒頭で一度だけ「HP（corporate site）」と補う。
-- **Rationale**: キットの中身は日本語クライアント向け提案を日本語でレビューしながら作るための道具で、
-  日本語であること自体が機能。一方マーケット一覧の説明文は不特定多数が読むので英語が通りやすい。「HP」は
-  和製の語なので、入口（README）で一度だけ国際語の corporate site を添えれば誤解を防げる。
-- **Evidence**: `workflow.md` 20行「このキット自体は日本語で書く（人間がレビューできるように）」。
-- **Sources**: 元キット `workflow.md` 20行／ユーザー確認（本セッション）／.claude/rules/language.md。
+**Prerequisites**: #12
 
-## D-3: 初期 version 0.1.0・タグ/Release はスコープ外
-- **Issue**: 新規プラグインの version と、リリース（タグ・GitHub Release）をどこまで本セッションでやるか。
-- **Conclusion**: `plugin.json` に `version: 0.1.0` を置く。タグ付けと GitHub Release は別の明示指示で
-  行う作業とし、本セッションでは行わない。
-- **Rationale**: `--strict` 検証に version は必須なので 0.1.0 を置く。一方 plugin.md は「リリース指示が
-  あるときだけ昇格・タグはリリース時」と定めるので、リリース行為は指示を待つ。
-- **Evidence**: .claude/rules/plugin.md「Bump only on an explicit release instruction」「Tag each
-  release on main」。
-- **Sources**: .claude/rules/plugin.md。
+**Steps**:
 
-## D-4: スライドHTMLは汎用テンプレ化（実案件データを公開リポジトリに持ち込まない）
-- **Issue**: 完成 deck（豆蔵 `work/04_提案書.html`）を雛形にする際、(A)汎用テンプレ化／(B)丸ごと見本同梱／
-  (C)両方 のどれにするか。ccpm は公開マーケットプレイス。
-- **Conclusion**: A。CSSデザインシステムと全スライド構造は引き継ぎ、豆蔵固有の中身（社名・実額¥3,080,000・
-  件数・提案者名）は `{{ }}` プレースホルダ＋見本行＋記入ガイドに置換。
-- **Rationale**: 再利用資産の本体は CSS とレイアウトで、中身は案件固有。B/C は実在クライアントの見積・社名を
-  公開リポジトリに残すため不採用。A なら設計資産を完全継承しつつ実データ流出を避けられる。
-- **Evidence**: 元 deck の CSS は実データを含まず（コメントも汎用）、温存してバイト一致を確認。
-- **Sources**: 元 deck `work/04_提案書.html`／ユーザー確認（本セッション：A を選択）／.claude/rules/marketplace.md。
+- [ ] Acceptance criteria を1項目ずつ実物で確認する（`validate --strict` 両方・ヘッドレス起動・ファイル実在・
+      言語分岐・marketplace/root README 同期・内容ドリフト有無）。未確認の項目を残さない
+- [ ] 実走結果を **PR #8 上**に提示する（`push-and-review` ルール＝レビューはコンソールでなく PR で行う）。
+      #9–#12 の成果もこの PR にまとまっているので、ユーザーはここで一度にレビューする
+- [ ] ユーザーの verdict を受ける：`/rn:ty`（承認）→ check off、`/rn:gm`（差し戻し）→ 指摘に対応して再提示
 
-## D-5: 言語はルール通り＝成果物（道具）は英語・ユーザー接点は日本語（D-2 を撤回）
-- **⚠️ SUPERSEDED by D-6（2026-06-23）**：軸が「道具 vs ユーザー接点」では粗い。正しい軸は「プラグインの読者層が
-  日本に限定されるか」。hposal は限定されるので、利用者が読む README・テンプレ本文も日本語が正。結論は D-6。
-- **Issue**: 「全部日本語」は中途半端。language.md（成果物は英語既定・指示があれば別）をどう正しく適用するか。
-- **Conclusion**: お手本 `rn`（SKILL.md も README も英語）に揃え、**道具＝英語／ユーザー接点＝日本語**。
-  英語：SKILL.md・テンプレ本文（01-03・site-inventory・04_proposal.md）・README・plugin.json・
-  marketplace.json・CHANGELOG・`04_proposal.html` のコメント/使い方ヘッダ。日本語：`04_proposal.html`
-  のクライアント可視コピー＋`{{}}`（提出物そのもの）と、実行時に生成する中間文書・コンソール会話。
-- **Rationale**: language.md の狙い（広い読者・AI学習量）は「道具」で効く。日本語であるべきは人が読む出力＝
-  クライアント提出物とレビュー会話だけ。AI向け作業指示は英語の方が安定し、language.md「指示があれば別」に
-  も合致。`rn` の steering（英語見出し＋日本語中身）と同じ層分け。
-- **Evidence**: `rn/skills/gm/SKILL.md`・`rn/README.md` が英語。CSS（1–374行）は実データを含まず原本
-  バイト一致のまま温存。本セッションで英語化後、⚠️ 26/26・フェーズ4・★ゲート保持を実数検証。
-- **Sources**: .claude/rules/language.md／お手本 `rn`／ユーザー確認（本セッション：「ルール通り」）。
+**Completion criteria**:
 
-## D-6: 言語はプラグインの読者層で分岐＝hposal は日本限定なので利用者が読む成果物は日本語（D-5 を撤回）
-- **Issue**: D-5 は README・テンプレ本文まで英語化した。だが hposal の利用者は「日本語クライアント向け提案を作る
-  日本語話者」に限定される。README を読み・テンプレを記入するその人が日本語話者なら、英語化はコストを上げるだけで
-  到達は広がらない。正しい軸は「道具 vs ユーザー接点」ではなく「**プラグインの読者層が一言語に限定されるか**」。
-- **Conclusion**: language.md の例外に従い、**利用者が読む成果物は日本語**にする。
-  - 日本語：`hposal/README.md`／`references/templates/` のテンプレ本文（01_requirements・02_proposal-design・
-    03_work-breakdown・04_proposal.md・site-inventory）／`04_proposal.html` の記入ガイド・コメント＋クライアント
-    可視コピー＋`{{}}`（提出物そのもの）／実行時生成の中間文書・コンソール会話。
-  - 英語のまま：`SKILL.md`（AI向け作業指示）／`plugin.json`・`marketplace.json` とその description／`CHANGELOG.md`／
-    root `README.md` のプラグイン一覧行／コミット・PR 文。
-- **Rationale**: hposal は日本語クライアント向け提案でのみ意味を持つ＝利用者は日本に限定される（読者層の確定）。
-  language.md の「読者が一言語に限定されるプラグインは、その利用者が読む成果物をその言語で書く」例外がそのまま当てはまる。
-  AI向けプロンプトと機械/マーケット向けメタは広い読者を保つので英語のまま。
-- **Audience decision（要・作成前確認）**: hposal の読者層＝**日本限定**（2026-06-23 ユーザー確認済）。今後の
-  プラグインは作成前にこの読者層を確定し、ここに明示する（language.md の手続き規定）。
-- **Evidence**: ユーザー指示（2026-06-23：「今回のプラグインは利用者が読む成果物は日本語、rn とかは利用者を日本に
-  限定してない」）。英語化前の日本語原本が `.rn/hposal-plugin/corporate-site-kit/templates/` に現存し復元の土台になる。
-- **Sources**: .claude/rules/language.md（本セッションで追記した例外節）／ユーザー確認（本セッション）。
-
-## D-9: 04 提案書テンプレはモノリスでなく「アウトライン＋パーツ（1パーツ1スライド）」にする
-- **Issue**: 元の `04_proposal.html` は CSS＋20スライドを1ファイルに詰めた 1044行モノリスで、運用は
-  「`{{ }}` を埋める／要らない任意スライドを削る／`.pg` を手で振り直す」。だが dogfood で、各スライドには
-  本物の変種があり（現状＝単一/複数統合・画面＝サービスCTA/絞り込み検索・見積＝総額/レンジ/複数額比較）、
-  実現手段に分岐がある案件では比較が“層”として複数スライドにまたがる（#21）。モノリスはこれを
-  「1枚だけ同梱・残りは削って手で作り直し」「比較は手で2列化」にしてしまい、これが #10–13・#19・#21 の摩擦の正体。
-- **Conclusion**: テンプレを**アウトライン＋パーツ**に分解する。**1パーツ＝1スライド**（種類ごとに変種ファイル）。
-  `04_proposal.md` を「3層の背骨・スロット順・各スロットが採るパーツ変種・層→レイアウト（1–2層=1列／3層=2列比較）・
-  `.pg` は組み立て時採番」を定める**アウトライン＝組み立て仕様**にする。CSS は共有 head パーツ1か所（バイト不変）。
-  SKILL フェーズ4は「アウトライン順にパーツを選び連結→埋める→export」を駆動。最終成果物は今と同じ単一 HTML→PDF。
-- **Rationale**: 変種を「選択（合成）」に変えることで、削除・手作り直し・採番ズレ・2列化手術が消える＝性質を
-  **ルールでなく構造で担保**できる（[[structure-not-rules]]）。比較を“層”で通す #21 は「第3層スロットに2列比較
-  パーツを採る」だけになる。トレードオフ＝組み立て（連結）の一手が増えるが、CSS を共有 head に1回・本体を断片で
-  連結すれば最終 HTML は今と同一・ヘッドレス Chrome の1ファイル印刷もそのまま・CSS バイト不変も保てる。AI が回す
-  前提なら連結は苦にならない。
-- **Granularity decision（ユーザー確認）**: 1パーツ＝1スライド（2026-06-26 確認済）。ブロック単位（価値カード・
-  比較行）まで割らない＝アウトラインがスライド列に素直に対応し、proposal deck にこの粒度が合うため。
-- **Evidence**: dogfood-notes #10/#11/#12/#19/#21。第3層 2列比較の実装見本＝private `ikuko-hp/04_proposal.html`
-  （22スライド3層デッキ）。元モノリス CSS 1–376行は実データを含まず、共有パーツへバイト一致で温存できる。
-- **Sources**: dogfood-notes.md（#10–13・#19・#21）／private `ikuko-hp/04_proposal.html`／ユーザー確認（本セッション 2026-06-26）。
-
-## D-10: ゼロベース dogfood は実ブリーフ起点・二者構成（subagent 起草／main 利用者役）で回す
-- **Issue**: task #11 の★ゲート2点 — (a) 何を削除して何を起点にするか、(b)「メインエージェントが利用者役」をどう運用するか。
-  当初案は「PII なしの架空案件をゼロベースで用意」だったが、ユーザーは実案件のブリーフを起点にすると判断。
-- **Conclusion**:
-  - **(a) 起点＝実ブリーフ**：private `ikuko-hp/input/ホームページリニューアル要件.md`（施主の生要件）だけを残し、前回 dogfood の
-    下流成果物（01–04・inventory・書き出し・旧 `.rn` steering）と公開側 `dogfood-notes.md` を削除。生成物は hposal が要件から
-    いつでも再現できる前提なので完全削除でよい（git 外＝不可逆を承知の上）。
-  - **(b) 二者構成**：subagent が `/hposal:up`（＝`hposal/skills/up/SKILL.md`）を起草実走し、★ゲート/質問で main に返す。main は
-    利用者/レビュー役として質問に答え（内部単価など未提供入力は PII なしの仮値を供給）、ドラフトを批判的にレビューし承認/差し戻す。
-- **Rationale**: (a) dogfood の目的は「生ブリーフ1枚→完成提案を `/hposal:up` が導けるか」の検証。実ブリーフの方が架空より現実の歪みを
-  あぶり出す。再現性向上を何度も dogfood して積む狙いにも、実案件起点が合う。(b)「利用者役」の素直な実装は main＝人間（レビュー）側・
-  起草 AI は別エージェント。★ゲートと質問機構＝AI↔利用者のやり取りを実際に動かして初めて「AI が訊くべきを訊いたか／ゲートが分かるか」を
-  測れる。main 単独の自己起草・自己承認では独立チェックが効かない。
-- **PII 境界**: 実走は private フォルダで行い生成物 01–04 は private に留める。公開リポジトリ（ccpm）に戻すのは PII を除いた一般化所見の
-  新 `dogfood-notes.md` のみ。
-- **Evidence**: ユーザー指示（2026-06-26）「今の出来では使えないので消して大丈夫／hposal があればいつでも再現できる、そのために
-  プラグインを作っている／これから何度も dogfood して再現性を高める」「利用者役は案1（二者構成）」。
-- **Sources**: ユーザー確認（本セッション 2026-06-26）／task-workflow.md（coordinator＝main／implementation expert＝subagent）。
+- Acceptance criteria の全項目について OK/NG と根拠が提示されており、未確認の項目がゼロである。
+- ユーザーが PR #8 上で承認済みで、未解決の差し戻し指摘が残っていない。
 
 # State
 
@@ -521,27 +444,8 @@ followup を当て→また回す、を収束まで続けるのがこのタス�
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-06-26
-- **Last completed**: task #11（実装・QA 済／PR #8 で user review 待ち、これは据え置き）。本セッションで **task #12 の1周目に着手**：
-  (1) **適用ラウンド1**＝Round 1 dogfood の反映方針 followup を plugin に適用しコミット `4b5712a`（push 済）：SKILL F1/F4/F5/F7/F9・
-  テンプレ 02（移行CL＋実態ゲート）／03（共通＋基盤分岐＋総額＋役割別突合）・新パーツ work-detail.common/branch・estimate.compare 高さ予算・
-  outline F12/F14。`validate hposal --strict`／`validate . --strict` 両方 ✔。自前検証で CSS クラスは全て `_head.html` に解決・additive 確認。
-  (2) **再 dogfood（2周目）**＝二者構成（D-10）で架空案件（学習塾12pp・基盤2案 WP/ノーコード・toC リードフォーム・小予算・独自ドメイン+301）を
-  subagent 起草／main ★レビューで phase 1→3 完走。新所見 **G1–G5・H1–H4・J1–J4** を収集し `dogfood-notes.md` の「Round 2」節に永続化（本コミット）。
-- **Next**:
-  1. **Phase 4 を回し直す**（中断時に dogfood subagent が Phase 4＝デッキ組み立てを実行中だったが未完了・所見未捕捉）。新パーツ
-     work-detail.common/branch と組み立て時 title/総ページ数機構を試す山場。または次の dogfood に畳んでよい。
-  2. **適用ラウンド2**＝`dogfood-notes.md` の「反映方針（apply-round-2）」を当てる：**01 テンプレ**（G1 ★ゲート stub／G2 i↔r 機械突合 or `要件化`列削除／
-     G3 移行に「作り直し」値／G4+H3 母数フィールド）・**02**（H1 process スロット／H4 相互参照）・**03**（**J1 責任分担マトリクス skeleton＝F8 を完成**／
-     J2 見本行をフォーム/検索 別行／J3 標準項目チェックリスト）・**SKILL**（H2 p→deck-slot／J4 2バンド別名）。→ `validate` 両方→**再 dogfood**。
-  3. 新所見が出なくなる＝**安定するまで「適用→dogfood」を反復**（各周回で `dogfood-notes.md` を更新）。
-  4. 安定後：task #12 の self-check → QA → **PR #8 で user review**（#10・#11・#12 をまとめてレビュー/マージ／承認後に各タスクを check-off マーカーで確定）。
-- **Notes**:
-  - **重要な検知**：J1 が「**1周目の F8 適用は部分的**」を露呈（03 に役割別突合表は足したが、SKILL 必須の移行責任分担マトリクスは未）。
-    apply-round-2 で F8 を完成させる。2周目の所見クラスタは1周目が触らなかった **01 テンプレ・i↔r 台帳・02/03 スロット**に集中＝dogfood が機能している。
-  - **未コミットの ledger**：`.rn/hposal-plugin/checks/12.md`（適用ラウンドの self-check、実装 expert 記入）は本中断コミットに含める（tree clean 化）。
-    QA/review-verdict 欄は空のまま＝coordinator が後で埋める。task #12 はまだ QA 前。
-  - **dogfood 生成物**は scratchpad（`…/scratchpad/dogfood-r2/`・揮発）にあり公開リポジトリ外。架空・PII なし。所見の一般化版だけ `dogfood-notes.md` に戻した。
-  - 背景 subagent（dogfood 起草）の id＝`aa847b481ddb1ba6c`（/clear で消える）。resume では Phase 4 を新規 dispatch するか apply-round-2 に進む。
-  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN）。deliverable `4b5712a` push 済み。
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
