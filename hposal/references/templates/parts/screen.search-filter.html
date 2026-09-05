@@ -1,0 +1,48 @@
+<!-- ╔═ PART: screen.search-filter ═╗ 第2層・何をするか｜画面モック：絞り込み検索（事例・実績・講座など）。
+     ⚠️ 絞り込み検索は中〜大規模・件数が多い一覧向け。小規模 toC には過剰なことが多い（#11）→ screen.service-cta を検討。
+     side.filter の軸＝1見出し(.sh)＋チェック(.ck) or タグ(.tagrow/.tg)。02 で決めたタクソノミーを置く。 -->
+<section class="slide scr">
+  <div class="brandbar"></div>
+  <div class="eyebrow">Screen &mdash; {{画面名}}</div>
+  <div class="ttl">{{画面の名前 例: 事例検索}}</div>
+  <div class="lead">{{この画面で実現する価値の一文。左の絞り込みで再読込なしに結果が絞れる、など}}</div>
+  <div class="imgnote">下の画面は<b>使い勝手をご説明するためのイメージ</b>です。実際のデザインは異なります。</div>
+  <div class="body">
+    <div class="screen">
+      <div class="scbar"><span class="d"></span><span class="d"></span><span class="d"></span><span class="url">{{example.com / cases}}</span>
+        <span class="smp" style="margin-left:auto">サンプルイメージ</span></div>
+      <div class="topnav">
+        <span class="logo">{{ロゴ}}</span>
+        <span class="n">{{ナビ}}</span><span class="n active new">{{現在地}}</span><span class="n">{{ナビ}}</span>
+      </div>
+      <div class="crumb">ホーム &rsaquo; <b>{{現在地}}</b></div>
+      <div class="lay">
+        <div class="side filter">
+          <div class="sh">🔍 絞り込み</div>
+          <span class="fw">フリーワードで探す</span>
+          <div class="sh">{{絞り込み軸① 例: 業種業態}}</div>
+          <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
+          <label class="ck"><input type="checkbox">{{選択肢}}</label>
+          <div class="sh">{{絞り込み軸②}}</div>
+          <label class="ck"><input type="checkbox" checked>{{選択肢}}</label>
+          <label class="ck"><input type="checkbox">{{選択肢}}</label>
+        </div>
+        <div class="main2">
+          <div class="rhd"><span>{{一覧名}}</span><span class="cnt">{{全件}}件中 {{表示}}件を表示</span></div>
+          <div class="cardsg">
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+            <div class="rc"><div class="th"></div><div class="ct">{{結果タイトル}}</div><div class="cg"><span class="b2">{{タグ}}</span><span class="b2">{{タグ}}</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vrow" style="margin-top:auto">
+      <div class="vbox"><div class="vh">お客様にとって</div><div class="vt">{{利用者が得る価値}}</div></div>
+      <div class="vbox b"><div class="vh">{{宛先}}さんにとって</div><div class="vt">{{運用側が得る価値}}</div></div>
+    </div>
+  </div>
+  <div class="footmark">{{宛先}} / （提案者）</div>
+  <div class="pg">{{頁}} / {{総ページ数}}</div>
+</section>
