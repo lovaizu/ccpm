@@ -350,9 +350,10 @@ so only a genuinely suspended session reads `paused`.)
 - **Status**: paused
 - **Date**: 2026-09-06
 - **Last completed**: none — #1 is in progress
-- **Next**: #1 — re-run the three expert reviews (QA / Craft-writing / Verification-dry-run) against
-  `evidence/1-jsonl-behaviour.md` at `9f5f413`; the first round failed all three and its findings are
-  addressed in that commit, and the second round was dispatched but did not return before suspend.
+- **Next**: #1 — re-run the QA and Verification (dry-run) expert reviews against
+  `evidence/1-jsonl-behaviour.md` at `9f5f413`, then triage. Round 2 of the Craft (writing) review is
+  **already done** — verdict Fail, 16 findings recorded in `checks/1-review-craft-round2.md`; do not
+  re-run it. Round 1 failed all three and its findings are addressed in `9f5f413`.
 - **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
   Measured facts live in `evidence/1-jsonl-behaviour.md` — do not re-derive them.
   **Open decision, asked and unanswered**: whether to change the Acceptance criterion "locatable from
