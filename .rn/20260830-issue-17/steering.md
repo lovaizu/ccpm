@@ -27,9 +27,10 @@ treatment as one instance among them.
 - A planner writing a `steering.md` after this change cannot land an acceptance criterion phrased as
   an artifact existing without visibly leaving something unanswered — the failure that started this
   session is caught while the plan is still being written, not after it ships.
-- Before a plan reaches the user, the coordinator has judged it against a small fixed set of
-  purpose-derived questions and the user is shown that judgement as a conclusion with its grounds —
-  so a shallow judgement is visible as shallow rather than hidden behind a passed check.
+- Before anything reaches the user at a gate — plan, design, or evaluation — the coordinator has run
+  one named check over four fixed viewpoints, and the user is shown its result as what was observed
+  and what followed from it, never as a pass mark. A viewpoint nobody actually examined shows up as a
+  blank line, so a shallow check is visible as shallow instead of hiding behind a passed stamp.
 - Every mandated review in `rn` can be answered for: what it catches that the surrounding structure
   does not. Any review kept only because it was already there is either justified against that
   question or dropped — the plan itself is where "is this step worth its cost?" gets asked.
@@ -131,9 +132,16 @@ purpose — with the reasoning recorded where reasoning belongs.
 
 - [ ] group the unenforced rules by the device that fits (question in place of a blank field, a second
       reader, a mechanical check, a named link that leaves orphans visible, a checkbox, a gate)
-- [ ] settle the fixed set of questions the coordinator puts to a plan before the gate, deriving them
-      from how a plan fails its purpose rather than from failures already seen — and keep the set
-      small enough that answering it stays an act of judgement, not a checklist to clear
+- [ ] record the coordinator check the user settled at the plan gate — named `preflight`, four fixed
+      viewpoints (sufficiency / evidence / assumptions / fit) shared by all three gates, output as
+      `observation → action or remaining limit` per viewpoint rather than an OK/NG stamp — with the
+      reasoning for the format: a stamp can be applied without looking, while an unexamined viewpoint
+      leaves a visible blank
+- [ ] derive each viewpoint's per-gate wording from how that gate fails its purpose — at the plan
+      gate: does the goal survive every task completing (sufficiency); what has to be run for the
+      result to be felt (evidence); which assumptions are load-bearing (assumptions); what is missing
+      and what is over-specified (fit) — and keep the set small enough that answering it stays an act
+      of judgement, not a checklist to clear
 - [ ] decide what changes about the unconditional per-task reviews: which stay, which become
       conditional, which go — answered against what each catches, not against precedent
 - [ ] decide the acceptance-criteria case explicitly — it is the session's originating instance
@@ -188,12 +196,11 @@ that failed and started this session.
 - [ ] apply the decided devices to `steering-template.md`
 - [ ] apply them to `planning-workflow.md`, so template and workflow ask the same questions in the
       same terms
-- [ ] make the coordinator judge the plan before the plan-gate ask, against the fixed purpose-derived
-      questions settled in #2 — does the goal survive every task completing; what has to be run for
-      the result to be felt; which assumptions are load-bearing; what is missing and what is
-      over-specified
-- [ ] have that judgement reach the user with the plan, as a conclusion plus its grounds per question
-      — not a passed/failed stamp, and not a fourth gate
+- [ ] build `preflight` into the gate asks these two files mint — plan, design sign-off and
+      evaluation sign-off — so no gate ask is reachable without the coordinator having run the four
+      viewpoints in their per-gate wording from #2
+- [ ] have the result reach the user with the deliverable, one line per viewpoint as observation then
+      action or remaining limit — not a passed/failed stamp, and not a fourth gate
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing medium)
@@ -205,10 +212,11 @@ no new user steps)
 
 - an artifact-existence acceptance criterion cannot be written without leaving something visibly
   unanswered
-- no path through `planning-workflow.md` reaches the plan-gate ask without the coordinator's
-  judgement, and the user never sees a plan without seeing that judgement's grounds
+- no path through `planning-workflow.md` reaches a gate ask without `preflight` having run, and the
+  user never sees the deliverable without seeing what each viewpoint observed
+- a viewpoint that was skipped reads as a blank rather than as a pass
 - a plan whose result could only be confirmed by reading — with nothing to run — is named as such by
-  the judgement rather than passing quietly
+  the evidence viewpoint rather than passing quietly
 - a planner reading the template and the workflow is never told two different things
 - the user still sees one plan gate, with the same commands and verdicts
 - re-reading this session's own `steering.md` against the finished files turns up nothing that fails
