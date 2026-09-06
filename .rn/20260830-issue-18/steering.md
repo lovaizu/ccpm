@@ -4,19 +4,26 @@ Design: rn/docs/design.md
 # Goal
 
 Let `rn` be improved from how its own sessions actually ran, using the conversation log as evidence
-rather than memory. Today that is impractical: nothing in the Claude Code conversation log (JSONL)
-says which `rn` session or which task an entry belongs to, so finding a session's log and cutting it
-into per-task intervals means matching `sessionId` / `cwd` / `gitBranch` and `git log` timestamps by
-hand, and sessions running concurrently in worktrees of one repository cannot be told apart from
-inside the log at all.
+rather than memory. Today that is impractical for one specific reason: nothing in the Claude Code
+conversation log (JSONL) says which task an entry belongs to, so cutting a session's log into
+per-task intervals means correlating `git log` timestamps against the log by hand.
 
-Two things follow, in this order. First, `rn` writes markers into the JSONL so a session's log can be
-located by a value unique to that session, split by task, and read **while the session is still
-open**. Second, on top of those markers, `rn` gains a retrospective — deliberately split into two
-stages so the user is involved at exactly one point of their own choosing: a **collection** stage that
-runs silently at each `/rn:dn` and only records friction that actually left a trace, and a
-**stocktake** stage the user invokes, which surfaces only friction that recurs across intervals, turns
-it into improvement proposals, and files them as issues on the user's approval.
+Finding the log is not the problem. Claude Code files a conversation under a project directory named
+after its working directory, so a worktree's conversations have their own directory and sessions
+running concurrently in sibling worktrees of one repository never mix. Reading it in time is not the
+problem either — entries are appended as they happen and are greppable while the conversation is
+still open. What is missing is the interval: `rn` stops for the user at exactly three gates, and
+ordinary build tasks run start to finish without stopping, so nothing in the log marks where a task
+began or ended.
+
+Two things follow, in this order. First, `rn` writes a boundary marker at each task's start and
+completion, carrying enough of its own context — which session, which task — to stay readable after
+the task list has been revised. Second, on top of those boundaries, `rn` gains a retrospective —
+deliberately split into two stages so the user is involved at exactly one point of their own
+choosing: a **collection** stage that runs silently at each `/rn:dn` and only records friction that
+actually left a trace, and a **stocktake** stage the user invokes, which surfaces only friction that
+recurs across intervals, turns it into improvement proposals, and files them as issues on the user's
+approval.
 
 The separation is the point, not an implementation detail: asking for a proposal from one session's
 worth of material forces noise into the shape of an improvement, and asking at every suspend makes the
@@ -25,19 +32,15 @@ retrospective with nothing to say naturally says nothing.
 
 # Acceptance criteria
 
-- A session's JSONL is locatable by grepping a single session-identifying marker, without inspecting
-  `sessionId`, `cwd`, or `gitBranch`.
-- The session-identifying value is unique per session (e.g. a commit hash), so two sessions never
-  share it.
-- Every task's interval boundary is discoverable inside the JSONL by grep alone — no correlation
-  against `git log` timestamps.
-- A boundary marker names its task from the marker line alone — which session, and which task —
-  without consulting `steering.md` at any revision or any commit history. A bare task number does
-  not satisfy this.
+- A session's JSONL files are locatable from the session's own working directory alone — no matching
+  on `sessionId` and no correlation against `git log` timestamps.
+- Sessions running concurrently against worktrees of one repository never share a log location, so
+  one session's interval can never draw on another's entries.
+- Every task's interval boundary is discoverable inside the JSONL by grep alone.
+- A boundary marker names its session and its task from the marker line alone — without consulting
+  `steering.md` at any revision or any commit history. A bare task number does not satisfy this.
 - The same holds for a collected friction record: it names its task without depending on
   `steering.md`'s task list as it stands later.
-- Sessions running concurrently against worktrees of one repository are distinguishable by grepping
-  their JSONLs.
 - All of the above hold mid-session, before the session ends — not only after it closes.
 - The collection stage runs with no user interaction and no user-visible output, and records nothing
   when the interval left no friction trace.
@@ -53,22 +56,28 @@ retrospective with nothing to say naturally says nothing.
 
 # Assumptions
 
-- Claude Code appends assistant text and tool calls/results to the conversation JSONL as they happen,
-  so a string emitted during a turn is greppable before the conversation ends. **Unverified** — task
-  #1 measures it, and if it proves false the marker design changes.
-- A conversation's JSONL lives at `~/.claude/projects/{project-slug}/{sessionId}.jsonl`. Observed
-  today: this worktree's project slug is `-Users-kiyo-work-lovaizu-ccpm`, the main checkout's path —
-  so worktrees of one repository may share a project directory, which is exactly why `cwd` alone does
-  not separate concurrent sessions.
+- **Measured, 2026-09-06**: Claude Code appends assistant text and tool calls to the conversation
+  JSONL as they happen — text from a previous turn and a command string from the running turn were
+  both greppable in the open conversation's file. Task #1 records the evidence and settles which
+  emission points land.
+- **Measured, 2026-09-06**: a conversation's JSONL lives at
+  `~/.claude/projects/{working-directory-slug}/{sessionId}.jsonl`, and the slug is the working
+  directory — so each worktree has its own directory
+  (`…-ccpm--claude-worktrees-issue-18` and `…-issue-17` are separate). Worktrees of one repository do
+  **not** share a project directory.
+- No session-identifying string is emitted: the working directory already separates sessions, and
+  the boundary marker carries the session's own name for the case where one directory hosts more
+  than one session.
 - Claude Code itself cannot be modified; every marker must be produced by `rn`'s own procedures
   through ordinary agent output or tool calls.
-- The `chore: start session` commit gives each session a value that is unique by construction.
+- `rn` stops for the user at three gates only (plan, design, evaluation); ordinary build tasks pass
+  through without stopping, so the session-status block cannot serve as a task boundary.
 - A task number is **not** a stable identifier. `steering.md`'s task list is revised during a session
   (`/rn:gm` re-does work and can rewrite or add tasks), so `#1` at one moment and `#1` later need not
   be the same task. Git history is not a fallback either: PRs land on `main` squashed, so the
   intermediate `steering.md` revisions that would say what `#1` meant do not survive — observed on
   `.rn/20260705-improve-design-template/steering.md`, which has exactly one commit on `main`.
-- An `rn` session spans several conversations, so one session maps to N JSONL files.
+- An `rn` session spans several conversations, so one session maps to N JSONL files in one directory.
 - Reading and analysing a JSONL is delegated to a subagent, so it does not consume the coordinator's
   remaining context — which is what makes collection affordable at `/rn:dn`, where context is by
   definition nearly exhausted.
@@ -84,21 +93,25 @@ retrospective with nothing to say naturally says nothing.
 
 # Tasks
 
-### #1: Measure how a string actually reaches the JSONL
+### #1: Settle by measurement what the conversation log gives and what an emitted string does
 
-**Purpose**: Determine by measurement — not by reasoning — which way of emitting a string lands in the
-live conversation JSONL and can be grepped while the conversation is still open.
+**Purpose**: Put the log's location, its liveness, and the behaviour of each emission point on
+recorded command-and-output evidence, so #2 decides the marker on measurement rather than reasoning.
 
 **Prerequisites**: none
 
 **Steps**:
 
+- [ ] record the location fact with its command and output: each worktree's conversations live in
+      their own project directory, and sibling worktrees of one repository do not share one
+- [ ] record the liveness fact with its command and output: entries from the open conversation are
+      greppable before it ends
 - [ ] enumerate the candidate emission points (assistant message text, a Bash command string, a Bash
-      command's output, a tool result)
-- [ ] emit a distinct probe string by each candidate in this conversation
-- [ ] grep the live JSONL for each probe and record whether it landed, how soon, and in which fields
-- [ ] confirm each hit came from the emission itself, not from the instruction that requested it
-- [ ] determine what distinguishes the JSONLs of concurrent worktree sessions of one repository
+      command's output, a tool result) and emit one distinct probe by each
+- [ ] compose each probe so its text appears nowhere in the instruction that requests it, and confirm
+      each hit comes from the emission itself
+- [ ] record, per emission point, whether it landed, how soon, and in which JSONL fields
+- [ ] record how a session spanning several conversations appears in that directory
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (writing, subagent)
@@ -106,28 +119,30 @@ live conversation JSONL and can be grepped while the conversation is still open.
 
 **Completion criteria**:
 
-- At least one emission method is shown by recorded command-and-output evidence to put an arbitrary
-  string into the live JSONL, greppable before the conversation ends.
-- Methods that landed and methods that did not are separately recorded; no method is reported as
-  working without its observed evidence.
+- The location and liveness facts are each recorded with the command run and the output observed, not
+  asserted from reasoning.
+- At least one emission method is shown by recorded evidence to put an arbitrary string into the live
+  JSONL, greppable before the conversation ends.
 - Each reported hit is attributable to the emission itself — a hit that only matches the requesting
   instruction is not counted as a landing.
-- The question "what tells two concurrent worktree sessions apart from inside the JSONL" has a
-  measured answer, not a presumed one.
+- Methods that landed and methods that did not are separately recorded; no method is reported as
+  working without its observed evidence.
 
 ### #2: Record the decisions in `rn/docs/design.md`
 
-**Purpose**: Settle the marker format and the two-stage retrospective as decisions with reasoning in
+**Purpose**: Settle the boundary marker and the two-stage retrospective as decisions with reasoning in
 `rn`'s canonical design doc.
 
 **Prerequisites**: #1
 
 **Steps**:
 
-- [ ] decide the session marker's value and textual form, from #1's measurements
-- [ ] decide the task-boundary marker's form, and at which points it is emitted
-- [ ] decide how a marker names its task so it stays readable after the task list has been revised —
-      the marker describes what was being worked on, not a row in a document that moves
+- [ ] state how a session's log files are located, and why no session-identifying string is emitted
+- [ ] decide the task-boundary marker's textual form and emission method, from #1's measurements
+- [ ] decide at which points it is emitted (task start, task completion) and what happens to a task
+      that is abandoned or re-done
+- [ ] decide how a marker names its session and its task so it stays readable after the task list has
+      been revised — the marker describes what was being worked on, not a row in a document that moves
 - [ ] decide where collected friction facts are stored, and their record shape
 - [ ] decide the bar for what counts as a friction fact worth recording
 - [ ] decide the stocktake command's name and its call sites (user invocation, `/rn:dn`, session end)
@@ -142,6 +157,8 @@ live conversation JSONL and can be grepped while the conversation is still open.
 
 - Every decision listed in Steps is present in `design.md` with its reasoning and the alternative it
   was chosen over; none is stated as a bare choice.
+- The rejected alternatives include emitting a session-identifying string and reading task boundaries
+  off the session-status block, each with the measured reason it was rejected.
 - `design.md` still answers each of `design-template.md`'s h3 questions after the update, with no
   question left silently unanswered.
 - No statement in `design.md` contradicts #1's measured results.
@@ -166,20 +183,19 @@ live conversation JSONL and can be grepped while the conversation is still open.
 - The user has approved `design.md` through an explicit verdict; no revision request from that review
   remains unaddressed.
 
-### #4: Emit the markers
+### #4: Emit the boundary markers
 
-**Purpose**: Make `rn`'s procedures write the session marker and the task-boundary markers into the
-JSONL at the points the design fixes.
+**Purpose**: Make `rn`'s procedures write a task-boundary marker at the points the design fixes, so
+every task's interval exists in the log without the user doing anything.
 
 **Prerequisites**: #3
 
 **Steps**:
 
-- [ ] emit the session marker where the design places it (`/rn:on`, and on resume so every one of the
-      session's JSONL files carries it)
-- [ ] emit the task-boundary markers at task start and task completion
+- [ ] emit the boundary markers at task start and task completion, in the form the design fixes
 - [ ] update the affected skills and references (`on`, `dn`, `up`, `task-execute-workflow`,
       `task-verify-workflow`) consistently, with the format defined in exactly one place
+- [ ] confirm the markers ride on steps that already run, adding no prompt and no gate
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (writing, subagent)
@@ -187,10 +203,10 @@ JSONL at the points the design fixes.
 
 **Completion criteria**:
 
-- Grepping this repository's JSONLs for the session marker returns this session's log and no other
-  session's, demonstrated with the command and its output.
 - For a task that has started and finished under the new steps, both boundaries are found by grep
-  alone, and the interval between them contains that task's work.
+  alone, and the interval between them contains that task's work — demonstrated with the command and
+  its output.
+- A marker line identifies its session and its task on its own, read with no other file open.
 - The marker format is defined in one place; the skills and references that emit it cite that place
   rather than restating the format.
 - Emitting the markers changes nothing the user sees in normal operation beyond the marker line
@@ -205,8 +221,9 @@ subagent, recording nothing when there is no trace.
 
 **Steps**:
 
-- [ ] write the collection procedure as a reference: locate the JSONL by marker, cut the interval,
-      extract only traced friction, append to the store
+- [ ] write the collection procedure as a reference: locate the session's log directory from the
+      working directory, cut the interval by the boundary markers, extract only traced friction,
+      append to the store
 - [ ] fix the extraction bar in that reference so an interval with no trace yields no record
 - [ ] wire the call into `/rn:dn` so it runs without asking the user anything
 - [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
@@ -280,14 +297,14 @@ friction as improvements, and files approved ones as issues.
 
 ### #8: Demonstrate on this session's own JSONL
 
-**Purpose**: Prove the whole path end to end on real material — locate this session's log by marker,
-split it by task, run collection and stocktake.
+**Purpose**: Prove the whole path end to end on real material — locate this session's log, split it by
+task, run collection and stocktake.
 
 **Prerequisites**: #7
 
 **Steps**:
 
-- [ ] locate this session's JSONL files by the session marker alone
+- [ ] locate this session's JSONL files from the working directory alone
 - [ ] split one of them into per-task intervals by the boundary markers alone
 - [ ] run the collection stage over a real interval and inspect what it recorded
 - [ ] run the stocktake command and inspect what it proposed
@@ -298,8 +315,8 @@ split it by task, run collection and stocktake.
 
 **Completion criteria**:
 
-- Locating and splitting are done with the markers alone; the record shows no fallback to `sessionId`,
-  `cwd`, `gitBranch`, or `git log` timestamps.
+- Locating uses the working directory and splitting uses the markers alone; the record shows no
+  fallback to `sessionId` matching or `git log` timestamps.
 - The collection run's output is consistent with what the interval actually contains — recorded
   friction is traceable to the interval, and no friction visible in the interval is silently dropped.
 - The stocktake run either proposes something backed by recurring facts, or reports nothing to
