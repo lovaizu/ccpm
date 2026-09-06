@@ -353,8 +353,23 @@ concrete event per rule)
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-06
+- **Last completed**: none — #1 is in Verify, not cleared
+- **Next**: #1 — re-dispatch fix round 1 on `rule-inventory.md`, then re-run QA / Craft / Verification
+- **Notes**: branch `worktree-issue-17`, draft PR https://github.com/lovaizu/ccpm/pull/21. Plan gate
+  approved; the `preflight` check (four viewpoints, `observation → action or remaining limit`) is
+  folded into the plan and is #2's decision content. #1's deliverable is
+  `.rn/20260830-issue-17/rule-inventory.md` at commit `68a92c0`, 249 rows, **unrevised**. All three
+  reviews returned FAIL and converged; verdicts are recorded in `checks/1.md`. The fix work-order is
+  settled — six sections: (A) three false facts each repeated across the document, with coordinator-
+  verified true values: the two task-workflow files are identical over lines 6–136 (131 lines), not
+  4–135; 39 of 40 past check files carry `## Overall Verdict` while 24 lack the `Ready to check off`
+  line; 7 of 8 past sessions have no Design sign-off task, not 5 of 8. (B) altered quotations and
+  over-run line spans. (C) five normative statements with no row. (D) internal contradictions,
+  including row 145 sitting in both the enforced and unenforced sets. (E) the load-bearing fix — the
+  verdict boundary: 28 `visible` rows rest only on "the user reads the message" and 10 `stops` rows
+  only on the assistant's turn ending, so the unenforced list is roughly 35 rows short. (F) writing
+  and structure. Two dispatches of this work-order died before writing anything — the first on a rate
+  limit, the second stopped for this suspend — so no partial edit exists to reconcile. Instruct the
+  next dispatch to commit per section so progress survives.
