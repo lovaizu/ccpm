@@ -42,14 +42,24 @@ Launch → Handover → Care／上限 Direction 2 案・revision 2 回／ロー�
 計画のアウトライン（見出しは英語・単数形。どう見せるかはビューの話なので、計画側では分ける）：
 
 ```
-Goal / AsIs / ToBe / Steering / Scope / Content / Process / Schedule / Cost / Risk / Team / Contract / ChangeLog
+Requirement  Goal / Priority                                   施主から聞く（AI が起案、人が確認）
+Context      Team / AsIs                                       調べる（AI が起案、人が確認）
+Planning     ToBe / Scope / Content / Process / Schedule / Cost / Risk   上から順に決める。各決定は上流だけを根拠にする
+Contract                                                       Planning とは別部。Cost・Schedule・Risk・Priority を参照
+ChangeLog                                                      Planning とは別部。開始後の決定変更と理由
 ```
 
-Steering には Base／Scope／Level の選択に加えてトレードオフスライダー（何を固定し、何を動かすか）を置き、施主と
-「何を守るか」を最初に揃える。軸名 Scope と見出し Scope は衝突するため、軸名は D-3 のとおり案件で試してから決める。
+Contract と ChangeLog を外した Requirement / Context / Planning は Web サイトに限らない汎用の骨組み。
+Priority にはトレードオフスライダー（何を固定し何を動かすか）と予算上限・期限を置き、施主と「何を守るか」を最初に揃える。
+Base／Scope／Level の案の比較は Scope の冒頭に「検討した案と選んだ案」として置く（軸名 Scope と見出し Scope の衝突は
+D-3 で軸名側を見直す）。Team は与件の事実（誰が居て何ができるか）として Scope の上流に置き、Process は工程ごとに
+Team の役割を参照するだけにする。
+トレースの仕組み：各決定に ID と「根拠にした決定」を持たせ、Cost の一行から Goal まで遡れる。上流に根拠の無い決定・
+下流に使われない決定を「切れ」として検査する（AC 2・AC 3 の土台、#3 で機械検査）。
+
 見積は行データ＋定数が正で、表はビュー。「一つの事実は一か所」を計画まで貫き、v1 の export ゲート（残留ゼロ）は
 変換器の検査に置き換わる。
 
 **根拠**：ユーザー（2026-09-06）「このプラグインは計画を作ること。最終成果物は計画。提案書は計画のビューで、計画は
-プロジェクト開始後もメンテするもの、提案書はメンテしない」「すべて AI、人は判断するだけ」「どう見せるかはビューの話」。
+プロジェクト開始後もメンテするもの、提案書はメンテしない」「すべて AI、人は判断するだけ」「どう見せるかはビューの話」「Requirement, Context, Planning ってことですか」「Contract、ChangeLog は Planning とは別。この 2 つを外せば何にでも使える」。
 旧 D-5（提案書 Markdown が正・PDF はビュー）はこれで置き換え。
