@@ -102,17 +102,17 @@ recorded command-and-output evidence, so #2 decides the marker on measurement ra
 
 **Steps**:
 
-- [ ] record the location fact with its command and output: each worktree's conversations live in
+- [x] record the location fact with its command and output: each worktree's conversations live in
       their own project directory, and sibling worktrees of one repository do not share one
-- [ ] record the liveness fact with its command and output: entries from the open conversation are
+- [x] record the liveness fact with its command and output: entries from the open conversation are
       greppable before it ends
-- [ ] enumerate the candidate emission points (assistant message text, a Bash command string, a Bash
+- [x] enumerate the candidate emission points (assistant message text, a Bash command string, a Bash
       command's output, a tool result) and emit one distinct probe by each
-- [ ] compose each probe so its text appears nowhere in the instruction that requests it, and confirm
+- [x] compose each probe so its text appears nowhere in the instruction that requests it, and confirm
       each hit comes from the emission itself
-- [ ] record, per emission point, whether it landed, how soon, and in which JSONL fields
-- [ ] record how a session spanning several conversations appears in that directory
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [x] record, per emission point, whether it landed, how soon, and in which JSONL fields
+- [x] record how a session spanning several conversations appears in that directory
+- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (writing, subagent)
 - [ ] Verification expert review (dry-run, subagent)
@@ -347,8 +347,19 @@ task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-06
+- **Last completed**: none — #1 is in progress
+- **Next**: #1 — re-run the three expert reviews (QA / Craft-writing / Verification-dry-run) against
+  `evidence/1-jsonl-behaviour.md` at `9f5f413`; the first round failed all three and its findings are
+  addressed in that commit, and the second round was dispatched but did not return before suspend.
+- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
+  Measured facts live in `evidence/1-jsonl-behaviour.md` — do not re-derive them.
+  **Open decision, asked and unanswered**: whether to change the Acceptance criterion "locatable from
+  the session's own working directory alone" to "locatable by grepping the session-named boundary
+  marker, with the working directory as a fast path". Raised because a conversation whose `cwd` is
+  this worktree was found filed under the main checkout's project directory (a `relocated` stub), so
+  the directory is not airtight. No task list change is pending on the answer — only that criterion
+  and #2's framing.
+  Untracked at suspend: `?? .rn/20260830-issue-18/checks/` (the task-#1 check file; the coordinator
+  commits it at check-off).
