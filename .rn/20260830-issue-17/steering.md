@@ -71,9 +71,11 @@ treatment as one instance among them.
 - **Unverified.** The rules that turn out to be unenforced can be covered by the devices `rn` already
   uses, without inventing a new kind of enforcement. If the sweep turns up a rule that none of them
   fits, task #2 decides what to do about that rule specifically.
-- **Unverified.** One extra subagent read between drafting a plan and showing it to the user is an
-  acceptable cost. The plan is currently the only artifact in `rn` that reaches the user with no
-  expert having read it.
+- **Unverified.** The coordinator checking its own work at a gate catches enough to be worth the
+  step. `preflight` as approved is the coordinator's own four-viewpoint pass, not a subagent read —
+  cheaper, but self-review, so it is weaker at catching what the coordinator was already blind to.
+  The plan is currently the only artifact in `rn` that reaches the user with no expert having read
+  it; #2 decides whether the viewpoints alone close that or a reader is still needed.
 
 # Rules
 
