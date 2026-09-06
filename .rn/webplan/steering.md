@@ -174,4 +174,16 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
+- **Status**: paused
+- **Date**: 2026-09-06
+- **Last completed**: プランゲートの見直し（AC＝提案者のベネフィット 5 項目、各 Completion criteria＝Purpose 達成、#4 が AC 5 項目を担う連鎖）。
+  旧 hposal v1 の archive と案件フォルダの派生物を削除し、ブランチを main 直後の 1 コミット `265ca5d` に squash して PR #8 を更新。
+  #1 は未着手（いちど subagent に丸投げして提案書まで作った分は全削除・差し戻し済み）。
+- **Next**: ユーザーが「再開後に議論したい」と指定。まず議論から入る（#1 の進め方）。議論後に #1 の最初の Step＝最終成果物の合意
+  （「施主に出す提案書＝Markdown が正・PDF はビュー、＋その中の見積」で合っているかを 1 問で確認中・未回答）。
+  #1 は subagent に委任せず、決定を 1 つずつ素の対話で合意しながら進める（learn-by-doing の目的そのもの）。
+- **Notes**:
+  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN・プランゲートは「作業再開して」で通過扱い、`/rn:ty` 記録なし）。ブランチ `hposal-plugin`。
+  - rn 改善要望＝Issue #24（CC ⇒ Purpose ⇒ AC の連鎖を明示・検査）。#17（各層の書き方）の続き。
+  - `.rn/webplan/project/` は gitignore。残っているのは生の入力のみ（`input/` ブリーフ・回答・v1 ゲート回答 4 本、`inventory/`、`work/` サイト複製・Lighthouse・競合複製）。
+  - 未解決の user-deferred パス：なし。
