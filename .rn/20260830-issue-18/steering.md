@@ -350,10 +350,11 @@ so only a genuinely suspended session reads `paused`.)
 - **Status**: paused
 - **Date**: 2026-09-06
 - **Last completed**: none — #1 is in progress
-- **Next**: #1 — re-run the QA and Verification (dry-run) expert reviews against
-  `evidence/1-jsonl-behaviour.md` at `9f5f413`, then triage. Round 2 of the Craft (writing) review is
-  **already done** — verdict Fail, 16 findings recorded in `checks/1-review-craft-round2.md`; do not
-  re-run it. Round 1 failed all three and its findings are addressed in `9f5f413`.
+- **Next**: #1 — re-run the Verification (dry-run) expert review against
+  `evidence/1-jsonl-behaviour.md` at `9f5f413`, then triage all three rounds together. QA and Craft
+  round 2 are **already done** — both Fail, findings in `checks/1-review-qa-round2.md` and
+  `checks/1-review-craft-round2.md`; do not re-run them. Round 1 failed all three and its findings are
+  addressed in `9f5f413`. This is fix round 2 of the 3 the workflow allows.
 - **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
   Measured facts live in `evidence/1-jsonl-behaviour.md` — do not re-derive them.
   **Open decision, asked and unanswered**: whether to change the Acceptance criterion "locatable from
