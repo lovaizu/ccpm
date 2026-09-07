@@ -27,7 +27,8 @@
 Base（Existing site／Template／Reference／Brand assets）× Scope（Refresh／Redesign＋Expand オプション）× Level
 （Basic／Current／Signature）／工程 Discovery → Content → Design〔Direction → Refinement → Rollout〕→ Build → QA →
 Launch → Handover → Care／上限 Direction 2 案・revision 2 回／ロール Client／Provider（＋Subcontractor）。
-松竹梅は廃止（Scope と Level の 2 軸を 1 列に潰していた）。1・2・3 は業界で通じる語、Level と Expand は造語のため
+松竹梅は廃止（Scope と Level の 2 軸を 1 列に潰していた）。
+**2026-09-07 追記**：計画の見出し Scope との衝突を避け、案の軸名は **Change**（Refresh／Redesign）に改める。#1 では Base（Existing site）× Change × Level（Current）で 2 案を並べ、Expand は使わなかった。1・2・3 は業界で通じる語、Level と Expand は造語のため
 提案書の初出で 1 行定義する。
 
 ### D-4: 名前は #2 で決める
