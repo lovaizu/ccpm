@@ -174,15 +174,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-06
-- **Last completed**: #1 Step 1・2（最終成果物＝計画、Requirement / Context / Planning ＋ Contract・ChangeLog の構造と決める順序、D-5）。
-  Step 3 進行中：Goal（G-1〜G-3）は確定して `project/mamezou-devsite/plan.md` に記載済み。`learnings.md` に起案の観点 14 件を先行記録。
-- **Next**: #1 Step 3 の続き。Priority（P-1〜P-3）を起案してユーザーに提示済み・未回答（品質＞費用＞範囲＞時期、費用上限と時期は Client 確認）。
-  回答後は Context（Team → AsIs）→ Planning（ToBe → … → Risk）→ Contract の順に 1 見出しずつ起案 → 判断。各起案は `learnings.md` の観点で自己検査してから出す。
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
 - **Notes**:
-  - PR #8＝https://github.com/lovaizu/ccpm/pull/8（OPEN）。ブランチ `hposal-plugin`。
-  - 計画の本体 `.rn/webplan/project/mamezou-devsite/plan.md` と `worklog.md` は gitignore（push しない）。学びは `learnings.md` に一般化して push。
-  - #1 は subagent に委任せず、決定を 1 つずつ素の対話で合意して進める。
-  - 未解決：軸名 Scope と見出し Scope の衝突（D-3 で軸名側を見直す・Scope 起案時）。
-  - 未解決の user-deferred パス：なし。
