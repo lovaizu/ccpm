@@ -174,12 +174,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-08
-- **Last completed**: #1 Step 4 の途中。tasks.md をユーザーと行単位で確認中。Discovery〜Launch・Handover の全行を 目的名・担当・A/B 通常・最悪（目盛り 0.5・1・3・5・8）の表 ＋ ID ごとの In/Out/Client の箇条書き に組み直し、Build をファイル在庫から積み直し（PR 4 本・BD1 設計・BD9 突き合わせ）、文書を 4 つに限定、QA→Test、要約を SVG グラフ化。learnings 42〜48 を push 済み。
-- **Next**: tasks.md の続きの確認（Direction 以降の行と、目盛り変更で上に寄せた行の妥当性）→ 反映 → 提案書 `out/proposal.html` の確認 → 納品形として Step 4 を閉じる → Step 5（worklog を一般化して learnings に）。
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
 - **Notes**:
-  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore（git 管理外。render.py の区間置換で消した実績あり、置換前に境界を印字）。数値の正は `tasks.md` の行、定数は `work/plan.data.json`。`python3 work/render.py plan.md out work/plan.data.json tasks.md` で提案書・SVG グラフを生成し、tasks.md 合計行・ガント・plan.md Schedule/Cost/Provider note を照合する。
-  - 現在の額：実装まで A ¥1,194,000／上限 ¥1,506,000（12 週）、B ¥1,722,000／¥2,058,000（15 週）。上限が見込みの +20〜26%（粗い目盛りの帰結、ユーザー未確認）。
-  - 保留：進捗の見せ方（バーンアップ等）、Refinement 2 週に Client 確認 2 回が収まるか。
-  - 未解決の user-deferred パス：なし。
