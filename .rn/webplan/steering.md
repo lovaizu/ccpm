@@ -174,8 +174,11 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
+- **Status**: paused
+- **Date**: 2026-09-08
+- **Last completed**: #1 Step 4 の途中。tasks.md を通しで確認（in/out・計画との照合）、提供範囲の軸（デザインのみ・Figma 納品／実装まで）、二点見積り（通常／最悪、不安量＝√Σ(最悪−通常)²、見込み／上限の額）を計画・タスク一覧・提案書に反映。提案書 11 枚を描画して通しで見直し済み。learnings 39〜41 を push 済み。
+- **Next**: ユーザーが tasks.md の明細（行）単位で確認し、質問と FB を出す → 反映 → 提案書 `out/proposal.html` の確認 → 納品形として Step 4 を閉じる → Step 5（worklog を一般化して learnings に〔決定の一覧と順序／各決定の入力と出力／v1 に足りなかったもの／引き継ぐもの〕）。
 - **Notes**:
+  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `tasks.md` の行（通常／最悪）、定数（単価・進行管理率・週）は `work/plan.data.json`。`python3 work/render.py plan.md out work/plan.data.json tasks.md` で提案書を生成し、tasks.md の要約・合計行、plan.md の Schedule・Cost・Provider note との一致を検査する。
+  - 進捗の見せ方（バーンアップ等）と、Refinement 2 週に Client 確認 2 回（各 2〜3 営業日）が収まるかは保留。
+  - 未解決の user-deferred パス：なし。
