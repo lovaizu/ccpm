@@ -176,9 +176,9 @@ so only a genuinely suspended session reads `paused`.)
 
 - **Status**: paused
 - **Date**: 2026-09-08
-- **Last completed**: #1 Step 4 の途中（計画の通しレビューを終了。採用導線の位置・Process の図と範囲の文・アイコン行を反映。learnings 36 書き直し、37・38 追加を push 済み）。
-- **Next**: #1 Step 4 の続き＝見積を詰める。`out/estimate.html` のレビュー → Schedule・Cost の人日と単価の議論（Direction 4 枚に対する人日の見直し含む）→ 提案書 `out/proposal.html` のレビュー → 納品形。
+- **Last completed**: #1 Step 4 の途中（見積書を廃止し、内部の `tasks.md` を起案。見た目・構成はユーザー確認済み：要約〔逆算の図／ガント／工程別の週と人日／負荷／Client にしてもらうこと〕＋工程ごとの表 39 行）。
+- **Next**: #1 Step 4 の続き＝`tasks.md` の中身の確認（行の妥当性・in/out の繋がり・薄い人日：BD4 記事、DR3 トップ 2 方向）→ 必要なら plan.data.json の人日・Schedule・Cost を更新 → 提案書 `out/proposal.html` のレビュー → 納品形。
 - **Notes**:
-  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `project/mamezou-devsite/work/plan.data.json`、`work/render.py plan.md out work/plan.data.json` で提案書・見積を生成し額の一致を検査。
-  - ユーザーの判断はアウトラインと提案の方針のみ。見出しごとの確認は求めない。計画のレビューはユーザー判断で打ち切り（再開後は見積から）。
+  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `work/plan.data.json`。`python3 work/render.py plan.md out work/plan.data.json tasks.md` で提案書を生成し、plan.md の額・tasks.md の各表と要約・ガントの一致を検査する。
+  - 進捗の見せ方（バーンアップ等）は保留（tasks.md から進捗表と状態・実績列を外した）。
   - 未解決の user-deferred パス：なし。
