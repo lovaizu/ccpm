@@ -174,11 +174,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-08
-- **Last completed**: #1 Step 4 の途中（見積書を廃止し、内部の `tasks.md` を起案。見た目・構成はユーザー確認済み：要約〔逆算の図／ガント／工程別の週と人日／負荷／Client にしてもらうこと〕＋工程ごとの表 39 行）。
-- **Next**: #1 Step 4 の続き＝`tasks.md` の中身の確認（行の妥当性・in/out の繋がり・薄い人日：BD4 記事、DR3 トップ 2 方向）→ 必要なら plan.data.json の人日・Schedule・Cost を更新 → 提案書 `out/proposal.html` のレビュー → 納品形。
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
 - **Notes**:
-  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `work/plan.data.json`。`python3 work/render.py plan.md out work/plan.data.json tasks.md` で提案書を生成し、plan.md の額・tasks.md の各表と要約・ガントの一致を検査する。
-  - 進捗の見せ方（バーンアップ等）は保留（tasks.md から進捗表と状態・実績列を外した）。
-  - 未解決の user-deferred パス：なし。
