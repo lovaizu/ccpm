@@ -69,7 +69,7 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 
 - [x] 最終成果物を合意する（何を・どんな形で出すか）→ D-5
 - [x] 逆算：最終成果物に「決まっていないと書けない決定」を洗い出し、各決定の入力元と依存順＝進め方を合意する → D-5
-- [ ] 決定を 1 つずつ素の対話で決め、`project/worklog.md` に〔決めたこと／順序／入力／成果物／詰まった点〕を記録する
+- [x] 決定を 1 つずつ素の対話で決め、`project/worklog.md` に〔決めたこと／順序／入力／成果物／詰まった点〕を記録する（方針転換：判断はアウトラインと方針のみ、AI が全見出しを起案し計画を通しレビュー）
 - [ ] 決定が揃ったら提案書と見積に畳む → ユーザーレビュー → 修正 → 納品形
 - [ ] `worklog.md` を一般化して `.rn/webplan/learnings.md` に書く：〔決定の一覧と順序／各決定の入力と出力／
       v1 に足りなかったもの／v1 から引き継ぐもの〕。社名・実額・個人名・他社著作物の複製を含めない
@@ -174,8 +174,11 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
+- **Status**: paused
+- **Date**: 2026-09-08
+- **Last completed**: #1 Step 3（計画 `project/mamezou-devsite/plan.md` を全見出し起案し、ユーザーの通しレビューで約 20 件反映。learnings 15〜36 を push 済み）。
+- **Next**: #1 Step 4 の続き。計画のレビュー継続（残指摘があれば反映）→ 提案書 `out/proposal.html`（スライド）と見積 `out/estimate.html`（1 枚）のレビュー（未着手）→ Schedule・Cost の人日と単価の議論（Direction 4 枚に対する人日の見直し含む）→ 納品形。
 - **Notes**:
+  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `project/mamezou-devsite/work/plan.data.json`、`work/render.py plan.md out work/plan.data.json` で提案書・見積を生成し額の一致を検査。
+  - ユーザーの判断はアウトラインと提案の方針のみ。見出しごとの確認は求めない。
+  - 未解決の user-deferred パス：なし。
