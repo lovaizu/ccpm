@@ -174,8 +174,11 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
+- **Status**: paused
+- **Date**: 2026-09-08
+- **Last completed**: #1 Step 4 の途中（計画の通しレビューを終了。採用導線の位置・Process の図と範囲の文・アイコン行を反映。learnings 36 書き直し、37・38 追加を push 済み）。
+- **Next**: #1 Step 4 の続き＝見積を詰める。`out/estimate.html` のレビュー → Schedule・Cost の人日と単価の議論（Direction 4 枚に対する人日の見直し含む）→ 提案書 `out/proposal.html` のレビュー → 納品形。
 - **Notes**:
+  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `project/mamezou-devsite/work/plan.data.json`、`work/render.py plan.md out work/plan.data.json` で提案書・見積を生成し額の一致を検査。
+  - ユーザーの判断はアウトラインと提案の方針のみ。見出しごとの確認は求めない。計画のレビューはユーザー判断で打ち切り（再開後は見積から）。
+  - 未解決の user-deferred パス：なし。
