@@ -174,12 +174,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-08
-- **Last completed**: #1 Step 4 の途中。tasks.md の見積を 3 観点（逆算・基準行・最悪）で見直し中。反映済み：最悪はリスク行のみ（16 行を最悪＝通常）、最悪の合計を廃止、RF「指摘を集める」×2・BD9・DR3・DR2 を削除、DS3 1/3・DR2 トップ 3/5・DR5 バナー 1/3・RF1 1/1・BD6 A 3/5、in/out 小文字、Build 見出し下を箇条書き、out を提出物だけに（SVG は work/）。learnings 49〜56 を push 済み。初回打ち合わせ用に `out/plan-process-2026-09-08.md`（Process まで、額なし）を出した。
-- **Next**: 見積の続き（保留 1 点：RF5／RF6 の A 通常 0.5 → 1/3 の推奨、未回答）→ 初回打ち合わせの結果を計画の ChangeLog に反映 → 提案書 `out/proposal.html` の確認 → 納品形として Step 4 を閉じる → Step 5（worklog を一般化して learnings に）。
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
 - **Notes**:
-  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `tasks.md` の行、定数は `work/plan.data.json`。`python3 work/render.py plan.md out work/plan.data.json tasks.md` で提案書と `work/effort.svg`・`work/load.svg` を生成し照合する。plan.md の Cost 同期は scratchpad の sync_plan.py（揮発。render.py 冒頭の cost 計算を exec して Cost 節を書き換える）。
-  - 現在の額：実装まで A ¥1,122,000／上限 ¥1,386,000（12 週）、B ¥1,530,000／¥1,806,000（15 週）。デザインのみ A ¥432,000／¥612,000、B ¥588,000／¥768,000。
-  - 保留：進捗の見せ方、Refinement 2 週に Client 確認 2 回が収まるか、B 案 Build 6 週の妥当性（21 日）。
-  - 未解決の user-deferred パス：なし。
