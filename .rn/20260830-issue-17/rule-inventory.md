@@ -1,6 +1,6 @@
 # Rule inventory — what `rn` states, and what happens when it is broken
 
-**Nothing in `rn` enforces anything.** Of the 254 normative statements in its 8 reference files and 5
+**Nothing in `rn` self-enforces anything.** Of the 254 normative statements in its 8 reference files and 5
 skill files, 89 are enforced and 165 are not — and not one of the 89 is enforced by machinery `rn`
 itself ships. The plugin contains no executable code at all: `find rn -type f` returns 17 files,
 sixteen Markdown and one JSON, none of them executable (`find rn -type f -perm -u+x` returns 0), and
@@ -58,8 +58,9 @@ mechanism, that mechanism is quoted from the file that implements it, with its o
 no such line could be quoted, the rule is recorded as unenforced.
 
 Rules were also tested against what past sessions actually produced — the eight session directories
-under `.rn/`, their `steering.md`, `rn/docs/design.md`, and 40 `checks/*.md` files — not only against
-the rule text. Several rules that read as enforced turn out to have been broken repeatedly with
+under `.rn/`, their `steering.md`, `rn/docs/design.md`, and the 41 `checks/*.md` files they hold — not
+only against the rule text. Every "of 40" figure below is over the 40 past check files, this session's
+own excluded, since a session still running has not yet had the chance to breach anything. Several rules that read as enforced turn out to have been broken repeatedly with
 nothing noticing.
 
 **Counts.** 254 normative statements. By file: 41 in `task-execute-workflow.md` (whose lines 6–136 are
@@ -167,7 +168,7 @@ line 5, its Phase: Verify, and its Phase: Complete.
 | 50 | Element 5 Output format — "OK/NG per criterion with concrete evidence, plus an overall pass/fail" | :156 | recognised | The returned summary is on the coordinator's screen and is transcribed into the check file (`:192`). A summary in the wrong shape shows immediately. |
 | 51 | Element 6 Neutral framing — "**Never** pass the self-check file …, the implementation expert's summary, or any OK/NG verdict; do not defend the choices or hint at the verdict you expect." | :157-159 | unseen | The single most consequential rule in the file for review independence, and the single least observable: a primed review is indistinguishable from an independent one in its output. |
 | 52 | QA checklist — "the verification approach is meaningful to the actual objective … no rubber-stamped or purpose-mismatched check" | :162-163 | unseen | Looked for a reader of the reviewer. The check file records the reviewer's verdict (`task-verify-workflow.md:191-192`) but never the checklist it was given, and the review prompt is never written to disk (row 46). A reviewer that ignored the checklist returns a summary of the same shape. |
-| 53 | Design checklist — "does the approach/structure fit; separation of concerns; system-wide integrity (interface contracts, API compatibility, cross-doc consistency)" | :164-166 | unseen | Same as row 52. Note the 132-line verbatim duplication between this file and `task-execute-workflow.md` survived every Design review that has ever run. |
+| 53 | Design checklist — "does the approach/structure fit; separation of concerns; system-wide integrity (interface contracts, API compatibility, cross-doc consistency)" | :164-166 | unseen | Same as row 52. Note the 131-line verbatim duplication between this file and `task-execute-workflow.md` survived every Design review that has ever run. |
 | 54 | Craft checklist — coding: "naming, error handling, null/thread safety", no duplication, style consistency; writing: "prose clarity and correctness, consistency with the doc's existing voice/terminology"; visual: notation clarity | :167-170 | unseen | Same as row 52. |
 | 55 | Verification checklist — test: "meaningful and in GWT (Given/When/Then) format" covering edge cases; fact-check: "every claim/reference verified against its source, no unverified assertion stated as fact, and completeness of claim coverage"; dry-run: trace every step/branch | :171-175 | unseen | Same as row 52 — and this checklist was never run at all in the majority of past tasks. |
 | 56 | "**Triage every finding.** Each ends in exactly one of" Valid / Invalid / Escalation | :176 | unseen | Findings arrive in the review summary the coordinator reads; the check file records verdicts (`:191-192`). A dropped finding is visible only to whoever compares the summary against the file — and nobody does. Fails at leg (1): the comparison that would catch a dropped finding — review summary against check file — is assigned to nobody. `:191-192` says to record the verdicts; no step says to reconcile the record with what came back. |
@@ -252,7 +253,7 @@ line 5, its Phase: Verify, and its Phase: Complete.
 | 121 | `Rules` seeds "commit and push every change; one completion marker per task" | :52 | recognised | The marker half is consumed by `up/SKILL.md:26`'s grep, which checks off whatever task the message names. The push half has no such consumer: an unpushed branch is absent from the PR, and no step asks anyone to compare the PR against local `HEAD`. |
 | 122 | "**Purpose**: what to achieve, 1-2 sentences" | :59 | unseen | Copied into the work-order (`task-execute-workflow.md:141`) and read by the user at the plan gate. Length is unchecked. Fails at leg (2): the work-order that copies `Purpose` is a prompt and never reaches disk, and no reader is sent to measure the sentence count at the gate. |
 | 123 | "**Prerequisites**: tasks that must be completed first (or "none")" | :61 | unseen | Nothing reads prerequisites: `task-verify-workflow.md:215` advances to "the next unchecked task" by position, not by dependency. **A stated prerequisite has no consumer at all.** |
-| 124 | Steps include "self-check (OK/NG per completion criterion, record in checks/{task-id}.md)" as a `- [ ]` item | :67 | unseen | The step is a checkbox in `steering.md`; `dn/SKILL.md:22-23` checks off completed steps and the file is on the PR. An unchecked box is a visible blank — but past sessions closed with unchecked boxes left behind (3 in `20260705`, 2 in `20260624`) and nothing objected. Fails at leg (2) for the step that matters: an unchecked box is a blank only for a step planning actually wrote, and a step never written leaves no blank. Past sessions closed with unchecked boxes still standing — 3 in `20260705-improve-design-template`, 2 in `20260624-rename-cmds-on-dn-up` — and nothing objected. |
+| 124 | Steps include "self-check (OK/NG per completion criterion, record in checks/{task-id}.md)" as a `- [ ]` item | :67 | unseen | The step is a checkbox in `steering.md`; `dn/SKILL.md:22-23` checks off completed steps and the file is on the PR. An unchecked box is a visible blank — but twelve were left behind across five past sessions and nothing objected. Fails at leg (2) for the step that matters: an unchecked box is a blank only for a step planning actually wrote, and a step never written leaves no blank. Past sessions closed with unchecked boxes still standing — 5 in `20260615-experts-do-the-work`, 3 in `20260705-improve-design-template`, 2 in `20260624-rename-cmds-on-dn-up`, 1 each in `20260615-output-rule` and `20260625-rn-lean`, twelve across five of the seven past sessions — and nothing objected. |
 | 125 | Steps include "QA expert review (subagent)" | :68 | unseen | Same checkbox mechanism as row 124, and it fails the same way: a step that planning never wrote cannot be a blank. Every session before `20260625` has QA steps; the review sections behind them are missing from most check files. |
 | 126 | Steps include "Craft expert review (subagent, per the task's medium)" | :69 | unseen | Absent from all 5 sessions before `20260625-rn-lean`. Nothing noticed. |
 | 127 | Steps include "Verification expert review (subagent, per the task's medium)" | :70 | unseen | **The specimen.** Absent from all 7 tasks of `20260705-improve-design-template` and from every earlier session; present in only 5 of 40 check files. The rule exists, the breach is plain in the output, and nothing in `rn` looks. |
@@ -269,7 +270,7 @@ line 5, its Phase: Verify, and its Phase: Complete.
 | 138 | Prerequisites: "List dependencies explicitly; enables parallel/sequential judgment" | :103 | unseen | Row 123: nothing consumes prerequisites. |
 | 139 | Criteria vs steps: criteria answer ① and ② with grounds, "not that an artifact was produced; actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. The task-execution references' … Process selection section … is the source of *which* reviews apply — keep the two in sync" | :104 | unseen | "Keep the two in sync" names no mechanism, and the two are demonstrably out of sync: `task-execute-workflow.md:59-64` mandates Verification for every build task, and this template's Steps list has carried it since `0.7.0` — yet planning wrote it into 0 of 7 tasks in the very next session. |
 | 140 | Flat tasks: "Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates … The user signs off only at the three scheduled gates" | :105 | recognised | Numbering is consumed by `up/SKILL.md:26`'s `complete task #{id}` grep and by `status-display.md:39-50`'s ranges. Non-sequential ids break neither, but `20260625-rn-lean` ordering `#1–#5, #16, #15, #6–#14` produced a task list whose reading order is not its numeric order. |
-| 141 | Done annotation: "A task that is done but awaiting an external gate … may carry an explicit done annotation in its heading … such a task counts as completed for the session-status display" | :106 | recognised | Consumed by `status-display.md:19-22`: "A task counts ✅ when `steering.md` records it complete — checked off, or carrying an explicit done annotation". Both files agree; `20260625-rn-lean` used the annotation on 14 tasks with no `[x]` check-offs at all, so the whole session's ✅ state rests on prose matching. |
+| 141 | Done annotation: "A task that is done but awaiting an external gate … may carry an explicit done annotation in its heading … such a task counts as completed for the session-status display" | :106 | recognised | Consumed by `status-display.md:19-22`: "A task counts ✅ when `steering.md` records it complete — checked off, or carrying an explicit done annotation". Both files agree; `20260625-rn-lean` carries the annotation on 15 of its 16 task headings and exactly one `- [x]` in the whole file (`:241`), so that session's ✅ state rests almost entirely on prose matching. |
 
 ## `status-display.md` (83 lines)
 
@@ -458,10 +459,11 @@ rejecting a missing PR number, a combined `owner`/`repo` value, or a bad comment
 192); a non-fast-forward push after an amend (223). Every one sits in `planning-workflow.md`,
 `pr-feedback-workflow.md` or `dn` — the only files that actually run commands.
 
-Nine rows that the first pass counted here have been removed: 197, 198, 199 (nothing declines an
-unpushed commit — `gh browse <sha> -n` builds its URL locally, see row 198), 214, 224, 228, 229, 231,
-248 (a command the agent runs and interprets is not a mechanism that refuses it), and 220, 232 (real
-consumers, but they recognise rather than refuse).
+Three shapes that look like this group are not in it. Rows 197, 198 and 199 turn on `gh browse <sha>
+-n`, which builds its URL locally and never asks GitHub whether the commit exists (row 198), so
+nothing declines a Done reply for an unpushed commit. Rows 214, 224, 228, 229 and 248 have the agent
+run a command and then act on its output — a command the agent interprets is not a mechanism that
+refuses it. Rows 220 and 232 are real consumers, but they recognise rather than refuse.
 
 ## C. A named reader is made to look — 44 rows
 
@@ -541,8 +543,12 @@ the integrity of the mechanism that is supposed to protect everything else.
 Rows **6, 7, 8, 9, 19, 20, 45, 92, 124, 125, 126, 127, 128, 139, 251.**
 
 The mandated per-task reviews and the rules that place them. Empirically the worst-performing rules in
-the plugin: a Verification section appears in 5 of 40 check files, Craft in 11, and
-`20260705-improve-design-template` ran neither in any of its 7 tasks while closing approved.
+the plugin: a Verification section appears in 5 of the 40 past check files and Craft in 11. The two
+axes fail differently. Craft was simply never adopted before `20260625-rn-lean` (0 of 20 check files
+in the five sessions before it), then adopted wholesale — 5 of 14 in `rn-lean`, 6 of 6 in
+`20260705-improve-design-template`, which also writes a Craft step into 6 of its 7 tasks. Verification
+appears in 5 of `rn-lean`'s 14 files and nowhere else at all: `20260705-improve-design-template`
+writes the step into none of its 7 tasks and closed approved.
 `steering-template.md:67-71`'s Steps checklist would be a mechanism — an unchecked box is a visible
 blank — but only for a step planning actually wrote, and **a step never written cannot be a blank.**
 The failure is at authoring time, not execution time, and `planning-workflow.md:38`'s pre-persist
@@ -636,9 +642,10 @@ Rows **12, 14, 17, 65, 70, 73, 74, 75, 81, 82, 100, 101, 142, 143, 144, 146, 147
 This group is what the tightened `recognised` test created, and it is the largest single correction in
 this inventory. Every one of these rules produces something the user could in principle see — a status
 block, a proposal, a report, a PR body, a commit on the branch — and none of them produces a reader
-who is looking at it *against the rule*. Twelve are the whole of `status-display.md`'s output contract
-(142–144, 146, 148–154): the file's own product is a block the user reads, and no `rn` step ever
-compares an emitted block to the `steering.md` it was supposed to be derived from. Six more are
+who is looking at it *against the rule*. Twelve of them are `status-display.md`'s output contract
+(142–144, 146–154): the file's own product is a block the user reads, and no `rn` step ever compares
+an emitted block to the `steering.md` it was supposed to be derived from. That file's thirteenth rule
+(145) is unenforced too — it sits in U7, since a block derived fresh and one reused differ in nothing. Six more are
 planning's proposal rules (73–75, 81, 82, 101), where a proposal made without alternatives is
 indistinguishable from one made with them.
 
