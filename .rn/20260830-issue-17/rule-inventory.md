@@ -1,7 +1,7 @@
 # Rule inventory — what `rn` states, and what happens when it is broken
 
-**`rn` ships one line of machinery, and it guards one property.** Of the 254 normative statements in
-its 8 reference files and 5 skill files, 61 are enforced and 193 are not. The plugin contains no
+**`rn` ships one line of machinery, and it guards one property.** Of the 269 normative statements in
+its 8 reference files and 5 skill files, 61 are enforced and 208 are not. The plugin contains no
 executable code: `find rn -type f` returns 17 files, sixteen Markdown and one JSON, none of them
 executable (`find rn -type f -perm -u+x` returns 0), and there is no hook, no script, no validator
 and no CI step anywhere in it. The one exception is a declaration rather than code —
@@ -13,12 +13,12 @@ the result of a command they typed, the PR thread's reviewer, or a later `rn` st
 out with their row ids under "The enforced set" below, and they are the whole of what catches a
 breach.
 
-The 193 unenforced rows are this document's product: the definite list task #2 works from, grouped
+The 208 unenforced rows are this document's product: the definite list task #2 works from, grouped
 under "The unenforced set" by *why* nothing catches them, because the groups need different repairs.
-The two largest groups hold 68 of the 193 between them. Thirty-five rows produce something a user
+The two largest groups hold 72 of the 208 between them. Thirty-five rows produce something a user
 can see and give no one an occasion to check it against the rule; twelve of the thirteen rules in
 `status-display.md` sit here. Thirty-three more are the review chain's own internals, which live in
-prompts that are never written to disk. A tenth group, U10, holds the 27 rows that name a real
+prompts that are never written to disk. A tenth group, U10, holds the 30 rows that name a real
 reader whose own step is one nothing records having run.
 
 ## The verdict vocabulary
@@ -62,7 +62,7 @@ meeting the result of a command they themselves typed; and the user at a schedul
 the assistant's turn and hands them an artifact already on the PR. Whether a gate was *placed* is a
 separate rule with its own row (12, 14, 15, 93, 94) and is not folded into the rows the gate reads —
 folding it in would resolve every verdict here to "nothing forces the agent to run `rn` at all".
-Applying this to a fixed point moved 27 rows out of the enforced set; they are listed as **U10**,
+Applying this to a fixed point moved 27 rows out of the enforced set (30 sit in the group today, three of them never enforced to begin with); they are listed as **U10**,
 where the repair is to make the reader's step leave a trace rather than to find a reader.
 
 Two further words are used throughout in one sense each, and nowhere in the other's:
@@ -95,15 +95,24 @@ repository retains no conversation transcripts, so what a user did or did not re
 observable from it; where a claim of "nothing noticed" is made here it means a specific absence on
 disk — no commit, no check-file entry, no escalation record — and it says which.
 
-**Counts.** 254 normative statements. By file: 41 in `task-execute-workflow.md` (whose shared span
+**Granularity.** One row per statement a reader could breach on its own. A template block is
+expanded the same way as prose: each field or section that prescribes content gets a row, because
+that content is what a later step addresses by name — which is why `steering-template.md`'s block
+yields rows 115–134 and 255–257, and `design-template.md`'s yields rows 173 and 266–269, one per h2
+section with its h3 questions. The instructions *about* a block (copy it verbatim; answer every
+question) stay one row each (106, 169, 170), and a line that restates a rule already inventoried is
+cited on that rule's row rather than given its own (`steering-template.md:32`, `:33` on rows 113 and
+114).
+
+**Counts.** 269 normative statements. By file: 43 in `task-execute-workflow.md` (whose shared span
 with `task-verify-workflow.md` is counted once — see that file's table below), 32 more in
-`task-verify-workflow.md`, 36 in `planning-workflow.md`, 37 in `steering-template.md`, 13 in
-`status-display.md`, 11 in `migration-workflow.md`, 16 in `design-template.md`, 26 in
+`task-verify-workflow.md`, 39 in `planning-workflow.md`, 42 in `steering-template.md`, 13 in
+`status-display.md`, 11 in `migration-workflow.md`, 20 in `design-template.md`, 27 in
 `pr-feedback-workflow.md`, and 4 / 14 / 11 / 7 / 6 in `on` / `dn` / `up` / `ty` / `gm`. Row ids are
-stable identifiers assigned in the order the rules were inventoried; rows 250–254 sit at the end of
+stable identifiers assigned in the order the rules were inventoried; rows 250–269 sit at the end of
 their file's table rather than in source-line order; the index under "The unenforced set" gives
 every row's `file:line`, so source order is recoverable from there. By verdict: **12 refuse**, **49
-are recognized on breach**, **193 are unseen**.
+are recognized on breach**, **208 are unseen**.
 
 ## Per-file inventory
 
@@ -161,6 +170,8 @@ sentence ("Run one task at a time.") stands verbatim on line 5 of each, but row 
 | 38 | Element 7 Return — "a compact summary only … Do not paste full file contents or trial-and-error." | :172-174 | unseen | Fails at legs (2) and (3): the coordinator is handed the summary rather than sent to compare it against a length bar, and no bar is stated. Contrast row 202, where the summary's named fields are what `pr-feedback-workflow.md:128-134` checks the result against; compactness is consumed by nothing. The cost is context, and it is spent before it can be judged. |
 | 39 | "**Capture the task's starting commit** — current `HEAD` … Capture it **once**; do **not** re-capture on fix rounds." | :175-176 | unseen | The value lives only in the coordinator's context. A re-captured or lost SHA silently narrows the cumulative diff at `task-verify-workflow.md:144-145`, hiding earlier rounds from review. |
 | 40 | "**Dispatch the implementation expert** with the work-order and wait for its summary." | :177 | unseen | See rows 5 and 10. |
+| 258 | "Per-task quality on every other task is caught by self-check + QA/expert review + the coordinator's independent review." | :46-47 | unseen | The second place `rn` documents an enforcement it never built (row 26 and `migration-workflow.md:47-48` are the first). All three named catchers are unenforced here: the self-check is written by the agent that built the artifact (rows 32, 33), the QA/expert reviews leave no trace that they ran (rows 6–9, 45–55), and the coordinator's independent review is rows 41–44, which record nothing. The sentence is the plugin's own claim that per-task quality is caught, and it is the claim this inventory contradicts. |
+| 259 | Coordinator duties — "Decomposes the goal, picks which expert each piece needs, dispatches, reviews against the committed diff, triages findings, re-instructs, updates `steering.md`, talks with the user." | :12-14 | unseen | The role's own duty list, and every item on it is unenforced under its own row: dispatch (5, 10, 40), review against the diff (41–44), triage (56–62), `steering.md` updates (66 is the one exception, enforced). Nothing records which of the duties the coordinator performed on any given task. |
 | 251 | "Once the expert returns, continue to `task-verify-workflow.md`." | :179 | unseen | The hand-off from Execute to Verify. Nothing records that it was taken: a task whose reviews never ran produces a check file with its review-verdict sections still empty, and nothing reads those sections (row 26). |
 
 ### `task-verify-workflow.md` (222 lines)
@@ -241,6 +252,9 @@ own line 5, its Phase: Verify, and its Phase: Complete.
 | 103 | "**Take the sign-off via the user's verdict commands** … never infer approval and never record a verdict the user did not issue." | :50 | recognized | The harness stops the assistant from *invoking* `/rn:ty` or `/rn:gm` (`ty/SKILL.md:4`, `gm/SKILL.md:4`), not from writing that a verdict was given. Reader: the user; artifact: the message recording the verdict and the check-off that follows it; difference: they know whether they typed the command. |
 | 104 | "**CRITICAL: DO NOT proceed without explicit user approval.**" | :51 | recognized | Row 13's mechanism: the ask ends the turn only if the ask is made, so the recognition is of the breach, not of the rule. Reader: the user at the plan gate; artifact: the PR the gate points them at; difference: commits that predate their verdict. Nothing in `rn` declines on their behalf. |
 | 252 | "Use the confirmed slug for the path." | :19 | recognized | The slug becomes the session directory name, which `dn/SKILL.md:14` and `up/SKILL.md:17` discover by `git log … -- '*/steering.md'` and `status-display.md:37-38` renders in every status header ("the session's slug (the steering directory name, date prefix dropped)"). Reader: the user at the plan gate; artifact: the blob link in the PR body (`planning-workflow.md:44`), whose path contains the slug; difference: a slug they did not confirm, against one they chose minutes earlier. Nothing re-derives the path from the confirmation. |
+| 260 | "Read by `on/SKILL.md` at the start of a session, before task #1 begins — task execution then continues via `task-execute-workflow.md` / `task-verify-workflow.md`." | :3-5 | unseen | The read-order rule for planning, and the class rows 1 and 250 belong to: nothing records which file was read or when, so a session that ran planning from memory and one that read the file leave the same `steering.md`. |
+| 261 | "When the design is settled at plan time — or the session has no `design.md` at all (Step 3's "force no empty `design.md`" rule) — place no separate task; it folds into the plan-gate hand-off instead (Step 5)." | :36 | unseen | The other arm of row 93, and the branch 2 of the 8 sessions actually took (`.rn/20260705-improve-design-template/steering.md:68-69`, `.rn/20260625-rn-lean/steering.md:78`). Nothing reads a task list against it: a session that folded the gate in and one that simply forgot the task produce the same `steering.md`, which is what makes row 93's absence uncountable. Row 102 states the same branch from Step 5's side. |
+| 262 | "**Persist and open a draft PR — the plan gate.** This is the first of the three scheduled user sign-offs (plan / design / evaluation)." | :40 | unseen | The step header that names the gate. The persist and PR halves are rows 96 and 99; what this line adds is the count — first of three — and that is row 12's rule, failing at leg (3) for row 12's reason: the user holds no copy of the three-gate scheme, so a session that runs two gates or four reads to them as an ordinary session. |
 | 253 | "Coverage need not be complete: if an existing design.md covers the core of the work's area, treat it as the update target and record the session's new-but-related content under the sections it belongs to (adding new h3-level content is still "updating," not authoring fresh)." | :26-28 | unseen | The permissive half of row 83's judgment, and unrecorded in the same way: nothing states which existing `design.md` files were considered, how much of the area each covered, or why the threshold was or was not met. A session that skipped the question and a session that asked it and answered "no" produce the same `Design:` line. |
 | 254 | The two sign-off tasks' prescribed content — Design sign-off: "Completion criteria: `design.md` is approved. Steps: present `design.md` to the user and take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)."; Evaluation sign-off: "Completion criteria: the Acceptance criteria run is approved. Steps: present the Acceptance criteria run result to the user and take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)." | :36-37 | unseen | Rows 93 and 94 cover whether the task is *placed*; this covers what planning must *write into* it, and nothing reads the written task against the prescription. Both past Evaluation sign-off tasks depart from it: `.rn/20260625-rn-lean/steering.md:231-252` and `.rn/20260705-improve-design-template/steering.md:239-254` each write their own Purpose, Steps and Completion criteria. `task-verify-workflow.md:219-222`'s backstop tests only that a task by that name was encountered, never what it says. |
 
@@ -252,12 +266,13 @@ own line 5, its Phase: Verify, and its Phase: Complete.
 | 106 | "**Copy the template block below verbatim.** Keep every heading. Keep the blank lines between fields" | :7 | unseen | The headings are addressed by name — `dn/SKILL.md:25` (row 217), `up/SKILL.md:24` (row 231), `migration-workflow.md:21-23` (row 158) — but all three of those rows are `unseen`, so a missing heading breaks a consumer nothing records having run. Nothing checks the blank lines. |
 | 107 | "**Leave placeholders in unpopulated sections.** `Tasks`, `State` start empty; fill later." | :8 | unseen | Row 106's consumers, and row 106's cap. The other half of the breach — filling `Tasks` or `State` early — reaches nothing at all: premature content reads as content. |
 | 108 | "**Fill each section per the rules below.**" | :9 | unseen | Parent of rows 109–141 — every per-section rule in this file. Nothing reads a written `steering.md` against any of them. |
+| 264 | "Allocate content by kind, so steering stays a lean forward contract:" | :13 | unseen | The parent of rows 109–111 and the statement of what the doc-division is *for*. Nothing classifies content by kind (row 109), so the property this line names — that steering stays lean — is measured by nothing; `.rn/20260625-rn-lean/steering.md` runs to 350 lines with per-task narration in its headings and nothing in the flow reads its length or its contents against this rule. |
 | 109 | Doc-division: "**Requirements & acceptance criteria → `steering.md`**" | :15 | unseen | Looked for a reader that classifies content by kind. `migration-workflow.md:21-23` reconciles steering's *fields* against the template, never their contents against the doc-division, so design rationale written into `steering.md` sits in a legitimate field and reads normally. |
 | 110 | "**Structure & decisions (how the parts fit, and why) → `design.md`** … rationale lives only here, at the decision level." | :16 | unseen | Same as row 109. |
 | 111 | "**User-facing UX → `README`**" | :17 | unseen | Same as row 109. |
 | 112 | "A decision lands in a task, in `design.md`, or in a rule. Deliberation and history live in git + the PR — never in steering." | :19 | unseen | Same absent reader as row 109. Searched the eight past `steering.md` files for a place where deliberation would be flagged: none exists, and `.rn/20260625-rn-lean/steering.md`'s task headings carry per-task narration (`— DONE through QA`, on 15 of 16 tasks) that no check file or commit records as a finding. |
-| 113 | "`Rn version:` … is written once, at creation, from the installed plugin's version — never user-edited afterward" | :21-24 | unseen | Row 86: the line is usually absent, and the comparison that would consume it treats absence as no-mismatch. |
-| 114 | "The `Design:` line below it points to the session's `design.md`. A session with no design omits this line entirely" | :26-27 | unseen | Row 84's consumer (`migration-workflow.md:28-29`), and row 84's cap. |
+| 113 | "`Rn version:` … is written once, at creation, from the installed plugin's version — never user-edited afterward" | :21-24 | unseen | Row 86: the line is usually absent, and the comparison that would consume it treats absence as no-mismatch. The template block states the same rule again at `:32` ("stamped at creation, not user-edited"), which is the rule restated, not a check. |
+| 114 | "The `Design:` line below it points to the session's `design.md`. A session with no design omits this line entirely" | :26-27 | unseen | Row 84's consumer (`migration-workflow.md:28-29`), and row 84's cap. The template block carries the same instruction at `:33` ("omit this whole line if the session has no design"), which row 90 states as an obligation. |
 | 115 | `Goal`: "why this is being done and what the user wants to change — the full intent, no added scope" | :37 | recognized | The user reads it at the plan gate; `status-display.md:37-38` compresses it into every status block's header. |
 | 116 | `Acceptance criteria`: "the states / conditions by which the goal is judged achieved" | :41 | recognized | Consumed by the Evaluation sign-off task, whose completion criteria are "the Acceptance criteria run is approved" (`planning-workflow.md:37`) — the user reads the run at the last gate. |
 | 117 | "two axes: goal alignment + quality" | :42 | unseen | Looked for a check on criterion coverage. QA reviews the artifact *against* the criteria (`task-verify-workflow.md:155`), never the criteria against this rule, so a list of criteria all on one axis passes every step `rn` defines. |
@@ -265,6 +280,7 @@ own line 5, its Phase: Verify, and its Phase: Complete.
 | 119 | `Assumptions`: "things taken to be true in pursuit of the goal — if one proves false, the plan changes" | :47 | recognized | Read by the user at the plan gate; `migration-workflow.md:21-23` names the field among what it reconciles. |
 | 120 | "distinguish facts from assumptions — state explicitly if unverified" | :48 | unseen | Looked for a marker that survives writing. `steering-template.md:47-48` gives facts and assumptions the same bullet shape, so an unverified claim written without the caveat is typographically identical to a verified one, and no later step re-asks. |
 | 121 | `Rules` seeds "commit and push every change; one completion marker per task" | :52 | recognized | Two halves. The marker half is consumed by `up/SKILL.md:26`'s grep (row 232), which checks off whatever task the message names. The push half has no consumer: an unpushed branch is absent from the PR, and no step asks anyone to compare the PR against local `HEAD`. |
+| 265 | Task heading shape — "`### #N: <task name>`" | :57 | unseen | Load-bearing and unread. The `#N` it carries is what `up/SKILL.md:26`'s marker grep checks off against (row 140) and what `status-display.md:39-50` collapses into ranges "with a short label per task" — the label is this heading's text. But nothing parses `steering.md`'s headings: `20260625-rn-lean` appended `— DONE through QA` to 15 of its 16 headings and `20260830-issue-17` writes a sentence-long name, and both render and check off exactly as a bare `### #N: <name>` would. |
 | 122 | "**Purpose**: what to achieve, 1-2 sentences" | :59 | unseen | Copied into the work-order (`task-execute-workflow.md:141`) and read by the user at the plan gate. Length is unchecked. Fails at leg (2): the work-order that copies `Purpose` is a prompt and never reaches disk, and no reader is sent to measure the sentence count at the gate. |
 | 123 | "**Prerequisites**: tasks that must be completed first (or "none")" | :61 | unseen | Nothing reads prerequisites: `task-verify-workflow.md:215` advances to "the next unchecked task" by position, not by dependency. **A stated prerequisite has no consumer at all.** |
 | 124 | Steps include "self-check (OK/NG per completion criterion, record in checks/{task-id}.md)" as a `- [ ]` item | :67 | unseen | The step is a checkbox in `steering.md`; `dn/SKILL.md:22-23` checks off completed steps and the file is on the PR. Fails at leg (2) for the step that matters: an unchecked box is a blank only for a step planning actually wrote, and a step never written leaves no blank. Boxes that were written also survived unchecked — 5 in `20260615-experts-do-the-work`, 3 in `20260705-improve-design-template`, 2 in `20260624-rename-cmds-on-dn-up`, 1 each in `20260615-output-rule` and `20260625-rn-lean` — and each of those tasks carries a `complete task #{id}` marker commit all the same. |
@@ -284,6 +300,9 @@ own line 5, its Phase: Verify, and its Phase: Complete.
 | 138 | Prerequisites: "List dependencies explicitly; enables parallel/sequential judgment" | :103 | unseen | Row 123: nothing consumes prerequisites. |
 | 139 | Criteria vs steps: criteria answer ① and ② with grounds, "not that an artifact was produced; actions, reviews, and gates go in Steps as `- [ ]` so their status stays trackable. The task-execution references' … Process selection section … is the source of *which* reviews apply — keep the two in sync" | :104 | unseen | "Keep the two in sync" names no mechanism, and the two are demonstrably out of sync: `task-execute-workflow.md:59-64` mandates Verification for every build task, this template's Steps list has carried it since `0.7.0`, and the next session wrote it into 0 of its 6 build tasks while writing Craft into all 6. Nothing compares the two documents, and nothing compares a written task to either. |
 | 140 | Flat tasks: "Number tasks `#1`, `#2`, …; do not group into phases or add phase-level gates … The user signs off only at the three scheduled gates" | :105 | recognized | Two halves. Numbered ids are consumed by `up/SKILL.md:26`'s `complete task #{id}` grep (row 232): a task with no id can never be checked off by a resume. Sequence and flatness are not — non-consecutive ids break neither consumer, and `20260625-rn-lean` ordering `#1–#5, #16, #15, #6–#14` produced a task list whose reading order is not its numeric order, with nothing objecting. |
+| 255 | `State` field: "**Date**: YYYY-MM-DD" | :88 | unseen | Read by `up/SKILL.md:24` along with the rest of `State`, which is row 231, `unseen` — and nothing parses the value, so a wrong or absent date is a wrong or absent string. Row 217 covers writing the section; this covers what the field must contain. |
+| 256 | `State` field: "**Last completed**: #N description" | :89 | unseen | Row 255's reader. This is the field `up/SKILL.md:24` names first ("last completed task"), so a wrong id resumes from the wrong place — but the read is row 231 and records nothing, and no step re-derives the value from `git log` before using it (`up`'s own step 4 syncs the *task list*, not this field). |
+| 257 | `State` field: "**Next**: #N description" | :90 | unseen | Row 255's reader, and the same failure. Together with rows 133 and 134 these three are the whole payload `up/SKILL.md:24` reads; all four fields are unenforced, and rows 133 and 134 are unenforced only because their readers are (U10). |
 | 141 | Done annotation: "A task that is done but awaiting an external gate … may carry an explicit done annotation in its heading … such a task counts as completed for the session-status display" | :106 | unseen | Consumed only by `status-display.md:19-22` (row 146), which is `unseen`: the block it produces has no reader but the user and nothing compares the ✅ set to `steering.md`. `20260625-rn-lean` carries the annotation on 15 of its 16 task headings against exactly one `- [x]` in the whole file (`:241`), so that session's ✅ state rests on prose matching that nothing verifies. |
 
 ### `status-display.md` (83 lines)
@@ -337,7 +356,11 @@ fresh and one reused leave no differing artifact at all.
 | 170 | "**Answer every h3 question with a decision and the reasoning behind it** … If a question does not apply, say so **and say why** … Nothing here licenses a section with a question left silently unanswered." | :19-22 | unseen | The core rule of the file, and there is no reader: a missing answer under a present heading looks like prose. |
 | 171 | "**In Detailed design, repeat `4.N` once per mechanism or component the design introduces** — not a fixed four" | :23-24 | unseen | Looked for an enumeration to compare against. Nothing in `rn` lists a design's mechanisms independently of the `4.N` subsections themselves, so the subsection count is its own authority — a design with three mechanisms and one subsection reads as a design with one mechanism. |
 | 172 | "**Treat the whole document as optional, not any section within it.** … once you are writing one, no section may be skipped for having "nothing to record"" | :25-28 | unseen | Same as row 170. |
-| 173 | The template block — five h2 sections with their h3 questions, and the header line "Not read at runtime — for whoever maintains the design" | :32-75 | unseen | Same as row 170. |
+| 173 | Template block, section 1 — **Background & Goals**, and its four questions: "What is the goal?", "What goes wrong without this?", "What does reaching it require?", "What is out of scope?" | :40-48 | unseen | Same as row 170, and the header line is the file's own statement that its product has no runtime reader (row 166). |
+| 266 | Template block, section 2 — **Assumptions & Constraints**: "What do we take as true?", "What binds the solution?" | :50-54 | unseen | Same as row 170. |
+| 267 | Template block, section 3 — **Design overview**: "What is the core idea, and why does it solve the problem?", "What are the pieces, and what is each responsible for?", "How does work move?" | :56-62 | unseen | Same as row 170. |
+| 268 | Template block, section 4 — **Detailed design**: "one 4.N subsection per mechanism/component the design introduces — repeat, do not cap at a fixed count", each asking "What does <mechanism> guarantee, and how is a breach caught?" | :64-68 | unseen | Same as rows 170 and 171. This is the question this inventory asks of every rule, asked of every mechanism in a design, and nothing checks that the answer is real — `rn/docs/design.md`'s own `4.N` answers are where this session's gap should have shown. |
+| 269 | Template block, section 5 — **Alternatives considered**: "Why this shape, and not another?", "What did we trade away?" | :70-74 | unseen | Same as row 170. |
 | 174 | Per-section guidance, including: every `4.N` "asks the same pair of questions of its mechanism: what does it guarantee, and how is a breach of that guarantee caught?" | :81-96 | unseen | The template asks of every mechanism the exact question this inventory asks of every rule — and nothing checks that the answer is real. `rn/docs/design.md`'s own `4.N` answers are the place this session's gap should have shown. |
 | 175 | "Follow this instead of the Steps above when `planning-workflow.md`'s location check (Step 2) points `Design:` at an existing `design.md`" | :100-102 | unseen | Row 168. |
 | 176 | "**Read the existing document in full before touching it.** Identify which h3 questions the session's work actually changes" | :104-105 | unseen | Looked for a trace of reading. The update procedure's only output is the revised `design.md`, and a document revised after a full read differs from one revised after a keyword search in quality, not in form. |
@@ -355,6 +378,7 @@ This file is the densest cluster of genuinely enforced rules in `rn`, because al
 | # | Rule | Source | Verdict | Mechanism, or why nothing catches it |
 |---|---|---|---|---|
 | 182 | "A **coordinator** dispatches one **execution subagent** per review thread, sequentially, and reviews each result before the next." | :3-4 | unseen | Nothing records the dispatch (rows 5, 11). |
+| 263 | "**Execution subagent** — subagent (Agent tool, no conversation history)." | :17 | unseen | Word for word row 11's rule in the other file, and it fails identically: nothing records whether the Agent tool was used or whether history was passed, and a coordinator handling the thread itself posts the same reply. |
 | 183 | "Verification is a single coordinator pass — not the QA-expert / multi-round chain" | :4-7 | unseen | A scope statement about what does *not* run; its breach (running experts anyway) leaves no artifact. |
 | 184 | "Entered from `/rn:gm` with no argument — the argument/no-argument routing rule lives in `gm/SKILL.md`." | :9-10 | unseen | Not a refusal. The harness gates `/rn:gm` itself (`gm/SKILL.md:4`), but nothing stops the loop being entered from anywhere else, and `gm/SKILL.md:15`'s branch is a rule about which step to take, not a gate on taking it. Entering the loop wrongly leaves no artifact that differs from entering it rightly. |
 | 185 | Coordinator "Never resolves a thread." | :14-16 | recognized | Thread resolution is GitHub state the reviewer sees; a thread resolved by the assistant is visibly resolved-by-assistant on the PR. |
@@ -540,16 +564,16 @@ such condition. Row 162 is enforced only in the text that asserts it.
 
 ## The unenforced set — the list task #2 works from
 
-**193 rows** where a breach reaches nothing that would tell it from compliance. The ten groups
+**208 rows** where a breach reaches nothing that would tell it from compliance. The ten groups
 below are a partition — every `unseen` row appears in exactly one group, and
-33+15+10+14+14+10+27+8+35+27 = 193 — and they are grouped by *why* nothing catches them, because the
+35+15+10+18+15+10+28+10+37+30 = 208 — and they are grouped by *why* nothing catches them, because the
 groups need different repairs. Each group lists its rows with the `file:line` they live at and what
 they say, so a worker can start on one group without searching the per-file tables above; the full
 statement, the verdict and the grounds stay in those tables under the same id. Because the source
-citations travel with the ids here, the five rows appended out of numeric order (250–254) are
+citations travel with the ids here, the twenty rows appended out of numeric order (250–269) are
 locatable in their files from this list alone.
 
-### U1. The review chain's internals — 33 rows
+### U1. The review chain's internals — 35 rows
 
 | # | Source | Rule |
 |---|---|---|
@@ -557,6 +581,7 @@ locatable in their files from this list alone.
 | 5 | `task-execute-workflow.md:16-17` | Implementation expert "Produces, fixes, and commits/pushes the deliverable" |
 | 10 | `task-execute-workflow.md:26` | "All deliverable work (produce/fix/commit/push) goes to the implementation expert, every time, any size." |
 | 11 | `task-execute-workflow.md:27-28` | "Each review expert runs as an independent subagent (Agent tool, no conversation history) and returns a compact summary." |
+| 259 | `task-execute-workflow.md:12-14` | Coordinator duties — "Decomposes the goal, picks which expert each piece needs, dispatches, reviews against the committed diff, triages findings …" |
 | 22 | `task-execute-workflow.md:73-75` | "Self-check is produced in Execute … reviews run in Verify; the coordinator's independent review then clears the task" |
 | 27 | `task-execute-workflow.md:139-140` | The work-order must "include everything it needs and only that, with these 7 elements" |
 | 28 | `task-execute-workflow.md:141` | Element 1 Task — "Purpose, Steps, Completion criteria copied from `steering.md`" |
@@ -582,6 +607,7 @@ locatable in their files from this list alone.
 | 62 | `task-verify-workflow.md:191` | "Never silently drop, blindly accept, or bounce a finding for lack of a standard." |
 | 63 | `task-verify-workflow.md:191-192` | "Record the review verdicts into the check file." |
 | 182 | `pr-feedback-workflow.md:3-4` | "A **coordinator** dispatches one **execution subagent** per review thread, sequentially, and reviews each result before the next." |
+| 263 | `pr-feedback-workflow.md:17` | "**Execution subagent** — subagent (Agent tool, no conversation history)." |
 | 183 | `pr-feedback-workflow.md:4-7` | "Verification is a single coordinator pass — not the QA-expert / multi-round chain" |
 | 193 | `pr-feedback-workflow.md:86-87` | "Process the queue **one thread at a time**. Never dispatch two threads in parallel" |
 | 194 | `pr-feedback-workflow.md:89-92` | Work-order contents: Thread (`path`, `line`, full bodies, `databaseId`) and Task ("produce exactly one of the two outcomes") |
@@ -661,7 +687,7 @@ while rebuilding: `steering-template.md:75-79` states the bar for **Completion**
 Acceptance criteria (`.rn/20260705-improve-design-template/steering.md:22-49`, 9 of 10 written as
 artifact existence).
 
-### U4. The whole of `design.md` — 14 rows
+### U4. The whole of `design.md` — 18 rows
 
 | # | Source | Rule |
 |---|---|---|
@@ -673,6 +699,10 @@ artifact existence).
 | 171 | `design-template.md:23-24` | "**In Detailed design, repeat `4.N` once per mechanism or component the design introduces** — not a fixed four" |
 | 172 | `design-template.md:25-28` | "**Treat the whole document as optional, not any section within it.** … once you are writing one, no section may be skipped for having "nothing to … |
 | 173 | `design-template.md:32-75` | The template block — five h2 sections with their h3 questions, and the header line "Not read at runtime — for whoever maintains the design" |
+| 266 | `design-template.md:50-54` | Template block, section 2 — **Assumptions & Constraints**: "What do we take as true?", "What binds the solution?" |
+| 267 | `design-template.md:56-62` | Template block, section 3 — **Design overview**: "What is the core idea, and why does it solve the problem?", "What are the pieces, and what is each …" |
+| 268 | `design-template.md:64-68` | Template block, section 4 — **Detailed design**: "one 4.N subsection per mechanism/component the design introduces — repeat, do not cap at a fixed …" |
+| 269 | `design-template.md:70-74` | Template block, section 5 — **Alternatives considered**: "Why this shape, and not another?", "What did we trade away?" |
 | 174 | `design-template.md:81-96` | Per-section guidance, including: every `4.N` "asks the same pair of questions of its mechanism: what does it guarantee, and how is a breach of that …" |
 | 175 | `design-template.md:100-102` | "Follow this instead of the Steps above when `planning-workflow.md`'s location check (Step 2) points `Design:` at an existing `design.md`" |
 | 176 | `design-template.md:104-105` | "**Read the existing document in full before touching it.** Identify which h3 questions the session's work actually changes" |
@@ -683,15 +713,18 @@ artifact existence).
 `design-template.md:4` says outright "**Not read at runtime**". The document has no consumer in the
 flow: only a Design sign-off gate presents it, and that task exists only if planning placed one (row
 93, itself unenforced; only 3 of the 8 sessions have a `design.md` at all, and both past ones folded
-the gate into the plan gate rather than skipping it). The template's own contract — "What does
-<mechanism> guarantee, and how is a breach caught?" (`design-template.md:68`) — is exactly the
-question this inventory asks, and nothing checks that a `4.N` answers it truthfully.
+the gate into the plan gate rather than skipping it). Rows 173 and 266–269 are the five h2 sections
+of the template block, one row each, and rows 167 and 170 are the obligation to answer their h3
+questions. The template's own contract — "What does <mechanism> guarantee, and how is a breach
+caught?" (`design-template.md:68`, row 268) — is exactly the question this inventory asks, and
+nothing checks that a `4.N` answers it truthfully.
 
-### U5. Content allocation, doc division, and the migration judgments — 14 rows
+### U5. Content allocation, doc division, and the migration judgments — 15 rows
 
 | # | Source | Rule |
 |---|---|---|
 | 88 | `planning-workflow.md:33` | "Read the doc-division rule … and `…/references/design-template.md`, then **allocate content at planning** per the doc-division" |
+| 264 | `steering-template.md:13` | "Allocate content by kind, so steering stays a lean forward contract:" |
 | 109 | `steering-template.md:15` | Doc-division: "**Requirements & acceptance criteria → `steering.md`**" |
 | 110 | `steering-template.md:16` | "**Structure & decisions (how the parts fit, and why) → `design.md`** … rationale lives only here, at the decision level." |
 | 111 | `steering-template.md:17` | "**User-facing UX → `README`**" |
@@ -736,7 +769,7 @@ marks it. `on/SKILL.md:15` documents that its own copy of the
 check says "this branch can never actually fire here". The reconciliation the trigger guards (rows
 157, 158, 160, 164, 165) is itself an unrecorded judgment.
 
-### U7. Breaches with no possible trace — 27 rows
+### U7. Breaches with no possible trace — 28 rows
 
 | # | Source | Rule |
 |---|---|---|
@@ -751,6 +784,7 @@ check says "this branch can never actually fire here". The reconciliation the tr
 | 44 | `task-verify-workflow.md:146` | "Confirm the change matches the task's scope and Completion criteria before spending review experts." |
 | 64 | `task-verify-workflow.md:194-200` | "**Escalation is an always-open channel, not confined to triage.**  … raised to the user **immediately, wherever it surfaces** … never deferred to a …" |
 | 71 | `task-verify-workflow.md:219-222` | "If no unchecked tasks remain and no "Evaluation sign-off" task was ever encountered … that is a planning defect … escalate to the user immediately … …" |
+| 260 | `planning-workflow.md:3-5` | "Read by `on/SKILL.md` at the start of a session, before task #1 begins — task execution then continues via `task-execute-workflow.md` / …" |
 | 83 | `planning-workflow.md:21-26` | "**Check for an existing design.md first.** … This is a judgment call on scope overlap, not a mechanical file-existence check." |
 | 85 | `planning-workflow.md:33` | "Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md` and follow its per-section guidance." |
 | 91 | `planning-workflow.md:35` | "Work backwards from the Acceptance criteria end state" |
@@ -782,15 +816,17 @@ the rule has to be restated as something that produces an artifact, or dropped.*
 Rows **41–44, 63, 71, 214, 229 and 231** carry a second load beyond their own: they are the reader
 steps the 27 rows of U10 rest on. Fixing them is worth 34 rows, not 8.
 
-### U8. Single cases — 8 rows
+### U8. Single cases — 10 rows
 
 
 | # | Source | Rule |
 |---|---|---|
 | 26 | `task-execute-workflow.md:86-135` | The check-file format block — five columns, `## QA Expert Review`, three expert sections, `## Overall Verdict` with five verdict lines and … |
+| 258 | `task-execute-workflow.md:46-47` | "Per-task quality on every other task is caught by self-check + QA/expert review + the coordinator's independent review." |
 | 80 | `planning-workflow.md:15-17` | Slug candidates: the current git branch, an issue reference in `$ARGUMENTS`, a kebab-case name from the goal |
 | 93 | `planning-workflow.md:36` | "**Design sign-off task.** When the session has a `design.md` not settled at plan time, place a **"Design sign-off"** task … at the point where heavy …" |
 | 98 | `planning-workflow.md:43` | "Ensure the work is on a branch — if on the default branch, create `{slug}` first." |
+| 261 | `planning-workflow.md:36` | "When the design is settled at plan time — or the session has no `design.md` at all (Step 3's "force no empty `design.md`" rule) — place no separate …" |
 | 102 | `planning-workflow.md:49` | "**Design gate.** … When the design is settled at plan time, fold it into this plan-gate approval (one stop). When it is not, Step 4 placed a …" |
 | 108 | `steering-template.md:9` | "**Fill each section per the rules below.**" |
 | 162 | `migration-workflow.md:41-52` | For a task whose Completion criteria changed and that has a `checks/{task-id}.md`: "record in its Overall Verdict a …" |
@@ -813,7 +849,7 @@ Three worth naming:
   an unprotected repo, `rn` has nothing here at all — which is why the verdict is `unseen` rather
   than `refuses`.
 
-### U9. Output on the user's screen with no auditor — 35 rows
+### U9. Output on the user's screen with no auditor — 37 rows
 
 | # | Source | Rule |
 |---|---|---|
@@ -829,6 +865,8 @@ Three worth naming:
 | 82 | `planning-workflow.md:21` | "Alongside the slug, decide the session's `design.md` location with the user." |
 | 100 | `planning-workflow.md:44` | "The PR body is a single link to the steering file and nothing else — do not copy the Goal, tasks, or any plan content into it. Use a branch-ref blob …" |
 | 101 | `planning-workflow.md:45-48` | "Open the plan-gate ask with the session-status block … on both branches: push and PR creation succeeded → report the PR link and ask the user to …" |
+| 262 | `planning-workflow.md:40` | "**Persist and open a draft PR — the plan gate.** This is the first of the three scheduled user sign-offs (plan / design / evaluation)." |
+| 265 | `steering-template.md:57` | Task heading shape — "`### #N: <task name>`" |
 | 142 | `status-display.md:3-5` | "The compact session map that opens every message stopping for user input while a session is active … The block comes first in that message — before …" |
 | 143 | `status-display.md:9-12` | "**Emit only while a session is active** — its `steering.md` exists and is identified." with the listed exceptions (planning's pre-persist asks … |
 | 144 | `status-display.md:13-16` | "**Asks and flow-ending reports both count as stops** … on a report the 👉 line states where the session stands and the user's next move instead of an …" |
@@ -868,7 +906,7 @@ at which someone is required to hold the output up against the rule — which is
 already do for `Goal`, `Acceptance criteria` and `Assumptions` (group C), and what nothing does for
 the block, the proposals, or the reports.
 
-### U10. Enforced only if a step nothing records actually runs — 27 rows
+### U10. Enforced only if a step nothing records actually runs — 30 rows
 
 | # | Source | Rule |
 |---|---|---|
@@ -890,6 +928,9 @@ the block, the proposals, or the reports.
 | 106 | `steering-template.md:7` | "**Copy the template block below verbatim.** Keep every heading. Keep the blank lines between fields" |
 | 107 | `steering-template.md:8` | "**Leave placeholders in unpopulated sections.** `Tasks`, `State` start empty; fill later." |
 | 114 | `steering-template.md:26-27` | "The `Design:` line below it points to the session's `design.md`. A session with no design omits this line entirely" |
+| 255 | `steering-template.md:88` | `State` field: "**Date**: YYYY-MM-DD" |
+| 256 | `steering-template.md:89` | `State` field: "**Last completed**: #N description" |
+| 257 | `steering-template.md:90` | `State` field: "**Next**: #N description" |
 | 133 | `steering-template.md:83-85` | `State` placeholder: "`Status` is `paused` while a session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` …" |
 | 134 | `steering-template.md:91` | `Notes`: "bounded forward pointer … not a re-narration of the session (that lives in `git log`)" |
 | 141 | `steering-template.md:106` | Done annotation: "A task that is done but awaiting an external gate … may carry an explicit done annotation in its heading … such a task counts as …" |
@@ -901,30 +942,30 @@ the block, the proposals, or the reports.
 | 234 | `up/SKILL.md:30` | "**Clean up State.** Replace the `State` section with its template placeholder and commit the reconciliation." |
 
 Every row here names a real reader and a real artifact. What it cannot name is anything that says the
-reading happened. Five reader steps carry all 27:
+reading happened. Six reader steps carry all 30:
 
 | The reader | Its own row | Rows that rested on it |
 |---|---|---|
 | The coordinator's diff read and `git status` — `task-verify-workflow.md:139-146` | 41, 42, 43, 44 | 25, 29, 34, 35, 58, 177, 179 |
 | The coordinator transcribing verdicts into the check file — `task-verify-workflow.md:191-192` | 63 | 23, 24, 32, 33, 50 |
 | The `Design:` read in `migration-workflow.md:27-31`, in a workflow that has never run | 159, 155 | 84, 87, 90, 114 |
-| `up`'s candidate ranking and `State` read — `up/SKILL.md:19`, `:24`; `dn/SKILL.md:15-16` | 214, 229, 231 | 106, 107, 133, 134, 217, 220, 221, 234 |
+| `up`'s candidate ranking and `State` read — `up/SKILL.md:19`, `:24`; `dn/SKILL.md:15-16` | 214, 229, 231 | 106, 107, 133, 134, 217, 220, 221, 234, 255, 256, 257 |
 | The Evaluation-sign-off backstop — `task-verify-workflow.md:219-222`, itself `unseen` | 71 | 15, 94 |
 | The status block's ✅-membership rule — `status-display.md:19-22`, read by no one but the user | 146 | 141 |
 
 The repair is the opposite of U9's. U9 has the artifact and lacks the occasion to read it; U10 has
 the occasion, named and mandated, and lacks any trace that it was taken. Making one of these five
 steps write a line — which file was read, what the diff showed, which candidate was ranked first —
-would move most of the 27 back across the boundary at once, and none of them needs a new reader.
+would move most of the 30 back across the boundary at once, and none of them needs a new reader.
 Two of the five have standing proof they went untaken: `.rn/20260615-subagent-execution/steering.md:340`
 still reads `- **Status**: paused` today, and `migration-workflow.md`'s reconciliation has never
 fired at all (row 155).
 
-### Outside the 193: the rule that was never written
+### Outside the 208: the rule that was never written
 
 The 131 lines the two task-workflow files share verbatim carry **no rule anywhere requiring they
-stay in sync**, and no mechanism if there were one. This is deliberately not one of the 193 and not
-one of the 254: the 254 are statements `rn` makes, and this is a statement `rn` does not make, so it
+stay in sync**, and no mechanism if there were one. This is deliberately not one of the 208 and not
+one of the 269: the 254 are statements `rn` makes, and this is a statement `rn` does not make, so it
 has no `file:line` to be cited at and no breach to judge. It is recorded here so task #2 does not
 lose it — it is a rule to write, where every row in the nine groups above is a rule to rebuild.
 The Design expert on the task that created it did flag it (`.rn/20260625-rn-lean/checks/12.md`: "a
