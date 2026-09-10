@@ -984,9 +984,9 @@ and those stay in scope, because a dimension is not a size: `rn` states no rule 
 them to be skipped for a small change, which is the question this section asks. The few steps that
 fire only on a state a session may never reach are marked conditional where they appear.
 
-**What is inventoried.** Sixty-one steps, in five tables: fifteen bind every build task (four
-reviews plus eleven others), eight are planning's, twenty-four belong to the five command skills,
-twelve are the PR-feedback loop's, and two run across everything. Each carries the row ids that
+**What is inventoried.** Seventy-one steps, in six tables: twenty-three bind every build task (four
+reviews plus nineteen others), nine are planning's, twenty-four belong to the five command skills,
+thirteen are the PR-feedback loop's, and two run across everything. Each carries the row ids that
 state it, so the set can be checked against the per-file tables above rather than taken on trust.
 For each: what it catches that nothing else in the structure would, and whether it earns that on a
 small change.
@@ -1007,23 +1007,31 @@ reviewer to be skipped. The result in practice was not proportionality but silen
 planning simply stopped writing the steps. The lesson for task #2 is that the fix for an
 over-mandated step is a stated condition, not a firmer instruction.
 
-### The other eleven per-task steps carry the task's boundary, its record and its state
+### The other nineteen per-task steps carry the task's boundary, its record and its state
 
 | Step | Mandated at | Rows | What only this catches | Worth its cost? |
 |---|---|---|---|---|
+| Task in the work-order — Purpose, Steps, Completion criteria copied from `steering.md` | `task-execute-workflow.md:141` | 27, 28 | The only thing that puts the task's own contract in front of the agent that will be judged against it. Every later step — the self-check, all four reviews, the coordinator's scope confirmation — compares an artifact to these criteria, so a paraphrased or truncated copy silently moves the bar for all of them. | Yes, and it is a paste. It is also unrecoverable: the work-order is a prompt, never written to disk (row 27), so a wrong copy cannot be found afterwards. |
+| Best practices in the work-order — Craft always, Design conditionally | `task-execute-workflow.md:148-152` | 31 | The only place the standards the Craft and Design reviews will apply are stated *before* the artifact exists rather than after. Without it the reviews are the first time the bar is named. | Yes on any task producing prose or structure; it costs two lines. Prompt-only like the rest of the work-order, so nothing shows whether it was included. |
+| Element 6 — stage explicitly, plain message, no `complete task #`, push, never force-push | `task-execute-workflow.md:162-165`, fallbacks at `:166-171` | 35, 36, 37 | The one work-order element with a consumer outside the prompt: the marker prohibition is what keeps `up/SKILL.md:26`'s grep from checking off a task nobody finished (row 36). Explicit staging is what keeps a stray file out of the commit; the fallbacks are what stop a failed push from being reported as a success. | Yes, unconditionally, and it is the cheapest step in the loop — but only the marker half is enforced. Explicit staging is caught only if there was a stray file *and* someone reads the diff, and rows 41–44 say nobody records doing so. |
+| Element 7 — return a compact summary, no pasted file contents | `task-execute-workflow.md:172-174` | 38 | Keeps the coordinator's context clear of the build's trial and error. A resource property, like the dispatch rule below. | No as a check: no bar is stated and nothing measures the summary (row 38). The cost is context and it is spent before it can be judged. |
+| Review experts run as independent subagents with no conversation history | `task-execute-workflow.md:27-28`; `pr-feedback-workflow.md:17` | 11, 263 | The whole basis on which a review's verdict is worth more than the coordinator's own opinion: no history means no exposure to the reasoning that produced the artifact. Element 6's neutral framing (row 51) is the same guarantee stated for the prompt's contents. | Yes — it is what the four reviews *are*. Nothing records whether the Agent tool was used or what history was passed, so a coordinator role-playing a review produces the same check file. |
 | Scope in the work-order | `task-execute-workflow.md:142` | 29 | The only place the task's boundary is stated to the agent that will cross it — "stay within this task; do not start adjacent tasks; name the files expected in play". It is what makes `task-verify-workflow.md:146`'s scope confirmation answerable: without it the coordinator has no boundary to hold the diff against. | Yes, and it is one sentence. On a small task it is the difference between a one-file diff and an opportunistic tidy-up nobody asked for. |
 | Method in the work-order | `task-execute-workflow.md:143-147` | 30 | The only instruction to verify *while building* rather than after — test-first for code, claim-by-claim for writing, trace-as-built for a diagram. Every other verification step in `rn` runs after the artifact exists, when a wrong claim is already written down. | Yes on any task with claims or behavior in it. It is also the least checkable step in the loop: element 5 asks the expert to confirm it applied the Method, which is self-report, not evidence (row 30). |
 | Self-check | `task-execute-workflow.md:153-161` | 32, 33, 34 | The only per-criterion evidence written by whoever built the thing, and the only record of *how* the Method was applied (coverage figures, which claims were checked, where the flow was traced). | Yes as a **record**; weak as a **check** — it is written by the same agent that built the artifact, and past files were left without a `Ready to check off` verdict with no consequence (row 26). Its value is entirely contingent on QA reading it, which `task-verify-workflow.md:157-159` forbids passing to the reviewer. |
-| Coordinator reads the committed diff | `task-verify-workflow.md:139-146` | 41, 42, 43, 44 | The only step that reads the actual artifact independently of anyone's account of it. Catches scope creep, stray staged files, a summary that does not match the diff, a regenerated file. It is the reader behind all 16 rows of group C's coordinator list. | Yes, always. It is one `git show`, and 13 rows of group C rest on it. |
+| Coordinator reads the committed diff | `task-verify-workflow.md:139-146` | 41, 42, 43, 44 | The only step that reads the actual artifact independently of anyone's account of it. Catches scope creep, stray staged files, a summary that does not match the diff, a regenerated file. It was the reader behind group C's coordinator list until this pass; the thirteen rows that rested on it are now U10, because nothing records that the read happened. | Yes, always — it is one `git show`. What it costs the inventory is that thirteen rows hang on a step with no trace, and one line of output would return them all. |
 | Dispatch all deliverable work to the implementation expert | `task-execute-workflow.md:26` | 10, 40 | Keeps the coordinator's context clear of build trial-and-error — a resource property, not a quality one. | Yes for context economy; it catches nothing, and nothing records whether it happened. |
 | Capture the task's starting commit | `task-execute-workflow.md:175-176` | 39 | The only way `task-verify-workflow.md:144-145`'s cumulative diff spans multiple fix rounds. Without it, review sees the last round only. | Yes — free, and its loss silently narrows the one step that always earns its place. |
 | Triage every finding to Valid/Invalid/Escalation | `task-verify-workflow.md:176-189` | 56, 57, 60, 61 | The only step forcing a finding to a decision instead of a judgment call about whether to bother. The Invalid bar ("Invalid **only** when it rests on a factual error or falls outside a scope boundary written in the Completion criteria") is what stops findings being waved off. | Yes — it is the rule that makes the reviews consequential rather than advisory. |
+| The coordinator, not the expert, commits the check file | `task-execute-workflow.md:82-84`, `:161` | 25, 34 | The one thing that makes `task-verify-workflow.md:140-143`'s "`git status` shows **only** that tracked check file" a usable signal: if the expert committed it, the deliverable commit contains the ledger and the signal is gone. | Yes, and it costs nothing — but it buys a signal only the coordinator reads, and row 42 records nothing about whether it looked. |
 | Record review verdicts into the check file | `task-verify-workflow.md:191-192` | 62, 63 | The only durable trace that a review happened at all. Everything else about the review chain is prompt-only. | Yes — it is the one artifact that could make U1's 33 unenforced rows visible, and it already exists. |
 | Escalation, always open | `task-verify-workflow.md:194-200` | 18, 64 | The only route by which a discovery that changes the agreed plan or design reaches the user between gates — "raised to the user **immediately, wherever it surfaces** … never deferred to a gate". Nothing else in the loop can interrupt it. | Yes, and it costs nothing when it does not fire. Its failure mode is silence: an escalation that should have fired and did not leaves no artifact anywhere (row 64), which is why it sits in U7 rather than in the enforced set. |
+| Hand off from Execute to Verify | `task-execute-workflow.md:179` | 251 | The seam between building and reviewing, and the only statement that reviews follow the build rather than replacing it. | Yes, and free. A task whose reviews never ran leaves a check file with its review-verdict sections empty, and nothing reads those sections (row 26). |
+| A sign-off task runs its gate instead of the build chain | `task-execute-workflow.md:65-71` | 21 | The only branch that keeps the three scheduled gates out of the review machinery: no axes spawn, Execute and Verify are skipped, and the check-off waits on the user's verdict command. It is what stops a gate being self-answered by a review. | Yes — and it is one of the few steps with real backing: `disable-model-invocation: true` means the assistant cannot issue `/rn:ty` (rows 237, 244), so the verdict has to come from the user. Writing "approved" in prose is still possible; that half is recognized, not refused. |
 | Check off steering + the single completion marker | `task-verify-workflow.md:208-214` | 66, 67, 68 | The session's actual state. Feeds `up`'s resume, the status block, and "the next unchecked task". | Yes — this is `rn`'s state machine; without it a resumed session redoes or skips work. |
-| Advance immediately, no per-task gate | `task-verify-workflow.md:215-217` | 69, 17, 65 | Keeps the user out of per-task decisions, which is the plugin's whole premise. | Yes; it costs nothing and is what the three-gate design buys. |
+| Advance immediately, no per-task gate | `task-verify-workflow.md:215-217`; the no-gate rule at `task-execute-workflow.md:44-46` and `task-verify-workflow.md:204-206` | 69, 17, 65 | Keeps the user out of per-task decisions, which is the plugin's whole premise. | Yes; it costs nothing and is what the three-gate design buys. |
 
-### Planning's eight steps fix everything the session is later judged against
+### Planning's nine steps fix everything the session is later judged against
 
 | Step | Mandated at | Rows | What only this catches | Worth its cost? |
 |---|---|---|---|---|
@@ -1034,7 +1042,8 @@ over-mandated step is a stated condition, not a firmer instruction.
 | **4. Decompose tasks** | `:35` | 91, 92 | The only place the work is cut into units, and the parent of every per-task rule in `steering-template.md` — the `Tasks` structure, the inline criteria rules, and the `Task definition requirements` table. | Yes; it is the plan. It is also where the Goal's specimen failure happened, and every criteria-shape rule it invokes sits in U3. |
 | Evaluation sign-off always last | `planning-workflow.md:37` | 94, 254 | That the goal is confirmed met before the session closes — the only step that checks the Acceptance criteria at all. | Yes, and it is the one planning rule with a downstream check at all (`task-verify-workflow.md:219-222`). That check is row 71, itself `unseen` and never exercised: the rule and the backstop both entered on 2026-07-01 (`2ddcafa`), and both sessions since have placed the task. |
 | Pre-persist self-check that the last task is Evaluation sign-off | `planning-workflow.md:38` | 95 | Would catch the omission at authoring time rather than at session end. | Yes in principle; unenforced in fact (row 95), and it covers only this one task — the Design sign-off, the review steps, and the criteria phrasing get no equivalent. **The cheapest generalization available to task #2 is to widen this step, since it is already the right shape: a check at authoring time on the artifact planning just wrote.** |
-| **5. Persist and open a draft PR — the plan gate** | `planning-workflow.md:40-51` | 99, 100 | Puts the plan in front of the user in rendered form and creates the session's one review surface, on which group C's user depends entirely. | Yes — every `recognized` verdict in this inventory that names the user ultimately resolves to this PR. |
+| **5. Persist and open a draft PR** | `planning-workflow.md:40-44` | 96, 97, 99, 100, 262 | Puts the plan in front of the user in rendered form and creates the session's one review surface, on which group C's user depends entirely. Writing and committing `steering.md` is also what makes the session discoverable to `dn`/`up` at all (rows 79, 96, 97). | Yes — every `recognized` verdict in this inventory that names the user ultimately resolves to this PR, and `gh pr create` refuses rather than half-succeeding. The PR *body* rule is the weak half: a body with the plan pasted into it reads as helpful (row 100). |
+| **5a. Take the plan-gate approval** | `planning-workflow.md:45-51` | 101, 102, 103, 104, 261 | The gate itself: the ask that ends the turn, the design-gate fold-in decision, the requirement that the verdict come through `/rn:ty` or `/rn:gm`, and "**CRITICAL: DO NOT proceed without explicit user approval.**" It is the anchor the whole of group C's user readings rest on — the moment the flow stops and hands the user an artifact they have to answer for. | Yes, and it is the plugin's single most load-bearing step. What backs it is thin: `disable-model-invocation: true` stops the assistant *issuing* the verdict command (row 237), nothing stops it recording one, and nothing at all catches a gate that is simply never opened. The fold-in branch (row 261) is recorded nowhere by rule. |
 
 ### The command skills' twenty-four steps are what survives a suspend
 
@@ -1059,18 +1068,18 @@ over-mandated step is a stated condition, not a firmer instruction.
 | `up` **6. Clean up State** | `:30` | 234 | The only reset of `Status: paused`. Skipping it leaves a closed session outranking a live one in both discovery searches. | Yes — `20260615-subagent-execution/steering.md` is the standing proof that it was skipped once and still costs something. |
 | `up` **8. Begin the next task** | `:34` | 1, 236 | The resume's handoff into the execution loop, reading "the next unchecked task" from `steering.md`. | Yes, free, and it is the payoff for steps 3, 4 and 6. Ordering half unenforced, as in `on` 3. |
 | `ty` **2. Identify the pending approval** | `ty/SKILL.md:15` | 240 | The only step in `rn` that manufactures its own reader: it states the target back to the user before anything is recorded, so a misidentified approval is caught by the one party who knows what they meant. | Yes, always. It is a sentence, and it is the shape the rest of the plugin is missing. |
-| `ty` **3. Record it as approved** | `:17` | 241 | The act the gate exists for. | Yes for a task gate, where the record is a committed check-off read downstream. For a plan gate it writes nothing at all, so the approval survives only in the conversation. |
+| `ty` **3. Record it as approved** | `:17` | 241 | The only step that turns a verdict spoken in the conversation into something on disk: for a task gate, the `steering.md` check-off (`task-verify-workflow.md:208`) that `up` and the status block then read. Without it the approval exists only in a transcript nobody keeps. | Yes for a task gate, where the record is a committed check-off read downstream. For a plan gate it writes nothing at all, so the approval survives only in the conversation. |
 | `ty` **4. Advance the workflow** | `:19-24` | 242 | The only mapping from which gate was approved to what happens next — plan/design to the next task, evaluation to session close, a reviewed item to accepted. | Yes; it is one branch table. Where the advance lands in an artifact it is recognized (row 241); where it ends in a closing report it is not. |
 | `ty` **5. Nothing pending** | `:26` | 243 | The guard against `/rn:ty` approving something that was never pending. | Yes — it costs a sentence and it is the negative case of step 2. It catches nothing after the fact: a compliant reply and a breaching one differ in no artifact (row 243). |
 | `gm` **2. Branch on the argument** | `gm/SKILL.md:15` | 246 | The plugin's one fully specified predicate — trim, treat blank as empty, non-empty to step 3, empty to step 4. Every other conditional in `rn` is a judgment. | Yes, and the wrong branch is recognized at once by the user who typed the command. Steps 3 and 4 are its two arms; their condition is the argument, not the size of the work. |
 | `gm` **5. Either way, this is a revise verdict** | `:21` | 249 | The rule that no piece of feedback is dropped, whichever arm ran. | Real for PR feedback, where an unaddressed thread stays unresolved and is re-collected on the next run (rows 200, 206). Nothing at all for `$ARGUMENTS` feedback, which exists only in the conversation. |
 
-### The PR-feedback loop's twelve steps keep their state in GitHub, not in memory
+### The PR-feedback loop's thirteen steps keep their state in GitHub, not in memory
 
 | Step | Mandated at | Rows | What only this catches | Worth its cost? |
 |---|---|---|---|---|
 | **Find the session's PR**, and capture `owner`/`repo` separately | `pr-feedback-workflow.md:22-38` | 187, 188, 189 | The only place the loop learns which PR it is working on, and the one branch that stops rather than fabricating a number. | Yes, and it is one of the few steps that genuinely refuses: `gh pr view` exits non-zero with no PR, and the GraphQL call has nothing to take. |
-| **Fetch all review threads**, paginating until exhausted | `:42-72` | 190 | The only enumeration of what the loop has to answer. | Yes — and it is the one step in this file that fails silently. A skipped page shrinks the queue and nothing counts what should have been in it. |
+| **Fetch all review threads**, paginating until exhausted | `:42-72` | 190 | The only enumeration of what the loop has to answer. | Yes. Nothing counts what a skipped page should have returned, but the threads it missed stay unresolved and the next run re-collects them (row 206) — the loop's self-repair covers this step as it covers the queue filter. |
 | **Build the queue** — unresolved, last comment by the thread's author | `:74-82` | 191, 192 | The only filter separating threads awaiting a reply from threads already answered or resolved, and the step that records the `databaseId` every later call is keyed on. | Yes; the reviewer is a real reader of both errors — a wrongly kept thread gets a duplicate reply, a wrongly dropped one stays unanswered — and a bad id is rejected by the API. |
 | Work-order element **Thread** | `:91` | 194 | The only context the subagent gets: `path`, `line`, the full comment bodies, the first comment's id. | Yes, and it is four fields. It is never written to disk, so a truncated one is unrecoverable afterwards. |
 | Work-order element **Task** — exactly one of two outcomes | `:92` | 194 | The only thing forcing a thread to end in either a change or a question rather than in silence. | Yes; it is the loop's entire contract with the subagent, in one sentence. |
@@ -1080,6 +1089,7 @@ over-mandated step is a stated condition, not a firmer instruction.
 | **Never resolve the thread** — resolution is the author's act | `:124`, `:142-148` | 203, 206 | The loop's state lives in GitHub's unresolved flag rather than in the assistant's memory, so a missed thread is re-collected on the next run instead of being lost. | Yes, unconditionally. It is the only mechanism in `rn` that repairs its own omissions, and it costs nothing to obey. |
 | **Check the result** before advancing | `:130-132` | 204 | The only inspection between two threads; without it the loop advances on the subagent's word. | Yes — it is the loop's per-item review, and it is one read of the reply against its thread. |
 | **OK → dispatch the next thread** | `:133` | 193 | The sequencing that keeps two subagents off the same PR at once. | Yes for context economy and for reply ordering. Nothing records whether it held: the replies and commits are order-independent (row 193). |
+| **Report the loop result** when the queue is empty | `:136-138` | 205 | The only statement of what the loop did, and the only place the user learns that the threads are answered without going to GitHub and counting. | Worth writing, worth nothing as a check: nothing re-reads a sent message, and the state it summarizes lives on GitHub where the user would have to count for themselves (row 205). |
 | **Problem → re-instruct the same subagent** | `:134` | 204 | The only correction path inside the loop, and the only rule forbidding advance on a wrong result. | Yes; re-instructing the subagent that already holds the thread is cheaper than a fresh one. |
 
 ### Two steps span the whole session, and one of them has never run
@@ -1089,10 +1099,17 @@ over-mandated step is a stated condition, not a firmer instruction.
 | Session-status block at every user stop | `status-display.md:3-5` | 142 | The only thing that tells the user where the session stands without opening `steering.md`. | Yes on a stop; it is the user's only continuous view, and the user is one of group C's three readers. |
 | `migration` reconciles steering, then design, then tasks | `migration-workflow.md:20-25`, `:27-31`, `:33-38` | 157, 158, 159, 160, 161, 162 | The only path by which a session authored under an older `rn` is brought to current convention — and the only step that re-reads a *past* artifact against a current template rather than a new artifact against its own task. | **Not as built.** It has never run: its trigger is a `Rn version:` comparison that usually has no left operand (row 86), and all three reconciliations are unrecorded judgments whose output is indistinguishable from not having run (rows 158, 160). The shape is right; nothing starts it and nothing records it. |
 
-### Thirteen of the sixty-one do not earn their place as written
+### Eighteen of the seventy-one do not earn their place as written
 
-Collected from the cost column above, so the set is in one place rather than scattered across six
-tables. Each is a step `rn` runs anyway.
+Collected from the cost columns above, so the set is in one place rather than scattered across six
+tables. One standard decides membership: a step, or a half of a step the file states separately, is
+listed when what it produces is used by nothing — no reader, no later step, no command — or when its
+cost is a fresh subagent and `rn` gives no way to say "not on this change". Where only one half of a
+step fails, the half is named and the other half stays out; that is why `dn` 5 appears for its
+`wip:` prefix and not for its marker prohibition, and why `on` 3 and `up` 8 appear only for their
+file-ordering clause.
+
+**Cost is a subagent, and there is no way to decline it** (2):
 
 - **Craft on a mechanical edit** — a rename or a version bump returns wording nits. It earns its
   place on any task producing prose a user will read; `rn` offers no way to say which task that is.
@@ -1100,36 +1117,58 @@ tables. Each is a step `rn` runs anyway.
   can already see makes the re-derivation redundant. Of the tasks the rule actually governed it was
   dropped from 6 of 6, in a session whose changes were mostly of exactly this kind — which is why
   nothing in that session's record treats the omission as a defect.
+
+**The output is used by nothing** (16):
+
 - **Dispatching all deliverable work to the implementation expert** — a context-economy rule in a
   quality rule's position. It catches nothing, and nothing records whether it happened (rows 10,
   40).
 - **The self-check as a check** — it is written by the agent that built the artifact. As a record it
   is the only per-criterion evidence there is; as a check it verifies nothing (rows 32, 33).
+- **Element 7's compact-summary bar** — no bar is stated and nothing measures the summary. The
+  context is spent before anyone can judge whether it was worth spending (row 38).
+- **The file-ordering clause in `on` 3 and `up` 8** — "read `task-execute-workflow.md` then
+  `task-verify-workflow.md`". Nothing records which file was read, or whether either was (rows 1,
+  250).
 - **The version check in all five skills** — it has never fired, `on`'s copy is documented as
   unreachable, and no file defines the missing-line case (rows 86, 210).
 - **`migration`'s three reconciliations** — never run, and all three produce judgments whose output
   is indistinguishable from not having run (rows 158, 160).
 - **Planning step 2's design-overlap judgment** — the cost is paid at plan time and nothing records
   the answer, so a session that asked and one that did not leave identical files (rows 83, 253).
+- **Planning's pre-persist self-check** — it covers one task, writes nothing, and the one session
+  that placed its Evaluation sign-off mid-list (`20260625-rn-lean`, at `#15` before `#6`–`#14`)
+  leaves nothing on disk to say whether the check ran and passed or never ran (row 95).
 - **`dn` 5's `wip:` prefix rule** — nothing compares the prefix to the checkbox state it is supposed
   to reflect (row 218).
 - **`dn` 9's report as a check** — its one checkable claim, that the commits are local-only, has no
   reader with a reason to check it (row 225).
+- **`dn` 8's clean-tree verification, as a guarantee** — the re-read is the right shape, but nothing
+  records that step 8 ran, so a `dn` that skipped it and one that ran it on a clean tree produce the
+  same report and the same commit (row 224).
+- **`up` 3's `State` read** — nothing records that it happened: a session resumed from a guess and
+  one resumed from the file produce the same next commit (row 231).
+- **`up` 5's blocker check** — a removed task simply stops appearing, and the user holds no earlier
+  copy of the list to miss it from (row 233).
 - **`ty` 3 at a plan gate** — for a task gate it writes a committed check-off; for a plan gate it
   writes nothing at all, so the approval survives only in the conversation (row 241).
 - **`ty` 5's nothing-pending reply** — a compliant reply and a breaching one differ in no artifact
   (row 243).
 - **`gm` 5 for `$ARGUMENTS` feedback** — real for PR feedback, where the thread is the queue;
   nothing at all for feedback that exists only in the conversation (row 249).
-- **`up` 4 as built** — the right step on the wrong predicate: a substring match that fires on six
-  other task ids and on three prose commits (rows 36, 232).
+- **The PR loop's closing report** — the thread state it summarizes lives on GitHub, and nothing
+  re-reads a sent message (row 205).
+
+One further step is listed not for its cost but for its predicate: **`up` 4 as built** matches
+`complete task #1` against `#1b` and `#10`–`#16`, and against one commit that only quotes the phrase
+(rows 36, 232). It is the right step running on the wrong test.
 
 ### What the cost column adds up to
 
 The steps that earn their place unconditionally are the cheap ones that write or read an artifact —
 one `git show`, one check-off, one `git status --porcelain` re-run, one target stated back to the
-user. The thirteen above are of two kinds: steps whose cost is a fresh subagent that must read the
-artifact from scratch, and steps whose only output is a judgment nobody records. `rn` has no way to
-say "not on this change" about either kind, and the record shows what follows — not proportionality
-but silent omission. Task #2 inherits both halves: 165 rules with no mechanism, and thirteen steps
-whose mechanism costs more than it returns.
+user. The eighteen above split two ways: two whose cost is a fresh subagent, and sixteen whose only
+output is a judgment nobody records. `rn` has no way to say "not on this change" about the first
+kind, and the record shows what followed — planning stopped writing the steps rather than scoping
+them. Task #2 inherits both halves: 208 rules with no mechanism, and eighteen steps whose mechanism
+costs more than it returns.
