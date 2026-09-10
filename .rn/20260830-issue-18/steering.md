@@ -347,20 +347,8 @@ task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-06
-- **Last completed**: none — #1 is in progress
-- **Next**: #1 — **all three round-2 reviews are done and all returned Fail**; do not re-run them.
-  Findings are in `checks/1-review-qa-round2.md`, `1-review-craft-round2.md` and
-  `1-review-verification-round2.md`. Resume at triage, then dispatch fix round 2 (of the 3 the workflow
-  allows) against `evidence/1-jsonl-behaviour.md` at `9f5f413`, then re-review.
-- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
-  Measured facts live in `evidence/1-jsonl-behaviour.md` — do not re-derive them.
-  **Open decision, asked and unanswered**: whether to change the Acceptance criterion "locatable from
-  the session's own working directory alone" to "locatable by grepping the session-named boundary
-  marker, with the working directory as a fast path". Raised because a conversation whose `cwd` is
-  this worktree was found filed under the main checkout's project directory (a `relocated` stub), so
-  the directory is not airtight. No task list change is pending on the answer — only that criterion
-  and #2's framing.
-  Untracked at suspend: `?? .rn/20260830-issue-18/checks/` (the task-#1 check file; the coordinator
-  commits it at check-off).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
