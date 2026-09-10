@@ -624,7 +624,9 @@ artifact, that the completion criteria were copied verbatim, that it was **not**
 self-check or any prior verdict (`task-verify-workflow.md:157-159` — the review-independence rule),
 that each expert checklist was applied, that findings were triaged rather than dropped, that the
 3-iteration cap held. All of it lives in prompts that are never written to disk, so a review that
-never ran, a review that ran primed, and a good review produce the same artifact.
+never ran, a review that ran primed, and a good review produce the same artifact. Rows 259 and 263
+are the role definitions the rest hang off — the coordinator's duty list and the execution
+subagent's — and they are unenforced in exactly the same way.
 
 It is the second-largest group after U9. Nothing about a review is recoverable after it has run,
 which is why the rules protecting the reviews are the least recoverable rules in the plugin.
@@ -745,7 +747,9 @@ nothing checks that a `4.N` answers it truthfully.
 
 Which file a piece of content belongs in; that assumptions are separated from facts; that
 prerequisites are listed; the reconciliation judgments in `migration-workflow.md`'s three steps.
-Misallocated content simply sits in the wrong place and reads normally. **Rows 123 and 138 are the
+Misallocated content simply sits in the wrong place and reads normally, and row 264 names the
+property the division exists to buy — that steering stays a lean forward contract — which nothing
+measures. **Rows 123 and 138 are the
 extreme case: nothing consumes `Prerequisites` at all** — `task-verify-workflow.md:215` advances to
 "the next unchecked task" by position, never by dependency — so a declared prerequisite has no
 effect on anything in the system.
@@ -814,7 +818,8 @@ not re-captured (39, 43), that the coordinator's own `git status` and diff-read 
 file yourself" (222) — a deleted untracked file leaves no residue in git, in `git status`, or
 anywhere else. Seven of them (184, 214, 224, 227, 228, 229, 231) are the same shape one step further
 out: they instruct the agent to run a command, read a file, or take a branch, and the only evidence
-the step happened is that the agent proceeded as though it had. **Adding a reader cannot fix these;
+the step happened is that the agent proceeded as though it had. Row 260 is the same shape for
+planning's own read order. **Adding a reader cannot fix these;
 the rule has to be restated as something that produces an artifact, or dropped.**
 
 Rows **41–44, 63, 71, 214, 229 and 231** carry a second load beyond their own: they are the reader
@@ -901,7 +906,9 @@ contract (142–144, 146–154): the file's own product is a block the user read
 compares an emitted block to the `steering.md` it was supposed to be derived from. That file's
 thirteenth rule (145) is unenforced too — it sits in U7, since a block derived fresh and one reused
 differ in nothing. Six more are planning's proposal rules (73–75, 81, 82, 101), where a proposal
-made without alternatives is indistinguishable from one made with them.
+made without alternatives is indistinguishable from one made with them. Rows 262 and 265 are the
+same failure at one remove: the three-gate count and the task-heading shape are both legible in
+what the user reads and neither is held up against the file that prescribes it.
 
 The repair these need is different from every other group's. Where U1–U8 lack an artifact, U9 has
 the artifact and lacks the occasion to read it. A rule here becomes enforceable by naming a moment
@@ -968,7 +975,7 @@ fired at all (row 155).
 
 The 131 lines the two task-workflow files share verbatim carry **no rule anywhere requiring they
 stay in sync**, and no mechanism if there were one. This is deliberately not one of the 208 and not
-one of the 269: the 254 are statements `rn` makes, and this is a statement `rn` does not make, so it
+one of the 269: the 269 are statements `rn` makes, and this is a statement `rn` does not make, so it
 has no `file:line` to be cited at and no breach to judge. It is recorded here so task #2 does not
 lose it — it is a rule to write, where every row in the nine groups above is a rule to rebuild.
 The Design expert on the task that created it did flag it (`.rn/20260625-rn-lean/checks/12.md`: "a
