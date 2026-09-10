@@ -507,12 +507,49 @@ Two of these consumers are demonstrably defective and should be treated as findi
 **165 rows** where a breach reaches nothing that would tell it from compliance. The nine groups
 below are a partition — every `unseen` row appears in exactly one group, and
 33+15+10+14+14+10+26+8+35 = 165 — and they are grouped by *why* nothing catches them, because the
-groups need different repairs.
+groups need different repairs. Each group lists its rows with the `file:line` they live at and what
+they say, so a worker can start on one group without searching the per-file tables above; the full
+statement, the verdict and the grounds stay in those tables under the same id. Because the source
+citations travel with the ids here, the five rows appended out of numeric order (250–254) are
+locatable in their files from this list alone.
 
 ### U1. The review chain's internals — 33 rows
 
-Rows **4, 5, 10, 11, 22, 27, 28, 30, 31, 37, 38, 40, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 57, 59,
-60, 61, 62, 63, 182, 183, 193, 194, 207.**
+| # | Source | Rule |
+|---|---|---|
+| 4 | `task-execute-workflow.md:14-15` | Coordinator "Writes directly **only** `steering.md` and `checks/{task-id}.md`; never …" |
+| 5 | `task-execute-workflow.md:16-17` | Implementation expert "Produces, fixes, and commits/pushes the deliverable" |
+| 10 | `task-execute-workflow.md:26` | "All deliverable work (produce/fix/commit/push) goes to the implementation expert …" |
+| 11 | `task-execute-workflow.md:27-28` | "Each review expert runs as an independent subagent (Agent tool, no conversation …" |
+| 22 | `task-execute-workflow.md:73-75` | "Self-check is produced in Execute … reviews run in Verify; the coordinator's …" |
+| 27 | `task-execute-workflow.md:139-140` | The work-order must "include everything it needs and only that, with these 7 elements" |
+| 28 | `task-execute-workflow.md:141` | Element 1 Task — "Purpose, Steps, Completion criteria copied from `steering.md`" |
+| 30 | `task-execute-workflow.md:143-147` | Element 3 Method — "apply the task's Verification method as you build, not only after" … |
+| 31 | `task-execute-workflow.md:148-152` | Element 4 Best practices — Craft always; Design "when the task produces or revises …" |
+| 37 | `task-execute-workflow.md:166-171` | Element 6 fallbacks — cannot push → say so and leave the commit, coordinator pushes … |
+| 38 | `task-execute-workflow.md:172-174` | Element 7 Return — "a compact summary only … Do not paste full file contents or …" |
+| 40 | `task-execute-workflow.md:177` | "**Dispatch the implementation expert** with the work-order and wait for its summary." |
+| 46 | `task-verify-workflow.md:150-152` | Element 1 Role — review "**adversarially** … assume defects exist and try to break the …" |
+| 47 | `task-verify-workflow.md:153` | Element 2 Artifact — "the full content or diff under review." |
+| 48 | `task-verify-workflow.md:154` | Element 3 Criteria — "the expert checklist below." |
+| 49 | `task-verify-workflow.md:155` | Element 4 — "the task's Completion criteria copied **verbatim** from `steering.md`" |
+| 51 | `task-verify-workflow.md:157-159` | Element 6 Neutral framing — "**Never** pass the self-check file …, the implementation …" |
+| 52 | `task-verify-workflow.md:162-163` | QA checklist — "the verification approach is meaningful to the actual objective … no …" |
+| 53 | `task-verify-workflow.md:164-166` | Design checklist — "does the approach/structure fit; separation of concerns …" |
+| 54 | `task-verify-workflow.md:167-170` | Craft checklist — coding: "naming, error handling, null/thread safety", no duplication … |
+| 55 | `task-verify-workflow.md:171-175` | Verification checklist — test: "meaningful and in GWT (Given/When/Then) format" … |
+| 56 | `task-verify-workflow.md:176` | "**Triage every finding.** Each ends in exactly one of" Valid / Invalid / Escalation |
+| 57 | `task-verify-workflow.md:177-178` | "**Valid** → fix it. Dispatch the implementation expert (fresh subagent) — every …" |
+| 59 | `task-verify-workflow.md:181-183` | "re-run the same review expert; if the fix could affect a dimension another expert …" |
+| 60 | `task-verify-workflow.md:184-185` | "**Invalid** → reject it, citing evidence. Invalid **only** when it rests on a factual …" |
+| 61 | `task-verify-workflow.md:186-189` | "Escalate **only** when the decision is genuinely the user's … "It's minor, so I'll … |
+| 62 | `task-verify-workflow.md:191` | "Never silently drop, blindly accept, or bounce a finding for lack of a standard." |
+| 63 | `task-verify-workflow.md:191-192` | "Record the review verdicts into the check file." |
+| 182 | `pr-feedback-workflow.md:3-4` | "A **coordinator** dispatches one **execution subagent** per review thread …" |
+| 183 | `pr-feedback-workflow.md:4-7` | "Verification is a single coordinator pass — not the QA-expert / multi-round chain" |
+| 193 | `pr-feedback-workflow.md:86-87` | "Process the queue **one thread at a time**. Never dispatch two threads in parallel" |
+| 194 | `pr-feedback-workflow.md:89-92` | Work-order contents: Thread (`path`, `line`, full bodies, `databaseId`) and Task … |
+| 207 | `pr-feedback-workflow.md:152-153` | "One coordinator pass per item … is the whole of verification. No QA expert, no Design …" |
 
 Every rule about *how* a review or a dispatch is produced: that the work went to a subagent rather
 than to the coordinator's own hand (rows 4 and 5, the two halves of the authorship boundary), that
@@ -528,7 +565,23 @@ mechanism that is supposed to protect everything else.
 
 ### U2. The per-task reviews and their placement — 15 rows
 
-Rows **6, 7, 8, 9, 19, 20, 45, 92, 124, 125, 126, 127, 128, 139, 251.**
+| # | Source | Rule |
+|---|---|---|
+| 6 | `task-execute-workflow.md:18` | "**QA expert** (every task) — subagent." |
+| 7 | `task-execute-workflow.md:19-20` | "**Design expert** (tasks that produce or revise structure/approach)" |
+| 8 | `task-execute-workflow.md:21-22` | "**Craft expert** (per medium: coding / writing / visual)" |
+| 9 | `task-execute-workflow.md:23-24` | "**Verification expert** (per medium: test / fact-check / dry-run)" |
+| 19 | `task-execute-workflow.md:53-57` | "QA always spawns for a task that builds something; a sign-off task spawns none. Craft …" |
+| 20 | `task-execute-workflow.md:59-64` | The three build-task instances — Code, Docs, Visual — each run the same chain … |
+| 45 | `task-verify-workflow.md:147-149` | "**Dispatch the review experts as independent subagents** — QA always; Craft and …" |
+| 92 | `planning-workflow.md:35` | "Define each task following the template's `Tasks` structure, inline …" |
+| 124 | `steering-template.md:67` | Steps include "self-check (OK/NG per completion criterion, record in …" |
+| 125 | `steering-template.md:68` | Steps include "QA expert review (subagent)" |
+| 126 | `steering-template.md:69` | Steps include "Craft expert review (subagent, per the task's medium)" |
+| 127 | `steering-template.md:70` | Steps include "Verification expert review (subagent, per the task's medium)" |
+| 128 | `steering-template.md:71` | Steps include "(tasks that produce or revise structure/approach only) Design expert …" |
+| 139 | `steering-template.md:104` | Criteria vs steps: criteria answer ① and ② with grounds, "not that an artifact was …" |
+| 251 | `task-execute-workflow.md:179` | "Once the expert returns, continue to `task-verify-workflow.md`." |
 
 The mandated per-task reviews and the rules that place them. Empirically the least-observed rules in
 the plugin: a Verification section appears in 5 of the 40 past check files and Craft in 11. The two
@@ -544,7 +597,18 @@ task. Row 139's "keep the two in sync" names no mechanism and the two are provab
 
 ### U3. The shape of task criteria — 10 rows
 
-Rows **117, 118, 122, 129, 130, 131, 132, 135, 136, 137.**
+| # | Source | Rule |
+|---|---|---|
+| 117 | `steering-template.md:42` | "two axes: goal alignment + quality" |
+| 118 | `steering-template.md:43` | "write these exhaustively, never sample — the complete set is what defines scope (in / …" |
+| 122 | `steering-template.md:59` | "**Purpose**: what to achieve, 1-2 sentences" |
+| 129 | `steering-template.md:75-76` | Completion criterion ①: "is the objective achieved? — the objective met, not that an …" |
+| 130 | `steering-template.md:77` | Criterion ②: "are new problems absent? — name the representative failure modes and …" |
+| 131 | `steering-template.md:78` | "objectively verifiable by a third party; no vague terms ("appropriate", "correct")" |
+| 132 | `steering-template.md:79` | "state the end-state, never actions/reviews/gates (those belong in Steps); the grounds …" |
+| 135 | `steering-template.md:100` | Granularity: "Purpose expressible in one sentence; split if it grows" |
+| 136 | `steering-template.md:101` | Specificity: "Not "implement" but "implement `methodName()` in `ClassName`"" |
+| 137 | `steering-template.md:102` | Objectivity: "Completion criteria judgeable by a third party" |
 
 The ①/② phrasing, "the objective met, not that an output was produced", "no vague terms",
 exhaustiveness, and the Granularity / Specificity / Objectivity rows of the `Task definition
@@ -558,7 +622,22 @@ artifact existence).
 
 ### U4. The whole of `design.md` — 14 rows
 
-Rows **166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 178, 180, 181.**
+| # | Source | Rule |
+|---|---|---|
+| 166 | `design-template.md:3-5` | "Read when creating a session's `design.md` … **Not read at runtime**: it records …" |
+| 167 | `design-template.md:7-9` | "The h2 sections below are the canonical design-document sections; under each, the h3 …" |
+| 168 | `design-template.md:13-14` | "This is the fresh-authoring path … to update an existing one, skip to "Updating an … |
+| 169 | `design-template.md:16-17` | "**Copy the template block below verbatim.** Keep every heading, numbering, and section …" |
+| 170 | `design-template.md:19-22` | "**Answer every h3 question with a decision and the reasoning behind it** … If a …" |
+| 171 | `design-template.md:23-24` | "**In Detailed design, repeat `4.N` once per mechanism or component the design …" |
+| 172 | `design-template.md:25-28` | "**Treat the whole document as optional, not any section within it.** … once you are …" |
+| 173 | `design-template.md:32-75` | The template block — five h2 sections with their h3 questions, and the header line "Not …" |
+| 174 | `design-template.md:81-96` | Per-section guidance, including: every `4.N` "asks the same pair of questions of its …" |
+| 175 | `design-template.md:100-102` | "Follow this instead of the Steps above when `planning-workflow.md`'s location check …" |
+| 176 | `design-template.md:104-105` | "**Read the existing document in full before touching it.** Identify which h3 questions …" |
+| 178 | `design-template.md:109-111` | "**The decision-plus-reasoning contract from fresh authoring still applies to whatever …" |
+| 180 | `design-template.md:127-137` | "**Give genuinely open content a destination outside `design.md`.** … Session-scoped …" |
+| 181 | `design-template.md:138-139` | "**Add or drop `4.N` subsections to match what changed** … a new mechanism gets a new …" |
 
 `design-template.md:4` says outright "**Not read at runtime**". The document has no consumer in the
 flow: only a Design sign-off gate presents it, and that task exists only if planning placed one (row
@@ -568,7 +647,22 @@ question this inventory asks, and nothing checks that a `4.N` answers it truthfu
 
 ### U5. Content allocation, doc division, and the migration judgments — 14 rows
 
-Rows **88, 109, 110, 111, 112, 120, 123, 138, 157, 158, 159, 160, 161, 163.**
+| # | Source | Rule |
+|---|---|---|
+| 88 | `planning-workflow.md:33` | "Read the doc-division rule … and `…/references/design-template.md`, then **allocate …" |
+| 109 | `steering-template.md:15` | Doc-division: "**Requirements & acceptance criteria → `steering.md`**" |
+| 110 | `steering-template.md:16` | "**Structure & decisions (how the parts fit, and why) → `design.md`** … rationale lives …" |
+| 111 | `steering-template.md:17` | "**User-facing UX → `README`**" |
+| 112 | `steering-template.md:19` | "A decision lands in a task, in `design.md`, or in a rule. Deliberation and history …" |
+| 120 | `steering-template.md:48` | "distinguish facts from assumptions — state explicitly if unverified" |
+| 123 | `steering-template.md:61` | "**Prerequisites**: tasks that must be completed first (or "none")" |
+| 138 | `steering-template.md:103` | Prerequisites: "List dependencies explicitly; enables parallel/sequential judgment" |
+| 157 | `migration-workflow.md:15-18` | "Reconcile the three artifacts below **in this order** — steering, then design, then …" |
+| 158 | `migration-workflow.md:20-25` | Step 1: "Compare the session's `steering.md` … against the current …" |
+| 159 | `migration-workflow.md:27-31` | Step 2: "Read the session's `steering.md` `Design:` line; if it is absent … skip this …" |
+| 160 | `migration-workflow.md:33-38` | Step 3: "For every unchecked task … judge its Purpose / Prerequisites / Steps / …" |
+| 161 | `migration-workflow.md:39-40` | "Leave every already-checked-off task untouched — reconciliation targets the …" |
+| 163 | `migration-workflow.md:56-58` | "Apply the reconciling edits from all three steps and commit them directly. This is not …" |
 
 Which file a piece of content belongs in; that assumptions are separated from facts; that
 prerequisites are listed; the reconciliation judgments in `migration-workflow.md`'s three steps.
@@ -579,7 +673,18 @@ effect on anything in the system.
 
 ### U6. Version stamping and migration triggering — 10 rows
 
-Rows **86, 113, 155, 164, 165, 210, 215, 235, 239, 245.**
+| # | Source | Rule |
+|---|---|---|
+| 86 | `planning-workflow.md:33` | "Stamp the template's top `Rn version:` line with the currently installed plugin's …" |
+| 113 | `steering-template.md:21-24` | "`Rn version:` … is written once, at creation, from the installed plugin's version …" |
+| 155 | `migration-workflow.md:3-6` | "Invoked by a command skill (`on`/`dn`/`up`/`ty`/`gm`) when the active session's …" |
+| 164 | `migration-workflow.md:59-61` | "Once the reconciling edits are committed, update the session's `steering.md` …" |
+| 165 | `migration-workflow.md:65-70` | "Every comparison above asks one question only: does this artifact match what the …" |
+| 210 | `on/SKILL.md:15` | "**Check version.** … on a mismatch, run `…/references/migration-workflow.md` first …" |
+| 215 | `dn/SKILL.md:18-20` | "**Check version.** Compare `steering.md`'s `Rn version:` line to the installed …" |
+| 235 | `up/SKILL.md:32` | "**Check version.** … on a mismatch, run `…/references/migration-workflow.md` first …" |
+| 239 | `ty/SKILL.md:13` | "**Check version.**" |
+| 245 | `gm/SKILL.md:13` | "**Check version.**" |
 
 The `Rn version:` stamp is absent from 6 of 8 past sessions, and its consumer is "a plain string
 comparison" (`migration-workflow.md:5`) that no file defines for a missing line — so an un-stamped
@@ -589,8 +694,34 @@ check "can never actually fire." The reconciliation the trigger guards (rows 157
 
 ### U7. Breaches with no possible trace — 26 rows
 
-Rows **1, 3, 18, 39, 41, 42, 43, 44, 64, 83, 85, 91, 95, 105, 145, 184, 214, 222, 224, 227, 228,
-229, 231, 248, 250, 253.**
+| # | Source | Rule |
+|---|---|---|
+| 1 | `task-execute-workflow.md:5` | "`on` and `up` read both files at task execution, this one first" |
+| 3 | `task-execute-workflow.md:7-8` | "Write check files under `{steering_dir}/checks/`." |
+| 18 | `task-execute-workflow.md:47-49` | Escalation is "a separate always-open channel — not a gate; an escalation message opens …" |
+| 39 | `task-execute-workflow.md:175-176` | "**Capture the task's starting commit** — current `HEAD` … Capture it **once**; do …" |
+| 41 | `task-verify-workflow.md:139` | "**Read the committed diff yourself.**" |
+| 42 | `task-verify-workflow.md:140-143` | "Expect `git status` to show **only** that tracked check file — that is normal, not a …" |
+| 43 | `task-verify-workflow.md:144-145` | "Inspect the committed deliverable: `git show <sha>` … or …" |
+| 44 | `task-verify-workflow.md:146` | "Confirm the change matches the task's scope and Completion criteria before spending …" |
+| 64 | `task-verify-workflow.md:194-200` | "**Escalation is an always-open channel, not confined to triage.** … raised to the user …" |
+| 83 | `planning-workflow.md:21-26` | "**Check for an existing design.md first.** … This is a judgment call on scope overlap …" |
+| 85 | `planning-workflow.md:33` | "Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md` and follow its …" |
+| 91 | `planning-workflow.md:35` | "Work backwards from the Acceptance criteria end state" |
+| 95 | `planning-workflow.md:38` | "**Self-check before persisting.** Before persisting (Step 5), confirm the last task in …" |
+| 105 | `steering-template.md:3` | "Read when creating a new `steering.md`." |
+| 145 | `status-display.md:17-18` | "**Derive the block fresh from the active `steering.md` at emit time** — its `Goal` …" |
+| 184 | `pr-feedback-workflow.md:9-10` | "Entered from `/rn:gm` with no argument — the argument/no-argument routing rule lives …" |
+| 214 | `dn/SKILL.md:13-16` | "**Locate steering.md.** Use the path known from this session. If unknown: run …" |
+| 222 | `dn/SKILL.md:44` | "Never delete a file yourself." |
+| 224 | `dn/SKILL.md:50-54` | "**Verify clean.** Run `git status --porcelain` … Non-empty → for each remaining …" |
+| 227 | `up/SKILL.md:13-15` | "**Handle a dirty tree.** … Tree dirty → run step 2's discovery first, read-only … then …" |
+| 228 | `up/SKILL.md:17` | "**Find steering.md.** Run …" |
+| 229 | `up/SKILL.md:18-20` | "One result → use it. … Multiple → rank by `State` showing `Status: paused`, then most …" |
+| 231 | `up/SKILL.md:24` | "**Read State.** Read the `State` section: last completed task, next task, and notes." |
+| 248 | `gm/SKILL.md:19` | "**From the PR (no argument).** Read `…/references/pr-feedback-workflow.md` and run …" |
+| 250 | `task-verify-workflow.md:4-5` | "`on` and `up` read both files at task execution, this one second." — the counterpart … |
+| 253 | `planning-workflow.md:26-28` | "Coverage need not be complete: if an existing design.md covers the core of the work's …" |
 
 Not "nothing looks" but "there is nothing to look at": that a file was read (1, 85, 105), that a
 judgment was made (44, 83, 91, 95), that an escalation *should* have fired and did not (18, 64),
@@ -609,7 +740,18 @@ trace of whether it happened.
 
 ### U8. Single cases — 8 rows
 
-Rows **26, 80, 93, 102, 108, 162, 190, 254.** Three worth naming:
+| # | Source | Rule |
+|---|---|---|
+| 26 | `task-execute-workflow.md:86-135` | The check-file format block — five columns, `## QA Expert Review`, three expert … |
+| 80 | `planning-workflow.md:15-17` | Slug candidates: the current git branch, an issue reference in `$ARGUMENTS`, a … |
+| 93 | `planning-workflow.md:36` | "**Design sign-off task.** When the session has a `design.md` not settled at plan time …" |
+| 102 | `planning-workflow.md:49` | "**Design gate.** … When the design is settled at plan time, fold it into this …" |
+| 108 | `steering-template.md:9` | "**Fill each section per the rules below.**" |
+| 162 | `migration-workflow.md:41-52` | For a task whose Completion criteria changed and that has a `checks/{task-id}.md` … |
+| 190 | `pr-feedback-workflow.md:42-72` | "**Fetch all review threads** via GraphQL, **paginating** `reviewThreads` until …" |
+| 254 | `planning-workflow.md:36-37` | The two sign-off tasks' prescribed content — Design sign-off: "Completion criteria …" |
+
+Three worth naming:
 
 - **Rows 26 and 162** — the check file's `## Overall Verdict` block, and
   `migration-workflow.md:47-48`'s claim that Phase: Complete gates on `Ready to check off` reading
@@ -625,8 +767,43 @@ Rows **26, 80, 93, 102, 108, 162, 190, 254.** Three worth naming:
 
 ### U9. Output on the user's screen with no auditor — 35 rows
 
-Rows **12, 14, 17, 65, 70, 73, 74, 75, 81, 82, 100, 101, 142, 143, 144, 146, 147, 148, 149, 150,
-151, 152, 153, 154, 156, 205, 213, 218, 225, 230, 233, 238, 242, 243, 247.**
+| # | Source | Rule |
+|---|---|---|
+| 12 | `task-execute-workflow.md:32` | "The user signs off at exactly **three** scheduled gates, never on any other task" |
+| 14 | `task-execute-workflow.md:35-37` | "**Design gate** — sign-off on the approach / key decisions before they are built on" |
+| 17 | `task-execute-workflow.md:44-46` | "The per-task boundary is **not** a user gate for ordinary build tasks" |
+| 65 | `task-verify-workflow.md:204-206` | "There is no per-task user gate for a normal task: once Verify clears … the coordinator …" |
+| 70 | `task-verify-workflow.md:217-219` | "If no unchecked tasks remain and the Evaluation sign-off was approved, the session …" |
+| 73 | `planning-workflow.md:10` | "Treat every user interaction as a proposal: lead with one concrete recommended option …" |
+| 74 | `planning-workflow.md:10` | "`AskUserQuestion` is fine when one option is your recommendation." |
+| 75 | `planning-workflow.md:10` | "At a stop that instructs opening with the session-status block, the block precedes the …" |
+| 81 | `planning-workflow.md:19` | "Propose one recommended slug plus the alternatives … When already on a non-default …" |
+| 82 | `planning-workflow.md:21` | "Alongside the slug, decide the session's `design.md` location with the user." |
+| 100 | `planning-workflow.md:44` | "The PR body is a single link to the steering file and nothing else — do not copy the …" |
+| 101 | `planning-workflow.md:45-48` | "Open the plan-gate ask with the session-status block … on both branches: push and PR …" |
+| 142 | `status-display.md:3-5` | "The compact session map that opens every message stopping for user input while a …" |
+| 143 | `status-display.md:9-12` | "**Emit only while a session is active** — its `steering.md` exists and is identified." … |
+| 144 | `status-display.md:13-16` | "**Asks and flow-ending reports both count as stops** … on a report the 👉 line states …" |
+| 146 | `status-display.md:19-22` | "**A task counts ✅ when `steering.md` records it complete** — checked off, or carrying …" |
+| 147 | `status-display.md:23-24` | "**Write the block in the user's conversation language.**" |
+| 148 | `status-display.md:25` | "**Markers are fixed**: ✅ completed / 👉 current / ⬜ remaining." |
+| 149 | `status-display.md:29-35` | The format block — header / ✅ / 👉 / ⬜ / outlook, in that order |
+| 150 | `status-display.md:37-38` | "**Header** — `── {slug}: {goal one-liner} ──`: the session's slug (the steering …" |
+| 151 | `status-display.md:39-42` | "**✅ completed** … Group consecutive ids into ranges … comma-separate non-consecutive …" |
+| 152 | `status-display.md:43-48` | "**👉 current** — exactly one line … A stop not tied to a numbered task (the plan gate …" |
+| 153 | `status-display.md:49-50` | "**⬜ remaining** … **No remaining tasks → omit the ⬜ lines entirely** — never render an …" |
+| 154 | `status-display.md:51-52` | "**Outlook** — one closing parenthesized line: what follows this stop" |
+| 156 | `migration-workflow.md:8-11` | "Coordinator only: no implementation expert, and no QA/Design/Craft/Verification …" |
+| 205 | `pr-feedback-workflow.md:136-138` | "When the queue is empty, the loop is done — report the loop result … opening that …" |
+| 213 | `dn/SKILL.md:9` | "Records resume state and hands off. Does not execute tasks." |
+| 218 | `dn/SKILL.md:29-32` | "**Commit the work.**" — "Tree clean → skip this commit. … Current task's steps all …" |
+| 225 | `dn/SKILL.md:56-59` | "**Report.** Open the report with the session-status block … then output the branch …" |
+| 230 | `up/SKILL.md:22` | "From step 3 on, any message stopping for user input opens with the session-status …" |
+| 233 | `up/SKILL.md:28` | "**Check blockers.** If `State` notes mention a blocker, investigate and find an …" |
+| 238 | `ty/SKILL.md:9` | "Approves the pending rn confirmation and advances the flow. Performs no revision." |
+| 242 | `ty/SKILL.md:19-24` | "**Advance the workflow.** … a plan or design gate passes — execution proceeds to the …" |
+| 243 | `ty/SKILL.md:26` | "**Nothing pending.** If nothing is actually awaiting approval, open the reply with the …" |
+| 247 | `gm/SKILL.md:17` | "**With feedback (`$ARGUMENTS` present).** Treat `$ARGUMENTS` as a revise verdict on …" |
 
 This group is what the tightened `recognized` test created, and it is the largest single correction
 in this inventory. Every one of these rules produces something the user could in principle see — a
@@ -644,10 +821,13 @@ at which someone is required to hold the output up against the rule — which is
 already do for `Goal`, `Acceptance criteria` and `Assumptions` (group C), and what nothing does for
 the block, the proposals, or the reports.
 
-### Not in any group, but unenforced and worth a row of its own
+### Outside the 165: the rule that was never written
 
 The 131 lines the two task-workflow files share verbatim carry **no rule anywhere requiring they
-stay in sync**, and no mechanism if there were one. It is not a broken rule; it is a missing one.
+stay in sync**, and no mechanism if there were one. This is deliberately not one of the 165 and not
+one of the 254: the 254 are statements `rn` makes, and this is a statement `rn` does not make, so it
+has no `file:line` to be cited at and no breach to judge. It is recorded here so task #2 does not
+lose it — it is a rule to write, where every row in the nine groups above is a rule to rebuild.
 The Design expert on the task that created it did flag it (`.rn/20260625-rn-lean/checks/12.md`: "a
 standing drift risk against the repo's own anti-duplication principle — noted, not actioned"), and
 the finding was closed as an accepted tradeoff. The review worked; nothing turned its outcome into a
