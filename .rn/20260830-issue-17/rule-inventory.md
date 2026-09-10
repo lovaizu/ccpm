@@ -17,14 +17,15 @@ under `.rn/`, their `steering.md`, `rn/docs/design.md`, and 40 `checks/*.md` fil
 the rule text. Several rules that read as enforced turn out to have been broken repeatedly with
 nothing noticing.
 
-**Counts.** 249 normative statements. By file: 40 in `task-execute-workflow.md` (whose lines 6–136 are
+**Counts.** 254 normative statements. By file: 41 in `task-execute-workflow.md` (whose lines 6–136 are
 byte-identical to `task-verify-workflow.md`'s — 131 lines — so rows 3–26 state the rules of
-both and are counted once), 31 more in `task-verify-workflow.md`, 33 in `planning-workflow.md`, 37 in
+both and are counted once), 32 more in `task-verify-workflow.md`, 36 in `planning-workflow.md`, 37 in
 `steering-template.md`, 13 in `status-display.md`, 11 in `migration-workflow.md`, 16 in
 `design-template.md`, 26 in `pr-feedback-workflow.md`, and 4 / 14 / 11 / 7 / 6 in `on` / `dn` / `up` /
-`ty` / `gm`.
+`ty` / `gm`. Row ids are stable identifiers assigned in the order the rules were inventoried; rows
+250–254 were added in a later pass and sit at the end of their file's table rather than in line order.
 
-By verdict: **34 stop the flow**, **111 are visible on breach**, **104 are neither**. Every one of the
+By verdict: **34 stop the flow**, **112 are visible on breach**, **108 are neither**. Every one of the
 34 stops rests on something outside `rn`'s prose: a `git` or `gh` command that fails (17 rows — 98, 99,
 187–189, 192, 197–199, 214, 220, 223, 224, 228, 229, 232, 248), the harness refusing to let the model
 invoke a skill (`disable-model-invocation: true` — 208, 212, 226, 237, 244), the assistant's turn ending
@@ -139,6 +140,7 @@ files and are not repeated in the next table. Lines 1–5 differ between the two
 | 38 | Element 7 Return — "a compact summary only … Do not paste full file contents or trial-and-error." | :172-174 | visible | The coordinator reads the summary; a bloated one is on its screen. Nothing enforces brevity, and the cost (context) is paid before it is seen. |
 | 39 | "**Capture the task's starting commit** — current `HEAD` … Capture it **once**; do **not** re-capture on fix rounds." | :175-176 | neither | The value lives only in the coordinator's context. A re-captured or lost SHA silently narrows the cumulative diff at `task-verify-workflow.md:144-145`, hiding earlier rounds from review. |
 | 40 | "**Dispatch the implementation expert** with the work-order and wait for its summary." | :177 | neither | See rows 5 and 10. |
+| 251 | "Once the expert returns, continue to `task-verify-workflow.md`." | :179 | neither | The hand-off from Execute to Verify. Nothing records that it was taken: a task whose reviews never ran produces a check file with its review-verdict sections still empty, and nothing reads those sections — 24 of 40 past check files carry no `Ready to check off` line and every one of those tasks was checked off. |
 
 ## `task-verify-workflow.md` (lines 137–222)
 
@@ -178,6 +180,7 @@ line 5, its Phase: Verify, and its Phase: Complete.
 | 69 | "**Advance.** Begin the next unchecked task immediately — a sign-off task goes straight to the gate … any other task begins at Phase: Execute" | :215-217 | visible | The unchecked-task list in `steering.md` is the state; skipping one leaves it unchecked and it reappears in every subsequent status block (`status-display.md:49-50`). |
 | 70 | "If no unchecked tasks remain and the Evaluation sign-off was approved, the session closes — open that session-close report with the session-status block" | :217-219 | visible | Row 12's reader. |
 | 71 | "If no unchecked tasks remain and no "Evaluation sign-off" task was ever encountered … that is a planning defect … escalate to the user immediately … do not close the session silently." | :219-222 | visible | A genuine backstop, quoted in full here, and the only rule in `rn` that checks another rule's output (`planning-workflow.md:37`). It fires only if the flow reaches the end of the task list inside a live session — 5 of 8 past sessions have no Evaluation sign-off task and none of them escalated. |
+| 250 | "`on` and `up` read both files at task execution, this one second." — the counterpart of row 1, and the one line of the shared header that differs between the two files | :4-5 | neither | Row 1's mechanism, in the other direction. `on/SKILL.md:17` and `up/SKILL.md:34` name the same order ("read `…/task-execute-workflow.md` then `…/task-verify-workflow.md`"), which restates the rule rather than checking it; no step records which file was read when, so reading this file first, or not at all, leaves no trace. |
 
 ## `planning-workflow.md` (51 lines)
 
@@ -195,7 +198,7 @@ line 5, its Phase: Verify, and its Phase: Complete.
 | 81 | "Propose one recommended slug plus the alternatives … When already on a non-default branch, recommend that branch's name as the slug." | :19 | visible | The proposal is on the user's screen. |
 | 82 | "Alongside the slug, decide the session's `design.md` location with the user." | :21 | visible | Same reader as row 81. |
 | 83 | "**Check for an existing design.md first.** … This is a judgment call on scope overlap, not a mechanical file-existence check." | :21-26 | neither | No artifact records that the check happened or what it concluded. |
-| 84 | "If one covers the area, point this session's `Design:` line at it and treat the work on it as an update — following design-template.md's "Updating an existing design.md" procedure … If none covers the area, default to `.rn/{yyyymmdd}-{slug}/design.md` (lowercase)" | :26-31 | visible | The `Design:` line is read by `migration-workflow.md:28-29` ("Read the session's `steering.md` `Design:` line; if it is absent, the session has no `design.md` — skip this step entirely"). A wrong pointer silently reconciles the wrong file; an absent one silently skips. |
+| 84 | "If one covers the area, point this session's `Design:` line at it and treat the work on it as an update — following design-template.md's "Updating an existing design.md" procedure … If none covers the area, default to `.rn/{yyyymmdd}-{slug}/design.md` (lowercase)" | :28-31 | visible | The `Design:` line is read by `migration-workflow.md:28-29` ("Read the session's `steering.md` `Design:` line; if it is absent, the session has no `design.md` — skip this step entirely"). A wrong pointer silently reconciles the wrong file; an absent one silently skips. |
 | 85 | "Read `${CLAUDE_PLUGIN_ROOT}/references/steering-template.md` and follow its per-section guidance." | :33 | neither | Nothing records the read. Rows 106–134 below are the guidance, and most of it is itself unenforced. |
 | 86 | "Stamp the template's top `Rn version:` line with the currently installed plugin's version — read from … `.claude-plugin/plugin.json` `version` field." | :33 | neither | 6 of 8 past `steering.md` files have no `Rn version:` line at all. The consumer (`on/SKILL.md:15` and the four siblings) does "a plain string comparison" (`migration-workflow.md:5`) that no file defines for a missing line, so an omission is silently a match. |
 | 87 | "Write the chosen design.md path into the template's `Design:` line below it." | :33 | visible | Row 84's consumer. |
@@ -216,6 +219,9 @@ line 5, its Phase: Verify, and its Phase: Complete.
 | 102 | "**Design gate.** … When the design is settled at plan time, fold it into this plan-gate approval (one stop). When it is not, Step 4 placed a **Design sign-off** task" | :49 | neither | See row 93. Which branch was taken is never recorded, so neither choice can be checked. |
 | 103 | "**Take the sign-off via the user's verdict commands** … never infer approval and never record a verdict the user did not issue." | :50 | stops | `/rn:ty` and `/rn:gm` carry `disable-model-invocation: true` (`ty/SKILL.md:4`, `gm/SKILL.md:4`) — the assistant cannot invoke them, so a genuine verdict can only come from the user. Fabricating one in prose is only *visible* (row 16). |
 | 104 | "**CRITICAL: DO NOT proceed without explicit user approval.**" | :51 | stops | Row 13's mechanism: the ask ends the turn and the conversation needs a user message to continue. |
+| 252 | "Use the confirmed slug for the path." | :19 | visible | The slug becomes the session directory name, which `dn/SKILL.md:14` and `up/SKILL.md:17` discover by `git log … -- '*/steering.md'` and `status-display.md:37-38` renders in every status header ("the session's slug (the steering directory name, date prefix dropped)"). A path built from a slug the user did not confirm is on their screen at the plan gate and in every later block. Nothing compares the path to what was confirmed. |
+| 253 | "Coverage need not be complete: if an existing design.md covers the core of the work's area, treat it as the update target and record the session's new-but-related content under the sections it belongs to (adding new h3-level content is still "updating," not authoring fresh)." | :26-28 | neither | The permissive half of row 83's judgement, and unrecorded in the same way: nothing states which existing `design.md` files were considered, how much of the area each covered, or why the threshold was or was not met. A session that skipped the question and a session that asked it and answered "no" produce the same `Design:` line. |
+| 254 | The two sign-off tasks' prescribed content — Design sign-off: "Completion criteria: `design.md` is approved. Steps: present `design.md` to the user and take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)."; Evaluation sign-off: "Completion criteria: the Acceptance criteria run is approved. Steps: present the Acceptance criteria run result to the user and take the verdict via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)." | :36-37 | neither | Rows 93 and 94 cover whether the task is *placed*; this covers what planning must *write into* it, and nothing reads the written task against the prescription. Both past Evaluation sign-off tasks depart from it: `.rn/20260625-rn-lean/steering.md:231-252` and `.rn/20260705-improve-design-template/steering.md:239-254` each write their own Purpose, Steps and Completion criteria. `task-verify-workflow.md:219-222`'s backstop tests only that a task by that name was encountered, never what it says. |
 
 ## `steering-template.md` (106 lines)
 
@@ -423,7 +429,7 @@ This file is the densest cluster of genuinely enforced rules in `rn`, because al
 
 # The enforced set
 
-145 rows (34 stops + 111 visible). They rest on four mechanisms and nothing else. Listed here by
+146 rows (34 stops + 112 visible). They rest on four mechanisms and nothing else. Listed here by
 mechanism so #2 can see what it has to work with — a rebuilt rule has to attach to one of these, or
 invent a fifth. Groups A and B are exact and disjoint; C and D overlap, since many rows are read both
 by the user on the PR and by a later `rn` step, so their sizes are given as the rows that cite them
@@ -446,7 +452,7 @@ entirely in `pr-feedback-workflow.md` (7), `dn` (4) and `up` (3), with 2 in `pla
 
 Every `status-display.md` rule (142–154), every plan-gate and proposal rule (73–75, 77, 78, 81, 82, 101,
 104), the verdict-integrity rules (12, 16, 17), the report rules (225, 242, 243, 247), and every rule
-whose product is `steering.md` content the user reads on the PR (89, 100, 107, 115, 116, 119, 122).
+whose product is `steering.md` content the user reads on the PR (89, 100, 107, 115, 116, 119, 122, 252).
 Strength: the user is a genuinely independent reader. Limit: they see only what is put in front of
 them, which is the plan, the design (if a gate exists), the acceptance run, and the PR diff.
 
@@ -482,8 +488,8 @@ Two of these consumers are demonstrably defective and should be treated as findi
 
 # The unenforced set — the list #2 works from
 
-**104 rows** where a breach leaves no trace anyone or anything reads. The eight groups below are a
-partition — every "neither" row appears in exactly one group, and 26+13+9+13+11+10+15+7 = 104. They are
+**108 rows** where a breach leaves no trace anyone or anything reads. The eight groups below are a
+partition — every "neither" row appears in exactly one group, and 26+14+9+13+11+10+17+8 = 108. They are
 grouped by *why* nothing catches them, because the groups need different repairs.
 
 ## U1. The review chain's internals — 26 rows
@@ -502,9 +508,9 @@ ran primed, and a good review produce the same artifact.
 This is the largest group and the most consequential: it contains every rule protecting the integrity
 of the mechanism that is supposed to protect everything else.
 
-## U2. Which reviews run at all — 13 rows
+## U2. Which reviews run at all — 14 rows
 
-Rows **6, 7, 8, 9, 19, 20, 45, 92, 125, 126, 127, 128, 139.**
+Rows **6, 7, 8, 9, 19, 20, 45, 92, 125, 126, 127, 128, 139, 251.**
 
 The mandated per-task reviews and the rules that place them. Empirically the worst-performing rules in
 the plugin: a Verification section appears in 5 of 40 check files, Craft in 11, and
@@ -558,9 +564,9 @@ session silently reads as up to date, forever. `on/SKILL.md:15` documents that i
 check "can never actually fire." The reconciliation the trigger guards (rows 157, 158, 160, 164, 165)
 is itself an unrecorded judgement.
 
-## U7. Undetectable in principle — 15 rows
+## U7. Undetectable in principle — 17 rows
 
-Rows **1, 3, 18, 39, 41, 43, 44, 64, 83, 85, 91, 95, 105, 145, 222.**
+Rows **1, 3, 18, 39, 41, 43, 44, 64, 83, 85, 91, 95, 105, 145, 222, 250, 253.**
 
 Not "nothing looks" but "there is nothing to look at": that a file was read (1, 85, 105), that a
 judgement was made (44, 83, 91, 95), that an escalation *should* have fired and did not (18, 64), that
@@ -573,9 +579,9 @@ Row **41** belongs here and deserves naming: "Read the committed diff yourself"
 (`task-verify-workflow.md:139`) is `rn`'s single strongest mechanism — it backs nine rows in the
 enforced set — and there is no trace of whether it happened.
 
-## U8. Single cases — 7 rows
+## U8. Single cases — 8 rows
 
-Rows **26, 80, 93, 102, 108, 162, 190.** Three worth naming:
+Rows **26, 80, 93, 102, 108, 162, 190, 254.** Three worth naming:
 
 - **Rows 26 and 162** — the check file's `## Overall Verdict` block, and `migration-workflow.md:47-48`'s
   claim that Phase: Complete gates on `Ready to check off` reading Yes. It does not:
