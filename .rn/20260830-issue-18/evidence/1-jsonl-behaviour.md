@@ -1,77 +1,173 @@
 # Where an emitted string lands in Claude Code's conversation log
 
-Measured 2026-09-06 against the live logs on this machine, under:
+Task #2 has to choose the textual form of a task-boundary marker and the method `rn` uses to write it
+into the conversation log. This document records what the log actually does, so that choice rests on
+measurement rather than on reasoning. Every claim carries the command that produced it and the output
+that came back; anything not measured is labelled as an inference, with its basis named.
+
+Measured 2026-09-10 on this machine, under:
 
 ```
 $ claude --version
-2.1.263 (Claude Code)
+2.1.267 (Claude Code)
 ```
 
-Every fact here is about undocumented on-disk internals, so it is bound to that version and to this
-machine's history. Each claim carries the command that produced it and the output that came back;
-where output is shortened, the block says so.
+Figures taken on 2026-09-06 under version 2.1.263 are labelled where they are quoted. All of this is
+undocumented on-disk internals, so it is bound to those versions and to this machine's history.
 
-## How this document names things
+## What this establishes
 
-Claude Code's `sessionId` names **one conversation**, not an `rn` session — the pair this measurement
-exists to keep apart.
+| # | Finding | Section |
+|---|---|---|
+| 1 | The conversation file is complete on disk while the conversation is open, and an entry reaches disk about 0.1 s after its own timestamp. | [Liveness](#the-conversation-file-is-live-and-lags-its-own-entries-by-about-01-s) |
+| 2 | Five channels put an arbitrary string into the conversation file; each lands at the field path its channel predicts. | [Five channels land](#five-channels-put-a-string-into-the-conversation-file) |
+| 3 | Two candidate methods do **not** land: a subagent's own turns never reach the conversation file, and a tool result over about 30 KB is written to a side file instead of into the JSONL. | [Two methods do not land](#two-candidate-methods-do-not-land) |
+| 4 | A string emitted in one turn is readable by a later tool call in that same turn. | [Same-turn read-back](#same-turn-read-back-works) |
+| 5 | Only 16-character lowercase hex was emitted, so nothing is known about spaces, quotes, newlines, non-ASCII — or about `<` and `>`, which one channel escapes to `&lt;` and `&gt;`. | [Character set](#only-16-character-lowercase-hex-was-emitted) |
+| 6 | A conversation file is placed by its relocation target, so globbing one working directory's project directory both misses and over-returns. | [Placement](#a-file-is-placed-by-relocation-target-not-by-the-working-directory-of-its-entries) |
+| 7 | The set of files in a project directory changes while the session is open: three files became five between the two measurement rounds. | [The file set moves](#the-file-set-changes-while-the-session-is-open) |
+| 8 | A conversation can continue into a **new file under a new `sessionId`** that replays every earlier entry verbatim, so a marker emitted before the continuation exists twice on disk. A `continued-in` entry links the pair. | [Continuation by replay](#a-conversation-can-continue-into-a-new-file-that-replays-the-old-one) |
+| 9 | A restart can instead append into the existing file, leaving no seam record other than a change of `version` mid-file. | [Restart in place](#a-restart-can-append-into-the-existing-file-marked-only-by-the-version-stamp) |
+| 10 | Compaction stays in one file and reproduces earlier prose into a summary entry, so a marker quoted in prose can appear a second time under a later timestamp. | [Compaction](#compaction-stays-in-one-file-and-replays-earlier-prose-into-it) |
+| 11 | Line order and timestamp order disagree; the largest observed backstep is 13,429.9 s, and 76 of one file's entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
+
+What this does **not** do is choose the marker. Section [What this still cannot answer](#what-this-still-cannot-answer)
+lists what task #2 has to settle some other way.
+
+## Terms
+
+`sessionId` names one Claude Code conversation, not an `rn` session — the pair this measurement exists
+to keep apart. The vocabulary used throughout:
 
 - **session** — the `rn` session, `.rn/20260830-issue-18/`. Never used for a Claude Code log.
-- **conversation** — one Claude Code log file, named for its `sessionId`. The conversation that emitted
-  the probes is `ef482a21`; its file is the **conversation file**.
+- **conversation** / **conversation file** — one Claude Code log file, named for its `sessionId`.
 - **subagent file** — a subagent's own turns, two levels below the conversation file at
   `<conversation-uuid>/subagents/agent-*.jsonl`.
-- **probe** — the act of emitting. **token** — the string emitted.
+- **entry** — one JSON object, one line of a JSONL file. Every entry carries a `type`; nineteen types
+  are in use on this machine, inventoried in [Ordering](#line-order-and-timestamp-order-disagree).
+- **marker** — the string task #2 will design for `rn` to write at a task boundary. Nothing in this
+  document is a marker; the strings measured here stand in for one.
+- **emission channel** — one way of getting a string into a log file: a place in a turn where the
+  string can be put, plus the entry and field path it ends up in. Five are measured, and *channel* is
+  the only word this document uses for them.
+- **probe** — one act of emitting a stand-in string through one channel. **token** — the string
+  emitted. A probe is performed; a token is emitted.
+- **coordinator** — the main agent of a conversation, whose entries are `isSidechain: false`. The
+  probes recorded here were performed by the coordinator of conversation `ef482a21`, never by a
+  subagent; which agent emits is load-bearing and is named everywhere below.
 - **main checkout** — `/Users/kiyo/work/lovaizu/ccpm`. **worktree** — `…/.claude/worktrees/issue-18`.
 
-Shorthand used in the command blocks:
+Paste these assignments into a shell before running any command block below. They are inputs, not
+output:
 
-```
+```sh
 PROJ_MAIN=~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm
 PROJ_WT=~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18
 CONV=$PROJ_WT/ef482a21-4765-41d3-9d74-aa4c8d40f5d8.jsonl
 SUB=$PROJ_WT/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/subagents/agent-adcd0d76cf2237e15.jsonl
 PROBE=/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/scratchpad/probe
+TOOLS=.rn/20260830-issue-18/evidence/tools
+LIVE=$PROJ_WT/c763d0be-78f2-4036-a80b-3d5d95c07065.jsonl          # the conversation writing this document
+AGENT=$PROJ_WT/c763d0be-78f2-4036-a80b-3d5d95c07065/subagents/agent-a39f6e288d6277a88.jsonl
+S=/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/c763d0be-78f2-4036-a80b-3d5d95c07065/scratchpad
 ```
 
-`$PROBE` holds one file per token, written before any probe was emitted. Token values are read from
-those files and never typed into a command or into this document; they appear below elided as
-`<p1>`…`<p4>`. That is not tidiness. This document is read back into the conversation it describes, so
-any literal written here becomes a hit in every later grep of the log — a hazard measured, not
-assumed, in *A substring grep is not a test for a structural link* below.
+`$PROBE` holds one file per token, written before any probe ran. Token values are read from those
+files and never typed into a command or into this document; they appear below elided as `<p1>`…`<p4>`,
+and `$TOOLS/masktok.py` is what performs the elision. The rule is deliberate: this document is read
+back into the conversation it describes, so any token literal written here would become a hit in every
+later grep of the log — the hazard measured in [The self-reference hazard](#the-self-reference-hazard-is-measured-not-assumed).
 
-**When each figure was taken.** The probes and the first grep ran 2026-09-06 05:05–05:07Z in an earlier
-round; those figures are quoted from the log as recorded and are labelled as such. Everything else was
-re-measured 05:22–05:29Z for this document. The log is append-only and still growing, so re-running
-any count now returns a larger number than the one printed here.
+Four shared scripts live in `evidence/tools/` so the command blocks stay short:
 
-## The four emission points all land, each in the field its point predicts
+- `masktok.py` — loads tokens from a directory and replaces each value with `<name>`.
+- `corpus.py <scan>` — the six whole-machine scans (`versions`, `version-range`, `persist-bracket`,
+  `no-timestamp`, `worktree-ptr`, `entry-types`), each reading every conversation file on this machine.
+- `scan.py <scan> <file>…` — the seven per-file scans (`spans`, `cwd`, `types`, `inversions`, `seam`,
+  `handoff`, `escaping`). Each subcommand is the exact measurement the section quoting it describes.
+- `walk.py` — parses every entry of a JSONL file and reports the JSON path of each string field
+  containing a needle. Printed values are masked and **truncated to 110 characters**; paths and entry
+  headers are printed in full. It parses rather than grepping raw lines because attribution needs the
+  exact field a hit occupies: a hit at `.message.content[0].input.command` of an `assistant` entry
+  cannot be an echo of a prompt, and a raw-line grep cannot tell the two apart.
 
-Four probes were emitted from `ef482a21` at 05:05:18–05:05:27Z, one per candidate emission point.
-Attribution is a walk over every string field of every parsed entry — not an eyeball over raw lines —
-so each hit is reported at the JSON path it occupies. Re-measured 05:24Z:
+## Part 1 — What lands
+
+### The conversation file is live, and lags its own entries by about 0.1 s
+
+The file is complete on disk up to the moment it is read, while the conversation is still open:
 
 ```
-$ python3 - "$CONV" "$PROBE" <<'PY'
-import json,sys,os
-toks={n:open(os.path.join(sys.argv[2],n)).read().strip() for n in ('p1','p2','p3','p4')}
-def mask(s):
-    for n,v in toks.items(): s=s.replace(v,'<%s>'%n)
-    return s
-for i,l in enumerate(open(sys.argv[1]),1):
-    if not any(v in l for v in toks.values()): continue
-    e=json.loads(l)
-    print('line %-4d type=%-9s isSidechain=%-5s ts=%s'%(i,e.get('type'),e.get('isSidechain'),e.get('timestamp')))
-    def walk(o,p=''):
-        if isinstance(o,str):
-            hs=[n for n,v in toks.items() if v in o]
-            if hs: print('   %-6s @ %-38s %s'%(','.join(sorted(hs)),p,mask(repr(o))[:110]))
-        elif isinstance(o,dict):
-            for k,v in o.items(): walk(v,p+'.'+k)
-        elif isinstance(o,list):
-            for j,v in enumerate(o): walk(v,p+'[%d]'%j)
-    walk(e)
+$ python3 -c "
+import json
+ts=[json.loads(l).get('timestamp') for l in open('$CONV') if l.strip()]
+print('entries on disk:  ', sum(1 for _ in open('$CONV')))
+print('newest timestamp: ', max(t for t in ts if t))
+"; date -u +'wall clock:        %Y-%m-%dT%H:%M:%SZ'
+entries on disk:   268
+newest timestamp:  2026-09-06T05:22:48.550Z
+wall clock:        2026-09-06T05:29:03Z
+```
+
+That block is quoted from the 2026-09-06 round. The 375 s between the newest entry and the wall clock
+is idle time, not flush delay: the conversation was suspended while the reading turn ran.
+
+Flush delay itself is small. Comparing the file's mtime against the newest entry it contains, from
+inside a running Bash command, measured 2026-09-10 11:09:01Z:
+
+```
+$ python3 - "$AGENT" <<'PY'
+import json,sys,os,datetime
+p=sys.argv[1]; M='<m>'                       # a random literal placed in this very command
+es=[(i,json.loads(l)) for i,l in enumerate(open(p),1) if l.strip()]
+mt=datetime.datetime.utcfromtimestamp(os.stat(p).st_mtime)
+i,e=max(((i,e) for i,e in es if e.get('timestamp')), key=lambda x:x[1]['timestamp'])
+print('newest entry:             line %d type=%s ts=%s'%(i,e.get('type'),e['timestamp']))
+print('file mtime:               %sZ'%mt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3])
+print("this command's own entry: %s"%('present' if any(M in json.dumps(x) for _,x in es) else 'not yet written'))
 PY
+newest entry:             line 190 type=assistant ts=2026-09-10T11:09:00.965Z
+file mtime:               2026-09-10T11:09:01.067Z
+this command's own entry: not yet written
+```
+
+`<m>` is elided for the same reason token values are. The mtime runs 0.102 s behind the newest entry's
+own timestamp, and two facts follow:
+
+- **An entry reaches disk about 0.1 s after the timestamp it carries.**
+- **The entry describing an in-flight tool call is not on disk while that call runs.** An earlier draft
+  claimed the opposite; a reading taken at 2026-09-06T05:08:20.781Z inside a subagent found 40 entries
+  on disk, newest 05:08:14.189Z, with the reading call's own entry absent — the same result, six
+  seconds staler because a thinking pause preceded it.
+
+Both readings were taken on files the running agent writes to. The 0.1 s figure is measured on a
+subagent file; the cross-agent measurement in [Same-turn read-back](#same-turn-read-back-works)
+bounds the conversation file at 11.1 s and is consistent with it.
+
+Every re-measured figure in this document also rests on the log being **append-only**, so that is
+tested rather than assumed — the same file hashed and counted twice, 105 seconds apart:
+
+```
+$ date -u +'t %Y-%m-%dT%H:%M:%SZ'
+$ printf 'bytes=%s lines=%s prefix40=%s\n' "$(wc -c < $AGENT|tr -d ' ')" \
+    "$(wc -l < $AGENT|tr -d ' ')" "$(head -n 40 $AGENT | shasum -a 256 | cut -c1-16)"
+t 2026-09-10T11:04:23Z
+bytes=554921 lines=126 prefix40=809e0c5fd3437c3a
+t 2026-09-10T11:06:08Z
+bytes=610859 lines=150 prefix40=809e0c5fd3437c3a
+```
+
+The file grew by 55,938 bytes and 24 lines while the hash of its first 40 lines stayed identical.
+Content already written is not rewritten; a count re-run later returns a larger number, never a
+different prefix.
+
+### Five channels put a string into the conversation file
+
+Four tokens were emitted by the **coordinator** of conversation `ef482a21` between 05:05:18Z and
+05:05:27Z on 2026-09-06, one per channel. Re-run 2026-09-10 with the shared walker:
+
+```
+$ python3 $TOOLS/walk.py "$CONV" --tokens "$PROBE"
 line 134  type=user      isSidechain=False ts=2026-09-06T05:05:18.632Z
    p1,p2  @ .message.content[0].content            'HEAD=6bb155d\np1=<p1>\np2=<p2>\n(p3 and p4 deliberately not printed)'
    p1,p2  @ .toolUseResult.stdout                  'HEAD=6bb155d\np1=<p1>\np2=<p2>\n(p3 and p4 deliberately not printed)'
@@ -87,827 +183,689 @@ line 144  type=user      isSidechain=False ts=2026-09-06T05:05:27.100Z
    p4     @ .toolUseResult.file.content            '<p4>\n'
 ```
 
-| Emission point | Landed | Entry `type` | JSONL field path | Detail |
+Line 134 is the coordinator's own `cat` of the token files, run before the probes; it is a second,
+incidental instance of the Bash-output channel and is why `p1` and `p2` show two hits each.
+
+| # | Emission channel | Lands | Entry `type` | Field path |
 |---|---|---|---|---|
-| Assistant message text | yes | `assistant` | `message.content[0].text` | line 138 |
-| Bash command string, no output | yes | `assistant` | `message.content[0].input.command` | line 139; the command `: <p2>` printed nothing |
-| Bash command output | yes | `user` | `message.content[0].content` **and** `toolUseResult.stdout` | lines 142 and 134; two field paths in one entry |
-| Non-Bash tool result (Read) | yes | `user` | `message.content[0].content` **and** `toolUseResult.file.content` | line 144; `message.content` carries the `1\t` line-number prefix, `toolUseResult.file.content` is the raw text |
+| 1 | Assistant message text | yes | `assistant` | `message.content[0].text` (line 138) |
+| 2 | Bash command string, no output | yes | `assistant` | `message.content[0].input.command` (line 139; `: <p2>` printed nothing) |
+| 3 | Bash command output | yes | `user` | `message.content[0].content` **and** `toolUseResult.stdout` (lines 142, 134) |
+| 4 | Non-Bash tool result (Read) | yes | `user` | `message.content[0].content` **and** `toolUseResult.file.content` (line 144; `message.content` carries the `1\t` line-number prefix, `toolUseResult.file.content` the raw text) |
+| 5 | A subagent's final report | yes | `queue-operation` and `user` | `.content` and `.message.content`, inside `<result>` — see below |
+| — | A subagent's own turn | **no** | — | reaches the subagent file only; [evidence](#two-candidate-methods-do-not-land) |
+| — | Bash output over ~30 KB | **no** | `user` | replaced by a `<persisted-output>` preview; full text goes to `tool-results/<id>.txt`; [evidence](#two-candidate-methods-do-not-land) |
 
-Line 134 is the probing turn's own `cat` of the token files, run before the four probes. It is a
-second, incidental instance of the "Bash command output" point landing, and it is why `p1` and `p2`
-show two hits each; it is not counted as their intended landing.
+Channels 1–4 are ordinary parts of a turn that Claude Code already records, so four positives out of
+four attempts would be a weak result on its own: no method was tried there that could plausibly fail.
+The two negatives at the foot of the table are what give it a boundary, and both are measured rather
+than assumed.
 
-**The negative column is empty, and that is a weak result rather than a strong one.** Four points were
-tried and four landed; no method was tried that could plausibly fail — every candidate was an ordinary
-part of a turn that Claude Code already records. The measurement shows these four work. It shows
-nothing about where the boundary of "works" lies, because the boundary was never approached.
+#### Channel 5: a subagent's final report crosses into the conversation file
 
-### Attribution rests on the field-path walk, and on a work order that names no token
-
-The field-path walk above is the load-bearing guard. Each hit sits at the exact JSON path its emission
-point predicts, in an entry the conversation itself produced (`isSidechain: false`, `type` matching the
-point). A hit that were merely an echo of the request would sit in a prompt field of a `user` entry,
-not in `message.content[0].input.command` of an `assistant` entry.
-
-The second guard is that the requesting instruction contains no token value, so no hit above can be an
-echo of it. The work order was passed to the probing subagent as the `Agent` tool's `prompt` input and
-is recorded verbatim in the conversation file, so it can be counted directly. Re-measured 05:26Z:
+A subagent's intermediate turns stay in its own file. Its final report does not: it arrives in the
+conversation file about 100 ms later as a `user` entry wrapped in a `<task-notification>` element,
+preceded by a `queue-operation` entry carrying the same text. Measured 2026-09-10 over two handoffs:
 
 ```
-$ python3 - "$CONV" "$PROBE" <<'PY'
-import json,sys,os
-toks={n:open(os.path.join(sys.argv[2],n)).read().strip() for n in ('p1','p2','p3','p4')}
-wo=None
-for l in open(sys.argv[1]):
-    if 'toolu_017s36oLYcS6qDpAhZDgWvqZ' not in l: continue
-    e=json.loads(l)
-    if e.get('type')!='assistant': continue
-    for b in e['message']['content']:
-        if b.get('type')=='tool_use' and b.get('id')=='toolu_017s36oLYcS6qDpAhZDgWvqZ':
-            wo=b['input']['prompt']
-print('work order chars:',len(wo))
-for n,v in toks.items(): print('  occurrences of %s in work order: %d'%(n, wo.count(v)))
-PY
-work order chars: 9697
-  occurrences of p1 in work order: 0
-  occurrences of p2 in work order: 0
-  occurrences of p3 in work order: 0
-  occurrences of p4 in work order: 0
+$ python3 $TOOLS/scan.py handoff $PROJ_WT/555280be-*.jsonl
+task a78cb9340f4ca0e62  report 2026-09-06T08:37:32.037Z -> user entry line 242 2026-09-06T08:37:32.156Z (+119 ms)
+task a1acd223789ed6dda  report 2026-09-06T08:42:10.340Z -> user entry line 278 2026-09-06T08:42:10.406Z (+66 ms)
 ```
 
-The tokens were passed by file path only. All four counts are zero.
+The `user` entry is `isSidechain: false`, carries `origin.kind == "task-notification"` and
+`promptSource == "system"` — which is what distinguishes it from a human prompt — and its content is a
+tag sequence `task-notification / task-id / tool-use-id / output-file / status / summary / note /
+result / usage`, with the report body inside `<result>`.
 
-### Subagent turns are separated by file, and `isSidechain` agrees wherever it exists
-
-Subagent turns are written two levels below the conversation file, not beside it. Re-measured 05:28Z;
-the `grep` narrows the listing to the probing subagent, since four further subagents have run since:
-
-```
-$ find $PROJ_WT/ef482a21-4765-41d3-9d74-aa4c8d40f5d8 -type f | grep adcd0d76
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/subagents/agent-adcd0d76cf2237e15.jsonl
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/subagents/agent-adcd0d76cf2237e15.meta.json
-
-$ cat $PROJ_WT/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/subagents/agent-adcd0d76cf2237e15.meta.json
-{"agentType":"general-purpose","description":"Measure JSONL behaviour, task #1","toolUseId":"toolu_017s36oLYcS6qDpAhZDgWvqZ","spawnDepth":1}
-```
-
-Tallying `(type, isSidechain)` over both files, re-measured 05:25Z:
+**That body is HTML-entity-escaped.** Comparing each report against the `<result>` it arrives in:
 
 ```
-$ python3 - "$CONV" "$SUB" <<'PY'
-import json,sys,collections
-for path,label in ((sys.argv[1],'conversation file'),(sys.argv[2],'subagent file')):
-    es=[json.loads(l) for l in open(path) if l.strip()]
-    c=collections.Counter((e.get('type'), e.get('isSidechain')) for e in es)
-    print('==',label,'entries',len(es))
-    for k in sorted(c, key=lambda k:(str(k[0]),str(k[1]))): print('   ',k,c[k])
-    has=[e for e in es if 'isSidechain' in e]
-    print('    entries carrying isSidechain:',len(has),' all False:',all(e['isSidechain'] is False for e in has))
-PY
-== conversation file entries 268
-    ('ai-title', None) 13
-    ('assistant', False) 66
-    ('atis-latch', None) 15
-    ('attachment', False) 58
-    ('file-history-snapshot', None) 4
-    ('last-prompt', None) 14
-    ('mode', None) 15
-    ('permission-mode', None) 15
-    ('pr-link', None) 16
-    ('queue-operation', None) 8
-    ('system', False) 8
-    ('user', False) 36
-    entries carrying isSidechain: 168  all False: True
-== subagent file entries 75
-    ('assistant', True) 37
-    ('attachment', True) 19
-    ('user', True) 19
-    entries carrying isSidechain: 75  all False: False
+$ python3 $TOOLS/scan.py escaping $PROJ_WT/555280be-*.jsonl
+line 242  identical=False unescape(result)==report=True   &lt;=4 &gt;=4 &amp;=0
+line 278  identical=False unescape(result)==report=True   &lt;=12 &gt;=11 &amp;=6
 ```
 
-Stated precisely: **every entry of the conversation file that carries `isSidechain` has it `false`.**
-100 of its 268 entries carry no such field at all — `mode`, `permission-mode`, `atis-latch`,
-`ai-title`, `last-prompt`, `pr-link`, `file-history-snapshot`, `queue-operation` — so "every entry is
-`isSidechain: false`" would be wrong. Every entry of the subagent file has it `true`. The separation a
-reader can rely on is the **file**; the field agrees wherever it is present.
+`html.unescape()` of the `<result>` body equals the report exactly, and `<`, `>` and `&` are the
+characters that differ. **Channel 5 does not carry a marker verbatim if the marker contains an angle
+bracket or an ampersand.** No other channel was shown to transform its payload.
 
-## An emitted string is greppable in about eighty seconds — an upper bound, not a latency
-
-The one recorded emission-to-readable interval comes from the probing round. Probes were emitted
-between 05:05:18.632Z and 05:05:27.100Z (timestamps in the walk above). The first grep of the
-conversation file is recorded in the subagent file as entry 15 (the command) and entry 16 (its
-result), quoted from the log verbatim with the token literals masked:
+The `<output-file>` named in the wrapper is a symlink back to the subagent's own JSONL, not a copy of
+the report:
 
 ```
-$ python3 - "$SUB" "$PROBE" <<'PY'
-import json,sys,os
-toks={n:open(os.path.join(sys.argv[2],n)).read().strip() for n in ('p1','p2','p3','p4')}
-def mask(s):
-    for n,v in toks.items(): s=s.replace(v,'<%s>'%n)
-    return s
-for i,l in enumerate(open(sys.argv[1]),1):
-    if i not in (15,16): continue
-    e=json.loads(l); print('line',i,e.get('type'),e.get('timestamp'))
-    for b in e['message']['content']:
-        if b.get('type')=='tool_use':   print('  tool_use',b['name'],mask(json.dumps(b['input'])))
-        if b.get('type')=='tool_result':print('  tool_result',mask(json.dumps(b.get('content'))))
-    print()
-PY
-line 15 assistant 2026-09-06T05:06:46.799Z
-  tool_use Bash {"command": "F=~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/ef482a21-4765-41d3-9d74-aa4c8d40f5d8.jsonl; ls -la $F; echo \"lines:\"; wc -l < $F; echo \"=== token counts ===\"; for t in <p1> <p2> <p3> <p4>; do printf \"%s: %s\\n\" $t \"$(grep -c $t $F)\"; done", "description": "Check liveness and token hit counts"}
-
-line 16 user 2026-09-06T05:06:46.849Z
-  tool_result "-rw-------@ 1 kiyo  staff  325267  9\u6708  6 14:06 /Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/ef482a21-4765-41d3-9d74-aa4c8d40f5d8.jsonl\nlines:\n     160\n=== token counts ===\n<p1>: 2\n<p2>: 2\n<p3>: 1\n<p4>: 1"
+$ ls -la /private/tmp/claude-501/…-issue-18/555280be-…/tasks/
+lrwxr-xr-x 1 kiyo wheel 162 a1acd223789ed6dda.output -> …/555280be-…/subagents/agent-a1acd223789ed6dda.jsonl
 ```
 
-All four tokens were present on the first look; none needed a retry.
+### Attribution: the tokens post-date every instruction that could have echoed them
 
-- Last probe 05:05:27.100Z → grep result entry 05:06:46.849Z: **79.7 s**.
-- First probe 05:05:18.632Z → same: **88.2 s**.
+A hit only counts as a landing if it came from the emission and not from the text that requested it.
+Three facts establish that, and each is measured on conversation `ef482a21`.
 
-**Both are upper bounds on the write-to-greppable delay, not measurements of it.** Nothing polled in
-between; the interval is dominated by the probing turn doing other work. The true delay lies at or
-below 79.7 s and this measurement does not narrow it. No tighter bound is recorded, because isolating
-one would require emitting fresh probes from the conversation itself, which this round deliberately
-did not do — a subagent's probes land in a subagent file, not where a marker must land.
+**The field paths.** Each hit sits at the exact path its channel predicts, in an entry the
+conversation itself produced (`isSidechain: false`, `type` matching the channel). An echo of a request
+would sit in a prompt field of a `user` entry, not at `message.content[0].input.command` of an
+`assistant` entry.
 
-### The entry for a tool call in flight is not necessarily on disk
-
-An earlier draft claimed the opposite — that "the entry describing an action is flushed before that
-action completes" — from a reading taken inside the subagent. The log refutes it. The command behind
-that reading is recorded, and it read `$SUB`, the subagent file, not the conversation file; its own
-output labels it as such:
-
-```
-line 41 assistant 2026-09-06T05:08:20.781Z
-  tool_use Bash, `input.command` — lines 1-9 of 26, the rest unrelated to this figure:
- 1| D=~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18
- 2| SD=$D/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/subagents/agent-adcd0d76cf2237e15.jsonl
- 3| echo "now: $(date -u +%Y-%m-%dT%H:%M:%S.%3NZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)"
- 4| echo "newest timestamp in live sidechain file:"
- 5| python3 -c "
- 6| import json
- 7| ts=[json.loads(l)['timestamp'] for l in open('$SD',encoding='utf-8') if l.strip() and 'timestamp' in json.loads(l)]
- 8| print(' entries:',len(ts),' newest:',max(ts))
- 9| "
-
-line 42 user 2026-09-06T05:08:20.888Z
-  `toolUseResult.stdout` — lines 1-3 of 9:
- 1| now: 2026-09-06T05:08:20.3NZ
- 2| newest timestamp in live sidechain file:
- 3|  entries: 40  newest: 2026-09-06T05:08:14.189Z
-```
-
-(`+%…%3NZ` is a GNU `date` extension; BSD `date` on this machine printed `.3NZ` literally, so the
-recorded wall clock is `05:08:20`.)
-
-What the reading actually saw: 40 entries on disk, newest timestamped 05:08:14.189Z. That entry is an
-`assistant` entry whose first content block is `thinking`. The reading tool call is entry 41,
-timestamped 05:08:20.781Z — **6.6 seconds later, and absent from disk when the maximum was computed.**
-So the opposite of the earlier claim holds in this sample: the in-flight tool call's own entry was not
-yet written. The six-second figure measures how stale the newest flushed entry happened to be after a
-thinking pause. It is not a write delay, and it was not taken on the conversation file.
-
-### The conversation's content is on disk while the conversation is open
-
-The fact the criterion needs survives the correction and is re-runnable at any time. Re-measured
-05:29Z, from inside the still-open conversation `ef482a21`:
+**The tokens did not exist until after the last human instruction.** The last typed prompt before the
+probes is line 122, three characters long; the tokens were generated in-conversation at line 127:
 
 ```
 $ python3 -c "
 import json
-ts=[json.loads(l).get('timestamp') for l in open('$CONV') if l.strip()]
-ts=[t for t in ts if t]
-print('entries on disk:  ', sum(1 for _ in open('$CONV')))
-print('newest timestamp: ', max(ts))
-"; date -u +'wall clock:        %Y-%m-%dT%H:%M:%SZ'
-entries on disk:   268
-newest timestamp:  2026-09-06T05:22:48.550Z
-wall clock:        2026-09-06T05:29:03Z
+for i,e in ((i,json.loads(l)) for i,l in enumerate(open('$CONV'),1)):
+    if i<140 and e.get('type')=='user' and (e.get('origin') or {}).get('kind')=='human':
+        print('line %-4d ts=%s chars=%d'%(i,e['timestamp'],len(e['message']['content'])))"
+line 5    ts=2026-09-06T04:53:42.209Z chars=76
+line 54   ts=2026-09-06T04:58:07.323Z chars=12
+line 94   ts=2026-09-06T05:01:04.033Z chars=1
+line 122  ts=2026-09-06T05:03:52.631Z chars=3
+
+$ # line 127, 2026-09-06T05:05:18.258Z, the command that created the tokens:
+for n in 1 2 3 4; do openssl rand -hex 8 > "$PROBE/p$n"; done
 ```
 
-268 entries, covering everything the conversation had written up to the moment it handed off to the
-turn now reading it. **The 375-second age of the newest entry is not a flush delay**: the conversation
-is idle while that turn runs, so nothing new has been produced. What is established is that the file
-is readable and complete up to the handoff, and that it grows during the conversation rather than at
-its end.
+The longest human prompt before the probes is 76 characters and the immediately preceding one is 3;
+none could hold a 16-hex token, and no token existed until 05:05:18.258Z, 86 seconds after the last of
+them.
 
-## A subagent's report lands in the conversation file — a fifth emission channel
+**The work order could not have been the source.** It was passed to a subagent at 05:06:30.864Z —
+after every hit at 05:05:24–27Z — and the hits are coordinator emissions (`isSidechain: false`) whose
+own instruction is the human prompt above. Counting token occurrences in that work order, as an
+earlier draft did, measures a text that post-dates what it is supposed to guard.
 
-A subagent's *intermediate* turns stay in its own file, as the tallies above show. Its **final report
-does not**: it is delivered into the conversation file as a `user` entry. Re-measured 05:24Z, searching
-the conversation file for the opening words of the probing subagent's report:
+### Same-turn read-back works
 
-```
-$ python3 - "$CONV" <<'PY'
-import json,sys
-needle="Task #1 done. All four probes landed; nothing came out negative"
-for i,l in enumerate(open(sys.argv[1]),1):
-    if needle not in l: continue
-    e=json.loads(l)
-    print('line',i,'type',e.get('type'),'isSidechain',e.get('isSidechain'),'ts',e.get('timestamp'))
-    def walk(o,p=''):
-        if isinstance(o,str):
-            if needle in o: print('   path',p or '.','len',len(o))
-        elif isinstance(o,dict):
-            for k,v in o.items(): walk(v,p+'.'+k)
-        elif isinstance(o,list):
-            for j,v in enumerate(o): walk(v,p+'[%d]'%j)
-    walk(e)
-PY
-line 162 type queue-operation isSidechain None ts 2026-09-06T05:11:20.076Z
-   path .content len 3729
-line 164 type user isSidechain False ts 2026-09-06T05:11:20.087Z
-   path .message.content len 3729
-```
-
-The report's own entry in the subagent file is the last `assistant` entry there, at
-2026-09-06T05:11:19.977Z. It reaches the conversation file 99 ms later as a `queue-operation` entry
-and 110 ms later as the `user` entry the conversation actually reads.
-
-The `user` entry in full, with strings over 100 characters truncated by the printer itself:
+A marker is only useful if the same turn that writes it can read it back. A token was emitted into
+Bash stdout and grepped by the next tool call of the same turn, 2026-09-10:
 
 ```
-$ python3 - "$CONV" <<'PY'
-import json,sys
-for i,l in enumerate(open(sys.argv[1]),1):
-    if i!=164: continue
-    e=json.loads(l)
-    def shrink(o):
-        if isinstance(o,str): return o[:100]+('…[%d chars]'%len(o) if len(o)>100 else '')
-        if isinstance(o,dict): return {k:shrink(v) for k,v in o.items()}
-        if isinstance(o,list): return [shrink(v) for v in o]
-        return o
-    print(json.dumps(shrink(e),ensure_ascii=False,indent=1))
-PY
-{
- "parentUuid": "d6d86071-215e-43ea-b0d5-7358873d8de9",
- "isSidechain": false,
- "promptId": "f5be4693-9792-4b5f-87b8-f95accd5b271",
- "type": "user",
- "message": {
-  "role": "user",
-  "content": "<task-notification>\n<task-id>adcd0d76cf2237e15</task-id>\n<tool-use-id>toolu_017s36oLYcS6qDpAhZDgWvqZ…[3729 chars]"
- },
- "uuid": "99d3b1ff-68b4-4fa1-92c8-9b9f372fc8de",
- "timestamp": "2026-09-06T05:11:20.087Z",
- "permissionMode": "bypassPermissions",
- "origin": {
-  "kind": "task-notification"
- },
- "promptSource": "system",
- "queueSkipAttachments": true,
- "userType": "external",
- "entrypoint": "cli",
- "cwd": "/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18",
- "sessionId": "ef482a21-4765-41d3-9d74-aa4c8d40f5d8",
- "version": "2.1.263",
- "gitBranch": "worktree-issue-18"
-}
+$ openssl rand -hex 8 > "$S/q1"; cat "$S/q1"        # emitting call, entry ts 11:07:47.607Z
+$ grep -c -F -f "$S/q1" "$AGENT"                    # reading call,  entry ts 11:07:59.006Z
+1
+$ grep -c -F -f "$S/q1" "$LIVE"
+0
 ```
 
-The wrapper's full tag sequence, taken from that same string with
-`re.findall(r'</?[a-z-]+>', content)`, is `task-notification / task-id / tool-use-id / output-file /
-status / summary / note / result / usage`; the report body sits inside `<result>`.
+The token was on disk and greppable **11.4 s** after the entry carrying it, without leaving the turn.
+`-F -f <file>` keeps the token out of the command line, so the hit cannot be an echo of the grep
+itself; `walk.py` places it at `.message.content[0].content` and `.toolUseResult.stdout` of a `user`
+entry, exactly as channel 3 predicts.
 
-**Field paths for this channel:** `.content` on the `queue-operation` entry and `.message.content` on
-the `user` entry, with `origin.kind == "task-notification"` and `promptSource == "system"`
-distinguishing it from a human prompt. Both entries are in the conversation file; the `user` one is
-`isSidechain: false`.
-
-None of the four tokens reached the conversation file this way, but only by accident of wording — the
-report elided them:
+The 11.4 s is dominated by the agent's own latency between two tool calls, not by the writer: the
+flush measurement above puts the write itself at about 0.1 s. The independent cross-agent figure
+agrees. On 2026-09-06 the coordinator emitted an `assistant` text entry at 05:06:35.762Z (line 159 of
+`$CONV`); a subagent running concurrently listed the file at 05:06:46.849Z and counted 160 lines:
 
 ```
-$ python3 - "$SUB" "$PROBE" <<'PY'
-import json,sys,os
-toks={n:open(os.path.join(sys.argv[2],n)).read().strip() for n in ('p1','p2','p3','p4')}
-es=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]
-rep=[e for e in es if e.get('type')=='assistant'][-1]['message']['content'][0]['text']
-print('final report chars:',len(rep))
-for n,v in sorted(toks.items()): print('  occurrences of %s in final report: %d'%(n, rep.count(v)))
-PY
-final report chars: 2962
-  occurrences of p1 in final report: 0
-  occurrences of p2 in final report: 0
-  occurrences of p3 in final report: 0
-  occurrences of p4 in final report: 0
+$ python3 $TOOLS/walk.py "$SUB" --tokens "$PROBE"   # entry 16, 2026-09-06T05:06:46.849Z
+  tool_result "…\nlines:\n     160\n=== token counts ===\n<p1>: 2\n<p2>: 2\n<p3>: 1\n<p4>: 1"
 ```
 
-Had the report quoted a token, that token would now sit in the conversation file at
-`.message.content`, indistinguishable by grep from a coordinator emission. **Which agent is permitted
-to emit a marker is therefore a live constraint**, not a settled one, and a subagent that merely
-mentions a marker in its report emits it.
+160 lines means line 159 was on disk, so a coordinator emission was greppable by another agent
+**11.1 s** after its timestamp. All four tokens were present on that first look; none needed a retry.
+The same read gives a loose 82.1 s bound from the first probe (05:05:24.735Z) — that figure is an
+artefact of the emitting turn doing other work in between and is not used anywhere below.
 
-## A log file is filed by relocation target, not by the working directory of its entries
+### Two candidate methods do not land
+
+**A subagent's own turns never reach the conversation file.** This is the method an `rn`
+implementation is most likely to reach for — have the expert subagent emit the marker — and it does
+not work. While this document was being written, the writing subagent's own file grew by 24 entries
+while the conversation file stayed byte-identical:
+
+| `wc -c` / `wc -l` | 11:04:23Z | 11:06:08Z |
+|---|---|---|
+| subagent file `agent-a39f6e28…` | 554,921 B, 126 lines | 610,859 B, 150 lines |
+| conversation file `c763d0be…` | 578,631 B, 167 lines | 578,631 B, 167 lines |
+
+The probe of the previous section confirms it directly: `grep -c` for the emitted token returns 1 in
+the subagent file and **0** in the conversation file. The separation is by file, and the `isSidechain`
+field agrees wherever it exists:
+
+```
+$ python3 $TOOLS/scan.py types $LIVE $AGENT
+c763d0be-78f2-40 entries 167  | no isSidechain field: 48
+    {'assistant/False': 38, 'atis-latch/None': 10, 'attachment/False': 55, 'file-history-snapshot/None': 2, 'last-prompt/None': 9, 'mode/None': 10, 'permission-mode/None': 10, 'pr-link/None': 7, 'system/False': 2, 'user/False': 24}
+agent-a39f6e288d entries 332  | no isSidechain field: 0
+    {'assistant/True': 158, 'attachment/True': 90, 'user/True': 84}
+```
+
+Every entry of the conversation file that carries `isSidechain` has it `false`, and 48 of its 167
+entries carry no such field at all — so "every entry is `isSidechain: false`" would overstate it.
+Every entry of the subagent file has it `true`. **What does cross the boundary is the subagent's final
+report** — channel 5 — and nothing else.
+
+**A tool result over about 30 KB is not written into the JSONL at all.** The conversation directory has
+a second child besides `subagents/`:
+
+```
+$ ls $PROJ_WT/ef482a21-*/ $PROJ_WT/ef482a21-*/tool-results/
+…/ef482a21-4765-41d3-9d74-aa4c8d40f5d8/:            …/tool-results/:
+subagents                                           bxs03q1mk.txt
+tool-results
+```
+
+Above the threshold the entry's `message.content` carries a `<persisted-output>` notice —
+`Output too large (30.5KB). Full output saved to: …/tool-results/<id>.txt` — followed by a preview,
+and the full text goes to that file:
+
+```
+$ python3 -c "                        # the first such entry on this machine
+import json,glob,os
+for f in glob.glob(os.path.expanduser('~/.claude/projects/*/*.jsonl')):
+    for l in open(f):
+        if 'persistedOutputPath' not in l: continue
+        r=json.loads(l).get('toolUseResult') or {}
+        if 'persistedOutputPath' not in r: continue
+        print('toolUseResult keys:',sorted(r.keys()))
+        print('persistedOutputSize %d, file on disk %d, stdout kept in the entry %d chars'%(
+              r['persistedOutputSize'],os.path.getsize(r['persistedOutputPath']),len(r['stdout'])))
+        raise SystemExit"
+toolUseResult keys: ['interrupted', 'isImage', 'noOutputExpected', 'persistedOutputPath', 'persistedOutputSize', 'stderr', 'stdout']
+persistedOutputSize 41731, file on disk 41731, stdout kept in the entry 15250 chars
+```
+
+The threshold was bounded by scanning every `toolUseResult` carrying a `stdout` across all 137
+conversation files and every subagent file on this machine:
+
+```
+$ python3 $TOOLS/corpus.py persist-bracket
+largest result kept inline: 29067 chars
+smallest result persisted:  30044 bytes
+```
+
+**The threshold lies between 29,067 and 30,044 characters of output**, consistent with a 30,000-character
+cap; the corpus contains no result between those sizes, which is how far the material on disk bounds
+it. Two consequences: the Bash-output channel silently stops writing into the JSONL for large output,
+and `tool-results/<id>.txt` is a further place on disk where an emitted string can end up — one no
+grep of the JSONL will find.
+
+### Only 16-character lowercase hex was emitted
+
+All four tokens were `openssl rand -hex 8` output: 16 characters, `[0-9a-f]` only. The measurement
+therefore establishes the five channels **only for a bare alphanumeric run carrying no shell, JSON or
+markup metacharacter**.
+
+Task #2 must not assume any of the following survives a channel, because none was tested: a **space**
+or any whitespace; `#`, `:`, `/`, `|`; a single or double **quote**; a **backslash**; a **newline**
+inside the marker; **non-ASCII** characters; a marker long enough to be truncated or persisted out of
+the JSONL; and a marker whose text is a substring of another marker. Two channels are quoting-sensitive
+in ways a hex token cannot expose — channel 2 records the marker as it appeared on a shell command
+line, channel 4 as file bytes — and channel 5 is *known* to transform `<`, `>` and `&`.
+
+## Part 2 — What a later reader can rely on
+
+### A file is placed by relocation target, not by the working directory of its entries
 
 Each working directory has a project directory whose name is that path with `/` and `.` both replaced
-by `-`. Six exist for this repository. Re-measured 05:28Z:
+by `-` (`printf '%s' "$p" | tr '/.' '--'` reproduces it). Six exist for this repository — the main
+checkout plus `aiya`, `hpate`, `issue-17`, `issue-18` and `techting` — listed by
+`ls -d ~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm*` on 2026-09-10.
+
+The mapping is not injective, so "each worktree gets its own directory" is a property of these paths
+rather than of the scheme: `/` and `.` both become `-`, so `/a/b.c` and `/a/b-c` both name `-a-b-c`.
+All 32 project directories on this machine match `^[A-Za-z0-9-]*$`, so no other character class has
+been exercised and nothing is known about a space or a non-ASCII path segment.
+
+Directory membership is not decided by the `cwd` an entry records. The main checkout's project
+directory holds three files that carry a `relocated` entry; none of the 69 files across the five
+worktree directories does. Measured 2026-09-10:
 
 ```
-$ ls -d ~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm*
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-aiya
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-hpate
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-17
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18
-/Users/kiyo/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-techting
-```
-
-The name is reproducible with `tr`:
-
-```
-$ for p in /Users/kiyo/work/lovaizu/ccpm \
-           /Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18; do
-    printf '%s -> %s\n' "$p" "$(printf '%s' "$p" | tr '/.' '--')"
-  done
-/Users/kiyo/work/lovaizu/ccpm -> -Users-kiyo-work-lovaizu-ccpm
-/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18 -> -Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18
-```
-
-**The mapping is lossy and does not guarantee distinct directories.** `/` and `.` map to the same
-character, so two different paths produce one name:
-
-```
-$ printf '%s -> %s\n' "/a/b.c" "$(printf '%s' '/a/b.c' | tr '/.' '--')" \
-                      "/a/b-c" "$(printf '%s' '/a/b-c' | tr '/.' '--')"
-/a/b.c -> -a-b-c
-/a/b-c -> -a-b-c
-```
-
-The six ccpm directories happen not to collide — a property of these six paths, not of the scheme.
-Scope: all 24 project directories on this machine match `^[A-Za-z0-9-]*$`, so no other character class
-was exercised, and nothing is known about how a space or a non-ASCII path segment is encoded.
-
-### Three files prove the directory diverges from the `cwd` on every entry
-
-The directory a file sits in is **not** decided by the `cwd` its entries record. The main checkout's
-project directory holds three files whose every `cwd` is a worktree. Re-measured 05:22Z:
-
-```
-$ cd ~/.claude/projects
-$ for d in ./-Users-kiyo-work-lovaizu-ccpm ./-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-*; do
-    n=$(grep -l '"type":"relocated"' "$d"/*.jsonl 2>/dev/null | wc -l | tr -d ' ')
-    t=$(ls "$d"/*.jsonl 2>/dev/null | wc -l | tr -d ' ')
-    printf '%-56s %s / %s\n' "${d#./}" "$n" "$t"
+$ for d in $PROJ_MAIN ~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-*; do
+    printf '%-56s %s / %s\n' "$(basename $d)" \
+      "$(grep -l '"type":"relocated"' "$d"/*.jsonl 2>/dev/null | wc -l|tr -d ' ')" \
+      "$(ls "$d"/*.jsonl 2>/dev/null | wc -l|tr -d ' ')"
   done
 -Users-kiyo-work-lovaizu-ccpm                            3 / 4
 -Users-kiyo-work-lovaizu-ccpm--claude-worktrees-aiya     0 / 31
--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-hpate    0 / 5
--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-17 0 / 4
--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18 0 / 3
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-hpate    0 / 13
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-17 0 / 5
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18 0 / 5
 -Users-kiyo-work-lovaizu-ccpm--claude-worktrees-techting 0 / 15
 ```
 
-Three of the four files in the main checkout's directory carry a `relocated` entry; none of the 58
-files across the five worktree directories does. The entry names where the conversation went:
+The `relocated` entry names where the conversation went — `"relocatedCwd":"/Users/kiyo/work/lovaizu/ccpm"`
+in all three — while the entries of those same files record a worktree. How far that goes is bounded
+by how few entries carry a `cwd` at all:
 
 ```
-$ grep -h -o '"type":"relocated"[^}]*}' $PROJ_MAIN/5466c142-d1b4-4deb-ba67-bd19344e107c.jsonl | head -1
-"type":"relocated","sessionId":"5466c142-d1b4-4deb-ba67-bd19344e107c","relocatedCwd":"/Users/kiyo/work/lovaizu/ccpm"}
+$ python3 $TOOLS/scan.py cwd $PROJ_MAIN/*.jsonl
+04319f87 entries=11   with_cwd=3   cwds=['/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/aiya']
+10dcd188 entries=13   with_cwd=3   cwds=['/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-17']
+5466c142 entries=13   with_cwd=3   cwds=['/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18']
+8dca6935 entries=114  with_cwd=76  cwds=['/Users/kiyo/work/lovaizu/ccpm']
 ```
 
-All four files in that directory, characterised together. Re-measured 05:29Z:
+**Three files diverge from their directory on every entry that records a `cwd` — but only 3 of 11 to
+13 entries record one.** The divergence is real and the sample inside each file is small.
+
+The three divergent files are stubs of 3–4 KB and 11–13 entries spanning under 90 ms, with **zero**
+`assistant` entries — no task work at all. A tally of their entry types shows what they share: a
+`/clear` command entry with its empty `local-command-stdout` system entry, one `mode`, two
+`file-history-snapshot`, one `last-prompt`, two `worktree-state` (the first naming the worktree, the
+second `worktreeSession: null`) and two `relocated`. They do not share everything — two of the three
+carry two `cost-state` entries and `04319f87` carries none. In each, `worktreeSession.originalCwd`,
+`preEnterOriginalCwd` and `relocatedCwd` are the same path, the checkout the worktree hangs off, so
+the relocation target is the recorded origin rather than anything computed at relocation time.
+
+**Relocation happens mid-file**: the two `relocated` entries sit at lines 7 and 10 of 11 in
+`04319f87`, and at lines 7 and 12 of 13 in the other two, with entries before and after. A path
+resolved earlier in a session therefore stops being the file's location partway through, which rules
+out caching a conversation's location once.
+
+**Not established — the trigger.** All three stubs pair a `/clear` with a worktree-to-`null`
+`worktree-state` transition, so this material cannot separate "leaving a worktree relocates the file"
+from "`/clear` inside a worktree relocates the file", and no file on this machine carries real work
+*and* a `relocated` entry.
+
+**The consequence for a marker reader: globbing one working directory's project directory both misses
+and over-returns.** `5466c142` belongs to the issue-18 worktree by every `cwd` and `gitBranch` it
+records, yet it is filed under the main checkout; conversely, grepping the main checkout's directory
+returns entries whose `cwd` is a worktree.
+
+### The file set changes while the session is open
+
+The 2026-09-06 round recorded three conversation files for this session. There are now five:
 
 ```
-$ python3 - $PROJ_MAIN/*.jsonl <<'PY'
-import json,sys,os
-for p in sys.argv[1:]:
-    es=[json.loads(l) for l in open(p) if l.strip()]
-    ts=[e['timestamp'] for e in es if e.get('timestamp')]
-    ws=[e.get('worktreeSession') for e in es if e.get('type')=='worktree-state']
-    cmds=[e['message']['content'] for e in es if e.get('type')=='user'
-          and isinstance(e.get('message',{}).get('content'),str)
-          and '<command-name>' in e['message']['content']]
-    print(os.path.basename(p)[:8],'bytes=%-7d entries=%-3d relocated=%d'
-          %(os.path.getsize(p),len(es),sum(1 for e in es if e.get('type')=='relocated')))
-    print('   span   ',min(ts),'->',max(ts))
-    print('   cwd    ',sorted(set(e['cwd'] for e in es if 'cwd' in e)))
-    print('   assistant entries', sum(1 for e in es if e.get('type')=='assistant'))
-    print('   command',[c.split('</command-name>')[0].split('>')[-1] for c in cmds])
-    print('   worktreeSession.sessionId',[w['sessionId'] if w else None for w in ws])
-PY
-04319f87 bytes=3151    entries=11  relocated=2
-   span    2026-08-16T12:09:36.320Z -> 2026-08-16T12:09:36.407Z
-   cwd     ['/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/aiya']
-   assistant entries 0
-   command ['/clear']
-   worktreeSession.sessionId ['6ff22937-755d-4f10-a4f3-178c8bab62b6', None]
-10dcd188 bytes=4177    entries=13  relocated=2
-   span    2026-08-30T14:21:59.216Z -> 2026-08-30T14:21:59.258Z
-   cwd     ['/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-17']
-   assistant entries 0
-   command ['/clear']
-   worktreeSession.sessionId ['6463aea8-e1eb-46b4-b8a6-13c65bcc66ac', None]
-5466c142 bytes=3791    entries=13  relocated=2
-   span    2026-08-30T14:19:43.762Z -> 2026-08-30T14:19:43.810Z
-   cwd     ['/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18']
-   assistant entries 0
-   command ['/clear']
-   worktreeSession.sessionId ['17080efa-bb3f-488c-a2e3-46794ddb2df2', None]
-8dca6935 bytes=207465  entries=114 relocated=0
-   span    2026-08-30T12:30:45.792Z -> 2026-08-30T13:59:14.084Z
-   cwd     ['/Users/kiyo/work/lovaizu/ccpm']
-   assistant entries 26
-   command []
-   worktreeSession.sessionId []
+$ python3 $TOOLS/scan.py spans $PROJ_WT/*.jsonl
+17080efa entries=191  with_ts=134  2026-08-30T14:01:09.992Z -> 2026-08-30T14:19:43.757Z
+555280be entries=296  with_ts=266  2026-09-06T04:53:42.208Z -> 2026-09-06T08:43:11.345Z
+c763d0be entries=167  with_ts=126  2026-09-10T10:52:57.852Z -> 2026-09-10T10:58:50.352Z
+eded9b12 entries=184  with_ts=141  2026-08-30T14:20:31.090Z -> 2026-09-05T01:34:32.173Z
+ef482a21 entries=370  with_ts=270  2026-09-06T04:53:42.208Z -> 2026-09-06T08:34:49.927Z
 ```
 
-What the three relocated files are: 3–4 KB, 11–13 entries, spanning under 90 ms, containing a `/clear`
-command entry, its empty `local-command-stdout` system entry, two `worktree-state` entries (the first
-naming the worktree, the second `worktreeSession: null`), and two `relocated` entries. **None contains
-any task work at all** — zero `assistant` entries. They are stubs.
+Files appear while the session is open, and existing files keep growing — `ef482a21` was 268 entries
+when the first round measured it and is 370 now. **Any enumeration of a session's conversations is a
+snapshot**, and this is exactly the condition a task-boundary mechanism has to work under.
 
-**Established:** a file is placed by `relocatedCwd` when a `relocated` entry is present, and that
-placement can differ from the `cwd` on every one of the file's own entries. **Not established — the
-trigger.** All three stubs share the same three features: a `/clear`, a worktree-to-`null`
-`worktree-state` transition, and a `relocatedCwd` equal to the checkout the worktree hangs off. This
-material cannot separate "leaving a worktree relocates the file" from "`/clear` inside a worktree
-relocates the file", and it says nothing about a relocated file that carries real work — no such file
-exists on this machine to inspect.
-
-**The consequence a marker reader needs: globbing one working directory's project directory can miss
-conversations that belong to that working directory.** `5466c142` belongs to the issue-18 worktree by
-every `cwd` and `gitBranch` it records, yet it is filed under the main checkout. The converse holds
-too: grepping the main checkout's directory returns entries whose `cwd` is a worktree. Directory
-membership and working directory are two different things and must not be conflated in a marker
-search.
-
-## One in-file pointer exists: it names the worktree's origin conversation, not a predecessor
-
-The worktree's project directory holds three conversation files, all belonging to this one `rn`
-session. Re-measured 05:29Z:
+Nor does an entry's own metadata identify where its file sits. Pairing `cwd` with `gitBranch` per
+entry in `17080efa` shows every `cwd`-carrying entry naming the issue-18 worktree while 94 of them
+record `gitBranch: main`, and 63 of the file's 191 entries carry neither field:
 
 ```
-$ ls -la $PROJ_WT
-total 2560
-drwx------@  6 kiyo  staff     192  9月  6 14:06 .
-drwx------@ 26 kiyo  staff     832  9月  6 14:03 ..
--rw-------@  1 kiyo  staff  350874  8月 30 23:19 17080efa-bb3f-488c-a2e3-46794ddb2df2.jsonl
--rw-------@  1 kiyo  staff  294284  9月  5 10:35 eded9b12-eb24-4601-9203-d893583ed99e.jsonl
-drwxr-xr-x@  4 kiyo  staff     128  9月  6 14:15 ef482a21-4765-41d3-9d74-aa4c8d40f5d8
--rw-------@  1 kiyo  staff  640244  9月  6 14:22 ef482a21-4765-41d3-9d74-aa4c8d40f5d8.jsonl
+$ python3 -c "
+import json,sys,collections
+es=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]
+for k,v in sorted(collections.Counter((e.get('cwd'),e.get('gitBranch')) for e in es).items(),key=str):
+    print('  cwd=%s gitBranch=%s -> %d'%(k[0],k[1],v))" $PROJ_WT/17080efa-*.jsonl
+  cwd=/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18 gitBranch=main -> 94
+  cwd=/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18 gitBranch=worktree-issue-18 -> 34
+  cwd=None gitBranch=None -> 63
 ```
 
-```
-$ python3 - $PROJ_WT/*.jsonl <<'PY'
-import json,sys,os,collections
-for p in sys.argv[1:]:
-    es=[json.loads(l) for l in open(p) if l.strip()]
-    ts=[e['timestamp'] for e in es if e.get('timestamp')]
-    print(os.path.basename(p)[:8], 'entries=%-4d'%len(es), min(ts),'->',max(ts))
-    print('   gitBranch',dict(collections.Counter(e['gitBranch'] for e in es if e.get('gitBranch'))))
-    print('   cwd      ',dict(collections.Counter(e['cwd'] for e in es if e.get('cwd'))))
-PY
-17080efa entries=191  2026-08-30T14:01:09.992Z -> 2026-08-30T14:19:43.757Z
-   gitBranch {'main': 94, 'worktree-issue-18': 34}
-   cwd       {'/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18': 128}
-eded9b12 entries=184  2026-08-30T14:20:31.090Z -> 2026-09-05T01:34:32.173Z
-   gitBranch {'worktree-issue-18': 133}
-   cwd       {'/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18': 133}
-ef482a21 entries=268  2026-09-06T04:53:42.208Z -> 2026-09-06T05:22:48.550Z
-   gitBranch {'worktree-issue-18': 168}
-   cwd       {'/Users/kiyo/work/lovaizu/ccpm/.claude/worktrees/issue-18': 168}
-```
-
-Note the shape of that tally: `17080efa` has 191 entries but only 128 carry a `cwd`, so "every entry
-records the worktree as `cwd`" would overstate it — **every entry that carries a `cwd` does**, while 94
-of those same entries still record `gitBranch: main`.
-
-An in-file pointer to another conversation **does exist**. The `worktree-state` entry type carries
-`worktreeSession.sessionId`, and in the stub `5466c142` that value is `17080efa` — a different
-conversation. Scanned across all 62 ccpm conversation files, re-measured 05:31Z:
+A timestamp-ordered sweep can also drop a whole file. One file on this machine carries entries but no
+`timestamp` anywhere:
 
 ```
-$ python3 - <<'PY'
-import json, glob, os, collections
-root=os.path.expanduser('~/.claude/projects')
-dirs=[root+'/-Users-kiyo-work-lovaizu-ccpm']+sorted(glob.glob(root+'/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-*'))
-tot=hit=0; by=collections.defaultdict(list)
-for d in dirs:
-    for f in sorted(glob.glob(d+'/*.jsonl')):
-        tot+=1; me=os.path.basename(f)[:8]; ptr=set()
-        for l in open(f):
-            if '"worktree-state"' not in l: continue
-            e=json.loads(l)
-            ws=e.get('worktreeSession') if e.get('type')=='worktree-state' else None
-            if ws and ws.get('sessionId'): ptr.add(ws['sessionId'][:8])
-        if ptr:
-            hit+=1; by[os.path.basename(d)].append((me, tuple(sorted(ptr))))
-for d in sorted(by):
-    rows=by[d]
-    print('%-56s %2d file(s); targets %s; self-pointing %d'
-          %(d, len(rows), sorted({r[1] for r in rows}), sum(1 for r in rows if r[1]==(r[0],))))
-print('files carrying worktreeSession.sessionId: %d / %d'%(hit,tot))
-PY
--Users-kiyo-work-lovaizu-ccpm                             3 file(s); targets [('17080efa',), ('6463aea8',), ('6ff22937',)]; self-pointing 0
--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-aiya     11 file(s); targets [('6ff22937',)]; self-pointing 1
--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-17  1 file(s); targets [('6463aea8',)]; self-pointing 1
--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18  1 file(s); targets [('17080efa',)]; self-pointing 1
-files carrying worktreeSession.sessionId: 16 / 62
+$ python3 $TOOLS/corpus.py no-timestamp
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-tech a08bd6fc entries 1 {'bridge-session': 1}
 ```
 
-**How far the pointer goes.** It names the conversation that *created or entered the worktree*, not the
-immediately preceding one. All eleven `aiya` conversations that carry it name the same target,
-`6ff22937`, and one of the eleven is `6ff22937` itself. The pointer therefore partitions conversations
-by which worktree entry they descend from; it does not chain, and it cannot order a session's
-conversations. It is also usually absent — 46 of 62 files carry no `worktree-state` entry with a
-non-null `worktreeSession`, including two of this session's own three conversations. Re-measured
-05:28Z:
+`555280be` was in that state too when it first appeared during the previous review round — 10 entries,
+no timestamps, its `file-history-snapshot` entries replaying another file's `messageId`s — before it
+grew into the 296-entry file above. A file with no timestamps is invisible to a timestamp-ordered
+sweep and can grow into a substantive conversation later.
+
+### A conversation can continue into a new file that replays the old one
+
+`555280be` and `ef482a21` share a start timestamp because the first is a continuation of the second,
+written as a **new file under a new `sessionId` that replays every earlier entry verbatim**:
 
 ```
-$ for f in 17080efa-bb3f-488c-a2e3-46794ddb2df2 \
-           eded9b12-eb24-4601-9203-d893583ed99e \
-           ef482a21-4765-41d3-9d74-aa4c8d40f5d8; do
-    printf '%s: worktree-state entries = %s\n' "${f%%-*}" "$(grep -c '"type":"worktree-state"' $PROJ_WT/$f.jsonl)"
-  done
-17080efa: worktree-state entries = 9
-eded9b12: worktree-state entries = 0
-ef482a21: worktree-state entries = 0
-```
-
-Ordering this session's three conversations still needs outside knowledge — the directory listing, the
-timestamps, and the session path each file mentions. The pointer does not supply it. `leafUuid` on
-`last-prompt` entries resolves inside its own file only (all seven values in `ef482a21`, measured
-05:07Z, name uuids in `ef482a21`), so it is not a cross-conversation link either.
-
-### A substring grep is not a test for a structural link, and it no longer returns zero
-
-The earlier check — grepping each of the three files for the other two conversation ids — is a raw
-substring search over prose, not a test for a linkage field. It now returns non-zero, because this
-very document quoting those ids was read back into the conversation. Re-measured 05:29Z:
-
-```
-$ A=17080efa-bb3f-488c-a2e3-46794ddb2df2
-$ B=eded9b12-eb24-4601-9203-d893583ed99e
-$ C=ef482a21-4765-41d3-9d74-aa4c8d40f5d8
-$ for f in $A $B $C; do for id in $A $B $C; do
-    [ "$f" = "$id" ] && continue
-    printf 'in %s, substring hits for %s : %s\n' "${f%%-*}" "${id%%-*}" "$(grep -c -- "$id" $PROJ_WT/$f.jsonl)"
-  done; done
-in 17080efa, substring hits for eded9b12 : 0
-in 17080efa, substring hits for ef482a21 : 0
-in eded9b12, substring hits for 17080efa : 0
-in eded9b12, substring hits for ef482a21 : 0
-in ef482a21, substring hits for 17080efa : 6
-in ef482a21, substring hits for eded9b12 : 1
-```
-
-All six hits in `ef482a21` are in `user`, `assistant` and `queue-operation` entries dated 05:11–05:22Z
-— this document's own text and its review, not linkage. Two different claims are involved: **no
-structural linkage field orders these three conversations** (measured above), and **a substring
-occurrence of a conversation id is not evidence of a link** — nor is it stable, as the drift from 0 to
-6 in fifteen minutes shows.
-
-## Compaction stays in one file and replays earlier prose into it
-
-An earlier draft left this undetermined. The answer is on disk: a conversation in the `techting`
-worktree carries a compaction summary. Measured 05:27Z:
-
-```
-$ T=~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-techting/4b750c4a-e82a-4d1f-9dbd-cd1938cc4472.jsonl
-$ grep -c '"isCompactSummary":true' $T
-1
-$ python3 - "$T" <<'PY'
+$ python3 -c "
 import json,sys
-es=[(i,json.loads(l)) for i,l in enumerate(open(sys.argv[1]),1) if l.strip()]
-print('distinct sessionId in file:', set(e.get('sessionId') for i,e in es if e.get('sessionId')))
-for i,e in es:
-    if not e.get('isCompactSummary'): continue
-    print('line',i,'type',e.get('type'),'ts',e.get('timestamp'),'isSidechain',e.get('isSidechain'))
-    print('  keys:',sorted(e.keys()))
-    c=e['message']['content']; s=c if isinstance(c,str) else json.dumps(c)
-    print('  content chars:',len(s)); print('  head:',repr(s[:200]))
-PY
-distinct sessionId in file: {'4b750c4a-e82a-4d1f-9dbd-cd1938cc4472'}
-line 307 type user ts 2026-08-22T06:21:18.412Z isSidechain False
-  keys: ['cwd', 'entrypoint', 'gitBranch', 'isCompactSummary', 'isSidechain', 'isVisibleInTranscriptOnly', 'message', 'parentUuid', 'promptId', 'sessionId', 'session_id', 'slug', 'timestamp', 'type', 'userType', 'uuid', 'version']
-  content chars: 10341
-  head: 'This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.\n\nSummary:\n1. Primary Request and Intent:\n   The '
+L=lambda p:[json.loads(l) for l in open(p) if l.strip()]
+a,b=L(sys.argv[1]),L(sys.argv[2])
+ua={e['uuid'] for e in a if e.get('uuid')}; ub={e['uuid'] for e in b if e.get('uuid')}
+print('ef482a21 uuids',len(ua),'555280be uuids',len(ub),'shared',len(ua&ub))
+print('555280be sessionIds', {e.get('sessionId') for e in b if e.get('sessionId')})
+print('sessionId on the replayed entries:', {e.get('sessionId') for e in b if e.get('uuid') in ua})" \
+    $PROJ_WT/ef482a21-*.jsonl $PROJ_WT/555280be-*.jsonl
+ef482a21 uuids 229 555280be uuids 256 shared 229
+555280be sessionIds {'555280be-6a99-451d-a64b-f48c62d964df'}
+sessionId stamped on the replayed entries: {'555280be-6a99-451d-a64b-f48c62d964df'}
 ```
 
-Compaction writes **one `user` entry with `isCompactSummary: true` into the same file, under the same
-`sessionId`** — no new conversation, no new file, and so no predecessor record is needed. A reader
-looking for a compaction boundary should look for that field, not for a second file.
+All 229 of the predecessor's entries reappear in the successor with their original `uuid` and original
+`timestamp`, but restamped with the new `sessionId`; 27 further entries follow, the earliest at
+08:37:32.156Z, 2 m 42 s after the predecessor's last entry. Every entry of the successor carries
+`sessionKind: "bg"`, which the predecessor never carries — so what was measured is Claude Code's
+background-session continuation, not necessarily what `--resume` or `--continue` do.
 
-**The duplication hazard is the consequence that matters for cutting an interval.** The summary is
-10,341 characters of prose *about* the earlier part of the conversation, so text already in the file
-reappears in it. Measured by extracting the backtick-quoted literals from the summary and testing each
-against the portion of the file that precedes it (list trimmed to the first 6 of 27):
+**The pair is linked by a structural field.** The predecessor's last entry is a type this document had
+not previously recorded:
+
+```
+$ grep -h '"type":"continued-in"' $PROJ_WT/*.jsonl
+{"type":"continued-in","timestamp":"2026-09-06T08:34:49.927Z","sessionId":"ef482a21-4765-41d3-9d74-aa4c8d40f5d8","continuedInSessionId":"555280be-6a99-451d-a64b-f48c62d964df"}
+```
+
+It appears in 1 of the 137 conversation files on this machine — the only continuation of this kind in
+the corpus — and it is a forward pointer only: the successor carries no field naming the predecessor.
+
+Two consequences for a marker reader:
+
+- **A marker emitted before the continuation exists twice on disk**, in two files, under identical
+  `uuid`s and identical original timestamps. Deduplicating by `uuid` works; treating each file as a
+  distinct stretch of history does not. The four probe tokens show it — the same hit counts in the
+  predecessor and in the successor, and nothing in the other three files:
+
+  ```
+  $ for f in $PROJ_WT/*.jsonl; do printf '%s: ' "$(basename $f | cut -c1-8)"
+      for n in p1 p2 p3 p4; do printf '%s=%s ' $n "$(grep -c -F -f $PROBE/$n $f)"; done; echo; done
+  17080efa: p1=0 p2=0 p3=0 p4=0
+  555280be: p1=2 p2=2 p3=1 p4=1
+  c763d0be: p1=0 p2=0 p3=0 p4=0
+  eded9b12: p1=0 p2=0 p3=0 p4=0
+  ef482a21: p1=2 p2=2 p3=1 p4=1
+  ```
+- **`continued-in` orders that pair**, which is more than the worktree pointer below can do — but n=1,
+  and it says nothing about the other four files of this session.
+
+### A restart can append into the existing file, marked only by the version stamp
+
+Scanning every conversation file on this machine for a change of `version` within one file:
+
+```
+$ python3 $TOOLS/corpus.py versions
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-hpat f96e5843 {'2.1.261': 75, '2.1.263': 129}
+-Users-kiyo-work-lovaizu-dotfiles--claude-worktrees- 1b4dd5b8 {'2.1.239': 488, '2.1.240': 16}
+files with more than one distinct version: 2 / 137
+```
+
+Both seams look the same. Printing `(line, type, version, timestamp, uuid, parentUuid)` around the
+version change in `1b4dd5b8`:
+
+```
+$ python3 $TOOLS/scan.py seam ~/.claude/projects/-Users-kiyo-work-lovaizu-dotfiles--claude-worktrees-herdr4mac/1b4dd5b8-*.jsonl
+system                 v=2.1.239  ts=2026-08-24T00:10:29.358Z   uuid=c7b6b082 parent=271452ce
+bridge-session         v=None     ts=None                       uuid=None parent=None
+user                   v=2.1.240  ts=2026-08-24T00:24:29.842Z   uuid=1f14e004 parent=c7b6b082
+user                   v=2.1.240  ts=2026-08-24T00:24:29.842Z   uuid=aea67ec7 parent=1f14e004
+entries whose parentUuid is absent from the file: 0
+```
+
+One `sessionId` throughout, no compact-summary entry, a 14-minute gap, and an unbroken `parentUuid`
+chain across the seam (`1f14e004`'s parent is the pre-seam `c7b6b082`; zero entries in the file carry
+a `parentUuid` absent from it). `f96e5843` matches: same `sessionId`, no summary, 16 m 8 s gap,
+`52192322`'s parent is the pre-seam `2c62a778`.
+
+A running process cannot change the version string it stamps, so **a restart appended into the existing
+file under the same id, leaving no seam record other than the version change** — an inference from the
+version stamp, with nothing else in the file marking the seam. The `bridge-session` entry sitting next
+to both seams is not that record: it appears in 25 of 137 files and 14 times inside `f96e5843` alone.
+
+So there are two observed continuation shapes: this one, and the new-file replay above. Neither is
+attributable to a specific command-line flag from the material on disk.
+
+**The version stamp does not work as a general discriminator**, because several versions are in use at
+once. Taking the first and last timestamp of each version across every file on this machine:
+
+```
+$ python3 $TOOLS/corpus.py version-range
+  2.1.251   first=2026-08-30T12:27:16.653Z  last=2026-09-06T04:43:55.344Z
+  2.1.252   first=2026-09-01T07:25:21.343Z  last=2026-09-06T05:37:14.089Z
+  2.1.261   first=2026-09-05T11:54:27.870Z  last=2026-09-06T08:52:03.322Z
+  2.1.263   first=2026-09-06T04:53:17.428Z  last=2026-09-10T11:17:22.090Z   ← still running: `last` advances on every re-run
+  2.1.265   first=2026-09-10T10:51:05.750Z  last=2026-09-10T10:58:50.352Z
+  2.1.267   first=2026-09-10T10:54:32.431Z  last=2026-09-10T10:55:44.508Z
+```
+
+The version ranges overlap heavily — `2.1.265` and `2.1.267` were both written within four minutes
+today — so an old stamp after a long gap means only that the writing process is old, not that it was
+never restarted. That is why `eded9b12`'s 90-hour gap, listed under
+[What this still cannot answer](#what-this-still-cannot-answer), stays undecided.
+
+### Compaction stays in one file and replays earlier prose into it
+
+Exactly one conversation file on this machine carries a compaction summary, so everything in this
+section is n=1:
+
+```
+$ printf 'machine: %s / %s\n' \
+    "$(grep -l '"isCompactSummary":true' ~/.claude/projects/*/*.jsonl 2>/dev/null | wc -l|tr -d ' ')" \
+    "$(ls ~/.claude/projects/*/*.jsonl | wc -l|tr -d ' ')"
+machine: 1 / 137
+```
+
+In that file, compaction writes one `user` entry with `isCompactSummary: true` into the same file under
+the same `sessionId` — no new conversation, no new file:
+
+```
+$ T=~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-techting/4b750c4a-*.jsonl
+$ python3 -c "
+import json,sys
+es=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]
+print('entries %d, distinct sessionId %s'%(len(es),{e.get('sessionId') for e in es if e.get('sessionId')}))
+for i,e in enumerate(es,1):
+    if not e.get('isCompactSummary'): continue
+    c=e['message']['content']
+    print('line %d type=%s ts=%s isSidechain=%s chars=%d'%(i,e.get('type'),e['timestamp'],e.get('isSidechain'),len(c)))
+    print('head:',repr(c[:90]))" $T
+entries 405, distinct sessionId {'4b750c4a-e82a-4d1f-9dbd-cd1938cc4472'}
+line 307 type=user ts=2026-08-22T06:21:18.412Z isSidechain=False chars=10341
+head: 'This session is being continued from a previous conversation that ran out of context. The '
+```
+
+A reader looking for a compaction boundary should look for that field, not for a second file.
+
+**The duplication hazard is what matters for cutting an interval.** The summary is 10,341 characters of
+prose *about* the earlier conversation, so some earlier text reappears in it. The decision-relevant
+direction is how likely a given earlier string is to be reproduced — not how much of the summary is
+old text:
 
 ```
 $ python3 - "$T" <<'PY'
 import json,re,sys
 lines=open(sys.argv[1]).read().splitlines()
 es=[json.loads(l) for l in lines if l.strip()]
-idx=[i for i,e in enumerate(es) if e.get('isCompactSummary')][0]
-summ=es[idx]['message']['content']
-before='\n'.join(lines[:idx])
-toks=sorted(set(re.findall(r'`([^`\n]{8,60})`',summ)))
-dup=[t for t in toks if t in before]
-print('summary is entry index %d (line %d) of %d'%(idx,idx+1,len(es)))
-print('distinct backtick-quoted strings in the summary: %d'%len(toks))
-print('of those, also present verbatim earlier in the same file: %d'%len(dup))
-for t in dup[:6]: print('   ',repr(t))
+i=[k for k,e in enumerate(es) if e.get('isCompactSummary')][0]
+summ=es[i]['message']['content']; before='\n'.join(lines[:i])
+earlier=sorted(set(re.findall(r'`([^`\n]{8,60})`',before)))
+print('backtick-quoted strings appearing before the summary: %d'%len(earlier))
+print('of those, reproduced in the summary: %d'%sum(1 for t in earlier if t in summ))
 PY
-summary is entry index 306 (line 307) of 405
-distinct backtick-quoted strings in the summary: 39
-of those, also present verbatim earlier in the same file: 27
-    ' (approve) or '
-    '## Fold-round re-review (coordinator, 2026-08-22)'
-    '.claude-plugin/marketplace.json'
-    '.rn/20260614-writ/checks/7.md'
-    '.rn/20260614-writ/checks/8.md'
-    '.rn/20260614-writ/steering.md'
+backtick-quoted strings appearing before the summary: 194
+of those, reproduced in the summary: 35
 ```
 
-27 of 39 quoted strings in the summary already appear earlier in the same file. **A marker quoted in
-the conversation before a compaction therefore appears a second time, later in the file, inside the
-summary entry** — and that second copy is timestamped at compaction time, minutes or hours after the
-work it names. A reader cutting an interval on "the last occurrence of marker X" gets the summary's
-copy, not the original emission.
+**35 of 194 earlier quoted strings — about 18% — were reproduced in the summary.** (The converse
+tally, 27 of the summary's 39 quoted strings being older text, describes what the summary is made of
+and says nothing about the odds facing any particular marker.) A marker quoted in prose before a
+compaction therefore has a material chance of appearing a second time, later in the file, timestamped
+at compaction time rather than at the boundary it names — so "the last occurrence of marker X" can
+return the summary's copy. Whether a marker sitting in a Bash command string or a tool result is
+reproduced was not measured.
 
-## Multi-day gaps do not reveal whether a conversation was resumed
+### Line order and timestamp order disagree
 
-An earlier draft asserted that resume and continue "were never exercised". That is unsupported.
-`eded9b12` spans 2026-08-30 to 2026-09-05 in one file, with two multi-day gaps between adjacent
-entries. Re-measured 05:30Z, gap list trimmed to the three largest:
-
-```
-$ python3 - "$PROJ_WT/eded9b12-eb24-4601-9203-d893583ed99e.jsonl" <<'PY'
-import json,sys,datetime,collections
-def parse(t): return datetime.datetime.strptime(t,'%Y-%m-%dT%H:%M:%S.%fZ')
-rows=[]
-for i,l in enumerate(open(sys.argv[1]),1):
-    if not l.strip(): continue
-    e=json.loads(l)
-    if e.get('timestamp'): rows.append((i,parse(e['timestamp']),e.get('type')))
-es=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]
-print('span',rows[0][1],'->',rows[-1][1],' entries with timestamp',len(rows))
-print('distinct sessionId:',set(e.get('sessionId') for e in es if e.get('sessionId')))
-print('isCompactSummary entries:',sum(1 for e in es if e.get('isCompactSummary')))
-print('version tally:',dict(collections.Counter(e['version'] for e in es if e.get('version'))))
-for g,a,b in sorted(((b[1]-a[1]).total_seconds(),a,b) for a,b in zip(rows,rows[1:]))[::-1][:3]:
-    print('  %8.0f s (%5.1f h)  line %d %s %s -> line %d %s %s'%(g,g/3600,a[0],a[2],a[1],b[0],b[2],b[1]))
-PY
-span 2026-08-30 14:20:31.090000 -> 2026-09-05 01:34:32.173000  entries with timestamp 141
-distinct sessionId: {'eded9b12-eb24-4601-9203-d893583ed99e'}
-isCompactSummary entries: 0
-version tally: {'2.1.251': 133}
-    323426 s ( 89.8 h)  line 161 system 2026-09-01 07:43:18.353000 -> line 163 user 2026-09-05 01:33:44.711000
-    147452 s ( 41.0 h)  line 49 system 2026-08-30 14:24:11.961000 -> line 51 user 2026-09-01 07:21:43.889000
-       286 s (  0.1 h)  line 147 system 2026-09-01 07:34:31.650000 -> line 149 user 2026-09-01 07:39:17.527000
-```
-
-Nothing in the file marks either gap: one `sessionId`, no `isCompactSummary` entry, a single `version`
-across all 133 entries that carry one, and a two-order-of-magnitude jump from the third-largest gap
-(286 s) to the second (41 h).
-
-**Whether this file was resumed cannot be decided from this material.** A restart would be visible if
-Claude Code had been upgraded across a gap, since `version` is stamped per entry — but no file on this
-machine spans two versions, so that discriminator is untested here too. Re-measured 05:31Z:
+Measured 2026-09-10 across this session's five conversation files, listing every adjacent pair whose
+timestamps run backwards:
 
 ```
-$ python3 - <<'PY'
-import json, glob, os, collections
-root=os.path.expanduser('~/.claude/projects')
-dirs=[root+'/-Users-kiyo-work-lovaizu-ccpm']+sorted(glob.glob(root+'/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-*'))
-tot=multi=0
-for d in dirs:
-    for f in sorted(glob.glob(d+'/*.jsonl')):
-        tot+=1; vs=collections.Counter()
-        for l in open(f):
-            if '"version"' not in l: continue
-            e=json.loads(l)
-            if e.get('version'): vs[e['version']]+=1
-        if len(vs)>1:
-            multi+=1; print(os.path.basename(d)[:52], os.path.basename(f)[:8], dict(vs))
-print('files with more than one distinct version: %d / %d'%(multi,tot))
-PY
-files with more than one distinct version: 0 / 62
+$ python3 $TOOLS/scan.py inversions $PROJ_WT/*.jsonl
+17080efa  line 69   user               -> line 70   attachment          -0.001s
+17080efa  line 90   user               -> line 91   attachment          -0.001s
+17080efa  line 122  file-history-delta -> line 123  assistant           -0.019s
+17080efa  line 145  pr-link            -> line 146  assistant           -3.094s
+17080efa  line 188  queue-operation    -> line 189  assistant           -0.025s
+555280be  line 12   queue-operation    -> line 13   user                -13429.938s
+555280be  line 14   user               -> line 15   attachment          -0.001s
+555280be  line 52   user               -> line 53   attachment          -0.001s
+555280be  line 249  queue-operation    -> line 250  assistant           -30.169s
+555280be  line 254  queue-operation    -> line 255  attachment          -8.590s
+c763d0be  line 6    user               -> line 7    attachment          -0.001s
+eded9b12  line 83   user               -> line 84   attachment          -0.001s
+ef482a21  line 6    user               -> line 7    attachment          -0.001s
+ef482a21  line 54   user               -> line 55   attachment          -0.001s
+ef482a21  line 321  queue-operation    -> line 322  system              -0.060s
 ```
 
-A 90-hour gap in one file is equally consistent with `--resume` appending to the existing file and with
-one conversation left open across four days. **The question stays open:** it is not known whether
-`--resume` or `--continue` starts a new file, appends to the existing one, or writes any record at the
-seam.
+The entry stamped ahead of its successor is always a bookkeeping type — `queue-operation`, `pr-link`,
+`file-history-delta`, or a `user` entry running 1 ms ahead of its own `attachment`. No `assistant`
+entry was ever the ahead-stamped one. But the backstep is not small: **13,429.9 s (3 h 43 m)** at
+`555280be` line 12, where resume-time bookkeeping precedes the replayed prefix described above, and
+30.2 s at line 249.
 
-## Only 16-character lowercase hex was tested, so a real marker's character set is untested
+**That figure is a running maximum observed at 2026-09-10T11:00Z, not a bound.** It was 3.094 s when
+the previous round measured three files and grew to 13,429.9 s when two more appeared. No marker
+scheme should treat any number from this measurement as a safe separation.
 
-All four tokens had the same shape. Measured 05:26Z:
-
-```
-$ for n in p1 p2 p3 p4; do v=$(cat $PROBE/$n)
-    printf '%s: len=%d charclass=%s\n' $n ${#v} \
-      "$(printf '%s' "$v" | grep -qE '^[0-9a-f]+$' && echo '[0-9a-f] only' || echo 'other')"
-  done
-p1: len=16 charclass=[0-9a-f] only
-p2: len=16 charclass=[0-9a-f] only
-p3: len=16 charclass=[0-9a-f] only
-p4: len=16 charclass=[0-9a-f] only
-```
-
-No probe was emitted in this round, deliberately: a subagent's probes land in a subagent file, not
-where a marker must land, so they would answer nothing about the four emission points. The measurement
-therefore establishes those points **only for a bare alphanumeric run carrying no shell or JSON
-metacharacter.**
-
-The next task must not assume any of the following survives an emission point, because none was
-tested: a **space** or any whitespace; `#`, `:`, `/`, `|`; a single or double **quote**; a
-**backslash**; a **newline** inside the marker; **non-ASCII** characters; a marker long enough to be
-truncated in a tool result; and a marker whose text is a substring of another marker. Two of the
-landing paths are quoting-sensitive in ways a hex token could not expose:
-`message.content[0].input.command` records the marker as it appeared on a shell command line, and
-`toolUseResult.file.content` records it as file bytes.
-
-## Line order and timestamp order disagree, so an interval's boundaries depend on the sort key
-
-Measured 05:30Z over this session's three conversation files:
+A second ordering problem: **76 of `ef482a21`'s 268 entries carried no `timestamp` at all** when the
+first round measured it, and 100 of 370 do now:
 
 ```
-$ python3 - $PROJ_WT/*.jsonl <<'PY'
-import json,sys,os,datetime
-def parse(t): return datetime.datetime.strptime(t,'%Y-%m-%dT%H:%M:%S.%fZ')
-for path in sys.argv[1:]:
-    rows=[]
-    for i,l in enumerate(open(path),1):
-        if not l.strip(): continue
-        e=json.loads(l); t=e.get('timestamp')
-        if t: rows.append((i,parse(t),e.get('type')))
-    inv=[(a,b) for a,b in zip(rows,rows[1:]) if b[1]<a[1]]
-    print('%-12s entries_with_ts=%-4d adjacent_inversions=%-3d max_backstep=%.3fs'
-          %(os.path.basename(path)[:8],len(rows),len(inv),
-            max(((a[1]-b[1]).total_seconds() for a,b in inv), default=0)))
-    for a,b in inv:
-        print('   line %-4d %-18s %s  ->  line %-4d %-18s %s   (-%.3fs)'
-              %(a[0],a[2],a[1].strftime('%H:%M:%S.%f')[:-3],
-                b[0],b[2],b[1].strftime('%H:%M:%S.%f')[:-3],(a[1]-b[1]).total_seconds()))
-PY
-17080efa     entries_with_ts=134  adjacent_inversions=5   max_backstep=3.094s
-   line 69   user               14:03:10.252  ->  line 70   attachment         14:03:10.251   (-0.001s)
-   line 90   user               14:12:20.556  ->  line 91   attachment         14:12:20.555   (-0.001s)
-   line 122  file-history-delta 14:18:04.903  ->  line 123  assistant          14:18:04.884   (-0.019s)
-   line 145  pr-link            14:18:19.395  ->  line 146  assistant          14:18:16.301   (-3.094s)
-   line 188  queue-operation    14:19:43.757  ->  line 189  assistant          14:19:43.732   (-0.025s)
-eded9b12     entries_with_ts=141  adjacent_inversions=1   max_backstep=0.001s
-   line 83   user               07:28:10.862  ->  line 84   attachment         07:28:10.861   (-0.001s)
-ef482a21     entries_with_ts=192  adjacent_inversions=2   max_backstep=0.001s
-   line 6    user               04:53:42.209  ->  line 7    attachment         04:53:42.208   (-0.001s)
-   line 54   user               04:58:07.323  ->  line 55   attachment         04:58:07.322   (-0.001s)
-```
-
-Inversions occur in all three files. Most are 1 ms — a `user` entry written just ahead of its own
-`attachment` — but one is **3.094 s**: a `pr-link` entry timestamped after the `assistant` entry that
-follows it on the next line.
-
-A second, larger ordering problem: **76 of the conversation file's 268 entries carry no `timestamp` at
-all.** Re-measured 05:30Z:
-
-```
-$ python3 - "$CONV" <<'PY'
-import json,sys,collections
-es=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]
+$ python3 -c "
+import json,collections
+es=[json.loads(l) for l in open('$CONV') if l.strip()]
 no=[e for e in es if not e.get('timestamp')]
-print('entries with no timestamp: %d / %d'%(len(no),len(es)))
-print(dict(collections.Counter(e.get('type') for e in no)))
-PY
-entries with no timestamp: 76 / 268
-{'mode': 15, 'permission-mode': 15, 'atis-latch': 15, 'file-history-snapshot': 4, 'last-prompt': 14, 'ai-title': 13}
+print('%d / %d'%(len(no),len(es)), dict(collections.Counter(e.get('type') for e in no)))"
+100 / 370 {'mode': 19, 'permission-mode': 19, 'atis-latch': 19, 'last-prompt': 18, 'ai-title': 17, 'file-history-snapshot': 5, 'cost-state': 3}
 ```
 
-**Consequence for a marker reader: cutting an interval by line number and cutting it by timestamp give
-different boundaries.** A timestamp sort silently drops the 76 untimestamped entries or must fall back
-on line order for them; a line-number cut includes entries whose timestamps fall outside the interval,
-by up to 3 seconds in the observed worst case. Whichever rule is chosen must be chosen explicitly, and
-a marker landing within about 3 seconds of a boundary is not reliably on one side of it.
+Which types those are is the whole inventory in use on this machine:
+
+```
+$ python3 $TOOLS/corpus.py entry-types
+distinct entry types: 19
+attachment 9194, assistant 7350, user 4779, mode 1457, last-prompt 1450, pr-link 1443, atis-latch 1241,
+system 1093, queue-operation 962, ai-title 836, file-history-snapshot 762, permission-mode 454,
+worktree-state 374, bridge-session 272, file-history-delta 82, cost-state 73, relocated 14,
+agent-name 4, continued-in 1
+```
+
+**Consequence: cutting an interval by line number and cutting it by timestamp give different
+boundaries.** A timestamp sort silently drops the untimestamped entries or must fall back on line order
+for them; a line-number cut includes entries whose timestamps fall hours outside the interval. The rule
+has to be chosen explicitly.
+
+### Cross-conversation pointers: one forward chain, one worktree-origin pointer, no ordering
+
+Besides `continued-in`, one in-file pointer to another conversation exists: `worktree-state` entries
+carry `worktreeSession.sessionId`. Scanned across the 73 ccpm conversation files, 2026-09-10:
+
+```
+$ python3 $TOOLS/corpus.py worktree-ptr
+-Users-kiyo-work-lovaizu-ccpm                             3 file(s); targets [('17080efa',), ('6463aea8',), ('6ff22937',)]; self-pointing 0
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-aiya     11 file(s); targets [('6ff22937',)]; self-pointing 1
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-17  1 file(s); targets [('6463aea8',)]; self-pointing 1
+-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18  1 file(s); targets [('17080efa',)]; self-pointing 1
+files carrying worktreeSession.sessionId: 16 / 73
+```
+
+It names the conversation that *created or entered the worktree*, not the immediately preceding one:
+all eleven `aiya` conversations name the same target and one of them is that target. It partitions
+conversations by worktree origin, does not chain, and is usually absent — 57 of 73 files carry no
+`worktree-state` entry with a non-null `worktreeSession`, including four of this session's five
+conversations (only `17080efa` has any, nine of them).
+
+`leafUuid` on `last-prompt` entries is not a cross-conversation link either: every value resolves
+inside its own file.
+
+```
+$ python3 -c "
+import json
+es=[json.loads(l) for l in open('$CONV') if l.strip()]
+lp=[e.get('leafUuid') for e in es if e.get('type')=='last-prompt']
+uu={e['uuid'] for e in es if e.get('uuid')}
+print('last-prompt %d, distinct leafUuid %d, resolving in this file %d'%(
+      len(lp),len(set(lp)),sum(1 for v in set(lp) if v in uu)))"
+last-prompt 18, distinct leafUuid 18, resolving in this file 18
+```
+
+Eighteen, where the 2026-09-06 round recorded seven at 05:07Z: the file grew. Every count in this
+document is the count at its stated time.
+
+### The self-reference hazard is measured, not assumed
+
+A substring grep for a conversation id is not a test for a link between conversations, and it does not
+return a stable answer. Counting each of this session's five ids inside the other four files:
+
+```
+$ python3 -c "
+import glob,os,sys
+files=sorted(glob.glob(sys.argv[1])); ids=[os.path.basename(f)[:-6] for f in files]
+for f,me in zip(files,ids):
+    raw=open(f,encoding='utf-8',errors='replace').read()
+    print(' in %s: %s'%(me[:8],{o[:8]:raw.count(o) for o in ids if o!=me}))" '$PROJ_WT/*.jsonl'
+ in 17080efa: {'555280be': 0, 'c763d0be': 0, 'eded9b12': 0, 'ef482a21': 0}
+ in 555280be: {'17080efa': 9, 'c763d0be': 0, 'eded9b12': 2, 'ef482a21': 254}
+ in c763d0be: {'17080efa': 0, '555280be': 0, 'eded9b12': 0, 'ef482a21': 0}
+ in eded9b12: {'17080efa': 0, '555280be': 0, 'c763d0be': 0, 'ef482a21': 0}
+ in ef482a21: {'17080efa': 10, '555280be': 1, 'c763d0be': 0, 'eded9b12': 2}
+```
+
+The `17080efa` count inside `ef482a21` was 0 in the first round, 6 in the second, and is 10 now: every
+increment is this document being read back into the conversation it describes. Only one of those 254
+hits is structural — the `continued-in` entry.
+
+The text lands in the same fields an emission does. Running the walker with the document's own first
+line as needle, over every conversation and subagent file of this session:
+
+```
+$ sed -n '1p' .rn/20260830-issue-18/evidence/1-jsonl-behaviour.md > $S/needle
+$ for f in $PROJ_WT/*.jsonl $PROJ_WT/*/subagents/*.jsonl; do
+    python3 $TOOLS/walk.py "$f" --needle-file $S/needle; done
+```
+
+Nine distinct field paths came back at 2026-09-10T11:30Z — `.message.content[0].content`,
+`.message.content[0].input.command`, `.message.content[0].input.content`, `.toolUseResult`,
+`.toolUseResult.content`, `.toolUseResult.file.content`, `.toolUseResult.stdout`,
+`.toolUseResult.structuredPatch[N].lines[M]` and `.attachment.snippet` — reached by reading the file
+with `Read`, reading it with `cat` or `grep`, writing it, editing it, and naming its first line on a
+command line. Eleven subagent files carry the text and two conversation files do, the latter through a
+`git log` whose commit subject quotes the document. The list keeps growing as the document is worked
+on, which is itself the point.
+
+Four of those nine — `.message.content[0].content`, `.message.content[0].input.command`,
+`.toolUseResult.stdout` and `.toolUseResult.file.content` — are exactly where channels 2, 3 and 4 land.
+**A marker whose format is described in a document that is later read, or quoted in a work order, is
+indistinguishable by grep from a real emission of it**, and neither a field-path nor an entry-type
+discriminator separates the two, because the defining text lands at the same paths. This is why token
+values are elided throughout, and it is the one hazard task #2 cannot design around by choosing a
+field.
 
 ## What this still cannot answer
 
-Open questions a marker-format decision must resolve some other way. They are handed forward, not
-concealed.
+- **How an emission is told apart from the text that defines it.** Measured above; no discriminator
+  found. This is the sharpest open constraint on the marker's form.
+- **Whether a marker containing a space, punctuation, a quote, a newline or non-ASCII survives a
+  channel.** Only 16-character lowercase hex was emitted. `<`, `>` and `&` are known to be escaped on
+  channel 5 and untested elsewhere.
+- **What `--resume` and `--continue` write.** Two continuation shapes were measured — a new file
+  replaying the old one under a new `sessionId` with `sessionKind: "bg"`, and a restart appending into
+  the existing file across a version change — but neither can be attributed to a particular flag from
+  the material on disk. The version stamp does not help decide which happened in a given file: on
+  2026-09-05, when `eded9b12` resumed after a 90-hour gap stamped `2.1.251`, this machine's files
+  carried `2.1.251`, `2.1.252` and `2.1.261` on the same day, so several versions were in concurrent
+  use and an old stamp after a gap discriminates nothing.
+- **How to enumerate a session's conversations completely.** Globbing one project directory is unsound
+  in both directions, the file set moves while the session is open, `continued-in` covers one pair, and
+  `worktreeSession.sessionId` names a worktree origin rather than an order. No measured method is
+  complete.
+- **What the relocation trigger is**, and how a relocated file that contains real work behaves — no
+  such file exists on this machine.
+- **Whether a marker in a command string or tool result survives compaction unduplicated.** Only
+  backtick-quoted prose was measured, at n=1, at about 18%.
 
-- **How an emission is told apart from the text that defines it.** This document is read back into the
-  conversation it measures, so its own text now sits in the conversation file at
-  `.message.content[0].content` and `.toolUseResult.file.content` — the same field paths as the "Bash
-  command output" and "Read result" emission points. The drift from 0 to 6 hits in the ordered-pair
-  check above is exactly this effect. A marker whose format is described in a document that is later
-  read, or quoted in a work order, is indistinguishable by grep from a real emission of it, and a
-  field-path or entry-type discriminator does not help, because the defining text lands at the same
-  paths.
-- **Whether a marker containing a space, punctuation, a quote, a newline or non-ASCII survives an
-  emission point.** Only 16-character lowercase hex was tested.
-- **Whether a marker written in one turn is readable by a tool call in that same turn.** The tightest
-  recorded bound is 79.7 s and is an upper bound; separately, an in-flight tool call's own entry was
-  measured to be *absent* from disk at 05:08:20.781Z. Same-turn read-back is not established, and the
-  one relevant sample points against it.
-- **How to enumerate a session's conversations.** Globbing one project directory is unsound: a
-  conversation belonging to a working directory can be filed under another, and
-  `worktreeSession.sessionId` names the worktree's origin conversation rather than ordering the
-  session's. No measured method enumerates a session's conversations completely.
-- **Whether a marker survives compaction unduplicated.** It does not, if it is quoted in prose the
-  summary reproduces — 27 of 39 quoted strings reappeared in the sample above. Whether a marker sitting
-  in a Bash command string or a tool result is reproduced in a summary was not measured, and no way to
-  suppress the duplicate is known.
-- **What `--resume` and `--continue` write.** Untested, and the material on disk cannot distinguish a
-  resumed conversation from a long-idle one.
+## Which blocks re-run and which are frozen records
+
+- **Re-runnable at any time** on this machine: every block under "Part 2 — what a later reader can
+  rely on", plus the append-only test. They read only the logs, so their figures come back larger,
+  never different in kind.
+- **Frozen records.** Every block that depends on `$PROBE` — the whole of
+  [Five channels land](#five-channels-put-a-string-into-the-conversation-file),
+  [Attribution](#attribution-the-tokens-post-date-every-instruction-that-could-have-echoed-them)
+  and the cross-agent figure in [Same-turn read-back](#same-turn-read-back-works). `$PROBE` is a
+  per-conversation scratchpad directory belonging to conversation `ef482a21`. It still existed on
+  2026-09-10 and every block above was re-run against it that day, but nothing keeps it alive; once it
+  is cleaned up, those blocks cannot be re-run and the outputs quoted here are the only record. The
+  same-turn probe and the flush measurement are one-shot for the same reason — they were emitted by
+  the agent that wrote this document, into that agent's own file.
+- Re-running the frozen blocks would mean emitting fresh tokens from a coordinator turn, which is a
+  measurement task #2 can commission if it needs a channel this document did not test.
