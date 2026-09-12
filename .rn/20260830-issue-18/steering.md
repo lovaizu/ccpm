@@ -347,8 +347,30 @@ task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-13
+- **Last completed**: none — #1 is in progress
+- **Next**: #1 — **all three round-3 reviews are done and all returned Fail**; do not re-run them.
+  Findings are in `checks/1-review-qa-round3.md`, `1-review-craft-round3.md` and
+  `1-review-verification-round3.md`, and the verdicts are in `checks/1.md`. Two fix iterations are
+  spent of the three the workflow allows. Resume by dispatching fix round 3 against
+  `evidence/1-jsonl-behaviour.md` at `d77f9de`, then re-review.
+- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
+  Measured facts live in `evidence/1-jsonl-behaviour.md` and its `evidence/tools/` scripts — do not
+  re-derive them; re-measure only what a finding names.
+  Round 3's failures share one root cause: three scans were pointed at a narrower corpus than the prose
+  generalises to, and widening the *same* command to the named population produces a counterexample
+  each time. Fix that structurally (scan machine-wide by default, state the corpus in the sentence
+  carrying the number) rather than patching the named instances — rounds 2 and 3 both found fresh
+  instances of the same shape.
+  **Two decisions asked and unanswered, both blocking #2:**
+  (a) whether #1's scope extends to probing the **hook** and slash-command channels. The plan
+  enumerates four emission points, all of which depend on the model choosing to emit; a hook fires
+  deterministically and lands in a structurally distinct entry (`hook_system_message`, carrying
+  `hookName`), which would also settle the document's declared hardest open problem — telling a real
+  emission apart from text that merely describes one. Recommended: yes.
+  (b) whether to change the Acceptance criterion "locatable from the session's own working directory
+  alone" to "locatable by grepping the session-named boundary marker, with the working directory as a
+  fast path". Round 3 settled the factual half: the criterion as written is not achievable — a
+  510-entry conversation was found filed under the main checkout with 322 of its entries naming a
+  worktree `cwd`. Left as written, #9's evaluation fails on it.
