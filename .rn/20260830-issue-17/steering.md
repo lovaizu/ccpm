@@ -96,22 +96,22 @@ statement in `rn`, whether breaking it becomes visible, stops the flow, or passe
 
 **Steps**:
 
-- [ ] read each of `rn/references/*.md` (8 files) and `rn/skills/*/SKILL.md` (5 files) end to end and
+- [x] read each of `rn/references/*.md` (8 files) and `rn/skills/*/SKILL.md` (5 files) end to end and
       extract every normative statement
-- [ ] judge each one: visible on breach / stops the flow / neither — naming the mechanism where one
+- [x] judge each one: visible on breach / stops the flow / neither — naming the mechanism where one
       exists
-- [ ] check each rule against what past sessions actually produced (`.rn/*/steering.md`, their
+- [x] check each rule against what past sessions actually produced (`.rn/*/steering.md`, their
       `design.md` and `checks/`), not only against the rule text — the `Verification expert review`
       case shows a breach is visible in the output and invisible in the rule
-- [ ] for each step `rn` mandates unconditionally — the per-task QA / Craft / Verification / Design
+- [x] for each step `rn` mandates unconditionally — the per-task QA / Craft / Verification / Design
       reviews above all — record what it catches that nothing else would, and whether it is worth its
       cost on a small task
-- [ ] record the judgement in `.rn/20260830-issue-17/rule-inventory.md`, one row per rule, with its
+- [x] record the judgement in `.rn/20260830-issue-17/rule-inventory.md`, one row per rule, with its
       source location
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing medium)
-- [ ] Verification expert review (subagent, writing medium)
+- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (subagent, writing medium)
+- [x] Verification expert review (subagent, writing medium)
 
 **Completion criteria** (serves: exhaustive judgement)
 
@@ -353,8 +353,27 @@ concrete event per rule)
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-13
+- **Next**: #1 — awaiting the user's decision below; do not check #1 off until it resolves
+- **Notes**: branch `worktree-issue-17`, draft PR https://github.com/lovaizu/ccpm/pull/21.
+  **#1's steps all ran but the task is not cleared.** Three fix rounds were dispatched and landed
+  (`df365d4`..`a4f5efa`, `c5c3607`..`692a882`, `f62035f`..`ee5b22c`); all three reviews returned NG
+  after each, so `task-verify-workflow.md:182-183`'s 3-iteration cap is reached. Round-3 verdicts are
+  in `checks/1.md`. **Escalated, decision pending**: run a 4th round over the cap, or close #1 as-is
+  and carry the residue into #2. The user was also asked whether this review depth is right for the
+  remaining 8 tasks. Deliverable is `rule-inventory.md` at `ee5b22c` — 269 rows, 12 refuses / 49
+  recognized / 208 unseen, partitions verified exact by the coordinator and all three reviewers.
+  Unresolved residue, all four converged on: (a) ~12 boundary rows resting on a mechanism their cited
+  file lacks — row 188's `refuses` disproved by running it (`-F pr=1` exits 0 with real data), row 99
+  borrowing row 72's mechanism, rows 195/201 naming the PR diff where `pr-feedback-workflow.md:144-145`
+  makes the reviewer open the reply, and group C's 18-row bullet asserting the gate opens `steering.md`
+  when only the plan gate does; (b) 8 stale counts left by round 3's own re-derivation (U9 37 not 35,
+  U1 35 not 33, U10 30 not 27, six reader steps not five, 12 refusals not 13, 19 closing bullets not
+  18, row 63 in U1 not U10); (c) one new rule-era misattribution round 3 introduced — `Rn version:`
+  entered `3b9603e` 2026-07-05, not `2ddcafa`, so post-rule breaches are 0 not 1; (d) writing —
+  repetition, revision-history narration, and repair prescriptions that `steering.md` assigns to #2.
+  Coordinator correction to carry forward: the round-3 work-order cited
+  `.rn/20260625-rn-lean/steering.md:78` as that session's design-gate fold-in record; it is not — that
+  line states the doc-division rule generally and rn-lean carries a `Design:` line. The rule-era
+  defence still holds, that evidence does not.
