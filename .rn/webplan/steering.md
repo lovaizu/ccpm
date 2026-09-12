@@ -174,8 +174,11 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
+- **Status**: paused
+- **Date**: 2026-09-12
+- **Last completed**: #1 Step 4 の途中。提案書を作り直した：本文と見た目は `work/proposal.template.html`、`work/render.py` は額・週の計算と検査・期間 SVG・流し込み・改行処理（1 文 1 行、収まらない文だけ読点で折る）だけ。表示速度は「採用したいエンジニアの環境（5G・新しい端末）では 1.8 秒で課題にしない」に書き直し、「標準条件」の語を計画からも排除。計画に リポジトリ URL・Lighthouse 2 条件＋Qiita/Zenn 比較・レポートのリンク（out/lighthouse/ 20 本）を追記。確認リスト `work/proposal-check.md` と撮影 `work/shots.sh` を追加。
+- **Next**: 提案書の残りの指摘を受ける → 保留中の見積 1 点（RF5／RF6 の A 通常 0.5 → 1/3 の推奨、未回答）→ 初回打ち合わせの結果を計画の ChangeLog に反映 → 納品形として Step 4 を閉じる → Step 5（worklog を一般化して learnings に。2026-09-09〜10 の worklog 8 節が未反映）。
 - **Notes**:
+  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `tasks.md` の行、定数は `work/plan.data.json`。生成と確認：`python3 work/render.py plan.md out work/plan.data.json tasks.md` → `zsh work/shots.sh` → `work/shots/sheet.png` を `work/proposal-check.md` の観点で全ページ見る。
+  - 現在の額：実装まで A ¥1,122,000／上限 ¥1,386,000（12 週）、B ¥1,530,000／¥1,806,000（15 週）。デザインのみ A ¥432,000／¥612,000、B ¥588,000／¥768,000。
+  - 未解決の user-deferred パス：なし。
