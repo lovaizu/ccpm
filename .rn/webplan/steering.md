@@ -174,8 +174,12 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: 
-- **Last completed**: 
-- **Next**: 
-- **Notes**: 
+- **Status**: paused
+- **Date**: 2026-09-13
+- **Last completed**: #1 Step 4 の途中。初回打ち合わせの結果（流入は検索→記事、予算 50 万、準委任、12 月は必達でない、PC 中心）を受けて計画を 3 案（A デザイン／B ＋HTML/CSS／C ＋組み込み）に作り直した。デザインはユーザーの 3 行（D1 4／6・D2 3／5・D3 3／5）、用語は 順調／最大／余裕／見積額、契約は履行割合型で「想定と違えば都度調整」の 1 行。plan.md・tasks.md・plan.data.json・render.py・提案書ひな型を書き直し、提案書 11 ページを撮影して目視済み。窓幅に合わせて縮む（zoom）。
+- **Next**: 9/18 ごろ豆蔵から参考サイトと要望を受領 → 計画を見直す（方向の起点、推奨案）→ マークアップ／フロントエンドの担い手が決まったら M1〜M3・F1〜F4 を本人の見積に差し替え → 納品形として Step 4 を閉じる → Step 5（worklog を一般化して learnings に。2026-09-09〜13 の worklog 11 節が未反映）。
+- **Notes**:
+  - PR #8（OPEN）、ブランチ `hposal-plugin`。案件フォルダ `project/` は gitignore。数値の正は `tasks.md` の行、定数は `work/plan.data.json`。生成と確認：`python3 work/render.py plan.md out work/plan.data.json tasks.md` → `zsh work/shots.sh` → `work/shots/sheet.png` を `work/proposal-check.md` の観点で全ページ見る。
+  - 現在の見積額：A ¥324,000（5 週）／B ¥624,000（7 週）／C ¥900,000（9 週）。順調時の額は内部のみ。
+  - UX から全ページの導線を見直すオプションは今回入れず、次のフェーズの候補として保留。
+  - 未解決の user-deferred パス：なし。
