@@ -174,8 +174,14 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: -
-- **Last completed**: -
-- **Next**: -
-- **Notes**: -
+- **Status**: paused
+- **Date**: 2026-09-15
+- **Next**: #1 Step 4 — 9/18 ごろ先方から参考サイトと要望を受領 → 計画を見直す（方向の起点、推奨案）→ マークアップ／フロントエンドの担い手が決まったら該当行を本人の見積に差し替え → 納品形として Step 4 を閉じる。その後 Step 5 の残り（決定の一覧と順序／各決定の入力と出力／v1 に足りなかったもの・引き継ぐもの）。
+- **Last completed**: #1 Step 5 の積み残しのうち観点の抽出のみ。worklog 9/09〜9/12 の 12 節を一般化し `learnings.md` に 57〜68 を追加（数値は誰の環境の値か／ビューはひな型＋流し込み／調べれば分かることはリスクでなく事実 ほか）。Step 4 は先方入力待ちで未着手。
+- **Notes**:
+  - ブランチ `hposal-plugin`、PR #8（OPEN）。案件フォルダ `project/` は gitignore。
+  - 数値の正は `tasks.md` の行、定数は `work/plan.data.json`。生成と確認：`python3 work/render.py plan.md out work/plan.data.json tasks.md` → `zsh work/shots.sh` → `work/shots/sheet.png` を `work/proposal-check.md` の観点で全ページ見る。
+  - ブロッカー：9/18 の先方入力（参考サイト・要望）。これが来るまで Step 4 は進められない。Step 5 の残りは Step 4 の確定内容が入力なので先行させない。
+  - 現在の見積額：A ¥（額）（5 週）／B ¥（額）（7 週）／C ¥（額）（9 週）。順調時の額は内部のみ。
+  - UX から全ページの導線を見直すオプションは今回入れず、次のフェーズの候補として保留。
+  - 未解決の user-deferred パス：なし。
