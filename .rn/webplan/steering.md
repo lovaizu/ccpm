@@ -189,26 +189,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-19
-- **Last completed**: #1 Step 3 まで（前セッション）。本セッションは 9/18 の先方入力を読み、事実と判断を
-  Assumptions に記録しただけ。`plan.md` は未更新。
-- **Next**: #1 Step 4 — 9/18 の入力を受けて `plan.md` を更新する。SSoT は計画で、tasks.md と提案書はそこから導く。
-  各段はユーザー承認を取ってから次へ進む。
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8（OPEN）。先方入力は
-    `project/sample-project/input/client-request_20260918/`（PDF 5 頁＋注記付きモック 3 枚。gitignore 下）。
-    モックは右上「注記を表示」を外すと完成イメージだけになる。
-  - `plan.md` 更新の要点：構成はモックのまま受ける／B・C 案は注記に降格／納期は日付を切らず
-    「開始から順に完成」で示す。
-  - 前提が 2 つ崩れている：`plan.md:303` の「ロゴ・キャラクターは既存素材を流用」（マスコットのアイコンとサイト名書体の
-    変更要求）、`plan.md:226` の「SP は崩れないことの確認まで」（レスポンシブ挙動の定義要求）。
-  - 案の切り方は `tasks.md` に日数を積んでから決める。金額感を先に置かない。
-  - 先方への回答が要る未決 10 項目：注記の「検討」6 件（タグクラウド、コードハイライト配色、はてブ・リンクコピー
-    追加、連載バッジ ほか）と「ご定義ください」系（補足ボックス、脚注の往復導線、本文中の画像、右カラムのバナー枠、
-    連載ナビ、引用・箇条書き）。
-  - 要確認：ダーク／ライトの切替は Figma の Variable Modes が要り、Starter は 1 モードのみ。Professional を
-    契約するかを判断する必要がある。Dev Mode も Starter 非対応で、課金はファイル所有チーム側にかかるため、
-    Figma ファイルを先方へ移管する案が素直。
-  - telldes は提案に紹介として含める。telldes 側の改善議論は別セッション `figma-plugins-f2` へ申し送り済み。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
