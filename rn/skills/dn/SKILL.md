@@ -1,42 +1,45 @@
 ---
 name: dn
-description: "Suspend the current rn session — commit and push the work, record resume context in steering.md, hand off to a manual /clear. Use when stopping: context nearly full, a break, or end of day, via /rn:dn. Has side effects (commits, pushes) — run only on explicit /rn:dn."
+description: "Suspend the current rn session — record where it stands in steering.md, commit and push everything, and hand off to a manual /clear. Use when stopping: context nearly full, a break, end of day. Has side effects (commits, pushes) — run only on explicit /rn:dn."
 disable-model-invocation: true
 ---
 
 # /rn:dn — Suspend a session
 
-Records resume state and hands off. Runs no task.
+Writes down where the session stands so a fresh conversation can pick it up. Runs no task.
 
 ## Steps
 
-1. **Find the steering.md in play, so the right session is suspended.** Use the known path, else
-   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep paths
-   on disk, prefer one whose `State` shows `Status: paused`.
+1. **Name the session being suspended, so the right `steering.md` is written.** Use the path
+   known in this conversation; otherwise run
+   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep the
+   paths on disk, and take the most recent.
 
-2. **Check the version, so an older session gets reconciled before it's left mid-air.** Compare
-   `Rn version:` to the installed version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`); on
-   mismatch, run the migration section of `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
+2. **Bring an older session current before leaving it, so the next resume reads one shape.**
+   Compare `Rn version:` with the installed version in
+   `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`; on a mismatch run the migration section of
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
 
-3. **Check off what's actually done, so resume doesn't redo it.** In `steering.md`, check off
-   completed steps.
+3. **Record what is actually done, so the resume does not redo it.** Check off the steps completed
+   in this conversation; add any task the work uncovered.
 
-4. **Write `State`, so a fresh conversation knows exactly where to pick up.** Follow the `State`
-   placeholder in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`: `Status: paused`, `Date`,
-   `Last completed`, `Next`, `Notes` (a forward pointer only — branch/PR, pending gate, blockers).
+4. **Write `State`, so a cold reader knows exactly where to pick up.** Fill the `State` fields from
+   the template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`: `Status: paused`, today's
+   `Date`, `Last completed`, `Next`, and `Notes` as a forward pointer only — branch, PR, the gate
+   awaiting a verdict if any, blockers. History stays in git.
 
-5. **Commit the work, so nothing is lost between conversations.** Tree clean → skip. Current task's
-   steps all checked → commit normally. Some unchecked → prefix `wip:`. The message must never
-   contain `complete task #`.
+5. **Commit the work in progress, so nothing lives only in this conversation.** Tree clean → skip.
+   Current task's steps all checked → a plain conventional message. Some unchecked → prefix `wip:`.
+   Never include `complete task #` — that marker belongs to the check-off commit alone.
 
-6. **Resolve untracked files, so the tree is genuinely clean, not just committed.** For each
-   untracked path: regenerable build/test residue → add a rule to `.gitignore`; anything else → ask
-   the user (commit / gitignore / delete themselves / keep), opening with the status block. Never
-   delete a file yourself.
+6. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
+   untracked path: regenerable build or test residue → add a rule to `.gitignore`; anything else →
+   ask the user (commit, ignore, keep, or delete it themselves), opening with the session-status
+   block. Never delete a file yourself; note any path the user leaves unresolved in `Notes`.
 
-7. **Push, so the suspended session is visible outside this conversation.** Commit `State` and any
-   `.gitignore` edit together, then push. If push fails, continue and report it.
+7. **Push, so the suspended session exists outside this machine.** Commit `State` and any
+   `.gitignore` change together, then push. If the push fails, continue and say so in the report.
 
-8. **Report where things stand, so the user knows how to resume.** Open with the status block; give
-   the branch name; if push failed, say the commits are local-only; name any paths the user still
-   needs to resolve. Tell the user: `/clear`, then `/rn:up`.
+8. **Tell the user how to come back.** Open with the session-status block; give the branch; say if
+   commits are local-only; name any unresolved paths. Then: `/clear`, and `/rn:up` in the new
+   conversation.

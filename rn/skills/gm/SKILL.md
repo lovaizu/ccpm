@@ -1,29 +1,33 @@
 ---
 name: gm
-description: Register a revise verdict on the work under review. With an argument, /rn:gm <text> revises the pending item against it. With no argument, it works through the current PR's unresolved review threads. Has side effects (revises work, commits, pushes, replies on the PR) — run only on explicit /rn:gm.
+description: Ask rn to revise what it last presented — /rn:gm <text> revises against that feedback; plain /rn:gm takes the feedback from the session PR's unresolved review threads. Has side effects (revises, commits, pushes, replies on the PR) — run only on explicit /rn:gm.
 disable-model-invocation: true
 ---
 
 # /rn:gm — Revise
 
-Registers a revise verdict — the counterpart to `/rn:ty`. Nothing is dropped: every piece of
-feedback is acted on.
+Records a revise verdict, the counterpart of `/rn:ty`. Every piece of feedback is acted on; none is
+dropped.
 
 ## Steps
 
-1. **Check the version, so revision lands on a current session.** Compare `steering.md`'s
-   `Rn version:` to the installed version; on mismatch, run the migration section of
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
+1. **Bring an older session current first, so the revision lands on the current shape.** Compare
+   `Rn version:` with the installed version in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`;
+   on a mismatch run the migration section of `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-2. **Route on the argument, so text feedback and PR feedback don't get conflated.** `$ARGUMENTS`
-   non-empty after trimming → step 3. Empty → step 4.
+2. **Take the feedback from where the user put it, so text and PR comments are not confused.**
+   `$ARGUMENTS` non-empty after trimming → it is the feedback; go to step 3. Empty → the feedback is
+   on the PR; go to step 4.
 
-3. **Revise the pending item against the given text.** Apply it to whatever was last presented for
-   confirmation; if nothing is pending, treat the text as a direct instruction. Report, opening with
-   the status block.
+3. **Revise the pending item against the text, then present it again.** The pending item is what
+   was last presented for a decision; with nothing pending, treat the text as a direct instruction.
+   Make the change through the task loop's implementer (`${CLAUDE_PLUGIN_ROOT}/references/task.md`
+   step 1) when it touches the deliverable, or directly when it touches `steering.md`; have it
+   judged again; re-present with the session-status block.
 
-4. **Work the PR's review threads, so feedback left on GitHub gets addressed.** For each unresolved
-   thread whose last comment is the reviewer's: address it and reply with what changed and the
-   commit, or reply with a question when the ask is unclear. Never resolve a thread — that's the
-   reviewer's act. `gh api` on the PR's review threads is enough to drive this. Report when the
-   queue is empty.
+4. **Work every unresolved review thread, so nothing the reviewer wrote is lost.** Read the PR's
+   review threads (`gh api graphql` on `reviewThreads`, paginated). For each thread that is
+   unresolved and where the reviewer has the last word: address it, commit and push, and reply on
+   that thread with what changed and the commit; or, when the ask is unclear, reply with the
+   question and change nothing. Never resolve a thread — that is the reviewer's act. Report when
+   the queue is empty, opening with the session-status block.

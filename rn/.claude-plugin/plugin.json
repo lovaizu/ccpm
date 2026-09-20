@@ -1,6 +1,6 @@
 {
   "name": "rn",
-  "description": "Goal-driven work sessions: a goal becomes a steering.md tracked in git, an implementer subagent runs each task while a third-party evaluator judges the result against named questions on the pull request, and you decide only at the plan, design, and evaluation gates with /rn:ty (approve) and /rn:gm (revise) — resuming across conversations from the same file.",
+  "description": "Goal-driven work sessions that outlive a conversation: a goal becomes a steering.md in git, an implementer builds each task and a third-party evaluator judges it on the pull request, and you decide only at the plan, design, and evaluation gates with /rn:ty (approve) and /rn:gm (revise).",
   "version": "0.9.0",
   "author": { "name": "lovaizu" }
 }

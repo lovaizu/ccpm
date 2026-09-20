@@ -1,27 +1,31 @@
 ---
 name: ty
-description: Approve the pending rn confirmation — sign off whatever was last presented (plan, design, or evaluation gate, or a reviewed result) and advance. Has side effects (continues the workflow) — run only on explicit /rn:ty.
+description: Approve what rn last presented for a decision — the plan, a design, the evaluation, or a reviewed result — and let the session advance. Has side effects (checks off, commits, runs the next task) — run only on explicit /rn:ty.
 disable-model-invocation: true
 ---
 
 # /rn:ty — Approve
 
-Approves the pending confirmation and advances. No revision.
+Records the user's approval of the pending decision and moves the session on. Changes nothing
+about what was approved.
 
 ## Steps
 
-1. **Check the version, so approval lands on a current session.** Compare `steering.md`'s
-   `Rn version:` to the installed version; on mismatch, run the migration section of
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
+1. **Bring an older session current first, so the approval lands on the current shape.** Compare
+   `Rn version:` with the installed version in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`;
+   on a mismatch run the migration section of `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-2. **Identify what's pending, so the right thing gets approved.** Find the most recent gate or
-   reviewed item awaiting sign-off. If more than one is plausible, ask which, opening with the
-   status block.
+2. **Name what is being approved, so the verdict cannot land on the wrong thing.** It is the most
+   recent gate or reviewed item presented for a decision — in this conversation, or in `State`'s
+   `Notes` after a resume. Say it back in one line. If more than one is plausible, ask which,
+   opening with the session-status block. Nothing pending → say so with the block and stop.
 
-3. **Record it approved, so the workflow has a fact to advance from.** Mark the pending item as
-   approved.
-
-4. **Advance from the approved point.** Plan or design gate → check the task off, continue the task
-   loop at the next unchecked task per `${CLAUDE_PLUGIN_ROOT}/references/task.md`. Evaluation gate →
-   check the task off; the session closes; open the closing report with the status block. Nothing
-   pending → say so, opening with the status block, and stop.
+3. **Advance from the approved point, so the approval has an effect the record shows.**
+   - Plan gate → run task #1 per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
+   - "Design sign-off" task → check it off in `steering.md`, commit
+     `docs: complete task #N — design sign-off`, push, then continue the task loop at the next
+     unchecked task.
+   - "Evaluation sign-off" task → check it off, commit `docs: complete task #N — evaluation
+     sign-off`, push, mark the PR ready for review, and close the session with a report that opens
+     with the session-status block and names the merge as the user's next move.
+   - A reviewed item → it stands as final; continue whatever was waiting on it.

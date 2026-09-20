@@ -1,43 +1,44 @@
 ---
 name: on
-description: Start a new rn work session from a goal — restate the goal, decompose it into tasks in a steering.md, open a draft PR, evaluate the plan, then begin task #1 once approved. Has side effects (writes files, commits, pushes, opens a PR) — run only on explicit /rn:on.
+description: Start a new rn work session from a goal — restate the goal, turn it into tasks in a steering.md, open a draft PR, have the plan evaluated, then begin task #1 once the user approves. Has side effects (writes files, commits, pushes, opens a PR) — run only on explicit /rn:on.
 disable-model-invocation: true
 ---
 
 # /rn:on — Start a session
 
-Turns a goal into tasks in `steering.md`, opens a draft PR, evaluates the plan, then runs task #1
-after approval.
+Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and runs task #1 after the
+user approves.
 
 ## Steps
 
-1. **Capture the goal faithfully, so the session builds exactly what was asked.** Take it from the
-   user's message or `$ARGUMENTS`; ask if absent. Restate it in plain language; confirm only if
-   ambiguous. This becomes `Goal`.
+1. **Capture the goal as the user means it, so the session builds what was asked and nothing
+   else.** Take it from the message or `$ARGUMENTS`; ask if absent. Restate it in plain words and
+   confirm only when it is ambiguous. The restatement becomes `Goal`.
 
-2. **Choose where the session lives, so it's findable later.** Location is
-   `.rn/{yyyymmdd}-{slug}/steering.md`. Candidate slugs: the current branch, an issue number
-   (`#31` → `issue-31`), or a kebab-case name from the goal. Propose one and let the user confirm.
+2. **Give the session a stable home, so every later command can find it.** The path is
+   `.rn/{yyyymmdd}-{slug}/steering.md`. Slug candidates: the current branch, an issue number
+   (`#31` → `issue-31`), a kebab-case name from the goal. Propose one; if the user already named
+   one, use it without asking.
 
-3. **Write `steering.md`, so the plan is a single reviewable artifact.** Follow
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`'s template: stamp `Rn version:` from
-   `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`; write `Goal`, exhaustive `Acceptance criteria`
-   (states, not artifacts), `Assumptions` (facts marked as facts), `Rules` (first line always
-   "commit and push every change; one completion marker per task"). Work `Tasks` back from the
-   Acceptance criteria; add a "Design sign-off" task wherever the approach must be decided before
-   build; always end with "Evaluation sign-off".
+3. **Write the plan as one reviewable file, so the user judges a whole, not a conversation.**
+   Follow the template and section notes in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. Stamp
+   `Rn version:` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Work `Tasks` backwards
+   from the Acceptance criteria; add a "Design sign-off" task where the approach must be decided
+   before build; end with "Evaluation sign-off".
 
-4. **Persist and open the PR, so the plan is on record before anything is built.** Commit
-   `chore: start session — {slug}`; branch off the default branch if needed; push; open a draft PR
-   whose body is exactly
+4. **Put the plan on record before anything is built, so it can be reviewed where diffs render.**
+   Commit `chore: start session — {slug}`; branch off the default branch if on it; push; open a
+   draft PR whose body is exactly
    `See [steering](https://github.com/{owner}/{repo}/blob/{branch}/.rn/{yyyymmdd}-{slug}/steering.md).`
+   If push or PR creation fails, say so and carry on — the plan is then reviewed in the
+   conversation and later verdicts are reported there.
 
-5. **Have the plan judged before asking the user, so their review starts from a plan already free of
-   avoidable defects.** Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan; post the
-   verdict on the PR; fix any NG and re-run before step 6.
+5. **Have the plan judged before the user sees it, so their review starts from a plan already
+   free of avoidable defects.** Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan;
+   fix every NG and re-run before step 6.
 
-6. **Stop at the plan gate — this decision is the user's.** Report with the session-status block
-   (see `${CLAUDE_PLUGIN_ROOT}/references/steering.md`); ask for `/rn:ty` or `/rn:gm` on the PR.
+6. **Stop at the plan gate — this decision is the user's.** Open with the session-status block
+   (`${CLAUDE_PLUGIN_ROOT}/references/steering.md`) and ask for `/rn:ty` or `/rn:gm`.
 
-7. **Once approved, hand off to the task loop.** Run task #1 per
-   `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
+7. **After approval, run the tasks.** `/rn:ty` continues into
+   `${CLAUDE_PLUGIN_ROOT}/references/task.md` at task #1.

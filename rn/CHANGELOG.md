@@ -8,24 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Every task's result is now judged by a third-party evaluator with no memory of how it was built,
-  against a few named questions about whether it does its job — not whether a step ran — so a pass
-  means the deliverable actually works, not that the process looked thorough.
-- Evaluation now happens on the pull request instead of behind the scenes, so you can read what was
-  judged and why alongside the diff it judged.
-- The implementer that does the hands-on work now runs on the faster model (`sonnet`), while the
-  evaluator that judges the result runs on the stronger model (`opus`), so routine work moves
-  quickly and the judgment calls get the stronger read.
-- The prompt text `rn` runs on is now small enough to read in one sitting, so what each command
-  actually does is easy to see and trust.
-- Older sessions now migrate to the current conventions automatically the next time a command runs
-  on them, with nothing to do by hand.
+- Every plan and every task's result is now judged by a third party against a few named questions about whether it does its job — a pass means the work works, not that a step ran.
+- Evaluations are posted on the pull request — you read what was judged and why next to the diff it judged.
+- Hands-on work runs on the faster model (`sonnet`) and judgment on the stronger one (`opus`) — routine work moves fast and the calls that matter get the stronger read.
+- `rn`'s prompt text is a third of its former size and every step says what it is for — you can read what each command does in one sitting.
+- A session written under an older `rn` is brought current automatically the next time a command runs on it — nothing to do by hand.
 
 ### Removed
 
-- A session no longer accumulates a `checks/` directory or a per-session `design.md` — it leaves
-  only `steering.md` and the deliverable, with the evaluation living on the PR instead of in the
-  repository.
+- The per-task review chain and its `checks/` files, and the per-session `design.md` template — a session leaves only `steering.md` and the deliverable.
 
 ## [0.8.0] - 2026-07-07
 
