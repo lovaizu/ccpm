@@ -61,7 +61,7 @@ are deleted — so each says the minute it was taken.
 | 11 | A conversation can continue into a **new file under a new `sessionId`** that replays every uuid-carrying entry and drops almost every bookkeeping one, so a marker emitted before the continuation exists twice on disk. A `continued-in` entry links the pair, and a snake_case `session_id` marks each replayed copy. | [Continuation by replay](#a-conversation-can-continue-into-a-new-file-that-replays-the-old-one) |
 | 12 | A restart can instead append into the existing file, leaving no seam record other than a change of `version` mid-file. | [Restart in place](#a-restart-can-append-into-the-existing-file-marked-only-by-the-version-stamp) |
 | 13 | Compaction stays in one file and reproduces earlier prose into a summary entry. For a string that occurred **once** before the summary — the cohort a boundary marker belongs to — the reproduction rate is 2 of 46. | [Compaction](#compaction-stays-in-one-file-and-replays-earlier-prose-into-it) |
-| 14 | Line order and timestamp order disagree in 830 places machine-wide as of 2026-09-20T06:00Z — a running maximum over a growing corpus, not a fixed count; the largest backstep is 13,429.9 s, and 100 of one file's 370 entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
+| 14 | Line order and timestamp order disagree in 808 places machine-wide as of 2026-09-20T05:37Z — the `corpus.py inversions` run shown in this section's own body, a running maximum over a growing corpus, not a fixed count; the largest backstep is 13,429.9 s, and 100 of one file's 370 entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
 
 What this does **not** do is choose the marker. Section [What this still cannot answer](#what-this-still-cannot-answer)
 lists what task #2 has to settle some other way.
@@ -133,10 +133,12 @@ Four shared scripts live in `evidence/tools/` so the command blocks stay short:
 - `corpus.py <scan> [arg]` — the seventeen whole-machine scans (`versions`, `version-range`,
   `persist-bracket`, `no-timestamp`, `worktree-ptr`, `entry-types`, `attachment-types`,
   `hook-entries`, `relocated`, `sidechain`, `continued-in`, `compaction`, `projdirs`, `localcmd`,
-  `handoffs`, `inversions`, `needle`). Each reads every conversation file on this machine;
-  `persist-bracket`, `attachment-types`, `hook-entries`, `localcmd` and `needle` read every subagent
-  file too, and `worktree-ptr` reads only the ccpm project directories. **Every one prints its
-  population as its first line**, so a figure quoted from it cannot lose it.
+  `handoffs`, `inversions`, `needle`). Each reads every conversation file on this machine — including
+  `worktree-ptr`, which despite the ccpm-relative pointer it inspects is not restricted to the ccpm
+  project directories, as its own quoted output below shows by listing `dotfiles` rows too;
+  `persist-bracket`, `attachment-types`, `hook-entries`, `localcmd` and `needle` additionally read
+  every subagent file. **Every one prints its population as its first line**, so a figure quoted from
+  it cannot lose it.
 - `scan.py <scan> <file>… [--tokens <dir>]` — the fourteen per-file scans (`spans`, `cwd`, `types`,
   `inversions`, `seam`, `handoff`, `escaping`, `replay`, `selfref`, `leaf`, `hooks`, `hookraw`,
   `hookids`, `prompts`). Each subcommand is the exact measurement the section quoting it describes,
@@ -288,15 +290,7 @@ not over one file, and the rates below come from every handoff on this machine. 
 conversation files of the directory:
 
 ```
-$ python3 $TOOLS/scan.py handoff $PROJ_WT/ef482a21-*.jsonl $PROJ_WT/555280be-*.jsonl
-task adcd0d76cf2237e15  status=completed report 2026-09-06T05:11:19.977Z -> user entry line 164  2026-09-06T05:11:20.087Z (+110 ms)
-task a4df617c773767748  status=completed report 2026-09-06T05:17:00.784Z -> user entry line 212  2026-09-06T05:17:00.820Z (+36 ms)
-task a5d5a4bd2d25bf029  status=completed report 2026-09-06T05:19:11.775Z -> user entry line 224  2026-09-06T05:19:11.817Z (+42 ms)
-task a23264b4498e3f2b4  status=completed report 2026-09-06T05:19:50.666Z -> user entry line 236  2026-09-06T05:19:50.698Z (+32 ms)
-task aea55898151ee88ec  status=completed report 2026-09-06T05:40:40.129Z -> user entry line 272  2026-09-06T05:40:40.187Z (+58 ms)
-task ace26eab7066559b2  status=failed    report 2026-09-06T05:42:48.587Z -> user entry line 305  2026-09-06T05:42:48.601Z (+14 ms)  [agent died on an error entry]
-task a0a8199dda8b9e775  status=failed    report 2026-09-06T05:43:15.203Z -> user entry line 311  2026-09-06T05:43:15.223Z (+20 ms)  [agent died on an error entry]
-task a0f08758eaae33068  status=failed    report 2026-09-06T05:43:37.818Z -> user entry line 317  2026-09-06T05:43:37.832Z (+14 ms)  [agent died on an error entry]
+$ python3 $TOOLS/scan.py handoff $PROJ_WT/*.jsonl
 task adcd0d76cf2237e15  status=completed report 2026-09-06T05:11:19.977Z -> user entry line 124  2026-09-06T05:11:20.087Z (+110 ms)
 task a4df617c773767748  status=completed report 2026-09-06T05:17:00.784Z -> user entry line 152  2026-09-06T05:17:00.820Z (+36 ms)
 task a5d5a4bd2d25bf029  status=completed report 2026-09-06T05:19:11.775Z -> user entry line 156  2026-09-06T05:19:11.817Z (+42 ms)
@@ -307,11 +301,73 @@ task a0a8199dda8b9e775  status=failed    report 2026-09-06T05:43:15.203Z -> user
 task a0f08758eaae33068  status=failed    report 2026-09-06T05:43:37.818Z -> user entry line 208  2026-09-06T05:43:37.832Z (+14 ms)  [agent died on an error entry]
 task a78cb9340f4ca0e62  status=completed report 2026-09-06T08:37:32.037Z -> user entry line 242  2026-09-06T08:37:32.156Z (+119 ms)
 task a1acd223789ed6dda  status=completed report 2026-09-06T08:42:10.340Z -> user entry line 278  2026-09-06T08:42:10.406Z (+66 ms)
+task a0b0b21899209706e  status=failed    report 2026-09-20T05:07:20.507Z -> user entry line 296  2026-09-20T04:44:44.963Z (+-1355544 ms)
+task ad2441398f572e7e4  status=completed report 2026-09-20T05:53:19.542Z -> user entry line 482  2026-09-20T05:53:20.656Z (+1114 ms)
+task a2ca0d1baf844ce19  status=completed report 2026-09-20T05:54:27.296Z -> user entry line 499  2026-09-20T05:54:42.915Z (+15619 ms)
+task a6e9b1e51c9ce499a  status=completed report 2026-09-20T06:13:57.790Z -> user entry line 575  2026-09-20T06:14:35.162Z (+37372 ms)
+task afe92fd1c5ffc6cd9  status=completed report 2026-09-20T06:15:29.992Z -> user entry line 592  2026-09-20T06:15:30.035Z (+43 ms)
+task a363802caaba29790  status=completed report 2026-09-20T06:16:23.296Z -> user entry line 609  2026-09-20T06:16:47.861Z (+24565 ms)
+task a39f6e288d6277a88  status=completed report 2026-09-10T11:30:55.820Z -> user entry line 171  2026-09-10T11:30:55.869Z (+49 ms)
+task a53581be566248fc1  status=completed report 2026-09-10T11:39:56.346Z -> user entry line 216  2026-09-10T11:39:56.396Z (+50 ms)
+task a973cbd7798109892  status=completed report 2026-09-10T11:44:21.678Z -> user entry line 233  2026-09-10T11:44:21.750Z (+72 ms)
+task aa9ae89c59823c237  status=completed report 2026-09-10T11:44:55.001Z -> user entry line 244  2026-09-10T11:45:00.101Z (+5100 ms)
+task adcd0d76cf2237e15  status=completed report 2026-09-06T05:11:19.977Z -> user entry line 164  2026-09-06T05:11:20.087Z (+110 ms)
+task a4df617c773767748  status=completed report 2026-09-06T05:17:00.784Z -> user entry line 212  2026-09-06T05:17:00.820Z (+36 ms)
+task a5d5a4bd2d25bf029  status=completed report 2026-09-06T05:19:11.775Z -> user entry line 224  2026-09-06T05:19:11.817Z (+42 ms)
+task a23264b4498e3f2b4  status=completed report 2026-09-06T05:19:50.666Z -> user entry line 236  2026-09-06T05:19:50.698Z (+32 ms)
+task aea55898151ee88ec  status=completed report 2026-09-06T05:40:40.129Z -> user entry line 272  2026-09-06T05:40:40.187Z (+58 ms)
+task ace26eab7066559b2  status=failed    report 2026-09-06T05:42:48.587Z -> user entry line 305  2026-09-06T05:42:48.601Z (+14 ms)  [agent died on an error entry]
+task a0a8199dda8b9e775  status=failed    report 2026-09-06T05:43:15.203Z -> user entry line 311  2026-09-06T05:43:15.223Z (+20 ms)  [agent died on an error entry]
+task a0f08758eaae33068  status=failed    report 2026-09-06T05:43:37.818Z -> user entry line 317  2026-09-06T05:43:37.832Z (+14 ms)  [agent died on an error entry]
 ```
 
-Ten distinct handoffs, eighteen rows: the first eight are `ef482a21`'s, the next eight are
-`555280be` replaying those same eight at different line numbers, and the last two are the handoffs
-`555280be` added after the continuation. The delay is 14–119 ms on all ten.
+Twenty distinct handoffs, twenty-eight rows, over four of the seven files — `17080efa`, `6ed86163`
+and `eded9b12` hold none. Rows 21–28 are `ef482a21`'s own eight handoffs, and rows 1–8 are `555280be`
+replaying those same eight task ids at different line numbers, which is why the glob widening did not
+change the ten handoffs the earlier, two-file run already showed: rows 1–10 are `555280be` (its eight
+replayed handoffs plus the two it added after the continuation) and rows 21–28 are those same eight
+handoffs as `ef482a21` first wrote them. What the widening adds is ten further handoffs the two-file
+run never saw, ten of `c391e411`'s and `c763d0be`'s own — rows 11–20.
+
+**Those ten are not 14–119 ms.** Excluding the one explained below, their delay runs from 43 ms to
+**37,372 ms**: `a2ca0d1baf844ce19` at 15.6 s, `a363802caaba29790` at 24.6 s, `aa9ae89c59823c237` at
+5.1 s, `a6e9b1e51c9ce499a` at 37.4 s. Checking `a6e9b1e51c9ce499a` against the surrounding entries of
+`c391e411` explains why: its `queue-operation enqueue` lands at 06:13:57.823Z, but the coordinator is
+mid-turn at that instant — composing its own assistant text, which does not finish until 06:14:35.024Z
+— and the `<task-notification>` only becomes a `user` entry at 06:14:35.162Z, 0.14 s after that turn
+closes. **The delay is not a fixed channel property; it is bounded by how long the coordinator's own
+current turn takes to finish**, because the harness can only inject the notification between turns.
+The 14–119 ms figures from the first two files held because those probes happened to land between
+short turns; nothing in the channel guarantees that.
+
+**The one negative row, `a0b0b21899209706e` at −1,355,544 ms, is a mismeasurement, not a landing
+lagging its own request.** The task-id notified twice: the row above pairs `<status>failed</status>`
+(the agent hit its session limit at 2026-09-20T04:44:44.963Z, `<result>` a mid-task progress line) with
+`report 2026-09-20T05:07:20.507Z`. That later timestamp is the *last* assistant-text entry of
+`agent-a0b0b21899209706e.jsonl` — but the coordinator resumed that same agent at 05:02:13.692Z after
+the rate limit reset (`SendMessage to: a0b0b21899209706e`), and the subagent kept writing into the same
+file after the failed notification had already been read out. `scan.py`'s `_report()` takes the file's
+last assistant text unconditionally, so for a resumed task-id it returns the *second* run's completion,
+not the text that existed when the *first* notification fired — the note the notification itself
+carries (*"the same task-id may notify more than once"*) is exactly this case. The resumed run's own
+completion never reaches a `<task-notification>` `user` entry at all: its `queue-operation` is enqueued
+at 05:07:20.543Z and removed again at 05:07:26.930Z (line 345) without ever landing — the same
+enqueued-and-dropped failure mode the machine-wide `corpus.py handoffs` census below counts 142 times,
+in 33 files — and what the coordinator actually received for the resumption was a
+different wrapper, `<agent-message from="a0b0b21899209706e">... [Subagent hand-back] ...`, at line 335.
+`scan.py handoff` has no matching-by-time guard for a task-id that notifies twice, so **this row is the
+script pairing the wrong notification with the wrong report, not evidence that a report can precede its
+own request**; the underlying fact this uncovers is real and worse than a mismeasurement, though: a
+task-id's second completion can vanish from `<task-notification>` delivery entirely and surface only
+under a different tag if the harness happens to route it as a hand-back instead.
+
+So channel 5's own latency is not the 14–119 ms the two-file run implied: real, single-notification
+handoffs range from 14 ms to 37.4 s, gated by the coordinator's own turn length rather than by anything
+the channel itself bounds — a design routing a task-boundary marker through channel 5 has to tolerate a
+multi-second wait, not budget for tens of milliseconds. And because a resumed task-id can notify more
+than once, with only one of the notifications guaranteed to reach a `<task-notification>` entry, any
+reader keyed on task-id must be prepared for the second completion to arrive as an `<agent-message>`
+hand-back instead, or not to arrive as a distinct entry at all.
 
 The `user` entry is `isSidechain: false`, carries `origin.kind == "task-notification"` and
 `promptSource == "system"` — which is what distinguishes it from a human prompt. Its content is a tag
