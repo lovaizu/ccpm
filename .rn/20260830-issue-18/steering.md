@@ -194,7 +194,7 @@ recorded command-and-output evidence, so #2 decides the marker on measurement ra
 
 **Steps**:
 
-- [ ] push and present `design.md` on the PR
+- [x] push and present `design.md` on the PR
 - [ ] take the verdict: `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)
 
 **Completion criteria**:
@@ -367,8 +367,13 @@ task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-20
+- **Last completed**: #2 — `design.md`'s decisions recorded and content-complete; round-3's two
+  orphaned Craft findings fixed directly (`71f7ee0`); all reviews now PASS.
+- **Next**: #3 — design sign-off. `design.md` is pushed and presentable on the PR; only the user's
+  verdict is outstanding.
+- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft). Resume
+  by waiting for `/rn:ty` (approve → proceed to #4) or `/rn:gm` (revise `design.md`, re-present).
+  `rn` issue https://github.com/lovaizu/ccpm/issues/30 (fix rounds patch only named findings, no
+  iteration-count tracking) remains open, unrelated to this session's own build.
