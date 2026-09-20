@@ -515,7 +515,13 @@ cross-entry inversion within a file, not cross-file start-time reliability direc
 evidence does bear on it: a file can carry no timestamped entry at all for a stretch of its own early
 life (measured: a 10-entry, no-timestamp file grew into a 296-entry conversation, and a separate,
 single-entry file carries no timestamp whatsoever), so a file-start comparison taken as a snapshot
-mid-session can find a newer file with nothing yet to compare — carried forward as a residual risk
+mid-session can find a newer file with nothing yet to compare. A second, sharper failure mode exists even
+once both files do have a timestamped entry to compare: a file that in truth starts first can carry a
+long stretch of leading, untimestamped bookkeeping entries (measured to exist, above) before its own
+first timestamped entry, while a file that in truth starts later reaches its own first timestamped entry
+sooner — comparing by first-timestamped-entry alone then ranks the later file ahead of the earlier one,
+inverting the true start order even though both files had a timestamp available to compare, a
+correctness risk rather than only a completeness one. Both are carried forward as residual risks
 alongside the others this section already names, not assumed away.
 
 **The bar for a friction fact worth recording** is a citable trace: a specific JSONL entry (or entries)
@@ -531,10 +537,11 @@ not a shortfall to explain.
 
 **Finding where the previous run left off.** The collection stage is idempotent rather than
 watermarked: every `/rn:dn` re-scans the session's entries from its own start, and a fact is appended
-only if no existing entry in `.rn/friction.md` already carries the same JSONL citation — always the
-file-and-line pair (below), never a fragment-text compare, so re-scanning an interval a previous run
-already covered costs a re-read, never a duplicate record regardless of how a re-scan's own extraction
-happens to word the fact. This was chosen
+only if no existing entry in `.rn/friction.md` already carries the same dedup key — the source entry's
+`uuid` when it has one, the file-and-line pair otherwise (below), never a fragment-text compare — so
+re-scanning an interval a previous run already covered costs a re-read, never a duplicate record
+regardless of how a re-scan's own extraction happens to word the fact, and regardless of which replayed
+copy of the same underlying entry (2.1, 4.7) a re-scan happens to draw its citation from. This was chosen
 over storing an explicit watermark (a line in `steering.md`'s own State section, or a marker appended to
 `.rn/friction.md` itself naming the last-processed position) for two reasons that follow from this
 design's own existing constraints rather than a fresh judgment call: 2.2 already binds this design
@@ -559,11 +566,20 @@ marker in 4.7 — a fact recorded against `#N` would be unreadable once `/rn:gm`
 the friction itself, in a sentence or two; the JSONL citation it traces to — file and line, which is
 available in literally every case the collection stage would ever cite, since every entry it could point
 at sits in an append-only file and so has a stable line position once written (2.1's own
-liveness/append-only measurement); a short quoted fragment may sit alongside it for readability, but is
-only ever a supplement, never a substitute, and the dedup equality above is always the file-and-line
-pair, never a fragment-text compare, so an LLM-driven re-scan paraphrasing the same fragment differently
-can never itself produce a second record — and a status field, defaulting to unfiled, that the stocktake
-stage (4.9) flips once a
+liveness/append-only measurement), plus the source entry's own `uuid` when it carries one; a short quoted
+fragment may sit alongside either for readability, but is only ever a supplement, never a substitute. The
+dedup key above is that `uuid` when the source entry has one, the file-and-line pair otherwise, never a
+fragment-text compare — the same fix 4.7 already applies to the task-boundary marker, and for the same
+reason: the measured `sessionKind: "bg"` continuation shape replays a `uuid`-carrying entry into a
+successor file at a different line (2.1), so file-and-line alone would see the predecessor's and the
+successor's copies as two distinct citations, where `uuid`-based dedup correctly treats them as one. The
+fallback to file-and-line loses nothing in practice: every entry the citable-trace bar above can point at
+— a tool call, a review verdict, a user correction, a workaround — is one of the message-type entries
+task #1 measured to carry a `uuid`; an entry with none is the uuid-less, bookkeeping kind (`mode`,
+`cost-state`, and similar, 2.1) that a continuation drops rather than replays, with one measured exception
+(`file-history-snapshot`) that this bar never cites either — so a re-scan paraphrasing the same fragment
+differently still can never itself produce a second record — and a status field, defaulting to unfiled,
+that the stocktake stage (4.9) flips once a
 cluster built from this fact becomes an approved issue — without it, a fact already acted on would look
 "recurring" again on every later run, since the store is never pruned. Markdown, matching `steering.md`
 and `design.md`, so the user can open and read it directly with no tooling of its own.
@@ -600,12 +616,14 @@ exists to avoid.
 **Mechanism.** The command reads `.rn/friction.md`, and the coordinator — not a fixed keyword or string
 match — reads all of its unfiled facts and groups them against a stated equivalence test: two facts
 belong to the same group when one could be rewritten as a restatement of the other without losing or
-adding information — concretely, when merging the two into a single sentence would drop nothing either
-fact states on its own. The test targets the friction itself, not the task it happened in or the
-wording it was recorded with, which is what lets two differently-worded facts from different tasks or
-sessions cluster at all. Applying the test is still a judgment call, of the same kind 4.5 already accepts
-for scope overlap between design docs — the coordinator, not a mechanical rule, decides whether merging
-would lose information — but it is a judgment call guided by a stated test, not an unconstrained one. An
+adding information — concretely: group A and B only when telling the user about A alone, or B alone,
+would be an accurate but incomplete account of the same underlying friction, not when they are two
+distinct frictions worth reporting separately even though related. The test targets the friction itself,
+not the task it happened in or the wording it was recorded with, which is what lets two differently-worded
+facts from different tasks or sessions cluster at all. Applying the test is still a judgment call, of the
+same kind 4.5 already accepts for scope overlap between design docs — the coordinator, not a mechanical
+rule, decides whether the two facts are actually restatements of one underlying friction or two separate
+ones — but it is a judgment call guided by a stated test, not an unconstrained one. An
 exact or keyword match on the friction text was considered and rejected for this: two facts about the
 same underlying issue, worded differently across tasks or sessions, would never cluster under it,
 silently under-reporting exactly the recurrence this stage exists to surface. Grouping is not by which
@@ -619,8 +637,9 @@ differently or drops the proposal, per the user's feedback) — the same verdict
 gives every reviewed result, not a third channel: a stocktake proposal (the coordinator builds it,
 presents it, and gets an approve/decline verdict on it) is structurally exactly that — a reviewed
 result — not an escalation, which 5.1 ties to a change in the *agreed plan*, and not a weigh-in question,
-which is an ad hoc query mid-task; stocktake is neither. This is `/rn:ty`/`/rn:gm`'s first call site with
-no active session's task loop underneath it: `/rn:sk` itself carries no version check of its own — 4.6
+which is an ad hoc query mid-task; stocktake is neither. Unlike the plan gate, which always has a
+`steering.md` just written underneath it (3.3), a standalone `/rn:sk` run may have no active session — no
+`steering.md` — at all: `/rn:sk` itself carries no version check of its own — 4.6
 names only `on`/`dn`/`up`/`ty`/`gm` as the five skills that carry one — but a stocktake verdict is taken
 through `/rn:ty`/`/rn:gm`, and their own version-check step (4.6) is written against "the active
 session's `Rn version:`," something a standalone stocktake run need not have identified; and their
@@ -756,11 +775,13 @@ Completeness for
 simplicity in the friction store: `.rn/friction.md` is never pruned, so a filed pattern needs its own
 status field to keep from being re-proposed forever, and a fact whose only trace is the collecting
 subagent's own impression is simply not recorded at all, even where that impression might have been
-right — the bar is a citable JSONL entry, not the subagent's judgment (4.8). One edge the file-and-line
-dedup rule (4.8) does not itself close: the measured `sessionKind: "bg"` continuation shape copies a
-uuid-carrying entry into a second file at a different line, under a restamped `sessionId` (2.1), so the
-same underlying entry can carry two distinct file-and-line citations, one per copy. 4.8 already dedups
-this for task-boundary markers specifically by their `uuid`; nothing yet states the same rule for an
-arbitrary friction citation, so if collection ever draws a citation from a different copy across two
-runs, the two citations would not compare equal — carried forward as a residual risk rather than
-resolved here.
+right — the bar is a citable JSONL entry, not the subagent's judgment (4.8). The edge a file-and-line-only
+dedup rule would have left open — the measured `sessionKind: "bg"` continuation shape copying a
+`uuid`-carrying entry into a second file at a different line (2.1), so the same underlying entry could
+carry two distinct file-and-line citations, one per copy — is closed the same way 4.8 already closes it
+for the task-boundary marker: the dedup key is the source entry's `uuid` when it has one, file-and-line
+otherwise. This holds for every entry the citable-trace bar (4.8) can actually point at — a tool call, a
+review verdict, a user correction, a workaround — since each is one of the message-type entries task #1
+measured to carry a `uuid`, never one of the uuid-less bookkeeping kinds a continuation drops (2.1); that
+the bar's named entry kinds line up with the uuid-carrying set is a reasoned conclusion from those kinds'
+own definitions, not a separate machine-wide measurement enumerating every entry type's `uuid` presence.
