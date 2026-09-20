@@ -64,11 +64,11 @@ wrong with it is visible.
 
 **Steps**:
 
-- [ ] Write: five `SKILL.md`s, whatever references they need, `plugin.json` at `0.9.0`, and
+- [x] Write: five `SKILL.md`s, whatever references they need, `plugin.json` at `0.9.0`, and
       `rn/docs/design.md` as one page saying what stays, what goes, where each principle lands
-- [ ] Try: resume the issue-18 session under it in scratch; run a small real goal through
+- [x] Try: resume the issue-18 session under it in scratch; run a small real goal through
       `on` → `dn` → `up` → the three gates in scratch
-- [ ] Evaluate: put both runs on the PR; a third party on the stronger model answers the Acceptance
+- [x] Evaluate: put both runs on the PR; a third party on the stronger model answers the Acceptance
       criteria's questions against them
 - [ ] Take the user's verdict via `/rn:ty` / `/rn:gm`
 
@@ -141,8 +141,17 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-21
+- **Last completed**: none checked off — #1's Write / Try / Evaluate steps are done; its verdict step
+  is open
+- **Next**: #1's last step — the user's Round 1 verdict (`/rn:ty` → check #1 off and start #2;
+  `/rn:gm` → fix within Round 1 and re-evaluate)
+- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). rn text at `fe74e07`; try records
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769; third-party evaluation
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569 (C1 NG on one lost State fact;
+  9 text defects, fix 1–3 before self-hosting). Round 2 must rerun the tries against a real GitHub
+  remote — the PR half of A4 is unverified. Working rules from the user: rn text is written by the
+  coordinator itself; subagents and headless tries run on opus (judgment) / sonnet (implementation),
+  `claude -p … --model opus`. Tries run headlessly with
+  `--plugin-dir rn --settings '{"enabledPlugins":{"rn@ccpm":false}}'` and `--resume` for gate replies.
