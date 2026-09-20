@@ -156,16 +156,16 @@ recorded command-and-output evidence, so #2 decides the marker on measurement ra
 
 **Steps**:
 
-- [ ] state how a session's log files are located, and why no session-identifying string is emitted
-- [ ] decide the task-boundary marker's textual form and emission method, from #1's measurements
-- [ ] decide at which points it is emitted (task start, task completion) and what happens to a task
+- [x] state how a session's log files are located, and why no session-identifying string is emitted
+- [x] decide the task-boundary marker's textual form and emission method, from #1's measurements
+- [x] decide at which points it is emitted (task start, task completion) and what happens to a task
       that is abandoned or re-done
-- [ ] decide how a marker names its session and its task so it stays readable after the task list has
+- [x] decide how a marker names its session and its task so it stays readable after the task list has
       been revised — the marker describes what was being worked on, not a row in a document that moves
-- [ ] decide where collected friction facts are stored, and their record shape
-- [ ] decide the bar for what counts as a friction fact worth recording
-- [ ] decide the stocktake command's name and its call sites (user invocation, `/rn:dn`, session end)
-- [ ] update `design.md` per `design-template.md`'s "Updating an existing design.md" procedure
+- [x] decide where collected friction facts are stored, and their record shape
+- [x] decide the bar for what counts as a friction fact worth recording
+- [x] decide the stocktake command's name and its call sites (user invocation, `/rn:dn`, session end)
+- [x] update `design.md` per `design-template.md`'s "Updating an existing design.md" procedure
 - [ ] self-check (OK/NG per completion criterion, record in checks/2.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (writing, subagent)
@@ -367,8 +367,23 @@ task, run collection and stocktake.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-20
+- **Last completed**: #1 — settled by measurement (evidence + hook channel + discriminator; all four
+  reviews PASS)
+- **Next**: #2 — `design.md`'s decisions are written and content-complete (all 8 decision Steps
+  checked). Three fix rounds have run against QA/Craft/Verification(fact-check)/Design review
+  (iterations 1–3 of the 3 the workflow allows, per `task-verify-workflow.md`'s cap). Current
+  state: QA/Verification(fact-check) PASS; Design PASS as of the round-3 fix (`9b82f5b`); **Craft
+  still FAIL** — round 3's Craft review found two must-fix findings that were never sent to the
+  round-3 (final) fix dispatch, a coordinator oversight, not a design defect: (a) 4.9 misquotes 5.1
+  by dropping "or design" from "anything that changes the agreed plan or design"; (b) 4.8 cites a
+  "liveness" measurement to §2.1 that §2.1 never states. Both are one-line textual fixes.
+- **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft).
+  Resume by asking the user whether to spend a 4th fix round on the two Craft findings above (the
+  workflow's 3-iteration cap is technically exhausted; the user was asked and had not yet answered
+  when this session suspended) — then re-run only the Craft review, since QA/fact-check/Design
+  already cleared this material. Do not re-derive `checks/2.md`'s round-by-round history; it is
+  committed with this suspend. `rn` issue https://github.com/lovaizu/ccpm/issues/30 was filed this
+  session (fix rounds patch only named findings + no iteration-count tracking) — separate from the
+  Craft oversight above, which is the coordinator's own slip, not an instance of #30's gap.
