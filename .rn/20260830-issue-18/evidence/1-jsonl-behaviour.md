@@ -49,7 +49,7 @@ are deleted — so each says the minute it was taken.
 | # | Finding | Section |
 |---|---|---|
 | 1 | Every entry a conversation has finished writing is on disk while the conversation is open, about 0.1 s behind its own timestamp — measured on a subagent file; the entry for a tool call still running is not there yet. | [Liveness](#the-conversation-file-is-live-and-lags-its-own-entries-by-about-01-s) |
-| 2 | Six channels put an emitted string into the conversation file; each lands at the field path its channel predicts. What was emitted was a hex token on channels 1–5, and `HOOKPROBE <event> <token>` on channel 6 — not an arbitrary string, which row 8 is about. | [Six channels land](#six-channels-put-a-string-into-the-conversation-file) |
+| 2 | Six channels put an emitted string into the conversation file; each lands at the field path its channel predicts. Channel 5 lands only conditionally — see row 5's neighbours in the channel table. What was emitted was a hex token on channels 1–5, and `HOOKPROBE <event> <token>` on channel 6 — not an arbitrary string, which row 8 is about. | [Six channels land](#six-channels-put-a-string-into-the-conversation-file) |
 | 3 | A plugin hook's stdout is filed as an entry of its own kind — `type: "attachment"` with `attachment.type: "hook_success"` — carrying a string the hook computes at run time. | [Channel 6](#channel-6-a-plugin-hooks-stdout-is-filed-as-an-entry-of-its-own-kind) |
 | 4 | That entry shape **is** a discriminator: machine-wide, `hookEvent` occurs as a JSON key only inside a hook attachment, while the same marker quoted in prose stays in the message fields. It is the one thing the other five channels do not offer. | [The discriminator](#the-hook-entry-tells-an-emission-from-a-quotation) |
 | 5 | Two channels do **not** land: a subagent's own turns never reach the conversation file, and Bash stdout past 30,000 bytes is cut there — the head stays in the entry, the whole output goes to a side file. The cut is a Bash-stdout property; other tool results are kept inline far past it. | [Two channels do not land](#two-channels-do-not-land-a-subagents-own-turns-and-bash-stdout-past-30000-bytes) |
@@ -263,7 +263,7 @@ exist when any instruction was written, which is what the next section measures.
 | 2 | Bash command string, no output | yes | `assistant` | `message.content[0].input.command` (line 139; `: <p2>` printed nothing) |
 | 3 | Bash command output | yes | `user` | `message.content[0].content` **and** `toolUseResult.stdout` (lines 142, 134) |
 | 4 | Non-Bash tool result (Read) | yes | `user` | `message.content[0].content` **and** `toolUseResult.file.content` (line 144; `message.content` carries the `1\t` line-number prefix, `toolUseResult.file.content` the raw text) |
-| 5 | A subagent's final report | yes, **when the dispatch succeeds and the report is not neutralised** | `queue-operation` and `user` | `.content` and `.message.content`, inside `<result>` — [see below](#channel-5-a-subagents-final-report-crosses-into-the-conversation-file) |
+| 5 | A subagent's final report | **not reliably** — the `queue-operation` copy always exists, the `user` copy needs the dispatch to succeed and to be delivered, and the text is rewritten when it trips the harness | `queue-operation` and `user` | `.content` and `.message.content`, inside `<result>` — [see below](#channel-5-a-subagents-final-report-crosses-into-the-conversation-file) |
 | 6 | A plugin hook's stdout | yes | `attachment` | `.attachment.content` and `.attachment.stdout`, under `attachment.type: "hook_success"` — [see below](#channel-6-a-plugin-hooks-stdout-is-filed-as-an-entry-of-its-own-kind) |
 | — | A subagent's own turn | **no** | — | reaches the subagent file only; [evidence](#two-channels-do-not-land-a-subagents-own-turns-and-bash-stdout-past-30000-bytes) |
 | — | Bash stdout past 30,000 bytes | **cut** | `user` | the first 30,000 bytes stay in `toolUseResult.stdout` under a `<persisted-output>` notice; the whole output goes to `tool-results/<id>.txt`. Not a property of tool results in general; [evidence](#two-channels-do-not-land-a-subagents-own-turns-and-bash-stdout-past-30000-bytes) |
@@ -320,9 +320,10 @@ sequence `task-notification / task-id / tool-use-id / output-file / status / sum
 easily miss either way. Machine-wide:
 
 ```
-$ python3 $TOOLS/corpus.py handoffs                       # 2026-09-20T05:38Z
+$ python3 $TOOLS/corpus.py handoffs                       # 2026-09-20T05:45Z
 files scanned: 156 conversation
 task-notification entries: 316
+queue-operation task ids enqueued but never reaching a `user` entry: 142 in 33 files
   neutralised      False      272
   neutralised      True       44
   status           completed  287
@@ -337,7 +338,12 @@ files holding a neutralised report: 12
 ```
 
 So across all 316 handoffs this machine has recorded: **29 did not deliver a report at all** and
-**44 delivered one the harness had rewritten**. Both are below.
+**44 delivered one the harness had rewritten**. Both are below. The first line is a fourth failure
+mode and the largest: **142 task ids, in 33 files, are enqueued by a `queue-operation` entry and
+removed again without ever becoming a `user` entry**. The report text exists on disk only inside the
+two `queue-operation` entries — which are also the entries a continuation drops. So channel 5's
+`user`-entry landing is not guaranteed at all; the `queue-operation` copy is what always exists, and
+it is the copy with the shorter life.
 
 **The body is transformed, in three separate ways.** Comparing each report against the `<result>` it
 arrives in, over the same three files:
@@ -1660,6 +1666,9 @@ evidence here it offers no discriminator a quotation could not forge.
   Channels 1–5 were measured on 16-character lowercase hex only, channel 6 on the same alphabet plus
   a space and uppercase ASCII. `<`, `>` and `&` are known **not** to survive channel 5 unchanged, and
   untested elsewhere.
+- **Why 142 enqueued reports were removed rather than delivered.** The count is measured; the cause
+  is not — an interrupted dispatch, a superseded queue entry and a cancelled task would all look like
+  this from the log alone.
 - **Where channel 5's neutralisation pattern begins and ends.** `marker-prefix-forgery` is a named
   trigger that fired twice on this machine, and a task-boundary marker is by construction the shape it
   names — but which marker shapes trip it was not probed, only that some do. Whatever marker task #2

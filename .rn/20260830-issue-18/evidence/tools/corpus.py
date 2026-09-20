@@ -309,11 +309,25 @@ def handoffs():
     see the failed ones, the neutralised ones, or the second wrapper shape.
     """
     pop()
-    tot = 0
+    tot = gone = gonef = 0
     c = collections.Counter()
     names = collections.Counter()
     files = set()
     for f in CONV:
+        seen, queued = set(), collections.defaultdict(set)
+        for e in entries(f):
+            if e.get('type') == 'queue-operation':
+                raw = json.dumps(e)
+                m = (re.search(r'"taskId":\s*"([^"]+)"', raw)
+                     or re.search(r'<task-id>(.*?)</task-id>', raw))
+                if m:
+                    queued[m.group(1)].add(e.get('operation') or e.get('op'))
+            c_ = e.get('message', {}).get('content') if e.get('type') == 'user' else None
+            if isinstance(c_, str) and '<task-notification>' in c_:
+                seen.add(re.search(r'<task-id>(.*?)</task-id>', c_).group(1))
+        n = sum(1 for t in queued if t not in seen)
+        gone += n
+        gonef += bool(n)
         for e in entries(f):
             c_ = e.get('message', {}).get('content') if e.get('type') == 'user' else None
             if not isinstance(c_, str) or '<task-notification>' not in c_:
@@ -330,6 +344,8 @@ def handoffs():
                 for t in b.group(1).split(','):
                     names[t.strip()] += 1
     print('task-notification entries: %d' % tot)
+    print('queue-operation task ids enqueued but never reaching a `user` entry: %d in %d files'
+          % (gone, gonef))
     for k, n in sorted(c.items(), key=str):
         print('  %-16s %-10s %d' % (k[0], k[1], n))
     print('files holding a neutralised report: %d' % len(files))
