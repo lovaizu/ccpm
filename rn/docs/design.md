@@ -116,10 +116,15 @@ baked in when the plugin was installed. JSONL line order and wall-clock timestam
 margin this document's own re-runs have never found a ceiling for (808 backward-running pairs
 machine-wide, largest 13,429.9 s, still climbing as the corpus grows), so this session's collection
 stage (4.8) cuts an interval by line position within each append-only file, never by comparing
-timestamps across entries. A Claude-Code-level continuation replays every `uuid`-carrying entry of the
-predecessor file into the successor verbatim, under the same `uuid` and original timestamp, so the
-collection stage deduplicates by `uuid` across a session's own files rather than treating each file as
-independent history. Finally, **nothing beyond 16-character lowercase hex (channels 1–5) and that
+timestamps across entries. Two continuation shapes were measured, neither attributable to a particular
+invocation flag (`--resume`/`--continue`) from what's on disk: the `sessionKind: "bg"` shape carries
+the predecessor's `uuid`-carrying entries into a new file under a new `sessionId`, restamping
+`sessionId` on every replayed entry and adding `sessionKind` — only the `.message` content is
+byte-identical to the original, not the whole entry, so "verbatim" overstates it — while the other
+shape simply appends into the existing file, under its original `sessionId`, after a restart, with
+nothing replayed at all. The collection stage deduplicates by `uuid` across a session's own files to
+survive the first shape; the second shape has no replayed entry to dedup in the first place, so it
+leaves that mechanism unaffected. Finally, **nothing beyond 16-character lowercase hex (channels 1–5) and that
 alphabet plus a space and uppercase ASCII (channel 6) has been measured to survive any channel
 unaltered** — this session fixes the marker's fields (4.7) but leaves the literal characters joining
 them, in particular whatever a session slug's own hyphens or a task description's punctuation need, to
@@ -191,7 +196,12 @@ measurement of its own: emission has to be a hook, since that is the only channe
 confused with a quotation of itself on (2.1), and once emission is the hook's own act rather than
 something the coordinator deliberately fires, restamping on every firing costs nothing extra to
 implement — the alternative (recognising two specific tool calls as "the" boundary) is the one that
-would need bespoke logic (4.7, 5.1).
+would need bespoke logic (4.7, 5.1). From this follows more than 4.7's own mechanism: because a boundary
+is a changepoint in a continuously restamped value rather than a remembered event, the friction record
+built on top of it (4.8) is keyable by that same restamped description with no extra bookkeeping of its
+own — collection never has to ask "which task was this," it reads the value the hook already put there.
+(C) sits at a narrower altitude than (A) and (B) — one mechanism, not an organizing architecture — but
+its consequence reaches past its own section.
 
 Together these solve the problem this document opens with: (A) gives every mechanism — including this
 session's version tracking and migration — one authoritative place to live and cite, so a cold agent or
@@ -388,8 +398,10 @@ Guarantees that every stretch of the conversation log where the coordinator is a
 an `rn` session can be attributed to one task's own description — without relying on any of the five
 ordinary emission channels (assistant text, a Bash command or its output, a tool result, a subagent's
 final report), none of which task #1 could tell apart from a document or a work order quoting the same
-text, and without relying on the session-status block, which appears only at the three sign-off gates
-and never around an ordinary task (2.2, 4.1).
+text, and without relying on the session-status block, which appears only at explicit user-facing stops
+— the sign-off gates, an escalation, `/rn:dn`'s untracked-path confirmation, its suspend report (3.2) —
+never during an ordinary task's build/verify work, where a task boundary actually needs to be read (2.2,
+4.1).
 
 The mechanism: a plugin `PostToolUse` hook, registered with no tool restriction so it fires on every
 tool call the coordinator makes — measured directly for the `Agent` and `Bash` tools, both landing in
@@ -447,13 +459,13 @@ rejected for this (5.1): it would need its own lookup table back to the session 
 rules out as a new state store, and it would still need the two-directory search to find it — the slug
 already gives a bounded search something readable to filter on, at no extra cost.
 
-**Breach detection.** If the hook fails to fire for a stretch of coordinator activity (plugin
-misconfigured, or disabled), no markers land for that stretch at all — caught the same way task #4's own
-completion criterion checks it, by grepping for both boundaries of a task that has actually run and
-confirming the interval between them holds that task's work. If a marker names the wrong session or task
-(a bug reading `steering.md`), the mismatch between the marker's own text and the working directory or
-task actually in progress is visible on direct inspection of the log, since both are stated in the same
-line. A quotation of the marker's own format elsewhere — in this document, in `README.md`, in a work
+**Breach detection.** A breach (the hook failing to fire for a stretch of coordinator activity — plugin
+misconfigured, or disabled, so no markers land for that stretch at all) is caught the same way task #4's
+own completion criterion checks it: by grepping for both boundaries of a task that has actually run and
+confirming the interval between them holds that task's work. A breach (a marker naming the wrong session
+or task, from a bug reading `steering.md`) is visible on direct inspection of the log, because the
+marker's own text and the working directory or task actually in progress are stated in the same line. A
+quotation of the marker's own format elsewhere — in this document, in `README.md`, in a work
 order — is not mistaken for a real emission because the collection stage (4.8) keys off the entry's
 structural shape (`attachment.type: "hook_success"` and the hook's own `command`, per task #1's channel-6
 discriminator), never a bare substring match; the Verification expert review of tasks #4 and #5 checks
@@ -467,14 +479,22 @@ and that nothing is invented when there is none.
 
 At every `/rn:dn`, a subagent — never the coordinator itself, so its own context is not spent reading a
 JSONL (2.1) — locates this session's own conversation files by 4.7's two-directory method, finds the
-task-boundary markers bearing this session's slug within them, and cuts the stretch since the previous
-`/rn:dn` (or, on the first one, the session's start) into per-task intervals at the points where the
-restamped description changes. Two ordering rules carried forward from task #1 govern the cut: intervals
+task-boundary markers bearing this session's slug within them, and cuts the *whole* session's stretch,
+from its own start, into per-task intervals at the points where the restamped description changes —
+every run, not only the stretch since the previous one (below). Two ordering rules carried forward from
+task #1 govern the cut: intervals
 are cut by line position within each append-only file, never by comparing timestamps across entries,
 because line order and timestamp order are measured to disagree by an unbounded and still-growing margin
-(2.1); and a marker replayed into a later file by a Claude-Code-level continuation is deduplicated by its
-`uuid` rather than counted as a second occurrence, because a continuation is measured to replay every
-`uuid`-carrying entry of its predecessor verbatim, under the same `uuid` (2.1).
+(2.1); and a marker replayed into a later file by the measured `sessionKind: "bg"` continuation shape is
+deduplicated by its `uuid` rather than counted as a second occurrence, because that shape carries every
+`uuid`-carrying entry of its predecessor forward under the same `uuid`, with only its `.message` content
+byte-identical and its `sessionId` restamped (2.1) — the other measured continuation shape, a restart
+appending into the existing file, replays nothing, so it leaves this dedup step with nothing to do. A
+consequence of 4.7's own residual risk follows directly here, not a new one: a sign-off task with
+genuinely zero coordinator tool calls has no marker and so no interval of its own, so any friction from
+it (a "revise" verdict, say) would be misattributed to whichever neighboring task's markers bracket that
+stretch of the log — believed not to occur, since every sign-off command reads `steering.md` at minimum,
+but carried forward as the same unmeasured case 4.7 already names (5.2).
 
 **The bar for a friction fact worth recording** is a citable trace: a specific JSONL entry (or entries)
 the fact points at — a tool call that errored and had to be retried, an expert review verdict of
@@ -486,6 +506,23 @@ Goal wording) cashes out to, and it is what makes task #5's own completion crite
 citable trace is not producible") a property of the procedure rather than a matter of subagent judgment.
 An interval with no traceable friction yields no record at all — the empty outcome is the normal path,
 not a shortfall to explain.
+
+**Finding where the previous run left off.** The collection stage is idempotent rather than
+watermarked: every `/rn:dn` re-scans the session's entries from its own start, and a fact is appended
+only if no existing entry in `.rn/friction.md` already carries the same JSONL citation — so re-scanning
+an interval a previous run already covered costs a re-read, never a duplicate record. This was chosen
+over storing an explicit watermark (a line in `steering.md`'s own State section, or a marker appended to
+`.rn/friction.md` itself naming the last-processed position) for two reasons that follow from this
+design's own existing constraints rather than a fresh judgment call: 2.2 already binds this design
+against introducing a new state store, and a watermark is exactly one more position to keep
+synchronized; and `steering.md`'s own doc-division rule keeps it a lean forward contract, not an
+archive, so stamping progress onto it on every `/rn:dn` is the kind of growth that rule exists to
+prevent. A watermark is also unreliable exactly when it would matter most: 4.8's own rule that an
+interval with no friction yields no record at all means a friction-keyed watermark can be silently
+absent right after the session's most uneventful stretch — the one case a second-or-later run most
+needs to know where the previous one stopped. Re-scanning trades a bigger read (the whole session, not
+one interval) for no new durable state, and that read is already paid by a subagent dispatched
+precisely so it never touches the coordinator's own context (2.1, above).
 
 **Where facts are stored, and their shape.** `.rn/friction.md`, one file at the repo root — a sibling to
 the per-session `.rn/{yyyymmdd}-{slug}/` directories, not nested inside any one of them, because
@@ -501,12 +538,12 @@ cluster built from this fact becomes an approved issue — without it, a fact al
 "recurring" again on every later run, since the store is never pruned. Markdown, matching `steering.md`
 and `design.md`, so the user can open and read it directly with no tooling of its own.
 
-**Breach detection.** A recorded fact with no citation field is visibly non-conformant against the shape
-just fixed, on a plain read of `.rn/friction.md`. That the coordinator's own context is never spent
-reading a JSONL is checkable by confirming a subagent dispatch, not a coordinator tool call, appears in
-the transcript around each `/rn:dn`. That an interval with no friction leaves nothing behind, and that
-`/rn:dn` asks no question and adds no output for it, is exactly task #5's own completion criteria and is
-checked there.
+**Breach detection.** A breach (a recorded fact with no citation field) is visibly non-conformant against
+the shape just fixed, on a plain read of `.rn/friction.md`. A breach (the coordinator's own context spent
+reading a JSONL, rather than a subagent's) is checkable because a subagent dispatch, not a coordinator
+tool call, is what the transcript shows around each `/rn:dn`. That an interval with no friction leaves
+nothing behind, and that `/rn:dn` asks no question and adds no output for it, is exactly task #5's own
+completion criteria and is checked there.
 
 ### 4.9 What does the stocktake stage guarantee, and how is a breach caught?
 
@@ -515,7 +552,10 @@ a proposal is shown only for friction seen more than once, and that nothing is f
 that user's explicit approval for it.
 
 **Command and call sites.** `/rn:sk` — two letters, matching the plugin's existing `on`/`dn`/`up`/`ty`/`gm`
-naming, mnemonic for "stock[take]." It runs only on: (1) explicit user invocation, at any time, which is
+naming, mnemonic for "stock[take]." A longer, self-explanatory name (`/rn:stocktake`, `/rn:review`) was
+considered and rejected for the same reason the existing five stayed two letters: consistency with a
+command surface the user already has to remember wins over any one command being self-explanatory in
+isolation. It runs only on: (1) explicit user invocation, at any time, which is
 the only call site that actually runs it — matching steering.md's own Goal wording that the user invokes
 stocktake "at exactly one point of their own choosing"; and (2) a one-line mention, not a run, in the
 closing report once a session reaches its evaluation sign-off and can close (the same closing report
@@ -527,24 +567,37 @@ the user nothing extra — no question, no added output"; running the recurrence
 at every suspend would reintroduce exactly the per-suspend tax the two-stage split (steering.md's Goal)
 exists to avoid.
 
-**Mechanism.** The command reads `.rn/friction.md` and groups its unfiled facts by what they are about —
-not by which session or task recorded them, since the same underlying friction can recur under different
-task descriptions in different sessions. Only a group with more than one member is surfaced (steering.md's
-own Acceptance criteria: "friction it has seen more than once"), each with every fact in the group
-attached, citations included, so a proposal is never shown without the material it rests on. For each
-surfaced group the coordinator proposes one improvement and takes the user's explicit approval before
-filing anything; only an approved proposal becomes a GitHub issue, and a declined or skipped group stays
-in `.rn/friction.md`, unfiled, until it recurs further or the user acts on it directly. A group of one is
-never proposed, and a run that finds no recurring group reports that plainly rather than manufacturing
-one (task #6's own completion criterion). Once a group's proposal is approved and filed, every fact in
-that group has its status field (4.8) flipped so the same pattern is not re-proposed on a later run —
-necessary precisely because `.rn/friction.md` is never pruned.
+**Mechanism.** The command reads `.rn/friction.md`, and the coordinator — not a fixed keyword or string
+match — reads all of its unfiled facts and judges which describe the same underlying friction: a
+judgment call, not a mechanical clustering check, the same kind 4.5 already accepts for scope overlap
+between design docs. An exact or keyword match on the friction text was considered and rejected for
+this: two facts about the same underlying issue, worded differently across tasks or sessions, would
+never cluster under it, silently under-reporting exactly the recurrence this stage exists to surface.
+Grouping is not by which session or task recorded a fact, since the same underlying friction can recur
+under different task descriptions in different sessions. Only a group with more than one member is
+surfaced (steering.md's own Acceptance criteria: "friction it has seen more than once"), each with every
+fact in the group attached, citations included, so a proposal is never shown without the material it
+rests on. For each surfaced group the coordinator proposes one improvement and takes the user's explicit
+approval through its own direct yes/no exchange, not through `/rn:ty`/`/rn:gm`'s shared verdict
+vocabulary: 3.1(A) reserves that vocabulary for sign-off tasks and reviewed results, and a stocktake
+proposal is neither one — it is answered directly, the same way 3.1(A) already carves out escalation and
+weigh-in questions. Only an approved proposal becomes a GitHub issue, and a declined or skipped group
+stays in `.rn/friction.md`, unfiled, until it recurs further or the user acts on it directly. A group of
+one is never proposed, and a run that finds no recurring group reports that plainly rather than
+manufacturing one (task #6's own completion criterion). Once a group's proposal is approved and filed,
+every fact in that group has its status field (4.8) flipped so the same pattern is not re-proposed on a
+later run — necessary precisely because `.rn/friction.md` is never pruned.
 
-**Breach detection.** An issue filed with no matching approved proposal in the conversation transcript is
-checkable directly on GitHub, against `.rn/friction.md`'s status field for the facts it claims to close.
-A proposal shown for a group of size one, or a proposal shown without its supporting facts, is checkable
+**Breach detection.** A breach (an issue filed with no matching approved proposal in the conversation
+transcript) is checkable directly on GitHub, against `.rn/friction.md`'s status field for the facts it
+claims to close. A breach (a proposal shown for a group of size one, or without its supporting facts) is
+checkable
 by re-reading `.rn/friction.md` itself — the same store the command reads and the user can open, so
-nothing the command surfaces rests on material only the command itself can see.
+nothing the command surfaces rests on material only the command itself can see. A missed clustering (two
+facts about the same friction the coordinator's judgment failed to group) is not caught synchronously —
+nothing flags it at the run that missed it — but is not permanently lost either: the underlying friction
+persists and keeps generating its own trace, so it eventually reappears as its own future fact, and a
+later stocktake run gets another chance to cluster it; a false negative here costs delay, not loss.
 
 ## 5. Alternatives considered
 
@@ -622,9 +675,12 @@ The standing decisions these build on:
   revisions that would say what `#N` meant at the time. A description carries its own meaning with no
   other file open, which is exactly what both need to survive a task list that has since moved.
 - **Reading task boundaries off the session-status block was never a candidate to begin with, and stays
-  rejected** — `rn` stops for the user at three gates only (plan, design, evaluation; 2.2, 4.2), and an
-  ordinary build task passes through without stopping, so the session-status block simply never appears
-  around most task boundaries; there is nothing in it to read a boundary off.
+  rejected** — the block opens only at explicit user-facing stops (the sign-off gates, an escalation,
+  `/rn:dn`'s untracked-path confirmation, its suspend report; 3.2), and an ordinary build task passes
+  through none of those, so the block never appears around an ordinary task boundary; there is nothing
+  in it to read a boundary off. This alternative was never live to begin with — settled already by this
+  design's own fixed three-gate rule (2.2) and 3.2's own list of stop points, not by anything task #1
+  measured.
 
 ### 5.2 What did we trade away?
 
@@ -644,7 +700,11 @@ two events per task would, in exchange for never having to special-case an aband
 small residual risk is carried rather than resolved: the marker's literal join characters beyond the
 tested hex/space/uppercase alphabet are left to task #4 to verify, not decided here (2.1), and a sign-off
 task that happens to involve zero coordinator tool calls would go unmarked — believed not to occur, since
-every sign-off command reads `steering.md` at minimum, but not itself measured (4.7). Completeness for
+every sign-off command reads `steering.md` at minimum, but not itself measured (4.7). Which invocation
+(`--resume`, `--continue`, or a plain restart) produces which of the two measured continuation shapes is
+also not established from what's on disk (2.1) — carried forward as a gap rather than assumed, since the
+collection stage's dedup step (4.8) has to hold under either shape regardless of which flag caused it.
+Completeness for
 simplicity in the friction store: `.rn/friction.md` is never pruned, so a filed pattern needs its own
 status field to keep from being re-proposed forever, and a fact whose only trace is the collecting
 subagent's own impression is simply not recorded at all, even where that impression might have been
