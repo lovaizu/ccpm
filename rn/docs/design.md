@@ -9,52 +9,46 @@ the session's contract in git as `steering.md`, so a fresh conversation resumes 
 user at exactly three decisions — the plan, a design when one has to be settled before build, and
 the evaluation of the result. Everything else runs without asking.
 
-## The three principles, and where each lands
+## Principles, and where each lands
 
-1. **Work is instructed by purpose and intent.** Every numbered step in every `SKILL.md` and
-   reference opens with one sentence saying what it is for, then what to do. A step whose purpose
-   cannot be stated is not in `rn`. The implementer receives a task as its owner would state it —
-   Purpose, Steps, Completion criteria — not a recipe (`references/task.md` step 1).
-2. **Results are evaluated by a third party against essential viewpoints.**
-   `references/evaluate.md` holds the whole of it: an evaluator that did not build the artifact,
-   given only the Goal, the artifact, and a few fixed questions per kind — plan, design,
-   deliverable, session — answering each with evidence. The verdict goes on the PR. `/rn:on` runs
-   it on the plan before the user sees it; `task.md` runs it on every task's result.
-3. **Judgment and execution use different models.** Planning happens in the conversation; the
-   evaluator is dispatched with `model: opus`; the implementer with `model: sonnet`. The `Agent`
-   tool's `model` parameter is the whole mechanism.
+1. **Work is instructed by purpose and intent.** Every step in every `SKILL.md` and reference opens
+   with what it is for, then what to do; a step whose purpose cannot be stated is not in `rn`. A
+   task is stated by its Objective and Success criteria and handed to the implementer that way
+   (`references/task.md` step 1), never as a recipe.
+2. **Results are evaluated by a third party against essential viewpoints.** One evaluation per
+   artifact, by an evaluator that did not build it, against a few fixed questions per kind that ask
+   whether it does its job — never a chain of self-checks, never "did the step run"
+   (`references/evaluate.md`). The verdict goes on the PR, where the user reads it rendered.
+3. **Judgment and execution use different models.** The implementer is dispatched with
+   `model: sonnet`, the evaluator with `model: opus`; the conductor plans in the conversation on the
+   user's model. The `Agent` tool's `model` parameter is the whole mechanism.
 
-## What stays
+## Decisions
 
-- The five commands `/rn:on`, `/rn:dn`, `/rn:up`, `/rn:ty`, `/rn:gm`, user-invoked only.
-- `steering.md` — its header (`Rn version:`, optional `Design:`) and sections (`Goal`,
-  `Acceptance criteria`, `Assumptions`, `Rules`, `Tasks`, `State`) keep their 0.8.0 names, so an
-  older file is readable without conversion.
-- Three gates through `/rn:ty` and `/rn:gm`: the plan gate at the end of `on`, a "Design sign-off"
-  task when planning places one, "Evaluation sign-off" as the last task. No per-task gate.
-- One completion marker per task: `complete task #N` in the check-off commit alone; `/rn:up`
-  reconciles with it.
-- Suspend and resume through `State`; the session-status block at every stop; the draft PR whose
-  body is a link to `steering.md`; the version check on every command and the migration it
-  triggers.
+- **Criteria are states, at both levels.** The Goal has Success criteria; each task has an
+  Objective and its own Success criteria. A criterion names a state of the world, never an artifact
+  or a step, so it survives a change of means and the evaluator judges outcomes. Each level is
+  judged against the one above it: Success criteria against the Goal, an Objective against the
+  Goal, a task's Success criteria against its Objective.
+- **The conductor works toward the Goal; it does not only pass messages.** It reads every result
+  before the evaluator sees it, folds what each round teaches into `steering.md`, and interrupts
+  the user only when the agreed Goal, criteria or design would change (`references/task.md`).
+- **Three gates, and no other stop.** The plan gate ends `/rn:on`; a "Design sign-off" task stops
+  where planning placed one; "Evaluation sign-off" is always the last task. `/rn:ty` and `/rn:gm`
+  are the only verdict vocabulary.
+- **A session leaves `steering.md` and the deliverable.** Evaluations are PR comments; a design
+  lives in the project's own documents, pointed to by the `Design:` line. `rn` writes no process
+  file of its own.
+- **One completion marker per task.** `complete task #N` appears in the check-off commit alone;
+  `/rn:up` reconciles from it.
+- **An older session is rebuilt, not patched.** A version mismatch rewrites `steering.md` from the
+  current template with the old file as input, carrying every fact, so the session goes on at the
+  current bar (`references/steering.md`, Migration).
+- **Documents hold current intent only.** `steering.md`, a design, and this file record what is
+  decided and why; history lives in git and on the PR.
 
-## What goes, and why
+## Shape
 
-0.8.0 put every task through a self-check, QA, Craft, Verification, and sometimes Design review,
-each writing into `checks/{task}.md`, and put every session's design into a fixed question
-template. [Issue #31](https://github.com/lovaizu/ccpm/issues/31) measured the result: 1,160 lines
-of prompt, four fifths of a session directory as process residue, and checks that asked whether a
-step ran rather than whether the output does its job. All of it goes — the check files, the expert
-matrix, the iteration caps, the seven-element work-order, the design template, the GraphQL script
-for PR feedback, the separate status-display file. One evaluation per artifact replaces the chain.
-
-## What a session leaves
-
-`steering.md` and the deliverable. Evaluations are PR comments. A design, when the session has one,
-lives in the project's own documents and is pointed to by the `Design:` line.
-
-## Models
-
-Planning runs in the conversation on the model the user chose. `rn` fixes the two roles it
-dispatches: implementer `sonnet`, evaluator `opus`. The split is what the principle asks for; the
-parameter is where it is enforced.
+Five user-invoked commands — `/rn:on`, `/rn:dn`, `/rn:up`, `/rn:ty`, `/rn:gm` — and three
+references: `steering.md` (the file and its migration), `task.md` (the loop and the roles),
+`evaluate.md` (the questions). The session-status block opens every stop.

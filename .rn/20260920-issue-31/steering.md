@@ -13,8 +13,7 @@ command runs under 0.9.0.
 # Acceptance criteria
 
 - The whole of `rn`'s prompt text can be read in one sitting, and for every step in it a reader can
-  say what that step is for. (Checked by a third party reading it end to end in one pass; today's
-  1,160 lines is the reference.)
+  say what that step is for. (Checked by a third party reading it end to end in one pass.)
 - Every result `rn` evaluates — a plan, a design, a deliverable — is judged by someone other than its
   author, against a few named questions about whether it does its job; not whether a step ran.
 - Judgment (planning, evaluation) and execution run on different models, and a real session's
@@ -52,6 +51,10 @@ command runs under 0.9.0.
   Release with the CHANGELOG section as notes.
 - Never modify `origin/worktree-issue-18`; use scratch space for every try, and leave none of it in
   the repository.
+- The rn text is written by the conductor itself in the conversation; subagents and headless tries
+  run on opus (judgment) / sonnet (implementation), `claude -p … --model opus`.
+- Tries run headlessly with `--plugin-dir rn --settings '{"enabledPlugins":{"rn@ccpm":false}}'` and
+  `--resume` for gate replies, against a real GitHub remote so the PR path is exercised.
 
 # Tasks
 
@@ -91,7 +94,8 @@ the new `rn`.
 
 - [ ] Restart this work under `--plugin-dir rn`; migrate this session through the real path
 - [ ] Write: address round 1's verdict
-- [ ] Try: rerun the two round-1 tries; this session's own resume is the third
+- [ ] Try: rerun the two round-1 tries against a real GitHub remote; this session's own resume is
+      the third
 - [ ] Evaluate and take the verdict as in round 1
 
 **Completion criteria**:
@@ -147,11 +151,6 @@ so only a genuinely suspended session reads `paused`.)
   is open
 - **Next**: #1's last step — the user's Round 1 verdict (`/rn:ty` → check #1 off and start #2;
   `/rn:gm` → fix within Round 1 and re-evaluate)
-- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). rn text at `fe74e07`; try records
+- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). Try records
   https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769; third-party evaluation
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569 (C1 NG on one lost State fact;
-  9 text defects, fix 1–3 before self-hosting). Round 2 must rerun the tries against a real GitHub
-  remote — the PR half of A4 is unverified. Working rules from the user: rn text is written by the
-  coordinator itself; subagents and headless tries run on opus (judgment) / sonnet (implementation),
-  `claude -p … --model opus`. Tries run headlessly with
-  `--plugin-dir rn --settings '{"enabledPlugins":{"rn@ccpm":false}}'` and `--resume` for gate replies.
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569.

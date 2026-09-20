@@ -6,8 +6,7 @@ disable-model-invocation: true
 
 # /rn:on — Start a session
 
-Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and runs task #1 after the
-user approves.
+Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops at the plan gate.
 
 ## Steps
 
@@ -23,8 +22,9 @@ user approves.
 3. **Write the plan as one reviewable file, so the user judges a whole, not a conversation.**
    Follow the template and section notes in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. Stamp
    `Rn version:` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Work `Tasks` backwards
-   from the Acceptance criteria; add a "Design sign-off" task where the approach must be decided
-   before build; end with "Evaluation sign-off".
+   from the Success criteria; where the approach must be decided before build, add a "Design
+   sign-off" task and write the `Design:` line with the path the design will live at; end with
+   "Evaluation sign-off".
 
 4. **Put the plan on record before anything is built, so it can be reviewed where diffs render.**
    Commit `chore: start session — {slug}`; branch off the default branch if on it; push; open a
@@ -34,11 +34,10 @@ user approves.
    conversation and later verdicts are reported there.
 
 5. **Have the plan judged before the user sees it, so their review starts from a plan already
-   free of avoidable defects.** Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan;
-   fix every NG and re-run before step 6.
+   free of avoidable defects.** Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan.
+   NG → fix, commit `docs: revise plan — {what changed}`, push, judge again; after three NG rounds
+   stop and ask the user, opening with the session-status block.
 
 6. **Stop at the plan gate — this decision is the user's.** Open with the session-status block
-   (`${CLAUDE_PLUGIN_ROOT}/references/steering.md`) and ask for `/rn:ty` or `/rn:gm`.
-
-7. **After approval, run the tasks.** `/rn:ty` continues into
-   `${CLAUDE_PLUGIN_ROOT}/references/task.md` at task #1.
+   (`${CLAUDE_PLUGIN_ROOT}/references/steering.md`) and ask for `/rn:ty` or `/rn:gm`. `/rn:ty`
+   runs task #1 per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
