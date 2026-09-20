@@ -15,6 +15,11 @@ further: `rn` itself keeps changing its own conventions (the question-driven `de
 existing-design-update branch, and version tracking are this session's own additions), so a session's
 `steering.md` / `design.md` / tasks, authored under an older `rn` version, must catch up to the
 currently installed one automatically — without the user having to notice the drift or ask for it.
+This session adds a further layer on top: `rn` should be improvable from how its own sessions actually
+ran, using the Claude Code conversation log as evidence instead of memory or hand correlation. That
+needs two things `rn` does not yet have — a boundary marker that says where one task's work ends and
+the next begins inside a session's JSONL, and a retrospective that turns friction actually observed in
+that log into improvement proposals rather than impressions.
 
 ### 1.2 What goes wrong without this?
 
@@ -27,7 +32,13 @@ or has nothing telling it how to update one instead of authoring fresh — this 
 directly, since `rn/docs/design.md` (this document) already existed and needed updating. Without
 version tracking: a session started under an older `rn` keeps running against stale conventions
 indefinitely — the gap between what a session's artifacts assume and what the installed plugin now
-requires only widens, and nothing ever notices or closes it.
+requires only widens, and nothing ever notices or closes it. Without a task boundary in the log: one
+task's own stretch of work cannot be told apart from the tasks either side of it without correlating
+`git log` timestamps against the JSONL by hand — the exact gap task #1 measured. Without a retrospective
+built on top of that boundary: friction that recurs across a session, or across sessions, is never
+turned into anything, because nobody re-reads old JSONL files looking for it, and asking for a proposal
+after every task would make the retrospective a tax nobody wants to pay (steering.md's own Goal draws
+this line explicitly).
 
 ### 1.3 What does reaching it require?
 
@@ -39,7 +50,13 @@ existing covering `design.md` before defaulting to a fresh path (4.5); an `Rn ve
 `steering.md`, set once at creation from the installed plugin version; a `migration-workflow.md` that
 reconciles `steering.md`, then `design.md`, then remaining tasks against current convention on a
 version mismatch; and a one-line version check wired into each of the five command skills
-(`on`/`dn`/`up`/`ty`/`gm`) that triggers it (4.6).
+(`on`/`dn`/`up`/`ty`/`gm`) that triggers it (4.6). Layered on further by this session: a task-boundary
+marker, restamped continuously by a plugin hook rather than emitted as two remembered events, so a
+task's interval in the log is read off as a changepoint rather than tracked by the coordinator (4.7); a
+collection stage that turns each interval's trace-backed friction into an append-only record at every
+`/rn:dn`, at no cost to the user when there is nothing to record (4.8); and a stocktake stage, invoked by
+the user, that proposes only friction recurring across intervals and files it as an issue only on
+explicit approval (4.9).
 
 ### 1.4 What is out of scope?
 
@@ -49,7 +66,14 @@ No semver-range or CHANGELOG-driven migration logic — the version check is pla
 reconciliation always compares the current artifact against the currently installed template, never
 against a delta keyed to which version a session started from. Cutting an actual `rn` release (version
 bump + finalizing `CHANGELOG.md`) is a separate, explicit follow-up instruction per `plugin.md`'s
-release procedure, not part of this design.
+release procedure, not part of this design. No retroactive marking of conversation history already on
+disk: the marker only exists in entries written after `rn` starts emitting it, so task #8 demonstrates
+the mechanism on this session's own later tasks, not by reaching backward into the conversations task #1
+already measured. No machine-wide, unbounded log search: locating a session's own record is bounded to
+its own working directory's project directory plus, when running inside a worktree, the parent
+checkout's project directory that relocation is measured to target (4.7) — not a scan of every project
+directory on the machine. No cross-repository correlation: a friction fact belongs to the repository
+whose `.rn/friction.md` records it (2.2, 4.8).
 
 ## 2. Assumptions & Constraints
 
@@ -67,6 +91,41 @@ needed. `migration-workflow.md` runs with no user gate; an occasional wrong reco
 accepted risk, caught through normal PR/git-log review rather than a live approval step (per
 `push-and-review.md`), not through the scheduled sign-off gates.
 
+This session adds a further round of narrower, measured assumptions (task #1's evidence document).
+Claude Code files a conversation under the project directory named for the working directory its
+conversation started in — separating sibling worktrees of one repository, since each has its own
+directory — but not unconditionally: **measured 2026-09-20**, leaving a worktree can relocate that
+conversation's file into the *parent checkout's* project directory instead, and 6 of 155 files on this
+machine sit under a directory no `cwd` of theirs reproduces, including one of this session's own eight
+conversations. The location method this session adds (4.7) treats the working-directory glob as a fast
+path and the parent checkout's directory as a second, bounded search target precisely because of this —
+never a scan of every project directory on the machine, since relocation is measured to target only
+that one further, known location. Only a plugin hook's stdout — channel 6 of task #1's six measured
+channels — lands as an entry structurally distinct from ordinary conversation text: its
+`attachment.type: "hook_success"` and its `hookEvent` key occur nowhere else across 552 files scanned
+machine-wide, while the same string quoted in prose (this document included, once it is read back into
+a conversation) reaches the identical field paths the other five channels use. A `PostToolUse` hook on
+the coordinator's own tool call lands in the conversation file carrying that call's own `toolUseID`; a
+`SubagentStop` hook, or any hook firing while a subagent is running, reaches only the subagent's file; a
+`SessionEnd` hook's output is filed nowhere — so this session's marker fires on the coordinator's own
+`PostToolUse`, never inside a dispatched subagent and never on `SubagentStop`. A hook can print content
+it computes at the moment it fires, by reading a file — demonstrated by three runs each printing
+whichever token was on disk at fire time, not a value fixed when the plugin was installed — so this
+session's marker relies on the hook reading `steering.md` fresh on every firing rather than on anything
+baked in when the plugin was installed. JSONL line order and wall-clock timestamp order disagree, by a
+margin this document's own re-runs have never found a ceiling for (808 backward-running pairs
+machine-wide, largest 13,429.9 s, still climbing as the corpus grows), so this session's collection
+stage (4.8) cuts an interval by line position within each append-only file, never by comparing
+timestamps across entries. A Claude-Code-level continuation replays every `uuid`-carrying entry of the
+predecessor file into the successor verbatim, under the same `uuid` and original timestamp, so the
+collection stage deduplicates by `uuid` across a session's own files rather than treating each file as
+independent history. Finally, **nothing beyond 16-character lowercase hex (channels 1–5) and that
+alphabet plus a space and uppercase ASCII (channel 6) has been measured to survive any channel
+unaltered** — this session fixes the marker's fields (4.7) but leaves the literal characters joining
+them, in particular whatever a session slug's own hyphens or a task description's punctuation need, to
+be verified empirically before task #4 finalizes the format string; that gap is a residual risk carried
+forward, not something this design invents a false certainty about.
+
 ### 2.2 What binds the solution?
 
 The user gates only plan / design / evaluation — never per task, and never on a reconciliation — so
@@ -77,11 +136,23 @@ the one durable substrate (2.1). `migration-workflow.md` may not read `CHANGELOG
 version ranges — every comparison is current-artifact-vs-current-template, regardless of which version
 a session started from, so there is no per-version bookkeeping to maintain as `rn` keeps changing.
 
+This session binds three further constraints. The friction store reuses git as its durability
+mechanism (`.rn/friction.md`, committed like `steering.md`) rather than introducing a database or
+service, consistent with `steering.md` + git + the PR being the one durable substrate (2.1). Neither the
+collection stage nor the stocktake stage adds a fourth user gate: collection runs unattended inside the
+existing `/rn:dn`, and stocktake is a plain command the user chooses to run, not a stop the coordinator
+forces — the fixed three-gate rule (this section, 4.2) still counts only plan / design / evaluation.
+Locating a session's own conversation files stays bounded to two directories — the working directory's
+own project directory and, inside a worktree, the parent checkout's — rather than a machine-wide scan;
+task #1's relocation finding names the parent checkout as the only place a worktree conversation is
+ever filed instead, so a bounded, deterministic search covers the measured failure mode without
+scanning every project directory on the machine.
+
 ## 3. Design overview
 
 ### 3.1 What is the core idea, and why does it solve the problem?
 
-Two organizing ideas, with the rest following from them.
+Three organizing ideas, with the rest following from them.
 
 **(A) A skill orchestrates; each work-instruction is a fixed spec.** A procedure controls only the
 *order* in which work-instructions fire. The detail of each one lives in its own spec, in one place:
@@ -111,11 +182,24 @@ review, so a reviewer shares the builder's viewpoint and fewer defects survive; 
 needs are spawned, so coverage widens without weight. (Why this over a fixed code-centric trio, and what
 else was considered for both ideas, is in section 5.)
 
+**(C) A task boundary is a position in the log, not an event the coordinator has to remember to emit.**
+Rather than two events (start, complete) that something has to remember to fire and that an abandoned or
+re-done task would need special handling for, a hook restamps the *current* task's own description on
+every coordinator tool call; a boundary is simply where that restamped value changes between two
+consecutive markers, which the collection stage (4.8) reads off directly. This follows from a channel-6
+measurement of its own: emission has to be a hook, since that is the only channel a marker cannot be
+confused with a quotation of itself on (2.1), and once emission is the hook's own act rather than
+something the coordinator deliberately fires, restamping on every firing costs nothing extra to
+implement — the alternative (recognising two specific tool calls as "the" boundary) is the one that
+would need bespoke logic (4.7, 5.1).
+
 Together these solve the problem this document opens with: (A) gives every mechanism — including this
 session's version tracking and migration — one authoritative place to live and cite, so a cold agent or
 a future session never has to re-derive it; (B) means the reviewer of a change (a `design.md` rewrite, a
 workflow edit, a skill edit) is drawn from the same axis as whoever built it, so drift in any one
-artifact is caught by someone who actually understands that artifact's shape.
+artifact is caught by someone who actually understands that artifact's shape; (C) means a task's own
+stretch of the log exists without the coordinator having to remember to mark it, and survives whatever
+`/rn:gm` later does to the task list that named it.
 
 ### 3.2 What are the pieces, and what is each responsible for?
 
@@ -127,6 +211,9 @@ artifact is caught by someone who actually understands that artifact's shape.
 | `steering.md` | The session's forward contract: `Goal` / `Acceptance criteria` / `Assumptions` / `Rules` / `Tasks` / `State`, plus the `Rn version:` and `Design:` header lines. Doc-division rule: requirements & acceptance criteria live here; structure & decisions live in `design.md`; user-facing UX lives in the README — this keeps `steering.md` lean enough to re-read in full every time (2.1). |
 | `design.md` | The whole-structure design — this doc, for `rn`'s own work. A session's `design.md` defaults to `.rn/{yyyymmdd}-{slug}/design.md`, but that default is not unconditional: `planning-workflow.md`'s design-location step checks first whether an existing `design.md` already covers the session's work area, and if so points `Design:` at it and treats the work as an update instead of fresh authoring (resolved in 4.5). |
 | `migration-workflow.md` | The reconciliation procedure a version mismatch triggers — coordinator-only, no expert spawn (4.6). |
+| Task-boundary hook | A plugin `PostToolUse` hook that restamps the session's slug and the current task's description on every coordinator tool call, landing as a structurally discriminable `attachment` entry (4.7). |
+| `.rn/friction.md` | The friction store — one append-only, git-tracked file at the repo root, written by the collection stage and read by both it and the stocktake stage (4.8, 4.9). |
+| `/rn:sk` | The stocktake command — user-invoked, proposes only friction recurring across intervals, files nothing without approval (4.9). |
 
 The coordinator follows four procedures for the normal session flow, plus a fifth for drift:
 **planning-workflow** decomposes the goal into tasks and places the plan / design / evaluation
@@ -186,6 +273,15 @@ flowchart LR
   gate --> off
   off -->|next task| pick
 ```
+
+**Task-boundary layer** — a third, finer-grained loop that runs underneath both of the above without
+changing their shape. The task-boundary hook fires on every coordinator tool call regardless of which
+loop is active, restamping the session's slug and whatever task `steering.md` currently shows as
+in-progress; so a task's own stretch of the log exists whether that task went through the ordinary
+build/verify path or was a sign-off gate, with no separate step for either diagram to carry (4.7).
+`/rn:dn`'s existing suspend step gains the collection stage as a silent addition (4.8); a new,
+separately-invoked `/rn:sk` command is the only path to a stocktake proposal, mentioned but not run at
+the session's own closing report (4.9).
 
 ## 4. Detailed design
 
@@ -286,6 +382,170 @@ shape, not because `on` has its own drift to detect. A breach in `migration-work
 (a wrong reconciliation) is not caught synchronously — no live gate reviews it — but surfaces through
 normal PR/git-log review, an accepted trade-off (2.1, 5.2).
 
+### 4.7 What does the task-boundary marker guarantee, and how is a breach caught?
+
+Guarantees that every stretch of the conversation log where the coordinator is actively working under
+an `rn` session can be attributed to one task's own description — without relying on any of the five
+ordinary emission channels (assistant text, a Bash command or its output, a tool result, a subagent's
+final report), none of which task #1 could tell apart from a document or a work order quoting the same
+text, and without relying on the session-status block, which appears only at the three sign-off gates
+and never around an ordinary task (2.2, 4.1).
+
+The mechanism: a plugin `PostToolUse` hook, registered with no tool restriction so it fires on every
+tool call the coordinator makes — measured directly for the `Agent` and `Bash` tools, both landing in
+the identical `attachment`/`hook_success` shape, so extending the same hook to the other tools `rn`'s
+workflows call (`Read`, `Edit`, `Write`) is an extrapolation from those two rather than something task
+#1 ran itself; task #4 should confirm it holds for each tool type before relying on it. On every firing
+the hook reads `steering.md` fresh — never a value fixed when the plugin was installed (2.1) — finds the
+*current* task (the first task in the Tasks list still carrying an unchecked step; this reuses
+`steering.md`'s own checkbox convention rather than adding a field, per 2.2) and prints a fixed-shape
+line naming the active session's own slug and that task's description text. The line lands as an
+`attachment` entry of `attachment.type: "hook_success"`, the one shape task #1 measured to occur nowhere
+else in 552 files scanned machine-wide (2.1) — so this document, `steering.md`, or a future planning
+session can name and quote the marker's own format in prose (as this section does) without that
+quotation ever being confused with a real emission, which channels 1–5 could not have offered no matter
+how the format were chosen.
+
+**Continuous restamping, not two discrete events.** Rather than emitting one marker at task start and
+another at task completion, the hook restamps the same line on *every* firing while a task stays
+current; a task boundary is simply the line in the log where the restamped description changes between
+two consecutive markers, which the collection stage (4.8) reads off directly rather than being told
+"start" or "complete" by name. This directly answers what happens to a task that is abandoned or
+re-done: an abandoned task's markers simply stop appearing once `steering.md` moves past it — there is
+no missing "complete" event to notice, because none was ever expected — and a re-done task (steps
+reopened under the same heading, or a revision that reintroduces the same work) is restamped again the
+same way it was the first time, producing a second, non-contiguous run of the same description text
+that the collection stage treats as its own interval rather than merging it into the first. A sign-off
+task is covered the same way: `/rn:ty` and `/rn:gm` both read `steering.md` (and, on a version mismatch,
+`plugin.json`) before recording a verdict, so at least one coordinator tool call — and hence at least one
+restamped marker — occurs even though no expert subagent is dispatched; a sign-off task with genuinely
+zero coordinator tool calls would go unmarked, believed not to occur under the current skills but not
+itself measured, and named as a residual risk rather than assumed away (5.2).
+
+**Naming the session and the task so the marker survives a revised list.** The marker carries the
+session's own slug (the `.rn/{yyyymmdd}-{slug}` name, fixed for the session's lifetime, set once at
+`/rn:on`) and the current task's *description text*, never a bare `#N`. `steering.md`'s own Assumptions
+already establish why: `/rn:gm` can rewrite or add tasks mid-session, so `#N` at one moment and `#N`
+later need not name the same task, and a squashed PR drops the intermediate `steering.md` revisions that
+would say what `#N` meant at the time it was written. A description carries its own meaning with no
+other file open, which is what the marker (and, by the same reasoning, the friction record in 4.8) needs
+to survive a task list that has since moved.
+
+**Locating a session's own markers without a separately minted session-identifying string.** Task #1
+measured that the working-directory glob already separates concurrent sessions in the common case — each
+worktree of one repository gets its own project directory — so a bare correlation token would only
+duplicate work the directory split already does. The gap the glob leaves is relocation: a conversation
+can be filed under the *parent checkout's* directory instead once its worktree is left, and that
+retargeting is measured to land only there, never at some unrelated directory (2.1). The location method
+this session settles on is therefore a two-directory search — the working directory's own project
+directory, plus the parent checkout's when running inside a worktree — filtered to the markers naming
+this session's own slug, which both picks this session out from any other session's relocated files
+sharing that same parent-checkout directory (measured: two different worktrees' stubs can sit side by
+side there) and confirms structurally that a candidate file is this session's rather than merely
+guessing from its path. Emitting a separate, opaque session-identifying string was considered and
+rejected for this (5.1): it would need its own lookup table back to the session it names, which 2.2
+rules out as a new state store, and it would still need the two-directory search to find it — the slug
+already gives a bounded search something readable to filter on, at no extra cost.
+
+**Breach detection.** If the hook fails to fire for a stretch of coordinator activity (plugin
+misconfigured, or disabled), no markers land for that stretch at all — caught the same way task #4's own
+completion criterion checks it, by grepping for both boundaries of a task that has actually run and
+confirming the interval between them holds that task's work. If a marker names the wrong session or task
+(a bug reading `steering.md`), the mismatch between the marker's own text and the working directory or
+task actually in progress is visible on direct inspection of the log, since both are stated in the same
+line. A quotation of the marker's own format elsewhere — in this document, in `README.md`, in a work
+order — is not mistaken for a real emission because the collection stage (4.8) keys off the entry's
+structural shape (`attachment.type: "hook_success"` and the hook's own `command`, per task #1's channel-6
+discriminator), never a bare substring match; the Verification expert review of tasks #4 and #5 checks
+that the implementation actually does so, rather than falling back to a grep that the self-reference
+hazard measured to be unsound (2.1).
+
+### 4.8 What does the collection stage guarantee, and how is a breach caught?
+
+Guarantees that friction actually left in the log surfaces without the user doing anything at `/rn:dn`,
+and that nothing is invented when there is none.
+
+At every `/rn:dn`, a subagent — never the coordinator itself, so its own context is not spent reading a
+JSONL (2.1) — locates this session's own conversation files by 4.7's two-directory method, finds the
+task-boundary markers bearing this session's slug within them, and cuts the stretch since the previous
+`/rn:dn` (or, on the first one, the session's start) into per-task intervals at the points where the
+restamped description changes. Two ordering rules carried forward from task #1 govern the cut: intervals
+are cut by line position within each append-only file, never by comparing timestamps across entries,
+because line order and timestamp order are measured to disagree by an unbounded and still-growing margin
+(2.1); and a marker replayed into a later file by a Claude-Code-level continuation is deduplicated by its
+`uuid` rather than counted as a second occurrence, because a continuation is measured to replay every
+`uuid`-carrying entry of its predecessor verbatim, under the same `uuid` (2.1).
+
+**The bar for a friction fact worth recording** is a citable trace: a specific JSONL entry (or entries)
+the fact points at — a tool call that errored and had to be retried, an expert review verdict of
+"revise" together with the defect it names, an explicit user correction that changed already-built work,
+a workaround the coordinator had to invent because a documented step did not hold. A fact resting only
+on the collecting subagent's own impression, with no entry to point at, is not recorded, even where that
+impression might have been right — this is what "friction that actually left a trace" (steering.md's own
+Goal wording) cashes out to, and it is what makes task #5's own completion criterion ("a record with no
+citable trace is not producible") a property of the procedure rather than a matter of subagent judgment.
+An interval with no traceable friction yields no record at all — the empty outcome is the normal path,
+not a shortfall to explain.
+
+**Where facts are stored, and their shape.** `.rn/friction.md`, one file at the repo root — a sibling to
+the per-session `.rn/{yyyymmdd}-{slug}/` directories, not nested inside any one of them, because
+friction is meant to be compared across the tasks of a session and across sessions over time, and a
+per-session location would scatter exactly what a later stocktake needs gathered. Git-tracked, reusing
+`steering.md` + git + the PR as the one durable substrate (2.1, 2.2) rather than adding a new store. One
+entry per friction fact, appended, never rewritten by collection, each carrying: the date; the session's
+slug and the task's description text as they read at the time (never `#N`, for the same reason as the
+marker in 4.7 — a fact recorded against `#N` would be unreadable once `/rn:gm` moves the list under it);
+the friction itself, in a sentence or two; the JSONL citation it traces to (file and line, or a short
+quoted fragment); and a status field, defaulting to unfiled, that the stocktake stage (4.9) flips once a
+cluster built from this fact becomes an approved issue — without it, a fact already acted on would look
+"recurring" again on every later run, since the store is never pruned. Markdown, matching `steering.md`
+and `design.md`, so the user can open and read it directly with no tooling of its own.
+
+**Breach detection.** A recorded fact with no citation field is visibly non-conformant against the shape
+just fixed, on a plain read of `.rn/friction.md`. That the coordinator's own context is never spent
+reading a JSONL is checkable by confirming a subagent dispatch, not a coordinator tool call, appears in
+the transcript around each `/rn:dn`. That an interval with no friction leaves nothing behind, and that
+`/rn:dn` asks no question and adds no output for it, is exactly task #5's own completion criteria and is
+checked there.
+
+### 4.9 What does the stocktake stage guarantee, and how is a breach caught?
+
+Guarantees that the user, and only the user, decides when accumulated friction becomes a proposal, that
+a proposal is shown only for friction seen more than once, and that nothing is filed as an issue without
+that user's explicit approval for it.
+
+**Command and call sites.** `/rn:sk` — two letters, matching the plugin's existing `on`/`dn`/`up`/`ty`/`gm`
+naming, mnemonic for "stock[take]." It runs only on: (1) explicit user invocation, at any time, which is
+the only call site that actually runs it — matching steering.md's own Goal wording that the user invokes
+stocktake "at exactly one point of their own choosing"; and (2) a one-line mention, not a run, in the
+closing report once a session reaches its evaluation sign-off and can close (the same closing report
+`/rn:ty`'s own steps already open with the session-status block, 4.1) — naming `/rn:sk` as available at
+the moment the user is most likely to want it, without spending their choice for them. Wiring stocktake
+into `/rn:dn` itself, the third candidate call site, was considered and rejected: `/rn:dn` already
+carries the collection stage (4.8), and the session's own Acceptance criteria fix that suspending "costs
+the user nothing extra — no question, no added output"; running the recurrence check and proposal flow
+at every suspend would reintroduce exactly the per-suspend tax the two-stage split (steering.md's Goal)
+exists to avoid.
+
+**Mechanism.** The command reads `.rn/friction.md` and groups its unfiled facts by what they are about —
+not by which session or task recorded them, since the same underlying friction can recur under different
+task descriptions in different sessions. Only a group with more than one member is surfaced (steering.md's
+own Acceptance criteria: "friction it has seen more than once"), each with every fact in the group
+attached, citations included, so a proposal is never shown without the material it rests on. For each
+surfaced group the coordinator proposes one improvement and takes the user's explicit approval before
+filing anything; only an approved proposal becomes a GitHub issue, and a declined or skipped group stays
+in `.rn/friction.md`, unfiled, until it recurs further or the user acts on it directly. A group of one is
+never proposed, and a run that finds no recurring group reports that plainly rather than manufacturing
+one (task #6's own completion criterion). Once a group's proposal is approved and filed, every fact in
+that group has its status field (4.8) flipped so the same pattern is not re-proposed on a later run —
+necessary precisely because `.rn/friction.md` is never pruned.
+
+**Breach detection.** An issue filed with no matching approved proposal in the conversation transcript is
+checkable directly on GitHub, against `.rn/friction.md`'s status field for the facts it claims to close.
+A proposal shown for a group of size one, or a proposal shown without its supporting facts, is checkable
+by re-reading `.rn/friction.md` itself — the same store the command reads and the user can open, so
+nothing the command surfaces rests on material only the command itself can see.
+
 ## 5. Alternatives considered
 
 ### 5.1 Why this shape, and not another?
@@ -324,6 +584,47 @@ The standing decisions these build on:
   actual version mismatch a command encounters going forward; migrating every past session's
   `steering.md`/`design.md` immediately would touch dormant sessions nobody is actively working, for no
   benefit over reconciling lazily if and when a command next touches them.
+- **A structurally-discriminable hook (channel 6) over any of channels 1–5 for the marker's emission** —
+  assistant text, a Bash command or its output, and a tool result all land at field paths a document, a
+  work order, or this very design doc can also land text in, with no field-path or entry-type test
+  separating a real emission from a quotation (measured machine-wide: `hookEvent` occurs as a JSON key
+  only inside a hook attachment across 552 files, 0 false positives, against 65 false positives for a
+  plain substring match on the same word). Channel 5 specifically — a subagent's final report, the
+  channel `rn` would otherwise reach for first — was measured separately unreliable regardless of the
+  discriminator question: real handoff latency ranges 14 ms to 37.4 s, bounded by the coordinator's own
+  turn length rather than anything the channel itself bounds; on top of the 316 handoffs that do land as
+  a `<task-notification>` entry, a further 142 task ids on this machine are enqueued and then removed
+  again without ever reaching one at all; and a delivered report is entity-escaped and, when it trips
+  the `marker-prefix-forgery` pattern (fired twice on this machine already, on exactly the shape a
+  task-boundary marker has by construction), irreversibly rewritten.
+- **Continuous restamping of the current task's description (4.7) over two discrete start/complete
+  events** — a discrete pair needs the hook to recognise *which* tool call is the boundary (for example,
+  the specific `steering.md` edit that checks a task off), a content-matching problem no channel-6
+  measurement covers, and it would still need bespoke handling for a task that is abandoned mid-way (no
+  completion marker is ever emitted for it) or re-done (a second start marker for the same task needs its
+  own rule). Reading the current task fresh from `steering.md` on every `PostToolUse` needs neither: an
+  abandoned task simply stops being restamped once `steering.md` moves past it, and a re-done task is
+  restamped again exactly the way it was the first time, with no separate code path for either case. The
+  cost is volume — a marker per tool call rather than two per task — not correctness (5.2).
+- **A self-naming marker plus a bounded two-directory search (4.7) over a separately minted
+  session-identifying string or a machine-wide grep** — task #1 measured that the working-directory glob
+  already separates concurrent sessions in the common case, so a bare correlation token would duplicate
+  work the directory split already does; the gap the glob leaves is relocation, which task #1 also
+  measured to always target the worktree's own parent checkout, never an arbitrary directory, so the
+  search only needs to widen to that one further, known location rather than to every project directory
+  on the machine. Because the marker already has to carry the session's own name to stay self-describing
+  (below), that same text is what a bounded substring search over the two directories filters on; a
+  separate opaque ID would need its own lookup table back to the session, which 2.2 rules out as a new
+  state store.
+- **The task's description text, not `#N`, as what the marker (4.7) and the friction record (4.8) name**
+  — steering.md's own Assumptions already establish that a task number is not a stable identifier:
+  `/rn:gm` can rewrite or add tasks mid-session, and a squashed PR drops the intermediate `steering.md`
+  revisions that would say what `#N` meant at the time. A description carries its own meaning with no
+  other file open, which is exactly what both need to survive a task list that has since moved.
+- **Reading task boundaries off the session-status block was never a candidate to begin with, and stays
+  rejected** — `rn` stops for the user at three gates only (plan, design, evaluation; 2.2, 4.2), and an
+  ordinary build task passes through without stopping, so the session-status block simply never appears
+  around most task boundaries; there is nothing in it to read a boundary off.
 
 ### 5.2 What did we trade away?
 
@@ -337,3 +638,14 @@ it lands (per `push-and-review.md`). Completeness for cost in version tracking: 
 already-closed sessions means some older `steering.md`/`design.md` pairs may carry stale conventions
 indefinitely if no command ever runs against them again — accepted because those sessions are done, and
 reconciling them would spend effort on work nobody is resuming.
+
+Volume for uniformity in the marker: restamping on every `PostToolUse` writes far more log entries than
+two events per task would, in exchange for never having to special-case an abandoned or re-done task. A
+small residual risk is carried rather than resolved: the marker's literal join characters beyond the
+tested hex/space/uppercase alphabet are left to task #4 to verify, not decided here (2.1), and a sign-off
+task that happens to involve zero coordinator tool calls would go unmarked — believed not to occur, since
+every sign-off command reads `steering.md` at minimum, but not itself measured (4.7). Completeness for
+simplicity in the friction store: `.rn/friction.md` is never pruned, so a filed pattern needs its own
+status field to keep from being re-proposed forever, and a fact whose only trace is the collecting
+subagent's own impression is simply not recorded at all, even where that impression might have been
+right — the bar is a citable JSONL entry, not the subagent's judgment (4.8).
