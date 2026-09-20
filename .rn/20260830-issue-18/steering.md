@@ -112,7 +112,17 @@ recorded command-and-output evidence, so #2 decides the marker on measurement ra
       each hit comes from the emission itself
 - [x] record, per emission point, whether it landed, how soon, and in which JSONL fields
 - [x] record how a session spanning several conversations appears in that directory
-- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [ ] fix the round-3 findings at their root: make every scan run over the whole population its
+      sentence generalises to, and name that population in the sentence carrying the number, rather
+      than patching the instances a review happened to name
+- [ ] probe the hook channel: ship a hook from a plugin directory, emit through it a probe whose text
+      appears nowhere in the instruction that requests it, and record whether it landed, how soon, and
+      in which JSONL fields
+- [ ] record whether a hook can emit a value it computes at run time by reading a file, so the emitted
+      string can name the session and the task rather than being fixed
+- [ ] record whether a hook entry's structure tells a real emission apart from text that merely quotes
+      the marker — the discriminator the other four channels do not provide
+- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (writing, subagent)
 - [ ] Verification expert review (dry-run, subagent)
@@ -127,6 +137,12 @@ recorded command-and-output evidence, so #2 decides the marker on measurement ra
   instruction is not counted as a landing.
 - Methods that landed and methods that did not are separately recorded; no method is reported as
   working without its observed evidence.
+- The hook channel is measured on the same terms as the other four — whether it landed, in which
+  fields, and with its probe text traceable to the emission rather than to the instruction.
+- Whether a hook emission can be told apart from text that quotes the same string is settled by
+  recorded evidence — either a discriminator shown to work, or a recorded failure to find one.
+- Every figure in the document states the population its scan covered, and that scan covers the
+  population the surrounding sentence generalises to.
 
 ### #2: Record the decisions in `rn/docs/design.md`
 
