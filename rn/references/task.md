@@ -10,7 +10,19 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
   deliverable and never judges it in the evaluator's place — but it reads everything before passing
   it on, keeps `steering.md` true to what the session has learned, and steps in the moment
   something is off. What reaches the evaluator and the user is work the conductor has already read
-  against the task's Objective, its Success criteria and the Rules.
+  against the task's Objective, its Success criteria and the Rules. It steps in, before anything
+  goes on, when:
+  - a result is reported done but the thing itself does not show it — run or read it, never take
+    the report;
+  - a criterion, a task or an assumption is written as an artifact, a step or work still to do,
+    not as a state;
+  - a fact or number has no source, or moved to fit feedback rather than evidence;
+  - a term is used without a meaning a reader can take, or a document carries history,
+    self-evident lines or repetition — the reader would have to ask;
+  - the same finding comes back a second time — it becomes a Rule, not another round;
+  - an Assumption breaks or the work uncovers a task — `steering.md` changes now;
+  - a stop is about to ask the user what the record answers, ask more than one thing, or offer
+    options without a recommendation.
 - **Implementer** — `Agent`, `model: sonnet`, no conversation history. Builds one task.
 - **Evaluator** — `Agent`, `model: opus`, no conversation history. Judges one artifact per
   `evaluate.md`.
