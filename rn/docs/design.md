@@ -18,14 +18,13 @@ stopping them.
    (`skills/on`, `dn`, `up`, `ty`, `gm`) and in `references/steering.md`, `task.md`, `evaluate.md`. A
    step with no purpose doesn't exist.
 2. **Third-party evaluation against named questions.** `references/evaluate.md` holds who evaluates
-   (an `Agent` subagent with no conversation history, launched without a `model` override, given
-   only the Goal, the artifact, its kind, and the fixed questions for that kind — never the author's
+   (an `Agent` subagent with no conversation history, launched with `model: opus`, given only the
+   Goal, the artifact, its kind, and the fixed questions for that kind — never the author's
    summary), the questions per kind, the output shape, and where the verdict goes: the session PR,
    via `gh pr comment`.
-3. **Judgment and execution run on different models.** Planning happens in the conversation itself.
-   `references/task.md` dispatches the implementer with `model: sonnet`; `evaluate.md` dispatches
-   the evaluator with no override, so it runs on the conversation's own model — the one that
-   planned.
+3. **Judgment and execution run on different models.** Planning happens in the conversation itself,
+   which the user runs on the stronger model (`opus`). `references/task.md` dispatches the
+   implementer with `model: sonnet`; `evaluate.md` dispatches the evaluator with `model: opus`.
 
 ## What stays
 
@@ -60,6 +59,6 @@ rendered form.
 
 ## Models
 
-Planning runs in the conversation — no dispatch, no separate model. The implementer runs on
-`sonnet` (`task.md`). The evaluator runs with no model override, so it always matches whatever model
-is doing the planning in that conversation (`evaluate.md`).
+Planning runs in the conversation itself, which the user runs on the stronger model (`opus`) — no
+dispatch, no separate model. The implementer runs on `sonnet` (`task.md`). The evaluator runs on
+`opus` (`evaluate.md`).

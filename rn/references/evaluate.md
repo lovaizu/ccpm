@@ -6,10 +6,9 @@ Judges a result against a few named questions, by someone other than its author.
 ## Steps
 
 1. **Launch a subagent with no memory of how the artifact was built, so the verdict isn't colored
-   by the author's account.** Dispatch `Agent` with no `model` override, so it runs on the
-   conversation's own model. Give it exactly: the session Goal, the artifact (a path or a commit
-   range), its kind, and that kind's questions below. Never give it the author's summary or an
-   expected verdict.
+   by the author's account.** Dispatch `Agent` with `model: opus` — judgment runs on the stronger
+   model. Give it exactly: the session Goal, the artifact (a path or a commit range), its kind, and
+   that kind's questions below. Never give it the author's summary or an expected verdict.
 
 2. **Ask only the fixed questions for the artifact's kind.**
 

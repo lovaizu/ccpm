@@ -33,5 +33,4 @@ and re-entered by `/rn:ty` once a gate is approved.
    at once (status block), never held for a gate.
 
 Judgment and execution run on different models: the implementer (step 1) is dispatched with
-`model: sonnet`; the evaluator (step 2) is dispatched with no `model` override, so it runs on the
-conversation's own model — the one that planned.
+`model: sonnet`; the evaluator (step 2) is dispatched with `model: opus`.
