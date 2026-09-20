@@ -211,7 +211,8 @@ every task's interval exists in the log without the user doing anything.
 
 **Steps**:
 
-- [ ] emit the boundary markers at task start and task completion, in the form the design fixes
+- [ ] emit the boundary marker in the form and at the firing points the design fixes (continuous
+      restamping of the current task on every coordinator tool call, not two discrete events)
 - [ ] update the affected skills and references (`on`, `dn`, `up`, `task-execute-workflow`,
       `task-verify-workflow`) consistently, with the format defined in exactly one place
 - [ ] confirm the markers ride on steps that already run, adding no prompt and no gate
