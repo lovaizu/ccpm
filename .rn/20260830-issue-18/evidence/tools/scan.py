@@ -1,6 +1,10 @@
 """Per-file scans over JSONL log files, one subcommand per question.
 
-Usage: scan.py {spans|cwd|types|inversions|seam|handoff|escaping} <file.jsonl>...
+Usage: scan.py {spans|cwd|types|inversions|seam|handoff|escaping|hooks|hookraw|hookids|prompts}
+               <file.jsonl>... [--tokens <dir>]
+
+`--tokens <dir>` loads probe tokens the way walk.py does: hookraw masks their values out
+of what it prints, prompts reports which of them each user entry holds.
 
 Every scan parses entries rather than grepping lines, so a reported field is the field
 an entry actually holds. Kept out of the evidence document so its command blocks stay
@@ -13,6 +17,11 @@ import json
 import os
 import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from masktok import load as load_tokens, mask
+
+TOKENS = {}
 
 TS = lambda t: datetime.datetime.strptime(t, '%Y-%m-%dT%H:%M:%S.%fZ')
 
@@ -111,10 +120,68 @@ def escaping(paths):
                      body.count('&lt;'), body.count('&gt;'), body.count('&amp;')))
 
 
+def _hook_entries(path):
+    for i, e in enumerate(load(path), 1):
+        a = e.get('attachment') or {}
+        if str(a.get('type', '')).startswith('hook'):
+            yield i, e, a
+
+
+def hooks(paths):
+    """every hook attachment: its event, its exit code, and where its text sits."""
+    for p in paths:
+        for i, e, a in _hook_entries(p):
+            print('%-24s line %-4d %-13s %-20s exit=%-3s content==stdout.strip()=%-5s keys=%s'
+                  % (os.path.basename(p)[:24], i, a.get('type'), a.get('hookName'),
+                     a.get('exitCode'), (a.get('stdout') or '').strip() == (a.get('content') or '').strip(),
+                     ','.join(sorted(a))))
+
+
+def hookraw(paths):
+    """the first hook attachment of each file, whole, minus its `rendered` copy."""
+    for p in paths:
+        for i, e, _ in _hook_entries(p):
+            body = json.dumps({k: v for k, v in e.items() if k != 'rendered'}, indent=1)
+            print(mask(body, TOKENS))
+            break
+
+
+def hookids(paths):
+    """hook attachments and tool calls in line order, with the ids that link them."""
+    for p in paths:
+        print('##', os.path.basename(p)[:24])
+        for i, e in enumerate(load(p), 1):
+            a = e.get('attachment') or {}
+            c = (e.get('message') or {}).get('content')
+            if str(a.get('type', '')).startswith('hook'):
+                print(' line %-3d %-20s toolUseID=%s' % (i, a.get('hookName'), a.get('toolUseID')))
+            elif isinstance(c, list) and c and c[0].get('type') == 'tool_use':
+                print(' line %-3d tool_use %-8s id=%s' % (i, c[0].get('name'), c[0].get('id')))
+
+
+def prompts(paths):
+    """every user entry: how long it is, and which probe tokens it holds."""
+    for p in paths:
+        for i, e in enumerate(load(p), 1):
+            if e.get('type') != 'user':
+                continue
+            c = (e.get('message') or {}).get('content')
+            c = c if isinstance(c, str) else json.dumps(c)
+            print('%-22s line %-3d chars=%-5d tokens=%s'
+                  % (os.path.basename(p)[:22], i, len(c),
+                     [n for n, v in TOKENS.items() if v and v in c] or '-'))
+
+
 SCANS = {'spans': spans, 'cwd': cwd, 'types': types, 'inversions': inversions,
-         'seam': seam, 'handoff': handoff, 'escaping': escaping}
+         'seam': seam, 'handoff': handoff, 'escaping': escaping, 'hooks': hooks,
+         'hookraw': hookraw, 'hookids': hookids, 'prompts': prompts}
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3 or sys.argv[1] not in SCANS:
+    argv = sys.argv[1:]
+    if '--tokens' in argv:
+        k = argv.index('--tokens')
+        TOKENS = load_tokens(argv[k + 1])
+        argv = argv[:k] + argv[k + 2:]
+    if len(argv) < 2 or argv[0] not in SCANS:
         raise SystemExit(__doc__)
-    SCANS[sys.argv[1]](sys.argv[2:])
+    SCANS[argv[0]](argv[1:])

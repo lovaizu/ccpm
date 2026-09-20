@@ -12,24 +12,28 @@ $ claude --version
 2.1.267 (Claude Code)
 ```
 
-Figures taken on 2026-09-06 under version 2.1.263 are labelled where they are quoted. All of this is
-undocumented on-disk internals, so it is bound to those versions and to this machine's history.
+Figures taken on 2026-09-06 under version 2.1.263 are labelled where they are quoted, as are the
+hook-channel figures taken on 2026-09-20 under 2.1.278. All of this is undocumented on-disk
+internals, so it is bound to those versions and to this machine's history.
 
 ## What this establishes
 
 | # | Finding | Section |
 |---|---|---|
 | 1 | The conversation file is complete on disk while the conversation is open, and an entry reaches disk about 0.1 s after its own timestamp. | [Liveness](#the-conversation-file-is-live-and-lags-its-own-entries-by-about-01-s) |
-| 2 | Five channels put an arbitrary string into the conversation file; each lands at the field path its channel predicts. | [Five channels land](#five-channels-put-a-string-into-the-conversation-file) |
-| 3 | Two candidate methods do **not** land: a subagent's own turns never reach the conversation file, and a tool result over about 30 KB is written to a side file instead of into the JSONL. | [Two methods do not land](#two-candidate-methods-do-not-land) |
-| 4 | A string emitted in one turn is readable by a later tool call in that same turn. | [Same-turn read-back](#same-turn-read-back-works) |
-| 5 | Only 16-character lowercase hex was emitted, so nothing is known about spaces, quotes, newlines, non-ASCII — or about `<` and `>`, which one channel escapes to `&lt;` and `&gt;`. | [Character set](#only-16-character-lowercase-hex-was-emitted) |
-| 6 | A conversation file is placed by its relocation target, so globbing one working directory's project directory both misses and over-returns. | [Placement](#a-file-is-placed-by-relocation-target-not-by-the-working-directory-of-its-entries) |
-| 7 | The set of files in a project directory changes while the session is open: three files became five between the two measurement rounds. | [The file set moves](#the-file-set-changes-while-the-session-is-open) |
-| 8 | A conversation can continue into a **new file under a new `sessionId`** that replays every earlier entry verbatim, so a marker emitted before the continuation exists twice on disk. A `continued-in` entry links the pair. | [Continuation by replay](#a-conversation-can-continue-into-a-new-file-that-replays-the-old-one) |
-| 9 | A restart can instead append into the existing file, leaving no seam record other than a change of `version` mid-file. | [Restart in place](#a-restart-can-append-into-the-existing-file-marked-only-by-the-version-stamp) |
-| 10 | Compaction stays in one file and reproduces earlier prose into a summary entry, so a marker quoted in prose can appear a second time under a later timestamp. | [Compaction](#compaction-stays-in-one-file-and-replays-earlier-prose-into-it) |
-| 11 | Line order and timestamp order disagree; the largest observed backstep is 13,429.9 s, and 76 of one file's entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
+| 2 | Six channels put an arbitrary string into the conversation file; each lands at the field path its channel predicts. | [Six channels land](#six-channels-put-a-string-into-the-conversation-file) |
+| 3 | A plugin hook's stdout is filed as an entry of its own kind — `type: "attachment"` with `attachment.type: "hook_success"` — carrying a string the hook computes at run time. | [Channel 6](#channel-6-a-plugin-hooks-stdout-is-filed-as-an-entry-of-its-own-kind) |
+| 4 | That entry shape **is** a discriminator: machine-wide, `hookEvent` occurs as a JSON key only inside a hook attachment, while the same marker quoted in prose stays in the message fields. It is the one thing the other five channels do not offer. | [The discriminator](#the-hook-entry-tells-an-emission-from-a-quotation) |
+| 5 | Two candidate methods do **not** land: a subagent's own turns never reach the conversation file, and a tool result over about 30 KB is written to a side file instead of into the JSONL. | [Two methods do not land](#two-candidate-methods-do-not-land) |
+| 6 | Two hook placements do **not** land either: a `SessionEnd` hook's output is filed nowhere, and a hook firing inside a subagent reaches the subagent file only. | [Hook events that do not land](#two-hook-placements-fire-without-reaching-the-conversation-file) |
+| 7 | A string emitted in one turn is readable by a later tool call in that same turn. | [Same-turn read-back](#same-turn-read-back-works) |
+| 8 | Only 16-character lowercase hex was emitted on channels 1–5, so nothing is known there about spaces, quotes, newlines, non-ASCII — or about `<` and `>`, which one channel escapes to `&lt;` and `&gt;`. Channel 6 additionally carried a space and uppercase ASCII. | [Character set](#only-16-character-lowercase-hex-was-emitted) |
+| 9 | A conversation file is placed by its relocation target, so globbing one working directory's project directory both misses and over-returns. | [Placement](#a-file-is-placed-by-relocation-target-not-by-the-working-directory-of-its-entries) |
+| 10 | The set of files in a project directory changes while the session is open: three files became five between the two measurement rounds. | [The file set moves](#the-file-set-changes-while-the-session-is-open) |
+| 11 | A conversation can continue into a **new file under a new `sessionId`** that replays every earlier entry verbatim, so a marker emitted before the continuation exists twice on disk. A `continued-in` entry links the pair. | [Continuation by replay](#a-conversation-can-continue-into-a-new-file-that-replays-the-old-one) |
+| 12 | A restart can instead append into the existing file, leaving no seam record other than a change of `version` mid-file. | [Restart in place](#a-restart-can-append-into-the-existing-file-marked-only-by-the-version-stamp) |
+| 13 | Compaction stays in one file and reproduces earlier prose into a summary entry, so a marker quoted in prose can appear a second time under a later timestamp. | [Compaction](#compaction-stays-in-one-file-and-replays-earlier-prose-into-it) |
+| 14 | Line order and timestamp order disagree; the largest observed backstep is 13,429.9 s, and 76 of one file's entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
 
 What this does **not** do is choose the marker. Section [What this still cannot answer](#what-this-still-cannot-answer)
 lists what task #2 has to settle some other way.
@@ -48,13 +52,17 @@ to keep apart. The vocabulary used throughout:
 - **marker** — the string task #2 will design for `rn` to write at a task boundary. Nothing in this
   document is a marker; the strings measured here stand in for one.
 - **emission channel** — one way of getting a string into a log file: a place in a turn where the
-  string can be put, plus the entry and field path it ends up in. Five are measured, and *channel* is
+  string can be put, plus the entry and field path it ends up in. Six are measured, and *channel* is
   the only word this document uses for them.
 - **probe** — one act of emitting a stand-in string through one channel. **token** — the string
   emitted. A probe is performed; a token is emitted.
 - **coordinator** — the main agent of a conversation, whose entries are `isSidechain: false`. The
-  probes recorded here were performed by the coordinator of conversation `ef482a21`, never by a
-  subagent; which agent emits is load-bearing and is named everywhere below.
+  channel 1–5 probes were performed by the coordinator of conversation `ef482a21`, never by a
+  subagent; the channel 6 probes were performed by a hook script in three headless conversations of
+  their own, one of whose hooks fired inside a subagent. Which agent emits is load-bearing and is
+  named everywhere below.
+- **hook** — a command Claude Code runs at a named point of a turn. A plugin declares its hooks in
+  `<plugin>/hooks/hooks.json`; the string the hook prints on stdout is what channel 6 emits.
 - **main checkout** — `/Users/kiyo/work/lovaizu/ccpm`. **worktree** — `…/.claude/worktrees/issue-18`.
 
 Paste these assignments into a shell before running any command block below. They are inputs, not
@@ -70,21 +78,29 @@ TOOLS=.rn/20260830-issue-18/evidence/tools
 LIVE=$PROJ_WT/c763d0be-78f2-4036-a80b-3d5d95c07065.jsonl          # the conversation writing this document
 AGENT=$PROJ_WT/c763d0be-78f2-4036-a80b-3d5d95c07065/subagents/agent-a39f6e288d6277a88.jsonl
 S=/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/c763d0be-78f2-4036-a80b-3d5d95c07065/scratchpad
+HOOKPROJ=~/.claude/projects/-private-tmp-claude-501--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18-c391e411-3a1d-49ce-84fb-a082334e2143-scratchpad-pcwd
+HBASE=/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-issue-18/c391e411-3a1d-49ce-84fb-a082334e2143/scratchpad
+HTOK=$HBASE/tokall
 ```
 
-`$PROBE` holds one file per token, written before any probe ran. Token values are read from those
-files and never typed into a command or into this document; they appear below elided as `<p1>`…`<p4>`,
-and `$TOOLS/masktok.py` is what performs the elision. The rule is deliberate: this document is read
+`$PROBE` holds one file per token, written before any probe ran, and `$HTOK` does the same for the
+three channel-6 tokens. Token values are read from those files and never typed into a command or into
+this document; they appear below elided as `<p1>`…`<p4>` and `<h1>`…`<h3>`, and `$TOOLS/masktok.py`
+is what performs the elision. The rule is deliberate: this document is read
 back into the conversation it describes, so any token literal written here would become a hit in every
 later grep of the log — the hazard measured in [The self-reference hazard](#the-self-reference-hazard-is-measured-not-assumed).
 
 Four shared scripts live in `evidence/tools/` so the command blocks stay short:
 
 - `masktok.py` — loads tokens from a directory and replaces each value with `<name>`.
-- `corpus.py <scan>` — the six whole-machine scans (`versions`, `version-range`, `persist-bracket`,
-  `no-timestamp`, `worktree-ptr`, `entry-types`), each reading every conversation file on this machine.
-- `scan.py <scan> <file>…` — the seven per-file scans (`spans`, `cwd`, `types`, `inversions`, `seam`,
-  `handoff`, `escaping`). Each subcommand is the exact measurement the section quoting it describes.
+- `corpus.py <scan>` — the eight whole-machine scans (`versions`, `version-range`, `persist-bracket`,
+  `no-timestamp`, `worktree-ptr`, `entry-types`, `attachment-types`, `hook-entries`), each reading
+  every conversation file on this machine; `persist-bracket`, `attachment-types` and `hook-entries`
+  read every subagent file too, and `worktree-ptr` reads only the ccpm project directories.
+- `scan.py <scan> <file>… [--tokens <dir>]` — the eleven per-file scans (`spans`, `cwd`, `types`,
+  `inversions`, `seam`, `handoff`, `escaping`, `hooks`, `hookraw`, `hookids`, `prompts`). Each
+  subcommand is the exact measurement the section quoting it describes; `--tokens` loads probe
+  tokens the way `walk.py` does, so `hookraw` can mask them and `prompts` can report them.
 - `walk.py` — parses every entry of a JSONL file and reports the JSON path of each string field
   containing a needle. Printed values are masked and **truncated to 110 characters**; paths and entry
   headers are printed in full. It parses rather than grepping raw lines because attribution needs the
@@ -161,7 +177,7 @@ The file grew by 55,938 bytes and 24 lines while the hash of its first 40 lines 
 Content already written is not rewritten; a count re-run later returns a larger number, never a
 different prefix.
 
-### Five channels put a string into the conversation file
+### Six channels put a string into the conversation file
 
 Four tokens were emitted by the **coordinator** of conversation `ef482a21` between 05:05:18Z and
 05:05:27Z on 2026-09-06, one per channel. Re-run 2026-09-10 with the shared walker:
@@ -193,13 +209,16 @@ incidental instance of the Bash-output channel and is why `p1` and `p2` show two
 | 3 | Bash command output | yes | `user` | `message.content[0].content` **and** `toolUseResult.stdout` (lines 142, 134) |
 | 4 | Non-Bash tool result (Read) | yes | `user` | `message.content[0].content` **and** `toolUseResult.file.content` (line 144; `message.content` carries the `1\t` line-number prefix, `toolUseResult.file.content` the raw text) |
 | 5 | A subagent's final report | yes | `queue-operation` and `user` | `.content` and `.message.content`, inside `<result>` — see below |
+| 6 | A plugin hook's stdout | yes | `attachment` | `.attachment.content` and `.attachment.stdout`, under `attachment.type: "hook_success"` — [see below](#channel-6-a-plugin-hooks-stdout-is-filed-as-an-entry-of-its-own-kind) |
 | — | A subagent's own turn | **no** | — | reaches the subagent file only; [evidence](#two-candidate-methods-do-not-land) |
 | — | Bash output over ~30 KB | **no** | `user` | replaced by a `<persisted-output>` preview; full text goes to `tool-results/<id>.txt`; [evidence](#two-candidate-methods-do-not-land) |
+| — | A `SessionEnd` hook's stdout | **no** | — | the hook runs; its output is filed nowhere; [evidence](#two-hook-placements-fire-without-reaching-the-conversation-file) |
+| — | A hook firing inside a subagent | **no** | `attachment` | reaches the subagent file only, like the subagent's own turns; [evidence](#two-hook-placements-fire-without-reaching-the-conversation-file) |
 
 Channels 1–4 are ordinary parts of a turn that Claude Code already records, so four positives out of
 four attempts would be a weak result on its own: no method was tried there that could plausibly fail.
-The two negatives at the foot of the table are what give it a boundary, and both are measured rather
-than assumed.
+The four negatives at the foot of the table are what give it a boundary, and all four are measured
+rather than assumed.
 
 #### Channel 5: a subagent's final report crosses into the conversation file
 
@@ -238,10 +257,365 @@ $ ls -la /private/tmp/claude-501/…-issue-18/555280be-…/tasks/
 lrwxr-xr-x 1 kiyo wheel 162 a1acd223789ed6dda.output -> …/555280be-…/subagents/agent-a1acd223789ed6dda.jsonl
 ```
 
+#### Channel 6: a plugin hook's stdout is filed as an entry of its own kind
+
+The five channels above are places in a turn; this one is a program Claude Code runs. A throwaway
+plugin was built under `$HBASE` — a `plugin.json`, and a `hooks/hooks.json` registering one script
+against five events, extended to nine for the third run — and three headless conversations were run
+with it loaded, on 2026-09-20 under
+2.1.278, from a scratch working directory of their own so their logs land in a project directory
+nothing else writes to, `$HOOKPROJ`. The script is what emits:
+
+```sh
+#!/bin/bash                                    # $1 is the event name
+BASE=$HBASE
+TOK=$(cat "$BASE/tok/h")                       # read at run time, not baked into the script
+cat > /dev/null                                # the event payload arrives on stdin
+printf '%s %s\n' "$(date -u +%H:%M:%S.000)" "$1" >> "$BASE/fired.log"
+printf 'HOOKPROBE %s %s\n' "$1" "$TOK"
+exit 0
+```
+
+The plugin and the scratch working directory were deleted once the runs were over. What stays, as
+this section's evidence, is the three conversation files those runs wrote, plus the one subagent
+file under the third:
+
+```
+$ python3 $TOOLS/scan.py spans $HOOKPROJ/*.jsonl
+11b1c7b5 entries=38   with_ts=31   2026-09-20T04:25:47.775Z -> 2026-09-20T04:25:56.089Z
+495aaa7b entries=37   with_ts=30   2026-09-20T04:26:54.551Z -> 2026-09-20T04:27:00.891Z
+7e75075d entries=37   with_ts=30   2026-09-20T04:27:51.856Z -> 2026-09-20T04:27:59.629Z
+```
+
+`hooks.json` points every registered event at that one script, in the shape a plugin declares:
+
+```json
+"Stop": [{"hooks": [{"type": "command",
+                     "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/emit.sh\" stop"}]}]
+```
+
+The first run, with a token freshly generated by `openssl rand -hex 8` into the file the script
+reads, and kept for later scans as `$HTOK/h1`:
+
+```
+$ cd $HBASE/pcwd && claude -p "Run exactly this Bash command and then reply with only its output:
+    grep -c -F -f $HBASE/tok/h $HOOKPROJ/*.jsonl" --plugin-dir $HBASE/hookprobe --allowedTools Bash
+2
+```
+
+The `2` is the grep's own answer: the glob matched the one file the run had just created, so
+`grep -c` printed a bare count. The prompt names the token *file*, never its contents, so no hit on
+the token can come from the instruction. That is measured rather than asserted — every `user` entry
+of the three probe conversations and of the one subagent file, with the tokens it holds:
+
+```
+$ python3 $TOOLS/scan.py prompts $HOOKPROJ/*.jsonl $HOOKPROJ/*/subagents/*.jsonl --tokens $HTOK
+11b1c7b5-1768-407c-991 line 4   chars=386   tokens=-
+11b1c7b5-1768-407c-991 line 26  chars=109   tokens=-
+495aaa7b-918a-4f8a-841 line 4   chars=252   tokens=-
+495aaa7b-918a-4f8a-841 line 25  chars=124   tokens=['h2']
+7e75075d-29fb-4c06-886 line 4   chars=175   tokens=-
+7e75075d-29fb-4c06-886 line 25  chars=908   tokens=-
+agent-a76a62b028a410a1 line 1   chars=59    tokens=-
+agent-a76a62b028a410a1 line 13  chars=110   tokens=-
+```
+
+Line 4 of each conversation is its prompt and line 1 of the subagent file is its work order; none of
+the four holds a token. The single `user` entry that does is run 2's line 25 — the `cat` this
+document deliberately asked for, to give the next section a quotation to tell apart from an emission.
+All five events the first run registered put the token into the conversation file:
+
+```
+$ python3 $TOOLS/walk.py $HOOKPROJ/11b1c7b5-*.jsonl --tokens $HTOK
+line 3    type=attachment isSidechain=False ts=2026-09-20T04:25:47.775Z
+   h1     @ .attachment.content                    'HOOKPROBE sessionstart <h1>'
+   h1     @ .attachment.stdout                     'HOOKPROBE sessionstart <h1>\n'
+   h1     @ .rendered[0].content                   '<system-reminder>\nSessionStart:startup hook success: HOOKPROBE sessionstart <h1>\n</system-reminder>'
+line 14   type=attachment isSidechain=False ts=2026-09-20T04:25:50.252Z
+   h1     @ .attachment.content                    'HOOKPROBE userpromptsubmit <h1>'
+   h1     @ .attachment.stdout                     'HOOKPROBE userpromptsubmit <h1>\n'
+   h1     @ .rendered[0].content                   '<system-reminder>\nUserPromptSubmit hook success: HOOKPROBE userpromptsubmit <h1>\n</system-reminder>'
+line 25   type=attachment isSidechain=False ts=2026-09-20T04:25:54.931Z
+   h1     @ .attachment.content                    'HOOKPROBE pretooluse <h1>'
+   h1     @ .attachment.stdout                     'HOOKPROBE pretooluse <h1>\n'
+line 27   type=attachment isSidechain=False ts=2026-09-20T04:25:55.073Z
+   h1     @ .attachment.content                    'HOOKPROBE posttooluse <h1>'
+   h1     @ .attachment.stdout                     'HOOKPROBE posttooluse <h1>\n'
+line 35   type=attachment isSidechain=False ts=2026-09-20T04:25:56.088Z
+   h1     @ .attachment.content                    'HOOKPROBE stop <h1>'
+   h1     @ .attachment.stdout                     'HOOKPROBE stop <h1>\n'
+```
+
+The entry is neither a message nor a tool result. Line 3 whole, with `rendered` dropped and the token
+masked:
+
+```
+$ python3 $TOOLS/scan.py hookraw $HOOKPROJ/11b1c7b5-*.jsonl --tokens $HTOK
+{
+ "parentUuid": null,
+ "isSidechain": false,
+ "attachment": {
+  "type": "hook_success",
+  "hookName": "SessionStart:startup",
+  "toolUseID": "5729eee6-ec9f-462f-99d7-af03ef7481ac",
+  "hookEvent": "SessionStart",
+  "content": "HOOKPROBE sessionstart <h1>",
+  "stdout": "HOOKPROBE sessionstart <h1>\n",
+  "stderr": "",
+  "exitCode": 0,
+  "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/emit.sh\" sessionstart",
+  "durationMs": 20
+ },
+ "type": "attachment",
+ "uuid": "b6514e54-33df-4157-8f7e-a9928bc74cd3",
+ "timestamp": "2026-09-20T04:25:47.775Z",
+ "userType": "external",
+ "entrypoint": "sdk-cli",
+ "cwd": "…/scratchpad/pcwd",
+ "sessionId": "11b1c7b5-1768-407c-991a-f954cb7ca5dd",
+ "version": "2.1.278",
+ "gitBranch": "HEAD"
+}
+```
+
+`content` is the hook's stdout with its trailing newline stripped and `stdout` is the raw bytes, in
+all 18 hook entries the three runs wrote — `scan.py hooks` reports `content==stdout.strip()=True` on
+every one of them. The emitted string carried a **space** and **uppercase ASCII** through unaltered,
+which makes channel 6 the only one measured over more than bare lowercase hex. In all three probe
+conversations, `SessionStart` and `UserPromptSubmit` additionally get a `rendered` copy wrapped in a
+`<system-reminder>` and the other events do not; that is the only difference between the landings.
+
+**The string is computed at run time.** The token file was overwritten with a fresh
+`openssl rand -hex 8` between runs, and each run's value kept as `$HTOK/h1`, `h2`, `h3`. Counting
+each token in each conversation:
+
+```
+$ for t in h1 h2 h3; do printf '%s: ' $t
+    for f in $HOOKPROJ/11b1c7b5-*.jsonl $HOOKPROJ/495aaa7b-*.jsonl $HOOKPROJ/7e75075d-*.jsonl; do
+      printf '%s ' "$(grep -c -F -f $HTOK/$t $f)"; done; echo; done
+h1: 5 0 0
+h2: 0 7 0
+h3: 0 0 5
+```
+
+Each conversation carries only the value that was in the file at the moment it ran, so **what a hook
+emits is decided at run time and can name the session and the task** rather than being fixed when the
+plugin is installed. (Run 2's seven is five hook entries plus two quotations; the next section is
+about those.)
+
+**The entry is on disk before the conversation ends.** The `2` printed above is the probe's own grep,
+recorded in the conversation that produced it:
+
+```
+$ python3 -c "
+import json,sys
+for i,l in enumerate(open(sys.argv[1]),1):
+    e=json.loads(l)
+    if i in (24,26): print(i, e['type'], e['timestamp'], e['message']['content'][0].get('content',''))
+" $HOOKPROJ/11b1c7b5-*.jsonl
+24 assistant 2026-09-20T04:25:54.897Z
+26 user 2026-09-20T04:25:55.073Z 2
+```
+
+The Bash call ran between 04:25:54.897Z and 04:25:55.073Z and counted the two hook entries that
+preceded it, stamped 04:25:47.775Z and 04:25:50.252Z — so a hook emission was greppable from inside
+its own conversation, twelve entries and two further hook events before that conversation ended (the
+file closed at 38 lines). The newer of the two was on disk within 4.8 s of its own timestamp, which
+is an upper bound set by the agent's latency rather than a flush time: the `PreToolUse` entry at
+line 25, stamped at most 0.18 s before the read, was *not* counted, which is the 0.1 s flush lag of
+[Liveness](#the-conversation-file-is-live-and-lags-its-own-entries-by-about-01-s) seen from the other
+side.
+
+#### The hook entry tells an emission from a quotation
+
+Run 2 asked for the token file to be `cat`-ed and its contents repeated in the reply, so the same
+string reached one conversation twice: once because the hook printed it, once because the
+conversation quoted it.
+
+```
+$ python3 $TOOLS/walk.py $HOOKPROJ/495aaa7b-*.jsonl --tokens $HTOK
+line 3    type=attachment isSidechain=False ts=2026-09-20T04:26:54.551Z
+   h2     @ .attachment.content                    'HOOKPROBE sessionstart <h2>'
+   h2     @ .attachment.stdout                     'HOOKPROBE sessionstart <h2>\n'
+   h2     @ .rendered[0].content                   '<system-reminder>\nSessionStart:startup hook success: HOOKPROBE sessionstart <h2>\n</system-reminder>'
+line 14   type=attachment isSidechain=False ts=2026-09-20T04:26:56.480Z
+   h2     @ .attachment.content                    'HOOKPROBE userpromptsubmit <h2>'
+   h2     @ .attachment.stdout                     'HOOKPROBE userpromptsubmit <h2>\n'
+   h2     @ .rendered[0].content                   '<system-reminder>\nUserPromptSubmit hook success: HOOKPROBE userpromptsubmit <h2>\n</system-reminder>'
+line 24   type=attachment isSidechain=False ts=2026-09-20T04:26:59.312Z
+   h2     @ .attachment.content                    'HOOKPROBE pretooluse <h2>'
+   h2     @ .attachment.stdout                     'HOOKPROBE pretooluse <h2>\n'
+line 25   type=user      isSidechain=False ts=2026-09-20T04:26:59.421Z
+   h2     @ .message.content[0].content            '<h2>'
+   h2     @ .toolUseResult.stdout                  '<h2>'
+line 26   type=attachment isSidechain=False ts=2026-09-20T04:26:59.421Z
+   h2     @ .attachment.content                    'HOOKPROBE posttooluse <h2>'
+   h2     @ .attachment.stdout                     'HOOKPROBE posttooluse <h2>\n'
+line 33   type=assistant isSidechain=False ts=2026-09-20T04:27:00.837Z
+   h2     @ .message.content[0].text               'QUOTED <h2>'
+line 34   type=attachment isSidechain=False ts=2026-09-20T04:27:00.890Z
+   h2     @ .attachment.content                    'HOOKPROBE stop <h2>'
+   h2     @ .attachment.stdout                     'HOOKPROBE stop <h2>\n'
+```
+
+Lines 25 and 33 are channels 3 and 1 carrying the identical string, 0.1 s either side of a hook
+entry. Nothing about the string separates them; the entry does:
+
+| | a hook emission | the same string quoted |
+|---|---|---|
+| entry `type` | `attachment` | `user` (line 25), `assistant` (line 33) |
+| `attachment.type` | `hook_success` | the entry has no `attachment` key |
+| field path | `.attachment.content`, `.attachment.stdout` | `.message.content[0].content`, `.toolUseResult.stdout`, `.message.content[0].text` |
+
+The separation is not local to this file. Machine-wide, over every conversation and subagent file
+under `~/.claude/projects/`, at 2026-09-20T05:03Z:
+
+```
+$ python3 $TOOLS/corpus.py hook-entries
+files scanned: 156 conversation + 394 subagent
+files holding a hook attachment: 7
+  entry type=attachment  attachment.type=hook_success         hookEvent=PostToolUse      4
+  entry type=attachment  attachment.type=hook_success         hookEvent=PreToolUse       4
+  entry type=attachment  attachment.type=hook_success         hookEvent=SessionStart     3
+  entry type=attachment  attachment.type=hook_success         hookEvent=Stop             3
+  entry type=attachment  attachment.type=hook_success         hookEvent=SubagentStop     1
+  entry type=attachment  attachment.type=hook_success         hookEvent=UserPromptSubmit 3
+  entry type=attachment  attachment.type=hook_system_message  hookEvent=PostToolUse      4
+  ca75e7c4-22b8-46d6-bac7- entrypoint=['cli']              version=['2.1.239']
+  4b750c4a-e82a-4d1f-9dbd- entrypoint=['cli']              version=['2.1.239']
+  720ab230-dc70-47b1-a6e4- entrypoint=['cli']              version=['2.1.233']
+  11b1c7b5-1768-407c-991a- entrypoint=['sdk-cli']          version=['2.1.278']
+  495aaa7b-918a-4f8a-8418- entrypoint=['sdk-cli']          version=['2.1.278']
+  7e75075d-29fb-4c06-8860- entrypoint=['sdk-cli']          version=['2.1.278']
+  agent-a76a62b028a410a1c. entrypoint=['sdk-cli']          version=['2.1.278']
+other entries with `hookEvent` as a JSON key:        0
+other entries with "hookEvent" only inside a string: 43
+```
+
+**Across those 550 files, `hookEvent` occurs as a JSON key only inside a hook attachment.** The 43
+other entries hold the word only inside a string — prose about hooks, written on this machine while
+this measurement was being made, which is precisely the class of hit
+[the self-reference hazard](#the-self-reference-hazard-is-measured-not-assumed) is about. That count
+rises every time this document is edited or read; the key count does not. A substring test counted 43
+false positives at 05:03Z; the structural test counted none.
+
+The field path alone is not the test. Over the same 156 + 394 files, keeping only the attachment
+types that carry a `content` string:
+
+```
+$ python3 $TOOLS/corpus.py attachment-types | grep -v 'content: 0$'
+files scanned: 156 conversation + 394 subagent
+distinct attachment.type: 32
+  skill_listing                   529  with .attachment.content: 529
+  hook_success                     18  with .attachment.content: 18
+  hook_system_message               4  with .attachment.content: 4
+```
+
+Three of the 32 attachment types carry a `.attachment.content` string, and one of them,
+`skill_listing`, holds each available skill's own description verbatim — so a marker documented in a
+skill description would land at the same path. It is `attachment.type` that discriminates, not the
+path.
+
+Two limits of the discriminator, both measured rather than argued:
+
+- The entry identifies the **emitter, not the provenance of the text**. `attachment.content` is
+  whatever the hook printed, so a hook that echoed something it had read would file quoted text under
+  `hook_success`. What pins a hit to one plugin's hook is `attachment.command`, which records the
+  hook's own command line — `bash "${CLAUDE_PLUGIN_ROOT}/hooks/emit.sh" <event>` in all 18 entries
+  above.
+- All 18 `hook_success` entries on this machine sit in the four probe files listed above, written
+  under `entrypoint: "sdk-cli"`. The four hook attachments this measurement did not write are the
+  `hook_system_message` entries in the three `cli` files — Claude Code's own notices, carrying
+  `content, hookEvent, hookName, toolUseID, type` and no `stdout`, `exitCode` or `command`. So hook
+  attachments are filed in interactive sessions too, but **a plugin hook's stdout has been observed
+  only headless**.
+
+#### Two hook placements fire without reaching the conversation file
+
+Run 3 registered four further events and asked for a subagent, to find where the channel stops. The
+script appends a line to its own log before printing, so a firing is recorded whether or not its
+output lands:
+
+```
+$ cat $HBASE/fired.log
+04:27:51.000 sessionstart
+04:27:53.000 userpromptsubmit
+04:27:55.000 pretooluse
+04:27:57.000 pretooluse
+04:27:57.000 posttooluse
+04:27:58.000 subagentstop
+04:27:58.000 posttooluse
+04:27:59.000 stop
+04:27:59.000 sessionend
+```
+
+`Notification` and `PreCompact` are registered in the same `hooks.json` and do not appear: the run
+gave them no occasion, so they are untested rather than negative. Of the nine firings, five reached
+the conversation file, three reached the subagent file only, and one reached nothing at all.
+
+**A `SessionEnd` hook's output is filed nowhere.** The script ran — it wrote its line at 04:27:59,
+the same second the conversation file took its last write, at 04:27:59.649 — and printed the same
+string the eight landing firings printed. It appears in none of the four files of the probe project
+directory:
+
+```
+$ grep -c 'HOOKPROBE sessionend' $HOOKPROJ/*.jsonl $HOOKPROJ/*/subagents/*.jsonl | sort
+…/11b1c7b5-1768-407c-991a-f954cb7ca5dd.jsonl:0
+…/495aaa7b-918a-4f8a-8418-28abc9a4933d.jsonl:0
+…/7e75075d-29fb-4c06-8860-207335cfd428.jsonl:0
+…/7e75075d-29fb-4c06-8860-207335cfd428/subagents/agent-a76a62b028a410a1c.jsonl:0
+```
+
+**A hook that fires inside a subagent reaches the subagent file only.** The run's `SubagentStop`,
+and the `PreToolUse`/`PostToolUse` pair around the subagent's own Bash call, are in the subagent
+file; the conversation file holds only the events of the coordinator's own turn:
+
+```
+$ python3 $TOOLS/scan.py hooks $HOOKPROJ/7e75075d-*.jsonl $HOOKPROJ/7e75075d-*/subagents/*.jsonl
+7e75075d-29fb-4c06-8860- line 3    hook_success  SessionStart:startup exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 14   hook_success  UserPromptSubmit     exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 24   hook_success  PreToolUse:Agent     exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 26   hook_success  PostToolUse:Agent    exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 34   hook_success  Stop                 exit=0   content==stdout.strip()=True  keys=…
+agent-a76a62b028a410a1c. line 12   hook_success  PreToolUse:Bash      exit=0   content==stdout.strip()=True  keys=…
+agent-a76a62b028a410a1c. line 14   hook_success  PostToolUse:Bash     exit=0   content==stdout.strip()=True  keys=…
+agent-a76a62b028a410a1c. line 22   hook_success  SubagentStop         exit=0   content==stdout.strip()=True  keys=…
+```
+
+The three subagent-side entries are `isSidechain: true`, the five conversation-side ones
+`isSidechain: false`. `SubagentStop` is the obvious place to mark the end of a dispatched task, and
+it lands on the far side of the same boundary
+[a subagent's own turns](#two-candidate-methods-do-not-land) land on. What does reach the
+conversation file for that same dispatch is `PostToolUse` on the `Agent` call, and it is tied to the
+dispatch by id:
+
+```
+$ python3 $TOOLS/scan.py hookids $HOOKPROJ/7e75075d-*.jsonl $HOOKPROJ/7e75075d-*/subagents/*.jsonl
+## 7e75075d-29fb-4c06-8860-
+ line 3   SessionStart:startup toolUseID=3ac2d64d-b321-47bc-b1d1-8489c8791595
+ line 14  UserPromptSubmit     toolUseID=708d872d-30cd-45f7-bdc5-3087bbb57516
+ line 23  tool_use Agent    id=toolu_01NUQwpHhgcXk1gfJEpuVysV
+ line 24  PreToolUse:Agent     toolUseID=toolu_01NUQwpHhgcXk1gfJEpuVysV
+ line 26  PostToolUse:Agent    toolUseID=toolu_01NUQwpHhgcXk1gfJEpuVysV
+ line 34  Stop                 toolUseID=e51d2363-5dd2-4b4a-a947-2bd6e07d9808
+## agent-a76a62b028a410a1c.
+ line 11  tool_use Bash     id=toolu_011UMEmif2dkF9HYV96ChCoo
+ line 12  PreToolUse:Bash      toolUseID=toolu_011UMEmif2dkF9HYV96ChCoo
+ line 14  PostToolUse:Bash     toolUseID=toolu_011UMEmif2dkF9HYV96ChCoo
+ line 22  SubagentStop         toolUseID=75eb66bd-cd7e-47c2-b9ea-23ea0ecb37a7
+```
+
+A `PreToolUse` or `PostToolUse` entry carries the id of the call it brackets — `toolu_01NUQ…` on
+lines 24 and 26 is the `tool_use` at line 23 — while the other four events carry a uuid that is not a
+tool-call id at all. So a task boundary marked on `SubagentStop` is invisible to the conversation,
+while the same boundary marked on `PostToolUse` of the `Agent` call is both visible and attributable
+to the dispatch that ended.
+
 ### Attribution: the tokens post-date every instruction that could have echoed them
 
 A hit only counts as a landing if it came from the emission and not from the text that requested it.
-Three facts establish that, and each is measured on conversation `ef482a21`.
+For channels 1 to 5, three facts establish that, and each is measured on conversation `ef482a21`;
+channel 6's tokens are accounted for in its own section above.
 
 **The field paths.** Each hit sits at the exact path its channel predicts, in an entry the
 conversation itself produced (`isSidechain: false`, `type` matching the channel). An echo of a request
@@ -384,14 +758,18 @@ grep of the JSONL will find.
 
 ### Only 16-character lowercase hex was emitted
 
-All four tokens were `openssl rand -hex 8` output: 16 characters, `[0-9a-f]` only. The measurement
-therefore establishes the five channels **only for a bare alphanumeric run carrying no shell, JSON or
-markup metacharacter**.
+All seven tokens were `openssl rand -hex 8` output: 16 characters, `[0-9a-f]` only. The measurement
+therefore establishes the six channels **only for a bare alphanumeric run carrying no shell, JSON or
+markup metacharacter**. Channel 6 reaches a little further, because what its hook printed was
+`HOOKPROBE <event> <token>`: a **space** and **uppercase ASCII** arrived verbatim at
+`.attachment.content`, and the only transformation seen anywhere on that channel was the trailing
+newline being stripped from `content` while `stdout` kept it.
 
 Task #2 must not assume any of the following survives a channel, because none was tested: a **space**
-or any whitespace; `#`, `:`, `/`, `|`; a single or double **quote**; a **backslash**; a **newline**
-inside the marker; **non-ASCII** characters; a marker long enough to be truncated or persisted out of
-the JSONL; and a marker whose text is a substring of another marker. Two channels are quoting-sensitive
+or any whitespace on channels 1 to 5; `#`, `:`, `/`, `|`; a single or double **quote**; a
+**backslash**; a **newline** inside the marker; **non-ASCII** characters; a marker long enough to be
+truncated or persisted out of the JSONL; and a marker whose text is a substring of another marker.
+An interior space is the one item channel 6 has evidence for. Two channels are quoting-sensitive
 in ways a hex token cannot expose — channel 2 records the marker as it appeared on a shell command
 line, channel 4 as file bytes — and channel 5 is *known* to transform `<`, `>` and `&`.
 
@@ -825,18 +1203,29 @@ on, which is itself the point.
 Four of those nine — `.message.content[0].content`, `.message.content[0].input.command`,
 `.toolUseResult.stdout` and `.toolUseResult.file.content` — are exactly where channels 2, 3 and 4 land.
 **A marker whose format is described in a document that is later read, or quoted in a work order, is
-indistinguishable by grep from a real emission of it**, and neither a field-path nor an entry-type
-discriminator separates the two, because the defining text lands at the same paths. This is why token
-values are elided throughout, and it is the one hazard task #2 cannot design around by choosing a
-field.
+indistinguishable by grep from a real emission of it on channels 1 to 5**, and for those five neither
+a field-path nor an entry-type discriminator separates the two, because the defining text lands at
+the same paths. This is why token values are elided throughout.
+
+Channel 6 is the exception, and it is the reason the channel was probed at all: a hook emission is an
+`attachment` entry of type `hook_success`, a shape the nine paths above do not include and quoted text
+cannot produce — measured in
+[The hook entry tells an emission from a quotation](#the-hook-entry-tells-an-emission-from-a-quotation).
+A marker emitted through a hook can therefore be described in this document, and quoted in a work
+order, without either mention counting as a landing.
 
 ## What this still cannot answer
 
-- **How an emission is told apart from the text that defines it.** Measured above; no discriminator
-  found. This is the sharpest open constraint on the marker's form.
-- **Whether a marker containing a space, punctuation, a quote, a newline or non-ASCII survives a
-  channel.** Only 16-character lowercase hex was emitted. `<`, `>` and `&` are known to be escaped on
-  channel 5 and untested elsewhere.
+- **How an emission on channels 1 to 5 is told apart from the text that defines it.** Measured above;
+  no discriminator found for those five. Channel 6 has one, so this constrains the marker's form only
+  if task #2 chooses a channel other than the hook.
+- **Whether a marker containing punctuation, a quote, a newline or non-ASCII survives a channel.**
+  Channels 1–5 were measured on 16-character lowercase hex only, channel 6 on the same alphabet plus
+  a space and uppercase ASCII. `<`, `>` and `&` are known to be escaped on channel 5 and untested
+  elsewhere.
+- **What a hook emits on `Notification` and `PreCompact`.** Both were registered; neither fired in
+  the probe runs, so both are untested. Nor was an interactive session measured: every
+  `hook_success` entry on this machine was written headless, under `entrypoint: "sdk-cli"`.
 - **What `--resume` and `--continue` write.** Two continuation shapes were measured — a new file
   replaying the old one under a new `sessionId` with `sessionKind: "bg"`, and a restart appending into
   the existing file across a version change — but neither can be attributed to a particular flag from
@@ -859,7 +1248,8 @@ field.
   rely on", plus the append-only test. They read only the logs, so their figures come back larger,
   never different in kind.
 - **Frozen records.** Every block that depends on `$PROBE` — the whole of
-  [Five channels land](#five-channels-put-a-string-into-the-conversation-file),
+  [Six channels land](#six-channels-put-a-string-into-the-conversation-file) except its channel-6
+  subsections,
   [Attribution](#attribution-the-tokens-post-date-every-instruction-that-could-have-echoed-them)
   and the cross-agent figure in [Same-turn read-back](#same-turn-read-back-works). `$PROBE` is a
   per-conversation scratchpad directory belonging to conversation `ef482a21`. It still existed on
@@ -867,5 +1257,15 @@ field.
   is cleaned up, those blocks cannot be re-run and the outputs quoted here are the only record. The
   same-turn probe and the flush measurement are one-shot for the same reason — they were emitted by
   the agent that wrote this document, into that agent's own file.
+- **The channel-6 blocks sit in between.** The three probe conversations —
+  `11b1c7b5-…`, `495aaa7b-…` and `7e75075d-…`, plus `7e75075d-…/subagents/agent-a76a62b028a410a1c` —
+  are ordinary log files and stay at `$HOOKPROJ`, so every scan over them (`walk.py`, the four
+  `scan.py` hook subcommands, the two `corpus.py` censuses, the `grep` counts) re-runs as long as
+  those files exist. What does not come back is the plugin: it was a throwaway under `$HBASE` and was
+  deleted once the runs were over, so a *new* hook probe means building one again, and the script's
+  own `$HBASE/fired.log` went with it. `$HTOK` keeps the three token values so the masked blocks can
+  be re-derived; it is a scratchpad directory and dies with the scratchpad, exactly as `$PROBE` does.
+  The two machine-wide censuses grow with the corpus, so their figures are stamped with the minute
+  they were taken.
 - Re-running the frozen blocks would mean emitting fresh tokens from a coordinator turn, which is a
   measurement task #2 can commission if it needs a channel this document did not test.

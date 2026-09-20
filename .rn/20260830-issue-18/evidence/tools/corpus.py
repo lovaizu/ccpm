@@ -1,6 +1,7 @@
 """Whole-corpus scans over ~/.claude/projects, one subcommand per question.
 
-Usage: corpus.py {versions|version-range|persist-bracket|no-timestamp|worktree-ptr|entry-types}
+Usage: corpus.py {versions|version-range|persist-bracket|no-timestamp|worktree-ptr|entry-types|
+                  attachment-types|hook-entries}
 
 Each scan reads every conversation file on the machine (and, for persist-bracket, every
 subagent file too), so its figures grow as the logs grow. Kept out of the evidence
@@ -100,9 +101,63 @@ def worktree_ptr():
           % (sum(len(r) for r in by.values()), len(CCPM)))
 
 
+def attachment_types():
+    """every `attachment.type` on this machine, and how many carry a `content` string."""
+    c, withtext = collections.Counter(), collections.Counter()
+    for f in CONV + SUBS:
+        for e in entries(f):
+            a = e.get('attachment')
+            if not isinstance(a, dict):
+                continue
+            c[a.get('type')] += 1
+            if isinstance(a.get('content'), str):
+                withtext[a.get('type')] += 1
+    print('files scanned: %d conversation + %d subagent' % (len(CONV), len(SUBS)))
+    print('distinct attachment.type: %d' % len(c))
+    for t, n in c.most_common():
+        print('  %-28s %6d  with .attachment.content: %d' % (t, n, withtext[t]))
+
+
+def hook_entries():
+    """hook attachments machine-wide, and where else the name `hookEvent` turns up."""
+    def keys(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                yield k
+                for x in keys(v):
+                    yield x
+        elif isinstance(o, list):
+            for v in o:
+                for x in keys(v):
+                    yield x
+
+    c, files, as_key, as_text = collections.Counter(), {}, 0, 0
+    for f in CONV + SUBS:
+        for e in entries(f):
+            a = e.get('attachment') if isinstance(e.get('attachment'), dict) else {}
+            if str(a.get('type', '')).startswith('hook'):
+                c[(e.get('type'), a.get('type'), a.get('hookEvent'))] += 1
+                files.setdefault(f, [set(), set()])
+                files[f][0].add(e.get('entrypoint'))
+                files[f][1].add(e.get('version'))
+            elif 'hookEvent' in json.dumps(e):
+                as_key += 'hookEvent' in set(keys(e))
+                as_text += 'hookEvent' not in set(keys(e))
+    print('files scanned: %d conversation + %d subagent' % (len(CONV), len(SUBS)))
+    print('files holding a hook attachment: %d' % len(files))
+    for k, n in sorted(c.items(), key=str):
+        print('  entry type=%-11s attachment.type=%-20s hookEvent=%-16s %d' % (k + (n,)))
+    for f in sorted(files):
+        print('  %-24s entrypoint=%-20s version=%s'
+              % (os.path.basename(f)[:24], sorted(files[f][0]), sorted(files[f][1])))
+    print('other entries with `hookEvent` as a JSON key:        %d' % as_key)
+    print('other entries with "hookEvent" only inside a string: %d' % as_text)
+
+
 SCANS = {'versions': versions, 'version-range': version_range,
          'persist-bracket': persist_bracket, 'no-timestamp': no_timestamp,
-         'worktree-ptr': worktree_ptr, 'entry-types': entry_types}
+         'worktree-ptr': worktree_ptr, 'entry-types': entry_types,
+         'attachment-types': attachment_types, 'hook-entries': hook_entries}
 
 if __name__ == '__main__':
     if len(sys.argv) != 2 or sys.argv[1] not in SCANS:
