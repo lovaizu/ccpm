@@ -190,23 +190,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-20
-- **Last completed**: #1 Step 3 まで。本セッションは `plan.md` を全面書き直し（310 行、`project/` 配下・gitignore）。
-- **Next**: #1 の新 Step 4 — `work/mock-review.md` を作る。ユーザー承認済みで、再開後すぐ着手する。
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8（OPEN）。先方入力は
-    `project/sample-project/input/client-request_20260918/`（PDF＋注記付きモック 3 枚）。
-  - `mock-review.md` の作り方：モックの注記＋注記の無い要素（レイアウト・ブレークポイント・
-    余白・カードの比率）を洗い出し、参考サイト（フューチャー技術ブログ・Zenn・Qiita）の実物と
-    突き合わせ、〔決定／たたき台／要提案〕に分ける。たたき台のうち参考サイトと食い違うものを
-    提案候補に挙げる。出口は提案書の「承った点／ご提案する点」。
-  - この表の上で Decisions 2（検討 4 件の採否）と 3（画面幅）を一度に判断する。個別往復はしない。
-  - `plan.md` の構成：Request / Priority / Scope / Process / Schedule / Cost / Risk / Decisions /
-    Contract / AsIs。Decisions 1（1 と 2 の 2 通りを正直に積んで案の本数を決める）と単価 ¥（額） は確定。
-    Priority は 費用 ＞ 品質 ＞ 範囲 ＞ 時期。
-  - Decisions 4 は独立で並行可：デザイナーは Figma Starter のまま、ファイルを Client へ渡す。
-    Dev Mode・MCP が要る場合に Client 側で何を用意するかを調べて提案する。telldes も試す。
-  - 編集方針（ユーザー指示）：モックを見れば分かることは書かない。経緯・変更履歴・原文引用は載せない。
-    h1 は英語。提案は 1 つずつ出す。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
