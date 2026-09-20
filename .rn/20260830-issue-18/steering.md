@@ -32,27 +32,30 @@ retrospective with nothing to say naturally says nothing.
 
 # Acceptance criteria
 
-- A session's JSONL files are locatable from the session's own working directory alone — no matching
-  on `sessionId` and no correlation against `git log` timestamps.
-- Sessions running concurrently against worktrees of one repository never share a log location, so
-  one session's interval can never draw on another's entries.
-- Every task's interval boundary is discoverable inside the JSONL by grep alone.
-- A boundary marker names its session and its task from the marker line alone — without consulting
-  `steering.md` at any revision or any commit history. A bare task number does not satisfy this.
-- The same holds for a collected friction record: it names its task without depending on
-  `steering.md`'s task list as it stands later.
-- All of the above hold mid-session, before the session ends — not only after it closes.
-- The collection stage runs with no user interaction and no user-visible output, and records nothing
-  when the interval left no friction trace.
-- The stocktake stage runs only when invoked, presents only friction recurring across intervals, and
-  files an issue only after the user approves it.
-- One `rn` session spanning several conversations (several JSONL files) is still locatable and
-  splittable as one session.
-- `rn/docs/design.md` records the decisions and their rejected alternatives; `rn/README.md` describes
-  what a user sees and does; `rn/CHANGELOG.md` carries the entries under `## [Unreleased]`.
-- The mechanism is demonstrated against this session's own JSONL, with the commands and observed
-  output recorded — not argued from reasoning alone.
-- `claude plugin validate` passes `--strict` for both the plugin and the marketplace root.
+- A session's conversation record can be identified in full by machine, with no by-hand correlation
+  work left to the user. (Checked by identifying this session's own record and comparing it against
+  what the session actually produced.)
+- A session's record never draws in another session's work — including sessions running at the same
+  time against sibling worktrees of one repository.
+- Any one task's work can be read back as its own stretch of the record, separated from the tasks
+  either side of it.
+- A stretch of record stays attributable to the task it came from after the task list has been
+  revised: a later reader can tell what was being worked on, with no other file and no commit history
+  open.
+- The same holds for a recorded friction fact — what it was about survives the task list changing
+  under it.
+- All of the above are true while the session is still running, not only once it has ended.
+- Suspending a session costs the user nothing extra — no question, no added output — and an interval
+  that held no friction leaves nothing behind.
+- The user chooses when to take stock. The retrospective proposes only friction it has seen more than
+  once, always with the facts it rests on, and files nothing without that user's approval.
+- A session spread over several conversations is still read back as one session.
+- A user can tell, from the plugin's own documents, what the retrospective does around them and what
+  changed for them.
+- The mechanism is known to work on real material, not only in principle. (Demonstrated on this
+  session's own record, with the commands and observed output recorded.)
+- Installing and updating the plugin is not broken by the change. (`claude plugin validate --strict`
+  passes for both the plugin and the marketplace root.)
 
 # Assumptions
 
