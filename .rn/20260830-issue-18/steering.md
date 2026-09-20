@@ -371,8 +371,9 @@ so only a genuinely suspended session reads `paused`.)
 - **Date**: 2026-09-20
 - **Last completed**: #2 — `design.md`'s decisions recorded and content-complete; round-3's two
   orphaned Craft findings fixed directly (`71f7ee0`); all reviews now PASS.
-- **Next**: #3 — design sign-off. `design.md` is pushed and presentable on the PR; only the user's
-  verdict is outstanding.
+- **Next**: #3 — design sign-off. A `/rn:gm` revise verdict came in via PR review (design.md too
+  verbose, wanted bullet points throughout) and was addressed (`a1d614a`, condensed 787→654 lines);
+  only the user's verdict on the revised `design.md` is outstanding.
 - **Notes**: branch `worktree-issue-18`, PR https://github.com/lovaizu/ccpm/pull/20 (draft). Resume
   by waiting for `/rn:ty` (approve → proceed to #4) or `/rn:gm` (revise `design.md`, re-present).
   `rn` issue https://github.com/lovaizu/ccpm/issues/30 (fix rounds patch only named findings, no
