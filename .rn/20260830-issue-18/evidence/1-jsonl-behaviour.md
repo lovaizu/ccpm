@@ -56,7 +56,7 @@ are deleted — so each says the minute it was taken.
 | 6 | Two hook placements do **not** land either: a `SessionEnd` hook's output is filed nowhere, and a hook firing inside a subagent reaches the subagent file only. | [Hook events that do not land](#two-hook-placements-fire-without-reaching-the-conversation-file-sessionend-and-inside-a-subagent) |
 | 7 | A string emitted in one turn is readable by a later tool call in that same turn — shown on a subagent reading its own file, and separately across agents on the conversation file at an 11.1 s upper bound. | [Same-turn read-back](#same-turn-read-back-works) |
 | 8 | Only 16-character lowercase hex was emitted on channels 1–5, so nothing is known there about spaces, quotes, newlines or non-ASCII. `<`, `>` and `&` are known **not** to survive channel 5 unchanged and are untested on the rest. Channel 6 additionally carried a space and uppercase ASCII. | [Character set](#only-16-character-lowercase-hex-was-emitted-so-the-character-set-is-untested) |
-| 9 | A conversation file is placed by the directory the session started in and is moved on relocation, so 6 of the 155 files on this machine that record a `cwd` sit under a directory no `cwd` of theirs reproduces — one of them a 510-entry conversation. | [Placement](#a-file-is-placed-by-relocation-target-not-by-the-working-directory-of-its-entries) |
+| 9 | A conversation file is placed by the directory its **conversation** started in and is moved on relocation, so 6 of the 155 files on this machine that record a `cwd` sit under a directory no `cwd` of theirs reproduces — one of them a 510-entry conversation. | [Placement](#a-file-is-placed-by-relocation-target-not-by-the-working-directory-of-its-entries) |
 | 10 | The set of files in a project directory changes while the session is open: three files became five and then seven across the measurement rounds. | [The file set moves](#the-file-set-changes-while-the-session-is-open) |
 | 11 | A conversation can continue into a **new file under a new `sessionId`** that replays every uuid-carrying entry and drops almost every bookkeeping one, so a marker emitted before the continuation exists twice on disk. A `continued-in` entry links the pair, and a snake_case `session_id` marks each replayed copy. | [Continuation by replay](#a-conversation-can-continue-into-a-new-file-that-replays-the-old-one) |
 | 12 | A restart can instead append into the existing file, leaving no seam record other than a change of `version` mid-file. | [Restart in place](#a-restart-can-append-into-the-existing-file-marked-only-by-the-version-stamp) |
@@ -583,7 +583,7 @@ h3: 0 0 5
 ```
 
 Each conversation carries only the value that was in the file at the moment it ran, so **what a hook
-emits is decided at run time and can name the session and the task** rather than being fixed when the
+emits is decided at run time and can name the conversation and the task** rather than being fixed when the
 plugin is installed. (Run 2's seven is five hook entries plus two quotations; the next section is
 about those.)
 
@@ -1063,11 +1063,12 @@ Read the three numbers in order:
 
 - **All 34 directory names are `[A-Za-z0-9-]` only**, so no other character class has been exercised
   and nothing is known about a space or a non-ASCII path segment in a *directory name*. That is not
-  the same as saying no session has touched such a path: `cwd` values on this machine include
-  `…/input/豆蔵様よりご要望資料_20260918`. A directory is named for where the session *started*, and no
-  session has started in such a path.
+  the same as saying no conversation has touched such a path: `cwd` values on this machine include
+  `…/input/豆蔵様よりご要望資料_20260918`. A directory is named for where its conversation *started*,
+  and no conversation has started in such a path.
 - **32 of 57 (cwd, directory) pairs are not reproduced by the rule.** Almost all of those are a
-  session that `cd`-ed below its starting directory: the file stays where the session started while
+  conversation that `cd`-ed below its starting directory: the file stays where the conversation
+  started while
   the entries record the deeper path. So the rule maps *a session's starting directory* to a
   directory, not *an entry's `cwd`*.
 - **6 files of 155 are filed under a directory no `cwd` of theirs reproduces at all.** Those six are
@@ -1687,7 +1688,7 @@ evidence here it offers no discriminator a quotation could not forge.
   carried `2.1.251`, `2.1.252` and `2.1.261` on the same day, so several versions were in concurrent
   use and an old stamp after a gap discriminates nothing.
 - **How to enumerate a session's conversations completely.** Globbing one project directory is unsound
-  in both directions, the file set moves in both directions while the session is open, `continued-in`
+  in both directions, the file set moves in both directions while the `rn` session is open, `continued-in`
   covers one pair in 156 files, and `worktreeSession.sessionId` names a worktree origin rather than an
   order. No measured method is complete.
 - **What the relocation trigger is.** Leaving the worktree is common to all six relocated files and
