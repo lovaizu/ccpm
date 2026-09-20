@@ -566,7 +566,7 @@ marker in 4.7 — a fact recorded against `#N` would be unreadable once `/rn:gm`
 the friction itself, in a sentence or two; the JSONL citation it traces to — file and line, which is
 available in literally every case the collection stage would ever cite, since every entry it could point
 at sits in an append-only file and so has a stable line position once written (2.1's own
-liveness/append-only measurement), plus the source entry's own `uuid` when it carries one; a short quoted
+append-only measurement), plus the source entry's own `uuid` when it carries one; a short quoted
 fragment may sit alongside either for readability, but is only ever a supplement, never a substitute. The
 dedup key above is that `uuid` when the source entry has one, the file-and-line pair otherwise, never a
 fragment-text compare — the same fix 4.7 already applies to the task-boundary marker, and for the same
@@ -636,7 +636,7 @@ file the group as one GitHub issue) or `/rn:gm` (revise → the coordinator eith
 differently or drops the proposal, per the user's feedback) — the same verdict vocabulary 3.1(A) already
 gives every reviewed result, not a third channel: a stocktake proposal (the coordinator builds it,
 presents it, and gets an approve/decline verdict on it) is structurally exactly that — a reviewed
-result — not an escalation, which 5.1 ties to a change in the *agreed plan*, and not a weigh-in question,
+result — not an escalation, which 5.1 ties to a change in the *agreed plan or design*, and not a weigh-in question,
 which is an ad hoc query mid-task; stocktake is neither. Unlike the plan gate, which always has a
 `steering.md` just written underneath it (3.3), a standalone `/rn:sk` run may have no active session — no
 `steering.md` — at all: `/rn:sk` itself carries no version check of its own — 4.6
