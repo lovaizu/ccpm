@@ -496,6 +496,28 @@ it (a "revise" verdict, say) would be misattributed to whichever neighboring tas
 stretch of the log — believed not to occur, since every sign-off command reads `steering.md` at minimum,
 but carried forward as the same unmeasured case 4.7 already names (5.2).
 
+**Ordering the files themselves, before cutting intervals inside any one of them.** A session's own
+record commonly spans more than one file — this session alone has seven, or eight counting the one
+relocation places outside the working-directory glob (2.1) — so cutting per-task intervals across the
+whole session first needs those files placed in order relative to each other, a question distinct from
+the within-file line-position rule above. Two cases. A **continuation pair** — one file continuing
+another, linked by a `continued-in` entry (2.1; the only instance measured machine-wide, but directional
+by construction) — is already known-adjacent and in order regardless of any timestamp: the entry names
+predecessor and successor directly, so the predecessor's stretch always precedes its successor's, the
+same ordering the dedup rule above already relies on to treat a replayed marker's original as preceding
+its copy. Files with **no continuation link between them** — independent conversations within the same
+session, for instance either side of a `/clear` or a fresh start — are ordered instead by each file's own
+first *timestamped* entry, never by comparing timestamps across entries within a stream, which the rule
+above already distrusts for the measured, unbounded inversions of 2.1: comparing which file as a whole
+started earlier is a coarser, whole-file comparison, not a per-entry one, so it does not inherit that
+specific failure mode. This file-start rule is a reasoned choice, not a measured one — task #1 measured
+cross-entry inversion within a file, not cross-file start-time reliability directly — and one part of the
+evidence does bear on it: a file can carry no timestamped entry at all for a stretch of its own early
+life (measured: a 10-entry, no-timestamp file grew into a 296-entry conversation, and a separate,
+single-entry file carries no timestamp whatsoever), so a file-start comparison taken as a snapshot
+mid-session can find a newer file with nothing yet to compare — carried forward as a residual risk
+alongside the others this section already names, not assumed away.
+
 **The bar for a friction fact worth recording** is a citable trace: a specific JSONL entry (or entries)
 the fact points at — a tool call that errored and had to be retried, an expert review verdict of
 "revise" together with the defect it names, an explicit user correction that changed already-built work,
@@ -509,8 +531,10 @@ not a shortfall to explain.
 
 **Finding where the previous run left off.** The collection stage is idempotent rather than
 watermarked: every `/rn:dn` re-scans the session's entries from its own start, and a fact is appended
-only if no existing entry in `.rn/friction.md` already carries the same JSONL citation — so re-scanning
-an interval a previous run already covered costs a re-read, never a duplicate record. This was chosen
+only if no existing entry in `.rn/friction.md` already carries the same JSONL citation — always the
+file-and-line pair (below), never a fragment-text compare, so re-scanning an interval a previous run
+already covered costs a re-read, never a duplicate record regardless of how a re-scan's own extraction
+happens to word the fact. This was chosen
 over storing an explicit watermark (a line in `steering.md`'s own State section, or a marker appended to
 `.rn/friction.md` itself naming the last-processed position) for two reasons that follow from this
 design's own existing constraints rather than a fresh judgment call: 2.2 already binds this design
@@ -532,8 +556,14 @@ per-session location would scatter exactly what a later stocktake needs gathered
 entry per friction fact, appended, never rewritten by collection, each carrying: the date; the session's
 slug and the task's description text as they read at the time (never `#N`, for the same reason as the
 marker in 4.7 — a fact recorded against `#N` would be unreadable once `/rn:gm` moves the list under it);
-the friction itself, in a sentence or two; the JSONL citation it traces to (file and line, or a short
-quoted fragment); and a status field, defaulting to unfiled, that the stocktake stage (4.9) flips once a
+the friction itself, in a sentence or two; the JSONL citation it traces to — file and line, which is
+available in literally every case the collection stage would ever cite, since every entry it could point
+at sits in an append-only file and so has a stable line position once written (2.1's own
+liveness/append-only measurement); a short quoted fragment may sit alongside it for readability, but is
+only ever a supplement, never a substitute, and the dedup equality above is always the file-and-line
+pair, never a fragment-text compare, so an LLM-driven re-scan paraphrasing the same fragment differently
+can never itself produce a second record — and a status field, defaulting to unfiled, that the stocktake
+stage (4.9) flips once a
 cluster built from this fact becomes an approved issue — without it, a fact already acted on would look
 "recurring" again on every later run, since the store is never pruned. Markdown, matching `steering.md`
 and `design.md`, so the user can open and read it directly with no tooling of its own.
@@ -568,25 +598,43 @@ at every suspend would reintroduce exactly the per-suspend tax the two-stage spl
 exists to avoid.
 
 **Mechanism.** The command reads `.rn/friction.md`, and the coordinator — not a fixed keyword or string
-match — reads all of its unfiled facts and judges which describe the same underlying friction: a
-judgment call, not a mechanical clustering check, the same kind 4.5 already accepts for scope overlap
-between design docs. An exact or keyword match on the friction text was considered and rejected for
-this: two facts about the same underlying issue, worded differently across tasks or sessions, would
-never cluster under it, silently under-reporting exactly the recurrence this stage exists to surface.
-Grouping is not by which session or task recorded a fact, since the same underlying friction can recur
-under different task descriptions in different sessions. Only a group with more than one member is
-surfaced (steering.md's own Acceptance criteria: "friction it has seen more than once"), each with every
-fact in the group attached, citations included, so a proposal is never shown without the material it
-rests on. For each surfaced group the coordinator proposes one improvement and takes the user's explicit
-approval through its own direct yes/no exchange, not through `/rn:ty`/`/rn:gm`'s shared verdict
-vocabulary: 3.1(A) reserves that vocabulary for sign-off tasks and reviewed results, and a stocktake
-proposal is neither one — it is answered directly, the same way 3.1(A) already carves out escalation and
-weigh-in questions. Only an approved proposal becomes a GitHub issue, and a declined or skipped group
-stays in `.rn/friction.md`, unfiled, until it recurs further or the user acts on it directly. A group of
-one is never proposed, and a run that finds no recurring group reports that plainly rather than
-manufacturing one (task #6's own completion criterion). Once a group's proposal is approved and filed,
-every fact in that group has its status field (4.8) flipped so the same pattern is not re-proposed on a
-later run — necessary precisely because `.rn/friction.md` is never pruned.
+match — reads all of its unfiled facts and groups them against a stated equivalence test: two facts
+belong to the same group when one could be rewritten as a restatement of the other without losing or
+adding information — concretely, when merging the two into a single sentence would drop nothing either
+fact states on its own. The test targets the friction itself, not the task it happened in or the
+wording it was recorded with, which is what lets two differently-worded facts from different tasks or
+sessions cluster at all. Applying the test is still a judgment call, of the same kind 4.5 already accepts
+for scope overlap between design docs — the coordinator, not a mechanical rule, decides whether merging
+would lose information — but it is a judgment call guided by a stated test, not an unconstrained one. An
+exact or keyword match on the friction text was considered and rejected for this: two facts about the
+same underlying issue, worded differently across tasks or sessions, would never cluster under it,
+silently under-reporting exactly the recurrence this stage exists to surface. Grouping is not by which
+session or task recorded a fact, since the same underlying friction can recur under different task
+descriptions in different sessions. Only a group with more than one member is surfaced (steering.md's own
+Acceptance criteria: "friction it has seen more than once"), each with every fact in the group attached,
+citations included, so a proposal is never shown without the material it rests on. For each surfaced
+group the coordinator proposes one improvement and takes the user's verdict through `/rn:ty` (approve →
+file the group as one GitHub issue) or `/rn:gm` (revise → the coordinator either re-clusters the group
+differently or drops the proposal, per the user's feedback) — the same verdict vocabulary 3.1(A) already
+gives every reviewed result, not a third channel: a stocktake proposal (the coordinator builds it,
+presents it, and gets an approve/decline verdict on it) is structurally exactly that — a reviewed
+result — not an escalation, which 5.1 ties to a change in the *agreed plan*, and not a weigh-in question,
+which is an ad hoc query mid-task; stocktake is neither. This is `/rn:ty`/`/rn:gm`'s first call site with
+no active session's task loop underneath it: `/rn:sk` itself carries no version check of its own — 4.6
+names only `on`/`dn`/`up`/`ty`/`gm` as the five skills that carry one — but a stocktake verdict is taken
+through `/rn:ty`/`/rn:gm`, and their own version-check step (4.6) is written against "the active
+session's `Rn version:`," something a standalone stocktake run need not have identified; and their
+advance step (4.2, 3.2) enumerates only a plan/design/evaluation gate proceeding or a reviewed item
+standing as final, neither of which is "file the group as an issue" or "return to re-cluster." Both gaps
+are this decision's own scope extension of the two commands, stated plainly rather than assumed already
+covered — task #6, which implements `/rn:sk`, carries the matching change into `ty`'s and `gm`'s own
+skill steps. An approved proposal becomes a GitHub issue, and
+a revised or otherwise unresolved group stays in `.rn/friction.md`, unfiled, until it recurs further, is
+re-clustered successfully, or the user acts on it directly. A group of one is never proposed, and a run
+that finds no recurring group reports that plainly rather than manufacturing one (task #6's own
+completion criterion). Once a group's proposal is approved and filed, every fact in that group has its
+status field (4.8) flipped so the same pattern is not re-proposed on a later run — necessary precisely
+because `.rn/friction.md` is never pruned.
 
 **Breach detection.** A breach (an issue filed with no matching approved proposal in the conversation
 transcript) is checkable directly on GitHub, against `.rn/friction.md`'s status field for the facts it
@@ -708,4 +756,11 @@ Completeness for
 simplicity in the friction store: `.rn/friction.md` is never pruned, so a filed pattern needs its own
 status field to keep from being re-proposed forever, and a fact whose only trace is the collecting
 subagent's own impression is simply not recorded at all, even where that impression might have been
-right — the bar is a citable JSONL entry, not the subagent's judgment (4.8).
+right — the bar is a citable JSONL entry, not the subagent's judgment (4.8). One edge the file-and-line
+dedup rule (4.8) does not itself close: the measured `sessionKind: "bg"` continuation shape copies a
+uuid-carrying entry into a second file at a different line, under a restamped `sessionId` (2.1), so the
+same underlying entry can carry two distinct file-and-line citations, one per copy. 4.8 already dedups
+this for task-boundary markers specifically by their `uuid`; nothing yet states the same rule for an
+arbitrary friction citation, so if collection ever draws a citation from a different copy across two
+runs, the two citations would not compare equal — carried forward as a residual risk rather than
+resolved here.
