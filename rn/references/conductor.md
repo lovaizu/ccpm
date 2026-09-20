@@ -38,4 +38,5 @@ Before anything goes on — to the evaluator, to the PR, to the user — the con
 - a stop would ask the user what the record answers, ask more than one thing, or offer options
   without a recommendation.
 
-Each skill carries, in the step where it applies, the check it makes.
+Each command and the task loop carry, in the step where it applies, the check the conductor makes
+there.

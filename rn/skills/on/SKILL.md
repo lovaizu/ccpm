@@ -42,7 +42,7 @@ Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops
 6. **Have the plan judged before the user sees it, so their review starts from a plan already
    free of avoidable defects.** Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan.
    NG → fix, commit `docs: revise plan — {what changed}`, push, judge again; after three NG rounds
-   stop and ask the user, opening with the session-status block.
+   stop and ask the user one thing, with a recommendation, opening with the session-status block.
 
 7. **Stop at the plan gate — this decision is the user's.** Open with the session-status block
    (`${CLAUDE_PLUGIN_ROOT}/references/steering.md`) and ask one thing: `/rn:ty` or `/rn:gm`. `/rn:ty`

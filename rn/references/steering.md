@@ -91,14 +91,15 @@ opening `steering.md`.
 ```
 ── {slug}: {goal one-liner} ──
 ✅ {ids}   {short labels}
-👉 #{id}   {task name} ── asking now: {what this stop needs from the user}
+👉 #{id}   {task name} ── asking now: {the one thing this stop needs from the user}
 ⬜ {ids}   {short labels}
 ({outlook — what follows this stop})
 ```
 
 Derive it from `steering.md` at the moment of writing — never reuse an earlier block. A stop not
 tied to a task (the plan gate) names the gate instead of an id. Omit the ⬜ line when nothing
-remains. Write it in the user's conversation language.
+remains. Write it in the user's conversation language. A stop asks one thing, never what the
+record already answers, and carries the conductor's recommendation.
 
 ## Migration — a session written under an older rn
 
@@ -116,7 +117,8 @@ it recorded lost.
    step that records substance, moved into the template's fields. Drop an unchecked step that
    existed only to run the old `rn`'s own review — a self-check, an expert review, a record into a
    process file such as `checks/`; a step that records substance stays and points where this `rn`
-   puts it, the PR. A checked step stays as it is: it records what happened.
+   puts it, the PR. A checked step stays as it is: it records what happened. The new file holds
+   current intent only — no history of the old `rn` or of the migration; git keeps that.
 
 3. **Sync `State` to where the session actually stands, so the next command continues rather than
    restarts.** Carry every fact from the old `State`, including anything pending or deferred, and
@@ -126,9 +128,10 @@ it recorded lost.
    leaves.** That is the `checks/` directory and nothing else — evidence and deliverables stay. Git
    history keeps what is removed.
 
-5. **Have the migrated plan judged as a plan, so the session continues at the current bar.** Run
-   `evaluate.md` with kind Plan plus its Migration line; fix every NG, three rounds at most, then
-   ask the user.
+5. **Have the migrated plan judged as a plan, so the session continues at the current bar.** First
+   read it as the conductor, against the old file: every task, check-off and pending item present,
+   every criterion a state. Then run `evaluate.md` with kind Plan plus its Migration line; fix
+   every NG, three rounds at most, then ask the user one thing, with a recommendation.
 
 6. **Stamp `Rn version:` with the installed version, commit `chore: migrate session to rn
    <version>`, and push, so later commands see a current session and the migration is on record.**

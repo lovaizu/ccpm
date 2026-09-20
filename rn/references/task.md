@@ -5,9 +5,9 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
 
 ## Roles
 
-- **Conductor** — the agent in the conversation, per `conductor.md`: it reads every result before
-  anyone else, keeps `steering.md` true, and interrupts the user only for the plan, a design, the
-  evaluation, or a change to one of them.
+- **Conductor** — the agent in the conversation. This loop runs under the role in
+  `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, taken up by the command that entered it; read
+  it again here if it is not in this conversation.
 - **Implementer** — `Agent`, `model: sonnet`, no conversation history. Builds one task.
 - **Evaluator** — `Agent`, `model: opus`, no conversation history. Judges one artifact per
   `evaluate.md`.
@@ -28,21 +28,25 @@ enforced.
 
 2. **Read the result before anyone else does, so the evaluator and the user see only work that
    could be complete.** Check it on the thing itself — not on the implementer's report — against
-   the task's Success criteria and the Rules. A miss the conductor can see goes straight back to
+   the task's Success criteria and the Rules: does it show what the report claims; does every fact
+   or number in it have a source; does every term carry a meaning the reader can take, with no
+   history, self-evident lines or repetition. A miss the conductor can see goes straight back to
    the implementer with what is missing; only then does it go on.
 
 3. **Have the result judged by someone other than its author, so a pass means it does its job.**
    Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` — kind Deliverable for an ordinary task, kind
    Design for "Design sign-off", kind Session for "Evaluation sign-off". A verdict line without
    evidence is not a verdict — send it back. NG → step 1 again with the findings. After three NG
-   rounds on one task, stop and ask the user, opening with the session-status block.
+   rounds on one task, stop and ask the user one thing, with a recommendation, opening with the
+   session-status block.
 
 4. **Fold what was learned into `steering.md`, so the plan stays true and the next task starts
    from it.** After every result and every evaluation: an Assumption that proved false is corrected;
    a finding that would recur becomes a Rule; a task the work uncovered is added, one made
    unnecessary is removed; the `Design:` line names the design once it exists. Commit with the
    task's work. A change to the Goal, the Success criteria or an approved design is the user's —
-   raise it at once with the session-status block, never hold it for a gate.
+   raise it at once, as one question with a recommendation, opening with the session-status block;
+   never hold it for a gate.
 
 5. **For an ordinary task, record completion where a fresh conversation will read it, then move
    on — the user is not asked what is not theirs to decide.** Check the task and its steps off in

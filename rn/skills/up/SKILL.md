@@ -39,7 +39,9 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
 7. **Bring `steering.md` back in line with the record, so the session continues from what is
    true, not from what was last written.** A `Pending` item the commits show closed is closed; an
    Assumption a commit disproved is corrected; a blocker in `Pending` is investigated and a way
-   through found — a task is removed only when it has become unnecessary.
+   through found — a task is removed only when it has become unnecessary. A change this forces on
+   the Goal, the Success criteria or an approved design is the user's: raise it as one question
+   with a recommendation, opening with the session-status block, before continuing.
 
 8. **Mark the session live and commit, so only a genuinely suspended session reads `paused`.** Set
    `Status: not suspended`; leave `Pending` and `Notes` as they are — they are still true and

@@ -40,7 +40,8 @@ Writes down where the session stands so a fresh conversation can pick it up. Run
 7. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
    untracked path: regenerable build or test residue → add a rule to `.gitignore`; anything else →
    ask the user (commit, ignore, keep, or delete it themselves), one path at a time with a
-   recommendation, opening with the session-status block. Never delete a file yourself; note any path the user leaves unresolved in `Pending`.
+   recommendation, opening with the session-status block. Never delete a file yourself; note any
+   path the user leaves unresolved in `Pending`.
 
 8. **Push, so the suspended session exists outside this machine.** Commit `State` and any
    `.gitignore` change together, then push. If the push fails, continue and say so in the report.

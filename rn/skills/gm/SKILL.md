@@ -28,13 +28,13 @@ dropped.
    Think from what the feedback is for, not from its wording: a change to the deliverable goes
    through the task loop (`${CLAUDE_PLUGIN_ROOT}/references/task.md`, from step 1), a change to
    `steering.md` is the conductor's own; the same lens is applied to the whole artifact, not only
-   the line named. Feedback that repeats a finding already made becomes a Rule in `steering.md`.
-   Read the revised thing itself before it goes on; have it judged again; re-present with the
-   session-status block.
+   the line named. A fact or number changes only on evidence, never to match the feedback.
+   Feedback that repeats a finding already made becomes a Rule in `steering.md`. Read the revised
+   thing itself before it goes on; have it judged again; re-present with the session-status block.
 
 5. **Work every unresolved review thread, so nothing the reviewer wrote is lost.** Read the PR's
    review threads (`gh api graphql` on `reviewThreads`, paginated). For each thread that is
    unresolved and where the reviewer has the last word: address it as in step 4, commit and push,
    and reply on that thread with what changed and the commit; or, when the ask is unclear, reply
-   with the question and change nothing. Never resolve a thread — that is the reviewer's act.
+   with one question only the reviewer can answer, with a recommendation, and change nothing. Never resolve a thread — that is the reviewer's act.
    Report when the queue is empty, opening with the session-status block.

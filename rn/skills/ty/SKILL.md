@@ -21,7 +21,8 @@ about what was approved.
 3. **Name what is being approved, so the verdict cannot land on the wrong thing.** It is the most
    recent gate or reviewed item presented for a decision — in this conversation, or in `State`'s
    `Pending` after a resume. Say it back in one line. If more than one is plausible, ask which,
-   with a recommendation, opening with the session-status block. Nothing pending → say so with the block and stop.
+   with a recommendation, opening with the session-status block. Nothing pending → say so with the
+   block and stop.
 
 4. **Advance from the approved point, so the approval has an effect the record shows.**
    - Plan gate → run task #1 per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
