@@ -49,7 +49,7 @@ are deleted — so each says the minute it was taken.
 | # | Finding | Section |
 |---|---|---|
 | 1 | Every entry a conversation has finished writing is on disk while the conversation is open, about 0.1 s behind its own timestamp — measured on a subagent file; the entry for a tool call still running is not there yet. | [Liveness](#the-conversation-file-is-live-and-lags-its-own-entries-by-about-01-s) |
-| 2 | Six channels put an emitted string into the conversation file; each lands at the field path its channel predicts. Channel 5 lands only conditionally — see row 5's neighbours in the channel table. What was emitted was a hex token on channels 1–5, and `HOOKPROBE <event> <token>` on channel 6 — not an arbitrary string, which row 8 is about. | [Six channels land](#six-channels-put-a-string-into-the-conversation-file) |
+| 2 | Six channels put an emitted string into the conversation file; each lands at the field path its channel predicts. Channel 5 lands only conditionally — see row 5's own cell in the channel table. What was emitted was a hex token on channels 1–5, and `HOOKPROBE <event> <token>` on channel 6 — not an arbitrary string, which row 8 is about. | [Six channels land](#six-channels-put-a-string-into-the-conversation-file) |
 | 3 | A plugin hook's stdout is filed as an entry of its own kind — `type: "attachment"` with `attachment.type: "hook_success"` — carrying a string the hook computes at run time. | [Channel 6](#channel-6-a-plugin-hooks-stdout-is-filed-as-an-entry-of-its-own-kind) |
 | 4 | That entry shape **is** a discriminator: machine-wide, `hookEvent` occurs as a JSON key only inside a hook attachment, while the same marker quoted in prose stays in the message fields. It is the one thing the other five channels do not offer. | [The discriminator](#the-hook-entry-tells-an-emission-from-a-quotation) |
 | 5 | Two channels do **not** land: a subagent's own turns never reach the conversation file, and Bash stdout past 30,000 bytes is cut there — the head stays in the entry, the whole output goes to a side file. The cut is a Bash-stdout property; other tool results are kept inline far past it. | [Two channels do not land](#two-channels-do-not-land-a-subagents-own-turns-and-bash-stdout-past-30000-bytes) |
@@ -61,7 +61,7 @@ are deleted — so each says the minute it was taken.
 | 11 | A conversation can continue into a **new file under a new `sessionId`** that replays every uuid-carrying entry and drops almost every bookkeeping one, so a marker emitted before the continuation exists twice on disk. A `continued-in` entry links the pair, and a snake_case `session_id` marks each replayed copy. | [Continuation by replay](#a-conversation-can-continue-into-a-new-file-that-replays-the-old-one) |
 | 12 | A restart can instead append into the existing file, leaving no seam record other than a change of `version` mid-file. | [Restart in place](#a-restart-can-append-into-the-existing-file-marked-only-by-the-version-stamp) |
 | 13 | Compaction stays in one file and reproduces earlier prose into a summary entry. For a string that occurred **once** before the summary — the cohort a boundary marker belongs to — the reproduction rate is 2 of 46. | [Compaction](#compaction-stays-in-one-file-and-replays-earlier-prose-into-it) |
-| 14 | Line order and timestamp order disagree in 805 places machine-wide; the largest backstep is 13,429.9 s, and 100 of one file's 370 entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
+| 14 | Line order and timestamp order disagree in 830 places machine-wide as of 2026-09-20T06:00Z — a running maximum over a growing corpus, not a fixed count; the largest backstep is 13,429.9 s, and 100 of one file's 370 entries carry no timestamp at all. | [Ordering](#line-order-and-timestamp-order-disagree) |
 
 What this does **not** do is choose the marker. Section [What this still cannot answer](#what-this-still-cannot-answer)
 lists what task #2 has to settle some other way.
@@ -76,7 +76,8 @@ to keep apart. The vocabulary used throughout:
 - **subagent file** — a subagent's own turns, two levels below the conversation file at
   `<conversation-uuid>/subagents/agent-*.jsonl`.
 - **entry** — one JSON object, one line of a JSONL file. Every entry carries a `type`; nineteen types
-  are in use on this machine, inventoried in [Ordering](#line-order-and-timestamp-order-disagree).
+  are in use across conversation files on this machine, inventoried in
+  [Ordering](#line-order-and-timestamp-order-disagree).
 - **marker** — the string task #2 will design for `rn` to write at a task boundary. Nothing in this
   document is a marker; the strings measured here stand in for one.
 - **emission channel** — one way of getting a string into a log file: a place in a turn where the
@@ -716,90 +717,6 @@ Two limits of the discriminator, both measured rather than argued:
   attachments are filed in interactive sessions too, but **a plugin hook's stdout has been observed
   only headless**.
 
-#### Two hook placements fire without reaching the conversation file: SessionEnd, and inside a subagent
-
-Run 3 registered four further events and asked for a subagent, to find where the channel stops. The
-script appends a line to its own log before printing, so a firing is recorded whether or not its
-output lands. **Frozen record, 2026-09-20T04:27Z** — `fired.log` lived inside the throwaway plugin
-directory and went with it, so this block is the only record of the firings; every other block in
-this section reads the probe conversations, which survive:
-
-```
-$ cat $HBASE/fired.log
-04:27:51.000 sessionstart
-04:27:53.000 userpromptsubmit
-04:27:55.000 pretooluse
-04:27:57.000 pretooluse
-04:27:57.000 posttooluse
-04:27:58.000 subagentstop
-04:27:58.000 posttooluse
-04:27:59.000 stop
-04:27:59.000 sessionend
-```
-
-`Notification` and `PreCompact` are registered in the same `hooks.json` and do not appear: the run
-gave them no occasion, so they are untested rather than negative. Of the nine firings, five reached
-the conversation file, three reached the subagent file only, and one reached nothing at all.
-
-**A `SessionEnd` hook's output is filed nowhere.** The script ran — it wrote its line at 04:27:59,
-the same second the conversation file took its last write, at 04:27:59.649 — and printed the same
-string the eight landing firings printed. It appears in none of the four files of the probe project
-directory:
-
-```
-$ grep -c 'HOOKPROBE sessionend' $HOOKPROJ/*.jsonl $HOOKPROJ/*/subagents/*.jsonl | sort
-…/11b1c7b5-1768-407c-991a-f954cb7ca5dd.jsonl:0
-…/495aaa7b-918a-4f8a-8418-28abc9a4933d.jsonl:0
-…/7e75075d-29fb-4c06-8860-207335cfd428.jsonl:0
-…/7e75075d-29fb-4c06-8860-207335cfd428/subagents/agent-a76a62b028a410a1c.jsonl:0
-```
-
-**A hook that fires inside a subagent reaches the subagent file only.** The run's `SubagentStop`,
-and the `PreToolUse`/`PostToolUse` pair around the subagent's own Bash call, are in the subagent
-file; the conversation file holds only the events of the coordinator's own turn:
-
-```
-$ python3 $TOOLS/scan.py hooks $HOOKPROJ/7e75075d-*.jsonl $HOOKPROJ/7e75075d-*/subagents/*.jsonl
-7e75075d-29fb-4c06-8860- line 3    hook_success  SessionStart:startup exit=0   content==stdout.strip()=True  keys=…
-7e75075d-29fb-4c06-8860- line 14   hook_success  UserPromptSubmit     exit=0   content==stdout.strip()=True  keys=…
-7e75075d-29fb-4c06-8860- line 24   hook_success  PreToolUse:Agent     exit=0   content==stdout.strip()=True  keys=…
-7e75075d-29fb-4c06-8860- line 26   hook_success  PostToolUse:Agent    exit=0   content==stdout.strip()=True  keys=…
-7e75075d-29fb-4c06-8860- line 34   hook_success  Stop                 exit=0   content==stdout.strip()=True  keys=…
-agent-a76a62b028a410a1c. line 12   hook_success  PreToolUse:Bash      exit=0   content==stdout.strip()=True  keys=…
-agent-a76a62b028a410a1c. line 14   hook_success  PostToolUse:Bash     exit=0   content==stdout.strip()=True  keys=…
-agent-a76a62b028a410a1c. line 22   hook_success  SubagentStop         exit=0   content==stdout.strip()=True  keys=…
-```
-
-The three subagent-side entries are `isSidechain: true`, the five conversation-side ones
-`isSidechain: false`. `SubagentStop` is the obvious place to mark the end of a dispatched task, and
-it lands on the far side of the same boundary
-[a subagent's own turns](#two-channels-do-not-land-a-subagents-own-turns-and-bash-stdout-past-30000-bytes)
-land on. What does reach the
-conversation file for that same dispatch is `PostToolUse` on the `Agent` call, and it is tied to the
-dispatch by id:
-
-```
-$ python3 $TOOLS/scan.py hookids $HOOKPROJ/7e75075d-*.jsonl $HOOKPROJ/7e75075d-*/subagents/*.jsonl
-## 7e75075d-29fb-4c06-8860-
- line 3   SessionStart:startup toolUseID=3ac2d64d-b321-47bc-b1d1-8489c8791595
- line 14  UserPromptSubmit     toolUseID=708d872d-30cd-45f7-bdc5-3087bbb57516
- line 23  tool_use Agent    id=toolu_01NUQwpHhgcXk1gfJEpuVysV
- line 24  PreToolUse:Agent     toolUseID=toolu_01NUQwpHhgcXk1gfJEpuVysV
- line 26  PostToolUse:Agent    toolUseID=toolu_01NUQwpHhgcXk1gfJEpuVysV
- line 34  Stop                 toolUseID=e51d2363-5dd2-4b4a-a947-2bd6e07d9808
-## agent-a76a62b028a410a1c.
- line 11  tool_use Bash     id=toolu_011UMEmif2dkF9HYV96ChCoo
- line 12  PreToolUse:Bash      toolUseID=toolu_011UMEmif2dkF9HYV96ChCoo
- line 14  PostToolUse:Bash     toolUseID=toolu_011UMEmif2dkF9HYV96ChCoo
- line 22  SubagentStop         toolUseID=75eb66bd-cd7e-47c2-b9ea-23ea0ecb37a7
-```
-
-A `PreToolUse` or `PostToolUse` entry carries the id of the call it brackets — `toolu_01NUQ…` on
-lines 24 and 26 is the `tool_use` at line 23 — while the other four events carry a uuid that is not a
-tool-call id at all. So a task boundary marked on `SubagentStop` is invisible to the conversation,
-while the same boundary marked on `PostToolUse` of the `Agent` call is both visible and attributable
-to the dispatch that ended.
-
 ### Attribution: the tokens post-date every instruction that could have echoed them
 
 A hit only counts as a landing if it came from the emission and not from the text that requested it.
@@ -1005,6 +922,90 @@ Four things follow, and the third and fourth are the ones that matter for a mark
   of the JSONL will find, and it is not permanent: 9 of the 200 side files have already been removed
   while their entries still name them.
 
+### Two hook placements fire without reaching the conversation file: SessionEnd, and inside a subagent
+
+Run 3 registered four further events and asked for a subagent, to find where the channel stops. The
+script appends a line to its own log before printing, so a firing is recorded whether or not its
+output lands. **Frozen record, 2026-09-20T04:27Z** — `fired.log` lived inside the throwaway plugin
+directory and went with it, so this block is the only record of the firings; every other block in
+this section reads the probe conversations, which survive:
+
+```
+$ cat $HBASE/fired.log
+04:27:51.000 sessionstart
+04:27:53.000 userpromptsubmit
+04:27:55.000 pretooluse
+04:27:57.000 pretooluse
+04:27:57.000 posttooluse
+04:27:58.000 subagentstop
+04:27:58.000 posttooluse
+04:27:59.000 stop
+04:27:59.000 sessionend
+```
+
+`Notification` and `PreCompact` are registered in the same `hooks.json` and do not appear: the run
+gave them no occasion, so they are untested rather than negative. Of the nine firings, five reached
+the conversation file, three reached the subagent file only, and one reached nothing at all.
+
+**A `SessionEnd` hook's output is filed nowhere.** The script ran — it wrote its line at 04:27:59,
+the same second the conversation file took its last write, at 04:27:59.649 — and printed the same
+string the eight landing firings printed. It appears in none of the four files of the probe project
+directory:
+
+```
+$ grep -c 'HOOKPROBE sessionend' $HOOKPROJ/*.jsonl $HOOKPROJ/*/subagents/*.jsonl | sort
+…/11b1c7b5-1768-407c-991a-f954cb7ca5dd.jsonl:0
+…/495aaa7b-918a-4f8a-8418-28abc9a4933d.jsonl:0
+…/7e75075d-29fb-4c06-8860-207335cfd428.jsonl:0
+…/7e75075d-29fb-4c06-8860-207335cfd428/subagents/agent-a76a62b028a410a1c.jsonl:0
+```
+
+**A hook that fires inside a subagent reaches the subagent file only.** The run's `SubagentStop`,
+and the `PreToolUse`/`PostToolUse` pair around the subagent's own Bash call, are in the subagent
+file; the conversation file holds only the events of the coordinator's own turn:
+
+```
+$ python3 $TOOLS/scan.py hooks $HOOKPROJ/7e75075d-*.jsonl $HOOKPROJ/7e75075d-*/subagents/*.jsonl
+7e75075d-29fb-4c06-8860- line 3    hook_success  SessionStart:startup exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 14   hook_success  UserPromptSubmit     exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 24   hook_success  PreToolUse:Agent     exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 26   hook_success  PostToolUse:Agent    exit=0   content==stdout.strip()=True  keys=…
+7e75075d-29fb-4c06-8860- line 34   hook_success  Stop                 exit=0   content==stdout.strip()=True  keys=…
+agent-a76a62b028a410a1c. line 12   hook_success  PreToolUse:Bash      exit=0   content==stdout.strip()=True  keys=…
+agent-a76a62b028a410a1c. line 14   hook_success  PostToolUse:Bash     exit=0   content==stdout.strip()=True  keys=…
+agent-a76a62b028a410a1c. line 22   hook_success  SubagentStop         exit=0   content==stdout.strip()=True  keys=…
+```
+
+The three subagent-side entries are `isSidechain: true`, the five conversation-side ones
+`isSidechain: false`. `SubagentStop` is the obvious place to mark the end of a dispatched task, and
+it lands on the far side of the same boundary
+[a subagent's own turns](#two-channels-do-not-land-a-subagents-own-turns-and-bash-stdout-past-30000-bytes)
+land on. What does reach the
+conversation file for that same dispatch is `PostToolUse` on the `Agent` call, and it is tied to the
+dispatch by id:
+
+```
+$ python3 $TOOLS/scan.py hookids $HOOKPROJ/7e75075d-*.jsonl $HOOKPROJ/7e75075d-*/subagents/*.jsonl
+## 7e75075d-29fb-4c06-8860-
+ line 3   SessionStart:startup toolUseID=3ac2d64d-b321-47bc-b1d1-8489c8791595
+ line 14  UserPromptSubmit     toolUseID=708d872d-30cd-45f7-bdc5-3087bbb57516
+ line 23  tool_use Agent    id=toolu_01NUQwpHhgcXk1gfJEpuVysV
+ line 24  PreToolUse:Agent     toolUseID=toolu_01NUQwpHhgcXk1gfJEpuVysV
+ line 26  PostToolUse:Agent    toolUseID=toolu_01NUQwpHhgcXk1gfJEpuVysV
+ line 34  Stop                 toolUseID=e51d2363-5dd2-4b4a-a947-2bd6e07d9808
+## agent-a76a62b028a410a1c.
+ line 11  tool_use Bash     id=toolu_011UMEmif2dkF9HYV96ChCoo
+ line 12  PreToolUse:Bash      toolUseID=toolu_011UMEmif2dkF9HYV96ChCoo
+ line 14  PostToolUse:Bash     toolUseID=toolu_011UMEmif2dkF9HYV96ChCoo
+ line 22  SubagentStop         toolUseID=75eb66bd-cd7e-47c2-b9ea-23ea0ecb37a7
+```
+
+A `PreToolUse` or `PostToolUse` entry carries the id of the call it brackets — `toolu_01NUQ…` on
+lines 24 and 26 is the `tool_use` at line 23 — while the other four events carry a uuid that is not a
+tool-call id at all. So a task boundary marked on `SubagentStop` is invisible to the conversation,
+while the same boundary marked on `PostToolUse` of the `Agent` call is both visible and attributable
+to the dispatch that ended.
+
 ### Only 16-character lowercase hex was emitted, so the character set is untested
 
 All seven tokens were `openssl rand -hex 8` output: 16 characters, `[0-9a-f]` only. The measurement
@@ -1164,7 +1165,7 @@ not have.
 ### The file set changes while the session is open
 
 The 2026-09-06 round recorded three conversation files for this session; the 2026-09-10 round found
-five. There are now seven:
+five. There are now seven under `$PROJ_WT`:
 
 ```
 $ python3 $TOOLS/scan.py spans $PROJ_WT/*.jsonl            # 2026-09-20T05:14Z
@@ -1176,6 +1177,11 @@ c763d0be entries=308  with_ts=235  2026-09-10T10:52:57.852Z -> 2026-09-12T23:09:
 eded9b12 entries=184  with_ts=141  2026-08-30T14:20:31.090Z -> 2026-09-05T01:34:32.173Z
 ef482a21 entries=370  with_ts=270  2026-09-06T04:53:42.208Z -> 2026-09-06T08:34:49.927Z
 ```
+
+That is the glob's count, not the session's: [Placement](#a-file-is-placed-by-relocation-target-not-by-the-working-directory-of-its-entries)
+shows `5466c142` sits under `$PROJ_MAIN` instead, misfiled by the same relocation as the other five
+files there, yet every `cwd` and `gitBranch` it records names this issue-18 worktree throughout — an
+eighth file belonging to this session that a `$PROJ_WT` glob does not reach.
 
 Files appear while the session is open, and existing files keep growing — `ef482a21` was 268 entries
 when the first round measured it and is 370 now; `c763d0be` was 167 on 2026-09-10 and is 308.
@@ -1312,6 +1318,7 @@ $ python3 $TOOLS/scan.py seam \
     ~/.claude/projects/-Users-kiyo-work-lovaizu-dotfiles--claude-worktrees-herdr4mac/1b4dd5b8-*.jsonl \
     ~/.claude/projects/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-hpate/f96e5843-*.jsonl
 ## 1b4dd5b8  entries=679
+assistant              v=2.1.239  ts=2026-08-24T00:10:29.231Z   uuid=271452ce parent=ac038e8d
 system                 v=2.1.239  ts=2026-08-24T00:10:29.358Z   uuid=c7b6b082 parent=271452ce
 bridge-session         v=None     ts=None                       uuid=None parent=None
 user                   v=2.1.240  ts=2026-08-24T00:24:29.842Z   uuid=1f14e004 parent=c7b6b082
