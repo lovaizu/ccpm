@@ -1,21 +1,29 @@
 ---
 name: gm
-description: Register a revise verdict on the work under review — the counterpart to /rn:ty. With an argument, /rn:gm <text> takes <text> as the feedback and revises the pending item against it. With no argument, /rn:gm processes the current PR's review comments through the PR-feedback workflow. Has side effects (revises work, commits, pushes, replies on the PR) — run only on explicit /rn:gm.
+description: Register a revise verdict on the work under review. With an argument, /rn:gm <text> revises the pending item against it. With no argument, it works through the current PR's unresolved review threads. Has side effects (revises work, commits, pushes, replies on the PR) — run only on explicit /rn:gm.
 disable-model-invocation: true
 ---
 
 # /rn:gm — Revise
 
-Registers a revise verdict ("good, more") on the work under review. The feedback comes from `$ARGUMENTS` when present, otherwise from the current PR's review comments.
+Registers a revise verdict — the counterpart to `/rn:ty`. Nothing is dropped: every piece of
+feedback is acted on.
 
 ## Steps
 
-1. **Check version.** Compare the active session's `steering.md` `Rn version:` line to the installed plugin's version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`'s `version` field); on a mismatch, run `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first — on a match, do nothing.
+1. **Check the version, so revision lands on a current session.** Compare `steering.md`'s
+   `Rn version:` to the installed version; on mismatch, run the migration section of
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
 
-2. **Branch on the argument.** Trim `$ARGUMENTS` of surrounding whitespace first; treat a blank/whitespace-only value as empty. If non-empty after trimming, it is the feedback — go to step 3. If empty (absent or blank), the feedback lives in the PR's review comments — go to step 4.
+2. **Route on the argument, so text feedback and PR feedback don't get conflated.** `$ARGUMENTS`
+   non-empty after trimming → step 3. Empty → step 4.
 
-3. **With feedback (`$ARGUMENTS` present).** Treat `$ARGUMENTS` as a revise verdict on the pending item — the thing the assistant last presented for confirmation, or the work under review. If there is no pending item, treat `$ARGUMENTS` as a direct instruction and act on it — it is still feedback/work to do, so do not stall on a missing target. Apply the revision, re-doing or redispatching the work as needed, then report, opening the report with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md` (subject to that spec's active-session boundary). Do not enter the PR-feedback loop.
+3. **Revise the pending item against the given text.** Apply it to whatever was last presented for
+   confirmation; if nothing is pending, treat the text as a direct instruction. Report, opening with
+   the status block.
 
-4. **From the PR (no argument).** Read `${CLAUDE_PLUGIN_ROOT}/references/pr-feedback-workflow.md` and run that loop against the current PR's review comments.
-
-5. **Either way, this is a revise verdict** — the counterpart to `/rn:ty` (approve). It drops nothing: every piece of feedback is acted on.
+4. **Work the PR's review threads, so feedback left on GitHub gets addressed.** For each unresolved
+   thread whose last comment is the reviewer's: address it and reply with what changed and the
+   commit, or reply with a question when the ask is unclear. Never resolve a thread — that's the
+   reviewer's act. `gh api` on the PR's review threads is enough to drive this. Report when the
+   queue is empty.

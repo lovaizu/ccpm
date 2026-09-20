@@ -4,6 +4,29 @@ All notable, user-facing changes to the `rn` plugin are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Every task's result is now judged by a third-party evaluator with no memory of how it was built,
+  against a few named questions about whether it does its job — not whether a step ran — so a pass
+  means the deliverable actually works, not that the process looked thorough.
+- Evaluation now happens on the pull request instead of behind the scenes, so you can read what was
+  judged and why alongside the diff it judged.
+- The implementer that does the hands-on work now runs on a faster model, while planning and
+  evaluation stay on the model you're talking to, so routine work moves quickly and the judgment
+  calls get the stronger read.
+- The prompt text `rn` runs on is now small enough to read in one sitting, so what each command
+  actually does is easy to see and trust.
+- Older sessions now migrate to the current conventions automatically the next time a command runs
+  on them, with nothing to do by hand.
+
+### Removed
+
+- A session no longer accumulates a `checks/` directory or a per-session `design.md` — it leaves
+  only `steering.md` and the deliverable, with the evaluation living on the PR instead of in the
+  repository.
+
 ## [0.8.0] - 2026-07-07
 
 ### Added

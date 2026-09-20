@@ -1,6 +1,6 @@
 ---
 name: up
-description: Resume a suspended rn work session in a fresh conversation. Use when the user returns to continue earlier work, typically via /rn:up. Finds steering.md from git history, reconciles task state against the commit log, and resumes the next task. Has side effects (commits, executes tasks) — run only on explicit /rn:up.
+description: Resume a suspended rn session in a fresh conversation. Finds steering.md from git history, reconciles task state against the commit log, and resumes the next task. Has side effects (commits, executes tasks) — run only on explicit /rn:up.
 disable-model-invocation: true
 ---
 
@@ -10,25 +10,32 @@ Reconstructs prior session state, aligns it with git, and continues from the nex
 
 ## Steps
 
-1. **Handle a dirty tree.**
-   - Tree clean → proceed.
-   - Tree dirty → run step 2's discovery first, read-only, to identify the suspended steering.md; then propose a `wip:` commit or a discard, opening the message with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md` (subject to that spec's active-session boundary), and wait for confirmation before touching the working tree.
+1. **Clear a dirty tree first, so resume starts from a known state.** Tree clean → proceed. Dirty →
+   run step 2 read-only to identify the session, then propose a `wip:` commit or a discard (opening
+   with the status block) and wait for confirmation.
 
-2. **Find steering.md.** Run `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5` and keep the paths that exist on disk.
-   - One result → use it.
-   - Multiple → rank by `State` showing `Status: paused`, then most recent commit, and propose the top candidate.
-   - Zero → tell the user "No steering.md found. Run `/rn:on` to start." and stop.
+2. **Find the steering.md to resume, so the right session continues.** Run
+   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep paths
+   on disk. One → use it. Several → prefer `Status: paused`, then newest, and propose it. None →
+   tell the user "No steering.md found. Run /rn:on to start." and stop.
 
-   From step 3 on, any message stopping for user input opens with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`.
+3. **Check the version, so an older session is current before it's touched.** Compare `Rn version:`
+   to the installed version; on mismatch, run the migration section of
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
 
-3. **Read State.** Read the `State` section: last completed task, next task, and notes.
+4. **Read `State`, so resume knows what was last done and what's next.** Read `Last completed`,
+   `Next`, `Notes`.
 
-4. **Sync tasks.** Cross-check `git log` against the unchecked tasks. A commit matches a task when its message contains `complete task #{id}`; check that task off in steering.md.
+5. **Reconcile check-offs against git, so a commit made before a crash isn't redone.** Cross-check
+   `git log` against unchecked tasks: a commit whose message contains `complete task #{id}` checks
+   that task off.
 
-5. **Check blockers.** If `State` notes mention a blocker, investigate and find an alternative approach before removing any task.
+6. **Investigate any blocker before dropping a task.** If `Notes` names a blocker, resolve or
+   confirm it still stands before proceeding.
 
-6. **Clean up State.** Replace the `State` section with its template placeholder and commit the reconciliation.
+7. **Reset `State` and commit, so the placeholder is ready for the next suspend.** Replace `State`
+   with its template placeholder; commit `chore: resume — {slug}`; push.
 
-7. **Check version.** Compare `steering.md`'s `Rn version:` line to the installed plugin's version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`'s `version` field); on a mismatch, run `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first — on a match, do nothing.
-
-8. **Begin the next task.** Read `${CLAUDE_PLUGIN_ROOT}/references/task-execute-workflow.md` then `${CLAUDE_PLUGIN_ROOT}/references/task-verify-workflow.md` and execute the next unchecked task following them in sequence.
+8. **Continue where the session left off.** If `Notes` names a pending gate, re-present it (status
+   block) and wait. Otherwise run the next unchecked task per
+   `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

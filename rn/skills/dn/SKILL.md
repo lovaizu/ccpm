@@ -1,59 +1,42 @@
 ---
 name: dn
-description: "Suspend the current rn work session — commit and push the work, record resume context in steering.md, and hand off to a manual /clear. Use when stopping: context nearly full, a break, or end of day, typically via /rn:dn. Has side effects (commits, pushes) — run only on explicit /rn:dn."
+description: "Suspend the current rn session — commit and push the work, record resume context in steering.md, hand off to a manual /clear. Use when stopping: context nearly full, a break, or end of day, via /rn:dn. Has side effects (commits, pushes) — run only on explicit /rn:dn."
 disable-model-invocation: true
 ---
 
 # /rn:dn — Suspend a session
 
-Records resume state and hands off. Does not execute tasks.
+Records resume state and hands off. Runs no task.
 
 ## Steps
 
-1. **Locate steering.md.** Use the path known from this session. If unknown: run
-   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep the
-   paths that exist on disk, and take the one whose `State` shows `Status: paused`, else the most
-   recent.
+1. **Find the steering.md in play, so the right session is suspended.** Use the known path, else
+   `git log --diff-filter=AM --name-only --pretty=format: -- '*/steering.md' | head -5`, keep paths
+   on disk, prefer one whose `State` shows `Status: paused`.
 
-2. **Check version.** Compare `steering.md`'s `Rn version:` line to the installed plugin's version
-   (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`'s `version` field); on a mismatch, run
-   `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first — on a match, do nothing.
+2. **Check the version, so an older session gets reconciled before it's left mid-air.** Compare
+   `Rn version:` to the installed version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`); on
+   mismatch, run the migration section of `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
 
-3. **Check off progress.** In steering.md, check off completed task steps and add any tasks
-   discovered during the work.
+3. **Check off what's actually done, so resume doesn't redo it.** In `steering.md`, check off
+   completed steps.
 
-4. **Write the `State` section** per `steering-template.md`'s State placeholder: `Status: paused`,
-   `Date`, `Last completed`, `Next`, `Notes` — cap `Notes` to the bounded forward pointer the
-   placeholder's `Notes` line defines, never a re-narration of the session.
+4. **Write `State`, so a fresh conversation knows exactly where to pick up.** Follow the `State`
+   placeholder in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`: `Status: paused`, `Date`,
+   `Last completed`, `Next`, `Notes` (a forward pointer only — branch/PR, pending gate, blockers).
 
-5. **Commit the work.**
-   - Tree clean → skip this commit.
-   - Current task's steps all checked → commit normally.
-   - Some steps unchecked → commit with a `wip:` prefix.
-   - The message must not contain `complete task #`.
+5. **Commit the work, so nothing is lost between conversations.** Tree clean → skip. Current task's
+   steps all checked → commit normally. Some unchecked → prefix `wip:`. The message must never
+   contain `complete task #`.
 
-6. **Resolve untracked residue.** Run `git status --porcelain`; the remaining entries are untracked
-   (`??`). Handle each `??` path:
-   - Regenerable test/build artifact — e.g. `.pytest_cache/`, `.coverage`, `htmlcov/`,
-     `coverage.xml`, `__pycache__/`, `dist/`, `node_modules/`, `.tox/` → append a matching rule to the
-     repo-root `.gitignore` (create it if absent). Any doubt → handle as the next item instead.
-   - Anything else → ask the user how to handle it (commit / gitignore / delete themselves / keep),
-     opening the message with the session-status block per
-     `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`. For any path the user does not resolve,
-     append its exact `git status --porcelain` string to `State → Notes`.
-   - Never delete a file yourself.
+6. **Resolve untracked files, so the tree is genuinely clean, not just committed.** For each
+   untracked path: regenerable build/test residue → add a rule to `.gitignore`; anything else → ask
+   the user (commit / gitignore / delete themselves / keep), opening with the status block. Never
+   delete a file yourself.
 
-7. **Commit and push.** Commit the `State` changes and any `.gitignore` edit together in one commit,
-   then `git push`. If push fails, continue and record that it failed (for step 9). Never amend, never
-   force-push.
+7. **Push, so the suspended session is visible outside this conversation.** Commit `State` and any
+   `.gitignore` edit together, then push. If push fails, continue and report it.
 
-8. **Verify clean.** Run `git status --porcelain`:
-   - Empty → go to step 9.
-   - Non-empty → for each remaining (non-gitignored) untracked path, if its exact
-     `git status --porcelain` string is not already recorded in `State → Notes` from step 6, record it
-     there as user-deferred; then go to step 9. Never loop back to step 6. Never delete a file.
-
-9. **Report.** Open the report with the session-status block per
-   `${CLAUDE_PLUGIN_ROOT}/references/status-display.md`, then output the branch name. If the last
-   push did not succeed, state that the commits are local-only and must be pushed. Name any
-   user-deferred paths recorded in `State → Notes`.
+8. **Report where things stand, so the user knows how to resume.** Open with the status block; give
+   the branch name; if push failed, say the commits are local-only; name any paths the user still
+   needs to resolve. Tell the user: `/clear`, then `/rn:up`.
