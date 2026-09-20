@@ -125,10 +125,10 @@ recorded command-and-output evidence, so #2 decides the marker on measurement ra
       string can name the session and the task rather than being fixed
 - [ ] record whether a hook entry's structure tells a real emission apart from text that merely quotes
       the marker — the discriminator the other four channels do not provide
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (writing, subagent)
-- [ ] Verification expert review (dry-run, subagent)
+- [x] self-check (OK/NG per completion criterion, record in checks/1.md)
+- [x] QA expert review (subagent)
+- [x] Craft expert review (writing, subagent)
+- [x] Verification expert review (dry-run, subagent)
 
 **Completion criteria**:
 
