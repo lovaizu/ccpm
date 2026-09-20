@@ -85,7 +85,8 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 - [x] 決定を 1 つずつ素の対話で決め、`project/worklog.md` に〔決めたこと／順序／入力／成果物／詰まった点〕を記録する（方針転換：判断はアウトラインと方針のみ、AI が全見出しを起案し計画を通しレビュー）
 - [x] モックの全要素を参考サイト 3 つと突き合わせ、〔決定／たたき台／要提案〕に切り分けて `work/mock-review.md` に置く
 - [ ] 9/18 の先方入力を受けて `plan.md` を更新する（SSoT は計画。タスク一覧と提案書はここから導く）
-- [ ] `plan.md` から `tasks.md` を導出し、日数を積んで案の切り方を決める
+- [ ] `plan.md` の「作るもの」を `work/comps.md`（カンプ一覧）に展開する：部品一覧＋カンプ一覧（ページ型×モード×画面幅×工程）。ルートは Components／Top／Article（通常・連載は1ルートに同居、`comps.md` 上の行としては別カウント）
+- [ ] `comps.md` から `tasks.md` を導出し、日数を積んで案の切り方を決める
 - [ ] `plan.md` から提案書を導出 → ユーザーレビュー → 修正 → 納品形
 - [ ] `worklog.md` を一般化して `.rn/webplan/learnings.md` に書く：〔決定の一覧と順序／各決定の入力と出力／
       v1 に足りなかったもの／v1 から引き継ぐもの〕。社名・実額・個人名・他社著作物の複製を含めない
@@ -190,8 +191,15 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-20
+- **Last completed**: #1 Step 4（`work/mock-review.md`。作成後、検証・設計レビュー2回＋修正2回を経て確定。360行）
+- **Next**: #1 の Step「9/18 の先方入力を受けて `plan.md` を更新する」。ユーザー指示：「OKなので再開後に作業進めて」——下記の確定事項をそのまま `plan.md` の Decisions に反映し、質問し直さない
+- **Notes**:
+  - ブランチ `hposal-plugin`、PR #8（OPEN）。
+  - **今セッションで確定した Decisions 2（検討4件）**：I1 タグクラウド＝採否未定のまま見積もりに入れる（採用可否は `tasks.md` の日数次第）／I3 シェア先追加（はてブ・リンクコピー）＝両方足す／I4 連載バッジ＝足す／I5 連載の全記事リスト＝全回の開閉式リストを作る（「全N本」の表示に必要な一覧データが前提として既にある、が根拠）。`plan.md` の Decisions 節に D-n として書き起こす。
+  - **今セッションで確定した要提案2件**：N1（テーマ切替）は参考サイト2つが標準実装しており要望どおりなので提案書での特記は不要／2-15（フォーカス表示）はホバー定義を `:focus-visible` で使い回すだけで追加コストなしなので含める。
+  - **Decisions 3（画面幅の範囲）は未確定。** 候補3案（A=5枚／B=8枚／C=13枚、`work/mock-review.md` 6節）を `plan.md` 更新時に提示して決める。
+  - **`comps.md`（新規・Task #1 に1ステップ追加済み）の構成が確定**：ルートは Components／Top／Article の3つ。Foundationsという独立ページは無し（Variablesはパネル定義のみで完結、telldes 等の抽出はキャンバス上の見本に依存しない）。共通枠の展開図（図A/B）は独立ページでなく Components 内のヘッダーの状態バリアントとして持たせる。Direction（方向2案）は独立ページでなく Top／Article 各ページ内の最初のフレーム群として置く。Article は通常・連載を1つのFigmaルートに同居させる（過去に3枚の別HTMLで共通ヘッダーがズレた実害があるため）。ただし `comps.md` の見積もり行としては通常・連載を引き続き別カウントする。
+  - 用語：この案件内部では「カンプ」のまま（「モックアップ」への統一は検討したが、Client 提供の注記付きHTML＝「モック」との衝突を理由にユーザーが撤回）。telldes 側の用語は別問題として "mockup" を推奨（本セッションで回答済み、telldes 側での採否はユーザー判断）。
+  - 未解決の user-deferred パス：なし。
