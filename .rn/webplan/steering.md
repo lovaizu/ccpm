@@ -191,8 +191,15 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-21
+- **Last completed**: #1 Steps 5〜7(plan.md の Decisions 2/3 反映、comps.md 作成、tasks.md 導出と Decisions 1 の判定)。続けて Step 8 の前半として `work/proposal.template.html` を今の plan.md に合わせて全面書き直し、`out/proposal.html` を生成済み(未チェックオフ、ユーザーレビュー待ち)
+- **Next**: #1 Step 8「`plan.md` から提案書を導出 → ユーザーレビュー → 修正 → 納品形」の続き。ユーザーが `out/proposal.html` を開いて見た目・文章を確認した後の指摘を受けて直す
+- **Notes**:
+  - ブランチ `hposal-plugin`、PR #8(OPEN)。
+  - **費用計算の仕組みを作り直した**:旧 `work/render.py`+`work/plan.data.json`(3役体制前提)は現行 plan と合わず、`work/tasks.csv`(生データ)+`work/cost.json`(単価・進行管理率・週稼働日数)+`work/calc_cost.py`(計算・SVG帯グラフ生成)に置き換えた。数字は必ずこのスクリプトの出力を転記する(手計算しない)。
+  - **確定した値**:進行管理率 5%(旧20%は3役体制の名残で廃止、2026-09-20)。週稼働 2.5日/週(0.5人月相当、Client FB待ちは別途足さない、2026-09-21)。
+  - **確定した結論**:Decisions 1 は優先3ページ型のみを本命(¥（額）・9週)、その他4ページ型を含む案を「ご希望があれば」(¥（額）・11週)。
+  - **`work/render.py`・`work/plan.data.json` は旧構造のまま残っている**(古い3役体制の名残)。calc_cost.py に完全に置き換わったので、削除するかはユーザー判断待ち(ファイルは消さずに残してある)。
+  - `out/proposal.html` は `work/proposal.template.html` + `work/schedule.svg` + `{{date}}` を手動で埋め込んで生成した一時的な手順(render.py は使っていない)。今後も更新するなら同じ手順を踏むか、render.py 自体を作り直す必要がある。
+  - 未解決の user-deferred パス:なし。
