@@ -141,8 +141,11 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-20
+- **Last completed**: none — plan written and pushed; plan gate pending
+- **Next**: #1 Round 1 — the smallest `rn` that runs (after plan approval)
+- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). Awaiting the user's plan verdict on the
+  PR via `/rn:ty` / `/rn:gm`; on approval start #1. Open point: whether the round-1 tries can be
+  driven headlessly (`claude -p … --plugin-dir rn` with `--resume` for gate replies) — settle at the
+  first try, fall back to interactive with transcript on the PR.
