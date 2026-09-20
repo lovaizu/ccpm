@@ -30,9 +30,11 @@ the evaluation of the result. Everything else runs without asking.
   or a step, so it survives a change of means and the evaluator judges outcomes. Each level is
   judged against the one above it: Success criteria against the Goal, an Objective against the
   Goal, a task's Success criteria against its Objective.
-- **The conductor works toward the Goal; it does not only pass messages.** It reads every result
-  before the evaluator sees it, folds what each round teaches into `steering.md`, and interrupts
-  the user only when the agreed Goal, criteria or design would change (`references/task.md`).
+- **The conductor works toward the Goal; it does not only pass messages.** Every command takes
+  the role up in its first step (`references/conductor.md`): it reads every result before the
+  evaluator sees it, folds what each round teaches into `steering.md`, and interrupts the user
+  only when the agreed Goal, criteria or design would change. Each check it makes sits in the step
+  where it applies, not in a list.
 - **Three gates, and no other stop.** The plan gate ends `/rn:on`; a "Design sign-off" task stops
   where planning placed one; "Evaluation sign-off" is always the last task. `/rn:ty` and `/rn:gm`
   are the only verdict vocabulary.
@@ -50,5 +52,5 @@ the evaluation of the result. Everything else runs without asking.
 ## Shape
 
 Five user-invoked commands — `/rn:on`, `/rn:dn`, `/rn:up`, `/rn:ty`, `/rn:gm` — and three
-references: `steering.md` (the file and its migration), `task.md` (the loop and the roles),
-`evaluate.md` (the questions). The session-status block opens every stop.
+references: `conductor.md` (the role every command runs under), `steering.md` (the file and its
+migration), `task.md` (the loop), `evaluate.md` (the questions). The session-status block opens every stop.
