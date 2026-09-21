@@ -74,8 +74,9 @@ and its limit are the caller's.
    verdict. Written to the verdict file, headed `## Evaluation — {kind}[ — task #N] — {short
    commit}`, and returned as the final message.
 
-5. **Caller — put the verdict, as returned, where the user reviews, so it is read in rendered
-   form and stays addressable.** A line without evidence is not a verdict: send it back first.
+5. **Caller — put every round's verdict, as returned, where the user reviews, so an NG is read
+   there as much as an OK, in rendered form, and stays addressable.** A line without evidence is
+   not a verdict: send it back first.
    Then `gh pr comment --body-file` with the verdict file; the command prints the comment's URL —
    fetch that comment, compare it to the file, and only then remove the file. That URL is where
    the verdict is, for `Pending` and for the user. With no PR, print the file in full in the
