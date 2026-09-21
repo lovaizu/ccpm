@@ -73,7 +73,7 @@ wrong with it is visible.
       `on` → `dn` → `up` → the three gates in scratch
 - [x] Evaluate: put both runs on the PR; a third party on the stronger model answers the Acceptance
       criteria's questions against them
-- [ ] Fix what the tries and evaluations exposed — as the shape `rn` should have, not patches on
+- [x] Fix what the tries and evaluations exposed — as the shape `rn` should have, not patches on
       the lines named; re-try with a goal that places a "Design sign-off" task so the Design kind
       and the `Design:` line run for real; re-evaluate
 - [ ] Take the user's verdict via `/rn:ty` / `/rn:gm`
