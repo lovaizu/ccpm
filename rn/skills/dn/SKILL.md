@@ -10,19 +10,17 @@ Writes down where the session stands so a fresh conversation can pick it up. Run
 
 ## Steps
 
-1. **Take up the conductor's role and enter the session, so the right `steering.md` is written
-   in one shape.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, then run Entering a
-   session in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
+1. **Take up the conductor's role and enter the session.** Read
+   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, then run Entering a session in
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
 2. **Record what is actually done, so the resume does not redo it.** Check off a step only when
    the thing itself shows it done — not because the conversation says so; add any task the work
    uncovered.
 
-3. **Write `State`, so a cold reader knows exactly where to pick up.** Fill every field from the
-   template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`: `Status: paused`, today's `Date`,
-   `Last completed`, `Next`, `Pending` — the gate awaiting a verdict, open questions, items the
-   user deferred, blockers — and `Notes` as branch, PR and what else the next conversation needs.
-   History stays in git and on the PR.
+3. **Write `State`, so a cold reader knows exactly where to pick up.** Fill every field as the
+   template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md` says, with `Status: paused` and
+   today's `Date`.
 
 4. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
    untracked path: regenerable build or test residue → add a rule to `.gitignore`; anything else →

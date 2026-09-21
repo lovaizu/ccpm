@@ -10,8 +10,8 @@ Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops
 
 ## Steps
 
-1. **Take up the conductor's role, so someone works toward the Goal from this command's first
-   step.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; what follows runs under it.
+1. **Take up the conductor's role.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; what
+   follows runs under it.
 
 2. **Capture the goal as the user means it, so the session builds what was asked and nothing
    else.** Take it from the message or `$ARGUMENTS`; ask if absent. Restate it in plain words —
@@ -28,8 +28,7 @@ Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops
    `Rn version:` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Work `Tasks` backwards
    from the Success criteria; where the approach must be decided before build, add a "Design
    sign-off" task and write the `Design:` line with the path the design will live at; end with
-   "Evaluation sign-off". Every decision about scope goes into a criterion or an Assumption — it
-   is what the evaluator and the user will judge against.
+   "Evaluation sign-off".
 
 5. **Put the plan on record before anything is built, so it can be reviewed where diffs render.**
    Commit `chore: start session — {slug}`; branch off the default branch if on it; push; open a
@@ -42,6 +41,6 @@ Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops
    free of avoidable defects.** Run Judging the plan in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-7. **Stop at the plan gate — this decision is the user's.** Commit the `Pending` line Judging the
-   plan wrote, push, open with the session-status block and ask one thing: `/rn:ty` or `/rn:gm`. `/rn:ty` runs task #1 per
+7. **Stop at the plan gate — this decision is the user's.** Open with the session-status block
+   and ask one thing: `/rn:ty` or `/rn:gm`. `/rn:ty` runs task #1 per
    `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

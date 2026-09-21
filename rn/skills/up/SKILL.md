@@ -10,8 +10,8 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
 
 ## Steps
 
-1. **Take up the conductor's role, so someone works toward the Goal from this command's first
-   step.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; what follows runs under it.
+1. **Take up the conductor's role.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; what
+   follows runs under it.
 
 2. **Start from a known tree, so nothing half-done gets mixed into the resume.** Tree clean →
    proceed. Dirty → do step 3's first part read-only to name the session, then propose one of a
@@ -22,8 +22,7 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
    session in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
 4. **Read `State`, so the resume knows what was last done, what is next, and what is pending.**
-   Take `Last completed`, `Next`, `Pending` (the gate awaiting a verdict, open questions, deferred
-   items, blockers) and `Notes` (branch, PR).
+   Take `Last completed`, `Next`, `Pending` and `Notes`.
 
 5. **Reconcile with git, so work committed before a crash is not redone.** A commit whose message
    contains `complete task #{id}` proves that task done: mark it per Checking a task off in

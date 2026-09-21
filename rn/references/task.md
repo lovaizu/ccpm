@@ -5,36 +5,26 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
 
 ## Roles
 
-- **Conductor** — the agent in the conversation. This loop runs under the role in
-  `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, taken up by the command that entered it; read
-  it again here if it is not in this conversation.
+- **Conductor** — the agent in the conversation, per
+  `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; read it here if it is not in this conversation.
 - **Implementer** — `Agent`, `model: sonnet`, no conversation history. Builds one task.
 - **Evaluator** — `Agent`, `model: opus`, no conversation history. Judges one artifact per
   `evaluate.md`.
-
-Judgment and execution run on different models; the `model` parameter is where the split is
-enforced.
 
 ## Steps
 
 1. **Hand the task to the implementer as its owner would state it, so the work aims at the
    Objective rather than at a recipe.** Dispatch the implementer carrying: the Goal in one line;
    this task's Objective, Steps and Success criteria verbatim; the Rules; the files in play; what
-   the session has learned that bears on this task — earlier findings, a changed Assumption; and
-   the commit convention — stage paths by name (never `git add -A`), a plain conventional message
-   that does not contain `complete task #`, push, never force, return what changed and the commit
-   SHA(s). For a "Design sign-off" task the deliverable is the approach, written at the path the
-   `Design:` line names. "Evaluation sign-off" skips this step: nothing is built, the finished work
-   is judged.
+   the session has learned that bears on this task; and that it returns what changed and the
+   commit SHA(s). For a "Design sign-off" task the deliverable is the approach, written at the
+   path the `Design:` line names. "Evaluation sign-off" skips this step: nothing is built, the
+   finished work is judged.
 
 2. **Read the result before anyone else does, so the evaluator and the user see only work that
-   could be complete.** Check it on the thing itself — not on the implementer's report — against
-   the task's Success criteria and the Rules: does it show what the report claims; does every fact
-   or number in it have a source; does every term carry a meaning the reader can take, with no
-   history, self-evident lines or repetition. Try it on a copy in a scratch directory outside the
-   repository, removed before the command stops — never by breaking the repository in place. A
-   miss the conductor can see goes straight back to the implementer with what is missing; only
-   then does it go on.
+   could be complete.** Check it on the thing itself against the task's Success criteria and the
+   Rules. A miss the conductor can see goes straight back to the implementer with what is missing;
+   only then does it go on.
 
 3. **Have the result judged by someone other than its author, so a pass means it does its job.**
    Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` — kind Deliverable for an ordinary task, kind
@@ -46,7 +36,7 @@ enforced.
 
 4. **Fold what was learned into `steering.md`, so the plan stays true and the next task starts
    from it.** After every result and every evaluation: an Assumption that proved false is corrected;
-   a finding that would recur becomes a Rule; a task the work uncovered is added, one made
+   a finding that came back once becomes a Rule; a task the work uncovered is added, one made
    unnecessary is removed; the `Design:` line names the design once it exists. Commit with the
    task's work. A change to the Goal, the Success criteria or an approved design is the user's —
    raise it at once, as one question with a recommendation, opening with the session-status block;
@@ -58,8 +48,7 @@ enforced.
    unchecked task.
 
 6. **For a gate task, stop — the decision is the user's.** Write `State`'s `Pending`: the gate,
-   the commit its artifact was judged at, and where the verdict is (the PR comment, or "in
-   conversation"); commit `docs: present {task name} for the verdict`; push. Then present the
-   judged artifact and the evaluator's verdict with the session-status block and wait. `/rn:ty`
-   checks the task off and continues with the next unchecked task; `/rn:gm` returns to step 1
-   with the feedback.
+   the commit its artifact was judged at, and where the verdict is; commit and push. Then present
+   the judged artifact and the evaluator's verdict with the session-status block and wait.
+   `/rn:ty` checks the task off and continues with the next unchecked task; `/rn:gm` returns to
+   step 1 with the feedback.

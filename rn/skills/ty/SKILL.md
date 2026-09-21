@@ -11,9 +11,9 @@ about what was approved.
 
 ## Steps
 
-1. **Take up the conductor's role and enter the session, so the approval lands on the right
-   session in its current shape.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, then
-   run Entering a session in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
+1. **Take up the conductor's role and enter the session.** Read
+   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, then run Entering a session in
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
 2. **Name what is being approved, so the verdict cannot land on the wrong thing.** It is the most
    recent gate or reviewed item presented for a decision — in this conversation, or in `State`'s
