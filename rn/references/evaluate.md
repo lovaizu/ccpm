@@ -41,7 +41,9 @@ what the evaluator is asked to do.
    - P5 — Is each Assumption a checked fact or a named assumption, and is none of them work still
      to do or a decision not yet made?
    - Migration (a migrated plan only) — Is every task, check-off, `State` fact and pending item of
-     the old file present in the new one?
+     the old file present in the new one? Not a loss: an unchecked step that only ran the old
+     `rn`'s own review, and the old `rn`'s process files such as `checks/` — the migration drops
+     those by design.
 
    **Design** (the approach, written before build)
    - D1 — Does it reach the Goal — can each Success criterion be traced to the part of the design

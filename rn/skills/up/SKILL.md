@@ -40,6 +40,9 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
    `Status: active`; leave `Pending` and `Notes` as they are — they are still true and nothing
    else records them. Commit `chore: resume — {slug}`; push.
 
-8. **Continue exactly where the session stopped.** A gate named in `Pending` → present it again
-   with the session-status block and wait for `/rn:ty` or `/rn:gm`. Otherwise run the next
-   unchecked task per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
+8. **Continue exactly where the session stopped, so the user decides on what was judged.** A gate
+   named in `Pending` → if the artifact has moved since the verdict on record (the PR's latest
+   evaluation names the commit it judged), have it judged again per
+   `${CLAUDE_PLUGIN_ROOT}/references/task.md` step 3 first; then present it again with the
+   session-status block and wait for `/rn:ty` or `/rn:gm`. Otherwise run the next unchecked task
+   per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

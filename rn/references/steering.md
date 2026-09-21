@@ -139,7 +139,8 @@ opening `steering.md`.
 ({outlook — what follows this stop})
 ```
 
-Names are quoted as `steering.md` writes them — the Goal's first sentence and the task names,
+The slug is the session directory's name without its date prefix (`.rn/20260921-wc-tool/` →
+`wc-tool`). Names are quoted as `steering.md` writes them — the Goal's first sentence and the task names,
 verbatim, `/`-separated, ids grouped into ranges (`#1–#3`) — so the user meets the same words in
 every conversation; everything else in the block is in the user's conversation language. The 👉 line
 carries the ask; on a report that asks nothing (a suspend, a close) it carries where the session
