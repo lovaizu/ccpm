@@ -148,19 +148,8 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-21
-- **Last completed**: none checked off — #1's Write / Try / Evaluate steps are done (first run,
-  rerun after the review threads, and a third try against a real remote); its fix step is open
-- **Next**: #1's fix step — the user decided the defects are fixed within Round 1 before the
-  verdict, not carried to Round 2: rebuild toward the right shape (no patching of named lines),
-  re-try including a design-bearing goal, re-evaluate, then present for the verdict
-- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). The defect list to work from is the two
-  evaluations of rn at `6c7c59f`: https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753896748
-  (N1–N10) and https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755349831 (defects 1–10,
-  recurrences, untested items). Real-remote tries run on https://github.com/lovaizu/rn-try
-  (kiyobot has write access); its PR #1 is the last try's residue and may be deleted. Earlier
-  records: first run https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769 /
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569, rerun
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753806152, third try
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755209675.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
