@@ -41,7 +41,8 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
 
 8. **Continue exactly where the session stopped, so the user decides on what was judged.** A gate
    named in `Pending` → if its artifact has moved since the commit `Pending` says was judged, or
-   `Pending` records no completed verdict for it, have it judged again per
-   `${CLAUDE_PLUGIN_ROOT}/references/task.md` step 3 first; then present it again with the
-   session-status block and wait for `/rn:ty` or `/rn:gm`. Otherwise run the next unchecked task
-   per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
+   `Pending` records no completed verdict for it, have it judged again as it now stands per
+   `${CLAUDE_PLUGIN_ROOT}/references/task.md` step 3 — a commit on the branch is the user's work,
+   never undone to spare the round; then present it again with the session-status block and wait
+   for `/rn:ty` or `/rn:gm`. Otherwise run the next unchecked task per
+   `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
