@@ -191,14 +191,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-21
-- **Last completed**: #1 Step 8 の途中。提案書を「注記への回答書」から提案書に組み直し(11 頁)、ユーザーレビューを複数周受けて修正済み。納品形の承認は未取得なので Step 8 は未チェック
-- **Next**: #1 Step 8 の続き。費用表の行構成を決めてから `out/proposal.html` を見てもらい、納品形の合意を取る
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象なので push されない。
-  - **未回答の判断が 1 件**：費用表を 3 行(デザイン／確認と修正の見込み／進行管理 5%)から 2 行(デザイン ¥（額）／進行管理 5%)に畳むか。「確認と修正の見込み」を独立行で出すと値引き交渉の的になるため畳むことを推奨済み。総額 ¥（額） は変わらない。
-  - 提案書の構成：表紙／現状の理解／3 つの柱／進め方／柱 1・2・3／ご検討 4 件／どこまで描くか／費用と条件／次の一歩。設計の具体値(px・比率・HEX)は載せず、課題と良くする方向まで。金額は費用ページ 1 か所だけ。
-  - ビルドは `python3 build/build_proposal.py`。検査は `zsh build/fit.sh`(紙面の収まり＋改行が読点・句点の直後だけか)、撮影は `zsh build/shots.sh`。週と期間は `build/calc_cost.py --ranges` が `tasks.csv` から出すので手で書かない。
-  - 案件フォルダを性格で分け直した：ルート(plan/comps/tasks/mock-review/worklog)・`input/`・`source/`(実サイトの複製と計測)・`build/`(提案書のソースと見積の元)・`out/`(proposal.html のみ)。`work/` は削除。
-  - 未解決の user-deferred パス:なし。
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
