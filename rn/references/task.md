@@ -31,16 +31,15 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
    Design for "Design sign-off", kind Session for "Evaluation sign-off". NG → step 1 again with the
    findings; a Session NG names finished work that fails a criterion, so it becomes a task added
    before "Evaluation sign-off" in step 4, and the loop continues from that task. After three NG
-   rounds on one task, stop and ask the user, showing the last verdict; the count starts again
-   from the answer.
+   rounds on one task, stop and ask the user.
 
 4. **Fold what was learned into `steering.md`, so the plan stays true and the next task starts
    from it.** After every result and every evaluation: an Assumption that proved false is corrected;
    a finding that came back once becomes a Rule; a task the work uncovered is added, one made
    unnecessary is removed; the `Design:` line names the design once it exists; a limit the user
    accepted at a gate becomes an Assumption, so the next evaluator judges against it instead of
-   being told to excuse it. Commit with the task's work. A change to the Goal, the Success criteria or an approved design is the user's —
-   raise it at once; never hold it for a gate.
+   being told to excuse it. Commit with the task's work. A change to the Goal, the Success
+   criteria or an approved design is the user's — raise it at once; never hold it for a gate.
 
 5. **For an ordinary task, record completion where a fresh conversation will read it, then move
    on — the user is not asked what is not theirs to decide.** Check the task off per Checking a

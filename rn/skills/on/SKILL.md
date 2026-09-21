@@ -41,5 +41,5 @@ Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops
    free of avoidable defects.** Run Judging the plan in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-7. **Stop at the plan gate — this decision is the user's.** Ask: `/rn:ty` or `/rn:gm`. `/rn:ty` runs task #1 per
-   `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
+7. **Stop at the plan gate — this decision is the user's.** Ask: `/rn:ty` or `/rn:gm`. `/rn:ty`
+   runs task #1 per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

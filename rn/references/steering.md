@@ -97,7 +97,8 @@ Every command but `/rn:on` starts here, so it acts on the right session in its c
    `git log --format= --name-only --diff-filter=AM -- '*/steering.md' | awk 'NF && !seen[$0]++'`
    (each session once, most recently touched first) and keep the paths that exist on disk and
    whose `Status` is not `closed`. One → use it. Several → prefer `Status: paused`, then the most
-   recent; `/rn:up` proposes it and waits, the other commands say which one they took. None → say "No open session. Run /rn:on to start." and stop.
+   recent; `/rn:up` proposes it and waits, the other commands say which one they took. None →
+   say "No open session. Run /rn:on to start." and stop.
 
 2. **Bring an older session current.** Compare `Rn version:` with `version` in
    `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`; on a mismatch run Migration below before the

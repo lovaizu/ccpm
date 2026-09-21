@@ -3,15 +3,17 @@
 Has a result judged by someone other than its author, against a few named questions about whether
 it does its job — not whether a step ran. Read by Judging the plan in `steering.md` (kind Plan) and
 by `task.md` (kinds Design, Deliverable, Session). What follows an NG — a fix, a retry, a stop —
-and its limit are the caller's.
+and its limit are the caller's; a stop at the limit shows the last verdict, and the count starts
+again from the user's answer.
 
 ## Steps
 
 1. **Caller — put the round on record before it starts, so a conversation that ends mid-round
    leaves a verdict to find, not a stale one to trust.** Choose the verdict file's path outside
-   the repository. Write in `State`'s `Pending` what is being judged, at `HEAD`, and the verdict
-   file's path; commit and push. A round's entry is replaced only by the URL of its posted
-   verdict, never by the next round — an unposted round stays on record until step 5 closes it.
+   the repository. Write in `State`'s `Pending` what is being judged, the commit it stands at
+   (`HEAD` before this record commit), and the verdict file's path; commit and push. A round's
+   entry is replaced only by the URL of its posted verdict, never by the next round — an unposted
+   round stays on record until step 5 closes it.
 
 2. **Caller — give the judgment to someone who did not build the thing, so the verdict is not
    colored by the builder's account.** Dispatch `Agent` with `model: opus` and no conversation
@@ -45,8 +47,9 @@ and its limit are the caller's.
    - P5 — Is each Assumption a checked fact or a named assumption, and is none of them work still
      to do or a decision not yet made?
    - Migration (a migrated plan only) — Is every task, check-off, `State` fact and pending item of
-     the old file present in the new one, allowing for what the Migration section of
-     `steering.md` drops and adds by design?
+     the old file present in the new one? By design, and not a loss: unchecked steps that only ran
+     the old `rn`'s own review and its process files are dropped, and a check-off the commit log
+     proves is added.
 
    **Design** (the approach, written before build)
    - D1 — Does it reach the Goal — can each Success criterion be traced to the part of the design
