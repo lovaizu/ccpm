@@ -9,8 +9,9 @@ and its limit are the caller's.
 
 1. **Caller — put the round on record before it starts, so a conversation that ends mid-round
    leaves a verdict to find, not a stale one to trust.** Choose the verdict file's path outside
-   the repository. If `State`'s `Pending` names the gate this round judges, replace what it says
-   about the verdict with: judging at `HEAD`, verdict file at that path; commit and push.
+   the repository. Write in `State`'s `Pending` what is being judged, at `HEAD`, and the verdict
+   file's path; commit and push. A round's entry is replaced only by the URL of its posted
+   verdict, never by the next round — an unposted round stays on record until step 5 closes it.
 
 2. **Caller — give the judgment to someone who did not build the thing, so the verdict is not
    colored by the builder's account.** Dispatch `Agent` with `model: opus` and no conversation
@@ -78,6 +79,6 @@ and its limit are the caller's.
    there as much as an OK, in rendered form, and stays addressable.** A line without evidence is
    not a verdict: send it back first.
    Then `gh pr comment --body-file` with the verdict file; the command prints the comment's URL —
-   fetch that comment, compare it to the file, and only then remove the file. That URL is where
-   the verdict is, for `Pending` and for the user. With no PR, print the file in full in the
-   conversation and keep it until the round's `Pending` entry is cleared.
+   fetch that comment, compare it to the file, write that printed URL into the round's `Pending`
+   entry as where the verdict is, and only then remove the file. With no PR, print the file in
+   full in the conversation and keep it until the round's `Pending` entry is closed.

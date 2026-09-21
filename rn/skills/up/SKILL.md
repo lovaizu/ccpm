@@ -39,8 +39,9 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
    else records them. Commit `chore: resume — {slug}`; push.
 
 8. **Continue exactly where the session stopped, so the user decides on what was judged.** A gate
-   named in `Pending` → present it only when the commit `Pending` names as judged is `HEAD`. When
-   `Pending` names a round still running and its verdict file is on disk, finish that round from
+   named in `Pending` → present it only when nothing outside `.rn/` has changed since the commit
+   `Pending` names as judged (`git diff --quiet <judged> HEAD -- . ':!.rn'`). When `Pending`
+   names a round still running and its verdict file is on disk, finish that round from
    `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` step 5. Otherwise judge the gate again at
    `HEAD` per `${CLAUDE_PLUGIN_ROOT}/references/task.md` step 3. Then present it and wait for
    `/rn:ty` or `/rn:gm`. No gate pending → run the next unchecked task per

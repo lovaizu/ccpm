@@ -109,9 +109,8 @@ Run wherever `steering.md`'s Goal, Success criteria, Assumptions or tasks have j
 or changed — by `/rn:on`, by Migration, by `/rn:gm` — so no plan reaches the user or the task
 loop unjudged. First read it yourself against the Plan questions; a defect you can see does not go
 to the evaluator. Then run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan. NG →
-fix, commit, push, judge again; after three NG rounds stop and ask the user. Where the plan gate
-follows, write `State`'s `Pending` — the gate, the commit judged, where the verdict is — and
-commit.
+fix, commit, push, judge again; after three NG rounds stop and ask the user, showing the last
+verdict; the count starts again from the answer.
 
 ## Session-status block
 

@@ -6,8 +6,8 @@ takes this role up in its first step; `task.md` runs under it.
 ## Purpose
 
 The Goal is achieved, and the user is stopped only for what is theirs — the plan, a design, the
-evaluation. What reaches the evaluator and the user has already been read by the conductor on the
-thing itself; what the session has learned is already in `steering.md`.
+evaluation. What reaches the evaluator and the user has already been read by the conductor; what the session
+has learned is already in `steering.md`.
 
 ## What it does, and does not
 
