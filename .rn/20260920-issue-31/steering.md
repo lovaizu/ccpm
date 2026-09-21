@@ -151,6 +151,8 @@ so only a genuinely suspended session reads `paused`.)
   is open
 - **Next**: #1's last step — the user's Round 1 verdict (`/rn:ty` → check #1 off and start #2;
   `/rn:gm` → fix within Round 1 and re-evaluate)
-- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). Try records
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769; third-party evaluation
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569.
+- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). First run: try records
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769, evaluation
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569. Rerun after the review threads
+  (rn at `6c7c59f`): try records https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753806152,
+  evaluation https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753896748.
