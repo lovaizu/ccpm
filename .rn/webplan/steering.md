@@ -191,8 +191,15 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: 
-- **Last completed**: 
-- **Next**: 
+- **Status**: paused
+- **Date**: 2026-09-21
+- **Last completed**: #1 Step 8 の途中。提案書を plan.md からゼロベースで書き直し(13 頁)、ユーザーレビューを 2 周受けて修正済み。納品形の承認は未取得なので Step 8 は未チェック
+- **Next**: #1 Step 8 の続き。`out/proposal.html` を見てもらい、残る指摘を反映して納品形の合意を取る
 - **Notes**:
+  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象なので push されない。
+  - 提案書の中身は `work/mock-review.md` 4 節の★21 項目(＝「提案書へ」と印を付けた Provider の判断)を 5 分野に束ねたもの。旧版は 9/18 以前の調査(AsIs・表示速度・トップ構成の作り替え)で埋まっており、★を 1 件も載せていなかったため全面差し替えた。
+  - Decisions 2 のタグクラウドを決定：トップに独立ブロックを置かず、検索パネルのタグ一覧に件数付きで兼ねさせる(追加費用ゼロ)。plan.md に反映済みで、Decisions は全件クローズ。
+  - Provider 名は Provider。plan.md 冒頭に記録済み。
+  - ビルドは `python3 work/build_proposal.py`(日付と帯グラフを差し込む)。数字は `work/calc_cost.py` が `tasks.csv`/`cost.json` から生成するので手転記しない。紙面のはみ出しは 1280×720 で全 13 頁ゼロを実測確認済み。
+  - **`work/render.py`・`work/plan.data.json` は旧 3 役体制のまま残っている**。build_proposal.py に置き換わったので、削除するかはユーザー判断待ち(消していない)。
+  - 未解決の user-deferred パス:なし。
