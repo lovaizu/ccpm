@@ -155,4 +155,7 @@ so only a genuinely suspended session reads `paused`.)
   https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769, evaluation
   https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569. Rerun after the review threads
   (rn at `6c7c59f`): try records https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753806152,
-  evaluation https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753896748.
+  evaluation https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753896748. Try 3 against the
+  real remote https://github.com/lovaizu/rn-try (PR https://github.com/lovaizu/rn-try/pull/1):
+  records https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755209675, evaluation
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755349831.
