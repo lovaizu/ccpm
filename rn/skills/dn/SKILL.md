@@ -24,8 +24,8 @@ Writes down where the session stands so a fresh conversation can pick it up. Run
 
 4. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
    untracked path: regenerable build or test residue → add a rule to `.gitignore`; anything else →
-   ask the user (commit, ignore, keep, or delete it themselves), one path at a time with a
-   recommendation, opening with the session-status block. Never delete a file yourself; note any
+   ask the user (commit, ignore, keep, or delete it themselves), one path at a time. Never delete
+   a file yourself; note any
    path the user leaves unresolved in `Pending`.
 
 5. **Commit and push, so nothing lives only in this conversation or this machine.** One commit
@@ -34,6 +34,6 @@ Writes down where the session stands so a fresh conversation can pick it up. Run
    `complete task #` — that marker belongs to the check-off commit alone. Push; if the push fails,
    continue and say so in the report.
 
-6. **Tell the user how to come back.** Open with the session-status block; give the branch; say if
+6. **Tell the user how to come back.** Give the branch; say if
    commits are local-only; name any unresolved paths. Then: `/clear`, and `/rn:up` in the new
    conversation.

@@ -31,16 +31,14 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
    Design for "Design sign-off", kind Session for "Evaluation sign-off". NG → step 1 again with the
    findings; a Session NG names finished work that fails a criterion, so it becomes a task added
    before "Evaluation sign-off" in step 4, and the loop continues from that task. After three NG
-   rounds on one task, stop and ask the user one thing, with a recommendation, opening with the
-   session-status block.
+   rounds on one task, stop and ask the user.
 
 4. **Fold what was learned into `steering.md`, so the plan stays true and the next task starts
    from it.** After every result and every evaluation: an Assumption that proved false is corrected;
    a finding that came back once becomes a Rule; a task the work uncovered is added, one made
    unnecessary is removed; the `Design:` line names the design once it exists. Commit with the
    task's work. A change to the Goal, the Success criteria or an approved design is the user's —
-   raise it at once, as one question with a recommendation, opening with the session-status block;
-   never hold it for a gate.
+   raise it at once; never hold it for a gate.
 
 5. **For an ordinary task, record completion where a fresh conversation will read it, then move
    on — the user is not asked what is not theirs to decide.** Check the task off per Checking a
@@ -49,6 +47,6 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
 
 6. **For a gate task, stop — the decision is the user's.** Write `State`'s `Pending`: the gate,
    the commit its artifact was judged at, and where the verdict is; commit and push. Then present
-   the judged artifact and the evaluator's verdict with the session-status block and wait.
+   the judged artifact and the evaluator's verdict and wait.
    `/rn:ty` checks the task off and continues with the next unchecked task; `/rn:gm` returns to
    step 1 with the feedback.

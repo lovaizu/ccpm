@@ -15,7 +15,7 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
 
 2. **Start from a known tree, so nothing half-done gets mixed into the resume.** Tree clean →
    proceed. Dirty → do step 3's first part read-only to name the session, then propose one of a
-   `wip:` commit or a discard, with a recommendation, opening with the session-status block, and
+   `wip:` commit or a discard, and
    wait for the answer.
 
 3. **Enter the session, so the right work continues in its current shape.** Run Entering a
@@ -32,17 +32,16 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
    true, not from what was last written.** A `Pending` item the commits show closed is closed; an
    Assumption a commit disproved is corrected; a blocker in `Pending` is investigated and a way
    through found — a task is removed only when it has become unnecessary. A change this forces on
-   the Goal, the Success criteria or an approved design is the user's: raise it as one question
-   with a recommendation, opening with the session-status block, before continuing.
+   the Goal, the Success criteria or an approved design is the user's: raise it before continuing.
 
 7. **Mark the session live and commit, so only a genuinely suspended session reads `paused`.** Set
    `Status: active`; leave `Pending` and `Notes` as they are — they are still true and nothing
    else records them. Commit `chore: resume — {slug}`; push.
 
 8. **Continue exactly where the session stopped, so the user decides on what was judged.** A gate
-   named in `Pending` → if its artifact has moved since the commit `Pending` says was judged, or
-   `Pending` records no completed verdict for it, have it judged again as it now stands per
-   `${CLAUDE_PLUGIN_ROOT}/references/task.md` step 3 — a commit on the branch is the user's work,
-   never undone to spare the round; then present it again with the session-status block and wait
-   for `/rn:ty` or `/rn:gm`. Otherwise run the next unchecked task per
+   named in `Pending` → present it only when the commit `Pending` names as judged is `HEAD`. When
+   `Pending` names a round still running and its verdict file is on disk, finish that round from
+   `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` step 5. Otherwise judge the gate again at
+   `HEAD` per `${CLAUDE_PLUGIN_ROOT}/references/task.md` step 3. Then present it and wait for
+   `/rn:ty` or `/rn:gm`. No gate pending → run the next unchecked task per
    `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

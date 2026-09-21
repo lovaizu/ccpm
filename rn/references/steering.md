@@ -87,7 +87,7 @@ Design: <path to the session's design — omit the line when there is none>
 A task is complete when its heading ends in ` ✅` — `### #1: <task name> ✅` — and every step under
 it is `[x]`. The check-off is one commit, `<type>: complete task #N — <name>`, the only commit whose
 message carries `complete task #`; `/rn:up` reconciles from it. A task found incomplete later gets
-a new task; the check-off stands.
+a new task.
 
 ## Entering a session
 
@@ -97,8 +97,7 @@ Every command but `/rn:on` starts here, so it acts on the right session in its c
    `git log --format= --name-only --diff-filter=AM -- '*/steering.md' | awk 'NF && !seen[$0]++'`
    (each session once, most recently touched first) and keep the paths that exist on disk and
    whose `Status` is not `closed`. One → use it. Several → prefer `Status: paused`, then the most
-   recent; `/rn:up` proposes it with a recommendation and waits, the other commands say which one
-   they took. None → say "No open session. Run /rn:on to start." and stop.
+   recent; `/rn:up` proposes it and waits, the other commands say which one they took. None → say "No open session. Run /rn:on to start." and stop.
 
 2. **Bring an older session current.** Compare `Rn version:` with `version` in
    `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`; on a mismatch run Migration below before the
@@ -110,14 +109,15 @@ Run wherever `steering.md`'s Goal, Success criteria, Assumptions or tasks have j
 or changed — by `/rn:on`, by Migration, by `/rn:gm` — so no plan reaches the user or the task
 loop unjudged. First read it yourself against the Plan questions; a defect you can see does not go
 to the evaluator. Then run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan. NG →
-fix, commit, push, judge again; after three NG rounds stop and ask the user one thing, with a
-recommendation, opening with the session-status block. Where the plan gate follows, write
-`State`'s `Pending` — the gate, the commit judged, where the verdict is — and commit.
+fix, commit, push, judge again; after three NG rounds stop and ask the user. Where the plan gate
+follows, write `State`'s `Pending` — the gate, the commit judged, where the verdict is — and
+commit.
 
 ## Session-status block
 
 Opens every message that stops for the user while a session is active, so they can answer without
-opening `steering.md`.
+opening `steering.md`. A stop asks one thing, with the conductor's recommendation, and never what
+the record already answers.
 
 ```
 ── {slug}: {Goal's first sentence} ──
@@ -161,7 +161,8 @@ it recorded lost.
    commit log (`complete task #N`).
 
 4. **Remove what the old `rn` wrote for its own process, so the session leaves what this `rn`
-   leaves.** That is the `checks/` directory and nothing else — evidence and deliverables stay.
+   leaves.** Its process files — under 0.8.0, the `checks/` directory — and nothing else; evidence
+   and deliverables stay.
 
 5. **Stamp `Rn version:` with the installed version, commit `chore: migrate session to rn
    <version>`, and push, so the migration is on record before it is judged.**
