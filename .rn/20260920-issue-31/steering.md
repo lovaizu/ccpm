@@ -148,13 +148,8 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-22
-- **Last completed**: #1 step 4 — the fix/re-try/re-evaluate cycle: four cycles, tries 4–8, four
-  evaluations on the PR (`0c06f5a`)
-- **Next**: #1 step 5 — take the user's verdict on round 1 via `/rn:ty` / `/rn:gm`
-- **Notes**: branch `worktree-rebuild-rn`, PR #32 (its head is `0c06f5a`). Try 8 ran a real goal
-  (`rev-sh`) start → suspend → resume → close under the 0.9.0 draft with the user stopped only at
-  the plan and evaluation gates, so #1's second completion criterion now has a run behind it; that
-  try lives in its own scratch repo, not here. `gh` is not authenticated in this worktree's shell,
-  so posting round 1's verdict to PR #32 needs `gh auth login` (or `GH_TOKEN`) first.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
