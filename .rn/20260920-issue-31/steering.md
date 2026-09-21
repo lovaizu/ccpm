@@ -73,6 +73,9 @@ wrong with it is visible.
       `on` → `dn` → `up` → the three gates in scratch
 - [x] Evaluate: put both runs on the PR; a third party on the stronger model answers the Acceptance
       criteria's questions against them
+- [ ] Fix what the tries and evaluations exposed — as the shape `rn` should have, not patches on
+      the lines named; re-try with a goal that places a "Design sign-off" task so the Design kind
+      and the `Design:` line run for real; re-evaluate
 - [ ] Take the user's verdict via `/rn:ty` / `/rn:gm`
 
 **Completion criteria**:
@@ -147,15 +150,17 @@ so only a genuinely suspended session reads `paused`.)
 
 - **Status**: paused
 - **Date**: 2026-09-21
-- **Last completed**: none checked off — #1's Write / Try / Evaluate steps are done; its verdict step
-  is open
-- **Next**: #1's last step — the user's Round 1 verdict (`/rn:ty` → check #1 off and start #2;
-  `/rn:gm` → fix within Round 1 and re-evaluate)
-- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). First run: try records
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769, evaluation
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569. Rerun after the review threads
-  (rn at `6c7c59f`): try records https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753806152,
-  evaluation https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753896748. Try 3 against the
-  real remote https://github.com/lovaizu/rn-try (PR https://github.com/lovaizu/rn-try/pull/1):
-  records https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755209675, evaluation
-  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755349831.
+- **Last completed**: none checked off — #1's Write / Try / Evaluate steps are done (first run,
+  rerun after the review threads, and a third try against a real remote); its fix step is open
+- **Next**: #1's fix step — the user decided the defects are fixed within Round 1 before the
+  verdict, not carried to Round 2: rebuild toward the right shape (no patching of named lines),
+  re-try including a design-bearing goal, re-evaluate, then present for the verdict
+- **Notes**: branch `worktree-rebuild-rn`, PR #32 (draft). The defect list to work from is the two
+  evaluations of rn at `6c7c59f`: https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753896748
+  (N1–N10) and https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755349831 (defects 1–10,
+  recurrences, untested items). Real-remote tries run on https://github.com/lovaizu/rn-try
+  (kiyobot has write access); its PR #1 is the last try's residue and may be deleted. Earlier
+  records: first run https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750717769 /
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5750756569, rerun
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5753806152, third try
+  https://github.com/lovaizu/ccpm/pull/32#issuecomment-5755209675.
