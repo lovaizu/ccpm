@@ -31,15 +31,18 @@ enforced.
    could be complete.** Check it on the thing itself — not on the implementer's report — against
    the task's Success criteria and the Rules: does it show what the report claims; does every fact
    or number in it have a source; does every term carry a meaning the reader can take, with no
-   history, self-evident lines or repetition. Try it on a copy, never by breaking the repository in
-   place. A miss the conductor can see goes straight back to the implementer with what is missing;
-   only then does it go on.
+   history, self-evident lines or repetition. Try it on a copy in a scratch directory outside the
+   repository, removed before the command stops — never by breaking the repository in place. A
+   miss the conductor can see goes straight back to the implementer with what is missing; only
+   then does it go on.
 
 3. **Have the result judged by someone other than its author, so a pass means it does its job.**
    Run `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` — kind Deliverable for an ordinary task, kind
    Design for "Design sign-off", kind Session for "Evaluation sign-off". NG → step 1 again with the
-   findings. After three NG rounds on one task, stop and ask the user one thing, with a
-   recommendation, opening with the session-status block.
+   findings; a Session NG names finished work that fails a criterion, so it becomes a task added
+   before "Evaluation sign-off" in step 4, and the loop continues from that task. After three NG
+   rounds on one task, stop and ask the user one thing, with a recommendation, opening with the
+   session-status block.
 
 4. **Fold what was learned into `steering.md`, so the plan stays true and the next task starts
    from it.** After every result and every evaluation: an Assumption that proved false is corrected;
@@ -54,6 +57,9 @@ enforced.
    task off in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, commit and push. Then the next
    unchecked task.
 
-6. **For a gate task, stop — the decision is the user's.** Present the judged artifact and the
-   evaluator's verdict with the session-status block and wait. `/rn:ty` checks the task off and
-   continues with the next unchecked task; `/rn:gm` returns to step 1 with the feedback.
+6. **For a gate task, stop — the decision is the user's.** Write `State`'s `Pending`: the gate,
+   the commit its artifact was judged at, and where the verdict is (the PR comment, or "in
+   conversation"); commit `docs: present {task name} for the verdict`; push. Then present the
+   judged artifact and the evaluator's verdict with the session-status block and wait. `/rn:ty`
+   checks the task off and continues with the next unchecked task; `/rn:gm` returns to step 1
+   with the feedback.

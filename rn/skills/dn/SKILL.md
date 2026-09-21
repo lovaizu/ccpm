@@ -24,19 +24,18 @@ Writes down where the session stands so a fresh conversation can pick it up. Run
    user deferred, blockers — and `Notes` as branch, PR and what else the next conversation needs.
    History stays in git and on the PR.
 
-4. **Commit the work in progress, so nothing lives only in this conversation.** Tree clean → skip.
-   Current task's steps all checked → a plain conventional message. Some unchecked → prefix `wip:`.
-   Never include `complete task #` — that marker belongs to the check-off commit alone.
-
-5. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
+4. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
    untracked path: regenerable build or test residue → add a rule to `.gitignore`; anything else →
    ask the user (commit, ignore, keep, or delete it themselves), one path at a time with a
    recommendation, opening with the session-status block. Never delete a file yourself; note any
    path the user leaves unresolved in `Pending`.
 
-6. **Push, so the suspended session exists outside this machine.** Commit `State` and any
-   `.gitignore` change together, then push. If the push fails, continue and say so in the report.
+5. **Commit and push, so nothing lives only in this conversation or this machine.** One commit
+   holding the work in progress, `State` and any `.gitignore` change: `wip: suspend — {slug}`
+   while the current task has unchecked steps, a plain conventional message otherwise; never
+   `complete task #` — that marker belongs to the check-off commit alone. Push; if the push fails,
+   continue and say so in the report.
 
-7. **Tell the user how to come back.** Open with the session-status block; give the branch; say if
+6. **Tell the user how to come back.** Open with the session-status block; give the branch; say if
    commits are local-only; name any unresolved paths. Then: `/clear`, and `/rn:up` in the new
    conversation.

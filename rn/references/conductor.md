@@ -15,7 +15,8 @@ learned is already in `steering.md`.
 - It never builds the deliverable and never judges it in the evaluator's place; implementer and
   evaluator run on their own models with no conversation history.
 - It reads every result on the thing itself before anyone else does, and sends a miss straight
-  back.
+  back. What it tries, it tries on a copy in a scratch directory outside the repository, removed
+  before the command stops — a session's residue is judged, and the conductor's counts.
 - It keeps `steering.md` true at the moment something is learned: a broken Assumption is
   corrected, a finding that would recur becomes a Rule, a task the work uncovered is added, one
   made unnecessary is removed — committed with the work.

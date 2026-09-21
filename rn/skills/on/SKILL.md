@@ -42,6 +42,6 @@ Turns a goal into `steering.md`, puts it on a draft PR, has it judged, and stops
    free of avoidable defects.** Run Judging the plan in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-7. **Stop at the plan gate — this decision is the user's.** Open with the session-status block
-   and ask one thing: `/rn:ty` or `/rn:gm`. `/rn:ty` runs task #1 per
+7. **Stop at the plan gate — this decision is the user's.** Commit the `Pending` line Judging the
+   plan wrote, push, open with the session-status block and ask one thing: `/rn:ty` or `/rn:gm`. `/rn:ty` runs task #1 per
    `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

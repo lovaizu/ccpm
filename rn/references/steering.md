@@ -57,8 +57,8 @@ is shown. Then why, in full — no added scope>
 - **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Pending**: the gate awaiting a verdict, open questions, items the user deferred, blockers — or
-  "none"
+- **Pending**: the gate awaiting a verdict — with the commit its artifact was judged at and where
+  the verdict is — open questions, items the user deferred, blockers; or "none"
 - **Notes**: branch, PR, and whatever else the next conversation needs; history lives in git and
   on the PR
 ```
@@ -124,7 +124,8 @@ plan with a defect you can see does not go to the evaluator. Then run
 `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` with kind Plan. NG → fix, commit
 `docs: revise plan — {what changed}`, push, judge again; after three NG rounds stop and ask the
 user one thing, with a recommendation, opening with the session-status block. The plan the user
-sees is the plan that was judged: a change after the verdict is judged again.
+sees is the plan that was judged: a change after the verdict is judged again. Where the plan gate
+follows, `State`'s `Pending` names the gate, the commit judged and where the verdict is.
 
 ## Session-status block
 
@@ -166,8 +167,8 @@ it recorded lost.
    template's fields; a task the old file records complete gets the ` ✅` mark. Drop an unchecked
    step that existed only to run the old `rn`'s own review — a self-check, an expert review, a
    record into a process file such as `checks/`; a step that records substance stays and points
-   where this `rn` puts it, the PR. A checked step keeps its check and its substance; its wording
-   changes only where the record shows it false. The new file holds current intent only — no
+   where this `rn` puts it, the PR. A checked step is carried verbatim, check and all, whatever it
+   ran; its wording changes only where the record shows it false. The new file holds current intent only — no
    history of the old `rn` or of the migration; git keeps that.
 
 3. **Sync `State` to where the session actually stands, so the next command continues rather than

@@ -18,6 +18,8 @@ what the evaluator is asked to do.
    - the kind and all of that kind's questions below, every round;
    - a scratch directory outside the repository to work in, which it removes before returning,
      leaving the repository's working tree as it found it;
+   - a verdict file — a path outside the repository where it writes its verdict, the same text
+     it returns, so the caller can pass it on without retyping a word;
    - the language to answer in — the one `steering.md` is written in.
 
    Never the author's account, never what to excuse or where not to look, never an earlier
@@ -41,9 +43,9 @@ what the evaluator is asked to do.
    - P5 — Is each Assumption a checked fact or a named assumption, and is none of them work still
      to do or a decision not yet made?
    - Migration (a migrated plan only) — Is every task, check-off, `State` fact and pending item of
-     the old file present in the new one? Not a loss: an unchecked step that only ran the old
-     `rn`'s own review, and the old `rn`'s process files such as `checks/` — the migration drops
-     those by design.
+     the old file present in the new one? The migration's own rule says what changes by design
+     and is not a loss: unchecked steps that only ran the old `rn`'s review and its process files
+     are dropped, and a check-off the commit log proves is added.
 
    **Design** (the approach, written before build)
    - D1 — Does it reach the Goal — can each Success criterion be traced to the part of the design
@@ -69,15 +71,18 @@ what the evaluator is asked to do.
 
 3. **Evaluator — return one line per question and one overall verdict, so the caller can act
    without re-reading the artifact.** Each line: OK or NG, then the evidence. Then the overall
-   verdict.
+   verdict. Written to the verdict file, headed `## Evaluation — {kind}[ — task #N] — {short
+   commit}`, and returned as the final message.
 
 4. **Caller — put every round's verdict where the user reviews, so it is read in rendered form,
    as returned, and stays addressable.** A line without evidence is not a verdict: send it back
-   before anything else. Then `gh pr comment` on the session PR from a file holding the verdict as
-   returned, headed `## Evaluation — {kind}[ — task #N] — {short commit}`; read the posted comment
-   back before going on. Every round is posted, an NG as much as an OK — the user reads the
-   verdict, never the conductor's paraphrase of it. With no PR, report it in the conversation
-   instead.
+   before anything else. Then post the verdict file itself — `gh pr comment --body-file` on the
+   session PR — and read the posted comment back against the file before going on; then remove
+   the file. Every round is posted, an NG as much as an OK, and never retyped — the user reads the
+   verdict, not the conductor's paraphrase of it. With no PR, print the file in full in the
+   conversation instead.
 
 5. **Caller — act on the verdict; what follows an NG — a fix, a retry, a stop — is the caller's
-   decision, and so is its limit.**
+   decision, and so is its limit.** Wherever a gate is then presented, `State`'s `Pending` names
+   the commit this verdict judged and where the verdict is, so a later conversation knows what
+   was judged.
