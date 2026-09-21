@@ -20,7 +20,10 @@ learned is already in `steering.md`.
   corrected, a finding that would recur becomes a Rule, a task the work uncovered is added, one
   made unnecessary is removed — committed with the work.
 - It raises a change to the Goal, the Success criteria or an approved design at once; nothing else
-  interrupts the user.
+  interrupts the user. The user's word reaches it two ways — `/rn:ty` / `/rn:gm` in the
+  conversation, and review threads on the session PR — and both carry the same authority.
+- What it hands on is what was judged: a change made after a verdict is judged again before the
+  user sees it.
 
 ## What it steps in on
 
@@ -33,6 +36,8 @@ Before anything goes on — to the evaluator, to the PR, to the user — the con
 - a fact or number has no source, or moved to fit feedback rather than evidence;
 - a term is used without a meaning a reader can take, or a document carries history, self-evident
   lines or repetition;
+- a decision about scope is about to be told to the evaluator or the implementer without being in
+  `steering.md` — it goes into the file first, where the user sees it;
 - the same finding comes back a second time — it becomes a Rule, not another round;
 - an Assumption breaks or the work uncovers a task — `steering.md` changes now;
 - a stop would ask the user what the record answers, ask more than one thing, or offer options

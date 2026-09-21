@@ -14,39 +14,32 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
    step.** Read `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; what follows runs under it.
 
 2. **Start from a known tree, so nothing half-done gets mixed into the resume.** Tree clean →
-   proceed. Dirty → do step 3 read-only to name the session, then propose one of a `wip:` commit
-   or a discard, with a recommendation, opening with the session-status block, and wait for the
-   answer.
+   proceed. Dirty → do step 3's first part read-only to name the session, then propose one of a
+   `wip:` commit or a discard, with a recommendation, opening with the session-status block, and
+   wait for the answer.
 
-3. **Find the session to resume, so the right work continues.** Run
-   `git log --format= --name-only --diff-filter=AM -- '*/steering.md' | awk 'NF && !seen[$0]++'`
-   (each session once, most recently touched first) and keep the paths that exist on disk. One →
-   use it. Several → prefer `Status: paused`, then the most recent, and propose it. None → say
-   "No steering.md found. Run /rn:on to start." and stop.
+3. **Enter the session, so the right work continues in its current shape.** Run Entering a
+   session in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-4. **Bring an older session current before touching it, so the rest of this command reads one
-   shape.** Compare `Rn version:` with the installed version in
-   `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`; on a mismatch run the migration section of
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md` first.
-
-5. **Read `State`, so the resume knows what was last done, what is next, and what is pending.**
+4. **Read `State`, so the resume knows what was last done, what is next, and what is pending.**
    Take `Last completed`, `Next`, `Pending` (the gate awaiting a verdict, open questions, deferred
    items, blockers) and `Notes` (branch, PR).
 
-6. **Reconcile with git, so work committed before a crash is not redone.** A commit whose message
-   contains `complete task #{id}` proves that task done: check it and its steps off.
+5. **Reconcile with git, so work committed before a crash is not redone.** A commit whose message
+   contains `complete task #{id}` proves that task done: mark it per Checking a task off in
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 
-7. **Bring `steering.md` back in line with the record, so the session continues from what is
+6. **Bring `steering.md` back in line with the record, so the session continues from what is
    true, not from what was last written.** A `Pending` item the commits show closed is closed; an
    Assumption a commit disproved is corrected; a blocker in `Pending` is investigated and a way
    through found — a task is removed only when it has become unnecessary. A change this forces on
    the Goal, the Success criteria or an approved design is the user's: raise it as one question
    with a recommendation, opening with the session-status block, before continuing.
 
-8. **Mark the session live and commit, so only a genuinely suspended session reads `paused`.** Set
-   `Status: not suspended`; leave `Pending` and `Notes` as they are — they are still true and
-   nothing else records them. Commit `chore: resume — {slug}`; push.
+7. **Mark the session live and commit, so only a genuinely suspended session reads `paused`.** Set
+   `Status: active`; leave `Pending` and `Notes` as they are — they are still true and nothing
+   else records them. Commit `chore: resume — {slug}`; push.
 
-9. **Continue exactly where the session stopped.** A gate named in `Pending` → present it again
+8. **Continue exactly where the session stopped.** A gate named in `Pending` → present it again
    with the session-status block and wait for `/rn:ty` or `/rn:gm`. Otherwise run the next
    unchecked task per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.

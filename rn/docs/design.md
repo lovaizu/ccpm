@@ -38,11 +38,23 @@ the evaluation of the result. Everything else runs without asking.
 - **Three gates, and no other stop.** The plan gate ends `/rn:on`; a "Design sign-off" task stops
   where planning placed one; "Evaluation sign-off" is always the last task. `/rn:ty` and `/rn:gm`
   are the only verdict vocabulary.
-- **A session leaves `steering.md` and the deliverable.** Evaluations are PR comments; a design
-  lives in the project's own documents, pointed to by the `Design:` line. `rn` writes no process
-  file of its own.
-- **One completion marker per task.** `complete task #N` appears in the check-off commit alone;
-  `/rn:up` reconciles from it.
+- **A session leaves `steering.md` and the deliverable.** Evaluations are PR comments — every
+  round, as the evaluator wrote it; a design lives in the project's own documents, pointed to by
+  the `Design:` line. `rn` writes no process file of its own.
+- **The evaluator is handed the contract, not a briefing.** It receives `steering.md` whole, the
+  artifact and its kind's questions — never the builder's account, an exclusion list or an earlier
+  verdict; a fresh agent every round. A scope decision that is not in `steering.md` is not a
+  decision, so the evaluator and the user judge against the same record.
+- **The user's word has two channels of equal weight.** `/rn:ty` / `/rn:gm` in the conversation
+  and review threads on the session PR; a plan either one changes is judged again before work
+  continues.
+- **One completion marker per task, one mark in the file.** `complete task #N` appears in the
+  check-off commit alone and the task's heading gains ` ✅`; `/rn:up` reconciles from the commit.
+  Pushed history is never rewritten.
+- **A session has three states.** `active`, `paused`, `closed`; only a paused one is offered for
+  resume, and a closed one never is.
+- **Names are quoted, not summarized.** The status block carries the Goal's first sentence and the
+  task names as `steering.md` writes them, so the user meets the same words in every conversation.
 - **An older session is rebuilt, not patched.** A version mismatch rewrites `steering.md` from the
   current template with the old file as input, carrying every fact, so the session goes on at the
   current bar (`references/steering.md`, Migration).
@@ -51,6 +63,8 @@ the evaluation of the result. Everything else runs without asking.
 
 ## Shape
 
-Five user-invoked commands — `/rn:on`, `/rn:dn`, `/rn:up`, `/rn:ty`, `/rn:gm` — and three
-references: `conductor.md` (the role every command runs under), `steering.md` (the file and its
-migration), `task.md` (the loop), `evaluate.md` (the questions). The session-status block opens every stop.
+Five user-invoked commands — `/rn:on`, `/rn:dn`, `/rn:up`, `/rn:ty`, `/rn:gm` — and four
+references: `conductor.md` (the role every command runs under), `steering.md` (the file, and the
+operations every command shares — entering a session, judging the plan, checking off, the status
+block, migration), `task.md` (the loop), `evaluate.md` (the questions). The session-status block
+opens every stop.

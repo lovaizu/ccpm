@@ -1,23 +1,33 @@
 # Evaluate
 
 Has a result judged by someone other than its author, against a few named questions about whether
-it does its job — not whether a step ran. Read by `/rn:on` (kind Plan), by the migration in
-`steering.md` (kind Plan with its Migration line), and by `task.md` (kinds Design, Deliverable,
-Session).
+it does its job — not whether a step ran. Read by Judging the plan in `steering.md` (kind Plan) and
+by `task.md` (kinds Design, Deliverable, Session). Steps 1, 4 and 5 are the caller's; 2 and 3 are
+what the evaluator is asked to do.
 
 ## Steps
 
-1. **Give the judgment to someone who did not build the thing, so the verdict is not colored by
-   the builder's account.** Dispatch `Agent` with `model: opus` and no conversation history. Hand
-   it what the questions need and nothing that answers them: the session Goal and Success
-   criteria; for a task, its Objective and Success criteria; the artifact (a path or a commit
-   range); its kind and that kind's questions below; a scratch directory outside the repository to
-   work in, which it removes before returning. Never the author's summary, never the verdict you
-   expect.
+1. **Caller — give the judgment to someone who did not build the thing, so the verdict is not
+   colored by the builder's account.** Dispatch `Agent` with `model: opus` and no conversation
+   history — a fresh one every round, so the judge of a fix is never the author of the finding.
+   Hand it, and only this:
+   - `steering.md` in full — the Goal, Success criteria, Rules, Assumptions and tasks are the whole
+     contract; a decision about scope that is not in it is not a decision;
+   - which task, when the artifact is one task's result or design;
+   - the artifact — a path or a commit range;
+   - the kind and all of that kind's questions below, every round;
+   - a scratch directory outside the repository to work in, which it removes before returning,
+     leaving the repository's working tree as it found it;
+   - the language to answer in — the one `steering.md` is written in.
 
-2. **Ask only the questions for the artifact's kind, so the judgment is about the job the artifact
-   has to do.** Each level is judged against the one above it: Success criteria against the Goal, a
-   task's Objective against the Goal, a task's Success criteria against its Objective.
+   Never the author's account, never what to excuse or where not to look, never an earlier
+   verdict or what was fixed since; earlier evaluations on the PR are not evidence either — the
+   evaluator judges the thing itself.
+
+2. **Evaluator — answer only the questions for the artifact's kind, so the judgment is about the
+   job the artifact has to do.** Each level is judged against the one above it: Success criteria
+   against the Goal, a task's Objective against the Goal, a task's Success criteria against its
+   Objective. Run or read the thing itself; a report of it is not evidence.
 
    **Plan** (`steering.md`)
    - P1 — If every Success criterion held, would the Goal be achieved — nothing missing, nothing
@@ -55,12 +65,17 @@ Session).
      the work exposed?
    - S3 — Has the session left only `steering.md` and the deliverable — in the tree and outside it?
 
-3. **Require one line per question and one overall verdict, so the caller can act without
-   re-reading the artifact.** Each line: OK or NG, then the evidence. Then the overall verdict.
+3. **Evaluator — return one line per question and one overall verdict, so the caller can act
+   without re-reading the artifact.** Each line: OK or NG, then the evidence. Then the overall
+   verdict.
 
-4. **Put the verdict where the user reviews, so it is read in rendered form and stays
-   addressable.** `gh pr comment` on the session PR, headed by what was evaluated and the commit.
-   With no PR, report it in the conversation instead.
+4. **Caller — put every round's verdict where the user reviews, so it is read in rendered form,
+   as returned, and stays addressable.** A line without evidence is not a verdict: send it back
+   before anything else. Then `gh pr comment` on the session PR from a file holding the verdict as
+   returned, headed `## Evaluation — {kind}[ — task #N] — {short commit}`; read the posted comment
+   back before going on. Every round is posted, an NG as much as an OK — the user reads the
+   verdict, never the conductor's paraphrase of it. With no PR, report it in the conversation
+   instead.
 
-5. **Return the verdict to the caller, so what follows an NG — a fix, a retry, a stop — is the
-   caller's decision.** The retry and its limit live where this file is called from.
+5. **Caller — act on the verdict; what follows an NG — a fix, a retry, a stop — is the caller's
+   decision, and so is its limit.**
