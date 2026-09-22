@@ -191,14 +191,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-23
-- **Last completed**: #1 Step 8 の途中。8 点の見直しのうち comps.md・tasks.md を目的から作り直し、見積をゼロベースで積み直した
-- **Next**: #1 Step 8 の続き。下の 2 件を片付けてから提案書を直し、案件ルートの資料をまとめて提示し直す
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象なので push されない。
-  - **ユーザーの判断待ち（1 問）**：優先 3 ページ型のゼロベース見積が ¥（額）・11 週となり、（予算額）の枠に入らない。品質を落とさず 7 つ削っても ¥（額） で届かない。提案書を (1) ¥（額） を出して判断を Client へ返す〔推奨〕/ (2) 削った案 ¥（額） を本命にする / (3) 単価 ¥（額）・週 2.5 日の前提を見直す、のどれで組み直すか。答えが出るまで `plan.md` の Decisions 1・Cost・Schedule と提案書 11 頁は直せない。
-  - **未着手の見直し 2 点**（9/22 のユーザー指示 8 点のうち残り）：worklog.md の重要ポイントの漏れ／worklog.md をクライアントに出せる前提の文量・形式にする（内部用の区別を作らない）。
-  - 実物：`.rn/webplan/project/sample-project/` の `comps.md`（作るもの・成果物単位に工数）・`tasks.md`（作業と順序）・`build/tasks.csv`（日数の正）。額は `python3 build/calc_cost.py build/tasks.csv build/cost.json`。提案書は `out/proposal.html`、ビルドは `python3 build/build_proposal.py`、検査は `zsh build/fit.sh`。
-  - `learnings.md` は 87〜89 を追記済み（成果物単位で積む／既存から逆算しない／枠に入らないなら入らないと出す）。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
