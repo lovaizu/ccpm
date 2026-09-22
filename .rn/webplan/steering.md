@@ -191,21 +191,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-22
-- **Last completed**: #1 Step 8 の途中。提案書は 11 頁で実測に基づく内容に直し、窓幅追随・日付つき PDF 出力を復活させた。納品形の承認は未取得なので Step 8 は未チェック
-- **Next**: #1 Step 8 の続き。下の 8 点を見直してから、提案書と案件ルートの資料をまとめて提示し直す
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象なので push されない。
-  - **再開後に見直す 8 点**（ユーザー指示）：
-    1. `worklog.md` の漏れ。文量でなく、重要なポイントが落ちていないか。
-    2. `comps.md` が分かりにくい。カンプ（ページ）と部品で Figma のページを分けるべきでは。ページごとのフレームになるのでは。カンプ＝ルートフレーム＝ページか。
-    3. `comps.md` は成果物単位の明細で工数を積み上げる形のはずだが、工数が入っていない。
-    4. `tasks.md` が見にくい。「内部用」のような不要な記載が多い。
-    5. `comps.md`・`tasks.md` の目的から考え直す。comps＝全量で何が必要か・何を作るか。tasks＝comps を実現する作業と作業順。
-    6. 案件ルートの資料は、見たいと言われたらクライアントにも出せる前提で書く。金額など伏せる箇所はあっても、外部用／内部用の区別は作らない。
-    7. 6 は `worklog.md` も同じ。この案件の試行に限らず常に。
-    8. 全体を人が読める文量・形式に。箇条書きを使い、認知負荷とノイズを減らす。
-  - 実物：`.rn/webplan/project/sample-project/out/proposal.html` と `out/proposal-20260922.pdf`（11 頁）。ビルドは `python3 build/build_proposal.py`、検査は `zsh build/fit.sh`、撮影は `zsh build/shots.sh`、PDF は指示時のみ `zsh build/pdf.sh`。
-  - `learnings.md` は 69〜86 を追記済み（9/13 以降の取りこぼしを transcript から回収）。以降は FB のたびにその場で追記する。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: -
+- **Last completed**: -
+- **Next**: -
+- **Notes**: -
