@@ -148,8 +148,19 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-22
+- **Last completed**: #1 step 4 — the fix/re-try/re-evaluate cycle (`0c06f5a`)
+- **Next**: #1 step 5 — the user's verdict on round 1; they have said the revise is coming via
+  `/rn:gm`, so expect the fix list below rather than an approval
+- **Notes**: branch `worktree-rebuild-rn`, PR #32 (head `7603821`). Agreed with the user at this
+  stop, to be built once the verdict lands: (1) evaluations become files under
+  `.rn/{session}/evaluations/NN-*.md` and no plain PR comment is ever posted — a round closes on its
+  committed file, not a posted URL, which also drops the `gh` dependency; the files are removed when
+  the session closes so only `steering.md` and the deliverable remain; (2) a slug names what the work
+  produces, never a ticket id — rename this session to `.rn/20260920-rebuild-rn/`; (3) steering.md's
+  header becomes YAML frontmatter (`rn`, `issue`, `pr`, `design`), which GitHub renders as a table;
+  (4) `status` and `paused_at` move into that frontmatter with the pair `running` / `paused`, while
+  Last completed / Next / Notes stay in this section as prose. Also pending: PR #32 carries 14 plain
+  comments — move the last pair (try 8 record, fourth-cycle evaluation) into `evaluations/` and
+  delete the other 12, showing the user the list first.
