@@ -1,18 +1,23 @@
 # steering.md
 
 The one file a session keeps: its plan and its running record. Every `/rn:*` command reads it;
-`/rn:on` writes it, the task loop checks it off and keeps it true, `/rn:dn` and `/rn:up` write and
-reset `State`. The operations every command shares — entering a session, judging the plan,
-checking a task off, the session-status block, migration — are defined here once.
+`/rn:on` writes it, the task loop checks it off and keeps it true, `/rn:dn` and `/rn:up` set and
+clear the suspend fields. The operations every command shares — entering a session, judging the
+plan, checking a task off, the session-status block, migration — are defined here once.
 
 ## Template
 
-Copy verbatim when starting a session. Keep every heading and field name exactly — every command
+Copy verbatim when starting a session. Keep every field name and heading exactly — every command
 finds its way by them.
 
 ```markdown
-Rn version: <installed rn version>
-Design: <path to the session's design — omit the line when there is none>
+---
+rn: <installed rn version>
+issue: <the issue this session serves — omit the line when there is none>
+pr: <the session PR's URL — added when the PR opens>
+design: <path to the session's design — omit the line when there is none>
+status: running
+---
 
 # Goal
 
@@ -50,17 +55,22 @@ Design: <path to the session's design — omit the line when there is none>
 
 # State
 
-- **Status**: active
-- **Date**: YYYY-MM-DD
 - **Last completed**: #N description
 - **Next**: #N description
-- **Pending**: <the gate awaiting a verdict, with the commit judged and where the verdict is; open
-  questions; items the user deferred; blockers — or "none">
-- **Notes**: <branch, PR, whatever else the next conversation needs>
+- **Pending**: <the gate awaiting a verdict, with the commit judged and the evaluation file it
+  stands on; open questions; items the user deferred; blockers — or "none">
+- **Notes**: <whatever else the next conversation needs>
 ```
 
-## Why each section exists
+## Why each part exists
 
+- **Frontmatter** — the session's fixed facts, kept as YAML so GitHub renders them as a table
+  above the plan and every command reads them without parsing prose. `rn` is the version the
+  session is written for; `issue` and `pr` are where the work came from and where it is reviewed;
+  `design` points at the approach once one is settled. `status` is `running` while the session is
+  live and `paused` from `/rn:dn` to `/rn:up` — the suspend signal, and the only state that is a
+  field. `/rn:dn` adds `paused_at: <YYYY-MM-DD>` beside it and `/rn:up` removes it. That a session
+  is finished is not a field either: its last task, "Evaluation sign-off", carries ` ✅`.
 - **Goal** — what the user wants; everything below traces back to it. Its first sentence is the
   session's name: the status block and every report quote it as written, so the user meets the
   same words in every conversation.
@@ -75,12 +85,11 @@ Design: <path to the session's design — omit the line when there is none>
 - **Tasks** — the work, worked back from the Success criteria; each Objective serves one, fits one
   sentence, and is reached by concrete steps. Flat and numbered, no phases. A "Design sign-off"
   task goes where the approach must be decided before build; its deliverable is the approach,
-  written where it belongs in the project and named on the `Design:` line. "Evaluation sign-off"
+  written where it belongs in the project and named in the `design` field. "Evaluation sign-off"
   is always the last task.
-- **State** — where the session stands between conversations. `Status` is `active` while a
-  conversation holds the session, `paused` from `/rn:dn` to `/rn:up`, and `closed` once
-  "Evaluation sign-off" is approved — a closed session is never resumed. `Pending` is carried
-  until each item it names is closed; history lives in git and on the PR.
+- **State** — where the session stands between conversations, in prose: what was last completed,
+  what is next, what is pending, and what else a cold reader needs. `Pending` is carried until each
+  item it names is closed; history lives in git and on the PR.
 
 ## Checking a task off
 
@@ -96,11 +105,12 @@ Every command but `/rn:on` starts here, so it acts on the right session in its c
 1. **Find `steering.md`.** The path known in this conversation; otherwise run
    `git log --format= --name-only --diff-filter=AM -- '*/steering.md' | awk 'NF && !seen[$0]++'`
    (each session once, most recently touched first) and keep the paths that exist on disk and
-   whose `Status` is not `closed`. One → use it. Several → prefer `Status: paused`, then the most
-   recent; `/rn:up` proposes it and waits, the other commands say which one they took. None →
-   say "No open session. Run /rn:on to start." and stop.
+   whose last task, "Evaluation sign-off", is not yet ` ✅` — a finished session is never resumed.
+   One → use it. Several → prefer `status: paused`, then the most recent; `/rn:up` proposes it and
+   waits, the other commands say which one they took. None → say "No open session. Run /rn:on to
+   start." and stop.
 
-2. **Bring an older session current.** Compare `Rn version:` with `version` in
+2. **Bring an older session current.** Compare the `rn` field with `version` in
    `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`; on a mismatch run Migration below before the
    command goes on.
 
@@ -136,9 +146,9 @@ gate instead of an id. Omit the ⬜ line when nothing remains.
 
 ## Migration — a session written under an older rn
 
-Run when a command finds `Rn version:` different from the installed version. The point is that the
-session goes on under the current `rn`, at the current bar, with nothing done by hand and nothing
-it recorded lost.
+Run when a command finds the `rn` field different from the installed version, or finds the version
+recorded some other way than in frontmatter. The point is that the session goes on under the
+current `rn`, at the current bar, with nothing done by hand and nothing it recorded lost.
 
 1. **Take the old session as input, so nothing it holds is lost.** Read its `steering.md` and
    everything else in its directory. The old text stays in git history; nothing here edits it in
@@ -146,27 +156,32 @@ it recorded lost.
 
 2. **Write `steering.md` fresh from the template above, so the session is in the shape `/rn:on`
    would give it today.** Carry the Goal as recorded, opening it with one sentence if it has none.
-   Rewrite each criterion that names an artifact or a step as the state it stands for. Carry every
-   task with its id, name and check-offs into the template's fields; a task the old file records
-   complete gets the ` ✅` mark. A checked step is carried verbatim, whatever it ran; its wording
-   changes only where the record shows it false. Drop an unchecked step that existed only to run
-   the old `rn`'s own review — a self-check, an expert review, a record into a process file such as
-   `checks/`; an unchecked step that records substance stays and points where this `rn` puts it,
-   the PR. The new file holds current intent only — no history of the old `rn` or of the
-   migration.
+   Lift the old header's facts into the frontmatter fields, and the issue and PR the old `State`
+   carried in prose along with them. Rewrite each criterion that names an artifact or a step as the
+   state it stands for. Carry every task with its id, name and check-offs into the template's
+   fields; a task the old file records complete gets the ` ✅` mark. A checked step is carried
+   verbatim, whatever it ran; its wording changes only where the record shows it false. Drop an
+   unchecked step that existed only to run the old `rn`'s own review — a self-check, an expert
+   review, a record into a process file such as `checks/`; an unchecked step that records substance
+   stays and points where this `rn` puts it. The new file holds current intent only — no history of
+   the old `rn` or of the migration.
 
 3. **Sync `State` to where the session actually stands, so the next command continues rather than
    restarts.** Carry every fact from the old `State`, including anything pending or deferred, map
-   an older `Status` value onto `active` / `paused` / `closed`, and reconcile check-offs with the
-   commit log (`complete task #N`).
+   an older status value onto `running` / `paused`, and reconcile check-offs with the commit log
+   (`complete task #N`).
 
-4. **Remove what the old `rn` wrote for its own process, so the session leaves what this `rn`
+4. **Rename the session's directory when its slug names a ticket rather than the work, so the
+   session reads as what it produces.** `git mv` the directory to `.rn/{yyyymmdd}-{slug}` with a
+   slug taken from the Goal; the issue number lives in the `issue` field.
+
+5. **Remove what the old `rn` wrote for its own process, so the session leaves what this `rn`
    leaves.** Its process files — under 0.8.0, the `checks/` directory — and nothing else; evidence
    and deliverables stay.
 
-5. **Stamp `Rn version:` with the installed version, commit `chore: migrate session to rn
+6. **Stamp the `rn` field with the installed version, commit `chore: migrate session to rn
    <version>`, and push, so the migration is on record before it is judged.**
 
-6. **Have the migrated plan judged, so the session continues at the current bar.** Run Judging
+7. **Have the migrated plan judged, so the session continues at the current bar.** Run Judging
    the plan above, with the Migration question added to the Plan kind. Then continue the command
    that triggered it.

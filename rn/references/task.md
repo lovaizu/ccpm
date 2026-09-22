@@ -18,7 +18,7 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
    this task's Objective, Steps and Success criteria verbatim; the Rules; the files in play; what
    the session has learned that bears on this task; and that it returns what changed and the
    commit SHA(s). For a "Design sign-off" task the deliverable is the approach, written at the
-   path the `Design:` line names. "Evaluation sign-off" skips this step: nothing is built, the
+   path the `design` field names. "Evaluation sign-off" skips this step: nothing is built, the
    finished work is judged.
 
 2. **Read the result before anyone else does, so the evaluator and the user see only work that
@@ -36,7 +36,7 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
 4. **Fold what was learned into `steering.md`, so the plan stays true and the next task starts
    from it.** After every result and every evaluation: an Assumption that proved false is corrected;
    a finding that came back once becomes a Rule; a task the work uncovered is added, one made
-   unnecessary is removed; the `Design:` line names the design once it exists; a limit the user
+   unnecessary is removed; the `design` field names the design once it exists; a limit the user
    accepted at a gate becomes an Assumption, so the next evaluator judges against it instead of
    being told to excuse it. Commit with the task's work. A change to the Goal, the Success
    criteria or an approved design is the user's — raise it at once; never hold it for a gate.
@@ -47,7 +47,7 @@ and `/rn:ty` after the plan gate, and from `/rn:up` on resume.
    unchecked task.
 
 6. **For a gate task, stop — the decision is the user's.** `Pending` already names the gate, the
-   commit judged and the verdict's URL from the round that cleared it. Present the judged artifact
-   and the evaluator's verdict and wait.
+   commit judged and the evaluation file the round that cleared it wrote. Present the judged
+   artifact and the evaluator's verdict and wait.
    `/rn:ty` checks the task off and continues with the next unchecked task; `/rn:gm` returns to
    step 1 with the feedback.

@@ -18,9 +18,9 @@ Writes down where the session stands so a fresh conversation can pick it up. Run
    the thing itself shows it done — not because the conversation says so; add any task the work
    uncovered.
 
-3. **Write `State`, so a cold reader knows exactly where to pick up.** Fill every field as the
-   template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md` says, with `Status: paused` and
-   today's `Date`.
+3. **Mark the session suspended and write `State`, so a cold reader knows exactly where to pick
+   up.** Set `status: paused` in the frontmatter and add `paused_at` with today's date, then fill
+   every `State` field as the template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md` says.
 
 4. **Leave the tree genuinely clean, so the next conversation starts from git alone.** For each
    untracked path: regenerable build or test residue → add a rule to `.gitignore`; anything else →

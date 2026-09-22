@@ -6,14 +6,22 @@ by `task.md` (kinds Design, Deliverable, Session). What follows an NG — a fix,
 and its limit are the caller's; a stop at the limit shows the last verdict, and the count starts
 again from the user's answer.
 
+Every round's verdict is a file in the session's own directory,
+`.rn/{yyyymmdd}-{slug}/evaluations/{NN}-{kind}[-task-{N}].md`, where `{NN}` is the next unused
+number there — `01-plan.md`, `02-plan.md` for its re-judge, `03-design-task-2.md`, and so on. The
+file is committed and pushed, so the user reads every round rendered on the PR beside the diff it
+judged, an NG as much as an OK, and a round closes on a commit rather than on anything posted. The
+directory is removed when "Evaluation sign-off" is approved, so the session still leaves only
+`steering.md` and the deliverable.
+
 ## Steps
 
 1. **Caller — put the round on record before it starts, so a conversation that ends mid-round
-   leaves a verdict to find, not a stale one to trust.** Choose the verdict file's path outside
-   the repository. Write in `State`'s `Pending` what is being judged, the commit it stands at
-   (`HEAD` before this record commit), and the verdict file's path; commit and push. A round's
-   entry is replaced only by the URL of its posted verdict, never by the next round — an unposted
-   round stays on record until step 5 closes it.
+   leaves a verdict to find, not a stale one to trust.** Work out the verdict file's path by the
+   rule above. Write in `State`'s `Pending` what is being judged, the commit it stands at (`HEAD`
+   before this record commit), and that path; commit and push. A round's entry is closed only by
+   the commit of its written verdict, never by the next round — an unfinished round stays on record
+   until step 5 closes it.
 
 2. **Caller — give the judgment to someone who did not build the thing, so the verdict is not
    colored by the builder's account.** Dispatch `Agent` with `model: opus` and no conversation
@@ -22,12 +30,12 @@ again from the user's answer.
    verdict:
    - `steering.md` in full — the whole contract, scope decisions included;
    - which task, when the artifact is one task's result or design;
-   - the artifact — a path or a commit range — and that it is the only thing to read on the PR;
+   - the artifact — a path or a commit range — and that it is the only thing to read;
    - the kind and all of that kind's questions below, every round;
-   - a scratch directory outside the repository to work in, removed before it returns, leaving
-     the working tree as it found it;
-   - the verdict file's path, where it writes the verdict it returns, so the caller can pass it
-     on without retyping a word;
+   - a scratch directory outside the repository to work in, removed before it returns, so the only
+     thing it leaves behind is the verdict file;
+   - the verdict file's path, where it writes the verdict it returns, so the caller can commit it
+     without retyping a word;
    - the language to answer in — the one `steering.md` is written in.
 
 3. **Evaluator — answer only the questions for the artifact's kind, so the judgment is about the
@@ -71,17 +79,16 @@ again from the user's answer.
    - S1 — Does every Success criterion hold on the real artifacts, with evidence?
    - S2 — Read the Goal as the user wrote it: is it achieved — or did the criteria miss something
      the work exposed?
-   - S3 — Has the session left only `steering.md` and the deliverable — in the tree and outside it?
+   - S3 — Has the session left only `steering.md`, its `evaluations/` and the deliverable — in the
+     tree and outside it?
 
 4. **Evaluator — return one line per question and one overall verdict, so the caller can act
    without re-reading the artifact.** Each line: OK or NG, then the evidence. Then the overall
-   verdict. Written to the verdict file, headed `## Evaluation — {kind}[ — task #N] — {short
+   verdict. Written to the verdict file, headed `# Evaluation — {kind}[ — task #N] — {short
    commit}`, and returned as the final message.
 
-5. **Caller — put every round's verdict, as returned, where the user reviews, so an NG is read
-   there as much as an OK, in rendered form, and stays addressable.** A line without evidence is
-   not a verdict: send it back first.
-   Then `gh pr comment --body-file` with the verdict file; the command prints the comment's URL —
-   fetch that comment, compare it to the file, write that printed URL into the round's `Pending`
-   entry as where the verdict is, and only then remove the file. With no PR, print the file in
-   full in the conversation and keep it until the round's `Pending` entry is closed.
+5. **Caller — commit the verdict as the evaluator wrote it, so the user reads it rendered next to
+   what it judged and it stays addressable.** A line without evidence is not a verdict: send it
+   back first. Then compare the file to what was returned, commit it alone as
+   `docs: evaluation {NN} — {kind}[ — task #N] — {OK|NG}`, push, and write that commit into the
+   round's `Pending` entry as where the verdict is. The file stays until the session closes.

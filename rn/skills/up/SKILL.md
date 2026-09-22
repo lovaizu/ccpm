@@ -35,12 +35,13 @@ Rebuilds where the session stands from `steering.md` and git, then continues.
    the Goal, the Success criteria or an approved design is the user's: raise it before continuing.
 
 7. **Mark the session live and commit, so only a genuinely suspended session reads `paused`.** Set
-   `Status: active`; leave `Pending` and `Notes` as they are — they are still true and nothing
-   else records them. Commit `chore: resume — {slug}`; push.
+   `status: running` and remove `paused_at`; leave `Pending` and `Notes` as they are — they are
+   still true and nothing else records them. Commit `chore: resume — {slug}`; push.
 
 8. **Continue exactly where the session stopped, so the user decides on what was judged.** A gate
    named in `Pending` → present it only when the artifact that round judged is unchanged since
-   the commit `Pending` names: for the plan gate, `steering.md` outside its `# State` section;
+   the commit `Pending` names: for the plan gate, `steering.md` outside its frontmatter and its
+   `# State` section;
    for any other gate, everything outside `.rn/` (`git diff --quiet <judged> HEAD -- . ':!.rn'`).
    When `Pending`
    names a round still running and its verdict file is on disk, finish that round from

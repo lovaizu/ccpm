@@ -25,7 +25,9 @@ about what was approved.
    - "Design sign-off" task → check it off per Checking a task off in
      `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, push, then continue the task loop at the next
      unchecked task.
-   - "Evaluation sign-off" task → check it off the same way with `Status: closed` in the same
-     commit, push, mark the PR ready for review, and close the session with a report that names
-     the merge as the user's next move.
+   - "Evaluation sign-off" task → check it off the same way, and in the same commit remove the
+     session's `evaluations/` directory, so what the session leaves is `steering.md` and the
+     deliverable; push, mark the PR ready for review, and close the session with a report that
+     names the merge as the user's next move. The ` ✅` on this task is what marks the session
+     finished — no command offers it for resume again.
    - A reviewed item → it stands as final; continue whatever was waiting on it.

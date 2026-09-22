@@ -18,7 +18,8 @@ the evaluation of the result. Everything else runs without asking.
 2. **Results are evaluated by a third party against essential viewpoints.** One evaluation per
    artifact, by an evaluator that did not build it, against a few fixed questions per kind that ask
    whether it does its job — never a chain of self-checks, never "did the step run"
-   (`references/evaluate.md`). The verdict goes on the PR, where the user reads it rendered.
+   (`references/evaluate.md`). Each verdict is committed as a file in the session's own directory,
+   so the user reads it rendered on the PR beside the diff it judged.
 3. **Judgment and execution use different models.** The implementer is dispatched with
    `model: sonnet`, the evaluator with `model: opus`; the conductor plans in the conversation on the
    user's model. The `Agent` tool's `model` parameter is the whole mechanism.
@@ -38,9 +39,12 @@ the evaluation of the result. Everything else runs without asking.
 - **Three gates, and no other stop.** The plan gate ends `/rn:on`; a "Design sign-off" task stops
   where planning placed one; "Evaluation sign-off" is always the last task. `/rn:ty` and `/rn:gm`
   are the only verdict vocabulary.
-- **A session leaves `steering.md` and the deliverable.** Evaluations are PR comments — every
-  round, as the evaluator wrote it; a design lives in the project's own documents, pointed to by
-  the `Design:` line. `rn` writes no process file of its own.
+- **A session leaves `steering.md` and the deliverable.** Every round's verdict is a file under
+  the session's `evaluations/`, committed as the evaluator wrote it, and the directory goes when
+  "Evaluation sign-off" is approved. Committed rather than posted: a round then closes on something
+  the repository holds and `git` alone can find on a resume, instead of on a comment that has to be
+  fetched back to be trusted. A design lives in the project's own documents, pointed to by the
+  `design` field. `rn` writes no process file of its own.
 - **The evaluator is handed the contract, not a briefing.** It receives `steering.md` whole, the
   artifact and its kind's questions — never the builder's account, an exclusion list or an earlier
   verdict; a fresh agent every round. A scope decision that is not in `steering.md` is not a
@@ -51,8 +55,17 @@ the evaluation of the result. Everything else runs without asking.
 - **One completion marker per task, one mark in the file.** `complete task #N` appears in the
   check-off commit alone and the task's heading gains ` ✅`; `/rn:up` reconciles from the commit.
   Pushed history is never rewritten.
-- **A session has three states.** `active`, `paused`, `closed`; only a paused one is offered for
-  resume, and a closed one never is.
+- **The session's fixed facts are frontmatter; its running record is prose.** `rn`, `issue`,
+  `pr`, `design` and `status` sit in YAML at the top, which GitHub renders as a table and every
+  command reads without parsing prose; `State` keeps what only a sentence can say — what was last
+  done, what is next, what is pending.
+- **`status` is a pair, and finished is not a status.** `running` or `paused`, nothing else: the
+  field exists to signal a suspend, and `/rn:dn` sets `paused_at` beside it. That a session is
+  finished is read from its last task, "Evaluation sign-off", carrying ` ✅` — a fact the record
+  already holds, so no flag can contradict it.
+- **A session is named after what it produces.** The directory slug comes from the Goal, never
+  from a ticket id or a branch carrying one — those point at the work instead of naming it, and
+  the issue has its own field.
 - **Names are quoted, not summarized.** The status block carries the Goal's first sentence and the
   task names as `steering.md` writes them, so the user meets the same words in every conversation.
 - **An older session is rebuilt, not patched.** A version mismatch rewrites `steering.md` from the
