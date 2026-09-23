@@ -190,14 +190,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-23
-- **Last completed**: #1 Step 8 の途中。案件の資料を plan（計画全体）＞tasks（作業）・outputs（成果物、旧 comps/deliverables）に局所化し、outputs.md を telldes の作法に沿って表 1 つ・ツリー付きに作り直した
-- **Next**: #1 Step 8 の続き。ユーザーのレビューを outputs.md → tasks.md → plan.md の順に受けて直す（outputs.md のレビュー途中）
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象なので push されない。
-  - 資料の役割・更新手順は `project/sample-project/README.md`。工数の正は `outputs.md`・`tasks.md` の表、`python3 build/calc_cost.py --check` で重複と plan の額ずれを止める。
-  - 見積は優先 3 ページ型のみ ¥（額）・11 週、その他 4 ページ型を含む ¥（額）・13 週。
-  - **ユーザーの判断待ち（Decisions 1）**：どちらも （予算額）の枠を超える。提案書を (1) 額を出して判断を Client へ返す〔推奨〕/ (2) 範囲を削る / (3) 単価・稼働の前提を見直す、のどれで組むか。答えが出るまで plan の Decisions 1 と提案書の費用頁は直せない。
-  - plan.md は telldes 採用に合わせた見直しが未着手（Figma の受け渡し・Decisions 4・Dev Mode の要否・telldes が開発中であるリスク）。plan のレビュー時に直す。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: —
+- **Last completed**: —
+- **Next**: —
+- **Notes**: —
