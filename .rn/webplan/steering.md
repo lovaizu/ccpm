@@ -192,8 +192,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-23
-- **Last completed**: #1 Step 8 — 提案書を納品形として確定（ユーザー「試走は終わり」）。資料間の食い違いを解消し、ホバー共通化・Figma の置き場所・ライトの色・OGP の範囲外を反映（learnings 162〜164）
-- **Next**: #1 Step 9 — learnings を #2 の入力として整える。ユーザーの FB が次の案件で限りなくゼロになるよう、FB の類型ごとに書く前に防げる形へ一般化する。済んだら案件フォルダを削除する（次の Step）
-- **Notes**: ブランチ `hposal-plugin`、PR #8(OPEN)。案件フォルダ `.rn/webplan/project/sample-project/` は `.gitignore` 対象で git 履歴が無い。ユーザーが別の場所へコピーする。削除は learnings 更新の後、コピー済みを確かめてから。
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
