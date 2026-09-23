@@ -190,8 +190,14 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-09-23
+- **Last completed**: #1 Step 8 の途中。outputs.md の工数を実物に照らして置き直し、工程を「準備 → 方向 → 部品 → カンプ」に組み替え、tasks.md の工数を outputs.md の合計（`calc_cost.py --sync`）にした
+- **Next**: #1 Step 8 の続き。ユーザー承認済み：モック 3 枚の HTML／CSS の画面幅指定と現行サイト（モックに無い 4 ページ型）から要素 × 画面幅 × 状態の全要素リストを機械的に作り、outputs.md の行に対応づけ、対応先の無い要素を `calc_cost.py --check` で止める。その後 outputs.md を照らし直す
+- **Notes**:
+  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象で push されない。
+  - 固める順（ユーザー指示）：outputs の工数 → tasks の工数 → 金額。金額はまだ触らない（plan.md の額・週数と提案書は古いまま。`build_proposal.py` は工程名 w_詳細/w_仕上げ が消えたので動かない）。
+  - 判断待ち：FB 対応の回数（推奨：各工程 2 回。1 回あたり＝その工程の成果物の日数 × 割合を cost.json に置きスクリプトで計算）。tasks の工数の段で聞く。
+  - plan.md に載せる判断：会社のロゴに切り替える提案（先方依頼はマスコットのアイコンの変更）と、その使用可否の前提。工程の区切り（方向＝トンマナ＋画面幅ごとの配置）も plan に反映が要る。
+  - 画面幅で変わる形のうち「フッター：スマホで縦に積む」「目次：スマホで開閉」は実測でなく案。
+  - 未解決の user-deferred パス：なし。
