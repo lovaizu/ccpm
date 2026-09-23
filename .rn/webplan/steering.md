@@ -69,12 +69,11 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 
 # Tasks
 
-### #1: 仮案件を手で最後まで進め、作業記録と学びを残す
+### #1: 仮案件を手で最後まで進め、学びを残す
 
 **Purpose**: `.rn/webplan/project/` の仮案件（技術ブログのリデザイン提案）を、プラグイン抜きで今回揃えた概念
 （Project overview、Base／Scope／Level、Direction 2 案 → Refinement revision 2 回 → Rollout、Content の担当表、
-工程とロール）で提案書とタスク一覧まで仕上げる。作業のたびに `project/worklog.md` へ〔決めたこと／順序／入力／成果物／
-詰まった点〕を追記し、最後に一般化して `.rn/webplan/learnings.md` にする。
+工程とロール）で提案書とタスク一覧まで仕上げる。学びは FB を受けるたびにその場で一般化して `.rn/webplan/learnings.md` に書く。
 
 **Prerequisites**: none
 
@@ -88,10 +87,10 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 - [x] `plan.md` の「作るもの」を `work/comps.md`（カンプ一覧）に展開する：部品一覧＋カンプ一覧（ページ型×モード×画面幅×工程）。ルートは Components／Top／Article（通常・連載は1ルートに同居、`comps.md` 上の行としては別カウント）
 - [x] `comps.md` から `tasks.md` を導出し、日数を積んで案の切り方を決める
 - [ ] `plan.md` から提案書を導出 → ユーザーレビュー → 修正 → 納品形
-- [ ] `worklog.md` を一般化して `.rn/webplan/learnings.md` に書く：〔決定の一覧と順序／各決定の入力と出力／
-      v1 に足りなかったもの／v1 から引き継ぐもの〕。社名・実額・個人名・他社著作物の複製を含めない
+- [ ] `learnings.md` を #2 の入力として整える：案件の最終成果物（`plan.md`・`deliverables.md`・`tasks.md`）と learnings から
+      〔決定の一覧と順序／各決定の入力と出力／v1 に足りなかったもの／v1 から引き継ぐもの〕を書き足す。社名・実額・個人名・他社著作物の複製を含めない
 - [ ] self-check（各完了基準を OK/NG で判定し `.rn/webplan/checks/1.md` に記録）
-- [ ] QA expert review（subagent・`learnings.md` が worklog を忠実に一般化しているか）
+- [ ] QA expert review（subagent・`learnings.md` が案件の成果物と会話の記録（transcript）に照らして漏れなく忠実に一般化しているか）
 - [ ] Craft expert review（subagent・writing）
 - [ ] Verification expert review（subagent・fact-check）
 
