@@ -87,10 +87,10 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 - [x] `plan.md` の「作るもの」を `work/comps.md`（カンプ一覧）に展開する：部品一覧＋カンプ一覧（ページ型×モード×画面幅×工程）。ルートは Components／Top／Article（通常・連載は1ルートに同居、`comps.md` 上の行としては別カウント）
 - [x] `comps.md` から `tasks.md` を導出し、日数を積んで案の切り方を決める
 - [x] `plan.md` から提案書を導出 → ユーザーレビュー → 修正 → 納品形
-- [ ] `learnings.md` を #2 の入力として整える：案件の最終成果物（`plan.md`・`outputs.md`・`tasks.md`）と learnings から
+- [x] `learnings.md` を #2 の入力として整える：案件の最終成果物（`plan.md`・`outputs.md`・`tasks.md`）と learnings から
       〔決定の一覧と順序／各決定の入力と出力〕を書き足す。社名・実額・個人名・他社著作物の複製を含めない
       目標は、次の案件でユーザーの FB が限りなくゼロに近づくこと（FB の類型ごとに、書く前に防げる形へ一般化する）
-- [ ] ユーザーが案件フォルダを別の場所へコピー済みであることを確かめ、`.rn/webplan/project/` の下の案件フォルダを削除する
+- [x] ユーザーが案件フォルダを別の場所へコピー済みであることを確かめ、`.rn/webplan/project/` の下の案件フォルダを削除する
 - [ ] self-check（各完了基準を OK/NG で判定し `.rn/webplan/checks/1.md` に記録）
 - [ ] QA expert review（subagent・`learnings.md` が案件の成果物と会話の記録（transcript）に照らして漏れなく忠実に一般化しているか）
 - [ ] Craft expert review（subagent・writing）
