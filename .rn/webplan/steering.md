@@ -190,8 +190,14 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
+- **Status**: paused
+- **Date**: 2026-09-23
+- **Last completed**: #1 Step 8 の途中。tasks.md・outputs.md のレビュー指摘をすべて反映（工程＝先方が確かめることの番号付き、作業は動作名・成果物は工程ごとに 1 行、準備の工程を廃止、ブレークポイントを全ページ共通 3 つに、デザインの答えを書かない、合計行を追加）
+- **Next**: #1 Step 8 の続き。①金額に関することを plan.md から新しい `estimate.md` へ移す（Cost 節・単価と率の注記・決定 1 の額。日数は tasks/outputs、週数と Schedule は plan に残す。ユーザー了承済み）→ ②plan.md 全体を今日の FB に照らして見直す → ③金額の段（額・週数を合わせ、提案書を作り直す）
 - **Notes**:
+  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象で push されない。
+  - 現在の計算値：案 1 23.25 日・¥（額）・10 週／案 2 27.5 日・¥（額）・12 週。`calc_cost.py --check` は plan.md の額が古いことだけが NG。
+  - plan.md の古い箇所：工程の図と表（準備・詳細・仕上げ）、Schedule、Risks 3（準備の工程）、Cost。
+  - 案 2 の週数が、工程ごとの切り上げ（12 週）と `--ranges` の繰り越し（11 週）で食い違う。金額の段で数え方を揃える。
+  - 提案書の前提は手で写している。金額の段で plan.md の前提から差し込む形にする。`build_proposal.py` は工程名が変わって動かない。
+  - 未解決の user-deferred パス：なし。
