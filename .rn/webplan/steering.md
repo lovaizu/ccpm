@@ -190,13 +190,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-23
-- **Last completed**: #1 Step 8 の途中。金額を `estimate.md` へ分離、plan.md を判断と線引きだけに組み直し（Decisions 節廃止・AsIs を `asis.md` へ）、ユーザーが plan.md を OK とした
-- **Next**: #1 Step 8 の続き。提案書（`build/proposal.template.html`）を plan.md・estimate.md・outputs.md・tasks.md に合わせて作り直す → `build_proposal.py` を新しい工程名（方向・部品・カンプ）で動かす → `fit.sh` で紙面検査 → ユーザーレビュー
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象で push されない（git 履歴も無いので、消す前に確認）。
-  - 現在値：案 1 ¥（額）・10 週／案 2 ¥（額）・12 週（`calc_cost.py --check` OK）。
-  - 提案書を書く前に learnings 129〜141 を読み、各ページを「読み手が判断に使わない文は余計」の基準で全文照らしてから見せる。指摘を受けたら、その資料だけでなく plan / estimate / outputs / tasks / 提案書 すべてに同じレンズを当てる。
-  - 保留（ユーザー「後にしよう」）：先方が Figma 有料プランを用意する場合のファイルの置き場所（先方チームに最初から置く案を推奨）／ライトの色を誰が決めるか。OGP 画像に現ロゴが入るかは未確認。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: —
+- **Last completed**: —
+- **Next**: —
+- **Notes**: —
