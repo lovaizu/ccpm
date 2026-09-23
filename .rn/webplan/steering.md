@@ -111,7 +111,7 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 
 **Steps**:
 
-- [ ] `learnings.md` から設計入力を一覧にする
+- [x] `learnings.md` から設計入力を一覧にする
 - [ ] 名前を 2〜3 案出し、ユーザーと会話で 1 つに決める（D-4）
 - [ ] `design.md` を書く（背景 → ペイン → ベネフィット → UX → 構造 → 部品の順。決定 D-n を追加）
 - [ ] steering の Acceptance criteria を確定版に更新し、#3／#4 の Steps を具体化する
@@ -190,8 +190,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-09-23
+- **Last completed**: #1 完了（learnings.md を「決める順序／資料ごとの目的・形・評価の問い／機械で止めるもの／作業の仕方」に再編。履歴から施主情報を除去）。#2 Step 1 は learnings の節をそのまま設計入力とし、別の一覧は作らない
+- **Next**: #2 Step 2 — プラグイン名をユーザーに決めてもらう（提示済み：webplan〈推奨〉／siteplan／wsp、回答待ち）
+- **Notes**: PR #8 の force-push 記録から、書き換え前の古いコミット（施主情報入り）は開ける。完全削除は GitHub サポートへの依頼が要る（依頼するかはユーザー判断・未決）
