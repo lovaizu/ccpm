@@ -190,13 +190,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-23
-- **Last completed**: #1 Step 8 の途中。outputs.md をユーザーが完了と判断（部品 101 パターンを幅ごと・1 行 1 つの ☐ で列挙、FB 対応は cost.json の回数 2・割合 10% から計算、404 を優先範囲に追加）
-- **Next**: #1 Step 8 の続き。まずユーザーが tasks.md をレビューする（再開したら tasks.md を提示して指摘を受ける）。その後、金額の段：plan.md の額・週数・範囲（404 を Provider から足す提案として）を calc_cost.py に合わせ、提案書を作り直す
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
 - **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象で push されない。
-  - 現在の計算値：案 1 24.75 日・¥（額）・11 週／案 2 28 日・¥（額）・12 週。`calc_cost.py --check` は plan.md の額・週数が古いことだけが NG。
-  - `build_proposal.py` は工程名 w_詳細/w_仕上げ が消えたので動かない（金額の段で直す）。
-  - plan.md に載せる判断：会社のロゴへの切り替え提案と使用可否の前提、工程の区切り（方向＝トンマナ＋画面幅ごとの配置）、404 の追加。
-  - 未解決の user-deferred パス：なし。
