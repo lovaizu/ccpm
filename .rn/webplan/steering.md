@@ -67,7 +67,7 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 
 # Tasks
 
-### #1: 仮案件を手で最後まで進め、学びを残す
+### #1: 仮案件を手で最後まで進め、学びを残す ✅
 
 **Purpose**: `.rn/webplan/project/` の仮案件（技術ブログのリデザイン提案）を、プラグイン抜きで今回揃えた概念
 （Project overview、Base／Scope／Level、Direction 2 案 → Refinement revision 2 回 → Rollout、Content の担当表、
@@ -89,10 +89,10 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
       〔決定の一覧と順序／各決定の入力と出力〕を書き足す。社名・実額・個人名・他社著作物の複製を含めない
       目標は、次の案件でユーザーの FB が限りなくゼロに近づくこと（FB の類型ごとに、書く前に防げる形へ一般化する）
 - [x] ユーザーが案件フォルダを別の場所へコピー済みであることを確かめ、`.rn/webplan/project/` の下の案件フォルダを削除する
-- [ ] self-check（各完了基準を OK/NG で判定し `.rn/webplan/checks/1.md` に記録）
-- [ ] QA expert review（subagent・`learnings.md` が案件の成果物と会話の記録（transcript）に照らして漏れなく忠実に一般化しているか）
-- [ ] Craft expert review（subagent・writing）
-- [ ] Verification expert review（subagent・fact-check）
+- [x] self-check（各完了基準を OK/NG で判定し `.rn/webplan/checks/1.md` に記録）
+- [x] QA expert review（subagent・`learnings.md` が案件の成果物と会話の記録（transcript）に照らして漏れなく忠実に一般化しているか）
+- [x] Craft expert review（subagent・writing）
+- [x] Verification expert review（subagent・fact-check）
 
 **Completion criteria**:
 
