@@ -190,13 +190,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-23
-- **Last completed**: #1 Step 8 の途中。提案書を 10 枚に作り直し（骨子 1 枚化・費用は案 A〜D の 4 案・前提と取引条件を分離・ご参考 telldes）、FB 対応を全案 各 1 回に積み直した（案 A ¥（額）・10 週／B ¥（額）・12 週／C ¥（額）・9 週／D ¥（額）・11 週、`--check` OK）
-- **Next**: #1 Step 8 の続き。ユーザーが `project/sample-project` をコピーして実案件に使うので、再開したらまず `sample-project` 配下を全ファイル点検する（資料どうしの食い違い・古い記述・計算と検査が通るか）。その後、提案書のユーザーレビューを続ける
-- **Notes**:
-  - ブランチ `hposal-plugin`、PR #8(OPEN)。案件ファイルは `.gitignore` 対象で push されない（git 履歴も無いので、消す前に確認）。
-  - 点検で必ず見る食い違い：案 C・D（見た目 1 案・PC と SP のみ）は提案書と `build/cost.json`（`lite_exclude`）にしか無く、`plan.md` の Scope と `estimate.md` の見積額の表は 2 案（A・B）のまま。`mock-review.md` は旧工程名（詳細・仕上げ）のまま。
-  - 未回答：ホバーを共通ルールにして部品の日数を置き直すか（見当は −0.25〜0.5 日）／本文の部品を記事 901 本の使用数で「絵が要る物」と「ルールで足りる物」に分けるか。
-  - 保留（ユーザー「後にしよう」）：Figma 有料プランを先方が用意する場合のファイルの置き場所／ライトの色を誰が決めるか。OGP 画像に現ロゴが入るかは未確認。
-  - 未解決の user-deferred パス：なし。
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
