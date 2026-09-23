@@ -86,9 +86,11 @@ dogfood する。旧 `hposal`（v1）とその派生物は削除した（コミ�
 - [x] 9/18 の先方入力を受けて `plan.md` を更新する（SSoT は計画。タスク一覧と提案書はここから導く）
 - [x] `plan.md` の「作るもの」を `work/comps.md`（カンプ一覧）に展開する：部品一覧＋カンプ一覧（ページ型×モード×画面幅×工程）。ルートは Components／Top／Article（通常・連載は1ルートに同居、`comps.md` 上の行としては別カウント）
 - [x] `comps.md` から `tasks.md` を導出し、日数を積んで案の切り方を決める
-- [ ] `plan.md` から提案書を導出 → ユーザーレビュー → 修正 → 納品形
+- [x] `plan.md` から提案書を導出 → ユーザーレビュー → 修正 → 納品形
 - [ ] `learnings.md` を #2 の入力として整える：案件の最終成果物（`plan.md`・`outputs.md`・`tasks.md`）と learnings から
       〔決定の一覧と順序／各決定の入力と出力／v1 に足りなかったもの／v1 から引き継ぐもの〕を書き足す。社名・実額・個人名・他社著作物の複製を含めない
+      目標は、次の案件でユーザーの FB が限りなくゼロに近づくこと（FB の類型ごとに、書く前に防げる形へ一般化する）
+- [ ] ユーザーが案件フォルダを別の場所へコピー済みであることを確かめ、`.rn/webplan/project/sample-project/` を削除する
 - [ ] self-check（各完了基準を OK/NG で判定し `.rn/webplan/checks/1.md` に記録）
 - [ ] QA expert review（subagent・`learnings.md` が案件の成果物と会話の記録（transcript）に照らして漏れなく忠実に一般化しているか）
 - [ ] Craft expert review（subagent・writing）
@@ -190,8 +192,8 @@ plugin.json）、marketplace と root README に登録し、`validate --strict` 
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-23
+- **Last completed**: #1 Step 8 — 提案書を納品形として確定（ユーザー「試走は終わり」）。資料間の食い違いを解消し、ホバー共通化・Figma の置き場所・ライトの色・OGP の範囲外を反映（learnings 162〜164）
+- **Next**: #1 Step 9 — learnings を #2 の入力として整える。ユーザーの FB が次の案件で限りなくゼロになるよう、FB の類型ごとに書く前に防げる形へ一般化する。済んだら案件フォルダを削除する（次の Step）
+- **Notes**: ブランチ `hposal-plugin`、PR #8(OPEN)。案件フォルダ `.rn/webplan/project/sample-project/` は `.gitignore` 対象で git 履歴が無い。ユーザーが別の場所へコピーする。削除は learnings 更新の後、コピー済みを確かめてから。
