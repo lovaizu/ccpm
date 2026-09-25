@@ -22,14 +22,37 @@ plugin:
 flowchart TD
   G([Your rough goal]) --> O[rn works out with you<br/>what you really want]
   O --> P([You approve the plan<br/>on the draft PR])
-  P --> B[One agent builds a task]
+  P --> B[One agent implements a task]
   B --> J[Another agent evaluates it,<br/>not told how it was made]
-  J --> C{rn chooses the next move<br/>by the goal}
+  J --> C{rn decides the next move<br/>by the goal}
   C -->|redo, or the next task| B
   C -.->|a decision that is yours| Y([You answer<br/>/rn:ty or /rn:gm])
   Y --> B
   C ==>|goal reached| D([You check the finished work])
 ```
+
+## How it's put together
+
+```mermaid
+flowchart LR
+  ON["/rn:on<br/>start"] --> W[rn works]
+  W --> S([stops for you:<br/>plan · design · finished work])
+  S --> TY["/rn:ty<br/>OK"]
+  S --> GM["/rn:gm<br/>feedback"]
+  W -.-> DN["/rn:dn<br/>pause mid-work"]
+  TY --> C["/clear"]
+  GM --> C
+  DN --> C
+  C --> UP["/rn:up<br/>resume"] --> W
+```
+
+- **rn decides every next move; nobody else does.** One agent implements each task, another
+  evaluates it and reports what holds and what doesn't, and you answer only the decisions that are
+  yours.
+- **Every stop is a clean point to `/clear`.** `/rn:ty`, `/rn:gm` and `/rn:dn` record and stop;
+  `/rn:up` reads the record and goes on.
+- **`/rn:dn` is for stopping in the middle of the work.** At a stop, your answer is already the
+  record.
 
 ## A session, start to finish
 
@@ -71,7 +94,8 @@ The block on top heads every message that stops for you: ✅ done, 👉 now, ⬜
 ### 2. Decide — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
-and plain `/rn:gm` takes your review comments off the pull request. `rn` records the approval, or
+and plain `/rn:gm` takes your review comments off the pull request. Where the choice is yours,
+`/rn:ty` takes the recommended option and `/rn:gm <option>` another. `rn` records the approval, or
 revises the plan by your feedback, and stops there.
 
 ```console
@@ -85,10 +109,11 @@ of room.
 
 ### 3. While it works
 
-You don't watch. Each piece of work is built by one agent and evaluated by another, which is told
-the goal but not how the work was made — so work passes because it does its job, not because its
-maker says so. Between them, `rn` decides the next move by the goal: send the work back, revise the
-plan, bring you in, or go on. Each decision is one line, so when you glance back you can follow it:
+You don't watch. Each task is implemented by one agent and evaluated by another, which is told the
+goal but not how the work was made — so work passes because it does its job, not because its maker
+says so. Between them, `rn` decides the next move by the goal, not by the evaluator's word: send the
+work back, revise the plan, bring you in, or go on. Each decision is one line, so when you glance back
+you can follow it:
 
 ```console
 ● #2 reproduce the timeout ── evaluated: not reached (the test passes without the fault) → redo
@@ -108,8 +133,9 @@ Every evaluation is committed with the session, so you can read it on the pull r
 
 ### 5. Step away — `/rn:dn`, then `/rn:up`
 
-Context nearly full, or done for the day: `/rn:dn` records where the session stands and pushes
-everything. Run `/clear` yourself (a plugin can't), then `/rn:up` in the fresh conversation.
+Context nearly full in the middle of the work, or done for the day: `/rn:dn` records where the
+session stands and pushes everything. Run `/clear` yourself (a plugin can't), then `/rn:up` in the
+fresh conversation.
 
 ```console
 > /rn:dn

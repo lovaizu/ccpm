@@ -28,4 +28,4 @@ as far as the user's next decision, since what follows depends on it.
 4. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
    the body of the branch's pull request, opening a draft one when it has none, and write its URL in
    `pr`.
-5. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`: the first stops at the Plan sign-off.
+5. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

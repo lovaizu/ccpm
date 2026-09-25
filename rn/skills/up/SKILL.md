@@ -8,8 +8,8 @@ disable-model-invocation: true
 
 ## Purpose
 
-The session goes on from where the user left it, by the decisions they made, as if it had never
-stopped, until their next decision.
+The session goes on from where the user left it, by what `steering.md` and git record, as if it had
+never stopped, until their next decision.
 
 ## Steps
 
@@ -22,5 +22,4 @@ stopped, until their next decision.
    ● Resuming {slug} at #{id}: {task name}
    ```
 
-3. Set `status` to `running`.
-4. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
+3. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

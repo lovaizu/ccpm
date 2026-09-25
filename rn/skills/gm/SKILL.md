@@ -8,9 +8,9 @@ disable-model-invocation: true
 
 ## Purpose
 
-The session is revised by what the user asks for as soon as they ask, so `steering.md` always says
-what comes next. Their words are kept whole: the evaluator checks the revision by them, and a summary
-would shift that measure.
+The session is revised by what the user asks for as soon as they ask, and stops, so they can clear
+their conversation: `steering.md` says what comes next. Their words are kept whole, since the
+evaluator evaluates the revision by them, and a summary would shift that measure.
 
 ## Steps
 
@@ -18,8 +18,9 @@ would shift that measure.
    not a sign-off → say what the session is doing, and stop.
 2. The feedback is `$ARGUMENTS`; without it, the pull request's review threads whose last comment is
    the user's, each with its location and URL. Add it to `Feedback`.
-3. Revise by it: at the Plan sign-off the plan, at a Design sign-off the choices, at the Evaluation
-   sign-off tasks added before it that answer it.
+3. Revise what the sign-off decides on by it: the plan, the choices, or, for the finished work, tasks
+   added before its sign-off. At a Design sign-off, a choice the feedback names is the user's
+   decision: record it as a Fact in `Assumptions` and mark the sign-off `[x]`.
 4. Commit, push, and say in the user's language:
 
    ```

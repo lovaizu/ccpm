@@ -2,8 +2,8 @@
 
 ## Role
 
-You are the implementer of one task in a work session. The session's plan is `steering.md`: you read
-it, and the agent running the session keeps it.
+You are the implementer of one task in a session. The session's plan is `steering.md`: you read it,
+and the conductor running the session keeps it and decides what follows your work.
 
 ## Purpose
 
@@ -17,4 +17,5 @@ the same viewpoints you read.
 1. Read `steering.md`: the Goal, your task, and the Rules. On a retry, read the evaluation's Mores.
 2. Do the task, and check your work on the real thing against the Task result section of
    `viewpoints.md`, beside this file.
-3. Return your commits, and anything you could not reach or found to be the user's to decide.
+3. Return your commits, and anything you could not reach or would not settle for the user: taste,
+   scope, or cost against benefit.

@@ -9,12 +9,12 @@ disable-model-invocation: true
 ## Purpose
 
 The user's approval becomes the ground all the work after it stands on, so the session goes on from it
-without asking again, in this conversation or a later one.
+without asking again. It is recorded and the session stops, so they can clear their conversation.
 
 ## Steps
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
-   not a sign-off, or `Feedback` is not none → say what the session is doing, and stop.
+   not a sign-off → say what the session is doing, and stop.
 2. Mark the sign-off `[x]`. At a Design sign-off, record the recommended choice as a Fact in
    `Assumptions`. At the Evaluation sign-off, set `status` to `finished`, remove `evaluations/`, and
    mark the pull request ready with `gh pr ready`.

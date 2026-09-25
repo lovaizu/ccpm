@@ -56,13 +56,12 @@ status: running
 ```
 
 - Tasks are taken in the order written and end at a sign-off: "Design sign-off" for a choice that is
-  the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the agent
-  running the session accepts its evaluation, a sign-off when the user approves it. A task added later
-  takes the next unused id.
-- `status` is `paused` from `/rn:dn` until `/rn:up`, and `finished` from the approval of the
-  Evaluation sign-off.
-- `Feedback` is the user's words asking for a revision, kept until the revision is evaluated as
-  reached. `Notes` is what the next conversation needs that nothing else records.
+  the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the conductor
+  accepts its evaluation, a sign-off when the user approves it. A task added later takes the next
+  unused id.
+- `status` is `finished` from the approval of the Evaluation sign-off.
+- `Feedback` is the user's words asking for a revision, kept until the conductor accepts the revision.
+  `Notes` is what the next conversation needs that nothing else records.
 - `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
 
 ## Finding the session
