@@ -90,8 +90,9 @@ Read these when writing or changing a plan.
   run in
   the order they appear; a task added later takes the next unused id, so ids already in commit
   messages keep pointing at their task.
-- **State** — `running` while a conversation holds the session. When the session stops for a fresh
-  conversation it reads:
+- **State** — where the session stands between conversations. `/rn:up` sets `Status` to `running`
+  and leaves the other fields until they are acted on or rewritten; when the session stops for a
+  fresh conversation it reads:
 
   ```markdown
   - **Status**: paused

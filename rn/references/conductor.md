@@ -69,17 +69,17 @@ once an approach is settled.
 When `State` holds `Feedback`, the user asked for a revision of what was last presented — the first
 task not yet complete.
 
-1. Take the feedback: the text `/rn:up` read from `State`, or what the reviewer left on the pull
+1. Take the feedback: the text in `Feedback`, or what the reviewer left on the pull
    request — review threads that are unresolved and whose last comment is not rn's (`gh api
    graphql` on `reviewThreads`, paginated), and review summaries and comments newer than rn's
    latest verdict. rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often
    post as the same account, so the author does not tell them apart.
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
-   not only the line it names. A change to the deliverable becomes a task before the sign-off, whose
-   Purpose is what the feedback asks for, with the next unused id, run as in Running with the feedback handed to the
-   implementer; a change to the plan is yours to write.
-3. Reply on each thread, opening with `<!-- rn -->`, with what changed and the commit — or, when the ask is unclear, with one
-   question only the reviewer can answer. Leave resolving the thread to the reviewer.
+   not only the line it names. A change to the deliverable becomes a task before the sign-off, with
+   the next unused id and a Purpose that is what the feedback asks for, run as in Running with the
+   feedback handed to the implementer; a change to the plan is yours to write.
+3. Reply on each thread, opening with `<!-- rn -->`, with what changed and the commit — or, when the
+   ask is unclear, with one question only the reviewer can answer. Leave resolving the thread to the reviewer.
 4. When the feedback is acted on, set `Feedback` to none, and go on as in Running — which, at a
    sign-off, evaluates the changed work before presenting it again.
 
