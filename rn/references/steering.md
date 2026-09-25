@@ -1,36 +1,35 @@
 # steering.md
 
-The one file a session keeps. A fresh conversation resumes from it and git alone, and every command
-finds its way by its field names and headings, so they stay exactly as written.
+セッションが持つ唯一のファイル。新しい会話はこれと git だけから再開し、どのコマンドもフィールド名と見出しを頼りに動くので、それらは書かれたとおりに保つ。
 
-## Template
+## ひな形
 
 ```markdown
 ---
-rn: <installed rn version>
-issue: <the issue this session serves — omit when there is none>
-pr: <the session's pull request URL>
-design: <the document setting out a Design sign-off's choices — omit until there is one>
+rn: <インストールされている rn の version>
+issue: <このセッションが対応する issue — なければ行ごと省く>
+pr: <セッションのプルリクエストの URL>
+design: <Design sign-off の選択肢を示した文書 — できるまで省く>
 status: running
 ---
 
 # Goal
 
-<what the user wants and why, as agreed with them>
+<利用者が望むことと、その理由。利用者と合意したもの>
 
 # Goal reached when
 
-- <a state the user gains>
+- <利用者が得る状態>
 
 # Assumptions
 
-- **Fact** (<how it was checked>): <what the plan rests on, including each choice the user made>
-- **Assumption**: <what the plan rests on without having checked it>
+- **Fact** (<どう確かめたか>): <計画が頼っていること。利用者がした選択も含む>
+- **Assumption**: <確かめないまま計画が頼っていること>
 
 # Rules
 
 - commit and push every change
-- <what an implementer could not know from the Goal: this repository's conventions>
+- <作業担当が Goal からは知り得ないこと。このリポジトリの決まり>
 
 # Tasks
 
@@ -48,19 +47,19 @@ status: running
 
 - The user approved the plan.
 
-### #2: <task name>
+### #2: <タスク名>
 
-**Purpose**: <what this task reaches, and the line of Goal reached when it serves>
+**Purpose**: <このタスクが届くところと、それが受け持つ Goal reached when の行>
 
-**Prerequisites**: <task ids, or none>
+**Prerequisites**: <タスクの id、または none>
 
 **Steps**:
 
-- [ ] <step>
+- [ ] <手順>
 
 **Purpose reached when**:
 
-- <a state that shows the Purpose reached>
+- <Purpose に届いたと分かる状態>
 
 # State
 
@@ -69,37 +68,26 @@ status: running
 - **Notes**: none
 ```
 
-- The tasks end at a sign-off: "Design sign-off" for a choice that is the user's, "Evaluation sign-off"
-  for the finished work. A sign-off task has the one step `Approved by the user`. A task is complete
-  when every step is `[x]`; a task added later takes the next unused id.
-- `status` is `paused`, with `paused_at: <YYYY-MM-DD>`, from `/rn:dn` until `/rn:up`.
-- `Next` is the task to take and how far it got. `Feedback` is the user's words asking for a revision,
-  kept until the revision passes its evaluation. `Notes` is what the next conversation needs that
-  nothing else records.
-- `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
+- タスクはサインオフで終わる。利用者が選ぶことには「Design sign-off」、完成物には「Evaluation sign-off」。サインオフのタスクの手順は `Approved by the user` の1つだけ。タスクは手順がすべて `[x]` になったら完了。後から足すタスクは、まだ使っていない次の id を取る。
+- `status` は `/rn:dn` から `/rn:up` までの間 `paused` で、`paused_at: <YYYY-MM-DD>` を添える。
+- `Next` は取るべきタスクと、どこまで進んだか。`Feedback` は直しを求める利用者の言葉で、その直しが評価を通るまで残す。`Notes` は、ほかのどこにも残らない、次の会話に要ること。
+- `steering.md` の隣の `evaluations/` には、Evaluation sign-off まですべての評価を置く。
 
-## Finding the session
+## セッションを見つける
 
-1. The `steering.md` this conversation has been working on.
-2. Otherwise the one this branch changed:
+1. この会話で扱ってきた `steering.md`。
+2. なければ、このブランチが変えたもの。
    `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`
-   (`git remote set-head origin --auto` first when `origin/HEAD` is not set).
-3. Otherwise those changed on the branches of open pull requests
-   (`gh pr list --state open --json headRefName`): propose one and wait.
+   （`origin/HEAD` が未設定なら、先に `git remote set-head origin --auto`）。
+3. なければ、開いているプルリクエストのブランチが変えたもの
+   （`gh pr list --state open --json headRefName`）。1つを提案して待つ。
 
-None → "No open session. Run `/rn:on` to start." A finished session → say so. Either way, stop.
+見つからなければ「No open session. Run `/rn:on` to start.」、終わったセッションならそう伝える。どちらも止まる。
 
-A session with no `rn` field, or one that differs from `version` in
-`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, was started under an earlier `rn`. `/rn:up` brings
-it up to date; any other command asks the user to run `/rn:up` first, and stops.
+`rn` フィールドがない、または `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` の `version` と違うセッションは、前の版の `rn` で始まったもの。`/rn:up` が今の版に合わせる。ほかのコマンドは、先に `/rn:up` を実行するよう利用者に頼んで止まる。
 
-## Bringing an older session up to date
+## 前の版のセッションを今の版に合わせる
 
-Rewrite it in the template's shape so this `rn` can run it, with none of its plan or progress lost
-and the wording the user approved unchanged. Earlier versions wrote the header as `Rn version:` and
-`Design:` lines, named the criteria Acceptance criteria and Completion criteria, kept status in
-`State`, had no Plan sign-off task (the plan was approved on the pull request), and ran their own
-reviews as steps recorded in `checks/`; those reviews are replaced by this `rn`'s evaluations.
+この `rn` で動かせるよう、ひな形の形に書き直す。計画も進み具合も失わず、利用者が承認した文言は変えない。前の版は、ヘッダーを `Rn version:` と `Design:` の行で書き、基準を Acceptance criteria と Completion criteria と呼び、状態を `State` に持ち、Plan sign-off のタスクを持たず（計画はプルリクエストで承認していた）、独自のレビューを手順として `checks/` に記録していた。そのレビューは、この `rn` の評価に置き換わる。
 
-Commit `chore: bring session up to rn {version}`, push, and have the plan evaluated as in
-`${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
+`chore: bring session up to rn {version}` でコミットしてプッシュし、`${CLAUDE_PLUGIN_ROOT}/references/turn.md` のとおりに計画を評価させる。

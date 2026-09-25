@@ -1,23 +1,20 @@
 ---
 name: gm
-description: Ask for changes to what an rn session stopped for — the plan, a design choice, or the finished work — from the feedback given, or from the review comments on the pull request; record it and stop. It commits and pushes, so run it only on an explicit /rn:gm.
+description: rn のセッションが止まって待っているもの（計画・設計の選択・完成物）に変更を求める。フィードバックは引数から、なければプルリクエストのレビューコメントから取り、記録して止まる。コミット・プッシュするので、/rn:gm と明示されたときだけ実行する。
 disable-model-invocation: true
 ---
 
-# /rn:gm — Good, more
+# /rn:gm — いいね、もっと
 
-The user wants more from what the session stopped for. Record their feedback whole, in their words, so
-the revision answers what they asked, not a summary of it, and stop.
+利用者は、セッションが止まって待っていたものに、もっと望むことがある。直しが要約ではなく利用者の言ったことに答えるよう、フィードバックを利用者の言葉のまま丸ごと記録して、止まる。
 
-Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The feedback is `$ARGUMENTS`;
-without it, the unresolved review threads on the pull request, each with its location and URL. Only
-GraphQL tells which are resolved:
+`${CLAUDE_PLUGIN_ROOT}/references/steering.md` のとおりにセッションを見つける。フィードバックは `$ARGUMENTS`。なければ、プルリクエストの未解決のレビュースレッドを、場所と URL つきで取る。解決済みかどうかは GraphQL でしか分からない。
 
 ```
 gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{isResolved path line comments(first:20){nodes{url body}}}}}}}' -F o={owner} -F r={repo} -F n={number}
 ```
 
-Add it to `Feedback`, commit, and push. Then say, in the user's language:
+`Feedback` に書き足し、コミットしてプッシュする。そして利用者の言語で伝える。
 
 ```
 ● Recorded: {n} points on {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.

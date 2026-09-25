@@ -1,24 +1,19 @@
 ---
 name: ty
-description: Approve the decision an rn session stopped for — the plan, a design choice, or the finished work — record it, and stop. It commits, pushes, and at the last sign-off marks the pull request ready, so run it only on an explicit /rn:ty.
+description: rn のセッションが止まって待っている判断（計画・設計の選択・完成物）を承認し、記録して止まる。コミット・プッシュし、最後のサインオフではプルリクエストをレビュー可能にするので、/rn:ty と明示されたときだけ実行する。
 disable-model-invocation: true
 ---
 
-# /rn:ty — Approve
+# /rn:ty — 承認する
 
-The user approves what the session stopped for. Record it in `steering.md`, so the work goes on from
-there without asking again, and stop.
+利用者は、セッションが止まって待っていたものを承認した。もう聞き直さずにそこから進めるよう `steering.md` に記録して、止まる。
 
-Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. Check the sign-off at `Next`
-and set `Next` past it. At a Design sign-off, record the choice — the one `$ARGUMENTS` names, or your
-recommendation — as a Fact in `Assumptions`. At the Evaluation sign-off, the session ends: remove
-`evaluations/` and mark the pull request ready with `gh pr ready`. Commit and push.
+`${CLAUDE_PLUGIN_ROOT}/references/steering.md` のとおりにセッションを見つける。`Next` のサインオフにチェックを入れ、`Next` をその先へ進める。Design sign-off では、選んだもの（`$ARGUMENTS` が名指すもの、なければ自分のおすすめ）を `Assumptions` に Fact として書く。Evaluation sign-off でセッションは終わる。`evaluations/` を消し、`gh pr ready` でプルリクエストをレビュー可能にする。コミットしてプッシュする。
 
-Then say, in the user's language:
+そして利用者の言語で伝える。
 
 ```
 ● Approved: {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.
 ```
 
-At the Evaluation sign-off, say instead that the session is finished, that the merge is theirs, and
-what `Notes` says waits on it.
+Evaluation sign-off では代わりに、セッションが終わったこと、マージは利用者のものであること、マージ待ちとして `Notes` にあることを伝える。
