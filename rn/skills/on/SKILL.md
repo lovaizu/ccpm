@@ -29,25 +29,26 @@ The plan goes only as far as the next decision that is the user's: a choice of t
 against benefit. What comes after depends on their answer, so it is planned once they give it. If no
 such choice remains, the plan ends at the user's check of the finished work.
 
-Write it to `.rn/{yyyymmdd}-{slug}/steering.md` on a new branch from the default branch, from the
-template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading what each part is for. The slug
-is a short kebab-case name for what the work produces. `rn` is `version` in
-`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Uncommitted changes in the tree are the user's,
-so ask what to do with them before you create the branch. Read the plan against what you and the user
-agreed: only you heard the conversation, so a goal written down wrong is yours to catch. Commit it
-and push.
+Uncommitted changes in the tree are the user's, so ask what to do with them first. Then create a new
+branch from the default branch, and write the plan to `.rn/{yyyymmdd}-{slug}/steering.md` from the
+template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading what each part is for. The slug is a
+short kebab-case name for what the work produces. `rn` is `version` in
+`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Write it in the language the repository's documents
+are written in. Read the plan against what you and the user agreed: only you heard the conversation, so
+a goal written down wrong is yours to catch. Commit it and push.
 
 ## Have the plan judged
 
 Start a fresh general-purpose agent with `Agent` to judge the plan, as the Plan kind in
-`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`. Give it that file, the path of `steering.md`, and the
-file for its verdict: `evaluations/{NN}-plan.md` next to `steering.md`, `{NN}` counting up from
-`01`. Give it nothing else. Your reasons and how the plan came about would pull it toward your view.
-Commit the verdict and push, so the user can tie it to the plan it judged.
+`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`. Give it that file, the path of `steering.md`, the user's
+own words (`$ARGUMENTS`, and the issue they named) to check the Goal against, and the file for its
+verdict: `evaluations/{NN}-plan.md` next to `steering.md`, `{NN}` counting up from `01` across the
+session's verdicts. Give it nothing else. Your reasons and how the plan came about would pull it toward
+your view. Commit the verdict and push, so the user can tie it to the plan it judged.
 
-Then decide by the goal, reading its Mores. Fix the plan and have it judged again; bring the user in
-when a More is theirs to decide; or go on when the plan does its job. A fixed plan is committed and
-pushed before it is judged again. Show each decision as one line:
+Then decide by the goal, reading its Mores. Fix the plan and have it judged again; ask the user in the
+conversation when a More is theirs to decide; or go on when the plan does its job. A fixed plan is
+committed and pushed before it is judged again. Show each decision as one line:
 
 ```
 ● plan ── judged: {passes | fails ({the More that decides it})} → {what you do next}
@@ -62,9 +63,11 @@ Then stop. Open your message with the session's map, in the user's language:
 
 ```
 ── {slug}: {the goal in one line} ──
-👉 #1   Plan sign-off ── {what you need from the user}
-⬜ #{ids}   {task names, separated by /}
+👉 #1      plan sign-off ── {what you need from the user}
+⬜ #{first}–#{last}   {task names, separated by /}
 ({what happens after this stop})
+
+Draft PR: {url}
 ```
 
 Ask them to read the plan on the pull request, with your recommendation. They answer with `/rn:ty` to

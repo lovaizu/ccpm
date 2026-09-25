@@ -9,11 +9,12 @@ it says whether the result reaches its purpose, and what to keep and what to cha
 ## Plan
 
 The plan is `steering.md`: the Goal, its Acceptance criteria, the Assumptions, and the tasks that
-lead to the sign-off at the end of the plan.
+lead to the sign-off at the end of the plan. You are also given the user's own words, the request
+the Goal was worked out from.
 
 - **Does it hold what the user wants?** If every Acceptance criterion held, the Goal would be
   reached, read for why the user wants it and not only its words, with nothing missing and nothing
-  added.
+  added; and the Goal keeps every part of the user's own words.
 - **Do the criteria survive a change of means?** Each criterion, of the session and of each task,
   is a state that can be checked on the real thing, not an artifact to produce or a step to run.
 - **Do the tasks reach the next decision?** Each task's Purpose serves an Acceptance criterion; if
