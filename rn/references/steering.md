@@ -84,7 +84,9 @@ Read these when writing or changing a plan.
   and end at a sign-off task for it: "Design sign-off" for that decision, "Evaluation sign-off"
   when no decision remains before the end. What lies past a decision depends on it, so those tasks
   are written from the approach once it is settled, and the user approves the approach and them
-  together at its sign-off. A sign-off task has the one step `Approved by the user`. Tasks run in
+  together at its sign-off. A sign-off task has the one step `Approved by the user`. Work that can
+  only follow the merge — a tag, a release — goes in a task after "Evaluation sign-off", with the
+  merge as its prerequisite, since the merge is the user's. Tasks run in
   the order they appear; a task added later takes the next unused id, so ids already in commit
   messages keep pointing at their task.
 - **State** — `running` while a conversation holds the session. When the session stops for a fresh
@@ -107,14 +109,15 @@ branch, so the branch names it.
 
 1. The path known in this conversation, if there is one.
 2. Otherwise the `.rn/*/steering.md` this branch changed:
-   `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`.
+   `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`. When
+   `origin/HEAD` is not set, `git remote set-head origin --auto` sets it first.
 3. Otherwise the sessions on branches not yet merged: for each branch in
    `git branch -r --no-merged origin/HEAD`, the `.rn/*/steering.md` it changed, read at that branch,
-   whose "Evaluation sign-off" is not complete. Propose one — a paused one first — with its branch
-   to switch to, and wait.
+   with a task not yet complete. Propose one — a paused one first — with its branch to switch to,
+   and wait.
 
-More than one found → ask which. A session whose "Evaluation sign-off" is complete is finished →
-say so and stop. None → say "No open session. Run `/rn:on` to start." and stop.
+More than one found → ask which. A session whose tasks are all complete is finished → say so and
+stop. None → say "No open session. Run `/rn:on` to start." and stop.
 
 ## Migration
 
@@ -126,7 +129,10 @@ goes on under this one with nothing run by hand and nothing it recorded lost.
 2. Rewrite `steering.md` in the template's shape. Carry the Goal, criteria, Assumptions, Rules, the
    `Design:` line, and every task with its id, name, fields and check-offs; a checked step stays
    word for word. Drop an unchecked step that only ran the old `rn`'s own review — a self-check, an
-   expert review, a record into `checks/`. Carry every fact of the old `State` into the new fields,
+   expert review, a record into `checks/`. A sign-off task gets the one step `Approved by the user`
+   — checked if the old task was complete; its other unchecked steps that do work go into a task
+   placed before it, or after "Evaluation sign-off" when they wait on the merge, each with the next
+   unused id. Carry every fact of the old `State` into the new fields,
    `Notes` taking what fits nowhere else. The old plan was approved when it started, so no Plan
    sign-off is added.
 3. Remove the old `rn`'s process records — under 0.8.0, the `checks/` directory — and nothing else.

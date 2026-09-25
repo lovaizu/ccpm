@@ -36,8 +36,8 @@ commits, or the old session's commit for a migrated plan). Hand it nothing else:
 implementer's account and not an earlier verdict, so it judges the result and not the story.
 
 Post its final message on the session's pull request as it wrote it
-(`gh pr comment --body-file -`, the text on standard input), headed with the kind, the task and the
-short commit it judged, so
+(`gh pr comment --body-file -`, the text on standard input), opening with `<!-- rn -->` and a
+heading of the kind, the task and the short commit it judged, so
 the user reads every verdict beside the change it judges. With no pull request, show it in the
 conversation instead.
 

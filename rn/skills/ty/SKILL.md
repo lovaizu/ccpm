@@ -18,7 +18,8 @@ was approved.
    approval: say so and stop.
 3. **Record the approval.** Mark its step `[x]`, commit `docs: complete task #N — {task name}` —
    the marker only a check-off carries — and push.
-4. **Close or hand off.** "Evaluation sign-off" → mark the PR ready for review and report the
-   session closed, opening with the map in Stopping for the user in
-   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; the merge is the user's next move. Otherwise →
-   Handing off to a fresh conversation there, `Feedback` none.
+4. **Close or hand off.** "Evaluation sign-off" → mark the PR ready for review; the merge is the
+   user's next move. With no task left, report the session closed, opening with the map in
+   Stopping for the user in `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`. Otherwise — tasks
+   remain, after the merge or before the next sign-off — Handing off to a fresh conversation there,
+   `Feedback` none.
