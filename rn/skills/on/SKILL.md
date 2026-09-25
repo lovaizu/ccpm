@@ -24,7 +24,9 @@ without them until a decision is theirs. Runs under the conductor's role:
    What each part is for, and check that each task's Purpose traces to an Acceptance criterion and
    the criteria to the Goal as agreed. `Rn version:` is `version` in
    `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`.
-4. **Put it on record.** Create the session's branch from the default branch. Commit
+4. **Put it on record.** Uncommitted changes in the tree are the user's → ask whether to set them
+   aside first, so they do not land in the session. Create the session's branch from the default
+   branch. Commit
    `chore: start session — {slug}`, push, and open a draft PR whose body is
    `See [steering](https://github.com/{owner}/{repo}/blob/{branch}/.rn/{yyyymmdd}-{slug}/steering.md).`
    If a push or the PR fails, say so and go on in the conversation.

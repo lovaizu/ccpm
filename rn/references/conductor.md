@@ -5,7 +5,8 @@ implementer and judged by an evaluator, and decide every next move by whether it
 closer. The user decides what is theirs — the plan, an approach they would want a say in, whether
 the finished work does what they wanted — and you bring each such decision to them as soon as it
 arises, with what they need to make it. `implement.md` and `evaluate.md` sit beside this file; the
-implementer and the evaluator read their brief from there themselves, so what reaches them is the brief and the session, not your summary of either.
+implementer and the evaluator read their brief from there themselves, so what reaches them is the
+brief and the session, not your summary of either.
 
 ## Running the session to its next decision
 
@@ -20,12 +21,15 @@ implementer and the evaluator read their brief from there themselves, so what re
    3. Decide the next move.
 3. "Design sign-off": the approach is settled by the tasks before it. Unless they are already there,
    write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is
-   for), placed after the sign-off; have the plan evaluated, kind Plan; decide the next move. Then stop for the user with
-   the approach and its verdict, and the tasks that follow from it and the plan's verdict.
+   for), placed after the sign-off; have the plan evaluated, kind Plan; decide the next move. Then
+   stop for the user with the approach and its verdict, and the tasks that follow from it and the
+   plan's verdict.
 4. "Evaluation sign-off": have the finished work evaluated, kind Session; decide the next move.
    Then stop for the user with the verdict and what they would check themselves.
 5. "Plan sign-off": have the plan evaluated, kind Plan; decide the next move. Then stop for the
    user with the plan and its verdict.
+
+Each stop is made as in Stopping for the user.
 
 ## Having a result evaluated
 
@@ -34,11 +38,10 @@ at its path and follow it; the kind; the `steering.md` path; and what to evaluat
 commits, or the old session's commit for a migrated plan). Hand it nothing else: not the
 implementer's account and not an earlier verdict, so it judges the result and not the story.
 
-Post its final message on the session's pull request as it wrote it
-(`gh pr comment --body-file -`, the text on standard input), opening with `<!-- rn -->` and a
-heading of the kind, the task and the short commit it judged, so
-the user reads every verdict beside the change it judges. With no pull request, show it in the
-conversation instead.
+Post its final message on the session's pull request as it wrote it (`gh pr comment --body-file -`,
+the text on standard input), opening with `<!-- rn -->` and a heading of the kind, the task and the
+short commit it judged, so the user reads every verdict beside the change it judges. With no pull
+request, show it in the conversation instead.
 
 ## Deciding the next move
 
@@ -50,10 +53,11 @@ Read the verdict and the result, and act on what the Goal needs:
 - The result falls short → send it back to whoever can fix it: the implementer with the verdict, or
   yourself when the fault is in `steering.md`. Evaluate again after the fix. When the work falls
   short at a Design or Evaluation sign-off, there is no build task to send it back to, so add one
-  before the sign-off whose Purpose is what the verdict shows missing, and run it.
+  before the sign-off, with the next unused id and a Purpose that is what the verdict shows
+  missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
-  passes one that misses — → a fresh evaluator, told which of its questions to answer again.
-  Its verdict stands; if you still disagree, the disagreement goes to the user. On a plan, which you
+  passes one that misses — → a fresh evaluator, told which of its questions to answer again. Its
+  verdict stands; if you still disagree, the disagreement goes to the user. On a plan, which you
   wrote, it goes to the user at once.
 - The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
   comes back after a fix; or the way forward is a matter of taste, scope, or cost the user weighs →
@@ -69,24 +73,25 @@ once an approach is settled.
 When `State` holds `Feedback`, the user asked for a revision of what was last presented — the first
 task not yet complete.
 
-1. Take the feedback: the text in `Feedback`, or what the reviewer left on the pull
-   request — review threads that are unresolved and whose last comment is not rn's (`gh api
-   graphql` on `reviewThreads`, paginated), and review summaries and comments newer than rn's
-   latest verdict. rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often
-   post as the same account, so the author does not tell them apart.
+1. Take the feedback: the text in `Feedback`, or what the reviewer left on the pull request —
+   review threads that are unresolved and whose last comment is not rn's (`gh api graphql` on
+   `reviewThreads`, paginated), and review summaries and comments newer than rn's latest verdict.
+   rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often post as the same
+   account, so the author does not tell them apart.
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
    not only the line it names. A change to the deliverable becomes a task before the sign-off, with
    the next unused id and a Purpose that is what the feedback asks for, run as in Running with the
-   feedback handed to the implementer; a change to the plan is yours to write.
+   feedback handed to the implementer. A change to the plan is yours to write, with what the user
+   asked recorded in the Goal, a criterion or an Assumption, so the evaluator judges against it.
 3. Reply on each thread, opening with `<!-- rn -->`, with what changed and the commit — or, when the
-   ask is unclear, with one question only the reviewer can answer. Leave resolving the thread to the reviewer.
+   ask is unclear, with one question only the reviewer can answer. Leave resolving the thread to
+   the reviewer.
 4. When the feedback is acted on, set `Feedback` to none, and go on as in Running — which, at a
    sign-off, evaluates the changed work before presenting it again.
 
 ## Stopping for the user
 
-Every message that stops for the user opens with the session's map, so they can answer without
-opening `steering.md`:
+Open the message with the session's map, so the user can answer without opening `steering.md`:
 
 ```
 ── {slug}: {the Goal's first sentence} ──
@@ -103,7 +108,8 @@ session stands and the user's next move; the ⬜ line goes when nothing remains.
 
 Then ask one thing, with your recommendation, pointing at the pull request for what is long to read.
 At a sign-off, the answer is `/rn:ty` to approve or `/rn:gm <feedback>` to revise — plain `/rn:gm`
-when the feedback is in review threads on the pull request.
+when the feedback is in review threads on the pull request. Any other question is answered in
+words, in the conversation.
 
 ## Handing off to a fresh conversation
 
@@ -111,11 +117,13 @@ when the feedback is in review threads on the pull request.
 `/clear` and then `/rn:up` resume with nothing more said.
 
 1. Write `State` in its paused form from this conversation: `Next` is the first task not yet
-   complete and how far it got; `Feedback` is the revise feedback not yet acted on, or none; `Notes` hold what the
-   next conversation needs that `steering.md` and git do not.
-2. Leave the tree clean, so the next conversation starts from git alone. For each untracked path:
-   build or test output → a `.gitignore` rule; anything else → ask the user whether to commit,
-   ignore or keep it, one path at a time, and name a path they leave in `Notes`.
+   complete and how far it got; `Feedback` is the revise feedback not yet acted on, or none;
+   `Notes` hold what the next conversation needs that `steering.md` and git do not — first, any
+   question still open for the user.
+2. Leave the tree clean, so the next conversation starts from git alone. For each untracked path,
+   and each change the session did not make: build or test output → a `.gitignore` rule; anything
+   else → ask the user whether to commit, ignore or keep it, one path at a time, and name a path
+   they keep in `Notes`.
 3. Commit — `wip: suspend — {slug}` while the first task not yet complete is partly done, a plain
    conventional message otherwise — and push. If the push fails, say so in the report.
 4. Report, opening with the map: the session stands here, and the next move is `/clear` then
