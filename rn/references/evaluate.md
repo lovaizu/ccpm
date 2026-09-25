@@ -20,8 +20,9 @@ lead to the sign-off at the end of the plan.
   its Completion criteria held, its Purpose would be reached; in the order their prerequisites
   allow, the tasks reach the sign-off that ends them, and that sign-off is a decision the user must
   make.
-- **Is what the plan rests on true?** Each Assumption marked a fact was checked, and none is work
-  still to do or a decision not yet made.
+- **Is what the plan rests on true and recorded?** Each Assumption marked a fact was checked, and
+  none is work still to do or a decision not yet made; the Rules hold the repository's conventions
+  the tasks must follow, which an implementer could not know from the Goal.
 
 ## Evaluating
 

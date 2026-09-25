@@ -33,17 +33,21 @@ Write it to `.rn/{yyyymmdd}-{slug}/steering.md` on a new branch from the default
 template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading what each part is for. The slug
 is a short kebab-case name for what the work produces. `rn` is `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Uncommitted changes in the tree are the user's,
-so ask what to do with them before you create the branch.
+so ask what to do with them before you create the branch. Read the plan against what you and the user
+agreed: only you heard the conversation, so a goal written down wrong is yours to catch. Commit it
+and push.
 
 ## Have the plan judged
 
-Start a fresh agent with `Agent` to judge the plan. Give it
-`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`, the kind `Plan`, the path of `steering.md`, and the
+Start a fresh general-purpose agent with `Agent` to judge the plan, as the Plan kind in
+`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`. Give it that file, the path of `steering.md`, and the
 file for its verdict: `evaluations/{NN}-plan.md` next to `steering.md`, `{NN}` counting up from
 `01`. Give it nothing else. Your reasons and how the plan came about would pull it toward your view.
+Commit the verdict and push, so the user can tie it to the plan it judged.
 
 Then decide by the goal, reading its Mores. Fix the plan and have it judged again; bring the user in
-when a More is theirs to decide; or go on when the plan does its job. Show each decision as one line:
+when a More is theirs to decide; or go on when the plan does its job. A fixed plan is committed and
+pushed before it is judged again. Show each decision as one line:
 
 ```
 ● plan ── judged: {passes | fails ({the More that decides it})} → {what you do next}
@@ -51,8 +55,8 @@ when a More is theirs to decide; or go on when the plan does its job. Show each 
 
 ## Put it on record and stop
 
-Commit `steering.md` and `evaluations/`, and push. Open a draft pull request whose body links
-`steering.md` on the branch. Write its URL in `pr`, commit, and push.
+Open a draft pull request whose body links `steering.md` on the branch. Write its URL in `pr`,
+commit, and push.
 
 Then stop. Open your message with the session's map, in the user's language:
 
