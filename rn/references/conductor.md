@@ -10,8 +10,7 @@ implementer and the evaluator read their brief from there themselves, so what re
 ## Running the session to its next decision
 
 1. Take the first task not yet complete. Work committed since the last check-off is part of it, so
-   read those commits before building anything. A task waiting on the merge, while the PR is not
-   merged (`gh pr view --json state`), is the user's move: stop for the user and say so.
+   read those commits before building anything.
 2. A task that builds something:
    1. Dispatch the implementer — `Agent`, `model: sonnet` — with: read `implement.md` at its path
       and follow it; the `steering.md` path; the task id; and, when this is a second pass, the
@@ -53,7 +52,7 @@ Read the verdict and the result, and act on what the Goal needs:
   short at a Design or Evaluation sign-off, there is no build task to send it back to, so add one
   before the sign-off whose Purpose is what the verdict shows missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
-  passes one that misses — → a fresh evaluator, handed the question the verdict left unanswered.
+  passes one that misses — → a fresh evaluator, told which of its questions to answer again.
   Its verdict stands; if you still disagree, the disagreement goes to the user. On a plan, which you
   wrote, it goes to the user at once.
 - The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
@@ -73,15 +72,16 @@ task not yet complete.
 1. Take the feedback: the text `/rn:up` read from `State`, or what the reviewer left on the pull
    request — review threads that are unresolved and whose last comment is not rn's (`gh api
    graphql` on `reviewThreads`, paginated), and review summaries and comments newer than rn's
-   latest post. rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often
+   latest verdict. rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often
    post as the same account, so the author does not tell them apart.
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
    not only the line it names. A change to the deliverable becomes a task before the sign-off, whose
    Purpose is what the feedback asks for, with the next unused id, run as in Running with the feedback handed to the
-   implementer; a change to the plan is yours to write, then the plan is evaluated.
+   implementer; a change to the plan is yours to write.
 3. Reply on each thread, opening with `<!-- rn -->`, with what changed and the commit — or, when the ask is unclear, with one
    question only the reviewer can answer. Leave resolving the thread to the reviewer.
-4. A sign-off → stop for the user with it again. Any other task → go on as in Running.
+4. When the feedback is acted on, set `Feedback` to none, and go on as in Running — which, at a
+   sign-off, evaluates the changed work before presenting it again.
 
 ## Stopping for the user
 
@@ -116,8 +116,8 @@ when the feedback is in review threads on the pull request.
 2. Leave the tree clean, so the next conversation starts from git alone. For each untracked path:
    build or test output → a `.gitignore` rule; anything else → ask the user whether to commit,
    ignore or keep it, one path at a time, and name a path they leave in `Notes`.
-3. Commit — `wip: suspend — {slug}` while a task has unchecked steps, a plain conventional message
-   otherwise — and push. If the push fails, say so in the report.
+3. Commit — `wip: suspend — {slug}` while the first task not yet complete is partly done, a plain
+   conventional message otherwise — and push. If the push fails, say so in the report.
 4. Report, opening with the map: the session stands here, and the next move is `/clear` then
    `/rn:up` — or, to go on in this conversation, the user just says so, and you continue as
    `/rn:up` does from reading `State`.
