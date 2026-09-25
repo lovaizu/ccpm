@@ -78,7 +78,7 @@ wrong with it is visible.
       and the `Design:` line run for real; re-evaluate
 - [x] Settle `viewpoints.md` with the user — what a prompt is judged on, per what it covers:
       structure, generation, evaluation, work steps
-- [ ] Rewrite `rn` on `viewpoints.md`, carrying two requests from a real session
+- [x] Rewrite `rn` on `viewpoints.md`, carrying two requests from a real session
       (mamezou-devsite-2f, 2026-09-25):
   - `/rn:on` draws the goal out of the user — shows its reading one point at a time until the
     user's unspoken aim and the approach are agreed — and plans only up to the next decision,
