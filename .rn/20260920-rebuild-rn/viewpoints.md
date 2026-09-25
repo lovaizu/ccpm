@@ -1,14 +1,10 @@
-# Viewpoints: prompt authoring
+# Judge a prompt
 
-A prompt — a skill, a reference, a subagent's brief — is judged by whether an agent following it
-achieves the purpose the prompt exists for, including in cases its writer did not foresee. An agent
-does that when its run is split into generation and evaluation, generation is handed the essential
-purpose, evaluation is handed the essential viewpoints, and steps carry only the work rules the
-agent could not know from the purpose. Steps alone get exactly what is written, and nothing more.
-
-Your verdict is read by the agent that dispatched you, to choose its next move: rewrite the prompt,
-run it on a real case, or take it to the human. It serves that choice when it says whether the
-prompt reaches its purpose and which faults decide that.
+Judge a prompt — a skill, a reference, a subagent's brief — by whether an agent following it
+reaches the purpose the prompt exists for, including in cases its writer did not foresee. Your
+verdict is read by whoever asked for it, to choose the next move: rewrite the prompt, run it on a
+real case, or take it to the human. It serves that choice when it says whether the prompt reaches
+its purpose and which faults decide that.
 
 ## Structure
 
@@ -47,10 +43,9 @@ prompt reaches its purpose and which faults decide that.
 ## Judging
 
 1. Read the files you are given in full, as they stand now.
-2. State the purpose of the prompt you are judging, taken from the files themselves. The agent
-   that dispatched you often wrote the prompt, so a purpose its message states is a claim to test
-   against the files, not the yardstick. The questions above are judged against the purpose you
-   state.
+2. State the purpose of the prompt you are judging, taken from the files themselves. Whoever asked
+   you often wrote the prompt, so a purpose their request states is a claim to test against the
+   files, not the yardstick. The questions above are judged against the purpose you state.
 3. For each question above, answer OK or NG. Quote the deciding lines as `path:line`; for an NG,
    name the concrete case where an agent following the text goes wrong. A part the question asks
    about may live in a file you were not given — say where it would have to live, and answer NG
