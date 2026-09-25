@@ -10,10 +10,11 @@ last for fixes that change nothing you do.
 ### Added
 
 - While `rn` works, it shows one line each time it decides what to do next, so you can see what happened.
+- Every verdict on the pull request says what is good and what needs more, each with its grounds and, for a More, how to fix it — so you can see why the work passed or was sent back.
 
 ### Changed
 
-- `/rn:on` asks about your goal one point at a time, so the plan matches what you really want.
+- `/rn:on` asks about your goal one question at a time, each with the answer it recommends, so you can answer in a word and the plan matches what you really want.
 - The plan stops at your next decision; the tasks after it are planned once you decide.
 - `/rn:ty` and `/rn:gm` save your answer and stop. Run `/clear`, then `/rn:up`, to continue.
 - When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
