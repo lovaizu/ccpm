@@ -57,9 +57,9 @@ pr: <the pull request URL>
 ## Have the plan judged
 
 Start a fresh agent with `Agent` to judge the plan. Give it the path of `steering.md`, the questions
-below, and the file for its verdict: `verdicts/{NN}-plan.md` next to `steering.md`, `{NN}` counting up from
-`01`. Give it nothing else.
-Your reasons and how the plan came about would pull it toward your view.
+below, and the file for its verdict: `verdicts/{NN}-plan.md` next to `steering.md`, `{NN}` counting
+up from `01`. Give it nothing else. Your reasons and how the plan came about would pull it toward your
+view.
 
 - If every criterion held, would the user have what they want: the aim, not only the words?
 - Can each criterion and each check be seen on the real thing, not only as a file made or a step done?
