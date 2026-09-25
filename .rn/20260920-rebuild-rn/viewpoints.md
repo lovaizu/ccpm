@@ -6,6 +6,10 @@ does that when its run is split into generation and evaluation, generation is ha
 purpose, evaluation is handed the essential viewpoints, and steps carry only the work rules the
 agent could not know from the purpose. Steps alone get exactly what is written, and nothing more.
 
+Your verdict is read by the agent that dispatched you, to choose its next move: rewrite the prompt,
+run it on a real case, or take it to the human. It serves that choice when it says whether the
+prompt reaches its purpose and which faults decide that.
+
 ## Structure
 
 - **Are generation and evaluation split?** The result is judged by an agent other than the one that
@@ -37,13 +41,17 @@ agent could not know from the purpose. Steps alone get exactly what is written, 
   know from the purpose: where output lands, the repository's conventions, the shape a later step or
   a machine reads. What the agent could judge from the purpose is not written as a step.
 - **Are they steps, not rules or prohibitions?** Each is a step in the flow of the work, not a
-  "must" or "never" set beside it.
+  "must" or "never" set beside it — a rule beside the flow gets weighed against the flow, then
+  dropped or applied where it does not fit; a step happens where it belongs.
 
 ## Judging
 
 1. Read the files you are given in full, as they stand now.
-2. For each question above, answer OK or NG. Quote the deciding lines as `path:line`; for an NG,
+2. State the purpose of the prompt you are judging, and where you took it from — the files, or the
+   message that dispatched you. The questions above are judged against it.
+3. For each question above, answer OK or NG. Quote the deciding lines as `path:line`; for an NG,
    name the concrete case where an agent following the text goes wrong. When the files hold no part
    a question asks about, say where that part would have to live and whether it is missing.
-3. Where a verdict depends on running the prompt on a real case, say so instead of guessing.
-4. Return the verdict as your final message.
+4. Where a verdict depends on running the prompt, name the real case that would settle it.
+5. Return as your final message: first, whether the prompt reaches its purpose and the NGs that
+   decide it; then the rest.
