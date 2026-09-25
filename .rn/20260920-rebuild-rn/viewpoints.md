@@ -47,10 +47,11 @@ its purpose and which faults decide that.
 2. State the purpose of the prompt you are evaluating, taken from the files themselves. Whoever asked
    you often wrote the prompt, so a purpose their request states is a claim to test against the
    files, not the yardstick. The questions above are answered against the purpose you state.
-3. For each question above, answer OK or NG. Quote the deciding lines as `path:line`; for an NG,
-   name the concrete case where an agent following the text goes wrong. A part the question asks
-   about may live in a file you were not given — say where it would have to live, and answer NG
-   only when it belongs in these files and is not there.
-4. Where a verdict depends on running the prompt, name the real case that would settle it.
-5. Return as your final message: first, whether the prompt reaches its purpose and the NGs that
-   decide it; then the rest.
+3. For each question above, answer with Good and More. Good is what already serves the purpose, so
+   a rewrite keeps it; More is what would bring the prompt closer to it, with the concrete case
+   where an agent following the text goes wrong. Quote the lines behind each as `path:line`. A part
+   the question asks about may live in a file you were not given — say where it would have to
+   live, and raise a More only when it belongs in these files and is not there.
+4. Where an answer depends on running the prompt, name the real case that would settle it.
+5. Return as your final message: first, whether the prompt reaches its purpose and the Mores that
+   decide it; then each question's Good and More.
