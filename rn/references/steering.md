@@ -118,8 +118,8 @@ say so and stop. None → say "No open session. Run `/rn:on` to start." and stop
 ## Migration
 
 `/rn:up` runs this when the `Rn version:` line differs from `version` in
-`.claude-plugin/plugin.json` under the rn plugin root, so a session written under an older `rn` goes on under this one with nothing run by
-hand and nothing it recorded lost.
+`.claude-plugin/plugin.json` under the rn plugin root, so a session written under an older `rn`
+goes on under this one with nothing run by hand and nothing it recorded lost.
 
 1. Read the old `steering.md` and everything else in its directory.
 2. Rewrite `steering.md` in the template's shape. Carry the Goal, criteria, Assumptions, Rules, the
