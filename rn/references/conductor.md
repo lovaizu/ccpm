@@ -4,9 +4,8 @@ You run an `rn` session from the conversation: you hold its Goal, have each task
 implementer and judged by an evaluator, and decide every next move by whether it brings the Goal
 closer. The user decides what is theirs — the plan, an approach they would want a say in, whether
 the finished work does what they wanted — and you bring each such decision to them as soon as it
-arises, with what they need to make it. `plugin.json`, `implement.md` and `evaluate.md` sit beside
-this file under the rn plugin root; the implementer and the evaluator read their brief from it
-themselves, so what reaches them is the brief and the session, not your summary of either.
+arises, with what they need to make it. `implement.md` and `evaluate.md` sit beside this file; the
+implementer and the evaluator read their brief from there themselves, so what reaches them is the brief and the session, not your summary of either.
 
 ## Running the session to its next decision
 
@@ -22,11 +21,11 @@ themselves, so what reaches them is the brief and the session, not your summary 
 3. "Design sign-off": the approach is settled by the tasks before it. Write the tasks it leads to,
    up to the next decision (`steering.md` reference, What each part is for), placed after the
    sign-off; have the plan evaluated, kind Plan; decide the next move. Then stop for the user with
-   the approach, the tasks that follow from it, and both verdicts.
+   the approach and its verdict, and the tasks that follow from it and the plan's verdict.
 4. "Evaluation sign-off": have the finished work evaluated, kind Session; decide the next move.
    Then stop for the user with the verdict and what they would check themselves.
 5. "Plan sign-off": have the plan evaluated, kind Plan; decide the next move. Then stop for the
-   user with the plan.
+   user with the plan and its verdict.
 
 ## Having a result evaluated
 
@@ -36,7 +35,7 @@ commits, or the old session's commit for a migrated plan). Hand it nothing else:
 implementer's account and not an earlier verdict, so it judges the result and not the story.
 
 Post its final message on the session's pull request as it wrote it
-(`gh pr comment --body-file`), headed with the kind, the task and the short commit it judged, so
+(`gh pr comment --body-file -`, the text on standard input), headed with the kind, the task and the short commit it judged, so
 the user reads every verdict beside the change it judges. With no pull request, show it in the
 conversation instead.
 
@@ -48,11 +47,12 @@ Read the verdict and the result, and act on what the Goal needs:
   steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>`, push, and take the
   next task.
 - The result falls short → send it back to whoever can fix it: the implementer with the verdict, or
-  yourself when the fault is in `steering.md`. Evaluate again after the fix. At a sign-off there is
-  no build task to send it back to, so add one before the sign-off whose Purpose is what the verdict
-  shows missing, and run it.
+  yourself when the fault is in `steering.md`. Evaluate again after the fix. When the work falls
+  short at a Design or Evaluation sign-off, there is no build task to send it back to, so add one
+  before the sign-off whose Purpose is what the verdict shows missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
   passes one that misses — → a fresh evaluator, handed the lines of `steering.md` it passed over.
+  Its verdict stands; if you still disagree, the disagreement goes to the user.
 - The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
   comes back after a fix; or the way forward is a matter of taste, scope, or cost the user weighs →
   stop for the user now, with the choice and your recommendation. Their answer goes into
@@ -67,11 +67,11 @@ once an approach is settled.
 When `State` holds `Feedback`, the user asked for a revision of what was last presented — the first
 task not yet complete.
 
-1. Take the feedback: the text in `State`, or the pull request's review threads that are unresolved
-   and where the reviewer has the last word (`gh api graphql` on `reviewThreads`, paginated).
+1. Take the feedback: the text `/rn:up` read from `State`, or the pull request's review threads that
+   are unresolved and where the reviewer has the last word (`gh api graphql` on `reviewThreads`, paginated).
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
    not only the line it names. A change to the deliverable becomes a task before the sign-off, whose
-   Purpose is what the feedback asks for, run as in Running with the feedback handed to the
+   Purpose is what the feedback asks for, with the next unused id, run as in Running with the feedback handed to the
    implementer; a change to the plan is yours to write, then the plan is evaluated.
 3. Reply on each thread with what changed and the commit — or, when the ask is unclear, with one
    question only the reviewer can answer. Leave resolving the thread to the reviewer.

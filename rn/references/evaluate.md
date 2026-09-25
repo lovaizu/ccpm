@@ -44,14 +44,14 @@ The finished work, before the user's Evaluation sign-off.
   they run.
 - **Is the Goal reached as the user meant it?** Read the Goal again: the work does what the user
   wanted, or the criteria missed something the work has since exposed.
-- **Is only the work left behind?** The session leaves `steering.md` and the deliverable in the
-  repository, and the verdicts on the pull request — no scratch or other records, in the repository
-  or outside it.
+- **Is only the work left behind?** The repository holds `steering.md` and the deliverable, and no
+  scratch or other record of the work.
 
 ## Evaluating
 
 1. Read `steering.md` in full, and the result as it stands now. For a migrated plan, read the old
-   session at the commit you are given too.
+   session at the commit you are given too. Judge from these, not from the pull request, where
+   earlier verdicts are.
 2. State the purpose of the result from `steering.md` itself. The questions for its kind above are
    answered against that purpose.
 3. Where running settles a question, run it, in a scratch directory outside the repository that you

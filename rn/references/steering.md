@@ -83,7 +83,10 @@ Read these when writing or changing a plan.
   user's — an approach choice where taste, scope, or cost against benefit is theirs to weigh —
   and end at a sign-off task for it: "Design sign-off" for that decision, "Evaluation sign-off"
   when no decision remains before the end. What lies past a decision depends on it, so those tasks
-  are written once it is made. A sign-off task has the one step `Approved by the user`.
+  are written from the approach once it is settled, and the user approves the approach and them
+  together at its sign-off. A sign-off task has the one step `Approved by the user`. Tasks run in
+  the order they appear; a task added later takes the next unused id, so ids already in commit
+  messages keep pointing at their task.
 - **State** — `running` while a conversation holds the session. When the session stops for a fresh
   conversation it reads:
 
@@ -105,15 +108,17 @@ branch, so the branch names it.
 1. The path known in this conversation, if there is one.
 2. Otherwise the `.rn/*/steering.md` this branch changed:
    `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`.
-3. Otherwise the `.rn/*/steering.md` on disk whose `State` reads `Status: paused`: propose it, with
-   its branch to switch to, and wait.
+3. Otherwise the sessions on branches not yet merged: for each branch in
+   `git branch -r --no-merged origin/HEAD`, the `.rn/*/steering.md` it changed, read at that branch.
+   Propose the one whose `State` is paused, with its branch to switch to, and wait.
 
-More than one found → ask which. None → say "No open session. Run `/rn:on` to start." and stop.
+More than one found → ask which. A session whose "Evaluation sign-off" is complete is finished →
+say so and stop. None → say "No open session. Run `/rn:on` to start." and stop.
 
 ## Migration
 
-`/rn:up` runs this when the `Rn version:` line differs from `version` in `plugin.json` under the rn
-plugin root, so a session written under an older `rn` goes on under this one with nothing run by
+`/rn:up` runs this when the `Rn version:` line differs from `version` in
+`.claude-plugin/plugin.json` under the rn plugin root, so a session written under an older `rn` goes on under this one with nothing run by
 hand and nothing it recorded lost.
 
 1. Read the old `steering.md` and everything else in its directory.

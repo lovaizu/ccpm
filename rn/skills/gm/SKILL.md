@@ -14,7 +14,7 @@ starts from the feedback and not from a summary of it.
 1. **Enter the session** as in Entering a session in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 2. **Take the feedback.** `$ARGUMENTS`, trimmed, not empty → that text, word for word. Empty → the
-   session PR's unresolved review threads; with no PR, ask for the feedback as `/rn:gm <feedback>`
-   and stop.
+   session PR's unresolved review threads; with no PR or no such thread, ask for the feedback as
+   `/rn:gm <feedback>` and stop.
 3. **Hand off** as in Handing off to a fresh conversation in
    `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, with that feedback as `Feedback`.

@@ -17,8 +17,8 @@ nothing the user decided is lost. Runs under the conductor's role:
 2. **Enter the session** as in Entering a session in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, and bring it current as in Migration there when
    its `Rn version:` differs from `version` in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`.
-3. **Read `State`, then set it back to running.** Keep `Next`, `Feedback` and `Notes` in mind for
-   what follows; replace `State` with `- **Status**: running`, commit `chore: resume — {slug}`, and
+3. **Read `State`, then set it back to running.** Carry `Next`, `Feedback` word for word and
+   `Notes` into what follows; replace `State` with `- **Status**: running`, commit `chore: resume — {slug}`, and
    push, so only a stopped session reads `paused`.
 4. **Check the record against the repository.** A note or Assumption the commits have since
    overtaken is corrected in `steering.md`; a blocker in `Notes` is looked into for a way through

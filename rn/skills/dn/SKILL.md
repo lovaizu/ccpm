@@ -12,7 +12,5 @@ Writes down where the session stands so a fresh conversation picks it up without
 
 1. **Enter the session** as in Entering a session in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
-2. **Record what is done.** Mark a step `[x]` only where the repository shows it done, not because
-   the conversation says so; add a task the work uncovered.
-3. **Hand off** as in Handing off to a fresh conversation in
+2. **Hand off** as in Handing off to a fresh conversation in
    `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, `Feedback` none.
