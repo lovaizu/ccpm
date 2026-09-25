@@ -41,12 +41,13 @@ One task's commits, and the files they touch as they stand now, against that tas
 
 ## Finished work
 
-Everything the session changed, before the user's Evaluation sign-off, against the Goal in
-`steering.md`.
+Everything the session changed apart from `evaluations/`, before the user's Evaluation sign-off,
+against the Goal in `steering.md`.
 
 - **Is the Goal reached?** The finished work does what the Goal says, beyond the letter of Goal reached
   when; a gap in those lines that the work has since exposed is named.
 - **Does every line of Goal reached when hold?** On the real thing, run where it runs.
 - **Are the Rules followed?** Across the whole change, every convention the Rules record is kept.
 - **Is only the work left behind?** What the session changed in the repository is `steering.md`, its
-  `evaluations/`, which go at the sign-off, and the work itself; no scratch or other record.
+  `evaluations/`, which go at the sign-off, and the work itself, a design document among it; no
+  scratch or other record.

@@ -15,8 +15,14 @@ at `Next` must be a sign-off task waiting for the user; if it is not, say what t
 instead, and stop.
 
 The feedback is `$ARGUMENTS`. When it is empty, it is the unresolved review threads on the session's
-pull request: for each, its location, its URL, and what it asks, read with `gh`. None there either →
-ask the user what they want changed, and stop.
+pull request, with each thread's file and line, its URL, and what it asks. Only GraphQL tells which
+threads are resolved:
+
+```
+gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{isResolved path line comments(first:20){nodes{url body}}}}}}}' -F o={owner} -F r={repo} -F n={number}
+```
+
+None there either → ask the user what they want changed, and stop.
 
 Write it into `Feedback`, next to anything already there. Commit `steering.md` and push. Then stop,
 and say in the user's language what was recorded:

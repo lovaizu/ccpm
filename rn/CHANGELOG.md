@@ -20,6 +20,10 @@ last for fixes that change nothing you do.
 - `/rn:ty` and `/rn:gm` save your answer and stop. Run `/clear`, then `/rn:up`, to continue.
 - When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
 
+### Removed
+
+- The question-by-question `design.md` template, and reusing an existing `design.md`: a design is now written only where a choice is yours, as the options with what each costs and gives, in the place your repository keeps designs.
+
 ## [0.8.0] - 2026-07-07
 
 ### Added

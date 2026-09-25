@@ -12,7 +12,7 @@ Every command finds its way by the field names and headings, so they stay exactl
 rn: <installed rn version>
 issue: <the issue this session serves — omit the line when there is none>
 pr: <the session's pull request URL — added once it is open>
-design: <path to the approach a Design sign-off settled — added once there is one>
+design: <path to the document setting out a Design sign-off's choices — added once there is one>
 status: running
 ---
 
@@ -92,11 +92,10 @@ status: running
   tasks run only as far as the next decision that is the user's — an approach where taste, scope, or
   cost against benefit is theirs to weigh — and end at a sign-off task for it: "Design sign-off" for
   that decision, "Evaluation sign-off" when no decision remains before the end. What lies past a
-  decision depends on it, so those tasks are written once it is settled, and the user approves the
-  approach and them together at its sign-off. A sign-off task has the one step `Approved by the user`.
-  The session ends at the Evaluation sign-off, before the merge, which is the user's. Tasks run in the
-  order they appear; a task added later takes the next unused id, so ids already in commit messages keep
-  pointing at their task.
+  decision depends on it, so those tasks are written once the user has chosen. A sign-off task has the
+  one step `Approved by the user`. The session ends at the Evaluation sign-off, before the merge, which
+  is the user's. Tasks run in the order they appear; a task added later takes the next unused id, so ids
+  already in commit messages keep pointing at their task.
 - **State** — where the session stands between conversations. `Next` is the first task not yet
   complete and how far it got; `Feedback` the user's revision not yet acted on, or none; `Notes`
   what the next conversation needs that nothing else records.
@@ -119,3 +118,30 @@ branch, so the branch names it.
 
 More than one found → ask which. A session whose Evaluation sign-off is complete is finished → say so
 and stop. None → say "No open session. Run `/rn:on` to start." and stop.
+
+A session started under an earlier `rn` — no `rn` field in its frontmatter, or one that differs from
+`version` in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` — is brought up to date first, below,
+whichever command found it.
+
+## Bringing an older session up to date
+
+Rewrite `steering.md` in the shape of the template, so this `rn` can run it, with nothing it recorded
+lost:
+
+- Carry the Goal, the Assumptions, the Rules, and every task with its id, name, fields, and
+  check-offs; a checked step stays word for word. Old names for the same thing take the template's
+  names: Acceptance criteria become Goal reached when, Completion criteria become Purpose reached
+  when. Wording the user approved stays as it is.
+- Lift the old header lines, and the issue and pull request the old `State` names, into the
+  frontmatter; carry every other fact of the old `State` into `Next`, `Feedback`, and `Notes`.
+- Drop an unchecked step that only ran the old `rn`'s own review — a self-check, an expert review, a
+  record into `checks/` — and remove those records. A sign-off task gets the one step `Approved by the
+  user`, checked if the old task was complete.
+- When the user has not yet approved the plan — no task has a checked step and nothing records their
+  approval — add a Plan sign-off with the next unused id as the first task, and set `Next` to it.
+- Tasks after a Design sign-off not yet approved move into `Notes`, as tasks planned before the
+  choice, to be rewritten once the user has chosen.
+
+Check the rewrite against the commit before it, part by part, so nothing is lost. Set `rn` to the
+installed version, commit `chore: bring session up to rn {version}`, push, and have the plan
+evaluated as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`, deciding on it as there.
