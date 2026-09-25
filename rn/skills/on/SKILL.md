@@ -7,10 +7,10 @@ disable-model-invocation: true
 # /rn:on — Start a session
 
 The user gives a goal, roughly. Find out what they really want, and plan the way to it, so the work can
-go on without them until a decision is theirs. A plan built on the literal words is judged against the
-wrong thing, and the user finds that out only at the end.
+go on without them until a decision is theirs. A plan built on the literal words is evaluated against
+the wrong Goal, and the user finds that out only at the end.
 
-## Work out the goal
+## Work out the Goal
 
 Start from `$ARGUMENTS` and what the repository shows. First settle what done looks like, since it
 fixes the scope every later answer is measured against; then why they want it, how they will know it
@@ -21,7 +21,7 @@ what it decides and the answer you recommend, so the user can agree in a word or
 only what the answers so far let you ask without guessing; each answer changes what comes next.
 Facts are yours to find: look up what the repository or the environment can answer instead of
 asking. Decisions are the user's: put each one to them. You are done when nothing the plan rests on
-is left assumed without their knowing, and they agree you both see the same aim and way.
+is left assumed without their knowing, and they agree you both see the same Goal and way.
 
 ## Write the plan
 
@@ -35,21 +35,20 @@ template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading what each pa
 short kebab-case name for what the work produces. `rn` is `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Write it in the language the repository's documents
 are written in. What the plan must reach is the Plan section of
-`${CLAUDE_PLUGIN_ROOT}/references/purpose.md`; check the plan against it, and against what you and the
-user agreed: only you heard the conversation, so a goal written down wrong is yours to catch. Commit it
-and push.
+`${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md`; check the plan against it, and against what you and
+the user agreed: only you heard the conversation, so a Goal written down wrong is yours to catch. Commit
+it and push.
 
-## Have the plan judged
+## Have the plan evaluated
 
-Have the plan judged as the Plan kind, as in Having a result judged in
-`${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
+Have the plan evaluated as in Having it evaluated in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
 
-Then decide by the goal, reading its Mores. Fix the plan and have it judged again; ask the user in the
-conversation when a More is theirs to decide; or go on when the plan does its job. A fixed plan is
-committed and pushed before it is judged again. Show each decision as one line:
+Then decide by the Goal, reading its Mores. Fix the plan and have it evaluated again; ask the user in
+the conversation when a More is theirs to decide; or go on when the plan does its job. A fixed plan is
+committed and pushed before it is evaluated again. Show each decision as one line:
 
 ```
-● plan ── judged: {passes | fails ({the More that decides it})} → {what you do next}
+● plan ── evaluated: {passes | fails ({the More that decides it})} → {what you do next}
 ```
 
 ## Put it on record and stop

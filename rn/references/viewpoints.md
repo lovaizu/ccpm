@@ -1,19 +1,19 @@
-# What each result is for
+# Viewpoints
 
-What a plan, a task's result, and the finished work must reach. Whoever makes one reads its section as
-what to reach and checks the result against it before handing it on; the agent that judges it reads the
-same section as what to check. One text for both, so maker and judge look at the same thing.
+What a plan, a task result, and the finished work must reach. Whoever makes one reads its section as
+what to reach, and checks their work against it before handing it on; the evaluator reads the same
+section as what to check. One text for both, so maker and evaluator look at the same thing.
 
-Every section asks one thing first: does it reach what the user really wants? The questions after that
-split it down to what the section judges, then guard what it must not break.
+Every section asks one thing first: does it reach its Goal or Purpose? The questions after that split
+it down level by level, then guard what it must not break.
 
 ## Plan
 
-`steering.md`, as first written or as rewritten after a result was judged. Past the start, the plan goes
-on from where the session stands, and the work done so far is its ground.
+`steering.md`, as first written or as rewritten after a task result was evaluated. Past the start, the
+plan goes on from where the session stands, and the work done so far is its ground.
 
-- **Would it reach the Goal?** Carried out, the plan leads to the Goal the user agreed, as far as
-  their next decision.
+- **Would it reach the Goal?** Carried out, the plan leads to the Goal the user agreed, as far as their
+  next decision.
 - **Does "Goal reached when" cover the Goal?** If every line held, the Goal would be reached.
 - **Do the tasks cover "Goal reached when"?** Every line is served by a task's Purpose, or is plainly
   left to the tasks written after the decision that ends the plan.
@@ -29,24 +29,24 @@ on from where the session stands, and the work done so far is its ground.
 - **Are the conventions recorded?** The Rules hold the repository's conventions the tasks must follow,
   which an implementer could not know from the Goal.
 
-## Result
+## Task result
 
-One task's result: its commits, and the files they touch as they stand now, against that task in
-`steering.md`.
+One task's commits, and the files they touch as they stand now, against that task in `steering.md`.
 
 - **Is the Purpose reached?** On the real thing, run where it runs, every line of the task's Purpose
   reached when holds, and the Purpose holds beyond their letter.
-- **Is nothing added?** The result does nothing the Purpose did not ask for.
-- **Are the Rules followed?** The result keeps every convention the Rules record.
+- **Is nothing added?** The task result does nothing the Purpose did not ask for.
+- **Are the Rules followed?** The task result keeps every convention the Rules record.
 - **Does what worked still work?** What worked before the change still works.
 
-## Session
+## Finished work
 
-The finished work, before the user's Evaluation sign-off, against the Goal in `steering.md`.
+Everything the session changed, before the user's Evaluation sign-off, against the Goal in
+`steering.md`.
 
-- **Is the Goal reached?** The work does what the Goal says, beyond the letter of Goal reached when; a
-  gap in those lines that the work has since exposed is named.
+- **Is the Goal reached?** The finished work does what the Goal says, beyond the letter of Goal reached
+  when; a gap in those lines that the work has since exposed is named.
 - **Does every line of Goal reached when hold?** On the real thing, run where it runs.
 - **Are the Rules followed?** Across the whole change, every convention the Rules record is kept.
 - **Is only the work left behind?** What the session changed in the repository is `steering.md`, its
-  `evaluations/`, which go at the sign-off, and the deliverable; no scratch or other record.
+  `evaluations/`, which go at the sign-off, and the work itself; no scratch or other record.

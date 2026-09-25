@@ -1,6 +1,6 @@
 # steering.md
 
-The one file a session keeps: what the user wants, how it will be judged, the work, and where the
+The one file a session keeps: what the user wants, how it will be evaluated, the work, and where the
 session stands. Every `/rn:*` command reads it; a fresh conversation resumes from it and git alone.
 
 ## Template
@@ -18,7 +18,7 @@ status: running
 
 # Goal
 
-<what the user wants and why, as agreed with them — including the aim they had not put into words>
+<what the user wants and why, as agreed with them — including what they had not put into words>
 
 # Goal reached when
 
@@ -52,7 +52,7 @@ status: running
 
 ### #2: <task name>
 
-**Purpose**: <the outcome this task reaches, and the line of Goal reached when it serves>
+**Purpose**: <what this task reaches, and the line of Goal reached when it serves>
 
 **Prerequisites**: <task ids, or none>
 
@@ -77,14 +77,14 @@ status: running
   plan and a command reads them without parsing prose. `status` is `paused` from `/rn:dn` until
   `/rn:up`, with `paused_at: <YYYY-MM-DD>` beside it, and `running` otherwise. That a session is
   finished is not a field: its Evaluation sign-off is complete.
-- **Goal** — what everything below is judged against, so it holds what the user actually wants and
+- **Goal** — what everything below is evaluated against, so it holds what the user actually wants and
   why, not only the words of the request.
 - **Goal reached when** — how the user will know the Goal is reached. Each line is a state the user
   gains, not an artifact or a step, so it still holds if the means change. The heading is the start
   of each line's sentence, so a line reads as a state reached, not work done.
 - **Assumptions** — what the plan rests on, marked as checked or not, so a wrong one is found and
   corrected instead of built on. A scope decision, and what was ruled out of scope, lives here, so
-  the evaluator and the user judge against the same record.
+  the evaluator and the user evaluate against the same record.
 - **Rules** — the conventions an implementer could not know from the Goal: how this repository
   commits, where output lands, what it must not touch.
 - **Tasks** — worked back from Goal reached when. Each Purpose serves a line of it; each line of Purpose
@@ -102,4 +102,4 @@ status: running
   what the next conversation needs that nothing else records.
 
 A task is complete when every step under it is `[x]`. Beside `steering.md`, the session's directory
-holds `evaluations/`, every verdict as its evaluator wrote it, until the Evaluation sign-off.
+holds `evaluations/`, every evaluation as its evaluator wrote it, until the Evaluation sign-off.

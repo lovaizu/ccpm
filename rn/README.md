@@ -23,7 +23,7 @@ flowchart TD
   G([Your rough goal]) --> O[rn works out with you<br/>what you really want]
   O --> P([You approve the plan<br/>on the draft PR])
   P --> B[One agent builds a task]
-  B --> J[Another agent judges it,<br/>not told how it was made]
+  B --> J[Another agent evaluates it,<br/>not told how it was made]
   J --> C{rn chooses the next move<br/>by the goal}
   C -->|redo, another way,<br/>or the next task| B
   C -.->|a decision that is yours| Y([You answer<br/>/rn:ty or /rn:gm])
@@ -85,18 +85,17 @@ of room.
 
 ### 3. While it works
 
-You don't watch. Each piece of work is built by one agent and judged by another, which is told the
-goal but not how the work was made — so a result passes because it does its job, not because its
+You don't watch. Each piece of work is built by one agent and evaluated by another, which is told
+the goal but not how the work was made — so work passes because it does its job, not because its
 maker says so. Between them, `rn` decides the next move by the goal: send the work back, try another
-way, change what the judge looks at, bring you in, or go on. Each decision is one line, so when you
-glance back you can follow it:
+way, bring you in, or go on. Each decision is one line, so when you glance back you can follow it:
 
 ```console
-● #2 reproduce the timeout ── judged: fails (the test passes without the fault) → redo
-● #2 reproduce the timeout ── judged: passes → #3
+● #2 reproduce the timeout ── evaluated: fails (the test passes without the fault) → redo
+● #2 reproduce the timeout ── evaluated: passes → #3
 ```
 
-Every verdict is also on the pull request, beside the change it judged.
+Every evaluation is also on the pull request, beside the change it evaluated.
 
 ### 4. Called back
 
