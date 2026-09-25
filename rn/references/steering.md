@@ -132,9 +132,9 @@ goes on under this one with nothing run by hand and nothing it recorded lost.
    word for word. Drop an unchecked step that only ran the old `rn`'s own review — a self-check, an
    expert review, a record into `checks/`. A sign-off task gets the one step `Approved by the user`
    — checked if the old task was complete; its other unchecked steps that do work go into a task
-   placed before it, with the next unused id, or into `Notes` when they wait on the merge. Carry every fact of the old `State` into the new fields,
-   `Notes` taking what fits nowhere else. The old plan was approved when it started, so no Plan
-   sign-off is added.
+   placed before it, with the next unused id, or into `Notes` when they wait on the merge. Carry
+   every fact of the old `State` into the new fields, `Notes` taking what fits nowhere else. The
+   old plan was approved when it started, so no Plan sign-off is added.
 3. Remove the old `rn`'s process records — under 0.8.0, the `checks/` directory — and nothing else.
 4. Set `Rn version:` to the installed version; commit `chore: migrate session to rn <version>` and
    push.
