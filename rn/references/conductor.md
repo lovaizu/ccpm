@@ -18,8 +18,8 @@ implementer and the evaluator read their brief from there themselves, so what re
    2. Have the result evaluated, kind Result, naming the task and the commits since the last
       check-off.
    3. Decide the next move.
-3. "Design sign-off": the approach is settled by the tasks before it. Write the tasks it leads to,
-   up to the next decision (`steering.md` reference, What each part is for), placed after the
+3. "Design sign-off": the approach is settled by the tasks before it. Unless they are already there,
+   write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is for), placed after the
    sign-off; have the plan evaluated, kind Plan; decide the next move. Then stop for the user with
    the approach and its verdict, and the tasks that follow from it and the plan's verdict.
 4. "Evaluation sign-off": have the finished work evaluated, kind Session; decide the next move.
@@ -51,8 +51,9 @@ Read the verdict and the result, and act on what the Goal needs:
   short at a Design or Evaluation sign-off, there is no build task to send it back to, so add one
   before the sign-off whose Purpose is what the verdict shows missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
-  passes one that misses — → a fresh evaluator, handed the lines of `steering.md` it passed over.
-  Its verdict stands; if you still disagree, the disagreement goes to the user.
+  passes one that misses — → a fresh evaluator, handed the question the verdict left unanswered.
+  Its verdict stands; if you still disagree, the disagreement goes to the user. On a plan, which you
+  wrote, it goes to the user at once.
 - The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
   comes back after a fix; or the way forward is a matter of taste, scope, or cost the user weighs →
   stop for the user now, with the choice and your recommendation. Their answer goes into
@@ -67,8 +68,10 @@ once an approach is settled.
 When `State` holds `Feedback`, the user asked for a revision of what was last presented — the first
 task not yet complete.
 
-1. Take the feedback: the text `/rn:up` read from `State`, or the pull request's review threads that
-   are unresolved and where the reviewer has the last word (`gh api graphql` on `reviewThreads`, paginated).
+1. Take the feedback: the text `/rn:up` read from `State`, or what the reviewer left on the pull
+   request since the last presentation — review threads that are unresolved and where the reviewer
+   has the last word (`gh api graphql` on `reviewThreads`, paginated), review summaries and
+   comments.
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
    not only the line it names. A change to the deliverable becomes a task before the sign-off, whose
    Purpose is what the feedback asks for, with the next unused id, run as in Running with the feedback handed to the
@@ -105,7 +108,7 @@ when the feedback is in review threads on the pull request.
 `/clear` and then `/rn:up` resume with nothing more said.
 
 1. Write `State` in its paused form from this conversation: `Next` is the first task not yet
-   complete and how far it got; `Feedback` is the revise feedback or none; `Notes` hold what the
+   complete and how far it got; `Feedback` is the revise feedback not yet acted on, or none; `Notes` hold what the
    next conversation needs that `steering.md` and git do not.
 2. Leave the tree clean, so the next conversation starts from git alone. For each untracked path:
    build or test output → a `.gitignore` rule; anything else → ask the user whether to commit,

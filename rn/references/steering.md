@@ -27,7 +27,7 @@ Design: <path to the approach a Design sign-off settled — add the line once th
 
 # Rules
 
-- commit and push every change; one completion marker per task
+- commit and push every change
 - <conventions of this session and repository that every task follows>
 
 # Tasks
@@ -109,8 +109,9 @@ branch, so the branch names it.
 2. Otherwise the `.rn/*/steering.md` this branch changed:
    `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`.
 3. Otherwise the sessions on branches not yet merged: for each branch in
-   `git branch -r --no-merged origin/HEAD`, the `.rn/*/steering.md` it changed, read at that branch.
-   Propose the one whose `State` is paused, with its branch to switch to, and wait.
+   `git branch -r --no-merged origin/HEAD`, the `.rn/*/steering.md` it changed, read at that branch,
+   whose "Evaluation sign-off" is not complete. Propose one — a paused one first — with its branch
+   to switch to, and wait.
 
 More than one found → ask which. A session whose "Evaluation sign-off" is complete is finished →
 say so and stop. None → say "No open session. Run `/rn:on` to start." and stop.

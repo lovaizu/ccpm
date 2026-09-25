@@ -44,8 +44,8 @@ The finished work, before the user's Evaluation sign-off.
   they run.
 - **Is the Goal reached as the user meant it?** Read the Goal again: the work does what the user
   wanted, or the criteria missed something the work has since exposed.
-- **Is only the work left behind?** The repository holds `steering.md` and the deliverable, and no
-  scratch or other record of the work.
+- **Is only the work left behind?** The repository holds `steering.md` and the deliverable — the
+  document on the `Design:` line is part of it — and no scratch or other record of the work.
 
 ## Evaluating
 

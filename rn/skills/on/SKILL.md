@@ -21,7 +21,8 @@ without them until a decision is theirs. Runs under the conductor's role:
 2. **Name the session.** `.rn/{yyyymmdd}-{slug}/steering.md`, the slug a short kebab-case name for
    what the work produces. Use a name the user gave; otherwise propose one with the plan.
 3. **Write the plan** from the template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading
-   What each part is for. `Rn version:` is `version` in
+   What each part is for, and check that each task's Purpose traces to an Acceptance criterion and
+   the criteria to the Goal as agreed. `Rn version:` is `version` in
    `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`.
 4. **Put it on record.** Branch off the default branch if on it. Commit
    `chore: start session — {slug}`, push, and open a draft PR whose body is
