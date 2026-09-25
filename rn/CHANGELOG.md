@@ -8,20 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Every plan and every task's result is now judged by a third party against a few named questions about whether it does its job — a pass means the work works, not that a step ran.
-- A plan is judged as a chain — Goal, its Success criteria, each task's Objective, each task's Success criteria, the Assumptions — so a gap at any level is caught before you read it; a plan `/rn:gm` changes is judged again the same way, so a criterion nobody asked for cannot enter.
-- `steering.md` names its bar as `Success criteria` (session and task) and each task's aim as `Objective` — the names say what is judged: that the goal is achieved, not that a deliverable exists.
-- The agent in the conversation is a conductor, not a relay — it reads every result before the evaluator and you see it, and keeps the plan current with what each round taught, so what reaches you is worth your decision.
-- Every evaluation round is committed into the session's own folder as the evaluator wrote it, an NG as much as an OK — you read what was judged and why on the pull request, next to the diff it judged, and the folder is cleared when you sign the session off, so what remains is the plan and the work.
-- Hands-on work runs on the faster model (`sonnet`) and judgment on the stronger one (`opus`) — routine work moves fast and the calls that matter get the stronger read.
-- `rn`'s prompt text reads in one sitting and every step says what it is for — you can tell what each command does and why.
-- A session written under an older `rn` is rebuilt from the current template the next time a command runs on it, carrying every task, check-off and pending item — it goes on at the current bar with nothing to do by hand.
-- `State` keeps a `Pending` line that survives a resume — a gate awaiting your verdict or an item you deferred is not lost between conversations.
-- A session you approve at "Evaluation sign-off" is finished by its own record — `/rn:up` no longer offers it to resume, and nothing can say otherwise.
-- A session's folder is named after what the work produces rather than the ticket it came from — `.rn/20260702-payment-fix/` reads as work, and the issue and pull request are recorded inside.
-- `steering.md` opens with a small table of the session's facts — which `rn` it runs under, its issue, its pull request, its design, and whether it is running or paused — so you see where a session stands the moment you open it on GitHub.
-- The session map quotes the goal and the task names as `steering.md` writes them — what you approved keeps its name across conversations.
-- A review thread you open on the session PR carries the same weight as `/rn:gm <text>` — the reply is the change and its commit, and the thread is left for you to resolve.
+- `/rn:on` draws your goal out with you one point at a time, until the aim behind the request and the approach are agreed — the plan is built on what you want, not only on the words you first typed.
+- The plan runs only as far as the next decision that is yours; the tasks after it are written once you have made it — nothing is planned on a guess about your answer.
+- `/rn:ty`, `/rn:gm` and `/rn:dn` record your decision and stop, so `/clear` then `/rn:up` resumes with nothing more said; to go on without clearing, just say so.
+- Each plan, task result and finished session is judged by a separate evaluator on a few questions about whether it does its job, and the verdict is posted on the pull request next to the change it judges.
+- Building runs on the faster model (`sonnet`) and judging on the stronger one (`opus`) — routine work moves fast and the calls that matter get the stronger read.
+- `rn`'s prompt text reads in one sitting, and every step says what it is for.
+- A session written under 0.8.0 is brought current the next time a command runs on it, carrying every task, check-off and note — nothing to do by hand.
 
 ### Removed
 
