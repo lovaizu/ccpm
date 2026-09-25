@@ -1,66 +1,54 @@
 # Viewpoints
 
-What a plan, a task result, and the finished work must reach. Whoever makes one reads its section as
-what to reach, and checks their work against it before handing it on; the evaluator reads the same
-section as what to check. One text for both, so maker and evaluator look at the same thing.
-
-Every section asks one thing first: does it reach its Goal or Purpose? The questions after that split
-it down level by level, then guard what it must not break.
+What each thing a session makes must reach. Its maker reads the section as what to reach and checks
+its work against it; the evaluator reads the same section as what to check. Each section asks first
+whether it reaches its Goal or Purpose, then splits that down, then guards what it must not break.
 
 ## Plan
 
-`steering.md`, as first written or as rewritten since. Past the start, the plan goes on from where the
-session stands, and the work done so far is its ground.
+`steering.md`, as first written or as rewritten since. Past the start, the work done so far is its
+ground.
 
-- **Would it reach the Goal?** Carried out, the plan leads to the Goal the user agreed, as far as their
-  next decision.
+- **Would it reach the Goal?** Carried out, it leads to the Goal the user agreed, as far as their next
+  decision.
 - **Does "Goal reached when" cover the Goal?** If every line held, the Goal would be reached.
 - **Do the tasks cover "Goal reached when"?** Every line is served by a task's Purpose, or is plainly
   left to the tasks written after the decision that ends the plan.
 - **Does each "Purpose reached when" cover its Purpose?** If every line held, the Purpose would be
   reached.
-- **Can each line be told on the real thing?** Each line of "Goal reached when" and of "Purpose
-  reached when" is a state that can be checked on the real thing, not an artifact to produce or a
-  step to run, so it still holds if the means change.
-- **Do the tasks end at the user's decision?** In the order their prerequisites allow, the tasks reach
-  the sign-off that ends them, none goes past it, and that sign-off is a decision the user must make.
-- **Is what the plan rests on true?** Each Assumption marked Fact was checked, and none is work still
-  to do or a decision not yet made.
-- **Are the conventions recorded?** The Rules hold the repository's conventions the tasks must follow,
-  which an implementer could not know from the Goal.
+- **Can each line be told on the real thing?** Each line of both is a state checked on the real
+  thing, not an artifact or a step, so it holds if the means change.
+- **Do the tasks end at the user's decision?** They reach the sign-off that ends them, none goes past
+  it, and that sign-off is a decision the user must make: taste, scope, or cost against benefit.
+- **Is what it rests on true?** Each Fact was checked; no Assumption hides work or an open decision.
+- **Are the conventions recorded?** The Rules hold what the tasks must follow and an implementer could
+  not know from the Goal.
 
 ## Design choice
 
-The choices set out for a Design sign-off, where the `design` field points or in the sign-off task
-itself, against the Goal in `steering.md` and the work done so far.
+The choices set out for a Design sign-off, against the Goal and the work so far.
 
-- **Does each choice reach the Goal?** Carried out, each choice set out would reach the Goal; one that
-  would not is named as such.
-- **Is each choice told truly?** What each costs and gives matches the repository and the work so
-  far, run or read where that settles it.
-- **Is the decision the user's?** The choices differ in taste, scope, or cost against benefit, which
-  the Goal alone does not settle.
-- **Does the recommendation follow?** It follows from the Goal and what each choice costs and gives.
+- **Does each choice reach the Goal?** One that would not is named as such.
+- **Is each told truly?** What each costs and gives matches the repository and the work so far.
+- **Is the decision the user's?** The choices differ in what the Goal alone does not settle.
+- **Does the recommendation follow?** From the Goal and what each costs and gives.
 
 ## Task result
 
-One task's commits, and the files they touch as they stand now, against that task in `steering.md`.
+One task's commits, and the files they touch as they stand now, against that task.
 
-- **Is the Purpose reached?** On the real thing, run where it runs, every line of the task's Purpose
-  reached when holds, and the Purpose holds beyond their letter.
-- **Is nothing added?** The task result does nothing the Purpose did not ask for.
-- **Are the Rules followed?** The task result keeps every convention the Rules record.
-- **Does what worked still work?** What worked before the change still works.
+- **Is the Purpose reached?** On the real thing, run where it runs, every line of Purpose reached when
+  holds, and the Purpose holds beyond their letter.
+- **Is nothing added?** It does nothing the Purpose did not ask for.
+- **Are the Rules followed?**
+- **Does what worked still work?**
 
 ## Finished work
 
-Everything the session changed apart from `evaluations/`, before the user's Evaluation sign-off,
-against the Goal in `steering.md`.
+Everything the session changed apart from `evaluations/`, against the Goal.
 
-- **Is the Goal reached?** The finished work does what the Goal says, beyond the letter of Goal reached
-  when; a gap in those lines that the work has since exposed is named.
+- **Is the Goal reached?** Beyond the letter of Goal reached when; a gap in those lines the work has
+  since exposed is named.
 - **Does every line of Goal reached when hold?** On the real thing, run where it runs.
-- **Are the Rules followed?** Across the whole change, every convention the Rules record is kept.
-- **Is only the work left behind?** What the session changed in the repository is `steering.md`, its
-  `evaluations/`, which go at the sign-off, and the work itself, a design document among it; no
-  scratch or other record.
+- **Are the Rules followed?** Across the whole change.
+- **Is only the work left behind?** Besides the work, only `steering.md` and `evaluations/`.

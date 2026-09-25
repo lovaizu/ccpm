@@ -6,29 +6,19 @@ disable-model-invocation: true
 
 # /rn:gm — Good, more
 
-The user has read what the session stopped for and wants more from it. Record their feedback where
-a later conversation will find it, whole and in their words, so the revision answers what they asked
-and not a summary of it.
+The user wants more from what the session stopped for. Record their feedback whole, in their words, so
+the revision answers what they asked, not a summary of it, and stop.
 
-Find the session as in Finding the session in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The task
-at `Next` must be a sign-off task waiting for the user; if it is not, say what the session is doing
-instead, and stop.
-
-The feedback is `$ARGUMENTS`. When it is empty, it is the unresolved review threads on the session's
-pull request, with each thread's file and line, its URL, and what it asks. Only GraphQL tells which
-threads are resolved:
+Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The feedback is `$ARGUMENTS`;
+without it, the unresolved review threads on the pull request, each with its location and URL. Only
+GraphQL tells which are resolved:
 
 ```
 gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{isResolved path line comments(first:20){nodes{url body}}}}}}}' -F o={owner} -F r={repo} -F n={number}
 ```
 
-None there either → ask the user what they want changed, and stop.
-
-Write it into `Feedback`, next to anything already there. Commit `steering.md` and push. Then stop,
-and say in the user's language what was recorded:
+Add it to `Feedback`, commit, and push. Then say, in the user's language:
 
 ```
 ● Recorded: {n} points on {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.
 ```
-
-When the user says to go on here, run the session as `/rn:up` does.
