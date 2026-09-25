@@ -128,7 +128,7 @@ everything. Run `/clear` yourself (a plugin can't), then `/rn:up` in the fresh c
 ### 6. Finish
 
 At the last sign-off you check the finished work. On `/rn:ty` the pull request is marked ready; the
-merge is yours. The session leaves behind only its plan, `steering.md`, and the work itself.
+merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
 
 ## Coming from an earlier rn
 

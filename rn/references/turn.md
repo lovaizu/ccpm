@@ -18,12 +18,13 @@ user. A later conversation knows only `steering.md` and git, so every decision g
 
 Take turns until one stops for the user. Each takes the first task in `steering.md` not marked `[x]`:
 
-- **A task**: start a fresh agent with `Agent`, giving it
-  `${CLAUDE_PLUGIN_ROOT}/references/implement.md`, the path of `steering.md`, the task's id, and the
-  task's latest evaluation when `evaluations/` holds one. It returns its commits and what it found to
-  be the user's. Have them evaluated, and decide.
-- **A sign-off**: have what it decides on evaluated, the plan, the choices, or the finished work, and
-  decide. Reached, stop for the user.
+- **A task**: start a fresh agent with `Agent`, giving it the paths of
+  `${CLAUDE_PLUGIN_ROOT}/references/implement.md` and `steering.md`, the task's id, and the task's
+  latest evaluation when `evaluations/` holds one. It returns its commits and what it found to be the
+  user's. Have them evaluated, and decide.
+- **A sign-off**: at a Design sign-off, first set out the choices where the `design` field says, each
+  with what it costs and gives, and your recommendation. Have what the sign-off decides on evaluated,
+  the plan, the choices, or the finished work, and decide. Reached, stop for the user.
 - **None, after a Design sign-off**: write the tasks that follow from the chosen design, as far as the
   user's next decision, and have the plan evaluated until it is reached.
 
@@ -31,10 +32,11 @@ Take turns until one stops for the user. Each takes the first task in `steering.
 
 1. What you made yourself, the plan or the choices, check first against its section of
    `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md` and against what the user said.
-2. Start a fresh agent with `Agent`. Give it `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`, the kind
-   (Plan, Design choice, Task result, or Finished work), the path of `steering.md`, a task result's id
-   and commits, and the file `evaluations/{NN}-{plan | design-{id} | task-{id} | finished-work}.md`,
-   `{NN}` counting up from `01`. Nothing else.
+2. Start a fresh agent with `Agent`. Give it the paths of
+   `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` and `steering.md`, the kind (Plan, Design choice,
+   Task result, or Finished work), a task result's id and commits, and the file
+   `evaluations/{NN}-{plan | design-{id} | task-{id} | finished-work}.md`, `{NN}` counting up from
+   `01`. Nothing else.
 3. Commit the evaluation and push.
 
 ## Deciding
@@ -43,8 +45,7 @@ Take turns until one stops for the user. Each takes the first task in `steering.
    choices and have the revision evaluated; a task not marked `[x]` is taken again by the next turn,
    and when it keeps falling short, another way is the user's.
 2. What is the user's, a More or what the implementer returned, goes to them: at the sign-off you are
-   stopping at, or at a Design sign-off in place of the tasks not yet `[x]`, with its choices set out
-   where the `design` field says, each with what it costs and gives, and your recommendation.
+   stopping at, or at a Design sign-off that takes the place of every task not yet `[x]`.
 3. Commit, push, and show the move as one line:
 
    ```

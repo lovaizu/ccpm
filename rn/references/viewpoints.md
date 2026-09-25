@@ -47,10 +47,10 @@ One task's commits, and the files they touch as they stand now, against that tas
 
 ## Finished work
 
-Everything the session changed apart from `evaluations/`, against the Goal.
+Everything the session changed apart from its directory under `.rn/`, against the Goal.
 
 - **Is the Goal reached?** Beyond the letter of Goal reached when; a gap in those lines the work has
   since exposed is named.
 - **Does every line of Goal reached when hold?** On the real thing, run where it runs.
 - **Are the Rules followed?** Across the whole change.
-- **Is only the work left behind?** Besides the work, only `steering.md` and `evaluations/`.
+- **Is only the work left behind?** Besides the work, only the session's directory under `.rn/`.

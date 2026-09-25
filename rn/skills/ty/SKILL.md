@@ -14,7 +14,7 @@ without asking again, in this conversation or a later one.
 ## Steps
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
-   not a sign-off → say what the session is doing, and stop.
+   not a sign-off, or `Feedback` is not none → say what the session is doing, and stop.
 2. Mark the sign-off `[x]`. At a Design sign-off, record the recommended choice as a Fact in
    `Assumptions`. At the Evaluation sign-off, set `status` to `finished`, remove `evaluations/`, and
    mark the pull request ready with `gh pr ready`.
@@ -24,6 +24,5 @@ without asking again, in this conversation or a later one.
    ● Approved: {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.
    ```
 
-   At the Evaluation sign-off, say instead that the session is finished, that the merge is theirs, and
-   what `Notes` says waits on it.
+   At the Evaluation sign-off, say instead that the session is finished and the merge is theirs.
 4. When the user says to go on, go on as `/rn:up` does.

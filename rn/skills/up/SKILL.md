@@ -16,7 +16,7 @@ stopped, until their next decision.
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an earlier `rn`
    started it, bring it up to date as there instead of the steps below: that ends at the Plan
    sign-off.
-2. Say, with the first task not `[x]`:
+2. Say, naming the first task not `[x]`, or the sign-off just approved when none is left:
 
    ```
    ● Resuming {slug} at #{id}: {task name}
