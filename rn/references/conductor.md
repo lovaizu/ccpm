@@ -104,8 +104,9 @@ A stop not tied to a task names the moment instead of an id; on a report the �
 session stands and the user's next move; the ⬜ line goes when nothing remains.
 
 Then ask one thing, with your recommendation, pointing at the pull request for what is long to read.
-At a sign-off, the answer is `/rn:ty` to approve or `/rn:gm <feedback>` to revise — plain `/rn:gm`
-when the feedback is a review on the pull request. Any other question is answered in words, in the
+At a sign-off, the answer is `/rn:ty` to approve — `/rn:ty <choice>` when it asks for a choice —
+or `/rn:gm <feedback>` to revise — plain `/rn:gm` when the feedback is a review on the pull
+request. Any other question is answered in words, in the
 conversation.
 
 ## Handing off to a fresh conversation
