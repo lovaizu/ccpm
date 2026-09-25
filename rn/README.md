@@ -1,98 +1,137 @@
 # rn — Right Now
 
-Most AI agents need a carefully written prompt and constant watching to actually get a task done. `rn` doesn't — give it a goal, roughly, with `/rn:on`, and it takes over from there. You only come back in at the moments that are genuinely yours to decide; everything else just gets handled. That's the whole idea behind the name: you can start right now, with nothing prepared.
+Most AI agents need a carefully written prompt and someone watching them to get a task done. `rn`
+doesn't: give it a goal, roughly, with `/rn:on`. It works out with you what you actually want, then
+carries the work through without you, and calls you back only for the decisions that are yours. The
+session lives in git, so it survives a full context, a `/clear`, or the end of the day. You can start
+right now, with nothing prepared.
 
 ## Install
 
-`rn` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the plugin:
+`rn` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the
+plugin:
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install rn@ccpm
 ```
 
-That makes `/rn:on`, `/rn:dn`, and `/rn:up` available, plus the two verdict commands you answer sign-offs with: `/rn:ty` (approve) and `/rn:gm` (revise).
+## A session, start to finish
 
-## How it works
-
-```mermaid
-flowchart TD
-  G([Your goal]) --> P([You approve the plan<br/>on the draft PR])
-  P --> W[Assistant runs a task]
-  W -->|heavy work, kept out of sight| X[Expert does it<br/>reviewers try to break it]
-  X -->|cleared, added to the same PR| W
-  W -.->|only when the call is yours| C([You weigh in])
-  W ==>|all tasks done| D([You confirm the goal is met])
-```
-
-One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. You sign off on the plan up front, then the assistant works through the tasks without stopping to ask you for each one — they pile up on the same PR as the reviewers clear them. It pulls you back in only when a call is genuinely yours, and at the very end you confirm the goal is actually met before the session closes.
-
-## Getting started
-
-Say you want to push through "fix the bug in the payment screen."
+Say the payment screen fails now and then, and you want it fixed.
 
 ### 1. Start — `/rn:on`
 
-Tell it your goal. It restates the goal as it understands it, breaks it into verifiable tasks, and opens a draft PR with the full plan for you to review — too much to read comfortably in the console.
+Say what you want, as roughly as it comes to mind. `rn` tells you how it reads it, one point at a
+time — what you want, why, how you'd know it's done, how to go about it — and moves on only when
+you agree. It looks up what the repository can answer instead of asking you.
 
 ```console
-> /rn:on fix the bug in the payment screen
+> /rn:on the payment screen fails sometimes, fix it
 
-● ── payment-fix: payments complete on the payment screen ──
-  👉 plan sign-off ── asking now: review the plan on the draft PR — /rn:ty to approve and start #1
-  ⬜ #1–#4   reproduction test / root-cause fix / regression check / evaluation sign-off
-  (after approval, tasks run one by one without stopping to ask, until #4 — the evaluation sign-off)
+● Here's how I read it: payments with a saved card fail about one time in twenty — the error log
+  shows a timeout from the card service. Is that the failure you mean?
 
-  Captured your goal as I understand it:
-    "Fix the bug on the payment screen so payments complete successfully"
+> yes, and customers give up when it happens
 
-  Steering: .rn/20260702-payment-fix/steering.md
-  Draft PR with the full plan: https://github.com/you/repo/pull/42
+● So the point is that a customer who pays gets through, not only that the error goes away —
+  a retry or a clear message would count too. Is that right?
 ```
 
-That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input once a session is underway, so you always see where the session stands without opening `steering.md`.
+Once the goal and the way to it are agreed, `rn` writes the plan — only as far as the next decision
+that is yours, since what comes after depends on it — and puts it on a draft pull request.
 
-Read the plan on the PR and answer with a verdict command — `/rn:ty` approves it as is; `/rn:gm <feedback>` asks for changes first (and plain `/rn:gm` picks your review comments up off the PR). On approval the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met. The same two commands answer every sign-off, so you never have to guess how to reply.
+```console
+● ── payment-fix: customers who pay get through ──
+  👉 #1      plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
+  ⬜ #2–#3   reproduce the timeout / design sign-off
+  (after approval, #2 runs without you; you're called again at #3 to choose between retry and
+  failover)
 
-### 2. Step away — `/rn:dn`
+  Draft PR: https://github.com/you/repo/pull/42
+```
 
-Context is full, or you're done for the day. Run it and your work is committed / pushed, with a note left for next time.
+The block on top heads every message that stops for you: ✅ done, 👉 now, ⬜ ahead.
+
+### 2. Decide — `/rn:ty` and `/rn:gm`
+
+Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
+and plain `/rn:gm` takes your review comments off the pull request. `rn` records the decision in the
+session and stops there.
+
+```console
+> /rn:ty
+
+● Approved: plan sign-off. Next: /clear, then /rn:up — or say "go on" to continue here.
+```
+
+A fresh conversation picks the session up from what was recorded, so a long session never runs out
+of room.
+
+### 3. While it works
+
+You don't watch. Each piece of work is built by one agent and judged by another, which is told the
+goal but not how the work was made — so a result passes because it does its job, not because its
+maker says so. Between them, `rn` decides the next move by the goal: send the work back, try another
+way, change what the judge looks at, bring you in, or go on. Each decision is one line, so when you
+glance back you can follow it:
+
+```console
+● #2 reproduce the timeout ── judged: fails (the test passes without the fault) → redo
+● #2 reproduce the timeout ── judged: passes → #3
+```
+
+Every verdict is also on the pull request, beside the change it judged.
+
+### 4. Called back
+
+`rn` stops for you only where the call is yours:
+
+- **the plan** — before any work starts;
+- **an approach** — where taste, scope, or cost against benefit is yours to weigh, including when
+  the current way keeps falling short;
+- **the finished work** — whether it does what you wanted.
+
+### 5. Step away — `/rn:dn`, then `/rn:up`
+
+Context nearly full, or done for the day: `/rn:dn` records where the session stands and pushes
+everything. Run `/clear` yourself (a plugin can't), then `/rn:up` in the fresh conversation.
 
 ```console
 > /rn:dn
 
-● ── payment-fix: payments complete on the payment screen ──
-  ✅ #1      reproduction test
-  👉 #2      root-cause fix ── suspended here; next move: /clear, then /rn:up
-  ⬜ #3–#4   regression check / evaluation sign-off
-  (#2 starts on /rn:up)
+● ── payment-fix: customers who pay get through ──
+  ✅ #1      plan sign-off
+  👉 #2      reproduce the timeout ── stopped here; next: /clear, then /rn:up
+  ⬜ #3      design sign-off
 
-  Committed and pushed — "test: add reproduction test for payment failure"
-```
-
-### 3. Come back — `/rn:up`
-
-Run it in a fresh conversation. It finds where you stopped from git and resumes from there.
-
-```console
+> /clear
 > /rn:up
 
-● Found a suspended session: payment-fix
-  Reconciled with the git log — #1 is done.
-
-● Resuming from #2: find the root cause and fix it
+● Resuming payment-fix at #2: reproduce the timeout
 ```
 
----
+### 6. Finish
 
-`on` is just once, at the very start. After that, each break is just **`dn` → `/clear` → `up`**, and your work stays unbroken until the goal is met.
+At the last sign-off you check the finished work. On `/rn:ty` the pull request is marked ready; the
+merge is yours. The session leaves behind only its plan, `steering.md`, and the work itself.
 
-> Run `/clear` yourself after `/rn:dn` — a plugin can't clear the context for you.
+## Coming from an earlier rn
 
-## Why on / dn / up?
+A session started under any earlier version of `rn` is brought up to date the next time you run
+`/rn:up` on it — nothing to do by hand, and nothing it recorded is lost.
 
-They're a two-letter power set — on / down / up — easy to keep straight because they track the session's own state:
+## Why these names?
 
-- **`on`** — *power on.* You sit down and start a session.
-- **`dn`** — *down.* You take the session down for now — a pause, not quitting. ("down" trimmed to two letters to match.)
-- **`up`** — *up.* You bring the session back up and pick up where you left off.
+`on` / `dn` / `up` follow a race:
+
+- **`on`** — *on your marks.* You take your place, facing the goal.
+- **`dn`** — *cool down.* You ease off for now — a pause, not quitting.
+- **`up`** — *warming up.* You warm back up and go on from where you stopped.
+
+`ty` / `gm` are the two answers to a decision, and both are thanks:
+
+- **`ty`** — *thank you.* You approve by thanking.
+- **`gm`** — *good, more.* You thank it, and ask for more.
+
+Either one records your answer and stops; the work goes on at the next `/rn:up`.
