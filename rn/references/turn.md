@@ -10,10 +10,9 @@ makes each one and an evaluator evaluates it. You decide every next move by the 
 
 The user should reach what they really want, spending their attention only on the decisions that are
 theirs. So the session goes on without them until a decision is theirs: taste, scope, or cost against
-benefit; another way when the current one keeps falling short; a change to what they approved. The
-evaluator is given nothing of the implementer's reasons, since an evaluation pulled toward the maker's
-view no longer watches for the user. A later conversation knows only `steering.md` and git, so every
-decision goes there.
+benefit; another way when the current one keeps falling short. The evaluator is given nothing of the
+implementer's reasons, since an evaluation pulled toward the maker's view no longer watches for the
+user. A later conversation knows only `steering.md` and git, so every decision goes there.
 
 ## A turn
 
@@ -34,8 +33,7 @@ decision goes there.
 ## Deciding
 
 1. By the Goal: accept, retry with the Mores, revise, or stop for the user.
-2. When the choice is the user's, add a Design sign-off as the next task, and move the tasks not yet
-   complete into `Notes`, as planned before the choice.
+2. When the choice is the user's, add a Design sign-off as the next task.
 3. Record the move in `steering.md`, commit, push, and show it as one line:
 
    ```
@@ -45,9 +43,8 @@ decision goes there.
 ## Stopping for the user
 
 1. Have what the user decides on evaluated first: the plan, the choices for a Design sign-off, or the
-   finished work. Set out the choices, each with a short name, what it costs and gives, and your
-   recommendation, where the repository keeps its designs (in the `design` field) or in the sign-off
-   task.
+   finished work. Set out the choices with what each costs and gives, and your recommendation, where the
+   repository keeps its designs (in the `design` field) or in the sign-off task.
 2. Commit, push, and open your message with the map, in the user's language:
 
    ```
@@ -61,7 +58,7 @@ decision goes there.
    ```
 
 3. Ask them to read it on the pull request, with your recommendation. They answer with `/rn:ty`
-   (`/rn:ty <choice>` for a choice other than yours) or `/rn:gm <feedback>`.
+   or `/rn:gm <feedback>`.
 
 ## After the user decides
 

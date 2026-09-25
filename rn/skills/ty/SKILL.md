@@ -16,8 +16,7 @@ without asking again, in this conversation or a later one.
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. `Next` not at a sign-off →
    say what the session is doing, and stop.
 2. Check the sign-off and set `Next` past it.
-3. At a Design sign-off, record the choice — the one `$ARGUMENTS` names, or your recommendation — as a
-   Fact in `Assumptions`.
+3. At a Design sign-off, record the approved choice as a Fact in `Assumptions`.
 4. At the Evaluation sign-off the session ends: remove `evaluations/` and mark the pull request ready
    with `gh pr ready`.
 5. Commit, push, and say in the user's language:
