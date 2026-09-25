@@ -103,3 +103,19 @@ status: running
 
 A task is complete when every step under it is `[x]`. Beside `steering.md`, the session's directory
 holds `evaluations/`, every evaluation as its evaluator wrote it, until the Evaluation sign-off.
+
+## Finding the session
+
+Every command but `/rn:on` starts here, so it acts on the right session. A session lives on its own
+branch, so the branch names it.
+
+1. The `steering.md` this conversation has been working on, if there is one.
+2. Otherwise the `.rn/*/steering.md` this branch changed:
+   `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`. When
+   `origin/HEAD` is not set, `git remote set-head origin --auto` sets it first.
+3. Otherwise the sessions with an open pull request: for each branch in
+   `gh pr list --state open --json headRefName`, the `.rn/*/steering.md` it changed. Propose one, a
+   paused one first, with its branch to switch to, and wait for the user.
+
+More than one found → ask which. A session whose Evaluation sign-off is complete is finished → say so
+and stop. None → say "No open session. Run `/rn:on` to start." and stop.

@@ -45,6 +45,15 @@ your view. Commit the evaluation and push, so the user can tie it to what it eva
 
 ## Stopping for the user
 
+The user decides from what is in front of them, so prepare it first:
+
+- Design sign-off → set out the choices with what each costs and gives, and your recommendation, in a
+  document that stays with the work: where the repository keeps its designs, or next to `steering.md`
+  when it keeps none. Set the `design` field to its path. Write the tasks that follow from the
+  recommended choice, as far as the next decision, and have the plan evaluated: the user approves the
+  choice and the tasks together.
+- Evaluation sign-off → the finished work has been evaluated, as in a turn.
+
 Commit and push. Open your message with the session's map, in the user's language:
 
 ```
