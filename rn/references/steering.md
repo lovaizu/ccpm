@@ -96,10 +96,11 @@ status: running
   one step `Approved by the user`. The session ends at the Evaluation sign-off, before the merge, which
   is the user's. Tasks run in the order they appear; a task added later takes the next unused id, so ids
   already in commit messages keep pointing at their task.
-- **State** — where the session stands between conversations. `Next` is the first task not yet
-  complete and how far it got — its work done but not yet evaluated, or evaluated but not yet
-  decided on; `Feedback` the user's words asking for a revision, kept until the revision passes its
-  evaluation, or none; `Notes` what the next conversation needs that nothing else records.
+- **State** — where the session stands between conversations. `Next` is the first task not yet complete
+  and how far it got — its work done but not yet evaluated, evaluated but not yet decided on, or sent
+  back to retry, with the commits or the evaluation; `Feedback` the user's words asking for a revision,
+  kept until the revision passes its evaluation, or none; `Notes` what the next conversation needs that
+  nothing else records.
 
 A task is complete when every step under it is `[x]`. Beside `steering.md`, the session's directory
 holds `evaluations/`, every evaluation as its evaluator wrote it, until the Evaluation sign-off.

@@ -19,6 +19,7 @@ last for fixes that change nothing you do.
 - The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
 - `/rn:ty` and `/rn:gm` save your answer and stop. Run `/clear`, then `/rn:up`, to continue.
 - When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
+- A session started under an earlier `rn` is brought up to date by `/rn:up`; the other commands ask you to run it first.
 
 ### Removed
 

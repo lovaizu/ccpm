@@ -11,13 +11,13 @@ Take the task at `Next`.
 
 A sign-off task is the user's decision: stop for the user, below.
 
-When `Next` says the task has been evaluated but not yet decided on, decide on that evaluation. When
-it says the work is done but not yet evaluated, have those commits evaluated. Otherwise start a fresh
-agent with `Agent` to do the task. Give it the path of `steering.md`, the task's id, and
+When `Next` says the task has been evaluated but not yet decided on, decide on that evaluation. When it
+says the work is done but not yet evaluated, have those commits evaluated. Otherwise start a fresh agent
+with `Agent` to do the task. Give it the path of `steering.md`, the task's id, and
 `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md`, whose Task result section is what it must reach and
-check its work against; on a retry, the Mores it must answer too. It does the task, commits and pushes
-its work, leaves `steering.md` to you, and returns the commits. You do not do the task yourself: your
-context has to last until the user's decision.
+check its work against; on a retry, the evaluation whose Mores it must answer too. It does the task,
+commits and pushes its work, leaves `steering.md` to you, and returns the commits. You do not do the
+task yourself: your context has to last until the user's decision.
 
 Have the task result evaluated, decide on it, and take the next turn.
 
@@ -45,8 +45,9 @@ Read its Mores, and decide by the Goal:
 - **What decides it is the user's to weigh** — taste, scope, or cost against benefit, or a change to
   the Goal or Goal reached when they approved → add a Design sign-off for it.
 
-A Design sign-off goes in as the next task, and the tasks after it move into `Notes`, as tasks planned
-before the choice: what follows depends on what the user chooses.
+A Design sign-off goes in as the next task. The tasks not yet complete — a task whose way fell short
+among them — move into `Notes`, as tasks planned before the choice, so the plan written after it is
+the only way on.
 
 Set `Next` in `State`, commit `steering.md`, and push. Show the decision as one line:
 
@@ -81,18 +82,21 @@ Draft PR: {url}
 ```
 
 Ask them to read what the decision is about on the pull request, with your recommendation. They
-answer with `/rn:ty` to approve, or `/rn:gm <feedback>` to ask for changes.
+answer with `/rn:ty` to approve, or `/rn:gm <feedback>` to ask for changes; at a Design sign-off,
+`/rn:ty` takes your recommendation and `/rn:ty <choice>` another choice.
 
 ## After the user decides
 
-`/rn:up` goes on from here.
+`/rn:up` goes on from here. What `Next` says is under way comes first: a task result or revision to
+evaluate, or an evaluation to decide on.
 
 At a Design sign-off the user approved, the choice is in `Assumptions`: write the tasks that follow
 from it, as far as the next decision, from what `Notes` kept of the earlier plan, and have the plan
 evaluated.
 
-When `Feedback` holds the user's words asking for a revision, it is about what the session stopped
-for; answer every point of it:
+When `Feedback` holds the user's words asking for a revision and `Next` shows nothing under way for
+it, it is about what the session stopped for; answer every point of it, and say in `Next` what is
+under way:
 
 - the plan or a design choice → revise it yourself, have it evaluated, and stop at the same sign-off;
 - the finished work → add the tasks before the Evaluation sign-off that answer it, and run turns.
