@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The plan runs only as far as the next decision that is yours; the tasks after it are written once you have made it — nothing is planned on a guess about your answer.
 - `/rn:ty`, `/rn:gm` and `/rn:dn` record your decision and stop, so `/clear` then `/rn:up` resumes with nothing more said; to go on without clearing, just say so.
 - Each plan, task result and finished session is judged by a separate evaluator on a few questions about whether it does its job, and the verdict is committed into the session's folder — you read it on the pull request next to the change it judges, and the folder is cleared when you sign the session off.
-- Building runs on the faster model (`sonnet`) and judging on the stronger one (`opus`) — routine work moves fast and the calls that matter get the stronger read.
 - `rn`'s prompt text reads in one sitting, and every step says what it is for.
 - A session written under 0.8.0 is brought current the next time `/rn:up` runs on it, carrying every task, check-off and note — nothing to do by hand.
 - `steering.md` opens with a small table — `rn` version, issue, pull request, design, and whether the session is running or paused — so you see where it stands the moment you open it on GitHub.

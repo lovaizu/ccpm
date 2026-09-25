@@ -3,7 +3,7 @@ Design: rn/docs/design.md
 
 # Goal
 
-Rebuild `rn` from scratch on the three principles and the kept mechanism in
+Rebuild `rn` from scratch on the viewpoints in `viewpoints.md` and the kept mechanism in
 [issue #31](https://github.com/lovaizu/ccpm/issues/31), and ship it as release 0.9.0. Instead of
 agreeing a full plan up front, build it in rounds: write a small `rn`, run it on real material,
 have the result evaluated, fix, repeat — so what gets evaluated is always a working `rn`, never a
@@ -16,8 +16,6 @@ command runs under 0.9.0.
   say what that step is for. (Checked by a third party reading it end to end in one pass.)
 - Every result `rn` evaluates — a plan, a design, a deliverable — is judged by someone other than its
   author, against a few named questions about whether it does its job; not whether a step ran.
-- Judgment (planning, evaluation) and execution run on different models, and a real session's
-  record shows it.
 - On a real session, a user can start, suspend, resume in a fresh conversation, and close, deciding
   only at plan, design, and evaluation via `/rn:ty` / `/rn:gm`; afterwards the session has left only
   `steering.md` and the deliverable, and the evaluation is on the PR.
@@ -28,8 +26,6 @@ command runs under 0.9.0.
 
 # Assumptions
 
-- **Fact**: the Agent tool takes `model`; agent definitions can also fix a model in frontmatter.
-  Either satisfies the third principle — the criterion is the split, not the parameter.
 - **Fact (read 2026-09-20)**: the issue-18 session reads `Rn version: 0.8.0` and is `paused`; it is
   read-only for this session.
 - **Assumption**: a round can be tried without installing — `claude --plugin-dir rn` (interactive)
@@ -51,8 +47,8 @@ command runs under 0.9.0.
   Release with the CHANGELOG section as notes.
 - Never modify `origin/worktree-issue-18`; use scratch space for every try, and leave none of it in
   the repository.
-- The rn text is written by the conductor itself in the conversation; subagents and headless tries
-  run on opus (judgment) / sonnet (implementation), `claude -p … --model opus`.
+- The rn text is written by the conductor itself in the conversation; subagents take the
+  conversation's model — rn names none.
 - Tries run headlessly with `--plugin-dir rn --settings '{"enabledPlugins":{"rn@ccpm":false}}'` and
   `--resume` for gate replies, against a real GitHub remote so the PR path is exercised.
 

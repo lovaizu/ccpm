@@ -8,21 +8,23 @@ A goal outlives a conversation: context runs out, `/clear` wipes the thread, a d
 the session in git as `steering.md`, so a fresh conversation resumes it, and brings the user in
 only for what is theirs to decide.
 
-## Principles, and where each lands
+## How the prompt is built
 
-1. **Work is instructed by purpose.** The conductor, the implementer and the evaluator each open
-   their brief on what their result is for (`references/conductor.md`, `implement.md`,
-   `evaluate.md`). A task hands on its Purpose; its Steps are the planned way, which the implementer
-   leaves when the Purpose is better served. Only what an agent could not judge from the purpose —
-   where output lands, the commit convention, the shapes a later command reads — is written as a
-   step.
-2. **Results are evaluated by a third party against essential viewpoints.** A fresh evaluator reads
-   the result and `steering.md`, never the implementer's account or an earlier verdict, and answers
-   a few questions per kind — plan, one task's result, the finished session — about whether the
-   result reaches its purpose. The conductor then decides the next move by the purpose, not by a
-   count of rounds.
-3. **Judgment and execution use different models.** The implementer runs on `sonnet`, the
-   evaluator on `opus`; the conductor plans in the conversation.
+`rn`'s prompt text is judged as any prompt is, on four points; each lands in it as follows.
+
+- **Structure — generation and evaluation are split, and a role between them decides.** The
+  implementer builds, a fresh evaluator judges without the implementer's account or an earlier
+  verdict, and the conductor decides each next move by the Goal, not by a count of rounds
+  (`references/conductor.md`).
+- **Generation — handed the purpose, checked against it.** A task hands on its Purpose and the Goal
+  it serves; its Steps are the planned way, which the implementer leaves when the Purpose is better
+  served, and it checks its result on the thing itself before returning (`implement.md`).
+- **Evaluation — a few viewpoints drawn from the purpose.** Each kind — plan, one task's result,
+  the finished session — has a few questions about whether the result reaches its purpose, answered
+  by running it where it runs (`evaluate.md`).
+- **Work steps — only what the purpose cannot tell.** Where output lands, the commit convention and
+  the shapes a later command reads are steps in the flow; everything an agent can judge from the
+  purpose is left to it.
 
 ## What stays
 

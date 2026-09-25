@@ -13,7 +13,7 @@ brief and the session, not your summary of either.
 1. Take the first task not yet complete. Work committed since the last check-off is part of it, so
    read those commits before building anything.
 2. A task that builds something:
-   1. Dispatch the implementer — `Agent`, `model: sonnet` — with: read `implement.md` at its path
+   1. Dispatch the implementer — `Agent` — with: read `implement.md` at its path
       and follow it; the `steering.md` path; the task id; and, when this is a second pass, the
       evaluator's verdict or the user's feedback word for word.
    2. Have the result evaluated, kind Result.
@@ -31,7 +31,7 @@ brief and the session, not your summary of either.
 
 1. A verdict in `evaluations/` on the same thing as it stands now — nothing it judged has changed
    since — is reused, so a resume does not evaluate it again.
-2. Otherwise dispatch the evaluator — `Agent`, `model: opus`, a fresh one each time — with: read
+2. Otherwise dispatch the evaluator — `Agent`, a fresh one each time — with: read
    `evaluate.md` at its path and follow it; the kind; the `steering.md` path; what it judges; and
    the file to write its verdict to, `evaluations/{NN}-{kind}[-task-{N}].md` in the session's
    directory, `{NN}` the next unused number. What it judges: for a Result, the task and its build
