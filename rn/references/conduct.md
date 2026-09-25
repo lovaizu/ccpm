@@ -26,8 +26,8 @@ Take turns until one stops for the user. Each takes the first task in `steering.
   commits and what it found to be the user's. Have them evaluated, and decide.
 - **A sign-off**: at a Design sign-off whose choices are not yet set out, set them out in the document
   the `design` field names, each with what it costs and gives, and your recommendation. Have what the
-  sign-off decides on, the plan, the choices, or the finished work, evaluated when it changed since its
-  last evaluation, and decide.
+  sign-off decides on, the plan, the choices, or the finished work, evaluated when it changed since
+  its last evaluation, and decide.
 - **None, after a Design sign-off**: write the tasks that follow from the chosen design, as far as the
   user's next decision. Have the plan evaluated, and decide.
 
