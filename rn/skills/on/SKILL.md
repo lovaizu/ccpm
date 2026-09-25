@@ -33,11 +33,11 @@ Uncommitted changes in the tree are the user's, so ask what to do with them firs
 branch from the default branch, and write the plan to `.rn/{yyyymmdd}-{slug}/steering.md` from the
 template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading what each part is for. The slug is a
 short kebab-case name for what the work produces. `rn` is `version` in
-`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. The Request is `$ARGUMENTS` as the user wrote it;
-write the rest in the language the repository's documents are written in. What the plan must reach is
-the Plan section of `${CLAUDE_PLUGIN_ROOT}/references/purpose.md`; check the plan against it, and
-against what you and the user agreed: only you heard the conversation, so a goal written down wrong is
-yours to catch. Commit it and push.
+`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Write it in the language the repository's documents
+are written in. What the plan must reach is the Plan section of
+`${CLAUDE_PLUGIN_ROOT}/references/purpose.md`; check the plan against it, and against what you and the
+user agreed: only you heard the conversation, so a goal written down wrong is yours to catch. Commit it
+and push.
 
 ## Have the plan judged
 

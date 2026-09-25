@@ -16,10 +16,6 @@ design: <path to the approach a Design sign-off settled — added once there is 
 status: running
 ---
 
-# Request
-
-<the user's words that started the session, as they wrote them, and the issue they named>
-
 # Goal
 
 <what the user wants and why, as agreed with them — including the aim they had not put into words>
@@ -81,8 +77,6 @@ status: running
   plan and a command reads them without parsing prose. `status` is `paused` from `/rn:dn` until
   `/rn:up`, with `paused_at: <YYYY-MM-DD>` beside it, and `running` otherwise. That a session is
   finished is not a field: its Evaluation sign-off is complete.
-- **Request** — the user's own words, kept as they wrote them, so the Goal can always be checked
-  against what was asked and not only against what was understood.
 - **Goal** — what everything below is judged against, so it holds what the user actually wants and
   why, not only the words of the request.
 - **Goal reached when** — how the user will know the Goal is reached. Each line is a state the user

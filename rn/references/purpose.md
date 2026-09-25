@@ -12,10 +12,8 @@ split it down to what the section judges, then guard what it must not break.
 `steering.md`, as first written or as rewritten after a result was judged. Past the start, the plan goes
 on from where the session stands, and the work done so far is its ground.
 
-- **Would it reach what the user wants?** Carried out, the plan leads to what the user really wants,
-  as far as their next decision.
-- **Does the Goal cover the Request?** Every part of the user's words, and why they want it, is in the
-  Goal, and nothing they did not ask for is added.
+- **Would it reach the Goal?** Carried out, the plan leads to the Goal the user agreed, as far as
+  their next decision.
 - **Does "Goal reached when" cover the Goal?** If every line held, the Goal would be reached.
 - **Do the tasks cover "Goal reached when"?** Every line is served by a task's Purpose, or is plainly
   left to the tasks written after the decision that ends the plan.
