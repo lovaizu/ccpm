@@ -10,7 +10,8 @@ implementer and the evaluator read their brief from there themselves, so what re
 ## Running the session to its next decision
 
 1. Take the first task not yet complete. Work committed since the last check-off is part of it, so
-   read those commits before building anything.
+   read those commits before building anything. A task waiting on the merge, while the PR is not
+   merged (`gh pr view --json state`), is the user's move: stop for the user and say so.
 2. A task that builds something:
    1. Dispatch the implementer — `Agent`, `model: sonnet` — with: read `implement.md` at its path
       and follow it; the `steering.md` path; the task id; and, when this is a second pass, the
@@ -19,8 +20,8 @@ implementer and the evaluator read their brief from there themselves, so what re
       check-off.
    3. Decide the next move.
 3. "Design sign-off": the approach is settled by the tasks before it. Unless they are already there,
-   write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is for), placed after the
-   sign-off; have the plan evaluated, kind Plan; decide the next move. Then stop for the user with
+   write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is
+   for), placed after the sign-off; have the plan evaluated, kind Plan; decide the next move. Then stop for the user with
    the approach and its verdict, and the tasks that follow from it and the plan's verdict.
 4. "Evaluation sign-off": have the finished work evaluated, kind Session; decide the next move.
    Then stop for the user with the verdict and what they would check themselves.
@@ -35,7 +36,8 @@ commits, or the old session's commit for a migrated plan). Hand it nothing else:
 implementer's account and not an earlier verdict, so it judges the result and not the story.
 
 Post its final message on the session's pull request as it wrote it
-(`gh pr comment --body-file -`, the text on standard input), headed with the kind, the task and the short commit it judged, so
+(`gh pr comment --body-file -`, the text on standard input), headed with the kind, the task and the
+short commit it judged, so
 the user reads every verdict beside the change it judges. With no pull request, show it in the
 conversation instead.
 
@@ -69,14 +71,15 @@ When `State` holds `Feedback`, the user asked for a revision of what was last pr
 task not yet complete.
 
 1. Take the feedback: the text `/rn:up` read from `State`, or what the reviewer left on the pull
-   request since the last presentation — review threads that are unresolved and where the reviewer
-   has the last word (`gh api graphql` on `reviewThreads`, paginated), review summaries and
-   comments.
+   request — review threads that are unresolved and whose last comment is not rn's (`gh api
+   graphql` on `reviewThreads`, paginated), and review summaries and comments newer than rn's
+   latest post. rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often
+   post as the same account, so the author does not tell them apart.
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
    not only the line it names. A change to the deliverable becomes a task before the sign-off, whose
    Purpose is what the feedback asks for, with the next unused id, run as in Running with the feedback handed to the
    implementer; a change to the plan is yours to write, then the plan is evaluated.
-3. Reply on each thread with what changed and the commit — or, when the ask is unclear, with one
+3. Reply on each thread, opening with `<!-- rn -->`, with what changed and the commit — or, when the ask is unclear, with one
    question only the reviewer can answer. Leave resolving the thread to the reviewer.
 4. A sign-off → stop for the user with it again. Any other task → go on as in Running.
 
