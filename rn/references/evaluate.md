@@ -58,6 +58,6 @@ against that task in `steering.md` and its Rules.
    grounds that show it does — the concrete case where it goes wrong — and how to change it. Ground
    each on evidence: a `path:line`, or a command and what it printed.
 5. Write the verdict to the file you are given, in the language `steering.md` is written in, headed
-   `# Evaluation — {kind}[ — task #N] — {short commit judged}`: first, whether the result reaches its purpose
-   and the Mores that decide it; then each question's Good and More. Leave it uncommitted, and
-   return the same text as your final message.
+   `# Evaluation — {kind}[ — task #N] — {short commit judged}`: first, whether the result reaches
+   its purpose and the Mores that decide it; then each question's Good and More. Leave it
+   uncommitted, and return the same text as your final message.
