@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 ## Purpose
 
-Every piece of work and every evaluation in the session is judged against the Goal set here, so the
+Every piece of work and every evaluation in the session is evaluated against the Goal set here, so the
 Goal must be what the user really wants, not their first words: a plan built on the words reaches the
 wrong thing, however well it is carried out, and the user finds out only at the end. The plan goes only
 as far as the user's next decision, since what follows depends on it.

@@ -1,9 +1,9 @@
 # Viewpoints
 
-What each thing a session makes must reach. The implementer reads a section as what to reach and checks
-their work against it; the evaluator reads the same section as what to check, so both look at the same
-thing. Each section asks first whether it reaches its Goal or Purpose, then splits that down, then
-guards what it must not break.
+What each thing a session makes must reach. The implementer reads a section as what to reach and
+checks their work against it; the evaluator reads the same section as what to evaluate, so both look
+at the same thing. Each section asks first whether it reaches its Goal or Purpose, then splits that
+down, then guards what it must not break.
 
 ## Plan
 

@@ -56,11 +56,11 @@ status: running
 ```
 
 - Tasks are taken in the order written and end at a sign-off: "Design sign-off" for a choice that is
-  the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the conductor
-  accepts its evaluation, a sign-off when the user approves it. A task added later takes the next
-  unused id.
+the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the conductor
+decides its Purpose is reached, a sign-off when the user approves it. A task added later takes the
+next unused id.
 - `status` is `finished` from the approval of the Evaluation sign-off.
-- `Feedback` is the user's words asking for a revision, kept until the conductor accepts the revision.
+- `Feedback` is the user's words asking for a revision, kept until the conductor decides it is answered.
   `Notes` is what the next conversation needs that nothing else records.
 - `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
 

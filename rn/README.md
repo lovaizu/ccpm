@@ -25,10 +25,10 @@ flowchart TD
   P --> B[One agent implements a task]
   B --> J[Another agent evaluates it,<br/>not told how it was made]
   J --> C{rn decides the next move<br/>by the goal}
-  C -->|redo, or the next task| B
+  C -->|retry, or the next task| B
   C -.->|a decision that is yours| Y([You answer<br/>/rn:ty or /rn:gm])
   Y --> B
-  C ==>|goal reached| D([You check the finished work])
+  C ==>|goal reached| D([You approve the finished work])
 ```
 
 ## How it's put together
@@ -46,11 +46,11 @@ flowchart LR
   C --> UP["/rn:up<br/>resume"] --> W
 ```
 
-- **rn decides every next move; nobody else does.** One agent implements each task, another
-  evaluates it and reports what holds and what doesn't, and you answer only the decisions that are
-  yours.
-- **Every stop is a clean point to `/clear`.** `/rn:ty`, `/rn:gm` and `/rn:dn` record and stop;
-  `/rn:up` reads the record and goes on.
+- **`rn`, the conductor, decides every next move; nobody else does.** One agent, the implementer,
+  implements each task; another, the evaluator, evaluates it and reports what holds and what
+  doesn't; you answer only the decisions that are yours.
+- **Every stop is a clean point to `/clear`.** `/rn:ty`, `/rn:gm` and `/rn:dn` record your answer —
+  `/rn:gm` also revises by it — and stop; `/rn:up` reads the record and goes on.
 - **`/rn:dn` is for stopping in the middle of the work.** At a stop, your answer is already the
   record.
 
@@ -111,12 +111,12 @@ of room.
 
 You don't watch. Each task is implemented by one agent and evaluated by another, which is told the
 goal but not how the work was made — so work passes because it does its job, not because its maker
-says so. Between them, `rn` decides the next move by the goal, not by the evaluator's word: send the
-work back, revise the plan, bring you in, or go on. Each decision is one line, so when you glance back
+says so. Between them, `rn` decides the next move by the goal, not by the evaluator's word: accept,
+retry, revise the plan, or call you in. Each decision is one line, so when you glance back
 you can follow it:
 
 ```console
-● #2 reproduce the timeout ── evaluated: not reached (the test passes without the fault) → redo
+● #2 reproduce the timeout ── evaluated: not reached (the test passes without the fault) → retry
 ● #2 reproduce the timeout ── evaluated: reached → #3
 ```
 
@@ -127,8 +127,8 @@ Every evaluation is committed with the session, so you can read it on the pull r
 `rn` stops for you only where the call is yours:
 
 - **the plan** — before any work starts;
-- **an approach** — where taste, scope, or cost against benefit is yours to weigh, including when
-  the current way keeps falling short;
+- **a design** — where taste, scope, or cost against benefit is yours to weigh, including when the
+  current way keeps falling short;
 - **the finished work** — whether it does what you wanted.
 
 ### 5. Step away — `/rn:dn`, then `/rn:up`
@@ -153,8 +153,9 @@ fresh conversation.
 
 ### 6. Finish
 
-At the last sign-off you check the finished work. On `/rn:ty` the pull request is marked ready; the
-merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
+At the Evaluation sign-off, the last one, you approve the finished work. On `/rn:ty` the pull
+request is marked ready; the merge is yours. The session leaves behind only its `.rn/` directory and
+the work itself.
 
 ## Coming from an earlier rn
 
