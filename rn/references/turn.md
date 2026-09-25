@@ -15,11 +15,11 @@ and decide.
 
 ## Having it evaluated
 
-Start a fresh general-purpose agent with `Agent`. Give it `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`,
-the kind (Plan, Design choice, Task result, or Finished work), the path of `steering.md`, a task
-result's id and commits, and the file `evaluations/{NN}-{plan | design-{id} | task-{id} |
-finished-work}.md`, `{NN}` counting up from `01`. Nothing else: your reasons would pull it toward your
-view. Commit its evaluation and push.
+Start a fresh general-purpose agent with `Agent`. Give it
+`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`, the kind (Plan, Design choice, Task result, or Finished
+work), the path of `steering.md`, a task result's id and commits, and the file `evaluations/{NN}-{plan |
+design-{id} | task-{id} | finished-work}.md`, `{NN}` counting up from `01`. Nothing else: your reasons
+would pull it toward your view. Commit its evaluation and push.
 
 ## Deciding
 
