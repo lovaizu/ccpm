@@ -9,8 +9,8 @@ it down level by level, then guard what it must not break.
 
 ## Plan
 
-`steering.md`, as first written or as rewritten after a task result was evaluated. Past the start, the
-plan goes on from where the session stands, and the work done so far is its ground.
+`steering.md`, as first written or as rewritten since. Past the start, the plan goes on from where the
+session stands, and the work done so far is its ground.
 
 - **Would it reach the Goal?** Carried out, the plan leads to the Goal the user agreed, as far as their
   next decision.
@@ -28,6 +28,19 @@ plan goes on from where the session stands, and the work done so far is its grou
   to do or a decision not yet made.
 - **Are the conventions recorded?** The Rules hold the repository's conventions the tasks must follow,
   which an implementer could not know from the Goal.
+
+## Design choice
+
+The choices set out for a Design sign-off, where the `design` field points or in the sign-off task
+itself, against the Goal in `steering.md` and the work done so far.
+
+- **Does each choice reach the Goal?** Carried out, each choice set out would reach the Goal; one that
+  would not is named as such.
+- **Is each choice told truly?** What each costs and gives matches the repository and the work so
+  far, run or read where that settles it.
+- **Is the decision the user's?** The choices differ in taste, scope, or cost against benefit, which
+  the Goal alone does not settle.
+- **Does the recommendation follow?** It follows from the Goal and what each choice costs and gives.
 
 ## Task result
 

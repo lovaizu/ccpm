@@ -12,8 +12,9 @@ The questions to answer are the section for its kind in `viewpoints.md`, beside 
 ## Evaluating
 
 1. Read `steering.md` in full, and what you evaluate as it stands now. Evaluate from these, not from
-   earlier evaluations beside `steering.md` or on the pull request, and not from `State`, which is the
-   running agent's own record.
+   earlier evaluations beside `steering.md` or on the pull request, and not from `Next` and `Notes`,
+   the running agent's own record. `Feedback` is the user's own words: a revision answers every point
+   of it.
 2. Name the Goal or Purpose it must reach, from `steering.md` itself. The questions for its kind are
    answered against that.
 3. Where running or reading the repository settles a question, do it. Run in a scratch directory

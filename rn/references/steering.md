@@ -83,8 +83,8 @@ status: running
   gains, not an artifact or a step, so it still holds if the means change. The heading is the start
   of each line's sentence, so a line reads as a state reached, not work done.
 - **Assumptions** — what the plan rests on, marked as checked or not, so a wrong one is found and
-  corrected instead of built on. A scope decision, and what was ruled out of scope, lives here, so
-  the evaluator and the user evaluate against the same record.
+  corrected instead of built on. A scope decision, what was ruled out of scope, and each choice the
+  user made at a sign-off live here, so the evaluator and the user evaluate against the same record.
 - **Rules** — the conventions an implementer could not know from the Goal: how this repository
   commits, where output lands, what it must not touch.
 - **Tasks** — worked back from Goal reached when. Each Purpose serves a line of it; each line of Purpose
@@ -97,8 +97,9 @@ status: running
   is the user's. Tasks run in the order they appear; a task added later takes the next unused id, so ids
   already in commit messages keep pointing at their task.
 - **State** — where the session stands between conversations. `Next` is the first task not yet
-  complete and how far it got; `Feedback` the user's revision not yet acted on, or none; `Notes`
-  what the next conversation needs that nothing else records.
+  complete and how far it got — its work done but not yet evaluated, or evaluated but not yet
+  decided on; `Feedback` the user's words asking for a revision, kept until the revision passes its
+  evaluation, or none; `Notes` what the next conversation needs that nothing else records.
 
 A task is complete when every step under it is `[x]`. Beside `steering.md`, the session's directory
 holds `evaluations/`, every evaluation as its evaluator wrote it, until the Evaluation sign-off.
@@ -119,29 +120,34 @@ branch, so the branch names it.
 More than one found → ask which. A session whose Evaluation sign-off is complete is finished → say so
 and stop. None → say "No open session. Run `/rn:on` to start." and stop.
 
-A session started under an earlier `rn` — no `rn` field in its frontmatter, or one that differs from
-`version` in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` — is brought up to date first, below,
-whichever command found it.
+A session started under an earlier `rn` has no `rn` field in its frontmatter, or one that differs from
+`version` in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. `/rn:up` brings it up to date, below;
+any other command says so, and stops: "This session was started under an earlier rn. Run `/rn:up`
+first."
 
 ## Bringing an older session up to date
 
-Rewrite `steering.md` in the shape of the template, so this `rn` can run it, with nothing it recorded
-lost:
+Rewrite `steering.md` in the shape of the template, so this `rn` can run it, with none of its plan or
+progress lost:
 
 - Carry the Goal, the Assumptions, the Rules, and every task with its id, name, fields, and
   check-offs; a checked step stays word for word. Old names for the same thing take the template's
   names: Acceptance criteria become Goal reached when, Completion criteria become Purpose reached
   when. Wording the user approved stays as it is.
-- Lift the old header lines, and the issue and pull request the old `State` names, into the
-  frontmatter; carry every other fact of the old `State` into `Next`, `Feedback`, and `Notes`.
+- Lift the old header lines, the issue and pull request the old `State` names, and a paused status
+  with its date, into the frontmatter; carry every other fact of the old `State` into `Next`,
+  `Feedback`, and `Notes`.
 - Drop an unchecked step that only ran the old `rn`'s own review — a self-check, an expert review, a
-  record into `checks/` — and remove those records. A sign-off task gets the one step `Approved by the
-  user`, checked if the old task was complete.
+  record into `checks/` — and remove those records. A task whose work steps are checked but whose
+  review was not finished has its work done but not yet evaluated: keep one unchecked step
+  `Evaluated`, and say so in `Next` with its commits. A sign-off task gets the one step `Approved by
+  the user`, checked if the old task was complete.
 - When the user has not yet approved the plan — no task has a checked step and nothing records their
-  approval — add a Plan sign-off with the next unused id as the first task, and set `Next` to it.
+  approval — add a Plan sign-off as the first task, and set `Next` to it.
 - Tasks after a Design sign-off not yet approved move into `Notes`, as tasks planned before the
   choice, to be rewritten once the user has chosen.
 
 Check the rewrite against the commit before it, part by part, so nothing is lost. Set `rn` to the
 installed version, commit `chore: bring session up to rn {version}`, push, and have the plan
-evaluated as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`, deciding on it as there.
+evaluated as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`, deciding on it as there. A More on wording
+the user approved is not acted on: name it to the user at the next stop.

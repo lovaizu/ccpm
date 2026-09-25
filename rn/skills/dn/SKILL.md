@@ -12,12 +12,12 @@ this one ends.
 
 Find the session as in Finding the session in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. An
 agent the session started that is still running would change the repository after the pause: wait for
-it to return.
+it to return. An evaluation it wrote is part of the session: commit it.
 
-Write in `State` where the session stands: `Next`, the first task not yet complete and how far it got
-— when its work is done but not yet evaluated, say so and name the commits; `Feedback`, as it is;
-`Notes`, what this conversation knows that the next one needs and nothing else records. Set `status`
-to `paused` and `paused_at` to today.
+Write in `State` where the session stands: `Next`, the first task not yet complete and how far it got —
+its work done but not yet evaluated, with the commits, or evaluated but not yet decided on, with the
+evaluation; `Feedback`, as it is; `Notes`, what this conversation knows that the next one needs and
+nothing else records. Set `status` to `paused` and `paused_at` to today.
 
 Commit the work in progress and push, so nothing is left only on this machine. Files the session made
 that are not part of the work are its scratch: remove them. A file you cannot place is the user's to

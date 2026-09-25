@@ -17,7 +17,9 @@ Mark its step `[x]`. When `Feedback` holds a revision, the user has now approved
 none. Then set `Next`:
 
 - Plan sign-off → the task after it.
-- Design sign-off → that the user chose, and the tasks that follow from the choice are to be written.
+- Design sign-off → the tasks that follow from the choice are to be written. The choice is the one
+  `$ARGUMENTS` names, or your recommendation when it names none; write it in `Assumptions` as a Fact
+  the user chose at this sign-off.
 - Evaluation sign-off → the session ends. Remove its `evaluations/`: they served the decisions made
   along the way, and this approval is the last of them. Mark the pull request ready with
   `gh pr ready`.

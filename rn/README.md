@@ -133,7 +133,7 @@ merge is yours. The session leaves behind only its plan, `steering.md`, and the 
 ## Coming from an earlier rn
 
 A session started under any earlier version of `rn` is brought up to date the next time you run
-`/rn:up` on it — nothing to do by hand, and nothing it recorded is lost.
+`/rn:up` on it — nothing to do by hand, and none of its plan or progress is lost.
 
 ## Why these names?
 
