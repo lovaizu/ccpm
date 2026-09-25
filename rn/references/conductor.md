@@ -16,8 +16,7 @@ brief and the session, not your summary of either.
    1. Dispatch the implementer — `Agent`, `model: sonnet` — with: read `implement.md` at its path
       and follow it; the `steering.md` path; the task id; and, when this is a second pass, the
       evaluator's verdict or the user's feedback word for word.
-   2. Have the result evaluated, kind Result, naming the task and the commits since the last
-      check-off.
+   2. Have the result evaluated, kind Result.
    3. Decide the next move.
 3. "Design sign-off": the approach is settled by the tasks before it. Unless they are already there,
    write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is
@@ -28,21 +27,21 @@ brief and the session, not your summary of either.
 5. "Plan sign-off": have the plan evaluated, kind Plan; decide the next move. Then stop for the
    user with the plan and its verdict.
 
-At a sign-off, a verdict in `evaluations/` on the thing as it stands now — nothing it judged has
-changed since — is reused, so a resume does not evaluate it again.
-
 ## Having a result evaluated
 
-Dispatch the evaluator — `Agent`, `model: opus`, a fresh one each time — with: read `evaluate.md`
-at its path and follow it; the kind; the `steering.md` path; what to evaluate (the task and its
-commits, or the old session's commit for a migrated plan); and the file to write its verdict to,
-`evaluations/{NN}-{kind}[-task-{N}].md` in the session's directory, `{NN}` the next unused number.
-Hand it nothing else: not the implementer's account and not an earlier verdict, so it judges the
-result and not the story.
-
-Commit the file as it wrote it, `docs: evaluation {NN} — {kind}[ — task #N]`, and push, so the
-user reads every verdict on the pull request beside the change it judges, and a resume finds it in
-git.
+1. A verdict in `evaluations/` on the same thing as it stands now — nothing it judged has changed
+   since — is reused, so a resume does not evaluate it again.
+2. Otherwise dispatch the evaluator — `Agent`, `model: opus`, a fresh one each time — with: read
+   `evaluate.md` at its path and follow it; the kind; the `steering.md` path; what it judges; and
+   the file to write its verdict to, `evaluations/{NN}-{kind}[-task-{N}].md` in the session's
+   directory, `{NN}` the next unused number. What it judges: for a Result, the task and its build
+   commits since the last check-off — not the evaluation commits between them, which carry earlier
+   verdicts; for a Plan, the sign-off the plan leads to, and for a migrated plan the commit before
+   the migration as the old session; for a Session, nothing more. Hand it nothing else: not the
+   implementer's account and not an earlier verdict, so it judges the result and not the story.
+3. Commit the file as it wrote it, `docs: evaluation {NN} — {kind}[ — task #N]`, and push, so the
+   user reads every verdict on the pull request beside the change it judges, and a resume finds it
+   in git.
 
 ## Deciding the next move
 
@@ -56,9 +55,9 @@ Read the verdict and the result, and act on what the Goal needs:
   Evaluation sign-off there is no build task to send it back to, so add one before the sign-off,
   with the next unused id and a Purpose that is what the verdict shows missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
-  passes one that misses — → a fresh evaluator, told which of its questions to answer again. Its
-  verdict stands; if you still disagree, the disagreement goes to the user. On a plan, which you
-  wrote, it goes to the user at once.
+  passes one that misses — → a fresh evaluator, told which of its questions to answer again and
+  not why. Its verdict stands; if you still disagree, the disagreement goes to the user. On a plan,
+  which you wrote, it goes to the user at once.
 - The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
   comes back after a fix; or the way forward is a matter of taste, scope, or cost the user weighs →
   stop for the user now, with the choice and your recommendation. Their answer goes into
@@ -114,7 +113,8 @@ conversation.
 1. Write `State` from this conversation: `Next` is the first task not yet complete and how far it
    got; `Feedback` is the revision not yet acted on, or none; `Notes` hold what the next
    conversation needs that `steering.md` and git do not — first, any question still open for the
-   user. Set `status: paused` and `paused_at` to today.
+   user. Then read `steering.md` as a fresh conversation would, and add what it would still have
+   to ask. Set `status: paused` and `paused_at` to today.
 2. Leave the tree clean, so the next conversation starts from git alone. For each untracked path,
    and each change the session did not make: build or test output → a `.gitignore` rule; anything
    else → ask the user whether to commit, ignore or keep it, one path at a time, and name a path

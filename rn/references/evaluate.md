@@ -9,8 +9,8 @@ result reaches its purpose and which faults decide that.
 
 ## Plan
 
-The plan is `steering.md`: the Goal, its Acceptance criteria, the Assumptions, and the tasks up to
-the next sign-off.
+The plan is `steering.md`: the Goal, its Acceptance criteria, the Assumptions, and the tasks that
+lead to the sign-off named to you — from the sign-off before it, or from the start.
 
 - **Does it hold what the user wants?** If every Acceptance criterion held, the Goal — read for why
   the user wants it, not only its words — would be reached, with nothing missing and nothing added.
@@ -57,7 +57,7 @@ The finished work, before the user's Evaluation sign-off.
    answered against that purpose.
 3. Where running settles a question, run it, in a scratch directory outside the repository that you
    remove before returning — a clone with its remote removed when what runs commits, pushes or
-   posts. Leave the repository and its pull request as you found them.
+   posts. Leave the repository and its pull request as you found them, apart from the verdict file.
 4. For each question, answer with Good and More. Good is what already serves the purpose, so a
    change keeps it; More is what would bring the result closer to it, with the concrete case where
    it falls short. Point at the evidence — a `path:line`, a command and what it printed.

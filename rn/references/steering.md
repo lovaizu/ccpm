@@ -77,10 +77,9 @@ status: running
 Read these when writing or changing a plan.
 
 - **Frontmatter** — the session's fixed facts, in YAML so GitHub shows them as a table above the
-  plan and a command reads them without parsing prose. `status` is `running` while a conversation
-  holds the session and `paused` from a hand-off until `/rn:up`, with `paused_at: <YYYY-MM-DD>`
-  beside it for that time. That a session is finished is not a field: its "Evaluation sign-off" is
-  complete.
+  plan and a command reads them without parsing prose. `status` is `paused` from a hand-off until
+  `/rn:up`, with `paused_at: <YYYY-MM-DD>` beside it for that time, and `running` otherwise. That
+  a session is finished is not a field: its "Evaluation sign-off" is complete.
 - **Goal** — what everything below is judged against, so it holds what the user actually wants and
   why, not only the words of the request.
 - **Acceptance criteria** — how the user will know the Goal is reached. Each is a state the user
