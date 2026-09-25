@@ -8,8 +8,11 @@ it says whether the result reaches its purpose, and what to keep and what to cha
 
 ## Plan
 
-The plan is `steering.md`. You are also given the user's own words, the request the Goal was worked
-out from. Each level of the plan covers the one above it, with nothing missing and nothing added.
+The plan is `steering.md`, as first written or as rewritten after a result was judged. You are
+also given the user's own words, the request the Goal was worked out from. Past the start, the plan
+goes on from where the session stands, and the work done so far is its ground: read it, and run it
+where it runs. Each level of the plan covers the one above it, with nothing missing and nothing
+added.
 
 - **Does the Goal cover the request?** Every part of the user's words, and why they want it, is in
   the Goal, and nothing they did not ask for is added.
