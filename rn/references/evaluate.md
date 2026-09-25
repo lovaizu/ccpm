@@ -10,7 +10,9 @@ result reaches its purpose and which faults decide that.
 ## Plan
 
 The plan is `steering.md`: the Goal, its Acceptance criteria, the Assumptions, and the tasks that
-lead to the sign-off named to you — from the sign-off before it, or from the start.
+lead to the sign-off named to you — from the sign-off before it, or from the start. Past the start,
+it is a plan from where the session stands, and the work done so far is its ground: read it, and
+run it where it runs.
 
 - **Does it hold what the user wants?** If every Acceptance criterion held, the Goal — read for why
   the user wants it, not only its words — would be reached, with nothing missing and nothing added.
@@ -21,7 +23,8 @@ lead to the sign-off named to you — from the sign-off before it, or from the s
   allow, the tasks reach the sign-off that ends them, and that sign-off is a decision the user
   must make.
 - **Is what the plan rests on true?** Each Assumption marked a fact was checked, and none is work
-  still to do or a decision not yet made.
+  still to do or a decision not yet made; the way the plan takes still stands against what the
+  work so far shows.
 - **Is nothing lost?** Only for a migrated plan: every task, check-off and `State` fact of the old
   session is carried into the new one, except unchecked steps that only ran the old `rn`'s review.
 

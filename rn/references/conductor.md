@@ -1,92 +1,75 @@
 # Conductor
 
 You run an `rn` session from the conversation: you hold its Goal, have each task built by an
-implementer and judged by an evaluator, and decide every next move by whether it brings the Goal
-closer. The user decides what is theirs — the plan, an approach they would want a say in, whether
-the finished work does what they wanted — and you bring each such decision to them as soon as it
-arises, with what they need to make it. `implement.md` and `evaluate.md` sit beside this file; the
-implementer and the evaluator read their brief from there themselves, so what reaches them is the
-brief and the session, not your summary of either.
+implementer and judged by an evaluator, and after every verdict you plan again, from where the
+session now stands, how to reach the Goal. That plan is `steering.md`: it is your judgment, put
+where a third party evaluates it as it evaluates the work. The user decides what is theirs — the
+plan, an approach they would want a say in, whether the finished work does what they wanted — and
+the plan stops at a sign-off for each such decision as soon as it arises. `implement.md` and
+`evaluate.md` sit beside this file; the implementer and the evaluator read their brief from there
+themselves, so what reaches them is the brief and the session, not your summary of either.
 
 ## Running the session to its next decision
 
-1. Take the first task not yet complete. Work committed since the last check-off is part of it, so
-   read those commits before building anything.
-2. A task that builds something:
-   1. Dispatch the implementer — `Agent` — with: read `implement.md` at its path and follow it;
-      the `steering.md` path; the task id; and, when this is a second pass, the
-      evaluator's verdict or the user's feedback word for word.
-   2. Have the result evaluated, kind Result.
-   3. Decide the next move.
-3. "Design sign-off": the approach is settled by the tasks before it. Unless they are already there,
-   write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is
-   for), placed after the sign-off; have the plan evaluated, kind Plan; decide the next move. Then
-   stop for the user with the approach and the tasks that follow from it, and the verdicts on each.
-4. "Evaluation sign-off": have the finished work evaluated, kind Session; decide the next move.
-   Then stop for the user with the verdict and what they would check themselves.
-5. "Plan sign-off": have the plan evaluated, kind Plan; decide the next move. Then stop for the
-   user with the plan and its verdict.
+Take the first task not yet complete; work committed since the last check-off is part of it, so
+read those commits before building anything.
+
+- A task that builds something: dispatch the implementer — `Agent` — with: read `implement.md` at
+  its path and follow it; the `steering.md` path; the task id; and, when this is a second pass, the
+  verdict or feedback it answers, word for word. Have the result evaluated, kind Result, then plan
+  again.
+- "Evaluation sign-off": have the finished work evaluated, kind Session, then plan again.
+- Then, while the first task not yet complete is a sign-off, stop for the user with what it signs
+  off and the verdicts on it as it stands — at "Plan sign-off" the plan; at "Design sign-off" the
+  approach and the tasks that follow from it; at "Evaluation sign-off" the finished work and what
+  they would check themselves. A plan with no verdict yet is evaluated first, as in Planning again.
+  Otherwise take that task.
+
+## Planning again
+
+After every verdict — an evaluator's, or the user's feedback — plan from where the session stands:
+
+1. Read the verdict for what it shows about the way the plan takes to the Goal, not only about the
+   lines it names. When it judges something other than the purpose — fails the result over a
+   detail, or passes one that misses — ask a fresh evaluator, told which of its questions to answer
+   again and not why; its verdict stands.
+2. Write the plan from here in `steering.md`. Check off the steps of a task whose result reached its
+   Purpose. Record in Assumptions what the work has shown, a way that proved not to reach a Purpose
+   among it. Add, change or remove tasks so that, done in order, they reach the next decision that
+   is the user's; a task added takes the next unused id. A change to the Goal, an Acceptance
+   criterion or a way the user approved is theirs, so the plan stops at a sign-off for it first;
+   set the `design` field once an approach is settled.
+3. When the way ahead changed — its tasks, their Purposes or criteria, or what they rest on — have
+   the plan evaluated, kind Plan, and plan again on its verdict. If you still disagree with that
+   verdict, the disagreement goes to the user: the plan is yours, so you do not overrule its judge.
+4. Commit and push. The commit that checks a task off is `<type>: complete task #N — <task name>`,
+   the only commit whose message carries `complete task #`.
 
 ## Having a result evaluated
 
 1. A verdict in `evaluations/` on the same thing as it stands now — nothing it judged has changed
    since — is reused, so a resume does not evaluate it again.
-2. Otherwise dispatch the evaluator — `Agent`, a fresh one each time — with: read
-   `evaluate.md` at its path and follow it; the kind; the `steering.md` path; what it judges; and
-   the file to write its verdict to, `evaluations/{NN}-{kind}[-task-{N}].md` in the session's
-   directory, `{NN}` the next unused number. What it judges: for a Result, the task and its build
-   commits since the last check-off — not the evaluation commits between them, which carry earlier
-   verdicts; for a Plan, the sign-off the plan leads to, and for a migrated plan the commit before
-   the migration as the old session; for a Session, nothing more. Hand it nothing else: not the
-   implementer's account and not an earlier verdict, so it judges the result and not the story.
+2. Otherwise dispatch the evaluator — `Agent`, a fresh one each time — with: read `evaluate.md` at
+   its path and follow it; the kind; the `steering.md` path; what it judges; and the file to write
+   its verdict to, `evaluations/{NN}-{kind}[-task-{N}].md` in the session's directory, `{NN}` the
+   next unused number. What it judges: for a Result, the task and its build commits since the last
+   check-off — not the evaluation commits between them, which carry earlier verdicts; for a Plan,
+   the sign-off the plan leads to, and for a migrated plan the commit before the migration as the
+   old session; for a Session, nothing more. Hand it nothing else: not the implementer's account
+   and not an earlier verdict, so it judges the result and not the story.
 3. Commit the file as it wrote it, `docs: evaluation {NN} — {kind}[ — task #N]`, and push, so the
    user reads every verdict on the pull request beside the change it judges, and a resume finds it
    in git.
 
-## Deciding the next move
-
-Read the verdict and the result, and act on what the Goal needs:
-
-- The result reaches its purpose → fold in what the work taught (below), and those of the
-  verdict's Mores worth taking — they refine a result already judged to hold, so they are not
-  evaluated again; for a build task, mark its steps `[x]`, commit the check-off as
-  `<type>: complete task #N — <task name>` — the only commit whose message carries
-  `complete task #` — push, and take the next task.
-- The result falls short → first read it beside the earlier verdicts on the same task or plan: a
-  fault of a kind already fixed once, in a new place, shows the approach falls short, not the line
-  — that is the user's, below. Otherwise send it back to whoever can fix it: the implementer with the
-  verdict, or yourself when the fault is in `steering.md`. Evaluate again after the fix. At a
-  Design or Evaluation sign-off there is no build task to send it back to, so add one before the
-  sign-off, with the next unused id and a Purpose that is what the verdict shows missing, and run
-  it.
-- The verdict judges something other than the purpose — it fails the result over a detail, or
-  passes one that misses — → a fresh evaluator, told which of its questions to answer again and
-  not why. Its verdict stands; if you still disagree, the disagreement goes to the user. On a plan,
-  which you wrote, it goes to the user at once.
-- The fix would change the Goal, an Acceptance criterion or an approved approach; the approach
-  falls short; or the way forward is a matter of taste, scope, or cost the user weighs → stop for
-  the user now, with the choice — for an approach, the other ways to reach the Purpose — and your
-  recommendation. Their answer goes into `steering.md` before the work goes on.
-
-Fold what the work taught into `steering.md` in the same commit: correct an Assumption that proved
-false, add a task the work uncovered, remove one it made unnecessary, and set the `design` field
-once an approach is settled.
-
 ## Revising on feedback
 
-When `State` holds `Feedback`, the user asked for a revision of what was last presented — the first
-task not yet complete.
-
-1. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
-   not only the line it names. A change to the deliverable becomes a task before the sign-off, with
-   the next unused id and a Purpose that is what the feedback asks for, run as in Running with the
-   feedback handed to the implementer. A change to the plan is yours to write, with what the user
-   asked recorded in the Goal, a criterion or an Assumption, so the evaluator judges against it.
-2. Reply on each review thread the feedback came from, opening with `<!-- rn -->`, with what
-   changed and the commit — or, when the ask is unclear, with one question only the reviewer can
-   answer. Leave resolving the thread to the reviewer.
-3. When the feedback is acted on, set `Feedback` to none, and go on as in Running — which, at a
-   sign-off, evaluates the changed work before presenting it again.
+When `State` holds `Feedback`, the user asked for a revision of what was last presented. Plan again
+on it as on any verdict, with what the user asked recorded in the Goal, a criterion or an
+Assumption, so the evaluator judges against it; work on the deliverable is a task placed before the
+sign-off, its implementer handed the feedback. Reply on each review thread the feedback came from,
+opening with `<!-- rn -->`, with what changed and the commit — or, when the ask is unclear, with
+one question only the reviewer can answer; leave resolving the thread to the reviewer. Set
+`Feedback` to none, and go on as in Running.
 
 ## Stopping for the user
 

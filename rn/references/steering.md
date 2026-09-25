@@ -147,4 +147,4 @@ recorded lost.
 4. Remove the old `rn`'s process records — under 0.8.0, the `checks/` directory — and nothing else.
 5. Set `rn` to the installed version; commit `chore: migrate session to rn <version>` and push.
 6. Have the migrated plan evaluated as in `conductor.md`, kind Plan, handing the evaluator the
-   commit before the migration as the old session, and decide the next move on its verdict there.
+   commit before the migration as the old session, and plan again on its verdict there.

@@ -12,10 +12,12 @@ only for what is theirs to decide.
 
 `rn`'s prompt text is judged as any prompt is, on four points; each lands in it as follows.
 
-- **Structure — generation and evaluation are split, and a role between them decides.** The
-  implementer builds, a fresh evaluator judges without the implementer's account or an earlier
-  verdict, and the conductor decides each next move by the Goal, not by a count of rounds
-  (`references/conductor.md`).
+- **Structure — generation and evaluation are split, and the role between them is judged too.**
+  The implementer builds, a fresh evaluator judges without the implementer's account or an earlier
+  verdict. After every verdict the conductor plans again from where the session stands, and that
+  plan — `steering.md` — is evaluated like any result, so the conductor's judgment is not the one
+  thing nobody checks (`references/conductor.md`). A fix that patches only what a verdict named
+  meets a plan evaluator asking whether the way still reaches the Purpose.
 - **Generation — handed the purpose, checked against it.** A task hands on its Purpose and the Goal
   it serves; its Steps are the planned way, which the implementer leaves when the Purpose is better
   served, and it checks its result on the thing itself before returning (`implement.md`).
