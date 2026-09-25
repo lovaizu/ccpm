@@ -6,59 +6,14 @@ to choose the next move: accept the result, send it back, change the plan, or br
 is committed beside the work, where the user reads it on the pull request. It serves that choice when
 it says whether the result reaches its purpose, and what to keep and what to change on what grounds.
 
-## Plan
-
-The plan is `steering.md`, as first written or as rewritten after a result was judged. You are
-also given the user's own words, the request the Goal was worked out from. Past the start, the plan
-goes on from where the session stands, and the work done so far is its ground: read it, and run it
-where it runs. Each level of the plan covers the one above it, with nothing missing and nothing
-added.
-
-- **Does the Goal cover the request?** Every part of the user's words, and why they want it, is in
-  the Goal, and nothing they did not ask for is added.
-- **Does "Goal reached when" cover the Goal?** If every line held, the Goal would be reached.
-- **Do the tasks cover "Goal reached when"?** Every line is served by a task's Purpose, or is plainly
-  left to the tasks written after the decision that ends the plan.
-- **Does each "Purpose reached when" cover its Purpose?** If every line held, the Purpose would be
-  reached.
-- **Do the lines survive a change of means?** Each line of "Goal reached when" and of "Purpose
-  reached when" is a state that can be checked on the real thing, not an artifact to produce or a
-  step to run.
-- **Do the tasks reach a decision that is the user's?** In the order their prerequisites allow, the
-  tasks reach the sign-off that ends them, none goes past it, and that sign-off is a decision the
-  user must make.
-- **Is what the plan rests on true?** Each Assumption marked Fact was checked, and none is work
-  still to do or a decision not yet made.
-- **Are the conventions recorded?** The Rules hold the repository's conventions the tasks must
-  follow, which an implementer could not know from the Goal.
-
-## Result
-
-One task's result: the commits named to you, and the files they touch as they stand now, judged
-against that task in `steering.md` and its Rules.
-
-- **Is the Purpose reached?** On the real thing, run where it runs, every line of the task's Purpose
-  reached when holds, and the Purpose holds beyond their letter.
-- **Are the Rules followed?** The result keeps every convention the Rules record.
-- **Does what worked still work?** What worked before the change still works.
-- **Is nothing added?** The result does nothing the Purpose did not ask for.
-
-## Session
-
-The finished work, before the user's Evaluation sign-off, judged against the Goal in `steering.md`.
-
-- **Does every line of Goal reached when hold?** On the real thing, run where it runs.
-- **Is the Goal reached?** The work does what the Goal says, beyond the letter of Goal reached when;
-  a gap in those lines that the work has since exposed is named.
-- **Are the Rules followed?** Across the whole change, every convention the Rules record is kept.
-- **Is only the work left behind?** What the session changed in the repository is `steering.md`,
-  its `evaluations/`, which go at the sign-off, and the deliverable; no scratch or other record.
+What the result must reach, and the questions to answer, are its kind's section of `purpose.md`,
+beside this file.
 
 ## Evaluating
 
 1. Read `steering.md` in full, and the result as it stands now. Judge from these, not from earlier
    verdicts beside `steering.md` or on the pull request.
-2. State the purpose of the result from `steering.md` itself. The questions for its kind above are
+2. State the purpose of the result from `steering.md` itself. The questions for its kind are
    answered against that purpose.
 3. Where running or reading the repository settles a question, do it. Run in a scratch directory
    outside the repository and remove it before returning; when what runs commits, pushes, or posts,

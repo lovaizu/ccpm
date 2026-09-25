@@ -34,17 +34,19 @@ branch from the default branch, and write the plan to `.rn/{yyyymmdd}-{slug}/ste
 template in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, reading what each part is for. The slug is a
 short kebab-case name for what the work produces. `rn` is `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Write it in the language the repository's documents
-are written in. Read the plan against what you and the user agreed: only you heard the conversation, so
-a goal written down wrong is yours to catch. Commit it and push.
+are written in. What the plan must reach is the Plan section of
+`${CLAUDE_PLUGIN_ROOT}/references/purpose.md`; check the plan against it, and against what you and the
+user agreed: only you heard the conversation, so a goal written down wrong is yours to catch. Commit it
+and push.
 
 ## Have the plan judged
 
-Start a fresh general-purpose agent with `Agent` to judge the plan, as the Plan kind in
-`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`. Give it that file, the path of `steering.md`, the user's
-own words (`$ARGUMENTS`, and the issue they named) to check the Goal against, and the file for its
-verdict: `evaluations/{NN}-plan.md` next to `steering.md`, `{NN}` counting up from `01` across the
-session's verdicts. Give it nothing else. Your reasons and how the plan came about would pull it toward
-your view. Commit the verdict and push, so the user can tie it to the plan it judged.
+Start a fresh general-purpose agent with `Agent` to judge the plan, as the Plan kind. Give it
+`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` to follow, the path of `steering.md`, the user's own
+words (`$ARGUMENTS`, and the issue they named) to check the Goal against, and the file for its verdict:
+`evaluations/{NN}-plan.md` next to `steering.md`, `{NN}` counting up from `01` across the session's
+verdicts. Give it nothing else. Your reasons and how the plan came about would pull it toward your view.
+Commit the verdict and push, so the user can tie it to the plan it judged.
 
 Then decide by the goal, reading its Mores. Fix the plan and have it judged again; ask the user in the
 conversation when a More is theirs to decide; or go on when the plan does its job. A fixed plan is
