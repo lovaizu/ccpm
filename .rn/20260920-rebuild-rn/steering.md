@@ -154,8 +154,17 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-25
+- **Last completed**: #1 — `viewpoints.md` settled; the rewrite step is still open: rn was reworked
+  from `8d255dc` (verdicts as committed files, frontmatter, found by branch), tried for real (record
+  `evaluations/03-tries-at-096c639.md`), and restructured at `191516d` — the conductor plans again
+  after every verdict and that plan is judged by a third party.
+- **Next**: #1 — the user checks the rn plugin at `191516d` before any try (their request). Then
+  re-try the ja-char-count scene where task #2 looped five times on patches, to see whether
+  planning again stops it; re-evaluate rn per `viewpoints.md`; then the verdict step.
+- **Notes**: branch `worktree-rebuild-rn`, PR #32. Decided today: rn names no model (every role on
+  the conversation's); the principles are absorbed into `viewpoints.md` (Goal and design.md say so).
+  Open, not yet applied: `viewpoints.md`'s Evaluating step 4 only names the real case that would
+  settle a question — the user agreed the root is that a prompt's evaluation should run it; apply
+  after the plugin check. Try PRs lovaizu/rn-try#7 (stopped mid-way) and #8 (closed) are left open.
