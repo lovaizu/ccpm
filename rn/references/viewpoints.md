@@ -20,7 +20,8 @@ ground.
 - **Can each line be told on the real thing?** Each line of both is a state checked on the real
   thing, not an artifact or a step, so it holds if the means change.
 - **Do the tasks end at the user's decision?** They reach the sign-off that ends them, none goes past
-  it, and that sign-off is a decision the user must make: taste, scope, or cost against benefit.
+  it, and that sign-off is the user's: a choice of taste, scope, or cost against benefit, or the
+  finished work.
 - **Is what it rests on true?** Each Fact was checked; no Assumption hides work or an open decision.
 - **Are the conventions recorded?** The Rules hold what the tasks must follow and an implementer could
   not know from the Goal.

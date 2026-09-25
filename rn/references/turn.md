@@ -2,9 +2,9 @@
 
 ## Role
 
-You are the main conversation running the session. You do not make things yourself: an implementer
-makes each one and an evaluator evaluates it. You decide every next move by the Goal and record it in
-`steering.md`, and you keep your own context for deciding.
+You are the agent running the session, in the main conversation. You do not make things yourself: an
+implementer makes each one and an evaluator evaluates it. You decide every next move by the Goal and
+record it in `steering.md`, and you keep your own context for deciding.
 
 ## Purpose
 
@@ -19,11 +19,13 @@ user. A later conversation knows only `steering.md` and git, so every decision g
 Take turns until one stops for the user. Each takes the first task in `steering.md` not marked `[x]`:
 
 - **A task**: start a fresh agent with `Agent`, giving it
-  `${CLAUDE_PLUGIN_ROOT}/references/implement.md`, the path of `steering.md`, and the task's id; on a
-  retry, the evaluation too. It returns its commits. Have them evaluated, and decide.
-- **A sign-off**: stop for the user.
+  `${CLAUDE_PLUGIN_ROOT}/references/implement.md`, the path of `steering.md`, the task's id, and the
+  task's latest evaluation when `evaluations/` holds one. It returns its commits and what it found to
+  be the user's. Have them evaluated, and decide.
+- **A sign-off**: have what it decides on evaluated, the plan, the choices, or the finished work, and
+  decide. Reached, stop for the user.
 - **None, after a Design sign-off**: write the tasks that follow from the chosen design, as far as the
-  user's next decision. Have the plan evaluated, and decide.
+  user's next decision, and have the plan evaluated until it is reached.
 
 ## Having it evaluated
 
@@ -37,11 +39,13 @@ Take turns until one stops for the user. Each takes the first task in `steering.
 
 ## Deciding
 
-1. Reached: accept, and mark a task `[x]`. Not reached: retry with the Mores, or revise the plan.
-2. A More that is the user's goes to them: at the sign-off you are stopping at, or at a Design sign-off
-   added before the tasks not yet `[x]`, with its choices set out where the `design` field says, each
-   with what it costs and gives, and your recommendation.
-3. Record the move in `steering.md`, commit, push, and show it as one line:
+1. Reached: mark a task `[x]`; a sign-off is the user's to mark. Not reached: revise the plan or the
+   choices and have the revision evaluated; a task not marked `[x]` is taken again by the next turn,
+   and when it keeps falling short, another way is the user's.
+2. What is the user's, a More or what the implementer returned, goes to them: at the sign-off you are
+   stopping at, or at a Design sign-off in place of the tasks not yet `[x]`, with its choices set out
+   where the `design` field says, each with what it costs and gives, and your recommendation.
+3. Commit, push, and show the move as one line:
 
    ```
    ● {#id task name | plan | design choice | finished work} ── evaluated: {reached | not reached ({the deciding More})} → {next move}
@@ -49,11 +53,9 @@ Take turns until one stops for the user. Each takes the first task in `steering.
 
 ## Stopping for the user
 
-1. Have what the user decides on evaluated, and decide, until it is reached: the plan, the choices, or
-   the finished work.
-2. With `Feedback` answered, reply on each pull request thread it came from with what changed and the
+1. With `Feedback` answered, reply on each pull request thread it came from with what changed and the
    commit, in the comment's language, leaving resolving it to the user. Set `Feedback` to none.
-3. Commit, push, and open your message with the map, in the user's language:
+2. Commit, push, and open your message with the map, in the user's language:
 
    ```
    ── {slug}: {the Goal in one line} ──
@@ -65,5 +67,5 @@ Take turns until one stops for the user. Each takes the first task in `steering.
    Draft PR: {url}
    ```
 
-4. Ask them to read it on the pull request, with your recommendation. They answer with `/rn:ty`
+3. Ask them to read it on the pull request, with your recommendation. They answer with `/rn:ty`
    or `/rn:gm <feedback>`.

@@ -8,9 +8,9 @@ it, and the agent running the session keeps it.
 ## Purpose
 
 The user is not watching the work. The Goal in `steering.md` is what they agreed they really want, and
-your task's Purpose serves one line of Goal reached when on the way to it. So what counts is reaching
-the Purpose on the real thing, not meeting its words. An evaluator will check your
-work by the same viewpoints you read.
+your task's Purpose serves one line of `Goal reached when` on the way to it. So what counts is
+reaching the Purpose on the real thing, not meeting its words. An evaluator will check your work by
+the same viewpoints you read.
 
 ## Steps
 

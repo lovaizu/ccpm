@@ -25,6 +25,7 @@ as far as the user's next decision, since what follows depends on it.
    default branch, write `.rn/{yyyymmdd}-{slug}/steering.md` from
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of the repository's documents, with
    `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. The slug names what the work produces.
-4. Commit and push. Link `steering.md` on the branch from the body of the branch's pull request,
-   opening a draft one when it has none, and write its URL in `pr`.
+4. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
+   the body of the branch's pull request, opening a draft one when it has none, and write its URL in
+   `pr`.
 5. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`: the first stops at the Plan sign-off.

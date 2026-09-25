@@ -15,7 +15,7 @@ without asking again, in this conversation or a later one.
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
    not a sign-off → say what the session is doing, and stop.
-2. Mark the sign-off `[x]`. At a Design sign-off, record the approved choice as a Fact in
+2. Mark the sign-off `[x]`. At a Design sign-off, record the recommended choice as a Fact in
    `Assumptions`. At the Evaluation sign-off, set `status` to `finished`, remove `evaluations/`, and
    mark the pull request ready with `gh pr ready`.
 3. Commit, push, and say in the user's language:

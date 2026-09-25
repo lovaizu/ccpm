@@ -14,8 +14,7 @@ only `steering.md` and git, so everything it needs is left there, and nothing el
 ## Steps
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
-2. Write what the next conversation needs in `Notes`; set `status` to `paused` and `paused_at` to
-   today.
+2. Write what the next conversation needs in `Notes`, and set `status` to `paused`.
 3. Commit and push.
 4. Stop, opening your message with the map as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`:
 

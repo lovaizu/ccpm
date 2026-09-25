@@ -20,7 +20,7 @@ last for fixes that change nothing you do.
 - The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
 - `/rn:ty` records your approval and `/rn:gm` revises the plan by your feedback right away; both then stop. Run `/clear`, then `/rn:up`, to continue.
 - When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
-- A session started under an earlier `rn` is rebuilt by `/rn:up` from its old plan and the work done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
+- A session started under an earlier `rn` (the first two numbers of the version differ) is rebuilt by `/rn:up` from its old plan and the work done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
 - Each task is evaluated by one fresh agent against what the task must reach, instead of several expert reviews recorded in `checks/`.
 - `/rn:on` starts on your current branch and its pull request when you are on one, instead of always making new ones.
 

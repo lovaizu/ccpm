@@ -22,5 +22,5 @@ stopped, until their next decision.
    ● Resuming {slug} at #{id}: {task name}
    ```
 
-3. Set `status` to `running` and remove `paused_at`.
+3. Set `status` to `running`.
 4. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.

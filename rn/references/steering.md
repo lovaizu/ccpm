@@ -8,9 +8,8 @@ finds its way by its field names and headings, so they stay exactly as written.
 ```markdown
 ---
 rn: <installed rn version>
-issue: <the issue this session serves — omit when there is none>
 pr: <the session's pull request URL>
-design: <where a Design sign-off's choices are set out: where the repository keeps its designs, or design.md beside this file — omit until there is one>
+design: <where a Design sign-off's choices are set out: where the repository keeps its designs, or design.md beside this file>
 status: running
 ---
 
@@ -60,8 +59,8 @@ status: running
   the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the agent
   running the session accepts its evaluation, a sign-off when the user approves it. A task added later
   takes the next unused id.
-- `status` is `paused`, with `paused_at: <YYYY-MM-DD>`, from `/rn:dn` until `/rn:up`, and `finished`
-  from the approval of the Evaluation sign-off.
+- `status` is `paused` from `/rn:dn` until `/rn:up`, and `finished` from the approval of the
+  Evaluation sign-off.
 - `Feedback` is the user's words asking for a revision, kept until the revision is evaluated as
   reached. `Notes` is what the next conversation needs that nothing else records.
 - `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
@@ -77,7 +76,7 @@ status: running
 
 None → "No open session. Run `/rn:on` to start." A finished session → say so. Either way, stop.
 
-A session with no `rn` field, or one that differs from `version` in
+A session with no `rn` field, or one whose first two numbers differ from `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, was started under an earlier `rn`. `/rn:up` brings
 it up to date; any other command asks the user to run `/rn:up` first, and stops.
 
@@ -88,6 +87,5 @@ from it through `/rn:on`, rather than converting a format that changed from vers
 
 1. `git mv` it to `steering.old.md` beside it.
 2. Take the steps of `/rn:on` (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`) on the session's branch,
-   pull request, and directory, with `steering.old.md` as the request: ask only what it leaves
-   unclear, and plan from the work already done.
-3. Remove `steering.old.md` before the stop, commit, and push.
+   pull request, and directory, with `steering.old.md` as the request, removed once `steering.md` is
+   written: ask only what it leaves unclear, and plan from the work already done.

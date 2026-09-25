@@ -16,8 +16,8 @@ would shift that measure.
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
    not a sign-off → say what the session is doing, and stop.
-2. The feedback is `$ARGUMENTS`; without it, the unresolved review threads on the pull request, each
-   with its location and URL. Add it to `Feedback`.
+2. The feedback is `$ARGUMENTS`; without it, the pull request's review threads whose last comment is
+   the user's, each with its location and URL. Add it to `Feedback`.
 3. Revise by it: at the Plan sign-off the plan, at a Design sign-off the choices, at the Evaluation
    sign-off tasks added before it that answer it.
 4. Commit, push, and say in the user's language:
