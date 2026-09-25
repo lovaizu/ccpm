@@ -10,6 +10,7 @@ last for fixes that change nothing you do.
 ### Added
 
 - While `rn` works, it shows one line each time it decides what to do next, so you can see what happened.
+- The plan keeps your request word for word, so the goal is always checked against what you asked, not only against how it was understood.
 - Every verdict on the pull request says what is good and what needs more, each with its grounds and, for a More, how to fix it — so you can see why the work passed or was sent back.
 
 ### Changed
