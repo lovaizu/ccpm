@@ -47,7 +47,9 @@ brief and the session, not your summary of either.
 
 Read the verdict and the result, and act on what the Goal needs:
 
-- The result reaches its purpose → fold in what the work taught (below); for a build task, mark its
+- The result reaches its purpose → fold in what the work taught (below), and those of the
+  verdict's Mores worth taking — they refine a result already judged to hold, so they are not
+  evaluated again; for a build task, mark its
   steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>` — the only commit
   whose message carries `complete task #` — push, and take the next task.
 - The result falls short → first read it beside the earlier verdicts on the same task or plan: a
