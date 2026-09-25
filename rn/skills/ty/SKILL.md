@@ -17,7 +17,9 @@ was approved.
    complete. Say it back in one line. When that task is not a sign-off, nothing is awaiting
    approval: say so and stop.
 3. **Record the approval.** Mark its step `[x]`, commit `docs: complete task #N — {task name}` —
-   the marker only a check-off carries — and push.
+   the marker only a check-off carries — and push. At "Evaluation sign-off", remove the session's
+   `evaluations/` in the same commit: the session then leaves `steering.md` and the deliverable,
+   and every verdict stays in the pull request's history.
 4. **Close or hand off.** "Evaluation sign-off" → mark the PR ready for review and report the
    session closed, opening with the map in Stopping for the user in
    `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`: the merge is the user's next move, followed by

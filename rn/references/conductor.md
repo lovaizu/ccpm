@@ -22,39 +22,39 @@ brief and the session, not your summary of either.
 3. "Design sign-off": the approach is settled by the tasks before it. Unless they are already there,
    write the tasks it leads to, up to the next decision (`steering.md` reference, What each part is
    for), placed after the sign-off; have the plan evaluated, kind Plan; decide the next move. Then
-   stop for the user with the approach and its verdict, and the tasks that follow from it and the
-   plan's verdict.
+   stop for the user with the approach and the tasks that follow from it, and the verdicts on each.
 4. "Evaluation sign-off": have the finished work evaluated, kind Session; decide the next move.
    Then stop for the user with the verdict and what they would check themselves.
 5. "Plan sign-off": have the plan evaluated, kind Plan; decide the next move. Then stop for the
    user with the plan and its verdict.
 
-Each stop is made as in Stopping for the user.
+At a sign-off, a verdict in `evaluations/` on the thing as it stands now — nothing it judged has
+changed since — is reused, so a resume does not evaluate it again.
 
 ## Having a result evaluated
 
 Dispatch the evaluator — `Agent`, `model: opus`, a fresh one each time — with: read `evaluate.md`
-at its path and follow it; the kind; the `steering.md` path; and what to evaluate (the task and its
-commits, or the old session's commit for a migrated plan). Hand it nothing else: not the
-implementer's account and not an earlier verdict, so it judges the result and not the story.
+at its path and follow it; the kind; the `steering.md` path; what to evaluate (the task and its
+commits, or the old session's commit for a migrated plan); and the file to write its verdict to,
+`evaluations/{NN}-{kind}[-task-{N}].md` in the session's directory, `{NN}` the next unused number.
+Hand it nothing else: not the implementer's account and not an earlier verdict, so it judges the
+result and not the story.
 
-Post its final message on the session's pull request as it wrote it (`gh pr comment --body-file -`,
-the text on standard input), opening with `<!-- rn -->` and a heading of the kind, the task and the
-short commit it judged, so the user reads every verdict beside the change it judges. With no pull
-request, show it in the conversation instead.
+Commit the file as it wrote it, `docs: evaluation {NN} — {kind}[ — task #N]`, and push, so the
+user reads every verdict on the pull request beside the change it judges, and a resume finds it in
+git.
 
 ## Deciding the next move
 
 Read the verdict and the result, and act on what the Goal needs:
 
 - The result reaches its purpose → fold in what the work taught (below); for a build task, mark its
-  steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>`, push, and take the
-  next task.
+  steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>` — the only commit
+  whose message carries `complete task #` — push, and take the next task.
 - The result falls short → send it back to whoever can fix it: the implementer with the verdict, or
-  yourself when the fault is in `steering.md`. Evaluate again after the fix. When the work falls
-  short at a Design or Evaluation sign-off, there is no build task to send it back to, so add one
-  before the sign-off, with the next unused id and a Purpose that is what the verdict shows
-  missing, and run it.
+  yourself when the fault is in `steering.md`. Evaluate again after the fix. At a Design or
+  Evaluation sign-off there is no build task to send it back to, so add one before the sign-off,
+  with the next unused id and a Purpose that is what the verdict shows missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
   passes one that misses — → a fresh evaluator, told which of its questions to answer again. Its
   verdict stands; if you still disagree, the disagreement goes to the user. On a plan, which you
@@ -65,7 +65,7 @@ Read the verdict and the result, and act on what the Goal needs:
   `steering.md` before the work goes on.
 
 Fold what the work taught into `steering.md` in the same commit: correct an Assumption that proved
-false, add a task the work uncovered, remove one it made unnecessary, and set the `Design:` line
+false, add a task the work uncovered, remove one it made unnecessary, and set the `design` field
 once an approach is settled.
 
 ## Revising on feedback
@@ -73,20 +73,15 @@ once an approach is settled.
 When `State` holds `Feedback`, the user asked for a revision of what was last presented — the first
 task not yet complete.
 
-1. Take the feedback: the text in `Feedback`, or what the reviewer left on the pull request —
-   review threads that are unresolved and whose last comment is not rn's (`gh api graphql` on
-   `reviewThreads`, paginated), and review summaries and comments newer than rn's latest verdict.
-   rn's posts are the ones that open with `<!-- rn -->`; the reviewer and rn often post as the same
-   account, so the author does not tell them apart.
-2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
+1. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
    not only the line it names. A change to the deliverable becomes a task before the sign-off, with
    the next unused id and a Purpose that is what the feedback asks for, run as in Running with the
    feedback handed to the implementer. A change to the plan is yours to write, with what the user
    asked recorded in the Goal, a criterion or an Assumption, so the evaluator judges against it.
-3. Reply on each thread, opening with `<!-- rn -->`, with what changed and the commit — or, when the
-   ask is unclear, with one question only the reviewer can answer. Leave resolving the thread to
-   the reviewer.
-4. When the feedback is acted on, set `Feedback` to none, and go on as in Running — which, at a
+2. Reply on each review thread the feedback came from, opening with `<!-- rn -->`, with what
+   changed and the commit — or, when the ask is unclear, with one question only the reviewer can
+   answer. Leave resolving the thread to the reviewer.
+3. When the feedback is acted on, set `Feedback` to none, and go on as in Running — which, at a
    sign-off, evaluates the changed work before presenting it again.
 
 ## Stopping for the user
@@ -108,18 +103,18 @@ session stands and the user's next move; the ⬜ line goes when nothing remains.
 
 Then ask one thing, with your recommendation, pointing at the pull request for what is long to read.
 At a sign-off, the answer is `/rn:ty` to approve or `/rn:gm <feedback>` to revise — plain `/rn:gm`
-when the feedback is in review threads on the pull request. Any other question is answered in
-words, in the conversation.
+when the feedback is a review on the pull request. Any other question is answered in words, in the
+conversation.
 
 ## Handing off to a fresh conversation
 
 `/rn:ty`, `/rn:gm` and `/rn:dn` record the user's decision and end the conversation's part, so that
 `/clear` and then `/rn:up` resume with nothing more said.
 
-1. Write `State` in its paused form from this conversation: `Next` is the first task not yet
-   complete and how far it got; `Feedback` is the revise feedback not yet acted on, or none;
-   `Notes` hold what the next conversation needs that `steering.md` and git do not — first, any
-   question still open for the user.
+1. Write `State` from this conversation: `Next` is the first task not yet complete and how far it
+   got; `Feedback` is the revision not yet acted on, or none; `Notes` hold what the next
+   conversation needs that `steering.md` and git do not — first, any question still open for the
+   user. Set `status: paused` and `paused_at` to today.
 2. Leave the tree clean, so the next conversation starts from git alone. For each untracked path,
    and each change the session did not make: build or test output → a `.gitignore` rule; anything
    else → ask the user whether to commit, ignore or keep it, one path at a time, and name a path

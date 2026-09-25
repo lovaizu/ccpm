@@ -26,9 +26,9 @@ only for what is theirs to decide.
 
 ## What stays
 
-- `steering.md` in git is the session's contract, and its 0.8.0 shape — `Rn version:` line, Goal,
-  Acceptance criteria, Assumptions, Rules, Tasks with Purpose and Completion criteria, State — so a
-  0.8.0 session migrates by carrying its facts rather than translating them.
+- `steering.md` in git is the session's contract, and its 0.8.0 sections — Goal, Acceptance
+  criteria, Assumptions, Rules, Tasks with Purpose and Completion criteria, State — so a 0.8.0
+  session migrates by carrying its facts rather than translating them.
 - Sign-offs through `/rn:ty` and `/rn:gm`, and the session map heading every stop.
 
 ## What changes
@@ -44,8 +44,20 @@ only for what is theirs to decide.
 - **Every verdict ends the conversation's part.** `/rn:ty`, `/rn:gm` and `/rn:dn` record the
   decision and `State` and stop; `/rn:up` is the one way back in. A long session then runs in fresh
   conversations by default, and the user goes on without clearing just by saying so.
-- **Verdicts are pull request comments.** The user reads each beside the change it judges, and the
-  session leaves `steering.md` and the deliverable with nothing to clean up.
+- **Verdicts are committed files.** Each goes into the session's `evaluations/` as the evaluator
+  wrote it, so the user reads it on the pull request beside the change it judges, and a resume
+  finds it in git instead of fetching a comment back to trust it. The directory goes at the
+  Evaluation sign-off; the verdicts stay in the PR's history.
+- **The session's fixed facts are frontmatter.** Version, issue, pull request, design and
+  `running` / `paused` sit in YAML that GitHub shows as a table and a command reads without
+  parsing prose. Finished is not a status: it is read from the Evaluation sign-off being complete,
+  so no field can contradict the record.
+- **A session is found by its branch.** It lives on its own branch and pull request, so a command
+  takes the session its branch changed, or offers the ones with an open pull request; history
+  across branches is not searched, since it turns up other branches' and merged sessions.
+- **Work a sign-off asks for is a task.** A sign-off has nothing to rebuild, so a verdict or
+  feedback that asks for work there becomes a new task placed before it, with the next unused id,
+  and ids in commit messages keep pointing at their task.
 
 ## What goes
 

@@ -3,9 +3,9 @@
 Evaluate a result of an `rn` session — its plan, one task's result, or the finished work — by
 whether it reaches the purpose it exists for. You did not make it, and you are not told how it was
 made. Your verdict is read by the conductor, who runs the session, to choose the next move: accept
-the result, send it back, change the plan, or bring the user in; and it is posted on the pull
-request, where the user reads it beside the change it judges. It serves that choice when it says
-whether the result reaches its purpose and which faults decide that.
+the result, send it back, change the plan, or bring the user in; and it is committed beside the
+work, where the user reads it on the pull request. It serves that choice when it says whether the
+result reaches its purpose and which faults decide that.
 
 ## Plan
 
@@ -44,15 +44,15 @@ The finished work, before the user's Evaluation sign-off.
   they run.
 - **Is the Goal reached as the user meant it?** Read the Goal again: the work does what the user
   wanted, or the criteria missed something the work has since exposed.
-- **Is only the work left behind?** What the session changed in the repository is `steering.md` and
-  the deliverable — the document on the `Design:` line is part of it — and no scratch or other
-  record of the work.
+- **Is only the work left behind?** What the session changed in the repository is `steering.md`,
+  its `evaluations/` — removed at the sign-off — and the deliverable, the document in the `design`
+  field part of it; no scratch or other record of the work.
 
 ## Evaluating
 
 1. Read `steering.md` in full, and the result as it stands now. For a migrated plan, read the old
-   session at the commit you are given too. Judge from these, not from the pull request, where
-   earlier verdicts are.
+   session at the commit you are given too. Judge from these, not from `evaluations/` or the pull
+   request, where earlier verdicts are.
 2. State the purpose of the result from `steering.md` itself. The questions for its kind above are
    answered against that purpose.
 3. Where running settles a question, run it, in a scratch directory outside the repository that you
@@ -61,5 +61,7 @@ The finished work, before the user's Evaluation sign-off.
 4. For each question, answer with Good and More. Good is what already serves the purpose, so a
    change keeps it; More is what would bring the result closer to it, with the concrete case where
    it falls short. Point at the evidence — a `path:line`, a command and what it printed.
-5. Return as your final message, in the language `steering.md` is written in: first, whether the
-   result reaches its purpose and the Mores that decide it; then each question's Good and More.
+5. Write your verdict to the file you are given, in the language `steering.md` is written in, headed
+   `# Evaluation — {kind}[ — task #N] — {short commit judged}`: first, whether the result reaches
+   its purpose and the Mores that decide it; then each question's Good and More. Leave it
+   uncommitted, and return the same text as your final message.
