@@ -1,6 +1,6 @@
 {
   "name": "rn",
   "description": "Give a goal, roughly: rn works out with you what you really want, plans to your next decision on a draft PR, and carries the work through — one agent builds each task, another evaluates it — calling you back only for decisions that are yours (/rn:ty approve, /rn:gm revise). The session lives in git, so it resumes across conversations (/rn:dn, /rn:up).",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "author": { "name": "lovaizu" }
 }

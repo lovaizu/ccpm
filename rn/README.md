@@ -25,7 +25,7 @@ flowchart TD
   P --> B[One agent builds a task]
   B --> J[Another agent evaluates it,<br/>not told how it was made]
   J --> C{rn chooses the next move<br/>by the goal}
-  C -->|redo, another way,<br/>or the next task| B
+  C -->|redo, or the next task| B
   C -.->|a decision that is yours| Y([You answer<br/>/rn:ty or /rn:gm])
   Y --> B
   C ==>|goal reached| D([You check the finished work])
@@ -58,8 +58,8 @@ that is yours, since what comes after depends on it — and puts it on a draft p
 
 ```console
 ● ── payment-fix: customers who pay get through ──
-  👉 #1      plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
-  ⬜ #2–#3   reproduce the timeout / design sign-off
+  👉 #1 plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
+  ⬜ #2 reproduce the timeout / #3 design sign-off
   (after approval, #2 runs without you; you're called again at #3 to choose between retry and
   failover)
 
@@ -88,8 +88,8 @@ of room.
 
 You don't watch. Each piece of work is built by one agent and evaluated by another, which is told
 the goal but not how the work was made — so work passes because it does its job, not because its
-maker says so. Between them, `rn` decides the next move by the goal: send the work back, try another
-way, bring you in, or go on. Each decision is one line, so when you glance back you can follow it:
+maker says so. Between them, `rn` decides the next move by the goal: send the work back, revise the
+plan, bring you in, or go on. Each decision is one line, so when you glance back you can follow it:
 
 ```console
 ● #2 reproduce the timeout ── evaluated: fails (the test passes without the fault) → redo
@@ -116,9 +116,9 @@ everything. Run `/clear` yourself (a plugin can't), then `/rn:up` in the fresh c
 > /rn:dn
 
 ● ── payment-fix: customers who pay get through ──
-  ✅ #1      plan sign-off
-  👉 #2      reproduce the timeout ── stopped here; next: /clear, then /rn:up
-  ⬜ #3      design sign-off
+  ✅ #1 plan sign-off
+  👉 #2 reproduce the timeout ── stopped here; next: /clear, then /rn:up
+  ⬜ #3 design sign-off
 
 > /clear
 > /rn:up

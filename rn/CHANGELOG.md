@@ -5,11 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 A version goes up by what changes for you: the middle number for anything you would notice, the
 last for fixes that change nothing you do.
 
-## [Unreleased]
+## [0.9.0] - 2026-09-25
 
 ### Added
 
 - While `rn` works, it shows one line each time it decides what to do next, so you can see what happened.
+- `/rn:ty <choice>` picks a choice other than the one `rn` recommends at a design decision.
 - Every evaluation on the pull request says what is good and what needs more, each with its grounds and, for a More, how to fix it — so you can see why the work passed or was sent back.
 
 ### Changed
@@ -20,6 +21,7 @@ last for fixes that change nothing you do.
 - `/rn:ty` and `/rn:gm` save your answer and stop. Run `/clear`, then `/rn:up`, to continue.
 - When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
 - A session started under an earlier `rn` is rebuilt by `/rn:up` from its old plan and the work done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
+- Each task is evaluated by one fresh agent against what the task must reach, instead of several expert reviews recorded in `checks/`.
 - `/rn:on` starts on your current branch and its pull request when you are on one, instead of always making new ones.
 
 ### Removed
