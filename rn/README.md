@@ -133,8 +133,9 @@ merge is yours. The session leaves behind only its plan, `steering.md`, and the 
 
 ## Coming from an earlier rn
 
-A session started under any earlier version of `rn` is brought up to date the next time you run
-`/rn:up` on it — nothing to do by hand, and none of its plan or progress is lost.
+A session started under any earlier version of `rn` is rebuilt the next time you run `/rn:up` on it:
+`rn` reads the old plan and the work done, asks only what they leave unclear, and stops for you to
+approve the new plan — on the same branch and pull request.
 
 ## Why these names?
 

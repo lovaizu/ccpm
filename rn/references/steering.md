@@ -95,12 +95,11 @@ it up to date; any other command asks the user to run `/rn:up` first, and stops.
 
 ## Bringing an older session up to date
 
-Put it in the template's shape so this `rn` can run it, with none of its plan or progress lost and the
-wording the user approved unchanged. Earlier versions wrote the header as `Rn version:` and `Design:`
-lines, named the criteria Acceptance criteria and Completion criteria, kept status in `State`, had no
-Plan sign-off task (the plan was approved on the pull request), and ran their own reviews as steps
-recorded in `checks/`; those reviews are replaced by this `rn`'s evaluations.
+The old `steering.md` is the user's request and the record of the work so far. Rebuild the session
+from it through `/rn:on`, rather than converting a format that changed from version to version.
 
-1. Rewrite it in the template's shape.
-2. Commit `chore: bring session up to rn {version}` and push.
-3. Have the plan evaluated as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
+1. `git mv` it to `steering.old.md` beside it.
+2. Take the steps of `/rn:on` (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`) on the session's branch,
+   pull request, and directory, with `steering.old.md` as the request: ask only what it leaves
+   unclear, and plan from the work already done.
+3. Remove `steering.old.md` before the stop, commit, and push.

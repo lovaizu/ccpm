@@ -13,8 +13,9 @@ stopped, until their next decision.
 
 ## Steps
 
-1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, bringing it up to date if
-   an earlier `rn` started it.
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an earlier `rn`
+   started it, bring it up to date as there instead of the steps below: that ends at the Plan
+   sign-off.
 2. Say:
 
    ```

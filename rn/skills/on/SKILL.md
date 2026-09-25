@@ -21,12 +21,14 @@ as far as the user's next decision, since what follows depends on it.
    they can agree in a word or correct you. Look facts up yourself; put decisions to them. It is
    settled when you both see the same Goal and way, and nothing the plan rests on is assumed without
    their knowing.
-2. On a new branch from the default branch, write `.rn/{yyyymmdd}-{slug}/steering.md` from
+2. On the current branch when it is not the default branch, otherwise on a new branch from the
+   default branch, write `.rn/{yyyymmdd}-{slug}/steering.md` from
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of the repository's documents, with
    `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. The slug names what the work produces.
 3. Check it against the Plan section of `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md` and against
    what you agreed: only you heard the conversation. Commit and push.
 4. Have it evaluated and decide, as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`; a More that is the
    user's to decide, ask them here.
-5. Open a draft pull request whose body links `steering.md` on the branch, and write its URL in `pr`.
+5. Link `steering.md` on the branch from the body of the branch's pull request, opening a draft one
+   when it has none, and write its URL in `pr`.
 6. Stop for the user at the Plan sign-off, as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
