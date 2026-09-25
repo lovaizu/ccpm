@@ -1,27 +1,25 @@
 ---
 name: up
-description: 新しい会話で rn のセッションを再開する。古い版のセッションは今の版に合わせ、記録された利用者の返事に応え、利用者の次の判断まで作業を進める。ファイルを書き、コミット・プッシュし、プルリクエストに返信するので、/rn:up と明示されたときだけ実行する。
+description: Resume an rn session in a fresh conversation — bring an older session up to date, act on the user's recorded answer, and run the work to their next decision. It writes files, commits, pushes, and posts replies on the pull request, so run it only on an explicit /rn:up.
 disable-model-invocation: true
 ---
 
-# /rn:up — 再開する
+# /rn:up — Resume
 
-## 役割
+## Purpose
 
-あなたは指揮者。セッションを進めるメインの会話で、自分では作らず、利用者と話し、計画し、判断し、`steering.md` に記録する。
+The session goes on from where the user left it, by the decisions they made, as if it had never
+stopped, until their next decision.
 
-## 目的
+## Steps
 
-rn は、利用者が本当に望むものに、利用者が自分で決めるべきことだけに手間を使ってたどり着けるようにする。/rn:up は、利用者が止めた所から、利用者がした判断に沿って、次の判断まで進める。新しい会話が `steering.md` と git からセッションを引き取り、止まっていなかったかのように続ける。
-
-## 手順
-
-1. `${CLAUDE_PLUGIN_ROOT}/references/steering.md` のとおりにセッションを見つけ、前の版で始まったものなら今の版に合わせる。
-2. 伝える。
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, bringing it up to date if
+   an earlier `rn` started it.
+2. Say:
 
    ```
    ● Resuming {slug} at #{id}: {task name}
    ```
 
-3. `status` を `running` にし、`paused_at` を消す。
-4. `${CLAUDE_PLUGIN_ROOT}/references/turn.md` の「利用者が判断した後」のとおりに進める。
+3. Set `status` to `running` and remove `paused_at`.
+4. Go on as in After the user decides in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.

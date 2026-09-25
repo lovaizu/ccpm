@@ -1,43 +1,55 @@
-# 観点
+# Viewpoints
 
-セッションが作るものそれぞれが、何に届くべきか。作る側は節を「届くべきもの」として読んで自分の仕事を確かめ、評価役は同じ節を「確かめるもの」として読む。同じ文面なので、両者は同じものを見る。どの節も、まず Goal か Purpose に届くかを問い、次にそれを段ごとに分け、最後に壊してはいけないものを守る。
+What each thing a session makes must reach. The implementer reads a section as what to reach and checks
+their work against it; the evaluator reads the same section as what to check, so both look at the same
+thing. Each section asks first whether it reaches its Goal or Purpose, then splits that down, then
+guards what it must not break.
 
 ## Plan
 
-最初に書かれた、またはその後書き直された `steering.md`。始まった後は、それまでの作業が土台になる。
+`steering.md`, as first written or as rewritten since. Past the start, the work done so far is its
+ground.
 
-- **Goal に届くか:** そのとおりに進めれば、利用者が合意した Goal に、利用者の次の判断まで届く。
-- **Goal reached when は Goal を覆うか:** すべての行が満たされれば、Goal に届く。
-- **タスクは Goal reached when を覆うか:** どの行も、いずれかのタスクの Purpose が受け持つか、計画を締める判断の後に書くタスクに回されていると読める。
-- **各 Purpose reached when は Purpose を覆うか:** すべての行が満たされれば、Purpose に届く。
-- **どの行も実物で確かめられるか:** 両方のどの行も、作ったものや踏んだ手順ではなく、実物で確かめられる状態として書かれ、やり方が変わっても変わらない。
-- **タスクは利用者の判断で終わるか:** タスクは計画を締めるサインオフに行き着き、その先へは進まない。そのサインオフは、好み・範囲・費用と効果の釣り合いで利用者が決めるべき判断である。
-- **頼っていることは確かか:** Fact は確かめてある。Assumption に、隠れた作業やまだ決まっていない判断が紛れていない。
-- **決まりは書かれているか:** タスクが守るべきで、作業担当が Goal からは知り得ない決まりが、Rules にある。
+- **Would it reach the Goal?** Carried out, it leads to the Goal the user agreed, as far as their next
+  decision.
+- **Does "Goal reached when" cover the Goal?** If every line held, the Goal would be reached.
+- **Do the tasks cover "Goal reached when"?** Every line is served by a task's Purpose, or is plainly
+  left to the tasks written after the decision that ends the plan.
+- **Does each "Purpose reached when" cover its Purpose?** If every line held, the Purpose would be
+  reached.
+- **Can each line be told on the real thing?** Each line of both is a state checked on the real
+  thing, not an artifact or a step, so it holds if the means change.
+- **Do the tasks end at the user's decision?** They reach the sign-off that ends them, none goes past
+  it, and that sign-off is a decision the user must make: taste, scope, or cost against benefit.
+- **Is what it rests on true?** Each Fact was checked; no Assumption hides work or an open decision.
+- **Are the conventions recorded?** The Rules hold what the tasks must follow and an implementer could
+  not know from the Goal.
 
 ## Design choice
 
-Design sign-off のために示した選択肢。Goal とそれまでの作業に照らす。
+The choices set out for a Design sign-off, against the Goal and the work so far.
 
-- **どの選択肢も Goal に届くか:** 届かないものは、そうだと書いてある。
-- **どれも正しく書かれているか:** それぞれの費用と得るものが、リポジトリとそれまでの作業に合っている。
-- **利用者が決めるべき判断か:** 選択肢の違いが、Goal だけでは決まらないものである。
-- **おすすめは筋が通るか:** Goal と、それぞれの費用と得るものから導かれている。
+- **Does each choice reach the Goal?** One that would not is named as such.
+- **Is each told truly?** What each costs and gives matches the repository and the work so far.
+- **Is the decision the user's?** The choices differ in what the Goal alone does not settle.
+- **Does the recommendation follow?** From the Goal and what each costs and gives.
 
 ## Task result
 
-1つのタスクのコミットと、それが触れたファイルのいまの状態。そのタスクに照らす。
+One task's commits, and the files they touch as they stand now, against that task.
 
-- **Purpose に届いたか:** 実物で、動くものは動かして、Purpose reached when のすべての行が満たされ、文字面を超えて Purpose に届いている。
-- **付け足しはないか:** Purpose が求めていないことをしていない。
-- **Rules を守っているか**
-- **前は動いていたものが、今も動くか**
+- **Is the Purpose reached?** On the real thing, run where it runs, every line of Purpose reached when
+  holds, and the Purpose holds beyond their letter.
+- **Is nothing added?** It does nothing the Purpose did not ask for.
+- **Are the Rules followed?**
+- **Does what worked still work?**
 
 ## Finished work
 
-セッションが変えたもの全体（`evaluations/` を除く）。Goal に照らす。
+Everything the session changed apart from `evaluations/`, against the Goal.
 
-- **Goal に届いたか:** Goal reached when の文字面を超えて届いている。作業の中で見えてきた、それらの行の漏れも挙げる。
-- **Goal reached when のすべての行が満たされているか:** 実物で、動くものは動かして確かめる。
-- **Rules を守っているか:** 変更全体で。
-- **成果物だけが残っているか:** 成果物のほかに残るのは `steering.md` と `evaluations/` だけ。
+- **Is the Goal reached?** Beyond the letter of Goal reached when; a gap in those lines the work has
+  since exposed is named.
+- **Does every line of Goal reached when hold?** On the real thing, run where it runs.
+- **Are the Rules followed?** Across the whole change.
+- **Is only the work left behind?** Besides the work, only `steering.md` and `evaluations/`.

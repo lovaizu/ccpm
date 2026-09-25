@@ -1,24 +1,32 @@
 ---
 name: on
-description: rn のセッションを始める。利用者が本当に望むことを一緒に固め、利用者の次の判断までの計画を下書きのプルリクエストに置き、承認を待って止まる。ファイルを書き、コミット・プッシュし、プルリクエストを開くので、/rn:on と明示されたときだけ実行する。
+description: Start an rn session. Work out with the user what they really want, plan up to their next decision on a draft pull request, and stop for their approval. It writes files, commits, pushes, and opens a pull request, so run it only on an explicit /rn:on.
 disable-model-invocation: true
 ---
 
-# /rn:on — セッションを始める
+# /rn:on — Start a session
 
-## 役割
+## Purpose
 
-あなたは指揮者。セッションを進めるメインの会話で、自分では作らず、利用者と話し、計画し、判断し、`steering.md` に記録する。
+Every piece of work and every evaluation in the session is judged against the Goal set here, so the
+Goal must be what the user really wants, not their first words: a plan built on the words reaches the
+wrong thing, however well it is carried out, and the user finds out only at the end. The plan goes only
+as far as the user's next decision, since what follows depends on it.
 
-## 目的
+## Steps
 
-rn は、利用者が本当に望むものに、利用者が自分で決めるべきことだけに手間を使ってたどり着けるようにする。/rn:on はその出発点で、以後のすべての作業と評価が照らす Goal を、利用者が本当に望むことに合わせる。ここがずれると、どれだけ正しく作って評価しても違うものに届き、利用者はそれを最後に知る。だから言葉の奥の狙いまで利用者と固める。道筋は、利用者の次の判断（好み・範囲・費用と効果の釣り合いで決まる選択）までだけ計画する。その先は判断しだいで変わるからだ。
-
-## 手順
-
-1. `$ARGUMENTS` とリポジトリから始めて、ゴールを利用者と固める。まず「終わったときの姿」を決める。範囲がそれで決まるからだ。次に、なぜ望むのか、どうすれば終わったと分かるか、どう進めるか。質問は1つずつ、自分の読み・それで何が決まるか・おすすめの答えを添えて、利用者が一言で同意するか直せるようにする。事実は自分で調べ、判断は利用者に委ねる。ゴールと進め方を二人が同じに見ていて、計画が頼ることに利用者の知らない前提が残っていなければ、固まった。
-2. 既定ブランチから新しいブランチを切り、`${CLAUDE_PLUGIN_ROOT}/references/steering.md` のひな形から `.rn/{yyyymmdd}-{slug}/steering.md` を書く。言語はリポジトリの文書に合わせ、`rn` には `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` の `version` を入れる。slug は作るものの名前にする。
-3. 計画を `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md` の Plan の節と、合意した内容に照らして確かめる。会話を聞いたのは自分だけだからだ。コミットしてプッシュする。
-4. `${CLAUDE_PLUGIN_ROOT}/references/turn.md` のとおりに評価させ、判断する。利用者が決めるべき More は、ここで利用者に聞く。
-5. `steering.md` をブランチ上でリンクする本文で下書きのプルリクエストを開き、その URL を `pr` に書く。
-6. `${CLAUDE_PLUGIN_ROOT}/references/turn.md` のとおり、Plan sign-off で利用者のために止まる。
+1. Starting from `$ARGUMENTS` and the repository, work out the Goal with the user. Settle first what
+   done looks like, since it fixes the scope; then why they want it, how they will know, and the way
+   there. Ask one question at a time: your reading, what it decides, and the answer you recommend, so
+   they can agree in a word or correct you. Look facts up yourself; put decisions to them. It is
+   settled when you both see the same Goal and way, and nothing the plan rests on is assumed without
+   their knowing.
+2. On a new branch from the default branch, write `.rn/{yyyymmdd}-{slug}/steering.md` from
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of the repository's documents, with
+   `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. The slug names what the work produces.
+3. Check it against the Plan section of `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md` and against
+   what you agreed: only you heard the conversation. Commit and push.
+4. Have it evaluated and decide, as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`; a More that is the
+   user's to decide, ask them here.
+5. Open a draft pull request whose body links `steering.md` on the branch, and write its URL in `pr`.
+6. Stop for the user at the Plan sign-off, as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.

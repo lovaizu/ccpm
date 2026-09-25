@@ -1,25 +1,22 @@
 ---
 name: dn
-description: rn のセッションを一時停止する。いまの位置を steering.md に記録してすべてプッシュし、新しい会話が /rn:up で続きから始められるようにする。コミット・プッシュするので、/rn:dn と明示されたときだけ実行する。
+description: Pause an rn session — record where it stands in steering.md and push everything, so a fresh conversation picks it up with /rn:up. It commits and pushes, so run it only on an explicit /rn:dn.
 disable-model-invocation: true
 ---
 
-# /rn:dn — 一時停止する
+# /rn:dn — Pause
 
-## 役割
+## Purpose
 
-あなたは指揮者。セッションを進めるメインの会話で、自分では作らず、利用者と話し、計画し、判断し、`steering.md` に記録する。
+The user can come back to the session without explaining anything again. The next conversation knows
+only `steering.md` and git, so everything it needs is left there, and nothing else.
 
-## 目的
+## Steps
 
-rn は、利用者が本当に望むものに、利用者が自分で決めるべきことだけに手間を使ってたどり着けるようにする。/rn:dn は、会話が途切れても、利用者が説明し直さずに続けられるようにする。次の会話が知るのは `steering.md` と git だけなので、続けるのに要るものはすべてそこに残し、それ以外は残さない。
-
-## 手順
-
-1. `${CLAUDE_PLUGIN_ROOT}/references/steering.md` のとおりにセッションを見つける。
-2. いまの位置を `State` に書き、`status` を `paused` にして `paused_at` を添える。
-3. 作業の残りかすを消し、コミットしてプッシュする。
-4. `${CLAUDE_PLUGIN_ROOT}/references/turn.md` の一覧をメッセージの頭に置いて止まる。
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
+2. Write where it stands in `State`; set `status` to `paused` and `paused_at` to today.
+3. Remove the session's scratch, commit, and push.
+4. Stop, opening your message with the map as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`:
 
    ```
    👉 {#id task name} ── stopped here; next: /clear, then /rn:up
