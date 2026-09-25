@@ -47,11 +47,14 @@ prompt reaches its purpose and which faults decide that.
 ## Judging
 
 1. Read the files you are given in full, as they stand now.
-2. State the purpose of the prompt you are judging, and where you took it from — the files, or the
-   message that dispatched you. The questions above are judged against it.
+2. State the purpose of the prompt you are judging, taken from the files themselves. The agent
+   that dispatched you often wrote the prompt, so a purpose its message states is a claim to test
+   against the files, not the yardstick. The questions above are judged against the purpose you
+   state.
 3. For each question above, answer OK or NG. Quote the deciding lines as `path:line`; for an NG,
-   name the concrete case where an agent following the text goes wrong. When the files hold no part
-   a question asks about, say where that part would have to live and whether it is missing.
+   name the concrete case where an agent following the text goes wrong. A part the question asks
+   about may live in a file you were not given — say where it would have to live, and answer NG
+   only when it belongs in these files and is not there.
 4. Where a verdict depends on running the prompt, name the real case that would settle it.
 5. Return as your final message: first, whether the prompt reaches its purpose and the NGs that
    decide it; then the rest.
