@@ -158,19 +158,8 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-25
-- **Last completed**: #1 — `viewpoints.md` settled (`e5aae75`); the rewrite step is reopened: the
-  first rewrite (`8d255dc`) was patched through five evaluations into a worse text (`06730c7`, 484
-  lines) and was made to post verdicts as PR comments, against the user's standing instruction.
-- **Next**: #1 — the user approved (2026-09-25, via `/rn:dn`): (1) delete the three comments this
-  session posted on PR #32 (issuecomment-5826037329, -5826040653, -5826656478); (2) rework `rn` from
-  `8d255dc` as the base, keeping only fixes that follow from the structure (not per-case patches),
-  with verdicts as committed files (round 1's decision, `8681d70`) instead of PR comments.
-- **Notes**: branch `worktree-rebuild-rn`, PR #32. Carried from the last suspend: the rebuild's goal
-  is that the main thread works as a conductor — holds the purpose, brings the user in early and as
-  often as their decisions need, decides each next move by the purpose rather than by a count; after
-  each change an opus subagent evaluates per `viewpoints.md`, and a finding is thought through from
-  what it is for, never patched line by line. The two requests from mamezou-devsite-2f are in the
-  first rewrite and stay. The real `/rn:up` run on the issue-18 session (clone, push cut off)
-  migrated it cleanly; that result is worth keeping as evidence, not as a PR comment.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
