@@ -1,34 +1,49 @@
 # Viewpoints: prompt authoring
 
-An agent built from a prompt — a skill, a reference, a subagent's brief — generates and evaluates.
-It does its best work when generation is handed the purpose and evaluation is handed the viewpoints
-that decide whether the result does its job; steps alone get exactly what is written and nothing
-the writer did not foresee. These are the viewpoints for judging such a prompt.
+A prompt — a skill, a reference, a subagent's brief — is judged by whether an agent following it
+achieves the purpose the prompt exists for, including in cases its writer did not foresee. An agent
+does that when its run is split into generation and evaluation, generation is handed the essential
+purpose, evaluation is handed the essential viewpoints, and steps carry only the work rules the
+agent could not know from the purpose. Steps alone get exactly what is written, and nothing more.
 
-## Viewpoints
+## Structure
 
-1. **Does the purpose lead?** Every part that asks for work says what outcome it serves, for whom,
-   and why — so an agent meeting a case the text did not foresee still acts toward the outcome. NG
-   when a part is a recipe whose aim a reader would have to guess.
+- **Are generation and evaluation split?** The result is judged by an agent other than the one that
+  made it, without that agent's conversation. The maker's own check is never the final verdict.
+- **Is the evaluator kept clear of the maker's pull?** It is handed the purpose, the viewpoints and
+  the result — not the maker's account or excuses, and not an earlier round's verdict.
+- **Does a role between them decide the next move by the purpose?** After each verdict, someone
+  decides — by whether it serves the purpose, not by a count — to run again, change the viewpoints,
+  return to the human, or stop.
 
-2. **Is evaluation handed what decides the job?** Wherever a result is judged — by the agent itself
-   or by another — it is judged on the few viewpoints that say whether the result serves its purpose,
-   not on whether steps ran or a checklist was filled. NG when the judgment could pass work that
-   fails its purpose, or fail work that serves it.
+## Generation
 
-3. **Are steps kept to the work's rules?** Steps appear only where the work must go one fixed way —
-   where output lands, what must happen (a commit, a file a later step reads, a format a machine
-   parses) — and each still says why. NG when steps stand in for judgment the purpose should carry,
-   or when a rule the work depends on is left as a bare "do not" with nothing that carries it out.
+- **Is it handed the essential purpose?** It gets the purpose, not a recipe, and the purpose reaches
+  past the surface of the request to why the result is needed.
+- **Does it check its own result against that purpose?** Before returning, it checks whether the
+  purpose is reached, not whether every step was done.
+
+## Evaluation
+
+- **Is it handed the essential viewpoints?** A few viewpoints drawn from the purpose, not a
+  checklist of steps run or formats matched.
+- **Does it judge whether the purpose is achieved?** It judges the result, not the work done —
+  where it can, by running the result on a real case rather than reading its text. It neither passes
+  work that misses the purpose nor fails work that reaches it over details.
+
+## Work steps
+
+- **Are only context-dependent work rules written as steps?** Steps carry what the agent could not
+  know from the purpose: where output lands, the repository's conventions, the shape a later step or
+  a machine reads. What the agent could judge from the purpose is not written as a step.
+- **Are they steps, not rules or prohibitions?** Each is a step in the flow of the work, not a
+  "must" or "never" set beside it.
 
 ## Judging
 
-1. Read the files you are given in full, as they stand now; a change can break a part it did not
-   touch.
-2. For each viewpoint, answer OK or NG. Quote the lines that decide it as `path:line`; for an NG,
-   name the concrete case where an agent following this text would go wrong.
-3. Leave out wording, line length and formatting unless they change what the agent does — they are
-   not what these viewpoints judge.
-4. Whether a purpose names the real need cannot be read off the text; it shows only when the prompt
-   runs on a real case. Where your verdict depends on that, say so instead of guessing.
-5. Return the verdict as your final message; write no files.
+1. Read the files you are given in full, as they stand now.
+2. For each question above, answer OK or NG. Quote the deciding lines as `path:line`; for an NG,
+   name the concrete case where an agent following the text goes wrong. When the files hold no part
+   a question asks about, say where that part would have to live and whether it is missing.
+3. Where a verdict depends on running the prompt on a real case, say so instead of guessing.
+4. Return the verdict as your final message.
