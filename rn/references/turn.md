@@ -45,7 +45,7 @@ decision goes there.
 ## Stopping for the user
 
 1. Have what the user decides on evaluated first: the plan, the choices for a Design sign-off, or the
-   finished work. Set out the choices with what each costs and gives and your recommendation, where
+   finished work. Set out the choices, each with a short name, what it costs and gives, and your recommendation, where
    the repository keeps its designs (in the `design` field) or in the sign-off task.
 2. Commit, push, and open your message with the map, in the user's language:
 

@@ -72,7 +72,7 @@ The block on top heads every message that stops for you: ✅ done, 👉 now, ⬜
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
 and plain `/rn:gm` takes your review comments off the pull request. Where you choose between ways,
-`/rn:ty` takes the one `rn` recommends and `/rn:ty <choice>` another. `rn` records the decision in the
+`/rn:ty` takes the one `rn` recommends and `/rn:ty <choice>`, naming another, takes that one. `rn` records the decision in the
 session and stops there.
 
 ```console
