@@ -1,8 +1,22 @@
 # Changelog
 
 All notable, user-facing changes to the `rn` plugin are documented here.
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+A version goes up by what changes for you: the middle number for anything you would notice, the
+last for fixes that change nothing you do.
+
+## [Unreleased]
+
+### Added
+
+- While `rn` works, it shows one line each time it decides what to do next, so you can see what happened.
+
+### Changed
+
+- `/rn:on` asks about your goal one point at a time, so the plan matches what you really want.
+- The plan stops at your next decision; the tasks after it are planned once you decide.
+- `/rn:ty` and `/rn:gm` save your answer and stop. Run `/clear`, then `/rn:up`, to continue.
+- When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
 
 ## [0.8.0] - 2026-07-07
 
