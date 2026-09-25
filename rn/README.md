@@ -16,6 +16,21 @@ plugin:
 > /plugin install rn@ccpm
 ```
 
+## How it works
+
+```mermaid
+flowchart TD
+  G([Your rough goal]) --> O[rn works out with you<br/>what you really want]
+  O --> P([You approve the plan<br/>on the draft PR])
+  P --> B[One agent builds a task]
+  B --> J[Another agent judges it,<br/>not told how it was made]
+  J --> C{rn chooses the next move<br/>by the goal}
+  C -->|redo, another way,<br/>or the next task| B
+  C -.->|a decision that is yours| Y([You answer<br/>/rn:ty or /rn:gm])
+  Y --> B
+  C ==>|goal reached| D([You check the finished work])
+```
+
 ## A session, start to finish
 
 Say the payment screen fails now and then, and you want it fixed.
