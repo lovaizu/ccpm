@@ -13,4 +13,5 @@ Writes down where the session stands so a fresh conversation picks it up without
 1. **Enter the session** as in Entering a session in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
 2. **Hand off** as in Handing off to a fresh conversation in
-   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, `Feedback` none.
+   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, `Feedback` being whatever of a revision in
+   progress is not yet done, or none.
