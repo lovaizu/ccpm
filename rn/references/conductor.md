@@ -13,8 +13,8 @@ brief and the session, not your summary of either.
 1. Take the first task not yet complete. Work committed since the last check-off is part of it, so
    read those commits before building anything.
 2. A task that builds something:
-   1. Dispatch the implementer — `Agent` — with: read `implement.md` at its path
-      and follow it; the `steering.md` path; the task id; and, when this is a second pass, the
+   1. Dispatch the implementer — `Agent` — with: read `implement.md` at its path and follow it;
+      the `steering.md` path; the task id; and, when this is a second pass, the
       evaluator's verdict or the user's feedback word for word.
    2. Have the result evaluated, kind Result.
    3. Decide the next move.
@@ -50,9 +50,9 @@ Read the verdict and the result, and act on what the Goal needs:
 - The result reaches its purpose → fold in what the work taught (below); for a build task, mark its
   steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>` — the only commit
   whose message carries `complete task #` — push, and take the next task.
-- The result falls short → first read it beside the earlier verdicts on the same task: a fault of a
-  kind already fixed once, in a new place, shows the approach falls short, not the line — that is
-  the user's, below. Otherwise send it back to whoever can fix it: the implementer with the
+- The result falls short → first read it beside the earlier verdicts on the same task or plan: a
+  fault of a kind already fixed once, in a new place, shows the approach falls short, not the line
+  — that is the user's, below. Otherwise send it back to whoever can fix it: the implementer with the
   verdict, or yourself when the fault is in `steering.md`. Evaluate again after the fix. At a
   Design or Evaluation sign-off there is no build task to send it back to, so add one before the
   sign-off, with the next unused id and a Purpose that is what the verdict shows missing, and run
