@@ -43,6 +43,17 @@ against that task in `steering.md` and its Rules.
 - **Does what worked still work?** What worked before the change still works.
 - **Is nothing added?** The result does nothing the Purpose did not ask for.
 
+## Session
+
+The finished work, before the user's Evaluation sign-off, judged against the Goal in `steering.md`.
+
+- **Does every line of Goal reached when hold?** On the real thing, run where it runs.
+- **Is the Goal reached?** The work does what the Goal says, beyond the letter of Goal reached when;
+  a gap in those lines that the work has since exposed is named.
+- **Are the Rules followed?** Across the whole change, every convention the Rules record is kept.
+- **Is only the work left behind?** What the session changed in the repository is `steering.md`,
+  its `evaluations/`, which go at the sign-off, and the deliverable; no scratch or other record.
+
 ## Evaluating
 
 1. Read `steering.md` in full, and the result as it stands now. Judge from these, not from earlier
