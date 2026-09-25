@@ -10,7 +10,7 @@ finds its way by its field names and headings, so they stay exactly as written.
 rn: <installed rn version>
 issue: <the issue this session serves — omit when there is none>
 pr: <the session's pull request URL>
-design: <the document setting out a Design sign-off's choices — omit until there is one>
+design: <where a Design sign-off's choices are set out: where the repository keeps its designs, or design.md beside this file — omit until there is one>
 status: running
 ---
 
@@ -34,29 +34,17 @@ status: running
 
 # Tasks
 
-### #1: Plan sign-off
+### [ ] #1: Plan sign-off
 
 **Purpose**: <the user agrees this plan before any work starts>
-
-**Prerequisites**: none
-
-**Steps**:
-
-- [ ] Approved by the user
 
 **Purpose reached when**:
 
 - <the user approved the plan>
 
-### #2: <task name>
+### [ ] #2: <task name>
 
 **Purpose**: <what this task reaches, and the line of Goal reached when it serves>
-
-**Prerequisites**: <task ids, or none>
-
-**Steps**:
-
-- [ ] <step>
 
 **Purpose reached when**:
 
@@ -64,18 +52,18 @@ status: running
 
 # State
 
-- **Next**: #1 Plan sign-off
 - **Feedback**: none
 - **Notes**: none
 ```
 
-- The tasks end at a sign-off: "Design sign-off" for a choice that is the user's, "Evaluation sign-off"
-  for the finished work. A sign-off task has the one step `Approved by the user`. A task is complete
-  when every step is `[x]`; a task added later takes the next unused id.
-- `status` is `paused`, with `paused_at: <YYYY-MM-DD>`, from `/rn:dn` until `/rn:up`.
-- `Next` is the task to take and how far it got. `Feedback` is the user's words asking for a revision,
-  kept until the revision passes its evaluation. `Notes` is what the next conversation needs that
-  nothing else records.
+- Tasks are taken in the order written and end at a sign-off: "Design sign-off" for a choice that is
+  the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the agent
+  running the session accepts its evaluation, a sign-off when the user approves it. A task added later
+  takes the next unused id.
+- `status` is `paused`, with `paused_at: <YYYY-MM-DD>`, from `/rn:dn` until `/rn:up`, and `finished`
+  from the approval of the Evaluation sign-off.
+- `Feedback` is the user's words asking for a revision, kept until the revision is evaluated as reached.
+  `Notes` is what the next conversation needs that nothing else records.
 - `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
 
 ## Finding the session

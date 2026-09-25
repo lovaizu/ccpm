@@ -16,36 +16,44 @@ user. A later conversation knows only `steering.md` and git, so every decision g
 
 ## A turn
 
-1. Take the task at `Next`. A sign-off is the user's: stop for them.
-2. Start a fresh agent with `Agent`, giving it `${CLAUDE_PLUGIN_ROOT}/references/implement.md`, the
-   path of `steering.md`, and the task's id; on a retry, the evaluation too. It returns its commits.
-3. Have them evaluated, and decide.
+Take turns until one stops for the user. Each takes the first task in `steering.md` not marked `[x]`:
+
+- **A task**: start a fresh agent with `Agent`, giving it
+  `${CLAUDE_PLUGIN_ROOT}/references/implement.md`, the path of `steering.md`, and the task's id; on a
+  retry, the evaluation too. It returns its commits. Have them evaluated, and decide.
+- **A sign-off**: stop for the user.
+- **None, after a Design sign-off**: write the tasks that follow from the chosen design, as far as the
+  user's next decision. Have the plan evaluated, and decide.
 
 ## Having it evaluated
 
-1. Start a fresh general-purpose agent with `Agent`. Give it
-   `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`, the kind (Plan, Design choice, Task result, or
-   Finished work), the path of `steering.md`, a task result's id and commits, and the file
-   `evaluations/{NN}-{plan | design-{id} | task-{id} | finished-work}.md`, `{NN}` counting up from
-   `01`. Nothing else.
-2. Commit the evaluation and push.
+1. What you made yourself, the plan or the choices, check first against its section of
+   `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md` and against what the user said.
+2. Start a fresh agent with `Agent`. Give it `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md`, the kind
+   (Plan, Design choice, Task result, or Finished work), the path of `steering.md`, a task result's id
+   and commits, and the file `evaluations/{NN}-{plan | design-{id} | task-{id} | finished-work}.md`,
+   `{NN}` counting up from `01`. Nothing else.
+3. Commit the evaluation and push.
 
 ## Deciding
 
-1. By the Goal: accept, retry with the Mores, revise, or stop for the user.
-2. When the choice is the user's, add a Design sign-off as the next task.
+1. Reached: accept, and mark a task `[x]`. Not reached: retry with the Mores, or revise the plan.
+2. A More that is the user's goes to them: at the sign-off you are stopping at, or at a Design sign-off
+   added before the tasks not yet `[x]`, with its choices set out where the `design` field says, each
+   with what it costs and gives, and your recommendation.
 3. Record the move in `steering.md`, commit, push, and show it as one line:
 
    ```
-   ● {#id task name | plan | design choice | finished work} ── evaluated: {passes | fails ({the deciding More})} → {next move}
+   ● {#id task name | plan | design choice | finished work} ── evaluated: {reached | not reached ({the deciding More})} → {next move}
    ```
 
 ## Stopping for the user
 
-1. Have what the user decides on evaluated first: the plan, the choices for a Design sign-off, or the
-   finished work. Set out the choices with what each costs and gives, and your recommendation, where the
-   repository keeps its designs (in the `design` field) or in the sign-off task.
-2. Commit, push, and open your message with the map, in the user's language:
+1. Have what the user decides on evaluated, and decide, until it is reached: the plan, the choices, or
+   the finished work.
+2. With `Feedback` answered, reply on each pull request thread it came from with what changed and the
+   commit, in the comment's language, leaving resolving it to the user. Set `Feedback` to none.
+3. Commit, push, and open your message with the map, in the user's language:
 
    ```
    ── {slug}: {the Goal in one line} ──
@@ -57,15 +65,5 @@ user. A later conversation knows only `steering.md` and git, so every decision g
    Draft PR: {url}
    ```
 
-3. Ask them to read it on the pull request, with your recommendation. They answer with `/rn:ty`
+4. Ask them to read it on the pull request, with your recommendation. They answer with `/rn:ty`
    or `/rn:gm <feedback>`.
-
-## After the user decides
-
-1. Go on from `Next`.
-2. After a chosen design, write the tasks that follow from it and have the plan evaluated.
-3. With `Feedback`, revise what the user stopped at until its evaluation passes: the plan or the
-   choices yourself, the finished work through new tasks.
-4. Reply on each pull request thread the feedback came from, with what changed and the commit, in the
-   comment's language, leaving resolving it to the user. Set `Feedback` to none.
-5. Take turns until the session stops for the user.

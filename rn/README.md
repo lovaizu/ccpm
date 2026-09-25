@@ -71,8 +71,8 @@ The block on top heads every message that stops for you: ✅ done, 👉 now, ⬜
 ### 2. Decide — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
-and plain `/rn:gm` takes your review comments off the pull request. `rn` records the decision in the
-session and stops there.
+and plain `/rn:gm` takes your review comments off the pull request. `rn` records the approval, or
+revises the plan by your feedback, and stops there.
 
 ```console
 > /rn:ty
@@ -91,11 +91,11 @@ maker says so. Between them, `rn` decides the next move by the goal: send the wo
 plan, bring you in, or go on. Each decision is one line, so when you glance back you can follow it:
 
 ```console
-● #2 reproduce the timeout ── evaluated: fails (the test passes without the fault) → redo
-● #2 reproduce the timeout ── evaluated: passes → #3
+● #2 reproduce the timeout ── evaluated: not reached (the test passes without the fault) → redo
+● #2 reproduce the timeout ── evaluated: reached → #3
 ```
 
-Every evaluation is also on the pull request, beside the change it evaluated.
+Every evaluation is committed with the session, so you can read it on the pull request.
 
 ### 4. Called back
 
@@ -149,4 +149,4 @@ approve the new plan — on the same branch and pull request.
 - **`ty`** — *thank you.* You approve by thanking.
 - **`gm`** — *good, more.* You thank it, and ask for more.
 
-Either one records your answer and stops; the work goes on at the next `/rn:up`.
+Either one acts on your answer and stops; the work goes on at the next `/rn:up`.

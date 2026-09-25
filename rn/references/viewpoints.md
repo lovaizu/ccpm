@@ -27,7 +27,7 @@ ground.
 
 ## Design choice
 
-The choices set out for a Design sign-off, against the Goal and the work so far.
+The choices set out where the `design` field says, against the Goal and the work so far.
 
 - **Does each choice reach the Goal?** One that would not is named as such.
 - **Is each told truly?** What each costs and gives matches the repository and the work so far.
@@ -40,7 +40,7 @@ One task's commits, and the files they touch as they stand now, against that tas
 
 - **Is the Purpose reached?** On the real thing, run where it runs, every line of Purpose reached when
   holds, and the Purpose holds beyond their letter.
-- **Is nothing added?** It does nothing the Purpose did not ask for.
+- **Is nothing added?** Nothing beyond what reaching the Purpose needs.
 - **Are the Rules followed?**
 - **Does what worked still work?**
 

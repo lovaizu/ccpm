@@ -16,11 +16,11 @@ stopped, until their next decision.
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an earlier `rn`
    started it, bring it up to date as there instead of the steps below: that ends at the Plan
    sign-off.
-2. Say:
+2. Say, with the first task not `[x]`:
 
    ```
    ● Resuming {slug} at #{id}: {task name}
    ```
 
 3. Set `status` to `running` and remove `paused_at`.
-4. Go on as in After the user decides in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
+4. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/turn.md`.
