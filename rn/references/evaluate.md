@@ -8,22 +8,26 @@ it says whether the result reaches its purpose, and what to keep and what to cha
 
 ## Plan
 
-The plan is `steering.md`: the Goal, its Acceptance criteria, the Assumptions, and the tasks that
-lead to the sign-off at the end of the plan. You are also given the user's own words, the request
-the Goal was worked out from.
+The plan is `steering.md`. You are also given the user's own words, the request the Goal was worked
+out from. Each level of the plan covers the one above it, with nothing missing and nothing added.
 
-- **Does it hold what the user wants?** If every Acceptance criterion held, the Goal would be
-  reached, read for why the user wants it and not only its words, with nothing missing and nothing
-  added; and the Goal keeps every part of the user's own words.
-- **Do the criteria survive a change of means?** Each criterion, of the session and of each task,
-  is a state that can be checked on the real thing, not an artifact to produce or a step to run.
-- **Do the tasks reach the next decision?** Each task's Purpose serves an Acceptance criterion; if
-  its Completion criteria held, its Purpose would be reached; in the order their prerequisites
-  allow, the tasks reach the sign-off that ends them, and that sign-off is a decision the user must
-  make.
-- **Is what the plan rests on true and recorded?** Each Assumption marked a fact was checked, and
-  none is work still to do or a decision not yet made; the Rules hold the repository's conventions
-  the tasks must follow, which an implementer could not know from the Goal.
+- **Does the Goal cover the request?** Every part of the user's words, and why they want it, is in
+  the Goal, and nothing they did not ask for is added.
+- **Does "Goal reached when" cover the Goal?** If every line held, the Goal would be reached.
+- **Do the tasks cover "Goal reached when"?** Every line is served by a task's Purpose, or is plainly
+  left to the tasks written after the decision that ends the plan.
+- **Does each "Purpose reached when" cover its Purpose?** If every line held, the Purpose would be
+  reached.
+- **Do the lines survive a change of means?** Each line of "Goal reached when" and of "Purpose
+  reached when" is a state that can be checked on the real thing, not an artifact to produce or a
+  step to run.
+- **Do the tasks reach a decision that is the user's?** In the order their prerequisites allow, the
+  tasks reach the sign-off that ends them, none goes past it, and that sign-off is a decision the
+  user must make.
+- **Is what the plan rests on true?** Each Assumption marked Fact was checked, and none is work
+  still to do or a decision not yet made.
+- **Are the conventions recorded?** The Rules hold the repository's conventions the tasks must
+  follow, which an implementer could not know from the Goal.
 
 ## Evaluating
 

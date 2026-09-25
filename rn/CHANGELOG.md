@@ -16,6 +16,7 @@ last for fixes that change nothing you do.
 
 - `/rn:on` asks about your goal one question at a time, each with the answer it recommends, so you can answer in a word and the plan matches what you really want.
 - The plan stops at your next decision; the tasks after it are planned once you decide.
+- The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
 - `/rn:ty` and `/rn:gm` save your answer and stop. Run `/clear`, then `/rn:up`, to continue.
 - When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
 

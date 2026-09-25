@@ -20,7 +20,7 @@ status: running
 
 <what the user wants and why, as agreed with them — including the aim they had not put into words>
 
-# Acceptance criteria
+# Goal reached when
 
 - <a state the user gains; the Goal is reached when every line holds>
 
@@ -46,13 +46,13 @@ status: running
 
 - [ ] Approved by the user
 
-**Completion criteria**:
+**Purpose reached when**:
 
 - The user approved the plan.
 
 ### #2: <task name>
 
-**Purpose**: <the outcome this task reaches, and the Acceptance criterion it serves>
+**Purpose**: <the outcome this task reaches, and the line of Goal reached when it serves>
 
 **Prerequisites**: <task ids, or none>
 
@@ -60,7 +60,7 @@ status: running
 
 - [ ] <step>
 
-**Completion criteria**:
+**Purpose reached when**:
 
 - <a state that shows the Purpose reached>
 
@@ -79,22 +79,24 @@ status: running
   finished is not a field: its Evaluation sign-off is complete.
 - **Goal** — what everything below is judged against, so it holds what the user actually wants and
   why, not only the words of the request.
-- **Acceptance criteria** — how the user will know the Goal is reached. Each is a state the user
-  gains, not an artifact or a step, so it still holds if the means change.
+- **Goal reached when** — how the user will know the Goal is reached. Each line is a state the user
+  gains, not an artifact or a step, so it still holds if the means change. The heading is the start
+  of each line's sentence, so a line reads as a state reached, not work done.
 - **Assumptions** — what the plan rests on, marked as checked or not, so a wrong one is found and
   corrected instead of built on. A scope decision, and what was ruled out of scope, lives here, so
   the evaluator and the user judge against the same record.
 - **Rules** — the conventions an implementer could not know from the Goal: how this repository
   commits, where output lands, what it must not touch.
-- **Tasks** — worked back from the Acceptance criteria. Each Purpose serves one; each Completion
-  criterion shows that Purpose reached. The tasks run only as far as the next decision that is the
-  user's — an approach where taste, scope, or cost against benefit is theirs to weigh — and end at a
-  sign-off task for it: "Design sign-off" for that decision, "Evaluation sign-off" when no decision
-  remains before the end. What lies past a decision depends on it, so those tasks are written once
-  it is settled, and the user approves the approach and them together at its sign-off. A sign-off
-  task has the one step `Approved by the user`. The session ends at the Evaluation sign-off, before
-  the merge, which is the user's. Tasks run in the order they appear; a task added later takes the
-  next unused id, so ids already in commit messages keep pointing at their task.
+- **Tasks** — worked back from Goal reached when. Each Purpose serves a line of it; each line of Purpose
+  reached when is a state that shows that Purpose reached, as Goal reached when does for the Goal. The
+  tasks run only as far as the next decision that is the user's — an approach where taste, scope, or
+  cost against benefit is theirs to weigh — and end at a sign-off task for it: "Design sign-off" for
+  that decision, "Evaluation sign-off" when no decision remains before the end. What lies past a
+  decision depends on it, so those tasks are written once it is settled, and the user approves the
+  approach and them together at its sign-off. A sign-off task has the one step `Approved by the user`.
+  The session ends at the Evaluation sign-off, before the merge, which is the user's. Tasks run in the
+  order they appear; a task added later takes the next unused id, so ids already in commit messages keep
+  pointing at their task.
 - **State** — where the session stands between conversations. `Next` is the first task not yet
   complete and how far it got; `Feedback` the user's revision not yet acted on, or none; `Notes`
   what the next conversation needs that nothing else records.
