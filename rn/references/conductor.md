@@ -50,18 +50,21 @@ Read the verdict and the result, and act on what the Goal needs:
 - The result reaches its purpose → fold in what the work taught (below); for a build task, mark its
   steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>` — the only commit
   whose message carries `complete task #` — push, and take the next task.
-- The result falls short → send it back to whoever can fix it: the implementer with the verdict, or
-  yourself when the fault is in `steering.md`. Evaluate again after the fix. At a Design or
-  Evaluation sign-off there is no build task to send it back to, so add one before the sign-off,
-  with the next unused id and a Purpose that is what the verdict shows missing, and run it.
+- The result falls short → first read it beside the earlier verdicts on the same task: a fault of a
+  kind already fixed once, in a new place, shows the approach falls short, not the line — that is
+  the user's, below. Otherwise send it back to whoever can fix it: the implementer with the
+  verdict, or yourself when the fault is in `steering.md`. Evaluate again after the fix. At a
+  Design or Evaluation sign-off there is no build task to send it back to, so add one before the
+  sign-off, with the next unused id and a Purpose that is what the verdict shows missing, and run
+  it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
   passes one that misses — → a fresh evaluator, told which of its questions to answer again and
   not why. Its verdict stands; if you still disagree, the disagreement goes to the user. On a plan,
   which you wrote, it goes to the user at once.
-- The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
-  comes back after a fix; or the way forward is a matter of taste, scope, or cost the user weighs →
-  stop for the user now, with the choice and your recommendation. Their answer goes into
-  `steering.md` before the work goes on.
+- The fix would change the Goal, an Acceptance criterion or an approved approach; the approach
+  falls short; or the way forward is a matter of taste, scope, or cost the user weighs → stop for
+  the user now, with the choice — for an approach, the other ways to reach the Purpose — and your
+  recommendation. Their answer goes into `steering.md` before the work goes on.
 
 Fold what the work taught into `steering.md` in the same commit: correct an Assumption that proved
 false, add a task the work uncovered, remove one it made unnecessary, and set the `design` field
