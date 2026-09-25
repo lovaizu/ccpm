@@ -88,6 +88,8 @@ status: running
 
 ## 前の版のセッションを今の版に合わせる
 
-この `rn` で動かせるよう、ひな形の形に書き直す。計画も進み具合も失わず、利用者が承認した文言は変えない。前の版は、ヘッダーを `Rn version:` と `Design:` の行で書き、基準を Acceptance criteria と Completion criteria と呼び、状態を `State` に持ち、Plan sign-off のタスクを持たず（計画はプルリクエストで承認していた）、独自のレビューを手順として `checks/` に記録していた。そのレビューは、この `rn` の評価に置き換わる。
+この `rn` で動かせるよう、ひな形の形にする。計画も進み具合も失わず、利用者が承認した文言は変えない。前の版は、ヘッダーを `Rn version:` と `Design:` の行で書き、基準を Acceptance criteria と Completion criteria と呼び、状態を `State` に持ち、Plan sign-off のタスクを持たず（計画はプルリクエストで承認していた）、独自のレビューを手順として `checks/` に記録していた。そのレビューは、この `rn` の評価に置き換わる。
 
-`chore: bring session up to rn {version}` でコミットしてプッシュし、`${CLAUDE_PLUGIN_ROOT}/references/turn.md` のとおりに計画を評価させる。
+1. ひな形の形に書き直す。
+2. `chore: bring session up to rn {version}` でコミットしてプッシュする。
+3. `${CLAUDE_PLUGIN_ROOT}/references/turn.md` のとおりに計画を評価させる。
