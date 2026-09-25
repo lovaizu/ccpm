@@ -62,8 +62,8 @@ status: running
   takes the next unused id.
 - `status` is `paused`, with `paused_at: <YYYY-MM-DD>`, from `/rn:dn` until `/rn:up`, and `finished`
   from the approval of the Evaluation sign-off.
-- `Feedback` is the user's words asking for a revision, kept until the revision is evaluated as reached.
-  `Notes` is what the next conversation needs that nothing else records.
+- `Feedback` is the user's words asking for a revision, kept until the revision is evaluated as
+  reached. `Notes` is what the next conversation needs that nothing else records.
 - `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
 
 ## Finding the session
