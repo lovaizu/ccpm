@@ -32,6 +32,17 @@ added.
 - **Are the conventions recorded?** The Rules hold the repository's conventions the tasks must
   follow, which an implementer could not know from the Goal.
 
+## Result
+
+One task's result: the commits named to you, and the files they touch as they stand now, judged
+against that task in `steering.md` and its Rules.
+
+- **Is the Purpose reached?** On the real thing, run where it runs, every line of the task's Purpose
+  reached when holds, and the Purpose holds beyond their letter.
+- **Are the Rules followed?** The result keeps every convention the Rules record.
+- **Does what worked still work?** What worked before the change still works.
+- **Is nothing added?** The result does nothing the Purpose did not ask for.
+
 ## Evaluating
 
 1. Read `steering.md` in full, and the result as it stands now. Judge from these, not from earlier
@@ -47,6 +58,6 @@ added.
    grounds that show it does — the concrete case where it goes wrong — and how to change it. Ground
    each on evidence: a `path:line`, or a command and what it printed.
 5. Write the verdict to the file you are given, in the language `steering.md` is written in, headed
-   `# Evaluation — {kind} — {short commit judged}`: first, whether the result reaches its purpose
+   `# Evaluation — {kind}[ — task #N] — {short commit judged}`: first, whether the result reaches its purpose
    and the Mores that decide it; then each question's Good and More. Leave it uncommitted, and
    return the same text as your final message.
