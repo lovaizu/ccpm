@@ -1,33 +1,24 @@
 ---
 name: ty
-description: Approve what rn last presented for a decision — the plan, a design, the evaluation, or a reviewed result — and let the session advance. Has side effects (checks off, commits, runs the next task) — run only on explicit /rn:ty.
+description: Approve what rn last presented for sign-off — the plan, an approach, or the finished work — record it in steering.md, and stop so the session resumes after /clear with /rn:up. Has side effects (checks off, commits, pushes) — run only on explicit /rn:ty.
 disable-model-invocation: true
 ---
 
 # /rn:ty — Approve
 
-Records the user's approval of the pending decision and moves the session on. Changes nothing
-about what was approved.
+Records the user's approval where a fresh conversation will find it. Changes nothing about what
+was approved.
 
 ## Steps
 
-1. **Take up the conductor's role and enter the session.** Read
-   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, then run Entering a session in
+1. **Enter the session** as in Entering a session in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
-
-2. **Name what is being approved, so the verdict cannot land on the wrong thing.** It is the most
-   recent gate or reviewed item presented for a decision — in this conversation, or in `State`'s
-   `Pending` after a resume. Say it back in one line. If more than one is plausible, ask which.
-   Nothing pending → say so and stop.
-
-3. **Advance from the approved point, so the approval has an effect the record shows.**
-   - Plan gate → run task #1 per `${CLAUDE_PLUGIN_ROOT}/references/task.md`.
-   - "Design sign-off" task → check it off per Checking a task off in
-     `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, push, then continue the task loop at the next
-     unchecked task.
-   - "Evaluation sign-off" task → check it off the same way, and in the same commit remove the
-     session's `evaluations/` directory, so what the session leaves is `steering.md` and the
-     deliverable; push, mark the PR ready for review, and close the session with a report that
-     names the merge as the user's next move. The ` ✅` on this task is what marks the session
-     finished — no command offers it for resume again.
-   - A reviewed item → it stands as final; continue whatever was waiting on it.
+2. **Name what is approved.** It is the sign-off task last presented — the first task not yet
+   complete. Say it back in one line. When that task is not a sign-off, nothing is awaiting
+   approval: say so and stop.
+3. **Record the approval.** Mark its step `[x]`, commit `docs: complete task #N — {task name}`, and
+   push.
+4. **Close or hand off.** "Evaluation sign-off" → mark the PR ready for review and report the
+   session closed, opening with the map in Stopping for the user in
+   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; the merge is the user's next move. Otherwise →
+   Handing off to a fresh conversation there, `Feedback` none.

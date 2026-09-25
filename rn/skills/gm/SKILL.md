@@ -1,38 +1,20 @@
 ---
 name: gm
-description: Ask rn to revise what it last presented — /rn:gm <text> revises against that feedback; plain /rn:gm takes the feedback from the session PR's unresolved review threads. Has side effects (revises, commits, pushes, replies on the PR) — run only on explicit /rn:gm.
+description: Ask rn to revise what it last presented — /rn:gm <feedback> takes the feedback as written, plain /rn:gm takes it from the session PR's unresolved review threads — record it in steering.md, and stop so /rn:up revises in a fresh conversation. Has side effects (commits, pushes) — run only on explicit /rn:gm.
 disable-model-invocation: true
 ---
 
 # /rn:gm — Revise
 
-Records a revise verdict, the counterpart of `/rn:ty`. Every piece of feedback gets an answer — a
-change, or one question.
+Records the user's request for a revision where a fresh conversation will find it, so the revision
+starts from the feedback and not from a summary of it.
 
 ## Steps
 
-1. **Take up the conductor's role and enter the session.** Read
-   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, then run Entering a session in
+1. **Enter the session** as in Entering a session in
    `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
-
-2. **Take the feedback from where the user put it, so text and PR comments are not confused.**
-   `$ARGUMENTS` non-empty after trimming → it is the feedback; go to step 3. Empty → the feedback is
-   on the PR; go to step 4. Empty and the session has no PR → say so and stop: the feedback comes
-   as `/rn:gm <text>`.
-
-3. **Revise the pending item against the feedback, then present it again.** The pending item is
-   what was last presented for a decision; with nothing pending, treat the feedback as a direct
-   instruction. Think from what the feedback is for, not from its wording, and apply the same lens
-   to the whole artifact, not only the line named. A change to the deliverable goes through the
-   task loop (`${CLAUDE_PLUGIN_ROOT}/references/task.md`, from step 1). A change to `steering.md`
-   is the conductor's to write — the feedback is the user's word, so the Goal and the Success
-   criteria may move with it — and is then judged per Judging the plan in
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. Re-present it.
-
-4. **Work every unresolved review thread, so nothing the reviewer wrote is lost.** The reviewer
-   on the session PR is the user. Read the PR's review threads (`gh api graphql` on
-   `reviewThreads`, paginated). For each thread that is unresolved and where the reviewer has the
-   last word: address it as in step 3, commit and push, and reply on that thread with what changed
-   and the commit; or, when the ask is unclear, reply with one question only the reviewer can
-   answer, and change nothing. Never resolve a thread — that is the
-   reviewer's act. Report when the queue is empty.
+2. **Take the feedback.** `$ARGUMENTS`, trimmed, not empty → that text, word for word. Empty → the
+   session PR's unresolved review threads; with no PR, ask for the feedback as `/rn:gm <feedback>`
+   and stop.
+3. **Hand off** as in Handing off to a fresh conversation in
+   `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`, with that feedback as `Feedback`.

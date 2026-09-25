@@ -1,6 +1,8 @@
 {
   "name": "rn",
-  "description": "Goal-driven work sessions that outlive a conversation: a goal becomes a steering.md in git, an implementer builds each task and a third-party evaluator judges it on the pull request, and you decide only at the plan, design, and evaluation gates with /rn:ty (approve) and /rn:gm (revise).",
+  "description": "Goal-driven work sessions that outlive a conversation: rn draws your goal out with you, keeps the plan as a steering.md in git, has each task built on a fast model and judged by a third party on a strong one, and brings you in only for decisions that are yours — answered with /rn:ty (approve) and /rn:gm (revise).",
   "version": "0.9.0",
-  "author": { "name": "lovaizu" }
+  "author": {
+    "name": "lovaizu"
+  }
 }

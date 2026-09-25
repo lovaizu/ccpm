@@ -1,94 +1,62 @@
-# Evaluate
+# Evaluate a result
 
-Has a result judged by someone other than its author, against a few named questions about whether
-it does its job — not whether a step ran. Read by Judging the plan in `steering.md` (kind Plan) and
-by `task.md` (kinds Design, Deliverable, Session). What follows an NG — a fix, a retry, a stop —
-and its limit are the caller's; a stop at the limit shows the last verdict, and the count starts
-again from the user's answer.
+Evaluate a result of an `rn` session — its plan, one task's result, or the finished work — by
+whether it reaches the purpose it exists for. You did not make it, and you are not told how it was
+made. Your verdict is read by the conductor, who runs the session, to choose the next move: accept
+the result, send it back, change the plan, or bring the user in; and it is posted on the pull
+request, where the user reads it beside the change it judges. It serves that choice when it says
+whether the result reaches its purpose and which faults decide that.
 
-Every round's verdict is a file in the session's own directory,
-`.rn/{yyyymmdd}-{slug}/evaluations/{NN}-{kind}[-task-{N}].md`, where `{NN}` is the next unused
-number there — `01-plan.md`, `02-plan.md` for its re-judge, `03-design-task-2.md`, and so on. The
-file is committed and pushed, so the user reads every round rendered on the PR beside the diff it
-judged, an NG as much as an OK, and a round closes on a commit rather than on anything posted. The
-directory is removed when "Evaluation sign-off" is approved, so the session still leaves only
-`steering.md` and the deliverable.
+## Plan
 
-## Steps
+The plan is `steering.md`: the Goal, its Acceptance criteria, the Assumptions, and the tasks up to
+the next sign-off.
 
-1. **Caller — put the round on record before it starts, so a conversation that ends mid-round
-   leaves a verdict to find, not a stale one to trust.** Work out the verdict file's path by the
-   rule above. Write in `State`'s `Pending` what is being judged, the commit it stands at (`HEAD`
-   before this record commit), and that path; commit and push. A round's entry is closed only by
-   the commit of its written verdict, never by the next round — an unfinished round stays on record
-   until step 5 closes it.
+- **Does it hold what the user wants?** If every Acceptance criterion held, the Goal — read for why
+  the user wants it, not only its words — would be reached, with nothing missing and nothing added.
+- **Do the criteria survive a change of means?** Each criterion, of the session and of each task,
+  is a state that could be checked on the real thing, not an artifact to produce or a step to run.
+- **Do the tasks reach the next decision?** Each task's Purpose serves an Acceptance criterion; if
+  its Completion criteria held, its Purpose would be reached; in the order their prerequisites
+  allow, the tasks reach the sign-off that ends them, and that sign-off is a decision the user
+  must make.
+- **Is what the plan rests on true?** Each Assumption marked a fact was checked, and none is work
+  still to do or a decision not yet made.
+- **Is nothing lost?** Only for a migrated plan: every task, check-off and `State` fact of the old
+  session is carried into the new one, except unchecked steps that only ran the old `rn`'s review.
 
-2. **Caller — give the judgment to someone who did not build the thing, so the verdict is not
-   colored by the builder's account.** Dispatch `Agent` with `model: opus` and no conversation
-   history — a fresh one every round, so the judge of a fix is never the author of the finding.
-   Hand it this and nothing else — not the builder's account, not what to excuse, not an earlier
-   verdict:
-   - `steering.md` in full — the whole contract, scope decisions included;
-   - which task, when the artifact is one task's result or design;
-   - the artifact — a path or a commit range — and that it is the only thing to read;
-   - the kind and all of that kind's questions below, every round;
-   - a scratch directory outside the repository to work in, removed before it returns, so the only
-     thing it leaves behind is the verdict file;
-   - the verdict file's path, where it writes the verdict it returns, so the caller can commit it
-     without retyping a word;
-   - the language to answer in — the one `steering.md` is written in.
+## Result
 
-3. **Evaluator — answer only the questions for the artifact's kind, so the judgment is about the
-   job the artifact has to do.** Each level is judged against the one above it: Success criteria
-   against the Goal, a task's Objective against the Goal, a task's Success criteria against its
-   Objective. Run or read the thing itself.
+One task's result: the commits named to you, and the files they touch as they stand now.
 
-   **Plan** (`steering.md`)
-   - P1 — If every Success criterion held, would the Goal be achieved — nothing missing, nothing
-     extra?
-   - P2 — Does each task's Objective serve a Success criterion, and do the tasks together, in the
-     order their Prerequisites allow, reach all of them?
-   - P3 — If a task's Success criteria held, would its Objective be achieved, and can each be
-     checked with evidence?
-   - P4 — Does every criterion, at both levels, survive a change of means — is it a state of the
-     world, not an artifact or a step?
-   - P5 — Is each Assumption a checked fact or a named assumption, and is none of them work still
-     to do or a decision not yet made?
-   - Migration (a migrated plan only) — Is every task, check-off, `State` fact and pending item of
-     the old file present in the new one? By design, and not a loss: unchecked steps that only ran
-     the old `rn`'s own review and its process files are dropped, and a check-off the commit log
-     proves is added.
+- **Is the task's Purpose reached?** On the thing itself — run it on a real case where it can run —
+  each Completion criterion holds, and the Purpose holds beyond their letter.
+- **Does it serve the Goal?** It moves the session toward its Acceptance criteria, follows the
+  Rules, and adds nothing the Purpose did not ask for.
+- **Is the whole still sound?** What worked before still works, and what changed reads as one piece
+  with what was there.
 
-   **Design** (the approach, written before build)
-   - D1 — Does it reach the Goal — can each Success criterion be traced to the part of the design
-     that produces it?
-   - D2 — Does every part earn its place — for each, what fails if it is removed? Nothing is there
-     without a reason.
-   - D3 — Where a choice existed, is it made, with its why recorded against the Goal — nothing left
-     for the builder to guess, and a later change can be judged against it?
+## Session
 
-   **Deliverable** (one task's result)
-   - E1 — Is the task's Objective achieved — judged on the thing itself, run or read, with each
-     Success criterion holding on evidence a reader can check?
-   - E2 — Is there nothing beyond the Objective — no added scope, no residue, nothing done "in
-     case"?
-   - E3 — Is the whole still sound — what worked before still works, and what was touched reads as
-     one piece with what was there?
+The finished work, before the user's Evaluation sign-off.
 
-   **Session** (the finished work, at "Evaluation sign-off")
-   - S1 — Does every Success criterion hold on the real artifacts, with evidence?
-   - S2 — Read the Goal as the user wrote it: is it achieved — or did the criteria miss something
-     the work exposed?
-   - S3 — Has the session left only `steering.md`, its `evaluations/` and the deliverable — in the
-     tree and outside it?
+- **Does every Acceptance criterion hold?** Checked on the real artifacts, by running them where
+  they run.
+- **Is the Goal reached as the user meant it?** Read the Goal again: the work does what the user
+  wanted, or the criteria missed something the work has since exposed.
+- **Is only the work left behind?** The session leaves `steering.md` and the deliverable — no
+  scratch, no process records, in the repository or outside it.
 
-4. **Evaluator — return one line per question and one overall verdict, so the caller can act
-   without re-reading the artifact.** Each line: OK or NG, then the evidence. Then the overall
-   verdict. Written to the verdict file, headed `# Evaluation — {kind}[ — task #N] — {short
-   commit}`, and returned as the final message.
+## Evaluating
 
-5. **Caller — commit the verdict as the evaluator wrote it, so the user reads it rendered next to
-   what it judged and it stays addressable.** A line without evidence is not a verdict: send it
-   back first. Then compare the file to what was returned, commit it alone as
-   `docs: evaluation {NN} — {kind}[ — task #N] — {OK|NG}`, push, and write that commit into the
-   round's `Pending` entry as where the verdict is. The file stays until the session closes.
+1. Read `steering.md` in full, and the result as it stands now. For a migrated plan, read the old
+   session at the commit you are given too.
+2. State the purpose of the result from `steering.md` itself. The questions for its kind above are
+   answered against that purpose.
+3. Where running settles a question, run it, in a scratch directory outside the repository that you
+   remove before returning. Leave the repository as you found it.
+4. For each question, answer with Good and More. Good is what already serves the purpose, so a
+   change keeps it; More is what would bring the result closer to it, with the concrete case where
+   it falls short. Point at the evidence — a `path:line`, a command and what it printed.
+5. Return as your final message, in the language `steering.md` is written in: first, whether the
+   result reaches its purpose and the Mores that decide it; then each question's Good and More.
