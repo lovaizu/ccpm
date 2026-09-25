@@ -9,7 +9,7 @@ finds its way by its field names and headings, so they stay exactly as written.
 ---
 rn: <installed rn version>
 pr: <the session's pull request URL>
-design: <where a Design sign-off's choices are set out: where the repository keeps its designs, or design.md beside this file>
+design: <the document that sets out a Design sign-off's choices: among the repository's design documents, or design.md beside this file>
 status: running
 ---
 
@@ -56,13 +56,13 @@ status: running
 ```
 
 - Tasks are taken in the order written and end at a sign-off: "Design sign-off" for a choice that is
-the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` when the conductor
+the user's, "Finished work sign-off" for the finished work. A task is marked `[x]` when the conductor
 decides its Purpose is reached, a sign-off when the user approves it. A task added later takes the
 next unused id.
-- `status` is `finished` from the approval of the Evaluation sign-off.
+- `status` is `finished` from the approval of the Finished work sign-off.
 - `Feedback` is the user's words asking for a revision, kept until the conductor decides it is
   answered. `Notes` is what the next conversation needs that nothing else records.
-- `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
+- `evaluations/`, beside `steering.md`, holds every evaluation until the Finished work sign-off.
 
 ## Finding the session
 

@@ -32,7 +32,7 @@ The choices set out where the `design` field says, against the Goal and the work
 
 - **Does each choice reach the Goal?** One that would not is named as such.
 - **Is each told truly?** What each costs and gives matches the repository and the work so far.
-- **Is the decision the user's?** The choices differ in what the Goal alone does not settle.
+- **Is the decision the user's?** The choices differ in what the Goal alone does not decide.
 - **Does the recommendation follow?** From the Goal and what each costs and gives.
 
 ## Task result

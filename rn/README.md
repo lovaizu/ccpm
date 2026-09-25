@@ -47,8 +47,8 @@ flowchart LR
 ```
 
 - **`rn`, the conductor, decides every next move; nobody else does.** One agent, the implementer,
-  implements each task; another, the evaluator, evaluates it and reports what holds and what
-  doesn't; you answer only the decisions that are yours.
+  implements each task; another, the evaluator, evaluates it and says what holds and what doesn't;
+  you answer only the decisions that are yours.
 - **Every stop is a clean point to `/clear`.** `/rn:ty`, `/rn:gm` and `/rn:dn` record your answer —
   `/rn:gm` also revises by it — and stop; `/rn:up` reads the record and goes on.
 - **`/rn:dn` is for stopping in the middle of the work.** At a stop, your answer is already the
@@ -89,13 +89,13 @@ that is yours, since what comes after depends on it — and puts it on a draft p
   Draft PR: https://github.com/you/repo/pull/42
 ```
 
-The block on top heads every message that stops for you: ✅ done, 👉 now, ⬜ ahead.
+The map on top heads every message that stops for you: ✅ done, 👉 now, ⬜ ahead.
 
 ### 2. Decide — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
 and plain `/rn:gm` takes your review comments off the pull request. Where the choice is yours,
-`/rn:ty` takes the recommended option and `/rn:gm <option>` another. `rn` records the approval, or
+`/rn:ty` takes the recommended choice and `/rn:gm <choice>` another. `rn` records the approval, or
 revises the plan by your feedback, and stops there.
 
 ```console
@@ -153,7 +153,7 @@ fresh conversation.
 
 ### 6. Finish
 
-At the Evaluation sign-off, the last one, you approve the finished work. On `/rn:ty` the pull
+At the Finished work sign-off, the last one, you approve the finished work. On `/rn:ty` the pull
 request is marked ready; the merge is yours. The session leaves behind only its `.rn/` directory and
 the work itself.
 

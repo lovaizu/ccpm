@@ -15,14 +15,14 @@ without asking again. It is recorded and the session stops, so they can clear th
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
    not a sign-off → say what the session is doing, and stop.
-2. Mark the sign-off `[x]`. At a Design sign-off, record the recommended choice as a Fact in
-   `Assumptions`. At the Evaluation sign-off, set `status` to `finished`, remove `evaluations/`, and
-   mark the pull request ready with `gh pr ready`.
+2. Mark the sign-off `[x]` and set `Feedback` to none. At a Design sign-off, record the recommended
+   choice as a Fact in `Assumptions`. At the Finished work sign-off, set `status` to `finished`, remove
+   `evaluations/`, and mark the pull request ready with `gh pr ready`.
 3. Commit, push, and say in the user's language:
 
    ```
    ● Approved: {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.
    ```
 
-   At the Evaluation sign-off, say instead that the session is finished and the merge is theirs.
+   At the Finished work sign-off, say instead that the session is finished and the merge is theirs.
 4. When the user says to go on, go on as `/rn:up` does.

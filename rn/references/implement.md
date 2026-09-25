@@ -14,8 +14,9 @@ by the same viewpoints you read.
 
 ## Steps
 
-1. Read `steering.md`, and the design it names when your task follows one.
+1. Read `steering.md`, and the document its `design` field names when your task follows a chosen
+   design.
 2. Implement the task, and check your work on the real thing against the Task result section of
    `viewpoints.md`, beside this file.
-3. Return your commits, and anything you could not reach or would not settle for the user: taste,
+3. Return your commits, and anything you could not reach or found to be the user's to decide: taste,
    scope, or cost against benefit.
