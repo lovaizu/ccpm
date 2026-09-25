@@ -95,26 +95,26 @@ Read these when writing or changing a plan.
   - **Notes**: <what the next conversation needs that nothing else records>
   ```
 
-A task is complete when every step under it is `[x]`. Its check-off is one commit,
-`<type>: complete task #N — <task name>`, the only commit whose message carries `complete task #`.
+A task is complete when every step under it is `[x]`.
 
 ## Entering a session
 
-Every command but `/rn:on` starts here, so it acts on the right session in its current shape.
+Every command but `/rn:on` starts here, so it acts on the right session. A session lives on its own
+branch, so the branch names it.
 
-1. Find `steering.md`. The path known in this conversation; otherwise
-   `git log --format= --name-only --diff-filter=AM -- '*/steering.md' | awk 'NF && !seen[$0]++'`,
-   keeping the paths that exist on disk and whose "Evaluation sign-off" is not yet complete. One →
-   use it. Several → prefer `Status: paused`, then the most recently touched; `/rn:up` proposes it
-   and waits, the other commands say which one they took. None → say "No open session. Run
-   `/rn:on` to start." and stop.
-2. Compare the `Rn version:` line with `version` in `plugin.json` under the rn plugin root. On a
-   mismatch, run Migration below before going on.
+1. The path known in this conversation, if there is one.
+2. Otherwise the `.rn/*/steering.md` this branch changed:
+   `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`.
+3. Otherwise the `.rn/*/steering.md` on disk whose `State` reads `Status: paused`: propose it, with
+   its branch to switch to, and wait.
+
+More than one found → ask which. None → say "No open session. Run `/rn:on` to start." and stop.
 
 ## Migration
 
-A session written under an older `rn` goes on under this one with nothing run by hand and nothing
-it recorded lost.
+`/rn:up` runs this when the `Rn version:` line differs from `version` in `plugin.json` under the rn
+plugin root, so a session written under an older `rn` goes on under this one with nothing run by
+hand and nothing it recorded lost.
 
 1. Read the old `steering.md` and everything else in its directory.
 2. Rewrite `steering.md` in the template's shape. Carry the Goal, criteria, Assumptions, Rules, the
@@ -127,4 +127,4 @@ it recorded lost.
 4. Set `Rn version:` to the installed version; commit `chore: migrate session to rn <version>` and
    push.
 5. Have the migrated plan evaluated as in `conductor.md`, kind Plan, handing the evaluator the
-   commit before the migration as the old session, then go on with the command that found it.
+   commit before the migration as the old session, and decide the next move on its verdict there.

@@ -15,7 +15,8 @@ nothing the user decided is lost. Runs under the conductor's role:
 1. **Start from a known tree.** Clean → go on. Dirty → find the session as in step 2, read-only,
    then propose a `wip:` commit or discarding the changes, and wait for the answer.
 2. **Enter the session** as in Entering a session in
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
+   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, and bring it current as in Migration there when
+   its `Rn version:` differs from `version` in `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`.
 3. **Read `State`, then set it back to running.** Keep `Next`, `Feedback` and `Notes` in mind for
    what follows; replace `State` with `- **Status**: running`, commit `chore: resume — {slug}`, and
    push, so only a stopped session reads `paused`.

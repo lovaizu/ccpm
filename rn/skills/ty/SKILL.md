@@ -16,8 +16,8 @@ was approved.
 2. **Name what is approved.** It is the sign-off task last presented — the first task not yet
    complete. Say it back in one line. When that task is not a sign-off, nothing is awaiting
    approval: say so and stop.
-3. **Record the approval.** Mark its step `[x]`, commit `docs: complete task #N — {task name}`, and
-   push.
+3. **Record the approval.** Mark its step `[x]`, commit `docs: complete task #N — {task name}` —
+   the marker only a check-off carries — and push.
 4. **Close or hand off.** "Evaluation sign-off" → mark the PR ready for review and report the
    session closed, opening with the map in Stopping for the user in
    `${CLAUDE_PLUGIN_ROOT}/references/conductor.md`; the merge is the user's next move. Otherwise →

@@ -28,9 +28,6 @@ themselves, so what reaches them is the brief and the session, not your summary 
 5. "Plan sign-off": have the plan evaluated, kind Plan; decide the next move. Then stop for the
    user with the plan.
 
-At a sign-off, a verdict already on the pull request for the thing as it stands now is reused, so
-a resume does not evaluate it again.
-
 ## Having a result evaluated
 
 Dispatch the evaluator — `Agent`, `model: opus`, a fresh one each time — with: read `evaluate.md`
@@ -39,19 +36,23 @@ commits, or the old session's commit for a migrated plan). Hand it nothing else:
 implementer's account and not an earlier verdict, so it judges the result and not the story.
 
 Post its final message on the session's pull request as it wrote it
-(`gh pr comment --body-file`), headed with the kind and the task, so the user reads every verdict
-beside the change it judges. With no pull request, show it in the conversation instead.
+(`gh pr comment --body-file`), headed with the kind, the task and the short commit it judged, so
+the user reads every verdict beside the change it judges. With no pull request, show it in the
+conversation instead.
 
 ## Deciding the next move
 
 Read the verdict and the result, and act on what the Goal needs:
 
 - The result reaches its purpose → fold in what the work taught (below); for a build task, mark its
-  steps `[x]`, commit the check-off, push, and take the next task.
+  steps `[x]`, commit the check-off as `<type>: complete task #N — <task name>`, push, and take the
+  next task.
 - The result falls short → send it back to whoever can fix it: the implementer with the verdict, or
-  yourself when the fault is in `steering.md`. Evaluate again after the fix.
+  yourself when the fault is in `steering.md`. Evaluate again after the fix. At a sign-off there is
+  no build task to send it back to, so add one before the sign-off whose Purpose is what the verdict
+  shows missing, and run it.
 - The verdict judges something other than the purpose — it fails the result over a detail, or
-  passes one that misses — → a fresh evaluator, told the part of the purpose to look at.
+  passes one that misses — → a fresh evaluator, handed the lines of `steering.md` it passed over.
 - The fix would change the Goal, an Acceptance criterion or an approved approach; the same fault
   comes back after a fix; or the way forward is a matter of taste, scope, or cost the user weighs →
   stop for the user now, with the choice and your recommendation. Their answer goes into
@@ -69,9 +70,9 @@ task not yet complete.
 1. Take the feedback: the text in `State`, or the pull request's review threads that are unresolved
    and where the reviewer has the last word (`gh api graphql` on `reviewThreads`, paginated).
 2. Work out what each piece of feedback is for, and apply that to the whole of what was presented,
-   not only the line it names. A change to the deliverable goes to the implementer with the
-   feedback, then evaluation, as in Running; a change to the plan is yours to write, then the plan
-   is evaluated.
+   not only the line it names. A change to the deliverable becomes a task before the sign-off, whose
+   Purpose is what the feedback asks for, run as in Running with the feedback handed to the
+   implementer; a change to the plan is yours to write, then the plan is evaluated.
 3. Reply on each thread with what changed and the commit — or, when the ask is unclear, with one
    question only the reviewer can answer. Leave resolving the thread to the reviewer.
 4. A sign-off → stop for the user with it again. Any other task → go on as in Running.
