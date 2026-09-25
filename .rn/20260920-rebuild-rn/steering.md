@@ -76,6 +76,16 @@ wrong with it is visible.
 - [x] Fix what the tries and evaluations exposed — as the shape `rn` should have, not patches on
       the lines named; re-try with a goal that places a "Design sign-off" task so the Design kind
       and the `Design:` line run for real; re-evaluate
+- [ ] Settle `viewpoints.md` with the user — what a prompt is judged on, per what it covers:
+      structure, generation, evaluation, work steps
+- [ ] Rewrite `rn` on `viewpoints.md`, carrying two requests from a real session
+      (mamezou-devsite-2f, 2026-09-25):
+  - `/rn:on` draws the goal out of the user — shows its reading one point at a time until the
+    user's unspoken aim and the approach are agreed — and plans only up to the next decision,
+    adding the rest once it is made
+  - `/rn:ty`, `/rn:gm` and `/rn:dn` each record the user's decision (approve / revise / none),
+    write `State` from the conversation, and stop — so `/clear` then `/rn:up` resumes with no
+    added words; to go on without clearing, the user just says so
 - [ ] Take the user's verdict via `/rn:ty` / `/rn:gm`
 
 **Completion criteria**:
