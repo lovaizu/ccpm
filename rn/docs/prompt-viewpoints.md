@@ -32,8 +32,17 @@ its purpose and which faults decide that.
   where it can, by running the result on a real case rather than reading its text. It neither passes
   work that misses the purpose nor fails work that reaches it over details.
 
-## Work steps
+## Role, purpose and steps
 
+- **Does it open with the reader's role?** It says who the reader is in this run and who else takes
+  part, where the reader could not tell otherwise — a fresh agent knows nothing of the conversation
+  that started it.
+- **Is the purpose stated once, before the steps?** The essential purpose and why it matters, in one
+  place; steps do not repeat it or give their own reasons.
+- **Is it written for its reader and their context?** It leaves out what the reader already knows —
+  what the model knows in general, what the plugin is — and what they can read from the files they
+  are given. The same thing has the same word across the files, and each sentence says one thing.
+- **Are the steps numbered and short?** One action each, in the order of the work.
 - **Are only context-dependent work rules written as steps?** Steps carry what the agent could not
   know from the purpose: where output lands, the repository's conventions, the shape a later step or
   a machine reads. What the agent could judge from the purpose is not written as a step.
