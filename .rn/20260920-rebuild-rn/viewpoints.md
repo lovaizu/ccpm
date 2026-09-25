@@ -8,10 +8,11 @@ its purpose and which faults decide that.
 
 ## Structure
 
-- **Are generation and evaluation split?** The result is evaluated by an agent other than the one that
-  made it, without that agent's conversation. The maker's own check is never the final verdict.
-- **Is the evaluator kept clear of the maker's pull?** It is handed the purpose, the viewpoints and
-  the result — not the maker's account or excuses, and not an earlier round's verdict.
+- **Are generation and evaluation split?** The result is evaluated by an agent other than the
+  generator, without the generator's conversation. The generator's own check is never the final
+  verdict.
+- **Is the evaluator kept clear of the generator's pull?** It is handed the purpose, the viewpoints
+  and the result — not the generator's account or excuses, and not an earlier round's verdict.
 - **Does a role between them decide the next move by the purpose?** After each verdict, someone
   decides — by whether it serves the purpose, not by a count — to run again, change the viewpoints,
   return to the human, or stop.
