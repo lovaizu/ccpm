@@ -158,21 +158,8 @@ the new `rn`.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-25
-- **Last completed**: #1 — `viewpoints.md` settled with the user (`e5aae75`): evaluate a prompt by
-  whether it reaches its purpose; questions per structure / generation / evaluation / work steps;
-  answers as Good / More, verdict first. Written as a body that serves as a SKILL.md (frontmatter
-  added only when it becomes one) or as a subagent brief.
-- **Next**: #1 — rewrite `rn` on `viewpoints.md`; the user said to proceed after resume.
-- **Notes**: branch `worktree-rebuild-rn`, PR #32. Agreed with the user, not yet in `Goal` /
-  `Acceptance criteria`: the rebuild's goal is that the main thread works as a conductor — holds
-  the purpose, brings the user in early and as often as their decisions need, and decides each next
-  move by the purpose rather than by a count; repeated try/evaluate cycles were dropped as not
-  serving round 1's purpose. Way of working: after each change, an opus subagent evaluates the
-  changed files per `viewpoints.md`; real runs at key points (e.g. `/rn:on` on a goal the user
-  cannot yet put into words). Open decision: delete round 1's `rn/skills/`, `rn/references/` and
-  `rn/docs/design.md` and write them fresh (recommended), keeping `plugin.json`, `README.md`,
-  `CHANGELOG.md`. The last evaluation of the current `rn` (on/conductor/task/evaluate) found four
-  deciding Mores: next move set by a count; "only thing to read" vs E3/S3; conductor's rules beside
-  the flow (PR review threads have no step); implementer gets a one-line Goal and no self-check.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
