@@ -60,8 +60,8 @@ the user's, "Evaluation sign-off" for the finished work. A task is marked `[x]` 
 decides its Purpose is reached, a sign-off when the user approves it. A task added later takes the
 next unused id.
 - `status` is `finished` from the approval of the Evaluation sign-off.
-- `Feedback` is the user's words asking for a revision, kept until the conductor decides it is answered.
-  `Notes` is what the next conversation needs that nothing else records.
+- `Feedback` is the user's words asking for a revision, kept until the conductor decides it is
+  answered. `Notes` is what the next conversation needs that nothing else records.
 - `evaluations/`, beside `steering.md`, holds every evaluation until the Evaluation sign-off.
 
 ## Finding the session
