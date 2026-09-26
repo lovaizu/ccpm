@@ -29,9 +29,10 @@ takes what is in front:
   commits and what it found to be the user's. Have them evaluated, and decide.
 - **A sign-off**: at a Design sign-off `evaluations/` holds no Design evaluation for, work out with
   the user what its Purpose leaves open, as steps 1–2 of `${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`
-  work out the Goal. Write it into the repository's README and design document, a new one beside the
-  README when it has none, to the Design section of `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md`,
-  and name the design document in `design`. Have what the sign-off decides on, the plan, the design,
+  work out the Goal. Where to write it is part of that: search the repository for the README and
+  the design document of what the work changes, and propose them; where none exists, propose
+  `README.md` and `docs/design.md` beside it. Write it there to the Design section of
+  `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md`, and name the design document in `design`. Have what the sign-off decides on, the plan, the design,
   or the finished work, evaluated when it changed since its last evaluation, and decide.
 - **None, after a Design sign-off**: write the tasks that follow from the design, as far as the
   user's next decision. Have the plan evaluated, and decide.

@@ -9,7 +9,7 @@ finds its way by its field names and headings, so they stay exactly as written.
 ---
 rn: <installed rn version>
 pr: <the session's pull request URL>
-design: <the repository's design document the work is built toward, beside its README; none until a Design sign-off>
+design: <the design document the work is built toward, agreed with the user at a Design sign-off; none until then>
 status: running
 ---
 

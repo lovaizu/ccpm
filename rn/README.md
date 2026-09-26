@@ -130,7 +130,8 @@ Every evaluation is committed with the session, so you can read it on the pull r
 - **a design** — where the work changes what your product should be, or taste, scope, or cost
   against benefit is yours to weigh, including when the current way keeps falling short. `rn` talks
   it through with you one point at a time, as it did the goal, then writes it into your README and
-  design document for you to approve. The work is built to them, and they stay with your product;
+  design document — the ones it finds in your repository, or `README.md` and `docs/design.md` when
+  there are none — for you to approve. The work is built to them, and they stay with your product;
 - **the finished work** — whether it does what you wanted.
 
 ### 5. Step away — `/rn:dn`, then `/rn:up`
