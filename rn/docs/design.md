@@ -142,6 +142,9 @@ Everything a session needs is in its directory `.rn/{date}-{slug}/`, which holds
   assumption below.
 - **Planning only to the next decision** means planning again after each. It is paid because a plan
   past it is rewritten anyway.
+- **Evaluating each thing once** leaves a fix seen only by its maker's check, which leans toward its
+  reasons. It is paid because of the fourth assumption below; what a fix gets wrong is left to the
+  evaluation of the finished work and to the user's sign-off.
 - **Essentials over steps** make a run less predictable than a script. It is paid because steps cap
   the work at what their writer foresaw.
 - **Not taken — the evaluator decides the next move.** It would retry work that serves the Goal over
@@ -156,3 +159,5 @@ Assumptions, not yet checked:
   better than essentials.
 - An evaluator told only the Goal and shown only the work finds what the user would find wrong.
 - A design settled without the user is what they most often find wrong only at the end.
+- Rounds of evaluation run by AI alone keep raising points that are not essential and do not settle;
+  one round, with a person deciding from its result, takes less time and costs less.
