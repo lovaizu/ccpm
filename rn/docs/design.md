@@ -25,7 +25,7 @@ prompts under `skills/` and `references/` carry it out; where one differs from t
 - **Every stop is a point where the user can clear the conversation.** A long session outgrows any
   one conversation, so everything the next one needs is in `steering.md` and git, and nowhere else.
 
-## Who does what
+## Roles
 
 | | Does | Decides |
 |---|---|---|
