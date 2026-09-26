@@ -2,9 +2,17 @@
 
 Most AI agents need a carefully written prompt and someone watching them to get a task done. `rn`
 doesn't: give it a goal, roughly, with `/rn:on`. It works out with you what you actually want, then
-carries the work through without you, and calls you back only for the decisions that are yours. The
-session lives in git, so it survives a full context, a `/clear`, or the end of the day. You can start
-right now, with nothing prepared.
+carries the work through without you, and calls you back only for the decisions that are yours. One
+goal carried through to the end is a session, and a session lives in git — its record in `.rn/` in
+your repository, its work on a pull request — so it survives a full context, a `/clear`, or the end
+of the day. You can start right now, with nothing prepared.
+
+## What you need
+
+- [Claude Code](https://code.claude.com)
+- A git repository with its remote on GitHub
+- The [GitHub CLI](https://cli.github.com) `gh`, logged in to that GitHub, since `rn` opens and
+  updates a pull request
 
 ## Install
 
@@ -16,44 +24,42 @@ plugin:
 > /plugin install rn@ccpm
 ```
 
-## How it works
+## How a session goes
+
+A session is always either at work, or stopped for you at a sign-off: a point where you approve
+something before the work goes past it. There are three kinds: the Plan sign-off first, a Design
+sign-off where the work changes what your product should be or a decision of yours comes up, and the
+Finished work sign-off last.
 
 ```mermaid
-flowchart TD
-  G([Your rough goal]) --> O[rn works out with you<br/>what you really want]
-  O --> P([You approve the plan<br/>on the draft PR])
-  P --> B[One agent implements a task]
-  B --> J[Another agent evaluates it,<br/>not told how it was made]
-  J --> C{rn decides the next move<br/>by the goal}
-  C -->|retry, or the next task| B
-  C -.->|a decision that is yours| Y([You answer<br/>/rn:ty or /rn:gm])
-  Y --> B
-  C ==>|goal reached| D([You approve the finished work])
+stateDiagram-v2
+    state "Plan sign-off" as Plan
+    state "At work" as Work
+    state "Design sign-off" as Design
+    state "Finished work sign-off" as Finished
+
+    [*] --> Plan: /rn:on
+    Plan --> Plan: /rn:gm
+    Plan --> Work: /rn:ty
+    Work --> Work: /rn:dn, /rn:up
+    Work --> Design: a design is yours to settle
+    Work --> Finished: all tasks done
+    Design --> Design: /rn:gm
+    Design --> Work: /rn:ty
+    Finished --> Work: /rn:gm adds tasks
+    Finished --> [*]: /rn:ty
 ```
 
-## How it's put together
-
-```mermaid
-flowchart LR
-  ON["/rn:on<br/>start"] --> W[rn works]
-  W --> S([stops for you:<br/>plan · design · finished work])
-  S --> TY["/rn:ty<br/>OK"]
-  S --> GM["/rn:gm<br/>feedback"]
-  W -.-> DN["/rn:dn<br/>pause mid-work"]
-  TY --> C["/clear"]
-  GM --> C
-  DN --> C
-  C --> UP["/rn:up<br/>resume"] --> W
-```
-
-- **`rn`, the conductor, decides every next move; nobody else does.** One agent, the implementer,
-  implements each task; another, the evaluator, evaluates it and says what holds and what doesn't;
-  you answer only the decisions that are yours.
-- **Every stop is a clean point to `/clear`.** `/rn:ty`, `/rn:gm` and `/rn:dn` record your answer —
-  `/rn:gm` also revises by it and has the revision evaluated — and stop; `/rn:up` reads the record
-  and goes on.
-- **`/rn:dn` is for stopping in the middle of the work.** At a stop, your answer is already the
-  record.
+- **`/rn:ty` approves, `/rn:gm` asks for changes.** Either one acts on your answer and stops. Say "go
+  on" to continue in the same conversation, or `/clear` first when you want a fresh one, then
+  `/rn:up`.
+- **`/rn:dn` pauses the work anywhere**, and `/rn:up` picks it up again, in this conversation or a new
+  one.
+- **A command with nothing to do where the session stands tells you where it stands.** `/rn:up` at a
+  sign-off you have not answered stops there again.
+- **`/rn:up` also brings a session started under an earlier `rn` up to date**: it reads the old plan
+  and the work done, asks only what they leave unclear, and stops for you to approve the new plan, on
+  the same branch and pull request.
 
 ## A session, start to finish
 
@@ -77,8 +83,8 @@ you agree. It looks up what the repository can answer instead of asking you.
   a retry or a clear message would count too. Is that right?
 ```
 
-Once the goal and the way to it are agreed, `rn` writes the plan — only as far as the next decision
-that is yours, since what comes after depends on it — and puts it on a draft pull request.
+Once the goal and the way to it are agreed, `rn` writes the plan as far as your next decision and
+puts it on a draft pull request.
 
 ```console
 ● ── payment-fix: customers who pay get through ──
@@ -90,62 +96,57 @@ that is yours, since what comes after depends on it — and puts it on a draft p
   Draft PR: https://github.com/you/repo/pull/42
 ```
 
-The map on top heads every message that stops for your decision: ✅ done, 👉 now, ⬜ ahead.
+The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahead.
 
-### 2. Decide — `/rn:ty` and `/rn:gm`
+### 2. Where you are called back
+
+`rn` stops for you only where the call is yours:
+
+- **the plan** — before any work starts;
+- **a design** — where the work changes what your product should be, or where taste, scope, or cost
+  against benefit is yours to weigh, as when the current way does not settle however it is fixed.
+  `rn` talks it through with you one point at a time, as it did the goal, and writes it into your
+  README and design document — the ones it finds in your repository, or `README.md` and
+  `docs/design.md` when there are none. You approve those, and the work is built to them;
+- **the finished work** — whether it does what you wanted.
+
+### 3. Answer — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
-and plain `/rn:gm` takes your review comments off the pull request. `rn` records the approval and
-stops; on feedback it revises, has the revision evaluated, and stops again for your answer.
+and plain `/rn:gm` takes your review comments off the pull request.
 
 ```console
 > /rn:ty
 
-● Approved: Plan sign-off. Next: /clear, then /rn:up — or say "go on" to continue here.
+● Approved: Plan sign-off. Next: say "go on", or /clear and /rn:up.
 ```
 
-A fresh conversation picks the session up from what was recorded, so a long session never runs out
-of room.
+### 4. While it works
 
-### 3. While it works
-
-You don't watch. Each task is implemented by one agent and evaluated by another, which is told the
-goal but not how the work was made — so work passes because it does its job, not because its maker
-says so. Between them, `rn` decides the next move by the goal, not by the evaluator's word: accept,
-retry, revise the plan, or call you in. Each decision is one line, so when you glance back
-you can follow it:
+You don't watch. Each task is made by one agent and evaluated by another, so work passes because it
+does its job, not because its maker says so. Each time `rn` decides what to do next, it says so in
+one line, so when you glance back you can follow it:
 
 ```console
 ● #2 reproduce the timeout ── decided: not reached (the test passes without the fault) → retry
 ● #2 reproduce the timeout ── decided: reached → #3
 ```
 
-Every evaluation is committed with the session, so you can read it on the pull request.
-
-### 4. Called back
-
-`rn` stops for you only where the call is yours:
-
-- **the plan** — before any work starts;
-- **a design** — where the work changes what your product should be, or taste, scope, or cost
-  against benefit is yours to weigh, including when the current way keeps falling short. `rn` talks
-  it through with you one point at a time, as it did the goal, then writes it into your README and
-  design document — the ones it finds in your repository, or `README.md` and `docs/design.md` when
-  there are none — for you to approve. The work is built to them, and they stay with your product;
-- **the finished work** — whether it does what you wanted.
+Every evaluation is committed with the session, so you can read it on the pull request. Why `rn` is
+built this way is in its [design document](./docs/design.md).
 
 ### 5. Step away — `/rn:dn`, then `/rn:up`
 
 Context nearly full in the middle of the work, or done for the day: `/rn:dn` records where the
-session stands and pushes everything. Run `/clear` yourself (a plugin can't), then `/rn:up` in the
-fresh conversation.
+session stands and pushes everything. Run `/clear` yourself when you want a fresh conversation (a
+plugin can't), then `/rn:up`.
 
 ```console
 > /rn:dn
 
 ● ── payment-fix: customers who pay get through ──
   ✅ #1 Plan sign-off
-  👉 #2 reproduce the timeout ── stopped here; next: /clear, then /rn:up
+  👉 #2 reproduce the timeout ── stopped here; next: /rn:up
   ⬜ #3 Design sign-off
 
 > /clear
@@ -156,28 +157,14 @@ fresh conversation.
 
 ### 6. Finish
 
-At the Finished work sign-off, the last one, you approve the finished work. On `/rn:ty` the pull
-request is marked ready; the merge is yours. The session leaves behind only its `.rn/` directory and
-the work itself.
-
-## Coming from an earlier rn
-
-A session started under any earlier version of `rn` is brought up to date the next time you run
-`/rn:up` on it:
-`rn` reads the old plan and the work done, asks only what they leave unclear, and stops for you to
-approve the new plan — on the same branch and pull request.
+At the Finished work sign-off, you approve the finished work. On `/rn:ty` the pull request is marked
+ready; the merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
 
 ## Why these names?
 
-`on` / `dn` / `up` follow a race:
+`on` / `dn` / `up` follow a race: **on** your marks, cool **d**ow**n** for a pause, warm **up** to
+go on. `ty` / `gm` are two thanks: **t**hank **y**ou approves, **g**ood, **m**ore asks for more.
 
-- **`on`** — *on your marks.* You take your place, facing the goal.
-- **`dn`** — *cool down.* You ease off for now — a pause, not quitting.
-- **`up`** — *warming up.* You warm back up and go on from where you stopped.
+## License
 
-`ty` / `gm` are the two answers to a decision, and both are thanks:
-
-- **`ty`** — *thank you.* You approve by thanking.
-- **`gm`** — *good, more.* You thank it, and ask for more.
-
-Either one acts on your answer and stops; the work goes on at the next `/rn:up`.
+[MIT](../LICENSE)
