@@ -81,10 +81,11 @@ it up to date; any other command asks the user to run `/rn:up` first, and stops.
 
 ## Bringing an older session up to date
 
-The old `steering.md` is the user's request and the record of the work so far. Rebuild the session
-from it through `/rn:on`, rather than converting a format that changed from version to version.
+The old `steering.md` is the user's request and the record of the work so far. The session is brought
+up to date by taking `/rn:on`'s steps on it, rather than by converting a format that changed from
+version to version.
 
 1. `git mv` it to `steering.old.md` beside it.
-2. Take the steps of `/rn:on` (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`) on the session's branch,
-   pull request, and directory, with `steering.old.md` as the request, removed once `steering.md` is
-   written: ask only what it leaves unclear, and plan from the work already done.
+2. Take the steps of `/rn:on` (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`), the session's branch,
+   pull request, and directory in place of new ones, with `steering.old.md` as the request, removed
+   once `steering.md` is written: ask only what it leaves unclear, and plan from the work already done.

@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 ## Purpose
 
-Every piece of work and every evaluation in the session is evaluated against the Goal set here, so the
+Every piece of work and every decision in the session rests on the Goal set here, so the
 Goal must be what the user really wants, not their first words: a plan built on the words reaches the
 wrong thing, however well it is carried out, and the user finds out only at the end. The plan goes only
 as far as the user's next decision, since what follows depends on it.
@@ -21,11 +21,11 @@ as far as the user's next decision, since what follows depends on it.
 2. Ask one question at a time, with your reading, what it decides, and the answer you recommend,
    until you both see the same Goal and way, and nothing the plan rests on is assumed without their
    knowing.
-3. On the current branch when it is not the default branch, otherwise on a new branch from the
-   default branch, write `.rn/{yyyymmdd}-{slug}/steering.md` from
-   `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of the repository's documents, with
-   `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. The slug names what the work produces.
-4. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
+3. Work on the current branch when it is not the default branch, otherwise on a new branch from the
+   default branch, in `.rn/{yyyymmdd}-{slug}/`, the slug naming what the work produces.
+4. Write `steering.md` there from `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of
+   the repository's documents, with `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`.
+5. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
    the body of the branch's pull request, opening a draft one when it has none, and write its URL in
    `pr`.
-5. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.
+6. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

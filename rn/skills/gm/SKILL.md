@@ -1,6 +1,6 @@
 ---
 name: gm
-description: Ask for changes to what an rn session stopped for — the plan, a design choice, or the finished work — from the feedback given, or from the review comments on the pull request; revise the session by it and stop. It commits and pushes, so run it only on an explicit /rn:gm.
+description: Ask for changes to what an rn session stopped for — the plan, a design, or the finished work — from the feedback given, or from the review comments on the pull request; revise the session by it, have the revision evaluated, and stop. It commits and pushes, so run it only on an explicit /rn:gm.
 disable-model-invocation: true
 ---
 
@@ -8,9 +8,10 @@ disable-model-invocation: true
 
 ## Purpose
 
-The session is revised by what the user asks for as soon as they ask, and stops, so they can clear
-their conversation: `steering.md` says what comes next. Their words are kept whole, since the
-evaluator evaluates the revision by them, and a summary would shift that measure.
+The session is revised by what the user asks for as soon as they ask, and stops again for their
+answer, so they can clear their conversation: `steering.md` says what comes next. Their words are
+kept whole, since the evaluator evaluates the revision by them, and a summary would shift that
+measure.
 
 ## Steps
 
@@ -23,7 +24,9 @@ evaluator evaluates the revision by them, and a summary would shift that measure
    `${CLAUDE_PLUGIN_ROOT}/references/conduct.md` gives it: the plan, the choices, or, for the finished
    work, tasks added before its sign-off. Reply on each pull request thread it came from with what
    changed and the commit, in the comment's language, leaving resolving it to the user.
-4. Commit, push, and say in the user's language:
+4. At the Plan or a Design sign-off, take the turn as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`:
+   it stops at the same sign-off. At the Finished work sign-off, commit, push, and say in the user's
+   language:
 
    ```
    ● Revised: {n} points on {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.

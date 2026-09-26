@@ -1,6 +1,6 @@
 ---
 name: up
-description: Resume an rn session in a fresh conversation — bring an older session up to date, act on the user's recorded answer, and run the work to their next decision. It writes files, commits, pushes, and posts replies on the pull request, so run it only on an explicit /rn:up.
+description: Resume an rn session in a fresh conversation — bring an older session up to date, act on the user's recorded answer, and run the work to their next decision. It writes files, commits, and pushes, so run it only on an explicit /rn:up.
 disable-model-invocation: true
 ---
 

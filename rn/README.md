@@ -50,7 +50,8 @@ flowchart LR
   implements each task; another, the evaluator, evaluates it and says what holds and what doesn't;
   you answer only the decisions that are yours.
 - **Every stop is a clean point to `/clear`.** `/rn:ty`, `/rn:gm` and `/rn:dn` record your answer —
-  `/rn:gm` also revises by it — and stop; `/rn:up` reads the record and goes on.
+  `/rn:gm` also revises by it and has the revision evaluated — and stop; `/rn:up` reads the record
+  and goes on.
 - **`/rn:dn` is for stopping in the middle of the work.** At a stop, your answer is already the
   record.
 
@@ -81,27 +82,27 @@ that is yours, since what comes after depends on it — and puts it on a draft p
 
 ```console
 ● ── payment-fix: customers who pay get through ──
-  👉 #1 plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
-  ⬜ #2 reproduce the timeout / #3 design sign-off
+  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
+  ⬜ #2 reproduce the timeout / #3 Design sign-off
   (after approval, #2 runs without you; you're called again at #3 to choose between retry and
   failover)
 
   Draft PR: https://github.com/you/repo/pull/42
 ```
 
-The map on top heads every message that stops for you: ✅ done, 👉 now, ⬜ ahead.
+The map on top heads every message that stops for your decision: ✅ done, 👉 now, ⬜ ahead.
 
 ### 2. Decide — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
 and plain `/rn:gm` takes your review comments off the pull request. Where the choice is yours,
-`/rn:ty` takes the recommended choice and `/rn:gm <choice>` another. `rn` records the approval, or
-revises the plan by your feedback, and stops there.
+`/rn:ty` takes the recommended choice and `/rn:gm <choice>` another. `rn` records the approval and
+stops; on feedback it revises, has the revision evaluated, and stops again for your answer.
 
 ```console
 > /rn:ty
 
-● Approved: plan sign-off. Next: /clear, then /rn:up — or say "go on" to continue here.
+● Approved: Plan sign-off. Next: /clear, then /rn:up — or say "go on" to continue here.
 ```
 
 A fresh conversation picks the session up from what was recorded, so a long session never runs out
@@ -116,8 +117,8 @@ retry, revise the plan, or call you in. Each decision is one line, so when you g
 you can follow it:
 
 ```console
-● #2 reproduce the timeout ── evaluated: not reached (the test passes without the fault) → retry
-● #2 reproduce the timeout ── evaluated: reached → #3
+● #2 reproduce the timeout ── decided: not reached (the test passes without the fault) → retry
+● #2 reproduce the timeout ── decided: reached → #3
 ```
 
 Every evaluation is committed with the session, so you can read it on the pull request.
@@ -141,9 +142,9 @@ fresh conversation.
 > /rn:dn
 
 ● ── payment-fix: customers who pay get through ──
-  ✅ #1 plan sign-off
+  ✅ #1 Plan sign-off
   👉 #2 reproduce the timeout ── stopped here; next: /clear, then /rn:up
-  ⬜ #3 design sign-off
+  ⬜ #3 Design sign-off
 
 > /clear
 > /rn:up
@@ -159,7 +160,8 @@ the work itself.
 
 ## Coming from an earlier rn
 
-A session started under any earlier version of `rn` is rebuilt the next time you run `/rn:up` on it:
+A session started under any earlier version of `rn` is brought up to date the next time you run
+`/rn:up` on it:
 `rn` reads the old plan and the work done, asks only what they leave unclear, and stops for you to
 approve the new plan — on the same branch and pull request.
 

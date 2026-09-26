@@ -7,7 +7,7 @@ down, then guards what it must not break.
 
 ## Plan
 
-`steering.md`, as first written or as rewritten since. Past the start, the work done so far is its
+`steering.md`, as first written or as revised since. Past the start, the work done so far is its
 ground.
 
 - **Would it reach the Goal?** Carried out, it leads to the Goal the user agreed, as far as their next

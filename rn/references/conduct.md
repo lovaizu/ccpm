@@ -18,11 +18,13 @@ its maker's view no longer watches for the user.
 
 ## A turn
 
-Take turns until one stops for the user. Each takes the first task in `steering.md` not marked `[x]`:
+Take turns until one stops for the user. Each begins by reading `steering.md` and `evaluations/`, and
+takes what is in front:
 
+- **An evaluation with no decision committed for it**: decide.
 - **A task**: start a fresh implementer with `Agent`, giving it the paths of
   `${CLAUDE_PLUGIN_ROOT}/references/implement.md` and `steering.md`, the task's id, and, when
-  `evaluations/` holds one for it, its latest evaluation with the More you decided on. It returns its
+  `evaluations/` holds one for it, its latest evaluation with the deciding More. It returns its
   commits and what it found to be the user's. Have them evaluated, and decide.
 - **A sign-off**: at a Design sign-off whose choices are not yet set out, set them out in the document
   the `design` field names, each with what it costs and gives, and your recommendation. Have what the
@@ -43,17 +45,20 @@ Take turns until one stops for the user. Each takes the first task in `steering.
 
 ## Deciding
 
-1. Decide by the Goal, from each More and from what the implementer returned. Nothing left between the
-   work and its Goal or Purpose: a task → mark it `[x]`; a sign-off → stop for the user; the plan or
-   the choices with no sign-off pending → the next turn. The implementer's or yours to fix: a task →
-   it is retried by the next turn; the plan or the choices → revise and have evaluated again, past the
-   Plan sign-off by adding tasks before the sign-off it stops at. The user's → it goes to them, at the
-   sign-off you are stopping at, or at a Design sign-off that takes the place of every task not yet
-   `[x]`.
+1. Decide by the Goal, from each More and from what the implementer returned, by what was evaluated
+   and what is left between it and the Goal or Purpose:
+
+   | | Nothing | The implementer's or yours to fix | The user's: taste, scope, cost against benefit, or a way that keeps falling short |
+   |---|---|---|---|
+   | A task | mark it `[x]` | it is retried by the next turn | a Design sign-off takes the place of every task not yet `[x]` |
+   | The plan or the choices | at a sign-off's turn stop for the user, else the next turn | revise, and have them evaluated again | at the sign-off you are stopping at |
+   | The finished work | stop for the user | add tasks before its sign-off; the next turn | at the sign-off you are stopping at |
+
+   `Feedback` is answered when nothing is left: set it to none.
 2. Commit the evaluation and the move, and push, with the move as the message and as one line:
 
    ```
-   ● {#id task name | plan | design choice | finished work} ── evaluated: {reached | not reached ({the deciding More})} → {next move}
+   ● {#id task name | plan | design choice | finished work} ── decided: {reached | not reached ({the deciding More})} → {next move}
    ```
 
 ## Stopping for the user
