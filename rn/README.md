@@ -11,8 +11,8 @@ of the day. You can start right now, with nothing prepared.
 
 - [Claude Code](https://code.claude.com)
 - A git repository with its remote on GitHub
-- The [GitHub CLI](https://cli.github.com) `gh`, logged in to that GitHub, since `rn` opens and
-  updates a pull request
+- The [GitHub CLI](https://cli.github.com) `gh`, logged in to that GitHub with `gh auth login`,
+  since `rn` opens and updates a pull request
 
 ## Install
 
@@ -26,10 +26,17 @@ plugin:
 
 ## How a session goes
 
-A session is always either at work, or stopped for you at a sign-off: a point where you approve
-something before the work goes past it. There are three kinds: the Plan sign-off first, a Design
-sign-off where the work changes what your product should be or a decision of yours comes up, and the
-Finished work sign-off last.
+A session is at work, paused by you, or stopped for you at a sign-off: a point where you approve
+something before the work goes past it. `rn` stops only where the call is yours:
+
+- **the Plan sign-off** — before any work starts;
+- **a Design sign-off** — where the work changes what your product should be, or where taste, scope,
+  or cost against benefit is yours to weigh, as when the current way does not settle however it is
+  fixed. Say a payment times out: whether it retries or fails over is yours to settle. `rn` talks it
+  through with you one point at a time, and writes it into your README and design document — the
+  ones it finds in your repository, or `README.md` and `docs/design.md` when there are none. You
+  approve those, and the work is built to them;
+- **the Finished work sign-off** — whether the finished work does what you wanted.
 
 ```mermaid
 stateDiagram-v2
@@ -55,8 +62,8 @@ stateDiagram-v2
   `/rn:up`.
 - **`/rn:dn` pauses the work anywhere**, and `/rn:up` picks it up again, in this conversation or a new
   one.
-- **A command with nothing to do where the session stands tells you where it stands.** `/rn:up` at a
-  sign-off you have not answered stops there again.
+- **`/rn:ty` or `/rn:gm` at work, and `/rn:dn` at a sign-off, only tell you where the session
+  stands.** `/rn:up` at a sign-off you have not answered stops there again.
 - **`/rn:up` also brings a session started under an earlier `rn` up to date**: it reads the old plan
   and the work done, asks only what they leave unclear, and stops for you to approve the new plan, on
   the same branch and pull request.
@@ -83,8 +90,9 @@ you agree. It looks up what the repository can answer instead of asking you.
   a retry or a clear message would count too. Is that right?
 ```
 
-Once the goal and the way to it are agreed, `rn` writes the plan as far as your next decision and
-puts it on a draft pull request.
+Once the goal and the way to it are agreed, `rn` writes the plan and puts it on a draft pull
+request. The plan is a numbered list of tasks, each sign-off one of them, and it runs only as far as
+your next decision; once you decide, `rn` writes the tasks that follow from it.
 
 ```console
 ● ── payment-fix: customers who pay get through ──
@@ -98,22 +106,10 @@ puts it on a draft pull request.
 
 The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahead.
 
-### 2. Where you are called back
-
-`rn` stops for you only where the call is yours:
-
-- **the plan** — before any work starts;
-- **a design** — where the work changes what your product should be, or where taste, scope, or cost
-  against benefit is yours to weigh, as when the current way does not settle however it is fixed.
-  `rn` talks it through with you one point at a time, as it did the goal, and writes it into your
-  README and design document — the ones it finds in your repository, or `README.md` and
-  `docs/design.md` when there are none. You approve those, and the work is built to them;
-- **the finished work** — whether it does what you wanted.
-
-### 3. Answer — `/rn:ty` and `/rn:gm`
+### 2. Answer — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
-and plain `/rn:gm` takes your review comments off the pull request.
+and plain `/rn:gm` takes your review comments on the pull request as your feedback.
 
 ```console
 > /rn:ty
@@ -121,7 +117,7 @@ and plain `/rn:gm` takes your review comments off the pull request.
 ● Approved: Plan sign-off. Next: say "go on", or /clear and /rn:up.
 ```
 
-### 4. While it works
+### 3. While it works
 
 You don't watch. Each task is made by one agent and evaluated by another, so work passes because it
 does its job, not because its maker says so. Each time `rn` decides what to do next, it says so in
@@ -135,7 +131,7 @@ one line, so when you glance back you can follow it:
 Every evaluation is committed with the session, so you can read it on the pull request. Why `rn` is
 built this way is in its [design document](./docs/design.md).
 
-### 5. Step away — `/rn:dn`, then `/rn:up`
+### 4. Step away — `/rn:dn`, then `/rn:up`
 
 Context nearly full in the middle of the work, or done for the day: `/rn:dn` records where the
 session stands and pushes everything. Run `/clear` yourself when you want a fresh conversation (a
@@ -155,12 +151,12 @@ plugin can't), then `/rn:up`.
 ● Resuming payment-fix at #2: reproduce the timeout
 ```
 
-### 6. Finish
+### 5. Finish
 
 At the Finished work sign-off, you approve the finished work. On `/rn:ty` the pull request is marked
 ready; the merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
 
-## Why these names?
+## The names
 
 `on` / `dn` / `up` follow a race: **on** your marks, cool **d**ow**n** for a pause, warm **up** to
 go on. `ty` / `gm` are two thanks: **t**hank **y**ou approves, **g**ood, **m**ore asks for more.
