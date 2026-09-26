@@ -42,27 +42,27 @@ the Finished work sign-off last.
 
 ```mermaid
 stateDiagram-v2
-    direction LR
     state "Plan sign-off" as Plan
     state "At work on tasks" as Work
     state "Design sign-off" as Design
     state "Finished work sign-off" as Finished
 
-    [*] --> Plan: /rn:on, or /rn:up on a session from an earlier rn
-    Plan --> Plan: /rn:gm revises the plan
-    Plan --> Work: /rn:ty, then /rn:up
-    Work --> Work: /rn:dn stops, /rn:up goes on
-    Work --> Design: a choice is the user's
-    Work --> Finished: the last task is done
-    Design --> Design: /rn:gm revises the choices
-    Design --> Work: /rn:ty, or /rn:gm naming a choice, then /rn:up
-    Finished --> Work: /rn:gm adds tasks, then /rn:up
+    [*] --> Plan: /rn:on
+    Plan --> Plan: /rn:gm
+    Plan --> Work: /rn:ty, /rn:up
+    Work --> Work: /rn:dn, /rn:up
+    Work --> Design: user's choice
+    Work --> Finished: last task done
+    Design --> Design: /rn:gm
+    Design --> Work: /rn:ty, /rn:up
+    Finished --> Work: /rn:gm, /rn:up
     Finished --> [*]: /rn:ty
 ```
 
-- **`/rn:gm` revises until the evaluation leaves nothing of the feedback, then stops**; `/rn:ty`
-  records the approval and stops. `/rn:gm` without a choice named at a Design sign-off is feedback;
-  naming one approves it, as `/rn:ty` approves the recommended one.
+- **`/rn:gm` revises what the sign-off decides on until the evaluation leaves nothing of the
+  feedback, then stops**: the plan, the choices, or, at the Finished work sign-off, tasks added
+  before it. `/rn:ty` records the approval and stops. `/rn:gm` without a choice named at a Design
+  sign-off is feedback; naming one approves it, as `/rn:ty` approves the recommended one.
 - **`/rn:up` at a sign-off not yet approved stops there again.**
 - **A command with nothing to do where the session stands only reports**: `/rn:gm` and `/rn:ty` at
   work say what the session is doing; `/rn:dn` at a sign-off says where it is stopped and what
