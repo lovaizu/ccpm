@@ -25,9 +25,9 @@ prompts under `skills/` and `references/` carry it out; where one differs from t
 - **Every stop is a point where the user can clear the conversation.** A long session outgrows any
   one conversation, so everything the next one needs is in `steering.md` and git, and nowhere else.
 
-## Roles
+## Who does what
 
-| | Does | Decides |
+| Role | Does | Decides |
 |---|---|---|
 | **User** | answers at a sign-off | the Plan, a Design choice, the Finished work |
 | **Conductor** (the main conversation) | works out the Goal, writes the plan, sets out choices, starts the others, keeps `steering.md` | every next move, by the Goal |
@@ -40,7 +40,7 @@ A session is always at one of these points: at work on a task, or stopped at a s
 ends each stretch of tasks: the Plan sign-off first, a Design sign-off where a choice is the user's,
 the Finished work sign-off last.
 
-| | At work | Stopped at a sign-off |
+| Command | At work | Stopped at a sign-off |
 |---|---|---|
 | `/rn:on` | — | — (starts a new session; stops at the Plan sign-off) |
 | `/rn:up` | takes turns until the next stop | takes turns: after an approval, on to what follows; otherwise stops at the same sign-off again |
