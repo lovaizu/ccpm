@@ -1,98 +1,166 @@
 # rn — Right Now
 
-Most AI agents need a carefully written prompt and constant watching to actually get a task done. `rn` doesn't — give it a goal, roughly, with `/rn:on`, and it takes over from there. You only come back in at the moments that are genuinely yours to decide; everything else just gets handled. That's the whole idea behind the name: you can start right now, with nothing prepared.
+Most AI agents need a carefully written prompt and someone watching them to get a task done. `rn`
+doesn't: give it a goal, roughly, with `/rn:on`. It works out with you what you actually want, then
+carries the work through without you, and calls you back only for the decisions that are yours. One
+goal carried through to the end is a session, and a session lives in git — its record in `.rn/` in
+your repository, its work on a pull request — so it survives a full context, a `/clear`, or the end
+of the day. You can start right now, with nothing prepared.
+
+## What you need
+
+- [Claude Code](https://code.claude.com)
+- A git repository with its remote on GitHub
+- The [GitHub CLI](https://cli.github.com) `gh`, logged in to that GitHub with `gh auth login`,
+  since `rn` opens and updates a pull request
 
 ## Install
 
-`rn` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the plugin:
+`rn` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the
+plugin:
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install rn@ccpm
 ```
 
-That makes `/rn:on`, `/rn:dn`, and `/rn:up` available, plus the two verdict commands you answer sign-offs with: `/rn:ty` (approve) and `/rn:gm` (revise).
+## How a session goes
 
-## How it works
+A session is at work, paused by you, or stopped for you at a sign-off: a point where you approve
+something before the work goes past it. `rn` stops only where the call is yours:
+
+- **the Plan sign-off** — before any work starts;
+- **a Design sign-off** — where the work changes what your product should be, or where taste, scope,
+  or cost against benefit is yours to weigh, as when the current way does not settle however it is
+  fixed. Say a payment times out: whether it retries or fails over is yours to settle. `rn` talks it
+  through with you one point at a time, and writes it into your README and design document — the
+  ones it finds in your repository, or `README.md` and `docs/design.md` when there are none. You
+  approve those, and the work is built to them;
+- **the Finished work sign-off** — whether the finished work does what you wanted.
 
 ```mermaid
-flowchart TD
-  G([Your goal]) --> P([You approve the plan<br/>on the draft PR])
-  P --> W[Assistant runs a task]
-  W -->|heavy work, kept out of sight| X[Expert does it<br/>reviewers try to break it]
-  X -->|cleared, added to the same PR| W
-  W -.->|only when the call is yours| C([You weigh in])
-  W ==>|all tasks done| D([You confirm the goal is met])
+stateDiagram-v2
+    state "Plan sign-off" as Plan
+    state "At work" as Work
+    state "Design sign-off" as Design
+    state "Finished work sign-off" as Finished
+
+    [*] --> Plan: /rn:on
+    Plan --> Plan: /rn:gm
+    Plan --> Work: /rn:ty
+    Work --> Work: /rn:dn, /rn:up
+    Work --> Design: a design is yours to settle
+    Work --> Finished: all tasks done
+    Design --> Design: /rn:gm
+    Design --> Work: /rn:ty
+    Finished --> Work: /rn:gm adds tasks
+    Finished --> [*]: /rn:ty
 ```
 
-One assistant stays with you the whole time; the experts and reviewers work behind the scenes, so the trial-and-error never crowds the conversation. You sign off on the plan up front, then the assistant works through the tasks without stopping to ask you for each one — they pile up on the same PR as the reviewers clear them. It pulls you back in only when a call is genuinely yours, and at the very end you confirm the goal is actually met before the session closes.
+- **`/rn:ty` approves, `/rn:gm` asks for changes.** Either one acts on your answer and stops. Say "go
+  on" to continue in the same conversation, or `/clear` first when you want a fresh one, then
+  `/rn:up`.
+- **`/rn:dn` pauses the work anywhere**, and `/rn:up` picks it up again, in this conversation or a new
+  one.
+- **`/rn:ty` or `/rn:gm` at work, and `/rn:dn` at a sign-off, only tell you where the session
+  stands.** `/rn:up` at a sign-off you have not answered stops there again.
+- **`/rn:up` also brings a session started under an earlier `rn` up to date**: it reads the old plan
+  and the work done, asks only what they leave unclear, and stops for you to approve the new plan, on
+  the same branch and pull request.
 
-## Getting started
+## A session, start to finish
 
-Say you want to push through "fix the bug in the payment screen."
+Say the payment screen fails now and then, and you want it fixed.
 
 ### 1. Start — `/rn:on`
 
-Tell it your goal. It restates the goal as it understands it, breaks it into verifiable tasks, and opens a draft PR with the full plan for you to review — too much to read comfortably in the console.
+Say what you want, as roughly as it comes to mind. `rn` tells you how it reads it, one point at a
+time — what you want, why, how you'd know it's done, how to go about it — and moves on only when
+you agree. It looks up what the repository can answer instead of asking you.
 
 ```console
-> /rn:on fix the bug in the payment screen
+> /rn:on the payment screen fails sometimes, fix it
 
-● ── payment-fix: payments complete on the payment screen ──
-  👉 plan sign-off ── asking now: review the plan on the draft PR — /rn:ty to approve and start #1
-  ⬜ #1–#4   reproduction test / root-cause fix / regression check / evaluation sign-off
-  (after approval, tasks run one by one without stopping to ask, until #4 — the evaluation sign-off)
+● Here's how I read it: payments with a saved card fail about one time in twenty — the error log
+  shows a timeout from the card service. Is that the failure you mean?
 
-  Captured your goal as I understand it:
-    "Fix the bug on the payment screen so payments complete successfully"
+> yes, and customers give up when it happens
 
-  Steering: .rn/20260702-payment-fix/steering.md
-  Draft PR with the full plan: https://github.com/you/repo/pull/42
+● So the point is that a customer who pays gets through, not only that the error goes away —
+  a retry or a clear message would count too. Is that right?
 ```
 
-That opening block — ✅ done / 👉 now / ⬜ ahead — heads every message that stops for your input once a session is underway, so you always see where the session stands without opening `steering.md`.
+Once the goal and the way to it are agreed, `rn` writes the plan and puts it on a draft pull
+request. The plan is a numbered list of tasks, each sign-off one of them, and it runs only as far as
+your next decision; once you decide, `rn` writes the tasks that follow from it.
 
-Read the plan on the PR and answer with a verdict command — `/rn:ty` approves it as is; `/rn:gm <feedback>` asks for changes first (and plain `/rn:gm` picks your review comments up off the PR). On approval the assistant begins the first task — from here it's the loop above, one task at a time, each task added to the same PR as the reviewers clear it, without stopping to ask you again until the goal is met. The same two commands answer every sign-off, so you never have to guess how to reply.
+```console
+● ── payment-fix: customers who pay get through ──
+  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
+  ⬜ #2 reproduce the timeout / #3 Design sign-off
+  (after approval, #2 runs without you; at #3 we settle together how a payment recovers from the
+  timeout, and I write it into the README and design doc for you to approve)
 
-### 2. Step away — `/rn:dn`
+  Draft PR: https://github.com/you/repo/pull/42
+```
 
-Context is full, or you're done for the day. Run it and your work is committed / pushed, with a note left for next time.
+The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahead.
+
+### 2. Answer — `/rn:ty` and `/rn:gm`
+
+Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
+and plain `/rn:gm` takes your review comments on the pull request as your feedback.
+
+```console
+> /rn:ty
+
+● Approved: Plan sign-off. Next: say "go on", or /clear and /rn:up.
+```
+
+### 3. While it works
+
+You don't watch. Each task is made by one agent and evaluated by another, so work passes because it
+does its job, not because its maker says so. Each time `rn` decides what to do next, it says so in
+one line, so when you glance back you can follow it:
+
+```console
+● #2 reproduce the timeout ── decided: not reached (the test passes without the fault) → retry
+● #2 reproduce the timeout ── decided: reached → #3
+```
+
+Every evaluation is committed with the session, so you can read it on the pull request. Why `rn` is
+built this way is in its [design document](./docs/design.md).
+
+### 4. Step away — `/rn:dn`, then `/rn:up`
+
+Context nearly full in the middle of the work, or done for the day: `/rn:dn` records where the
+session stands and pushes everything. Run `/clear` yourself when you want a fresh conversation (a
+plugin can't), then `/rn:up`.
 
 ```console
 > /rn:dn
 
-● ── payment-fix: payments complete on the payment screen ──
-  ✅ #1      reproduction test
-  👉 #2      root-cause fix ── suspended here; next move: /clear, then /rn:up
-  ⬜ #3–#4   regression check / evaluation sign-off
-  (#2 starts on /rn:up)
+● ── payment-fix: customers who pay get through ──
+  ✅ #1 Plan sign-off
+  👉 #2 reproduce the timeout ── stopped here; next: /rn:up
+  ⬜ #3 Design sign-off
 
-  Committed and pushed — "test: add reproduction test for payment failure"
-```
-
-### 3. Come back — `/rn:up`
-
-Run it in a fresh conversation. It finds where you stopped from git and resumes from there.
-
-```console
+> /clear
 > /rn:up
 
-● Found a suspended session: payment-fix
-  Reconciled with the git log — #1 is done.
-
-● Resuming from #2: find the root cause and fix it
+● Resuming payment-fix at #2: reproduce the timeout
 ```
 
----
+### 5. Finish
 
-`on` is just once, at the very start. After that, each break is just **`dn` → `/clear` → `up`**, and your work stays unbroken until the goal is met.
+At the Finished work sign-off, you approve the finished work. On `/rn:ty` the pull request is marked
+ready; the merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
 
-> Run `/clear` yourself after `/rn:dn` — a plugin can't clear the context for you.
+## The names
 
-## Why on / dn / up?
+`on` / `dn` / `up` follow a race: **on** your marks, cool **d**ow**n** for a pause, warm **up** to
+go on. `ty` / `gm` are two thanks: **t**hank **y**ou approves, **g**ood, **m**ore asks for more.
 
-They're a two-letter power set — on / down / up — easy to keep straight because they track the session's own state:
+## License
 
-- **`on`** — *power on.* You sit down and start a session.
-- **`dn`** — *down.* You take the session down for now — a pause, not quitting. ("down" trimmed to two letters to match.)
-- **`up`** — *up.* You bring the session back up and pick up where you left off.
+[MIT](../LICENSE)

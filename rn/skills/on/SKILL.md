@@ -1,17 +1,31 @@
 ---
 name: on
-description: Start a new rn work session from a goal — restate the goal, decompose it into verifiable tasks in a steering.md, open a draft PR for review, then begin task #1 once approved. Has side effects (writes files, commits, pushes, opens a PR) — run only on explicit /rn:on.
+description: Start an rn session. Work out with the user what they really want, plan up to their next decision on a draft pull request, and stop for their approval. It writes files, commits, pushes, and opens a pull request, so run it only on an explicit /rn:on.
 disable-model-invocation: true
 ---
 
 # /rn:on — Start a session
 
-Turns a goal into verifiable tasks in `steering.md`, opens a draft PR, then executes task #1 after approval.
+## Purpose
+
+Every piece of work and every decision in the session rests on the Goal set here, so the
+Goal must be what the user really wants, not their first words: a plan built on the words reaches the
+wrong thing, however well it is carried out, and the user finds out only at the end. The plan goes only
+as far as the user's next decision, since what follows depends on it.
 
 ## Steps
 
-1. **Plan the session.** Read `${CLAUDE_PLUGIN_ROOT}/references/planning-workflow.md` and run it in sequence.
-
-2. **Check version.** Compare the newly written `steering.md`'s `Rn version:` line to the installed plugin's version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`'s `version` field); on a mismatch, run `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first — on a match, do nothing. Since step 1 just stamped that line from this same installed version, this branch can never actually fire here — it's kept only so `on`'s step matches `dn`/`up`/`ty`/`gm`'s, not because `on` has its own drift to detect.
-
-3. **Begin task #1.** After approval, read `${CLAUDE_PLUGIN_ROOT}/references/task-execute-workflow.md` then `${CLAUDE_PLUGIN_ROOT}/references/task-verify-workflow.md` and execute task #1 following them in sequence.
+1. Starting from `$ARGUMENTS` and the repository, work out the Goal with the user: what done looks
+   like first, then why they want it, how they will know, and the way there. Look facts up yourself;
+   put decisions to them.
+2. Ask one question at a time, with your reading, what it decides, and the answer you recommend,
+   until you both see the same Goal and way, and nothing the plan rests on is assumed without their
+   knowing.
+3. Work on the current branch when it is not the default branch, otherwise on a new branch from the
+   default branch, in `.rn/{yyyymmdd}-{slug}/`, the slug naming what the work produces.
+4. Write `steering.md` there from `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of
+   the repository's documents, with `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`.
+5. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
+   the body of the branch's pull request, opening a draft one when it has none, and write its URL in
+   `pr`.
+6. Take turns as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

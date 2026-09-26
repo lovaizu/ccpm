@@ -1,6 +1,6 @@
 {
   "name": "rn",
-  "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into verifiable tasks, open a draft PR for the plan, and execute task by task — a coordinator delegates hands-on work to domain experts and has each task reviewed behind the scenes, while you sign off only at plan, design, and evaluation (/rn:ty approve, /rn:gm revise) — resuming across conversations via a git-tracked steering.md.",
-  "version": "0.8.0",
+  "description": "Give a goal, roughly: rn works out with you what you really want, plans to your next decision on a draft PR, and carries the work through — one agent implements each task, another evaluates it — calling you back only for decisions that are yours (/rn:ty approve, /rn:gm revise). The session lives in git, so it resumes across conversations (/rn:dn, /rn:up).",
+  "version": "0.9.0",
   "author": { "name": "lovaizu" }
 }

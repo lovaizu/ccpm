@@ -1,21 +1,35 @@
 ---
 name: gm
-description: Register a revise verdict on the work under review — the counterpart to /rn:ty. With an argument, /rn:gm <text> takes <text> as the feedback and revises the pending item against it. With no argument, /rn:gm processes the current PR's review comments through the PR-feedback workflow. Has side effects (revises work, commits, pushes, replies on the PR) — run only on explicit /rn:gm.
+description: Ask for changes to what an rn session stopped for — the plan, a design, or the finished work — from the feedback given, or from the review comments on the pull request; revise the session by it, have the revision evaluated, and stop. It commits and pushes, so run it only on an explicit /rn:gm.
 disable-model-invocation: true
 ---
 
-# /rn:gm — Revise
+# /rn:gm — Good, more
 
-Registers a revise verdict ("good, more") on the work under review. The feedback comes from `$ARGUMENTS` when present, otherwise from the current PR's review comments.
+## Purpose
+
+The session is revised by what the user asks for as soon as they ask, and stops again for their
+answer, so they can clear their conversation: `steering.md` says what comes next. Their words are
+kept whole, since the evaluator evaluates the revision by them, and a summary would shift that
+measure.
 
 ## Steps
 
-1. **Check version.** Compare the active session's `steering.md` `Rn version:` line to the installed plugin's version (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`'s `version` field); on a mismatch, run `${CLAUDE_PLUGIN_ROOT}/references/migration-workflow.md` first — on a match, do nothing.
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
+   not a sign-off → say what the session is doing, and stop.
+2. The feedback is `$ARGUMENTS`; without it, the pull request's review threads whose last comment is
+   the user's, each with its location and URL.
+3. At a Design sign-off, a choice it names is the user's decision: go on as `/rn:ty` does, with that
+   choice. Otherwise add it to `Feedback` and revise what the sign-off decides on by it, in the shape
+   `${CLAUDE_PLUGIN_ROOT}/references/conduct.md` gives it: the plan, the choices, or, for the finished
+   work, tasks added before its sign-off. Reply on each pull request thread it came from with what
+   changed and the commit, in the comment's language, leaving resolving it to the user.
+4. At the Plan or a Design sign-off, take the turn as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`:
+   it stops at the same sign-off. At the Finished work sign-off, commit, push, and say in the user's
+   language:
 
-2. **Branch on the argument.** Trim `$ARGUMENTS` of surrounding whitespace first; treat a blank/whitespace-only value as empty. If non-empty after trimming, it is the feedback — go to step 3. If empty (absent or blank), the feedback lives in the PR's review comments — go to step 4.
+   ```
+   ● Revised: {n} points on {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.
+   ```
 
-3. **With feedback (`$ARGUMENTS` present).** Treat `$ARGUMENTS` as a revise verdict on the pending item — the thing the assistant last presented for confirmation, or the work under review. If there is no pending item, treat `$ARGUMENTS` as a direct instruction and act on it — it is still feedback/work to do, so do not stall on a missing target. Apply the revision, re-doing or redispatching the work as needed, then report, opening the report with the session-status block per `${CLAUDE_PLUGIN_ROOT}/references/status-display.md` (subject to that spec's active-session boundary). Do not enter the PR-feedback loop.
-
-4. **From the PR (no argument).** Read `${CLAUDE_PLUGIN_ROOT}/references/pr-feedback-workflow.md` and run that loop against the current PR's review comments.
-
-5. **Either way, this is a revise verdict** — the counterpart to `/rn:ty` (approve). It drops nothing: every piece of feedback is acted on.
+5. When the user says to go on, go on as `/rn:up` does.

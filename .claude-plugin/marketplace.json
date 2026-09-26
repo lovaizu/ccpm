@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "rn",
-      "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into reviewed tasks, open a draft PR for the plan, and resume across conversations via a git-tracked steering.md.",
+      "description": "Give a goal, roughly: rn works out with you what you really want, carries the work through with each task built by one agent and evaluated by another, and calls you back only for decisions that are yours. The session lives in git, so it resumes across conversations.",
       "source": "./rn",
       "category": "development"
     }
