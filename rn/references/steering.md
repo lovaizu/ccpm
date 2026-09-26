@@ -9,7 +9,7 @@ finds its way by its field names and headings, so they stay exactly as written.
 ---
 rn: <installed rn version>
 pr: <the session's pull request URL>
-design: <the design document the work is built toward, agreed with the user at a Design sign-off; none until then>
+design: <the document that sets out a Design sign-off's choices: among the repository's design documents, or design.md beside this file>
 status: running
 ---
 
@@ -23,7 +23,7 @@ status: running
 
 # Assumptions
 
-- **Fact** (<how it was checked>): <what the plan rests on>
+- **Fact** (<how it was checked>): <what the plan rests on, including each choice the user made>
 - **Assumption**: <what the plan rests on without having checked it>
 
 # Rules
@@ -55,9 +55,8 @@ status: running
 - **Notes**: none
 ```
 
-- Tasks are taken in the order written and end at a sign-off: "Design sign-off" before the work that
-changes what the product should be, or for a decision that is the user's, its Purpose naming what
-is to be decided; "Finished work sign-off" for the finished work. A task is marked `[x]` when the conductor
+- Tasks are taken in the order written and end at a sign-off: "Design sign-off" for a choice that is
+the user's, "Finished work sign-off" for the finished work. A task is marked `[x]` when the conductor
 decides its Purpose is reached, a sign-off when the user approves it. A task added later takes the
 next unused id.
 - `status` is `finished` from the approval of the Finished work sign-off.

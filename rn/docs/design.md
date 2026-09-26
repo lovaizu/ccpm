@@ -46,6 +46,8 @@ ends each stretch of tasks: the Plan sign-off first, a Design sign-off where the
 the product should be or a decision of the user's comes up, the Finished work sign-off last. At a
 Design sign-off, the conductor first works the design out with the user, one question at a time as
 for the Goal, and writes it into the README and the design document; the sign-off approves those.
+Where they go is agreed in the same talk: the ones the repository already has for what the work
+changes, or `README.md` and `docs/design.md` when it has none.
 
 ```mermaid
 stateDiagram-v2
