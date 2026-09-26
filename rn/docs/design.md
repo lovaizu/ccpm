@@ -66,14 +66,12 @@ evaluator raises by what is left between the thing and its Goal or Purpose, and 
 
 | What is left | Whose | Next move |
 |---|---|---|
-| Nothing | — | a task is done; what a sign-off waits on, the plan, the choices, or the finished work, goes to it and the session stops there; a plan no sign-off waits on goes on to its tasks |
+| Nothing | — | a task is done; what a sign-off waits on, the plan, the choices, or the finished work, goes to it and the session stops there; a plan no sign-off waits on goes on to its tasks, since the decision it follows is made |
 | A task falls short | the implementer's | the task is retried, the evaluation given with it |
 | The plan or the choices fall short | the conductor's | they are revised, and evaluated again |
 | The finished work falls short | the conductor's | tasks are added before its sign-off |
 | A choice of taste, scope, or cost against benefit, or a way that keeps falling short | the user's | a Design sign-off takes the place of the tasks not done, its choices set out, and the session stops there |
 
-- **A plan written or revised after the Plan sign-off goes on without a stop**, since the decision
-  it follows is already made.
 - **Each decision is one line**, committed with its evaluation, so the user can follow the session on
   the pull request.
 
