@@ -84,8 +84,8 @@ that is yours, since what comes after depends on it — and puts it on a draft p
 ● ── payment-fix: customers who pay get through ──
   👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
   ⬜ #2 reproduce the timeout / #3 Design sign-off
-  (after approval, #2 runs without you; you're called again at #3 to choose between retry and
-  failover)
+  (after approval, #2 runs without you; at #3 we settle together how a payment recovers from the
+  timeout, and I write it into the README and design doc for you to approve)
 
   Draft PR: https://github.com/you/repo/pull/42
 ```
@@ -95,8 +95,7 @@ The map on top heads every message that stops for your decision: ✅ done, 👉 
 ### 2. Decide — `/rn:ty` and `/rn:gm`
 
 Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
-and plain `/rn:gm` takes your review comments off the pull request. Where the choice is yours,
-`/rn:ty` takes the recommended choice and `/rn:gm <choice>` another. `rn` records the approval and
+and plain `/rn:gm` takes your review comments off the pull request. `rn` records the approval and
 stops; on feedback it revises, has the revision evaluated, and stops again for your answer.
 
 ```console
@@ -128,8 +127,10 @@ Every evaluation is committed with the session, so you can read it on the pull r
 `rn` stops for you only where the call is yours:
 
 - **the plan** — before any work starts;
-- **a design** — where taste, scope, or cost against benefit is yours to weigh, including when the
-  current way keeps falling short;
+- **a design** — where the work changes what your product should be, or taste, scope, or cost
+  against benefit is yours to weigh, including when the current way keeps falling short. `rn` talks
+  it through with you one point at a time, as it did the goal, then writes it into your README and
+  design document for you to approve. The work is built to them, and they stay with your product;
 - **the finished work** — whether it does what you wanted.
 
 ### 5. Step away — `/rn:dn`, then `/rn:up`

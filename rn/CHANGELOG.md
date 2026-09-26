@@ -18,16 +18,17 @@ last for fixes that change nothing you do.
 - The plan stops at your next decision; the tasks after it are planned once you decide.
 - A task says only what it must reach, not the steps to take, so the work is judged by what it does.
 - The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
-- `/rn:ty` records your approval and stops; `/rn:gm` revises by your feedback right away, has the revision evaluated, and stops again for your answer — so you can `/clear` at any stop and run `/rn:up` to continue. Where a choice is yours, `/rn:gm <choice>` picks a choice other than the recommended one.
+- `/rn:ty` records your approval and stops; `/rn:gm` revises by your feedback right away, has the revision evaluated, and stops again for your answer — so you can `/clear` at any stop and run `/rn:up` to continue.
+- A design is talked through with you one point at a time, like the goal, and written into your README and design document for you to approve; the work is built to them, and they stay with your product after the session.
 - `rn` decides every next move by the goal itself; the evaluator reports what holds and what does not, and a task that does its job is not sent back over a detail.
-- When the work keeps failing, `rn` asks you to choose another way instead of retrying the same one.
+- When the work keeps failing, `rn` works out another way with you instead of retrying the same one.
 - A session started under an earlier `rn` (the first two numbers of the version differ) is brought up to date by `/rn:up` from its old plan and the work done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
 - Each task is evaluated by one fresh evaluator against what the task must reach, instead of several expert reviews recorded in `checks/`.
 - `/rn:on` starts on your current branch and its pull request when you are on one, instead of always making new ones.
 
 ### Removed
 
-- The question-by-question `design.md` template, and reusing an existing `design.md`: a design is now written only where a choice is yours, as the choices with what each costs and gives, in the place your repository keeps designs.
+- The question-by-question `design.md` template in the session: a design is now written only where the work changes what your product should be, or a decision is yours, into your repository's own README and design document.
 
 ## [0.8.0] - 2026-07-07
 
