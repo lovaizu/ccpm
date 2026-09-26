@@ -94,14 +94,15 @@ one part of the flow above.
 
 ## How the conductor decides
 
-A task is done when no More is left that fixing would bring closer to its Purpose. For each More, the conductor asks, by the Goal: does fixing it bring the thing closer to the Goal or
-its Purpose; whose is it to fix; how; and does the fix keep the Goods. A More that fixing does not
-bring closer is set aside, with the reason in the decision line. What it fixes, it gives to whoever
-the fix is: a task's result to its implementer again with the Mores to fix, the plan or a design to
-itself, the finished work as tasks added before its sign-off. The user's is what the Goal cannot
-decide: taste, scope, cost against benefit, or a way that does not settle — the same More coming
-back, or each fix bringing a new one. That becomes a Design sign-off in place of the tasks not
-done, worked out there with the user.
+A task is done when no More is left that fixing would bring closer to its Purpose. For each More,
+the conductor asks, by the Goal: does fixing it bring the thing closer to the Goal or its Purpose;
+whose is it to fix; how; and does the fix keep the Goods. A More that fixing does not bring closer
+is set aside, with the reason in the decision line. What it fixes, it gives to whoever the fix is: a
+task's result to its implementer again with the Mores to fix, the plan or a design to itself, the
+finished work as tasks added before its sign-off. The user's is what the Goal cannot decide: taste,
+scope, cost against benefit, or a way that does not settle — the same More coming back, or each fix
+bringing a new one. That becomes a Design sign-off in place of the tasks not done, worked out there
+with the user.
 
 ## What is kept, and who reads it
 
