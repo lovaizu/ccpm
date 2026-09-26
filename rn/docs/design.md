@@ -45,30 +45,46 @@ thing takes the questions as the aim of the making, and checks what it made by t
 asks the same questions of the same thing. So making and evaluating look at the same thing, and
 each question is written once. Every check and every evaluation answers each question with a Good,
 what already serves the aim and must be kept, and a More, what falls short and how to change it,
-each with its grounds, since the conductor decides from them. `rn` carries its essentials as one
-set, in parts named for what they look at: Working out, Plan, Design, Task result, Finished work,
-Deciding, and Asking.
+each with its grounds, since the conductor decides from them.
+
+```mermaid
+flowchart LR
+    E(["the essentials of a thing"])
+    M["maker: makes it, and checks it"]
+    V["evaluator: evaluates it, once"]
+    C["conductor: decides"]
+    E -->|the aim| M
+    E -->|the questions| V
+    M -->|the thing| V
+    M -->|Good and More| C
+    V -->|Good and More| C
+```
+
+`rn` carries its essentials as one set, in parts named for what they look at. Each part is used at
+these moments of a session, in bold:
 
 ```mermaid
 flowchart TD
-    Talk["<b>Work out the Goal or a design with the user</b><br/>conductor · Working out"]
-    Make["<b>Make, and check it</b><br/>the plan, the README and design document: conductor<br/>a task's result: implementer<br/>· the essentials of what is made"]
-    Eval["<b>Evaluate, once per thing</b><br/>evaluator · the same essentials"]
-    Fin["<b>Evaluate the finished work</b><br/>evaluator · Finished work"]
-    Decide["<b>Decide on each Good and More</b><br/>conductor · Deciding"]
-    Ask["<b>Stop for the user at a sign-off</b><br/>conductor · Asking"]
-
-    Talk --> Make
-    Make -->|first made| Eval
-    Make -->|fixed| Decide
-    Eval --> Decide
-    Fin --> Decide
-    Decide -->|a More to fix, or the next task| Make
-    Decide -->|all tasks done| Fin
-    Decide -->|the user's to settle| Talk
-    Decide -->|ready for a sign-off| Ask
-    Ask -->|/rn:gm| Make
-    Ask -->|/rn:ty| Decide
+    subgraph Start["/rn:on"]
+        direction LR
+        a1["<b>Working out</b><br/>conductor works out<br/>the Goal with the user"] --> a2["<b>Plan</b><br/>conductor makes<br/>the plan"] --> a3["<b>Plan</b><br/>evaluator evaluates<br/>the plan"] --> a4["<b>Deciding</b><br/>conductor"] --> a5["<b>Asking</b><br/>conductor stops at<br/>the Plan sign-off"]
+    end
+    subgraph Task["each task"]
+        direction LR
+        b1["<b>Task result</b><br/>implementer makes<br/>the result"] --> b2["<b>Task result</b><br/>evaluator evaluates<br/>the result"] --> b3["<b>Deciding</b><br/>conductor"]
+    end
+    subgraph Design["a Design sign-off"]
+        direction LR
+        c1["<b>Working out</b><br/>conductor works out<br/>the design with the user"] --> c2["<b>Design</b><br/>conductor writes the README<br/>and design document"] --> c3["<b>Design</b><br/>evaluator evaluates<br/>them"] --> c4["<b>Deciding</b><br/>conductor"] --> c5["<b>Asking</b><br/>conductor stops at<br/>the Design sign-off"]
+    end
+    subgraph Finish["all tasks done"]
+        direction LR
+        d1["<b>Finished work</b><br/>evaluator evaluates<br/>the finished work"] --> d2["<b>Deciding</b><br/>conductor"] --> d3["<b>Asking</b><br/>conductor stops at<br/>the Finished work sign-off"]
+    end
+    Start --> Task
+    Task --> Design
+    Design --> Task
+    Task --> Finish
 ```
 
 - **The conductor's own acts have essentials too**: working out with the user, deciding, and asking
