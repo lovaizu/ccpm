@@ -21,6 +21,11 @@ prompts under `skills/` and `references/` carry it out; where one differs from t
 - **The user decides only what is theirs.** Taste, scope, cost against benefit, another way when the
   current one keeps falling short, and whether the finished work is what they wanted. Everything
   else goes on without them, since their attention is the scarcest thing in the session.
+- **What the work should become is written down before it is built, and stays.** Where the work
+  changes what the product should be, its README and design document say so first, worked out with
+  the user as the Goal is; the work follows them, and a change to them comes before the work. A
+  decision kept only in the session ends with it; in the documents it outlives the session, and the
+  next change can be told against it.
 - **The plan reaches only as far as the user's next decision.** What follows depends on it.
 - **Every stop is a point where the user can clear the conversation.** A long session outgrows any
   one conversation, so everything the next one needs is in `steering.md` and git, and nowhere else.
@@ -29,16 +34,18 @@ prompts under `skills/` and `references/` carry it out; where one differs from t
 
 | Role | Does | Decides |
 |---|---|---|
-| **User** | answers at a sign-off | the Plan, a Design choice, the Finished work |
-| **Conductor** (the main conversation) | works out the Goal, writes the plan, sets out choices, starts the others, keeps `steering.md` | every next move, by the Goal |
+| **User** | works out the Goal and the design with the conductor, answers at a sign-off | the Plan, the Design, the Finished work |
+| **Conductor** (the main conversation) | works out the Goal and the design with the user, writes the plan and the design documents, starts the others, keeps `steering.md` | every next move, by the Goal |
 | **Implementer** (a fresh agent per task) | implements one task and checks it | nothing |
-| **Evaluator** (a fresh agent per evaluation) | evaluates the plan, the choices, a task's result, or the finished work | nothing |
+| **Evaluator** (a fresh agent per evaluation) | evaluates the plan, the design, a task's result, or the finished work | nothing |
 
 ## Where the session stands, and what each command does
 
 A session is always at one of these points: at work on a task, or stopped at a sign-off. A sign-off
-ends each stretch of tasks: the Plan sign-off first, a Design sign-off where a choice is the user's,
-the Finished work sign-off last.
+ends each stretch of tasks: the Plan sign-off first, a Design sign-off where the work changes what
+the product should be or a decision of the user's comes up, the Finished work sign-off last. At a
+Design sign-off, the conductor first works the design out with the user, one question at a time as
+for the Goal, and writes it into the README and the design document; the sign-off approves those.
 
 ```mermaid
 stateDiagram-v2
@@ -51,7 +58,7 @@ stateDiagram-v2
     Plan --> Plan: /rn:gm
     Plan --> Work: /rn:ty, /rn:up
     Work --> Work: /rn:dn, /rn:up
-    Work --> Design: user's choice
+    Work --> Design: design due
     Work --> Finished: last task done
     Design --> Design: /rn:gm
     Design --> Work: /rn:ty, /rn:up
@@ -60,9 +67,8 @@ stateDiagram-v2
 ```
 
 - **`/rn:gm` revises what the sign-off decides on until the evaluation leaves nothing of the
-  feedback, then stops**: the plan, the choices, or, at the Finished work sign-off, tasks added
-  before it. `/rn:ty` records the approval and stops. `/rn:gm` without a choice named at a Design
-  sign-off is feedback; naming one approves it, as `/rn:ty` approves the recommended one.
+  feedback, then stops**: the plan, the design documents, or, at the Finished work sign-off, tasks
+  added before it. `/rn:ty` records the approval and stops.
 - **`/rn:up` at a sign-off not yet approved stops there again.**
 - **A command with nothing to do where the session stands only reports**: `/rn:gm` and `/rn:ty` at
   work say what the session is doing; `/rn:dn` at a sign-off says where it is stopped and what
@@ -81,11 +87,11 @@ evaluator raises by what is left between the thing and its Goal or Purpose, and 
 
 | What is left | Whose | Next move |
 |---|---|---|
-| Nothing | — | a task is done; what a sign-off waits on, the plan, the choices, or the finished work, goes to it and the session stops there; a plan no sign-off waits on goes on to its tasks, since the decision it follows is made |
+| Nothing | — | a task is done; what a sign-off waits on, the plan, the design, or the finished work, goes to it and the session stops there; a plan no sign-off waits on goes on to its tasks, since the decision it follows is made |
 | A task falls short | the implementer's | the task is retried, the evaluation given with it |
-| The plan or the choices fall short | the conductor's | they are revised, and evaluated again |
+| The plan or the design falls short | the conductor's | it is revised, and evaluated again |
 | The finished work falls short | the conductor's | tasks are added before its sign-off |
-| A choice of taste, scope, or cost against benefit, or a way that keeps falling short | the user's | a Design sign-off takes the place of the tasks not done, its choices set out, and the session stops there |
+| A decision of taste, scope, or cost against benefit, or a way that keeps falling short | the user's | a Design sign-off takes the place of the tasks not done, and the design is worked out there with the user |
 
 - **Each decision is one line**, committed with its evaluation, so the user can follow the session on
   the pull request.
@@ -96,8 +102,7 @@ evaluator raises by what is left between the thing and its Goal or Purpose, and 
 |---|---|---|---|
 | Goal, Goal reached when, Assumptions, Rules, Tasks | conductor | everyone | never; revised in place |
 | a task's `[x]` | conductor when it decides the Purpose reached; `/rn:ty` for a sign-off | conductor, to find what is in front | never |
-| a choice the user made | `/rn:ty` or `/rn:gm <choice>`, as a Fact in Assumptions | conductor, implementer, evaluator | never |
-| `design`: the document with a Design sign-off's choices | conductor, when the plan first holds a Design sign-off | conductor, implementer, evaluator | never |
+| the README and the design document the `design` field names | conductor, from what it works out with the user | conductor, implementer, evaluator | never; they are the product's own, and outlive the session |
 | `Feedback`: the user's words, whole | `/rn:gm` | conductor, evaluator | conductor when nothing is left of it; `/rn:ty` on approval |
 | `Notes`: where the work stands | `/rn:dn` | conductor at the next turn | conductor once read |
 | an evaluation | evaluator, uncommitted | conductor to decide; the implementer on a retry of its task | conductor commits it; removed at the Finished work approval |
