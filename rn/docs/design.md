@@ -42,6 +42,7 @@ the Finished work sign-off last.
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     state "Plan sign-off" as Plan
     state "At work on tasks" as Work
     state "Design sign-off" as Design
