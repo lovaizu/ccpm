@@ -40,18 +40,32 @@ A session is always at one of these points: at work on a task, or stopped at a s
 ends each stretch of tasks: the Plan sign-off first, a Design sign-off where a choice is the user's,
 the Finished work sign-off last.
 
-| Command | At work | Stopped at a sign-off |
-|---|---|---|
-| `/rn:on` | — | — (starts a new session; stops at the Plan sign-off) |
-| `/rn:up` | takes turns until the next stop | takes turns: after an approval, on to what follows; otherwise stops at the same sign-off again |
-| `/rn:dn` | records where the work stands, stops | says where it is stopped and what answers it |
-| `/rn:gm` | says what the session is doing | records the feedback, revises until the evaluation leaves nothing of it, stops |
-| `/rn:ty` | says what the session is doing | records the approval, stops |
+```mermaid
+stateDiagram-v2
+    state "Plan sign-off" as Plan
+    state "At work on tasks" as Work
+    state "Design sign-off" as Design
+    state "Finished work sign-off" as Finished
 
-- **`/rn:gm` at a sign-off revises what that sign-off decides on**: the plan, the choices, or, at the
-  Finished work sign-off, tasks added before it. It then stops at the first task not done: the same
-  sign-off, or the added tasks, which `/rn:up` takes. At a Design sign-off, `/rn:gm <choice>` naming
-  a choice is an approval of that choice, as `/rn:ty` is of the recommended one.
+    [*] --> Plan: /rn:on, or /rn:up on a session from an earlier rn
+    Plan --> Plan: /rn:gm revises the plan
+    Plan --> Work: /rn:ty, then /rn:up
+    Work --> Work: /rn:dn stops, /rn:up goes on
+    Work --> Design: a choice is the user's
+    Work --> Finished: the last task is done
+    Design --> Design: /rn:gm revises the choices
+    Design --> Work: /rn:ty, or /rn:gm naming a choice, then /rn:up
+    Finished --> Work: /rn:gm adds tasks, then /rn:up
+    Finished --> [*]: /rn:ty
+```
+
+- **`/rn:gm` revises until the evaluation leaves nothing of the feedback, then stops**; `/rn:ty`
+  records the approval and stops. `/rn:gm` without a choice named at a Design sign-off is feedback;
+  naming one approves it, as `/rn:ty` approves the recommended one.
+- **`/rn:up` at a sign-off not yet approved stops there again.**
+- **A command with nothing to do where the session stands only reports**: `/rn:gm` and `/rn:ty` at
+  work say what the session is doing; `/rn:dn` at a sign-off says where it is stopped and what
+  answers it.
 - **Every command that stops, stops without going on.** `/rn:up` is the only way back to work, so the
   user can always clear first.
 - **A session from an earlier rn** is brought up to date by `/rn:up`, by working out its plan again
