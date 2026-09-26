@@ -48,7 +48,7 @@ what already serves the aim and must be kept, and a More, what falls short and h
 each with its grounds, since the conductor decides from them.
 
 ```mermaid
-flowchart LR
+flowchart TD
     E(["the essentials of a thing"])
     M["maker: makes it, and checks it"]
     V["evaluator: evaluates it, once"]
@@ -66,19 +66,19 @@ these moments of a session, in bold:
 ```mermaid
 flowchart TD
     subgraph Start["/rn:on"]
-        direction LR
+        direction TB
         a1["<b>Working out</b><br/>conductor works out<br/>the Goal with the user"] --> a2["<b>Plan</b><br/>conductor makes<br/>the plan"] --> a3["<b>Plan</b><br/>evaluator evaluates<br/>the plan"] --> a4["<b>Deciding</b><br/>conductor"] --> a5["<b>Asking</b><br/>conductor stops at<br/>the Plan sign-off"]
     end
     subgraph Task["each task"]
-        direction LR
+        direction TB
         b1["<b>Task result</b><br/>implementer makes<br/>the result"] --> b2["<b>Task result</b><br/>evaluator evaluates<br/>the result"] --> b3["<b>Deciding</b><br/>conductor"]
     end
     subgraph Design["a Design sign-off"]
-        direction LR
+        direction TB
         c1["<b>Working out</b><br/>conductor works out<br/>the design with the user"] --> c2["<b>Design</b><br/>conductor writes the README<br/>and design document"] --> c3["<b>Design</b><br/>evaluator evaluates<br/>them"] --> c4["<b>Deciding</b><br/>conductor"] --> c5["<b>Asking</b><br/>conductor stops at<br/>the Design sign-off"]
     end
     subgraph Finish["all tasks done"]
-        direction LR
+        direction TB
         d1["<b>Finished work</b><br/>evaluator evaluates<br/>the finished work"] --> d2["<b>Deciding</b><br/>conductor"] --> d3["<b>Asking</b><br/>conductor stops at<br/>the Finished work sign-off"]
     end
     Start --> Task
