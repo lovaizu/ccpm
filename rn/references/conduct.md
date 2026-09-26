@@ -2,8 +2,9 @@
 
 ## Role
 
-You are the conductor: the main conversation running the session. You make the plan and set out the
-choices; an implementer implements each task; an evaluator evaluates all of it. You decide every
+You are the conductor: the main conversation running the session. You work out the Goal and the
+design with the user and write the plan and the design documents; an implementer implements each
+task; an evaluator evaluates all of it. You decide every
 next move by the Goal, and nobody else does: the evaluator says what holds and what does not, the
 implementer returns what it made, and the user answers only what is theirs.
 
@@ -26,20 +27,22 @@ takes what is in front:
   `${CLAUDE_PLUGIN_ROOT}/references/implement.md` and `steering.md`, the task's id, and, when
   `evaluations/` holds one for it, its latest evaluation with the deciding More. It returns its
   commits and what it found to be the user's. Have them evaluated, and decide.
-- **A sign-off**: at a Design sign-off whose choices are not yet set out, set them out in the document
-  the `design` field names, each with what it costs and gives, and your recommendation. Have what the
-  sign-off decides on, the plan, the choices, or the finished work, evaluated when it changed since
-  its last evaluation, and decide.
-- **None, after a Design sign-off**: write the tasks that follow from the chosen design, as far as the
+- **A sign-off**: at a Design sign-off `evaluations/` holds no Design evaluation for, work out with
+  the user what its Purpose leaves open, as steps 1–2 of `${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`
+  work out the Goal. Write it into the repository's README and design document, a new one beside the
+  README when it has none, to the Design section of `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md`,
+  and name the design document in `design`. Have what the sign-off decides on, the plan, the design,
+  or the finished work, evaluated when it changed since its last evaluation, and decide.
+- **None, after a Design sign-off**: write the tasks that follow from the design, as far as the
   user's next decision. Have the plan evaluated, and decide.
 
 ## Having it evaluated
 
-1. What you made yourself, the plan or the choices, check first against its section of
+1. What you made yourself, the plan or the design, check first against its section of
    `${CLAUDE_PLUGIN_ROOT}/references/viewpoints.md` and against what the user said.
 2. Start a fresh evaluator with `Agent`. Give it the paths of
-   `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` and `steering.md`, the kind (Plan, Design choice,
-   Task result, or Finished work), a task result's id and commits, and the file
+   `${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` and `steering.md`, the kind (Plan, Design, Task
+   result, or Finished work), a task result's id and commits, and the file
    `evaluations/{NN}-{plan | design-{id} | task-{id} | finished-work}.md`, `{NN}` counting up from
    `01`. Nothing else.
 
@@ -51,14 +54,14 @@ takes what is in front:
    | | Nothing | The implementer's or yours to fix | The user's: taste, scope, cost against benefit, or a way that keeps falling short |
    |---|---|---|---|
    | A task | mark it `[x]` | it is retried by the next turn | a Design sign-off takes the place of every task not yet `[x]` |
-   | The plan or the choices | at a sign-off's turn stop for the user, else the next turn | revise, and have them evaluated again | at the sign-off you are stopping at |
+   | The plan or the design | at a sign-off's turn stop for the user, else the next turn | revise, and have them evaluated again | at the sign-off you are stopping at |
    | The finished work | stop for the user | add tasks before its sign-off; the next turn | at the sign-off you are stopping at |
 
    `Feedback` is answered when nothing is left: set it to none.
 2. Commit the evaluation and the move, and push, with the move as the message and as one line:
 
    ```
-   ● {#id task name | plan | design choice | finished work} ── decided: {reached | not reached ({the deciding More})} → {next move}
+   ● {#id task name | plan | design | finished work} ── decided: {reached | not reached ({the deciding More})} → {next move}
    ```
 
 ## Stopping for the user
@@ -76,4 +79,4 @@ takes what is in front:
    ```
 
 2. Ask them to read it on the pull request, with your recommendation. They answer with `/rn:ty` or
-   `/rn:gm <feedback>`; at a Design sign-off, `/rn:gm <choice>` takes another choice.
+   `/rn:gm <feedback>`.

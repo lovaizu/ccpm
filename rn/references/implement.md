@@ -14,8 +14,8 @@ by the same viewpoints you read.
 
 ## Steps
 
-1. Read `steering.md`, and the document its `design` field names when your task follows a chosen
-   design.
+1. Read `steering.md`, and the README and the design document its `design` field names: the work is
+   built to them. Where reaching the Purpose would take changing them, return that instead.
 2. Implement the task, and check your work on the real thing against the Task result section of
    `viewpoints.md`, beside this file.
 3. Return your commits, and anything you could not reach or found to be the user's to decide: taste,
