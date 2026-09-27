@@ -225,9 +225,9 @@ pull request, and every later `rn` reads them.
 5. Each thing is evaluated once.
 6. The evaluator is given what the user agreed or said, and nothing of the maker's account.
 
-   It gets the commit or document to evaluate, the essentials, the Goal, Goal reached when, the Rules,
-   the task's Purpose, the README, the design document, and the user's feedback; not the maker's
-   reasons, commit messages, notes, or earlier evaluations.
+   It gets the commit or document to evaluate, the essentials, the Goal, Goal reached when, the
+   Rules, the task's Purpose, the README, the design document, and the user's feedback; not the
+   maker's reasons, commit messages, notes, or earlier evaluations.
 
 7. No commit of the work goes beyond what the README and the design document on its branch say.
 8. The documents hold only what stands now.
