@@ -148,8 +148,7 @@ checks start:
 ● #4 move src/cart ── decided: reached → #5
 ```
 
-Every evaluation is committed with the session, so you can read it on the pull request. Why `rn` is
-built this way is in its [design document](./docs/design.md).
+Every evaluation is committed with the session, so you can read it on the pull request.
 
 ### 4. Step away — `/rn:dn`, then `/rn:up`
 
@@ -175,6 +174,11 @@ plugin can't), then `/rn:up`.
 
 At the Deliverable sign-off, you approve the deliverable. On `/rn:ty` the pull request is marked
 ready; the merge is yours. The session leaves behind only its `.rn/` directory and the deliverable.
+
+## How it is built
+
+Who makes, checks, and decides each thing in a session, and why `rn` is built that way, is in its
+[design document](./docs/design.md).
 
 ## The names
 
