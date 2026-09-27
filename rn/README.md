@@ -36,11 +36,11 @@ something before the work goes past it. `rn` stops only where the call is yours:
 - A Design sign-off comes where what your product should be, or a call of taste, scope, or cost, is
   yours.
 
-  That includes a way that does not settle however it is fixed. Say a payment times out: whether it
-  retries or fails over is yours to settle. `rn` talks it through with you one point at a time, and
-  writes it into your README and design document — the ones it finds in your repository, or
-  `README.md` and `docs/design.md` when there are none. You approve those, and the work is built to
-  them.
+  That includes a way that does not settle however it is fixed. Say `rn` builds a skill that writes
+  your release notes: whether they list every change or only what users notice is yours to settle.
+  `rn` talks it through with you one point at a time, and writes it into your README and design
+  document — the ones it finds in your repository, or `README.md` and `docs/design.md` when there
+  are none. You approve those, and the work is built to them.
 
 - The Deliverable sign-off comes last.
 
@@ -86,7 +86,7 @@ stateDiagram-v2
 
 ## A session, start to finish
 
-Say the payment screen fails now and then, and you want it fixed.
+Say you write your release notes by hand before each release, and you want a skill that writes them.
 
 ### 1. Start — `/rn:on`
 
@@ -95,15 +95,15 @@ time — what you want, why, how you'd know it's done, how to go about it — an
 you agree. It looks up what the repository can answer instead of asking you.
 
 ```console
-> /rn:on the payment screen fails sometimes, fix it
+> /rn:on I want a skill that writes our release notes
 
-● Here's how I read it: payments with a saved card fail about one time in twenty — the error log
-  shows a timeout from the card service. Is that the failure you mean?
+● Here's how I read it: the notes in CHANGELOG.md are written by hand from the pull requests merged
+  since the last release. You want a skill that writes them. Is that it?
 
-> yes, and customers give up when it happens
+> yes, it takes me an hour every release
 
-● So the point is that a customer who pays gets through, not only that the error goes away —
-  a retry or a clear message would count too. Is that right?
+● So the point is notes you can ship after a light read, not only a draft — notes you still
+  rewrite would save you little. Is that right?
 ```
 
 Once the goal and the way to it are agreed, `rn` writes the plan and puts it on a draft pull
@@ -111,11 +111,11 @@ request. The plan is a numbered list of tasks, each sign-off one of them, and it
 your next decision; once you decide, `rn` writes the tasks that follow from it.
 
 ```console
-● ── payment-fix: customers who pay get through ──
+● ── release-notes: notes you ship after a light read ──
   👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
-  ⬜ #2 reproduce the timeout / #3 Design sign-off
-  (after approval, #2 runs without you; at #3 we settle together how a payment recovers from the
-  timeout, and I write it into the README and design doc for you to approve)
+  ⬜ #2 compare past notes with their pull requests / #3 Design sign-off
+  (after approval, #2 runs without you; at #3 we settle together what the notes say and how, and I
+  write it into the README and design doc for you to approve)
 
   Draft PR: https://github.com/you/repo/pull/42
 ```
@@ -140,8 +140,8 @@ does its job, not because its maker says so. Each time `rn` decides what to do n
 one line, so when you glance back you can follow it:
 
 ```console
-● #2 reproduce the timeout ── decided: not reached (the test passes without the fault) → retry
-● #2 reproduce the timeout ── decided: reached → #3
+● #2 compare past notes with their pull requests ── decided: not reached (only one release compared) → retry
+● #2 compare past notes with their pull requests ── decided: reached → #3
 ```
 
 Every evaluation is committed with the session, so you can read it on the pull request. Why `rn` is
@@ -156,15 +156,15 @@ plugin can't), then `/rn:up`.
 ```console
 > /rn:dn
 
-● ── payment-fix: customers who pay get through ──
+● ── release-notes: notes you ship after a light read ──
   ✅ #1 Plan sign-off
-  👉 #2 reproduce the timeout ── stopped here; next: /rn:up
+  👉 #2 compare past notes with their pull requests ── stopped here; next: /rn:up
   ⬜ #3 Design sign-off
 
 > /clear
 > /rn:up
 
-● Resuming payment-fix at #2: reproduce the timeout
+● Resuming release-notes at #2: compare past notes with their pull requests
 ```
 
 ### 5. Finish
