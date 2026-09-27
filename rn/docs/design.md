@@ -5,32 +5,47 @@ differ from this document, this document is right.
 
 ## What rn holds to
 
-- **The Goal is what the user really wants, not their first words.** Every piece of work and every
-  decision rests on it; a plan built on the first words reaches the wrong thing however well it is
-  carried out.
-- **rn works by essentials, not by steps or rules.** Everything made in a session is given what it
-  must reach and the essential questions to judge it by, and its maker finds the way there. Steps are
-  kept to the letter and miss the point when the ground turns out different, and they cap the work at
-  what their writer foresaw. So `rn` improves by refining its essentials, and gains as the models it
-  runs on get better (the first assumption below).
-- **What is made is checked by the one who asked for it, and evaluated once by one who did not make
-  it; a person decides from that one round.** The maker's view leans toward its own reasons (the
-  second assumption); rounds of evaluation run by AI alone keep raising points that are not essential
-  and do not settle (the fourth).
-- **Only the conductor decides what comes next, and only it records it.** It asks for the work, so it
-  answers for it reaching its purpose. A move taken on the letter of an evaluation redoes work that
-  already serves the Goal; a record written by several hands no longer says who decided what.
-- **The user decides only what is theirs.** Taste, scope, cost against benefit, what the product
-  should be, a way that does not settle, and whether the finished work is what they wanted. Their
-  attention is what a session spends most carefully; asked for more, they can no longer leave the
-  work to it.
-- **The documents lead, and hold only what stands now.** How the work proceeds is argued on
-  `steering.md`, how the product is built on its design document, and what it should be on its
-  README; each changes before the work does. They say what stands and why, never how it came to be:
-  that is in the commits, each carrying the discussion that led to it. A decision kept only in the
-  session ends with it; history kept in the documents buries what stands.
-- **The plan reaches only as far as the user's next decision.** Tasks planned past a decision not
-  yet made rest on a guess of it (the fifth assumption).
+- The Goal is what the user really wants, not their first words.
+
+  Every piece of work and every decision rests on it; a plan built on the first words reaches the
+  wrong thing however well it is carried out.
+
+- rn works by essentials, not by steps or rules.
+
+  Everything made in a session is given what it must reach and the essential questions to judge it
+  by, and its maker finds the way there. Steps are kept to the letter and miss the point when the
+  ground turns out different, and they cap the work at what their writer foresaw. So `rn` improves by
+  refining its essentials, and gains as the models it runs on get better (assumption 1).
+
+- What is made is checked by the one who asked for it, evaluated once by one who did not make it,
+  and a person decides from that one round.
+
+  The maker's view leans toward its own reasons (assumption 2); rounds of evaluation run by AI alone
+  keep raising points that are not essential and do not settle (assumption 4).
+
+- Only the conductor decides what comes next, and only it records it.
+
+  It asks for the work, so it answers for it reaching its purpose. A move taken on the letter of an
+  evaluation redoes work that already serves the Goal; a record written by several hands no longer
+  says who decided what.
+
+- The user decides only what is theirs.
+
+  Taste, scope, cost against benefit, what the product should be, a way that does not settle, and
+  whether the finished work is what they wanted. Their attention is what a session spends most
+  carefully; asked for more, they can no longer leave the work to it.
+
+- The documents lead the work, and hold only what stands now.
+
+  How the work proceeds is argued on `steering.md`, how the product is built on its design document,
+  and what it should be on its README; each changes before the work does. They say what stands and
+  why, never how it came to be: that is in the commits, each carrying the discussion that led to it.
+  A decision kept only in the session ends with it; history kept in the documents buries what
+  stands.
+
+- The plan reaches only as far as the user's next decision.
+
+  Tasks planned past a decision not yet made rest on a guess of it (assumption 5).
 
 ## The parts, and what passes between them
 
@@ -61,10 +76,10 @@ flowchart TD
 
 | Part | Does | Decides | Touches git |
 |---|---|---|---|
-| **User** | works out the Goal and each design with the conductor; answers at a sign-off | the Plan, each Design, the Finished work | no |
-| **Conductor** | works out the Goal and designs; writes the plan and the documents; asks for work and checks what comes back; keeps the record | every next move | the only one |
-| **Implementer** | makes one task's result in the work tree, and checks it | nothing | no |
-| **Evaluator** | evaluates one commit, or the plan, a design, or the finished work | nothing | no |
+| User | works out the Goal and each design with the conductor; answers at a sign-off | the Plan, each Design, the Finished work | no |
+| Conductor | works out the Goal and designs; writes the plan and the documents; asks for work and checks what comes back; keeps the record | every next move | the only one |
+| Implementer | makes one task's result in the work tree, and checks it | nothing | no |
+| Evaluator | evaluates one commit, or the plan, a design, or the finished work | nothing | no |
 
 ## A turn of the conductor
 
@@ -112,18 +127,29 @@ flowchart TD
     D -->|"the user's"| U
 ```
 
-- **`/rn:on`** works out the Goal with the user (**Working out**), writes the plan (**Plan**), has it
-  evaluated once, and takes turns up to the Plan sign-off.
-- **`/rn:gm`** puts the user's words in `open/`, whole; the conductor fixes by them what the sign-off
-  decides on, checks the fix, and stops at the same sign-off. The fix is not evaluated again; the user
-  answers it.
-- **`/rn:ty`** closes the sign-off in front, and stops.
-- **`/rn:dn`** puts where the work stands in `open/`, and stops.
-- **`/rn:up`** takes turns. A session from an earlier `rn` is worked out again from its old record,
-  up to a new Plan sign-off.
-- Tasks added from the evaluation of the finished work are made and evaluated like any task; the
-  finished work is then not evaluated again, and the session stops at its sign-off.
+- `/rn:on` works out the Goal and makes the plan, up to the Plan sign-off.
+
+  Working out, then the plan as one thing made.
+
+- `/rn:up` takes turns until the session stops for the user.
+
+  A session from an earlier `rn` is worked out again from its old record, up to a new Plan sign-off.
+
+- `/rn:gm` fixes what the sign-off decides on by the user's words, and stops at the same sign-off.
+
+  Its words go into `open/` whole; the conductor fixes by them and checks the fix, and the user
+  answers it rather than an evaluator.
+
+- `/rn:ty` closes the sign-off in front, and stops.
+
+- `/rn:dn` puts where the work stands into `open/`, and stops.
+
 - A fix is checked by the conductor and committed, and is not evaluated again.
+
+- Tasks added from the evaluation of the finished work are made like any task, and the session then
+  stops at the Finished work sign-off.
+
+  The finished work is not evaluated again.
 
 ## The essentials of each thing
 
@@ -147,14 +173,14 @@ flowchart TD
 
 | Part | The thing | Made by | Received by | Must reach |
 |---|---|---|---|---|
-| **Working out** | the agreed Goal, or design | conductor, with the user | user | what the user really wants, seen the same by both, with nothing they would decide assumed |
-| **Plan** | `steering.md` | conductor | evaluator; user at the Plan sign-off | a way to the Goal that rests on no decision the user has not made, each task's Purpose telling on the real thing |
-| **Design** | the README and design document | conductor | evaluator; user at a Design sign-off | the README: a user new to the product sees what it does for them, and can start. The design document: the one source every decision on how to build it starts from — its structure, what each part is for, and what passes between the parts, with no gap, in diagrams a person can follow. Both: only what stands now |
-| **Task result** | a task's edits | implementer | conductor, then evaluator | its Purpose reached on the real thing, within the design |
-| **Evaluation** | Good and More on a thing | evaluator | conductor | what goes wrong for the user, grounded on the thing, against its purpose |
-| **Deciding** | a decision line | conductor | user, on the pull request | the move that brings the thing closest to the Goal and settles: nothing fixed that does not bring it closer, nothing of the user's decided without them, and the plan and the design still standing after it, or revised first |
-| **Asking** | a stop for the user | conductor | user | a decision that is theirs, which they can make on the spot from what is shown |
-| **Finished work** | all the work | the session | evaluator; user at the Finished work sign-off | the Goal reached |
+| Working out | the agreed Goal, or design | conductor, with the user | user | what the user really wants, seen the same by both, with nothing they would decide assumed |
+| Plan | `steering.md` | conductor | evaluator; user at the Plan sign-off | a way to the Goal that rests on no decision the user has not made, each task's Purpose telling on the real thing |
+| Design | the README and design document | conductor | evaluator; user at a Design sign-off | the README: a user new to the product sees what it does for them, and can start. The design document: the one source every decision on how to build it starts from — its structure, what each part is for, and what passes between the parts, with no gap, in diagrams a person can follow. Both: only what stands now |
+| Task result | a task's edits | implementer | conductor, then evaluator | its Purpose reached on the real thing, within the design |
+| Evaluation | Good and More on a thing | evaluator | conductor | what goes wrong for the user, grounded on the thing, against its purpose |
+| Deciding | a decision line | conductor | user, on the pull request | the move that brings the thing closest to the Goal and settles: nothing fixed that does not bring it closer, nothing of the user's decided without them, and the plan and the design still standing after it, or revised first |
+| Asking | a stop for the user | conductor | user | a decision that is theirs, which they can make on the spot from what is shown |
+| Finished work | all the work | the session | evaluator; user at the Finished work sign-off | the Goal reached |
 
 The questions themselves are kept in one place, apart from this document, since refining them is how
 `rn` improves.
@@ -189,46 +215,74 @@ pull request, and every later `rn` reads them.
 
 ## What always holds
 
-1. **After every command, resuming needs only the pushed branch.**
-2. **No task past a sign-off the user has not approved is started or committed.**
-3. **Only the conductor runs git, and every commit is one decision**, its message carrying the items
-   of `open/` it settles, which leave `open/` in the same commit.
-4. **`open/` is empty whenever the session stops at a sign-off.**
-5. **Each thing is evaluated once.**
-6. **The evaluator is given the commit or document to evaluate, the essentials, and what the user
-   agreed or said** — the Goal, Goal reached when, the Rules, the task's Purpose, the README, the
-   design document, and the user's feedback — **and nothing of the maker's account**: not its
+1. After every command, resuming needs only the pushed branch.
+2. No task past a sign-off the user has not approved is started or committed.
+3. Only the conductor runs git, and every commit is one decision.
+
+   Its message carries the items of `open/` it settles, which leave `open/` in the same commit.
+
+4. `open/` is empty whenever the session stops at a sign-off.
+5. Each thing is evaluated once.
+6. The evaluator is given what the user agreed or said, and nothing of the maker's account.
+
+   It gets the commit or document to evaluate, the essentials, the Goal, Goal reached when, the Rules,
+   the task's Purpose, the README, the design document, and the user's feedback; not the maker's
    reasons, commit messages, notes, or earlier evaluations.
-7. **No commit of the work goes beyond what the README and the design document on its branch say.**
-8. **The documents hold only what stands now.**
+
+7. No commit of the work goes beyond what the README and the design document on its branch say.
+8. The documents hold only what stands now.
 
 ## What it costs, and the ways not taken
 
-- **A fresh agent for every task and every evaluation** costs time and tokens, and a new implementer
-  starts without what the last one learned. It is paid for the second assumption, and what the
-  next task needs is in the documents.
-- **Stopping for each design** costs the user's time mid-session. It is paid for the third
-  assumption.
-- **Planning only to the next decision** means planning again after each; paid for the fifth.
-- **Evaluating each thing once** leaves a fix seen only by its maker and the conductor. It is paid
-  for the fourth assumption; what a fix gets wrong is left to the evaluation of the finished work
+- A fresh agent for every task and every evaluation costs time and tokens.
+
+  A new implementer also starts without what the last one learned. It is paid for assumption 2, and
+  what the next task needs is in the documents.
+
+- Stopping for each design costs the user's time mid-session.
+
+  It is paid for assumption 3.
+
+- Planning only to the next decision means planning again after each.
+
+  It is paid for assumption 5.
+
+- Evaluating each thing once leaves a fix seen only by its maker and the conductor.
+
+  It is paid for assumption 4; what a fix gets wrong is left to the evaluation of the finished work
   and the user's sign-off.
-- **The conductor's own plan and designs are checked by no one but it until an evaluator and then
-  the user see them.** It is paid because the user sees each at its sign-off.
-- **Only the conductor runs git**, so while an implementer works, its edits are only in the work tree;
-  a conversation that ends then resumes only on the same machine.
-- **History only in the pull request.** The branch is squashed into one commit on `main`, so how the
-  work came to be is read from the pull request, which keeps its commits after the branch is gone,
-  on GitHub alone.
-- **Not taken — the evaluator decides the next move.** It would redo work that serves the Goal over
-  a point of wording.
-- **Not taken — the user picks among prepared choices.** A pick carries no reasons into the README
-  and design document, and prepared choices hide what the user would have raised in talk.
-- **Not taken — one evaluator per essential.** An evaluator stands in for the reader, who reads the
-  whole; one who sees a single question misses what contradicts across them. Where one evaluator
-  goes shallow, the essentials are too many or too blunt, and are refined instead.
-- **Not taken — decisions kept as files of their own.** They would pile up beside the documents and
-  bury what stands; the commits already carry them.
+
+- The conductor's own plan and designs are checked by no one else until an evaluator sees them.
+
+  It is paid because the user also sees each at its sign-off.
+
+- While an implementer works, its edits are only in the work tree, since only the conductor runs git.
+
+  A conversation that ends then resumes only on the same machine.
+
+- How the work came to be is kept only in the pull request, on GitHub.
+
+  The branch is squashed into one commit on `main`; the pull request keeps its commits after the
+  branch is gone.
+
+- The evaluator does not decide the next move.
+
+  It would redo work that serves the Goal over a point of wording.
+
+- The user does not pick among prepared choices.
+
+  A pick carries no reasons into the README and design document, and prepared choices hide what the
+  user would have raised in talk.
+
+- One evaluator reads the whole thing, not one evaluator per essential.
+
+  An evaluator stands in for the reader, who reads the whole; one who sees a single question misses
+  what contradicts across them. Where one evaluator goes shallow, the essentials are too many or too
+  blunt, and are refined instead.
+
+- Decisions are not kept as files of their own.
+
+  They would pile up beside the documents and bury what stands; the commits already carry them.
 
 Assumptions, not yet checked:
 

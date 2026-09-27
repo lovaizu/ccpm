@@ -29,14 +29,22 @@ plugin:
 A session is at work, paused by you, or stopped for you at a sign-off: a point where you approve
 something before the work goes past it. `rn` stops only where the call is yours:
 
-- **the Plan sign-off** — before any work starts;
-- **a Design sign-off** — where the work changes what your product should be, or where taste, scope,
-  or cost against benefit is yours to weigh, as when the current way does not settle however it is
-  fixed. Say a payment times out: whether it retries or fails over is yours to settle. `rn` talks it
-  through with you one point at a time, and writes it into your README and design document — the
-  ones it finds in your repository, or `README.md` and `docs/design.md` when there are none. You
-  approve those, and the work is built to them;
-- **the Finished work sign-off** — whether the finished work does what you wanted.
+- The Plan sign-off comes before any work starts.
+
+  You approve the plan on the pull request.
+
+- A Design sign-off comes where what your product should be, or a call of taste, scope, or cost, is
+  yours.
+
+  That includes a way that does not settle however it is fixed. Say a payment times out: whether it
+  retries or fails over is yours to settle. `rn` talks it through with you one point at a time, and
+  writes it into your README and design document — the ones it finds in your repository, or
+  `README.md` and `docs/design.md` when there are none. You approve those, and the work is built to
+  them.
+
+- The Finished work sign-off comes last.
+
+  You approve whether the finished work does what you wanted.
 
 ```mermaid
 stateDiagram-v2
@@ -57,16 +65,24 @@ stateDiagram-v2
     Finished --> [*]: /rn:ty
 ```
 
-- **`/rn:ty` approves, `/rn:gm` asks for changes.** Either one acts on your answer and stops. Say "go
-  on" to continue in the same conversation, or `/clear` first when you want a fresh one, then
+- `/rn:ty` approves and `/rn:gm` asks for changes, and either one then stops.
+
+  Say "go on" to continue in the same conversation, or `/clear` first when you want a fresh one, then
   `/rn:up`.
-- **`/rn:dn` pauses the work anywhere**, and `/rn:up` picks it up again, in this conversation or a new
-  one.
-- **`/rn:ty` or `/rn:gm` at work, and `/rn:dn` at a sign-off, only tell you where the session
-  stands.** `/rn:up` at a sign-off you have not answered stops there again.
-- **`/rn:up` also brings a session started under an earlier `rn` up to date**: it reads the old plan
-  and the work done, asks only what they leave unclear, and stops for you to approve the new plan, on
-  the same branch and pull request.
+
+- `/rn:dn` pauses the work anywhere, and `/rn:up` picks it up again.
+
+  In this conversation or a new one.
+
+- A command with nothing to do where the session stands only tells you where it stands.
+
+  That is `/rn:ty` or `/rn:gm` at work, and `/rn:dn` at a sign-off. `/rn:up` at a sign-off you have
+  not answered stops there again.
+
+- `/rn:up` brings a session started under an earlier `rn` up to date.
+
+  It reads the old plan and the work done, asks only what they leave unclear, and stops for you to
+  approve the new plan, on the same branch and pull request.
 
 ## A session, start to finish
 
