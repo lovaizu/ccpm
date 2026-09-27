@@ -42,27 +42,27 @@ something before the work goes past it. `rn` stops only where the call is yours:
   `README.md` and `docs/design.md` when there are none. You approve those, and the work is built to
   them.
 
-- The Finished work sign-off comes last.
+- The Goal sign-off comes last.
 
-  You approve whether the finished work does what you wanted.
+  You approve whether the Goal is reached, on the work as it now runs.
 
 ```mermaid
 stateDiagram-v2
     state "Plan sign-off" as Plan
     state "At work" as Work
     state "Design sign-off" as Design
-    state "Finished work sign-off" as Finished
+    state "Goal sign-off" as Goal
 
     [*] --> Plan: /rn:on
     Plan --> Plan: /rn:gm
     Plan --> Work: /rn:ty
     Work --> Work: /rn:dn, /rn:up
     Work --> Design: a design is yours to settle
-    Work --> Finished: all tasks done
+    Work --> Goal: all tasks done
     Design --> Design: /rn:gm
     Design --> Work: /rn:ty
-    Finished --> Work: /rn:gm adds tasks
-    Finished --> [*]: /rn:ty
+    Goal --> Work: /rn:gm adds tasks
+    Goal --> [*]: /rn:ty
 ```
 
 - `/rn:ty` approves and `/rn:gm` asks for changes, and either one then stops.
@@ -169,7 +169,7 @@ plugin can't), then `/rn:up`.
 
 ### 5. Finish
 
-At the Finished work sign-off, you approve the finished work. On `/rn:ty` the pull request is marked
+At the Goal sign-off, you approve that the Goal is reached. On `/rn:ty` the pull request is marked
 ready; the merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
 
 ## The names

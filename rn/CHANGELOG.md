@@ -19,6 +19,7 @@ last for fixes that change nothing you do.
 - A task says only what it must reach, not the steps to take, so the work is judged by what it does.
 - The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
 - `/rn:ty` records your approval and stops; `/rn:gm` revises by your feedback right away, has the revision evaluated, and stops again for your answer — so you can `/clear` at any stop and run `/rn:up` to continue.
+- The last stop is the Goal sign-off: you approve only whether your goal is reached, on the work as it now runs, since the plan and each design were approved at their own stops.
 - A design is talked through with you one point at a time, like the goal, and written into your README and design document for you to approve; the work is built to them, and they stay with your product after the session.
 - `rn` decides every next move by the goal itself; the evaluator reports what holds and what does not, and a task that does its job is not sent back over a detail.
 - When the work keeps failing, `rn` works out another way with you instead of retrying the same one.
