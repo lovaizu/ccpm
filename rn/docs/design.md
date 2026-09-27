@@ -81,10 +81,14 @@ flowchart TD
 | Implementer | makes one task's result in the work tree, and checks it | nothing | no |
 | Evaluator | evaluates one commit, or the plan, a design, or the deliverable | nothing | no |
 
+A thing is anything made in a session: the plan, a design, a task's result, an evaluation, a
+decision. Its maker is the one who makes it: the implementer for a task's result, the evaluator for
+an evaluation, the conductor for the rest.
+
 ## A turn of the conductor
 
 Each turn takes what is in front, and turns follow until the session stops for the user. In bold,
-the part of the essentials each step is made and checked by.
+the essentials each step is made and checked by.
 
 ```mermaid
 flowchart TD
@@ -98,9 +102,8 @@ flowchart TD
     F -->|"a sign-off, open/ empty"| A(["stop, with the grounds<br/><b>Asking</b>"])
 ```
 
-One thing made goes the same way, whatever it is. Its maker is the implementer for a task's result
-and the conductor for the plan or a design; the deliverable has no maker of its own, and starts at
-its evaluation.
+One thing made goes the same way, whatever it is. The deliverable has no maker of its own, and
+starts at its evaluation.
 
 ```mermaid
 flowchart TD
@@ -154,7 +157,8 @@ flowchart TD
 ## The essentials of each thing
 
 An essential is a question of what a thing must reach. The maker takes the questions as the aim of
-its making and checks what it made by them; whoever receives the thing checks it by the same. Every
+its making and checks what it made by them; the conductor, the evaluator, and the user check it by
+the same. Every
 check and every evaluation answers each question with a Good, what serves the aim and must be kept,
 and a More, what falls short, what goes wrong for its reader because of it, and how to change it.
 
@@ -162,7 +166,7 @@ and a More, what falls short, what goes wrong for its reader because of it, and 
 flowchart TD
     E(["the essentials of a thing"])
     M["its maker: makes it, and checks it"]
-    V["its receiver: checks it,<br/>or evaluates it once"]
+    V["conductor, evaluator, user:<br/>check it, or evaluate it once"]
     C["conductor: decides"]
     E -->|the aim| M
     E -->|the questions| V
@@ -171,7 +175,7 @@ flowchart TD
     V -->|Good and More| C
 ```
 
-| Part | The thing | Made by | Received by | Must reach |
+| Essentials of | The thing | Made by | Checked by | Must reach |
 |---|---|---|---|---|
 | Working out | the agreed Goal, or design | conductor, with the user | user | what the user really wants, seen the same by both, with nothing they would decide assumed |
 | Plan | `steering.md` | conductor | evaluator; user at the Plan sign-off | a way to the Goal that rests on no decision the user has not made, each task's Purpose telling on the real thing |
@@ -180,7 +184,7 @@ flowchart TD
 | Evaluation | Good and More on a thing | evaluator | conductor | what goes wrong for the user, grounded on the thing, against its purpose |
 | Deciding | a decision line | conductor | user, on the pull request | the move that brings the thing closest to the Goal and settles: nothing fixed that does not bring it closer, nothing of the user's decided without them, and the plan and the design still standing after it, or revised first |
 | Asking | a stop for the user | conductor | user | a decision that is theirs, which they can make on the spot from what is shown |
-| Deliverable | all the work | the session | evaluator; user at the Deliverable sign-off | the Goal reached |
+| Deliverable | all the session made | the session | evaluator; user at the Deliverable sign-off | the Goal reached |
 
 The questions themselves are kept in one place, apart from this document, since refining them is how
 `rn` improves.
