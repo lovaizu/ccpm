@@ -10,20 +10,20 @@ last for fixes that change nothing you do.
 ### Added
 
 - While `rn` works, it shows one line each time it decides what to do next, so you can see what happened.
-- Every evaluation, committed to the pull request, says what is good and what needs more, each with its grounds and, for a More, how to fix it — so you can see why the work passed or was sent back.
+- Every evaluation, committed to the pull request, says what is good and what needs more, each with its grounds and, for a More, how to fix it — so you can see why a result passed or was sent back.
 
 ### Changed
 
 - `/rn:on` asks about your goal one question at a time, each with the answer it recommends, so you can answer in a word and the plan matches what you really want.
 - The plan stops at your next decision; the tasks after it are planned once you decide.
-- A task says only what it must reach, not the steps to take, so the work is judged by what it does.
+- A task says only what it must reach, not the steps to take, so a result is judged by what it does.
 - The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
-- `/rn:ty` records your approval and stops; `/rn:gm` revises by your feedback right away, has the revision evaluated, and stops again for your answer — so you can `/clear` at any stop and run `/rn:up` to continue.
+- `/rn:ty` records your approval and stops; `/rn:gm` fixes by your feedback right away and stops again for your answer — so you can `/clear` at any stop and run `/rn:up` to continue.
 - The last stop is the Deliverable sign-off: you approve only the deliverable against your goal, since the plan and each design were approved at their own stops.
-- A design is talked through with you one point at a time, like the goal, and written into your README and design document for you to approve; the work is built to them, and they stay with your product after the session.
+- A design is talked through with you one point at a time, like the goal, and written into your README and design document for you to approve; your product is built to them, and they stay with your product after the session.
 - `rn` decides every next move by the goal itself; the evaluator reports what holds and what does not, and a task that does its job is not sent back over a detail.
 - When the work keeps failing, `rn` works out another way with you instead of retrying the same one.
-- A session started under an earlier `rn` (the first two numbers of the version differ) is brought up to date by `/rn:up` from its old plan and the work done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
+- A session started under an earlier `rn` (the first two numbers of the version differ) is brought up to date by `/rn:up` from its old plan and what was done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
 - Each task is evaluated by one fresh evaluator against what the task must reach, instead of several expert reviews recorded in `checks/`.
 - `/rn:on` starts on your current branch and its pull request when you are on one, instead of always making new ones.
 

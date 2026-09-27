@@ -4,7 +4,7 @@ Most AI agents need a carefully written prompt and someone watching them to get 
 doesn't: give it a goal, roughly, with `/rn:on`. It works out with you what you actually want, then
 carries the work through without you, and calls you back only for the decisions that are yours. One
 goal carried through to the end is a session, and a session lives in git — its record in `.rn/` in
-your repository, its work on a pull request — so it survives a full context, a `/clear`, or the end
+your repository, what it makes on a pull request — so it survives a full context, a `/clear`, or the end
 of the day. You can start right now, with nothing prepared.
 
 ## What you need
@@ -40,11 +40,12 @@ something before the work goes past it. `rn` stops only where the call is yours:
   whether the type checks are strict from the start or tightened step by step is yours to settle.
   `rn` talks it through with you one point at a time, and writes it into your README and design
   document — the ones it finds in your repository, or `README.md` and `docs/design.md` when there
-  are none. You approve those, and the work is built to them.
+  are none. You approve those, and your product is built to them.
 
 - The Deliverable sign-off comes last.
 
-  You approve the deliverable, the work as it now runs, by whether it reaches your goal.
+  You approve the deliverable, your product as the session leaves it, by whether it reaches your
+  goal.
 
 ```mermaid
 stateDiagram-v2
@@ -81,7 +82,7 @@ stateDiagram-v2
 
 - `/rn:up` brings a session started under an earlier `rn` up to date.
 
-  It reads the old plan and the work done, asks only what they leave unclear, and stops for you to
+  It reads the old plan and what was done, asks only what they leave unclear, and stops for you to
   approve the new plan, on the same branch and pull request.
 
 ## A session, start to finish
@@ -107,15 +108,16 @@ you agree. It looks up what the repository can answer instead of asking you.
 ```
 
 Once the goal and the way to it are agreed, `rn` writes the plan and puts it on a draft pull
-request. The plan is a numbered list of tasks, each sign-off one of them, and it runs only as far as
-your next decision; once you decide, `rn` writes the tasks that follow from it.
+request. The plan holds the goal, how you'd know it is reached, and a numbered list of tasks, each
+sign-off one of them. The tasks run only as far as your next decision; once you decide, `rn` writes
+the tasks that follow from it.
 
 ```console
 ● ── typescript: a wrong type fails the build ──
-  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to revise
+  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
   ⬜ #2 trace the type mistakes that reached production / #3 Design sign-off
-  (after approval, #2 runs without you; at #3 we settle together how strict the checks start, and
-  I write it into the README and design doc for you to approve)
+  (after approval, #2 runs without you; at #3 we settle together how strict the type checks start,
+  and I write it into the README and design document for you to approve)
 
   Draft PR: https://github.com/you/repo/pull/42
 ```
@@ -135,8 +137,8 @@ and plain `/rn:gm` takes your review comments on the pull request as your feedba
 
 ### 3. While it works
 
-You don't watch. Each task is made by one agent and evaluated by another, so work passes because it
-does its job, not because its maker says so. Each time `rn` decides what to do next, it says so in
+You don't watch. Each task is made by one agent and evaluated by another, so a result passes
+because it does its job, not because the agent that made it says so. Each time `rn` decides what to do next, it says so in
 one line, so when you glance back you can follow it. Here, after you settled at #3 how strict the
 checks start:
 
@@ -172,7 +174,7 @@ plugin can't), then `/rn:up`.
 ### 5. Finish
 
 At the Deliverable sign-off, you approve the deliverable. On `/rn:ty` the pull request is marked
-ready; the merge is yours. The session leaves behind only its `.rn/` directory and the work itself.
+ready; the merge is yours. The session leaves behind only its `.rn/` directory and the deliverable.
 
 ## The names
 
