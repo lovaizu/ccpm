@@ -148,7 +148,7 @@ flowchart TD
 | Part | The thing | Made by | Received by | Must reach |
 |---|---|---|---|---|
 | **Working out** | the agreed Goal, or design | conductor, with the user | user | what the user really wants, seen the same by both, with nothing they would decide assumed |
-| **Plan** | `steering.md` | conductor | evaluator; user at the Plan sign-off | a way to the Goal, as far as the next decision, each task's Purpose telling on the real thing |
+| **Plan** | `steering.md` | conductor | evaluator; user at the Plan sign-off | a way to the Goal that rests on no decision the user has not made, each task's Purpose telling on the real thing |
 | **Design** | the README and design document | conductor | evaluator; user at a Design sign-off | the README: a user new to the product sees what it does for them, and can start. The design document: the one source every decision on how to build it starts from — its structure, what each part is for, and what passes between the parts, with no gap, in diagrams a person can follow. Both: only what stands now |
 | **Task result** | a task's edits | implementer | conductor, then evaluator | its Purpose reached on the real thing, within the design |
 | **Evaluation** | Good and More on a thing | evaluator | conductor | what goes wrong for the user, grounded on the thing, against its purpose |
