@@ -32,7 +32,7 @@ differ from this document, this document is right.
 - The user decides only what is theirs.
 
   Taste, scope, cost against benefit, what the product should be, a way that does not settle, and
-  whether the Goal is reached. Their attention is what a session spends most
+  whether the deliverable reaches the Goal. Their attention is what a session spends most
   carefully; asked for more, they can no longer leave the work to it.
 
 - The documents lead the work, and hold only what stands now.
@@ -76,10 +76,10 @@ flowchart TD
 
 | Part | Does | Decides | Touches git |
 |---|---|---|---|
-| User | works out the Goal and each design with the conductor; answers at a sign-off | the Plan, each Design, whether the Goal is reached | no |
+| User | works out the Goal and each design with the conductor; answers at a sign-off | the Plan, each Design, the Deliverable | no |
 | Conductor | works out the Goal and designs; writes the plan and the documents; asks for work and checks what comes back; keeps the record | every next move | the only one |
 | Implementer | makes one task's result in the work tree, and checks it | nothing | no |
-| Evaluator | evaluates one commit, or the plan, a design, or the finished work | nothing | no |
+| Evaluator | evaluates one commit, or the plan, a design, or the deliverable | nothing | no |
 
 ## A turn of the conductor
 
@@ -94,12 +94,12 @@ flowchart TD
     F -->|"a Design sign-off<br/>not yet worked out"| W["work out the design<br/>with the user<br/><b>Working out</b>"]
     W --> DT["one thing made:<br/>the README and design document<br/><b>Design</b>"]
     F -->|"nothing left before<br/>the next decision"| P["one thing made:<br/>the tasks that follow<br/><b>Plan</b>"]
-    F -->|"every task done, the<br/>finished work not yet evaluated"| FW["one thing made, from its evaluation:<br/>the finished work<br/><b>Finished work</b>"]
+    F -->|"every task done, the<br/>deliverable not yet evaluated"| FW["one thing made, from its evaluation:<br/>the deliverable<br/><b>Deliverable</b>"]
     F -->|"a sign-off, open/ empty"| A(["stop, with the grounds<br/><b>Asking</b>"])
 ```
 
 One thing made goes the same way, whatever it is. Its maker is the implementer for a task's result
-and the conductor for the plan or a design; the finished work has no maker of its own, and starts at
+and the conductor for the plan or a design; the deliverable has no maker of its own, and starts at
 its evaluation.
 
 ```mermaid
@@ -146,10 +146,10 @@ flowchart TD
 
 - A fix is checked by the conductor and committed, and is not evaluated again.
 
-- Tasks added from the evaluation of the finished work are made like any task, and the session then
-  stops at the Goal sign-off.
+- Tasks added from the evaluation of the deliverable are made like any task, and the session then
+  stops at the Deliverable sign-off.
 
-  The finished work is not evaluated again.
+  The deliverable is not evaluated again.
 
 ## The essentials of each thing
 
@@ -180,7 +180,7 @@ flowchart TD
 | Evaluation | Good and More on a thing | evaluator | conductor | what goes wrong for the user, grounded on the thing, against its purpose |
 | Deciding | a decision line | conductor | user, on the pull request | the move that brings the thing closest to the Goal and settles: nothing fixed that does not bring it closer, nothing of the user's decided without them, and the plan and the design still standing after it, or revised first |
 | Asking | a stop for the user | conductor | user | a decision that is theirs, which they can make on the spot from what is shown |
-| Finished work | all the work | the session | evaluator; user at the Goal sign-off | the Goal reached |
+| Deliverable | all the work | the session | evaluator; user at the Deliverable sign-off | the Goal reached |
 
 The questions themselves are kept in one place, apart from this document, since refining them is how
 `rn` improves.
@@ -249,7 +249,7 @@ pull request, and every later `rn` reads them.
 
 - Evaluating each thing once leaves a fix seen only by its maker and the conductor.
 
-  It is paid for assumption 4; what a fix gets wrong is left to the evaluation of the finished work
+  It is paid for assumption 4; what a fix gets wrong is left to the evaluation of the deliverable
   and the user's sign-off.
 
 - The conductor's own plan and designs are checked by no one else until an evaluator sees them.
