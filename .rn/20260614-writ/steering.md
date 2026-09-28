@@ -5,7 +5,7 @@ Design: writ/docs/design.md
 
 writ is a Claude Code plugin that makes a document read as if a person wrote it, so its reader takes
 it in with the least effort, applied on demand by a human or by Claude itself. This plan settles what
-writ ought to be — its essential viewpoints, its README, and its design — and ends at the user's
+writ ought to be — its essentials, its README, and its design — and ends at the user's
 approval of those three. Writing the skill itself comes after that approval, in a plan of its own.
 
 The plan starts from zero. The earlier build was removed so it cannot steer the new one; what it
@@ -13,39 +13,39 @@ taught survives only as the user's feedback listed under Assumptions.
 
 # Acceptance criteria
 
-- The viewpoints state what every document writ produces must reach, as a few essential questions
+- The essentials state what every document writ produces must reach, as a few essential questions
   rather than a list of bans, so a form of noise nobody listed is still caught.
 - Every piece of the feedback in `instruction.md`, `writing-feedback-rn.md` and
-  `writing-feedback-telldes.md` is either answered by a viewpoint or deliberately left out with the
+  `writing-feedback-telldes.md` is either answered by an essential or deliberately left out with the
   user's agreement.
 - A reader of the README who uses Claude Code grasps, top to bottom, what writ does for them and how
   to use it, through an example they can picture as their own work.
-- A reader of the design grasps, top to bottom, how writ reaches the viewpoints: who takes part, what
+- A reader of the design grasps, top to bottom, how writ reaches the essentials: who takes part, what
   passes between them, and why each decision was made, in one sentence at the decision.
-- The README and the design each meet the viewpoints themselves.
-- The user has approved the viewpoints, the README, and the design on PR #15.
+- The README and the design each meet the essentials themselves.
+- The user has approved the essentials, the README, and the design on PR #15.
 
 # Assumptions
 
 - Fact: the sources of record are `instruction.md` (the original instruction),
   `writing-feedback-rn.md` (the writing know-how agreed in the rn rebuild, PR #33) and
-  `writing-feedback-telldes.md` (Telldes's README and design viewpoints and the user's writing
+  `writing-feedback-telldes.md` (Telldes's points for reviewing a README and a design and the user's writing
   feedback there). All stay in their original Japanese because they are the user's words.
 - Fact: the two feedback files disagree in places — e.g. the rn one says never to refer the reader
   to another section and to keep no section of costs or rejected options, while the Telldes one has
   the README link to the design for reasons and the design name its costs and rejected options.
 - Fact: earlier field feedback from real runs is kept where it was given — PR #15's review comments,
   and `writ-feedback-3.md` / `writ-feedback-4.md` on branch `worktree-aiya` under
-  `.rn/20260813-aiya/`. It is input to the viewpoints, not a base to build on.
-- Fact: rn's rebuild (branch `rn-rebuild`) is the model for the approach: essential viewpoints first,
+  `.rn/20260813-aiya/`. It is input to the essentials, not a base to build on.
+- Fact: rn's rebuild (branch `rn-rebuild`) is the model for the approach: the essentials first,
   then README and design written and judged against them.
-- Assumption: the viewpoints live at `writ/references/viewpoints.md`, as rn's do, so the skill later
+- Assumption: the essentials live at `writ/references/essentials.md`, so the skill later
   writes and judges by the same file.
 
 # Rules
 
 - commit and push every change; one completion marker per task
-- Work toward each task's Purpose and judge the result against the viewpoints; no fixed review
+- Work toward each task's Purpose and judge the result against the essentials; no fixed review
   ceremony per task.
 - The only procedural rules are this repository's plugin rules (`.claude/rules/plugin.md`,
   `marketplace.md`, `language.md`): artifacts in English, and when the plugin ships, version only in
@@ -54,28 +54,28 @@ taught survives only as the user's feedback listed under Assumptions.
 
 # Tasks
 
-### #1: Write writ's essential viewpoints
+### #1: Write writ's essentials
 
-**Purpose**: State, in `writ/references/viewpoints.md`, the few essential questions every document
+**Purpose**: State, in `writ/references/essentials.md`, the few essential questions every document
 must reach, so writing and judging look at the same thing.
 
 **Prerequisites**: none
 
 **Steps**:
 
-- [ ] Draw the viewpoints from `instruction.md`, both feedback files, and the earlier field feedback
+- [ ] Draw the essentials from `instruction.md`, both feedback files, and the earlier field feedback
 - [ ] Bring each point where the sources disagree to the user, one at a time
 - [ ] Refine until each question is essential and none repeats another
 
 **Completion criteria**:
 
-- Each item of the feedback is caught by a viewpoint, or left out with the user's agreement.
-- No viewpoint is a ban on a single form of noise; each names the end it protects.
+- Each item of the feedback is caught by an essential, or left out with the user's agreement.
+- No essential is a ban on a single form of noise; each names the end it protects.
 
 ### #2: Write writ's README and design
 
 **Purpose**: Show what writ ought to be — to its user in `writ/README.md`, and to whoever builds it
-in `writ/docs/design.md` — held to the viewpoints.
+in `writ/docs/design.md` — held to the essentials.
 
 **Prerequisites**: #1
 
@@ -89,9 +89,9 @@ in `writ/docs/design.md` — held to the viewpoints.
 - Read top to bottom, the README tells a Claude Code user what writ does for them and how to use it.
 - Read top to bottom, the design shows who takes part, what passes between them, and why each choice
   was made.
-- Both meet every viewpoint.
+- Both meet every essential.
 
-### #3: Refine the viewpoints, README, and design together, and take the user's approval
+### #3: Refine the essentials, README, and design together, and take the user's approval
 
 **Purpose**: Bring the three to agreement with one another and to the user's approval on PR #15.
 
@@ -99,7 +99,7 @@ in `writ/docs/design.md` — held to the viewpoints.
 
 **Steps**:
 
-- [ ] Judge the three against the viewpoints and fix what falls short, in any of the three
+- [ ] Judge the three against the essentials and fix what falls short, in any of the three
 - [ ] Take the user's review on PR #15
 
 **Completion criteria**:
