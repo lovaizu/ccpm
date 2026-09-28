@@ -39,7 +39,7 @@ taught survives only as the user's feedback listed under Assumptions.
   `.rn/20260813-aiya/`. It is input to the essentials, not a base to build on.
 - Fact: rn's rebuild (branch `rn-rebuild`) is the model for the approach: the essentials first,
   then README and design written and judged against them.
-- Assumption: the essentials live at `writ/references/essentials.md`, so the skill later
+- Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
 # Rules
@@ -58,7 +58,7 @@ taught survives only as the user's feedback listed under Assumptions.
 
 ### #1: Write writ's essentials
 
-**Purpose**: State, in `writ/references/essentials.md`, the few essential questions every document
+**Purpose**: State, in `writ/references/essentials/`, one file per kind of document, the few essential questions every document
 must reach, so writing and judging look at the same thing.
 
 **Prerequisites**: none
