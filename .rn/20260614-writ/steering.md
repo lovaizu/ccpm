@@ -50,6 +50,8 @@ taught survives only as the user's feedback listed under Assumptions.
 - The only procedural rules are this repository's plugin rules (`.claude/rules/plugin.md`,
   `marketplace.md`, `language.md`): artifacts in English, and when the plugin ships, version only in
   `plugin.json` and the marketplace and root README updated together.
+- Write the essentials, README, and design in Japanese for the user's review, and translate them to
+  English before the merge.
 - Do not read the removed build (commits before this plan) as a starting point.
 
 # Tasks
@@ -63,7 +65,7 @@ must reach, so writing and judging look at the same thing.
 
 **Steps**:
 
-- [ ] Draw the essentials from `instruction.md`, both feedback files, and the earlier field feedback
+- [x] Draw the essentials from `instruction.md`, both feedback files, and the earlier field feedback
 - [ ] Bring each point where the sources disagree to the user, one at a time
 - [ ] Refine until each question is essential and none repeats another
 
