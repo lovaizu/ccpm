@@ -103,6 +103,7 @@ in `writ/docs/design.md` — held to the essentials.
 
 - [ ] Judge the three against the essentials and fix what falls short, in any of the three
 - [ ] Take the user's review on PR #15
+- [ ] Once approved, translate the three to English
 
 **Completion criteria**:
 
