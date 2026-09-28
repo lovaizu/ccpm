@@ -4,8 +4,8 @@ Most AI agents need a carefully written prompt and someone watching them to get 
 doesn't: give it a goal, roughly, with `/rn:on`. It works out with you what you actually want, then
 carries the work through without you, and calls you back only for the decisions that are yours. One
 goal carried through to the end is a session, and a session lives in git — its record in `.rn/` in
-your repository, what it makes on a pull request — so it survives a full context, a `/clear`, or the end
-of the day. You can start right now, with nothing prepared.
+your repository, what it makes on a pull request — so it survives a full context, a `/clear`, or
+the end of the day. You can start right now, with nothing prepared.
 
 ## What you need
 
@@ -26,27 +26,6 @@ plugin:
 
 ## How a session goes
 
-A session is at work, paused by you, or stopped for you at a sign-off: a point where you approve
-something before the work goes past it. `rn` stops only where the call is yours:
-
-- The Plan sign-off comes before any work starts.
-
-  You approve the plan on the pull request.
-
-- A Design sign-off comes where what your product should be, or a call of taste, scope, or cost, is
-  yours.
-
-  That includes a way that does not settle however it is fixed. Say `rn` moves your app to TypeScript:
-  whether the type checks are strict from the start or tightened step by step is yours to settle.
-  `rn` talks it through with you one point at a time, and writes it into your README and design
-  document — the ones it finds in your repository, or `README.md` and `docs/design.md` when there
-  are none. You approve those, and your product is built to them.
-
-- The Deliverable sign-off comes last.
-
-  You approve the deliverable, your product as the session leaves it, by whether it reaches your
-  goal.
-
 ```mermaid
 stateDiagram-v2
     state "Plan sign-off" as Plan
@@ -66,28 +45,9 @@ stateDiagram-v2
     Deliverable --> [*]: /rn:ty
 ```
 
-- `/rn:ty` approves and `/rn:gm` asks for changes, and either one then stops.
-
-  Say "go on" to continue in the same conversation, or `/clear` first when you want a fresh one, then
-  `/rn:up`.
-
-- `/rn:dn` pauses the work anywhere, and `/rn:up` picks it up again.
-
-  In this conversation or a new one.
-
-- A command with nothing to do where the session stands only tells you where it stands.
-
-  That is `/rn:ty` or `/rn:gm` at work, and `/rn:dn` at a sign-off. `/rn:up` at a sign-off you have
-  not answered stops there again.
-
-- `/rn:up` brings a session started under an earlier `rn` up to date.
-
-  It reads the old plan and what was done, asks only what they leave unclear, and stops for you to
-  approve the new plan, on the same branch and pull request.
-
-## A session, start to finish
-
-Say your app is written in JavaScript, and you want it moved to TypeScript — work that takes days.
+A sign-off is where you approve something before the work goes past it. `rn` stops only there, or
+where you pause it. Say your app is written in JavaScript, and you want it moved to TypeScript —
+work that takes days.
 
 ### 1. Start — `/rn:on`
 
@@ -107,17 +67,14 @@ you agree. It looks up what the repository can answer instead of asking you.
   file moved with loose types would still let it through. Is that right?
 ```
 
-Once the goal and the way to it are agreed, `rn` writes the plan and puts it on a draft pull
-request. The plan holds the goal, how you'd know it is reached, and a numbered list of tasks, each
-sign-off one of them. The tasks run only as far as your next decision; once you decide, `rn` writes
-the tasks that follow from it.
+Then `rn` writes the plan — the goal, how you'd know it is reached, and the tasks — and puts it on a
+draft pull request. The tasks run only as far as your next decision; once you decide, `rn` plans
+what follows from it.
 
 ```console
 ● ── typescript: a wrong type fails the build ──
   👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
   ⬜ #2 trace the type mistakes that reached production / #3 Design sign-off
-  (after approval, #2 runs without you; at #3 we settle together how strict the type checks start,
-  and I write it into the README and design document for you to approve)
 
   Draft PR: https://github.com/you/repo/pull/42
 ```
@@ -126,8 +83,9 @@ The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahe
 
 ### 2. Answer — `/rn:ty` and `/rn:gm`
 
-Every decision is answered the same way: `/rn:ty` approves, `/rn:gm <feedback>` asks for changes,
-and plain `/rn:gm` takes your review comments on the pull request as your feedback.
+`/rn:ty` approves; `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
+comments on the pull request. Either one then stops: say "go on" to continue, or `/clear` first when
+you want a fresh conversation, then `/rn:up`.
 
 ```console
 > /rn:ty
@@ -135,12 +93,24 @@ and plain `/rn:gm` takes your review comments on the pull request as your feedba
 ● Approved: Plan sign-off. Next: say "go on", or /clear and /rn:up.
 ```
 
-### 3. While it works
+### 3. Settle a design — Design sign-off
+
+#2 runs without you. At #3, how strict the type checks start is a call of cost against safety, so it
+is yours. `rn` talks it through with you one point at a time, and writes what you settle into your
+README and design document — the ones it finds in your repository, or `README.md` and
+`docs/design.md` when there are none. You approve those, and your product is built to them.
+
+```console
+● #2 found the three bugs in src/cart and src/checkout. Strict checks from the start stop all
+  three, but nothing builds until every file is typed; loose first builds sooner and lets them
+  through until tightened. Which weighs more for you?
+```
+
+### 4. While it works
 
 You don't watch. Each task is made by one agent and evaluated by another, so a result passes
-because it does its job, not because the agent that made it says so. Each time `rn` decides what to do next, it says so in
-one line, so when you glance back you can follow it. Here, after you settled at #3 how strict the
-checks start:
+because it does its job, not because the agent that made it says so. Each time `rn` decides what to
+do next, it says so in one line:
 
 ```console
 ● #4 move src/cart ── decided: not reached (it passes only because its types are `any`; last
@@ -150,11 +120,11 @@ checks start:
 
 Every evaluation is committed with the session, so you can read it on the pull request.
 
-### 4. Step away — `/rn:dn`, then `/rn:up`
+### 5. Step away — `/rn:dn`, then `/rn:up`
 
-Context nearly full in the middle of the work, or done for the day: `/rn:dn` records where the
-session stands and pushes everything. Run `/clear` yourself when you want a fresh conversation (a
-plugin can't), then `/rn:up`.
+Context nearly full, or done for the day: `/rn:dn` records where the session stands and pushes
+everything. Run `/clear` yourself when you want a fresh conversation (a plugin can't), then
+`/rn:up`.
 
 ```console
 > /rn:dn
@@ -170,10 +140,11 @@ plugin can't), then `/rn:up`.
 ● Resuming typescript at #5: move src/checkout
 ```
 
-### 5. Finish
+### 6. Finish — Deliverable sign-off
 
-At the Deliverable sign-off, you approve the deliverable. On `/rn:ty` the pull request is marked
-ready; the merge is yours. The session leaves behind only its `.rn/` directory and the deliverable.
+You approve the deliverable, your product as the session leaves it, by whether it reaches your goal;
+`/rn:gm` adds tasks instead. On `/rn:ty` the pull request is marked ready; the merge is yours. The
+session leaves behind only its `.rn/` directory and the deliverable.
 
 ## How it is built
 
