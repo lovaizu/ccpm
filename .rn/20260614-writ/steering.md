@@ -15,8 +15,9 @@ taught survives only as the user's feedback listed under Assumptions.
 
 - The viewpoints state what every document writ produces must reach, as a few essential questions
   rather than a list of bans, so a form of noise nobody listed is still caught.
-- Every piece of the feedback in `writing-feedback.md` and `instruction.md` is either answered by a
-  viewpoint or deliberately left out with the user's agreement.
+- Every piece of the feedback in `instruction.md`, `writing-feedback-rn.md` and
+  `writing-feedback-telldes.md` is either answered by a viewpoint or deliberately left out with the
+  user's agreement.
 - A reader of the README who uses Claude Code grasps, top to bottom, what writ does for them and how
   to use it, through an example they can picture as their own work.
 - A reader of the design grasps, top to bottom, how writ reaches the viewpoints: who takes part, what
@@ -26,9 +27,13 @@ taught survives only as the user's feedback listed under Assumptions.
 
 # Assumptions
 
-- Fact: the sources of record are `instruction.md` (the original instruction) and
-  `writing-feedback.md` (the writing know-how agreed in the rn rebuild, PR #33). Both stay in their
-  original Japanese because they are the user's words.
+- Fact: the sources of record are `instruction.md` (the original instruction),
+  `writing-feedback-rn.md` (the writing know-how agreed in the rn rebuild, PR #33) and
+  `writing-feedback-telldes.md` (Telldes's README and design viewpoints and the user's writing
+  feedback there). All stay in their original Japanese because they are the user's words.
+- Fact: the two feedback files disagree in places — e.g. the rn one says never to refer the reader
+  to another section and to keep no section of costs or rejected options, while the Telldes one has
+  the README link to the design for reasons and the design name its costs and rejected options.
 - Fact: earlier field feedback from real runs is kept where it was given — PR #15's review comments,
   and `writ-feedback-3.md` / `writ-feedback-4.md` on branch `worktree-aiya` under
   `.rn/20260813-aiya/`. It is input to the viewpoints, not a base to build on.
@@ -58,7 +63,8 @@ must reach, so writing and judging look at the same thing.
 
 **Steps**:
 
-- [ ] Draw the viewpoints from `writing-feedback.md`, `instruction.md`, and the earlier field feedback
+- [ ] Draw the viewpoints from `instruction.md`, both feedback files, and the earlier field feedback
+- [ ] Bring each point where the sources disagree to the user, one at a time
 - [ ] Refine until each question is essential and none repeats another
 
 **Completion criteria**:
