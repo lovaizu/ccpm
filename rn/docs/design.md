@@ -10,8 +10,8 @@
 
 ```mermaid
 flowchart TD
-    E(["essentials.md<br/>（作るものごとの観点、rn に1つ）"])
-    M["作る人（指揮者か生成者）:<br/>作って、セルフチェックする"]
+    E(["essentials.md:<br/>作るものごとの観点"])
+    M["指揮者か生成者:<br/>作って、セルフチェックする"]
     V["指揮者、評価者:<br/>確かめる、評価する"]
     C["指揮者: 決める"]
     E -->|"狙い"| M
@@ -32,9 +32,9 @@ Good は狙いに役立っていて残すべきもの、More は届いていな�
 ```mermaid
 flowchart TD
     U(["ユーザー"])
-    C["指揮者<br/>（メインの会話）"]
-    G["生成者<br/>（タスクごとに新しい agent）"]
-    E["評価者<br/>（評価ごとに新しい agent）"]
+    C["メインの会話の指揮者"]
+    G["タスクごとに立つ生成者"]
+    E["評価ごとに立つ評価者"]
     U -->|"会話、コマンド"| C
     C -->|"問い、根拠を添えたサインオフ"| U
     C -->|"タスク、直す More"| G
@@ -63,10 +63,10 @@ flowchart TD
     C["指揮者"]
     G["生成者"]
     E["評価者"]
-    S["steering.md<br/>（進め方）"]
-    RD["README と設計書<br/>（あるべき姿と作り方）"]
-    O["open/<br/>（まだ片付いていない項目）"]
-    M["コミットメッセージ<br/>（判断の1行と、片付いた項目）"]
+    S["steering.md:<br/>進め方"]
+    RD["README と設計書:<br/>あるべき姿と作り方"]
+    O["open/:<br/>まだ片付いていない項目"]
+    M["コミットメッセージ:<br/>判断の1行と、片付いた項目"]
     C -->|"書く"| S
     C -->|"ユーザーと詰めて書く"| RD
     G -->|"セルフチェック"| O
@@ -88,7 +88,7 @@ flowchart TD
 - 生成者は `steering.md`、README、設計書を読み、評価者はそのうちユーザーが合意したところを読む。ユーザーは全部をプルリクエストで読む。
 - `steering.md` の項目と `open/` のファイル名は、後の版の `rn` も読む約束。
 
-  `steering.md` は `rn`（版）、`pr`、`design`（設計書の場所）、`status`、`Goal`、`Goal reached when`、`Assumptions`、`Rules`、`Tasks` とその `Purpose` と `[x]`。`open/` は `{NN}-{kind}-{about}.md` で、kind は `check`、`evaluation`、`feedback`、`notes`。
+  `steering.md` の項目は、そのひな形が持つ。`open/` のファイル名は `{NN}-{kind}-{about}.md` で、kind は `check`、`evaluation`、`feedback`、`notes`。
 
 ## セッションの流れ
 
@@ -145,8 +145,8 @@ flowchart TD
     D{"指揮者が More を1つずつ決める"}
     F["生成者が直す"]
     FK{"指揮者が直しを確かめる"}
-    S["コミットして push<br/>（片付いた More をメッセージに）"]
-    U["Design サインオフへ<br/>（済んでいないタスクの代わりに）"]
+    S["片付いた More をメッセージに入れて<br/>コミットして push"]
+    U["済んでいないタスクの代わりに<br/>Design サインオフへ"]
     M --> K
     K -->|"届いていない"| M
     K -->|"届いた"| C
@@ -170,7 +170,7 @@ flowchart TD
 
 - ゴールから決められない More は、ユーザーに渡す。
 
-  README や設計書を変える直しと、収束しないやり方（同じ More が繰り返し出る、直すたびに新しい More が出る）も含む。
+  README や設計書を変える直しも、収束しないやり方も含む。同じ More が繰り返し出るときや、直すたびに新しい More が出るときが、収束しないやり方。
 
 - 評価は1回で、直しはもう一度評価しない。
 
