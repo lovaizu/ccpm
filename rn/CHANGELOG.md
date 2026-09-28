@@ -9,27 +9,27 @@ last for fixes that change nothing you do.
 
 ### Added
 
-- While `rn` works, it shows one line each time it decides what to do next, so you can see what happened.
-- Every evaluation, committed to the pull request, says what is good and what needs more, each with its grounds and, for a More, how to fix it — so you can see why a result passed or was sent back.
+- `rn` は作業中、次に何をするかを決めるたびに1行で伝える。何が起きたかが分かる。
+- 評価はどれもプルリクエストにコミットされ、良いところと足りないところを、それぞれの根拠と、足りないところの直し方と一緒に伝える。成果が通った理由や、戻された理由が分かる。
 
 ### Changed
 
-- `/rn:on` asks about your goal one question at a time, each with the answer it recommends, so you can answer in a word and the plan matches what you really want.
-- The plan stops at your next decision; the tasks after it are planned once you decide.
-- A task says only what it must reach, not the steps to take, so a result is judged by what it does.
-- The plan's "Acceptance criteria" and "Completion criteria" are now "Goal reached when" and "Purpose reached when", so each line says what state shows the goal reached, not what work gets done.
-- `/rn:ty` records your approval and stops; `/rn:gm` fixes by your feedback right away and stops again for your answer — so you can `/clear` at any stop and run `/rn:up` to continue.
-- The last stop is the Deliverable sign-off: you approve only the deliverable against your goal, since the plan and each design were approved at their own stops.
-- A design is talked through with you one point at a time, like the goal, and written into your README and design document for you to approve; your product is built to them, and they stay with your product after the session.
-- `rn` decides every next move by the goal itself; the evaluator reports what holds and what does not, and a task that does its job is not sent back over a detail.
-- When the work keeps failing, `rn` works out another way with you instead of retrying the same one.
-- A session started under an earlier `rn` (the first two numbers of the version differ) is brought up to date by `/rn:up` from its old plan and what was done, asking only what they leave unclear, and waits for your approval of the new plan; the other commands ask you to run `/rn:up` first.
-- Each task is evaluated by one fresh evaluator against what the task must reach, instead of several expert reviews recorded in `checks/`.
-- `/rn:on` starts on your current branch and its pull request when you are on one, instead of always making new ones.
+- `/rn:on` はゴールについて1問ずつ、おすすめの答えを添えて聞く。一言で答えられ、計画が本当に欲しいものに合う。
+- 計画はあなたの次の判断までで止まり、その先のタスクはあなたが決めてから立てる。
+- タスクは何に届くべきかだけを書き、踏む手順は書かない。成果は、それが何をするかで判断される。
+- 計画の「Acceptance criteria」と「Completion criteria」は「Goal reached when」と「Purpose reached when」になった。各行が、する作業ではなく、ゴールに届いたと分かる状態を書く。
+- `/rn:ty` は承認を記録して止まる。`/rn:gm` はフィードバックどおりにすぐ直し、もう一度あなたの答えを待って止まる。どこで止まっても `/clear` して `/rn:up` で続けられる。
+- 最後に止まるのは Deliverable サインオフ。計画と各設計はそれぞれのサインオフで承認済みなので、ここではゴールに照らして成果物だけを承認する。
+- 設計は、ゴールと同じように1点ずつあなたと話して詰め、あなたの README と設計書に書いて承認を受ける。プロダクトはそのとおりに作られ、README と設計書はセッションのあともプロダクトに残る。
+- `rn` は次の一手をすべてゴールそのものから決める。評価者は成り立っていることといないことを伝え、役目を果たしているタスクを細部のために戻さない。
+- 作業が失敗し続けるときは、同じやり方を繰り返さず、別のやり方をあなたと考える。
+- 以前の `rn` で始めたセッション（版の最初の2つの数字が違うもの）は、`/rn:up` が古い計画と済んだことから今の形にし、分からないところだけを聞き、新しい計画の承認を待つ。ほかのコマンドは、先に `/rn:up` を実行するよう伝える。
+- 各タスクは、`checks/` に記録する複数の専門レビューではなく、何に届くべきかに照らして新しい評価者1人が評価する。
+- `/rn:on` は、今いるブランチとそのプルリクエストがあればそこで始め、毎回新しく作らない。
 
 ### Removed
 
-- The question-by-question `design.md` template in the session: a design is now written only where the work changes what your product should be, or a decision is yours, into your repository's own README and design document.
+- セッションの中の、1問ずつ答える `design.md` のひな形。設計は、作業がプロダクトのあるべき姿を変えるところか、あなたが決めることがあるところでだけ、リポジトリ自身の README と設計書に書く。
 
 ## [0.8.0] - 2026-07-07
 
