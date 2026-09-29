@@ -5,8 +5,8 @@ Design: writ/docs/design.md
 
 writ is a Claude Code plugin that makes a document read as if a person wrote it, so its reader takes
 it in with the least effort, applied on demand by a human or by Claude itself. This plan settles what
-writ ought to be — its essentials, its README, and its design — and ends at the user's
-approval of those three. Writing the skill itself comes after that approval, in a plan of its own.
+writ ought to be — its essentials, its README, and its design — then builds the skill from the approved
+design, tries it against the design's qualities, and ends when writ ships on PR #15.
 
 The plan starts from zero. The earlier build was removed so it cannot steer the new one; what it
 taught survives only as the user's feedback listed under Assumptions.
@@ -24,6 +24,8 @@ taught survives only as the user's feedback listed under Assumptions.
   passes between them, and why each decision was made, in one sentence at the decision.
 - The README and the design each meet the essentials themselves.
 - The user has approved the essentials, the README, and the design on PR #15.
+- A Claude Code user who installs writ from the marketplace and runs `/writ:up` gets what the README
+  promises: each quality in the design's quality section passes when writ is actually run.
 
 # Assumptions
 
@@ -123,6 +125,62 @@ in `writ/docs/design.md` — held to the essentials.
 
 - The three use one word for each thing and do not contradict one another.
 - The user has approved all three.
+
+### #4: Write writ's skill
+
+**Purpose**: Write the prompts that make writ act as the approved design says, so the requester,
+writing role and checking role each reach their purpose even in cases the prompts did not foresee.
+
+**Prerequisites**: #3
+
+**Steps**:
+
+- [ ] Have a writing role write the prompts from the design and the essentials
+- [ ] Have a checking role outside the discussion evaluate them once against `prompt.md` and `doc.md`
+- [ ] Sort every Good and More, have the fixes made, and judge them against reader and purpose
+- [ ] Take the user's review on PR #15 with the final Good and More per question
+
+**Completion criteria**:
+
+- Every decision in the design is realized in the prompts, and nothing in them lacks a reason in the
+  design.
+- The prompts meet `prompt.md` and `doc.md`.
+- The user has approved them.
+
+### #5: Try writ against the design's qualities
+
+**Purpose**: Confirm that a user running writ actually gets what the README promises.
+
+**Prerequisites**: #4
+
+**Steps**:
+
+- [ ] Run writ in every scenario the design's quality section names, and judge each quality by what
+      happens to the user and the reader
+- [ ] Fix what falls short within the same round and run again, until each quality passes or the
+      user decides
+
+**Completion criteria**:
+
+- Each quality in the design passes in its named scenarios, with the runs' results as grounds.
+
+### #6: Ship writ
+
+**Purpose**: Make writ installable from the marketplace and hand the merge to the user.
+
+**Prerequisites**: #5
+
+**Steps**:
+
+- [ ] Translate the prompts to English
+- [ ] Add `plugin.json` with a version, a `CHANGELOG.md`, the marketplace entry and the root README line
+- [ ] Pass `claude plugin validate --strict` for the plugin and the marketplace
+- [ ] Ask the user to merge PR #15
+
+**Completion criteria**:
+
+- `/plugin install writ@ccpm` installs writ and `/writ:up` runs.
+- The user has merged PR #15.
 
 # State
 
