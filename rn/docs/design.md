@@ -12,7 +12,7 @@
 
 ```mermaid
 flowchart TD
-    E(["essentials.md"])
+    E(["essentials.md:<br/>本質的な観点"])
     M["作る人"]
     V["確かめる人"]
     E -->|"作るときに目指すこと"| M
