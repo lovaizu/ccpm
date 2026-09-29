@@ -42,8 +42,7 @@ taught survives only as the user's feedback listed under Assumptions.
 - Fact: the user approved how the essentials are used, to be carried into #2's design as its core:
   the writing role reads the essentials as aims and decides layer by layer, top layer first; a
   separate checking role, given only the document, the reader definition and the essentials, reads as
-  the reader, answers the top question first, then reports stumbles and NGs top layer first, skipping
-  lower layers when a higher one fails; only fixes that serve the purpose are made, a defect of the
+  the reader, restates what it understood, then answers every question with Good and/or More; only fixes that serve the purpose are made, a defect of the
   subject goes back to its owner, and there is one evaluation before the user decides.
 - Fact: the user agreed to keep two things in `instruction.md` out of the essentials: the outline
   per kind of document (derived from the reader instead), and the orders to the writing AI (write in
