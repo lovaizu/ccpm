@@ -4,23 +4,23 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Can the reader read every sentence as written for them?
 
-    Be able to say each of these in one line: who reads it, what they decide and do when they finish, and whether they read it straight through or skim for the parts they need. Decide the style, order, diagrams and ending from those. If there are two readers, split the document.
+    Make sure you can say each of these three things in one line: who reads it, what they decide and do when they finish, and whether they read it straight through or skim for the parts they need. Decide the style, order, diagrams and ending from those. If there are two readers, split the document.
 
 - Can the reader get what they need from this document alone, without reading sentences they do not need?
 
-    Do not try to cover everything; narrow it to the key points. If there are many key points, the narrowing is not finished. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as someone rereading it, past reviewers or approvers, are not needed by this reader. A sentence that restates a rule another mechanism already enforces also looks correct, adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
+    Do not try to cover everything; narrow it to the key points. If there are many key points, the narrowing still falls short. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as someone rereading it, past reviewers or approvers, are not needed by this reader. Likewise, a sentence that restates a rule another mechanism already enforces looks correct but adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
 
 - Does the reader get content from the very first sentence?
 
-    Write the key point from the first sentence. Do not describe where the document stands, how to read it, how to use it or what it contains; let the title and body convey that.
+    Write the key point from the first sentence. Do not describe the document's place among others, how to read it, how to use it or what it contains; let the title and body convey that.
 
 - Does the reader avoid reading the same thing twice?
 
     Do not repeat what the title, a diagram or other sentences already make clear.
 
-- Does the reader get today's decisions without being thrown off by how they came about?
+- Does the reader get the current decisions without being thrown off by how they came about?
 
-    How a decision was reached and the history of changes do not help a reader who wants to know how things stand now.
+    How the decisions came about and the history of changes do not serve a reader who wants to know how things stand now.
 
 - Can the reader recognize a flaw in the content as a flaw?
 
@@ -40,15 +40,15 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Can the reader scan a list without reading the explanations?
 
-    Make each item one sentence that makes sense on its own. Write the explanation after the item, after a blank line, indented.
+    Make each item one sentence that makes sense on its own. Put the explanation below the item, after a blank line, indented.
 
-- Can the reader take every word without explanation, and read the same word as the same thing?
+- Can the reader understand every word without explanation, and read the same word as the same thing?
 
-    Always use the same word with the same meaning. Choose common words over jargon and coined terms. Even a common word, when its meaning is stretched as a figure of speech, is read differently by different people, just like a coined term. So choose words that say plainly what happened. Name a role by what it does, and refer to people by their role, not their name. Call things by the name the people using them see.
+    Always use the same word with the same meaning. Choose common words over jargon and coined terms. Even a common word, when its meaning is stretched as a figure of speech, is read differently by different people, just like a coined term. So choose words that say plainly what happened. Name a role by what it does, and refer to people by their role, not their name. Call things by the name that people who use them see.
 
 - Can the reader tell how certain each statement is?
 
-    State checked facts flatly, write unchecked things as assumptions, and write decisions as decisions. What was a proposal or hypothesis in the draft stays a proposal or hypothesis. Where you cannot state something flatly, add its evidence or "unverified". Also write how far you checked. When comparing options, do not gather only the facts that favor one; lay out measured values and judgments separately. Also write what does not work, the costs and the limits.
+    State checked facts flatly, write unchecked things as assumptions, and write decisions as decisions. What was a proposal or hypothesis at the draft stage stays a proposal or hypothesis. Where you cannot state something flatly, add its evidence or "unverified". Also write how far you checked. When comparing options, do not gather only the facts that favor one; lay out measured values and judgments separately. Also write what does not work, the costs and the limits.
 
 - Is the style suited to the reader, and does it read as if a person wrote it?
 

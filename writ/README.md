@@ -2,7 +2,7 @@
 
 With writ, the documents Claude Code writes read as if a person wrote them, and come finished in a shape that lets the reader take in their content with the least effort. You no longer have to read and fix documents that leave you unsure what you are supposed to do, sentences that repeat the same thing in other words, or preambles that say nothing.
 
-## Call `/writ:up`, answer what it asks, and a finished document comes back
+## Call `/writ:up`, just answer what it asks, and a finished document comes back
 
 ```mermaid
 flowchart TD
@@ -14,15 +14,15 @@ flowchart TD
   U -->|"/writ:up and your answers"| W
   D -->|Current content| W
   W -->|Questions about reader and purpose| U
-  C -->|Facts found by looking| W
+  C -->|Facts it looked up| W
   W -->|Written and fixed content| F
   W -->|"Good points to keep, shortfalls left"| U
   W -.->|"Content problem that blocks the purpose"| U
 ```
 
-writ does not start writing until it is settled who reads the document and what they decide and do when they finish. The quality of a document can only be measured once its reader and purpose are settled.
+writ does not start writing until it is decided who reads the document and what they decide and do when they finish. The quality of a document can only be measured once its reader and purpose are decided.
 
-Before returning the document, writ checks it through the eyes of a reader who does not know the conversation so far, and fixes what it can. Remarks and fixes from along the way are not returned. [Why it takes this shape](docs/design.md) is in the design doc.
+Before returning the document, writ checks it through the eyes of a reader who does not know the discussion so far, and fixes what it can. Remarks along the way and the back-and-forth of fixes are not returned. [Why it takes this shape](docs/design.md) is in the design doc.
 
 ## Example: writing a TypeScript migration plan for your team
 
@@ -53,7 +53,7 @@ We move src/api/ first, then go on to src/ui/. src/api/ is what the rest of the 
 | src/ui/ | (undecided) |
 ```
 
-The reply comes with Good and More. Good is what is working and should be kept from now on. More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
+The reply comes with Good and More. Good is what serves the purpose and should be kept from now on. More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
 
 ```console
 ● Good (Every document): The first sentence says which directory moves first.
@@ -75,9 +75,9 @@ To fix a plan you already have, hand over the document. writ reads it and asks o
   But no deadline is written anywhere. Has a deadline been set?
 ```
 
-If the deadline is set, the fixed result is written into the original file, and Good and More come back the same way. If it is not set yet, you do not get back a plan that blurs the deadline with clever wording; the conversation starts from what to do about the deadline. A plan without a deadline cannot achieve its purpose of having readers agree on a deadline. That is how it differs from the owner column, which can be left blank.
+If the deadline is set, the fixed result is written into the original file, and Good and More come back the same way. If it is not set yet, you do not get back a plan that blurs the deadline with clever wording; the discussion starts from what to do about the deadline. A plan without a deadline cannot achieve its purpose of having readers agree on a deadline. That is how it differs from the owner column, which can be left blank.
 
-## Claude Code also uses writ on its own when it writes documents
+## Claude Code also uses writ on its own in situations where it writes documents
 
 When Claude Code writes a README or a design doc in the middle of its work, it writes right away if the conversation tells it the reader and purpose, asks you only when it does not know them, and returns with Good and More attached to its reply.
 
