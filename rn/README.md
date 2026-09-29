@@ -21,6 +21,7 @@
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     state "Plan サインオフ" as Plan
     state "作業中" as Work
     state "Design サインオフ" as Design
