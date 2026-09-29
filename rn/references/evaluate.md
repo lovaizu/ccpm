@@ -26,7 +26,7 @@ asking you back.
 - When you are asked to answer points again, those points: they lacked grounds or were off the
   purpose.
 
-Leave aside commit messages, `check` and `notes` items, and earlier evaluations: they are the maker's
+Leave aside commit messages, `notes` items, and earlier evaluations: they are the maker's
 account, not grounds.
 
 ## What to return

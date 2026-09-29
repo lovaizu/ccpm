@@ -62,12 +62,12 @@ with the next unused id, before the tasks not yet done, so there is a sign-off t
 ## Carrying out a task
 
 1. Start a fresh generator with `Agent`, giving it the paths of
-   `${CLAUDE_PLUGIN_ROOT}/references/generate.md` and `steering.md`, the task's id, and the path of its
-   self-check file in `open/`. When it is to fix, add the path of the item in `open/` and which More.
-2. Check what it returned against the task's purpose, on the real thing, reading its self-check. Not
+   `${CLAUDE_PLUGIN_ROOT}/references/generate.md` and `steering.md`, and the task's id. When it is to
+   fix, add the path of the item in `open/`, which More, and the fix you decided.
+2. Check what it returned against the task's purpose, on the real thing. Not
    fulfilled → send it back with what falls short. Something only the user can decide → go back to
    work out the design, that point first.
-3. Commit and push, settling the self-check. Have the result evaluated and settle it.
+3. Commit and push. Have the result evaluated and settle it.
 4. Mark the task `[x]`.
 
 The deliverable is evaluated once, when the tasks planned after the last Design sign-off are done,
@@ -102,8 +102,9 @@ that are not essential and never settles; another one is made only when the user
    should change, and misleads the user at the sign-off. A Good whose grounds do not hold is a More.
    A question with neither Good nor More was not checked; have it answered. Decide each More, as the
    Decision section asks: fix it, let it go with the reason, or hand it to the user when only they
-   can decide it. A fix is made by a generator for a task, by you for the
-   plan and the design; check it against the purpose and the Goods, and commit. Settled items leave
+   can decide it. The fix is yours to choose, from the purpose and what the user struggles with; the
+   evaluation does not propose one. A fix is made by a generator for a task, by you for the plan and
+   the design; check it against the purpose and the Goods, and commit. Settled items leave
    `open/` with their full text and your decision in the commit message.
 3. Repeat until every More is decided, or the work cannot go on: the same More keeps coming back,
    each fix brings a new More, or a fix needs the README or the design document changed.

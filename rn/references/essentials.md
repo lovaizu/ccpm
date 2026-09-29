@@ -90,17 +90,18 @@ Everything the session changed apart from its directory under `.rn/`.
 
 ## Evaluation
 
-What an evaluator returns, and what a generator returns as its self-check.
+What an evaluator returns.
 
 - Can the conductor decide each More from it, without asking back?
 
     Each Good and More points to a place in the real thing, a `path:line` or a command and its
     output, and says why. A Good says why it must be kept when fixing; a More says what the user will
-    struggle with because of it, and a fix. Every question is answered with a Good, a More, or both: a
-question left without either was not checked, though it looks as if it was. Both carry the same
-weight: a Good given in one word leaves
-    whoever fixes unable to tell what to keep, and they break what works. It says whether the purpose
-    is served, not whether steps were followed.
+    struggle with because of it. How to fix it is the conductor's to decide: a fix written into the
+    evaluation pulls that decision toward the evaluator's first idea. Every question is answered with
+    a Good, a More, or both: a question left without either was not checked, though it looks as if it
+    was. Both carry the same weight: a Good given in one word leaves whoever fixes unable to tell what
+    to keep, and they break what works. It says whether the purpose is served, not whether steps were
+    followed.
 
 ## Decision
 

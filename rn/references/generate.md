@@ -18,12 +18,11 @@ not yours to settle.
 
 - `steering.md`, and the README and design document it names.
 - The Task result section of `${CLAUDE_PLUGIN_ROOT}/references/essentials.md`: what your result aims
-  for, and what you check it by. An evaluator will evaluate it by the same questions.
+  for. An evaluator will evaluate it by the same questions.
 - When you are to fix, the item in `open/` you are given, for the More you are to fix and the Goods
-  to keep.
+  to keep, and the fix the conductor decided.
 
 ## What to return
 
-Write your self-check to the file in `open/` you are given: each question of the Task result section
-answered with Good and More, as the Evaluation section of the essentials asks. Then return what you
-changed, and anything you could not fulfil within the design, or found to be the user's to decide.
+Return what you changed, and anything you could not fulfil within the design, or found to be the
+user's to decide.
