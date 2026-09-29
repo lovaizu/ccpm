@@ -1,35 +1,35 @@
-# プロンプト
+# Prompt
 
-読み手は、そのプロンプトに従って動く AI。読み終えたとき、書き手が想定していなかった場面でも、目的を果たせる動き方を自分で選べる。
+The reader is the AI that acts by following the prompt. When it finishes, it can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee.
 
-- AI が、何のために、誰として、何をするかをつかめるか。
+- Can the AI grasp what it is for, who it acts as, and what it does?
 
-    目的には、なぜそれが必要かを添える。理由を知っていれば、書かれていない場面でも目的に合うほうを選べる。役割には、誰として読み、何を自分で決め、何を決めずに依頼元へ返すかを書く。
+    Add to the purpose why it is needed. Knowing the reason, the AI can choose what fits the purpose even in situations that are not written down. For the role, write who it reads as, what it decides itself, and what it does not decide but returns to the requester.
 
-- AI が、手順の決まりは守りながら、それ以外は目的と役割から自分で動きを選べるか。
+- Can the AI keep the rules of the procedure while choosing everything else itself from the purpose and role?
 
-    手順に書くのは、受け渡しの形式のように、ずれると壊れるうえに目的と役割からは導けない決まりだけにする。手順は書かれたとおりに守られるので、想定と違う場面では的を外す。目的と役割で足りるところは読み手に任せる。各段階で使う決まりは、その段階に書く。別の文書を読ませる箇所には、パスと読む理由だけを書き、要約は添えない。
+    Put in the procedure only rules that break things when they drift and cannot be derived from the purpose and role, such as the format of a handoff. A procedure is followed exactly as written, so it misses the mark in situations other than the ones expected. Where the purpose and role are enough, leave it to the reader. Write the rules used at each stage in that stage. Where the AI is told to read another document, write only the path and why to read it, without a summary.
 
-- 確かめる役が、作る役の理由に引きずられず、読み手として確かめられるか。
+- Can the checking role check as a reader, without being pulled along by the producing role's reasons?
 
-    作る役と確かめる役は、同じ観点を読む。作る役は観点を目指す姿として読み、確かめる役は問いとして読む。確かめる役には、作る役がそうした理由を渡さない。どちらの役も、観点のすべての問いに Good と More の一方か両方で答え、依頼元に返す。Good と More は同じ重さで返す。Good は、目的に役立っていて、直すときに壊してはいけないところと、なぜ守るべきか。More は、足りないところと、それによって読み手が何に困るか、どう直すか。どちらにも、path:line や実行したコマンドとその出力のような根拠を添える。Good が「分かりやすい」の一言だけだと、直す側は何を守ればよいか分からず、効いているところまで壊す。
+    The producing role and the checking role read the same essentials. The producing role reads them as the shape to aim for, and the checking role reads them as questions. Do not pass the checking role the producing role's reasons for what it did. Both roles answer every question in the essentials with Good, More or both, and return the answers to the requester. Return Good and More with equal weight. Good is what serves the purpose and must not be broken when fixing, and why it should be kept. More is what is missing, what the reader struggles with because of it, and how to fix it. Attach evidence to both, such as path:line or a command that was run and its output. When a Good says only "easy to understand", whoever fixes the document does not know what to keep, and breaks even what is working.
 
-- 依頼元が、確かめた結果を目的に照らして次の動きを自分で決め、評価と直しのくり返しを必ず決着させられるか。
+- Can the requester decide its next move itself by weighing the check's results against the purpose, and always bring the cycle of evaluating and fixing to an end?
 
-    確かめる役は、直すかどうかも、次に何をするかも決めない。確かめた結果を字面どおりに受けて動くと、目的に役立っている部分までやり直すことになる。作っていない役による評価は1回だけにする。評価を何度も回すと、本質的でない指摘が続いて収まらない。その先は依頼元が、返ってきた More を1つずつ目的に照らして、直すか、見送るか、人に渡すかを決め、直すものは作る役に直させる。返ってきた Good も1つずつ疑い、根拠が成り立たないものは More として振り分ける。直した結果は、依頼元が読み手と目的に照らして判断する。作っていない役にしかできないのは、話し合いを知らずに読むことだけだからだ。判断が1か所にあるので、くり返しは「収まった」か「進められない」かのどちらかに必ず決まる。同じ More がくり返し出る、直すたびに新しい More が出る、合意した文書を変えないと直せない、のどれかが起きたら進められない。その代わり、評価のあとの直しは作っていない役の目を通らない。最終的な Good と More を根拠つきで人に渡せば、人が確かめ、必要なら評価をもう一度頼めるので、これを受け入れる。
+    The checking role decides neither whether to fix nor what to do next. Acting on the check's results literally means redoing even the parts that serve the purpose. Evaluation by a role that did not produce the work happens only once. When evaluation runs many times, non-essential remarks keep coming and never settle. After that, the requester weighs each returned More against the purpose one by one and decides whether to fix it, let it go, or hand it to a person, and has the producing role fix the ones to fix. It also doubts each returned Good one by one, and sorts any whose evidence does not hold as a More. The requester judges the fixed result against the reader and purpose, because the only thing a role that did not produce the work can do that others cannot is read without knowing the conversation. Because judgment sits in one place, the cycle always ends as either "settled" or "cannot proceed". It cannot proceed if any of these happens: the same More keeps coming back, each fix brings a new More, or a fix requires changing the agreed document. The cost is that fixes after the evaluation do not pass before the eyes of a role that did not produce the work. This is accepted, because handing the person the final Good and More with evidence lets the person check them and, if needed, ask for another evaluation.
 
-- 人が、レビューを頼まれたとき、全文を読み直さずに、承認するか直しを求めるかを決められるか。
+- When a person is asked to review, can they decide whether to approve or ask for fixes without rereading the whole text?
 
-    決着したら、問いごとの最終的な Good と More を確かめる。直さないと目的を果たせず、しかも目的からは直し方が決まらない More が残るとき、または進められないときは、レビューに出さない。人と話して決める段階へ戻り、その More を最初の論点にする。それ以外なら、レビュー依頼に問いごとの最終的な Good と More を、実物の場所と根拠をつけて添える。途中の指摘や直しは添えない。人が見るのは最終形なので、最終的な Good と More があれば、全文を読み直さなくても判断を言い切れる。
+    Once the cycle is settled, check the final Good and More for each question. If a More remains that must be fixed to achieve the purpose and whose fix the purpose does not settle, or if the cycle cannot proceed, do not send it for review. Go back to the stage of talking with the person to decide, and make that More the first topic. Otherwise, attach to the review request the final Good and More for each question, with the location in the actual work and the evidence. Do not attach remarks or fixes from along the way. The person looks at the final form, so the final Good and More let them state their judgment without rereading the whole text.
 
-- 作る役と確かめる役が、少ない問いで、目的に関わる誤りをまとめてとらえられるか。
+- Can the producing role and the checking role catch the errors that matter to the purpose together, with few questions?
 
-    問いは禁止事項の一覧にせず、同じ原因から生じる誤りをまとめて捉えるものにする。また、手順を踏んだかどうかでなく、できあがったものの状態で確かめられるように書く。本質的でない問いが混ざると、作る役の狙いがずれ、読む量が増え、直しても終わらないか、人の負担が増える。確かめる役の答えが浅いなら、問いが多すぎるか、ぼやけているかのどちらかなので、役を増やさず問いを磨く。
+    Do not make the questions a list of prohibitions; make each question catch together the errors that arise from the same cause. Also write them so they can be checked from the state of the finished work, not from whether steps were followed. When non-essential questions creep in, the producing role's aim drifts, there is more to read, and either fixing never ends or the person's burden grows. If the checking role's answers are shallow, the questions are either too many or too vague, so sharpen the questions instead of adding roles.
 
-- 観点を磨いたとき、それを使うどの役も、すぐに同じ観点を読めるか。
+- When the essentials are improved, can every role that uses them read the same essentials right away?
 
-    ほかの文書には、観点のファイルがあることと、誰がどう使うかだけを書き、内容は写さない。写すと、観点を磨くたびに内容がずれていく。
+    In other documents, write only that the essentials file exists and who uses it and how; do not copy its content. Copies drift each time the essentials are improved.
 
-- AI が、読んだ文をそのまま、すべき動きとして受け取れるか。
+- Can the AI take every sentence it reads, as written, as something to do?
 
-    存在しないものの説明、決まるまでの経緯、そのときの作業にしか関わらない決まりは、すべきことではない。
+    Explanations of things that do not exist, how decisions came about, and rules that concern only the task at hand are not things to do.

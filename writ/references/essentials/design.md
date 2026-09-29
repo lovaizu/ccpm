@@ -1,25 +1,25 @@
-# 設計書
+# Design doc
 
-読み手は、作る人と直す人で、人の場合も AI の場合もある。読み終えたとき、利用者に届ける姿がどう実現されるかが分かり、ある変更が設計に合うかどうか、合わないならなぜかを説明できる。
+The readers are builders and maintainers, who may be people or AI. When they finish, they know how the outcome for the user is achieved, and can explain whether a given change fits the design and, if not, why.
 
-- 作る人が、数個の方針を覚えるだけで、迷ったときにどちらを選ぶか決められるか。
+- Can a builder decide which way to go when unsure, by remembering just a few policies?
 
-    方針を1文で言い切り、すぐあとに、守らないと何が起きるかを書く。その説明は、利用者に届ける姿か、利用環境や利用者のように設計では変えられない条件に行き着くまでたどる。1つの機能にしか関わらない決まりは、その機能の箇所に書く。
+    State each policy flatly in one sentence, and right after it write what happens if it is not kept. Trace that explanation until it reaches the outcome for the user, or a condition the design cannot change, such as the environment the product is used in or the user. Write a rule that concerns only one feature where that feature is described.
 
-- 直す人が、知りたい順に読み進めて、どこを直せばよいか見当をつけられるか。
+- Can a maintainer read in the order they want to know things and get a sense of where to make a change?
 
-    まず、誰が何をし、何を決めるかという役割と境界。次に、どんな状態があり、操作でどう変わるか。次に、何を見てどちらに振り分けるかという判断の基準。最後に、何が残り、誰が書き、誰が読むか。役割も状態も受け渡しも、置く理由を利用者に届ける姿までたどれるものだけを置く。たどれないものは、直す人に確かめる手がかりのない決まりを増やすだけなので、置かない。
+    First, the roles and their boundaries: who does what and who decides what. Next, the states there are and how operations change them. Next, the criteria for judgment: what is looked at and which way things are sorted. Last, what remains, who writes it and who reads it. Of roles, states and handoffs alike, keep only those whose reason for being there can be traced to the outcome for the user. Leave out those that cannot; they only add rules the maintainer has no way to check.
 
-- 直す人が、どの操作のあとでも守るべき条件を見分けられるか。
+- Can a maintainer tell which conditions must hold after every operation?
 
-    その条件に関係する決定の箇所に、「どの操作のあとでも〜」のように、常に成り立つ条件だと分かる書き方で書く。
+    Write each such condition at the decision it concerns, phrased so it reads as a condition that always holds, as in "after every operation, ...".
 
-- 作る人が、ゴールから見て確かめるべき品質ごとに、どう確かめ、何を満たせば合格で、どこまで確かめるかを決められるか。
+- Can a builder decide, for each quality to check from the goal, how to check it, what passes, and how far to check?
 
-    確かめる品質は、利用者に届ける姿が果たされているかだけにする。設計書が実現すると言っている項目から1つずつ引き出し、品質ごとに、どの項目のためか、外すと利用者が何に困るかを書く。合格の基準は、読み手や利用者に何が起きるかで書く。仕組みが設計どおりに動くかは、果たされなかったときに原因を探す手がかりであって、品質ではない。仕組みから並べると、仕組みが動くかは確かめても、利用者が目的を果たせるかを誰も確かめない。どこまで確かめるかを決めるときに諦めたことも書く。テストのしかたが書かれていないと、確かめ方が作る人ごと、変更ごとにばらばらになる。合格の基準が書かれていないと、テストを走らせても、実現したと言ってよいかを誰も決められない。
+    Check only whether the outcome for the user is achieved. Draw the qualities one by one from the items the design doc says it achieves, and for each quality write which item it is for and what the user struggles with if it is missing. Write the pass criteria as what happens to the reader or the user. Whether the mechanism works as designed is a clue for finding the cause when the outcome is not achieved; it is not a quality. When qualities are listed from the mechanism, someone checks that the mechanism works, but no one checks whether the user can achieve their purpose. Also write what you gave up when deciding how far to check. Without a written way to test, the way of checking varies by builder and by change. Without written pass criteria, even after the tests run, no one can decide whether it may be called achieved.
 
-- 直す人が、ほかの案に変えたくなったとき、それで何を失い、なぜ採らなかったかが分かるか。
+- When a maintainer wants to switch to another option, can they see what it would lose and why it was not chosen?
 
-- 読み手が、利用者に届ける姿を書いた文書からも、実装からも読み取れない意図と決定を、ここで受け取れるか。
+- Does the reader get here the intent and decisions they cannot read from the document describing the outcome for the user or from the implementation?
 
-    どの文も、利用者に届ける姿を書いた文書や実装を読んでも分からず、実装を作り直しても変わらないことを書く。だから決定は、意図と常に成り立つ条件として書き、それを実現する設定や手順は書かない。実装がまだないときも同じで、設定や手順を書くと、実装を作り直すたびに設計書が古くなる。コードの分け方、ファイル名や関数名、内部のデータ構造、処理の手順は、設計書に書くことではない。名前を出すのは、使う人に見える名前と、外部との取り決めだけにする。外部との取り決めとは、利用者の環境に残るものと、後の版が読むものの形式で、役割どうしの受け渡しは含まない。外部との取り決めは、後の版も人も読むので、項目ごとになぜあるかを書き、実際に埋まった例で見せる。ディレクトリ構成は、利用者の環境に残るものと後の版が読むものに限って全階層を木で示し、利用者が変えてよい場所と変えてはいけない場所を分ける。
+    Every sentence says something that reading the document describing the outcome for the user or the implementation does not reveal, and that does not change when the implementation is rebuilt. So write decisions as intent and conditions that always hold, not as the settings or steps that achieve them. The same goes when there is no implementation yet: settings or steps make the design doc go stale each time the implementation is rebuilt. How the code is split, file and function names, internal data structures and processing steps do not belong in a design doc. Name only what users can see and external agreements. External agreements are the formats of what remains in the user's environment and of what later versions read; handoffs between roles are not included. Later versions and people both read external agreements, so write why each item exists and show them with a real filled-in example. Show the directory layout as a full tree only for what remains in the user's environment and what later versions read, and mark where the user may and may not make changes.

@@ -1,59 +1,59 @@
-# すべての文書
+# Every document
 
-読み手が上から順に読むだけで全体をつかめ、読み終えたときにすべきことができるか。
+Can the reader grasp the whole by reading from top to bottom, and, when they finish, do what they need to do?
 
-- 読み手が、どの文も自分に向けて書かれたものとして読めるか。
+- Can the reader read every sentence as written for them?
 
-    誰が読むのか、読み終えて何を決め何をするのか、通して読むのか必要な箇所だけ拾い読むのか。この3つをそれぞれ1行で言えるようにし、文体、順序、図、締めくくり方はそこから決める。読み手が2人いるなら、文書を分ける。
+    Be able to say each of these in one line: who reads it, what they decide and do when they finish, and whether they read it straight through or skim for the parts they need. Decide the style, order, diagrams and ending from those. If there are two readers, split the document.
 
-- 読み手が、この文書だけで必要なことをそろえられ、要らない文を読まずに済むか。
+- Can the reader get what they need from this document alone, without reading sentences they do not need?
 
-    すべてを網羅しようとせず、要点に絞る。要点がいくつもあるなら、まだ絞り込みが足りない。網羅的な詳細がどうしても必要なら、別の文書に表でまとめ、本文からリンクする。読み返す人、過去のレビュアー、承認する人など、ほかの人に向けた文は、この読み手には要らない。ほかの仕組みですでに成り立っている決まりを重ねて書いた文も、正しそうに見えて読み手に何も足さず、やがて実際の仕組みとずれていく。使う道具の仕組みも説明し直さず、その上に置いた決定だけを書く。逆に、読み手に必要なのに置き場がないことがあれば、置き場を新しく作る。
+    Do not try to cover everything; narrow it to the key points. If there are many key points, the narrowing is not finished. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as someone rereading it, past reviewers or approvers, are not needed by this reader. A sentence that restates a rule another mechanism already enforces also looks correct, adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
 
-- 読み手が、最初の1文から中身を受け取れるか。
+- Does the reader get content from the very first sentence?
 
-    最初の1文から要点を書く。文書の位置づけ、読み方、使い方、内容の紹介は書かず、題名と本文から伝わるようにする。
+    Write the key point from the first sentence. Do not describe where the document stands, how to read it, how to use it or what it contains; let the title and body convey that.
 
-- 読み手が、同じことを2度読まずに済むか。
+- Does the reader avoid reading the same thing twice?
 
-    題名や図、ほかの文から分かることは、繰り返さない。
+    Do not repeat what the title, a diagram or other sentences already make clear.
 
-- 読み手が、経緯に惑わされず、今の決定を受け取れるか。
+- Does the reader get today's decisions without being thrown off by how they came about?
 
-    決まるまでの経緯や変更の履歴は、今どうなっているかを知りたい読み手の役に立たない。
+    How a decision was reached and the history of changes do not help a reader who wants to know how things stand now.
 
-- 読み手が、内容そのものの欠陥に、欠陥として気づけるか。
+- Can the reader recognize a flaw in the content as a flaw?
 
-    ルールの抜けや主張どうしの食い違いのように、読み手がつまずく原因が書き方でなく内容にあるなら、文章を取り繕ってごまかさず、欠陥があることをそのまま書く。
+    When what trips the reader lies in the content rather than the writing, such as a missing rule or claims that contradict each other, do not cover it up with smooth sentences; state plainly that the flaw is there.
 
-- 見出しだけを上から読んで、話の筋が通るか。
+- Does the story hold together when you read only the headings from top to bottom?
 
-    通して読む節では、その節の主張か、読み手がそこで抱く疑問を見出しにする。拾い読みされる節では、読み手が探すときの言葉を見出しにする。見出しは決まった型に当てはめず、読み手が疑問を抱く順に並べる。
+    In a section read straight through, make the heading that section's claim or the question the reader has at that point. In a section that is skimmed, make the heading the words the reader would look for. Do not fit headings to a fixed pattern; put them in the order the reader's questions arise.
 
-- 図を見るだけで、その節の要点が分かるか。
+- Does a diagram alone give the key point of its section?
 
-    登場人物とそのやりとり、順序、分岐、状態の変化は図で示す。図は飾りではなく、その節の要点を描くものにする。矢印には、何が渡されるかを書く。文書やファイルもそれぞれ登場人物として描き、誰が書き、誰が読み、どこへ渡るかを示す。全体に流れや構造がある文書では、冒頭に全体図を置き、その後は部分ごとの図に分ける。1枚の図の箱は一目で追える数にとどめ、縦向きに描き、ラベルはその時点の読み手に通じる短い言葉にする。各節では図を先に置く。
+    Show in diagrams the actors and what passes between them, order, branches and changes of state. A diagram is not decoration; it draws the key point of its section. On each arrow, write what is passed. Draw documents and files as actors too, and show who writes them, who reads them and where they go. In a document with an overall flow or structure, put an overall diagram at the start, then split it into a diagram for each part. Keep the boxes in one diagram few enough to follow at a glance, draw top to bottom, and make labels short words the reader understands at that point. In each section, put the diagram first.
 
-- 上から順に読むだけで、前後を行き来せずに理解できるか。
+- Can the reader understand by reading from top to bottom, without going back and forth?
 
-    結論や読み手にとっての利点を先に書き、抽象的な型より先に具体的な流れの例を見せる。言葉は、初めて出てきた箇所か、それより前で意味が分かるようにする。理由、方針、常に成り立つ条件、代償、採らなかった案、仮定は、関係する決定のすぐそばに書く。理由は1文で書く。
+    Write the conclusion and the benefit to the reader first, and show a concrete example of the flow before the abstract pattern. Make every word understandable where it first appears or earlier. Write reasons, policies, conditions that always hold, costs, rejected options and assumptions right next to the decision they belong to. Write a reason in one sentence.
 
-- 並んだ項目を、説明を読まずに見渡せるか。
+- Can the reader scan a list without reading the explanations?
 
-    各項目は、それだけで意味が通じる1文にする。説明は項目のあとに空行を入れ、字下げして書く。
+    Make each item one sentence that makes sense on its own. Write the explanation after the item, after a blank line, indented.
 
-- 読み手が、どの言葉も説明なしに受け取れ、同じ言葉を同じものとして読めるか。
+- Can the reader take every word without explanation, and read the same word as the same thing?
 
-    同じ言葉はいつも同じ意味で使う。専門用語や造語より、ふつうの言葉を選ぶ。ふつうの言葉でも、たとえとして意味を広げて使うと、造語と同じく人によって受け取り方がずれる。だから、何が起きたかをそのまま表す言葉を選ぶ。役割は何をするかが分かる名前で呼び、人も個人名でなく役割で呼ぶ。物は、使う人に見えている名前で呼ぶ。
+    Always use the same word with the same meaning. Choose common words over jargon and coined terms. Even a common word, when its meaning is stretched as a figure of speech, is read differently by different people, just like a coined term. So choose words that say plainly what happened. Name a role by what it does, and refer to people by their role, not their name. Call things by the name the people using them see.
 
-- 書かれていることがどれほど確かか、読み取れるか。
+- Can the reader tell how certain each statement is?
 
-    確かめた事実は言い切り、確かめていないことは仮定として書き、決めたことは決めたこととして書く。下書きの段階で提案や仮説だったものは、提案や仮説のまま書く。言い切れない箇所には、根拠か「未確認」と書き添える。どこまで確かめたかも書く。複数の案を比べるときは、一方に都合のよい事実だけを集めず、測った値と判断を分けて並べる。うまくいかない点、代償、限界も書く。
+    State checked facts flatly, write unchecked things as assumptions, and write decisions as decisions. What was a proposal or hypothesis in the draft stays a proposal or hypothesis. Where you cannot state something flatly, add its evidence or "unverified". Also write how far you checked. When comparing options, do not gather only the facts that favor one; lay out measured values and judgments separately. Also write what does not work, the costs and the limits.
 
-- 読み手に合った文体で、人が書いたように読めるか。
+- Is the style suited to the reader, and does it read as if a person wrote it?
 
-    文体と調子は読み手に合わせて決め、最後まで変えない。埋め草、言い直し、一般論への逃げ、中身のないつなぎの言葉、不要な箇条書き、ぼかした言い方といった、AI が書いたと分かる癖を残さない。
+    Choose the style and tone to suit the reader, and keep them to the end. Leave none of the habits that give away AI writing: filler, restating, retreating into generalities, empty connecting words, needless bullet lists, hedged phrasing.
 
-- 読み手が、太字や括弧書きや表に目をそらされず、読み落とすと困るところで目を止められるか。
+- Can the reader stop where missing something would hurt, without bold, parentheses or tables pulling their eyes away?
 
-    太字は、読み落とすと判断を誤る箇所だけに使う。括弧書きは、ないと誤解される箇所だけに使い、それ以外は本文に組み込むか削る。表は、複数のものを同じ項目で並べて比べる箇所と、網羅的な詳細をまとめた別の文書だけに使う。
+    Use bold only where missing it would lead the reader to a wrong judgment. Use parentheses only where leaving them out would cause a misunderstanding; otherwise work the words into the sentence or cut them. Use tables only to compare several things by the same items, and in a separate document that gathers exhaustive detail.

@@ -1,21 +1,21 @@
 # README
 
-読み手は、その製品を初めて知った人。読み終えたとき、製品が自分に何をしてくれるかが分かり、使うかどうかを決め、使い始められる。
+The reader is someone meeting the product for the first time. When they finish, they know what the product does for them, decide whether to use it, and can start using it.
 
-- 冒頭で、何が楽になり、何が起きなくなるかが分かるか。
+- Does the opening make clear what gets easier and what stops happening?
 
-- 読み手が、完成した製品を使うときの体験を思い描けるか。
+- Can the reader picture the experience of using the finished product?
 
-- 使い始めてから結果を得るまでの流れと、各段階で何をして何が得られるかが、一目で分かるか。
+- Can the reader see at a glance the flow from starting to use it to getting a result, and what they do and get at each step?
 
-- 読み手が、例を自分の仕事として思い浮かべられるか。
+- Can the reader picture the example as their own work?
 
-    製品の強みが伝わり、読み手の仕事に近い場面を選ぶ。たとえば、JavaScript のアプリを TypeScript に移行する場面。他社の製品名や、有名なアプリをまねて作る例は使わない。
+    Choose a scene that shows the product's strengths and is close to the reader's work, for example moving a JavaScript app to TypeScript. Do not use other companies' product names, or examples that copy a well-known app.
 
-- 読み手が、製品の内部を知らないまま読み通せるか。
+- Can the reader read to the end without knowing the product's internals?
 
-    内部の役割の名前や、初めて使う人には関係のない例外は、設計書に書く。なぜこの形にしたのかは、読み手が「なぜ」と思うその文の中から設計書へリンクする。
+    Put the names of internal roles, and exceptions that do not matter to a first-time user, in the design doc. Link to the design doc for why the product takes this shape from within the very sentence where the reader would ask "why".
 
-- 初めての人が、この README だけで製品を手に入れて使い始められ、ライセンスも分かるか。
+- Can a newcomer get the product and start using it from this README alone, and learn its license?
 
-    事前に必要なものは、何が必要で、なぜ必要かだけを書く。準備のしかたは読み手の環境によって何通りもある。1つだけ書くとほかの方法は選べないように読めるし、すでに準備できている人には余計な手順になる。
+    For prerequisites, write only what is needed and why. There are many ways to prepare, depending on the reader's environment. Writing just one reads as if the others could not be chosen, and is an extra step for those already prepared.
