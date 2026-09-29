@@ -22,17 +22,21 @@
 ```mermaid
 flowchart LR
     S@{ shape: sm-circ }
+    Goal("ゴールを詰める")
     Plan("計画のレビュー")
     Work("作業中")
+    Talk("設計を詰める")
     Design("設計のレビュー")
     Deliverable("成果物のレビュー")
     E@{ shape: fr-circ }
 
-    S -->|開始| Plan
+    S -->|開始| Goal
+    Goal -.->|レビュー依頼| Plan
     Plan -->|フィードバック| Plan
     Plan -->|承認| Work
     Work -->|中断、再開| Work
-    Work -.->|レビュー依頼| Design
+    Work -.->|相談| Talk
+    Talk -.->|レビュー依頼| Design
     Work -.->|レビュー依頼| Deliverable
     Design -->|フィードバック| Design
     Design -->|承認| Work
@@ -40,9 +44,11 @@ flowchart LR
     Deliverable -->|承認| E
 
     style Work stroke-dasharray: 5 5
+    style Goal stroke-width: 3px
+    style Talk stroke-width: 3px
 ```
 
-点線は `rn` が進めるところ、実線はあなたがするところ。
+点線は `rn` が進めるところ、実線はあなたがするところ、太枠は `rn` とあなたが1点ずつ話して詰めるところ。
 
 1つのゴールを最後までやり遂げる単位をセッションと呼ぶ。レビューは、作業がその先へ進む前に、あなたが見て、承認するかフィードバックを返すところ。`rn` が止まるのはそこと、あなたが中断したところだけ。
 
