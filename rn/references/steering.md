@@ -1,68 +1,76 @@
-# steering.md
+# The session's record
 
-The one file a session keeps. A fresh conversation resumes from it and git alone, and every command
-finds its way by its field names and headings, so they stay exactly as written.
+A session is its directory `.rn/{yyyymmdd}-{slug}/`, the README and design document, and git. A fresh
+conversation, and every later version of `rn`, resumes from these alone, so the layout, field names,
+and headings stay exactly as written here.
 
-## Template
+## steering.md
 
 ```markdown
 ---
 rn: <installed rn version>
 pr: <the session's pull request URL>
-design: <the document that sets out a Design sign-off's choices: among the repository's design documents, or design.md beside this file>
 status: running
+ux: <path of the README that says what the product should be to whoever uses it; README.md when none is settled>
+design: <path of the design document that says how it is built; docs/design.md when none is settled>
 ---
 
 # Goal
 
 <what the user wants and why, as agreed with them>
 
-# Goal reached when
+# Goal achieved when
 
-- <a state the user gains>
+- <a state of the product that shows the goal achieved>
 
 # Assumptions
 
-- **Fact** (<how it was checked>): <what the plan rests on, including each choice the user made>
+- **Fact** (<how it was checked, or "the user decided">): <what the plan rests on>
 - **Assumption**: <what the plan rests on without having checked it>
 
 # Rules
 
-- commit and push every change
-- <what an implementer could not know from the Goal: this repository's conventions>
+- Commit and push every change
+- <what a generator cannot tell from the goal, such as this repository's conventions>
 
 # Tasks
 
 ### [ ] #1: Plan sign-off
+### [ ] #2: Design sign-off
+### [ ] #3: <task name>
 
-**Purpose**: <the user agrees this plan before any work starts>
+**Purpose**: <what this task does for the goal>
 
-**Purpose reached when**:
+**Purpose achieved when**:
 
-- <the user approved the plan>
+- <a state checked on the real thing>
 
-### [ ] #2: <task name>
-
-**Purpose**: <what this task reaches, and the line of Goal reached when it serves>
-
-**Purpose reached when**:
-
-- <a state that shows the Purpose reached>
-
-# State
-
-- **Feedback**: none
-- **Notes**: none
+### [ ] #4: Deliverable sign-off
 ```
 
-- Tasks are taken in the order written and end at a sign-off: "Design sign-off" for a choice that is
-the user's, "Finished work sign-off" for the finished work. A task is marked `[x]` when the conductor
-decides its Purpose is reached, a sign-off when the user approves it. A task added later takes the
-next unused id.
-- `status` is `finished` from the approval of the Finished work sign-off.
-- `Feedback` is the user's words asking for a revision, kept until the conductor decides it is
-  answered. `Notes` is what the next conversation needs that nothing else records.
-- `evaluations/`, beside `steering.md`, holds every evaluation until the Finished work sign-off.
+- Tasks are taken in the order written. A task is marked `[x]` when the conductor decides its purpose
+  is fulfilled, a sign-off when the user approves it. A task added later takes the next unused id.
+- `status` becomes `finished` when the Deliverable sign-off is approved.
+
+## open/
+
+What is not yet settled, beside `steering.md`, one file per item, named `{NN}-{kind}-{about}.md`:
+`{NN}` is the next number after the highest in `open/`, from `01`; `{kind}` is `check` (a generator's
+self-check), `evaluation` (an evaluator's), `feedback` (the user's words from `/rn:gm`, kept whole), or
+`notes` (what `/rn:dn` leaves for the next conversation); `{about}` names what it is about, such as
+`task-3` or `plan`. An item leaves `open/` in the commit that settles it, and its text goes into that
+commit's message.
+
+## The decision line
+
+Every commit the conductor makes ends with one line saying what was decided and what comes next:
+
+```
+● {#id task name | plan | design | deliverable | the sign-off name} ── {what was decided} → {next move}
+```
+
+The last decision line on the branch is where the session stands: a later conversation takes up its
+next move. When the session stops at a sign-off, the next move is `waiting for the {sign-off name}`.
 
 ## Finding the session
 
@@ -77,16 +85,16 @@ None → "No open session. Run `/rn:on` to start." A finished session → say so
 
 A session with no `rn` field, or one whose first two numbers differ from `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, was started under an earlier `rn`. `/rn:up` brings
-it up to date; any other command asks the user to run `/rn:up` first, and stops.
+it to the current form; any other command asks the user to run `/rn:up` first, and stops.
 
-## Bringing an older session up to date
+## Bringing an older session to the current form
 
-The old `steering.md` is the user's request and the record of the work so far. The session is brought
-up to date by taking `/rn:on`'s steps on it, rather than by converting a format that changed from
-version to version.
+The old record is the user's request and what was done so far. Its format changed from version to
+version, so rather than converting it, the goal is worked out again from it.
 
-1. `git mv` it to `steering.old.md` beside it.
-2. Take the steps of `/rn:on` (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`), the session's branch,
-   pull request, and directory in place of new ones, with `steering.old.md` as the request, removed
-   once `steering.md` is written: ask only what it leaves unclear, and plan from the work already
-   done.
+1. `git mv` the old `steering.md` to `steering.old.md` beside it.
+2. Work out the plan as `/rn:on` does (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`), with the
+   session's branch, pull request, and directory in place of new ones and `steering.old.md` as the
+   request: ask only what it leaves unclear, and carry over what was done.
+3. Remove `steering.old.md` and anything else the old version left in the directory in the commit
+   that writes the new `steering.md`. The session stops at its new Plan sign-off.

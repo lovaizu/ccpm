@@ -1,6 +1,6 @@
 ---
 name: ty
-description: Approve the decision an rn session stopped for — the plan, a design, or the finished work — record it, and stop. It commits, pushes, and at the last sign-off marks the pull request ready, so run it only on an explicit /rn:ty.
+description: Approve the sign-off an rn session is waiting for — the plan, the design, or the deliverable — record it, and stop. It commits, pushes, and at the Deliverable sign-off marks the pull request ready, so run it only on an explicit /rn:ty.
 disable-model-invocation: true
 ---
 
@@ -9,20 +9,21 @@ disable-model-invocation: true
 ## Purpose
 
 The user's approval becomes the ground all the work after it stands on, so the session goes on from it
-without asking again. It is recorded and the session stops, so they can clear their conversation.
+without asking again. It is recorded and the session stops, so they can clear the conversation.
 
 ## Steps
 
-1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The first task not `[x]` is
-   not a sign-off → say what the session is doing, and stop.
-2. Mark the sign-off `[x]`. At a Design sign-off, record the recommended
-   choice as a Fact in `Assumptions`. At the Finished work sign-off, set `status` to `finished`,
-   remove `evaluations/`, and mark the pull request ready with `gh pr ready`.
-3. Commit, push, and say in the user's language:
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line is
+   not waiting for a sign-off → say what the session is doing, and stop.
+2. Mark the sign-off `[x]`. At the Deliverable sign-off, set `status` to `finished` and mark the pull
+   request ready with `gh pr ready`.
+3. Commit and push with the decision line
+   `● {sign-off name} ── approved → {work out the design | plan the tasks | finished}`, and say in the
+   user's language:
 
    ```
-   ● Approved: {sign-off name}. Next: /clear, then /rn:up — or say "go on" to continue here.
+   ● Approved the {plan | design}. Next: say "go on", or /clear and /rn:up.
    ```
 
-   At the Finished work sign-off, say instead that the session is finished and the merge is theirs.
+   At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.
 4. When the user says to go on, go on as `/rn:up` does.
