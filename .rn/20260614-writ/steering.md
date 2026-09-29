@@ -188,15 +188,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-29
-- **Last completed**: #3 step "Take the user's review on PR #15" (user approved the essentials, README and design)
-- **Next**: #3 "translate the three to English" — a translation subagent was still running at suspend.
-  On resume, look for a `docs(writ): translate` commit: if present, check the English against the
-  Japanese at `faaa8a9` (same meaning, one English word per term across the six files); if absent,
-  translate again. Then check off #3 and start #4.
-- **Notes**: #4 follows the same flow as the README and design (writing-role subagent writes →
-  checker outside the discussion evaluates once against `prompt.md` and `doc.md` → requester sorts
-  every Good/More, has fixes made, judges them → review request on PR #15 with final Good/More per
-  question). Subagents use opus. After any edit to `prompt.md`, tell rn session rebuild-rn-c1 the line
-  numbers.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
