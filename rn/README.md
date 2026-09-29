@@ -6,7 +6,7 @@
 
 - [Claude Code](https://code.claude.com)
 - リモートが GitHub にある git リポジトリ
-- [GitHub CLI](https://cli.github.com) の `gh`。`rn` がプルリクエストを開いて更新するので、`gh auth login` でその GitHub にログインしておく
+- [GitHub CLI](https://cli.github.com) の `gh`。`rn` がプルリクエストを開いて更新するのに使う
 
 ## 入れ方
 
