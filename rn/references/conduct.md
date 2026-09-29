@@ -26,9 +26,13 @@ Read `steering.md`, `open/`, and the last decision line, and take up its next mo
 says what was under way; settle it once you have taken it up. A `feedback` item goes back to before
 the sign-off it answers: the plan or the design is worked out again with the user, taking the mismatch
 behind the words as the first point, since fixing only what the words say leaves it in place; the
-deliverable gets tasks for it. When it asks for another evaluation, have one made. A feedback item is
+deliverable gets tasks for it, or goes back to work out the design when the fix needs the README or
+design document changed, since those are what the user approved the product to be. When it asks for another evaluation, have one made. A feedback item is
 settled in the commit that stops at the next sign-off, so every evaluator before it reads the user's
 words. Keep going until you stop for the user.
+
+Speak the user's language: the one they write in, or in a fresh conversation, the one the last
+decision line is written in.
 
 ## Working out the plan and the design
 
@@ -82,8 +86,8 @@ sections of the essentials, and the path of its file in `open/`:
 | Task result | the task's commits | Task result |
 | Deliverable | the change since the branch left the default branch | Deliverable |
 
-Nothing else: an evaluation pulled toward its maker's reasons stops seeing where the user will
-struggle. An evaluator evaluates a thing once. Evaluating again with AI alone keeps raising points
+Nothing else, not even what the thing was changed to answer: an evaluation pulled toward its maker's
+reasons stops seeing where the user will struggle. An evaluator evaluates a thing once. Evaluating again with AI alone keeps raising points
 that are not essential and never settles; another one is made only when the user asks with `/rn:gm`.
 
 ## Settling an evaluation
@@ -91,13 +95,16 @@ that are not essential and never settles; another one is made only when the user
 1. Check the evaluation itself. Points without grounds, or off the purpose, go to a fresh evaluator
    with the same inputs and those points, the one addition, to answer again. Commit and push the
    evaluation in `open/`.
-2. Decide each More, as the Decision section asks: fix it, let it go with the reason, or hand it to
-   the user when only they can decide it. A fix is made by a generator for a task, by you for the
+2. Check each Good's grounds as you check each More's: a Good that is wrong has the fix keep what
+   should change, and misleads the user at the sign-off. A Good whose grounds do not hold is a More.
+   A question with neither Good nor More was not checked; have it answered. Decide each More, as the
+   Decision section asks: fix it, let it go with the reason, or hand it to the user when only they
+   can decide it. A fix is made by a generator for a task, by you for the
    plan and the design; check it against the purpose and the Goods, and commit. Settled items leave
    `open/` with their text and your decision in the commit message.
 3. Repeat until every More is decided, or the work cannot go on: the same More keeps coming back,
    each fix brings a new More, or a fix needs the README or the design document changed.
-4. Check the final Good and More for each viewpoint. A fatal More is one without which the goal
+4. Check the final Good and More for each question of the essentials. A fatal More is one without which the goal
    cannot be achieved and whose fix the goal does not determine. When one remains, a More is handed
    to the user, or the work cannot go on, go back to work out the plan (for the plan) or the design
    (for anything else), with that More as the first point. Otherwise move on.
@@ -115,10 +122,10 @@ is in the user's language:
 
 ## Stopping for the user
 
-At a sign-off, `open/` is empty. Commit and push with the final Good and More for each viewpoint in
-the message body and the decision line `● … → waiting for #{id} {sign-off name}` last, so a later
-conversation can give the same review request. Give it, in the user's language, as the Review
-request section asks:
+At a sign-off, `open/` is empty. Commit and push with the review request's final Good and More, as
+you give it, in the message body and the decision line `● … → waiting for #{id} {sign-off name}`
+last, so a later conversation can give the same review request. Give it, in the user's language, as
+the Review request section asks:
 
 ```
 ── {slug}: {the goal in one line} ──
@@ -129,7 +136,9 @@ request section asks:
 Draft PR: {url}
 To read: {links to what is signed off: steering.md, the README and design document, or the change}
 
-{the final Good and More for each viewpoint, with place and grounds}
+### {each question of the essentials for what is signed off}
+- Good: {what serves it, at path:line, and why keep it}
+- More: {what falls short, at path:line, what the user struggles with, and why it was let go}
 ```
 
 The map on top heads every message where you stop: ✅ done, 👉 now, ⬜ ahead.

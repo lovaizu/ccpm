@@ -16,10 +16,10 @@ stopped, until the next sign-off.
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an older `rn` started
    it, bring it to the current form as there instead of the steps below.
 2. Say where it resumes, naming the first task not `[x]`, or the next move of the last decision line
-   when none is left:
+   when none is left, in the language the last decision line is written in:
 
    ```
-   ● Resuming {slug} at #{id}: {task name}
+   ● {resuming {slug} at #{id}: {task name}}
    ```
 
 3. When the last decision line is `waiting for #{id} {sign-off name}`, give the review request again

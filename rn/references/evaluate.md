@@ -31,8 +31,8 @@ account, not grounds.
 
 ## What to return
 
-Answer each question of the sections you are given with Good and More, as the Evaluation section
-asks. Where running or reading answers a question, do it, outside the repository or in a clone with
+Answer every question of the sections you are given, under its own heading, with Good, More, or
+both, as the Evaluation section asks. Where running or reading answers a question, do it, outside the repository or in a clone with
 its remote removed, and leave the repository as you found it but for the file you write. Write the
 evaluation to the file in `open/` you are given, in the language of `steering.md`, headed
 `# Evaluation — {kind}[ — task #N]`, and return the same text.

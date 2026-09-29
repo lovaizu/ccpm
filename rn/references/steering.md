@@ -98,8 +98,6 @@ rather than converting it.
 2. Work out the plan as `/rn:on` does (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`), with the
    session's branch, pull request, and directory in place of new ones and the old record as the
    request: ask only what it leaves unclear. The first write of the new `steering.md` replaces the
-   old one and removes the rest of the old files but a design the old version kept in the directory;
-   the old record stays readable in git. What was done becomes Facts in Assumptions, each saying
-   where it was done.
-3. A design the old version kept in the directory is read while working out the design, and removed
-   in the commit that moves what still holds into the design document.
+   old one, moves what an old design in the directory settled, and the user approved, into the design
+   document, and removes the rest of the old files; the old record stays readable in git. What was
+   done becomes Facts in Assumptions, each saying where it was done.

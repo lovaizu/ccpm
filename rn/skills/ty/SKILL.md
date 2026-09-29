@@ -22,8 +22,9 @@ without asking again. It is recorded and the session stops, so they can clear th
    in the user's language:
 
    ```
-   ● Approved the {plan | design}. Next: say "go on", or /clear and /rn:up.
+   ● {approved the plan or the design}. {next: say "go on", or /clear and /rn:up}
    ```
 
    At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.
+   Everything in braces is in the user's language.
 4. When the user says to go on, go on as `/rn:up` does.

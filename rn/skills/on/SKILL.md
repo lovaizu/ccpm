@@ -21,7 +21,7 @@ thing, however well it is carried out, and the user finds out only at the end.
    the repository's documents, with `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` and
    the goal as `$ARGUMENTS` gives it for now.
 3. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
-   the body of the branch's pull request, opening a draft one when it has none. Write its URL in
-   `pr`, commit, and push.
+   the body of the branch's pull request, opening a draft one titled with the goal in one line when it
+   has none. Write its URL in `pr`, commit, and push. As the goal is settled, keep the title to it.
 4. Work out the plan with the user from `$ARGUMENTS` and the repository, and go on, as in
    `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`: the session stops at the Plan sign-off.

@@ -21,10 +21,10 @@ them, and a summary would shift that measure.
    the user's, each with its location and URL. Write it to a `feedback` item in `open/`.
 3. Commit and push with the decision line
    `● #{id} {sign-off name} ── feedback → {work out the plan again | work out the design again | add tasks}`,
-   and say in the user's language:
+   and say, everything in braces in the user's language:
 
    ```
-   ● Took your feedback on the {plan | design | deliverable}. Next: say "go on", or /clear and /rn:up.
+   ● {took the feedback on the plan, the design, or the deliverable}. {next: say "go on", or /clear and /rn:up}
    ```
 
 4. When the user says to go on, go on as `/rn:up` does.

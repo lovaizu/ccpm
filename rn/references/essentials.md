@@ -96,7 +96,9 @@ What an evaluator returns, and what a generator returns as its self-check.
 
     Each Good and More points to a place in the real thing, a `path:line` or a command and its
     output, and says why. A Good says why it must be kept when fixing; a More says what the user will
-    struggle with because of it, and a fix. Both carry the same weight: a Good given in one word leaves
+    struggle with because of it, and a fix. Every question is answered with a Good, a More, or both: a
+question left without either was not checked, though it looks as if it was. Both carry the same
+weight: a Good given in one word leaves
     whoever fixes unable to tell what to keep, and they break what works. It says whether the purpose
     is served, not whether steps were followed.
 
@@ -127,7 +129,8 @@ What the conductor gives the user at a sign-off.
 
 - Can the user decide to approve or give feedback without reading everything again?
 
-    It gives the final Good and More for each viewpoint of what is signed off, each with the place in
-    the real thing and the grounds, not the points and fixes along the way. A More left in place says
+    It gives the final Good and More under each question of what is signed off, each with the place
+    in the real thing and the grounds, not the points and fixes along the way, and only what bears on
+    the user's decision. A More left in place says
     why it was let go. Nothing fatal is left: something that is no use until fixed is not taken to a
     sign-off.

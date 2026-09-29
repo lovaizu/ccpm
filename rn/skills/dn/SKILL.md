@@ -24,5 +24,7 @@ needs is left there.
    the task under way as:
 
    ```
-   👉 #{id} {task name} ── stopped here; next: /rn:up
+   👉 #{id} {task name} ── {stopped here; next: /rn:up}
    ```
+
+   Everything in braces is in the user's language.
