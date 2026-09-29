@@ -167,10 +167,13 @@ flowchart TD
 
 ```
 リポジトリ/
-├── README.md、docs/design.md   プロダクトのあるべき姿と作り方
-└── .rn/{yyyymmdd}-{slug}/      セッション1つ分
-    ├── steering.md             進め方
-    └── open/                   まだ片付いていない項目
+├── README.md                   使う人から見たあるべき姿
+├── docs/
+│   └── design.md               作り方
+└── .rn/
+    └── {yyyymmdd}-{slug}/      セッション1つ分
+        ├── steering.md         進め方
+        └── open/               まだ片付いていない項目
 ```
 
 セッションが残すのは、このディレクトリと成果物だけ。README と設計書はプロダクトのもので、セッションが終わっても残り、次のセッションもそこから始まる。
