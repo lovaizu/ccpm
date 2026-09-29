@@ -1,242 +1,242 @@
-# writ の設計
+# Design of writ
 
-writ は、利用者が直さずにそのまま読み手へ渡せる文書を返します。そのために、読み手と目的が決まってから書く役に書かせ、話し合いを知らない確かめる役に1回だけ確かめさせ、その結果をどう扱うかは、利用者と話している Claude Code（依頼元）だけが決めます。
+writ returns documents the user can hand to the reader as they are, without fixing them. To do that, it has a writing role write only after the reader and purpose are settled, has a checking role that does not know the conversation check the document just once, and leaves what to do with the result to Claude Code talking with the user (the requester) alone.
 
-確かめる役は、観点のファイルにあるすべての問いに Good と More で答えます。観点のファイルは、文書の種類ごとに、良い文書かを問いの形で並べたものです。Good は目的に役立っていて直すときに壊してはいけないところ、More は足りないところと、それで読み手が何に困るかです。
+The checking role answers every question in the essentials file with Good and More. An essentials file lists, for one kind of document, what makes a good document, in the form of questions. Good is what serves the purpose and must not be broken when fixing; More is what is missing and what the reader struggles with because of it.
 
 ```mermaid
 flowchart TD
-  U([利用者])
-  R[依頼元]
-  S[(リポジトリやコード)]
-  W[書く役]
-  E[/観点のファイル/]
-  F[/対象の文書/]
-  K[確かめる役]
-  U -->|読み手と目的、欠陥への答え| R
-  R -->|読み手と目的の質問、目的を妨げる欠陥| U
-  S -->|調べて分かった事実| R
-  R -->|読み手と目的、事実、決めたこと、直すところ| W
-  E -->|目指す姿| W
-  W -->|書いて直した中身| F
-  R -->|読み手と目的、文書と観点のファイルの場所| K
-  F -->|書き込まれた中身| K
-  E -->|問い| K
-  S -->|事実の裏付け| K
-  K -->|問いごとの Good と More| R
-  F -->|直した中身| R
-  R -->|最終の Good と More| U
-  F -->|仕上がった文書| U
+  U([User])
+  R[Requester]
+  S[(Repository and code)]
+  W[Writing role]
+  E[/Essentials file/]
+  F[/Target document/]
+  K[Checking role]
+  U -->|"Reader and purpose, answers about flaws"| R
+  R -->|"Questions about reader and purpose, flaws that block the purpose"| U
+  S -->|Facts found by looking| R
+  R -->|"Reader and purpose, facts, decisions, what to fix"| W
+  E -->|Shape to aim for| W
+  W -->|Written and fixed content| F
+  R -->|"Reader and purpose, where the document and essentials file are"| K
+  F -->|Content as written| K
+  E -->|Questions| K
+  S -->|Facts to back claims| K
+  K -->|Good and More per question| R
+  F -->|Fixed content| R
+  R -->|Final Good and More| U
+  F -->|Finished document| U
 ```
 
-## 読み手と目的を先に決め、話し合いを知らない役が1回だけ確かめ、依頼元だけが判断し、欠陥は隠しません
+## The reader and purpose come first, a role that does not know the conversation checks once, only the requester judges, and flaws are not hidden
 
-- 読み手と、読み終えて何を決め何をするかが決まるまで、書き始めません。
+- Writing does not start until the reader, and what they decide and do when they finish, are settled.
 
-    文書の良し悪しは読み手と目的に照らして初めて測れます。決まらないまま書くと、書く役は何を目指すかを、依頼元は何を基準に直すかを決められず、利用者が自分で読んで直すことになります。
+    The quality of a document can only be measured against its reader and purpose. Written without them, the writing role cannot decide what to aim for, nor the requester what to fix against, and the user ends up reading and fixing the document themselves.
 
-- 文書を確かめるのは、話し合いも書いた理由も知らない役です。
+- The document is checked by a role that knows neither the conversation nor the reasons behind the writing.
 
-    書いた者は、話し合いを知らなかった状態に戻れません。だから読み返しても、話し合いを知らない読み手がつまずく箇所が見えず、その箇所は利用者が文書を渡した先で初めて見つかります。
+    Whoever wrote it cannot go back to not knowing the conversation. So on rereading, they do not see where a reader who does not know the conversation will stumble, and those places are first found only after the user has handed the document on.
 
-- 直すか残すかは依頼元だけが決め、確かめる役による評価は、読み手と目的を決めてから文書を返すまでの間に1回にします。
+- Only the requester decides whether to fix or leave, and the checking role evaluates once, between settling the reader and purpose and returning the document.
 
-    評価を何度も回すと、直すたびに本質的でない指摘が新しく出て終わらず、利用者はいつまでも文書を受け取れません。評価が1回なら、そのあとに続くのは依頼元が直しを判断することだけで、依頼元は、返せるか、これ以上直しても進まないかを自分で決められます。返せるとは、どの More も直したか理由を付けて残し、どの Good も根拠が成り立つことです。だから文書は、返されるか、利用者との話し合いに戻るかのどちらかで必ず止まります。話し合って読み手や目的を決め直したあとは、書き直した文書をもう一度確かめます。文書の土台が変わっているうえ、利用者の決定が間に入るので、指摘が止まらないまま続くことはありません。
+    When evaluation runs many times, each fix brings new non-essential remarks, it never ends, and the user never receives the document. With one evaluation, all that follows is the requester judging fixes, and the requester can decide itself whether the document is ready to return or further fixes will get nowhere. Ready to return means every More has been fixed or left with a reason, and every Good's evidence holds. So the document always stops in one of two ways: it is returned, or it goes back to the conversation with the user. After the conversation settles the reader or purpose again, the rewritten document is checked once more. The document's footing has changed and the user's decision comes in between, so remarks do not go on without end.
 
-- 中身の欠陥は、言い回しで取り繕わず、欠陥のまま示します。
+- Flaws in the content are shown as flaws, not covered up with wording.
 
-    目的に要る中身が欠けた文書を上手な文で包むと、利用者も読み手も欠陥に気づかないまま使い、読み手は目的を果たせません。
+    When a document missing content its purpose needs is wrapped in skilled sentences, both the user and the reader use it without noticing the flaw, and the reader cannot achieve the purpose.
 
-## 利用者が決め、依頼元が頼んで判断し、書く役は書き、確かめる役は答えるだけです
+## The user decides, the requester asks and judges, the writing role writes, and the checking role only answers
 
-### 利用者は、読み手と目的と、目的を妨げる欠陥の扱いを決めます
+### The user decides the reader, the purpose, and what to do about flaws that block the purpose
 
-- 依頼元が利用者に聞くのは、会話、渡された文書、リポジトリから分からないことだけです。
+- The requester asks the user only what the conversation, the document handed over and the repository do not tell it.
 
-    聞くのは、誰が読むか、読み終えて何を決め何をするか、どこに置くかです。すでに言ったことや文書から分かることを聞かれると、利用者は同じことを何度も答えることになります。既にある文書を渡されたときは、読み取った読み手と目的を示したうえで、読み取れないことだけを聞きます。Claude Code が作業の途中で自分から writ を使うときも同じで、会話から分かれば聞かずに書きます。
+    It asks who reads the document, what they decide and do when they finish, and where it goes. Being asked what they already said or what the document shows makes the user answer the same thing again and again. When handed an existing document, the requester shows the reader and purpose it read from it and asks only what it could not read. The same holds when Claude Code uses writ on its own in the middle of its work: if the conversation tells it, it writes without asking.
 
-- 通して読むか拾い読むかは、目的と置き場所から依頼元が決め、決められないときだけ聞きます。
+- Whether the document is read straight through or skimmed, the requester decides from the purpose and where it goes, and asks only when it cannot decide.
 
-    利用者には答えにくい問いで、しかも多くは目的と置き場所から決まるからです。
+    It is a question the user finds hard to answer, and it is mostly settled by the purpose and where the document goes.
 
-- 目的を果たせないほどの中身の欠陥は、依頼元が推し量って埋めず、利用者に戻します。
+- A content flaw serious enough to keep the purpose from being achieved is not filled in by the requester's guesswork but taken back to the user.
 
-    利用者やその周りの人が決めることを writ が決めると、利用者の意図と違う文書が、決まったことのような顔をして返ります。
+    When writ decides what the user or the people around them should decide, a document that differs from the user's intent comes back looking as if it had been decided.
 
-### 依頼元は、聞き、調べ、書く役に渡し、直すかどうかを決めます
+### The requester asks, looks things up, hands off to the writing role, and decides whether to fix
 
-依頼元は、利用者と話している Claude Code そのものです。書くのと直すのは、別に立てた書く役に任せます。書いて直すやりとりが利用者との会話に入らないので、会話が長くならず、途中で要約されて決めたことの細部が落ちにくくなるからです。依頼元が自分で書く案は採りません。話し合いのすべてを手元に置いて書けますが、書いて直すたびに利用者との会話が長くなり、途中で要約されやすくなります。
+The requester is the Claude Code that is talking with the user. It leaves writing and fixing to a separately started writing role. Because the back-and-forth of writing and fixing stays out of the conversation with the user, that conversation stays short and is less likely to be summarized partway and lose details of what was decided. The option of the requester writing itself is not taken. It could write with the whole conversation at hand, but every round of writing and fixing lengthens the conversation with the user and makes a summary partway more likely.
 
-- 書く中身の事実は、推し量らず、リポジトリやコードを調べて得ます。
+- Facts for the content are found by looking into the repository and code, not guessed.
 
-    推し量った事実を書くと、読み手はそれを信じて誤った判断をします。
+    When guessed facts are written, the reader trusts them and judges wrongly.
 
-- 書く役には、読み手と目的、調べて分かった事実、利用者と決めたことを、欠けなく渡します。
+- The writing role is handed the reader and purpose, the facts found, and what was decided with the user, with nothing missing.
 
-    これが書く役を分ける代償です。書く役は話し合いを知らないので、渡されなかったことは推し量って埋めるしかなく、利用者の意図と違う文書になります。渡すのは、読み手の細かな事情まで含め、書く役が話し合いに戻らなくても利用者の意図どおりに書けるだけのものです。
+    This is the cost of separating the writing role. The writing role does not know the conversation, so anything not handed to it can only be filled in by guessing, and the document differs from the user's intent. What is handed over is enough, down to the fine details of the reader's situation, for the writing role to write as the user intends without going back to the conversation.
 
-### 書く役は、渡されたものと観点のファイルから、対象のファイルに書いて直します
+### The writing role writes into and fixes the target file, from what it was handed and the essentials file
 
-- 観点のファイルを目指す姿として読み、読み手、要点、見出し、図、文、言葉の順に、前のものから決めます。
+- It reads the essentials file as the shape to aim for, and decides in order, reader, key points, headings, diagrams, sentences, words, each from what comes before.
 
-    書く役の仕事は文書を良い姿に近づけることなので、問いを満たすべき姿として読みます。後のものは前のものの決定に従うので、読み手や要点が決まる前に文や言葉を磨いても、前のものを変えたときに無駄になります。
+    The writing role's job is to bring the document closer to a good shape, so it reads the questions as a shape to satisfy. Later things follow the decisions made for earlier ones, so polishing sentences and words before the reader and key points are settled is wasted when the earlier ones change.
 
-- 対象のファイルに直接書き、下書きを別に作りません。
+- It writes directly into the target file and makes no separate draft.
 
-    下書きを別に作ると、利用者が確かめる物と実際に置かれる物が2つになって食い違いが起き、片付けるべきファイルが利用者の環境に残ります。既にある文書を直すときも、元のファイルに書き込みます。
+    A separate draft means what the user checks and what actually gets placed are two things, which come to differ, and it leaves a file in the user's environment for them to clean up. When fixing an existing document, too, it writes into the original file.
 
-- 文書は Markdown、図は mermaid で書き、利用者の指定や置き場所の形式があればそちらに従います。
+- Documents are written in Markdown and diagrams in mermaid, unless the user asks otherwise or where the document goes has its own format.
 
-    すべての文書の観点が図を求めるので、書く役が文字として書いて直せる図の形式が要ります。置き場所に決まった形式があるなら、読み手はその形式で読むので、そちらを優先します。
+    The essentials for every document call for diagrams, so the writing role needs a diagram format it can write and fix as text. If where the document goes has a set format, the reader reads it in that format, so that comes first.
 
-### 確かめる役は、話し合いを知らないまま問いに答え、何も決めません
+### The checking role answers the questions without knowing the conversation, and decides nothing
 
-- どの受け渡しでも、確かめる役が手にするのは、対象の文書、読み手と目的、観点のファイル、文書が語るリポジトリやコードだけです。
+- In every handoff, all the checking role gets is the target document, the reader and purpose, the essentials file, and the repository and code the document talks about.
 
-    読み手と目的とは、誰が読むか、読み終えて何を決め何をするか、通して読むか拾い読むかです。話し合い、書いた理由、前の版やその差分は渡しません。1つでも渡ると、確かめる役は書き手の意図で文書の欠けを補って読み、読み手がつまずく箇所を見落とします。今の会話を引き継いで立てた役を確かめる役にしても、同じことが起きます。
+    The reader and purpose means who reads it, what they decide and do when they finish, and whether they read it straight through or skim it. The conversation, the reasons behind the writing, earlier versions and their differences are not handed over. If even one is, the checking role fills the document's gaps with the writer's intent as it reads, and misses where the reader stumbles. The same happens if the checking role is started by carrying over the current conversation.
 
-- 最初に、読み手、読み手がすべきこと、文書の要点を、自分の言葉で言い直します。
+- First, it restates in its own words the reader, what the reader must do, and the document's key points.
 
-    書き手の意図と言い直しとのずれは、書いた者には見えない分かりにくさそのものです。依頼元は、言い直しを話し合いで決めたことと比べ、ずれていればそこを More として扱います。
+    The gap between the writer's intent and this restatement is exactly the unclearness the writer cannot see. The requester compares the restatement with what was decided in the conversation, and treats any gap as a More.
 
-- 使う観点のファイルにあるすべての問いに、Good と More の一方か両方で答えます。
+- It answers every question in the essentials file it uses with Good, More or both.
 
-    確かめる役の仕事は文書の今の状態を答えることなので、観点のファイルを問いとして読みます。読み手や要点が崩れていたら見出しから後の問いに答えない、という案は採りません。答えのない問いがあると、依頼元は直すときに壊してはいけない箇所を知らず、利用者への返答にもその問いの答えが欠けます。
+    The checking role's job is to report the document's current state, so it reads the essentials file as questions. The option of not answering the questions from headings onward when the reader or key points have broken down is not taken. If a question goes unanswered, the requester does not know which places must not be broken when fixing, and the reply to the user lacks that question's answer.
 
-- 直すかどうかも、次に何をするかも決めません。
+- It decides neither whether to fix nor what to do next.
 
-    確かめる役は話し合いを知らないので、その指摘を字面どおりに受けて直すと、目的に役立っている部分まで作り直すことになります。
+    The checking role does not know the conversation, so taking its remarks literally and fixing them rebuilds even the parts that serve the purpose.
 
-## 文書は、決める・書く・確かめる・振り分ける・直すと進み、返るか利用者との話し合いに戻ります
+## A document moves through deciding, writing, checking, sorting and fixing, and either returns or goes back to the conversation with the user
 
 ```mermaid
 stateDiagram-v2
   direction TB
-  [*] --> 決める: /writ:up、または文書を書く場面
-  決める --> 書く: 読み手と目的が決まった
-  書く --> 確かめる: 書く役が対象のファイルに書き込んだ
-  確かめる --> 振り分ける: すべての問いの Good と More
-  振り分ける --> 振り分ける: More に残した理由を付けた
-  振り分ける --> 直す: 直し方の決まる More がある
-  直す --> 振り分ける: 書く役が直し、依頼元が判断した
-  振り分ける --> 返す: どの More も直したか理由を付けて残し、どの Good も根拠が成り立つ
-  振り分ける --> 決める: 進められない、または目的を妨げる More がある
-  返す --> [*]
+  [*] --> Decide: /writ:up, or a moment to write a document
+  Decide --> Write: Reader and purpose settled
+  Write --> Check: Writing role wrote into the target file
+  Check --> Sort: Good and More for every question
+  Sort --> Sort: Gave a More a reason to leave it
+  Sort --> Fix: A More whose fix is settled
+  Fix --> Sort: Writing role fixed it, requester judged it
+  Sort --> Return: Every More fixed or left with a reason, every Good's evidence holds
+  Sort --> Decide: Cannot proceed, or a More blocks the purpose
+  Return --> [*]
 ```
 
-- どの状態のあとでも、対象のファイルの中身は、中身の欠陥をぼかしていません。
+- After every state, the content of the target file does not blur flaws in the content.
 
-    対象のファイルに直接書くので、利用者は途中の状態も目にします。進められずに話し合いへ戻るときも、ファイルにあるのは欠陥が見える文書です。
+    Because writing goes directly into the target file, the user sees the in-between states too. Even when it cannot proceed and goes back to the conversation, the file holds a document whose flaws are visible.
 
-## 振り分けは、読み手が目的を果たせるかで決めます
+## Sorting is decided by whether the reader can achieve the purpose
 
-担当が空欄の移行計画は、読み手が空欄を埋めて担当を引き受けられるので、残して返します。期限のない移行計画は、読み手が期限に合意するという目的を果たせないので、返さずに話し合います。
+A migration plan with a blank owner column is returned with the blank left, because readers can fill the blank and take on their part. A migration plan without a deadline is not returned but talked over, because readers cannot achieve the purpose of agreeing on a deadline.
 
 ```mermaid
 flowchart TD
-  M[More と、根拠が成り立たない Good]
-  Q1{目的に照らして直し方が決まり、<br/>守るべき Good を壊さないか}
-  X[書く役に直させる]
-  Q2{残しても、読み手は<br/>目的を果たせるか}
-  L[残して、最終の More に<br/>残した理由を書く]
-  B[返さずに、その More から<br/>利用者と話す]
+  M[More, and Good whose evidence does not hold]
+  Q1{"Does the purpose settle how to fix it,<br/>without breaking a Good to keep?"}
+  X[Have the writing role fix it]
+  Q2{"If it is left, can the reader<br/>still achieve the purpose?"}
+  L["Leave it, and write in the final More<br/>why it was left"]
+  B["Do not return; talk with the user,<br/>starting from that More"]
   M --> Q1
-  Q1 -->|はい| X
-  Q1 -->|いいえ| Q2
-  Q2 -->|果たせる| L
-  Q2 -->|果たせない| B
+  Q1 -->|Yes| X
+  Q1 -->|No| Q2
+  Q2 -->|Can| L
+  Q2 -->|Cannot| B
 ```
 
-- Good は1つずつ根拠を文書と照らし、成り立たないものは More として振り分けます。
+- Each Good's evidence is checked against the document one by one, and any that does not hold is sorted as a More.
 
-    成り立たない Good を返すと、利用者は効いていない箇所を守るべきところと信じ、次の直しで判断を誤ります。
+    If a Good that does not hold is returned, the user believes a place that is not working is something to keep, and misjudges the next fix.
 
-- 直した結果は、依頼元が読み手と目的に照らして判断し、確かめる役には戻しません。
+- The requester judges the fixed result against the reader and purpose, and does not send it back to the checking role.
 
-    確かめる役にしかできないのは、話し合いを知らずに読むことだけです。直しが目的に合うかは、依頼元のほうがよく分かります。その代わり、評価のあとの直しは、話し合いを知らない目を通りません。それでも最終の Good と More には場所と根拠が付くので、利用者はその箇所を確かめられ、必要なら writ にもう一度渡せます。そのため、この限界を受け入れます。
+    The only thing the checking role can do that others cannot is read without knowing the conversation. The requester knows better whether a fix fits the purpose. The cost is that fixes after the evaluation do not pass before eyes that do not know the conversation. Even so, the final Good and More carry locations and evidence, so the user can check those places and, if needed, hand the document to writ again. So this limit is accepted.
 
-- 依頼元が直した結果を判断していて、直しても同じ More が残る、直すたびに別の More が生まれる、決めた読み手や目的を変えないと直せない、のどれかに当たったら、進められないと判断します。
+- While judging fixed results, the requester judges that it cannot proceed if the same More remains after fixing, each fix brings another More, or a fix requires changing the settled reader or purpose.
 
-    どれも、直しを重ねても返せる状態にならない兆しです。そのまま続けると、利用者は文書を受け取れないまま待つことになります。
+    Each is a sign that more fixing will not bring the document to a state ready to return. If it went on, the user would be left waiting without receiving the document.
 
-## 利用者に返るのは、対象の文書と、問いごとの最終の Good と More だけです
+## Only the target document and the final Good and More for each question return to the user
 
-- どの状態のあとでも、利用者の環境に writ が残すのは対象の文書だけです。
+- After every state, the only thing writ leaves in the user's environment is the target document.
 
-    下書きや評価の記録が残ると、利用者が片付けることになり、どれが本物かにも迷います。
+    Leftover drafts or evaluation records are the user's to clean up, and make it unclear which one is real.
 
-- 返答には、使った観点のファイルのすべての問いについて最終の Good と More を添え、途中の指摘や直しの経緯は添えません。
+- The reply carries the final Good and More for every question in the essentials file used, and not the remarks or fixes from along the way.
 
-    利用者が承認するのは最終形なので、最終の Good と More があれば、全文を読み直さずに承認か直しの依頼かを決められます。経緯を添えると、それが今の文書のどこに当てはまるかを利用者が確かめ直すことになります。
+    The user approves the final form, so the final Good and More let them decide between approving and asking for fixes without rereading the whole text. With the history attached, the user would have to check again where each part applies in the current document.
 
-Good と More に付く項目は、それぞれ利用者の判断を助けるためにあります。
+Each item attached to Good and More is there to help the user judge.
 
-- 観点の名前は、利用者が観点のファイルで問いそのものを読めるようにします。
-- 場所は、利用者が全文でなくその箇所だけを見れば済むようにします。
-- 根拠は、利用者が writ の判断を信じる代わりに確かめられるようにします。
-- More に付く読み手が困ることは、残した More を受け入れるかを読み手への影響で決められるようにします。
-- More に付く残した理由は、直さなかったのが見落としでなく判断だと示し、利用者が自分で決めるべきことかを見分けられるようにします。
+- The essentials name lets the user read the question itself in the essentials file.
+- The location lets the user look at just that place instead of the whole text.
+- The evidence lets the user check writ's judgment instead of trusting it.
+- The reader's problem attached to a More lets the user decide, by its effect on the reader, whether to accept a More that was left.
+- The reason attached to a More that was left shows that not fixing it was a judgment, not an oversight, and lets the user tell whether it is something they should decide themselves.
 
-## 観点は1か所にだけ置き、書く役も確かめる役も同じファイルを読みます
+## The essentials live in one place only, and the writing role and checking role read the same file
 
 ```mermaid
 flowchart TD
-  M([writ を直す人])
-  E[/観点のファイル/]
-  R[依頼元]
-  W[書く役]
-  K[確かめる役]
+  M([Person who changes writ])
+  E[/Essentials file/]
+  R[Requester]
+  W[Writing role]
+  K[Checking role]
   D[/README/]
-  U([利用者])
-  M -->|問い| E
-  R -->|使う観点のファイルの場所| W
-  R -->|使う観点のファイルの場所| K
-  E -->|目指す姿| W
-  E -->|問い| K
-  D -->|観点のファイルへのリンク| U
-  E -->|問い| U
+  U([User])
+  M -->|Questions| E
+  R -->|Where the essentials file is| W
+  R -->|Where the essentials file is| K
+  E -->|Shape to aim for| W
+  E -->|Questions| K
+  D -->|Links to essentials files| U
+  E -->|Questions| U
 ```
 
-すべての文書の観点はいつも使い、README、設計書、AI に読ませるプロンプトなら、その種類の観点を重ねます。種類は、依頼元が置き場所と目的から決めます。
+The essentials for every document are always used, and for a README, a design doc or a prompt for an AI to read, the essentials for that kind are added on top. The requester decides the kind from where the document goes and its purpose.
 
-- どの受け渡しでも、観点は要約せず、ファイルの場所で渡します。
+- In every handoff, the essentials are passed as the file's location, not as a summary.
 
-    要約を渡すと、要約した役の読み方で問いが変わり、観点のファイルを磨いても古い要約が使われ続けるからです。
+    A summary changes the questions to match how the summarizing role read them, and the old summary goes on being used even after the essentials file is improved.
 
-- どの変更のあとでも、観点の中身は観点のファイルにだけあり、ほかの文書や writ の指示に写されていません。
+- After every change, the content of the essentials lives only in the essentials files, and is not copied into other documents or writ's instructions.
 
-    写すと、観点を磨くたびに写しとずれていき、利用者が README から読む観点と、実際に書いて確かめるときに使われる観点が食い違います。
+    Copies drift each time the essentials are improved, and the essentials the user reads from the README come to differ from the ones actually used to write and check.
 
-- 利用者に見える名前は、`/writ:up`、Good と More、観点のファイルの名前（`doc.md`、`readme.md`、`design.md`、`prompt.md`）です。
+- The names the user sees are `/writ:up`, Good and More, and the essentials file names (`doc.md`, `readme.md`, `design.md`, `prompt.md`).
 
-    README がこれらの名前で使い方と観点を伝えているので、変えると利用者が README で覚えたことが通じなくなります。
+    The README uses these names to explain how to use writ and the essentials, so changing them would make what the user learned from the README no longer hold.
 
-## 品質は、利用者に届ける姿ごとに writ を走らせて試します
+## Quality is tested by running writ for each outcome for the user
 
-どの品質も、利用者の立場で writ を走らせ、返ってきたものを読む人（試す人）が合否を決めます。
+For each quality, the person who runs writ in the user's position and reads what comes back (the tester) decides pass or fail.
 
-- 利用者が、返ってきた文書を直さずに読み手へ渡せる。
+- The user can hand the returned document to the reader as it is, without fixing it.
 
-    [README](../README.md) の最初の約束で、欠けると、読んで直す手間が利用者に戻ります。観点の種類ごとに、新しく書く場面と既にある文書を直す場面で writ を走らせます。話し合いを知らない人に文書を読ませ、読み終えて何を決め何をするかを言わせます。その答えが依頼したときの目的と一致し、試す人が読み手に渡す前に変えたい箇所を読み手に関わる理由つきで挙げて、1つも残らなければ合格です。
+    This is the first promise of the [README](../README.md); without it, the work of reading and fixing falls back on the user. For each kind of essentials, run writ both to write a new document and to fix an existing one. Have someone who does not know the conversation read the document and say what they decide and do when they finish. It passes if that answer matches the purpose given in the request, and when the tester lists the places they would change before handing the document to the reader, each with a reason that concerns the reader, none remain.
 
-- 利用者は、すでに伝えたことや文書から分かることを聞かれず、読み手と目的が決まらないまま書かれた文書も受け取らない。
+- The user is not asked what they already said or what the document shows, and does not receive a document written before the reader and purpose were settled.
 
-    [README](../README.md) の「聞かれたことに答えるだけ」と「分からないときだけ聞く」の約束で、欠けると、同じことを何度も答えるか、的の定まらない文書を受け取ります。読み手を言わずに頼む場面、読み手と目的の分かる文書を渡す場面、会話で読み手と目的が決まったあとに Claude Code が自分から文書を書く場面で走らせます。最初の場面だけ書く前に質問が来て、残りの2つは質問なしに書き始めれば合格です。
+    These are the [README](../README.md)'s promises "answer what it asks" and "asks only when it does not know"; without them, the user answers the same thing again and again or receives a document with no clear aim. Run it when asking without saying who the reader is, when handing over a document from which the reader and purpose can be read, and when Claude Code writes a document on its own after the conversation has settled the reader and purpose. It passes if questions come before writing only in the first case, and writing starts without questions in the other two.
 
-- 利用者は、返答の Good と More だけで、承認するか直しを求めるかを決められる。
+- The user can decide from the reply's Good and More alone whether to approve or ask for fixes.
 
-    [README](../README.md) の Good と More の約束で、欠けると、利用者は全文を読み直すことになります。試す人が返答だけで判断を決め、そのあと全文を読みます。判断が変わらず、すべての場所と根拠が文書と合い、使った観点のファイルのすべての問いに答えがあれば合格です。
+    This is the [README](../README.md)'s promise about Good and More; without it, the user rereads the whole text. The tester makes a decision from the reply alone, then reads the whole text. It passes if the decision does not change, every location and piece of evidence matches the document, and every question in the essentials file used has an answer.
 
-- 目的を果たせない中身の欠陥があるとき、利用者は取り繕った文書でなく、その欠陥についての話し合いを受け取る。
+- When a content flaw keeps the purpose from being achieved, the user receives a conversation about that flaw, not a document that covers it up.
 
-    [README](../README.md) の期限の例の約束で、欠けると、読み手が目的を果たせない文書がそれらしく返ります。期限の決まっていない移行計画のように目的に要る中身が欠けた依頼と、担当のように空欄で残せる欠けがある依頼で走らせます。前者では文書を仕上がったものとして返さずに欠けた中身から話し始め、後者では残した理由つきの More とともに返せば合格です。
+    This is the [README](../README.md)'s promise in the deadline example; without it, a document that does not let the reader achieve the purpose comes back looking finished. Run it with a request missing content the purpose needs, like a migration plan with no deadline set, and with a request that has a gap that can be left blank, like the owners. It passes if in the first case the document is not returned as finished and the conversation starts from the missing content, and in the second the document is returned with a More that gives the reason it was left.
 
-- 利用者は、文書か、それを妨げている欠陥についての話し合いのどちらかを必ず受け取り、終わらないまま待たされない。
+- The user always receives either the document or a conversation about the flaw blocking it, and is never left waiting without end.
 
-    [README](../README.md) の、聞かれたことに答えれば文書が返るという約束で、欠けると、利用者は何も受け取れないまま待ち続けます。上に挙げたすべての場面に加え、決めた読み手と目的を変えないと直せない欠けを含む依頼で走らせます。どの場面でも、文書と Good と More が返るか、進められない理由から話し合いが始まるかのどちらかで終われば合格です。
+    This is the [README](../README.md)'s promise that answering what it asks brings a document back; without it, the user keeps waiting and receives nothing. Run it in every case above, plus a request containing a gap that cannot be fixed without changing the settled reader and purpose. It passes if every case ends either with the document and Good and More coming back or with a conversation starting from why it cannot proceed.
 
-- 利用者の環境に、対象の文書のほかは何も残らない。
+- Nothing but the target document remains in the user's environment.
 
-    欠けると、利用者が片付けることになります。走らせる前と後で作業ディレクトリを比べ、変わったのが対象のファイルだけなら合格です。
+    Without this, the user has to clean up. Compare the working directory before and after running; it passes if only the target file changed.
 
-試すのは、上に挙げた種類と場面の組み合わせまでです。あらゆる種類の文書や読み手は試さず、観点のファイルが種類を問わない問いで書かれていることに頼ります。README から読む観点と実際に使われる観点が食い違わないことと、利用者に見える名前が変わらないことは、走らせて試しません。どちらも writ を変えたときに起き、走らせて返ってきたものからは見分けにくいので、writ を変える人が変更のたびに観点のファイルと README を見比べて守ります。
+Testing covers only the combinations of kinds and cases listed above. It does not test every kind of document or reader, and relies on the essentials files being written as questions that hold for any kind. Two things are not tested by running writ: that the essentials read from the README do not differ from those actually used, and that the names the user sees do not change. Both happen when writ is changed and are hard to spot in what comes back from a run, so whoever changes writ keeps them by comparing the essentials files and the README at every change.
