@@ -45,6 +45,9 @@ taught survives only as the user's feedback listed under Assumptions.
   the reader, answers the top question first, then reports stumbles and NGs top layer first, skipping
   lower layers when a higher one fails; only fixes that serve the purpose are made, a defect of the
   subject goes back to its owner, and there is one evaluation before the user decides.
+- Fact: the user agreed to keep two things in `instruction.md` out of the essentials: the outline
+  per kind of document (derived from the reader instead), and the orders to the writing AI (write in
+  md, draw figures in mermaid, ask back when the reader is unclear), which go to #2's design.
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
@@ -73,8 +76,8 @@ must reach, so writing and judging look at the same thing.
 
 - [x] Draw the essentials from `instruction.md`, both feedback files, and the earlier field feedback
 - [x] Bring each point where the sources disagree to the user, one at a time
-- [ ] Refine until each question is essential and none repeats another
-- [ ] Reorder the questions in `doc.md` by the layers they are decided in: reader, core, headings,
+- [x] Refine until each question is essential and none repeats another
+- [x] Reorder the questions in `doc.md` by the layers they are decided in: reader, core, headings,
       figures, sentences, then words, certainty, style and marks
 
 **Completion criteria**:
