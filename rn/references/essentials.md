@@ -108,9 +108,12 @@ What the conductor decides for each More, and for what comes next.
 
 - Does it bring the work closest to the goal, and settle?
 
-    A More is fixed when fixing brings the work closer to its purpose and keeps the Goods; otherwise
-    it is let go, with the reason. Acting on the letter of an evaluation redoes work that serves the
-    goal. What only the user can decide goes to the user; everything else is decided from the goal.
+    A More is fixed when fixing brings the work closer to its purpose and keeps the Goods. It is let
+    go, with the reason, only when fixing would not bring the work closer: never because the fix is
+    costly or needs the README, the design document, or the user. A More that bears on the purpose
+    and whose fix needs any of those is handed to the user, and the session goes back to work out the
+    design; it is never taken to a sign-off for the user to decide there, since the user approves a
+    sign-off as it stands. Acting on the letter of an evaluation redoes work that serves the goal.
 
 ## Question
 
@@ -129,8 +132,9 @@ What the conductor gives the user at a sign-off.
 
 - Can the user decide to approve or give feedback without reading everything again?
 
-    It gives the final Good and More under each question of what is signed off, each with the place
-    in the real thing and the grounds, not the points and fixes along the way, and only what bears on
-    the user's decision. A More left in place says
-    why it was let go. Nothing fatal is left: something that is no use until fixed is not taken to a
-    sign-off.
+    It gives the final Good and More under every question of the sections for what is signed off,
+    each question as essentials.md words it, so the user sees what was checked. Each Good and More
+    points to a `path:line` or a command and its output, and says why; one that cannot point to
+    anything is not given. Not the points and fixes along the way, and only what bears on the user's
+    decision. A More left in place says why fixing it would not serve the purpose. No More asks the
+    user to decide, and nothing fatal is left: those go back to working out the design first.

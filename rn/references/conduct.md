@@ -38,7 +38,8 @@ decision line is written in.
 
 Talk with the user one point at a time until you both see the same thing, looking things up as you
 go: their answers change where to look. Each question is put as the Question section asks. Write each
-point into its document as it is agreed, and push, so a pause loses nothing.
+point into its document as it is agreed, and push, so a pause loses nothing. Keep the pull request's
+title to the goal as it settles.
 
 - The plan, in `steering.md`: what they want, why, and how they would know the goal is achieved; which
   README and design document the design goes into, found in the repository or `README.md` and
@@ -47,6 +48,8 @@ point into its document as it is agreed, and push, so a pause loses nothing.
   each quality the goal needs, how to test it, what passes, and how far. They hold only what holds
   now. There is always a Design sign-off, even when nothing changes the documents, since a mismatch
   found only after it is built costs a lot of rework.
+- After a Design sign-off, the README and design document change only by working out the design
+  again, through another Design sign-off: they are what the user approved.
 - Once the Design sign-off is approved, plan the tasks that make the deliverable, ending at the
   Deliverable sign-off, or revise those not yet done by the design.
 
@@ -101,11 +104,11 @@ that are not essential and never settles; another one is made only when the user
    Decision section asks: fix it, let it go with the reason, or hand it to the user when only they
    can decide it. A fix is made by a generator for a task, by you for the
    plan and the design; check it against the purpose and the Goods, and commit. Settled items leave
-   `open/` with their text and your decision in the commit message.
+   `open/` with their full text and your decision in the commit message.
 3. Repeat until every More is decided, or the work cannot go on: the same More keeps coming back,
    each fix brings a new More, or a fix needs the README or the design document changed.
-4. Check the final Good and More for each question of the essentials. A fatal More is one without which the goal
-   cannot be achieved and whose fix the goal does not determine. When one remains, a More is handed
+4. Check the final Good and More for each question of the essentials. A fatal More is one without
+   which the goal cannot be achieved and whose fix the goal does not determine. When one remains, a More is handed
    to the user, or the work cannot go on, go back to work out the plan (for the plan) or the design
    (for anything else), with that More as the first point. Otherwise move on.
 
@@ -114,7 +117,9 @@ essentials, or a document, and that is what to decide.
 
 Each time you decide what comes next, tell the user in the decision line. `●`, `──`, `→`, and
 `waiting for #{id} {sign-off name}` stay as written, since commands find their way by them; the rest
-is in the user's language:
+is in the user's language. Decision lines, review requests, and notes are your words to the user,
+not the repository's documents, so they are in the user's language whatever the documents use; a
+later conversation tells the user's language from them:
 
 ```
 ● #3 move src/cart ── decided: purpose not fulfilled (last quarter's cart bug still ships) → fix
@@ -122,10 +127,10 @@ is in the user's language:
 
 ## Stopping for the user
 
-At a sign-off, `open/` is empty. Commit and push with the review request's final Good and More, as
-you give it, in the message body and the decision line `● … → waiting for #{id} {sign-off name}`
-last, so a later conversation can give the same review request. Give it, in the user's language, as
-the Review request section asks:
+At a sign-off, `open/` is empty. Write the review request once, in the user's language, as the
+Review request section asks; commit and push with that text as the message body and the decision
+line `● … → waiting for #{id} {sign-off name}` last; then give the user the same text. The commit is
+what a later conversation gives again, so what the user sees and what the record holds never differ.
 
 ```
 ── {slug}: {the goal in one line} ──
