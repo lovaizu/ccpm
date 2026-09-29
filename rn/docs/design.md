@@ -86,7 +86,7 @@ flowchart TD
     U -->|"conversation, commands"| C
     C -->|"questions, review requests<br/>with the final Good/More"| U
     C -->|"a task, a More to fix"| G
-    G -->|"edits in the working tree, self-check"| C
+    G -->|"edits in the working tree"| C
     C -->|"a commit or document to evaluate"| E
     E -->|"evaluation"| C
 ```
@@ -138,7 +138,11 @@ making and checking do not drift apart.
 
 The result of a check comes back as Good and More, with the same weight. Both point to a place in the
 real thing and say why. A Good adds why it must be kept when fixing; a More adds what the user will
-struggle with because of it, and a fix.
+struggle with because of it. How to fix it is left to the conductor, who decides every next move:
+a fix written into the evaluation would pull that decision toward the evaluator's first idea.
+
+Only whoever checks answers with Good and More. Whoever makes reads the essential viewpoints as what
+to aim for, and the conductor checks what they made against its purpose.
 
 `rn` hands over essential viewpoints instead of steps because steps miss the mark in situations they
 did not foresee. With essential viewpoints, an AI can choose the way that fits the situation, and
@@ -222,7 +226,6 @@ them. The whole deliverable starts from the evaluator's evaluation, once all tas
 flowchart TD
     U(["User"])
     C["Conductor"]
-    G["Generator"]
     E["Evaluator"]
     S["steering.md:<br/>how the work goes"]
     RD["README and design document:<br/>what the product should be, and how it is built"]
@@ -230,7 +233,6 @@ flowchart TD
     M["Commit messages:<br/>the decision line, and settled items"]
     C -->|"writes"| S
     C -->|"works out with the user and writes"| RD
-    G -->|"self-check"| O
     E -->|"evaluation"| O
     U -->|"words given with /rn:gm"| O
     C -->|"notes left by /rn:dn"| O
@@ -247,9 +249,9 @@ request.
 Documents hold only what holds now. How it came to be decided is carried by commit messages. History
 left in a document buries what holds now.
 
-What is not yet settled goes in `open/`: a generator's self-check, an evaluator's evaluation, the
-user's words received with `/rn:gm`, and the notes `/rn:dn` leaves. A file is named
-`{NN}-{kind}-{about}.md`, where kind is `check`, `evaluation`, `feedback`, or `notes`. The conductor
+What is not yet settled goes in `open/`: an evaluator's evaluation, the user's words received with
+`/rn:gm`, and the notes `/rn:dn` leaves. A file is named `{NN}-{kind}-{about}.md`, where kind is
+`evaluation`, `feedback`, or `notes`. The conductor
 decides item by item whether it is needed, and a settled item leaves `open/` in the commit that
 settles it and stays in that commit's message. So nothing slips, and `open/` is always empty when
 the session stops at a sign-off.
