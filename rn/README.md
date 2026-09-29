@@ -32,15 +32,15 @@ flowchart TD
 
     S -->|"開始 - /rn:on"| PlanTalk
     PlanTalk -.->|レビュー依頼| Plan
-    Plan -->|"フィードバック - /rn:gm"| PlanTalk
-    Plan -->|"承認 - /rn:ty"| DesignTalk
+    Plan -->|フィードバック| PlanTalk
+    Plan -->|承認| DesignTalk
     DesignTalk -.->|レビュー依頼| Design
-    Design -->|"フィードバック - /rn:gm"| DesignTalk
-    Design -->|"承認 - /rn:ty"| Make
+    Design -->|フィードバック| DesignTalk
+    Design -->|承認| Make
     Make -.->|決めることが出た| DesignTalk
     Make -.->|レビュー依頼| Deliverable
-    Deliverable -->|"フィードバック - /rn:gm"| Make
-    Deliverable -->|"承認 - /rn:ty"| E
+    Deliverable -->|フィードバック| Make
+    Deliverable -->|承認| E
 
     style Make stroke-dasharray: 5 5
     style PlanTalk stroke-width: 3px
