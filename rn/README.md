@@ -22,24 +22,24 @@
 ```mermaid
 stateDiagram-v2
     direction LR
-    state "Plan サインオフ" as Plan
+    state "計画のレビュー" as Plan
     state "作業中" as Work
-    state "Design サインオフ" as Design
-    state "Deliverable サインオフ" as Deliverable
+    state "設計のレビュー" as Design
+    state "成果物のレビュー" as Deliverable
 
     [*] --> Plan: 開始
     Plan --> Plan: フィードバック
     Plan --> Work: 承認
     Work --> Work: 中断、再開
-    Work --> Design: 承認依頼
-    Work --> Deliverable: 承認依頼
+    Work --> Design: レビュー依頼
+    Work --> Deliverable: レビュー依頼
     Design --> Design: フィードバック
     Design --> Work: 承認
     Deliverable --> Work: フィードバック
     Deliverable --> [*]: 承認
 ```
 
-1つのゴールを最後までやり遂げる単位をセッションと呼ぶ。サインオフは、作業がその先へ進む前に、あなたが承認するところ。`rn` が止まるのはそこと、あなたが中断したところだけ。例として、あなたのアプリは JavaScript で書かれていて、それを TypeScript に移したいとする。何日もかかる作業だ。
+1つのゴールを最後までやり遂げる単位をセッションと呼ぶ。レビューは、作業がその先へ進む前に、あなたが見て、承認するかフィードバックを返すところ。`rn` が止まるのはそこと、あなたが中断したところだけ。例として、あなたのアプリは JavaScript で書かれていて、それを TypeScript に移したいとする。何日もかかる作業だ。
 
 ### 1. 開始 — `/rn:on`
 
@@ -62,8 +62,8 @@ stateDiagram-v2
 
 ```console
 ● ── typescript: 型の間違いでビルドが落ちる ──
-  👉 #1 Plan サインオフ ── PR で計画を読んでください: 承認は /rn:ty、直してほしいときは /rn:gm <フィードバック>
-  ⬜ #2 本番に出た型の間違いをたどる / #3 Design サインオフ
+  👉 #1 計画のレビュー ── PR で計画を読んでください: 承認は /rn:ty、直してほしいときは /rn:gm <フィードバック>
+  ⬜ #2 本番に出た型の間違いをたどる / #3 設計のレビュー
 
   下書きの PR: https://github.com/you/repo/pull/42
 ```
@@ -77,10 +77,10 @@ stateDiagram-v2
 ```console
 > /rn:ty
 
-● 承認しました: Plan サインオフ。次: 「続けて」と言うか、/clear して /rn:up。
+● 計画を承認しました。次: 「続けて」と言うか、/clear して /rn:up。
 ```
 
-### 3. 設計を決める — Design サインオフ
+### 3. 設計を決める — 設計のレビュー
 
 #2 はあなた抜きで進む。#3 では、どう作るかと、ゴールから見て確かめるべき品質ごとに、テストのしかた、合格の基準、どこまで確かめるかを、`rn` が提案する。そのうち「型チェックをどれくらい厳しく始めるか」は、手間と安全のどちらを取るかの判断なので、あなたが決める。`rn` はそれを1点ずつあなたと話し、決まったことを README と設計書に書く。書く先は、リポジトリにある README と設計書で、無ければ `README.md` と `docs/design.md`。あなたがそれを承認すると、プロダクトはそのとおりに作られる。
 
@@ -112,9 +112,9 @@ context がいっぱいになりそうなとき、その日の作業を終える
 > /rn:dn
 
 ● ── typescript: 型の間違いでビルドが落ちる ──
-  ✅ #1 Plan サインオフ / #2 型の間違いをたどる / #3 Design サインオフ / #4 src/cart を移す
+  ✅ #1 計画のレビュー / #2 型の間違いをたどる / #3 設計のレビュー / #4 src/cart を移す
   👉 #5 src/checkout を移す ── ここで止めました。次: /rn:up
-  ⬜ #6 src/account を移す / #7 Deliverable サインオフ
+  ⬜ #6 src/account を移す / #7 成果物のレビュー
 
 > /clear
 > /rn:up
@@ -122,7 +122,7 @@ context がいっぱいになりそうなとき、その日の作業を終える
 ● typescript を #5 から再開します: src/checkout を移す
 ```
 
-### 6. 終える — Deliverable サインオフ
+### 6. 終える — 成果物のレビュー
 
 成果物、つまりセッションを終えた時点のプロダクトを、ゴールを達成しているかで承認する。足りなければ `/rn:gm` でタスクを足す。`/rn:ty` でプルリクエストは ready になり、マージはあなたが行う。セッションが残すのは、`.rn/` ディレクトリと成果物だけ。
 
