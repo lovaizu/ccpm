@@ -27,16 +27,16 @@ stateDiagram-v2
     state "Design サインオフ" as Design
     state "Deliverable サインオフ" as Deliverable
 
-    [*] --> Plan: on
-    Plan --> Plan: gm
-    Plan --> Work: ty
-    Work --> Work: dn, up
+    [*] --> Plan: 始める
+    Plan --> Plan: 直してもらう
+    Plan --> Work: 承認
+    Work --> Work: 中断、再開
     Work --> Design: 設計を決める
     Work --> Deliverable: 全タスク済み
-    Design --> Design: gm
-    Design --> Work: ty
-    Deliverable --> Work: gm
-    Deliverable --> [*]: ty
+    Design --> Design: 直してもらう
+    Design --> Work: 承認
+    Deliverable --> Work: タスクを足す
+    Deliverable --> [*]: 承認
 ```
 
 サインオフは、作業がその先へ進む前に、あなたが承認するところ。`rn` が止まるのはそこと、あなたが一時停止したところだけ。例として、あなたのアプリは JavaScript で書かれていて、それを TypeScript に移したいとする。何日もかかる作業だ。
