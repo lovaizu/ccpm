@@ -20,26 +20,29 @@
 ## セッションの進み方
 
 ```mermaid
-stateDiagram-v2
-    direction LR
-    state "計画のレビュー" as Plan
-    state "作業中" as Work
-    state "設計のレビュー" as Design
-    state "成果物のレビュー" as Deliverable
+flowchart LR
+    S@{ shape: sm-circ }
+    Plan("計画のレビュー")
+    Work("作業中")
+    Design("設計のレビュー")
+    Deliverable("成果物のレビュー")
+    E@{ shape: fr-circ }
 
-    [*] --> Plan: 開始
-    Plan --> Plan: フィードバック
-    Plan --> Work: 承認
-    Work --> Work: 中断、再開
-    Work --> Design: レビュー依頼
-    Work --> Deliverable: レビュー依頼
-    Design --> Design: フィードバック
-    Design --> Work: 承認
-    Deliverable --> Work: フィードバック
-    Deliverable --> [*]: 承認
+    S -->|開始| Plan
+    Plan -->|フィードバック| Plan
+    Plan -->|承認| Work
+    Work -->|中断、再開| Work
+    Work -.->|レビュー依頼| Design
+    Work -.->|レビュー依頼| Deliverable
+    Design -->|フィードバック| Design
+    Design -->|承認| Work
+    Deliverable -->|フィードバック| Work
+    Deliverable -->|承認| E
+
+    style Work stroke-dasharray: 5 5
 ```
 
-1つのゴールを最後までやり遂げる単位をセッションと呼ぶ。レビューは、作業がその先へ進む前に、あなたが見て、承認するかフィードバックを返すところ。`rn` が止まるのはそこと、あなたが中断したところだけ。
+1つのゴールを最後までやり遂げる単位をセッションと呼ぶ。レビューは、作業がその先へ進む前に、あなたが見て、承認するかフィードバックを返すところ。`rn` が止まるのはそこと、あなたが中断したところだけ。点線は `rn` が進めるところ、実線はあなたがするところ。
 
 例として、あなたのアプリは JavaScript で書かれていて、それを TypeScript に移したいとする。何日もかかる作業だ。
 
