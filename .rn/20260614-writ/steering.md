@@ -136,8 +136,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 **Steps**:
 
 - [x] Have a writing role write the prompts from the design and the essentials
-- [ ] Have a checking role outside the discussion evaluate them once against `prompt.md` and `doc.md`
-- [ ] Sort every Good and More, have the fixes made, and judge them against reader and purpose
+- [x] Have a checking role outside the discussion evaluate them once against `prompt.md` and `doc.md`
+- [x] Sort every Good and More, have the fixes made, and judge them against reader and purpose
 - [ ] Take the user's review on PR #15 with the final Good and More per question
 
 **Completion criteria**:
