@@ -11,9 +11,9 @@ flowchart TD
   C[(Repository and code)]
   W[writ]
   F[/Finished document/]
-  U -->|"/writ:up and your answers"| W
+  U -->|"/writ:up and your replies"| W
   D -->|Current content| W
-  W -->|Questions about reader and purpose| U
+  W -->|Asks about reader and purpose| U
   C -->|Facts it looked up| W
   W -->|Written and fixed content| F
   W -->|"Good points to keep, shortfalls left"| U

@@ -8,7 +8,7 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Can the reader get what they need from this document alone, without reading sentences they do not need?
 
-    Do not try to cover everything; narrow it to the key points. If there are many key points, you have not narrowed enough yet. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as someone rereading it, past reviewers or approvers, are not needed by this reader. Likewise, a sentence that restates a rule another mechanism already enforces looks correct but adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
+    Do not try to cover everything; narrow it to the key points. If there are many key points, you have not narrowed enough yet. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as approvers, reviewers from earlier rounds, or someone rereading it, are not needed by this reader. Likewise, a sentence that restates a rule another mechanism already enforces looks correct but adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
 
 - Does the reader get content from the very first sentence?
 
@@ -26,9 +26,9 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
     When what trips the reader lies in the content rather than the writing, such as a missing rule or claims that contradict each other, do not cover it up with smooth sentences; state plainly that the flaw is there.
 
-- Does the story hold together when you read only the headings from top to bottom?
+- Does the line of reasoning hold together when you read only the headings from top to bottom?
 
-    In a section read straight through, make the heading that section's claim or the question the reader has at that point. In a section that is skimmed, make the heading the words the reader would look for. Do not fit headings to a fixed pattern; put them in the order the reader's questions arise.
+    In a section read straight through, make the heading that section's claim or what the reader is wondering at that point. In a section that is skimmed, make the heading the words the reader would look for. Do not fit headings to a fixed pattern; put them in the order the reader would wonder about them.
 
 - Does a diagram alone give the key point of its section?
 
@@ -56,4 +56,4 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Can the reader stop where missing something would hurt, without bold, parentheses or tables pulling their eyes away?
 
-    Use bold only where missing it would lead the reader to a wrong judgment. Use parentheses only where leaving them out would cause a misunderstanding; otherwise work the words into the sentence or cut them. Use tables only to compare several things by the same items, and in a separate document that gathers exhaustive detail.
+    Use bold only where missing it would lead the reader to a wrong judgment. Use parentheses only where leaving them out would cause a misunderstanding; otherwise work the words into the sentence or cut them. Use tables only to compare several things on the same points, and in a separate document that gathers exhaustive detail.

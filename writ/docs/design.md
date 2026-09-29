@@ -1,6 +1,6 @@
 # Design of writ
 
-writ returns documents the user can hand to the reader as they are, without fixing them. To do that, it has a writing role write only after the reader and purpose are decided, has a checking role that does not know the discussion check the document just once, and only Claude Code, the one talking with the user (the requester), decides what to do with the result.
+writ returns documents the user can hand to the reader as they are, without fixing them. To do that, a writing role writes only after the reader and purpose are decided, and a checking role that does not know the discussion checks the document just once. Only Claude Code, the one talking with the user (the requester), decides what to do with the result.
 
 The checking role answers every question in the essentials file with Good and More. An essentials file lists, for one kind of document, what makes a good document, in the form of questions. Good is what serves the purpose and must not be broken when fixing; More is a shortfall and what the reader struggles with because of it.
 
@@ -14,7 +14,7 @@ flowchart TD
   F[/Target document/]
   K[Checking role]
   U -->|"Reader and purpose, answers about flaws"| R
-  R -->|"Questions about reader and purpose, flaws that block the purpose"| U
+  R -->|"Asks about reader and purpose, flaws that block the purpose"| U
   S -->|Facts it looked up| R
   R -->|"Reader and purpose, facts, decisions, what to fix"| W
   E -->|Shape to aim for| W
@@ -93,7 +93,7 @@ The requester is the Claude Code that is talking with the user. It leaves writin
 
 - In every handoff, all the checking role gets is the target document, the reader and purpose, the essentials file, and the repository and code the document talks about.
 
-    The reader and purpose means who reads it, what they decide and do when they finish, and whether they read it straight through or skim it. The discussion, the reasons behind the writing, earlier versions and their differences are not handed over. If even one is, the checking role fills in what the document is missing with the writer's intent as it reads, and misses where the reader stumbles. The same happens if the checking role is started by carrying over the current conversation.
+    The reader and purpose means who reads it, what they decide and do when they finish, and whether they read it straight through or skim it. The discussion, the reasons behind the writing, earlier versions and diffs against them are not handed over. If even one is, the checking role fills in what the document is missing with the writer's intent as it reads, and misses where the reader stumbles. The same happens if the checking role is started by carrying over the current conversation.
 
 - First, it restates in its own words the reader, what the reader must do, and the document's key points.
 
@@ -124,7 +124,7 @@ stateDiagram-v2
   Return --> [*]
 ```
 
-- After every state, the content of the target file does not blur flaws in the content.
+- After every state, the target file does not blur flaws in its content.
 
     Because writing goes directly into the target file, the user sees the in-between states too. Even when it cannot proceed and goes back to the discussion, the file holds a document whose flaws are visible.
 
@@ -155,7 +155,7 @@ flowchart TD
 
     The only thing the checking role can do that others cannot is read without knowing the discussion. The requester knows better whether a fix fits the purpose. The cost is that fixes after the evaluation are not seen by a role that does not know the discussion. Even so, the final Good and More carry locations and evidence, so the user can check those places and, if needed, hand the document to writ again. So this limit is accepted.
 
-- While reviewing fixed results, the requester decides that it cannot proceed if the same More remains after fixing, each fix brings another More, or a fix requires changing the reader or purpose already decided.
+- While judging fixed results, the requester concludes that it cannot proceed if the same More remains after fixing, each fix brings another More, or a fix requires changing the reader or purpose already decided.
 
     Each is a sign that more fixing will not bring the document to a state ready to return. If it went on, the user would be left waiting without receiving the document.
 
@@ -211,21 +211,21 @@ The essentials for every document are always used, and for a README, a design do
 
     The README uses these names to explain how to use writ and the essentials, so changing them would make what the user learned from the README no longer hold.
 
-## Quality is tested by running writ for each outcome the user should get
+## Quality is tested by running writ for each outcome for the user
 
 For each quality, the person who runs writ in the user's position and reads what comes back (the tester) decides pass or fail.
 
 - The user can hand the returned document to the reader as it is, without fixing it.
 
-    This is the first promise of the [README](../README.md); if it is missing, the work of reading and fixing falls back on the user. For each kind of essentials, run writ both to write a new document and to fix an existing one. Have someone who does not know the discussion read the document and say what they decide and do when they finish. It passes if that answer matches the purpose given in the request, and the tester finds no place they would change, for a reason that concerns the reader, before handing it to the reader.
+    This is the first promise of the [README](../README.md); if it is missing, the work of reading and fixing falls back on the user. For each kind of essentials, run writ both to write a new document and to fix an existing one. Have someone who does not know the discussion read the document and say what they decide and do when they finish. It passes if that answer matches the purpose given in the request, and when the tester is asked to list, each with a reason that concerns the reader, the places they would change before handing the document to the reader, they list none.
 
 - The user is not asked what they already said or what the document shows, and does not receive a document written before the reader and purpose were decided.
 
-    These are the [README](../README.md)'s promises "just answer what it asks" and "asks only when it does not know"; if they are missing, the user answers the same thing again and again or receives a document with no clear aim. Run it in a situation where the user asks for a document without saying who the reader is, a situation where a document from which the reader and purpose can be read is handed over, and a situation where Claude Code writes a document on its own after the reader and purpose have been decided in the conversation. It passes if questions come before writing only in the first situation, and writing starts without questions in the other two.
+    These are the [README](../README.md)'s promises "just answer what it asks" and "asks only when it does not know"; if they are missing, the user answers the same thing again and again or receives a document with no clear aim. Run it in a situation where the user asks for a document without saying who the reader is, a situation where a document from which the reader and purpose can be read is handed over, and a situation where Claude Code writes a document on its own after the reader and purpose have been decided in the conversation. It passes if writ asks before writing only in the first situation, and writ starts writing without asking in the other two.
 
 - The user can decide from the reply's Good and More alone whether to approve or request fixes.
 
-    This is the [README](../README.md)'s promise about Good and More; if it is missing, the user rereads the whole text. The tester makes a decision from the reply alone, then reads the whole text. It passes if the decision does not change, every location and piece of evidence matches the document, and every question in the essentials file used has an answer.
+    This is the [README](../README.md)'s promise about Good and More; if it is missing, the user rereads the whole text. The tester makes a judgment from the reply alone, then reads the whole text. It passes if the judgment does not change, every location and piece of evidence matches the document, and every question in the essentials file used has an answer.
 
 - When a content flaw keeps the purpose from being achieved, the user receives a discussion about that flaw, not a document that covers it up.
 

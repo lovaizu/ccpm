@@ -18,4 +18,4 @@ The reader is someone meeting the product for the first time. When they finish, 
 
 - Can a newcomer get the product and start using it from this README alone, and learn its license?
 
-    For prerequisites, write only what is needed and why. There are many ways to prepare, depending on the reader's environment. Writing just one reads as if the others could not be chosen, and is an extra step for those already prepared.
+    For prerequisites, write only what is needed and why. There are many ways to prepare, depending on the reader's environment. Writing just one reads as if the others could not be chosen, and is an extra procedure for those already prepared.
