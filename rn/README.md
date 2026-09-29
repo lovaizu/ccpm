@@ -32,10 +32,10 @@ flowchart TD
 
     S -->|開始| PlanTalk
     PlanTalk -.->|レビュー依頼| Plan
-    Plan -->|フィードバック| Plan
+    Plan -->|フィードバック| PlanTalk
     Plan -->|承認| DesignTalk
     DesignTalk -.->|レビュー依頼| Design
-    Design -->|フィードバック| Design
+    Design -->|フィードバック| DesignTalk
     Design -->|承認| Make
     Make -->|中断、再開| Make
     Make -.->|決めることが出た| DesignTalk
@@ -85,7 +85,7 @@ flowchart TD
 
 ### 2. 承認、フィードバック — `/rn:ty` と `/rn:gm`
 
-`/rn:ty` は承認する。`/rn:gm <フィードバック>` は直してほしいことを伝え、引数なしの `/rn:gm` はプルリクエストのレビューコメントをフィードバックとして受け取る。どちらも、そのあと止まる。続けるときは「続けて」と言う。新しい会話にしたいときは、先に `/clear` してから `/rn:up` する。
+`/rn:ty` は承認する。`/rn:gm <フィードバック>` は直してほしいことを伝え、引数なしの `/rn:gm` はプルリクエストのレビューコメントをフィードバックとして受け取る。どちらも、そのあと止まる。フィードバックのあとは、計画と設計は詰め直しに、成果物は生成・評価に戻る。続けるときは「続けて」と言う。新しい会話にしたいときは、先に `/clear` してから `/rn:up` する。
 
 ```console
 > /rn:ty
