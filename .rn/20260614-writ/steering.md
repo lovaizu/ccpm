@@ -131,8 +131,24 @@ in `writ/docs/design.md` — held to the essentials.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-29
+- **Last completed**: #2 step "Write the README" (user approved on PR #15)
+- **Next**: #2 "Write the design" — rebuild from improved essentials. The user approved this order:
+  (1) improve the essentials, (2) delete `writ/docs/design.md` and push, (3) regenerate it the same way
+  (writer subagent → one evaluation → conductor sorts More → review request with final Good/More)
+- **Notes**: Essentials fixes approved (2026-09-29), not yet applied:
+  design.md — every element (role, state, handoff) traces its reason to what reaches the user, else
+  it is not placed; decisions are written as intent and invariants, never the settings or steps that
+  realize them, even before the implementation exists; qualities to confirm are only whether what
+  reaches the user is fulfilled, with pass criteria in what happens to the reader and user
+  (mechanisms are clues, not qualities); "external agreement" = what stays in the user's environment
+  or what later versions read (the directory tree is limited to that; role-to-role handoffs are not).
+  doc.md — do not re-explain the mechanisms of the tools used; write only the decision built on them.
+  prompt.md — the requester judges each fix against the reader and purpose (only reading without the
+  discussion is the non-author's job); the checker answers every question with Good and/or More;
+  Good carries grounds like More and the requester doubts each Good, sorting a broken one as More.
+  Design decisions for the rebuild: no draft — write straight to the target file; md/mermaid are
+  defaults, following the user's or the target place's format. Process: the evaluator answers every
+  question; the conductor applies every question before the review request. After editing
+  prompt.md, tell rn session rebuild-rn-c1 the line numbers.
