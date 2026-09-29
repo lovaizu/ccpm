@@ -9,8 +9,8 @@ last for fixes that change nothing you do.
 
 ### Changed
 
-- `rn` を作り直した。手順を渡すのをやめ、作るものはすべて「何を果たすべきか」という本質的な観点で作り、同じ観点で確かめる。あなたに聞くのは、あなたが決めることだけになる。何がどう変わったかは [README](./README.md) と[設計書](./docs/design.md) にある。
-- 以前の `rn` で始めたセッションは、`/rn:up` で今の形にしてから続ける。`/rn:up` は古い計画と済んだことから今の形の計画を作り、新しい計画の承認を待つ。
+- `rn` is rebuilt. Instead of handing over steps, everything it makes is made to essential viewpoints, "what should this serve", and checked with the same ones, and it asks you only what is yours to decide. What changed and how is in the [README](./README.md) and the [design document](./docs/design.md).
+- A session started under an earlier `rn` is brought to the current form with `/rn:up` before it goes on. `/rn:up` builds a plan in the current form from the old plan and what was done, and waits for you to approve the new plan.
 
 ## [0.8.0] - 2026-07-07
 

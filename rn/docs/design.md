@@ -1,198 +1,280 @@
-# rn 設計書
+# rn design
 
-## rn が実現すること
+## What rn delivers
 
-- ざっくりしたゴールから、計画と設計を、調べながらユーザーと話して、認識が揃うまで詰める。
-- そこから先はユーザー抜きで作り、作っていない評価者が、設計で決めた合格の基準で確かめる。
-- ユーザーに聞くのは、計画、設計、成果物のレビューと、ユーザーが決めることだけ。
-- 何をどう判断したかは、プルリクエストとコミットメッセージで読める。
-- 会話を新しくしても、翌日でも、push 済みのブランチから止めたところの続きができる。
+- From a rough goal, it works out the plan and the design with the user, looking things up while
+  they talk, until both see the same thing.
+- From there it makes the work without the user, and an evaluator that did not make it checks it
+  against the pass criteria set in the design.
+- It asks the user only for the Plan, Design, and Deliverable sign-offs, and for decisions that are
+  the user's.
+- What was decided, and how, can be read on the pull request and in the commit messages.
+- In a fresh conversation, or the next day, the work goes on from where it stopped, from the pushed
+  branch.
 
-## セッションは、計画、設計、成果物の3つのレビューで区切られる
+## Three sign-offs divide a session: plan, design, deliverable
 
 ```mermaid
 flowchart TD
     ON(["/rn:on"])
-    W["計画をユーザーと詰める"]
-    P["計画を書き、評価する"]
-    PS{{"計画のレビュー"}}
-    D["設計をユーザーと詰めて<br/>README と設計書に書き、評価する"]
-    DS{{"設計のレビュー"}}
-    P2["成果物を作るタスクを計画し、<br/>評価する"]
-    T["タスクを1つずつ進める"]
-    EV["成果物を評価する"]
-    T2["足したタスクを進める"]
-    FS{{"成果物のレビュー"}}
-    END(["プルリクエストを ready にする"])
+    W["Work out the plan with the user"]
+    P["Write the plan, evaluate it"]
+    PS{{"Plan sign-off"}}
+    D["Work out the design with the user,<br/>write it into the README and design document,<br/>evaluate it"]
+    DS{{"Design sign-off"}}
+    P2["Plan the tasks that make the deliverable,<br/>evaluate them"]
+    T["Carry out the tasks one by one"]
+    EV["Evaluate the deliverable"]
+    T2["Carry out the added tasks"]
+    FS{{"Deliverable sign-off"}}
+    END(["Mark the pull request ready"])
     ON --> W --> P --> PS
-    P -->|"致命的な More が残った"| W
+    P -->|"a fatal More remains"| W
     PS -->|"/rn:gm"| W
     PS -->|"/rn:ty"| D
     D --> DS
     DS -->|"/rn:gm"| D
     DS -->|"/rn:ty"| P2
     P2 --> T
-    T -->|"ユーザーが決めることが出た"| D
-    T -->|"タスクがすべて済んだ"| EV
-    EV -->|"足すタスクがある"| T2
-    EV -->|"致命的な More が残った"| D
+    T -->|"a decision is the user's"| D
+    T -->|"all tasks done"| EV
+    EV -->|"tasks to add"| T2
+    EV -->|"a fatal More remains"| D
     T2 --> FS
-    EV -->|"足すタスクがない"| FS
+    EV -->|"no tasks to add"| FS
     FS -->|"/rn:gm"| T2
     FS -->|"/rn:ty"| END
 ```
 
-ユーザーが `/rn:on` でゴールを渡すと、指揮者はまず計画を詰める。「このアプリを TypeScript に移して」なら、なぜ移したいのかを聞き、リポジトリや過去の不具合を調べながら、「型の間違いがあるとビルドが落ちること」がゴールだと1点ずつ確かめていく。ユーザーの答えで調べる先が変わるので、調べ終えてから聞くのではなく、話しながら調べる。認識が揃ったら計画を書いて評価し、計画のレビューで止まる。
+When the user gives a goal with `/rn:on`, the conductor first works out the plan. For "move this app
+to TypeScript", it asks why, and while looking through the repository and past bugs, confirms one
+point at a time that the goal is "a wrong type fails the build". The user's answers change where to
+look, so it looks things up while talking instead of finishing the research before asking. Once
+both see the same thing, it writes the plan, evaluates it, and stops at the Plan sign-off.
 
-承認されると、同じやり方で設計を詰める。型チェックをどれくらい厳しく始めるか、どの品質をどんなテストで確かめ、何を満たせば合格とするか。設計書を変えることがなくても、設計のレビューはいつもある。実装してから認識のずれに気づくと、手戻りが大きいからだ。
+On approval, it works out the design the same way: how strict the type checks start, which qualities
+to check with which tests, and what passes. There is always a Design sign-off, even when the design
+document does not change, because a mismatch found only after it is built costs a lot of rework.
 
-成果物を作るタスクは、設計が決まってから立てる。設計の前に立てたタスクは、設計が決まるとほとんど書き直しになる。タスクがすべて済むと成果物全体を評価し、足りないところのタスクを足して進めてから、成果物のレビューで止まる。途中でユーザーが決めることや、直さないとゴールを達成できない More が出たら、設計を詰めるところへ戻る。
+Tasks that make the deliverable are planned once the design is settled. Tasks planned before the
+design would mostly be rewritten once it is. When all tasks are done, the whole deliverable is
+evaluated, tasks are added for what falls short and carried out, and the session stops at the
+Deliverable sign-off. When a decision comes up that is the user's, or a More without which the goal
+cannot be achieved, it goes back to working out the design.
 
-レビューでは、ユーザーが `/rn:ty` で承認するか、`/rn:gm` でフィードバックを返す。どちらのあとも止まる。そこはユーザーが `/clear` で会話を新しくしてよい場所で、続きは「続けて」か `/rn:up` で始まる。フィードバックのあとは、そのレビューの前に戻る。計画と設計はユーザーと詰め直し、成果物はタスクを足して進める。言葉どおりに直すだけでは、フィードバックの裏にある認識のずれが残るからだ。
+At a sign-off, the user approves with `/rn:ty` or gives feedback with `/rn:gm`. Either one then
+stops. That is where the user may start a fresh conversation with `/clear`, and the work goes on with
+"go on" or `/rn:up`. After feedback, the session goes back to before that sign-off: a plan or a
+design is worked out again with the user, and a deliverable gets added tasks. Fixing only what the
+words say would leave the mismatch behind the feedback in place.
 
-`/rn:dn` はいつでも中断でき、`/rn:up` はそこから次のレビューまで進める。以前の版の `rn` で始めたセッションでは、`/rn:up` が古い記録からゴールを詰め直し、新しい計画のレビューで止まる。
+`/rn:dn` pauses at any time, and `/rn:up` carries on from there to the next sign-off. For a session
+started under an older version of `rn`, `/rn:up` works the goal out again from the old record and
+stops at a new Plan sign-off.
 
-## 指揮者が決め、生成者が作り、作っていない評価者が評価する
+## The conductor decides, the generator makes, and an evaluator that did not make it evaluates
 
 ```mermaid
 flowchart TD
-    U(["ユーザー"])
-    C["メインの会話の指揮者"]
-    G["タスクごとに立つ生成者"]
-    E["評価ごとに立つ評価者"]
-    U -->|"会話、コマンド"| C
-    C -->|"問い、最終的な Good/More を添えたレビュー依頼"| U
-    C -->|"タスク、直す More"| G
-    G -->|"作業ツリーの編集、セルフチェック"| C
-    C -->|"評価するコミットか文書"| E
-    E -->|"評価"| C
+    U(["User"])
+    C["Conductor in the main conversation"]
+    G["Generator, one per task"]
+    E["Evaluator, one per evaluation"]
+    U -->|"conversation, commands"| C
+    C -->|"questions, review requests<br/>with the final Good/More"| U
+    C -->|"a task, a More to fix"| G
+    G -->|"edits in the working tree, self-check"| C
+    C -->|"a commit or document to evaluate"| E
+    E -->|"evaluation"| C
 ```
 
-指揮者は、ユーザーと話しているメインの会話で、セッションの間ずっと同じ。生成者はタスクごとに、評価者は評価ごとに新しく立ち、終われば消える。
+The conductor is the main conversation with the user, the same one throughout the session. A
+generator is started for each task, and an evaluator for each evaluation; each ends when done.
 
-次に何をするかを決めるのは、指揮者だけ。評価者が「src/cart の型が `any` のまま」と返しても、それを直すかどうかは指揮者が決める。評価の字面どおりに動くと、ゴールに役立っている作業までやり直すことになるので、タスクを頼んだ指揮者が、そのタスクが目的を果たすことに責任を持つ。コミットには判断が載るので、git を使うのも指揮者だけにする。生成者は作業ツリーを編集して返す。
+Only the conductor decides what happens next. When an evaluator reports "src/cart's types are still
+`any`", the conductor decides whether to fix it. Acting on the letter of an evaluation redoes work
+that serves the goal, so the conductor that asked for a task is responsible for it fulfilling its
+purpose. Commits carry decisions, so only the conductor uses git. A generator edits the working tree
+and returns.
 
-評価者には、ユーザーが合意したことと、ユーザーが言ったことだけを渡し、どう作ったかは渡さない。作った人は自分の理由に沿って読んでしまう。作っていない人がユーザーの立場で読むと、ユーザーが困るところが見える。
+An evaluator receives only what the user agreed to and what the user said, never how the thing was
+made. Whoever made it reads it along their own reasons. Someone who did not make it, reading from the
+user's side, sees where the user will struggle.
 
-ユーザーに聞くのは、ユーザーにしか決められないことだけ。好み、範囲、手間と安心のどちらを取るか、プロダクトのあるべき姿、何度直しても収まらないときのやり方、そして成果物がゴールを達成したか。それ以外は、調べるか、ゴールから決める。聞くことが増えるほど、ユーザーは作業を任せきれなくなる。
+The user is asked only what only the user can decide: taste, scope, effort against safety, what the
+product should be, another way when fixes keep falling short, and whether the deliverable achieves
+the goal. Everything else is looked up or decided from the goal. The more the user is asked, the less
+they can leave the work to `rn`.
 
-## 作るものはすべて、本質的な観点で作り、同じ観点で確かめる
+## Everything is made to essential viewpoints, and checked with the same ones
 
 ```mermaid
 flowchart TD
-    E(["essentials.md:<br/>本質的な観点"])
-    M["作る人"]
-    V["確かめる人"]
-    E -->|"作るときに目指すこと"| M
-    E -->|"確かめるときに問うこと"| V
+    E(["essentials.md:<br/>essential viewpoints"])
+    M["Whoever makes"]
+    V["Whoever checks"]
+    E -->|"what to aim for when making"| M
+    E -->|"what to ask when checking"| V
 ```
 
-計画、設計書、タスクの成果のように、`rn` が作るものには、どれも目的がある。本質的な観点は、作ったか、やったかではなく、それで目的を果たせるかを問う。目的は、受け取った人がそれで何をできるようになるかで言う。README なら「初めての人が、自分に何をしてくれるかが分かり、使い始められるか」で、「インストール手順があるか」ではない。やったかは手順をなぞれば満たせてしまうが、果たせるかは実物を見ないと答えられない。
+Everything `rn` makes, such as a plan, a design document, or a task's result, has a purpose. An
+essential viewpoint asks not whether it was made or done, but whether it serves its purpose. The
+purpose is stated as what whoever receives it can then do. For a README, that is "can a newcomer
+tell what it does for them, and start using it", not "is there an install step". Whether it was done
+can be met by following steps; whether it serves its purpose can be answered only by looking at the
+real thing.
 
-作るものごとの本質的な観点を essentials.md の1か所にまとめ、作る人はそれを目指して作り、確かめる人は同じ問いで確かめる。計画と設計は指揮者が作り、成果物は生成者が作る。確かめるのは、指揮者と評価者。
+The essential viewpoints for each kind of thing are in one place, essentials.md. Whoever makes aims
+for them, and whoever checks asks the same questions. The conductor makes the plan and the design,
+and a generator makes the deliverable. The conductor and an evaluator check.
 
-たとえば設計書の本質的な観点には「作る人が、読んで、どの品質をどう確かめ、何を満たせば合格かを決められるか」がある。指揮者はそれを満たすように書き、評価者は同じ問いで読む。目指すものと問うものが同じなので、作る側と確かめる側がずれない。
+For example, the design document has the essential viewpoint "can whoever builds it read it and
+decide which qualities to check, how, and what passes". The conductor writes to meet it, and an
+evaluator reads with the same question. Because what is aimed for and what is asked are the same,
+making and checking do not drift apart.
 
-確かめた結果は Good と More に分けて、同じ重さで返す。どちらも、実物のどこかと、なぜそう言えるかの根拠を添える。Good には、直すときも守るべき理由を、More には、それでユーザーが何に困るかと改善案を添える。
+The result of a check comes back as Good and More, with the same weight. Both point to a place in the
+real thing and say why. A Good adds why it must be kept when fixing; a More adds what the user will
+struggle with because of it, and a fix.
 
-手順ではなく本質的な観点を渡すのは、手順は想定していない状況で的を外すからだ。本質的な観点なら、状況に合うやり方を AI が選べ、モデルが賢くなるほどうまく選べる。だから `rn` を良くするときは、手順を足さずに essentials.md を磨く。
+`rn` hands over essential viewpoints instead of steps because steps miss the mark in situations they
+did not foresee. With essential viewpoints, an AI can choose the way that fits the situation, and
+chooses better as models get smarter. So `rn` is improved by sharpening essentials.md, not by adding
+steps.
 
-## 作ったものは、評価者が1回評価し、指揮者が直しを収めてから先へ進める
+## An evaluator evaluates once, and the conductor settles the fixes before moving on
 
 ```mermaid
 flowchart TD
-    M["生成者がタスクの成果を作る"]
-    K{"指揮者が目的に照らして確かめる"}
-    C["コミットして push"]
-    V["評価者が1回評価する"]
-    KE{"指揮者が評価を確かめる"}
-    O["評価を open/ に置いて push"]
-    D{"指揮者が More を1つずつ決める"}
-    F["生成者が直す"]
-    FK{"指揮者が直しを確かめる"}
-    S["片付いた More を open/ から<br/>コミットメッセージへ移して push"]
-    J{"指揮者が観点ごとの<br/>最終的な Good/More を確かめる"}
-    N["次のタスクか、<br/>最終的な Good/More を添えたレビュー依頼へ"]
-    U["詰めるところへ戻る"]
+    M["The generator makes a task's result"]
+    K{"The conductor checks it<br/>against the purpose"}
+    C["Commit and push"]
+    V["An evaluator evaluates once"]
+    KE{"The conductor checks the evaluation"}
+    O["Put the evaluation in open/ and push"]
+    D{"The conductor decides<br/>each More in turn"}
+    F["The generator fixes"]
+    FK{"The conductor checks the fix"}
+    S["Move settled Mores from open/<br/>to the commit message and push"]
+    J{"The conductor checks the final<br/>Good/More for each viewpoint"}
+    N["On to the next task, or a review<br/>request with the final Good/More"]
+    U["Back to working things out"]
     M --> K
-    K -->|"目的を果たしていない"| M
-    K -->|"目的を果たした"| C
+    K -->|"purpose not fulfilled"| M
+    K -->|"purpose fulfilled"| C
     C --> V
     V --> KE
-    KE -->|"根拠がない、<br/>目的から外れている"| V
-    KE -->|"妥当"| O
+    KE -->|"no grounds,<br/>off the purpose"| V
+    KE -->|"sound"| O
     O --> D
-    D -->|"直す"| F
+    D -->|"fix"| F
     F --> FK
-    FK -->|"目的を果たしていない"| F
-    FK -->|"目的を果たした"| S
-    D -->|"見送る"| S
-    S -->|"決めていない More がある"| D
-    S -->|"すべて決めた"| J
-    D -->|"進められない"| U
-    J -->|"致命的な More がない"| N
-    J -->|"致命的な More が残った"| U
+    FK -->|"purpose not fulfilled"| F
+    FK -->|"purpose fulfilled"| S
+    D -->|"let go"| S
+    S -->|"a More still undecided"| D
+    S -->|"all decided"| J
+    D -->|"cannot go on"| U
+    J -->|"no fatal More"| N
+    J -->|"a fatal More remains"| U
 ```
 
-タスクでは、生成者が作ったものを、指揮者がまずタスクの目的に照らして確かめる。目的を果たしていればコミットして push し、評価者がそのコミットを評価する。
+In a task, the conductor first checks what the generator made against the task's purpose. If it
+fulfills the purpose, the conductor commits and pushes, and an evaluator evaluates that commit.
 
-指揮者は評価を受け取ると、まず評価そのものを確かめる。根拠の無い指摘や、目的から外れた指摘は、評価者に評価し直させる。妥当な評価は `open/` に置いて push する。評価者が評価するのは1回だけで、その先は指揮者が生成者と直しを繰り返す。指揮者は More を1つずつ決める。直せば目的に近づき、直しても Good が保たれる More は、生成者が直し、指揮者が確かめてコミットする。直しても目的に近づかない More は、根拠を添えて見送る。決めるのが指揮者なので、繰り返しは「収まった」か「進められない」かのどちらかに必ず決まる。同じ More が繰り返し出る、直すたびに新しい More が出る、README や設計書を変えないと直せない、といったときは進められない。
+On receiving an evaluation, the conductor first checks the evaluation itself. A point without
+grounds, or off the purpose, goes back to the evaluator to evaluate again. A sound evaluation is put
+in `open/` and pushed. The evaluator evaluates only once; from there the conductor and the generator
+repeat the fixing. The conductor decides each More in turn. A More whose fix brings the work closer
+to its purpose, and keeps the Goods, is fixed by the generator, checked by the conductor, and
+committed. A More whose fix does not bring it closer is let go, with the reason. Because the
+conductor decides, the repetition always ends as either "settled" or "cannot go on". It cannot go on
+when the same More keeps coming back, each fix brings a new More, or a fix needs the README or the
+design document changed.
 
-More をすべて決めたら、指揮者は本質的な観点ごとの最終的な Good/More を確かめる。直さないとゴールを達成できず、ゴールからは直し方が決まらない致命的な More が残るとき、または進められないときは、レビューに進まず詰めるところへ戻り、その More を最初の論点としてユーザーと話す。そうでなければ次へ進み、レビューの前なら、最終的な Good/More をレビュー依頼に添える。ユーザーが見るのは途中の指摘と直しではなく最終形なので、全文を読み直さなくても、承認するかフィードバックを返すかを自分で言い切れる。致命的な More を抱えたままレビューに出さないのは、直さないと役に立たないものを承認させても、ユーザーの時間を使うだけだからだ。
+When every More is decided, the conductor checks the final Good/More for each essential viewpoint. A
+fatal More is one without which the goal cannot be achieved, and whose fix the goal does not
+determine. When one remains, or the work cannot go on, it does not go to the sign-off: it goes back
+to working things out, and that More is the first point to talk through with the user. Otherwise it
+moves on, and before a sign-off, the final Good/More goes with the review request. The user sees the
+final state, not the points and fixes along the way, so they can say for themselves whether to
+approve or give feedback without reading everything again. A fatal More is not taken to a sign-off,
+because having the user approve something that is no use until fixed only spends their time.
 
-互いに食い違う More が出たら、片方を選ばない。ゴール、本質的な観点、文書のどこかに決まっていないことがあるしるしなので、そこを決める。
+When Mores contradict each other, `rn` does not pick one. They are a sign that something is
+undecided in the goal, the essential viewpoints, or a document, so that is what gets decided.
 
-評価のあとに直したところは、作っていない人の目を通らない。最終的な Good/More は、直しを決めた指揮者の判断になる。それでも評価を重ねないのは、AI だけで評価を回すと本質的でない指摘が続いて収まらないからだ。最終的な Good/More はどれも実物の場所と根拠を持つのでユーザーが確かめられ、もう一度評価させたいときは、ユーザーが `/rn:gm` で頼める。
+What is fixed after the evaluation does not pass before anyone who did not make it. The final
+Good/More is the judgment of the conductor that decided the fixes. Evaluations are still not
+repeated, because evaluating with AI alone keeps raising points that are not essential and never
+settles. Every final Good and More points to a place in the real thing and says why, so the user can
+check it, and when they want another evaluation, they can ask for it with `/rn:gm`.
 
-計画と設計も同じ流れで、作って直すのが生成者ではなく指揮者になる。成果物全体は、タスクがすべて済んだあとに、評価者の評価から始まる。
+A plan and a design follow the same flow, with the conductor, not a generator, making and fixing
+them. The whole deliverable starts from the evaluator's evaluation, once all tasks are done.
 
-## 文書が作業を先導し、今の状態だけを持つ
+## Documents lead the work and hold only the current state
 
 ```mermaid
 flowchart TD
-    U(["ユーザー"])
-    C["指揮者"]
-    G["生成者"]
-    E["評価者"]
-    S["steering.md:<br/>進め方"]
-    RD["README と設計書:<br/>あるべき姿と作り方"]
-    O["open/:<br/>まだ片付いていない項目"]
-    M["コミットメッセージ:<br/>判断の1行と、片付いた項目"]
-    C -->|"書く"| S
-    C -->|"ユーザーと詰めて書く"| RD
-    G -->|"セルフチェック"| O
-    E -->|"評価"| O
-    U -->|"/rn:gm の言葉"| O
-    C -->|"/rn:dn のメモ"| O
-    O -->|"指揮者が決めて片付ける"| M
+    U(["User"])
+    C["Conductor"]
+    G["Generator"]
+    E["Evaluator"]
+    S["steering.md:<br/>how the work goes"]
+    RD["README and design document:<br/>what the product should be, and how it is built"]
+    O["open/:<br/>items not yet settled"]
+    M["Commit messages:<br/>the decision line, and settled items"]
+    C -->|"writes"| S
+    C -->|"works out with the user and writes"| RD
+    G -->|"self-check"| O
+    E -->|"evaluation"| O
+    U -->|"words given with /rn:gm"| O
+    C -->|"notes left by /rn:dn"| O
+    O -->|"the conductor decides and settles"| M
 ```
 
-`rn` は、進め方、プロダクトのあるべき姿、作り方を、文書に書いてから作業する。進め方は `steering.md` に、あるべき姿と作り方は、プロダクトの README と設計書に書く。ユーザーとの議論もこれらの文書の上で行い、決まったら文書が先に変わり、作業はそれに従う。生成者はこの3つを読み、評価者はそのうちユーザーが合意したところを読む。ユーザーは全部をプルリクエストで読む。
+`rn` writes down how the work goes, what the product should be, and how it is built, before it
+works. How the work goes is in `steering.md`; what the product should be and how it is built are in
+the product's README and design document. Discussion with the user happens on these documents too:
+once something is decided, the document changes first, and the work follows it. A generator reads
+all three, and an evaluator reads the parts the user agreed to. The user reads everything on the pull
+request.
 
-文書には、今成り立っていることだけを書く。どう決まったかという経緯は、コミットメッセージが運ぶ。文書に経緯を残すと、今成り立っていることが埋もれる。
+Documents hold only what holds now. How it came to be decided is carried by commit messages. History
+left in a document buries what holds now.
 
-まだ片付いていないことは `open/` に置く。生成者のセルフチェック、評価者の評価、`/rn:gm` で受け取ったユーザーの言葉、`/rn:dn` で残すメモがそれにあたる。ファイル名は `{NN}-{kind}-{about}.md` で、kind は `check`、`evaluation`、`feedback`、`notes`。指揮者が1項目ずつ要るか要らないかを決め、片付いた項目はそのコミットで `open/` から消してメッセージに残す。だから何も漏れず、レビューで止まるときの `open/` はいつも空になる。
+What is not yet settled goes in `open/`: a generator's self-check, an evaluator's evaluation, the
+user's words received with `/rn:gm`, and the notes `/rn:dn` leaves. A file is named
+`{NN}-{kind}-{about}.md`, where kind is `check`, `evaluation`, `feedback`, or `notes`. The conductor
+decides item by item whether it is needed, and a settled item leaves `open/` in the commit that
+settles it and stays in that commit's message. So nothing slips, and `open/` is always empty when
+the session stops at a sign-off.
 
-### セッションは .rn/ の下に1つのディレクトリを持つ
+### A session has one directory under .rn/
 
 ```
-リポジトリ/
-├── README.md                   使う人から見たあるべき姿
+repository/
+├── README.md                   what the product should be, to whoever uses it
 ├── docs/
-│   └── design.md               作り方
+│   └── design.md               how it is built
 └── .rn/
-    └── {yyyymmdd}-{slug}/      セッション1つ分
-        ├── steering.md         進め方
-        └── open/               まだ片付いていない項目
+    └── {yyyymmdd}-{slug}/      one session
+        ├── steering.md         how the work goes
+        └── open/               items not yet settled
 ```
 
-README と設計書は、ここに示したのが指定の無いときの場所で、計画を詰めるときにユーザーと別の場所に決められる。決めた場所は `steering.md` の `ux` と `design` に残る。`.rn/` の下の形は変えられない。
+The README and design document are where they are shown when nothing else is specified; another
+place can be settled with the user while working out the plan. The settled place stays in the `ux`
+and `design` fields of `steering.md`. The layout under `.rn/` cannot be changed.
 
-セッションが残すのは、このディレクトリと成果物だけ。README と設計書はプロダクトのもので、セッションが終わっても残り、次のセッションもそこから始まる。
+A session leaves behind only this directory and the deliverable. The README and design document
+belong to the product: they stay after the session ends, and the next session starts from them.
 
-### steering.md に、ゴールと計画を1か所にまとめる
+### steering.md holds the goal and the plan in one place
 
-どの役も、会話を新しくしたあとも、ここを読めば同じゴールと計画から動ける。TypeScript への移行で、設計が承認された直後の `steering.md` はこうなる。
+Any role, even after a fresh conversation, can read this and work from the same goal and plan. For
+the move to TypeScript, `steering.md` right after the Design sign-off looks like this:
 
 ```markdown
 ---
@@ -205,100 +287,116 @@ design: docs/design.md
 
 # Goal
 
-前の四半期に本番で出た、型の違う値による不具合を、出す前に止めたい。
-型の間違いがあるとビルドが落ちるようにする。
+Stop the production bugs from last quarter caused by a value of the wrong type before they ship.
+A wrong type fails the build.
 
 # Goal achieved when
 
-- 3件の不具合をそれぞれ再現するコードで、3件ともビルドが落ちる
-- すべてのファイルが .ts になっている
+- Code reproducing each of the three bugs fails the build, all three
+- Every file is .ts
 
 # Assumptions
 
-- **Fact**（不具合の記録で確かめた）: 3件は src/cart と src/checkout にある
-- **Fact**（ユーザーが決めた）: 型チェックは最初から厳しくする
-- **Assumption**: ビルドは CI の tsc で走る
+- **Fact** (checked in the bug records): the three bugs are in src/cart and src/checkout
+- **Fact** (the user decided): type checks are strict from the start
+- **Assumption**: the build runs tsc in CI
 
 # Rules
 
-- 変更はすべてコミットして push する
+- Commit and push every change
 
 # Tasks
 
-### [x] #1: 計画のレビュー
-### [x] #2: 設計のレビュー
-### [ ] #3: src/cart を移す
+### [x] #1: Plan sign-off
+### [x] #2: Design sign-off
+### [ ] #3: move src/cart
 
-**Purpose**: カートの金額計算で、型の違う値がビルドで落ちる
+**Purpose**: in the cart's price calculation, a wrong type fails the build
 
 **Purpose achieved when**:
 
-- カートの不具合を再現するコードで、ビルドが落ちる
+- Code reproducing the cart bug fails the build
 ```
 
-| 項目 | なぜあるか |
+| Field | Why it is there |
 |---|---|
-| `rn` | 古い版で始めたセッションを見分け、`/rn:up` で今の形にするため |
-| `pr` | ユーザーがすべてを読む場所を、会話が変わっても見失わないため |
-| `status` | セッションが終わったかを、どのコマンドも同じに判断するため |
-| `ux` | 使う人から見たあるべき姿を書く README を1つに決め、会話が変わっても、どの役も同じ文書を読むため |
-| `design` | どう作るかを書く設計書を1つに決め、同じく、どの役も同じ文書を読むため |
-| Goal | すべての判断の基準になる、ユーザーと合意した何が欲しいかとなぜ |
-| Goal achieved when | 成果物のレビューで、ゴールを達成したかを判断する材料 |
-| Assumptions | 確かめた事実と確かめていない仮定を分け、仮定の上に乗った判断を見分けるため |
-| Rules | リポジトリの約束事のように、生成者がゴールからは分からないこと |
-| Tasks | 目的と、目的を果たしたと分かる条件を持ち、指揮者が目的に照らして確かめるため。レビューもタスクとして並び、止まるたびに出る地図になる |
+| `rn` | To tell a session started under an older version, so `/rn:up` can bring it to the current form |
+| `pr` | So the place where the user reads everything is not lost when the conversation changes |
+| `status` | So every command judges the same way whether the session has ended |
+| `ux` | To fix the one README that says what the product should be to whoever uses it, so every role reads the same document across conversations |
+| `design` | To fix the one design document that says how it is built, so likewise every role reads the same document |
+| Goal | What the user wants and why, as agreed with them, the basis of every decision |
+| Goal achieved when | What the Deliverable sign-off judges whether the goal is achieved by |
+| Assumptions | To keep checked facts apart from unchecked assumptions, so a decision resting on an assumption can be told |
+| Rules | What a generator cannot tell from the goal, such as the repository's conventions |
+| Tasks | Each holds its purpose and how to tell it is fulfilled, so the conductor can check against the purpose. Sign-offs are tasks too, and make the map shown at every stop |
 
-## rn の品質は、プロンプトを読んで確かめ、練習用のリポジトリで走らせて確かめる
+## rn's quality is checked by reading the prompts and by running rn on a practice repository
 
-`rn` はプロンプトでできているので、同じ入力でも毎回同じには動かず、決まった答えと突き合わせるテストは書けない。そこで、プロンプトを書く前に、冒頭の「rn が実現すること」のそれぞれについて、外すとユーザーが何に困るか、どの場面で確かめるか、何が起きれば合格かを決めておき、書いたあとに2つのやり方で確かめる。
+`rn` is made of prompts, so the same input does not behave the same way every time, and no test can
+compare it against a fixed answer. So before writing the prompts, for each item under "What rn
+delivers", it is set what the user struggles with if it fails, in which scene it is checked, and
+what passes; after writing them, they are checked in two ways.
 
-- 読んで確かめる: プロンプトを書いていない評価者が、プロンプトの本質的な観点とこの設計書に照らして、プロンプトを読む。どのコマンドから始めても、誰が何を書き、誰がそれを読むかを端から端までたどり、読むものが無い、書いたものを誰も読まない、というところを探す。実際に走らせても、起こしにくい分かれ道は通らないことがあるので、そこは読んで確かめるしかない。
-- 走らせて確かめる: 小さな JavaScript のアプリを置いた、GitHub 上の練習用のリポジトリで、`claude -p --plugin-dir` で `rn` を実際に走らせる。ユーザーの返事は、1ターンずつ会話を引き継いで渡す。会話、`steering.md`、`open/`、コミット、プルリクエストを、作っていない評価者が下の合格の基準で評価する。プロンプトが正しそうに読めても、AI がそのとおりに動くとは限らないからだ。
+- Reading: an evaluator that did not write the prompts reads them against the essential viewpoints
+  for prompts and this design document. From every command, it traces end to end who writes what
+  and who reads it, looking for something read that nothing writes, or something written that
+  nothing reads. Running may not pass through branches that are hard to trigger, so those can only
+  be checked by reading.
+- Running: on a practice repository on GitHub holding a small JavaScript app, `rn` is actually run
+  with `claude -p --plugin-dir`. The user's replies are passed one turn at a time, carrying the
+  conversation over. An evaluator that did not make it evaluates the conversation, `steering.md`,
+  `open/`, the commits, and the pull request against the pass criteria below. Prompts that read as
+  correct do not guarantee an AI behaves that way.
 
-### 計画と設計を、認識が揃うまで詰める
+### It works out the plan and the design until both see the same thing
 
-外すと、ずれたまま作られ、実装のあとで気づいて大きく手戻りする。
+If this fails, the work is built on a mismatch, found only after it is built, at great rework.
 
-| 場面 | 合格の基準 |
+| Scene | Passes when |
 |---|---|
-| 「このアプリを TypeScript に移して」で始める | 1回に聞くのは1点だけ。計画のレビューで止まり、承認すると、設計書を変えるものが無くても設計のレビューで止まる。成果物を作るタスクは、設計の承認のあとに立つ |
-| 計画のレビューで `/rn:gm` | フィードバックの裏にあるずれを、1点目として詰め直す |
+| Start with "move this app to TypeScript" | It asks one point at a time. It stops at the Plan sign-off, and on approval stops at the Design sign-off even when nothing changes the design document. Tasks that make the deliverable are planned after the Design sign-off |
+| `/rn:gm` at the Plan sign-off | It works the plan out again, taking the mismatch behind the feedback as the first point |
 
-### ユーザー抜きで作り、作っていない評価者が合格の基準で確かめる
+### It makes the work without the user, and an evaluator that did not make it checks it against the pass criteria
 
-外すと、ユーザーが見張っていないと進まないか、目的を果たしていないものが通る。
+If this fails, the work goes nowhere unless the user watches, or something that does not serve its
+purpose gets through.
 
-| 場面 | 合格の基準 |
+| Scene | Passes when |
 |---|---|
-| 設計の承認から成果物のレビューまで | 成果物が、`steering.md` の Goal achieved when を満たす。TypeScript の例なら、3件の不具合をそれぞれ再現するコードで、3件ともビルドが落ちる。評価者の評価は1回だけで、More ごとに、直すか、見送るか、ユーザーに渡すかが決まる |
-| ゴールからは直し方が決まらない More が出るように仕込んだ課題 | 成果物のレビューに進まず、設計を詰めるところへ戻り、その More を最初の論点としてユーザーに聞く |
-| 成果物のレビューで `/rn:gm` | タスクが足されて進み、もう一度成果物のレビューで止まる |
+| From the Design sign-off to the Deliverable sign-off | The deliverable meets Goal achieved when in `steering.md`: in the TypeScript example, code reproducing each of the three bugs fails the build, all three. The evaluator evaluates once, and each More is decided as fix, let go, or hand to the user |
+| A goal set up so that a More comes up whose fix the goal does not determine | It does not go to the Deliverable sign-off; it goes back to working out the design and asks the user about that More first |
+| `/rn:gm` at the Deliverable sign-off | Tasks are added and carried out, and it stops at the Deliverable sign-off again |
 
-### 聞くのは、レビューとユーザーが決めることだけ
+### It asks only for sign-offs and the user's decisions
 
-外すと、聞かれるたびに呼び戻され、ユーザーが作業を任せきれない。
+If this fails, the user is called back at every question and cannot leave the work to `rn`.
 
-| 場面 | 合格の基準 |
+| Scene | Passes when |
 |---|---|
-| どの場面でも | 止まったのは3つのレビューと、ユーザーにしか決められないことだけ。リポジトリや公式ドキュメントを調べれば分かることは聞かない |
-| 3つのレビューそれぞれ | レビュー依頼に、本質的な観点ごとの最終的な Good/More が、実物の場所と根拠つきで載り、全文を読み直さなくても判断できる |
+| Every scene | It stops only at the three sign-offs and at what only the user can decide. It does not ask what the repository or official documentation can answer |
+| Each of the three sign-offs | The review request carries the final Good/More for each essential viewpoint, with the place in the real thing and the grounds, so the user can decide without reading everything again |
 
-### 判断が、プルリクエストとコミットメッセージで読める
+### Decisions can be read on the pull request and in commit messages
 
-外すと、なぜそうなったかが分からず、ユーザーが承認できず、後から直す人も手がかりを失う。
+If this fails, nobody can tell why things came out as they did: the user cannot approve, and whoever
+fixes it later loses the thread.
 
-| 場面 | 合格の基準 |
+| Scene | Passes when |
 |---|---|
-| どの場面でも | 評価と、More ごとの判断と根拠が、コミットメッセージで読める。レビューで止まったときの `open/` は空 |
+| Every scene | The evaluations, and the decision and reason for each More, can be read in the commit messages. `open/` is empty when it stops at a sign-off |
 
-### 止めたところから続けられる
+### It goes on from where it stopped
 
-外すと、1つの会話に収まらない長い作業を任せられない。
+If this fails, the user cannot hand over long work that does not fit in one conversation.
 
-| 場面 | 合格の基準 |
+| Scene | Passes when |
 |---|---|
-| タスクの途中で `/rn:dn` し、新しい会話で `/rn:up` | 同じタスクから始まり、済んだタスクをやり直さない |
-| 0.8.0 で始めたセッションで `/rn:up` | 済んだことを引き継いだ今の形の `steering.md` ができ、計画のレビューで止まる |
+| `/rn:dn` in the middle of a task, then `/rn:up` in a fresh conversation | It starts from the same task and does not redo finished ones |
+| `/rn:up` on a session started under 0.8.0 | A `steering.md` in the current form, carrying over what was done, is made, and it stops at the Plan sign-off |
 
-走らせるのは場面ごとに1回にする。1回に時間も費用もかかるので、何度も走らせて揺れを測ることは諦め、その分は読んで確かめるほうで補う。指揮者だけが git を使うこと、どの役が何を読むかは、走らせた会話からは見分けにくいので、読んで確かめるだけにする。何日も続く長いセッション、大きなリポジトリ、モデルによる違いは、ここでは確かめない。
+Each scene is run once. A run takes time and money, so measuring the spread over many runs is given
+up, and reading makes up for it. That only the conductor uses git, and which role reads what, are hard
+to tell from a run's conversation, so they are checked by reading only. Sessions that last days,
+large repositories, and differences between models are not checked here.

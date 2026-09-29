@@ -1,151 +1,180 @@
 # rn — Right Now
 
-たいていの AI エージェントは、作業をやり遂げるのに、よく練ったプロンプトと子守りを必要とする。`rn` は要らない。ゴールをざっくり渡すだけでよい。`rn` は、あなたが本当に欲しいものをあなたと一緒に詰め、そこから先はあなた抜きで作業をやり遂げ、あなたが決めることのときだけ呼び戻す。途中の記録も作ったものも git に置くので、会話を新しくしても、翌日になっても、止めたところから続けられる。何も準備せず、今すぐ始められる。
+Most AI agents need a carefully written prompt and some babysitting to get a task done. `rn` doesn't:
+give it a goal, roughly. It works out with you what you really want, then carries the work through
+without you, and calls you back only for the decisions that are yours. Its record and what it makes
+both live in git, so you can pick up where you left off in a fresh conversation, or the next day.
+You can start right now, with nothing prepared.
 
-## 必要なもの
+## What you need
 
 - [Claude Code](https://code.claude.com)
-- リモートが GitHub にある git リポジトリ
-- [GitHub CLI](https://cli.github.com) の `gh`。`rn` がプルリクエストを開いて更新するのに使う
+- A git repository with its remote on GitHub
+- The [GitHub CLI](https://cli.github.com) `gh`, which `rn` uses to open and update a pull request
 
-## インストール
+## Install
 
-`rn` は `ccpm` マーケットプレイスから配っている。Claude Code で、マーケットプレイスを一度だけ追加し、プラグインを入れる。
+`rn` ships from the `ccpm` marketplace. In Claude Code, add the marketplace once, then install the
+plugin:
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install rn@ccpm
 ```
 
-## セッションの進み方
+## How a session goes
 
 ```mermaid
 flowchart TD
     S@{ shape: sm-circ }
-    PlanTalk("計画を詰める")
-    Plan("計画のレビュー")
-    DesignTalk("設計を詰める")
-    Design("設計のレビュー")
-    Make("成果物を生成・評価する")
-    Deliverable("成果物のレビュー")
+    PlanTalk("Work out the plan")
+    Plan("Plan sign-off")
+    DesignTalk("Work out the design")
+    Design("Design sign-off")
+    Make("Generate and evaluate the deliverable")
+    Deliverable("Deliverable sign-off")
     E@{ shape: fr-circ }
 
-    S -->|開始| PlanTalk
-    PlanTalk -.->|レビュー依頼| Plan
-    Plan -->|フィードバック| PlanTalk
-    Plan -->|承認| DesignTalk
-    DesignTalk -.->|レビュー依頼| Design
-    Design -->|フィードバック| DesignTalk
-    Design -->|承認| Make
-    Make -.->|決めることが出た| DesignTalk
-    Make -.->|レビュー依頼| Deliverable
-    Deliverable -->|フィードバック| Make
-    Deliverable -->|承認| E
+    S -->|start| PlanTalk
+    PlanTalk -.->|review request| Plan
+    Plan -->|feedback| PlanTalk
+    Plan -->|approve| DesignTalk
+    DesignTalk -.->|review request| Design
+    Design -->|feedback| DesignTalk
+    Design -->|approve| Make
+    Make -.->|a decision is yours| DesignTalk
+    Make -.->|review request| Deliverable
+    Deliverable -->|feedback| Make
+    Deliverable -->|approve| E
 
     style Make stroke-dasharray: 5 5
     style PlanTalk stroke-width: 3px
     style DesignTalk stroke-width: 3px
 ```
 
-点線は `rn` が進めるところ、実線はあなたがするところ、太枠は `rn` が調べながらあなたと1点ずつ話し、認識が揃うまで詰めるところ。
+Dotted lines are where `rn` moves on, solid lines are yours, and a bold box is where `rn` looks
+things up while talking with you one point at a time, until you both see the same thing.
 
-1つのゴールを最後までやり遂げる単位をセッションと呼ぶ。レビューは、作業がその先へ進む前に、あなたが見て、承認するかフィードバックを返すところ。`rn` は、何が良く何が足りないかを、根拠とともに添えてレビューを頼むので、全文を読み直さなくても判断できる。`rn` が止まるのはそこと、あなたが中断したところだけ。
+One goal carried through to the end is a session. A sign-off is where you look at the work before it
+goes past that point, and approve it or give feedback. `rn` asks for each one with what is good and
+what falls short, and why, so you can decide without reading everything again. `rn` stops only
+there, and where you pause it.
 
-例として、あなたのアプリは JavaScript で書かれていて、それを TypeScript に移したいとする。何日もかかる作業だ。
+Say your app is written in JavaScript, and you want it moved to TypeScript — work that takes days.
 
-### 1. 開始 — `/rn:on`
+### 1. Start — `/rn:on`
 
-欲しいものを、思いついたままざっくり言う。`rn` は、何が欲しいのか、なぜ欲しいのか、どうなればゴールを達成したと言えるのかを、どう理解したか1点ずつ伝える。あなたが同意してから次に進む。リポジトリや公式ドキュメント、ベストプラクティスを調べれば分かることは、あなたに聞かずに調べる。
-
-```console
-> /rn:on このアプリを TypeScript に移して
-
-● こう理解しました: 前の四半期に本番で出た不具合のうち3件は、型の違う値でした。数値のはずの
-  ところに undefined が来ていました。これを出す前に止めたい、ということでしょうか?
-
-> そう、それが理由
-
-● では、ゴールは「そういう間違いがあるとビルドが落ちること」ですね。全ファイルが .ts に
-  なるだけでは足りません。ゆるい型で移したファイルは、同じ間違いを通してしまいます。
-  合っていますか?
-```
-
-次に `rn` は計画を書き、下書きのプルリクエストに載せる。計画は、ゴール、ゴールを達成したと分かる条件、タスクを持つ。成果物を作るタスクは、設計が決まってから立てる。
+Say what you want, as roughly as it comes to mind. `rn` tells you how it understands it, one point
+at a time — what you want, why you want it, and how you would know the goal is achieved — and moves
+on only when you agree. What the repository, the official documentation, or best practice can
+answer, it looks up instead of asking you.
 
 ```console
-● ── typescript: 型の間違いでビルドが落ちる ──
-  👉 #1 計画のレビュー ── PR で計画を読んでください: 承認は /rn:ty、直してほしいときは /rn:gm <フィードバック>
-  ⬜ #2 設計のレビュー
+> /rn:on move this app to TypeScript
 
-  下書きの PR: https://github.com/you/repo/pull/42
+● Here's how I understand it: three of last quarter's production bugs were a value of the wrong
+  type — undefined where a number was expected. Is catching those before they ship what you're after?
+
+> yes, that's why
+
+● Then the goal is that such a mistake fails the build. Every file ending in .ts is not enough: a
+  file moved with loose types would still let it through. Is that right?
 ```
 
-`rn` が止まるたびに、メッセージの頭にこの地図が出る。✅ は済み、👉 は今、⬜ はこの先。
+Then `rn` writes the plan and puts it on a draft pull request. The plan holds the goal, how you
+would know it is achieved, and the tasks. Tasks that make the deliverable come only once the design
+is settled.
 
-### 2. 承認、フィードバック — `/rn:ty` と `/rn:gm`
+```console
+● ── typescript: a wrong type fails the build ──
+  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
+  ⬜ #2 Design sign-off
 
-`/rn:ty` は承認する。`/rn:gm <フィードバック>` は直してほしいことを伝え、引数なしの `/rn:gm` はプルリクエストのレビューコメントをフィードバックとして受け取る。どちらも、そのあと止まる。フィードバックのあとは、計画と設計は詰め直しに、成果物は生成・評価に戻る。続けるときは「続けて」と言う。新しい会話にしたいときは、先に `/clear` してから `/rn:up` する。
+  Draft PR: https://github.com/you/repo/pull/42
+```
+
+The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahead.
+
+### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
+
+`/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
+comments on the pull request as feedback. Either one then stops. After feedback, a plan or a design
+is worked out again, and a deliverable goes back to generating and evaluating. Say "go on" to
+continue, or `/clear` first when you want a fresh conversation, then `/rn:up`.
 
 ```console
 > /rn:ty
 
-● 計画を承認しました。次: 「続けて」と言うか、/clear して /rn:up。
+● Approved the plan. Next: say "go on", or /clear and /rn:up.
 ```
 
-### 3. 設計を詰める — 設計のレビュー
+### 3. Work out the design — Design sign-off
 
-計画を承認すると、`rn` は設計を詰めに入る。実装してから認識のずれに気づくと手戻りが大きいので、設計書を変えるかどうかにかかわらず、設計のレビューは必ずある。`rn` は、どう作るかと、ゴールから見て確かめるべき品質ごとに、テストのしかた、合格の基準、どこまで確かめるかを、`rn` が提案する。そのうち「型チェックをどれくらい厳しく始めるか」は、手間と安全のどちらを取るかの判断なので、あなたが決める。`rn` は必要なことを調べながら、それを1点ずつあなたと話し、決まったことを README と設計書に書く。どの README と設計書に書くかは、計画を詰めるときにあなたと決める。あなたがそれを承認すると、プロダクトはそのとおりに作られる。
+Once you approve the plan, `rn` works out the design. Finding a mismatch only after it is built costs
+a lot of rework, so there is always a Design sign-off, whether or not the design document changes.
+`rn` proposes how to build it and, for each quality the goal needs, how to test it, what passes, and
+how far to test. Of those, how strict the type checks start is a call of effort against safety, so
+it is yours. `rn` looks up what it needs while talking it through with you one point at a time, and
+writes what you settle into your README and design document. Which README and design document, you
+settle with it while working out the plan. You approve them, and your product is built to them.
 
 ```console
-● 調べると、3件の不具合は src/cart と src/checkout にありました。テストは、3件を
-  それぞれ再現するコードを置き、3件ともビルドが落ちれば合格、を提案します。
-  型チェックは、最初から厳しくすれば3件とも止まりますが、全ファイルに型を付けるまで
-  ビルドできません。ゆるく始めれば早くビルドできますが、締めるまでは3件とも通ります。
-  どちらを重く見ますか?
+● The three bugs are in src/cart and src/checkout. For the test, I propose code that reproduces
+  each of the three, passing when all three fail the build. Strict checks from the start stop all
+  three, but nothing builds until every file is typed; loose first builds sooner, but lets all
+  three through until tightened. Which weighs more for you?
 ```
 
-### 4. 成果物の生成と評価
+### 4. Generate and evaluate the deliverable
 
-あなたは見ていなくてよい。タスクごとに、ある agent が作り、別の agent が評価する。だから成果は、作った agent がそう言うからではなく、役目を果たしているから通る。`rn` は次に何をするかを決めるたびに、1行で伝える。
+You don't watch. For each task, one agent makes it and another evaluates it, so a result passes
+because it does its job, not because the agent that made it says so. Each time `rn` decides what to
+do next, it says so in one line:
 
 ```console
-● #3 src/cart を移す ── 判断: 目的を果たしていない。型を `any` にして通しているだけで、
-  前の四半期のカートの不具合はまだ出てしまう → 直す
-● #3 src/cart を移す ── 判断: 目的を果たした → #4
+● #3 move src/cart ── decided: purpose not fulfilled. It passes only because its types are `any`;
+  last quarter's cart bug would still ship → fix
+● #3 move src/cart ── decided: purpose fulfilled → #4
 ```
 
-評価はどれもセッションと一緒にコミットされるので、プルリクエストで読める。
+Every evaluation is committed with the session, so you can read it on the pull request.
 
-### 5. 中断、再開 — `/rn:dn`、`/rn:up`
+### 5. Pause and resume — `/rn:dn`, `/rn:up`
 
-context がいっぱいになりそうなとき、その日の作業を終えるとき、`/rn:dn` はセッションがどこまで進んだかを記録し、すべてを push する。新しい会話にしたいときは、あなたが `/clear` してから `/rn:up` する。`/clear` はプラグインからはできない。
+When the context is nearly full, or you are done for the day, `/rn:dn` records how far the session
+has come and pushes everything. When you want a fresh conversation, run `/clear` yourself, then
+`/rn:up`. A plugin can't run `/clear`.
 
 ```console
 > /rn:dn
 
-● ── typescript: 型の間違いでビルドが落ちる ──
-  ✅ #1 計画のレビュー / #2 設計のレビュー / #3 src/cart を移す
-  👉 #4 src/checkout を移す ── ここで止めました。次: /rn:up
-  ⬜ #5 src/account を移す / #6 成果物のレビュー
+● ── typescript: a wrong type fails the build ──
+  ✅ #1 Plan sign-off / #2 Design sign-off / #3 move src/cart
+  👉 #4 move src/checkout ── stopped here; next: /rn:up
+  ⬜ #5 move src/account / #6 Deliverable sign-off
 
 > /clear
 > /rn:up
 
-● typescript を #4 から再開します: src/checkout を移す
+● Resuming typescript at #4: move src/checkout
 ```
 
-### 6. 終える — 成果物のレビュー
+### 6. Finish — Deliverable sign-off
 
-成果物、つまりセッションを終えた時点のプロダクトを、ゴールを達成しているかで承認する。足りなければ `/rn:gm` でタスクを足す。`/rn:ty` でプルリクエストは ready になり、マージはあなたが行う。セッションが残すのは、`.rn/` ディレクトリと成果物だけ。
+You approve the deliverable, your product as the session leaves it, by whether it achieves your
+goal. When something falls short, `/rn:gm` adds tasks. On `/rn:ty` the pull request is marked ready;
+the merge is yours. The session leaves behind only its `.rn/` directory and the deliverable.
 
-## 仕組み
+## How it is built
 
-セッションの中で誰が作り、誰が確かめ、誰が決めるのか、そしてなぜそう作ったのかは、[設計書](./docs/design.md)にある。
+Who makes, checks, and decides each thing in a session, and why `rn` is built that way, is in its
+[design document](./docs/design.md).
 
-## 名前の由来
+## The names
 
-`on` / `dn` / `up` は競走から取った。**on** your marks（位置について）、中断は cool **d**ow**n**、再開は warm **up**。`ty` / `gm` は2つのお礼の言葉。**t**hank **y**ou は承認、**g**ood, **m**ore はもっと良くしてほしいという頼み。
+`on` / `dn` / `up` follow a race: **on** your marks, cool **d**ow**n** for a pause, warm **up** to
+go on. `ty` / `gm` are two thanks: **t**hank **y**ou approves, **g**ood, **m**ore asks for more.
 
-## ライセンス
+## License
 
 [MIT](../LICENSE)
