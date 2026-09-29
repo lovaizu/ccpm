@@ -16,11 +16,11 @@ them, and a summary would shift that measure.
 ## Steps
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line is
-   not waiting for a sign-off → say what the session is doing, and stop.
+   not `waiting for #{id} {sign-off name}` → say what the session is doing, and stop.
 2. The feedback is `$ARGUMENTS`; without it, the pull request's review threads whose last comment is
    the user's, each with its location and URL. Write it to a `feedback` item in `open/`.
 3. Commit and push with the decision line
-   `● {sign-off name} ── feedback → {work out the plan again | work out the design again | add tasks}`,
+   `● #{id} {sign-off name} ── feedback → {work out the plan again | work out the design again | add tasks}`,
    and say in the user's language:
 
    ```

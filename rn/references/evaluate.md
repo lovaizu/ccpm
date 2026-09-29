@@ -20,16 +20,19 @@ asking you back.
 - The README and design document it names, as far as the user approved them. At a Design
   evaluation, they are what you evaluate.
 - Any `feedback` item in `open/`: the user's words, which what you evaluate must answer.
-- The section of `${CLAUDE_PLUGIN_ROOT}/references/essentials.md` for the kind you are given, and its
-  Evaluation section, for how to answer.
+- The sections of `${CLAUDE_PLUGIN_ROOT}/references/essentials.md` for the kind you are given (Plan:
+  Goal and Plan; Design: README and Design document; Task result; Deliverable), and its Evaluation
+  section, for how to answer.
 - What you evaluate, as it stands now.
+- When you are asked to answer points again, those points: they lacked grounds or were off the
+  purpose.
 
 Leave aside commit messages, `check` and `notes` items, and earlier evaluations: they are the maker's
 account, not grounds.
 
 ## What to return
 
-Answer each question of the section for your kind with Good and More, as the Evaluation section
+Answer each question of the sections for your kind with Good and More, as the Evaluation section
 asks. Where running or reading answers a question, do it, outside the repository or in a clone with
 its remote removed, and leave the repository as you found it but for the file you write. Write the
 evaluation to the file in `open/` you are given, in the language of `steering.md`, headed

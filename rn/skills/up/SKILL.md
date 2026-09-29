@@ -15,11 +15,13 @@ stopped, until the next sign-off.
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an older `rn` started
    it, bring it to the current form as there instead of the steps below.
-2. Say, naming the first task not `[x]`:
+2. Say where it resumes, naming the first task not `[x]`, or the next move of the last decision line
+   when none is left:
 
    ```
    ● Resuming {slug} at #{id}: {task name}
    ```
 
-3. Take up the session as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`. When it is waiting for a
-   sign-off, give the review request again and stop.
+3. When the last decision line is `waiting for #{id} {sign-off name}`, give the review request again
+   from that commit's message, and stop. Otherwise take up the session as in
+   `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

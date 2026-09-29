@@ -49,7 +49,8 @@ design: <path of the design document that says how it is built; docs/design.md w
 ```
 
 - Tasks are taken in the order written. A task is marked `[x]` when the conductor decides its purpose
-  is fulfilled, a sign-off when the user approves it. A task added later takes the next unused id.
+  is fulfilled, a sign-off when the user approves it. A task added later takes the next unused id and
+  goes before the sign-off it leads to.
 - `status` becomes `finished` when the Deliverable sign-off is approved.
 
 ## open/
@@ -66,11 +67,12 @@ commit's message.
 Every commit the conductor makes ends with one line saying what was decided and what comes next:
 
 ```
-● {#id task name | plan | design | deliverable | the sign-off name} ── {what was decided} → {next move}
+● {#id task name | plan | design | deliverable | #{id} {sign-off name}} ── {what was decided} → {next move}
 ```
 
 The last decision line on the branch is where the session stands: a later conversation takes up its
-next move. When the session stops at a sign-off, the next move is `waiting for the {sign-off name}`.
+next move. When the session stops at a sign-off, the next move is `waiting for #{id} {sign-off name}`,
+and the message body above it holds the final Good and More given with the review request.
 
 ## Finding the session
 
@@ -89,12 +91,15 @@ it to the current form; any other command asks the user to run `/rn:up` first, a
 
 ## Bringing an older session to the current form
 
-The old record is the user's request and what was done so far. Its format changed from version to
-version, so rather than converting it, the goal is worked out again from it.
+The old record is the user's request and what was done so far; the goal is worked out again from it
+rather than converting it.
 
-1. `git mv` the old `steering.md` to `steering.old.md` beside it.
+1. Read the old `steering.md` and whatever else the old version left in the session's directory.
 2. Work out the plan as `/rn:on` does (`${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md`), with the
-   session's branch, pull request, and directory in place of new ones and `steering.old.md` as the
-   request: ask only what it leaves unclear, and carry over what was done.
-3. Remove `steering.old.md` and anything else the old version left in the directory in the commit
-   that writes the new `steering.md`. The session stops at its new Plan sign-off.
+   session's branch, pull request, and directory in place of new ones and the old record as the
+   request: ask only what it leaves unclear. The first write of the new `steering.md` replaces the
+   old one and removes the rest of the old files but a design the old version kept in the directory;
+   the old record stays readable in git. What was done becomes Facts in Assumptions, each saying
+   where it was done.
+3. A design the old version kept in the directory is read while working out the design, and removed
+   in the commit that moves what still holds into the design document.

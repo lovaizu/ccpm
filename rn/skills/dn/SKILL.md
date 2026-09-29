@@ -14,7 +14,9 @@ needs is left there.
 
 ## Steps
 
-1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`.
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line is
+   `waiting for #{id} {sign-off name}` → say it is already stopped there, safe to clear, and that
+   `/rn:ty` or `/rn:gm` answers it; stop.
 2. Write what the next conversation needs and nothing else records to a `notes` item in `open/`: what
    was under way, and in a talk with the user, the points agreed and the point still open.
 3. Commit and push with the decision line `● paused ── → {what was under way}`.
