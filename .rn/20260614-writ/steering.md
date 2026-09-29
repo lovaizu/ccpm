@@ -39,6 +39,12 @@ taught survives only as the user's feedback listed under Assumptions.
   `.rn/20260813-aiya/`. It is input to the essentials, not a base to build on.
 - Fact: rn's rebuild (branch `rn-rebuild`) is the model for the approach: the essentials first,
   then README and design written and judged against them.
+- Fact: the user approved how the essentials are used, to be carried into #2's design as its core:
+  the writing role reads the essentials as aims and decides layer by layer, top layer first; a
+  separate checking role, given only the document, the reader definition and the essentials, reads as
+  the reader, answers the top question first, then reports stumbles and NGs top layer first, skipping
+  lower layers when a higher one fails; only fixes that serve the purpose are made, a defect of the
+  subject goes back to its owner, and there is one evaluation before the user decides.
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
@@ -118,14 +124,8 @@ in `writ/docs/design.md` — held to the essentials.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-29
-- **Last completed**: #1 essentials drafted in four files (`doc`, `readme`, `design`, `rules`) and
-  revised through the user's feedback; not yet checked off
-- **Next**: #1 — reorder `doc.md` by layer and refine, then check it off; then #2
-- **Notes**: Branch `worktree-writ`, PR #15. Approved by the user, to carry into #2's design as its
-  core: the writing role reads the essentials as aims and decides layer by layer, top layer first; a
-  separate checking role, given only the document, the reader definition and the essentials, reads as
-  the reader, answers the top question first, then reports stumbles and NGs top layer first, skipping
-  lower layers when a higher one fails; only fixes that serve the purpose are made, a defect of the
-  subject goes back to its owner, and there is one evaluation before the user decides.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
