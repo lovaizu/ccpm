@@ -48,6 +48,10 @@ taught survives only as the user's feedback listed under Assumptions.
 - Fact: the user agreed to keep two things in `instruction.md` out of the essentials: the outline
   per kind of document (derived from the reader instead), and the orders to the writing AI (write in
   md, draw figures in mermaid, ask back when the reader is unclear), which go to #2's design.
+- Fact: input to #2's design from the rn rebuild session: a writer cannot return to not knowing the
+  discussion, so rereading cannot find where a document is unclear; the checking role, in a fresh
+  context, restates what it understood, and where the restatement drifts is where the document is
+  unclear.
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
