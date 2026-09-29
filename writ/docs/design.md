@@ -1,6 +1,6 @@
 # Design of writ
 
-writ returns documents the user can hand to the reader as they are, without fixing them. To do that, it has a writing role write only after the reader and purpose are decided, has a checking role that does not know the discussion check the document just once, and leaves what to do with the result to Claude Code talking with the user (the requester) alone.
+writ returns documents the user can hand to the reader as they are, without fixing them. To do that, it has a writing role write only after the reader and purpose are decided, has a checking role that does not know the discussion check the document just once, and only Claude Code, the one talking with the user (the requester), decides what to do with the result.
 
 The checking role answers every question in the essentials file with Good and More. An essentials file lists, for one kind of document, what makes a good document, in the form of questions. Good is what serves the purpose and must not be broken when fixing; More is a shortfall and what the reader struggles with because of it.
 
@@ -65,7 +65,7 @@ flowchart TD
 
 ### The requester asks, looks things up, hands off to the writing role, and decides whether to fix
 
-The requester is the Claude Code that is talking with the user. It leaves writing and fixing to a separately started writing role. Because the back-and-forth of writing and fixing stays out of the conversation with the user, that conversation stays short and is less likely to be summarized partway and lose details of what was decided. The requester does not write the document itself. It could write with the whole discussion at hand, but every round of writing and fixing lengthens the conversation with the user and makes a summary partway more likely.
+The requester is the Claude Code that is talking with the user. It leaves writing and fixing to a separately started writing role. Because the back-and-forth of writing and fixing stays out of the conversation with the user, that conversation stays short and is less likely to be summarized partway and lose details of what was decided. Having the requester write the document itself was rejected. The requester could then write with the whole discussion at hand, but every round of writing and fixing lengthens the conversation with the user and makes a summary partway more likely.
 
 - Facts for the content are found by looking into the repository and code, not guessed.
 
@@ -79,7 +79,7 @@ The requester is the Claude Code that is talking with the user. It leaves writin
 
 - It reads the essentials file as the shape to aim for, and decides the reader, key points, headings, diagrams, sentences and words in that order, earlier ones first.
 
-    The writing role's job is to bring the document closer to a good shape, so it reads each question as a state the document should reach. Later things follow the decisions made for earlier ones, so polishing sentences and words before the reader and key points are decided is wasted when the earlier ones change.
+    The writing role's job is to bring the document closer to a good shape, so it reads each question as a shape the document should take. Later things follow the decisions made for earlier ones, so refining sentences and words before the reader and key points are decided is wasted when the earlier ones change.
 
 - It writes directly into the target file and makes no separate draft.
 
@@ -97,11 +97,11 @@ The requester is the Claude Code that is talking with the user. It leaves writin
 
 - First, it restates in its own words the reader, what the reader must do, and the document's key points.
 
-    The gap between the writer's intent and this restatement is exactly the unclearness the writer cannot see. The requester compares the restatement with what was decided in the discussion, and treats any gap as a More.
+    The gap between the writer's intent and this restatement is exactly the difficulty in understanding that the writer cannot see. The requester compares the restatement with what was decided in the discussion, and treats any gap as a More.
 
 - It answers every question in the essentials file it uses with Good, More or both.
 
-    The checking role's job is to report the document's current state, so it reads the essentials file as questions. It does not skip the questions from headings onward, even when the reader or key points have fallen apart. If a question goes unanswered, the requester does not know which places must not be broken when fixing, and the reply to the user is missing that question's answer.
+    The checking role's job is to report the document's current state, so it reads the essentials file as questions. Skipping the questions from headings onward when the reader or key points have fallen apart was rejected. If a question goes unanswered, the requester does not know which places must not be broken when fixing, and the reply to the user is missing that question's answer.
 
 - It decides neither whether to fix nor what to do next.
 
@@ -155,7 +155,7 @@ flowchart TD
 
     The only thing the checking role can do that others cannot is read without knowing the discussion. The requester knows better whether a fix fits the purpose. The cost is that fixes after the evaluation are not seen by a role that does not know the discussion. Even so, the final Good and More carry locations and evidence, so the user can check those places and, if needed, hand the document to writ again. So this limit is accepted.
 
-- While judging fixed results, the requester judges that it cannot proceed if the same More remains after fixing, each fix brings another More, or a fix requires changing the reader or purpose already decided.
+- While reviewing fixed results, the requester decides that it cannot proceed if the same More remains after fixing, each fix brings another More, or a fix requires changing the reader or purpose already decided.
 
     Each is a sign that more fixing will not bring the document to a state ready to return. If it went on, the user would be left waiting without receiving the document.
 
@@ -165,9 +165,9 @@ flowchart TD
 
     Leftover drafts or evaluation records are the user's to clean up, and make it unclear which one is real.
 
-- The reply carries the final Good and More for every question in the essentials file used, and not the remarks along the way or the back-and-forth of fixes.
+- The reply carries the final Good and More for every question in the essentials file used, and not the remarks along the way or how the fixes went.
 
-    The user approves the final form, so the final Good and More let them decide between approving and requesting fixes without rereading the whole text. With the back-and-forth attached, the user would have to check again where each part applies in the current document.
+    The user approves the final form, so the final Good and More let them decide between approving and requesting fixes without rereading the whole text. If how the fixes went were attached, the user would have to check again where each part applies in the current document.
 
 Each item attached to Good and More is there to help the user judge.
 
@@ -201,27 +201,27 @@ The essentials for every document are always used, and for a README, a design do
 
 - In every handoff, the essentials are passed as the file's location, not as a summary.
 
-    A summary changes the questions to match how the summarizing role read them, and the old summary goes on being used even after the essentials file is improved.
+    A summary changes the questions to match how the summarizing role read them, and the old summary goes on being used even after the essentials file is refined.
 
 - After every change, the content of the essentials lives only in the essentials files, and is not copied into other documents or writ's instructions.
 
-    Copies drift each time the essentials are improved, and the essentials the user reads from the README come to differ from the ones actually used to write and check.
+    Copies drift each time the essentials are refined, and the essentials the user reads from the README come to differ from the ones actually used to write and check.
 
 - The names the user sees are `/writ:up`, Good and More, and the essentials file names (`doc.md`, `readme.md`, `design.md`, `prompt.md`).
 
     The README uses these names to explain how to use writ and the essentials, so changing them would make what the user learned from the README no longer hold.
 
-## Quality is tested by running writ for each outcome for the user
+## Quality is tested by running writ for each outcome the user should get
 
 For each quality, the person who runs writ in the user's position and reads what comes back (the tester) decides pass or fail.
 
 - The user can hand the returned document to the reader as it is, without fixing it.
 
-    This is the first promise of the [README](../README.md); if it is missing, the work of reading and fixing falls back on the user. For each kind of essentials, run writ both to write a new document and to fix an existing one. Have someone who does not know the discussion read the document and say what they decide and do when they finish. It passes if that answer matches the purpose given in the request, and the tester, listing every place they would change before handing it to the reader with a reason that concerns the reader, finds none.
+    This is the first promise of the [README](../README.md); if it is missing, the work of reading and fixing falls back on the user. For each kind of essentials, run writ both to write a new document and to fix an existing one. Have someone who does not know the discussion read the document and say what they decide and do when they finish. It passes if that answer matches the purpose given in the request, and the tester finds no place they would change, for a reason that concerns the reader, before handing it to the reader.
 
 - The user is not asked what they already said or what the document shows, and does not receive a document written before the reader and purpose were decided.
 
-    These are the [README](../README.md)'s promises "just answer what it asks" and "asks only when it does not know"; if they are missing, the user answers the same thing again and again or receives a document with no clear aim. Run it in a situation where the work is assigned without saying who the reader is, a situation where a document from which the reader and purpose can be read is handed over, and a situation where Claude Code writes a document on its own after the reader and purpose have been decided in the conversation. It passes if questions come before writing only in the first situation, and writing starts without questions in the other two.
+    These are the [README](../README.md)'s promises "just answer what it asks" and "asks only when it does not know"; if they are missing, the user answers the same thing again and again or receives a document with no clear aim. Run it in a situation where the user asks for a document without saying who the reader is, a situation where a document from which the reader and purpose can be read is handed over, and a situation where Claude Code writes a document on its own after the reader and purpose have been decided in the conversation. It passes if questions come before writing only in the first situation, and writing starts without questions in the other two.
 
 - The user can decide from the reply's Good and More alone whether to approve or request fixes.
 

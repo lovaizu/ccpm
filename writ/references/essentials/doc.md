@@ -8,13 +8,13 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Can the reader get what they need from this document alone, without reading sentences they do not need?
 
-    Do not try to cover everything; narrow it to the key points. If there are many key points, the narrowing still falls short. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as someone rereading it, past reviewers or approvers, are not needed by this reader. Likewise, a sentence that restates a rule another mechanism already enforces looks correct but adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
+    Do not try to cover everything; narrow it to the key points. If there are many key points, you have not narrowed enough yet. If exhaustive detail is truly needed, gather it in a table in a separate document and link to it from the body. Sentences meant for other people, such as someone rereading it, past reviewers or approvers, are not needed by this reader. Likewise, a sentence that restates a rule another mechanism already enforces looks correct but adds nothing for the reader, and in time drifts from the real mechanism. Do not re-explain how the tools you use work; write only the decisions you made on top of them. Conversely, if the reader needs something that has no place yet, make a new place for it.
 
 - Does the reader get content from the very first sentence?
 
     Write the key point from the first sentence. Do not describe the document's place among others, how to read it, how to use it or what it contains; let the title and body convey that.
 
-- Does the reader avoid reading the same thing twice?
+- Is the reader spared reading the same thing twice?
 
     Do not repeat what the title, a diagram or other sentences already make clear.
 
@@ -32,7 +32,7 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Does a diagram alone give the key point of its section?
 
-    Show in diagrams the actors and what passes between them, order, branches and changes of state. A diagram is not decoration; it draws the key point of its section. On each arrow, write what is passed. Draw documents and files as actors too, and show who writes them, who reads them and where they go. In a document with an overall flow or structure, put an overall diagram at the start, then split it into a diagram for each part. Keep the boxes in one diagram few enough to follow at a glance, draw top to bottom, and make labels short words the reader understands at that point. In each section, put the diagram first.
+    Show in diagrams the actors and the back-and-forth between them, order, branches and changes of state. A diagram is not decoration; it draws the key point of its section. On each arrow, write what is passed. Draw documents and files as actors too, and show who writes them, who reads them and where they go. In a document with an overall flow or structure, put an overall diagram at the start, then use a separate diagram for each part. Keep the boxes in one diagram few enough to follow at a glance, draw top to bottom, and make labels short words the reader understands at that point. In each section, put the diagram first.
 
 - Can the reader understand by reading from top to bottom, without going back and forth?
 

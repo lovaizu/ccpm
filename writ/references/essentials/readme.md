@@ -10,7 +10,7 @@ The reader is someone meeting the product for the first time. When they finish, 
 
 - Can the reader picture the example as their own work?
 
-    Choose a situation that shows the product's strengths and is close to the reader's work, for example the situation of moving a JavaScript app to TypeScript. Do not use other companies' product names, or examples that copy a well-known app.
+    Choose a situation that shows the product's strengths and is close to the reader's work, for example, moving a JavaScript app to TypeScript. Do not use other companies' product names, or examples that copy a well-known app.
 
 - Can the reader read to the end without knowing the product's internals?
 

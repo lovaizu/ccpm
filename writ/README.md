@@ -22,7 +22,7 @@ flowchart TD
 
 writ does not start writing until it is decided who reads the document and what they decide and do when they finish. The quality of a document can only be measured once its reader and purpose are decided.
 
-Before returning the document, writ checks it through the eyes of a reader who does not know the discussion so far, and fixes what it can. Remarks along the way and the back-and-forth of fixes are not returned. [Why it takes this shape](docs/design.md) is in the design doc.
+Before returning the document, writ checks it through the eyes of a reader who does not know the discussion so far, and fixes what it can. Remarks along the way and how the fixes went are not returned. [Why it takes this shape](docs/design.md) is in the design doc.
 
 ## Example: writing a TypeScript migration plan for your team
 
@@ -53,7 +53,7 @@ We move src/api/ first, then go on to src/ui/. src/api/ is what the rest of the 
 | src/ui/ | (undecided) |
 ```
 
-The reply comes with Good and More. Good is what serves the purpose and should be kept from now on. More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
+The reply comes with Good and More. Good is what helps and should be kept from now on. More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
 
 ```console
 ● Good (Every document): The first sentence says which directory moves first.
@@ -71,7 +71,7 @@ To fix a plan you already have, hand over the document. writ reads it and asks o
 ```console
 > /writ:up docs/migration-plan.md
 
-● I read this plan as being for the team's engineers to agree on the order of moving and the deadline for finishing.
+● I read this plan as being for the team's engineers to agree on the order in which to move things and the deadline for finishing.
   But no deadline is written anywhere. Has a deadline been set?
 ```
 
@@ -79,13 +79,13 @@ If the deadline is set, the fixed result is written into the original file, and 
 
 ## Claude Code also uses writ on its own in situations where it writes documents
 
-When Claude Code writes a README or a design doc in the middle of its work, it writes right away if the conversation tells it the reader and purpose, asks you only when it does not know them, and returns with Good and More attached to its reply.
+When Claude Code writes a README or a design doc in the middle of its work, it writes right away if the conversation tells it the reader and purpose, asks you only when it does not know them, and attaches Good and More to its reply.
 
 ## Documents are checked against the essentials for their kind
 
 - [Every document](references/essentials/doc.md) is checked on whether the reader can grasp the whole by reading from top to bottom and, when they finish, do what they need to do.
 - A [README](references/essentials/readme.md) is also checked on whether someone meeting the product for the first time learns what it does for them, decides whether to use it, and can start using it.
-- A [design doc](references/essentials/design.md) is also checked on whether builders and maintainers learn how the outcome for the user is achieved, and can explain whether a given change fits the design.
+- A [design doc](references/essentials/design.md) is also checked on whether builders and maintainers learn how the outcome for the user is realized, and can explain whether a given change fits the design.
 - A [prompt for an AI to read](references/essentials/prompt.md) is also checked on whether the AI can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee.
 
 ## Get it and start using it
