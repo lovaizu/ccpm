@@ -20,7 +20,7 @@
 ## セッションの進み方
 
 ```mermaid
-flowchart LR
+flowchart TD
     S@{ shape: sm-circ }
     Goal("計画を詰める")
     Plan("計画のレビュー")
