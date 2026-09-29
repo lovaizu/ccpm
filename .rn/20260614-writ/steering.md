@@ -66,8 +66,10 @@ must reach, so writing and judging look at the same thing.
 **Steps**:
 
 - [x] Draw the essentials from `instruction.md`, both feedback files, and the earlier field feedback
-- [ ] Bring each point where the sources disagree to the user, one at a time
+- [x] Bring each point where the sources disagree to the user, one at a time
 - [ ] Refine until each question is essential and none repeats another
+- [ ] Reorder the questions in `doc.md` by the layers they are decided in: reader, core, headings,
+      figures, sentences, then words, certainty, style and marks
 
 **Completion criteria**:
 
@@ -116,8 +118,14 @@ in `writ/docs/design.md` — held to the essentials.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-09-29
+- **Last completed**: #1 essentials drafted in four files (`doc`, `readme`, `design`, `rules`) and
+  revised through the user's feedback; not yet checked off
+- **Next**: #1 — reorder `doc.md` by layer and refine, then check it off; then #2
+- **Notes**: Branch `worktree-writ`, PR #15. Approved by the user, to carry into #2's design as its
+  core: the writing role reads the essentials as aims and decides layer by layer, top layer first; a
+  separate checking role, given only the document, the reader definition and the essentials, reads as
+  the reader, answers the top question first, then reports stumbles and NGs top layer first, skipping
+  lower layers when a higher one fails; only fixes that serve the purpose are made, a defect of the
+  subject goes back to its owner, and there is one evaluation before the user decides.
