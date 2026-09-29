@@ -72,8 +72,8 @@ another evaluation of the deliverable.
 ## Having it evaluated
 
 Start a fresh evaluator with `Agent`, giving it the paths of
-`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` and `steering.md`, the kind and what to evaluate, and
-the path of its file in `open/`:
+`${CLAUDE_PLUGIN_ROOT}/references/evaluate.md` and `steering.md`, the kind, what to evaluate, the
+sections of the essentials, and the path of its file in `open/`:
 
 | Kind | What to evaluate | Sections of the essentials |
 |---|---|---|
