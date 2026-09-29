@@ -37,7 +37,6 @@ flowchart TD
     DesignTalk -.->|レビュー依頼| Design
     Design -->|フィードバック| DesignTalk
     Design -->|承認| Make
-    Make -->|中断、再開| Make
     Make -.->|決めることが出た| DesignTalk
     Make -.->|レビュー依頼| Deliverable
     Deliverable -->|フィードバック| Make
