@@ -30,7 +30,7 @@ flowchart TD
     Deliverable("成果物のレビュー")
     E@{ shape: fr-circ }
 
-    S -->|"開始 - /rn:on"| PlanTalk
+    S -->|開始| PlanTalk
     PlanTalk -.->|レビュー依頼| Plan
     Plan -->|フィードバック| PlanTalk
     Plan -->|承認| DesignTalk
