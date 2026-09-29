@@ -127,11 +127,8 @@ in `writ/docs/design.md` — held to the essentials.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-29
-- **Last completed**: #1 writ's essentials in four files (`doc`, `readme`, `design`, `prompt`)
-- **Next**: #2 — wait for the user's comments on the essentials on PR #15 and address them first;
-  then ask how a user uses writ (proposed: one command that both writes a new document and fixes a
-  given one), then write the README
-- **Notes**: The rn rebuild session (rebuild-rn-c1) sends essentials feedback by cross-session
-  message; apply it and reply.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
