@@ -45,6 +45,7 @@ flowchart TD
     Make -.->|a decision is yours| DesignTalk
     Make -.->|review request| Deliverable
     Deliverable -->|feedback| Make
+    Deliverable -->|feedback that changes the design| DesignTalk
     Deliverable -->|approve| E
 
     style Make stroke-dasharray: 5 5
@@ -99,7 +100,8 @@ The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahe
 
 `/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
 comments on the pull request as feedback. Either one then stops. After feedback, a plan or a design
-is worked out again, and a deliverable goes back to generating and evaluating. Say "go on" to
+is worked out again, and a deliverable goes back to generating and evaluating, or to working out the
+design when the fix changes your README or design document. Say "go on" to
 continue, or `/clear` first when you want a fresh conversation, then `/rn:up`.
 
 ```console
@@ -162,7 +164,7 @@ has come and pushes everything. When you want a fresh conversation, run `/clear`
 ### 6. Finish — Deliverable sign-off
 
 You approve the deliverable, your product as the session leaves it, by whether it achieves your
-goal. When something falls short, `/rn:gm` adds tasks. On `/rn:ty` the pull request is marked ready;
+goal. When something falls short, `/rn:gm` adds tasks, or reopens the design when the fix changes it. On `/rn:ty` the pull request is marked ready;
 the merge is yours. The session leaves behind only its `.rn/` directory and the deliverable.
 
 ## How it is built

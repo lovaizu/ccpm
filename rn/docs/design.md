@@ -42,7 +42,8 @@ flowchart TD
     EV -->|"a fatal More remains"| D
     T2 --> FS
     EV -->|"no tasks to add"| FS
-    FS -->|"/rn:gm"| T2
+    FS -->|"/rn:gm, fixed within the design"| T2
+    FS -->|"/rn:gm, needs the README<br/>or design document changed"| D
     FS -->|"/rn:ty"| END
 ```
 
@@ -65,8 +66,10 @@ cannot be achieved, it goes back to working out the design.
 At a sign-off, the user approves with `/rn:ty` or gives feedback with `/rn:gm`. Either one then
 stops. That is where the user may start a fresh conversation with `/clear`, and the work goes on with
 "go on" or `/rn:up`. After feedback, the session goes back to before that sign-off: a plan or a
-design is worked out again with the user, and a deliverable gets added tasks. Fixing only what the
-words say would leave the mismatch behind the feedback in place.
+design is worked out again with the user, and a deliverable gets added tasks. Feedback on the
+deliverable that needs the README or design document changed goes back to working out the design,
+through a Design sign-off, since those documents are what the user approved the product to be.
+Fixing only what the words say would leave the mismatch behind the feedback in place.
 
 `/rn:dn` pauses at any time, and `/rn:up` carries on from there to the next sign-off. For a session
 started under an older version of `rn`, `/rn:up` works the goal out again from the old record and
@@ -367,7 +370,8 @@ purpose gets through.
 |---|---|
 | From the Design sign-off to the Deliverable sign-off | The deliverable meets Goal achieved when in `steering.md`: in the TypeScript example, code reproducing each of the three bugs fails the build, all three. The evaluator evaluates once, and each More is decided as fix, let go, or hand to the user |
 | A goal set up so that a More comes up whose fix the goal does not determine | It does not go to the Deliverable sign-off; it goes back to working out the design and asks the user about that More first |
-| `/rn:gm` at the Deliverable sign-off | Tasks are added and carried out, and it stops at the Deliverable sign-off again |
+| `/rn:gm` at the Deliverable sign-off, fixable within the design | Tasks are added and carried out, and it stops at the Deliverable sign-off again |
+| `/rn:gm` at the Deliverable sign-off, needing the README changed | It works out the design with the user, stops at a Design sign-off, and then at the Deliverable sign-off again |
 
 ### It asks only for sign-offs and the user's decisions
 
