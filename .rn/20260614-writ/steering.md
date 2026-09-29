@@ -98,7 +98,7 @@ in `writ/docs/design.md` — held to the essentials.
 
 **Steps**:
 
-- [ ] Write the README
+- [x] Write the README
 - [ ] Write the design
 
 **Completion criteria**:
