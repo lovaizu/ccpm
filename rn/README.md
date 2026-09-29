@@ -22,7 +22,7 @@
 ```mermaid
 flowchart LR
     S@{ shape: sm-circ }
-    Goal("ゴールを詰める")
+    Goal("計画を詰める")
     Plan("計画のレビュー")
     Work("作業中")
     Talk("設計を詰める")
