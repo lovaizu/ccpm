@@ -134,8 +134,9 @@ What the conductor gives the user at a sign-off.
 - Can the user decide to approve or give feedback without reading everything again?
 
     It gives the final Good and More under every question of the sections for what is signed off,
-    each question as essentials.md words it, so the user sees what was checked. Each Good and More
+    each question put faithfully in the user's language, so the user sees what was checked. Each Good and More
     points to a `path:line` or a command and its output, and says why; one that cannot point to
     anything is not given. Not the points and fixes along the way, and only what bears on the user's
     decision. A More left in place says why fixing it would not serve the purpose. No More asks the
-    user to decide, and nothing fatal is left: those go back to working out the design first.
+    user to decide or invites feedback on it, and nothing fatal is left: those go back to working out
+    the design first.

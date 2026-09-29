@@ -104,8 +104,17 @@ that are not essential and never settles; another one is made only when the user
    Decision section asks: fix it, let it go with the reason, or hand it to the user when only they
    can decide it. The fix is yours to choose, from the purpose and what the user struggles with; the
    evaluation does not propose one. A fix is made by a generator for a task, by you for the plan and
-   the design; check it against the purpose and the Goods, and commit. Settled items leave
-   `open/` with their full text and your decision in the commit message.
+   the design; check it against the purpose and the Goods, and commit. Settled items leave `open/`
+   with their text copied whole, never shortened, and your decision on each More as one of:
+
+   ```
+   - {the More} → fixed: {how}
+   - {the More} → let go: fixing it would not serve {the purpose}, because {why}
+   - {the More} → to the user: back to working out the design
+   ```
+
+   A reason that is the cost of fixing, or that the fix needs the README, the design document, or
+   the user, is not a reason to let go: that More goes to the user.
 3. Repeat until every More is decided, or the work cannot go on: the same More keeps coming back,
    each fix brings a new More, or a fix needs the README or the design document changed.
 4. Check the final Good and More for each question of the essentials. A fatal More is one without
@@ -118,7 +127,8 @@ essentials, or a document, and that is what to decide.
 
 Each time you decide what comes next, tell the user in the decision line. `●`, `──`, `→`, and
 `waiting for #{id} {sign-off name}` stay as written, since commands find their way by them; the rest
-is in the user's language. Decision lines, review requests, and notes are your words to the user,
+is in the user's language. Decision lines, decisions on each More, review requests, and notes are
+your words to the user,
 not the repository's documents, so they are in the user's language whatever the documents use; a
 later conversation tells the user's language from them:
 
@@ -130,8 +140,9 @@ later conversation tells the user's language from them:
 
 At a sign-off, `open/` is empty. Write the review request once, in the user's language, as the
 Review request section asks; commit and push with that text as the message body and the decision
-line `● … → waiting for #{id} {sign-off name}` last; then give the user the same text. The commit is
-what a later conversation gives again, so what the user sees and what the record holds never differ.
+line `● … → waiting for #{id} {sign-off name}` last; then give the user that message word for word,
+as `git log -1 --format=%B` prints it, adding nothing and rewording nothing. The commit is what a
+later conversation gives again, so what the user sees and what the record holds never differ.
 
 ```
 ── {slug}: {the goal in one line} ──

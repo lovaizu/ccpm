@@ -23,5 +23,5 @@ stopped, until the next sign-off.
    ```
 
 3. When the last decision line is `waiting for #{id} {sign-off name}`, give the review request again
-   from that commit's message, and stop. Otherwise take up the session as in
+   word for word as that commit's message prints it, and stop. Otherwise take up the session as in
    `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.
