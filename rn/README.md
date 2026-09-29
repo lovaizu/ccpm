@@ -30,17 +30,17 @@ flowchart TD
     Deliverable("成果物のレビュー")
     E@{ shape: fr-circ }
 
-    S -->|開始| PlanTalk
+    S -->|"開始 - /rn:on"| PlanTalk
     PlanTalk -.->|レビュー依頼| Plan
-    Plan -->|フィードバック| PlanTalk
-    Plan -->|承認| DesignTalk
+    Plan -->|"フィードバック - /rn:gm"| PlanTalk
+    Plan -->|"承認 - /rn:ty"| DesignTalk
     DesignTalk -.->|レビュー依頼| Design
-    Design -->|フィードバック| DesignTalk
-    Design -->|承認| Make
+    Design -->|"フィードバック - /rn:gm"| DesignTalk
+    Design -->|"承認 - /rn:ty"| Make
     Make -.->|決めることが出た| DesignTalk
     Make -.->|レビュー依頼| Deliverable
-    Deliverable -->|フィードバック| Make
-    Deliverable -->|承認| E
+    Deliverable -->|"フィードバック - /rn:gm"| Make
+    Deliverable -->|"承認 - /rn:ty"| E
 
     style Make stroke-dasharray: 5 5
     style PlanTalk stroke-width: 3px
