@@ -61,9 +61,8 @@ up while talking with you one point at a time, until you both see the same thing
 is where it works without you.
 
 One goal carried through to the end is a session. A sign-off is where you look at the work before it
-goes past that point, and approve it or give feedback. `rn` asks for each one with what is good and
-what falls short, and why, so you can decide without reading everything again. `rn` stops only
-there, and where you pause it.
+goes past that point, and approve it or give feedback. `rn` stops only there, and where you pause
+it.
 
 Say your app is written in JavaScript, and you want it moved to TypeScript — work that takes days.
 

@@ -90,8 +90,7 @@ wait for someone outside, what the product should be, another way when fixes kee
 whether the deliverable achieves the goal. Everything else is looked up or decided from the goal. The
 more the user is asked, the less they can leave the work to `rn`.
 
-A question is one point, with how the conductor understands it, what each way costs and gives, and
-which is recommended, so the user can answer on the spot. When the work waits on someone outside,
+A question is put so the user can answer it on the spot. When the work waits on someone outside,
 what to do meanwhile is such a question, not a stop: a stop leaves the user unsure what `rn` is
 waiting for.
 
@@ -128,7 +127,9 @@ purpose, commits, and has it evaluated.
 
 An evaluator receives only what the user agreed to and what the user said, never how the thing was
 made or what it was changed to answer. Whoever made it reads it along their own reasons. Someone who
-did not make it, reading from the user's side, sees where the user will struggle.
+did not make it, reading from the user's side, sees where the user will struggle. Every role is
+handed the paths of what it reads, never a summary of them: a summary carries the summarizer's
+reading, and the role would work from that instead of the thing.
 
 ```mermaid
 flowchart TD
@@ -142,9 +143,8 @@ flowchart TD
 Everything `rn` makes, such as a plan, a design document, or a task's result, has a purpose, stated
 as what whoever receives it can then do. For a README, that is "can a newcomer tell what they get and
 start using it", not "is there an install step". Whether it was done can be met by following steps;
-whether it serves its purpose can be answered only by looking at the real thing. The essential
-viewpoints for each kind of thing are kept in one place; whoever makes aims for them, and whoever
-checks asks the same questions, so making and checking do not drift apart.
+whether it serves its purpose can be answered only by looking at the real thing. Making and
+checking read the same file of viewpoints, so they do not drift apart.
 
 Only whoever checks answers, with Good and More of the same weight. Both point to a place in the real
 thing and say why. A Good adds what the user gains from it, which a fix must not take away; a More adds what the user will
@@ -176,9 +176,8 @@ flowchart TD
     J -->|"a fatal More remains"| U
 ```
 
-An evaluator evaluates a thing once. The conductor first checks the evaluation itself. A point
-without grounds, or off the purpose, goes to a fresh evaluator to answer again. Each Good's grounds
-are checked as a More's are, since a wrong Good has the fix keep what should change.
+Each Good's grounds are checked as a More's are, since a wrong Good has the fix keep what should
+change.
 
 From there the conductor and the generator repeat the fixing, one More at a time:
 
@@ -189,9 +188,6 @@ From there the conductor and the generator repeat the fixing, one More at a time
 Because the conductor decides, the repetition always ends as either "settled" or "cannot go on".
 It cannot go on when the same More keeps coming back, when each fix brings a new More, or when a fix
 needs the README or the design document changed.
-
-This is what makes the deliverable what the user wanted and not only what the tasks said: the
-evaluator reads it from the user's side, against what they agreed to.
 
 Fixes after the evaluation are checked by the conductor against the purpose, not by a fresh
 evaluator. Evaluations are not repeated, because evaluating with AI alone keeps raising points that are not essential and
@@ -237,9 +233,8 @@ shows. Not the points and fixes along the way: the user approves the final state
 they would have to work out where each applies now. No More asks the user to decide or invites
 feedback, since those went back to working things out.
 
-The review request is written once and committed as the body of the commit that stops, and the user
-is given that body word for word. A later conversation gives the same text again, so what the user
-read and what the record holds never differ.
+The user is given the body of the stop commit word for word, so what the user read and what a later
+conversation gives never differ.
 
 ## Everything decided is pushed to the branch as it is decided, so any conversation takes the session up
 
@@ -267,13 +262,6 @@ flowchart TD
     O -.->|"reads"| UP
     M -.->|"reads the last decision line"| UP
 ```
-
-`rn` writes down how the work goes, what the product should be, and how it is built, before it
-works. How the work goes is in `steering.md`; what the product should be and how it is built are in
-the product's README and design document. Discussion with the user happens on these documents too:
-once something is decided, the document changes first, and the work follows it. A generator reads
-all three, and an evaluator reads the parts the user agreed to. The user reads everything on the pull
-request.
 
 Every decision is committed and pushed as it is made, with a decision line that says what was
 decided and what comes next. A fresh conversation, on `/rn:up`, reads `steering.md`, `open/`, and the
