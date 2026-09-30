@@ -138,7 +138,12 @@ writing role and checking role each reach their purpose even in cases the prompt
 - [x] Have a writing role write the prompts from the design and the essentials
 - [x] Have a checking role outside the discussion evaluate them once against `prompt.md` and `doc.md`
 - [x] Sort every Good and More, have the fixes made, and judge them against reader and purpose
-- [ ] Take the user's review on PR #15 with the final Good and More per question
+- [ ] Fix the essentials to the framework the user agreed (benefits and use in the README, a
+      feature per benefit in the design, qualities from the benefits; steps only for what role and
+      purpose cannot carry; every part of a prompt traces to the design)
+- [ ] Fix the README and the design with the essentials, and take the user's review on PR #15
+- [ ] Delete the prompts and rebuild them from the README, the design and the essentials alone
+- [ ] Evaluate them once, first on the benefits; sort, fix, and take the user's review on PR #15
 
 **Completion criteria**:
 
