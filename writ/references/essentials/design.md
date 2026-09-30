@@ -18,6 +18,10 @@ The readers are builders and maintainers, who may be people or AI. When they fin
 
     Check only whether the outcome for the user is achieved. Draw the qualities one by one from the items the design doc says it realizes, and for each quality write which item it is for and what the user struggles with if it is missing. Write the pass criteria as what happens to the reader or the user. Whether the mechanism works as designed is a clue for finding the cause when the outcome is not achieved; it is not a quality. When qualities are listed from the mechanism, someone checks that the mechanism works, but no one checks whether the user can achieve their purpose. Also write what you gave up when deciding how far to check. Without a written way to test, the way of checking varies by builder and by change. Without written pass criteria, even after the tests run, no one can decide whether it can be said to be realized.
 
+- Can a builder tell which qualities come first: those the user would choose the product for, before those the user takes for granted?
+
+    Write the qualities the user would choose the product for first, each with its check, and then the qualities the user takes for granted, such as nothing being lost. A product that is only correct gives the user no reason to choose it. Checks of what the user takes for granted are easier to write, so they multiply and crowd out the checks that show why the user would choose the product; then every check passes while no one has checked whether the user would choose it.
+
 - When a maintainer wants to switch to another option, can they see what switching would lose and why it was not chosen?
 
 - Does the reader get here the intent and decisions they cannot read from the document describing the outcome for the user or from the implementation?
