@@ -66,20 +66,33 @@ flowchart TD
 
 Five policies hold across the features:
 
-- Only the conductor decides what happens next. An evaluator sees only the thing, so fixes decided
-  by its words would rebuild what already serves the goal, and the user would not get what they
-  wanted.
-- Only the conductor uses git. A commit records a decision, so one made by anyone else would record
-  a decision nobody made, and a later conversation would go on from it.
-- Everything is made to essential viewpoints and checked with the same ones, and `rn` is improved by
-  sharpening them, not by adding steps. Steps miss the mark in situations they did not foresee, and
-  the user gets work that followed them instead of work that serves the goal.
-- Documents lead the work and hold only what holds now. A decision kept only in a conversation is
-  lost when it is cleared, and history left in a document buries what holds now, so either way the
-  user explains again what was already decided.
-- `rn` decides what goes into the README and design document; `writ`, a plugin `rn` depends on,
-  writes and checks them. Their viewpoints then live in one place, so the documents the user
-  approves read as well as any `writ` writes, and improving `writ` improves them.
+- Only the conductor decides what happens next.
+
+    Decisions are made where the goal and the whole conversation are known, so a fix keeps what
+    already serves the goal. An evaluator sees only the thing, and fixes decided by its words would
+    rebuild what works.
+
+- Only the conductor uses git.
+
+    Every commit then records a decision someone actually made, so a later conversation goes on from
+    real decisions.
+
+- Everything is made and checked with the same essential viewpoints, and `rn` is improved by
+  sharpening them, not by adding steps.
+
+    A viewpoint asks what the work is for, so it fits situations no one foresaw and the user gets
+    work that serves the goal. An added step is followed even where it misses.
+
+- Documents lead the work and hold only what holds now.
+
+    A decision written down outlives a cleared conversation, and a document without history shows
+    what holds at a glance, so the user never explains again what was already decided.
+
+- `rn` decides what goes into the README and design document, and `writ`, a plugin `rn` depends on,
+  writes and checks them.
+
+    The viewpoints for documents then live in one place, so the documents the user approves read as
+    well as any `writ` writes, and improving `writ` improves them.
 
 ## It works out the goal and the design with the user
 
