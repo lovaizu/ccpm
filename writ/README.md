@@ -108,6 +108,7 @@ Claude Code が writ を選ぶかどうかはその場の判断なので、毎�
 - [README](references/essentials/readme.md) はさらに、製品を初めて知った人が、自分にとっての利点を知り、使うかどうかを決め、使い始められるかで確かめます。
 - [設計書](references/essentials/design.md)はさらに、作る人と直す人が、README に挙げた利点をどの機能がどう届けるかを知り、ある変更が設計に合うかどうかを説明できるかで確かめます。
 - [AI に読ませるプロンプト](references/essentials/prompt.md)はさらに、AI が、書き手の想定していなかった場面でも、目的を果たせる動き方を自分で選べるかで確かめます。
+- [観点](references/essentials/essentials.md)はさらに、書く役と確かめる役が、誰も想定していなかった部分についても、受け取る人に要るかどうかで判断できるかで確かめます。
 
 ## 入手して使い始める
 
