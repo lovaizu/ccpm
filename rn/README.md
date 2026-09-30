@@ -138,7 +138,7 @@ there. You can clear the conversation at that point and lose nothing: say "go on
 
 Once you approve the plan, `rn` works out the design with you: how to build it, and what to test so
 you know it works. You see and approve both before anything is built, so what comes back at the end
-is what you expected ([why](./docs/design.md#it-works-out-the-goal-and-the-design-with-the-user-one-point-at-a-time-looking-things-up-as-they-talk)).
+is what you expected.
 Of those, how strict the type checks start is a call of effort against safety, so it is yours. What
 you settle goes into your README and design document, which stay with your product, so the next
 session, or a teammate, starts from what you settled.
@@ -154,7 +154,7 @@ session, or a teammate, starts from what you settled.
 ### 4. Build and check the deliverable
 
 You don't babysit it. Each result is checked by an agent that did not make it, so it passes because it
-does its job, not because its maker says so ([why](./docs/design.md#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)). Each task has a purpose set in the plan, and each
+does its job, not because its maker says so. Each task has a purpose set in the plan, and each
 time `rn` decides what to do next against it, it says so in one line, so a glance tells you where it
 is and why:
 
