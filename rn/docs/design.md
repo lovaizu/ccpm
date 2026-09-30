@@ -132,7 +132,7 @@ Approving and giving feedback each stop, since that is where the user may clear 
 Once approved, the goal, the README, and the design document go back through their sign-off only
 when what the product should be, or how it is built, changes without the user having decided it.
 Two kinds of change are written without stopping: a correction that changes neither, such as a line
-number gone stale, and a change the user made by answering a question. The next review request shows
+number gone stale, and a change the user made by answering a question. The next proposal shows
 them first, as changed since the last approval. Stopping for them would spend the user's attention
 on nothing to decide; leaving them out would have the user approve something other than what they
 read.
@@ -146,7 +146,7 @@ flowchart TD
     G["Generator, one per task"]
     E["Evaluator, one per evaluation"]
     U -->|"conversation, commands"| C
-    C -->|"questions, review requests<br/>with the final Good/More"| U
+    C -->|"proposals, with the final<br/>Good/More as grounds"| U
     C -->|"a task, a More to fix"| G
     G -->|"edits in the working tree"| C
     C -->|"a commit or document to evaluate"| E
@@ -250,7 +250,7 @@ Having the user approve something that is no use until fixed only spends their t
 flowchart TD
     J{"Final Good/More<br/>for each viewpoint"}
     U["Back to working things out"]
-    R["The review request, committed<br/>as the body of the stop commit"]
+    R["The proposal, committed<br/>as the body of the stop commit"]
     P(["The user reads it"])
     L(["/rn:up in a later conversation<br/>gives the same body"])
     J -->|"fatal More, needs the user,<br/>or cannot go on"| U
@@ -259,8 +259,8 @@ flowchart TD
     R --> L
 ```
 
-Otherwise the review request opens with what `rn` proposes next, such as building on this design,
-and why that serves the goal. Then, as its grounds, it gives under every question put in the user's
+Otherwise `rn` gives the proposal: what it wants to do next, such as building on this design, and
+why that serves the goal. Then, as its grounds, it gives under every question put in the user's
 language the final Good and More, each at its place in the real thing and with its grounds, claiming
 no more than that place shows. Not the points and fixes along the way: the user approves the final state, and with those
 they would have to work out where each applies now. No More asks the user to decide or invites
@@ -463,8 +463,8 @@ is chosen to spare them.
 |---|---|
 | A whole session, from `/rn:on` to the Deliverable sign-off | Every time the user is called is a sign-off or a question only they can decide, and the evaluator agrees for each one. Between the Design and Deliverable sign-offs the user is not called unless such a question comes up |
 | The work waits on someone outside, such as a partner's answer | It asks the user what to do meanwhile, and does not stop on its own |
-| A correction to the approved README that changes neither what the product should be nor how it is built | It does not stop for it, and a stand-in reading only the next review request can tell what changed since the last approval |
-| Each of the three sign-offs | A stand-in for the user who reads only the review request decides to approve or give feedback, and the evaluator, reading the real thing, finds the same decision right |
+| A correction to the approved README that changes neither what the product should be nor how it is built | It does not stop for it, and a stand-in reading only the next proposal can tell what changed since the last approval |
+| Each of the three sign-offs | A stand-in for the user who reads only the proposal decides to say yes or no, and the evaluator, reading the real thing, finds the same decision right |
 
 ### Work that takes days goes on from where it stopped
 
@@ -474,7 +474,7 @@ all again each time.
 | Scene | Passes when |
 |---|---|
 | `/rn:dn` in the middle of a task, then `/rn:up` in a fresh conversation | It starts from the same task, does not redo finished ones, speaks the user's language, and asks nothing already decided |
-| `/rn:up` at a sign-off in a fresh conversation | It gives the same review request again |
+| `/rn:up` at a sign-off in a fresh conversation | It gives the same proposal again |
 
 ### What the user takes for granted
 
@@ -486,7 +486,7 @@ cannot tell why things came out as they did.
 | `/rn:up` on a session started under 0.8.0 | A `steering.md` in the current form, carrying over what was done, is made, and it stops at the Plan sign-off |
 | `/rn:gm` at the Deliverable sign-off, fixable within the design | Tasks are added and carried out, and it stops at the Deliverable sign-off again |
 | `/rn:gm` at the Deliverable sign-off, changing what the product should be | It works out the design with the user, stops at a Design sign-off, and then at the Deliverable sign-off again |
-| Each of the three sign-offs | Every Good and More in the review request holds when the evaluator checks it at its place |
+| Each of the three sign-offs | Every Good and More in the proposal holds when the evaluator checks it at its place |
 | Every scene | The evaluations, and the decision on each More, are in the commit messages, whole; `open/` is empty at every sign-off; each stop's message is its commit's body |
 
 What a script can decide, such as `open/` being empty at a stop or a stop's message matching its

@@ -39,14 +39,14 @@ flowchart TD
     E@{ shape: fr-circ }
 
     S -->|start| PlanTalk
-    PlanTalk -.->|review request| Plan
+    PlanTalk -.->|proposal| Plan
     Plan -->|feedback| PlanTalk
     Plan -->|approve| DesignTalk
-    DesignTalk -.->|review request| Design
+    DesignTalk -.->|proposal| Design
     Design -->|feedback| DesignTalk
     Design -->|approve| Make
     Make -.->|a decision is yours| DesignTalk
-    Make -.->|review request| Deliverable
+    Make -.->|proposal| Deliverable
     Deliverable -->|feedback| Make
     Deliverable -->|feedback that changes the design| DesignTalk
     Deliverable -->|approve| E
