@@ -13,7 +13,7 @@
 Who is who: the conductor is the main conversation with the user, the one that decides every next
 move. A generator makes one task's result. An evaluator checks one thing, answering each essential
 viewpoint (a question the thing must answer yes to, kept in `references/essentials.md`) with Good,
-what serves it and must be kept, and More, what falls short.
+what serves it, and More, what falls short.
 
 The whole session, from the inside:
 
@@ -147,7 +147,7 @@ viewpoints for each kind of thing are kept in one place; whoever makes aims for 
 checks asks the same questions, so making and checking do not drift apart.
 
 Only whoever checks answers, with Good and More of the same weight. Both point to a place in the real
-thing and say why. A Good adds why it must be kept when fixing; a More adds what the user will
+thing and say why. A Good adds what the user gains from it, which a fix must not take away; a More adds what the user will
 struggle with because of it. How to fix it is left to the conductor: a fix written into the
 evaluation would pull that decision toward the evaluator's first idea.
 
