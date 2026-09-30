@@ -23,7 +23,7 @@ flowchart TD
     W["Work out the plan with the user"]
     P["Write the plan, evaluate it"]
     PS{{"Plan sign-off"}}
-    D["Work out the design with the user,<br/>write it into the README and design document,<br/>evaluate it"]
+    D["Work out the design with the user;<br/>writ writes and checks the README<br/>and design document"]
     DS{{"Design sign-off"}}
     P2["Plan the tasks that make the deliverable,<br/>evaluate them"]
     T["Carry out the tasks one by one"]
@@ -50,7 +50,7 @@ flowchart TD
     FS -->|"/rn:ty"| END
 ```
 
-Four policies hold across the features:
+Five policies hold across the features:
 
 - Only the conductor decides what happens next. An evaluator sees only the thing, so fixes decided
   by its words would rebuild what already serves the goal, and the user would not get what they
@@ -63,6 +63,9 @@ Four policies hold across the features:
 - Documents lead the work and hold only what holds now. A decision kept only in a conversation is
   lost when it is cleared, and history left in a document buries what holds now, so either way the
   user explains again what was already decided.
+- `rn` decides what goes into the README and design document; `writ`, a plugin `rn` depends on,
+  writes and checks them. Their viewpoints then live in one place, so the documents the user
+  approves read as well as any `writ` writes, and improving `writ` improves them.
 
 ## It works out the goal and the design with the user, one point at a time, looking things up as they talk
 
@@ -72,7 +75,9 @@ finishing the research before asking, since the user's answers change where to l
 repository, official documentation, or best practice can answer is looked up, not asked. The plan
 has its own sign-off, because a design worked out on a wrong goal is wasted.
 
-The design is worked out the same way, with what to test and what passes. There is always a Design sign-off, even when the design
+The design is worked out the same way, with what to test and what passes. What is settled goes to
+`writ`, which writes it into the README and design document and returns the final Good and More for
+its viewpoints, for the Design sign-off. There is always a Design sign-off, even when the design
 document does not change, because a mismatch found only after it is built costs a lot of rework.
 Tasks that make the deliverable are planned only once the design is settled; tasks planned before
 the design would mostly be rewritten once it is.
@@ -140,9 +145,9 @@ flowchart TD
     E -->|"what to ask when checking"| V
 ```
 
-Everything `rn` makes, such as a plan, a design document, or a task's result, has a purpose, stated
-as what whoever receives it can then do. For a README, that is "can a newcomer tell what they get and
-start using it", not "is there an install step". Whether it was done can be met by following steps;
+Everything `rn` makes, such as a plan or a task's result, has a purpose, stated as what whoever
+receives it can then do. For a plan, that is "can the conductor carry the work to the goal by it",
+not "does it list tasks". Whether it was done can be met by following steps;
 whether it serves its purpose can be answered only by looking at the real thing. Making and
 checking read the same file of viewpoints, so they do not drift apart.
 
@@ -197,8 +202,7 @@ evaluation with `/rn:gm`.
 When Mores contradict each other, `rn` does not pick one. They are a sign that something is
 undecided in the goal, the essential viewpoints, or a document, so that is what gets decided.
 
-A plan and a design follow the same flow, with the conductor, not a generator, making and fixing
-them. The whole deliverable is evaluated once, when the tasks planned after the last Design sign-off
+A plan follows the same flow, with the conductor, not a generator, making and fixing it. The whole deliverable is evaluated once, when the tasks planned after the last Design sign-off
 are done.
 
 ## A sign-off comes with the final Good and More for every essential viewpoint, each at its place and with its grounds
@@ -248,7 +252,7 @@ flowchart TD
     O["open/:<br/>items not yet settled"]
     M["Commit messages:<br/>the decision line, and settled items"]
     C -->|"writes"| S
-    C -->|"works out with the user and writes"| RD
+    C -->|"what is settled with the user, via writ"| RD
     E -->|"evaluation"| O
     U -->|"words given with /rn:gm"| O
     C -->|"notes left by /rn:dn"| O
