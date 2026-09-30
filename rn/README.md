@@ -1,10 +1,11 @@
 # rn — Right Now
 
-Say what you want to achieve, and `rn` carries it all the way there. All you do is decide.
+Say what you want to achieve in your repository, and `rn` carries it all the way there. All you do
+is decide.
 
 - You get what you really want, without writing a careful prompt first.
-- Your time goes only to the decisions that are yours: you don't babysit the work, and you don't
-  re-read all of it to approve it.
+- Your time goes only to the decisions that are yours, such as what to build and how much risk to
+  take: you don't babysit the work, and you don't re-read all of it to approve it.
 - Work that takes days goes on the next day, or in a fresh conversation, from where it stopped.
 
 Most AI agents need a carefully written prompt and some babysitting.
@@ -13,7 +14,8 @@ Most AI agents need a carefully written prompt and some babysitting.
 
 - [Claude Code](https://code.claude.com)
 - A git repository with its remote on GitHub, since `rn` puts everything you review on a pull request
-- The [GitHub CLI](https://cli.github.com) `gh`, which `rn` uses to open and update a pull request
+- The [GitHub CLI](https://cli.github.com) `gh`, logged in with push access, which `rn` uses to open
+  and update a pull request
 
 ## Install
 
@@ -25,7 +27,15 @@ plugin:
 > /plugin install rn@ccpm
 ```
 
+This also installs `writ`, from the same marketplace, which `rn` has write your README and design
+document so they read well to whoever picks them up.
+
 ## How a session goes
+
+One goal carried through to the end is a session. A sign-off is where you look at the work before it
+goes past that point, and say yes to `rn`'s proposal or give feedback. Between sign-offs, `rn` calls
+you only for a decision that is yours. It works on its own branch and a draft pull request, so your
+default branch is untouched until you merge.
 
 ```mermaid
 flowchart TD
@@ -34,7 +44,7 @@ flowchart TD
     Plan("Plan sign-off")
     DesignTalk("Work out the design")
     Design("Design sign-off")
-    Make("Generate and evaluate the deliverable")
+    Make("Build and check the deliverable")
     Deliverable("Deliverable sign-off")
     E@{ shape: fr-circ }
 
@@ -60,15 +70,12 @@ Dotted lines are where `rn` moves on, solid lines are yours, a bold box is where
 up while talking with you one point at a time, until you both see the same thing, and the dashed box
 is where it works without you.
 
-One goal carried through to the end is a session. A sign-off is where you look at the work before it
-goes past that point, and approve it or give feedback. `rn` stops only there, and where you pause
-it.
-
 Say your app is written in JavaScript, and you want it moved to TypeScript — work that takes days.
 
 ### 1. Start — `/rn:on`
 
-Say what you want, as roughly as it comes to mind; what you get is what you meant. `rn` tells you
+In your repository, say what you want, as roughly as it comes to mind; what you get is what you
+meant. `rn` tells you
 how it understands it, one point at a time — what you want, why you want it, and how you would know
 the goal is achieved — and moves on only when you agree. What the repository, the official documentation, or best practice can
 answer, it looks up instead of asking you.
@@ -88,7 +95,7 @@ answer, it looks up instead of asking you.
 Knowing why you want it is what shows where your first words would go wrong: every file ending in
 .ts would have let the bugs through.
 
-Then `rn` writes the plan and puts it on a draft pull request. The plan holds the goal, how you
+Then `rn` writes the plan, `steering.md`, and puts it on a draft pull request. The plan holds the goal, how you
 would know it is achieved, and the tasks. The tasks that build it are planned once the design is
 settled, so they follow what you agree to there.
 
@@ -117,9 +124,9 @@ no from this, and read the plan itself on the pull request whenever you want.
 ### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
 
 `/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
-comments on the pull request as feedback, so you can comment where you read. Either one stops, a
-point where you can clear the conversation and lose nothing: say "go on" to continue, or `/clear`
-first, then `/rn:up`.
+comments on the pull request as feedback, so you can comment where you read. Either one stops
+there. You can clear the conversation at that point and lose nothing: say "go on" to continue, or
+`/clear` first, then `/rn:up`.
 
 ```console
 > /rn:ty
@@ -144,17 +151,20 @@ session, or a teammate, starts from what you settled.
   Which weighs more for you?
 ```
 
-### 4. Generate and evaluate the deliverable
+### 4. Build and check the deliverable
 
 You don't babysit it. Each result is checked by an agent that did not make it, so it passes because it
-does its job, not because its maker says so ([why](./docs/design.md#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)). Each time `rn` decides what to
-do next, it says so in one line, so a glance tells you where it is and why:
+does its job, not because its maker says so ([why](./docs/design.md#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)). Each task has a purpose set in the plan, and each
+time `rn` decides what to do next against it, it says so in one line, so a glance tells you where it
+is and why:
 
 ```console
 ● #3 move src/cart ── decided: purpose not fulfilled. It passes only because its types are `any`;
   last quarter's cart bug would still ship → fix
 ● #3 move src/cart ── decided: purpose fulfilled → #4
 ```
+
+If a decision only you can make comes up, `rn` asks you, with what it proposes and why.
 
 ### 5. Pause and resume — `/rn:dn`, `/rn:up`
 
@@ -180,8 +190,17 @@ day, `/rn:dn` records how far the session has come. When you want a fresh conver
 ### 6. Finish — Deliverable sign-off
 
 You approve the deliverable, your product as the session leaves it, by whether it achieves the goal
-you agreed at the start: it was built and checked against that goal, not only against its tasks. When something falls short, `/rn:gm` has it fixed. On `/rn:ty` the pull request is marked
-ready; the merge is yours. Besides your product, the session leaves only its `.rn/` directory, the
+you agreed at the start. It was built and checked against that goal, not only against its tasks.
+When something falls short, `/rn:gm` has it fixed. On `/rn:ty` the pull request is marked ready,
+and the merge is yours:
+
+```console
+> /rn:ty
+
+● Approved the deliverable. The pull request is ready: https://github.com/you/repo/pull/42
+```
+
+Besides your product, the session leaves only its `.rn/` directory, the
 record of how things were decided, so you or a teammate can later see why things came out as they
 did.
 
