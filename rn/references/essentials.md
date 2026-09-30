@@ -58,8 +58,11 @@ The document the `design` field names.
 - Can whoever builds it read it and decide which qualities to check, how, and what passes?
 
     The qualities are drawn one by one from what the design says the product delivers, each with what
-    the user struggles with if it fails; that the product achieves its goal comes before that its
-    mechanisms work as designed. It says how far to check, and what that gives up.
+    the user struggles with if it fails. What the user would choose the product for comes first, then
+    what they take for granted: a product that is only correct gives no reason to use it, and checks
+    of what is taken for granted crowd out the ones that show why it is worth using. That the product
+    achieves its goal comes before that its mechanisms work as designed. It says how far to check,
+    and what that gives up.
 
 - Can whoever changes it later tell why each decision was made, and what another way would lose?
 
