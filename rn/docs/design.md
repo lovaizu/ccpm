@@ -32,6 +32,8 @@
 
     Works in 5. Pause and resume.
 
+## Who does what, and what holds throughout
+
 Who is who: the conductor is the main conversation with the user, the one that decides every next
 move. A generator makes one task's result. An evaluator checks one thing, answering each essential
 viewpoint (a question the thing must answer yes to, kept in `references/essentials.md`) with Good,
