@@ -2,9 +2,9 @@
 
 The readers are the producing role, which reads the essentials as the shape to aim for, and the checking role, which reads them as questions to answer. When they finish, they can judge any part of any work by whether the receiver of the work needs it, including parts no one foresaw.
 
-- Can the question, and every sentence under it, be met only by someone who understands the receiver's purpose?
+- Can the question, and every sentence under it, be answered only by someone who understands the receiver's purpose?
 
-    A question and explanation answered from the purpose keep the producing role aiming at it and the checking role judging by it, even in cases no one foresaw, and they are answered from the state of the finished work, not from whether steps were followed. Anything form alone satisfies is a rule, whether it is the question, such as "show an example", or a means named in the explanation, such as "link to the design doc": the producing role adds it where it does not help, and the checking role counts it as a Good because the essentials name it.
+    Answered from the purpose, the question and its explanation keep the producing role aiming at it and the checking role judging by it, even in cases no one foresaw, and they are answered from the state of the finished work, not from whether steps were followed. Anything form alone satisfies, such as "show an example" or a named means like "link to the design doc", is added where it does not help and counted as a Good because it is there.
 
 - Does each question find both what is missing and what is extra?
 
@@ -14,10 +14,10 @@ The readers are the producing role, which reads the essentials as the shape to a
 
     A question asked of the purpose covers every case, including the one no one listed. A list of cases grows with each new one and still misses some.
 
-- Does the explanation under each question give only why the receiver needs it, led by what they gain?
+- Does the explanation under each question give why the receiver needs it, led by what they gain?
 
-    An explanation that says what the receiver gains when the question holds lets the roles judge cases no one wrote down; an example may show it, and a contrast with what the receiver loses comes last and brief. Steps and flow rules belong in the design or the prompt; under a question they are followed where they do not fit.
+    An explanation that says what the receiver gains when the question holds lets the roles judge cases no one wrote down; an example may show it, and a contrast with what the receiver loses comes last and brief.
 
-- Are the questions few enough to remember, each tracing to a benefit the receiver would choose the work for?
+- Do the questions and the receiver's benefits match closely enough to remember?
 
-    A few questions, each catching together the errors that come from one cause, keep the producing role's aim steady and the checking role's answers deep. With non-essential questions the aim drifts and fixing never ends; when the answers are shallow, refine the questions rather than add roles.
+    When every question traces to a benefit the receiver would choose the work for, and every such benefit has a question, the producing role's aim stays steady and the checking role's answers go deep. A question tracing to no benefit makes the aim drift and fixing never end; a benefit with no question goes unchecked.
