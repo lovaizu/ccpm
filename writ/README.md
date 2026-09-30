@@ -1,106 +1,119 @@
 # writ
 
-With writ, the documents Claude Code writes read as if a person wrote them, and come finished in a shape that lets the reader take in their content with the least effort. You no longer have to read and fix documents that leave you unsure what you are supposed to do, sentences that repeat the same thing in other words, or preambles that say nothing.
+writ なしで Claude Code に文書を頼むと、文書は書けても、それが読み手に合っているかを読んで直すのはあなたです。writ を使うと、次の状態が得られます。
 
-## Call `/writ:up`, just answer what it asks, and a finished document comes back
+- 返ってきた文書を、自分で読んで直さずに、そのまま読み手へ渡せます。
+
+    読み手は読み終えて何をすればよいかが分かり、あなたは同じことを言い換えて繰り返す文や、何も言っていない前置きを削る手間がなくなります。
+
+- 全文を読み直さなくても、返答だけで、承認するか直しを頼むかを決められます。
+- 読み手が目的を果たせなくなるほどの中身の欠けは、うまい文で隠されずに、あなたが決めることとして手元に戻ってきます。
+- 作業の途中で Claude Code が書く README や設計書も、あなたが頼まなくても同じように仕上がります。
+
+## `/writ:up` を呼んで聞かれたことに答えると、仕上がった文書と問いごとの答えが返ってきます
 
 ```mermaid
 flowchart TD
-  U([You])
-  D[/"Document you hand over (only when fixing)"/]
-  C[(Repository and code)]
-  W[writ]
-  F[/Finished document/]
-  U -->|"/writ:up and your replies"| W
-  D -->|Current content| W
-  W -->|Asks about reader and purpose| U
-  C -->|Facts it looked up| W
-  W -->|Written and fixed content| F
-  W -->|"Good points to keep, shortfalls left"| U
-  W -.->|"Content problem that blocks the purpose"| U
+  S1["/writ:up を呼ぶ<br/>（直すときは文書を渡す）"]
+  S2[読み手と目的の質問に答える]
+  S3[仕上がった文書と、<br/>問いごとの Good と More を受け取る]
+  S4[Good と More を読んで、<br/>承認するか直しを頼むかを決める]
+  T[目的に要る中身の欠けについて話し合う]
+  S1 --> S2
+  S2 -->|答え| S3
+  S2 -.->|目的に要る中身が欠けているときは、文書の代わりに| T
+  T -->|決めたこと| S3
+  S3 --> S4
 ```
 
-writ does not start writing until it is decided who reads the document and what they decide and do when they finish. The quality of a document can only be measured once its reader and purpose are decided.
+writ は、誰が読み、読み終えて何を決め何をするのかが定まるまで書き始めません。文書の良し悪しは、読み手とその目的が決まって初めて測れるからです。
 
-Before returning the document, writ checks it through the eyes of a reader who does not know the discussion so far, and fixes what it can. Remarks along the way and how the fixes went are not returned. [Why it takes this shape](docs/design.md) is in the design doc.
+返す前に、writ は文書を、ここまでの話し合いを知らない読み手の目で確かめ、直せるところを直してから返します。返答に添えられるのは、今の文書についての答えだけで、途中の指摘や直しの経緯は含まれません。[なぜこの形なのか](docs/design.md)は設計書に書いています。
 
-## Example: writing a TypeScript migration plan for your team
+## 例：TypeScript への移行計画をチームに向けて書く
 
-Say your app written in JavaScript is moving to TypeScript, and you are writing the plan for your team.
+JavaScript で書かれたアプリを TypeScript に移すことになり、その計画書をチームに向けて書くとします。
 
 ```console
 > /writ:up
 
-● Before I write, tell me three things.
-  1. Who reads this document?
-  2. When they finish, what do they decide and what do they do?
-  3. Where should it go?
+● 書く前に3つ教えてください。
+  1. この文書は誰が読みますか。
+  2. 読み終えたとき、その人は何を決め、何をしますか。
+  3. どこに置きますか。
 
-> The engineers on the team. I want them to agree on which directory to move first and each take on a part.
-  Put it in docs/migration-plan.md.
+> チームのエンジニア。どのディレクトリから移すかに合意して、それぞれ担当を引き受けてほしい。
+  docs/migration-plan.md に置いて。
 ```
 
-writ looks into the repository's directory layout and code, then writes the plan into docs/migration-plan.md.
+writ はリポジトリのディレクトリ構成やコードを調べてから計画書を書き、docs/migration-plan.md に書き込みます。
 
 ```markdown
-# TypeScript migration plan
+# TypeScript 移行計画
 
-We move src/api/ first, then go on to src/ui/. src/api/ is what the rest of the code calls, so once it has types, mistakes in the calling code show up right away too.
+最初に src/api/ を移し、次に src/ui/ に進みます。src/api/ はほかのコードから呼ばれる側なので、ここに型が付くと、呼ぶ側の誤りもすぐ見つかるようになります。
 
-| Directory | Owner |
+| ディレクトリ | 担当 |
 | --- | --- |
-| src/api/ | (undecided) |
-| src/ui/ | (undecided) |
+| src/api/ | （未定） |
+| src/ui/ | （未定） |
 ```
 
-The reply comes with Good and More. Good is what helps and should be kept from now on. More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
+返答には、使った観点の問いが1つずつそのまま並び、それぞれに Good か More、あるいは両方が付きます。観点とは、文書の種類ごとに、良い文書かを問いの形で並べたものです。Good は、役立っていて今後も守るべきところです。More は、writ が直さずに残した足りないところで、読み手が何に困るかと、なぜ残したかが付きます。どちらにも、文書のどこの話かと、その根拠が付きます。
 
 ```console
-● Good (Every document): The first sentence says which directory moves first.
-    Location: line 3 (the sentence after the heading)
-    Evidence: The reader gets what they need to agree on in the first sentence.
+● docs/migration-plan.md に書きました。すべての文書の観点（doc.md）の問いごとの答えです。
 
-  More (Every document): The owner column is empty.
-    Location: the owner table
-    Reader's problem: Until the blanks are filled, readers do not know what they are taking on.
-    Why left: Who owns what is for you and your team to decide, so it was left as blanks.
+  問い: 読み手は、最初の1文から中身を受け取れるか。
+    Good: 冒頭の1文で、最初に移すディレクトリが分かる。
+      場所: 3行目（見出しの次の1文）
+      根拠: 読み手が合意すべき点を、最初の1文で受け取れる。
+
+  問い: 読み手は、必要なことをこの文書だけから受け取れ、要らない文を読まずに済むか。
+    More: 担当の欄が空いている。
+      場所: 担当の表
+      困ること: 読み手は、空欄が埋まるまで自分が何を引き受けるのか分からない。
+      根拠: 表の2行とも、担当が「（未定）」になっている。
+      残した理由: 誰が担当するかはあなたとチームが決めることなので、空欄の形で残した。
 ```
 
-To fix a plan you already have, hand over the document. writ reads it and asks only what it cannot tell from it.
+実際の返答では、doc.md のすべての問いに、この形で答えが並びます。どの問いへの答えかが分かるので、答えのない問いがないことも返答だけで確かめられます。
+
+すでにある計画書を直すときは、その文書を渡します。writ は文書を読んだうえで、そこから分からないことだけを聞きます。
 
 ```console
 > /writ:up docs/migration-plan.md
 
-● I read this plan as being for the team's engineers to agree on the order in which to move things and the deadline for finishing.
-  But no deadline is written anywhere. Has a deadline been set?
+● この計画書は、チームのエンジニアが移す順番と移し終える期限に合意するためのものと読みました。
+  ただ、期限がどこにも書かれていません。期限は決まっていますか。
 ```
 
-If the deadline is set, the fixed result is written into the original file, and Good and More come back the same way. If it is not set yet, you do not get back a plan that blurs the deadline with clever wording; the discussion starts from what to do about the deadline. A plan without a deadline cannot achieve its purpose of having readers agree on a deadline. That is how it differs from the owner column, which can be left blank.
+期限が決まっていれば、直した結果は元のファイルに書き込まれ、同じように問いごとの Good と More が返ってきます。期限がまだ決まっていなければ、うまい言い回しで期限をぼかした計画書は返ってこず、期限をどうするかから話が始まります。期限のない計画書では、読み手が期限に合意するという目的を果たせないからです。空欄で残せる担当の欄とは、ここが違います。
 
-## Claude Code also uses writ on its own in situations where it writes documents
+## 作業の途中では、呼ばなくても Claude Code が writ を使います
 
-When Claude Code writes a README or a design doc in the middle of its work, it writes right away if the conversation tells it the reader and purpose, asks you only when it does not know them, and attaches Good and More to its reply.
+作業の途中で Claude Code が README や設計書を書くときは、`/writ:up` を呼ばなくても writ を使います。会話から読み手と目的が分かればそのまま書き、分からないときだけあなたに聞き、問いごとの Good と More を返答に添えて返します。
 
-## Documents are checked against the essentials for their kind
+## 文書は、種類ごとの観点で確かめられます
 
-- [Every document](references/essentials/doc.md) is checked on whether the reader can grasp the whole by reading from top to bottom and, when they finish, do what they need to do.
-- A [README](references/essentials/readme.md) is also checked on whether someone meeting the product for the first time learns what it does for them, decides whether to use it, and can start using it.
-- A [design doc](references/essentials/design.md) is also checked on whether builders and maintainers learn how the outcome for the user is realized, and can explain whether a given change fits the design.
-- A [prompt for an AI to read](references/essentials/prompt.md) is also checked on whether the AI can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee.
+- [どの文書も](references/essentials/doc.md)、読み手が上から順に読むだけで全体をつかみ、読み終えたときにすべきことができるかで確かめます。
+- [README](references/essentials/readme.md) はさらに、製品を初めて知った人が、自分にとっての利点を知り、使うかどうかを決め、使い始められるかで確かめます。
+- [設計書](references/essentials/design.md)はさらに、作る人と直す人が、README に挙げた利点をどの機能がどう届けるかを知り、ある変更が設計に合うかどうかを説明できるかで確かめます。
+- [AI に読ませるプロンプト](references/essentials/prompt.md)はさらに、AI が、書き手の想定していなかった場面でも、目的を果たせる動き方を自分で選べるかで確かめます。
 
-## Get it and start using it
+## 入手して使い始める
 
-writ is a Claude Code plugin, so you need Claude Code.
+writ は Claude Code のプラグインなので、Claude Code が必要です。
 
-writ is available from the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install writ.
+writ はプラグインマーケットプレイス `lovaizu/ccpm` から入手できます。Claude Code で、マーケットプレイスを追加してから writ を入れてください。
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install writ@ccpm
 ```
 
-Now `/writ:up` is ready to use.
+これで `/writ:up` が使えるようになります。
 
-## License
+## ライセンス
 
-MIT License. The full text is in [LICENSE](../LICENSE) at the repository root.
+MIT ライセンスです。条文はリポジトリ直下の [LICENSE](../LICENSE) にあります。
