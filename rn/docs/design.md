@@ -81,8 +81,9 @@ The design is worked out the same way, with what to test and what passes. `rn` d
 into the README and design document, and `writ` writes them and returns the final Good and More for
 its viewpoints. The viewpoints for documents then live in one place, so the documents the user
 approves read as well as any `writ` writes, and improving `writ` improves them; two copies would
-drift apart. The conductor checks `writ`'s Goods and Mores at their places as it does an
-evaluator's, and commits the edits. There is always a Design sign-off, even when the design document
+drift apart. Points agreed while working out the design wait in `open/` until `writ` writes them,
+so a pause loses none. What `writ` returns is kept in `open/` as an evaluation and settled as one, so
+the conductor checks its Goods and Mores at their places and its record reaches the commit whole. There is always a Design sign-off, even when the design document
 does not change, since the user sees how it will be built and checked before anything is built
 (README, 3. Work out the design). Tasks that make the deliverable are planned only once the design
 is approved; tasks planned before the design would mostly be rewritten once it is.
@@ -230,7 +231,7 @@ conversation gives never differ.
 flowchart TD
     U(["User"])
     C["Conductor"]
-    E["Evaluator"]
+    E["Evaluator, or writ"]
     S["steering.md:<br/>the goal and the plan"]
     O["open/:<br/>items not yet settled"]
     M["Commit messages:<br/>settled items and the decision line"]
@@ -238,7 +239,7 @@ flowchart TD
     C -->|"writes"| S
     E -->|"evaluation"| O
     U -->|"words given with /rn:gm"| O
-    C -->|"notes left by /rn:dn"| O
+    C -->|"notes: design points agreed,<br/>and what /rn:dn leaves"| O
     O -->|"settled by the conductor"| M
     S -->|"read"| UP
     O -->|"read"| UP
