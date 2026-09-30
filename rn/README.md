@@ -108,8 +108,8 @@ is settled.
 
 The map on top heads every message where `rn` stops for a sign-off or a pause: ✅ done, 👉 now,
 ⬜ ahead. Under it, `rn` says what it proposes to do next and why, then gives its grounds: each
-question the plan must answer, with what is good and what falls short, and where. You only say yes or
-no, without reading the whole plan.
+question the plan must answer, with what is good and what falls short, and where. You can say yes or
+no from this, and read the plan itself on the pull request whenever you want.
 
 ### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
 
