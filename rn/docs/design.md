@@ -2,35 +2,25 @@
 
 ## The benefits, and the features that give them
 
-### You get what you really want, without writing a careful prompt first
+Each feature below has its own section, and the README stages where it works are under its name.
 
-- [It works out the goal and the design with the user, one point at a time, looking things up as they talk](#it-works-out-the-goal-and-the-design-with-the-user-one-point-at-a-time-looking-things-up-as-they-talk)
-
-    Works in the README's 1. Start and 3. Work out the design.
-
-- [An evaluator that did not make the work checks it once, and the conductor settles the fixes before the user is called](#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)
-
-    Works in 4. Generate and evaluate.
-
-### Your time goes only to the decisions that are yours
-
-- [It calls the user only at three sign-offs, and for decisions only the user can make](#it-calls-the-user-only-at-three-sign-offs-and-for-decisions-only-the-user-can-make)
-
-    Works in 2. Approve or give feedback, and 4. Generate and evaluate.
-
-- [An evaluator that did not make the work checks it once, and the conductor settles the fixes before the user is called](#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)
-
-    Works in 4. Generate and evaluate.
-
-- [A sign-off comes with what rn proposes next, grounded in the final Good and More for every essential viewpoint](#a-sign-off-comes-with-what-rn-proposes-next-grounded-in-the-final-good-and-more-for-every-essential-viewpoint)
-
-    Works in 2. Approve or give feedback, and 6. Finish.
-
-### Work that takes days goes on the next day, or in a fresh conversation, from where it stopped
-
-- [Everything decided is pushed to the branch as it is decided, so any conversation takes the session up](#everything-decided-is-pushed-to-the-branch-as-it-is-decided-so-any-conversation-takes-the-session-up)
-
-    Works in 5. Pause and resume.
+```mermaid
+flowchart LR
+    F1["It works out the goal and the design with the user<br/>README 1, 3"]
+    F3["An evaluator that did not make the work checks it<br/>README 4"]
+    F2["It calls the user only for decisions that are theirs<br/>README 2, 4"]
+    F4["A sign-off comes with a proposal and its grounds<br/>README 2, 6"]
+    F5["Everything decided is pushed, so any conversation goes on<br/>README 5"]
+    B1(["You get what you really want,<br/>without writing a careful prompt first"])
+    B2(["Your time goes only to<br/>the decisions that are yours"])
+    B3(["Work that takes days goes on<br/>from where it stopped"])
+    F1 --> B1
+    F3 --> B1
+    F3 --> B2
+    F2 --> B2
+    F4 --> B2
+    F5 --> B3
+```
 
 ## Who does what, and what holds throughout
 
@@ -91,7 +81,7 @@ Five policies hold across the features:
   writes and checks them. Their viewpoints then live in one place, so the documents the user
   approves read as well as any `writ` writes, and improving `writ` improves them.
 
-## It works out the goal and the design with the user, one point at a time, looking things up as they talk
+## It works out the goal and the design with the user
 
 The conductor works out the plan before anything else, because a plan built on the user's first
 words achieves what they said, not what they wanted. It looks things up while talking instead of
@@ -112,7 +102,7 @@ what the words say leaves the mismatch in place. Feedback on the deliverable tha
 product should be goes back to working out the design, through a Design sign-off, since the README
 and design document are what the user approved the product to be.
 
-## It calls the user only at three sign-offs, and for decisions only the user can make
+## It calls the user only for decisions that are theirs
 
 The user is asked only what only the user can decide: taste, scope, effort against safety, whether to
 wait for someone outside, what the product should be, another way when fixes keep falling short, and
@@ -137,7 +127,7 @@ them first, as changed since the last approval. Stopping for them would spend th
 on nothing to decide; leaving them out would have the user approve something other than what they
 read.
 
-## An evaluator that did not make the work checks it once, and the conductor settles the fixes before the user is called
+## An evaluator that did not make the work checks it
 
 ```mermaid
 flowchart TD
@@ -233,7 +223,7 @@ undecided in the goal, the essential viewpoints, or a document, so that is what 
 A plan follows the same flow, with the conductor, not a generator, making and fixing it. The whole deliverable is evaluated once, when the tasks planned after the last Design sign-off
 are done.
 
-## A sign-off comes with what rn proposes next, grounded in the final Good and More for every essential viewpoint
+## A sign-off comes with a proposal and its grounds
 
 When every More is decided, the conductor checks the final Good and More for each question of the
 essential viewpoints. A fatal More is one without which the goal cannot be achieved, and whose fix
@@ -269,7 +259,7 @@ feedback, since those went back to working things out.
 The user is given the body of the stop commit word for word, so what the user read and what a later
 conversation gives never differ.
 
-## Everything decided is pushed to the branch as it is decided, so any conversation takes the session up
+## Everything decided is pushed, so any conversation goes on
 
 ```mermaid
 flowchart TD
