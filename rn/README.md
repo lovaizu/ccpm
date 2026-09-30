@@ -96,6 +96,9 @@ is settled.
 
   Draft PR: https://github.com/you/repo/pull/42
 
+  I propose working out the design on this plan: it says what you want, why, and how you would
+  know it is achieved.
+
   ### Can you read the goal and say "yes, that is what I want, and why"?
   - Good: it names the three type bugs as the reason (steering.md:11), so every later choice is
     judged against stopping them
@@ -104,8 +107,9 @@ is settled.
 ```
 
 The map on top heads every message where `rn` stops for a sign-off or a pause: ✅ done, 👉 now,
-⬜ ahead. Under it, each question the plan must answer comes with what is good and what falls short,
-and where, so you can decide without reading the whole plan.
+⬜ ahead. Under it, `rn` says what it proposes to do next and why, then gives its grounds: each
+question the plan must answer, with what is good and what falls short, and where. You only say yes or
+no, without reading the whole plan.
 
 ### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
 

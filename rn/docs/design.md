@@ -22,7 +22,7 @@
 
     Works in 4. Generate and evaluate.
 
-- [A sign-off comes with the final Good and More for every essential viewpoint, each at its place and with its grounds](#a-sign-off-comes-with-the-final-good-and-more-for-every-essential-viewpoint-each-at-its-place-and-with-its-grounds)
+- [A sign-off comes with what rn proposes next, grounded in the final Good and More for every essential viewpoint](#a-sign-off-comes-with-what-rn-proposes-next-grounded-in-the-final-good-and-more-for-every-essential-viewpoint)
 
     Works in 2. Approve or give feedback, and 6. Finish.
 
@@ -118,6 +118,10 @@ The user is asked only what only the user can decide: taste, scope, effort again
 wait for someone outside, what the product should be, another way when fixes keep falling short, and
 whether the deliverable achieves the goal. Everything else is looked up or decided from the goal. The
 more the user is asked, the less they can leave the work to `rn`.
+
+Whenever `rn` calls the user, at a question or a sign-off, it comes with what it proposes to do next
+toward the goal, and why, so the user only says yes or no. A report of where things stand would
+leave the user to work out what to do next, which is the work they left to `rn`.
 
 A question is put so the user can answer it on the spot. When the work waits on someone outside,
 what to do meanwhile is such a question, not a stop: a stop leaves the user unsure what `rn` is
@@ -229,7 +233,7 @@ undecided in the goal, the essential viewpoints, or a document, so that is what 
 A plan follows the same flow, with the conductor, not a generator, making and fixing it. The whole deliverable is evaluated once, when the tasks planned after the last Design sign-off
 are done.
 
-## A sign-off comes with the final Good and More for every essential viewpoint, each at its place and with its grounds
+## A sign-off comes with what rn proposes next, grounded in the final Good and More for every essential viewpoint
 
 When every More is decided, the conductor checks the final Good and More for each question of the
 essential viewpoints. A fatal More is one without which the goal cannot be achieved, and whose fix
@@ -255,9 +259,10 @@ flowchart TD
     R --> L
 ```
 
-Otherwise the review request gives, under every question put in the user's language, the final Good
-and More, each at its place in the real thing and with its grounds, claiming no more than that place
-shows. Not the points and fixes along the way: the user approves the final state, and with those
+Otherwise the review request opens with what `rn` proposes next, such as building on this design,
+and why that serves the goal. Then, as its grounds, it gives under every question put in the user's
+language the final Good and More, each at its place in the real thing and with its grounds, claiming
+no more than that place shows. Not the points and fixes along the way: the user approves the final state, and with those
 they would have to work out where each applies now. No More asks the user to decide or invites
 feedback, since those went back to working things out.
 
