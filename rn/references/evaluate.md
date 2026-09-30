@@ -17,7 +17,8 @@ not hold, reaches their approval unseen, and a Good is the part they will not re
 
 - From `steering.md`: the Goal, Goal achieved when, the Assumptions, the Rules, and for a task
   result, its purpose.
-- The README and design document it names, as far as the user approved them.
+- The README and design document it names: once the Design sign-off is marked `[x]`, what the user
+  approved the product to be.
 - Any `feedback` item in `open/`: the user's words, which what you evaluate must answer.
 - The viewpoint file you are given, and `evaluation.md`, for how to answer.
 - What you evaluate, as it stands now.

@@ -30,7 +30,6 @@ design: <path of the design document that says how it is built; docs/design.md w
 
 # Rules
 
-- Commit and push every change
 - <what a generator cannot tell from the goal, such as this repository's conventions>
 
 # Tasks
@@ -77,14 +76,15 @@ and the message body above it is the proposal given to the user.
 ## Finding the session
 
 1. The `steering.md` this conversation has been working on.
-2. Otherwise the one the current branch changed, since each session works on its own branch:
+2. Otherwise the one the current branch changed whose `status` is `running`, since each session works
+   on its own branch:
    `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`
    (`git remote set-head origin --auto` first when `origin/HEAD` is not set).
 
 None → say there is no session on this branch: check out the session's branch, or run `/rn:on` to
-start one. A session whose `status` is `finished` → say so. Either way, stop.
+start one. Only a session whose `status` is `finished` → say it is finished. Either way, stop.
 
-A session with no `rn` field, or one whose first two numbers differ from `version` in
+A session with no `rn` field, or one whose first two numbers are lower than `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, was started under an earlier `rn`. `/rn:up` brings
 it to the current form; any other command asks the user to run `/rn:up` first, and stops.
 

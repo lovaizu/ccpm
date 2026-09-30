@@ -26,4 +26,4 @@ without asking again. It is recorded and the session stops, so they can clear th
    ```
 
    At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.
-4. When the user says to go on, go on as `/rn:up` does.
+4. When the user says to go on, go on as `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` says, from its second step.

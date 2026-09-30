@@ -9,12 +9,12 @@ What the conductor decides for each More, and for what comes next.
 
 - Does it bring the work closest to the goal, and settle?
 
-    A More is fixed when fixing brings the work closer to its purpose and keeps the Goods, so the user
-    gets more of what they wanted and nothing that already serves them is lost. It is let go, with the
-    reason, only when fixing would not bring the work closer; its cost, or that the fix needs the
-    README, the design document, or the user, is never that reason. Such a More goes back to working
-    things out with the user before any sign-off, since the user approves a sign-off as it stands.
-    Acting on the letter of an evaluation would redo work that serves the goal.
+    The user gets more of what they wanted, and loses nothing that already serves them, when a More is
+    fixed where fixing brings the work closer to its purpose and keeps the Goods. A More is let go,
+    with the reason, only when fixing would not bring the work closer; its cost, or that the fix needs
+    the README, the design document, or the user, is never that reason. A More whose fix needs the
+    user reaches them before any sign-off, since the user approves a sign-off as it stands. Acting on
+    the letter of an evaluation would redo work that serves the goal.
 
 ## Question
 

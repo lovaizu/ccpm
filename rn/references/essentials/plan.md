@@ -19,10 +19,10 @@ finish reading, the user knows the goal is theirs, and every role works toward t
 
 - Can the conductor carry the work to the goal by it, checking each task against its purpose?
 
-    When every line of Goal achieved when is served by a task's purpose, and each line of Purpose
-    achieved when is a state checked on the real thing, the conductor can tell at every task whether
-    the work moved toward the goal. The tasks that make the deliverable are planned once the design is
-    approved, so they follow what the user agreed there.
+    Where the plan holds tasks that make the deliverable, each task's purpose serving a line of Goal
+    achieved when, every line served by some task, and each line of Purpose achieved when a state
+    checked on the real thing let the conductor tell at every task whether the work moved toward the
+    goal. Before the Design sign-off the plan's only tasks are the sign-offs.
 
 - Can a generator carry out its task without asking anyone?
 

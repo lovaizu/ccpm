@@ -19,7 +19,7 @@ needs is left there.
    `/rn:ty` or `/rn:gm` answers it; stop.
 2. Write what the next conversation needs and nothing else records to a `notes` item in `open/`: what
    was under way, and in a talk with the user, the points agreed and the point still open.
-3. Commit and push with the decision line `● paused ── → {what was under way}`.
+3. Commit and push with the decision line `● {what was under way} ── {paused} → {/rn:up}`.
 4. Stop, opening your message with the map as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, with
    the task under way as:
 

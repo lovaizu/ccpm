@@ -41,34 +41,43 @@ decision line is written in.
 
 Talk with the user one point at a time until you both see the same thing, looking things up as you
 go: their answers change where to look. Each question to the user is put as the Question section of
-`conductor.md` asks, with what you propose. Write each point into its document as it is agreed, and
-push, so a pause loses nothing. Keep the pull request's title to the goal whenever the goal changes.
+`conductor.md` asks, with what you propose. Push each point as it is agreed, so a pause loses nothing:
+a point of the plan into `steering.md`, a point of the design into a `notes` item in `open/` until
+`writ` writes it. Keep the pull request's title to the goal whenever the goal changes.
 
 You stop only at a sign-off. When the work waits on someone outside, what to do meanwhile is a
 question to the user, not a stop of your own.
 
-- The plan, in `steering.md`: what they want, why, and how they would know the goal is achieved; which
-  README and design document the design goes into, found in the repository, or `README.md` and
-  `docs/design.md`. Its tasks are the Plan and Design sign-offs. Make it yourself, have it evaluated,
-  settle it, and stop at the Plan sign-off.
-- The design, once the plan is approved: how to build it, and for each benefit the goal needs, in
-  which scene it is checked and what passes. What is agreed goes into the README and design document
-  through the `writ:up` skill, which you run with their paths, their readers, and what was agreed.
-  `writ` writes them and returns the final Good and More for its viewpoints. Check each Good and More
-  at its place as you would an evaluator's, settle them as below, commit, and stop at the Design
-  sign-off. There is always a Design sign-off, even when nothing changes the documents, since the
-  user sees how it will be built and checked before anything is built.
-- Once the Design sign-off is approved, plan the tasks that make the deliverable, ending at the
-  Deliverable sign-off, or revise those not yet done by the design. Have them evaluated as the plan,
-  settle them, and carry them out without stopping.
+- The plan is `steering.md`, made by you, evaluated, settled, and stopped at the Plan sign-off.
+
+    It holds what the user wants, why, and how they would know the goal is achieved, and which README
+    and design document the design goes into: those found in the repository, or `README.md` and
+    `docs/design.md`. Its tasks are the Plan and Design sign-offs.
+
+- The design is written into the README and design document by the `writ:up` skill, checked by you,
+  and stopped at the Design sign-off.
+
+    Work out with the user how to build it, and for each benefit the goal needs, in which scene it is
+    checked and what passes. Run `writ:up` once for each document, with its path, its readers, and
+    the agreed points; run it even when nothing changes the document, so the Design sign-off, which
+    there always is, has grounds, and the user sees how it will be built and checked before anything
+    is built. Write what `writ` returns, its final Good and More with what it decided on each More,
+    into an `evaluation` item in `open/`, and commit it with the documents and the `notes` it
+    settles. Then settle it as an evaluation. `writ` has already fixed what it could; a More you
+    decide differently from `writ` changes the documents, so it is a point to work out with the user,
+    after which `writ:up` writes it.
+
+- The tasks that make the deliverable are planned once the Design sign-off is approved, and carried
+  out without stopping.
+
+    They end at the Deliverable sign-off; revise those not yet done by the design. They are evaluated
+    and settled as the plan.
 
 Once approved, the goal goes back through the Plan sign-off, and the README and design document
-through the Design sign-off, only when what they say changes without the user having decided it.
-Two kinds of change are written without stopping: a correction that changes nothing they say, such as
-a line number gone stale, and a change the user made by answering a question. The next proposal shows
-them first, as changed since the last approval. Going back to work out the design after the Design
-sign-off, add a Design sign-off, with the next unused id, before the tasks not yet done, so there is a
-sign-off to stop at.
+through the Design sign-off, only when what they say changes without the user having decided it: add
+that sign-off, with the next unused id, before the tasks not yet done. Two kinds of change are written
+without stopping: a correction that changes nothing they say, such as a line number gone stale, and a
+change the user made by answering a question.
 
 ## Carrying out a task
 
@@ -77,8 +86,8 @@ sign-off to stop at.
    `${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md`, and the task's id. When it is to fix,
    add the path of the item in `open/`, which More, and the fix you decided.
 2. Check what it returned against the task's purpose, on the real thing. Not fulfilled → send it back
-   with what falls short. Something only the user can decide → go back to work out the design, that
-   point first.
+   with what falls short. Something only the user can decide → ask them, as the Question section of
+   `conductor.md` asks, and write in what they decide.
 3. Commit and push. Have the result evaluated and settle it.
 4. Mark the task `[x]`.
 
@@ -112,23 +121,24 @@ asks with `/rn:gm`.
    More it hides. A Good or More without grounds, or off the purpose, is let go with that reason. A
    question answered with neither, check yourself on the real thing.
 2. Decide each More as the Decision section of `conductor.md` asks. The fix is yours to choose, from
-   the purpose and what the user struggles with. A fix is made by a generator for a task, and by you
-   for the plan; check it against the purpose and look again at every Good it touched, since a fix
+   the purpose and what the user struggles with. A fix is made by a generator for a task, by you for
+   the plan, and by `writ:up` for the README and design document; check it against the purpose and look again at every Good it touched, since a fix
    can take a Good away, then commit. Settled items leave `open/` with their text copied whole, never
    shortened, and your decision on each More as one of:
 
    ```
    - {the More} → fixed: {how}
    - {the More} → let go: {why fixing it would not serve the purpose}
-   - {the More} → to the user: back to working out {the plan | the design}
+   - {the More} → to the user: {the question, or back to working out the plan | the design}
    ```
 
 3. Repeat until every More is decided, or the work cannot go on: the same More keeps coming back,
    each fix brings a new More, or a fix needs the README or the design document changed.
 4. Check the final Good and More for each question. A fatal More is one without whose fix the goal
-   cannot be achieved, and whose fix only the user can decide. When one remains, a More goes to the
-   user, or the work cannot go on, go back to work out the plan, for the plan, or the design, for
-   anything else, with that More as the first point. Otherwise move on.
+   cannot be achieved, and whose fix only the user can decide. When one remains, or the work cannot
+   go on, go back to work out the plan, for the plan, or the design, for anything else, with that
+   More as the first point. A More whose fix only the user can decide but the goal does not hang on
+   is a question to them, and what they decide is written in. Otherwise move on.
 
 When Mores contradict each other, do not pick one: something is undecided in the goal, the
 viewpoints, or a document, and that is what to decide.
@@ -162,10 +172,13 @@ Draft PR: {url}
 
 {what you propose to do next, and why it serves the goal}
 
+Changed since the last approval: {each change written without stopping, from the commits since the last stop commit}
+
 ### {each question for what is signed off}
-- Good: {what the user gains, at path:line}
-- More: {what the user struggles with, at path:line, and why it was let go}
+- Good: {what the user gains, at path:line, and why it holds there}
+- More: {what the user struggles with, at path:line, why, and why it was let go}
 ```
 
-The map on top heads every message where you stop: ✅ done, 👉 now, ⬜ ahead. At the Design sign-off,
-the questions are `writ`'s, with the final Good and More it returned as you settled them.
+The map on top heads every message where you stop: ✅ done, 👉 now, ⬜ ahead. Leave out the changed
+line when there is none. At the Design sign-off, the questions are `writ`'s, with the final Good and
+More it returned as you settled them.
