@@ -1,14 +1,36 @@
 # rn design
 
-## Features, and the benefit each gives
+## The benefits, and the features that give them
 
-| Feature | Benefit in the README | Where it works in the README |
-|---|---|---|
-| It works out the goal and the design with the user, one point at a time, looking things up as they talk | You get what you really want, without writing a careful prompt first | 1. Start; 3. Work out the design |
-| It calls the user only at three sign-offs, and for decisions only the user can make | Your time goes only to the decisions that are yours | 2. Approve or give feedback; 4. Generate and evaluate |
-| An evaluator that did not make the work checks it once, and the conductor settles the fixes before the user is called | You get what you really want, without writing a careful prompt first; Your time goes only to the decisions that are yours | 4. Generate and evaluate |
-| A sign-off comes with the final Good and More for every essential viewpoint, each at its place and with its grounds | Your time goes only to the decisions that are yours | 2. Approve or give feedback; 6. Finish |
-| Everything decided is pushed to the branch as it is decided, so any conversation takes the session up | Work that takes days goes on the next day, or in a fresh conversation, from where it stopped | 5. Pause and resume |
+### You get what you really want, without writing a careful prompt first
+
+- [It works out the goal and the design with the user, one point at a time, looking things up as they talk](#it-works-out-the-goal-and-the-design-with-the-user-one-point-at-a-time-looking-things-up-as-they-talk)
+
+    Works in the README's 1. Start and 3. Work out the design.
+
+- [An evaluator that did not make the work checks it once, and the conductor settles the fixes before the user is called](#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)
+
+    Works in 4. Generate and evaluate.
+
+### Your time goes only to the decisions that are yours
+
+- [It calls the user only at three sign-offs, and for decisions only the user can make](#it-calls-the-user-only-at-three-sign-offs-and-for-decisions-only-the-user-can-make)
+
+    Works in 2. Approve or give feedback, and 4. Generate and evaluate.
+
+- [An evaluator that did not make the work checks it once, and the conductor settles the fixes before the user is called](#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)
+
+    Works in 4. Generate and evaluate.
+
+- [A sign-off comes with the final Good and More for every essential viewpoint, each at its place and with its grounds](#a-sign-off-comes-with-the-final-good-and-more-for-every-essential-viewpoint-each-at-its-place-and-with-its-grounds)
+
+    Works in 2. Approve or give feedback, and 6. Finish.
+
+### Work that takes days goes on the next day, or in a fresh conversation, from where it stopped
+
+- [Everything decided is pushed to the branch as it is decided, so any conversation takes the session up](#everything-decided-is-pushed-to-the-branch-as-it-is-decided-so-any-conversation-takes-the-session-up)
+
+    Works in 5. Pause and resume.
 
 Who is who: the conductor is the main conversation with the user, the one that decides every next
 move. A generator makes one task's result. An evaluator checks one thing, answering each essential
