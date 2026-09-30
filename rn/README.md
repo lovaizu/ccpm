@@ -101,7 +101,7 @@ The map on top heads every message where `rn` stops: ✅ done, 👉 now, ⬜ ahe
 `/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
 comments on the pull request as feedback. Either one then stops. After feedback, a plan or a design
 is worked out again, and a deliverable goes back to generating and evaluating, or to working out the
-design when the fix changes your README or design document. Say "go on" to
+design when the fix changes what you approved the product to be. Say "go on" to
 continue, or `/clear` first when you want a fresh conversation, then `/rn:up`.
 
 ```console

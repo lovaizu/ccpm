@@ -43,7 +43,7 @@ flowchart TD
     T2 --> FS
     EV -->|"no tasks to add"| FS
     FS -->|"/rn:gm, fixed within the design"| T2
-    FS -->|"/rn:gm, needs the README<br/>or design document changed"| D
+    FS -->|"/rn:gm, changes what<br/>the product should be"| D
     FS -->|"/rn:ty"| END
 ```
 
@@ -67,9 +67,17 @@ At a sign-off, the user approves with `/rn:ty` or gives feedback with `/rn:gm`. 
 stops. That is where the user may start a fresh conversation with `/clear`, and the work goes on with
 "go on" or `/rn:up`. After feedback, the session goes back to before that sign-off: a plan or a
 design is worked out again with the user, and a deliverable gets added tasks. Feedback on the
-deliverable that needs the README or design document changed goes back to working out the design,
+deliverable that changes what the product should be goes back to working out the design,
 through a Design sign-off, since those documents are what the user approved the product to be.
 Fixing only what the words say would leave the mismatch behind the feedback in place.
+
+Once approved, the goal, the README, and the design document go back through their sign-off only
+when what the product should be, or how it is built, changes without the user having decided it. A
+correction that changes neither, such as a line number gone stale, and a change the user made by
+answering a question, are written without stopping, and the next review request shows them first as
+changed since the last approval. Stopping for those would spend the user's attention on what they
+have nothing to decide about, while leaving them out of the review request would have the user
+approve something other than what they read.
 
 `/rn:dn` pauses at any time, and `/rn:up` carries on from there to the next sign-off. For a session
 started under an older version of `rn`, `/rn:up` works the goal out again from the old record and
@@ -339,9 +347,14 @@ A wrong type fails the build.
 ## rn's quality is checked by reading the prompts and by running rn on a practice repository
 
 `rn` is made of prompts, so the same input does not behave the same way every time, and no test can
-compare it against a fixed answer. So before writing the prompts, for each item under "What rn
-delivers", it is set what the user struggles with if it fails, in which scene it is checked, and
-what passes; after writing them, they are checked in two ways.
+compare it against a fixed answer. So before writing the prompts, it is set what the user struggles
+with if each quality fails, in which scene it is checked, and what passes; after writing them, they
+are checked in two ways.
+
+What the user would choose `rn` for comes first: a rough goal is enough, the work can be left to it,
+and a sign-off can be decided without reading everything again. Other agents already make work that
+is correct when watched, so an `rn` that is only correct gives no reason to use it. What the user
+takes for granted comes after, checked as far as it holds.
 
 - Reading: an evaluator that did not write the prompts reads them against the essential viewpoints
   for prompts and this design document. From every command, it traces end to end who writes what
@@ -349,40 +362,60 @@ what passes; after writing them, they are checked in two ways.
   nothing reads. Running may not pass through branches that are hard to trigger, so those can only
   be checked by reading.
 - Running: on a practice repository on GitHub holding a small JavaScript app, `rn` is actually run
-  with `claude -p --plugin-dir`. The user's replies are passed one turn at a time, carrying the
-  conversation over. An evaluator that did not make it evaluates the conversation, `steering.md`,
-  `open/`, the commits, and the pull request against the pass criteria below. Prompts that read as
-  correct do not guarantee an AI behaves that way.
+  with `claude -p --plugin-dir`. A stand-in for the user answers one turn at a time, carrying the
+  conversation over, and knows only what a real user would. An evaluator that did not make it
+  evaluates the conversation, `steering.md`, `open/`, the commits, the pull request, and the
+  deliverable against the pass criteria below. Prompts that read as correct do not guarantee an AI
+  behaves that way.
 
-### It works out the plan and the design until both see the same thing
+### A rough goal is enough
 
-If this fails, the work is built on a mismatch, found only after it is built, at great rework.
+If this fails, the user has to write a careful prompt, as with other agents, or gets what they said
+instead of what they wanted.
 
 | Scene | Passes when |
 |---|---|
-| Start with "move this app to TypeScript" | It asks one point at a time. It stops at the Plan sign-off, and on approval stops at the Design sign-off even when nothing changes the design document. Tasks that make the deliverable are planned after the Design sign-off |
+| Start with a rough goal whose words, taken as they are, would build the wrong thing, such as a partner's list whose short entries could be read two ways | The approved goal differs from the first words where those would have gone wrong, and the evaluator can name what each difference prevented. It asks one point at a time, only what the user decides, and looks up what the repository or official documentation answers |
 | `/rn:gm` at the Plan sign-off | It works the plan out again, taking the mismatch behind the feedback as the first point |
 
-### It makes the work without the user, and an evaluator that did not make it checks it against the pass criteria
+### The work can be left to it
 
-If this fails, the work goes nowhere unless the user watches, or something that does not serve its
-purpose gets through.
+If this fails, the user is called back again and again and has to watch the work, which is what
+`rn` is chosen to spare them.
+
+| Scene | Passes when |
+|---|---|
+| A whole session, from `/rn:on` to the Deliverable sign-off | Every time the user is called is a sign-off or a question only they can decide, and the evaluator agrees for each one. Between the Design and Deliverable sign-offs the user is not called unless such a question comes up |
+| The work waits on someone outside, such as a partner's answer | It asks the user what to do meanwhile, and does not stop on its own |
+| A correction to the approved README that changes neither what the product should be nor how it is built | It does not stop for it; the next review request shows it first as changed since the last approval |
+
+### A sign-off can be decided without reading everything again
+
+If this fails, the user reads every document and every change at each sign-off, and leaving the work
+to `rn` saves them nothing.
+
+| Scene | Passes when |
+|---|---|
+| Each of the three sign-offs | A stand-in for the user who reads only the review request decides to approve or give feedback, and the evaluator, reading the real thing, finds the same decision right. The review request carries the final Good/More for each essential viewpoint, with the place in the real thing and the grounds |
+
+### The deliverable achieves the goal
+
+If this fails, the user gets work that does not do what they wanted, however smoothly it was made.
 
 | Scene | Passes when |
 |---|---|
 | From the Design sign-off to the Deliverable sign-off | The deliverable meets Goal achieved when in `steering.md`: in the TypeScript example, code reproducing each of the three bugs fails the build, all three. The evaluator evaluates once, and each More is decided as fix, let go, or hand to the user |
 | A goal set up so that a More comes up whose fix the goal does not determine | It does not go to the Deliverable sign-off; it goes back to working out the design and asks the user about that More first |
 | `/rn:gm` at the Deliverable sign-off, fixable within the design | Tasks are added and carried out, and it stops at the Deliverable sign-off again |
-| `/rn:gm` at the Deliverable sign-off, needing the README changed | It works out the design with the user, stops at a Design sign-off, and then at the Deliverable sign-off again |
+| `/rn:gm` at the Deliverable sign-off, changing what the product should be | It works out the design with the user, stops at a Design sign-off, and then at the Deliverable sign-off again |
 
-### It asks only for sign-offs and the user's decisions
+### What a review request says is true
 
-If this fails, the user is called back at every question and cannot leave the work to `rn`.
+If this fails, the user approves on a claim that does not hold, and finds out only after the merge.
 
 | Scene | Passes when |
 |---|---|
-| Every scene | It stops only at the three sign-offs and at what only the user can decide. It does not ask what the repository or official documentation can answer |
-| Each of the three sign-offs | The review request carries the final Good/More for each essential viewpoint, with the place in the real thing and the grounds, so the user can decide without reading everything again |
+| Each of the three sign-offs | Every Good and More holds when the evaluator checks it at its place |
 
 ### Decisions can be read on the pull request and in commit messages
 
@@ -399,7 +432,8 @@ If this fails, the user cannot hand over long work that does not fit in one conv
 
 | Scene | Passes when |
 |---|---|
-| `/rn:dn` in the middle of a task, then `/rn:up` in a fresh conversation | It starts from the same task and does not redo finished ones |
+| `/rn:dn` in the middle of a task, then `/rn:up` in a fresh conversation | It starts from the same task, does not redo finished ones, and speaks the user's language |
+| `/rn:up` at a sign-off in a fresh conversation | It gives the same review request again |
 | `/rn:up` on a session started under 0.8.0 | A `steering.md` in the current form, carrying over what was done, is made, and it stops at the Plan sign-off |
 
 Each scene is run once. A run takes time and money, so measuring the spread over many runs is given
