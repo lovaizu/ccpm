@@ -193,8 +193,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-09-30
-- **Last completed**: #4 step "Fix the essentials to the framework the user agreed" (a467f15)
-- **Next**: #4 "Fix the README and the design with the essentials, and take the user's review on PR #15" — the Japanese README and design stand on the agreed benefits (67b044f) and await the user's review. On resume, first give the user an organized summary of where things stand (the user asked: 再開後に整理して教えて), then take the review.
-- **Notes**: Agreed benefits — one line 「AI が書いた文書を、人が書いたように読みやすい文書に仕上げる（新規も既存も）」 plus four (reader understands in one read / hand over without fixing / judge from the reply alone / undecided things are asked, not hidden); mid-work use is a way of use, not a benefit. Roles move out of agents/: /writ:up starts subagents with a reference file path. Open for the user in review: run counts in the design's quality section (3 runs all pass; mid-work pick 4 of 5), and the README calling Good/More 「良いところと足りないところ」. Open, not yet asked: translate the rebuilt prompts before #5 so what is tested is what ships. After approval: translate README/design, delete writ/skills and writ/agents and rebuild from README, design and essentials only. rn session rebuild-rn-c1 shares viewpoint changes; tell it after any edit to prompt.md.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
