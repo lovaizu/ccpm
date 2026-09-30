@@ -83,8 +83,8 @@ Five policies hold across the features:
 
 ## It works out the goal and the design with the user
 
-The conductor works out the plan before anything else, because a plan built on the user's first
-words achieves what they said, not what they wanted. It looks things up while talking instead of
+The conductor works out the plan before anything else, since what the user gets is what they meant
+only when the goal is theirs (README, 1. Start). It looks things up while talking instead of
 finishing the research before asking, since the user's answers change where to look. What the
 repository, official documentation, or best practice can answer is looked up, not asked. The plan
 has its own sign-off, because a design worked out on a wrong goal is wasted.
@@ -92,7 +92,8 @@ has its own sign-off, because a design worked out on a wrong goal is wasted.
 The design is worked out the same way, with what to test and what passes. What is settled goes to
 `writ`, which writes it into the README and design document and returns the final Good and More for
 its viewpoints, for the Design sign-off. There is always a Design sign-off, even when the design
-document does not change, because a mismatch found only after it is built costs a lot of rework.
+document does not change, since the user sees how it will be built and checked before anything is
+built (README, 3. Work out the design).
 Tasks that make the deliverable are planned only once the design is settled; tasks planned before
 the design would mostly be rewritten once it is.
 
@@ -106,12 +107,12 @@ and design document are what the user approved the product to be.
 
 The user is asked only what only the user can decide: taste, scope, effort against safety, whether to
 wait for someone outside, what the product should be, another way when fixes keep falling short, and
-whether the deliverable achieves the goal. Everything else is looked up or decided from the goal. The
-more the user is asked, the less they can leave the work to `rn`.
+whether the deliverable achieves the goal. Everything else is looked up or decided from the goal, so
+the user's time goes only to what is theirs.
 
 Whenever `rn` calls the user, at a question or a sign-off, it comes with what it proposes to do next
-toward the goal, and why, so the user only says yes or no. A report of where things stand would
-leave the user to work out what to do next, which is the work they left to `rn`.
+toward the goal, and why. A report of where things stand would leave the user to work out what to do
+next, which is the work they left to `rn`.
 
 A question is put so the user can answer it on the spot. When the work waits on someone outside,
 what to do meanwhile is such a question, not a stop: a stop leaves the user unsure what `rn` is
