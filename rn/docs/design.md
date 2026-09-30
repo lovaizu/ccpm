@@ -38,41 +38,6 @@ flowchart LR
 
     The commit where `rn` stops for the user is the stop commit.
 
-The whole session, from the inside:
-
-```mermaid
-flowchart TD
-    ON(["/rn:on"])
-    W["Work out the plan with the user"]
-    P["Write the plan, evaluate it"]
-    PS{{"Plan sign-off"}}
-    D["Work out the design with the user;<br/>writ writes and checks the README<br/>and design document"]
-    DS{{"Design sign-off"}}
-    P2["Plan the tasks that make the deliverable,<br/>evaluate them"]
-    T["Carry out the tasks one by one"]
-    EV["Evaluate the deliverable"]
-    T2["Carry out the added tasks"]
-    FS{{"Deliverable sign-off"}}
-    END(["Mark the pull request ready"])
-    ON --> W --> P --> PS
-    P -->|"a fatal More"| W
-    PS -->|"/rn:gm"| W
-    PS -->|"/rn:ty"| D
-    D --> DS
-    DS -->|"/rn:gm"| D
-    DS -->|"/rn:ty"| P2
-    P2 --> T
-    T -->|"the design must change"| D
-    T -->|"all tasks done"| EV
-    EV -->|"tasks to add"| T2
-    EV -->|"a fatal More"| D
-    T2 --> FS
-    EV -->|"no tasks to add"| FS
-    FS -->|"/rn:gm, fixed within the design"| T2
-    FS -->|"/rn:gm, changes what<br/>the product should be"| D
-    FS -->|"/rn:ty"| END
-```
-
 Six policies hold across the features:
 
 - Only the conductor decides what happens next.
@@ -170,9 +135,7 @@ flowchart TD
 
 The conductor stays the same conversation throughout the session, since what was talked through
 stays with it. A fresh generator is started for each task, so its attention holds only that task,
-and a fresh evaluator for each evaluation; each ends when done. A generator edits the working tree
-and returns; the conductor checks the result against the task's purpose, commits, and has it
-evaluated.
+and a fresh evaluator for each evaluation; each ends when done.
 
 An evaluator receives only what the user agreed to and what the user said, never how the thing was
 made or what it was changed to answer. Someone who did not make it, reading from the user's side,
@@ -194,7 +157,7 @@ flowchart TD
     M["The generator makes a task's result"]
     K{"The conductor checks it<br/>against the purpose"}
     V["An evaluator evaluates once"]
-    KE{"The conductor checks the evaluation"}
+    KE{"The conductor checks each Good<br/>and each More at its place"}
     D{"The conductor decides<br/>each More in turn"}
     F["The generator fixes"]
     J{"The conductor checks the final<br/>Good/More for each viewpoint"}
@@ -214,8 +177,11 @@ flowchart TD
     J -->|"a fatal More"| U
 ```
 
-Each Good's grounds are checked as a More's are, since a wrong Good has the fix keep what should
-change. Then the conductor decides each More in turn:
+Every Good is checked at its place as strictly as every More, so a Good the user reads in a proposal
+holds, and they can trust it without reading that part. A Good that does not hold is the most
+dangerous point in a session: no one looks again at what is called good, so the flaw it hides would
+reach the user's approval unseen. It is decided as the More it hides. Then the conductor decides
+each More in turn:
 
 - A More whose fix brings the work closer to its purpose, and keeps the Goods, is fixed.
 - A More whose fix would not bring the work closer is let go, with the reason.
@@ -228,9 +194,11 @@ cannot go on when the same More keeps coming back, when each fix brings a new Mo
 needs the README or the design document changed.
 
 Fixes after the evaluation are checked by the conductor against the purpose, not by a fresh
-evaluator. An evaluation is not repeated, since each AI evaluation raises new points that are not
+evaluator, and the final check looks again at every Good a fix touched, since a fix can take a Good
+away. An evaluation is not repeated, since each AI evaluation raises new points that are not
 essential, and repeating never settles; for the same reason the whole deliverable is evaluated once,
-when the tasks planned after the last Design sign-off are done. The user can check every final Good
+when the tasks planned after the last Design sign-off are done, and the Mores it raises are fixed as
+added tasks. The user can check every final Good
 and More at its place, and ask with `/rn:gm` for anything, another evaluation included.
 
 When Mores contradict each other, `rn` does not pick one. They are a sign that something is
@@ -240,22 +208,8 @@ A plan follows the same flow, with the conductor making and fixing it.
 
 ## A sign-off comes with a proposal and its grounds
 
-```mermaid
-flowchart TD
-    J{"Final Good/More<br/>for each viewpoint"}
-    U["Back to working things out,<br/>that More first"]
-    R["The proposal, committed<br/>as the body of the stop commit"]
-    P(["The user reads it"])
-    L(["/rn:up in a later conversation<br/>gives the same body"])
-    J -->|"a fatal More,<br/>or cannot go on"| U
-    J -->|"otherwise"| R
-    R --> P
-    R --> L
-```
-
-When every More is decided, the conductor checks the final Good and More for each question of the
-essential viewpoints. A fatal More, or work that cannot go on, goes back to working things out with
-the user instead of to the sign-off, since having the user approve something that is no use until
+A fatal More, or work that cannot go on, goes back to working things out with the user, that More
+first, instead of to the sign-off, since having the user approve something that is no use until
 fixed only spends their time.
 
 Otherwise `rn` gives the proposal: what it wants to do next, such as building on this design, and
@@ -294,18 +248,16 @@ flowchart TD
     M -.->|"reads the last decision line"| UP
 ```
 
-Every decision is committed and pushed as it is made. A fresh conversation, on `/rn:up`, reads
-`steering.md`, `open/`, and the last decision line, and takes up the next move, in the language that
-line is written in. For a session started under an older version of `rn`, `/rn:up` works the goal
+Every decision is committed and pushed as it is made. A fresh conversation takes up the next move
+on `/rn:up`, in the language the last decision line is written in. For a session started under an older version of `rn`, `/rn:up` works the goal
 out again from the old record and stops at a new Plan sign-off.
 
 A session works on its own branch with a draft pull request, so the user's default branch changes
 only when they merge. The user reads everything on the pull request, where diffs, long documents,
 and diagrams render, and the record stays with the code.
 
-What is not yet settled goes in `open/`, as it was received: an evaluator's evaluation, the user's
-words received with `/rn:gm`, and the notes `/rn:dn` leaves, with an unfinished task's edits
-committed beside them, so nothing needed to resume is only in the working tree. A file is named
+Items go in `open/` as they were received, and `/rn:dn` commits an unfinished task's edits beside
+its notes, so nothing needed to resume is only in the working tree. A file is named
 `{NN}-{kind}-{about}.md`: the number keeps the order they came in, and the kind, `evaluation`,
 `feedback`, or `notes`, says who wrote it and so how it is settled. A settled item leaves `open/` in
 the commit that settles it, copied whole into that commit's message with the decision on each More,
@@ -350,8 +302,7 @@ repository/
 ```
 
 The README and design document are where they are shown when nothing else is specified; another
-place can be agreed with the user while working out the plan. The agreed place stays in the `ux`
-and `design` fields of `steering.md`. The layout under `.rn/` cannot be changed, since `/rn:up` finds
+place can be agreed with the user while working out the plan. The layout under `.rn/` cannot be changed, since `/rn:up` finds
 the session by it.
 
 A session leaves behind only this directory and the deliverable. The README and design document
@@ -420,7 +371,7 @@ A wrong type fails the build.
 
     Every command then judges the same way whether the session has ended.
 
-- `ux` and `design` fix the one README and the one design document.
+- `ux` and `design` fix the one README and the one design document, wherever they were agreed.
 
     Every role reads the same documents across conversations.
 
@@ -516,10 +467,16 @@ is chosen to spare them.
     Passes when it does not stop, and a stand-in reading only the next proposal can tell what changed
     since the last approval.
 
+- A task result that looks done but does not serve its purpose, such as a file moved to .ts whose
+  types are `any`.
+
+    Passes when no Good claims it and the proposal shows it as a More.
+
 - Each of the three sign-offs.
 
     Passes when a stand-in for the user who reads only the proposal decides yes or no, and the
-    evaluator, reading the real thing, finds the same decision right.
+    evaluator, reading the real thing, finds the same decision right and every Good and More holding
+    at its place.
 
 ### Work that takes days goes on from where it stopped
 
@@ -537,8 +494,8 @@ all again each time.
 
 ### What the user takes for granted
 
-If these fail, the user loses what an upgrade carried, approves on a claim that does not hold, or
-cannot tell why things came out as they did.
+If these fail, the user loses what an upgrade carried, or cannot tell why things came out as they
+did.
 
 - `/rn:up` on a session started under 0.8.0.
 
@@ -553,10 +510,6 @@ cannot tell why things came out as they did.
 
     Passes when it works out the design with the user, stops at a Design sign-off, and then at the
     Deliverable sign-off again.
-
-- Each of the three sign-offs.
-
-    Passes when every Good and More in the proposal holds when the evaluator checks it at its place.
 
 - Every scene.
 
