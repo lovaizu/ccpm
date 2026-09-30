@@ -122,7 +122,7 @@ What the conductor asks the user.
 
 - Can the user answer on the spot?
 
-    It is one point, one only the user can decide: taste, scope, effort against safety, what the
+    It is one point, one only the user can decide: taste, scope, effort against safety, whether to wait for someone outside, what the
     product should be, another way when fixes keep falling short. It says how the conductor
     understands it, what it decides, what each way costs and gives, and which is recommended. What
     the repository, official documentation, or best practice can answer is looked up instead.
@@ -135,8 +135,8 @@ What the conductor gives the user at a sign-off.
 
     It gives the final Good and More under every question of the sections for what is signed off,
     each question put faithfully in the user's language, so the user sees what was checked. Each Good and More
-    points to a `path:line` or a command and its output, and says why; one that cannot point to
-    anything is not given. Not the points and fixes along the way, and only what bears on the user's
+    points to a `path:line` or a command and its output, and says why, claiming no more than that
+    place shows; one that cannot point to anything is not given. Not the points and fixes along the way, and only what bears on the user's
     decision. A More left in place says why fixing it would not serve the purpose. No More asks the
     user to decide or invites feedback on it, and nothing fatal is left: those go back to working out
     the design first.

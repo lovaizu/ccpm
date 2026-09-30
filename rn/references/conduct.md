@@ -39,7 +39,10 @@ decision line is written in.
 Talk with the user one point at a time until you both see the same thing, looking things up as you
 go: their answers change where to look. Each question is put as the Question section asks. Write each
 point into its document as it is agreed, and push, so a pause loses nothing. Keep the pull request's
-title to the goal as it settles.
+title to the goal whenever the goal changes.
+
+You stop only at a sign-off, and ask only as the Question section asks. When the work waits on
+someone outside, what to do meanwhile is a Question to the user, not a stop of your own.
 
 - The plan, in `steering.md`: what they want, why, and how they would know the goal is achieved; which
   README and design document the design goes into, found in the repository or `README.md` and
@@ -102,7 +105,8 @@ that are not essential and never settles; another one is made only when the user
    should change, and misleads the user at the sign-off. A Good whose grounds do not hold is a More.
    A question with neither Good nor More was not checked; have it answered. Decide each More, as the
    Decision section asks: fix it, let it go with the reason, or hand it to the user when only they
-   can decide it. The fix is yours to choose, from the purpose and what the user struggles with; the
+   can decide it: a fix that would make a decision the Question section names is theirs, however
+   plainly the goal seems to settle it. The fix is yours to choose, from the purpose and what the user struggles with; the
    evaluation does not propose one. A fix is made by a generator for a task, by you for the plan and
    the design; check it against the purpose and the Goods, and commit. Settled items leave `open/`
    with their text copied whole, never shortened, and your decision on each More as one of:
@@ -110,7 +114,7 @@ that are not essential and never settles; another one is made only when the user
    ```
    - {the More} → fixed: {how}
    - {the More} → let go: fixing it would not serve {the purpose}, because {why}
-   - {the More} → to the user: back to working out the design
+   - {the More} → to the user: back to working out {the plan | the design}
    ```
 
    A reason that is the cost of fixing, or that the fix needs the README, the design document, or
@@ -140,8 +144,8 @@ later conversation tells the user's language from them:
 
 At a sign-off, `open/` is empty. Write the review request once, in the user's language, as the
 Review request section asks; commit and push with that text as the message body and the decision
-line `● … → waiting for #{id} {sign-off name}` last; then give the user that message word for word,
-as `git log -1 --format=%B` prints it, adding nothing and rewording nothing. The commit is what a
+line `● … → waiting for #{id} {sign-off name}` last; then give the user that body word for word,
+as `git log -1 --format=%b` prints it up to the decision line, adding nothing and rewording nothing. The commit is what a
 later conversation gives again, so what the user sees and what the record holds never differ.
 
 ```

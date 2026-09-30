@@ -18,13 +18,12 @@ without asking again. It is recorded and the session stops, so they can clear th
 2. Mark that task `[x]`. At the Deliverable sign-off, set `status` to `finished` and mark the pull
    request ready with `gh pr ready`.
 3. Commit and push with the decision line
-   `● #{id} {sign-off name} ── approved → {work out the design | plan the tasks | finished}`, and say
-   in the user's language:
+   `● #{id} {sign-off name} ── {approved} → {work out the design | plan the tasks | finished}`, and say,
+   everything in braces in the user's language:
 
    ```
    ● {approved the plan or the design}. {next: say "go on", or /clear and /rn:up}
    ```
 
    At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.
-   Everything in braces is in the user's language.
 4. When the user says to go on, go on as `/rn:up` does.
