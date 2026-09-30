@@ -8,7 +8,11 @@ The reader is the AI that acts by following the prompt. When it finishes, it can
 
 - Can the AI follow each step as written without breaking what the product promises its user, and choose everything else itself from the purpose and role?
 
-    Put in the steps only rules that break things when they drift and cannot be derived from the purpose and role, such as the format of a handoff. Steps are followed exactly as written, so they miss the mark in situations other than the ones expected, and a step phrased as a habit, such as "confirm with the user", overrides the purpose where the two disagree. Where the purpose and role are enough, leave it to the reader. Write the rules used at each step in that step. A situation that needs other rules, such as fixing rather than first writing, gets its own step, because rules buried in another step's order are not followed there. Where the AI is told to read another document, write only the path and why to read it, without a summary.
+    Put in the steps only rules that break things when they drift and cannot be derived from the purpose and role, such as the format of a handoff. If the step were removed and the AI, from its role and purpose, would still act rightly, it is not a step. The design's flow of work goes into the role and purpose, so the AI judges each move from them; copied as numbered steps, it is followed in order even where it should not be. Steps are followed exactly as written, so they miss the mark in situations other than the ones expected, and a step phrased as a habit, such as "confirm with the user", overrides the purpose where the two disagree. Write the rules used at each step in that step. A situation that needs other rules, such as fixing rather than first writing, gets its own step, because rules buried in another step's order are not followed there. Where the AI is told to read another document, write only the path and why to read it, without a summary.
+
+- Can a maintainer tell, for each part of a prompt and each mechanism it relies on, which feature in the design it serves?
+
+    Trace each part, and each mechanism such as agent definitions, hooks or a subagent launch, to a feature in the design. What traces to nothing is either left out, or the design is changed first. A means chosen while implementing, with no ground in the design, is kept by habit with no reason anyone can check.
 
 - Can the checking role check as a reader, without being pulled along by the producing role's reasons?
 
@@ -18,9 +22,9 @@ The reader is the AI that acts by following the prompt. When it finishes, it can
 
     A role told that another will see its output stops dealing with it, and when no step of the other role reads that output, it falls through. Likewise, a step that reads something no one writes has nothing to work from.
 
-- Is each role kept from what it must not see, not only told to stay away from it?
+- Is each role kept from what it must not see?
 
-    Each role that must not see something is kept from it by what it is given and by the tools it has, not only by being told. Give each role only the tools it needs. When a role needs a tool that could reach what it must not see, such as Bash reaching git history, the prompt names what it must not fetch and why. A rule that a tool lets the role break is not a boundary.
+    Keep from each role what it must not see by what it is handed. What it could still fetch for itself, such as git history, the discussion or earlier versions, the prompt names as not to fetch, with why. The tools a role needs to do its work also reach these, so tools cannot close the boundary; only what the role is handed and what the prompt names can. Knowing why, the role also passes up routes to the same thing that the prompt did not name.
 
 - Does the checking role spend its judgment where only it can judge?
 
