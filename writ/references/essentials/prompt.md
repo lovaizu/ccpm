@@ -2,17 +2,25 @@
 
 The reader is the AI that acts by following the prompt. When it finishes, it can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee.
 
-- Can the AI grasp what it is for, who it acts as, and what it does?
+- Can the AI grasp who it acts as, what it is for, and what it does?
 
-    Add to the purpose why it is needed. Knowing the reason, the AI can choose what fits the purpose even in situations that are not written down. For the role, write who it reads as, what it decides itself, and what it does not decide but returns to the requester.
+    Give the role, then the purpose, then the steps, each under its own heading. The purpose and the steps tell the role what to do, so a role given after them leaves the first orders with no one to carry them out. For the role, write who it reads as, what it decides itself, and what it does not decide but returns to the requester. In the purpose, write the benefit to the user and why it is needed, never a summary of the steps. Knowing the benefit, the AI can choose what fits it even in situations the steps do not cover; a purpose that summarises the steps sends the AI back to following them where they do not reach.
 
-- Can the AI keep the rules of the procedure while choosing everything else itself from the purpose and role?
+- Can the AI keep the rules of the steps while choosing everything else itself from the purpose and role?
 
-    Put in the procedure only rules that break things when they drift and cannot be derived from the purpose and role, such as the format of a handoff. A procedure is followed exactly as written, so it misses the mark in situations other than the ones expected. Where the purpose and role are enough, leave it to the reader. Write the rules used at each stage in that stage. Where the AI is told to read another document, write only the path and why to read it, without a summary.
+    Put in the steps only rules that break things when they drift and cannot be derived from the purpose and role, such as the format of a handoff. Steps are followed exactly as written, so they miss the mark in situations other than the ones expected. Where the purpose and role are enough, leave it to the reader. Write the rules used at each step in that step. Where the AI is told to read another document, write only the path and why to read it, without a summary.
 
 - Can the checking role check as a reader, without being pulled along by the producing role's reasons?
 
     The producing role and the checking role read the same essentials. The producing role reads them as the shape to aim for, and the checking role reads them as questions. Do not pass the checking role the producing role's reasons for what it did. The checking role answers every question in the essentials with Good, More or both, and returns the answers to the requester. Return Good and More with equal weight. Good is what serves the purpose and must not be broken when fixing, and why it should be kept. More is a shortfall and what the reader struggles with because of it; how to fix it is the requester's to decide. Attach evidence to both, such as path:line or a command that was run and its output. When a Good says only "easy to understand", whoever fixes it does not know what to keep, and breaks even what is working.
+
+- Is each role kept from what it must not see, not only told to stay away from it?
+
+    Each role that must not see something is kept from it by what it is given and by the tools it has, not only by being told. Give each role only the tools it needs. When a role needs a tool that could reach what it must not see, such as Bash reaching git history, the prompt names what it must not fetch and why. A rule that a tool lets the role break is not a boundary.
+
+- Does the checking role spend its judgment where only it can judge?
+
+    The checking role judges mainly whether the reader of the work gets the benefit they would choose the work for over what they would use instead. What the reader takes for granted and a script can decide, such as a format holding, nothing being lost or a link resolving, goes to tests or scripts. They are faster and give the same answer every time, and a checking role that spends its attention on them has less left for the judgment only it can make. What the reader takes for granted but no script can decide, such as whether a claim is true, stays with the checking role.
 
 - Can the requester decide its next move itself by weighing the check's results against the purpose, and always bring the cycle of evaluating and fixing to an end?
 
@@ -24,7 +32,7 @@ The reader is the AI that acts by following the prompt. When it finishes, it can
 
 - Can the producing role and the checking role, with few questions, catch whole groups of errors that matter to the purpose?
 
-    Do not make the questions a list of prohibitions; make each question catch together the errors that arise from the same cause. Also write them so they can be checked from the state of the finished work, not from whether the procedure was followed. When non-essential questions creep in, the producing role's aim drifts, there is more to read, and either fixing never ends or the person's burden grows. If the checking role's answers are shallow, the questions are either too many or too vague, so refine the questions instead of adding roles.
+    Do not make the questions a list of prohibitions; make each question catch together the errors that arise from the same cause. Also write them so they can be checked from the state of the finished work, not from whether the steps were followed. When non-essential questions creep in, the producing role's aim drifts, there is more to read, and either fixing never ends or the person's burden grows. If the checking role's answers are shallow, the questions are either too many or too vague, so refine the questions instead of adding roles.
 
 - When the essentials are refined, can every role that uses them read the same essentials right away?
 
