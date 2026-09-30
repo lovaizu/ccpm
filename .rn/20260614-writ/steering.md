@@ -195,8 +195,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-09-30
+- **Last completed**: #4 essentials consolidated (5 files, questions per cause), style.md rules layer added (0e2f4e9)
+- **Next**: #4 "Fix the README and the design with the essentials, and take the user's review on PR #15" — first get the user's answer to the pending question below, then re-check README and design against the consolidated essentials and style.md.
+- **Notes**: Branch worktree-writ, PR #15. Pending decision, asked and unanswered: align writ's calls to the user with prompt.md's proposal form (propose reader/purpose when inferable, ask only when not); recommended yes. Still open for review: run counts in the design's quality section, the README's 「良いところと足りないところ」 for Good/More. To do in the README/design pass: the design must not retell the README's user-side whys (trace to the stage instead); the README follows style.md (no bold, no tables). rn (session rebuild-rn-c1) depends on writ being merged to main; tell it after any change to the essentials or style.md.
