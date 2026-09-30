@@ -8,7 +8,7 @@ The reader is whoever the document is written for. When they finish, they have g
 
 - Can the reader take it in the way they read it, straight through or skimming, without going back or ahead?
 
-    Read straight through, the reader knows from the first sentence what they will gain, follows the argument by the headings, and finds everything a sentence relies on already given. Skimming, they find their part by headings in the words they would look for. Either way, a list whose items each make sense alone gives the reader the list from its items, and they read an explanation only where they want the why. A word used before it is explained, or a decision's reason kept away from it, sends them back or ahead.
+    Read straight through, the reader knows from the first sentence what they will gain, follows the argument by the headings, and finds everything a sentence relies on already given. Skimming, they find their part by headings in the words they would look for. A word used before it is explained, or a decision's reason kept away from it, sends them back or ahead.
 
 - Where the key point is who takes part and what passes between them, can the reader grasp it at a glance?
 
