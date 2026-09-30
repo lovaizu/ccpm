@@ -68,9 +68,9 @@ Say your app is written in JavaScript, and you want it moved to TypeScript — w
 
 ### 1. Start — `/rn:on`
 
-Say what you want, as roughly as it comes to mind. `rn` tells you how it understands it, one point
-at a time — what you want, why you want it, and how you would know the goal is achieved — and moves
-on only when you agree. What the repository, the official documentation, or best practice can
+Say what you want, as roughly as it comes to mind; what you get is what you meant. `rn` tells you
+how it understands it, one point at a time — what you want, why you want it, and how you would know
+the goal is achieved — and moves on only when you agree. What the repository, the official documentation, or best practice can
 answer, it looks up instead of asking you.
 
 ```console
@@ -85,9 +85,12 @@ answer, it looks up instead of asking you.
   file moved with loose types would still let it through. Is that right?
 ```
 
+Knowing why you want it is what shows where your first words would go wrong: every file ending in
+.ts would have let the bugs through.
+
 Then `rn` writes the plan and puts it on a draft pull request. The plan holds the goal, how you
-would know it is achieved, and the tasks. Tasks that make the deliverable come only once the design
-is settled.
+would know it is achieved, and the tasks. The tasks that build it are planned once the design is
+settled, so they follow what you agree to there.
 
 ```console
 ● ── typescript: a wrong type fails the build ──
@@ -114,8 +117,9 @@ no from this, and read the plan itself on the pull request whenever you want.
 ### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
 
 `/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
-comments on the pull request as feedback, which `rn` then works through. Either one stops. Say
-"go on" to continue, or `/clear` first when you want a fresh conversation, then `/rn:up`.
+comments on the pull request as feedback, so you can comment where you read. Either one stops, a
+point where you can clear the conversation and lose nothing: say "go on" to continue, or `/clear`
+first, then `/rn:up`.
 
 ```console
 > /rn:ty
@@ -125,18 +129,18 @@ comments on the pull request as feedback, which `rn` then works through. Either 
 
 ### 3. Work out the design — Design sign-off
 
-Once you approve the plan, `rn` works out the design with you, and there is always a Design
-sign-off ([why](./docs/design.md#it-works-out-the-goal-and-the-design-with-the-user-one-point-at-a-time-looking-things-up-as-they-talk)).
-`rn` proposes how to build it, and what to test so you know it works. Of those, how strict the type
-checks start is a call of effort against safety, so it is yours. What you settle goes into your
-README and design document, which stay with your product. You approve them, and your product is
-built to them.
+Once you approve the plan, `rn` works out the design with you: how to build it, and what to test so
+you know it works. You see and approve both before anything is built, so what comes back at the end
+is what you expected ([why](./docs/design.md#it-works-out-the-goal-and-the-design-with-the-user-one-point-at-a-time-looking-things-up-as-they-talk)).
+Of those, how strict the type checks start is a call of effort against safety, so it is yours. What
+you settle goes into your README and design document, which stay with your product, so the next
+session, or a teammate, starts from what you settled.
 
 ```console
 ● The three bugs are in src/cart and src/checkout. For the test, I propose code that reproduces
   each of the three, passing when all three fail the build. Strict checks from the start stop all
   three, but nothing builds until every file is typed; loose first builds sooner, but lets all
-  three through until tightened. I recommend strict: stopping those three is why you are moving.
+  three through until tightened. I propose strict: stopping those three is why you are moving.
   Which weighs more for you?
 ```
 
@@ -144,7 +148,7 @@ built to them.
 
 You don't babysit it. Each result is checked by an agent that did not make it, so it passes because it
 does its job, not because its maker says so ([why](./docs/design.md#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)). Each time `rn` decides what to
-do next, it says so in one line:
+do next, it says so in one line, so a glance tells you where it is and why:
 
 ```console
 ● #3 move src/cart ── decided: purpose not fulfilled. It passes only because its types are `any`;
@@ -154,8 +158,9 @@ do next, it says so in one line:
 
 ### 5. Pause and resume — `/rn:dn`, `/rn:up`
 
-When the context is nearly full, or you are done for the day, `/rn:dn` records how far the session
-has come and pushes everything. When you want a fresh conversation, run `/clear` yourself, then
+Every decision is pushed as it is made, so tomorrow, or a fresh conversation, starts where you
+stopped, without explaining anything again. When the context is nearly full, or you are done for the
+day, `/rn:dn` records how far the session has come. When you want a fresh conversation, run `/clear` yourself, then
 `/rn:up`. A plugin can't run `/clear`.
 
 ```console
@@ -174,10 +179,11 @@ has come and pushes everything. When you want a fresh conversation, run `/clear`
 
 ### 6. Finish — Deliverable sign-off
 
-You approve the deliverable, your product as the session leaves it, by whether it achieves your
-goal. When something falls short, `/rn:gm` has it fixed. On `/rn:ty` the pull request is marked
+You approve the deliverable, your product as the session leaves it, by whether it achieves the goal
+you agreed at the start: it was built and checked against that goal, not only against its tasks. When something falls short, `/rn:gm` has it fixed. On `/rn:ty` the pull request is marked
 ready; the merge is yours. Besides your product, the session leaves only its `.rn/` directory, the
-record of how things were decided.
+record of how things were decided, so you or a teammate can later see why things came out as they
+did.
 
 ## How it is built
 
