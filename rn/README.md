@@ -1,10 +1,14 @@
 # rn — Right Now
 
-Most AI agents need a carefully written prompt and some babysitting to get a task done. `rn` doesn't:
-give it a goal, roughly. It works out with you what you really want, then carries the work through
-without you, and calls you back only for the decisions that are yours. Its record and what it makes
-both live in git, so you can pick up where you left off in a fresh conversation, or the next day.
-You can start right now, with nothing prepared.
+Say what you want to achieve, and `rn` carries it all the way there. All you do is decide.
+
+- You get what you really want, without writing a careful prompt first.
+- Your time goes only to the decisions that are yours: you don't watch the work, and you don't
+  re-read all of it to approve it.
+- Work that takes days goes on the next day, or in a fresh conversation, from where it stopped.
+
+Most AI agents need a carefully written prompt and some babysitting. With `rn` you can start right
+now, with nothing prepared.
 
 ## What you need
 
@@ -129,8 +133,8 @@ settle with it while working out the plan. You approve them, and your product is
 
 ### 4. Generate and evaluate the deliverable
 
-You don't watch. For each task, one agent makes it and another evaluates it, so a result passes
-because it does its job, not because the agent that made it says so. Each time `rn` decides what to
+You don't watch. Each result is checked by an agent that did not make it, so it passes because it
+does its job, not because its maker says so ([why](./docs/design.md)). Each time `rn` decides what to
 do next, it says so in one line:
 
 ```console
