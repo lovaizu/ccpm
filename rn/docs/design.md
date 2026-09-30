@@ -413,7 +413,7 @@ writing them, they are checked in two ways.
   behaves that way.
 
 The benefits come first, and what the user takes for granted after. Other agents already make work
-that is correct when watched, so an `rn` that is only correct gives no reason to use it. A run is
+that is correct when someone babysits them, so an `rn` that is only correct gives no reason to use it. A run is
 judged first on the benefits, and while one fails, what the user takes for granted is not what is
 fixed first: those failures are the easiest to see, and fixing whatever a run shows first leaves the
 benefits never measured. Each check of a benefit is run on a case where, without it, the user would
@@ -435,7 +435,7 @@ instead of what they wanted.
 
 ### Your time goes only to the decisions that are yours
 
-If this fails, the user watches the work, or re-reads all of it at each sign-off, which is what `rn`
+If this fails, the user babysits the work, or re-reads all of it at each sign-off, which is what `rn`
 is chosen to spare them.
 
 | Scene | Passes when |

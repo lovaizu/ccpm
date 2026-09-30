@@ -3,7 +3,7 @@
 Say what you want to achieve, and `rn` carries it all the way there. All you do is decide.
 
 - You get what you really want, without writing a careful prompt first.
-- Your time goes only to the decisions that are yours: you don't watch the work, and you don't
+- Your time goes only to the decisions that are yours: you don't babysit the work, and you don't
   re-read all of it to approve it.
 - Work that takes days goes on the next day, or in a fresh conversation, from where it stopped.
 
@@ -139,7 +139,7 @@ built to them.
 
 ### 4. Generate and evaluate the deliverable
 
-You don't watch. Each result is checked by an agent that did not make it, so it passes because it
+You don't babysit it. Each result is checked by an agent that did not make it, so it passes because it
 does its job, not because its maker says so ([why](./docs/design.md#an-evaluator-that-did-not-make-the-work-checks-it-once-and-the-conductor-settles-the-fixes-before-the-user-is-called)). Each time `rn` decides what to
 do next, it says so in one line:
 
