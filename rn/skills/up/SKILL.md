@@ -22,6 +22,6 @@ stopped, until the next sign-off.
    ● {resuming {slug} at #{id}: {task name}}
    ```
 
-3. When the last decision line is `waiting for #{id} {sign-off name}`, give the review request again
+3. When the last decision line is `waiting for #{id} {sign-off name}`, give the proposal again
    word for word as that commit's message body prints it up to the decision line, and stop. Otherwise take up the session as in
    `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

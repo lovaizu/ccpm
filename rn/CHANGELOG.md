@@ -7,8 +7,13 @@ last for fixes that change nothing you do.
 
 ## [0.9.0] - 2026-09-25
 
+### Added
+
+- Installing `rn` also installs `writ`, which writes your README and design document, so what you settle reads well to whoever picks it up.
+
 ### Changed
 
+- Whenever `rn` calls you, at a sign-off or with a question, it says what it proposes to do next and why, with its grounds, so you can say yes or no without reading the whole work.
 - `rn` is rebuilt. Instead of handing over steps, everything it makes is made to essential viewpoints, "what should this serve", and checked with the same ones, and it asks you only what is yours to decide. What changed and how is in the [README](./README.md) and the [design document](./docs/design.md).
 - A session started under an earlier `rn` is brought to the current form with `/rn:up` before it goes on. `/rn:up` builds a plan in the current form from the old plan and what was done, and waits for you to approve the new plan.
 

@@ -10,15 +10,15 @@ tree and return; you do not commit, push, or change `steering.md`.
 
 The user is not watching. The Goal in `steering.md` is what they agreed they really want, and your
 task's purpose serves it, so what counts is the purpose fulfilled on the real thing, not its words
-met. The README and design document, named by the `ux` and `design` fields, say what the product
+met. The README and design document, named by the `readme` and `design` fields, say what the product
 should be and how it is built; the user agreed to them, so a task that cannot be done within them is
 not yours to settle.
 
 ## What to read
 
 - `steering.md`, and the README and design document it names.
-- The Task result section of `${CLAUDE_PLUGIN_ROOT}/references/essentials.md`: what your result aims
-  for. An evaluator will evaluate it by the same questions.
+- The viewpoint file you are given, `task-result.md`: what your result aims for. An evaluator will
+  evaluate it by the same questions.
 - When you are to fix, the item in `open/` you are given, for the More you are to fix and the Goods
   to keep, and the fix the conductor decided.
 

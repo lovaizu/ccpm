@@ -11,7 +11,7 @@ and headings stay exactly as written here.
 rn: <installed rn version>
 pr: <the session's pull request URL>
 status: running
-ux: <path of the README that says what the product should be to whoever uses it; README.md when none is settled>
+readme: <path of the README that says what the product should be to whoever uses it; README.md when none is settled>
 design: <path of the design document that says how it is built; docs/design.md when none is settled>
 ---
 
@@ -25,8 +25,8 @@ design: <path of the design document that says how it is built; docs/design.md w
 
 # Assumptions
 
-- **Fact** (<how it was checked, or "the user decided">): <what the plan rests on>
-- **Assumption**: <what the plan rests on without having checked it>
+- Fact, <how it was checked, or "decided by the user">: <what the plan rests on>
+- Assumption: <what the plan rests on without having checked it>
 
 # Rules
 
@@ -39,9 +39,9 @@ design: <path of the design document that says how it is built; docs/design.md w
 ### [ ] #2: Design sign-off
 ### [ ] #3: <task name>
 
-**Purpose**: <what this task does for the goal>
+Purpose: <what this task does for the goal>
 
-**Purpose achieved when**:
+Purpose achieved when:
 
 - <a state checked on the real thing>
 
@@ -72,18 +72,17 @@ Every commit the conductor makes ends with one line saying what was decided and 
 
 The last decision line on the branch is where the session stands: a later conversation takes up its
 next move. When the session stops at a sign-off, the next move is `waiting for #{id} {sign-off name}`,
-and the message body above it holds the final Good and More given with the review request.
+and the message body above it is the proposal given to the user.
 
 ## Finding the session
 
 1. The `steering.md` this conversation has been working on.
-2. Otherwise the one this branch changed:
+2. Otherwise the one the current branch changed, since each session works on its own branch:
    `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`
    (`git remote set-head origin --auto` first when `origin/HEAD` is not set).
-3. Otherwise those changed on the branches of open pull requests
-   (`gh pr list --state open --json headRefName`): propose one and wait.
 
-None → "No open session. Run `/rn:on` to start." A finished session → say so. Either way, stop.
+None → say there is no session on this branch: check out the session's branch, or run `/rn:on` to
+start one. A session whose `status` is `finished` → say so. Either way, stop.
 
 A session with no `rn` field, or one whose first two numbers differ from `version` in
 `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, was started under an earlier `rn`. `/rn:up` brings
