@@ -55,7 +55,7 @@ flowchart TD
     DesignTalk -.->|proposal| Design
     Design -->|feedback| DesignTalk
     Design -->|approve| Make
-    Make -.->|a decision is yours| DesignTalk
+    Make -.->|the design must change| DesignTalk
     Make -.->|proposal| Deliverable
     Deliverable -->|feedback| Make
     Deliverable -->|feedback that changes the design| DesignTalk
