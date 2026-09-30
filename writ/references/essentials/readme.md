@@ -8,7 +8,7 @@ The reader is someone meeting the product for the first time. When they finish, 
 
 - Can the reader see at a glance the flow from starting to use it to getting a result, what they do and get at each stage, and the thinking behind each stage that gets it for them?
 
-    A reader who sees, at each stage, why it is good for them, such as "it asks why you want it, so what you get is what you meant", sees the product was thought through for them and works with it as it intends. Each stage leads to a benefit in the opening, and each benefit is reached at some stage; a stage that leads to none is not needed, and a benefit no stage reaches is missing its way. How a stage is built stays in the design doc. Shown only as what to do, a stage reads as a manual.
+    A reader who sees, at each stage, why it is good for them, such as "it asks why you want it, so what you get is what you meant", sees the product was thought through for them and works with it as it intends. Each stage leads to a benefit in the opening, and each benefit is reached at some stage; a stage that leads to none is not needed, and a benefit no stage reaches is missing its way. How a stage is built does not help them decide. Shown only as what to do, a stage reads as a manual.
 
 - Can the reader picture the example as their own work?
 
@@ -16,7 +16,7 @@ The reader is someone meeting the product for the first time. When they finish, 
 
 - Can the reader read to the end without knowing the product's internals?
 
-    Kept to what a first-time reader needs to decide, the README reads through without stopping, and a reader who asks why the product takes this shape follows a link to the design doc from the sentence where they ask. Names of internal roles and exceptions make them learn what they do not need.
+    Kept to what a first-time reader needs to decide, the README reads through without stopping, and the reader gets the why they ask for where they ask it. Names of internal roles and exceptions make them learn what they do not need.
 
 - Can a newcomer get the product and start using it from this README alone, and learn whether they may use it?
 

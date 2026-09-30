@@ -2,9 +2,9 @@
 
 The readers are the producing role, which reads the essentials as the shape to aim for, and the checking role, which reads them as questions to answer. When they finish, they can judge any part of any work by whether the receiver of the work needs it, including parts no one foresaw.
 
-- Can the question be answered only by someone who understands the receiver's purpose?
+- Can the question, and every sentence under it, be met only by someone who understands the receiver's purpose?
 
-    A question answered from the purpose keeps the producing role aiming at it and the checking role judging by it, even in cases no one foresaw, and it is answered from the state of the finished work, not from whether steps were followed. One that form alone satisfies, such as "show an example" or "put it in a table", is a rule: met where it does not help, and passed where the form is there and the purpose is missed. What a script can decide belongs in a script.
+    A question and explanation answered from the purpose keep the producing role aiming at it and the checking role judging by it, even in cases no one foresaw, and they are answered from the state of the finished work, not from whether steps were followed. Anything form alone satisfies is a rule, whether it is the question, such as "show an example", or a means named in the explanation, such as "link to the design doc": the producing role adds it where it does not help, and the checking role counts it as a Good because the essentials name it. What a script can decide belongs in a script.
 
 - Does each question find both what is missing and what is extra?
 

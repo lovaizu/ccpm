@@ -24,11 +24,11 @@ Can the reader grasp the whole by reading from top to bottom, and, when they fin
 
 - Can the reader grasp at a glance who takes part, what passes between them, and in what order?
 
-    A diagram that draws its section's key point shows actors, handoffs, order, branches and changes of state at once, which prose makes the reader assemble in their head. It does so when each arrow names what is passed and documents and files are drawn as actors, so the reader sees who writes and reads them. A diagram of something else, or with more boxes than one glance holds, gives nothing.
+    Seen at a glance, who takes part, what passes on each handoff, who writes and reads each document, and the order, branches and changes of state are the section's key point grasped at once, where prose makes the reader assemble them in their head. A picture of something other than that key point, or holding more than one glance takes in, gives nothing.
 
 - Can the reader understand by reading from top to bottom, without going back and forth?
 
-    Read in order, the reader keeps their place and builds understanding as they go: the conclusion and what they gain first, the example before the pattern it shows, each word explained where it first appears, and each decision's reason, cost and rejected options beside it. Each jump back or ahead costs them their place.
+    Read in order, the reader knows from the start what they will gain, finds everything a sentence relies on already given, and builds understanding as they go. A word used before it is explained, a pattern before the example that makes it clear, or a decision's reason, cost or rejected options kept away from it sends them back or ahead and costs them their place.
 
 - Can the reader scan a list without reading the explanations?
 
