@@ -61,11 +61,12 @@ question to the user, not a stop of your own.
     checked and what passes. Run `writ:up` once for each document, with its path, its readers, and
     the agreed points; run it even when nothing changes the document, so the Design sign-off, which
     there always is, has grounds, and the user sees how it will be built and checked before anything
-    is built. Write what `writ` returns, its final Good and More with what it decided on each More,
-    into an `evaluation` item in `open/`, and commit it with the documents and the `notes` it
-    settles. Then settle it as an evaluation. `writ` has already fixed what it could; a More you
-    decide differently from `writ` changes the documents, so it is a point to work out with the user,
-    after which `writ:up` writes it.
+    is built. What `writ:up` returns comes back to you, not to the user, and is never your reply:
+    in the same turn, write it, its final Good and More with what it decided on each More, into an
+    `evaluation` item in `open/`, commit it with the documents and the `notes` it settles, and settle
+    it as an evaluation, deciding each point yourself. A More you decide to fix goes back to
+    `writ:up` as a point to write; check what returns as you check any fix. How the documents get
+    written is yours to decide; the user is asked only what the product should be.
 
 - The tasks that make the deliverable are planned once the Design sign-off is approved, and carried
   out without stopping.
@@ -118,8 +119,9 @@ asks with `/rn:gm`.
 1. Commit and push the evaluation in `open/`. Check every Good at its place as strictly as every
    More: the user will trust a Good in the proposal without reading that part, so a Good that does
    not hold would carry the flaw it hides to their approval unseen. A Good that does not hold is the
-   More it hides. A Good or More without grounds, or off the purpose, is let go with that reason. A
-   question answered with neither, check yourself on the real thing.
+   More it hides. A Good or More without grounds, or off the purpose, is let go with that reason and
+   is not a final Good or More. A question left with neither, answer yourself on the real thing, with
+   a Good or More at its place.
 2. Decide each More as the Decision section of `conductor.md` asks. The fix is yours to choose, from
    the purpose and what the user struggles with. A fix is made by a generator for a task, by you for
    the plan, and by `writ:up` for the README and design document; check it against the purpose and look again at every Good it touched, since a fix
