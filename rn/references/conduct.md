@@ -57,16 +57,18 @@ question to the user, not a stop of your own.
 - The design is written into the README and design document by the `writ:up` skill, checked by you,
   and stopped at the Design sign-off.
 
-    Work out with the user how to build it, and for each benefit the goal needs, in which scene it is
-    checked and what passes. Run `writ:up` once for each document, with its path, its readers, and
-    the agreed points; run it even when nothing changes the document, so the Design sign-off, which
-    there always is, has grounds, and the user sees how it will be built and checked before anything
-    is built. What `writ:up` returns comes back to you, not to the user, and is never your reply:
-    in the same turn, write it, its final Good and More with what it decided on each More, into an
-    `evaluation` item in `open/`, commit it with the documents and the `notes` it settles, and settle
-    it as an evaluation, deciding each point yourself. A More you decide to fix goes back to
-    `writ:up` as a point to write; check what returns as you check any fix. How the documents get
-    written is yours to decide; the user is asked only what the product should be.
+    Work out with the user how to build it, and for each benefit the goal needs, in which scene it
+    is checked and what passes. Run `writ:up` once for each document, with its path, its readers,
+    and the agreed points; run it even when nothing changes the document, so the Design sign-off,
+    which there always is, has grounds, and the user sees how it will be built and checked before
+    anything is built. `writ:up` ends by giving its document and final Good and More to whoever
+    asked, and that is you, not the user: never give it as text, since text with no tool call ends
+    your turn and leaves the user to say "go on". Your next step after it is a tool call that writes
+    it, its final Good and More with what it decided on each More, into an `evaluation` item in
+    `open/`, commit it with the documents and the `notes` it settles, and settle it as an
+    evaluation, deciding each point yourself. A More you decide to fix goes back to `writ:up` as a
+    point to write; check what returns as you check any fix. How the documents get written is yours
+    to decide; the user is asked only what the product should be.
 
 - The tasks that make the deliverable are planned once the Design sign-off is approved, and carried
   out without stopping.
