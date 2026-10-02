@@ -327,10 +327,6 @@ For every quality, a person who runs writ in the user's place and reads what com
 
     A quality for "asked instead of glossed over"; without it, a document with which the reader cannot achieve the purpose comes back looking right, and the user hands it over unaware of the hole. Run on a request that Claude Code without writ would blur or fill by inference, such as typing rules where whether any may be used is undecided, and on a request with a gap that can be left undecided, such as the owners. It passes if, in the first, writ does not return the document as finished but starts by asking about what is undecided, with the gap visible in the target file too, and in the second, it returns with a More that carries the reason it was left. The second is there because asking back about everything would pass the first alone.
 
-- Documents Claude Code writes in the middle of its work also get the four benefits.
-
-    A quality for the feature for documents written in the middle of work; without it, documents the user forgot to call writ for are handed over as finished without writ. Run on a scene where, after the reader and purpose are settled in the conversation, the user has Claude Code write a README without calling `/writ:up`. The design does not promise it is chosen every time, and the README tells what to do when it is not, so what is checked is whether the benefits reach the document when it is chosen. It passes if writ is chosen, starts writing without asking, adds a Good and More for each essential to the report, and the document meets the pass criteria of the first and second qualities. If it is not chosen, run again until it is.
-
 ### What the user takes for granted
 
 What a script can decide is checked with a script. It is fast, gives the same answer every time, and leaves the tester's attention for judging the benefits.
@@ -356,3 +352,5 @@ What a script cannot decide is checked by the tester.
 ### What is not checked
 
 The tests go only as far as the combinations of kinds and scenes listed above. Not every kind of document or reader is tried; this relies on the essentials being worded to fit every kind of document.
+
+Whether Claude Code chooses writ for a document it writes in the middle of its work is not run. That depends on Claude Code's judgment of the skill description in the moment, which writ cannot make certain; once chosen, writ runs the same flow the benefits above already check; and when it is not chosen, the user calls `/writ:up` as the README says, so little is lost. What writ controls is the description, so the tester reads it against the official guidance for skill descriptions instead. It passes if the description follows that guidance and says what writ does and when to use it, including the scene of writing a document in the middle of work.
