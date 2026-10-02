@@ -63,17 +63,20 @@ question to the user, not a stop of your own.
 - The design is the README and design document, written by the `writ:up` skill run in an agent of
   its own, evaluated by `design.md`, settled, and stopped at the Design sign-off.
 
-    Work out with the user how to build it, and for each benefit the goal needs, in which scene it
-    is checked and what passes. For each document, start a fresh agent with `Agent` to run
-    `writ:up`, giving it the document's path, its readers, the `artifact-language` of
+    Work out with the user how to build it, and for each line of Goal achieved when, in which scene
+    it is checked and what passes. Start a fresh agent with `Agent` that runs `writ:up` for the README
+    and then the design document, giving it their paths and readers, the `artifact-language` of
     `steering.md`, and the path of the `notes` item holding the agreed points, never a summary of
     them, since a summary drifts from what was agreed. `writ` checks how the documents read; whether
-    they achieve the goal is `rn`'s, so the agent then reads both documents whole and returns a Good
-    or More for every question of `design.md`, as a generator does, and you check them as you check a
-    generator's. Run it even when nothing changes the document, so the Design sign-off, which there
-    always is, has grounds, and the user sees how it will be built and checked before anything is
-    built. Commit the documents with the `notes` they settle, then have the design evaluated. A More
-    you decide to fix goes to a fresh agent running `writ:up`, as a point to write. How the documents
+    they achieve the goal is `rn`'s, so give it also the paths of `steering.md`,
+    `${CLAUDE_PLUGIN_ROOT}/references/essentials/design.md`, and
+    `${CLAUDE_PLUGIN_ROOT}/references/essentials/evaluation.md`: once both are written, it reads them
+    whole and returns a Good or More for every question of `design.md`, as a generator does, and you
+    check them as you check a generator's. Run it even when no point changes the documents, so the
+    Design sign-off, which there always is, has grounds, and the user sees how it will be built and
+    checked before anything is built. Commit the documents with the `notes` they settle, then have
+    the design evaluated. A More you decide to fix is written as a point to a `notes` item, and goes
+    to a fresh such agent with that item's path. How the documents
     get written is yours to decide; the user is asked only what the product should be.
 
 - The tasks that make the deliverable are planned once the Design sign-off is approved, and carried
@@ -155,7 +158,7 @@ its place alone, written to its own `evaluation` item and settled the same way.
    ```
 
 3. Repeat until every More is decided, or the work cannot go on: the same More keeps coming back,
-   each fix brings a new More, or a fix needs the README or the design document changed.
+   each fix brings a new More, or a fix to anything but the design needs the README or the design document changed.
 4. Check the final Good and More for each question. A fatal More is one without whose fix the goal
    cannot be achieved, and whose fix only the user can decide. When one remains, or the work cannot
    go on, go back to work out the plan, for the plan, or the design, for anything else, with that

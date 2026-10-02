@@ -87,7 +87,10 @@ reads well without anyone but its maker asking whether it achieves the goal. Poi
 working out the design wait in `open/` until `writ` writes them, so a pause loses none. There is always a Design sign-off, even when the design document
 does not change, since the user sees how it will be built and checked before anything is built
 (README, 3. Work out the design). Tasks that make the deliverable are planned only once the design
-is approved; tasks planned before the design would mostly be rewritten once it is.
+is approved; tasks planned before the design would mostly be rewritten once it is. They first raise the
+qualities the user would choose the product for, until the goal is nearly achieved, and finish the
+qualities the user takes for granted last: those are easier to build and check, and started first
+they take the effort while why the user would choose the product goes unchecked.
 
 After feedback at a sign-off, the session goes back to before it: a plan or a design is worked out
 again with the user, taking the mismatch behind the feedback as the first point, since fixing only
@@ -225,7 +228,7 @@ design and is the worst placed to call them good. Then the conductor decides eac
 
 The repetition ends as either settled or cannot go on. It cannot go on when the same More keeps
 coming back, when each fix brings a new More, or when a fix needs the README or the design document
-changed.
+changed, unless what is fixed is the design itself.
 
 A fix is checked by the conductor against the purpose, and then by a fresh evaluator given only that
 More and its place, which says whether it still holds. Whoever made a fix is the worst placed to see
@@ -241,7 +244,8 @@ place, and at a sign-off ask with `/rn:gm` for anything, another evaluation incl
 When Mores contradict each other, `rn` does not pick one. They are a sign that something is
 undecided in the goal, the essential viewpoints, or a document, so that is what gets decided.
 
-A plan follows the same flow, with the conductor making and fixing it.
+A plan follows the same flow, with the conductor making and fixing it, and so does the design, with
+`writ` writing and fixing it.
 
 ## A sign-off comes with a proposal and its grounds
 
