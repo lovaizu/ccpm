@@ -48,9 +48,9 @@ $ARGUMENTS
 
     When given a document to fix, read it first. As a proposal, the user only says whether it is right, and a wrong inference shows up before writing starts.
 
-- Do not have a decision that belongs to the user or those around them written into the document as your proposal. If leaving it undecided keeps the reader from achieving the purpose, ask the user as in the section on asking the user; otherwise have it written as undecided.
+- Do not have a decision that belongs to the user or those around them written into the document as your proposal. Have it written as undecided only when the reader can settle it themselves, as with who takes which part, or can achieve the purpose without it; ask the user about any other, as in the section on asking the user, and about one you are unsure of.
 
-    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read.
+    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read. Left undecided where the reader cannot settle it, such as a team rule, or where the reader cannot wait for it, such as an AI acting on a prompt, it makes the reader guess and redo the work. A question costs the user one answer, while leaving it wrongly costs every reader.
 
 - Ask one question at a time, and remove what the answer settled before asking the next.
 

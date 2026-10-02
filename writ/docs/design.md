@@ -252,9 +252,9 @@ flowchart TD
 
     Each is a sign that further fixing will not reach a returnable state. Carrying on leaves the user waiting without ever getting the document. The cycle of fixing is expected to stop at these three signs, but whether the signs can always be told is not checked; the quality "never left waiting without an end" checks it.
 
-- A decision that belongs to the user or those around them is not written into the document as writ's proposal. If leaving it undecided keeps the reader from achieving the purpose, it goes back to the user; otherwise the document shows it as undecided.
+- A decision that belongs to the user or those around them is not written into the document as writ's proposal. The document shows it as undecided only when the reader can settle it themselves, as with who takes which part, or can achieve the purpose without it; any other goes back to the user, and so does one writ is unsure of.
 
-    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read.
+    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read. Left undecided where the reader cannot settle it, such as a team rule, or where the reader cannot wait for it, such as an AI acting on a prompt, it makes the reader guess and redo the work. A question costs the user one answer, while leaving it wrongly costs every reader, so when unsure, writ asks.
 
 - After any state, the content of the target file does not blur a gap in the content.
 
