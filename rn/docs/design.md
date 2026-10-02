@@ -130,18 +130,23 @@ flowchart TD
     U(["User"])
     C["Conductor in the main conversation"]
     G["Generator, one per task"]
+    W["writ, one per document"]
     E["Evaluator, one per evaluation"]
     U -->|"conversation, commands"| C
     C -->|"proposals, with the final<br/>Good/More as grounds"| U
     C -->|"a task, a More to fix"| G
     G -->|"edits in the working tree"| C
+    C -->|"a document, the agreed points"| W
+    W -->|"the document, its final Good/More"| C
     C -->|"a commit or document to evaluate"| E
     E -->|"evaluation"| C
 ```
 
 The conductor stays the same conversation throughout the session, since what was talked through
 stays with it. A fresh generator is started for each task, so its attention holds only that task,
-and a fresh evaluator for each evaluation; each ends when done.
+a fresh `writ` for each document, and a fresh evaluator for each evaluation; each ends when done.
+Every one of them returns to the conductor, never to the user, so the conductor's turn ends only
+when it stops for a sign-off or asks the user a question.
 
 An evaluator is handed the thing, its essential viewpoints, and what the user agreed to and said:
 the goal and the task's purpose in `steering.md`, and the agreed parts of the README and design
