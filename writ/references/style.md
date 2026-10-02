@@ -38,9 +38,9 @@ The reader is the producing role. When it finishes, it writes every document so 
 
     The reader wants how things stand now; the history is kept in git.
 
-- Put a diagram first in its section, drawn top to bottom, with few boxes and each arrow labelled with what passes.
+- In a document a person reads, put a diagram first in its section, drawn top to bottom, with few boxes and each arrow labelled with what passes; in a prompt, draw none.
 
-    The reader grasps the section at a glance before reading the prose.
+    A person grasps the section at a glance before reading the prose; an AI reads the diagram as text, in order, and gets the same thing twice.
 
 - In a README, show use as a scenario with realistic console output, not a mechanical list.
 

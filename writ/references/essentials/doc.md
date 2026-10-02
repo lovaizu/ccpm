@@ -12,7 +12,7 @@ The reader is whoever the document is written for. When they finish, they have g
 
 - Where the key point is who takes part and what passes between them, can the reader grasp it at a glance?
 
-    Seen at a glance, who takes part, what passes on each handoff, who writes and reads each document, and the order and branches are grasped at once, where prose makes the reader assemble them in their head. A picture of something prose already gives at once, or holding more than one glance takes in, costs a look and gives nothing.
+    Seen at a glance, who takes part, what passes on each handoff, who writes and reads each document, and the order and branches are grasped at once, where prose makes the reader assemble them in their head. A picture of something prose already gives at once, or holding more than one glance takes in, costs a look and gives nothing. An AI reads a picture as text, in order, so for it a picture only repeats the prose.
 
 - Can the reader tell what is settled, what is assumed, and what is missing?
 
