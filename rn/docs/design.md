@@ -276,6 +276,8 @@ Every decision is committed and pushed as it is made, so `/rn:up` takes up the n
 conversation language that `steering.md` records. For a session started under an older version of
 `rn`, `/rn:up` works the goal out again from the old record and stops at a new Plan sign-off, since
 an older record may not hold why the user wants the goal, and every later decision is judged by it.
+What an old design approved is kept as agreed points of the design, for `writ` to write and the user
+to see at the Design sign-off, since the design document changes only that way.
 
 A session works on its own branch with a draft pull request, so the user's default branch changes
 only when they merge. `/rn:on` makes `steering.md` and the draft pull request at once, from the
@@ -549,8 +551,9 @@ did.
 
 - `/rn:up` on a session started under 0.8.0.
 
-    Passes when a `steering.md` in the current form, carrying over what was done, is made, and it
-    stops at the Plan sign-off.
+    Passes when a `steering.md` in the current form, carrying over what was done, is made, what the
+    old design approved is in a `notes` item and not in the design document, and it stops at the Plan
+    sign-off.
 
 - `/rn:gm` at the Deliverable sign-off, fixable within the design.
 
