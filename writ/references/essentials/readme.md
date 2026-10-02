@@ -42,7 +42,7 @@ The reader is someone meeting the product for the first time. When they finish, 
 
     With everything needed to start in one place, the reader goes from deciding to using without searching elsewhere.
 
-- Are the prerequisites written so each reader can prepare them in their own environment?
+- Can each reader prepare the prerequisites in their own way?
 
     Stating what is needed and why lets each reader prepare in their own way. A single way of preparing reads as if the others could not be chosen, and gives those already prepared a procedure they do not need.
 

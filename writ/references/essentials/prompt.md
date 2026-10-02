@@ -10,11 +10,11 @@ The reader is the AI that acts by following the prompt. When it finishes, it can
 
     A purpose that names the user's benefit and its reason gives the AI something to weigh each choice against. A purpose that only summarises the steps adds nothing the steps do not say.
 
-- Is every step something the AI could not work out from its role and purpose?
+- Is every step one the AI would get wrong if it were not written?
 
     Kept to rules that break things when they drift and cannot be derived, such as the format of a handoff, the steps leave the AI free to act on the purpose everywhere else. Steps are followed exactly, so a flow of work copied into them, or a sentence meant only as explanation, is acted on even where it goes against the purpose. Take a step away: if the AI would still act rightly, it was not needed.
 
-- Does every part of the prompt, and every mechanism it relies on, trace to a feature in the design?
+- Does every part of the prompt, and every mechanism it uses, such as a hook or a subagent, serve a feature in the design?
 
     A maintainer who can trace each part and each mechanism, such as an agent definition, a hook or a subagent launch, to a feature can tell what changing it costs. One that traces to nothing has no ground anyone can check, and is kept by habit.
 
@@ -26,11 +26,11 @@ The reader is the AI that acts by following the prompt. When it finishes, it can
 
     When every input has a writer, each role gets what its work needs. An input no one writes leaves the role to fill it by guess.
 
-- Is each role kept from what it must not see?
+- Is each role kept from seeing what it must not see?
 
     Told what it must not see and why, each role keeps the view it is there for. A checking role handed the producing role's reasons, or free to fetch git history, the discussion or earlier versions, fills the work's gaps with them and misses where the reader trips; the tools it needs reach those too, so tools alone cannot keep it out.
 
-- Does the checking role judge whether the reader gets the benefit?
+- Does the checking role spend its judgment on whether the reader gets the benefit?
 
     Only a role that did not produce the work can read it without knowing the discussion, so its judgment goes where only it can see: whether the reader gets the benefit they would choose the work for. Spent on form, that judgment grows thin.
 
@@ -62,6 +62,6 @@ The reader is the AI that acts by following the prompt. When it finishes, it can
 
     Asked only what is theirs to answer, the person spends their time on their own decisions. What can be looked up is looked up.
 
-- Is each question asked after the answers that could change it?
+- Is each question to the person asked after the questions whose answers could change it?
 
     Asked in that order, the person never answers a question an earlier answer made unnecessary.
