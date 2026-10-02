@@ -163,12 +163,12 @@ evaluation would pull that decision toward the evaluator's first idea.
 
 ```mermaid
 flowchart TD
-    M["The generator makes a task's result"]
-    K{"The conductor checks it<br/>against the purpose"}
+    M["The generator makes a task's result,<br/>reads it whole, and returns<br/>a Good or More for every question"]
+    K{"The conductor checks the purpose,<br/>and each Good and More at its place"}
     V["An evaluator evaluates once"]
     KE{"The conductor checks each Good<br/>and each More at its place"}
     D{"The conductor decides<br/>each More in turn"}
-    F["The generator fixes"]
+    F["The generator fixes,<br/>reads it whole, and returns<br/>a Good or More for every question"]
     R["A fresh evaluator checks<br/>that More alone"]
     J{"The conductor checks the final<br/>Good/More for each viewpoint"}
     N["On to the next task,<br/>or to the sign-off"]
@@ -186,6 +186,16 @@ flowchart TD
     J -->|"no fatal More"| N
     J -->|"a fatal More"| U
 ```
+
+A generator reads its result whole once made, and again after each fix, and fixes it until no
+question of the viewpoints falls short, since one fix, such as a word changed or a part moved, can
+break another place. It returns a Good or More for every question, a More it could not fix
+included, so the conductor sees where it stands without finding out alone. Whoever made a thing
+knows what it means and cannot see where it is unclear; the evaluator stays for that.
+
+The conductor checks every question in full three times: what the generator returns, what the
+evaluator returns, and, before proposing to the user, the final Good and More against the real thing
+as it is now, since a fix can move or take away what a Good pointed to.
 
 Every Good is checked at its place as strictly as every More, so a Good the user reads in a proposal
 holds, and they can trust it without reading that part. A Good that does not hold is the most

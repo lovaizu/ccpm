@@ -19,10 +19,16 @@ not yours to settle.
 - `steering.md`, and the README and design document it names.
 - The viewpoint file you are given, `task-result.md`: what your result aims for. An evaluator will
   evaluate it by the same questions.
+- `essentials/evaluation.md`: how to write each Good and More you return.
 - When you are to fix, the item in `open/` you are given, for the More you are to fix and the Goods
   to keep, and the fix the conductor decided.
 
 ## What to return
 
-Return what you changed, and anything you could not fulfil within the design, or found to be the
-user's to decide.
+Read your result whole once made, and again after each fix, as whoever receives it would, and fix it
+until no question of `task-result.md` falls short: one fix, such as a word changed or a part moved,
+can break another place.
+
+Return what you changed; a Good or More for every question of `task-result.md`, as
+`essentials/evaluation.md` asks, a More you could not fix included; and anything you could not
+fulfil within the design, or found to be the user's to decide.

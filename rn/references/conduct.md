@@ -86,10 +86,12 @@ change the user made by answering a question.
 
 1. Start a fresh generator with `Agent`, giving it the paths of
    `${CLAUDE_PLUGIN_ROOT}/references/generate.md`, `steering.md`, and
-   `${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md`, and the task's id. When it is to fix,
+   `${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md`,
+   `${CLAUDE_PLUGIN_ROOT}/references/essentials/evaluation.md`, and the task's id. When it is to fix,
    add the path of the item in `open/`, which More, and the fix you decided.
-2. Check what it returned against the task's purpose, on the real thing. Not fulfilled → send it back
-   with what falls short. Something only the user can decide → ask them, as the Question section of
+2. Check what it returned against the task's purpose, on the real thing, and every question's Good
+   and More at its place, as in step 1 of settling an evaluation. Not fulfilled, a Good that does not
+   hold, or a question left with neither → send it back with what falls short. Something only the user can decide → ask them, as the Question section of
    `conductor.md` asks, and write in what they decide.
 3. Commit and push. Have the result evaluated and settle it.
 4. Mark the task `[x]`.
@@ -161,7 +163,9 @@ Each time you decide what comes next, write it in the decision line and tell the
 
 ## Stopping for the user
 
-At a sign-off, `open/` is empty. Write the proposal once, as the Proposal section of `conductor.md`
+At a sign-off, `open/` is empty. Check every final Good and More again at its place in the real
+thing as it is now, since a fix can move or take away what one pointed to; the proposal gives only
+what holds there. Write the proposal once, as the Proposal section of `conductor.md`
 asks; commit and push with that text as the message body and the decision line
 `● … → waiting for #{id} {sign-off name}` last; then give the user that body, as
 `git log -1 --format=%b` prints it up to the decision line, in the conversation language, adding
