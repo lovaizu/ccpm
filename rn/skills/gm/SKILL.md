@@ -9,8 +9,7 @@ disable-model-invocation: true
 ## Purpose
 
 Feedback is a sign that the user and the session do not yet see the same thing, so the session goes
-back to before the sign-off: the plan or the design is worked out again with the user, and the
-deliverable gets tasks. The user's words are kept whole, since the work is answered and evaluated by
+back to before the sign-off and works out again what the feedback shows they do not yet share. The user's words are kept whole, since the work is answered and evaluated by
 them, and a summary would shift that measure.
 
 ## Steps

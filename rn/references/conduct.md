@@ -27,11 +27,11 @@ What you make, you make to its essential viewpoints, and what you decide and say
 Read `steering.md`, `open/`, and the last decision line, and take up its next move. First bring the
 branch up to the latest default branch on the remote by merging it in; when that changes what the
 plan or the design rests on, work that out again before the next sign-off. The `notes` item
-`/rn:dn` left says what was under way; a task under way goes on from the edits committed with it, so
-give its generator the item's path, and settle the item once that generator returns. A `notes` item
+`/rn:dn` left says what was under way; settle it once you have taken it up. A task under way goes on
+from the edits committed with it, so give its generator the item's path, and settle the item once
+that generator returns. A `notes` item
 of agreed design points stays until `writ` writes them. A `feedback` item goes back to before
-the sign-off it answers: the plan or the design is worked out again with the user, and stopped at
-that sign-off again, added with the next unused id before the tasks not yet done, taking the mismatch
+the sign-off it answers: the plan or the design is worked out again with the user, taking the mismatch
 behind the words as the first point, since fixing only what the words say leaves it in place. Feedback
 on the deliverable gets tasks for it, or goes back to working out the design when it changes what the
 product should be or how it is built, since the README and design document are what the user
@@ -104,7 +104,8 @@ that sign-off again, added the same way, since only the sign-off shows the user 
    and More at its place, as in step 1 of settling an evaluation. Not fulfilled, a Good that does not
    hold, or a question left with neither → commit it with its decision line, such as `purpose not
    fulfilled`, so a later conversation knows why the task is not done, and send it back with what
-   falls short. Something only the user can decide → ask them, as the Question section of
+   falls short; when it keeps falling short the same way, the work cannot go on, as in settling an
+   evaluation. Something only the user can decide → ask them, as the Question section of
    `conductor.md` asks, and write in what they decide.
 3. Commit and push. Have the result evaluated and settle it.
 4. Mark the task `[x]` in the commit that settles its evaluation.
@@ -142,7 +143,7 @@ its place alone, written to its own `evaluation` item and settled the same way.
    More it hides. A Good or More without grounds, or off the purpose, is let go with that reason and
    is not a final Good or More. A question left with neither goes to a fresh evaluator for that
    question alone, since you made the plan and the design and are the worst placed to see where they
-   fall short.
+   fall short. Left with neither again, the thing does not show the answer, and that is its More.
 2. Decide each More as the Decision section of `conductor.md` asks. The fix is yours to choose: first
    what the work should be for its purpose, then what to change wherever the real thing falls short
    of it for the same cause, not only at the place the More names. A fix is made by a generator for a task, by you for
@@ -161,7 +162,7 @@ its place alone, written to its own `evaluation` item and settled the same way.
    each fix brings a new More, or a fix to anything but the design needs the README or the design document changed.
 4. Check the final Good and More for each question. A fatal More is one without whose fix the goal
    cannot be achieved, and whose fix only the user can decide. When one remains, or the work cannot
-   go on, go back to work out the plan, for the plan, or the design, for anything else, with that
+   go on, go back to work out the plan or the design, whichever its fix would change, with that
    More as the first point, and stop at that sign-off again. A More whose fix only the user can decide but the goal does not hang on
    is a question to them, and what they decide is written in. Otherwise move on.
 

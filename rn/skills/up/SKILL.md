@@ -8,8 +8,8 @@ disable-model-invocation: true
 
 ## Purpose
 
-The session goes on from where the user left it, by what its record says, as if it had never
-stopped, until the next sign-off.
+The user can clear the conversation at any stop and come back without explaining anything again,
+since the session goes on from where they left it by what its record says.
 
 ## Steps
 
