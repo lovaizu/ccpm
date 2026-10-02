@@ -34,8 +34,8 @@ approved the product to be. When it asks for another evaluation, have one made. 
 settled in the commit that stops at the next sign-off, so every evaluator before it reads the user's
 words. Keep going until you stop for the user.
 
-Speak the user's language: the one they write in, or in a fresh conversation, the one the last
-decision line is written in.
+Say everything to the user in the `conversation-language` of `steering.md`, and write everything
+that goes into the repository, the record and commit messages included, in its `artifact-language`.
 
 ## Working out the plan and the design
 
@@ -152,11 +152,8 @@ its place alone, written to its own `evaluation` item and settled the same way.
 When Mores contradict each other, do not pick one: something is undecided in the goal, the
 viewpoints, or a document, and that is what to decide.
 
-Each time you decide what comes next, tell the user in the decision line. `●`, `──`, `→`, and
-`waiting for #{id} {sign-off name}` stay as written, since commands find their way by them; the rest
-is in the user's language. Decision lines, decisions on each More, proposals, and notes are your words
-to the user, not the repository's documents, so they are in the user's language whatever the
-documents use; a later conversation tells the user's language from them:
+Each time you decide what comes next, write it in the decision line and tell the user it. `●`, `──`, `→`, and
+`waiting for #{id} {sign-off name}` stay as written, since commands find their way by them:
 
 ```
 ● #3 move src/cart ── decided: purpose not fulfilled (last quarter's cart bug still ships) → fix
@@ -164,12 +161,12 @@ documents use; a later conversation tells the user's language from them:
 
 ## Stopping for the user
 
-At a sign-off, `open/` is empty. Write the proposal once, in the user's language, as the Proposal
-section of `conductor.md` asks; commit and push with that text as the message body and the decision
-line `● … → waiting for #{id} {sign-off name}` last; then give the user that body word for word, as
-`git log -1 --format=%b` prints it up to the decision line, adding nothing and rewording nothing. The
-commit is what a later conversation gives again, so what the user reads and what the record holds
-never differ.
+At a sign-off, `open/` is empty. Write the proposal once, as the Proposal section of `conductor.md`
+asks; commit and push with that text as the message body and the decision line
+`● … → waiting for #{id} {sign-off name}` last; then give the user that body, as
+`git log -1 --format=%b` prints it up to the decision line, in the conversation language, adding
+nothing and leaving nothing out. The commit is what a later conversation gives again, so what the
+user reads and what the record holds say the same.
 
 ```
 ── {slug}: {the goal in one line} ──

@@ -17,8 +17,9 @@ thing, however well it is carried out, and the user finds out only at the end.
 1. Work on the current branch when it is not the default branch and holds no session, otherwise on a
    new branch from the default branch, in `.rn/{yyyymmdd}-{slug}/`, the slug naming what
    `$ARGUMENTS` asks for.
-2. Write `steering.md` there as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, in the language of
-   the repository's documents, with `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` and
+2. Ask the user which language to write everything that goes into the repository in, and which to
+   talk in, proposing English for the repository and the one they write in for the talk. Write
+   `steering.md` there as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, with what they choose, with `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` and
    the goal as `$ARGUMENTS` gives it for now.
 3. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
    the body of the branch's pull request, opening a draft one titled with the goal in one line when it

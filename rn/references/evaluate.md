@@ -31,8 +31,8 @@ not grounds.
 Answer every question of the viewpoint file you are given, under its own heading, with Good, More, or
 both, as `evaluation.md` asks. Where running or reading answers a question, do it, outside the
 repository or in a clone with its remote removed, and leave the repository as you found it but for
-the file you write. Write the evaluation to the file in `open/` you are given, in the language of
-`steering.md`, headed `# Evaluation — {kind}[ — task #N]`, and return the same text.
+the file you write. Write the evaluation to the file in `open/` you are given, in the
+`artifact-language` of `steering.md`, headed `# Evaluation — {kind}[ — task #N]`, and return the same text.
 
 When you are given one question, or one More and its place, answer that alone: for the question, a
 Good or More as above; for the More, whether it still holds at its place now, with the grounds.

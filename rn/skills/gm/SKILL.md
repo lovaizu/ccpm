@@ -22,7 +22,8 @@ them, and a summary would shift that measure.
    and stop. Write it to a `feedback` item in `open/`.
 3. Commit and push with the decision line
    `● #{id} {sign-off name} ── {feedback received} → {work out the plan again | work out the design again | add tasks}`,
-   and say, everything in braces in the user's language:
+   and say, the decision line in the `artifact-language` of `steering.md`, and what you say in
+   its `conversation-language`:
 
    ```
    ● {took the feedback on the plan, the design, or the deliverable}. {next: say "go on", or /clear and /rn:up}

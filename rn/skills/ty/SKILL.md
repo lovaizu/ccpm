@@ -19,7 +19,8 @@ without asking again. It is recorded and the session stops, so they can clear th
    request ready with `gh pr ready`.
 3. Commit and push with the decision line
    `● #{id} {sign-off name} ── {approved} → {work out the design | plan the tasks | finished}`, and say,
-   everything in braces in the user's language:
+   the decision line in the `artifact-language` of `steering.md`, and what you say in
+   its `conversation-language`:
 
    ```
    ● {approved the plan or the design}. {next: say "go on", or /clear and /rn:up}

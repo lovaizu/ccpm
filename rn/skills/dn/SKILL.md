@@ -27,4 +27,5 @@ needs is left there.
    👉 #{id} {task name} ── {stopped here; next: /rn:up}
    ```
 
-   Everything in braces is in the user's language.
+   The decision line is in the `artifact-language` of `steering.md`, and what you say in its
+   `conversation-language`.

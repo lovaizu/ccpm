@@ -11,6 +11,8 @@ and headings stay exactly as written here.
 rn: <installed rn version>
 pr: <the session's pull request URL>
 status: running
+artifact-language: <the language the user chose for everything written to the repository>
+conversation-language: <the language the user chose for what is said to them>
 readme: <path of the README that says what the product should be to whoever uses it; README.md when none is settled>
 design: <path of the design document that says how it is built; docs/design.md when none is settled>
 ---

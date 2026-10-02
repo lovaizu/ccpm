@@ -238,8 +238,8 @@ user's terms, the final Good and More, each at its place in the real thing and w
 claiming no more than that place shows. The points and fixes along the way are left out: the user
 approves the final state, and with those they would have to work out where each applies now.
 
-The user is given the body of the stop commit word for word, so what the user read and what a later
-conversation gives never differ.
+The user is given the body of the stop commit in the conversation language, adding nothing and
+leaving nothing out, so what the user read and what a later conversation gives say the same.
 
 ## Everything decided is pushed, so any conversation goes on
 
@@ -263,7 +263,7 @@ flowchart TD
 ```
 
 Every decision is committed and pushed as it is made, so `/rn:up` takes up the next move, in the
-user's language that `steering.md` records. For a session started under an older version of
+conversation language that `steering.md` records. For a session started under an older version of
 `rn`, `/rn:up` works the goal out again from the old record and stops at a new Plan sign-off, since
 an older record may not hold why the user wants the goal, and every later decision is judged by it.
 
@@ -308,7 +308,7 @@ rn: settle the evaluation of #3 move src/cart
 - The decision line comes last, and a stop commit's reads `● waiting for #2 Design sign-off`.
 
     `/rn:up` finds the next move by `●`, `──`, `→`, and `waiting for`, which stay as written. The
-    rest is in the user's language.
+    rest is in the artifact language, like everything else committed.
 
 ### A session has one directory under .rn/
 
@@ -341,7 +341,8 @@ the move to TypeScript, `steering.md` right after the Design sign-off looks like
 rn: 0.9.0
 pr: https://github.com/you/repo/pull/42
 status: running
-language: Japanese
+artifact-language: English
+conversation-language: Japanese
 readme: README.md
 design: docs/design.md
 ---
@@ -395,10 +396,13 @@ Purpose achieved when:
 
     Every command then judges the same way whether the session has ended.
 
-- `language` is the language the user writes in.
+- `artifact-language` and `conversation-language` are what the user chose when the session began:
+  the first for everything written to the repository, the record and commits included, the second
+  for what is said to them.
 
-    A fresh conversation speaks it from the first line, instead of guessing it from records whose
-    words mix with the repository's.
+    The record reads in one language throughout, and a fresh conversation speaks the user's
+    language from the first line instead of guessing it. `rn` proposes English for the repository,
+    which reaches the most readers later, and the language the user writes in for the talk.
 
 - `readme` and `design` fix the one README and the one design document, wherever they were agreed.
 
@@ -521,7 +525,7 @@ all again each time.
 
 - `/rn:dn` in the middle of a task, then `/rn:up` in a fresh conversation.
 
-    Passes when it starts from the same task, does not redo finished ones, speaks the user's
+    Passes when it starts from the same task, does not redo finished ones, speaks the conversation
     language, and asks nothing already decided.
 
 - `/rn:up` at a sign-off in a fresh conversation.
