@@ -122,7 +122,7 @@ file in `open/`:
 - A task result is the task's commits, by `task-result.md`.
 - The deliverable is the change since the branch left the default branch, by `deliverable.md`.
 
-Nothing else, not even what the thing was changed to answer: an evaluation pulled toward its maker's
+Nothing else, not even how it was made or changed, the user's own words in `feedback` items aside: an evaluation pulled toward its maker's
 reasons stops seeing where the user will struggle. A thing is evaluated whole once, since an AI evaluation
 can raise new points that are not essential each time it is asked; another is made only when the user
 asks with `/rn:gm`. A check of one point is not another evaluation: a question an evaluation left with

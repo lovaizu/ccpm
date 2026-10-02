@@ -149,8 +149,9 @@ Every one of them returns to the conductor, never to the user, so the conductor'
 when it stops for a sign-off or asks the user a question.
 
 An evaluator is handed the thing, its essential viewpoints, and what the user agreed to and said:
-the goal and the task's purpose in `steering.md`, and the agreed parts of the README and design
-document. It is never handed how the thing was made or what it was changed to answer. Someone who
+the goal and the task's purpose in `steering.md`, the agreed parts of the README and design
+document, and the user's feedback in their own words. It is never handed the maker's account, how
+the thing was made or how it was changed to answer something. Someone who
 did not make it, reading from the user's side, sees where the user will struggle; whoever made it
 reads it along their own reasons.
 
