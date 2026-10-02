@@ -92,7 +92,11 @@ After feedback at a sign-off, the session goes back to before it: a plan or a de
 again with the user, taking the mismatch behind the feedback as the first point, since fixing only
 what the words say leaves the mismatch in place. Feedback on the deliverable that changes what the
 product should be, or how it is built, goes back to working out the design, through a Design
-sign-off, since the README and design document are what the user approved the product to be.
+sign-off, since the README and design document are what the user approved the product to be. Work
+that goes back to working out the plan or the design, from feedback or from a fatal More, always
+stops at that sign-off again before anything is built on it, even when the user answered every
+question along the way: answers settle points one at a time, and only the sign-off shows the user
+the whole they are about to have built.
 
 ## It calls the user only for decisions that are theirs
 
@@ -114,7 +118,8 @@ Approving and giving feedback each stop, since that is where the user may clear 
 Once approved, the goal goes back through the Plan sign-off, and the README and design document
 through the Design sign-off, only when what they say changes without the user having decided it. Two
 kinds of change are written without stopping: a correction that changes nothing they say, such as a
-line number gone stale, and a change the user made by answering a question. The next proposal shows
+line number gone stale, and a change the user made by answering a question while the work goes on
+from what was approved, not after it went back to working out the plan or the design. The next proposal shows
 them first, as changed since the last approval, so the user approves what they read without being
 stopped for what they already decided.
 
