@@ -112,9 +112,11 @@ file in `open/`:
 - The deliverable is the change since the branch left the default branch, by `deliverable.md`.
 
 Nothing else, not even what the thing was changed to answer: an evaluation pulled toward its maker's
-reasons stops seeing where the user will struggle. A thing is evaluated once, since an AI evaluation
+reasons stops seeing where the user will struggle. A thing is evaluated whole once, since an AI evaluation
 can raise new points that are not essential each time it is asked; another is made only when the user
-asks with `/rn:gm`.
+asks with `/rn:gm`. A check of one point is not another evaluation: a question an evaluation left with
+neither Good nor More, or a More you fixed, goes to a fresh evaluator with that question or More and
+its place alone, written to its own `evaluation` item and settled the same way.
 
 ## Settling an evaluation
 
@@ -122,13 +124,15 @@ asks with `/rn:gm`.
    More: the user will trust a Good in the proposal without reading that part, so a Good that does
    not hold would carry the flaw it hides to their approval unseen. A Good that does not hold is the
    More it hides. A Good or More without grounds, or off the purpose, is let go with that reason and
-   is not a final Good or More. A question left with neither, answer yourself on the real thing, with
-   a Good or More at its place.
+   is not a final Good or More. A question left with neither goes to a fresh evaluator for that
+   question alone, since you made the plan and the design and are the worst placed to see where they
+   fall short.
 2. Decide each More as the Decision section of `conductor.md` asks. The fix is yours to choose: first
    what the work should be for its purpose, then what to change wherever the real thing falls short
    of it for the same cause, not only at the place the More names. A fix is made by a generator for a task, by you for
-   the plan, and by `writ:up` for the README and design document; check it against the purpose and look again at every Good it touched, since a fix
-   can take a Good away, then commit. Settled items leave `open/` with their text copied whole, never
+   the plan, and by `writ:up` for the README and design document; check it against the purpose, then have a fresh evaluator check that More alone,
+   since whoever made a fix is the worst placed to see it fall short, and decide again on what it
+   returns; look again at every Good the fix touched, since a fix can take a Good away, then commit. Settled items leave `open/` with their text copied whole, never
    shortened, and your decision on each More as one of:
 
    ```

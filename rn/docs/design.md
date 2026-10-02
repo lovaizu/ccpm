@@ -191,8 +191,9 @@ Every Good is checked at its place as strictly as every More, so a Good the user
 holds, and they can trust it without reading that part. A Good that does not hold is the most
 dangerous point in a session: no one looks again at what is called good, so the flaw it hides would
 reach the user's approval unseen. It is decided as the More it hides. A Good or More without
-grounds, or off the purpose, is dropped with the reason. Then the conductor decides each More in
-turn:
+grounds, or off the purpose, is dropped with the reason. A question then left with neither Good nor
+More goes to a fresh evaluator for that question alone, since the conductor made the plan and the
+design and is the worst placed to call them good. Then the conductor decides each More in turn:
 
 - A More whose fix brings the work closer to its purpose, and keeps the Goods, is fixed.
 
