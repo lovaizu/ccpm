@@ -59,7 +59,8 @@ Purpose achieved when:
 What is not yet settled, beside `steering.md`, one file per item, named `{NN}-{kind}-{about}.md`:
 `{NN}` is the next number after the highest in `open/`, from `01`; `{kind}` is `evaluation` (an
 evaluator's), `feedback` (the user's words from `/rn:gm`, kept whole), or
-`notes` (what `/rn:dn` leaves for the next conversation); `{about}` names what it is about, such as
+`notes` (design points agreed and waiting for `writ`, or what `/rn:dn` leaves for the next
+conversation); `{about}` names what it is about, such as
 `task-3` or `plan`. An item leaves `open/` in the commit that settles it, and its text goes into that
 commit's message.
 

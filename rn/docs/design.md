@@ -254,7 +254,10 @@ claiming no more than that place shows. The points and fixes along the way are l
 approves the final state, and with those they would have to work out where each applies now.
 
 The user is given the body of the stop commit in the conversation language, adding nothing and
-leaving nothing out, so what the user read and what a later conversation gives say the same.
+leaving nothing out, so what the user read and what a later conversation gives say the same. When
+the same sign-off is proposed again, each More of its last proposal stays, at its place as it is
+now, until a fix settles it, since the user approves the final state and a More left out of it is
+one they never see.
 
 ## Everything decided is pushed, so any conversation goes on
 
@@ -285,7 +288,8 @@ What an old design approved is kept as agreed points of the design, for `writ` t
 to see at the Design sign-off, since the design document changes only that way.
 
 A session works on its own branch with a draft pull request, so the user's default branch changes
-only when they merge. `/rn:on` makes `steering.md` and the draft pull request at once, from the
+only when they merge. `/rn:on` makes `steering.md` and the draft pull request at once, linking the issue it serves when
+there is one, from the
 user's first words, and each point agreed updates them, so a stop at any moment loses nothing agreed. The user reads everything on the pull request, where diffs, long documents,
 and diagrams render, and the record stays with the code.
 
@@ -345,7 +349,8 @@ place can be agreed with the user while working out the plan. They belong to the
 after the session ends, and the next session starts from them.
 
 The layout under `.rn/` cannot be changed, since `/rn:up` finds the session by it. `/rn:up` takes the
-session whose `status` is `running` on the current branch, since each session works on its own
+session on the current branch whose `status` is not `finished`, a session from an older `rn` having
+none, since each session works on its own
 branch.
 
 ### steering.md holds the goal and the plan in one place
@@ -571,7 +576,7 @@ did.
 
 What a script can decide is checked by a script over every run's commits, not by the evaluator: that
 the evaluations and what was decided on each point are whole in the commit messages, that `open/` is
-empty at every sign-off, and that each stop's message is its commit's body. A script is faster, gives
+empty at every sign-off, and that each stop's commit body is the proposal the user was given. A script is faster, gives
 the same answer every time, and leaves the evaluator's attention for whether the user gets the
 benefits.
 

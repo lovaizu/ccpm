@@ -20,10 +20,14 @@ not yours to settle.
 - The viewpoint file you are given, `task-result.md`: what your result aims for. An evaluator will
   evaluate it by the same questions.
 - `essentials/evaluation.md`: how to write each Good and More you return.
+- When a paused task is taken up, the `notes` item in `open/` you are given, for what was under way;
+  the working tree already holds its edits, so go on from them.
 - When you are to fix, the item in `open/` you are given, for the More you are to fix and the Goods
   to keep, and the fix the conductor decided.
 
 ## What to return
+
+Write in the `artifact-language` of `steering.md`.
 
 Read your result whole once made, and again after each fix, as whoever receives it would, and fix it
 until no question of `task-result.md` falls short: one fix, such as a word changed or a part moved,
