@@ -235,7 +235,7 @@ is asked, and repeating need not settle; asking about one More keeps the check t
 the same reason the whole
 deliverable is evaluated once, when the tasks planned after the last Design sign-off are done, and
 the Mores it raises are fixed as added tasks. The user can check every final Good and More at its
-place, and ask with `/rn:gm` for anything, another evaluation included.
+place, and at a sign-off ask with `/rn:gm` for anything, another evaluation included.
 
 When Mores contradict each other, `rn` does not pick one. They are a sign that something is
 undecided in the goal, the essential viewpoints, or a document, so that is what gets decided.
@@ -304,8 +304,9 @@ its notes, so nothing needed to resume is only in the working tree. A file is na
 `{NN}-{kind}-{about}.md`: the number keeps the order they came in, and the kind, `evaluation`,
 `feedback`, or `notes`, says who wrote it. A settled item leaves `open/` in the commit that settles
 it, copied whole into that commit's message with what was decided on each point, so the record lives
-in git and leaves no file behind in the repository. `open/` is always empty when the session stops
-at a sign-off.
+in git and leaves no file behind in the repository. When the session stops at a sign-off, `open/`
+holds nothing but design points agreed and waiting for `writ`, such as those an older session's
+design approved, so every evaluation and feedback is settled before the user approves.
 
 A settled evaluation looks like this in its commit message:
 
@@ -577,7 +578,7 @@ did.
 
 What a script can decide is checked by a script over every run's commits, not by the evaluator: that
 the evaluations and what was decided on each point are whole in the commit messages, that `open/` is
-empty at every sign-off, and that each stop's commit body is the proposal the user was given. A script is faster, gives
+empty at every sign-off but for design points agreed and waiting for `writ`, and that each stop's commit body is the proposal the user was given. A script is faster, gives
 the same answer every time, and leaves the evaluator's attention for whether the user gets the
 benefits.
 

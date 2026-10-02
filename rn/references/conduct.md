@@ -174,7 +174,7 @@ Each time you decide what comes next, write it in the decision line and tell the
 
 ## Stopping for the user
 
-At a sign-off, `open/` is empty and the branch has the latest default branch on the remote merged
+At a sign-off, `open/` holds nothing but design points agreed and waiting for `writ`, and the branch has the latest default branch on the remote merged
 in. Check every final Good and More again at its place in the real
 thing as it is now, since a fix can move or take away what one pointed to; the proposal gives only
 what holds there. Write the proposal once, as the Proposal section of `conductor.md`
