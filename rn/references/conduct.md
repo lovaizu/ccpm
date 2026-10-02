@@ -124,8 +124,9 @@ asks with `/rn:gm`.
    More it hides. A Good or More without grounds, or off the purpose, is let go with that reason and
    is not a final Good or More. A question left with neither, answer yourself on the real thing, with
    a Good or More at its place.
-2. Decide each More as the Decision section of `conductor.md` asks. The fix is yours to choose, from
-   the purpose and what the user struggles with. A fix is made by a generator for a task, by you for
+2. Decide each More as the Decision section of `conductor.md` asks. The fix is yours to choose: first
+   what the work should be for its purpose, then what to change wherever the real thing falls short
+   of it for the same cause, not only at the place the More names. A fix is made by a generator for a task, by you for
    the plan, and by `writ:up` for the README and design document; check it against the purpose and look again at every Good it touched, since a fix
    can take a Good away, then commit. Settled items leave `open/` with their text copied whole, never
    shortened, and your decision on each More as one of:

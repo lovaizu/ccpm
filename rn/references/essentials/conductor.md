@@ -16,6 +16,12 @@ What the conductor decides for each More, and for what comes next.
     user reaches them before any sign-off, since the user approves a sign-off as it stands. Acting on
     the letter of an evaluation would redo work that serves the goal.
 
+- Does the fix come from what the work should be?
+
+    The More is gone for good when the fix starts from what the work should be for its purpose, and
+    the gap between that and the real thing says what to change, wherever the same cause shows. A
+    fix made only where the More points leaves its cause to show up again elsewhere.
+
 ## Question
 
 What the conductor asks the user, between sign-offs.

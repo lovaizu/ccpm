@@ -195,6 +195,11 @@ grounds, or off the purpose, is dropped with the reason. Then the conductor deci
 turn:
 
 - A More whose fix brings the work closer to its purpose, and keeps the Goods, is fixed.
+
+    The fix starts from what the work should be for its purpose, not from the place the More names:
+    the gap between that and the real thing says what to change, wherever the same cause shows. A
+    fix made only where the More points leaves the cause to show up again elsewhere.
+
 - A More whose fix would not bring the work closer is let go, with the reason.
 
     Its cost, or that the fix needs the README, the design document, or the user, is never that
