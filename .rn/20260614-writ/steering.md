@@ -177,7 +177,7 @@ writing role and checking role each reach their purpose even in cases the prompt
 
 **Steps**:
 
-- [ ] Translate the prompts to English
+- [x] Translate the prompts to English
 - [x] Add `plugin.json` with a version, a `CHANGELOG.md`, the marketplace entry and the root README line
 - [ ] Pass `claude plugin validate --strict` for the plugin and the marketplace
 - [ ] Ask the user to merge PR #15
