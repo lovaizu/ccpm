@@ -32,7 +32,7 @@ $ARGUMENTS
 
 - Pass the essentials and the style rules by file location, without summarizing or copying their content.
 
-    The essentials files are in `${CLAUDE_PLUGIN_ROOT}/references/essentials/`, and the style rules are `${CLAUDE_PLUGIN_ROOT}/references/style.md`. A summary drifts each time the essentials are refined, and the shape the producing role aims for drifts away from the shape the checking role asks about.
+    The essentials files are in `${CLAUDE_PLUGIN_ROOT}/references/essentials/`, the style rules are `${CLAUDE_PLUGIN_ROOT}/references/style.md`, and the lint script that checks the style rules a command can decide is `${CLAUDE_PLUGIN_ROOT}/references/lint/lint.sh`. A summary drifts each time the essentials are refined, and the shape the producing role aims for drifts away from the shape the checking role asks about.
 
 - Leave only the target file in the user's environment.
 
@@ -58,7 +58,7 @@ $ARGUMENTS
 
 - As essentials files, use `doc.md` for every document, and add `readme.md`, `design.md`, `prompt.md` or `essentials.md` when the document is a README, a design doc, a prompt for an AI to read, or an essentials file.
 
-- Give the producing role the location of writer.md, the reader and purpose, the facts you looked up, the decisions made with the user, the location of the target file, and the locations of the essentials files to use and of the style rules.
+- Give the producing role the location of writer.md, the reader and purpose, the facts you looked up, the decisions made with the user, the location of the target file, and the locations of the essentials files to use, of the style rules and of the lint script.
 
     The producing role does not know the discussion, so whatever it is not given it can only leave as a gap. Give it enough, down to the reader's particular circumstances, to write as the user intends without going back to the discussion.
 
@@ -70,7 +70,7 @@ $ARGUMENTS
 
 - Do not give the style rules to the checking role; check them yourself, and have the producing role fix what departs from them.
 
-    Given the rules, the checking role spends its eye on checking form, and the judgment only it can make, whether the reader can achieve the purpose, grows thin. Rules a script can decide are checked with a command.
+    Given the rules, the checking role spends its eye on checking form, and the judgment only it can make, whether the reader can achieve the purpose, grows thin. Each time you check every essential against the document, also run `sh <lint script> <target file>`, and judge each finding by the reason of its rule, not as a failure, since a rule may not fit.
 
 - Have the check run only once for each set of decisions, and when the reader and purpose or the decisions made with the user change or are newly made, have the rewritten document checked again.
 

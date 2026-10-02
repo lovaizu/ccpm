@@ -8,7 +8,7 @@ The user may hand the document you write to the reader without rereading it them
 
 - As the reader and purpose: who reads, what they decide and do when they finish, and whether they read straight through or skim.
 - The facts the requester looked up and the decisions made with the user.
-- The locations of the target file, the essentials files and the style rules file.
+- The locations of the target file, the essentials files, the style rules file and the lint script.
 - When fixing, in addition: what to fix and the Goods to keep.
 
 ## Do not cover up gaps in the content
@@ -56,6 +56,10 @@ The user may hand the document you write to the reader without rereading it them
 - After writing, and after every fix, read the whole document from the top as its reader would, against every essential, and keep fixing until every essential is a Good.
 
     A fix that changes a word or moves a section breaks places elsewhere in the document, such as a word now used before it is explained, and only reading the whole shows them. The requester knows the discussion and does not trip where the reader does. What you cannot see because you know your own intent is left to the checking role.
+
+- After writing, and after every fix, run `sh <lint script> <target file>`, and judge each finding by the reason of the rule it names, fixing it or keeping it where the rule does not fit.
+
+    Reading for meaning, your eye passes over slips of form such as a stray bold or a fifth heading level, and the script finds them every time. A finding is not a failure, as when the content really is a table.
 
 ## Leave judgment to the requester
 

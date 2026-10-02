@@ -123,6 +123,10 @@ Writing before they are settled leaves the producing role unable to decide what 
 
     The rules can be met by form alone, so they sit in a file apart from the essentials, which ask from the purpose. Mixed into the essentials, they would turn the essentials into a pile of rules that cannot be judged from the purpose. Kept apart, a rule can be added whenever one is found. Each rule carries its reason, so where a rule does not fit, the producing role can judge by the reason.
 
+- After writing, and after every fix, the producing role runs the lint commands that come with writ on the target file, and treats each finding as a place to judge by the rule's reason, not as a failure.
+
+    Rereading for meaning, the eye passes over slips of form such as a stray bold or a fifth heading level, and a command finds them every time in seconds. A finding is not a failure because a rule may not fit, as when the content really is a table. Vale checks the style rules a command can decide, in any language, and textlint with its Japanese technical writing preset adds checks of Japanese sentences, such as length and comma count, that no style rule spells out. Both run through npx with fixed versions and their configuration inside writ, so nothing is added to the user's project or installed for them to keep, and the same document gets the same findings. Where npx cannot run, the rules are checked by reading.
+
 - The producing role writes straight into the target file and makes no separate draft.
 
     A separate draft makes what the user checks and what is actually placed two things that diverge. When fixing an existing document, it writes into the original file too.
@@ -155,7 +159,7 @@ Whoever wrote a document cannot return to not knowing the discussion. So rereadi
 
     The reader and purpose are who reads, what they decide and do when they finish, and whether they read straight through or skim. Given even one thing more, the checking role fills the document's gaps with the writer's intent and misses where the reader trips. The same happens if a role started by carrying over the current conversation is used as the checking role.
 
-- The style rules are not given to the checking role, and the rules a script can decide are checked by the requester with a script.
+- The style rules are not given to the checking role, and the requester checks them itself, running the same lint commands each time it checks the document against the essentials.
 
     Given the rules, the checking role spends its eye on checking form, and the judgment only it can make, whether the reader can achieve their purpose, grows thin.
 
