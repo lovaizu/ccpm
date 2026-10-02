@@ -256,8 +256,8 @@ flowchart TD
     M -->|"the last decision line"| UP
 ```
 
-Every decision is committed and pushed as it is made, so `/rn:up` takes up the next move in the
-language the last decision line is written in. For a session started under an older version of
+Every decision is committed and pushed as it is made, so `/rn:up` takes up the next move, in the
+user's language that `steering.md` records. For a session started under an older version of
 `rn`, `/rn:up` works the goal out again from the old record and stops at a new Plan sign-off, since
 an older record may not hold why the user wants the goal, and every later decision is judged by it.
 
@@ -296,7 +296,7 @@ rn: settle the evaluation of #3 move src/cart
 - The decision line comes last, and a stop commit's reads `● waiting for #2 Design sign-off`.
 
     `/rn:up` finds the next move by `●`, `──`, `→`, and `waiting for`, which stay as written. The
-    rest is in the user's language, which a later conversation takes from it.
+    rest is in the user's language.
 
 ### A session has one directory under .rn/
 
@@ -329,6 +329,7 @@ the move to TypeScript, `steering.md` right after the Design sign-off looks like
 rn: 0.9.0
 pr: https://github.com/you/repo/pull/42
 status: running
+language: Japanese
 readme: README.md
 design: docs/design.md
 ---
@@ -381,6 +382,11 @@ Purpose achieved when:
 - `status` is `running` or `finished`.
 
     Every command then judges the same way whether the session has ended.
+
+- `language` is the language the user writes in.
+
+    A fresh conversation speaks it from the first line, instead of guessing it from records whose
+    words mix with the repository's.
 
 - `readme` and `design` fix the one README and the one design document, wherever they were agreed.
 
