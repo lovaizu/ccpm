@@ -115,6 +115,10 @@ Writing before they are settled leaves the producing role unable to decide what 
 
     Each later one follows from the decisions of the earlier ones, so polishing sentences or words before the reader and core are settled is wasted once an earlier one changes.
 
+- After writing, and after every fix, the producing role reads the whole document from the top as its reader would, against every essential, and fixes it until nothing falls short before returning.
+
+    A fix that changes a word or moves a section breaks places elsewhere in the document, and only reading the whole shows them. The requester, who knows the discussion, does not trip there, so a broken place left by the producing role reaches the user. What the producing role cannot see because it knows its own intent is left to the checking role.
+
 - The producing role follows the style rules on top of the essentials.
 
     The rules can be met by form alone, so they sit in a file apart from the essentials, which ask from the purpose. Mixed into the essentials, they would turn the essentials into a pile of rules that cannot be judged from the purpose. Kept apart, a rule can be added whenever one is found. Each rule carries its reason, so where a rule does not fit, the producing role can judge by the reason.

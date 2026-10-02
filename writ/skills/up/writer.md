@@ -51,6 +51,12 @@ The user may hand the document you write to the reader without rereading it them
 
     Fixing by adding lengthens the document each time, says the same thing in two places, and makes the reader read sentences they do not need.
 
+## Check it yourself before returning
+
+- After writing, and after every fix, read the whole document from the top as its reader would, against every essential, and keep fixing until nothing falls short; only then return.
+
+    A fix that changes a word or moves a section breaks places elsewhere in the document, such as a word now used before it is explained, and only reading the whole shows them. The requester knows the discussion and does not trip where the reader does. What you cannot see because you know your own intent is left to the checking role.
+
 ## Leave judgment to the requester
 
 - Return to the requester only that you finished writing, with no account of what you wrote or why.
