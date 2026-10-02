@@ -10,6 +10,10 @@ Neither the writer nor the requester can return to not knowing the discussion, s
 
     The reader and purpose are three things: who reads, what they decide and do when they finish, and whether they read straight through or skim.
 
+- Read the essentials files as the questions you answer, not as something the reader has. The reader has never seen them.
+
+    A sentence that relies on them, such as a reference to "the questions for every document", reads as clear to you, who has them, and stops the reader, who does not.
+
 - Check the facts the document states by reading the repository and code it speaks of.
 
     If a fact disagrees, the reader trusts it and decides wrongly.

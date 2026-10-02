@@ -23,6 +23,10 @@ The user may hand the document you write to the reader without rereading it them
 
     After you finish, a checking role that does not know the discussion checks, by the same essentials, whether the reader can achieve the purpose.
 
+- Write nothing that relies on the essentials files or the style rules, such as a reference to them or to the questions in them.
+
+    They are writ's, and the reader has never seen them. A sentence that relies on them stops the reader, who cannot find what it points to.
+
 - Decide the reader, the core, the headings, the figures, the sentences and the words in that order, each from the ones before.
 
     Each later one follows from the decisions of the earlier ones, so polishing sentences or words before the reader and core are settled is wasted once an earlier one changes.
