@@ -34,7 +34,7 @@ works.
 
 - A fatal More is one without whose fix the goal cannot be achieved, and whose fix only the user can
   decide.
-- `writ`, a plugin `rn` depends on, writes and checks the README and design document.
+- `writ`, a plugin `rn` depends on, writes the README and design document and checks how they read.
 - Each decision is committed with a decision line that says what was decided and what comes next.
 
     The commit where `rn` stops for the user is the stop commit.
@@ -78,12 +78,13 @@ instead of finishing the research before asking, since the user's answers change
 plan has its own sign-off, because a design worked out on a wrong goal is wasted.
 
 The design is worked out the same way, with what to test and what passes. `rn` decides what goes
-into the README and design document, and `writ` writes them and returns the final Good and More for
-its viewpoints. The viewpoints for documents then live in one place, so the documents the user
-approves read as well as any `writ` writes, and improving `writ` improves them; two copies would
-drift apart. Points agreed while working out the design wait in `open/` until `writ` writes them,
-so a pause loses none. What `writ` returns is kept in `open/` as an evaluation and settled as one, so
-the conductor checks its Goods and Mores at their places and its record reaches the commit whole. There is always a Design sign-off, even when the design document
+into the README and design document, and `writ` writes them, as a generator makes a task's result.
+How a document reads is checked by `writ`'s viewpoints, kept in one place, so the documents the user
+approves read as well as any `writ` writes; two copies would drift apart. Whether the design
+achieves the goal is `rn`'s, so the design is evaluated by `rn`'s own viewpoints, as the plan, each
+task's result, and the deliverable are: the Design sign-off would otherwise approve a document that
+reads well without anyone but its maker asking whether it achieves the goal. Points agreed while
+working out the design wait in `open/` until `writ` writes them, so a pause loses none. There is always a Design sign-off, even when the design document
 does not change, since the user sees how it will be built and checked before anything is built
 (README, 3. Work out the design). Tasks that make the deliverable are planned only once the design
 is approved; tasks planned before the design would mostly be rewritten once it is.
@@ -266,7 +267,7 @@ one they never see.
 flowchart TD
     U(["User"])
     C["Conductor"]
-    E["Evaluator, or writ"]
+    E["Evaluator"]
     S["steering.md:<br/>the goal and the plan"]
     O["open/:<br/>items not yet settled"]
     M["Commit messages:<br/>settled items and the decision line"]

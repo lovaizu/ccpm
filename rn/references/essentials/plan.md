@@ -1,32 +1,56 @@
 # Plan
 
 The plan is `steering.md`. Its readers are the user, who approves it at the Plan sign-off; the
-conductor, who carries the work by it; and the generators and evaluators, who work from it. When they
-finish reading, the user knows the goal is theirs, and every role works toward that same goal.
+conductor, who carries the work by it; and the generators and evaluators, who work from it. Each part
+is there because the goal needs it, so each question asks whether a part does its job. Before the
+tasks that make the deliverable are planned, the questions on Tasks do not apply.
 
-- Can the user read the goal and say "yes, that is what I want, and why"?
+## Goal
 
-    A goal that is what the user really wants, with the reason they want it, lets every later choice
-    be judged against that reason, so what the user gets at the end is what they meant. Their first
-    words may point elsewhere; a plan built on the words achieves the wrong thing however well it is
-    carried out, and the user finds out only at the end.
+- Is the goal what the user really wants, with the reason they want it?
 
-- Can whoever checks the deliverable tell, on the real thing, whether the goal is achieved?
+    Built on the user's first words, the work turns out wrong however well it is done, and the user
+    finds out only at the end. With the reason agreed, every later decision is judged by it.
 
-    When each line of Goal achieved when is a state of the product that holds whatever means are
-    chosen, and all of them together mean the goal is achieved, the Deliverable sign-off is judged by
-    what the user wanted. A line naming an artifact or a step is met while the goal is missed.
+## Goal achieved when
 
-- Can the conductor carry the work to the goal by it, checking each task against its purpose?
+- If every line holds, is the goal achieved?
 
-    Where the plan holds tasks that make the deliverable, each task's purpose serving a line of Goal
-    achieved when, every line served by some task, and each line of Purpose achieved when a state
-    checked on the real thing let the conductor tell at every task whether the work moved toward the
-    goal. Before the Design sign-off the plan's only tasks are the sign-offs.
+    The deliverable passes or fails by these lines. With a line missing, the work can pass every one
+    and still miss the goal, and the user approves it.
 
-- Can a generator carry out its task without asking anyone?
+- Is each line a state of the product that stays the same whatever way it is built?
 
-    When the Rules hold what cannot be told from the goal, such as the repository's conventions, and
-    each Fact says how it was checked, a generator works on its own and the user is not called for
-    what is already known. An Assumption that hides a decision only the user can make would be decided
-    by whoever reads it.
+    A line naming something to make, or a step to take, is passed by making it or taking it. A state
+    judges every way of building by the same measure.
+
+## Assumptions
+
+- Is each assumption checked, with nothing in it that is the user's to decide?
+
+    An assumption not checked gives way in the middle of the work. A decision of the user's hidden
+    in one sets the work on a course the user never chose.
+
+## Rules
+
+- Are the repository's conventions written here that a generator cannot tell from the goal?
+
+    A generator that does not know a convention works against it, and the work is done again.
+
+## Tasks
+
+- Does each task's purpose serve a line of Goal achieved when, and is every line served by a task?
+
+    A task that serves no line is work wasted. A line no task serves is never built.
+
+- If every line of a task's Purpose achieved when holds, is its purpose fulfilled, whatever way it is
+  built?
+
+    A task result passes or fails by these lines. With one missing, or one naming a step, the work
+    moves on with the purpose unfulfilled.
+
+- Do the tasks first raise the qualities the user would choose the product for until the goal is
+  nearly achieved, and only then finish the qualities the user takes for granted?
+
+    What the user takes for granted is easier to build and to check, so starting there spends the
+    effort on it, and whether the user would choose the product is never checked.

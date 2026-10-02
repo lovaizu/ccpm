@@ -20,7 +20,7 @@ decided.
 What you make, you make to its essential viewpoints, and what you decide and say to the user, to
 `${CLAUDE_PLUGIN_ROOT}/references/essentials/conductor.md`. The viewpoints are in
 `${CLAUDE_PLUGIN_ROOT}/references/essentials/`, one file for each kind of thing: `plan.md`,
-`task-result.md`, `deliverable.md`, and `evaluation.md` for what an evaluator returns.
+`design.md`, `task-result.md`, `deliverable.md`, and `evaluation.md` for what an evaluator returns.
 
 ## Taking up the session
 
@@ -60,20 +60,21 @@ question to the user, not a stop of your own.
     and design document the design goes into: those found in the repository, or `README.md` and
     `docs/design.md`, unless the user wants them elsewhere. Its tasks are the Plan and Design sign-offs.
 
-- The design is written into the README and design document by the `writ:up` skill, run in an
-  agent of its own, checked by you, and stopped at the Design sign-off.
+- The design is the README and design document, written by the `writ:up` skill run in an agent of
+  its own, evaluated by `design.md`, settled, and stopped at the Design sign-off.
 
     Work out with the user how to build it, and for each benefit the goal needs, in which scene it
     is checked and what passes. For each document, start a fresh agent with `Agent` to run
-    `writ:up` and return what it gives, giving it the document's path, its readers, the
-    `artifact-language` of `steering.md`, and the path of the `notes` item holding the agreed points, never a summary of them, since a summary drifts from
-    what was agreed. Run it even when nothing changes the document, so the Design sign-off, which
-    there always is, has grounds, and the user sees how it will be built and checked before anything
-    is built. Write what returns, its final Good and More, into an
-    `evaluation` item in `open/`, commit it with the documents and the `notes` it settles, and settle
-    it as an evaluation, deciding each point yourself. A More you decide to fix goes to a fresh agent
-    running `writ:up`, as a point to write; check what returns as you check any fix. How the documents get written is yours
-    to decide; the user is asked only what the product should be.
+    `writ:up`, giving it the document's path, its readers, the `artifact-language` of
+    `steering.md`, and the path of the `notes` item holding the agreed points, never a summary of
+    them, since a summary drifts from what was agreed. `writ` checks how the documents read; whether
+    they achieve the goal is `rn`'s, so the agent then reads both documents whole and returns a Good
+    or More for every question of `design.md`, as a generator does, and you check them as you check a
+    generator's. Run it even when nothing changes the document, so the Design sign-off, which there
+    always is, has grounds, and the user sees how it will be built and checked before anything is
+    built. Commit the documents with the `notes` they settle, then have the design evaluated. A More
+    you decide to fix goes to a fresh agent running `writ:up`, as a point to write. How the documents
+    get written is yours to decide; the user is asked only what the product should be.
 
 - The tasks that make the deliverable are planned once the Design sign-off is approved, and carried
   out without stopping.
@@ -119,6 +120,7 @@ Start a fresh evaluator with `Agent`, giving it the paths of
 file in `open/`:
 
 - A plan is `steering.md`, by `plan.md`.
+- The design is the README and design document `steering.md` names, by `design.md`.
 - A task result is the task's commits, by `task-result.md`.
 - The deliverable is the change since the branch left the default branch, by `deliverable.md`.
 
@@ -127,9 +129,7 @@ reasons stops seeing where the user will struggle. A thing is evaluated whole on
 can raise new points that are not essential each time it is asked; another is made only when the user
 asks with `/rn:gm`. A check of one point is not another evaluation: a question an evaluation left with
 neither Good nor More, or a More you fixed, goes to a fresh evaluator with that question or More and
-its place alone, written to its own `evaluation` item and settled the same way. For the README and
-design document, that check goes to a fresh agent running `writ:up`, since their viewpoints are
-`writ`'s.
+its place alone, written to its own `evaluation` item and settled the same way.
 
 ## Settling an evaluation
 
@@ -204,5 +204,4 @@ Changed since the last approval: {each change written without stopping, from the
 The map on top heads every message where you stop for a sign-off or a pause: ✅ done, 👉 now, ⬜ ahead. Leave out the changed
 line when there is none. When the same sign-off is proposed again, start from the Good and More of
 its last proposal: each More stays, at its place as it is now, until a fix settles it, since the
-user approves the final state and a More left out of it is one they never see. At the Design sign-off, the questions are `writ`'s, with the final Good and
-More it returned as you settled them.
+user approves the final state and a More left out of it is one they never see.
