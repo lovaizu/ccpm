@@ -265,6 +265,11 @@ A session works on its own branch with a draft pull request, so the user's defau
 only when they merge. The user reads everything on the pull request, where diffs, long documents,
 and diagrams render, and the record stays with the code.
 
+When a session is taken up, and before each sign-off, its branch is brought up to the latest default
+branch on the remote. When that changes what the plan or the design rests on, that is worked out
+again before the sign-off. A branch left behind would have the user approve work on files the
+default branch no longer has, found out only at the merge.
+
 Items go in `open/` as they were received, and `/rn:dn` commits an unfinished task's edits beside
 its notes, so nothing needed to resume is only in the working tree. A file is named
 `{NN}-{kind}-{about}.md`: the number keeps the order they came in, and the kind, `evaluation`,
