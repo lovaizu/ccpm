@@ -142,7 +142,7 @@ writing role and checking role each reach their purpose even in cases the prompt
       feature per benefit in the design, qualities from the benefits; steps only for what role and
       purpose cannot carry; every part of a prompt traces to the design)
 - [x] Fix the README and the design with the essentials, and take the user's review on PR #15
-- [ ] Delete the prompts and rebuild them from the README, the design and the essentials alone
+- [x] Delete the prompts and rebuild them from the README, the design and the essentials alone
 - [ ] Evaluate them once, first on the benefits; sort, fix, and take the user's review on PR #15
 
 **Completion criteria**:
@@ -195,8 +195,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-10-02
+- **Last completed**: #4 prompts rewritten as writ's requester and fixed after a real run (d46b122)
+- **Next**: #4 last step — the user's review of the prompts on PR #15; on approval, check off #4 and start #5.
+- **Notes**: Branch worktree-writ, PR #15. On resume, first tell the user where things stand (the user asked). A real `/writ:up` run (TS migration plan, practice repo in scratchpad, ~$4.5 total) worked end to end after two fixes: asking only reader/purpose/placement (content goes in the doc as proposals) and the checking role looking for unneeded parts too. Untested, for #5: a prompt-writing scene (writer twice produced a design copy, checker three times gave unfounded Goods before the fix), fixing an existing doc, the undecided-`any` scene, the in-flow scene. Open More: essentials are English while README/prompts are Japanese until translation before merge. Tell rn session rebuild-rn-c1 after any change to the essentials or style.md (none this session).
