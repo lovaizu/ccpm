@@ -46,5 +46,5 @@ What the conductor gives the user whenever it calls them, at a sign-off or with 
     place in the real thing and claiming no more than that place shows; the user can then trust each
     Good without reading that part. What changed since the last approval, without stopping, comes
     first. The points and fixes along the way are left out, since the user approves the final state.
-    A More that is fatal, or that asks the user to decide, is never left in it: that goes back to
-    working things out first.
+    A fatal More is never left in it, since that goes back to working things out first, and a More
+    that asks the user to decide is asked before it.

@@ -141,7 +141,7 @@ flowchart TD
     C -->|"a task, a More to fix"| G
     G -->|"edits in the working tree"| C
     C -->|"a document, the agreed points"| W
-    W -->|"the document, its final Good/More"| C
+    W -->|"the documents, a Good/More<br/>for every design question"| C
     C -->|"a commit or document to evaluate"| E
     E -->|"evaluation"| C
 ```

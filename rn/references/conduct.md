@@ -76,13 +76,14 @@ question to the user, not a stop of your own.
     Design sign-off, which there always is, has grounds, and the user sees how it will be built and
     checked before anything is built. Commit the documents with the `notes` they settle, then have
     the design evaluated. A More you decide to fix is written as a point to a `notes` item, and goes
-    to a fresh such agent with that item's path. How the documents
-    get written is yours to decide; the user is asked only what the product should be.
+    to a fresh such agent with that item's path and the evaluation item's, for the Goods to keep. The
+    user is asked only what the product should be.
 
 - The tasks that make the deliverable are planned once the Design sign-off is approved, and carried
   out without stopping.
 
-    They end at the Deliverable sign-off; revise those not yet done by the design. They are evaluated
+    They end at the Deliverable sign-off; after a later Design sign-off, revise those not yet done by
+    the design it approved. They are evaluated
     and settled as the plan.
 
 Once approved, the goal goes back through the Plan sign-off, and the README and design document
@@ -91,7 +92,8 @@ that sign-off, with the next unused id, before the tasks not yet done. Two kinds
 without stopping: a correction that changes nothing they say, such as a line number gone stale, and a
 change the user made by answering a question while the work goes on from what was approved. Work
 that goes back to working out the plan or the design, from feedback or a fatal More, always stops at
-that sign-off again, added the same way, since only the sign-off shows the user the whole.
+that sign-off again, since only the sign-off shows the user the whole: the one the feedback answers
+is still open, and one already approved is added the same way.
 
 ## Carrying out a task
 
@@ -104,7 +106,8 @@ that sign-off again, added the same way, since only the sign-off shows the user 
    and More at its place, as in step 1 of settling an evaluation. Not fulfilled, a Good that does not
    hold, or a question left with neither → commit it with its decision line, such as `purpose not
    fulfilled`, so a later conversation knows why the task is not done, and send it back with what
-   falls short; when it keeps falling short the same way, the work cannot go on, as in settling an
+   falls short. A result the design does not let it fulfil is a fix to the design, so go back to
+   working out the design. When it keeps falling short the same way, the work cannot go on, as in settling an
    evaluation. Something only the user can decide → ask them, as the Question section of
    `conductor.md` asks, and write in what they decide.
 3. Commit and push. Have the result evaluated and settle it.
@@ -112,7 +115,8 @@ that sign-off again, added the same way, since only the sign-off shows the user 
 
 The deliverable is evaluated once, when the tasks planned after the last Design sign-off are done,
 with the decision line `● deliverable ── evaluated → …`. For its Mores to fix, add tasks before the
-Deliverable sign-off, and settle the evaluation in that commit, each More's decision naming its task.
+Deliverable sign-off, and settle the evaluation in that commit, each More's decision naming its task;
+once a task is done, a fresh evaluator checks its More alone, as any fixed More.
 Tasks added from it, or from feedback at the Deliverable sign-off, go on to the sign-off without
 another evaluation of the deliverable.
 
@@ -132,8 +136,8 @@ Nothing else, not even how it was made or changed, the user's own words in `feed
 reasons stops seeing where the user will struggle. A thing is evaluated whole once, since an AI evaluation
 can raise new points that are not essential each time it is asked; another is made only when the user
 asks with `/rn:gm`. A check of one point is not another evaluation: a question an evaluation left with
-neither Good nor More, or a More you fixed, goes to a fresh evaluator with that question or More and
-its place alone, written to its own `evaluation` item and settled the same way.
+neither Good nor More, or a More you fixed, goes to a fresh evaluator given what an evaluator is given, with that question or More and
+its place in place of the whole, written to its own `evaluation` item and settled the same way.
 
 ## Settling an evaluation
 

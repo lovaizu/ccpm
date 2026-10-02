@@ -20,7 +20,7 @@ them, and a summary would shift that measure.
    for this sign-off, each with its location and URL, kept whole. Neither → ask the user for their feedback,
    and stop. Write it to a `feedback` item in `open/`.
 3. Commit and push with the decision line
-   `● #{id} {sign-off name} ── {feedback received} → {work out the plan again | work out the design again | add tasks}`,
+   `● #{id} {sign-off name} ── {feedback received} → {take it up}`,
    and say, the decision line in the `artifact-language` of `steering.md`, and what you say in
    its `conversation-language`:
 

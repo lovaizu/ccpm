@@ -109,7 +109,7 @@ settled, so they follow what you agree to there.
   I propose working out the design on this plan: it says what you want, why, and how you would
   know it is achieved.
 
-  ### Can you read the goal and say "yes, that is what I want, and why"?
+  ### Is the goal what you really want, with the reason you want it?
   - Good: it names the three type bugs as the reason (steering.md:11), so every later choice is
     judged against stopping them
   - More: none

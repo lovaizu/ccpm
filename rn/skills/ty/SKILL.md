@@ -18,7 +18,7 @@ without asking again. It is recorded and the session stops, so they can clear th
 2. Mark that task `[x]`. At the Deliverable sign-off, set `status` to `finished` and mark the pull
    request ready with `gh pr ready`.
 3. Commit and push with the decision line
-   `● #{id} {sign-off name} ── {approved} → {work out the design | plan the tasks | finished}`, and say,
+   `● #{id} {sign-off name} ── {approved} → {the first task not `[x]`, or finished}`, and say,
    the decision line in the `artifact-language` of `steering.md`, and what you say in
    its `conversation-language`:
 
