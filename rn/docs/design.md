@@ -418,6 +418,13 @@ checked in two ways.
     read that nothing writes, or something written that nothing reads. Running may not pass through
     branches that are hard to trigger, so those are checked by reading.
 
+    It also traces both ways between this document and the prompts, every statement and not a
+    sample: each decision here to the prompt line that makes an AI do it where it applies, and each
+    prompt rule that changes what the user gets or sees to the decision it rests on. A decision no
+    prompt carries is lost however good the design, and a rule nothing here grounds changes the user's
+    experience without having been agreed. It is done again whenever the prompts or this document
+    change, since a change on one side leaves the other behind unseen.
+
 The benefits come first, and what the user takes for granted after: an `rn` that is only correct
 gives no reason to use it (README, the line on other agents). A run is judged first on the benefits,
 and while one fails, what the user takes for granted is not what is fixed first, since those failures
