@@ -59,7 +59,7 @@ We move src/api/ first, then go on to src/ui/. src/api/ is what the rest of the 
 - The owner for moving src/ui/ is not decided yet.
 ```
 
-The report opens with writ's view on whether the document can be handed over as it is. As its grounds, each essential it used follows word for word, with a Good, a More, or both. An essential is a question that checks whether a document is good, and each kind of document has its own set. A Good is a part that helps, with what the reader gains from it. A More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
+The report opens with writ's view on whether the document can be handed over as it is. As its grounds, each essential it used follows word for word, with a Good, a More, or both. An essential is a question that checks whether a document is good, and each kind of document has its own set. A Good is a part that helps, with what the reader gains from it. A More is a shortfall writ left unfixed, with what the reader struggles with and why it was left; for something left undecided, it also carries writ's proposal, so you settle it by saying whether it is right. Both say where in the document they point to, and give their evidence.
 
 ```console
 ● I wrote docs/migration-plan.md. Only the owners are undecided; I think it can go to the team as it is.
@@ -77,6 +77,7 @@ The report opens with writ's view on whether the document can be handed over as 
       Struggle: Until owners are decided, readers do not know what they are taking on.
       Evidence: Both items say "not decided yet".
       Why left: Who owns what is for you and your team to decide, so it was left visibly undecided.
+      Proposal: Each engineer who takes a part writes their name under "Owners" in a pull request, since the plan already lives in the repository.
 ```
 
 A real report answers every essential in doc.md this way. Since each answer names its essential, you can also tell from the report alone that no essential went unanswered. The owners can be left undecided, since readers can take parts on and settle them.

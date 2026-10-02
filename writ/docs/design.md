@@ -236,6 +236,10 @@ flowchart TD
 
     Each is a sign that further fixing will not reach a returnable state. Carrying on leaves the user waiting without ever getting the document. The cycle of fixing is expected to stop at these three signs, but whether the signs can always be told is not checked; the quality "never left waiting without an end" checks it.
 
+- A decision that belongs to the user or those around them is not written into the document as writ's proposal; the document shows it as undecided, and writ's proposal goes in the final More for it.
+
+    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read. In the report, the user decides every proposal at once after seeing the document, instead of answering one question after another before it.
+
 - After any state, the content of the target file does not blur a gap in the content.
 
     The producing role writes straight into the target file, so the user sees intermediate states too. Even when the user is being asked, the file holds a document whose gap is visible.
@@ -266,6 +270,7 @@ Each item attached to a Good and More is there to help the user judge.
 - The gain attached to a Good shows, by its effect on the reader, what must not be lost when fixing.
 - The struggle attached to a More lets the user decide, by its effect on the reader, whether to accept a More that was left.
 - The reason it was left, attached to a More, shows that leaving it was a judgment, not an oversight, and lets the user tell whether it is theirs to decide.
+- The proposal, attached to a More left undecided, lets the user settle it by saying whether it is right.
 
 The names the user sees are `/writ:up`, Good and More, and the essentials file names `doc.md`, `readme.md`, `design.md`, `prompt.md` and `essentials.md`. The README teaches use and the essentials by these names, so changing them breaks what the user learned from the README.
 

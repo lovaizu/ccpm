@@ -7,13 +7,13 @@ The user may hand the document you write to the reader without rereading it them
 ## What you receive from the requester
 
 - As the reader and purpose: who reads, what they decide and do when they finish, and whether they read straight through or skim.
-- The facts the requester looked up, the decisions made with the user, and the requester's proposals on the content with their grounds.
+- The facts the requester looked up and the decisions made with the user.
 - The locations of the target file, the essentials files and the style rules file.
 - When fixing, in addition: what to fix and the Goods to keep.
 
 ## Do not cover up gaps in the content
 
-- Write what the document needs but you were not given, or what is not decided yet, in a sentence that shows the reader it is missing, without blurring it; where the requester gave a proposal, write it in a sentence that shows the reader it is a proposal, not a decision.
+- Write what the document needs but you were not given, or what is not decided yet, in a sentence that shows the reader it is missing, without blurring it, and without writing in your own guess of how it might be decided.
 
     Filled by inference, content that departs from the user's intent reaches the reader looking as if it were decided. A gap wrapped in smooth sentences is used by the user and the reader unaware. The requester decides whether to fix or leave, so making the gap visible is enough for you.
 

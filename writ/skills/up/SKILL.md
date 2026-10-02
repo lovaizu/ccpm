@@ -46,7 +46,11 @@ $ARGUMENTS
 
 - Before writing starts, ask the user only two kinds of things: what the conversation, the documents handed over and the repository do not tell about the reader, purpose and location; and a gap in the content that cannot be inferred and blocks the reader's purpose. For what can be inferred, show a proposal with its grounds and ask whether it is right.
 
-    When given a document to fix, read it first. As a proposal, the user only says whether it is right, and a wrong inference shows up before writing starts. Content of the document, such as steps or owners, is not asked when a grounded proposal can be made: hand the proposal and its grounds to the producing role to write into the document as a proposal, and show it to the user in the report's view or a More. Asked about the content one item at a time, the user answers again and again before seeing the document, and read in the document, a proposal can be judged together with the rest of the content.
+    When given a document to fix, read it first. As a proposal, the user only says whether it is right, and a wrong inference shows up before writing starts.
+
+- Do not have a decision that belongs to the user or those around them written into the document as your proposal. Have it written as undecided, and put your proposal with its grounds in the final More for it.
+
+    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read. In the report, the user decides every proposal at once after seeing the document, instead of answering one question after another before it. A gap that blocks the reader's purpose is asked instead, as in the section on asking the user.
 
 - Ask one question at a time, and remove what the answer settled before asking the next.
 
@@ -54,7 +58,7 @@ $ARGUMENTS
 
 - As essentials files, use `doc.md` for every document, and add `readme.md`, `design.md`, `prompt.md` or `essentials.md` when the document is a README, a design doc, a prompt for an AI to read, or an essentials file.
 
-- Give the producing role the location of writer.md, the reader and purpose, the facts you looked up, the decisions made with the user, your proposals on the content with their grounds, the location of the target file, and the locations of the essentials files to use and of the style rules.
+- Give the producing role the location of writer.md, the reader and purpose, the facts you looked up, the decisions made with the user, the location of the target file, and the locations of the essentials files to use and of the style rules.
 
     The producing role does not know the discussion, so whatever it is not given it can only leave as a gap. Give it enough, down to the reader's particular circumstances, to write as the user intends without going back to the discussion.
 
@@ -110,9 +114,9 @@ $ARGUMENTS
 
     An essential left unanswered keeps the user from judging the result from the report alone. For an essential whose More was fixed, give the fixed current state as a Good.
 
-- Attach to a Good its location, the gain to the reader and the evidence, and to a More its location, the reader's struggle, the evidence and the reason it was left.
+- Attach to a Good its location, the gain to the reader and the evidence, and to a More its location, the reader's struggle, the evidence and the reason it was left, and, for a decision left undecided, your proposal with its grounds.
 
-    The location lets the user look at that place only, not the whole document. The evidence lets the user check writ's judgment instead of trusting it. The gain shows what must not be lost when fixing. The struggle and the reason left let the user tell whether to accept a More that was left, or whether it is theirs to decide.
+    The location lets the user look at that place only, not the whole document. The evidence lets the user check writ's judgment instead of trusting it. The gain shows what must not be lost when fixing. The struggle and the reason left let the user tell whether to accept a More that was left, or whether it is theirs to decide. The proposal lets the user settle it by saying whether it is right.
 
 - Do not attach remarks from along the way or the history of fixes.
 
@@ -134,6 +138,7 @@ Essential: <the question word for word from the essentials file>
     Struggle: Until owners are decided, readers do not know what they are taking on.
     Evidence: Both items say "not decided yet".
     Why left: Who owns what is for the user and the team to decide, so it was left visibly undecided.
+    Proposal: Each engineer who takes a part writes their name under "Owners" in a pull request, since the plan already lives in the repository.
 ```
 
 ## Finish a document written in the middle of work by the same flow
