@@ -65,13 +65,13 @@ The report opens with writ's view on whether the document can be handed over as 
 ● I wrote docs/migration-plan.md. Only the owners are undecided; I think it can go to the team as it is.
   My grounds are the answers to each essential for every document (doc.md).
 
-  Essential: Can the reader take it in the way they read it, straight through or skimming, without going back or ahead?
+  Essential: Does the first sentence tell the reader what they get from this document?
     Good: The first sentence says which directory moves first.
       Location: line 3 (the sentence after the heading)
       Gain: The reader gets what they need to agree on in the first sentence.
       Evidence: The first sentence reads "We move src/api/ first, then go on to src/ui/."
 
-  Essential: Is every part something this reader needs in order to decide and do what they came for?
+  Essential: Is everything the reader needs to decide or act written down?
     More: The owners are not decided.
       Location: the "Owners" section
       Struggle: Until owners are decided, readers do not know what they are taking on.
