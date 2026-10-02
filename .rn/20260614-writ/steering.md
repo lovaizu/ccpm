@@ -195,8 +195,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-02
-- **Last completed**: #4 (#5 in progress: fixes 1058a55, f42a875, ade6d54, bbe6e83 pushed)
-- **Next**: #5 — add Vale (plus textlint for Japanese) to writ, approved by the user: config shipped in the plugin, run via npx by the producing role in its self-check and by the requester in its three checks, findings as a signal to review, not a fail. Then rerun every scene of the design's quality section with the current writ.
-- **Notes**: Branch worktree-writ, PR #15. Trials run as nested subagents (user-approved; headless `claude -p` is blocked by the auto-mode classifier): the requester is a fresh opus subagent told to read writ/skills/up/SKILL.md with CLAUDE_PLUGIN_ROOT spelled out; I answer as the user via SendMessage; baseline is the same prompt without the skill; readers are fresh subagents asked for "unclear spots / next step / questions" (asking for "trips" got blocked by safeguards). Quality 5 (writ chosen mid-work) cannot be tested with subagents; it needs a real session. Previous session's scratchpad (/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-techting/568631e1-f16e-4668-8561-d3ade583cf19/scratchpad) holds base-repo, findings.md and a tried Vale config in linttest/cfg; it may be gone. Open: the line between asking and leaving undecided (writ left `any` undecided where the reader then stopped); repetition across sections is not caught by tools or checkers. rn shares the three-check shape (rebuild-rn-c1).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
