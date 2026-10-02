@@ -164,6 +164,7 @@ flowchart TD
     KE{"The conductor checks each Good<br/>and each More at its place"}
     D{"The conductor decides<br/>each More in turn"}
     F["The generator fixes"]
+    R["A fresh evaluator checks<br/>that More alone"]
     J{"The conductor checks the final<br/>Good/More for each viewpoint"}
     N["On to the next task,<br/>or to the sign-off"]
     U["Back to working out the design,<br/>or the plan for a plan"]
@@ -173,7 +174,8 @@ flowchart TD
     V -->|"the evaluation"| KE
     KE -->|"the Mores that hold"| D
     D -->|"a More to fix"| F
-    F -->|"the fix, checked<br/>against the purpose"| D
+    F -->|"the fix, checked<br/>against the purpose"| R
+    R -->|"whether the More still holds"| D
     D -->|"all decided"| J
     D -->|"cannot go on"| U
     J -->|"no fatal More"| N
@@ -197,10 +199,13 @@ The repetition ends as either settled or cannot go on. It cannot go on when the 
 coming back, when each fix brings a new More, or when a fix needs the README or the design document
 changed.
 
-Fixes after the evaluation are checked by the conductor against the purpose, not by a fresh
-evaluator, and the final check looks again at every Good a fix touched, since a fix can take a Good
-away. An evaluation is not repeated, since an AI evaluation can raise new points that are not
-essential each time it is asked, and repeating need not settle; for the same reason the whole
+A fix is checked by the conductor against the purpose, and then by a fresh evaluator given only that
+More and its place, which says whether it still holds. Whoever made a fix is the worst placed to see
+that it falls short, and a More called fixed that still holds reaches the proposal as a Good. The
+final check looks again at every Good a fix touched, since a fix can take a Good away. The whole is
+not evaluated again, since an AI evaluation can raise new points that are not essential each time it
+is asked, and repeating need not settle; asking about one More keeps the check to what was fixed. For
+the same reason the whole
 deliverable is evaluated once, when the tasks planned after the last Design sign-off are done, and
 the Mores it raises are fixed as added tasks. The user can check every final Good and More at its
 place, and ask with `/rn:gm` for anything, another evaluation included.
