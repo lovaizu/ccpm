@@ -105,7 +105,7 @@ Whether Claude Code chooses writ is its judgment in the moment, so it will not a
 - A [README](references/essentials/readme.md) is also checked on whether someone meeting the product for the first time learns the benefits it gives them, decides whether to use it, and can start using it.
 - A [design doc](references/essentials/design.md) is also checked on whether builders and maintainers learn which features give the README's benefits and how, and can explain whether a given change fits the design.
 - A [prompt for an AI to read](references/essentials/prompt.md) is also checked on whether the AI can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee.
-- An [essentials file](references/essentials/essentials.md) is also checked on whether the producing role and the checking role can judge any part, including parts no one foresaw, by whether the receiver needs it.
+- An [essentials file](references/essentials/essentials.md) is also checked on whether the producing role and the checking role can judge any part, including parts no one foresaw, by whether the one who receives the finished work needs it.
 
 ## Get it and start using it
 

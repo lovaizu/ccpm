@@ -67,7 +67,7 @@ The benefits are named by the README's opening words — "understood in one read
 
 - The content of the essentials lives only in the essentials files, and every handoff passes their location, not a summary.
 
-    After any change, the content of the essentials stays uncopied into other documents and into writ's instructions. Copies and summaries drift each time the essentials are refined, the shape the producing role aims for parts from the shape the checking role asks about, and the user no longer gets a document they can hand over as it is. The README links to these files, so the user can read the essentials themselves to see which essential a Good or More answers.
+    After any change, the content of the essentials stays uncopied into other documents and into writ's instructions. Copies and summaries drift each time the essentials are refined, the shape the producing role aims for drifts away from the shape the checking role asks about, and the user no longer gets a document they can hand over as it is. The README links to these files, so the user can read the essentials themselves to see which essential a Good or More answers.
 
 - The only thing writ leaves in the user's environment is the target document.
 
@@ -95,7 +95,7 @@ flowchart TD
 Writing before they are settled leaves the producing role unable to decide what to aim for, and the requester unable to decide what to fix by.
 
 - Writing does not start until the reader, and what they decide and do when they finish, are settled.
-- The requester asks the user only what the conversation, the documents handed over and the repository do not tell, asks whether it may propose what it can infer, and asks one thing at a time.
+- The requester asks the user only what the conversation, the documents handed over and the repository do not tell, proposes what it can infer and asks whether it is right, and asks one thing at a time.
 
     What it asks is who reads, what they decide and do when they finish, and where the document goes. Asked what they already said or what the document already tells, the user answers the same thing again and again. Made to write out from scratch even what can be inferred, the user puts into words clues writ already has; as a proposal, a wrong inference shows up before writing starts. Asked several things at once, the user answers questions an earlier answer made unnecessary, so the requester asks one thing, removes what the answer settled, and then asks the next.
 
@@ -265,7 +265,7 @@ Each item attached to a Good and More is there to help the user judge.
 - The evidence lets the user check writ's judgment instead of trusting it.
 - The gain attached to a Good shows, by its effect on the reader, what must not be lost when fixing.
 - The struggle attached to a More lets the user decide, by its effect on the reader, whether to accept a More that was left.
-- The reason left attached to a More shows that leaving it was a judgment, not an oversight, and lets the user tell whether it is theirs to decide.
+- The reason it was left, attached to a More, shows that leaving it was a judgment, not an oversight, and lets the user tell whether it is theirs to decide.
 
 The names the user sees are `/writ:up`, Good and More, and the essentials file names `doc.md`, `readme.md`, `design.md`, `prompt.md` and `essentials.md`. The README teaches use and the essentials by these names, so changing them breaks what the user learned from the README.
 
@@ -323,7 +323,7 @@ What a script cannot decide is checked by the tester.
 
 - The user is not asked what they already said or what the document tells.
 
-    Run on a scene where a document whose reader and purpose can be read is handed over; it passes if writ asks only what cannot be read, and asks whether it may propose what it can infer.
+    Run on a scene where a document whose reader and purpose can be read is handed over; it passes if writ asks only what cannot be read, and proposes what it can infer, asking whether it is right.
 
 - The user always gets either the document or a question about the gap that blocks it, and is never left waiting without an end.
 
