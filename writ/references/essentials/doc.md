@@ -58,9 +58,9 @@ The reader is whoever the document is written for. When they finish, they have g
 
     When every part agrees, the reader can act on any part without checking it against the others. Two parts that disagree leave the reader to follow whichever they read last, or to stop; a writer who knows the intent reads past the disagreement, so it is found only by setting the parts side by side.
 
-- Are gaps and contradictions in the content written plainly, not hidden?
+- Can the reader see where the content has a gap?
 
-    Seeing a gap or a contradiction, the reader can raise it or decide around it. A flaw covered with smooth sentences is acted on unaware.
+    Seeing a gap, the reader can raise it or decide around it. A gap covered with smooth sentences is acted on unaware.
 
 - Does the tone suit the reader throughout?
 

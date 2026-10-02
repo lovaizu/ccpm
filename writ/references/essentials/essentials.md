@@ -14,6 +14,10 @@ The readers are the producing role, which reads the essentials as the shape to a
 
     Asked about the purpose, the producing role aims at it and the checking role judges by it, even in cases no one foresaw. A question about form, such as "is there an example" or "is there a link to the design doc", is met by adding the form where it does not help, and counted as a Good because it is there.
 
+- Does each question ask about the state of the work the receiver gets, not about what the writer did?
+
+    Asked about the state, the checking role looks for the flaw itself, such as setting parts side by side to find two that disagree. Asked about what the writer did, such as whether they disclosed a contradiction, a flaw no one noticed passes, since nothing was hidden.
+
 - Does each question find both what is missing and what is extra?
 
     A question that lets the reader judge what taking a part away would lose keeps the work the size its purpose needs. One that asks only whether something is there finds only gaps, and the work grows each round.
