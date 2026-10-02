@@ -176,7 +176,7 @@ Draft PR: {url}
 
 {what you propose to do next, and why it serves the goal}
 
-Changed since the last approval: {each change written without stopping, from the commits since the last stop commit}
+Changed since the last approval: {each change written without stopping, from the commits since the last approval, not the last stop, since the user approved nothing at a stop that took feedback}
 
 ### {each question for what is signed off}
 - Good: {what the user gains, at path:line, and why it holds there}
