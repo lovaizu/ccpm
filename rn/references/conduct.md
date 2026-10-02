@@ -189,7 +189,7 @@ Changed since the last approval: {each change written without stopping, from the
 - More: {what the user struggles with, at path:line, why, and why it was let go}
 ```
 
-The map on top heads every message where you stop: ✅ done, 👉 now, ⬜ ahead. Leave out the changed
+The map on top heads every message where you stop for a sign-off or a pause: ✅ done, 👉 now, ⬜ ahead. Leave out the changed
 line when there is none. When the same sign-off is proposed again, start from the Good and More of
 its last proposal: each More stays, at its place as it is now, until a fix settles it, since the
 user approves the final state and a More left out of it is one they never see. At the Design sign-off, the questions are `writ`'s, with the final Good and

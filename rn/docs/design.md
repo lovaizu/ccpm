@@ -317,7 +317,7 @@ rn: settle the evaluation of #3 move src/cart
 
     The user and a later conversation see what became of each.
 
-- The decision line comes last, and a stop commit's reads `● waiting for #2 Design sign-off`.
+- The decision line comes last, and a stop commit's ends `→ waiting for #2 Design sign-off`.
 
     `/rn:up` finds the next move by `●`, `──`, `→`, and `waiting for`, which stay as written. The
     rest is in the artifact language, like everything else committed.
