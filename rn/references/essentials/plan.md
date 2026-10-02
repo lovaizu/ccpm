@@ -20,6 +20,11 @@ tasks that make the deliverable are planned, the questions on Tasks do not apply
     The deliverable is then judged by what the user wants. With a line missing, the work can pass
     every one and still miss the goal, and the user approves it.
 
+- Is each line needed for the goal?
+
+    The work then goes only to what the goal needs. A line the goal does not need adds work, and
+    passing it proves nothing about the goal.
+
 - Is each line a state of the product that stays the same whatever way it is built?
 
     A state judges every way of building by the same measure. A line naming something to make, or a
