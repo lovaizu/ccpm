@@ -1,125 +1,125 @@
 # writ
 
-AI が書く文書を、新しく書くときも今ある文書を直すときも、人が書いたように読みやすく仕上げます。
+writ finishes the documents AI writes, whether new or fixed, so they read as easily as if a person wrote them.
 
-- 読み手は、一度読めば分かり、読み終えたら何をすればいいかが分かります。
-- あなたは、自分で読んで直さずに、そのまま渡せます。
-- あなたは、全文を読み直さなくても、書き終えたときに writ が会話に出す報告を見るだけで仕上がりを判断できます。
-- あなたは、決まっていないことはごまかさずに聞いてくれるので、中身の穴に気づかないまま渡すことがありません。
+- Your reader understands the document in one reading and knows what to do when they finish.
+- You can hand the document over as it is, without reading and fixing it yourself.
+- You can judge the result from the report writ gives in the conversation when it finishes, without rereading the whole document.
+- writ asks you about what is undecided instead of glossing over it, so you never hand over a document with a hole you did not notice.
 
-## `/writ:up` を呼んで聞かれたことに答えると、仕上がった文書と、観点ごとの Good と More が返ってきます
+## Call `/writ:up`, answer what it asks, and you get the finished document with a Good and More for each essential
 
 ```mermaid
 sequenceDiagram
-  actor Y as あなた
+  actor Y as You
   participant W as writ
-  participant F as 対象の文書
-  Y->>W: /writ:up と、頼みたいことや直す文書
-  W->>Y: 読み手と目的の案か質問
-  Y->>W: 答え
-  W->>F: 書いた中身
-  opt 読み手が目的を果たすのに要ることが決まっていないとき
-    W->>Y: 決まっていないことの質問
-    Y->>W: 決めたこと
-    W->>F: 書き直した中身
+  participant F as Target document
+  Y->>W: /writ:up and what you want, or the document to fix
+  W->>Y: A proposal or a question about the reader and purpose
+  Y->>W: Your answer
+  W->>F: Written content
+  opt Something the reader needs to achieve their purpose is undecided
+    W->>Y: A question about what is undecided
+    Y->>W: What you decided
+    W->>F: Rewritten content
   end
-  F->>Y: 仕上がった文書
-  W->>Y: 観点ごとの Good と More
-  Note over Y: 承認するか、直しを頼むかを決める
+  F->>Y: Finished document
+  W->>Y: A Good and More for each essential
+  Note over Y: Decide whether to approve or ask for fixes
 ```
 
-writ は、誰が読み、読み終えて何を決め何をするのかが定まるまで書き始めません。文書の良し悪しは、読み手とその目的が決まって初めて測れるからです。あなたが答えるのは、頼んだときの言葉やリポジトリから分からないことだけで、推し量れることには writ が案を示すので、よいかどうかを答えれば済みます。書いた文書は、ここまでの話し合いを知らない読み手の目で確かめ、直せるところを直してから返します。
+writ does not start writing until it is settled who reads the document and what they decide and do when they finish, because how good a document is can only be measured once its reader and purpose are settled. You answer only what your request and the repository do not tell; where writ can infer something, it proposes it, and you just say whether it is right. Before returning the document, writ checks it through the eyes of a reader who does not know the discussion so far, and fixes what it can.
 
-## 例：TypeScript への移行計画をチームに向けて書く
+## Example: writing a TypeScript migration plan for your team
 
-JavaScript で書かれたアプリを TypeScript に移すことになり、その計画書をチームに向けて書くとします。
+Say your app written in JavaScript is moving to TypeScript, and you are writing the plan for the engineers on your team.
 
 ```console
-> /writ:up TypeScript への移行計画を、チームのエンジニアに向けて書いて
+> /writ:up Write the TypeScript migration plan for the engineers on my team
 
-● 読み終えたとき、チームのエンジニアは何を決め、何をしますか。
+● When the engineers finish reading, what should they decide and do?
 
-> どのディレクトリから移すかに合意して、それぞれ担当を引き受けてほしい。
+> Agree on which directory to move first, and each take on a part.
 
-● docs/ に設計の文書が並んでいるので、docs/migration-plan.md に置こうと考えています。よいですか。
+● Design documents sit in docs/, so I plan to put it in docs/migration-plan.md. Is that all right?
 
-> それで。
+> Yes.
 ```
 
-writ はリポジトリのディレクトリ構成やコードを調べてから計画書を書き、docs/migration-plan.md に書き込みます。
+writ looks into the repository's directory layout and code, then writes the plan into docs/migration-plan.md.
 
 ```markdown
-# TypeScript 移行計画
+# TypeScript migration plan
 
-最初に src/api/ を移し、次に src/ui/ に進みます。src/api/ はほかのコードから呼ばれる側なので、ここに型が付くと、呼ぶ側の誤りもすぐ見つかるようになります。
+We move src/api/ first, then go on to src/ui/. src/api/ is what the rest of the code calls, so once it has types, mistakes in the calling code show up right away too.
 
-## 担当
+## Owners
 
-- src/api/ を移す担当は、まだ決まっていません。
-- src/ui/ を移す担当は、まだ決まっていません。
+- The owner for moving src/api/ is not decided yet.
+- The owner for moving src/ui/ is not decided yet.
 ```
 
-報告は、このまま渡せるかについての writ の考えから始まり、その根拠として、使った観点が1つずつそのまま並び、それぞれに Good か More、あるいは両方が付きます。観点とは、文書が良いかを確かめる項目で、文書の種類ごとに決まっています。Good は、役立っているところで、読み手がそれで何を得るかが付きます。More は、writ が直さずに残した足りないところで、読み手が何に困るかと、なぜ残したかが付きます。どちらにも、文書のどこの話かと、その根拠が付きます。
+The report opens with writ's view on whether the document can be handed over as it is. As its grounds, each essential it used follows word for word, with a Good, a More, or both. An essential is a question that checks whether a document is good, and each kind of document has its own set. A Good is a part that helps, with what the reader gains from it. A More is a shortfall writ left unfixed, with what the reader struggles with and why it was left. Both say where in the document they point to, and give their evidence.
 
 ```console
-● docs/migration-plan.md に書きました。担当だけ決まっていませんが、このままチームに渡せると考えます。
-  根拠は、すべての文書の観点（doc.md）ごとの答えです。
+● I wrote docs/migration-plan.md. Only the owners are undecided; I think it can go to the team as it is.
+  My grounds are the answers to each essential for every document (doc.md).
 
-  観点: 読み手は、通して読むにも拾い読むにも、戻ったり先を見たりせずに受け取れるか。
-    Good: 冒頭の1文で、最初に移すディレクトリが分かる。
-      場所: 3行目（見出しの次の1文）
-      得ること: 読み手は、合意すべき点を最初の1文で受け取れる。
-      根拠: 冒頭の1文が「最初に src/api/ を移し、次に src/ui/ に進みます」になっている。
+  Essential: Can the reader take it in the way they read it, straight through or skimming, without going back or ahead?
+    Good: The first sentence says which directory moves first.
+      Location: line 3 (the sentence after the heading)
+      Gain: The reader gets what they need to agree on in the first sentence.
+      Evidence: The first sentence reads "We move src/api/ first, then go on to src/ui/."
 
-  観点: どの部分も、この読み手が決めて行うことのために要るものか。
-    More: 担当が決まっていない。
-      場所: 「担当」の節
-      困ること: 読み手は、担当が決まるまで自分が何を引き受けるのか分からない。
-      根拠: 2つの項目とも「まだ決まっていません」になっている。
-      残した理由: 誰が担当するかはあなたとチームが決めることなので、決まっていないと分かる形で残した。
+  Essential: Is every part something this reader needs in order to decide and do what they came for?
+    More: The owners are not decided.
+      Location: the "Owners" section
+      Struggle: Until owners are decided, readers do not know what they are taking on.
+      Evidence: Both items say "not decided yet".
+      Why left: Who owns what is for you and your team to decide, so it was left visibly undecided.
 ```
 
-実際の報告では、doc.md のすべての観点に、この形で答えが並びます。どの観点への答えかが分かるので、答えのない観点がないことも報告だけで確かめられます。担当は、読み手が引き受けて決めればよいので、決まっていないまま渡せます。
+A real report answers every essential in doc.md this way. Since each answer names its essential, you can also tell from the report alone that no essential went unanswered. The owners can be left undecided, since readers can take parts on and settle them.
 
-すでにある文書を直すときは、その文書を渡します。たとえば、移したコードに型を付けるときの決まりを、以前に書いた docs/typing-guide.md にまとめてあるとします。writ は文書を読んだうえで、そこから分からないことだけを聞きます。
+To fix a document you already have, hand it over. Say you have collected the rules for adding types to moved code in docs/typing-guide.md. writ reads the document and asks only what it cannot tell from it.
 
 ```console
 > /writ:up docs/typing-guide.md
 
-● この文書は、チームのエンジニアが、移したコードに型を付けるときに従う決まりと読みました。
-  直そうとしましたが、any を使ってよいかが決まっていないため、仕上がったものとしては返せません。
-  any は使ってよいですか。使ってよいなら、どんなときですか。
+● I read this document as the rules the team's engineers follow when adding types to moved code.
+  I tried to fix it, but I cannot return it as finished, because it is not decided whether any may be used.
+  May any be used? If so, when?
 ```
 
-決めたことを答えると、writ はそれを入れて書き直し、同じように観点ごとの Good と More が返ってきます。「できるだけ避ける」のような、どちらとも取れる言い回しで any をぼかした文書は返ってきません。どちらとも取れる決まりでは、読み手は決まりに従って書けないからです。決まっていないまま渡せる担当とは、ここが違います。
+When you answer what you decided, writ writes it in, and a Good and More for each essential come back the same way. You do not get back a document that blurs any with wording that can be read either way, such as "avoid it where possible", because readers cannot follow a rule that can be read either way. That is how it differs from the owners, which can be handed over undecided.
 
-## 作業の途中で Claude Code が文書を書くときは、Claude Code が writ を選んで使うことがあります
+## When Claude Code writes a document in the middle of its work, it may choose writ on its own
 
-writ には「文書を書くときや直すときに使うもの」という説明が付いていて、Claude Code は、作業の途中で README や設計書を書こうとするとき、この説明に当てはまると判断すれば writ を使います。会話から読み手と目的が分かればそのまま書き、分からないときだけあなたに聞いて、観点ごとの Good と More を報告に添えます。
+writ comes with a description saying it is for writing and fixing documents. When Claude Code is about to write a README or a design doc in the middle of its work and judges that this description fits, it uses writ. If the conversation tells it the reader and purpose, it writes right away; it asks you only when it cannot tell, and adds a Good and More for each essential to its report.
 
-Claude Code が writ を選ぶかどうかはその場の判断なので、毎回選ばれるとは限りません。報告に観点ごとの Good と More が添えられていなければ、その文書を渡して `/writ:up` を呼んでください。
+Whether Claude Code chooses writ is its judgment in the moment, so it will not always choose it. If a report comes without a Good and More for each essential, hand that document over and call `/writ:up`.
 
-## 文書は、種類ごとの観点で確かめられます
+## Documents are checked against the essentials for their kind
 
-- [どの文書も](references/essentials/doc.md)、読み手が上から順に読むだけで全体をつかみ、読み終えたときにすべきことができるかで確かめます。
-- [README](references/essentials/readme.md) はさらに、製品を初めて知った人が、自分にとっての利点を知り、使うかどうかを決め、使い始められるかで確かめます。
-- [設計書](references/essentials/design.md)はさらに、作る人と直す人が、README に挙げた利点をどの機能がどう届けるかを知り、ある変更が設計に合うかどうかを説明できるかで確かめます。
-- [AI に読ませるプロンプト](references/essentials/prompt.md)はさらに、AI が、書き手の想定していなかった場面でも、目的を果たせる動き方を自分で選べるかで確かめます。
-- [観点のファイル](references/essentials/essentials.md)はさらに、書く役と確かめる役が、誰も想定していなかった部分についても、受け取る人に要るかどうかで判断できるかで確かめます。
+- [Every document](references/essentials/doc.md) is checked on whether the reader grasps the whole by reading from top to bottom and, when they finish, can do what they need to do.
+- A [README](references/essentials/readme.md) is also checked on whether someone meeting the product for the first time learns the benefits it gives them, decides whether to use it, and can start using it.
+- A [design doc](references/essentials/design.md) is also checked on whether builders and maintainers learn which features give the README's benefits and how, and can explain whether a given change fits the design.
+- A [prompt for an AI to read](references/essentials/prompt.md) is also checked on whether the AI can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee.
+- An [essentials file](references/essentials/essentials.md) is also checked on whether the producing role and the checking role can judge any part, including parts no one foresaw, by whether the receiver needs it.
 
-## 入手して使い始める
+## Get it and start using it
 
-writ は Claude Code のプラグインなので、Claude Code が必要です。
+writ is a Claude Code plugin, so you need Claude Code.
 
-writ はプラグインマーケットプレイス `lovaizu/ccpm` から入手できます。Claude Code で、マーケットプレイスを追加してから writ を入れてください。
+writ is available from the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install writ.
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install writ@ccpm
 ```
 
-これで `/writ:up` が使えるようになります。
+Now `/writ:up` is ready to use.
 
-## ライセンス
+## License
 
-MIT ライセンスです。条文はリポジトリ直下の [LICENSE](../LICENSE) にあります。
+MIT License. The full text is in [LICENSE](../LICENSE) at the repository root.

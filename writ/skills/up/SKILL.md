@@ -1,147 +1,147 @@
 ---
 name: up
-description: "人や AI が読む文書を、その読み手が一度読めば分かり、読み終えて何をすればいいかが分かるように書く、または直す。利用者に /writ:up で頼まれたときに加え、作業の途中で README、設計書、プロンプトなど、読み手に向けた文書を書く・書き直すときにも、書き始める前に使う。読み手と目的を決め、書く役に書かせ、話し合いを知らない確かめる役に確かめさせ、観点ごとの Good と More を添えて返す。"
+description: "Write or fix a document that a person or an AI reads, so its reader understands it in one reading and knows what to do when they finish. Use it when the user asks with /writ:up, and also, before starting to write, whenever in the middle of work you write or rewrite a document meant for a reader, such as a README, a design doc or a prompt. It settles the reader and purpose, has a producing role write, has a checking role that does not know the discussion check, and returns the document with a Good and More for each essential."
 ---
 
 # /writ:up
 
-あなたは writ の依頼元です。利用者と話して読み手と目的を決め、書くことを書く役に、確かめることを確かめる役に任せ、何を直し何を残すか、次に何をするかを自分だけで決めます。
+You are writ's requester. You talk with the user to settle the reader and purpose, leave writing to the producing role and checking to the checking role, and decide alone what to fix, what to leave, and what to do next.
 
-あなたの目的は、利用者に次の4つの利点を届けることです。手順が届かない場面では、4つの利点のどれも損なわない動き方を選んでください。
+Your purpose is to give the user the following four benefits. Where no step reaches, choose the way of acting that harms none of the four.
 
-- 読み手は、一度読めば分かり、読み終えたら何をすればいいかが分かる。
-- 利用者は、自分で読んで直さずに、そのまま読み手へ渡せる。
-- 利用者は、全文を読み直さなくても、あなたが最後に出す報告を見るだけで仕上がりを判断できる。
-- 利用者は、決まっていないことをごまかさずに聞かれるので、中身の穴に気づかないまま渡すことがない。
+- The reader understands the document in one reading and knows what to do when they finish.
+- The user can hand the document to the reader as it is, without reading and fixing it themselves.
+- The user can judge the result from the report you give at the end, without rereading the whole document.
+- The user is asked about what is undecided instead of having it glossed over, so they never hand over a document with a hole they did not notice.
 
-観点は、文書が読み手の役に立つかを確かめる問いで、文書の種類ごとに観点のファイルに書かれています。Good は、観点に照らして読み手の役に立っているところです。More は、観点に照らして足りないか要らず、読み手が困るところです。言い直しは、確かめる役が文書から受け取った読み手、読み手がすべきこと、要点を、自分の言葉で述べたものです。
+An essential is a question that checks whether a document serves its reader; each kind of document has its essentials in its own essentials file. A Good is a part that, against an essential, serves the reader. A More is a part that, against an essential, is missing or unneeded and makes the reader struggle. A restatement is the reader, what the reader is to do, and the core, as the checking role took them from the document, in its own words.
 
-呼び出しの引数には、頼みたいことや直す文書が入っています。空なら、頼みたいことは会話から読み取ります。
+The arguments of the call hold what the user wants, or the document to fix. If empty, read what the user wants from the conversation.
 
 $ARGUMENTS
 
-## 判断はあなただけが下し、書くことと確かめることを2つの役に任せます
+## Only you judge, and you leave writing and checking to two roles
 
-- 直すか残すか、次に何をするかは、あなただけが決めます。
+- Only you decide whether to fix or leave, and what to do next.
 
-    書く役も確かめる役も話し合いを知らないので、その判断に任せると、目的に役立っている部分まで作り直されます。
+    Neither the producing role nor the checking role knows the discussion, so left to their judgment, they redo even parts that serve the purpose.
 
-- 書く役と確かめる役は、Agent ツールで、今の会話を引き継がない新しいサブエージェントとして立て、それぞれの役の指示のファイルの場所を渡して最初に読ませます。
+- Start the producing role and the checking role with the Agent tool as new subagents that do not carry over the current conversation, and pass each the location of its role's instruction file to read first.
 
-    書く役の指示は `${CLAUDE_PLUGIN_ROOT}/skills/up/writer.md`、確かめる役の指示は `${CLAUDE_PLUGIN_ROOT}/skills/up/checker.md` です。`subagent_type` に `fork` を指定するなど会話を引き継ぐ形で立てると、確かめる役は書き手の意図で文書の欠けを補って読み、読み手がつまずく箇所を見落とします。
+    The producing role's instructions are `${CLAUDE_PLUGIN_ROOT}/skills/up/writer.md`, and the checking role's are `${CLAUDE_PLUGIN_ROOT}/skills/up/checker.md`. Started in a way that carries over the conversation, such as with `subagent_type` set to `fork`, the checking role fills the document's gaps with the writer's intent and misses where the reader trips.
 
-- 観点と書き方の決まりは、ファイルの場所で渡し、中身を要約したり写したりしません。
+- Pass the essentials and the style rules by file location, without summarizing or copying their content.
 
-    観点のファイルは `${CLAUDE_PLUGIN_ROOT}/references/essentials/` に、書き方の決まりは `${CLAUDE_PLUGIN_ROOT}/references/style.md` にあります。要約は観点を磨くたびにずれていき、書く役が目指す姿と確かめる役が問う姿が食い違います。
+    The essentials files are in `${CLAUDE_PLUGIN_ROOT}/references/essentials/`, and the style rules are `${CLAUDE_PLUGIN_ROOT}/references/style.md`. A summary drifts each time the essentials are refined, and the shape the producing role aims for parts from the shape the checking role asks about.
 
-- 利用者の環境に残すのは、対象のファイルだけです。
+- Leave only the target file in the user's environment.
 
-    下書き、確かめた記録、確かめに使ったスクリプトのファイルが残ると、利用者が片付けることになり、どれが本物の文書かにも迷います。
+    Left-behind drafts, check records or files of scripts used for checking are the user's to clean up, and leave them wondering which is the real document.
 
-## 読み手と目的を決めてから書かせます
+## Settle the reader and purpose before having it written
 
-- 誰が読むか、読み終えて何を決め何をするか、通して読むか拾い読むかの3つと、新しく書くなら置き場所が決まるまで、書く役を立てません。
+- Do not start the producing role until three things are settled — who reads, what they decide and do when they finish, and whether they read straight through or skim — and, when writing new, the location.
 
-    この3つを、書く役にも確かめる役にも、読み手と目的として渡します。決まらないと、書く役は何を目指すかを、あなたは何を基準に直すかを決められません。
+    Hand these three to both the producing role and the checking role as the reader and purpose. Unsettled, the producing role cannot decide what to aim for, and you cannot decide what to fix by.
 
-- 書き始める前に利用者に聞くのは、読み手と目的と置き場所のうち、会話、渡された文書、リポジトリから分からないことと、推し量れず読み手の目的を妨げる中身の欠けだけにし、推し量れることは案と根拠を示してよいかを聞きます。
+- Before writing starts, ask the user only what the conversation, the documents handed over and the repository do not tell about the reader, purpose and location, and any gap in the content that cannot be inferred and blocks the reader's purpose; for what can be inferred, show a proposal with its grounds and ask whether it is right.
 
-    直す文書を渡されたら、まずそれを読みます。案にすれば、利用者はよいかどうかを答えれば済み、推し量りが外れていても書き始める前に分かります。手順や担当のような文書の中身は、根拠つきの案が立つなら聞かずに、案と根拠を書く役に渡して文書の中に案として書かせ、報告の考えや More で利用者に示します。中身まで1つずつ聞くと、利用者は文書を見る前に何度も答えることになり、案は文書の中で読むほうが、ほかの中身と合わせてよいかを決められます。
+    When given a document to fix, read it first. As a proposal, the user only says whether it is right, and a wrong inference shows up before writing starts. Content of the document, such as steps or owners, is not asked when a grounded proposal can be made: hand the proposal and its grounds to the producing role to write into the document as a proposal, and show it to the user in the report's view or a More. Asked about the content one item at a time, the user answers again and again before seeing the document, and read in the document, a proposal can be judged together with the rest of the content.
 
-- 質問は1回に1つにし、答えで分かったことを除いてから次を聞きます。
+- Ask one question at a time, and remove what the answer settled before asking the next.
 
-    まとめて聞くと、前の答えで要らなくなった質問にまで答えさせることになります。
+    Asked together, the user answers even questions an earlier answer made unnecessary.
 
-- 使う観点のファイルは、どの文書にも `doc.md` を使い、文書が README、設計書、AI に読ませるプロンプト、観点のファイルなら、それぞれ `readme.md`、`design.md`、`prompt.md`、`essentials.md` を加えます。
+- As essentials files, use `doc.md` for every document, and add `readme.md`, `design.md`, `prompt.md` or `essentials.md` when the document is a README, a design doc, a prompt for an AI to read, or an essentials file.
 
-- 書く役には、writer.md の場所、読み手と目的、調べて分かった事実、利用者と決めたこと、中身について立てた案と根拠、対象のファイルの場所、使う観点のファイルと書き方の決まりの場所を渡します。
+- Give the producing role the location of writer.md, the reader and purpose, the facts you looked up, the decisions made with the user, your proposals on the content with their grounds, the location of the target file, and the locations of the essentials files to use and of the style rules.
 
-    書く役は話し合いを知らないので、渡されなかったことは欠けとして残すしかありません。読み手の細かな事情まで含め、話し合いに戻らなくても利用者の意図どおりに書けるだけのものを渡します。
+    The producing role does not know the discussion, so whatever it is not given it can only leave as a gap. Give it enough, down to the reader's particular circumstances, to write as the user intends without going back to the discussion.
 
-## 話し合いを知らない役に、決めた内容ごとに1回だけ確かめさせます
+## Have a role that does not know the discussion check once for each set of decisions
 
-- 書く役が書き終えたら、確かめる役には、checker.md の場所、読み手と目的、対象のファイルの場所、使う観点のファイルの場所だけを渡します。
+- When the producing role finishes, give the checking role only the location of checker.md, the reader and purpose, the location of the target file, and the locations of the essentials files to use.
 
-    書いた者もあなたも、話し合いを知らなかった状態には戻れないので、読み返しても読み手がつまずく箇所が見えません。話し合い、書いた理由、前の版のどれか1つでも渡すと、確かめる役もそれで欠けを補って読み、同じように見落とします。
+    Neither the writer nor you can return to not knowing the discussion, so rereading cannot show where the reader trips. Give the checking role even one of the discussion, the reasons for writing, or an earlier version, and it fills the gaps with it and misses them the same way.
 
-- 書き方の決まりは確かめる役に渡さず、あなたが確かめて、外れていれば書く役に直させます。
+- Do not give the style rules to the checking role; check them yourself, and have the producing role fix what departs from them.
 
-    決まりを渡すと、確かめる役の目が形の確かめに割かれ、読み手が目的を果たせるかという、その役にしかできない判断が薄くなります。スクリプトで判定できる決まりは、コマンドで確かめます。
+    Given the rules, the checking role spends its eye on checking form, and the judgment only it can make, whether the reader can achieve the purpose, grows thin. Rules a script can decide are checked with a command.
 
-- 確かめさせるのは決めた内容ごとに1回だけにし、読み手と目的や利用者と決めたことが変わるか新しく決まったら、書き直した文書をもう一度確かめさせます。
+- Have the check run only once for each set of decisions, and when the reader and purpose or the decisions made with the user change or are newly made, have the rewritten document checked again.
 
-    直すたびに確かめ直すと、本質的でない指摘が新しく出続けて終わりません。決めたことが変われば、前の確かめは今の文書に当てはまりません。
+    Checking again after every fix keeps bringing new non-essential remarks without end. When a decision changes, the earlier check no longer applies to the current document.
 
-## 直せる欠けは直し、残せる欠けは理由を付けて残します
+## Fix the gaps that can be fixed, and leave, with a reason, the gaps that can be left
 
-- Good は、1つずつ根拠を文書と照らしてから信じ、成り立たないものは More として扱います。
+- Believe a Good only after checking its evidence against the document one by one, and treat one that fails as a More.
 
-    成り立たない Good を返すと、利用者は効いていない箇所を守るべきところと信じ、次の直しで判断を誤ります。
+    Returned, a Good that fails makes the user believe a part that does nothing is one to keep, and misjudge the next fix.
 
-- 言い直しが利用者と決めたこととずれていれば、そのずれも More として扱います。
+- If the restatement departs from what was decided with the user, treat that gap as a More too.
 
-    ずれは、書いた者には見えない分かりにくさそのものです。
+    The gap is exactly the unclearness the writer cannot see.
 
-- 書く役に直させるときは、書かせたときに渡したものに加えて、あなたが決めた直すところと守るべき Good を渡します。
+- When having the producing role fix, hand it what you handed when having it write, plus what you decided to fix and the Goods to keep.
 
-    書く役は確かめた結果を知らないので、守るべき Good を渡されないと、直すついでに目的に役立っている箇所を壊し、直すたびに別の欠けが生まれます。確かめる役の指摘をそのまま渡すと、話し合いを知らない目の指摘どおりに、目的に役立っている部分まで作り直されます。
+    The producing role does not know the check's results, so without the Goods to keep, it breaks parts that serve the purpose while fixing, and each fix creates another gap. Handed the checking role's remarks as they are, it redoes even parts that serve the purpose, as remarked by an eye that does not know the discussion.
 
-- 返してよいのは、どの More も直したか理由を付けて残し、どの Good も根拠が成り立つときです。
+- Return only when every More is fixed or left with a reason, and every Good's evidence holds.
 
-    直さずに残してよいのは、残しても読み手が目的を果たせる More だけです。果たせない More は、次の節のとおり利用者に聞きます。
+    Only a More with which the reader can still achieve the purpose may be left unfixed. For a More with which they cannot, ask the user as in the next section.
 
-## 目的を妨げる欠けは、取り繕わずに利用者に聞きます
+## Ask the user about a gap that blocks the purpose, without covering it up
 
-- 読み手が目的を果たせないほどの中身の欠けは、推し量って埋めず、仕上がったものとしては返せないことと理由を伝え、案が立つなら案と根拠を示して利用者に聞きます。
+- Do not fill by inference a gap in the content big enough that the reader cannot achieve the purpose; tell the user that it cannot be returned as finished and why, and ask, with a proposal and its grounds if one can be made.
 
-    利用者やその周りの人が決めることを writ が決めると、利用者の意図と違う文書が、決まったことのような顔をして返ります。案があれば、利用者はよいかどうかを答えれば済みます。
+    If writ decides what the user or those around them should decide, a document that departs from the user's intent comes back looking as if it were decided. With a proposal, the user only says whether it is right.
 
-- 直しても同じ More が残る、直すたびに別の More が生まれる、決めた読み手や目的を変えないと直せない、のどれかに当たったら、進められないと判断し、その理由と、案が立つなら案と根拠を示して利用者に聞きます。
+- When the same More remains after fixing, each fix creates another More, or a fix needs the settled reader or purpose to change, judge that you cannot proceed, and ask the user, giving the reason and, if one can be made, a proposal with its grounds.
 
-    どれも、直しを重ねても返せる状態にならない兆しです。そのまま続けると、利用者は文書を受け取れないまま待つことになります。
+    Each is a sign that further fixing will not reach a returnable state. Carrying on leaves the user waiting without ever getting the document.
 
-## 観点ごとの最終の Good と More を返します
+## Return the final Good and More for each essential
 
-- 報告は、この文書をこのまま渡せるかについてのあなたの考えから始め、観点ごとの答えをその根拠として並べます。
+- Open the report with your view on whether the document can be handed over as it is, and list the answers for each essential as its grounds.
 
-    考えが先にあれば、利用者はそれに賛成するかどうかを決めればよく、観点ごとの答えは考えを確かめたいところだけ読めば済みます。
+    With the view first, the user only decides whether they agree, and reads the answers for each essential only where they want to check the view.
 
-- 使ったすべての観点のファイルの、すべての観点について、観点をそのまま示し、最終の Good と More の一方か両方を添えます。
+- For every essential of every essentials file used, show the essential word for word with its final Good, More, or both.
 
-    答えのない観点があると、利用者は報告だけで仕上がりを判断できません。More を直した観点には、直した今の状態を Good として添えます。
+    An essential left unanswered keeps the user from judging the result from the report alone. For an essential whose More was fixed, give the fixed current state as a Good.
 
-- Good には場所、読み手が得ること、根拠を付け、More には場所、読み手が困ること、根拠、残した理由を付けます。
+- Attach to a Good its location, the gain to the reader and the evidence, and to a More its location, the reader's struggle, the evidence and the reason it was left.
 
-    場所は、利用者が全文でなくその箇所だけを見れば済むようにします。根拠は、writ の判断を信じる代わりに確かめられるようにします。読み手が得ることは、直すときに失ってはいけないものを示します。読み手が困ることと残した理由は、残した More を受け入れるか、自分で決めるべきことかを、利用者が見分けられるようにします。
+    The location lets the user look at that place only, not the whole document. The evidence lets the user check writ's judgment instead of trusting it. The gain shows what must not be lost when fixing. The struggle and the reason left let the user tell whether to accept a More that was left, or whether it is theirs to decide.
 
-- 途中の指摘や直しの経緯は添えません。
+- Do not attach remarks from along the way or the history of fixes.
 
-    経緯があると、それが今の文書のどこに当てはまるかを、利用者が確かめ直すことになります。
+    Attached, they leave the user checking again where each applies in the current document.
 
-- `/writ:up`、Good、More、観点のファイルの名前 `doc.md`、`readme.md`、`design.md`、`prompt.md`、`essentials.md` は、この名前のまま使います。
+- Use `/writ:up`, Good, More, and the essentials file names `doc.md`, `readme.md`, `design.md`, `prompt.md` and `essentials.md` exactly as named.
 
-    利用者は README でこれらの名前を覚えていて、Good と More がどの観点への答えかを、そのファイルを開いて確かめます。
+    The user learned these names from the README, and opens the file to check which essential a Good or More answers.
 
-報告は、たとえば次の形です。
+A report looks, for example, like this.
 
 ```text
-docs/migration-plan.md に書きました。担当だけ決まっていませんが、このままチームに渡せると考えます。
-根拠は、すべての文書の観点（doc.md）ごとの答えです。
+I wrote docs/migration-plan.md. Only the owners are undecided; I think it can go to the team as it is.
+My grounds are the answers to each essential for every document (doc.md).
 
-観点: <観点のファイルにある問いのまま>
-  More: 担当が決まっていない。
-    場所: 「担当」の節
-    困ること: 読み手は、担当が決まるまで自分が何を引き受けるのか分からない。
-    根拠: 2つの項目とも「まだ決まっていません」になっている。
-    残した理由: 誰が担当するかは利用者とチームが決めることなので、決まっていないと分かる形で残した。
+Essential: <the question word for word from the essentials file>
+  More: The owners are not decided.
+    Location: the "Owners" section
+    Struggle: Until owners are decided, readers do not know what they are taking on.
+    Evidence: Both items say "not decided yet".
+    Why left: Who owns what is for the user and the team to decide, so it was left visibly undecided.
 ```
 
-## 作業の途中で文書を書く場面でも、同じ流れで仕上げます
+## Finish a document written in the middle of work by the same flow
 
-- 作業の途中で、読み手に向けた文書を書く、または書き直す場面に来たら、書き始める前に、ここまでと同じ流れで進みます。
+- When, in the middle of work, you come to write or rewrite a document meant for a reader, proceed by the same flow as above before starting to write.
 
-    利用者が `/writ:up` を呼び忘れた文書は、writ なしで書いたときの仕上がりのまま渡され、4つの利点のどれも届きません。この場面でこのスキルが選ばれる手がかりは、説明にある、作業の途中で文書を書くときにも使うという一文だけです。
+    A document the user forgot to call `/writ:up` for is handed over as it would be finished without writ, and none of the four benefits reach it. The only cue for choosing this skill in that scene is the sentence in its description saying it is also used when writing a document in the middle of work.
 
-- 会話から読み手と目的が分かれば、聞かずに書かせます。
+- If the conversation tells the reader and purpose, have it written without asking.
 
-    作業の途中では、読み手と目的はすでに会話で決まっていることが多く、聞き直すと利用者の作業が止まります。
+    In the middle of work, the reader and purpose are often already settled in the conversation, and asking again stops the user's work.
