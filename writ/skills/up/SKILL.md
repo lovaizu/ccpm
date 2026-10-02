@@ -48,9 +48,9 @@ $ARGUMENTS
 
     When given a document to fix, read it first. As a proposal, the user only says whether it is right, and a wrong inference shows up before writing starts.
 
-- Do not have a decision that belongs to the user or those around them written into the document as your proposal. Have it written as undecided, and put your proposal with its grounds in the final More for it.
+- Do not have a decision that belongs to the user or those around them written into the document as your proposal. If leaving it undecided keeps the reader from achieving the purpose, ask the user as in the section on asking the user; otherwise have it written as undecided.
 
-    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read. In the report, the user decides every proposal at once after seeing the document, instead of answering one question after another before it. A gap that blocks the reader's purpose is asked instead, as in the section on asking the user.
+    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read.
 
 - Ask one question at a time, and remove what the answer settled before asking the next.
 
@@ -92,7 +92,7 @@ $ARGUMENTS
 
 - Return only when every More is fixed or left with a reason, and every Good's evidence holds.
 
-    Only a More with which the reader can still achieve the purpose may be left unfixed. For a More with which they cannot, ask the user as in the next section.
+    Only a More with which the reader can still achieve the purpose may be left unfixed. Judge by whether the reader can carry out all of what they do when they finish, not by whether they can start. For a More with which they cannot, ask the user as in the next section.
 
 ## Ask the user about a gap that blocks the purpose, without covering it up
 
@@ -114,9 +114,9 @@ $ARGUMENTS
 
     An essential left unanswered keeps the user from judging the result from the report alone. For an essential whose More was fixed, give the fixed current state as a Good.
 
-- Attach to a Good its location, the gain to the reader and the evidence, and to a More its location, the reader's struggle, the evidence and the reason it was left, and, for a decision left undecided, your proposal with its grounds.
+- Attach to a Good its location, the gain to the reader and the evidence, and to a More its location, the reader's struggle, the evidence and the reason it was left.
 
-    The location lets the user look at that place only, not the whole document. The evidence lets the user check writ's judgment instead of trusting it. The gain shows what must not be lost when fixing. The struggle and the reason left let the user tell whether to accept a More that was left, or whether it is theirs to decide. The proposal lets the user settle it by saying whether it is right.
+    The location lets the user look at that place only, not the whole document. The evidence lets the user check writ's judgment instead of trusting it. The gain shows what must not be lost when fixing. The struggle and the reason left let the user tell whether to accept a More that was left, or whether it is theirs to decide.
 
 - Do not attach remarks from along the way or the history of fixes.
 
@@ -138,7 +138,6 @@ Essential: <the question word for word from the essentials file>
     Struggle: Until owners are decided, readers do not know what they are taking on.
     Evidence: Both items say "not decided yet".
     Why left: Who owns what is for the user and the team to decide, so it was left visibly undecided.
-    Proposal: Each engineer who takes a part writes their name under "Owners" in a pull request, since the plan already lives in the repository.
 ```
 
 ## Finish a document written in the middle of work by the same flow

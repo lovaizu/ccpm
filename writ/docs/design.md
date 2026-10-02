@@ -228,7 +228,7 @@ flowchart TD
 
 ## Ask the user about a gap that blocks the purpose, without covering it up
 
-- A gap in the content big enough that the purpose cannot be achieved is not filled by the requester's inference; it goes back to the user.
+- A gap in the content big enough that the purpose cannot be achieved is not filled by the requester's inference; it goes back to the user. Whether the purpose can be achieved is judged by whether the reader can carry out all of what they do when they finish, not by whether they can start.
 
     If writ decides what the user or those around them should decide, a document that departs from the user's intent comes back looking as if it were decided. A document with a gap wrapped in smooth sentences is used by the user and the reader unaware, and the reader cannot achieve the purpose.
 
@@ -236,9 +236,9 @@ flowchart TD
 
     Each is a sign that further fixing will not reach a returnable state. Carrying on leaves the user waiting without ever getting the document. The cycle of fixing is expected to stop at these three signs, but whether the signs can always be told is not checked; the quality "never left waiting without an end" checks it.
 
-- A decision that belongs to the user or those around them is not written into the document as writ's proposal; the document shows it as undecided, and writ's proposal goes in the final More for it.
+- A decision that belongs to the user or those around them is not written into the document as writ's proposal. If leaving it undecided keeps the reader from achieving the purpose, it goes back to the user; otherwise the document shows it as undecided.
 
-    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read. In the report, the user decides every proposal at once after seeing the document, instead of answering one question after another before it.
+    Written in as a proposal, it reaches the reader as half decided, so the reader cannot tell what to follow, and the document grows with parts the reader need not read.
 
 - After any state, the content of the target file does not blur a gap in the content.
 
@@ -270,7 +270,6 @@ Each item attached to a Good and More is there to help the user judge.
 - The gain attached to a Good shows, by its effect on the reader, what must not be lost when fixing.
 - The struggle attached to a More lets the user decide, by its effect on the reader, whether to accept a More that was left.
 - The reason it was left, attached to a More, shows that leaving it was a judgment, not an oversight, and lets the user tell whether it is theirs to decide.
-- The proposal, attached to a More left undecided, lets the user settle it by saying whether it is right.
 
 The names the user sees are `/writ:up`, Good and More, and the essentials file names `doc.md`, `readme.md`, `design.md`, `prompt.md` and `essentials.md`. The README teaches use and the essentials by these names, so changing them breaks what the user learned from the README.
 
