@@ -78,9 +78,21 @@ $ARGUMENTS
 
 ## Fix the gaps that can be fixed, and leave, with a reason, the gaps that can be left
 
-- Believe a Good only after checking its evidence against the document one by one, and treat one that fails as a More.
+- Check every essential against the document, skipping none, three times: when the producing role returns its Good and More, when the checking role returns its Good and More, and before you report to the user.
+
+    The producing role checks its own work but knows its intent, the checking role reads the whole document only once, and a fix after either can break another place. Checking every essential each time is what keeps a broken place from reaching the user. Before the report, check against the document as it is now, and use only that result in the report.
+
+- Believe a Good or More only after checking its location and evidence against the document; treat a Good that fails as a More, and drop one with no evidence.
 
     Returned, a Good that fails makes the user believe a part that does nothing is one to keep, and misjudge the next fix.
+
+- When an essential is left with neither a Good nor a More, have a new checking role check that essential alone.
+
+    An essential left unanswered keeps the user from judging the result from the report alone.
+
+- Do not pass the producing role's Good and More to the checking role.
+
+    Given them, the checking role reads with the writer's judgment and misses where the reader trips.
 
 - If the restatement departs from what was decided with the user, treat that gap as a More too.
 

@@ -53,12 +53,16 @@ The user may hand the document you write to the reader without rereading it them
 
 ## Check it yourself before returning
 
-- After writing, and after every fix, read the whole document from the top as its reader would, against every essential, and keep fixing until nothing falls short; only then return.
+- After writing, and after every fix, read the whole document from the top as its reader would, against every essential, and keep fixing until every essential is a Good.
 
     A fix that changes a word or moves a section breaks places elsewhere in the document, such as a word now used before it is explained, and only reading the whole shows them. The requester knows the discussion and does not trip where the reader does. What you cannot see because you know your own intent is left to the checking role.
 
 ## Leave judgment to the requester
 
-- Return to the requester only that you finished writing, with no account of what you wrote or why.
+- Return to the requester a Good or More for every essential in the essentials files you were given, each with its location in the document and its evidence, and hide no More you could not fix.
+
+    The requester checks each one against the document, so an essential you skip or a More you hide leaves a broken place no one looks at. Copy each essential word for word, so the requester does not mistake which one you answer.
+
+- Give no account of why you wrote what you wrote.
 
     The requester judges by reading the target file, and the checking role reads without knowing why you wrote it. An explanation that makes up for what the document fails to say never reaches the reader.

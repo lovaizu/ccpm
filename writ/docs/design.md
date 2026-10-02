@@ -115,7 +115,7 @@ Writing before they are settled leaves the producing role unable to decide what 
 
     Each later one follows from the decisions of the earlier ones, so polishing sentences or words before the reader and core are settled is wasted once an earlier one changes.
 
-- After writing, and after every fix, the producing role reads the whole document from the top as its reader would, against every essential, and fixes it until nothing falls short before returning.
+- After writing, and after every fix, the producing role reads the whole document from the top as its reader would, against every essential, fixes it until every essential is a Good, and returns a Good or More for every essential with location and evidence, hiding no More it could not fix.
 
     A fix that changes a word or moves a section breaks places elsewhere in the document, and only reading the whole shows them. The requester, who knows the discussion, does not trip there, so a broken place left by the producing role reaches the user. What the producing role cannot see because it knows its own intent is left to the checking role.
 
@@ -218,9 +218,17 @@ flowchart TD
 ```
 
 - If the checking role's restatement departs from what was decided in the discussion, that gap is sorted as a More.
-- Each Good's evidence is checked against the document one by one, and a Good whose evidence fails is sorted as a More.
+- The requester checks every essential against the document, skipping none, three times: when the producing role returns, when the checking role returns, and before reporting to the user.
+
+    The producing role checks its own work but knows its intent, the checking role reads the whole document only once, and a fix after either can break another place. Checking every essential each time keeps a broken place from reaching the user. The report uses only the last check, made against the document as it is now.
+
+- Each Good and More is believed only after its location and evidence are checked against the document; a Good whose evidence fails is sorted as a More, and one with no evidence is dropped. An essential left with neither goes to a new checking role for that essential alone.
 
     Returned, a Good whose evidence fails makes the user believe a part that does nothing is one to keep, and misjudge the next fix.
+
+- The producing role's Good and More are not passed to the checking role.
+
+    Given them, the checking role reads with the writer's judgment and misses where the reader trips.
 
 - A More is fixed at its root before any sentence is added.
 
