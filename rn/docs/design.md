@@ -462,8 +462,8 @@ checked in two ways.
     `steering.md`, `open/`, the commits, the pull request, and the deliverable against the pass
     criteria below. Prompts that read as correct do not guarantee an AI behaves that way.
 
-- Reading: an evaluator that did not write the prompts reads them against the essential viewpoints
-  for prompts and this design document.
+- Reading: an evaluator that did not write the prompts reads them against `writ`'s essential
+  viewpoints for prompts and this design document, after every change to the prompts.
 
     From every command, it traces end to end who writes what and who reads it, looking for something
     read that nothing writes, or something written that nothing reads. Running may not pass through
