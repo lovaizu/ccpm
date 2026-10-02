@@ -195,8 +195,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-02
-- **Last completed**: #4 (#5 in progress: lint script added in 6ead917; 10-scene trial round run)
-- **Next**: #5 — in this order: (1) rewrite all five essentials files so each item is one short yes/no question about one point plus a separate reason (what the user gains / what breaks), per the rn session rebuild-rn-c1, essentials.md included; (2) change design.md's quality bar for "understood in one reading" and "handed over as it is" to option A, approved by the user: no passage that stops the reader achieving the purpose (judged by content, not count), and fewer such passages than without writ; (3) fix the prompts for this round's failures; (4) rerun every scene.
-- **Notes**: Branch worktree-writ, PR #15. Round results: Q3 report-only PASS; Q4 owners-left PASS but `any` again left undecided without asking (s2, second time); Q1/Q2 fail on the old bar; Q5 untested (needs a real session); all granted qualities PASS, lint 0 on every writ doc. Failures to fix: s5 design contradicts itself (refused address: no reminder that day vs. retried later) and neither checker nor requester caught it; s10 user essentials file says "on top of the ones for every document", pointing to writ's own doc.md; s8 wrote "not decided" lines into the bot prompt itself. Readers asked "every place you stopped" get blocked by safeguards (reasoning_extraction) about half the time; asking for "passages read two ways or not actionable" works. Trial repos, scenes.md and reader outputs are in this session's scratchpad (.../7c2de8da-.../scratchpad/trials), which may be gone.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
