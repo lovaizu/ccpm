@@ -143,7 +143,7 @@ writing role and checking role each reach their purpose even in cases the prompt
       purpose cannot carry; every part of a prompt traces to the design)
 - [x] Fix the README and the design with the essentials, and take the user's review on PR #15
 - [x] Delete the prompts and rebuild them from the README, the design and the essentials alone
-- [ ] Evaluate them once, first on the benefits; sort, fix, and take the user's review on PR #15
+- [x] Evaluate them once, first on the benefits; sort, fix, and take the user's review on PR #15
 
 **Completion criteria**:
 
