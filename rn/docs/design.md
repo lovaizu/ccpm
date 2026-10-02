@@ -268,7 +268,8 @@ user's language that `steering.md` records. For a session started under an older
 an older record may not hold why the user wants the goal, and every later decision is judged by it.
 
 A session works on its own branch with a draft pull request, so the user's default branch changes
-only when they merge. The user reads everything on the pull request, where diffs, long documents,
+only when they merge. `/rn:on` makes `steering.md` and the draft pull request at once, from the
+user's first words, and each point agreed updates them, so a stop at any moment loses nothing agreed. The user reads everything on the pull request, where diffs, long documents,
 and diagrams render, and the record stays with the code.
 
 When a session is taken up, and before each sign-off, its branch is brought up to the latest default

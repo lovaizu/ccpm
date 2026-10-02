@@ -95,8 +95,8 @@ answer, it looks up instead of asking you.
 Knowing why you want it is what shows where your first words would go wrong: every file ending in
 .ts would have let the bugs through.
 
-Then `rn` writes the plan, `steering.md`, and puts it on a draft pull request. The plan holds the goal, how you
-would know it is achieved, and the tasks. The tasks that build it are planned once the design is
+From your first words, `rn` keeps the plan, `steering.md`, on a draft pull request, and updates it
+as each point is agreed. The plan holds the goal, how you would know it is achieved, and the tasks. The tasks that build it are planned once the design is
 settled, so they follow what you agree to there.
 
 ```console
