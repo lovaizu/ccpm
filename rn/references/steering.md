@@ -78,7 +78,8 @@ and the message body above it is the proposal given to the user.
 ## Finding the session
 
 1. The `steering.md` this conversation has been working on.
-2. Otherwise the one the current branch changed whose `status` is `running`, since each session works
+2. Otherwise the one the current branch changed whose `status` is not `finished`, an older session
+   having none, since each session works
    on its own branch:
    `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`
    (`git remote set-head origin --auto` first when `origin/HEAD` is not set).

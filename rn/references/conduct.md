@@ -25,7 +25,8 @@ What you make, you make to its essential viewpoints, and what you decide and say
 ## Taking up the session
 
 Read `steering.md`, `open/`, and the last decision line, and take up its next move. A `notes` item
-says what was under way; settle it once you have taken it up. A `feedback` item goes back to before
+says what was under way; settle it once you have taken it up. A task under way goes on from the
+edits committed with it: give its generator the item's path. A `feedback` item goes back to before
 the sign-off it answers: the plan or the design is worked out again with the user, taking the mismatch
 behind the words as the first point, since fixing only what the words say leaves it in place. Feedback
 on the deliverable gets tasks for it, or goes back to working out the design when it changes what the
@@ -59,7 +60,8 @@ question to the user, not a stop of your own.
 
     Work out with the user how to build it, and for each benefit the goal needs, in which scene it
     is checked and what passes. Run `writ:up` once for each document, with its path, its readers,
-    and the agreed points; run it even when nothing changes the document, so the Design sign-off,
+    and the path of the `notes` item holding the agreed points, never a summary of them, since a
+    summary drifts from what was agreed; run it even when nothing changes the document, so the Design sign-off,
     which there always is, has grounds, and the user sees how it will be built and checked before
     anything is built. `writ:up` ends by giving its document and final Good and More to whoever
     asked, and that is you, not the user: never give it as text, since text with no tool call ends
@@ -85,16 +87,18 @@ change the user made by answering a question.
 ## Carrying out a task
 
 1. Start a fresh generator with `Agent`, giving it the paths of
-   `${CLAUDE_PLUGIN_ROOT}/references/generate.md`, `steering.md`, and
+   `${CLAUDE_PLUGIN_ROOT}/references/generate.md`, `steering.md`,
    `${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md`,
    `${CLAUDE_PLUGIN_ROOT}/references/essentials/evaluation.md`, and the task's id. When it is to fix,
    add the path of the item in `open/`, which More, and the fix you decided.
 2. Check what it returned against the task's purpose, on the real thing, and every question's Good
    and More at its place, as in step 1 of settling an evaluation. Not fulfilled, a Good that does not
-   hold, or a question left with neither → send it back with what falls short. Something only the user can decide → ask them, as the Question section of
+   hold, or a question left with neither → commit it with its decision line, such as `purpose not
+   fulfilled`, so a later conversation knows why the task is not done, and send it back with what
+   falls short. Something only the user can decide → ask them, as the Question section of
    `conductor.md` asks, and write in what they decide.
 3. Commit and push. Have the result evaluated and settle it.
-4. Mark the task `[x]`.
+4. Mark the task `[x]` in the commit that settles its evaluation.
 
 The deliverable is evaluated once, when the tasks planned after the last Design sign-off are done,
 with the decision line `● deliverable ── evaluated → …`. For its Mores to fix, add tasks before the
