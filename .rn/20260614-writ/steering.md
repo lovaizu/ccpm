@@ -195,8 +195,8 @@ writing role and checking role each reach their purpose even in cases the prompt
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-02
-- **Last completed**: #4 prompts approved, all writ docs and prompts in English (4b75193)
-- **Next**: #5 first step — run writ in every scene of the design's quality section.
-- **Notes**: Branch worktree-writ, PR #15. On resume, retry the headless trial with `claude -p "/writ:up ..." --plugin-dir writ --model opus --permission-mode bypassPermissions --output-format json` inside a practice repo in the scratchpad (the user's instruction: it works in rn's session, see rebuild-rn scratchpad runI-call.sh); this session's attempt was denied by the auto-mode classifier ("Create Unsafe Agents"). If denied again, ask the user; the fallback (acceptEdits plus --allowedTools) must include Agent, since writ starts its roles with it. Practice repo: a small Express taskboard app (src/api, src/ui, docs/architecture.md), left at this session's scratchpad `base-repo/`; recreate if gone. Plan per scene: user turns via `--resume`, baseline run without the plugin, a fresh subagent as the reader; estimated $50–70 in total. Tell rn session rebuild-rn-c1 after any change to the essentials or style.md.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
