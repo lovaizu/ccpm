@@ -22,8 +22,15 @@ their time only on the three sign-offs and on what only they can decide.
 
 - `writ` PR #15 (branch `worktree-writ`) merges before the integration check; until then trials use
   `writ` from that branch. Unverified when it merges.
-- A PreToolUse hook can tell which subagent made a tool call. Unverified — checked before hooks 9–11
-  are built; if false, the design changes for those three.
+- A hook can tell which subagent made a tool call: inside a subagent, the hook input carries
+  `agent_id` and `agent_type`, and a plugin agent reports `<plugin>:<agent>` (e.g. `rn:first-user`)
+  (docs: hooks). The matcher filters by tool name only, so the script checks `agent_type`. A plugin
+  agent's own `hooks` frontmatter is ignored (docs: plugins/components), so hooks for one agent live in
+  the plugin's `hooks/hooks.json`. Documented, not yet run.
+- A skill with `context: fork` runs without the caller's conversation; it gets the SKILL.md body,
+  and CLAUDE.md and git status as its agent loads them (docs: skills, sub-agents). A plugin agent
+  supports `omitClaudeMd` (docs: plugins/components). Whether a skill's `agent` field can name the
+  plugin's own agent is not documented — confirmed by running before the design relies on it.
 
 # Rules
 
@@ -186,8 +193,8 @@ breach is stopped rather than left to the evaluator.
 
 **Steps**:
 
-- [ ] Confirm whether a PreToolUse hook can tell which subagent made a call; if not, take the
-  design change for checks 9–11 to the user
+- [ ] Run a hook that reads `agent_type` and confirm it tells the first user and the other agents
+  apart; if not, take the design change for checks 9–11 to the user
 - [ ] Build checks 1–8, then 9–11, as the design says, with their tests, following
   `.claude/rules/hooks.md` (shared with writ; on `worktree-writ` until PR #15 merges, then on `main`)
 - [ ] Run each check against a breaking case and a passing case
