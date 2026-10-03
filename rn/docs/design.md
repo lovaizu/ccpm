@@ -53,19 +53,25 @@ flowchart TD
     F4["A sign-off comes with a proposal and its grounds<br/>README 1, 2, 6"]
     F5["Everything decided is pushed, so any conversation goes on<br/>README 2, 5"]
     F6["Hooks check rn's rules as it goes<br/>README 5, 6"]
+    F7["It installs from the marketplace with writ<br/>README Install"]
     A1(["A1"])
     A2(["A2"])
     A3(["A3"])
     A4(["A4"])
-    MB(["M1–M7"])
+    M1(["M1"])
+    M2(["M2"])
+    M3(["M3"])
+    M4(["M4"])
+    M5(["M5"])
+    M6(["M6"])
+    M7(["M7"])
     F1 -->|"gives"| A1
-    F3 -->|"gives"| A1
     F2 -->|"gives"| A2
-    F3 -->|"gives"| A2
+    F3 -->|"gives"| A1 & A2 & M6
     F4 -->|"gives"| A3
-    F5 -->|"gives"| A4
-    F5 -->|"gives"| MB
-    F6 -->|"gives"| MB
+    F5 -->|"gives"| A4 & M1 & M2 & M3
+    F6 -->|"gives"| M2 & M3 & M4 & M5 & M6
+    F7 -->|"gives"| M7
 ```
 
 Under each feature are the README stages where it works.
@@ -76,8 +82,8 @@ Under each feature are the README stages where it works.
 - A generator makes one task's result.
 - The first user uses a piece of work as its receiver would, before the user does, and reports what
   it understood and what happened, without judging it.
-- A viewpoint is a question about the state of what the receiver gets, worked back from the
-  purpose of the work.
+- A viewpoint is a question worked back from the purpose of the work, answered by what happened when
+  the work was used.
 - The conductor sets each answer in a report beside the aim and gives a Good, what serves the aim,
   or a More, what falls short of it.
 - A fatal More is one without whose fix the goal cannot be achieved, and whose fix only the user can
@@ -88,7 +94,7 @@ Under each feature are the README stages where it works.
 
     The commit where `rn` stops for the user is the stop commit.
 
-Six policies hold across the features:
+Seven policies hold across the features:
 
 - Only the conductor decides what happens next.
 
@@ -111,6 +117,12 @@ Six policies hold across the features:
 
     Each role then reads the thing itself, so what it makes or finds holds for the thing. A summary
     carries the summarizer's reading, and the role would work from that instead.
+
+- Every agent the conductor calls leaves its whole result in files and returns only a short result
+  and where those files are.
+
+    A whole result in the conversation is too long to be read, crowds the conductor's context, and
+    is lost when the conversation is summarized; the files keep it for whoever wants to check.
 
 - Decisions are written into documents before the work that follows them, and the documents hold
   only what holds now.
@@ -218,6 +230,11 @@ goal is nearly achieved, and finish must-be quality last, by the policy above.
 
 ### Feedback at a sign-off
 
+Feedback is the words the user gives with `/rn:gm`, or, when they give none, the review comments
+they wrote on the pull request for that sign-off, each with its place, since the user reads the work
+on the pull request and can comment where they read. Either is kept whole in a `feedback` item in
+`open/`, since the work is then measured by the user's own words.
+
 After feedback at a sign-off, the session goes back to before it: a plan or a design is worked out
 again with the user, taking the mismatch behind the feedback as the first point, since fixing only
 what the words say leaves the mismatch in place. Feedback on the deliverable that changes what the
@@ -246,6 +263,8 @@ what to do meanwhile is such a question, not a stop: a stop leaves the user unsu
 waiting for.
 
 Approving and giving feedback each stop, since that is where the user may clear the conversation.
+The user goes on by saying so in the same conversation, or by `/clear` and then `/rn:up`; both go on
+from what is pushed, so they lead to the same next move.
 
 Once approved, the goal goes back through the Plan sign-off, and the README, design document, and
 verification document through the Design sign-off, only when what they say changes without the user
@@ -269,11 +288,11 @@ flowchart TD
     U -->|"conversation, commands"| C
     C -->|"proposals, with the final<br/>Good/More as grounds"| U
     C -->|"a task, a More to fix"| G
-    G -->|"edits in the working tree"| C
+    G -->|"edits in the working tree,<br/>a short result"| C
     C -->|"a document, the agreed points"| W
-    W -->|"the documents"| C
+    W -->|"the documents, a short result,<br/>and where its report is"| C
     C -->|"the work, its purpose, the viewpoints"| F
-    F -->|"report: what it understood<br/>and what happened"| C
+    F -->|"a short result,<br/>and where its report is"| C
 ```
 
 The generator and the first user are split after the generator/evaluator split in Anthropic's
@@ -305,7 +324,8 @@ tangled:
   the work is made, do not reach it.
 - It is handed only the work and its purpose: the paths of the work, of the viewpoints, and of what
   the user agreed to, the goal and the task's purpose in `steering.md`, the agreed parts of the
-  README, design document, and verification document, and the user's feedback in their own words.
+  README, design document, and verification document, and the user's feedback in their own words,
+  and the path of the file its report goes to.
 - The generator, `rn:generator`, has no Agent tool, so it cannot call the first user and shape what
   it is told.
 - The conductor calls the first user by name, `rn:first-user`.
@@ -316,6 +336,14 @@ reading the maker's account, that is, commit messages, notes, and earlier report
 rn's rules as it goes). A definition can take a tool away but not part of one, and the first user and
 the generator need the shell to use and to build the work.
 
+The hooks hold this only for what the first user writes and reads with Claude Code's file tools. A
+hook sees a shell command's text, not every file the command touches, so a write or read made through
+the shell, such as a build writing its output or a script reading `open/`, is not stopped. This is
+accepted, since stopping it would take the shell the use needs. What remains is held otherwise: the
+first user is handed no path to the maker's account and nothing of how the work was made, so it has
+no reason to look for it, and what it writes stays in the working tree, where the conductor, the only
+one who commits, sees it before committing.
+
 `rn` does not use a skill's `agent` field to run a skill as one of its own agents, since the
 documentation does not say that field can name a plugin's agent.
 
@@ -324,19 +352,23 @@ documentation does not say that field can name a plugin's agent.
 Everything `rn` makes, such as a plan or a task's result, has a purpose, stated as what whoever
 receives it can then do. For a plan, that is "can the conductor carry the work to the goal by it",
 not "does it list tasks". Its viewpoints are a few essential questions worked back from that purpose,
-each asking about the state of what the receiver gets, not about what the maker did, such as "Is
-each fact checked?" or "Has the work shown nothing the user did not agree to?". Asked about the
-state, the first user looks for the flaw itself; asked whether the maker did something, such as
-disclose a contradiction, a flaw no one noticed passes, since nothing was hidden. This follows
-`writ`'s essentials for essentials (`writ/references/essentials/essentials.md` at `31dba86`). How to
-find the answer is left to the first user.
+each answered by what happened when the first user used the work, such as "Checking each fact the
+plan rests on at its source, which did not hold?" rather than "Is each fact checked?". A question of
+whether something is there, or is good, is answered "yes" by looking the work over without using
+it, and a work no one can use passes; answered by what happened in use, the answer is a fact the
+conductor can set beside the aim. Each question asks about one point, so the point that falls short
+does not hide behind one that holds, and has grounds that say what the receiver gains, so it is
+followed by its intent where it names nothing. This follows `writ`'s essentials for essentials
+(`writ/references/essentials/essentials.md` at `e50d263`). How to use the work to find the answer is
+left to the first user.
 
 Each viewpoint file in `rn/references/essentials/` is for one thing `rn` makes or says: the plan, the
 design, a task's result, the deliverable, a report, and what the conductor decides and says. Its
 viewpoints are not split by Kano quality: a question stays only if removing it would let a work that
 misses its purpose pass, whatever its quality, so the first user gives full attention to each. The
 Kano split is used where it changes what is done, in the Acceptance criteria and the tasks and checks
-tied to them, and the plan's viewpoint file asks whether the plan brings attractive quality first.
+tied to them, and the plan's viewpoint file asks which work on must-be quality comes before the
+attractive criteria are nearly met.
 
 For each viewpoint the first user answers in one of two forms: "from the work I understood this",
 or "doing as written, this happened". It gives no Good or More. The conductor sets each answer beside
@@ -450,13 +482,15 @@ flowchart TD
     U(["User"])
     C["Conductor"]
     F["First user"]
+    W["writ"]
     S["steering.md:<br/>the goal and the plan"]
     O["open/:<br/>items not yet settled"]
     M["Commit messages:<br/>settled items and the decision line"]
     UP(["/rn:up in a fresh conversation"])
     C -->|"writes"| S
-    F -->|"report"| O
-    U -->|"words given with /rn:gm"| O
+    F -->|"report, one file per use"| O
+    W -->|"report on how<br/>the documents read"| O
+    U -->|"feedback given with /rn:gm"| O
     C -->|"notes: design points agreed,<br/>and what /rn:dn leaves"| O
     O -->|"settled by the conductor"| M
     S -->|"read"| UP
@@ -479,6 +513,9 @@ first words, and each point agreed updates them, so a stop at any moment loses n
 user reads everything on the pull request, where diffs, long documents, and diagrams render, and the
 record stays with the code.
 
+When the user approves the deliverable, the pull request is marked ready for review, since the work
+is then what the user approved; the merge stays the user's.
+
 The pull request body links `steering.md` and carries what GitHub needs to connect the work:
 `Closes #N` for an issue the work completes, `Refs #N` for one it only serves, and the pull requests
 it replaces. The body holds no copy of the plan, since a copy drifts from `steering.md`.
@@ -498,6 +535,17 @@ it, copied whole into that commit's message with what was decided on each point,
 in git and leaves no file behind in the repository. When the session stops at a sign-off, `open/`
 holds nothing but design points agreed and waiting for `writ`, such as those an older session's
 design approved, so every report and feedback is settled before the user approves.
+
+A `report` is written by whoever the conductor calls to use or check the work: a first user, or
+`writ` on how the documents read. The conductor names its file, one for each use it asks for, such
+as task #3's result, or one viewpoint of it after a fix. The report goes whole into that file, and
+only a short result and the file's place come back: one line per viewpoint saying what was
+understood or what happened, and where (from `writ`, which sets its own first user's answers beside
+its aim, a Good or More and where), and in full only what the user must decide. The conductor sets
+those lines beside the aim, reads the file wherever a line does not show enough, and commits each
+report as it arrives, so the user can read it on the pull request. Asking for the same use again
+writes the same file anew, since only the latest applies to the work as it is now; the conductor
+takes the earlier one, already in git, out of the file first, so the first user never reads it.
 
 A settled report looks like this in its commit message:
 
@@ -708,6 +756,19 @@ They are written in Python 3.9 with the standard library only, which comes with 
 developer tools and is no less common elsewhere; when it is missing they stop and tell the user to install it, since a skipped check
 goes unnoticed.
 
+## It installs from the marketplace with writ
+
+Gives M7.
+
+`rn` ships from the `ccpm` marketplace, and its `plugin.json` names `writ` as a dependency, so
+installing `rn` brings `writ` with it and the user installs one thing (README, Install). `writ` stays
+a dependency rather than part of `rn`: it ships from the same marketplace and is updated together
+with `rn`, so the documents a session writes read as well as any `writ` writes, without a second
+copy of how to write them.
+
+`rn` passes `claude plugin validate --strict`, alone and as part of the marketplace, on every change
+to it, so a fault in its manifest or files is caught before it reaches a user who installs it.
+
 ## The parts
 
 - `rn/skills/`: the commands `/rn:on`, `/rn:ty`, `/rn:gm`, `/rn:dn`, `/rn:up`.
@@ -716,7 +777,3 @@ goes unnoticed.
 - `rn/references/essentials/`: the viewpoint files.
 - `rn/agents/`: the generator and the first user.
 - `rn/hooks/`: the checks above, with their tests in `rn/tests/`.
-
-`writ` stays a dependency rather than part of `rn`: it ships from the same marketplace and is updated
-together with `rn`, so the documents a session writes read as well as any `writ` writes, without a
-second copy of how to write them.
