@@ -25,7 +25,9 @@ measure.
    and say, in the `conversation-language` of `steering.md`:
 
    ```
-   ● {took the feedback on the plan, the design, or the deliverable}. {next: say "go on", or /clear and /rn:up}
+   {the decision line}
+
+   Say "go on", or /clear and then /rn:up.
    ```
 
 4. When the user says to go on, go on as `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` says, from its

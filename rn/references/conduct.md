@@ -34,10 +34,12 @@ the user's feedback, which stays in their own words.
 Read `steering.md`, `open/`, and the last decision line, and take up its next move. First bring the
 branch up to the latest default branch on the remote by merging it in, keeping both sides' intent
 where they conflict; when that changes what the plan or the design rests on, work that out again
-before the next sign-off. A `notes` item `/rn:dn` left says what was under way: a task under way goes
-on from the edits committed with it, so give its generator the item's path, and settle the item once
-the task is taken up. A `notes` item of agreed design points stays until `writ` writes them. A
-`feedback` item is taken up as in Feedback below. Keep going until you stop for the user.
+before the next sign-off. A `notes` item `/rn:dn` left says what was under way and how far it came:
+a task under way goes on from the edits committed with it, so give its generator the item's path; a
+talk goes on from the point still open. Settle the item once that is taken up. A `report` left
+unsettled is settled as in Using and settling before anything else. A `notes` item of agreed design
+points stays until `writ` writes them. A `feedback` item is taken up as in Feedback below. Keep going
+until you stop for the user.
 
 ## Working out the plan
 
@@ -57,8 +59,8 @@ the pull request's title to the goal. The plan holds the goal and why, Acceptanc
 Attractive quality and Must-be quality with an ID each, Assumptions, Rules, the issues the work closes
 or serves and the pull requests it replaces (into the pull request body), and where the README,
 design document, and verification document are: those found in the repository, or `README.md`,
-`docs/design.md`, and `docs/verification.md`. Its only tasks are the Plan, Design, and Deliverable
-sign-offs; what the deliverable needs goes under Not yet specified.
+`docs/design.md`, and `docs/verification.md`. Its only tasks are the Plan and Design sign-offs; what
+the deliverable needs goes under Not yet specified.
 
 When the plan is agreed, read it whole against `plan.md`, have it used and settled as in Using and
 settling, and stop at the Plan sign-off.
@@ -78,7 +80,9 @@ passes. Edge cases are not covered in advance; a must-be gap is fixed when it sh
 
 Start a fresh agent with `Agent` for each document, the README, then the design document, then the
 verification document, that runs the `writ:up` skill. Give it the document's path, its reader and
-what they do when they finish, the `artifact-language`, and the paths of the `notes` item and of
+what they do when they finish (the README: someone meeting the product, who decides whether to use
+it and starts; the design document: builders and maintainers, who build it and weigh a change by
+what it costs the user; the verification document: whoever runs the checks again after a change), the `artifact-language`, and the paths of the `notes` item and of
 `steering.md`, never a summary of them, since a summary drifts from what was agreed. Tell it the
 reader and purpose are settled, to return any question as a result instead of asking, to write its
 report to a `report` file in `open/` you name, and to return only a short result and that path. Do
@@ -92,8 +96,8 @@ sign-off.
 
 ## Planning the tasks
 
-Once the Design sign-off is approved, plan the tasks that make the deliverable, before the
-Deliverable sign-off:
+Once the Design sign-off is approved, plan the tasks that make the deliverable, numbered on from the
+sign-offs, and add the Deliverable sign-off after them:
 
 - Settle the decisions one at a time, each before the tasks that rest on it.
 - Each task holds its purpose, the criterion IDs it serves, and Completion criteria split into
@@ -112,16 +116,18 @@ tasks not yet done by the design it approved.
    add the path of the report, which More, and the fix you decided.
 2. Check what it returned against the task's purpose on the real thing. Not fulfilled → commit it
    with its decision line, such as `── decided: purpose not fulfilled (…) → fix`, and send it back
-   with what falls short. A result the design does not let it fulfil is a fix to the design: go back
-   to working out the design. Something only the user can decide → ask them, and write in what they
-   decide.
+   with what falls short. Falling short the same way again means the work cannot go on, as in Using
+   and settling. A result the design does not let it fulfil is a fix to the design: go back to working
+   out the design. Something only the user can decide → ask them, and write in what they decide.
 3. Commit and push. Have the result used and settled.
 4. Mark the task `[x]` in the commit that settles its reports.
 
 When the tasks planned after the last Design sign-off are done, have the deliverable used once: a
 first user runs each scene's input from the verification document, and you run the machine checks,
 with the decision line `● deliverable ── used → …`. Its Mores to fix become tasks added before the
-Deliverable sign-off, each More's decision naming its task.
+Deliverable sign-off, each More's decision naming its task. Once such a task is done, a fresh first
+user checks its More alone; the whole deliverable is not used again, since each fresh use raises new
+points that are not essential.
 
 ## Using and settling
 
@@ -130,7 +136,7 @@ viewpoint file, what it uses, and the `report` file in `open/` it writes to:
 
 - A plan is `steering.md`, by `plan.md`.
 - The design is the three documents `steering.md` names, by `design.md`.
-- A task result is the task's changes on the working tree, by `task-result.md`.
+- A task result is the task's commits, by `task-result.md`.
 - The deliverable is the product as the branch holds it, by `deliverable.md`, with each scene's input
   from the verification document and never its "Passes when".
 
@@ -138,11 +144,13 @@ Give nothing else, not how it was made or changed, the user's own words in `feed
 first user who knows the maker's reasons fills the work's gaps with them and misses where the user
 will struggle.
 
-1. Commit and push the report as it arrives. Set each answer beside the aim, the purpose and the
-   criteria by ID, and give a Good or a More, each at its place in the real thing. Check every Good
-   there as strictly as every More: the user will trust a Good without reading that part, so a Good
-   that does not hold carries the flaw it hides to their approval unseen. A viewpoint the report
-   leaves unanswered goes to a fresh first user for that viewpoint alone.
+1. Set each answer beside the aim, the purpose and the criteria by ID, and give a Good or a More,
+   each at its place in the real thing. Check every Good there as strictly as every More: the user
+   will trust a Good without reading that part, so a Good that does not hold carries the flaw it
+   hides to their approval unseen. Write them under the report in its file, as `steering.md`'s
+   reference shows, and commit and push it, so whoever fixes reads the Goods to keep. A viewpoint the
+   report leaves unanswered goes to a fresh first user for that viewpoint alone; unanswered again,
+   the work does not show the answer, and that is its More.
 2. Decide each More as the Decision section of `conductor.md` asks. Fix from what the work should be
    for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
    for the plan, and by `writ` for the documents; check it against the purpose. A fix to a More on
@@ -160,7 +168,7 @@ When Mores contradict each other, do not pick one: something is undecided in the
 viewpoints, or a document, and that is what to decide.
 
 Settle the reports in one commit, each copied whole with your decisions as `steering.md`'s reference
-shows, and the decision line last.
+shows, and the decision line last. A stop comes after it, in a commit of its own.
 
 ## Feedback
 
@@ -183,10 +191,13 @@ what to do meanwhile is a question. At a sign-off, `open/` holds nothing but des
 `writ`, and the branch has the latest default branch merged in. Check every final Good and More
 again at its place as it is now.
 
-Write the proposal once, as the Proposal section of `conductor.md` asks; commit and push with that
-text as the message body and `→ waiting for #{id} {sign-off name}` last; then give the user that body,
-as `git log -1 --format=%b` prints it up to the decision line, in the conversation language, adding
-nothing and leaving nothing out.
+Write the proposal once, as the Proposal section of `conductor.md` asks, with the final state only:
+the points and fixes along the way are left out, since the user approves the final state. Have a
+fresh first user take it up as the user would, by the Proposal section of `conductor.md`, and settle
+its report as above. Then commit and push, empty when nothing changed, with the proposal as the
+message body and `→ waiting for #{id} {sign-off name}` last; then give the user that body, as
+`git log -1 --format=%b` prints it up to the decision line, translated into the conversation
+language when the two differ, adding nothing and leaving nothing out.
 
 ```
 ── {slug}: {the goal in one line} ──
@@ -198,7 +209,7 @@ Draft PR: {url}
 
 {what you propose to do next, and why it serves the goal}
 
-Changed since the last approval: {each change written without stopping since the last approval}
+Changed since the last approval: {each change written without stopping, from the decision lines since the approval commit}
 Taken away: {what the product or rn did before that this design no longer does}
 
 ### {each viewpoint, in the user's terms}

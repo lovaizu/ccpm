@@ -127,7 +127,7 @@ there; until then, the plan shows them as not yet specified.
   know it is achieved.
 
   ### Is the goal what you really want, with the reason you want it?
-  - Good: it names the three type bugs as the reason (steering.md:11), so every later choice is
+  - Good A1: it names the three type bugs as the reason (steering.md:11), so every later choice is
     judged against stopping them
   - More: none
   ...

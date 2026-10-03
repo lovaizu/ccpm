@@ -127,7 +127,9 @@ words and the ideal that purpose calls for, since the words alone carry the gap 
 shows: every file ending in .ts would have let the bugs through. It asks one point at a time and
 writes each into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
 or serves, which pull requests it replaces, and which languages the record and the talk are in, are
-among the points agreed.
+among the points agreed; `rn` proposes the languages the repository and the user's instructions
+already set, or else English for the record, which reaches the most readers later, and the user's own
+for the talk.
 
 ### Acceptance criteria, split by the Kano model
 
@@ -401,7 +403,8 @@ points for `writ` to write.
 ### The pull request
 
 A session works on its own branch with a draft pull request, so the default branch changes only when
-the user merges. `/rn:on` makes `steering.md` and the pull request from the user's first words, and
+the user merges. It starts from the latest default branch and never takes in the user's uncommitted
+changes: `/rn:on` on a tree that has them says so and stops. `/rn:on` makes `steering.md` and the pull request from the user's first words, and
 each point agreed updates them. The user reads everything on the pull request, where diffs and
 diagrams render. When the user approves the deliverable, the pull request is marked ready; the merge
 stays the user's.

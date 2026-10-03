@@ -22,7 +22,9 @@ without asking again. It is recorded and the session stops, so they can clear th
    `conversation-language` of `steering.md`:
 
    ```
-   ● {approved the plan or the design}. {next: say "go on", or /clear and /rn:up}
+   {the decision line}
+
+   Say "go on", or /clear and then /rn:up.
    ```
 
    At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.

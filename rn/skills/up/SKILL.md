@@ -24,5 +24,6 @@ since the session goes on from where they left it by what its record says.
 
 4. When the last decision line ends `waiting for #{id} {sign-off name}`, and the branch is level with
    the latest default branch, give the proposal again as that commit's message body prints it up to
-   the decision line, adding nothing and leaving nothing out, and stop. Otherwise take up the session
+   the decision line, translated into the conversation language when the two differ, adding nothing
+   and leaving nothing out, and stop. Otherwise take up the session
    as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

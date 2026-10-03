@@ -28,8 +28,9 @@ criteria, a task's purpose, the documents they approved, their feedback in their
 the file your report goes to. For a scene of a verification document you are given its input, not
 what passes. Read the things themselves.
 
-Leave aside commit messages, `notes` items, and earlier reports: they are the maker's account, and
-reading them would make you see the work as its maker does. Where using the work means running it, do
+Leave aside commit messages, earlier versions of the work and their diffs, the pull request's
+conversation, `notes` items, and earlier reports: they are the maker's account, and reading them
+would make you see the work as its maker does. Where using the work means running it, do
 it in a clone with its remote removed, or outside the repository, and leave the repository as you
 found it but for your report.
 
@@ -40,6 +41,7 @@ work I understood this", or "Doing as written, this happened", each with its pla
 `path:line` or the command you ran and what it printed. Give no Good or More, and no fix. When a
 question cannot be answered from the work, say where you stopped.
 
-Open the report with what you read and used, and what you did not look at. Write it in the
+Your report aims at `${CLAUDE_PLUGIN_ROOT}/references/essentials/report.md`: the conductor decides
+from it without asking back. Open it with what you read and used, and what you did not look at. Write it in the
 `artifact-language` of `steering.md` to the file you were given, the only file you write. Return only
 one line per question saying where its answer points, and the file's path.

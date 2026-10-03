@@ -67,8 +67,9 @@ Completion criteria:
 - Tasks are taken in the order written. A task is marked `[x]` when the conductor decides its purpose
   is fulfilled, a sign-off only when the user approves it with `/rn:ty`. A task added later takes the
   next unused id and goes before the sign-off it leads to.
-- Until the Design sign-off is approved, the only tasks are the sign-offs; what the deliverable needs
-  is under Not yet specified.
+- Until the Design sign-off is approved, the only tasks are the Plan and Design sign-offs; what the
+  deliverable needs is under Not yet specified. The tasks planned then take the next ids, and the
+  Deliverable sign-off comes last.
 - The pull request body links `steering.md`, with `Closes #N` for each issue the work completes,
   `Refs #N` for each it only serves, and the pull requests it replaces, as agreed in the plan.
 - `status` becomes `finished` when the Deliverable sign-off is approved.
@@ -86,8 +87,9 @@ the highest number in `open/`, or `01` when it is empty; `{kind}` is one of
 
 `{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`.
 
-An item leaves `open/` in the commit that settles it, copied whole into that commit's message under
-its file name, followed by what was decided on each point:
+The conductor writes its Good and More under a report in the report's file before any fix is made,
+so whoever fixes reads the Goods to keep. An item leaves `open/` in the commit that settles it,
+copied whole into that commit's message under its file name, with what was decided on each More:
 
 ```
 04-report-task-3.md:
@@ -103,7 +105,9 @@ stays in the record and the first user never reads it.
 
 ## The decision line
 
-Every commit the conductor makes ends with one line saying what was decided and what comes next:
+Every commit the conductor makes has a subject line saying what it records, such as
+`rn: settle the reports on #3 move src/cart`, and ends with one line saying what was decided and what
+comes next; the first, from `/rn:on`, is `● plan ── started → working out the plan`:
 
 ```
 ● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}
@@ -119,7 +123,7 @@ listed:
 | At a sign-off, with the proposal as the message body | `→ waiting for #{id} {sign-off name}` | only `notes` of design points waiting for `writ` |
 | After `/rn:ty` | `── approved → {the next task, or finished}` | the same |
 | After `/rn:gm` | `── feedback in {file} → {working out the plan or the design again, or the tasks for it}` | that, and the `feedback` item |
-| A pause, on `/rn:dn` | `→ paused at #{id} {task name}` | whatever is unsettled, and a `notes` item on where the task stands, its edits committed beside it |
+| A pause, on `/rn:dn` | `→ paused at {#id task name, plan, or design}` | whatever is unsettled, and a `notes` item on where the task stands, its edits committed beside it |
 
 ## Finding the session
 
