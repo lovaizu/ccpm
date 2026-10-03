@@ -36,7 +36,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 - commit and push every change; one completion marker per task
 - This session runs on `rn` 0.8.0, but where it departs from 0.8.0 it goes the 0.9.0 way, as
-  `rn/docs/design.md` describes it. The departures:
+  `rn/docs/design.md` describes it (the user's instruction, 2026-10-03). The departures:
   - A task's result is not reviewed by 0.8.0's self-check and QA, Design, Craft, and Verification
     experts, and no `checks/` file is written. Instead: the conductor checks the result against the
     task's purpose; a fresh first user (a subagent handed only the work, its purpose, and the
@@ -126,8 +126,8 @@ verification split into its own document, so the prompts and hooks can be built 
 - [ ] 10. The session's pull request body carries, besides the link to `steering.md`, what GitHub
   needs to connect the work: `Closes #N` for an issue the work completes, `Refs #N` for one it only
   serves, and the pull requests it supersedes.
-- [ ] 11. Validation (agreed in the writ session, `.claude/rules/validation.md` on `worktree-writ`,
-  e4eba07): attractive quality is confirmed by using the work as the user would, on the golden path,
+- [ ] 11. Validation (agreed in the writ session; now `.claude/rules/plugin.md` § Check on
+  `worktree-writ`, 6ca67db): attractive quality is confirmed by using the work as the user would, on the golden path,
   comparing what happened with what was aimed for. Edge cases and other flows are not covered in
   advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to fix,
   while covering everything adds checks that can all pass with no one having confirmed the attractive
@@ -205,24 +205,41 @@ receiver's state.
 
 - [ ] Rebuild `rn/skills/*` and `rn/references/*` (the viewpoint files are #2's) from the
   approved documents
-- [ ] Evaluator that did not write them reads all prompts against `writ`'s prompt viewpoints and the
-  design; settle every More
 - [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
 - Tracing every command end to end, nothing is read that nothing writes and nothing is written that
   nothing reads.
-- Each feature in the design document is carried by a named part of the prompts, and no prompt
-  behavior lacks a basis in the design document.
-- The prompt evaluation against `writ`'s viewpoints holds no unsettled More.
+- Each command, run with `--plugin-dir` on the practice repository, goes the way the README and
+  design document say, and no prompt behavior lacks a basis in the design document.
+- The prompts' use against `writ`'s prompt viewpoints and the design holds no unsettled More.
 
-### #5: Hooks check rn's rules mechanically
+### #5: Trials run on the practice repository
+
+**Purpose**: Each benefit's scene in the verification document passes when `rn` is run on
+`lovaizu/rn-try`, including pause and resume, `/rn:gm`, and bringing a 0.8.0 session to the new form.
+
+**Prerequisites**: #4
+
+**Steps**:
+
+- [ ] Run each golden-path scene with a stand-in user, using `writ` from `worktree-writ`; fix a
+  must-be gap that shows up in use
+- [ ] Used by a first user and settled by the conductor (Rules)
+
+**Completion criteria**:
+
+- Every golden-path scene in the verification document passes, as a first user's account of the run
+  set beside the scene by the conductor.
+- No evaluation or trial record is posted as a PR comment.
+
+### #6: Hooks check rn's rules mechanically
 
 **Purpose**: The rules in point 4 are enforced by hooks at the three points the design names, so a
 breach is stopped rather than left to the evaluator.
 
-**Prerequisites**: #4
+**Prerequisites**: #5
 
 **Steps**:
 
@@ -240,12 +257,12 @@ breach is stopped rather than left to the evaluator.
   design names.
 - A normal session run raises no false stop.
 
-### #6: CHANGELOG states what 0.9.0 changes for the user
+### #7: CHANGELOG states what 0.9.0 changes for the user
 
 **Purpose**: A user reading `rn/CHANGELOG.md`'s 0.9.0 section learns how far `rn` has moved from 0.8.0
 and what changes for them.
 
-**Prerequisites**: #5
+**Prerequisites**: #6
 
 **Steps**:
 
@@ -260,26 +277,6 @@ and what changes for them.
 - `plugin.json` is 0.9.0, the CHANGELOG's top section is `## [0.9.0] - <release date>`, and no empty
   `## [Unreleased]` is left.
 
-### #7: Trials run on the practice repository
-
-**Purpose**: Each benefit's scene in the verification document passes when `rn` is run on
-`lovaizu/rn-try`, including pause and resume, `/rn:gm`, and bringing a 0.8.0 session to the new form.
-
-**Prerequisites**: #6
-
-**Steps**:
-
-- [ ] Run each golden-path scene with a stand-in user, using `writ` from `worktree-writ`, and run
-  the machine checks; fix a must-be gap that shows up in use
-- [ ] An evaluator that did not make it judges each run against the verification document
-- [ ] Fix any More within the round and run again before the verdict
-- [ ] Used by a first user and settled by the conductor (Rules)
-
-**Completion criteria**:
-
-- Every scene in the verification document passes, judged by an evaluator that did not make the run.
-- No evaluation or trial record is posted as a PR comment.
-
 ### #8: Integration check with the real writ
 
 **Purpose**: `rn` works with `writ` as merged to `main`, not only with its working branch.
@@ -288,14 +285,16 @@ and what changes for them.
 
 **Steps**:
 
-- [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`
-- [ ] Run `claude plugin validate --strict` for `rn` and the marketplace
+- [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
+  with the hooks on
+- [ ] Run every machine check in the verification document, `claude plugin validate --strict`
+  for `rn` and the marketplace included
 - [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
 - The scenes that call `writ` pass with the merged `writ`.
-- Both strict validations pass.
+- Every machine check in the verification document passes, both strict validations included.
 
 ### #9: Practice repository cleaned up
 
