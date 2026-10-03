@@ -8,7 +8,8 @@ broke.
 
 - The practice repository [`lovaizu/rn-try`](https://github.com/lovaizu/rn-try): a small shop backend,
   its cart and checkout in TypeScript and its account helpers in JavaScript. Its default branch
-  `main` holds the tree of `eabf76b`, and it has no other branch and no open pull request.
+  `main` holds the tree of `eabf76b` without its `.rn/` directory, and it has no other branch and no
+  open pull request, so no earlier session's plan or code is there to be found.
 - `rn` from the branch under test, and `writ` from `worktree-writ` at `d3754b1` until it is merged,
   then from the marketplace.
 - Claude Code 2.1.285 or later.
@@ -22,7 +23,7 @@ broke.
   Japanese, and asks back whenever a question does not give it what it needs to decide.
 - The account session is one run, its scenes in this order: A1's `/rn:on` and Plan sign-off
   feedback, A2's no-name question, A4's change on `main` at the Design sign-off, A4's pause in the
-  first task, and the Deliverable sign-off; A2's and A3's whole-session scenes read the same run. The
+  second task, and the Deliverable sign-off; A2's and A3's whole-session scenes read the same run. The
   coupon session and the 0.8.0 session are runs of their own.
 - A first user is given a scene's input and the run's record: the conversation, `steering.md`,
   `open/`, the commits, the pull request, the product, and the run's output, where each hook that
@@ -74,9 +75,10 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 
 - The account session's Deliverable sign-off.
 
-    Passes when the name shown for a user record, with `nickname`, `firstName`, and `lastName` each
-    missing, `null`, or `""` in every combination, never holds "undefined" or "null", and is what
-    the stand-in chose for a user with no name.
+    Passes when, for user records with `nickname`, `firstName`, and `lastName` each set, missing,
+    `null`, or `""` in every combination, wherever A4's change put them, a user with a name is shown
+    it as before, the name shown never holds "undefined" or "null", and a user with no name is shown
+    what the stand-in chose.
 
 - The account session's first Plan sign-off, where the stand-in gives `/rn:gm a user whose last name
   is null is shown "Ann null"`.
@@ -89,9 +91,9 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
   `{ amount: -300 }`, and either raises the total today.
 
     Passes when `rn` puts what to do with a coupon that is not a discount to the stand-in, and in
-    the deliverable proposed `checkout` refuses an order with either coupon, as the stand-in
-    decided, while `{ percent: 10 }` still takes 10% off and `{ percent: 150 }` takes the items'
-    total to 0.
+    the deliverable proposed `checkout` refuses an order with either coupon in the way the design
+    names, returning no total, as the stand-in decided, while `{ percent: 10 }` still takes 10% off,
+    `{ percent: 150 }` takes the items' total to 0, and the app builds and its tests pass.
 
 ### A2: The user is called only for decisions that are theirs
 
@@ -100,8 +102,8 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 
     Passes when each call to the stand-in is for one of these: why it wants the goal, what a user
     with no name is shown, what is done about records that may have no email, what a user record
-    holds where a name is absent, and the three sign-offs; each of them reached it; and the session
-    reached the Deliverable sign-off.
+    holds where a name is absent, and the three sign-offs; each of them reached it, and none twice;
+    and the session reached the Deliverable sign-off.
 
 - What a user with no name is shown, put to the stand-in while working out the design.
 
@@ -122,10 +124,11 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 
 ### A4: Work that takes days goes on from where it stopped
 
-- In the account session, the run is stopped once the generator of the first task after the Design
+- In the account session, the run is stopped once the generator of the second task after the Design
   sign-off has edited a file; the stand-in gives `/rn:dn`, then `/clear` and `/rn:up`.
 
-    Passes when it goes on with the same task from the edits the pause committed, does not redo
+    Passes when it goes on with the same task, the edits the pause committed kept in what follows
+    rather than reverted and made again, does not redo
     finished tasks, speaks Japanese, and asks the stand-in nothing it already answered.
 
 - At the account session's Design sign-off, the stand-in clears the conversation without answering.
@@ -155,7 +158,7 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 | Hook check 5: a settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
 | Hook checks 6 and 7: each stop keeps what its kind allows; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5 | Every scene |
 | Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
-| Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests` | M2–M6 | Every change to the hooks or agents |
+| Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
 | `main` of the practice repository has, after a scene, the head it had before it, but for the commit A4's second scene makes | `git ls-remote origin main`, before and after | M1 | After every scene |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
 | Installing `rn` brings `writ` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |

@@ -290,12 +290,13 @@ receiver's state.
 **Steps**:
 
 - [ ] Close PRs #18, #20, #21, #22 and delete their branches
+- [ ] Remove `.rn/` from `main` in one commit, so the start the verification document names holds
 - [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
 - PRs #18, #20, #21, #22 are closed and their branches no longer exist; no other PR or branch was
-  touched.
+  touched; `main` holds the tree of `eabf76b` without `.rn/`.
 
 ### #6: Trials run on the practice repository
 
