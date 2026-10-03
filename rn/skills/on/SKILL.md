@@ -26,7 +26,9 @@ thing, however well it is carried out, and the user finds out only at the end.
    `steering.md` as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, with what they choose, `rn`
    from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and the goal as `$ARGUMENTS` gives it for
    now.
-4. Commit and push, and open a draft pull request titled with the goal in one line, its body linking
-   `steering.md`. Write its URL in `pr`, commit, and push.
+4. Commit and push, in the chosen `artifact-language` as every commit from here on, with the subject
+   and decision line `steering.md`'s reference gives, and open a draft pull request titled with the
+   goal in one line, its body linking `steering.md`. Write its URL in `pr`, then commit and push with
+   `● plan ── pull request opened → working out the plan`.
 5. Work out the plan with the user and go on, as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`:
    the session stops at the Plan sign-off.

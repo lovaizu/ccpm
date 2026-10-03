@@ -18,7 +18,7 @@ without asking again. It is recorded and the session stops, so they can clear th
 2. Mark that task `[x]`. At the Deliverable sign-off, set `status` to `finished` and mark the pull
    request ready with `gh pr ready`.
 3. Commit and push with the decision line
-   `● #{id} {sign-off name} ── approved → {the first task not [x], or finished}`, and say, in the
+   `● #{id} {sign-off name} ── approved → {the first task not [x]; planning the tasks, after the Design sign-off; finished, after the Deliverable sign-off}`, and say, in the
    `conversation-language` of `steering.md`:
 
    ```
@@ -27,6 +27,7 @@ without asking again. It is recorded and the session stops, so they can clear th
    Say "go on", or /clear and then /rn:up.
    ```
 
-   At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.
+   At the Deliverable sign-off, say instead, after the decision line,
+   `The pull request is ready: {url}. The merge is yours.`
 4. When the user says to go on, go on as `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` says, from its
    third step.

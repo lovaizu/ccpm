@@ -36,7 +36,8 @@ branch up to the latest default branch on the remote by merging it in, keeping b
 where they conflict; when that changes what the plan or the design rests on, work that out again
 before the next sign-off. A `notes` item `/rn:dn` left says what was under way and how far it came:
 a task under way goes on from the edits committed with it, so give its generator the item's path; a
-talk goes on from the point still open. Settle the item once that is taken up. A `report` left
+talk goes on from the point still open. Settle the item in the first commit after that is taken
+up. A `report` left
 unsettled is settled as in Using and settling before anything else. A `notes` item of agreed design
 points stays until `writ` writes them. A `feedback` item is taken up as in Feedback below. Keep going
 until you stop for the user.
@@ -113,7 +114,8 @@ tasks not yet done by the design it approved.
 
 1. Start a fresh `rn:generator` with `Agent`, giving it the paths of `steering.md`,
    `${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md`, and the task's id. When it is to fix,
-   add the path of the report, which More, and the fix you decided.
+   add the path of the report, which More, and the fix you decided; for a task added from the
+   deliverable's use, the path of that report.
 2. Check what it returned against the task's purpose on the real thing. Not fulfilled → commit it
    with its decision line, such as `── decided: purpose not fulfilled (…) → fix`, and send it back
    with what falls short. Falling short the same way again means the work cannot go on, as in Using
@@ -193,10 +195,11 @@ again at its place as it is now.
 
 Write the proposal once, as the Proposal section of `conductor.md` asks, with the final state only:
 the points and fixes along the way are left out, since the user approves the final state. Have a
-fresh first user take it up as the user would, by the Proposal section of `conductor.md`, and settle
-its report as above. Then commit and push, empty when nothing changed, with the proposal as the
+fresh first user take it up as the user would, by the Proposal section of `conductor.md`, from a
+`notes` item `{NN}-notes-proposal.md` you write it to, and settle its report as above; the stop commit
+removes the item. Then commit and push, empty when nothing changed, with the proposal as the
 message body and `→ waiting for #{id} {sign-off name}` last; then give the user that body, as
-`git log -1 --format=%b` prints it up to the decision line, translated into the conversation
+`git log -1 --format=%b` prints it, the decision line included, translated into the conversation
 language when the two differ, adding nothing and leaving nothing out.
 
 ```
