@@ -189,12 +189,41 @@ by the conductor, so the results of #1 onward can be checked the 0.9.0 way.
 - No question can be removed without letting a work that misses its purpose pass, each asks about one
   point, and each has grounds saying what the receiver gains.
 
-### #3: Design sign-off
+### #3: Documents cut to what their readers use
+
+**Purpose**: The README, design document, and verification document hold only what their readers use
+to decide or act, with the diagrams readable at page width, so the user can judge the design at the
+Design sign-off.
+
+**Prerequisites**: #1, #2
+
+**Steps**:
+
+- [ ] Add to each viewpoint file in `rn/references/essentials/` the question of which parts of the
+  work were used for its purpose and which were passed over unused, and rewrite every question into
+  the form answered by what happened in use, as agreed in the writ session (2026-10-03): the
+  essentials for essentials gain "which parts of the work were used and which passed over", and
+  "if removed, would a missing work pass" becomes "which question's answer was not used to judge
+  whether the work achieved its purpose"
+- [ ] A first user uses the three documents with the design viewpoints; the conductor decides for each
+  part passed over whether the purpose needs it, and details the prompts or hooks hold move to #5
+  and #7
+- [ ] The generator cuts and rewrites, diagrams first and text only for what they do not show,
+  each diagram readable at page width
+- [ ] Used by a first user and settled by the conductor (Rules)
+
+**Completion criteria**:
+
+- A first user reading each document as its reader passes over no part the conductor keeps for the
+  purpose, and every part it passes over is gone or moved.
+- No diagram needs horizontal scrolling or shrunk text on the pull request.
+
+### #4: Design sign-off
 
 **Purpose**: The user approves the README, design document, and verification document before the
 prompts and hooks are built on them.
 
-**Prerequisites**: #1, #2
+**Prerequisites**: #3
 
 **Steps**:
 
@@ -205,13 +234,13 @@ prompts and hooks are built on them.
 
 - The README, design document, and verification document are approved.
 
-### #4: Prompts built from the approved design
+### #5: Prompts built from the approved design
 
 **Purpose**: `rn`'s skills, references, and viewpoint files do what the approved README and design
 document say, including the Kano split, IDs, hearing, task creation, and viewpoints stated as the
 receiver's state.
 
-**Prerequisites**: #3
+**Prerequisites**: #4
 
 **Steps**:
 
@@ -231,12 +260,12 @@ receiver's state.
   design document say, and no prompt behavior lacks a basis in the design document.
 - The prompts' use against `writ`'s prompt viewpoints and the design holds no unsettled More.
 
-### #5: Trials run on the practice repository
+### #6: Trials run on the practice repository
 
 **Purpose**: Each benefit's scene in the verification document passes when `rn` is run on
 `lovaizu/rn-try`, including pause and resume, `/rn:gm`, and bringing a 0.8.0 session to the new form.
 
-**Prerequisites**: #4
+**Prerequisites**: #5
 
 **Steps**:
 
@@ -252,12 +281,12 @@ receiver's state.
   set beside the scene by the conductor.
 - No evaluation or trial record is posted as a PR comment.
 
-### #6: Hooks check rn's rules mechanically
+### #7: Hooks check rn's rules mechanically
 
 **Purpose**: The rules in point 4 are enforced by hooks at the three points the design names, so a
 breach is stopped rather than left to the evaluator.
 
-**Prerequisites**: #5
+**Prerequisites**: #6
 
 **Steps**:
 
@@ -277,12 +306,12 @@ breach is stopped rather than left to the evaluator.
   design names.
 - A normal session run raises no false stop.
 
-### #7: CHANGELOG states what 0.9.0 changes for the user
+### #8: CHANGELOG states what 0.9.0 changes for the user
 
 **Purpose**: A user reading `rn/CHANGELOG.md`'s 0.9.0 section learns how far `rn` has moved from 0.8.0
 and what changes for them.
 
-**Prerequisites**: #6
+**Prerequisites**: #7
 
 **Steps**:
 
@@ -297,11 +326,11 @@ and what changes for them.
 - `plugin.json` is 0.9.0, the CHANGELOG's top section is `## [0.9.0] - <release date>`, and no empty
   `## [Unreleased]` is left.
 
-### #8: Integration check with the real writ
+### #9: Integration check with the real writ
 
 **Purpose**: `rn` works with `writ` as merged to `main`, not only with its working branch.
 
-**Prerequisites**: #7, and `writ` PR #15 merged
+**Prerequisites**: #8, and `writ` PR #15 merged
 
 **Steps**:
 
@@ -316,11 +345,11 @@ and what changes for them.
 - The scenes that call `writ` pass with the merged `writ`.
 - Every machine check in the verification document passes, both strict validations included.
 
-### #9: Practice repository cleaned up
+### #10: Practice repository cleaned up
 
 **Purpose**: `lovaizu/rn-try` holds nothing left from earlier trials.
 
-**Prerequisites**: #8
+**Prerequisites**: #9
 
 **Steps**:
 
@@ -332,11 +361,11 @@ and what changes for them.
 - PRs #18, #20, #21, #22 are closed and their branches no longer exist; no other PR or branch was
   touched.
 
-### #10: Evaluation sign-off
+### #11: Evaluation sign-off
 
 **Purpose**: The user approves the run of the Acceptance criteria.
 
-**Prerequisites**: #9
+**Prerequisites**: #10
 
 **Steps**:
 
@@ -353,8 +382,12 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-10-03
+- **Last completed**: #1 README, design document, and verification document carry points 1–14 (and #2)
+- **Next**: #3 Documents cut to what their readers use — first step: add the used / passed-over question to rn's viewpoint files
+- **Notes**: branch `rn-rebuild`, PR #33. The Design sign-off was presented once; the user found the
+  documents text-heavy and degraded (design.md 8,253 words vs 5,213 this morning and 3,727 on main)
+  and its diagrams too wide, and approved this plan: fix the viewpoints first, then cut by a first
+  user's use (writ found the same gap; its essentials.md is not yet updated on `worktree-writ`, so rn
+  applies the agreed changes itself). Do not rewrite the documents by eye or with writ before that.
