@@ -32,9 +32,9 @@ The caller gives the location of the work, its receiver and purpose, and the aim
 
     A real receiver also knows what they use the work for, so without the purpose the use drifts from the real one. Knowing the aim, the first user would look for it and fill the gaps in its head; given the maker's view or the style rules, it would spend its attention on them instead of on what only it can do, using the work without the discussion.
 
-3. Lay the report beside the aim, and give each question at least one Good or More. A Good gives its location and what the receiver gains; a More gives its location and what the receiver struggles with. Each carries evidence quoted from the report or from the work. Do not say how to fix a More and do not decide to leave one.
+3. Lay the report beside the aim, and give each question at least one Good or More. A Good gives its location and what the receiver gains; a More gives its location and what the receiver struggles with. Each carries evidence quoted from the report or from the work. Each part the report names in answer to a question, such as a part read past, a stop or a guess, is a More, unless the aim shows the receiver needs it as it is. Do not say how to fix a More and do not decide to leave one.
 
-    What a Good gains tells whoever fixes the work what must not be lost. A More put as the receiver's struggle lets the caller weigh it against the purpose; a More put as a fix pulls the decision toward your first idea.
+    The questions ask for what kept the receiver from the purpose, so what the report names there is a struggle even when the aim does not mention it. What a Good gains tells whoever fixes the work what must not be lost. A More put as the receiver's struggle lets the caller weigh it against the purpose; a More put as a fix pulls the decision toward your first idea.
 
 4. Write the result file in the form of `${CLAUDE_PLUGIN_ROOT}/skills/pith/result-form.md`, copying the first user's report for each question under it.
 
