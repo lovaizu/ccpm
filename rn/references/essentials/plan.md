@@ -43,3 +43,8 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
     The effort then goes first to why the user would choose the result, and that is checked while
     there is time to change course. Must-be quality is easier to build and check, and started first
     it takes the effort while the reason to choose the work goes unchecked.
+
+- Carrying the work on from the plan, which parts did you use and which did you pass over?
+
+    The plan then holds only what carries the work, so the conductor finds what it needs in a fresh
+    conversation, and the user reads at the Plan sign-off only what they approve.

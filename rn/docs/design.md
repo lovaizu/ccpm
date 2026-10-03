@@ -373,14 +373,17 @@ whether something is there, or is good, is answered "yes" by looking the work ov
 it, and a work no one can use passes; answered by what happened in use, the answer is a fact the
 conductor can set beside the aim. Each question asks about one point, so the point that falls short
 does not hide behind one that holds, and has grounds that say what the receiver gains, so it is
-followed by its intent where it names nothing. This follows `writ`'s essentials for essentials
-(`writ/references/essentials/essentials.md` at `e50d263`). How to use the work to find the answer is
-left to the first user.
+followed by its intent where it names nothing. Every file also asks which parts of the work were
+used toward its purpose and which were passed over unused: a question of whether something is good
+gets answers only about the parts that were used, so a part no one needs would never come to light.
+This follows `writ`'s essentials for essentials (`writ/references/essentials/essentials.md` at
+`0056078`). How to use the work to find the answer is left to the first user.
 
 Each viewpoint file in `rn/references/essentials/` is for one thing `rn` makes or says: the plan, the
 design, a task's result, the deliverable, a report, and what the conductor decides and says. Its
-viewpoints are not split by Kano quality: a question stays only if removing it would let a work that
-misses its purpose pass, whatever its quality, so the first user gives full attention to each. The
+viewpoints are not split by Kano quality: a question stays only if its answer is used to judge
+whether the work achieved its purpose, whatever its quality, so the first user gives full attention
+to each. The
 Kano split is used where it changes what is done, in the Acceptance criteria and the tasks and checks
 tied to them, and the plan's viewpoint file asks which work on must-be quality comes before the
 attractive criteria are nearly met.

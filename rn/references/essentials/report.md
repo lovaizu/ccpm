@@ -22,3 +22,8 @@ the report answers.
 
     The conductor can then trust each answer, and a Good given on it holds when the user reads that
     part, since no one looks again at what is called good.
+
+- Giving each Good or More from the report, which parts did you use and which did you read past?
+
+    The conductor then reads only what it decides on, and its conversation holds what the session
+    needs rather than what was read past.

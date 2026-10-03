@@ -17,3 +17,9 @@ purpose and its Completion criteria.
 - Using what worked before the task, what no longer works?
 
     The user keeps what they had, and each later task builds on ground that holds.
+
+- Doing what the task's purpose is for, which of the task's changes did you use, and which did you
+  never meet?
+
+    Each task then adds only what moves the work toward the goal, and the deliverable carries
+    nothing that a later task or the user must keep without knowing why.

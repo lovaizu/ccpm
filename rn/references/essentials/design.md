@@ -41,3 +41,10 @@ the documents read is `writ`'s to check.
 
     A pass then proves the criterion met, so the user approves at the Deliverable sign-off only work
     that achieves the goal.
+
+- Reading each document as its reader, which parts did you use to decide or act, and which did you
+  read past?
+
+    Each document then holds only what its readers decide or act on, so the user judges the design
+    at the Design sign-off without wading through parts written for someone else, such as how a
+    decision came about.

@@ -30,3 +30,9 @@ acceptance criteria, by ID.
 
     The next session then starts from documents that say what was built, instead of from a wrong
     one.
+
+- Using the product for the goal, which of the session's changes did you use, and which did you
+  never meet?
+
+    The next session then starts from a product that holds nothing no one uses. A part no use
+    reaches is kept and changed with the rest without anyone knowing what it is for.

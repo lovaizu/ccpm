@@ -25,6 +25,12 @@ as close to the goal as it can, keeps what already serves the user, and settles.
 
     The user keeps what already served them, and a Good shown at the sign-off still holds.
 
+- Going on from the commit message as a later conversation, which parts did you use and which did
+  you read past?
+
+    A later conversation then finds at once what it goes on from, instead of losing it among parts
+    written for no one who reads them.
+
 ## Question
 
 What the conductor asks the user between sign-offs. With it, the user answers on the spot, and their
@@ -41,6 +47,12 @@ time goes only to what is theirs.
     The user's time then goes only to the decisions that are theirs, since everything else is looked
     up instead of asked.
 
+- Answering the question as the user, which parts did you use to answer and which did you read
+  past?
+
+    The user then reads only what their answer rests on, and the point they must decide is not
+    hidden among parts they skip.
+
 ## Proposal
 
 What the conductor gives the user whenever it calls them, at a sign-off or with a question. With it,
@@ -55,3 +67,9 @@ the user says yes or no from it alone, and reads the work whenever they want.
 
     The user can then trust each Good without reading that part. A Good that does not hold hides a
     flaw no one looks at again, and it reaches the user's approval unseen.
+
+- Deciding yes or no as the user, which parts of the proposal did you use and which did you read
+  past?
+
+    The user then reads only what they decide on, and what matters is not lost among parts they
+    skip.
