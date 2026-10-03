@@ -1,67 +1,27 @@
 # Prompt
 
-The reader is the AI that acts by following the prompt. When it finishes, it can choose for itself a way of acting that achieves the purpose, even in situations the writer did not foresee. A maintainer also reads it, to change it without losing what it is for. The questions on roles, checking and turning to a person apply where the prompt is part of a product that has them.
+This file has three readers. The generator reads it as the form to aim for when it writes a prompt. The first user picks, from the purpose handed over with the prompt, the situations to give the AI, actually gives the prompt to an AI through `claude -p` or the like and runs it, and reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the prompt was given to an AI and run, whether the AI that receives it acts in line with the purpose even in situations the writer did not foresee, and which instructions are not needed.
 
-- Can the AI act toward its purpose where no step reaches?
+- When you gave it a situation the writer foresaw, what did the AI do?
 
-    Knowing who it is before it reads what to do, and what it is for, the AI chooses what fits in situations the writer did not foresee. Told only what to do, it stops or guesses where the steps end.
+    Laid beside the aim, what the AI did and what it left show whether the prompt reaches its purpose, from what happened when it ran rather than from what was taken in by reading. Even an instruction that is clear to read, the AI misreads when it acts, or drops under the push of other instructions. If it goes wrong in a situation the writer foresaw, it goes wrong all the more in one they did not.
 
-- Does the purpose say what the product's user gets from it, and why that is needed?
+- When you gave it a situation that no step reaches, what did the AI do?
 
-    A purpose that names the user's benefit and its reason gives the AI something to weigh each choice against. A purpose that only summarises the steps adds nothing the steps do not say.
+    Given the purpose and why it is needed, the AI can choose for itself, where the steps run out, the action that fits the purpose. An AI given only what to do stops at the end of the steps or goes on by guessing. Such a situation is one the purpose covers but no step touches. Situations the writer pictured show only whether the AI can follow the steps.
 
-- Is every step one the AI would get wrong if it were not written?
+- When you gave it a situation where following the steps leads away from the purpose, what did the AI do?
 
-    Kept to rules that break things when they drift and cannot be derived, such as the format of a handoff, the steps leave the AI free to act on the purpose everywhere else. Steps are followed exactly, so a flow of work copied into them, or a sentence meant only as explanation, is acted on even where it goes against the purpose. Take a step away: if the AI would still act rightly, it was not needed.
+    When the steps are narrowed to rules that break things if they slip and cannot be worked out from the purpose, such as the form of a handoff, the AI acts in line with the purpose everywhere else. The AI keeps steps exactly as written, so steps that only copy a workflow, and sentences meant as explanation, are carried out even in situations where they work against the purpose.
 
-- Does every part of the prompt, and every mechanism it uses, such as a hook or a subagent, serve a feature in the design?
+- When it met something the user or the people around them decide, what did the AI do?
 
-    A maintainer who can trace each part and each mechanism, such as an agent definition, a hook or a subagent launch, to a feature can tell what changing it costs. One that traces to nothing has no ground anyone can check, and is kept by habit.
+    When what the user decides is handed back to the user, the user makes their own decision and does not mistake the AI's guess for fact. When the AI decides and goes on, the decision stays the AI's guess until the user finds it later. Asking even what could be found out by looking spends the user's time on what is not their decision. Even a prompt that does not talk with the user lets the user decide, if the result shows what was left undecided.
 
-- Is every output a role leaves read by the next?
+- When you gave it the same situation several times, where did the AI's actions differ from run to run?
 
-    When each output has a reader, nothing a role makes is lost between roles. An output no one reads is work wasted, or a handoff missing.
+    A single run cannot tell whether acting in line with the purpose was luck or the prompt's doing. Where the runs differed is where the prompt did not give the AI what to decide by. If every difference is fine in light of the purpose, that is where the AI can be left to choose.
 
-- Is everything a role reads written by someone?
+- When you took out one instruction and ran it again on the same situation, what changed in what the AI did?
 
-    When every input has a writer, each role gets what its work needs. An input no one writes leaves the role to fill it by guess.
-
-- Is each role kept from seeing what it must not see?
-
-    Told what it must not see and why, each role keeps the view it is there for. A checking role handed the producing role's reasons, or free to fetch git history, the discussion or earlier versions, fills the work's gaps with them and misses where the reader trips; the tools it needs reach those too, so tools alone cannot keep it out.
-
-- Does the checking role spend its judgment on whether the reader gets the benefit?
-
-    Only a role that did not produce the work can read it without knowing the discussion, so its judgment goes where only it can see: whether the reader gets the benefit they would choose the work for. Spent on form, that judgment grows thin.
-
-- Does the checking role return, for each question, a Good that says what the reader gains?
-
-    A Good that says what the reader gains tells whoever fixes what a fix must not take away. A Good that says only "easy to understand" leaves them not knowing what to keep.
-
-- Does the checking role return, for each question, a More that says what the reader struggles with?
-
-    A More put as the reader's struggle lets the requester weigh it against the purpose. A More put as a fix pulls the decision toward the checking role's first idea.
-
-- Does every Good and More come with evidence the requester can check?
-
-    With evidence, such as a place in the work, the requester checks each answer in the work itself instead of trusting it.
-
-- Does the requester decide its next move by weighing the check's results against the purpose?
-
-    With judgment in one place that knows the purpose, the requester fixes what brings the work closer to it and keeps what already serves it. Acted on literally, a check's results redo even the parts that serve the purpose.
-
-- Does the cycle of evaluating and fixing always end?
-
-    Ending with the work settled, or with the reason it cannot go on, the cycle gives the person a result. Evaluated again after each fix, the work keeps drawing new non-essential remarks.
-
-- Can the person say yes or no from what the AI gives them alone?
-
-    Given what the AI proposes to do next toward the purpose, why, and its grounds, such as the final Good and More for each question, the person decides from that alone and reads the work whenever they want. Remarks and fixes from along the way leave them working out which still apply.
-
-- Is the person asked only what the conversation, the documents handed over and the repository do not already tell?
-
-    Asked only what is theirs to answer, the person spends their time on their own decisions. What can be looked up is looked up.
-
-- Is each question to the person asked after the questions whose answers could change it?
-
-    Asked in that order, the person never answers a question an earlier answer made unnecessary.
+    If nothing changed, the instruction is not needed. The AI already does it, working it out from the purpose or doing it without being told. The AI tries to keep even an unneeded instruction in every situation, so it takes effect in situations that go against the purpose and draws attention away from the other instructions. The instruction to take out is chosen from those that showed in none of the AI's actions in the situations run for the other questions.
