@@ -281,7 +281,7 @@ receiver's state.
   design document say, and no prompt behavior lacks a basis in the design document.
 - The prompts' use against `writ`'s prompt viewpoints and the design holds no unsettled More.
 
-### #10: Practice repository cleaned up
+### [x] #10: Practice repository cleaned up
 
 **Purpose**: `lovaizu/rn-try` holds nothing left from earlier trials.
 
@@ -289,9 +289,9 @@ receiver's state.
 
 **Steps**:
 
-- [ ] Close PRs #18, #20, #21, #22 and delete their branches
-- [ ] Remove `.rn/` from `main` in one commit, so the start the verification document names holds
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [x] Close PRs #18, #20, #21, #22 and delete their branches
+- [x] Remove `.rn/` from `main` in one commit, so the start the verification document names holds
+- [x] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
