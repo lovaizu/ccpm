@@ -52,6 +52,20 @@ code-modernization).
 - **Leave to hooks only the mechanical rules a definition cannot hold**, such as a file's form, a
   name, matching IDs, a commit's form, or a push left undone.
 
+### Results
+
+- **Write the whole result to a file, and return to the caller only a short result and the file's
+  location.** The short result opens with the conductor's view, gives every essential one line (Good
+  or More, and where), and sets out in full only what the user must decide, such as a More that was
+  left.
+  - Rationale: a whole result in the conversation is too long to be read, crowds the caller's context,
+    and is lost when the conversation is summarized; the file keeps it for whoever wants to check.
+- **Keep one result file per target, overwritten on each run, under the plugin's own directory (e.g.
+  `.writ/`) mirroring the target's path, unless the caller names a place** (e.g. rn under its session
+  in `.rn/`). Leave nothing else behind; whether to commit the file is the user's call.
+  - Rationale: the latest result is the only one that applies to the work as it is now, and files that
+    pile up are the user's to clean.
+
 ## 2. Check
 
 ### Validation: use it as its user would
