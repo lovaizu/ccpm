@@ -240,8 +240,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-03
-- **Last completed**: #4 (#5 in progress: pith agreed and recorded under Assumptions; README and design rewritten in Japanese for review)
-- **Next**: #5 — take the user's review of `writ/README.md` and `writ/docs/design.md` on PR #15, then rebuild the prompts.
-- **Notes**: Rules now live only in `.claude/rules/plugin.md` (roles, results in open/, validation, release); conventions are shared with the rn session rebuild-rn-c1. Unverified: whether pith in a forked context can start the first user agent, and whether a skill's `agent` can name a plugin agent — run these first when building. The textlint rule that list items be である調 does not fit the item-then-explanation style and is left.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
