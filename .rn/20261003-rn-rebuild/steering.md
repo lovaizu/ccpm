@@ -166,7 +166,7 @@ verification split into its own document, so the prompts and hooks can be built 
 - The documents hold no procedure notes, history, or restated content, and the README reads as
   benefits and use rather than a list of mechanisms.
 
-### #2: Viewpoint files rewritten to writ's essentials for essentials
+### [x] #2: Viewpoint files rewritten to writ's essentials for essentials
 
 **Purpose**: Each viewpoint file in `rn/references/essentials/` can be used by a first user and settled
 by the conductor, so the results of #1 onward can be checked the 0.9.0 way.
@@ -214,6 +214,8 @@ receiver's state.
 
 - [ ] Rebuild `rn/skills/*` and `rn/references/*` (the viewpoint files are #2's) from the
   approved documents
+- [ ] From #2's use: a decision record names each fixed More's cause, not only its symptom, and the
+  Goods the fix touched; a proposal and a report name the commit they are about
 - [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
