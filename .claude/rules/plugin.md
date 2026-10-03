@@ -54,17 +54,27 @@ code-modernization).
 
 ### Results
 
-- **Write the whole result to a file, and return to the caller only a short result and the file's
-  location.** The short result opens with the conductor's view, gives every essential one line (Good
-  or More, and where), and sets out in full only what the user must decide, such as a More that was
-  left.
+- **Write the whole result to a file in `open/`, and return to the caller only a short result and the
+  file's location.** The short result opens with the conductor's view, gives every essential one line
+  (Good or More, and where), and sets out in full only what the user must decide, such as a More that
+  was left.
   - Rationale: a whole result in the conversation is too long to be read, crowds the caller's context,
-    and is lost when the conversation is summarized; the file keeps it for whoever wants to check.
-- **Keep one result file per target, overwritten on each run, under the plugin's own directory (e.g.
-  `.writ/`) mirroring the target's path, unless the caller names a place** (e.g. rn under its session
-  in `.rn/`). Leave nothing else behind; whether to commit the file is the user's call.
-  - Rationale: the latest result is the only one that applies to the work as it is now, and files that
-    pile up are the user's to clean.
+    and is lost when the conversation is summarized.
+- **Name it `{dir}/open/{NN}-{kind}-{target}.md`, commit it, and push it.** `{dir}` is the plugin's own
+  directory (e.g. `.writ/`), or the place the caller names (rn names its session,
+  `.rn/{date}-{slug}/`). `{NN}` is the order it arrived in; `{kind}` is `report` (what the first user
+  reported, with its Good and More), `feedback` (what the user said) or `notes` (points agreed and
+  waiting); `{target}` names the work. Using the same target again overwrites the same file.
+  - Rationale: pushed, the result survives the conversation and can be read on the pull request; one
+    file per target holds only what applies to the work as it is now.
+- **Clear a file once everything in it is settled: copy its whole text into the commit message, and
+  delete the file in that commit.** A More is settled when it is fixed, let go with its reason, or
+  decided by the user; end each More in the message with what became of it (`→ fixed:`,
+  `→ let go:` with the reason, or `→ to the user:`). A plugin may add its own marks, such as rn's
+  decision line.
+  - Rationale: `open/` then holds only what still needs action, so a file left there is the sign that
+    something does; the record stays in git history, and the working tree ends with nothing but the
+    work.
 
 ## 2. Check
 
