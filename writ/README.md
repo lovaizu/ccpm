@@ -163,7 +163,7 @@ first user は、プロンプトを実際に AI に渡し、手順にない場�
 
 ## 入手して使い始める
 
-writ は Claude Code のプラグインなので、Claude Code が要ります。報告の形を確かめるスクリプトに、Python 3.9 以降が要ります。Mac では、git と同じ開発者ツールに入っています。
+writ は Claude Code のプラグインなので、Claude Code が要ります。報告の形を確かめるスクリプトに、Python 3.9 以降が要ります。Mac では、git と同じ開発者ツールに入っています。Node.js は無くても使えます。あれば、文の長さのような機械で判断できる書き方を、npx で取ってくる lint（Vale と textlint）でも確かめます。
 
 writ はプラグインのマーケットプレイス `lovaizu/ccpm` から入手できます。Claude Code でマーケットプレイスを足してから、writ を入れます。
 
