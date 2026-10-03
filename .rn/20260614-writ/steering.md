@@ -208,11 +208,12 @@ proven and split into its own plugin.
       over the conversation and is not given the aim
 - [ ] Fix what the results call for, and take the user's review on PR #15 (fixed; the user said
       to build through #6 without waiting, so the review is taken with #6's results)
-- [ ] Rebuild the prompts from the README, the design and the essentials, with the generator and
+- [x] Rebuild the prompts from the README, the design and the essentials, with the generator and
       first user as plugin agents
 - [x] Build pith's result check and the first user's hook in Python 3.9, with unittest tests in
       `writ/tests/`
-- [ ] Rewrite `prompt.md` with pith
+- [x] Rewrite `prompt.md` with pith (the run was stopped after the generator wrote it and the
+      first user had begun trying it; one `/writ:up` run inside it took 35 minutes)
 
 **Completion criteria**:
 
