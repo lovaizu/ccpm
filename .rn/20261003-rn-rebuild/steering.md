@@ -45,8 +45,10 @@ their time only on the three sign-offs and on what only they can decide.
     aim and gives Good or More; each More whose fix brings the work closer is fixed by the generator,
     then checked by a fresh first user for that viewpoint alone; the final Good and More go into the
     task's check-off commit message.
-  - A first user writes its whole report to `.rn/20261003-rn-rebuild/reports/{target}.md`
-    (overwritten each run, not committed) and returns only a short result and that path (point 14).
+  - A first user writes its whole report to `.rn/20261003-rn-rebuild/open/{NN}-report-{target}.md`
+    (overwritten when the same target is used again) and returns only a short result and that path
+    (point 14). The commit that settles it carries the report whole with the conductor's decisions,
+    and removes the file from `open/`.
   - The viewpoints are the file in `rn/references/essentials/` for what the result is (the design for
     #1, `writ`'s `essentials.md` for #2), and for prompts also `writ`'s viewpoints for prompts
     (`writ/references/essentials/prompt.md` on `worktree-writ`); after every change to the prompts, all of them are used this way.
