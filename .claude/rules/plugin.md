@@ -29,11 +29,20 @@ code-modernization).
 
 ### Roles
 
-- **Keep a checking role from what it must not see by how the role is defined:** start it as a
+- **Build a plugin that makes and checks work from three roles: the conductor, the generator and the
+  first user** (always these words).
+  - The **conductor** alone judges and decides what comes next: it hands work to the generator, has the
+    first user use the result, sets what the first user reports beside the aim, gives each a Good or a
+    More, and decides what to fix or leave.
+  - The **generator** makes or fixes the work as the conductor decides.
+  - The **first user** uses the work as its user would and reports what happened, without judging it.
+  - Rationale: judgment kept in the one role that knows the aim weighs every remark against it; a
+    first user that judges, or a generator that grades its own work, fills the gaps with what it meant.
+- **Keep the first user from what it must not see by how the role is defined:** start it as a
   separate subagent that does not carry over the conversation, set `omitClaudeMd`, hand it only the
-  work and its purpose, and take the tool that calls other agents away from the producing role, so the
-  producing role cannot call the checking role.
-  - Rationale: the checking role (the first user) is there to use the work as its user would, without
+  work and its purpose, and take the tool that calls other agents away from the generator, so the
+  generator cannot call the first user.
+  - Rationale: the first user is there to use the work as its user would, without
     knowing how it was made. A subagent can be called by anyone, from the conversation, a user, a
     forked skill or another subagent, so watching every way it can be called with hooks grows tangled;
     a plugin's settings cannot restrict it either. A definition holds however it is called.
