@@ -367,7 +367,10 @@ Gives A3.
 A fatal More, or work that cannot go on, goes back to working things out with the user instead of to
 the sign-off, since approving something that is no use until fixed only spends the user's time.
 
-Otherwise `rn` proposes what it wants to do next and why that serves the goal. As its grounds it
+Otherwise `rn` proposes what it wants to do next and why that serves the goal, and says first, for
+each attractive criterion, how far the work now gives it and what came closer since the last
+proposal. Clearing every More never ends, since each fix leaves a smaller one; how close the work has
+come is what lets the user decide whether it is enough. As its grounds it
 gives, under every viewpoint and in the user's terms, the final Good and More, each at its place,
 with its criterion ID, claiming no more than that place shows. When the design takes away something
 the product does today, the proposal names it, so the user decides that loss there. Each

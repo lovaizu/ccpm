@@ -227,6 +227,9 @@ Draft PR: {url}
 
 {what you propose to do next, and why it serves the goal}
 
+Toward what you would choose it for:
+- {each attractive criterion ID}: {how far the work now gives it, in the user's terms} ({since the last proposal: what came closer, or the same})
+
 Changed since the last approval: {each change written without stopping, from the decision lines since the approval commit}
 Taken away: {what the product or rn did before that this design no longer does}
 
