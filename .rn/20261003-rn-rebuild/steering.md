@@ -35,10 +35,19 @@ their time only on the three sign-offs and on what only they can decide.
 # Rules
 
 - commit and push every change; one completion marker per task
-- After every change to the prompts, an evaluator that did not write them reads all of them against
-  `writ`'s essential viewpoints for prompts (`writ/references/essentials/prompt.md` on branch
-  `worktree-writ`), and the change is not done until its Mores are settled. `writ` is still being
-  built, so `rn`'s design document does not name it for this.
+- This session runs on `rn` 0.8.0, but where it departs from 0.8.0 it goes the 0.9.0 way, as
+  `rn/docs/design.md` describes it. The departures:
+  - A task's result is not reviewed by 0.8.0's self-check and QA, Design, Craft, and Verification
+    experts, and no `checks/` file is written. Instead: the conductor checks the result against the
+    task's purpose; a fresh first user (a subagent handed only the work, its purpose, and the
+    viewpoints, nothing of how it was made) uses it once and answers each viewpoint with what it
+    understood or what happened, giving no Good or More; the conductor sets those answers beside the
+    aim and gives Good or More; each More whose fix brings the work closer is fixed by the generator,
+    then checked by a fresh first user for that viewpoint alone; the final Good and More go into the
+    task's check-off commit message.
+  - The viewpoints are the file in `rn/references/essentials/` for what the result is (the design for
+    #1), and for prompts also `writ`'s viewpoints for prompts (`writ/references/essentials/prompt.md`
+    on `worktree-writ`); after every change to the prompts, all of them are used this way.
 - A More is fixed from what the work should be for its purpose, and design changes reach both the
   design document and the prompts.
 - The README and design document are changed and approved on the PR first; the prompts and hooks are
@@ -129,11 +138,7 @@ verification split into its own document, so the prompts and hooks can be built 
   the work as the user would, before the user does, and answers with the facts of that use — what it
   understood and what happened — without judging. Comparing those facts with the aim (validation) is
   the conductor's. Terms follow it throughout (e.g. the `open/` kind evaluation becomes report).
-- [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
-- [ ] Design expert review (subagent)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
@@ -177,10 +182,7 @@ receiver's state.
   approved documents
 - [ ] Evaluator that did not write them reads all prompts against `writ`'s prompt viewpoints and the
   design; settle every More
-- [ ] self-check (OK/NG per completion criterion, record in checks/3.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, dry-run)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
@@ -205,10 +207,7 @@ breach is stopped rather than left to the evaluator.
   `.claude/rules/plugin.md` § Build (shared with writ; on `worktree-writ` until PR #15 merges, then
   on `main`)
 - [ ] Run each check against a breaking case and a passing case
-- [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, coding)
-- [ ] Verification expert review (subagent, test)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
@@ -227,10 +226,7 @@ and what changes for them.
 
 - [ ] Write the `## [0.9.0]` entries from the approved README and design, dated the day the release
   is finalized
-- [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
-- [ ] QA expert review (subagent)
-- [ ] Craft expert review (subagent, writing)
-- [ ] Verification expert review (subagent, fact-check)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
@@ -252,9 +248,7 @@ and what changes for them.
   the machine checks; fix a must-be gap that shows up in use
 - [ ] An evaluator that did not make it judges each run against the verification document
 - [ ] Fix any More within the round and run again before the verdict
-- [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
-- [ ] QA expert review (subagent)
-- [ ] Verification expert review (subagent, dry-run)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
@@ -271,9 +265,7 @@ and what changes for them.
 
 - [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`
 - [ ] Run `claude plugin validate --strict` for `rn` and the marketplace
-- [ ] self-check (OK/NG per completion criterion, record in checks/7.md)
-- [ ] QA expert review (subagent)
-- [ ] Verification expert review (subagent, dry-run)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
@@ -289,8 +281,7 @@ and what changes for them.
 **Steps**:
 
 - [ ] Close PRs #18, #20, #21, #22 and delete their branches
-- [ ] self-check (OK/NG per completion criterion, record in checks/8.md)
-- [ ] QA expert review (subagent)
+- [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
