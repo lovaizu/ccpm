@@ -218,6 +218,8 @@ receiver's state.
   approved documents
 - [ ] From #2's use: a decision record names each fixed More's cause, not only its symptom, and the
   Goods the fix touched; a proposal and a report name the commit they are about
+- [ ] From #1's fix: `rn/references/essentials/report.md` opens with what the first user writes to
+  `open/` and the short result it returns (point 14), not "what a first user returns"
 - [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
