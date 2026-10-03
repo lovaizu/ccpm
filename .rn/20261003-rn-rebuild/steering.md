@@ -202,7 +202,8 @@ breach is stopped rather than left to the evaluator.
 - [ ] For any of 9–11 the design leaves to a hook, run a hook that reads `agent_type` and confirm it
   tells the first user and the other agents apart; if not, take the design change to the user
 - [ ] Build checks 1–8, and whatever of 9–11 the design leaves to hooks, with their tests, following
-  `.claude/rules/hooks.md` (shared with writ; on `worktree-writ` until PR #15 merges, then on `main`)
+  `.claude/rules/plugin.md` § Build (shared with writ; on `worktree-writ` until PR #15 merges, then
+  on `main`)
 - [ ] Run each check against a breaking case and a passing case
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
