@@ -35,9 +35,9 @@ by which the features below and the [verification document](./verification.md) r
   and what comes next.
 - M3: Every settled item is whole in the commit that settles it, so the record shows why things came
   out as they did.
-- M4: `steering.md`, `open/`, and the verification document keep the form every command reads them
-  by, and every ID they refer to exists.
-- M5: A sign-off is passed only by the user's approval, and a stop for the user leaves nothing
+- M4: `steering.md`, the names of the files in `open/`, and the verification document keep the form
+  every command reads them by, and every ID they refer to exists.
+- M5: A sign-off is passed only by the user's approval, and is put to the user with nothing
   unsettled behind it.
 - M6: What the first user reports is what the user would get, since it knows nothing of how the work
   was made.
@@ -203,7 +203,19 @@ covering everything adds checks that can all pass with no one having confirmed t
 quality. What a machine can judge is checked by machine every time, since it costs nothing to run
 and gives the same answer each time. Verification is its own document, not a section of the design,
 since it is what the deliverable is checked by, and keeping it apart lets the first user be handed
-it alone. `rn`'s own [verification document](./verification.md) has the same form.
+it alone.
+
+Each scene fixes in advance everything its pass depends on, such as what the user says, knows, and
+decides, since whoever runs a scene after seeing the work could otherwise choose those so that it
+passes. The document has a form the conductor finds each scene by, and hook check 3 traces each ID
+by:
+
+- `## Golden-path scenes` has a `### <ID>: <criterion>` heading for each attractive criterion, and
+  under it each scene as a list item, with what passes indented below it, starting "Passes when".
+- `## Machine checks` is a table whose `Criteria` column names the IDs each check checks.
+- A must-be criterion no machine can judge is named by its ID in the "Passes when" of a scene.
+
+`rn`'s own [verification document](./verification.md) has the same form.
 
 There is always a Design sign-off, even when the documents do not change, and it approves the design
 and verification documents together, since the user sees how the product will be built and how it
@@ -232,8 +244,11 @@ goal is nearly achieved, and finish must-be quality last, by the policy above.
 
 Feedback is the words the user gives with `/rn:gm`, or, when they give none, the review comments
 they wrote on the pull request for that sign-off, each with its place, since the user reads the work
-on the pull request and can comment where they read. Either is kept whole in a `feedback` item in
-`open/`, since the work is then measured by the user's own words.
+on the pull request and can comment where they read. The comments for that sign-off are those the
+`gh` user wrote on the pull request after its stop commit, since comments from before it were made
+on the work as it stood before this proposal. Either is kept whole in a `feedback` item in `open/`,
+quoted in the user's own words and language even when the record is in another, since the work is
+then measured by what the user said, not by a translation of it.
 
 After feedback at a sign-off, the session goes back to before it: a plan or a design is worked out
 again with the user, taking the mismatch behind the feedback as the first point, since fixing only
@@ -264,7 +279,7 @@ waiting for.
 
 Approving and giving feedback each stop, since that is where the user may clear the conversation.
 The user goes on by saying so in the same conversation, or by `/clear` and then `/rn:up`; both go on
-from what is pushed, so they lead to the same next move.
+from what is pushed, so they lead to the same next move (see Where rn stops).
 
 Once approved, the goal goes back through the Plan sign-off, and the README, design document, and
 verification document through the Design sign-off, only when what they say changes without the user
@@ -310,7 +325,7 @@ The conductor stays the same conversation throughout the session, since what was
 stays with it. A fresh generator is started for each task, so its attention holds only that task, a
 fresh `writ` for each document, and a fresh first user for each use; each ends when done. Every one
 of them returns to the conductor, never to the user, so the conductor's turn ends only when it stops
-for a sign-off or asks the user a question.
+for the user or asks them a question.
 
 ### Keeping the first user apart, by how it is defined
 
@@ -387,6 +402,7 @@ flowchart TD
     KE{"The conductor sets each answer<br/>beside the aim: Good or More"}
     D{"The conductor decides<br/>each More in turn"}
     F["The generator fixes,<br/>and reads it whole"]
+    FK{"The conductor checks the fix<br/>against the purpose"}
     R["A fresh first user uses it<br/>for that viewpoint alone"]
     J{"The conductor checks the final<br/>Good/More for each viewpoint"}
     N["On to the next task,<br/>or to the sign-off"]
@@ -397,7 +413,9 @@ flowchart TD
     V -->|"the report"| KE
     KE -->|"the Mores"| D
     D -->|"a More to fix"| F
-    F -->|"the fix, checked<br/>against the purpose"| R
+    F -->|"the fix"| FK
+    FK -->|"a fix on attractive quality"| R
+    FK -->|"a fix on must-be quality"| D
     R -->|"what happened"| D
     D -->|"all decided"| J
     D -->|"cannot go on"| U
@@ -432,12 +450,15 @@ The repetition ends as either settled or cannot go on. It cannot go on when the 
 coming back, when each fix brings a new More, or when a fix needs the README, design document, or
 verification document changed, unless what is fixed is the design itself.
 
-A fix is checked by the conductor against the purpose, and then by a fresh first user given only that
-viewpoint and its place. Whoever made a fix is the worst placed to see that it falls short, and a More
-called fixed that still holds reaches the proposal as a Good. The final check looks again at every
-Good a fix touched, since a fix can take a Good away. The whole is not used again, since each fresh
-use can raise new points that are not essential, and repeating need not settle; asking about one
-viewpoint keeps the check to what was fixed.
+Every fix is checked by the conductor against the purpose. A fix to a More on attractive quality is
+then used by a fresh first user given only that viewpoint and its place: whoever made a fix is the
+worst placed to see that it falls short, and a More called fixed that still holds reaches the
+proposal as a Good. A fix to a More on must-be quality, one bearing only on a must-be criterion or a
+task's must-be Completion criteria, is not used again, since a must-be gap is visible and quick to
+fix, and the effort of another use goes to attractive quality instead. The final check looks again
+at every Good a fix touched, since a fix can take a Good away. The whole is not used again, since
+each fresh use can raise new points that are not essential, and repeating need not settle; asking
+about one viewpoint keeps the check to what was fixed.
 
 For the same reason the whole deliverable is used once, when the tasks planned after the last Design
 sign-off are done: a first user runs each scene of the verification document, and the machine checks
@@ -490,8 +511,9 @@ flowchart TD
     C -->|"writes"| S
     F -->|"report, one file per use"| O
     W -->|"report on how<br/>the documents read"| O
-    U -->|"feedback given with /rn:gm"| O
-    C -->|"notes: design points agreed,<br/>and what /rn:dn leaves"| O
+    U -->|"feedback given with /rn:gm"| C
+    C -->|"feedback: the user's words, whole"| O
+    C -->|"notes: design points agreed,<br/>and where /rn:dn paused"| O
     O -->|"settled by the conductor"| M
     S -->|"read"| UP
     O -->|"read"| UP
@@ -527,41 +549,73 @@ default branch no longer has, found out only at the merge.
 
 ### open/ and the record in commit messages
 
-Items go in `open/` as they were received, and `/rn:dn` commits an unfinished task's edits beside
-its notes, so nothing needed to resume is only in the working tree. A file is named
-`{NN}-{kind}-{about}.md`: the number keeps the order they came in, and the kind, `report`,
-`feedback`, or `notes`, says who wrote it. A settled item leaves `open/` in the commit that settles
-it, copied whole into that commit's message with what was decided on each point, so the record lives
-in git and leaves no file behind in the repository. When the session stops at a sign-off, `open/`
-holds nothing but design points agreed and waiting for `writ`, such as those an older session's
-design approved, so every report and feedback is settled before the user approves.
+Items go in `open/` as they come in, so nothing needed to go on is only in the working tree or the
+conversation:
 
-A `report` is written by whoever the conductor calls to use or check the work: a first user, or
-`writ` on how the documents read. The conductor names its file, one for each use it asks for, such
-as task #3's result, or one viewpoint of it after a fix. The report goes whole into that file, and
-only a short result and the file's place come back: one line per viewpoint saying what was
-understood or what happened, and where (from `writ`, which sets its own first user's answers beside
-its aim, a Good or More and where), and in full only what the user must decide. The conductor sets
-those lines beside the aim, reads the file wherever a line does not show enough, and commits each
-report as it arrives, so the user can read it on the pull request. Asking for the same use again
-writes the same file anew, since only the latest applies to the work as it is now; the conductor
-takes the earlier one, already in git, out of the file first, so the first user never reads it.
+- A `report` is written by whoever the conductor calls to use or check the work: a first user, or
+  `writ` on how the documents read.
+- A `feedback` item is written by the conductor, holding the user's feedback at a sign-off.
+- A `notes` item is written by the conductor, holding design points agreed and waiting for `writ`,
+  such as those an older session's design approved, or where a task stands when `/rn:dn` pauses it.
+
+A file is named `{NN}-{kind}-{about}.md`. The kind says what it holds. The number is one more than
+the highest in `open/`, or `01` when `open/` is empty, so it keeps the order among the items open
+together and is chosen from `open/` alone; once an item is settled, its place in the order is its
+commit.
+
+The conductor names a report's file, one for each use it asks for: task #3's result is one use, and
+one viewpoint of it after a fix is another, with its own file, so the report from before the fix
+stays as it was found. The report goes whole into that file, and only a short result and the file's
+place come back: one line per viewpoint saying what was understood or what happened, and where (from
+`writ`, which sets its own first user's answers beside its aim, a Good or More and where), and in
+full only what the user must decide. The conductor sets those lines beside the aim, reads the file
+wherever a line does not show enough, and commits each report as it arrives, so the user can read it
+on the pull request.
+
+A settled item leaves `open/` in the commit that settles it, copied whole into that commit's message
+with what was decided on each point, so the record lives in git and leaves no file behind in the
+repository:
+
+- A task's reports, its first use and every use after a fix, are settled together in the commit
+  that decides what comes of the task, such as its purpose fulfilled, in the order of their numbers.
+
+    The record then shows each finding beside what became of it, in the order it happened.
+
+- The reports on a plan or a design are settled before its sign-off stop, and a `feedback` item
+  before the next sign-off stop, once the work it asked for is done.
+
+    The user approves the final state, so nothing of it is left open when they are asked.
+
+- Asking for the same use again, such as one viewpoint after a second fix, writes the same file
+  anew, since only the latest applies to the work as it is now. The conductor first settles the
+  earlier report, taking it out of `open/` in a commit that carries it whole with what was decided
+  on it.
+
+    The earlier report then stays in the record like any other, and the first user never reads it.
 
 A settled report looks like this in its commit message:
 
 ```
-rn: settle the report on #3 move src/cart
+rn: settle the reports on #3 move src/cart
 
+04-report-3-cart.md:
 - Does a wrong type in the cart fail the build?
   Doing as written: I passed "2" as the quantity to src/cart/price.ts:12 and ran the build; it built.
 - Good A1: src/cart/total.ts:8 types the total as number; the cart bug fails the build
 - More A1: src/cart/price.ts:12 still takes `any` for the quantity; the cart bug would ship
   → fixed: typed the quantity as number
 
+05-report-3-cart-wrong-type.md:
+- Does a wrong type in the cart fail the build?
+  Doing as written: I passed "2" as the quantity to src/cart/price.ts:12 and ran the build; it
+  failed, saying a string is not a number.
+- Good A1: src/cart/price.ts:12 types the quantity as number; the cart bug fails the build
+
 ● #3 move src/cart ── decided: purpose fulfilled → #4
 ```
 
-- The report is copied whole, and each Good and More follows with its criterion ID.
+- Each report is copied whole under its file name, and each Good and More follows with its
+  criterion ID.
 
     What the first user found and what the conductor made of it stay readable after `open/` is
     emptied.
@@ -571,10 +625,44 @@ rn: settle the report on #3 move src/cart
     The user and a later conversation see what became of each, and a More let go keeps its reason,
     the way not chosen.
 
-- The decision line comes last, and a stop commit's ends `→ waiting for #2 Design sign-off`.
+- Feedback is quoted in the user's own words and language; everything else is in the artifact
+  language.
 
-    `/rn:up` finds the next move by `●`, `──`, `→`, and `waiting for`, which stay as written. The
-    rest is in the artifact language, like everything else committed.
+    The words the work is measured by stay the user's, and the rest of the record reads in one
+    language.
+
+- The decision line comes last, and a stop commit's ends as its kind says in Where rn stops.
+
+### Where rn stops
+
+`rn` stops for the user in four ways, each in a stop commit whose decision line says which it is, so
+`/rn:up` reads from the last decision line what it takes up and what `open/` may hold:
+
+| Stop | `open/` holds | The decision line, for example |
+|---|---|---|
+| A sign-off, with the proposal | only `notes` of design points waiting for `writ` | `● #2 Design sign-off ── proposed: build on this design → waiting for #2 Design sign-off` |
+| After `/rn:ty` | the same as at the sign-off | `● #2 Design sign-off ── approved → #3 move src/cart` |
+| After `/rn:gm` | that, and the `feedback` item | `● #2 Design sign-off ── feedback in 03-feedback-design.md → working out the design again` |
+| A pause, on `/rn:dn` | whatever is not yet settled, and a `notes` item on where the task stands, its edits committed beside it | `● #4 move src/checkout ── half done: order.ts moved, payment.ts next → paused at #4 move src/checkout` |
+
+- At a sign-off, every report and feedback is settled first.
+
+    What the user approves is then the whole of the work, with nothing found about it left unread.
+
+- After feedback, the `feedback` item stays open until the work it asked for is done, and is
+  settled before the next sign-off stop.
+
+    A fresh conversation then starts that work from the user's own words.
+
+- A pause leaves what is unsettled as it is, since settling it is the work the pause interrupts.
+
+    `/rn:up` takes the task up from its notes and its committed edits, with nothing to redo.
+
+- `/rn:up` finds the next move by `●`, `──`, `→`, `waiting for`, and `paused at`, which stay as
+  written whatever the artifact language.
+
+A question to the user is not a stop: nothing has been decided, so nothing is committed, and a fresh
+conversation comes to the same question again from the last decision line.
 
 ### A session has one directory under .rn/
 
@@ -684,8 +772,8 @@ Completion criteria:
     Every command then judges the same way whether the session has ended.
 
 - `artifact-language` and `conversation-language` are what the user chose when the session began:
-  the first for everything written to the repository, the record and commits included, the second
-  for what is said to them.
+  the first for everything written to the repository, the record and commits included, but for the
+  user's feedback, which is quoted in their own words; the second for what is said to them.
 
     The record reads in one language throughout, and a fresh conversation speaks the user's
     language from the first line instead of guessing it. `rn` proposes English for the repository,
@@ -731,30 +819,46 @@ The checks run at three points:
   conductor's turn ends for the user.
 - Before every commit, on what is about to be committed.
 
+Checks 10 and 11 run before the first user's file tool call instead (PreToolUse), since a write or
+read is already done once it is seen after.
+
 What they check:
 
 1. `steering.md` has its front matter and headings, task headings read `### [ ] #N: name`, and IDs
    are unique.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
-3. Every ID referred to exists; every acceptance criterion has a check in the verification
-   document, and a task once tasks are planned.
+3. Every ID referred to exists. The verification document keeps its form: every attractive
+   criterion has a `### <ID>:` heading with a scene, and every must-be criterion is named in a
+   machine check or a scene. Every acceptance criterion has a task once tasks are planned.
 4. Every conductor commit ends with a decision line `● … ── … → …`.
-5. A settled `open/` item's text is whole in the commit message.
-6. A stop commit leaves `open/` holding only design points waiting for `writ`, has the latest default
-   branch merged, and its decision line ends `waiting for #N …`.
-7. A sign-off is marked `[x]`, and `status: finished` set, only in a commit approving it.
+5. A settled `open/` item's text is whole in the commit message, an earlier report taken out to be
+   written anew included.
+6. A stop commit keeps what its kind allows in Where rn stops: what `open/` holds and how its
+   decision line ends; at a sign-off, the latest default branch is also merged.
+7. A sign-off is marked `[x]`, or `status: finished` set, only after the user typed `/rn:ty`;
+   feedback is taken only after `/rn:gm`, and a pause made only after `/rn:dn`.
 8. Every commit is pushed.
 9. Only the conductor uses git: a commit or push from inside a subagent, the generator, the first
    user, or `writ`, is stopped.
 10. The first user writes only its own report file.
 11. The first user does not read the maker's account: commit messages, notes, or earlier reports.
 
+Check 7 knows what the user typed from a hook on `UserPromptExpansion`, which Claude Code runs when a
+command the user typed expands, and not when Claude calls a skill itself. It notes the command, read
+from the line the user typed, under the session's ID in the plugin's data directory, and the next
+stop commit uses the note up. Only the user can make that note, so the conductor cannot pass a
+sign-off, take feedback, or pause on its own decision.
+
 Checks 9 to 11 tell the agents apart by the `agent_type` a hook receives inside a subagent, which for
-a plugin's agent is the plugin-scoped name, such as `rn:first-user`. The hooks live in the plugin's
-`hooks/hooks.json`, since Claude Code ignores the `hooks` field in a plugin agent's own definition.
-They are written in Python 3.9 with the standard library only, which comes with git in the Mac
-developer tools and is no less common elsewhere; when it is missing they stop and tell the user to install it, since a skipped check
-goes unnoticed.
+a plugin's agent is the plugin-scoped name, such as `rn:first-user`. For check 10, a hook does not
+see the path the conductor named in its call, so it holds the first user to the first file it
+writes: that file must be a `report` in the session's `open/` that the last commit does not hold,
+and is noted under the agent's `agent_id`, and every later write by the same agent must be to it.
+
+The hooks live in the plugin's `hooks/hooks.json`, since Claude Code ignores the `hooks` field in a
+plugin agent's own definition. They are written in Python 3.9 with the standard library only, which
+comes with git in the Mac developer tools and is no less common elsewhere; when it is missing they
+stop and tell the user to install it, since a skipped check goes unnoticed.
 
 ## It installs from the marketplace with writ
 

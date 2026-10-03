@@ -132,35 +132,40 @@ there; until then, the plan shows them as not yet specified.
     judged against stopping them
   - More: none
   ...
+
+  ● #1 Plan sign-off ── proposed: work out the design on this plan → waiting for #1 Plan sign-off
 ```
 
 The map on top heads every message where `rn` stops for a sign-off or a pause: ✅ done, 👉 now,
 ⬜ ahead. Under it, `rn` says what it proposes to do next and why, then gives its grounds: each
 question the plan must answer, with what is good and what falls short, and where. You can say yes or
-no from this, and read the plan itself on the pull request whenever you want.
+no from this, and read the plan itself on the pull request whenever you want. The last line is what
+`rn` records of where it stopped, so a fresh conversation goes on from the same place.
 
 ### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
 
-`/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes your review
-comments on the pull request as feedback, so you can comment where you read. Either one stops
-there. You can clear the conversation at that point and lose nothing: say "go on" to continue, or
-`/clear` first, then `/rn:up`.
+`/rn:ty` approves. `/rn:gm <feedback>` asks for changes, and plain `/rn:gm` takes the review
+comments you wrote on the pull request since `rn` stopped for this sign-off as feedback, so you can
+comment where you read. Either one stops there. You can clear the conversation at that point and
+lose nothing: say "go on" to continue, or `/clear` first, then `/rn:up`.
 
 ```console
 > /rn:ty
 
-● Approved the plan. Next: say "go on", or /clear and /rn:up.
+● #1 Plan sign-off ── approved → #2 Design sign-off
+
+  Say "go on", or /clear and then /rn:up.
 ```
 
 ### 3. Work out the design — Design sign-off
 
 Once you approve the plan, `rn` works out the design with you: how to build it, and how you will see
-that it works. You approve the design document and a verification document together, before
-anything is built, so what comes back at the end is what you expected. The verification document
-says, for each attractive criterion, how it will be used as you would use it and what it should
-do then. Of the points that come up, how strict the type checks start is a call of effort against safety, so
-it is yours. What you settle goes into your README, design document, and verification document,
-which stay with your product, so the next session, or a teammate, starts from what you settled.
+that it works. You approve the design document and a verification document together, before anything
+is built, so what comes back at the end is what you expected. The verification document says, for
+each attractive criterion, how it will be used as you would use it and what it should do then. Of
+the points that come up, how strict the type checks start is a call of effort against safety, so it
+is yours. What you settle goes into your README, design document, and verification document, which
+stay with your product, so the next session, or a teammate, starts from what you settled.
 
 ```console
 ● The three bugs are in src/cart and src/checkout. For the test, I propose code that reproduces
@@ -190,16 +195,20 @@ If a decision only you can make comes up, `rn` asks you, with what it proposes a
 
 Every decision is pushed as it is made, so tomorrow, or a fresh conversation, starts where you
 stopped, without explaining anything again. When the context is nearly full, or you are done for the
-day, `/rn:dn` records how far the session has come. When you want a fresh conversation, run `/clear` yourself, then
-`/rn:up`. A plugin can't run `/clear`.
+day, `/rn:dn` records how far the session has come. When you want a fresh conversation, run `/clear`
+yourself, then `/rn:up`. A plugin can't run `/clear`.
 
 ```console
 > /rn:dn
 
 ● ── typescript: a wrong type fails the build ──
   ✅ #1 Plan sign-off / #2 Design sign-off / #3 move src/cart
-  👉 #4 move src/checkout ── stopped here; next: /rn:up
+  👉 #4 move src/checkout ── paused here
   ⬜ #5 move src/account / #6 Deliverable sign-off
+
+  ● #4 move src/checkout ── half done: order.ts moved, payment.ts next → paused at #4 move src/checkout
+
+  Next: /clear, then /rn:up.
 
 > /clear
 > /rn:up
