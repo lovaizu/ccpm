@@ -42,9 +42,10 @@ their time only on the three sign-offs and on what only they can decide.
     task's purpose; a fresh first user (a subagent handed only the work, its purpose, and the
     viewpoints, nothing of how it was made) uses it once and answers each viewpoint with what it
     understood or what happened, giving no Good or More; the conductor sets those answers beside the
-    aim and gives Good or More; each More whose fix brings the work closer is fixed by the generator,
-    then checked by a fresh first user for that viewpoint alone; the final Good and More go into the
-    task's check-off commit message.
+    aim and gives Good or More; each More whose fix brings the work closer is fixed by the generator;
+    a fix to a More on attractive quality is checked by a fresh first user for that viewpoint alone,
+    while a More on must-be quality is fixed and needs no re-check (point 11; the user, 2026-10-03);
+    the final Good and More go into the task's check-off commit message.
   - A first user writes its whole report to `.rn/20261003-rn-rebuild/open/{NN}-report-{target}.md`
     (overwritten when the same target is used again) and returns only a short result and that path
     (point 14). The commit that settles it carries the report whole with the conductor's decisions,
