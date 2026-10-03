@@ -115,8 +115,13 @@ verification split into its own document, so the prompts and hooks can be built 
   model, generator/evaluator split, decision records (ways not chosen). Verify each attribution before
   writing it. Watch upstream changes of mattpocock/skills and decide whether to take them in.
 - [ ] 8. Viewpoints ask about the state of what the receiver gets, not what the maker did (writ's
-  essentials.md, 31dba86). Rewrite rn's viewpoint files to it with the Kano and naming changes, e.g.
+  essentials.md, 31dba86). Rewrite rn's viewpoint files to it with the naming changes, e.g.
   "Is each fact checked?" and "Has the work shown nothing…". (Documents here; files in #2.)
+  Viewpoint files are not split by Kano quality: a question stays only if removing it would let a
+  work that misses its purpose pass (writ's essentials.md, e50d263), whatever its quality. The Kano
+  split is used where it changes what is done: the Acceptance criteria and the tasks and checks tied
+  to them; the plan's viewpoint file asks whether the plan brings attractive quality first. (Agreed
+  2026-10-03.)
 - [ ] 9. `writ` stays a dependency (same marketplace, updated together).
 - [ ] 10. The session's pull request body carries, besides the link to `steering.md`, what GitHub
   needs to connect the work: `Closes #N` for an issue the work completes, `Refs #N` for one it only
