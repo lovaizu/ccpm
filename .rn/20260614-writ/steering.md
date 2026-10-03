@@ -229,7 +229,7 @@ proven and split into its own plugin.
 
 **Steps**:
 
-- [ ] Run writ in every scenario the design's quality section names, and judge each quality by what
+- [x] Run writ in every scenario the design's quality section names, and judge each quality by what
       happens to the user and the reader
 - [ ] Fix what falls short within the same round and run again, until each quality passes or the
       user decides
@@ -264,8 +264,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-10-03
+- **Last completed**: #4 (#5 left only the user's review on PR #15; #6 round 1 done, results in `.writ/open/04-report-trial.md`, four Mores fixed in 5663a1e)
+- **Next**: #6 round 2 — judge scene E (migration plan) and scene F (typing guide) against the four fixed benefits, update and settle `.writ/open/04-report-trial.md`, then #7.
+- **Notes**: Round 2 runs in the session scratchpad `sandbox/sceneE` (session 4d76a36f…, last turn E.4 may still be running) and `sandbox/sceneF` (finished: report-only approval held, 3 question rounds, one interpretive line at docs/typing-guide.md:34); if the scratchpad is gone, copy `sample-app` fresh and rerun. For E still to do: the user's report-first decision, and a fresh reader's read for repetition. Trials are driven from the main session with `claude -p --plugin-dir writ`; a subagent starting it is blocked by auto mode.
