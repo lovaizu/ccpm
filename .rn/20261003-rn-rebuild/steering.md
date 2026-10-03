@@ -10,7 +10,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 - Every benefit in `rn/README.md` passes its scene in the verification document, run on the practice
   repository `lovaizu/rn-try` with the real `writ`.
-- Points 1–9 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
+- Points 1–10 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
   approved on PR #33, and the prompts, viewpoint files, and hooks do what those documents say.
 - Pause and resume (`/rn:dn`, `/rn:up`), feedback (`/rn:gm`), and bringing a 0.8.0 session to the new
   form each work on the practice repository.
@@ -24,8 +24,6 @@ their time only on the three sign-offs and on what only they can decide.
   `writ` from that branch. Unverified when it merges.
 - A PreToolUse hook can tell which subagent made a tool call. Unverified — checked before hooks 9–11
   are built; if false, the design changes for those three.
-- `rn` 0.9.0 in `plugin.json` and `CHANGELOG.md` is on this branch only; `main` and the latest tag are
-  0.8.0 (`rn--v0.8.0`). No release instruction for 0.9.0 has been confirmed.
 
 # Rules
 
@@ -40,10 +38,12 @@ their time only on the three sign-offs and on what only they can decide.
   built from them only after.
 - Points are put to the user one at a time, in plain Japanese, with grounds and one recommendation.
 - Artifacts in English; conversation in Japanese.
+- This work is released as `rn` 0.9.0, a large step up from 0.8.0 (the user's release instruction,
+  2026-10-03). After the user merges PR #33, tag `rn--v0.9.0` on `main` and publish its GitHub Release.
 
 # Tasks
 
-### #1: README, design document, and verification document carry agreed points 1–9
+### #1: README, design document, and verification document carry agreed points 1–10
 
 **Purpose**: The README and design document state every point agreed on 2026-10-02/03, with
 verification split into its own document, so the prompts and hooks can be built from them.
@@ -96,6 +96,9 @@ verification split into its own document, so the prompts and hooks can be built 
   essentials.md, 31dba86). Rewrite rn's viewpoint files to it with the Kano and naming changes, e.g.
   "Is each fact checked?" and "Has the work shown nothing…". (Documents here; files in #3.)
 - [ ] 9. `writ` stays a dependency (same marketplace, updated together).
+- [ ] 10. The session's pull request body carries, besides the link to `steering.md`, what GitHub
+  needs to connect the work: `Closes #N` for an issue the work completes, `Refs #N` for one it only
+  serves, and the pull requests it supersedes.
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
@@ -105,7 +108,7 @@ verification split into its own document, so the prompts and hooks can be built 
 **Completion criteria**:
 
 - A reader of `rn/README.md`, `rn/docs/design.md`, and the verification document alone can say, for
-  each of points 1–9 above, where it is stated and what it means for the user or the maintainer — no
+  each of points 1–10 above, where it is stated and what it means for the user or the maintainer — no
   point is missing or changed in meaning.
 - Every acceptance criterion in the design has an ID and at least one verification check that names
   it; no check names an ID that does not exist.
@@ -181,18 +184,17 @@ breach is stopped rather than left to the evaluator.
   design names.
 - A normal session run raises no false stop.
 
-### #5: CHANGELOG states what changed for the user
+### #5: CHANGELOG states what 0.9.0 changes for the user
 
-**Purpose**: A user reading `rn/CHANGELOG.md` learns what changes for them, in the place the release
-rules put it.
+**Purpose**: A user reading `rn/CHANGELOG.md`'s 0.9.0 section learns how far `rn` has moved from 0.8.0
+and what changes for them.
 
 **Prerequisites**: #4
 
 **Steps**:
 
-- [ ] Ask the user whether this work is released as 0.9.0; without a release instruction, entries go
-  under `## [Unreleased]` and `plugin.json` keeps the released version
-- [ ] Write the entries from the approved README and design
+- [ ] Write the `## [0.9.0]` entries from the approved README and design, dated the day the release
+  is finalized
 - [ ] self-check (OK/NG per completion criterion, record in checks/5.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
@@ -202,7 +204,8 @@ rules put it.
 
 - Every user-noticeable change from this work has one line stating what changed and why it helps,
   and no line covers something the user would not notice.
-- The version in `plugin.json` and the CHANGELOG heading agree with the user's release decision.
+- `plugin.json` is 0.9.0, the CHANGELOG's top section is `## [0.9.0] - <release date>`, and no empty
+  `## [Unreleased]` is left.
 
 ### #6: Trials run on the practice repository
 
