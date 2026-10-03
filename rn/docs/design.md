@@ -126,7 +126,8 @@ To this `rn` adds its own part. It finds what the user really wants from the pur
 words and the ideal that purpose calls for, since the words alone carry the gap the README's example
 shows: every file ending in .ts would have let the bugs through. It asks one point at a time and
 writes each into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
-or serves, and which languages the record and the talk are in, are among the points agreed.
+or serves, which pull requests it replaces, and which languages the record and the talk are in, are
+among the points agreed.
 
 ### Acceptance criteria, split by the Kano model
 
@@ -189,8 +190,8 @@ whether `rn` takes it in, since `rn` holds the know-how, not the skills.
 
 ### Feedback at a sign-off
 
-Feedback is the words the user gives with `/rn:gm`, or, when they give none, the review comments the
-`gh` user wrote on the pull request after the stop commit, so the user can comment where they read.
+Feedback is the words the user gives with `/rn:gm`, or, when they give none, every comment the `gh`
+user wrote on the pull request after the stop commit, on a line or on the whole, so the user can comment where they read.
 It is kept whole, in the user's own words and language, in a `feedback` item in `open/`, so the work
 is measured by what the user said.
 
