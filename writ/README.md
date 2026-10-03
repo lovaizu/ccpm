@@ -1,197 +1,197 @@
 # writ
 
-writ に文書を書かせると、あなたは次のものを得ます。新しく書く文書も、今ある文書を直すときも同じです。
+When writ writes a document for you, you get the following, whether the document is new or one you already have and want fixed.
 
-- 読み手は一度読めば分かり、読み終えて何をすればよいかも分かります。
-- 返ってきた文書を、自分で読み直して直さずに、そのまま読み手に渡せます。
-- 最後の報告を読むだけで、文書全体を読み直さずに結果を判断できます。
-- 読み手が目的を果たすのに要ることが決まっていなければ、ごまかされずにあなたへの質問として返ります。読み手が自分で決められることは、決まっていないと分かる形で残るので、気づかない穴のある文書を渡すことはありません。
+- Your reader understands it in one reading, and knows what to do once they finish.
+- You can hand the document you get back straight to your reader, without reading it over and fixing it yourself.
+- You can judge the result from the final report alone, without reading the whole document again.
+- When something your reader needs to achieve their purpose is not decided, it comes back to you as a question instead of being covered over. What your reader can decide for themselves is left so that they can see it is not decided, so you never hand on a document with a hole no one has noticed.
 
-writ は、仕上げた文書を読み手と同じ立場で実際に使ってみて、確かめてから返すので、これらが得られます。
+You get these because writ uses the finished document as your reader would, and checks it, before returning it.
 
-文書だけでなく、プロンプトやコード、テストなど、自分の作ったものを確かめるのにも使えます。
+You can also use it to check what you make besides documents, such as prompts, code and tests.
 
-- 作ったものを、その利用者として実際に使った事実で確かめられます。作った側の思い込みが入りません。
-- 自分の作るものに合った観点、つまり目的を果たしたかを確かめる問いを、目的から逆算して作れます。作った観点は、実物で試してから使えます。
+- You check what you made by what happened when it was used as its user would use it. What you meant while making it does not get in.
+- You can write the essentials for what you make, that is, questions that ask whether it achieved its purpose, worked back from that purpose. You try the essentials on a real work before you use them.
 
-## `/writ:up` を呼んで聞かれたことに答えると、仕上がった文書と、観点ごとに確かめた結果が返ります
+## Call `/writ:up` and answer what it asks, and you get the finished document and the result for every question
 
 ```mermaid
 sequenceDiagram
-  actor Y as あなた
+  actor Y as You
   participant W as writ
-  participant F as 対象の文書
-  participant U as first user<br/>話し合いを知らない AI
-  Y->>W: /writ:up と、やりたいことか直したい文書
-  W->>Y: 読み手と目的の提案か質問
-  Y->>W: 答え
-  W->>F: 書いた中身
-  F->>U: 読み手として読む文書
-  U->>W: 何を受け取り、何をしようとしたか
-  W->>F: 狙いからずれた所を直した中身
-  opt 読み手が目的を果たすのに要ることが決まっていない
-    W->>Y: 決まっていないことの質問
-    Y->>W: 決めたこと
-    W->>F: 書き直した中身
+  participant F as The document
+  participant U as first user<br/>an AI that does not know the discussion
+  Y->>W: /writ:up, with what you want or the document to fix
+  W->>Y: A proposal or question on the reader and purpose
+  Y->>W: Your answer
+  W->>F: What it wrote
+  F->>U: The document to read as its reader
+  U->>W: What it took in and what it set out to do
+  W->>F: The fixes where it fell short of the aim
+  opt Something the reader needs to achieve the purpose is not decided
+    W->>Y: A question on what is not decided
+    Y->>W: What you decided
+    W->>F: The rewrite
   end
-  F->>Y: 仕上がった文書
-  W->>Y: 観点ごとに確かめた結果
-  Note over Y: 承認するか、直しを頼むかを決める
+  F->>Y: The finished document
+  W->>Y: The result for every question
+  Note over Y: You decide whether to approve it or ask for fixes
 ```
 
-報告には、使った観点ごとに Good か More が付きます。Good は狙いどおりに伝わった所、More は狙いからずれている所です。
+The report gives a Good or More for every question in the essentials writ used. A Good is a place that comes across as the aim intends; a More is a place that falls short of the aim.
 
-writ は、誰が読み、読み終えて何を決めて何をするかが決まるまで、書き始めません。文書の良し悪しは、読み手と目的が決まって初めて測れるからです。あなたが答えるのは、頼んだ言葉とリポジトリから分からないことだけです。writ が推し量れることは提案として出すので、合っているかを答えるだけで済みます。
+writ does not start writing until it is settled who reads the document and what they decide and do once they have read it. How good a document is can be measured only once its reader and purpose are set. You answer only what your request and the repository do not tell. What writ can infer, it puts to you as a proposal, so you only say whether it is right.
 
-返す前に、writ は first user（最初の利用者）に文書を使わせます。first user は、これまでの話し合いを知らない別の AI です。読み手として文書を読み、何を受け取って何をしようとしたかを報告します。writ はその報告を狙いと比べ、狙いからずれた所を直してから返します。読み手がつまずく所は、書いた側が読み直しても見えません。話し合いを知らない目で実際に使って、初めて見えます。
+Before returning the document, writ has a first user use it. The first user is a separate AI that does not know the discussion so far. It reads the document as its reader and reports what it took in and what it set out to do. writ lays that report beside the aim and fixes where the document falls short before returning it. Where a reader trips cannot be seen by the one who wrote the document, however often they read it over. It shows only when someone who does not know the discussion actually uses it.
 
-## 例：チームのために TypeScript への移行計画を書く
+## Example: writing a TypeScript migration plan for the team
 
-JavaScript で書いたアプリを TypeScript に移すことになり、チームのエンジニアが読む計画を書くとします。
+Your app is written in JavaScript and is moving to TypeScript, and you want a plan for the team's engineers to read.
 
 ```console
-> /writ:up チームのエンジニア向けに、TypeScript への移行計画を書いて
+> /writ:up Write a TypeScript migration plan for the team's engineers
 
-● エンジニアは読み終えて、何を決めて何をすればよいですか？
+● Once the engineers have read it, what should they decide and do?
 
-> どのディレクトリから移すかに合意して、それぞれ担当を引き受ける。
+> Agree on which directories to move first, and each take one on.
 
-● 設計の文書は docs/ にあるので、docs/migration-plan.md に置くつもりです。よいですか？
+● The design documents are in docs/, so I plan to put it at docs/migration-plan.md. Is that right?
 
-> はい。
+> Yes.
 ```
 
-writ はリポジトリのディレクトリ構成とコードを調べ、docs/migration-plan.md に計画を書きます。
+writ looks up the repository's directory layout and code, and writes the plan to docs/migration-plan.md.
 
 ```markdown
-# TypeScript への移行計画
+# TypeScript migration plan
 
-src/api/ から先に移し、そのあと src/ui/ に進みます。src/api/ はほかのコードから呼ばれる側なので、先に型が付けば、呼ぶ側の間違いもすぐ見つかります。
+We move src/api/ first, then go on to src/ui/. Other code calls src/api/, so once it has types, mistakes in the calling code show up at once.
 
-## 担当
+## Owners
 
-- src/api/ を移す担当は、まだ決まっていません。
-- src/ui/ を移す担当は、まだ決まっていません。
+- No one owns moving src/api/ yet.
+- No one owns moving src/ui/ yet.
 ```
 
-報告は、文書をこのまま渡せるかの writ の見立てから始まります。続いて、使った観点ごとに、Good か More かとその場所が1行ずつ並びます。観点は文書の種類ごとにあります。writ が残した More だけは、読み手が何に困るかと、残した理由まで書かれます。あなたが決めるのは、その More を受け入れるかどうかだからです。
+The report opens with writ's view of whether the document can be handed on as it is. Then comes one line for every question in the essentials it used, with Good or More and where. There are essentials for each kind of document. Only for a More that writ left does the report also say what the reader struggles with and why it was left, because what you decide is whether to accept that More.
 
 ```console
-● docs/migration-plan.md を書きました。担当だけ決まっていませんが、このままチームに渡せると考えます。
+● I wrote docs/migration-plan.md. Only the owners are not decided, and I think you can hand it to the team as it is.
 
-  どの文書にも使う観点（doc.md）
-    一度読んで、何をすればよいと受け取ったか ……… Good（3行目と「担当」の節）
-    読み終えてすぐ動こうとしたとき、何が足りなかったか ……… More（「担当」の節）
-    （ほかの観点も同じように1行ずつ）
+  Essentials for every document (doc.md)
+    Having read it once, what did you take it you should do? ……… Good (line 3 and "Owners")
+    When you set out to act right after reading, what was missing? ……… More ("Owners")
+    (every other question gets a line the same way)
 
-  残した More
-    担当が決まっていません（「担当」の節）
-      first user の報告：誰がどこを担当するかが決まっていないので、名乗り出るまで動けない
-      困ること：担当が決まるまで、読み手は自分が何を引き受けるか分かりません。
-      残した理由：誰が何を担当するかは、あなたとチームが決めることです。読み手が名乗り出て決められるので、決まっていないと分かる形で残しました。
+  The More I left
+    The owners are not decided ("Owners")
+      The first user's report: who takes which part is not decided, so I cannot act until someone volunteers
+      What the reader struggles with: until owners are set, readers do not know what they will take on.
+      Why I left it: who owns what is for you and your team to decide. Readers can settle it by volunteering, so I left it where they can see it is not decided.
 
-  全文：.writ/open/01-report-migration-plan.md
+  Full text: .writ/open/01-report-migration-plan.md
 ```
 
-どの観点にも1行ずつ答えるので、答え漏れがないことも報告だけで分かります。Good の中身を確かめたいときは、その観点について聞けば答えます。
+Since every question gets its own line, the report alone also shows that none was left unanswered. To see what lies behind a Good, ask about that question and writ answers.
 
-全文のファイルには、観点ごとの first user の報告と、Good・More のすべてが、場所と根拠付きで入っています。first user の報告は、文書をどう受け取り、何をしようとしたかです。Good には読み手が何を得るか、More には読み手が何に困るかが付きます。writ はこのファイルを `.writ/open/` に置き、このファイルだけを今のブランチにコミットし、そのブランチに上流があれば push します。対象の文書ごとに1つで、確かめ直すと上書きされます。
+The full file holds the first user's report for every question and every Good and More, each with its place and evidence. The first user's report is how it took in the document and what it set out to do. A Good says what the reader gains, and a More says what the reader struggles with. writ puts the file in `.writ/open/`, commits only that file to the current branch, and pushes if the branch has an upstream. There is one file per document, and checking again overwrites it.
 
-残した More をあなたが受け入れるか決めると、その結果は片付きます。writ は全文をコミットメッセージに写し、ファイルを消してコミットします。記録は git の履歴に残り、最後に残るのは文書だけです。`.writ/open/` にファイルが残っていれば、まだあなたの判断を待っているものがあるという印です。
+Once you decide whether to accept the Mores that were left, the result is cleared. writ copies the full text into a commit message and deletes the file in that commit. The record stays in the git history, and in the end only the document remains. A file left in `.writ/open/` is the sign that something still waits for your decision.
 
-今ある文書を直すときは、その文書を渡します。移したコードに型を付けるときの決まりを、docs/typing-guide.md にまとめてあるとします。writ は文書を読み、文書から分からないことだけを聞きます。
+To fix a document you already have, hand writ that document. Say you keep the rules for adding types to moved code in docs/typing-guide.md. writ reads it and asks only what the document does not tell.
 
 ```console
 > /writ:up docs/typing-guide.md
 
-● この文書は、チームのエンジニアが移したコードに型を付けるときに従う決まりだと読みました。
-  直そうとしましたが、any を使ってよいかが決まっていないので、仕上がったものとしては返せません。
-  any は使ってよいですか？ 使ってよいなら、どんなときですか？
+● I read this as the rules the team's engineers follow when they add types to moved code.
+  I tried to fix it, but whether `any` is allowed is not decided, so I cannot return it as finished.
+  Is `any` allowed? If so, when?
 ```
 
-決めたことを答えると、writ はそれを書き入れ、観点ごとの Good・More が同じ形で返ります。「できるだけ避ける」のように、どちらとも読める言い方で any をぼかした文書は返ってきません。チームの決まりは読み手が自分では決められず、どちらとも読める決まりには従えないからです。読み手が名乗り出て決められる担当とは、ここが違います。
+When you answer with what you decided, writ writes it in, and the Good and More for every question come back in the same form. You never get back a document that blurs `any` with words that read either way, such as "avoid where possible". Readers cannot decide a team rule themselves, and they cannot follow a rule that reads either way. That is the difference from the owners, which readers can settle by volunteering.
 
-## 作業の途中で Claude Code が文書を書くとき、自分で writ を選ぶことがあります
+## When Claude Code writes a document during other work, it may choose writ itself
 
-writ には、文書を書いたり直したりするためのものだという説明が付いています。Claude Code が作業の途中で README や設計書を書こうとして、この説明が当てはまると判断すると、writ を使います。会話から読み手と目的が分かればすぐに書き、分からないときだけあなたに聞きます。報告には、観点ごとの Good・More が付きます。
+writ comes with a description saying it is for writing and fixing documents. When Claude Code is about to write a README or a design document during other work and judges that this description fits, it uses writ. If the conversation tells the reader and purpose, it writes at once, and asks you only when it cannot tell. The report gives a Good or More for every question.
 
-writ を選ぶかは、その場の Claude Code の判断なので、いつも選ぶとは限りません。観点ごとの Good・More が付いていない報告が来たら、その文書を渡して `/writ:up` を呼んでください。
+Whether to choose writ is Claude Code's judgment at the moment, so it does not always choose it. If a report comes without a Good or More for every question, call `/writ:up` with that document.
 
-## 作ったものを確かめる、観点を作る：pith
+## Checking what you made, and writing essentials: pith
 
-pith は、成果物を観点で確かめる仕組みです。writ の中で `/writ:up` が使っているものを、あなたが `/writ:pith` で呼ぶか、言葉で頼んで直接使うこともできます。文書に限らず、プロンプトやコード、テストも確かめられます。
+pith checks a work against essentials. It is the part of writ that `/writ:up` uses, and you can also use it directly, by calling `/writ:pith` or by asking for it in words. It checks not only documents but also prompts, code and tests.
 
-### 作ったものを確かめる
+### Checking what you made
 
-CI で PR を見る Claude のために、.github/prompts/pr-review.md にプロンプトを書いたとします。狙いは、src/ui/api-client.js を壊す API の変更を見つけることです。
+Say you wrote a prompt at .github/prompts/pr-review.md for the Claude that reviews pull requests in CI. The aim is to catch API changes that break src/ui/api-client.js.
 
 ```console
-> /writ:pith .github/prompts/pr-review.md を確かめて。
-  受け手は CI で動く Claude で、PR ごとにこのプロンプトで差分を見て、コメントを書く。
-  狙いは、api-client.js を壊す API の変更を見逃さないことと、それ以外ではコメントしないこと。
+> /writ:pith Check .github/prompts/pr-review.md.
+  The receiver is Claude running in CI, which reads each pull request's diff with this prompt and writes comments.
+  The aim is to miss no API change that breaks api-client.js, and to comment on nothing else.
 
-● pith で確かめました。API の変更を見つける所は狙いどおりですが、1つ狙いからずれています。
+● I checked it with pith. Finding API changes works as the aim intends, but one thing falls short of it.
 
-  More：項目名の変更を見逃しました（12行目「エンドポイントの追加・削除・引数の変更を見る」）
-    観点：手順にない場面を与えたとき、AI は何をしたか
-    first user の報告：API を変えずにレスポンスの項目名だけを変えた差分を与えたら、「API の変更ではない」としてコメントしなかった
-    困ること：項目名が変わったとき、UI が壊れたまま PR がマージされます。
+  More: it missed a renamed field (line 12, "Look at added or removed endpoints and changed arguments")
+    Question: when given a situation no step covers, what did the AI do?
+    The first user's report: given a diff that only renamed a field in a response without changing the API, it judged "not an API change" and made no comment
+    What the receiver struggles with: when a field is renamed, the pull request is merged with the UI broken.
 
-  全文：.writ/open/01-report-pr-review.md
+  Full text: .writ/open/01-report-pr-review.md
 ```
 
-first user は、プロンプトを実際に AI に渡し、手順にない場面で動かしてみます。良し悪しは付けず、起きたことを報告します。報告を狙いと比べて Good・More を付けるのは、first user とは別の、pith の中で良し悪しを判断する役です。あなたが書き出した狙いはこの役だけが受け取り、first user には見せません。狙いを知ると、それを探しながら使い、足りない所を頭の中で補ってしまうからです。
+The first user actually gives the prompt to an AI and runs it in situations no step covers. It does not judge; it reports what happened. Laying the report beside the aim and giving each Good and More is the work of a separate role inside pith, the conductor, which judges. Only the conductor receives the aim you wrote out; the first user never sees it. Knowing the aim, it would use the work looking for it, and fill what is missing in its head.
 
-狙いは、確かめる前に書き出して渡します。書き出さなかった狙いとは比べられないからです。渡した狙いのどれとも比べられない観点があると、first user が使う前に、その観点を挙げて狙いを足すよう返ってきます。
+Write out the aim and hand it over before the check, because an aim that was not written out cannot be compared with. If a question cannot be compared with anything in the aim you handed over, pith returns before any first user runs, naming that question and asking you to add to the aim.
 
-### 観点を作る
+### Writing essentials
 
-チームで社内向けの CLI ツールを作っていて、そのリリースノートには決まった確かめ方がないとします。読み手はその CLI を使っている社内の開発者で、今すぐ新しい版に上げるかを決めるために読みます。
+Say your team builds an internal CLI tool, and there is no set way to check its release notes. The readers are the developers in the company who use the CLI, and they read the notes to decide whether to upgrade to the new version now.
 
 ```console
-> /writ:pith うちの CLI のリリースノートの観点を作って。docs/essentials/release-notes.md に置いて。
-  読むのはこの CLI を使っている社内の開発者で、今すぐ新しい版に上げるかを決めるために読む。
+> /writ:pith Write essentials for our CLI's release notes. Put them at docs/essentials/release-notes.md.
+  The readers are the developers in the company who use this CLI, reading to decide whether to upgrade now.
 
-● docs/essentials/release-notes.md に、次の3つの問いを観点として書きました。
-    読んで、上げると何が変わり、何をしなければならないと受け取ったか
-    上げずにいると、何を逃すと受け取ったか
-    読み終えて、今すぐ上げるかをどう決めたか
-  一番新しいリリースノート（docs/releases/1.4.md）で試すと、3つとも使って起きたことで答えられ、
-  その答えから上げるかを決められました。
+● I wrote these three questions as the essentials in docs/essentials/release-notes.md.
+    Having read it, what did you take it would change when you upgrade, and what would you have to do?
+    What did you take it you would miss if you did not upgrade?
+    Once you finished reading, how did you decide whether to upgrade now?
+  Tried on the latest release notes (docs/releases/1.4.md), all three could be answered from what happened in use,
+  and from those answers you could decide whether to upgrade.
 ```
 
-観点は、目的から逆算して作ります。リリースノートの目的が「今すぐ上げるかを決められる」なら、観点は「読んで、上げると何が変わり、何をしなければならないと受け取ったか」のような問いになります。「変更点が箇条書きか」のような、形を問う観点にはなりません。作った観点は、実際のリリースノートに当てて確かめてみます。その種類の実物がまだなければ、最初に実物を確かめるときに試します。
+Essentials are worked back from the purpose. If the purpose of release notes is to let readers decide whether to upgrade now, a question looks like "Having read it, what did you take it would change when you upgrade, and what would you have to do?". It never asks about form, as in "Are the changes in a bulleted list?". pith tries the essentials it wrote on real release notes. If no real work of that kind exists yet, they are tried the first time a real one is checked.
 
-## 観点
+## Essentials
 
-文書は、種類ごとの観点で確かめます。
+Documents are checked with the essentials for their kind.
 
-- [どの文書にも](references/essentials/doc.md)使う観点です。読み手が一度読んで、読み終えて何をすればよいか分かるかを確かめます。
-- [README](references/essentials/readme.md) は、初めての人が得るものを知って使うかを決め、使い始められるかも確かめます。
-- [設計書](references/essentials/design.md) は、作る人と保守する人が、どの機能がどのベネフィットを生むかを知り、変更が設計に合うかを判断できるかも確かめます。
-- [AI が読むプロンプト](references/essentials/prompt.md) は、書いた人が想定していない場面でも、AI が目的に沿って動けるかも確かめます。
+- The essentials for [every document](references/essentials/doc.md) check whether readers understand it in one reading and know what to do once they finish.
+- For a [README](references/essentials/readme.md), they also check whether a newcomer learns what they gain, decides whether to use the product, and can start using it.
+- For a [design document](references/essentials/design.md), they also check whether those who build and maintain the product know which feature brings which benefit, and can judge whether a change fits the design.
+- For a [prompt an AI reads](references/essentials/prompt.md), they also check whether the AI can act toward the purpose even in situations the writer did not foresee.
 
-コードやテストの観点は付いていません。それらを確かめるときは、先に `/writ:pith` で観点を作ります。
+There are no essentials for code or tests. To check them, first write essentials with `/writ:pith`.
 
-観点そのものは、[観点の観点](references/essentials/essentials.md)で確かめます。観点が目的から逆算されているか、first user が使って起きたことで答えられる問いになっているか、などです。
+The essentials themselves are checked with the [essentials for essentials files](references/essentials/essentials.md): whether they were worked back from the purpose, whether each question can be answered from what happened when a first user used the work, and so on.
 
-## 入手して使い始める
+## Getting started
 
-writ は Claude Code のプラグインなので、Claude Code が要ります。報告の形を確かめるスクリプトに、Python 3.9 以降が要ります。Mac では、git と同じ開発者ツールに入っています。なければ writ は、確かめを飛ばさずに止まり、入れるよう伝えます。Node.js は無くても使えます。あれば、文の長さのような機械で判断できる書き方を、npx で取ってくる lint（Vale と textlint）でも確かめます。
+writ is a Claude Code plugin, so you need Claude Code. The script that checks the form of the report needs Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, writ stops instead of skipping the check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
 
-writ はプラグインのマーケットプレイス `lovaizu/ccpm` から入手できます。Claude Code でマーケットプレイスを足してから、writ を入れます。
+writ is in the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install writ.
 
 ```console
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install writ@ccpm
 ```
 
-これで `/writ:up` と `/writ:pith` を使えます。
+Now you can use `/writ:up` and `/writ:pith`.
 
-## どう作られているか
+## How it is built
 
-誰が作り、誰が使い、誰が決めるのか、なぜ writ をそう作ったのかは、[設計書](docs/design.md)にあります。
+Who makes, who uses and who decides, and why writ is built that way, are in the [design document](docs/design.md).
 
-## ライセンス
+## License
 
-MIT ライセンスです。全文は、リポジトリのルートの [LICENSE](../LICENSE) にあります。
+MIT. The full text is in [LICENSE](../LICENSE) at the root of the repository.

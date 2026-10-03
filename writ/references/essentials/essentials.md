@@ -1,57 +1,57 @@
-# 観点ファイル
+# Essentials files
 
-読み手は三者です。生成者は、観点ファイルを書くときに、目指す形としてこれを読みます。first user は、観点ファイルの問いを、その種類の実物に当てて確かめてみて、ここにある問いごとに、何をして何が起きたかを報告します。どう確かめるかは first user が決め、良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、観点ファイルを使って起きたことから、その観点ファイルで実物が目的を達成したかを確かめられるかが分かります。
+This file has three readers. The generator reads it as the form to aim for when it writes an essentials file. The first user tries checking a real work of the file's kind with the essentials file's questions, and reports, for each question here, what it did and what happened. How to check is for the first user to decide, and it does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the essentials file was used, whether that essentials file can check that a real work achieved its purpose.
 
-- 観点ファイルの問いごとに、答えを出すために実物で何をしたか。
+- For each question of the essentials file, what did you do with the real work to get an answer?
 
-    実物を受け手として使って答えた問いなら、答えは使ってみなければ出ない事実で、狙いの横に置いて比べられます。文書なら、読み手として読んで何を受け取り、何をしようとしたかです。実物を眺めるだけで答えが出た問いは、何かがあるか、良いかを問うもので、誰も使えない実物でも「はい」で通ります。答えを出せずに止まったなら、止まった所が、問いの足りない所です。
+    When a question was answered by using the real work as its receiver, the answer is a fact that comes out only by using it, and can be laid beside the aim and compared. For a document, it is what was taken in and what was set out to do, reading as the reader. A question answered by only looking over the real work asks whether something is there or whether it is good, and passes with "yes" even for a real work no one can use. If you stopped without an answer, where you stopped is where the question falls short.
 
-    例:
-    - 文書: 「選ぶ理由が書いてあるか」は眺めて答えが出る。「読み手として読み、選ぶ理由として何を受け取ったか」は読んでみないと出ない。
-    - プロンプト: 「目的が書いてあるか」は眺めて答えが出る。「どの手順にもない場面を AI に渡し、AI が何をしたか」は動かしてみないと出ない。
-    - コード: 「エラー処理があるか」は眺めて答えが出る。「不正な値で呼び、何が起きたか」は呼んでみないと出ない。
-    - テスト: 「テスト名が分かりやすいか」は眺めて答えが出る。「わざとコードを壊して走らせ、どのテストがどんなメッセージで落ちたか」は走らせてみないと出ない。
+    Examples:
+    - Document: "Does it state the reason to choose it?" is answered by looking it over. "Reading as the reader, what did you take in as the reason to choose it?" is answered only by reading it.
+    - Prompt: "Does it state the purpose?" is answered by looking it over. "Given a situation no step covers, what did the AI do?" is answered only by running it.
+    - Code: "Is there error handling?" is answered by looking it over. "Called with a bad value, what happened?" is answered only by calling it.
+    - Tests: "Are the test names clear?" is answered by looking them over. "With the code broken on purpose and the tests run, which test failed, with what message?" is answered only by running them.
 
-- 観点ファイルの問いごとに、どんな答えが出たか。
+- For each question of the essentials file, what answer came out?
 
-    受け手が何を得たか、受け手に何が起きたかという答えなら、指揮者は狙いの横に置いて Good か More をはっきり付けられ、More ならどれだけずれたかも言えます。そうした答えを引き出すのは、目的から逆算した問いです。目的は誰も予想しなかった場面も含むので、その場面の答えも判断できます。目的のための手段を問うと、答えは手段があるかどうかになり、役に立たない所にも手段を足せば通って、実物は目的を外したままです。「読んでどうだったか」のように比べようのない問いには、「読みやすかった」のような、良くも悪くもない答えが出ます。
+    When the answer is what the receiver got or what happened to the receiver, the conductor can lay it beside the aim and plainly give a Good or More, and for a More can say how far it falls short. What draws such answers is a question worked back from the purpose. The purpose also covers situations no one foresaw, so answers in those situations can be judged too. A question about a means toward the purpose gets an answer about whether the means is there; adding the means even where it does not help passes, and the real work still misses the purpose. A question with nothing to compare against, such as "How was it to read?", gets an answer that is neither good nor bad, such as "It was easy to read."
 
-    例:
-    - 文書: 目的は、初めての人が使うかを決められること。「例が載っていた」という答えは手段についてで、狙いと比べられない。「時間のかかる作業を見張らずに任せられる、を選ぶ理由として受け取った」なら比べられる。
-    - プロンプト: 目的は、手順にない場面でも AI が目的に向かって動くこと。「手順に番号が振ってあった」は比べられない。「決まっていない点を並べて利用者に聞いた」なら、狙いが「決まっていない点は利用者に戻す」のとき Good と言える。
-    - コード: 目的は、担当者が期日を忘れないこと。「通知の処理が別の関数になっていた」は比べられない。「もう一度走らせても、メールは1通のままだった」なら、狙いが「1件につき1日1通」のとき Good と言える。
-    - テスト: 目的は、壊れたものをマージ前に止めること。「テストが百本以上あった」は比べられない。「関数の中身を空にしても全テストが通った」なら、狙いが「壊せばテストが落ちる」のとき More と言える。
+    Examples:
+    - Document: the purpose is that a newcomer can decide whether to use it. "There was an example" is an answer about a means and cannot be compared with the aim. "I took in being able to leave long work to it without watching as the reason to choose it" can be compared.
+    - Prompt: the purpose is that the AI acts toward the purpose even in situations no step covers. "The steps were numbered" cannot be compared. "It listed the points not decided and asked the user" is a Good when the aim is "points not decided go back to the user".
+    - Code: the purpose is that the person in charge does not forget a due date. "The notification was handled in a separate function" cannot be compared. "Run again, there was still one email" is a Good when the aim is "one email per item per day".
+    - Tests: the purpose is to stop what is broken before it is merged. "There were over a hundred tests" cannot be compared. "With the function's body emptied, every test passed" is a More when the aim is "breaking it makes a test fail".
 
-- 実物のどの部分を目的に向けて使い、どの部分を使わずに通り過ぎたかは、どの問いの答えに出たか。
+- In the answer to which question did it show which parts of the real work were used toward the purpose, and which were passed by without being used?
 
-    使った部分と通り過ぎた部分が答えに出れば、指揮者は、実物に要らない部分を見つけられます。何かが良いかを問うだけの問いには、使った部分についての答えしか出ず、読み飛ばした部分は誰の目にも留まりません。
+    When the used parts and the parts passed by show in the answers, the conductor finds the parts the real work does not need. A question that only asks whether something is good gets answers only about the parts used, and the skipped parts catch no one's eye.
 
-    例:
-    - 文書: 読み手として、使うかを決めるのに使った節と、読み飛ばした経緯の節。
-    - プロンプト: AI が動くときに従った指示と、どの場面でも効かなかった指示。
-    - コード: 呼んだときに通った処理と、一度も通らなかった処理。
-    - テスト: コードを壊したときに落ちたテストと、何を壊しても落ちなかったテスト。
+    Examples:
+    - Document: as the reader, the sections used to decide whether to use it, and the section on history that was skipped.
+    - Prompt: the instructions the AI followed when it acted, and the instructions that did not matter in any situation.
+    - Code: the code paths taken when called, and the ones never taken.
+    - Tests: the tests that failed when the code was broken, and the tests that never failed, whatever was broken.
 
-- 実物を確かめようとしたことに、どの問いの答えが働き、どれが何の働きもしなかったか。
+- Which questions' answers did work in trying to check the real work, and which did nothing?
 
-    働いた問いだけに絞れば、問いは少なく、first user はひとつひとつに注意を注ぎ、どう確かめるかを自分で選べます。何の働きもしなかった問いは、ほかの問いの答えで分かることを重ねて問うか、目的を外した実物を止めない問いです。残すと、観点ファイルは、全部通るのに誰も目的を確かめていないチェックリストに育ちます。
+    Kept to the questions that did work, the file has few questions, the first user gives each its full attention, and it can choose how to check for itself. A question that did nothing either asks again what another question's answer already shows, or does not stop a real work that misses the purpose. Kept, such questions grow the essentials file into a checklist that all passes while no one has checked the purpose.
 
-    例:
-    - 文書: 「見出しだけで筋を追えたか」の答えは何の働きもしなかった。読み手が何をするかは「一度読んで、何をすると受け取ったか」の答えで分かった。
-    - プロンプト: 「役割が冒頭に書いてあったか」の答えは何の働きもしなかった。AI の動きは「どの手順にもない場面で AI が何をしたか」の答えで分かった。
-    - コード: 「どの関数も50行以下だったか」の答えは何の働きもしなかった。チームのきまりにしたいなら、スクリプトで確かめる。
-    - テスト: 「境界値のテストがあったか」の答えは何の働きもしなかった。壊れたものが止まるかは「よくある壊し方をしたとき、何がマージを止めたか」の答えで分かった。
+    Examples:
+    - Document: the answer to "Could you follow the line from the headings alone?" did nothing. What the reader does showed in the answer to "Having read it once, what did you take it you should do?".
+    - Prompt: the answer to "Was the role stated at the top?" did nothing. How the AI acted showed in the answer to "In a situation no step covers, what did the AI do?".
+    - Code: the answer to "Was every function 50 lines or fewer?" did nothing. To make it a team rule, check it with a script.
+    - Tests: the answer to "Were there tests for boundary values?" did nothing. Whether something broken is stopped showed in the answer to "When broken in a common way, what stopped the merge?".
 
-- 一つの答えで二つ以上の点に答えた問いはどれで、それは何と何か。
+- Which question answered two or more points with one answer, and what were they?
 
-    一つの点だけを問えば、答えも Good か More もその点だけのものになり、直す人はどこを変えればよいか分かります。二つの点を一度に問うと、答えは両方をまとめて語り、足りない方が、足りている方の陰に隠れます。
+    When a question asks about one point only, the answer and the Good or More are about that point alone, and whoever fixes knows what to change. When it asks about two points at once, the answer speaks of both together, and the one that falls short hides behind the one that does not.
 
-    例:
-    - 文書: 「選ぶ理由として何を、始め方として何を受け取ったか」は二つに分かれる。
-    - プロンプト: 「どの手順にもない場面で、AI は目的に向かって動き、利用者が決めることを利用者に戻したか」は二つに分かれる。
-    - コード: 「期日の朝にメールが届き、重ならなかったか」は二つに分かれる。
-    - テスト: 「壊したときにテストが落ち、数秒で終わったか」は二つに分かれる。
+    Examples:
+    - Document: "What did you take in as the reason to choose it, and as how to start?" splits into two.
+    - Prompt: "In a situation no step covers, did the AI act toward the purpose and return to the user what the user decides?" splits into two.
+    - Code: "Did the email arrive on the morning of the due date, without duplicates?" splits into two.
+    - Tests: "When broken, did a test fail, and did the run finish in seconds?" splits into two.
 
-- 問いの言葉だけでは何を確かめるか決まらなかったとき、何を手がかりに決めたか。
+- When a question's words alone did not settle what to check, what did you go by to decide?
 
-    問いの下に、受け手が何を得るかという根拠があれば、生成者も first user も、問いの言葉が触れていない所を、問いの意図で決められます。根拠がなければ、問いは字面どおりに使われ、言葉に合うだけの実物が、肝心な所を外したまま通ります。
+    With a ground under each question saying what the receiver gains, the generator and the first user can decide, by the question's intent, what its words do not touch. Without one, a question is used to the letter, and a real work that only matches the words passes while missing what matters.

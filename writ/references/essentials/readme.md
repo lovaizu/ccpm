@@ -1,23 +1,23 @@
 # README
 
-読み手は三者です。生成者は、README を書くときに、目指す形としてこれを読みます。first user は、その製品に初めて出会い、使うかを決め、使い始めようとする人として README を読み、ここにある問いごとに、何をして何が起きたかを報告します。良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、初めての人として読んで起きたことから、README で読み手が製品から得るベネフィットを知り、使うかを決め、使い始められるかを確かめられます。
+This file has three readers. The generator reads it as the form to aim for when it writes a README. The first user reads the README as someone who meets the product for the first time, decides whether to use it, and sets out to start using it, and reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when a newcomer read it, whether the README lets its reader learn the benefits they get from the product, decide whether to use it, and start using it.
 
-- 冒頭を読んだ時点で、この製品で自分が何を得ると受け取ったか。
+- Having read the opening, what did you take it you would get from this product?
 
-    冒頭で得るものを受け取れば、読み手は自分に向いた製品かをすぐ決められます。見張らずに任せられる、のような得るものでなく、「あなたが決めることだけで呼び戻す」のような製品のすることを受け取ったなら、得るものは読み手が自分で割り出すことになります。
+    Taking in from the opening what they gain, readers decide at once whether the product is for them. If they took in what the product does, such as "calls you back only for what you decide", instead of what they gain, such as being able to leave work to it without watching, they are left to work out what they gain themselves.
 
-- ふだん代わりに使うものでなくこの製品を選ぶ理由として、何を受け取ったか。
+- What did you take in as the reason to choose this product over what you would use instead?
 
-    別の道具や手作業では得られないものが、読み手に製品を選ばせます。代わりのものでも得られるもの、たとえば何もなくならないことは、当たり前と受け取られ、冒頭にあると効く理由を隠します。各段がなぜ読み手にとって良いかや、読み手の仕事に近い例も、ここで理由として受け取られます。読み手の仕事から遠い例や、よその製品や有名なアプリから借りた例は、他人の話として読まれます。
+    What another tool or doing it by hand cannot give is what makes readers choose the product. What the alternatives also give, such as nothing being lost, is taken for granted, and placed at the top it hides the reasons that work. Why each step is good for the reader, and examples close to the reader's own work, are also taken in here as reasons. An example far from the reader's work, or one borrowed from another product or a well-known app, is read as someone else's story.
 
-- 使い始めてから結果を得るまでを、自分が何をして何を得る流れとして受け取ったか。
+- How did you take in the way from starting to use it to getting the result, as a flow of what you do and what you get?
 
-    流れを先に受け取れば、読み手は各段がどこへ向かうかを知って読めます。この流れを選ぶ理由の横に置くと、どの段にもつながらない理由は、道筋のない約束として見えます。
+    Taking in the flow first, readers read each step knowing where it leads. Laid beside the reasons to choose the product, a reason that connects to no step shows as a promise with no way to it.
 
-- 使うかを決めるにも使い始めるにも要らないのに、覚えなければ先へ進めなかった名前や仕組みは何か。
+- What names or mechanisms did you have to learn before you could go on, though you needed them neither to decide whether to use it nor to start?
 
-    初めての人が決めるのに要ることに絞れば、README は止まらずに読み通せます。内部の役の名前や例外は、要らないことを覚えさせます。
+    Kept to what a newcomer needs to decide, the README is read through without stopping. Names of internal roles and exceptions make the reader learn what they do not need.
 
-- この README だけを頼りに、入れて使い始めようとして、どこまで進み、どこで外を探したか。
+- Relying on this README alone, how far did you get in installing it and starting to use it, and where did you look elsewhere?
 
-    始めるのに要ることが一か所にそろっていれば、読み手は決めてから使うまで、ほかを探さずに進めます。前提は、何が要り、なぜ要るかが書いてあれば、読み手はそれぞれのやり方で用意できます。一つの用意の仕方だけを書くと、ほかのやり方は選べないように読め、もう用意できている読み手には要らない手順を渡します。
+    With what is needed to start gathered in one place, readers go from deciding to using without looking elsewhere. When a prerequisite says what is needed and why, readers can get it ready in their own way. Writing only one way to get it ready reads as if no other way can be chosen, and hands readers who already have it steps they do not need.

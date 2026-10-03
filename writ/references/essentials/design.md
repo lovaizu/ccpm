@@ -1,47 +1,47 @@
-# 設計書
+# Design document
 
-読み手は三者です。生成者は、設計書を書くときに、目指す形としてこれを読みます。first user は、設計書をその README と実装と一緒に受け取り、作る人や保守する人として、ありそうな変更を一つ選んでそれが設計に合うかを決めようとし、ベネフィットを一つ確かめようとして読み、ここにある問いごとに、何をして何が起きたかを報告します。良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、作る人や保守する人として使って起きたことから、設計書で読み手が、README のベネフィットをどの機能が利用者に届け、それぞれどう作られているかを知り、利用者がそれぞれを得ているかを確かめ、変更が設計に合うか、合わないならなぜかを言えるかを確かめられます。
+This file has three readers. The generator reads it as the form to aim for when it writes a design document. The first user takes the design document together with its README and implementation, and reads it as someone who builds or maintains the product: it picks one likely change and tries to decide whether it fits the design, and tries to check one benefit. It then reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when it was used by someone who builds or maintains the product, whether the design document lets its reader learn which feature brings each of the README's benefits to the user and how each is built, check that the user gets each one, and say whether a change fits the design and, if not, why.
 
-- ありそうな変更を一つ選んだとき、それが設計に合うかを、利用者が何を失うかからどう決めたか。
+- Having picked one likely change, how did you decide, from what the user would lose, whether it fits the design?
 
-    機能ごとに、それが仕えるベネフィット、それが働く README の使い方の段、変更が触れる分だけの作りが見つかれば、保守する人は変更を利用者が失うもので量れます。
+    When they find, for each feature, the benefit it serves, the step of the README's usage where it works, and as much of how it is built as the change touches, maintainers weigh a change by what the user loses.
 
-- 変更が設計に合うか迷ったとき、どの方針を思い出して使ったか。
+- When you were unsure whether a change fits the design, which principle did you recall and use?
 
-    方針が少なければ、作る人は方針どうしを比べ、場面ごとに違う所を決められます。一つの機能にしか関わらないきまりは、その機能のそばに置きます。方針に並ぶと、どこでも覚えておくことが一つ増えます。
+    With few principles, builders can weigh them against each other and decide where situations differ. A rule that concerns only one feature sits beside that feature. Listed among the principles, it adds one more thing to keep in mind everywhere.
 
-- 使った方針それぞれについて、守らなければ何が壊れると受け取ったか。
+- For each principle you used, what did you take it would break if it were not kept?
 
-    方針がベネフィットか、製品が使われる環境や利用者のような設計では変えられない条件につながっていれば、作る人は壊れるものを知って方針を比べられます。どちらにもつながらない方針は、習慣で守られます。
+    When a principle ties to a benefit, or to a condition the design cannot change, such as the environment the product is used in or its user, builders know what breaks and can weigh principles against each other. A principle tied to neither is kept out of habit.
 
-- README のベネフィットそれぞれを、利用者がどの機能で得ると受け取ったか。
+- For each of the README's benefits, through which feature did you take it the user gets it?
 
-    ベネフィットごとに機能があれば、保守する人は利用者が実際にどう得るかが分かります。機能は、書いていない者に作業を確かめてもらえる、のような、製品がベネフィットに向けて差し出すものです。どの機能も仕えないベネフィットは、届く道がありません。仕組みの名前で呼ばれた部分や、ベネフィットのすぐ後に仕組みが続く書き方は、どの部分がどのベネフィットを届けるかを隠します。ベネフィット、使い方の流れ、段が利用者に良い理由は、すでに言っている README の段をたどれば足ります。設計書で言い直すと、README からずれていきます。
+    With a feature for each benefit, maintainers see how the user actually gets it. A feature is what the product offers toward a benefit, such as having the work checked by someone who did not write it. A benefit no feature serves has no way to reach the user. A part named after its mechanism, or writing in which a mechanism follows right after a benefit, hides which part brings which benefit. For the benefits, the flow of use and why each step is good for the user, pointing to the README's steps that already say them is enough. Said again in the design document, they drift from the README.
 
-- 選んだ変更の後も、いつも成り立っていなければならないと受け取ったことは何か。
+- After the change you picked, what did you take it must always hold?
 
-    どの操作の後にも成り立つ条件として、関わる決定のところで読めれば、保守する人は一か所を変えても何が成り立ち続けるべきかが分かります。手順の一段として読まれた条件は、手順が変わると破られます。
+    When it reads, at the decision it concerns, as a condition that holds after every operation, maintainers know what must keep holding even when they change one place. A condition read as one step of a procedure is broken when the procedure changes.
 
-- ベネフィットを一つ確かめようとして、何が起きれば通ったと受け取ったか。
+- In trying to check one benefit, what did you take it must happen for the check to pass?
 
-    利用者が実際にベネフィットを得たかで確かめれば、利用者がそもそも製品を選ぶかが分かります。作業を読み直さずに要約から承認できるのが狙いなら、要約だけ読んだ利用者が作業を読んだときと同じに決めるかを確かめます。読み手や利用者に何が起きるかで通る基準を書けば、どの作る人も同じに確かめられます。成果物がベネフィットのための形をしているか、機能が設計どおり動くかの確かめは、ベネフィットが外れていても通ります。
+    Checking whether the user actually got the benefit shows whether the user would choose the product at all. If the aim is to approve work from a summary without reading it again, the check is whether a user who read only the summary decides the same as one who read the work. A passing bar written as what happens to the reader or the user lets every builder check the same way. A check of whether the output has the shape meant for the benefit, or whether a feature works as designed, passes even when the benefit is missed.
 
-- その確かめを、どんな場面で走らせると受け取ったか。
+- In what situation did you take it that check is run?
 
-    ベネフィットがなければ利用者がはっきり困る場面で走らせれば、通ったことがベネフィットの本物の証になります。代わりのものでも同じにできる場面では、何も確かめずに通ります。
+    When the check runs in a situation where the user would plainly struggle without the benefit, a pass is real proof of the benefit. In a situation the alternatives handle just as well, it passes without checking anything.
 
-- 確かめる手間を、どこにかけると受け取ったか。
+- Where did you take it the checking effort goes?
 
-    ベネフィットを先に確かめれば、手間は利用者が製品を選ぶかが分かる所にかかります。何もなくならないことのような、利用者が当たり前と受け取る品質は、確かめやすく、壊れても見えやすいので、先に置くと、その確かめが増えて全部通り、誰もベネフィットを確かめていない状態になります。形が守られているか、リンクが切れていないかのようにスクリプトで決められることは、スクリプトに任せれば、速く、いつも同じ答えが出ます。
+    Checking the benefits first puts the effort where it shows whether the user would choose the product. Quality the user takes for granted, such as nothing being lost, is easy to check and easy to see when broken, so placed first, its checks multiply and all pass, while no one has checked the benefits. Leaving to a script what a script can decide, such as whether a form is kept or whether a link is broken, is fast and gives the same answer every time.
 
-- 今のやり方を別の案に替えたくなった所で、なぜ今のやり方が選ばれたと受け取ったか。
+- Where you were tempted to replace the current way with another option, why did you take it the current way was chosen?
 
-    替えると何を失い、なぜその案が選ばれなかったかが分かれば、保守する人は変更をすでにある決定と比べて量れます。なければ、代償を知らずに決定を覆します。保守する人がまず手を伸ばさない案は、書き残すまでもありません。
+    Knowing what replacing it loses and why that option was not chosen, maintainers weigh a change against the decisions already made. Without it, they overturn a decision without knowing its cost. An option maintainers would not reach for first needs no mention.
 
-- 選んだ変更を入れたとして、意図は変わらないのに書き直すことになる文はどれか。
+- Supposing the change you picked were made, which sentences would have to be rewritten though the intent stays the same?
 
-    作り直しで変わらないことに絞れば、設計書は作り直しを越えて正しいままです。設定、手順、コードの分け方、ファイル名や関数名、内部のデータ構造は、作り直すたびに古くなります。
+    Kept to what does not change when the product is rebuilt, the design document stays true across rebuilds. Settings, procedures, how the code is split, file and function names, and internal data structures go stale with every rebuild.
 
-- 利用者の環境に残り、後の版や人が読むものの形を変えようとして、どの項目なら読む側を壊さずに変えられると受け取ったか。
+- In trying to change the form of something left in the user's environment for later versions or people to read, which fields did you take it could be changed without breaking those who read it?
 
-    利用者の環境から後の版や人が読むものは、外との約束で、外から読まれるので、その形は設計の一部です。実装を作り直しても残る一か所である設計書にあれば、保守する人は、各項目がなぜあり、何がいつも成り立ち、形がどうなっているかを見て、どの項目なら読む側を壊さずに変えられるかが分かります。実装には写しを置きません。二つの写しはずれていきます。役どうしの受け渡しは、外との約束ではありません。
+    What later versions or people read from the user's environment is a contract with the outside, read from outside, so its form is part of the design. When it is in the design document, the one place that survives a rebuild of the implementation, maintainers see why each field exists, what always holds, and what the form is, and can tell which fields can change without breaking those who read it. The implementation keeps no copy; two copies drift apart. Handoffs between roles are not a contract with the outside.

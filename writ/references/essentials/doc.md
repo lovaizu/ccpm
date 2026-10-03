@@ -1,31 +1,31 @@
-# どの文書にも
+# Every document
 
-読み手は三者です。生成者は、文書を書くときに、目指す形としてこれを読みます。first user は、文書と一緒に渡された読み手と目的から、その読み手が読み終えて何を決め、何をするかを定め、その読み手として上から一度読んで、ここにある問いごとに、何をして何が起きたかを報告します。目的から定まらなければ、定まらなかったことを報告します。良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、読み手として読んで起きたことから、文書が読み手に決めさせ、動かせるかを確かめられます。README、設計書、プロンプトは、それぞれのファイルの問いでも確かめます。
+This file has three readers. The generator reads it as the form to aim for when it writes a document. The first user takes the reader and purpose handed over with the document, settles from them what that reader decides and does once they finish reading, reads the document once from the top as that reader, and reports, for each question here, what it did and what happened. When the purpose does not settle it, it reports that it was not settled. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the document was read as its reader, whether it lets the reader decide and act. A README, a design document and a prompt are also checked with the questions of their own files.
 
-- 読み終えて、何を決め、何をすると受け取ったか。
+- Once you finished reading, what did you take it you should decide and do?
 
-    受け取ったことを狙いの横に置けば、ずれた所が、文書の伝わっていない所です。書き手は議論を知らない頭に戻れないので、読み返しても見つけられません。一つの言葉が途中で意味を変えた所や、一つのものを二つの名前で呼んだ所は、読み手が気づかないまま、ここに違う受け取り方として出ます。
+    Laid beside the aim, what the reader took in differs exactly where the document did not get across. The writer cannot go back to a mind that does not know the discussion, so reading it over does not find those places. A place where a word changes meaning partway, or where one thing goes by two names, shows up here as a different understanding the reader never noticed.
 
-- 決めたり動いたりするのに使った部分はどこで、使わずに読み飛ばした部分はどこか。
+- Which parts did you use to decide or act, and which did you skip without using?
 
-    読み飛ばした部分が分かれば、文書から外せる部分が分かり、読み手は要らない所をかき分けずに決めて動けます。読み飛ばされるのは、レビューする人など別の誰かに向けた部分、なぜ読むのかを知る前に置かれた背景、決定に至った経緯、言い直し、本文がすでに伝えたことを繰り返すだけの図であることが多くあります。
+    Knowing the parts that were skipped shows what can be taken out, so the reader decides and acts without wading through what they do not need. The parts skipped are often those meant for someone else, such as a reviewer, background placed before the reader knows why they are reading, the history of how a decision was reached, restatements, and figures that only repeat what the text already said.
 
-- 決めたり動いたりしようとして、文書に書いてなく、推し量るか誰かに聞くしかなかったことは何か。
+- In trying to decide or act, what was not in the document, so that you could only guess or ask someone?
 
-    足りない所が分かれば、読み手は文書だけで動けるようになります。どの部分も支えていない決定は、推し量って決められるか、読み手を聞きに行かせます。滑らかな文で覆われた抜けは、読み手が気づかずに動くので、ここに出なければ、最初の問いの答えのずれに出ます。
+    Knowing what is missing lets the reader act from the document alone. A decision that no part supports leaves the reader to guess it or sends them off to ask. A gap covered by smooth sentences is acted on without the reader noticing, so if it does not show here, it shows as a difference in the answer to the first question.
 
-- 通して読んでいて、止まったり、戻ったり、先を探したりした所はどこで、そこで何が分からなかったか。
+- Reading through, where did you stop, go back or look ahead, and what did you not understand there?
 
-    止まらずに読めれば、読み手は、文がよりどころにすることを、いつもその前で受け取っています。説明より先に使われた言葉、別の所に置かれた決定の理由、専門用語や造語、食い違う二つの部分は、読み手を止めるか、違う方へ進ませます。
+    When the reading does not stop, the reader has always taken in what a sentence rests on before reaching it. A word used before it is explained, a decision whose reason sits elsewhere, jargon or coined terms, and two parts that disagree stop the reader or send them the wrong way.
 
-- 読み返したい部分を見出しから探したとき、どの見出しで見つかり、どの見出しでは見つからなかったか。
+- When you looked for a part to read again by its heading, under which heading did you find it, and under which did you not?
 
-    見出しが読み手の探す言葉なら、拾い読みする読み手は自分の部分にすぐ行き着けます。書き手の内輪の言葉の見出しは、素通りされます。
+    When headings are the words the reader looks for, a reader who picks parts reaches their own at once. A heading in the writer's in-house words is passed over.
 
-- 読みながら、誰が何をし、何が渡り、どの順かを、頭の中で組み立てなければならなかった所はどこか。
+- Where, while reading, did you have to piece together in your head who does what, what passes, and in what order?
 
-    頭の中で組み立てた所は、一目で分かる図にすれば、読み手は文で一つずつ積み上げずにすぐつかめます。AI は図を文として順に読むので、AI の読み手には、図は文を繰り返すだけです。
+    Drawn as a figure grasped at a glance, what the reader had to piece together is taken in at once instead of built up sentence by sentence. An AI reads a figure as text, in order, so for an AI reader a figure only repeats the text.
 
-- 決めたり動いたりするのに頼った記述それぞれを、どこまで確かなものと受け取ったか。
+- How certain did you take each statement you relied on to decide or act?
 
-    確かめられた事実か、仮定、提案、決定か、確かめたならどこまでかを見分けられれば、読み手は記述をその確かさの分だけ信じ、確かめていない所は頼る前に確かめ直せます。確かめていない主張を言い切ると、事実として動かれます。範囲を書かない確かめは、すべてを確かめたと受け取られます。
+    When the reader can tell a checked fact from an assumption, a proposal or a decision, and, if it was checked, how far, they believe each statement as far as it is certain and check again what was not checked before relying on it. An unchecked claim stated flatly is acted on as fact. A check whose reach is not written is taken as having checked everything.

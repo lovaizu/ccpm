@@ -1,406 +1,406 @@
-# writ の設計
+# writ design
 
-writ は、[README](../README.md) の冒頭に挙げた6つのベネフィットを、2つのスキルで利用者に届けます。`/writ:up` は文書を書いて仕上げ、pith は成果物を観点で確かめ、観点を作ります。pith は、利用者が `/writ:pith` で呼ぶか、言葉で頼んで使います。pith を別のスキルにするのは、文書に限らずどの成果物も確かめるからで、rn からも使えるよう、独立したプラグインに分ける予定です。どちらのスキルも、指揮者・生成者・first user の3つの役で組みます。判断して次を決めるのは、それぞれのスキルの指揮者だけです。生成者は指揮者の決めたとおりに作って直し、first user は成果物を利用者として使って、起きたことを報告します。観点、Good、More、first user の意味は README と同じです。
+writ brings the user the six benefits listed at the top of the [README](../README.md) through two skills. `/writ:up` writes and finishes a document; pith checks a work against essentials and writes essentials. The user uses pith by calling `/writ:pith` or by asking for it in words. pith is a separate skill because it checks any work, not only documents, and it is to be split into a plugin of its own so that rn can use it too. Both skills are built from three roles: the conductor, the generator and the first user. Only each skill's conductor judges and decides what comes next. The generator makes and fixes the work as the conductor decides, and the first user uses the work as its user would and reports what happened. Essentials, question, Good, More and first user mean the same as in the README.
 
 ```mermaid
 flowchart TD
-  U([利用者])
-  C[up の指揮者<br/>利用者と話す Claude Code]
-  G[生成者]
-  F[/対象の文書/]
-  subgraph P[pith：呼び出し元の会話を引き継がない]
-    PC[pith の指揮者]
-    FU[first user]
+  U([User])
+  C[up's conductor<br/>the Claude Code that talks with the user]
+  G[Generator]
+  F[/The document/]
+  subgraph P[pith: does not carry over the caller's conversation]
+    PC[pith's conductor]
+    FU[First user]
   end
-  E[/観点ファイル/]
-  U -->|読み手と目的、決まっていないことへの答え| C
-  C -->|提案か質問、渡せるかの見立てと観点ごとの Good・More| U
-  C -->|読み手と目的、調べた事実、決めたこと、直す所と残す Good| G
-  G -->|書いた中身、直した中身| F
-  C -->|文書の場所、受け手と目的、狙い、観点ファイル| PC
-  PC -->|文書の場所、受け手と目的、観点ファイル。狙いは渡さない| FU
-  F -->|使う文書| FU
-  FU -->|観点ごとの、使って起きたこと| PC
-  PC -->|観点ごとの報告と Good・More の全文| RF[/open/ の結果のファイル/]
-  PC -->|短い結果と結果のファイルの場所| C
-  PC -->|観点を作るとき：何の観点か、受け手と目的、直す所と残す Good| G
-  G -->|観点を作るとき：書いた観点ファイル| E
+  E[/Essentials files/]
+  U -->|reader and purpose, answers on what is not decided| C
+  C -->|proposals or questions, the view on handing it on and the Good and More for every question| U
+  C -->|reader and purpose, facts found, what was decided, places to fix and Goods to keep| G
+  G -->|what it wrote, what it fixed| F
+  C -->|document's location, receiver and purpose, aim, essentials files| PC
+  PC -->|document's location, receiver and purpose, essentials files; never the aim| FU
+  F -->|the document to use| FU
+  FU -->|what happened in use, for every question| PC
+  PC -->|every question's report and every Good and More in full| RF[/open/ result file/]
+  PC -->|short result and the result file's location| C
+  PC -->|when writing essentials: the kind of work, receiver and purpose, places to fix and Goods to keep| G
+  G -->|when writing essentials: the essentials file it wrote| E
   E --> G
   E --> FU
   E --> PC
 ```
 
-## 8つの機能が6つのベネフィットを生む
+## Eight features bring the six benefits
 
-ベネフィットは README の冒頭の言葉で呼びます。`/writ:up` のものは「一度読めば分かる」「そのまま渡せる」「報告で判断できる」「ごまかさずに聞かれる」の4つです。pith のものは「使った事実で確かめられる」「目的から逆算した観点を作れる」の2つです。
+The benefits are called by the words at the top of the README. Those of `/writ:up` are four: "understands it in one reading", "hand it straight on", "judge from the report" and "asked instead of covered over". Those of pith are two: "check by what happened in use" and "write essentials worked back from the purpose".
 
-- 読み手と目的を決めてから書かせる。
+- Have the document written only once the reader and purpose are settled.
 
-    「一度読めば分かる」「そのまま渡せる」のための機能です。README の図の「読み手と目的の提案か質問」で働きます。
+    It serves "understands it in one reading" and "hand it straight on". It works at "A proposal or question on the reader and purpose" in the README's figure.
 
-- pith で first user に使わせて確かめる。
+- Have a first user use the document through pith, and check it.
 
-    「一度読めば分かる」「そのまま渡せる」のための機能です。書いてから「仕上がった文書」を返すまでの間に働きます。
+    It serves "understands it in one reading" and "hand it straight on". It works between writing and returning "The finished document".
 
-- 直せる穴は直し、残せる穴は理由を付けて残す。
+- Fix the holes that can be fixed, and leave, with a reason, the holes that can be left.
 
-    「そのまま渡せる」「報告で判断できる」のための機能です。「仕上がった文書」を返す前に働きます。
+    It serves "hand it straight on" and "judge from the report". It works before "The finished document" is returned.
 
-- 目的を妨げる穴は、ごまかさずに利用者へ聞く。
+- Ask the user, instead of covering it over, about a hole that blocks the purpose.
 
-    「ごまかさずに聞かれる」のための機能です。「決まっていないことの質問」で働きます。
+    It serves "asked instead of covered over". It works at "A question on what is not decided".
 
-- 観点ごとの最後の Good・More を返す。
+- Return the final Good and More for every question.
 
-    「報告で判断できる」のための機能です。利用者が「承認するか、直しを頼むか」を決めるところで働きます。
+    It serves "judge from the report". It works where the user decides "whether to approve it or ask for fixes".
 
-- 作業の途中で書く文書も、同じ流れで仕上げる。
+- Finish a document written during other work in the same flow.
 
-    利用者が `/writ:up` を呼ばなかった文書にも、上の4つを届ける機能です。README の「作業の途中で Claude Code が文書を書くとき」で働きます。
+    It brings the four benefits above also to a document for which the user did not call `/writ:up`. It works in the README's "When Claude Code writes a document during other work".
 
-- 受け手として使った事実を、狙いと比べて Good・More にする（pith）。
+- Lay the fact of use as the receiver beside the aim and turn it into Good and More (pith).
 
-    「使った事実で確かめられる」のための機能です。README の「作ったものを確かめる」で働き、`/writ:up` の2つ目の機能もこれを使います。
+    It serves "check by what happened in use". It works in the README's "Checking what you made", and the second feature of `/writ:up` uses it.
 
-- 観点を目的から逆算して書き、実物で試す（pith）。
+- Write essentials worked back from the purpose, and try them on a real work (pith).
 
-    「目的から逆算した観点を作れる」のための機能です。README の「観点を作る」で働きます。
+    It serves "write essentials worked back from the purpose". It works in the README's "Writing essentials".
 
-## どの機能でも守る方針
+## Principles every feature keeps
 
-- 判断するのは指揮者だけ。
+- Only the conductor judges.
 
-    `/writ:up` では利用者と話す Claude Code が指揮者です。直すか残すかと、次に何をするかを決めます。pith では pith の指揮者が、first user の報告を狙いと比べて Good・More を付けます。生成者や first user に判断が広がると、話し合いを知らない役の判断が、目的に役立っている所まで作り直します。生成者が自分の書いたものを採点すると、自分の意図で穴を埋めて甘くなります。
+    In `/writ:up`, the conductor is the Claude Code that talks with the user. It decides what to fix or leave and what comes next. In pith, pith's conductor lays the first user's report beside the aim and gives Good and More. When judgment spreads to the generator or the first user, a role that does not know the discussion remakes even what serves the purpose. A generator that grades what it wrote fills the holes with what it meant and grades too softly.
 
-- 役は、エージェントの定義で切り離す。
+- The roles are kept apart by the agent definitions.
 
-    生成者と first user は、プラグインのエージェントとして置きます。first user には `omitClaudeMd` を付け、会話を引き継がない別のサブエージェントとして呼びます。渡すのは、成果物、受け手と目的、観点ファイルだけです。first user はコマンドを動かせるので、プロンプトは `claude -p` で AI に渡して動かし、コードは自分で呼ぶかテストを走らせて使います。生成者にも first user にも、ほかのエージェントを呼ぶ道具を持たせないので、生成者は first user を呼べません。守りたいのは、どう呼ばれても話し合いが first user に届かないことです。サブエージェントは、会話からも利用者からもほかのスキルからも呼べるので、呼ばれ方を hook で見張ると込み入ります。`omitClaudeMd` を付けたエージェントの定義なら、どう呼ばれても成り立ちます。sub-agents の公式文書には、プラグインのエージェントではこの項目が無視されるとあります。ただ、Claude Code 2.1.285 で試すと、プラグインのエージェントでもプロジェクトの CLAUDE.md を読ませませんでした。確かめたのはこの版で、付けた形と付けない形を2回ずつ動かしただけです。
+    The generator and the first user are plugin agents. The first user has `omitClaudeMd` and is called as a separate subagent that does not carry over the conversation. It is handed only the work, the receiver and purpose, and the essentials files. The first user can run commands, so it gives a prompt to an AI with `claude -p` and runs it, and uses code by calling it or running its tests. Neither the generator nor the first user has the tool that calls other agents, so the generator cannot call the first user. What must hold is that, however the first user is called, the discussion never reaches it. A subagent can be called from the conversation, by the user or from another skill, so watching how it is called with hooks grows tangled. An agent definition with `omitClaudeMd` holds however it is called. The official sub-agents documentation says this field is ignored for plugin agents. Tried on Claude Code 2.1.285, though, a plugin agent with it did not read the project's CLAUDE.md. Only that version was tried, running the definition with and without the field twice each.
 
-- 観点の中身は観点ファイルにだけ置き、受け渡しでは場所を渡す。
+- The content of the essentials lives only in the essentials files, and handoffs pass their location.
 
-    どの変更のあとも、観点の中身は、ほかの文書や writ の指示に写されていません。写しや要約は観点を磨くたびにずれ、生成者のめざす形と first user の答える問いも離れていきます。README は観点ファイルにリンクしているので、利用者は、Good・More がどの観点への答えかを観点ファイルで読めます。
+    After every change, the content of the essentials is not copied into other documents or into writ's prompts. A copy or a summary drifts each time the essentials are refined, and what the generator aims for and what the first user answers drift apart. The README links to the essentials files, so the user can read in them which question each Good and More answers.
 
-- 最後に残るのは対象の成果物だけ。結果のファイルは、片付くまで `open/` に置く。
+- In the end only the work remains, and a result file stays in `open/` until it is settled.
 
-    下書きや途中の記録のファイルは作りません。残ると利用者が片付けることになり、どれが本物か迷わせます。結果の全文だけは、書いた pith の指揮者が `.writ/open/{NN}-report-{対象}.md` に書き、今のブランチにコミットし、そのブランチに上流があれば push します。ファイルに書くのは、会話が長くなって要約されても全文が残り、呼び出し元の会話に全文が流れ込まないからです。手元に置くだけでなくコミットして push するのは、会話が終わっても残り、プルリクエストで読めるからです。上流のないブランチを push しないのは、push 先を writ が勝手に決めないためです。対象ごとに1つで、確かめ直すときも同じファイルに書きます。中の More がすべて片付いたら、片付けた側が全文をコミットメッセージに写し、ファイルを消してコミットします。片付けるのは、`/writ:up` では指揮者、pith を直接頼んだときは利用者と話す Claude Code です。片付いたとは、直したか、理由を付けて見送ったか、利用者が決めたかのどれかです。こうすると `open/` には片付いていないものだけが残り、残っていれば対応が要るという印になります。記録は git の履歴に残ります。rn のように呼び出し元が自分の `open/` を持つときは、呼び出し元が `/writ:up` か `/writ:pith` への頼みの中でファイルの場所を名前まで示し、writ はそこに書きます。片付けるのは呼び出し元です。
+    No drafts or files of notes along the way are made. Left behind, they would be for the user to clear away, and would leave the user unsure which is the real one. Only the full result is written, by pith's conductor, to `.writ/open/{NN}-report-{target}.md`, committed to the current branch and pushed if the branch has an upstream. It goes in a file so that the full text survives when a long conversation is summarized, and does not flow into the caller's conversation. It is committed and pushed, not just kept locally, so that it outlives the conversation and can be read on the pull request. A branch without an upstream is not pushed, because where to push is not for writ to decide. There is one file per target, and a recheck writes to the same file. Once every More in it is settled, whoever clears it copies the full text into a commit message and deletes the file in that commit. In `/writ:up` that is the conductor; when pith was asked for directly, it is the Claude Code that talks with the user. A More is settled when it is fixed, let go with a reason, or decided by the user. Then `open/` holds only what is not settled, and a file there is the sign that something needs action. The record stays in the git history. When a caller such as rn keeps its own `open/`, the caller names the file's location, down to its name, in its request to `/writ:up` or `/writ:pith`, and writ writes there. The caller clears it.
 
-## 読み手と目的を決めてから書かせる
+## Have the document written only once the reader and purpose are settled
 
-書く前に決まっていないと、生成者は何をめざせばよいか決められず、指揮者は何を基準に直すかを決められません。
+If they are not settled before writing, the generator cannot tell what to aim for, and the conductor cannot tell what to fix by.
 
-- 誰が読み、読み終えて何を決めて何をするかが決まるまで、書き始めない。
-- 指揮者が利用者に聞くのは、会話・渡された文書・リポジトリから分からないことだけ。推し量れることは提案として出して合っているかを聞き、1つずつ聞く。
+- Do not start writing until it is settled who reads the document and what they decide and do once they have read it.
+- The conductor asks the user only what the conversation, the documents handed over and the repository do not tell. What it can infer, it puts as a proposal and asks whether it is right, and it asks one question at a time.
 
-    聞くのは、誰が読むか、読み終えて何を決めて何をするか、どこに置くかです。すでに言ったことや文書に書いてあることを聞かれると、利用者は同じことを何度も答えることになります。推し量れることまで一から書かせると、writ がすでに持っている手がかりを言葉にさせることになります。提案なら、推し量り違いが書く前に見つかります。まとめて聞くと、前の答えで要らなくなった質問にも答えさせます。そこで1つ聞き、答えで決まったことを外してから次を聞きます。
+    What it asks is who reads the document, what they decide and do once they have read it, and where it is placed. Asked what they already said or what a document already says, the user answers the same thing over and over. Made to write from scratch even what can be inferred, the user puts into words clues writ already has. A proposal catches a wrong guess before anything is written. Asked together, the user also answers questions an earlier answer made unnecessary. So the conductor asks one, drops what the answer settled, and asks the next.
 
-- 通して読むか拾い読みするかは、目的と置き場所から指揮者が決め、決められないときだけ聞く。
+- The conductor decides from the purpose and the place whether the reader reads it through or picks parts, and asks only when it cannot.
 
-    利用者には答えにくい質問で、たいていは目的と置き場所で決まります。
+    The user finds this hard to answer, and the purpose and the place usually settle it.
 
-- 中身の事実は、推し量らずにリポジトリとコードを調べて書く。
+- Write the facts in the content by looking them up in the repository and the code, never by inferring them.
 
-    推し量って書いた事実を読み手は信じ、判断を誤ります。
+    The reader believes a fact written on a guess and decides wrongly.
 
-- 生成者には、読み手と目的、調べた事実、利用者と決めたことを、欠けなく渡す。
+- Hand the generator, without gaps, the reader and purpose, the facts found, and what was decided with the user.
 
-    生成者は話し合いを知らないので、渡されなかったことは推し量るしかなく、文書が利用者の意図からずれます。渡す量は、読み手の細かい事情まで含め、話し合いに戻らなくても利用者の意図どおりに書ける量です。これは書くことを指揮者から切り離す代わりに払うものです。指揮者が自分で書く形は選びません。話し合いのすべてを手元に書けますが、書いて直すたびに利用者との会話が長くなり、要約されて決めたことの細部が抜けやすくなるからです。
+    The generator does not know the discussion, so whatever is not handed over it can only guess, and the document drifts from what the user meant. Enough is handed over, down to the reader's particular circumstances, that the generator can write as the user means without going back to the discussion. This is the price of keeping writing apart from the conductor. Having the conductor write is not chosen. The conductor could write with the whole discussion at hand, but every write and fix would lengthen the conversation with the user, and once it is summarized the details of what was decided slip out.
 
-- 生成者は、観点ファイルをめざす形として読み、読み手、核、見出し、図、文、言葉の順に、前のものから決める。
+- The generator reads the essentials files as the form to aim for, and decides in this order, each from the ones before: the reader, the core, the headings, the figures, the sentences, the words.
 
-    後のものは前のものの決定から決まるので、読み手と核が決まる前に文や言葉を磨いても、前のものが変われば無駄になります。
+    Each later choice follows from the earlier ones, so polishing sentences or words before the reader and core are settled is lost when an earlier choice changes.
 
-- 生成者は、書いたあとと直すたびに文書全体を頭から読み手として読んで直す。そのうえで、観点ごとの Good・More を場所と根拠を付けて指揮者へ返し、直せなかった More も隠さない。
+- After writing and after every fix, the generator reads the whole document from the top as its reader and fixes it. It then returns a Good or More for every question to the conductor, with place and evidence, and hides no More it could not fix.
 
-    言葉を変えたり節を動かしたりすると、文書のほかの所が崩れ、全体を読み直して初めて見えます。生成者の Good・More は判定ではなく、指揮者が文書に照らして確かめるための申告です。
+    Changing a word or moving a section breaks other places in the document, which show only when the whole is read again. The generator's Good and More are not a verdict; they are claims for the conductor to check against the document.
 
-- 生成者は、観点に加えて書き方の決まりに従い、書いたあとと直すたびに、writ に付いている lint を対象の文書で走らせ、指摘を直す。
+- The generator follows the style rules on top of the essentials, and after writing and after every fix runs writ's lint on the document and fixes what it finds.
 
-    決まりは形だけで満たせるので、目的から問う観点とは別のファイルに置きます。観点に混ぜると、観点が目的から判断できない決まりの山になります。決まりごとに理由を付けるので、合わない所では理由で判断できます。lint の指摘は失敗ではなく、決まりの理由で判断する場所として扱います。中身が本当に表である場合のように、決まりが合わないこともあるからです。Vale は、どの言語でも、コマンドで決められる書き方の決まりを確かめます。日本語の技術文書向けの設定を入れた textlint は、文の長さや読点の数など、決まりに書いていない日本語の文の確認を足します。どちらも npx で決まった版を動かし、設定は writ の中に置くので、利用者のプロジェクトに何も足さず、同じ文書には同じ指摘が出ます。npx が動かない所では、読んで確かめます。
+    The rules can be met by form alone, so they sit in a file apart from the essentials, which ask about the purpose. Mixed into the essentials, they would turn them into a pile of rules that cannot be judged from the purpose. Each rule carries its reason, so where a rule does not fit, it can be judged by its reason. A lint finding is not a failure but a place to judge by the rule's reason, because a rule sometimes does not fit, as when the content really is a table. Vale checks, in any language, the style rules a command can decide. textlint, set up for Japanese technical writing, adds checks on Japanese sentences that the rules do not state, such as sentence length and the number of commas. Both run a fixed version through npx, and their settings live inside writ, so nothing is added to the user's project and the same document always gets the same findings. Where npx does not run, the rules are checked by reading.
 
-- 生成者は対象の文書に直接書き、別の下書きを作らない。
+- The generator writes directly into the document and makes no separate draft.
 
-    別の下書きがあると、利用者が確かめるものと実際に置かれるものが2つに分かれて、ずれていきます。
+    With a separate draft, what the user checks and what is actually placed split into two and drift apart.
 
-- 文書は Markdown で、図は mermaid で書く。利用者の指定か置き場所の決まりがあれば、それに従う。
+- Write documents in Markdown and figures in mermaid. Where the user names a form or the place has one, follow it.
 
-    観点が図を求めるので、生成者には、文字として書いて直せる図の形が要ります。置き場所に決まった形があれば、読み手はその形で読むので、そちらを優先します。
+    The essentials ask for figures, so the generator needs a form of figure it can write and fix as text. Where the place has a set form, the reader reads in that form, so it comes first.
 
-## pith で first user に使わせて確かめる
+## Have a first user use the document through pith, and check it
 
-書いた本人は、話し合いを知らなかった頃に戻れません。読み直しても、話し合いを知らない読み手がつまずく所は見えず、利用者が文書を渡したあとで初めて見つかります。
+The writer cannot go back to not knowing the discussion. Reading it over, they cannot see where a reader who does not know the discussion trips, and it is found only after the user has handed the document on.
 
-- 指揮者は、生成者が書き終えたら、pith に、文書の場所、受け手と目的、狙い、観点ファイルを渡して確かめさせる。狙いとして、読み手が得るべきものと、利用者と決めたことを、観点で分けずに文で書き出す。
+- Once the generator finishes writing, the conductor has pith check the document, handing it the document's location, the receiver and purpose, the aim, and the essentials files. As the aim, it writes out in sentences, not split by question, what the reader should gain and what was decided with the user.
 
-    pith は渡された狙いとしか比べられないので、話し合いで決めたことは、書き出して渡さない限り確かめられません。
+    pith can compare only with the aim it is given, so what was decided in the discussion cannot be checked unless it is written out and handed over.
 
-- 観点ファイルは、成果物が文書なら `doc.md` をいつも使い、文書の種類に応じて `readme.md`、`design.md`、`prompt.md`、`essentials.md` のどれかを足す。文書でない成果物には、その種類の観点ファイルだけを使う。
+- For a document, always use `doc.md`, and add whichever of `readme.md`, `design.md`, `prompt.md` and `essentials.md` fits its kind. For a work that is not a document, use only the essentials file for its kind.
 
-    `doc.md` は読み手として読んで起きたことを問うので、どの文書にも当てはまり、読むものでない成果物には当てはまりません。
+    `doc.md` asks what happened when the work was read as its reader, so it fits every document and nothing that is not read.
 
-- 書き方の決まりは pith に渡さない。生成者が直したあと、指揮者も同じ lint を走らせて、守られたかを確かめる。
+- Do not hand pith the style rules. After the generator fixes, the conductor runs the same lint itself to confirm they were kept.
 
-    渡すと first user が形の確認に目を使い、first user にしかできない、話し合いを知らずに使うことが薄くなります。
+    Handed them, the first user would spend its attention checking form, and what only it can do, using the work without knowing the discussion, would grow thin.
 
-- 魅力的品質の More を直したときだけ、指揮者はその観点を名指しして pith に渡し、新しい first user に確かめ直させる。当たり前品質の More は、直すだけで確かめ直さない。直したものが目的に合っているかは、どちらも指揮者が More の場所と根拠に照らして確かめる。読み手と目的か、話し合いで決めたことが変わったときは、全体を確かめ直す。
+- Only when an attractive-quality More was fixed does the conductor name that question to pith and have a new first user check it again. A More of quality the user takes for granted is fixed and not rechecked. Whether either fix serves the purpose, the conductor checks against the More's place and evidence. When the reader and purpose, or what was decided in the discussion, change, the whole is checked again.
 
-    魅力的品質は、利用者が writ を選ぶ理由になる品質で、その More は、読み手が文書から得るべきものを得られないことです。当たり前品質は、利用者があって当たり前と受け取る品質で、その More は、言葉の食い違いや切れたリンクのような欠けです。魅力的品質の More が直せたかは、話し合いを知らない目で使い直さないと分かりません。前の first user は直す前の文書を使っているので、新しい first user にします。当たり前品質の欠けは目に見えやすく、すぐ直せます。そこに確かめ直しの手間をかけると、その分が魅力的品質から取られます。確かめ直すのはその観点だけなので、直すたびに全体へ新しい指摘が広がることもありません。決めたことが変わって書き直した文書は、前の確かめが当てはまらないので、全体を確かめ直します。
+    Attractive quality is the quality that makes the user choose writ; a More of it means the reader does not get from the document what they should. Quality the user takes for granted is what the user expects to be there; a More of it is a defect such as a word used two ways or a broken link. Whether an attractive-quality More is fixed shows only when someone who does not know the discussion uses the document again. The earlier first user used the document before the fix, so a new first user is started. A defect of what is taken for granted is easy to see and quick to fix. Spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix. A document rewritten because a decision changed is not covered by the earlier check, so the whole is checked again.
 
-## 直せる穴は直し、残せる穴は理由を付けて残す
+## Fix the holes that can be fixed, and leave, with a reason, the holes that can be left
 
 ```mermaid
 stateDiagram-v2
   direction TB
-  [*] --> 決める: /writ:up か、文書を書く場面
-  決める --> 書く: 読み手と目的が決まった
-  書く --> 確かめる: 生成者が対象の文書に書いた
-  確かめる --> 振り分ける: pith が結果を返した
-  振り分ける --> 直す: 直し方が分かる More
-  直す --> 振り分ける: 生成者が直し、指揮者が確かめた
-  振り分ける --> 返す: どの More も直したか理由を付けて残し、どの Good も根拠が成り立つ
-  振り分ける --> 聞く: 進められない、または目的を妨げる More
-  聞く --> 決める: 答えで、読み手と目的か観点の種類が変わった
-  聞く --> 書く: 答えで、事実か決めたことが変わった
-  返す --> [*]
+  [*] --> Settle: /writ:up, or a document is about to be written
+  Settle --> Write: the reader and purpose are settled
+  Write --> Check: the generator wrote into the document
+  Check --> Sort: pith returned its result
+  Sort --> Fix: a More whose fix is clear
+  Fix --> Sort: the generator fixed it and the conductor checked
+  Sort --> Return: every More is fixed or left with a reason, and every Good's ground holds
+  Sort --> Ask: cannot go on, or a More blocks the purpose
+  Ask --> Settle: the answer changed the reader and purpose or the kind of essentials
+  Ask --> Write: the answer changed a fact or what was decided
+  Return --> [*]
 ```
 
-直すか残すかは、次の順に1つずつ問うて決めます。
+Whether to fix or leave is decided by asking the following, one at a time, in order.
 
 ```mermaid
 flowchart TD
-  M[More、根拠が成り立たない Good]
-  Q1{残す Good を壊さずに、<br/>目的から直し方が分かるか}
-  X[生成者に直させる]
-  Q2{このままで、読み手は<br/>目的を果たせるか}
-  L[残し、理由を最後の More に書く]
-  B[利用者に聞く]
+  M[A More, or a Good whose ground does not hold]
+  Q1{Is it clear from the purpose how to fix it<br/>without breaking a Good to keep?}
+  X[Have the generator fix it]
+  Q2{Can the reader achieve<br/>the purpose as it is?}
+  L[Leave it, with the reason in the final More]
+  B[Ask the user]
   M --> Q1
-  Q1 -->|分かる| X
-  Q1 -->|分からない| Q2
-  Q2 -->|果たせる| L
-  Q2 -->|果たせない| B
+  Q1 -->|yes| X
+  Q1 -->|no| Q2
+  Q2 -->|yes| L
+  Q2 -->|no| B
 ```
 
-- 指揮者は、観点のすべてを文書に照らして、1つも飛ばさずに3回確かめる。生成者が返したとき、pith が返したとき、利用者に報告する前。
+- The conductor checks every question against the document three times, skipping none: when the generator returns, when pith returns, and before reporting to the user.
 
-    生成者は自分の意図を知っていて、first user は1回しか使わず、どちらのあとの直しもほかの所を崩しうるからです。報告には、今の文書に照らした最後の確かめだけを使います。
+    The generator knows its own intent, the first user uses the document only once, and a fix after either can break another place. The report uses only the last check, against the document as it is now.
 
-- Good・More は、場所と根拠を文書に照らしてから信じる。根拠が成り立たない Good は More として振り分ける。
+- Believe a Good or More only after checking its place and evidence against the document. A Good whose ground does not hold is sorted as a More.
 
-    そのまま返すと、役に立っていない所を残すべき所だと利用者に思わせ、次の直しを誤らせます。
+    Returned as it is, it would make the user think a place that does not help must be kept, and would mislead the next fix.
 
-- 生成者の Good・More は pith に渡さない。
+- Do not hand the generator's Good and More to pith.
 
-    渡すと、first user が書いた側の判断で使い、読み手がつまずく所を見逃します。
+    Handed them, the first user would use the document with the writer's judgment and miss where the reader trips.
 
-- More は、文を足す前に根から直す。
+- Fix a More at the root before adding a sentence.
 
-    More の多くは「〜がない」の形で返ります。足して直すと、直すたびに文書が長くなって同じことを2か所で言い、読み手に要らない文を読ませます。指揮者は、同じことがすでにどこかで言われていないか、今ある文を置き換えれば済まないかを先に見て、生成者にもそう直させます。
+    Most Mores come back as "there is no ...". Fixing by adding makes the document longer with every fix, says the same thing in two places, and makes the reader read sentences they do not need. The conductor first looks for whether the same thing is already said somewhere and whether replacing a sentence that is there is enough, and has the generator fix that way too.
 
-- 生成者は直すたびに新しく呼び、書かせたときと同じものと、直す所と、残す Good を渡す。
+- Start a new generator for every fix, and hand it the same as when it wrote, plus the places to fix and the Goods to keep.
 
-    同じ生成者に続けて頼むと、生成者は前に書いたときの意図で文書を読み直し、穴を自分の意図で埋めます。生成者は確かめた結果を知らないので、残す Good がないと、直しながら目的に役立つ所を壊し、直すたびに別の穴ができます。
+    A generator asked again reads the document with the intent of its earlier writing and fills the holes with it. The generator does not know the check's result, so without the Goods to keep, it breaks what serves the purpose while it fixes, and makes a new hole for each one fixed.
 
-## 目的を妨げる穴は、ごまかさずに利用者へ聞く
+## Ask the user, instead of covering it over, about a hole that blocks the purpose
 
-- 目的を果たせないほどの中身の穴は、指揮者が推し量って埋めず、利用者に戻す。果たせるかは、読み手が始められるかではなく、読み終えてすることを最後までやり切れるかで判断する。
+- A hole in the content that keeps the purpose from being achieved goes back to the user; the conductor does not fill it by inference. Whether the purpose can be achieved is judged by whether the reader can carry through to the end what they do after reading, not by whether they can start.
 
-    writ が、利用者やその周りの人が決めることを決めると、利用者の意図からずれた文書が、決まったような顔で返ってきます。
+    When writ decides what the user or the people around them decide, a document that drifts from what the user meant comes back looking settled.
 
-- 直しても同じ More が残るとき、直すたびに別の More ができるとき、決めた読み手や目的を変えないと直せないときは、進められないと判断して利用者に戻る。
+- When the same More remains after a fix, when each fix makes another More, or when it cannot be fixed without changing the settled reader or purpose, the conductor judges it cannot go on and goes back to the user.
 
-    どれも、これ以上直しても返せる形にならない印です。続けると、利用者は文書を受け取れないまま待つことになります。
+    Each is a sign that more fixing will not make the document ready to return. Going on, the user would wait without ever receiving it.
 
-- 利用者やその周りの人が決めることを、writ の提案として文書に書かない。読み手が自分で決められるとき（担当を名乗り出るなど）か、決まらなくても目的を果たせるときだけ、決まっていないと分かる形で残す。それ以外と、迷うときは利用者に聞く。
+- Do not write as writ's proposal what the user or the people around them decide. Leave it visibly undecided only when the reader can decide it themselves, such as volunteering to own a part, or when the purpose is achieved without it. Otherwise, and whenever unsure, ask the user.
 
-    提案として書くと、半分決まったものとして読み手に届き、何に従えばよいか分からなくなります。読み手が自分で決められないこと（チームの決まりなど）や、決定を待てないこと（プロンプトで動く AI など）を残すと、読み手は推し量ってやり直すことになります。質問は利用者が1回答えれば済みますが、残し方を誤ると読み手全員が困るので、迷えば聞きます。
+    Written as a proposal, it reaches the reader as half decided, and they no longer know what to follow. Leaving what the reader cannot decide alone, such as a team's rule, or cannot wait for, such as an AI acting on a prompt, leaves the reader guessing and redoing. A question costs the user one answer, but leaving it wrongly costs every reader, so when unsure, ask.
 
-- どの状態のあとも、対象の文書は中身の穴をぼかさない。
+- After every state, the document does not blur a hole in its content.
 
-    生成者は対象の文書に直接書くので、利用者は途中の状態も目にします。利用者に聞いている間も、文書は穴が見える形です。
+    The generator writes directly into the document, so the user sees it also in the middle. While the user is being asked, too, the document shows the hole.
 
-- 話し合いで決めたことが変わったら、それが変える段階からやり直す。
+- When what was decided in the discussion changes, go back to the step it changes.
 
-    観点の種類が変われば観点を選ぶところから、事実が変われば調べるところから、生成者に渡すものだけが変われば書くところからです。
+    To choosing essentials when the kind of essentials changes, to looking things up when a fact changes, and to writing when only what the generator is handed changes.
 
-## 観点ごとの最後の Good・More を返す
+## Return the final Good and More for every question
 
-- 会話での報告は、渡せるかの指揮者の見立てから始める。続けて、使った観点のすべてについて、観点の文言と、Good か More かとその場所を1行ずつ示す。残した More だけは、first user の報告、困ること、残した理由まで示す。最後に、結果のファイルの場所を添える。
+- The report in the conversation opens with the conductor's view of whether the document can be handed on. Then, for every question of the essentials used, one line gives the question's words, Good or More, and where. Only for a More that was left does it also give the first user's report, what the reader struggles with, and why it was left. It ends with the result file's location.
 
-    見立てが先にあれば、利用者は同意するかだけを決め、確かめたい所だけ観点ごとの答えを読みます。利用者が決めるのは、残した More を受け入れるかどうかなので、詳しく示すのはそこだけです。Good の得るものは、直すときに壊さないためのもので、使うのは指揮者と生成者です。全部を会話に載せると、観点ごとに Good・More がいくつも付くので、報告が長くなりすぎて読まれません。More を直した観点は、直した今の状態を Good として示すので、答えのない観点は残りません。
+    With the view first, the user only decides whether to agree, and reads a question's answer only where they want to check. What the user decides is whether to accept the Mores that were left, so only those are set out in full. What a Good gains is there so a fix does not break it, and it is the conductor and the generator who use it. Put in the conversation in full, with several Goods and Mores per question, the report would be too long to be read. A question whose More was fixed shows its state now, as a Good, so no question is left without an answer.
 
-- 結果のファイルには、観点ごとの first user の報告と、最後の Good・More のすべてを、場所と根拠付きで書く。
+- The result file holds, for every question, the first user's report and every final Good and More, each with place and evidence.
 
-    利用者は、確かめたい所だけファイルで読むか、指揮者に聞けば、Good・More が使った事実にもとづくことを確かめられます。
+    The user can confirm that a Good or More rests on the fact of use by reading only the part they want in the file, or by asking the conductor.
 
-- 途中の指摘や直した経緯は付けない。
+- Leave out remarks along the way and how things were fixed.
 
-    付けると、利用者は、それぞれが今の文書のどこに当てはまるかを確かめ直すことになります。
+    With them, the user would have to work out again where each applies in the document as it is now.
 
-- 利用者が残した More を受け入れるか決めたら、指揮者はその結果を片付ける。コミットメッセージには全文を写し、各 More の末尾にどうなったか（`→ fixed:`、`→ let go:` と理由、`→ to the user:`）を付ける。
+- Once the user decides whether to accept the Mores that were left, the conductor clears the result. It copies the full text into the commit message and ends each More with what became of it (`→ fixed:`, `→ let go:` with the reason, or `→ to the user:`).
 
-    見送った More も理由ごと履歴に残るので、選ばなかった道としてあとから読めます。利用者が決めないまま会話が終わっても、ファイルが `open/` に残るので、判断待ちのものがあると分かります。
+    A More that was let go stays in the history with its reason, so it can be read later as a road not taken. If the conversation ends before the user decides, the file stays in `open/`, so it shows that something waits for a decision.
 
-結果のファイルは、利用者、rn のような呼び出し元、writ の後の版が読む、外との約束です。そのため、どの版でも次のことが成り立つ形にします。
+The result file is read by the user, by a caller such as rn, and by later versions of writ, so it is a contract with the outside. So its form keeps the following true in every version.
 
-- ファイル名の `{NN}` は、そのファイルが `open/` に届いた順を表す2桁の数にする。
+- The `{NN}` in the file name is a two-digit number showing the order the file arrived in `open/`.
 
-    利用者は `open/` を開くと、判断を待つものを届いた順に読めます。
+    When the user opens `open/`, they read what waits for a decision in the order it came.
 
-- ファイルの冒頭には、対象の成果物、その受け手と目的、狙いを書く。
+- The top of the file names the target work, its receiver and purpose, and the aim.
 
-    あとから読む人は、会話に戻らなくても、Good・More がどの狙いと比べたものかを知れます。
+    A later reader knows what aim each Good and More was compared with, without going back to the conversation.
 
-- 続けて観点ごとに、観点ファイルの名前と問いを一字一句そのまま書き、その下に first user の報告と Good・More を書く。
+- Then, for every question, the essentials file's name and the question are written word for word, and under them the first user's report and the Good and More.
 
-    観点ファイルの名前で、利用者は観点をそのファイルの中で読めます。問いが観点ファイルと同じ文字なので、すべての観点に答えがあるかを、スクリプトが観点ファイルと突き合わせて確かめられます。
+    With the essentials file's name, the user can read the question in that file. Since the question has the same characters as in the essentials file, a script can match the file against it and check that every question has an answer.
 
-- Good・More のそれぞれに、場所を `パス:行` の形で、根拠を成果物か first user の報告から引いた文で付ける。
+- Every Good and More carries its place as `path:line` and evidence quoted from the work or from the first user's report.
 
-    場所で、利用者は文書全体でなくその所だけを見られます。根拠で、利用者は writ の判断を信じるのでなく確かめられます。どちらも決まった形なので、場所が実在するかと、引いた文が引いた元に本当にあるかを、スクリプトが確かめられます。成果物から引いた文は成果物で、first user の報告から引いた文は同じ結果のファイルの報告で探します。
+    With the place, the user looks at that spot instead of the whole document. With the evidence, the user checks writ's judgment instead of trusting it. Both are in a fixed form, so a script can check that the place exists and that the quoted text is really where it was quoted from. A quote from the work is looked for in the work, and a quote from the first user's report is looked for in the report in the same result file.
 
-- Good には得るものを、More には困ることを付け、残した More には残した理由も付ける。
+- A Good says what the reader gains, a More says what the reader struggles with, and a More that was left also says why it was left.
 
-    Good の得るもので、直すときに失ってはいけないものが、読み手への効き目で分かります。More の困ることで、利用者は残した More を受け入れるかを、読み手への効き目で決められます。残した理由で、見落としでなく判断して残したことと、利用者が決めることかどうかが分かります。
+    What a Good gains shows, by its effect on the reader, what must not be lost when the work is fixed. What a More struggles with lets the user decide, by its effect on the reader, whether to accept a More that was left. The reason shows the More was left by a decision, not missed, and whether it is for the user to decide.
 
-利用者が目にする名前は、次のものです。README はこの名前で使い方と観点を教えるので、変えると利用者が README で覚えたことが崩れます。
+The names the user sees are the following. The README teaches use and the essentials with these names, so changing them breaks what the user learned from the README.
 
-- `/writ:up`、`/writ:pith`、pith、first user
-- Good、More
-- 観点ファイルの名前：`doc.md`、`readme.md`、`design.md`、`prompt.md`、`essentials.md`
+- `/writ:up`, `/writ:pith`, pith, first user
+- Good, More
+- The essentials files' names: `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`
 
-## 作業の途中で書く文書も、同じ流れで仕上げる
+## Finish a document written during other work in the same flow
 
-- Claude Code が作業の途中で文書を書いたり書き直したりするときは、`/writ:up` と同じ流れで、指揮者として進める。
+- When Claude Code writes or rewrites a document during other work, it goes through the same flow as `/writ:up`, as the conductor.
 
-    利用者が呼び忘れた文書は、writ なしで仕上がったものとして渡され、4つのベネフィットが届きません。
+    A document for which the user forgot to call writ is handed on as finished without writ, and the four benefits do not reach it.
 
-- この場面で writ が使われるのは、Claude Code が writ のスキルの説明を読み、今の場面に当てはまると判断したとき。
+- writ is used here when Claude Code reads the description of writ's skill and judges that it fits the moment.
 
-    スキルの説明には、利用者が頼んだときだけでなく、作業の途中で文書を書こうとするときにも使うと書きます。説明を当てはめるかはその場の Claude Code の判断なので、いつも選ばれるとは限りません。選ばれなかった文書は writ なしで仕上がったものとして渡されます。そこで README で、Good・More が付いていなければ `/writ:up` を呼ぶよう伝えます。ファイルを書くときに動く hook は選びません。hook は Claude Code が中身を作り終えてファイルに書くときに動くので、読み手と目的が決まる前に中身ができています。しかも、読み手に向けた文書でも作業メモでも動いてしまいます。利用者の CLAUDE.md に「文書は writ で書く」と足す形も選びません。対象の文書以外のものを利用者の環境に残し、それを保つ手間を利用者に移すからです。
+    The skill's description says it is used not only when the user asks but also when a document is about to be written during other work. Whether the description fits is Claude Code's judgment at the moment, so it is not always chosen. A document for which it is not chosen is handed on as finished without writ. So the README tells the user to call `/writ:up` when a report comes without a Good or More. A hook that runs when a file is written is not chosen. Such a hook runs once Claude Code has finished the content and writes the file, so the content exists before the reader and purpose are settled. It also runs both for a document meant for a reader and for working notes. Adding "write documents with writ" to the user's CLAUDE.md is not chosen either. It leaves something besides the document in the user's environment and moves the effort of keeping it up to the user.
 
-- 会話から読み手と目的が分かれば、聞かずに書く。
+- If the conversation tells the reader and purpose, write without asking.
 
-    作業の途中では、読み手と目的が会話ですでに決まっていることが多く、聞き直すと利用者の作業を止めます。
+    During other work, the reader and purpose are often already settled in the conversation, and asking again stops the user's work.
 
-## 受け手として使った事実を、狙いと比べて Good・More にする（pith）
+## Lay the fact of use as the receiver beside the aim and turn it into Good and More (pith)
 
 ```mermaid
 sequenceDiagram
-  participant C as 呼び出し元
-  participant PC as pith の指揮者
-  participant FU as first user
-  C->>PC: 成果物の場所、受け手と目的、狙い、観点ファイル
-  alt 狙いが観点を覆っていない
-    PC->>C: 狙いが足りない観点
-  else 覆っている
-    PC->>FU: 成果物の場所、受け手と目的、観点ファイル
-    FU->>PC: 観点ごとに、何をして何が起きたか
-    PC->>PC: 狙いと比べて Good・More を付け、形をスクリプトで確かめ、全文を結果のファイルに書く
-    PC->>C: 短い結果と結果のファイルの場所
+  participant C as Caller
+  participant PC as pith's conductor
+  participant FU as First user
+  C->>PC: Work's location, receiver and purpose, aim, essentials files
+  alt The aim does not cover every question
+    PC->>C: The questions the aim does not cover
+  else It covers them
+    PC->>FU: Work's location, receiver and purpose, essentials files
+    FU->>PC: For every question, what it did and what happened
+    PC->>PC: Lays it beside the aim, gives Good and More, checks the form by script, writes the full text to the result file
+    PC->>C: Short result and the result file's location
   end
 ```
 
-呼び出し元は、`/writ:up` の指揮者のことも、pith を直接頼んだ利用者の会話のこともあります。
+The caller may be the conductor of `/writ:up`, or the user's conversation that asked for pith directly.
 
-- pith は、呼び出し元の会話を引き継がない別の文脈（`context: fork`）で動くスキルにする。
+- pith is a skill that runs in a context of its own (`context: fork`) and does not carry over the caller's conversation.
 
-    利用者が名前で呼び、ほかのスキルからも呼ぶのでエージェントでなくスキルにし、fork で呼び出し元の会話を持ち込ませません。fork したスキルから first user のエージェントを動かせることは、Claude Code 2.1.285 で試してあります。Good・More を付ける pith の指揮者は、呼び出し元の話し合いで補って読むことがありません。作った側と別の役が評価すると、作った側が自分で評価するより厳しく採点できる、という Anthropic の手引きにも沿います。代わりに、書き出されなかった狙いは確かめられません。そのため、狙いを書き出して渡すことを、pith の入力として必須にします。
+    It is a skill, not an agent, because the user calls it by name and other skills call it too, and fork keeps the caller's conversation out. That a forked skill can start the first user agent was tried on Claude Code 2.1.285. pith's conductor, which gives Good and More, never reads the work through the caller's discussion. It also follows Anthropic's guidance that a role apart from the maker grades more strictly than the maker grading its own work. The cost is that an aim not written out cannot be checked. So a written aim is a required input of pith.
 
-- pith の指揮者は、first user を動かす前に、文で書かれた狙いがすべての観点を覆っているかを確かめ、足りなければそのまま返す。
+- Before starting a first user, pith's conductor checks that the aim, written in sentences, covers every question, and if not, returns as it is.
 
-    比べる狙いのない観点は、first user に使わせても判定できません。使わせたあとで分かるより、手間がかかりません。
+    A question with no aim to compare against cannot be judged even after a first user has used the work. Finding that out before costs less than after.
 
-- first user には、成果物の場所、受け手と目的、観点ファイルだけを渡し、狙いは渡さない。
+- The first user is handed only the work's location, the receiver and purpose, and the essentials files, never the aim.
 
-    本物の利用者も、何のために使うかは知っています。目的を知らずに使うと、使い方が本物から外れます。一方、狙いを知ると、それを探しながら使い、足りない所を頭の中で補います。言い換えテストでも、読み手に正解は見せません。
+    A real user also knows what they use the work for. Without the purpose, its use drifts from the real one. Knowing the aim, on the other hand, it would use the work looking for it and fill what is missing in its head. A paraphrase test, too, never shows the reader the right answer.
 
-- first user は、成果物を受け手として実際に使い、観点ごとに、何をして何が起きたかを報告する。良し悪しは付けない。どう使って確かめるかは first user が決める。
+- The first user actually uses the work as its receiver and reports, for every question, what it did and what happened. It does not judge. How to use and check the work is the first user's to decide.
 
-    文書なら、読み手として読んで何を受け取り、何をしようとしたかです。プロンプトなら `claude -p` で AI に渡して動かしたときに AI が何をしたか、コードなら呼んで何が起きたかです。使った事実なら、狙いの横に置いて比べられます。迷って止まったときは、止まったことを報告します。本物の利用者も、作った人に聞けずに止まるので、それこそが見つけたいことです。
+    For a document, it is what it took in and what it set out to do, reading as the reader. For a prompt, what the AI did when given it with `claude -p` and run; for code, what happened when it was called. A fact of use can be laid beside the aim and compared. When it stops, unsure, it reports that it stopped. A real user also stops, unable to ask the maker, and that is exactly what is being looked for.
 
-- first user のエージェントの定義は、作った経緯に触れないように組み、定義で守れない所だけを hook で止める。
+- The first user's agent definition is built to keep it from how the work was made, and hooks stop only what the definition cannot hold.
 
-    first user は git の履歴と Claude Code の会話の記録を読みません。読むと、成果物の穴を作った側の意図で埋めます。読む道具は事実を確かめるのにも要るので、道具を絞るだけでは守れません。そこで、first user が動いているときは、hook で次を止めます。履歴を読む git の操作（log、前のコミットの show、前のコミットとの diff、blame、reflog、stash）と、会話の記録を読むことです。hooks の公式文書では、プラグインの hook はサブエージェントの道具の呼び出しでも動き、サブエージェントの中では hook の入力に `agent_type` が入ります。そのため、止めるのは first user が動いているときだけで、ほかの作業には効きません。
+    The first user does not read the git history or Claude Code's conversation records. Reading them, it would fill the work's holes with the maker's intent. Its reading tools are also needed to check facts, so narrowing the tools alone cannot keep it out. So while a first user runs, hooks stop git operations that read history (log, show of an earlier commit, diff against an earlier commit, blame, reflog, stash) and reading conversation records. By the official hooks documentation, a plugin's hooks also run on a subagent's tool calls, and inside a subagent the hook's input carries `agent_type`. So they stop things only while a first user runs, and do not affect other work.
 
-- pith の指揮者は、報告を狙いと比べ、観点ごとに Good・More を付ける。Good には場所と得るもの、More には場所と困ることを付け、どちらにも、報告や成果物から引いた根拠を付ける。
+- pith's conductor lays the report beside the aim and gives each question a Good or More. A Good carries its place and what is gained, a More its place and the struggle, and both carry evidence quoted from the report or the work.
 
-    直すか残すかは、目的を知る呼び出し元が決めるので、pith は決めません。
+    Whether to fix or leave is decided by the caller, which knows the purpose, so pith does not decide it.
 
-- pith は、観点ごとの報告と Good・More の全文を結果のファイルに書き、呼び出し元には、短い結果とファイルの場所を返す。確かめ直す観点を名指しされたときは、同じ結果のファイルの、その観点の節だけを置き換える。
+- pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location. When questions are named for a recheck, it replaces only those questions' sections in the same result file.
 
-    全文を返すと、呼び出し元の会話がそれで埋まります。節だけを置き換えるので、名指しされなかった観点の答えも残り、すべての観点に答えがある形が保たれます。
+    Returning the full text would fill the caller's conversation. Replacing only the sections keeps the answers of the questions not named, so every question keeps an answer.
 
-- pith は、返す前に、Good・More の形をスクリプトで確かめる。すべての観点に答えがあるか、場所が実在するか、根拠として引いた文が引いた元に本当にあるか。引いた元は、成果物か、同じ結果のファイルにある first user の報告。
+- Before returning, pith checks the form of the Good and More by script: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 
-    機械で判定できることは機械で確かめれば、速く、毎回同じ答えが出ます。呼び出し元は、確かめ済みのものだけを受け取るので、同じことを確かめ直しません。スクリプトは pith の中に置き、ほかから呼ばせません。呼び出し元が中身に頼ると、pith の作りを変えたときに壊れるからです。スクリプトと、first user を止める hook は、Python 3 の標準ライブラリだけで書きます。確かめごとが増えても1つずつ直して試せ、git のある所ならたいてい入っていて、Node.js のように利用者の手元にないことのあるものに頼らずに済むからです。
+    What a machine can decide, checked by a machine, is fast and gives the same answer every time. The caller receives only what was already checked, so it does not check the same again. The script sits inside pith and nothing else calls it, because a caller that relied on its insides would break when pith's build changed. The script, and the hooks that stop the first user, are written with Python 3's standard library only. Each check can be fixed and tested on its own as checks grow, Python is there wherever git is in most cases, and nothing depends on something like Node.js that the user may not have.
 
-- 質問が出ても、pith は利用者に聞かず、結果として呼び出し元に返す。
+- When a question comes up, pith does not ask the user but returns it to the caller as its result.
 
-    pith は呼び出し元の会話を持たないので、利用者に聞くかどうかは、話し合いを知る呼び出し元が決めます。
+    pith does not hold the caller's conversation, so whether to ask the user is for the caller, which knows the discussion, to decide.
 
-## 観点を目的から逆算して書き、実物で試す（pith）
+## Write essentials worked back from the purpose, and try them on a real work (pith)
 
-- 受け取るのは、何の成果物の観点か、その受け手と目的、狙い、置き場所。その種類の実物があれば、その場所も受け取る。
+- pith receives what kind of work the essentials are for, its receiver and purpose, the aim, and where to put them. If a real work of that kind exists, it also receives its location.
 
-    狙いは、呼び出し元がその観点に求めるもの、つまり観点で確かめた成果物から受け手が得るべきものです。書いた観点ファイルを確かめるとき、pith の指揮者はこれと比べます。
+    The aim is what the caller wants from the essentials, that is, what a receiver should gain from a work checked with them. pith's conductor compares with it when it checks the essentials file it wrote.
 
-- pith の指揮者が生成者を呼び、生成者が、観点の観点（`essentials.md`）に沿って、目的から逆算して観点ファイルを書く。
+- pith's conductor calls the generator, and the generator writes the essentials file worked back from the purpose, following the essentials for essentials files (`essentials.md`).
 
-    観点は、目的を達成したかを、使って起きたことで答えさせる少ない問いです。目的から逆算すれば、手段を問う観点は出てきません。どう確かめるかを問いにしないので、観点はチェックリストになりません。
+    Essentials are a few questions that ask whether the purpose was achieved, answered by what happened in use. Worked back from the purpose, no question asks about means. No question asks how to check, so the essentials do not become a checklist.
 
-- 書いた観点ファイルは、上の流れで、観点の観点を使って確かめる。first user は、観点ファイルの問いを実物に当てて、実際に確かめてみる。
+- The essentials file written is checked in the flow above, with the essentials for essentials files. The first user applies the file's questions to a real work and actually tries checking it.
 
-    観点ファイルの利用者は、それで成果物を確かめる人です。そのため「使う」とは、実物を確かめてみることです。first user は、問いごとに何をして確かめ、どんな答えが出たか、どこで止まったかを報告します。答えから目的を達成したかが分かるかは、pith の指揮者が判断します。実物がまだなければ試せないので、試したことにはせず、最初に実物を確かめるときに試します。
+    The user of an essentials file is whoever checks a work with it, so to use it is to try checking a real work. The first user reports, for every question, what it did to check, what answer came out, and where it stopped. Whether the answers show if the purpose was achieved is for pith's conductor to judge. If no real work exists yet, it cannot be tried, so pith does not claim it was tried; it is tried the first time a real work is checked.
 
-- pith の指揮者は、直す所を決めて生成者に直させ、More の場所で直ったかを確かめてから返す。結果は、成果物を確かめるときと同じ形で結果のファイルに書く。
+- pith's conductor decides what to fix, has the generator fix it, and checks at each More's place that it is fixed before returning. The result is written to a result file in the same form as when a work is checked.
 
-    観点ファイルは pith が作るものなので、直すかどうかも pith が決めます。
+    An essentials file is pith's own work, so pith decides whether to fix it.
 
-## 品質は、ベネフィットを確かめられる場面で使って確かめる（妥当性確認）
+## Check quality by using writ where its benefits can be seen (validation)
 
-品質は、まず6つのベネフィットを妥当性確認で確かめます。利用者として writ をゴールデンパスの場面で使い、起きたことをベネフィットと比べます。場面は、そのベネフィットがなければ利用者がはっきり困るものを選びます。そうでない場面では、届いたかが見えないからです。ベネフィットが通るまで、当たり前品質の欠けを先に直すことはしません。
+Quality is first checked on the six benefits, by validation: use writ as its user would on the golden path, and lay what happened beside the benefits. The situations chosen are ones where, without the benefit, the user would plainly struggle. In other situations, whether the benefit arrived cannot be seen. Until the benefits pass, defects of what the user takes for granted are not fixed first.
 
-どの品質も、話し合いを知らない別のサブエージェントを first user にして確かめます。first user は利用者の代わりに writ を動かし、返ってきたものを使って、起きたことを報告します。合否は、writ を確かめる指揮者が、その報告をベネフィットと比べて決めます。場面ごとに1回ずつ動かします。writ の結果は動かすたびに変わりえますが、動かすには時間とお金がかかるので、ばらつきは何度も動かして測りません。
+Every quality is checked with a separate subagent that does not know the discussion, as the first user. The first user runs writ in the user's place, uses what comes back, and reports what happened. Pass or fail is decided by the conductor checking writ, which lays the report beside the benefits. Each situation is run once. writ's result can differ from run to run, but running it costs time and money, so the spread is not measured by running many times.
 
-### ベネフィット
+### Benefits
 
-- 読み手は一度読めば分かり、読み終えて何をすればよいかも分かる。
+- Readers understand the document in one reading, and know what to do once they finish.
 
-    「一度読めば分かる」の品質です。これがないと、読み手は読み直すか、書いた人に聞きに戻ります。README の2つの例（移行計画を新しく書く、型の決まりの文書を直す）で writ を動かします。first user が、文書を頭から1回読み、どちらとも読める所や動けない所に印を付け、読み終えて何を決めて何をするかを言います。指揮者は印ごとに、その所の中身が読み手の目的を妨げるかを判断します。言ったことが頼んだときの目的と合い、目的を妨げる印がなければ合格です。目的を妨げない印は不合格にしません。丁寧に読めば何かしら印は付くので、数で測ると、読み手に要らない所まで磨くことになるからです。
+    This is the quality of "understands it in one reading". Without it, readers read again, or go back to ask the writer. writ is run on the README's two examples: writing a new migration plan, and fixing the typing rules document. The first user reads the document once from the top, marks places that read either way or where it cannot act, and says what it decides and does once it finishes. For each mark, the conductor judges whether the content there blocks the reader's purpose. It passes when what the first user says matches the purpose given in the request and no mark blocks the purpose. A mark that does not block the purpose does not fail it. A careful reading always leaves some marks, so counting them would mean polishing places the reader does not need.
 
-- 返ってきた文書を、そのまま読み手に渡せる。
+- The user can hand the document they get back straight to the reader.
 
-    「そのまま渡せる」の品質です。これがないと、読んで直す手間が利用者に戻ります。1つ目と同じ場面で、first user は利用者として、読み手に渡す前に変えたい所を、読み手に関わる理由と一緒に挙げます。1つ目と同じく、目的を妨げるかで判断し、そういう所がなければ合格です。
+    This is the quality of "hand it straight on". Without it, the effort of reading and fixing goes back to the user. In the same situations as the first, the first user, as the user, names what it would change before handing it to the reader, each with a reason that concerns the reader. As with the first, each is judged by whether it blocks the purpose, and it passes when there is none that does.
 
-- 最後の報告だけで、結果を判断できる。
+- The user can judge the result from the final report alone.
 
-    「報告で判断できる」の品質です。これがないと、利用者は文書全体を読み直します。使うのは、移行計画のように、残した More が承認の判断を左右する場面です。first user は報告だけを読んで承認するかどこを直してもらうかを決め、そのあと文書全体を読みます。判断が変わらず、どの Good・More がどの観点への答えかが報告だけで分かれば合格です。
+    This is the quality of "judge from the report". Without it, the user reads the whole document again. The situation used is one where a More that was left decides approval, such as the migration plan. The first user reads only the report and decides whether to approve or what to have fixed, then reads the whole document. It passes when the decision does not change, and the report alone shows which question each Good and More answers.
 
-- 決まっていないことは、ごまかされずに聞かれる。
+- What is not decided is asked, not covered over.
 
-    「ごまかさずに聞かれる」の品質です。これがないと、読み手が目的を果たせない文書が、正しそうな顔で返ってきます。型の決まりの場面（any を使ってよいかが決まっていない）と、移行計画の場面（担当は決まっていなくてよい）で動かします。前者では仕上がったものとして返さずに決まっていないことを聞き、対象の文書でも穴が見え、後者では残した理由の付いた More とともに返れば合格です。後者があるのは、何でも聞き返せば前者だけは通ってしまうからです。
+    This is the quality of "asked instead of covered over". Without it, a document with which the reader cannot achieve the purpose comes back looking right. It is run on the typing rules situation, where whether `any` is allowed is not decided, and on the migration plan situation, where the owners may stay undecided. It passes when, in the first, writ does not return it as finished but asks about what is not decided, and the hole shows in the document too; and in the second, it returns with a More that carries the reason it was left. The second is there because asking back about everything would pass the first alone.
 
-- 使った事実で確かめられる。
+- The user can check by what happened in use.
 
-    「使った事実で確かめられる」の品質です。これがないと、作った側の思い込みで確かめたものが、使えないまま渡ります。README の、PR を見るプロンプトの場面で、狙いから外れる穴を1つ入れたプロンプトと、狙いどおりのプロンプトを pith で確かめます。前者ではその穴を指す More が、使って起きたことを根拠に返り、後者ではその観点が Good で返れば合格です。入れる穴は、プロンプトを読むだけでは見えず、動かして初めて分かるものにします。読むだけで見える穴では、使った事実で確かめたかが分からないからです。
+    This is the quality of "check by what happened in use". Without it, a work checked by what the maker meant is handed on unusable. In the README's situation of the prompt that reviews pull requests, pith checks a prompt with one hole that misses the aim and a prompt that meets the aim. It passes when, for the first, a More pointing at that hole comes back with what happened in use as its evidence, and for the second, that question comes back as a Good. The hole put in is one that cannot be seen by reading the prompt and shows only when it is run. A hole seen by reading alone would not show whether the check rested on the fact of use.
 
-- 目的から逆算した観点を作れる。
+- The user can write essentials worked back from the purpose.
 
-    「目的から逆算した観点を作れる」の品質です。これがないと、観点は形を問うチェックリストになり、全部通っても目的は確かめられません。README の、リリースノートの観点を作る場面で動かします。どの問いも first user が使って起きたことで答えられ、その答えから、実物のリリースノートで上げるかを決められれば合格です。
+    This is the quality of "write essentials worked back from the purpose". Without it, essentials become a checklist of form, which can all pass without the purpose being checked. writ is run on the README's situation of writing essentials for release notes. It passes when every question can be answered from what happened when the first user used the work, and from those answers one can decide whether to upgrade, on real release notes.
 
-### 当たり前品質
+### Quality the user takes for granted
 
-機械で決められることは、スクリプトで毎回確かめます。速く、毎回同じ答えが出て、指揮者の目をベネフィットの判断に残せます。
+What a machine can decide is checked by script every time. It is fast, gives the same answer every time, and leaves the conductor's attention for judging the benefits.
 
-- 動かす前と後で作業ディレクトリを比べて、変わったのが対象の成果物と `open/` の結果のファイルだけであること。片付けたあとは、対象の成果物だけであること。
-- pith の返す Good・More が、すべての観点に答え、場所が実在し、引いた根拠が成果物か first user の報告にあること。これは pith が返すたびに自分で確かめ、そのスクリプトは Python の unittest で、止める例と通す例を確かめる。
-- first user が動いているとき、作った経緯を読む道具の使い方が hook で止まること。これも unittest で確かめる。
-- README から観点ファイルへのリンクがすべて実在し、利用者が目にする名前が README と writ でそろっていること。
+- Comparing the working directory before and after a run, only the target work and the result file in `open/` have changed. After clearing, only the target work has.
+- pith's Good and More answer every question, every place exists, and every quoted piece of evidence is in the work or in the first user's report. pith checks this itself every time it returns, and the script is tested with Python's unittest on a case it stops and a case it lets through.
+- While a first user runs, the hooks stop the uses of tools that read how the work was made. This too is tested with unittest.
+- Every link from the README to the essentials files exists, and the names the user sees match between the README and writ.
 
-それ以外の当たり前品質は、前もって網羅して確かめず、使いながら出てきたら直します。同じことを聞かれない、止まったまま待たされない、事実がリポジトリと合う、などです。目に見えやすく、すぐ直せるからです。
+Other quality the user takes for granted is not covered up front; it is fixed when it shows up in use, such as not being asked the same thing twice, not being left waiting, and facts matching the repository. Such failures are easy to see and quick to fix.
 
-### 確かめないこと
+### What is not checked
 
-試すのは、上に挙げたゴールデンパスの場面だけです。ほかの種類の成果物や読み手、別の流れは試しません。観点が、どの種類の成果物にも当てはまる言葉で書かれていることに頼ります。
+Only the golden-path situations above are tried. Other kinds of work or readers, and other flows, are not. The design relies on the essentials being written in words that fit any kind of work.
 
-作業の途中の文書に Claude Code が writ を選ぶかは、動かして確かめません。その場の Claude Code のスキルの説明の読み方しだいで、writ の側では確実にできないからです。選ばれれば上で確かめた流れと同じで、選ばれなければ利用者が README のとおり `/writ:up` を呼ぶので、失うものはわずかです。writ の側で変えられるのは説明です。そこで指揮者は、説明をスキルの説明についての公式の手引きと照らして読みます。手引きに沿い、何をするかといつ使うか（作業の途中で文書を書く場面を含む）を言っていれば合格です。
+Whether Claude Code chooses writ for a document during other work is not checked by running it. It depends on how Claude Code reads the skill's description at the moment, which writ cannot make certain. If chosen, the flow is the same as checked above; if not, the user calls `/writ:up` as the README says, so little is lost. What writ can change is the description. So the conductor reads the description against the official guidance on skill descriptions. It passes when it follows that guidance and says what the skill does and when to use it, including when a document is about to be written during other work.
