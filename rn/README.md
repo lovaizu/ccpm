@@ -38,16 +38,16 @@ default branch is untouched until you merge.
 
 ```mermaid
 flowchart TD
-    S@{ shape: sm-circ }
+    S(("start"))
     PlanTalk("Work out the plan")
     Plan("Plan sign-off")
     DesignTalk("Work out the design")
     Design("Design sign-off")
     Make("Build and check the deliverable")
     Deliverable("Deliverable sign-off")
-    E@{ shape: fr-circ }
+    E((("done")))
 
-    S -->|start| PlanTalk
+    S --> PlanTalk
     PlanTalk -.->|proposal| Plan
     Plan -->|feedback| PlanTalk
     Plan -->|approve| DesignTalk
