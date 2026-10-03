@@ -126,6 +126,10 @@ there; until then, the plan shows them as not yet specified.
   I propose working out the design on this plan: it says what you want, why, and how you would
   know it is achieved.
 
+  Toward what you would choose it for:
+  - A1: each of the three bugs is named with how its failing build is checked; nothing is built yet
+    (first proposal)
+
   ### Is the goal what you really want, with the reason you want it?
   - Good A1: it names the three type bugs as the reason (steering.md:11), so every later choice is
     judged against stopping them
@@ -136,8 +140,10 @@ there; until then, the plan shows them as not yet specified.
 ```
 
 The map on top heads every message where `rn` stops for a sign-off or a pause: ✅ done, 👉 now,
-⬜ ahead. Under it, `rn` says what it proposes to do next and why, then gives its grounds: each
-question the plan must answer, with what is good and what falls short, and where. You can say yes or
+⬜ ahead. Under it, `rn` says what it proposes to do next and why, then how close the work has come
+to each thing you would choose it for, and what came closer since its last proposal. Clearing every
+shortfall never ends, so this is what you decide on: whether it has come close enough. Then it gives
+its grounds: each question the plan must answer, with what is good and what falls short, and where. You can say yes or
 no from this, and read the plan itself on the pull request whenever you want. The last line is what
 `rn` records of where it stopped, so a fresh conversation goes on from the same place.
 
@@ -221,7 +227,8 @@ yourself, then `/rn:up`. A plugin can't run `/clear`.
 You approve the deliverable, your product as the session leaves it, by whether it achieves the goal
 you agreed at the start. Before you see it, it was used as you would use it, in each scene of the
 verification document you approved, so it was checked against that goal, not only against its
-tasks.
+tasks. The proposal says how close it has come to each thing you would choose it for, so you decide
+whether that is enough.
 When something falls short, `/rn:gm` has it fixed. On `/rn:ty` the pull request is marked ready,
 and the merge is yours:
 

@@ -58,6 +58,13 @@ time goes only to what is theirs.
 What the conductor gives the user whenever it calls them, at a sign-off or with a question. With it,
 the user says yes or no from it alone, and reads the work whenever they want.
 
+- Deciding as the user whether the work has come close enough, what did you learn of how far it now
+  gives each thing you would choose it for, and of what came closer since the last proposal?
+
+    The user then decides when to stop from how close the work has come. A verdict or a count of
+    Goods and Mores does not say whether the work is usable, and clearing every More never ends,
+    since each fix leaves a smaller one.
+
 - Deciding yes or no as the user, what beyond the proposal did you need?
 
     The user then decides a move from the proposal alone, from what the conductor proposes to do next
