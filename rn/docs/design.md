@@ -252,7 +252,9 @@ holds the goal and everything the user agreed, sets those facts beside the aim.
 
 The conductor stays the same conversation throughout the session, so what was talked through stays
 with it. A fresh generator is started for each task, a fresh `writ` for each document, and a fresh
-first user for each use, so each one's attention holds only its own work.
+first user for each use, so each one's attention holds only its own work. Each returns to the
+conductor, never to the user, and the conductor waits for it, so its turn ends only when it stops for
+the user or asks them a question.
 
 ### Keeping the first user apart
 

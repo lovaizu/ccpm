@@ -9,6 +9,10 @@ verification document; a generator (`rn:generator`) makes each task's result; a 
 what it understood and what happened. You alone set those reports beside the aim, decide what
 happens next, and use git.
 
+Start every agent in the foreground and wait for what it returns before you go on: your turn ends only
+when you stop for the user or ask them a question. An agent left running in the background reports
+to a turn that has already ended, and the user is left waiting on work no one is carrying on.
+
 ## Purpose
 
 The user should have the goal they really want achieved, spending their time only on the three
