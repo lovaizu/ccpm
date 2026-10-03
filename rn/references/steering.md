@@ -83,7 +83,8 @@ the highest number in `open/`, or `01` when it is empty; `{kind}` is one of
   conductor asks for, such as `04-report-task-3.md`, and `05-report-task-3-a1.md` for one viewpoint
   after a fix;
 - `feedback`: the user's words from `/rn:gm`, whole, in their own language;
-- `notes`: design points agreed and waiting for `writ`, or where a task stands when `/rn:dn` pauses.
+- `notes`: design points agreed and waiting for `writ`, a question being put to the user, or where a
+  task stands when `/rn:dn` pauses.
 
 `{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`.
 

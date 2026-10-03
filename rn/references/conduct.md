@@ -48,8 +48,8 @@ until you stop for the user.
 
 ## Working out the plan
 
-Talk with the user one point at a time until you both see the same thing, as the Question section of
-`conductor.md` asks:
+Talk with the user one point at a time until you both see the same thing, each question asked as in
+Asking the user:
 
 - What is to be decided is a tree; ask only a point whose prerequisites are settled, with the answer
   you recommend and why.
@@ -190,6 +190,15 @@ A correction that changes nothing they say, and a change the user made by answer
 written without stopping. Work that goes back to working out the plan or the design always stops at
 that sign-off again.
 
+## Asking the user
+
+Write a question to a `notes` item `{NN}-notes-question.md` and have a fresh first user take it up as
+the user would, by the Question section of `conductor.md`, with the paths of the item and of
+`steering.md`; settle its report as above, fixing the item, since you wrote the question and cannot
+see what it leaves out. Then commit and push, and give the user the question as the item holds it,
+translated into the conversation language when the two differ, adding nothing and leaving nothing
+out. The item leaves `open/` in the commit that records the answer.
+
 ## Stopping for the user
 
 You stop only at a sign-off; a question is not a stop, and when the work waits on someone outside,
@@ -198,7 +207,9 @@ what to do meanwhile is a question. At a sign-off, `open/` holds nothing but des
 again at its place as it is now.
 
 Write the proposal once, as the Proposal section of `conductor.md` asks, with the final state only:
-the points and fixes along the way are left out, since the user approves the final state. Have a
+the points and fixes along the way are left out, since the user approves the final state. Each
+`Assumption` in `steering.md` is a More under the criterion it puts at risk, until something checks
+it, since the user approves the work resting on it. Have a
 fresh first user take it up as the user would, by the Proposal section of `conductor.md`, from a
 `notes` item `{NN}-notes-proposal.md` you write it to, and settle its report as above; the stop commit
 removes the item. Then commit and push, empty when nothing changed, with the proposal as the

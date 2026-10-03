@@ -214,8 +214,10 @@ the goal.
 
 Whenever `rn` calls the user, it comes with what it proposes to do next toward the goal, and why. A
 report of where things stand would leave the user to work out what to do next, which is the work they
-left to `rn`. A question is put so the user can answer it on the spot. When the work waits on someone
-outside, what to do meanwhile is such a question, not a stop.
+left to `rn`. A question is put so the user can answer it on the spot, so before it is asked a fresh
+first user takes it up as the user would, as it does a proposal: the conductor that wrote the question
+cannot see what it leaves out. When the work waits on someone outside, what to do meanwhile is such a
+question, not a stop.
 
 Approving and giving feedback each stop, since that is where the user may clear the conversation;
 the user goes on by saying so, or by `/clear` and then `/rn:up`, and both lead to the same next move.
@@ -368,7 +370,9 @@ the sign-off, since approving something that is no use until fixed only spends t
 Otherwise `rn` proposes what it wants to do next and why that serves the goal. As its grounds it
 gives, under every viewpoint and in the user's terms, the final Good and More, each at its place,
 with its criterion ID, claiming no more than that place shows. When the design takes away something
-the product does today, the proposal names it, so the user decides that loss there. The points and
+the product does today, the proposal names it, so the user decides that loss there. Each
+`Assumption` in `steering.md` is a More under the criterion it puts at risk in every proposal until
+something checks it, since the user approves the work resting on it at each sign-off. The points and
 fixes along the way are left out, since the user approves the final state.
 
 The user reads the body of the stop commit in the conversation language, so what they read and what
@@ -422,7 +426,8 @@ the user never approves work on files the default branch no longer has.
 
 `open/` holds what is not yet settled, so nothing needed to go on lives only in the conversation: a
 `report` from a first user or `writ`, a `feedback` item with the user's words, and a `notes` item
-with design points waiting for `writ` or where a paused task stands.
+with design points waiting for `writ`, a question being put to the user, or where a paused task
+stands.
 
 A settled item leaves `open/` in the commit that settles it, copied whole into its message with what
 was decided on each point, each More ending `→ fixed:`, `→ let go:`, or `→ to the user:`. The record
@@ -434,9 +439,10 @@ reason. Feedback is quoted in the user's own language; everything else is in the
 `rn` stops for the user at a sign-off, after `/rn:ty`, after `/rn:gm`, and on a pause with `/rn:dn`,
 each in a stop commit whose decision line says which. At a sign-off every report and feedback is
 settled first, so the user approves the whole of the work with nothing found about it left unread.
-A pause leaves what is unsettled as it is, with a note on where the task stands, so `/rn:up` takes it
-up with nothing to redo. A question is not a stop: nothing is committed, and a fresh conversation
-comes to the same question again.
+A pause leaves what is unsettled as it is, with a note on where the task stands and its generator's
+edits, even those it had not returned, so `/rn:up` takes it up with nothing to redo or ask. A
+question is not a stop: its commit is not a stop commit, and a fresh conversation comes to the same
+question again from its item in `open/`.
 
 ### A session has one directory under .rn/
 

@@ -27,7 +27,7 @@ without asking again. It is recorded and the session stops, so they can clear th
    Say "go on", or /clear and then /rn:up.
    ```
 
-   At the Deliverable sign-off, say instead, after the decision line,
-   `The pull request is ready: {url}. The merge is yours.`
+   At the Deliverable sign-off, say instead, after the decision line, that the pull request is ready,
+   with its URL, and that the merge is theirs.
 4. When the user says to go on, go on as `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` says, from its
    third step.

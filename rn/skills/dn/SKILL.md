@@ -19,7 +19,10 @@ needs is left there.
    `/rn:ty` or `/rn:gm` answers it; stop.
 2. Write what the next conversation needs and nothing else records to a `notes` item in `open/`: what
    was under way and how far it came, and in a talk with the user, the points agreed and the point
-   still open.
+   still open. Uncommitted edits while a task is under way are that task's, made by its generator
+   even when the pause stopped it before it returned: name the task and what its generator was sent
+   to do, and that the edits are not yet checked, so the next conversation hands them to the task's
+   generator rather than asking the user whose they are.
 3. Commit and push, with an unfinished task's edits beside the item, so nothing needed to go on is only
    on this machine, with the decision line
    `● {#id task name | plan | design} ── {how far it came} → paused at {#id task name | plan | design}`.
