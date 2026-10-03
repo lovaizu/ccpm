@@ -1,57 +1,114 @@
-# Plugin authoring rules (ccpm)
+# Plugin rules (ccpm)
 
-Source: based on facts confirmed in the official docs (plugins-reference / plugin-marketplaces / skills at code.claude.com/docs).
+How a plugin in this marketplace is built, checked, registered and released, in that order.
 
-## Version number
+Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces / skills / hooks /
+sub-agents at code.claude.com/docs) and the official plugins (plugin-dev, hookify, security-guidance,
+code-modernization).
 
-- **Write `version` in exactly one place: `plugin.json`.** Do not put `version` in `marketplace.json`.
-  - Resolution order is `plugin.json` → marketplace entry → git commit SHA. **When both are set, `plugin.json` wins**, so a `version` in the marketplace entry is redundant and meaningless.
-  - The top-level `version` in the marketplace is "manifest metadata" and is not used to detect updates for users.
-- **Always set `version` in `plugin.json`** (semver, e.g. `0.1.0`).
-  - `claude plugin validate --strict` warns and then fails when `version` is unset.
-- **What it means (from the user's side):** pinning a version means users receive an update **only when you bump it**.
-- **Bump only on an explicit release instruction.** There is no automatic bump — not even on merge to `main`. Without an instruction, user-facing changes wait under CHANGELOG's `## [Unreleased]` and `plugin.json` stays put; the version rises only when the user says to cut a release.
-  - Omitting it makes every commit a new release (the commit-SHA strategy, suited to active development), but to pass `--strict` this repo's policy is to keep `version` in `plugin.json`.
+## 1. Build
 
-### How much to bump (semver increment)
+### Hooks and check scripts
 
-Decide the increment by the largest change in the release, judged from the user's side:
+- **Follow the official hook best practice** (plugin-dev's `hook-development`).
+- **Put each check in its own named file, and one entry file per hook event**, as the official
+  `hookify` does (e.g. `pretooluse.py`). This also holds for a script a plugin runs to check its own
+  output.
+  - Rationale: each check can then be read, fixed and tested on its own.
+- **Write them in Python 3 with the standard library only, running on 3.9.**
+  - Rationale: with many checks, bash is weak to maintain and test. python3 comes with git in the Mac
+    developer tools, so wherever git is there, python3 is too; on Linux and Windows it is no less
+    common than jq. TypeScript is not used, since Node.js may not be on the user's machine.
+- **When python3 is missing, stop and tell the user to install it; never skip the check.**
+  - Rationale: a skipped check goes unnoticed, so no one learns the rule is not being kept.
+- **State in the plugin's README that Python 3.9 or later is needed.**
+- **Write the tests with the standard `unittest`, in the plugin's own `tests/`** (e.g. `rn/tests/`),
+  as the official `security-guidance` and `code-modernization` plugins do. **Feed in the JSON a hook
+  would receive, and check both a case it stops and a case it lets through.**
+  - Rationale: a check that never stops anything looks the same as one that works.
 
-- **major** (`1.0.0` → `2.0.0`) — a breaking change: an existing command/skill is removed or renamed, or its inputs/behavior change in a way that breaks current usage. While still on `0.x`, breaking changes go in **minor** instead (pre-1.0 has no stability promise).
-- **minor** (`0.1.0` → `0.2.0`) — user-visible behavior changes or a new command/skill/feature is added, without breaking existing usage.
-- **patch** (`0.1.0` → `0.1.1`) — no behavior change: typo/wording fixes, docs, internal refactors.
+### Roles
 
-## CHANGELOG
+- **Keep a checking role from what it must not see by how the role is defined:** start it as a
+  separate subagent that does not carry over the conversation, set `omitClaudeMd`, hand it only the
+  work and its purpose, and take the tool that calls other agents away from the producing role, so the
+  producing role cannot call the checking role.
+  - Rationale: the checking role (the first user) is there to use the work as its user would, without
+    knowing how it was made. A subagent can be called by anyone, from the conversation, a user, a
+    forked skill or another subagent, so watching every way it can be called with hooks grows tangled;
+    a plugin's settings cannot restrict it either. A definition holds however it is called.
+- **Leave to hooks only the mechanical rules a definition cannot hold**, such as a file's form, a
+  name, matching IDs, a commit's form, or a push left undone.
 
-- **Keep `CHANGELOG.md` in the plugin root**, in [Keep a Changelog](https://keepachangelog.com) format: reverse-chronological, a `## [Unreleased]` section on top **while changes are pending** (absent in a freshly released changelog), then one `## [x.y.z] - YYYY-MM-DD` section per release. Group lines under `Added` / `Changed` / `Fixed` / `Removed`, using only the ones that apply.
-- **Write an entry for every user-impacting change** — a new, changed, or removed behavior of a command or skill, or of what the user reads and approves.
-  - **Skip noise**: typo fixes, refactors, internal docs, pure formatting — anything a user would not notice gets no entry.
-- **How to write each entry** — one line that states *what changed* and *the benefit to the user*, in terms a user understands (not commit or implementation language). Keep it concise: `<what changed> — <why it helps the user>`.
-- **Where the entry goes:**
-  - No release instruction → add the line under `## [Unreleased]` (the pending next release), creating that `## [Unreleased]` section at the top if the previous action was a release and it is absent.
-  - A release instruction (cutting a version) → rename `## [Unreleased]` to the chosen `## [x.y.z] - YYYY-MM-DD` and bump `version` in `plugin.json` to match. **Do not leave an empty `## [Unreleased]` heading behind** — a released changelog starts at its latest version section; the `## [Unreleased]` section is re-created at the top only when the next user-facing change lands. Merging to `main` does not by itself bump the version — the bump happens only on this instruction.
+## 2. Check
 
-## Release procedure (who does what)
+### Validation: use it as its user would
 
-On a release instruction, the assistant does every step **except the merge** — the merge to `main` is
-the user's, because `main` is protected and only the user holds the privileges to clear its required
-review. The order:
+- **Check the attractive quality by validation: use the plugin as its user would, on the golden path,
+  and compare what happened with what it aims for.**
+  - Rationale: the attractive quality is why the user chooses the plugin, so the checking effort goes
+    there first.
+- **Do not cover edge cases or alternative flows up front; fix a failure of what the user takes for
+  granted when it shows up in use.**
+  - Rationale: such failures are easy to see and quick to fix. Covering them up front grows a list of
+    checks that all pass while no one has checked the attractive quality.
+- **Check by script, every time, whatever a script can decide.**
+  - Rationale: it costs nothing to run and gives the same answer every time.
 
-1. **Assistant** — bump `version` in `plugin.json` and finalize `CHANGELOG.md` (rename `## [Unreleased]`
-   to the chosen `## [x.y.z] - YYYY-MM-DD`, leaving no empty `## [Unreleased]` behind), commit, and **push**.
-2. **Assistant** — **request the user to merge** the PR to `main`. The assistant **never merges to
-   `main` itself** and never uses `--admin` to bypass branch protection.
-3. **User** — merges the PR to `main` and tells the assistant it is merged.
-4. **Assistant** — once told the merge is done, **tags `main` and publishes the GitHub Release** as
-   below (this part stays the assistant's).
+### Structure check
 
-## Tags and GitHub Releases
+- **Pass both `claude plugin validate <plugin-path> --strict` and `claude plugin validate
+  <marketplace-root> --strict`.**
+  - Rationale: a malformed manifest fails for every user at install, before any behavior is reached.
 
-- **Tag each release on `main`** with an annotated, plugin-scoped tag `<plugin>-v<version>` (e.g. `rn-v0.2.0`). The name is prefixed because each plugin in this marketplace versions independently; the `-` separator avoids colliding with the `plugin@marketplace` install syntax (the same prefix-by-package convention as Lerna `pkg@x.y.z` or Go `path/vx.y.z`).
-- **Publish a GitHub Release** for that tag, using the CHANGELOG's matching section as the notes.
-- **Read release timing from tags / Releases, not from merge commits.** The merge to `main` delivers the code; the tag records which commit is which version, and when.
+## 3. Register
 
-## Validation gate
+- **Add every plugin to `.claude-plugin/marketplace.json`** — one entry under `plugins` with `name`,
+  `description`, `source` (e.g. `./rn`), and `category`. This is what Claude Code reads to install it.
+- **List every plugin in the root `README.md`** with a link to its own README (e.g.
+  `[rn](./rn/README.md)`) and a one-line description. This is the human entry point.
+- **Change the two together** when a plugin is added, renamed, or removed.
+  - Rationale: a plugin counts as shipped only once both the machine and a human reader can reach it.
 
-- Structural validation must pass both `claude plugin validate <plugin-path> --strict` and `claude plugin validate <marketplace-root> --strict`.
-- Confirm behavior headlessly: `claude -p "/<plugin>:<skill>" --plugin-dir <plugin-path>` (skill namespace = plugin name).
+## 4. Release
+
+### Version number
+
+- **Write `version` in exactly one place: `plugin.json`, and always set it** (semver, e.g. `0.1.0`).
+  - Rationale: when both are set, `plugin.json` wins over the marketplace entry, so a second copy is
+    meaningless; `claude plugin validate --strict` fails when it is unset. Users receive an update only
+    when it is bumped.
+- **Bump only on an explicit release instruction**, not on merge to `main`. Until then, user-facing
+  changes wait under CHANGELOG's `## [Unreleased]`.
+- **Decide the increment by the largest change, from the user's side:** major for a breaking change
+  (on `0.x`, minor instead), minor for a new or changed user-visible behavior, patch for no behavior
+  change.
+
+### CHANGELOG
+
+- **Keep `CHANGELOG.md` in the plugin root**, in [Keep a Changelog](https://keepachangelog.com)
+  format: `## [Unreleased]` on top while changes are pending, then one `## [x.y.z] - YYYY-MM-DD` per
+  release, grouped under `Added` / `Changed` / `Fixed` / `Removed` as they apply.
+- **Write an entry for every change a user would notice**, as one line: `<what changed> — <why it
+  helps the user>`. Typos, refactors, internal docs and formatting get none.
+- **On a release, rename `## [Unreleased]` to the version and date, and leave no empty
+  `## [Unreleased]` behind**; it is re-created when the next user-facing change lands.
+
+### Who does what
+
+1. **Assistant** — bumps `version` in `plugin.json`, finalizes `CHANGELOG.md`, commits, and pushes.
+2. **Assistant** — asks the user to merge the pull request to `main`; never merges it itself and never
+   uses `--admin`.
+   - Rationale: `main` is protected, and only the user can clear its required review.
+3. **User** — merges, and says so.
+4. **Assistant** — tags `main` and publishes the GitHub Release.
+
+### Tags and GitHub Releases
+
+- **Tag each release on `main`** as `<plugin>--v<version>` (e.g. `rn--v0.2.0`), created with
+  `claude plugin tag --push` from the plugin directory.
+  - Rationale: this is Claude Code's own form: a plugin that depends on another with a version range
+    resolves it against these tags, and the prefix lets each plugin version independently. The
+    command also validates the plugin and refuses a tag that already exists.
+- **Publish a GitHub Release** for that tag, with the CHANGELOG's matching section as the notes.
+- **Read release timing from tags and Releases, not from merge commits.**

@@ -69,9 +69,9 @@ taught survives only as the user's feedback listed under Assumptions.
 - commit and push every change; one completion marker per task
 - Work toward each task's Purpose and judge the result against the essentials; no fixed review
   ceremony per task.
-- The only procedural rules are this repository's plugin rules (`.claude/rules/plugin.md`,
-  `marketplace.md`, `language.md`): artifacts in English, and when the plugin ships, version only in
-  `plugin.json` and the marketplace and root README updated together.
+- The only procedural rules are this repository's plugin rules (`.claude/rules/plugin.md`) and
+  artifacts in English: when the plugin ships, version only in `plugin.json` and the marketplace and
+  root README updated together.
 - Write the essentials, README, and design in Japanese for the user's review, and translate them to
   English before the merge.
 - Do not read the removed build (commits before this plan) as a starting point.
@@ -211,7 +211,7 @@ proven and split into its own plugin.
 - [ ] Pass `claude plugin validate --strict` for the plugin and the marketplace
 - [ ] Ask the user to merge PR #15
 - [ ] Once merged, tag `main` as `writ--v<version>` with `claude plugin tag --push` and publish
-      the GitHub Release (the rule is in `.claude/rules/plugin.md` on branch `rn-rebuild`, ad1bb3d)
+      the GitHub Release (the rule is in `.claude/rules/plugin.md`)
 
 **Completion criteria**:
 
