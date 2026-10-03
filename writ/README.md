@@ -74,18 +74,20 @@ We move src/api/ first, then go on to src/ui/. Other code calls src/api/, so onc
 - No one owns moving src/ui/ yet.
 ```
 
-The report opens with writ's view of whether the document can be handed on as it is. Then comes one line for every question in the essentials it used, with Good or More and where. There are essentials for each kind of document. Only for a More that writ left does the report also say what the reader struggles with and why it was left, because what you decide is whether to accept that More.
+The report opens with writ's view of whether the document can be handed on as it is. Then comes every question in the essentials it used, each with one line under it: Good or More, what the reader gains or struggles with, and where. There are essentials for each kind of document. Only for a More that writ left does the report also give, under the question it answers, the first user's report and why it was left, because what you decide is whether to accept that More.
 
 ```console
 ● I wrote docs/migration-plan.md. Only the owners are not decided, and I think you can hand it to the team as it is.
 
   Essentials for every document (doc.md)
-    Once you finished reading, what did you take it you should decide and do? ……… Good (line 3 and "Owners")
-    In trying to decide or act, what was not in the document, so that you could only guess or ask someone? ……… More ("Owners")
+    Once you finished reading, what did you take it you should decide and do?
+      Good: readers agree to move src/api/ first, then src/ui/, and each take one on (line 3 and "Owners")
+    In trying to decide or act, what was not in the document, so that you could only guess or ask someone?
+      More: readers cannot tell who takes which directory until someone volunteers ("Owners")
     (every other question gets a line the same way)
 
   The More I left
-    The owners are not decided ("Owners")
+    In trying to decide or act, what was not in the document, so that you could only guess or ask someone?
       The first user's report: who takes which part is not decided, so I cannot act until someone volunteers
       What the reader struggles with: until owners are set, readers do not know what they will take on.
       Why I left it: who owns what is for you and your team to decide. Readers can settle it by volunteering, so I left it where they can see it is not decided.

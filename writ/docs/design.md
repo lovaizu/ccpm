@@ -196,6 +196,10 @@ flowchart TD
 
     Most Mores come back as "there is no ...". Fixing by adding makes the document longer with every fix, says the same thing in two places, and makes the reader read sentences they do not need. The conductor first looks for whether the same thing is already said somewhere and whether replacing a sentence that is there is enough, and has the generator fix that way too.
 
+- A More about parts the reader read past is fixed by taking the part out or saying it once, and is not left, unless the reader needs the part for a later step the purpose includes.
+
+    How to fix it is clear from the purpose, and taking out a part the reader did not use breaks no Good. Left, a thing said again and again teaches the reader to read past it, so they also pass the one place where it matters, and every reader spends time on it.
+
 - Start a new generator for every fix, and hand it the same as when it wrote, plus the places to fix and the Goods to keep.
 
     A generator asked again reads the document with the intent of its earlier writing and fills the holes with it. The generator does not know the check's result, so without the Goods to keep, it breaks what serves the purpose while it fixes, and makes a new hole for each one fixed.
@@ -210,9 +214,17 @@ flowchart TD
 
     Each is a sign that more fixing will not make the document ready to return. Going on, the user would wait without ever receiving it.
 
-- Do not write as writ's proposal what the user or the people around them decide. Leave it visibly undecided only when the reader can decide it themselves, such as volunteering to own a part, or when the purpose is achieved without it. Otherwise, and whenever unsure, ask the user.
+- Do not write, as a rule or as writ's proposal, what the user or the people around them decide and have not decided. The generator writes no rule, decision or commitment it was not handed. Leave it visibly undecided only when the reader can decide it themselves, such as volunteering to own a part, or when the purpose is achieved without it. Otherwise, and whenever unsure, ask the user.
 
-    Written as a proposal, it reaches the reader as half decided, and they no longer know what to follow. Leaving what the reader cannot decide alone, such as a team's rule, or cannot wait for, such as an AI acting on a prompt, leaves the reader guessing and redoing. A question costs the user one answer, but leaving it wrongly costs every reader, so when unsure, ask.
+    Written as a rule, it reaches the reader as decided, and they follow a decision no one made. Written as a proposal, it reaches the reader as half decided, and they no longer know what to follow. Leaving what the reader cannot decide alone, such as a team's rule, or cannot wait for, such as an AI acting on a prompt, leaves the reader guessing and redoing. A question costs the user one answer, but leaving it wrongly costs every reader, so when unsure, ask.
+
+- Before returning the document, the conductor checks every rule, decision or commitment the document states against what the user decided and what the sources already said. One found in neither is a decision the user or the team owns: it is taken out or shown as undecided, and the user is asked when it blocks the purpose.
+
+    The essentials ask what the reader took in and did, not where a statement came from, so a rule written in on a guess reads as settled and passes the check, and the report then tells the user nothing was guessed. Only the conductor holds what was decided, so only it can tell a decision handed over from one made up.
+
+- Ask one question at a time while each answer can change what is asked next. Points owned by the user or the team that a check finds undecided are asked together in one message, as a list. Once the user's answers show that a matter has not been discussed, writ raises no new points of that kind one by one: it gathers them, shows them in the document as undecided, and proposes to finish.
+
+    Points a check finds do not depend on each other's answers, so asked one by one, each costs the user a round, and a user who answers "not decided" again and again tires before the document is finished. A list is answered in one reply. A matter the team has not discussed gets the same answer for each new point of it, so asking each one spends the user's reply on what the document can show as undecided.
 
 - After every state, the document does not blur a hole in its content.
 
@@ -224,9 +236,9 @@ flowchart TD
 
 ## Return the final Good and More for every question
 
-- The report in the conversation opens with the conductor's view of whether the document can be handed on. Then, for every question of the essentials used, one line gives the question's words, Good or More, and where. Only for a More that was left does it also give the first user's report, what the reader struggles with, and why it was left. It ends with the result file's location.
+- The report in the conversation opens with the conductor's view of whether the document can be handed on. Then, for every question of the essentials used, it gives the question's words and under them one line: Good or More, in a few words what the reader gains or struggles with there, and where. Only for a More that was left does it also give, under the question it answers, the first user's report, what the reader struggles with, and why it was left. It ends with the result file's location.
 
-    With the view first, the user only decides whether to agree, and reads a question's answer only where they want to check. What the user decides is whether to accept the Mores that were left, so only those are set out in full. What a Good gains is there so a fix does not break it, and it is the conductor and the generator who use it. Put in the conversation in full, with several Goods and Mores per question, the report would be too long to be read. A question whose More was fixed shows its state now, as a Good, so no question is left without an answer.
+    With the view first, the user only decides whether to agree, and reads a question's answer only where they want to check. Each line says what its Good or More is about, because a place alone tells the user nothing until they read the document there, which is the reading the report is meant to spare. What the user decides is whether to accept the Mores that were left, so only those are set out in full, each under its question so the user sees what it falls short on. The full account of what a Good gains is there so a fix does not break it, and it is the conductor and the generator who use it, so the line gives only a few words of it. Put in the conversation in full, with several Goods and Mores per question, the report would be too long to be read. A question whose More was fixed shows its state now, as a Good, so no question is left without an answer.
 
 - The result file holds, for every question, the first user's report and every final Good and More, each with place and evidence.
 
@@ -328,7 +340,7 @@ The caller may be the conductor of `/writ:up`, or the user's conversation that a
 
 - pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location. When questions are named for a recheck, it replaces only those questions' sections in the same result file.
 
-    Returning the full text would fill the caller's conversation. Replacing only the sections keeps the answers of the questions not named, so every question keeps an answer.
+    Returning the full text would fill the caller's conversation. The short result has the same shape as the report of `/writ:up`, with a line per question saying in a few words what the receiver gains or struggles with, so the caller can judge from it alone. Replacing only the sections keeps the answers of the questions not named, so every question keeps an answer.
 
 - Before returning, pith checks the form of the Good and More by script: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 

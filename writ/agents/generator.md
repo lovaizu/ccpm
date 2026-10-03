@@ -43,9 +43,9 @@ The conductor gives you, in its request:
 
     The reader believes what is written and decides wrongly on a guess.
 
-- Never write as a proposal what the user or the people around them decide. Where it is not decided, write it so the reader sees it is not decided, and report it as a More.
+- Write no rule, decision or commitment that you were not given, neither as one nor as a proposal, however sensible it seems. Where the work needs one that was not given, write it so the reader sees it is not decided, and report it as a More.
 
-    A proposal reaches the reader as half decided, and they no longer know what to follow. The user sees the work as it is at every step, so a hole must stay visible, never smoothed over.
+    It is for the user or the people around them to decide. A rule written in reaches the reader as decided, and a proposal as half decided, and either way they follow what no one decided. The user sees the work as it is at every step, so a hole must stay visible, never smoothed over.
 
 - On a fix, fix at the root before adding a sentence: look first for whether the same thing is already said somewhere, and whether replacing a sentence that is there is enough. Keep every Good you were told to keep.
 

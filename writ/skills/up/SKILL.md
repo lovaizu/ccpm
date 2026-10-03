@@ -55,6 +55,8 @@ Sort each More, and each Good whose ground does not hold, by asking in this orde
 
 Judge whether the reader can achieve the purpose by whether they can carry through to the end what they do after reading, not by whether they can start.
 
+A More about parts the reader read past, such as a rule said again and again, is always fixed: have the part taken out or said once. Leave it only when the reader needs the part for a later step the purpose includes. Left, a thing said again and again teaches the reader to read past it, so they also pass the one place where it matters.
+
 - To fix, start a new generator each time and hand it the same as when it wrote, plus the places to fix and the Goods to keep. Fix at the root: before adding a sentence, look for whether it is already said somewhere and whether replacing a sentence is enough, and tell the generator to fix that way.
 
     A generator asked again reads the document with the intent of its earlier writing and fills the holes with it. Without the Goods to keep, it breaks what serves the purpose and makes a new hole for each one fixed. Adding a sentence for each More makes the document longer every time and says the same thing twice.
@@ -63,9 +65,17 @@ Judge whether the reader can achieve the purpose by whether they can carry throu
 
     Whether an attractive-quality More is fixed shows only when someone who does not know the discussion uses the document again, and the earlier first user used it before the fix. A defect is easy to see and quick to fix; checking it again takes the effort from attractive quality. Rechecking only the named question keeps new remarks from spreading over the whole each time.
 
-- Do not write as writ's proposal what the user or the people around them decide. Leave it visibly undecided only when the reader can decide it themselves, such as volunteering to take on a part, or when the purpose is achieved without it. Otherwise, and whenever you are unsure, ask the user.
+- Do not let the document state, as a rule or as writ's proposal, what the user or the people around them decide and have not decided. Leave it visibly undecided only when the reader can decide it themselves, such as volunteering to take on a part, or when the purpose is achieved without it. Otherwise, and whenever you are unsure, ask the user.
 
-    A proposal reaches the reader as half decided. What the reader cannot decide alone, such as a team's rule, or cannot wait for, such as an AI acting on a prompt, would leave them guessing and redoing. A question costs the user one answer; leaving it wrongly costs every reader.
+    A rule written in reaches the reader as decided; a proposal reaches them as half decided. What the reader cannot decide alone, such as a team's rule, or cannot wait for, such as an AI acting on a prompt, would leave them guessing and redoing. A question costs the user one answer; leaving it wrongly costs every reader.
+
+- Before you return the document, check every rule, decision or commitment it states against what the user decided and what the sources you found already said. One that is in neither is a decision the user or the team owns, even if it sounds sensible: have it taken out or shown as undecided, and ask the user when it blocks the purpose.
+
+    The essentials ask what the reader took in, not where a statement came from, so a guessed rule passes them and the reader follows it as decided; only you hold what was decided.
+
+- Ask one question at a time while each answer can change what you ask next. Ask together in one message, as a list, the points owned by the user or the team that a check finds undecided. Once the user's answers show that a matter has not been discussed, raise no new points of that kind one by one: gather them, show them in the document as undecided, and propose to finish.
+
+    Points a check finds do not depend on each other's answers, so asked one by one, each costs the user a round, and a user who answers "not decided" again and again tires before the document is finished. A list is answered in one reply. A matter the team has not discussed gets the same answer for each new point of it, so the document can show those as undecided without asking each.
 
 - Stop fixing and go back to the user when the same More remains after a fix, when each fix makes another More, or when it cannot be fixed without changing the settled reader or purpose. Each is a sign that more fixing will not make the document ready, and the user would wait without receiving it.
 
@@ -80,8 +90,8 @@ Before you report, check every question against the document as it is now, and u
 Report in the user's language, in the shape and with the names the example in `${CLAUDE_PLUGIN_ROOT}/README.md` shows, since the user learned writ from it:
 
 - Open with your view of whether the document can be handed on as it is.
-- Then, for every essentials file and every question in it, one line: the question word for word, Good or More, and where.
-- Set out in full only each More you left: the first user's report, what the reader struggles with, and why you left it. The user decides whether to accept those, so that is all they need in full.
+- Then, for every essentials file and every question in it, the question word for word and under it one line: Good or More, in a few words what the reader gains or struggles with there, and where. A place alone tells the user nothing until they read the document there, which is the reading the report is meant to spare.
+- Set out in full only each More you left, under the question it answers: the first user's report, what the reader struggles with, and why you left it. The user decides whether to accept those, so that is all they need in full.
 - End with the result file's location.
 
 With the view first, the user only decides whether to agree and reads a question's answer only where they want to check. Everything in the conversation would be too long to be read.
