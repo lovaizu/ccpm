@@ -64,7 +64,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 # Tasks
 
-### #1: README, design document, and verification document carry agreed points 1–14
+### [x] #1: README, design document, and verification document carry agreed points 1–14
 
 **Purpose**: The README and design document state every point agreed on 2026-10-02/03, with
 verification split into its own document, so the prompts and hooks can be built from them.
@@ -240,6 +240,8 @@ receiver's state.
 
 **Steps**:
 
+- [ ] From #1: decide how a `claude -p` run is stopped partway through a task (A4's first and third
+  scenes), and whether a teammate's commits on the session branch need a rule (A4's second scene)
 - [ ] Run each golden-path scene with a stand-in user, using `writ` from `worktree-writ`; fix a
   must-be gap that shows up in use
 - [ ] Used by a first user and settled by the conductor (Rules)
@@ -261,6 +263,8 @@ breach is stopped rather than left to the evaluator.
 
 - [ ] For any of 9–11 the design leaves to a hook, run a hook that reads `agent_type` and confirm it
   tells the first user and the other agents apart; if not, take the design change to the user
+- [ ] From #1: run whether `UserPromptExpansion` fires for a command passed through `claude -p`, and
+  what `command_name` is for a plugin skill, before check 7 relies on it
 - [ ] Build checks 1–8, and whatever of 9–11 the design leaves to hooks, with their tests, following
   `.claude/rules/plugin.md` § Build (shared with writ; on `worktree-writ` until PR #15 merges, then
   on `main`)
