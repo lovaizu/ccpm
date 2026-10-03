@@ -1,43 +1,57 @@
 # Essentials
 
-The readers are the producing role, which reads the essentials as the shape to aim for, and the checking role, which reads them as questions to answer. When they finish, they can judge any part of any work by whether the receiver of the work needs it, including parts no one foresaw.
+The readers are three. The producing role reads the essentials as the shape to aim for. The first user uses the work as its user would: reads a document as its reader and acts on it, calls code, or gives a prompt to an AI and lets it act. The essentials tell the first user what to report of what happened; how to use the work to find out is the first user's own choice, and the first user does not judge it good or bad. The requester, who knows the aim, sets what the first user reports beside the aim and gives each a Good or a More. When they finish, what happened when the first user used the work shows whether the work achieves its purpose.
+
+- Is each question a test of whether the work achieves its purpose, worked back from that purpose?
+
+    Worked back from the purpose, a question keeps the producing role aiming at what the receiver gets, and lets the requester judge cases no one foresaw, since the purpose covers them all. A question about a means, something meant to bring the purpose, is met by adding the means where it does not help, and the work passes while missing its purpose.
+
+    Examples:
+    - Document (a README): the purpose is that a newcomer can decide whether to use the product. Ask not "is there an example" but "what does the reader take as the reason to choose this product".
+    - Prompt: the purpose is that the AI acts toward its purpose where nothing was foreseen. Ask not "are the steps numbered" but "what does the AI do in a situation no step covers".
+    - Code: the purpose is that an assignee does not forget a due date. Ask not "is the notification logic in its own function" but "what reaches the assignee on the morning of the due date".
+    - Test: the purpose is that a break is caught before merge. Ask not "are there over a hundred tests" but "when the code is broken in a common way, what stops the merge".
+
+- Is each question answered by what happened when the first user actually used the work?
+
+    Answered by what happened in use, a question cannot be answered without using the work, and the answer is a fact the requester can set beside the aim. For a document, what happened is what the reader took from it and what they set out to do. A question of whether something is there or is good is answered "yes" by looking the work over without using it, and a work no one can use passes.
+
+    Examples:
+    - Document: not "is the reason to choose it written" but "reading as the reader, what did you take as the reason to choose it".
+    - Prompt: not "is the purpose written" but "given a situation no step covers, what did the AI do".
+    - Code: not "is there error handling" but "called with invalid input, what happened".
+    - Test: not "are the test names clear" but "with the code broken on purpose and the tests run, which test failed, and with what message".
+
+- Can the requester tell whether the work achieves its purpose by setting the answer beside the aim?
+
+    An answer that can be set beside the aim lets the requester give a clear Good or More, and for a More, say how far the work drifted. A question that cannot be compared, such as "how was it to read", draws answers like "easy to read" that are neither good nor bad.
+
+    Examples:
+    - Document: the aim is that the user can leave the work to the product without watching. The answer "I took it that my work gets faster" drifts from it, so it is a More.
+    - Prompt: the aim is that undecided points go back to the person. The answer "it listed the undecided points and asked the person" meets it, so it is a Good.
+    - Code: the aim is one email per task per day. The answer "run again, still one email" meets it, so it is a Good.
+    - Test: the aim is that a break makes a test fail. The answer "with the function emptied, every test passed" misses it, so it is a More.
+
+- Is every question one that, if removed, would let a work that misses its purpose pass?
+
+    Kept to questions that cannot be removed, the essentials stay few, the first user puts full attention on each, and chooses how to find it out. A question whose failure another question already catches is a means of checking that one; kept as a question, the essentials grow into a checklist that all passes while no one has checked the purpose.
+
+    Examples:
+    - Document: "can the argument be followed from the headings alone" can be removed; "after reading once, what did you take as what to do" catches the same failure.
+    - Prompt: "is the role named at the top" can be removed; "what does the AI do in a situation no step covers" catches it.
+    - Code: "is every function under fifty lines" can be removed; without it, no work that misses its purpose passes. If the team wants it as a rule, a script checks it.
+    - Test: "are there boundary tests" can be removed; "when the code is broken in a common way, what stops the merge" catches it.
 
 - Does each question ask about one point only?
 
-    Answering one point at a time, the checking role gives a clear Good or More, and whoever fixes knows which point to change. A question holding two points gets one answer for both, and the point that falls short hides behind the one that holds.
+    With one point, the answer and its Good or More are about that point alone, and whoever fixes knows which point to change. Asked two points, the answer covers both at once, and the one that falls short hides behind the one that holds.
 
-- Is each question short enough to answer yes or no by looking at the work?
+    Examples:
+    - Document: "what did you take as the reason to choose it and how to start" splits into two.
+    - Prompt: "in a situation no step covers, did the AI act toward its purpose and hand back the decisions that belong to the person" splits into two.
+    - Code: "does the email arrive on the morning of the due date, without duplicates" splits into two.
+    - Test: "when broken, does a test fail, and does the run finish in seconds" splits into two.
 
-    A short question is answered from the work itself, the same way by every reader, and is easy to keep in mind while writing. A long question carrying its reasons or cases is read differently by each role, and the reasons crowd out the point.
+- Does each question have grounds that say what the receiver gains from it?
 
-- Does each question ask whether the receiver can achieve their purpose?
-
-    Asked about the purpose, the producing role aims at it and the checking role judges by it, even in cases no one foresaw. A question about form, such as "is there an example" or "is there a link to the design doc", is met by adding the form where it does not help, and counted as a Good because it is there.
-
-- Does each question ask about the state of the work the receiver gets, not about what the writer did?
-
-    Asked about the state, the checking role looks for the flaw itself, such as setting parts side by side to find two that disagree. Asked about what the writer did, such as whether they disclosed a contradiction, a flaw no one noticed passes, since nothing was hidden.
-
-- Does each question find both what is missing and what is extra?
-
-    A question that lets the reader judge what taking a part away would lose keeps the work the size its purpose needs. One that asks only whether something is there finds only gaps, and the work grows each round.
-
-- Does each question cover every case it concerns, without listing cases?
-
-    A question asked of the purpose covers the case no one listed. A list of cases grows with each new one and still misses some.
-
-- Does each question have grounds that say why it is needed?
-
-    With the grounds, the roles judge by the question's intent in cases the question does not name. Without them, the question is followed by its letter, and a work that matches the words passes while missing the point.
-
-- Do the grounds start from what the receiver gains when the question holds?
-
-    Starting from the gain, the roles aim at what the receiver would choose the work for, and weigh a fix by what it adds. Grounds that start from what goes wrong turn the work toward guarding against failures; what is lost belongs after the gain, briefly.
-
-- Does every question trace to a benefit the receiver would choose the work for?
-
-    Tracing to a benefit, each question keeps the producing role's aim steady and gives the checking role a reason to look deep. A question that traces to none makes the aim drift and fixing never end.
-
-- Does every such benefit have a question that asks about it?
-
-    With a question for each benefit, every reason the receiver would choose the work is checked. A benefit with no question goes unchecked, however good the rest is.
+    With the grounds, the producing role and the first user judge by the question's intent where the question names nothing. Without them, the question is followed by its letter, and a work that matches the words passes while missing the point.

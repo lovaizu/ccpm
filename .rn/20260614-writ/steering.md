@@ -58,6 +58,9 @@ taught survives only as the user's feedback listed under Assumptions.
   essentials files and checks a work by them. `/writ:up` keeps writing documents and checks through
   `pith`. The point of `pith` is a few essential questions, the opposite of an exhaustive checklist,
   so how each question is checked is left to the checking role's judgment.
+- Fact: the user agreed on 2026-10-03, with the rn session, that the role that checks is the
+  first user (always the two words): it uses the work as its user would and reports what happened,
+  without judging it; the requester sets that beside the aim and gives each a Good or a More.
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
