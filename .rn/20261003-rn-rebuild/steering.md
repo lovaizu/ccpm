@@ -208,6 +208,15 @@ Design sign-off.
 - [ ] A first user uses the three documents with the design viewpoints; the conductor decides for each
   part passed over whether the purpose needs it, and details the prompts or hooks hold move to #5
   and #7
+- [ ] The verification document's purpose is to rerun the same checks later and find a regression
+  (agreed 2026-10-03). It holds only: where a run starts (the practice repository's commit, `writ`'s
+  version), how it is run, each scene as a test case of input (what the stand-in says, knows, and
+  decides) and Passes when, and the machine checks as commands with the criteria they check. A first
+  user is handed a scene's input only; Passes when stays with the conductor, which sets the report
+  beside it. Why attractive quality is checked by use and must-be quality has no scenes is stated
+  once, in the design document. This holds for the verification document `rn` has `writ` write for
+  a user's product as for `rn`'s own: the design document's form for it, hook check 3, and
+  `rn/references/essentials/deliverable.md` change with it
 - [ ] The generator cuts and rewrites, diagrams first and text only for what they do not show,
   each diagram readable at page width
 - [ ] Used by a first user and settled by the conductor (Rules)
