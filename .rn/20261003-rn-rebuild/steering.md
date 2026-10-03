@@ -89,6 +89,12 @@ verification split into its own document, so the prompts and hooks can be built 
 
   Content (whether it serves the purpose, the language, feedback kept whole) stays with the evaluator
   and conductor.
+
+  Keeping the roles apart (9–11) serves one aim: the first user checks the work knowing nothing of
+  how it was made, so what it reports is what the user would get. That is held first by how each agent
+  is defined — what it is handed and which tools it has (a fresh subagent, `omitClaudeMd`, only the
+  work and its purpose, no Agent tool for the generator so it cannot call the first user). The design
+  settles which of 9–11 the definitions hold; only what they cannot hold stays a hook.
 - [ ] 5. Hearing: adopt the know-how of `grilling` (mattpocock/skills, MIT, d81f3a1, 2026-09-29) — a
   tree of decisions, ask what its prerequisites allow with a recommended answer, facts are looked up
   not asked, done when nothing is silently assumed — and add rn's own part: find what the user really
@@ -193,9 +199,9 @@ breach is stopped rather than left to the evaluator.
 
 **Steps**:
 
-- [ ] Run a hook that reads `agent_type` and confirm it tells the first user and the other agents
-  apart; if not, take the design change for checks 9–11 to the user
-- [ ] Build checks 1–8, then 9–11, as the design says, with their tests, following
+- [ ] For any of 9–11 the design leaves to a hook, run a hook that reads `agent_type` and confirm it
+  tells the first user and the other agents apart; if not, take the design change to the user
+- [ ] Build checks 1–8, and whatever of 9–11 the design leaves to hooks, with their tests, following
   `.claude/rules/hooks.md` (shared with writ; on `worktree-writ` until PR #15 merges, then on `main`)
 - [ ] Run each check against a breaking case and a passing case
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
@@ -205,7 +211,7 @@ breach is stopped rather than left to the evaluator.
 
 **Completion criteria**:
 
-- Each of checks 1–11 stops its breaking case and lets its passing case through, at the points the
+- Each check built stops its breaking case and lets its passing case through, at the points the
   design names.
 - A normal session run raises no false stop.
 
