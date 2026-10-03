@@ -46,8 +46,8 @@ their time only on the three sign-offs and on what only they can decide.
     then checked by a fresh first user for that viewpoint alone; the final Good and More go into the
     task's check-off commit message.
   - The viewpoints are the file in `rn/references/essentials/` for what the result is (the design for
-    #1), and for prompts also `writ`'s viewpoints for prompts (`writ/references/essentials/prompt.md`
-    on `worktree-writ`); after every change to the prompts, all of them are used this way.
+    #1, `writ`'s `essentials.md` for #2), and for prompts also `writ`'s viewpoints for prompts
+    (`writ/references/essentials/prompt.md` on `worktree-writ`); after every change to the prompts, all of them are used this way.
 - A More is fixed from what the work should be for its purpose, and design changes reach both the
   design document and the prompts.
 - The README and design document are changed and approved on the PR first; the prompts and hooks are
@@ -116,7 +116,7 @@ verification split into its own document, so the prompts and hooks can be built 
   writing it. Watch upstream changes of mattpocock/skills and decide whether to take them in.
 - [ ] 8. Viewpoints ask about the state of what the receiver gets, not what the maker did (writ's
   essentials.md, 31dba86). Rewrite rn's viewpoint files to it with the Kano and naming changes, e.g.
-  "Is each fact checked?" and "Has the work shown nothing…". (Documents here; files in #3.)
+  "Is each fact checked?" and "Has the work shown nothing…". (Documents here; files in #2.)
 - [ ] 9. `writ` stays a dependency (same marketplace, updated together).
 - [ ] 10. The session's pull request body carries, besides the link to `steering.md`, what GitHub
   needs to connect the work: `Closes #N` for an issue the work completes, `Refs #N` for one it only
@@ -138,7 +138,7 @@ verification split into its own document, so the prompts and hooks can be built 
   the work as the user would, before the user does, and answers with the facts of that use — what it
   understood and what happened — without judging. Comparing those facts with the aim (validation) is
   the conductor's. Terms follow it throughout (e.g. the `open/` kind evaluation becomes report).
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [ ] Used by a first user and settled by the conductor (Rules), once #2 has made the viewpoints usable
 
 **Completion criteria**:
 
@@ -152,12 +152,32 @@ verification split into its own document, so the prompts and hooks can be built 
 - The documents hold no procedure notes, history, or restated content, and the README reads as
   benefits and use rather than a list of mechanisms.
 
-### #2: Design sign-off
+### #2: Viewpoint files rewritten to writ's essentials for essentials
+
+**Purpose**: Each viewpoint file in `rn/references/essentials/` can be used by a first user and settled
+by the conductor, so the results of #1 onward can be checked the 0.9.0 way.
+
+**Prerequisites**: #1 written (its terms: first user, Kano split, criterion IDs)
+
+**Steps**:
+
+- [ ] Rewrite each file in `rn/references/essentials/` to `writ/references/essentials/essentials.md`
+  on `worktree-writ` (e50d263) and to what `rn/docs/design.md` § Viewpoints says of them
+- [ ] Used by a first user and settled by the conductor (Rules), with `essentials.md` as the viewpoints
+
+**Completion criteria**:
+
+- A first user given one viewpoint file and a work of its kind can answer each question only by using
+  the work, and the conductor can give Good or More by setting each answer beside the aim.
+- No question can be removed without letting a work that misses its purpose pass, each asks about one
+  point, and each has grounds saying what the receiver gains.
+
+### #3: Design sign-off
 
 **Purpose**: The user approves the README, design document, and verification document before the
 prompts and hooks are built on them.
 
-**Prerequisites**: #1
+**Prerequisites**: #1, #2
 
 **Steps**:
 
@@ -168,17 +188,17 @@ prompts and hooks are built on them.
 
 - The README, design document, and verification document are approved.
 
-### #3: Prompts and viewpoint files built from the approved design
+### #4: Prompts built from the approved design
 
 **Purpose**: `rn`'s skills, references, and viewpoint files do what the approved README and design
 document say, including the Kano split, IDs, hearing, task creation, and viewpoints stated as the
 receiver's state.
 
-**Prerequisites**: #2
+**Prerequisites**: #3
 
 **Steps**:
 
-- [ ] Rebuild `rn/skills/*` and `rn/references/*` (including `rn/references/essentials/*`) from the
+- [ ] Rebuild `rn/skills/*` and `rn/references/*` (the viewpoint files are #2's) from the
   approved documents
 - [ ] Evaluator that did not write them reads all prompts against `writ`'s prompt viewpoints and the
   design; settle every More
@@ -192,12 +212,12 @@ receiver's state.
   behavior lacks a basis in the design document.
 - The prompt evaluation against `writ`'s viewpoints holds no unsettled More.
 
-### #4: Hooks check rn's rules mechanically
+### #5: Hooks check rn's rules mechanically
 
 **Purpose**: The rules in point 4 are enforced by hooks at the three points the design names, so a
 breach is stopped rather than left to the evaluator.
 
-**Prerequisites**: #3
+**Prerequisites**: #4
 
 **Steps**:
 
@@ -215,12 +235,12 @@ breach is stopped rather than left to the evaluator.
   design names.
 - A normal session run raises no false stop.
 
-### #5: CHANGELOG states what 0.9.0 changes for the user
+### #6: CHANGELOG states what 0.9.0 changes for the user
 
 **Purpose**: A user reading `rn/CHANGELOG.md`'s 0.9.0 section learns how far `rn` has moved from 0.8.0
 and what changes for them.
 
-**Prerequisites**: #4
+**Prerequisites**: #5
 
 **Steps**:
 
@@ -235,12 +255,12 @@ and what changes for them.
 - `plugin.json` is 0.9.0, the CHANGELOG's top section is `## [0.9.0] - <release date>`, and no empty
   `## [Unreleased]` is left.
 
-### #6: Trials run on the practice repository
+### #7: Trials run on the practice repository
 
 **Purpose**: Each benefit's scene in the verification document passes when `rn` is run on
 `lovaizu/rn-try`, including pause and resume, `/rn:gm`, and bringing a 0.8.0 session to the new form.
 
-**Prerequisites**: #5
+**Prerequisites**: #6
 
 **Steps**:
 
@@ -255,11 +275,11 @@ and what changes for them.
 - Every scene in the verification document passes, judged by an evaluator that did not make the run.
 - No evaluation or trial record is posted as a PR comment.
 
-### #7: Integration check with the real writ
+### #8: Integration check with the real writ
 
 **Purpose**: `rn` works with `writ` as merged to `main`, not only with its working branch.
 
-**Prerequisites**: #6, and `writ` PR #15 merged
+**Prerequisites**: #7, and `writ` PR #15 merged
 
 **Steps**:
 
@@ -272,11 +292,11 @@ and what changes for them.
 - The scenes that call `writ` pass with the merged `writ`.
 - Both strict validations pass.
 
-### #8: Practice repository cleaned up
+### #9: Practice repository cleaned up
 
 **Purpose**: `lovaizu/rn-try` holds nothing left from earlier trials.
 
-**Prerequisites**: #7
+**Prerequisites**: #8
 
 **Steps**:
 
@@ -288,11 +308,11 @@ and what changes for them.
 - PRs #18, #20, #21, #22 are closed and their branches no longer exist; no other PR or branch was
   touched.
 
-### #9: Evaluation sign-off
+### #10: Evaluation sign-off
 
 **Purpose**: The user approves the run of the Acceptance criteria.
 
-**Prerequisites**: #8
+**Prerequisites**: #9
 
 **Steps**:
 
