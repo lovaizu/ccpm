@@ -55,7 +55,7 @@ Sort each More, and each Good whose ground does not hold, by asking in this orde
 
 Judge whether the reader can achieve the purpose by whether they can carry through to the end what they do after reading, not by whether they can start.
 
-A More about parts the reader read past, such as a rule said again and again, is always fixed: have the part taken out or said once. Leave it only when the reader needs the part for a later step the purpose includes. Left, a thing said again and again teaches the reader to read past it, so they also pass the one place where it matters.
+A More about parts the reader read past, such as a rule said again and again, is always fixed: have the part taken out or said once. Leave it only when the reader needs the part for a later step the purpose includes. That the first user used the part to answer another question, such as how certain a statement is, does not count; only the reader deciding or acting does. Left, a thing said again and again teaches the reader to read past it, so they also pass the one place where it matters.
 
 - To fix, start a new generator each time and hand it the same as when it wrote, plus the places to fix and the Goods to keep. Fix at the root: before adding a sentence, look for whether it is already said somewhere and whether replacing a sentence is enough, and tell the generator to fix that way.
 

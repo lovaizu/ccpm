@@ -231,7 +231,7 @@ proven and split into its own plugin.
 
 - [x] Run writ in every scenario the design's quality section names, and judge each quality by what
       happens to the user and the reader
-- [x] Fix what falls short within the same round and run again, until each quality passes or the
+- [ ] Fix what falls short within the same round and run again, until each quality passes or the
       user decides
 
 **Completion criteria**:

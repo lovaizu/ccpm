@@ -6,9 +6,9 @@ This file has three readers. The generator reads it as the form to aim for when 
 
     Laid beside the aim, what the reader took in differs exactly where the document did not get across. The writer cannot go back to a mind that does not know the discussion, so reading it over does not find those places. A place where a word changes meaning partway, or where one thing goes by two names, shows up here as a different understanding the reader never noticed.
 
-- Which parts did you use to decide or act, and which did you skip without using?
+- Which parts did you use to decide or act, which did you skip without using, and where did you find yourself reading again what you had already read?
 
-    Knowing the parts that were skipped shows what can be taken out, so the reader decides and acts without wading through what they do not need. The parts skipped are often those meant for someone else, such as a reviewer, background placed before the reader knows why they are reading, the history of how a decision was reached, restatements, and figures that only repeat what the text already said.
+    Knowing the parts that were skipped shows what can be taken out, so the reader decides and acts without wading through what they do not need. The parts skipped are often those meant for someone else, such as a reviewer, background placed before the reader knows why they are reading, the history of how a decision was reached, restatements, and figures that only repeat what the text already said. A restatement is often not skipped but skimmed, so it shows only when asked for; once the reader skims a run of repeats, they also skim the one new point among them.
 
 - In trying to decide or act, what was not in the document, so that you could only guess or ask someone?
 
