@@ -73,6 +73,16 @@ taught survives only as the user's feedback listed under Assumptions.
   has it fixed, and returns it. A work is checked again only when the aim or decisions change; a
   question that comes up is returned as a result, never asked of the user by `pith`. `/writ:up`
   takes the same three role names.
+- Fact: the user agreed on 2026-10-03 that the essentials must find what a work does not need,
+  and that the check is driven by the essentials: fix the essentials first, check the work with a
+  first user, then fix the work. A question that asks whether something is good is answered from the
+  first user's report only for what was used, so parts read past never surface. `essentials.md` gets
+  two questions in the first user's form: whether the answers showed which parts of the work were
+  used toward the purpose and which were passed by; and which question's answer was not used to judge
+  whether the work achieved its purpose (replacing "would removing it let a missing work pass").
+  Every question in `essentials.md`, `doc.md`, `readme.md` and `design.md` is rewritten into the
+  form of what the first user did in use, and `doc.md` asks which parts the reader used to decide or
+  act and which they read past.
 - Fact: tried on 2026-10-03 with Claude Code 2.1.285 and a throwaway plugin: a skill with
   `context: fork` can start a plugin agent through the Agent tool (`subagent_type: "<plugin>:<agent>"`),
   and a skill's `agent` field can name a plugin agent the same way, which then runs the skill.
