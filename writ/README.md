@@ -80,8 +80,8 @@ The report opens with writ's view of whether the document can be handed on as it
 ● I wrote docs/migration-plan.md. Only the owners are not decided, and I think you can hand it to the team as it is.
 
   Essentials for every document (doc.md)
-    Having read it once, what did you take it you should do? ……… Good (line 3 and "Owners")
-    When you set out to act right after reading, what was missing? ……… More ("Owners")
+    Once you finished reading, what did you take it you should decide and do? ……… Good (line 3 and "Owners")
+    In trying to decide or act, what was not in the document, so that you could only guess or ask someone? ……… More ("Owners")
     (every other question gets a line the same way)
 
   The More I left
