@@ -8,7 +8,7 @@ broke.
 
 - The practice repository [`lovaizu/rn-try`](https://github.com/lovaizu/rn-try): a small shop backend,
   its cart and checkout in TypeScript and its account helpers in JavaScript. Its default branch
-  `main` holds the tree of `eabf76b` without its `.rn/` directory, and it has no other branch and no
+  `main` holds the tree of `c3b5f8e`, which has no `.rn/` directory, and it has no other branch and no
   open pull request, so no earlier session's plan or code is there to be found.
 - `rn` from the branch under test, and `writ` from `worktree-writ` at `d3754b1` until it is merged,
   then from the marketplace.
@@ -29,7 +29,7 @@ broke.
   `open/`, the commits, the pull request, the product, and the run's output, where each hook that
   stops says why. It reports what happened. The maintainer running the verification sets that
   beside the scene's "Passes when".
-- After a run, a revert commit puts back the tree of `eabf76b` on `main`, and the run's branches and
+- After a run, a revert commit puts back the tree of `c3b5f8e` on `main`, and the run's branches and
   pull requests are closed.
 
 ## The stand-in's parts
