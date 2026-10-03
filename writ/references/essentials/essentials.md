@@ -1,57 +1,57 @@
-# Essentials
+# 観点ファイル
 
-The readers are three. The producing role reads the essentials as the shape to aim for. The first user uses the work as its user would: reads a document as its reader and acts on it, calls code, or gives a prompt to an AI and lets it act. The essentials tell the first user what to report of what happened; how to use the work to find out is the first user's own choice, and the first user does not judge it good or bad. The requester, who knows the aim, sets what the first user reports beside the aim and gives each a Good or a More. When they finish, what happened when the first user used the work shows whether the work achieves its purpose.
+読み手は三者です。生成者は、観点ファイルを書くときに、目指す形としてこれを読みます。first user は、観点ファイルの問いを、その種類の実物に当てて確かめてみて、ここにある問いごとに、何をして何が起きたかを報告します。どう確かめるかは first user が決め、良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、観点ファイルを使って起きたことから、その観点ファイルで実物が目的を達成したかを確かめられるかが分かります。
 
-- Is each question a test of whether the work achieves its purpose, worked back from that purpose?
+- 観点ファイルの問いごとに、答えを出すために実物で何をしたか。
 
-    Worked back from the purpose, a question keeps the producing role aiming at what the receiver gets, and lets the requester judge cases no one foresaw, since the purpose covers them all. A question about a means, something meant to bring the purpose, is met by adding the means where it does not help, and the work passes while missing its purpose.
+    実物を受け手として使って答えた問いなら、答えは使ってみなければ出ない事実で、狙いの横に置いて比べられます。文書なら、読み手として読んで何を受け取り、何をしようとしたかです。実物を眺めるだけで答えが出た問いは、何かがあるか、良いかを問うもので、誰も使えない実物でも「はい」で通ります。答えを出せずに止まったなら、止まった所が、問いの足りない所です。
 
-    Examples:
-    - Document (a README): the purpose is that a newcomer can decide whether to use the product. Ask not "is there an example" but "what does the reader take as the reason to choose this product".
-    - Prompt: the purpose is that the AI acts toward its purpose where nothing was foreseen. Ask not "are the steps numbered" but "what does the AI do in a situation no step covers".
-    - Code: the purpose is that an assignee does not forget a due date. Ask not "is the notification logic in its own function" but "what reaches the assignee on the morning of the due date".
-    - Test: the purpose is that a break is caught before merge. Ask not "are there over a hundred tests" but "when the code is broken in a common way, what stops the merge".
+    例:
+    - 文書: 「選ぶ理由が書いてあるか」は眺めて答えが出る。「読み手として読み、選ぶ理由として何を受け取ったか」は読んでみないと出ない。
+    - プロンプト: 「目的が書いてあるか」は眺めて答えが出る。「どの手順にもない場面を AI に渡し、AI が何をしたか」は動かしてみないと出ない。
+    - コード: 「エラー処理があるか」は眺めて答えが出る。「不正な値で呼び、何が起きたか」は呼んでみないと出ない。
+    - テスト: 「テスト名が分かりやすいか」は眺めて答えが出る。「わざとコードを壊して走らせ、どのテストがどんなメッセージで落ちたか」は走らせてみないと出ない。
 
-- Is each question answered by what happened when the first user actually used the work?
+- 観点ファイルの問いごとに、どんな答えが出たか。
 
-    Answered by what happened in use, a question cannot be answered without using the work, and the answer is a fact the requester can set beside the aim. For a document, what happened is what the reader took from it and what they set out to do. A question of whether something is there or is good is answered "yes" by looking the work over without using it, and a work no one can use passes.
+    受け手が何を得たか、受け手に何が起きたかという答えなら、指揮者は狙いの横に置いて Good か More をはっきり付けられ、More ならどれだけずれたかも言えます。そうした答えを引き出すのは、目的から逆算した問いです。目的は誰も予想しなかった場面も含むので、その場面の答えも判断できます。目的のための手段を問うと、答えは手段があるかどうかになり、役に立たない所にも手段を足せば通って、実物は目的を外したままです。「読んでどうだったか」のように比べようのない問いには、「読みやすかった」のような、良くも悪くもない答えが出ます。
 
-    Examples:
-    - Document: not "is the reason to choose it written" but "reading as the reader, what did you take as the reason to choose it".
-    - Prompt: not "is the purpose written" but "given a situation no step covers, what did the AI do".
-    - Code: not "is there error handling" but "called with invalid input, what happened".
-    - Test: not "are the test names clear" but "with the code broken on purpose and the tests run, which test failed, and with what message".
+    例:
+    - 文書: 目的は、初めての人が使うかを決められること。「例が載っていた」という答えは手段についてで、狙いと比べられない。「時間のかかる作業を見張らずに任せられる、を選ぶ理由として受け取った」なら比べられる。
+    - プロンプト: 目的は、手順にない場面でも AI が目的に向かって動くこと。「手順に番号が振ってあった」は比べられない。「決まっていない点を並べて利用者に聞いた」なら、狙いが「決まっていない点は利用者に戻す」のとき Good と言える。
+    - コード: 目的は、担当者が期日を忘れないこと。「通知の処理が別の関数になっていた」は比べられない。「もう一度走らせても、メールは1通のままだった」なら、狙いが「1件につき1日1通」のとき Good と言える。
+    - テスト: 目的は、壊れたものをマージ前に止めること。「テストが百本以上あった」は比べられない。「関数の中身を空にしても全テストが通った」なら、狙いが「壊せばテストが落ちる」のとき More と言える。
 
-- Can the requester tell whether the work achieves its purpose by setting the answer beside the aim?
+- 実物のどの部分を目的に向けて使い、どの部分を使わずに通り過ぎたかは、どの問いの答えに出たか。
 
-    An answer that can be set beside the aim lets the requester give a clear Good or More, and for a More, say how far the work drifted. A question that cannot be compared, such as "how was it to read", draws answers like "easy to read" that are neither good nor bad.
+    使った部分と通り過ぎた部分が答えに出れば、指揮者は、実物に要らない部分を見つけられます。何かが良いかを問うだけの問いには、使った部分についての答えしか出ず、読み飛ばした部分は誰の目にも留まりません。
 
-    Examples:
-    - Document: the aim is that the user can leave the work to the product without watching. The answer "I took it that my work gets faster" drifts from it, so it is a More.
-    - Prompt: the aim is that undecided points go back to the person. The answer "it listed the undecided points and asked the person" meets it, so it is a Good.
-    - Code: the aim is one email per task per day. The answer "run again, still one email" meets it, so it is a Good.
-    - Test: the aim is that a break makes a test fail. The answer "with the function emptied, every test passed" misses it, so it is a More.
+    例:
+    - 文書: 読み手として、使うかを決めるのに使った節と、読み飛ばした経緯の節。
+    - プロンプト: AI が動くときに従った指示と、どの場面でも効かなかった指示。
+    - コード: 呼んだときに通った処理と、一度も通らなかった処理。
+    - テスト: コードを壊したときに落ちたテストと、何を壊しても落ちなかったテスト。
 
-- Is every question one that, if removed, would let a work that misses its purpose pass?
+- 実物が目的を達成したかを判断するのに、どの問いの答えを使わなかったか。
 
-    Kept to questions that cannot be removed, the essentials stay few, the first user puts full attention on each, and chooses how to find it out. A question whose failure another question already catches is a means of checking that one; kept as a question, the essentials grow into a checklist that all passes while no one has checked the purpose.
+    答えが判断に使われる問いだけに絞れば、問いは少なく、first user はひとつひとつに注意を注ぎ、どう確かめるかを自分で選べます。判断に使われない問いは、ほかの問いを確かめるための手段か、目的を外した実物を止めない問いです。残すと、観点ファイルは、全部通るのに誰も目的を確かめていないチェックリストに育ちます。
 
-    Examples:
-    - Document: "can the argument be followed from the headings alone" can be removed; "after reading once, what did you take as what to do" catches the same failure.
-    - Prompt: "is the role named at the top" can be removed; "what does the AI do in a situation no step covers" catches it.
-    - Code: "is every function under fifty lines" can be removed; without it, no work that misses its purpose passes. If the team wants it as a rule, a script checks it.
-    - Test: "are there boundary tests" can be removed; "when the code is broken in a common way, what stops the merge" catches it.
+    例:
+    - 文書: 「見出しだけで筋を追えたか」の答えは使わなかった。「一度読んで、何をすると受け取ったか」の答えで判断がついた。
+    - プロンプト: 「役割が冒頭に書いてあったか」の答えは使わなかった。「どの手順にもない場面で AI が何をしたか」の答えで判断がついた。
+    - コード: 「どの関数も50行以下だったか」の答えは使わなかった。チームのきまりにしたいなら、スクリプトで確かめる。
+    - テスト: 「境界値のテストがあったか」の答えは使わなかった。「よくある壊し方をしたとき、何がマージを止めたか」の答えで判断がついた。
 
-- Does each question ask about one point only?
+- 一つの答えで二つ以上の点に答えた問いはどれで、それは何と何か。
 
-    With one point, the answer and its Good or More are about that point alone, and whoever fixes knows which point to change. Asked two points, the answer covers both at once, and the one that falls short hides behind the one that holds.
+    一つの点だけを問えば、答えも Good か More もその点だけのものになり、直す人はどこを変えればよいか分かります。二つの点を一度に問うと、答えは両方をまとめて語り、足りない方が、足りている方の陰に隠れます。
 
-    Examples:
-    - Document: "what did you take as the reason to choose it and how to start" splits into two.
-    - Prompt: "in a situation no step covers, did the AI act toward its purpose and hand back the decisions that belong to the person" splits into two.
-    - Code: "does the email arrive on the morning of the due date, without duplicates" splits into two.
-    - Test: "when broken, does a test fail, and does the run finish in seconds" splits into two.
+    例:
+    - 文書: 「選ぶ理由として何を、始め方として何を受け取ったか」は二つに分かれる。
+    - プロンプト: 「どの手順にもない場面で、AI は目的に向かって動き、利用者が決めることを利用者に戻したか」は二つに分かれる。
+    - コード: 「期日の朝にメールが届き、重ならなかったか」は二つに分かれる。
+    - テスト: 「壊したときにテストが落ち、数秒で終わったか」は二つに分かれる。
 
-- Does each question have grounds that say what the receiver gains from it?
+- 問いの言葉だけでは何を確かめるか決まらなかったとき、何を手がかりに決めたか。
 
-    With the grounds, the producing role and the first user judge by the question's intent where the question names nothing. Without them, the question is followed by its letter, and a work that matches the words passes while missing the point.
+    問いの下に、受け手が何を得るかという根拠があれば、生成者も first user も、問いの言葉が触れていない所を、問いの意図で決められます。根拠がなければ、問いは字面どおりに使われ、言葉に合うだけの実物が、肝心な所を外したまま通ります。
