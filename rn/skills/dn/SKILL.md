@@ -14,19 +14,15 @@ needs is left there.
 
 ## Steps
 
-1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line is
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line ends
    `waiting for #{id} {sign-off name}` → say it is already stopped there, safe to clear, and that
    `/rn:ty` or `/rn:gm` answers it; stop.
 2. Write what the next conversation needs and nothing else records to a `notes` item in `open/`: what
-   was under way, and in a talk with the user, the points agreed and the point still open.
-3. Commit and push, with an unfinished task's edits in the working tree beside the item, so nothing
-   needed to resume is only on this machine, with the decision line `● {#id task name | plan | design} ── {paused} → {/rn:up}`.
-4. Stop, opening your message with the map as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, with
-   the task under way as:
-
-   ```
-   👉 #{id} {task name} ── {stopped here; next: /rn:up}
-   ```
-
-   The decision line is in the `artifact-language` of `steering.md`, and what you say in its
-   `conversation-language`.
+   was under way and how far it came, and in a talk with the user, the points agreed and the point
+   still open.
+3. Commit and push, with an unfinished task's edits beside the item, so nothing needed to go on is only
+   on this machine, with the decision line
+   `● {#id task name | plan | design} ── {how far it came} → paused at {#id task name | plan | design}`.
+4. Stop, opening your message with the map as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, the
+   task under way as `👉 #{id} {task name} ── paused here`, then the decision line, then
+   `Next: /clear, then /rn:up.`, in the `conversation-language` of `steering.md`.

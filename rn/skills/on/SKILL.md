@@ -14,15 +14,17 @@ thing, however well it is carried out, and the user finds out only at the end.
 
 ## Steps
 
-1. Work on the current branch when it is not the default branch and holds no session, otherwise on a
-   new branch from the default branch, in `.rn/{yyyymmdd}-{slug}/`, the slug naming what
-   `$ARGUMENTS` asks for.
-2. Ask the user which language to write everything that goes into the repository in, and which to
+1. Check that `python3` runs, since the checks `rn` makes on its record need it; when it does not,
+   say so and how to install it, and stop. When the working tree has uncommitted changes, say so
+   without touching them, and stop.
+2. Work on a new branch from the latest default branch, in `.rn/{yyyymmdd}-{slug}/`, the slug naming
+   what `$ARGUMENTS` asks for.
+3. Ask the user which language to write everything that goes into the repository in, and which to
    talk in, proposing English for the repository and the one they write in for the talk. Write
-   `steering.md` there as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, with what they choose, with `rn` from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json` and
-   the goal as `$ARGUMENTS` gives it for now.
-3. Commit and push. Link `steering.md` on the branch, and the issue it serves when there is one, from
-   the body of the branch's pull request, opening a draft one titled with the goal in one line when it
-   has none. Write its URL in `pr`, commit, and push.
-4. Work out the plan with the user from `$ARGUMENTS` and the repository, and go on, as in
-   `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`: the session stops at the Plan sign-off.
+   `steering.md` as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, with what they choose, `rn`
+   from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and the goal as `$ARGUMENTS` gives it for
+   now.
+4. Commit and push, and open a draft pull request titled with the goal in one line, its body linking
+   `steering.md`. Write its URL in `pr`, commit, and push.
+5. Work out the plan with the user and go on, as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`:
+   the session stops at the Plan sign-off.

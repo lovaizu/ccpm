@@ -13,18 +13,18 @@ without asking again. It is recorded and the session stops, so they can clear th
 
 ## Steps
 
-1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line is
-   not `waiting for #{id} {sign-off name}` → say what the session is doing, and stop.
+1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line does
+   not end `waiting for #{id} {sign-off name}` → say what the session is doing, and stop.
 2. Mark that task `[x]`. At the Deliverable sign-off, set `status` to `finished` and mark the pull
    request ready with `gh pr ready`.
 3. Commit and push with the decision line
-   `● #{id} {sign-off name} ── {approved} → {the first task not `[x]`, or finished}`, and say,
-   the decision line in the `artifact-language` of `steering.md`, and what you say in
-   its `conversation-language`:
+   `● #{id} {sign-off name} ── approved → {the first task not [x], or finished}`, and say, in the
+   `conversation-language` of `steering.md`:
 
    ```
    ● {approved the plan or the design}. {next: say "go on", or /clear and /rn:up}
    ```
 
    At the Deliverable sign-off, say instead that the session is finished and the merge is theirs.
-4. When the user says to go on, go on as `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` says, from its second step.
+4. When the user says to go on, go on as `${CLAUDE_PLUGIN_ROOT}/skills/up/SKILL.md` says, from its
+   third step.

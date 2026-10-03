@@ -13,16 +13,16 @@ since the session goes on from where they left it by what its record says.
 
 ## Steps
 
-1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an older `rn` started
+1. Check that `python3` runs; when it does not, say so and how to install it, and stop.
+2. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an older `rn` started
    it, bring it to the current form as there instead of the steps below.
-2. Say where it resumes, naming the first task not `[x]`, or the next move of the last decision line
-   when none is left, in the `conversation-language` of `steering.md`:
+3. Say where it resumes, in the `conversation-language` of `steering.md`:
 
    ```
-   ● {resuming {slug} at #{id}: {task name}}
+   ● {resuming {slug} at #{id}: {task name}, or at the next move of the last decision line}
    ```
 
-3. When the last decision line is `waiting for #{id} {sign-off name}`, give the proposal again
-   as that commit's message body prints it up to the decision line, in the conversation language,
-   adding nothing and leaving nothing out, and stop. Otherwise take up the session as in
-   `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.
+4. When the last decision line ends `waiting for #{id} {sign-off name}`, and the branch is level with
+   the latest default branch, give the proposal again as that commit's message body prints it up to
+   the decision line, adding nothing and leaving nothing out, and stop. Otherwise take up the session
+   as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.

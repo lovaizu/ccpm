@@ -1,7 +1,8 @@
 # Report
 
-What a first user returns after using a work: for each viewpoint, what it understood from the work,
-or what happened when it did as the work says. With it, the conductor sets each answer beside the aim
+What a first user writes to its `report` file in `open/` after using a work, returning only a short
+result and the file's place: for each viewpoint, what it understood from the work, or what happened
+when it did as the work says. With it, the conductor sets each answer beside the aim
 and gives a Good or a More, each checked at its place in the real thing, without asking back. The
 first user of a report takes it up as the conductor would, with the work, the aim, and the viewpoints
 the report answers.
