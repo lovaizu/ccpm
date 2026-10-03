@@ -86,6 +86,10 @@ taught survives only as the user's feedback listed under Assumptions.
 - Fact: tried on 2026-10-03 with Claude Code 2.1.285 and a throwaway plugin: a skill with
   `context: fork` can start a plugin agent through the Agent tool (`subagent_type: "<plugin>:<agent>"`),
   and a skill's `agent` field can name a plugin agent the same way, which then runs the skill.
+  `omitClaudeMd: true` on a plugin agent kept a project CLAUDE.md out of it (two runs; without the
+  field the agent saw it, two runs), although the sub-agents doc says the field is ignored for
+  plugin agents. A PreToolUse hook input carries `agent_type` (`<plugin>:<agent>`) inside a subagent,
+  and plugin hooks fire for a subagent's tool calls (hooks doc).
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
