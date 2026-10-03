@@ -10,7 +10,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 - Every benefit in `rn/README.md` passes its scene in the verification document, run on the practice
   repository `lovaizu/rn-try` with the real `writ`.
-- Points 1–13 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
+- Points 1–14 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
   approved on PR #33, and the prompts, viewpoint files, and hooks do what those documents say.
 - Pause and resume (`/rn:dn`, `/rn:up`), feedback (`/rn:gm`), and bringing a 0.8.0 session to the new
   form each work on the practice repository.
@@ -45,6 +45,8 @@ their time only on the three sign-offs and on what only they can decide.
     aim and gives Good or More; each More whose fix brings the work closer is fixed by the generator,
     then checked by a fresh first user for that viewpoint alone; the final Good and More go into the
     task's check-off commit message.
+  - A first user writes its whole report to `.rn/20261003-rn-rebuild/reports/{target}.md`
+    (overwritten each run, not committed) and returns only a short result and that path (point 14).
   - The viewpoints are the file in `rn/references/essentials/` for what the result is (the design for
     #1, `writ`'s `essentials.md` for #2), and for prompts also `writ`'s viewpoints for prompts
     (`writ/references/essentials/prompt.md` on `worktree-writ`); after every change to the prompts, all of them are used this way.
@@ -59,7 +61,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 # Tasks
 
-### #1: README, design document, and verification document carry agreed points 1–13
+### #1: README, design document, and verification document carry agreed points 1–14
 
 **Purpose**: The README and design document state every point agreed on 2026-10-02/03, with
 verification split into its own document, so the prompts and hooks can be built from them.
@@ -143,12 +145,19 @@ verification split into its own document, so the prompts and hooks can be built 
   the work as the user would, before the user does, and answers with the facts of that use — what it
   understood and what happened — without judging. Comparing those facts with the aim (validation) is
   the conductor's. Terms follow it throughout (e.g. the `open/` kind evaluation becomes report).
+- [ ] 14. Results (agreed in the writ session; `.claude/rules/plugin.md` § Build › Results on
+  `worktree-writ`, ffa1579): a first user, `writ`, or any agent rn calls writes its whole result to a
+  file and returns only a short result and the file's place — the conductor's view, one line per
+  viewpoint (Good or More, and where), and in full only what the user must decide. One file per
+  target, overwritten on each run, in the place rn names under the session's directory in `.rn/`.
+  The whole result in the conversation is too long to be read, crowds the conductor's context, and is
+  lost when the conversation is summarized.
 - [ ] Used by a first user and settled by the conductor (Rules), once #2 has made the viewpoints usable
 
 **Completion criteria**:
 
 - A reader of `rn/README.md`, `rn/docs/design.md`, and the verification document alone can say, for
-  each of points 1–13 above, where it is stated and what it means for the user or the maintainer — no
+  each of points 1–14 above, where it is stated and what it means for the user or the maintainer — no
   point is missing or changed in meaning.
 - Every acceptance criterion in the design has an ID and at least one verification check that names
   it; no check names an ID that does not exist.
