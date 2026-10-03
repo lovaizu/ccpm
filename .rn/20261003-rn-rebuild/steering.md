@@ -382,12 +382,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-03
-- **Last completed**: #1 README, design document, and verification document carry points 1–14 (and #2)
-- **Next**: #3 Documents cut to what their readers use — first step: add the used / passed-over question to rn's viewpoint files
-- **Notes**: branch `rn-rebuild`, PR #33. The Design sign-off was presented once; the user found the
-  documents text-heavy and degraded (design.md 8,253 words vs 5,213 this morning and 3,727 on main)
-  and its diagrams too wide, and approved this plan: fix the viewpoints first, then cut by a first
-  user's use (writ found the same gap; its essentials.md is not yet updated on `worktree-writ`, so rn
-  applies the agreed changes itself). Do not rewrite the documents by eye or with writ before that.
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
