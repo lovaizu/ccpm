@@ -307,7 +307,7 @@ receiver's state.
 
 **Steps**:
 
-- [ ] From #1: decide how a `claude -p` run is stopped partway through a task (A4's first and third
+- [x] From #1: decide how a `claude -p` run is stopped partway through a task (A4's first and third
   scenes), and whether a teammate's commits on the session branch need a rule (A4's second scene)
 - [ ] Run each golden-path scene with a stand-in user, using `writ` from `worktree-writ`; fix a
   must-be gap that shows up in use
@@ -328,14 +328,14 @@ breach is stopped rather than left to the evaluator.
 
 **Steps**:
 
-- [ ] For any of 9–11 the design leaves to a hook, run a hook that reads `agent_type` and confirm it
+- [x] For any of 9–11 the design leaves to a hook, run a hook that reads `agent_type` and confirm it
   tells the first user and the other agents apart; if not, take the design change to the user
-- [ ] From #1: run whether `UserPromptExpansion` fires for a command passed through `claude -p`, and
+- [x] From #1: run whether `UserPromptExpansion` fires for a command passed through `claude -p`, and
   what `command_name` is for a plugin skill, before check 7 relies on it
-- [ ] Build checks 1–8, and whatever of 9–11 the design leaves to hooks, with their tests, following
+- [x] Build checks 1–8, and whatever of 9–11 the design leaves to hooks, with their tests, following
   `.claude/rules/plugin.md` § Build (shared with writ; on `worktree-writ` until PR #15 merges, then
   on `main`)
-- [ ] Run each check against a breaking case and a passing case
+- [x] Run each check against a breaking case and a passing case
 - [ ] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
@@ -353,7 +353,7 @@ and what changes for them.
 
 **Steps**:
 
-- [ ] Write the `## [0.9.0]` entries from the approved README and design, dated the day the release
+- [x] Write the `## [0.9.0]` entries from the approved README and design, dated the day the release
   is finalized
 - [ ] Used by a first user and settled by the conductor (Rules)
 
@@ -404,8 +404,24 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-10-03
+- **Last completed**: #10 Practice repository cleaned up (#4 Design sign-off deferred by the user's instruction)
+- **Next**: #6 Trials — resume the account session trial, then the scenes not yet driven
+- **Notes**: branch `rn-rebuild`, PR #33. Decided for #6: a `claude -p` run is stopped partway by the
+  harness killing it once the second task's generator has edited a file, then `/rn:dn` on the same
+  conversation; a teammate's commits on the session branch need no rule. Verified for #7 on 2.1.285:
+  `UserPromptExpansion` fires under `claude -p` with `command_name` `<plugin>:<skill>`, and a plugin
+  agent's tool calls carry `agent_type` `<plugin>:<agent>`. The hooks (403dc40) and the CHANGELOG
+  draft (d13b78b) are committed but not yet used by a first user.
+  Trial harness (scratchpad, lost on reboot):
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-rebuild-rn/363cf33b-b680-48f4-bd1b-c2c150018f12/scratchpad/trial/`
+  — `driver.py` (stand-in, scenes), `transcript.md`, `work/` (account session clone, stopped after
+  `/rn:up` reworked the design for the names moved under `profile`; uncommitted docs and two reports
+  in its open/), `writ-src/` (writ at d3754b1). Resume with `python3 driver.py account resume` after
+  setting its flags past the Design-clear scene. On `lovaizu/rn-try`: draft PR #23 is the account
+  session; `main` carries the A4 hand commit 394f850, to be reverted to the tree of c3b5f8e after the
+  run. Found in the trial and fixed: the conductor ended turns with agents running (0a67ba0). Seen,
+  not yet decided: rn put two questions in one message (A2).
+  Open question to the user (unanswered): after the account session, drive the coupon scene, A3's
+  comparison, and the 0.8.0 scene before #7, keeping effort on attractive quality — recommended yes.
