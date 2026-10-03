@@ -16,6 +16,7 @@ Most AI agents need a carefully written prompt and some babysitting.
 - A git repository with its remote on GitHub, since `rn` puts everything you review on a pull request
 - The [GitHub CLI](https://cli.github.com) `gh`, logged in with push access, which `rn` uses to open
   and update a pull request
+- Python 3.9 or later, which runs the checks `rn` makes on its own record as it goes
 
 ## Install
 
@@ -75,10 +76,10 @@ Say your app is written in JavaScript, and you want it moved to TypeScript — w
 ### 1. Start — `/rn:on`
 
 In your repository, say what you want, as roughly as it comes to mind; what you get is what you
-meant. `rn` tells you
-how it understands it, one point at a time — what you want, why you want it, and how you would know
-the goal is achieved — and moves on only when you agree. What the repository, the official documentation, or best practice can
-answer, it looks up instead of asking you.
+meant. `rn` tells you how it understands it, one point at a time, each with the answer it
+recommends — what you want, why you want it, and how you would know the goal is achieved — and moves
+on only when you agree. What the repository, the official documentation, or best practice can answer,
+it looks up instead of asking you.
 
 ```console
 > /rn:on move this app to TypeScript
@@ -96,8 +97,25 @@ Knowing why you want it is what shows where your first words would go wrong: eve
 .ts would have let the bugs through.
 
 From your first words, `rn` keeps the plan, `steering.md`, on a draft pull request, and updates it
-as each point is agreed. The plan holds the goal, how you would know it is achieved, and the tasks. The tasks that build it are planned once the design is
-settled, so they follow what you agree to there.
+as each point is agreed. The plan holds the goal, its acceptance criteria, and the tasks. The
+criteria come in two kinds: what would make you choose the result, and what you take for granted.
+Each has an ID, so you can follow any task or check back to the criterion it serves:
+
+```markdown
+# Acceptance criteria
+
+## Attractive quality
+
+- A1: Code reproducing each of the three bugs fails the build
+
+## Must-be quality
+
+- M1: Every file is .ts
+- M2: The app builds and runs as before
+```
+
+The tasks that build it are planned once the design is settled, so they follow what you agree to
+there; until then, the plan shows them as not yet specified.
 
 ```console
 ● ── typescript: a wrong type fails the build ──
@@ -136,12 +154,13 @@ there. You can clear the conversation at that point and lose nothing: say "go on
 
 ### 3. Work out the design — Design sign-off
 
-Once you approve the plan, `rn` works out the design with you: how to build it, and what to test so
-you know it works. You see and approve both before anything is built, so what comes back at the end
-is what you expected.
-Of those, how strict the type checks start is a call of effort against safety, so it is yours. What
-you settle goes into your README and design document, which stay with your product, so the next
-session, or a teammate, starts from what you settled.
+Once you approve the plan, `rn` works out the design with you: how to build it, and how you will see
+that it works. You approve the design document and a verification document together, before
+anything is built, so what comes back at the end is what you expected. The verification document
+says, for each attractive criterion, how it will be used as you would use it and what it should
+do then. Of the points that come up, how strict the type checks start is a call of effort against safety, so
+it is yours. What you settle goes into your README, design document, and verification document,
+which stay with your product, so the next session, or a teammate, starts from what you settled.
 
 ```console
 ● The three bugs are in src/cart and src/checkout. For the test, I propose code that reproduces
@@ -153,10 +172,11 @@ session, or a teammate, starts from what you settled.
 
 ### 4. Build and check the deliverable
 
-You don't babysit it. Each result is checked by an agent that did not make it, so it passes because it
-does its job, not because its maker says so. Each task has a purpose set in the plan, and each
-time `rn` decides what to do next against it, it says so in one line, so a glance tells you where it
-is and why:
+You don't babysit it. Before you see a result, an agent that knows nothing of how it was made uses
+it as you would, and tells `rn` what it understood and what happened. `rn` sets that beside what the
+result is for, so a result passes because it does its job, not because its maker says so. Each task
+has a purpose set in the plan, and each time `rn` decides what to do next against it, it says so in
+one line, so a glance tells you where it is and why:
 
 ```console
 ● #3 move src/cart ── decided: purpose not fulfilled. It passes only because its types are `any`;
@@ -190,7 +210,9 @@ day, `/rn:dn` records how far the session has come. When you want a fresh conver
 ### 6. Finish — Deliverable sign-off
 
 You approve the deliverable, your product as the session leaves it, by whether it achieves the goal
-you agreed at the start. It was built and checked against that goal, not only against its tasks.
+you agreed at the start. Before you see it, it was used as you would use it, in each scene of the
+verification document you approved, so it was checked against that goal, not only against its
+tasks.
 When something falls short, `/rn:gm` has it fixed. On `/rn:ty` the pull request is marked ready,
 and the merge is yours:
 
@@ -200,14 +222,16 @@ and the merge is yours:
 ● Approved the deliverable. The pull request is ready: https://github.com/you/repo/pull/42
 ```
 
-Besides your product, the session leaves only its `.rn/` directory, the
-record of how things were decided, so you or a teammate can later see why things came out as they
-did.
+Besides your product, the session leaves only its `.rn/` directory, the record of how things were
+decided, so you or a teammate can later see why things came out as they did. The pull request links
+the issues the work closes or serves, and the pull requests it replaces, so GitHub connects them for
+you.
 
 ## How it is built
 
-Who makes, checks, and decides each thing in a session, and why `rn` is built that way, is in its
-[design document](./docs/design.md).
+Who makes, uses, and decides each thing in a session, and why `rn` is built that way, is in its
+[design document](./docs/design.md). How `rn` itself is checked is in its
+[verification document](./docs/verification.md).
 
 ## The names
 
