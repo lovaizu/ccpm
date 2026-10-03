@@ -10,7 +10,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 - Every benefit in `rn/README.md` passes its scene in the verification document, run on the practice
   repository `lovaizu/rn-try` with the real `writ`.
-- Points 1–12 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
+- Points 1–13 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
   approved on PR #33, and the prompts, viewpoint files, and hooks do what those documents say.
 - Pause and resume (`/rn:dn`, `/rn:up`), feedback (`/rn:gm`), and bringing a 0.8.0 session to the new
   form each work on the practice repository.
@@ -43,7 +43,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 # Tasks
 
-### #1: README, design document, and verification document carry agreed points 1–12
+### #1: README, design document, and verification document carry agreed points 1–13
 
 **Purpose**: The README and design document state every point agreed on 2026-10-02/03, with
 verification split into its own document, so the prompts and hooks can be built from them.
@@ -112,6 +112,9 @@ verification split into its own document, so the prompts and hooks can be built 
   Viewpoints are few essential questions worked back from the purpose; how to check is left to the
   checker. (writ will gather viewpoints and how to check them in a skill `pith`, later a plugin rn
   may use; its viewpoints for viewpoints are not yet agreed.)
+- [ ] 13. With point 12, the role that checks the work is the validator, not the evaluator: it
+  validates by using the work and reporting what it understood and what happened, and the conductor
+  judges. Terms follow it throughout (e.g. the `open/` kind evaluation becomes validation).
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
@@ -121,7 +124,7 @@ verification split into its own document, so the prompts and hooks can be built 
 **Completion criteria**:
 
 - A reader of `rn/README.md`, `rn/docs/design.md`, and the verification document alone can say, for
-  each of points 1–12 above, where it is stated and what it means for the user or the maintainer — no
+  each of points 1–13 above, where it is stated and what it means for the user or the maintainer — no
   point is missing or changed in meaning.
 - Every acceptance criterion in the design has an ID and at least one verification check that names
   it; no check names an ID that does not exist.
