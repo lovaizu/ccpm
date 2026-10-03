@@ -2,10 +2,10 @@
 
 Everything the session changed apart from its directory under `.rn/`. With it, the user has the goal
 they agreed, and approves it at the Deliverable sign-off; the next session starts from it. The first
-user uses the product as its user would; the conductor sets each answer beside the goal and its
-acceptance criteria, by ID.
+user uses the product as its user would, given each scene's input but never what passes; the
+conductor sets each answer beside the goal, its acceptance criteria by ID, and each scene's pass.
 
-- Running each scene of the verification document on the product, what happened?
+- Running each scene's input from the verification document on the product, what happened?
 
     The deliverable is then judged where the user would feel it, by the measure fixed before it was
     built, which cannot be eased to fit what was built.

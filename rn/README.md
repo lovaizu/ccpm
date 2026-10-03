@@ -8,8 +8,6 @@ is decide.
   take: you don't babysit the work, and you don't re-read all of it to approve it.
 - Work that takes days goes on the next day, or in a fresh conversation, from where it stopped.
 
-Most AI agents need a carefully written prompt and some babysitting.
-
 ## What you need
 
 - [Claude Code](https://code.claude.com)
@@ -79,7 +77,8 @@ In your repository, say what you want, as roughly as it comes to mind; what you 
 meant. `rn` tells you how it understands it, one point at a time, each with the answer it
 recommends — what you want, why you want it, and how you would know the goal is achieved — and moves
 on only when you agree. What the repository, the official documentation, or best practice can answer,
-it looks up instead of asking you.
+it looks up instead of asking you. It also asks which language to talk in and which to write the
+repository in, and which issues the work closes.
 
 ```console
 > /rn:on move this app to TypeScript
@@ -162,7 +161,8 @@ lose nothing: say "go on" to continue, or `/clear` first, then `/rn:up`.
 Once you approve the plan, `rn` works out the design with you: how to build it, and how you will see
 that it works. You approve the design document and a verification document together, before anything
 is built, so what comes back at the end is what you expected. The verification document says, for
-each attractive criterion, how it will be used as you would use it and what it should do then. Of
+each attractive criterion, how it will be used as you would use it and what it should do then, so
+the same check can be run again after any later change. Of
 the points that come up, how strict the type checks start is a call of effort against safety, so it
 is yours. What you settle goes into your README, design document, and verification document, which
 stay with your product, so the next session, or a teammate, starts from what you settled.
@@ -241,11 +241,6 @@ you.
 Who makes, uses, and decides each thing in a session, and why `rn` is built that way, is in its
 [design document](./docs/design.md). How `rn` itself is checked is in its
 [verification document](./docs/verification.md).
-
-## The names
-
-`on` / `dn` / `up` follow a race: **on** your marks, cool **d**ow**n** for a pause, warm **up** to
-go on. `ty` / `gm` are two thanks: **t**hank **y**ou approves, **g**ood, **m**ore asks for more.
 
 ## License
 
