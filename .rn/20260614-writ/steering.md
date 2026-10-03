@@ -61,6 +61,18 @@ taught survives only as the user's feedback listed under Assumptions.
 - Fact: the user agreed on 2026-10-03, with the rn session, that the role that checks is the
   first user (always the two words): it uses the work as its user would and reports what happened,
   without judging it; the requester sets that beside the aim and gives each a Good or a More.
+- Fact: the user agreed on 2026-10-03 how `pith` works. It runs in a forked context, and is built
+  from the conductor, the generator and the first user (`.claude/rules/plugin.md`). To check a work,
+  the caller hands the work, its receiver and purpose, the aim (what the receiver should get and what
+  was decided) and the essentials files; the conductor first checks that the aim covers every
+  essential, the first user (given the work, receiver, purpose and essentials, never the aim) uses it
+  and reports what happened, and the conductor sets that beside the aim, gives Good and More, checks
+  their form by script, and returns them; there is no generator, and the caller decides what to fix.
+  To write an essentials file, the generator writes it worked back from the purpose, the first user
+  tries it on a real work of that kind and reports, and the conductor judges by `essentials.md`,
+  has it fixed, and returns it. A work is checked again only when the aim or decisions change; a
+  question that comes up is returned as a result, never asked of the user by `pith`. `/writ:up`
+  takes the same three role names.
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
