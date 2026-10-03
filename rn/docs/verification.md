@@ -158,6 +158,7 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 | Hook check 5: a settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
 | Hook checks 6 and 7: each stop keeps what its kind allows; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5 | Every scene |
 | Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
+| Hook check 12: the conductor starts no agent in the background | the hooks; a stop shows in the run's output | A2 | Every scene |
 | Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
 | `main` of the practice repository has, after a scene, the head it had before it, but for the commit A4's second scene makes | `git ls-remote origin main`, before and after | M1 | After every scene |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |

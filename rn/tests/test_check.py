@@ -236,6 +236,28 @@ class Checks(unittest.TestCase):
         self.r.commit("rn: pause\n\n● #3 cart ── half → paused at #3 cart")
         self.assertEqual(self.r.after_commit()[0], 2)
 
+    def test_7_amending_a_typed_pause_passes_and_a_second_pause_stops(self):
+        self.r.hook("prompt", command_name="rn:dn")
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: pause\n\n● #3 cart ── half → paused at #3 cart")
+        self.assertEqual(self.r.after_commit()[0], 0)
+        sh(self.r.dir, "git", "commit", "-q", "--amend", "-m",
+           "rn: pause at #3\n\n● #3 cart ── half → paused at #3 cart")
+        self.assertEqual(self.r.after_commit()[0], 0)
+        self.r.write("b.txt", "b\n")
+        self.r.commit("rn: pause\n\n● #3 cart ── more → paused at #3 cart")
+        self.assertEqual(self.r.after_commit()[0], 2)
+
+    # Check 12
+    def test_12_conductor_starting_an_agent_in_the_background_stops(self):
+        start = dict(tool_name="Agent", tool_input={"subagent_type": "rn:generator", "prompt": "x",
+                                                    "run_in_background": True})
+        code, out = self.r.hook("pre", **start)
+        self.assertEqual(code, 2)
+        self.assertIn("foreground", out)
+        start["tool_input"]["run_in_background"] = False
+        self.assertEqual(self.r.hook("pre", **start)[0], 0)
+
     # Check 8
     def test_8_unpushed_commit_blocks_stop(self):
         self.r.write("a.txt", "a\n")

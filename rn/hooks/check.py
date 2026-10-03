@@ -222,15 +222,26 @@ def notes_path(data, session_id):
     return os.path.join(data, f"typed-{session_id}.json")
 
 
-def take_note(data, session_id, cmd):
+def take_note(data, session_id, cmd, parent):
+    """Spend one typed command on the commit on top of parent. Amending that commit keeps its parent,
+    so it is the same record rewritten, not a second one, and passes without another command."""
     p = notes_path(data, session_id)
+    given = os.path.join(data, f"given-{session_id}.json")
     try:
         notes = json.load(open(p))
     except Exception:
-        return False
+        notes = []
+    try:
+        spent = json.load(open(given))
+    except Exception:
+        spent = {}
+    if parent and spent.get(cmd) == parent:
+        return True
     if cmd in notes:
         notes.remove(cmd)
         json.dump(notes, open(p, "w"))
+        spent[cmd] = parent
+        json.dump(spent, open(given, "w"))
         return True
     return False
 
@@ -322,6 +333,10 @@ def main():
                     emit([f"the first user writes only its report {own}"])
             if tool in ("Read", "Grep", "Glob") and path and reads_maker_account(path, sdir, own):
                 emit(["the first user does not read notes or earlier reports"])
+        # Check 12: an agent left running reports to a turn that has already ended.
+        if not agent and tool == "Agent" and inp.get("run_in_background"):
+            emit(["start the agent in the foreground and wait for what it returns; your turn ends "
+                  "only when you stop for the user or ask them a question"])
         if not agent and tool == "Agent" and inp.get("subagent_type") == FIRST_USER:
             emit(form_checks(top, sdir))
         sys.exit(0)
@@ -336,7 +351,8 @@ def main():
             problems = check_decision_line(msg) + check_settled_whole(top, rel, msg) + \
                 check_stop(top, sdir, msg)
             need = needed_command(top, rel, msg)
-            if need and not take_note(store, data.get("session_id", ""), need):
+            parent = git("rev-parse", "HEAD~1", cwd=top).strip()
+            if need and not take_note(store, data.get("session_id", ""), need, parent):
                 problems.append(f"this commit records what only the user's /rn:{need} may; "
                                 "undo it with git reset --soft HEAD~1")
             emit(problems)
