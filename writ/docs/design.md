@@ -196,7 +196,7 @@ flowchart TD
 
     Most Mores come back as "there is no ...". Fixing by adding makes the document longer with every fix, says the same thing in two places, and makes the reader read sentences they do not need. The conductor first looks for whether the same thing is already said somewhere and whether replacing a sentence that is there is enough, and has the generator fix that way too.
 
-- A More about parts the reader read past is fixed by taking the part out or saying it once, and is not left, unless the reader needs the part for a later step the purpose includes. That the first user used the part to answer another question does not count.
+- A More about parts the reader read past is fixed by taking the part out or saying it once, and is not left, unless the reader needs the part for a later step the purpose includes. That the first user used the part to answer another question does not count. A thing said in two places, in two sentences or in a figure and a sentence, is kept in the one place the reader uses.
 
     The first user also answers questions a reader never asks, such as how certain each statement is, so a part it used only there is still one the reader passes. How to fix it is clear from the purpose, and taking out a part the reader did not use breaks no Good. Left, a thing said again and again teaches the reader to read past it, so they also pass the one place where it matters, and every reader spends time on it.
 
