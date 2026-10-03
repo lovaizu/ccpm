@@ -194,7 +194,7 @@ by the conductor, so the results of #1 onward can be checked the 0.9.0 way.
 - No question can be removed without letting a work that misses its purpose pass, each asks about one
   point, and each has grounds saying what the receiver gains.
 
-### #3: Documents cut to what their readers use
+### [x] #3: Documents cut to what their readers use
 
 **Purpose**: The README, design document, and verification document hold only what their readers use
 to decide or act, with the diagrams readable at page width, so the user can judge the design at the
@@ -204,16 +204,16 @@ Design sign-off.
 
 **Steps**:
 
-- [ ] Add to each viewpoint file in `rn/references/essentials/` the question of which parts of the
+- [x] Add to each viewpoint file in `rn/references/essentials/` the question of which parts of the
   work were used for its purpose and which were passed over unused, and rewrite every question into
   the form answered by what happened in use, as agreed in the writ session (2026-10-03): the
   essentials for essentials gain "which parts of the work were used and which passed over", and
   "if removed, would a missing work pass" becomes "which question's answer was not used to judge
   whether the work achieved its purpose"
-- [ ] A first user uses the three documents with the design viewpoints; the conductor decides for each
+- [x] A first user uses the three documents with the design viewpoints; the conductor decides for each
   part passed over whether the purpose needs it, and details the prompts or hooks hold move to #5
   and #7
-- [ ] The verification document's purpose is to rerun the same checks later and find a regression
+- [x] The verification document's purpose is to rerun the same checks later and find a regression
   (agreed 2026-10-03). It holds only: where a run starts (the practice repository's commit, `writ`'s
   version), how it is run, each scene as a test case of input (what the stand-in says, knows, and
   decides) and Passes when, and the machine checks as commands with the criteria they check. A first
@@ -222,9 +222,9 @@ Design sign-off.
   once, in the design document. This holds for the verification document `rn` has `writ` write for
   a user's product as for `rn`'s own: the design document's form for it, hook check 3, and
   `rn/references/essentials/deliverable.md` change with it
-- [ ] The generator cuts and rewrites, diagrams first and text only for what they do not show,
+- [x] The generator cuts and rewrites, diagrams first and text only for what they do not show,
   each diagram readable at page width
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [x] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
