@@ -182,10 +182,14 @@ proven and split into its own plugin.
 
 **Steps**:
 
-- [ ] Settle with the user, one point at a time, what the skill does and where its boundary with
+- [x] Settle with the user, one point at a time, what the skill does and where its boundary with
       `/writ:up` lies, following the best practices for checking by a rubric
 - [ ] Change the README and the design, and take the user's review on PR #15
-- [ ] Rebuild the prompts from the README, the design and the essentials
+- [ ] Rebuild the prompts from the README, the design and the essentials, with the generator and
+      first user as plugin agents
+- [ ] Build pith's result check and the first user's hook in Python 3.9, with unittest tests in
+      `writ/tests/`
+- [ ] Rewrite `doc.md`, `readme.md`, `design.md` and `prompt.md` with pith
 
 **Completion criteria**:
 
@@ -236,8 +240,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-10-03
+- **Last completed**: #4 (#5 in progress: pith agreed and recorded under Assumptions; README and design rewritten in Japanese for review)
+- **Next**: #5 — take the user's review of `writ/README.md` and `writ/docs/design.md` on PR #15, then rebuild the prompts.
+- **Notes**: Rules now live only in `.claude/rules/plugin.md` (roles, results in open/, validation, release); conventions are shared with the rn session rebuild-rn-c1. Unverified: whether pith in a forked context can start the first user agent, and whether a skill's `agent` can name a plugin agent — run these first when building. The textlint rule that list items be である調 does not fit the item-then-explanation style and is left.
