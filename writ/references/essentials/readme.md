@@ -1,51 +1,23 @@
 # README
 
-The reader is someone meeting the product for the first time. When they finish, they know the benefits the product gives them, decide whether to use it, and can start using it.
+読み手は三者です。生成者は、README を書くときに、目指す形としてこれを読みます。first user は、その製品に初めて出会い、使うかを決め、使い始めようとする人として README を読み、ここにある問いごとに、何をして何が起きたかを報告します。良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、初めての人として読んで起きたことから、README で読み手が製品から得るベネフィットを知り、使うかを決め、使い始められるかを確かめられます。
 
-- Does the opening tell the reader what they get, the benefits?
+- 冒頭を読んだ時点で、この製品で自分が何を得ると受け取ったか。
 
-    Opening with what the reader gets, such as being able to leave the work to it without watching, lets them decide at once whether the product is for them. What the product does toward that, such as "it calls you back only for the decisions that are yours", leaves them to work out what they get.
+    冒頭で得るものを受け取れば、読み手は自分に向いた製品かをすぐ決められます。見張らずに任せられる、のような得るものでなく、「あなたが決めることだけで呼び戻す」のような製品のすることを受け取ったなら、得るものは読み手が自分で割り出すことになります。
 
-- Is every benefit a reason to choose this product over what the reader would use instead?
+- ふだん代わりに使うものでなくこの製品を選ぶ理由として、何を受け取ったか。
 
-    A benefit the alternative does not give, such as another tool or doing the work by hand, is what makes the reader choose the product. One the alternative gives as well, such as nothing being lost, the reader takes for granted, and in the opening it hides the reasons that count.
+    別の道具や手作業では得られないものが、読み手に製品を選ばせます。代わりのものでも得られるもの、たとえば何もなくならないことは、当たり前と受け取られ、冒頭にあると効く理由を隠します。各段がなぜ読み手にとって良いかや、読み手の仕事に近い例も、ここで理由として受け取られます。読み手の仕事から遠い例や、よその製品や有名なアプリから借りた例は、他人の話として読まれます。
 
-- Can the reader see at a glance the flow from starting to use it to getting a result?
+- 使い始めてから結果を得るまでを、自分が何をして何を得る流れとして受け取ったか。
 
-    Seeing the whole flow first, the reader knows where each stage leads before reading it. Stages read one by one leave them to piece the flow together.
+    流れを先に受け取れば、読み手は各段がどこへ向かうかを知って読めます。この流れを選ぶ理由の横に置くと、どの段にもつながらない理由は、道筋のない約束として見えます。
 
-- Does each stage say what the reader does and what they get?
+- 使うかを決めるにも使い始めるにも要らないのに、覚えなければ先へ進めなかった名前や仕組みは何か。
 
-    Knowing what they do and get at each stage, the reader can picture using the product step by step.
+    初めての人が決めるのに要ることに絞れば、README は止まらずに読み通せます。内部の役の名前や例外は、要らないことを覚えさせます。
 
-- Does each stage say why it is good for the reader?
+- この README だけを頼りに、入れて使い始めようとして、どこまで進み、どこで外を探したか。
 
-    Seeing why a stage is good for them, such as "it asks why you want it, so what you get is what you meant", the reader sees the product was thought through for them, and works with it as it intends. Shown only as what to do, a stage reads as a manual.
-
-- Does every stage lead to one of the benefits?
-
-    When every stage leads to a benefit, the reader reads nothing that does not serve what they came for. A stage that leads to none is not needed.
-
-- Is every benefit reached at some stage?
-
-    When each benefit is reached at a stage, the reader sees how they actually get it. A benefit no stage reaches reads as a promise without a way.
-
-- Is the example one the reader can picture as their own work?
-
-    Shown the product on a case close to their own work that brings out its strengths, such as moving a JavaScript app to TypeScript, the reader sees what they would get. A case far from their work, or borrowed from another company's product or a well-known app, reads as someone else's.
-
-- Can the reader read to the end without knowing the product's internals?
-
-    Kept to what a first-time reader needs to decide, the README reads through without stopping. Names of internal roles and exceptions make them learn what they do not need.
-
-- Can the reader install the product and start using it from this README alone?
-
-    With everything needed to start in one place, the reader goes from deciding to using without searching elsewhere.
-
-- Can each reader prepare the prerequisites in their own way?
-
-    Stating what is needed and why lets each reader prepare in their own way. A single way of preparing reads as if the others could not be chosen, and gives those already prepared a procedure they do not need.
-
-- Can the reader tell the terms under which they may use the product?
-
-    The license tells the reader before they start whether their use is allowed.
+    始めるのに要ることが一か所にそろっていれば、読み手は決めてから使うまで、ほかを探さずに進めます。前提は、何が要り、なぜ要るかが書いてあれば、読み手はそれぞれのやり方で用意できます。一つの用意の仕方だけを書くと、ほかのやり方は選べないように読め、もう用意できている読み手には要らない手順を渡します。

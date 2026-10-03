@@ -1,71 +1,35 @@
-# Every document
+# どの文書にも
 
-The reader is whoever the document is written for. When they finish, they have grasped the whole by reading from top to bottom and can do what they need to do. Every document is judged by these questions, and a README, a design doc or a prompt also by its own file.
+読み手は三者です。生成者は、文書を書くときに、目指す形としてこれを読みます。first user は、文書と一緒に渡された読み手と目的から、その読み手が読み終えて何を決め、何をするかを定め、その読み手として上から一度読んで、ここにある問いごとに、何をして何が起きたかを報告します。目的から定まらなければ、定まらなかったことを報告します。良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、読み手として読んで起きたことから、文書が読み手に決めさせ、動かせるかを確かめられます。README、設計書、プロンプトは、それぞれのファイルの問いでも確かめます。
 
-- Does every part help the reader decide or act?
+- 読み終えて、何を決め、何をすると受け取ったか。
 
-    When every part is one the reader needs, they decide and act without wading through the rest. Knowing who reads, and what they decide and do when they finish, is what lets each part be judged: take a part away, and if the reader would still decide and act the same, it does not belong. Parts that pass the reader by are often written for someone else, such as a reviewer, or tell how the decisions came about.
+    受け取ったことを狙いの横に置けば、ずれた所が、文書の伝わっていない所です。書き手は議論を知らない頭に戻れないので、読み返しても見つけられません。一つの言葉が途中で意味を変えた所や、一つのものを二つの名前で呼んだ所は、読み手が気づかないまま、ここに違う受け取り方として出ます。
 
-- Is everything the reader needs to decide or act written down?
+- 決めたり動いたりするのに使った部分はどこで、使わずに読み飛ばした部分はどこか。
 
-    With nothing missing, the reader acts on the document alone. A decision no part supports is made by guess, or sends the reader to ask.
+    読み飛ばした部分が分かれば、文書から外せる部分が分かり、読み手は要らない所をかき分けずに決めて動けます。読み飛ばされるのは、レビューする人など別の誰かに向けた部分、決定に至った経緯、言い直し、本文がすでに伝えたことを繰り返すだけの図であることが多くあります。
 
-- Does the first sentence tell the reader what they get from this document?
+- 決めたり動いたりしようとして、文書に書いてなく、推し量るか誰かに聞くしかなかったことは何か。
 
-    Knowing from the first sentence what they will gain, the reader decides whether to read on and reads the rest toward it. An opening that starts with background makes them read before they know why.
+    足りない所が分かれば、読み手は文書だけで動けるようになります。どの部分も支えていない決定は、推し量って決められるか、読み手を聞きに行かせます。滑らかな文で覆われた抜けは、読み手が気づかずに動くので、ここに出なければ、最初の問いの答えのずれに出ます。
 
-- Can the reader follow the argument by reading the headings alone, top to bottom?
+- 通して読んでいて、止まったり、戻ったり、先を探したりした所はどこで、そこで何が分からなかったか。
 
-    Following the headings, the reader sees where the document is going before reading the body, and reads each part knowing its place. Headings that only name topics leave the reader to piece the argument together.
+    止まらずに読めれば、読み手は、文がよりどころにすることを、いつもその前で受け取っています。説明より先に使われた言葉、別の所に置かれた決定の理由、専門用語や造語、食い違う二つの部分は、読み手を止めるか、違う方へ進ませます。
 
-- Are the headings in the words the reader would look for?
+- 最初の一文を読んだ時点で、この文書から何を得ると受け取ったか。
 
-    A reader who skims finds their part at once when the headings use their own words. Headings in the writer's internal terms are passed over.
+    最初の一文で得るものが分かれば、読み手は読み進めるかを決め、残りをそこへ向けて読めます。背景から始まる冒頭は、なぜ読むのかを知る前に読ませます。
 
-- Is what prose makes the reader assemble in their head shown in a figure they grasp at a glance?
+- 読み返したい部分を見出しから探したとき、どの見出しで見つかり、どの見出しでは見つからなかったか。
 
-    Seen at a glance, such as who does what, what passes between them, and in what order, the reader grasps at once what prose would make them build up step by step.
+    見出しが読み手の探す言葉なら、拾い読みする読み手は自分の部分にすぐ行き着けます。書き手の内輪の言葉の見出しは、素通りされます。
 
-- Does every figure get across faster than reading the prose?
+- 読みながら、誰が何をし、何が渡り、どの順かを、頭の中で組み立てなければならなかった所はどこか。
 
-    A figure that is quicker than the prose saves the reader time. A figure of what the prose already gives at once, or one holding more than a glance takes in, costs a look and gives nothing. An AI reads a figure as text, in order, so for it a figure only repeats the prose.
+    頭の中で組み立てた所は、一目で分かる図にすれば、読み手は文で一つずつ積み上げずにすぐつかめます。AI は図を文として順に読むので、AI の読み手には、図は文を繰り返すだけです。
 
-- Can every sentence be understood from what came before it?
+- 決めたり動いたりするのに頼った記述それぞれを、どこまで確かなものと受け取ったか。
 
-    Reading straight through, the reader finds everything a sentence relies on already given, so they never go back or ahead. A word used before it is explained, or a decision with its reason kept elsewhere, sends them looking.
-
-- Can every word be understood without explanation?
-
-    Plain words let the reader read on without stopping. Jargon and coined terms stop them, or send them the wrong way.
-
-- Is each word used with one meaning throughout?
-
-    With one meaning per word, the reader reads each use the same way. A word that shifts meaning leads them to the wrong conclusion without noticing.
-
-- Is each thing called by one word throughout?
-
-    With one word per thing, the reader knows two passages speak of the same thing. Two names for one thing make the reader wonder whether there are two.
-
-- Can the reader tell checked facts from assumptions, proposals and decisions?
-
-    Telling them apart, the reader trusts each statement as far as it deserves. An unchecked claim stated flatly is acted on as fact.
-
-- Can the reader tell how far each check reached?
-
-    Knowing what was checked and what was not, the reader knows where to look again before relying on it. A check stated without its reach is taken to cover everything.
-
-- Does the content agree with itself from start to finish?
-
-    When every part agrees, the reader can act on any part without checking it against the others. Two parts that disagree leave the reader to follow whichever they read last, or to stop; a writer who knows the intent reads past the disagreement, so it is found only by setting the parts side by side.
-
-- Can the reader see where the content has a gap?
-
-    Seeing a gap, the reader can raise it or decide around it. A gap covered with smooth sentences is acted on unaware.
-
-- Does the tone suit the reader throughout?
-
-    A tone suited to the reader and kept to the end reads as a person wrote it for them, so they trust it and read closely. Habits that give away AI writing, such as filler or restating, make them distrust it and skim.
-
-- Is emphasis only where missing something would hurt?
-
-    With few marks, the reader's eye stops where it matters. Many marked words hide the one that matters.
+    確かめられた事実か、仮定、提案、決定か、確かめたならどこまでかを見分けられれば、読み手は記述をその確かさの分だけ信じ、確かめていない所は頼る前に確かめ直せます。確かめていない主張を言い切ると、事実として動かれます。範囲を書かない確かめは、すべてを確かめたと受け取られます。

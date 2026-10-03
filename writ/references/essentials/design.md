@@ -1,67 +1,51 @@
-# Design doc
+# 設計書
 
-The readers are builders and maintainers, who may be people or AI. When they finish, they know which features give the user the README's benefits and how each is built, can check that the user gets each benefit, and can explain whether a given change fits the design and, if not, why.
+読み手は三者です。生成者は、設計書を書くときに、目指す形としてこれを読みます。first user は、設計書をその README と実装と一緒に受け取り、作る人や保守する人として、ありそうな変更を一つ選んでそれが設計に合うかを決めようとし、ベネフィットを一つ確かめようとして読み、ここにある問いごとに、何をして何が起きたかを報告します。良し悪しは付けません。指揮者は、報告を狙いと比べて、問いごとに Good か More を付けます。読み終えると、作る人や保守する人として使って起きたことから、設計書で読み手が、README のベネフィットをどの機能が利用者に届け、それぞれどう作られているかを知り、利用者がそれぞれを得ているかを確かめ、変更が設計に合うか、合わないならなぜかを言えるかを確かめられます。
 
-- Are the policies few enough for a builder to recall and use when unsure?
+- ありそうな変更を一つ選んだとき、それが設計に合うかを、利用者が何を失うかからどう決めたか。
 
-    A few policies let a builder weigh one against another and decide where cases differ. A rule that concerns only one feature belongs with that feature; among the policies it is one more thing to remember everywhere.
+    機能ごとに、それが仕えるベネフィット、それが働く README の使い方の段、変更が触れる分だけの作りが見つかれば、保守する人は変更を利用者が失うもので量れます。
 
-- Is each policy backed by a benefit in the README or by something the design cannot change?
+- 変更が設計に合うか迷ったとき、どの方針を思い出して使ったか。
 
-    Traced to a benefit, or to a condition such as the environment the product is used in or the user, a policy tells the builder what breaks if it is not kept, so they can weigh it. A policy that traces to neither is kept by habit.
+    方針が少なければ、作る人は方針どうしを比べ、場面ごとに違う所を決められます。一つの機能にしか関わらないきまりは、その機能のそばに置きます。方針に並ぶと、どこでも覚えておくことが一つ増えます。
 
-- Does every benefit in the README have the features that give it?
+- 使った方針それぞれについて、守らなければ何が壊れると受け取ったか。
 
-    With a feature for each benefit, the maintainer sees how the user actually gets it. A feature is what the product provides toward a benefit, such as having the work checked by someone who did not write it. A benefit no feature serves is missing its way.
+    方針がベネフィットか、製品が使われる環境や利用者のような設計では変えられない条件につながっていれば、作る人は壊れるものを知って方針を比べられます。どちらにもつながらない方針は、習慣で守られます。
 
-- Is every part the design names there for a benefit?
+- README のベネフィットそれぞれを、利用者がどの機能で得ると受け取ったか。
 
-    Tracing each to a benefit, the maintainer knows what each is there for. One that traces to nothing can be taken away. Parts named after mechanisms, or a benefit followed straight by the mechanism, hide which part gives which benefit.
+    ベネフィットごとに機能があれば、保守する人は利用者が実際にどう得るかが分かります。機能は、書いていない者に作業を確かめてもらえる、のような、製品がベネフィットに向けて差し出すものです。どの機能も仕えないベネフィットは、届く道がありません。仕組みの名前で呼ばれた部分や、ベネフィットのすぐ後に仕組みが続く書き方は、どの部分がどのベネフィットを届けるかを隠します。
 
-- Can a maintainer tell, for each feature, what a change to it would cost the user?
+- 選んだ変更の後も、いつも成り立っていなければならないと受け取ったことは何か。
 
-    Finding for each feature the benefit it serves, the step of use in the README where it works, and as much of how it is built as a change touches, the maintainer weighs a change by what the user would lose.
+    どの操作の後にも成り立つ条件として、関わる決定のところで読めれば、保守する人は一か所を変えても何が成り立ち続けるべきかが分かります。手順の一段として読まれた条件は、手順が変わると破られます。
 
-- Is what must always hold written so the reader can tell it must always hold?
+- ベネフィットを一つ確かめようとして、何が起きれば通ったと受け取ったか。
 
-    A condition read, at the decision it concerns, as holding after every operation tells the maintainer what must still hold when they change one part. Read as one step of a procedure, it is broken when the procedure changes.
+    利用者が実際にベネフィットを得たかで確かめれば、利用者がそもそも製品を選ぶかが分かります。作業を読み直さずに要約から承認できるのが狙いなら、要約だけ読んだ利用者が作業を読んだときと同じに決めるかを確かめます。読み手や利用者に何が起きるかで通る基準を書けば、どの作る人も同じに確かめられます。成果物がベネフィットのための形をしているか、機能が設計どおり動くかの確かめは、ベネフィットが外れていても通ります。
 
-- Is each benefit checked by whether the user actually gets it?
+- その確かめを、どんな場面で走らせると受け取ったか。
 
-    Checking the benefit itself shows whether the user would choose the product at all. If the user should be able to approve from a summary without rereading the work, the check is whether a user who reads only the summary decides as they would after reading the work. A check that an artifact has the form meant to bring a benefit, or that a feature works as designed, passes while the benefit fails.
+    ベネフィットがなければ利用者がはっきり困る場面で走らせれば、通ったことがベネフィットの本物の証になります。代わりのものでも同じにできる場面では、何も確かめずに通ります。
 
-- Does each check run on a case where, without the benefit, the user would clearly be worse off?
+- 確かめる手間を、どこにかけると受け取ったか。
 
-    On such a case, a pass shows the benefit is real. On a case where the alternative does as well, the check passes without testing anything.
+    ベネフィットを先に確かめれば、手間は利用者が製品を選ぶかが分かる所にかかります。何もなくならないことのような、利用者が当たり前と受け取る品質は、確かめやすく、壊れても見えやすいので、先に置くと、その確かめが増えて全部通り、誰もベネフィットを確かめていない状態になります。形が守られているか、リンクが切れていないかのようにスクリプトで決められることは、スクリプトに任せれば、速く、いつも同じ答えが出ます。
 
-- Do the pass criteria say what happens to the reader or the user?
+- 今のやり方を別の案に替えたくなった所で、なぜ今のやり方が選ばれたと受け取ったか。
 
-    Criteria stated as what happens to the reader or the user let every builder check the same way and say the benefit is realized. Criteria stated as what the work contains are met while the user still loses out.
+    替えると何を失い、なぜその案が選ばれなかったかが分かれば、保守する人は変更をすでにある決定と比べて量れます。なければ、代償を知らずに決定を覆します。保守する人がまず手を伸ばさない案は、書き残すまでもありません。
 
-- Does the design say which cases were left unchecked, and why?
+- README と実装を読んだうえで設計書を読み、判断に何も足さなかった文はどれか。
 
-    Knowing what was not checked, the maintainer knows where a pass says nothing. An unstated gap is read as covered.
+    どの文も、保守する人がほかでは得られない意図や決定を足していれば、その文を外すと、何かの変更の判断が変わります。決定の理由が利用者の得るものなら、設計書は、それがなぜ利用者に良いかをすでに言っている README の段をたどり、利用者にとっての理由を一か所に保ちます。ベネフィット、使い方の流れ、段が利用者に良い理由を言い直すと、README からずれていきます。
 
-- Are the benefits checked before the quality the user takes for granted?
+- 選んだ変更を入れたとして、意図は変わらないのに書き直すことになる文はどれか。
 
-    Checking the benefits first puts the checking effort where it tells whether the user would choose the product. What the user takes for granted, such as nothing being lost, is easier to check and its failures easier to see; put first, those checks multiply and all pass while no one has checked a benefit.
+    作り直しで変わらないことに絞れば、設計書は作り直しを越えて正しいままです。設定、手順、コードの分け方、ファイル名や関数名、内部のデータ構造は、作り直すたびに古くなります。
 
-- Is the taken-for-granted quality that a script can judge left to scripts?
+- 利用者の環境に残り、後の版や人が読むものの形を変えようとして、どの項目なら読む側を壊さずに変えられると受け取ったか。
 
-    A script, such as one that checks a format holds or a link resolves, is faster and gives the same answer every time, so the builder's effort goes to the benefits.
-
-- Does each option a maintainer might later want to switch to say why it was not chosen?
-
-    Seeing what a switch would lose and why the option was not chosen, a maintainer weighs a change against the decision already made. Without it, they undo the decision unaware of its cost. An option no maintainer would reasonably reach for needs no record.
-
-- Does every sentence say something the reader cannot read from the README or the implementation?
-
-    Every sentence then adds intent or a decision the maintainer would otherwise lack: take it away, and they would judge some change differently. Where a decision's reason is what the user gains, the design traces to the README stage that already says why it is good for the user, so the user's why stays in one place. A restated benefit, flow of use or reason a stage is good for the user drifts from the README.
-
-- Does every sentence stay true when the implementation is rebuilt?
-
-    Kept to what does not change with a rebuild, the design stays true across rebuilds. Settings, procedures, how the code is split, file and function names or internal data structures go stale with each one.
-
-- Is the form of what stays in the user's environment, for later versions or people to read, written here?
-
-    What later versions or people read from the user's environment is an external agreement; it is read from outside, so its form is part of the design. Kept here, in the one home that survives rebuilding the implementation, it shows the maintainer why each item exists, the conditions that always hold and what the form looks like, so they know which items may change without breaking a reader. The implementation carries no copy, since two copies drift apart. Handoffs between roles are not external agreements.
+    利用者の環境から後の版や人が読むものは、外との約束で、外から読まれるので、その形は設計の一部です。実装を作り直しても残る一か所である設計書にあれば、保守する人は、各項目がなぜあり、何がいつも成り立ち、形がどうなっているかを見て、どの項目なら読む側を壊さずに変えられるかが分かります。実装には写しを置きません。二つの写しはずれていきます。役どうしの受け渡しは、外との約束ではありません。
