@@ -190,8 +190,11 @@ breach is stopped rather than left to the evaluator.
   design change for checks 9–11 to the user
 - [ ] Build checks 1–8, then 9–11, as the design says, following hook best practice (plugin-dev's
   hook-development) and structured and named so each check is found and changed on its own, in
-  bash and jq; when jq is missing, a hook stops and tells the user to install it, never skips
-- [ ] Put the hook tests in `rn/tests/`, feeding each hook's input to it, as the official plugins do
+  Python 3 with the standard library only, running on 3.9; when python3 is missing, a hook stops and
+  tells the user to install it, never skips
+- [ ] Put the hook tests in `rn/tests/` with `unittest`, feeding each hook's input to it, as the
+  official plugins do
+- [ ] State in `rn/README.md` that `rn` needs Python 3.9 or later
 - [ ] Run each check against a breaking case and a passing case
 - [ ] self-check (OK/NG per completion criterion, record in checks/4.md)
 - [ ] QA expert review (subagent)
