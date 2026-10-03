@@ -29,7 +29,9 @@ their time only on the three sign-offs and on what only they can decide.
   the plugin's `hooks/hooks.json`. Documented, not yet run.
 - A skill with `context: fork` runs without the caller's conversation; it gets the SKILL.md body,
   and CLAUDE.md and git status as its agent loads them (docs: skills, sub-agents). A plugin agent
-  supports `omitClaudeMd` (docs: plugins/components). Whether a skill's `agent` field can name the
+  supports `omitClaudeMd` (docs: plugins/components); the sub-agents page says a plugin agent ignores
+  it, yet on Claude Code 2.1.285 it worked (the writ session, 2026-10-03: 2/2 with, 2/2 without), so
+  it works now without a documented guarantee. Whether a skill's `agent` field can name the
   plugin's own agent is not documented — confirmed by running before the design relies on it.
 
 # Rules
@@ -57,6 +59,9 @@ their time only on the three sign-offs and on what only they can decide.
   design document and the prompts.
 - The README and design document are changed and approved on the PR first; the prompts and hooks are
   built from them only after.
+- The user's instruction (2026-10-03): go through #8 without the user's check, building it all
+  once; ask only what is the user's to decide. #4 stays unchecked until the user gives its verdict;
+  the work after it goes on without waiting.
 - Points are put to the user one at a time, in plain Japanese, with grounds and one recommendation.
 - Artifacts in English; conversation in Japanese.
 - This work is released as `rn` 0.9.0, a large step up from 0.8.0 (the user's release instruction,
@@ -257,6 +262,13 @@ receiver's state.
   approved documents
 - [ ] From #2's use: a decision record names each fixed More's cause, not only its symptom, and the
   Goods the fix touched; a proposal and a report name the commit they are about
+- [ ] From #3's cut: the formats a prompt or hook holds (open/ names and the settled-report form, the
+  stop kinds, the steering.md form and fields, each hook's mechanism, the agent definition) are
+  built from `rn/docs/design.md` at 68e9766, the commit before the cut, as far as the approved
+  design still holds them
+- [ ] From #3's report: a safe default where the design is silent — `/rn:on` on uncommitted changes
+  stops and says so without touching them; a merge conflict when the branch is brought up keeps
+  both sides' intent or goes back to the design; with no Python the session stops at its start
 - [ ] From #1's fix: `rn/references/essentials/report.md` opens with what the first user writes to
   `open/` and the short result it returns (point 14), not "what a first user returns"
 - [ ] Used by a first user and settled by the conductor (Rules)
@@ -268,6 +280,22 @@ receiver's state.
 - Each command, run with `--plugin-dir` on the practice repository, goes the way the README and
   design document say, and no prompt behavior lacks a basis in the design document.
 - The prompts' use against `writ`'s prompt viewpoints and the design holds no unsettled More.
+
+### #10: Practice repository cleaned up
+
+**Purpose**: `lovaizu/rn-try` holds nothing left from earlier trials.
+
+**Prerequisites**: #5; done before the trials, so no earlier trial's branch or plan is read in them
+
+**Steps**:
+
+- [ ] Close PRs #18, #20, #21, #22 and delete their branches
+- [ ] Used by a first user and settled by the conductor (Rules)
+
+**Completion criteria**:
+
+- PRs #18, #20, #21, #22 are closed and their branches no longer exist; no other PR or branch was
+  touched.
 
 ### #6: Trials run on the practice repository
 
@@ -353,22 +381,6 @@ and what changes for them.
 
 - The scenes that call `writ` pass with the merged `writ`.
 - Every machine check in the verification document passes, both strict validations included.
-
-### #10: Practice repository cleaned up
-
-**Purpose**: `lovaizu/rn-try` holds nothing left from earlier trials.
-
-**Prerequisites**: #9
-
-**Steps**:
-
-- [ ] Close PRs #18, #20, #21, #22 and delete their branches
-- [ ] Used by a first user and settled by the conductor (Rules)
-
-**Completion criteria**:
-
-- PRs #18, #20, #21, #22 are closed and their branches no longer exist; no other PR or branch was
-  touched.
 
 ### #11: Evaluation sign-off
 
