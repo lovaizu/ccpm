@@ -248,7 +248,7 @@ proven and split into its own plugin.
 
 - [x] Translate the prompts to English
 - [x] Add `plugin.json` with a version, a `CHANGELOG.md`, the marketplace entry and the root README line
-- [ ] Pass `claude plugin validate --strict` for the plugin and the marketplace
+- [x] Pass `claude plugin validate --strict` for the plugin and the marketplace
 - [ ] Ask the user to merge PR #15
 - [ ] Once merged, tag `main` as `writ--v<version>` with `claude plugin tag --push` and publish
       the GitHub Release (the rule is in `.claude/rules/plugin.md`)
