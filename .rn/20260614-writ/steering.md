@@ -264,8 +264,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-10-03
+- **Last completed**: #4 (#5 left only the user's review; #6 round 2 judged scenes E and F)
+- **Next**: #6 — rerun scene E as scene G with fix 16afaae, judge only the attractive quality "understands in one reading" (no part read past or repeated), then settle `.writ/open/04-report-trial.md` and go to #7.
+- **Notes**: Round 2 results: asked-as-a-list and say-what-each-Good-is-about pass in E and F; hand-it-on found no guessed rule in E. More: E's first user listed seven parts read past, but pith gave only Goods, and a fresh reader skipped most open questions as repeats (lines 63/142, 75/138, 89/108/132/154, 116-128/150-166); fixed in 16afaae (pith step 3 and design). Scene G runs in scratchpad 070d581f…/sandbox/sceneG, session b4ae7067-9303-47a5-ae87-5aca644dd72c; turn 3 hit the usage limit — resend `G.3.msg` with `turn.sh G 3 <session> G.3.msg`. The user asked to focus on the attractive quality.
