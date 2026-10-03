@@ -201,15 +201,16 @@ proven and split into its own plugin.
 
 - [x] Settle with the user, one point at a time, what the skill does and where its boundary with
       `/writ:up` lies, following the best practices for checking by a rubric
-- [ ] Rewrite the questions of `essentials.md`, then `doc.md`, `readme.md` and `design.md`, so each
+- [x] Rewrite the questions of `essentials.md`, then `doc.md`, `readme.md` and `design.md`, so each
       is answered by what the first user did in use, including which parts were used to decide or
       act and which were read past
-- [ ] Check the README and the design by those essentials, with a first user that does not carry
+- [x] Check the README and the design by those essentials, with a first user that does not carry
       over the conversation and is not given the aim
-- [ ] Fix what the results call for, and take the user's review on PR #15
+- [ ] Fix what the results call for, and take the user's review on PR #15 (fixed; the user said
+      to build through #6 without waiting, so the review is taken with #6's results)
 - [ ] Rebuild the prompts from the README, the design and the essentials, with the generator and
       first user as plugin agents
-- [ ] Build pith's result check and the first user's hook in Python 3.9, with unittest tests in
+- [x] Build pith's result check and the first user's hook in Python 3.9, with unittest tests in
       `writ/tests/`
 - [ ] Rewrite `prompt.md` with pith
 
