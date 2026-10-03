@@ -404,24 +404,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-03
-- **Last completed**: #10 Practice repository cleaned up (#4 Design sign-off deferred by the user's instruction)
-- **Next**: #6 Trials — resume the account session trial, then the scenes not yet driven
-- **Notes**: branch `rn-rebuild`, PR #33. Decided for #6: a `claude -p` run is stopped partway by the
-  harness killing it once the second task's generator has edited a file, then `/rn:dn` on the same
-  conversation; a teammate's commits on the session branch need no rule. Verified for #7 on 2.1.285:
-  `UserPromptExpansion` fires under `claude -p` with `command_name` `<plugin>:<skill>`, and a plugin
-  agent's tool calls carry `agent_type` `<plugin>:<agent>`. The hooks (403dc40) and the CHANGELOG
-  draft (d13b78b) are committed but not yet used by a first user.
-  Trial harness (scratchpad, lost on reboot):
-  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-rebuild-rn/363cf33b-b680-48f4-bd1b-c2c150018f12/scratchpad/trial/`
-  — `driver.py` (stand-in, scenes), `transcript.md`, `work/` (account session clone, stopped after
-  `/rn:up` reworked the design for the names moved under `profile`; uncommitted docs and two reports
-  in its open/), `writ-src/` (writ at d3754b1). Resume with `python3 driver.py account resume` after
-  setting its flags past the Design-clear scene. On `lovaizu/rn-try`: draft PR #23 is the account
-  session; `main` carries the A4 hand commit 394f850, to be reverted to the tree of c3b5f8e after the
-  run. Found in the trial and fixed: the conductor ended turns with agents running (0a67ba0). Seen,
-  not yet decided: rn put two questions in one message (A2).
-  Open question to the user (unanswered): after the account session, drive the coupon scene, A3's
-  comparison, and the 0.8.0 scene before #7, keeping effort on attractive quality — recommended yes.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
