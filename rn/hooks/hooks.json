@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null || { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check.py\" prompt"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|NotebookEdit|Read|Grep|Glob|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null || { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check.py\" pre"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null || { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check.py\" post"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null || { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check.py\" stop"
+          }
+        ]
+      }
+    ]
+  }
+}
