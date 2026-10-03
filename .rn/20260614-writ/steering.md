@@ -53,6 +53,11 @@ taught survives only as the user's feedback listed under Assumptions.
   discussion, so rereading cannot find where a document is unclear; the checking role, in a fresh
   context, restates what it understood, and where the restatement drifts is where the document is
   unclear.
+- Fact: the user agreed on 2026-10-03 that the essentials and the check by them are one thing, held
+  in a skill named `pith` (`/writ:pith` now, `/pith:up` once split into its own plugin): it writes
+  essentials files and checks a work by them. `/writ:up` keeps writing documents and checks through
+  `pith`. The point of `pith` is a few essential questions, the opposite of an exhaustive checklist,
+  so how each question is checked is left to the checking role's judgment.
 - Assumption: the essentials live at `writ/references/essentials/`, one file per kind of document, so the skill later
   writes and judges by the same file.
 
