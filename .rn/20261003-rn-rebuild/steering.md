@@ -10,7 +10,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 - Every benefit in `rn/README.md` passes its scene in the verification document, run on the practice
   repository `lovaizu/rn-try` with the real `writ`.
-- Points 1–10 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
+- Points 1–12 agreed on 2026-10-02/03 (task #1's steps) are in the README and design document as
   approved on PR #33, and the prompts, viewpoint files, and hooks do what those documents say.
 - Pause and resume (`/rn:dn`, `/rn:up`), feedback (`/rn:gm`), and bringing a 0.8.0 session to the new
   form each work on the practice repository.
@@ -43,7 +43,7 @@ their time only on the three sign-offs and on what only they can decide.
 
 # Tasks
 
-### #1: README, design document, and verification document carry agreed points 1–10
+### #1: README, design document, and verification document carry agreed points 1–12
 
 **Purpose**: The README and design document state every point agreed on 2026-10-02/03, with
 verification split into its own document, so the prompts and hooks can be built from them.
@@ -99,6 +99,19 @@ verification split into its own document, so the prompts and hooks can be built 
 - [ ] 10. The session's pull request body carries, besides the link to `steering.md`, what GitHub
   needs to connect the work: `Closes #N` for an issue the work completes, `Refs #N` for one it only
   serves, and the pull requests it supersedes.
+- [ ] 11. Validation (agreed in the writ session, `.claude/rules/validation.md` on `worktree-writ`,
+  e4eba07): attractive quality is confirmed by using the work as the user would, on the golden path,
+  comparing what happened with what was aimed for. Edge cases and other flows are not covered in
+  advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to fix,
+  while covering everything adds checks that can all pass with no one having confirmed the attractive
+  quality. What a machine can judge is checked by machine every time. This shapes point 2: the
+  verification document holds each attractive criterion's golden-path scene and the machine checks.
+- [ ] 12. When work is checked against viewpoints, the checker gives no Good/More: for each viewpoint
+  it answers "from the work I understood this" or "doing as written, this happened". The one who
+  knows the aim (the conductor in rn) compares those answers with the aim and gives Good/More.
+  Viewpoints are few essential questions worked back from the purpose; how to check is left to the
+  checker. (writ will gather viewpoints and how to check them in a skill `pith`, later a plugin rn
+  may use; its viewpoints for viewpoints are not yet agreed.)
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
@@ -108,7 +121,7 @@ verification split into its own document, so the prompts and hooks can be built 
 **Completion criteria**:
 
 - A reader of `rn/README.md`, `rn/docs/design.md`, and the verification document alone can say, for
-  each of points 1–10 above, where it is stated and what it means for the user or the maintainer — no
+  each of points 1–12 above, where it is stated and what it means for the user or the maintainer — no
   point is missing or changed in meaning.
 - Every acceptance criterion in the design has an ID and at least one verification check that names
   it; no check names an ID that does not exist.
@@ -216,7 +229,8 @@ and what changes for them.
 
 **Steps**:
 
-- [ ] Run each scene with a stand-in user, using `writ` from `worktree-writ`
+- [ ] Run each golden-path scene with a stand-in user, using `writ` from `worktree-writ`, and run
+  the machine checks; fix a must-be gap that shows up in use
 - [ ] An evaluator that did not make it judges each run against the verification document
 - [ ] Fix any More within the round and run again before the verdict
 - [ ] self-check (OK/NG per completion criterion, record in checks/6.md)
