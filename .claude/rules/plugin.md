@@ -38,6 +38,9 @@ code-modernization).
   - The **first user** uses the work as its user would and reports what happened, without judging it.
   - Rationale: judgment kept in the one role that knows the aim weighs every remark against it; a
     first user that judges, or a generator that grades its own work, fills the gaps with what it meant.
+  - A plugin that only checks work someone else made leaves out the generator. A plugin that makes
+    nothing for anyone to use, such as a hook that only guards a rule or a connector to another tool,
+    needs none of the three.
 - **Keep the first user from what it must not see by how the role is defined:** start it as a
   separate subagent that does not carry over the conversation, set `omitClaudeMd`, hand it only the
   work and its purpose, and take the tool that calls other agents away from the generator, so the
