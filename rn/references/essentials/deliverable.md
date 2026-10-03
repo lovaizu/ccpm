@@ -19,9 +19,11 @@ acceptance criteria, by ID.
 
     The user keeps what they had, instead of finding a break in use and having to fix it.
 
-- Looking through the change, what did you find that neither the goal nor the design asks for?
+- Using the product, what did it do that neither the goal nor the design says it will?
 
     The user then receives only what they approved, with nothing left for them to find and remove.
+    What counts is what the user meets in use; a part that changes nothing there costs them
+    nothing.
 
 - Reading the README and design document after using the product, where does what they say differ
   from what happened?

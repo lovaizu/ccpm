@@ -10,8 +10,7 @@ purpose and its Completion criteria.
     The purpose then holds where it is used, beyond the letter of the Completion criteria, so the user
     gets what the task was planned to give.
 
-- Setting the result beside what the README and design document say of it, what does it do that they
-  do not say?
+- Using the result, what did it do that the README and design document do not say?
 
     The user then receives what they approved the product to be, and nothing they did not agree to.
 

@@ -25,7 +25,7 @@ the documents read is `writ`'s to check.
     The user can then tell before anything is built that the goal will be achieved, and every
     criterion gets built.
 
-- Setting the design beside the product as it is today, what that serves the user now did the design
+- Using the product as it is today, then reading the design, what that served you did the design
   take away?
 
     What the user relies on today still works once the goal is achieved, or they decide its loss at

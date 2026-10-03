@@ -17,7 +17,8 @@ the report answers.
     An answer from use is what the user would meet, so a Good given on it holds when the user uses
     the work. An answer from looking the work over passes a work no one can use.
 
-- Going to the place each answer names, what did you find that differs from the answer?
+- Doing at each answer's place what the answer says was done, what happened that differs from the
+  answer?
 
     The conductor can then trust each answer, and a Good given on it holds when the user reads that
     part, since no one looks again at what is called good.

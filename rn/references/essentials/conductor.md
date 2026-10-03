@@ -16,12 +16,12 @@ as close to the goal as it can, keeps what already serves the user, and settles.
     cost, or because its fix needs the README, the design document, or the user, leaves them with
     less than the goal.
 
-- Going to the place each fixed More named, and to wherever the same cause shows, what of it did you
-  find still there?
+- Using the work where each fixed More was found, and wherever the same cause shows, what of the
+  More happened again?
 
     The More is then gone for good, instead of showing up again elsewhere from a cause left in place.
 
-- Going to the place of each Good a fix touched, what did you find there now?
+- Using the work where each Good a fix touched was found, what happened that differs from the Good?
 
     The user keeps what already served them, and a Good shown at the sign-off still holds.
 
@@ -46,13 +46,12 @@ time goes only to what is theirs.
 What the conductor gives the user whenever it calls them, at a sign-off or with a question. With it,
 the user says yes or no from it alone, and reads the work whenever they want.
 
-- Reading only the proposal, as the user, what did you decide?
+- Deciding yes or no as the user, what beyond the proposal did you need?
 
-    The user then decides a move, from what the conductor proposes to do next and why, rather than
-    working out what to do from a report.
+    The user then decides a move from the proposal alone, from what the conductor proposes to do next
+    and why, rather than working out what to do from a report or the work.
 
-- Going to the place each Good names, what did you find that the Good claims and the place does not
-  show?
+- Using the work where each Good was found, what happened that differs from the Good?
 
     The user can then trust each Good without reading that part. A Good that does not hold hides a
     flaw no one looks at again, and it reaches the user's approval unseen.
