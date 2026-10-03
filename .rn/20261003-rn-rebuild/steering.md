@@ -112,9 +112,10 @@ verification split into its own document, so the prompts and hooks can be built 
   Viewpoints are few essential questions worked back from the purpose; how to check is left to the
   checker. (writ will gather viewpoints and how to check them in a skill `pith`, later a plugin rn
   may use; its viewpoints for viewpoints are not yet agreed.)
-- [ ] 13. With point 12, the role that checks the work is the validator, not the evaluator: it
-  validates by using the work and reporting what it understood and what happened, and the conductor
-  judges. Terms follow it throughout (e.g. the `open/` kind evaluation becomes validation).
+- [ ] 13. With point 12, the role that checks the work is the first user, not the evaluator: it uses
+  the work as the user would, before the user does, and answers with the facts of that use — what it
+  understood and what happened — without judging. Comparing those facts with the aim (validation) is
+  the conductor's. Terms follow it throughout (e.g. the `open/` kind evaluation becomes report).
 - [ ] self-check (OK/NG per completion criterion, record in checks/1.md)
 - [ ] QA expert review (subagent)
 - [ ] Craft expert review (subagent, writing)
