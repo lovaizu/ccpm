@@ -88,6 +88,11 @@ code-modernization).
   granted when it shows up in use.**
   - Rationale: such failures are easy to see and quick to fix. Covering them up front grows a list of
     checks that all pass while no one has checked the attractive quality.
+- **After a fix, have a new first user check again only where an attractive-quality More was fixed;
+  a fix of what the user takes for granted is only checked by the conductor.**
+  - Rationale: whether the user now gets what the work is for shows only when someone who does not know
+    the discussion uses it again. Rechecking the rest draws mostly must-be remarks, as rn found, and
+    the effort is taken from the attractive quality.
 - **Check by script, every time, whatever a script can decide.**
   - Rationale: it costs nothing to run and gives the same answer every time.
 
