@@ -1,16 +1,20 @@
 # Task result
 
-One task's changes, as they stand now. Its reader is the conductor, who judges from it whether the work
-moved toward the goal, and in the end the user, who receives the deliverable it becomes.
+One task's changes, as they stand now. With it, the work has moved by the task's purpose toward the
+goal, and the user, in the end, receives it as part of the deliverable. The first user uses the result
+where it runs, as whoever the purpose serves would; the conductor sets each answer beside the task's
+purpose and its Completion criteria.
 
-- Does it fulfil its purpose on the real thing, within the README and design document?
+- Doing on the real thing what the task's purpose is for, what happened?
 
-    Run where it runs, the purpose holds beyond the letter of Purpose achieved when, so the user gets
-    what the task was planned to give. The README and design document are what the user approved the
-    product to be, and a result outside them gives the user something they did not agree to.
+    The purpose then holds where it is used, beyond the letter of the Completion criteria, so the user
+    gets what the task was planned to give.
 
-- Does everything that worked before still work, with nothing added that the purpose does not need?
+- Setting the result beside what the README and design document say of it, what does it do that they
+  do not say?
 
-    The user then receives exactly what they agreed to, and each later task builds on ground that
-    holds. A result that breaks what worked, or carries more than its purpose, leaves the user to
-    find and undo it.
+    The user then receives what they approved the product to be, and nothing they did not agree to.
+
+- Using what worked before the task, what no longer works?
+
+    The user keeps what they had, and each later task builds on ground that holds.

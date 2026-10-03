@@ -333,8 +333,10 @@ find the answer is left to the first user.
 
 Each viewpoint file in `rn/references/essentials/` is for one thing `rn` makes or says: the plan, the
 design, a task's result, the deliverable, a report, and what the conductor decides and says. Its
-viewpoints are grouped as Attractive quality and Must-be quality, with what the receiver would
-choose the thing for first.
+viewpoints are not split by Kano quality: a question stays only if removing it would let a work that
+misses its purpose pass, whatever its quality, so the first user gives full attention to each. The
+Kano split is used where it changes what is done, in the Acceptance criteria and the tasks and checks
+tied to them, and the plan's viewpoint file asks whether the plan brings attractive quality first.
 
 For each viewpoint the first user answers in one of two forms: "from the work I understood this",
 or "doing as written, this happened". It gives no Good or More. The conductor sets each answer beside

@@ -1,63 +1,43 @@
 # Design
 
-The design is the README and design document that `steering.md` names, as they will stand once the
-goal is achieved. Its readers are the user, who approves it at the Design sign-off as what the
-product should be and how it is built; the conductor, who plans the tasks by it; and the generators,
-who build by it. Each part is there because the goal needs it, so each question asks whether a part
-does its job for this goal. How well the documents read is `writ`'s to check.
+The design is the README, design document, and verification document that `steering.md` names, as
+they will stand once the goal is achieved. With it, the user sees before anything is built what the
+product will do for them and how they will see that it works, the conductor plans the tasks, and a
+generator builds as the user chose. The first user reads it as each of them would and acts on it as
+far as it reaches; the conductor sets each answer beside the goal and its acceptance criteria. How
+the documents read is `writ`'s to check.
 
-## The README's benefits
+- Reading the README as the product's user, what did you take as what the product does for you once
+  the goal is achieved?
 
-- Does it say rightly what the user gets from the product once the goal is achieved?
+    The user then knows, before anything is built, what they will receive, and approves that rather
+    than something they pictured.
 
-    The user then knows from the README what the product will do for them. When it says otherwise,
-    they receive something other than what they expected.
+- Following the README's use step by step against the design document, which step did the design
+  give no way to take?
 
-## The README's use
+    The user then gets the benefit by doing what the README says, instead of finding out alone how
+    to reach it.
 
-- Can the product, once the goal is achieved, be used as the README says?
+- Tracing each acceptance criterion through the design document, which criterion did no feature
+  make hold?
 
-    The user then gets the benefit by following it. When it cannot, they have to find out how to use
-    it alone.
+    The user can then tell before anything is built that the goal will be achieved, and every
+    criterion gets built.
 
-## The design document's benefits and features
+- Setting the design beside the product as it is today, what that serves the user now did the design
+  take away?
 
-- Can each line of Goal achieved when be traced to the features that make it hold?
+    What the user relies on today still works once the goal is achieved, or they decide its loss at
+    the Design sign-off instead of finding it in use.
 
-    The user can then tell before anything is built that the goal will be achieved. A line traced to
-    no feature is never built.
+- Building a feature from the design as a generator would, what did you have to decide that is the
+  user's to decide?
 
-- Does the design keep everything that already serves the user?
+    The product is then built the way the user chose, instead of the way a generator guessed.
 
-    What the user relies on today still works once the goal is achieved. Lost, it is found in use.
+- Taking each scene of the verification document as the one who must pass it, how could you pass it
+  with a product that misses its criterion?
 
-## How each feature is built
-
-- Can a generator build it without deciding anything that is the user's to decide?
-
-    The product is then built the way the user chose. What the design leaves open, a generator
-    decides on the spot.
-
-## The ways chosen
-
-- Does each way chosen say what the ways not chosen would lose?
-
-    Whoever changes it later then weighs a change against what the choice cost. Without it, they
-    undo the decision unaware, and pay again what was paid to make it.
-
-## How it is checked
-
-- Does each line of Goal achieved when have a scene where it is checked on the real thing?
-
-    Set before anything is built, it is checked where the user would feel it. Set after, it is drawn
-    from what was built.
-
-- Does each scene say what passes?
-
-    The deliverable is then judged by a measure fixed before it was built, the same for whoever
-    checks it.
-
-- Does each check fail when the goal is missed?
-
-    A pass then proves the goal achieved. A check that passes when the goal is missed has the user
-    approve work that misses it.
+    A pass then proves the criterion met, so the user approves at the Deliverable sign-off only work
+    that achieves the goal.

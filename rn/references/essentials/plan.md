@@ -1,73 +1,45 @@
 # Plan
 
-The plan is `steering.md`. Its readers are the user, who approves it at the Plan sign-off; the
-conductor, who carries the work by it; and the generators and evaluators, who work from it. Each part
-is there because the goal needs it, so each question asks whether a part does its job. Before the
-tasks that make the deliverable are planned, the questions on Tasks do not apply.
+The plan is `steering.md`. With it, the conductor carries the work to what the user really wants,
+even in a fresh conversation, and the user, approving it at the Plan sign-off, knows what they will
+get and why. The first user takes the plan up as the conductor would on resuming the work, and acts
+on it as far as the plan reaches; the conductor sets each answer beside what the user said. Before
+the tasks that make the deliverable are planned, the questions on tasks are not asked.
 
-## Goal
+- Reading the plan once, what did you take as the reason the user wants the goal?
 
-- Is the goal what the user really wants, with the reason they want it?
+    With the reason in the plan, every later decision is judged by it, in any conversation, and the
+    user gets what they meant rather than what their first words said.
 
-    With the reason agreed, every later decision is judged by it, and the user gets what they meant.
-    Built on their first words, the work turns out wrong however well it is done, and they find out
-    only at the end.
+- Reading the acceptance criteria as the one who must meet them, how could you meet every one and
+  leave the goal unmet?
 
-## Goal achieved when
+    When no work can meet the criteria and miss the goal, the user approves at the Deliverable
+    sign-off what they wanted, since that sign-off judges by the criteria.
 
-- If every line holds, is the goal achieved?
+- Checking each fact the plan rests on at its source, which did not hold?
 
-    The deliverable is then judged by what the user wants. With a line missing, the work can pass
-    every one and still miss the goal, and the user approves it.
+    The plan then stands on ground that holds to the end, instead of giving way in the middle of the
+    work, after effort was spent on it.
 
-- Is each line needed for the goal?
+- Acting on the plan, which point you relied on is a decision only the user can make, yet is not
+  recorded as theirs?
 
-    The work then goes only to what the goal needs. A line the goal does not need adds work, and
-    passing it proves nothing about the goal.
+    Every decision the work rests on is then one the user made, so the work goes the way they chose.
 
-- Is each line a state of the product that stays the same whatever way it is built?
+- Following the tasks in order, which acceptance criterion did no task bring to hold?
 
-    A state judges every way of building by the same measure. A line naming something to make, or a
-    step to take, is passed by making it or taking it.
+    Every criterion is then built, so the deliverable reaches the goal the user approved.
 
-## Assumptions
+- Reading a task's Completion criteria as its generator, how could you meet every one and leave its
+  purpose unfulfilled?
 
-- Is each fact checked?
+    Each task's result is then judged by what it is for, so the work moves on only when it has
+    moved toward the goal.
 
-    The plan then stands on ground that holds to the end. A fact not checked gives way in the middle
-    of the work.
+- Following the tasks in order, which work on must-be quality comes before the attractive
+  criteria are nearly met?
 
-- Is no decision of the user's hidden among the assumptions?
-
-    Every decision the work rests on is then one the user made. One hidden there sets the work on a
-    course they never chose.
-
-## Rules
-
-- Are the repository's conventions written here that a generator cannot tell from the goal?
-
-    A generator then builds to them the first time. One that does not know a convention works against
-    it, and the work is done again.
-
-## Tasks
-
-- Does each task's purpose serve a line of Goal achieved when?
-
-    Every task then moves the work toward the goal. A task that serves no line is work wasted.
-
-- Is every line of Goal achieved when served by a task?
-
-    Every line is then built. A line no task serves is never built.
-
-- If every line of a task's Purpose achieved when holds, is its purpose fulfilled, whatever way it is
-  built?
-
-    Each task result is then judged by what it is for. With a line missing, or one naming a step,
-    the work moves on with the purpose unfulfilled.
-
-- Do the tasks raise the qualities the user would choose the product for until the goal is nearly
-  achieved, before finishing the qualities the user takes for granted?
-
-    The effort then goes first to why the user would choose the product, and that is checked while
-    there is time to change course. What the user takes for granted is easier to build and to check,
-    so starting there spends the effort on it.
+    The effort then goes first to why the user would choose the result, and that is checked while
+    there is time to change course. Must-be quality is easier to build and check, and started first
+    it takes the effort while the reason to choose the work goes unchecked.

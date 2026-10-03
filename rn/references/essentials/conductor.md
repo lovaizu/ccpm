@@ -1,50 +1,58 @@
 # What the conductor decides and says
 
-Its readers are the user, who is called only for what is theirs, and a later conversation, which goes
-on from what was decided.
+Its receivers are the user, who is called only for what is theirs, and a later conversation, which
+goes on from what was decided. The first user takes each up as the user or a later conversation
+would; the conductor sets each answer beside the goal and what the user agreed.
 
 ## Decision
 
-What the conductor decides for each More, and for what comes next.
+What the conductor decides for each More, as its commit message records it. With it, the work comes
+as close to the goal as it can, keeps what already serves the user, and settles.
 
-- Does it bring the work closest to the goal, and settle?
+- For each More let go, what did you take from its reason as why fixing it would not bring the work
+  closer to its purpose?
 
-    The user gets more of what they wanted, and loses nothing that already serves them, when a More is
-    fixed where fixing brings the work closer to its purpose and keeps the Goods. A More is let go,
-    with the reason, only when fixing would not bring the work closer; its cost, or that the fix needs
-    the README, the design document, or the user, is never that reason. A More whose fix needs the
-    user reaches them before any sign-off, since the user approves a sign-off as it stands. Acting on
-    the letter of an evaluation would redo work that serves the goal.
+    The user then gets every fix that brings them closer to what they wanted. A More let go for its
+    cost, or because its fix needs the README, the design document, or the user, leaves them with
+    less than the goal.
 
-- Does the fix come from what the work should be?
+- Going to the place each fixed More named, and to wherever the same cause shows, what of it did you
+  find still there?
 
-    The More is gone for good when the fix starts from what the work should be for its purpose, and
-    the gap between that and the real thing says what to change, wherever the same cause shows. A
-    fix made only where the More points leaves its cause to show up again elsewhere.
+    The More is then gone for good, instead of showing up again elsewhere from a cause left in place.
+
+- Going to the place of each Good a fix touched, what did you find there now?
+
+    The user keeps what already served them, and a Good shown at the sign-off still holds.
 
 ## Question
 
-What the conductor asks the user, between sign-offs.
+What the conductor asks the user between sign-offs. With it, the user answers on the spot, and their
+time goes only to what is theirs.
 
-- Can the user answer it on the spot?
+- Answering the question as the user, what did you have to look up or ask back first?
 
-    The user answers at once, and their time goes only to what is theirs, when the question is one
-    point that the goal, the conversation, the repository, the official documentation and best
-    practice cannot settle, asked after the answers that could change it. It says how the conductor
-    understands the point, what it proposes and why, and what each way gives and costs. What any of
-    those sources can answer is looked up instead of asked.
+    The user then answers at once, from what the question gives: one point, how the conductor
+    understands it, what it proposes and why, and what each way gives and costs.
+
+- What part of the question could the goal, the conversation, the repository, the official
+  documentation, or best practice have settled?
+
+    The user's time then goes only to the decisions that are theirs, since everything else is looked
+    up instead of asked.
 
 ## Proposal
 
-What the conductor gives the user whenever it calls them, at a sign-off or with a question.
+What the conductor gives the user whenever it calls them, at a sign-off or with a question. With it,
+the user says yes or no from it alone, and reads the work whenever they want.
 
-- Can the user say yes or no from it alone, and read the work whenever they want?
+- Reading only the proposal, as the user, what did you decide?
 
-    It says what the conductor proposes to do next toward the goal, and why, so the user decides a
-    move rather than working out what to do from a report. At a sign-off, its grounds are the final
-    Good and More under every question for what is signed off, put in the user's terms, each at its
-    place in the real thing and claiming no more than that place shows; the user can then trust each
-    Good without reading that part. What changed since the last approval, without stopping, comes
-    first. The points and fixes along the way are left out, since the user approves the final state.
-    A fatal More is never left in it, since that goes back to working things out first, and a More
-    that asks the user to decide is asked before it.
+    The user then decides a move, from what the conductor proposes to do next and why, rather than
+    working out what to do from a report.
+
+- Going to the place each Good names, what did you find that the Good claims and the place does not
+  show?
+
+    The user can then trust each Good without reading that part. A Good that does not hold hides a
+    flaw no one looks at again, and it reaches the user's approval unseen.
