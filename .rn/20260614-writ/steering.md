@@ -152,11 +152,32 @@ writing role and checking role each reach their purpose even in cases the prompt
 - The prompts meet `prompt.md` and `doc.md`.
 - The user has approved them.
 
-### #5: Try writ against the design's qualities
+### #5: Make checking by essentials its own skill
+
+**Purpose**: Hold how a work is checked by its essentials in one skill, separate from `/writ:up`,
+so every improvement to the check reaches every user of it, and rn can later reuse it once it is
+proven and split into its own plugin.
+
+**Prerequisites**: #4
+
+**Steps**:
+
+- [ ] Settle with the user, one point at a time, what the skill does and where its boundary with
+      `/writ:up` lies, following the best practices for checking by a rubric
+- [ ] Change the README and the design, and take the user's review on PR #15
+- [ ] Rebuild the prompts from the README, the design and the essentials
+
+**Completion criteria**:
+
+- `/writ:up` gets its check through the new skill, and gives the user the same benefits as before.
+- The design says how the checking role's eye is measured, so the trial in #6 can tell whether it
+  finds what the essentials ask about.
+
+### #6: Try writ against the design's qualities
 
 **Purpose**: Confirm that a user running writ actually gets what the README promises.
 
-**Prerequisites**: #4
+**Prerequisites**: #5
 
 **Steps**:
 
@@ -169,11 +190,11 @@ writing role and checking role each reach their purpose even in cases the prompt
 
 - Each quality in the design passes in its named scenarios, with the runs' results as grounds.
 
-### #6: Ship writ
+### #7: Ship writ
 
 **Purpose**: Make writ installable from the marketplace and hand the merge to the user.
 
-**Prerequisites**: #5
+**Prerequisites**: #6
 
 **Steps**:
 
