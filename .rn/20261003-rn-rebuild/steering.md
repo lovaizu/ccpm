@@ -248,7 +248,7 @@ prompts and hooks are built on them.
 
 - The README, design document, and verification document are approved.
 
-### #5: Prompts built from the approved design
+### [x] #5: Prompts built from the approved design
 
 **Purpose**: `rn`'s skills, references, and viewpoint files do what the approved README and design
 document say, including the Kano split, IDs, hearing, task creation, and viewpoints stated as the
@@ -258,20 +258,20 @@ receiver's state.
 
 **Steps**:
 
-- [ ] Rebuild `rn/skills/*` and `rn/references/*` (the viewpoint files are #2's) from the
+- [x] Rebuild `rn/skills/*` and `rn/references/*` (the viewpoint files are #2's) from the
   approved documents
-- [ ] From #2's use: a decision record names each fixed More's cause, not only its symptom, and the
+- [x] From #2's use: a decision record names each fixed More's cause, not only its symptom, and the
   Goods the fix touched; a proposal and a report name the commit they are about
-- [ ] From #3's cut: the formats a prompt or hook holds (open/ names and the settled-report form, the
+- [x] From #3's cut: the formats a prompt or hook holds (open/ names and the settled-report form, the
   stop kinds, the steering.md form and fields, each hook's mechanism, the agent definition) are
   built from `rn/docs/design.md` at 68e9766, the commit before the cut, as far as the approved
   design still holds them
-- [ ] From #3's report: a safe default where the design is silent — `/rn:on` on uncommitted changes
+- [x] From #3's report: a safe default where the design is silent — `/rn:on` on uncommitted changes
   stops and says so without touching them; a merge conflict when the branch is brought up keeps
   both sides' intent or goes back to the design; with no Python the session stops at its start
-- [ ] From #1's fix: `rn/references/essentials/report.md` opens with what the first user writes to
+- [x] From #1's fix: `rn/references/essentials/report.md` opens with what the first user writes to
   `open/` and the short result it returns (point 14), not "what a first user returns"
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [x] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
