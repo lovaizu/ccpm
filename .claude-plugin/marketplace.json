@@ -9,6 +9,12 @@
       "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into reviewed tasks, open a draft PR for the plan, and resume across conversations via a git-tracked steering.md.",
       "source": "./rn",
       "category": "development"
+    },
+    {
+      "name": "writ",
+      "description": "Makes a document read as if a person wrote it for its reader, so you can hand it on without rereading it and judge it from the report alone.",
+      "source": "./writ",
+      "category": "productivity"
     }
   ]
 }

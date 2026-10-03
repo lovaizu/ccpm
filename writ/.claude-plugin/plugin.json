@@ -1,0 +1,6 @@
+{
+  "name": "writ",
+  "description": "Makes a document read as if a person wrote it for its reader: settles who reads it and what they do next, writes it, has it checked once by a role that does not know the discussion, and returns it with Good and More for every question.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}
