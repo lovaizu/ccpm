@@ -101,8 +101,8 @@ taught survives only as the user's feedback listed under Assumptions.
 - The only procedural rules are this repository's plugin rules (`.claude/rules/plugin.md`) and
   artifacts in English: when the plugin ships, version only in `plugin.json` and the marketplace and
   root README updated together.
-- Write the essentials, README, and design in Japanese for the user's review, and translate them to
-  English before the merge.
+- Artifacts are in English. On 2026-10-03 the user had the Japanese review drafts translated before
+  #6, so the trial runs on the English artifacts.
 - Do not read the removed build (commits before this plan) as a starting point.
 
 # Tasks
