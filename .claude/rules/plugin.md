@@ -84,15 +84,15 @@ code-modernization).
   and compare what happened with what it aims for.**
   - Rationale: the attractive quality is why the user chooses the plugin, so the checking effort goes
     there first.
-- **Do not cover edge cases or alternative flows up front; fix a failure of what the user takes for
-  granted when it shows up in use.**
-  - Rationale: such failures are easy to see and quick to fix. Covering them up front grows a list of
-    checks that all pass while no one has checked the attractive quality.
-- **After a fix, have a new first user check again only where an attractive-quality More was fixed;
-  a fix of what the user takes for granted is only checked by the conductor.**
+- **Spend no checking effort on what the user takes for granted: do not cover edge cases or
+  alternative flows up front, and do not have a first user check a fix of it again. Fix it when it
+  shows up in use; the conductor confirms the fix.**
+  - Rationale: such a failure is easy to see and should be quick to fix, so checking it costs more
+    than it saves. Covering it up front grows a list of checks that all pass while no one has checked
+    the attractive quality, and rechecking it, as rn found, draws mostly more of the same remarks.
+- **After an attractive-quality More is fixed, have a new first user check that point again.**
   - Rationale: whether the user now gets what the work is for shows only when someone who does not know
-    the discussion uses it again. Rechecking the rest draws mostly must-be remarks, as rn found, and
-    the effort is taken from the attractive quality.
+    the discussion uses it again.
 - **Check by script, every time, whatever a script can decide.**
   - Rationale: it costs nothing to run and gives the same answer every time.
 
