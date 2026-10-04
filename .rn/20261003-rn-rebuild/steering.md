@@ -344,7 +344,7 @@ breach is stopped rather than left to the evaluator.
   design names.
 - A normal session run raises no false stop.
 
-### #8: CHANGELOG states what 0.9.0 changes for the user
+### [x] #8: CHANGELOG states what 0.9.0 changes for the user
 
 **Purpose**: A user reading `rn/CHANGELOG.md`'s 0.9.0 section learns how far `rn` has moved from 0.8.0
 and what changes for them.
@@ -355,7 +355,7 @@ and what changes for them.
 
 - [x] Write the `## [0.9.0]` entries from the approved README and design, dated the day the release
   is finalized
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [x] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
