@@ -319,7 +319,7 @@ receiver's state.
   set beside the scene by the conductor.
 - No evaluation or trial record is posted as a PR comment.
 
-### #7: Hooks check rn's rules mechanically
+### [x] #7: Hooks check rn's rules mechanically
 
 **Purpose**: The rules in point 4 are enforced by hooks at the three points the design names, so a
 breach is stopped rather than left to the evaluator.
@@ -336,7 +336,7 @@ breach is stopped rather than left to the evaluator.
   `.claude/rules/plugin.md` § Build (shared with writ; on `worktree-writ` until PR #15 merges, then
   on `main`)
 - [x] Run each check against a breaking case and a passing case
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [x] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
