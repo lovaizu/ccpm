@@ -131,9 +131,9 @@ The 0.8.0 session asks for coupons:
 | Hook checks 1–3: the form of `steering.md`, the names in `open/`, the verification document's form and IDs | the hooks; a stop shows in the run's output | M4 | Every scene |
 | Hook checks 4 and 8: a decision line on every conductor commit, every commit pushed | the hooks; a stop shows in the run's output | M2 | Every scene |
 | Hook check 5: a settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
-| Hook checks 6 and 7: each stop keeps what its kind allows; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5 | Every scene |
+| Hook checks 6 and 7: each stop keeps what its kind allows, and every Good and More of a proposal names its criterion; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5, A3 | Every scene |
 | Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
-| Hook checks 12 and 13: the conductor starts no agent in the background, and ends its turn only at a stop or a question | the hooks; a stop shows in the run's output | A2 | Every scene |
+| Hook checks 12–14: the conductor starts no agent in the background, ends its turn only at a stop or a question, and speaks the conversation language | the hooks; a stop shows in the run's output | A2, A3 | Every scene |
 | Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
 | `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
