@@ -404,8 +404,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-10-05
+- **Last completed**: #10 (#6's six fixes in e69d1d8, fa70807)
+- **Next**: #7 hooks (user, 2026-10-05: "再開後に7に進んで"); first check off #6, ended there by the user
+- **Notes**: #6 account rerun stopped at the user's word partway through the design: all rn replies were in Japanese, questions one point each, unknowns kept as Assumptions, every proposal Good/More named an ID; the A3 second stand-in (reading PR) approved the plan as the first did. Not run: A4 pause, Deliverable sign-off, the 0.8.0 scene. rn-try is clean (main b3b14e8, PRs #31, #32 closed). Harness `driver.py` (scratchpad, temp) now reads the sign-off from the last commit, since rn's messages are translated.
