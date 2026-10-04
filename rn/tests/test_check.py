@@ -298,6 +298,16 @@ class Checks(unittest.TestCase):
         sh(self.r.dir, "git", "push", "-q")
         self.assertEqual(self.r.hook("stop")[1].strip(), "")
 
+    # After a summary
+    def test_after_compact_the_record_is_read_again(self):
+        code, out = self.r.hook("compact", source="compact")
+        self.assertEqual(code, 0)
+        self.assertIn(f"{SDIR}/steering.md", out)
+        self.assertIn("open/", out)
+        sh(self.r.dir, "git", "rm", "-rq", ".rn")
+        self.r.commit("drop")
+        self.assertEqual(self.r.hook("compact", source="compact")[1].strip(), "")
+
     # Check 9
     def test_9_subagent_commit_stops(self):
         for agent in ("rn:generator", "rn:first-user", "general-purpose"):

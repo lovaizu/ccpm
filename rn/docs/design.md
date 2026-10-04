@@ -453,7 +453,9 @@ settled first, so the user approves the whole of the work with nothing found abo
 A pause leaves what is unsettled as it is, with a note on where the task stands and its generator's
 edits, even those it had not returned, so `/rn:up` takes it up with nothing to redo or ask. A
 question is not a stop: its commit is not a stop commit, and a fresh conversation comes to the same
-question again from its item in `open/`.
+question again from its item in `open/`. When Claude Code summarizes the conversation partway, a hook
+has the conductor read the record again as `/rn:up` does, since a summary drops details the record
+holds whole.
 
 ### A session has one directory under .rn/
 

@@ -306,6 +306,12 @@ def main():
     if not sdir:
         sys.exit(0)
     rel = os.path.relpath(sdir, top)
+    if event == "compact":
+        print(f"rn: the conversation was just summarized, and a summary drops details. Before going "
+              f"on, take up the session from its record as /rn:up does: read {rel}/steering.md, every "
+              f"file in {rel}/open/, and the last decision line (git log -1), and go on from its next "
+              f"move.")
+        sys.exit(0)
     agent = data.get("agent_type") or ""
     tool = data.get("tool_name", "")
     inp = data.get("tool_input") or {}

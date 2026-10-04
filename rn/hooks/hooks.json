@@ -41,6 +41,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null || { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check.py\" compact"
+          }
+        ]
+      }
     ]
   }
 }
