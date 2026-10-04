@@ -20,6 +20,7 @@ last for fixes that change nothing you do.
 
 - Every sign-off comes with what `rn` proposes to do next and why, and under each question what is good and what falls short, with where, so you can say yes or no without re-reading the work.
 - Every proposal says first how close the work has come to each thing you would choose it for, and what came closer since the last one, so you decide when it is close enough instead of waiting for every shortfall to be cleared.
+- `rn` spends its checks on what you would choose the work for, using it the way you would; small gaps off that path are shown to you rather than chased, so sessions do not stretch on clearing them.
 - There is always a Design sign-off, and the tasks are planned only after it, so they follow what you agreed there instead of being rewritten.
 - Plain `/rn:gm` takes every comment you wrote on the pull request since `rn` stopped for the sign-off, so you can give feedback where you read.
 - A session started under an earlier `rn` has its goal worked out again with you from its old record when you run `/rn:up`, and stops at a new Plan sign-off, so every later decision is judged by why you want the goal.
