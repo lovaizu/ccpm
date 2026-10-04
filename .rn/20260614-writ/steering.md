@@ -264,8 +264,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-04
-- **Last completed**: #6
-- **Next**: #7 — wait for the user's review and merge of PR #15 (it also clears #5's review step); once merged, tag `main` as `writ--v0.1.0` with `claude plugin tag --push` from `writ/` and publish the GitHub Release with CHANGELOG's 0.1.0 section.
-- **Notes**: PR #15 (branch `worktree-writ`). The CI `tests` workflow passes (28 tests, 100% of lines); the user is to add `tests` as a required check on `main`'s branch protection.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
