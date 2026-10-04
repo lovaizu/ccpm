@@ -499,8 +499,9 @@ before the conductor starts an agent.
 9. Only the conductor uses git.
 10. The first user writes only its own report file.
 11. The first user does not read commit messages, notes, or earlier reports.
-12. The conductor starts no agent in the background, since an agent left running reports to a turn
-    that has ended, and the user is left waiting on work no one carries on (A2).
+12. The conductor starts no agent in the background, nor continues one by message, which runs it in
+    the background, since an agent left running reports to a turn that has ended, and the user is
+    left waiting on work no one carries on (A2).
 
 The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
 and is common elsewhere; when it is missing, the session stops and says so, since a skipped check

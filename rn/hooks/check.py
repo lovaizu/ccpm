@@ -337,6 +337,9 @@ def main():
         if not agent and tool == "Agent" and inp.get("run_in_background"):
             emit(["start the agent in the foreground and wait for what it returns; your turn ends "
                   "only when you stop for the user or ask them a question"])
+        if not agent and tool == "SendMessage":
+            emit(["an agent continued by message runs in the background; start a fresh agent in the "
+                  "foreground with the paths of what the last one left, and wait for what it returns"])
         if not agent and tool == "Agent" and inp.get("subagent_type") == FIRST_USER:
             emit(form_checks(top, sdir))
         sys.exit(0)

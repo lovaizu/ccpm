@@ -258,6 +258,12 @@ class Checks(unittest.TestCase):
         start["tool_input"]["run_in_background"] = False
         self.assertEqual(self.r.hook("pre", **start)[0], 0)
 
+    def test_12_conductor_continuing_an_agent_by_message_stops(self):
+        code, out = self.r.hook("pre", tool_name="SendMessage",
+                                tool_input={"to": "a1", "message": "carry on"})
+        self.assertEqual(code, 2)
+        self.assertIn("foreground", out)
+
     # Check 8
     def test_8_unpushed_commit_blocks_stop(self):
         self.r.write("a.txt", "a\n")
