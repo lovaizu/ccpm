@@ -53,6 +53,16 @@ The caller gives the location of the work, its receiver and purpose, and the aim
 
     `open/` then holds only what still waits for action, and the record stays in git history.
 
+## Settle a result file
+
+The caller has fixed or left the Mores of a work it had checked, and gives the result file, the work's location, the essentials files, and how each More was settled: fixed, with its location in the work as it is now, or left, with why.
+
+1. Bring the result file to that state. Keep each first user's report. Turn each fixed More into the Good it now is, with its location and evidence quoted from the work as it is now; add `Left because:` with the caller's reason to each More that was left. Do not judge whether a fix holds or a reason is right: the caller decided them, knowing the purpose.
+
+2. Run the check script, commit and push as in "Check a work", steps 5 and 6.
+
+3. Return the short result as in "Check a work", step 7, with each More that was left set out in full with why it was left.
+
 ## Make an essentials file
 
 The caller gives what kind of work the essentials are for, that work's receiver and purpose, the aim, and where to put the file. The aim is what a receiver should gain from a work checked with these essentials; when the caller states only the work's purpose, that purpose is the aim, since the essentials exist to check it. If the caller names no real work of that kind, look in the repository for the latest one.

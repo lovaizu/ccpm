@@ -17,7 +17,7 @@ flowchart TD
   C -->|proposals or questions, the view on handing it on and the Good and More for every question| U
   C -->|reader and purpose, facts found, what was decided, places to fix and Goods to keep| G
   G -->|what it wrote, what it fixed| F
-  C -->|document's location, receiver and purpose, aim, essentials files| PC
+  C -->|document's location, receiver and purpose, aim, essentials files; at the end, how each More was settled| PC
   PC -->|document's location, receiver and purpose, essentials files; never the aim| FU
   F -->|the document to use| FU
   FU -->|what happened in use, for every question| PC
@@ -240,7 +240,7 @@ flowchart TD
 
     With the view first, the user only decides whether to agree, and reads a question's answer only where they want to check. Each line says what its Good or More is about, because a place alone tells the user nothing until they read the document there, which is the reading the report is meant to spare. What the user decides is whether to accept the Mores that were left, so only those are set out in full, each under its question so the user sees what it falls short on. The full account of what a Good gains is there so a fix does not break it, and it is the conductor and the generator who use it, so the line gives only a few words of it. Put in the conversation in full, with several Goods and Mores per question, the report would be too long to be read. A question whose More was fixed shows its state now, as a Good, so no question is left without an answer.
 
-- The result file holds, for every question, the first user's report and every final Good and More, each with place and evidence.
+- The result file holds, for every question, the first user's report and every final Good and More, each with place and evidence. Before reporting, the conductor hands pith how each More was settled, and pith brings the file to that state.
 
     The user can confirm that a Good or More rests on the fact of use by reading only the part they want in the file, or by asking the conductor.
 
@@ -344,9 +344,9 @@ The caller may be the conductor of `/writ:up`, or the user's conversation that a
 
     Whether to fix or leave is decided by the caller, which knows the purpose, so pith does not decide it.
 
-- pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location. When questions are named for a recheck, it replaces only those questions' sections in the same result file.
+- pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location. When questions are named for a recheck, it replaces only those questions' sections in the same result file. When the caller hands over how each More was settled, fixed or left with why, pith brings the result file to that state and checks its form again.
 
-    Returning the full text would fill the caller's conversation. The short result has the same shape as the report of `/writ:up`, with a line per question saying in a few words what the receiver gains or struggles with, so the caller can judge from it alone. Replacing only the sections keeps the answers of the questions not named, so every question keeps an answer.
+    Returning the full text would fill the caller's conversation. The short result has the same shape as the report of `/writ:up`, with a line per question saying in a few words what the receiver gains or struggles with, so the caller can judge from it alone. Replacing only the sections keeps the answers of the questions not named, so every question keeps an answer. The caller does not edit the result file itself: only pith writes it, so its form is checked every time, and no caller relies on pith's insides.
 
 - Before returning, pith checks the form of the Good and More by script: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 

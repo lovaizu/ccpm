@@ -85,7 +85,7 @@ A More about parts the reader read past, such as a rule said again and again, is
 
 ## 4. Report the final Good and More
 
-Before you report, check every question against the document as it is now, and use only that last check. Bring the result file to that state in the form of `${CLAUDE_PLUGIN_ROOT}/skills/pith/result-form.md`: keep each first user's report, set each question's Good or More as it now stands with locations in the current document, turn a fixed More into the Good it now is, and add `Left because:` to each More you left. Leave out remarks and fixes from along the way; the user would have to work out which still apply. Commit only the result file to the current branch, and push if the branch has an upstream.
+Before you report, check every question against the document as it is now, and use only that last check. Then call pith to bring the result file to that state: hand it the result file, the document's location, the essentials files, and how each More was settled, either fixed, with its location in the current document, or left, with why. Do not edit the result file yourself: only pith writes it, so its form is checked every time and nothing outside pith relies on how pith checks it. Leave out remarks and fixes from along the way; the user would have to work out which still apply.
 
 Report in the user's language, in the shape and with the names the example in `${CLAUDE_PLUGIN_ROOT}/README.md` shows, since the user learned writ from it:
 
