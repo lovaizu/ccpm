@@ -179,7 +179,7 @@ The essentials themselves are checked with the [essentials for essentials files]
 
 ## Getting started
 
-writ is a Claude Code plugin, so you need Claude Code. The checks writ runs itself need Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, writ stops instead of skipping the check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
+writ is a Claude Code plugin, so you need Claude Code. The script that checks the form of the report needs Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, writ stops instead of skipping the check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
 
 writ is in the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install writ.
 
