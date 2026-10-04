@@ -100,7 +100,28 @@ class CheckResultTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(result.stdout, "")
 
+    def test_given_no_essentials_file_when_checked_then_stops_with_usage(self):
+        result = subprocess.run([sys.executable, ENTRY, ".writ/open/01-report-readme.md"],
+                                cwd=self.root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("usage: check_result.py", result.stderr)
+
+    def test_given_a_missing_essentials_file_when_checked_then_stops(self):
+        self.write(".writ/open/01-report-readme.md", GOOD_RESULT)
+        result = subprocess.run([sys.executable, ENTRY, ".writ/open/01-report-readme.md",
+                                 "essentials/design.md"],
+                                cwd=self.root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, "essentials/design.md: no such file\n")
+
     # every question answered
+
+    def test_given_a_question_written_over_two_lines_when_checked_then_read_as_one(self):
+        self.write("essentials/readme.md", ESSENTIALS.replace(
+            "- How far did you get installing from this README alone?",
+            "- How far did you get installing\nfrom this README alone?"))
+        result = self.run_check(GOOD_RESULT)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_given_a_question_without_section_when_checked_then_stops(self):
         text = GOOD_RESULT.split("## readme.md: How far")[0]
@@ -129,7 +150,17 @@ class CheckResultTest(unittest.TestCase):
         text = GOOD_RESULT.replace("`docs/README.md:8` ", "")
         self.assertProblems(self.run_check(text), ":19: More has no location")
 
+    def test_given_a_location_not_in_path_line_form_when_checked_then_stops(self):
+        text = GOOD_RESULT.replace("`docs/README.md:3-4`", "`docs/README.md, opening`")
+        self.assertProblems(self.run_check(text),
+                            ":12: Good location `docs/README.md, opening` is not `path:line`",
+                            ":13: evidence (work) has no located file to look in")
+
     # evidence found
+
+    def test_given_evidence_not_in_quotes_when_checked_then_stops(self):
+        text = GOOD_RESULT.replace('"looked elsewhere for a config file"', "looked elsewhere")
+        self.assertProblems(self.run_check(text), ':20: evidence (report) is not a quote in "..."')
 
     def test_given_work_evidence_not_in_the_file_when_checked_then_stops(self):
         text = GOOD_RESULT.replace("You stop watching the build", "You never watch the build")

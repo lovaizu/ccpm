@@ -56,7 +56,8 @@ class FirstUserHistoryTest(unittest.TestCase):
                         "git -C /Users/someone/repo log -3",
                         "git --no-pager -c core.pager=cat diff",
                         "cd repo && git log | head -5",
-                        "ls; /usr/bin/git show HEAD"):
+                        "ls; /usr/bin/git show HEAD",
+                        'git log --format="%h;%s" -3'):
             with self.subTest(command=command):
                 self.assertBlocked(run_entry(hook_input("Bash", {"command": command})))
 

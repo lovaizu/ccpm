@@ -39,24 +39,13 @@ def _runs_git_history(command: str) -> bool:
     return False
 
 
-def _strings(value) -> List[str]:
-    if isinstance(value, str):
-        return [value]
-    if isinstance(value, dict):
-        return [text for item in value.values() for text in _strings(item)]
-    if isinstance(value, list):
-        return [text for item in value for text in _strings(item)]
-    return []
-
-
 def check(input_data: dict) -> Optional[str]:
     if input_data.get("agent_type") != FIRST_USER:
         return None
     tool_name = input_data.get("tool_name", "")
     tool_input = input_data.get("tool_input") or {}
-    if tool_name not in ("Bash", "Read", "Grep", "Glob"):
-        return None
-    if any(CONVERSATION_RECORDS.search(text) for text in _strings(tool_input)):
+    texts = [value for value in tool_input.values() if isinstance(value, str)]
+    if any(CONVERSATION_RECORDS.search(text) for text in texts):
         return REASON
     if tool_name == "Bash" and _runs_git_history(str(tool_input.get("command", ""))):
         return REASON

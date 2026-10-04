@@ -8,10 +8,6 @@ Prints each problem on its own line; exits 1 if any, 0 if none.
 import os
 import sys
 
-if sys.version_info < (3, 9):
-    sys.stderr.write("writ: Python 3.9 or later is needed; install it and run again.\n")
-    sys.exit(1)
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from checks import evidence_found, every_question_answered, locations_exist  # noqa: E402

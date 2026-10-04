@@ -57,7 +57,7 @@ The caller gives the location of the work, its receiver and purpose, and the aim
 
 The caller gives what kind of work the essentials are for, that work's receiver and purpose, the aim, and where to put the file. The aim is what a receiver should gain from a work checked with these essentials; when the caller states only the work's purpose, that purpose is the aim, since the essentials exist to check it. If the caller names no real work of that kind, look in the repository for the latest one.
 
-1. Start a new generator (`writ:generator`) and hand it the kind of work, its receiver and purpose, the location to write and the language to write in, the locations of `${CLAUDE_PLUGIN_ROOT}/references/essentials/essentials.md` as the form to aim for, of `${CLAUDE_PLUGIN_ROOT}/references/style.md` and of `${CLAUDE_PLUGIN_ROOT}/references/lint/lint.sh`.
+1. Start a new generator (`writ:generator`) and hand it the kind of work, its receiver and purpose, the location to write and the language to write in, the locations of `${CLAUDE_PLUGIN_ROOT}/references/essentials/essentials.md` as the form to aim for, of `${CLAUDE_PLUGIN_ROOT}/references/style.md` and of `${CLAUDE_PLUGIN_ROOT}/references/lint/`.
 
     Worked back from the purpose, the questions ask whether the purpose was met, by what happened in use. Questions about means, or about how to check, would grow into a checklist that passes while no one has checked the purpose.
 

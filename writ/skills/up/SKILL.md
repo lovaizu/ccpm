@@ -35,7 +35,7 @@ How good a document is can be measured only once its reader and purpose are set;
 
 ## 2. Have the generator write
 
-Start a new generator and hand it, without gaps: the location of the document and the language to write it in; the reader and purpose, with how they read it and the reader's particular circumstances; the facts you found, with where you found them; what was decided with the user; the locations of the essentials files; the locations of `${CLAUDE_PLUGIN_ROOT}/references/style.md` and `${CLAUDE_PLUGIN_ROOT}/references/lint/lint.sh`. Hand it so much that it can write as the user means without going back to the discussion.
+Start a new generator and hand it, without gaps: the location of the document and the language to write it in; the reader and purpose, with how they read it and the reader's particular circumstances; the facts you found, with where you found them; what was decided with the user; the locations of the essentials files; the locations of `${CLAUDE_PLUGIN_ROOT}/references/style.md` and `${CLAUDE_PLUGIN_ROOT}/references/lint/`. Hand it so much that it can write as the user means without going back to the discussion.
 
 The generator does not know the discussion, so whatever is not handed over it must guess, and the document drifts from what the user meant. Do not write the document yourself: every write and fix would lengthen the conversation with the user, and once it is summarized the details of what was decided slip out.
 
@@ -43,7 +43,7 @@ The generator does not know the discussion, so whatever is not handed over it mu
 
 You check every question of every essentials file against the document three times, skipping none: when the generator returns, when pith returns, and before you report to the user. The generator knows its own intent, the first user uses the document once, and a fix after either can break another place. Believe a Good or More only after checking its location and evidence in the document; a Good whose ground does not hold is sorted as a More, since returned as it is, it would make the user think a place that does not help must be kept.
 
-After every write and fix by the generator, run `sh ${CLAUDE_PLUGIN_ROOT}/references/lint/lint.sh <document>` yourself to confirm the style rules were kept. Sort and fix what the first check finds as below before calling pith.
+After every write and fix by the generator, run `sh ${CLAUDE_PLUGIN_ROOT}/references/lint/vale.sh <document>` yourself, and for a Japanese document also `sh ${CLAUDE_PLUGIN_ROOT}/references/lint/textlint-ja.sh <document>`, to confirm the style rules were kept. Sort and fix what the first check finds as below before calling pith.
 
 Then call pith with the Skill tool. Hand it the location of the document, the reader and purpose, the aim, and the locations of the essentials files; if a caller such as rn named the place of the result file in its request, hand that too. Write the aim as sentences, not split by question: what the reader should gain, and everything decided with the user. pith compares only with the aim it is given, so what was decided and not written out is not checked. Do not hand pith the style rules or the generator's Good and More: the first user would spend its attention on form, or use the document with the writer's judgment, and miss where the reader trips. If pith returns questions the aim does not cover, add to the aim and call it again. If it says Python 3.9 or later is needed, tell the user to install it and stop; the check is never skipped.
 

@@ -51,7 +51,7 @@ The conductor gives you, in its request:
 
     A More usually comes back as "there is no ...". Adding a sentence for each makes the work longer every time and says the same thing twice. Breaking a Good while fixing creates a new hole for each one fixed.
 
-- Follow the style rules on top of the essentials. After writing and after every fix, run the lint on the work with `sh <lint location> <work>`, and judge each finding by the why of its rule; fix it where the rule fits. Where the lint says npx is not found, check the rules by reading.
+- Follow the style rules on top of the essentials. After writing and after every fix, run the lint on the work with `sh <lint location>/vale.sh <work>`, and for a Japanese work also `sh <lint location>/textlint-ja.sh <work>`, and judge each finding by the why of its rule; fix it where the rule fits. Where npx is not found, check the rules by reading.
 
     The rules can be met by form alone, so they sit apart from the essentials. A finding is a place to judge, not a failure, because a rule sometimes does not fit, as when the content really is a table.
 
