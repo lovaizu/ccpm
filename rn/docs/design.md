@@ -499,7 +499,8 @@ before the conductor starts an agent, and check 13 when it ends its turn.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
 3. Every ID referred to exists; the verification document keeps its form; every acceptance criterion
    has a scene or a machine check, and a task once tasks are planned.
-4. Every conductor commit ends with a decision line `● … ── … → …`.
+4. Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but trailers
+   such as `Co-Authored-By`.
 5. A settled `open/` item is whole in the commit message.
 6. A stop commit leaves in `open/` only what its kind allows, and at a sign-off the latest default
    branch is merged.

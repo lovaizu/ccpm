@@ -14,6 +14,7 @@ import sys
 FIRST_USER = "rn:first-user"
 KINDS = ("report", "feedback", "notes")
 DECISION = re.compile(r"^● .+ ── .+ → .+$")
+TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*: \S")
 FRONT_KEYS = ("rn", "pr", "status", "artifact-language", "conversation-language", "readme", "design",
               "verification")
 HEADINGS = ("# Goal", "# Acceptance criteria", "## Attractive quality", "## Must-be quality",
@@ -168,10 +169,17 @@ def form_checks(top, sdir):
     return check_steering(open(st).read()) + check_open_names(sdir) + check_trace(top, sdir)
 
 
+def last_line(msg):
+    """The message's last line, past the trailers (e.g. Co-Authored-By) git or the harness adds."""
+    lines = [l.strip() for l in msg.strip().splitlines() if l.strip()]
+    while lines and TRAILER.match(lines[-1]):
+        lines.pop()
+    return lines[-1] if lines else ""
+
+
 # Check 4: decision line.
 def check_decision_line(msg):
-    last = [l for l in msg.strip().splitlines() if l.strip()][-1:] or [""]
-    if not DECISION.match(last[0].strip()):
+    if not DECISION.match(last_line(msg)):
         return ["commit message: the last line is not a decision line `● … ── … → …`"]
     return []
 
@@ -197,7 +205,7 @@ def check_settled_whole(top, rel_sdir, msg):
 # Check 6: a stop commit leaves in open/ only what its kind allows.
 def check_stop(top, sdir, msg):
     problems = []
-    last = msg.strip().splitlines()[-1] if msg.strip() else ""
+    last = last_line(msg)
     od = os.path.join(sdir, "open")
     names = sorted(os.listdir(od)) if os.path.isdir(od) else []
     kinds = [n.split("-")[1] for n in names if n.count("-") >= 2]
@@ -247,7 +255,7 @@ def take_note(data, session_id, cmd, parent):
 
 
 def needed_command(top, rel_sdir, msg):
-    last = msg.strip().splitlines()[-1] if msg.strip() else ""
+    last = last_line(msg)
     diff = git("diff", "HEAD~1", "HEAD", "--", rel_sdir + "/steering.md", cwd=top)
     if re.search(r"^\+### \[x\] #\d+: .*sign-off", diff, re.M | re.I) or \
             re.search(r"^\+status: finished", diff, re.M):
@@ -376,8 +384,7 @@ def main():
         elif ahead and ahead != "0":
             problems.append(f"{ahead} commit(s) not pushed; push them")
         # Check 13: the turn ends only where the user has something to decide.
-        last = git("log", "-1", "--format=%B", cwd=top).strip().splitlines()
-        last = last[-1] if last else ""
+        last = last_line(git("log", "-1", "--format=%B", cwd=top))
         stop = re.search(r"→ waiting for #|── approved →|── feedback in |→ paused at ", last)
         od = os.path.join(sdir, "open")
         asking = os.path.isdir(od) and any("-notes-question" in n for n in os.listdir(od))

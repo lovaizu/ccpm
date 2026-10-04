@@ -173,6 +173,12 @@ class Checks(unittest.TestCase):
         self.r.commit("rn: a\n\n● #3 cart ── decided: fix → #3 cart")
         self.assertEqual(self.r.after_commit()[0], 0)
 
+    def test_4_decision_line_before_trailers_passes(self):
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: a\n\n● #3 cart ── decided: fix → #3 cart\n\n"
+                      "Co-Authored-By: Claude <noreply@anthropic.com>")
+        self.assertEqual(self.r.after_commit()[0], 0)
+
     def test_4_no_decision_line_stops(self):
         self.r.write("a.txt", "a\n")
         self.r.commit("rn: a")
@@ -290,7 +296,7 @@ class Checks(unittest.TestCase):
                      "● #1 Plan sign-off ── approved → #2 Design sign-off",
                      "● #3 cart ── half → paused at #3 cart"):
             self.r.write("a.txt", line + "\n")
-            self.r.commit("rn: x\n\n" + line)
+            self.r.commit("rn: x\n\n" + line + "\n\nCo-Authored-By: Claude <noreply@anthropic.com>")
             sh(self.r.dir, "git", "push", "-q")
             self.assertEqual(self.r.hook("stop")[1].strip(), "", line)
         self.r.write(f"{SDIR}/open/01-notes-question.md", "Which way?\n")
