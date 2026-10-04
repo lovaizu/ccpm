@@ -8,17 +8,20 @@ code-modernization).
 
 ## 1. Build
 
-### Hooks and check scripts
+### Hooks and scripts
 
 - **Follow the official hook best practice** (plugin-dev's `hook-development`).
 - **Put each check in its own named file, and one entry file per hook event**, as the official
   `hookify` does (e.g. `pretooluse.py`). This also holds for a script a plugin runs to check its own
   output.
   - Rationale: each check can then be read, fixed and tested on its own.
-- **Write them in Python 3 with the standard library only, running on 3.9.**
-  - Rationale: with many checks, bash is weak to maintain and test. python3 comes with git in the Mac
-    developer tools, so wherever git is there, python3 is too; on Linux and Windows it is no less
-    common than jq. TypeScript is not used, since Node.js may not be on the user's machine.
+- **Write what the plugin makes itself in Python 3 with the standard library only, running on 3.9.
+  A script that only calls an existing tool, with no logic of its own, may be sh.**
+  - Rationale: what the plugin makes itself can be wrong, so it must be held by tests, and bash is
+    weak to maintain and test. An existing tool is tested by its makers, so a script that only calls
+    it adds little risk of its own. python3 comes with git in the Mac developer tools, so wherever
+    git is there, python3 is too; on Linux and Windows it is no less common than jq. TypeScript is
+    not used, since Node.js may not be on the user's machine.
 - **When python3 is missing, stop and tell the user to install it; never skip the check.**
   - Rationale: a skipped check goes unnoticed, so no one learns the rule is not being kept.
 - **State in the plugin's README that Python 3.9 or later is needed.**
@@ -26,6 +29,15 @@ code-modernization).
   as the official `security-guidance` and `code-modernization` plugins do. **Feed in the JSON a hook
   would receive, and check both a case it stops and a case it lets through.**
   - Rationale: a check that never stops anything looks the same as one that works.
+- **Have the tests run every line the plugin makes itself, and delete a line no test has a reason to
+  run.**
+  - Rationale: a line no test runs is either not needed, and only adds what can break, or needed and
+    left unguarded.
+- **Leave a line out of the count with `# pragma: no cover` only when whether it runs depends on
+  timing or on an environment the tests cannot make, such as a race between processes or another OS,
+  and write the reason beside it.**
+  - Rationale: a line left out is no longer counted, so it passes unnoticed; kept to lines that truly
+    cannot be run, the count still shows every other gap.
 
 ### Roles
 
@@ -95,6 +107,13 @@ code-modernization).
     the discussion uses it again.
 - **Check by script, every time, whatever a script can decide.**
   - Rationale: it costs nothing to run and gives the same answer every time.
+
+### Tests
+
+- **CI runs every plugin's `tests/` on every push, counting which lines they run, and fails when any
+  line is not run.**
+  - Rationale: tests run by hand are skipped when they matter most, and a gap shown only as a number
+    is left as it is; a failing run makes the missing test or the needless line get dealt with.
 
 ### Structure check
 
