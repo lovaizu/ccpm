@@ -7,6 +7,8 @@ last for fixes that change nothing you do.
 
 ## [0.9.0] - 2026-10-03
 
+0.9.0 rebuilds how a session runs, from your first words to the last sign-off.
+
 ### Added
 
 - `rn` asks why you want the goal and finds what you really want behind your first words, one point per message with the answer it recommends, asking what a result must do for you before offering ways and asking what only you can know instead of guessing it, so what you get is what you meant.
@@ -20,19 +22,21 @@ last for fixes that change nothing you do.
 
 ### Changed
 
+- A session started under an earlier `rn` has its goal worked out again with you from its old record when you run `/rn:up`, and stops at a new Plan sign-off; until then `/rn:ty`, `/rn:gm`, and `/rn:dn` ask you to run `/rn:up` first instead of bringing it up to date on their own, so every later decision is judged by why you want the goal.
 - The QA, Design, Craft, and Verification reviewers are replaced: before you see a result, an agent that knows nothing of how it was made uses it as you would and says what it understood and what happened, so a result passes because it does its job, not because its maker or a reviewer says so.
-- Every sign-off comes with what `rn` proposes to do next and why, and under each question what is good and what falls short, with where and which of your criteria it bears on, so you can say yes or no without re-reading the work.
+- Every sign-off comes with what `rn` proposes to do next and why, what changed since your last approval, including what you settled by answering a question, and anything the product will no longer do; under each question it gives what is good and what falls short, with where and which of your criteria it bears on, and every assumption not yet checked stands as a shortfall until it is, so you can say yes or no without re-reading the work.
 - Every proposal says first how close the work has come to each thing you would choose it for, and what came closer since the last one, so you decide when it is close enough instead of waiting for every shortfall to be cleared.
 - `rn` spends its checks and fixes on what you would choose the work for: it checks that with the fewest uses that show it, the way you would use the product, and fixes first what brings it closer; small gaps off that path are neither chased nor put before you, so you get what you came for sooner.
 - There is always a Design sign-off, and the tasks are planned only after it, so they follow what you agreed there instead of being rewritten.
 - The README, design document, and verification document are written into your product (`README.md`, `docs/design.md`, `docs/verification.md` unless you agree another place) instead of a session's design under `.rn/`, and stay after the session, so the next session, or a teammate, starts from what you settled.
 - `/rn:ty` and `/rn:gm` record your answer and stop instead of going straight on; say "go on", or `/clear` and then `/rn:up`, so you can clear the conversation at any sign-off and lose nothing.
 - Feedback sends the session back to working out the plan or the design with you, starting from what it shows you do not yet share, and stops at that sign-off again before anything is built on it, instead of having each point acted on as worded, so what lies behind your words is fixed, not only the words.
-- Plain `/rn:gm` takes every comment you wrote on the pull request since `rn` stopped for the sign-off, and no longer takes comments by others, so you can give feedback where you read, and only your feedback decides the work.
+- `/rn:gm` gives feedback only on the sign-off waiting for you, and no longer carries out other instructions at other times; plain `/rn:gm` takes every comment you wrote on the pull request since `rn` stopped for the sign-off, and no longer takes comments by others, so you can give feedback where you read, and only your feedback decides the work.
 - The last sign-off is now the Deliverable sign-off, and approving it with `/rn:ty` marks the pull request ready, so only the merge is left to you.
-- `/rn:on` always starts a new branch from the latest default branch, even when you are on another branch, and stops without touching anything when you have uncommitted changes, so a session never builds on stale or unrelated work and never takes in yours.
+- `/rn:on` always starts a new branch from the latest default branch, even when you are on another branch, and stops without touching anything when you have uncommitted changes, so a session never builds on stale or unrelated work and never takes in yours. It names the session from your words instead of asking you for a name, and opens the draft pull request at once, before the plan is worked out, so you can follow the plan on the pull request as it is agreed.
+- `/rn:up` takes up the session on the branch you are on, instead of searching the history for a paused one; check out the session's branch first, so the session you resume is always the one you are looking at.
+- The findings on each piece of work are no longer kept as `checks/` files under `.rn/`: every report, with each finding and what became of it, is kept whole in the message of the commit that settles it, and every commit ends with a line saying what was decided and what comes next, instead of a `complete task #N` marker, so the pull request's history tells you why each finding was fixed or let go, and `.rn/` holds only `steering.md` and what is still open.
 - The pull request body links, beside `steering.md`, the issues the work closes or serves and the pull requests it replaces, so GitHub connects them for you.
-- A session started under an earlier `rn` has its goal worked out again with you from its old record when you run `/rn:up`, and stops at a new Plan sign-off, so every later decision is judged by why you want the goal.
 
 ### Removed
 
