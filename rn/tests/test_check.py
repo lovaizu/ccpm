@@ -391,6 +391,10 @@ class Checks(unittest.TestCase):
                   "● #3 Apply the discount before the coupon ── half → paused at #3 Apply the discount "
                   "before the coupon\n\n次: /clear してから /rn:up")
         self.assertEqual(self.r.hook("stop", last_assistant_message=paused)[1].strip(), "")
+        bullets = "前回の承認からの変更:\n" + "".join(
+            f"- ● #{n} Apply the discount before the coupon ── half → paused at #{n} Apply the "
+            "discount before the coupon\n" for n in range(3, 9)) + "確認してください。"
+        self.assertEqual(self.r.hook("stop", last_assistant_message=bullets)[1].strip(), "")
         english = paused.replace("ここで一時停止", "paused here").replace(
             "次: /clear してから /rn:up", "Next: clear the conversation, then take it up again.")
         self.assertIn("Japanese", self.r.hook("stop", last_assistant_message=english)[1])

@@ -419,7 +419,7 @@ def script_share(text, scripts):
     """How much of the text's prose is in the given scripts: a word of a script that spaces its
     words counts one, a character of one that does not counts a half. None when too short to say."""
     text = re.sub(r"```.*?```", " ", text, flags=re.S)
-    text = re.sub(r"^\s*● .*$", " ", text, flags=re.M)  # a decision line quoted from the record
+    text = re.sub(r"^\s*(?:[-*]\s+)?● .*$", " ", text, flags=re.M)  # a decision line quoted from the record
     text = re.sub(r"`[^`]*`", " ", text)
     text = re.sub(r"\S*[/\\]\S*", " ", text)
     units, prev = {}, None
