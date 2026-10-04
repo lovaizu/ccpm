@@ -45,8 +45,21 @@ time goes only to what is theirs.
 
 - Answering the question as the user, what did you have to look up or ask back first?
 
-    The user then answers at once, from what the question gives: one point, how the conductor
-    understands it, what it proposes and why, and what each way gives and costs.
+    The user then answers at once, from what the question gives: how the conductor understands the
+    point, what it proposes and why, and what each way gives and costs.
+
+- Answering the question as the user, which separate decisions did you make?
+
+    The user then decides one point with their whole attention, and the answer settles exactly that
+    point. With several in one message, the user answers the one they follow and the rest go by
+    unanswered or half-decided.
+
+- Choosing as the user among the ways offered, what did you want the result to do for you that no
+  way gave?
+
+    The ways then come from what the result must do for the user, asked first where the goal does
+    not say, so one of them fits. Ways drawn from what the repository holds can all miss it, and the
+    user takes none.
 
 - What part of the question could the goal, the conversation, the repository, the official
   documentation, or best practice have settled?

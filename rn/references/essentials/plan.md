@@ -22,6 +22,13 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
     The plan then stands on ground that holds to the end, instead of giving way in the middle of the
     work, after effort was spent on it.
 
+- Acting on the plan, which fact you relied on can neither the repository nor any documentation
+  show, yet is recorded neither as told by the user nor as an Assumption?
+
+    A fact only the user knows, such as what their records hold, is then asked rather than guessed,
+    and the work does not rest on a guess that holds in the repository but not where the product
+    runs.
+
 - Acting on the plan, which point you relied on is a decision only the user can make, yet is not
   recorded as theirs?
 

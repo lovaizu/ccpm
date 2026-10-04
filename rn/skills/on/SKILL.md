@@ -19,10 +19,10 @@ thing, however well it is carried out, and the user finds out only at the end.
    without touching them, and stop.
 2. Work on a new branch from the latest default branch, pushed to a branch of the same name on the
    remote, in `.rn/{yyyymmdd}-{slug}/`, the slug naming what `$ARGUMENTS` asks for.
-3. Ask the user which language to write everything that goes into the repository in, and which to
-   talk in, proposing what the repository and the user's instructions already set, or else English
-   for the repository, which reaches the most readers later, and the one they write in for the
-   talk. Write
+3. Ask the user, as one point, the languages: one to write everything that goes into the repository
+   in, and one to talk in, proposing what the repository and the user's instructions already set,
+   or else English for the repository, which reaches the most readers later, and the one they write
+   in for the talk, so a single yes settles both. Write
    `steering.md` as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, with what they choose, `rn`
    from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and the goal as `$ARGUMENTS` gives it for
    now.

@@ -64,6 +64,8 @@ Completion criteria:
 ```
 
 - Criterion IDs are `A1`, `A2`… and `M1`, `M2`…, never reused once given.
+- A Fact "decided by the user" is one they chose. What they do not know but say to go on with is an
+  `Assumption`, so it stays a More in every proposal until something checks it.
 - Tasks are taken in the order written. A task is marked `[x]` when the conductor decides its purpose
   is fulfilled, a sign-off only when the user approves it with `/rn:ty`. A task added later takes the
   next unused id and goes before the sign-off it leads to.
@@ -114,8 +116,9 @@ comes next; the first, from `/rn:on`, is `● plan ── started → working ou
 ● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}
 ```
 
-`●`, `──`, `→`, `waiting for`, and `paused at` stay as written whatever the artifact language, since
-the commands find their way by them. The last decision line on the branch is where the session
+`●`, `──`, `→`, `waiting for`, and `paused at`, and `Good` and `More` with their criterion ID at the
+start of a line, stay as written whatever the artifact language, since the commands and checks find
+their way by them. The last decision line on the branch is where the session
 stands. The commits where `rn` stops for the user end as follows, and leave in `open/` only what is
 listed:
 

@@ -126,10 +126,18 @@ How it asks follows the know-how of `grilling` in
   practice can settle is the conductor's to find.
 - Hearing is done when nothing is silently assumed.
 
+Two of these `rn` sharpens. A fact none of those sources can show, such as what the user's records
+hold, is asked, since only the user knows it and a guess holds in the repository but not where the
+product runs. What the user does not know but tells `rn` to go on with is written as an
+`Assumption`, not as their decision, so it stays a More in every proposal until something checks it.
+
 To this `rn` adds its own part. It finds what the user really wants from the purpose behind their
 words and the ideal that purpose calls for, since the words alone carry the gap the README's example
-shows: every file ending in .ts would have let the bugs through. It asks one point at a time and
-writes each into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
+shows: every file ending in .ts would have let the bugs through. Where the goal does not say what
+a result must do for the user, it asks that before offering ways, since ways drawn from what the
+repository holds can all miss it, and the user takes none. It asks one point per message, since
+with several the user answers the one they follow and the rest go by half-decided, and writes each
+into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
 or serves, which pull requests it replaces, and which languages the record and the talk are in, are
 among the points agreed; `rn` proposes the languages the repository and the user's instructions
 already set, or else English for the record, which reaches the most readers later, and the user's own
@@ -500,13 +508,13 @@ same goal and plan.
 
 ## Hooks check rn's rules as it goes
 
-Gives M2 to M6, and with checks 12 and 13 A2.
+Gives M2 to M6; checks 12 to 14 also give A2, and checks 6 and 14 A3.
 
 What a machine can judge is checked by hooks, so a breach is stopped where it happens. Whether the
 work serves its purpose stays with the first user and the conductor. The checks run right after a
 file is written, before the first user is called and before the conductor stops for the user, and
 before every commit; checks 10 and 11 run before the first user's file tool call, and check 12
-before the conductor starts an agent, and check 13 when it ends its turn.
+before the conductor starts an agent, and checks 13 and 14 when it ends its turn.
 
 1. `steering.md` has its front matter and headings, and task IDs are unique.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
@@ -515,8 +523,9 @@ before the conductor starts an agent, and check 13 when it ends its turn.
 4. Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but trailers
    such as `Co-Authored-By`.
 5. A settled `open/` item is whole in the commit message.
-6. A stop commit leaves in `open/` only what its kind allows, and at a sign-off the latest default
-   branch is merged.
+6. A stop commit leaves in `open/` only what its kind allows; at a sign-off the latest default
+   branch is merged, and every Good and More in the proposal names an acceptance criterion by its
+   ID, so the user sees what each bears on (A3).
 7. A sign-off is passed, or the session finished, only after the user typed `/rn:ty`; feedback is
    taken only after `/rn:gm`, and a pause made only after `/rn:dn`.
 8. Every commit is pushed.
@@ -529,6 +538,11 @@ before the conductor starts an agent, and check 13 when it ends its turn.
 13. The conductor ends its turn only at a stop or with a question waiting in `open/`; otherwise it
     is sent on once, since a turn that ends with nothing to decide leaves the user watching the work
     (A2). A second end passes, for a turn that answered the user's own words.
+14. The conductor's last message in a turn is in the `conversation-language`, judged by its script;
+    otherwise it is sent back to say it again (A2, A3). A sentence telling the conductor to talk in
+    the user's language gave way among artifacts written in another, and the user was asked in a
+    language they had not chosen. Two languages in one script, such as English and French, are not
+    told apart.
 
 The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
 and is common elsewhere; when it is missing, the session stops and says so, since a skipped check

@@ -227,6 +227,18 @@ class Checks(unittest.TestCase):
            "rn: propose\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off")
         self.assertEqual(self.r.after_commit()[0], 0)
 
+    def test_6_proposal_point_without_criterion_id_stops(self):
+        body = ("rn: propose\n\n### What you get\n- Good A1: the build stops each bug, at a.ts:3\n"
+                "- More: the key is unchecked, at b.ts:9\n\n"
+                "● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off")
+        self.r.write("a.txt", "a\n")
+        self.r.commit(body)
+        code, out = self.r.after_commit()
+        self.assertEqual(code, 2)
+        self.assertIn("More: the key", out)
+        sh(self.r.dir, "git", "commit", "-q", "--amend", "-m", body.replace("- More:", "- More M1:"))
+        self.assertEqual(self.r.after_commit()[0], 0)
+
     # Check 7
     def test_7_sign_off_marked_without_ty_stops_and_with_ty_passes(self):
         self.r.write(f"{SDIR}/steering.md", STEERING.replace("### [ ] #1:", "### [x] #1:"))
@@ -303,6 +315,29 @@ class Checks(unittest.TestCase):
         self.r.commit("rn: ask\n\n● design ── question written → asking the user")
         sh(self.r.dir, "git", "push", "-q")
         self.assertEqual(self.r.hook("stop")[1].strip(), "")
+
+    # Check 14
+    def test_14_ending_a_turn_in_another_language_stops_even_the_second_time(self):
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: a\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off")
+        sh(self.r.dir, "git", "push", "-q")
+        english = "Which word should come before the code? I recommend A, since it matches the screen."
+        for active in (False, True):
+            code, out = self.r.hook("stop", last_assistant_message=english, stop_hook_active=active)
+            self.assertIn('"decision": "block"', out)
+            self.assertIn("Japanese", out)
+
+    def test_14_ending_a_turn_in_the_conversation_language_passes(self):
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: a\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off")
+        sh(self.r.dir, "git", "push", "-q")
+        for text in ("`src/account` を TypeScript にすることで、何を得たいですか？ "
+                     "推奨は A です。`DISPLAY_NAME_KEY` を設定しないとアプリは起動しません。",
+                     "── typescript: 型の誤りがビルドで止まる ──\n✅ #1 Plan sign-off\n"
+                     "👉 #2 Design sign-off ── PR で読んで /rn:ty で承認、/rn:gm で修正依頼\n\n"
+                     "メールだけで登録したユーザーにも、ちゃんとした名前を出します。",
+                     "OK"):
+            self.assertEqual(self.r.hook("stop", last_assistant_message=text)[1].strip(), "", text)
 
     # After a summary
     def test_after_compact_the_record_is_read_again(self):

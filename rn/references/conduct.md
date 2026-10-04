@@ -57,10 +57,15 @@ Asking the user:
 - What is to be decided is a tree; ask only a point whose prerequisites are settled, with the answer
   you recommend and why.
 - Look facts up, never ask them: what the repository, the official documentation, or best practice
-  can settle is yours to find, and the answers change where to look.
+  can settle is yours to find, and the answers change where to look. A fact none of them can show,
+  such as what the user's records hold, ask: only the user knows it, and a guess holds in the
+  repository but not where the product runs.
 - Find what the user really wants from the purpose behind their words and the ideal it calls for,
   since the words alone can be met while the purpose is missed. Ask why they want it.
-- Done when nothing is silently assumed.
+- Where the goal does not say what a result must do for the user, ask that before offering ways,
+  and draw the ways from it: ways drawn from what the repository holds can all miss it.
+- Done when nothing is silently assumed. What the user does not know but tells you to go on with is
+  an `Assumption`, not a Fact decided by them, since no one checked it.
 
 Write each point into `steering.md` as it is agreed, commit, and push, so a pause loses nothing; keep
 the pull request's title to the goal. The plan holds the goal and why, Acceptance criteria split into
@@ -200,8 +205,9 @@ that sign-off again.
 
 ## Asking the user
 
-Write a question to a `notes` item `{NN}-notes-question.md` and have a fresh first user take it up as
-the user would, by the Question section of `conductor.md`, with the paths of the item and of
+Ask one point per message: with several, the user answers the one they follow and the rest go by
+half-decided. Write a question to a `notes` item `{NN}-notes-question.md` and have a fresh first user
+take it up as the user would, by the Question section of `conductor.md`, with the paths of the item and of
 `steering.md`; settle its report as above, fixing the item, since you wrote the question and cannot
 see what it leaves out. Then commit and push, and give the user the question as the item holds it,
 translated into the conversation language when the two differ, adding nothing and leaving nothing
