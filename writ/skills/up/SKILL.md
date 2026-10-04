@@ -85,7 +85,7 @@ A More about parts the reader read past, such as a rule said again and again, is
 
 ## 4. Report the final Good and More
 
-Before you report, check every question against the document as it is now, and use only that last check. Bring the result file to that state in the form of `${CLAUDE_PLUGIN_ROOT}/skills/pith/result-form.md`: keep each first user's report, set each question's Good or More as it now stands with locations in the current document, turn a fixed More into the Good it now is, and add `Left because:` to each More you left. Leave out remarks and fixes from along the way; the user would have to work out which still apply. From the repository root, run `python3 ${CLAUDE_PLUGIN_ROOT}/skills/pith/scripts/check_result.py <result file> <essentials files>...` and fix the file until it reports nothing. Commit only the result file to the current branch, and push if the branch has an upstream.
+Before you report, check every question against the document as it is now, and use only that last check. Bring the result file to that state in the form of `${CLAUDE_PLUGIN_ROOT}/skills/pith/result-form.md`: keep each first user's report, set each question's Good or More as it now stands with locations in the current document, turn a fixed More into the Good it now is, and add `Left because:` to each More you left. Leave out remarks and fixes from along the way; the user would have to work out which still apply. Commit only the result file to the current branch, and push if the branch has an upstream.
 
 Report in the user's language, in the shape and with the names the example in `${CLAUDE_PLUGIN_ROOT}/README.md` shows, since the user learned writ from it:
 
