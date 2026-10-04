@@ -404,8 +404,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-10-04
+- **Last completed**: #10 (no task checked since; #6 trials under way)
+- **Next**: #6 — after the user reviews cb0d13e on PR #33, run the account session once from `/rn:on` on the new rn, and report closeness to A1–A4 and whether checks stay minimal (user: "再開後にやってみて")
+- **Notes**: cb0d13e made attractive quality the goal (fewest checks, improvement where it raises it soonest), per the user's instruction 2026-10-04; it dropped the coupon scene and the main-change-at-Design scene from `rn/docs/verification.md`. Before the run: on `lovaizu/rn-try`, revert hand commit d822ec8 on `main`, close PRs #28 and #29 and delete their branches. Harness `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-rebuild-rn/363cf33b-b680-48f4-bd1b-c2c150018f12/scratchpad/trial/` (driver.py; remove its `move_names_under_profile` step, use a fresh `work/` clone); it lives in a temp dir and may be gone. Coupon run settled in 514c4bf; hook trailer fix e7347b4.
