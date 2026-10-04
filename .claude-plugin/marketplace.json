@@ -2,11 +2,13 @@
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "ccpm",
   "description": "Claude Code plugin marketplace for lovaizu projects",
-  "owner": { "name": "lovaizu" },
+  "owner": {
+    "name": "lovaizu"
+  },
   "plugins": [
     {
       "name": "rn",
-      "description": "Goal-driven work sessions: restate a goal as a faithful understanding, decompose it into reviewed tasks, open a draft PR for the plan, and resume across conversations via a git-tracked steering.md.",
+      "description": "Say what you want, roughly: rn works out with you what you really want, carries the work through, has each result used by an agent that knows nothing of how it was made before you see it, and calls you back only for the plan, design, and deliverable sign-offs and the decisions that are yours. The session lives in git, so it resumes across conversations.",
       "source": "./rn",
       "category": "development"
     }

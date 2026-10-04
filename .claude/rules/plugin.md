@@ -47,7 +47,7 @@ review. The order:
 
 ## Tags and GitHub Releases
 
-- **Tag each release on `main`** with an annotated, plugin-scoped tag `<plugin>-v<version>` (e.g. `rn-v0.2.0`). The name is prefixed because each plugin in this marketplace versions independently; the `-` separator avoids colliding with the `plugin@marketplace` install syntax (the same prefix-by-package convention as Lerna `pkg@x.y.z` or Go `path/vx.y.z`).
+- **Tag each release on `main`** as `<plugin>--v<version>` (e.g. `rn--v0.2.0`), created with `claude plugin tag --push` from the plugin directory. This is Claude Code's own form: a plugin that depends on another with a version range resolves it against these tags, and the plugin-name prefix lets each plugin in this marketplace version independently. The command also validates the plugin and refuses a tag that already exists.
 - **Publish a GitHub Release** for that tag, using the CHANGELOG's matching section as the notes.
 - **Read release timing from tags / Releases, not from merge commits.** The merge to `main` delivers the code; the tag records which commit is which version, and when.
 
