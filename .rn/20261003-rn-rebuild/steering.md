@@ -404,8 +404,15 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-10-04
+- **Last completed**: #10 (no task checked since; #6 trials under way)
+- **Next**: #6 — resume the two check runs, have first users report them, then report closeness per A1–A4
+- **Notes**: Harness `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-rebuild-rn/363cf33b-b680-48f4-bd1b-c2c150018f12/scratchpad/trial/`
+  (writ-src at ecda2f7). Both runs stopped at the usage limit 17:16: coupon (PR #29, resume
+  `python3 coupon.py`, it starts with /rn:up) checks rn asks about non-discount coupons; account
+  (PR #28, branch account-typescript, resume `python3 driver.py account resume cleared`) checks the
+  mid-task pause and the Deliverable proposal. Run them one at a time. After the account run,
+  revert hand commit d822ec8 on rn-try main. Fixes since the last trials: d036d13 (checks aim at
+  attractive criteria; goal settles a point only when one way), 846775e (check 13 end of turn),
+  2928dda (re-read after compact).
