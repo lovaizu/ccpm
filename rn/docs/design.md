@@ -512,9 +512,11 @@ Gives M2 to M6; checks 12 to 14 also give A2, and checks 6 and 14 A3.
 
 What a machine can judge is checked by hooks, so a breach is stopped where it happens. Whether the
 work serves its purpose stays with the first user and the conductor. The checks run right after a
-file is written, before the first user is called and before the conductor stops for the user, and
-before every commit; checks 10 and 11 run before the first user's file tool call, and check 12
-before the conductor starts an agent, and checks 13 and 14 when it ends its turn.
+file is written, before the first user is called, and when the conductor ends its turn. Checks 4 to 7
+run on every commit right after it is made, before it is pushed: a conductor command that both
+commits and pushes is stopped, since the push would carry a breach to the pull request before the
+checks could stop it. Checks 9 to 12 run before the tool call they judge, and checks 8, 13, and 14 on
+every end of the turn.
 
 1. `steering.md` has its front matter and headings, and task IDs are unique.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
@@ -529,9 +531,13 @@ before the conductor starts an agent, and checks 13 and 14 when it ends its turn
 7. A sign-off is passed, or the session finished, only after the user typed `/rn:ty`; feedback is
    taken only after `/rn:gm`, and a pause made only after `/rn:dn`.
 8. Every commit is pushed.
-9. Only the conductor uses git.
+9. Only the conductor commits or pushes on the session's repository. Only git run as a command
+   counts, not its name in other text, so an agent can search for it; a repository of the agent's
+   own, such as the first user's clone, is not checked.
 10. The first user writes only its own report file.
-11. The first user does not read commit messages, notes, or earlier reports.
+11. The first user does not read the session's commit messages or history, notes, or earlier
+    reports. A question or proposal item it is given to take up is the work it uses, so it reads
+    that.
 12. The conductor starts no agent in the background, nor continues one by message, which runs it in
     the background, since an agent left running reports to a turn that has ended, and the user is
     left waiting on work no one carries on (A2).
@@ -539,10 +545,11 @@ before the conductor starts an agent, and checks 13 and 14 when it ends its turn
     is sent on once, since a turn that ends with nothing to decide leaves the user watching the work
     (A2). A second end passes, for a turn that answered the user's own words.
 14. The conductor's last message in a turn is in the `conversation-language`, judged by its script;
-    otherwise it is sent back to say it again (A2, A3). A sentence telling the conductor to talk in
-    the user's language gave way among artifacts written in another, and the user was asked in a
-    language they had not chosen. Two languages in one script, such as English and French, are not
-    told apart.
+    otherwise it is sent back to say it again (A2, A3). What it quotes from the record, in the
+    artifact language, does not count: the map's goal line, the goal, the task names, and decision
+    lines. A sentence telling the conductor to talk in the user's language gave way among artifacts
+    written in another, and the user was asked in a language they had not chosen. Two languages in
+    one script, such as English and French, are not told apart.
 
 The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
 and is common elsewhere; when it is missing, the session stops and says so, since a skipped check

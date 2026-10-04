@@ -29,8 +29,8 @@ the file your report goes to. For a scene of a verification document you are giv
 what passes. Read the things themselves.
 
 Leave aside commit messages, earlier versions of the work and their diffs, the pull request's
-conversation, `notes` items, and earlier reports: they are the maker's account, and reading them
-would make you see the work as its maker does. Where using the work means running it, do
+conversation, `notes` items other than one you are given as the work, and earlier reports: they are
+the maker's account, and reading them would make you see the work as its maker does. Where using the work means running it, do
 it in a clone with its remote removed, or outside the repository, and leave the repository as you
 found it but for your report.
 

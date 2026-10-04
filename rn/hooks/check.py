@@ -8,6 +8,7 @@ session is running on this branch.
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 
@@ -45,6 +46,19 @@ def session(top):
             front = front_matter(open(st).read())
             if front is not None and front.get("status") != "finished":
                 return os.path.join(base, name)
+    return None
+
+
+def finished_by_head(top):
+    """The session directory whose steering.md the last commit set to finished, or None: the commit
+    that finishes a session is still checked, and still has to be pushed."""
+    for path in git("diff", "--name-only", "HEAD~1", "HEAD", "--", ".rn", cwd=top).split():
+        parts = path.split("/")
+        if len(parts) == 3 and parts[2] == "steering.md":
+            front = front_matter(git("show", "HEAD:" + path, cwd=top)) or {}
+            before = front_matter(git("show", "HEAD~1:" + path, cwd=top)) or {}
+            if front.get("status") == "finished" and before.get("status") != "finished":
+                return os.path.join(top, ".rn", parts[1])
     return None
 
 
@@ -274,9 +288,83 @@ def needed_command(top, rel_sdir, msg):
     return None
 
 
-# Checks 9–11: keep agents apart.
-GIT_WRITE = re.compile(r"\bgit\b[^|;&]*\b(commit|push)\b")
-GIT_READ = re.compile(r"\bgit\b[^|;&]*\b(log|show|blame|reflog)\b")
+# Checks 9–11: keep agents apart. Only git run as a command counts, and only on the session's
+# repository: a first user runs the work in a clone of its own, and text such as `grep 'git push'`
+# runs no git.
+GIT_WRITE = ("commit", "push")
+GIT_READ = ("log", "show", "blame", "reflog")
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
+PREFIX = ("env", "command", "exec", "time", "nohup", "sudo")
+
+
+def without_heredocs(cmd):
+    out, end = [], None
+    for line in cmd.split("\n"):
+        if end is not None:
+            if line.strip() == end:
+                end = None
+            continue
+        out.append(line)
+        m = HEREDOC.search(line)
+        if m:
+            end = m.group(2)
+    return "\n".join(out)
+
+
+def git_runs(cmd, cwd):
+    """Each git command the shell command runs, as (subcommand, the directory it acts in)."""
+    text = without_heredocs(cmd)
+    try:
+        lex = shlex.shlex(text.replace("\n", " ; "), posix=True, punctuation_chars=True)
+        lex.whitespace_split = True
+        tokens = list(lex)
+    except ValueError:
+        tokens = re.findall(r"[;&|()]+|[^\s;&|()]+", text.replace("\n", " ; "))
+    runs, dirs, here, words = [], [], cwd, []
+
+    def flush():
+        nonlocal here
+        w = list(words)
+        words.clear()
+        while w and (re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", w[0]) or w[0] in PREFIX):
+            w.pop(0)
+        if not w:
+            return
+        if w[0] == "cd":
+            target = w[1] if len(w) > 1 else "~"
+            here = os.path.join(here, os.path.expanduser(target))
+        elif os.path.basename(w[0]) == "git":
+            d, i = here, 1
+            while i < len(w) and w[i].startswith("-"):
+                if w[i] == "-C" and i + 1 < len(w):
+                    d = os.path.join(d, os.path.expanduser(w[i + 1]))
+                    i += 1
+                elif w[i] in ("-c", "--git-dir", "--work-tree", "--namespace") and i + 1 < len(w):
+                    i += 1
+                i += 1
+            if i < len(w):
+                runs.append((w[i], d))
+
+    for t in tokens:
+        if t and set(t) <= set(";&|()<>"):
+            flush()
+            if "(" in t:
+                dirs.append(here)
+            if ")" in t and dirs:
+                here = dirs.pop()
+        else:
+            words.append(t)
+    flush()
+    return runs
+
+
+def on_repo(runs, subs, top):
+    return [s for s, d in runs if s in subs and os.path.isdir(d) and root(d) == top]
+
+
+def reads_quoted(name):
+    """A question or proposal item is the work a first user is given to take up."""
+    return re.match(r"^\d{2}-notes-(question|proposal)\.md$", name) is not None
 
 
 def reads_maker_account(path, sdir, own):
@@ -286,7 +374,7 @@ def reads_maker_account(path, sdir, own):
     od = os.path.join(sdir, "open")
     if p.startswith(od + os.sep):
         name = os.path.basename(p)
-        return name != own and ("-notes-" in name or "-report-" in name)
+        return name != own and not reads_quoted(name) and ("-notes-" in name or "-report-" in name)
     return "/.git/" in p + "/" and p.split("/.git/")[0] == os.path.dirname(os.path.dirname(sdir))
 
 
@@ -346,13 +434,31 @@ def script_share(text, scripts):
     return sum(units.get(n, 0) for n in scripts) / total
 
 
+def text_of(sdir):
+    return open(os.path.join(sdir, "steering.md")).read()
+
+
+def unquoted(steering, message):
+    """The message without what it quotes from the record, which is in the artifact language: the
+    map's goal line, the goal, and the task names."""
+    message = re.sub(r"^\s*── .* ──\s*$", " ", message, flags=re.M)
+    quoted = [l.strip() for l in section(steering, "# Goal", 1) if l.strip()]
+    for line in steering.splitlines():
+        m = re.match(r"^### \[[ x]\] #\d+: (.+)$", line)
+        if m:
+            quoted.append(m.group(1).strip())
+    for q in sorted(quoted, key=len, reverse=True):
+        message = message.replace(q, " ")
+    return message
+
+
 def check_language(sdir, message):
-    front = front_matter(open(os.path.join(sdir, "steering.md")).read()) or {}
+    front = front_matter(text_of(sdir)) or {}
     lang = front.get("conversation-language", "").strip().lower()
     scripts = next((v for k, v in LANGUAGES.items() if lang in k), None)
     if not scripts or not message:
         return []
-    share = script_share(message, scripts)
+    share = script_share(unquoted(text_of(sdir), message), scripts)
     if share is not None and share < 0.5:
         return [f"your message to the user is not in {front['conversation-language']}, the "
                 "conversation language steering.md records: say it again in that language"]
@@ -387,6 +493,8 @@ def main():
     if not top:
         sys.exit(0)
     sdir = session(top)
+    if not sdir and event in ("post", "stop"):
+        sdir = finished_by_head(top)
     if not sdir:
         sys.exit(0)
     rel = os.path.relpath(sdir, top)
@@ -399,14 +507,19 @@ def main():
     agent = data.get("agent_type") or ""
     tool = data.get("tool_name", "")
     inp = data.get("tool_input") or {}
+    runs = git_runs(inp.get("command", ""), cwd) if tool == "Bash" else []
     if event == "pre":
-        cmd = inp.get("command", "") if tool == "Bash" else ""
-        if agent and GIT_WRITE.search(cmd):
+        if agent and on_repo(runs, GIT_WRITE, top):
             emit([f"only the conductor uses git; {agent} may not commit or push"])
+        # Checks 4–7 run once the commit is made; a push in the same command would carry a breach
+        # to the pull request before they could stop it.
+        if not agent and on_repo(runs, ("commit",), top) and on_repo(runs, ("push",), top):
+            emit(["commit and push in separate commands, so rn's checks run on the commit before "
+                  "it is pushed"])
         if agent == FIRST_USER:
             own_p = os.path.join(store, f"first-user-{data.get('agent_id', '')}.txt")
             own = open(own_p).read().strip() if os.path.isfile(own_p) else ""
-            if tool == "Bash" and GIT_READ.search(cmd):
+            if on_repo(runs, GIT_READ, top):
                 emit(["the first user does not read commit messages or history"])
             path = inp.get("file_path") or inp.get("path") or ""
             if tool in ("Write", "Edit", "NotebookEdit") and path:
@@ -438,8 +551,7 @@ def main():
             path = os.path.realpath(inp.get("file_path", ""))
             if path.startswith(sdir + os.sep) or path.endswith("verification.md"):
                 emit(form_checks(top, sdir))
-        if tool == "Bash" and not agent and re.search(r"\bgit\b[^|;&]*\bcommit\b",
-                                                      inp.get("command", "")):
+        if not agent and on_repo(runs, ("commit",), top):
             msg = git("log", "-1", "--format=%B", cwd=top)
             problems = check_decision_line(msg) + check_settled_whole(top, rel, msg) + \
                 check_stop(top, sdir, msg)
@@ -451,12 +563,9 @@ def main():
             emit(problems)
         sys.exit(0)
     if event == "stop":
-        # Check 14 runs on every end, the second included, since any may speak to the user.
+        # Every end is checked, the second included, but for check 13: any end may speak to the
+        # user, and any may leave commits only on this machine.
         language = check_language(sdir, data.get("last_assistant_message") or "")
-        if data.get("stop_hook_active"):
-            if language:
-                print(json.dumps({"decision": "block", "reason": "rn check:\n- " + language[0]}))
-            sys.exit(0)
         problems = form_checks(top, sdir)
         ahead = git("rev-list", "--count", "@{u}..HEAD", cwd=top).strip()
         if not git("rev-parse", "--abbrev-ref", "@{u}", cwd=top).strip():
@@ -468,7 +577,7 @@ def main():
         stop = re.search(r"→ waiting for #|── approved →|── feedback in |→ paused at ", last)
         od = os.path.join(sdir, "open")
         asking = os.path.isdir(od) and any("-notes-question" in n for n in os.listdir(od))
-        if not problems and not stop and not asking:
+        if not problems and not stop and not asking and not data.get("stop_hook_active"):
             problems.append("nothing here is for the user to decide: go on with the next move. End the "
                             "turn only at a sign-off or with a question, or again if you were answering "
                             "the user's own words")

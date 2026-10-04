@@ -266,6 +266,29 @@ class Checks(unittest.TestCase):
         self.r.commit("rn: pause\n\n● #3 cart ── more → paused at #3 cart")
         self.assertEqual(self.r.after_commit()[0], 2)
 
+    def test_7_finishing_without_ty_stops_and_with_ty_passes(self):
+        st = STEERING.replace("status: running", "status: finished") \
+            .replace("### [ ] #1:", "### [x] #1:").replace("### [ ] #2:", "### [x] #2:")
+        self.r.write(f"{SDIR}/steering.md", st)
+        self.r.commit("rn: finish\n\n● #2 Design sign-off ── approved → finished")
+        code, out = self.r.after_commit()
+        self.assertEqual(code, 2)
+        self.assertIn("/rn:ty", out)
+        self.r.hook("prompt", command_name="rn:ty")
+        self.assertEqual(self.r.after_commit()[0], 0)
+
+    # Checks 4–7 run between commit and push.
+    def test_conductor_committing_and_pushing_in_one_command_stops(self):
+        for cmd in ("git commit -m x && git push", "git commit -m x; git push -u origin session",
+                    "git add -A\ngit commit -m x\ngit push"):
+            code, out = self.r.hook("pre", tool_name="Bash", tool_input={"command": cmd})
+            self.assertEqual(code, 2, cmd)
+            self.assertIn("separate commands", out)
+        for cmd in ("git commit -m x", "git push", "git add -A && git commit -F - <<'EOF'\n"
+                    "rn: x\n\npush it later with git push\n\n● a ── b → c\nEOF"):
+            self.assertEqual(self.r.hook("pre", tool_name="Bash", tool_input={"command": cmd})[0], 0,
+                             cmd)
+
     # Check 12
     def test_12_conductor_starting_an_agent_in_the_background_stops(self):
         start = dict(tool_name="Agent", tool_input={"subagent_type": "rn:generator", "prompt": "x",
@@ -291,6 +314,21 @@ class Checks(unittest.TestCase):
         sh(self.r.dir, "git", "push", "-q")
         code, out = self.r.hook("stop")
         self.assertEqual(out.strip(), "")
+
+    def test_8_unpushed_commit_blocks_the_second_end_too(self):
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: a\n\n● design ── agreed → writ rewrites the documents")
+        code, out = self.r.hook("stop", stop_hook_active=True)
+        self.assertIn("not pushed", out)
+        sh(self.r.dir, "git", "push", "-q")
+        self.assertEqual(self.r.hook("stop", stop_hook_active=True)[1].strip(), "")
+
+    def test_8_the_finishing_commit_must_be_pushed(self):
+        self.r.write(f"{SDIR}/steering.md", STEERING.replace("status: running", "status: finished"))
+        self.r.commit("rn: finish\n\n● #2 Design sign-off ── approved → finished")
+        self.assertIn("not pushed", self.r.hook("stop")[1])
+        sh(self.r.dir, "git", "push", "-q")
+        self.assertEqual(self.r.hook("stop")[1].strip(), "")
 
     # Check 13
     def test_13_ending_a_turn_with_nothing_for_the_user_stops_once(self):
@@ -339,6 +377,24 @@ class Checks(unittest.TestCase):
                      "OK"):
             self.assertEqual(self.r.hook("stop", last_assistant_message=text)[1].strip(), "", text)
 
+    def test_14_text_quoted_from_the_record_does_not_count(self):
+        st = STEERING.replace("### [ ] #2: Design sign-off",
+                              "### [x] #2: Design sign-off\n### [ ] #3: Apply the discount before "
+                              "the coupon\n\nServes: A1, M1")
+        self.r.write(f"{SDIR}/steering.md", st)
+        self.r.commit("rn: pause\n\n● #3 Apply the discount before the coupon ── half → paused at #3 "
+                      "Apply the discount before the coupon")
+        sh(self.r.dir, "git", "push", "-q")
+        paused = ("── typescript: A wrong type fails the build. ──\n"
+                  "✅ #1 Plan sign-off / #2 Design sign-off\n"
+                  "👉 #3 Apply the discount before the coupon ── ここで一時停止\n\n"
+                  "● #3 Apply the discount before the coupon ── half → paused at #3 Apply the discount "
+                  "before the coupon\n\n次: /clear してから /rn:up")
+        self.assertEqual(self.r.hook("stop", last_assistant_message=paused)[1].strip(), "")
+        english = paused.replace("ここで一時停止", "paused here").replace(
+            "次: /clear してから /rn:up", "Next: clear the conversation, then take it up again.")
+        self.assertIn("Japanese", self.r.hook("stop", last_assistant_message=english)[1])
+
     # After a summary
     def test_after_compact_the_record_is_read_again(self):
         code, out = self.r.hook("compact", source="compact")
@@ -357,6 +413,21 @@ class Checks(unittest.TestCase):
             self.assertEqual(code, 2, agent)
         code, _ = self.r.hook("pre", tool_name="Bash", tool_input={"command": "git commit -m x"})
         self.assertEqual(code, 0)
+
+    def test_9_and_11_only_git_run_on_the_sessions_repository_counts(self):
+        clone = os.path.join(self.r.tmp.name, "try")
+        sh(self.r.tmp.name, "git", "clone", "-q", self.r.dir, clone)
+        for agent in ("rn:generator", "rn:first-user"):
+            for cmd in (f"cd {clone} && git commit -qam try", f"git -C {clone} log -3",
+                        "grep -rn 'git push' docs", "rg 'git log' README.md"):
+                code, _ = self.r.hook("pre", agent_type=agent, agent_id="f3", tool_name="Bash",
+                                      tool_input={"command": cmd})
+                self.assertEqual(code, 0, (agent, cmd))
+            for cmd in (f"cd {clone} && git log; cd {self.r.dir} && git commit -m x",
+                        f"git -C {self.r.dir} commit -m x"):
+                code, _ = self.r.hook("pre", agent_type=agent, agent_id="f3", tool_name="Bash",
+                                      tool_input={"command": cmd})
+                self.assertEqual(code, 2, (agent, cmd))
 
     # Check 10
     def test_10_first_user_writes_only_its_report(self):
@@ -377,6 +448,10 @@ class Checks(unittest.TestCase):
                                      **fu)[0], 2)
         self.assertEqual(self.r.hook("pre", tool_name="Bash", tool_input={"command": "git log -3"},
                                      **fu)[0], 2)
+        for name in ("01-notes-question.md", "03-notes-proposal.md"):
+            given = os.path.join(self.r.dir, SDIR, "open", name)
+            self.assertEqual(self.r.hook("pre", tool_name="Read", tool_input={"file_path": given},
+                                         **fu)[0], 0, name)
         readme = os.path.join(self.r.dir, "README.md")
         self.assertEqual(self.r.hook("pre", tool_name="Read", tool_input={"file_path": readme},
                                      **fu)[0], 0)
