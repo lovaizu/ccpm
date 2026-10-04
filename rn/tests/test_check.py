@@ -267,12 +267,36 @@ class Checks(unittest.TestCase):
     # Check 8
     def test_8_unpushed_commit_blocks_stop(self):
         self.r.write("a.txt", "a\n")
-        self.r.commit("rn: a\n\n● #3 cart ── fix → #3 cart")
+        self.r.commit("rn: a\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off")
         code, out = self.r.hook("stop")
         self.assertIn('"decision": "block"', out)
         sh(self.r.dir, "git", "push", "-q")
         code, out = self.r.hook("stop")
         self.assertEqual(out.strip(), "")
+
+    # Check 13
+    def test_13_ending_a_turn_with_nothing_for_the_user_stops_once(self):
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: agree\n\n● design ── agreed → writ rewrites the documents")
+        sh(self.r.dir, "git", "push", "-q")
+        code, out = self.r.hook("stop")
+        self.assertIn('"decision": "block"', out)
+        self.assertIn("go on", out)
+        code, out = self.r.hook("stop", stop_hook_active=True)
+        self.assertEqual(out.strip(), "")
+
+    def test_13_ending_a_turn_at_a_stop_or_a_question_passes(self):
+        for line in ("● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off",
+                     "● #1 Plan sign-off ── approved → #2 Design sign-off",
+                     "● #3 cart ── half → paused at #3 cart"):
+            self.r.write("a.txt", line + "\n")
+            self.r.commit("rn: x\n\n" + line)
+            sh(self.r.dir, "git", "push", "-q")
+            self.assertEqual(self.r.hook("stop")[1].strip(), "", line)
+        self.r.write(f"{SDIR}/open/01-notes-question.md", "Which way?\n")
+        self.r.commit("rn: ask\n\n● design ── question written → asking the user")
+        sh(self.r.dir, "git", "push", "-q")
+        self.assertEqual(self.r.hook("stop")[1].strip(), "")
 
     # Check 9
     def test_9_subagent_commit_stops(self):

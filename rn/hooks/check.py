@@ -369,6 +369,16 @@ def main():
             problems.append("the branch has no remote branch; push it")
         elif ahead and ahead != "0":
             problems.append(f"{ahead} commit(s) not pushed; push them")
+        # Check 13: the turn ends only where the user has something to decide.
+        last = git("log", "-1", "--format=%B", cwd=top).strip().splitlines()
+        last = last[-1] if last else ""
+        stop = re.search(r"→ waiting for #|── approved →|── feedback in |→ paused at ", last)
+        od = os.path.join(sdir, "open")
+        asking = os.path.isdir(od) and any("-notes-question" in n for n in os.listdir(od))
+        if not problems and not stop and not asking:
+            problems.append("nothing here is for the user to decide: go on with the next move. End the "
+                            "turn only at a sign-off or with a question, or again if you were answering "
+                            "the user's own words")
         if problems:
             print(json.dumps({"decision": "block", "reason": "rn check:\n- " + "\n- ".join(problems)}))
         sys.exit(0)

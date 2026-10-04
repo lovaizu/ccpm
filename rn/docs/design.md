@@ -477,13 +477,13 @@ same goal and plan.
 
 ## Hooks check rn's rules as it goes
 
-Gives M2 to M6, and with check 12 A2.
+Gives M2 to M6, and with checks 12 and 13 A2.
 
 What a machine can judge is checked by hooks, so a breach is stopped where it happens. Whether the
 work serves its purpose stays with the first user and the conductor. The checks run right after a
 file is written, before the first user is called and before the conductor stops for the user, and
 before every commit; checks 10 and 11 run before the first user's file tool call, and check 12
-before the conductor starts an agent.
+before the conductor starts an agent, and check 13 when it ends its turn.
 
 1. `steering.md` has its front matter and headings, and task IDs are unique.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
@@ -502,6 +502,9 @@ before the conductor starts an agent.
 12. The conductor starts no agent in the background, nor continues one by message, which runs it in
     the background, since an agent left running reports to a turn that has ended, and the user is
     left waiting on work no one carries on (A2).
+13. The conductor ends its turn only at a stop or with a question waiting in `open/`; otherwise it
+    is sent on once, since a turn that ends with nothing to decide leaves the user watching the work
+    (A2). A second end passes, for a turn that answered the user's own words.
 
 The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
 and is common elsewhere; when it is missing, the session stops and says so, since a skipped check
