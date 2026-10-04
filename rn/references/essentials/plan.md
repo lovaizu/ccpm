@@ -11,10 +11,10 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
     With the reason in the plan, every later decision is judged by it, in any conversation, and the
     user gets what they meant rather than what their first words said.
 
-- Reading the acceptance criteria as the one who must meet them, how could you meet every one and
-  leave the goal unmet?
+- Reading the attractive criteria beside the reason the user wants the goal, what of that reason do
+  they leave out?
 
-    When no work can meet the criteria and miss the goal, the user approves at the Deliverable
+    The work then aims at why the user wants the goal, and the user approves at the Deliverable
     sign-off what they wanted, since that sign-off judges by the criteria.
 
 - Checking each fact the plan rests on at its source, which did not hold?
@@ -31,11 +31,11 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
 
     Every criterion is then built, so the deliverable reaches the goal the user approved.
 
-- Reading a task's Completion criteria as its generator, how could you meet every one and leave its
-  purpose unfulfilled?
+- Reading a task's Completion criteria as its generator, what of the task's purpose toward the
+  attractive criteria do they leave out?
 
     Each task's result is then judged by what it is for, so the work moves on only when it has
-    moved toward the goal.
+    moved toward why the user would choose it.
 
 - Following the tasks in order, which work on must-be quality comes before the attractive
   criteria are nearly met?

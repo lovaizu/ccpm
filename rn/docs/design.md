@@ -62,7 +62,16 @@ must-be quality", 1984). Each criterion has an ID, by which the features below a
 - Each decision is committed with a decision line that says what was decided and what comes next.
   The commit where `rn` stops for the user is the stop commit.
 
-Seven policies hold across the features:
+Seven policies hold across the features, the first above the rest:
+
+- Attractive quality is the goal. Its checks are the fewest that confirm it, and each improvement
+  goes where it raises it soonest.
+
+    Attractive quality is why the user chooses the work, so they get what they came for soonest when
+    every effort goes to raising it. Must-be quality is checked by machine, and a must-be gap is fixed
+    where it stands in the way on the golden path; started first, or hunted beyond that path, it takes
+    the effort, and every check added beyond the fewest is time not spent on what the user chose the
+    work for.
 
 - Only the conductor decides what happens next.
 
@@ -96,11 +105,6 @@ Seven policies hold across the features:
 
     A decision written down outlives a cleared conversation, so the user never explains again what
     was already decided.
-
-- Attractive quality comes first, and must-be quality after.
-
-    Attractive quality is why the user chooses the work, so effort goes there while the goal is
-    still open. Must-be quality is easier to build and check, and started first it takes the effort.
 
 ## It works out the goal and the design with the user
 
@@ -148,11 +152,13 @@ writes them, so they read as well as any `writ` writes. Whether the design achie
 `writ` writes them, so a pause loses none.
 
 Attractive quality is confirmed by using the product as its user would, on the golden path, and
-comparing what happened with what was aimed for. Edge cases and other flows are not covered in
-advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to fix, while
-covering everything adds checks that can all pass with no one having confirmed the attractive
-quality. What a machine can judge is checked by machine every time, since it costs nothing and gives
-the same answer each time.
+comparing what happened with what was aimed for. Each attractive criterion gets the fewest scenes,
+and each scene the fewest inputs, that show the user getting why they would choose the product; a
+scene or input that shows nothing another does not is left out. Edge cases and other flows are not
+covered in advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to
+fix, while covering everything adds checks that can all pass with no one having confirmed the
+attractive quality, and spends on checking the time that would raise it. What a machine can judge is
+checked by machine every time, since it costs nothing and gives the same answer each time.
 
 The verification document holds what it takes to run those checks again after any change and see
 whether something that worked broke:
@@ -292,8 +298,11 @@ no one needs would otherwise never come to light. A question stays only if its a
 judge whether the work achieved its purpose. This follows `writ`'s essentials for essentials.
 
 There is one file each for the plan, the design, a task's result, the deliverable, a report, and
-what the conductor decides and says. The files are not split by Kano quality; the plan's file asks
-whether must-be work comes before the attractive criteria are nearly met.
+what the conductor decides and says. The files are not split by Kano quality; their questions aim at
+attractive quality, how far the work gives it and what stands in its way along the golden path. No
+question goes looking for must-be gaps, since one that does sends the effort to hunting them; must-be
+quality is left to the machine checks and to the gaps that stand in the way on that path. The plan's
+file asks whether must-be work comes before the attractive criteria are nearly met.
 
 The first user answers each viewpoint with "from the work I understood this" or "doing as written,
 this happened", and gives no Good or More. The conductor sets each answer beside the aim and gives
@@ -349,8 +358,9 @@ user for that viewpoint alone. Then the conductor decides each More:
 - A More whose fix would not bring the work closer is let go, with the reason.
 
     Its cost, or that the fix needs the README, the design document, or the user, is never that
-    reason. A must-be gap met only off the golden path is let go and stays a More in the proposal,
-    so the user sees it: hunting such gaps never ends, and each fix leaves a smaller one.
+    reason. A must-be gap met only off the golden path is let go, its reason kept in the record:
+    hunting such gaps never ends, each fix leaves a smaller one, and the time goes from raising the
+    attractive quality.
 
 It cannot go on when the same More keeps coming back, when each fix brings a new More, or when a fix
 needs the documents changed, unless what is fixed is the design itself. When Mores contradict each
@@ -379,8 +389,11 @@ Otherwise `rn` proposes what it wants to do next and why that serves the goal, a
 each attractive criterion, how far the work now gives it and what came closer since the last
 proposal. Clearing every More never ends, since each fix leaves a smaller one; how close the work has
 come is what lets the user decide whether it is enough. As its grounds it
-gives, under every viewpoint and in the user's terms, the final Good and More, each at its place,
-with its criterion ID, claiming no more than that place shows. When the design takes away something
+gives, under every viewpoint and in the user's terms, the final Good and More on the attractive
+criteria and on the must-be gaps met on the golden path, each at its place, with its criterion ID,
+claiming no more than that place shows. A must-be gap let go off that path stays in the record, not
+in the proposal: put before the user, it asks them to spend their time on what they did not choose
+the work for. When the design takes away something
 the product does today, the proposal names it, so the user decides that loss there. Each
 `Assumption` in `steering.md` is a More under the criterion it puts at risk in every proposal until
 something checks it, since the user approves the work resting on it at each sign-off. The points and

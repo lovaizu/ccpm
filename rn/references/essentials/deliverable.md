@@ -17,22 +17,6 @@ conductor sets each answer beside the goal, its acceptance criteria by ID, and e
     gets what they wanted, not only what was written down. Edge cases off that path are not hunted,
     since clearing every gap never ends.
 
-- Using what worked before the session, what no longer works?
-
-    The user keeps what they had, instead of finding a break in use and having to fix it.
-
-- Using the product, what did it do that neither the goal nor the design says it will?
-
-    The user then receives only what they approved, with nothing left for them to find and remove.
-    What counts is what the user meets in use; a part that changes nothing there costs them
-    nothing.
-
-- Reading the README and design document after using the product, where does what they say differ
-  from what happened?
-
-    The next session then starts from documents that say what was built, instead of from a wrong
-    one.
-
 - Using the product for the goal, which of the session's changes did you use, and which did you
   never meet?
 

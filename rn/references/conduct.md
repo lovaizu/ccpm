@@ -25,9 +25,12 @@ decided.
 What you decide and say to the user, you decide and say to
 `${CLAUDE_PLUGIN_ROOT}/references/essentials/conductor.md`. Each thing a session makes has its
 viewpoint file in `${CLAUDE_PLUGIN_ROOT}/references/essentials/`: `plan.md`, `design.md`,
-`task-result.md`, `deliverable.md`, and `report.md` for what a first user returns. Attractive quality
-comes first: effort goes to why the user would choose the result while the goal is still open, and
-must-be quality is finished last.
+`task-result.md`, `deliverable.md`, and `report.md` for what a first user returns.
+
+Attractive quality, why the user would choose the result, is the goal. Check it with the fewest uses
+that confirm it, and put each improvement where it raises it soonest. Must-be quality is checked by
+machine and fixed where a gap stands in the way on the golden path, and finished last: hunted beyond
+that path, it takes the time that would bring the user what they came for.
 
 Say everything to the user in the `conversation-language` of `steering.md`, and write everything that
 goes into the repository, the record and commit messages included, in its `artifact-language`, but
@@ -81,7 +84,9 @@ starts, how it goes, for each attractive criterion its golden-path scenes, each 
 and, indented below, "Passes when" what must happen, and the machine checks as commands naming the
 criteria they check. A must-be criterion no machine judges is named in a "Passes when". Fix each
 scene's input and pass before anything is built, since fixed after, they could be chosen so that it
-passes. Edge cases are not covered in advance; a must-be gap is fixed when it shows up in use.
+passes. Give each attractive criterion the fewest scenes, and each scene the fewest inputs, that show
+the user getting why they would choose the product, and leave out one that shows nothing another does
+not. Edge cases are not covered in advance; a must-be gap is fixed when it shows up in use.
 
 Start a fresh agent with `Agent` for each document, the README, then the design document, then the
 verification document, that runs the `writ:up` skill. Give it the document's path, its reader and
@@ -159,7 +164,8 @@ will struggle.
    the work does not show the answer, and that is its More.
 2. Decide each More as the Decision section of `conductor.md` asks. Fix a More that brings an
    attractive criterion closer, or a must-be gap met on the golden path; let go any other must-be
-   More and keep it in the proposal, since hunting such gaps never ends. Fix from what the work
+   More with its reason in the record, since hunting such gaps never ends and takes the time that
+   would raise the attractive quality. Fix from what the work
    should be for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
    for the plan, and by `writ` for the documents; check it against the purpose. A fix to a More on
    attractive quality goes to a fresh first user for that viewpoint and its place alone, its own
@@ -209,7 +215,10 @@ what to do meanwhile is a question. At a sign-off, `open/` holds nothing but des
 again at its place as it is now.
 
 Write the proposal once, as the Proposal section of `conductor.md` asks, with the final state only:
-the points and fixes along the way are left out, since the user approves the final state. Each
+the points and fixes along the way are left out, since the user approves the final state. Its Goods
+and Mores are those on the attractive criteria and on must-be gaps met on the golden path; a must-be
+More let go stays in the record, since put before the user it asks them to spend their time on what
+they did not choose the work for. Each
 `Assumption` in `steering.md` is a More under the criterion it puts at risk, until something checks
 it, since the user approves the work resting on it. Have a
 fresh first user take it up as the user would, by the Proposal section of `conductor.md`, from a

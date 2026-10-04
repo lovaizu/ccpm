@@ -36,11 +36,12 @@ the documents read is `writ`'s to check.
 
     The product is then built the way the user chose, instead of the way a generator guessed.
 
-- Taking each scene of the verification document as the one who must pass it, how could you pass it
-  with a product that misses its criterion?
+- Taking each scene of the verification document as the user it stands for, what of why they would
+  choose the product would its pass show, and which scene or input showed nothing another did not?
 
-    A pass then proves the criterion met, so the user approves at the Deliverable sign-off only work
-    that achieves the goal.
+    A pass then shows the user getting what they chose the work for, with the fewest checks, so the
+    time goes to raising it rather than to checking it. A scene added to catch every way a product
+    could fail never ends, and its pass shows nothing more of why the user chose it.
 
 - Reading each document as its reader, which parts did you use to decide or act, and which did you
   read past?

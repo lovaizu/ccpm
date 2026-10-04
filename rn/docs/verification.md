@@ -22,9 +22,9 @@ broke.
 - A stand-in plays the user. It is given only its part below and what `rn` says to it, writes in
   Japanese, and asks back whenever a question does not give it what it needs to decide.
 - The account session is one run, its scenes in this order: A1's `/rn:on` and Plan sign-off
-  feedback, A2's no-name question, A4's change on `main` at the Design sign-off, A4's pause in the
-  second task, and the Deliverable sign-off; A2's and A3's whole-session scenes read the same run. The
-  coupon session and the 0.8.0 session are runs of their own.
+  feedback, A2's no-name question, A4's pause in the second task after the Design sign-off, and the
+  Deliverable sign-off; A2's and A3's whole-session scenes read the same run. The 0.8.0 session is a
+  run of its own.
 - A first user is given a scene's input and the run's record: the conversation, `steering.md`,
   `open/`, the commits, the pull request, the product, and the run's output, where each hook that
   stops says why. It reports what happened. The maintainer running the verification sets that
@@ -49,17 +49,10 @@ The account session starts from rough words:
 - At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
   its reason and decisions, and otherwise gives `/rn:gm` with what it saw.
 
-The coupon session is made by hand before the run, on its own branch with a draft pull request, in
-the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
+The 0.8.0 session asks for coupons:
 
-- Goal: every coupon is a discount, so no coupon makes an order cost more than it would without one.
-- Acceptance criteria: A1, a percent coupon over 100% takes the items' total to 0, not below; M1,
-  the app builds and its tests pass as before.
-- The Plan and Design sign-offs are approved, with a README, design document, and verification
-  document saying of coupons only that one over 100% takes the items' total to 0, and tasks planned
-  for that.
-- Why the stand-in wants this, said only when asked why: a coupon once took an order's total below
-  0, and money went back to the customer by mistake.
+- Why the stand-in wants every coupon to be a discount, said only when asked why: a coupon once
+  took an order's total below 0, and money went back to the customer by mistake.
 - What it decides, when asked: a coupon that is not a discount refuses the order.
 
 ## Scenes
@@ -76,9 +69,8 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 - The account session's Deliverable sign-off.
 
     Passes when, for user records with `nickname`, `firstName`, and `lastName` each set, missing,
-    `null`, or `""` in every combination, wherever A4's change put them, a user with a name is shown
-    it as before, the name shown never holds "undefined" or "null", and a user with no name is shown
-    what the stand-in chose.
+    `null`, or `""` in every combination, a user with a name is shown it as before, the name shown
+    never holds "undefined" or "null", and a user with no name is shown what the stand-in chose.
 
 - The account session's first Plan sign-off, where the stand-in gives `/rn:gm a user whose last name
   is null is shown "Ann null"`.
@@ -86,14 +78,6 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
     Passes when the plan next put up covers all three forms an absent name takes, missing, `null`,
     and `""`, for each name field, not `null` alone; or, when the first plan already covered all
     three, `rn` shows the stand-in where it does rather than adding `null` again.
-
-- The coupon session's Deliverable sign-off. `src/cart/cart.ts` also takes `{ percent: -10 }` and
-  `{ amount: -300 }`, and either raises the total today.
-
-    Passes when `rn` puts what to do with a coupon that is not a discount to the stand-in, and in
-    the deliverable proposed `checkout` refuses an order with either coupon in the way the design
-    names, returning no total, as the stand-in decided, while `{ percent: 10 }` still takes 10% off,
-    `{ percent: 150 }` takes the items' total to 0, and the app builds and its tests pass.
 
 ### A2: The user is called only for decisions that are theirs
 
@@ -131,18 +115,9 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
     rather than reverted and made again, does not redo
     finished tasks, speaks Japanese, and asks the stand-in nothing it already answered.
 
-- At the account session's Design sign-off, the stand-in clears the conversation without answering.
-  A commit is made by hand on `main` that moves the names `displayName` takes under `profile`, with
-  its tests, and the stand-in gives `/rn:up`.
-
-    Passes when `/rn:up` brings the branch up to `main`, the design document is changed for the new
-    shape, the stand-in is asked nothing it already answered, and the session stops at the Design
-    sign-off again with a proposal that names the change. Putting up the first proposal unchanged
-    fails.
-
 - `/rn:up` on a session paused under `rn` 0.8.0, made before the scene with `--plugin-dir` on
   `rn/` of a worktree of the tag `rn--v0.8.0`: the stand-in starts it with
-  `/rn:on make every coupon a discount`, answers as in the coupon session, approves each sign-off
+  `/rn:on make every coupon a discount`, answers by its part above, approves each sign-off
   0.8.0 puts up, and gives `/rn:dn` once its first task has begun.
 
     Passes when it goes on from that session's goal and what was done, with `steering.md` in the
@@ -160,6 +135,6 @@ the form `rn/references/steering.md` gives, and taken up with `/rn:up`:
 | Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
 | Hook checks 12 and 13: the conductor starts no agent in the background, and ends its turn only at a stop or a question | the hooks; a stop shows in the run's output | A2 | Every scene |
 | Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
-| `main` of the practice repository has, after a scene, the head it had before it, but for the commit A4's second scene makes | `git ls-remote origin main`, before and after | M1 | After every scene |
+| `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
 | Installing `rn` brings `writ` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |

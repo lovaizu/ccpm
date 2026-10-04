@@ -12,14 +12,6 @@ purpose and its Completion criteria.
     criteria, and the conductor sees how close the work has come to why the user would choose it.
     Edge cases off that path are not hunted: a must-be gap is fixed when it shows up there.
 
-- Using the result, what did it do that the README and design document do not say?
-
-    The user then receives what they approved the product to be, and nothing they did not agree to.
-
-- Using what worked before the task, what no longer works?
-
-    The user keeps what they had, and each later task builds on ground that holds.
-
 - Doing what the task's purpose is for, which of the task's changes did you use, and which did you
   never meet?
 
