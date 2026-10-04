@@ -264,8 +264,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-10-05
+- **Last completed**: #6
+- **Next**: #7 — wait for the user's merge of PR #15 (it also clears #5's review step); once merged, set CHANGELOG's 0.1.0 date to the release day, tag `main` as `writ--v0.1.0` with `claude plugin tag --push` from `writ/`, and publish the GitHub Release with that section.
+- **Notes**: PR #15 (branch `worktree-writ`). The final check before merge is done under `.claude/rules/final-check.md`; CI passes (31 tests, every line run).
