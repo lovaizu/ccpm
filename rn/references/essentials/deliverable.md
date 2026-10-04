@@ -10,10 +10,12 @@ conductor sets each answer beside the goal, its acceptance criteria by ID, and e
     The deliverable is then judged where the user would feel it, by the measure fixed before it was
     built, which cannot be eased to fit what was built.
 
-- Using the product for the goal in a case the acceptance criteria do not name, what happened?
+- Using the product for the goal as its user would, along the golden path, how far did it give each
+  attractive criterion, and what stood in the way?
 
-    The user then gets what they wanted, not only what was written down, and a gap seen now is
-    theirs to decide before approving rather than found later in use.
+    The user then decides from how close the product has come to why they would choose it, and
+    gets what they wanted, not only what was written down. Edge cases off that path are not hunted,
+    since clearing every gap never ends.
 
 - Using what worked before the session, what no longer works?
 

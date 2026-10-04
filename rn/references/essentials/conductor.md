@@ -9,6 +9,13 @@ would; the conductor sets each answer beside the goal and what the user agreed.
 What the conductor decides for each More, as its commit message records it. With it, the work comes
 as close to the goal as it can, keeps what already serves the user, and settles.
 
+- For each More fixed, which attractive criterion did you take it to bring closer, or where on the
+  golden path did you take its must-be gap to show up?
+
+    Effort then goes to why the user would choose the work. Fixing every must-be gap found off the
+    golden path never ends, since each fix leaves a smaller one, and it spends the time the
+    attractive quality needs.
+
 - For each More let go, what did you take from its reason as why fixing it would not bring the work
   closer to its purpose?
 
@@ -45,7 +52,9 @@ time goes only to what is theirs.
   documentation, or best practice have settled?
 
     The user's time then goes only to the decisions that are theirs, since everything else is looked
-    up instead of asked.
+    up instead of asked. The goal settles a point only when it leaves one way; where it allows ways
+    that give the user or their users different things, such as refusing an order or charging it
+    in full, the choice is the user's, and deciding it for them is a guess they find later.
 
 - Answering the question as the user, which parts did you use to answer and which did you read
   past?

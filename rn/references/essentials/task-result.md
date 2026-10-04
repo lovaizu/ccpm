@@ -5,10 +5,12 @@ goal, and the user, in the end, receives it as part of the deliverable. The firs
 where it runs, as whoever the purpose serves would; the conductor sets each answer beside the task's
 purpose and its Completion criteria.
 
-- Doing on the real thing what the task's purpose is for, what happened?
+- Doing on the real thing what the task's purpose is for, along the golden path of the criteria it
+  serves, what happened, and how far does it now give each attractive one?
 
-    The purpose then holds where it is used, beyond the letter of the Completion criteria, so the user
-    gets what the task was planned to give.
+    The purpose then holds where the user will use it, beyond the letter of the Completion
+    criteria, and the conductor sees how close the work has come to why the user would choose it.
+    Edge cases off that path are not hunted: a must-be gap is fixed when it shows up there.
 
 - Using the result, what did it do that the README and design document do not say?
 

@@ -157,8 +157,10 @@ will struggle.
    reference shows, and commit and push it, so whoever fixes reads the Goods to keep. A viewpoint the
    report leaves unanswered goes to a fresh first user for that viewpoint alone; unanswered again,
    the work does not show the answer, and that is its More.
-2. Decide each More as the Decision section of `conductor.md` asks. Fix from what the work should be
-   for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
+2. Decide each More as the Decision section of `conductor.md` asks. Fix a More that brings an
+   attractive criterion closer, or a must-be gap met on the golden path; let go any other must-be
+   More and keep it in the proposal, since hunting such gaps never ends. Fix from what the work
+   should be for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
    for the plan, and by `writ` for the documents; check it against the purpose. A fix to a More on
    attractive quality goes to a fresh first user for that viewpoint and its place alone, its own
    `report` file; a fix to a More on must-be quality is not used again. Look again at every Good a fix

@@ -210,7 +210,9 @@ Gives A2.
 
 The user is asked only what the goal, the repository, the official documentation and best practice
 cannot settle, such as how much effort is worth how much safety, and whether the deliverable achieves
-the goal.
+the goal. The goal settles a point only when it leaves one way: where it allows ways that give the
+user or their users different things, the choice is theirs, and `rn` deciding it is a guess they
+find later.
 
 Whenever `rn` calls the user, it comes with what it proposes to do next toward the goal, and why. A
 report of where things stand would leave the user to work out what to do next, which is the work they
@@ -329,12 +331,17 @@ flowchart TD
 A generator reads its result whole once made, and again after each fix, since one fix can break
 another place. Whoever made a thing cannot see where it is unclear; the first user stays for that.
 
+The first user uses the work along the golden path of the attractive criteria it serves, the way
+the user would, and says how far it gives each; it does not go looking for edge cases, since
+effort is for why the user would choose the work, and a must-be gap is fixed when it shows up there.
+
 Every Good is checked at its place as strictly as every More. A Good that does not hold is the most
 dangerous point in a session: no one looks again at what is called good, so the flaw it hides
 reaches the user's approval unseen. A viewpoint the report leaves unanswered goes to a fresh first
 user for that viewpoint alone. Then the conductor decides each More:
 
-- A More whose fix brings the work closer to its purpose, and keeps the Goods, is fixed.
+- A More whose fix brings the work closer to an attractive criterion, or closes a must-be gap met on
+  the golden path, and keeps the Goods, is fixed.
 
     The fix starts from what the work should be for its purpose, wherever the same cause shows. A
     fix made only where the More points leaves the cause to show up elsewhere.
@@ -342,7 +349,8 @@ user for that viewpoint alone. Then the conductor decides each More:
 - A More whose fix would not bring the work closer is let go, with the reason.
 
     Its cost, or that the fix needs the README, the design document, or the user, is never that
-    reason.
+    reason. A must-be gap met only off the golden path is let go and stays a More in the proposal,
+    so the user sees it: hunting such gaps never ends, and each fix leaves a smaller one.
 
 It cannot go on when the same More keeps coming back, when each fix brings a new More, or when a fix
 needs the documents changed, unless what is fixed is the design itself. When Mores contradict each
