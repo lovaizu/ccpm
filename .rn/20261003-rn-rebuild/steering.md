@@ -404,8 +404,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-05
-- **Last completed**: #10 (no task checked since; #6 trials under way)
-- **Next**: #6 — fix the six Mores settled in 45d3636 (user: "再開後に進めて"), then run the account session again, with A3's second stand-in reading the PR, and report closeness to A1–A4
-- **Notes**: Fixes, from 45d3636: (1) a hook stops a reply to the user not in `conversation-language` (structure; design doc and prompts both); (2) one point per question message; (3) ask what the result must do for the user before offering ways when the goal does not say; (4) a fact only the user can know is asked, not assumed; (5) Plan and Design proposals name a criterion ID on each Good/More (conductor.md § Proposal); (6) "go on as if" from a user who does not know is an Assumption, so a More. Before the rerun: on `lovaizu/rn-try`, revert the run's changes if any reached `main` (it was b3b14e8), close PR #30 and delete branch `account-to-typescript`. Harness: `driver.py` in this session's scratchpad `trial/` (temp; may be gone — rebuild from the old one per 45d3636's notes: Design-approval-based pause, writ from `origin/worktree-writ`).
+- **Status**: not suspended
+- **Date**: —
+- **Last completed**: —
+- **Next**: —
+- **Notes**: —
