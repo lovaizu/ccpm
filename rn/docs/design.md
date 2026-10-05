@@ -162,7 +162,9 @@ writes them, so they read as well as any `writ` writes. Whether the design achie
 Attractive quality is confirmed by using the product as its user would, on the golden path, and
 comparing what happened with what was aimed for. Each attractive criterion gets the fewest scenes,
 and each scene the fewest inputs, that show the user getting why they would choose the product; a
-scene or input that shows nothing another does not is left out. Edge cases and other flows are not
+scene or input that shows nothing another does not is left out. Each scene starts where it needs to,
+set up rather than reached by running what comes before it, so a run spends its time only on the
+criterion it checks. Edge cases and other flows are not
 covered in advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to
 fix, while covering everything adds checks that can all pass with no one having confirmed the
 attractive quality, and spends on checking the time that would raise it. What a machine can judge is
