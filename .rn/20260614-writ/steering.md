@@ -206,7 +206,7 @@ proven and split into its own plugin.
       act and which were read past
 - [x] Check the README and the design by those essentials, with a first user that does not carry
       over the conversation and is not given the aim
-- [ ] Fix what the results call for, and take the user's review on PR #15 (fixed; the user said
+- [x] Fix what the results call for, and take the user's review on PR #15 (fixed; the user said
       to build through #6 without waiting, so the review is taken with #6's results)
 - [x] Rebuild the prompts from the README, the design and the essentials, with the generator and
       first user as plugin agents
@@ -257,9 +257,9 @@ proven and split into its own plugin.
       the rule once pushed (rn's `driver.py` lives only in its scratchpad)
 - [x] Build writ's trials in `writ/trials/` by that rule, one minimal scene per benefit the design
       names, in Python 3.9 with the standard library only
-- [ ] Rebuild the prompts from that design, run writ on the README and the design, compare each
+- [x] Rebuild the prompts from that design, run writ on the README and the design, compare each
       with the version before as its reader, and take the user's review on PR #15
-- [ ] Ask the user again to merge PR #15
+- [x] Ask the user again to merge PR #15
 - [ ] Once merged, tag `main` as `writ--v<version>` with `claude plugin tag --push` and publish
       the GitHub Release (the rule is in `.claude/rules/plugin.md`)
 
