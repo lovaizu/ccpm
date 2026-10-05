@@ -113,6 +113,16 @@ code-modernization).
 - **After an attractive-quality More is fixed, have a new first user check that point again.**
   - Rationale: whether the user now gets what the work is for shows only when someone who does not know
     the discussion uses it again.
+- **Keep the code that runs this validation inside the plugin, in its own `trials/` apart from
+  `tests/`: one minimal scene per attractive quality, each setting up the situation, running the
+  plugin as its user would, and leaving what happened for the conductor to read.**
+  - Rationale: a trial put together on the spot guesses at how the last one ran and is lost with the
+    session; kept in the plugin, it runs the same way each time and is fixed along with the plugin.
+    One scene per attractive quality is enough, since a trial shows whether the user gets what the
+    plugin is for, not every case.
+- **Write the trials as the plugin's own code is written, but leave `trials/` out of the line count.**
+  - Rationale: a trial starts Claude Code, which CI cannot run, and each run is read by the conductor,
+    so the run itself is its check.
 - **Check by script, every time, whatever a script can decide.**
   - Rationale: it costs nothing to run and gives the same answer every time.
 
