@@ -29,6 +29,13 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
     and the work does not rest on a guess that holds in the repository but not where the product
     runs.
 
+- Reading the criteria, which kind of input they speak of, such as "a user with no name", has forms
+  where the product runs that neither the repository shows nor the user told, or was tried today on
+  only some of its forms?
+
+    Each criterion then holds for every form the input takes where the product runs, not only for
+    the one tried, and the user gets the result for all the cases they meet.
+
 - Acting on the plan, which point you relied on is a decision only the user can make, yet is not
   recorded as theirs?
 

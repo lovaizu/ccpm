@@ -60,6 +60,10 @@ Asking the user:
   can settle is yours to find, and the answers change where to look. A fact none of them can show,
   such as what the user's records hold, ask: only the user knows it, and a guess holds in the
   repository but not where the product runs.
+- Each kind of input the goal speaks of, such as "a user with no name", is such a fact: ask what
+  forms it takes where the product runs unless the repository shows them, and check what the product
+  does today on every form, since a criterion worded from the one form tried passes while the others
+  still fail.
 - Find what the user really wants from the purpose behind their words and the ideal it calls for,
   since the words alone can be met while the purpose is missed. Ask why they want it.
 - Where the goal does not say what a result must do for the user, ask that before offering ways,
