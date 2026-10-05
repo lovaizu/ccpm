@@ -45,11 +45,11 @@ The caller gives the location of the work, its receiver and purpose, and the aim
 
     If python3 is missing or older than 3.9, stop without returning a result, and tell the caller that pith needs Python 3.9 or later and the user must install it. A skipped check goes unnoticed, so no one would learn the form was not kept.
 
-6. Commit only the result file to the current branch, and push if the branch has an upstream. Do not push a branch without one: where to push is not for writ to decide.
+6. Do not commit or push the result file, however you were called.
 
-    Committed and pushed, the result outlives the conversation and can be read on the pull request.
+    The record is kept by the conductor that talks with the user, the one that knows what the user decided. A caller such as rn stops any other role from using git.
 
-7. Return a short result, not the whole file, so the caller's conversation is not filled with it. Write it in the user's language and open it with your view of where the work stands against the aim. Then give, for every question, the question and under it one line: Good or More, in a few words what the receiver gains or struggles with there, and where; with a place alone, the caller cannot judge without reading the work. Set out each More in full: the question, the first user's report, and what the receiver struggles with. End with the result file's location and this note for the caller: once every More is fixed, let go with a reason, or decided by the user, copy the whole file into a commit message, end each More there with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, and delete the file in that commit.
+7. Return a short result, not the whole file, so the caller's conversation is not filled with it. Write it in the user's language and open it with your view of where the work stands against the aim. Then give, for every question, the question and under it one line: Good or More, in a few words what the receiver gains or struggles with there, and where; with a place alone, the caller cannot judge without reading the work. Set out each More in full: the question, the first user's report, and what the receiver struggles with. End with the result file's location and this note for the caller: commit the result file and push if the branch has an upstream, so it outlives the conversation and can be read on the pull request; once every More is fixed, let go with a reason, or decided by the user, copy the whole file into a commit message, end each More there with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, and delete the file in that commit.
 
     `open/` then holds only what still waits for action, and the record stays in git history.
 
@@ -59,7 +59,7 @@ The caller has fixed or left the Mores of a work it had checked, and gives the r
 
 1. Bring the result file to that state. Keep each first user's report. Turn each fixed More into the Good it now is, with its location and evidence quoted from the work as it is now; add `Left because:` with the caller's reason to each More that was left. Do not judge whether a fix holds or a reason is right: the caller decided them, knowing the purpose.
 
-2. Run the check script, commit and push as in "Check a work", steps 5 and 6.
+2. Run the check script as in "Check a work", step 5, and do not commit, as in step 6.
 
 3. Return the short result as in "Check a work", step 7, with each More that was left set out in full with why it was left.
 
@@ -79,4 +79,4 @@ The caller gives what kind of work the essentials are for, that work's receiver 
 
     A new generator reads the file without the intent of the earlier writing. Without the Goods to keep, it breaks what already serves the purpose while it fixes.
 
-4. If a result file was written, commit and push it as in "Check a work". Return in the same shape: your view, the questions the file now holds, whether and on which real work they were tried and what came of it, any More you could not fix with its reason, and, if there is one, the result file's location with the note for the caller.
+4. Return in the same shape: your view, the questions the file now holds, whether and on which real work they were tried and what came of it, any More you could not fix with its reason, and, if there is one, the result file's location with the note for the caller.

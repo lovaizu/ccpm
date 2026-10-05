@@ -29,6 +29,10 @@ How good a document is can be measured only once its reader and purpose are set;
 
 - For an existing document, read it first and propose the reader and purpose you read from it.
 
+- When the request also hands the document's result file from an earlier check, take that file as where the document stands: its receiver, purpose and aim as settled, its Goods as Goods to keep, and its Mores as what is left to fix. Go to section 3 and sort those Mores, and have pith recheck only as section 3 says, writing to the same file.
+
+    A caller such as rn starts a new `/writ:up` to have Mores fixed, and you do not carry over the earlier conversation. Checked again from the start, the earlier answers would be overwritten, and without the Goods to keep the generator would break what serves the purpose while it fixes.
+
 - Look up every fact the document will state in the repository and the code; never infer one. The reader believes what is written and decides wrongly on a guess.
 
 - Choose the essentials files: always `${CLAUDE_PLUGIN_ROOT}/references/essentials/doc.md`, plus whichever of `readme.md`, `design.md`, `prompt.md` and `essentials.md` in the same directory fits the kind of document, when one does.
@@ -46,6 +50,8 @@ You check every question of every essentials file against the document three tim
 After every write and fix by the generator, run `sh ${CLAUDE_PLUGIN_ROOT}/references/lint/vale.sh <document>` yourself, and for a Japanese document also `sh ${CLAUDE_PLUGIN_ROOT}/references/lint/textlint-ja.sh <document>`, to confirm the style rules were kept. Sort and fix what the first check finds as below before calling pith.
 
 Then call pith with the Skill tool. Hand it the location of the document, the reader and purpose, the aim, and the locations of the essentials files; if a caller such as rn named the place of the result file in its request, hand that too. Write the aim as sentences, not split by question: what the reader should gain, and everything decided with the user. pith compares only with the aim it is given, so what was decided and not written out is not checked. Do not hand pith the style rules or the generator's Good and More: the first user would spend its attention on form, or use the document with the writer's judgment, and miss where the reader trips. If pith returns questions the aim does not cover, add to the aim and call it again. If it says Python 3.9 or later is needed, tell the user to install it and stop; the check is never skipped.
+
+Each time pith returns, commit only the result file to the current branch, and push if the branch has an upstream; where to push a branch without one is not for writ to decide. When a caller such as rn named the place of the result file, leave committing to the caller. The record is kept by the conductor that talks with the user, and a caller such as rn stops any other role from using git.
 
 Sort each More, and each Good whose ground does not hold, by asking in this order:
 
