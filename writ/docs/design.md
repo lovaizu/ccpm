@@ -146,6 +146,10 @@ The writer cannot go back to not knowing the discussion. Reading it over, they c
 
     Attractive quality is the quality that makes the user choose writ; a More of it means the reader does not get from the document what they should. Quality the user takes for granted is what the user expects to be there; a More of it is a defect such as a word used two ways or a broken link. Whether an attractive-quality More is fixed shows only when someone who does not know the discussion uses the document again. The earlier first user used the document before the fix, so a new first user is started. A defect of what is taken for granted is easy to see and quick to fix. Spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix. A document rewritten because a decision changed is not covered by the earlier check, so the whole is checked again.
 
+- When the request hands an existing document to fix without its result file, the conductor, once the reader and purpose are settled, first has pith check the document as it is, and goes on from that result as from a handed result file.
+
+    The generator does not know why each part of the document is there. Asked to fix it without Goods to keep, it rewrites the parts that serve the reader together with the ones that fall short, and the user gets back a document that has lost what was good in it. Which parts serve the reader shows only when a first user uses the document as it is.
+
 - When the request hands a document that was already checked together with its result file, the conductor takes that file as where the document stands. Its Goods go to the generator as Goods to keep, its Mores are what is left to fix, and pith checks again only as above, writing to the same file.
 
     A caller such as rn starts a new `/writ:up` to have Mores fixed, and that `/writ:up` does not carry over the earlier conversation. Checked again from the start, the earlier answers would be overwritten, and without the Goods to keep the generator would break what serves the purpose while it fixes. The result is kept in a file so that it outlives the conversation, so a new call reads it and goes on from where the last one stopped.
@@ -156,7 +160,8 @@ The writer cannot go back to not knowing the discussion. Reading it over, they c
 stateDiagram-v2
   direction TB
   [*] --> Settle: /writ:up, or a document is about to be written
-  Settle --> Write: the reader and purpose are settled
+  Settle --> Write: the reader and purpose are settled, for a new document
+  Settle --> Check: the reader and purpose are settled, for a document to fix handed without its result file
   Write --> Check: the generator wrote into the document
   Check --> Sort: pith returned its result
   Sort --> Fix: a More whose fix is clear
