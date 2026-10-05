@@ -397,7 +397,9 @@ Gives A3.
 A fatal More, or work that cannot go on, goes back to working things out with the user instead of to
 the sign-off, since approving something that is no use until fixed only spends the user's time.
 
-Otherwise `rn` proposes what it wants to do next and why that serves the goal, and says first, for
+Otherwise `rn` proposes what it wants to do next and why that serves the goal. It gives the goal and
+each acceptance criterion as `steering.md` words them, since the work is judged by those words, and
+what the user knows that they leave out shows only against the words themselves. It says first, for
 each attractive criterion, how far the work now gives it and what came closer since the last
 proposal. Clearing every More never ends, since each fix leaves a smaller one; how close the work has
 come is what lets the user decide whether it is enough. As its grounds it
