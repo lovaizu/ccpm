@@ -404,8 +404,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-05
-- **Last completed**: #4 (the user's approval, a72990e; #7, #8 checked off before it)
-- **Next**: before #9, the user's instruction (2026-10-05): "再開後に、rnで利用する立場として観点考えて、writの全ファイルを見て評価して" — work out viewpoints as rn, the user of writ, then read every writ file (branch `worktree-writ`) and evaluate it; then #9 once writ PR #15 merges
-- **Notes**: the user (2026-10-05): "魅力的品質に近づけばよい" — stop at coming closer to the attractive quality, not at exhausting findings. writ PR #15 was still open.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
