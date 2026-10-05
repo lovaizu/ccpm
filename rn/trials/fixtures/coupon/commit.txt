@@ -1,0 +1,3 @@
+rn: approve the design
+
+● #2 Design sign-off ── approved → #3 Hold a percent coupon's total at 0
