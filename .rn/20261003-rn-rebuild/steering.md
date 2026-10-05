@@ -410,8 +410,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-06
-- **Last completed**: #4 (#5–#8, #10 checked off before it); #9 step 1 (rn/trials built, pinpoint scenes)
-- **Next**: #9 — A3 is not reached: after a571e93 (hearing and plan viewpoint ask each input's forms), the A3 trial's proposal reader still approves while the pull request reader asks for null and "" names; the plan's first user did not catch the gap on resume. Decide the cause from the ideal before fixing; rerun a1_a2_first_calls (stopped at the usage limit after call 1, which asked why). Then wait for writ PR #15's merge.
-- **Notes**: Trials run one at a time; rn-try `main` is at c3b5f8e (reset by the user); no PR or branch open there. Last round: A1, A2, A4 reached; A3 not. Judge rn 0.9.0 as a new plugin (each attractive quality close enough for real use; writ plugin.md 70ff1d6). Run transcripts are in this session's scratchpad only.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
