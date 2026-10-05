@@ -1,33 +1,9 @@
-"""The scenes writ is tried in, one or two per benefit, as the design's quality section names them.
+"""The scenes writ is tried in, as the design's quality section names them.
 
-`source` is "fixture" (the sample app in fixture/) or "repo" (this repository at HEAD).
-`user` is what the user knows and has decided; the user plays from it alone.
-`target` is the document a reader reads afterwards, and `reader` who reads it and why.
+Each opening hands writ everything the user would answer, so one run reaches the point to look at.
 """
 
-MIGRATION_USER = """\
-You lead a team whose app (this repository) is written in JavaScript and is moving to TypeScript.
-You want a migration plan for the team's engineers.
-- Once they have read it, the team agrees on which directories to move first, and each engineer
-  volunteers for the parts they want to take on. They do not start moving code right after reading.
-- No one owns any part yet; the team decides that after reading.
-- You have not decided the order of directories, how the UI is built, or whether cli/ is included.
-  These are for the team to decide after reading.
-- Any place writ proposes under docs/ is fine. English.
-"""
-
-TYPING_USER = """\
-You keep docs/typing-guide.md, the rules your team's engineers follow when they add types to code
-moved from JavaScript to TypeScript. The move has not started and tsconfig.json does not exist yet;
-you want the rules settled first.
-- The readers are the engineers who move the files. They read it to write types that pass review
-  without being sent back. Whether reviewers also count as readers has not been discussed.
-- If asked about `any`, you decide now: `any` is allowed only in declarations for untyped libraries
-  in src/types/vendor.d.ts, nowhere else, tests included. Elsewhere take the value as `unknown` and
-  narrow it before use.
-- Nothing else beyond what the guide already says has been discussed by the team.
-- The place stays docs/typing-guide.md.
-"""
+ASK_BACK = " Do not ask me anything; return any question as your result."
 
 PR_REVIEW_AIM = (
     "The receiver is a Claude running in CI; for each PR it reads the diff with this prompt and writes "
@@ -46,8 +22,15 @@ SCENES = {
         "benefits": ["understands it in one reading", "hand it straight on",
                      "judge from the report", "asked instead of covered over"],
         "source": "fixture",
-        "opening": "/writ:up Write a TypeScript migration plan for the team's engineers",
-        "user": MIGRATION_USER,
+        "opening": "/writ:up Write a TypeScript migration plan for the team's engineers, at "
+                   "docs/migration-plan.md. This app is moving from JavaScript to TypeScript. Once "
+                   "they have read it, the team agrees on which directories to move first, and each "
+                   "engineer volunteers for the parts they want; they do not start moving code right "
+                   "after reading. No one owns any part yet. The order of directories, how the UI is "
+                   "built, and whether cli/ is included are not decided; the team decides them after "
+                   "reading." + ASK_BACK,
+        "look": "the owners and the open choices are left visibly undecided, each with the reason, "
+                "and the report alone decides approval",
         "target": None,
         "reader": "an engineer on the team, who reads the plan before the team meets to agree which "
                   "directories to move first and who takes which part",
@@ -56,8 +39,13 @@ SCENES = {
         "benefits": ["understands it in one reading", "hand it straight on",
                      "asked instead of covered over"],
         "source": "fixture",
-        "opening": "/writ:up docs/typing-guide.md",
-        "user": TYPING_USER,
+        "opening": "/writ:up Fix docs/typing-guide.md. The readers are the engineers who move files "
+                   "from JavaScript to TypeScript; they read it to write types that pass review "
+                   "without being sent back. The move has not started and tsconfig.json does not "
+                   "exist yet. Whether `any` is allowed is not decided, and nothing beyond what the "
+                   "guide says has been decided." + ASK_BACK,
+        "look": "`any` comes back as a question and no rule on it is written; the parts readers "
+                "used before the fix are kept",
         "target": "docs/typing-guide.md",
         "reader": "an engineer on the team, who is about to move a JavaScript file to TypeScript and "
                   "add types that pass review",
@@ -66,7 +54,8 @@ SCENES = {
         "benefits": ["check by what happened in use"],
         "source": "fixture",
         "opening": "/writ:pith check .github/prompts/pr-review.md. " + PR_REVIEW_AIM,
-        "user": "You wrote the prompt and want it checked. You have nothing to add to the aim.",
+        "look": "a More points at the missing check on response fields, with what happened in use as "
+                "its evidence",
         "target": None,
         "reader": None,
     },
@@ -74,7 +63,7 @@ SCENES = {
         "benefits": ["check by what happened in use"],
         "source": "fixture",
         "opening": "/writ:pith check .github/prompts/pr-review.good.md. " + PR_REVIEW_AIM,
-        "user": "You wrote the prompt and want it checked. You have nothing to add to the aim.",
+        "look": "the question the other scene's More answers comes back Good",
         "target": None,
         "reader": None,
     },
@@ -83,9 +72,10 @@ SCENES = {
         "source": "fixture",
         "opening": "/writ:pith Write essentials for our CLI's release notes. Put them at "
                    "docs/essentials/release-notes.md. The readers are the developers in the company "
-                   "who use this CLI, reading to decide whether to upgrade now.",
-        "user": "Your team builds the internal CLI in cli/. There is no set way to check its release "
-                "notes; docs/releases/ holds the real ones.",
+                   "who use this CLI, reading to decide whether to upgrade now. The CLI is in cli/, and "
+                   "docs/releases/ holds its real release notes." + ASK_BACK,
+        "look": "every question is answered from what happened in use, and the answers decide "
+                "whether to upgrade on 1.4",
         "target": None,
         "reader": None,
     },
@@ -99,7 +89,7 @@ SCENES = {
                    "work. The README's facts must match writ's prompts and design in this repository "
                    "(writ/skills, writ/agents, writ/docs/design.md). Do not ask me anything; return "
                    "any question as your result.",
-        "user": None,
+        "look": "the parts readers used before the fix are kept",
         "target": "writ/README.md",
         "reader": "a Claude Code user who has not used writ, deciding whether to install it and then "
                   "how to use it on their own documents",
@@ -115,7 +105,7 @@ SCENES = {
                    "design's facts must match this repository (writ/README.md, writ/skills, "
                    "writ/agents, writ/hooks). Do not ask me anything; return any question as your "
                    "result.",
-        "user": None,
+        "look": "the parts readers used before the fix are kept",
         "target": "writ/docs/design.md",
         "reader": "whoever is about to change writ's prompts, agents or hooks without breaking a "
                   "decision in its design",
