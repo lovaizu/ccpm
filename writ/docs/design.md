@@ -1,6 +1,6 @@
 # writ design
 
-writ brings the user the six benefits listed at the top of the [README](../README.md) through two skills. `/writ:up` writes and finishes a document; pith checks a work against essentials and writes essentials. The user uses pith by calling `/writ:pith` or by asking for it in words. pith is a separate skill because it checks any work, not only documents, and it is to be split into a plugin of its own so that rn can use it too. Both skills are built from three roles: the conductor, the generator and the first user. Only each skill's conductor judges and decides what comes next. The generator makes and fixes the work as the conductor decides, and the first user uses the work as its user would and reports what happened. Essentials, question, Good, More and first user mean the same as in the README.
+writ brings the user the six benefits at the top of the [README](../README.md) through two skills, `/writ:up` and pith, which the user calls as `/writ:pith` or asks for in words. pith is a separate skill because it checks any work, not only documents, and it is to be split into a plugin of its own so that rn can use it too. rn is the other plugin in this marketplace, lovaizu/ccpm, and runs goal-driven work sessions. rn does not call writ or pith anywhere in this repository yet; writ is built so that a caller such as rn can call it. Both skills are built from three roles: the conductor, the generator and the first user. Only each skill's conductor judges and decides what comes next. The generator makes and fixes the work as the conductor decides, and the first user uses the work as its user would and reports what happened. Essentials, question, Good, More and first user mean the same as in the README.
 
 ```mermaid
 flowchart TD
@@ -61,7 +61,7 @@ The benefits are called by the words at the top of the README. Those of `/writ:u
 
 - Lay the fact of use as the receiver beside the aim and turn it into Good and More (pith).
 
-    It serves "check by what happened in use". It works in the README's "Checking what you made", and the second feature of `/writ:up` uses it.
+    It serves "check by what happened in use". It works in the README's "Checking what you made", and `/writ:up` uses it in "Have a first user use the document through pith, and check it".
 
 - Write essentials worked back from the purpose, and try them on a real work (pith).
 
@@ -75,7 +75,9 @@ The benefits are called by the words at the top of the README. Those of `/writ:u
 
 - The roles are kept apart by the agent definitions.
 
-    The generator and the first user are plugin agents. The first user has `omitClaudeMd` and is called as a separate subagent that does not carry over the conversation. It is handed only the work, the receiver and purpose, and the essentials files. The first user can run commands, so it gives a prompt to an AI with `claude -p` and runs it, and uses code by calling it or running its tests. Neither the generator nor the first user has the tool that calls other agents, so the generator cannot call the first user. What must hold is that, however the first user is called, the discussion never reaches it. A subagent can be called from the conversation, by the user or from another skill, so watching how it is called with hooks grows tangled. An agent definition with `omitClaudeMd` holds however it is called. The official sub-agents documentation says this field is ignored for plugin agents. Tried on Claude Code 2.1.285, though, a plugin agent with it did not read the project's CLAUDE.md. Only that version was tried, running the definition with and without the field twice each.
+    The generator and the first user are plugin agents. The first user has `omitClaudeMd` and is called as a separate subagent that does not carry over the conversation. The first user can run commands, so it gives a prompt to an AI with `claude -p` and runs it, and uses code by calling it or running its tests. Neither the generator nor the first user has the tool that calls other agents, so the generator cannot call the first user. What must hold is that, however the first user is called, the discussion never reaches it. A subagent can be called from the conversation, by the user or from another skill, so watching how it is called with hooks grows tangled. An agent definition with `omitClaudeMd` holds however it is called. Here writ relies on what a trial showed, against the documentation: the official sub-agents documentation says this field is ignored for plugin agents, but on Claude Code 2.1.285 a plugin agent with it did not read the project's CLAUDE.md. Only that version was tried, running the definition with and without the field twice each.
+
+    The first user's definition also tells it not to read how the work was made: the git history, Claude Code's conversation records, and the result files of earlier checks in `open/`. Reading them, it would fill the work's holes with the maker's intent. Its reading tools are needed to check facts, so narrowing the tools cannot keep it out. Hooks stop only what the definition cannot hold: the git commands that read history (log, show, diff, blame, reflog, stash) and paths under `.claude/projects`, where the conversation records are. By the official hooks documentation, a plugin's hooks also run on a subagent's tool calls, and inside a subagent the hook's input carries `agent_type`, so the hooks stop these only when it is `writ:first-user` and do not affect other work. The result files in `open/` are kept from it by the definition alone.
 
 - The content of the essentials lives only in the essentials files, and handoffs pass their location.
 
@@ -83,7 +85,7 @@ The benefits are called by the words at the top of the README. Those of `/writ:u
 
 - In the end only the work remains, and a result file stays in `open/` until it is settled.
 
-    No drafts or files of notes along the way are made. Left behind, they would be for the user to clear away, and would leave the user unsure which is the real one. Only the full result is written, by pith's conductor, to `.writ/open/{NN}-report-{target}.md`. It goes in a file so that the full text survives when a long conversation is summarized, and does not flow into the caller's conversation. pith does not commit it, however it is called. The conductor that talks with the user commits it to the current branch and pushes if the branch has an upstream: in `/writ:up` that is up's conductor, when pith was asked for directly it is the Claude Code that talks with the user, and when a caller such as rn called writ it is that caller's conductor. The record, the git history and `open/`, is kept by the one role that knows what the user decided; a role that is called writes and returns, and a caller such as rn stops any other role from using git. It is committed and pushed, not just kept locally, so that it outlives the conversation and can be read on the pull request. A branch without an upstream is not pushed, because where to push is not for writ to decide. There is one file per target, and a recheck writes to the same file. Once every More in it is settled, the same conductor clears it: it copies the full text into a commit message and deletes the file in that commit. A More is settled when it is fixed, let go with a reason, or decided by the user. Then `open/` holds only what is not settled, and a file there is the sign that something needs action. The record stays in the git history. When a caller such as rn keeps its own `open/`, the caller names the file's location, down to its name, in its request to `/writ:up` or `/writ:pith`, and writ writes there. The caller clears it.
+    No drafts or files of notes along the way are made. Left behind, they would be for the user to clear away, and would leave the user unsure which is the real one. Only the full result of a check is written to a file in `open/`, so that it survives when a long conversation is summarized and does not flow into the caller's conversation, and it is cleared once everything in it is settled. Who writes, commits and clears it is in "The result file: who writes, who commits, and its form".
 
 ## Have the document written only once the reader and purpose are settled
 
@@ -142,34 +144,36 @@ The writer cannot go back to not knowing the discussion. Reading it over, they c
 
     Handed them, the first user would spend its attention checking form, and what only it can do, using the work without knowing the discussion, would grow thin.
 
-- Only when an attractive-quality More was fixed does the conductor name that question to pith and have a new first user check it again. A More of quality the user takes for granted is fixed and not rechecked. Whether either fix serves the purpose, the conductor checks against the More's place and evidence. When the reader and purpose, or what was decided in the discussion, change, the whole is checked again.
+- A question is checked again by a new first user only when a More of attractive quality was fixed there. Attractive quality is the quality that makes the user choose writ, so such a More means the reader does not get from the document what they should. A More of quality the user takes for granted, a defect such as a word used two ways or a broken link, is fixed and not rechecked. Whether either fix serves the purpose, the conductor checks against the More's place and evidence. For a recheck, up's conductor names the attractive-quality question to pith and hands it the result file, and pith starts a new first user for that question and replaces only that question's section, so every other question keeps its answer.
 
-    Attractive quality is the quality that makes the user choose writ; a More of it means the reader does not get from the document what they should. Quality the user takes for granted is what the user expects to be there; a More of it is a defect such as a word used two ways or a broken link. Whether an attractive-quality More is fixed shows only when someone who does not know the discussion uses the document again. The earlier first user used the document before the fix, so a new first user is started. A defect of what is taken for granted is easy to see and quick to fix. Spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix. A document rewritten because a decision changed is not covered by the earlier check, so the whole is checked again.
+    Whether an attractive-quality More is fixed shows only when someone who does not know the discussion uses the document again. The earlier first user used the document before the fix, so a new first user is started. A defect of what is taken for granted is easy to see and quick to fix. Spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix.
 
 - When the request hands an existing document to fix without its result file, the conductor, once the reader and purpose are settled, first has pith check the document as it is, and goes on from that result as from a handed result file.
 
     The generator does not know why each part of the document is there. Asked to fix it without Goods to keep, it rewrites the parts that serve the reader together with the ones that fall short, and the user gets back a document that has lost what was good in it. Which parts serve the reader shows only when a first user uses the document as it is.
 
-- When the request hands a document that was already checked together with its result file, the conductor takes that file as where the document stands. Its Goods go to the generator as Goods to keep, its Mores are what is left to fix, and pith checks again only as above, writing to the same file.
+- When the request hands a document that was already checked together with its result file, the conductor takes that file as where the document stands. Its Goods go to the generator as Goods to keep, its Mores are what is left to fix, and pith checks again only as above.
 
-    A caller such as rn starts a new `/writ:up` to have Mores fixed, and that `/writ:up` does not carry over the earlier conversation. Checked again from the start, the earlier answers would be overwritten, and without the Goods to keep the generator would break what serves the purpose while it fixes. The result is kept in a file so that it outlives the conversation, so a new call reads it and goes on from where the last one stopped.
+    A caller such as rn starts a new `/writ:up` to have Mores fixed, and that `/writ:up` does not carry over the earlier conversation. Checked again from the start, the earlier answers would be overwritten, and without the Goods to keep the generator would break what serves the purpose while it fixes.
 
 ## Fix the holes that can be fixed, and leave, with a reason, the holes that can be left
 
 ```mermaid
 stateDiagram-v2
   direction TB
+  Settle: Settle the reader and purpose, look up facts, choose essentials
   [*] --> Settle: /writ:up, or a document is about to be written
   Settle --> Write: the reader and purpose are settled, for a new document
   Settle --> Check: the reader and purpose are settled, for a document to fix handed without its result file
   Write --> Check: the generator wrote into the document
   Check --> Sort: pith returned its result
   Sort --> Fix: a More whose fix is clear
-  Fix --> Sort: the generator fixed it and the conductor checked
+  Fix --> Check: an attractive-quality More was fixed, and a new first user rechecks only that question
+  Fix --> Sort: a defect the user takes for granted was fixed, and the conductor checked
   Sort --> Return: every More is fixed or left with a reason, and every Good's ground holds
   Sort --> Ask: cannot go on, or a More blocks the purpose
-  Ask --> Settle: the answer changed the reader and purpose or the kind of essentials
-  Ask --> Write: the answer changed a fact or what was decided
+  Ask --> Settle: the answer changed the reader, purpose, kind of document or a fact
+  Ask --> Write: the answer changed only what the generator is handed
   Return --> [*]
 ```
 
@@ -240,9 +244,9 @@ flowchart TD
 
     The generator writes directly into the document, so the user sees it also in the middle. While the user is being asked, too, the document shows the hole.
 
-- When what was decided in the discussion changes, go back to the step it changes.
+- When an answer changes what was decided, go back to the step it changes, as the figure in the section above shows, and have pith check the whole again.
 
-    To choosing essentials when the kind of essentials changes, to looking things up when a fact changes, and to writing when only what the generator is handed changes.
+    A document rewritten on a changed decision is not covered by the earlier check.
 
 ## Return the final Good and More for every question
 
@@ -250,21 +254,58 @@ flowchart TD
 
     With the view first, the user only decides whether to agree, and reads a question's answer only where they want to check. Each line says what its Good or More is about, because a place alone tells the user nothing until they read the document there, which is the reading the report is meant to spare. What the user decides is whether to accept the Mores that were left, so only those are set out in full, each under its question so the user sees what it falls short on. The full account of what a Good gains is there so a fix does not break it, and it is the conductor and the generator who use it, so the line gives only a few words of it. Put in the conversation in full, with several Goods and Mores per question, the report would be too long to be read. A question whose More was fixed shows its state now, as a Good, so no question is left without an answer.
 
-- The result file holds, for every question, the first user's report and every final Good and More, each with place and evidence. Before reporting, the conductor hands pith how each More was settled, and pith brings the file to that state.
-
-    The user can confirm that a Good or More rests on the fact of use by reading only the part they want in the file, or by asking the conductor.
-
 - Leave out remarks along the way and how things were fixed.
 
     With them, the user would have to work out again where each applies in the document as it is now.
 
-- Once the user decides whether to accept the Mores that were left, the conductor clears the result. It copies the full text into the commit message and ends each More with what became of it (`→ fixed:`, `→ let go:` with the reason, or `→ to the user:`).
+The names the user sees are the following. The README teaches use and the essentials with these names, so changing them breaks what the user learned from the README.
 
-    A More that was let go stays in the history with its reason, so it can be read later as a road not taken. If the conversation ends before the user decides, the file stays in `open/`, so it shows that something waits for a decision.
+- `/writ:up`, `/writ:pith`, pith, first user
+- Good, More
+- The essentials files' names: `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`
 
-The result file is read by the user, by a caller such as rn, and by later versions of writ, so it is a contract with the outside. So its form keeps the following true in every version.
+### The result file: who writes, who commits, and its form
 
-- The `{NN}` in the file name is a two-digit number showing the order the file arrived in `open/`.
+```mermaid
+flowchart TD
+  P[pith writes the result file and returns its location]
+  P -->|/writ:up called by the user| A[up's conductor commits, pushes and clears it]
+  P -->|/writ:pith asked for directly| B[the Claude Code that talks with the user commits, pushes and clears it]
+  P -->|a caller such as rn, directly or through /writ:up| C[that caller's conductor commits, pushes and clears it]
+```
+
+The result file serves "judge from the report": the user checks what lies behind any line of the report by reading only that part of the file, or by asking the conductor. It also serves "hand it straight on": in the end the user hands on the document alone, with nothing of the check left beside it. The following always hold.
+
+- Only pith writes the result file: at `.writ/open/{NN}-report-{target}.md`, or, when a caller such as rn keeps its own `open/`, at the place the caller names in its request, down to the file's name.
+
+    Its form is then checked every time, and no caller relies on pith's insides.
+
+- Only the conductor that talks with the user commits, pushes and clears it, as the figure shows; pith does not commit it, however it is called.
+
+    The record, the git history and `open/`, is kept by the one role that knows what the user decided; a role that is called writes and returns, and a caller such as rn stops any other role from using git. It is committed to the current branch and pushed if the branch has an upstream, so that it outlives the conversation and can be read on the pull request. A branch without an upstream is not pushed, because where to push is not for writ to decide.
+
+- `open/` holds only what is not settled. A More is settled when it is fixed, let go with a reason, or decided by the user, and a file whose Mores are all settled is cleared.
+
+    A file in `open/` is then the sign that something needs action, also when the conversation ends before the user decides. The record stays in the git history, where a More that was let go keeps its reason and can be read later as a road not taken.
+
+- There is one file per target, and a recheck and the final settling rewrite that file.
+
+    It then holds only what applies to the work as it is now.
+
+The final settling goes in this order.
+
+1. Before reporting, up's conductor hands pith how each More was settled: fixed, with its place in the document as it is now, or left, with why.
+2. pith rewrites the file to that state and checks its form again.
+3. Once the user decides on the Mores that were left, the conductor copies the whole text into a commit message and ends each More with `→ fixed:`, `→ let go:` with the reason, or `→ to the user:`.
+4. The conductor deletes the file in that commit.
+
+The result file's form is a contract with the outside, because the file is read by the user, by a caller such as rn, and by later versions of writ. What rn will read from it is not settled, because rn does not call writ yet, so no part of the form listed here is changed, and the following hold in every version. For the same reason, two things are not decided: whether a new field may be added, and whether the marks that end each More in the commit message, such as `→ fixed:`, are part of this contract.
+
+- The labels stay as written, while the text beside them is written in the user's language: `# Check: <target path>` as the first line, `Target:`, `Receiver and purpose:`, `Aim:`, `## <essentials file name>: <question>`, `Report:`, `- Good:`, `- More:`, `Evidence (work)`, `Evidence (report)` and `Left because:`. In a place, `<line>` is one line or a range `a-b`, and paths are relative to the repository root.
+
+    The check script finds each question's section, its report, each Good and More and its evidence by these words.
+
+- The `{NN}` in the file name is two digits, one more than the highest number already in `open/`.
 
     When the user opens `open/`, they read what waits for a decision in the order it came.
 
@@ -272,7 +313,7 @@ The result file is read by the user, by a caller such as rn, and by later versio
 
     A later reader knows what aim each Good and More was compared with, without going back to the conversation.
 
-- Then, for every question, the essentials file's name and the question are written word for word, and under them the first user's report and the Good and More.
+- Then every question has its own section, headed by the essentials file's name and the question written word for word, with the first user's report and at least one Good or More under it.
 
     With the essentials file's name, the user can read the question in that file. Since the question has the same characters as in the essentials file, a script can match the file against it and check that every question has an answer.
 
@@ -283,12 +324,6 @@ The result file is read by the user, by a caller such as rn, and by later versio
 - A Good says what the reader gains, a More says what the reader struggles with, and a More that was left also says why it was left.
 
     What a Good gains shows, by its effect on the reader, what must not be lost when the work is fixed. What a More struggles with lets the user decide, by its effect on the reader, whether to accept a More that was left. The reason shows the More was left by a decision, not missed, and whether it is for the user to decide.
-
-The names the user sees are the following. The README teaches use and the essentials with these names, so changing them breaks what the user learned from the README.
-
-- `/writ:up`, `/writ:pith`, pith, first user
-- Good, More
-- The essentials files' names: `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`
 
 ## Finish a document written during other work in the same flow
 
@@ -322,7 +357,7 @@ sequenceDiagram
   end
 ```
 
-The caller may be the conductor of `/writ:up`, or the user's conversation that asked for pith directly.
+pith is called by the conductor of `/writ:up`, by the user's conversation that asked for it directly, or by a caller such as rn.
 
 - pith is a skill that runs in a context of its own (`context: fork`) and does not carry over the caller's conversation.
 
@@ -332,17 +367,13 @@ The caller may be the conductor of `/writ:up`, or the user's conversation that a
 
     A question with no aim to compare against cannot be judged even after a first user has used the work. Finding that out before costs less than after.
 
-- The first user is handed only the work's location, the receiver and purpose, and the essentials files, never the aim.
+- The first user is handed only the work's location, the receiver and purpose, and the essentials files: never the aim, and nothing else from the discussion or from the maker.
 
     A real user also knows what they use the work for. Without the purpose, its use drifts from the real one. Knowing the aim, on the other hand, it would use the work looking for it and fill what is missing in its head. A paraphrase test, too, never shows the reader the right answer.
 
 - The first user actually uses the work as its receiver and reports, for every question, what it did and what happened. It does not judge. How to use and check the work is the first user's to decide.
 
     For a document, it is what it took in and what it set out to do, reading as the reader. For a prompt, what the AI did when given it with `claude -p` and run; for code, what happened when it was called. A fact of use can be laid beside the aim and compared. When it stops, unsure, it reports that it stopped. A real user also stops, unable to ask the maker, and that is exactly what is being looked for.
-
-- The first user's agent definition is built to keep it from how the work was made, and hooks stop only what the definition cannot hold.
-
-    The first user does not read the git history or Claude Code's conversation records. Reading them, it would fill the work's holes with the maker's intent. Its reading tools are also needed to check facts, so narrowing the tools alone cannot keep it out. So while a first user runs, hooks stop the git commands that can read history (log, show, diff, blame, reflog, stash) and reading conversation records. By the official hooks documentation, a plugin's hooks also run on a subagent's tool calls, and inside a subagent the hook's input carries `agent_type`. So they stop things only while a first user runs, and do not affect other work.
 
 - A hook runs the generator and the first user in the foreground, however they are started, so `/writ:up` and pith return only once the work and the result file are finished.
 
@@ -354,13 +385,13 @@ The caller may be the conductor of `/writ:up`, or the user's conversation that a
 
     Whether to fix or leave is decided by the caller, which knows the purpose, so pith does not decide it.
 
-- pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location. When questions are named for a recheck, it replaces only those questions' sections in the same result file. When the caller hands over how each More was settled, fixed or left with why, pith brings the result file to that state and checks its form again.
+- pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location.
 
-    Returning the full text would fill the caller's conversation. The short result has the same shape as the report of `/writ:up`, with a line per question saying in a few words what the receiver gains or struggles with, so the caller can judge from it alone. Replacing only the sections keeps the answers of the questions not named, so every question keeps an answer. The caller does not edit the result file itself: only pith writes it, so its form is checked every time, and no caller relies on pith's insides.
+    Returning the full text would fill the caller's conversation. The short result has the same shape as the report of `/writ:up`, so the caller can judge from it alone. The result file's form is in "The result file: who writes, who commits, and its form".
 
 - Before returning, pith checks the form of the Good and More by script: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 
-    What a machine can decide, checked by a machine, is fast and gives the same answer every time. The caller receives only what was already checked, so it does not check the same again. The script sits inside pith and nothing else calls it, because a caller that relied on its insides would break when pith's build changed. The script, and the hooks that stop the first user, are written with Python 3's standard library only. Each check can be fixed and tested on its own as checks grow, Python is there wherever git is in most cases, and nothing depends on something like Node.js that the user may not have.
+    What a machine can decide, checked by a machine, is fast and gives the same answer every time. The caller receives only what was already checked, so it does not check the same again. The script sits inside pith and nothing else calls it, because a caller that relied on its insides would break when pith's build changed. The script, and the hooks that stop the first user, are written with Python 3's standard library only, so each check can be fixed and tested on its own as checks grow. python3 comes with git in the Mac developer tools, and on Linux and Windows it is no less common than jq, while Node.js may not be on the user's machine. When python3 is missing, writ stops instead of skipping a check: pith stops and tells the user to install Python 3.9 or later, and the hook stops the first user's tool calls and the start of writ's agents with the same message. A skipped check goes unnoticed, so no one would learn that the rule was not kept.
 
 - When a question comes up, pith does not ask the user but returns it to the caller as its result.
 
@@ -386,7 +417,7 @@ The caller may be the conductor of `/writ:up`, or the user's conversation that a
 
 ## Check quality by using writ where its benefits can be seen (validation)
 
-Quality is first checked on the six benefits, by validation: use writ as its user would on the golden path, and lay what happened beside the benefits. The situations chosen are ones where, without the benefit, the user would plainly struggle. In other situations, whether the benefit arrived cannot be seen. Until the benefits pass, defects of what the user takes for granted are not fixed first.
+Checking effort goes to the six benefits first, because they are why the user chooses writ. They are checked by validation: use writ as its user would, in the README's example situations, which show the main way the user uses it, and lay what happened beside the benefits. The situations chosen are ones where, without the benefit, the user would plainly struggle. In other situations, whether the benefit arrived cannot be seen. Quality the user takes for granted is not checked up front, beyond what a script decides; it is fixed when it shows up in use. Until the benefits pass, defects of what the user takes for granted are not fixed first.
 
 Every quality is checked with a separate subagent that does not know the discussion, as the first user. The first user runs writ in the user's place, uses what comes back, and reports what happened. Pass or fail is decided by the conductor checking writ, which lays the report beside the benefits. Each situation is run once. writ's result can differ from run to run, but running it costs time and money, so the spread is not measured by running many times.
 
@@ -422,13 +453,13 @@ What a machine can decide is checked by script every time. It is fast, gives the
 
 - Comparing the working directory before and after a run, only the target work and the result file in `open/` have changed. After clearing, only the target work has.
 - pith's Good and More answer every question, every place exists, and every quoted piece of evidence is in the work or in the first user's report. pith checks this itself every time it returns, and the script is tested with Python's unittest on a case it stops and a case it lets through.
-- While a first user runs, the hooks stop the uses of tools that read how the work was made. This too is tested with unittest.
+- While a first user runs, the hooks stop reading git history and conversation records. This too is tested with unittest.
 - Every link from the README to the essentials files exists, and the names the user sees match between the README and writ.
 
-Other quality the user takes for granted is not covered up front; it is fixed when it shows up in use, such as not being asked the same thing twice, not being left waiting, and facts matching the repository. Such failures are easy to see and quick to fix.
+The rest of it, such as not being asked the same thing twice, not being left waiting, and facts matching the repository, is left to use, since such failures are easy to see and quick to fix.
 
 ### What is not checked
 
-Only the golden-path situations above are tried. Other kinds of work or readers, and other flows, are not. The design relies on the essentials being written in words that fit any kind of work.
+Only the README's example situations above are tried. Other kinds of work or readers, and other flows, are not. The design relies on the essentials being written in words that fit any kind of work.
 
 Whether Claude Code chooses writ for a document during other work is not checked by running it. It depends on how Claude Code reads the skill's description at the moment, which writ cannot make certain. If chosen, the flow is the same as checked above; if not, the user calls `/writ:up` as the README says, so little is lost. What writ can change is the description. So the conductor reads the description against the official guidance on skill descriptions. It passes when it follows that guidance and says what the skill does and when to use it, including when a document is about to be written during other work.
