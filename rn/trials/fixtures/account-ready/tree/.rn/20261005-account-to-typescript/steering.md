@@ -21,9 +21,10 @@ because it had no incident; this is one, so it moves too, and a mistake of the k
 
 ## Attractive quality
 
-- A1: A user who signed up with only an email address is shown a name that tells them apart from
-  every other user and shows nothing personal, no part of the address included, never "undefined",
-  so support stops being asked about it.
+- A1: A user who signed up with only an email address, whose `nickname`, `firstName`, and `lastName`
+  are each missing, `null`, or `""`, is shown a name that tells them apart from every other user and
+  shows nothing personal, no part of the address included, never "undefined", "null", or blank, so
+  support stops being asked about it.
 - A2: Given only such a name, support finds the user's ID with one command run with the key, so a
   user who writes in giving that name is answered from their first message.
 
@@ -31,8 +32,8 @@ because it had no incident; this is one, so it moves too, and a mistake of the k
 
 - M1: Users with a nickname, or with first and last names, are shown the same name as today.
 - M2: A mistake of the kind in `docs/incidents.md` made in `account` fails `npm run build`.
-- M3: A user with only a first name or only a last name is shown that name alone, never with
-  "undefined".
+- M3: A user with only a first name or only a last name, the other missing, `null`, or `""`, is
+  shown that name alone, never with "undefined", "null", or a stray space.
 - M4: No name reveals anything about the user, their ID included, to anyone without the key; the
   key is never in the repository.
 
@@ -40,8 +41,12 @@ because it had no incident; this is one, so it moves too, and a mistake of the k
 
 - Fact, decided by the user: the reason for the move is the "undefined undefined" name shown to
   users who signed up with only an email address, which brings repeated support questions.
-- Fact, run with node on `src/account/account.js`: `displayName` gives "undefined undefined" for a
-  user with no names, and "Kiyo undefined" for one with a first name only.
+- Fact, told by the user: in a user record, `nickname`, `firstName`, and `lastName` can each be
+  missing, `null`, or `""`; each of the three means the name is absent.
+- Fact, run with node on `src/account/account.js` on each form: `displayName` gives "undefined
+  undefined" for a user with no names missing, "null null" for both `null`, " " for both `""`, "Kiyo
+  undefined" and "Kiyo null" for a first name only, and " Ito" for a last name only with `""` first;
+  a `nickname` of `""` or `null` falls through to the first and last names.
 - Fact, decided by the user: none of the part before "@", the whole address, or one fixed word
   for everyone will do: the first two show the address, the last does not tell users apart.
 - Assumption: other users may see the names, since the user does not know who sees them; so no
