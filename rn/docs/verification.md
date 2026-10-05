@@ -16,11 +16,10 @@ broke.
 
 ## How a run goes
 
-- Each attractive criterion has its own trial in `rn/trials/`, which sets up the scene's start,
-  runs `rn` as its user would until the scene's end, and leaves the record for the first user. A
-  trial runs only its own scene: a criterion shown before the scene's start is set up from a fixture
-  in `rn/trials/fixtures/`, committed on a session branch of a fresh clone, not reached by running
-  the sessions before it.
+- Each trial in `rn/trials/` sets up its scene's start, runs `rn` as its user would until the
+  scene's end, and leaves the record for the first user. A scene that starts partway through a
+  session starts from a fixture in `rn/trials/fixtures/`, committed on a session branch of a fresh
+  clone, not reached by running the session up to it. One run serves every scene it reaches.
 - Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ>` in that clone, carrying the
   conversation over with `--resume`. `/clear` is a new `claude -p` without `--resume`.
 - A stand-in plays the user. It is given only its part below and what `rn` says to it, writes in
@@ -49,7 +48,7 @@ The account session starts from rough words:
 - At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
   its reason and decisions, and otherwise gives `/rn:gm` with what it saw.
 
-The 0.8.0 session asks for coupons:
+The coupon session asks that every coupon be a discount:
 
 - Why the stand-in wants every coupon to be a discount, said only when asked why: a coupon once
   took an order's total below 0, and money went back to the customer by mistake.
@@ -71,37 +70,35 @@ The 0.8.0 session asks for coupons:
 
 ### A2: The user is called only for decisions that are theirs
 
-- The account session from its approved plan (fixture `plan-approved`) to the Design sign-off.
+- A1's run.
 
-    Passes when each call to the stand-in is for what a user with no name is shown, what is done
-    about records that may have no email, or the Design sign-off, none twice; the stand-in answers
-    what a user with no name is shown without asking back, since the question gives the one point,
-    the ways, what each gives and costs, and the one `rn` recommends and why; and the approved
-    design holds the answer.
+    Passes when each call to the stand-in asks what only it can say, why it wants the goal, what it
+    knows, or what it chooses, or is a Plan sign-off; none asks what the repository or a run could
+    tell, and none asks again what was answered. The stand-in answers what a user with no name is
+    shown without asking back, since the question gives the one point, the ways, what each gives
+    and costs, and the one `rn` recommends and why; and the plan holds the answer.
 
 ### A3: At a sign-off, the user decides from the proposal
 
-- The Design sign-off reached in A2's run, where the stand-in is given no words. What a user with no
-  name is shown rests on every record having an email, which nothing in the session can check.
+- The second Plan sign-off of A1's run, where the stand-in is given no words.
 
     Passes when the stand-in, reading only the proposal, decides as a second stand-in with the same
     part decides reading the real thing on the pull request; every viewpoint in the proposal has a
     Good or a More, each holding at its place under the criterion ID it names; and the proposal
-    names the email shortfall as a More.
+    names as a More what the plan rests on that nothing in the session could check.
 
 ### A4: Work that takes days goes on from where it stopped
 
-- The account session from its approved design with the first build task done (fixture
-  `build-second-task`): the stand-in says "go on", the run is stopped once the generator has edited
-  a file, and the stand-in gives `/rn:dn`, then `/clear` and `/rn:up`, until that task is checked
-  off.
+- The coupon session at its first build task, both sign-offs before it approved (fixture
+  `coupon`): the stand-in says "go on", the run is stopped once the generator has edited a file,
+  and the stand-in gives `/rn:dn`, then `/clear` and `/rn:up`, until that task is checked off.
 
     Passes when it goes on with the same task, the edits the pause committed kept in what follows
-    rather than reverted and made again, does not redo the finished task, speaks Japanese, and asks
-    the stand-in nothing it already answered.
+    rather than reverted and made again, does not redo the sign-offs, speaks Japanese, and asks the
+    stand-in nothing the record holds.
 
-- `/rn:up` on the coupon session paused under `rn` 0.8.0 in its first task (fixture
-  `coupon-0.8.0`), until the Plan sign-off.
+- The coupon session paused under `rn` 0.8.0 in its first build task (fixture `coupon-0.8.0`):
+  `/rn:up`, until the Plan sign-off.
 
     Passes when it goes on from that session's goal and what was done, with `steering.md` in the
     current form, what the old design approved in a `notes` item, a stop at the Plan sign-off, and
