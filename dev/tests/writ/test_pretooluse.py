@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
 ENTRY = os.path.join(PLUGIN_ROOT, "hooks", "pretooluse.py")
 HOOKS_JSON = os.path.join(PLUGIN_ROOT, "hooks", "hooks.json")
 FIRST_USER = "writ:first-user"

@@ -25,10 +25,12 @@ code-modernization).
 - **When python3 is missing, stop and tell the user to install it; never skip the check.**
   - Rationale: a skipped check goes unnoticed, so no one learns the rule is not being kept.
 - **State in the plugin's README that Python 3.9 or later is needed.**
-- **Write the tests with the standard `unittest`, in the plugin's own `tests/`** (e.g. `rn/tests/`),
-  as the official `security-guidance` and `code-modernization` plugins do. **Feed in the JSON a hook
-  would receive, and check both a case it stops and a case it lets through.**
-  - Rationale: a check that never stops anything looks the same as one that works.
+- **Write the tests with the standard `unittest`, in `dev/tests/<plugin>/`** (e.g. `dev/tests/rn/`),
+  outside the plugin's directory. **Feed in the JSON a hook would receive, and check both a case it
+  stops and a case it lets through.**
+  - Rationale: a check that never stops anything looks the same as one that works. Installing a
+    plugin copies its whole directory, so what only its makers use is kept out of it and never
+    reaches the user.
 - **Name each test by what must happen, as one sentence (e.g. `test_first_user_reading_git_history_is_blocked`),
   as the official plugins do, and mark its body with `# Given`, `# When` and `# Then`.**
   - Rationale: each test then reads as a situation, an action and what must follow, so a reader sees
@@ -126,16 +128,16 @@ code-modernization).
   - Rationale: aiming at no More never ends, since every fix and every new first user brings fresh
     small remarks. When to stop is the user's call, and they make it quickest from whether the
     plugin can be used now, or whether anything got worse.
-- **Keep the code that runs this validation inside the plugin, in its own `trials/` apart from
-  `tests/`: one scene per attractive quality, from the state just before the moment the user gets it,
+- **Keep the code that runs this validation in the repository, in `dev/trials/<plugin>/` apart from
+  the tests: one scene per attractive quality, from the state just before the moment the user gets it,
   set up rather than reached by running what comes before, to the first result that shows whether
   they got it, leaving what happened for the conductor to read.**
   - Rationale: a trial put together on the spot guesses at how the last one ran and is lost with the
-    session; kept in the plugin, it runs the same way each time and is fixed along with the plugin.
+    session; kept in the repository, it runs the same way each time and is fixed along with the plugin.
     Nothing outside that span changes the answer, and a scene run to the end spends its time long
     after the answer has shown. How the parts join is checked by script on every run and shows in
     use.
-- **Write the trials as the plugin's own code is written, but leave `trials/` out of the line count.**
+- **Write the trials as the plugin's own code is written, but leave them out of the line count.**
   - Rationale: a trial starts Claude Code, which CI cannot run, and each run is read by the conductor,
     so the run itself is its check.
 - **Check by script, every time, whatever a script can decide.**
@@ -143,7 +145,7 @@ code-modernization).
 
 ### Tests
 
-- **CI runs every plugin's `tests/` on every push, counting which lines they run, and fails when any
+- **CI runs every plugin's tests on every push, counting which lines they run, and fails when any
   line is not run.**
   - Rationale: tests run by hand are skipped when they matter most, and a gap shown only as a number
     is left as it is; a failing run makes the missing test or the needless line get dealt with.

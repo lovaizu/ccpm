@@ -4,7 +4,7 @@ import os
 import re
 import unittest
 
-PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
 ESSENTIALS = os.path.join(PLUGIN_ROOT, "references", "essentials")
 
 

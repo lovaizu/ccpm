@@ -11,10 +11,10 @@ jobs:
         with:
           python-version: "3.9"
       - run: pip install "coverage>=7.10"
-      # Each plugin keeps its tests in its own tests/ (.claude/rules/plugin.md).
+      # Each plugin keeps its tests in dev/tests/<plugin>/ (.claude/rules/plugin.md).
       - run: |
-          for tests in */tests; do
-            coverage run --source="${tests%/tests}" -m unittest discover -s "$tests"
+          for tests in dev/tests/*; do
+            coverage run --source="${tests#dev/tests/}" -m unittest discover -s "$tests"
           done
       - run: coverage combine
       - run: coverage report

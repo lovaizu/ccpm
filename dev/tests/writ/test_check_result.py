@@ -8,7 +8,7 @@ import tempfile
 import textwrap
 import unittest
 
-PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
 ENTRY = os.path.join(PLUGIN_ROOT, "skills", "pith", "scripts", "check_result.py")
 
 ESSENTIALS = textwrap.dedent("""\

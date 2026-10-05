@@ -1,9 +1,9 @@
 """Run writ in a scene as its user would, and leave what happened for the conductor to read.
 
-    python3 writ/trials/run.py play <scene> <workdir>     set the scene up and run writ once
-    python3 writ/trials/run.py judge <scene> <workdir>    the user decides from writ's report, then the document
-    python3 writ/trials/run.py read <scene> <workdir>     a reader reads the finished document once
-    python3 writ/trials/run.py compare <scene> <workdir>  a reader compares it with the version before
+    python3 dev/trials/writ/run.py play <scene> <workdir>     set the scene up and run writ once
+    python3 dev/trials/writ/run.py judge <scene> <workdir>    the user decides from writ's report, then the document
+    python3 dev/trials/writ/run.py read <scene> <workdir>     a reader reads the finished document once
+    python3 dev/trials/writ/run.py compare <scene> <workdir>  a reader compares it with the version before
 
 Everything lands in <workdir>/<scene>/. A run takes many minutes.
 """
@@ -18,8 +18,8 @@ from pathlib import Path
 from scenes import SCENES
 
 TRIALS = Path(__file__).resolve().parent
-WRIT = TRIALS.parent
-REPO = WRIT.parent
+REPO = TRIALS.parents[2]
+WRIT = REPO / "writ"
 ROLES = TRIALS / "roles"
 
 

@@ -1,9 +1,6 @@
 [run]
 patch = subprocess
 parallel = true
-omit =
-    */tests/*
-    */trials/*
 
 [report]
 show_missing = true
