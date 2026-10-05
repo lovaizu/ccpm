@@ -252,6 +252,11 @@ proven and split into its own plugin.
 - [x] Ask the user to merge PR #15
 - [x] Add to writ's design that fixing an existing document first checks it with pith and keeps
       its Goods, as a handed result file does, and take the user's approval on PR #15
+- [ ] Add to `.claude/rules/plugin.md` (2. Check) that a plugin keeps its trial code inside it,
+      apart from `tests/`, with one minimal scene per attractive quality, and tell the rn session
+      the rule once pushed (rn's `driver.py` lives only in its scratchpad)
+- [ ] Build writ's trials in `writ/trials/` by that rule, one minimal scene per benefit the design
+      names, in Python 3.9 with the standard library only
 - [ ] Rebuild the prompts from that design, run writ on the README and the design, compare each
       with the version before as its reader, and take the user's review on PR #15
 - [ ] Ask the user again to merge PR #15
@@ -269,8 +274,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-10-05
+- **Last completed**: #6
+- **Next**: #7 — add the trial-code rule to `.claude/rules/plugin.md` and tell the rn session (rebuild-rn-c1); then build `writ/trials/` and run only the scenes the change touches ("understands it in one reading", "hand it straight on": fixing the typing rules document, and fixing copies of the README and the design), comparing each with the version before as its reader.
+- **Notes**: PR #15 (branch `worktree-writ`), not merged. The design change (82e188a) is approved; the prompts already carry it (ef246c5), so the step "Rebuild the prompts" needs only its runs. The user has approved trial runs; auto mode stopped `claude -p` from Bash with [Create Unsafe Agents] — do not reshape a stopped command to get past it, report it. Open questions from the earlier design run: build the before/after working-tree comparison script the design names (design.md, "Quality the user takes for granted") or drop it; may parts of the result-file form the design does not name change. rn session rebuild-rn-c1 waits for word when PR #15 is ready to merge again.
