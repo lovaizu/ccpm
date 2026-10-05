@@ -250,7 +250,7 @@ proven and split into its own plugin.
 - [x] Add `plugin.json` with a version, a `CHANGELOG.md`, the marketplace entry and the root README line
 - [x] Pass `claude plugin validate --strict` for the plugin and the marketplace
 - [x] Ask the user to merge PR #15
-- [ ] Add to writ's design that fixing an existing document first checks it with pith and keeps
+- [x] Add to writ's design that fixing an existing document first checks it with pith and keeps
       its Goods, as a handed result file does, and take the user's approval on PR #15
 - [ ] Rebuild the prompts from that design, run writ on the README and the design, compare each
       with the version before as its reader, and take the user's review on PR #15
