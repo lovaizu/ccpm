@@ -274,8 +274,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-06
-- **Last completed**: #6
-- **Next**: #7 — rerun only the design scene (`python3 writ/trials/run.py play design <workdir>`, then `compare design <workdir>`), check that the git command list and the lint details (Vale, textlint) in design.md survive, then report each attractive quality's closeness and whether writ is fit for real use (writ is new to its users), and take the user's review on PR #15.
-- **Notes**: PR #15 (branch `worktree-writ`), not merged. The design scene's last run (62 min) stopped at the usage limit mid-fix, so it was not judged. The typing-guide and README scenes after 19a8d3e passed: readers chose the fixed version and the earlier lost parts (design link, aim kept from the first user, etc.) were kept; no branch made. Open questions from the earlier design run: build the before/after working-tree comparison script the design names, or drop it; may parts of the result-file form the design does not name change. rn session rebuild-rn-c1 waits for word when PR #15 is ready to merge again.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
