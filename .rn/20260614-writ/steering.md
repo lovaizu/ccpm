@@ -255,7 +255,7 @@ proven and split into its own plugin.
 - [x] Add to `.claude/rules/plugin.md` (2. Check) that a plugin keeps its trial code inside it,
       apart from `tests/`, with one minimal scene per attractive quality, and tell the rn session
       the rule once pushed (rn's `driver.py` lives only in its scratchpad)
-- [ ] Build writ's trials in `writ/trials/` by that rule, one minimal scene per benefit the design
+- [x] Build writ's trials in `writ/trials/` by that rule, one minimal scene per benefit the design
       names, in Python 3.9 with the standard library only
 - [ ] Rebuild the prompts from that design, run writ on the README and the design, compare each
       with the version before as its reader, and take the user's review on PR #15
