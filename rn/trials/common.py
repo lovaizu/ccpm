@@ -124,25 +124,36 @@ class Trial:
 
     def start_from(self, fixture):
         """Commit a fixture on its session branch and open the session's draft pull request."""
-        tree = os.path.join(FIXTURES, fixture, "tree")
-        shutil.copytree(tree, self.work, dirs_exist_ok=True)
-        branch = os.listdir(os.path.join(tree, ".rn"))[0]
+        here = os.path.join(FIXTURES, fixture)
+        shutil.copytree(os.path.join(here, "tree"), self.work, dirs_exist_ok=True)
+        branch = read(os.path.join(here, "branch.txt")).strip()
+        message = read(os.path.join(here, "commit.txt"))
         self.git("checkout", "-q", "-b", branch)
         self.git("add", "-A")
-        self.git("commit", "-q", "-F", os.path.join(FIXTURES, fixture, "commit.txt"))
+        self.commit(message)
         self.git("push", "-q", "-u", "origin", branch)
         url = subprocess.run(["gh", "pr", "create", "-R", REPO, "--draft", "--base", "main",
                               "--head", branch, "--title", f"Fixture {fixture}", "--body",
-                              f"Plan: .rn/{branch}/steering.md"],
+                              f"Fixture {fixture}"],
                              cwd=self.work, capture_output=True, text=True).stdout.strip()
-        steering = os.path.join(self.work, ".rn", branch, "steering.md")
-        with open(steering) as f:
-            text = f.read()
-        with open(steering, "w") as f:
-            f.write(text.replace("PR_URL", url))
-        self.git("commit", "-q", "-a", "--amend", "--no-edit")
+        for root, _, files in os.walk(os.path.join(self.work, ".rn")):
+            for name in files:
+                path = os.path.join(root, name)
+                text = read(path)
+                if "PR_URL" in text:
+                    with open(path, "w") as f:
+                        f.write(text.replace("PR_URL", url))
+        self.git("add", "-A")
+        self.commit(message.replace("PR_URL", url), "--amend")
         self.git("push", "-q", "-f")
         self.log("trial", f"Started from fixture `{fixture}` on {branch}: {url}")
+
+    def commit(self, message, *args):
+        subprocess.run(["git", "commit", "-q", *args, "-F", "-"], cwd=self.work, input=message,
+                       text=True, check=True)
+
+    def head(self):
+        return self.git("rev-parse", "HEAD").strip()
 
     def run(self, scene):
         try:
@@ -151,6 +162,11 @@ class Trial:
             self.log("trial", f"Stopped: {e}.")
             sys.exit(3)
         print(self.record)
+
+
+def read(path):
+    with open(path) as f:
+        return f.read()
 
 
 def clone(path):

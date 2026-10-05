@@ -16,10 +16,9 @@ broke.
 
 ## How a run goes
 
-- Each trial in `rn/trials/` sets up its scene's start, runs `rn` as its user would until the
-  scene's end, and leaves the record for the first user. A scene that starts partway through a
-  session starts from a fixture in `rn/trials/fixtures/`, committed on a session branch of a fresh
-  clone, not reached by running the session up to it. One run serves every scene it reaches.
+- Each scene is run by its trial in `rn/trials/`, from the state just before the moment it checks
+  to the first result that shows it. A state partway through a session is a fixture in
+  `rn/trials/fixtures/`, committed on its session branch of a fresh clone with a draft pull request.
 - Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ>` in that clone, carrying the
   conversation over with `--resume`. `/clear` is a new `claude -p` without `--resume`.
 - A stand-in plays the user. It is given only its part below and what `rn` says to it, writes in
@@ -58,51 +57,50 @@ The coupon session asks that every coupon be a discount:
 
 ### A1: The user gets what they really want, though they start from rough words
 
-- The account session from `/rn:on` on `main` to the second Plan sign-off; at the first, the
-  stand-in gives `/rn:gm a user whose last name is null is shown "Ann null"`.
+- `/rn:on move src/account to TypeScript` on `main`, to `rn`'s first call to the stand-in.
 
-    Passes when `rn` asks the stand-in why it wants the goal, and the plan put up holds that no user
-    is shown "undefined" in their name, which the first words do not: moved to TypeScript as it is,
-    `${user.firstName}` still type-checks with the name missing. The plan put up after the `/rn:gm`
-    covers all three forms an absent name takes, missing, `null`, and `""`, for each name field,
-    not `null` alone; or, when the first plan already covered all three, `rn` shows the stand-in
-    where it does rather than adding `null` again.
+    Passes when `rn` asks why the stand-in wants the goal.
+
+- The account session at its first Plan sign-off (fixture `account-plan`), whose plan treats only a
+  missing name as absent: `/rn:gm a user whose last name is null is shown "Ann null"`, to the next
+  Plan sign-off.
+
+    Passes when the plan put up covers all three forms an absent name takes, missing, `null`, and
+    `""`, for each name field, not `null` alone.
 
 ### A2: The user is called only for decisions that are theirs
 
-- A1's run.
+- A1's first scene, gone on to `rn`'s third call, the stand-in answering each.
 
-    Passes when each call to the stand-in asks what only it can say, why it wants the goal, what it
-    knows, or what it chooses, or is a Plan sign-off; none asks what the repository or a run could
-    tell, and none asks again what was answered. The stand-in answers what a user with no name is
-    shown without asking back, since the question gives the one point, the ways, what each gives
-    and costs, and the one `rn` recommends and why; and the plan holds the answer.
+    Passes when each call asks what only the stand-in can say, why it wants the goal, what it
+    knows, or what it chooses; none asks what the repository or a run could tell, and none asks
+    again what was answered. A call to choose is answered without asking back, since it gives the
+    one point, the ways, what each gives and costs, and the one `rn` recommends and why.
 
 ### A3: At a sign-off, the user decides from the proposal
 
-- The second Plan sign-off of A1's run, where the stand-in is given no words.
+- The account session with its plan settled and its proposal not yet drafted, paused (fixture
+  `account-ready`): `/rn:up`, to the Plan sign-off, where the stand-in is given no words.
 
     Passes when the stand-in, reading only the proposal, decides as a second stand-in with the same
     part decides reading the real thing on the pull request; every viewpoint in the proposal has a
     Good or a More, each holding at its place under the criterion ID it names; and the proposal
-    names as a More what the plan rests on that nothing in the session could check.
+    names as a More each Assumption the plan rests on.
 
 ### A4: Work that takes days goes on from where it stopped
 
-- The coupon session at its first build task, both sign-offs before it approved (fixture
-  `coupon`): the stand-in says "go on", the run is stopped once the generator has edited a file,
-  and the stand-in gives `/rn:dn`, then `/clear` and `/rn:up`, until that task is checked off.
+- The coupon session paused in its first build task, its generator's test written and the code not
+  yet changed (fixture `coupon-paused`): `/rn:up`, to the first edit or call to the stand-in.
 
-    Passes when it goes on with the same task, the edits the pause committed kept in what follows
-    rather than reverted and made again, does not redo the sign-offs, speaks Japanese, and asks the
-    stand-in nothing the record holds.
+    Passes when it goes on with that task, handing the written test to its generator rather than
+    writing it again or asking whose it is, and speaks Japanese.
 
 - The coupon session paused under `rn` 0.8.0 in its first build task (fixture `coupon-0.8.0`):
-  `/rn:up`, until the Plan sign-off.
+  `/rn:up`, to the first call to the stand-in.
 
     Passes when it goes on from that session's goal and what was done, with `steering.md` in the
-    current form, what the old design approved in a `notes` item, a stop at the Plan sign-off, and
-    nothing asked again that the old record holds.
+    current form and what the old design approved in a `notes` item, and asks nothing the old record
+    holds.
 
 ## Machine checks
 
@@ -116,5 +114,6 @@ The coupon session asks that every coupon be a discount:
 | Hook checks 12–14: the conductor starts no agent in the background, ends its turn only at a stop or a question, and speaks the conversation language | the hooks; a stop shows in the run's output | A2, A3 | Every scene |
 | Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
 | `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
+| Each fixture in the current form passes the form checks | `python3 -m unittest discover -s rn/tests` | M4 | Every change to the fixtures or to the form |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
 | Installing `rn` brings `writ` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |

@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
-"""A1–A3: the account session from /rn:on on main to the second Plan sign-off.
-
-At the first Plan sign-off the stand-in gives feedback; at the second, the stand-in decides from the
-proposal alone and a second stand-in decides from the pull request, both recorded, neither sent.
-"""
+"""A3: the account session paused with its plan settled and its proposal not yet drafted, /rn:up to
+the Plan sign-off. The stand-in decides from the proposal alone and a second stand-in from the pull
+request; both are recorded, neither is sent."""
 import os
 import re
 import subprocess
 
 from common import ACCOUNT_PART, MAX_TURNS, Trial, clone
-
-FEEDBACK = '/rn:gm a user whose last name is null is shown "Ann null"'
 
 PR_READER = """You decide this sign-off by reading the real thing, not rn's message: the pull request
 {url} (use gh pr view / gh pr diff, and read the files on its branch in this clone; run git fetch and
@@ -22,7 +18,7 @@ and otherwise /rn:gm followed by what you saw. Then, after a line '---', list in
 the pull request you based it on."""
 
 
-def pr_reader(t, said):
+def pr_reader(said):
     reader = os.path.join(t.out, "reader")
     clone(reader)
     m = re.search(r"https://github\.com/\S+/pull/\d+", said)
@@ -36,19 +32,14 @@ def pr_reader(t, said):
 
 
 def scene():
-    said, sid, _ = t.turn("/rn:on move src/account to TypeScript")
-    sign_offs = 0
+    t.start_from("account-ready")
+    said, sid, _ = t.turn("/rn:up")
     for _ in range(MAX_TURNS):
         if t.waiting_for() == "Plan sign-off":
-            sign_offs += 1
-            if sign_offs == 2:
-                t.log("stand-in, from the proposal alone (not sent)", t.stand_in(ACCOUNT_PART, said))
-                t.log("second stand-in, from the pull request (not sent)", pr_reader(t, said))
-                return
-            reply = FEEDBACK
-        else:
-            reply = t.stand_in(ACCOUNT_PART, said)
-        said, sid, _ = t.turn(reply, sid)
+            t.log("stand-in, from the proposal alone (not sent)", t.stand_in(ACCOUNT_PART, said))
+            t.log("second stand-in, from the pull request (not sent)", pr_reader(said))
+            return
+        said, sid, _ = t.turn(t.stand_in(ACCOUNT_PART, said), sid)
     t.log("trial", "Turn limit reached.")
 
 
