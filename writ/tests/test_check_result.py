@@ -95,7 +95,7 @@ class CheckResultTest(unittest.TestCase):
             self.assertIn(fragment, line)
             self.assertTrue(line.startswith(".writ/open/01-report-readme.md"), line)
 
-    def test_given_a_result_in_form_when_checked_then_passes_with_no_output(self):
+    def test_a_result_in_form_passes_with_no_output(self):
         # Given
         text = GOOD_RESULT
         # When
@@ -104,7 +104,7 @@ class CheckResultTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(result.stdout, "")
 
-    def test_given_no_essentials_file_when_checked_then_stops_with_usage(self):
+    def test_no_essentials_file_stops_with_usage(self):
         # Given
         command = [sys.executable, ENTRY, ".writ/open/01-report-readme.md"]
         # When
@@ -113,7 +113,7 @@ class CheckResultTest(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("usage: check_result.py", result.stderr)
 
-    def test_given_a_missing_essentials_file_when_checked_then_stops(self):
+    def test_a_missing_essentials_file_stops_the_check(self):
         # Given
         self.write(".writ/open/01-report-readme.md", GOOD_RESULT)
         command = [sys.executable, ENTRY, ".writ/open/01-report-readme.md", "essentials/design.md"]
@@ -125,7 +125,7 @@ class CheckResultTest(unittest.TestCase):
 
     # every question answered
 
-    def test_given_a_question_written_over_two_lines_when_checked_then_read_as_one(self):
+    def test_a_question_over_two_lines_is_read_as_one(self):
         # Given
         self.write("essentials/readme.md", ESSENTIALS.replace(
             "- How far did you get installing from this README alone?",
@@ -135,7 +135,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_given_a_question_without_section_when_checked_then_stops(self):
+    def test_a_question_without_a_section_is_reported(self):
         # Given
         text = GOOD_RESULT.split("## readme.md: How far")[0]
         # When
@@ -143,7 +143,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, "no section `## readme.md: How far did you get")
 
-    def test_given_a_section_without_good_or_more_when_checked_then_stops(self):
+    def test_a_section_without_good_or_more_is_reported(self):
         # Given
         text = GOOD_RESULT.split("- More:")[0]
         # When
@@ -151,7 +151,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":15: no Good or More")
 
-    def test_given_a_question_reworded_when_checked_then_stops(self):
+    def test_a_reworded_question_is_reported_as_missing(self):
         # Given
         text = GOOD_RESULT.replace("on reading the opening", "from the opening")
         # When
@@ -161,7 +161,7 @@ class CheckResultTest(unittest.TestCase):
 
     # locations exist
 
-    def test_given_a_location_in_a_missing_file_when_checked_then_stops(self):
+    def test_a_location_in_a_missing_file_is_reported(self):
         # Given
         text = GOOD_RESULT.replace("`docs/README.md:8`", "`docs/INSTALL.md:8`")
         # When
@@ -169,7 +169,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":19: More location `docs/INSTALL.md:8`: no such file")
 
-    def test_given_a_line_past_the_end_when_checked_then_stops(self):
+    def test_a_line_past_the_end_is_reported(self):
         # Given
         text = GOOD_RESULT.replace("`docs/README.md:3-4`", "`docs/README.md:3-40`")
         # When
@@ -177,7 +177,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":12: Good location `docs/README.md:3-40`: outside")
 
-    def test_given_an_item_without_location_when_checked_then_stops(self):
+    def test_an_item_without_a_location_is_reported(self):
         # Given
         text = GOOD_RESULT.replace("`docs/README.md:8` ", "")
         # When
@@ -185,7 +185,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":19: More has no location")
 
-    def test_given_a_location_not_in_path_line_form_when_checked_then_stops(self):
+    def test_a_location_not_in_path_line_form_is_reported(self):
         # Given
         text = GOOD_RESULT.replace("`docs/README.md:3-4`", "`docs/README.md, opening`")
         # When
@@ -196,7 +196,7 @@ class CheckResultTest(unittest.TestCase):
 
     # evidence found
 
-    def test_given_evidence_not_in_quotes_when_checked_then_stops(self):
+    def test_evidence_not_in_quotes_is_reported(self):
         # Given
         text = GOOD_RESULT.replace('"looked elsewhere for a config file"', "looked elsewhere")
         # When
@@ -204,7 +204,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ':20: evidence (report) is not a quote in "..."')
 
-    def test_given_work_evidence_not_in_the_file_when_checked_then_stops(self):
+    def test_work_evidence_not_in_the_file_is_reported(self):
         # Given
         text = GOOD_RESULT.replace("You stop watching the build", "You never watch the build")
         # When
@@ -212,7 +212,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":13: evidence (work) not found in docs/README.md")
 
-    def test_given_report_evidence_not_in_the_report_when_checked_then_stops(self):
+    def test_report_evidence_not_in_the_report_is_reported(self):
         # Given
         text = GOOD_RESULT.replace('"looked elsewhere for a config file"', '"could not install"')
         # When
@@ -220,7 +220,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":20: evidence (report) not found")
 
-    def test_given_report_evidence_from_another_section_when_checked_then_stops(self):
+    def test_report_evidence_from_another_section_is_reported(self):
         # Given
         text = GOOD_RESULT.replace('"looked elsewhere for a config file"', '"I can stop"')
         # When
@@ -228,7 +228,7 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertProblems(result, ":20: evidence (report) not found")
 
-    def test_given_an_item_without_evidence_when_checked_then_stops(self):
+    def test_an_item_without_evidence_is_reported(self):
         # Given
         text = GOOD_RESULT.replace('  - Evidence (work): "You stop watching the build: tool tells you"\n', "")
         # When

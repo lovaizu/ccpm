@@ -46,7 +46,7 @@ class FirstUserHistoryTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stderr, "")
 
-    def test_given_first_user_when_bash_runs_git_history_then_blocked(self):
+    def test_first_user_reading_git_history_is_blocked(self):
         # Given
         commands = ("git log --oneline",
                     "git show HEAD~1:README.md",
@@ -66,7 +66,7 @@ class FirstUserHistoryTest(unittest.TestCase):
                 # Then
                 self.assertBlocked(result)
 
-    def test_given_first_user_when_bash_runs_other_git_or_commands_then_passes(self):
+    def test_first_user_running_other_commands_passes(self):
         # Given
         commands = ("git status", "git ls-files", "git -C repo rev-parse --show-toplevel",
                     "cat README.md | grep -n install", "python3 -m unittest")
@@ -77,7 +77,7 @@ class FirstUserHistoryTest(unittest.TestCase):
                 # Then
                 self.assertPassed(result)
 
-    def test_given_first_user_when_tool_reaches_conversation_records_then_blocked(self):
+    def test_first_user_reaching_conversation_records_is_blocked(self):
         # Given
         cases = [
             ("Read", {"file_path": "/Users/someone/.claude/projects/repo/abc123.jsonl"}),
@@ -93,7 +93,7 @@ class FirstUserHistoryTest(unittest.TestCase):
                 # Then
                 self.assertBlocked(result)
 
-    def test_given_first_user_when_tool_reads_the_work_then_passes(self):
+    def test_first_user_reading_the_work_passes(self):
         # Given
         cases = [
             ("Read", {"file_path": "/Users/someone/repo/README.md"}),
@@ -107,7 +107,7 @@ class FirstUserHistoryTest(unittest.TestCase):
                 # Then
                 self.assertPassed(result)
 
-    def test_given_other_agent_or_main_conversation_when_git_log_or_records_then_passes(self):
+    def test_other_agents_reading_history_or_records_pass(self):
         # Given
         agent_types = ("writ:generator", "general-purpose", None)
         for agent_type in agent_types:
@@ -127,7 +127,7 @@ class ForegroundAgentsTest(unittest.TestCase):
     def run_start(self, tool_input, agent_type=None):
         return run_entry(hook_input("Agent", tool_input, agent_type))
 
-    def test_given_writ_agent_started_in_background_when_hook_runs_then_moved_to_foreground(self):
+    def test_writ_agent_started_in_background_is_moved_to_foreground(self):
         for agent in ("writ:generator", "writ:first-user"):
             with self.subTest(agent=agent):
                 # Given
@@ -142,7 +142,7 @@ class ForegroundAgentsTest(unittest.TestCase):
                 self.assertEqual(output["permissionDecision"], "allow")
                 self.assertEqual(output["updatedInput"], dict(tool_input, run_in_background=False))
 
-    def test_given_writ_agent_started_without_the_field_when_hook_runs_then_set_to_foreground(self):
+    def test_writ_agent_started_without_the_field_runs_in_foreground(self):
         # Given
         tool_input = {"prompt": "Use docs/x.md", "subagent_type": "writ:first-user"}
         # When
@@ -152,7 +152,7 @@ class ForegroundAgentsTest(unittest.TestCase):
                          {"prompt": "Use docs/x.md", "subagent_type": "writ:first-user",
                           "run_in_background": False})
 
-    def test_given_other_agent_or_writ_agent_in_foreground_when_hook_runs_then_left_as_it_is(self):
+    def test_other_agents_and_foreground_writ_agents_are_left_as_they_are(self):
         # Given
         inputs = ({"prompt": "hi", "subagent_type": "general-purpose", "run_in_background": True},
                   {"prompt": "hi", "subagent_type": "writ:generator", "run_in_background": False})
@@ -184,7 +184,7 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
         return subprocess.run(["/bin/sh", "-c", self.command], input=stdin, env=env,
                               capture_output=True, text=True)
 
-    def test_given_no_python_when_first_user_calls_a_tool_then_blocked_with_install_message(self):
+    def test_without_python_first_user_is_blocked_and_told_to_install(self):
         # Given
         stdins = (hook_input("Read", {"file_path": "/Users/someone/repo/README.md"}),
                   hook_input("Bash", {"command": "ls"}).replace('": "', '":"'))
@@ -196,7 +196,7 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("install Python 3.9 or later", result.stderr)
 
-    def test_given_no_python_when_writ_agent_is_started_then_blocked_with_install_message(self):
+    def test_without_python_writ_agents_are_blocked_and_told_to_install(self):
         # Given
         stdins = (hook_input("Agent", {"prompt": "p", "subagent_type": "writ:generator"}, None),
                   hook_input("Agent", {"prompt": "p", "subagent_type": "writ:first-user"},
@@ -209,7 +209,7 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("install Python 3.9 or later", result.stderr)
 
-    def test_given_no_python_when_other_agent_calls_a_tool_then_passes(self):
+    def test_without_python_other_agents_pass(self):
         # Given
         stdin = hook_input("Bash", {"command": "echo agent_type writ:first-user"}, "general-purpose")
         # When
@@ -218,7 +218,7 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stderr, "")
 
-    def test_given_python_on_path_when_first_user_runs_git_log_then_entry_blocks(self):
+    def test_with_python_the_entry_file_blocks_git_log(self):
         # Given
         env = {"PATH": os.path.dirname(sys.executable) + os.pathsep + self.bin,
                "CLAUDE_PLUGIN_ROOT": PLUGIN_ROOT}

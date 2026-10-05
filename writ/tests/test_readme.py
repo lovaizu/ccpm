@@ -14,7 +14,7 @@ def read(*parts):
 
 
 class ReadmeTest(unittest.TestCase):
-    def test_given_the_readme_when_its_relative_links_are_followed_then_each_file_exists(self):
+    def test_every_relative_link_reaches_a_file(self):
         # Given
         links = re.findall(r"\]\(([^)#]+)\)", read("README.md"))
         # When
@@ -24,7 +24,7 @@ class ReadmeTest(unittest.TestCase):
         for link in relative:
             self.assertTrue(os.path.exists(os.path.join(PLUGIN_ROOT, link)), link)
 
-    def test_given_the_essentials_files_when_the_readme_is_read_then_each_is_linked(self):
+    def test_every_essentials_file_is_linked(self):
         # Given
         names = os.listdir(ESSENTIALS)
         # When
@@ -33,7 +33,7 @@ class ReadmeTest(unittest.TestCase):
         for name in names:
             self.assertIn("(references/essentials/{})".format(name), readme)
 
-    def test_given_the_skills_when_the_readme_is_read_then_its_commands_are_exactly_them(self):
+    def test_the_commands_taught_are_exactly_the_skills(self):
         # Given
         skills = os.listdir(os.path.join(PLUGIN_ROOT, "skills"))
         # When
