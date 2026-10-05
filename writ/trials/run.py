@@ -72,8 +72,18 @@ def play(name, scene_dir):
         f"# {name}\n\nBenefits: {', '.join(scene['benefits'])}\nLook at: {scene['look']}\n\n"
         f"## Request\n\n{scene['opening']}\n\n## writ ({minutes:.1f} min)\n\n{reply}\n\n"
         "## The scene at the end\n\n```\n" + git(repo, "status", "--short")
-        + git(repo, "log", "--oneline") + "```\n")
+        + git(repo, "log", "--oneline") + "```\n\n" + changed_only_target(name, repo))
     print(scene_dir / "play.md")
+
+
+def changed_only_target(name, repo):
+    """Only the target work and the result files in open/ may differ from the scene as set up."""
+    first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
+    changed = set((git(repo, "diff", "--name-only", first) + git(repo, "ls-files", "--others", "--exclude-standard")).split())
+    others = sorted(p for p in changed if not p.startswith(".writ/open/"))
+    target = SCENES[name]["target"]
+    passed = others == [target] or others == [] if target else len(others) <= 1
+    return f"Changed besides `.writ/open/`: {others or 'nothing'} — {'as expected' if passed else 'MORE THAN THE TARGET WORK'}\n"
 
 
 def judge(name, scene_dir):
