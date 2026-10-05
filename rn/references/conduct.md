@@ -221,7 +221,9 @@ what to do meanwhile is a question. At a sign-off, `open/` holds nothing but des
 again at its place as it is now.
 
 Write the proposal once, as the Proposal section of `conductor.md` asks, with the final state only:
-the points and fixes along the way are left out, since the user approves the final state. Its Goods
+the points and fixes along the way are left out, since the user approves the final state. Give the
+goal and every acceptance criterion as `steering.md` words them, since the work is judged by those
+words, and what the user knows that they leave out shows only against the words themselves. Its Goods
 and Mores are those on the attractive criteria and on must-be gaps met on the golden path; a must-be
 More let go stays in the record, since put before the user it asks them to spend their time on what
 they did not choose the work for. Each
@@ -243,6 +245,10 @@ language when the two differ, adding nothing and leaving nothing out.
 Draft PR: {url}
 
 {what you propose to do next, and why it serves the goal}
+
+Goal: {the goal as steering.md words it}
+Judged by:
+- {each acceptance criterion ID}: {the criterion as steering.md words it}
 
 Toward what you would choose it for:
 - {each attractive criterion ID}: {how far the work now gives it, in the user's terms} ({since the last proposal: what came closer, or the same})

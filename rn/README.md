@@ -126,6 +126,12 @@ there; until then, the plan shows them as not yet specified.
   I propose working out the design on this plan: it says what you want, why, and how you would
   know it is achieved.
 
+  Goal: a wrong type fails the build
+  Judged by:
+  - A1: Code reproducing each of the three bugs fails the build
+  - M1: Every file is .ts
+  - M2: The app builds and runs as before
+
   Toward what you would choose it for:
   - A1: each of the three bugs is named with how its failing build is checked; nothing is built yet
     (first proposal)
@@ -140,7 +146,8 @@ there; until then, the plan shows them as not yet specified.
 ```
 
 The map on top heads every message where `rn` stops for a sign-off or a pause: ✅ done, 👉 now,
-⬜ ahead. Under it, `rn` says what it proposes to do next and why, then how close the work has come
+⬜ ahead. Under it, `rn` says what it proposes to do next and why, and the goal and criteria in the
+plan's own words, so you can see what they leave out of what you know. Then it says how close the work has come
 to each thing you would choose it for, and what came closer since its last proposal. Clearing every
 shortfall never ends, so this is what you decide on: whether it has come close enough. Then it gives
 its grounds: each question the plan must answer, with what is good and what falls short, and where. You can say yes or
