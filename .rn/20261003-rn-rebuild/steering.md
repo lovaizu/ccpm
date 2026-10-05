@@ -404,8 +404,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-05
-- **Last completed**: #4 (#5–#8 checked off before it)
-- **Next**: #9 — once the user merges writ PR #15, merge `main` into this branch and run the scenes that call `writ` with the hooks on
-- **Notes**: PR #15 still open (review required) as of 2026-10-05. On merge, `main`'s CI holds `rn/tests` to every line run (`.coveragerc` `fail_under = 100`); check it in #9.
+- **Status**: not suspended
+- **Date**:
+- **Last completed**:
+- **Next**:
+- **Notes**:
