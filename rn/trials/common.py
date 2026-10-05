@@ -101,6 +101,8 @@ class Trial:
         try:
             j = json.loads(out)
             said, sid = j.get("result", ""), j.get("session_id", sid)
+            if not said:
+                said = "(no result) " + json.dumps({k: v for k, v in j.items() if k != "result"})
         except ValueError:
             said = out[-4000:] + "\nSTDERR:" + err[-2000:]
         self.log("rn" + (" (stopped by the trial)" if stopped else ""), said)

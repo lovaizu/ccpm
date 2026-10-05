@@ -372,7 +372,7 @@ and what changes for them.
 
 **Steps**:
 
-- [ ] Build `rn/trials/` and `rn/trials/fixtures/` from `rn/docs/verification.md` (each scene its
+- [x] Build `rn/trials/` and `rn/trials/fixtures/` from `rn/docs/verification.md` (each scene its
   own minimal trial, started from a fixture rather than the sessions before it), reusing what fits
   of `.rn/20261003-rn-rebuild/trials-before-split/`, then remove that directory; Python 3.9, stdlib,
   left out of the line count (`.claude/rules/plugin.md` § Check, writ PR #15, e0d5719)
