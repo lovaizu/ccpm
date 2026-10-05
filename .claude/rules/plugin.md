@@ -117,6 +117,14 @@ code-modernization).
 - **After an attractive-quality More is fixed, have a new first user check that point again.**
   - Rationale: whether the user now gets what the work is for shows only when someone who does not know
     the discussion uses it again.
+- **Judge a round of validation not by whether every More is gone, but for a new plugin by whether
+  each attractive quality has come close enough to put it to real use, and for a change to an
+  existing plugin by whether it improved what it set out to without making worse what worked
+  before. Report, for each attractive quality, how much closer it came than the round before,
+  together with that verdict.**
+  - Rationale: aiming at no More never ends, since every fix and every new first user brings fresh
+    small remarks. When to stop is the user's call, and they make it quickest from whether the
+    plugin can be used now, or whether anything got worse.
 - **Keep the code that runs this validation inside the plugin, in its own `trials/` apart from
   `tests/`: one scene per attractive quality, from the state just before the moment the user gets it,
   set up rather than reached by running what comes before, to the first result that shows whether
