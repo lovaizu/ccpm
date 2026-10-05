@@ -373,7 +373,9 @@ user for that viewpoint alone. Then the conductor decides each More:
 - A More whose fix would not bring the work closer is let go, with the reason.
 
     Its cost, or that the fix needs the README, the design document, or the user, is never that
-    reason. A must-be gap met only off the golden path is let go, its reason kept in the record:
+    reason, nor is the goal's silence: where whether a fix brings the work closer turns on what the
+    user wants of the result and the goal does not say, that is asked, since reading the silence as
+    their answer decides their point for them. A must-be gap met only off the golden path is let go, its reason kept in the record:
     hunting such gaps never ends, each fix leaves a smaller one, and the time goes from raising the
     attractive quality.
 

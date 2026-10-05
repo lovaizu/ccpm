@@ -174,7 +174,10 @@ will struggle.
 2. Decide each More as the Decision section of `conductor.md` asks. Fix a More that brings an
    attractive criterion closer, or a must-be gap met on the golden path; let go any other must-be
    More with its reason in the record, since hunting such gaps never ends and takes the time that
-   would raise the attractive quality. Fix from what the work
+   would raise the attractive quality. Never let a More go because the goal does not ask for what
+   it finds missing: where whether it brings the work closer turns on what the user wants of the
+   result and the goal does not say, ask the user that, since reading the silence as their answer
+   decides their point for them. Fix from what the work
    should be for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
    for the plan, and by `writ` for the documents; check it against the purpose. A fix to a More on
    attractive quality goes to a fresh first user for that viewpoint and its place alone, its own
