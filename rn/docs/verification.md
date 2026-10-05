@@ -19,6 +19,7 @@ broke.
 - Each scene is run by its trial in `rn/trials/`, from the state just before the moment it checks
   to the first result that shows it. A state partway through a session is a fixture in
   `rn/trials/fixtures/`, committed on its session branch of a fresh clone with a draft pull request.
+  Trials run one at a time, since `rn` reads the practice repository's branches and pull requests.
 - Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ>` in that clone, carrying the
   conversation over with `--resume`. `/clear` is a new `claude -p` without `--resume`.
 - A stand-in plays the user. It is given only its part below and what `rn` says to it, writes in

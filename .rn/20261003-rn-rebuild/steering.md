@@ -376,6 +376,8 @@ and what changes for them.
   own minimal trial, started from a fixture rather than the sessions before it), reusing what fits
   of `.rn/20261003-rn-rebuild/trials-before-split/`, then remove that directory; Python 3.9, stdlib,
   left out of the line count (`.claude/rules/plugin.md` § Check, writ PR #15, e0d5719)
+- [ ] Rewrite `rn/tests` to `.claude/rules/plugin.md` § Build on `main` once PR #15 merges: each test
+  named by what must happen, as one sentence, its body marked `# Given`, `# When`, `# Then`
 - [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
   with the hooks on
 - [ ] Run every machine check in the verification document, `claude plugin validate --strict`
