@@ -372,6 +372,11 @@ and what changes for them.
 
 **Steps**:
 
+- [ ] Move the trial drivers into `rn/trials/`, one minimal scene per attractive quality, as
+  `.claude/rules/plugin.md` § Check says (writ PR #15, e2d849d): Python 3.9, stdlib, left out of the
+  line count. Sources are the three `scratchpad/trial/driver.py` of earlier sessions under
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-rebuild-rn/` (363cf33b,
+  4a62afae, 74c8e337 — three differing versions)
 - [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
   with the hooks on
 - [ ] Run every machine check in the verification document, `claude plugin validate --strict`
