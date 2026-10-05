@@ -1,0 +1,13 @@
+diff --git a/src/api/tasks.js b/src/api/tasks.js
+index c2b3c69..960e38a 100644
+--- a/src/api/tasks.js
++++ b/src/api/tasks.js
+@@ -8,7 +8,7 @@ function toResponse(task) {
+     title: task.title,
+     status: task.status,
+     assigneeId: task.assigneeId,
+-    dueDate: task.dueDate,
++    dueAt: task.dueDate,
+   };
+ }
+ 
