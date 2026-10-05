@@ -128,7 +128,10 @@ How it asks follows the know-how of `grilling` in
 
 Two of these `rn` sharpens. A fact none of those sources can show, such as what the user's records
 hold, is asked, since only the user knows it and a guess holds in the repository but not where the
-product runs. What the user does not know but tells `rn` to go on with is written as an
+product runs. Each kind of input the goal speaks of, such as "a user with no name", is such a fact:
+what forms it takes where the product runs is asked unless the repository shows them, and what the
+product does today is checked on every form, since a criterion worded from the one form tried passes
+while the others still fail. What the user does not know but tells `rn` to go on with is written as an
 `Assumption`, not as their decision, so it stays a More in every proposal until something checks it.
 
 To this `rn` adds its own part. It finds what the user really wants from the purpose behind their
