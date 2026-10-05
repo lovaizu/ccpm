@@ -252,7 +252,7 @@ proven and split into its own plugin.
 - [x] Ask the user to merge PR #15
 - [x] Add to writ's design that fixing an existing document first checks it with pith and keeps
       its Goods, as a handed result file does, and take the user's approval on PR #15
-- [ ] Add to `.claude/rules/plugin.md` (2. Check) that a plugin keeps its trial code inside it,
+- [x] Add to `.claude/rules/plugin.md` (2. Check) that a plugin keeps its trial code inside it,
       apart from `tests/`, with one minimal scene per attractive quality, and tell the rn session
       the rule once pushed (rn's `driver.py` lives only in its scratchpad)
 - [ ] Build writ's trials in `writ/trials/` by that rule, one minimal scene per benefit the design
