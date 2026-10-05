@@ -250,6 +250,11 @@ proven and split into its own plugin.
 - [x] Add `plugin.json` with a version, a `CHANGELOG.md`, the marketplace entry and the root README line
 - [x] Pass `claude plugin validate --strict` for the plugin and the marketplace
 - [x] Ask the user to merge PR #15
+- [ ] Add to writ's design that fixing an existing document first checks it with pith and keeps
+      its Goods, as a handed result file does, and take the user's approval on PR #15
+- [ ] Rebuild the prompts from that design, run writ on the README and the design, compare each
+      with the version before as its reader, and take the user's review on PR #15
+- [ ] Ask the user again to merge PR #15
 - [ ] Once merged, tag `main` as `writ--v<version>` with `claude plugin tag --push` and publish
       the GitHub Release (the rule is in `.claude/rules/plugin.md`)
 
@@ -264,8 +269,8 @@ proven and split into its own plugin.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: YYYY-MM-DD
-- **Last completed**: #N description
-- **Next**: #N description
-- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
+- **Status**: paused
+- **Date**: 2026-10-05
+- **Last completed**: #6
+- **Next**: #7 — add to writ's design that fixing an existing document first checks it with pith (making a result file) and keeps its Goods; take the user's approval on PR #15, then rebuild the prompts and rerun writ on the README and the design (the user chose "a" = this path, A').
+- **Notes**: PR #15 (branch `worktree-writ`), not merged. Ground: writ run on copies of the README and design (scratchpad `cmp/`, `readme-run/`, `design-run/`, temporary) lost Goods of the input — e.g. the README's design link and "what readers can decide is left visibly undecided" — because writ never checks the document it was handed before rewriting it. writ's design run also returned two questions for the user: build the before/after working-tree comparison script the design names (design.md:413) or drop it; may parts of the result-file form the design does not name change. rn session rebuild-rn-c1 waits for word when PR #15 is ready to merge again.
