@@ -232,7 +232,7 @@ Design sign-off.
   purpose, and every part it passes over is gone or moved.
 - No diagram needs horizontal scrolling or shrunk text on the pull request.
 
-### #4: Design sign-off
+### [x] #4: Design sign-off
 
 **Purpose**: The user approves the README, design document, and verification document before the
 prompts and hooks are built on them.
@@ -241,7 +241,7 @@ prompts and hooks are built on them.
 
 **Steps**:
 
-- [ ] Present the README, design document, and verification document on PR #33 and take the verdict
+- [x] Present the README, design document, and verification document on PR #33 and take the verdict
   via `/rn:ty` (approve) or `/rn:gm` (revise → address the feedback, re-present)
 
 **Completion criteria**:
