@@ -33,6 +33,10 @@ How good a document is can be measured only once its reader and purpose are set;
 
     A caller such as rn starts a new `/writ:up` to have Mores fixed, and you do not carry over the earlier conversation. Checked again from the start, the earlier answers would be overwritten, and without the Goods to keep the generator would break what serves the purpose while it fixes.
 
+- When the request hands an existing document to fix without its result file, do not have it written first. Once the reader and purpose are settled and the essentials files chosen, call pith on the document as it is, as section 3 says, and go on from that result as from a handed result file.
+
+    The generator does not know why each part of the document is there. Asked to fix it without Goods to keep, it rewrites the parts that serve the reader together with the ones that fall short, and the user gets back a document that has lost what was good in it. Which parts serve the reader shows only when a first user uses the document as it is.
+
 - Look up every fact the document will state in the repository and the code; never infer one. The reader believes what is written and decides wrongly on a guess.
 
 - Choose the essentials files: always `${CLAUDE_PLUGIN_ROOT}/references/essentials/doc.md`, plus whichever of `readme.md`, `design.md`, `prompt.md` and `essentials.md` in the same directory fits the kind of document, when one does.
