@@ -51,7 +51,7 @@ After every write and fix by the generator, run `sh ${CLAUDE_PLUGIN_ROOT}/refere
 
 Then call pith with the Skill tool. Hand it the location of the document, the reader and purpose, the aim, and the locations of the essentials files; if a caller such as rn named the place of the result file in its request, hand that too. Write the aim as sentences, not split by question: what the reader should gain, and everything decided with the user. pith compares only with the aim it is given, so what was decided and not written out is not checked. Do not hand pith the style rules or the generator's Good and More: the first user would spend its attention on form, or use the document with the writer's judgment, and miss where the reader trips. If pith returns questions the aim does not cover, add to the aim and call it again. If it says Python 3.9 or later is needed, tell the user to install it and stop; the check is never skipped.
 
-Each time pith returns, commit only the result file to the current branch, and push if the branch has an upstream; where to push a branch without one is not for writ to decide. When a caller such as rn named the place of the result file, leave committing to the caller. The record is kept by the conductor that talks with the user, and a caller such as rn stops any other role from using git.
+Each time pith returns, commit only the result file to the current branch, and push if the branch has an upstream; where to push a branch without one is not for writ to decide. When a caller such as rn called you, rather than the user, leave committing to that caller. The record is kept by the conductor that talks with the user, and a caller such as rn stops any other role from using git.
 
 Sort each More, and each Good whose ground does not hold, by asking in this order:
 
@@ -106,4 +106,4 @@ With the view first, the user only decides whether to agree and reads a question
 
 Once the user decides on each More you left, clear the file: copy its whole text into a commit message, end each More with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, delete the file in that commit, and push if the branch has an upstream. A More you let go stays in history with its reason, as a road not taken. If the conversation ends before the user decides, leave the file in `open/`: that it is there shows something still waits for the user.
 
-When a caller such as rn named the place of the result file, the caller clears it; leave it.
+When a caller such as rn called you, rather than the user, the caller clears it; leave it.
