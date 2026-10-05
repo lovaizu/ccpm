@@ -29,6 +29,10 @@ code-modernization).
   as the official `security-guidance` and `code-modernization` plugins do. **Feed in the JSON a hook
   would receive, and check both a case it stops and a case it lets through.**
   - Rationale: a check that never stops anything looks the same as one that works.
+- **Write each test as Given / When / Then: name it `test_given_<situation>_when_<action>_then_<outcome>`,
+  and mark its body with `# Given`, `# When` and `# Then`.**
+  - Rationale: each test then reads as a situation, an action and what must follow, so a reader sees
+    what it guards without tracing the code, and a test whose Then checks nothing stands out.
 - **Have the tests run every line the plugin makes itself, and delete a line no test has a reason to
   run.**
   - Rationale: a line no test runs is either not needed, and only adds what can break, or needed and

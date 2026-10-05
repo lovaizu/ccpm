@@ -14,25 +14,35 @@ def read(*parts):
 
 
 class ReadmeTest(unittest.TestCase):
-    def test_every_relative_link_exists(self):
+    def test_given_the_readme_when_its_relative_links_are_followed_then_each_file_exists(self):
+        # Given
         links = re.findall(r"\]\(([^)#]+)\)", read("README.md"))
+        # When
         relative = [link for link in links if "://" not in link]
+        # Then
         self.assertTrue(relative)
         for link in relative:
             self.assertTrue(os.path.exists(os.path.join(PLUGIN_ROOT, link)), link)
 
-    def test_every_essentials_file_is_linked(self):
+    def test_given_the_essentials_files_when_the_readme_is_read_then_each_is_linked(self):
+        # Given
+        names = os.listdir(ESSENTIALS)
+        # When
         readme = read("README.md")
-        for name in os.listdir(ESSENTIALS):
+        # Then
+        for name in names:
             self.assertIn("(references/essentials/{})".format(name), readme)
 
-    def test_commands_match_the_skills(self):
+    def test_given_the_skills_when_the_readme_is_read_then_its_commands_are_exactly_them(self):
+        # Given
+        skills = os.listdir(os.path.join(PLUGIN_ROOT, "skills"))
+        # When
         readme = read("README.md")
-        for skill in os.listdir(os.path.join(PLUGIN_ROOT, "skills")):
+        # Then
+        for skill in skills:
             self.assertIn("/writ:{}".format(skill), readme)
             self.assertIn("name: {}\n".format(skill), read("skills", skill, "SKILL.md"))
-        self.assertEqual(set(re.findall(r"/writ:(\w+)", readme)),
-                         set(os.listdir(os.path.join(PLUGIN_ROOT, "skills"))))
+        self.assertEqual(set(re.findall(r"/writ:(\w+)", readme)), set(skills))
 
 
 if __name__ == "__main__":
