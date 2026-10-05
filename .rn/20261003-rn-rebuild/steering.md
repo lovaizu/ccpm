@@ -375,7 +375,7 @@ and what changes for them.
 - [ ] Build `rn/trials/` and `rn/trials/fixtures/` from `rn/docs/verification.md` (each scene its
   own minimal trial, started from a fixture rather than the sessions before it), reusing what fits
   of `.rn/20261003-rn-rebuild/trials-before-split/`, then remove that directory; Python 3.9, stdlib,
-  left out of the line count (`.claude/rules/plugin.md` § Check, writ PR #15, e2d849d)
+  left out of the line count (`.claude/rules/plugin.md` § Check, writ PR #15, e0d5719)
 - [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
   with the hooks on
 - [ ] Run every machine check in the verification document, `claude plugin validate --strict`
