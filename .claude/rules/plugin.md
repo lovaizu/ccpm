@@ -79,6 +79,14 @@ code-modernization).
   waiting); `{target}` names the work. Using the same target again overwrites the same file.
   - Rationale: pushed, the result survives the conversation and can be read on the pull request; one
     file per target holds only what applies to the work as it is now.
+- **Only the conductor that talks with the user commits, pushes and clears; a role or plugin it calls
+  writes the file and returns, however it is called.**
+  - Rationale: the record is kept by the one role that knows what the user decided; a caller such as
+    rn stops any other role from using git, so a called plugin that commits fails there.
+- **To go on with a work already checked, hand the next call its result file; that call takes the
+  file as where the work stands, keeps its Goods, and works on its Mores.**
+  - Rationale: a new call does not carry over the conversation, so without the file it checks from the
+    start, overwrites the earlier answers, and breaks what was Good while fixing.
 - **Clear a file once everything in it is settled: copy its whole text into the commit message, and
   delete the file in that commit.** A More is settled when it is fixed, let go with its reason, or
   decided by the user; end each More in the message with what became of it (`→ fixed:`,
