@@ -106,7 +106,7 @@ class Trial:
         except ValueError:
             said = out[-4000:] + "\nSTDERR:" + err[-2000:]
         self.log("rn" + (" (stopped by the trial)" if stopped else ""), said)
-        if "hit your session limit" in said or "hit your usage limit" in said:
+        if re.search(r"hit your \w+ limit", said):
             raise Stop("usage limit")
         return said, sid, stopped
 
