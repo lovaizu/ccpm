@@ -83,7 +83,7 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
 
 # Tasks
 
-### [ ] #1: Plan sign-off
+### [x] #1: Plan sign-off
 ### [ ] #2: Design sign-off
 
 # Not yet specified
@@ -95,9 +95,9 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
   does not exist. This is a fault of rn this session fixes.
 
 - The design, from the three causes the issues come from:
-  1. Checks by a first user run everywhere (#39, #45): a first user uses only a task result and the
-     deliverable; the conductor makes the question, the plan and the proposal right as it writes;
-     writ is called once per document, with every design point settled.
+  1. Checks by a first user run everywhere (#39, #45): the viewpoints stay the form every maker
+     writes to and every check uses, the conductor included; a first user uses only what its maker
+     cannot see without use; writ is called once per document, with every design point settled.
   2. What the user reads grows with the work checked (#46): a proposal and every check's short
      result hold only the conductor's view, the points the user decides, and the next move; fixed in
      `.claude/rules/plugin.md`, rn and writ.
@@ -105,5 +105,8 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
      act only in the session that runs rn and on the agents it started, check the verification
      document once the design writes it; the conductor waits for its agents one way; /rn:on keeps
      the worktree's branch.
+- The design starts from an audit of rn 0.9.0 as a whole, its design, prompts and hooks, against
+  what rn should be, and from why 0.9.0, rebuilt to be simpler, came out worse in use; the user asked
+  for both when approving the plan.
 - How it is shown to work: one rn session run end to end on the practice repository, compared with
   rn 0.9.0's run on time to the Design sign-off, the proposal's length, and what the user was asked.
