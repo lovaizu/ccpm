@@ -63,5 +63,7 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 
 # Not yet specified
 
-- How the check tells the first user's own saved output from any other agent's, and how
-  `writ/docs/design.md:80` and `writ/agents/first-user.md:35-37` say it.
+- The tasks that build what the design documents say: the hook in `writ/hooks/checks/`, its unittest
+  cases, the A1 trial in `dev/writ/trials/`, `writ/agents/first-user.md:35-37` saying the first user
+  may read the output its own calls saved, and the `writ/CHANGELOG.md` entry; planned after the
+  Design sign-off.
