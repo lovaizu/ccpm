@@ -397,7 +397,7 @@ and what changes for them.
 
 **Steps**:
 
-- [ ] From #9: in A2's rerun rn told the user "the checker tried it 3 times" before its question
+- [x] From #9: in A2's rerun rn told the user "the checker tried it 3 times" before its question
   (how the work was made reaching the user); whether the user's want to tell users apart is asked
   after call 3 is not yet seen (the scene ends at call 3). Bring both to the user with the result
 - [ ] Present the Acceptance criteria run result on PR #33 and take the verdict via `/rn:ty`
