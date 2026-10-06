@@ -164,6 +164,16 @@ class CheckResultTest(unittest.TestCase):
         # Then
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_a_question_wrapped_with_an_indent_is_read_as_one(self):
+        # Given
+        self.write("essentials/readme.md", ESSENTIALS.replace(
+            "- How far did you get installing from this README alone?",
+            "- How far did you get installing\n  from this README alone?"))
+        # When
+        result = self.run_check(GOOD_RESULT)
+        # Then
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_a_question_without_a_section_is_reported(self):
         # Given
         text = GOOD_RESULT.split("## readme.md: How far")[0]

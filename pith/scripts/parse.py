@@ -120,7 +120,7 @@ def parse_questions(path: str) -> List[str]:
         if line.startswith("- "):
             current = [line[2:]]
             questions.append("")
-        elif current is not None and line.strip() and not line.startswith((" ", "\t", "#")):
+        elif current is not None and line.strip() and not line.startswith(("    ", "\t", "#")):
             current.append(line)
         else:
             current = None
