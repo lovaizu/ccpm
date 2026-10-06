@@ -413,8 +413,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-06
-- **Last completed**: #9 (e2d62a3); writ's tool-results stop raised as issue #36.
-- **Next**: #11 — run every scene in `rn/docs/verification.md` on the current rn, one at a time (`python3 dev/rn/trials/<scene>.py --writ $PWD/writ --out <new dir>`), have a first user read the records, and present each attractive quality's progress on PR #33 with the two points in #11's first step.
-- **Notes**: Of the final run, only `a1_a2_first_calls` finished (calls: languages, why with ways A–D, the input's forms; each answered without asking back); its record was in the session scratchpad and is not kept, so rerun it too. The other four were stopped by a network drop and by this pause; rn-try holds only `main` (c3b5f8e).
+- **Status**: not suspended
+- **Date**: YYYY-MM-DD
+- **Last completed**: #N description
+- **Next**: #N description
+- **Notes**: bounded forward pointer — branch/PR, next concrete action, open blockers, user-deferred paths, open questions / pending decisions not yet captured in `design.md`; not a re-narration of the session (that lives in `git log`)
