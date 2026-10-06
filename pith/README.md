@@ -4,15 +4,15 @@ pith is a Claude Code plugin. When it checks something you made, a document, a p
 
 - You learn where the receiver of your work, the person or AI that uses it, falls short of what you aimed for, from what happened when the work was actually used, not from what you meant while making it.
 - Each point pith returns names the place in the work and quotes what happened there, so you see what to fix and what must not be lost while fixing.
-- You can check a kind of work no one has written questions for yet, such as code or tests, because pith writes those questions from the work's purpose, tries them on your work, and keeps them for the next check of that kind.
+- You can check any kind of work: a document or a prompt with the questions pith comes with, and a kind no one has written questions for yet, such as code or tests, with questions pith writes from the work's purpose, tries on your work, and keeps for the next check of that kind.
 
 Reading your work over yourself, or asking the AI that helped you make it, does not find these places. Both know what you meant, and fill in what the work leaves out without noticing. pith hands your work to a separate AI that does not know the discussion or how the work was made. It uses the work as its receiver would: it reads a document, runs a prompt with an AI, calls code, runs tests. Then it reports what happened, without judging.
 
-The check you called as `/writ:pith` is now `/pith:up`, and pith comes installed with writ. Called on its own, `/pith:up` checks with pith's own questions, not writ's, as told under [With writ and rn](#with-writ-and-rn).
+The check you called as `/writ:pith` is now `/pith:up`. It checks the same way with the same questions, and pith comes installed with writ.
 
 ## Call `/pith:up` with the work and your aim, and you get a Good or More for every question
 
-pith checks with questions kept in an essentials file, one for each kind of work. That separate AI, called the first user, uses the work and reports what happened for each question. pith then gives each question a Good, where the receiver gains what your aim intends, or a More, where the receiver falls short of it.
+pith checks with questions kept in an essentials file, one for each kind of work. For a document or a prompt, it uses the ones it comes with. For any other kind, such as code or tests, it uses the one for that kind in `.pith/essentials/` in your repository, and writes it first when there is none. That separate AI, called the first user, uses the work and reports what happened for each question. pith then gives each question a Good, where the receiver gains what your aim intends, or a More, where the receiver falls short of it.
 
 ```mermaid
 sequenceDiagram
@@ -44,7 +44,7 @@ Say you wrote a prompt at `.github/prompts/pr-review.md` for the Claude that rev
   The receiver is Claude in CI, which reads each pull request's diff with this prompt and writes a comment.
   The aim is to miss no API change that breaks src/ui/api-client.js, and to comment on nothing else.
 
-● There was no essentials file for prompts, so I wrote .pith/essentials/prompt.md and tried it on this prompt.
+● I checked it with pith's own questions for a prompt.
   Changed endpoints are caught as the aim intends, but one kind of change gets past.
 
   More: a renamed response field is missed (pr-review.md:12, "Look at endpoints added, removed, or with changed arguments")
@@ -79,7 +79,7 @@ Say your team has a command-line tool, `taskctl`, and you changed its export in 
   Full text: .pith/open/02-report-export.md
 ```
 
-pith keeps the questions in `.pith/essentials/` in your repository, so the next check of code uses the same ones. If you already have your own essentials files, name them in the call instead: `/pith:up Check cli/src/export.js with docs/essentials/code.md ...`.
+The next check of code uses these same questions. If you already have your own essentials files, name them in the call, and pith uses them instead: `/pith:up Check cli/src/export.js with docs/essentials/code.md ...`.
 
 ## What stays in your repository, and how to clear it
 
@@ -109,7 +109,7 @@ Once every More is fixed or let go with a reason, copy the file into a commit me
 
 writ, which writes documents, and rn, which carries a goal through to a finished change, both check their work through pith, so an improvement to how work is checked is made once in pith and reaches both.
 
-writ keeps the essentials files for its kinds of work, documents of every kind, READMEs, design documents and prompts, and rn keeps its own; each hands them to pith when it checks. `/pith:up` called on its own never uses them, whether writ is installed or not: it uses the essentials files you name, or else those in `.pith/essentials/`, writing one first as in the first example. To check with writ's essentials files, call `/writ:up` with the document: it checks the document with writ's questions through pith, then fixes what it finds, as [writ's README](../writ/README.md) tells.
+To check a document and fix it yourself, call `/pith:up`; to have a document written or fixed for you, call `/writ:up`, as [writ's README](../writ/README.md) tells. rn keeps its own questions for its kinds of work, such as a plan, a design or a finished change, and hands them to pith when it checks.
 
 ## Getting started
 
