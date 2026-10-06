@@ -1,0 +1,54 @@
+# pith verification
+
+Run these after any change to `pith`, or to how `writ` or `rn` call it, to see whether it still gives
+what its [design document](./design.md) promises, and whether something that worked broke.
+
+## Where a run starts
+
+- The fixture repository `dev/writ/trials/fixture/`, which pith shares with writ: a small task app with
+  a command-line tool, `taskctl`, a prompt that reviews pull requests in CI, and documents for its
+  engineers. Each run copies it to a fresh directory and makes it a git repository of its own.
+- `pith` and `writ` from the branch under test, with any installed copies turned off.
+
+## How a run goes
+
+`python3 dev/writ/trials/run.py play <scene> <workdir>` runs `claude -p` with `/pith:up` in the copy
+and leaves what happened in `<workdir>/<scene>/play.md`, with how long it took. The maintainer sets
+that beside the scene's "Passes when".
+
+## Scenes
+
+### Where the receiver falls short, from what happened in use
+
+- `pr-review-hole`: `/pith:up` checks `.github/prompts/pr-review.md` with the aim of the review prompt.
+
+    Passes when a More points at a place in the prompt where the AI, given a diff, missed a breaking
+    change or decided what the aim leaves to the PR author, with what the AI did as its evidence; and
+    the short result holds pith's view and each More, with every Good left in the result file.
+
+- `pr-review-sound`: the same with `.github/prompts/pr-review.good.md`.
+
+    Passes when the question the other scene's More answers comes back Good.
+
+### A kind of work no one has written questions for
+
+- `release-notes`: `/pith:up` writes essentials for the CLI's release notes.
+
+    Passes when every question is answered from what happened when the first user used a real
+    release note, and the answers decide whether to upgrade.
+
+### What a check costs
+
+- Every scene above records how long the caller waited. Set it beside the same scene run with
+  `/writ:pith` of writ 0.1.0.
+
+    Passes when a check keeps the caller waiting no longer than 0.1.0 did, and its short result is
+    no longer than its Mores need.
+
+## Machine checks
+
+| Check | Command | When |
+|---|---|---|
+| The form check stops a result file with a missing answer, a place that does not exist or a misquote, on every write; the hooks stop a first user reading git history or conversation records and let it read its own saved output; every line run | `coverage run -m unittest discover -s dev/pith/tests` | Every push, in CI |
+| Strict validation | `claude plugin validate pith --strict` and `claude plugin validate . --strict` | Every change |
+| No `/writ:pith`, first user, form check or essentials file left in writ or rn | `git ls-files writ rn \| grep -E 'first-user\|check_result\|essentials/(doc\|readme\|prompt\|essentials\|report)\.md\|skills/pith/'` prints nothing | Every change |
