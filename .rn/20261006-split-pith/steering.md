@@ -262,5 +262,5 @@ so only a genuinely suspended session reads `paused`.)
 - **Status**: paused
 - **Date**: 2026-10-06
 - **Last completed**: none (plan written, not yet approved)
-- **Next**: plan gate — push the branch, open the draft PR, take the plan verdict; then #1 Try calling pith from another plugin
-- **Notes**: branch `worktree-split-pith`; push and PR creation failed (GitHub not authenticated: `gh auth login` needed), so commits are local-only and no draft PR exists yet. The plan was shown in the console; no verdict given.
+- **Next**: plan gate — take the plan verdict on draft PR #40; then #1 Try calling pith from another plugin
+- **Notes**: branch `worktree-split-pith`, draft PR https://github.com/lovaizu/ccpm/pull/40. The plan is waiting for the user's verdict; none given yet.
