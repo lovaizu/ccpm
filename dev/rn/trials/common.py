@@ -176,6 +176,60 @@ class Trial:
                            cwd=self.work, capture_output=True, text=True)
 
 
+DECIDE = """Decide this sign-off as the user. Reply with /rn:ty if what you read shows nothing against
+your reason, what you know, and your decisions, and otherwise /rn:gm followed by what you saw. Then,
+after a line '---', list in a few lines what you based it on."""
+
+PROPOSAL_READER = """rn has put this proposal to you:
+
+{said}
+
+You read only this proposal; do not look at the code, the pull request, or anything else.
+
+""" + DECIDE
+
+PR_READER = """Read the real thing, not rn's message: the pull request {url} (use gh pr view / gh pr diff,
+and read the files on its branch in this clone; run git fetch and git checkout of the branch first).
+Read {what} and anything else on the branch as far as you need to decide. Do not change, commit,
+or push anything.
+
+""" + DECIDE
+
+
+def proposal_reader(t, said, part):
+    r = subprocess.run(["claude", "-p", part + "\n\n" + PROPOSAL_READER.format(said=said),
+                        "--model", "opus", "--tools", ""], cwd=t.out, capture_output=True, text=True)
+    return r.stdout.strip()
+
+
+def pr_reader(t, said, part, what):
+    reader = os.path.join(t.out, "reader")
+    clone(reader)
+    m = re.search(r"https://github\.com/\S+/pull/\d+", said)
+    url = m.group(0) if m else "(the open pull request of lovaizu/rn-try)"
+    part = part.replace("You never look at the code or the pull request yourself.", "")
+    r = subprocess.run(["claude", "-p", part + "\n\n" + PR_READER.format(url=url, what=what),
+                        "--model", "opus",
+                        "--allowedTools", "Bash(gh:*) Bash(git fetch:*) Bash(git checkout:*) "
+                        "Bash(git log:*) Bash(git show:*) Bash(git diff:*) Read Grep Glob"],
+                       cwd=reader, capture_output=True, text=True)
+    return r.stdout.strip()
+
+
+def decide_at_sign_off(t, part, fixture, sign_off, what):
+    """From `fixture`, /rn:up to `sign_off`; two stand-ins with `part` decide it, one from the
+    proposal alone and one from `what` on the pull request; both are recorded, neither is sent."""
+    t.start_from(fixture)
+    said, sid, _ = t.turn("/rn:up")
+    for _ in range(MAX_TURNS):
+        if t.waiting_for() == sign_off:
+            t.log("stand-in, from the proposal alone (not sent)", proposal_reader(t, said, part))
+            t.log("second stand-in, from the pull request (not sent)", pr_reader(t, said, part, what))
+            return
+        said, sid, _ = t.turn(t.stand_in(part, said), sid)
+    t.log("trial", "Turn limit reached.")
+
+
 def read(path):
     with open(path) as f:
         return f.read()

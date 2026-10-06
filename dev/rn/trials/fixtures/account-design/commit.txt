@@ -1,0 +1,3 @@
+wip: pause at design
+
+● design ── every design point agreed, waiting for writ → paused at design

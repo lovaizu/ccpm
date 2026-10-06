@@ -10,8 +10,7 @@ broke.
   its cart and checkout in TypeScript and its account helpers in JavaScript. Its default branch
   `main` holds the tree of `c3b5f8e`, which has no `.rn/` directory, and it has no other branch and no
   open pull request, so no earlier session's plan or code is there to be found.
-- `rn` from the branch under test, and `writ` from `worktree-writ` at `d3754b1` until it is merged,
-  then from the marketplace.
+- `rn` and `writ` from the branch under test, as its marketplace installs them.
 - Claude Code 2.1.285 or later.
 
 ## How a run goes
@@ -45,6 +44,8 @@ The account session starts from rough words:
   and asks back when the question offers no ways or leaves out what they cost.
 - Whether every record has an email it does not know and cannot find out before the release, and,
   when asked, it says to go on as if every record has one.
+- What it decided in the design, at the Design sign-off: the design points in the fixture's `notes`
+  item.
 - At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
   its reason and decisions, and otherwise gives `/rn:gm` with what it saw.
 
@@ -87,6 +88,15 @@ The coupon session asks that every coupon be a discount:
     part decides reading the real thing on the pull request; every viewpoint in the proposal has a
     Good or a More, each holding at its place under the criterion ID it names; and the proposal
     names as a More each Assumption the plan rests on.
+
+- The account session with its plan approved and every design point agreed, waiting for `writ`,
+  paused (fixture `account-design`): `/rn:up`, to the Design sign-off, where the stand-in is given no
+  words.
+
+    Passes when the stand-in, reading only the proposal, decides as a second stand-in with the same
+    part decides reading the README, design document, and verification document on the pull
+    request; and every viewpoint in the proposal has a Good or a More, each holding at its place
+    under the criterion ID it names.
 
 ### A4: Work that takes days goes on from where it stopped
 
