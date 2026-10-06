@@ -65,6 +65,11 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
   (the user waits hours through rounds of writing in the design stage); #46 of A3 (a 72-line proposal
   the user cannot decide from); #43 of A5; #44 of M8.
 
+- Fact, decided by the user: a question to the user is not checked by a first user before it is
+  asked. The conductor makes it right before writing it, by looking up what can be settled; rn 0.9.0's
+  check of every question by a first user (`rn/references/conduct.md`, "Asking the user") is a fault
+  this session removes.
+
 # Rules
 
 - Judge every change from what rn should be for its user, and fix the cause wherever it shows; never
