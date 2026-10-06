@@ -61,6 +61,12 @@ time goes only to what is theirs.
     not say, so one of them fits. Ways drawn from what the repository holds can all miss it, and the
     user takes none.
 
+- Reading the criterion the question serves, what does it say the result gives the user on this
+  point?
+
+    The ways then come from what the user wants to gain, asked first where the criterion says only
+    what must not happen, so the user chooses among ways that all give it.
+
 - What part of the question could the goal, the conversation, the repository, the official
   documentation, or best practice have settled?
 

@@ -141,7 +141,11 @@ an acceptance criterion already speaks to: where none says what a result must do
 `rn` asks that first and writes the answer as a criterion, then builds the ways from its words, and
 the question names it. Ways drawn from what the repository holds can all miss what the user wants,
 and the user takes none; asked to look first, `rn` still offered them, so the order is held by the
-record rather than by the wording. A shortfall the first user finds in a question is never let go,
+record rather than by the wording. Even so `rn` offered ways under a criterion that said only what
+must not happen, such as "never shown as undefined", which gives nothing to build a way from. So an
+attractive criterion states what the user or their users gain, such as a name support can tell apart
+that shows nothing private; what must not happen is must-be quality. A gain is known only by asking,
+so writing the criterion brings the question of what the result must do before any way. A shortfall the first user finds in a question is never let go,
 since the user meets it and fixing it costs only rewriting the question; when no way gives what it
 wanted the result to do, `rn` asks the user that before any way, rather than ruling it out by what
 the code allows today. It asks one point per message, since

@@ -26,7 +26,7 @@ verification: <path of the verification document; docs/verification.md unless ag
 
 ## Attractive quality
 
-- A1: <what would make the user choose the result>
+- A1: <what the user or their users gain, which would make them choose the result>
 
 ## Must-be quality
 
@@ -64,6 +64,7 @@ Completion criteria:
 ```
 
 - Criterion IDs are `A1`, `A2`… and `M1`, `M2`…, never reused once given.
+- An attractive criterion states a gain; what must not happen is a must-be criterion.
 - A Fact "decided by the user" is one they chose. What they do not know but say to go on with is an
   `Assumption`, so it stays a More in every proposal until something checks it.
 - Tasks are taken in the order written. A task is marked `[x]` when the conductor decides its purpose

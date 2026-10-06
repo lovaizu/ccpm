@@ -17,6 +17,12 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
     The work then aims at why the user wants the goal, and the user approves at the Deliverable
     sign-off what they wanted, since that sign-off judges by the criteria.
 
+- Reading each attractive criterion, what does it say the user or their users gain?
+
+    The work then aims at a gain the user chose, and ways are built from it. A criterion that says
+    only what must not happen is met by any way that avoids it, including those that miss what the
+    user wanted.
+
 - Checking each fact the plan rests on at its source, which did not hold?
 
     The plan then stands on ground that holds to the end, instead of giving way in the middle of the

@@ -66,9 +66,11 @@ Asking the user:
   still fail.
 - Find what the user really wants from the purpose behind their words and the ideal it calls for,
   since the words alone can be met while the purpose is missed. Ask why they want it.
-- Offer ways only for a point an acceptance criterion already speaks to. Where none says what a
-  result must do for the user, ask that first, write the answer as a criterion, then build the ways
-  from its words: ways drawn from what the repository holds can all miss it.
+- Write each attractive criterion as what the user or their users gain, never only as what must
+  not happen: that is must-be quality, and gives nothing to build a way from. Where you do not know
+  the gain, ask what the result should do for them, and write the answer as the criterion.
+- Offer ways only for a point an attractive criterion already speaks to by its gain, and build the
+  ways from that gain: ways drawn from what the repository holds can all miss it.
 - Done when nothing is silently assumed. What the user does not know but tells you to go on with is
   an `Assumption`, not a Fact decided by them, since no one checked it.
 
