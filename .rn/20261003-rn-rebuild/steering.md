@@ -397,6 +397,9 @@ and what changes for them.
 
 **Steps**:
 
+- [ ] From #9: in A2's rerun rn told the user "the checker tried it 3 times" before its question
+  (how the work was made reaching the user); whether the user's want to tell users apart is asked
+  after call 3 is not yet seen (the scene ends at call 3). Bring both to the user with the result
 - [ ] Present the Acceptance criteria run result on PR #33 and take the verdict via `/rn:ty`
   (approve) or `/rn:gm` (revise → address the feedback, re-present)
 
@@ -410,8 +413,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: paused
-- **Date**: 2026-10-06
-- **Last completed**: #9 steps 1–2 (tests rewritten; hooks split per check, coverage 100%, 1d492e8). A2 reached on its scene after e327ba5 (attractive criteria state a gain); main merged (917eb00); rn-try holds only main, and trials now close their PR (dd6cd25).
-- **Next**: #9 step 3 — install rn and writ from the marketplace on this branch and run the scenes that call writ, hooks on; then step 4 (machine checks). The user said to go on with the work after resuming.
-- **Notes**: For #11: in A2's rerun rn told the user "the checker tried it 3 times" before its question (process leaking to the user); whether the user's want to tell users apart is asked after call 3 is unchecked (the scene ends at call 3).
+- **Status**: not suspended
+- **Date**: (YYYY-MM-DD)
+- **Last completed**: (task #N, or —)
+- **Next**: (task #N)
+- **Notes**: (blockers, decisions pending, anything the next session needs)
