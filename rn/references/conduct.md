@@ -178,7 +178,11 @@ will struggle.
    would raise the attractive quality. Never let a More go because the goal does not ask for what
    it finds missing: where whether it brings the work closer turns on what the user wants of the
    result and the goal does not say, ask the user that, since reading the silence as their answer
-   decides their point for them. Fix from what the work
+   decides their point for them. A More on a question is never let go, since the user meets
+   whatever it leaves, and fixing it costs only rewriting the question. Where no way gave what the
+   first user wanted the result to do, the criterion the question serves does not say it: ask the
+   user that first, with `Serves: goal`, and build the ways from the answer, never from what the
+   code allows today. Fix from what the work
    should be for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
    for the plan, and by `writ` for the documents; check it against the purpose. A fix to a More on
    attractive quality goes to a fresh first user for that viewpoint and its place alone, its own

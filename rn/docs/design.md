@@ -141,7 +141,10 @@ an acceptance criterion already speaks to: where none says what a result must do
 `rn` asks that first and writes the answer as a criterion, then builds the ways from its words, and
 the question names it. Ways drawn from what the repository holds can all miss what the user wants,
 and the user takes none; asked to look first, `rn` still offered them, so the order is held by the
-record rather than by the wording. It asks one point per message, since
+record rather than by the wording. A shortfall the first user finds in a question is never let go,
+since the user meets it and fixing it costs only rewriting the question; when no way gives what it
+wanted the result to do, `rn` asks the user that before any way, rather than ruling it out by what
+the code allows today. It asks one point per message, since
 with several the user answers the one they follow and the rest go by half-decided, and writes each
 into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
 or serves, which pull requests it replaces, and which languages the record and the talk are in, are
@@ -539,7 +542,7 @@ every end of the turn.
    `Serves:` line the criteria it rests on, or `goal` when it asks what a result must do (A2).
 4. Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but trailers
    such as `Co-Authored-By`.
-5. A settled `open/` item is whole in the commit message.
+5. A settled `open/` item is whole in the commit message; a settled report on a question lets no More go (A2).
 6. A stop commit leaves in `open/` only what its kind allows; at a sign-off the latest default
    branch is merged, and every Good and More in the proposal names an acceptance criterion by its
    ID, so the user sees what each bears on (A3).
