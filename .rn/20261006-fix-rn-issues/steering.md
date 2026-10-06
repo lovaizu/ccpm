@@ -117,6 +117,14 @@ pith (PR #40, `writ/README.md`):
   every user message with `session_id`.
 - Fact, tried with `claude -p` 2.1.291 and a logging PreToolUse hook: a hook fired for a subagent's
   tool call carries the main conversation's `session_id`, with its own `agent_id` and `agent_type`.
+- Fact, decided by the user: the work is judged against the last versions that run to the end, rn
+  0.8.0 (`rn--v0.8.0`) and writ 0.1.0 (`writ--v0.1.0`, with pith inside it); rn 0.9.0 cannot finish
+  a session, and plain Claude Code is no bar for these plugins.
+- Fact, decided by the user: the plan is made and carried out without stopping at the sign-offs in
+  between; the user is told when it is done, and decides by merging.
+- Fact, decided by the user: what makes a plugin good is held as pith's viewpoints, checked by use;
+  how work is made and checked lives once, in rn's and pith's designs, which other plugins use rather
+  than copy; `.claude/rules/plugin.md` keeps only this repository's own conventions.
 - Fact, official docs (plugins/dependencies) and tried on 2.1.291 in PR #40: a dependency installs
   with the plugin that declares it; a plugin's skill calls a dependency's skill with the Skill tool,
   and that skill starts its own plugin's agent and reads files under its own root; the caller cannot
@@ -135,8 +143,82 @@ pith (PR #40, `writ/README.md`):
 
 # Tasks
 
-### [ ] #1: Plan sign-off
-### [ ] #2: Design sign-off
+### [x] #1: Plan sign-off
+### [x] #2: Design sign-off
+### [ ] #3: The bar, measured
+
+Purpose: Know what rn 0.8.0 and writ 0.1.0 give and cost the user, so the rebuild is judged by it.
+
+Serves: A1-A4, A6-A11
+
+Completion criteria:
+
+- Attractive quality: the README's story is run end to end on `lovaizu/rn-try` with rn 0.8.0, and
+  writ 0.1.0 writes one document and checks one prompt; for each, the time the user waited, what they
+  read to decide, each call to them, and what they got are recorded.
+
+### [ ] #4: The plugin rules split by where each is used
+
+Purpose: What makes a plugin good becomes pith's viewpoints, how work is made and checked lives once
+in rn's and pith's designs, and `.claude/rules/plugin.md` keeps only this repository's conventions.
+
+Serves: A10, A11, M9
+
+Completion criteria:
+
+- Attractive quality: a maker reading pith's viewpoints for a plugin knows what to aim for, including
+  what the user spends on the golden path, and nothing in them is a step or a history.
+- Must-be quality: no rule is held in two places.
+
+### [ ] #5: pith, a plugin of its own
+
+Purpose: Any work can be checked by use with pith alone, and writ and rn check through it.
+
+Serves: A10, A11, M6, M11
+
+Completion criteria:
+
+- Attractive quality: installed alone, pith checks a prompt and a piece of code by use and returns
+  a short result bounded by what the caller decides.
+- Must-be quality: tests run every line; strict validation passes.
+
+### [ ] #6: writ, rebuilt on pith
+
+Purpose: writ returns a document the reader can be handed, at less cost than writ 0.1.0.
+
+Serves: A6-A9, A2 (#36, #37)
+
+Completion criteria:
+
+- Attractive quality: writing the same document as in #3 gives a document as good or better, in less
+  time and fewer agent runs, with a report the user decides from.
+- Must-be quality: tests run every line; strict validation passes.
+
+### [ ] #7: rn, rebuilt small from its README
+
+Purpose: rn gives the README's story in use (#39, #41, #43-#46).
+
+Serves: A1-A4, M1-M10
+
+Completion criteria:
+
+- Attractive quality: the README's story run end to end as in #3 is as good or better on every
+  attractive criterion, with less waiting, less to read at each sign-off, and calls only for what is
+  the user's.
+- Must-be quality: tests run every line; strict validation passes; other sessions are not stopped.
+
+### [ ] #8: The three released together, ready to merge
+
+Purpose: The user can merge the three and release them at once.
+
+Serves: M7, M9
+
+Completion criteria:
+
+- Must-be quality: CI passes; `marketplace.json`, the root README and each CHANGELOG list the three;
+  the user is told the result against #3, each criterion's standing, and what is theirs to decide.
+
+### [ ] #9: Deliverable sign-off
 
 # Not yet specified
 
