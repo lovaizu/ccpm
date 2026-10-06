@@ -8,7 +8,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PLUGIN = os.path.join(HERE, "..", "..", "..", "rn")
 FIXTURES = os.path.join(HERE, "..", "trials", "fixtures")
 sys.path.insert(0, os.path.join(PLUGIN, "hooks"))
-import check  # noqa: E402
+import form  # noqa: E402
 
 
 class FixturesTest(unittest.TestCase):
@@ -24,7 +24,7 @@ class FixturesTest(unittest.TestCase):
         for name, tree, sdir in current:
             with self.subTest(fixture=name):
                 # When the form checks run on it
-                problems = check.form_checks(tree, sdir)
+                problems = form.check(tree, sdir)
                 # Then they find nothing
                 self.assertEqual(problems, [])
 
