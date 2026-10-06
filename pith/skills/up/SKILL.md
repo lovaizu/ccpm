@@ -19,7 +19,7 @@ $ARGUMENTS
 
 ## Check a work
 
-The caller gives the work's location, its receiver and purpose, and the aim: what the receiver should gain and what was decided, in sentences. It may name essentials files, the result file to write, or, with a result file, the questions to check again after a fix.
+The caller gives the work's location, its receiver and purpose, and the aim: what the receiver should gain and what was decided, in sentences. It may name essentials files and the result file to write.
 
 1. Settle what to check against.
 
@@ -27,15 +27,15 @@ The caller gives the work's location, its receiver and purpose, and the aim: wha
     - Use the essentials files the caller named. Otherwise choose from `${CLAUDE_PLUGIN_ROOT}/references/essentials/`: for a document `doc.md`, plus `readme.md`, `design.md` or `essentials.md` when it is one; for a prompt `prompt.md`; for a Claude Code plugin `plugin.md`, plus `prompt.md` for its skills and agents. For any other kind, such as code or tests, use `.pith/essentials/<kind>.md` at the repository root, and when there is none, make it first as in "Make an essentials file".
     - Read every question and check that from the aim you can tell what answer would be a Good. Return the questions the aim does not cover, before any first user runs: a question with nothing to compare against cannot be judged after use.
 
-2. Start one new first user and hand it only the work's location, its receiver and purpose, the essentials files' locations, the language of the result, and, on a recheck, the questions to answer. Never hand it the aim, the maker's view, or anything of the discussion: knowing the aim, it would look for it and fill the gaps in its head.
+2. Start one new first user and hand it only the work's location, its receiver and purpose, the essentials files' locations, and the language of the result. Never hand it the aim, the maker's view, or anything of the discussion: knowing the aim, it would look for it and fill the gaps in its head.
 
 3. Lay the report beside the aim and give each question at least one Good or More, each with its place as `path:line` and evidence quoted from the work or the report. A Good says what the receiver gains, which a fix must not take away; a More says what the receiver struggles with, never how to fix it. A part the report names as read past, a stop or a guess is a More unless the aim shows the receiver needs it as it is. Check every Good at its place as strictly as every More: the caller will trust a Good without looking.
 
-4. Write the result file in the form of `${CLAUDE_PLUGIN_ROOT}/references/result-form.md`, at the place the caller named, or else `.pith/open/{NN}-report-{target}.md` at the repository root. A file already there for the same target is written to again; on a recheck, replace only the rechecked questions' sections, so every other answer stands. pith's hook checks the form on every write; fix what it reports. Do not commit: the record is kept by the conductor that talks with the user.
+4. Write the result file in the form of `${CLAUDE_PLUGIN_ROOT}/references/result-form.md`, at the place the caller named, or else `.pith/open/{NN}-report-{target}.md` at the repository root. A file already there for the same target is written to again. pith's hook checks the form on every write; fix what it reports. Do not commit: the record is kept by the conductor that talks with the user.
 
-5. Return a short result that grows with what the caller must decide, not with the size of the work: your view of how close the work comes to the aim, then each More in full (the question, what happened, what the receiver struggles with, and where), then the result file's location. The Goods stay in the file. End with this note: settle each More in the file yourself, a fixed one rewritten as its Good with evidence from the work as it is now, a left one with `Left because:`; call pith again only to recheck a fixed More of attractive quality, naming that question; once every More is settled, copy the file into a commit message, end each More there with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, and delete the file in that commit.
+5. Return a short result that grows with what the caller must decide, not with the size of the work: your view of how close the work comes to the aim, then each More in full (the question, what happened, what the receiver struggles with, and where), then the result file's location. The Goods stay in the file. End with this note: settle each More in the file yourself, a fixed one rewritten as its Good with evidence from the work as it is now, a left one with `Left because:`; confirm a fix by doing again what the first user did where the More was found and seeing that it no longer happens, rather than calling pith again; when a More shows something the essentials did not ask, keep it as a viewpoint of your own for this work, and propose it for the essentials at the end; once every More is settled, copy the file into a commit message, end each More there with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, and delete the file in that commit.
 
-A first user is started once for the work, and again only for a fixed More of attractive quality, on that question alone. A defect the receiver takes for granted, such as a wrong path, is easy to see once fixed, and checking it again takes the effort from what the receiver chooses the work for.
+A first user is started once for a work. Started again after a fix, a new one brings fresh small remarks with every run, and the checking never ends; whether a fix holds is seen by doing again what the first user did where the More was found.
 
 ## Make an essentials file
 

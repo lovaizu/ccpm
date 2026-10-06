@@ -114,9 +114,9 @@ pith is called by the user's conversation, by the conductor of `/writ:up`, or by
 
     Returning the full text would fill the caller's conversation. The short result holds only what the caller decides: the conductor's view of how close the work comes to the aim, and each More in full. A line for every question would grow with the questions, and a caller asked to decide from a list that grows with the work either reads all of it or stops reading (#46). The Goods stay in the file, where whoever fixes reads what must not be lost.
 
-- A first user is started once for the work, and once more only for each fixed More of attractive quality, on that question alone. For such a recheck the caller hands pith the result file and names the question; pith starts a new first user for that question and replaces only that question's section, so every other question keeps its answer. Every other More the caller settles in the file itself: a fixed one is rewritten as its Good, a left one gets `Left because:`.
+- A first user is started once for a work. Whether a fix holds, the caller sees by doing again what the first user did where the More was found, and seeing that it no longer happens; pith is not run again. Every other More the caller settles in the file itself: a fixed one is rewritten as its Good, a left one gets `Left because:`.
 
-    Attractive quality is why the user chooses the work, so whether such a More is fixed shows only when someone who does not know the discussion uses the work again; the earlier first user used it before the fix. A defect the user takes for granted, such as a wrong path or a word used two ways, is easy to see and quick to fix, and spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix. pith used to run once more only to write the caller's settling into the file, so that only pith wrote it and its form held; a hook now checks the form on every write, so the caller writes the settling itself and that run is gone (#37).
+    Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting. What the first user reported is concrete, what it did and what happened, so whether that still happens can be seen by repeating it, which needs no one who does not know the discussion. When a More shows something the essentials did not ask, the caller keeps it as a viewpoint of its own for that work and proposes it for the essentials at the end, so the essentials grow from what use showed. pith used to run once more only to write the caller's settling into the file; a hook now checks the form on every write, so that run is gone (#37).
 
 - A hook of pith's checks the form of a result file by script every time one is written, by pith or by its caller: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 
@@ -197,7 +197,7 @@ The result file lets the user check what lies behind any line of the short resul
 
     A file in `open/` is then the sign that something needs action, also when the conversation ends before the user decides. The record stays in the git history, where a More that was let go keeps its reason and can be read later as a road not taken.
 
-- There is one file per target, and a recheck rewrites that file.
+- There is one file per target, and checking the same target again rewrites that file.
 
     It then holds only what applies to the work as it is now.
 

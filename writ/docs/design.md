@@ -120,9 +120,9 @@ The writer cannot go back to not knowing the discussion. Reading it over, they c
 
     Handed them, the first user would spend its attention checking form, and what only it can do, using the work without knowing the discussion, would grow thin. What the conductor can see by reading is fixed before the first user runs, so the one use goes to what only use shows.
 
-- A question is checked again by a new first user only when a More of attractive quality was fixed there. Attractive quality is the quality that makes the user choose writ, so such a More means the reader does not get from the document what they should. A More of quality the user takes for granted, a defect such as a word used two ways or a broken link, is fixed and not rechecked. Whether either fix serves the purpose, the conductor checks against the More's place and evidence. For a recheck, up's conductor names the attractive-quality question to pith and hands it the result file, and pith starts a new first user for that question and replaces only that question's section, so every other question keeps its answer.
+- A first user is started once for a document. After a fix, the conductor checks it at the More's place by reading there as the first user did, as its report says, and seeing that what it met no longer happens; pith is not run again. When a More shows something the essentials did not ask, the conductor keeps it as a viewpoint for that document, has the fix aim at it, and proposes it for pith's essentials in its report.
 
-    Whether an attractive-quality More is fixed shows only when someone who does not know the discussion uses the document again. The earlier first user used the document before the fix, so a new first user is started. A defect of what is taken for granted is easy to see and quick to fix. Spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix.
+    Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting; writ 0.1.0 fixed four times and met a new More each time. What the first user reported is concrete, so whether it still happens is seen by repeating it.
 
 - When the request hands an existing document to fix without its result file, the conductor, once the reader and purpose are settled, first has pith check the document as it is, and goes on from that result as from a handed result file.
 
@@ -143,9 +143,8 @@ stateDiagram-v2
   Settle --> Check: the reader and purpose are settled, for a document to fix handed without its result file
   Write --> Check: the generator wrote into the document
   Check --> Sort: pith returned its result
-  Sort --> Fix: a More whose fix is clear
-  Fix --> Check: an attractive-quality More was fixed, and a new first user rechecks only that question
-  Fix --> Sort: a defect the user takes for granted was fixed, and the conductor checked
+  Sort --> Fix: a More the reader cannot carry through with, whose fix is clear
+  Fix --> Sort: fixed, and the conductor saw by repeating the first user's use that it no longer happens
   Sort --> Return: every More is fixed or left with a reason, and every Good's ground holds
   Sort --> Ask: cannot go on, or a More blocks the purpose
   Ask --> Settle: the answer changed the reader, purpose, kind of document or a fact

@@ -51,7 +51,7 @@ Never let the document state, as a rule or as a proposal, what the user or the p
 
 Ask together, as one list, the points a check finds undecided: they do not depend on each other, so asked one by one each costs the user a round.
 
-After a fix, check it at the More's place. Only for a More of attractive quality, where the reader does not get what the document is for, call pith again with the result file and that question alone. A defect the user takes for granted, such as a broken link, is not checked again.
+After a fix, check it at the More's place by reading there as the first user did, as its report says, and seeing that what it met no longer happens. Do not call pith again: Started again after a fix, a new one brings fresh small remarks with every run, and the checking never ends; whether a fix holds is seen by doing again what the first user did where the More was found. When a More shows something the essentials did not ask, keep it as a viewpoint for this document, have the fix aim at it, and propose it for pith's essentials in your report.
 
 Stop fixing and go back to the user when the same More comes back, when each fix makes another, or when a fix needs the reader or purpose changed: each shows that more fixing will not bring the document closer.
 
@@ -63,6 +63,7 @@ Report in the user's language, in the shape `${CLAUDE_PLUGIN_ROOT}/README.md` sh
 
 - Your view of whether the document can be handed on as it is.
 - Each More you left, in full, under the question it answers: what happened, what the reader struggles with, and why you left it.
+- Any viewpoint the check lacked, as a proposal for pith's essentials.
 - The result file's location.
 
 Nothing else: the user decides only whether to accept what you left, and a report that grows with the questions is one they stop reading.

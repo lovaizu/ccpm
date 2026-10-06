@@ -100,7 +100,7 @@ Report: Given a diff that only renamed dueDate to dueAt in a response, it output
   - Left because: our pull requests stay under 500 lines.
 ```
 
-A fixed More that is easy to see, such as a wrong path, a broken link or a word used two ways, you settle in the file yourself like this, without a recheck. The renamed field is different: the receiver did not get what the work is for, so after fixing it, call pith again with the file and that question: `/pith:up Recheck .pith/open/01-report-pr-review.md; I fixed the renamed-field More.` A new first user then uses the work again on that question alone, and pith rewrites only that question's section of the file.
+You check a fix yourself by doing again what the first user did where the More was found: here, giving the prompt the diff that renames a field, and seeing that it now comments. pith is not run again, since each new first user brings fresh small remarks and the checking would never end. Then rewrite the More in the file as the Good it now is, as above.
 
 Once every More is fixed or let go with a reason, copy the file into a commit message and delete the file in that commit. The record stays in the git history, so a file left in `.pith/open/` is the sign that something still waits for you.
 

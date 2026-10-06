@@ -61,10 +61,39 @@ code-modernization).
   in [pith's design](../../pith/docs/design.md).
   - Rationale: a second copy of how work is checked grows apart from the first, and an improvement
     made once in pith then reaches every plugin.
+- **Build from the README's story: for each step, what the user gets there and the least the plugin
+  needs to give it. Add nothing a step does not need.**
+  - Rationale: a part no step needs still costs the user a wait or a read on every run, and stands
+    between them and what they came for.
+- **Instruct every role by the purpose and intent of its work. Keep exact steps only where a slip
+  breaks something and the purpose cannot tell how, such as the form of a handoff.**
+  - Rationale: a step is followed even where it misses, while a purpose fits cases no one foresaw;
+    where a slip breaks a handoff, the purpose alone leaves too much room.
 - **Fix a fault met in use at its cause, by sharpening a purpose or a viewpoint; add a step or a hook
   only where no purpose can hold it.**
-  - Rationale: a step is followed even where it misses, while a purpose fits cases no one foresaw;
-    steps added one per fault come to stand between the user and what the README promised.
+  - Rationale: steps added one per fault come to stand between the user and what the README promised.
+- **Start a first user once for a work. Confirm a fix by doing again what the first user did where
+  the More was found, and seeing that it no longer happens; do not start a first user again.**
+  - Rationale: each new first user brings fresh small remarks, so checking again after every fix never
+    ends and keeps the user waiting each round. What the first user reported is concrete, so whether it
+    still happens is seen by repeating it, which needs no one ignorant of the discussion.
+- **Fix a More only when the receiver cannot carry through their purpose with it; leave any other with
+  its reason.**
+  - Rationale: fixing what does not stand in the receiver's way spends the user's time on what they did
+    not choose the work for, and every fix can break what already serves them.
+- **When a More shows something no viewpoint asked, add it as a viewpoint of that session, in its own
+  rules, so every maker after it aims at it; at the end, propose it for the plugin's viewpoint files.**
+  - Rationale: the viewpoints then grow from what use showed, and a session is not held back waiting
+    for the plugin to change.
+- **Give the user only what they decide: what the plugin proposes and why, how close the work has come
+  to each thing they would choose it for, and each point that is theirs. Keep every Good and More in a
+  file they can read when they want.**
+  - Rationale: what grows with the work checked is either read whole, spending the time the plugin was
+    meant to save, or not read at all.
+- **Wait for each agent a role starts before going on; when Claude Code runs it in the background, end
+  the turn and go on when its result arrives. Never poll, and never hold the wait with a hook.**
+  - Rationale: how Claude Code runs agents changes, and a turn that goes on before a result arrives
+    acts on work that is not there yet.
 
 ## 2. Check
 

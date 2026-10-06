@@ -25,4 +25,4 @@ Report: <the first user's report for this question; may span lines>
 
 ## File name
 
-`{dir}/open/{NN}-report-{target}.md`. `{NN}` is two digits, one more than the highest number already in `open/`. A recheck rewrites the same file and replaces only the sections of the questions it rechecked.
+`{dir}/open/{NN}-report-{target}.md`. `{NN}` is two digits, one more than the highest number already in `open/`. Checking the same target again writes the same file.

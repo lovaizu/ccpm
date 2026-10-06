@@ -111,9 +111,13 @@ Check every Good and More at its place before you trust it: a Good the user trus
 carries the flaw it hides to their approval.
 
 - Fix a More whose fix brings an attractive criterion closer, or closes a must-be gap met on the
-  golden path, from what the work should be for its purpose, wherever the same cause shows. A fix of
-  attractive quality goes to `/pith:up` again for that question alone; a must-be fix is not used
-  again.
+  golden path, from what the work should be for its purpose, wherever the same cause shows. Confirm
+  the fix yourself by doing again what the first user did where the More was found, and seeing that
+  it no longer happens; do not run `/pith:up` again, since a new first user brings fresh small
+  remarks with every run and the checking never ends.
+- When a More shows something no viewpoint asked, write it to `steering.md`'s Rules as a viewpoint
+  of this session, so every generator and check after it aims at it, and at the Deliverable sign-off
+  propose it for `rn`'s viewpoint files.
 - Let go a must-be gap met off the golden path, with its reason in the record: hunting such gaps
   never ends and takes the time the attractive quality needs.
 - Where whether it brings the work closer turns on what the user wants and the criteria do not say,
@@ -143,6 +147,7 @@ Toward what you would choose it for:
 
 For you to decide:
 - {each More left, each unchecked Assumption, and anything the product did before that it no longer does, with where}
+- {at the Deliverable sign-off: each viewpoint this session added to its Rules, proposed for rn's viewpoint files}
 
 Draft PR: {url}
 ```

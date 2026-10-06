@@ -292,9 +292,12 @@ from how the work was made, is in [pith's design](../../pith/docs/design.md); `r
 hands `pith` and what it does with the result.
 
 A task's result is used once, by `pith` with `rn`'s `task-result.md`; the deliverable once, with
-`deliverable.md` and each scene's input from the verification document, never its pass. A fix to a
-More on attractive quality is used again by a fresh first user for that question alone; a fix to a
-must-be More is not, since it is visible and quick to fix, and the effort goes to attractive quality.
+`deliverable.md` and each scene's input from the verification document, never its pass. Whether a fix
+holds, the conductor sees by doing again what the first user did where the More was found; `pith` is
+not run again, since a new first user brings fresh small remarks with every run and the checking
+never ends. When a More shows something no viewpoint asked, it becomes a viewpoint of the session,
+written to `steering.md`'s Rules so every generator after it aims at it, and is proposed for `rn`'s
+viewpoint files at the Deliverable sign-off.
 
 The conductor checks every Good and More at its place, then decides each More:
 
