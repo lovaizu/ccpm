@@ -6,7 +6,7 @@ artifact-language: English
 conversation-language: Japanese
 readme: rn/README.md
 design: rn/docs/design.md
-verification: rn/docs/verification.md
+verification: rn/docs/verification-next.md
 ---
 
 # Goal
@@ -78,5 +78,11 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
 ### [ ] #2: Design sign-off
 
 # Not yet specified
+
+- `verification` goes back to `rn/docs/verification.md` once the design stage writes A5, M8 and M9
+  into it. rn 0.9.0's check (`rn/hooks/checks/trace.py:22-35`) stops every tool call until the
+  verification document covers every criterion, so a session that adds criteria to a product with a
+  verification document of its own cannot get past its plan; until then the field names a file that
+  does not exist. This is a fault of rn this session fixes.
 
 - How this session and PR #40 meet, since both change how rn checks its work.
