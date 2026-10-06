@@ -1,6 +1,6 @@
 ---
 rn: 0.9.0
-pr: <the session's pull request URL>
+pr: https://github.com/lovaizu/ccpm/pull/48
 status: running
 artifact-language: English
 conversation-language: Japanese
