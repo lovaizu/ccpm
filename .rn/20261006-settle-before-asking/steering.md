@@ -61,7 +61,7 @@ and the repository already settle; the others are kept as they work today.
   with no word for a request and repository that already give the why and leave one outcome; line 70
   ("Look facts up, never ask them") covers facts only.
 - Fact, read in `rn/references/conduct.md:225-231` and `rn/references/essentials/conductor.md:69`: the
-  only guard against a needless question, the Question viewpoint asking what the goal or the
+  only guard against a needless intent or means question, the Question viewpoint asking what the goal or the
   repository could have settled, runs after the question is written and a first user is started.
 - Fact, read in `rn/docs/verification.md:61`: the A1 scene starts from rough words with no reason
   given and passes when `rn` asks why; that question is the user's and stays, so A1 must not get
