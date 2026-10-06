@@ -31,9 +31,9 @@ pith's conductor gives you the location of the work, its receiver and purpose, t
 
 - When you stop because you cannot go on, report where you stopped and what you did not know.
 
-- Do not read how the work was made: no git history, no Claude Code conversation records, and no result files of earlier checks in an `open/` directory, such as `.pith/open/`.
+- Do not read the maker's account of the work: commit messages, notes, Claude Code conversation records, and result files of earlier checks in an `open/` directory, such as `.pith/open/`. The work itself you may read in any way, its changes too, such as with `git diff`, and your own saved command output.
 
-    Knowing the maker's intent or the aim, you would read the work looking for it and fill its gaps in your head, and miss where a receiver trips. A hook stops reading history and conversation records while you run; the rest is up to you.
+    Knowing the maker's intent or the aim, you would read the work looking for it and fill its gaps in your head, and miss where a receiver trips. What changed is part of the work; why it was changed is the maker's account.
 
 - Leave the working tree as you found it. If you need files to run something, make them outside the repository, and delete them by their exact path when you are done.
 

@@ -50,9 +50,9 @@ The benefits are called by the words at the top of the README: "where the receiv
 
 - The roles are kept apart by the agent definitions.
 
-    The generator and the first user are plugin agents, `pith:generator` and `pith:first-user`. The first user has `omitClaudeMd` and is called as a separate subagent that does not carry over the conversation. The first user can run commands, so it gives a prompt to an AI with `claude -p` and runs it, and uses code by calling it or running its tests. Neither the generator nor the first user has the tool that calls other agents, so the generator cannot call the first user. What must hold is that, however the first user is called, the discussion never reaches it. A subagent can be called from the conversation, by the user or from another skill, so watching how it is called with hooks grows tangled. An agent definition with `omitClaudeMd` holds however it is called. Here pith relies on what a trial showed, against the documentation: the official sub-agents documentation says this field is ignored for plugin agents, but on Claude Code 2.1.285 a plugin agent with it did not read the project's CLAUDE.md. Only that version was tried, running the definition with and without the field twice each.
+    The generator and the first user are plugin agents, `pith:generator` and `pith:first-user`. The first user has `omitClaudeMd` and is called as a separate subagent that does not carry over the conversation. The first user can run commands, so it gives a prompt to an AI with `claude -p` and runs it, and uses code by calling it or running its tests. Neither the generator nor the first user has the tool that calls other agents, so the generator cannot call the first user. What must hold is that, however the first user is called, the discussion never reaches it. An agent definition with `omitClaudeMd` holds however it is called. Each is started through a skill of its own, `pith:use` and `pith:make`, run apart from the conversation with `background: false`, so whoever starts it waits for its result in every kind of session; an agent started with the Agent tool runs in the background in an interactive session, and its caller would go on before the work is used or written. Here pith relies on what a trial showed, against the documentation: the official sub-agents documentation says this field is ignored for plugin agents, but on Claude Code 2.1.285 a plugin agent with it did not read the project's CLAUDE.md. Only that version was tried, running the definition with and without the field twice each.
 
-    The first user's definition also tells it not to read how the work was made: the git history, Claude Code's conversation records, and the result files of earlier checks in `open/`. Reading them, it would fill the work's holes with the maker's intent. Its reading tools are needed to check facts, so narrowing the tools cannot keep it out. Hooks stop only what the definition cannot hold: the git commands that read history (log, show, diff, blame, reflog, stash) and paths under `.claude/projects`, where the conversation records are. By the official hooks documentation, a plugin's hooks also run on a subagent's tool calls, and inside a subagent the hook's input carries `agent_type`, so the hooks stop these only when it is `pith:first-user` and do not affect other work. The result files in `open/` are kept from it by the definition alone.
+    The first user's definition also tells it not to read the maker's account: commit messages, notes, Claude Code's conversation records, and the result files of earlier checks in `open/`. Reading them, it would fill the work's holes with the maker's intent. The work itself, its changes included, it reads as it needs. No hook keeps it from the maker's account: a hook sees only a command's text, so it stopped the first user reading its own saved output and the changes it was asked about, while the model, told why, keeps to the definition.
 
 - The content of the essentials lives only in the essentials files, and handoffs pass their location.
 
@@ -75,7 +75,7 @@ sequenceDiagram
   else It covers them
     PC->>FU: Work's location, receiver and purpose, essentials files
     FU->>PC: For every question, what it did and what happened
-    PC->>PC: Lays it beside the aim, gives Good and More, writes the full text to the result file, which a hook checks by script
+    PC->>PC: Lays it beside the aim, gives Good and More, writes the full text to the result file, and checks its form by script
     PC->>C: Short result and the result file's location
   end
 ```
@@ -116,11 +116,11 @@ pith is called by the user's conversation, by the conductor of `/writ:up`, or by
 
 - A first user is started once for a work. Whether a fix holds, the caller sees by doing again what the first user did where the More was found, and seeing that it no longer happens; pith is not run again. Every other More the caller settles in the file itself: a fixed one is rewritten as its Good, a left one gets `Left because:`.
 
-    Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting. What the first user reported is concrete, what it did and what happened, so whether that still happens can be seen by repeating it, which needs no one who does not know the discussion. When a More shows something the essentials did not ask, the caller keeps it as a viewpoint of its own for that work and proposes it for the essentials at the end, so the essentials grow from what use showed. pith used to run once more only to write the caller's settling into the file; a hook now checks the form on every write, so that run is gone (#37).
+    Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting. What the first user reported is concrete, what it did and what happened, so whether that still happens can be seen by repeating it, which needs no one who does not know the discussion. When a More shows something the essentials did not ask, the caller keeps it as a viewpoint of its own for that work and proposes it for the essentials at the end, so the essentials grow from what use showed. pith used to run once more only to write the caller's settling into the file; the caller now settles it and checks its form with pith's script, so that run is gone (#37).
 
-- A hook of pith's checks the form of a result file by script every time one is written, by pith or by its caller: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
+- Whoever writes a result file, pith or its caller settling it, checks its form with pith's script, `scripts/check_result.py`, found through the `pith:where` skill: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 
-    What a machine can decide, checked by a machine, is fast and gives the same answer every time. The caller receives only what was already checked, so it does not check the same again, and a caller's settling cannot break the form unseen. The script sits inside pith and nothing else calls it, because a caller that relied on its insides would break when pith's build changed. The script, and the hooks that stop the first user, are written with Python 3's standard library only, so each check can be fixed and tested on its own as checks grow. python3 comes with git in the Mac developer tools, and on Linux and Windows it is no less common than jq, while Node.js may not be on the user's machine. When python3 is missing, pith stops instead of skipping a check: it tells the user to install Python 3.9 or later, and the hook stops the first user's tool calls with the same message. A skipped check goes unnoticed, so no one would learn that the rule was not kept.
+    What a machine can decide, checked by a machine, is fast and gives the same answer every time. The script is written with Python 3's standard library only, so each check can be fixed and tested on its own as checks grow. python3 comes with git in the Mac developer tools, and on Linux and Windows it is no less common than jq, while Node.js may not be on the user's machine. When python3 is missing, pith stops instead of skipping a check: it tells the user to install Python 3.9 or later. A skipped check goes unnoticed, so no one would learn that the rule was not kept.
 
 - When a question comes up, pith does not ask the user but returns it to the caller as its result.
 
@@ -185,9 +185,9 @@ flowchart TD
 
 The result file lets the user check what lies behind any line of the short result by reading only that part of the file, and in the end leaves the work alone, with nothing of the check beside it. The following always hold.
 
-- pith writes the result file at the place the caller names in its request, down to the file's name, or at `.pith/open/{NN}-report-{target}.md`. The caller writes in it only to settle a More, and a hook checks its form on every write.
+- pith writes the result file at the place the caller names in its request, down to the file's name, or at `.pith/open/{NN}-report-{target}.md`. The caller writes in it only to settle a More, and checks its form with pith's script.
 
-    Its form is then checked every time, whoever writes, and no caller relies on pith's insides.
+    Its form is then checked every time, whoever writes.
 
 - Only the conductor that talks with the user commits, pushes and clears it, as the figure shows; pith does not commit it, however it is called. Called directly, pith leaves the file uncommitted, and the user commits it when they want it kept.
 
@@ -201,7 +201,7 @@ The result file lets the user check what lies behind any line of the short resul
 
     It then holds only what applies to the work as it is now.
 
-The result file's form is a contract with the outside, because the file is read by the user, by writ and rn, and by later versions of pith. Its form is the one it had as `/writ:pith`'s, with one field added, `Essentials:`, and the following hold in every version. A field is added only when a reader needs something the form does not hold: the hook that checks a file written by the caller must know which essentials files its questions come from, and two callers can each have a `design.md`. The marks that end each More in the commit message that clears the file, `→ fixed:`, `→ let go:` with the reason, and `→ to the user:`, belong to that commit, not to the file's form.
+The result file's form is a contract with the outside, because the file is read by the user, by writ and rn, and by later versions of pith. Its form is the one it had as `/writ:pith`'s, with one field added, `Essentials:`, and the following hold in every version. A field is added only when a reader needs something the form does not hold: the script that checks a file written by the caller must know which essentials files its questions come from, and two callers can each have a `design.md`. The marks that end each More in the commit message that clears the file, `→ fixed:`, `→ let go:` with the reason, and `→ to the user:`, belong to that commit, not to the file's form.
 
 - The labels stay as written, while the text beside them is written in the user's language: `# Check: <target path>` as the first line, `Target:`, `Receiver and purpose:`, `Essentials:` with the path of each essentials file, `Aim:`, `## <essentials file name>: <question>`, `Report:`, `- Good:`, `- More:`, `Evidence (work)`, `Evidence (report)` and `Left because:`. In a place, `<line>` is one line or a range `a-b`, and paths are relative to the repository root.
 
@@ -263,8 +263,7 @@ Every quality is checked with a separate subagent that does not know the discuss
 What a machine can decide is checked by script every time. It is fast, gives the same answer every time, and leaves the conductor's attention for judging the benefits.
 
 - Comparing the working directory before and after a run, only the result file in `open/`, and an essentials file pith wrote, have changed.
-- pith's Good and More answer every question, every place exists, and every quoted piece of evidence is in the work or in the first user's report. The hook checks this on every write, and the script is tested with Python's unittest on a case it stops and a case it lets through.
-- While a first user runs, the hooks stop reading git history and conversation records. This too is tested with unittest.
+- pith's Good and More answer every question, every place exists, and every quoted piece of evidence is in the work or in the first user's report. Whoever writes the file runs the script, and it is tested with Python's unittest on a case it stops and a case it lets through.
 - No first user, form-check script or essentials file of pith's is left in writ or rn.
 
 The rest of it, such as not being asked the same thing twice, not being left waiting, and facts matching the repository, is left to use, since such failures are easy to see and quick to fix.

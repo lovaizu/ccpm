@@ -4,4 +4,4 @@ description: This skill should be used when writ, rn or another plugin's conduct
 user-invocable: false
 ---
 
-pith's files are under `${CLAUDE_PLUGIN_ROOT}`: the essentials files in `references/essentials/`, the style rules in `references/style.md`, and the lint in `references/lint/`. Use these paths as they are.
+pith's files are under `${CLAUDE_PLUGIN_ROOT}`: the essentials files in `references/essentials/`, the style rules in `references/style.md`, the lint in `references/lint/`, and the result file's form in `references/result-form.md`, checked by `python3 scripts/check_result.py <result file>`. Use these paths as they are.

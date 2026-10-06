@@ -1,6 +1,6 @@
 # Result file form
 
-Write the content in the user's language; the labels below stay as written. pith's hook checks a file against this form with `scripts/check_result.py` each time one is written, by pith or by the caller settling it.
+Write the content in the user's language; the labels below stay as written. Whoever writes the file, pith or the caller settling it, checks it against this form with `scripts/check_result.py <result file>`, run from the repository root.
 
 ```
 # Check: <target path>
