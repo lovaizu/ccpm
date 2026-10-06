@@ -1,0 +1,3 @@
+wip: pause at #3
+
+● #3 Hold a percent coupon's total at 0 ── the test written, applyCoupon not yet changed → paused at #3 Hold a percent coupon's total at 0
