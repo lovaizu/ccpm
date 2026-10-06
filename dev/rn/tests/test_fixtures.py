@@ -6,7 +6,7 @@ import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLUGIN = os.path.join(HERE, "..", "..", "..", "rn")
-FIXTURES = os.path.join(HERE, "..", "..", "trials", "rn", "fixtures")
+FIXTURES = os.path.join(HERE, "..", "trials", "fixtures")
 sys.path.insert(0, os.path.join(PLUGIN, "hooks"))
 import check  # noqa: E402
 

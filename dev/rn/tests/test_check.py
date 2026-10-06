@@ -1,6 +1,6 @@
 """Each of rn's checks stops its breaking case and lets its passing case through.
 
-Run from the plugin's parent directory: python3 -m unittest discover -s dev/tests/rn
+Run from the plugin's parent directory: python3 -m unittest discover -s dev/rn/tests
 """
 import json
 import os

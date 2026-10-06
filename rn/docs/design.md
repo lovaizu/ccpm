@@ -582,4 +582,4 @@ passes `claude plugin validate --strict`, alone and as part of the marketplace, 
   and the form of `steering.md`.
 - `rn/references/essentials/`: the viewpoint files.
 - `rn/agents/`: the generator and the first user.
-- `rn/hooks/`: the checks above, with their tests in `dev/tests/rn/`.
+- `rn/hooks/`: the checks above, with their tests in `dev/rn/tests/`.
