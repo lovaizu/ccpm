@@ -68,6 +68,19 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
   asked. The conductor makes it right before writing it, by looking up what can be settled; rn 0.9.0's
   check of every question by a first user (`rn/references/conduct.md`, "Asking the user") is a fault
   this session removes.
+- Fact, `git diff --stat 5adb39a 3a80a90 -- rn`: rn 0.9.0, rebuilt to be simpler, grew from 0.8:
+  +2858 / -1490 lines; 882 lines of hooks in 14 checks were added, and `conduct.md` alone is 285
+  lines.
+- Fact, read in `rn/docs/design.md` and `rn/references/conduct.md`: a first user is started for the
+  plan, the design, each task, the deliverable, each question, each proposal, and again for each fix
+  of an attractive More; nothing bounds how many runs a session makes, and every report feeds the
+  proposal, whose template asks for the goal, every criterion, and every final Good and More.
+- Fact, read in `rn/docs/design.md:86` and the hooks: rn's own policy is to improve by sharpening the
+  viewpoints, not by adding steps, yet each fault met while building it became a step or a hook
+  (the question check, checks 3, 7, 13, 14).
+- Fact, read in `rn/docs/verification.md` and `rn/docs/design.md:176-187`: rn is verified scene by
+  scene, each from the state just before one moment; no check measures a whole session, its time,
+  or what the user reads, so #39's 2 h 43 min was seen in #33 and released.
 - Fact, decided by the user: this session and PR #40 go on side by side; where they meet, the
   conflict is settled when the second of them is merged.
 
