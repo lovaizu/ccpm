@@ -11,7 +11,7 @@ last for fixes that change nothing you do.
 
 ### Added
 
-- `rn` asks why you want the goal and finds what you really want behind your first words, one point per message with the answer it recommends, asking what a result must do for you before offering ways and asking what only you can know instead of guessing it, so what you get is what you meant.
+- `rn` asks why you want the goal and finds what you really want behind your first words, one point per message, asking what you want a result to do for you before offering any way, offering ways with what each gives and costs and the one it recommends, and asking what only you can know instead of guessing it, so what you get is what you meant.
 - Acceptance criteria come in two kinds, what would make you choose the result and what you take for granted, each with an ID, and the effort goes to the first kind first, so the reason you wanted the work is checked while there is still time to change course.
 - At the Design sign-off you also approve a verification document: for each criterion, how the product will be used as you would use it and what must happen then, so you know before anything is built how you will see that it works, and the same check can be run again after any later change.
 - `/rn:on` asks which language to write the repository in and which to talk in, proposing what your repository and instructions already set, so a single yes settles both and everything `rn` writes and says comes in the one you chose.

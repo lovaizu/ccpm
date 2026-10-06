@@ -46,7 +46,7 @@ time goes only to what is theirs.
 - Answering the question as the user, what did you have to look up or ask back first?
 
     The user then answers at once, from what the question gives: how the conductor understands the
-    point, what it proposes and why, and what each way gives and costs.
+    point, and, when it offers ways, what each gives and costs and which it proposes and why.
 
 - Answering the question as the user, which separate decisions did you make?
 
@@ -54,18 +54,17 @@ time goes only to what is theirs.
     point. With several in one message, the user answers the one they follow and the rest go by
     unanswered or half-decided.
 
+- Answering as the user, which ways to get the result were put before you before you had said what
+  you want it to do for you?
+
+    The user then says what they want in their own words, and the ways are built from it. Ways
+    offered first are built on the conductor's guess, and a user who takes the recommended one gets
+    what they did not want.
+
 - Choosing as the user among the ways offered, what did you want the result to do for you that no
   way gave?
 
-    The ways then come from what the result must do for the user, asked first where the goal does
-    not say, so one of them fits. Ways drawn from what the repository holds can all miss it, and the
-    user takes none.
-
-- Reading the criterion the question serves, what does it say the result gives the user on this
-  point?
-
-    The ways then come from what the user wants to gain, asked first where the criterion says only
-    what must not happen, so the user chooses among ways that all give it.
+    The user then chooses among ways that all give what they said they want, so one of them fits.
 
 - What part of the question could the goal, the conversation, the repository, the official
   documentation, or best practice have settled?

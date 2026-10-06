@@ -74,9 +74,10 @@ Say your app is written in JavaScript, and you want it moved to TypeScript — w
 ### 1. Start — `/rn:on`
 
 In your repository, say what you want, as roughly as it comes to mind; what you get is what you
-meant. `rn` tells you how it understands it, one point at a time, each with the answer it
-recommends — what you want, why you want it, and how you would know the goal is achieved — and moves
-on only when you agree. What the repository, the official documentation, or best practice can answer,
+meant. `rn` tells you how it understands it and asks, one point at a time, what you want, why you
+want it, and how you would know the goal is achieved; where there are several ways to get it, it
+offers them with what each gives and costs and the one it recommends. It moves on only when you
+agree. What the repository, the official documentation, or best practice can answer,
 it looks up instead of asking you. It also asks which language to talk in and which to write the
 repository in, and which issues the work closes.
 

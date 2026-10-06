@@ -42,8 +42,8 @@ The account session starts from rough words:
 - What it wants for a user with no name, when asked: something that tells users apart and gives
   away nothing private. Asked to choose among ways, it chooses by what each gives and costs, and asks
   back when no way gives what it wants or the question leaves out what they cost.
-- Whether every record has an email it does not know and cannot find out before the release, and,
-  when asked, it says to go on as if every record has one.
+- It does not know whether every record has an email and cannot find out before the release; when
+  asked, it says to go on as if every record has one.
 - At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
   its reason and decisions, and otherwise gives `/rn:gm` with what it saw.
 

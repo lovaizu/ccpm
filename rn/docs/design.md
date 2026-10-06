@@ -121,40 +121,41 @@ How it asks follows the know-how of `grilling` in
 
 - What is to be decided is a tree, each decision hanging off the ones it rests on.
 - Only a question whose prerequisites are settled is asked.
-- Each question comes with the answer `rn` recommends.
+- Each question comes with the answer `rn` recommends; `rn` keeps this for means questions only.
 - Facts are looked up, never asked: what the repository, the official documentation, or best
   practice can settle is the conductor's to find.
 - Hearing is done when nothing is silently assumed.
 
-Two of these `rn` sharpens. A fact none of those sources can show, such as what the user's records
-hold, is asked, since only the user knows it and a guess holds in the repository but not where the
-product runs. Each kind of input the goal speaks of, such as "a user with no name", is such a fact:
-what forms it takes where the product runs is asked unless the repository shows them, and what the
-product does today is checked on every form, since a criterion worded from the one form tried passes
-while the others still fail. What the user does not know but tells `rn` to go on with is written as an
-`Assumption`, not as their decision, so it stays a More in every proposal until something checks it.
+`rn` asks two kinds of question, since what the user wants is theirs to say and how to get it is
+`rn`'s to find:
 
-To this `rn` adds its own part. It finds what the user really wants from the purpose behind their
-words and the ideal that purpose calls for, since the words alone carry the gap the README's example
-shows: every file ending in .ts would have let the bugs through. Ways are offered only for a point
-an acceptance criterion already speaks to: where none says what a result must do for the user,
-`rn` asks that first and writes the answer as a criterion, then builds the ways from its words, and
-the question names it. Ways drawn from what the repository holds can all miss what the user wants,
-and the user takes none; asked to look first, `rn` still offered them, so the order is held by the
-record rather than by the wording. Even so `rn` offered ways under a criterion that said only what
-must not happen, such as "never shown as undefined", which gives nothing to build a way from. So an
-attractive criterion states what the user or their users gain, such as a name support can tell apart
-that shows nothing private; what must not happen is must-be quality. A gain is known only by asking,
-so writing the criterion brings the question of what the result must do before any way. A shortfall the first user finds in a question is never let go,
-since the user meets it and fixing it costs only rewriting the question; when no way gives what it
-wanted the result to do, `rn` asks the user that before any way, rather than ruling it out by what
-the code allows today. It asks one point per message, since
-with several the user answers the one they follow and the rest go by half-decided, and writes each
-into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
-or serves, which pull requests it replaces, and which languages the record and the talk are in, are
-among the points agreed; `rn` proposes the languages the repository and the user's instructions
-already set, or else English for the record, which reaches the most readers later, and the user's own
-for the talk.
+- An intent question asks what the user wants: why they want the goal, and what a result should do
+  for them or their users. It carries no recommended answer and offers no way: `rn` says what it has
+  understood so far, and may name gains it sees, but only the user knows which they want, and a way
+  offered before that is built on a guess the user may take. The answer is written, in the user's
+  words, as an attractive criterion: what the user or their users gain. What must not happen is
+  must-be quality, and gives nothing to build a way from.
+- A means question asks the user to choose among ways, where the criteria allow ways that give
+  different things. It names the criteria it serves, and offers only ways that give what they say,
+  each with what it gives and costs, and the one `rn` recommends and why. Where no criterion yet says
+  what a result should do on the point, the intent question comes first.
+
+A fact none of those sources can show, such as what the user's records hold, is asked, since only the
+user knows it and a guess holds in the repository but not where the product runs. Each kind of input
+the goal speaks of, such as "a user with no name", is such a fact: what forms it takes where the
+product runs is asked unless the repository shows them, and what the product does today is checked
+on every form, since a criterion worded from the one form tried passes while the others still fail.
+What the user does not know but tells `rn` to go on with is written as an `Assumption`, not as their
+decision, so it stays a More in every proposal until something checks it.
+
+`rn` finds what the user really wants from the purpose behind their words and the ideal that purpose
+calls for, since the words alone carry the gap the README's example shows: every file ending in .ts
+would have let the bugs through. It asks one point per message, since with several the user answers
+the one they follow and the rest go by half-decided, and writes each into `steering.md` as it is
+agreed, so a pause loses none. Which issues the work closes or serves, which pull requests it
+replaces, and which languages the record and the talk are in, are among the points agreed; `rn`
+proposes the languages the repository and the user's instructions already set, or else English for
+the record, which reaches the most readers later, and the user's own for the talk.
 
 ### Acceptance criteria, split by the Kano model
 
@@ -249,8 +250,9 @@ Whenever `rn` calls the user, it comes with what it proposes to do next toward t
 report of where things stand would leave the user to work out what to do next, which is the work they
 left to `rn`. A question is put so the user can answer it on the spot, so before it is asked a fresh
 first user takes it up as the user would, as it does a proposal: the conductor that wrote the question
-cannot see what it leaves out. When the work waits on someone outside, what to do meanwhile is such a
-question, not a stop.
+cannot see what it leaves out. A More it finds in a question is never let go, since the user meets
+whatever the question leaves, and fixing it costs only rewriting it. When the work waits on someone
+outside, what to do meanwhile is such a question, not a stop.
 
 Approving and giving feedback each stop, since that is where the user may clear the conversation;
 the user goes on by saying so, or by `/clear` and then `/rn:up`, and both lead to the same next move.
@@ -383,11 +385,11 @@ user for that viewpoint alone. Then the conductor decides each More:
 - A More whose fix would not bring the work closer is let go, with the reason.
 
     Its cost, or that the fix needs the README, the design document, or the user, is never that
-    reason, nor is the goal's silence: where whether a fix brings the work closer turns on what the
-    user wants of the result and the goal does not say, that is asked, since reading the silence as
-    their answer decides their point for them. A must-be gap met only off the golden path is let go, its reason kept in the record:
-    hunting such gaps never ends, each fix leaves a smaller one, and the time goes from raising the
-    attractive quality.
+    reason. Where whether it brings the work closer turns on what the user wants and the criteria do
+    not say, that is an intent question for the user, since reading the silence as their answer
+    decides their point for them. A must-be gap met only off the golden path is let go, its reason
+    kept in the record: hunting such gaps never ends, each fix leaves a smaller one, and the time goes
+    from raising the attractive quality.
 
 It cannot go on when the same More keeps coming back, when each fix brings a new More, or when a fix
 needs the documents changed, unless what is fixed is the design itself. When Mores contradict each
@@ -543,7 +545,7 @@ every end of the turn.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
 3. Every ID referred to exists; the verification document keeps its form; every acceptance criterion
    has a scene or a machine check, and a task once tasks are planned; a question item names on its
-   `Serves:` line the criteria it rests on, or `goal` when it asks what a result must do (A2).
+   `Serves:` line the criteria a means question rests on, or `goal` for an intent question (A2).
 4. Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but trailers
    such as `Co-Authored-By`.
 5. A settled `open/` item is whole in the commit message; a settled report on a question lets no More go (A2).
@@ -569,9 +571,9 @@ every end of the turn.
 14. The conductor's last message in a turn is in the `conversation-language`, judged by its script;
     otherwise it is sent back to say it again (A2, A3). What it quotes from the record, in the
     artifact language, does not count: the map's goal line, the goal, the task names, and decision
-    lines. A sentence telling the conductor to talk in the user's language gave way among artifacts
-    written in another, and the user was asked in a language they had not chosen. Two languages in
-    one script, such as English and French, are not told apart.
+    lines. It is checked by machine, since among artifacts written in another language the
+    conductor's own wording drifts into theirs. Two languages in one script, such as English and
+    French, are not told apart.
 
 The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
 and is common elsewhere; when it is missing, the session stops and says so, since a skipped check

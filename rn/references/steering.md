@@ -90,7 +90,9 @@ the highest number in `open/`, or `01` when it is empty; `{kind}` is one of
   task stands when `/rn:dn` pauses. A question's first line is `Serves:` with the criterion IDs it
   rests on, or `goal`.
 
-`{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`.
+`{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`; a question
+being put to the user is `question`, and a proposal at a sign-off `proposal`, since the checks find
+them by these names.
 
 The conductor writes its Good and More under a report in the report's file before any fix is made,
 so whoever fixes reads the Goods to keep. An item leaves `open/` in the commit that settles it,
@@ -118,7 +120,7 @@ comes next; the first, from `/rn:on`, is `● plan ── started → working ou
 ● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}
 ```
 
-`●`, `──`, `→`, `waiting for`, and `paused at`, and `Good` and `More` with their criterion ID at the
+`●`, `──`, `→`, `waiting for`, `paused at`, `approved`, and `feedback in`, and `Good` and `More` with their criterion ID at the
 start of a line, stay as written whatever the artifact language, since the commands and checks find
 their way by them. The last decision line on the branch is where the session
 stands. The commits where `rn` stops for the user end as follows, and leave in `open/` only what is

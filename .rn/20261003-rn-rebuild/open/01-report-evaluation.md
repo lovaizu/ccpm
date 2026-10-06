@@ -6,8 +6,7 @@ repository kept `c3b5f8e` after every scene, and each run's pull request was clo
 The conductor read each run's transcript, commits, and session log against the scene's Passes when;
 no first user read the records.
 
-Conductor's view: A1, A3, and A4 are close enough to put to real use; A2 is not reached, with the
-cost of a miss small enough that it does not block use.
+Conductor's view: every attractive criterion, A1 to A4, is close enough to put to real use.
 
 ## A1: the user gets what they really want, though they start from rough words
 
@@ -22,21 +21,23 @@ Good. Close enough for real use; as before.
 
 ## A2: the user is called only for decisions that are theirs
 
-More. Not reached; no closer than before (asked back 3 of 3 runs, then 1 of 2 passed; now 2 of 2
-runs asked back).
+Good. Close enough for real use; reached for the first time (asked back in every run before).
 
 - The user's aim for A2 (2026-10-06): rn asks the purpose and intent and proposes the means; one
-  more question is no fault. The scene now checks that (56bee40).
-- Run (PR #58, 11 min): asked "what do you want to do for these users?", rn offered ways from a
-  guessed intent (one fixed word, the email before the @). The stand-in turned them down and said
-  it wants names that tell users apart and show nothing private; rn took it in and its next call
-  asked a fact the ways need (the form of the user ID).
-- Five fixes in words have not held it; the root fix is raised as #38.
+  more question is no fault. The scene checks that (56bee40).
+- First run (PR #58): asked what to do for these users, rn offered ways from a guessed intent, and
+  the stand-in turned them down. Cause: the design had every question carry a recommended answer,
+  so an intent question got a guessed one. The hearing was rewritten into intent questions, with no
+  recommended answer and no way, and means questions, with ways only once the intent is written in
+  the user's words; the plan's and the question's viewpoints now ask which gain the user did not say
+  and which ways came before the intent. Closes #38.
+- Two runs after the fix: each first call asked only what should be shown in place of the name; the
+  stand-in's answer was written as A1 in its words; each second call asked a further intent (who
+  needs to tell these users apart), offering no way.
 - From #9: rn's progress messages tell the user how the work was checked ("最初の質問を第三者役の
-  エージェントに試させたところ…", in PR #53's run). The want to tell users apart is now asked after
-  the reason (seen in PR #58).
+  エージェントに試させたところ…", in PR #53's run).
 
-  → to the user: whether A2 as it stands is accepted for 0.9.0, with #38 to follow
+  → to the user: whether this telling is acceptable
 
 ## A3: at a sign-off, the user decides from the proposal
 

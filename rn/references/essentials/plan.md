@@ -17,11 +17,12 @@ the tasks that make the deliverable are planned, the questions on tasks are not 
     The work then aims at why the user wants the goal, and the user approves at the Deliverable
     sign-off what they wanted, since that sign-off judges by the criteria.
 
-- Reading each attractive criterion, what does it say the user or their users gain?
+- Reading each attractive criterion beside what the user said, which of what it says they gain did
+  the user not say?
 
-    The work then aims at a gain the user chose, and ways are built from it. A criterion that says
-    only what must not happen is met by any way that avoids it, including those that miss what the
-    user wanted.
+    The work then aims at a gain the user chose, and ways are built from it. A gain the conductor
+    wrote for them is a guess, and a criterion that says only what must not happen is met by any
+    way that avoids it; either lets through ways that miss what the user wanted.
 
 - Checking each fact the plan rests on at its source, which did not hold?
 

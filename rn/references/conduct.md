@@ -10,7 +10,7 @@ what it understood and what happened. You alone set those reports beside the aim
 happens next, and use git.
 
 Start every agent in the foreground and wait for what it returns before you go on: your turn ends only
-when you stop for the user or ask them a question. An agent left running in the background reports
+when you stop for the user, ask them a question, or answer what they asked. An agent left running in the background reports
 to a turn that has already ended, and the user is left waiting on work no one is carrying on.
 
 ## Purpose
@@ -54,8 +54,19 @@ until you stop for the user.
 Talk with the user one point at a time until you both see the same thing, each question asked as in
 Asking the user:
 
-- What is to be decided is a tree; ask only a point whose prerequisites are settled, with the answer
-  you recommend and why.
+- What is to be decided is a tree; ask only a point whose prerequisites are settled.
+- Ask what the user wants with an intent question: why they want the goal, and what a result should
+  do for them or their users. Give what you have understood so far, and gains you see if any, but
+  no recommended answer and no way: only the user knows what they want, and a way offered before
+  they say it is built on your guess, which they may take. Write the answer, in their words, as an
+  attractive criterion: what the user or their users gain. What must not happen is must-be quality,
+  and gives nothing to build a way from.
+- Find what the user really wants from the purpose behind their words and the ideal it calls for,
+  since the words alone can be met while the purpose is missed.
+- Offer ways with a means question, only where the criteria allow ways that give different things:
+  name the criteria it serves, offer only ways that give what they say, each with what it gives and
+  costs, and the one you recommend and why. Where no criterion yet says what a result should do on
+  the point, ask the intent question first.
 - Look facts up, never ask them: what the repository, the official documentation, or best practice
   can settle is yours to find, and the answers change where to look. A fact none of them can show,
   such as what the user's records hold, ask: only the user knows it, and a guess holds in the
@@ -64,13 +75,6 @@ Asking the user:
   forms it takes where the product runs unless the repository shows them, and check what the product
   does today on every form, since a criterion worded from the one form tried passes while the others
   still fail.
-- Find what the user really wants from the purpose behind their words and the ideal it calls for,
-  since the words alone can be met while the purpose is missed. Ask why they want it.
-- Write each attractive criterion as what the user or their users gain, never only as what must
-  not happen: that is must-be quality, and gives nothing to build a way from. Where you do not know
-  the gain, ask what the result should do for them, and write the answer as the criterion.
-- Offer ways only for a point an attractive criterion already speaks to by its gain, and build the
-  ways from that gain: ways drawn from what the repository holds can all miss it.
 - Done when nothing is silently assumed. What the user does not know but tells you to go on with is
   an `Assumption`, not a Fact decided by them, since no one checked it.
 
@@ -180,15 +184,11 @@ will struggle.
 2. Decide each More as the Decision section of `conductor.md` asks. Fix a More that brings an
    attractive criterion closer, or a must-be gap met on the golden path; let go any other must-be
    More with its reason in the record, since hunting such gaps never ends and takes the time that
-   would raise the attractive quality. Never let a More go because the goal does not ask for what
-   it finds missing: where whether it brings the work closer turns on what the user wants of the
-   result and the goal does not say, ask the user that, since reading the silence as their answer
-   decides their point for them. A More on a question is never let go, since the user meets
-   whatever it leaves, and fixing it costs only rewriting the question. Where no way gave what the
-   first user wanted the result to do, the criterion the question serves does not say it: ask the
-   user that first, with `Serves: goal`, and build the ways from the answer, never from what the
-   code allows today. Fix from what the work
-   should be for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
+   would raise the attractive quality. Where whether a More brings the work closer turns on what the
+   user wants and the criteria do not say, ask the user that as an intent question, since reading
+   the silence as their answer decides their point for them. A More on a question is never let go,
+   since the user meets whatever it leaves, and fixing it costs only rewriting the question. Fix
+   from what the work should be for its purpose, wherever the same cause shows. A fix is made by a generator for a task, by you
    for the plan, and by `writ` for the documents; check it against the purpose. A fix to a More on
    attractive quality goes to a fresh first user for that viewpoint and its place alone, its own
    `report` file; a fix to a More on must-be quality is not used again. Look again at every Good a fix
@@ -223,9 +223,9 @@ that sign-off again.
 ## Asking the user
 
 Ask one point per message: with several, the user answers the one they follow and the rest go by
-half-decided. Write a question to a `notes` item `{NN}-notes-question.md`, opening with `Serves:` and the IDs of
-the criteria it rests on, or `goal` when it asks what a result must do or why the user wants it; a
-question offering ways always names a criterion. Have a fresh first user
+half-decided. Write a question to a `notes` item `{NN}-notes-question.md`, opening with `Serves:` and
+the IDs of the criteria a means question rests on, or `goal` for an intent question. Have a fresh
+first user
 take it up as the user would, by the Question section of `conductor.md`, with the paths of the item and of
 `steering.md`; settle its report as above, fixing the item, since you wrote the question and cannot
 see what it leaves out. Then commit and push, and give the user the question as the item holds it,
