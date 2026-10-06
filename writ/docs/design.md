@@ -25,7 +25,7 @@ flowchart TD
 
 The benefits are called by the words at the top of the README: "understands it in one reading", "hand it straight on", "judge from the report" and "asked instead of covered over".
 
-- Have the document written only once the reader and purpose are settled.
+- Agree with the user on the document's plan before anything is written.
 
     It serves "understands it in one reading" and "hand it straight on". It works at "A proposal or question on the reader and purpose" in the README's figure.
 
@@ -63,26 +63,29 @@ The benefits are called by the words at the top of the README: "understands it i
 
     No drafts or files of notes along the way are made. Left behind, they would be for the user to clear away, and would leave the user unsure which is the real one. Only the full result of a check is written to a file in `open/`, so that it survives when a long conversation is summarized and does not flow into the caller's conversation, and it is cleared once everything in it is settled. Who writes, commits and clears it is in "The result file: who writes, who commits, and its form".
 
-## Have the document written only once the reader and purpose are settled
+## Agree with the user on the document's plan before anything is written
 
-If they are not settled before writing, the generator cannot tell what to aim for, and the conductor cannot tell what to fix by.
+What the reader gets is settled before writing: who reads it and what they do after, and what each part tells them, in what order and how. Agreed then, a mismatch costs the user one answer; found after writing, it costs a round of writing and checking, and the user waits for each.
 
-- Do not start writing until it is settled who reads the document and what they decide and do once they have read it.
-- The conductor asks the user only what the conversation, the documents handed over and the repository do not tell. What it can infer, it puts as a proposal and asks whether it is right, and it asks one question at a time.
+- The conductor works out the plan with the user one point per message, and writes each point to the plan file, `.writ/open/{NN}-notes-{target}.md`, as it is agreed. Once all are agreed, it shows the plan as a whole, and writing starts when the user agrees.
 
-    What it asks is who reads the document, what they decide and do once they have read it, and where it is placed. Asked what they already said or what a document already says, the user answers the same thing over and over. Made to write from scratch even what can be inferred, the user puts into words clues writ already has. A proposal catches a wrong guess before anything is written. Asked together, the user also answers questions an earlier answer made unnecessary. So the conductor asks one, drops what the answer settled, and asks the next.
+    One point per message can be talked through until both see the same thing; asked together, the user answers the one they follow and the rest go by half-decided. Written to a file, the plan outlives a summarized conversation and is what the generator is handed.
 
-- The conductor decides from the purpose and the place whether the reader reads it through or picks parts, and asks only when it cannot.
+- The plan holds the reader, with what they know, the situation they read in, and whether they read through or pick parts; what they decide and do once they finish; the core they must take in first; the flow, with each section's heading in the reader's words, what it is for, what it tells and how; the facts with their sources; what is decided, and what is not, with who decides it; and the place, language and form.
 
-    The user finds this hard to answer, and the purpose and the place usually settle it.
+    These are what the generator would otherwise guess, and each guess drifts the document from what the user meant. A heading in the reader's words, a purpose for each section and how it tells are where documents most often go wrong: in what is said where, not in the sentences.
 
-- Write the facts in the content by looking them up in the repository and the code, never by inferring them.
+- The conductor asks only what the conversation, the documents handed over and the repository do not tell. Facts are looked up, never asked or inferred. What it can infer, it puts as a proposal with why, so the user only says whether it is right. When the conversation or a caller such as rn has already settled the plan, it is written down and writing goes on without asking.
 
-    The reader believes a fact written on a guess and decides wrongly.
+    Asked what they already said, the user answers the same thing over. The reader believes a fact written on a guess and decides wrongly.
 
-- Hand the generator, without gaps, the reader and purpose, the facts found, and what was decided with the user.
+- An existing document is material for the plan. The conductor reads it, proposes the plan it shows and which of its parts serve the reader, and the document is written again from the agreed plan rather than patched.
 
-    The generator does not know the discussion, so whatever is not handed over it can only guess, and the document drifts from what the user meant. Enough is handed over, down to the reader's particular circumstances, that the generator can write as the user means without going back to the discussion. This is the price of keeping writing apart from the conductor. Having the conductor write is not chosen. The conductor could write with the whole discussion at hand, but every write and fix would lengthen the conversation with the user, and once it is summarized the details of what was decided slip out.
+    A document fixed by patching drifts apart where the patches meet, and its parts keep the order and weight they had for a purpose that may have changed. Written again from the plan, it reads as one, and what served the reader is kept because the plan names it.
+
+- The generator is handed the paths of the plan, of the existing document as material, of the essentials files, and of pith's style rules and lint, with the document's place and language; never a summary.
+
+    The generator does not know the discussion, so what it is not handed it guesses. A summary carries the conductor's reading, and the generator writes from that instead of what was agreed. Having the conductor write is not chosen: every write and fix would lengthen the conversation with the user, and once it is summarized the details of what was decided slip out.
 
 - The generator reads the essentials files as the form to aim for, and decides in this order, each from the ones before: the reader, the core, the headings, the figures, the sentences, the words.
 
@@ -123,10 +126,6 @@ The writer cannot go back to not knowing the discussion. Reading it over, they c
 - A first user is started once for a document. After a fix, the conductor checks it at the More's place by reading there as the first user did, as its report says, and seeing that what it met no longer happens; pith is not run again. When a More shows something the essentials did not ask, the conductor keeps it as a viewpoint for that document, has the fix aim at it, and proposes it for pith's essentials in its report.
 
     Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting; writ 0.1.0 fixed four times and met a new More each time. What the first user reported is concrete, so whether it still happens is seen by repeating it.
-
-- When the request hands an existing document to fix without its result file, the conductor, once the reader and purpose are settled, first has pith check the document as it is, and goes on from that result as from a handed result file.
-
-    The generator does not know why each part of the document is there. Asked to fix it without Goods to keep, it rewrites the parts that serve the reader together with the ones that fall short, and the user gets back a document that has lost what was good in it. Which parts serve the reader shows only when a first user uses the document as it is.
 
 - When the request hands a document that was already checked together with its result file, the conductor takes that file as where the document stands. Its Goods go to the generator as Goods to keep, its Mores are what is left to fix, and pith checks again only as above.
 
@@ -211,9 +210,9 @@ flowchart TD
 
     The essentials ask what the reader took in and did, not where a statement came from, so a rule written in on a guess reads as settled and passes the check, and the report then tells the user nothing was guessed. Only the conductor holds what was decided, so only it can tell a decision handed over from one made up.
 
-- Ask one question at a time while each answer can change what is asked next. Points owned by the user or the team that a check finds undecided are asked together in one message, as a list. Once the user's answers show that a matter has not been discussed, writ raises no new points of that kind one by one: it gathers them, shows them in the document as undecided, and proposes to finish.
+- Ask one point per message, so each can be talked through, and write each answer to the plan. Most undecided points are found while the plan is agreed, before writing, where an answer costs the user least. Once the user's answers show that a matter has not been discussed, writ raises no new points of that kind: it shows them in the document as undecided, with who decides them, and proposes to finish.
 
-    Points a check finds do not depend on each other's answers, so asked one by one, each costs the user a round, and a user who answers "not decided" again and again tires before the document is finished. A list is answered in one reply. A matter the team has not discussed gets the same answer for each new point of it, so asking each one spends the user's reply on what the document can show as undecided.
+    A list of points asked at once gets the one the user follows answered and the rest half-decided. A matter the team has not discussed gets the same answer for each new point of it, so asking each spends the user's reply on what the document can show as undecided.
 
 - After every state, the document does not blur a hole in its content.
 

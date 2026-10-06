@@ -4,8 +4,9 @@
 
 ### Changed
 
+- Before anything is written, writ agrees with you, one point at a time, on the document's plan: who reads it, what they do after, and what each section tells and how; a document you already have is material for that plan, and is written again from it — a mismatch costs you one answer instead of a round of rewriting.
 - The report holds only writ's view and each More it left; every Good and More stays in the result file — what you read grows with what you decide, not with the number of questions.
-- A document is checked once by one first user, and the result file is settled without another run — writing a document keeps you waiting less.
+- A document is used once by one first user; a fix is confirmed by repeating what it did, and the result file is settled without another run — writing a document keeps you waiting less.
 - The check is pith's, a plugin installed with writ — the same check reaches what you make besides documents.
 
 ### Removed

@@ -20,9 +20,13 @@ sequenceDiagram
   participant F as The document
   participant U as first user<br/>an AI that does not know the discussion
   Y->>W: /writ:up, with what you want or the document to fix
-  W->>Y: A proposal or question on the reader and purpose
-  Y->>W: Your answer
-  W->>F: What it wrote
+  loop One point at a time
+    W->>Y: A proposal on the reader, what they do after, and what each section tells
+    Y->>W: Your answer
+  end
+  W->>Y: The plan as a whole
+  Y->>W: Agreed
+  W->>F: What it wrote, to the plan
   F->>U: The document to read as its reader
   U->>W: What it took in and what it set out to do
   W->>F: The fixes where it fell short of the aim
@@ -38,7 +42,7 @@ sequenceDiagram
 
 writ checks with a Good or More for every question in the essentials it used. A Good is a place that comes across as the aim intends; a More is a place that falls short of the aim. The report gives you only what you decide; every Good and More is in the full file.
 
-writ does not start writing until it is settled who reads the document and what they decide and do once they have read it. How good a document is can be measured only once its reader and purpose are set. You answer only what your request and the repository do not tell. What writ can infer, it puts to you as a proposal, so you only say whether it is right.
+writ does not start writing until you have agreed its plan: who reads the document, what they decide and do once they have read it, and what each section tells them, in what order and how. A mismatch found there costs you one answer; found after writing, it costs a round of writing and checking. writ asks one point at a time, so each can be talked through. You answer only what your request and the repository do not tell. What writ can infer, it puts to you as a proposal, so you only say whether it is right. A document you already have is material for the plan: writ proposes which of its parts serve the reader, and writes it again from the plan rather than patching it.
 
 Before returning the document, writ has a first user use it. The first user is a separate AI that does not know the discussion so far. It reads the document as its reader and reports what it took in and what it set out to do. writ lays that report beside the aim and fixes where the document falls short before returning it. Where a reader trips cannot be seen by the one who wrote the document, however often they read it over. It shows only when someone who does not know the discussion actually uses it.
 
@@ -56,14 +60,27 @@ Your app is written in JavaScript and is moving to TypeScript, and you want a pl
 ● The design documents are in docs/, so I plan to put it at docs/migration-plan.md. Is that right?
 
 > Yes.
+
+● Here is the plan I would write to. The engineers read it through once, before the meeting.
+    Core: the order and the owners are for the meeting; nothing moves before it.
+    1. What we agree on at the meeting — the three open choices, each with the facts that bear on it
+    2. The parts to move — each directory, its size and what it depends on, as a table
+    3. Owners — who has taken which part (no one yet)
+  Is this right?
+
+> Yes.
 ```
 
-writ looks up the repository's directory layout and code, and writes the plan to docs/migration-plan.md.
+writ looks up the repository's directory layout and code, and writes the document to docs/migration-plan.md from that plan.
 
 ```markdown
 # TypeScript migration plan
 
-We move src/api/ first, then go on to src/ui/. Other code calls src/api/, so once it has types, mistakes in the calling code show up at once.
+At the meeting we agree on the order to move the directories in, and each of us takes a part. Nothing moves before then.
+
+## What we agree on at the meeting
+
+- Which directory moves first. Other code calls src/api/, so typing it first shows mistakes in the calling code at once; src/ui/ is the largest.
 
 ## Owners
 
