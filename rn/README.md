@@ -14,7 +14,7 @@ is decide.
 - A git repository with its remote on GitHub, since `rn` puts everything you review on a pull request
 - The [GitHub CLI](https://cli.github.com) `gh`, logged in with push access, which `rn` uses to open
   and update a pull request
-- Python 3.9 or later, which runs the checks `rn` makes on its own record as it goes
+- Python 3.9 or later, which runs `rn`'s reminder after a summary and `pith`'s check of its result files
 
 ## Install
 
