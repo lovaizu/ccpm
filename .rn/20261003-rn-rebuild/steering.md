@@ -376,7 +376,7 @@ and what changes for them.
   own minimal trial, started from a fixture rather than the sessions before it), reusing what fits
   of `.rn/20261003-rn-rebuild/trials-before-split/`, then remove that directory; Python 3.9, stdlib,
   left out of the line count (`.claude/rules/plugin.md` § Check, writ PR #15, e0d5719)
-- [ ] Rewrite `dev/rn/tests` (moved from `rn/tests` with the trials to `dev/rn/trials`, writ 1abd703) to `.claude/rules/plugin.md` § Build on `main` once PR #15 merges: each test
+- [x] Rewrite `dev/rn/tests` (moved from `rn/tests` with the trials to `dev/rn/trials`, writ 1abd703) to `.claude/rules/plugin.md` § Build on `main` once PR #15 merges: each test
   named by what must happen, as one sentence, its body marked `# Given`, `# When`, `# Then`
 - [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
   with the hooks on
@@ -410,8 +410,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**: —
-- **Last completed**: —
-- **Next**: —
-- **Notes**: —
+- **Status**: paused
+- **Date**: 2026-10-06
+- **Last completed**: #9 steps 1–2 (tests rewritten; hooks split per check, coverage 100%, 1d492e8). A2 reached on its scene after e327ba5 (attractive criteria state a gain); main merged (917eb00); rn-try holds only main, and trials now close their PR (dd6cd25).
+- **Next**: #9 step 3 — install rn and writ from the marketplace on this branch and run the scenes that call writ, hooks on; then step 4 (machine checks). The user said to go on with the work after resuming.
+- **Notes**: For #11: in A2's rerun rn told the user "the checker tried it 3 times" before its question (process leaking to the user); whether the user's want to tell users apart is asked after call 3 is unchecked (the scene ends at call 3).
