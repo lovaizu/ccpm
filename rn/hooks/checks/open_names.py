@@ -1,4 +1,4 @@
-"""Check 2: open/ files are named {NN}-{kind}-{about}.md, the kind report, feedback, or notes."""
+"""The files in open/ are named {NN}-{kind}-{about}.md, the kind report, feedback, or notes."""
 import re
 
 from record import open_items

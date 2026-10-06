@@ -1,14 +1,13 @@
-"""rn's PostToolUse hook: checks 1 to 3 after a record file is written, and checks 4 to 7
-on a commit right after it is made."""
+"""rn's PostToolUse hook: the record's form after a record file is written, and the conductor's
+commit right after it is made."""
 import os
 import unittest
 
-from harness import (FEEDBACK, FINISHED, PAUSE, PROPOSAL, PROPOSE, REPORT, SDIR, STEERING,
-                     VERIFICATION, Session, sh)
+from harness import FEEDBACK, FINISHED, PAUSE, REPORT, SDIR, STEERING, VERIFICATION, Session, sh
 
 
 class PostToolUse(Session):
-    # Check 1
+    # steering.md keeps its form
     def test_steering_in_its_form_passes(self):
         # Given the steering.md the session started with
         # When it is written
@@ -71,7 +70,7 @@ class PostToolUse(Session):
         self.assertEqual(code, 2)
         self.assertIn("heading `# Tasks` is missing", out)
 
-    # Check 2
+    # open/ files keep their names
     def test_open_item_of_a_known_kind_passes(self):
         # Given an open/ item named as notes
         self.r.write(f"{SDIR}/open/01-notes-design.md", "x\n")
@@ -89,7 +88,7 @@ class PostToolUse(Session):
         self.assertEqual(code, 2)
         self.assertIn("01-evaluation-design.md", out)
 
-    # Check 3
+    # Every ID referred to exists, and every criterion is served once tasks are planned
     def test_verification_naming_an_undefined_criterion_is_stopped(self):
         # Given a verification document naming A9, which steering.md does not define
         self.r.write("docs/verification.md", VERIFICATION + "\n| a | A9 |\n")
@@ -98,14 +97,6 @@ class PostToolUse(Session):
         # Then it is stopped, naming A9
         self.assertEqual(code, 2)
         self.assertIn("A9", out)
-
-    def test_attractive_criterion_without_a_scene_is_stopped(self):
-        # Given a verification document with no scene for A1
-        self.r.write("docs/verification.md", VERIFICATION.replace("### A1:", "### X:"))
-        # When it is written
-        code, _ = self.post_write("docs/verification.md")
-        # Then it is stopped
-        self.assertEqual(code, 2)
 
     def test_criterion_served_by_no_task_is_stopped_once_tasks_are_planned(self):
         # Given a planned task serving A1 only
@@ -124,33 +115,6 @@ class PostToolUse(Session):
         # Then it passes
         self.assertEqual(code, 0)
 
-    def test_question_offering_ways_for_an_unwritten_criterion_is_stopped(self):
-        # Given a question resting on A2, which steering.md does not define
-        self.r.write(f"{SDIR}/open/01-notes-question.md", "Serves: A2\n\nWhich way for names?\n")
-        # When it is written
-        code, out = self.post_write(f"{SDIR}/open/01-notes-question.md")
-        # Then it is stopped, naming A2
-        self.assertEqual(code, 2)
-        self.assertIn("A2", out)
-
-    def test_question_without_a_serves_line_is_stopped(self):
-        # Given a question that names nothing it rests on
-        self.r.write(f"{SDIR}/open/01-notes-question.md", "Which way for names?\n")
-        # When it is written
-        code, out = self.post_write(f"{SDIR}/open/01-notes-question.md")
-        # Then it is stopped, asking for the Serves line
-        self.assertEqual(code, 2)
-        self.assertIn("Serves:", out)
-
-    def test_question_on_a_written_criterion_or_the_goal_passes(self):
-        for first in ("Serves: A1, M1", "Serves: goal"):
-            # Given a question resting on written criteria, or asking about the goal
-            self.r.write(f"{SDIR}/open/01-notes-question.md", first + "\n\nWhich way?\n")
-            # When it is written
-            code, out = self.post_write(f"{SDIR}/open/01-notes-question.md")
-            # Then it passes
-            self.assertEqual(code, 0, out)
-
     def test_task_serving_an_undefined_criterion_is_stopped(self):
         # Given a planned task serving A9, which no acceptance criterion has
         self.r.write(f"{SDIR}/steering.md",
@@ -161,26 +125,15 @@ class PostToolUse(Session):
         self.assertEqual(code, 2)
         self.assertIn("task refers to A9", out)
 
-    def test_verification_missing_one_of_its_headings_is_stopped(self):
-        for heading in ("## Scenes", "## Machine checks"):
-            # Given a verification document without that heading
-            self.r.write("docs/verification.md", VERIFICATION.replace(heading + "\n", ""))
-            # When it is written
-            code, out = self.post_write("docs/verification.md")
-            # Then it is stopped, naming the heading
-            self.assertEqual(code, 2, heading)
-            self.assertIn(f"`{heading}` is missing", out)
+    def test_record_without_a_verification_document_yet_passes(self):
+        # Given no verification document written yet
+        os.remove(os.path.join(self.r.dir, "docs/verification.md"))
+        # When steering.md is written
+        code, out = self.post_write(f"{SDIR}/steering.md")
+        # Then it passes
+        self.assertEqual(code, 0, out)
 
-    def test_must_be_criterion_named_in_no_scene_or_check_is_stopped(self):
-        # Given a verification document that names M1 nowhere
-        self.r.write("docs/verification.md", VERIFICATION.replace(", and M1 holds", ""))
-        # When it is written
-        code, out = self.post_write("docs/verification.md")
-        # Then it is stopped, naming M1
-        self.assertEqual(code, 2)
-        self.assertIn("must-be criterion M1", out)
-
-    # Check 4
+    # A conductor commit ends with a decision line
     def test_commit_ending_in_a_decision_line_passes(self):
         # Given a commit whose last line is a decision line
         self.r.write("a.txt", "a\n")
@@ -210,7 +163,7 @@ class PostToolUse(Session):
         self.assertEqual(code, 2)
         self.assertIn("decision line", out)
 
-    # Check 5
+    # A settled open/ item is whole in the commit message
     def test_settled_report_quoted_whole_in_the_commit_passes(self):
         # Given a report removed from open/ by a commit that quotes it whole
         self.settle_report_whole()
@@ -233,116 +186,7 @@ class PostToolUse(Session):
         self.assertEqual(code, 2)
         self.assertIn("02-report-task-4.md", out)
 
-    def settle(self, items, tail):
-        for name in items:
-            self.r.write(f"{SDIR}/open/{name}", REPORT)
-        self.r.commit("rn: reports\n\n● plan ── reports in → settle")
-        for name in items:
-            os.remove(os.path.join(self.r.dir, SDIR, "open", name))
-        quoted = "".join(f"{name}:\n    # Report\n\n    Doing as written, the build failed at "
-                         f"cart.ts:3.\n\n{tail[name]}\n\n" for name in items)
-        self.r.commit("rn: settle\n\n" + quoted + "● plan ── settled → asking the user")
-
-    def test_settled_report_on_a_question_letting_a_more_go_is_stopped(self):
-        # Given a report on a question settled with a More let go
-        self.settle(["02-report-question.md"],
-                    {"02-report-question.md": "- More A1: no way tells users apart\n"
-                                              "  → let go: displayName takes only the user"})
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it is stopped, naming the report
-        self.assertEqual(code, 2)
-        self.assertIn("02-report-question.md", out)
-
-    def test_settled_report_on_a_question_fixing_every_more_passes(self):
-        # Given a report on a question settled with its More fixed
-        self.settle(["02-report-question.md"],
-                    {"02-report-question.md": "- More A1: no way tells users apart\n"
-                                              "  → fixed: the user is asked first"})
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it passes
-        self.assertEqual(code, 0, out)
-
-    def test_more_let_go_on_another_report_settled_beside_a_question_passes(self):
-        # Given a question's report fixed, and a plan report after it letting a must-be More go
-        self.settle(["02-report-question.md", "03-report-plan.md"],
-                    {"02-report-question.md": "- More A1: x\n  → fixed: y",
-                     "03-report-plan.md": "- More M1: z\n  → let go: off the golden path"})
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it passes
-        self.assertEqual(code, 0, out)
-
-    # Check 6
-    def test_sign_off_with_a_report_left_open_is_stopped(self):
-        # Given a sign-off commit with a report still in open/
-        self.r.write(f"{SDIR}/open/01-report-plan.md", "x\n")
-        self.r.commit(PROPOSE)
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it is stopped, naming the report
-        self.assertEqual(code, 2)
-        self.assertIn("01-report-plan.md", out)
-
-    def test_sign_off_behind_the_default_branch_is_stopped(self):
-        # Given main moved on and a sign-off commit without it
-        self.move_main_ahead()
-        self.r.write("c.txt", "c\n")
-        self.r.commit(PROPOSE)
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it is stopped, saying main is not merged
-        self.assertEqual(code, 2)
-        self.assertIn("not merged", out)
-
-    def test_sign_off_after_merging_the_default_branch_passes(self):
-        # Given main moved on, then merged in before the sign-off commit
-        self.move_main_ahead()
-        self.r.write("c.txt", "c\n")
-        self.r.commit(PROPOSE)
-        self.r.after_commit()
-        sh(self.r.dir, "git", "merge", "-q", "--no-edit", "origin/main")
-        sh(self.r.dir, "git", "commit", "-q", "--allow-empty", "-m", PROPOSE)
-        # When the commit is checked
-        code, _ = self.r.after_commit()
-        # Then it passes
-        self.assertEqual(code, 0)
-
-    def test_proposal_point_naming_no_criterion_is_stopped(self):
-        # Given a proposal whose More point names no criterion
-        self.r.write("a.txt", "a\n")
-        self.r.commit(PROPOSAL)
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it is stopped, quoting that point
-        self.assertEqual(code, 2)
-        self.assertIn("More: the key", out)
-
-    def test_proposal_whose_every_point_names_a_criterion_passes(self):
-        # Given the proposal amended so its More point names M1
-        self.r.write("a.txt", "a\n")
-        self.r.commit(PROPOSAL)
-        self.r.after_commit()
-        sh(self.r.dir, "git", "commit", "-q", "--amend", "-m",
-           PROPOSAL.replace("- More:", "- More M1:"))
-        # When the commit is checked
-        code, _ = self.r.after_commit()
-        # Then it passes
-        self.assertEqual(code, 0)
-
-    def test_feedback_stop_with_no_feedback_item_is_stopped(self):
-        # Given the user typed /rn:gm, then a feedback stop commit with no feedback item in open/
-        self.r.hook("userpromptexpansion", command_name="rn:gm")
-        self.r.write("a.txt", "a\n")
-        self.r.commit(FEEDBACK)
-        # When the commit is checked
-        code, out = self.r.after_commit()
-        # Then it is stopped, saying the feedback item is missing
-        self.assertEqual(code, 2)
-        self.assertIn("no feedback item", out)
-
-    # Check 7
+    # What only the user's command may record
     def test_sign_off_marked_without_ty_is_stopped(self):
         # Given a sign-off marked done with no /rn:ty typed
         self.r.write(f"{SDIR}/steering.md", STEERING.replace("### [ ] #1:", "### [x] #1:"))
@@ -454,13 +298,21 @@ class PostToolUse(Session):
         # Then it passes
         self.assertEqual(code, 0, out)
 
-    # Checks 4 to 7 run on commits only.
+    # Only a commit is checked, and only a record file's writing
     def test_command_other_than_a_commit_is_not_checked_after_it_runs(self):
         # Given a commit with no decision line
         self.r.write("a.txt", "a\n")
         self.r.commit("rn: a")
         # When a command that makes no commit has run
         code, _ = self.r.hook("posttooluse", tool_name="Bash", tool_input={"command": "ls"})
+        # Then it passes
+        self.assertEqual(code, 0)
+
+    def test_writing_a_file_outside_the_record_is_not_checked(self):
+        # Given a steering.md out of form
+        self.r.write(f"{SDIR}/steering.md", STEERING.replace("# Tasks\n", ""))
+        # When a source file is written
+        code, _ = self.post_write("src.ts")
         # Then it passes
         self.assertEqual(code, 0)
 

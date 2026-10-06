@@ -1,10 +1,10 @@
-"""Check 7: a sign-off is passed, or the session finished, only after the user typed /rn:ty;
+"""A sign-off is passed, or the session finished, only after the user typed /rn:ty;
 feedback is taken only after /rn:gm, and a pause made only after /rn:dn."""
 import json
 import os
 import re
 
-from record import git, last_line
+from record import git, last_line, rn_command
 
 COMMANDS = ("ty", "gm", "dn")
 
@@ -15,7 +15,7 @@ def notes_path(store, session_id):
 
 def note(store, session_id, command_name):
     """Remember that the user typed one of the commands."""
-    name = (command_name or "").split(":")[-1]
+    name = rn_command(command_name)
     if name in COMMANDS:
         p = notes_path(store, session_id)
         try:

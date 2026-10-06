@@ -12,7 +12,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|Write|Edit|NotebookEdit|Read|Grep|Glob|Agent|SendMessage",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",

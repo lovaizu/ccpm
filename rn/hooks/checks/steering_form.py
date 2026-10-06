@@ -1,4 +1,4 @@
-"""Check 1: steering.md has its front matter and headings, and task and criterion IDs are unique."""
+"""The steering.md has its front matter and headings, and task and criterion IDs are unique."""
 import re
 
 from record import criteria, front_matter

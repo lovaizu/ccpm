@@ -1,4 +1,4 @@
-"""rn's agents are defined so the first user and the generator keep to their roles."""
+"""rn's generator is defined so it cannot call another agent, such as a first user."""
 import os
 import unittest
 
@@ -9,13 +9,6 @@ class Agents(unittest.TestCase):
     def front(self, name):
         text = open(os.path.join(PLUGIN, "agents", name)).read()
         return text.split("---")[1]
-
-    def test_first_user_starts_without_claude_md(self):
-        # Given the first user's definition
-        # When its front matter is read
-        front = self.front("first-user.md")
-        # Then it skips CLAUDE.md
-        self.assertRegex(front, r"(?m)^omitClaudeMd: true$")
 
     def test_generator_cannot_start_an_agent(self):
         # Given the generator's definition

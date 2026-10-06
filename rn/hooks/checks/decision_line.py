@@ -1,4 +1,4 @@
-"""Check 4: every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but
+"""Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but
 trailers such as Co-Authored-By."""
 import re
 

@@ -5,6 +5,7 @@ import subprocess
 import sys
 
 TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*: \S")
+COMMANDS = ("on", "up", "dn", "ty", "gm")
 
 
 def git(*args, cwd=None):
@@ -23,6 +24,21 @@ def store():
     path = os.environ.get("CLAUDE_PLUGIN_DATA") or os.path.join(os.path.expanduser("~"), ".rn-data")
     os.makedirs(path, exist_ok=True)
     return path
+
+
+def rn_command(command_name):
+    """The rn command the user typed, such as `up` for `/rn:up`, or None for any other command."""
+    space, _, name = (command_name or "").rpartition(":")
+    return name if space in ("", "rn") and name in COMMANDS else None
+
+
+def marker(store, session_id):
+    return os.path.join(store, f"rn-{session_id}")
+
+
+def mark(store, session_id):
+    """Remember that this conversation runs rn: the user typed an rn command in it."""
+    open(marker(store, session_id), "w").close()
 
 
 def front_matter(text):
@@ -68,8 +84,12 @@ def finished_by_head(top):
 
 def find(data, finished_too=False):
     """(the directory the hook runs in, the repository's top, the session directory), or None when
-    no rn session is running on this branch. With finished_too, the session the last commit finished
-    counts as running."""
+    the conversation does not run rn, or no rn session is running on this branch. An agent's tool
+    call carries the session_id of the conversation that started it. With finished_too, the session
+    the last commit finished counts as running."""
+    sid = data.get("session_id")
+    if not sid or not os.path.isfile(marker(store(), sid)):
+        return None
     cwd = data.get("cwd") or os.getcwd()
     top = root(cwd)
     if not top:
