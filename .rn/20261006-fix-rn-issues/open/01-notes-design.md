@@ -1,112 +1,95 @@
-# Design points for rn, from the audit of 0.9.0
+# Design of rn, from what its README promises
 
-Sources: steering.md (Facts on the audit), issues #39, #41, #43, #44, #45, #46, `rn/docs/design.md`,
-`rn/references/conduct.md`, `rn/hooks/`.
+`rn/README.md` as on `main` is what rn should be. Each section below takes one step of it: what the
+user gets there, the least rn needs to give it, and what in rn 0.9.0 stands in the way and goes.
+Nothing is added that a step of the README does not need.
 
-## Quality is built in by whoever makes a thing
+## Why 0.9.0 does harm
 
-- Every maker writes to the viewpoints of what it makes: the conductor to `conductor.md`, `plan.md`
-  and `design.md` for what it writes and says, a generator to its task's viewpoint file, `writ` to
-  its own. The viewpoints are the form a thing is written in, not only the questions it is checked by.
+- Every fault met while building 0.9.0 became a step or a hook (steering.md, Facts), and each of them
+  now stands between the user and a step of the README: below, under "In the way".
+- It was checked scene by scene and never used as the README's story runs, so no check saw the user
+  waiting hours, reading 72 lines, or never being heard.
+- So this design takes away; it adds only where a step cannot be given without it, and it is checked
+  by running the README's story end to end.
 
-    0.9.0 wrote first and checked after, by a first user, for everything the conductor wrote; the
-    check found what writing to the viewpoints would have avoided (#45), at the cost of a run each.
+## 1. Start: rn hears what you really want
 
-## A first user uses only what use shows
+- Gets: from rough words, rn says how it understands them and asks, one point at a time, what the
+  user wants, why, and how they would know; ways come with what each gives and costs and the one it
+  recommends; facts are looked up.
+- Needs: the conductor talks with the user directly. The request, or an issue it names, is where the
+  hearing starts, never its answer; what the user wants and why is always theirs.
+- In the way: a first user takes up each question before the user sees it, and the turn-end check
+  sends the conductor on unless a question file waits in `open/`; the conductor answers itself
+  instead (PR #48: it dropped its question and widened the goal on its own judgment).
 
-- A first user is started for a task result and for the deliverable's scenes, where running the work
-  shows what its maker cannot see. A question, the plan, a proposal, and a report are not used by a
-  first user; the conductor writes them to their viewpoints, and the user reads them.
-- Decided by the conductor on the user's "go on", over a first user trying to build from the design
-  points before `writ` writes (one run more per design) and over today's use of everything; shown to
-  the user at the Design sign-off.
-- Each thing is used once; a fix of an attractive More is used once more, on that point alone; nothing
-  else starts a first user. `report.md` goes, since nothing uses a report.
+## 2. A sign-off is decided from the proposal alone
 
-    Unbounded use was the cause of #39 and of the length in #46: every run added a report and every
-    fix a run.
+- Gets: the user says yes or no from the proposal, and reads the work on the pull request only when
+  they want to.
+- Needs: a proposal holds the map, how close each thing the user would choose the work for has come,
+  each point that is theirs to decide (a More left, an `Assumption`, something taken away), and the
+  next move with why. The goal, the criteria and every Good and More are on the pull request.
+- In the way: the proposal repeats the goal, every criterion and every Good and More (72 lines,
+  #46), and a first user reads it before the user does.
 
-## What the user reads is bounded by what they decide (#46)
+## 3. The design is worked out with you, and writ writes it once
 
-- A stop gives the map, the conductor's view of how close each attractive criterion has come, each
-  point the user decides (a More left, an `Assumption`, something taken away), and the next move with
-  why. The goal, the criteria, and every Good and More stay whole in the record and on the pull
-  request, not in the message.
-- The same holds for every short result an agent returns to its caller, `writ`'s and pith's
-  included, and is written once in `.claude/rules/plugin.md` § Results.
+- Gets: the user settles in talk only the calls that are theirs, such as effort against safety, and
+  approves the design and verification documents together before anything is built.
+- Needs: the conductor settles every point before `writ` is called, then runs `writ:up` itself in
+  its own conversation, once per document, so its result comes back.
+- In the way: a first user uses the documents against rn's viewpoints on top of writ's own check;
+  `writ` run inside an agent returns before its own agents do; rounds of writing (#39: hours).
 
-## The design stage calls writ once per document (#39)
+## 4. It builds without you watching
 
-- Before `writ` is called, the conductor reads the agreed design points against `design.md` as a
-  writer would, and settles every gap it finds; gaps that do not depend on each other go to the user
-  together.
-- A point `writ` still returns is settled, and handed to `writ` with its result file, so it fixes
-  only what the point touches.
+- Gets: the user does not watch; each result is used before they see it by an agent that knows
+  nothing of how it was made; each decision is one line.
+- Needs: a generator per task; a first user per task result and once for the deliverable, and once
+  more on a fixed attractive More alone; the conductor waits for its agents by ending its turn, and
+  their return wakes it.
+- In the way: the turn-end check sends the conductor on while it waits, and the check forbidding
+  background agents forbids the only way agents run (#44); its checks stop other sessions in the same
+  repository (#43).
 
-## The plan is heard from the user, as the README promises (A1, #45)
+## 5. Pause and resume
 
-- What the user really wants, why they want it and what a result should do for them, is always
-  theirs, so the plan is heard from them one point at a time until both see the same thing. An issue
-  or the request is where the hearing starts, never its answer: rn 0.9.0 read an issue as the user's
-  answer, dropped its question, and widened the goal on its own judgment (PR #48).
-- Looked up instead of asked: facts, and a means the criteria leave only one way to. A means question
-  is put to the user only when the criteria allow ways that give them something different; what they
-  settle is written as a Fact naming where.
+- Gets: a fresh conversation goes on from where the work stopped, without explaining again.
+- Needs: every decision pushed as it is made; `/rn:dn` in the middle of a task; `/rn:up`.
+- In the way: nothing found beyond the waiting in step 4.
 
-## The hooks hold only what a machine can tell, in the conductor's own session (#43, #44)
+## 6. Your default branch changes only when you merge
 
-- `/rn:on` and `/rn:up` record the session id of the conversation that runs rn; every conductor check
-  applies only to that session and to the agents it started. Another session passes, and a message to
-  another session is never stopped.
-- The conductor waits for the agents it started by ending its turn with one line on what runs; the
-  agent's return wakes it. The turn-end check that sends the conductor on is removed, since it is what
-  forbids that wait and what sent another session on with rn's work.
-- An approval is recorded after the user has spoken since the stop, in words or by `/rn:ty`; a commit
-  that records one with no user message since the stop is stopped.
-- The verification document's coverage is checked only once the design writes it, from the Design
-  sign-off on.
-- Removed with the first user's use of questions: the check that a settled report on a question lets
-  no More go.
-- Kept: the record's form, the decision line, pushed commits, only the conductor uses git, the first
-  user's reads and writes kept to its own, the conversation-language check, and the record read again
-  after Claude Code summarizes the conversation.
+- Gets: the work is on a branch and a draft pull request; the merge is the user's.
+- Needs: when the user starts on a branch of their own with no commits and level with the latest
+  default branch, such as a fresh worktree, rn works on it (#41); otherwise on its own.
+- In the way: `/rn:on` always makes a new branch, apart from the user's worktree (#41).
 
-## What the user sees taken away
+## Hooks keep only what the steps rest on
 
-- No first user takes up a question, the plan, or a proposal before the user reads it; the user is
-  the first reader of what the conductor writes.
-- A proposal no longer repeats the goal, every criterion, and every Good and More; they are on the
-  pull request.
-- `/rn:ty` is no longer the only way to approve; saying so in words is recorded the same.
+- Kept, each acting only in the conversation that runs rn and on the agents it started: the record's
+  form and the decision line (step 5), pushed commits (step 5), only the conductor uses git (step 4),
+  the first user's reads and writes (step 4), the conversation language, the record read again after
+  a summary (step 5), a sign-off passed only by `/rn:ty` (step 2).
+- Taken away: the turn-end check, the check forbidding background agents, the checks on questions,
+  and the verification coverage check before the design writes the verification document.
 
-## /rn:on keeps the branch the user started on (#41)
+## It is checked by running the README's story
 
-- When the current branch is not the default branch, has no commits of its own, and is at the latest
-  default branch, `/rn:on` works on it and pushes it under the same name.
+- One session on the practice repository, from `/rn:on` to the Design sign-off, run as the README's
+  story runs, beside rn 0.9.0's run of the same request. It passes when each step above is given:
+  the user was asked why they want it; they were called only for what is theirs; they decided the
+  sign-off from the proposal; the conductor waited for its agents with no loop; and the time to the
+  Design sign-off and the lines read at each stop are below 0.9.0's.
 
-## rn is checked by running a whole session
+## The same holds for every plugin, in `.claude/rules/plugin.md`
 
-- The verification document adds a run of one session from `/rn:on` to the Design sign-off on the
-  practice repository, measuring the time it takes, the lines the user reads at each stop, and what the
-  user was asked, against rn 0.9.0's run.
+Decided by the user: written into `.claude/rules/plugin.md` with rn and writ.
 
-## writ is run in the conductor's own conversation
-
-- The conductor runs `writ:up` itself with the Skill tool, not through an agent: an agent's own agents
-  report after it has returned, so a `writ` run inside an agent returns without its result. pith,
-  called from the conductor's conversation, returned its result whole (`open/03-report-readme.md`).
-
-## The same points hold for every plugin, in `.claude/rules/plugin.md`
-
-Decided by the user: these are written into `.claude/rules/plugin.md` with rn and writ, so writ and
-every later plugin keep them too.
-
-- § Results: a called role or plugin returns its result whoever calls it. A skill run as a fork
-  (`context: fork`, as pith is) and called from inside an agent returns before its own agents do, so
-  "however it is called" does not hold today; the rule says how a plugin that starts agents is called
-  so that its result comes back.
+- § Results: a short result holds only the view, the points the caller decides, and where the file
+  is (#46); a called plugin is called so that its result comes back.
 - § Hooks: a plugin's hooks act only in the conversation that runs it and on the agents it started,
-  and never stop a session from waiting for its own agents (#43, #44).
-- § Roles: a first user is started only for what use shows and its maker cannot see without use, such
-  as a task result and the finished product; what the conductor writes to the user is written to its
-  viewpoints and read first by the user.
+  and never stop a conversation from waiting for its agents.
+- § Roles: a first user is started only for what use shows and its maker cannot see without use.
