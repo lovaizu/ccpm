@@ -33,6 +33,16 @@ class PostToolUse(Session):
         # Then it is stopped
         self.assertEqual(code, 2)
 
+    def test_steering_repeating_a_criterion_id_is_stopped(self):
+        # Given a second A1
+        self.r.write(f"{SDIR}/steering.md",
+                     STEERING.replace("## Must-be quality", "- A1: again\n\n## Must-be quality"))
+        # When it is written
+        code, out = self.post_write(f"{SDIR}/steering.md")
+        # Then it is stopped, naming A1
+        self.assertEqual(code, 2)
+        self.assertIn("criterion ids repeat: A1", out)
+
     def test_steering_missing_a_front_matter_key_is_stopped(self):
         # Given a front matter that does not say where the verification document is
         self.r.write(f"{SDIR}/steering.md",
@@ -222,6 +232,47 @@ class PostToolUse(Session):
         # Then it is stopped, naming the report
         self.assertEqual(code, 2)
         self.assertIn("02-report-task-4.md", out)
+
+    def settle(self, items, tail):
+        for name in items:
+            self.r.write(f"{SDIR}/open/{name}", REPORT)
+        self.r.commit("rn: reports\n\n● plan ── reports in → settle")
+        for name in items:
+            os.remove(os.path.join(self.r.dir, SDIR, "open", name))
+        quoted = "".join(f"{name}:\n    # Report\n\n    Doing as written, the build failed at "
+                         f"cart.ts:3.\n\n{tail[name]}\n\n" for name in items)
+        self.r.commit("rn: settle\n\n" + quoted + "● plan ── settled → asking the user")
+
+    def test_settled_report_on_a_question_letting_a_more_go_is_stopped(self):
+        # Given a report on a question settled with a More let go
+        self.settle(["02-report-question.md"],
+                    {"02-report-question.md": "- More A1: no way tells users apart\n"
+                                              "  → let go: displayName takes only the user"})
+        # When the commit is checked
+        code, out = self.r.after_commit()
+        # Then it is stopped, naming the report
+        self.assertEqual(code, 2)
+        self.assertIn("02-report-question.md", out)
+
+    def test_settled_report_on_a_question_fixing_every_more_passes(self):
+        # Given a report on a question settled with its More fixed
+        self.settle(["02-report-question.md"],
+                    {"02-report-question.md": "- More A1: no way tells users apart\n"
+                                              "  → fixed: the user is asked first"})
+        # When the commit is checked
+        code, out = self.r.after_commit()
+        # Then it passes
+        self.assertEqual(code, 0, out)
+
+    def test_more_let_go_on_another_report_settled_beside_a_question_passes(self):
+        # Given a question's report fixed, and a plan report after it letting a must-be More go
+        self.settle(["02-report-question.md", "03-report-plan.md"],
+                    {"02-report-question.md": "- More A1: x\n  → fixed: y",
+                     "03-report-plan.md": "- More M1: z\n  → let go: off the golden path"})
+        # When the commit is checked
+        code, out = self.r.after_commit()
+        # Then it passes
+        self.assertEqual(code, 0, out)
 
     # Check 6
     def test_sign_off_with_a_report_left_open_is_stopped(self):

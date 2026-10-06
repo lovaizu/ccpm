@@ -535,7 +535,7 @@ commits and pushes is stopped, since the push would carry a breach to the pull r
 checks could stop it. Checks 9 to 12 run before the tool call they judge, and checks 8, 13, and 14 on
 every end of the turn.
 
-1. `steering.md` has its front matter and headings, and task IDs are unique.
+1. `steering.md` has its front matter and headings, and task and criterion IDs are unique.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
 3. Every ID referred to exists; the verification document keeps its form; every acceptance criterion
    has a scene or a machine check, and a task once tasks are planned; a question item names on its

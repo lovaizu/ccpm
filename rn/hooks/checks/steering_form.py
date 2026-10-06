@@ -1,7 +1,7 @@
-"""Check 1: steering.md has its front matter and headings, and task IDs are unique."""
+"""Check 1: steering.md has its front matter and headings, and task and criterion IDs are unique."""
 import re
 
-from record import front_matter
+from record import criteria, front_matter
 
 FRONT_KEYS = ("rn", "pr", "status", "artifact-language", "conversation-language", "readme", "design",
               "verification")
@@ -33,4 +33,8 @@ def check(text):
     dup = sorted({i for i in ids if ids.count(i) > 1})
     if dup:
         problems.append("steering.md: task ids repeat: " + ", ".join("#" + i for i in dup))
+    crit = criteria(text)
+    dupc = sorted({i for i in crit if crit.count(i) > 1})
+    if dupc:
+        problems.append("steering.md: criterion ids repeat: " + ", ".join(dupc))
     return problems
