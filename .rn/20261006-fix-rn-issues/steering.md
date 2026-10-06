@@ -94,6 +94,16 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
   verification document of its own cannot get past its plan; until then the field names a file that
   does not exist. This is a fault of rn this session fixes.
 
-- Where use by a first user belongs, and where the maker builds quality in as it writes: rn 0.9.0
-  has a first user check questions, the plan, proposals and documents, which is the common root of
-  #39, #45 and #46. This is the first point of the design.
+- The design, from the three causes the issues come from:
+  1. Checks by a first user run everywhere (#39, #45): a first user uses only a task result and the
+     deliverable; the conductor makes the question, the plan and the proposal right as it writes;
+     writ is called once per document, with every design point settled.
+  2. What the user reads grows with the work checked (#46): a proposal and every check's short
+     result hold only the conductor's view, the points the user decides, and the next move; fixed in
+     `.claude/rules/plugin.md`, rn and writ.
+  3. The hooks know neither the session nor the stage (#41, #43, #44, the coverage check above): they
+     act only in the session that runs rn and on the agents it started, check the verification
+     document once the design writes it; the conductor waits for its agents one way; /rn:on keeps
+     the worktree's branch.
+- How it is shown to work: one rn session run end to end on the practice repository, compared with
+  rn 0.9.0's run on time to the Design sign-off, the proposal's length, and what the user was asked.
