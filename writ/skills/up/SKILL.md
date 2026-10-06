@@ -24,8 +24,8 @@ The plan holds what the generator needs to write the document as agreed without 
 - The reader: who they are, what they already know, the situation they read it in, and whether they read it through or pick parts.
 - What the reader decides and does once they finish: the document's purpose, by which every part is judged.
 - The core: what the reader must take in first, in a sentence.
-- The flow: the order the reader goes through, and for each section its heading in the reader's words, what it is for, what it tells, and how, such as a figure, a table, an example or steps.
-- The facts each section rests on, with where each comes from.
+- For each thing the reader decides or does, everything they need to know to do it, found in the repository, the code and the documents, with where each comes from. Work it out from the reader's decisions, not from what the user said: the user knows the purpose, while what the reader needs to decide well is in the repository, and is what the reader misses most when it is left out.
+- The flow, built from those: the order the reader goes through, and for each section its heading in the reader's words, which decision or action it serves, what it tells, and how, such as a figure, a table, an example or steps.
 - What is decided, with who decided it, and what is not, with who decides it: the reader themselves, or the user, who is then asked.
 - Where it is placed, its language, and any form the place or the user sets.
 

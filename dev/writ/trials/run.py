@@ -4,6 +4,9 @@
     python3 dev/writ/trials/run.py judge <scene> <workdir>    the user decides from writ's report, then the document
     python3 dev/writ/trials/run.py read <scene> <workdir>     a reader reads the finished document once
     python3 dev/writ/trials/run.py compare <scene> <workdir>  a reader compares it with the version before
+    python3 dev/writ/trials/run.py versus <scene> <workdir> <other-workdir>
+                                                              a reader compares the documents two runs wrote,
+                                                              such as this writ's and the version in use
 
 Everything lands in <workdir>/<scene>/. A run takes many minutes.
 """
@@ -189,7 +192,27 @@ def compare(name, scene_dir):
     print(scene_dir / "compare.md")
 
 
+def versus(name, scene_dir, other_dir):
+    """A reader, told nothing of which is which, compares the documents two runs of a scene wrote."""
+    docs = {"this": scene_dir / "repo" / target(name, scene_dir / "repo"),
+            "other": other_dir / "repo" / target(name, other_dir / "repo")}
+    out = scene_dir / "versus"
+    order = random.sample(["this", "other"], 2)
+    out.mkdir()
+    for label, which in zip("XY", order):
+        shutil.copy(docs[which], out / f"{label}.md")
+    prompt = (ROLES / "compare.md").read_text().format(reader=SCENES[name]["reader"])
+    report, _ = reader(prompt.replace("two versions of the same document", "two documents written for the same request"), out)
+    (scene_dir / "versus.md").write_text(
+        f"# {name}: {scene_dir.parent.name} against {other_dir.parent.name}\n\nX is {order[0]}, Y is {order[1]}.\n\n{report}\n")
+    print(scene_dir / "versus.md")
+
+
 if __name__ == "__main__":
+    if len(sys.argv) == 5 and sys.argv[1] == "versus" and sys.argv[2] in SCENES:
+        name = sys.argv[2]
+        versus(name, Path(sys.argv[3]).resolve() / name, Path(sys.argv[4]).resolve() / name)
+        sys.exit()
     if len(sys.argv) != 4 or sys.argv[1] not in ("play", "judge", "read", "compare") or sys.argv[2] not in SCENES:
         sys.exit(__doc__ + "\nScenes: " + ", ".join(SCENES))
     command, name, workdir = sys.argv[1:]
