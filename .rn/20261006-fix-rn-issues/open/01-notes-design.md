@@ -43,10 +43,15 @@ Sources: steering.md (Facts on the audit), issues #39, #41, #43, #44, #45, #46, 
 - A point `writ` still returns is settled, and handed to `writ` with its result file, so it fixes
   only what the point touches.
 
-## The user is asked only what is theirs (#45)
+## The plan is heard from the user, as the README promises (A1, #45)
 
-- A point is put to the user only when the goal, the request, and the repository leave more than one
-  answer that gives the user something different; what they settle is written as a Fact naming where.
+- What the user really wants, why they want it and what a result should do for them, is always
+  theirs, so the plan is heard from them one point at a time until both see the same thing. An issue
+  or the request is where the hearing starts, never its answer: rn 0.9.0 read an issue as the user's
+  answer, dropped its question, and widened the goal on its own judgment (PR #48).
+- Looked up instead of asked: facts, and a means the criteria leave only one way to. A means question
+  is put to the user only when the criteria allow ways that give them something different; what they
+  settle is written as a Fact naming where.
 
 ## The hooks hold only what a machine can tell, in the conductor's own session (#43, #44)
 
