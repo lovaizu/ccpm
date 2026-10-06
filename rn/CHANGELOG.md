@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 A version goes up by what changes for you: the middle number for anything you would notice, the
 last for fixes that change nothing you do.
 
+## [Unreleased]
+
+### Changed
+
+- A proposal holds only what you decide: what `rn` proposes and why, how close the work has come to each thing you would choose it for, and each point that is yours; every Good and More stays on the pull request — you can say yes or no in one reading, however large the work.
+- Questions, the plan and proposals go straight to you, with no agent reading them first, and a point the request, the goal or the repository already settles is written into the plan instead of asked — you wait less and answer only what is yours.
+- The design is worked out with every point settled before the documents are written, and each document is written and checked once, with whether the design achieves the goal checked in the same use — the design stage no longer takes hours.
+- Each result is used before you see it through `pith`, installed with `rn`, which also checks what you make outside a session.
+- `/rn:on` in a fresh worktree works on that worktree's branch instead of making a second one.
+
+### Fixed
+
+- `rn`'s checks act only in the conversation that runs it: another session in the same repository is no longer stopped, sent on with `rn`'s work, or kept from receiving a reply.
+- The conductor waits for the agents it starts however Claude Code runs them, and is no longer sent on while it waits.
+
 ## [0.9.0] - 2026-10-06
 
 0.9.0 rebuilds how a session runs, from your first words to the last sign-off.

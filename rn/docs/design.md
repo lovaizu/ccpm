@@ -39,66 +39,64 @@ must-be quality", 1984). Each criterion has an ID, by which the features below a
 |---|---|---|
 | It works out the goal and the design with the user | A1 | 1, 3 |
 | It calls the user only for decisions that are theirs | A2 | 1, 3, 4 |
-| The first user uses the work before the user does | A1, A2, M6 | 4, 6 |
-| A sign-off comes with a proposal and its grounds | A3 | 1, 2, 6 |
+| Each result is used before the user sees it | A1, A2, M6 | 4, 6 |
+| A sign-off comes with a proposal of what the user decides | A3 | 1, 2, 6 |
 | Everything decided is pushed, so any conversation goes on | A4, M1, M2, M3 | 2, 5 |
-| Hooks check rn's rules as it goes | A2, M2–M6 | 5, 6 |
-| It installs from the marketplace with writ | M7 | Install |
+| Hooks check the record as it goes | M2–M5 | 5, 6 |
+| It installs from the marketplace with writ and pith | M7 | Install |
 
 ## Who does what, and what holds throughout
 
 - The conductor is the main conversation with the user, and decides every next move.
 - A generator makes one task's result.
-- The first user uses a piece of work as its receiver would, before the user does, and reports what
-  it understood and what happened, without judging it.
+- `writ` writes the README, design document, and verification document, and checks how they read.
+- `pith` has a first user, who knows nothing of how a thing was made, use a task's result or the
+  deliverable as its receiver would, and returns its view and each More, with every Good and More in a
+  result file.
 - A viewpoint is a question worked back from the purpose of the work, answered by what happened when
   the work was used.
-- The conductor sets each answer in a report beside the aim and gives a Good, what serves the aim,
-  or a More, what falls short of it.
-- A fatal More is one without whose fix the goal cannot be achieved, and whose fix only the user can
-  decide.
-- `writ`, a plugin `rn` depends on, writes the README, design document, and verification document,
-  and checks how they read.
 - Each decision is committed with a decision line that says what was decided and what comes next.
   The commit where `rn` stops for the user is the stop commit.
 
-Seven policies hold across the features, the first above the rest:
+These policies hold across the features, the first above the rest:
 
-- Attractive quality is the goal. Its checks are the fewest that confirm it, and each improvement
-  goes where it raises it soonest.
+- Attractive quality is the goal, and what the user spends on the way is part of it.
 
     Attractive quality is why the user chooses the work, so they get what they came for soonest when
-    every effort goes to raising it. Must-be quality is checked by machine, and a must-be gap is fixed
-    where it stands in the way on the golden path; started first, or hunted beyond that path, it takes
-    the effort, and every check added beyond the fewest is time not spent on what the user chose the
-    work for.
+    every effort goes to raising it. Each question they answer, each line they read, and each wait
+    while an agent runs is time taken from them; a session whose every part works can still cost
+    hours, which shows only when the whole story is run. Must-be quality is checked by machine, and
+    a must-be gap is fixed where it stands in the way on the golden path.
 
-- Only the conductor decides what happens next.
+- Only the conductor decides what happens next, and only the conductor uses git.
 
     Decisions are made where the goal and the whole conversation are known, so a fix keeps what
-    already serves the goal. Fixes decided by the first user's words would rebuild what works.
+    already serves the goal, and every commit records a decision someone actually made.
 
-- Only the conductor uses git.
-
-    Every commit then records a decision someone actually made, so a later conversation goes on from
-    real decisions.
-
-- Everything is made and checked with the same viewpoints, and `rn` is improved by sharpening them,
-  not by adding steps.
+- A fault met in use is fixed at its cause, by sharpening a purpose or a viewpoint, not by adding a
+  step or a hook.
 
     A viewpoint asks what the work is for, so it fits situations no one foresaw. An added step is
-    followed even where it misses.
+    followed even where it misses; `rn` 0.9.0 grew a step or a hook for each fault, and each came to
+    stand between the user and what this README promises.
 
-- Every role is handed the paths of what it reads, never a summary of them.
+- Each thing is checked once, by the one that made it, and only where use shows what its maker cannot
+  see.
 
-    A summary carries the summarizer's reading, and the role would work from that instead of the
-    thing.
+    Every first user is time the user waits. A task's result and the deliverable are used by `pith`;
+    the documents are checked by `writ`, with `rn`'s question of whether the design achieves the goal
+    added to the same use; what the conductor writes to the user is read by the user.
 
-- Every agent the conductor calls leaves its whole result in a file and returns only a short result
-  and where the file is.
+- What the user reads grows with what they decide, not with the work checked.
 
-    A whole result in the conversation crowds the conductor's context and is lost when the
-    conversation is summarized.
+    A proposal that lists every criterion and viewpoint is one the user either reads all of, spending
+    the time the sign-off was meant to save, or approves without reading.
+
+- Every role is handed the paths of what it reads, never a summary of them, and every agent leaves its
+  whole result in a file and returns only a short result and where the file is.
+
+    A summary carries the summarizer's reading, and a whole result in the conversation crowds it and
+    is lost when it is summarized.
 
 - Decisions are written into documents before the work that follows them, and the documents hold
   only what holds now.
@@ -169,18 +167,26 @@ be followed back to what the user approved, and a criterion nothing serves shows
 
 The design is worked out with the user the same way, with how the user will see that it works.
 `rn` decides what goes into the README, design document, and verification document, and `writ`
-writes them, so they read as well as any `writ` writes. Whether the design achieves the goal is
-`rn`'s, so the first user uses it against `rn`'s own viewpoints. Points agreed wait in `open/` until
-`writ` writes them, so a pause loses none.
+writes them, so they read as well as any `writ` writes. Points agreed wait in `open/` until `writ`
+writes them, so a pause loses none.
+
+Every point a writer would need is settled before any document is written: the conductor reads the
+agreed points against the goal as a writer would, and puts the gaps it finds to the user together,
+where they do not depend on each other's answers. A gap found by writing costs a whole round of
+writing; in `rn` 0.9.0 each one sent `writ` back again, and the design stage took hours (#39). Each
+document is then written once and checked once by `writ`, which adds `rn`'s design viewpoints to its
+own for the design document, so whether the design achieves the goal is checked in the same use.
 
 Attractive quality is confirmed by using the product as its user would, on the golden path, and
 comparing what happened with what was aimed for. Each attractive criterion gets the fewest scenes,
 and each scene the fewest inputs, that show the user getting why they would choose the product; a
 scene or input that shows nothing another does not is left out. A scene is the moment the user
 gets what the criterion promises: it starts from the state just before, set up rather than reached
-by running what comes before it, and ends at the first result that shows whether they got it, since
-nothing outside that span changes the answer. How the parts join is left to the hooks, which check
-on every run the form each part reads, and to use, where a gap shows and is fixed. Edge cases and other flows are not
+by running what comes before it, and ends at the first result that shows whether they got it, so a
+change is checked quickly. Before a round's verdict the whole story is also run once, from the
+user's first words to the deliverable, measuring what the user spent: how long they waited, how much
+they read to decide, and each time they were called. Every scene of `rn` 0.9.0 passed while one
+design stage took hours, which only the whole story shows. Edge cases and other flows are not
 covered in advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to
 fix, while covering everything adds checks that can all pass with no one having confirmed the
 attractive quality, and spends on checking the time that would raise it. What a machine can judge is
@@ -240,19 +246,17 @@ built.
 
 Gives A2.
 
-The user is asked only what the goal, the repository, the official documentation and best practice
-cannot settle, such as how much effort is worth how much safety, and whether the deliverable achieves
-the goal. The goal settles a point only when it leaves one way: where it allows ways that give the
-user or their users different things, the choice is theirs, and `rn` deciding it is a guess they
-find later.
+The user is asked only what the goal, the request, the repository, the official documentation and
+best practice cannot settle, such as how much effort is worth how much safety, and whether the
+deliverable achieves the goal. The goal settles a point only when it leaves one answer: where it
+allows answers that give the user or their users different things, the choice is theirs, and `rn`
+deciding it is a guess they find later. A point that is settled goes into the plan as a Fact naming
+where it was settled, with no question, so the user is not drawn into what was never theirs (#45).
 
-Whenever `rn` calls the user, it comes with what it proposes to do next toward the goal, and why. A
-report of where things stand would leave the user to work out what to do next, which is the work they
-left to `rn`. A question is put so the user can answer it on the spot, so before it is asked a fresh
-first user takes it up as the user would, as it does a proposal: the conductor that wrote the question
-cannot see what it leaves out. A More it finds in a question is never let go, since the user meets
-whatever the question leaves, and fixing it costs only rewriting it. When the work waits on someone
-outside, what to do meanwhile is such a question, not a stop.
+A question goes straight to the user. The conductor reads it as the user would before asking, by the
+Question viewpoints; no first user takes it up first, since that only makes the user wait for a
+question that, written right, needs no check. Whenever `rn` calls the user, it comes with what it
+proposes to do next toward the goal, and why.
 
 Approving and giving feedback each stop, since that is where the user may clear the conversation;
 the user goes on by saying so, or by `/clear` and then `/rn:up`, and both lead to the same next move.
@@ -262,7 +266,7 @@ changes without the user having decided it. A correction that changes nothing th
 the user made by answering a question, are written without stopping, and the next proposal shows
 them as changed since the last approval.
 
-## The first user uses the work before the user does
+## Each result is used before the user sees it
 
 Gives A1, A2, and M6.
 
@@ -271,167 +275,77 @@ flowchart TD
     U(["User"])
     C["Conductor"]
     G["Generator<br/>one per task"]
-    W["writ<br/>one per document"]
-    F["First user<br/>one per use"]
+    W["/writ:up<br/>one per document"]
+    P["/pith:up<br/>one per result"]
     U <-->|"talk, proposals"| C
     C <-->|"task ⇄ edits"| G
     C <-->|"points ⇄ documents"| W
-    C <-->|"work ⇄ report"| F
+    C <-->|"result ⇄ view and Mores"| P
 ```
-
-Each agent the conductor calls returns a short result and where its whole result is.
 
 The generator and the first user are split after the generator/evaluator split in Anthropic's
 [Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps):
-an agent asked to evaluate its own work tends to praise it. `rn` keeps the use and leaves out the
-judging: the first user reports only what it understood and what happened, and the conductor, who
-holds the goal and everything the user agreed, sets those facts beside the aim.
+an agent asked to evaluate its own work tends to praise it. The first user, `pith`'s, reports only
+what it understood and what happened; `pith` and then the conductor, who holds the goal and everything
+the user agreed, set those facts beside the aim. How a check runs, and how the first user is kept
+from how the work was made, is in [pith's design](../../pith/docs/design.md); `rn` keeps only what it
+hands `pith` and what it does with the result.
 
-The conductor stays the same conversation throughout the session, so what was talked through stays
-with it. A fresh generator is started for each task, a fresh `writ` for each document, and a fresh
-first user for each use, so each one's attention holds only its own work. Each returns to the
-conductor, never to the user, and the conductor waits for it, so its turn ends only when it stops for
-the user or asks them a question.
+A task's result is used once, by `pith` with `rn`'s `task-result.md`; the deliverable once, with
+`deliverable.md` and each scene's input from the verification document, never its pass. A fix to a
+More on attractive quality is used again by a fresh first user for that question alone; a fix to a
+must-be More is not, since it is visible and quick to fix, and the effort goes to attractive quality.
 
-### Keeping the first user apart
+The conductor checks every Good and More at its place, then decides each More:
 
-The first user knows nothing of how the work was made. This is held first by how the agents in
-`rn/agents/` are defined, since a definition holds however an agent is called:
+- A More whose fix brings an attractive criterion closer, or closes a must-be gap met on the golden
+  path, is fixed, from what the work should be for its purpose, wherever the same cause shows.
+- A More whose fix would not bring the work closer is let go, with the reason; a must-be gap met only
+  off the golden path is let go, since hunting such gaps never ends.
+- Where whether it brings the work closer turns on what the user wants and the criteria do not say,
+  the user is asked.
+- When the same More keeps coming back, or each fix brings a new one, or a fix needs the design
+  changed, the session goes back to the design, or the plan, with that More first.
 
-- The first user is a fresh subagent that does not load `CLAUDE.md`, which carries how the work is
-  made.
-- It is handed only the paths of the work, the viewpoints, what the user agreed, and the file its
-  report goes to.
-- The generator has no Agent tool, so it cannot call the first user and shape what it is told.
-
-What a definition cannot hold, since the first user and the generator need the shell, is left to
-hooks: only the conductor commits, the first user writes only its report, and it does not read
-commit messages, notes, or earlier reports. A hook sees a shell command's text, not every file it
-touches, so a read or write through the shell is not stopped; this is accepted, since the first user
-is given no path to the maker's account, and what it writes stays in the working tree for the
-conductor to see before committing.
+The conductor waits for every agent and skill it starts. When Claude Code runs one in the background,
+the conductor ends its turn saying what it waits for, and the result starts its next turn; nothing
+polls, and no hook forbids the wait (#44).
 
 ### Viewpoints
 
 Everything `rn` makes has a purpose, stated as what whoever receives it can then do. Its viewpoints,
 in `rn/references/essentials/`, are a few questions worked back from that purpose, each answered by
-what happened when the first user used the work, such as "Checking each fact the plan rests on at its
-source, which did not hold?" rather than "Is each fact checked?". A question of whether something is
-there or good is answered "yes" without using the work, and a work no one can use passes. Each
-question asks about one point, so a shortfall does not hide behind what holds, and has grounds that
-say what the receiver gains, so it is followed by its intent where it names nothing. Every file also
-asks which parts of the work were used toward its purpose and which were passed over, since a part
-no one needs would otherwise never come to light. A question stays only if its answer is used to
-judge whether the work achieved its purpose. This follows `writ`'s essentials for essentials.
+what happened when the work was used: one file each for the plan, the design, a task's result, the
+deliverable, and what the conductor decides and says. The conductor writes the plan, its questions
+and its proposals to them and reads them itself as their receiver would; `pith` uses `task-result.md`
+and `deliverable.md`; `writ` adds `design.md` to its own for the design document. A question stays
+only if its answer is used to judge whether the work achieved its purpose.
 
-There is one file each for the plan, the design, a task's result, the deliverable, a report, and
-what the conductor decides and says. The files are not split by Kano quality; their questions aim at
-attractive quality, how far the work gives it and what stands in its way along the golden path. No
-question goes looking for must-be gaps, since one that does sends the effort to hunting them; must-be
-quality is left to the machine checks and to the gaps that stand in the way on that path. The plan's
-file asks whether must-be work comes before the attractive criteria are nearly met.
-
-The first user answers each viewpoint with "from the work I understood this" or "doing as written,
-this happened", and gives no Good or More. The conductor sets each answer beside the aim and gives
-the Good or More, each at a place in the real thing and with the criterion ID it bears on. A Good
-says what the user gains, which a fix must not take away; a More says what the user will struggle
-with.
-
-### Each result is used once and settled by the conductor
-
-```mermaid
-flowchart TD
-    M["Generator makes the result"]
-    K{"Conductor: purpose<br/>fulfilled?"}
-    V["First user uses it once"]
-    D{"Conductor decides<br/>each More"}
-    F["Generator fixes"]
-    R["Fresh first user, that<br/>viewpoint alone"]
-    J{"Conductor: a fatal<br/>More left?"}
-    N["Next task or sign-off"]
-    U["Back to the design,<br/>or the plan"]
-    M --> K
-    K -->|"no"| M
-    K -->|"yes"| V
-    V -->|"report"| D
-    D -->|"fix"| F
-    F -->|"attractive"| R
-    F -->|"must-be"| D
-    R --> D
-    D -->|"all decided"| J
-    D -->|"cannot go on"| U
-    J -->|"no"| N
-    J -->|"yes"| U
-```
-
-A generator reads its result whole once made, and again after each fix, since one fix can break
-another place. Whoever made a thing cannot see where it is unclear; the first user stays for that.
-
-The first user uses the work along the golden path of the attractive criteria it serves, the way
-the user would, and says how far it gives each; it does not go looking for edge cases, since
-effort is for why the user would choose the work, and a must-be gap is fixed when it shows up there.
-
-Every Good is checked at its place as strictly as every More. A Good that does not hold is the most
-dangerous point in a session: no one looks again at what is called good, so the flaw it hides
-reaches the user's approval unseen. A viewpoint the report leaves unanswered goes to a fresh first
-user for that viewpoint alone. Then the conductor decides each More:
-
-- A More whose fix brings the work closer to an attractive criterion, or closes a must-be gap met on
-  the golden path, and keeps the Goods, is fixed.
-
-    The fix starts from what the work should be for its purpose, wherever the same cause shows. A
-    fix made only where the More points leaves the cause to show up elsewhere.
-
-- A More whose fix would not bring the work closer is let go, with the reason.
-
-    Its cost, or that the fix needs the README, the design document, or the user, is never that
-    reason. Where whether it brings the work closer turns on what the user wants and the criteria do
-    not say, that is an intent question for the user, since reading the silence as their answer
-    decides their point for them. A must-be gap met only off the golden path is let go, its reason
-    kept in the record: hunting such gaps never ends, each fix leaves a smaller one, and the time goes
-    from raising the attractive quality.
-
-It cannot go on when the same More keeps coming back, when each fix brings a new More, or when a fix
-needs the documents changed, unless what is fixed is the design itself. When Mores contradict each
-other, something is undecided in the goal, the viewpoints, or a document, and that is what gets
-decided.
-
-A fix to a More on attractive quality is used again by a fresh first user for that viewpoint alone,
-since whoever made a fix is the worst placed to see that it falls short. A fix to a More on must-be
-quality is not, since a must-be gap is visible and quick to fix, and the effort goes to attractive
-quality instead. The final check looks again at every Good a fix touched. The whole is not used
-again, since each fresh use raises new points that are not essential.
-
-The whole deliverable is used once, when the tasks after the last Design sign-off are done: a first
-user runs each scene of the verification document, and the machine checks run. Its Mores become
-added tasks. The plan follows the same flow, with the conductor making it, and so does the design,
-with `writ` writing it.
-
-## A sign-off comes with a proposal and its grounds
+## A sign-off comes with a proposal of what the user decides
 
 Gives A3.
 
 A fatal More, or work that cannot go on, goes back to working things out with the user instead of to
 the sign-off, since approving something that is no use until fixed only spends the user's time.
 
-Otherwise `rn` proposes what it wants to do next and why that serves the goal. It gives the goal and
-each acceptance criterion as `steering.md` words them, since the work is judged by those words, and
-what the user knows that they leave out shows only against the words themselves. It says first, for
-each attractive criterion, how far the work now gives it and what came closer since the last
-proposal. Clearing every More never ends, since each fix leaves a smaller one; how close the work has
-come is what lets the user decide whether it is enough. As its grounds it
-gives, under every viewpoint and in the user's terms, the final Good and More on the attractive
-criteria and on the must-be gaps met on the golden path, each at its place, with its criterion ID,
-claiming no more than that place shows. A must-be gap let go off that path stays in the record, not
-in the proposal: put before the user, it asks them to spend their time on what they did not choose
-the work for. When the design takes away something
-the product does today, the proposal names it, so the user decides that loss there. Each
-`Assumption` in `steering.md` is a More under the criterion it puts at risk in every proposal until
-something checks it, since the user approves the work resting on it at each sign-off. The points and
-fixes along the way are left out, since the user approves the final state.
+Otherwise `rn` proposes what it wants to do next and why that serves the goal, and gives only what the
+user decides on:
+
+- At the Plan sign-off, the goal and each acceptance criterion as `steering.md` words them, since they
+  are what the user approves, and what the user knows that they leave out shows only against the
+  words themselves.
+- For each attractive criterion, how far the work now gives it and what came closer since the last
+  proposal. Clearing every More never ends; how close the work has come is what lets the user decide
+  whether it is enough.
+- Each point that is theirs: a More left, an `Assumption` no one has checked, something the product
+  did before that this work no longer does, each with where.
+
+Every Good and More stays in the record and on the pull request. A proposal that also listed every
+criterion and viewpoint grew with the work checked and reached 72 lines, which the user could not
+decide from (#46); its length now follows what the user decides.
 
 The user reads the body of the stop commit in the conversation language, so what they read and what
-a later conversation reads say the same. When the same sign-off is proposed again, each More of the
+a later conversation reads say the same. When the same sign-off is proposed again, each point of the
 last proposal stays until a fix settles it.
 
 ## Everything decided is pushed, so any conversation goes on

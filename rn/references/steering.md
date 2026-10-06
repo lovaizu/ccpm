@@ -82,33 +82,25 @@ Completion criteria:
 What is not yet settled, one file per item, named `{NN}-{kind}-{about}.md`: `{NN}` is one more than
 the highest number in `open/`, or `01` when it is empty; `{kind}` is one of
 
-- `report`: written by a first user, or by `writ` on how the documents read, one file per use the
-  conductor asks for, such as `04-report-task-3.md`, and `05-report-task-3-a1.md` for one viewpoint
-  after a fix;
+- `report`: a result file `/pith:up` writes, in pith's form, on a task's result or the deliverable,
+  or one `/writ:up` leaves on a document, one file per work, such as `04-report-task-3.md`; a recheck
+  after a fix writes the same file;
 - `feedback`: the user's words from `/rn:gm`, whole, in their own language;
 - `notes`: design points agreed and waiting for `writ`, a question being put to the user, or where a
-  task stands when `/rn:dn` pauses. A question's first line is `Serves:` with the criterion IDs it
-  rests on, or `goal`.
+  task stands when `/rn:dn` pauses.
 
-`{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`; a question
-being put to the user is `question`, and a proposal at a sign-off `proposal`, since the checks find
-them by these names.
+`{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`.
 
-The conductor writes its Good and More under a report in the report's file before any fix is made,
-so whoever fixes reads the Goods to keep. An item leaves `open/` in the commit that settles it,
-copied whole into that commit's message under its file name, with what was decided on each More:
+The conductor settles a report in its file as pith's note says, each fixed More rewritten as its Good
+and each left More given `Left because:`. An item leaves `open/` in the commit that settles it, copied
+whole into that commit's message under its file name, each More ending with what was decided:
 
 ```
 04-report-task-3.md:
-    <the report, whole, each line indented>
-
-- Good A1: <what the user gains, at path:line>
-- More A1: <what the user will struggle with, at path:line>
-  → fixed: <how> | → let go: <why fixing it would not bring the work closer> | → to the user: <the question, or back to the plan or the design>
+    <the file, whole, each line indented>
+    - More: `src/cart.ts:12` <what the user will struggle with>
+      → fixed: <how> | → let go: <why fixing it would not bring the work closer> | → to the user: <the question, or back to the plan or the design>
 ```
-
-Asking for the same use again writes the same file anew; settle the earlier report first, so it
-stays in the record and the first user never reads it.
 
 ## The decision line
 

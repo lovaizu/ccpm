@@ -1,8 +1,9 @@
 # What the conductor decides and says
 
 Its receivers are the user, who is called only for what is theirs, and a later conversation, which
-goes on from what was decided. The first user takes each up as the user or a later conversation
-would; the conductor sets each answer beside the goal and what the user agreed.
+goes on from what was decided. The conductor reads what it wrote by these questions, as the user or
+a later conversation would, before giving it; no first user reads it, since the user reads it
+themselves and a check before them only makes them wait.
 
 ## Decision
 
@@ -95,15 +96,12 @@ reads the work whenever they want.
 - Deciding yes or no as the user, what beyond the proposal did you need?
 
     The user then decides a move from the proposal alone, from what the conductor proposes to do next
-    and why, rather than working out what to do from a report or the work.
-
-- Using the work where each Good was found, what happened that differs from the Good?
-
-    The user can then trust each Good without reading that part. A Good that does not hold hides a
-    flaw no one looks at again, and it reaches the user's approval unseen.
+    and why, and from each point that is theirs: a More left, an assumption no one has checked,
+    something the product will no longer do.
 
 - Deciding yes or no as the user, which parts of the proposal did you use and which did you read
   past?
 
-    The user then reads only what they decide on, and what matters is not lost among parts they
-    skip.
+    The user then reads only what they decide on. A proposal that grows with the work checked, such
+    as a line for every viewpoint, is one they either read all of, spending the time the sign-off was
+    meant to save, or approve without reading.

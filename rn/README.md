@@ -26,8 +26,9 @@ plugin:
 > /plugin install rn@ccpm
 ```
 
-This also installs `writ`, from the same marketplace, which `rn` has write your README and design
-document so they read well to whoever picks them up.
+This also installs `writ` and `pith`, from the same marketplace: `rn` has `writ` write your README and
+design document so they read well to whoever picks them up, and has `pith` use each result before
+you see it.
 
 ## How a session goes
 
@@ -128,7 +129,6 @@ there; until then, the plan shows them as not yet specified.
   know it is achieved.
 
   Goal: a wrong type fails the build
-  Judged by:
   - A1: Code reproducing each of the three bugs fails the build
   - M1: Every file is .ts
   - M2: The app builds and runs as before
@@ -137,23 +137,22 @@ there; until then, the plan shows them as not yet specified.
   - A1: each of the three bugs is named with how its failing build is checked; nothing is built yet
     (first proposal)
 
-  ### Is the goal what you really want, with the reason you want it?
-  - Good A1: it names the three type bugs as the reason (steering.md:11), so every later choice is
-    judged against stopping them
-  - More: none
-  ...
+  For you to decide:
+  - Assumed, not checked: the three bugs are all in src/cart and src/checkout (steering.md:24)
 
   ● #1 Plan sign-off ── proposed: work out the design on this plan → waiting for #1 Plan sign-off
 ```
 
 The map on top heads every message where `rn` stops for a sign-off or a pause: ✅ done, 👉 now,
-⬜ ahead. Under it, `rn` says what it proposes to do next and why, and the goal and criteria in the
-plan's own words, so you can see what they leave out of what you know. Then it says how close the work has come
-to each thing you would choose it for, and what came closer since its last proposal. Clearing every
-shortfall never ends, so this is what you decide on: whether it has come close enough. Then it gives
-its grounds: each question the plan must answer, with what is good and what falls short, and where. You can say yes or
-no from this, and read the plan itself on the pull request whenever you want. The last line is what
-`rn` records of where it stopped, so a fresh conversation goes on from the same place.
+⬜ ahead. Under it, `rn` says what it proposes to do next and why; at the Plan sign-off, the goal and
+criteria in the plan's own words, since they are what you approve. Then it says how close the work
+has come to each thing you would choose it for, and what came closer since its last proposal.
+Clearing every shortfall never ends, so this is what you decide on: whether it has come close enough.
+Last comes only what is yours to decide: a shortfall it left, something it assumed without checking,
+or something your product will no longer do. However large the work, the proposal holds no more
+than that; everything good and everything short of it is in the record on the pull request, for
+whenever you want it. The last line is what `rn` records of where it stopped, so a fresh conversation
+goes on from the same place.
 
 ### 2. Approve or give feedback — `/rn:ty` and `/rn:gm`
 

@@ -53,7 +53,7 @@ SCENES = {
     "pr-review-hole": {
         "benefits": ["check by what happened in use"],
         "source": "fixture",
-        "opening": "/writ:pith check .github/prompts/pr-review.md. " + PR_REVIEW_AIM,
+        "opening": "/pith:up check .github/prompts/pr-review.md. " + PR_REVIEW_AIM,
         "look": "a More points at the missing check on response fields, with what happened in use as "
                 "its evidence",
         "target": None,
@@ -62,7 +62,7 @@ SCENES = {
     "pr-review-sound": {
         "benefits": ["check by what happened in use"],
         "source": "fixture",
-        "opening": "/writ:pith check .github/prompts/pr-review.good.md. " + PR_REVIEW_AIM,
+        "opening": "/pith:up check .github/prompts/pr-review.good.md. " + PR_REVIEW_AIM,
         "look": "the question the other scene's More answers comes back Good",
         "target": None,
         "reader": None,
@@ -70,7 +70,7 @@ SCENES = {
     "release-notes": {
         "benefits": ["write essentials worked back from the purpose"],
         "source": "fixture",
-        "opening": "/writ:pith Write essentials for our CLI's release notes. Put them at "
+        "opening": "/pith:up Write essentials for our CLI's release notes. Put them at "
                    "docs/essentials/release-notes.md. The readers are the developers in the company "
                    "who use this CLI, reading to decide whether to upgrade now. The CLI is in cli/, and "
                    "docs/releases/ holds its real release notes." + ASK_BACK,

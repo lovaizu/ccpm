@@ -20,6 +20,9 @@ from scenes import SCENES
 TRIALS = Path(__file__).resolve().parent
 REPO = TRIALS.parents[2]
 WRIT = REPO / "writ"
+PITH = REPO / "pith"
+# Installed copies would answer in place of the plugins under test.
+SETTINGS = '{"enabledPlugins":{"writ@ccpm":false,"rn@ccpm":false,"pith@ccpm":false}}'
 ROLES = TRIALS / "roles"
 
 
@@ -36,7 +39,8 @@ def claude(message, cwd, extra):
 
 
 def writ(message, repo):
-    return claude(message, repo, ["--plugin-dir", str(WRIT), "--permission-mode", "auto"])
+    return claude(message, repo, ["--plugin-dir", str(WRIT), "--plugin-dir", str(PITH), "--permission-mode", "auto",
+                                  "--settings", SETTINGS])
 
 
 def reader(message, cwd):
@@ -80,7 +84,7 @@ def changed_only_target(name, repo):
     """Only the target work and the result files in open/ may differ from the scene as set up."""
     first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
     changed = set((git(repo, "diff", "--name-only", first) + git(repo, "ls-files", "--others", "--exclude-standard")).split())
-    others = sorted(p for p in changed if not p.startswith(".writ/open/"))
+    others = sorted(p for p in changed if not p.startswith((".writ/open/", ".pith/")))
     target = SCENES[name]["target"]
     passed = others == [target] or others == [] if target else len(others) <= 1
     return f"Changed besides `.writ/open/`: {others or 'nothing'} — {'as expected' if passed else 'MORE THAN THE TARGET WORK'}\n"
