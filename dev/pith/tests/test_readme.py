@@ -1,10 +1,10 @@
-"""The README's links reach their files, and the names it teaches are the ones writ uses."""
+"""The README's links reach their files, and the names it teaches are the ones pith uses."""
 
 import os
 import re
 import unittest
 
-PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
+PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "pith")
 
 
 def read(*parts):
@@ -25,14 +25,24 @@ class ReadmeTest(unittest.TestCase):
 
     def test_the_commands_taught_are_exactly_the_skills(self):
         # Given
-        skills = os.listdir(os.path.join(PLUGIN_ROOT, "skills"))
+        skills = [name for name in os.listdir(os.path.join(PLUGIN_ROOT, "skills"))
+                  if "user-invocable: false" not in read("skills", name, "SKILL.md")]
         # When
         readme = read("README.md")
         # Then
         for skill in skills:
-            self.assertIn("/writ:{}".format(skill), readme)
+            self.assertIn("/pith:{}".format(skill), readme)
             self.assertIn("name: {}\n".format(skill), read("skills", skill, "SKILL.md"))
-        self.assertEqual(set(re.findall(r"/writ:(\w+)", readme)), set(skills))
+        self.assertEqual(set(re.findall(r"/pith:(\w+)", readme)), set(skills))
+
+    def test_every_essentials_file_is_named(self):
+        # Given
+        names = os.listdir(os.path.join(PLUGIN_ROOT, "references", "essentials"))
+        # When
+        readme = read("README.md")
+        # Then
+        for name in names:
+            self.assertIn(name, readme)
 
 
 if __name__ == "__main__":

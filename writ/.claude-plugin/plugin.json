@@ -1,6 +1,9 @@
 {
   "name": "writ",
-  "description": "Makes a document read as if a person wrote it for its reader: settles who reads it and what they do next, writes it, has it checked by a role that does not know the discussion, and returns it with Good and More for every question.",
+  "description": "Makes a document read as if a person wrote it for its reader: settles who reads it and what they do next, writes it, has it checked with pith by a role that does not know the discussion, and returns it with a short report of what you decide.",
   "version": "0.1.0",
-  "author": { "name": "lovaizu" }
+  "author": { "name": "lovaizu" },
+  "dependencies": [
+    "pith"
+  ]
 }

@@ -4,15 +4,17 @@ import re
 import shlex
 from typing import List, Optional
 
-FIRST_USER = "writ:first-user"
+FIRST_USER = "pith:first-user"
 HISTORY_COMMANDS = {"log", "show", "blame", "reflog", "stash", "diff"}
 # git options placed before the subcommand that take the next word as their value
 OPTIONS_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--super-prefix",
                       "--config-env", "--exec-path"}
 CONVERSATION_RECORDS = re.compile(r"/\.claude/projects(?:/|$|[\s\"'`;|&)])")
+# Claude Code saves an agent's own long command output here; it holds no record of how the work was made.
+OWN_OUTPUT = re.compile(r"/\.claude/projects/\S*/tool-results/[^\s\"'`;|&)]+")
 SEPARATORS = re.compile(r"&&|\|\||[;|&\n()`]|\$\(")
 
-REASON = ("writ: the first user does not read how the work was made "
+REASON = ("pith: the first user does not read how the work was made "
           "(git history or Claude Code conversation records); use the work as it is.")
 
 
@@ -45,7 +47,7 @@ def check(input_data: dict) -> Optional[str]:
     tool_name = input_data.get("tool_name", "")
     tool_input = input_data.get("tool_input") or {}
     texts = [value for value in tool_input.values() if isinstance(value, str)]
-    if any(CONVERSATION_RECORDS.search(text) for text in texts):
+    if any(CONVERSATION_RECORDS.search(OWN_OUTPUT.sub("", text)) for text in texts):
         return REASON
     if tool_name == "Bash" and _runs_git_history(str(tool_input.get("command", ""))):
         return REASON

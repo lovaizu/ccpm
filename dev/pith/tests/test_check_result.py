@@ -8,8 +8,8 @@ import tempfile
 import textwrap
 import unittest
 
-PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
-ENTRY = os.path.join(PLUGIN_ROOT, "skills", "pith", "scripts", "check_result.py")
+PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "pith")
+ENTRY = os.path.join(PLUGIN_ROOT, "scripts", "check_result.py")
 
 ESSENTIALS = textwrap.dedent("""\
     # README
@@ -104,14 +104,43 @@ class CheckResultTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(result.stdout, "")
 
-    def test_no_essentials_file_stops_with_usage(self):
+    def test_no_result_file_named_stops_with_usage(self):
         # Given
-        command = [sys.executable, ENTRY, ".writ/open/01-report-readme.md"]
+        command = [sys.executable, ENTRY]
         # When
         result = subprocess.run(command, cwd=self.root, capture_output=True, text=True)
         # Then
         self.assertEqual(result.returncode, 2)
         self.assertIn("usage: check_result.py", result.stderr)
+
+    def test_a_missing_result_file_is_reported(self):
+        # Given
+        command = [sys.executable, ENTRY, ".pith/open/09-report-none.md", "essentials/readme.md"]
+        # When
+        result = subprocess.run(command, cwd=self.root, capture_output=True, text=True)
+        # Then
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, ".pith/open/09-report-none.md: no such file\n")
+
+    def test_the_essentials_line_names_the_files_to_check_against(self):
+        # Given
+        text = GOOD_RESULT.replace("Aim:", "Essentials: essentials/readme.md\nAim:")
+        self.write(".writ/open/01-report-readme.md", text)
+        # When
+        result = subprocess.run([sys.executable, ENTRY, ".writ/open/01-report-readme.md"],
+                                cwd=self.root, capture_output=True, text=True)
+        # Then
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_a_result_naming_no_essentials_is_reported(self):
+        # Given
+        self.write(".writ/open/01-report-readme.md", GOOD_RESULT)
+        # When
+        result = subprocess.run([sys.executable, ENTRY, ".writ/open/01-report-readme.md"],
+                                cwd=self.root, capture_output=True, text=True)
+        # Then
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("no `Essentials:` line", result.stdout)
 
     def test_a_missing_essentials_file_stops_the_check(self):
         # Given

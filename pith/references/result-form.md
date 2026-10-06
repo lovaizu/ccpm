@@ -1,12 +1,13 @@
 # Result file form
 
-Write the content in the user's language; the labels below stay as written. `scripts/check_result.py` checks a file against this form before pith returns.
+Write the content in the user's language; the labels below stay as written. pith's hook checks a file against this form with `scripts/check_result.py` each time one is written, by pith or by the caller settling it.
 
 ```
 # Check: <target path>
 
 Target: <path>
 Receiver and purpose: <text>
+Essentials: <path of each essentials file, separated by spaces>
 Aim: <text>
 
 ## <essentials file name>: <question word for word>
@@ -20,7 +21,7 @@ Report: <the first user's report for this question; may span lines>
   - Left because: <reason, once a More is left>
 ```
 
-`<line>` is one line or a range `a-b`. Paths are relative to the repository root.
+`<line>` is one line or a range `a-b`. Paths are relative to the repository root, or absolute.
 
 ## File name
 

@@ -1,4 +1,4 @@
-"""Tests for writ's PreToolUse hook, fed the JSON Claude Code sends, through the entry file."""
+"""Tests for pith's PreToolUse hook, fed the JSON Claude Code sends, through the entry file."""
 
 import json
 import os
@@ -8,10 +8,10 @@ import sys
 import tempfile
 import unittest
 
-PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
+PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "pith")
 ENTRY = os.path.join(PLUGIN_ROOT, "hooks", "pretooluse.py")
 HOOKS_JSON = os.path.join(PLUGIN_ROOT, "hooks", "hooks.json")
-FIRST_USER = "writ:first-user"
+FIRST_USER = "pith:first-user"
 
 
 def hook_input(tool_name, tool_input, agent_type=FIRST_USER):
@@ -97,6 +97,8 @@ class FirstUserHistoryTest(unittest.TestCase):
         # Given
         cases = [
             ("Read", {"file_path": "/Users/someone/repo/README.md"}),
+            ("Read", {"file_path": "/Users/someone/.claude/projects/repo/abc123/tool-results/b1.txt"}),
+            ("Bash", {"command": "cat /Users/someone/.claude/projects/repo/abc/tool-results/b1.txt"}),
             ("Grep", {"pattern": "install", "path": "/Users/someone/repo"}),
             ("Glob", {"pattern": "**/*.md", "path": "/Users/someone/repo/.claude/rules"}),
         ]
@@ -109,7 +111,7 @@ class FirstUserHistoryTest(unittest.TestCase):
 
     def test_other_agents_reading_history_or_records_pass(self):
         # Given
-        agent_types = ("writ:generator", "general-purpose", None)
+        agent_types = ("pith:generator", "general-purpose", None)
         for agent_type in agent_types:
             with self.subTest(agent_type=agent_type):
                 # When
@@ -119,51 +121,6 @@ class FirstUserHistoryTest(unittest.TestCase):
                 # Then
                 self.assertPassed(git_log)
                 self.assertPassed(records)
-
-
-class ForegroundAgentsTest(unittest.TestCase):
-    """writ's own agents run in the foreground, so the caller gets a finished work back."""
-
-    def run_start(self, tool_input, agent_type=None):
-        return run_entry(hook_input("Agent", tool_input, agent_type))
-
-    def test_writ_agent_started_in_background_is_moved_to_foreground(self):
-        for agent in ("writ:generator", "writ:first-user"):
-            with self.subTest(agent=agent):
-                # Given
-                tool_input = {"description": "write", "prompt": "Write docs/x.md",
-                              "subagent_type": agent, "run_in_background": True}
-                # When
-                result = self.run_start(tool_input)
-                # Then
-                self.assertEqual(result.returncode, 0, result.stderr)
-                output = json.loads(result.stdout)["hookSpecificOutput"]
-                self.assertEqual(output["hookEventName"], "PreToolUse")
-                self.assertEqual(output["permissionDecision"], "allow")
-                self.assertEqual(output["updatedInput"], dict(tool_input, run_in_background=False))
-
-    def test_writ_agent_started_without_the_field_runs_in_foreground(self):
-        # Given
-        tool_input = {"prompt": "Use docs/x.md", "subagent_type": "writ:first-user"}
-        # When
-        result = self.run_start(tool_input, "general-purpose")
-        # Then
-        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["updatedInput"],
-                         {"prompt": "Use docs/x.md", "subagent_type": "writ:first-user",
-                          "run_in_background": False})
-
-    def test_other_agents_and_foreground_writ_agents_are_left_as_they_are(self):
-        # Given
-        inputs = ({"prompt": "hi", "subagent_type": "general-purpose", "run_in_background": True},
-                  {"prompt": "hi", "subagent_type": "writ:generator", "run_in_background": False})
-        for tool_input in inputs:
-            with self.subTest(tool_input=tool_input):
-                # When
-                result = self.run_start(tool_input)
-                # Then
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertEqual(result.stdout, "")
-                self.assertEqual(result.stderr, "")
 
 
 class HooksJsonWithoutPythonTest(unittest.TestCase):
@@ -196,22 +153,9 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("install Python 3.9 or later", result.stderr)
 
-    def test_without_python_writ_agents_are_blocked_and_told_to_install(self):
-        # Given
-        stdins = (hook_input("Agent", {"prompt": "p", "subagent_type": "writ:generator"}, None),
-                  hook_input("Agent", {"prompt": "p", "subagent_type": "writ:first-user"},
-                             None).replace('": "', '":"'))
-        for stdin in stdins:
-            with self.subTest(stdin=stdin[-60:]):
-                # When
-                result = self.run_without_python(stdin)
-                # Then
-                self.assertEqual(result.returncode, 2)
-                self.assertIn("install Python 3.9 or later", result.stderr)
-
     def test_without_python_other_agents_pass(self):
         # Given
-        stdin = hook_input("Bash", {"command": "echo agent_type writ:first-user"}, "general-purpose")
+        stdin = hook_input("Bash", {"command": "echo agent_type pith:first-user"}, "general-purpose")
         # When
         result = self.run_without_python(stdin)
         # Then

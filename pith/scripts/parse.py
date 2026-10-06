@@ -54,6 +54,7 @@ class Section:
 class Result:
     path: str
     sections: List[Section]
+    essentials: List[str] = field(default_factory=list)
 
 
 def read_text(path: str) -> str:
@@ -71,7 +72,11 @@ def parse_result(path: str) -> Result:
         if section is not None and report_lines:
             section.report = "\n".join(report_lines)
 
+    essentials: List[str] = []
     for number, line in enumerate(read_text(path).splitlines(), start=1):
+        if section is None and line.startswith("Essentials:"):
+            essentials = line[len("Essentials:"):].split()
+            continue
         if line.startswith("## "):
             close_report()
             section = Section(heading=line[3:].strip(), line=number)
@@ -97,7 +102,7 @@ def parse_result(path: str) -> Result:
         if in_report:
             report_lines.append(line)
     close_report()
-    return Result(path=path, sections=sections)
+    return Result(path=path, sections=sections, essentials=essentials)
 
 
 def parse_questions(path: str) -> List[str]:

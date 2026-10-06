@@ -1,0 +1,29 @@
+{
+  "description": "pith: keeps the first user from reading git history or Claude Code conversation records, and checks every result file written against its form",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"; else case \"$(cat)\" in *'\"agent_type\":\"pith:first-user\"'*|*'\"agent_type\": \"pith:first-user\"'*) echo 'pith: stopped because its checks need Python 3.9 or later; install Python 3.9 or later and run again.' >&2; exit 2;; esac; exit 0; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py\"; else case \"$(cat)\" in *'/open/'*'-report-'*) echo 'pith: a result file cannot be checked without Python 3.9 or later; install Python 3.9 or later and run again.' >&2; exit 2;; esac; exit 0; fi",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}
