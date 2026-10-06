@@ -25,7 +25,7 @@ code-modernization).
 - **When python3 is missing, stop and tell the user to install it; never skip the check.**
   - Rationale: a skipped check goes unnoticed, so no one learns the rule is not being kept.
 - **State in the plugin's README that Python 3.9 or later is needed.**
-- **Write the tests with the standard `unittest`, in `dev/tests/<plugin>/`** (e.g. `dev/tests/rn/`),
+- **Write the tests with the standard `unittest`, in `dev/<plugin>/tests/`** (e.g. `dev/rn/tests/`),
   outside the plugin's directory. **Feed in the JSON a hook would receive, and check both a case it
   stops and a case it lets through.**
   - Rationale: a check that never stops anything looks the same as one that works. Installing a
@@ -128,7 +128,7 @@ code-modernization).
   - Rationale: aiming at no More never ends, since every fix and every new first user brings fresh
     small remarks. When to stop is the user's call, and they make it quickest from whether the
     plugin can be used now, or whether anything got worse.
-- **Keep the code that runs this validation in the repository, in `dev/trials/<plugin>/` apart from
+- **Keep the code that runs this validation in the repository, in `dev/<plugin>/trials/` apart from
   the tests: one scene per attractive quality, from the state just before the moment the user gets it,
   set up rather than reached by running what comes before, to the first result that shows whether
   they got it, leaving what happened for the conductor to read.**
