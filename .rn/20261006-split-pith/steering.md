@@ -36,7 +36,8 @@ work by use without installing a plugin for writing documents.
   before.
 - M2: An rn session's golden path (plan, design, tasks, deliverable, each checked before its sign-off)
   gives no less than before.
-- M3: Whoever calls `/writ:pith` today finds the same check as `/pith:up`, installed with writ.
+- M3: `/writ:pith` is removed, and whoever called it finds the same check as `/pith:up`, installed
+  with writ.
 - M4: No copy of pith's parts remains in writ or rn, and each part they share has exactly one home.
 - M5: Each plugin keeps `.claude/rules/plugin.md`: tests that run every line in CI, trials, a README
   stating Python 3.9 or later, a CHANGELOG entry, both `claude plugin validate --strict` runs passing,
