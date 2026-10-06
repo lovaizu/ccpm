@@ -45,13 +45,6 @@ A wrong type fails the build.
 ### [ ] #2: Design sign-off
 """
 
-VERIFICATION = """# verification
-
-### A1: Code reproducing each bug fails the build
-
-Passes when it fails the build, and M1 holds.
-"""
-
 SDIR = ".rn/20261003-typescript"
 
 
@@ -62,22 +55,17 @@ def sh(cwd, *args):
 class Repo:
     def __init__(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.remote = os.path.join(self.tmp.name, "remote.git")
         self.dir = os.path.join(self.tmp.name, "work")
         self.data = os.path.join(self.tmp.name, "data")
-        sh(self.tmp.name, "git", "init", "-q", "--bare", "-b", "main", self.remote)
-        sh(self.tmp.name, "git", "clone", "-q", self.remote, self.dir)
+        sh(self.tmp.name, "git", "init", "-q", "-b", "main", self.dir)
         sh(self.dir, "git", "config", "user.name", "t")
         sh(self.dir, "git", "config", "user.email", "t@example.com")
         self.write("README.md", "app\n")
         sh(self.dir, "git", "add", "-A")
         sh(self.dir, "git", "commit", "-qm", "init")
-        sh(self.dir, "git", "push", "-qu", "origin", "main")
         sh(self.dir, "git", "switch", "-qc", "session")
         self.write(f"{SDIR}/steering.md", STEERING)
-        self.write("docs/verification.md", VERIFICATION)
         self.commit("rn: start\n\n● plan ── started → working out the plan")
-        sh(self.dir, "git", "push", "-qu", "origin", "session")
 
     def write(self, rel, text):
         p = os.path.join(self.dir, rel)
@@ -97,18 +85,6 @@ class Repo:
                            cwd=self.dir, capture_output=True, text=True, env=env)
         return r.returncode, r.stdout + r.stderr
 
-    def after_commit(self):
-        return self.hook("posttooluse", tool_name="Bash", tool_input={"command": "git commit -F m"})
-
-
-PROPOSE = "rn: propose\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off"
-FEEDBACK = ("rn: feedback\n\n● #1 Plan sign-off ── feedback in 01-feedback-plan.md → working out "
-            "the plan again")
-PAUSE = "rn: pause\n\n● #3 cart ── half → paused at #3 cart"
-REPORT = "# Report\n\nDoing as written, the build failed at cart.ts:3.\n"
-FINISHED = STEERING.replace("status: running", "status: finished") \
-    .replace("### [ ] #1:", "### [x] #1:").replace("### [ ] #2:", "### [x] #2:")
-
 
 class Session(unittest.TestCase):
     """A repository with an rn session, and a conversation (s1) where the user typed /rn:on."""
@@ -119,22 +95,3 @@ class Session(unittest.TestCase):
 
     def tearDown(self):
         self.r.tmp.cleanup()
-
-    def post_write(self, rel):
-        return self.r.hook("posttooluse", tool_name="Write",
-                           tool_input={"file_path": os.path.join(self.r.dir, rel)})
-
-    def settle_report_whole(self):
-        self.r.write(f"{SDIR}/open/01-report-task-3.md", REPORT)
-        self.r.commit("rn: report\n\n● #3 cart ── report in → settle")
-        os.remove(os.path.join(self.r.dir, SDIR, "open/01-report-task-3.md"))
-        self.r.commit("rn: settle\n\n01-report-task-3.md:\n    # Report\n\n    Doing as written, the "
-                      "build failed at cart.ts:3.\n\n● #3 cart ── purpose fulfilled → #4")
-
-    def pause_after_dn(self):
-        self.r.hook("userpromptexpansion", command_name="rn:dn")
-        self.r.write("a.txt", "a\n")
-        self.r.commit(PAUSE)
-        self.r.after_commit()
-        sh(self.r.dir, "git", "commit", "-q", "--amend", "-m",
-           "rn: pause at #3\n\n● #3 cart ── half → paused at #3 cart")

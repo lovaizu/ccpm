@@ -10,38 +10,6 @@
         ]
       }
     ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\""
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash|Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/stop.py\""
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "compact",

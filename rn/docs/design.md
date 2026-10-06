@@ -42,7 +42,7 @@ must-be quality", 1984). Each criterion has an ID, by which the features below a
 | Each result is used before the user sees it | A1, A2, M6 | 4, 6 |
 | A sign-off comes with a proposal of what the user decides | A3 | 1, 2, 6 |
 | Everything decided is pushed, so any conversation goes on | A4, M1, M2, M3 | 2, 5 |
-| Hooks check the record as it goes | M2–M5 | 5, 6 |
+| A hook reminds the conductor after a summary | A4 | 5 |
 | It installs from the marketplace with writ and pith | M7 | Install |
 
 ## Who does what, and what holds throughout
@@ -310,9 +310,11 @@ The conductor checks every Good and More at its place, then decides each More:
 - When the same More keeps coming back, or each fix brings a new one, or a fix needs the design
   changed, the session goes back to the design, or the plan, with that More first.
 
-The conductor waits for every agent and skill it starts. When Claude Code runs one in the background,
-the conductor ends its turn saying what it waits for, and the result starts its next turn; nothing
-polls, and no hook forbids the wait (#44).
+The conductor starts the generator through `rn:make`, `writ` through `/writ:up` and the first user
+through `/pith:up`, each a skill that waits until its work is done, so the conductor goes on only once
+the result is there, in every kind of session; an agent started with the Agent tool runs in the
+background in an interactive session, and the conductor would call the user with nothing to decide
+or go on before the result exists (#44).
 
 ### Viewpoints
 
@@ -446,33 +448,18 @@ specified. Its front matter records the version of `rn`, the pull request, wheth
 finished, the two languages, and where the three documents are, so any conversation works from the
 same goal and plan.
 
-## Hooks check the record as it goes
+## A hook reminds the conductor after a summary
 
-Gives M2 to M5.
+When Claude Code summarizes the conversation, a hook tells the conductor to read the record again as
+`/rn:up` does, since a summary drops details the record holds whole and the model does not notice it
+was summarized. It speaks only to a conversation where the user typed an rn command, so another
+session in the same repository hears nothing.
 
-What a machine can judge about the record is checked by hooks, so a breach is stopped where it
-happens. A hook acts only in a conversation where the user typed an rn command, and on the agents it
-started; another session in the same repository is never stopped, sent on, or taken for the
-conductor (#43). A hook judges only what was written: whether the work serves its purpose, whether
-the conversation goes on, and how Claude Code runs an agent are not a hook's, since a hook sees none
-of them, and `rn` 0.9.0's hooks that tried left the conductor no way to wait for its agents (#44).
-
-- After a record file is written, and when the conductor ends its turn: `steering.md` has its front
-  matter and headings with unique IDs; `open/` files are named `{NN}-{kind}-{about}.md`; every
-  criterion ID referred to, in the tasks or the verification document, exists; once tasks are
-  planned, every criterion is served by a task.
-- On every conductor commit: it ends with a decision line `● … ── … → …`, followed only by trailers;
-  a settled `open/` item is whole in its message; a sign-off is passed, or the session finished,
-  only after the user typed `/rn:ty`, feedback taken only after `/rn:gm`, a pause made only after
-  `/rn:dn`.
-- Before an agent's command: no agent commits or pushes on the session's repository.
-- When the conductor ends its turn: every commit is pushed.
-- After Claude Code summarizes the conversation: the conductor reads the record again as `/rn:up`
-  does.
-
-The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
-and is common elsewhere; when it is missing, the session stops and says so, since a skipped check
-goes unnoticed.
+`rn` keeps no other hook. What the record must hold, who commits, and when a sign-off passes are held
+by the conductor's instructions, with the reason for each, and by how each role is defined: a hook
+sees only the condition it was given, and `rn` 0.9.0's hooks stopped right moves, other sessions, and
+the conductor waiting for its agents (#43, #44). The hook is written in Python 3.9 with the standard
+library only.
 
 ## It installs from the marketplace with writ and pith
 
@@ -490,4 +477,4 @@ any `pith` check uses it, without a second copy of either. `rn` passes
 - `rn/references/`: what the conductor carries the work toward, and the form of `steering.md`.
 - `rn/references/essentials/`: the viewpoint files.
 - `rn/agents/`: the generator.
-- `rn/hooks/`: the checks above, with their tests in `dev/rn/tests/`.
+- `rn/hooks/`: the reminder after a summary, with its tests in `dev/rn/tests/`.

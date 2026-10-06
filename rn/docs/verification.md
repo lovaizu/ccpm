@@ -121,12 +121,7 @@ the end.
 
 | Check | Command | Criteria | When |
 |---|---|---|---|
-| The record keeps its form: `steering.md`, the names in `open/`, every criterion ID referred to exists | the hooks; a stop shows in the run's output | M4 | Every scene |
-| A decision line on every conductor commit, every commit pushed | the hooks; a stop shows in the run's output | M2 | Every scene |
-| A settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
-| Only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5 | Every scene |
-| No agent commits or pushes | the hooks; a stop shows in the run's output | M6 | Every scene |
-| Each hook stops its breaking case and lets its passing case through, acts only in a conversation that typed an rn command, and runs every line | `coverage run -m unittest discover -s dev/rn/tests` | M2–M6 | Every push, in CI |
+| The reminder after a summary reaches only a conversation that typed an rn command, and runs every line | `coverage run -m unittest discover -s dev/rn/tests` | A4 | Every push, in CI |
 | `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
 | Installing `rn` brings `writ` and `pith` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |

@@ -11,14 +11,14 @@ last for fixes that change nothing you do.
 
 - A proposal holds only what you decide: what `rn` proposes and why, how close the work has come to each thing you would choose it for, and each point that is yours; every Good and More stays on the pull request — you can say yes or no in one reading, however large the work.
 - Questions, the plan and proposals go straight to you, with no agent reading them first, and a point the request, the goal or the repository already settles is written into the plan instead of asked — you wait less and answer only what is yours.
-- The design is worked out with every point settled before the documents are written, and each document is written and checked once, with whether the design achieves the goal checked in the same use — the design stage no longer takes hours.
+- The design is worked out one point at a time, including each document's plan, before the documents are written; each is then written and checked once, with whether the design achieves the goal checked in the same use — the design stage no longer takes hours.
 - Each result is used before you see it through `pith`, installed with `rn`, which also checks what you make outside a session.
 - `/rn:on` in a fresh worktree works on that worktree's branch instead of making a second one.
 
 ### Fixed
 
-- `rn`'s checks act only in the conversation that runs it: another session in the same repository is no longer stopped, sent on with `rn`'s work, or kept from receiving a reply.
-- The conductor waits for the agents it starts however Claude Code runs them, and is no longer sent on while it waits.
+- `rn` keeps one hook, the reminder after a summary, and it speaks only to the conversation that runs `rn`: another session in the same repository is no longer stopped, sent on with `rn`'s work, or kept from receiving a reply.
+- The conductor waits for its generator and checks however Claude Code runs agents, so it no longer calls you while it waits or goes on before a result exists.
 
 ## [0.9.0] - 2026-10-06
 

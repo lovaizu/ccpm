@@ -1,10 +1,8 @@
-"""rn's record as the checks read it: the session directory, its steering.md, and git."""
+"""rn's record as its hooks read it: the conversation that runs rn, and the session directory."""
 import os
 import re
 import subprocess
-import sys
 
-TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*: \S")
 COMMANDS = ("on", "up", "dn", "ty", "gm")
 
 
@@ -69,24 +67,9 @@ def session(top):
     return None
 
 
-def finished_by_head(top):
-    """The session directory whose steering.md the last commit set to finished, or None: the commit
-    that finishes a session is still checked, and still has to be pushed."""
-    for path in git("diff", "--name-only", "HEAD~1", "HEAD", "--", ".rn", cwd=top).split():
-        parts = path.split("/")
-        if len(parts) == 3 and parts[2] == "steering.md":
-            front = front_matter(git("show", "HEAD:" + path, cwd=top)) or {}
-            before = front_matter(git("show", "HEAD~1:" + path, cwd=top)) or {}
-            if front.get("status") == "finished" and before.get("status") != "finished":
-                return os.path.join(top, ".rn", parts[1])
-    return None
-
-
-def find(data, finished_too=False):
+def find(data):
     """(the directory the hook runs in, the repository's top, the session directory), or None when
-    the conversation does not run rn, or no rn session is running on this branch. An agent's tool
-    call carries the session_id of the conversation that started it. With finished_too, the session
-    the last commit finished counts as running."""
+    the conversation does not run rn, or no rn session is running on this branch."""
     sid = data.get("session_id")
     if not sid or not os.path.isfile(marker(store(), sid)):
         return None
@@ -95,59 +78,4 @@ def find(data, finished_too=False):
     if not top:
         return None
     sdir = session(top)
-    if not sdir and finished_too:
-        sdir = finished_by_head(top)
     return (cwd, top, sdir) if sdir else None
-
-
-def steering(sdir):
-    return open(os.path.join(sdir, "steering.md")).read()
-
-
-def section(text, heading, stop_level):
-    lines = text.splitlines()
-    try:
-        i = lines.index(heading)
-    except ValueError:
-        return []
-    out = []
-    for line in lines[i + 1:]:
-        if re.match(r"^#{1,%d} " % stop_level, line):
-            break
-        out.append(line)
-    return out
-
-
-def criteria(text):
-    out = []
-    for line in section(text, "# Acceptance criteria", 1):
-        m = re.match(r"^- ([AM]\d+):", line)
-        if m:
-            out.append(m.group(1))
-    return out
-
-
-def open_items(sdir):
-    od = os.path.join(sdir, "open")
-    return sorted(os.listdir(od)) if os.path.isdir(od) else []
-
-
-def last_line(msg):
-    """The message's last line, past the trailers (e.g. Co-Authored-By) git or the harness adds."""
-    lines = [l.strip() for l in msg.strip().splitlines() if l.strip()]
-    while lines and TRAILER.match(lines[-1]):
-        lines.pop()
-    return lines[-1] if lines else ""
-
-
-def head_message(top):
-    return git("log", "-1", "--format=%B", cwd=top)
-
-
-def report(problems):
-    """Show the problems to the agent, which Claude Code does on exit code 2, so it corrects
-    them."""
-    if problems:
-        print("rn check:\n- " + "\n- ".join(problems), file=sys.stderr)
-        return 2
-    return 0
