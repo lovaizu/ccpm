@@ -8,19 +8,63 @@ This file has three readers. The generator reads it as the form to aim for when 
 
 - On that run, how long did you wait at each point, how many lines did you read to decide each time you were asked, and what were you asked each time?
 
-    What the user spends is part of what they get: a plugin that brings the promised result after hours of waiting, or after a proposal too long to decide from, is one they stop using. The spending shows only across the whole path, since each scene is short, and it grows wherever a step was added for a fault instead of fixing its cause.
-
-- Of the times you were asked, which were for something only you could decide, and which could the plugin have settled from what it had or could look up?
-
-    A user called only for their own decisions can leave the work to the plugin. A question the request, the repository or the documentation already answers makes them watch over the work, and teaches them to answer without reading.
+    What the user spends is part of what they get: a plugin that brings the promised result after hours of waiting, or after a proposal too long to decide from, is one they stop using. The spending shows only across the whole path.
 
 - Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, what differed in what you got and what you spent?
 
     A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part more careful can leave the user worse off than before.
 
+- Of the times you were asked, which were for something only you could decide, and which could the plugin have settled from your request, the repository or the documentation?
+
+    A user called only for their own decisions can leave the work to the plugin. A question something else already answers makes them watch over the work, and teaches them to answer without reading.
+
+- Each time you were asked, what did you need to know, or ask back, before you could answer, and how many points did the message ask you to decide?
+
+    A question that says how the plugin understands the point, and, when it offers ways, what each gives and costs and which it recommends and why, is answered on the spot. One point per message can be talked through until both sides see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
+
+- Which ways were put before you before you had said what you wanted the result to do for you?
+
+    Ways built from what the user said give them what they want. Ways offered first are built on the plugin's guess, and a user who takes the recommended one gets what they did not ask for; the talk then goes round the ways instead of what the user wants.
+
+- Before anything was made, what had you agreed it would be, and where did what came back differ from it?
+
+    Agreed before it is made, what the user gets is what they meant, and a mismatch costs one answer. Found after it is made, it costs a round of making and checking, and the user waits for each.
+
+- Reading only what the generator was handed, what would you have had to guess to make it as agreed?
+
+    The generator knows nothing of the talk, so what it is not handed it guesses, and the work drifts from what the user agreed. Handed the agreement itself and where each fact comes from, never a summary, it makes what was agreed.
+
+- How many times was a work used by a first user, and what did each use after the first bring?
+
+    A first user who knows nothing of the discussion finds where a receiver trips, once. Started again after each fix, a new one brings fresh small remarks with every run, and the checking never ends while the user waits. Whether a fix holds shows by doing again what the first user did where it tripped.
+
+- Of the fixes made, which stood between the receiver and the purpose, and which did not?
+
+    Fixing what does not stand in the receiver's way spends the user's time on what they did not choose the work for, and every fix can break what already serves them. Clearing every remark never ends; how close the work has come is what the user decides on.
+
+- When the work met something none of these questions or the plugin's own viewpoints asked, where did it go?
+
+    Kept as a viewpoint of that session, in its own rules, it is aimed at by every maker after it, and proposed for the plugin's viewpoints at the end, so the viewpoints grow from what use showed. Fixed only where it was met, it shows up again elsewhere.
+
+- Deciding from what the plugin gave you at each stop, what did you need beyond it, and which parts did you read past?
+
+    What the user reads grows then with what they decide, not with the work checked: what the plugin proposes and why, how close it has come to each thing they would choose it for, and each point that is theirs. A report that grows with the work is either read whole, spending the time the plugin was meant to save, or not read at all.
+
+- While the plugin's agents worked, when were you called with nothing to decide?
+
+    A user called only to wait watches over the work they meant to leave. The plugin waits for its own agents and calls the user when there is something for them.
+
+- Clearing the conversation at a stop and starting again, what did you have to explain again?
+
+    Work that takes days goes on from its record, so the user explains nothing twice. What was decided and lived only in the conversation is lost with it.
+
+- At which moments did a hook act, and what would have happened at that moment without it?
+
+    A hook runs every time at a fixed moment and sees no more than the condition it was given. It earns its place where the model cannot act itself, such as reading the record again after the conversation is summarized, which the model does not notice. Where the model would have acted rightly without it, a hook adds nothing; where it judges what it cannot see, it stops right moves, such as an agent reading its own output or another session in the same repository.
+
 - While the plugin ran, what did it do to another conversation in the same repository, or to agents it did not start?
 
-    A user works with several sessions side by side. A plugin that takes another session for its own, stops its tools or sends it on with the plugin's work breaks work the user never gave it, and the harm shows far from its cause.
+    A user works with several sessions side by side. A plugin that takes another session for its own, stops its tools or sends it on with the plugin's work breaks work the user never gave it.
 
 - When you asked for the plugin's job in your own words, without naming its command, what started?
 
@@ -28,4 +72,4 @@ This file has three readers. The generator reads it as the form to aim for when 
 
 - Which of the plugin's files did the run read, run or follow, and which were never touched?
 
-    A part no run touches is either not needed, and only adds what can break, or meant for a case the story never meets, which the conductor weighs. Instructions read on every call cost the user's wait and the model's attention each time, so what is read only for some cases is better kept apart and read when needed.
+    A part no run touches is either not needed, and only adds what can break, or meant for a case the story never meets. Instructions read on every call cost the user's wait and the model's attention each time, so what is read only for some cases is kept apart and read when needed.
