@@ -53,7 +53,7 @@ Ask together, as one list, the points a check finds undecided: they do not depen
 
 After a fix, check it at the More's place. Only for a More of attractive quality, where the reader does not get what the document is for, call pith again with the result file and that question alone. A defect the user takes for granted, such as a broken link, is not checked again.
 
-Stop fixing and go back to the user when the same More comes back, when each fix makes another, or when a fix needs the reader or purpose changed.
+Fix once and check again once. What still falls short after that is reported: left with its reason when the reader can still carry through, otherwise asked of the user. A round of fixes costs the user a wait each time, and every new first user brings fresh small remarks, so fixing until no More is left never ends; whether the document is close enough to hand on is what the user decides. Go back to the user at once when a fix needs the reader or purpose changed.
 
 ## 4. Settle the result file and report
 

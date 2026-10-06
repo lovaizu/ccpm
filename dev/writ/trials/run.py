@@ -39,7 +39,9 @@ def claude(message, cwd, extra):
 
 
 def writ(message, repo):
-    return claude(message, repo, ["--plugin-dir", str(WRIT), "--plugin-dir", str(PITH), "--permission-mode", "auto",
+    # A check asked of pith runs with pith alone, as a user who never installed writ has it.
+    dirs = [] if message.startswith("/pith:") else ["--plugin-dir", str(WRIT)]
+    return claude(message, repo, [*dirs, "--plugin-dir", str(PITH), "--permission-mode", "auto",
                                   "--settings", SETTINGS])
 
 
