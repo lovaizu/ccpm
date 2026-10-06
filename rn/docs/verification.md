@@ -44,8 +44,6 @@ The account session starts from rough words:
   and asks back when the question offers no ways or leaves out what they cost.
 - Whether every record has an email it does not know and cannot find out before the release, and,
   when asked, it says to go on as if every record has one.
-- What it decided in the design, at the Design sign-off: the design points in the fixture's `notes`
-  item.
 - At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
   its reason and decisions, and otherwise gives `/rn:gm` with what it saw.
 
@@ -88,15 +86,6 @@ The coupon session asks that every coupon be a discount:
     part decides reading the real thing on the pull request; every viewpoint in the proposal has a
     Good or a More, each holding at its place under the criterion ID it names; and the proposal
     names as a More each Assumption the plan rests on.
-
-- The account session with its plan approved and every design point agreed, waiting for `writ`,
-  paused (fixture `account-design`): `/rn:up`, to the Design sign-off, where the stand-in is given no
-  words.
-
-    Passes when the stand-in, reading only the proposal, decides as a second stand-in with the same
-    part decides reading the README, design document, and verification document on the pull
-    request; and every viewpoint in the proposal has a Good or a More, each holding at its place
-    under the criterion ID it names.
 
 ### A4: Work that takes days goes on from where it stopped
 
