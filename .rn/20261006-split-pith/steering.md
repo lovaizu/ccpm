@@ -53,6 +53,10 @@ work by use without installing a plugin for writing documents.
   plugin's agents are named `<plugin>:<agent>`; no path variable is given for a dependency's directory.
 - Assumption: a plugin can call a dependency's skill, start its agents, and reach its files; the docs
   do not show how.
+- Assumption: called from the main conversation, pith returns its result before the caller goes on, so
+  the wait for a first user lives in pith alone; this held when writ:up called pith from inside an
+  agent (#33), but agents started from the main conversation ran in the background (#44). rn's own
+  generator and writ agents stay outside pith, and #44 stays rn's own for them.
 - Fact, checked in the repository: rn 0.9.0 depends on writ and has its README, design document, and
   verification document written by `writ:up`, which checks them with pith
   (`rn/references/conduct.md:107`, `writ/skills/up/SKILL.md:56`). Its own checks of the plan, a task
