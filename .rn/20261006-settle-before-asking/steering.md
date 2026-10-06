@@ -11,13 +11,14 @@ verification: rn/docs/verification.md
 
 # Goal
 
-`rn` puts a point to the user only when the goal, the request, and the repository leave more than
-one answer that gives the user something different; what they settle goes into the plan as a Fact
-naming where it was settled, with no question and no first user, so the user sees at the Plan
-sign-off what was decided for them and on what ground. The user wants this because their time should go
-only to the sign-offs and to what only they can decide: working out the plan for #36, `rn` wrote a
-question the issue and `writ/docs/design.md:80` already answered, had a first user check it, and
-dropped it only after the user asked why it could not decide the point itself (issue #45).
+`rn` puts a point to the user only when the goal, the request, the conversation, the repository, the
+official documentation, and best practice leave more than one answer that gives the user something
+different; what they settle goes into the plan as a Fact naming where it was settled, with no
+question and no first user, so the user sees at the Plan sign-off what was decided for them and on
+what ground. The user wants this because their time should go only to the sign-offs and to what only
+they can decide: working out the plan for #36, `rn` wrote a question the issue and
+`writ/docs/design.md:80` already answered, had a first user check it, and dropped it only after the
+user asked why it could not decide the point itself (issue #45).
 
 # Acceptance criteria
 
@@ -50,10 +51,16 @@ and the repository already settle; the others are kept as they work today.
 
 # Assumptions
 
+- Fact, read in `.claude/rules/plugin.md` (Validation) and `rn/hooks/`: a change to a plugin its
+  users already use is judged by whether it improves what it set out to without making worse what
+  worked before, and `rn`'s checks hold the session's criterion IDs to those its verification
+  document uses; so this session is judged by `rn`'s own criteria.
+- Fact, read in `rn/references/essentials/conductor.md:69-70`: the sources that can settle a point
+  are the goal, the conversation, the repository, the official documentation, and best practice.
 - Fact, read in `rn/references/conduct.md`: line 58 reads as asking an intent question every time,
   with no word for a request and repository that already give the why and leave one outcome; line 70
   ("Look facts up, never ask them") covers facts only.
-- Fact, read in `rn/references/conduct.md:224` and `rn/references/essentials/conductor.md:69`: the
+- Fact, read in `rn/references/conduct.md:225-231` and `rn/references/essentials/conductor.md:69`: the
   only guard against a needless question, the Question viewpoint asking what the goal or the
   repository could have settled, runs after the question is written and a first user is started.
 - Fact, read in `rn/docs/verification.md:61`: the A1 scene starts from rough words with no reason
@@ -76,5 +83,7 @@ and the repository already settle; the others are kept as they work today.
 
 # Not yet specified
 
-- Which steps of `conduct.md`, which viewpoints, and which hook checks change, and the trial that
-  shows A1.
+- Which steps of `conduct.md`, which viewpoints, and which hook checks change.
+- The A2 scene and trial that show a settled point going into the plan unasked, and which forms a
+  point takes are covered: from an issue, rough words, `/rn:gm` feedback, or an older record; an
+  intent, a means, or a fact point.
