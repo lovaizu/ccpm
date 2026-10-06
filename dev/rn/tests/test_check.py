@@ -167,6 +167,33 @@ class Checks(unittest.TestCase):
         self.r.write(f"{SDIR}/steering.md", st.replace("Serves: A1", "Serves: A1, M1"))
         self.assertEqual(self.post_write(f"{SDIR}/steering.md")[0], 0)
 
+    def test_3_question_offering_ways_for_an_unwritten_criterion_is_stopped(self):
+        # Given a question resting on A2, which steering.md does not define
+        self.r.write(f"{SDIR}/open/01-notes-question.md", "Serves: A2\n\nWhich way for names?\n")
+        # When it is written
+        code, out = self.post_write(f"{SDIR}/open/01-notes-question.md")
+        # Then it is stopped, naming A2
+        self.assertEqual(code, 2)
+        self.assertIn("A2", out)
+
+    def test_3_question_without_a_serves_line_is_stopped(self):
+        # Given a question that names nothing it rests on
+        self.r.write(f"{SDIR}/open/01-notes-question.md", "Which way for names?\n")
+        # When it is written
+        code, out = self.post_write(f"{SDIR}/open/01-notes-question.md")
+        # Then it is stopped, asking for the Serves line
+        self.assertEqual(code, 2)
+        self.assertIn("Serves:", out)
+
+    def test_3_question_on_a_written_criterion_or_the_goal_passes(self):
+        for first in ("Serves: A1, M1", "Serves: goal"):
+            # Given a question resting on written criteria, or asking about the goal
+            self.r.write(f"{SDIR}/open/01-notes-question.md", first + "\n\nWhich way?\n")
+            # When it is written
+            code, out = self.post_write(f"{SDIR}/open/01-notes-question.md")
+            # Then it passes
+            self.assertEqual(code, 0, out)
+
     # Check 4
     def test_4_decision_line_passes(self):
         self.r.write("a.txt", "a\n")
@@ -349,7 +376,7 @@ class Checks(unittest.TestCase):
             self.r.commit("rn: x\n\n" + line + "\n\nCo-Authored-By: Claude <noreply@anthropic.com>")
             sh(self.r.dir, "git", "push", "-q")
             self.assertEqual(self.r.hook("stop")[1].strip(), "", line)
-        self.r.write(f"{SDIR}/open/01-notes-question.md", "Which way?\n")
+        self.r.write(f"{SDIR}/open/01-notes-question.md", "Serves: A1\n\nWhich way?\n")
         self.r.commit("rn: ask\n\n● design ── question written → asking the user")
         sh(self.r.dir, "git", "push", "-q")
         self.assertEqual(self.r.hook("stop")[1].strip(), "")

@@ -66,8 +66,9 @@ Asking the user:
   still fail.
 - Find what the user really wants from the purpose behind their words and the ideal it calls for,
   since the words alone can be met while the purpose is missed. Ask why they want it.
-- Where the goal does not say what a result must do for the user, ask that before offering ways,
-  and draw the ways from it: ways drawn from what the repository holds can all miss it.
+- Offer ways only for a point an acceptance criterion already speaks to. Where none says what a
+  result must do for the user, ask that first, write the answer as a criterion, then build the ways
+  from its words: ways drawn from what the repository holds can all miss it.
 - Done when nothing is silently assumed. What the user does not know but tells you to go on with is
   an `Assumption`, not a Fact decided by them, since no one checked it.
 
@@ -213,7 +214,9 @@ that sign-off again.
 ## Asking the user
 
 Ask one point per message: with several, the user answers the one they follow and the rest go by
-half-decided. Write a question to a `notes` item `{NN}-notes-question.md` and have a fresh first user
+half-decided. Write a question to a `notes` item `{NN}-notes-question.md`, opening with `Serves:` and the IDs of
+the criteria it rests on, or `goal` when it asks what a result must do or why the user wants it; a
+question offering ways always names a criterion. Have a fresh first user
 take it up as the user would, by the Question section of `conductor.md`, with the paths of the item and of
 `steering.md`; settle its report as above, fixing the item, since you wrote the question and cannot
 see what it leaves out. Then commit and push, and give the user the question as the item holds it,

@@ -136,9 +136,12 @@ while the others still fail. What the user does not know but tells `rn` to go on
 
 To this `rn` adds its own part. It finds what the user really wants from the purpose behind their
 words and the ideal that purpose calls for, since the words alone carry the gap the README's example
-shows: every file ending in .ts would have let the bugs through. Where the goal does not say what
-a result must do for the user, it asks that before offering ways, since ways drawn from what the
-repository holds can all miss it, and the user takes none. It asks one point per message, since
+shows: every file ending in .ts would have let the bugs through. Ways are offered only for a point
+an acceptance criterion already speaks to: where none says what a result must do for the user,
+`rn` asks that first and writes the answer as a criterion, then builds the ways from its words, and
+the question names it. Ways drawn from what the repository holds can all miss what the user wants,
+and the user takes none; asked to look first, `rn` still offered them, so the order is held by the
+record rather than by the wording. It asks one point per message, since
 with several the user answers the one they follow and the rest go by half-decided, and writes each
 into `steering.md` as it is agreed, so a pause loses none. Which issues the work closes
 or serves, which pull requests it replaces, and which languages the record and the talk are in, are
@@ -532,7 +535,8 @@ every end of the turn.
 1. `steering.md` has its front matter and headings, and task IDs are unique.
 2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
 3. Every ID referred to exists; the verification document keeps its form; every acceptance criterion
-   has a scene or a machine check, and a task once tasks are planned.
+   has a scene or a machine check, and a task once tasks are planned; a question item names on its
+   `Serves:` line the criteria it rests on, or `goal` when it asks what a result must do (A2).
 4. Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but trailers
    such as `Co-Authored-By`.
 5. A settled `open/` item is whole in the commit message.

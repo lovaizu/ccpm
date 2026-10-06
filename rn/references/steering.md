@@ -86,7 +86,8 @@ the highest number in `open/`, or `01` when it is empty; `{kind}` is one of
   after a fix;
 - `feedback`: the user's words from `/rn:gm`, whole, in their own language;
 - `notes`: design points agreed and waiting for `writ`, a question being put to the user, or where a
-  task stands when `/rn:dn` pauses.
+  task stands when `/rn:dn` pauses. A question's first line is `Serves:` with the criterion IDs it
+  rests on, or `goal`.
 
 `{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`.
 

@@ -170,6 +170,19 @@ def check_trace(top, sdir):
             problems.append(f"verification: attractive criterion {i} has no `### {i}:` scene")
         for i in sorted(d for d in defined if d.startswith("M") and d not in named):
             problems.append(f"verification: must-be criterion {i} is named in no scene or check")
+    od = os.path.join(sdir, "open")
+    for name in sorted(os.listdir(od)) if os.path.isdir(od) else []:
+        if "-notes-question" not in name:
+            continue
+        first = (open(os.path.join(od, name)).read().strip().splitlines() or [""])[0]
+        m = re.match(r"^Serves: (.+)$", first)
+        named = set(ID.findall(m.group(1))) if m else set()
+        if not m or (m.group(1).strip() != "goal" and not named):
+            problems.append(f"open/{name}: the first line must be `Serves:` with the criterion IDs "
+                            "the question rests on, or `goal`")
+        for i in sorted(named - defined):
+            problems.append(f"open/{name}: serves {i}, which steering.md does not define; ask what "
+                            "the result must do and write it as a criterion before offering ways")
     planned = any(TASK.match(l) and "sign-off" not in l.lower()
                   for l in section(text, "# Tasks", 1))
     if planned:
