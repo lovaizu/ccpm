@@ -17,6 +17,9 @@ Sources: steering.md (Facts on the audit), issues #39, #41, #43, #44, #45, #46, 
 - A first user is started for a task result and for the deliverable's scenes, where running the work
   shows what its maker cannot see. A question, the plan, a proposal, and a report are not used by a
   first user; the conductor writes them to their viewpoints, and the user reads them.
+- Decided by the conductor on the user's "go on", over a first user trying to build from the design
+  points before `writ` writes (one run more per design) and over today's use of everything; shown to
+  the user at the Design sign-off.
 - Each thing is used once; a fix of an attractive More is used once more, on that point alone; nothing
   else starts a first user. `report.md` goes, since nothing uses a report.
 
@@ -57,8 +60,19 @@ Sources: steering.md (Facts on the audit), issues #39, #41, #43, #44, #45, #46, 
   that records one with no user message since the stop is stopped.
 - The verification document's coverage is checked only once the design writes it, from the Design
   sign-off on.
-- Kept: the record's form, the decision line, pushed commits, only the conductor uses git, and the
-  first user's reads and writes kept to its own.
+- Removed with the first user's use of questions: the check that a settled report on a question lets
+  no More go.
+- Kept: the record's form, the decision line, pushed commits, only the conductor uses git, the first
+  user's reads and writes kept to its own, the conversation-language check, and the record read again
+  after Claude Code summarizes the conversation.
+
+## What the user sees taken away
+
+- No first user takes up a question, the plan, or a proposal before the user reads it; the user is
+  the first reader of what the conductor writes.
+- A proposal no longer repeats the goal, every criterion, and every Good and More; they are on the
+  pull request.
+- `/rn:ty` is no longer the only way to approve; saying so in words is recorded the same.
 
 ## /rn:on keeps the branch the user started on (#41)
 
