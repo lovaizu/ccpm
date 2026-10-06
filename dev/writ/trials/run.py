@@ -35,7 +35,48 @@ def claude(message, cwd, extra):
         data = json.loads(out.stdout)
     except json.JSONDecodeError:
         sys.exit(f"claude did not return JSON (exit {out.returncode}):\n{out.stderr or out.stdout}")
+    claude.session = data.get("session_id")
     return data.get("result", ""), minutes
+
+
+MAX_TURNS = 8
+STAND_IN = """You are the user who asked a writing tool for a document with these words:
+
+{opening}
+
+You know only what those words say. Reply to what the tool just said as that user would, in the
+language it wrote in: answer what it asks from what you know, say you do not know what you do not,
+and agree to a proposal or plan that fits what you said. Output only your reply.
+
+The tool just said:
+
+{said}"""
+
+
+def done(repo):
+    """The tool has finished once a check has left its result file."""
+    return any(path.read_text(errors="replace").startswith("# Check:")
+               for path in repo.glob(".*/open/*-report-*.md"))
+
+
+def writ_talk(opening, repo):
+    """Run writ as its user would: the stand-in answers until a result file is left, or turns run out.
+    Returns what writ said last, the minutes it took, and the user's turns."""
+    said, minutes = writ(opening, repo)
+    talk = [("you", opening), ("writ", said)]
+    while not done(repo) and len(talk) < 2 * MAX_TURNS:
+        sid = claude.session
+        reply, _ = claude(STAND_IN.format(opening=opening, said=said), repo.parent, [])
+        talk.append(("you", reply))
+        more, m = claude(reply, repo, writ_args() + ["--resume", sid])
+        said, minutes = more, minutes + m
+        talk.append(("writ", said))
+    return said, minutes, talk
+
+
+def writ_args():
+    return ["--plugin-dir", str(WRIT), "--plugin-dir", str(PITH), "--permission-mode", "auto",
+            "--settings", SETTINGS]
 
 
 def writ(message, repo):
@@ -72,11 +113,16 @@ def setup(name, scene_dir):
 def play(name, scene_dir):
     scene = SCENES[name]
     repo = setup(name, scene_dir)
-    reply, minutes = writ(scene["opening"], repo)
+    if scene["opening"].startswith("/pith:"):
+        reply, minutes = writ(scene["opening"], repo)
+        talk = []
+    else:
+        reply, minutes, talk = writ_talk(scene["opening"], repo)
     (scene_dir / "report.md").write_text(reply)
+    (scene_dir / "talk.md").write_text("".join(f"## {who}\n\n{text}\n\n" for who, text in talk))
     (scene_dir / "play.md").write_text(
         f"# {name}\n\nBenefits: {', '.join(scene['benefits'])}\nLook at: {scene['look']}\n\n"
-        f"## Request\n\n{scene['opening']}\n\n## writ ({minutes:.1f} min)\n\n{reply}\n\n"
+        f"## Request\n\n{scene['opening']}\n\n## writ ({minutes:.1f} min, {len(talk) // 2} user turns)\n\n{reply}\n\n"
         "## The scene at the end\n\n```\n" + git(repo, "status", "--short")
         + git(repo, "log", "--oneline") + "```\n\n" + changed_only_target(name, repo))
     print(scene_dir / "play.md")

@@ -28,7 +28,7 @@ SCENES = {
                    "engineer volunteers for the parts they want; they do not start moving code right "
                    "after reading. No one owns any part yet. The order of directories, how the UI is "
                    "built, and whether cli/ is included are not decided; the team decides them after "
-                   "reading." + ASK_BACK,
+                   "reading.",
         "look": "the owners and the open choices are left visibly undecided, each with the reason, "
                 "and the report alone decides approval",
         "target": None,
@@ -43,7 +43,7 @@ SCENES = {
                    "from JavaScript to TypeScript; they read it to write types that pass review "
                    "without being sent back. The move has not started and tsconfig.json does not "
                    "exist yet. Whether `any` is allowed is not decided, and nothing beyond what the "
-                   "guide says has been decided." + ASK_BACK,
+                   "guide says has been decided.",
         "look": "`any` comes back as a question and no rule on it is written; the parts readers "
                 "used before the fix are kept",
         "target": "docs/typing-guide.md",
