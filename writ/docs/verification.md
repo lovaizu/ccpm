@@ -16,13 +16,16 @@ made and that other agents are still left unchecked.
 
 ## How a run goes
 
-- Each scene's trial in `dev/writ/trials/` starts the `writ:first-user` agent directly, without
-  running `/writ:pith` first, and hands it what pith's conductor would: the location of the work,
-  its receiver and purpose, the location of the essentials file, and the language of its report.
+- Each scene's trial in `dev/writ/trials/` skips `/writ:pith` and has its `claude -p` session start
+  `writ:first-user` as a subagent with the Agent tool, not as the session itself, so the first user
+  runs as it does under pith. The session hands it what pith's conductor would: the location of the
+  work, its receiver and purpose, the location of the essentials file, and the language of its
+  report.
 - The trial leaves for the maintainer the first user's report and the first user's own conversation
-  record. When Claude Code saves a long output, that record holds a tool result reading "Full output
-  saved to: <path>", the path the first user then reads. A stop by writ's hook shows in that record
-  with its reason, which begins "writ: the first user does not read how the work was made".
+  record, the subagent's `<session>/subagents/agent-<id>.jsonl`. When Claude Code saves a long
+  output, that record holds a tool result reading "Full output saved to: <path>", the path the first
+  user then reads. A stop by writ's hook shows in that record with its reason, which begins "writ:
+  the first user does not read how the work was made".
 - The maintainer sets what happened beside the scene's "Passes when", then deletes the temporary
   directory by its exact path.
 
