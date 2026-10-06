@@ -10,7 +10,7 @@ broke.
   its cart and checkout in TypeScript and its account helpers in JavaScript. Its default branch
   `main` holds the tree of `c3b5f8e`, which has no `.rn/` directory, and it has no other branch and no
   open pull request, so no earlier session's plan or code is there to be found.
-- `rn` and `writ` from the branch under test, as its marketplace installs them.
+- `rn`, `writ` and `pith` from the branch under test, as its marketplace installs them.
 - Claude Code 2.1.285 or later.
 
 ## How a run goes
@@ -19,7 +19,7 @@ broke.
   to the first result that shows it. A state partway through a session is a fixture in
   `dev/rn/trials/fixtures/`, committed on its session branch of a fresh clone with a draft pull request.
   Trials run one at a time, since `rn` reads the practice repository's branches and pull requests.
-- Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ>` in that clone, carrying the
+- Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ> --plugin-dir <pith>` in that clone, carrying the
   conversation over with `--resume`. `/clear` is a new `claude -p` without `--resume`.
 - A stand-in plays the user. It is given only its part below and what `rn` says to it, writes in
   Japanese, and asks back whenever a question does not give it what it needs to decide.
@@ -105,18 +105,28 @@ The coupon session asks that every coupon be a discount:
     current form and what the old design approved in a `notes` item, and asks nothing the old record
     holds.
 
+## The whole story
+
+Before a round's verdict, `dev/rn/trials/story.py` runs the account session from
+`/rn:on move src/account to TypeScript` on `main` to the Deliverable sign-off, the stand-in answering
+as above, and records in `spent.json` how long the user waited at each call, how many lines they read,
+and each time they were called. It is run the same way with `rn` 0.8.0, the last version that runs to
+the end.
+
+    Passes when the session reaches its end, each attractive criterion is given at least as well as
+    with 0.8.0, and the user waited less, read less at each sign-off, and was called less, with no
+    call for what the request, the goal or the repository already settled.
+
 ## Machine checks
 
 | Check | Command | Criteria | When |
 |---|---|---|---|
-| Hook checks 1–3: the form of `steering.md`, the names in `open/`, the verification document's form and IDs | the hooks; a stop shows in the run's output | M4 | Every scene |
-| Hook checks 4 and 8: a decision line on every conductor commit, every commit pushed | the hooks; a stop shows in the run's output | M2 | Every scene |
-| Hook check 5: a settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
-| Hook checks 6 and 7: each stop keeps what its kind allows, and every Good and More of a proposal names its criterion; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5, A3 | Every scene |
-| Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
-| Hook checks 12–14: the conductor starts no agent in the background, ends its turn only at a stop or a question, and speaks the conversation language | the hooks; a stop shows in the run's output | A2, A3 | Every scene |
-| Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s dev/rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
+| The record keeps its form: `steering.md`, the names in `open/`, every criterion ID referred to exists | the hooks; a stop shows in the run's output | M4 | Every scene |
+| A decision line on every conductor commit, every commit pushed | the hooks; a stop shows in the run's output | M2 | Every scene |
+| A settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
+| Only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5 | Every scene |
+| No agent commits or pushes | the hooks; a stop shows in the run's output | M6 | Every scene |
+| Each hook stops its breaking case and lets its passing case through, acts only in a conversation that typed an rn command, and runs every line | `coverage run -m unittest discover -s dev/rn/tests` | M2–M6 | Every push, in CI |
 | `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
-| Each fixture in the current form passes the form checks | `python3 -m unittest discover -s dev/rn/tests` | M4 | Every change to the fixtures or to the form |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
-| Installing `rn` brings `writ` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |
+| Installing `rn` brings `writ` and `pith` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |

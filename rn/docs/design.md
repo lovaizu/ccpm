@@ -394,7 +394,7 @@ the user never approves work on files the default branch no longer has.
 ### open/ and the record in commit messages
 
 `open/` holds what is not yet settled, so nothing needed to go on lives only in the conversation: a
-`report` from a first user or `writ`, a `feedback` item with the user's words, and a `notes` item
+`report`, the result file `pith` or `writ` leaves, a `feedback` item with the user's words, and a `notes` item
 with design points waiting for `writ`, a question being put to the user, or where a paused task
 stands.
 
@@ -410,8 +410,8 @@ each in a stop commit whose decision line says which. At a sign-off every report
 settled first, so the user approves the whole of the work with nothing found about it left unread.
 A pause leaves what is unsettled as it is, with a note on where the task stands and its generator's
 edits, even those it had not returned, so `/rn:up` takes it up with nothing to redo or ask. A
-question is not a stop: its commit is not a stop commit, and a fresh conversation comes to the same
-question again from its item in `open/`. When Claude Code summarizes the conversation partway, a hook
+question is not a stop: a fresh conversation comes to the same question again from its item in
+`open/`. When Claude Code summarizes the conversation partway, a hook
 has the conductor read the record again as `/rn:up` does, since a summary drops details the record
 holds whole.
 
@@ -443,69 +443,48 @@ specified. Its front matter records the version of `rn`, the pull request, wheth
 finished, the two languages, and where the three documents are, so any conversation works from the
 same goal and plan.
 
-## Hooks check rn's rules as it goes
+## Hooks check the record as it goes
 
-Gives M2 to M6; checks 12 to 14 also give A2, and checks 6 and 14 A3.
+Gives M2 to M5.
 
-What a machine can judge is checked by hooks, so a breach is stopped where it happens. Whether the
-work serves its purpose stays with the first user and the conductor. The checks run right after a
-file is written, before the first user is called, and when the conductor ends its turn. Checks 4 to 7
-run on every commit right after it is made, before it is pushed: a conductor command that both
-commits and pushes is stopped, since the push would carry a breach to the pull request before the
-checks could stop it. Checks 9 to 12 run before the tool call they judge, and checks 8, 13, and 14 on
-every end of the turn.
+What a machine can judge about the record is checked by hooks, so a breach is stopped where it
+happens. A hook acts only in a conversation where the user typed an rn command, and on the agents it
+started; another session in the same repository is never stopped, sent on, or taken for the
+conductor (#43). A hook judges only what was written: whether the work serves its purpose, whether
+the conversation goes on, and how Claude Code runs an agent are not a hook's, since a hook sees none
+of them, and `rn` 0.9.0's hooks that tried left the conductor no way to wait for its agents (#44).
 
-1. `steering.md` has its front matter and headings, and task and criterion IDs are unique.
-2. `open/` files are named `{NN}-{kind}-{about}.md`, the kind `report`, `feedback`, or `notes`.
-3. Every ID referred to exists; the verification document keeps its form; every acceptance criterion
-   has a scene or a machine check, and a task once tasks are planned; a question item names on its
-   `Serves:` line the criteria a means question rests on, or `goal` for an intent question (A2).
-4. Every conductor commit ends with a decision line `● … ── … → …`, followed by nothing but trailers
-   such as `Co-Authored-By`.
-5. A settled `open/` item is whole in the commit message; a settled report on a question lets no More go (A2).
-6. A stop commit leaves in `open/` only what its kind allows; at a sign-off the latest default
-   branch is merged, and every Good and More in the proposal names an acceptance criterion by its
-   ID, so the user sees what each bears on (A3).
-7. A sign-off is passed, or the session finished, only after the user typed `/rn:ty`; feedback is
-   taken only after `/rn:gm`, and a pause made only after `/rn:dn`.
-8. Every commit is pushed.
-9. Only the conductor commits or pushes on the session's repository. Only git run as a command
-   counts, not its name in other text, so an agent can search for it; a repository of the agent's
-   own, such as the first user's clone, is not checked.
-10. The first user writes only its own report file.
-11. The first user does not read the session's commit messages or history, notes, or earlier
-    reports. A question or proposal item it is given to take up is the work it uses, so it reads
-    that.
-12. The conductor starts no agent in the background, nor continues one by message, which runs it in
-    the background, since an agent left running reports to a turn that has ended, and the user is
-    left waiting on work no one carries on (A2).
-13. The conductor ends its turn only at a stop or with a question waiting in `open/`; otherwise it
-    is sent on once, since a turn that ends with nothing to decide leaves the user watching the work
-    (A2). A second end passes, for a turn that answered the user's own words.
-14. The conductor's last message in a turn is in the `conversation-language`, judged by its script;
-    otherwise it is sent back to say it again (A2, A3). What it quotes from the record, in the
-    artifact language, does not count: the map's goal line, the goal, the task names, and decision
-    lines. It is checked by machine, since among artifacts written in another language the
-    conductor's own wording drifts into theirs. Two languages in one script, such as English and
-    French, are not told apart.
+- After a record file is written, and when the conductor ends its turn: `steering.md` has its front
+  matter and headings with unique IDs; `open/` files are named `{NN}-{kind}-{about}.md`; every
+  criterion ID referred to, in the tasks or the verification document, exists; once tasks are
+  planned, every criterion is served by a task.
+- On every conductor commit: it ends with a decision line `● … ── … → …`, followed only by trailers;
+  a settled `open/` item is whole in its message; a sign-off is passed, or the session finished,
+  only after the user typed `/rn:ty`, feedback taken only after `/rn:gm`, a pause made only after
+  `/rn:dn`.
+- Before an agent's command: no agent commits or pushes on the session's repository.
+- When the conductor ends its turn: every commit is pushed.
+- After Claude Code summarizes the conversation: the conductor reads the record again as `/rn:up`
+  does.
 
 The hooks are written in Python 3.9 with the standard library only, which comes with git on a Mac
 and is common elsewhere; when it is missing, the session stops and says so, since a skipped check
 goes unnoticed.
 
-## It installs from the marketplace with writ
+## It installs from the marketplace with writ and pith
 
 Gives M7.
 
-`rn` ships from the `ccpm` marketplace, and its `plugin.json` names `writ` as a dependency, so the
-user installs one thing. `writ` stays a separate plugin, updated together with `rn`, so the documents
-a session writes read as well as any `writ` writes without a second copy of how to write them. `rn`
-passes `claude plugin validate --strict`, alone and as part of the marketplace, on every change.
+`rn` ships from the `ccpm` marketplace, and its `plugin.json` names `writ` and `pith` as
+dependencies, so the user installs one thing. They stay separate plugins, released together with
+`rn`, so the documents a session writes read as well as any `writ` writes, and a result is used as
+any `pith` check uses it, without a second copy of either. `rn` passes
+`claude plugin validate --strict`, alone and as part of the marketplace, on every change.
 
 ## The parts
 
 - `rn/skills/`: the commands `/rn:on`, `/rn:ty`, `/rn:gm`, `/rn:dn`, `/rn:up`.
-- `rn/references/`: how the conductor carries the work, and the form of `steering.md`.
+- `rn/references/`: what the conductor carries the work toward, and the form of `steering.md`.
 - `rn/references/essentials/`: the viewpoint files.
-- `rn/agents/`: the generator and the first user, and how each makes or uses.
+- `rn/agents/`: the generator.
 - `rn/hooks/`: the checks above, with their tests in `dev/rn/tests/`.

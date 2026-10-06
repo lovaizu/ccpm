@@ -13,7 +13,10 @@ import subprocess
 import sys
 import time
 
-RN = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn"))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+RN = os.path.join(ROOT, "rn")
+# Installed copies would answer in place of the plugins under test.
+SETTINGS = json.dumps({"enabledPlugins": {"rn@ccpm": False, "writ@ccpm": False, "pith@ccpm": False}})
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 REPO = "lovaizu/rn-try"
 MAX_TURNS = 60
@@ -58,17 +61,16 @@ class Stop(Exception):
 class Trial:
     def __init__(self, description):
         ap = argparse.ArgumentParser(description=description)
-        ap.add_argument("--writ", required=True, help="the writ plugin directory")
         ap.add_argument("--out", required=True, help="a new directory for the clone and record")
         a = ap.parse_args()
         if os.path.exists(a.out):
             sys.exit(f"{a.out} exists; give a new directory")
         os.makedirs(a.out)
         self.out = os.path.abspath(a.out)
-        self.writ = os.path.abspath(a.writ)
         self.work = os.path.join(self.out, "work")
         self.record = os.path.join(self.out, "transcript.md")
-        self.dirs = ["--plugin-dir", RN, "--plugin-dir", self.writ]
+        self.dirs = ["--plugin-dir", RN, "--plugin-dir", os.path.join(ROOT, "writ"),
+                     "--plugin-dir", os.path.join(ROOT, "pith"), "--settings", SETTINGS]
         clone(self.work)
 
     def log(self, who, text):
@@ -114,7 +116,7 @@ class Trial:
         prompt = (part + "\n\nrn just said:\n\n" + said +
                   "\n\nReply as the user would, in Japanese, or with the command you would type. "
                   "Output only your reply.")
-        r = subprocess.run(["claude", "-p", prompt, "--model", "opus"], cwd=self.out,
+        r = subprocess.run(["claude", "-p", prompt, "--model", "opus", "--settings", SETTINGS], cwd=self.out,
                            capture_output=True, text=True)
         return r.stdout.strip()
 

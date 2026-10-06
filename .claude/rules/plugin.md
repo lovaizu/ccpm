@@ -44,131 +44,55 @@ code-modernization).
   and write the reason beside it.**
   - Rationale: a line left out is no longer counted, so it passes unnoticed; kept to lines that truly
     cannot be run, the count still shows every other gap.
-
-### Roles
-
-- **Build a plugin that makes and checks work from three roles: the conductor, the generator and the
-  first user** (always these words).
-  - The **conductor** alone judges and decides what comes next: it hands work to the generator, has the
-    first user use the result, sets what the first user reports beside the aim, gives each a Good or a
-    More, and decides what to fix or leave.
-  - The **generator** makes or fixes the work as the conductor decides.
-  - The **first user** uses the work as its user would and reports what happened, without judging it.
-  - Rationale: judgment kept in the one role that knows the aim weighs every remark against it; a
-    first user that judges, or a generator that grades its own work, fills the gaps with what it meant.
-  - A plugin that only checks work someone else made leaves out the generator. A plugin that makes
-    nothing for anyone to use, such as a hook that only guards a rule or a connector to another tool,
-    needs none of the three.
-- **Keep the first user from what it must not see by how the role is defined:** start it as a
-  separate subagent that does not carry over the conversation, set `omitClaudeMd`, hand it only the
-  work and its purpose, and take the tool that calls other agents away from the generator, so the
-  generator cannot call the first user.
-  - Rationale: the first user is there to use the work as its user would, without
-    knowing how it was made. A subagent can be called by anyone, from the conversation, a user, a
-    forked skill or another subagent, so watching every way it can be called with hooks grows tangled;
-    a plugin's settings cannot restrict it either. A definition holds however it is called.
-- **Leave to hooks only the mechanical rules a definition cannot hold**, such as a file's form, a
-  name, matching IDs, a commit's form, or a push left undone.
+- **Leave to hooks only the mechanical rules an agent's definition cannot hold**, such as a file's
+  form, a name, matching IDs, a commit's form, or a push left undone.
 - **Have a hook act only in the conversation that runs its plugin and on the agents that conversation
   started, and judge only what was written; never have it decide whether a conversation goes on, or
   rest on how Claude Code runs an agent.**
-  - Rationale: rn 0.9.0's hooks took any session in the repository for its conductor, stopped its
-    replies to other sessions, and sent a session that ran no rn on with rn's work (#43). Its check
-    that agents run in the foreground, and its check that sent the conductor on at the end of a turn,
-    together forbade the only way left to wait once Claude Code ran agents in the background (#44).
-    Whether to go on is a judgment, and how agents run changes with Claude Code; a hook sees neither.
-- **Instruct every role by the purpose and intent of its work, not by steps. Fix a fault met in use
-  at its cause, by sharpening the purpose or a viewpoint; add a step or a hook only where no purpose
-  can hold it.**
-  - Rationale: a step is followed even where it misses, while a purpose fits cases no one foresaw.
-    rn 0.9.0, rebuilt to be simpler, grew by 2858 lines and 14 hook checks, since each fault met while
-    building it became a step or a hook, and each of them came to stand between the user and what the
-    README promised.
-- **Start a first user only where use shows what the maker cannot see without it, such as a
-  generator's result or the finished work. Have a work checked by the plugin that made it, not again
-  by its caller, and never by a first user for what the conductor writes to the user, who reads it
-  themselves.**
-  - Rationale: every first user is time the user waits. rn 0.9.0 had a first user read every question
-    and proposal, and checked writ's documents again after writ's own check; one design stage ran 124
-    agents over 2 h 43 min (#37, #39, #45).
+  - Rationale: other sessions work in the same repository, and a hook that takes them for its own
+    breaks work it was never given. Whether to go on is a judgment, and how agents run changes with
+    Claude Code; a hook sees neither.
 
-### Results
+### Making and checking work
 
-- **Write the whole result to a file in `open/`, and return to the caller only a short result and the
-  file's location.** The short result grows with what its reader decides, not with the size of the
-  work: the conductor's view of how close the work has come, each point that is the user's to decide,
-  such as a More left or an assumption no one has checked, and the next move. Every Good and More
-  stays in the file.
-  - Rationale: a whole result in the conversation is too long to be read, crowds the caller's context,
-    and is lost when the conversation is summarized. One line per essential still grows with the
-    essentials: an rn proposal of 72 lines left the user unable to say yes or no from it (#46).
-- **Name it `{dir}/open/{NN}-{kind}-{target}.md`, commit it, and push it.** `{dir}` is the plugin's own
-  directory (e.g. `.writ/`), or the place the caller names (rn names its session,
-  `.rn/{date}-{slug}/`). `{NN}` is the order it arrived in; `{kind}` is `report` (what the first user
-  reported, with its Good and More), `feedback` (what the user said) or `notes` (points agreed and
-  waiting); `{target}` names the work. Using the same target again overwrites the same file.
-  - Rationale: pushed, the result survives the conversation and can be read on the pull request; one
-    file per target holds only what applies to the work as it is now.
-- **Only the conductor that talks with the user commits, pushes and clears; a role or plugin it calls
-  writes the file and returns, however it is called.**
-  - Rationale: the record is kept by the one role that knows what the user decided; a caller such as
-    rn stops any other role from using git, so a called plugin that commits fails there.
-- **To go on with a work already checked, hand the next call its result file; that call takes the
-  file as where the work stands, keeps its Goods, and works on its Mores.**
-  - Rationale: a new call does not carry over the conversation, so without the file it checks from the
-    start, overwrites the earlier answers, and breaks what was Good while fixing.
-- **Clear a file once everything in it is settled: copy its whole text into the commit message, and
-  delete the file in that commit.** A More is settled when it is fixed, let go with its reason, or
-  decided by the user; end each More in the message with what became of it (`→ fixed:`,
-  `→ let go:` with the reason, or `→ to the user:`). A plugin may add its own marks, such as rn's
-  decision line.
-  - Rationale: `open/` then holds only what still needs action, so a file left there is the sign that
-    something does; the record stays in git history, and the working tree ends with nothing but the
-    work.
+- **A plugin that makes work and checks it by use builds on pith: its generator makes, and `/pith:up`
+  has pith's first user use the result; the plugin keeps only its own viewpoints for its kinds of
+  work and what it does with pith's result.** How a check runs, who judges, and the result file are
+  in [pith's design](../../pith/docs/design.md).
+  - Rationale: a second copy of how work is checked grows apart from the first, and an improvement
+    made once in pith then reaches every plugin.
+- **Fix a fault met in use at its cause, by sharpening a purpose or a viewpoint; add a step or a hook
+  only where no purpose can hold it.**
+  - Rationale: a step is followed even where it misses, while a purpose fits cases no one foresaw;
+    steps added one per fault come to stand between the user and what the README promised.
 
 ## 2. Check
 
 ### Validation: use it as its user would
 
-- **Check the attractive quality by validation: use the plugin as its user would, on the golden path,
-  and compare what happened with what it aims for.**
-  - Rationale: the attractive quality is why the user chooses the plugin, so the checking effort goes
-    there first.
-- **Spend no checking effort on what the user takes for granted: do not cover edge cases or
-  alternative flows up front, and do not have a first user check a fix of it again. Fix it when it
-  shows up in use; the conductor confirms the fix.**
-  - Rationale: such a failure is easy to see and should be quick to fix, so checking it costs more
-    than it saves. Covering it up front grows a list of checks that all pass while no one has checked
-    the attractive quality, and rechecking it, as rn found, draws mostly more of the same remarks.
-- **After an attractive-quality More is fixed, have a new first user check that point again.**
-  - Rationale: whether the user now gets what the work is for shows only when someone who does not know
-    the discussion uses it again.
-- **Judge a round of validation not by whether every More is gone, but by what the plugin is to its
-  user: for what the user meets as new (a new plugin, or one changed so far that its users learn it
-  afresh), by whether each attractive quality has come close enough to put it to real use; for what
-  the user meets as the same plugin changed, by whether it improved what it set out to without
-  making worse what worked before. Report, for each attractive quality, how much closer it came than the round before,
-  together with that verdict.**
+- **Check every plugin with `/pith:up`, using pith's essentials for a plugin
+  (`pith/references/essentials/plugin.md`) and for its skills and agents (`prompt.md`): run its
+  README's story end to end as its user would, and set what the user got and what they spent beside
+  the version users have now.**
+  - Rationale: what the user gets and spends shows only across the whole path; each part can work
+    while the whole costs the user hours.
+- **Judge a round not by whether every More is gone, but by what the plugin is to its user: for what
+  the user meets as new, by whether each attractive quality has come close enough to put it to real
+  use; for what they meet as the same plugin changed, by whether it improved what it set out to
+  without making worse what worked before. Report, for each attractive quality, how much closer it
+  came than the round before, together with that verdict.**
   - Rationale: aiming at no More never ends, since every fix and every new first user brings fresh
-    small remarks. When to stop is the user's call, and they make it quickest from whether the
-    plugin can be used now, or whether anything got worse.
+    small remarks. When to stop is the user's call, and they make it quickest from whether the plugin
+    can be used now, or whether anything got worse.
 - **Keep the code that runs this validation in the repository, in `dev/<plugin>/trials/` apart from
-  the tests: one scene per attractive quality, from the state just before the moment the user gets it,
-  set up rather than reached by running what comes before, to the first result that shows whether
-  they got it, leaving what happened for the conductor to read.**
+  the tests: the whole story, and one scene per attractive quality from the state just before the
+  moment the user gets it to the first result that shows whether they got it.**
   - Rationale: a trial put together on the spot guesses at how the last one ran and is lost with the
-    session; kept in the repository, it runs the same way each time and is fixed along with the plugin.
-    A scene run past its first result spends its time long after its answer has shown.
-- **Before a round's verdict, also run the golden path once end to end as its user would, the
-  README's story from the user's first words to the result, and measure what the user spent on it:
-  how long they waited, how much they read to decide, and each time they were called. Judge that
-  spending as attractive quality, never let it go as outside a scene.**
-  - Rationale: what the user spends shows only across the whole path. Every scene of rn 0.9.0 passed
-    while one design stage took 2 h 43 min and a proposal ran to 72 lines; the one run that showed the
-    time had it let go as outside its scene, and was removed (PR #33, task #9).
+    session; kept in the repository, it runs the same way each time and is fixed along with the
+    plugin. A scene checks a change quickly; the whole story judges the round.
 - **Write the trials as the plugin's own code is written, but leave them out of the line count.**
-  - Rationale: a trial starts Claude Code, which CI cannot run, and each run is read by the conductor,
-    so the run itself is its check.
+  - Rationale: a trial starts Claude Code, which CI cannot run, and each run is read by whoever
+    checks it, so the run itself is its check.
 - **Check by script, every time, whatever a script can decide.**
   - Rationale: it costs nothing to run and gives the same answer every time.
 
