@@ -72,6 +72,7 @@ class Story:
         left = left or {}
         self.calls = left.get("calls", [])
         self.started = time.time() - left.get("total", {}).get("wall_s", 0)
+        self.began = left.get("began", time.time())
         self.sid, self.said, self.prompt = left.get("sid"), left.get("said"), left.get("prompt")
 
     def run(self, max_calls, max_seconds):
@@ -133,13 +134,17 @@ class Story:
         branch = self.git("branch", "--show-current").strip()
         if not branch or branch == "main":
             return False
-        r = subprocess.run(["gh", "pr", "view", branch, "-R", REPO, "--json", "isDraft,state"],
-                           cwd=self.work, capture_output=True, text=True)
+        # An earlier run may have left a closed pull request on a branch of the same name.
+        r = subprocess.run(["gh", "pr", "list", "-R", REPO, "--head", branch, "--state", "all",
+                            "--json", "isDraft,state,createdAt"], cwd=self.work, capture_output=True,
+                           text=True)
         try:
-            pr = json.loads(r.stdout)
+            prs = json.loads(r.stdout)
         except ValueError:
             return False
-        if pr.get("state") != "OPEN" or not pr.get("isDraft"):
+        since = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self.began))
+        prs = [pr for pr in prs if pr.get("createdAt", "") >= since]
+        if any(pr.get("state") != "OPEN" or not pr.get("isDraft") for pr in prs):
             return True
         found = self.git("grep", "-l", "-E", "^status: finished|Status\\*\\*: finished", "HEAD", "--", ".rn")
         return bool(found.strip())
@@ -162,7 +167,7 @@ class Story:
         }
         with open(os.path.join(self.out, "spent.json"), "w") as f:
             json.dump({"total": total, "calls": self.calls, "stopped_at_limit": stopped,
-                       "sid": self.sid, "said": self.said, "prompt": self.prompt},
+                       "sid": self.sid, "said": self.said, "prompt": self.prompt, "began": self.began},
                       f, indent=2, ensure_ascii=False)
 
     def close_pull_request(self):
