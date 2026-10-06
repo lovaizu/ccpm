@@ -90,3 +90,18 @@ Sources: steering.md (Facts on the audit), issues #39, #41, #43, #44, #45, #46, 
 - The conductor runs `writ:up` itself with the Skill tool, not through an agent: an agent's own agents
   report after it has returned, so a `writ` run inside an agent returns without its result. pith,
   called from the conductor's conversation, returned its result whole (`open/03-report-readme.md`).
+
+## The same points hold for every plugin, in `.claude/rules/plugin.md`
+
+Decided by the user: these are written into `.claude/rules/plugin.md` with rn and writ, so writ and
+every later plugin keep them too.
+
+- § Results: a called role or plugin returns its result whoever calls it. A skill run as a fork
+  (`context: fork`, as pith is) and called from inside an agent returns before its own agents do, so
+  "however it is called" does not hold today; the rule says how a plugin that starts agents is called
+  so that its result comes back.
+- § Hooks: a plugin's hooks act only in the conversation that runs it and on the agents it started,
+  and never stop a session from waiting for its own agents (#43, #44).
+- § Roles: a first user is started only for what use shows and its maker cannot see without use, such
+  as a task result and the finished product; what the conductor writes to the user is written to its
+  viewpoints and read first by the user.
