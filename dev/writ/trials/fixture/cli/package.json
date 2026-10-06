@@ -1,0 +1,11 @@
+{
+  "name": "@taskboard/taskctl",
+  "version": "1.4.0",
+  "description": "CLI that exports taskboard tasks to files",
+  "bin": {
+    "taskctl": "bin/taskctl.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

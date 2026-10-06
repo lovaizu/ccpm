@@ -1,0 +1,7 @@
+extends: existence
+message: "Heading deeper than h3 — style.md: Use headings no deeper than h3."
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^#{4,}\s'

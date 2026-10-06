@@ -1,0 +1,7 @@
+extends: existence
+message: "Table — style.md: Do not use tables."
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^\s*\|.*\|\s*$'

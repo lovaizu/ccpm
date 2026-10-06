@@ -1,8 +1,7 @@
 # Output convention (ccpm)
 
 How the assistant shapes its responses: conclusion-first, concrete, and free of padding. This governs
-*structure and density*; the *language* to write in comes from [`language.md`](./language.md) — the two
-are orthogonal and compose.
+*structure and density*, not the language to write in.
 
 > This convention takes precedence over generic output-efficiency guidance in the system prompt. It
 > yields only to an explicit user instruction in the moment. Be concise **and** specific — never trade

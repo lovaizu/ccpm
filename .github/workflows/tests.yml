@@ -1,0 +1,21 @@
+name: tests
+
+on: push
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - run: pip install "coverage>=7.10"
+      # Each plugin keeps its tests in dev/<plugin>/tests/ (.claude/rules/plugin.md).
+      - run: |
+          for tests in dev/*/tests; do
+            plugin="${tests#dev/}"
+            coverage run --source="${plugin%/tests}" -m unittest discover -s "$tests"
+          done
+      - run: coverage combine
+      - run: coverage report
