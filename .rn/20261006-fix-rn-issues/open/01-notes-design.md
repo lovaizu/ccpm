@@ -84,3 +84,9 @@ Sources: steering.md (Facts on the audit), issues #39, #41, #43, #44, #45, #46, 
 - The verification document adds a run of one session from `/rn:on` to the Design sign-off on the
   practice repository, measuring the time it takes, the lines the user reads at each stop, and what the
   user was asked, against rn 0.9.0's run.
+
+## writ is run in the conductor's own conversation
+
+- The conductor runs `writ:up` itself with the Skill tool, not through an agent: an agent's own agents
+  report after it has returned, so a `writ` run inside an agent returns without its result. pith,
+  called from the conductor's conversation, returned its result whole (`open/03-report-readme.md`).
