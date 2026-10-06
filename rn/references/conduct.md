@@ -118,11 +118,8 @@ carries the flaw it hides to their approval.
   never ends and takes the time the attractive quality needs.
 - Where whether it brings the work closer turns on what the user wants and the criteria do not say,
   ask them.
-- Fix once and check again once. What still falls short after that goes into the proposal as a point
-  for the user, or, when the goal cannot be reached without it, back to working out the design, or
-  the plan, with that More first. Each round costs the user a wait, and fixing until no More is left
-  never ends.
-- When a fix needs the design changed, go back to working out the design with that More first.
+- When the same More keeps coming back, each fix brings a new one, or a fix needs the design changed,
+  go back to working out the design, or the plan, with that More first.
 
 Settle the result file as pith's note says, and commit it with your decisions and the decision line.
 

@@ -41,8 +41,8 @@ Then call `/pith:up` once, with the document's location, the reader and purpose,
 
 Check every Good and More pith returns at its place before you trust it. Sort each More, and each Good whose ground does not hold:
 
-1. If you can tell from the purpose how to fix it without breaking a Good, have it fixed: a new generator, handed the same as before plus the places to fix and the Goods to keep. Fix at the root: before a sentence is added, look for whether it is already said, or whether replacing one is enough; a sentence added for each More makes the document longer and says things twice.
-2. Otherwise, if the reader can still carry through what they do after reading, leave it, with the reason.
+1. If the reader can still carry through what they do after reading, leave it, with the reason. Fixing what does not stand between the reader and the purpose only costs the user a wait, and every fix checked again brings fresh small remarks.
+2. Otherwise, if you can tell from the purpose how to fix it without breaking a Good, have it fixed: a new generator, handed the same as before plus the places to fix and the Goods to keep. Fix at the root: before a sentence is added, look for whether it is already said, or whether replacing one is enough; a sentence added for each More makes the document longer and says things twice.
 3. Otherwise, ask the user.
 
 A part the reader read past, such as a rule said again and again, is taken out or said once, unless the purpose includes another use it serves.
@@ -53,7 +53,7 @@ Ask together, as one list, the points a check finds undecided: they do not depen
 
 After a fix, check it at the More's place. Only for a More of attractive quality, where the reader does not get what the document is for, call pith again with the result file and that question alone. A defect the user takes for granted, such as a broken link, is not checked again.
 
-Fix once and check again once. What still falls short after that is reported: left with its reason when the reader can still carry through, otherwise asked of the user. A round of fixes costs the user a wait each time, and every new first user brings fresh small remarks, so fixing until no More is left never ends; whether the document is close enough to hand on is what the user decides. Go back to the user at once when a fix needs the reader or purpose changed.
+Stop fixing and go back to the user when the same More comes back, when each fix makes another, or when a fix needs the reader or purpose changed: each shows that more fixing will not bring the document closer.
 
 ## 4. Settle the result file and report
 
