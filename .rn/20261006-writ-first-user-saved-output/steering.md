@@ -20,14 +20,14 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 
 ## Attractive quality
 
-- A1: A writ first user reads the whole of what its own command printed, even when Claude Code saved
-  it to a file for being too long, as a person scrolls back through their own terminal, and goes on
-  using the work without a detour.
+- A1: A writ first user reads the whole of what its own tool calls returned, even when Claude Code
+  saved it to a file for being too long, and goes on using the work without a detour.
 
 ## Must-be quality
 
-- M1: The first user still never reads how the work was made: Claude Code's conversation records and
-  the output any other agent saved stay closed to it.
+- M1: The first user still never reads how the work was made: Claude Code's conversation records,
+  and any saved output it cannot be shown to have made itself, including another first user's,
+  stay closed to it.
 - M2: Agents other than `writ:first-user` are not affected by the check.
 
 # Assumptions
@@ -35,12 +35,18 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 - Fact, `writ/docs/design.md:80`: the first user does not read how the work was made, since it would
   fill the work's holes with the maker's intent; hooks stop paths under `.claude/projects`, where the
   conversation records are, only when `agent_type` is `writ:first-user`.
-- Fact, checked under `~/.claude/projects/` on this machine: a session's saved outputs share one
-  folder, `<project>/<session>/tool-results/`, holding those of the main conversation and of every
-  subagent in the session, beside the conversation records (`<session>.jsonl`,
-  `<session>/subagents/`). Files are named either by the id of the tool call that made them
-  (`toolu_….txt`, seen for subagents) or by a short random id (seen for the main conversation), so
-  the name alone does not always say which agent wrote it.
+- Fact, checked under `~/.claude/projects/` on this machine, Claude Code 2.1.291: a session's saved
+  outputs share one folder, `<project>/<session>/tool-results/`, holding those of the main
+  conversation and of every subagent in the session, beside the conversation records
+  (`<session>.jsonl`, `<session>/subagents/agent-<id>.jsonl`). Files are named `toolu_….txt` or by a
+  short random id, both forms for both kinds of agent (`toolu_` from WebFetch, which a first user
+  does not have), and folders such as `pdf-<uuid>/page-N.jpg` hold the pages of a PDF read with
+  Read; the name never says which agent wrote it. Only a long Bash output (`<id>.txt`) is seen
+  stopped in use (#36). The saved path is quoted
+  in the transcript of the agent whose call made it.
+- Fact, `dev/writ/tests/test_pretooluse.py:17-31` and this machine: the hook input carries
+  `transcript_path`, `agent_id`, `agent_type`, and `tool_use_id`; `agent_id` matches the name of the
+  subagent's transcript `subagents/agent-<id>.jsonl`.
 - Fact, `rn/hooks/checks/first_user_reads.py`: rn's own first-user check does not stop paths under
   `.claude/projects`, so rn is not part of this fix.
 
@@ -57,4 +63,5 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 
 # Not yet specified
 
-- How the check tells the first user's own saved output from any other agent's.
+- How the check tells the first user's own saved output from any other agent's, and how
+  `writ/docs/design.md:80` and `writ/agents/first-user.md:35-37` say it.
