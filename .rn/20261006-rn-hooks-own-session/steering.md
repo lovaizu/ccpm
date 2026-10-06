@@ -24,6 +24,18 @@ same way in every conversation.
 
 # Assumptions
 
+- Fact, read in `rn/hooks/record.py:69` (`find`): every check takes any conversation on a branch
+  with a running `.rn/` session for its conductor; none looks at the hook input's `session_id`.
+- Fact, read in `rn/hooks/checks/foreground_agents.py:12`: every `SendMessage` from the main
+  conversation is stopped, whoever it is addressed to.
+- Fact, seen in this session on Claude Code 2.1.291: the `Agent` tool has no `run_in_background`
+  input, and its description says subagents run in the background and notify on completion.
+- Fact, from the hooks reference (code.claude.com/docs/en/hooks): the Stop hook's input carries
+  `background_tasks`, each with `type` (such as `subagent`), `status` and `agent_type`, so a Stop
+  check can tell that the conductor's agents are still running.
+- Fact, read in `rn/hooks/checks/turn_end.py:12`: the Stop check sends the conductor on whenever it
+  is not at a stop or a question, agents running or not.
+
 # Rules
 
 - Follow `.claude/rules/plugin.md` and `.claude/rules/final-check.md`.
@@ -34,3 +46,7 @@ same way in every conversation.
 ### [ ] #2: Design sign-off
 
 # Not yet specified
+
+- `rn/docs/verification.md` names criteria A1–A4 and M1–M7 of the rn rebuild session, which this
+  session's `steering.md` does not define, and rn's own check reports each on every edit: how the
+  documents' criteria and this session's relate.
