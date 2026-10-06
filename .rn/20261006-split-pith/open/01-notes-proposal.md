@@ -43,7 +43,7 @@ Approving the plan also approves its Assumptions and Rules (steering.md), among 
 for your instruction, and every check through pith follows the plugin rules on checking.
 
 ### Why you want it
-- Good goal: the reason (two copies growing apart; checking without writ) is read as meant, at steering.md:14-20
+- Good A2: the reason (two copies growing apart; checking without writ) is read as meant, at steering.md:14-20
 
 ### What you gain
 - Good A1: checking any work without installing writ, at steering.md:26-28
@@ -55,5 +55,5 @@ for your instruction, and every check through pith follows the plugin rules on c
   docs name it but do not show how (Assumption, steering.md:54-55); the design starts by trying it
 
 ### What this session also does
-- Good goal: issue #37 (pith run about three times per `/writ:up`) is closed by applying the plugin
+- Good A2: issue #37 (pith run about three times per `/writ:up`) is closed by applying the plugin
   rules to every check through pith, at steering.md:68-71
