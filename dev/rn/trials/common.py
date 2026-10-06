@@ -221,12 +221,16 @@ def decide_at_sign_off(t, part, fixture, sign_off, what):
     proposal alone and one from `what` on the pull request; both are recorded, neither is sent."""
     t.start_from(fixture)
     said, sid, _ = t.turn("/rn:up")
+    answers = []
     for _ in range(MAX_TURNS):
         if t.waiting_for() == sign_off:
+            if answers:
+                part += "\n- What you answered rn earlier in this session:\n\n" + "\n\n".join(answers)
             t.log("stand-in, from the proposal alone (not sent)", proposal_reader(t, said, part))
             t.log("second stand-in, from the pull request (not sent)", pr_reader(t, said, part, what))
             return
-        said, sid, _ = t.turn(t.stand_in(part, said), sid)
+        answers.append(t.stand_in(part, said))
+        said, sid, _ = t.turn(answers[-1], sid)
     t.log("trial", "Turn limit reached.")
 
 
