@@ -70,10 +70,16 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
   check of every question by a first user (`rn/references/conduct.md`, "Asking the user") is a fault
   this session removes.
 
+- Fact, decided by the user: this session and PR #40 go on side by side; where they meet, the
+  conflict is settled when the second of them is merged.
+
 # Rules
 
 - Judge every change from what rn should be for its user, and fix the cause wherever it shows; never
   patch only the line an issue names.
+- Where rn 0.9.0's own procedure has a first user check what the conductor writes to the user (a
+  question, the plan, a proposal), this session leaves it out: that is the fault it fixes, and the
+  user decided so for questions.
 - Releasing rn and writ (version bump, tags, GitHub Release) waits for an explicit release
   instruction, as `.claude/rules/plugin.md` says.
 
@@ -90,4 +96,6 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
   verification document of its own cannot get past its plan; until then the field names a file that
   does not exist. This is a fault of rn this session fixes.
 
-- How this session and PR #40 meet, since both change how rn checks its work.
+- Where use by a first user belongs, and where the maker builds quality in as it writes: rn 0.9.0
+  has a first user check questions, the plan, proposals and documents, which is the common root of
+  #39, #45 and #46. This is the first point of the design.
