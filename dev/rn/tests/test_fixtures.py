@@ -13,17 +13,20 @@ import check  # noqa: E402
 
 class FixturesTest(unittest.TestCase):
     def test_current_form_fixtures_pass_the_form_checks(self):
-        seen = 0
+        # Given every trial fixture whose steering.md is in the current form
+        current = []
         for name in sorted(os.listdir(FIXTURES)):
             tree = os.path.join(FIXTURES, name, "tree")
             for sdir in (os.path.join(tree, ".rn", s) for s in os.listdir(os.path.join(tree, ".rn"))):
-                if not open(os.path.join(sdir, "steering.md")).read().startswith("---"):
-                    continue
-                seen += 1
-                with self.subTest(fixture=name):
-                    self.assertEqual(check.form_checks(tree, sdir), [])
-        self.assertGreater(seen, 0)
-
+                if open(os.path.join(sdir, "steering.md")).read().startswith("---"):
+                    current.append((name, tree, sdir))
+        self.assertGreater(len(current), 0)
+        for name, tree, sdir in current:
+            with self.subTest(fixture=name):
+                # When the form checks run on it
+                problems = check.form_checks(tree, sdir)
+                # Then they find nothing
+                self.assertEqual(problems, [])
 
 if __name__ == "__main__":
     unittest.main()
