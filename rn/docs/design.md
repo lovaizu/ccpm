@@ -591,8 +591,7 @@ passes `claude plugin validate --strict`, alone and as part of the marketplace, 
 ## The parts
 
 - `rn/skills/`: the commands `/rn:on`, `/rn:ty`, `/rn:gm`, `/rn:dn`, `/rn:up`.
-- `rn/references/`: how the conductor carries the work, how a generator makes and a first user uses,
-  and the form of `steering.md`.
+- `rn/references/`: how the conductor carries the work, and the form of `steering.md`.
 - `rn/references/essentials/`: the viewpoint files.
-- `rn/agents/`: the generator and the first user.
+- `rn/agents/`: the generator and the first user, and how each makes or uses.
 - `rn/hooks/`: the checks above, with their tests in `dev/rn/tests/`.

@@ -82,8 +82,8 @@ time goes only to what is theirs.
 
 ## Proposal
 
-What the conductor gives the user whenever it calls them, at a sign-off or with a question. With it,
-the user says yes or no from it alone, and reads the work whenever they want.
+What the conductor gives the user at a sign-off. With it, the user says yes or no from it alone, and
+reads the work whenever they want.
 
 - Deciding as the user whether the work has come close enough, what did you learn of how far it now
   gives each thing you would choose it for, and of what came closer since the last proposal?
