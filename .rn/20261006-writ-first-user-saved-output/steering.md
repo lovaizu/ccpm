@@ -20,11 +20,35 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 
 ## Attractive quality
 
+- A1: A writ first user reads the whole of what its own command printed, even when Claude Code saved
+  it to a file for being too long, as a person scrolls back through their own terminal, and goes on
+  using the work without a detour.
+
 ## Must-be quality
+
+- M1: The first user still never reads how the work was made: Claude Code's conversation records and
+  the output any other agent saved stay closed to it.
+- M2: Agents other than `writ:first-user` are not affected by the check.
 
 # Assumptions
 
+- Fact, `writ/docs/design.md:80`: the first user does not read how the work was made, since it would
+  fill the work's holes with the maker's intent; hooks stop paths under `.claude/projects`, where the
+  conversation records are, only when `agent_type` is `writ:first-user`.
+- Fact, checked under `~/.claude/projects/` on this machine: a session's saved outputs share one
+  folder, `<project>/<session>/tool-results/`, holding those of the main conversation and of every
+  subagent in the session, beside the conversation records (`<session>.jsonl`,
+  `<session>/subagents/`). Files are named either by the id of the tool call that made them
+  (`toolu_….txt`, seen for subagents) or by a short random id (seen for the main conversation), so
+  the name alone does not always say which agent wrote it.
+- Fact, `rn/hooks/checks/first_user_reads.py`: rn's own first-user check does not stop paths under
+  `.claude/projects`, so rn is not part of this fix.
+
 # Rules
+
+- Follow `.claude/rules/plugin.md`: Python 3.9 with the standard library only, `unittest` tests in
+  `dev/writ/tests/` that run every line and check both a case stopped and a case let through, and an
+  entry under `## [Unreleased]` in `writ/CHANGELOG.md` without bumping the version.
 
 # Tasks
 
@@ -32,3 +56,5 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 ### [ ] #2: Design sign-off
 
 # Not yet specified
+
+- How the check tells the first user's own saved output from any other agent's.
