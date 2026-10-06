@@ -6,7 +6,8 @@ Draft PR: https://github.com/lovaizu/ccpm/pull/40
 
 Next, once approved: first try, on a throwaway pair of plugins, whether a plugin can call a
 dependency's skill and start its agents, and whether a call to pith from the main conversation returns
-its result before the caller goes on, since the whole design rests on both; then work out the design
+its result before the caller goes on, since the whole design rests on both; if either fails, I come
+back to you with the plan before designing on it; then work out the design
 with you on the six points the plan leaves open (steering.md, Not yet specified).
 
 Goal: Make pith the one place where work is checked by having it used (the first user, the comparison
@@ -35,13 +36,15 @@ Judged by:
   and a listing in `.claude-plugin/marketplace.json` and the root `README.md`.
 
 Toward what you would choose it for:
-- A1: planned only; nothing is built yet (the same)
-- A2: planned only; nothing is built yet (the same)
+- A1: planned only; nothing is built yet (the same as the last proposal)
+- A2: planned only; nothing is built yet (the same as the last proposal; since then the plan only adds
+  the second unknown below)
 
 Taken away: `/writ:pith`, replaced by `/pith:up` (M3).
 
 Approving the plan also approves its Assumptions and Rules (steering.md), among them: releases wait
-for your instruction, and every check through pith follows the plugin rules on checking.
+for your instruction, and every check through pith starts a first user only for the first use and for
+each fixed attractive More, with the result file's form checked by script.
 
 ### Why you want it
 - Good A2: the reason (two copies growing apart; checking without writ) is read as meant, at steering.md:14-20
@@ -56,7 +59,8 @@ for your instruction, and every check through pith follows the plugin rules on c
   docs name it but do not show how (Assumption, steering.md:54-55); the design starts by trying it
 - More A2: whether pith, called from the main conversation, returns its result before the caller
   goes on is not yet known; it held from inside an agent, but agents started from the main
-  conversation ran in the background (#44); tried beside the point above (Assumption, steering.md:56-59)
+  conversation ran in the background (#44); tried beside the point above (Assumption, steering.md:56-59);
+  #44 stays open for rn's own generator and writ agents, outside pith
 
 ### What this session also does
 - Good A2: issue #37 (pith run about three times per `/writ:up`) is closed by applying the plugin
