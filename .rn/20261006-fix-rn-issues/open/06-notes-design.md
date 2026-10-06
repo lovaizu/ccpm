@@ -29,13 +29,14 @@
   document as they are. The writ rewrites of the README and the design document made from the
   earlier per-issue notes were discarded, uncommitted.
 
-## Open: whether to go on with rn
+## Decided: go on without rn
 
-- The user asked whether this work can go on without rn, since rn 0.9.0's own faults stop it: its
-  hooks blocked messages to the other two sessions (#43), send the conductor on at every wait
-  (#44), and split every commit and push.
-- Answer to give: yes. rn's hooks are those of the installed `rn@ccpm` plugin and act wherever
-  `.rn/` exists, so disabling the plugin while rebuilding (`/plugin disable rn@ccpm`) lets the work
-  go on as plain Claude Code on this branch and PR #50; the new rn is tried with
-  `claude --plugin-dir` on the practice repository. Still to decide with the user: whether to do
-  so, and where the plan is kept meanwhile (this steering.md as a plain document is the default).
+- Decided by the user: the installed `rn@ccpm` is disabled (`/plugin disable rn@ccpm`), since its
+  hooks act wherever `.rn/` exists and stop this very work (#43, #44, split commits). The work goes
+  on as plain Claude Code on this branch and PR #50, with this steering.md as a plain document for
+  the plan; the new rn is tried with `claude --plugin-dir` on the practice repository.
+
+## Next
+
+- Work the plan out again with the user (goal covering rn, writ and pith; A5 as must-be quality),
+  then the design from `01-notes-design.md`.
