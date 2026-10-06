@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 A version goes up by what changes for you: the middle number for anything you would notice, the
 last for fixes that change nothing you do.
 
-## [0.9.0] - 2026-10-03
+## [0.9.0] - 2026-10-06
 
 0.9.0 rebuilds how a session runs, from your first words to the last sign-off.
 

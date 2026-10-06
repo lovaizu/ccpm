@@ -389,7 +389,7 @@ and what changes for them.
 - The scenes that call `writ` pass with the merged `writ`.
 - Every machine check in the verification document passes, both strict validations included.
 
-### #11: Evaluation sign-off
+### [x] #11: Evaluation sign-off
 
 **Purpose**: The user approves the run of the Acceptance criteria.
 
@@ -400,7 +400,7 @@ and what changes for them.
 - [x] From #9: in A2's rerun rn told the user "the checker tried it 3 times" before its question
   (how the work was made reaching the user); whether the user's want to tell users apart is asked
   after call 3 is not yet seen (the scene ends at call 3). Bring both to the user with the result
-- [ ] Present the Acceptance criteria run result on PR #33 and take the verdict via `/rn:ty`
+- [x] Present the Acceptance criteria run result on PR #33 and take the verdict via `/rn:ty`
   (approve) or `/rn:gm` (revise → address the feedback, re-present)
 
 **Completion criteria**:
