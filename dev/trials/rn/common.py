@@ -13,7 +13,7 @@ import subprocess
 import sys
 import time
 
-RN = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RN = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn"))
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 REPO = "lovaizu/rn-try"
 MAX_TURNS = 60

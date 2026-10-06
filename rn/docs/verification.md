@@ -16,9 +16,9 @@ broke.
 
 ## How a run goes
 
-- Each scene is run by its trial in `rn/trials/`, from the state just before the moment it checks
+- Each scene is run by its trial in `dev/trials/rn/`, from the state just before the moment it checks
   to the first result that shows it. A state partway through a session is a fixture in
-  `rn/trials/fixtures/`, committed on its session branch of a fresh clone with a draft pull request.
+  `dev/trials/rn/fixtures/`, committed on its session branch of a fresh clone with a draft pull request.
   Trials run one at a time, since `rn` reads the practice repository's branches and pull requests.
 - Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ>` in that clone, carrying the
   conversation over with `--resume`. `/clear` is a new `claude -p` without `--resume`.
@@ -113,8 +113,8 @@ The coupon session asks that every coupon be a discount:
 | Hook checks 6 and 7: each stop keeps what its kind allows, and every Good and More of a proposal names its criterion; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5, A3 | Every scene |
 | Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
 | Hook checks 12–14: the conductor starts no agent in the background, ends its turn only at a stop or a question, and speaks the conversation language | the hooks; a stop shows in the run's output | A2, A3 | Every scene |
-| Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
+| Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s dev/tests/rn`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
 | `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
-| Each fixture in the current form passes the form checks | `python3 -m unittest discover -s rn/tests` | M4 | Every change to the fixtures or to the form |
+| Each fixture in the current form passes the form checks | `python3 -m unittest discover -s dev/tests/rn` | M4 | Every change to the fixtures or to the form |
 | Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
 | Installing `rn` brings `writ` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |

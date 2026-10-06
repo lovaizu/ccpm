@@ -1,6 +1,6 @@
 """Each of rn's checks stops its breaking case and lets its passing case through.
 
-Run from the plugin's parent directory: python3 -m unittest discover -s rn/tests
+Run from the plugin's parent directory: python3 -m unittest discover -s dev/tests/rn
 """
 import json
 import os
@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PLUGIN = os.path.dirname(HERE)
+PLUGIN = os.path.join(HERE, "..", "..", "..", "rn")
 CHECK = os.path.join(PLUGIN, "hooks", "check.py")
 
 STEERING = """---
