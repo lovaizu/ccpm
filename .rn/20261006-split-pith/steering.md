@@ -76,7 +76,7 @@ work by use without installing a plugin for writing documents.
 
 # Tasks
 
-### [ ] #1: Plan sign-off
+### [x] #1: Plan sign-off
 ### [ ] #2: Design sign-off
 
 # Not yet specified
