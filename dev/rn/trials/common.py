@@ -163,7 +163,17 @@ class Trial:
         except Stop as e:
             self.log("trial", f"Stopped: {e}.")
             sys.exit(3)
+        finally:
+            self.close_pull_request()
         print(self.record)
+
+    def close_pull_request(self):
+        """Close the run's pull request and delete its branch, so the practice repository keeps only
+        main and the next run starts where the verification document says; the clone keeps all."""
+        branch = self.git("branch", "--show-current").strip()
+        if branch and branch != "main":
+            subprocess.run(["gh", "pr", "close", branch, "-R", REPO, "--delete-branch"],
+                           cwd=self.work, capture_output=True, text=True)
 
 
 def read(path):
