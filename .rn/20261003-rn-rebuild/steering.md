@@ -410,8 +410,8 @@ and what changes for them.
 session is suspended — the signal /rn:up and /rn:dn search for — and resets to `not suspended` here,
 so only a genuinely suspended session reads `paused`.)
 
-- **Status**: not suspended
-- **Date**:
-- **Last completed**:
-- **Next**:
-- **Notes**:
+- **Status**: paused
+- **Date**: 2026-10-06
+- **Last completed**: #4 (#5–#8, #10 checked off before it); #9 step 1. This session: A3 reached (fixture account-ready fixed, 6e042f9); tests and trials moved to dev/rn/ (67a6242)
+- **Next**: #9 — the user merged writ PR #15 (2026-10-06): merge `main` in, then go on with #9's remaining steps. First put to the user the A2 fix: A2 not reached — rn offers ways for a nameless user's name without first asking what it must do (tell users apart), though conduct.md says to; d6c2380 did not cure it. Recommended: a choice of ways is asked only after what the result must do is agreed and written in steering.md, ways built from it (design change, shown at #11); alternative: strengthen the wording only.
+- **Notes**: Ask the user what "消して、使ってない" meant (rn-try trial PRs #43–#45 and branches, or old scratchpads); closing rn-try PRs was denied by the auto-mode classifier. Run transcripts are in this session's scratchpad only.
