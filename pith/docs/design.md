@@ -1,510 +1,268 @@
 # pith design
 
-Which feature brings each benefit of the [README](../README.md), how it is built, and what must
-always hold, so that whoever builds or maintains pith, writ or rn can tell what a change would cost
-the user. The flow of use is in the README, and this document points to its sections rather than
-telling it again. How to run the checks named here is in the [verification document](./verification.md).
+pith brings the user the benefits at the top of the [README](../README.md) through one skill, `/pith:up`, which the user calls by name or asks for in words, and which writ and rn call to check their own work. pith was split out of writ, where it was `/writ:pith`, so that it checks any work without a plugin for writing documents, and so that writ and rn check through one place: an improvement to how work is checked is then made once and reaches both. pith is built from three roles: the conductor, the generator and the first user. Only pith's conductor judges and decides what comes next. The generator writes and fixes an essentials file as the conductor decides, and the first user uses the work as its receiver would and reports what happened. Essentials, question, Good, More and first user mean the same as in the README.
 
 ```mermaid
 flowchart TD
-  CA(["Caller<br/>the user's conversation, /writ:up or rn's conductor"])
-  subgraph P["/pith:up: runs in its own context, and the caller waits for it"]
-    PC["pith's conductor"]
-    FU["First user<br/>does not know the discussion"]
-    G["Generator"]
+  K([Caller<br/>the user's conversation, writ or rn])
+  subgraph P[pith: does not carry over the caller's conversation]
+    PC[pith's conductor]
+    FU[First user]
+    G[Generator]
   end
-  W[/"The work"/]
-  E[/"Essentials files"/]
-  RF[/"Result file in open/"/]
-  CA -->|"work's location, receiver and purpose, aim; essentials files and result file's place if it has them"| PC
-  PC -->|"work's location, receiver and purpose, essentials files; never the aim"| FU
-  W -->|"used as its receiver would"| FU
-  FU -->|"what happened, for every question"| PC
-  PC -->|"when no essentials file fits: kind of work, receiver and purpose"| G
-  G -->|"the essentials file it wrote"| E
-  E -->|"the questions"| FU
-  PC -->|"every report, every Good and More in full"| RF
-  PC -->|"short result and the file's location"| CA
-  CA -->|"settles each More, commits, clears"| RF
+  W[/The work/]
+  E[/Essentials files/]
+  RF[/open/ result file/]
+  K -->|work's location, receiver and purpose, aim, essentials files or the kind of work| PC
+  PC -->|work's location, receiver and purpose, essentials files; never the aim| FU
+  W -->|the work to use| FU
+  FU -->|what happened in use, for every question| PC
+  PC -->|every question's report and every Good and More in full| RF
+  PC -->|short result and the result file's location| K
+  K -->|settles each More in the file, commits and clears it| RF
+  PC -->|when a kind has no essentials: the kind of work, receiver and purpose, places to fix and Goods to keep| G
+  G -->|the essentials file it wrote| E
+  E --> FU
+  E --> PC
 ```
 
-The caller is whoever calls `/pith:up`: the user's own conversation, the conductor of `/writ:up`, or
-rn's conductor. pith's conductor is `/pith:up` itself, running in a context of its own; it alone
-judges a check. The first user uses the work as its receiver would and reports what happened,
-without judging. The generator writes what pith's conductor or `/writ:up` decides. The aim is what
-the receiver should gain, written out in sentences by the caller. Essentials file, question, Good,
-More and result file mean the same as in the README.
+## Three features bring the benefits
 
-## Acceptance criteria
+The benefits are called by the words at the top of the README: "where the receiver falls short, from what happened in use", "each point names its place and quotes what happened", and "check any kind of work".
 
-What would make a user choose pith is attractive quality, and what a user takes for granted is
-must-be quality. Each criterion has an ID, by which the features below and the verification document
-refer to it.
+- Lay the fact of use as the receiver beside the aim and turn it into Good and More.
 
-### Attractive quality
+    It serves "where the receiver falls short, from what happened in use" and "each point names its place and quotes what happened". It works in the README's "Call `/pith:up` with the work and your aim".
 
-- A1: Installing pith alone, without writ, gives `/pith:up`, which checks any work, such as a
-  document, a prompt, code or tests, by a first user's use, first writing the questions for a kind of
-  work that has none, such as code or tests.
-- A2: writ and rn both check their work through pith, so a change to how work is checked is made in
-  pith once and reaches both.
+- Write essentials worked back from the purpose for a kind of work that has none, and try them on a real work.
 
-### Must-be quality
-
-- M1: `/writ:up`'s golden paths, writing a new document and fixing an existing one, give no less than
-  before pith was split out.
-- M2: An rn session's golden path, the plan, the design, the tasks and the deliverable, each checked
-  before its sign-off, gives no less than before.
-- M3: `/writ:pith` is gone, and whoever called it finds the same check as `/pith:up`, installed with
-  writ.
-- M4: No copy of pith's parts remains in writ or rn, and each part they share has exactly one home.
-- M5: Each plugin keeps `.claude/rules/plugin.md`: tests that run every line in CI, trials, a README
-  stating Python 3.9 or later, a CHANGELOG entry, both `claude plugin validate --strict` runs
-  passing, and a listing in `.claude-plugin/marketplace.json` and the root `README.md`.
-
-## Four features bring the benefits
-
-- Check a work by its use, and give a Good or More for every question.
-
-    Gives A1, and brings "what happened when the work was actually used" and "names the place in
-    the work and quotes what happened there". It works in the README's "Call `/pith:up` with the
-    work and your aim" and "Example: checking a prompt that reviews pull requests".
-
-- Write an essentials file for a kind of work that has none, and try it on the work.
-
-    Gives A1, and brings "You can check any kind of work". It works in the README's "Example:
-    checking code with no essentials file yet".
-
-- Keep the whole result in a result file that the caller settles.
-
-    Gives A1, bringing "names the place in the work and quotes what happened there", and A2, since
-    writ and rn read and settle the same file. It works in the README's "What stays in your
-    repository, and how to clear it".
+    It serves "check any kind of work". It works in the README's "Example: checking code with no essentials file yet".
 
 - Be the one place where writ and rn check their work.
 
-    Gives A2, bringing "an improvement to how work is checked is made once in pith and reaches
-    both", and M1, M2, M3 and M4. It works in the README's "With writ and rn" and "Getting started".
-
-M5 is held by the machine checks in the last section.
+    It brings the benefits above to every work writ and rn check, and makes an improvement to how work is checked reach both at once. It works in the README's "With writ and rn".
 
 ## Principles every feature keeps
 
-- Only pith's conductor judges a check, and only the caller decides what to do with it.
+- Only the conductor judges.
 
-    pith's conductor lays the first user's report beside the aim and gives Good and More. When
-    judgment spreads to the first user or the generator, a role that does not know the aim remakes
-    even what serves it, and a generator that grades what it wrote fills the holes with what it meant
-    and grades too softly. Whether to fix or leave a More is the caller's, since only the caller
-    knows the purpose and the discussion. If this broke, a check would report what the maker meant,
-    and the first benefit would be gone.
+    pith's conductor lays the first user's report beside the aim and gives Good and More, and decides what to fix in an essentials file it wrote. Whether to fix or leave a More in the caller's work is the caller's, which knows the purpose. When judgment spreads to the generator or the first user, a role that does not know the discussion remakes even what serves the purpose. A generator that grades what it wrote fills the holes with what it meant and grades too softly.
 
-- The first user never learns how the work was made, and its agent definition holds this.
+- The roles are kept apart by the agent definitions.
 
-    The first user is a plugin agent with `omitClaudeMd`, started as a separate subagent that does
-    not carry over the conversation. Neither it nor the generator has the tool that calls other
-    agents, so the generator cannot call the first user and shape what it is told. A subagent can be
-    called from the conversation, by the user, from another skill or by another plugin, so watching
-    every way it is called with hooks grows tangled, while a definition holds however it is called.
-    Here pith relies on a trial whose result runs contrary to the documentation: the official
-    sub-agents documentation says `omitClaudeMd` is ignored for plugin agents, but on Claude Code 2.1.285 a plugin agent with it did
-    not read the project's CLAUDE.md. Only that version was tried, running the definition with and
-    without the field twice each. A first user that knew how the work was made would fill in what
-    the work leaves out, so a check would report what the maker meant instead of what happened in
-    use, and the user would lose the first benefit.
+    The generator and the first user are plugin agents, `pith:generator` and `pith:first-user`. The first user has `omitClaudeMd` and is called as a separate subagent that does not carry over the conversation. The first user can run commands, so it gives a prompt to an AI with `claude -p` and runs it, and uses code by calling it or running its tests. Neither the generator nor the first user has the tool that calls other agents, so the generator cannot call the first user. What must hold is that, however the first user is called, the discussion never reaches it. A subagent can be called from the conversation, by the user or from another skill, so watching how it is called with hooks grows tangled. An agent definition with `omitClaudeMd` holds however it is called. Here pith relies on what a trial showed, against the documentation: the official sub-agents documentation says this field is ignored for plugin agents, but on Claude Code 2.1.285 a plugin agent with it did not read the project's CLAUDE.md. Only that version was tried, running the definition with and without the field twice each.
 
-    The definition also tells the first user not to read the git history, Claude Code's conversation
-    records, or the result files of earlier checks in `open/`. Its reading tools are needed to check
-    facts, so narrowing the tools cannot keep it out. A hook of pith's stops only what the definition
-    cannot hold: the git commands that read history (log, show, diff, blame, reflog, stash) and paths
-    under `.claude/projects`. By the official hooks documentation, a plugin's hooks also run on a
-    subagent's tool calls and carry `agent_type`, so the hook acts only when it is `pith:first-user`
-    and leaves other work alone. Result files in `open/` are kept from it by the definition alone.
+    The first user's definition also tells it not to read how the work was made: the git history, Claude Code's conversation records, and the result files of earlier checks in `open/`. Reading them, it would fill the work's holes with the maker's intent. Its reading tools are needed to check facts, so narrowing the tools cannot keep it out. Hooks stop only what the definition cannot hold: the git commands that read history (log, show, diff, blame, reflog, stash) and paths under `.claude/projects`, where the conversation records are. By the official hooks documentation, a plugin's hooks also run on a subagent's tool calls, and inside a subagent the hook's input carries `agent_type`, so the hooks stop these only when it is `pith:first-user` and do not affect other work. The result files in `open/` are kept from it by the definition alone.
 
-- The content of the essentials lives only in the essentials files, and every handoff passes their
-  location.
+- The content of the essentials lives only in the essentials files, and handoffs pass their location.
 
-    A copy or a summary drifts each time the essentials are refined, and what the generator aims for
-    and what the first user answers drift apart. This holds for writ and rn too: they hand pith the
-    location of an essentials file, never its questions.
-
-- Whatever a script can decide is checked by a script, and a check is never skipped.
-
-    A script is fast and gives the same answer every time, and leaves pith's conductor and the caller
-    free to judge what only they can. pith's scripts and hooks are written with Python 3's standard
-    library only, running on 3.9, so each check can be fixed and tested on its own. python3 comes with
-    git in the Mac developer tools, and on Linux and Windows it is no less common than jq, while
-    Node.js may not be on the user's machine. When python3 is missing, `/pith:up` stops and tells the
-    user to install Python 3.9 or later, and the hook stops the first user's tool calls with the same
-    message. A skipped check goes unnoticed, so no one would learn that the rule was not kept.
+    The content of the essentials is not copied into other documents or into pith's prompts. A copy or a summary drifts each time the essentials are refined, and what a maker aims for and what the first user answers drift apart. The README names the essentials files, so the user can read in them which question each Good and More answers.
 
 - In the end only the work remains, and a result file stays in `open/` until it is settled.
 
-    No drafts or notes along the way are left. Left behind, they would be for the user to clear
-    away, and the user would not know which is the real one. The first user leaves the working tree as
-    it found it, and the generator writes directly into the work.
+    No drafts or files of notes along the way are made. Left behind, they would be for the user to clear away, and would leave the user unsure which is the real one. Only the full result of a check is written to a file in `open/`, so that it survives when a long conversation is summarized and does not flow into the caller's conversation, and it is cleared once everything in it is settled.
 
-## Check a work by its use, and give a Good or More for every question
+## Lay the fact of use as the receiver beside the aim and turn it into Good and More
 
 ```mermaid
 sequenceDiagram
   participant C as Caller
   participant PC as pith's conductor
   participant FU as First user
-  C->>PC: Work's location, receiver and purpose, aim, and essentials files if it has them
-  alt No aim, or the aim does not cover every question
-    PC->>C: A request for the aim, or the questions it does not cover
-  else The aim covers every question
+  C->>PC: Work's location, receiver and purpose, aim, essentials files
+  alt The aim does not cover every question
+    PC->>C: The questions the aim does not cover
+  else It covers them
     PC->>FU: Work's location, receiver and purpose, essentials files
     FU->>PC: For every question, what it did and what happened
-    PC->>PC: Lays it beside the aim, gives Good and More, writes the result file, checks its form
+    PC->>PC: Lays it beside the aim, gives Good and More, writes the full text to the result file, which a hook checks by script
     PC->>C: Short result and the result file's location
   end
 ```
 
-- `/pith:up` is a skill that runs in a context of its own (`context: fork`) with `background: false`,
-  so it never carries over the caller's conversation and the caller waits for its result.
+pith is called by the user's conversation, by the conductor of `/writ:up`, or by rn's conductor.
 
-    It is a skill, not an agent, because the user calls it by name and other plugins' skills call it
-    too. Run apart, pith's conductor never reads the work through the caller's discussion, which
-    follows Anthropic's guidance, [Harness design for long-running application
-    development](https://www.anthropic.com/engineering/harness-design-long-running-apps), that a role apart from the maker grades more strictly than the maker
-    grading its own work. That a forked skill can start the first user was tried on Claude Code
-    2.1.285. In an interactive session every agent the Agent tool starts runs in the background,
-    nested ones too ([#44](https://github.com/lovaizu/ccpm/issues/44)), and a caller that does not wait reads a half-finished check as finished;
-    a forked skill with `background: false` makes the caller wait, and the agent it started ran in the
-    foreground, as tried on 2.1.291. The cost of running apart is that an aim not written out cannot
-    be checked, so a written aim is a required input.
+- pith is a skill that runs in a context of its own (`context: fork`, `background: false`) and does not carry over the caller's conversation.
 
-- Without an aim, pith returns at once and asks for one; before any first user runs, pith's conductor
-  checks that the aim covers every question, and otherwise returns the questions it does not cover.
+    It is a skill, not an agent, because the user calls it by name and other plugins' skills call it too, and fork keeps the caller's conversation out. That a forked skill can start the first user agent was tried on Claude Code 2.1.285. pith's conductor, which gives Good and More, never reads the work through the caller's discussion. It also follows Anthropic's guidance that a role apart from the maker grades more strictly than the maker grading its own work. The cost is that an aim not written out cannot be checked. So a written aim is a required input of pith.
 
-    A question with nothing in the aim to compare against cannot be judged even after a first user has
-    used the work, and finding that out before costs less than after.
+    In an interactive session every agent the Agent tool starts runs in the background, nested ones too (#44), and a caller that reads what pith returns as finished would read it before the result file exists. A forked skill with `background: false` makes the caller wait for its result; tried on Claude Code 2.1.291, the first user it started ran in the foreground. A prompt cannot hold this for every caller, while the skill's own setting holds however pith is called.
 
-- pith uses the essentials files the caller names; otherwise, for a document `doc.md` and whichever
-  of `readme.md`, `design.md`, `prompt.md` and `essentials.md` fits its kind, and for any other work
-  the file for its kind in `.pith/essentials/`.
+- pith uses the essentials files named in the call. When none are named, for a document it uses `doc.md` and adds whichever of `readme.md`, `design.md`, `prompt.md` and `essentials.md` fits its kind; for a prompt, `prompt.md`; for any other kind, the file for that kind in `.pith/essentials/`, written first as in the next section when there is none.
 
-    `doc.md` asks what happened when the work was read, so it fits every document and nothing that is
-    not read. A kind with no file goes to "Write an essentials file for a kind of work that has none".
+    `doc.md` asks what happened when the work was read as its reader, so it fits every document and nothing that is not read. A caller that keeps its own questions for its kinds of work, as rn does, names them, so its questions stay its own while how the check runs stays pith's. The choice is the same whether writ is installed or not, so a former `/writ:pith` user gets the same check with the same questions.
 
-- The first user is handed only the work's location, the receiver and purpose, the essentials files'
-  locations, the language of its report and, on a recheck, the questions to answer: never the aim,
-  the maker's Good or More, the style rules, or anything else from the discussion.
+- Before starting a first user, pith's conductor checks that the aim, written in sentences, covers every question, and if not, returns as it is.
 
-    A real receiver knows what they use the work for, so without the purpose the use drifts from the
-    real one. The receiver and purpose may name files the receiver holds while using the work, as rn
-    names its `steering.md` and the documents the user approved. Knowing the aim, the first user would
-    use the work looking for it and fill in what is missing in its head; given the maker's view or the
-    style rules, it would spend its attention on them instead of on what only it can do.
+    A question with no aim to compare against cannot be judged even after a first user has used the work. Finding that out before costs less than after.
 
-- The first user uses the work as its receiver would, decides for itself how, and reports for every
-  question what it did and what happened, without judging.
+- The first user is handed only the work's location, the receiver and purpose, and the essentials files: never the aim, and nothing else from the discussion or from the maker.
 
-    It reads a document once from the top as its reader, gives a prompt to an AI with `claude -p`,
-    calls code and runs tests. A fact of use can be laid beside the aim and compared; a verdict
-    cannot. When it stops, unsure, it reports where it stopped, since a real receiver also cannot ask
-    the maker, and that is what is being looked for.
+    A real user also knows what they use the work for. Without the purpose, its use drifts from the real one. Knowing the aim, on the other hand, it would use the work looking for it and fill what is missing in its head. A paraphrase test, too, never shows the reader the right answer.
 
-- pith's conductor gives each question at least one Good or More, each with its place and evidence
-  quoted from the report or the work; each part the report names in answer to a question, such as a
-  part read past, a stop or a guess, is a More unless the aim shows the receiver needs it as it is.
+- The first user actually uses the work as its receiver and reports, for every question, what it did and what happened. It does not judge. How to use and check the work is the first user's to decide.
 
-    The questions ask what kept the receiver from the purpose, so what the report names there is a
-    struggle even when the aim does not mention it. A Good says what the receiver gains, so whoever
-    fixes the work knows what must not be lost; a More says what the receiver struggles with, so the
-    caller can weigh it against the purpose. pith does not say how to fix a More or decide to leave
-    one, since a More put as a fix pulls the caller's decision toward pith's first idea.
+    For a document, it is what it took in and what it set out to do, reading as the reader. For a prompt, what the AI did when given it with `claude -p` and run; for code, what happened when it was called. A fact of use can be laid beside the aim and compared. When it stops, unsure, it reports that it stopped. A real user also stops, unable to ask the maker, and that is exactly what is being looked for.
 
-- pith writes every question's report and every Good and More in full to the result file, and returns
-  to the caller only a short result and the file's location.
+- pith's conductor lays the report beside the aim and gives each question a Good or More. A Good carries its place and what is gained, a More its place and the struggle, and both carry evidence quoted from the report or the work. Each part the report names in answer to a question, such as a part read past, a stop or a guess, is a More, unless the aim shows the receiver needs it as it is.
 
-    The whole result in the caller's conversation would be too long to read, crowd the caller's
-    context, and be lost when the conversation is summarized. The short result opens with pith's view
-    of where the work stands against the aim, gives every question one line, Good or More with a few
-    words on what the receiver gains or struggles with and where, and sets out each More in full. A
-    place alone tells the caller nothing until they read the work there, which is the reading the
-    short result is meant to spare.
+    The questions ask for what kept the receiver from the purpose, so what the report names there is a struggle even when the aim does not mention it. Judged by the aim alone, a part read past that the aim says nothing about comes back as a Good, and the caller hands on a work with parts no one uses.
 
-- When a question comes up, pith returns it to the caller as its result and never asks the user.
+- pith writes every question's report and every Good and More in full to the result file, and returns to the caller a short result and the file's location.
 
-    pith does not hold the caller's conversation, so whether to ask the user is for the caller, which
-    knows the discussion.
+    Returning the full text would fill the caller's conversation. The short result opens with the conductor's view of where the work stands against the aim, gives every question one line, Good or More and where, and sets out each More in full, so the caller can judge from it alone.
 
-### A first user only where use can show something new
+- A first user is started once for the work, and once more only for each fixed More of attractive quality, on that question alone. For such a recheck the caller hands pith the result file and names the question; pith starts a new first user for that question and replaces only that question's section, so every other question keeps its answer. Every other More the caller settles in the file itself: a fixed one is rewritten as its Good, a left one gets `Left because:`.
 
-- A check starts a first user once for each work it checks, an essentials file pith writes being one
-  such work, and once more for each fixed More the caller judges to be of attractive quality, on that
-  question alone; nothing else starts one.
+    Attractive quality is why the user chooses the work, so whether such a More is fixed shows only when someone who does not know the discussion uses the work again; the earlier first user used it before the fix. A defect the user takes for granted, such as a wrong path or a word used two ways, is easy to see and quick to fix, and spending rechecks on it takes that effort from attractive quality. Only that question is rechecked, so new remarks do not spread over the whole with every fix. pith used to run once more only to write the caller's settling into the file, so that only pith wrote it and its form held; a hook now checks the form on every write, so the caller writes the settling itself and that run is gone (#37).
 
-    Whether a fixed attractive-quality More now gives the receiver what the work is for shows only
-    when someone who does not know the discussion uses the work again, and the earlier first user used
-    it before the fix. A More of quality the user takes for granted, such as a wrong path or a word
-    used two ways, is easy to see and quick to fix, so the caller confirms its fix at its place
-    without a recheck. Rechecking only that question keeps new remarks from spreading over the whole
-    with every fix. Each first user costs the user waiting: when settling the result file also took a
-    run of pith, 13 calls of `/writ:up` ran pith 43 times, and three of rn's documents took 2 hours 43
-    minutes ([#37](https://github.com/lovaizu/ccpm/issues/37)).
+- A hook of pith's checks the form of a result file by script every time one is written, by pith or by its caller: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 
-- The caller, which knows the purpose, decides that a fixed More was of attractive quality, and asks
-  for the recheck by calling pith again with the result file and that question; pith replaces only
-  that question's section.
+    What a machine can decide, checked by a machine, is fast and gives the same answer every time. The caller receives only what was already checked, so it does not check the same again, and a caller's settling cannot break the form unseen. The script sits inside pith and nothing else calls it, because a caller that relied on its insides would break when pith's build changed. The script, and the hooks that stop the first user, are written with Python 3's standard library only, so each check can be fixed and tested on its own as checks grow. python3 comes with git in the Mac developer tools, and on Linux and Windows it is no less common than jq, while Node.js may not be on the user's machine. When python3 is missing, pith stops instead of skipping a check: it tells the user to install Python 3.9 or later, and the hook stops the first user's tool calls with the same message. A skipped check goes unnoticed, so no one would learn that the rule was not kept.
 
-    Every other question keeps its answer, and a call that does not carry over the earlier
-    conversation goes on from where the work stands instead of checking from the start.
+- When a question comes up, pith does not ask the user but returns it to the caller as its result.
 
-## Write an essentials file for a kind of work that has none, and try it on the work
+    pith does not hold the caller's conversation, so whether to ask the user is for the caller, which knows the discussion, to decide.
 
-- When no essentials file fits the work's kind and the caller named none, pith writes one in
-  `.pith/essentials/`, tries it on this work, and then checks the work with it.
+## Write essentials worked back from the purpose, and try them on a real work
 
-    The user would otherwise have to write the questions before any check, and questions written
-    without trying them grow into a list of form. Kept there, the file is used by the next check of
-    that kind. A user who has their own essentials files names them in the call, and pith uses those.
+- When a work's kind has no essentials file and none is named, pith writes one before checking, from the kind of work, its receiver and purpose, and the aim, and tries it on the work handed in. It keeps it at `.pith/essentials/<kind>.md`, so the next check of that kind uses the same questions. A caller can also ask pith only to write essentials for a kind, naming where to put them, and hand a real work if one exists.
 
-- pith's conductor starts the generator (`pith:generator`), which writes the file worked back from the
-  work's purpose, following `essentials.md`, `style.md` and the lint.
+    The aim is what the caller wants from the essentials, that is, what a receiver should gain from a work checked with them. pith's conductor compares with it when it checks the essentials file it wrote. Writing them first, rather than returning to ask for them, is what lets a kind no one has written questions for be checked in one call.
 
-    Worked back from the purpose, every question asks whether the purpose was met, answered by what
-    happened in use, and none asks about means or about how to check. Such questions would grow into
-    a checklist that passes while no one has checked the purpose.
+- pith's conductor calls the generator, and the generator writes the essentials file worked back from the purpose, following the essentials for essentials files (`essentials.md`).
 
-- The file is checked as any work is, with `essentials.md` as its essentials file: its receiver is
-  whoever checks a work of that kind, and the first user uses it by applying its questions to the real
-  work.
+    Essentials are a few questions that ask whether the purpose was achieved, answered by what happened in use. Worked back from the purpose, no question asks about means. No question asks how to check, so the essentials do not become a checklist.
 
-    To use an essentials file is to check a real work with it, so that is what is tried. pith's
-    conductor judges whether the answers that came out show whether the work met its aim. When no real
-    work of the kind exists, pith runs no first user and does not claim the file was tried.
+- The essentials file written is checked in the flow above, with the essentials for essentials files. The first user applies the file's questions to a real work and actually tries checking it.
 
-- pith's conductor decides what to fix in the file, starts a new generator for each fix with the
-  places to fix and the Goods to keep, and checks each fix at its place.
+    The user of an essentials file is whoever checks a work with it, so to use it is to try checking a real work. The first user reports, for every question, what it did to check, what answer came out, and where it stopped. Whether the answers show if the purpose was achieved is for pith's conductor to judge. If no real work exists yet, it cannot be tried, so pith does not claim it was tried; it is tried the first time a real work is checked.
 
-    The essentials file is pith's own work, so pith, not the caller, decides what to fix. A generator
-    asked again reads with the intent of its earlier writing, and one without the Goods to keep breaks
-    what already serves the purpose.
+- pith's conductor decides what to fix, has a new generator fix it with the places to fix and the Goods to keep, and checks at each More's place that it is fixed before using the file on the work.
 
-## Keep the whole result in a result file that the caller settles
+    An essentials file is pith's own work, so pith decides whether to fix it. A generator asked again reads the file with the intent of its earlier writing, and one that does not know the Goods to keep breaks them while it fixes.
+
+## Be the one place where writ and rn check their work
+
+```mermaid
+flowchart LR
+  WU[/writ:up/] -->|a document, writ's aim, pith's essentials| PU[/pith:up/]
+  RN[rn's conductor] -->|a plan, design, task result, deliverable, question or proposal; rn's viewpoint file; the goal and criteria as the aim| PU
+  WU -->|starts to write and fix| PG[pith:generator]
+  WU -->|asks where pith's files are| PW[/pith:where/]
+  PU --> R[/result file in the caller's open/]
+```
+
+- writ and rn each declare pith as a dependency with the range `^0.1.0`, so installing either installs pith. rn declares it directly, not through writ, since it calls `/pith:up` itself.
+
+    By the official documentation, a dependency installs with the plugin that declares it, and a range picks the highest `pith--v<version>` tag in it; for a plugin at a relative path in its marketplace, as here, with no matching tag the marketplace's copy is used. Until pith is released, the marketplace's copy is used, which the range accepts. Both plugins call pith's skills and agents, which the documentation names as what a dependency is for.
+
+- writ keeps `/writ:up`, and writes and fixes a document with `pith:generator`, which it starts with the hook that runs its agents in the foreground. It learns where pith's essentials files, `style.md` and `lint/` are from a small skill of pith's, `/pith:where`, that returns pith's own directory.
+
+    The essentials files and the style rules each have one home, in pith, so an improvement to them reaches writ's writing and pith's checking at once. A plugin cannot name a file inside another plugin: `${CLAUDE_PLUGIN_ROOT}` is always the plugin's own directory, and no variable is given for a dependency's. Tried on Claude Code 2.1.291, a plugin's skill called a dependency's skill that returned that directory, and read a file there.
+
+- `/writ:up` hands `/pith:up` the result file's place in `.writ/open/`, as it did with `/writ:pith`. Called directly, pith writes to `.pith/open/` at the root of the repository.
+
+- rn calls `/pith:up` for every check it makes: the plan, the design, a task result, the deliverable, a question and a proposal. It hands the work, its own viewpoint file as the essentials, the receiver and purpose with the paths the receiver holds when using the work (`steering.md`, the approved documents, the user's feedback), `steering.md`'s goal and criteria as the aim, and its session's `open/{NN}-report-{about}.md` as the result file. rn's conductor checks each Good and More at its place and decides each More, as before.
+
+    rn's viewpoint files are for its own kinds of work and stay rn's; what moves is the first user, the comparison with the aim, and the result file's form, which rn had kept in copies of its own (`rn/agents/first-user.md`, `rn/references/essentials/report.md`, and the hooks that kept its first user to its report), and which had grown apart from pith's. They are removed from rn.
+
+- `writ/docs/design.md` and `rn/docs/design.md` link this document for how a check runs, and keep only what they hand pith and what they do with its result.
+
+    A copy of how a check runs, kept in three designs, would drift as pith's did in rn.
+
+## The result file: who writes, who settles, and its form
 
 ```mermaid
 flowchart TD
-  P["pith's conductor writes the result file<br/>and checks its form"]
-  S["The caller settles each More in the file<br/>pith's hook checks the form on every write"]
-  P --> S
-  S -->|"called directly"| U["The user commits and clears it"]
-  S -->|"called by /writ:up"| W["writ:up's conductor commits and clears it;<br/>when rn called writ:up, the file is in rn's open/<br/>and rn's conductor does"]
-  S -->|"called by rn"| R["rn's conductor commits and clears it"]
+  P[pith writes the result file and returns its location]
+  P -->|/pith:up called by the user| A[the user's conversation, at the user's word, settles, commits and clears it]
+  P -->|/writ:up| B[up's conductor settles, commits, pushes and clears it]
+  P -->|rn| C[rn's conductor settles, commits, pushes and clears it]
 ```
 
-The result file lets the user check what lies behind any line of the short result by reading only
-that part, and in the end the work is handed on alone, with nothing of the check beside it. The
-following always hold.
+The result file lets the user check what lies behind any line of the short result by reading only that part of the file, and in the end leaves the work alone, with nothing of the check beside it. The following always hold.
 
-- pith writes the result file at the place the caller names, down to the file's name, and otherwise
-  at `.pith/open/{NN}-report-{target}.md` at the repository root.
+- pith writes the result file at the place the caller names in its request, down to the file's name, or at `.pith/open/{NN}-report-{target}.md`. The caller writes in it only to settle a More, and a hook checks its form on every write.
 
-    `/writ:up` names its own in `.writ/open/`, or the place its own caller names, as rn names one in
-    its session's `open/` when it has a document written; rn, checking through pith directly, names `open/{NN}-report-{about}.md` in its
-    session's directory, so each caller keeps the files it acts on in one `open/`.
+    Its form is then checked every time, whoever writes, and no caller relies on pith's insides.
 
-- After pith returns, the caller settles the file itself: a fixed More becomes the Good it now is,
-  with its place and evidence in the work as it is now, and a More that was left gets `Left because:`
-  with the reason.
+- Only the conductor that talks with the user commits, pushes and clears it, as the figure shows; pith does not commit it, however it is called. Called directly, pith leaves the file uncommitted, and the user commits it when they want it kept.
 
-    The form is held by the check script and a hook, not by who writes the file, so settling it
-    starts no agent (#37).
+    The record, the git history and `open/`, is kept by the one role that knows what the user decided; a role that is called writes and returns, and a caller such as rn stops any other role from using git.
 
-- pith never commits or pushes a result file; only the conductor that talks with the user does, as the
-  figure shows.
+- `open/` holds only what is not settled. A More is settled when it is fixed, let go with a reason, or decided by the user, and a file whose Mores are all settled is cleared: its whole text is copied into a commit message, and the file is deleted in that commit.
 
-    The record is kept by the one role that knows what the user decided, and a caller such as rn stops
-    every other role from using git. Called directly, pith leaves the commit to the user, as the
-    README says.
+    A file in `open/` is then the sign that something needs action, also when the conversation ends before the user decides. The record stays in the git history, where a More that was let go keeps its reason and can be read later as a road not taken.
 
-- `open/` holds only what is not settled: a More is settled when it is fixed, let go with a reason, or
-  decided by the user, and a file whose Mores are all settled is cleared by copying its whole text
-  into a commit message and deleting it in that commit.
-
-    A file left in `open/` is then the sign that something still waits, also when the conversation
-    ends before the user decides. The record stays in the git history, where a More that was let go
-    keeps its reason.
-
-- There is one file per target, and a recheck or a settling rewrites that file.
+- There is one file per target, and a recheck rewrites that file.
 
     It then holds only what applies to the work as it is now.
 
-### The form check
+The result file's form is a contract with the outside, because the file is read by the user, by writ and rn, and by later versions of pith. Its form is the one it had as `/writ:pith`'s, unchanged, and the following hold in every version. No field is added now; one is added only when a caller needs to read something the form does not hold. The marks that end each More in the commit message that clears the file, `→ fixed:`, `→ let go:` with the reason, and `→ to the user:`, belong to that commit, not to the file's form.
 
-`check_result.py` checks a result file against its form: that every question of the essentials
-files has its section with at least one Good or More, that every place exists, and that each quote
-is really in the work or in the first user's report in the same file. pith's conductor runs it before
-returning, and a hook of pith's runs it on every write to a result file, so a file settled by the
-caller is held to the same form. The script sits inside pith; a caller relies on the form, not on the
-script's insides.
+- The labels stay as written, while the text beside them is written in the user's language: `# Check: <target path>` as the first line, `Target:`, `Receiver and purpose:`, `Aim:`, `## <essentials file name>: <question>`, `Report:`, `- Good:`, `- More:`, `Evidence (work)`, `Evidence (report)` and `Left because:`. In a place, `<line>` is one line or a range `a-b`, and paths are relative to the repository root.
 
-Not decided yet: how the hook knows which essentials files a result file was checked against.
-`check_result.py` takes them as arguments, the file's headings carry only each essentials file's
-name, not its directory, and no field is to be added to the form. How the hook tells a result file
-from other files, and what it does when the check finds a problem, are not decided either.
+    The check script finds each question's section, its report, each Good and More and its evidence by these words.
 
-### The result file's form, a contract with the outside
-
-The file is read by the user, by callers such as writ and rn, and by later versions of pith, so its
-form is kept here. The form below does not change, and no field is added now. The text beside each
-label is written in the user's language.
-
-- The labels stay as written: `# Check: <target path>` as the first line, `Target:`, `Receiver and
-  purpose:`, `Aim:`, `## <essentials file name>: <question>`, `Report:`, `- Good:`, `- More:`,
-  `Evidence (work)`, `Evidence (report)` and `Left because:`. In a place, `<line>` is one line or a
-  range `a-b`, and paths are relative to the repository root.
-
-    The check script and every caller find each question's section, its report, each Good and More
-    and its evidence by these words.
-
-- The file is named `{NN}-report-{target}.md`, with `{NN}` two digits, one more than the highest
-  number already in its `open/`.
+- The `{NN}` in the file name is two digits, one more than the highest number already in `open/`.
 
     When the user opens `open/`, they read what waits for a decision in the order it came.
 
 - The top of the file names the target work, its receiver and purpose, and the aim.
 
-    A later reader knows what aim each Good and More was compared with, without the conversation.
+    A later reader knows what aim each Good and More was compared with, without going back to the conversation.
 
-- Every question has its own section, headed by the essentials file's name and the question word for
-  word, with the first user's report and at least one Good or More under it.
+- Then every question has its own section, headed by the essentials file's name and the question written word for word, with the first user's report and at least one Good or More under it.
 
-    With the file's name, the user can read the question in that file, and a script can match the
-    essentials file against the result and check that every question has an answer.
+    With the essentials file's name, the user can read the question in that file. Since the question has the same characters as in the essentials file, a script can match the file against it and check that every question has an answer.
 
-- Every Good and More carries its place as `path:line` and evidence quoted from the work or from the
-  first user's report.
+- Every Good and More carries its place as `path:line` and evidence quoted from the work or from the first user's report.
 
-    With the place, the user looks at that spot instead of the whole work; with the evidence, they
-    check pith's judgment instead of trusting it. Both have a fixed form, so a script checks them.
+    With the place, the user looks at that spot instead of the whole work. With the evidence, the user checks pith's judgment instead of trusting it. Both are in a fixed form, so a script can check that the place exists and that the quoted text is really where it was quoted from. A quote from the work is looked for in the work, and a quote from the first user's report is looked for in the report in the same result file.
 
-- A Good says what the receiver gains, a More what the receiver struggles with, and a More that was
-  left also says why.
+- A Good says what the receiver gains, a More says what the receiver struggles with, and a More that was left also says why it was left.
 
-    What a Good gains shows what must not be lost in a fix; what a More struggles with lets the user
-    decide whether to accept it; the reason shows the More was left by a decision, not missed.
+    What a Good gains shows, by its effect on the receiver, what must not be lost when the work is fixed. What a More struggles with lets the user decide, by its effect on the receiver, whether to accept a More that was left. The reason shows the More was left by a decision, not missed, and whether it is for the user to decide.
 
-The marks that end each More when the file is cleared, `→ fixed:`, `→ let go:` with the reason, and
-`→ to the user:`, belong to the commit message that clears the file, as `.claude/rules/plugin.md`
-states, not to the file's form. A reader of the file never meets them, and a caller may add its own
-marks to its commit, as rn adds its decision line.
+The names the user sees are the following. The README teaches use and the essentials with these names, so changing them breaks what the user learned from the README.
 
-## Be the one place where writ and rn check their work
-
-```mermaid
-flowchart TD
-  WR["writ: /writ:up"]
-  RN["rn's conductor"]
-  subgraph PI["pith"]
-    UP["/pith:up"]
-    WH["pith:where"]
-    GE["pith:generator"]
-    FU["pith:first-user"]
-    RE[/"essentials files, style.md, lint/"/]
-  end
-  WR -->|"asks where pith's files are"| WH
-  WH -->|"pith's directory"| WR
-  WR -->|"what to write, with the files' locations"| GE
-  WR -->|"a document to check, result file in .writ/open/"| UP
-  RN -->|"a work to check with its own essentials file, result file in its session's open/"| UP
-  UP --> FU
-  RE --> GE
-  RE --> FU
-```
-
-- Every part of how work is checked has one home, in `pith/`: the `/pith:up` skill with the result
-  form and the check script, `pith:where`, the first user and its hook, the generator, the essentials
-  files `doc.md`, `readme.md`, `design.md`, `prompt.md` and `essentials.md`, `style.md`, and `lint/`.
-
-    A copy drifts from its source, so an improvement made in one copy does not reach the other
-    caller (A2, M4). pith alone needs every one of these to check a document or a prompt and to write
-    essentials (A1). They are the parts writ's pith used, moved with their names changed, so pith
-    checks as `/writ:pith` did (M3). Their tests and trials live in `dev/pith/`, outside the plugin,
-    since installing a plugin copies its whole directory.
-
-- writ and rn each declare pith as a dependency with the range `^0.1.0`, resolved against
-  `pith--v<version>` tags; rn declares it directly, since it calls `/pith:up` itself.
-
-    A dependency installs with the plugin that declares it, so installing writ or rn installs pith,
-    and installing pith installs neither. By the official documentation, for a plugin at a relative
-    path, as here, a range with no matching tag falls back to the marketplace's copy, so until pith is
-    released the marketplace's copy is used.
-
-- A caller reaches pith's files through `pith:where`, a skill that returns pith's own directory, under
-  which they sit at `references/essentials/`, `references/style.md` and `references/lint/`.
-
-    A plugin cannot name a file inside another plugin: the official documentation gives no path
-    variable for a dependency's directory, and `${CLAUDE_PLUGIN_ROOT}` in a skill is its own plugin's
-    directory. Tried on Claude Code 2.1.291: a plugin's skill called a dependency's skill that
-    returned that directory, and read a file there.
-
-- `/writ:up` starts `pith:generator` to write and fix a document, handing it pith's essentials files,
-  `style.md` and `lint/`, and calls `/pith:up` to check it, with its result file in `.writ/open/`.
-  writ keeps `/writ:up` and its hook that runs its agents in the foreground.
-
-    The generator is shared: pith starts it to write an essentials file, and `/writ:up` to write a
-    document, so it has one home with the essentials it aims for.
-
-- rn calls `/pith:up` for every check it makes, of the plan, the design, a task's result, the
-  deliverable, a question and a proposal, and keeps its own essentials files for these, `plan.md`,
-  `design.md`, `task-result.md`, `deliverable.md` and `conductor.md`.
-
-    rn hands the work, its essentials file, the receiver and purpose with the paths the receiver holds
-    when using the work, such as `steering.md`, the approved documents and feedback, the goal and
-    criteria of `steering.md` as the aim, and its session's `open/{NN}-report-{about}.md` as the
-    result file. rn's conductor checks each Good and More at its place and decides each More. rn's
-    documents are written by `/writ:up`, which checks them through pith in turn. rn keeps no first user
-    of its own.
-
-- What callers rely on is `/pith:up`'s inputs and short result, the result file's form,
-  `pith:where`'s directory and the paths under it, and `pith:generator`; a change to any of these is
-  a change to writ and rn.
-
-    writ's and rn's designs link to this document for how a check runs, and keep only what they hand
-    pith and what they do with its result. `background: false` makes callers wait for `/pith:up`
-    alone; the agents writ and rn start themselves are outside it, and #44 stays rn's own for them.
-
-The names the user sees are these. The README teaches use with them, so changing one breaks what the
-user learned.
-
-- `/pith:up`, pith, first user, Good, More, essentials file, result file
-- `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`
+- `/pith:up`, pith, first user
+- Good, More
+- The essentials files' names: `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`
 - `.pith/open/`, `.pith/essentials/`
 
-## Check that the user gets each benefit (validation)
+## Check quality by using pith where its benefits can be seen (validation)
 
-Checking effort goes to A1 and A2 first, because they are why the user chooses pith. They are
-checked by using pith as its user would, in situations where the user would plainly struggle without
-the benefit; in other situations, whether it arrived cannot be seen. Each scene below gives that
-situation and what must happen for it to pass. Where a run starts and how it goes are in the
-[verification document](./verification.md).
+Checking effort goes to the benefits first, because they are why the user chooses pith. They are checked by validation: use pith as its user would, in the README's example situations, and lay what happened beside the benefits. The situations chosen are ones where, without the benefit, the user would plainly struggle. Quality the user takes for granted is not checked up front, beyond what a script decides; it is fixed when it shows up in use. The scenes, their inputs and when each passes are in the [verification document](verification.md).
 
-- A1, checked by use: with pith installed alone, without writ, `/pith:up` checks the pull-request
-  review prompt of the README's example, which has one hole, with the README's aim.
+Every quality is checked with a separate subagent that does not know the discussion. It runs pith in the user's place, uses what comes back, and reports what happened. Pass or fail is decided by the conductor checking pith, which lays the report beside the benefits. Each situation is run once, since running it costs time and money.
 
-    It passes when a More points at that hole with what happened in use as its evidence. The hole is
-    one that cannot be seen by reading the prompt and shows only when the prompt is run, so a pass
-    shows the check rested on the fact of use, not on a reading.
+### Benefits
 
-- A1, any kind of work: with pith installed alone, `/pith:up` checks `cli/src/export.js` of the
-  README's example, for which no essentials file exists.
+- The user learns where the receiver falls short, from what happened in use, with each point at its place and quoted.
 
-    It passes when pith first writes an essentials file for code in `.pith/essentials/`, and then
-    checks `export.js` with it, every question answered from what happened when the code was run.
+    In the README's situation of the prompt that reviews pull requests, with pith installed and writ not, `/pith:up` checks a prompt with one hole that misses the aim. It passes when a More pointing at that hole comes back with what happened in use as its evidence. The hole put in is one that cannot be seen by reading the prompt and shows only when it is run. A hole seen by reading alone would not show whether the check rested on the fact of use.
 
-- A2: one `/writ:up` run and one rn check of a plan against `plan.md`.
+- The user can check a kind of work no one has written questions for.
 
-    It passes when each starts `pith:first-user` and leaves a result file that passes pith's form
-    check, so both reach the one check that a change to pith would change.
+    In the README's situation of code with no essentials file, `/pith:up` checks it. It passes when pith writes `.pith/essentials/code.md`, every question can be answered from what happened when the first user used the code, and the check with it finds the mistyped value the aim speaks of.
 
-What a script can decide is checked by script every time: that no first user, result-form script or
-essentials file of pith's remains outside `pith/` (M4), and that each plugin's tests run every line
-and both `claude plugin validate --strict` runs pass (M5). The check script is tested on a result file
-it stops and one it lets through, and the first user's hook on a call it stops and one it lets
-through. M1 to M3 are not checked up front: as `.claude/rules/plugin.md` says, a shortfall in what
-the user takes for granted is fixed when it shows in use.
+- writ and rn check through pith.
+
+    One `/writ:up` run and one check of an rn plan each start `pith:first-user` and leave a result file that passes pith's form check.
+
+### Quality the user takes for granted
+
+What a machine can decide is checked by script every time. It is fast, gives the same answer every time, and leaves the conductor's attention for judging the benefits.
+
+- Comparing the working directory before and after a run, only the result file in `open/`, and an essentials file pith wrote, have changed.
+- pith's Good and More answer every question, every place exists, and every quoted piece of evidence is in the work or in the first user's report. The hook checks this on every write, and the script is tested with Python's unittest on a case it stops and a case it lets through.
+- While a first user runs, the hooks stop reading git history and conversation records. This too is tested with unittest.
+- No first user, form-check script or essentials file of pith's is left in writ or rn.
+
+The rest of it, such as not being asked the same thing twice, not being left waiting, and facts matching the repository, is left to use, since such failures are easy to see and quick to fix.
+
+### What is not checked
+
+Only the README's example situations above are tried. Other kinds of work or receivers, and other flows, are not. The design relies on the essentials being written in words that fit any kind of work.
