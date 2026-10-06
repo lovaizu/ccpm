@@ -75,6 +75,16 @@ does"), `rn/agents/first-user.md`, `rn/references/essentials/report.md`, issues 
     For rn the aim is `steering.md`, which already holds everything the user decided; rn's proposals
     name a criterion ID on each Good and More.
 
+- `/pith:up` checks with the essentials files the caller names, or else the one for the work's kind
+  in the repository's `.pith/essentials/`, written first when there is none. It never picks up
+  another plugin's essentials, writ installed or not: writ's essentials are reached by `/writ:up`,
+  which names them to pith.
+
+    pith cannot name a file inside another plugin, as no caller can name one inside pith.
+
+- The README shows a few lines of a result file, so its reader sees which fixed More goes back to
+  pith for a recheck (one of attractive quality) and which they settle in the file themselves.
+
 - The result file is written where the caller names it: rn its session's
   `open/{NN}-report-{about}.md`, writ `.writ/open/`, and `.pith/open/` when called directly.
 
