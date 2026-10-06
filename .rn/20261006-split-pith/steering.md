@@ -23,9 +23,11 @@ plugin for writing documents.
 ## Attractive quality
 
 - A1: Installing pith alone, without writ, gives `/pith:up`, which checks any work (a document, a
-  prompt, code, tests) by a first user's use and writes the result file.
+  prompt, code, tests) by a first user's use and writes the result file, first writing the viewpoints
+  for a kind of work that has none, such as code or tests.
 - A2: writ and rn both check their work through pith, so a change to how work is checked is made in
-  pith once and reaches both.
+  pith once and reaches both. (The user's words: pith is the most basic function of an AI agent, and
+  rn moves onto it in this session; the gain is put in the conductor's words, agreed in conversation.)
 
 ## Must-be quality
 
@@ -33,21 +35,27 @@ plugin for writing documents.
   before.
 - M2: An rn session's golden path (plan, design, tasks, deliverable, each checked before its sign-off)
   gives no less than before.
-- M3: No copy of pith's parts remains in writ or rn, and each part they share has exactly one home.
-- M4: Each plugin keeps `.claude/rules/plugin.md`: tests that run every line in CI, trials, a README
+- M3: Whoever calls `/writ:pith` today finds the same check as `/pith:up`, installed with writ.
+- M4: No copy of pith's parts remains in writ or rn, and each part they share has exactly one home.
+- M5: Each plugin keeps `.claude/rules/plugin.md`: tests that run every line in CI, trials, a README
   stating Python 3.9 or later, a CHANGELOG entry, both `claude plugin validate --strict` runs passing,
   and a listing in `.claude-plugin/marketplace.json` and the root `README.md`.
 
 # Assumptions
 
-- Fact, official docs: `plugin.json` `dependencies` resolve a bare name against the same marketplace,
-  install automatically, and pick the highest `<plugin>--v<version>` tag in the range; with no
-  matching tag, the marketplace's current copy is used.
-- Assumption: a plugin can call a dependency's skill and start its agents, and reach its files; the
-  official docs give no path variable for a dependency's directory and do not document calling
-  another plugin's skill or agent.
-- Fact, checked in the repository: rn 0.9.0 does not call pith; it checks with its own first user
-  (`rn/agents/first-user.md`) and viewpoint files (`rn/references/essentials/`), and depends on writ.
+- Fact, official docs (plugins/dependencies): a dependency installs with the plugin that declares it;
+  a bare name follows the copy its marketplace provides, and a declared version range picks the
+  highest `<plugin>--v<version>` tag in it; for a plugin at a relative path, as here, no matching tag
+  falls back to the marketplace's copy.
+- Fact, official docs: a dependency is described as "one whose MCP server or skill it calls", and a
+  plugin's agents are named `<plugin>:<agent>`; no path variable is given for a dependency's directory.
+- Assumption: a plugin can call a dependency's skill, start its agents, and reach its files; the docs
+  do not show how.
+- Fact, checked in the repository: rn 0.9.0 depends on writ and has its README, design document, and
+  verification document written by `writ:up`, which checks them with pith
+  (`rn/references/conduct.md:107`, `writ/skills/up/SKILL.md:56`). Its own checks of the plan, a task
+  result, and the deliverable use its own first user (`rn/agents/first-user.md`) and viewpoint files
+  (`rn/references/essentials/`).
 - Fact, decided by the user: moving rn onto pith is done in this session, not in a later one.
 
 # Rules
@@ -69,4 +77,7 @@ plugin for writing documents.
   design, and a task result).
 - The two open points of the result file's form: whether a new field may be added, and whether the
   `→ fixed:` / `→ let go:` / `→ to the user:` marks are part of it.
+- Whether rn depends on pith directly or through writ, which it keeps for its documents.
+- Whether writ and rn declare a version range on pith or a bare name, given that a release waits for
+  an instruction.
 - How writ's and rn's designs (`writ/docs/design.md`, `rn/docs/design.md`) point to pith's.
