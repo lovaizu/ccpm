@@ -1,6 +1,5 @@
 """rn's record as its hooks read it: the conversation that runs rn, and the session directory."""
 import os
-import re
 import subprocess
 
 COMMANDS = ("on", "up", "dn", "ty", "gm")
@@ -39,20 +38,6 @@ def mark(store, session_id):
     open(marker(store, session_id), "w").close()
 
 
-def front_matter(text):
-    """The front matter's keys and values, or None when the text has none: a session started by an
-    older rn, which /rn:up brings to the current form."""
-    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
-    if not m:
-        return None
-    out = {}
-    for line in m.group(1).splitlines():
-        if ":" in line:
-            k, v = line.split(":", 1)
-            out[k.strip()] = v.strip()
-    return out
-
-
 def session(top):
     """The session directory on this branch whose status is not finished, or None."""
     base = os.path.join(top, ".rn")
@@ -60,10 +45,8 @@ def session(top):
         return None
     for name in sorted(os.listdir(base), reverse=True):
         st = os.path.join(base, name, "steering.md")
-        if os.path.isfile(st):
-            front = front_matter(open(st).read())
-            if front is not None and front.get("status") != "finished":
-                return os.path.join(base, name)
+        if os.path.isfile(st) and "\nstatus: finished\n" not in open(st).read():
+            return os.path.join(base, name)
     return None
 
 

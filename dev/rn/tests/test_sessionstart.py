@@ -1,4 +1,6 @@
 """rn's SessionStart hook: after a summary, the conductor reads the record again."""
+import os
+import tempfile
 import unittest
 
 from harness import Session, sh, SDIR
@@ -22,6 +24,24 @@ class SessionStart(Session):
         # When the conversation is summarized
         _, out = self.r.hook("sessionstart", source="compact")
         # Then nothing is said
+        self.assertEqual(out.strip(), "")
+
+    def test_after_compact_with_the_session_finished_nothing_is_said(self):
+        # Given the only session on the branch is finished
+        path = os.path.join(self.r.dir, SDIR, "steering.md")
+        self.r.write(f"{SDIR}/steering.md", open(path).read().replace("status: running", "status: finished"))
+        # When the conversation is summarized
+        _, out = self.r.hook("sessionstart", source="compact")
+        # Then nothing is said
+        self.assertEqual(out.strip(), "")
+
+    def test_after_compact_outside_a_repository_nothing_is_said(self):
+        # Given the conversation runs outside any git repository
+        outside = tempfile.mkdtemp()
+        # When it is summarized
+        _, out = self.r.hook("sessionstart", source="compact", cwd=outside)
+        # Then nothing is said
+        os.rmdir(outside)
         self.assertEqual(out.strip(), "")
 
 
