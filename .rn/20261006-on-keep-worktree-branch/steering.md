@@ -11,11 +11,12 @@ verification: rn/docs/verification.md
 
 # Goal
 
-When the current branch is not the default branch, has no commits of its own, and is at the latest
-default branch, `/rn:on` works on it as it is and pushes it under the same name; it makes a new
-branch only from the default branch itself, or when the current branch already holds other work.
-The user starts a worktree for the work and expects the session there, so a second name for the
-same work leaves the worktree and its branch apart and costs turns asking why and undoing it (#41).
+When the current branch is not the default branch and has no commits of its own, `/rn:on` works on
+it as it is, brought up to the latest default branch when it is behind, and pushes it under the same
+name; it makes a new branch only from the default branch itself, or when the current branch already
+holds other work. The user starts a worktree for the work and expects the session there, so a second
+name for the same work leaves the worktree and its branch apart and costs turns asking why and
+undoing it (#41).
 
 # Acceptance criteria
 
@@ -46,7 +47,16 @@ same work leaves the worktree and its branch apart and costs turns asking why an
 
 - Fact, from `rn/docs/design.md` "Acceptance criteria": the deliverable is `rn` changed, so it is
   judged by `rn`'s own criteria, copied above with their IDs, which `rn/docs/verification.md` refers
-  to; what this goal adds or changes in them is still being worked out with the user.
+  to.
+- Fact, from #41 "Why it matters": this goal serves A2, since the user spends turns asking why the
+  branch changed and undoing it; it adds no criterion of its own.
+- Fact, from `rn/skills/on/SKILL.md:20`: today `/rn:on` makes a new branch on every form of the
+  current branch: the default branch, a branch with no commits of its own at or behind the latest
+  default branch, and a branch with commits of its own.
+- Assumption: a branch with no commits of its own that is behind the latest
+  default branch is kept too, since moving it up loses nothing and a new name leaves the worktree
+  apart all the same; #41's words name only one at the latest default branch, the case it was seen
+  in.
 
 # Rules
 
