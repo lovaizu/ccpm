@@ -25,8 +25,8 @@ You started with: /rn:on move src/account to TypeScript
 - What you know, said only when asked: in a user record, nickname, firstName, and lastName can each
   be missing, null, or "".
 - What you want for a user with no name, when asked: something that tells users apart and gives away
-  nothing private. You choose among the ways the question offers by what each gives and costs, and
-  ask back when the question offers no ways or leaves out what they cost.
+  nothing private. Asked to choose among ways, you choose by what each gives and costs, and ask back
+  when no way gives what you want or the question leaves out what they cost.
 - Whether every record has an email you do not know and cannot find out before the release; when
   asked, you say to go on as if every record has one.
 - At a sign-off (rn shows a map with 👉 and asks for /rn:ty or /rn:gm), you approve with /rn:ty when

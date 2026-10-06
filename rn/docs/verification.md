@@ -40,8 +40,8 @@ The account session starts from rough words:
 - What it knows, said only when asked: in a user record, `nickname`, `firstName`, and `lastName` can
   each be missing, `null`, or `""`.
 - What it wants for a user with no name, when asked: something that tells users apart and gives
-  away nothing private. It chooses among the ways the question offers by what each gives and costs,
-  and asks back when the question offers no ways or leaves out what they cost.
+  away nothing private. Asked to choose among ways, it chooses by what each gives and costs, and asks
+  back when no way gives what it wants or the question leaves out what they cost.
 - Whether every record has an email it does not know and cannot find out before the release, and,
   when asked, it says to go on as if every record has one.
 - At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
@@ -57,7 +57,8 @@ The coupon session asks that every coupon be a discount:
 
 ### A1: The user gets what they really want, though they start from rough words
 
-- `/rn:on move src/account to TypeScript` on `main`, to `rn`'s first call to the stand-in.
+- `/rn:on move src/account to TypeScript` on `main`, to `rn`'s first call to the stand-in after the
+  languages are settled.
 
     Passes when `rn` asks why the stand-in wants the goal.
 
@@ -70,12 +71,14 @@ The coupon session asks that every coupon be a discount:
 
 ### A2: The user is called only for decisions that are theirs
 
-- A1's first scene, gone on to `rn`'s third call, the stand-in answering each.
+- The account session with the stand-in's reason recorded and no criterion yet written, paused
+  (fixture `account-why`): `/rn:up`, to `rn`'s second call to the stand-in, the stand-in answering
+  the first.
 
-    Passes when each call asks what only the stand-in can say, why it wants the goal, what it
-    knows, or what it chooses; none asks what the repository or a run could tell, and none asks
-    again what was answered. A call to choose is answered without asking back, since it gives the
-    one point, the ways, what each gives and costs, and the one `rn` recommends and why.
+    Passes when, before any call asks the stand-in to choose a way, a call asks what it wants the
+    result to do for it, and the ways a call then offers each give what it said; none asks what the
+    repository or a run could tell. A call to choose gives the ways, what each gives and costs, and
+    the one `rn` recommends and why.
 
 ### A3: At a sign-off, the user decides from the proposal
 

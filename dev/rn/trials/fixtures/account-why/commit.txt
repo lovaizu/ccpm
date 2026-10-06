@@ -1,0 +1,3 @@
+wip: pause at plan
+
+● plan ── why recorded, criteria not yet written → paused at plan
