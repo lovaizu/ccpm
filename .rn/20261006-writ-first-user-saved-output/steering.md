@@ -58,7 +58,7 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 
 # Tasks
 
-### [ ] #1: Plan sign-off
+### [x] #1: Plan sign-off
 ### [ ] #2: Design sign-off
 
 # Not yet specified
