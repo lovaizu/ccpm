@@ -11,20 +11,21 @@ verification: pith/docs/verification.md
 
 # Goal
 
-Make pith the one place where work is checked by having it used, split out of writ into a plugin of
-its own (issue #35), with writ and rn both checking through it. Today the same skeleton (a first user
-who does not know how the work was made, viewpoint files, Good and More against the aim) lives in
-writ as pith and again inside rn, and the two grow apart; with one home, an improvement to how work
-is checked is made once and reaches both, and anyone can check any work by use without installing a
-plugin for writing documents.
+Make pith the one place where work is checked by having it used (the first user, the comparison with
+the aim, the result file's form), while each caller keeps the viewpoints for its own kinds of work,
+split out of writ into a plugin of its own (issue #35), with writ and rn both checking through it.
+Today the same skeleton (a first user who does not know how the work was made, viewpoint files, Good
+and More against the aim) lives in writ as pith and again inside rn, and the two grow apart; with one
+home, an improvement to how work is checked is made once and reaches both, and anyone can check any
+work by use without installing a plugin for writing documents.
 
 # Acceptance criteria
 
 ## Attractive quality
 
 - A1: Installing pith alone, without writ, gives `/pith:up`, which checks any work (a document, a
-  prompt, code, tests) by a first user's use and writes the result file, first writing the viewpoints
-  for a kind of work that has none, such as code or tests.
+  prompt, code, tests) by a first user's use, first writing the viewpoints for a kind of work that has
+  none, such as code or tests.
 - A2: writ and rn both check their work through pith, so a change to how work is checked is made in
   pith once and reaches both. (The user's words: pith is the most basic function of an AI agent, and
   rn moves onto it in this session; the gain is put in the conductor's words, agreed in conversation.)
