@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>taskboard</title>
+</head>
+<body>
+  <h1>Tasks</h1>
+  <ul id="tasks"></ul>
+  <script type="module">
+    import { renderTaskList } from './task-list.js';
+    renderTaskList(document.getElementById('tasks'), {});
+  </script>
+</body>
+</html>

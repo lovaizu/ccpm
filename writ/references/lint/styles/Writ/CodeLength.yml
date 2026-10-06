@@ -1,0 +1,33 @@
+extends: script
+message: "Code example longer than 10 lines — style.md: Keep a code example to 10 lines or fewer."
+level: warning
+scope: raw
+script: |
+  text := import("text")
+  matches := []
+  // Diagrams, console output and Markdown samples are not code examples.
+  skip := ["mermaid", "console", "text", "markdown", "md"]
+  pos := 0
+  inside := false
+  counted := false
+  start := 0
+  lines := 0
+  for line in text.split(scope, "\n") {
+    fence := text.trim_space(line)
+    if text.has_prefix(fence, "```") {
+      if !inside {
+        info := text.trim_space(text.trim_prefix(fence, "```"))
+        inside = true
+        counted = true
+        for s in skip { if info == s { counted = false } }
+        start = pos
+        lines = 0
+      } else {
+        if counted && lines > 10 { matches = append(matches, {begin: start, end: pos + len(line)}) }
+        inside = false
+      }
+    } else if inside {
+      lines += 1
+    }
+    pos += len(line) + 1
+  }

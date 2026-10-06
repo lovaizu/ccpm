@@ -1,0 +1,47 @@
+diff --git a/src/api/tasks.js b/src/api/tasks.js
+index c2b3c69..a27fb3d 100644
+--- a/src/api/tasks.js
++++ b/src/api/tasks.js
+@@ -1,6 +1,14 @@
+ const { data, newTaskId } = require('./store');
+ 
+ const STATUSES = ['open', 'in_progress', 'done'];
++const NO_DUE_DATE = '9999-12-31';
++
++function byDueDate(a, b) {
++  const left = a.dueDate || NO_DUE_DATE;
++  const right = b.dueDate || NO_DUE_DATE;
++  if (left === right) return 0;
++  return left < right ? -1 : 1;
++}
+ 
+ function toResponse(task) {
+   return {
+@@ -20,12 +28,16 @@ function list(req, res) {
+   if (req.query.assignee) {
+     result = result.filter((t) => t.assigneeId === req.query.assignee);
+   }
+-  result = result.slice().sort((a, b) => (a.dueDate || '9999') < (b.dueDate || '9999') ? -1 : 1);
++  result = result.slice().sort(byDueDate);
+   res.json({ items: result.map(toResponse), total: result.length });
+ }
+ 
++function findTask(id) {
++  return data.tasks.find((t) => t.id === id);
++}
++
+ function get(req, res) {
+-  const task = data.tasks.find((t) => t.id === req.params.id);
++  const task = findTask(req.params.id);
+   if (!task) {
+     return res.status(404).json({ error: 'task not found' });
+   }
+@@ -50,7 +62,7 @@ function create(req, res) {
+ }
+ 
+ function update(req, res) {
+-  const task = data.tasks.find((t) => t.id === req.params.id);
++  const task = findTask(req.params.id);
+   if (!task) {
+     return res.status(404).json({ error: 'task not found' });
+   }

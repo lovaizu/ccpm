@@ -11,6 +11,12 @@
       "description": "Say what you want, roughly: rn works out with you what you really want, carries the work through, has each result used by an agent that knows nothing of how it was made before you see it, and calls you back only for the plan, design, and deliverable sign-offs and the decisions that are yours. The session lives in git, so it resumes across conversations.",
       "source": "./rn",
       "category": "development"
+    },
+    {
+      "name": "writ",
+      "description": "Makes a document read as if a person wrote it for its reader, so you can hand it on without rereading it and judge it from the report alone.",
+      "source": "./writ",
+      "category": "productivity"
     }
   ]
 }
