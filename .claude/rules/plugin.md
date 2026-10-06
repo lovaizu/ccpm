@@ -69,15 +69,39 @@ code-modernization).
     a plugin's settings cannot restrict it either. A definition holds however it is called.
 - **Leave to hooks only the mechanical rules a definition cannot hold**, such as a file's form, a
   name, matching IDs, a commit's form, or a push left undone.
+- **Have a hook act only in the conversation that runs its plugin and on the agents that conversation
+  started, and judge only what was written; never have it decide whether a conversation goes on, or
+  rest on how Claude Code runs an agent.**
+  - Rationale: rn 0.9.0's hooks took any session in the repository for its conductor, stopped its
+    replies to other sessions, and sent a session that ran no rn on with rn's work (#43). Its check
+    that agents run in the foreground, and its check that sent the conductor on at the end of a turn,
+    together forbade the only way left to wait once Claude Code ran agents in the background (#44).
+    Whether to go on is a judgment, and how agents run changes with Claude Code; a hook sees neither.
+- **Instruct every role by the purpose and intent of its work, not by steps. Fix a fault met in use
+  at its cause, by sharpening the purpose or a viewpoint; add a step or a hook only where no purpose
+  can hold it.**
+  - Rationale: a step is followed even where it misses, while a purpose fits cases no one foresaw.
+    rn 0.9.0, rebuilt to be simpler, grew by 2858 lines and 14 hook checks, since each fault met while
+    building it became a step or a hook, and each of them came to stand between the user and what the
+    README promised.
+- **Start a first user only where use shows what the maker cannot see without it, such as a
+  generator's result or the finished work. Have a work checked by the plugin that made it, not again
+  by its caller, and never by a first user for what the conductor writes to the user, who reads it
+  themselves.**
+  - Rationale: every first user is time the user waits. rn 0.9.0 had a first user read every question
+    and proposal, and checked writ's documents again after writ's own check; one design stage ran 124
+    agents over 2 h 43 min (#37, #39, #45).
 
 ### Results
 
 - **Write the whole result to a file in `open/`, and return to the caller only a short result and the
-  file's location.** The short result opens with the conductor's view, gives every essential one line
-  (Good or More, and where), and sets out in full only what the user must decide, such as a More that
-  was left.
+  file's location.** The short result grows with what its reader decides, not with the size of the
+  work: the conductor's view of how close the work has come, each point that is the user's to decide,
+  such as a More left or an assumption no one has checked, and the next move. Every Good and More
+  stays in the file.
   - Rationale: a whole result in the conversation is too long to be read, crowds the caller's context,
-    and is lost when the conversation is summarized.
+    and is lost when the conversation is summarized. One line per essential still grows with the
+    essentials: an rn proposal of 72 lines left the user unable to say yes or no from it (#46).
 - **Name it `{dir}/open/{NN}-{kind}-{target}.md`, commit it, and push it.** `{dir}` is the plugin's own
   directory (e.g. `.writ/`), or the place the caller names (rn names its session,
   `.rn/{date}-{slug}/`). `{NN}` is the order it arrived in; `{kind}` is `report` (what the first user
@@ -134,9 +158,14 @@ code-modernization).
   they got it, leaving what happened for the conductor to read.**
   - Rationale: a trial put together on the spot guesses at how the last one ran and is lost with the
     session; kept in the repository, it runs the same way each time and is fixed along with the plugin.
-    Nothing outside that span changes the answer, and a scene run to the end spends its time long
-    after the answer has shown. How the parts join is checked by script on every run and shows in
-    use.
+    A scene run past its first result spends its time long after its answer has shown.
+- **Before a round's verdict, also run the golden path once end to end as its user would, the
+  README's story from the user's first words to the result, and measure what the user spent on it:
+  how long they waited, how much they read to decide, and each time they were called. Judge that
+  spending as attractive quality, never let it go as outside a scene.**
+  - Rationale: what the user spends shows only across the whole path. Every scene of rn 0.9.0 passed
+    while one design stage took 2 h 43 min and a proposal ran to 72 lines; the one run that showed the
+    time had it let go as outside its scene, and was removed (PR #33, task #9).
 - **Write the trials as the plugin's own code is written, but leave them out of the line count.**
   - Rationale: a trial starts Claude Code, which CI cannot run, and each run is read by the conductor,
     so the run itself is its check.
