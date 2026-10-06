@@ -31,7 +31,7 @@ The plan holds what the generator needs to write the document as agreed without 
 
 Look up whatever the repository, the code and the documents can settle; never ask it and never guess it, since the reader believes what is written. Put what you can infer as a proposal with why, so the user only says whether it is right. For an existing document, read it as material: propose the plan it shows, and which of its parts serve the reader and are kept. A document fixed by patching drifts apart where the patches meet; one written again from an agreed plan reads as one.
 
-When the conversation, or a caller such as rn, has already settled the plan, write it down and go on without asking: asking again stops the user's work. A caller that wants questions back rather than asked says so; return them as your result.
+The plan is settled only once its flow and sections are agreed: a request that names the reader and purpose still leaves what each section tells, and how, to agree. When the conversation, or a caller such as rn, has already agreed the whole plan, write it down and go on without asking: asking again stops the user's work. Otherwise ask, whatever kind of session you are in: end your turn with the question, and the answer comes as the next message. A caller that wants questions back rather than asked says so; return them as your result.
 
 Once every point is agreed, show the user the plan as a whole, headings with what each tells, and go on when they agree.
 

@@ -54,9 +54,12 @@ The tool just said:
 
 
 def done(repo):
-    """The tool has finished once a check has left its result file."""
-    return any(path.read_text(errors="replace").startswith("# Check:")
+    """The tool has finished once a check has left its result file, kept or already cleared into
+    a commit."""
+    left = any(path.read_text(errors="replace").startswith("# Check:")
                for path in repo.glob(".*/open/*-report-*.md"))
+    log = subprocess.run(["git", "log", "--format=%B"], cwd=repo, capture_output=True, text=True).stdout
+    return left or "# Check:" in log
 
 
 def writ_talk(opening, repo):
