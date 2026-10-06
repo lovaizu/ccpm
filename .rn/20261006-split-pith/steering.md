@@ -51,12 +51,14 @@ work by use without installing a plugin for writing documents.
   falls back to the marketplace's copy.
 - Fact, official docs: a dependency is described as "one whose MCP server or skill it calls", and a
   plugin's agents are named `<plugin>:<agent>`; no path variable is given for a dependency's directory.
-- Assumption: a plugin can call a dependency's skill, start its agents, and reach its files; the docs
-  do not show how.
-- Assumption: called from the main conversation, pith returns its result before the caller goes on, so
-  the wait for a first user lives in pith alone; this held when writ:up called pith from inside an
-  agent (#33), but agents started from the main conversation ran in the background (#44). rn's own
-  generator and writ agents stay outside pith, and #44 stays rn's own for them.
+- Fact, tried on Claude Code 2.1.291: a plugin's skill calls a dependency's skill with the Skill tool,
+  and that skill starts its own plugin's agent and reads a file under its own root; the caller cannot
+  name a file inside the dependency, since no path variable is given for it.
+- Fact, official docs (skills, sub-agents) and tried on 2.1.291 with fork mode on: in an interactive
+  session every agent the Agent tool starts runs in the background, nested ones too (#44); a forked
+  skill with `background: false` makes the caller wait for its result, and the agent it started ran in
+  the foreground. rn's own generator and writ agents stay outside pith, and #44 stays rn's own for
+  them.
 - Fact, checked in the repository: rn 0.9.0 depends on writ and has its README, design document, and
   verification document written by `writ:up`, which checks them with pith
   (`rn/references/conduct.md:107`, `writ/skills/up/SKILL.md:56`). Its own checks of the plan, a task
