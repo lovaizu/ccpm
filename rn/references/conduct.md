@@ -104,8 +104,11 @@ Start a fresh agent with `Agent` for each document, the README, then the design 
 verification document, that runs the `writ:up` skill. Give it the document's path, its reader and
 what they do when they finish (the README: someone meeting the product, who decides whether to use
 it and starts; the design document: builders and maintainers, who build it and weigh a change by
-what it costs the user; the verification document: whoever runs the checks again after a change), the `artifact-language`, and the paths of the `notes` item and of
-`steering.md`, never a summary of them, since a summary drifts from what was agreed. Tell it the
+what it costs the user; the verification document: whoever runs the checks again after a change),
+the `artifact-language`, and the paths of the `notes` item and of `steering.md`, never a summary of
+them, since a summary drifts from what was agreed. For the verification document, also give it the
+headings `rn` reads it by: `## Scenes` holding a `### A1: …` heading for each attractive criterion,
+and `## Machine checks`. Tell it the
 reader and purpose are settled, to return any question as a result instead of asking, to write its
 report to a `report` file in `open/` you name, and to return only a short result and that path. Do
 this even when no point changes the documents, since there is always a Design sign-off. Commit the

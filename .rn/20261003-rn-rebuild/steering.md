@@ -364,7 +364,7 @@ and what changes for them.
 - `plugin.json` is 0.9.0, the CHANGELOG's top section is `## [0.9.0] - <release date>`, and no empty
   `## [Unreleased]` is left.
 
-### #9: Integration check with the real writ
+### [x] #9: Integration check with the real writ
 
 **Purpose**: `rn` works with `writ` as merged to `main`, not only with its working branch.
 
@@ -378,11 +378,11 @@ and what changes for them.
   left out of the line count (`.claude/rules/plugin.md` § Check, writ PR #15, e0d5719)
 - [x] Rewrite `dev/rn/tests` (moved from `rn/tests` with the trials to `dev/rn/trials`, writ 1abd703) to `.claude/rules/plugin.md` § Build on `main` once PR #15 merges: each test
   named by what must happen, as one sentence, its body marked `# Given`, `# When`, `# Then`
-- [ ] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
+- [x] Install `rn` and `writ` from the marketplace on this branch and run the scenes that call `writ`,
   with the hooks on
-- [ ] Run every machine check in the verification document, `claude plugin validate --strict`
+- [x] Run every machine check in the verification document, `claude plugin validate --strict`
   for `rn` and the marketplace included
-- [ ] Used by a first user and settled by the conductor (Rules)
+- [x] Used by a first user and settled by the conductor (Rules)
 
 **Completion criteria**:
 
