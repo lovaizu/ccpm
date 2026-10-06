@@ -8,7 +8,7 @@ pith is a Claude Code plugin. When it checks something you made, a document, a p
 
 Reading your work over yourself, or asking the AI that helped you make it, does not find these places. Both know what you meant, and fill in what the work leaves out without noticing. pith hands your work to a separate AI that does not know the discussion or how the work was made. It uses the work as its receiver would: it reads a document, runs a prompt with an AI, calls code, runs tests. Then it reports what happened, without judging.
 
-If you used `/writ:pith`, the same check is now `/pith:up`, and it comes installed with writ.
+The check you called as `/writ:pith` is now `/pith:up`, and pith comes installed with writ. Called on its own, `/pith:up` checks with pith's own questions, not writ's, as told under [With writ and rn](#with-writ-and-rn).
 
 ## Call `/pith:up` with the work and your aim, and you get a Good or More for every question
 
@@ -85,7 +85,23 @@ pith keeps the questions in `.pith/essentials/` in your repository, so the next 
 
 pith writes one result file for each work, in `.pith/open/` at the root of your repository, and does not commit or push it. To keep it beyond the conversation and show it on the pull request, commit it yourself.
 
-After you fix a More where the receiver did not get what the work is for, such as the missed renamed field, call pith again with the result file and that question: `/pith:up Recheck .pith/open/01-report-pr-review.md; I fixed the renamed-field More.` A new first user then uses the work again on that question alone. A fixed More that is easy to see, such as a broken link or a word used two ways, you settle in the file yourself without a recheck: rewrite it as the Good it now is. Give a More you leave `Left because:` and the reason.
+Say that, besides the renamed field, the same question also found a wrong path, which you fixed and then rewrote in the file as a Good yourself, and a long diff read only in part, which you left. That question's section of `.pith/open/01-report-pr-review.md` then reads:
+
+```markdown
+## prompt.md: When you gave it a situation that no step reaches, what did the AI do?
+
+Report: Given a diff that only renamed dueDate to dueAt in a response, it output NO_COMMENT. The prompt sent it to src/ui/apiClient.js, which does not exist. Given a diff of 3,000 lines, it read only the first part.
+
+- More: `.github/prompts/pr-review.md:12` A renamed response field is missed, so the pull request is merged and the UI breaks.
+  - Evidence (report): "it output NO_COMMENT"
+- Good: `.github/prompts/pr-review.md:13` The AI opens the client it checks the change against.
+  - Evidence (work): "read `src/ui/api-client.js`"
+- More: `.github/prompts/pr-review.md:3` A change late in a long diff goes unchecked.
+  - Evidence (report): "it read only the first part"
+  - Left because: our pull requests stay under 500 lines.
+```
+
+A fixed More that is easy to see, such as a wrong path, a broken link or a word used two ways, you settle in the file yourself like this, without a recheck. The renamed field is different: the receiver did not get what the work is for, so after fixing it, call pith again with the file and that question: `/pith:up Recheck .pith/open/01-report-pr-review.md; I fixed the renamed-field More.` A new first user then uses the work again on that question alone, and pith rewrites only that question's section of the file.
 
 Once every More is fixed or let go with a reason, copy the file into a commit message and delete the file in that commit. The record stays in the git history, so a file left in `.pith/open/` is the sign that something still waits for you.
 
@@ -93,7 +109,7 @@ Once every More is fixed or let go with a reason, copy the file into a commit me
 
 writ, which writes documents, and rn, which carries a goal through to a finished change, both check their work through pith, so an improvement to how work is checked is made once in pith and reaches both.
 
-writ keeps the essentials files for its kinds of work, documents of every kind, READMEs, design documents and prompts, and rn keeps its own; each hands them to pith. Without writ, pith writes the questions for documents too, as it does for any kind of work with no essentials file.
+writ keeps the essentials files for its kinds of work, documents of every kind, READMEs, design documents and prompts, and rn keeps its own; each hands them to pith when it checks. `/pith:up` called on its own never uses them, whether writ is installed or not: it uses the essentials files you name, or else those in `.pith/essentials/`, writing one first as in the first example. To check with writ's essentials files, call `/writ:up` with the document: it checks the document with writ's questions through pith, then fixes what it finds, as [writ's README](../writ/README.md) tells.
 
 ## Getting started
 
