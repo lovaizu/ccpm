@@ -64,6 +64,10 @@ work by use without installing a plugin for writing documents.
 - Releasing pith and writ (version bump, tags, GitHub Release) waits for an explicit release
   instruction, as `.claude/rules/plugin.md` says.
 - Files are moved with `git mv`, so their history follows.
+- A check through pith starts a first user only for the first use and for each fixed attractive-quality
+  More, and whatever a script can decide, such as the result file's form, is checked by script
+  (`.claude/rules/plugin.md` § Check); this closes #37, whose third pith run only settles the result
+  file.
 
 # Tasks
 
