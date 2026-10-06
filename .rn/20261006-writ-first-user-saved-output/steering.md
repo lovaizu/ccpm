@@ -55,11 +55,13 @@ When a `writ:first-user` runs a Bash command whose output is too large, Claude C
 - Follow `.claude/rules/plugin.md`: Python 3.9 with the standard library only, `unittest` tests in
   `dev/writ/tests/` that run every line and check both a case stopped and a case let through, and an
   entry under `## [Unreleased]` in `writ/CHANGELOG.md` without bumping the version.
+- The user said writ need not be used for the rest of this session: the conductor fixes the
+  documents itself.
 
 # Tasks
 
 ### [x] #1: Plan sign-off
-### [ ] #2: Design sign-off
+### [x] #2: Design sign-off
 
 # Not yet specified
 
