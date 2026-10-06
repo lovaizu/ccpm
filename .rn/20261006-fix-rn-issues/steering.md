@@ -81,6 +81,13 @@ rn's own criteria (`rn/docs/design.md`), word for word, with what this session a
 - Fact, read in `rn/docs/verification.md` and `rn/docs/design.md:176-187`: rn is verified scene by
   scene, each from the state just before one moment; no check measures a whole session, its time,
   or what the user reads, so #39's 2 h 43 min was seen in #33 and released.
+- Fact, official docs (sub-agents) and seen in this session: a background agent's result reaches the
+  main conversation as a notification that starts a later turn by itself, with nothing from the user.
+- Fact, official docs (hooks): every hook input has `session_id`; a hook fired inside a subagent adds
+  `agent_id` and `agent_type`; `SubagentStart` and `SubagentStop` exist; `UserPromptSubmit` fires on
+  every user message with `session_id`.
+- Fact, tried with `claude -p` 2.1.291 and a logging PreToolUse hook: a hook fired for a subagent's
+  tool call carries the main conversation's `session_id`, with its own `agent_id` and `agent_type`.
 - Fact, decided by the user: this session and PR #40 go on side by side; where they meet, the
   conflict is settled when the second of them is merged.
 
