@@ -28,3 +28,13 @@ from the user's own words; files no run touched found and fixed.
   at the usage limit. Rerun only those: `python3 dev/pith/trials/prompts.py <plugin> <workdir> <name>...`.
 - Seen in them: one first user ran /rn:dn 30 times over 17 situations on three models; a check that
   heavy costs the user's wait and usage, so the prompt essentials' first user needs a bound by purpose.
+
+## Where #8 stands (2026-10-07, at the usage limit)
+
+- rn's story now runs on real pull requests (pydantic/pydantic-ai #3611, #5143). The run with this rn
+  stopped at the usage limit after 15 calls (scratchpad `story-pr-new`); go on with
+  `python3 dev/rn/trials/story.py --rn rn --writ writ --pith pith --out <scratchpad>/story-pr-new`.
+  The 0.8.0 run never started (`story-pr-080`): delete that directory, then run it after.
+- Open question to the user: rn asked to create a private repository `lovaizu/pydantic-ai-trial` and
+  the stand-in agreed; none exists yet. Wait for the user before going on.
+- After both runs: read every JSONL of both runs (rules: Tests and trials) and fix from the facts.
