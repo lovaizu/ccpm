@@ -22,8 +22,8 @@ since the session goes on from where they left it by what its record says.
    ● {resuming {slug} at #{id}: {task name}, or at the next move of the last decision line}
    ```
 
-4. When the last decision line ends `waiting for #{id} {sign-off name}`, and the branch is level with
-   the latest default branch, give the proposal again as that commit's message body prints it, the
-   decision line included, translated into the conversation language when the two differ, adding nothing
-   and leaving nothing out, and stop. Otherwise take up the session
-   as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`.
+4. When the last commit ends `waiting for #{id} {sign-off name}`, and the branch is level with the
+   latest default branch, give again the proposal that commit's message body holds, with its decision
+   line, in the `conversation-language`, and stop. Otherwise, such as when the user committed after
+   the proposal, take up the session as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`: a proposal
+   the record has moved past would have them approve what no longer is.

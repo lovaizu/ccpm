@@ -10,7 +10,8 @@ is decide.
 
 ## What you need
 
-- [Claude Code](https://code.claude.com)
+- [Claude Code](https://code.claude.com), on Opus or Sonnet: on a smaller model `rn` drops steps it
+  needs, such as asking one point at a time
 - A git repository with its remote on GitHub, since `rn` puts everything you review on a pull request
 - The [GitHub CLI](https://cli.github.com) `gh`, logged in with push access, which `rn` uses to open
   and update a pull request

@@ -22,8 +22,9 @@ def check(copy, plugin, item, workdir):
     essentials = "essentials.md" if item.get("essentials") else "prompt.md"
     request = (f"/pith:up Check {item['path']} with pith's {essentials}. "
                f"Its receiver and purpose: {item['receiver']} "
-               f"To run it as its receiver would, load the plugin with "
-               f"`claude -p --plugin-dir {plugin}` from this repository's root. "
+               f"To run it as its receiver would, load the plugins with "
+               f"`claude -p --plugin-dir rn --plugin-dir writ --plugin-dir pith` from this "
+               f"repository's root, since each depends on the next. It runs on Opus and Sonnet. "
                f"The aim: {item['aim']} Write the result file to .pith/open/ as {item['name']}.")
     out = subprocess.run(["claude", "-p", request, "--model", "opus", "--output-format", "json",
                           "--plugin-dir", os.path.join(copy, "pith"), "--permission-mode", "auto",

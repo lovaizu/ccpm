@@ -15,8 +15,8 @@ needs is left there.
 ## Steps
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line ends
-   `waiting for #{id} {sign-off name}` → say it is already stopped there, safe to clear, and that
-   `/rn:ty` or `/rn:gm` answers it; stop.
+   `waiting for #{id} {sign-off name}` → say, in the `conversation-language` of `steering.md`, that
+   it is already stopped there, safe to clear, and that `/rn:ty` or `/rn:gm` answers it; stop.
 2. Write what the next conversation needs and nothing else records to a `notes` item in `open/`: what
    was under way and how far it came, and in a talk with the user, the points agreed and the point
    still open. Uncommitted edits while a task is under way are that task's, made by its generator
@@ -27,5 +27,5 @@ needs is left there.
    on this machine, with the decision line
    `● {#id task name | plan | design} ── {how far it came} → paused at {#id task name | plan | design}`.
 4. Stop, opening your message with the map as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, the
-   task under way as `👉 #{id} {task name} ── paused here`, then the decision line, then
+   point paused at as `👉 {#id task name | plan | design} ── paused here`, then the decision line, then
    `Next: /clear, then /rn:up.`, in the `conversation-language` of `steering.md`.

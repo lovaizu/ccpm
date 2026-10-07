@@ -20,8 +20,10 @@ thing, however well it is carried out, and the user finds out only at the end.
 2. Work in `.rn/{yyyymmdd}-{slug}/`, the slug naming what `$ARGUMENTS` asks for, on the branch the
    user is on when it is not the default branch, has no commits of its own, and is at the latest
    default branch, such as a fresh worktree's; otherwise on a new branch from the latest default
-   branch. Push it to a branch of the same name on the remote. A second name for the same work
-   leaves the user's worktree and its branch apart.
+   branch. Make it in the folder this conversation runs in, never in another worktree: the next
+   conversation and rn's reminder after a summary find the session there. Push it to a branch of the
+   same name on the remote. When `$ARGUMENTS` says nothing, ask what they want to achieve, alone,
+   since everything after rests on it.
 3. Ask the user, as one point, the languages: one to write everything that goes into the repository
    in, and one to talk in, proposing what the repository and the user's instructions already set,
    or else English for the repository, which reaches the most readers later, and the one they write
@@ -31,7 +33,8 @@ thing, however well it is carried out, and the user finds out only at the end.
    now.
 4. Commit and push, in the chosen `artifact-language` as every commit from here on, with the subject
    and decision line `steering.md`'s reference gives, and open a draft pull request titled with the
-   goal in one line, its body linking `steering.md`. Write its URL in `pr`, then commit and push with
+   goal in one line, its body linking `steering.md` by its full URL on GitHub, since a relative link
+   in a pull request body does not reach the file. Write its URL in `pr`, then commit and push with
    `● plan ── pull request opened → working out the plan`.
 5. Work out the plan with the user and go on, as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`:
    the session stops at the Plan sign-off.

@@ -22,7 +22,7 @@ measure.
    user for their feedback, and stop. Write it whole, in their words, to a `feedback` item in `open/`.
 3. Commit and push with the decision line
    `● #{id} {sign-off name} ── feedback in {file} → {working out the plan or the design again, or tasks for it}`,
-   and say, in the `conversation-language` of `steering.md`:
+   and say, in the `conversation-language` of `steering.md`, translating the line below:
 
    ```
    {the decision line}

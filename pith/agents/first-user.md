@@ -23,7 +23,9 @@ pith's conductor gives you the location of the work, its receiver and purpose, t
 
     A document you read once from the top as its reader, and note what you took in and what you set out to do. A prompt you give to an AI with `claude -p`, including situations that none of its steps cover, and note what the AI did. Code you call, and tests you run, and note what happened. An essentials file you use by applying its questions to the real work you were given, and note what you did to answer each question and what answer came out.
 
-- Read the essentials files for their questions, and answer every question you were given.
+- Read the essentials files for their questions, and answer every question you were given, with as few uses as answer them all.
+
+    One situation can answer several questions, and each use costs whoever waits for your report its time and usage. Use the work again only where a question asks for it, such as running the same situation several times, and only on the models the work is said to run on.
 
 - Do not judge. Report what you did and what happened; never write that something is good, bad, clear or missing as a verdict.
 

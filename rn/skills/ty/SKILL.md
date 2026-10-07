@@ -14,12 +14,15 @@ without asking again. It is recorded and the session stops, so they can clear th
 ## Steps
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line does
-   not end `waiting for #{id} {sign-off name}` → say what the session is doing, and stop.
-2. Mark that task `[x]`. At the Deliverable sign-off, set `status` to `finished` and mark the pull
-   request ready with `gh pr ready`.
+   not end `waiting for #{id} {sign-off name}` → say what the session is doing, and stop. When the
+   user approves with a change, they have not seen what they would approve: make the change, give
+   the changed proposal, and stop at the same sign-off.
+2. Mark that task `[x]`. At the Deliverable sign-off, first mark the pull request ready with
+   `gh pr ready`; when that fails, say so with its error and stop, recording nothing, since the
+   record would say the work is handed on while the pull request is not.
 3. Commit and push with the decision line
    `● #{id} {sign-off name} ── approved → {the first task not [x]; planning the tasks, after the Design sign-off; finished, after the Deliverable sign-off}`, and say, in the
-   `conversation-language` of `steering.md`:
+   `conversation-language` of `steering.md`, translating the line below:
 
    ```
    {the decision line}

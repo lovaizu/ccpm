@@ -139,7 +139,7 @@ The essentials are pith's, so an improvement to them reaches writ's writing and 
 
 ## Getting started
 
-writ is a Claude Code plugin, so you need Claude Code. The checks pith runs need Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, pith stops instead of skipping its check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
+writ is a Claude Code plugin, so you need Claude Code, on Opus or Sonnet, the models it is checked on. The checks pith runs need Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, pith stops instead of skipping its check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
 
 writ is in the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install writ; pith comes with it.
 

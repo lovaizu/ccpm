@@ -1,5 +1,7 @@
 # Conduct a session
 
+Paths here are from rn's directory, the one that holds this file's `references/`.
+
 ## What the user gets
 
 The user gets the goal they really want, though they started from rough words, and spends their time
@@ -7,7 +9,7 @@ only on the three sign-offs and on what only they can decide. Everything else yo
 from the goal: each extra question, each extra line they read, each wait while an agent runs is time
 taken from them, and the more they are asked, the less they can leave the work to you. Any stop is a
 point where they may clear the conversation, and a later one knows only the session's record
-(`${CLAUDE_PLUGIN_ROOT}/references/steering.md`), so push every decision as it is made.
+(`references/steering.md`), so push every decision as it is made.
 
 Say everything to the user in the `conversation-language` of `steering.md`; write everything that
 goes into the repository, the record and commit messages included, in its `artifact-language`, but
@@ -35,7 +37,7 @@ code and the documents settle, proposing what you can infer, and asking the user
 time, only what is left:
 
 - The plan, made by you: the goal and why the user wants it, the acceptance criteria in their words,
-  facts with where each was settled, and assumptions, as `${CLAUDE_PLUGIN_ROOT}/references/steering.md`
+  facts with where each was settled, and assumptions, as `references/steering.md`
   holds them.
 - Each document, made by `writ`: its plan as `/writ:up` holds a plan, the design points it carries,
   and `steering.md`.
@@ -45,13 +47,13 @@ time, only what is left:
 - Each check, made by `pith`: the work, its receiver and purpose, the goal and criteria as the aim,
   and the viewpoint file.
 
-The viewpoint files in `${CLAUDE_PLUGIN_ROOT}/references/essentials/` are one measure for every role:
+The viewpoint files in `references/essentials/` are one measure for every role:
 the maker aims at them, the first user answers them by use, and you judge by them.
 
 You are the maker of the plan, of each question and of each proposal, so you aim at their viewpoints
-as any maker does: read `${CLAUDE_PLUGIN_ROOT}/references/essentials/plan.md` before you write the
+as any maker does: read `references/essentials/plan.md` before you write the
 plan and again before the Plan sign-off, and the Question or Proposal section of
-`${CLAUDE_PLUGIN_ROOT}/references/essentials/conductor.md` before you ask or propose, reading what you
+`references/essentials/conductor.md` before you ask or propose, reading what you
 wrote by them as the user would. No first user reads what you write to the user, since the user reads
 it themselves.
 
@@ -105,7 +107,7 @@ the verification document, whoever runs the checks again after a change.
 Then run `/writ:up` once for each document, handing it that plan's path and `steering.md`'s, never a
 summary, telling it the plan is settled, to return any question as its result, to write its result
 file to `open/` under the name you give, and to add
-`${CLAUDE_PLUGIN_ROOT}/references/essentials/design.md` to its essentials for the design document,
+`references/essentials/design.md` to its essentials for the design document,
 so whether the design achieves the goal is checked in the same use. The verification document holds, for each attractive criterion, the scenes that show
 the user getting it, each with what is put in and "Passes when", and the machine checks; fix both
 before anything is built, so they are not chosen to pass. A point writ still returns is settled and
@@ -126,13 +128,13 @@ the user said gives the purpose; what the receiver needs to act well is mostly i
 left to the generator, the result comes out right in form and thin in what the receiver acts on.
 
 For each task, call `rn:make`, handing the generator the paths of `steering.md`, that `notes` item,
-`${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md` and the task's id, and on a fix the
+`references/essentials/task-result.md` and the task's id, and on a fix the
 result file, the More, and the fix you decided. Check what it returns against the task's purpose on
 the real thing; then run `/pith:up` on it with `task-result.md` as the essentials, the goal and
 criteria as the aim, and `open/{NN}-report-task-{id}.md` as the result file.
 
 When the tasks are done, run `/pith:up` once on the deliverable with
-`${CLAUDE_PLUGIN_ROOT}/references/essentials/deliverable.md`, handing the first user each scene's input
+`references/essentials/deliverable.md`, handing the first user each scene's input
 from the verification document and never its "Passes when", and run the machine checks yourself.
 
 ## Deciding each More

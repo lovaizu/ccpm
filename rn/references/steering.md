@@ -1,5 +1,7 @@
 # The session's record
 
+Paths here are from rn's directory, the one that holds this file's `references/`.
+
 A session is its directory `.rn/{yyyymmdd}-{slug}/`, the README, design document, and verification
 document it names, and git. A fresh conversation, and every later version of `rn`, goes on from
 these alone, so the layout, field names, headings, and markers stay exactly as written here.
@@ -106,7 +108,7 @@ whole into that commit's message under its file name, each More ending with what
 
 Every commit the conductor makes has a subject line saying what it records, such as
 `rn: settle the reports on #3 move src/cart`, and ends with one line saying what was decided and what
-comes next; the first, from `/rn:on`, is `● plan ── started → working out the plan`:
+comes next, followed only by trailers such as `Co-Authored-By:`; the first, from `/rn:on`, is `● plan ── started → working out the plan`:
 
 ```
 ● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}
@@ -137,7 +139,7 @@ None → say there is no session on this branch: check out the session's branch,
 Only one whose `status` is `finished` → say it is finished. Either way, stop.
 
 A session with no `rn` field, or one whose first two numbers are lower than `version` in
-`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, was started under an earlier `rn`. `/rn:up`
+`.claude-plugin/plugin.json` in rn's directory, was started under an earlier `rn`. `/rn:up`
 brings it to the current form; any other command asks the user to run `/rn:up` first, and stops.
 
 ## Bringing an older session to the current form
