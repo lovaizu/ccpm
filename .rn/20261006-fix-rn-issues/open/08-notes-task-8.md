@@ -19,3 +19,12 @@ Then, before asking the user to merge PR #50:
 Done and checked: rules as essentials and conventions; the three plugins aligned; hooks down to rn's
 reminder after a summary (112 lines from 985); A1-A4, A6-A11 compared; descriptions start writ and pith
 from the user's own words; files no run touched found and fixed.
+
+## Results so far (2026-10-07)
+
+- writ resume: a fresh conversation went on from the plan file without asking again.
+- pith against writ 0.1.0's /writ:pith, blind: pith's preferred; 8.0 min against 4.8.
+- Prompt checks: rn on, up, dn, ty finished (results in scratchpad `prompts/rn/`); the other 19 stopped
+  at the usage limit. Rerun only those: `python3 dev/pith/trials/prompts.py <plugin> <workdir> <name>...`.
+- Seen in them: one first user ran /rn:dn 30 times over 17 situations on three models; a check that
+  heavy costs the user's wait and usage, so the prompt essentials' first user needs a bound by purpose.
