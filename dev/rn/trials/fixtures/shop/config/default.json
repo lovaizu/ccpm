@@ -1,0 +1,30 @@
+{
+  "port": 3000,
+  "currency": "USD",
+  "logLevel": "info",
+  "adminToken": "",
+  "store": {
+    "name": "Larkspur Supply",
+    "supportEmail": "support@larkspur.example",
+    "siteUrl": "https://shop.larkspur.example"
+  },
+  "shipping": {
+    "defaultFeeCents": 1200,
+    "freeOverCents": 7500,
+    "surchargePerKgCents": 150,
+    "includedWeightGrams": 2000
+  },
+  "payments": {
+    "gatewayUrl": "https://api.paygate.example/v2",
+    "apiKey": "",
+    "retries": 2,
+    "timeoutMs": 5000
+  },
+  "inventory": {
+    "lowStockThreshold": 5
+  },
+  "mail": {
+    "transport": "log",
+    "from": "Larkspur Supply <orders@larkspur.example>"
+  }
+}
