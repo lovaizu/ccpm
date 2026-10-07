@@ -36,8 +36,14 @@ effort.
 - Scenes run with `claude -p`; the whole story at a milestone runs in a real interactive session, since
   `-p` behaves otherwise (in an interactive session an agent started with the Agent tool runs in the
   background, #44), and what only shows there would be missed.
-- Whether an interactive session can be driven this way is not yet checked; a small try settles it
-  before anything rests on it.
+- Fact, tried on Claude Code 2.1.293 (worker session, script `drive.py` in its scratchpad): a Python
+  stdlib pty script drives a real interactive `claude` with `--plugin-dir`. Hooks given with
+  `--settings` append each event to a file; a turn has truly ended only when `Stop` comes with
+  `background_tasks` empty (seen: shell and subagent running, then shell, then none). `/clear` gives a
+  new session and `/rn:up` resumes; every hook input carries `transcript_path`, so the JSONL is found.
+  The child must drop every `CLAUDE_CODE_*` variable, or it keeps no JSONL; the trust and
+  skip-permissions dialogs must be answered; an AskUserQuestion dialog fires `Notification`
+  (`permission_prompt`), not `Stop`. About 3 s overhead per turn.
 
 ## How a run turns into fixes
 
