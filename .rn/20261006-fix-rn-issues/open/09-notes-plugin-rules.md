@@ -69,6 +69,22 @@ effort.
 - Size is the measure of simple, not of good: rn 0.9.0 was smaller than 0.8.0 and did harm. Whether
   the plugin achieves its purpose is the check's to show.
 
+## The plugin type
+
+A plugin that has AI make something is built from one unit and two layers on it, as a web app is
+handlers joined by a session, and a batch job steps joined by a record it restarts from. Whether a
+layer is shared code across plugins is a separate question.
+
+| Layer | What it does | Today |
+|---|---|---|
+| Return | takes what it is given and an aim, makes one thing, returns it; never talks with the user | `pith:make`, `pith:up`, `rn:make` |
+| Join by talk | agrees with the user one point at a time, calls Returns, judges what comes back, decides the next move | writ's and rn's conductors |
+| Resume from a record | keeps what was joined and decided, so a cleared conversation goes on | rn's `steering.md` and `/rn:up` |
+
+pith is Return only; writ is Return and Join; rn is all three. What a plugin writes for itself is
+each Return's domain part (its viewpoints and what its generator needs); Join and Resume take the same
+shape in every plugin, yet today each plugin writes them again.
+
 ## Open
 
-- How the way of making is chosen.
+- Each layer's shape: what it takes, what it returns, how it is checked. Return first.
