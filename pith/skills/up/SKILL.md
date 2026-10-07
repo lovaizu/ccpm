@@ -1,6 +1,6 @@
 ---
 name: up
-description: This skill should be used when the user asks to "check this prompt / code / tests / document / plugin with pith", "/pith:up", "make essentials for ...", "write the questions to check X by", or when /writ:up or another caller such as rn hands over a work to check. It has a first user who does not know the discussion use the work as its receiver would, lays what happened beside a written aim, and returns the points the caller must decide, with every Good and More kept in a result file; it also writes an essentials file from a purpose and tries it on a real work.
+description: This skill should be used when the user wants to know whether something they made does its job for whoever uses it, before they hand it on or merge it: a prompt an AI will run, a document someone will read, code or tests, or a Claude Code plugin. It applies when they ask to "check whether this prompt really catches ...", "see if this README works for a newcomer", "test whether this code does what users need", "check this with pith" or "/pith:up", when they ask to "make essentials for ..." or "write the questions to check X by", and when /writ:up or rn hands over a work to check. A first user who does not know the discussion uses the work as its receiver would, and the user learns, with the place and what happened, where the receiver falls short.
 context: fork
 background: false
 ---
