@@ -14,6 +14,8 @@ last for fixes that change nothing you do.
 - The design is worked out one point at a time, including each document's plan, before the documents are written; each is then written and checked once, with whether the design achieves the goal checked in the same use — the design stage no longer takes hours.
 - Each result is used before you see it through `pith`, installed with `rn`, which also checks what you make outside a session.
 - `/rn:on` in a fresh worktree works on that worktree's branch instead of making a second one.
+- Ways are offered only when they give everything you said you want; when none does, `rn` says what stands in the way and asks which want gives — the talk stays on what you want instead of going round the ways.
+- Each result is used once by an agent that knows nothing of how it was made; a fix is confirmed by repeating what it did, and something no viewpoint asked becomes a viewpoint of your session, proposed for `rn` at the end — checking no longer goes on bringing fresh small remarks.
 
 ### Fixed
 
