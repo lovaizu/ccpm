@@ -85,8 +85,9 @@ the highest number in `open/`, or `01` when it is empty; `{kind}` is one of
 - `report`: a result file `/pith:up` writes, in pith's form, on a task's result or the deliverable,
   or one `/writ:up` leaves on a document, one file per work, such as `04-report-task-3.md`;
 - `feedback`: the user's words from `/rn:gm`, whole, in their own language;
-- `notes`: design points agreed and waiting for `writ`, a question being put to the user, or where a
-  task stands when `/rn:dn` pauses.
+- `notes`: design points agreed and waiting for `writ`, each document's plan, what a task's receiver
+  needs, worked out before the task, a question being put to the user, or where a task stands when
+  `/rn:dn` pauses.
 
 `{about}` names what it is about, such as `plan`, `design`, `task-3`, or `deliverable`.
 

@@ -30,6 +30,24 @@ there. Never start a generator or a first user with the Agent tool yourself: Cla
 background, and you would either call the user with nothing to decide or go on before the result
 exists.
 
+What each maker needs, you fill before it makes anything, by looking up what the repository, the
+code and the documents settle, proposing what you can infer, and asking the user, one point at a
+time, only what is left:
+
+- The plan, made by you: the goal and why the user wants it, the acceptance criteria in their words,
+  facts with where each was settled, and assumptions, as `${CLAUDE_PLUGIN_ROOT}/references/steering.md`
+  holds them.
+- Each document, made by `writ`: its plan as `/writ:up` holds a plan, the design points it carries,
+  and `steering.md`.
+- Each task's result, made by the generator: `steering.md` with the task's purpose and Completion
+  criteria, the approved documents, and the task's `notes` item, what the result's receiver decides
+  or does with it and needs for that, with sources.
+- Each check, made by `pith`: the work, its receiver and purpose, the goal and criteria as the aim,
+  and the viewpoint file.
+
+The viewpoint files in `${CLAUDE_PLUGIN_ROOT}/references/essentials/` are one measure for every role:
+the maker aims at them, the first user answers them by use, and you judge by them.
+
 What you decide and how you put it to the user, you write to
 `${CLAUDE_PLUGIN_ROOT}/references/essentials/conductor.md`, reading it yourself as the user would; no
 first user reads what you write to the user, since the user reads it themselves.
@@ -98,7 +116,13 @@ Once the design is approved, plan the tasks: each with its purpose, the criteria
 Completion criteria as states checked on the real thing; first raising attractive quality, must-be
 quality last; the Deliverable sign-off after them. Carry them out without stopping.
 
-For each task, call `rn:make`, handing the generator the paths of `steering.md`,
+Before each task, work out what whoever receives its result decides or does with it, and for each,
+what they need that the generator would otherwise have to guess: look it up in the repository, the
+code and the documents, and write it to a `notes` item for the task with where each comes from. What
+the user said gives the purpose; what the receiver needs to act well is mostly in the repository, and
+left to the generator, the result comes out right in form and thin in what the receiver acts on.
+
+For each task, call `rn:make`, handing the generator the paths of `steering.md`, that `notes` item,
 `${CLAUDE_PLUGIN_ROOT}/references/essentials/task-result.md` and the task's id, and on a fix the
 result file, the More, and the fix you decided. Check what it returns against the task's purpose on
 the real thing; then run `/pith:up` on it with `task-result.md` as the essentials, the goal and

@@ -23,6 +23,9 @@ the user approved the product to be; a task that cannot be done within them is n
 ## What you are given
 
 - `steering.md`, and the documents it names.
+- The `notes` item for the task: what whoever receives the result decides or does with it, and what
+  they need for that, with sources. Make the result give them that; what is not there, do not guess,
+  and say so.
 - The task's id, and the viewpoint file your result aims at; a first user will use it by the same
   questions.
 - When a paused task is taken up, the `notes` item on where it stands; the working tree holds its

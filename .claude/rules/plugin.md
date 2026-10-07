@@ -10,8 +10,17 @@ code-modernization).
 ## 1. What every plugin achieves
 
 Every plugin that makes something for its user runs one path, and differs from the others only in
-what it makes: its own viewpoints for its kinds of work, and the items its agreement and its handoff
-hold.
+two things it decides for each kind of work it makes:
+
+- Its viewpoints: a few questions asking whether the work achieved its purpose, answered by what
+  happened when it was used. The generator aims at them, the first user answers them by using the
+  work, and the conductor judges by them, so what is made and what is checked never drift apart.
+- What its generator needs: the inputs with which the generator makes the work as agreed without
+  guessing, including what the work's receiver needs to decide and act.
+
+The hearing fills those inputs. The conductor looks up what the repository, the code and the
+documents settle, puts what it can infer as a proposal, and asks the user, one point at a time, only
+what is left; when every input is filled and the user agrees, the generator makes the work.
 
 ```mermaid
 flowchart LR
@@ -43,29 +52,33 @@ it.
 
     What the user spends is part of what they get: a plugin that brings the promised result after hours of waiting, or after a proposal too long to decide from, is one they stop using. The spending shows only across the whole path.
 
-- Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, what differed in what you got and what you spent?
+- Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, and handed the two results without being told which is which, which would you rather have, and what did each cost you?
 
-    A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part more careful can leave the user worse off than before.
+    A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part faster can leave what the user gets thinner, which shows only when the results are set side by side by someone who does not know which is new. One comparison can fall either way by chance, so a result is read with how many times it was run.
 
 - Of the times you were asked, which were for something only you could decide, and which could the plugin have settled from your request, the repository or the documentation?
 
     A user called only for their own decisions can leave the work to the plugin. A question something else already answers makes them watch over the work, and teaches them to answer without reading.
 
-- Each time you were asked, what did you need to know, or ask back, before you could answer, and how many points did the message ask you to decide?
+- Each time you were asked, what did you need to know, or ask back, before you could answer?
 
-    A question that says how the plugin understands the point, and, when it offers ways, what each gives and costs and which it recommends and why, is answered on the spot. One point per message can be talked through until both sides see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
+    A question that says how the plugin understands the point, and, when it offers ways, what each gives and costs and which it recommends and why, is answered on the spot.
 
-- Which ways were put before you before you had said what you wanted the result to do for you?
+- Which messages asked you to decide more than one point?
 
-    Ways built from what the user said give them what they want. Ways offered first are built on the plugin's guess, and a user who takes the recommended one gets what they did not ask for; the talk then goes round the ways instead of what the user wants.
+    One point per message can be talked through until both sides see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
+
+- Of the ways put before you, which did not give everything you had said you wanted?
+
+    Ways built from what the user said give them what they want. A way offered before the user has said it, or one that misses part of it, is built on the plugin's guess; the user who takes it gets what they did not ask for, and the talk goes round the ways instead of what the user wants. When no way gives all of it, saying what stands in the way and asking which want gives keeps the talk on the user's wants.
 
 - Before anything was made, what had you agreed it would be, and where did what came back differ from it?
 
     Agreed before it is made, what the user gets is what they meant, and a mismatch costs one answer. Found after it is made, it costs a round of making and checking, and the user waits for each.
 
-- Reading only what the generator was handed, what would you have had to guess to make it as agreed?
+- For each thing the receiver of the work decides or does with it, what did they need to know that the generator was not handed?
 
-    The generator knows nothing of the talk, so what it is not handed it guesses, and the work drifts from what the user agreed. Handed the agreement itself and where each fact comes from, never a summary, it makes what was agreed.
+    The generator knows nothing of the talk, so what it is not handed it guesses, and the work drifts from what was agreed; handed the agreement itself and where each fact comes from, never a summary, it makes what was agreed. What the user says gives the purpose; what the receiver needs to decide well is mostly in the repository, and the user does not think to say it. Worked out from each of the receiver's decisions and looked up with its source before making, it reaches the work; left to the generator, the work comes out clean in form and thin in what the receiver acts on.
 
 - How many times was a work used by a first user, and what did each use after the first bring?
 

@@ -39,7 +39,7 @@ A first user is started once for a work. Started again after a fix, a new one br
 
 ## Make an essentials file
 
-The caller gives the kind of work, its receiver and purpose, and where to put the file, and may hand a real work of that kind; otherwise look for the latest one in the repository. The aim is what a receiver should gain from a work checked with these essentials.
+The caller gives the kind of work, its receiver and purpose, and where to put the file, and may hand a real work of that kind; otherwise look for the latest one in the repository. These are what the generator needs; when one is missing and the repository does not settle it, return asking the caller for it. The aim is what a receiver should gain from a work checked with these essentials.
 
 1. Have the generator write it with `pith:make`, handing it the kind of work, its receiver and purpose, where to write, the language, and the locations of `${CLAUDE_PLUGIN_ROOT}/references/essentials/essentials.md` as the form to aim for and of `${CLAUDE_PLUGIN_ROOT}/references/style.md`. Questions worked back from the purpose ask whether it was met, by what happened in use; questions about means grow into a checklist that passes while no one has checked the purpose.
 

@@ -19,7 +19,7 @@ $ARGUMENTS
 
 Work out with the user, one point per message, what the document will be, and write each point to the plan as it is agreed: `.writ/open/{NN}-notes-{target}.md` at the repository root, or the plan a caller hands you. One point per message can be talked through until you both see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
 
-The plan holds what the generator needs to write the document as agreed without guessing:
+The plan is what the generator needs to write the document as agreed without guessing; the hearing exists to fill it, so ask only what it lacks after you have looked up and proposed what you can:
 
 - The reader: who they are, what they already know, the situation they read it in, and whether they read it through or pick parts.
 - What the reader decides and does once they finish: the document's purpose, by which every part is judged.

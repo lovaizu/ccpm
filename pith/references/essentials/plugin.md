@@ -2,6 +2,38 @@
 
 This file has three readers. The generator reads it as the form to aim for when it builds a Claude Code plugin. The first user installs the plugin with `claude --plugin-dir`, runs the story its README tells from the user's first words to the result with `claude -p`, playing the user from what the README and the purpose say they know and want, and reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the plugin was used as its user would, whether the user gets what the README promises for what it costs them, and which parts of the plugin are not needed. The plugin's skills and agents are prompts, so they are also checked with the questions of `prompt.md`.
 
+- Its viewpoints: a few questions asking whether the work achieved its purpose, answered by what
+  happened when it was used. The generator aims at them, the first user answers them by using the
+  work, and the conductor judges by them, so what is made and what is checked never drift apart.
+- What its generator needs: the inputs with which the generator makes the work as agreed without
+  guessing, including what the work's receiver needs to decide and act.
+
+The hearing fills those inputs. The conductor looks up what the repository, the code and the
+documents settle, puts what it can infer as a proposal, and asks the user, one point at a time, only
+what is left; when every input is filled and the user agrees, the generator makes the work.
+
+```mermaid
+flowchart LR
+  H["Hear and agree<br/>one point at a time"] --> B["Hand the generator<br/>what was agreed"]
+  B --> M["Generator makes"]
+  M --> U["A first user uses it once"]
+  U --> D["The conductor decides<br/>each More"]
+  D --> R["The user gets only<br/>what they decide"]
+```
+
+The conductor is the conversation that talks with the user; it alone judges, decides what comes next,
+and keeps the record. The generator makes or fixes as the conductor decided. The first user, pith's,
+uses the work as its receiver would, knowing nothing of how it was made, and reports what happened
+without judging. A plugin builds on pith for the first user rather than keeping a copy of its own.
+
+The questions below are essentials, in the form of `pith/references/essentials/essentials.md`. The
+maker aims at them while building. The first user answers them by installing the plugin with
+`claude --plugin-dir`, running its README's story from the user's first words to the result with
+`claude -p`, playing the user from what the README says they know and want; whoever checks lays the
+answers beside the plugin's purpose and gives each a Good or More.
+`pith/references/essentials/plugin.md` is this section, word for word, so pith checks any plugin by
+it.
+
 - Running the README's story to its end, what did you get, set beside each gain the README promises?
 
     What the user gets at the end of the whole path is why they would choose the plugin. Each part can do what it was built for while the whole still fails: a run cut into scenes passes every scene and never shows that the story does not reach its end, or reaches it with something other than what was promised.
@@ -10,29 +42,33 @@ This file has three readers. The generator reads it as the form to aim for when 
 
     What the user spends is part of what they get: a plugin that brings the promised result after hours of waiting, or after a proposal too long to decide from, is one they stop using. The spending shows only across the whole path.
 
-- Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, what differed in what you got and what you spent?
+- Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, and handed the two results without being told which is which, which would you rather have, and what did each cost you?
 
-    A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part more careful can leave the user worse off than before.
+    A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part faster can leave what the user gets thinner, which shows only when the results are set side by side by someone who does not know which is new. One comparison can fall either way by chance, so a result is read with how many times it was run.
 
 - Of the times you were asked, which were for something only you could decide, and which could the plugin have settled from your request, the repository or the documentation?
 
     A user called only for their own decisions can leave the work to the plugin. A question something else already answers makes them watch over the work, and teaches them to answer without reading.
 
-- Each time you were asked, what did you need to know, or ask back, before you could answer, and how many points did the message ask you to decide?
+- Each time you were asked, what did you need to know, or ask back, before you could answer?
 
-    A question that says how the plugin understands the point, and, when it offers ways, what each gives and costs and which it recommends and why, is answered on the spot. One point per message can be talked through until both sides see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
+    A question that says how the plugin understands the point, and, when it offers ways, what each gives and costs and which it recommends and why, is answered on the spot.
 
-- Which ways were put before you before you had said what you wanted the result to do for you?
+- Which messages asked you to decide more than one point?
 
-    Ways built from what the user said give them what they want. Ways offered first are built on the plugin's guess, and a user who takes the recommended one gets what they did not ask for; the talk then goes round the ways instead of what the user wants.
+    One point per message can be talked through until both sides see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
+
+- Of the ways put before you, which did not give everything you had said you wanted?
+
+    Ways built from what the user said give them what they want. A way offered before the user has said it, or one that misses part of it, is built on the plugin's guess; the user who takes it gets what they did not ask for, and the talk goes round the ways instead of what the user wants. When no way gives all of it, saying what stands in the way and asking which want gives keeps the talk on the user's wants.
 
 - Before anything was made, what had you agreed it would be, and where did what came back differ from it?
 
     Agreed before it is made, what the user gets is what they meant, and a mismatch costs one answer. Found after it is made, it costs a round of making and checking, and the user waits for each.
 
-- Reading only what the generator was handed, what would you have had to guess to make it as agreed?
+- For each thing the receiver of the work decides or does with it, what did they need to know that the generator was not handed?
 
-    The generator knows nothing of the talk, so what it is not handed it guesses, and the work drifts from what the user agreed. Handed the agreement itself and where each fact comes from, never a summary, it makes what was agreed.
+    The generator knows nothing of the talk, so what it is not handed it guesses, and the work drifts from what was agreed; handed the agreement itself and where each fact comes from, never a summary, it makes what was agreed. What the user says gives the purpose; what the receiver needs to decide well is mostly in the repository, and the user does not think to say it. Worked out from each of the receiver's decisions and looked up with its source before making, it reaches the work; left to the generator, the work comes out clean in form and thin in what the receiver acts on.
 
 - How many times was a work used by a first user, and what did each use after the first bring?
 

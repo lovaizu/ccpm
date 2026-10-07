@@ -12,9 +12,11 @@ what its [design document](./design.md) promises, and whether something that wor
 
 ## How a run goes
 
-`python3 dev/writ/trials/run.py play <scene> <workdir>` runs `claude -p` with `/pith:up` in the copy
-and leaves what happened in `<workdir>/<scene>/play.md`, with how long it took. The maintainer sets
-that beside the scene's "Passes when".
+`python3 dev/pith/trials/run.py play <scene> <workdir>` runs `claude -p` with `/pith:up`, and pith
+alone, in the copy, and leaves what happened in `<workdir>/<scene>/play.md`, with how long it took. The
+scenes are in `dev/pith/trials/scenes.py`; the runner and the fixture are writ's, which pith shares.
+Each scene is a whole story of the README, from the user's request to the result they act on. The
+maintainer sets what happened beside the scene's "Passes when".
 
 ## Scenes
 
@@ -39,11 +41,12 @@ that beside the scene's "Passes when".
 
 ### What a check costs
 
-- Every scene above records how long the caller waited. Set it beside the same scene run with
-  `/writ:pith` of writ 0.1.0.
+- Every scene above records how long the caller waited. Run the same scene with `/writ:pith` of writ
+  0.1.0, and hand both short results to a reader who is not told which is which:
+  `python3 dev/pith/trials/run.py versus <scene> <workdir> <0.1.0-workdir>`.
 
-    Passes when a check keeps the caller waiting no longer than 0.1.0 did, and its short result is
-    no longer than its Mores need.
+    Passes when the reader would rather act on pith's, the caller waited no longer than with 0.1.0,
+    and the short result is no longer than its Mores need.
 
 ## Machine checks
 

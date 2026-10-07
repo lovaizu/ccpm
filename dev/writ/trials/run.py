@@ -18,7 +18,21 @@ import sys
 import time
 from pathlib import Path
 
+import importlib.util
+
 from scenes import SCENES
+
+
+def _pith_scenes():
+    """pith's scenes live in dev/pith/trials/ and run here, on the fixture the two share."""
+    path = Path(__file__).resolve().parents[2] / "pith" / "trials" / "scenes.py"
+    spec = importlib.util.spec_from_file_location("pith_scenes", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.SCENES
+
+
+SCENES = {**SCENES, **_pith_scenes()}
 
 TRIALS = Path(__file__).resolve().parent
 REPO = TRIALS.parents[2]
@@ -194,14 +208,19 @@ def compare(name, scene_dir):
 
 def versus(name, scene_dir, other_dir):
     """A reader, told nothing of which is which, compares the documents two runs of a scene wrote."""
-    docs = {"this": scene_dir / "repo" / target(name, scene_dir / "repo"),
-            "other": other_dir / "repo" / target(name, other_dir / "repo")}
+    if SCENES[name]["opening"].startswith("/pith:"):
+        # A check's result is the short result the caller acts on.
+        docs = {"this": scene_dir / "report.md", "other": other_dir / "report.md"}
+    else:
+        docs = {"this": scene_dir / "repo" / target(name, scene_dir / "repo"),
+                "other": other_dir / "repo" / target(name, other_dir / "repo")}
     out = scene_dir / "versus"
     order = random.sample(["this", "other"], 2)
     out.mkdir()
     for label, which in zip("XY", order):
         shutil.copy(docs[which], out / f"{label}.md")
-    prompt = (ROLES / "compare.md").read_text().format(reader=SCENES[name]["reader"])
+    who = SCENES[name]["reader"] or "the person who asked for the check, about to fix the work from what it says"
+    prompt = (ROLES / "compare.md").read_text().format(reader=who)
     report, _ = reader(prompt.replace("two versions of the same document", "two documents written for the same request"), out)
     (scene_dir / "versus.md").write_text(
         f"# {name}: {scene_dir.parent.name} against {other_dir.parent.name}\n\nX is {order[0]}, Y is {order[1]}.\n\n{report}\n")
