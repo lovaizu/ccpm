@@ -39,6 +39,17 @@ effort.
 - Whether an interactive session can be driven this way is not yet checked; a small try settles it
   before anything rests on it.
 
+## How a run turns into fixes
+
+- The cause is found from the records, not the outcome: the JSONL of every conversation and subagent
+  the run started is traced, what each role was handed, did and returned, before a fix is chosen. In
+  the rebuild, 41 of 44 commits were made before any trial's JSONL was read.
+- A run's findings are gathered whole and grouped by cause before anything is fixed, and only the
+  cause's place is fixed; a sentence is not added per symptom. An AI's behavior varies from run to
+  run, so one sighting does not show a cause (e923168 added two sentences from one stopped run).
+- A fix holds when the scene where it tripped runs again without it; at a milestone, the plugin is
+  compared, without saying which is which, with the version in use.
+
 ## Open
 
-- How a run is judged.
+- What "simple" is, so it can be checked.
