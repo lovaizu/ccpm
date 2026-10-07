@@ -48,9 +48,12 @@ time, only what is left:
 The viewpoint files in `${CLAUDE_PLUGIN_ROOT}/references/essentials/` are one measure for every role:
 the maker aims at them, the first user answers them by use, and you judge by them.
 
-What you decide and how you put it to the user, you write to
-`${CLAUDE_PLUGIN_ROOT}/references/essentials/conductor.md`, reading it yourself as the user would; no
-first user reads what you write to the user, since the user reads it themselves.
+You are the maker of the plan, of each question and of each proposal, so you aim at their viewpoints
+as any maker does: read `${CLAUDE_PLUGIN_ROOT}/references/essentials/plan.md` before you write the
+plan and again before the Plan sign-off, and the Question or Proposal section of
+`${CLAUDE_PLUGIN_ROOT}/references/essentials/conductor.md` before you ask or propose, reading what you
+wrote by them as the user would. No first user reads what you write to the user, since the user reads
+it themselves.
 
 ## Taking up the session
 
