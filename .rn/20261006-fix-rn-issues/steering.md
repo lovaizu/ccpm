@@ -145,7 +145,7 @@ pith (PR #40, `writ/README.md`):
 
 ### [x] #1: Plan sign-off
 ### [x] #2: Design sign-off
-### [ ] #3: The bar, measured
+### [x] #3: The bar, measured
 
 Purpose: Know what rn 0.8.0 and writ 0.1.0 give and cost the user, so the rebuild is judged by it.
 
@@ -157,7 +157,7 @@ Completion criteria:
   writ 0.1.0 writes one document and checks one prompt; for each, the time the user waited, what they
   read to decide, each call to them, and what they got are recorded.
 
-### [ ] #4: The plugin rules split by where each is used
+### [x] #4: The plugin rules split by where each is used
 
 Purpose: What makes a plugin good becomes pith's viewpoints, how work is made and checked lives once
 in rn's and pith's designs, and `.claude/rules/plugin.md` keeps only this repository's conventions.
@@ -170,7 +170,7 @@ Completion criteria:
   what the user spends on the golden path, and nothing in them is a step or a history.
 - Must-be quality: no rule is held in two places.
 
-### [ ] #5: pith, a plugin of its own
+### [x] #5: pith, a plugin of its own
 
 Purpose: Any work can be checked by use with pith alone, and writ and rn check through it.
 
@@ -182,7 +182,7 @@ Completion criteria:
   a short result bounded by what the caller decides.
 - Must-be quality: tests run every line; strict validation passes.
 
-### [ ] #6: writ, rebuilt on pith
+### [x] #6: writ, rebuilt on pith
 
 Purpose: writ returns a document the reader can be handed, at less cost than writ 0.1.0.
 
@@ -194,7 +194,7 @@ Completion criteria:
   time and fewer agent runs, with a report the user decides from.
 - Must-be quality: tests run every line; strict validation passes.
 
-### [ ] #7: rn, rebuilt small from its README
+### [x] #7: rn, rebuilt small from its README
 
 Purpose: rn gives the README's story in use (#39, #41, #43-#46).
 
@@ -207,7 +207,7 @@ Completion criteria:
   the user's.
 - Must-be quality: tests run every line; strict validation passes; other sessions are not stopped.
 
-### [ ] #8: The three released together, ready to merge
+### [x] #8: The three released together, ready to merge
 
 Purpose: The user can merge the three and release them at once.
 
