@@ -185,9 +185,7 @@ by running what comes before it, and ends at the first result that shows whether
 change is checked quickly. Before a round's verdict the whole story is also run once, from the
 user's first words to the deliverable, measuring what the user spent: how long they waited, how much
 they read to decide, and each time they were called: every scene can pass while one stage takes
-hours, which only the whole story shows. The story is run on work as large and as unclear as the
-README promises to carry, since on work the model finishes well alone, `rn`'s gain cannot show. Edge cases and other flows are not
-covered in advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to
+hours, which only the whole story shows. Edge cases and other flows are not covered in advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to
 fix, while covering everything adds checks that can all pass with no one having confirmed the
 attractive quality, and spends on checking the time that would raise it. What a machine can judge is
 checked by machine every time, since it costs nothing and gives the same answer each time.
