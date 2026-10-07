@@ -20,6 +20,16 @@ effort.
   they were called. Every part can work while the whole keeps the user waiting for hours, as rn 0.9.0
   did; looking only at what was got misses it.
 
+## How the check is run
+
+- Day to day, a change is judged by scenes: each starts from the state just before the moment the user
+  gets a gain and ends at the first result that shows it, so it runs in minutes.
+- At each milestone, the README's whole story is run once, the only run that shows what the user
+  spent; rn 0.9.0, checked by scenes alone, kept the user waiting 2 h 43 min unseen.
+- The story, its starting state and the version compared against (the one in use) are fixed first
+  and not changed on the way: the rebuild's comparison never finished because its subject changed
+  four times.
+
 ## Open
 
-- How the check is run quickly and the same way each time.
+- Who plays the user, and in what kind of session.
