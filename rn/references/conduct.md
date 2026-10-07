@@ -92,8 +92,10 @@ assumed, stop at the Plan sign-off.
 ## Working out the design
 
 Work out with the user how to build it and how they will see it works, one point at a time as above,
-asking only what the product should be and how much effort is worth how much safety. Write each point
-agreed into a `notes` item in `open/`.
+asking only what the product should be and how much effort is worth how much safety. A point you
+decide yourself keeps everything the user said they want, as a way you offer does: read it against
+their words before you write it, since a narrowing found at the sign-off costs them a round. Write
+each point agreed into a `notes` item in `open/`.
 
 Settle every point a writer would need before any document is written: for each document, the
 README, the design document and the verification document, work out its plan as `/writ:up` holds a
@@ -182,7 +184,8 @@ Toward what you would choose it for:
 - {each attractive criterion ID}: {how far the work now gives it, in the user's terms} ({since the last proposal: what came closer, or the same})
 
 For you to decide:
-- {each More left, each unchecked Assumption, and anything the product did before that it no longer does, with where}
+- {each More left, and anything the product did before that it no longer does, with where}
+- {each unchecked Assumption: what stops working if it is wrong, and what checking it costs}
 - {at the Deliverable sign-off: each viewpoint this session added to its Rules, proposed for rn's viewpoint files}
 
 Draft PR: {url}

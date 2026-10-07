@@ -39,6 +39,8 @@ Japanese. You started with: /rn:on PRの事実（コミット履歴、レビュ�
   about 250 review threads), and to see whether the rules prevent mistakes in another pull request,
   pydantic/pydantic-ai #5143. The plugin goes in this repository, which holds the team's Claude Code
   plugins. About a week of work is worth it to you; more is not.
+- Asked whether to create a repository, fork, or push anywhere outside this repository: no; try it on a
+  local clone, since you do not want anything made under your account for this.
 - Asked to choose among ways, you choose by what each gives and costs, and ask back when no way gives
   what you want or the question leaves out what they cost.
 - When asked something you do not know, say you do not know.
