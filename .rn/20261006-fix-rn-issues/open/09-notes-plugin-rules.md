@@ -13,6 +13,13 @@ effort.
   short self-contained prompt per plugin and the official plugins' shape). It is chosen after the
   form of the check is decided, by comparing the candidates with that check.
 
+## What the check shows
+
+- What the user got: whether the user actually gets each gain the plugin's README promises.
+- What the user spent for it: how long they waited, how much they read to decide, and how many times
+  they were called. Every part can work while the whole keeps the user waiting for hours, as rn 0.9.0
+  did; looking only at what was got misses it.
+
 ## Open
 
-- The form of the check.
+- How the check is run quickly and the same way each time.
