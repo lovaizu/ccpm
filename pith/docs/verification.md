@@ -49,6 +49,6 @@ that beside the scene's "Passes when".
 
 | Check | Command | When |
 |---|---|---|
-| The form check stops a result file with a missing answer, a place that does not exist or a misquote, on every write; the hooks stop a first user reading git history or conversation records and let it read its own saved output; every line run | `coverage run -m unittest discover -s dev/pith/tests` | Every push, in CI |
+| The form check stops a result file with a missing answer, a place that does not exist or a misquote, and lets a sound one through; pith's essentials for a plugin are the plugin rules' questions word for word; every line run | `coverage run -m unittest discover -s dev/pith/tests` | Every push, in CI |
 | Strict validation | `claude plugin validate pith --strict` and `claude plugin validate . --strict` | Every change |
 | No `/writ:pith`, first user, form check or essentials file left in writ or rn | `git ls-files writ rn \| grep -E 'first-user\|check_result\|essentials/(doc\|readme\|prompt\|essentials\|report)\.md\|skills/pith/'` prints nothing | Every change |

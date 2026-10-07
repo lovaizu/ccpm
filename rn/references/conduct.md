@@ -58,7 +58,9 @@ answer the one they follow and the rest go by half-decided.
   one answer that gives them something different. One they settle goes into the plan as a Fact naming
   where it was settled, with no question.
 - Where the criteria allow ways that give different things, offer the ways, each with what it gives
-  and costs, and the one you recommend and why.
+  and costs, and the one you recommend and why. Offer only ways that give everything the user said
+  they want; when none does, say what stands in the way and ask which of their wants gives, since a
+  way that misses what they said sends the talk round the ways instead of what they want.
 - What they do not know but say to go on with is an `Assumption`, not their decision.
 
 Write each point into `steering.md` as it is agreed, commit and push. When nothing is silently
