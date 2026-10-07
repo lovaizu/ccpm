@@ -1,0 +1,5 @@
+[
+ {"name": "up", "path": "writ/skills/up/SKILL.md",
+  "receiver": "Claude running /writ:up, or choosing it when a document is about to be written during other work.",
+  "aim": "The user gets a document their reader understands in one reading and acts on, which they can hand on as it is: the plan is agreed one point at a time before writing, worked out from what the reader decides, the document is used once by pith's first user, only what stands in the reader's way is fixed, and the report holds only what the user decides."}
+]
