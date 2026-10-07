@@ -121,7 +121,7 @@ To check a document and fix it yourself, call `/pith:up`; to have a document wri
 
 ## Getting started
 
-pith is a Claude Code plugin, so you need Claude Code, on Opus or Sonnet, the models it is checked on. Its checks are Python scripts, so it also needs Python 3.9 or later; on a Mac, it comes in the same developer tools as git. Without it, pith stops instead of skipping the check, and tells you to install it. Node.js is not needed.
+pith is a Claude Code plugin, so you need Claude Code, on Opus or Sonnet. Its checks are Python scripts, so it also needs Python 3.9 or later; on a Mac, it comes in the same developer tools as git. Without it, pith stops instead of skipping the check, and tells you to install it. Node.js is not needed.
 
 pith is in the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install pith. If you have writ or rn, pith is already installed.
 

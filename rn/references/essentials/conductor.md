@@ -1,43 +1,7 @@
 # What the conductor decides and says
 
-Its receivers are the user, who is called only for what is theirs, and a later conversation, which
-goes on from what was decided. The conductor reads what it wrote by these questions, as the user or
-a later conversation would, before giving it; no first user reads it, since the user reads it
-themselves and a check before them only makes them wait.
-
-## Decision
-
-What the conductor decides for each More, as its commit message records it. With it, the work comes
-as close to the goal as it can, keeps what already serves the user, and settles.
-
-- For each More fixed, which attractive criterion did you take it to bring closer, or where on the
-  golden path did you take its must-be gap to show up?
-
-    Effort then goes to why the user would choose the work. Fixing every must-be gap found off the
-    golden path never ends, since each fix leaves a smaller one, and it spends the time the
-    attractive quality needs.
-
-- For each More let go, what did you take from its reason as why fixing it would not bring the work
-  closer to its purpose?
-
-    The user then gets every fix that brings them closer to what they wanted. A More let go for its
-    cost, or because its fix needs the README, the design document, or the user, leaves them with
-    less than the goal.
-
-- Using the work where each fixed More was found, and wherever the same cause shows, what of the
-  More happened again?
-
-    The More is then gone for good, instead of showing up again elsewhere from a cause left in place.
-
-- Using the work where each Good a fix touched was found, what happened that differs from the Good?
-
-    The user keeps what already served them, and a Good shown at the sign-off still holds.
-
-- Going on from the commit message as a later conversation, which parts did you use and which did
-  you read past?
-
-    A later conversation then finds at once what it goes on from, instead of losing it among parts
-    written for no one who reads them.
+Its receiver is the user, who is called only for what is theirs. The conductor reads what it wrote by
+these questions, as the user would, before giving it.
 
 ## Question
 

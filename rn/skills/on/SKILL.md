@@ -14,7 +14,7 @@ thing, however well it is carried out, and the user finds out only at the end.
 
 ## Steps
 
-1. Check that `python3` runs, since the checks `rn` makes on its record need it; when it does not,
+1. Check that `python3` runs, since `pith`'s check of each result needs it; when it does not,
    say so and how to install it, and stop. When the working tree has uncommitted changes, say so
    without touching them, and stop.
 2. Work in `.rn/{yyyymmdd}-{slug}/`, the slug naming what `$ARGUMENTS` asks for, on the branch the

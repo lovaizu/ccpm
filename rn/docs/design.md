@@ -77,8 +77,8 @@ These policies hold across the features, the first above the rest:
   step or a hook.
 
     A viewpoint asks what the work is for, so it fits situations no one foresaw. An added step is
-    followed even where it misses; `rn` 0.9.0 grew a step or a hook for each fault, and each came to
-    stand between the user and what this README promises.
+    followed even where it misses, and steps added fault by fault come to stand between the user and
+    what this README promises.
 
 - Each thing is checked once, by the one that made it, and only where use shows what its maker cannot
   see.
@@ -170,11 +170,10 @@ The design is worked out with the user the same way, with how the user will see 
 writes them, so they read as well as any `writ` writes. Points agreed wait in `open/` until `writ`
 writes them, so a pause loses none.
 
-Every point a writer would need is settled before any document is written: the conductor reads the
-agreed points against the goal as a writer would, and puts the gaps it finds to the user together,
-where they do not depend on each other's answers. A gap found by writing costs a whole round of
-writing; in `rn` 0.9.0 each one sent `writ` back again, and the design stage took hours (#39). Each
-document is then written once and checked once by `writ`, which adds `rn`'s design viewpoints to its
+Every point a writer would need is settled before any document is written: for each document, the
+conductor works out its plan as `writ` holds one, proposing what the repository settles and asking
+the user one point at a time only what is left. A gap found by writing costs a whole round of writing
+and checking. Each document is then written once and checked once by `writ`, which adds `rn`'s design viewpoints to its
 own for the design document, so whether the design achieves the goal is checked in the same use.
 
 Attractive quality is confirmed by using the product as its user would, on the golden path, and
@@ -185,8 +184,9 @@ gets what the criterion promises: it starts from the state just before, set up r
 by running what comes before it, and ends at the first result that shows whether they got it, so a
 change is checked quickly. Before a round's verdict the whole story is also run once, from the
 user's first words to the deliverable, measuring what the user spent: how long they waited, how much
-they read to decide, and each time they were called. Every scene of `rn` 0.9.0 passed while one
-design stage took hours, which only the whole story shows. Edge cases and other flows are not
+they read to decide, and each time they were called: every scene can pass while one stage takes
+hours, which only the whole story shows. The story is run on work as large and as unclear as the
+README promises to carry, since on work the model finishes well alone, `rn`'s gain cannot show. Edge cases and other flows are not
 covered in advance: a must-be gap is fixed when it shows up in use, since it is visible and quick to
 fix, while covering everything adds checks that can all pass with no one having confirmed the
 attractive quality, and spends on checking the time that would raise it. What a machine can judge is
@@ -255,8 +255,9 @@ where it was settled, with no question, so the user is not drawn into what was n
 
 A question goes straight to the user. The conductor reads it as the user would before asking, by the
 Question viewpoints; no first user takes it up first, since that only makes the user wait for a
-question that, written right, needs no check. Whenever `rn` calls the user, it comes with what it
-proposes to do next toward the goal, and why.
+question that, written right, needs no check. A call for a choice comes with what `rn` recommends and
+why; a question about what the user wants comes with none, since a way offered first is built on
+`rn`'s guess.
 
 Approving and giving feedback each stop, since that is where the user may clear the conversation;
 the user goes on by saying so, or by `/clear` and then `/rn:up`, and both lead to the same next move.
@@ -346,8 +347,8 @@ user decides on:
   did before that this work no longer does, each with where.
 
 Every Good and More stays in the record and on the pull request. A proposal that also listed every
-criterion and viewpoint grew with the work checked and reached 72 lines, which the user could not
-decide from (#46); its length now follows what the user decides.
+criterion and viewpoint would grow with the work checked until the user could not decide from it
+(#46); its length follows what the user decides.
 
 The user reads the body of the stop commit in the conversation language, so what they read and what
 a later conversation reads say the same. When the same sign-off is proposed again, each point of the

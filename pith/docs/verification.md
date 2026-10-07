@@ -34,10 +34,18 @@ maintainer sets what happened beside the scene's "Passes when".
 
 ### A kind of work no one has written questions for
 
-- `release-notes`: `/pith:up` writes essentials for the CLI's release notes.
+- `export`: `/pith:up` checks `cli/src/export.js`, the README's example, with no essentials file for
+  code.
 
-    Passes when every question is answered from what happened when the first user used a real
-    release note, and the answers decide whether to upgrade.
+    Passes when pith writes `.pith/essentials/code.md`, every question is answered from what happened
+    when the first user called the code, and a More shows a mistyped `--since` taken without a word.
+
+### writ and rn check through pith
+
+- Seen in writ's and rn's whole stories (`dev/writ/trials/run.py`, `dev/rn/trials/story.py`).
+
+    Passes when each check there starts one first user and leaves a result file that passes
+    `check_result.py`.
 
 ### What a check costs
 

@@ -15,8 +15,8 @@ without asking again. It is recorded and the session stops, so they can clear th
 
 1. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. The last decision line does
    not end `waiting for #{id} {sign-off name}` → say what the session is doing, and stop. When the
-   user approves with a change, they have not seen what they would approve: make the change, give
-   the changed proposal, and stop at the same sign-off.
+   user approves with a change, they have not seen what they would approve: make the change, commit
+   and push the changed proposal ending with the same `waiting for` line, give it, and stop.
 2. Mark that task `[x]`. At the Deliverable sign-off, first mark the pull request ready with
    `gh pr ready`; when that fails, say so with its error and stop, recording nothing, since the
    record would say the work is handed on while the pull request is not.

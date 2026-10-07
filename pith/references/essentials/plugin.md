@@ -1,38 +1,6 @@
 # Claude Code plugin
 
-This file has three readers. The generator reads it as the form to aim for when it builds a Claude Code plugin. The first user installs the plugin with `claude --plugin-dir`, runs the story its README tells from the user's first words to the result with `claude -p`, playing the user from what the README and the purpose say they know and want, and reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the plugin was used as its user would, whether the user gets what the README promises for what it costs them, and which parts of the plugin are not needed. The plugin's skills and agents are prompts, so they are also checked with the questions of `prompt.md`.
-
-- Its viewpoints: a few questions asking whether the work achieved its purpose, answered by what
-  happened when it was used. The generator aims at them, the first user answers them by using the
-  work, and the conductor judges by them, so what is made and what is checked never drift apart.
-- What its generator needs: the inputs with which the generator makes the work as agreed without
-  guessing, including what the work's receiver needs to decide and act.
-
-The hearing fills those inputs. The conductor looks up what the repository, the code and the
-documents settle, puts what it can infer as a proposal, and asks the user, one point at a time, only
-what is left; when every input is filled and the user agrees, the generator makes the work.
-
-```mermaid
-flowchart LR
-  H["Hear and agree<br/>one point at a time"] --> B["Hand the generator<br/>what was agreed"]
-  B --> M["Generator makes"]
-  M --> U["A first user uses it once"]
-  U --> D["The conductor decides<br/>each More"]
-  D --> R["The user gets only<br/>what they decide"]
-```
-
-The conductor is the conversation that talks with the user; it alone judges, decides what comes next,
-and keeps the record. The generator makes or fixes as the conductor decided. The first user, pith's,
-uses the work as its receiver would, knowing nothing of how it was made, and reports what happened
-without judging. A plugin builds on pith for the first user rather than keeping a copy of its own.
-
-The questions below are essentials, in the form of `pith/references/essentials/essentials.md`. The
-maker aims at them while building. The first user answers them by installing the plugin with
-`claude --plugin-dir`, running its README's story from the user's first words to the result with
-`claude -p`, playing the user from what the README says they know and want; whoever checks lays the
-answers beside the plugin's purpose and gives each a Good or More.
-`pith/references/essentials/plugin.md` is this section, word for word, so pith checks any plugin by
-it.
+This file has two readers. The first user installs the plugin with `claude --plugin-dir`, runs the story its README tells from the user's first words to the result with `claude -p`, playing the user from what the README says they know and want, and reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim, the plugin's README and purpose, and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the plugin was used as its user would, whether the user gets what the README promises for what it costs them, and which parts of the plugin are not needed.
 
 - Running the README's story to its end, what did you get, set beside each gain the README promises?
 
@@ -42,9 +10,9 @@ it.
 
     What the user spends is part of what they get: a plugin that brings the promised result after hours of waiting, or after a proposal too long to decide from, is one they stop using. The spending shows only across the whole path.
 
-- Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, and handed the two results without being told which is which, which would you rather have, and what did each cost you?
+- Running the same story with the version you use now, and handed the two results without being told which is which, which would you rather have, and what did each cost you?
 
-    A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part faster can leave what the user gets thinner, which shows only when the results are set side by side by someone who does not know which is new. One comparison can fall either way by chance, so a result is read with how many times it was run.
+    A new version is worth installing only for what it adds over the one the user has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part faster can leave what the user gets thinner, which shows only when the results are set side by side by someone who does not know which is new.
 
 - Of the times you were asked, which were for something only you could decide, and which could the plugin have settled from your request, the repository or the documentation?
 

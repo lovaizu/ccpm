@@ -44,7 +44,7 @@ writ checks with a Good or More for every question in the essentials it used. A 
 
 writ does not start writing until you have agreed its plan: who reads the document, what they decide and do once they have read it, and what each section tells them, in what order and how. A mismatch found there costs you one answer; found after writing, it costs a round of writing and checking. writ asks one point at a time, so each can be talked through. You answer only what your request and the repository do not tell. What writ can infer, it puts to you as a proposal, so you only say whether it is right. A document you already have is material for the plan: writ proposes which of its parts serve the reader, and writes it again from the plan rather than patching it.
 
-Before returning the document, writ has a first user use it. The first user is a separate AI that does not know the discussion so far. It reads the document as its reader and reports what it took in and what it set out to do. writ lays that report beside the aim and fixes where the document falls short before returning it. Where a reader trips cannot be seen by the one who wrote the document, however often they read it over. It shows only when someone who does not know the discussion actually uses it.
+Before returning the document, writ has a first user use it. The first user is a separate AI that does not know the discussion so far. It reads the document as its reader and reports what it took in and what it set out to do. pith lays that report beside the aim, and writ fixes what stands between the reader and their purpose before returning it. Where a reader trips cannot be seen by the one who wrote the document, however often they read it over. It shows only when someone who does not know the discussion actually uses it.
 
 ## Example: writing a TypeScript migration plan for the team
 
@@ -104,9 +104,9 @@ The report opens with writ's view of whether the document can be handed on as it
 
 To see what lies behind any question, ask about it and writ answers from the full file.
 
-The full file holds the first user's report for every question and every Good and More, each with its place and evidence. The first user's report is how it took in the document and what it set out to do. A Good says what the reader gains, and a More says what the reader struggles with. writ puts the file in `.writ/open/`, commits only that file to the current branch, and pushes if the branch has an upstream. There is one file per document, and checking again overwrites it.
+The full file holds the first user's report for every question and every Good and More, each with its place and evidence. The first user's report is how it took in the document and what it set out to do. A Good says what the reader gains, and a More says what the reader struggles with. writ puts it in `.writ/open/` beside the plan you agreed, commits the two to the current branch, and pushes if the branch has an upstream.
 
-Once you decide whether to accept the Mores that were left, the result is cleared. writ copies the full text into a commit message and deletes the file in that commit. The record stays in the git history, and in the end only the document remains. A file left in `.writ/open/` is the sign that something still waits for your decision.
+Once you decide whether to accept the Mores that were left, both are cleared. writ copies their full text into a commit message and deletes them in that commit. The record stays in the git history, and in the end only the document remains. A file left in `.writ/open/` is the sign that something still waits for your decision.
 
 To fix a document you already have, hand writ that document. Say you keep the rules for adding types to moved code in docs/typing-guide.md. writ reads it and asks only what the document does not tell.
 
@@ -122,7 +122,7 @@ When you answer with what you decided, writ writes it in, and the report comes b
 
 ## When Claude Code writes a document during other work, it may choose writ itself
 
-writ comes with a description saying it is for writing and fixing documents. When Claude Code is about to write a README or a design document during other work and judges that this description fits, it uses writ. If the conversation tells the reader and purpose, it writes at once, and asks you only when it cannot tell.
+writ comes with a description saying it is for writing and fixing documents. When Claude Code is about to write a README or a design document during other work and judges that this description fits, it uses writ. If the conversation has already agreed what the document will be, it writes at once; otherwise it agrees the plan with you first, one point at a time.
 
 Whether to choose writ is Claude Code's judgment at the moment, so it does not always choose it. If a document comes back without a report and its full file, call `/writ:up` with that document.
 
@@ -139,7 +139,7 @@ The essentials are pith's, so an improvement to them reaches writ's writing and 
 
 ## Getting started
 
-writ is a Claude Code plugin, so you need Claude Code, on Opus or Sonnet, the models it is checked on. The checks pith runs need Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, pith stops instead of skipping its check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
+writ is a Claude Code plugin, so you need Claude Code, on Opus or Sonnet. The checks pith runs need Python 3.9 or later. On a Mac, it comes in the same developer tools as git. Without it, pith stops instead of skipping its check, and tells you to install it. You can use writ without Node.js. With it, writ also checks what a machine can decide about the writing, such as sentence length, with lint tools fetched by npx (Vale and textlint).
 
 writ is in the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the marketplace, then install writ; pith comes with it.
 

@@ -26,3 +26,7 @@ Report: <the first user's report for this question; may span lines>
 ## File name
 
 `{dir}/open/{NN}-report-{target}.md`. `{NN}` is two digits, one more than the highest number already in `open/`. Checking the same target again writes the same file.
+
+## Settling and clearing
+
+The caller settles each More: a fixed one is rewritten as the Good it now is, with evidence from the work as it is now; a left one gets `Left because:`. A fix is confirmed by doing again what the first user did where the More was found and seeing that it no longer happens, not by another check: a new first user brings fresh small remarks with every run. Once every More is settled, the conductor that talks with the user copies the file whole into a commit message, ends each More there with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, and deletes the file in that commit, so `open/` holds only what still needs action and the record stays in git.

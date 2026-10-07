@@ -6,7 +6,7 @@ artifact-language: English
 conversation-language: Japanese
 readme: rn/README.md
 design: rn/docs/design.md
-verification: rn/docs/verification-next.md
+verification: rn/docs/verification.md
 ---
 
 # Goal
@@ -122,9 +122,11 @@ pith (PR #40, `writ/README.md`):
   a session, and plain Claude Code is no bar for these plugins.
 - Fact, decided by the user: the plan is made and carried out without stopping at the sign-offs in
   between; the user is told when it is done, and decides by merging.
-- Fact, decided by the user: what makes a plugin good is held as pith's viewpoints, checked by use;
-  how work is made and checked lives once, in rn's and pith's designs, which other plugins use rather
-  than copy; `.claude/rules/plugin.md` keeps only this repository's own conventions.
+- Fact, decided by the user later in the session, replacing an earlier split: `.claude/rules/plugin.md`
+  holds how every plugin achieves its user's purpose, as essentials, and the conventions; each plugin
+  is fixed to the rules and keeps only its own content, its viewpoints and what its generator needs.
+  pith's `plugin.md` holds the rules' questions word for word, held so by a test, so pith checks any
+  plugin by them.
 - Fact, official docs (plugins/dependencies) and tried on 2.1.291 in PR #40: a dependency installs
   with the plugin that declares it; a plugin's skill calls a dependency's skill with the Skill tool,
   and that skill starts its own plugin's agent and reads files under its own root; the caller cannot

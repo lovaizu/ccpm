@@ -1,7 +1,7 @@
 # Plugin rules (ccpm)
 
 How a plugin in this marketplace achieves its user's purpose, and the conventions it keeps. Part 1
-holds what every plugin must achieve, as essentials; Part 2 holds what a script can decide.
+holds what every plugin must achieve, as essentials; Part 2 holds the conventions every plugin keeps.
 
 Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces / skills / hooks /
 sub-agents at code.claude.com/docs) and the official plugins (plugin-dev, hookify, security-guidance,
@@ -41,8 +41,8 @@ maker aims at them while building. The first user answers them by installing the
 `claude --plugin-dir`, running its README's story from the user's first words to the result with
 `claude -p`, playing the user from what the README says they know and want; whoever checks lays the
 answers beside the plugin's purpose and gives each a Good or More.
-`pith/references/essentials/plugin.md` is this section, word for word, so pith checks any plugin by
-it.
+`pith/references/essentials/plugin.md` holds these questions word for word, so pith checks any plugin
+by them.
 
 - Running the README's story to its end, what did you get, set beside each gain the README promises?
 
@@ -52,9 +52,9 @@ it.
 
     What the user spends is part of what they get: a plugin that brings the promised result after hours of waiting, or after a proposal too long to decide from, is one they stop using. The spending shows only across the whole path.
 
-- Running the same story with what you would use instead, the version you have now or Claude Code without the plugin when there is none, and handed the two results without being told which is which, which would you rather have, and what did each cost you?
+- Running the same story with the version you use now, and handed the two results without being told which is which, which would you rather have, and what did each cost you?
 
-    A plugin is worth installing only for what it adds over what the user already has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part faster can leave what the user gets thinner, which shows only when the results are set side by side by someone who does not know which is new. One comparison can fall either way by chance, so a result is read with how many times it was run.
+    A new version is worth installing only for what it adds over the one the user has. A run alone shows how the plugin behaves, not whether it is better; a change that makes every part faster can leave what the user gets thinner, which shows only when the results are set side by side by someone who does not know which is new.
 
 - Of the times you were asked, which were for something only you could decide, and which could the plugin have settled from your request, the repository or the documentation?
 
@@ -120,7 +120,7 @@ it.
 
     A part no run touches is either not needed, and only adds what can break, or meant for a case the story never meets. Instructions read on every call cost the user's wait and the model's attention each time, so what is read only for some cases is kept apart and read when needed.
 
-## 2. Conventions a script decides
+## 2. Conventions
 
 ### Code
 
@@ -162,12 +162,14 @@ it.
 - **CI runs every plugin's tests on every push, counting lines, and fails when any line is not run.**
   - Rationale: tests run by hand are skipped when they matter most.
 - **Keep the code that runs a plugin as its user would in `dev/<plugin>/trials/`: the README's whole
-  story, and one scene per attractive quality from the state just before the moment the user gets it
-  to the first result that shows it. Write it as the plugin's own code, but leave it out of the line
-  count.**
+  story, on work as large and as unclear as the README promises to carry, and, where a change needs a
+  quick look, a scene from the state just before the moment the user gets a gain to the first result
+  that shows it. Write it as the plugin's own code, but leave it out of the line count.**
   - Rationale: kept in the repository, a trial runs the same way each time and is fixed with the
-    plugin; a scene checks a change quickly, the whole story judges the round. A trial starts Claude
-    Code, which CI cannot run, so the run itself is its check.
+    plugin. On work the model finishes well without the plugin, the plugin's gain cannot show, and
+    what is fixed from such a run is fixed for nothing. A scene checks a change quickly; the whole
+    story judges the round. A trial starts Claude Code, which CI cannot run, so the run itself is its
+    check.
 
 ### Results and the record
 

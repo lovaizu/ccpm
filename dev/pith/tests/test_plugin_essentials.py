@@ -9,7 +9,8 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."
 def questions(path):
     with open(os.path.join(ROOT, path), encoding="utf-8") as handle:
         text = handle.read()
-    return text[text.index("\n- ") + 1:].split("\n## ")[0].strip()
+    first = next(line for line in text.splitlines() if line.startswith("- ") and line.endswith("?"))
+    return text[text.index(first):].split("\n## ")[0].strip()
 
 
 class PluginEssentialsTest(unittest.TestCase):

@@ -88,7 +88,7 @@ pith is called by the user's conversation, by the conductor of `/writ:up`, or by
 
     In an interactive session every agent the Agent tool starts runs in the background, nested ones too (#44), and a caller that reads what pith returns as finished would read it before the result file exists. A forked skill with `background: false` makes the caller wait for its result, and so pith starts its own first user and generator through such skills too, `pith:use` and `pith:make`; tried on Claude Code 2.1.291, a skill's agent ran in the foreground and its caller waited. A prompt cannot hold this for every caller, while the skill's own setting holds however pith is called.
 
-- pith uses the essentials files named in the call. When none are named, for a document it uses `doc.md` and adds whichever of `readme.md`, `design.md` and `essentials.md` fits its kind; for a prompt, `prompt.md`; for a Claude Code plugin, `plugin.md` with `prompt.md` for its skills and agents; for any other kind, the file for that kind in `.pith/essentials/`, written first as in the next section when there is none.
+- pith uses the essentials files named in the call. When none are named, for a document it uses `doc.md` and adds whichever of `readme.md`, `design.md` and `essentials.md` fits its kind; for a prompt, `prompt.md`; for a Claude Code plugin, `plugin.md`; for any other kind, the file for that kind in `.pith/essentials/`, written first as in the next section when there is none.
 
     `plugin.md` runs the plugin's README story from end to end and asks what the user spent on it: how long they waited, how much they read to decide, what they were asked. Every scene of a plugin can pass while the whole path costs the user hours, and that shows only on the whole path.
 
@@ -116,7 +116,7 @@ pith is called by the user's conversation, by the conductor of `/writ:up`, or by
 
 - A first user is started once for a work. Whether a fix holds, the caller sees by doing again what the first user did where the More was found, and seeing that it no longer happens; pith is not run again. Every other More the caller settles in the file itself: a fixed one is rewritten as its Good, a left one gets `Left because:`.
 
-    Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting. What the first user reported is concrete, what it did and what happened, so whether that still happens can be seen by repeating it, which needs no one who does not know the discussion. When a More shows something the essentials did not ask, the caller keeps it as a viewpoint of its own for that work and proposes it for the essentials at the end, so the essentials grow from what use showed. pith used to run once more only to write the caller's settling into the file; the caller now settles it and checks its form with pith's script, so that run is gone (#37).
+    Started again after a fix, a new first user brings fresh small remarks with every run, so the checking never ends and each round keeps the user waiting. What the first user reported is concrete, what it did and what happened, so whether that still happens can be seen by repeating it, which needs no one who does not know the discussion. When a More shows something the essentials did not ask, the caller keeps it as a viewpoint of its own for that work and proposes it for the essentials at the end, so the essentials grow from what use showed.
 
 - Whoever writes a result file, pith or its caller settling it, checks its form with pith's script, `scripts/check_result.py`, found through the `pith:where` skill: that every question has an answer, that every place exists, and that each quote is really where it was quoted from, which is the work or the first user's report in the same result file.
 
@@ -201,9 +201,9 @@ The result file lets the user check what lies behind any line of the short resul
 
     It then holds only what applies to the work as it is now.
 
-The result file's form is a contract with the outside, because the file is read by the user, by writ and rn, and by later versions of pith. Its form is the one it had as `/writ:pith`'s, with one field added, `Essentials:`, and the following hold in every version. A field is added only when a reader needs something the form does not hold: the script that checks a file written by the caller must know which essentials files its questions come from, and two callers can each have a `design.md`. The marks that end each More in the commit message that clears the file, `→ fixed:`, `→ let go:` with the reason, and `→ to the user:`, belong to that commit, not to the file's form.
+The result file's form is a contract with the outside, because the file is read by the user, by writ and rn, and by later versions of pith. The following hold in every version, and a field is added only when a reader needs something the form does not hold: the script that checks a file written by the caller must know which essentials files its questions come from, and two callers can each have a `design.md`. The marks that end each More in the commit message that clears the file, `→ fixed:`, `→ let go:` with the reason, and `→ to the user:`, belong to that commit, not to the file's form.
 
-- The labels stay as written, while the text beside them is written in the user's language: `# Check: <target path>` as the first line, `Target:`, `Receiver and purpose:`, `Essentials:` with the path of each essentials file, `Aim:`, `## <essentials file name>: <question>`, `Report:`, `- Good:`, `- More:`, `Evidence (work)`, `Evidence (report)` and `Left because:`. In a place, `<line>` is one line or a range `a-b`, and paths are relative to the repository root.
+- The labels stay as written, while the text beside them is written in the user's language: `# Check: <target path>` as the first line, `Target:`, `Receiver and purpose:`, `Essentials:` with the path of each essentials file, `Aim:`, `## <essentials file name>: <question>`, `Report:`, `- Good:`, `- More:`, `Evidence (work)`, `Evidence (report)` and `Left because:`. In a place, `<line>` is one line or a range `a-b`, and paths are relative to the repository root, or absolute.
 
     The check script finds each question's section, its report, each Good and More and its evidence by these words.
 
@@ -231,14 +231,14 @@ The names the user sees are the following. The README teaches use and the essent
 
 - `/pith:up`, pith, first user
 - Good, More
-- The essentials files' names: `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`
+- The essentials files' names: `doc.md`, `readme.md`, `design.md`, `prompt.md`, `essentials.md`, `plugin.md`
 - `.pith/open/`, `.pith/essentials/`
 
 ## Check quality by using pith where its benefits can be seen (validation)
 
 Checking effort goes to the benefits first, because they are why the user chooses pith. They are checked by validation: use pith as its user would, in the README's example situations, and lay what happened beside the benefits. The situations chosen are ones where, without the benefit, the user would plainly struggle. Quality the user takes for granted is not checked up front, beyond what a script decides; it is fixed when it shows up in use. The scenes, their inputs and when each passes are in the [verification document](verification.md).
 
-Every quality is checked with a separate subagent that does not know the discussion. It runs pith in the user's place, uses what comes back, and reports what happened. Pass or fail is decided by the conductor checking pith, which lays the report beside the benefits. Each situation is run once, since running it costs time and money.
+Every quality is checked with a separate subagent that does not know the discussion. It runs pith in the user's place, uses what comes back, and reports what happened. Pass or fail is decided by the conductor checking pith, which lays the report beside the benefits. Each situation is run once with each version compared, since running it costs time and money.
 
 ### Benefits
 
@@ -252,7 +252,7 @@ Every quality is checked with a separate subagent that does not know the discuss
 
 - writ and rn check through pith.
 
-    One `/writ:up` run and one check of an rn plan each start `pith:first-user` and leave a result file that passes pith's form check.
+    In writ's and rn's whole stories, each check starts `pith:first-user` once and leaves a result file that passes pith's form check.
 
 - A check costs the caller less than `/writ:pith` did.
 

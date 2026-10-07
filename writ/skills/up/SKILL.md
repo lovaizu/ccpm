@@ -39,11 +39,11 @@ Once every point is agreed, show the user the plan as a whole, headings with wha
 
 Call `pith:make`, handing the generator the paths of the plan, of the existing document as material when there is one, of the essentials files, of pith's `style.md` and `lint/`, and the document's location and language. Hand paths, never a summary: a summary carries your reading, and the generator writes from that instead of what was agreed. Choose the essentials files from pith's: always `doc.md`, plus `readme.md`, `design.md`, `prompt.md` or `essentials.md` when the document is one, and any the caller adds.
 
-When it returns, read the document against the plan and every question yourself, and run `sh <pith>/references/lint/vale.sh <document>`, and for a Japanese document also `textlint-ja.sh`. Have what you find fixed before pith runs, so the first user meets only what use can show.
+When it returns, read the document against the plan and every question yourself, with what the generator says it could not settle, and have what you find fixed before pith runs, so the first user meets only what use can show.
 
 ## 3. Check once and decide
 
-Call `/pith:up` once, with the document's location, the reader and purpose, the essentials files, the result file's place (`.writ/open/` or the caller's), and the aim: the plan's purpose and what was agreed, in sentences, since pith compares only with what is written out. If it returns questions the aim does not cover, add to the aim and call it again.
+When the request hands you a document already checked, with its result file, that file is where the document stands: its Mores are what is left to fix and its Goods what to keep, so go on from the sort below without calling pith. Otherwise call `/pith:up` once, with the document's location, the reader and purpose, the essentials files, the result file's place (`.writ/open/` or the caller's), and the aim: the plan's purpose and what was agreed, in sentences, since pith compares only with what is written out. If it returns questions the aim does not cover, add to the aim and call it again.
 
 Check every Good and More at its place before you trust it. For each More:
 

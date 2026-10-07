@@ -54,8 +54,8 @@ You are the maker of the plan, of each question and of each proposal, so you aim
 as any maker does: read `references/essentials/plan.md` before you write the
 plan and again before the Plan sign-off, and the Question or Proposal section of
 `references/essentials/conductor.md` before you ask or propose, reading what you
-wrote by them as the user would. No first user reads what you write to the user, since the user reads
-it themselves.
+wrote by them as the user would. No first user reads it: the user reads it themselves, and a check
+before them only makes them wait.
 
 ## Taking up the session
 
@@ -134,8 +134,12 @@ the real thing; then run `/pith:up` on it with `task-result.md` as the essential
 criteria as the aim, and `open/{NN}-report-task-{id}.md` as the result file.
 
 When the tasks are done, run `/pith:up` once on the deliverable with
-`references/essentials/deliverable.md`, handing the first user each scene's input
-from the verification document and never its "Passes when", and run the machine checks yourself.
+`references/essentials/deliverable.md` and `open/{NN}-report-deliverable.md` as the result file,
+handing the first user each scene's input from the verification document and never its "Passes
+when", and run the machine checks yourself.
+
+When `/pith:up` returns questions the aim does not cover, add to the aim what the plan and the design
+settle, and call it again; ask the user only what they leave open.
 
 ## Deciding each More
 

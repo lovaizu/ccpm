@@ -35,6 +35,29 @@ class SessionStart(Session):
         # Then nothing is said
         self.assertEqual(out.strip(), "")
 
+    def test_after_compact_an_earlier_session_on_the_default_branch_is_not_taken(self):
+        # Given an earlier session, with no status, already on main, and this branch's session finished
+        sh(self.r.dir, "git", "switch", "-q", "main")
+        self.r.write(".rn/20250101-old/steering.md", "---\nrn: 0.5.0\n---\n# Goal\nold\n")
+        self.r.commit("old session")
+        sh(self.r.dir, "git", "switch", "-q", "session")
+        sh(self.r.dir, "git", "merge", "-q", "main", "-m", "merge main")
+        path = os.path.join(self.r.dir, SDIR, "steering.md")
+        self.r.write(f"{SDIR}/steering.md", open(path).read().replace("status: running", "status: finished"))
+        self.r.commit("finish")
+        # When the conversation is summarized
+        _, out = self.r.hook("sessionstart", source="compact")
+        # Then nothing is said
+        self.assertEqual(out.strip(), "")
+
+    def test_after_compact_on_the_default_branch_nothing_is_said(self):
+        # Given the conversation is on main, which no session changed
+        sh(self.r.dir, "git", "switch", "-q", "main")
+        # When it is summarized
+        _, out = self.r.hook("sessionstart", source="compact")
+        # Then nothing is said
+        self.assertEqual(out.strip(), "")
+
     def test_after_compact_outside_a_repository_nothing_is_said(self):
         # Given the conversation runs outside any git repository
         outside = tempfile.mkdtemp()

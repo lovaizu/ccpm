@@ -1,6 +1,6 @@
 # Style
 
-The reader is the producing role. When it finishes, it writes every document so the reading holds to these rules, on top of the essentials, and where a rule does not fit, it judges the rule by its why.
+The generator writes every document to these rules, on top of the essentials; where a rule does not fit, it judges the rule by its why.
 
 - Do not use bold.
 

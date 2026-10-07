@@ -114,9 +114,8 @@ comes next, followed only by trailers such as `Co-Authored-By:`; the first, from
 ● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}
 ```
 
-`●`, `──`, `→`, `waiting for`, `paused at`, `approved`, and `feedback in`, and `Good` and `More` with their criterion ID at the
-start of a line, stay as written whatever the artifact language, since the commands and checks find
-their way by them. The last decision line on the branch is where the session
+`●`, `──`, `→`, `waiting for`, `paused at`, `approved`, and `feedback in` stay as written whatever
+the artifact language, since the commands find their way by them. The last decision line on the branch is where the session
 stands. The commits where `rn` stops for the user end as follows, and leave in `open/` only what is
 listed:
 

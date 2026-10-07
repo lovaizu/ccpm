@@ -26,10 +26,6 @@ This file has three readers. The generator reads it as the form to aim for when 
 
     If nothing changed, the instruction is not needed. The AI already does it, working it out from the purpose or doing it without being told. The AI tries to keep even an unneeded instruction in every situation, so it takes effect in situations that go against the purpose and draws attention away from the other instructions. The instruction to take out is chosen from those that showed in none of the AI's actions in the situations run for the other questions.
 
-- When you gave the same situation to the AI without the prompt, or with the version in use now, what did it do differently?
+- When you gave the same situation to the version of the prompt in use now, what did it do differently?
 
-    A prompt is worth its length only for what it changes over what the AI already does. When nothing differs, the AI already knew it and the prompt only costs attention; when the old version did better, the change made it worse, which a run of the new one alone never shows.
-
-- When you ran it on each model it will be run on, where did what the AI did differ?
-
-    A prompt works through the model that reads it. What a stronger model works out from the purpose, a faster one may need said, and what a faster one needs said, a stronger one may over-follow. A difference shows where the prompt leans on one model.
+    A change is worth making only for what it changes in what the AI does. When the old version did better, the change made it worse, which a run of the new one alone never shows.

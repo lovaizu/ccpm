@@ -39,14 +39,18 @@ def mark(store, session_id):
 
 
 def session(top):
-    """The session directory on this branch whose status is not finished, or None."""
-    base = os.path.join(top, ".rn")
-    if not os.path.isdir(base):
+    """The session directory this branch changed whose status is not finished, or None: sessions
+    already on the default branch, from earlier work, are not this branch's."""
+    base = next((b for b in (git("merge-base", "HEAD", ref, cwd=top).strip()
+                             for ref in ("origin/HEAD", "origin/main", "origin/master", "main", "master"))
+                 if b), "")
+    if not base:
         return None
-    for name in sorted(os.listdir(base), reverse=True):
-        st = os.path.join(base, name, "steering.md")
+    changed = git("diff", "--name-only", base, "HEAD", "--", ".rn/*/steering.md", cwd=top).split()
+    for rel in sorted(changed, reverse=True):
+        st = os.path.join(top, rel)
         if os.path.isfile(st) and "\nstatus: finished\n" not in open(st).read():
-            return os.path.join(base, name)
+            return os.path.dirname(st)
     return None
 
 

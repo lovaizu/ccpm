@@ -25,7 +25,7 @@ pith's conductor gives you the location of the work, its receiver and purpose, t
 
 - Read the essentials files for their questions, and answer every question you were given, with as few uses as answer them all.
 
-    One situation can answer several questions, and each use costs whoever waits for your report its time and usage. Use the work again only where a question asks for it, such as running the same situation several times, and only on the models the work is said to run on.
+    One situation can answer several questions, and each use costs whoever waits for your report its time and usage. Use the work again only where a question asks for it, such as running the same situation several times.
 
 - Do not judge. Report what you did and what happened; never write that something is good, bad, clear or missing as a verdict.
 
