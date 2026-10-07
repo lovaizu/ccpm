@@ -50,6 +50,19 @@ effort.
 - A fix holds when the scene where it tripped runs again without it; at a milestone, the plugin is
   compared, without saying which is which, with the version in use.
 
+## Staying simple
+
+- A plugin starts minimal: its purpose and its domain parts. Anthropic's own guidance is the same:
+  "start by testing a minimal prompt ... then add clear instructions ... based on failure modes"
+  (Effective context engineering for AI agents), and "Write minimal instructions: Create just enough
+  content to address the gaps" (Skill authoring best practices).
+- Something is added only for a failure reproduced in a scene.
+- At each milestone report and each request to merge, each plugin's size (what a call reads, in words)
+  is shown beside the version in use, and any growth comes with the failure it prevents. No CI and no
+  budget file: the user, who merges, judges it there.
+- Size is the measure of simple, not of good: rn 0.9.0 was smaller than 0.8.0 and did harm. Whether
+  the plugin achieves its purpose is the check's to show.
+
 ## Open
 
-- What "simple" is, so it can be checked.
+- How the way of making is chosen.
