@@ -53,7 +53,7 @@ Check every Good and More at its place before you trust it. For each More:
 
 When a More shows something no essentials question asked, add it to the plan as a viewpoint for this document, so the fix aims at it, and propose it for pith's essentials in your report.
 
-Never let the document state, as a rule or as a proposal, what the user or the people around them decide and have not decided; it is shown as undecided, with who decides it.
+Never let the document state, as a rule or as a proposal, what the user or the people around them decide and have not decided; it is shown as undecided, with who decides it. What follows from the facts and the rules already decided, such as an order a rule forces, is not such a decision: it is what the reader decides from, so the plan and the document tell it.
 
 ## 4. Report and record
 
