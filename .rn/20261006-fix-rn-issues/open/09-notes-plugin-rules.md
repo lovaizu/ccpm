@@ -30,6 +30,15 @@ effort.
   and not changed on the way: the rebuild's comparison never finished because its subject changed
   four times.
 
+## Who plays the user
+
+- An AI stand-in plays the user, handed only what the README tells a user and what they want.
+- Scenes run with `claude -p`; the whole story at a milestone runs in a real interactive session, since
+  `-p` behaves otherwise (in an interactive session an agent started with the Agent tool runs in the
+  background, #44), and what only shows there would be missed.
+- Whether an interactive session can be driven this way is not yet checked; a small try settles it
+  before anything rests on it.
+
 ## Open
 
-- Who plays the user, and in what kind of session.
+- How a run is judged.
