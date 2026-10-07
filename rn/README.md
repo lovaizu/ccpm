@@ -70,7 +70,8 @@ Dotted lines are where `rn` moves on, solid lines are yours, a bold box is where
 up while talking with you one point at a time, until you both see the same thing, and the dashed box
 is where it works without you.
 
-Say your app is written in JavaScript, and you want it moved to TypeScript — work that takes days.
+Say your team keeps meeting the same mistakes in review, and you want a Claude Code plugin that turns
+what past pull requests show into checks — work that takes days.
 
 ### 1. Start — `/rn:on`
 
@@ -83,19 +84,21 @@ it looks up instead of asking you. It also asks which language to talk in and wh
 repository in, and which issues the work closes.
 
 ```console
-> /rn:on move this app to TypeScript
+> /rn:on make a plugin that draws the intent out of a pull request's commits and review comments,
+  writes it as rules, and makes code or viewpoints that check them
 
-● Here's how I understand it: three of last quarter's production bugs were a value of the wrong
-  type — undefined where a number was expected. Is catching those before they ship what you're after?
+● Here's how I understand it: a plugin that reads a merged pull request and turns what reviewers
+  asked for into rules. What do you want those rules to do for you?
 
-> yes, that's why
+> the same remarks keep coming back in review, and fix-up commits repeat the same slips. I want
+  them caught before review, by a check or by an AI review, as a self-check
 
-● Then the goal is that such a mistake fails the build. Every file ending in .ts is not enough: a
-  file moved with loose types would still let it through. Is that right?
+● Then the goal is that a mistake already pointed out once is caught before the next review. Rules
+  written down are not enough: one no one runs catches nothing. Is that right?
 ```
 
-Knowing why you want it is what shows where your first words would go wrong: every file ending in
-.ts would have let the bugs through.
+Knowing why you want it is what shows where your first words would go wrong: a plugin that only
+writes rules would have caught nothing.
 
 From your first words, `rn` keeps the plan, `steering.md`, on a draft pull request, and updates it
 as each point is agreed. The plan holds the goal, its acceptance criteria, and the tasks. The
@@ -107,19 +110,22 @@ Each has an ID, so you can follow any task or check back to the criterion it ser
 
 ## Attractive quality
 
-- A1: Code reproducing each of the three bugs fails the build
+- A1: Run on a past pull request's first commits, the checks drawn from its review catch what the
+  reviewers later pointed out
+- A2: Each rule is checked before review: by code where a machine can decide it, otherwise by a
+  viewpoint an AI review uses
 
 ## Must-be quality
 
-- M1: Every file is .ts
-- M2: The app builds and runs as before
+- M1: Each rule names the review comments or commits it came from
+- M2: A check changes nothing in the repository but its own result
 ```
 
 The tasks that build it are planned once the design is settled, so they follow what you agree to
 there; until then, the plan shows them as not yet specified.
 
 ```console
-● ── typescript: a wrong type fails the build ──
+● ── review-rules: a mistake pointed out once is caught before the next review ──
   👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
   ⬜ #2 Design sign-off
 
@@ -128,17 +134,20 @@ there; until then, the plan shows them as not yet specified.
   I propose working out the design on this plan: it says what you want, why, and how you would
   know it is achieved.
 
-  Goal: a wrong type fails the build
-  - A1: Code reproducing each of the three bugs fails the build
-  - M1: Every file is .ts
-  - M2: The app builds and runs as before
+  Goal: a mistake pointed out once is caught before the next review
+  - A1: Run on a past pull request's first commits, the checks drawn from its review catch what the
+    reviewers later pointed out
+  - A2: Each rule is checked before review: by code where a machine can decide it, otherwise by a
+    viewpoint an AI review uses
+  - M1: Each rule names the review comments or commits it came from
+  - M2: A check changes nothing in the repository but its own result
 
   Toward what you would choose it for:
-  - A1: each of the three bugs is named with how its failing build is checked; nothing is built yet
-    (first proposal)
+  - A1, A2: how each is shown on a real pull request is named; nothing is built yet (first proposal)
 
   For you to decide:
-  - Assumed, not checked: the three bugs are all in src/cart and src/checkout (steering.md:24)
+  - Assumed, not checked: review comments are reachable with `gh` for the pull requests you use
+    (steering.md:24)
 
   ● #1 Plan sign-off ── proposed: work out the design on this plan → waiting for #1 Plan sign-off
 ```
@@ -176,16 +185,16 @@ that it works. You approve the design document and a verification document toget
 is built, so what comes back at the end is what you expected. The verification document says, for
 each attractive criterion, how it will be used as you would use it and what it should do then, so
 the same check can be run again after any later change. Of
-the points that come up, how strict the type checks start is a call of effort against safety, so it
-is yours. What you settle goes into your README, design document, and verification document, which
+the points that come up, how much is left to an AI review rather than code is a call of effort
+against certainty, so it is yours. What you settle goes into your README, design document, and verification document, which
 stay with your product, so the next session, or a teammate, starts from what you settled.
 
 ```console
-● The three bugs are in src/cart and src/checkout. For the test, I propose code that reproduces
-  each of the three, passing when all three fail the build. Strict checks from the start stop all
-  three, but nothing builds until every file is typed; loose first builds sooner, but lets all
-  three through until tightened. I propose strict: stopping those three is why you are moving.
-  Which weighs more for you?
+● Of the 40 remarks in the pull request I would test on, 12 a script can decide, such as a missing
+  test for a new setting; the rest need reading, such as whether an error message says what to do.
+  Code for the 12 catches them every time but misses the rest; viewpoints for an AI review reach all
+  40 but may miss one on a given run. I propose both: code for the 12, viewpoints for the rest, so
+  nothing reviewers asked for is left unchecked. Which weighs more for you?
 ```
 
 ### 4. Build and check the deliverable
@@ -197,9 +206,9 @@ has a purpose set in the plan, and each time `rn` decides what to do next agains
 one line, so a glance tells you where it is and why:
 
 ```console
-● #3 move src/cart ── decided: purpose not fulfilled. It passes only because its types are `any`;
-  last quarter's cart bug would still ship → fix
-● #3 move src/cart ── decided: purpose fulfilled → #4
+● #3 draw rules from a pull request ── decided: purpose not fulfilled. Two rules restate the diff,
+  not what the reviewer asked for, so they would catch nothing in the next pull request → fix
+● #3 draw rules from a pull request ── decided: purpose fulfilled → #4
 ```
 
 If a decision only you can make comes up, `rn` asks you, with what it proposes and why.
@@ -214,19 +223,19 @@ yourself, then `/rn:up`. A plugin can't run `/clear`.
 ```console
 > /rn:dn
 
-● ── typescript: a wrong type fails the build ──
-  ✅ #1 Plan sign-off / #2 Design sign-off / #3 move src/cart
-  👉 #4 move src/checkout ── paused here
-  ⬜ #5 move src/account / #6 Deliverable sign-off
+● ── review-rules: a mistake pointed out once is caught before the next review ──
+  ✅ #1 Plan sign-off / #2 Design sign-off / #3 draw rules from a pull request
+  👉 #4 checks from the rules ── paused here
+  ⬜ #5 viewpoints for an AI review / #6 Deliverable sign-off
 
-  ● #4 move src/checkout ── half done: order.ts moved, payment.ts next → paused at #4 move src/checkout
+  ● #4 checks from the rules ── half done: 7 of 12 checks written → paused at #4 checks from the rules
 
   Next: /clear, then /rn:up.
 
 > /clear
 > /rn:up
 
-● Resuming typescript at #4: move src/checkout
+● Resuming review-rules at #4: checks from the rules
 ```
 
 ### 6. Finish — Deliverable sign-off

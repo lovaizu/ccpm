@@ -1,9 +1,0 @@
-{
-  "name": "postcode-lite",
-  "version": "1.4.2",
-  "description": "Tiny postal code normaliser and region lookup for US and Canada",
-  "main": "index.cjs",
-  "type": "commonjs",
-  "license": "MIT",
-  "author": "Hollis Brandt"
-}

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""The README's story end to end, at the size it promises: `/rn:on move this app to TypeScript` on the
-practice repository, whose `main` is first set to the shop app in `fixtures/shop/`, answered by a
-stand-in who clears the conversation after each approval and comes back with `/rn:up`, until the pull
-request is ready, the session is finished, or the run gives out. Records what the user spent: how long
-each turn kept them waiting, how many lines they read, and each time they were called.
+"""The README's story end to end, at the size it promises: the user asks rn for a Claude Code plugin
+that turns a pull request's commits and review comments into rules and their checks, on the practice
+repository, whose `main` is first set to `fixtures/start/`. A stand-in answers, clears the
+conversation after each approval and comes back with `/rn:up`, until the pull request is ready, the
+session is finished, or the run gives out. Records what the user spent: how long each turn kept them
+waiting, how many lines they read, and each time they were called.
 
 Run it with any rn, so a rebuilt rn is set beside the version in use (rn 0.8.0); runs share the
 practice repository, so run them one at a time.
@@ -19,21 +20,25 @@ import sys
 import time
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
-SHOP = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "shop")
+START_TREE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "start")
 REPO = "lovaizu/rn-try"
-START = "/rn:on move this app to TypeScript"
+START = ("/rn:on PRの事実（コミット履歴、レビューコメント）から意図を抜き出してルールにし、"
+         "そのルールを検査するコードか観点を作るプラグインを作りたい")
 # Installed copies would answer in place of the plugins under test.
 SETTINGS = json.dumps({"enabledPlugins": {"rn@ccpm": False, "writ@ccpm": False, "pith@ccpm": False}})
 
-PART = """You are the engineer who owns a shop backend written in JavaScript, talking with a tool called
-rn in Japanese. You started with: /rn:on move this app to TypeScript
-- Why you want this, said only when asked why: three of last quarter's production bugs were a value
-  of the wrong type (they are in docs/incidents.md); each was hotfixed where it happened, and nothing
-  stops the next one of the same kind. You want such a mistake to fail the build instead of shipping.
-- What you know, said only when asked: deploys go out weekly from main, and the work cannot freeze
-  them, so it must land in steps that each keep the app running. About a week of work is worth it to
-  you; more is not.
-- vendor/ is a library your team does not own; you do not know whether types exist for it.
+PART = """You lead a team that builds software with AI help, and you are talking with a tool called rn in
+Japanese. You started with: /rn:on PRの事実（コミット履歴、レビューコメント）から意図を抜き出してルールにし、
+そのルールを検査するコードか観点を作るプラグインを作りたい
+- Why you want this, said only when asked why: the same remarks keep coming back in review, and the
+  commit history shows the same slips fixed again and again. You want each turned into a rule, and
+  the rule checked automatically, by code, or by viewpoints an AI review uses, so the author catches
+  it in a self-check before review.
+- What you know, said only when asked: the pull requests to learn from are on GitHub; as the example
+  to build and try it on, use pydantic/pydantic-ai #3611 ("Add `tool_choice` setting", 166 commits,
+  about 250 review threads), and to see whether the rules prevent mistakes in another pull request,
+  pydantic/pydantic-ai #5143. The plugin goes in this repository, which holds the team's Claude Code
+  plugins. About a week of work is worth it to you; more is not.
 - Asked to choose among ways, you choose by what each gives and costs, and ask back when no way gives
   what you want or the question leaves out what they cost.
 - When asked something you do not know, say you do not know.
@@ -79,16 +84,16 @@ def main():
 
 
 def set_main(work):
-    """Put the shop app on the practice repository's main, as one commit on top, so every run starts
+    """Put the starting tree on the practice repository's main, as one commit on top, so every run starts
     from the same tree with no earlier session's plan or code in it."""
     for name in os.listdir(work):
         if name != ".git":
             path = os.path.join(work, name)
             shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
-    shutil.copytree(SHOP, work, dirs_exist_ok=True)
+    shutil.copytree(START_TREE, work, dirs_exist_ok=True)
     subprocess.run(["git", "add", "-A"], cwd=work, check=True)
     if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=work).returncode:
-        subprocess.run(["git", "commit", "-qm", "The shop app"], cwd=work, check=True)
+        subprocess.run(["git", "commit", "-qm", "Start: the team's plugins"], cwd=work, check=True)
         subprocess.run(["git", "push", "-q", "origin", "main"], cwd=work, check=True)
 
 
