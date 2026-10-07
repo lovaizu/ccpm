@@ -29,7 +29,7 @@ The plan is what the generator needs to write the document as agreed without gue
 - What is decided, with who decided it, and what is not, with who decides it: the reader themselves, or the user, who is then asked.
 - Where it is placed, its language, and any form the place or the user sets.
 
-Look up whatever the repository, the code and the documents can settle; never ask it and never guess it, since the reader believes what is written. Put what you can infer as a proposal with why, so the user only says whether it is right. For an existing document, read it as material: propose the plan it shows, and which of its parts serve the reader and are kept. A document fixed by patching drifts apart where the patches meet; one written again from an agreed plan reads as one.
+Look up whatever the repository, the code and the documents can settle; never ask it and never guess it, since the reader believes what is written. Put what you can infer from them as a proposal with why, so the user only says whether it is right. What only the user knows, such as whether something is decided and who decides it, ask with no proposed answer: a guess offered first is taken, and the document then states what no one decided. For an existing document, read it as material: propose the plan it shows, and which of its parts serve the reader and are kept. A document fixed by patching drifts apart where the patches meet; one written again from an agreed plan reads as one.
 
 The plan is settled only once its flow and sections are agreed: a request that names the reader and purpose still leaves what each section tells, and how, to agree. When the conversation, or a caller such as rn, has already agreed the whole plan, write it down and go on without asking: asking again stops the user's work. Otherwise ask, whatever kind of session you are in: end your turn with the question, and the answer comes as the next message. A caller that wants questions back rather than asked says so; return them as your result.
 
@@ -51,7 +51,7 @@ Check every Good and More at its place before you trust it. For each More:
 2. Otherwise, if the plan tells how to fix it without breaking a Good, have it fixed with `pith:make`, handing the same as before plus the place to fix and the Goods to keep. Then read there as the first user did, as its report says, and see that what it met no longer happens. Do not call pith again: a new first user brings fresh small remarks with every run, and the checking never ends.
 3. Otherwise the plan did not settle it: ask the user, one point at a time, write the answer to the plan, and have the document fixed from it.
 
-When a More shows something no essentials question asked, add it to the plan as a viewpoint for this document, so the fix aims at it, and propose it for pith's essentials in your report.
+When a More shows something no essentials question asked, add it to the plan as a viewpoint for this document, so the fix aims at it, and propose it in your report as a question for pith's maintainers to consider. Never change pith's or any plugin's own files: they are not the user's repository, and every user of the plugin would get the change.
 
 Never let the document state, as a rule or as a proposal, what the user or the people around them decide and have not decided; it is shown as undecided, with who decides it. What follows from the facts and the rules already decided, such as an order a rule forces, is not such a decision: it is what the reader decides from, so the plan and the document tell it.
 

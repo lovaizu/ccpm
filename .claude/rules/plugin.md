@@ -108,9 +108,9 @@ by them.
 
     A hook runs every time at a fixed moment and sees no more than the condition it was given. It earns its place where the model cannot act itself, such as reading the record again after the conversation is summarized, which the model does not notice. Where the model would have acted rightly without it, a hook adds nothing; where it judges what it cannot see, it stops right moves, such as an agent reading its own output or another session in the same repository.
 
-- While the plugin ran, what did it do to another conversation in the same repository, or to agents it did not start?
+- While the plugin ran, what did it do to another conversation in the same repository, to agents it did not start, or to files outside the repository it was asked to work in?
 
-    A user works with several sessions side by side. A plugin that takes another session for its own, stops its tools or sends it on with the plugin's work breaks work the user never gave it.
+    A user works with several sessions side by side, and installs plugins they did not write. A plugin that takes another session for its own, stops its tools, sends it on with the plugin's work, or rewrites files outside the user's repository, such as another plugin's own files, breaks work the user never gave it.
 
 - When you asked for the plugin's job in your own words, without naming its command, what started?
 
@@ -161,6 +161,13 @@ by them.
   - Rationale: a line no test runs is either not needed, or needed and left unguarded.
 - **CI runs every plugin's tests on every push, counting lines, and fails when any line is not run.**
   - Rationale: tests run by hand are skipped when they matter most.
+- **Judge a trial from its records, never from its outcome alone: read the JSONL of every
+  conversation the run started, its subagents' too (`~/.claude/projects/<the run's directory>/`),
+  and trace what each role was handed, did, wrote and returned, before deciding what to fix.**
+  - Rationale: an outcome, or a reader's preference between two results, shows that something went
+    wrong, not where. A fix guessed from it lands where the fault is not, and rounds pass without
+    the plugin getting better. The records show each handoff as it happened, such as a planned point
+    the generator never wrote, or a role writing outside the user's repository.
 - **Keep the code that runs a plugin as its user would in `dev/<plugin>/trials/`: the README's whole
   story, on work as large and as unclear as the README promises to carry, and, where a change needs a
   quick look, a scene from the state just before the moment the user gets a gain to the first result

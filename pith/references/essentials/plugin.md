@@ -66,9 +66,9 @@ This file has two readers. The first user installs the plugin with `claude --plu
 
     A hook runs every time at a fixed moment and sees no more than the condition it was given. It earns its place where the model cannot act itself, such as reading the record again after the conversation is summarized, which the model does not notice. Where the model would have acted rightly without it, a hook adds nothing; where it judges what it cannot see, it stops right moves, such as an agent reading its own output or another session in the same repository.
 
-- While the plugin ran, what did it do to another conversation in the same repository, or to agents it did not start?
+- While the plugin ran, what did it do to another conversation in the same repository, to agents it did not start, or to files outside the repository it was asked to work in?
 
-    A user works with several sessions side by side. A plugin that takes another session for its own, stops its tools or sends it on with the plugin's work breaks work the user never gave it.
+    A user works with several sessions side by side, and installs plugins they did not write. A plugin that takes another session for its own, stops its tools, sends it on with the plugin's work, or rewrites files outside the user's repository, such as another plugin's own files, breaks work the user never gave it.
 
 - When you asked for the plugin's job in your own words, without naming its command, what started?
 
