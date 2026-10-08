@@ -85,6 +85,50 @@ pith is Return only; writ is Return and Join; rn is all three. What a plugin wri
 each Return's domain part (its viewpoints and what its generator needs); Join and Resume take the same
 shape in every plugin, yet today each plugin writes them again.
 
+## The state the layers carry: CCS
+
+The layers carry their state as a CCS (Compressed Cognitive State), not reinvented: the nine-field
+YAML of Bousetouane, "AI Agents Need Memory Control Over More Context" (arXiv 2601.11653), with the
+type vocabulary and operating rules aiya worked out (`worktree-aiya`, `aiya/agents/turn-brief.md`).
+
+- Read in the paper: each turn the agent acts on the last committed CCS and the current input only,
+  never the transcript; after the turn a separate compressor writes the next CCS from the finished
+  turn, the previous CCS and the artifacts it let through, and it replaces the previous one; artifacts
+  are referred to, never pasted. The one who acts does not write the state.
+- What a receiver needs fits the existing fields as types, with no new field: the receiver in
+  `focal_entities`, what they decide in `goal_orientation`, what is undecided in `uncertainty_signal`,
+  sources in `retrieved_artifacts`.
+- Not yet shown: the paper's results are qualitative only; aiya's try kept a CCS at 807-953 characters
+  over five steps, but under a script, not under prompts alone.
+
+## How rework is cut
+
+The rework seen was a generator writing a whole document, then returning what was undecided, and
+writing it again (8 rounds, 45 min). With a CCS:
+
+- A Return checks before making whether it can make without guessing; what is missing goes back
+  unmade, into `uncertainty_signal`, and Join resolves it (asks the user, or settles it from the
+  record) before calling the Return again.
+- What is decided stays in `constraints` and `goal_orientation`, so every later Return gets it and
+  nothing is asked twice or contradicted between documents.
+- A redo is handed only the gap found, with the attempt count, not the whole work again.
+- Gaps that show only by making remain; the aim is fewer rounds, not none.
+
+## Each Return has an IN and an OUT
+
+| | What holds | Checked |
+|---|---|---|
+| IN | the latest CCS has the Return's required fields and types, and no open gap that bears on it | by a hook, just before the Return is called |
+| OUT | what it made is where it was asked; its report says what it did, tried and left unsure; what it could not make is written as a gap | by a hook, just after it returns |
+| Next CCS | the compressor writes it from the previous CCS and the OUT, in the CCS form | by a hook, just after it is written |
+
+- A plugin writes, for each of its Returns, only the IN's required fields and what the OUT makes;
+  the form and its checks are shared.
+- A hook checks that a field is there, not that it is right; whether the work serves its purpose is
+  the check by use's.
+- Each hook acts only on its own plugin's CCS files and Return calls, since rn 0.9.0's hooks stopped
+  other sessions and right moves (#43, #44).
+
 ## Open
 
-- Each layer's shape: what it takes, what it returns, how it is checked. Return first.
+- The Join layer: who compresses, how the user's answers enter the CCS, who judges.
