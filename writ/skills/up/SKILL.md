@@ -15,9 +15,8 @@ $ARGUMENTS
 
 1. Check that `python3` 3.9 or later runs; the hooks need it. If not, say the user must install it,
    and stop. Call the `pith:where` skill for pith's directory.
-2. Agree the plan with the user, one point per message, writing each point to
-   `.writ/open/{NN}-notes-{target}.md` as it is agreed, `{target}` being the document's file name
-   without extension. The plan holds:
+2. Write the plan at `.writ/open/{NN}-notes-{target}.md`, `{target}` being the document's file name
+   without extension. It holds:
    - the reader: who they are, what they know, and how they read it;
    - the pass condition: what the reader decides and does once they finish;
    - for each of those decisions, what the reader needs to know, with where it comes from in the
@@ -26,10 +25,11 @@ $ARGUMENTS
    - what is decided, and what is not, with who decides it;
    - the place and the language.
 
-   Look up what the repository settles, and never ask it. Propose what you can infer, with why. Ask
-   what only the user knows, such as whether something is decided, with no proposal: a proposal is
-   taken, and the document then states what no one decided. For an existing document, propose the
-   plan it shows. When every point is agreed, show the plan whole and go on once the user agrees.
+   First fill all of it from the request, the repository and its documents, each point with its
+   source, and drop nothing the request says. What others or no one decides, write as undecided,
+   with who decides it, without asking. Then ask the user only what is left, one point per message,
+   with no proposal when it is what they want. For an existing document, fill the plan from what it
+   shows. Last, show the plan whole and go on once the user approves it.
 3. Write the generator's CCS at `.writ/{target}-make.yaml`, each value a quoted string:
 
     ```yaml
