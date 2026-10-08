@@ -182,6 +182,14 @@ As a test does: the gap between what was expected and what happened, then the ne
   costs, and the one recommended, with why.
 - The user is never called to wait: a turn ends only when nothing runs in the background.
 
+## What is agreed with the user lives above the Returns
+
+- A Return is a leaf: its IN cannot say what the user must agree. The user agrees at the level above:
+  what they want, why, what passes (the acceptance criteria) and what must hold (constraints).
+- Agreement flows down and gaps flow up: a gap in a Return's IN that the agreement above settles is
+  filled by the conductor, with where it came from; one that nothing above settles shows the
+  agreement above was short, and is taken back up to be agreed with the user.
+
 ## Open
 
-- The Resume layer.
+- What the level above (steering) is made of.
