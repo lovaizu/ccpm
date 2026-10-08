@@ -232,6 +232,16 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
 - Cost noted by the same article: multi-agent systems use about 15 times the tokens of a chat, so
   agents are added only where needed.
 
+## Resume
+
+- A fresh conversation reads from the top down: steering (the goal, what was agreed, the tasks and
+  which are done, so which task is current), then that task's latest CCS (how far it came, what waits),
+  then only what the CCS points to (approved documents, commits). Read from the leaf up, it could go on
+  in a way the agreement above no longer holds.
+- A CCS is kept per task, in the repository, committed and pushed as decided, so the next day or
+  another machine starts from the same place. The JSONL stays on the machine and is not used to
+  resume.
+
 ## Open
 
 - rn writes the README, design and verification documents before building, so the details of a
@@ -240,4 +250,3 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   present rn's trial (the conductor ran the product under construction, `claude -p
   /pr-rules:learn`, longer than a foreground command can wait); Agent-tool starts, the other cause
   seen, no longer happen since Returns are skills that wait.
-- Resume.
