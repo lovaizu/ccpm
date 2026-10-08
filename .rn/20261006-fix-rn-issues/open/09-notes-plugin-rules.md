@@ -262,15 +262,15 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   conversation judges, an IN hook (PreToolUse on Skill, verified to block a call with missing fields)
   and a facts hook (SubagentStop). Words read per call: conductor 2213 -> 1637, first user 1532 ->
   about 1256. Scene pr-review-hole ran in 4 min; the fixture's hole did not reproduce (caught 3/3).
-- Design gaps it showed, grouped by cause, to settle with the user one at a time:
-  1. The IN treats maker and user-tester alike: it requires the pass condition, but the user-tester
-     must not know the aim. Proposed (waiting for the user): the pass condition goes to the maker
-     and the judge only; each Return kind has its own required fields.
-  2. A plugin without Join has no record place: pith's CCS was left in the user's repository,
-     against its README (only the result file stays).
-  3. Start-minimal contradicts listing three hooks as the base: the worker built only the IN check
-     and the facts hook, the two that answer failures met.
-  4. The JSONL shows less than assumed: the first user read everything with `cat`, never the Read
-     tool, and a write outside the repository by a command shows in neither the JSONL nor git.
-  Also: where the common parts live is still open (they sit in pith for now); who writes the
-  judgment part of the CCS after a check was not said.
+- The four gaps pith's rebuild showed were settled from each role's purpose and written into the
+  design: required IN fields follow each role's purpose (the pass condition goes to the maker and the
+  judge, never the user-tester); a Return-only plugin keeps its CCS where the caller says, or outside
+  the repository and removes it, since the CCS exists to resume; the base starts with two hooks (IN
+  check, facts), others only once a failure reproduces; facts claim only what the records hold (reads
+  by command and writes outside the repository by command are not seen). The judgment part of a
+  Return-only plugin's CCS is written by the calling conversation, which judges.
+- Next: the worker brings pith in line with these (the user-tester's IN, where its CCS goes), then
+  writ.
+- Where the common parts live is still open (they sit in pith for now).
+- Settle what follows from the agreed purpose without asking; ask the user only about purpose or
+  intent that is not yet settled.
