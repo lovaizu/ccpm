@@ -2,8 +2,9 @@
 """SubagentStop: when pith's first user stops, write the facts of what it did, read from its own
 JSONL, into the CCS it was handed: the text of each command it ran with its exit status, the files
 it read with the Read tool, and the files it wrote with a writing tool. What a command read or wrote
-shows only in its text, so it is not claimed as a file read or written. The first user's own account
-is not a source of these facts."""
+shows only in its text, so it is not claimed as a file read or written. A command is cut short, and
+the JSONL's path is written beside it for the full text. The first user's own account is not a
+source of these facts."""
 import json
 import os
 import re
@@ -71,7 +72,8 @@ def main():
     state = ccs.load(path)
     trace, read = facts(tool_calls, root)
     state["episodic_trace"] = trace
-    state["retrieved_artifacts"] = [e for e in state["retrieved_artifacts"] if e[0] != "read"] + read
+    kept = [e for e in state["retrieved_artifacts"] if e[0] not in ("read", "transcript")]
+    state["retrieved_artifacts"] = kept + read + [("transcript", hook["agent_transcript_path"])]
     ccs.dump(state, path)
 
 

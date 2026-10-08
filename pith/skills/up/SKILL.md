@@ -23,10 +23,9 @@ $ARGUMENTS
    if there is none, say so and stop. Read every question; any whose Good the aim does not tell,
    name and ask the user to add to the aim, before anything is used.
 4. Write the first user's CCS as `<target>.yaml`, `<target>` being the work's file name without
-   extension, in the place the request names; otherwise in a new directory made with `mktemp -d`,
-   outside the repository, which keeps only the result file. Write it as below, each value a quoted
-   string. Never put the aim, your view or the discussion in it: knowing the aim, the first user would
-   look for it and fill the gaps in its head.
+   extension, in the place the request names, or else in `.pith/`. Write it as below, each value a
+   quoted string. Never put the aim, your view or the discussion in it: knowing the aim, the first
+   user would look for it and fill the gaps in its head.
 
     ```yaml
     semantic_gist:
@@ -44,15 +43,15 @@ $ARGUMENTS
 
 5. Call the `pith:use` skill with the CCS path as its only argument. It returns when the use is done,
    with the first user's report; the CCS then also holds the commands it ran and the files it read
-   or wrote with its tools.
+   or wrote with its tools, and the path of its JSONL for the full text.
 6. Lay the report beside the aim and give each question at least one Good or More, each with its place
    as `path:line` and the words quoted from the work or the report. A Good is what the receiver gains,
    which a fix must not take away; a More is what the receiver struggles with, never how to fix it.
    Check each Good at its place as strictly as each More. Where the report and the CCS's
    `episodic_trace` differ, such as a use reported that never ran, go by the CCS.
 7. Write the result file in the form of `${CLAUDE_PLUGIN_ROOT}/references/result-form.md`, at the place
-   the request names, or else `.pith/open/{NN}-report-{target}.md`. Do not commit it. If you made
-   the CCS directory, delete it by its exact path.
+   the request names, or else `.pith/open/{NN}-report-{target}.md`. Do not commit it. If the CCS is
+   in `.pith/`, delete it by its exact path: only the result file stays.
 8. Answer the user with your view of how close the work comes to the aim, each More in full (the
    question, what happened, what the receiver struggles with, the place), and the result file's path.
    The Goods stay in the file, so the answer grows with what the user decides, not with the work.

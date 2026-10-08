@@ -43,12 +43,11 @@ class Repo(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
         self.root = os.path.realpath(self.dir.name)
-        self.outside = tempfile.TemporaryDirectory()
-        self.ccs = os.path.join(os.path.realpath(self.outside.name), "pr-review.yaml")
+        os.makedirs(os.path.join(self.root, ".pith"))
+        self.ccs = os.path.join(self.root, ".pith", "pr-review.yaml")
 
     def tearDown(self):
         self.dir.cleanup()
-        self.outside.cleanup()
 
     def write_ccs(self, text):
         with open(self.ccs, "w") as f:
@@ -177,6 +176,7 @@ class Facts(Repo):
         self.assertEqual(state["retrieved_artifacts"], [
             ("essentials", "/plugin/references/essentials/prompt.md"),
             ("read", ".github/prompts/pr-review.md"),
+            ("transcript", transcript),
         ])
         self.assertEqual(state["focal_entities"][0], ("work", ".github/prompts/pr-review.md"))
         self.assertEqual(state["relational_map"], [])
