@@ -274,3 +274,12 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
 - Where the common parts live is still open (they sit in pith for now).
 - Settle what follows from the agreed purpose without asking; ask the user only about purpose or
   intent that is not yet settled.
+- writ rebuilt to its first gain (up to 5aa1241). migration-plan, same fixture: in use 9.9 min / 6
+  user turns; rebuilt 7.4 min / 4 turns, none of them answered by the request or the repository.
+  Words per call: conductor 3,381 -> 1,841, generator 2,118 -> 1,422. Design fixes it brought: CCS and
+  plan place without Resume, the conductor clears a settled gap, fix/keep, shared parts as identical
+  copies tested once, fill from the request and repo before asking, how to tell a point that is not
+  the user's. Two questions still went to the user against that last rule in one run; left until it
+  shows again.
+- Next: rn's first gain on the design. Then the remaining README gains of pith, writ and rn (writ's
+  commit and lint, pith writing an essentials file), each built only as its README story needs.
