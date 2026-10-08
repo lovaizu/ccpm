@@ -236,6 +236,8 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
 
 - rn writes the README, design and verification documents before building, so the details of a
   product that does not exist yet are invented in prose; how rn's stages are laid out.
-- Ending a turn while work runs in the background (seen in the trial): the Stop hook's
-  `background_tasks` can show it; whether to make it a check.
+- Ending a turn while work runs in the background: left until it is reproduced. Seen once in the
+  present rn's trial (the conductor ran the product under construction, `claude -p
+  /pr-rules:learn`, longer than a foreground command can wait); Agent-tool starts, the other cause
+  seen, no longer happen since Returns are skills that wait.
 - Resume.
