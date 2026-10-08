@@ -15,4 +15,4 @@ The user cleared the conversation and comes back without explaining anything aga
 3. Say, in the `conversation-language`: `● resuming {slug} at #{id} {task name}`.
 4. Go on from the CCS's `next` as `${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md` says from step 5: put
    its `question` again, or, when it is `waiting for #1 Plan sign-off`, give that proposal again and
-   stop.
+   stop. Any other move, such as working out the design, this rn cannot make yet: say so, and stop.

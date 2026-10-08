@@ -62,7 +62,7 @@ def main():
     ap.add_argument("--max-calls", type=int, default=60)
     ap.add_argument("--max-hours", type=float, default=10)
     ap.add_argument("--scene", choices=["plan"],
-                    help="plan: stop at the first sign-off, after one fresh conversation resumes there")
+                    help="plan: stop once a fresh conversation resumes after the first approval")
     a = ap.parse_args()
     out = os.path.abspath(a.out)
     work = os.path.join(out, "work")
@@ -135,10 +135,8 @@ class Story:
             if self.finished():
                 self.log("trial", "Finished: the pull request is ready or the session is finished.")
                 break
-            if scene == "plan" and self.calls[-1]["sign_off"]:
-                self.log("user", "/clear")
-                self.turn("/rn:up", None)
-                self.log("trial", "Scene plan: stopped at the first sign-off, after resuming there.")
+            if scene == "plan" and self.calls[-1]["said_by_user"] == "/rn:up":
+                self.log("trial", "Scene plan: stopped once a fresh conversation resumed after the first approval.")
                 break
             said, sid = self.reply(said, sid)
         else:
