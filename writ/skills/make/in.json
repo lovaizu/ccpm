@@ -1,0 +1,7 @@
+[
+  {"component": "focal_entities", "type": "work", "from": "the plan: where the document goes"},
+  {"component": "retrieved_artifacts", "type": "plan", "from": "the plan the user agreed, with its pass condition"},
+  {"component": "retrieved_artifacts", "type": "essentials", "from": "pith's references/essentials/"},
+  {"component": "retrieved_artifacts", "type": "style", "from": "pith's references/style.md"},
+  {"component": "constraints", "type": "language", "from": "the plan"}
+]

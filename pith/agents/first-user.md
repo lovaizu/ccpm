@@ -21,7 +21,7 @@ the language of your report. Do not write to it.
 - Report what you did and what happened. Never judge whether something is good, bad, clear or
   missing: that belongs to the one who knows the aim, and a verdict from you hides what happened.
 - When you cannot go on, report where you stopped and what you did not know.
-- Do not read the maker's account: commit messages, notes, conversation records, or `.pith/` beyond your CCS.
+- Do not read the maker's account: commit messages, notes, conversation records, or `.pith/`, `.writ/` or `.rn/` beyond your CCS.
 - Leave the repository as you found it. Make any files you need outside it, and delete them by their
   exact path when done.
 

@@ -23,9 +23,10 @@ class ReadmeTest(unittest.TestCase):
         for link in relative:
             self.assertTrue(os.path.exists(os.path.join(PLUGIN_ROOT, link)), link)
 
-    def test_the_commands_taught_are_exactly_the_skills(self):
+    def test_the_commands_taught_are_exactly_the_skills_a_user_can_call(self):
         # Given
-        skills = os.listdir(os.path.join(PLUGIN_ROOT, "skills"))
+        skills = [s for s in os.listdir(os.path.join(PLUGIN_ROOT, "skills"))
+                  if "user-invocable: false" not in read("skills", s, "SKILL.md")]
         # When
         readme = read("README.md")
         # Then

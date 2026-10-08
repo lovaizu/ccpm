@@ -1,5 +1,5 @@
-"""Tests for pith's hooks, fed the input Claude Code hands them: the CCS check before the first user
-starts, and the facts written from the first user's JSONL when it stops."""
+"""Tests for writ's hooks, fed the input Claude Code hands them: the CCS check before the generator
+starts, and the facts written from the generator's JSONL when it stops."""
 
 import io
 import json
@@ -11,24 +11,21 @@ import unittest
 from contextlib import redirect_stderr
 from unittest import mock
 
-SCRIPTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "pith", "scripts")
+SCRIPTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ", "scripts")
 sys.path.insert(0, SCRIPTS)
 
 import ccs  # noqa: E402
 import check_in  # noqa: E402
 import facts  # noqa: E402
 
-READY = """semantic_gist:
-  - investigate: "use the work as its receiver would"
-focal_entities:
-  - work: ".github/prompts/pr-review.md"
-  - receiver: "Claude in CI"
-goal_orientation:
-  - use: "write a comment on each pull request"
+READY = """focal_entities:
+  - work: "docs/migration-plan.md"
 constraints:
-  - language: "Japanese"
+  - language: "English"
 retrieved_artifacts:
-  - essentials: "/plugin/references/essentials/prompt.md"
+  - plan: ".writ/open/01-notes-migration-plan.md"
+  - essentials: "/pith/references/essentials/doc.md"
+  - style: "/pith/references/style.md"
   - read: "old.md"
 """
 
@@ -43,8 +40,8 @@ class Repo(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
         self.root = os.path.realpath(self.dir.name)
-        os.makedirs(os.path.join(self.root, ".pith"))
-        self.ccs = os.path.join(self.root, ".pith", "pr-review.yaml")
+        os.makedirs(os.path.join(self.root, ".writ"))
+        self.ccs = os.path.join(self.root, ".writ", "migration-plan-make.yaml")
 
     def tearDown(self):
         self.dir.cleanup()
@@ -53,7 +50,7 @@ class Repo(unittest.TestCase):
         with open(self.ccs, "w") as f:
             f.write(text)
 
-    def check(self, args, skill="pith:use"):
+    def check(self, args, skill="writ:make"):
         """The check's exit status and what it said."""
         err = io.StringIO()
         with redirect_stderr(err):
@@ -73,47 +70,45 @@ class CheckIn(Repo):
         # Then
         self.assertEqual((code, said), (0, ""))
 
-    def test_a_missing_receiver_stops_the_call_and_says_where_it_comes_from(self):
+    def test_a_missing_plan_stops_the_call_and_says_where_it_comes_from(self):
         # Given
-        self.write_ccs(READY.replace('  - receiver: "Claude in CI"\n', ""))
+        self.write_ccs(READY.replace('  - plan: ".writ/open/01-notes-migration-plan.md"\n', ""))
         # When
         code, said = self.check(self.ccs)
         # Then
         self.assertEqual(code, 2)
-        self.assertIn("focal_entities: receiver (from the caller: who uses the work)", said)
+        self.assertIn("retrieved_artifacts: plan (from the plan the user agreed, with its pass condition)", said)
 
     def test_an_open_gap_stops_the_call(self):
         # Given
-        self.write_ccs(READY + 'uncertainty_signal:\n  - gap: "which prompt runs in CI"\n')
+        self.write_ccs(READY + 'uncertainty_signal:\n  - gap: "whether cli/ is included"\n')
         # When
         code, said = self.check(self.ccs)
         # Then
         self.assertEqual(code, 2)
-        self.assertIn("Open gaps: which prompt runs in CI", said)
+        self.assertIn("Open gaps: whether cli/ is included", said)
 
     def test_a_call_without_a_ccs_path_is_stopped(self):
         # Given
         self.write_ccs(READY)
         # When
-        code, said = self.check("check the prompt in .github/prompts/pr-review.md")
+        code, said = self.check("write docs/migration-plan.md")
         # Then
         self.assertEqual(code, 2)
         self.assertIn("Hand the path of its CCS", said)
 
-    def test_a_ccs_the_caller_keeps_in_the_repository_is_found_from_its_relative_path(self):
+    def test_a_ccs_is_found_from_its_path_relative_to_the_repository(self):
         # Given
-        os.makedirs(os.path.join(self.root, ".rn"))
-        with open(os.path.join(self.root, ".rn", "use.yaml"), "w") as f:
-            f.write(READY)
+        self.write_ccs(READY)
         # When
-        code, said = self.check(".rn/use.yaml")
+        code, said = self.check(".writ/migration-plan-make.yaml")
         # Then
         self.assertEqual((code, said), (0, ""))
 
     def test_another_skill_is_never_stopped(self):
         # Given no CCS at all
         # When
-        code, said = self.check("anything", skill="writ:up")
+        code, said = self.check("anything", skill="pith:use")
         # Then
         self.assertEqual((code, said), (0, ""))
 
@@ -136,14 +131,14 @@ class Facts(Repo):
     def first_user_run(self):
         return self.transcript([
             {"type": "user", "message": {"content": self.ccs}},
-            self.use("a", "Read", {"file_path": os.path.join(self.root, ".github/prompts/pr-review.md")}),
-            self.result("a", "the prompt"),
-            self.use("a2", "Read", {"file_path": os.path.join(self.root, ".github/prompts/pr-review.md")}),
-            self.result("a2", "the prompt"),
+            self.use("a", "Read", {"file_path": os.path.join(self.root, "docs/architecture.md")}),
+            self.result("a", "the architecture"),
+            self.use("a2", "Read", {"file_path": os.path.join(self.root, "docs/architecture.md")}),
+            self.result("a2", "the architecture"),
             self.use("b", "Bash", {"command": "claude -p " + "x" * 200}),
             self.result("b", "NO_COMMENT"),
-            self.use("b2", "Bash", {"command": "cat .github/prompts/pr-review.good.md"}),
-            self.result("b2", "the old prompt"),
+            self.use("b2", "Bash", {"command": "cat docs/typing-guide.md"}),
+            self.result("b2", "the guide"),
             self.use("c", "Bash", {"command": "ls /nonexistent"}),
             self.result("c", "Exit code 1\nls: /nonexistent: No such file", error=True),
             self.use("d", "Bash", {"command": "false"}),
@@ -156,17 +151,17 @@ class Facts(Repo):
             {"type": "attachment"},
         ])
 
-    def test_what_the_first_user_did_is_written_from_its_jsonl(self):
+    def test_what_the_generator_did_is_written_from_its_jsonl(self):
         # Given
         self.write_ccs(READY)
         transcript = self.first_user_run()
         # When
-        run(facts, {"agent_type": "pith:first-user", "agent_transcript_path": transcript, "cwd": self.root})
+        run(facts, {"agent_type": "writ:generator", "agent_transcript_path": transcript, "cwd": self.root})
         # Then
         state = ccs.load(self.ccs)
         self.assertEqual(state["episodic_trace"], [
             ("executed", "claude -p " + "x" * 150 + "… → exit 0"),
-            ("executed", "cat .github/prompts/pr-review.good.md → exit 0"),
+            ("executed", "cat docs/typing-guide.md → exit 0"),
             ("failed", "ls /nonexistent → exit 1"),
             ("failed", "false → exit 1"),
             ("failed", "sleep 999 → exit None"),
@@ -174,11 +169,13 @@ class Facts(Repo):
             ("wrote_outside", "/tmp/elsewhere.md"),
         ])
         self.assertEqual(state["retrieved_artifacts"], [
-            ("essentials", "/plugin/references/essentials/prompt.md"),
-            ("read", ".github/prompts/pr-review.md"),
+            ("plan", ".writ/open/01-notes-migration-plan.md"),
+            ("essentials", "/pith/references/essentials/doc.md"),
+            ("style", "/pith/references/style.md"),
+            ("read", "docs/architecture.md"),
             ("transcript", transcript),
         ])
-        self.assertEqual(state["focal_entities"][0], ("work", ".github/prompts/pr-review.md"))
+        self.assertEqual(state["focal_entities"][0], ("work", "docs/migration-plan.md"))
         self.assertEqual(state["relational_map"], [])
 
     def test_another_agent_leaves_the_ccs_untouched(self):
@@ -191,11 +188,11 @@ class Facts(Repo):
         with open(self.ccs) as f:
             self.assertEqual(f.read(), READY)
 
-    def test_a_first_user_handed_no_ccs_writes_nothing(self):
+    def test_a_generator_handed_no_ccs_writes_nothing(self):
         # Given
         transcript = self.transcript([{"type": "user", "message": {"content": [{"type": "text", "text": "no path"}]}}])
         # When
-        run(facts, {"agent_type": "pith:first-user", "agent_transcript_path": transcript, "cwd": self.root})
+        run(facts, {"agent_type": "writ:generator", "agent_transcript_path": transcript, "cwd": self.root})
         # Then
         self.assertFalse(os.path.exists(self.ccs))
 

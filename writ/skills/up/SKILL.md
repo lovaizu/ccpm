@@ -1,64 +1,65 @@
 ---
 name: up
-description: This skill should be used when the user asks to "write a document", "write a README / design doc / plan / guide / prompt", "fix this document", "/writ:up", and also, during other work, whenever Claude Code is about to write or rewrite a document that someone will read, such as a README, a design document, a plan or a prompt. It agrees with the user, one point at a time, on what the document will be before anything is written, has it written to that agreement, has it checked by a first user who does not know the discussion, and returns it with a short report of what the user decides.
+description: This skill should be used when the user asks to "write a document", "write a README / design doc / plan / guide / prompt", "fix this document", "/writ:up", and also, during other work, whenever Claude Code is about to write or rewrite a document that someone will read, such as a README, a design document, a plan or a prompt. It agrees with the user, one point at a time, on what the document will be, has it written to that agreement, has a first user who does not know the discussion read it, and returns it with a short report of what the user decides.
 ---
 
 # writ up
 
-Act as writ's conductor. The user gets a document their reader understands in one reading and acts on once finished, which they can hand on as it is, and they judge it from a short report alone. Where something the reader needs is not decided, the user is asked instead of being handed a document that covers it over.
-
-What the reader gets is settled before anything is written: who reads it, what they do after, and what each part tells them, in what order and how. Agreed then, a mismatch costs the user one answer; found after writing, it costs a round of writing and checking. So you work out that plan with the user, hand it whole to the generator, and check what comes back once.
-
-You alone judge and decide what comes next. The generator only writes as you decide; pith's first user only uses the document and reports. Have the generator write or fix with the `pith:make` skill and the document checked with the `/pith:up` skill; both wait until their work is done. Learn where pith's files are with the `pith:where` skill.
+You are writ's conductor. The user gets a document their reader understands in one reading and acts
+on once finished. You alone talk with the user, judge and decide what comes next; writ's generator
+only writes, and pith's first user only reads and reports.
 
 The request:
 
 $ARGUMENTS
 
-## 1. Agree on the document's plan
+1. Check that `python3` 3.9 or later runs; the hooks need it. If not, say the user must install it,
+   and stop. Call the `pith:where` skill for pith's directory.
+2. Agree the plan with the user, one point per message, writing each point to
+   `.writ/open/{NN}-notes-{target}.md` as it is agreed, `{target}` being the document's file name
+   without extension. The plan holds:
+   - the reader: who they are, what they know, and how they read it;
+   - the pass condition: what the reader decides and does once they finish;
+   - for each of those decisions, what the reader needs to know, with where it comes from in the
+     repository;
+   - the sections, in order: each heading, the decision it serves, and what it tells, and how;
+   - what is decided, and what is not, with who decides it;
+   - the place and the language.
 
-Work out with the user, one point per message, what the document will be, and write each point to the plan as it is agreed: `.writ/open/{NN}-notes-{target}.md` at the repository root, or the plan a caller hands you. One point per message can be talked through until you both see the same thing; with several, the user answers the one they follow and the rest go by half-decided.
+   Look up what the repository settles, and never ask it. Propose what you can infer, with why. Ask
+   what only the user knows, such as whether something is decided, with no proposal: a proposal is
+   taken, and the document then states what no one decided. For an existing document, propose the
+   plan it shows. When every point is agreed, show the plan whole and go on once the user agrees.
+3. Write the generator's CCS at `.writ/{target}-make.yaml`, each value a quoted string:
 
-The plan is what the generator needs to write the document as agreed without guessing; the hearing exists to fill it, so ask only what it lacks after you have looked up and proposed what you can:
+    ```yaml
+    focal_entities:
+      - work: "<the document's path>"
+    retrieved_artifacts:
+      - plan: "<the plan's path>"
+      - essentials: "<pith>/references/essentials/doc.md, and one entry each for readme.md, design.md or prompt.md when the document is one>"
+      - style: "<pith>/references/style.md"
+      - material: "<the existing document, if any>"
+    constraints:
+      - language: "<the plan's language>"
+    ```
 
-- The reader: who they are, what they already know, the situation they read it in, and whether they read it through or pick parts.
-- What the reader decides and does once they finish: the document's purpose, by which every part is judged.
-- The core: what the reader must take in first, in a sentence.
-- For each thing the reader decides or does, everything they need to know to do it, found in the repository, the code and the documents, with where each comes from. Work it out from the reader's decisions, not from what the user said: the user knows the purpose, while what the reader needs to decide well is in the repository, and is what the reader misses most when it is left out.
-- The flow, built from those: the order the reader goes through, and for each section its heading in the reader's words, which decision or action it serves, what it tells, and how, such as a figure, a table, an example or steps.
-- What is decided, with who decided it, and what is not, with who decides it: the reader themselves, or the user, who is then asked.
-- Where it is placed, its language, and any form the place or the user sets.
-
-Look up whatever the repository, the code and the documents can settle; never ask it and never guess it, since the reader believes what is written. Put what you can infer from them as a proposal with why, so the user only says whether it is right. What only the user knows, such as whether something is decided and who decides it, ask with no proposed answer: a guess offered first is taken, and the document then states what no one decided. For an existing document, read it as material: propose the plan it shows, and which of its parts serve the reader and are kept. A document fixed by patching drifts apart where the patches meet; one written again from an agreed plan reads as one.
-
-The plan is settled only once its flow and sections are agreed: a request that names the reader and purpose still leaves what each section tells, and how, to agree. When the conversation, or a caller such as rn, has already agreed the whole plan, write it down and go on without asking: asking again stops the user's work. Otherwise ask, whatever kind of session you are in: end your turn with the question, and the answer comes as the next message. A caller that wants questions back rather than asked says so; return them as your result.
-
-Once every point is agreed, show the user the plan as a whole, headings with what each tells, and go on when they agree.
-
-## 2. Have it written
-
-Call `pith:make`, handing the generator the paths of the plan, of the existing document as material when there is one, of the essentials files, of pith's `style.md` and `lint/`, and the document's location and language. Hand paths, never a summary: a summary carries your reading, and the generator writes from that instead of what was agreed. Choose the essentials files from pith's: always `doc.md`, plus `readme.md`, `design.md`, `prompt.md` or `essentials.md` when the document is one, and any the caller adds.
-
-When it returns, read the document against the plan and every question yourself, with what the generator says it could not settle, and have what you find fixed before pith runs, so the first user meets only what use can show.
-
-## 3. Check once and decide
-
-When the request hands you a document already checked, with its result file, that file is where the document stands: its Mores are what is left to fix and its Goods what to keep, so go on from the sort below without calling pith. Otherwise call `/pith:up` once, with the document's location, the reader and purpose, the essentials files, the result file's place (`.writ/open/` or the caller's), and the aim: the plan's purpose and what was agreed, in sentences, since pith compares only with what is written out. If it returns questions the aim does not cover, add to the aim and call it again.
-
-Check every Good and More at its place before you trust it. For each More:
-
-1. If the reader can still carry through what they do after reading, leave it, with the reason. Fixing what does not stand between the reader and the purpose only costs the user a wait.
-2. Otherwise, if the plan tells how to fix it without breaking a Good, have it fixed with `pith:make`, handing the same as before plus the place to fix and the Goods to keep. Then read there as the first user did, as its report says, and see that what it met no longer happens. Do not call pith again: a new first user brings fresh small remarks with every run, and the checking never ends.
-3. Otherwise the plan did not settle it: ask the user, one point at a time, write the answer to the plan, and have the document fixed from it.
-
-When a More shows something no essentials question asked, add it to the plan as a viewpoint for this document, so the fix aims at it, and propose it in your report as a question for pith's maintainers to consider. Never change pith's or any plugin's own files: they are not the user's repository, and every user of the plugin would get the change.
-
-Never let the document state, as a rule or as a proposal, what the user or the people around them decide and have not decided; it is shown as undecided, with who decides it. What follows from the facts and the rules already decided, such as an order a rule forces, is not such a decision: it is what the reader decides from, so the plan and the document tell it.
-
-## 4. Report and record
-
-Settle the result file yourself: each fixed More rewritten as the Good it now is, with evidence from the document; `Left because:` with the reason under each More you left. Check its form with `python3 <pith>/scripts/check_result.py <result file>`.
-
-Report in the user's language, in the shape `${CLAUDE_PLUGIN_ROOT}/README.md` shows, with only what the user decides: your view of whether the document can be handed on as it is; each More you left, under the question it answers, with what happened, what the reader struggles with, and why you left it; any viewpoint the check lacked, as a proposal for pith's essentials; and the result file's location.
-
-When the user called you, commit the plan and the result file to the current branch and push if it has an upstream; do not commit the document, which the user reviews and commits as they choose. Once the user decides on what you left, clear both: copy each file's whole text into a commit message, end each More with `→ fixed:`, `→ let go:` and the reason, or `→ to the user:`, and delete them in that commit. When a caller such as rn called you, leave committing and clearing to it: the record is kept by the conductor that talks with the user.
+   Call `writ:make` with the CCS path. When it returns gaps, ask the user each, one per message,
+   write the answer to the plan, delete the gap from the CCS, and call it again.
+4. Write the first user's CCS at `.writ/{target}-use.yaml` in the form `<pith>/skills/up/SKILL.md`
+   step 4 shows, with the reader as receiver and what they do after reading as the use, and call
+   `pith:use` with its path. Never put the plan or the pass condition in it.
+5. Lay the first user's report beside the pass condition, and give each question a Good or More at
+   `path:line`, quoting the document or the report, checking each Good as strictly as each More. Go
+   by the CCS's `episodic_trace` where the report and it differ.
+6. For each More that stops the reader from doing what the pass condition says: if the plan tells
+   how to fix it, add `  - fix: "<path:line, and what the reader struggled with>"` and
+   `  - keep: "<each Good>"` under `goal_orientation` in the make CCS and call `writ:make`; then read
+   that place as the first user did and see that it no longer happens. Never call `pith:use` again.
+   If the plan does not tell, ask the user and write the answer to the plan first. Leave any other
+   More, with the reason.
+7. Write the result in the form of `<pith>/references/result-form.md` at
+   `.writ/open/{NN}-report-{target}.md`, each fixed More as the Good it now is, and run
+   `python3 <pith>/scripts/check_result.py` on it until it passes. Delete `.writ/{target}-make.yaml`
+   and `.writ/{target}-use.yaml` by those exact paths. Answer, in the user's language: whether the document can be handed on as it is, each More you left with what
+   happened and why you left it, and the result file's path.
