@@ -1,0 +1,6 @@
+[
+  {"component": "focal_entities", "type": "work", "from": "the caller: where the work is"},
+  {"component": "focal_entities", "type": "receiver", "from": "the caller: who uses the work and what for"},
+  {"component": "retrieved_artifacts", "type": "essentials", "from": "pith's references/essentials/, or the repository's .pith/essentials/"},
+  {"component": "constraints", "type": "language", "from": "the caller's conversation"}
+]

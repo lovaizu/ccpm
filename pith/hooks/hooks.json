@@ -1,0 +1,7 @@
+{
+  "description": "Checks the CCS before pith's first user starts, and writes the facts of what it did into the CCS when it stops.",
+  "hooks": {
+    "PreToolUse": [{"matcher": "Skill", "hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/check_in.py\""}]}],
+    "SubagentStop": [{"hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/facts.py\""}]}]
+  }
+}
