@@ -170,6 +170,18 @@ As a test does: the gap between what was expected and what happened, then the ne
 - The next move is one of: accept and go on; have only the gap remade; ask the user, when what was
   expected was never decided; go back a stage, when what was expected was wrong.
 
+## When the conductor calls the user
+
+- Only when: an IN lacks what only the user knows (what they want, why, how much effort is worth how
+  much safety); what was expected turns out undecided or wrong; a sign-off.
+- One point per message, even with several waiting, so each can be talked through until both see the
+  same thing; asked together, the user answers the one they follow and the rest go half-decided. The
+  points still waiting stay in the CCS as `uncertainty_signal: pending`, so none is lost.
+- Nothing the records can settle is asked; the facts found come with where they came from. A question
+  about what the user wants carries no proposed answer; a choice among ways gives what each gives and
+  costs, and the one recommended, with why.
+- The user is never called to wait: a turn ends only when nothing runs in the background.
+
 ## Open
 
-- When and how the conductor calls the user.
+- The Resume layer.
