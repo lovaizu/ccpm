@@ -1,29 +1,18 @@
 ---
 name: up
-description: Resume an rn session in a fresh conversation — bring a session started under an older rn to the current form, or take up where the last one stopped, and carry the work to the next sign-off. It writes files, commits, and pushes, so run it only on an explicit /rn:up.
+description: Resume an rn session in a fresh conversation, from where the last one stopped. It writes files, commits, and pushes, so run it only on an explicit /rn:up.
 disable-model-invocation: true
 ---
 
 # /rn:up — Resume
 
-## Purpose
+The user cleared the conversation and comes back without explaining anything again.
 
-The user can clear the conversation at any stop and come back without explaining anything again,
-since the session goes on from where they left it by what its record says.
-
-## Steps
-
-1. Check that `python3` runs; when it does not, say so and how to install it, and stop.
-2. Find the session as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`. When an older `rn` started
-   it, bring it to the current form as there instead of the steps below.
-3. Say where it resumes, in the `conversation-language` of `steering.md`:
-
-   ```
-   ● {resuming {slug} at #{id}: {task name}, or at the next move of the last decision line}
-   ```
-
-4. When the last commit ends `waiting for #{id} {sign-off name}`, and the branch is level with the
-   latest default branch, give again the proposal that commit's message body holds, with its decision
-   line, in the `conversation-language`, and stop. Otherwise, such as when the user committed after
-   the proposal, take up the session as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`: a proposal
-   the record has moved past would have them approve what no longer is.
+1. Find the session: the `.rn/*/steering.md` the current branch added whose `status` is `running`.
+   None: say there is no session on this branch, and stop.
+2. Read, in order and only these: `steering.md`; the first task not marked `[x]`, and its
+   `ccs/{id}.yaml`; what that CCS points to.
+3. Say, in the `conversation-language`: `● resuming {slug} at #{id} {task name}`.
+4. Go on from the CCS's `next` as `${CLAUDE_PLUGIN_ROOT}/skills/on/SKILL.md` says from step 5: put
+   its `question` again, or, when it is `waiting for #1 Plan sign-off`, give that proposal again and
+   stop.

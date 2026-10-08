@@ -6,35 +6,96 @@ disable-model-invocation: true
 
 # /rn:on — Start a session
 
-## Purpose
+You are rn's conductor. The user gets what they really want, not what their first words say: the
+plan rests on why they want it, and they only decide.
 
-Every piece of work and every decision in the session rests on the goal set here, so the goal must
-be what the user really wants, not their first words: a plan built on the words achieves the wrong
-thing, however well it is carried out, and the user finds out only at the end.
+The request:
 
-## Steps
+$ARGUMENTS
 
-1. Check that `python3` runs, since `pith`'s check of each result needs it; when it does not,
-   say so and how to install it, and stop. When the working tree has uncommitted changes, say so
-   without touching them, and stop.
-2. Work in `.rn/{yyyymmdd}-{slug}/`, the slug naming what `$ARGUMENTS` asks for, on the branch the
-   user is on when it is not the default branch, has no commits of its own, and is at the latest
-   default branch, such as a fresh worktree's; otherwise on a new branch from the latest default
-   branch. Make it in the folder this conversation runs in, never in another worktree: the next
-   conversation and rn's reminder after a summary find the session there. Push it to a branch of the
-   same name on the remote. When `$ARGUMENTS` says nothing, ask what they want to achieve, alone,
-   since everything after rests on it.
-3. Ask the user, as one point, the languages: one to write everything that goes into the repository
-   in, and one to talk in, proposing what the repository and the user's instructions already set,
-   or else English for the repository, which reaches the most readers later, and the one they write
-   in for the talk, so a single yes settles both. Write
-   `steering.md` as in `${CLAUDE_PLUGIN_ROOT}/references/steering.md`, with what they choose, `rn`
-   from `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and the goal as `$ARGUMENTS` gives it for
-   now.
-4. Commit and push, in the chosen `artifact-language` as every commit from here on, with the subject
-   and decision line `steering.md`'s reference gives, and open a draft pull request titled with the
-   goal in one line, its body linking `steering.md` by its full URL on GitHub, since a relative link
-   in a pull request body does not reach the file. Write its URL in `pr`, then commit and push with
-   `● plan ── pull request opened → working out the plan`.
-5. Work out the plan with the user and go on, as in `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`:
-   the session stops at the Plan sign-off.
+1. When the working tree has uncommitted changes, say so without touching them, and stop. When the
+   request is empty, ask what they want to achieve, and stop.
+2. Make the session `.rn/{yyyymmdd}-{slug}/`, the slug naming the request, on a new branch of the
+   same name from the latest default branch, unless the current branch is not the default one and
+   has no commits of its own. Push it.
+3. Write `steering.md` there as below, filling every part you can from the request, the repository
+   and its documents, each fact with its source, and dropping nothing the request says. A point is
+   not the user's when the request names who decides it, or when the work's receiver decides it
+   with the work: write it as undecided, with who decides it.
+
+    ```markdown
+    ---
+    pr: <the draft pull request's URL>
+    status: running
+    artifact-language: <the language for what goes into the repository>
+    conversation-language: <the language to talk in>
+    ---
+
+    # Goal
+
+    <what the user wants and why, in their words>
+
+    # Acceptance criteria
+
+    ## Attractive quality
+
+    - A1: <what would make them choose the result>
+
+    ## Must-be quality
+
+    - M1: <what they take for granted>
+
+    # Facts
+
+    - <decided by the user, or checked, with its source>
+
+    # Assumptions
+
+    - <what the plan rests on without having checked it>
+
+    # Tasks
+
+    ### [ ] #1: Plan sign-off
+    ### [ ] #2: Design sign-off
+
+    # Not yet specified
+
+    - <what cannot yet be stated as a task>
+    ```
+
+4. Commit and push, and open a draft pull request titled with the goal, its body linking
+   `steering.md` by its full GitHub URL. Write the task's state to `ccs/1.yaml` in the session,
+   each value a quoted string, and commit and push it with every change, so a fresh conversation
+   goes on from it:
+
+    ```yaml
+    focal_entities:
+      - task: "#1 Plan sign-off"
+    retrieved_artifacts:
+      - steering: "<path of steering.md>"
+    uncertainty_signal:
+      - question: "<the question now put to the user, if any>"
+    predictive_cue:
+      - next: "<the next move, such as: asking why they want it, or waiting for #1 Plan sign-off>"
+    ```
+
+5. Ask the user only what is left, one point per message, in their language: what they want, why,
+   and how they would know it is achieved, then the two languages, proposing what the repository
+   sets. Never offer an answer to what they want. Where there are several ways, give what each
+   gives and costs and the one you recommend, and why. Write each answer into `steering.md` in
+   their words, and update `ccs/1.yaml`.
+6. When nothing is left, stop at the Plan sign-off. Set `next` to `waiting for #1 Plan sign-off`
+   and commit and push. Say, in their language:
+
+    ```
+    ── {slug}: {goal in one line} ──
+      👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
+      ⬜ #2 Design sign-off
+
+      Draft PR: {pr}
+
+      {what you propose next, and why}
+      Goal: {goal}
+      {each criterion, word for word}
+      For you to decide: {each assumption not checked, with steering.md:line}
+    ```

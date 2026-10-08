@@ -61,6 +61,8 @@ def main():
                          "limit left, to go on from there")
     ap.add_argument("--max-calls", type=int, default=60)
     ap.add_argument("--max-hours", type=float, default=10)
+    ap.add_argument("--scene", choices=["plan"],
+                    help="plan: stop at the first sign-off, after one fresh conversation resumes there")
     a = ap.parse_args()
     out = os.path.abspath(a.out)
     work = os.path.join(out, "work")
@@ -77,7 +79,7 @@ def main():
             dirs += ["--plugin-dir", os.path.abspath(d)]
     story = Story(out, work, dirs, left)
     try:
-        story.run(a.max_calls, a.max_hours * 3600)
+        story.run(a.max_calls, a.max_hours * 3600, a.scene)
     except Limit:
         story.log("trial", "Stopped at the usage limit; run again with the same --out to go on.")
         sys.exit(3)
@@ -122,7 +124,7 @@ class Story:
         self.began = left.get("began", time.time())
         self.sid, self.said, self.prompt = left.get("sid"), left.get("said"), left.get("prompt")
 
-    def run(self, max_calls, max_seconds):
+    def run(self, max_calls, max_seconds, scene=None):
         if self.prompt:
             said, sid = self.turn(self.prompt, self.sid)
         elif self.said:
@@ -132,6 +134,11 @@ class Story:
         while len(self.calls) < max_calls and time.time() - self.started < max_seconds:
             if self.finished():
                 self.log("trial", "Finished: the pull request is ready or the session is finished.")
+                break
+            if scene == "plan" and self.calls[-1]["sign_off"]:
+                self.log("user", "/clear")
+                self.turn("/rn:up", None)
+                self.log("trial", "Scene plan: stopped at the first sign-off, after resuming there.")
                 break
             said, sid = self.reply(said, sid)
         else:

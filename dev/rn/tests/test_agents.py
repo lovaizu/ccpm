@@ -2,7 +2,7 @@
 import os
 import unittest
 
-from harness import PLUGIN
+PLUGIN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn")
 
 
 class Agents(unittest.TestCase):
