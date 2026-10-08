@@ -159,6 +159,17 @@ written again by an LLM it would be a second copy that drifts. So:
   fires for Claude Code's prompt-suggestion helper (`agent_type` empty), so it filters by its own
   agent type.
 
+## How the conductor judges
+
+As a test does: the gap between what was expected and what happened, then the next move.
+
+- Expected: what passes, written before anything is made, as what the receiver can then do; it is a
+  required field of the Return's IN. Written after the work is seen, it bends to the work.
+- What happened: the user-tester's report of using it as the receiver.
+- Breaches: the mismatches the cross-check of the JSONL and commits reports.
+- The next move is one of: accept and go on; have only the gap remade; ask the user, when what was
+  expected was never decided; go back a stage, when what was expected was wrong.
+
 ## Open
 
-- The rest of the Join layer: how the conductor judges, and how it calls the user.
+- When and how the conductor calls the user.
