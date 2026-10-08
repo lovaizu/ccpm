@@ -200,7 +200,29 @@ As a test does: the gap between what was expected and what happened, then the ne
   made from it; the state of the work, now spread over `open/` notes and commits' decision lines,
   moves to the CCS.
 
+## How a task joins its Returns
+
+1. Its IN is filled from the task in steering (what it makes, what passes); a hook checks the required
+   fields, and a gap nothing above settles goes back up.
+2. The maker makes it, or returns the gap unmade.
+3. One user-tester uses it once, as its receiver, and returns what happened.
+4. The conductor judges the gap between what was expected and what happened, with the cross-checked
+   facts.
+5. Only the gap is remade; whether it holds is seen by doing again what the user-tester did where it
+   tripped, not by a new user-tester.
+6. A gap not closed after two remakes goes back up: what was expected, or the way of making, is wrong.
+
+Weighed against the faults met, on paper only: it answers the generator writing first and returning
+gaps after (8 rounds, 45 min), asking what rn could settle (#45), pith run about three times per
+document (#37), rounds on the same remark, trusting the maker's account, and hooks stopping others
+(#43, #44). It does not answer the three below, left open.
+
 ## Open
 
-- How a task joins its Returns: make, use, judge, remake the gap.
+- rn writes the README, design and verification documents before building, so the details of a
+  product that does not exist yet are invented in prose; how rn's stages are laid out.
+- rn's conductor grows because writ's work runs inside its conversation; how one plugin calls
+  another.
+- Ending a turn while work runs in the background (seen in the trial): the Stop hook's
+  `background_tasks` can show it; whether to make it a check.
 - Resume.
