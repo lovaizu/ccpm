@@ -63,30 +63,24 @@ STAND_IN = """You are the user who asked a writing tool for a document with thes
 
 You know only what those words say. Reply to what the tool just said as that user would, in the
 language it wrote in: answer what it asks from what you know, say you do not know what you do not,
-and agree to a proposal or plan that fits what you said. Output only your reply.
+and agree to a proposal or plan that fits what you said. When the tool asks you nothing and only
+reports what it finished, output exactly DONE. Output only your reply.
 
 The tool just said:
 
 {said}"""
 
 
-def done(repo):
-    """The tool has finished once a check has left its result file, kept or already cleared into
-    a commit."""
-    left = any(path.read_text(errors="replace").startswith("# Check:")
-               for path in repo.glob(".*/open/*-report-*.md"))
-    log = subprocess.run(["git", "log", "--format=%B"], cwd=repo, capture_output=True, text=True).stdout
-    return left or "# Check:" in log
-
-
 def writ_talk(opening, repo):
-    """Run writ as its user would: the stand-in answers until a result file is left, or turns run out.
+    """Run writ as its user would: the stand-in answers until writ asks nothing more, or turns run out.
     Returns what writ said last, the minutes it took, and the user's turns."""
     said, minutes = writ(opening, repo)
     talk = [("you", opening), ("writ", said)]
-    while not done(repo) and len(talk) < 2 * MAX_TURNS:
+    while len(talk) < 2 * MAX_TURNS:
         sid = claude.session
         reply, _ = claude(STAND_IN.format(opening=opening, said=said), repo.parent, [])
+        if reply.strip() == "DONE":
+            break
         talk.append(("you", reply))
         more, m = claude(reply, repo, writ_args() + ["--resume", sid])
         said, minutes = more, minutes + m
