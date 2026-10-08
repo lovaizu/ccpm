@@ -28,12 +28,12 @@ $ARGUMENTS
    First fill all of it from the request, the repository and its documents, each point with its
    source, and drop nothing the request says. Go beyond the points the request names: from each
    thing the reader decides or does with the document, trace in the repository the facts it
-   touches. A fill you cannot give a source for is an inference: write it as undecided, never as a
-   fact. A point is not the user's when the request names who decides it, or when the reader
-   decides it with the document: write it as undecided, or as the reader's question, with who
-   decides it, without asking. Then ask the user only what is left, one point per message, with no
-   proposal when it is what they want. For an existing document, fill the plan from what it
-   shows. Last, show the plan whole and go on once the user approves it.
+   touches. A point with no source is undecided: write it so, with who decides it, the one the
+   request names, else the reader, never as a fact and without asking. Ask the user only what is
+   theirs alone: what they want, why, how they would know it is achieved, and how much effort it is
+   worth, one point per message, with no proposal when it is what they want. For an existing
+   document, fill the plan from what it shows. Last, show the plan whole and go on once the user
+   approves it.
 3. Write the generator's CCS at `.writ/{target}-make.yaml`, each value a quoted string:
 
     ```yaml
@@ -48,8 +48,9 @@ $ARGUMENTS
       - language: "<the plan's language>"
     ```
 
-   Call `writ:make` with the CCS path. When it returns gaps, ask the user each, one per message,
-   write the answer to the plan, delete the gap from the CCS, and call it again.
+   Call `writ:make` with the CCS path. When it returns gaps, or says it inferred something, write
+   each into the plan as undecided, with who decides it, as step 2 says, delete the gap from
+   the CCS, and call it again.
 4. Write the first user's CCS at `.writ/{target}-use.yaml` in the form `<pith>/skills/up/SKILL.md`
    step 4 shows, with the reader as receiver and what they do after reading as the use, and call
    `pith:use` with its path. Never put the plan or the pass condition in it.
@@ -60,9 +61,9 @@ $ARGUMENTS
    how to fix it, add `  - fix: "<path:line, and what the reader struggled with>"` and
    `  - keep: "<each Good>"` under `goal_orientation` in the make CCS and call `writ:make`; then read
    that place as the first user did and see that it no longer happens. Never call `pith:use` again.
-   If the plan does not tell, ask the user and write the answer to the plan first; if the user
-   cannot decide it either, have the document state it as undecided, with who decides it. Never let
-   a stumble go because the user has nothing to say. Leave any other More, with the reason.
+   If the plan does not tell, have the document state it as undecided, with who decides it, as
+   step 2 says, asking the user only when it is theirs alone. Never let a stumble go because the
+   user has nothing to say. Leave any other More, with the reason.
 7. Write the result in the form of `<pith>/references/result-form.md` at
    `.writ/open/{NN}-report-{target}.md`, each fixed More as the Good it now is, and run
    `python3 <pith>/scripts/check_result.py` on it until it passes. Delete `.writ/{target}-make.yaml`
