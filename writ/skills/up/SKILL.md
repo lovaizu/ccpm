@@ -26,8 +26,9 @@ $ARGUMENTS
    - the place and the language.
 
    First fill all of it from the request, the repository and its documents, each point with its
-   source, and drop nothing the request says. What others or no one decides, write as undecided,
-   with who decides it, without asking. Then ask the user only what is left, one point per message,
+   source, and drop nothing the request says. A point is not the user's when the request names who
+   decides it, or when the reader decides it with the document: write it as undecided, or as the
+   reader's question, with who decides it, without asking. Then ask the user only what is left, one point per message,
    with no proposal when it is what they want. For an existing document, fill the plan from what it
    shows. Last, show the plan whole and go on once the user approves it.
 3. Write the generator's CCS at `.writ/{target}-make.yaml`, each value a quoted string:
