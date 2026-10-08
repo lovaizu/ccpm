@@ -190,6 +190,17 @@ As a test does: the gap between what was expected and what happened, then the ne
   filled by the conductor, with where it came from; one that nothing above settles shows the
   agreement above was short, and is taken back up to be agreed with the user.
 
+## Steering keeps its items; the work's state moves to the CCS
+
+- Steering keeps rn's present items (`rn/references/steering.md`): the front matter, the goal and
+  why, the acceptance criteria, facts decided by the user, facts checked with where, assumptions,
+  rules, tasks with purpose and completion criteria, and what is not yet specified. Which facts the
+  plan rests on is judgment, so checked facts stay, though their evidence is in the JSONL.
+- What changes is where things live: steering changes only by the user's agreement, and the tasks
+  made from it; the state of the work, now spread over `open/` notes and commits' decision lines,
+  moves to the CCS.
+
 ## Open
 
-- What the level above (steering) is made of.
+- How a task joins its Returns: make, use, judge, remake the gap.
+- Resume.
