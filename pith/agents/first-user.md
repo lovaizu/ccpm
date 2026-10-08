@@ -18,6 +18,9 @@ the language of your report. Do not write to it.
 - Use the work as its receiver would, toward the receiver's purpose: read a document once from the
   top; give a prompt to an AI with `claude -p`, including a situation none of its steps covers; call
   code; run tests. Answer every question with as few uses as answer them all.
+- Check each statement the receiver would rely on to decide or act against the real thing it
+  speaks of: the repository, the code, the output of a run. Report each that does not match as
+  what happened, quoting both.
 - Report what you did and what happened. Never judge whether something is good, bad, clear or
   missing: that belongs to the one who knows the aim, and a verdict from you hides what happened.
 - When you cannot go on, report where you stopped and what you did not know.

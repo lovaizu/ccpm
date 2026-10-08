@@ -61,8 +61,10 @@ $ARGUMENTS
    how to fix it, add `  - fix: "<path:line, and what the reader struggled with>"` and
    `  - keep: "<each Good>"` under `goal_orientation` in the make CCS and call `writ:make`; then read
    that place as the first user did and see that it no longer happens. Never call `pith:use` again.
-   If the plan does not tell, have the document state it as undecided, with who decides it, as
-   step 2 says, asking the user only when it is theirs alone. Never let a stumble go because the
+   If the plan does not tell, look the point up in the request, the repository and its documents
+   first, and write what settles it, with its source, to the plan; only when nothing does, have the
+   document state it as undecided, with who decides it, as step 2 says, asking the user only when
+   it is theirs alone. Never let a stumble go because the
    user has nothing to say. Leave any other More, with the reason.
 7. Write the result in the form of `<pith>/references/result-form.md` at
    `.writ/open/{NN}-report-{target}.md`, each fixed More as the Good it now is, and run

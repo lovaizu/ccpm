@@ -29,7 +29,7 @@ $ARGUMENTS
 
     ```yaml
     semantic_gist:
-      - investigate: "use the work as its receiver would, and report what happened"
+      - investigate: "use the work as its receiver would, check what the receiver relies on against the real thing, and report what happened"
     focal_entities:
       - work: "<path>"
       - receiver: "<who uses it>"
