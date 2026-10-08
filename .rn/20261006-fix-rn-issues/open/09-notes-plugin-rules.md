@@ -250,3 +250,27 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   present rn's trial (the conductor ran the product under construction, `claude -p
   /pr-rules:learn`, longer than a foreground command can wait); Agent-tool starts, the other cause
   seen, no longer happen since Returns are skills that wait.
+
+## Where this stands (for a summarized conversation to go on from)
+
+- The agreed points above are written as `docs/plugin-design.md` (Japanese, for review on PR #50;
+  English before merge). It was read through and fixed statically (fa0a996).
+- Next agreed: rebuild pith, writ, rn from zero on it, in that order, fixing the design from what each
+  rebuild shows. This conversation (fix-rn-d3) decides with the user; the worker session fix-rn-3f
+  builds on instruction and reports, never deciding the design.
+- pith rebuilt up to the README's first gain by the worker (b5a5bb8): Return-only, the caller's
+  conversation judges, an IN hook (PreToolUse on Skill, verified to block a call with missing fields)
+  and a facts hook (SubagentStop). Words read per call: conductor 2213 -> 1637, first user 1532 ->
+  about 1256. Scene pr-review-hole ran in 4 min; the fixture's hole did not reproduce (caught 3/3).
+- Design gaps it showed, grouped by cause, to settle with the user one at a time:
+  1. The IN treats maker and user-tester alike: it requires the pass condition, but the user-tester
+     must not know the aim. Proposed (waiting for the user): the pass condition goes to the maker
+     and the judge only; each Return kind has its own required fields.
+  2. A plugin without Join has no record place: pith's CCS was left in the user's repository,
+     against its README (only the result file stays).
+  3. Start-minimal contradicts listing three hooks as the base: the worker built only the IN check
+     and the facts hook, the two that answer failures met.
+  4. The JSONL shows less than assumed: the first user read everything with `cat`, never the Read
+     tool, and a write outside the repository by a command shows in neither the JSONL nor git.
+  Also: where the common parts live is still open (they sit in pith for now); who writes the
+  judgment part of the CCS after a check was not said.
