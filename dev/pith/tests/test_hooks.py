@@ -22,7 +22,9 @@ READY = """semantic_gist:
   - investigate: "use the work as its receiver would"
 focal_entities:
   - work: ".github/prompts/pr-review.md"
-  - receiver: "Claude in CI, writing a comment on each pull request"
+  - receiver: "Claude in CI"
+goal_orientation:
+  - use: "write a comment on each pull request"
 constraints:
   - language: "Japanese"
 retrieved_artifacts:
@@ -41,11 +43,12 @@ class Repo(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
         self.root = os.path.realpath(self.dir.name)
-        os.makedirs(os.path.join(self.root, ".pith", "ccs"))
-        self.ccs = os.path.join(self.root, ".pith", "ccs", "pr-review.yaml")
+        self.outside = tempfile.TemporaryDirectory()
+        self.ccs = os.path.join(os.path.realpath(self.outside.name), "pr-review.yaml")
 
     def tearDown(self):
         self.dir.cleanup()
+        self.outside.cleanup()
 
     def write_ccs(self, text):
         with open(self.ccs, "w") as f:
@@ -67,24 +70,24 @@ class CheckIn(Repo):
         # Given
         self.write_ccs(READY)
         # When
-        code, said = self.check(".pith/ccs/pr-review.yaml")
+        code, said = self.check(self.ccs)
         # Then
         self.assertEqual((code, said), (0, ""))
 
     def test_a_missing_receiver_stops_the_call_and_says_where_it_comes_from(self):
         # Given
-        self.write_ccs(READY.replace('  - receiver: "Claude in CI, writing a comment on each pull request"\n', ""))
+        self.write_ccs(READY.replace('  - receiver: "Claude in CI"\n', ""))
         # When
-        code, said = self.check(".pith/ccs/pr-review.yaml")
+        code, said = self.check(self.ccs)
         # Then
         self.assertEqual(code, 2)
-        self.assertIn("focal_entities: receiver (from the caller: who uses the work and what for)", said)
+        self.assertIn("focal_entities: receiver (from the caller: who uses the work)", said)
 
     def test_an_open_gap_stops_the_call(self):
         # Given
         self.write_ccs(READY + 'uncertainty_signal:\n  - gap: "which prompt runs in CI"\n')
         # When
-        code, said = self.check(".pith/ccs/pr-review.yaml")
+        code, said = self.check(self.ccs)
         # Then
         self.assertEqual(code, 2)
         self.assertIn("Open gaps: which prompt runs in CI", said)
@@ -97,6 +100,16 @@ class CheckIn(Repo):
         # Then
         self.assertEqual(code, 2)
         self.assertIn("Hand the first user the path of its CCS", said)
+
+    def test_a_ccs_the_caller_keeps_in_the_repository_is_found_from_its_relative_path(self):
+        # Given
+        os.makedirs(os.path.join(self.root, ".rn"))
+        with open(os.path.join(self.root, ".rn", "use.yaml"), "w") as f:
+            f.write(READY)
+        # When
+        code, said = self.check(".rn/use.yaml")
+        # Then
+        self.assertEqual((code, said), (0, ""))
 
     def test_another_skill_is_never_stopped(self):
         # Given no CCS at all
@@ -123,13 +136,15 @@ class Facts(Repo):
 
     def first_user_run(self):
         return self.transcript([
-            {"type": "user", "message": {"content": ".pith/ccs/pr-review.yaml"}},
+            {"type": "user", "message": {"content": self.ccs}},
             self.use("a", "Read", {"file_path": os.path.join(self.root, ".github/prompts/pr-review.md")}),
             self.result("a", "the prompt"),
             self.use("a2", "Read", {"file_path": os.path.join(self.root, ".github/prompts/pr-review.md")}),
             self.result("a2", "the prompt"),
             self.use("b", "Bash", {"command": "claude -p " + "x" * 200}),
             self.result("b", "NO_COMMENT"),
+            self.use("b2", "Bash", {"command": "cat .github/prompts/pr-review.good.md"}),
+            self.result("b2", "the old prompt"),
             self.use("c", "Bash", {"command": "ls /nonexistent"}),
             self.result("c", "Exit code 1\nls: /nonexistent: No such file", error=True),
             self.use("d", "Bash", {"command": "false"}),
@@ -152,6 +167,7 @@ class Facts(Repo):
         state = ccs.load(self.ccs)
         self.assertEqual(state["episodic_trace"], [
             ("executed", "claude -p " + "x" * 150 + "… → exit 0"),
+            ("executed", "cat .github/prompts/pr-review.good.md → exit 0"),
             ("failed", "ls /nonexistent → exit 1"),
             ("failed", "false → exit 1"),
             ("failed", "sleep 999 → exit None"),

@@ -12,7 +12,7 @@ meant to achieve, and that is your value: its maker fills its gaps with what the
 receiver cannot ask them, so where you get stuck is what is being looked for.
 
 You are handed the path of a CCS, a YAML file. In it, `focal_entities` gives the work and its
-receiver, `retrieved_artifacts` the essentials files whose questions you answer, and `constraints`
+receiver, `goal_orientation` what the receiver uses it for, `retrieved_artifacts` the essentials files whose questions you answer, and `constraints`
 the language of your report. Do not write to it.
 
 - Use the work as its receiver would, toward the receiver's purpose: read a document once from the

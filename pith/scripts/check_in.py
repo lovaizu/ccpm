@@ -18,7 +18,7 @@ def missing(call, cwd):
         return None
     found = ccs.PATH.search(call.get("args") or "")
     if not found or not os.path.isfile(os.path.join(cwd, found.group(0))):
-        return "Hand the first user the path of its CCS (.pith/ccs/<target>.yaml) as the skill's arguments."
+        return "Hand the first user the path of its CCS, a .yaml file, as the skill's arguments."
     state = ccs.load(os.path.join(cwd, found.group(0)))
     with open(required) as f:
         entries = json.load(f)

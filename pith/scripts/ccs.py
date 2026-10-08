@@ -8,7 +8,7 @@ import re
 
 COMPONENTS = ("episodic_trace", "semantic_gist", "focal_entities", "relational_map", "goal_orientation",
               "constraints", "predictive_cue", "uncertainty_signal", "retrieved_artifacts")
-PATH = re.compile(r"\.pith/ccs/[^\s'\"`]+\.yaml")
+PATH = re.compile(r"[^\s'\"`]+\.yaml")
 
 
 def load(path):

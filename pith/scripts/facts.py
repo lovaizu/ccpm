@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """SubagentStop: when pith's first user stops, write the facts of what it did, read from its own
-JSONL, into the CCS it was handed: the commands it ran with their exit status, the files it read, and
-any file it wrote. The first user's own account is not a source of these facts."""
+JSONL, into the CCS it was handed: the text of each command it ran with its exit status, the files
+it read with the Read tool, and the files it wrote with a writing tool. What a command read or wrote
+shows only in its text, so it is not claimed as a file read or written. The first user's own account
+is not a source of these facts."""
 import json
 import os
 import re
