@@ -129,6 +129,36 @@ writing it again (8 rounds, 45 min). With a CCS:
 - Each hook acts only on its own plugin's CCS files and Return calls, since rn 0.9.0's hooks stopped
   other sessions and right moves (#43, #44).
 
+## Who writes the CCS: facts by script, judgment by the one who holds it
+
+What a role did is known only to that role once it returns, and most of it is already in the records:
+written again by an LLM it would be a second copy that drifts. So:
+
+| Part | Taken from | Written by |
+|---|---|---|
+| what happened (`episodic_trace`) | the role's JSONL (tool calls, results, final reply) and commits | script |
+| files read and commands run | the JSONL | script |
+| files changed | git (diff and commits), which also catches files written by a command | script |
+| sources (`retrieved_artifacts`) | the JSONL (files read, URLs fetched) | script |
+| goal and constraints | the approved documents, by path | script (reference only) |
+| what was decided with the user | the user's words, kept as said | the conductor |
+| what is unsure (`uncertainty_signal`) | only the role itself knows | the role that met it |
+| the next move (`predictive_cue`) | judgment | the conductor |
+
+- The two sources are cross-checked, and every mismatch is reported as a fact: a file git shows
+  changed that no tool call wrote, a write the JSONL shows outside the repository, a final reply that
+  claims a step whose tool result failed, a decision quoted as the user's that no user message holds.
+- The JSONL stays on the machine and is not in git, so what a later conversation or another machine
+  needs to resume comes from commits; the JSONL serves the checks while the work runs.
+- Fact, tried on Claude Code 2.1.293 (worker session, `try2/` in its scratchpad): a SubagentStop hook
+  fires for an agent started through a skill with `context: fork` and `background: false`, in both an
+  interactive session and `claude -p`; its input carries `agent_type`, `agent_transcript_path` and
+  `last_assistant_message`; at that moment every tool call and result is in the JSONL, the final reply
+  only in the input; a stdlib script listed files read and written, commands with exit status and a
+  write outside the repository, wrote them to a YAML file the next turn read, in 0.02 s. The hook also
+  fires for Claude Code's prompt-suggestion helper (`agent_type` empty), so it filters by its own
+  agent type.
+
 ## Open
 
-- The Join layer: who compresses, how the user's answers enter the CCS, who judges.
+- The rest of the Join layer: how the conductor judges, and how it calls the user.
