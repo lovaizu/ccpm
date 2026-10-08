@@ -283,3 +283,17 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   shows again.
 - Next: rn's first gain on the design. Then the remaining README gains of pith, writ and rn (writ's
   commit and lint, pith writing an essentials file), each built only as its README story needs.
+- (2026-10-09) Reports had shown only cost (time, turns, words); the user pointed out the gains were
+  never judged. The design's verification now says: each README promise first, judged by a blind
+  stand-in receiver comparing with the version in use, then cost (470e711). The version in use is
+  rn 0.8.0, writ and pith 0.1.0 (writ 0.1.0 carries its own check).
+- writ blind comparison: first the rebuilt document lost to 0.1.0 (holes lost in the conductor's
+  plan; fixed in 95bac41). Then writ6 won against 0.1.0 run to its end (writ010c): 6.7 vs 43.2 min,
+  4 turns each. Left, seen twice: the conductor asks the user the reader's points and writes
+  unsourced inferences as decided; the agreement section was rewritten around whose decision a
+  point is (fe3c4cc). Next for the worker: finish the rn 0.8.0 vs rebuilt runs, then put fe3c4cc
+  into writ and rn and rerun writ with a blind reader against writ6.
+- CI had failed on every push from 61db0ee to 4831c6a (rn/hooks/record.py:48 unrun); green since
+  afa9dbd. Check CI after each push.
+- rn-try: #78 closed by the worker (its rn080 run). #74 and #75 (2026-10-07) open; no record shows who
+  made them.
