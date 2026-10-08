@@ -217,12 +217,25 @@ gaps after (8 rounds, 45 min), asking what rn could settle (#45), pith run about
 document (#37), rounds on the same remark, trusting the maker's account, and hooks stopping others
 (#43, #44). It does not answer the three below, left open.
 
+## One conductor per session; a plugin called by another lends its Returns and domain parts
+
+- Only the conductor of the plugin the user started talks with the user, agrees, and judges. A plugin
+  it calls lends its Returns and its domain parts (each Return's IN required fields, its viewpoints);
+  the conductor fills the IN with the user from those fields and calls the Returns.
+- This is the orchestrator-worker pattern: in Anthropic's multi-agent research system the user talks
+  with the lead only, and subagents work in their own context and return condensed results. Claude
+  Code removes `AskUserQuestion` from every subagent, and uses subagents so the main conversation is
+  not flooded (official docs, sub-agents).
+- Running the called plugin's conductor inside the caller's conversation floods it (rn's conductor
+  reached 1.7 MB in the trial); running it apart leaves it unable to ask the user, so questions go
+  back and forth through the caller.
+- Cost noted by the same article: multi-agent systems use about 15 times the tokens of a chat, so
+  agents are added only where needed.
+
 ## Open
 
 - rn writes the README, design and verification documents before building, so the details of a
   product that does not exist yet are invented in prose; how rn's stages are laid out.
-- rn's conductor grows because writ's work runs inside its conversation; how one plugin calls
-  another.
 - Ending a turn while work runs in the background (seen in the trial): the Stop hook's
   `background_tasks` can show it; whether to make it a check.
 - Resume.
