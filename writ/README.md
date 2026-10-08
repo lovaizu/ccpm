@@ -152,7 +152,7 @@ Now you can use `/writ:up`, and `/pith:up` to check what you made yourself.
 
 ## How it is built
 
-Who makes, who uses and who decides, and why writ is built that way, are in the [design document](docs/design.md).
+Who makes, who uses and who decides, and why writ is built that way, are in the [base design](../docs/plugin-design.md) every plugin here is built on.
 
 ## License
 

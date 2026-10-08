@@ -56,7 +56,7 @@ def claude(message, cwd, extra):
     return data.get("result", ""), minutes
 
 
-MAX_TURNS = 8
+MAX_TURNS = 20
 STAND_IN = """You are the user who asked a writing tool for a document with these words:
 
 {opening}
