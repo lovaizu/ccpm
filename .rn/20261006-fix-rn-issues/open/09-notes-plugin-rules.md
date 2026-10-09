@@ -323,3 +323,8 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   the base in Claude Code: (A) a shared prose skill, (B) flow state and the CCS held by fw's scripts
   and hooks, with the conductor talking and judging, (C) Claude Code workflows for the stretches
   without the user. B looks likely; it will be tried small before the design is written.
+- The common base goes in its own plugin, named fw (framework), that writ, pith and rn depend on.
+  fw holds the make, use and learn roles, the conductor's common flow, the CCS and resume; each
+  plugin keeps only its domain content. No precedent was found in Claude Code for a depended-on
+  base plugin (official plugins copy), so writ is tried on fw first; the fallback is identical
+  copies.
