@@ -138,13 +138,17 @@ by them.
 
 ### Agents
 
-- **Start work a role must wait for through a skill with `context: fork`, `agent: <plugin>:<agent>`
-  and `background: false`, and call that skill; never start it with the Agent tool directly.**
-  - Rationale: in an interactive session Claude Code runs every agent the Agent tool starts in the
-    background and cannot be asked for the foreground, so the role either ends its turn, calling the
-    user with nothing to decide, or goes on before the result exists. A skill with
-    `background: false` makes the caller wait for its result in every kind of session, and its
-    agent runs in the foreground (official docs, sub-agents and skills; tried on Claude Code 2.1.291).
+- **Start each role once with the Agent tool, and hold the whole exchange with it through
+  SendMessage: request, its understanding, go, the work, a check, OK. Number every message the
+  conductor sends; the role begins each reply with the number it answers, and the conductor does not
+  go on past a step until the reply with that number has come.**
+  - Rationale: handing work off and only looking at the result costs a remake for every drift. In an
+    interactive session the role runs in the background, and the conductor ends its turn after each
+    send and is woken when the reply arrives; the user can talk to it meanwhile. A late completion
+    notice was once taken for the wrong reply, which the number prevents. A forked skill with
+    `background: false` waits in place, but the conductor cannot see the role's id to continue it;
+    `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` also waits, but turns off every background feature in
+    the user's other work (tried on Claude Code 2.1.294).
 
 ### Tests and trials
 
