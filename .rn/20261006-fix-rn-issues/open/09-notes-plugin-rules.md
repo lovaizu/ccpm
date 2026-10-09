@@ -297,3 +297,29 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   afa9dbd. Check CI after each push.
 - rn-try: #78 closed by the worker (its rn080 run). #74 and #75 (2026-10-07) open; no record shows who
   made them.
+- (2026-10-09) writ7 (fe3c4cc) lost to writ6 blind: an inference given a source, a generator
+  inference not reported, stale files never traced, a non-question. 25d9fae: the first user checks
+  what the receiver relies on against the real thing; a stumble is looked up before it is written as
+  undecided. writ8 and writ8s (generator Sonnet, first user Opus) both beat writ6; writ8s beat writ8,
+  one run each. b0b22a4: writ's conductor never edits the work. The model split waits for the
+  evaluation method.
+- Evaluation method, being agreed with the user point by point (nothing written into the design
+  yet; 75b44c1 was reverted in a29ec64 because it was written before agreement). Base: Anthropic's
+  "Demystifying evals for AI agents": tasks with success criteria and reference solutions, from
+  real failures; code graders first, LLM graders one per dimension, calibrated by the user; several
+  trials; read the transcripts. Start small, one plugin first; non-functional measures to be
+  discussed after the functional ones.
+- Agreed with the user: the common base is four roles (conduct, make, use, learn), the CCS and
+  resume; each plugin adds only its domain content. The learner runs every turn and reads all facts
+  (first user's results, JSONL, commits). It only outputs learnings; the conductor decides
+  everything. Content learnings are fixed at once. Process learnings go into the session's steering
+  rules and apply from the next turn. At the end the conductor asks the user whether to send them as
+  an issue (feedback) to the plugin's repository. Process learning is in every turn, at a cost,
+  because left to the end it gets skipped.
+- Survey (2026-10-09): takt, AWS AI-DLC and Archon hold the flow in a runner, not in prose. takt
+  says "prompts alone do not enforce behavior". AI-DLC PR #1624: the agent reads the user's reply and
+  the engine keeps their words. takt assembles each role's prompt from facets. Fix rounds are capped
+  in superpowers and cc-sdd. Few have a fresh agent use the work as its receiver would. Options for
+  the base in Claude Code: (A) a shared prose skill, (B) flow state and the CCS held by fw's scripts
+  and hooks, with the conductor talking and judging, (C) Claude Code workflows for the stretches
+  without the user. B looks likely; it will be tried small before the design is written.
