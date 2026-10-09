@@ -134,7 +134,7 @@ Now you can use `/pith:up`.
 
 ## How it is built
 
-Who uses the work, who judges it, and why pith is built that way, are in the [base design](../docs/plugin-design.md) every plugin here is built on.
+Who uses the work, who judges it, and why pith is built that way, are in the [design of fw](../fw/docs/design.md), the base every plugin here is built on.
 
 ## License
 
