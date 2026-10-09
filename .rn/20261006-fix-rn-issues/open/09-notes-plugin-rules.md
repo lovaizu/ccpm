@@ -357,3 +357,14 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   evaluation method (functional first, then non-functional) and the model split.
 - Order agreed: start from fw itself, with the domain parts as fixed mocks, to check the flow
   control; then put pith's real content on it.
+- Agreed (2026-10-09), how fw holds the flow:
+  - No script or hook just for the flow.
+  - An exhaustive state-transition table is written. Each transition becomes a condition checked
+    before a role is called, by the existing IN-check hook.
+    - The result goes to the user only when the CCS records a first-user use.
+    - The maker is called again only when the last turn's learnings are recorded.
+  - State and facts are kept by the existing facts hook, the CCS and commits.
+  - The conductor decides whose decision a point is, and changes steering's tasks.
+  - Hooks block only role calls, never the user exchange or the end of a turn. A block always says
+    what is missing.
+  - Tests check that every state can go on or go back to the user.
