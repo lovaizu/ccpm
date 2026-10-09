@@ -2,7 +2,8 @@
 
 In the conductor's JSONL, a role is started with the Agent tool and continued with SendMessage; its
 reply comes back as the Agent tool's result when it ran in the foreground, or else as a
-task-notification naming the agent. In the role's own JSONL, each message the conductor sent is a
+task-notification naming the agent: a user entry when the conductor was idle, and a queued one
+(`queue-operation`, `enqueue`) when it was busy, which reaches it with its next step. In the role's own JSONL, each message the conductor sent is a
 user entry, and each reply is the role's last text before the next message.
 """
 import json
@@ -31,6 +32,14 @@ def text(content):
     return "\n".join(b.get("text", "") for b in content)
 
 
+def notice(entry):
+    """The text of a task-notification the entry brings to the conductor, or ""."""
+    if entry.get("type") == "queue-operation" and entry.get("operation") == "enqueue":
+        return entry.get("content") if isinstance(entry.get("content"), str) else ""
+    content = (entry.get("message") or {}).get("content")
+    return content if entry.get("type") == "user" and isinstance(content, str) else ""
+
+
 def header(message):
     """(kind, CCS path, role) of a conductor message's first line, or None."""
     found = HEADER.match(message or "")
@@ -42,10 +51,9 @@ def roles(conductor):
     is the kind of the message still waiting for the role's reply, or None."""
     sent, agents = {}, {}
     for entry in entries(conductor):
-        if entry.get("type") == "user" and isinstance((entry.get("message") or {}).get("content"), str):
-            found = NOTICE.search(entry["message"]["content"])
-            if found and found.group(1) in agents:
-                agents[found.group(1)]["waiting"] = None
+        found = NOTICE.search(notice(entry))
+        if found and found.group(1) in agents:
+            agents[found.group(1)]["waiting"] = None
         for block in blocks(entry):
             if block.get("type") == "tool_use" and block.get("name") in ("Agent", "SendMessage"):
                 args = block.get("input") or {}

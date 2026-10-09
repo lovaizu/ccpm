@@ -45,12 +45,13 @@ class Conversation:
         for n, e in self.entries:
             ts = e.get("timestamp", "")
             content = (e.get("message") or {}).get("content")
-            if e.get("type") == "user" and isinstance(content, str):
+            if talk.notice(e):
+                content = talk.notice(e)
                 found = talk.NOTICE.search(content)
                 if found:
                     result = re.search(r"<result>(.*?)</result>", content, re.S)
                     self.events.append((n, ts, "notice", {"agent": found.group(1), "text": result.group(1) if result else ""}))
-                elif not content.startswith("<"):
+                elif e.get("type") == "user" and not content.startswith("<"):
                     self.events.append((n, ts, "user", {"text": content}))
             for b in talk.blocks(e):
                 if b.get("type") == "text" and e.get("type") == "assistant":

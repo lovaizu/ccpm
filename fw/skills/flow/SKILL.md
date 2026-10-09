@@ -21,8 +21,9 @@ exists, says what the plugin makes and how to fill and judge it; read it first.
 
 ## Start or resume
 
-1. Check that `python3` 3.9 or later runs; fw's hooks need it. If not, tell the user to install it,
-   and stop.
+1. Run `python3 --version` alone, as one command; fw's hooks need Python 3.9 or later. If it does
+   not run or is older, tell the user to install it, and stop. Run each command on its own, never
+   chained with `;` or `&&` to others, so a session that allows only some commands still lets it.
 2. If `<record>/steering.md` exists, resume from it: take the first task not done, run
    `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/state.py <record>/<task>` and go on from the state it
    prints, reading a CCS or a document only when you need it. Never ask the user what the record

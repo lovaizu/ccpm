@@ -130,6 +130,11 @@ class Repo(unittest.TestCase):
         self.lines.append({"type": "user", "message": {"content": f"<task-notification>\n<task-id>{agent}</task-id>\n"
                                                                   "<status>completed</status>\n</task-notification>"}})
 
+    def queued(self, agent):
+        """A reply that came while the conductor was busy: queued, and handed to it with its next step."""
+        self.lines.append({"type": "queue-operation", "operation": "enqueue",
+                           "content": f"<task-notification>\n<task-id>{agent}</task-id>\n</task-notification>"})
+
     # A role's own JSONL
 
     def role_jsonl(self, name, said, tools=()):

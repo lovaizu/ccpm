@@ -194,6 +194,16 @@ class Messages(Repo):
         self.notice(agent)
         self.assertEqual(self.send(agent, f"ok {path('make')}")[0], 0)
 
+    def test_a_reply_queued_while_the_conductor_was_busy_has_come(self):
+        # Given a check whose reply came while the conductor was busy with another role
+        agent = self.started()
+        self.message(agent, f"check {path('make')}")
+        self.queued(agent)
+        # When
+        code, _, said = self.send(agent, f"ok {path('make')}")
+        # Then
+        self.assertEqual((code, said), (0, ""))
+
     def test_a_role_started_in_the_foreground_has_replied_when_its_start_returns(self):
         # Given
         self.write("make", self.ready("make"))
