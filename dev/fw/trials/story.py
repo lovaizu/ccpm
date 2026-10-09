@@ -51,18 +51,19 @@ The tool just said:
 MAX_TURNS = 8
 
 
-def settings(out):
-    """Allow only what the run needs; deny the rest without asking. The hooks log turn ends for the
-    interactive driver."""
+def settings(out, name="settings.json", log_turns=True):
+    """Allow only what the run needs; deny the rest without asking. The hook logs the turn ends of
+    the session under test for the interactive driver; the other session gets none, so its turn ends
+    are never taken for the driven session's."""
     log = f"python3 -c \"import sys; open('{out}/events.jsonl','a').write(sys.stdin.read().replace(chr(10),' ')+chr(10))\""
     data = {
         "permissions": {"defaultMode": "dontAsk", "allow": [
             "Read", "Write", "Edit", "Glob", "Grep", "Agent", "SendMessage", "TaskStop", "Skill", "ToolSearch",
             "Bash(git:*)", "Bash(python3:*)", "Bash(ls:*)", "Bash(cat:*)", "Bash(mkdir:*)"]},
         "enabledPlugins": {"writ@ccpm": False, "rn@ccpm": False, "pith@ccpm": False, "fw@ccpm": False},
-        "hooks": {"Stop": [{"hooks": [{"type": "command", "command": log}]}]},
+        "hooks": {"Stop": [{"hooks": [{"type": "command", "command": log}]}]} if log_turns else {},
     }
-    path = os.path.join(out, "settings.json")
+    path = os.path.join(out, name)
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
     return path
@@ -203,7 +204,8 @@ class Run:
         """Another session in the same repository, with the same plugins, doing work of its own."""
         self.log["other"] = str(uuid.uuid4())
         self.save()
-        cmd = ["claude", "-p", OTHER, "--output-format", "json", *self.args(), "--session-id", self.log["other"]]
+        args = [a if a != self.settings else settings(self.out, "other-settings.json", False) for a in self.args()]
+        cmd = ["claude", "-p", OTHER, "--output-format", "json", *args, "--session-id", self.log["other"]]
         return subprocess.Popen(cmd, cwd=self.repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
                                 env=clean_env(), stdin=subprocess.DEVNULL)
 
