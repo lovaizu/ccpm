@@ -40,9 +40,10 @@ CI runs them on every push and fails on any line of `fw/scripts/` they do not ru
 ## Trials
 
 `dev/fw/trials/story.py` runs the mock plugin as its user would, with a stand-in user: two trivial
-questions are answered in parallel, the maker always answers 1+1=3 first so the first user stumbles
-once and the answer is fixed and rechecked, the conversation is cleared partway and resumed, and
-another session works in the same repository meanwhile. It then checks fw's flow by code
+questions are answered in parallel; the first user always stumbles once on `1+1=2`, since Sam needs
+the answer alone and only the first user's instructions say so, and the answer is fixed and
+rechecked; the conversation is cleared partway and resumed; and another session works in the same
+repository meanwhile. It then checks fw's flow by code
 (`checks.py`) from the JSONL of every conversation and role and from the CCS, and prints PASS or
 FAIL for each check with the JSONL file and entry that shows it.
 

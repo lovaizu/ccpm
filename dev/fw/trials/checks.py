@@ -177,7 +177,7 @@ class Run:
         with open(os.path.join(self.repo, "sum.txt")) as f:
             work = f.read()
         recheck_said = self.reply_to(recheck[4], "go") if recheck else ""
-        ok = "1+1=2" in text and fixed_turn and fixed_turn[3] and writes and work.strip() == "1+1=2" and "No stumble" in recheck_said
+        ok = "write 2" in text and fixed_turn and fixed_turn[3] and writes and work.strip() == "2" and "No stumble" in recheck_said
         self.say(bool(ok), "content learning fixed in that turn",
                  f"learner {short(learn[4]) if learn else '-'} replied to go {text[:160]!r}; fix written to make.yaml at {writes}; "
                  f"maker #{fixed_turn[0] if fixed_turn else '-'} made it; sum.txt {work!r}; recheck replied {recheck_said[:80]!r}")
