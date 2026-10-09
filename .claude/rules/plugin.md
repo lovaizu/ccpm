@@ -139,14 +139,16 @@ by them.
 ### Agents
 
 - **Start each role once with the Agent tool, and hold the whole exchange with it through
-  SendMessage: request, its understanding, go, the work, a check, OK. Number every message the
-  conductor sends, with numbers unique across the session so that roles running in parallel never
-  share one; the role begins each reply with the number it answers, and the conductor does not
-  go on past a step until the reply with that number has come.**
+  SendMessage: request, its understanding, go, the work, a check, OK. Begin every conductor message
+  with the task, the role and what it is (request, go, check, OK); the role begins each reply with
+  what it answers. Keep at most one message per role waiting for its reply, and do not go on past
+  that step until the reply has come.**
   - Rationale: handing work off and only looking at the result costs a remake for every drift. In an
     interactive session the role runs in the background, and the conductor ends its turn after each
     send and is woken when the reply arrives; the user can talk to it meanwhile. A late completion
-    notice was once taken for the wrong reply, which the number prevents. A forked skill with
+    notice was once nearly taken for a reply; a reply that says what it answers is told apart from it.
+    Numbers are not used: counting them across a cleared conversation needs a lookup, and models
+    miscopy such tokens (AWS AI-DLC, PR #1262). A forked skill with
     `background: false` waits in place, but the conductor cannot see the role's id to continue it;
     `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` also waits, but turns off every background feature in
     the user's other work (tried on Claude Code 2.1.294).
