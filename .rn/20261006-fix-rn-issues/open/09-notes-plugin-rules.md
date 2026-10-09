@@ -418,3 +418,10 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
        on stdin.
     3. A stopped role's progress goes in episodic_trace, and where to resume goes in predictive_cue.
     4. One Agent launch per turn, from request to OK; a fix or recheck is a new launch.
+- (2026-10-09) The rerun of the fw trial was stopped and its files deleted. The user: the mock's work
+  should be trivial ("what is 1+1?", "what colour is the opposite of red?"), so a trial checks
+  only the flow and runs fast. Next: start a one-shot agent, aligning before it builds. It makes
+  the mock's tasks trivial, with one fixed stumble (for example the maker answers 1+1=3 and the
+  first user finds it), runs the mock roles on a small model (Haiku), and then reruns both trial
+  modes, keeping the JSONL for my check. After that: write open points 1-4 above into the design,
+  then the evaluation method (the DeepEval trial, awaiting the user's go).
