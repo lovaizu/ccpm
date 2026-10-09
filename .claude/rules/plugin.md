@@ -140,7 +140,8 @@ by them.
 
 - **Start each role once with the Agent tool, and hold the whole exchange with it through
   SendMessage: request, its understanding, go, the work, a check, OK. Number every message the
-  conductor sends; the role begins each reply with the number it answers, and the conductor does not
+  conductor sends, with numbers unique across the session so that roles running in parallel never
+  share one; the role begins each reply with the number it answers, and the conductor does not
   go on past a step until the reply with that number has come.**
   - Rationale: handing work off and only looking at the result costs a remake for every drift. In an
     interactive session the role runs in the background, and the conductor ends its turn after each
