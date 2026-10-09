@@ -328,3 +328,32 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   plugin keeps only its domain content. No precedent was found in Claude Code for a depended-on
   base plugin (official plugins copy), so writ is tried on fw first; the fallback is identical
   copies.
+- (2026-10-09) fw's purpose, agreed with the user:
+  1. The user spends time only on their own decisions and gets what they want.
+  2. Work that takes days, or outlives a conversation, goes on from where it stopped.
+  3. It gets better with use. Content learnings are fixed at once. Process learnings act as
+     session rules, and at the end go to the plugin with the user's consent.
+  4. Whether it got better is judged from facts. What the user gets and what they pay are measured
+     as numbers. A drop is traced to its cause in the records (JSONL).
+  5. The common flow lives in one place. It is fixed once and checked once, apart from the domain
+     content, which can be swapped for mocks. A plugin maker writes only the domain content.
+  6. The flow holds when tasks are added, removed or reordered during the work.
+  7. It never gets stuck (no deadlock), and never touches other sessions or files outside the
+     repository.
+  8. fw itself stays small; it adds only what prevents a reproduced failure.
+  What the flow control must ensure:
+  - The work reaches the user only after a first user has used it.
+  - The user is called only for their own decisions.
+  - The state is in the record, and work resumes from anywhere.
+  - Learnings come out every turn.
+  - Tasks can be added, removed and reordered.
+  - Every state can go on or go back to the user.
+  - Every move can be traced from the facts afterwards.
+- Still open, to be derived from that purpose: how the flow is held: prose in one place, a script
+  with a state-transition table (the user asked for exhaustive transitions), or both. Proposed and
+  not yet agreed: two layers. Steering is data the conductor changes (tasks change during the
+  work). The cycle inside a task is a fixed state-transition table. A script is the one way to
+  change the record. The user warned that scripts and hooks can deadlock. Also open: the
+  evaluation method (functional first, then non-functional) and the model split.
+- Order agreed: start from fw itself, with the domain parts as fixed mocks, to check the flow
+  control; then put pith's real content on it.
