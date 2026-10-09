@@ -1,0 +1,6 @@
+{
+  "name": "fw",
+  "description": "The common base of the plugins that have AI make something for you: the task flow with a maker, a first user and a learner, the record that lets work resume after the conversation is cleared, and the checks that keep each step from starting without what it needs.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" }
+}

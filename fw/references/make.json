@@ -1,0 +1,7 @@
+[
+  {"component": "focal_entities", "type": "work", "from": "steering: the path where the work goes"},
+  {"component": "focal_entities", "type": "receiver", "from": "steering: who uses the work"},
+  {"component": "goal_orientation", "type": "pass", "from": "steering's acceptance: what the receiver can do with the work"},
+  {"component": "retrieved_artifacts", "type": "domain", "from": "the plugin's entry skill: its domain folder"},
+  {"component": "retrieved_artifacts", "type": "steering", "from": "the record: steering.md"}
+]

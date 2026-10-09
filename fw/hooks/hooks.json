@@ -1,0 +1,7 @@
+{
+  "description": "Checks the task's CCS before one of fw's roles is started, sent a message, or a task's result file is written, and writes the facts of each reply of a role into its CCS.",
+  "hooks": {
+    "PreToolUse": [{"matcher": "Agent|SendMessage|Write", "hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/check_in.py\""}]}],
+    "SubagentStop": [{"hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/facts.py\""}]}]
+  }
+}

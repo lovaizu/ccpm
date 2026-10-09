@@ -23,6 +23,12 @@
       "description": "Learn where the receiver of your work falls short, from what happened when a separate AI that does not know the discussion used it: a document, a prompt, code, tests or a plugin. Each point names its place and quotes what happened.",
       "source": "./pith",
       "category": "development"
+    },
+    {
+      "name": "fw",
+      "description": "The common base of the plugins that have AI make something for you: the task flow with a maker, a first user and a learner, a record that resumes after the conversation is cleared, and checks that keep each step from starting without what it needs.",
+      "source": "./fw",
+      "category": "development"
     }
   ]
 }

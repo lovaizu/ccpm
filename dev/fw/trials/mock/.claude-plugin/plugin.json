@@ -1,0 +1,7 @@
+{
+  "name": "mock",
+  "description": "A trial plugin built on fw with fixed domain parts, so fw's flow is checked apart from any real domain.",
+  "version": "0.0.0",
+  "author": { "name": "lovaizu" },
+  "dependencies": ["fw"]
+}

@@ -1,0 +1,5 @@
+[
+  {"component": "retrieved_artifacts", "type": "report", "from": "the record: the first user's JSONL, the last turn in use.yaml"},
+  {"component": "retrieved_artifacts", "type": "steering", "from": "the record: steering.md"},
+  {"component": "retrieved_artifacts", "type": "domain", "from": "the plugin's entry skill: its domain folder"}
+]
