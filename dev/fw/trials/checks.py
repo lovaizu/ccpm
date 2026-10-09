@@ -154,30 +154,45 @@ class Run:
                      ", ".join(f"use #{turns[i][0]} → {'learn #' + str(turns[i + 1][0]) if i + 1 < len(turns) else 'none'}" for i in uses))
 
     def content_fixed(self):
+        """The greeting's content learning is written as a fix after the learner of the first turn
+        was started and before the next maker was, that maker made it, and the recheck no longer
+        stumbles."""
         turns = self.turns("greeting")
         learn = next((t for t in turns if t[1] == "learn"), None)
-        replies = [line for k, line in self.exchange(learn[4])] if learn else []
-        text = self.last_text(learn[4]) if learn else ""
+        text = self.reply_to(learn[4], "go") if learn else ""
         fixed_turn = next((t for t in turns if learn and t[0] > learn[0] and t[1] == "make"), None)
+        recheck = next((t for t in turns if fixed_turn and t[0] > fixed_turn[0] and t[1] == "use"), None)
         writes = []
         for c in self.conversations:
+            steps = [s[0] for s in c.fw() if s[2] == "request"]
+            start = next((s[0] for s in c.fw() if s[2] == "request" and s[3] == ".mock/greeting/learn.yaml"), None)
+            if start is None:
+                continue
+            end = next((n for n in steps if n > start and n in [s[0] for s in c.fw() if s[3] == ".mock/greeting/make.yaml"]), 10 ** 9)
             for n, ts, _, call in c.calls():
                 body = json.dumps(call["input"])
-                if call["name"] in ("Write", "Edit") and call["input"].get("file_path", "").endswith("greeting/make.yaml") and "fix" in body:
+                if start < n < end and call["name"] in ("Write", "Edit") and call["input"].get("file_path", "").endswith("greeting/make.yaml") \
+                        and "- fix:" in body and "date" in body:
                     writes.append(f"{short(c.path)}:{n}")
         with open(os.path.join(self.repo, "greeting.txt")) as f:
             work = f.read()
-        recheck = next((t for t in turns if fixed_turn and t[0] > fixed_turn[0] and t[1] == "use"), None)
-        recheck_said = self.last_text(recheck[4]) if recheck else ""
-        ok = "from" in text and fixed_turn and fixed_turn[3] and writes and "from: mock" in work and "No stumble" in recheck_said
+        recheck_said = self.reply_to(recheck[4], "go") if recheck else ""
+        ok = "date" in text and fixed_turn and fixed_turn[3] and writes and "date: 2026-10-09" in work and "No stumble" in recheck_said
         self.say(bool(ok), "content learning fixed in that turn",
-                 f"learner {short(learn[4]) if learn else '-'} said {text[:120]!r}; fix written to make.yaml at {writes}; "
-                 f"maker #{fixed_turn[0] if fixed_turn else '-'} made it; greeting.txt {work!r}; recheck said {recheck_said[:80]!r}")
+                 f"learner {short(learn[4]) if learn else '-'} replied to go {text[:160]!r}; fix written to make.yaml at {writes}; "
+                 f"maker #{fixed_turn[0] if fixed_turn else '-'} made it; greeting.txt {work!r}; recheck replied {recheck_said[:80]!r}")
 
-    def last_text(self, path):
-        said = ""
+    def reply_to(self, path, kind):
+        """The whole text of the role's reply to the conductor's message of that kind."""
+        said, after = "", False
         for _, e in lines(path):
-            if e.get("type") == "assistant":
+            content = (e.get("message") or {}).get("content")
+            if e.get("type") == "user" and isinstance(content, str):
+                found = talk.HEADER.search(content)
+                if found and after:
+                    break
+                after = bool(found and found.group(1) == kind)
+            elif after and e.get("type") == "assistant":
                 text = "\n".join(b.get("text", "") for b in talk.blocks(e) if b.get("type") == "text")
                 said = text or said
         return said
@@ -226,16 +241,16 @@ class Run:
     def issue_question(self):
         talk_log = self.log.get("talk", [])
         asked = [i for i, t in enumerate(talk_log) if t["who"] == "conductor" and re.search(r"\bissue", t["text"], re.I)]
-        answer = talk_log[asked[-1] + 1]["text"] if asked and asked[-1] + 1 < len(talk_log) else ""
+        answer = talk_log[asked[0] + 1]["text"] if asked and asked[0] + 1 < len(talk_log) else ""
         gh = [f"{short(p)}:{n}" for p in self.all_jsonl() for n, e in lines(p) for b in talk.blocks(e)
               if b.get("type") == "tool_use" and b.get("name") == "Bash" and "gh issue" in (b.get("input") or {}).get("command", "")]
-        where = self.find_text(self.conversations[-1], r"\bissue") if self.conversations else None
+        where = self.find_text(self.conversations[-1], r"\bissue\b.*\?|\?.*\bissue\b") if self.conversations else None
         self.say(bool(asked) and not gh, "at the end the user is asked whether to send it as an issue",
                  f"asked at {where}; the user answered {answer[:60]!r}; gh issue run: {gh or 'never'}")
 
     def find_text(self, c, pattern):
         hits = [n for n, _, k, d in c.events if k == "text" and re.search(pattern, d["text"], re.I)]
-        return f"{short(c.path)}:{hits[-1]}" if hits else None
+        return f"{short(c.path)}:{hits[0]}" if hits else None
 
     def resume(self):
         cut = self.log.get("cut")

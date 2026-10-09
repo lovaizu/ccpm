@@ -130,7 +130,7 @@ the user; never work around it.
 - When the task is done, write `<record>/open/{NN}-report-<task>.md`, `{NN}` one more than the
   highest number in `open/`: the pass condition, each difference with what happened, and how it
   ended (`→ fixed`, `→ let go: <reason>`, or `→ to the user`). Mark the task `[x]` in steering. Copy
-  the file whole into a commit message and remove it with `git rm` in that commit.
+  the file whole into a commit message and delete it in that commit.
 
 ### Pause and end
 

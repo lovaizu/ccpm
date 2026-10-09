@@ -59,7 +59,7 @@ def settings(out, name="settings.json", log_turns=True):
     data = {
         "permissions": {"defaultMode": "dontAsk", "allow": [
             "Read", "Write", "Edit", "Glob", "Grep", "Agent", "SendMessage", "TaskStop", "Skill", "ToolSearch",
-            "Bash(git:*)", "Bash(python3:*)", "Bash(ls:*)", "Bash(cat:*)", "Bash(mkdir:*)"]},
+            "Bash(git:*)", "Bash(python3:*)", "Bash(ls:*)", "Bash(cat:*)", "Bash(mkdir:*)", "Bash(rm:*)"]},
         "enabledPlugins": {"writ@ccpm": False, "rn@ccpm": False, "pith@ccpm": False, "fw@ccpm": False},
         "hooks": {"Stop": [{"hooks": [{"type": "command", "command": log}]}]} if log_turns else {},
     }
