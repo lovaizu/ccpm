@@ -380,3 +380,28 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
     stray coverage file is untracked (42d853d). The worker's old trial JSONL is deleted.
   - Next: the evaluation method. fw is being built by a one-shot agent started from this session;
     fix-rn-3f takes no more work.
+- (2026-10-09, before a summary) Evaluation, being agreed:
+  - One method for all plugins, decided here and not per plugin.
+  - Measure functional and non-functional sides. For each, give the number plus fact-based
+    qualitative notes, with JSONL places and quotes.
+  - Best practice is Anthropic's "Demystifying evals for AI agents": write the ground truth (a
+    reference solution and its items) before the run, compare the output with it, run several
+    times, read the transcripts.
+  - The user wants RAG-style measures (DeepEval or Ragas): factual correctness against the ground
+    truth, faithfulness to what the roles read (from the JSONL), context recall and precision,
+    and answer relevancy.
+  - Non-functional: time, user wait, user answers and words read, tokens.
+  - Flow checks (order, learner each turn, leftover roles, deadlock) are fw's own tests and
+    trial, not evaluation measures.
+  - Open-ended counts of first-user stumbles are not measures, because they wobble between runs.
+  - LLM-judging libraries need an LLM API. `claude plugin eval` alone uses the Claude Code login,
+    but its judge sees only the output file (not the repo), the trace only as 12+12 messages, and
+    no multi-turn.
+  - Proposed next, awaiting the user's go: try DeepEval in dev/ with a small custom model class
+    that calls `claude -p`, on writ8's document with 2-3 ground-truth items. Check that it
+    computes correctness and faithfulness with reasons, and that 3 runs agree.
+  - Words to avoid: "what the user gets / pays" (said twice); say functional / non-functional,
+    or name the measure.
+- fw build: a one-shot agent (af3debc…) started from this session is building fw, the mock plugin,
+  tests and trials. The design is dev/fw/design.md. Messages say task, role and step; no numbers.
+  Developer docs go in dev/<plugin>/README.md.
