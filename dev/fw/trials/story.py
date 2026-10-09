@@ -162,7 +162,8 @@ class Run:
     def pty_conversation(self):
         sid = str(uuid.uuid4())
         self.log["conversations"].append(sid)
-        session = Session(self.repo, [*self.args(), "--session-id", sid], os.path.join(self.out, "events.jsonl"))
+        session = Session(self.repo, [*self.args(), "--session-id", sid], os.path.join(self.out, "events.jsonl"),
+                          checks.project_dir(self.repo))
         message = OPENING
         try:
             for _ in range(2 * MAX_TURNS):

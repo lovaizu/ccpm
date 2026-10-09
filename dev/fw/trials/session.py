@@ -18,6 +18,7 @@ import subprocess
 import threading
 import time
 
+QUIET = 45  # seconds with no JSONL written before a turn counts as ended
 TRUST = re.compile(r"Yes,?Itrustthisfolder", re.I)
 
 
@@ -26,8 +27,9 @@ def clean_env():
 
 
 class Session:
-    def __init__(self, cwd, args, events):
-        self.events, self.screen, self.alive = events, "", True
+    def __init__(self, cwd, args, events, records):
+        """`records` is the folder Claude Code writes the session's JSONL into."""
+        self.events, self.records, self.screen, self.alive = events, records, "", True
         master, slave = pty.openpty()
         self.proc = subprocess.Popen(["claude", *args], cwd=cwd, env={**clean_env(), "TERM": "xterm-256color"},
                                      stdin=slave, stdout=slave, stderr=slave, start_new_session=True)
@@ -82,13 +84,24 @@ class Session:
 
     def ended(self):
         """Whether the turn begun by the last message has ended: a Stop since it, with nothing left
-        running in the background, and no event for a few seconds after."""
+        running in the background, and no JSONL written for a while after. A role just sent a
+        message is not yet listed as running at that Stop, so the quiet is what tells."""
         events = self._read_events()[self.mark:]
         stops = [e for e in events if e.get("hook_event_name") == "Stop"]
         if not stops or events[-1].get("hook_event_name") != "Stop":
             return False
         running = [t for t in stops[-1].get("background_tasks") or [] if t.get("status") == "running"]
-        return not running and time.time() - os.path.getmtime(self.events) > 5
+        return not running and time.time() - max(self._last_write(), os.path.getmtime(self.events)) > QUIET
+
+    def _last_write(self):
+        newest = 0
+        for folder, _, files in os.walk(self.records):
+            for name in files:
+                try:
+                    newest = max(newest, os.path.getmtime(os.path.join(folder, name)))
+                except OSError:
+                    pass
+        return newest
 
     def wait(self, timeout, poll=None):
         """Wait for the turn to end; `poll` is called every few seconds and may return True to stop
