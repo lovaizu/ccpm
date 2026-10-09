@@ -31,8 +31,12 @@ def lines(path):
         return [(n, json.loads(l)) for n, l in enumerate(f, 1) if l.strip()]
 
 
+BASE = [os.path.expanduser("~/.claude/projects")]
+
+
 def short(path):
-    return os.path.relpath(path, os.path.expanduser("~/.claude/projects"))
+    """A JSONL's path from the run's own folder under ~/.claude/projects."""
+    return os.path.relpath(path, BASE[0])
 
 
 class Conversation:
@@ -96,6 +100,7 @@ class Run:
     def __init__(self, repo, log):
         self.repo, self.log = repo, log
         self.dir = project_dir(repo)
+        BASE[0] = self.dir
         other = f"{log.get('other')}.jsonl"
         files = [os.path.join(self.dir, n) for n in os.listdir(self.dir) if n.endswith(".jsonl") and n != other]
         self.conversations = sorted((Conversation(f) for f in files), key=lambda c: c.entries[0][1].get("timestamp", ""))
@@ -253,15 +258,26 @@ class Run:
                  + "; ".join(f"{t}: state at cut {s}, expected {w}, first step {g} at {at}" for t, s, w, g, at, _ in results))
 
     def none_left(self):
+        """At a pause or the end, every role the conversation started has replied to its last
+        message, as its own JSONL shows, or was stopped."""
         for i, c in enumerate(self.conversations):
             if self.log.get("mode") == "p" and i == 0 and self.log.get("cut"):
-                self.say(True, f"no role left working, conversation {i + 1}", "ended by the trial as a vanished conversation; not a pause")
+                self.say(True, f"no role left working, conversation {i + 1}",
+                         "ended by the trial as a vanished conversation, not a pause: not applicable")
                 continue
-            agents = talk.roles(c.path)
-            stopped = {c2["input"].get("task_id") for _, _, _, c2 in c.calls("TaskStop") if not c2["error"]}
-            left = [f"{a} ({v['path']}, waiting on {v['waiting']})" for a, v in agents.items() if v["waiting"] and a not in stopped]
-            self.say(not left, f"no role left working at the {'cut' if i == 0 else 'end'}, conversation {i + 1}",
-                     f"{short(c.path)}: {len(agents)} roles started, {len(stopped)} stopped; left: {left or 'none'}")
+            sub = os.path.join(c.path[:-6], "subagents")
+            stopped = {d["input"].get("task_id") for _, _, _, d in c.calls("TaskStop") if not d["error"]}
+            left, count = [], 0
+            for path, kind in self.roles.items():
+                if kind in AGENTS and os.path.dirname(path) == sub:
+                    count += 1
+                    said = self.exchange(path)
+                    agent = os.path.basename(path)[len("agent-"):-6]
+                    if said and said[-1][0] != "reply" and agent not in stopped:
+                        left.append(f"{short(path)} last sent {said[-1][1]!r}")
+            when = "the cut" if i == 0 and self.log.get("cut") else "the end"
+            self.say(not left, f"no role left working at {when}, conversation {i + 1}",
+                     f"{short(c.path)}: {count} roles, {len(stopped)} stopped; left: {left or 'none'}")
 
     def headers(self):
         missing, replies, bad = [], 0, []
@@ -303,7 +319,7 @@ class Run:
                 if d["name"] == "SendMessage" and wait.get(agent):
                     second.append(f"{short(c.path)}:{n}")
                 if d["name"] == "Agent":
-                    pending = [a for a, t in task_of.items() if t == task and wait.get(a)]
+                    pending = [a for a, t in task_of.items() if t == task and wait.get(a) in ("request", "go", "check")]
                     if pending:
                         early.append(f"{short(c.path)}:{n} while {pending} still answering")
                     task_of[agent] = task

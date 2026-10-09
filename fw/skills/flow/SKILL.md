@@ -78,9 +78,17 @@ Tasks that do not depend on each other run at the same time: start their roles t
 A turn is one role, started once, from request to OK. The task's folder is `<record>/<task>/`, with
 one CCS per role: `make.yaml`, `use.yaml`, `learn.yaml`.
 
-1. Write the role's CCS for this turn, each value a quoted string, keeping every entry the hooks
-   wrote (`turn`, `worked`, `made`, `work_before`, `conductor`) and leaving out the last turn's
-   `agreed`:
+1. Write the role's CCS for this turn in the form the hooks read, each component a list of
+   `type: "value"` entries:
+
+    ```yaml
+    focal_entities:
+      - work: "greeting.txt"
+      - receiver: "Sam, who reads the card once"
+    ```
+
+   Keep every entry the hooks wrote (`turn`, `worked`, `made`, `work_before`, `conductor`) and leave
+   out the last turn's `agreed`:
    - `make.yaml`: `focal_entities` `work` and `receiver`; `goal_orientation` `pass` (what the
      receiver can do with the work), and on a fix each `fix` (`path:line` and what happened there)
      and each `keep`; `retrieved_artifacts` `domain`, `steering` and each source; `constraints`
@@ -122,7 +130,7 @@ the user; never work around it.
 - When the task is done, write `<record>/open/{NN}-report-<task>.md`, `{NN}` one more than the
   highest number in `open/`: the pass condition, each difference with what happened, and how it
   ended (`→ fixed`, `→ let go: <reason>`, or `→ to the user`). Mark the task `[x]` in steering. Copy
-  the file whole into a commit message and delete it in that commit.
+  the file whole into a commit message and remove it with `git rm` in that commit.
 
 ### Pause and end
 

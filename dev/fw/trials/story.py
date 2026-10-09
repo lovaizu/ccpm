@@ -105,7 +105,7 @@ class Run:
 
     def stand_in(self, said):
         r = subprocess.run(["claude", "-p", STAND_IN.format(opening=OPENING, said=said), "--model", "opus",
-                            "--tools", "", "--setting-sources", ""], cwd=self.out, capture_output=True,
+                            "--tools", "", "--setting-sources", "", "--no-session-persistence"], cwd=self.out, capture_output=True,
                            text=True, env=clean_env(), stdin=subprocess.DEVNULL)
         return r.stdout.strip()
 

@@ -3,7 +3,8 @@
 In the conductor's JSONL, a role is started with the Agent tool and continued with SendMessage; its
 reply comes back as the Agent tool's result when it ran in the foreground, or else as a
 task-notification naming the agent: a user entry when the conductor was idle, and a queued one
-(`queue-operation`, `enqueue`) when it was busy, which reaches it with its next step. In the role's own JSONL, each message the conductor sent is a
+(`queue-operation`) when it was busy, which reaches it with its next step, or is removed from the
+queue unread when nothing waits on it; either way the role has replied. In the role's own JSONL, each message the conductor sent is a
 user entry, and each reply is the role's last text before the next message.
 """
 import json
@@ -34,7 +35,7 @@ def text(content):
 
 def notice(entry):
     """The text of a task-notification the entry brings to the conductor, or ""."""
-    if entry.get("type") == "queue-operation" and entry.get("operation") == "enqueue":
+    if entry.get("type") == "queue-operation":
         return entry.get("content") if isinstance(entry.get("content"), str) else ""
     content = (entry.get("message") or {}).get("content")
     return content if entry.get("type") == "user" and isinstance(content, str) else ""

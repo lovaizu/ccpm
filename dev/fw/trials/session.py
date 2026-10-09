@@ -14,12 +14,11 @@ import os
 import pty
 import re
 import select
-import signal
 import subprocess
 import threading
 import time
 
-TRUST = re.compile(r"trust (this|the files in this) folder", re.I)
+TRUST = re.compile(r"Yes,?Itrustthisfolder", re.I)
 
 
 def clean_env():
@@ -51,11 +50,15 @@ class Session:
         """A new folder asks once whether its files are trusted; the trial's own folder is."""
         deadline = time.time() + 60
         while time.time() < deadline:
-            plain = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", self.screen)
+            plain = re.sub(r"\s", "", re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", self.screen))
             if TRUST.search(plain):
+                os.write(self.master, b"\x1b[B")  # the first choice is "No, exit"
+                time.sleep(0.5)
                 os.write(self.master, b"\r")
+                self.screen = ""
+                time.sleep(5)
                 return
-            if "? for shortcuts" in plain or "bypass" in plain or ">" in plain[-200:]:
+            if "forshortcuts" in plain:
                 time.sleep(2)
                 return
             time.sleep(0.5)
@@ -115,10 +118,16 @@ class Session:
         return said
 
     def close(self):
-        self.alive = False
+        """Leave as a user would, then make sure the process is gone."""
         try:
-            os.killpg(self.proc.pid, signal.SIGTERM)
-        except ProcessLookupError:
-            pass
-        self.proc.wait(timeout=30)
+            os.write(self.master, b"/exit\r")
+            self.proc.wait(timeout=20)
+        except (OSError, subprocess.TimeoutExpired):
+            self.proc.terminate()
+            try:
+                self.proc.wait(timeout=20)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+                self.proc.wait()
+        self.alive = False
         os.close(self.master)
