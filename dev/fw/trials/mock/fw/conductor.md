@@ -3,6 +3,8 @@
 The user wants two questions answered for their friend Sam. Each answer is one task; the two do not
 depend on each other, so run their tasks at the same time.
 
+Each work goes at the root of the repository.
+
 | Task | Question | Work |
 |---|---|---|
 | sum | What is 1+1? | `sum.txt` |
