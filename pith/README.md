@@ -132,10 +132,6 @@ pith is in the plugin marketplace `lovaizu/ccpm`. In Claude Code, add the market
 
 Now you can use `/pith:up`.
 
-## How it is built
-
-Who uses the work, who judges it, and why pith is built that way, are in the [design of fw](../fw/docs/design.md), the base every plugin here is built on.
-
 ## License
 
 MIT. The full text is in [LICENSE](../LICENSE) at the root of the repository.
