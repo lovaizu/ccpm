@@ -41,8 +41,10 @@ STAND_IN = """You asked a tool, in English, for two cards for your friend Sam, w
 
 {opening}
 
-You know only that. Reply to what the tool just said as that user would: approve a plan or steering
-that fits what you asked; when asked whether to send something as an issue, answer no. When the tool
+You know only that, and you have no wishes about the kind of cards, their wording or how they are
+signed: whatever the tool proposes for those is fine with you. Reply to what the tool just said as
+that user would: approve a plan or steering that gives you two cards for Sam; when asked whether to
+send something as an issue, answer no. When the tool
 asks you nothing and only reports what it did, output exactly DONE. Output only your reply.
 
 The tool just said:
