@@ -368,3 +368,15 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   - Hooks block only role calls, never the user exchange or the end of a turn. A block always says
     what is missing.
   - Tests check that every state can go on or go back to the user.
+- (2026-10-09) Decided with the user:
+  - Roles are started once and held through messages that say task, role and step. The reply says
+    what it answers. Numbers are not used. No role is left working at a pause or at the end.
+  - The fw design is dev/fw/design.md. Each plugin has dev/<plugin>/README.md (developer guide) and
+    dev/<plugin>/design.md (why). <plugin>/README.md is for users, with a link for developers.
+    Developer rules move from .claude/rules/plugin.md into those files; the rules keep only
+    register, release and the structure check.
+  - One PR per plugin: fw first, then pith, writ and rn.
+  - Unneeded things are deleted. rn-try #74 and #75 are closed, with their branches deleted. The
+    stray coverage file is untracked (42d853d). The worker's old trial JSONL is deleted.
+  - Next: the evaluation method. fw is being built by a one-shot agent started from this session;
+    fix-rn-3f takes no more work.
