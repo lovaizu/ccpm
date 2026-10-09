@@ -405,3 +405,16 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
 - fw build: a one-shot agent (af3debc…) started from this session is building fw, the mock plugin,
   tests and trials. The design is dev/fw/design.md. Messages say task, role and step; no numbers.
   Developer docs go in dev/<plugin>/README.md.
+- (2026-10-09) The fw build agent reports done, at 50d8622.
+  - Checked by me: 40 tests pass (the report said 47), CI green, 100% line coverage.
+  - Its trial JSONL was deleted, so I rerun `dev/fw/trials/story.py --mode p` into
+    scratchpad/fwp1 (log: scratchpad/fwp1.log) to check its claims. Its claims: -p 16/16; pty 15/16,
+    failing on a conductor write to Claude Code's session scratchpad (msg.txt for a commit message).
+  - Sizes: fw/skills/flow/SKILL.md is 1,499 words; each agent is about 350.
+  - Open points, with my intended decisions, not yet written into the design:
+    1. A new turn's CCS keeps no hook entries from the last turn, because the recheck first user saw
+       the last use's reads.
+    2. The session scratchpad counts as outside the repository. The conductor commits with a message
+       on stdin.
+    3. A stopped role's progress goes in episodic_trace, and where to resume goes in predictive_cue.
+    4. One Agent launch per turn, from request to OK; a fix or recheck is a new launch.
