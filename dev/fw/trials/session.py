@@ -27,11 +27,12 @@ def clean_env():
 
 
 class Session:
-    def __init__(self, cwd, args, events, records):
-        """`records` is the folder Claude Code writes the session's JSONL into."""
+    def __init__(self, cwd, args, events, records, env=None):
+        """`records` is the folder Claude Code writes the session's JSONL into; `env` is added to the
+        session's environment."""
         self.events, self.records, self.screen, self.alive = events, records, "", True
         master, slave = pty.openpty()
-        self.proc = subprocess.Popen(["claude", *args], cwd=cwd, env={**clean_env(), "TERM": "xterm-256color"},
+        self.proc = subprocess.Popen(["claude", *args], cwd=cwd, env={**clean_env(), "TERM": "xterm-256color", **(env or {})},
                                      stdin=slave, stdout=slave, stderr=slave, start_new_session=True)
         os.close(slave)
         self.master = master

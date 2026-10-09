@@ -6,7 +6,7 @@ by code from the JSONL of every conversation and role, and from the CCS (checks.
     python3 dev/fw/trials/story.py --mode p --out <new dir outside the repository>
     python3 dev/fw/trials/story.py --mode pty --out <new dir outside the repository>
 
-`p` runs each user turn with `claude -p`, and clears the conversation by ending it once the greeting
+`p` runs each user turn with `claude -p`, and clears the conversation by ending it once the sum
 is fixed. `pty` drives a real interactive session (session.py), where the user tells the conductor
 to stop for the day at that point and then types /clear. Everything lands in <out>/; the JSONL in
 ~/.claude/projects/<the run's repository, encoded>/. A run takes many minutes.
@@ -31,19 +31,19 @@ import checks  # noqa: E402
 from session import Session, clean_env  # noqa: E402
 
 PLUGINS = ["--plugin-dir", os.path.join(REPO, "fw"), "--plugin-dir", os.path.join(TRIALS, "mock")]
-OPENING = "/mock:up Write two cards for my friend Sam."
+OPENING = "/mock:up Answer two questions for my friend Sam."
 RESUME = "/mock:up"
 PAUSE = "Let's stop here for today. I will clear the conversation and come back to it later."
 OTHER = ("Write the file notes/open/01-report-notes.md with the single line 'hi'. Then start an "
          "Explore agent in the background to list the files under notes/, and when it has replied, send "
          "it a message with SendMessage asking how many files it found. Report its two answers.")
-STAND_IN = """You asked a tool, in English, for two cards for your friend Sam, with these words:
+STAND_IN = """You asked a tool, in English, to answer two questions for your friend Sam, with these words:
 
 {opening}
 
-You know only that, and you have no wishes about the kind of cards, their wording or how they are
-signed: whatever the tool proposes for those is fine with you. Reply to what the tool just said as
-that user would: approve a plan or steering that gives you two cards for Sam; when asked whether to
+You know only that, and you have no wishes about the questions or how the answers are written:
+whatever the tool proposes for those is fine with you. Reply to what the tool just said as that user
+would: approve a plan or steering that answers two questions for Sam; when asked whether to
 send something as an issue, answer no. When the tool
 asks you nothing and only reports what it did, output exactly DONE. Output only your reply.
 
@@ -51,6 +51,8 @@ The tool just said:
 
 {said}"""
 MAX_TURNS = 8
+# The conductor's roles run on a small model, even where the conductor names one: the trial checks the flow.
+ROLES = {"CLAUDE_CODE_SUBAGENT_MODEL": "haiku", "CLAUDE_CODE_SUBAGENT_MODEL_FORCE": "1"}
 
 
 def settings(out, name="settings.json", log_turns=True):
@@ -84,7 +86,7 @@ def setup(out):
 
 
 def made_twice(repo):
-    path = os.path.join(repo, ".mock", "greeting", "make.yaml")
+    path = os.path.join(repo, ".mock", "sum", "make.yaml")
     return os.path.isfile(path) and sum(1 for e in ccs.load(path)["retrieved_artifacts"] if e[0] == "made") >= 2
 
 
@@ -128,14 +130,14 @@ class Run:
                "--session-id" if new else "--resume", sid]
         self.say("user", message)
         proc = subprocess.Popen(cmd, cwd=self.repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                                env=clean_env(), stdin=subprocess.DEVNULL, start_new_session=True)
+                                env={**clean_env(), **ROLES}, stdin=subprocess.DEVNULL, start_new_session=True)
         while proc.poll() is None:
             if watch and made_twice(self.repo):
                 time.sleep(10)
                 os.killpg(proc.pid, signal.SIGTERM)
                 proc.wait()
                 self.snapshot()
-                self.say("trial", "The conversation was ended here, as if cleared, once the greeting was fixed.")
+                self.say("trial", "The conversation was ended here, as if cleared, once the sum was fixed.")
                 return None
             time.sleep(3)
         out, err = proc.communicate()
@@ -165,7 +167,7 @@ class Run:
         sid = str(uuid.uuid4())
         self.log["conversations"].append(sid)
         session = Session(self.repo, [*self.args(), "--session-id", sid], os.path.join(self.out, "events.jsonl"),
-                          checks.project_dir(self.repo))
+                          checks.project_dir(self.repo), ROLES)
         message = OPENING
         try:
             for _ in range(2 * MAX_TURNS):

@@ -1,9 +1,10 @@
 # What the maker makes
 
-Write the work as exactly these lines, and nothing else:
+Write the work as exactly this one line, and nothing else:
 
-- `greeting.txt`: `Hello Sam!`, then `from: mock`
-- `farewell.txt`: `Goodbye Sam!`, then `from: mock`
+- `sum.txt`: `1+1=3`
+- `colour.txt`: `green`
 
-When `goal_orientation` holds a `fix`, add the line `date: 2026-10-09` at the end of the work, if it
-is not there yet. On request, say only which lines you will write.
+When `goal_orientation` holds a `fix`, write the line the fix says instead. On request, say only
+that you will write the answer to the question. On go, reply with the work's path only, never its
+lines.

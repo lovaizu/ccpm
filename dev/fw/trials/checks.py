@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
 import ccs  # noqa: E402
 import talk  # noqa: E402
 
-TASKS = {"greeting": ["make", "use", "learn", "make", "use", "learn"], "farewell": ["make", "use", "learn"]}
+TASKS = {"sum": ["make", "use", "learn", "make", "use", "learn"], "colour": ["make", "use", "learn"]}
 NEXT_ROLE = {"fill": "make", "align-make": "make", "make": "make", "align-use": "use", "use": "use",
              "align-recheck": "use", "recheck": "use", "align-learn": "learn", "learn": "learn", "judge": None}
 AGENTS = set(ccs.ROLES.values())
@@ -154,10 +154,10 @@ class Run:
                      ", ".join(f"use #{turns[i][0]} → {'learn #' + str(turns[i + 1][0]) if i + 1 < len(turns) else 'none'}" for i in uses))
 
     def content_fixed(self):
-        """The greeting's content learning is written as a fix after the learner of the first turn
+        """The sum's content learning is written as a fix after the learner of the first turn
         was started and before the next maker was, that maker made it, and the recheck no longer
         stumbles."""
-        turns = self.turns("greeting")
+        turns = self.turns("sum")
         learn = next((t for t in turns if t[1] == "learn"), None)
         text = self.reply_to(learn[4], "go") if learn else ""
         fixed_turn = next((t for t in turns if learn and t[0] > learn[0] and t[1] == "make"), None)
@@ -165,22 +165,22 @@ class Run:
         writes = []
         for c in self.conversations:
             steps = [s[0] for s in c.fw() if s[2] == "request"]
-            start = next((s[0] for s in c.fw() if s[2] == "request" and s[3] == ".mock/greeting/learn.yaml"), None)
+            start = next((s[0] for s in c.fw() if s[2] == "request" and s[3] == ".mock/sum/learn.yaml"), None)
             if start is None:
                 continue
-            end = next((n for n in steps if n > start and n in [s[0] for s in c.fw() if s[3] == ".mock/greeting/make.yaml"]), 10 ** 9)
+            end = next((n for n in steps if n > start and n in [s[0] for s in c.fw() if s[3] == ".mock/sum/make.yaml"]), 10 ** 9)
             for n, ts, _, call in c.calls():
                 body = json.dumps(call["input"])
-                if start < n < end and call["name"] in ("Write", "Edit") and call["input"].get("file_path", "").endswith("greeting/make.yaml") \
-                        and "- fix:" in body and "date" in body:
+                if start < n < end and call["name"] in ("Write", "Edit") and call["input"].get("file_path", "").endswith("sum/make.yaml") \
+                        and "- fix:" in body and "1+1=2" in body:
                     writes.append(f"{short(c.path)}:{n}")
-        with open(os.path.join(self.repo, "greeting.txt")) as f:
+        with open(os.path.join(self.repo, "sum.txt")) as f:
             work = f.read()
         recheck_said = self.reply_to(recheck[4], "go") if recheck else ""
-        ok = "date" in text and fixed_turn and fixed_turn[3] and writes and "date: 2026-10-09" in work and "No stumble" in recheck_said
+        ok = "1+1=2" in text and fixed_turn and fixed_turn[3] and writes and work.strip() == "1+1=2" and "No stumble" in recheck_said
         self.say(bool(ok), "content learning fixed in that turn",
                  f"learner {short(learn[4]) if learn else '-'} replied to go {text[:160]!r}; fix written to make.yaml at {writes}; "
-                 f"maker #{fixed_turn[0] if fixed_turn else '-'} made it; greeting.txt {work!r}; recheck replied {recheck_said[:80]!r}")
+                 f"maker #{fixed_turn[0] if fixed_turn else '-'} made it; sum.txt {work!r}; recheck replied {recheck_said[:80]!r}")
 
     def reply_to(self, path, kind):
         """The whole text of the role's reply to the conductor's message of that kind."""
@@ -354,7 +354,7 @@ class Run:
                 task = found[1].split("/")[1]
                 stamps = [e.get("timestamp") for _, e in lines(path) if e.get("timestamp")]
                 spans.setdefault(task, []).append((stamps[0], stamps[-1], short(path)))
-        pairs = [(a, b) for a in spans.get("greeting", []) for b in spans.get("farewell", []) if a[0] < b[1] and b[0] < a[1]]
+        pairs = [(a, b) for a in spans.get("sum", []) for b in spans.get("colour", []) if a[0] < b[1] and b[0] < a[1]]
         self.say(bool(pairs), "the two tasks' roles ran at the same time",
                  f"{pairs[0][0][2]} {pairs[0][0][0]}–{pairs[0][0][1]} with {pairs[0][1][2]} {pairs[0][1][0]}–{pairs[0][1][1]}" if pairs else "no overlap")
 
@@ -384,7 +384,7 @@ class Run:
                     outside.append(f"{short(path)}:{n} {target}")
         status = subprocess.run(["git", "status", "--short", "--untracked-files=all"], cwd=self.repo, capture_output=True, text=True).stdout
         changed = sorted({l[3:].split("/")[0] for l in status.splitlines()})
-        ok = not stops and wrote and sends and not touched and not outside and set(changed) <= {".mock", "greeting.txt", "farewell.txt", "notes"}
+        ok = not stops and wrote and sends and not touched and not outside and set(changed) <= {".mock", "sum.txt", "colour.txt", "notes"}
         self.say(bool(ok), "no effect on another session in the same repository, nor outside it",
                  f"other session: hook stops {stops or 'none'}, its Write {wrote}, its SendMessage {sends}; CCS naming it {touched or 'none'}; "
                  f"writes outside the repository {outside or 'none'}; changed in the repository {changed}")

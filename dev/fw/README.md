@@ -39,11 +39,12 @@ CI runs them on every push and fails on any line of `fw/scripts/` they do not ru
 
 ## Trials
 
-`dev/fw/trials/story.py` runs the mock plugin as its user would, with a stand-in user: the two
-cards are made in parallel, the greeting stumbles once and is fixed and rechecked, the conversation
-is cleared partway and resumed, and another session works in the same repository meanwhile. It then
-checks fw's flow by code (`checks.py`) from the JSONL of every conversation and role and from the
-CCS, and prints PASS or FAIL for each check with the JSONL file and entry that shows it.
+`dev/fw/trials/story.py` runs the mock plugin as its user would, with a stand-in user: two trivial
+questions are answered in parallel, the maker always answers 1+1=3 first so the first user stumbles
+once and the answer is fixed and rechecked, the conversation is cleared partway and resumed, and
+another session works in the same repository meanwhile. It then checks fw's flow by code
+(`checks.py`) from the JSONL of every conversation and role and from the CCS, and prints PASS or
+FAIL for each check with the JSONL file and entry that shows it.
 
 ```
 python3 dev/fw/trials/story.py --mode p --out <new directory outside the repository>
@@ -53,5 +54,6 @@ python3 dev/fw/trials/checks.py <that directory>      check a finished run again
 
 `--mode p` runs each user turn with `claude -p` and clears the conversation by ending it;
 `--mode pty` drives a real interactive session (`session.py`), where the user pauses and types
-`/clear`. Runs use `--model opus` and a settings file that allows only the tools the run needs.
+`/clear`. The conductor and the stand-in use `--model opus` and the roles Haiku, so a run checks
+the flow quickly; a settings file allows only the tools the run needs.
 Delete the output directory, and `~/.claude/projects/<its repository, encoded>/`, when done.
