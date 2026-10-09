@@ -240,7 +240,8 @@ class Run:
 
     def issue_question(self):
         talk_log = self.log.get("talk", [])
-        asked = [i for i, t in enumerate(talk_log) if t["who"] == "conductor" and re.search(r"\bissue", t["text"], re.I)]
+        asked = [i for i, t in enumerate(talk_log) if t["who"] == "conductor" and re.search(r"\bissue", t["text"], re.I)
+                 and "?" in t["text"]]
         answer = talk_log[asked[0] + 1]["text"] if asked and asked[0] + 1 < len(talk_log) else ""
         gh = [f"{short(p)}:{n}" for p in self.all_jsonl() for n, e in lines(p) for b in talk.blocks(e)
               if b.get("type") == "tool_use" and b.get("name") == "Bash" and "gh issue" in (b.get("input") or {}).get("command", "")]
@@ -377,12 +378,10 @@ class Run:
         outside = []
         root = os.path.realpath(self.repo) + os.sep
         for path in self.all_jsonl():
-            for n, e in lines(path):
-                for b in talk.blocks(e):
-                    if b.get("type") == "tool_use" and b.get("name") in ("Write", "Edit", "NotebookEdit"):
-                        target = (b.get("input") or {}).get("file_path") or ""
-                        if not os.path.realpath(target).startswith(root):
-                            outside.append(f"{short(path)}:{n} {target}")
+            for n, _, _, d in Conversation(path).calls():
+                target = d["input"].get("file_path") or ""
+                if d["name"] in ("Write", "Edit", "NotebookEdit") and not d["error"] and not os.path.realpath(target).startswith(root):
+                    outside.append(f"{short(path)}:{n} {target}")
         status = subprocess.run(["git", "status", "--short", "--untracked-files=all"], cwd=self.repo, capture_output=True, text=True).stdout
         changed = sorted({l[3:].split("/")[0] for l in status.splitlines()})
         ok = not stops and wrote and sends and not touched and not outside and set(changed) <= {".mock", "greeting.txt", "farewell.txt", "notes"}
