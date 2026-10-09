@@ -425,3 +425,14 @@ document (#37), rounds on the same remark, trusting the maker's account, and hoo
   first user finds it), runs the mock roles on a small model (Haiku), and then reruns both trial
   modes, keeping the JSONL for my check. After that: write open points 1-4 above into the design,
   then the evaluation method (the DeepEval trial, awaiting the user's go).
+- (2026-10-09) fw trial rerun with trivial mock tasks (c36296e, 330e431, b48cece; CI green). Mock roles run
+  on Haiku via CLAUDE_CODE_SUBAGENT_MODEL=haiku and CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1 on the
+  conductor's process only. A planted wrong answer (1+1=3) did not hold: the maker refused it and the
+  conductor agreed, which is the design working. The stumble is now a need only the receiver knows
+  (use.md only: Sam takes the answer alone, `2`). Result: p 16/16 (fw-p3), pty 14/16 (fw-pty2); output
+  and JSONL in this session's scratchpad (fw-p3, fw-pty2, older runs beside them).
+  - pty FAIL 1: a Haiku learner's reply lacked its header (:49); the conductor asked again (:50).
+    Seen once; left until it shows again.
+  - pty FAIL 2: the resumed conductor wrote a commit message to Claude Code's session scratchpad and
+    used `git commit -F` (c9300921…:199-202), after the shell refused an append. Same as open point 2.
+  - Next: write open points 1-4 into dev/fw/design.md, then the evaluation method.
