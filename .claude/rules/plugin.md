@@ -18,6 +18,10 @@ official plugins.
   discussion, and settle each finding by fixing the decision or principle it comes from.**
   - Rationale: a reading after every fix turns each finding into a patch, and the document drifts
     from its aim while every reading passes.
+- **Write each document, and make each fix to it, with its essentials open, holding the change to
+  their questions.**
+  - Rationale: the first user reads once, so a fix made after that reading is checked by nothing
+    else; turn's README opening grew with additions made without the essentials (2026-10-11).
 - **Put each prompt through writ's `prompt.md`, by running it, before the plugin's trials.**
   - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds the
     prompts' slips, not whether the plugin keeps its promises.
