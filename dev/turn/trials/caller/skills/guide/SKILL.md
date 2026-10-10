@@ -1,9 +1,11 @@
 ---
 name: guide
-description: Has turn write SETUP.md, the guide a newcomer follows to start this repository's app.
+description: Has turn write SETUP.md, the guide a newcomer follows to start this repository's app. Takes an optional `<in> <out>` to go on from an earlier record.
 ---
 
-Write `.caller/1.yaml` with exactly this, unless it exists:
+With no arguments, write `.caller/1.yaml` with exactly this, unless it exists, and use `in:
+.caller/1.yaml` and `out: .caller/2.yaml`. With arguments `$ARGUMENTS`, use the first as `in` and the
+second as `out`.
 
 ```yaml
 focal_entities:
@@ -14,15 +16,15 @@ goal_orientation:
   - use: "手順書を上から順に実行する"
 constraints:
   - language: "日本語"
+retrieved_artifacts:
+  - source: "docs/ops.md"
 ```
 
-Then call the `turn:up` skill with these three lines as its arguments:
+Call the `turn:up` skill with three lines as its arguments: `in: <in>`, `out: <out>`, and
+`domain: ${CLAUDE_PLUGIN_ROOT}/domain`.
 
-```
-in: .caller/1.yaml
-out: .caller/2.yaml
-domain: ${CLAUDE_PLUGIN_ROOT}/domain
-```
+When it returns, read only `<out>`, not the work, and act on its `next`:
 
-When it returns, read only `.caller/2.yaml`, not the work, and say in one line what you do next:
-finish, ask the user its `gap`, or call `turn:up` again.
+- `done`: commit the work it names with the message `guide`, and say so.
+- `ask the user`: show the user each `gap` and stop.
+- `to the caller: ...` or `stopped: ...`: say what it says and stop.
