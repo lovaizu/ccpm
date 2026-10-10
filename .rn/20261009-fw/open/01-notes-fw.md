@@ -12,11 +12,21 @@ pith, writ and rn are rebuilt one at a time, each in its own pull request: #51 (
   patched. I judge; workers only report facts and do decided fixes. The old code is material only.
 - Order: ben README + design, turn README + design (Japanese for review) → the user approves on
   PR #55 → minimal implementation → ben checks → English before merge → the user merges.
-- Done: ben/README.md, turn/README.md, dev/ben/design.md, dev/turn/design.md written, read by writ
-  first users, and their fixes applied. In ben, 成果物 is what the plugin hands its user and 結果 is
-  ben's result file, in the README too; changing only the run count keeps the same scene.
-  Implementation differences the first users saw are for the rebuild, not doc fixes.
-- Next: the user reviews the four documents on PR #55.
+- Done: the four documents written, read by writ first users, and their fixes applied. PR #55
+  holds only them, the plugin rules and this note, squashed onto main; the old implementation is
+  gone from the branch. Checked against official best practice (the user: every rule, the way
+  plugins are built and each plugin follow best practice and meet the purpose simply): trials
+  replaced by checking with ben; ben does not run on `claude plugin eval` (single turn, no user
+  answering, no comparison with an earlier version).
+- Remaining, in order:
+  1. The user decides where the three rules every plugin follows live (proposed: ben/README.md
+     only; plugin.md points to it). They are in both now.
+  2. Put ben/README.md, turn/README.md, both designs and .claude/rules/plugin.md through /writ:up.
+     The edits made after the first users read them have not been through writ.
+  3. The user reviews and approves the four documents on PR #55.
+  4. Minimal implementation from them; check with ben; trace a shortfall to its cause.
+  5. English before merge; register in marketplace.json and the root README; the user merges.
+  6. Then #52 pith, #53 writ, #54 rn, each in its own pull request.
 - Decided: name ben (not jig); BEN_PYTHON or ~/.ben/bin/python; /ben:check <plugin> writes a scene,
   /ben:check <scene file> checks again; a scene lives in the checked plugin's git repository.
 - Decided: "words read" is counted as characters.
