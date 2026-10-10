@@ -57,7 +57,7 @@ rebuilt on turn afterwards (#52, #53, #54); ben is drawn out of the rules once t
 # Tasks
 
 ### [x] #1: Plan sign-off
-### [ ] #2: turn's README and design hold every decision
+### [x] #2: turn's README and design hold every decision
 
 Purpose: the decisions of 2026-10-06 to 10-10, read in time order in their latest form, are in turn's
 README and design, so turn is built from them alone.
@@ -69,7 +69,7 @@ Completion criteria:
 - Attractive quality: each decision about turn is found in its README or design.
 - Must-be quality: nothing about ben is left in them, and no word the user ruled out is used.
 
-### [ ] #3: Plugin rules in ccpm
+### [x] #3: Plugin rules in ccpm
 
 Purpose: `.claude/rules/plugin.md` is back from git and says how a plugin here is built, tested,
 tried and released, with no reference to ben.
@@ -81,10 +81,27 @@ Completion criteria:
 - Attractive quality: building turn needs nothing the rules do not say.
 - Must-be quality: each rule has its reason.
 
-### [ ] #4: turn built and tried
+### [ ] #4: README and design through the viewpoints
 
-Purpose: turn's smallest form, built from its README and design, carries a task with a pitfall
-through a small calling plugin in a trial, and what happened is read from the conversation records.
+Purpose: turn's README and design are read once each, as their readers would, by someone who does
+not know the discussion, with writ's essentials files (`doc.md` with `readme.md` or `design.md`), and
+every finding is judged against each document's aim.
+
+Serves: A1, A2, M2
+
+Completion criteria:
+
+- Attractive quality: every question has a Good, checked at its place in the document, or a More
+  settled by fixing the decision or principle it comes from.
+- Must-be quality: what a principle already settles is left to the implementation, not written in.
+
+### [ ] #5: Design sign-off
+
+### [ ] #6: turn built and tried
+
+Purpose: turn's smallest form is built from the signed-off README and design; its prompts go through
+`prompt.md` before any trial; a trial carries a task with a pitfall through a small calling plugin,
+and what happened is read from the conversation records.
 
 Serves: A1, A2, M1, M3
 
@@ -93,8 +110,6 @@ Completion criteria:
 - Attractive quality: in the trial, the receiver uses the work once without stumbling, and the
   calling plugin decides its next move from the returned record alone.
 - Must-be quality: tests cover every line, and the plugin and marketplace validate.
-
-### [ ] #5: Design sign-off
 
 # Not yet specified
 
