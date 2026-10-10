@@ -31,8 +31,13 @@ official plugins.
 - **Write what the plugin runs on its users' machines in Python 3 with the standard library only, on
   3.9 or later, and say so in its README.** A script that only calls an existing tool may be sh.
   - Rationale: what the plugin makes can be wrong, so it is held by tests; python3 is wherever git
-    is, and Node.js may not be, and the user installs nothing more.
-- **When python3 is missing, stop and say how to install it.**
+    is, and Node.js may not be.
+- **Keep what the plugin's agents read and write as data in JSON, handled with `jq`, and say so in
+  its README.**
+  - Rationale: an agent reads or changes only the part it needs instead of the whole file, with a
+    tool it already knows; the official hooks docs and plugins use `jq` the same way, and a model is
+    less likely to overwrite JSON wrongly than Markdown.
+- **When python3 or jq is missing, stop and say how to install it.**
   - Rationale: a skipped check goes unnoticed.
 - **Put each hook check in its own named file, one entry file per hook event**, as the official
   `hookify` does.
