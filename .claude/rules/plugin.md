@@ -7,7 +7,22 @@ is shaped as it is, in [dev/turn/design.md](../../dev/turn/design.md).
 Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces) and the
 official plugins.
 
-## 1. Code and tests
+## 1. Order of work
+
+- **Write the README and the design first, put each through writ's essentials (`doc.md` with
+  `readme.md` or `design.md`), and have the user sign off the design before any code or prompt is
+  written.**
+  - Rationale: the code is derived from the documents; code written first stands on a measure no one
+    has settled, and turn's first build had to be thrown away for it (2026-10-10).
+- **Have each document read once, as its reader would, by a first user who does not know the
+  discussion, and settle each finding by fixing the decision or principle it comes from.**
+  - Rationale: a reading after every fix turns each finding into a patch, and the document drifts
+    from its aim while every reading passes.
+- **Put each prompt through writ's `prompt.md`, by running it, before the plugin's trials.**
+  - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds the
+    prompts' slips, not whether the plugin keeps its promises.
+
+## 2. Code and tests
 
 - **Keep a plugin's README for its users, and its design and all its builders need in
   `dev/<plugin>/`.**
@@ -44,13 +59,13 @@ official plugins.
   - Rationale: pull requests and pushes a run makes stay out of every repository people use, and
     two runs at once would mix in it.
 
-## 2. Structure check
+## 3. Structure check
 
 - **Pass both `claude plugin validate <plugin-path> --strict` and `claude plugin validate
   <marketplace-root> --strict`.**
   - Rationale: a malformed manifest fails for every user at install, before any behavior is reached.
 
-## 3. Register
+## 4. Register
 
 - **Add every plugin to `.claude-plugin/marketplace.json`** — one entry under `plugins` with `name`,
   `description`, `source` (e.g. `./rn`), and `category`. This is what Claude Code reads to install it.
@@ -59,7 +74,7 @@ official plugins.
 - **Change the two together** when a plugin is added, renamed, or removed.
   - Rationale: a plugin counts as shipped only once both the machine and a human reader can reach it.
 
-## 4. Release
+## 5. Release
 
 ### Version number
 

@@ -17,6 +17,12 @@
       "description": "Makes a document read as if a person wrote it for its reader, so you can hand it on without rereading it and judge it from the report alone.",
       "source": "./writ",
       "category": "productivity"
+    },
+    {
+      "name": "turn",
+      "description": "Hands one task of a plugin that has AI make something to its end: the work is made, used by an agent that knows nothing of the talk, and fixed where it stumbled, and the plugin decides its next move from the returned record without reading the work.",
+      "source": "./turn",
+      "category": "development"
     }
   ]
 }
