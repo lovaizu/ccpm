@@ -72,7 +72,7 @@ rebuilt on them afterwards (#52, #53, #54).
 # Tasks
 
 ### [x] #1: Plan sign-off
-### [x] #3: ben holds plugin delivery
+### [ ] #3: ben holds plugin delivery
 
 Purpose: ben's README and design hold everything to deliver a plugin, laid out from the scope's
 people, roles and dependencies, so nothing else is needed.
