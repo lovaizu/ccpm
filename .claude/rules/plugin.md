@@ -33,15 +33,10 @@ official plugins.
 - **Have the tests run every line the plugin runs itself, and delete a line no test has a reason to
   run.** `# pragma: no cover`, with its reason beside it, only where whether a line runs depends on
   an environment the tests cannot make. CI counts the lines on every push and fails on any not run.
-- **Keep the code that runs the plugin as its user would in `dev/<plugin>/trials/`, out of the line
-  count, and run it on the models the plugin's agents name, never a smaller one.**
-  - Rationale: CI cannot start Claude Code, so each run is its own check; a smaller model's slips
-    are not the plugin's.
-- **Judge a trial from the JSONL of every conversation and agent it started, not from its outcome
-  alone.**
-  - Rationale: the outcome shows that something went wrong, the records show where.
-- **Run a trial or a scene that needs a real GitHub repository in the private `lovaizu/rn-try`, one
-  at a time.**
+- **Check what a plugin promises its users with ben, as [ben/README.md](../../ben/README.md) says.**
+  - Rationale: CI cannot start Claude Code, so whether users get what the README promises is
+    checked by running the plugin as they would, one way for every plugin.
+- **Run a scene that needs a real GitHub repository in the private `lovaizu/rn-try`, one at a time.**
   - Rationale: pull requests and pushes a run makes stay out of every repository people use, and
     two runs at once would mix in it.
 
