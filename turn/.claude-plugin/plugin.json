@@ -1,0 +1,8 @@
+{
+  "name": "turn",
+  "description": "Hands one task of a plugin that has AI make something to its end: a maker makes it, a first user who knows nothing of the talk uses it, a learner learns from each use, and only what they stumbled on is fixed. The plugin passes a record of the task in and decides its next move from the new record it gets back, without reading the work.",
+  "version": "0.1.0",
+  "author": {
+    "name": "lovaizu"
+  }
+}

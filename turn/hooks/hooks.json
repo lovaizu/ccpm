@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Task|SendMessage",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null || { grep -q '\"subagent_type\": *\"turn:' || exit 0; echo 'turn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\""
+          }
+        ]
+      }
+    ]
+  }
+}
