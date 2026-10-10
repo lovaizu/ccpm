@@ -1,6 +1,6 @@
 ---
 rn: 0.9.0
-pr: https://github.com/lovaizu/ccpm/pull/55
+pr: https://github.com/lovaizu/ccpm/pull/57
 status: running
 artifact-language: English; the documents under review are Japanese until they are put into English before merge
 conversation-language: Japanese
