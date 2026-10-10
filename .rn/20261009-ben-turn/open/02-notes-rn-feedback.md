@@ -48,3 +48,19 @@ the viewpoints and the design sign-off, then rewrote the README and design from 
 use. Each time the ideal the user had already given (README as a scenario, design as intent) was
 not set down before writing. The hypothesis stands, but saying it was not enough: the first move on
 a deliverable has to be writing its ideal down, from the user's decisions, before any other work.
+
+## What the second failure showed (2026-10-10, asked by the user without bias)
+
+- The conductor could not say in its own words how turn is used until the user asked: what the
+  plugin's author writes and what happens to that plugin's user. It wrote the README without that.
+- Every check (essentials, tests, trials) takes the README and design as right, so all passed while
+  the README's promise itself was off.
+- Most of what had been decided was about turn's inside (the record, the roles, resuming). The
+  author's and user's experience was never settled, yet "turn is settled" was read by both the user
+  and the conductor as if it were.
+- A lesson written as a rule did not change what the conductor did: it broke this note's own
+  hypothesis the same day.
+
+Revised hypothesis, held by order rather than by a rule: the first thing made for a deliverable is a
+concrete scene of about five lines, what its user does and what happens to them, and nothing else is
+made until the user agrees to it. A miss then costs those lines, not a build.
