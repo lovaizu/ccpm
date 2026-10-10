@@ -20,9 +20,11 @@ def main():
     calls = transcript.calls(items, start) if start is not None else []
     last = max([i for i, (w, a) in enumerate(calls) if w == "learner"], default=-1)
     print(f"conversation: {path}")
+    shown = set()
     for what, aid in calls[last + 1:]:
-        if what != "made" and aid:
-            print(f"{what}: {transcript.agent_path(path, aid)}")
+        if aid and aid not in shown:
+            shown.add(aid)
+            print(f"{'maker' if what == 'made' else what}: {transcript.agent_path(path, aid)}")
     return 0
 
 

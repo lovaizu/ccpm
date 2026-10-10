@@ -2,7 +2,7 @@ import unittest
 
 import harness  # noqa: F401
 import ccs
-from checks import handed, order
+from checks import handed, order, returned
 
 
 class Record(unittest.TestCase):
@@ -52,6 +52,46 @@ class Order(unittest.TestCase):
                 self.assertEqual(len(got), len(want))
                 for w, g in zip(want, got):
                     self.assertIn(w, g)
+
+
+class Returned(unittest.TestCase):
+    HANDED = ccs.load(harness.RECORD)
+
+    def check(self, extra):
+        return " ".join(returned.check(self.HANDED, ccs.load(harness.RECORD + extra)))
+
+    def test_a_record_in_the_agreed_form_passes(self):
+        # Given
+        extra = ('goal_orientation:\n  - difference: "x → to the caller: y"\n'
+                 'predictive_cue:\n  - next: "to the caller: y"\n')
+        # When / Then
+        self.assertEqual(self.check(extra), "")
+
+    def test_each_way_out_of_the_agreed_form_is_named(self):
+        cases = [
+            ('constraints:\n  - difference: "x → fixed"\npredictive_cue:\n  - next: "done"\n',
+             "belongs under `goal_orientation`"),
+            ('goal_orientation:\n  - difference: "no difference"\npredictive_cue:\n  - next: "done"\n',
+             "must end with"),
+            ('predictive_cue:\n  - next: "done"\n  - next: "done"\n', "must be one line"),
+            ('uncertainty_signal:\n  - gap: "which port?"\npredictive_cue:\n  - next: "done"\n',
+             "so `next` is `ask the user`"),
+            ('goal_orientation:\n  - difference: "x → to the caller: y"\npredictive_cue:\n  - next: "done"\n',
+             "so `next` is `to the caller"),
+        ]
+        for extra, want in cases:
+            with self.subTest(want=want):
+                # Given / When / Then
+                self.assertIn(want, self.check(extra))
+
+    def test_a_line_handed_in_and_lost_is_named(self):
+        # Given
+        parts = ccs.load(harness.RECORD.replace('  - language: "English"\n', "") +
+                         'predictive_cue:\n  - next: "done"\n')
+        # When
+        got = returned.check(self.HANDED, parts)
+        # Then
+        self.assertIn("lost `language: English`", got[0])
 
 
 class Handed(unittest.TestCase):

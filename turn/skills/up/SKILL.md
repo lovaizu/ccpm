@@ -47,9 +47,10 @@ earlier gaps). When `in`'s `next` is `stopped: ...`, go on from there.
 
 - Start `turn:maker` with the paths of `in` and `make.md`, the rules so far, and, when fixing, only
   the differences to fix. It returns how it will make the work and what it cannot decide without
-  guessing. Answer what the record, its sources and its answers settle; what only the user can decide
-  is a `gap`, and you return with `next: ask the user`. Otherwise tell the same maker to go, by
-  SendMessage to its agent ID, with your answers. Without `make.md`, nothing is made or fixed.
+  guessing. Answer what the record, its sources, its answers and the domain files settle; what
+  only the user can decide is a `gap`, and you return with `next: ask the user`. Otherwise tell the
+  same maker to go, by SendMessage to its agent ID, with your answers. Without `make.md`, nothing
+  is made or fixed.
 - Start `turn:first-user` with the paths of the work and `use.md`, the `receiver`, the `use` and the
   rules, and after a fix, the part that was stumbled on to use again. Hand it nothing else, not the
   acceptance and not how the work was made: knowing them, it would use the work as they say and not

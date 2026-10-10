@@ -35,7 +35,7 @@ class Trace(unittest.TestCase):
                       '  - maker-1: "wrote SETUP.md"\n  - maker-1: "read /elsewhere/x.md"\n'
                       '  - first-user-1: "ran ./start.sh"\n'
                       '  - first-user-1: "ran "\n', out)
-        self.assertIn('  - git: "changed SETUP.md"', out)
+        self.assertIn('  - git: "uncommitted SETUP.md"', out)
         self.assertNotIn("said by the conductor", out)
         self.assertEqual(self.repo.read(".caller/1.yaml").count("earlier"), 1)
 
@@ -52,10 +52,20 @@ class Trace(unittest.TestCase):
         self.assertIn("use what was made", r.stderr)
         self.assertEqual(self.repo.read(".caller/2.yaml"), DONE)
 
+    def test_a_record_out_of_the_agreed_form_is_stopped(self):
+        # Given
+        self.repo.turn_up()
+        self.repo.write(".caller/2.yaml", harness.RECORD + 'predictive_cue:\n  - next: "maybe"\n')
+        # When
+        r = self.repo.script("trace.py", ".caller/1.yaml", ".caller/2.yaml")
+        # Then
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("`next` must be one line", r.stderr)
+
     def test_a_stopped_turn_returns_without_a_use(self):
         # Given: no turn:up found, and next is not done
         self.repo.add({"type": "user", "message": {"content": "hello"}})
-        self.repo.write(".caller/2.yaml", harness.RECORD + 'predictive_cue:\n  - next: "use"\n')
+        self.repo.write(".caller/2.yaml", harness.RECORD + 'predictive_cue:\n  - next: "stopped: use"\n')
         # When
         r = self.repo.script("trace.py", ".caller/1.yaml", ".caller/2.yaml")
         # Then
@@ -81,12 +91,15 @@ class Records(unittest.TestCase):
         self.repo.close()
 
     def test_the_records_of_the_use_just_made_are_listed(self):
-        # Given
+        # Given: a maker started before the last learning and told to fix after it
+        self.repo.agent("maker", "m0")
         self.repo.turn_up()
-        self.repo.agent("first-user", "u1")
-        self.repo.agent("learner", "l1")
         self.repo.agent("maker", "m1")
         self.repo.tool("SendMessage", {"to": "m1", "message": "go"})
+        self.repo.agent("first-user", "u1")
+        self.repo.agent("learner", "l1")
+        self.repo.tool("SendMessage", {"to": "m1", "message": "fix"})
+        self.repo.tool("SendMessage", {"to": "m0", "message": "not this turn's"})
         self.repo.agent("first-user", "u2")
         # When
         r = self.repo.script("records.py")
@@ -94,6 +107,7 @@ class Records(unittest.TestCase):
         lines = r.stdout.splitlines()
         self.assertEqual(lines[0], "conversation: " + self.repo.transcript)
         self.assertEqual([l.split(":")[0] for l in lines[1:]], ["maker", "first-user"])
+        self.assertTrue(lines[1].endswith("agent-m1.jsonl"))
         self.assertTrue(lines[2].endswith("agent-u2.jsonl"))
 
     def test_without_a_turn_only_the_conversation_is_listed(self):

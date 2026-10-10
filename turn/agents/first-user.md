@@ -12,8 +12,7 @@ you stumble is where the receiver would: so know nothing of how it was made, and
 no other records, nothing the work does not lead you to.
 
 Read `use.md`, then use the work once for the use you are given, as that person would. Check each
-statement you rely on against the real thing: run the command, open the file. After a fix you are
-told the part to use again; use only that.
+statement you rely on against the real thing: run the command, open the file.
 
 Return what you did and what happened, step by step, each with its place (`path:line`, or the
 command and what it printed), and where you stopped, had to guess, or would have asked someone.

@@ -10,7 +10,7 @@ sys.path[:0] = [HERE, os.path.join(HERE, "..", "hooks")]
 
 import ccs  # noqa: E402
 import transcript  # noqa: E402
-from checks import order  # noqa: E402
+from checks import order, returned  # noqa: E402
 
 TOOLS = {"Read": "read", "Write": "wrote", "Edit": "wrote", "NotebookEdit": "wrote"}
 
@@ -46,7 +46,7 @@ def trace(path, calls, cwd):
         lines += [(kind, a) for a in acts(transcript.agent_path(path, aid), cwd)]
     status = subprocess.run(["git", "status", "--porcelain"], cwd=cwd, capture_output=True,
                             text=True).stdout
-    lines += [("git", "changed " + l[3:]) for l in status.splitlines()]
+    lines += [("git", "uncommitted " + l[3:]) for l in status.splitlines()]
     return lines
 
 
@@ -65,12 +65,12 @@ def main(argv):
     calls = transcript.calls(items, start) if start is not None else []
     handed = ccs.load(ccs.read(argv[1]))
     parts = ccs.load(ccs.read(argv[2]))
-    nexts = ccs.values(parts, "predictive_cue", "next")
-    if any(str(n).strip().lower().startswith("done") for n in nexts):
-        problems = order.check([w for w, a in calls], "done")
-        if problems:
-            print("turn check:\n- " + "\n- ".join(problems), file=sys.stderr)
-            return 2
+    problems = returned.check(handed, parts)
+    if ccs.values(parts, "predictive_cue", "next") == ["done"]:
+        problems += order.check([w for w, a in calls], "done")
+    if problems:
+        print("turn check:\n- " + "\n- ".join(problems), file=sys.stderr)
+        return 2
     before = [i for name, items_ in handed if name == "episodic_trace" for i in items_]
     parts = [p for p in parts if p[0] != "episodic_trace"]
     parts.append(("episodic_trace", before + trace(path, calls, cwd)))
