@@ -6,7 +6,7 @@
 - The user read the README and design (2026-10-10) and found: the design has become a specification,
   and the README gives no picture of how turn is used.
 
-Next, only the two documents; the code, tests, rules and trial stay:
+Next, in the order README, design, implementation, each derived from the one before:
 
 1. Before writing, set down each document's ideal from what the user already decided:
    - README: a scenario with console-like screens: what the plugin's author writes (plugin.json,
@@ -18,7 +18,13 @@ Next, only the two documents; the code, tests, rules and trial stay:
      how the copy is made. The implementation and tests hold those.
 2. Judge every sentence against that ideal: keep it or take it out. Do not fill what a first user
    said was missing; ask what it shows about the ideal.
-3. Then the user's design sign-off on #57, and English before merge.
+3. The user's sign-off on the README and design (#57).
+4. Derive the implementation again from the signed-off design: for each part of the prompts, scripts,
+   hook and tests, keep it only if the design's intent leads to it, and add what it leads to and is
+   missing. Nothing in the current code is kept just because it exists; it was built from a design
+   that had turned into a specification.
+5. Put the changed prompts through `prompt.md`, and run the trial again on that version.
+6. English before merge.
 
 Carry over: never use 「得られること」「得るもの」 or "UX" as a name or in conversation; converse in
 plain everyday Japanese.
