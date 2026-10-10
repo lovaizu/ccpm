@@ -1,6 +1,0 @@
-{
-  "name": "caller",
-  "description": "A trial's calling plugin: has turn write a setup guide for a newcomer.",
-  "version": "0.0.0",
-  "dependencies": ["turn"]
-}
