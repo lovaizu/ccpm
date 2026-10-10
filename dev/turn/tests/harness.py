@@ -77,6 +77,7 @@ class Repo:
         with open(path, "a") as f:
             for tool, inp in acts:
                 f.write(json.dumps({"type": "assistant", "message": {"content": [
+                    {"type": "text", "text": "."},
                     {"type": "tool_use", "name": tool, "input": inp}]}}) + "\n")
 
     def env(self):

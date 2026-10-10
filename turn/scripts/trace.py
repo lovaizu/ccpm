@@ -16,7 +16,9 @@ TOOLS = {"Read": "read", "Write": "wrote", "Edit": "wrote", "NotebookEdit": "wro
 
 
 def rel(path, cwd):
-    return os.path.relpath(path, cwd) if os.path.isabs(path or "") else path
+    """A path in the repository as the repository names it; any other as it is."""
+    inside = os.path.isabs(path or "") and os.path.commonpath([path, cwd]) == cwd
+    return os.path.relpath(path, cwd) if inside else path
 
 
 def acts(path, cwd):

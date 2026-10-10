@@ -18,7 +18,8 @@ class Trace(unittest.TestCase):
         self.repo.write(".caller/1.yaml", harness.RECORD + 'episodic_trace:\n  - maker-1: "earlier"\n')
         self.repo.turn_up()
         self.repo.agent("maker", "m1", [("Read", {"file_path": os.path.join(self.repo.work, "app.py")}),
-                                        ("Write", {"file_path": "SETUP.md"}), ("Grep", {})])
+                                        ("Write", {"file_path": "SETUP.md"}), ("Grep", {}),
+                                        ("Read", {"file_path": "/elsewhere/x.md"})])
         self.repo.tool("SendMessage", {"to": "m1", "message": "go"})
         self.repo.agent("first-user", "u1", [("Bash", {"command": "./start.sh\necho"}), ("Bash", {})])
         self.repo.agent("learner", "l1")
@@ -31,7 +32,8 @@ class Trace(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         out = self.repo.read(".caller/2.yaml")
         self.assertIn('episodic_trace:\n  - maker-1: "earlier"\n  - maker-1: "read app.py"\n'
-                      '  - maker-1: "wrote SETUP.md"\n  - first-user-1: "ran ./start.sh"\n'
+                      '  - maker-1: "wrote SETUP.md"\n  - maker-1: "read /elsewhere/x.md"\n'
+                      '  - first-user-1: "ran ./start.sh"\n'
                       '  - first-user-1: "ran "\n', out)
         self.assertIn('  - git: "changed SETUP.md"', out)
         self.assertNotIn("said by the conductor", out)
