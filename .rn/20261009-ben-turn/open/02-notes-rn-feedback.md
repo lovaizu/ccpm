@@ -42,7 +42,9 @@ and every later judgment is made against it.
 
 ## Result
 
-Not yet: ben and turn are to be redone this way, starting with the README benefits checked against
-A1 to A3 and the user's decisions gathered from the conversation records. What to look at: whether
-the documents come closer to A1 to A3 without patches, how many times first users had to read, and
-whether the designs hold no specification.
+2026-10-10, second session: not kept. The conductor built turn before its documents went through
+the viewpoints and the design sign-off, then rewrote the README and design from the first users'
+"not written" items, so the design turned into a specification and the README lost the picture of
+use. Each time the ideal the user had already given (README as a scenario, design as intent) was
+not set down before writing. The hypothesis stands, but saying it was not enough: the first move on
+a deliverable has to be writing its ideal down, from the user's decisions, before any other work.
