@@ -1,9 +1,11 @@
-# Where task #4 stands
+# Where the work stands
 
-- turn's implementation was built before the README, design and prompts went through the viewpoints
-  and before the design sign-off, and was reverted (76488d0). Build only after #5.
-- First users are reading the README (`doc.md` + `readme.md`) and the design (`doc.md` + `design.md`)
-  once each. Next: check each Good and More at its place, settle each More from the document's aim,
-  and show the user.
+- The README and design were read once each by a first user with writ's essentials, and rewritten
+  as a whole from what the readers lacked; the contract now fixes `next`'s words, `answer` for the
+  user's answers, and the forms of `difference` and `episodic_trace`.
+- The user said to go on without asking and to tell them of large changes (2026-10-10), so the
+  design sign-off (#5) is theirs to give on the pull request; building (#6) goes on meanwhile.
+- Next: write turn's prompts and code from the README and design, put the prompts through
+  `prompt.md`, then test and try.
 - Carry over: never use 「得られること」「得るもの」 or "UX" as a name or in conversation; converse in
   plain everyday Japanese.

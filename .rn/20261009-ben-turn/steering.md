@@ -81,7 +81,7 @@ Completion criteria:
 - Attractive quality: building turn needs nothing the rules do not say.
 - Must-be quality: each rule has its reason.
 
-### [ ] #4: README and design through the viewpoints
+### [x] #4: README and design through the viewpoints
 
 Purpose: turn's README and design are read once each, as their readers would, by someone who does
 not know the discussion, with writ's essentials files (`doc.md` with `readme.md` or `design.md`), and
