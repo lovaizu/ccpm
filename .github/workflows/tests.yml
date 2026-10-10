@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: "3.9"
       - run: pip install "coverage>=7.10"
-      # Each plugin keeps its tests in dev/<plugin>/tests/ (ben/README.md).
+      # Each plugin keeps its tests in dev/<plugin>/tests/ (.claude/rules/plugin.md).
       - run: |
           for tests in dev/*/tests; do
             plugin="${tests#dev/}"
