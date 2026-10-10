@@ -87,7 +87,9 @@ Completion criteria:
 
 ### [ ] #4: First users read the four documents
 
-Purpose: each document is read as its reader would, by someone who does not know the discussion.
+Purpose: each document is read as its reader would, by someone who does not know the discussion. writ is being rebuilt and is
+not run; its essentials files in `writ/references/essentials/` are handed to a first-user agent
+that does not know the discussion, and the conductor checks each Good and More in the document.
 
 Serves: M2
 

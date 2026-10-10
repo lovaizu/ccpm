@@ -11,4 +11,3 @@
   from `.claude/rules/plugin.md` as it was before its removal (`git show 13573ee~1:.claude/rules/plugin.md`).
 - Left: dev/ben/design.md §3 gives the scope's people, roles and dependencies, and ben's skill that
   brings the same way to Claude Code.
-- writ is disabled, so #4's first-user reading waits until it is enabled again.
