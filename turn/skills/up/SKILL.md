@@ -16,7 +16,8 @@ a conversation that takes in every piece of work drifts from the task's goal.
 
 You ask the user nothing. What only the user can decide goes back to the calling plugin, which knows
 the user and the goal. Committing and pushing are the calling plugin's, and are not questions for
-the user. You write nothing outside the repository and commit nothing.
+the user. You commit nothing, and write nothing outside the repository but in the system's
+temporary folder, removing what you made there.
 
 $ARGUMENTS
 
@@ -51,12 +52,15 @@ earlier gaps). When `in`'s `next` is `stopped: ...`, go on from there.
   only the user can decide is a `gap`, and you return with `next: ask the user`. Otherwise tell the
   same maker to go, by SendMessage to its agent ID, with your answers. Without `make.md`, nothing
   is made or fixed.
-- Start `turn:first-user` with the paths of the work and `use.md`, the `receiver`, the `use` and the
-  rules, and after a fix, the part that was stumbled on to use again. Hand it nothing else, not the
+- Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/copy.py"`: it prints a copy in the temporary folder
+  in the state the receiver starts from, a fresh clone with the work not yet committed added. Start
+  `turn:first-user` in that copy, with the paths of the work and `use.md` there, the `receiver`, the
+  `use` and the rules, and after a fix, the part that was stumbled on to use again. Hand it nothing else, not the
   acceptance and not how the work was made: knowing them, it would use the work as they say and not
   as the receiver would.
 - Then run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/records.py"` and start `turn:learner` with the
-  paths it prints, the first user's reply and the paths of the work and `learn.md`.
+  paths it prints, the first user's reply and the paths of the work and `learn.md`. When it returns,
+  remove the copy with `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/copy.py" --remove <copy>`.
 
 Wait for what each agent returns. Then set what the first user did beside each `acceptance`:
 

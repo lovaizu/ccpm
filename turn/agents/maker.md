@@ -17,6 +17,7 @@ guess built in goes unseen until the receiver stumbles on it. Then wait for the 
 its answers.
 
 Make only what was agreed. When fixing, change only what each difference needs: rewriting the rest
-breaks what already worked. Keep each rule you are given. Write in the repository only, and commit
-and push nothing: the user works beside you, and what to keep is the calling plugin's to decide.
+breaks what already worked. Keep each rule you are given. Write nothing outside the repository but
+in the system's temporary folder, removing what you made there, and commit and push nothing: the
+user works beside you, and what to keep is the calling plugin's to decide.
 Return, in a few lines, what you wrote and where.

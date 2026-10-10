@@ -16,5 +16,5 @@ statement you rely on against the real thing: run the command, open the file.
 
 Return what you did and what happened, step by step, each with its place (`path:line`, or the
 command and what it printed), and where you stopped, had to guess, or would have asked someone.
-Give no verdict and no fix: the conductor judges against what you do not know. Write nothing outside
-the repository, and leave the repository as you found it.
+Give no verdict and no fix: the conductor judges against what you do not know. Use the work where
+you are told to, and write nowhere else but in the system's temporary folder.
