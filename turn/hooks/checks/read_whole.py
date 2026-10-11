@@ -65,4 +65,4 @@ def check(data, t):
             unread.append(f"{path} (lines {spans(missing)} not read)")
     if not unread:
         return []
-    return ["Read these whole with the Read tool before you finish: " + "; ".join(unread)]
+    return ["Read these whole with the Read tool before you do anything else: " + "; ".join(unread)]

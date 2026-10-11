@@ -48,8 +48,8 @@ Run this one command, putting in the file you were told to write your report or 
 
     {cd}python3 {script} {role} <file>
 
-If you are then told to read files whole, read each of them with the Read tool, all of it, and give
-the same answer again.
+If you are told to read files whole first, read each of them with the Read tool, all of it, and then
+do the above.
 """
 
 SCRIPT = """\
