@@ -72,9 +72,15 @@ Next:
    stand-in command again; every record showed the orchestrator calling the agents in order and each
    generator, learner and evaluator kept running until it had read its files. flow.py now reads the
    order from the orchestrator's calls; flow-4 passed all 9 checks.
-   Next (start here): put the prompts changed since afe0d15 (four agents and up's SKILL.md) through
-   writ's prompt.md, as before (one first user per prompt, runs in the session scratchpad); then the
-   first real use (pith, writ or rn) in a session the user starts.
+   Done (2026-10-11): the five prompts went through prompt.md (runs in this session's scratchpad,
+   prompt-check/). Fixed from the records: the first user's report was refused by its own place check;
+   learner and evaluator made "ask the user before writing" a cause and a rule, which left the
+   generator writing nothing (no one in a turn can ask the user); "ask the user" with words after it
+   garbled `next`; a copy with no deliverable passed and then left the work folder; the first user
+   added `; echo $?` and the like, so no step was ever marked an error. Decided by the user: rules go
+   to the generator and the evaluator only (design 85). Rerun on the same situations: all as meant;
+   flow trial passes.
+   Next (start here): the first real use (pith, writ or rn) in a session the user starts.
    Then: the user starts the session for the first of pith, writ and rn; this session sends it the
    work and judges turn from the records and the evidence.
 4. Decided by the user (2026-10-11): turn is used in two ways. When each plugin runs, its skill hands
