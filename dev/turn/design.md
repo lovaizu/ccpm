@@ -111,7 +111,7 @@ Keeps the promises "the deliverable shown has already been used, and what still 
 
     | Agent | Read whole |
     |---|---|
-    | Generator | What the deliverable should be with the rules and the user's answers, every viewpoint file and source, and the earlier rounds' Mores and learnings |
+    | Generator | What the deliverable should be with the rules and the user's answers, every viewpoint file and source, and the last round's Mores and learnings, or, in a turn's first round, those of the CCS received |
     | Learner | What the deliverable should be with the rules and the user's answers, every viewpoint file, the first user's report and both agents' steps |
     | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps and the learnings |
 

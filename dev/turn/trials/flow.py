@@ -5,8 +5,10 @@
 The note plugin writes a CCS and calls the real turn:up; only turn's four agents are stand-ins that
 return set reports. One task goes through every way a turn can go:
 
-turn 1   round 1 has a stumble to fix and a rule; round 2 a question only the user can answer
-turn 2   the skill adds the user's answer and calls again; the user stops it after the generator
+turn 1   round 1's version is More on the acceptance; the remake in round 2 turns it Good and leaves a
+         question only the user can answer
+turn 2   the skill adds the user's answer and calls again; the user stops it after the generator, and the
+         version the turn found is put back
 turn 3   in another clone, with only the CCS and the deliverable, the task carries on and is done
 
 Everything lands in <workdir>: both repositories, the stand-ins' log, each session's output and
@@ -27,18 +29,8 @@ ROLES = ("generator", "first-user", "learner", "evaluator")
 ACCEPTANCE = "A visitor finds the opening hours in the note alone"
 QUESTION = "Which day of the week is the shop closed?"
 ANSWER = "Monday."
-RULE = "Read every source of a fact before writing it."
-DECISIONS = [
-    {"endings": [{"stumble": "the hours are missing", "cause": "hours.txt was not read",
-                  "ending": "fixed", "grounds": ["first-user-1#1", "NOTE.md:3"]}],
-     "rules": [RULE], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
-    {"endings": [{"stumble": "the closing day is not known", "ending": "to the caller: ask the user",
-                  "grounds": ["first-user-2#1"]}],
-     "rules": [], "gaps": [QUESTION], "links": ["NOTE.md ← hours.txt"]},
-    {"endings": [{"stumble": "the title is plain", "ending": "let go: the visitor still finds the hours",
-                  "grounds": ["NOTE.md:1"]}],
-     "rules": [], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
-]
+# What each evaluator call judges, by call: the acceptance, then the viewpoint's first line.
+JUDGMENTS = [("more", "good"), ("good", "unsettled"), ("good", "good")]
 CALLS = [*ROLES, *ROLES, "generator", *ROLES]
 KEPT = ("focal_entities", "goal_orientation", "retrieved_artifacts")
 WORKDIR = Path()
@@ -61,7 +53,7 @@ the same answer again.
 """
 
 SCRIPT = """\
-import json, subprocess, sys
+import json, os, re, subprocess, sys
 role, target = sys.argv[1], sys.argv[2]
 log = {log!r}
 try:
@@ -71,19 +63,30 @@ except FileNotFoundError:
 files = list(dict.fromkeys(files + [target]))
 n = files.index(target) + 1
 open(log, "a").write(json.dumps({{"role": role, "call": n, "file": target}}) + "\\n")
+work = os.path.dirname(target)
+r = re.search(r"-([0-9]+)\\.[a-z]+$", target).group(1)
 if role == "generator":
     top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
-    open(top + "/NOTE.md", "w").write("# Visiting\\n\\nOpen 9 to 5.\\n")
-    print("Wrote NOTE.md from hours.txt.")
-elif role == "evaluator":
-    open(target, "w").write(json.dumps({decisions!r}[n - 1]))
-    print(target)
+    open(top + "/NOTE.md", "w").write(f"# Visiting\\n\\nOpen 9 to 5. (generator call {{n}})\\n")
+    open(target, "w").write("Wrote NOTE.md from hours.txt.\\n")
 elif role == "learner":
-    open(target, "w").write(json.dumps({{"causes": []}}))
-    print(target)
+    open(target, "w").write(json.dumps({{"learnings": [{{"learning": f"learning {{n}}", "grounds": [f"first-user-{{r}}#1"]}}]}}))
+elif role == "evaluator":
+    should = open(os.path.join(work, "should.md")).read()
+    viewpoint = re.search(r"^- viewpoint: (.+)$", should, re.M).group(1)
+    acceptance = re.search(r"^- acceptance: (.+)$", should, re.M).group(1)
+    points = []
+    for point, judgment in zip((acceptance, viewpoint + ":1"), {judgments!r}[n - 1]):
+        p = {{"point": point, "judgment": judgment, "grounds": [f"first-user-{{r}}#1", "NOTE.md:1"]}}
+        if judgment == "more":
+            p["fell_short"] = "the closing day is not given"
+        if judgment == "unsettled":
+            p.update(why="no source says which day the shop is closed", question={question!r})
+        points.append(p)
+    open(target, "w").write(json.dumps({{"points": points}}))
 else:
     open(target, "w").write(f"{{role}} report: read the note, found the hours.\\n")
-    print(target)
+print(target)
 """
 
 
@@ -102,7 +105,7 @@ def setup(workdir):
     git(repo, "commit", "-q", "-m", "shop")
     plugin = workdir / "turn"
     shutil.copytree(REPO / "turn", plugin)
-    (workdir / "standin.py").write_text(SCRIPT.format(log=str(workdir / "calls.jsonl"), decisions=DECISIONS))
+    (workdir / "standin.py").write_text(SCRIPT.format(log=str(workdir / "calls.jsonl"), judgments=JUDGMENTS, question=QUESTION))
     for role in ROLES:
         (plugin / "agents" / f"{role}.md").write_text(
             STANDIN.format(role=role, script=workdir / "standin.py",
@@ -198,6 +201,7 @@ def main(argv):
     first.say("Stop the task here, please.")
     first.wait(seen)
     first.close()
+    after_stop = (repo / "NOTE.md").read_text()
 
     other = workdir / "other"
     subprocess.run(["git", "clone", "-q", str(repo), str(other)], check=True)
@@ -209,24 +213,31 @@ def main(argv):
 
     tasks = [task(repo, k) for k in (1, 2, 3, 4)] + [task(other, 5)]
     left = {n for n in os.listdir(tempfile.gettempdir()) if n.startswith("turn-try-")} - tries_before
+    generators = [p for r, p in agent_calls(workdir) if r == "generator"]
     checks = {
         "turns return ask the user, stopped, done": [values(tasks[k], "predictive_cue", "next")
                                                      for k in (1, 3, 4)]
         == [["ask the user"], ["stopped: first-user-1"], ["done"]],
-        "the question is the one gap": values(tasks[1], "uncertainty_signal", "gap") == [QUESTION],
+        "turn 1 returns round 2's judgments: no More, the question as the one gap, round 2's learning": (
+            values(tasks[1], "uncertainty_signal", "more"), values(tasks[1], "uncertainty_signal", "gap"),
+            values(tasks[1], "relational_map", "learning")) == ([], [QUESTION], ["learning 2"]),
         "the agents are called in this order": [r for r, _ in agent_calls(workdir)] == CALLS,
-        "the rule and the answer reach the last CCS": [
-            (k, v if k == "rule" else v.startswith(QUESTION)) for e in tasks[4].get("constraints", [])
-            for k, v in e.items() if k in ("rule", "answer")] == [("rule", RULE), ("answer", True)],
+        "each generator after the first is handed what to remake from": [
+            [m for m in ("remake-1.md", "remake-2.md") if m in g]
+            for g in generators] == [[], ["remake-2.md"], ["remake-1.md"], ["remake-1.md"]],
+        "the stop puts back the version the turn found": after_stop == "# Visiting\n\nOpen 9 to 5. (generator call 2)\n",
+        "the answer reaches the last CCS": [v.startswith(QUESTION) for v in values(tasks[4], "constraints", "answer")]
+        == [True],
         "what the plugin wrote is unchanged": all(t.get(p) == tasks[0].get(p) for t in tasks for p in KEPT),
         "no commit": git(repo, "rev-list", "--count", f"{start}..HEAD") == "0"
         and git(other, "rev-list", "--count", f"{start}..HEAD") == "0",
         "no temporary folder left": not left,
         "the first user is never told the acceptance": not any(
             ACCEPTANCE in p for r, p in agent_calls(workdir) if r == "first-user"),
-        "each returned CCS points to its evidence, with each round's steps": [
-            [r["round"] for r in evidence(t)["rounds"] if any("first-user" in s["step"] for s in r["steps"])]
-            for t in (tasks[1], tasks[3], tasks[4])] == [[1, 2], [], [1]],
+        "each returned CCS points to its evidence, with each round's steps and the round returned": [
+            ([r["round"] for r in evidence(t)["rounds"] if any("first-user" in s["step"] for s in r["steps"])],
+             evidence(t).get("returned_round")) for t in (tasks[1], tasks[3], tasks[4])]
+        == [([1, 2], 2), ([], 0), ([1], 1)],
     }
     (workdir / "summary.json").write_text(json.dumps(checks, ensure_ascii=False, indent=2))
     print(json.dumps(checks, ensure_ascii=False, indent=2))
