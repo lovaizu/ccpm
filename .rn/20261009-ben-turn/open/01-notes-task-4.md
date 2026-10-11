@@ -19,7 +19,9 @@ learner only report what they did and what happened; the conductor alone gives e
 More, laying it beside what the CCS says the work should be and checking it against the work and the
 facts (conversation records, git), a Good as hard as a More, the learner's cause included. What is
 fixed is the cause of a stumble, and the work is remade from it, never patched spot by spot; the
-README says so (no "その場で直す").
+README says so (no "その場で直す"). The user uses the work as the receiver would: it is told only
+the work, who the receiver is and what they use it for, never the acceptance or the talk, and uses it
+in a fresh-clone temporary copy, so that where it stumbles is where the receiver would.
 
 Carry over: converse in plain everyday Japanese; never use 「得られること」「得るもの」 or "UX" as a
 name or in conversation; one name per thing (the record is "CCS").
