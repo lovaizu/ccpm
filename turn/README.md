@@ -2,7 +2,7 @@
 
 When you hand a long task to an AI agent, the conversation piles up, the context grows, and the agent slowly drifts from its goal and its rules. [ACC (Agent Cognitive Compressor)](https://arxiv.org/abs/2601.11653) is a method from research that prevents this. Instead of keeping the whole conversation, it rewrites, at every turn, only the state needed for the next step into a fixed form of nine parts, the CCS (Compressed Cognitive State), and replaces the previous state with it. See the paper for the details.
 
-turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the deliverable, tries it out, learns why it stumbled, and fixes it. A plugin writes its task, with what the deliverable should be, as a CCS in JSON, hands it over, and gets a new CCS back.
+turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the deliverable, tries it out, learns why it came out away from what it should be, and remakes it. A plugin writes its task, with what the deliverable should be, as a CCS in JSON, hands it over, and gets a new CCS back.
 
 ## For plugin authors
 
@@ -16,7 +16,7 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
 - Everything your skill needs for its next step can be traced from the returned CCS.
 
-    `next` says how the turn ended, `gap` what is left for your user, and the CCS points to the deliverable and everything behind it, the evidence among them: each step taken in trying it, as the conversation records show it, and each ending with the steps and the lines of the deliverable it rests on. Whether to open them is up to your skill.
+    `next` says how the turn ended, `gap` what is left for your user, and the CCS points to the deliverable and everything behind it, the evidence among them: each step taken in trying it, as the conversation records show it, and each Good or More with the steps and the lines it rests on. Whether to open them is up to your skill.
 
 - What the deliverable should be and the rules do not change in the middle of a task.
 
@@ -39,19 +39,22 @@ A person tries out what they made, fixes what tripped them up, and only then han
 flowchart LR
   I[CCS] --> M[The generator makes it]
   M --> U[The first user tries it]
-  U --> L[The learner finds the causes]
-  L --> J{The evaluator compares it with what it should be}
-  J -->|a stumble to fix| M
-  J -->|nothing to fix, let go, or something for the user or the skill to decide| O[New CCS]
+  U --> L[The learner finds why it came out away from what it should be]
+  L --> J{The evaluator gives each point Good or More}
+  J -->|a More| M
+  J -->|every point Good, no point closer, or something for the user or the skill to decide| O[New CCS]
 ```
 
-- The generator, the first user, the learner and the evaluator are separate agents. turn calls them in turn and passes on what each returns. Only the evaluator makes decisions, each against what the deliverable should be.
+- The generator, the first user, the learner and the evaluator are separate agents, each with one job. turn calls them in turn and passes on what each returns.
 
-    Whoever made the deliverable goes easy on it when checking it. The first user is told only the deliverable, who the receiver is and what they use it for, never the discussion or the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show.
+    | Agent | Its job |
+    |---|---|
+    | Generator | Makes the deliverable from what it should be and the viewpoint files. It is the only one who changes it, and on a remake it decides itself what to change |
+    | First user | Uses the deliverable in the receiver's place, and reports only what it did and what happened |
+    | Learner | From those facts, finds why the deliverable came out away from what it should be. It neither judges nor says how to fix |
+    | Evaluator | Lays each point beside what the deliverable should be and gives it Good or More, checking the reports and the learnings against the facts, a Good as hard as a More. It neither finds causes nor says how to fix |
 
-- Each time the deliverable is tried, the learner finds why it stumbled.
-
-    For the deliverable, it finds the cause of the stumble, not just the spot. The generator fixes that cause and remakes the deliverable from it. Patching spot by spot moves the deliverable away from what it should be. A cause in the way of working becomes a rule, which is kept for the rest of the turn and goes into the returned CCS.
+    Whoever made the deliverable goes easy on it when checking it, and whoever found a cause goes easy on that cause. The first user is told only the deliverable, who the receiver is and what they use it for, never the discussion or the acceptance criteria; if it knew the criteria, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show. A change named by someone other than the maker is made at the spot they saw, and patching spot by spot moves the deliverable away from what it should be.
 
 - A turn starts by receiving a CCS and ends by returning a new one.
 
@@ -69,10 +72,10 @@ Four kinds of entry say what the deliverable should be.
 |---|---|---|
 | `receiver` | The person who receives and uses the deliverable, and where they start from | The first user takes this person's place |
 | `use` | What the receiver uses the deliverable for | The first user uses it for this |
-| `acceptance` | What the receiver must be able to do with the deliverable for it to pass | The evaluator decides by it which stumbles must be fixed. The first user is never told it |
-| `viewpoint` | A viewpoint file: what a good deliverable is in your domain. One or more | The generator makes the deliverable by it; the learner traces causes by it, and the evaluator decides by it |
+| `acceptance` | What the receiver must be able to do with the deliverable for it to pass | The evaluator gives each criterion Good or More. The first user is never told it |
+| `viewpoint` | A viewpoint file: what a good deliverable is in your domain. One or more | The generator makes the deliverable by it; the learner measures by it, and the evaluator gives each of its points Good or More |
 
-The generator and the evaluator get all four. Write them so that trying the deliverable shows whether it meets them:
+The generator, the learner and the evaluator get all four. Write them so that trying the deliverable shows whether it meets them:
 
 - `receiver`: a person in a situation, with what they have and do not have. "A new team member on their first day, starting the app from the guide alone" tells the first user where to start; "developers" does not.
 - `use` and `acceptance`: what the receiver does, and what shows it worked. "Starts the app by following the guide alone" can be tried; "a clear guide" cannot.
@@ -84,7 +87,7 @@ The generator and the evaluator get all four. Write them so that trying the deli
 - For anything that needs asking someone (such as secret values), say who to ask.
 ```
 
-When these are not enough to decide a stumble, turn comes back with `to the caller` and the reason. Write a new CCS with them fixed, and call again.
+When these are not enough to decide a point, turn comes back with `to the caller` and the reason. Write a new CCS with them fixed, and call again.
 
 ### The form of a CCS
 
@@ -128,7 +131,7 @@ The names of parts and kinds, and fixed words such as the values of `next`, stay
 | | `rule` | A rule to keep | |
 | | `answer` | The user's answer to a returned `gap` | |
 
-`focal_entities`, `goal_orientation` and `retrieved_artifacts` stay the same for the whole task. In `constraints`, lines once written never change; new lines are added after them. turn adds the rules it learned (`rule`), and the skill adds the user's answers (`answer`).
+`focal_entities`, `goal_orientation` and `retrieved_artifacts` stay the same for the whole task. In `constraints`, lines once written never change; new lines are added after them; the skill adds the user's answers (`answer`).
 
 Viewpoint files live inside the plugin. The skill writes their place as `${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md` and copies it into the CCS. Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the current location when it loads the skill. If the path goes stale, on another machine or after an update, turn stops at the check it runs on receiving the CCS; write the CCS again with the current path and call again.
 
@@ -141,12 +144,8 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
   "predictive_cue": [{"next": "ask the user"}],
   "uncertainty_signal": [{"gap": "Who gives a new team member the API token?"}],
   "semantic_gist": [
-    {"difference": "Stopped at step 4 because var/ does not exist → fixed"},
-    {"difference": "Cannot say where to get the token → to the caller: ask the user"}
-  ],
-  "constraints": [
-    {"language": "English"},
-    {"rule": "Write each step only after typing it in a freshly cloned copy"}
+    {"difference": "A new team member starts the app by following the guide alone → Good"},
+    {"difference": "For anything that needs asking someone, say who to ask → to the caller: ask the user"}
   ],
   "relational_map": [{"link": "SETUP.md ← scripts in package.json"}],
   "episodic_trace": [
@@ -161,11 +160,10 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
 |---|---|---|
 | `predictive_cue` | `next` | What to do next. One of the values in the table in "Deciding from the returned CCS" |
 | `uncertainty_signal` | `gap` | Something only the user can decide, as a question that can be asked as it is |
-| `semantic_gist` | `difference` | Something that, when the deliverable was tried, did not match the criteria, and how it ended. The ending is one of `fixed`, `let go: <reason>` or `to the caller: <reason>` (left to the skill) |
-| `constraints` | `rule` | A rule about the way of working, learned in this turn |
+| `semantic_gist` | `difference` | Each point of what the deliverable should be, and how it ended when the deliverable was last used: `Good`, `More: <what fell short>` or `to the caller: <reason>` (left to the skill) |
 | `relational_map` | `link` | How the deliverable connects to its sources and other things |
 | `episodic_trace` | The agent and which round (`generator-1` is the generator's first round; likewise `first-user-1`, `learner-1` and `evaluator-1`), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
-| | `evidence` | Where the evidence is: each step taken in trying the deliverable, and each ending with the steps and lines it rests on. Written beside the returned CCS |
+| | `evidence` | Where the evidence is: each step taken in trying the deliverable, and each learning and each Good or More with the steps and lines it rests on. Written beside the returned CCS |
 
 ### What a script checks
 
@@ -219,7 +217,6 @@ jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 
 - If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
 - If python3 is missing, turn returns no CCS; it says in the conversation what to install, and stops.
-- To have the next task keep the rules learned here, copy the `rule` lines of the returned CCS into `constraints` of the next task's CCS.
 
 ## What stays with your plugin
 

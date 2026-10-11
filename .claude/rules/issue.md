@@ -12,6 +12,11 @@ nothing piles up beside it.
 - **When the plan changes, rewrite the issue and its pull request in place**, title included, so
   they say what is meant now.
   - Rationale: a new issue beside the old one leaves the reader to work out which still holds.
+- **When a piece of work starts again from zero, keep its branch and pull request: reset the branch
+  and rewrite the pull request in place.** Do not close the pull request, and open no new branch or
+  pull request for the same work.
+  - Rationale: the work is still the same piece of work; a closed pull request and a new one beside
+    it split its review and its links, as a new issue beside the old one does.
 - **Close an issue opened by mistake with a line saying where its content went.**
   - Rationale: whoever finds it through a link reaches the place that holds it.
 
