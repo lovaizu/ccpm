@@ -10,6 +10,14 @@ Next:
 2. Done: the user looked at the README and signed off the design (2026-10-11).
 3. After sign-off: task #6, the prompts, scripts and tests, derived from the design; prompts through
    writ's `prompt.md` before any trial. `dev/turn/README.md` is written once tests and trials exist.
+   In progress (2026-10-11): scripts `check.py`, `tryout.py`, `trace.py` with tests are pushed; tests
+   come first from now on (rule added). Next are the prompts: the `up` skill and the four agents,
+   with the `prompt.md` situations settled before each prompt is written.
+4. Decided by the user (2026-10-11): turn is used in two ways. When each plugin runs, its skill hands
+   each task to `turn:up`. When each plugin's documents and prompts are made, the builder hands that
+   work to `turn:up`, with writ's essentials files as viewpoints. turn's first version is made by
+   hand; once it passes its trial, pith, writ and rn are made through turn, and their calls to turn
+   are built in the same work.
 
 Agreed for the design (2026-10-11): its principles start from how the orchestrator uses the agents to bring the work to where the receiver can really use it. What the work
 should be is written in the CCS by the plugin (receiver, acceptance, use, viewpoints); turn neither
