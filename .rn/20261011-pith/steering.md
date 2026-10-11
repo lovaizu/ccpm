@@ -51,8 +51,8 @@ essentials files as the viewpoints.
 - Not yet decided: pith is built on turn; what is left for pith itself (for example, writing an
   essentials file for a kind of work that has none) is settled with the user, one point at a time,
   in #2.
-- Not yet decided: whether this pull request removes pith from writ. Recommended: leave writ as it
-  is, and handle it when writ is rebuilt (#53), so this pull request holds pith alone.
+- Fact, decided by the user: this pull request leaves the pith inside writ as it is; it is handled
+  when writ is rebuilt (#53).
 
 # Rules
 
@@ -64,7 +64,7 @@ essentials files as the viewpoints.
 
 # Tasks
 
-### [ ] #1: Plan sign-off
+### [x] #1: Plan sign-off
 
 ### [ ] #2: pith's README
 
