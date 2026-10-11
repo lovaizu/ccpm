@@ -218,7 +218,7 @@ jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 | `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
 
 - If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
-- If python3 or jq is missing, turn returns no CCS; it says in the conversation what to install, and stops.
+- If python3 is missing, turn returns no CCS; it says in the conversation what to install, and stops.
 - To have the next task keep the rules learned here, copy the `rule` lines of the returned CCS into `constraints` of the next task's CCS.
 
 ## What stays with your plugin
@@ -239,7 +239,7 @@ Your plugin's users need the following on their machine. Say so in your plugin's
 
 - jq
 
-    Used by the agents inside turn to read and write only the parts of the CCS they need.
+    Used by your skill to read only the parts of the returned CCS it needs.
 
 - A git repository
 

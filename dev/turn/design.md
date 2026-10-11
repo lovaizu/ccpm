@@ -96,7 +96,7 @@ Keeps the promises "the deliverable shown has already been used, with its stumbl
 
 - No agent reads a conversation record or the CCS itself for what it must know whole. A script turns the generator's and the first user's records into their steps, numbered: what it ran or opened, and what came out. It writes out what the deliverable should be, the rules and the user's answers from the CCS the same way.
 
-    A record is long and a CCS is read with jq a part at a time, so whether either was read through cannot be told. The files the script makes hold the same facts, and a file read with Claude Code's Read tool leaves in the record which lines were read.
+    A record is long and a CCS is read a part at a time, so whether either was read through cannot be told. The files the script makes hold the same facts, and a file read with Claude Code's Read tool leaves in the record which lines were read.
 
 - Each agent must have read whole, before it finishes:
 
@@ -161,7 +161,7 @@ Keeps the promise "what the deliverable should be and the rules do not change in
 
     A CCS written by AI may reword a line of what the deliverable should be, or add entries not in the tables. A script gives the same answer every time.
 
-- The check uses python3, and the CCS is read and written with jq. If either is missing, turn returns no CCS, says in the conversation what to install, and stops.
+- The check uses python3. If it is missing, turn returns no CCS, says in the conversation what to install, and stops.
 
     Going on without the check, no one would notice a change.
 
@@ -205,7 +205,7 @@ The plugin writes the CCS and keeps it; turn reads it, and so do later versions 
 
 - Only the kinds in the README's tables are used. The names of parts and kinds, and the values of `next`, stay in English. The words inside values are free.
 
-    The skill and the agents find the entries they need by kind; the skill reads `next` and `gap` with `jq` to decide its next step. Renaming them leaves the skills that read them unable to decide.
+    The skill and the next turn find the entries they need by kind; the skill reads `next` and `gap` with `jq` to decide its next step. Renaming them leaves the skills that read them unable to decide.
 
 ## 4. How it is checked
 

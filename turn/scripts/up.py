@@ -10,7 +10,6 @@ Run from the repository. A problem is printed as it is, with exit code 1.
 """
 import json
 import os
-import shutil
 import subprocess
 import sys
 
@@ -50,8 +49,6 @@ def load(path):
 
 
 def start(in_path, out_path, session):
-    if not shutil.which("jq"):
-        return "jq is not installed. Install it (https://jqlang.org/download/) and call again.", 1
     problems, ok = script("check.py", "in", in_path, out_path)
     if not ok:
         return problems, 1

@@ -46,12 +46,13 @@ official plugins.
   3.9 or later, and say so in its README.** A script that only calls an existing tool may be sh.
   - Rationale: what the plugin makes can be wrong, so it is held by tests; python3 is wherever git
     is, and Node.js may not be.
-- **Keep what the plugin's agents read and write as data in JSON, handled with `jq`, and say so in
-  its README.**
+- **Keep what the plugin's agents read and write as data in JSON. Where they need only a part, have
+  them read and change it with `jq`; where the purpose needs it read whole, have it read whole.**
   - Rationale: an agent reads or changes only the part it needs instead of the whole file, with a
     tool it already knows; the official hooks docs and plugins use `jq` the same way, and a model is
-    less likely to overwrite JSON wrongly than Markdown.
-- **When python3 or jq is missing, stop and say how to install it.**
+    less likely to overwrite JSON wrongly than Markdown. A judgment made on a part, where the whole
+    was needed, cannot be told from one made on the whole.
+- **When a tool the plugin runs on, such as python3 or jq, is missing, stop and say how to install it.**
   - Rationale: a skipped check goes unnoticed.
 - **Put each hook check in its own named file, one entry file per hook event**, as the official
   `hookify` does.

@@ -140,18 +140,6 @@ class UpTest(unittest.TestCase):
                          (1, "focal_entities has no deliverable\nfocal_entities has no receiver\n"))
         self.assertEqual(set(os.listdir(tempfile.gettempdir())), before)
 
-    def test_start_without_jq_says_how_to_install_it(self):
-        # Given: a machine with git but no jq
-        tools = os.path.join(self.root, "bin")
-        os.makedirs(tools)
-        os.symlink(shutil.which("git"), os.path.join(tools, "git"))
-        env = dict(os.environ, HOME=self.home, PATH=tools)
-        # When: a turn starts
-        result = self.run_up("start", ".t/in.json", ".t/out.json", SESSION, env=env)
-        # Then: it fails and says jq is not installed
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("jq is not installed", result.stdout)
-
     def test_copy_is_a_fresh_clone_with_the_deliverable_added(self):
         # Given: a turn whose deliverable has been made
         work = self.start()
