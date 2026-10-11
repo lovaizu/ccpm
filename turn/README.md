@@ -71,21 +71,21 @@ A person tries out what they made, fixes what tripped them up, and only then han
 
 ```mermaid
 flowchart LR
-  I[CCS] --> M[The maker makes it]
-  M --> U[The stand-in tries it]
-  U --> L[The learner learns]
-  L --> J{turn compares it with the criteria}
+  I[CCS] --> M[The generator makes it]
+  M --> U[The first user tries it]
+  U --> L[The learner finds the causes]
+  L --> J{The evaluator compares it with the criteria}
   J -->|a gap| M
   J -->|no gap, let go, or something for the user or the skill to decide| O[New CCS]
 ```
 
-- The maker, the stand-in and the learner are separate agents. Only turn, which calls them, makes decisions.
+- The generator, the first user, the learner and the evaluator are separate agents. turn's main conversation, the orchestrator, calls them in turn and passes on what each returns. Only the evaluator makes decisions.
 
-    Whoever made the work goes easy on it when checking it. The stand-in is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the work the way they describe, and the places where the receiver stumbles would not show.
+    Whoever made the work goes easy on it when checking it. The first user is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the work the way they describe, and the places where the receiver stumbles would not show.
 
-- Each time the work is tried, the learner learns why it stumbled.
+- Each time the work is tried, the learner finds why it stumbled.
 
-    For the work, it learns the cause of the stumble, not just the spot. The maker fixes that cause and remakes the work from it. Patching spot by spot moves the work away from what it should be. What it learns about the way of working becomes a rule, which is kept for the rest of the turn and goes into the returned CCS.
+    For the work, it finds the cause of the stumble, not just the spot. The generator fixes that cause and remakes the work from it. Patching spot by spot moves the work away from what it should be. A cause in the way of working becomes a rule, which is kept for the rest of the turn and goes into the returned CCS.
 
 - A turn starts by receiving a CCS and ends by returning a new one.
 
@@ -93,9 +93,9 @@ flowchart LR
 
 ## Writing a CCS
 
-A CCS is one JSON file. It has all nine parts, and each part is a list of `{"kind": "value"}` entries. A part with nothing in it is an empty list `[]`. Do not copy the content of the work or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
+A CCS is one JSON file. It has all nine parts, and each part is a list of `{"kind": "value"}` entries. The kind says what the value is: in `{"work": "SETUP.md"}`, the kind `work` says that `SETUP.md` is where the work goes. A part with nothing in it is an empty list `[]`. Do not copy the content of the work or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
 
-The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the two tables below are allowed. Other values are written in the language of the work.
+The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the two tables below are allowed: the skill and the agents find the entries they need by kind, and an entry with a kind not in the tables is stopped by the script check. Other values are written in the language of the work.
 
 ### What the plugin writes
 
@@ -139,7 +139,7 @@ The names of parts and kinds, and fixed words such as the values of `next`, stay
 
 Viewpoint files live inside the plugin. The skill writes their place as `${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md` and copies it into the CCS. Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the current location when it loads the skill. If the path goes stale, on another machine or after an update, turn stops at the check it runs on receiving the CCS; write the CCS again with the current path and call again.
 
-A viewpoint file says what good work is in the domain, in a form the maker and the learner can judge by. For a setup guide, it might say:
+A viewpoint file says what good work is in the domain, in a form the generator, the learner and the evaluator can judge by. For a setup guide, it might say:
 
 ```markdown
 - Go from a fresh clone to a running app, as steps of commands to type and what each one shows.
@@ -165,8 +165,8 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
   ],
   "relational_map": [{"link": "SETUP.md ← scripts in package.json"}],
   "episodic_trace": [
-    {"maker-1": "wrote SETUP.md"},
-    {"stand-in-1": "ran npm start"}
+    {"generator-1": "wrote SETUP.md"},
+    {"first-user-1": "ran npm start"}
   ]
 }
 ```
@@ -178,7 +178,7 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
 | `semantic_gist` | `difference` | Something that, when the work was tried, did not match the criteria, and how it ended. The ending is one of `fixed`, `let go: <reason>` or `to the caller: <reason>` (left to the skill) |
 | `constraints` | `rule` | A rule about the way of working, learned in this turn |
 | `relational_map` | `link` | How the work connects to its sources and other things |
-| `episodic_trace` | The agent and which round (`maker-1` is the maker's first round, `stand-in-1` the stand-in's first, `learner-1` the learner's first), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
+| `episodic_trace` | The agent and which round (`generator-1` is the generator's first round; likewise `first-user-1`, `learner-1` and `evaluator-1`), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
 
 ### What a script checks
 
@@ -256,7 +256,7 @@ Your plugin's users need the following on their machine. Say so in your plugin's
 
 - A git repository
 
-    The stand-in tries the work in a copy in the state of a freshly cloned repository.
+    The first user tries the work in a copy in the state of a freshly cloned repository.
 
 ## Installing
 

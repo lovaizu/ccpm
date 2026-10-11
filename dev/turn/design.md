@@ -2,33 +2,31 @@
 
 This document is for the people who build and maintain turn. For each promise in the [README](../../turn/README.md), it says which feature keeps it and how that is checked. Whether a change fits the design is decided by the principles below and by what the plugin's users would lose.
 
-The role inside turn that makes decisions is called the conductor. It is the main conversation running `turn:up`; when the README says "only turn makes decisions", it means the conductor.
-
 ## 1. Principles
 
-The conductor works toward what the CCS says the work should be. It has the maker make the work, has the stand-in try it in the receiver's place, has the learner find the cause of each stumble, and has the maker remake the work from that cause. It repeats this until trying the work matches what it should be, or until all that is left is for the user or the skill to decide. The result is work the receiver can really use. The five principles below always hold, so that this loop gets there.
+The orchestrator works toward what the CCS says the work should be. It has the generator make the work, the first user try it in the receiver's place, the learner find the causes of the stumbles, and the evaluator decide each one; then it has the generator remake the work from the causes to fix. It repeats this until trying the work matches what it should be, or until all that is left is for the user or the skill to decide. The result is work the receiver can really use. The five principles below always hold, so that this loop gets there.
 
 - Every decision is measured against what the CCS says the work should be.
 
-    What the work should be is what the plugin writes: the receiver (`receiver`), the acceptance criteria (`acceptance`), what the work is used for (`use`) and the viewpoint files (`viewpoint`). A turn knows only what is in the CCS, so a picture the conductor forms on its own reaches neither the next turn nor a resumed one. The plugin decides what the work should be; turn neither makes it up nor changes it. This keeps the promise that the acceptance criteria and rules do not change in the middle of a task. When that is not enough to decide, turn returns to the skill.
+    What the work should be is what the plugin writes: the receiver (`receiver`), the acceptance criteria (`acceptance`), what the work is used for (`use`) and the viewpoint files (`viewpoint`). A turn knows only what is in the CCS, so a picture an agent forms on its own reaches neither the next turn nor a resumed one. The plugin decides what the work should be; turn neither makes it up nor changes it. This keeps the promise that the acceptance criteria and rules do not change in the middle of a task. When that is not enough to decide, turn returns to the skill.
 
-- The stand-in uses the work as the receiver would.
+- The first user uses the work as the receiver would.
 
-    It is told only the work, who the receiver is and what they use it for; never the acceptance criteria or the discussion. It works in a fresh clone in a temporary folder with only the work added, the same state the receiver starts from. Then the stand-in stumbles where the receiver would, and the promise that the work shown has already been used, with its stumbles fixed, holds for real. Knowing the criteria, the stand-in would use the work the way they describe. In the working repository, files the receiver does not have would help it along and hide the stumbles.
+    It is told only the work, who the receiver is and what they use it for; never the acceptance criteria or the discussion. It works in a fresh clone in a temporary folder with only the work added, the same state the receiver starts from. Then the first user stumbles where the receiver would, and the promise that the work shown has already been used, with its stumbles fixed, holds for real. Knowing the criteria, the first user would use the work the way they describe. In the working repository, files the receiver does not have would help it along and hide the stumbles.
 
 - What gets fixed is the cause of a stumble, and the work is remade from it.
 
     Patching only the spot leaves the cause in place, the same stumble comes back elsewhere, and the work drifts away from what it should be. Remaking it from the cause brings it closer with every try, until the work shown has been used with its stumbles fixed. No fix is made that does not bring the work closer.
 
-- Only the conductor decides, and it checks each report against what the work should be, the work itself and the facts.
+- Only the evaluator decides, and it checks each report against what the work should be, the work itself and the facts.
 
-    The maker, the stand-in and the learner each do one job and report what they did and what happened. They do not judge. Whoever made the work goes easy on it, and once decisions spread across agents, no one can say which fix serves what the work should be. A report can claim more than was done, so the conductor checks it against the conversation records (JSONL) and git. It checks a report that something worked as hard as one that it stumbled, and the learner's cause just as hard. Taking "it worked" on trust passes the stumble on to the receiver, and the work shown is no longer work that has been used and fixed.
+    The generator, the first user and the learner each do one job and report what they did and what happened. They do not judge. Whoever made the work goes easy on it, and whoever found a cause goes easy on that cause; once decisions spread across agents, no one can say which fix serves what the work should be. A report can claim more than was done, so the evaluator checks it against the work, the conversation records (JSONL) and git. It checks a report that something worked as hard as one that it stumbled, and the learner's causes just as hard. Taking "it worked" on trust passes the stumble on to the receiver, and the work shown is no longer work that has been used and fixed.
 
-    The conductor does not make, try or learn itself, because the content of that work would fill its conversation, and, as the README opens with, it would drift from its goal and rules. Learning in particular means reading the long records of a round.
+    The orchestrator reads none of this content. It calls the agents and passes on what they return. Making, trying, finding causes and checking them all mean reading the work and long records; held in the orchestrator's conversation, round after round, that content would fill it, and, as the README opens with, it would drift from its goal and rules. Each of the other agents starts in a new conversation every round.
 
 - Only the returned CCS and the work remain after a turn.
 
-    The next turn starts from these alone, not from conversation records or anything the conductor remembers. turn never rewrites the CCS it received; it writes a new CCS to a separate file. This keeps the promise that a task stopped partway carries on from where it stopped, and, once the CCS and the work are committed, on another machine too. A turn cut off partway can start over from the same CCS. And the plugin can decide its next step from the returned CCS alone.
+    The next turn starts from these alone, not from conversation records or anything an agent remembers. turn never rewrites the CCS it received; it writes a new CCS to a separate file. This keeps the promise that a task stopped partway carries on from where it stopped, and, once the CCS and the work are committed, on another machine too. A turn cut off partway can start over from the same CCS. And the plugin can decide its next step from the returned CCS alone.
 
 ## 2. Features
 
@@ -39,46 +37,48 @@ Who passes what to whom within one turn:
 ```mermaid
 sequenceDiagram
   participant S as Skill
-  participant C as Conductor
-  participant M as Maker
-  participant U as Stand-in
+  participant O as Orchestrator
+  participant G as Generator
+  participant U as First user
   participant L as Learner
-  S->>C: CCS (in)
-  Note over C: A script checks the form of the CCS received
+  participant E as Evaluator
+  S->>O: CCS (in)
+  Note over O: A script checks the form of the CCS received
   loop until trying matches what the work should be, or only the user's or the skill's decisions remain
-    C->>M: what the work should be, sources, rules, the user's answers, the checked causes of stumbles
-    M-->>C: the work, and what it did
-    C->>U: the work, the receiver, what it is used for (in a temporary copy)
-    U-->>C: what it did, and what happened
-    C->>L: the stand-in's report, the records of that round, the viewpoint files
-    L-->>C: the causes of the stumbles
-    Note over C: Lays each report beside what the work should be, checks it against the work and the records, and decides
+    O->>G: what the work should be, sources, rules, the user's answers, the causes to fix
+    G-->>O: the work, and what it did
+    O->>U: the work, the receiver, what it is used for (in a temporary copy)
+    U-->>O: what it did, and what happened
+    O->>L: the first user's report, the records of that round, the viewpoint files
+    L-->>O: the causes of the stumbles
+    O->>E: what the work should be, the work, both reports, the records of that round
+    E-->>O: how each stumble ends, the causes to fix, the rules, the questions for the user
   end
-  Note over C: A script writes episodic_trace and checks the form of the CCS to return
-  C-->>S: new CCS (out)
+  Note over O: A script writes episodic_trace and checks the form of the CCS to return
+  O-->>S: new CCS (out)
 ```
 
 ### Trying the work as the receiver, and fixing the cause
 
 Keeps the promises "the work shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
 
-- The work returned is the one the stand-in used from start to end after the last remake.
+- The work returned is the one the first user used from start to end after the last remake.
 
     Work that was made but not used, or used again only at the fixed spot, has not been down the receiver's path. Remaking from a cause can change more than the spot where it stumbled.
 
-- Each time the stand-in finishes, the learner finds the causes of its stumbles.
+- Each time the first user finishes, the learner finds the causes of its stumbles.
 
-    The stand-in's report shows where it stumbled, not why. The learner looks for the cause in the report and in the records of what actually happened in that round.
+    The first user's report shows where it stumbled, not why. The learner looks for the cause in the report and in the records of what actually happened in that round.
 
-- The conductor decides each checked stumble against what the work should be, as one of the following, and writes how it ended in `difference` in the returned CCS.
-  - A stumble that keeps the receiver from meeting the acceptance criteria: its cause goes to the maker, who remakes the work (`fixed`).
+- The evaluator checks each stumble and its cause, and decides it against what the work should be as one of the following. How it ends goes into `difference` in the returned CCS.
+  - A stumble that keeps the receiver from meeting the acceptance criteria: its cause goes to the generator, which remakes the work (`fixed`).
   - A stumble that does not keep the receiver from meeting them: let go, with the reason (`let go`).
   - A stumble that what the work should be cannot decide: returned to the skill (`to the caller`). If only the user can decide it, it goes into `gap` as a question.
   - A stumble with the same cause that remains after the work was remade and tried again: the cause was misjudged, or what the work should be cannot decide it. Returned to the skill (`to the caller`).
 
     Repeating the same fix does not bring the work any closer.
 
-- A cause about the way of working becomes a rule (`rule`). The conductor passes it to every agent it calls for the rest of the turn and adds it to `constraints` in the returned CCS.
+- A checked cause in the way of working becomes a rule (`rule`). The orchestrator passes it to every agent it calls for the rest of the turn and adds it to `constraints` in the returned CCS.
 
     When the skill copies it into the next task's CCS, the same stumble does not come back across tasks either.
 
@@ -86,7 +86,7 @@ Keeps the promises "the work shown has already been used, with its stumbles fixe
 
 Keeps the promise "their other work is left untouched".
 
-- The temporary copy the stand-in works in is deleted when it is done.
+- The temporary copy the first user works in is deleted when it is done.
 - turn never commits or pushes.
 
     Whether to commit is decided by the plugin, which knows the user and the order of tasks.
@@ -95,7 +95,7 @@ Keeps the promise "their other work is left untouched".
 
 Keeps the promise "they are asked only what only they can decide".
 
-- What the CCS and its sources, the user's answers and the viewpoints settle, the conductor decides.
+- What the CCS and its sources, the user's answers and the viewpoints settle, the evaluator decides.
 - Only what they do not settle and only the user can decide goes into `gap`, as a question that can be asked as it is, with `next` set to `ask the user`.
 
     turn does not talk to the user. It does not know what the plugin has agreed with the user outside the turn. If turn decided what to ask, users would be asked the same thing again, or find decisions in the work they never meant to make.
@@ -104,7 +104,7 @@ Keeps the promise "they are asked only what only they can decide".
 
 Keeps the promise "you decide the next step without reading the work".
 
-- The conductor writes how each stumble ended (`difference`), what only the user can decide (`gap`), the rules it learned (`rule`), how the work connects to its sources (`link`) and what to do next (`next`).
+- The orchestrator writes, from the evaluator's decisions, how each stumble ended (`difference`), what only the user can decide (`gap`), the rules (`rule`), how the work connects to its sources (`link`) and what to do next (`next`).
 - What each agent actually read, wrote and ran (`episodic_trace`) is written by a script from the conversation records and git before the turn returns.
 
     An agent's own account can claim more than it did.
@@ -125,9 +125,9 @@ Keeps the promise "the acceptance criteria and rules do not change in the middle
 
 Keeps the promise "if they stop partway, the task carries on from where it stopped".
 
-- When the user asks in the conversation to stop, the conductor calls no new agent. It writes a new CCS up to the point where every stumble so far has an ending, and returns it with `next` set to `stopped: <where from>`.
+- When the user asks in the conversation to stop, the orchestrator calls no new agent. It writes a new CCS up to the point where every stumble so far has an ending, and returns it with `next` set to `stopped: <where from>`.
 
-    Stumbles with an ending, and the work made so far, remain in the CCS and on disk. A try or a learning round whose stumbles have no ending yet is done again in the next turn. That needs less machinery than adding a form to keep them in the CCS.
+    Stumbles with an ending, and the work made so far, remain in the CCS and on disk. A round whose stumbles have no ending yet is done again in the next turn. That needs less machinery than adding a form to keep them in the CCS.
 
 - A turn cut off without returning a CCS leaves nothing behind. The skill calls again with the same `in`, and the turn starts over.
 
@@ -147,7 +147,7 @@ The plugin writes the CCS and keeps it; turn reads it, and so do later versions 
 
 - In `constraints`, written lines never change; new lines are only added after them.
 
-    The user's answers and learned rules, once settled, are kept in later turns too.
+    The user's answers and rules, once settled, are kept in later turns too.
 
 - The parts turn writes are rewritten by each turn. They are read by the skill and by the next turn.
   - The skill decides its next step from `next` and `gap`, and copies `rule` into the next task.
@@ -159,9 +159,9 @@ The plugin writes the CCS and keeps it; turn reads it, and so do later versions 
 
     A copy drifts from the real thing, and the CCS grows.
 
-- The names of parts and kinds, and the values of `next`, stay in English and are only the fixed ones. The words inside values are free.
+- Only the kinds in the README's tables are used. The names of parts and kinds, and the values of `next`, stay in English. The words inside values are free.
 
-    They are the keys the skill reads with `jq` to decide its next step. Renaming them leaves the skills that read them unable to decide.
+    The skill and the agents find the entries they need by kind; the skill reads `next` and `gap` with `jq` to decide its next step. Renaming them leaves the skills that read them unable to decide.
 
 ## 4. How it is checked
 
@@ -185,7 +185,7 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 
 - "If they stop partway, the task carries on from where it stopped"
 
-    Scene: a task where the user asks to stop after the maker has finished. It passes when calling again with only the returned CCS and the work placed in another clone carries on from the work already made, and passes the same way.
+    Scene: a task where the user asks to stop after the generator has finished. It passes when calling again with only the returned CCS and the work placed in another clone carries on from the work already made, and passes the same way.
 
 "The acceptance criteria and rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time. The effort of the trials goes to whether the other promises reach the users.
 
@@ -194,3 +194,7 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 - A limit on the number of rounds is not used.
 
     A stumble whose cause remains is returned to the skill, so a loop that is not getting closer stops there. A limit would stop a loop that is still getting closer, and the receiver would get work they cannot use.
+
+- The learner and the evaluator are not merged into one agent.
+
+    One agent would read the same records once instead of twice, but it would then check the causes it found itself, and go easy on them.
