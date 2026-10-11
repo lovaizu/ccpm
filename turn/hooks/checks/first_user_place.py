@@ -15,6 +15,9 @@ def check(data, t):
     copy = t["copy"]
     path = target(data)
     if path is not None:
+        report = os.path.realpath(os.path.join(t["work"], f"first-user-{t['round']}.md"))
+        if data["tool_name"] in CHANGES and path == report:
+            return []
         if not inside(path, copy):
             return [f"{path} is outside your copy; work only inside {copy}"]
         if data["tool_name"] in CHANGES and inside(path, os.path.join(os.path.realpath(copy), t["deliverable"])):

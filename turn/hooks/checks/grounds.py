@@ -52,7 +52,8 @@ FORM = {
     "learner": ('{"causes": [{"stumble": "...", "cause": "...", "way_of_working": true, '
                 '"grounds": ["first-user-1#3"]}]}'),
     "evaluator": ('{"endings": [{"stumble": "...", "cause": "...", "ending": "fixed", '
-                  '"grounds": ["first-user-1#3", "SETUP.md:12"]}], "rules": [], "gaps": [], "links": []}'),
+                  '"grounds": ["first-user-1#3", "SETUP.md:12"]}], "rules": [], "gaps": [], "links": []}, '
+                  'each ending exactly "fixed", "let go: <why>", "to the caller: <why>" or "to the caller: ask the user"'),
 }
 
 

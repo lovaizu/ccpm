@@ -148,6 +148,8 @@ class AssembleTest(unittest.TestCase):
         cases = ["{not json", {"endings": [{"stumble": "x", "grounds": ["a#1"]}], "rules": [], "gaps": [], "links": []},
                  {"endings": [], "rules": "one", "gaps": [], "links": []}, {"endings": []},
                  {"endings": [{"stumble": "x", "ending": "patched", "grounds": ["first-user-1#2"]}], "rules": [], "gaps": [], "links": []},
+                 {"endings": [{"stumble": "x", "ending": "to the caller: ask the user. The viewpoint says so",
+                               "grounds": ["first-user-1#2"]}], "rules": [], "gaps": ["Who?"], "links": []},
                  {"endings": [{"stumble": "x", "ending": "fixed"}], "rules": [], "gaps": [], "links": []},
                  {"endings": [{"stumble": "x", "ending": "fixed", "grounds": []}], "rules": [], "gaps": [],
                   "links": []},

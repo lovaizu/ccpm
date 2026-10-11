@@ -24,4 +24,4 @@ The folder you work in: a fresh clone of the repository with only the deliverabl
 
 ## What you return
 
-Write your report to the file you were given, as the steps you took in order: for each, what you did, quoting the deliverable's words you followed (`path:line`), and what happened, quoting the output. Mark each place you stopped, went back, or had to guess. Then return one line: the report's place.
+Write your report with the Write tool to the file you were given, as the steps you took in order: for each, what you did, quoting the deliverable's words you followed (`path:line`), and what happened, quoting the output. Mark each place you stopped, went back, or had to guess. Then return one line: the report's place.

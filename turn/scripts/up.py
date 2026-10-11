@@ -72,7 +72,9 @@ def start(in_path, out_path, session):
 
 def copy(work):
     deliverable = [e["deliverable"] for e in load(state(work)["in"])["focal_entities"] if "deliverable" in e][0]
-    folder, _ = script("tryout.py", "make", deliverable)
+    folder, ok = script("tryout.py", "make", deliverable)
+    if not ok:
+        return folder, 1
     state(work, copy=folder)
     return folder, 0
 

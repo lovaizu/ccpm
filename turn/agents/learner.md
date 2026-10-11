@@ -23,6 +23,7 @@ Read each of these files whole with the Read tool before you write. You are kept
 
     "Step 4 lacks mkdir var" is a spot. "The steps were written in a repository where var/ already existed, without running them from a fresh clone" is a cause; it shows every other step written the same way.
 
+- No one in a turn can ask the user or anyone else; a fact only they hold leaves the turn as a question for the user. Where the deliverable needed such a fact, the cause is what the generator did with what it had, never that it did not ask.
 - When a cause is in the way of working rather than in this deliverable alone, say so: it can become a rule for the rest of the turn.
 - Do not decide what to do about a cause, and do not change any file but your own.
 

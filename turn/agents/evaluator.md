@@ -26,14 +26,14 @@ Read each of these whole with the Read tool, every viewpoint file and every file
 - End each stumble one of these ways:
   - It keeps the receiver from meeting `acceptance`: `fixed`, with the `cause` the generator is to remake the deliverable from.
   - It does not: `let go: <why>`.
-  - What the deliverable should be does not settle it: `to the caller: <why>`. When only the user can settle it, write `to the caller: ask the user`, and add the question to `gaps`, worded so it can be asked as it is.
+  - What the deliverable should be does not settle it: `to the caller: <why>`. When only the user can settle it, write exactly `to the caller: ask the user`, with nothing after it, and add the question to `gaps`, worded so it can be asked as it is.
   - Its cause is one an earlier round sent as `fixed`, and it remains after the remake: `to the caller: <why>`.
 
     Sending the same cause again does not bring the deliverable any closer.
 
-- A checked cause in the way of working becomes a rule: one sentence a generator can keep, saying how to work so that the deliverable comes out as it should be wherever that cause would act.
+- A checked cause in the way of working becomes a rule: one sentence a generator can keep within a turn, saying how to work so that the deliverable comes out as it should be wherever that cause would act.
 
-    The rule goes on to later tasks. One that only answers the place where the cause showed is a fix at the spot, carried into every task after it.
+    The rule goes on to later tasks. One that only answers the place where the cause showed is a fix at the spot, carried into every task after it. No one in a turn can ask the user, so a rule to ask before writing stops every generator after it; a fact only the user holds goes to `gaps`.
 - Note how the deliverable connects to its sources, as links such as `SETUP.md ← app.py`.
 
 ## What you return

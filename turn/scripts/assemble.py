@@ -13,7 +13,7 @@ import os
 import re
 import sys
 
-ENDING = re.compile(r"^(fixed|let go: .+|to the caller: .+)$")
+ENDING = re.compile(r"^(fixed|let go: .+|to the caller: ask the user|to the caller: (?!ask the user).+)$")
 ASK = "to the caller: ask the user"
 
 

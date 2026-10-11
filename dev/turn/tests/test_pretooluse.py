@@ -85,6 +85,21 @@ class PreToolUseTest(unittest.TestCase):
                 else:
                     self.assertIn(said, reason)
 
+    def test_the_first_user_writes_its_report_in_the_work_folder_and_touches_nothing_else_there(self):
+        # Given
+        cases = [("Write", {"file_path": os.path.join(self.work, "first-user-1.md"), "content": ""}, None),
+                 ("Write", {"file_path": os.path.join(self.work, "should.md"), "content": ""}, "outside"),
+                 ("Read", {"file_path": os.path.join(self.work, "should.md")}, "outside")]
+        for tool, given, said in cases:
+            with self.subTest(tool=tool, given=given):
+                # When
+                reason = self.call(tool, given, agent="turn:first-user")
+                # Then
+                if said is None:
+                    self.assertIsNone(reason)
+                else:
+                    self.assertIn(said, reason)
+
     def test_the_first_user_runs_commands_inside_its_copy_only(self):
         # Given
         cases = [({"command": f"cd {self.copy} && npm start"}, self.repo, None),
