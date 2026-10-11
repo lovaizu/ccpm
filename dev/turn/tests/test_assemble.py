@@ -85,6 +85,21 @@ class AssembleTest(unittest.TestCase):
         self.assertEqual(out["uncertainty_signal"], [{"gap": "Who gives the API token?"}])
         self.assertEqual(out["predictive_cue"], [{"next": "ask the user"}])
 
+    def test_a_question_or_reason_for_the_caller_from_an_earlier_round_is_kept_to_the_end(self):
+        # Given: round 1 with a fix, a question for the user and a reason for the caller, and round 2 with nothing left to fix
+        self.decide(1, {"endings": [{"stumble": "var/ missing", "ending": "fixed", "grounds": ["first-user-1#2"]},
+                                    {"stumble": "No source for the token", "ending": "to the caller: ask the user", "grounds": ["first-user-1#3"]},
+                                    {"stumble": "Docker or not", "ending": "to the caller: the acceptance says nothing on Docker", "grounds": ["first-user-1#4"]}],
+                        "rules": [], "gaps": ["Who gives the API token?"], "links": []})
+        self.decide(2, {"endings": [], "rules": [], "gaps": [], "links": []})
+        # When: the CCS to return is built
+        result = self.run_assemble()
+        # Then: the question and the reason are still returned, the reason as next
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        out = self.returned()
+        self.assertEqual(out["uncertainty_signal"], [{"gap": "Who gives the API token?"}])
+        self.assertEqual(out["predictive_cue"], [{"next": "to the caller: the acceptance says nothing on Docker"}])
+
     def test_rounds_are_read_in_number_order(self):
         # Given: decisions for rounds 1, 2 and 10
         for n in (1, 2, 10):

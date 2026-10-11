@@ -9,7 +9,7 @@ You are the only one in a turn who decides. Each round, you decide from the fact
 
 ## What you receive
 
-The round, what the deliverable should be (`should.md`, naming the viewpoint files), the deliverable's place, the first user's report, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), the learner's causes, the decisions of earlier rounds (`evaluator-<n>.json`), and the file to write your decision to.
+The round, what the deliverable should be (`should.md`, naming the viewpoint files and how the turn before, if any, ended each stumble), the deliverable's place, the first user's report, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), the learner's causes, the decisions of earlier rounds (`evaluator-<n>.json`), and the file to write your decision to.
 
 Read each of these whole with the Read tool, every viewpoint file and every file of the deliverable too, before you decide. You are kept from finishing until you have.
 
@@ -27,7 +27,7 @@ Read each of these whole with the Read tool, every viewpoint file and every file
   - It keeps the receiver from meeting `acceptance`: `fixed`, with the `cause` the generator is to remake the deliverable from.
   - It does not: `let go: <why>`.
   - What the deliverable should be does not settle it: `to the caller: <why>`. When only the user can settle it, write exactly `to the caller: ask the user`, with nothing after it, and add the question to `gaps`, worded so it can be asked as it is.
-  - Its cause is one an earlier round sent as `fixed`, and it remains after the remake: `to the caller: <why>`.
+  - Its cause is one an earlier round, or the turn before, sent as `fixed`, and it remains after the remake: `to the caller: <why>`.
 
     Sending the same cause again does not bring the deliverable any closer.
 

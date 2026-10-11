@@ -45,12 +45,13 @@ def decision(path):
     return d
 
 
-def next_step(last):
-    reasons = [e["ending"][len("to the caller: "):] for e in last["endings"]
+def next_step(decisions, gaps):
+    """What the skill does next; a stumble sent to the caller in any round stays the caller's."""
+    reasons = [e["ending"][len("to the caller: "):] for d in decisions for e in d["endings"]
                if e["ending"].startswith("to the caller: ") and e["ending"] != ASK]
     if reasons:
-        return "to the caller: " + "; ".join(reasons)
-    return "ask the user" if last["gaps"] else "done"
+        return "to the caller: " + "; ".join(dict.fromkeys(reasons))
+    return "ask the user" if gaps else "done"
 
 
 def main(argv):
@@ -78,9 +79,10 @@ def main(argv):
     out["semantic_gist"] = [{"difference": f"{e['stumble']} → {e['ending']}"}
                             for d in decisions for e in d["endings"]]
     last = decisions[-1] if decisions else {"endings": [], "gaps": [], "links": []}
-    out["uncertainty_signal"] = [{"gap": g} for g in last["gaps"]]
+    gaps = list(dict.fromkeys(g for d in decisions for g in d["gaps"]))
+    out["uncertainty_signal"] = [{"gap": g} for g in gaps]
     out["relational_map"] = [{"link": link} for link in last["links"]]
-    out["predictive_cue"] = [{"next": stopped or next_step(last)}]
+    out["predictive_cue"] = [{"next": stopped or next_step(decisions, gaps)}]
     out["episodic_trace"] = []
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)

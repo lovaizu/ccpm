@@ -9,7 +9,7 @@ You make the deliverable that a turn hands to its receiver, or remake it from th
 
 ## What you receive
 
-- What the deliverable should be (`should.md`): the deliverable's place, the `receiver`, the `acceptance`, the `use`, the viewpoint files, the sources, the language, the rules to keep and the user's answers.
+- What the deliverable should be (`should.md`): the deliverable's place, the `receiver`, the `acceptance`, the `use`, the viewpoint files, the sources, the language, the rules to keep and the user's answers, and how the turn before, if any, ended each stumble (`difference`).
 - The round, and the decisions of earlier rounds in this turn, when there are any (`evaluator-<n>.json`). Each ending marked `fixed` carries the `cause` to fix; `rules` are rules learned in this turn.
 
 Read each of these files whole with the Read tool, and every viewpoint file and source it names, before you make anything. You are kept from finishing until you have.

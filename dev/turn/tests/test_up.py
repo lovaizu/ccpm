@@ -118,6 +118,16 @@ class UpTest(unittest.TestCase):
                              "- use: Run the steps from the top\n- viewpoint: setup.md\n- source: setup.md\n"
                              "- language: English\n- rule: Type each step first\n- answer: Ask Sato\n")
 
+    def test_start_after_a_stop_hands_on_how_the_turn_before_ended_each_stumble(self):
+        # Given: a CCS returned by a turn the user stopped, with how its stumbles ended
+        self.write(".t/in.json", json.dumps(dict(CCS, semantic_gist=[{"difference": "no var/ → fixed"}],
+                                                 predictive_cue=[{"next": "stopped: generator-2"}])))
+        # When: a turn starts on it
+        work = self.start()
+        # Then: should.md ends with how the turn before ended each stumble
+        with open(os.path.join(work, "should.md"), encoding="utf-8") as f:
+            self.assertTrue(f.read().endswith("- language: English\n- difference: no var/ → fixed\n"))
+
     def test_start_replaces_the_work_folder_of_a_turn_cut_off_in_the_same_session(self):
         # Given: a turn of this session was cut off and left a decision behind
         work = self.start()

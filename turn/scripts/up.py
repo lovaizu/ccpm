@@ -23,7 +23,8 @@ PLACES = (("focal_entities", "deliverable"), ("focal_entities", "receiver"),
 SHOULD = (("focal_entities", "deliverable"), ("focal_entities", "receiver"),
           ("goal_orientation", "acceptance"), ("goal_orientation", "use"),
           ("retrieved_artifacts", "viewpoint"), ("retrieved_artifacts", "source"),
-          ("constraints", "language"), ("constraints", "rule"), ("constraints", "answer"))
+          ("constraints", "language"), ("constraints", "rule"), ("constraints", "answer"),
+          ("semantic_gist", "difference"))
 
 
 def script(name, *args):
