@@ -1,6 +1,7 @@
-"""Makes and deletes the copy the first user tries the deliverable in.
+"""Makes and deletes the copy the first user tries the deliverable in, and the turn's work folder.
 
     python3 tryout.py make <deliverable>   prints the copy's folder
+    python3 tryout.py work                 prints an empty work folder
     python3 tryout.py drop <folder>
 
 The copy is a fresh clone of the repository in a temporary folder, with only the deliverable added:
@@ -38,21 +39,28 @@ def make(deliverable):
     return folder, 0
 
 
+def work():
+    return tempfile.mkdtemp(prefix=PREFIX), 0
+
+
 def drop(folder):
-    """Deletes folder only when it is a copy this script made."""
+    """Deletes folder only when it is a folder this script made."""
     path = os.path.realpath(folder)
     temp = os.path.realpath(tempfile.gettempdir())
     if os.path.dirname(path) != temp or not os.path.basename(path).startswith(PREFIX):
-        return f"{folder} is not a copy made by turn; nothing deleted", 1
+        return f"{folder} is not a folder made by turn; nothing deleted", 1
     shutil.rmtree(path)
     return "", 0
 
 
 def main(argv):
-    if len(argv) != 3 or argv[1] not in ("make", "drop"):
+    if argv[1:] == ["work"]:
+        text, code = work()
+    elif len(argv) == 3 and argv[1] in ("make", "drop"):
+        text, code = (make if argv[1] == "make" else drop)(argv[2])
+    else:
         print(__doc__.strip())
         return 2
-    text, code = (make if argv[1] == "make" else drop)(argv[2])
     if text:
         print(text)
     return code

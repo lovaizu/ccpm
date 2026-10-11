@@ -109,9 +109,21 @@ class TryoutTest(unittest.TestCase):
         self.assertTrue(os.path.isdir(other))
         self.assertTrue(os.path.isdir(self.repo))
 
+    def test_work_makes_an_empty_folder_that_drop_deletes(self):
+        # Given
+        made = self.run_tryout("work")
+        folder = made.stdout.strip()
+        self.assertEqual(made.returncode, 0, made.stdout + made.stderr)
+        self.assertEqual(os.listdir(folder), [])
+        # When
+        result = self.run_tryout("drop", folder)
+        # Then
+        self.assertEqual((result.returncode, result.stdout), (0, ""))
+        self.assertFalse(os.path.exists(folder))
+
     def test_a_call_without_make_or_drop_shows_how_to_call_it(self):
         # Given
-        args = ["copy", "SETUP.md"]
+        args = ["work", "SETUP.md"]
         # When
         result = self.run_tryout(*args)
         # Then
