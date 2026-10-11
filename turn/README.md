@@ -79,7 +79,7 @@ flowchart LR
   J -->|no gap, let go, or something for the user or the skill to decide| O[New CCS]
 ```
 
-- The generator, the first user, the learner and the evaluator are separate agents. turn's main conversation, the orchestrator, calls them in turn and passes on what each returns. Only the evaluator makes decisions.
+- The generator, the first user, the learner and the evaluator are separate agents. turn calls them in turn and passes on what each returns. Only the evaluator makes decisions.
 
     Whoever made the work goes easy on it when checking it. The first user is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the work the way they describe, and the places where the receiver stumbles would not show.
 

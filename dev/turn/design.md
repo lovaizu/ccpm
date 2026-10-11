@@ -2,6 +2,8 @@
 
 This document is for the people who build and maintain turn. For each promise in the [README](../../turn/README.md), it says which feature keeps it and how that is checked. Whether a change fits the design is decided by the principles below and by what the plugin's users would lose.
 
+The orchestrator is turn's main conversation, the one running `turn:up`. Where the README says "turn calls them", it is the orchestrator that calls.
+
 ## 1. Principles
 
 The orchestrator works toward what the CCS says the work should be. It has the generator make the work, the first user try it in the receiver's place, the learner find the causes of the stumbles, and the evaluator decide each one; then it has the generator remake the work from the causes to fix. It repeats this until trying the work matches what it should be, or until all that is left is for the user or the skill to decide. The result is work the receiver can really use. The five principles below always hold, so that this loop gets there.
@@ -51,7 +53,7 @@ sequenceDiagram
     U-->>O: what it did, and what happened
     O->>L: the first user's report, the records of that round, the viewpoint files
     L-->>O: the causes of the stumbles
-    O->>E: what the work should be, the work, both reports, the records of that round
+    O->>E: what the work should be, the work, both reports, the records of that round, how earlier stumbles ended
     E-->>O: how each stumble ends, the causes to fix, the rules, the questions for the user
   end
   Note over O: A script writes episodic_trace and checks the form of the CCS to return
@@ -76,7 +78,7 @@ Keeps the promises "the work shown has already been used, with its stumbles fixe
   - A stumble that what the work should be cannot decide: returned to the skill (`to the caller`). If only the user can decide it, it goes into `gap` as a question.
   - A stumble with the same cause that remains after the work was remade and tried again: the cause was misjudged, or what the work should be cannot decide it. Returned to the skill (`to the caller`).
 
-    Repeating the same fix does not bring the work any closer.
+    Repeating the same fix does not bring the work any closer. The evaluator starts in a new conversation every round, so the orchestrator passes it how earlier stumbles ended.
 
 - A checked cause in the way of working becomes a rule (`rule`). The orchestrator passes it to every agent it calls for the rest of the turn and adds it to `constraints` in the returned CCS.
 
