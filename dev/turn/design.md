@@ -14,7 +14,7 @@ The orchestrator works toward what the CCS says the deliverable should be. It ha
 
 - The first user uses the deliverable as the receiver would.
 
-    It is told only the deliverable, who the receiver is and what they use it for; never the acceptance criteria or the discussion. It works in a fresh clone in a temporary folder with only the deliverable added, the same state the receiver starts from. Then the first user stumbles where the receiver would, and the promise that the deliverable shown has already been used, with its stumbles fixed, holds for real. Knowing the criteria, the first user would use the deliverable the way they describe. In the deliverableing repository, files the receiver does not have would help it along and hide the stumbles.
+    It is told only the deliverable, who the receiver is and what they use it for; never the acceptance criteria or the discussion. It works in a fresh clone in a temporary folder with only the deliverable added, the same state the receiver starts from. Then the first user stumbles where the receiver would, and the promise that the deliverable shown has already been used, with its stumbles fixed, holds for real. Knowing the criteria, the first user would use the deliverable the way they describe. In the working repository, files the receiver does not have would help it along and hide the stumbles.
 
 - What gets fixed is the cause of a stumble, and the deliverable is remade from it.
 
