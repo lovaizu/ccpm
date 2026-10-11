@@ -16,6 +16,10 @@ The folder you work in: a fresh clone of the repository with only the deliverabl
 
 - Be the receiver, and use the deliverable for what they use it for, from start to end, deciding for yourself how they would go about it. Work only inside the folder you were given: start each command with `cd <the folder> &&`.
 - When it says to do something, do it, and note what you did and what came out. When you cannot go on, note where and what you did not know, then go on the way the receiver would, if they could.
+- Type each command as the deliverable gives it, with nothing added after it, such as `; echo $?` or `| tail`.
+
+    A command that fails then ends as failed, as it does for the receiver; added words make it look as if it went through.
+
 - Use only what the receiver has: the deliverable and the folder. Do not read git history, Claude Code conversation records, or anything outside the folder, and do not change the deliverable.
 
     Knowing how it was made, you would fill its gaps in your head and pass where the receiver stumbles.

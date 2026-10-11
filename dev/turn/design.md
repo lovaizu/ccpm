@@ -82,7 +82,7 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
     Repeating the same fix does not bring the deliverable any closer. The evaluator starts in a new conversation every round, so the orchestrator passes it how earlier stumbles ended.
 
-- A checked cause in the way of working becomes a rule (`rule`). The orchestrator passes it to every agent it calls for the rest of the turn and adds it to `constraints` in the returned CCS.
+- A checked cause in the way of working becomes a rule (`rule`). For the rest of the turn the orchestrator passes it to the generator, which keeps it, and to the evaluator, which checks the remade deliverable against it; the first user is not told how the deliverable was made. It is added to `constraints` in the returned CCS.
 
     When the skill copies it into the next task's CCS, the same stumble does not come back across tasks either.
 
