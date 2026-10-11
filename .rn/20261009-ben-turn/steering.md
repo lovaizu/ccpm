@@ -96,7 +96,7 @@ Completion criteria:
   settled by fixing the decision or principle it comes from.
 - Must-be quality: what a principle already settles is left to the implementation, not written in.
 
-### [ ] #5: Design sign-off
+### [x] #5: Design sign-off
 
 ### [ ] #6: turn built and tried
 
