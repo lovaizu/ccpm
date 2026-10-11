@@ -22,6 +22,10 @@ official plugins.
 - **Keep each document to the simplest mechanism that serves the purpose; add no special path for a
   case an existing check already stops.**
   - Rationale: every special path is one more thing for users to learn and builders to keep right.
+- **When a document or prompt needs something its essentials file does not ask, add the question to
+  that file, whichever plugin is being built, and make the work again against it.**
+  - Rationale: what is written with the essentials open is made right as it is written; a gap left
+    in them is met again by every plugin made with them.
 - **Put each prompt through writ's `prompt.md`, by running it, before the plugin's trials.**
   - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds the
     prompts' slips, not whether the plugin keeps its promises.
