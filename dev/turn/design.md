@@ -1,196 +1,196 @@
-# turn の設計
+# turn design
 
-この設計書は、turn を作る人と直す人のためのものです。[README](../../turn/README.md) の約束を、どの機能が利用者に届けるか、それをどう確かめるかを書きます。変更が設計に合うかは、下の方針に照らし、利用者が何を失うかで決めます。
+This document is for the people who build and maintain turn. For each promise in the [README](../../turn/README.md), it says which feature keeps it and how that is checked. Whether a change fits the design is decided by the principles below and by what the plugin's users would lose.
 
-turn の中で判断する役を、指揮者と呼びます。`turn:up` を動かしているメインの会話のことで、README で「判断するのは turn だけ」と書いているのは指揮者のことです。
+The role inside turn that makes decisions is called the conductor. It is the main conversation running `turn:up`; when the README says "only turn makes decisions", it means the conductor.
 
-## 1. 方針
+## 1. Principles
 
-指揮者は、CCS に書かれたあるべき姿に向けて、作り手に作らせ、使い手に受け手として使わせ、学び手につまずきの元を学ばせ、その元から作り直させます。これを、使ってみた結果があるべき姿に合うか、残りが利用者やスキルにしか決められないことだけになるまでくり返し、受け手が実際に使える成果物にします。次の5つは、このくり返しがそこにたどり着くために、いつも成り立っていることです。
+The conductor works toward what the CCS says the work should be. It has the maker make the work, has the stand-in try it in the receiver's place, has the learner find the cause of each stumble, and has the maker remake the work from that cause. It repeats this until trying the work matches what it should be, or until all that is left is for the user or the skill to decide. The result is work the receiver can really use. The five principles below always hold, so that this loop gets there.
 
-- すべての判断の物差しは、CCS に書かれたあるべき姿です。
+- Every decision is measured against what the CCS says the work should be.
 
-    あるべき姿は、プラグインが書く受け手（`receiver`）、合格の基準（`acceptance`）、何に使うか（`use`）、観点のファイル（`viewpoint`）です。ターンが知っていることは CCS だけなので、指揮者が自分で思い描いた姿は、次のターンにも続きにも渡りません。あるべき姿を決めるのはプラグインで、turn はそれを作りも変えもしません。これで「合格の基準や決まりが、タスクの途中で書き換わらない」が成り立ちます。あるべき姿だけでは判断できない時は、スキルに返します。
+    What the work should be is what the plugin writes: the receiver (`receiver`), the acceptance criteria (`acceptance`), what the work is used for (`use`) and the viewpoint files (`viewpoint`). A turn knows only what is in the CCS, so a picture the conductor forms on its own reaches neither the next turn nor a resumed one. The plugin decides what the work should be; turn neither makes it up nor changes it. This keeps the promise that the acceptance criteria and rules do not change in the middle of a task. When that is not enough to decide, turn returns to the skill.
 
-- 使い手は、受け手と同じ立場で使います。
+- The stand-in uses the work as the receiver would.
 
-    知らせるのは、成果物と、受け手が誰で何に使うかだけです。合格の基準や話し合いは知らせません。使う場所は、クローンしたばかりの一時的な写しに成果物だけを置いたもので、受け手の手元と同じです。こうすると、使い手がつまずく所と受け手がつまずく所が同じになり、「見せられる成果物は、すでに使われ、つまずいた所が直っている」が本当になります。基準を知っていると、使い手はそれに沿って使ってしまいます。作業中のリポジトリには受け手の手元にないファイルがあり、それに助けられて、つまずきが隠れます。
+    It is told only the work, who the receiver is and what they use it for; never the acceptance criteria or the discussion. It works in a fresh clone in a temporary folder with only the work added, the same state the receiver starts from. Then the stand-in stumbles where the receiver would, and the promise that the work shown has already been used, with its stumbles fixed, holds for real. Knowing the criteria, the stand-in would use the work the way they describe. In the working repository, files the receiver does not have would help it along and hide the stumbles.
 
-- 直すのは、つまずきの元です。成果物は、そこから作り直します。
+- What gets fixed is the cause of a stumble, and the work is remade from it.
 
-    つまずいた箇所だけを継ぎ足すと、元が残ったまま別の所で同じつまずきが起き、成果物はあるべき姿から離れていきます。元から作り直せば、使い直すたびにあるべき姿に近づき、「見せられる成果物は、すでに使われ、つまずいた所が直っている」に届きます。あるべき姿に近づかない直しはしません。
+    Patching only the spot leaves the cause in place, the same stumble comes back elsewhere, and the work drifts away from what it should be. Remaking it from the cause brings it closer with every try, until the work shown has been used with its stumbles fixed. No fix is made that does not bring the work closer.
 
-- 判断するのは指揮者だけです。指揮者は、報告の1つ1つを、あるべき姿と並べ、成果物と事実で裏を取ってから決めます。
+- Only the conductor decides, and it checks each report against what the work should be, the work itself and the facts.
 
-    作り手、使い手、学び手は、それぞれ1つの仕事をして、したことと起きたことを報告するだけです。良し悪しは付けません。作った本人が確かめると甘くなり、判断がエージェントに散ると、どの直しがあるべき姿のためかを誰も言えなくなります。報告の言い分は、したこと以上を言いうるので、指揮者は会話の記録（JSONL）と git で裏を取ります。良いという報告も、つまずいたという報告も、学び手が出したつまずきの元も、同じ厳しさで裏を取ります。良いという言い分を信じると、つまずきがそのまま受け手に届き、「見せられる成果物は、すでに使われ、つまずいた所が直っている」が崩れます。
+    The maker, the stand-in and the learner each do one job and report what they did and what happened. They do not judge. Whoever made the work goes easy on it, and once decisions spread across agents, no one can say which fix serves what the work should be. A report can claim more than was done, so the conductor checks it against the conversation records (JSONL) and git. It checks a report that something worked as hard as one that it stumbled, and the learner's cause just as hard. Taking "it worked" on trust passes the stumble on to the receiver, and the work shown is no longer work that has been used and fixed.
 
-    作る、使う、学ぶを指揮者がしないのは、その中身で指揮者の会話が膨らみ、README の冒頭にあるとおり、目的や決まりからずれていくからです。とくに学ぶには、その回の長い記録を読む必要があります。
+    The conductor does not make, try or learn itself, because the content of that work would fill its conversation, and, as the README opens with, it would drift from its goal and rules. Learning in particular means reading the long records of a round.
 
-- ターンが終わって残るのは、返す CCS と成果物だけです。
+- Only the returned CCS and the work remain after a turn.
 
-    次のターンは、それだけから始めます。会話の記録や、指揮者の頭の中には頼りません。受け取った CCS は書き換えず、新しい CCS を別のファイルに書きます。これで「途中で止めても、続きから進む」が成り立ち、CCS と成果物をコミットしておけば別のマシンでも続きから進みます。ターンが途中で切れても、同じ CCS で始めからやり直せます。プラグインも、返ってきた CCS だけで次の一手を決められます。
+    The next turn starts from these alone, not from conversation records or anything the conductor remembers. turn never rewrites the CCS it received; it writes a new CCS to a separate file. This keeps the promise that a task stopped partway carries on from where it stopped, and, once the CCS and the work are committed, on another machine too. A turn cut off partway can start over from the same CCS. And the plugin can decide its next step from the returned CCS alone.
 
-## 2. 機能
+## 2. Features
 
-各機能が届ける約束は、README の「プラグインの作者にとって」と「プラグインの利用者にとって」の項です。働く場面は、README の「使う場面」と「返ってきた CCS で次を決める」です。
+The promises each feature keeps are those under "For plugin authors" and "For your plugin's users" in the README. The scenes where they work are "An example" and "Deciding from the returned CCS".
 
-1つのターンの中で、誰が何を渡すかは次のとおりです。
+Who passes what to whom within one turn:
 
 ```mermaid
 sequenceDiagram
-  participant S as スキル
-  participant C as 指揮者
-  participant M as 作り手
-  participant U as 使い手
-  participant L as 学び手
-  S->>C: CCS（in）
-  Note over C: 受け取った CCS の形を機械が確かめる
-  loop あるべき姿に合うか、残りが利用者かスキルの決めることだけになるまで
-    C->>M: あるべき姿、資料、決まり、利用者の答え、裏を取ったつまずきの元
-    M-->>C: 成果物と、したこと
-    C->>U: 成果物、受け手、何に使うか（一時的な写しの中で）
-    U-->>C: したことと、起きたこと
-    C->>L: 使い手の報告、その回の会話の記録、観点のファイル
-    L-->>C: つまずきの元
-    Note over C: 報告をあるべき姿と並べ、成果物と記録で裏を取って決める
+  participant S as Skill
+  participant C as Conductor
+  participant M as Maker
+  participant U as Stand-in
+  participant L as Learner
+  S->>C: CCS (in)
+  Note over C: A script checks the form of the CCS received
+  loop until trying matches what the work should be, or only the user's or the skill's decisions remain
+    C->>M: what the work should be, sources, rules, the user's answers, the checked causes of stumbles
+    M-->>C: the work, and what it did
+    C->>U: the work, the receiver, what it is used for (in a temporary copy)
+    U-->>C: what it did, and what happened
+    C->>L: the stand-in's report, the records of that round, the viewpoint files
+    L-->>C: the causes of the stumbles
+    Note over C: Lays each report beside what the work should be, checks it against the work and the records, and decides
   end
-  Note over C: episodic_trace を機械が書き、返す CCS の形を機械が確かめる
-  C-->>S: 新しい CCS（out）
+  Note over C: A script writes episodic_trace and checks the form of the CCS to return
+  C-->>S: new CCS (out)
 ```
 
-### 受け手として使い、つまずきの元から直す
+### Trying the work as the receiver, and fixing the cause
 
-届ける約束は「見せられる成果物は、すでに使われ、つまずいた所が直っている」と「作って、使ってみて、直す流れを、自分のスキルに書かずに済む」です。
+Keeps the promises "the work shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
 
-- 返す成果物は、最後に作り直したあと、使い手が始めから終わりまで使ったものです。
+- The work returned is the one the stand-in used from start to end after the last remake.
 
-    作っただけで使っていない成果物や、直した所だけを使い直した成果物は、受け手が通る道を通っていません。元から作り直すと、つまずいた箇所以外も変わりうるからです。
+    Work that was made but not used, or used again only at the fixed spot, has not been down the receiver's path. Remaking from a cause can change more than the spot where it stumbled.
 
-- 使い手が使い終えるたびに、学び手がつまずきの元を学びます。
+- Each time the stand-in finishes, the learner finds the causes of its stumbles.
 
-    使い手の報告だけでは、どこでつまずいたかは分かっても、なぜつまずいたかは分かりません。学び手は、報告と、その回に実際に起きたことの記録から元を探します。
+    The stand-in's report shows where it stumbled, not why. The learner looks for the cause in the report and in the records of what actually happened in that round.
 
-- 指揮者は、裏を取ったつまずきの1つ1つを、あるべき姿と比べて、次のどれかに決めます。結末は、返す CCS の `difference` に書きます。
-  - 受け手が合格の基準に届くのを妨げるつまずきは、元を作り手に渡して作り直させます（`fixed`）。
-  - 受け手が合格の基準に届くのを妨げないつまずきは、理由を添えて見送ります（`let go`）。
-  - あるべき姿だけでは決められないつまずきは、スキルに返します（`to the caller`）。利用者にしか決められないことなら、問いにして `gap` に入れます。
-  - 作り直して使い直しても、同じ元のつまずきが残る時は、元の見立てが違うか、あるべき姿では決められないことです。スキルに返します（`to the caller`）。
+- The conductor decides each checked stumble against what the work should be, as one of the following, and writes how it ended in `difference` in the returned CCS.
+  - A stumble that keeps the receiver from meeting the acceptance criteria: its cause goes to the maker, who remakes the work (`fixed`).
+  - A stumble that does not keep the receiver from meeting them: let go, with the reason (`let go`).
+  - A stumble that what the work should be cannot decide: returned to the skill (`to the caller`). If only the user can decide it, it goes into `gap` as a question.
+  - A stumble with the same cause that remains after the work was remade and tried again: the cause was misjudged, or what the work should be cannot decide it. Returned to the skill (`to the caller`).
 
-    同じ直しをくり返しても、あるべき姿には近づかないからです。
+    Repeating the same fix does not bring the work any closer.
 
-- 進め方についての元は、決まり（`rule`）になります。指揮者はターンの残りで呼ぶどのエージェントにもそれを渡し、返す CCS の `constraints` に足します。
+- A cause about the way of working becomes a rule (`rule`). The conductor passes it to every agent it calls for the rest of the turn and adds it to `constraints` in the returned CCS.
 
-    スキルがそれを次のタスクの CCS に写せば、タスクをまたいでも同じつまずきをくり返しません。
+    When the skill copies it into the next task's CCS, the same stumble does not come back across tasks either.
 
-### 利用者のほかの作業に触れない
+### Leaving the user's other work untouched
 
-届ける約束は「利用者のほかの作業に触れない」です。
+Keeps the promise "their other work is left untouched".
 
-- 使い手が使う一時的な写しは、使い終えたら消します。
-- turn はコミットも push もしません。
+- The temporary copy the stand-in works in is deleted when it is done.
+- turn never commits or pushes.
 
-    コミットするかどうかは、利用者とタスクの並びを知るプラグインが決めます。
+    Whether to commit is decided by the plugin, which knows the user and the order of tasks.
 
-### 利用者にしか決められないことだけを返す
+### Returning only what only the user can decide
 
-届ける約束は「聞かれるのは、利用者にしか決められないことだけ」です。
+Keeps the promise "they are asked only what only they can decide".
 
-- CCS とその資料、利用者の答え、観点から決まることは、指揮者が決めます。
-- 決まらず、利用者にしか決められないことだけを、そのまま聞ける問いにして `gap` に入れ、`next` を `ask the user` にして返します。
+- What the CCS and its sources, the user's answers and the viewpoints settle, the conductor decides.
+- Only what they do not settle and only the user can decide goes into `gap`, as a question that can be asked as it is, with `next` set to `ask the user`.
 
-    turn は利用者と話しません。ターンの外で利用者と何を合意しているかを、turn は知らないからです。聞くかどうかを turn が決めると、利用者は同じことを何度も聞かれたり、決めたつもりのないことが成果物に入ったりします。
+    turn does not talk to the user. It does not know what the plugin has agreed with the user outside the turn. If turn decided what to ask, users would be asked the same thing again, or find decisions in the work they never meant to make.
 
-### 返す CCS だけで次を決められる
+### Deciding from the returned CCS alone
 
-届ける約束は「成果物を読まずに、次の一手を決められる」です。
+Keeps the promise "you decide the next step without reading the work".
 
-- 指揮者は、つまずきごとの結末（`difference`）、利用者にしか決められないこと（`gap`）、学んだ決まり（`rule`）、成果物と資料のつながり（`link`）、次にすること（`next`）を書きます。
-- 各エージェントが実際に読み、書き、実行したこと（`episodic_trace`）は、ターンを返す前に、会話の記録と git から機械が書きます。
+- The conductor writes how each stumble ended (`difference`), what only the user can decide (`gap`), the rules it learned (`rule`), how the work connects to its sources (`link`) and what to do next (`next`).
+- What each agent actually read, wrote and ran (`episodic_trace`) is written by a script from the conversation records and git before the turn returns.
 
-    エージェントの言い分は、したこと以上を言いうるからです。
+    An agent's own account can claim more than it did.
 
-### あるべき姿が途中で書き換わらない
+### Keeping what the work should be unchanged
 
-届ける約束は「合格の基準や決まりが、タスクの途中で書き換わらない」です。
+Keeps the promise "the acceptance criteria and rules do not change in the middle of a task".
 
-- CCS を受け取った時と返す時に、形を機械が確かめます。合わなければ、何が合わないかを言って止まります。何を確かめるかは、README の「機械が確かめること」のとおりです。
+- A script checks the form of the CCS when it is received and when it is returned. If something does not match, it says what and stops. What it checks is listed in "What a script checks" in the README.
 
-    AI が書く CCS は、あるべき姿の行を言い換えたり、表にない項目を足したりしうるからです。機械の確かめは、毎回同じ答えを出します。
+    A CCS written by AI may reword a line of what the work should be, or add entries not in the tables. A script gives the same answer every time.
 
-- 確かめには python3 を、CCS の読み書きには jq を使います。どちらかがなければ、CCS を返さずに、何をインストールすればよいかを会話で伝えて止まります。
+- The check uses python3, and the CCS is read and written with jq. If either is missing, turn returns no CCS, says in the conversation what to install, and stops.
 
-    確かめを飛ばして進むと、書き換わったことに誰も気づかないからです。
+    Going on without the check, no one would notice a change.
 
-### 止めた所から続ける
+### Carrying on from where it stopped
 
-届ける約束は「途中で止めても、続きから進む」です。
+Keeps the promise "if they stop partway, the task carries on from where it stopped".
 
-- 利用者が会話で止めるよう言ったら、指揮者は新しいエージェントを呼ばずに、結末まで決まった所までを新しい CCS に書き、`next` を `stopped: <どこから>` にして返します。
+- When the user asks in the conversation to stop, the conductor calls no new agent. It writes a new CCS up to the point where every stumble so far has an ending, and returns it with `next` set to `stopped: <where from>`.
 
-    結末まで決まったつまずきと、作った成果物は、CCS とディスクに残ります。結末の決まっていない使ってみた回と学んだ回は、続きのターンでやり直します。それを CCS に残す形を足すより、やり直すほうが仕組みが少なく済みます。
+    Stumbles with an ending, and the work made so far, remain in the CCS and on disk. A try or a learning round whose stumbles have no ending yet is done again in the next turn. That needs less machinery than adding a form to keep them in the CCS.
 
-- CCS を返さずに切れたターンは、何も書き残しません。スキルは同じ `in` でもう一度呼び、ターンを始めからやり直します。
+- A turn cut off without returning a CCS leaves nothing behind. The skill calls again with the same `in`, and the turn starts over.
 
-    書きかけの CCS を頼りに続けると、半端な状態から進むことになるからです。受け取った CCS は元のままなので、やり直しはいつでもできます。
+    Carrying on from a half-written CCS would go on from a half-finished state. The CCS received is untouched, so starting over is always possible.
 
-## 3. CCS の取り決め
+## 3. The CCS contract
 
-CCS は、プラグインが書いて残し、turn が読み、次のバージョンの turn や別のマシンでも読まれます。形は README の「CCS の書き方」がすべてで、ここには、各部分を誰が読み、何がいつも成り立つかと、その理由を書きます。
+The plugin writes the CCS and keeps it; turn reads it, and so do later versions of turn and other machines. Its form is defined entirely by "Writing a CCS" in the README. This section says who reads each part, what always holds, and why.
 
-- CCS は、ACC の9つの部分をすべて持ち、ほかの部分を持ちません。
+- A CCS has all nine parts of ACC and no others.
 
-    9つの部分は、ACC の論文が、次の一手に要る状態として決めたものです。部分を足すと ACC と食い違い、読む側がそのたびに変わります。
+    The nine parts are what the ACC paper defines as the state needed for the next step. Adding a part departs from ACC, and every reader would have to change with it.
 
-- プラグインが書く部分（`focal_entities`、`goal_orientation`、`retrieved_artifacts`）は、タスクの間ずっと変わりません。
+- The parts the plugin writes (`focal_entities`, `goal_orientation`, `retrieved_artifacts`) stay the same for the whole task.
 
-    これがあるべき姿で、どのターンもこれを物差しにするからです。
+    They are what the work should be, and every turn measures against them.
 
-- `constraints` は、書かれた行が変わらず、後ろに足されるだけです。
+- In `constraints`, written lines never change; new lines are only added after them.
 
-    利用者の答えと学んだ決まりは、一度決まったら後のターンでも守られるからです。
+    The user's answers and learned rules, once settled, are kept in later turns too.
 
-- turn が書く部分は、ターンごとに、そのターンが書き直します。読むのは、スキルと次のターンです。
-  - スキルは、`next` と `gap` で次の一手を決め、`rule` を次のタスクに写します。
-  - 次のターンは、すべての部分を、自分が始める状態として読みます。`stopped` のあとは、`difference` と `episodic_trace` から、どこまで済んだかを知ります。`link` からは、資料が変わった時に見直す所を知ります。
+- The parts turn writes are rewritten by each turn. They are read by the skill and by the next turn.
+  - The skill decides its next step from `next` and `gap`, and copies `rule` into the next task.
+  - The next turn reads every part as the state it starts from. After `stopped`, it learns from `difference` and `episodic_trace` how far the work got. From `link`, it learns what to look at again when a source changes.
 
-    次の一手に要るのは、直前のターンまでの結果だけだからです。
+    The next step needs only the results up to the turn just before it.
 
-- 成果物や資料の中身は書かず、場所だけを書きます。
+- The content of the work and of sources is never copied in; only where they are.
 
-    中身を写すと、写しと実物が食い違い、CCS が膨らみます。
+    A copy drifts from the real thing, and the CCS grows.
 
-- 部分と種類の名前、`next` の値は英語のままで、決まったものだけです。値の中の言葉は自由です。
+- The names of parts and kinds, and the values of `next`, stay in English and are only the fixed ones. The words inside values are free.
 
-    スキルが `jq` で読み、次の一手を決める鍵だからです。名前や値を変えると、それを読むスキルが次を決められなくなります。
+    They are the keys the skill reads with `jq` to decide its next step. Renaming them leaves the skills that read them unable to decide.
 
-## 4. 確かめ方
+## 4. How it is checked
 
-約束が利用者に届いているかを、まず試走で確かめます。試走は `dev/turn/trials/` に置き、利用者がするとおりに turn を動かします。合格かどうかは、試走する人が、すべての会話とエージェントの記録（JSONL）を読んで決めます。
+Whether the promises reach the plugin's users is checked first, by trials. The trials live in `dev/turn/trials/` and run turn the way its users do. Whoever runs a trial decides whether it passed by reading every conversation and agent record (JSONL).
 
-- 「見せられる成果物は、すでに使われ、つまずいた所が直っている」
+- "The work shown has already been used, with its stumbles fixed"
 
-    場面：受け手が手元でつまずく落とし穴のあるタスクです。たとえば、新しいクローンにはないフォルダを前提にしてしまいやすいセットアップ手順書です。turn なしで AI に書かせると、そのつまずきが残る場面です。合格は、turn が返した成果物を、turn と関わりのない新しいエージェントが受け手として一度使い、つまずかずに合格の基準に届くことです。
+    Scene: a task with a pitfall the receiver would stumble on, such as a setup guide that is easy to write assuming a folder a fresh clone does not have. Without turn, an AI writing it leaves that stumble in. It passes when a new agent with no tie to turn, taking the receiver's place, uses the returned work once and meets the acceptance criteria without stumbling.
 
-- 「作って、使ってみて、直す流れを、自分のスキルに書かずに済む」
+- "You do not write the make, try and fix loop in your own skill"
 
-    場面：上の試走を、CCS を書き、`turn:up` を呼び、`next` を読むだけの小さなプラグインから動かします。合格は、そのプラグインのスキルに作る、使う、直すの手順がなくても、上の合格に届くことです。
+    Scene: the trial above, run from a small plugin that only writes the CCS, calls `turn:up` and reads `next`. It passes when the trial above passes though that plugin's skill has no steps for making, trying or fixing.
 
-- 「成果物を読まずに、次の一手を決められる」
+- "You decide the next step without reading the work"
 
-    場面：上の試走で返ってきた CCS です。合格は、CCS だけを読んで決めた次の一手が、成果物と会話の記録まで読んで決めた次の一手と同じになることです。
+    Scene: the CCS returned in the trial above. It passes when the next step decided from the CCS alone is the same as the one decided after also reading the work and the conversation records.
 
-- 「聞かれるのは、利用者にしか決められないことだけ」
+- "They are asked only what only they can decide"
 
-    場面：利用者しか知らないこと（たとえば、API トークンを誰が渡すか）を1つ含むタスクです。合格は、それが `gap` に入り、`gap` にほかの問いがなく、利用者の答えを足して呼び直すと、それを使った成果物になることです。
+    Scene: a task with one thing only the user knows, such as who hands over the API token. It passes when that thing is in `gap`, `gap` holds no other question, and calling again with the user's answer added gives work that uses the answer.
 
-- 「途中で止めても、続きから進む」
+- "If they stop partway, the task carries on from where it stopped"
 
-    場面：作り手が作り終えたあとで、利用者が止めるよう言うタスクです。合格は、返ってきた CCS と成果物だけを別のクローンに置いて呼び直すと、作られた成果物から続き、同じ合格に届くことです。
+    Scene: a task where the user asks to stop after the maker has finished. It passes when calling again with only the returned CCS and the work placed in another clone carries on from the work already made, and passes the same way.
 
-「合格の基準や決まりが、タスクの途中で書き換わらない」と「利用者のほかの作業に触れない」は、スクリプトとそのテストで確かめます。CCS の形を確かめること、写しを消すこと、コミットしないことは、機械が決められるので、速く、毎回同じ答えになります。試走の手間は、ほかの約束が届いているかに使います。
+"The acceptance criteria and rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time. The effort of the trials goes to whether the other promises reach the users.
 
-## 5. 選ばなかったやり方
+## 5. Options not taken
 
-- くり返しの回数に上限を設けるやり方は選びません。
+- A limit on the number of rounds is not used.
 
-    同じ元のつまずきが残ればスキルに返すので、近づかないくり返しはそこで止まります。上限を足すと、あるべき姿に近づいている途中で止まり、受け手は使えない成果物を受け取ります。
+    A stumble whose cause remains is returned to the skill, so a loop that is not getting closer stops there. A limit would stop a loop that is still getting closer, and the receiver would get work they cannot use.

@@ -2,7 +2,7 @@
 rn: 0.9.0
 pr: https://github.com/lovaizu/ccpm/pull/57
 status: running
-artifact-language: English; the documents under review are Japanese until they are put into English before merge
+artifact-language: English
 conversation-language: Japanese
 readme: turn/README.md
 design: dev/turn/design.md
@@ -50,7 +50,8 @@ rebuilt on turn afterwards (#52, #53, #54); ben is drawn out of the rules once t
 
 # Rules
 
-- The documents stay in Japanese while under review and are put into English before merge.
+- The documents are written in English from the start; the user reads them through machine
+  translation, so each thing keeps one plain word.
 - Implementation comes only from the approved documents; a shortfall is traced through the record to
   its cause and the cause is fixed.
 
@@ -113,4 +114,4 @@ Completion criteria:
 
 # Not yet specified
 
-- English before merge, registration in the marketplace and the root README, and release.
+- Registration in the marketplace and the root README, and release.

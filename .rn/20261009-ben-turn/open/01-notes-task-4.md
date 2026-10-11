@@ -25,5 +25,9 @@ in a fresh-clone temporary copy, so that where it stumbles is where the receiver
 and the work alone; the next turn starts from them, never from records or memory, and the CCS
 received is never rewritten. These five are the design's principles.
 
+Since 2026-10-11 the documents are written in English from the start; the README was rewritten in
+English (the stand-in replaces "user" as the name of the agent that tries the work, so `user-1` in
+`episodic_trace` became `stand-in-1`) and needs the user's look again before the design sign-off.
+
 Carry over: converse in plain everyday Japanese; never use 「得られること」「得るもの」 or "UX" as a
 name or in conversation; one name per thing (the record is "CCS").

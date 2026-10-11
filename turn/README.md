@@ -1,119 +1,119 @@
 # turn
 
-長いタスクを AI エージェントに任せると、やりとりが積み重なってコンテキストが膨らみ、エージェントは次第に目的や決まりからずれていきます。[ACC（Agent Cognitive Compressor）](https://arxiv.org/abs/2601.11653) は、これを防ぐために研究で示されたやり方です。やりとりの全部を持ち続けるかわりに、ターンごとに、次の一手に要る状態だけを、CCS（Compressed Cognitive State）という決まった9つの部分の形にまとめ直し、前の状態と置き換えます。詳しくは論文をご覧ください。
+When you hand a long task to an AI agent, the conversation piles up, the context grows, and the agent slowly drifts from its goal and its rules. [ACC (Agent Cognitive Compressor)](https://arxiv.org/abs/2601.11653) is a method from research that prevents this. Instead of keeping the whole conversation, it rewrites, at every turn, only the state needed for the next step into a fixed form of nine parts, the CCS (Compressed Cognitive State), and replaces the previous state with it. See the paper for the details.
 
-turn は、この1ターンを、AI に何かを作らせるプラグインのために形にしたものです。1ターンで、作って、使ってみて、つまずいた理由を学び、直します。プラグインはタスクを CCS の JSON に書いて渡し、新しい CCS を受け取ります。
+turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the work, tries it out, learns why it stumbled, and fixes it. A plugin writes its task as a CCS in JSON, hands it over, and gets a new CCS back.
 
-## プラグインの作者にとって
+## For plugin authors
 
-- 作って、使ってみて、直す流れを、自分のスキルに書かずに済みます。
+- You do not write the make, try and fix loop in your own skill.
 
-    書くのは、タスクの CCS と、そのドメインで良い成果物とは何かを書いた観点のファイルだけです。流れを直したくなっても、turn の1か所で済みます。
+    All you write is the task's CCS and a viewpoint file that says what good work is in your domain. If the loop needs a fix, it is fixed in one place, turn.
 
-- 成果物を読まずに、次の一手を決められます。
+- You decide the next step without reading the work.
 
-    返ってきた CCS の `next` を `jq` で1行読めば、終わったのか、利用者に聞くことがあるのかが分かります。
+    Read `next` from the returned CCS with one line of `jq`, and you know whether the task is done or there is something to ask your user.
 
-- 合格の基準や決まりが、タスクの途中で書き換わりません。
+- The acceptance criteria and rules do not change in the middle of a task.
 
-    turn が CCS を返すたびに、プラグインが書いた部分がそのままかを機械が確かめます。
+    Each time turn returns a CCS, a script checks that the parts your plugin wrote are unchanged.
 
-## プラグインの利用者にとって
+## For your plugin's users
 
-- 見せられる成果物は、すでに使われ、つまずいた所が直っています。
-- 聞かれるのは、利用者にしか決められないことだけです。
-- 途中で止めても、続きから進みます。CCS と成果物をコミットしておけば、別のマシンでも続きから進みます。
-- 利用者のほかの作業に触れません。
+- The work they are shown has already been used, and the places where it stumbled are fixed.
+- They are asked only what only they can decide.
+- If they stop partway, the task carries on from where it stopped. If they commit the CCS and the work, it carries on from there on another machine too.
+- Their other work is left untouched.
 
-    成果物を使ってみるのは、使い終えたら消す一時フォルダの写しの中です。turn はコミットも push もしません。
+    The work is tried out in a copy inside a temporary folder that is deleted afterward. turn never commits or pushes.
 
-## 使う場面
+## An example
 
-新人向けのセットアップ手順書を作るプラグイン `setup` を例にします。利用者がプラグインを呼ぶと、次のように進みます。
+Take a plugin `setup` that writes setup guides for new team members. When a user calls the plugin, it goes like this:
 
 ```text
 > /setup:guide
 
-  手順書（SETUP.md）を作ります。
-  ⎿ turn: 作っています
-  ⎿ turn: 新人になりきって、クローンしたばかりの写しで使っています
-  ⎿ turn: 4番目の手順で止まりました（var/ がない）。元は、打って確かめずに書いたことです。確かめながら書き直して、使い直しています
-  ⎿ turn: 最後まで使えました
+  Writing the setup guide (SETUP.md).
+  ⎿ turn: making it
+  ⎿ turn: trying it as a new team member, in a freshly cloned copy
+  ⎿ turn: stopped at step 4 (var/ does not exist). The cause: the steps were written without running them. Rewriting them while running each one, then trying again
+  ⎿ turn: it worked to the end
 
-  1つだけ教えてください。
-  API トークンは、新人に誰が渡しますか。
+  One question for you:
+  Who gives a new team member the API token?
 
-> 運用担当の佐藤さん
+> Sato from operations
 
-  ⎿ turn: 答えを入れて、トークンの手順を使い直しています
+  ⎿ turn: adding the answer and trying the token step again
 
-  SETUP.md ができました。新人になりきって使い、誰にも聞かずにアプリの起動まで進めました。
+  SETUP.md is ready. Tried as a new team member, it got the app running without asking anyone.
 ```
 
-その裏で、プラグインのスキルと turn は、CCS を受け渡しています。
+Behind this, the plugin's skill and turn pass a CCS back and forth.
 
 ```mermaid
 flowchart LR
-  W[スキルが CCS を書く] --> T[turn:up を呼ぶ]
-  T --> R[新しい CCS が返る]
+  W[The skill writes a CCS] --> T[It calls turn:up]
+  T --> R[A new CCS comes back]
   R --> N{next}
-  N -->|done| D[コミットして終える]
-  N -->|ask the user| A[利用者に聞き、答えを足した CCS を書く] --> T
-  N -->|to the caller| P[スキルが決める]
+  N -->|done| D[Commit and finish]
+  N -->|ask the user| A[Ask the user, write a CCS with the answer added] --> T
+  N -->|to the caller| P[The skill decides]
   N -->|stopped| T
 ```
 
-スキルがするのは、CCS を書くこと、`turn:up` を呼ぶこと、返ってきた CCS の `next` を見て次を決めることの3つです。作る、使ってみる、直す、は turn がします。
+The skill does three things: it writes the CCS, calls `turn:up`, and decides what to do from `next` in the returned CCS. turn does the making, the trying and the fixing.
 
-## ターンの考え方
+## How a turn works
 
-人は、作ったものを自分で使ってみて、つまずいた所を直してから、受け取る人（受け手）に渡します。turn は、この一続きを `turn:up` 1回で受け持ちます。
+A person tries out what they made, fixes what tripped them up, and only then hands it to the person who will use it (the receiver). turn does this whole stretch in one call to `turn:up`.
 
 ```mermaid
 flowchart LR
-  I[CCS] --> M[作り手が作る]
-  M --> U[使い手が使ってみる]
-  U --> L[学び手が学ぶ]
-  L --> J{turn が基準と比べる}
-  J -->|食い違いがある| M
-  J -->|食い違いがない、見送る、または利用者かスキルが決めることがある| O[新しい CCS]
+  I[CCS] --> M[The maker makes it]
+  M --> U[The stand-in tries it]
+  U --> L[The learner learns]
+  L --> J{turn compares it with the criteria}
+  J -->|a gap| M
+  J -->|no gap, let go, or something for the user or the skill to decide| O[New CCS]
 ```
 
-- 作り手、使い手、学び手は、別々のエージェントです。判断するのは、それらを呼ぶ turn だけです。
+- The maker, the stand-in and the learner are separate agents. Only turn, which calls them, makes decisions.
 
-    作った本人が確かめると、甘くなるからです。使い手は、話し合いも合格の基準も知らされず、受け手になりきって、受け手と同じ状態から使います。基準を知っていると、それに沿って使ってしまい、受け手がつまずく所が見えなくなるからです。
+    Whoever made the work goes easy on it when checking it. The stand-in is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the work the way they describe, and the places where the receiver stumbles would not show.
 
-- 学び手は、使うたびに、なぜつまずいたかを学びます。
+- Each time the work is tried, the learner learns why it stumbled.
 
-    成果物については、つまずいた箇所でなく、つまずきを生んだ元を学びます。作り手はその元を直し、成果物をそこから作り直します。箇所ごとに継ぎ足すと、成果物はあるべき姿から離れていくからです。進め方について学んだことは決まりになり、ターンの残りで守られ、返す CCS にも入ります。
+    For the work, it learns the cause of the stumble, not just the spot. The maker fixes that cause and remakes the work from it. Patching spot by spot moves the work away from what it should be. What it learns about the way of working becomes a rule, which is kept for the rest of the turn and goes into the returned CCS.
 
-- ターンは、CCS を受け取って始まり、新しい CCS を返して終わります。
+- A turn starts by receiving a CCS and ends by returning a new one.
 
-    turn は、渡された CCS を書き換えません。次のターンは、返ってきた CCS から始まります。
+    turn never rewrites the CCS it was given. The next turn starts from the CCS that came back.
 
-## CCS の書き方
+## Writing a CCS
 
-CCS は JSON のファイル1つです。9つの部分をすべて持ち、各部分は `{"種類": "値"}` の並びです。中身のない部分は、空の並び `[]` にします。成果物や資料の中身は書き写さず、場所だけを書きます。場所は、リポジトリの中のものはリポジトリからの相対パス、プラグインの中の観点のファイルは絶対パスです。
+A CCS is one JSON file. It has all nine parts, and each part is a list of `{"kind": "value"}` entries. A part with nothing in it is an empty list `[]`. Do not copy the content of the work or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
 
-部分と種類の名前、`next` の値のような決まった語は英語のままです。種類は、下の2つの表にあるものだけです。それ以外の値は、成果物を書く言葉で書きます。
+The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the two tables below are allowed. Other values are written in the language of the work.
 
-### プラグインが書くもの
+### What the plugin writes
 
 ```json
 {
   "focal_entities": [
     {"work": "SETUP.md"},
-    {"receiver": "今日入った新人。手順書だけでアプリを起動する"}
+    {"receiver": "A new team member on their first day, starting the app from the guide alone"}
   ],
   "goal_orientation": [
-    {"acceptance": "新人が誰にも聞かずに、手順書どおりにアプリを起動できる"},
-    {"use": "クローンしたばかりのリポジトリで、手順を上から順に実行する"}
+    {"acceptance": "A new team member starts the app by following the guide, without asking anyone"},
+    {"use": "Run the steps from the top in a freshly cloned repository"}
   ],
   "retrieved_artifacts": [
     {"viewpoint": "/Users/me/.claude/plugins/.../setup/viewpoints/setup.md"}
   ],
   "constraints": [
-    {"language": "日本語"}
+    {"language": "English"}
   ],
   "episodic_trace": [],
   "semantic_gist": [],
@@ -123,85 +123,85 @@ CCS は JSON のファイル1つです。9つの部分をすべて持ち、各�
 }
 ```
 
-| 部分 | 種類 | 書くこと | 必須 |
+| Part | Kind | What to write | Required |
 |---|---|---|---|
-| `focal_entities` | `work` | 作る成果物の場所。リポジトリの中 | はい |
-| | `receiver` | 成果物を受け取って使う人 | はい |
-| `goal_orientation` | `acceptance` | 受け手が成果物で何をできれば合格か | はい |
-| | `use` | 受け手が成果物を何に使うか | |
-| `retrieved_artifacts` | `viewpoint` | 観点のファイル。1つ以上 | はい |
-| | `source` | 成果物の元にする資料 | |
-| `constraints` | `language` | 成果物を書く言葉 | |
-| | `rule` | 守る決まり | |
-| | `answer` | 返ってきた `gap` への利用者の答え | |
+| `focal_entities` | `work` | Where the work to make goes, inside the repository | Yes |
+| | `receiver` | The person who receives and uses the work | Yes |
+| `goal_orientation` | `acceptance` | What the receiver must be able to do with the work for it to pass | Yes |
+| | `use` | What the receiver uses the work for | |
+| `retrieved_artifacts` | `viewpoint` | A viewpoint file. One or more | Yes |
+| | `source` | Material the work is based on | |
+| `constraints` | `language` | The language the work is written in | |
+| | `rule` | A rule to keep | |
+| | `answer` | The user's answer to a returned `gap` | |
 
-`focal_entities`、`goal_orientation`、`retrieved_artifacts` は、タスクの間ずっと変わりません。`constraints` は、書いた行は変わらず、後ろに足されていきます。turn が学んだ決まり（`rule`）を足し、スキルが利用者の答え（`answer`）を足します。
+`focal_entities`, `goal_orientation` and `retrieved_artifacts` stay the same for the whole task. In `constraints`, lines once written never change; new lines are added after them. turn adds the rules it learned (`rule`), and the skill adds the user's answers (`answer`).
 
-観点のファイルは、プラグインの中に置きます。スキルは、`${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md` のように書いて、その場所を CCS に写します。`${CLAUDE_PLUGIN_ROOT}` は、Claude Code がスキルを読み込む時に、今の場所に置き換わります。別のマシンやバージョンアップのあとで場所が古くなった時は、turn が受け取った時の確かめで止まるので、今の場所で CCS を書き直して呼び直します。
+Viewpoint files live inside the plugin. The skill writes their place as `${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md` and copies it into the CCS. Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the current location when it loads the skill. If the path goes stale, on another machine or after an update, turn stops at the check it runs on receiving the CCS; write the CCS again with the current path and call again.
 
-観点のファイルには、そのドメインで良い成果物とは何かを、作り手と学び手が判断に使える形で書きます。手順書なら、たとえば次のようになります。
+A viewpoint file says what good work is in the domain, in a form the maker and the learner can judge by. For a setup guide, it might say:
 
 ```markdown
-- 新しいクローンからアプリが動くまでを、打つコマンドと、それぞれで見えるものの手順にする。
-- どの手順も、今のリポジトリで実際に打って確かめたものにする。
-- 人に聞かないと分からないこと（秘密の値など）は、誰に聞くかを書く。
+- Go from a fresh clone to a running app, as steps of commands to type and what each one shows.
+- Every step has been typed and checked in the current repository.
+- For anything that needs asking someone (such as secret values), say who to ask.
 ```
 
-### turn が書くもの
+### What turn writes
 
-turn が書く部分は、ターンごとに作り直されます。返ってきた CCS は、たとえば次のようになります（プラグインが書いた部分は省いています）。
+The parts turn writes are made anew at every turn. A returned CCS looks like this (the parts the plugin wrote are left out):
 
 ```json
 {
   "predictive_cue": [{"next": "ask the user"}],
-  "uncertainty_signal": [{"gap": "API トークンは、新人に誰が渡しますか"}],
+  "uncertainty_signal": [{"gap": "Who gives a new team member the API token?"}],
   "semantic_gist": [
-    {"difference": "手順4で var/ がなく止まった → fixed"},
-    {"difference": "トークンの入手先が書けない → to the caller: 利用者に聞く"}
+    {"difference": "Stopped at step 4 because var/ does not exist → fixed"},
+    {"difference": "Cannot say where to get the token → to the caller: ask the user"}
   ],
   "constraints": [
-    {"language": "日本語"},
-    {"rule": "手順は、クローンしたばかりの写しで実際に打って確かめてから書く"}
+    {"language": "English"},
+    {"rule": "Write each step only after typing it in a freshly cloned copy"}
   ],
-  "relational_map": [{"link": "SETUP.md ← package.json の scripts"}],
+  "relational_map": [{"link": "SETUP.md ← scripts in package.json"}],
   "episodic_trace": [
     {"maker-1": "wrote SETUP.md"},
-    {"user-1": "ran npm start"}
+    {"stand-in-1": "ran npm start"}
   ]
 }
 ```
 
-| 部分 | 種類 | 中身 |
+| Part | Kind | Content |
 |---|---|---|
-| `predictive_cue` | `next` | 次にすること。「返ってきた CCS で次を決める」の表のどれか |
-| `uncertainty_signal` | `gap` | 利用者にしか決められないことを、そのまま聞ける問いにしたもの |
-| `semantic_gist` | `difference` | 使ってみて基準と食い違ったことと、その結末。結末は `fixed`（直した）、`let go: <理由>`（見送った）、`to the caller: <理由>`（スキルに任せた）のどれか |
-| `constraints` | `rule` | このターンで学んだ進め方の決まり |
-| `relational_map` | `link` | 成果物と資料などのつながり |
-| `episodic_trace` | エージェントと何回目か（`maker-1` は作り手の1回目、`user-1` は使い手の1回目、`learner-1` は学び手の1回目）、または `git` | 各エージェントが実際に読み、書き、実行したこと。会話の記録と git から機械が書きます |
+| `predictive_cue` | `next` | What to do next. One of the values in the table in "Deciding from the returned CCS" |
+| `uncertainty_signal` | `gap` | Something only the user can decide, as a question that can be asked as it is |
+| `semantic_gist` | `difference` | Something that, when the work was tried, did not match the criteria, and how it ended. The ending is one of `fixed`, `let go: <reason>` or `to the caller: <reason>` (left to the skill) |
+| `constraints` | `rule` | A rule about the way of working, learned in this turn |
+| `relational_map` | `link` | How the work connects to its sources and other things |
+| `episodic_trace` | The agent and which round (`maker-1` is the maker's first round, `stand-in-1` the stand-in's first, `learner-1` the learner's first), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
 
-### 機械が確かめること
+### What a script checks
 
-turn は、CCS を受け取った時と返す時に、形を機械で確かめます。合わなければ、何が合わないかを言って止まります。
+turn checks the form of the CCS with a script when it receives one and when it returns one. If something does not match, it says what and stops.
 
-- 受け取った時
-  - 9つの部分がすべてあり、ほかの部分がないこと。種類が表にあるものだけで、値が文字列であること。
-  - 必須の4つがあること。
-  - `retrieved_artifacts` に書いた場所が実際にあること。`work` がリポジトリの中を指すこと。新しく作るものなので、`work` はまだなくて構いません。
-  - 返す先が、まだないファイルであること。
-- 返す時
-  - `focal_entities`、`goal_orientation`、`retrieved_artifacts` が受け取った時のままで、`constraints` は元の行が残ったうえで足されていること。
-  - 部分と種類が、受け取った時と同じく表にあるものだけであること。AI が勝手に足した項目は、ここで止まります。
-  - `next` が決まった値の1つであること。
+- On receiving
+  - All nine parts are there and no others. Every kind is one in the tables, and every value is a string.
+  - The four required kinds are there.
+  - The places written in `retrieved_artifacts` exist. `work` points inside the repository. Since the work is new, `work` may not exist yet.
+  - The file to return to does not exist yet.
+- On returning
+  - `focal_entities`, `goal_orientation` and `retrieved_artifacts` are as received, and `constraints` keeps its original lines with any new ones after them.
+  - As on receiving, parts and kinds are only those in the tables. An entry the AI made up on its own stops here.
+  - `next` is one of the fixed values.
 
-CCS の大きさに上限は設けません。CCS が膨らむのは、タスクが大きすぎる合図です。タスクを分けることを考えてください。
+There is no size limit on a CCS. A CCS that keeps growing is a sign that the task is too big. Consider splitting it.
 
-## 呼び方
+## Calling turn
 
-プラグインのスキルに、次のように書きます。
+Write this in your plugin's skill:
 
 ````markdown
-`turn:up` のスキルを、次の2行を引数にして呼ぶ。
+Call the `turn:up` skill with these two lines as its arguments:
 
 ```
 in: .setup/task-1.json
@@ -209,63 +209,63 @@ out: .setup/task-2.json
 ```
 ````
 
-- `in` は、渡す CCS です。
-- `out` は、turn が新しい CCS を書く場所です。まだないファイルにします。
+- `in` is the CCS you hand over.
+- `out` is where turn writes the new CCS. It must be a file that does not exist yet.
 
-turn は同じ会話の中で動き、ターンが終わるか止まった時に戻ります。CCS の置き場所と名前は、プラグインが決めます。
+turn runs in the same conversation and comes back when the turn ends or stops. Where the CCS files live and what they are called is up to the plugin.
 
-## 返ってきた CCS で次を決める
+## Deciding from the returned CCS
 
-返ってきた CCS は、必要な所だけを `jq` で読みます。
+Read only what you need from the returned CCS with `jq`:
 
 ```sh
 jq -r '.predictive_cue[].next // empty' .setup/task-2.json
 jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 ```
 
-| `next` | スキルがすること |
+| `next` | What the skill does |
 |---|---|
-| `done` | 成果物と CCS をコミットして終えます。 |
-| `ask the user` | `gap` を利用者に聞きます。返ってきた CCS の `constraints` に、答えを `answer` として足して新しいファイル（`task-3.json`）に書き、それを `in` にして呼び直します。 |
-| `to the caller: <理由>` | 理由を見て、スキルが決めます。たとえば、合格の基準や観点を直した CCS を新しく書いて呼び直すか、利用者に相談します。 |
-| `stopped: <どこから>` | 利用者が turn の途中で、会話で止めるよう言った時です。返ってきた CCS を `in` にして呼べば、そこから続きます。 |
+| `done` | Commits the work and the CCS and finishes. |
+| `ask the user` | Asks the user each `gap`. Adds the answers as `answer` to `constraints` of the returned CCS, writes it to a new file (`task-3.json`), and calls again with it as `in`. |
+| `to the caller: <reason>` | Reads the reason and decides. For example, it writes a new CCS with the acceptance criteria or the viewpoints fixed and calls again, or it talks it over with the user. |
+| `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
 
-- turn が CCS を返さずに切れた時（マシンが止まった時など）は、同じ `in` でもう一度呼びます。そのターンを始めからやり直します。
-- python3 か jq がない時は、turn は CCS を返さずに、何をインストールすればよいかを会話で伝えて止まります。
-- 次のタスクにも学んだ決まりを守らせたい時は、返ってきた CCS の `rule` の行を、次のタスクの CCS の `constraints` に写します。
+- If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
+- If python3 or jq is missing, turn returns no CCS; it says in the conversation what to install, and stops.
+- To have the next task keep the rules learned here, copy the `rule` lines of the returned CCS into `constraints` of the next task's CCS.
 
-## プラグインに残ること
+## What stays with your plugin
 
-turn が受け持つのはタスク1つです。次のことは、呼ぶプラグインがします。
+turn takes care of one task. The plugin that calls it does the following:
 
-- タスクの前に、利用者と何を合意するかを決めること。
-- どのタスクを、どの順に回すかを決めること。
-- コミットと push。
+- Decides what to agree on with the user before the task.
+- Decides which tasks to run, and in what order.
+- Commits and pushes.
 
-## 必要なもの
+## Requirements
 
-プラグインの利用者のマシンに、次のものが要ります。プラグインの README にも書いてください。
+Your plugin's users need the following on their machine. Say so in your plugin's README too.
 
-- Python 3.9 以上
+- Python 3.9 or later
 
-    CCS の形の確かめに使います。
+    Used to check the form of the CCS.
 
 - jq
 
-    turn の中のエージェントが、CCS の必要な所だけを読み書きするのに使います。
+    Used by the agents inside turn to read and write only the parts of the CCS they need.
 
-- git のリポジトリ
+- A git repository
 
-    使い手は、リポジトリをクローンしたばかりの状態の写しで使います。
+    The stand-in tries the work in a copy in the state of a freshly cloned repository.
 
-## インストール
+## Installing
 
-プラグインの `.claude-plugin/plugin.json` で turn に依存します。turn と同じ lovaizu/ccpm のマーケットプレイスにあるプラグインなら、次のとおりです。
+Make your plugin depend on turn in its `.claude-plugin/plugin.json`. For a plugin in the same lovaizu/ccpm marketplace as turn:
 
 ```json
 "dependencies": ["turn"]
 ```
 
-利用者がプラグインをインストールすると、turn も一緒にインストールされます。
+When a user installs your plugin, turn is installed with it.
 
-ほかのマーケットプレイスにあるプラグインなら、`"turn@ccpm"` と書きます。そのうえで、自分のマーケットプレイスの `marketplace.json` に `"allowCrossMarketplaceDependenciesOn": ["ccpm"]` を足します。足さないと、Claude Code は turn をインストールしません。
+For a plugin in another marketplace, write `"turn@ccpm"`, and add `"allowCrossMarketplaceDependenciesOn": ["ccpm"]` to your marketplace's `marketplace.json`. Without it, Claude Code does not install turn.

@@ -1,9 +1,9 @@
-# プラグインを作る人へ
+# Building the plugins
 
-各プラグインの設計書、テスト、試走を置きます。インストールでコピーされるのは各プラグインのフォルダだけなので、ここにあるものは利用者の手元に入りません。
+Each plugin's design, tests and trials live here. Installing a plugin copies only its own folder, so nothing here reaches its users' machines.
 
 - [turn](./turn/)
-- [rn](./rn/)：設計書は、まだ [rn/docs/](../rn/docs/) にあります。
-- [writ](./writ/)：設計書は、まだ [writ/docs/](../writ/docs/) にあります。
+- [rn](./rn/): its design is still in [rn/docs/](../rn/docs/).
+- [writ](./writ/): its design is still in [writ/docs/](../writ/docs/).
 
-作り方、テスト、試走、リリースの決まりは [.claude/rules/plugin.md](../.claude/rules/plugin.md) にあります。
+The rules for building, testing, trying and releasing a plugin are in [.claude/rules/plugin.md](../.claude/rules/plugin.md).
