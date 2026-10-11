@@ -1,4 +1,4 @@
-"""Tests for the check run as each of turn's agents tries to finish, fed what Claude Code feeds it."""
+"""Tests for the check run as each of turn's agents hands back its report, fed what Claude Code feeds it."""
 
 import json
 import os
@@ -10,7 +10,7 @@ import unittest
 import uuid
 
 PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "turn")
-HOOK = os.path.join(PLUGIN_ROOT, "hooks", "subagentstop.py")
+HOOK = os.path.join(PLUGIN_ROOT, "hooks", "pretooluse.py")
 UP = os.path.join(PLUGIN_ROOT, "scripts", "up.py")
 
 CCS = {
@@ -22,7 +22,7 @@ CCS = {
 }
 
 
-class SubagentStopTest(unittest.TestCase):
+class HandbackTest(unittest.TestCase):
 
     def setUp(self):
         self.root = os.path.realpath(tempfile.mkdtemp())
@@ -71,21 +71,22 @@ class SubagentStopTest(unittest.TestCase):
                      "content": "<error>no</error>" if error else
                      "\n".join(f"{i}\t{text[i - 1]}" for i in shown)}]}}]
 
-    def record(self, entries):
-        path = os.path.join(self.root, f"agent-{uuid.uuid4().hex}.jsonl")
+    def stop(self, agent, entries, session=None):
+        """The agent hands back its report, with its record as Claude Code keeps it beside the session's."""
+        session = session or self.session
+        agent_id = uuid.uuid4().hex
+        path = os.path.join(self.root, "records", session, "subagents", f"agent-{agent_id}.jsonl")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             f.write("".join(json.dumps(e) + "\n" for e in entries))
-        return path
-
-    def stop(self, agent, entries, session=None):
-        data = {"session_id": session or self.session, "hook_event_name": "SubagentStop",
-                "stop_hook_active": False, "agent_id": "a1", "agent_type": agent, "cwd": self.repo,
-                "agent_transcript_path": self.record(entries), "last_assistant_message": "done"}
+        data = {"session_id": session, "hook_event_name": "PreToolUse", "tool_name": "SubagentHandback",
+                "tool_input": {"message": "done"}, "agent_id": agent_id, "agent_type": agent, "cwd": self.repo,
+                "transcript_path": os.path.join(self.root, "records", f"{session}.jsonl")}
         return subprocess.run([sys.executable, HOOK], input=json.dumps(data), capture_output=True, text=True)
 
     def blocked(self, result):
-        self.assertEqual(result.returncode, 0, result.stderr)
-        return json.loads(result.stdout)["reason"] if result.stdout.strip() else None
+        self.assertIn(result.returncode, (0, 2), result.stderr)
+        return result.stderr.strip() if result.returncode == 2 else None
 
     def generator_reads(self):
         return [e for p in (os.path.join(self.work, "should.md"), os.path.join(self.repo, "views/setup.md"),
@@ -119,7 +120,7 @@ class SubagentStopTest(unittest.TestCase):
     def test_an_agent_not_of_turn_is_let_through(self):
         # Given: an agent not of turn that read nothing
         entries = []
-        # When: it tries to finish
+        # When: it hands back its report
         result = self.stop("Explore", entries)
         # Then: it is let through
         self.assertIsNone(self.blocked(result))
@@ -127,7 +128,7 @@ class SubagentStopTest(unittest.TestCase):
     def test_a_turn_agent_outside_a_turn_of_this_session_is_let_through(self):
         # Given: a session with no turn running
         entries = []
-        # When: the generator tries to finish having read nothing
+        # When: the generator hands back its report having read nothing
         result = self.stop("turn:generator", entries, session=str(uuid.uuid4()))
         # Then: it is let through
         self.assertIsNone(self.blocked(result))
@@ -135,7 +136,7 @@ class SubagentStopTest(unittest.TestCase):
     def test_a_generator_that_read_everything_it_must_whole_finishes(self):
         # Given: a generator that read should.md, the viewpoint and every file in the source folder whole
         entries = self.generator_reads()
-        # When: it tries to finish
+        # When: it hands back its report
         result = self.stop("turn:generator", entries)
         # Then: it is let through
         self.assertIsNone(self.blocked(result))
@@ -143,7 +144,7 @@ class SubagentStopTest(unittest.TestCase):
     def test_a_generator_that_left_a_file_unread_is_kept_running_and_told_which(self):
         # Given: a generator that read all but one file in the source folder
         entries = self.generator_reads()[:-2]
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:generator", entries))
         # Then: it is kept running and told that file is not read, and not the file it did read
         self.assertIn(os.path.join(self.repo, "src/lib/util.py") + " (not read)", reason)
@@ -155,7 +156,7 @@ class SubagentStopTest(unittest.TestCase):
         view = os.path.join(self.repo, "views/setup.md")
         entries = (self.generator_reads()[4:] + self.read(should, lines=[1, 2]) + self.read(should, lines=[5])
                    + self.read(view, error=True))
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:generator", entries))
         # Then: it is told which lines of should.md are not read and that the viewpoint is not read
         self.assertIn(f"{should} (lines 3-4, 6-7 not read)", reason)
@@ -167,7 +168,7 @@ class SubagentStopTest(unittest.TestCase):
         with open(os.path.join(self.work, "turn.json"), encoding="utf-8") as f:
             s = json.load(f)
         self.put("turn.json", dict(s, round=2))
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:generator", self.generator_reads()))
         # Then: it is told round 1's decision is not read
         self.assertIn(os.path.join(self.work, "evaluator-1.json") + " (not read)", reason)
@@ -175,7 +176,7 @@ class SubagentStopTest(unittest.TestCase):
     def test_the_first_user_is_not_asked_to_read_anything_whole(self):
         # Given: a first user that read nothing
         entries = []
-        # When: it tries to finish
+        # When: it hands back its report
         result = self.stop("turn:first-user", entries)
         # Then: it is let through
         self.assertIsNone(self.blocked(result))
@@ -185,7 +186,7 @@ class SubagentStopTest(unittest.TestCase):
         self.round_one_files()
         entries = [e for p in ("first-user-1.md", "steps-generator-1.md", "steps-first-user-1.md")
                    for e in self.read(os.path.join(self.work, p))] + self.read(os.path.join(self.repo, "views/setup.md"))
-        # When: it tries to finish
+        # When: it hands back its report
         result = self.stop("turn:learner", entries)
         # Then: it is let through
         self.assertIsNone(self.blocked(result))
@@ -202,7 +203,7 @@ class SubagentStopTest(unittest.TestCase):
         for text, said in cases.items():
             with self.subTest(text=text):
                 self.put("learner-1.json", text)
-                # When: it tries to finish with each
+                # When: it hands back its report with each
                 reason = self.blocked(self.stop("turn:learner", entries))
                 # Then: it is told the causes are out of form, or which step does not exist
                 self.assertIn(said, reason)
@@ -211,7 +212,7 @@ class SubagentStopTest(unittest.TestCase):
         # Given: round 1's files and an evaluator's decision resting on the error step and a line of the deliverable, with the evaluator having read every file of the round, the viewpoint and the deliverable
         self.round_one_files()
         self.decide(["first-user-1#2", "SETUP.md:3"])
-        # When: it tries to finish
+        # When: it hands back its report
         result = self.stop("turn:evaluator", self.evaluator_reads())
         # Then: it is let through
         self.assertIsNone(self.blocked(result))
@@ -219,7 +220,7 @@ class SubagentStopTest(unittest.TestCase):
     def test_an_evaluator_with_no_decision_is_told_to_write_it(self):
         # Given: round 1's files and an evaluator that read them but wrote no decision
         self.round_one_files()
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:evaluator", self.evaluator_reads(decided=False)))
         # Then: it is told its decision is not in the form
         self.assertIn("evaluator-1.json is not in the form", reason)
@@ -228,7 +229,7 @@ class SubagentStopTest(unittest.TestCase):
         # Given: an evaluator that read everything, with a decision resting on a step of a round not run, a line past the deliverable's end, a line of a file not the deliverable, and words that are neither
         self.round_one_files()
         self.decide(["first-user-1#2", "generator-3#1", "SETUP.md:9", "README.md:1", "somewhere"])
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:evaluator", self.evaluator_reads()))
         # Then: it is told each of the four does not exist
         for said in ("generator-3#1 is not a step", "SETUP.md:9 is not a line of the deliverable",
@@ -239,7 +240,7 @@ class SubagentStopTest(unittest.TestCase):
         # Given: an evaluator that read everything, with a decision resting only on the first user's step that went well
         self.round_one_files()
         self.decide(["first-user-1#1"])
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:evaluator", self.evaluator_reads()))
         # Then: it is told the first user's error step has no ending
         self.assertIn("first-user-1#2 ended in an error and no ending names it", reason)
@@ -257,7 +258,7 @@ class SubagentStopTest(unittest.TestCase):
         self.round_one_files()
         self.decide(["first-user-1#2", "docs/a.md:1"])
         entries = [e for e in self.evaluator_reads() if "SETUP.md" not in json.dumps(e)]
-        # When: it tries to finish
+        # When: it hands back its report
         reason = self.blocked(self.stop("turn:evaluator", entries))
         # Then: it is told that file is not read, and the line is taken as a ground
         self.assertIn(os.path.join(self.repo, "docs/a.md") + " (not read)", reason)

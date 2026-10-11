@@ -47,7 +47,7 @@ STANDIN = """\
 ---
 name: {role}
 description: Stands in for turn's {role} in a check of turn's flow.
-model: sonnet
+model: inherit
 tools: Bash, Read
 ---
 
