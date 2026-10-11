@@ -28,7 +28,7 @@ The orchestrator works toward what the CCS says the deliverable should be. It ha
 
 - Only the returned CCS and the deliverable remain after a turn.
 
-    The next turn starts from these alone, not from conversation records or anything an agent remembers. turn never rewrites the CCS it received; it writes a new CCS to a separate file. This keeps the promise that a task stopped partway carries on from where it stopped, and, once the CCS and the deliverable are committed, on another machine too. A turn cut off partway can start over from the same CCS. And the plugin can decide its next step from the returned CCS alone.
+    The next turn starts from these alone, not from conversation records or anything an agent remembers. turn never rewrites the CCS it received; it writes a new CCS to a separate file. This keeps the promise that a task stopped partway carries on from where it stopped, and, once the CCS and the deliverable are committed, on another machine too. A turn cut off partway can start over from the same CCS. And everything the plugin needs for its next step can be traced from the returned CCS.
 
 ## 2. Features
 
@@ -102,9 +102,9 @@ Keeps the promise "they are asked only what only they can decide".
 
     turn does not talk to the user. It does not know what the plugin has agreed with the user outside the turn. If turn decided what to ask, users would be asked the same thing again, or find decisions in the deliverable they never meant to make.
 
-### Deciding from the returned CCS alone
+### Tracing the next step from the returned CCS
 
-Keeps the promise "your skill decides its next step from the returned CCS alone".
+Keeps the promise "everything your skill needs for its next step can be traced from the returned CCS".
 
 - The orchestrator writes, from the evaluator's decisions, how each stumble ended (`difference`), what only the user can decide (`gap`), the rules (`rule`), how the deliverable connects to its sources (`link`) and what to do next (`next`).
 - What each agent actually read, wrote and ran (`episodic_trace`) is written by a script from the conversation records and git before the turn returns.
@@ -177,9 +177,9 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 
     Scene: the trial above, run from a small plugin that only writes the CCS, calls `turn:up` and reads `next`. It passes when the trial above passes though that plugin's skill has no steps for making, trying or fixing.
 
-- "Your skill decides its next step from the returned CCS alone"
+- "Everything your skill needs for its next step can be traced from the returned CCS"
 
-    Scene: the CCS returned in the trial above. It passes when the next step decided from the CCS alone is the same as the one decided after also reading the deliverable and the conversation records.
+    Scene: the CCS returned in the trial above. It passes when the next step decided from the CCS and what it points to is the same as the one decided after also reading the conversation records. This shows that nothing needed for the next step was left only in the conversation.
 
 - "They are asked only what only they can decide"
 

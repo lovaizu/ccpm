@@ -10,9 +10,9 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
     All you write is the task's CCS and a viewpoint file that says what a good deliverable is in your domain. If the loop needs a fix, it is fixed in one place, turn.
 
-- Your skill decides its next step from the returned CCS alone.
+- Everything your skill needs for its next step can be traced from the returned CCS.
 
-    One line of `jq` reads `next` from it and tells your skill whether the task is done or there is something to ask your user. Your skill does not have to open the deliverable to find out.
+    `next` says how the turn ended, `gap` what is left for your user, and the CCS points to the deliverable and everything behind it. Whether to open them is up to your skill.
 
 - The acceptance criteria and rules do not change in the middle of a task.
 
