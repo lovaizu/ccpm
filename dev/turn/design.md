@@ -167,7 +167,7 @@ The plugin writes the CCS and keeps it; turn reads it, and so do later versions 
 
 ## 4. How it is checked
 
-Whether the promises reach the plugin's users is checked first, by trials. The trials live in `dev/turn/trials/` and run turn the way its users do. Whoever runs a trial decides whether it passed by reading every conversation and agent record (JSONL).
+The checking effort goes first to whether the promises reach the plugin's users, by trials. The trials live in `dev/turn/trials/` and run turn the way its users do. Whoever runs a trial decides whether it passed by reading every conversation and agent record (JSONL).
 
 - "The deliverable shown has already been used, with its stumbles fixed"
 
@@ -192,6 +192,16 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 - "If they stop partway, the task carries on from where it stopped"
 
     Scene: a task where the user asks to stop after the generator has finished. It passes when calling again with only the returned CCS and the deliverable placed in another clone carries on from the deliverable already made, and passes the same way.
+
+Before the trials run, each part is checked alone where its behavior is decided, so that a trial shows whether the promises reach the users, and a slip is found in the part that made it.
+
+- Each agent's prompt is run alone on set inputs and checked with writ's `prompt.md`.
+
+    A trial on unchecked prompts finds the prompts' slips, not whether the promises hold, and the slip it finds is hard to place among five agents.
+
+- The orchestrator's flow is run with stand-in agents that return set reports, down every way a round can end: a stumble to fix, every stumble ended, stopped by the user, a question for the user, and returned to the skill.
+
+    A real trial goes down only the path its task leads to; the other paths would reach users unchecked.
 
 "What the deliverable should be and the rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time. The effort of the trials goes to whether the other promises reach the users.
 

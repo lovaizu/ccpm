@@ -20,8 +20,9 @@ Next:
    Stopped there. The user asked what checking turn should look like. Proposed ideal, not yet
    agreed: each quality is checked where it is decided, as cheaply as shows it: scripts by unit
    tests; the orchestrator's flow with mock agents over every branch; each agent's prompt alone
-   with set inputs (`prompt.md`); the README's promises by one real trial at the end. Design
-   section 4 lacks the middle two.
+   with set inputs (`prompt.md`); the README's promises by one real trial at the end.
+   Decided by the user (2026-10-11): checking in four levels; design section 4 now has the prompt
+   checks and the orchestrator's flow with stand-in agents, before the trials.
    Open, for the user (start here): how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
    in the design; `trace.py`'s output was long and hard to read; the full trial runner came before
