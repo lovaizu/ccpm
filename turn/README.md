@@ -8,7 +8,7 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
 - The deliverable is judged against what you write it should be, and nothing else.
 
-    In the CCS you write who receives the deliverable, what they use it for, what they must be able to do with it for it to pass, and viewpoint files that say what a good deliverable is in your domain. turn tries the deliverable against these and fixes it until it meets them. It never makes up what the deliverable should be; when what you wrote is not enough to decide, it comes back to your skill with the reason. How good the deliverable gets rests on what you write here.
+    In the CCS you write who receives the deliverable, what they use it for, what they must be able to do with it for it to pass, and viewpoint files that say what a good deliverable is in your domain. turn tries the deliverable against these and remakes it while each remake brings it closer, until it meets them or what still falls short comes back to your skill, named. It never makes up what the deliverable should be; when what you wrote is not enough to decide, it comes back to your skill with the reason. How good the deliverable gets rests on what you write here.
 
 - You do not write the make, try and fix loop in your own skill.
 
@@ -24,7 +24,7 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
 ## For your plugin's users
 
-- The deliverable they are shown has already been used, and the places where it stumbled are fixed.
+- The deliverable they are shown has already been used in its receiver's place, and whatever still falls short of what it should be is named.
 - They are asked only what only they can decide.
 - If they stop partway, the task carries on from where it stopped. If they commit the CCS and the deliverable, it carries on from there on another machine too.
 - Their other work is left untouched.

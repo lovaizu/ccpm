@@ -73,7 +73,7 @@ Every ending that returns a CCS writes the evidence beside it, and leaves the re
 
 ### Using the deliverable as the receiver, and remaking it
 
-Keeps the promises "the deliverable is judged against what you write it should be, and nothing else", "the deliverable shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
+Keeps the promises "the deliverable is judged against what you write it should be, and nothing else", "the deliverable shown has already been used, and what still falls short is named" and "you do not write the make, try and fix loop in your own skill".
 
 - The deliverable returned is the closest version the first user used from start to end and the evaluator judged, and the returned CCS carries that version's Mores and learnings. Since every remake the loop goes on from brought the deliverable closer, it is the last judged version, unless the last remake brought it no closer; then it is the version before that remake.
 
@@ -97,7 +97,7 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
 ### Checking that each agent did its job
 
-Keeps the promises "the deliverable shown has already been used, with its stumbles fixed", "the deliverable is judged against what you write it should be, and nothing else" and "everything your skill needs for its next step can be traced from the returned CCS".
+Keeps the promises "the deliverable shown has already been used, and what still falls short is named", "the deliverable is judged against what you write it should be, and nothing else" and "everything your skill needs for its next step can be traced from the returned CCS".
 
 - Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to finish. If something is missing, the same agent is kept running and told what.
 
@@ -166,15 +166,7 @@ Keeps the promise "what the deliverable should be and the rules do not change in
 
 - A script checks the form of the CCS when it is received and when it is returned. If something does not match, it says what and stops. What it checks is listed in "What a script checks" in the README.
 
-    A CCS written by AI may reword a line of what the deliverable should be, or add entries not in the tables. A script gives the same answer every time.
-
-- On receiving, the script also checks that the deliverable is none of the viewpoint files and sources, and holds none of them.
-
-    A deliverable that is also its own measure changes the measure with every remake.
-
-- The check uses python3. If it is missing, turn returns no CCS, says in the conversation what to install, and stops.
-
-    Going on without the check, no one would notice a change.
+    A CCS written by AI may reword a line of what the deliverable should be, or add entries not in the tables, and a deliverable that is also a viewpoint file or a source changes the measure with every remake. A script gives the same answer every time, and turn does not go on without it, as "How a turn ends" says: no one would notice a change.
 
 ### Carrying on from where it stopped
 
@@ -225,7 +217,7 @@ The promises are checked where turn is really used: writ and rn are made through
 
 A real task has no stumble set in advance, so a turn that finds nothing can mean the deliverable is fine or the stumble was missed. Each promise is judged from the records of the real work:
 
-- "The deliverable shown has already been used, with its stumbles fixed": the deliverable returned is the closest version the first user used from start to end, and using it as its receiver shows no point the evaluator gave Good that falls short.
+- "The deliverable shown has already been used, and what still falls short is named": the deliverable returned is the closest version the first user used from start to end, and using it as its receiver shows nothing falling short that is not named in `more`, `gap` or `next`.
 - "You do not write the make, try and fix loop in your own skill": the calling skill only writes the CCS, calls `turn:up` and acts on `next`.
 - "The deliverable is judged against what you write it should be, and nothing else": what the CCS does not settle comes back as `to the caller` or `gap`, and is not settled in the deliverable.
 - "Everything your skill needs for its next step can be traced from the returned CCS": the next step decided from the CCS and what it points to is the same as the one decided after also reading the records.
