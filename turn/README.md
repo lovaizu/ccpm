@@ -2,17 +2,17 @@
 
 When you hand a long task to an AI agent, the conversation piles up, the context grows, and the agent slowly drifts from its goal and its rules. [ACC (Agent Cognitive Compressor)](https://arxiv.org/abs/2601.11653) is a method from research that prevents this. Instead of keeping the whole conversation, it rewrites, at every turn, only the state needed for the next step into a fixed form of nine parts, the CCS (Compressed Cognitive State), and replaces the previous state with it. See the paper for the details.
 
-turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the work, tries it out, learns why it stumbled, and fixes it. A plugin writes its task as a CCS in JSON, hands it over, and gets a new CCS back.
+turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the deliverable, tries it out, learns why it stumbled, and fixes it. A plugin writes its task as a CCS in JSON, hands it over, and gets a new CCS back.
 
 ## For plugin authors
 
 - You do not write the make, try and fix loop in your own skill.
 
-    All you write is the task's CCS and a viewpoint file that says what good work is in your domain. If the loop needs a fix, it is fixed in one place, turn.
+    All you write is the task's CCS and a viewpoint file that says what a good deliverable is in your domain. If the loop needs a fix, it is fixed in one place, turn.
 
 - Your skill decides its next step from the returned CCS alone.
 
-    One line of `jq` reads `next` from it and tells your skill whether the task is done or there is something to ask your user. Your skill does not have to open the work to find out.
+    One line of `jq` reads `next` from it and tells your skill whether the task is done or there is something to ask your user. Your skill does not have to open the deliverable to find out.
 
 - The acceptance criteria and rules do not change in the middle of a task.
 
@@ -20,12 +20,12 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
 ## For your plugin's users
 
-- The work they are shown has already been used, and the places where it stumbled are fixed.
+- The deliverable they are shown has already been used, and the places where it stumbled are fixed.
 - They are asked only what only they can decide.
-- If they stop partway, the task carries on from where it stopped. If they commit the CCS and the work, it carries on from there on another machine too.
+- If they stop partway, the task carries on from where it stopped. If they commit the CCS and the deliverable, it carries on from there on another machine too.
 - Their other work is left untouched.
 
-    The work is tried out in a copy inside a temporary folder that is deleted afterward. turn never commits or pushes.
+    The deliverable is tried out in a copy inside a temporary folder that is deleted afterward. turn never commits or pushes.
 
 ## An example
 
@@ -81,11 +81,11 @@ flowchart LR
 
 - The generator, the first user, the learner and the evaluator are separate agents. turn calls them in turn and passes on what each returns. Only the evaluator makes decisions.
 
-    Whoever made the work goes easy on it when checking it. The first user is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the work the way they describe, and the places where the receiver stumbles would not show.
+    Whoever made the deliverable goes easy on it when checking it. The first user is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show.
 
-- Each time the work is tried, the learner finds why it stumbled.
+- Each time the deliverable is tried, the learner finds why it stumbled.
 
-    For the work, it finds the cause of the stumble, not just the spot. The generator fixes that cause and remakes the work from it. Patching spot by spot moves the work away from what it should be. A cause in the way of working becomes a rule, which is kept for the rest of the turn and goes into the returned CCS.
+    For the deliverable, it finds the cause of the stumble, not just the spot. The generator fixes that cause and remakes the deliverable from it. Patching spot by spot moves the deliverable away from what it should be. A cause in the way of working becomes a rule, which is kept for the rest of the turn and goes into the returned CCS.
 
 - A turn starts by receiving a CCS and ends by returning a new one.
 
@@ -93,16 +93,16 @@ flowchart LR
 
 ## Writing a CCS
 
-A CCS is one JSON file. It has all nine parts, and each part is a list of `{"kind": "value"}` entries. The kind says what the value is: in `{"work": "SETUP.md"}`, the kind `work` says that `SETUP.md` is where the work goes. A part with nothing in it is an empty list `[]`. Do not copy the content of the work or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
+A CCS is one JSON file. It has all nine parts, and each part is a list of `{"kind": "value"}` entries. The kind says what the value is: in `{"deliverable": "SETUP.md"}`, the kind `deliverable` says that `SETUP.md` is where the deliverable goes. A part with nothing in it is an empty list `[]`. Do not copy the content of the deliverable or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
 
-The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the two tables below are allowed: the skill and the agents find the entries they need by kind, and an entry with a kind not in the tables is stopped by the script check. Other values are written in the language of the work.
+The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the two tables below are allowed: the skill and the agents find the entries they need by kind, and an entry with a kind not in the tables is stopped by the script check. Other values are written in the language of the deliverable.
 
 ### What the plugin writes
 
 ```json
 {
   "focal_entities": [
-    {"work": "SETUP.md"},
+    {"deliverable": "SETUP.md"},
     {"receiver": "A new team member on their first day, starting the app from the guide alone"}
   ],
   "goal_orientation": [
@@ -125,13 +125,13 @@ The names of parts and kinds, and fixed words such as the values of `next`, stay
 
 | Part | Kind | What to write | Required |
 |---|---|---|---|
-| `focal_entities` | `work` | Where the work to make goes, inside the repository | Yes |
-| | `receiver` | The person who receives and uses the work | Yes |
-| `goal_orientation` | `acceptance` | What the receiver must be able to do with the work for it to pass | Yes |
-| | `use` | What the receiver uses the work for | |
+| `focal_entities` | `deliverable` | Where the deliverable to make goes, inside the repository | Yes |
+| | `receiver` | The person who receives and uses the deliverable | Yes |
+| `goal_orientation` | `acceptance` | What the receiver must be able to do with the deliverable for it to pass | Yes |
+| | `use` | What the receiver uses the deliverable for | |
 | `retrieved_artifacts` | `viewpoint` | A viewpoint file. One or more | Yes |
-| | `source` | Material the work is based on | |
-| `constraints` | `language` | The language the work is written in | |
+| | `source` | Material the deliverable is based on | |
+| `constraints` | `language` | The language the deliverable is written in | |
 | | `rule` | A rule to keep | |
 | | `answer` | The user's answer to a returned `gap` | |
 
@@ -139,7 +139,7 @@ The names of parts and kinds, and fixed words such as the values of `next`, stay
 
 Viewpoint files live inside the plugin. The skill writes their place as `${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md` and copies it into the CCS. Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the current location when it loads the skill. If the path goes stale, on another machine or after an update, turn stops at the check it runs on receiving the CCS; write the CCS again with the current path and call again.
 
-A viewpoint file says what good work is in the domain, in a form the generator, the learner and the evaluator can judge by. For a setup guide, it might say:
+A viewpoint file says what a good deliverable is in the domain, in a form the generator, the learner and the evaluator can judge by. For a setup guide, it might say:
 
 ```markdown
 - Go from a fresh clone to a running app, as steps of commands to type and what each one shows.
@@ -175,9 +175,9 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
 |---|---|---|
 | `predictive_cue` | `next` | What to do next. One of the values in the table in "Deciding from the returned CCS" |
 | `uncertainty_signal` | `gap` | Something only the user can decide, as a question that can be asked as it is |
-| `semantic_gist` | `difference` | Something that, when the work was tried, did not match the criteria, and how it ended. The ending is one of `fixed`, `let go: <reason>` or `to the caller: <reason>` (left to the skill) |
+| `semantic_gist` | `difference` | Something that, when the deliverable was tried, did not match the criteria, and how it ended. The ending is one of `fixed`, `let go: <reason>` or `to the caller: <reason>` (left to the skill) |
 | `constraints` | `rule` | A rule about the way of working, learned in this turn |
-| `relational_map` | `link` | How the work connects to its sources and other things |
+| `relational_map` | `link` | How the deliverable connects to its sources and other things |
 | `episodic_trace` | The agent and which round (`generator-1` is the generator's first round; likewise `first-user-1`, `learner-1` and `evaluator-1`), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
 
 ### What a script checks
@@ -187,7 +187,7 @@ turn checks the form of the CCS with a script when it receives one and when it r
 - On receiving
   - All nine parts are there and no others. Every kind is one in the tables, and every value is a string.
   - The four required kinds are there.
-  - The places written in `retrieved_artifacts` exist. `work` points inside the repository. Since the work is new, `work` may not exist yet.
+  - The places written in `retrieved_artifacts` exist. `deliverable` points inside the repository. Since the deliverable is new, `deliverable` may not exist yet.
   - The file to return to does not exist yet.
 - On returning
   - `focal_entities`, `goal_orientation` and `retrieved_artifacts` are as received, and `constraints` keeps its original lines with any new ones after them.
@@ -225,7 +225,7 @@ jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 
 | `next` | What the skill does |
 |---|---|
-| `done` | Commits the work and the CCS and finishes. |
+| `done` | Commits the deliverable and the CCS and finishes. |
 | `ask the user` | Asks the user each `gap`. Adds the answers as `answer` to `constraints` of the returned CCS, writes it to a new file (`task-3.json`), and calls again with it as `in`. |
 | `to the caller: <reason>` | Reads the reason and decides. For example, it writes a new CCS with the acceptance criteria or the viewpoints fixed and calls again, or it talks it over with the user. |
 | `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
@@ -256,7 +256,7 @@ Your plugin's users need the following on their machine. Say so in your plugin's
 
 - A git repository
 
-    The first user tries the work in a copy in the state of a freshly cloned repository.
+    The first user tries the deliverable in a copy in the state of a freshly cloned repository.
 
 ## Installing
 
