@@ -82,7 +82,9 @@ def write_remake(work, n, mores, learnings):
     if not mores and not learnings:
         return ""
     parts = ["# What to remake the deliverable from\n"]
-    for title, items in (("More", mores), ("Learnings", learnings)):
+    # Learnings first: a list of points read first is met point by point.
+    for title, items in (("Why the last version came out away from what it should be", learnings),
+                         ("Where that showed", mores)):
         if items:
             parts.append(f"## {title}\n\n" + "".join(f"- {x}\n" for x in items))
     path = os.path.join(work, f"remake-{n}.md")

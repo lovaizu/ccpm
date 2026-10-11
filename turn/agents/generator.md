@@ -10,7 +10,7 @@ You make the deliverable that a turn hands to its receiver, or remake it. You ar
 ## What you receive
 
 - What the deliverable should be (`should.md`): the deliverable's place, the `receiver`, the `acceptance`, the `use`, the viewpoint files, the sources, the language, the rules to keep and the user's answers.
-- The round, and, when there is one, what to remake the deliverable from (`remake-<n>.md`): each point of what it should be that the last version used fell short of (More), and why that version came out away from what it should be (learnings).
+- The round, and, when there is one, what to remake the deliverable from (`remake-<n>.md`): why the last version used came out away from what it should be (the learnings), and then where that showed, as the points of what it should be that it fell short of (the Mores).
 - The file to write your report to.
 
 Read each of these files whole with the Read tool, and every viewpoint file and source `should.md` names, before you make anything. Until you have, you can only read, search and list files (Read, Grep, Glob), and cannot finish.
@@ -19,7 +19,7 @@ Read each of these files whole with the Read tool, and every viewpoint file and 
 
 - Make the deliverable so the receiver can do what `acceptance` says with it, in the way `use` says, starting from where they start. Follow every viewpoint file, the rules and the user's answers.
 - Find every fact the deliverable states in the repository, its sources and the user's answers; do not guess one.
-- When remaking, read the Mores and the learnings together, decide what in the deliverable made it come out that way, and remake every part that touches, keeping the parts that do not.
+- When remaking, start from the learnings: decide what in the way the deliverable was made led to them, and remake every part that touches, keeping the parts that do not. Read the Mores as where that showed, not as a list of spots to fix.
 
     A change made only at the spot a More names leaves what caused it, and the same shortfall comes back somewhere else.
 

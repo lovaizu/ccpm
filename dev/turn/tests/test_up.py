@@ -141,12 +141,12 @@ class UpTest(unittest.TestCase):
         result = self.run_up("start", ".t/in.json", ".t/out.json", SESSION)
         work = result.stdout.splitlines()[0][len("work: "):]
         self.addCleanup(shutil.rmtree, work, True)
-        # Then: it names remake-1.md last, which holds the More and the learning for round 1's generator, and not the question
+        # Then: it names remake-1.md last, which holds the learning first and the More after for round 1's generator, and not the question
         self.assertEqual(result.stdout.splitlines()[-1], "remake: " + os.path.join(work, "remake-1.md"))
         with open(os.path.join(work, "remake-1.md"), encoding="utf-8") as f:
-            self.assertEqual(f.read(), "# What to remake the deliverable from\n\n## More\n\n"
-                             "- Starts the app: step 3 needs var/\n\n## Learnings\n\n"
-                             "- The steps were written where var/ already existed\n")
+            self.assertEqual(f.read(), "# What to remake the deliverable from\n\n## Why the last version came out away from what it should be\n\n"
+                             "- The steps were written where var/ already existed\n\n## Where that showed\n\n"
+                             "- Starts the app: step 3 needs var/\n")
 
     def test_start_on_a_ccs_with_no_mores_or_learnings_hands_round_one_nothing_to_remake_from(self):
         # Given: a CCS with no More and no learning
@@ -253,12 +253,12 @@ class UpTest(unittest.TestCase):
         self.judge(work, 1, MORE)
         # When: the round is closed
         result = self.run_up("round", work)
-        # Then: the turn goes on to round 2, whose generator gets the More and the learning, and the copy is gone
+        # Then: the turn goes on to round 2, whose generator gets the learning first and the More after, and the copy is gone
         self.assertEqual((result.returncode, result.stdout), (0, "next round\n"))
         with open(os.path.join(work, "remake-2.md"), encoding="utf-8") as f:
-            self.assertEqual(f.read(), "# What to remake the deliverable from\n\n## More\n\n"
-                             "- Starts the app by following the guide alone: step 3 needs var/\n\n## Learnings\n\n"
-                             "- The steps were written where var/ already existed\n")
+            self.assertEqual(f.read(), "# What to remake the deliverable from\n\n## Why the last version came out away from what it should be\n\n"
+                             "- The steps were written where var/ already existed\n\n## Where that showed\n\n"
+                             "- Starts the app by following the guide alone: step 3 needs var/\n")
         self.assertFalse(os.path.exists(folder))
 
     def test_a_round_with_no_more_ends_the_turn(self):
