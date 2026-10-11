@@ -6,6 +6,7 @@ Claude Code plugin marketplace for lovaizu projects.
 
 - **[rn](./rn/README.md)** — *Right Now.* Give a goal, roughly; it works out what you really want, carries the work through, and calls you back only for decisions that are yours.
 - **[writ](./writ/README.md)** — Documents that read as if a person wrote them for their reader, handed on without rereading.
+- **[turn](./turn/README.md)** — For plugin authors: hand one task to turn, and get back a deliverable someone has already used in the receiver's place, with what tripped them up fixed.
 
 ## Install
 
