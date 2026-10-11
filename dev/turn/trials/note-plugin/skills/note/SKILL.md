@@ -31,4 +31,4 @@ description: Writes NOTE.md, the note a visitor reads to find when to come. Use 
    - `done`: say NOTE.md is ready, and finish.
    - `ask the user`: ask the user each `jq -r '.uncertainty_signal[].gap'` in the conversation, and finish your reply there. With the answers, write the returned CCS with `{"answer": "<question> — <answer>"}` added at the end of `constraints` to the next free file, and go to step 3 with it as `in`.
    - `to the caller: <reason>`: tell the user the reason and finish.
-   - `stopped: <where from>`: say where it stopped, and finish. On `/note:note` again, it carries on from there.
+   - `stopped: <where from>`: say where it was stopped, that NOTE.md is the version the returned CCS judges, and that `/note:note` again does the round that was not judged again from its start; then finish.

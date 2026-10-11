@@ -214,7 +214,7 @@ Whatever `next` says, the deliverable at its place is the version the returned C
 | `done` | Commits the deliverable and the CCS and finishes. |
 | `ask the user` | Asks the user each `gap`. Adds the answers as `answer` to `constraints` of the returned CCS, writes it to a new file (`task-3.json`), and calls again with it as `in`. |
 | `to the caller: <reason>` | The reason names the points what the deliverable should be does not settle, or says that a remake brought the deliverable no closer; then the deliverable returned is the version before that remake. When there are also `gap` questions, this comes first, since what the skill decides may change them. Reads the reason and decides. For example, it writes a new CCS with what the deliverable should be fixed and calls again, or it talks it over with the user. |
-| `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
+| `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway; `<where from>` shows the user where it was stopped. Call again with the returned CCS as `in`: the round that was not judged is done again from its start, on the version the returned CCS judges. |
 
 - If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
 - If python3 is missing, or the CCS fails the check, turn returns no CCS; it says in the conversation what to install or what did not match, and stops.
