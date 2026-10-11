@@ -99,7 +99,7 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
 Keeps the promises "the deliverable shown has already been used, and what still falls short is named", "the deliverable is judged against what you write it should be, and nothing else" and "everything your skill needs for its next step can be traced from the returned CCS".
 
-- Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to write what it returns and when it tries to finish. If something is missing, the same agent is kept running and told what.
+- Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to do anything but read and when it tries to finish. If something is missing, the same agent is kept running and told what.
 
     "Read the deliverable and the records, and decide from the facts" asked in words is met by skimming, and an account can claim a read that never happened. The record is written by Claude Code, not by the agent, so it shows what was done. Claude Code's hooks are made for this: one runs before the call that hands back an agent's report and can refuse it with the reason, which keeps the agent running.
 
@@ -107,7 +107,7 @@ Keeps the promises "the deliverable shown has already been used, and what still 
 
     A record is long and a CCS is read a part at a time, so whether either was read through cannot be told. The files the script makes hold the same facts, and a file read with Claude Code's Read tool leaves in the record which lines were read.
 
-- Each agent must have read whole before it writes what it returns: the generator before it first changes the deliverable, and the learner and the evaluator before they write their file. The same is checked when it finishes, for a generator that changes nothing:
+- Each agent must have read whole before it does anything but read: until then the generator, the learner and the evaluator may only read, search and list files. The same is checked when it finishes:
 
     | Agent | Read whole |
     |---|---|
@@ -115,7 +115,7 @@ Keeps the promises "the deliverable shown has already been used, and what still 
     | Learner | What the deliverable should be with the rules and the user's answers, every viewpoint file, the first user's report and both agents' steps |
     | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps and the learnings, and from round 2 on, the version before |
 
-    Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it, and at the end, a read made after the work cannot be told from one that shaped it. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
+    Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it, and at the end, a read made after the work cannot be told from one that shaped it. A command can change the deliverable without naming it, so what is held until then is every action but reading, not a path. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
 
 - What the first user is handed is checked when it is called: it never holds the acceptance criteria.
 
