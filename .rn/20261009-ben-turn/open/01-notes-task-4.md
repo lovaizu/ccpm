@@ -89,13 +89,10 @@ Next:
    run on the hand-back; tests in test_handback.py); duplicated record readers merged; stand-ins on
    the session's model; turn registered in the marketplace and root README, turn/CHANGELOG.md
    (Unreleased), dev/rn and dev/writ READMEs; Given/When/Then carry words (rule and all tests).
-   Next (start here): run `python3 dev/turn/trials/flow.py <new folder>` (flow-6 was running at
-   clear; rerun it) and check all 9 pass. Then write PR #57's description for the user's review:
-   whether it can be merged, each fix in one line with its ground, and what the user has not yet
-   seen (README/design lines changed since sign-off: rules go to generator and evaluator only, jq,
-   copy without the acceptance, difference handed on; `.claude/rules/` changes; writ prompt.md
-   lines). The user reviews and merges; merging comes before the first real use, since the session
-   for it starts from main.
+   Done (2026-10-11): flow-7 passed all 9 checks (flow-6 failed only because flow-7 was started
+   while it ran, and its copy was counted as left over). README's install line fixed to
+   `turn@ccpm`. The merge report is given to the user in the conversation; PR #57's body stays a
+   link. Next (start here): the user reviews and merges PR #57.
    After the merge: the first real use (pith, writ or rn) in a session the user starts.
    Then: the user starts the session for the first of pith, writ and rn; this session sends it the
    work and judges turn from the records and the evidence.
