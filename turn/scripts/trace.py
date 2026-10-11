@@ -42,7 +42,8 @@ def summary(path):
 
 
 def git(*args):
-    return subprocess.run(["git", *args], capture_output=True, text=True).stdout.strip()
+    # Only the line ends go: a porcelain line starts with its status columns, a space among them.
+    return subprocess.run(["git", *args], capture_output=True, text=True).stdout.rstrip("\n")
 
 
 def changes(start):

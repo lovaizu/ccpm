@@ -92,6 +92,17 @@ class TraceTest(unittest.TestCase):
             {"generator-1": "used no tools"},
             {"git": f"commits since {self.start[:7]}: 0; changed: .setup/, SETUP.md"}])
 
+    def test_the_git_entry_names_a_changed_tracked_file_whole(self):
+        # Given: a generator whose record has no tool call, and the file committed at the start changed but not staged
+        self.agent("a1", [{"type": "user", "message": {"content": "the task"}}])
+        self.write(os.path.join(self.repo, "package.json"), '{"name": "app"}\n')
+        # When: the records are written into the CCS to return
+        result = self.run_trace("generator-1=a1")
+        # Then: the git line names the changed file with its whole path, before what is new
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(self.trace()[-1],
+                         {"git": f"commits since {self.start[:7]}: 0; changed: package.json, .setup/"})
+
     def test_a_round_whose_record_is_missing_stops_and_leaves_the_ccs_as_it_was(self):
         # Given: a generator with a record and a first user with none
         self.agent("a1", [])
