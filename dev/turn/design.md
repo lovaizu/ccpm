@@ -46,6 +46,7 @@ sequenceDiagram
   participant E as Evaluator
   S->>O: CCS (in)
   Note over O: A script checks the form of the CCS received
+  Note over O,E: Each round, a script makes the list of items and checks every entry is there
   loop until trying matches what the deliverable should be, or only the user's or the skill's decisions remain
     O->>G: what the deliverable should be, sources, rules, the user's answers, the causes to fix
     G-->>O: the deliverable, and what it did
@@ -83,6 +84,25 @@ Keeps the promises "the deliverable is judged against what you write it should b
 - A checked cause in the way of working becomes a rule (`rule`). The orchestrator passes it to every agent it calls for the rest of the turn and adds it to `constraints` in the returned CCS.
 
     When the skill copies it into the next task's CCS, the same stumble does not come back across tasks either.
+
+### Covering every item, with its ground
+
+Keeps the promises "the deliverable shown has already been used, with its stumbles fixed" and "the deliverable is judged against what you write it should be, and nothing else".
+
+- Each round has one list of the items to be covered, and each role writes its entry for every item it is given, with its ground. A script checks that no item is left without an entry; an agent that left one is called again, as a new agent.
+
+    "Read everything" asked in words is met by skimming: an agent that decides without opening a record passes as one that read it. A list fixes what "everything" is, and a blank shows. The script compares items by number, not by wording, so an agent is never sent back for how it put something.
+
+- The list holds:
+  - Each line of what the deliverable should be: `receiver`, `use`, `acceptance`, each line of each viewpoint file, each `rule` and `answer` in `constraints`, and each cause sent to be fixed. The generator writes for each where the deliverable meets it and how it checked.
+  - Each step the first user took, listed by a script from its record: what it ran or opened, and what came out. The first user's report is its own account; the list is what happened. The learner writes, for each step that failed or went back and each stumble the report names, its cause and the evidence in the records.
+  - The evaluator writes, for every item, whether the deliverable and the records bear out what the other roles wrote, with its ground, and then how each stumble ends.
+
+    The one who checks goes down the same list as the one who did the work, so a claim nothing bears out shows at its item.
+
+- The list lives in the turn's work folder and is deleted with it. The CCS holds none of it.
+
+    The next turn starts from the CCS and the deliverable alone; what the list decided reaches it through the evaluator's endings, rules and questions.
 
 ### Leaving the user's other work untouched
 
