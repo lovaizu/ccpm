@@ -1,5 +1,5 @@
 ---
-pr:
+pr: https://github.com/lovaizu/ccpm/pull/58
 status: running
 artifact-language: English
 conversation-language: Japanese
