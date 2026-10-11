@@ -18,7 +18,11 @@ $ARGUMENTS
 1. Run `command -v python3 jq`. If either is missing, say which and how to install it (Python 3.9 or later; jq), and stop without writing a CCS.
 2. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py in <in> <out>` from the repository. If it prints anything, show it as it is and stop without writing a CCS.
 3. Note the commit the turn starts from (`git rev-parse HEAD`), and make a work folder with `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tryout.py work`.
-4. Read with `jq` the places you pass on: `deliverable`, `receiver`, `use` and every `viewpoint`.
+4. Read what you pass on, `deliverable`, `receiver`, `use` and every `viewpoint`:
+
+   ```
+   jq -r '.focal_entities[], .goal_orientation[], .retrieved_artifacts[] | to_entries[] | select(.key | IN("deliverable", "receiver", "use", "viewpoint")) | "\(.key): \(.value)"' <in>
+   ```
 
 ## Each round
 
