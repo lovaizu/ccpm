@@ -64,9 +64,11 @@ official plugins.
   passes.**
   - Rationale: a test written after the code is fitted to what the code does, not to what it must
     do; a test never seen failing may check nothing.
-- **Name each test by what must happen, as one sentence, and mark its body `# Given`, `# When`,
-  `# Then`.**
-  - Rationale: a test whose Then checks nothing stands out.
+- **Name each test by what must happen, as one sentence, and mark its body `# Given: <the
+  situation>`, `# When: <what is done>`, `# Then: <what must be so>`, each in plain words, not in
+  terms of the code.**
+  - Rationale: a first reader learns what is checked from the words alone, and a Then whose code
+    checks less than its words say stands out.
 - **Have the tests run every line the plugin runs itself, and delete a line no test has a reason to
   run.** `# pragma: no cover`, with its reason beside it, only where whether a line runs depends on
   an environment the tests cannot make. CI counts the lines on every push and fails on any not run.

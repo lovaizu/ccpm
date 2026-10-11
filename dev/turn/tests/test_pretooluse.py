@@ -59,15 +59,15 @@ class PreToolUseTest(unittest.TestCase):
         return result.stderr.strip() if result.returncode == 2 else None
 
     def test_outside_a_turn_of_this_session_every_call_goes_through(self):
-        # Given
+        # Given: a session with no turn running
         given = {"command": "git commit -m x"}
-        # When
+        # When: the generator asks to commit
         reason = self.call("Bash", given, agent="turn:generator", session=str(uuid.uuid4()))
-        # Then
+        # Then: it goes through
         self.assertIsNone(reason)
 
     def test_the_first_user_works_on_files_inside_its_copy_only(self):
-        # Given
+        # Given: the first user's file and agent calls: reading and writing in its copy, reading and searching outside it, editing the deliverable, and starting an agent
         cases = [("Read", {"file_path": os.path.join(self.copy, "setup.md")}, None),
                  ("Read", {"file_path": "setup.md"}, "outside"),
                  ("Grep", {"pattern": "x", "path": self.repo}, "outside"),
@@ -77,31 +77,31 @@ class PreToolUseTest(unittest.TestCase):
                  ("Agent", {"subagent_type": "Explore", "prompt": "look"}, None)]
         for tool, given, said in cases:
             with self.subTest(tool=tool, given=given):
-                # When
+                # When: each is asked for
                 reason = self.call(tool, given, agent="turn:first-user")
-                # Then
+                # Then: those inside the copy and the agent go through, those outside are stopped as outside, and editing the deliverable is stopped
                 if said is None:
                     self.assertIsNone(reason)
                 else:
                     self.assertIn(said, reason)
 
     def test_the_first_user_writes_its_report_in_the_work_folder_and_touches_nothing_else_there(self):
-        # Given
+        # Given: the first user writing its report, and writing and reading should.md, in the work folder
         cases = [("Write", {"file_path": os.path.join(self.work, "first-user-1.md"), "content": ""}, None),
                  ("Write", {"file_path": os.path.join(self.work, "should.md"), "content": ""}, "outside"),
                  ("Read", {"file_path": os.path.join(self.work, "should.md")}, "outside")]
         for tool, given, said in cases:
             with self.subTest(tool=tool, given=given):
-                # When
+                # When: each is asked for
                 reason = self.call(tool, given, agent="turn:first-user")
-                # Then
+                # Then: the report goes through, and should.md is stopped as outside both times
                 if said is None:
                     self.assertIsNone(reason)
                 else:
                     self.assertIn(said, reason)
 
     def test_the_first_user_runs_commands_inside_its_copy_only(self):
-        # Given
+        # Given: the first user's commands: one that moves into the copy first, one run from the copy, one run from the repository, one that reads a file in the repository, and one into the copy with an unclosed quote
         cases = [({"command": f"cd {self.copy} && npm start"}, self.repo, None),
                  ({"command": "npm start"}, self.copy, None),
                  ({"command": "npm start"}, self.repo, "cd into"),
@@ -109,16 +109,16 @@ class PreToolUseTest(unittest.TestCase):
                  ({"command": f'cd {self.copy} && echo "unclosed'}, self.repo, None)]
         for given, cwd, said in cases:
             with self.subTest(given=given, cwd=cwd):
-                # When
+                # When: each is asked for
                 reason = self.call("Bash", given, agent="turn:first-user", cwd=cwd)
-                # Then
+                # Then: those in the copy go through, the one from the repository is told to move into the copy, and the one reading outside is stopped as outside
                 if said is None:
                     self.assertIsNone(reason)
                 else:
                     self.assertIn(said, reason)
 
     def test_the_generator_changes_nothing_in_the_repository_but_the_deliverable(self):
-        # Given
+        # Given: the generator writing the deliverable, editing another file in the repository, writing outside the repository, and reading in it
         outside = os.path.join(self.root, "scratch", "try.sh")
         cases = [("Write", {"file_path": os.path.join(self.repo, "SETUP.md")}, None),
                  ("Edit", {"file_path": os.path.join(self.repo, "setup.md")}, "only the deliverable"),
@@ -126,36 +126,36 @@ class PreToolUseTest(unittest.TestCase):
                  ("Read", {"file_path": os.path.join(self.repo, "setup.md")}, None)]
         for tool, given, said in cases:
             with self.subTest(tool=tool, given=given):
-                # When
+                # When: each is asked for
                 reason = self.call(tool, given, agent="turn:generator")
-                # Then
+                # Then: all go through but the edit, which is stopped as not the deliverable
                 if said is None:
                     self.assertIsNone(reason)
                 else:
                     self.assertIn(said, reason)
 
     def test_no_agent_of_turn_commits_or_pushes(self):
-        # Given
+        # Given: commits and pushes by the generator, evaluator and learner, one inside a longer command and one with an unclosed quote, beside git status and a commit by an agent not of turn
         cases = [("git commit -m x", "turn:generator", True), ("git -C . push", "turn:evaluator", True),
                  ("npm test && git commit -am y", "turn:learner", True), ("git status", "turn:generator", False),
                  ("git commit -m x", "Explore", False), ('git commit -m "unclosed', "turn:generator", True)]
         for command, agent, stopped in cases:
             with self.subTest(command=command, agent=agent):
-                # When
+                # When: each command is asked for
                 reason = self.call("Bash", {"command": command}, agent=agent)
-                # Then
+                # Then: every commit or push by an agent of turn is stopped, and the other two go through
                 self.assertEqual(reason is not None and "commit or push" in reason, stopped)
 
     def test_the_first_user_is_never_handed_the_acceptance_criteria(self):
-        # Given
+        # Given: the first user started with the acceptance in its prompt, the first user started without it, and the evaluator started with it
         cases = [({"subagent_type": "turn:first-user", "prompt": f"Use SETUP.md. {ACCEPTANCE}."}, True),
                  ({"subagent_type": "turn:first-user", "prompt": "Use SETUP.md as a new team member."}, False),
                  ({"subagent_type": "turn:evaluator", "prompt": ACCEPTANCE}, False)]
         for given, stopped in cases:
             with self.subTest(given=given):
-                # When
+                # When: each agent is started
                 reason = self.call("Agent", given)
-                # Then
+                # Then: only the first user given the acceptance is stopped
                 self.assertEqual(reason is not None and "acceptance" in reason, stopped)
 
     def handback(self, agent, entries):
@@ -173,13 +173,13 @@ class PreToolUseTest(unittest.TestCase):
         return result.stderr.strip() if result.returncode == 2 else None
 
     def test_an_agent_handing_back_before_it_did_its_job_is_kept_running(self):
-        # Given
+        # Given: the generator, the first user and an agent not of turn, each with an empty record
         cases = [("turn:generator", "should.md (not read)"), ("turn:first-user", None), ("Explore", None)]
         for agent, said in cases:
             with self.subTest(agent=agent):
-                # When
+                # When: each hands back its report
                 reason = self.handback(agent, [])
-                # Then
+                # Then: the generator is kept running, told it has not read should.md, and the other two go through
                 if said is None:
                     self.assertIsNone(reason)
                 else:

@@ -61,7 +61,7 @@ class TraceTest(unittest.TestCase):
             return json.load(f)["episodic_trace"]
 
     def test_each_round_gets_what_its_agent_read_wrote_and_ran_from_its_record(self):
-        # Given
+        # Given: a generator's record that reads one file twice, searches, writes the deliverable and runs two commands, and a first user's record that reads the deliverable
         self.agent("a1", [
             {"type": "user", "message": {"content": "the task"}},
             tool("Read", {"file_path": "package.json"}),
@@ -72,44 +72,44 @@ class TraceTest(unittest.TestCase):
             tool("Bash", {"command": "ls var"}),
         ])
         self.agent("a2", [tool("Read", {"file_path": "SETUP.md"})])
-        # When
+        # When: the records are written into the CCS to return
         result = self.run_trace("generator-1=a1", "first-user-1=a2")
-        # Then
+        # Then: it prints nothing, the generator's line lists the file read once, the file written and both commands, and the first user's line lists the file read
         self.assertEqual((result.returncode, result.stdout), (0, ""), result.stderr)
         trace = self.trace()
         self.assertEqual(trace[0], {"generator-1": "read: package.json; wrote: SETUP.md; ran: npm start | ls var"})
         self.assertEqual(trace[1], {"first-user-1": "read: SETUP.md"})
 
     def test_the_git_entry_says_what_changed_since_the_turn_started(self):
-        # Given
+        # Given: a generator whose record has no tool call, and the deliverable left uncommitted in the repository
         self.agent("a1", [{"type": "user", "message": {"content": "the task"}}])
         self.write(os.path.join(self.repo, "SETUP.md"), "# Setup\n")
-        # When
+        # When: the records are written into the CCS to return
         result = self.run_trace("generator-1=a1")
-        # Then
+        # Then: the generator's line says it used no tools, and the git line says no commits since the turn started and names what changed
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(self.trace(), [
             {"generator-1": "used no tools"},
             {"git": f"commits since {self.start[:7]}: 0; changed: .setup/, SETUP.md"}])
 
     def test_a_round_whose_record_is_missing_stops_and_leaves_the_ccs_as_it_was(self):
-        # Given
+        # Given: a generator with a record and a first user with none
         self.agent("a1", [])
-        # When
+        # When: the records are written into the CCS to return
         result = self.run_trace("generator-1=a1", "first-user-1=gone")
-        # Then
+        # Then: it fails, says whose record is missing, and leaves the CCS as it was
         self.assertEqual(result.returncode, 1)
         self.assertEqual(result.stdout.strip(), "no conversation record for first-user-1 (gone)")
         self.assertEqual(self.trace(), [{"generator-1": "my own account"}])
 
     def test_a_call_without_the_three_values_shows_how_to_call_it(self):
-        # Given
+        # Given: a call with only the CCS to return, and one with an agent not given as round and record
         cases = [[sys.executable, ENTRY, self.out], [sys.executable, ENTRY, self.out, SESSION, self.start, "a1"]]
         for command in cases:
             with self.subTest(command=command[2:]):
-                # When
+                # When: each is made
                 result = subprocess.run(command, cwd=self.repo, capture_output=True, text=True)
-                # Then
+                # Then: each fails and shows how to call it
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("trace.py <out> <session id>", result.stdout)
 
