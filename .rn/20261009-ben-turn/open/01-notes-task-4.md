@@ -35,9 +35,12 @@ Next:
    generator naming a stand-in beside "not known yet", its claims of checks it did not run, the
    learner adding advice, the first user testing error lines beyond the guide, and a remake whose
    edit failed going to the caller.
-   Open for the user: README's CCS example (`turn/README.md:98`) says "without asking anyone"
-   beside a gap asking who gives the token; the trial plugin now says "following the guide alone".
-   Next: the orchestrator's flow with stand-in agents.
+   Decided by the user (2026-10-11), not yet done (start here): README's CCS example
+   (`turn/README.md:78` and `:98`) says "without asking anyone" beside a gap asking who gives the
+   token; change it to "following the guide alone", as the trial plugin now says.
+   Then: the orchestrator's flow with stand-in agents. The prompt-check runs and reports are in
+   /private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-fix-rn/698ccbfa-a498-4586-8607-a5ca5c993095/scratchpad/prompt-check/
+   (notes.md there; the reports came back as text and are summed up in it).
    Earlier points, now settled except the README clash: how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
    in the design; `trace.py`'s output was long and hard to read; the full trial runner came before
