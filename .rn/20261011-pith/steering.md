@@ -42,6 +42,7 @@ made through `turn:up`, with writ's essentials files as the viewpoints.
 - Fact, from the request: the README, the design and the prompts are each made by writing a CCS and
   calling `turn:up`; the viewpoints are writ's essentials files. rn is not used.
 - Fact, decided by the user: trials and agents run on Opus; Haiku is not used.
+- Fact, decided by the user: this session fixes turn while it makes pith.
 - Fact, decided by the user: rn, writ and pith are released together, so this pull request does not
   release pith.
 - Not yet decided: what pith leaves to turn and what it keeps (for example, whether checking a work
@@ -54,7 +55,8 @@ made through `turn:up`, with writ's essentials files as the viewpoints.
 - The documents are written in English from the start; the user reads them through machine
   translation, so each thing keeps one plain word.
 - Implementation comes only from the signed-off README and design.
-- turn is used as its README says and is not judged or fixed here.
+- turn is fixed here as pith is made: a shortfall seen in a turn's records is fixed only once its
+  cause is confirmed in them, README and design first, then tests first.
 
 # Tasks
 
