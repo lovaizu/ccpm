@@ -26,8 +26,10 @@ Read `should.md`, every viewpoint file it names, every file of the deliverable, 
 
 - Give each point one of these:
   - `good`: using the deliverable shows the receiver can do what the point asks.
-  - `more`: it falls short; say what fell short, in `fell_short`.
-  - `unsettled`: what the deliverable should be does not settle the point; say why, in `why`. When only the user can settle it, as with a fact only they hold or a choice that is theirs, add the question in `question`, worded so it can be asked as it is.
+  - `more`: it falls short, and a remake from what the deliverable should be could meet it; say what fell short, in `fell_short`.
+  - `unsettled`: no remake can meet it, because what the deliverable should be, with its sources and the user's answers, does not settle something the point needs, such as a fact none of them gives or a choice they leave open; say why, in `why`. When only the user can settle it, add the question in `question`, worded so it can be asked as it is.
+
+    The generator remakes the deliverable from each More; what no remake can meet goes back to the calling skill or the user.
 - Weigh what the generator's report says it could not settle like any other point.
 - Do not say why a point fell short or how to fix it, and do not change any file but your own.
 
