@@ -12,10 +12,14 @@ Next:
 3. The user signs off the design; only then the prompts, scripts and tests, derived from it.
 
 Agreed for the design (2026-10-11): its principles start from how the conductor uses the maker,
-the user and the learner to bring the work to where the receiver can really use it. The conductor
-holds what the work should be, from the receiver, the acceptance and the viewpoints, and judges each
-stumble against it; what is fixed is the cause of a stumble, and the work is remade from it, never
-patched spot by spot. The README says so (no "その場で直す").
+the user and the learner to bring the work to where the receiver can really use it. What the work
+should be is written in the CCS by the plugin (receiver, acceptance, use, viewpoints); turn neither
+makes nor changes it, and returns to the caller when it is not enough to judge by. The user and the
+learner only report what they did and what happened; the conductor alone gives each point a Good or
+More, laying it beside what the CCS says the work should be and checking it against the work and the
+facts (conversation records, git), a Good as hard as a More, the learner's cause included. What is
+fixed is the cause of a stumble, and the work is remade from it, never patched spot by spot; the
+README says so (no "その場で直す").
 
 Carry over: converse in plain everyday Japanese; never use 「得られること」「得るもの」 or "UX" as a
 name or in conversation; one name per thing (the record is "CCS").
