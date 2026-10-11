@@ -250,7 +250,8 @@ Your plugin's users need the following on their machine. Say so in your plugin's
 To call turn while you build your skill, install it yourself:
 
 ```console
-> /plugin install turn --marketplace lovaizu/ccpm
+> /plugin marketplace add lovaizu/ccpm
+> /plugin install turn@ccpm
 ```
 
 Make your plugin depend on turn in its `.claude-plugin/plugin.json`. For a plugin in the same lovaizu/ccpm marketplace as turn:
