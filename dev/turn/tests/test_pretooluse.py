@@ -143,6 +143,33 @@ class PreToolUseTest(unittest.TestCase):
                 # Then
                 self.assertEqual(reason is not None and "acceptance" in reason, stopped)
 
+    def handback(self, agent, entries):
+        """An agent handing back its report, with its record where Claude Code keeps it."""
+        main = os.path.join(self.root, "projects", f"{self.session}.jsonl")
+        record = os.path.join(self.root, "projects", self.session, "subagents", "agent-a1.jsonl")
+        os.makedirs(os.path.dirname(record), exist_ok=True)
+        with open(record, "w", encoding="utf-8") as f:
+            f.write("".join(json.dumps(e) + "\n" for e in entries))
+        data = {"session_id": self.session, "hook_event_name": "PreToolUse", "tool_name": "SubagentHandback",
+                "tool_input": {"message": "done"}, "cwd": self.repo, "transcript_path": main,
+                "agent_id": "a1", "agent_type": agent}
+        result = subprocess.run([sys.executable, HOOK], input=json.dumps(data), capture_output=True, text=True)
+        self.assertIn(result.returncode, (0, 2), result.stderr)
+        return result.stderr.strip() if result.returncode == 2 else None
+
+    def test_an_agent_handing_back_before_it_did_its_job_is_kept_running(self):
+        # Given
+        cases = [("turn:generator", "should.md (not read)"), ("turn:first-user", None), ("Explore", None)]
+        for agent, said in cases:
+            with self.subTest(agent=agent):
+                # When
+                reason = self.handback(agent, [])
+                # Then
+                if said is None:
+                    self.assertIsNone(reason)
+                else:
+                    self.assertIn(said, reason)
+
 
 if __name__ == "__main__":
     unittest.main()

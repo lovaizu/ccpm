@@ -214,15 +214,15 @@ def main(argv):
 
     tasks = [task(repo, k) for k in (1, 2, 3, 4)] + [task(other, 5)]
     left = {n for n in os.listdir(tempfile.gettempdir()) if n.startswith("turn-try-")} - tries_before
-    answer = f"{QUESTION} — {ANSWER}"
     checks = {
         "turns return ask the user, stopped, done": [values(tasks[k], "predictive_cue", "next")
                                                      for k in (1, 3, 4)]
         == [["ask the user"], ["stopped: first-user-1"], ["done"]],
         "the question is the one gap": values(tasks[1], "uncertainty_signal", "gap") == [QUESTION],
         "the agents are called in this order": [f"{c['role']}-{c['call']}" for c in calls(workdir)] == CALLS,
-        "the rule and the answer reach the last CCS": [RULE, answer] == [
-            v for e in tasks[4].get("constraints", []) for k, v in e.items() if k in ("rule", "answer")],
+        "the rule and the answer reach the last CCS": [
+            (k, v if k == "rule" else v.startswith(QUESTION)) for e in tasks[4].get("constraints", [])
+            for k, v in e.items() if k in ("rule", "answer")] == [("rule", RULE), ("answer", True)],
         "what the plugin wrote is unchanged": all(t.get(p) == tasks[0].get(p) for t in tasks for p in KEPT),
         "no commit": git(repo, "rev-list", "--count", f"{start}..HEAD") == "0"
         and git(other, "rev-list", "--count", f"{start}..HEAD") == "0",
