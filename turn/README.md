@@ -75,7 +75,7 @@ Four kinds of entry say what the deliverable should be.
 The generator and the evaluator get all four. Write them so that trying the deliverable shows whether it meets them:
 
 - `receiver`: a person in a situation, with what they have and do not have. "A new team member on their first day, starting the app from the guide alone" tells the first user where to start; "developers" does not.
-- `use` and `acceptance`: what the receiver does, and what shows it worked. "Starts the app by following the guide, without asking anyone" can be tried; "a clear guide" cannot.
+- `use` and `acceptance`: what the receiver does, and what shows it worked. "Starts the app by following the guide alone" can be tried; "a clear guide" cannot.
 - `viewpoint`: what a good deliverable is in your domain, each line something the deliverable can be checked against. For a setup guide, it might say:
 
 ```markdown
@@ -95,7 +95,7 @@ When these are not enough to decide a stumble, turn comes back with `to the call
     {"receiver": "A new team member on their first day, starting the app from the guide alone"}
   ],
   "goal_orientation": [
-    {"acceptance": "A new team member starts the app by following the guide, without asking anyone"},
+    {"acceptance": "A new team member starts the app by following the guide alone"},
     {"use": "Run the steps from the top in a freshly cloned repository"}
   ],
   "retrieved_artifacts": [
