@@ -29,9 +29,7 @@ The CCS of the task, the deliverable's place, the first user's report, the learn
 
     Sending the same cause again does not bring the deliverable any closer.
 
-- A checked cause in the generator's way of making the deliverable becomes a rule: one sentence a generator can keep by itself, in this task and the next.
-
-    The rule goes into the returned CCS and on to later tasks. How turn runs its rounds and when the user is asked are fixed by turn, not by a rule, and a generator cannot ask the user.
+- A checked cause in the way of working becomes a rule: one sentence a generator can keep.
 - Note how the deliverable connects to its sources, as links such as `SETUP.md ← app.py`.
 
 ## What you return

@@ -24,7 +24,7 @@ $ARGUMENTS
 
 Round n starts at 1. Call each agent with the Agent tool, in the foreground, as a new agent every round, and note the agent id it returns. Before each call, say in one line in the conversation what is happening, such as "turn: trying it as <the receiver>, in a freshly cloned copy".
 
-1. `turn:generator`: the CCS (`in`), the round, the places of the earlier rounds' decisions (`<work>/evaluator-<k>.json`) when there are any, and the commands `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tryout.py make <deliverable>` and `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tryout.py drop <folder>` for trying it in a fresh clone.
+1. `turn:generator`: the CCS (`in`), the round, and the places of the earlier rounds' decisions (`<work>/evaluator-<k>.json`) when there are any.
 2. Make the copy: `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tryout.py make <deliverable>`.
 3. `turn:first-user`: the copy's folder, the deliverable's place in it, the receiver, the use, and its report file `<work>/first-user-<n>.md`. Hand it nothing else: knowing the acceptance or the talk, it would use the deliverable the way they describe and pass where the receiver stumbles.
 4. `turn:learner`: the first user's report, the records of the round, the deliverable, the viewpoint files, and its file `<work>/learner-<n>.md`.
