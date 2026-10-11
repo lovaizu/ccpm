@@ -10,9 +10,23 @@ Next:
 2. Done: the user looked at the README and signed off the design (2026-10-11).
 3. After sign-off: task #6, the prompts, scripts and tests, derived from the design; prompts through
    writ's `prompt.md` before any trial. `dev/turn/README.md` is written once tests and trials exist.
-   In progress (2026-10-11): scripts `check.py`, `tryout.py`, `trace.py` with tests are pushed; tests
-   come first from now on (rule added). Next are the prompts: the `up` skill and the four agents,
-   with the `prompt.md` situations settled before each prompt is written.
+   In progress (2026-10-11): built test-first from here on (rule added): scripts `check.py`,
+   `tryout.py`, `trace.py`, `assemble.py` with tests (CI 100%); prompts `skills/up/SKILL.md` and
+   `agents/{generator,first-user,learner,evaluator}.md`; a trial plugin and fixture in
+   `dev/turn/trials/`. One full trial ran (scratchpad trial-1): the flow worked and returned
+   `ask the user`, then a contradiction between the example's acceptance ("without asking anyone")
+   and asking Sato for the token; the receiver run passed. b564b05 patched the prompts from that
+   trial before the way of checking was settled.
+   Stopped there. The user asked what checking turn should look like. Proposed ideal, not yet
+   agreed: each quality is checked where it is decided, as cheaply as shows it: scripts by unit
+   tests; the orchestrator's flow with mock agents over every branch; each agent's prompt alone
+   with set inputs (`prompt.md`); the README's promises by one real trial at the end. Design
+   section 4 lacks the middle two.
+   Open, for the user (start here): how far to roll back, and whether turn is still simple. Points
+   to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
+   in the design; `trace.py`'s output was long and hard to read; the full trial runner came before
+   the middle checks. Also for the user: the README example asks Sato for the token yet says the
+   app ran "without asking anyone"; turn's evaluator flagged the same clash in the trial.
 4. Decided by the user (2026-10-11): turn is used in two ways. When each plugin runs, its skill hands
    each task to `turn:up`. When each plugin's documents and prompts are made, the builder hands that
    work to `turn:up`, with writ's essentials files as viewpoints. turn's first version is made by
