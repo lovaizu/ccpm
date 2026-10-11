@@ -80,7 +80,23 @@ Next:
    added `; echo $?` and the like, so no step was ever marked an error. Decided by the user: rules go
    to the generator and the evaluator only (design 85). Rerun on the same situations: all as meant;
    flow trial passes.
-   Next (start here): the first real use (pith, writ or rn) in a session the user starts.
+   Done (2026-10-11): final check before merge (whole diff read by a fresh agent, each finding checked
+   at its source) and every finding fixed and pushed; CI passes (100%). Fixed: questions and reasons
+   for the caller kept across rounds; a turn started on a returned CCS hands its `difference` lines to
+   the generator and evaluator (should.md); jq is the calling skill's, not turn's (rule rewritten:
+   read a part with jq, the whole when the purpose needs it); the copy leaves out files holding the
+   acceptance; evidence written only after the returned CCS passes; SubagentStop hook removed (checks
+   run on the hand-back; tests in test_handback.py); duplicated record readers merged; stand-ins on
+   the session's model; turn registered in the marketplace and root README, turn/CHANGELOG.md
+   (Unreleased), dev/rn and dev/writ READMEs; Given/When/Then carry words (rule and all tests).
+   Next (start here): run `python3 dev/turn/trials/flow.py <new folder>` (flow-6 was running at
+   clear; rerun it) and check all 9 pass. Then write PR #57's description for the user's review:
+   whether it can be merged, each fix in one line with its ground, and what the user has not yet
+   seen (README/design lines changed since sign-off: rules go to generator and evaluator only, jq,
+   copy without the acceptance, difference handed on; `.claude/rules/` changes; writ prompt.md
+   lines). The user reviews and merges; merging comes before the first real use, since the session
+   for it starts from main.
+   After the merge: the first real use (pith, writ or rn) in a session the user starts.
    Then: the user starts the session for the first of pith, writ and rn; this session sends it the
    work and judges turn from the records and the evidence.
 4. Decided by the user (2026-10-11): turn is used in two ways. When each plugin runs, its skill hands
