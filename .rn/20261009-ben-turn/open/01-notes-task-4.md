@@ -5,11 +5,14 @@ point at a time. The user approved `turn/README.md` on 2026-10-11 (5392664 onwar
 
 Next:
 
-1. Write `dev/turn/design.md` from the README, with `writ/references/essentials/doc.md` and
-   `design.md` open, and `.claude/rules/plugin.md` §1 (simplest mechanism, no special paths).
-2. Have it read once by a first user who does not know the discussion; settle findings at their
-   root.
-3. The user signs off the design; only then the prompts, scripts and tests, derived from it.
+1. Done: `dev/turn/design.md` written from the README with the essentials open, and read once by a
+   first user (2026-10-11); its findings settled at their root.
+2. Waiting on the user: a look at the English `turn/README.md` on PR #57, then the design sign-off
+   (task #5). Two points derived from the principles are in the design for them to confirm: a
+   stumble whose cause remains after a remake goes to the caller, so there is no round limit; when
+   stopped, a round whose stumbles have no ending yet is done again.
+3. After sign-off: task #6, the prompts, scripts and tests, derived from the design; prompts through
+   writ's `prompt.md` before any trial. `dev/turn/README.md` is written once tests and trials exist.
 
 Agreed for the design (2026-10-11): its principles start from how the orchestrator uses the agents to bring the work to where the receiver can really use it. What the work
 should be is written in the CCS by the plugin (receiver, acceptance, use, viewpoints); turn neither
