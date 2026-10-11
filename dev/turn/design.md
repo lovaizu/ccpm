@@ -75,9 +75,9 @@ Every ending that returns a CCS writes the evidence beside it, and leaves the re
 
 Keeps the promises "the deliverable is judged against what you write it should be, and nothing else", "the deliverable shown has already been used, and what still falls short is named" and "you do not write the make, try and fix loop in your own skill".
 
-- The deliverable returned is the closest version the first user used from start to end and the evaluator judged, and the returned CCS carries that version's Mores and learnings. Since every remake the loop goes on from brought the deliverable closer, it is the last judged version, unless the last remake brought it no closer; then it is the version before that remake.
+- The deliverable returned is the closest version the first user used from start to end and the evaluator judged, and the returned CCS carries that version's Mores, including those the next round found it shared, and its learnings. Since every remake the loop goes on from brought the deliverable closer, it is the last judged version, unless the last remake brought it no closer; then it is the version before that remake.
 
-    A deliverable that was made but not used, or used again only at the changed spot, has not been down the receiver's path. A remake that turned a Good into More is farther from what the deliverable should be than the version it replaced. And the next turn starts from the CCS and the deliverable together, so the judgments must be those of the deliverable on disk.
+    A deliverable that was made but not used, or used again only at the changed spot, has not been down the receiver's path. A remake that turned a Good into More is farther from what the deliverable should be than the version it replaced. And the next turn starts from the CCS and the deliverable together, so the judgments must be those of the deliverable on disk. A More the next round found the version before shared is a fact about the version on disk, so it is carried too.
 
 - turn keeps each version the first user used in its work folder. Before the turn returns, a script puts the returned version back at the deliverable's place, so a later version that was not judged, or that brought the deliverable no closer, is not left there.
 
