@@ -53,8 +53,9 @@ Next:
    not get. So each agent's own record is checked when it tries to finish (a SubagentStop hook in
    turn's hooks/hooks.json, matched by `^turn:<agent>$`; plugin agents cannot hold hooks; a block
    keeps the same agent running with the reason), what must not be done is stopped as it is tried
-   (PreToolUse), the first user's record is turned into numbered steps for the learner and the
-   evaluator, and each cause and ending names the steps and deliverable lines it rests on, every
+   (PreToolUse), no agent reads a record or the CCS itself: a script writes the generator's and the
+   first user's steps and what the deliverable should be into files read whole with Read (checked by
+   the lines read), the first user's prompt is checked to hold no acceptance, and each cause and ending names the steps and deliverable lines it rests on, every
    error step named by some ending. The evidence file keeps the steps and the endings with their
    grounds. Confirmed in code.claude.com/docs/en/hooks and /sub-agents. Design 2 "Checking that each
    agent did its job" and the README's evidence lines are rewritten; waiting for the user's look.

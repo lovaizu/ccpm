@@ -22,7 +22,7 @@ The orchestrator works toward what the CCS says the deliverable should be. It ha
 
 - Only the evaluator decides, and it checks each report against what the deliverable should be, the deliverable itself and the facts.
 
-    The generator, the first user and the learner each do one job and report what they did and what happened. They do not judge. Whoever made the deliverable goes easy on it, and whoever found a cause goes easy on that cause; once decisions spread across agents, no one can say which fix serves what the deliverable should be. A report can claim more than was done, so the evaluator checks it against the deliverable, the conversation records (JSONL) and git. It checks a report that something worked as hard as one that it stumbled, and the learner's causes just as hard. Taking "it worked" on trust passes the stumble on to the receiver, and the deliverable shown is no longer a deliverable that has been used and fixed.
+    The generator, the first user and the learner each do one job and report what they did and what happened. They do not judge. Whoever made the deliverable goes easy on it, and whoever found a cause goes easy on that cause; once decisions spread across agents, no one can say which fix serves what the deliverable should be. A report can claim more than was done, so the evaluator checks it against the deliverable and the steps taken from the conversation records (JSONL). It checks a report that something worked as hard as one that it stumbled, and the learner's causes just as hard. Taking "it worked" on trust passes the stumble on to the receiver, and the deliverable shown is no longer a deliverable that has been used and fixed.
 
     The orchestrator reads none of this content. It calls the agents and passes on what they return. Making, trying, finding causes and checking them all mean reading the deliverable and long records; held in the orchestrator's conversation, round after round, that content would fill it, and, as the README opens with, it would drift from its goal and rules. Each of the other agents starts in a new conversation every round.
 
@@ -52,10 +52,10 @@ sequenceDiagram
     G-->>O: the deliverable, and what it did
     O->>U: the deliverable, the receiver, what it is used for (in a temporary copy)
     U-->>O: what it did, and what happened
-    Note over O: A script turns the first user's record into numbered steps
-    O->>L: the first user's report and steps, the generator's record, the viewpoint files
+    Note over O: A script turns the generator's and the first user's records into numbered steps
+    O->>L: the first user's report, both agents' steps, the viewpoint files
     L-->>O: the causes of the stumbles
-    O->>E: what the deliverable should be, the deliverable, the first user's report and steps, the causes, how earlier stumbles ended
+    O->>E: what the deliverable should be, the deliverable, the first user's report, both agents' steps, the causes, how earlier stumbles ended
     E-->>O: how each stumble ends, the causes to fix, the rules, the questions for the user
   end
   Note over O: A script writes the evidence and episodic_trace and checks the form of the CCS to return
@@ -72,7 +72,7 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
 - Each time the first user finishes, the learner finds the causes of its stumbles.
 
-    The first user's report shows where it stumbled, not why. The learner looks for the cause in the report and in the records of what actually happened in that round.
+    The first user's report shows where it stumbled, not why. The learner looks for the cause in the report and in the steps the generator and the first user took in that round, as their records show them.
 
 - The evaluator checks each stumble and its cause, and decides it against what the deliverable should be as one of the following. How it ends goes into `difference` in the returned CCS.
   - A stumble that keeps the receiver from meeting the acceptance criteria: its cause goes to the generator, which remakes the deliverable (`fixed`).
@@ -94,24 +94,29 @@ Keeps the promises "the deliverable shown has already been used, with its stumbl
 
     "Read the deliverable and the records, and decide from the facts" asked in words is met by skimming, and an account can claim a read that never happened. The record is written by Claude Code, not by the agent, so it shows what was done. Claude Code's hooks are made for this: one runs as an agent tries to stop and can keep it running with the reason.
 
-- What each agent must have opened before it finishes:
+- No agent reads a conversation record or the CCS itself for what it must know whole. A script turns the generator's and the first user's records into their steps, numbered: what it ran or opened, and what came out. It writes out what the deliverable should be, the rules and the user's answers from the CCS the same way.
 
-    | Agent | Opened |
+    A record is long and a CCS is read with jq a part at a time, so whether either was read through cannot be told. The files the script makes hold the same facts, and a file read with Claude Code's Read tool leaves in the record which lines were read.
+
+- Each agent must have read whole, before it finishes:
+
+    | Agent | Read whole |
     |---|---|
-    | Generator | The CCS, every viewpoint file and source, and the earlier rounds' decisions |
-    | First user | The deliverable, in its copy |
-    | Learner | The first user's report, its steps, the generator's record and the viewpoint files |
-    | Evaluator | The CCS, the deliverable, the first user's report and steps, the learner's causes and the earlier rounds' decisions |
+    | Generator | What the deliverable should be with the rules and the user's answers, every viewpoint file and source, and the earlier rounds' decisions |
+    | Learner | The first user's report, both agents' steps and the viewpoint files |
+    | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps, the learner's causes and the earlier rounds' decisions |
 
-- What an agent must not do is stopped when it tries: the first user reading or changing anything outside its copy or changing the deliverable, the generator changing anything but the deliverable, and any agent committing or pushing.
+    Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
 
-    Found afterwards, the harm is already done: a first user that read the repository has used knowledge the receiver does not have.
+- What each agent was handed is checked on its record too: the first user's never holds the acceptance criteria.
 
-- The first user's record is turned by a script into its steps, numbered: what it ran or opened, and what came out. The learner and the evaluator are handed these steps.
+    Handed them, the first user would use the deliverable the way they describe, and the receiver's stumbles would not show.
 
-    The record is long, and a long record gets skimmed. The steps are the same facts, short enough to be read whole.
+- What an agent must not do is stopped when it tries, as far as the call names it: the first user reading or changing anything outside its copy or changing the deliverable, the generator changing anything in the repository but the deliverable, and any agent committing or pushing.
 
-- Each cause the learner gives and each ending the evaluator decides names the steps and the lines of the deliverable it rests on. Before the agent finishes, these are checked to exist, and every step that ended in an error is checked to be named by some ending.
+    Found afterwards, the harm is already done: a first user that read the repository has used knowledge the receiver does not have. A command can reach places its call does not name; those are judged from the records of real use.
+
+- Each cause the learner gives and each ending the evaluator decides names the steps and the lines of the deliverable it rests on. These are checked to exist, and every step of the first user that ended in an error is checked to be named by some ending.
 
     A conclusion that names its ground can be followed back to the facts. An error is a fact a script can see, so none passes without an ending.
 
@@ -234,4 +239,4 @@ Before turn is used, and again after every change to it, each part is checked al
 
 - The learner and the evaluator are not merged into one agent.
 
-    One agent would read the same records once instead of twice, but it would then check the causes it found itself, and go easy on them.
+    One agent would read the same steps once instead of twice, but it would then check the causes it found itself, and go easy on them.
