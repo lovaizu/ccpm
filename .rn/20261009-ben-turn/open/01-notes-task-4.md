@@ -25,6 +25,10 @@ Next:
    checks and the orchestrator's flow with stand-in agents, before the trials.
    Decided by the user (2026-10-11): only b564b05 is taken back; scripts, prompts and the trial
    plugin stay, and the prompts go through the new checks.
+   Decided by the user (2026-10-11): the README has no console example (one call, CCS in and out).
+   A lacking viewpoint is added where it is missing, in any plugin: writ's prompt.md now asks how
+   the AI gets from a problem to what it changes (#53 notes it); turn's prompts were read against
+   it and the evaluator's rule now holds wherever the cause acts.
    Open (start here): next is checking each prompt alone, then the flow with stand-in agents.
    Earlier points, now settled except the README clash: how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
