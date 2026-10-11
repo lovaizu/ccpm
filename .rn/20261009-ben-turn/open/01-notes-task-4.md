@@ -7,7 +7,8 @@ Next:
 
 1. Done: `dev/turn/design.md` written from the README with the essentials open, and read once by a
    first user (2026-10-11); its findings settled at their root.
-2. Waiting on the user: a look at the English `turn/README.md` on PR #57, then the design sign-off
+2. Waiting on the user: a look at the English `turn/README.md` on PR #57 (on 2026-10-11 it was
+   rebuilt so that what the deliverable should be leads "For plugin authors" and "Writing a CCS"), then the design sign-off
    (task #5). Two points derived from the principles are in the design for them to confirm: a
    stumble whose cause remains after a remake goes to the caller, so there is no round limit; when
    stopped, a round whose stumbles have no ending yet is done again.

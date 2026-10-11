@@ -10,7 +10,7 @@ The orchestrator works toward what the CCS says the deliverable should be. It ha
 
 - Every decision is measured against what the CCS says the deliverable should be.
 
-    What the deliverable should be is what the plugin writes: the receiver (`receiver`), the acceptance criteria (`acceptance`), what the deliverable is used for (`use`) and the viewpoint files (`viewpoint`). A turn knows only what is in the CCS, so a picture an agent forms on its own reaches neither the next turn nor a resumed one. The plugin decides what the deliverable should be; turn neither makes it up nor changes it. This keeps the promise that the acceptance criteria and rules do not change in the middle of a task. When that is not enough to decide, turn returns to the skill.
+    What the deliverable should be is what the plugin writes: the receiver (`receiver`), the acceptance criteria (`acceptance`), what the deliverable is used for (`use`) and the viewpoint files (`viewpoint`). A turn knows only what is in the CCS, so a picture an agent forms on its own reaches neither the next turn nor a resumed one. The plugin decides what the deliverable should be; turn neither makes it up nor changes it. This keeps the promises that the deliverable is judged against what the plugin writes it should be and nothing else, and that what the deliverable should be and the rules do not change in the middle of a task. When that is not enough to decide, turn returns to the skill.
 
 - The first user uses the deliverable as the receiver would.
 
@@ -62,7 +62,7 @@ sequenceDiagram
 
 ### Trying the deliverable as the receiver, and fixing the cause
 
-Keeps the promises "the deliverable shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
+Keeps the promises "the deliverable is judged against what you write it should be, and nothing else", "the deliverable shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
 
 - The deliverable returned is the one the first user used from start to end after the last remake.
 
@@ -113,7 +113,7 @@ Keeps the promise "everything your skill needs for its next step can be traced f
 
 ### Keeping what the deliverable should be unchanged
 
-Keeps the promise "the acceptance criteria and rules do not change in the middle of a task".
+Keeps the promise "what the deliverable should be and the rules do not change in the middle of a task".
 
 - A script checks the form of the CCS when it is received and when it is returned. If something does not match, it says what and stops. What it checks is listed in "What a script checks" in the README.
 
@@ -177,6 +177,10 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 
     Scene: the trial above, run from a small plugin that only writes the CCS, calls `turn:up` and reads `next`. It passes when the trial above passes though that plugin's skill has no steps for making, trying or fixing.
 
+- "The deliverable is judged against what you write it should be, and nothing else"
+
+    Scene: a setup guide task whose CCS does not say whether the receiver already has Docker, while the guide can be written either way. It passes when that point comes back as `to the caller` or `gap`, and the returned deliverable does not settle it on its own.
+
 - "Everything your skill needs for its next step can be traced from the returned CCS"
 
     Scene: the CCS returned in the trial above. It passes when the next step decided from the CCS and what it points to is the same as the one decided after also reading the conversation records. This shows that nothing needed for the next step was left only in the conversation.
@@ -189,7 +193,7 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 
     Scene: a task where the user asks to stop after the generator has finished. It passes when calling again with only the returned CCS and the deliverable placed in another clone carries on from the deliverable already made, and passes the same way.
 
-"The acceptance criteria and rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time. The effort of the trials goes to whether the other promises reach the users.
+"What the deliverable should be and the rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time. The effort of the trials goes to whether the other promises reach the users.
 
 ## 5. Options not taken
 

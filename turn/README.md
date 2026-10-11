@@ -2,19 +2,23 @@
 
 When you hand a long task to an AI agent, the conversation piles up, the context grows, and the agent slowly drifts from its goal and its rules. [ACC (Agent Cognitive Compressor)](https://arxiv.org/abs/2601.11653) is a method from research that prevents this. Instead of keeping the whole conversation, it rewrites, at every turn, only the state needed for the next step into a fixed form of nine parts, the CCS (Compressed Cognitive State), and replaces the previous state with it. See the paper for the details.
 
-turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the deliverable, tries it out, learns why it stumbled, and fixes it. A plugin writes its task as a CCS in JSON, hands it over, and gets a new CCS back.
+turn puts one such turn into a form that plugins which have AI make something can use. In one turn, it makes the deliverable, tries it out, learns why it stumbled, and fixes it. A plugin writes its task, with what the deliverable should be, as a CCS in JSON, hands it over, and gets a new CCS back.
 
 ## For plugin authors
 
+- The deliverable is judged against what you write it should be, and nothing else.
+
+    In the CCS you write who receives the deliverable, what they use it for, what they must be able to do with it for it to pass, and viewpoint files that say what a good deliverable is in your domain. turn tries the deliverable against these and fixes it until it meets them. It never makes up what the deliverable should be; when what you wrote is not enough to decide, it comes back to your skill with the reason. How good the deliverable gets rests on what you write here.
+
 - You do not write the make, try and fix loop in your own skill.
 
-    All you write is the task's CCS and a viewpoint file that says what a good deliverable is in your domain. If the loop needs a fix, it is fixed in one place, turn.
+    If the loop needs a fix, it is fixed in one place, turn.
 
 - Everything your skill needs for its next step can be traced from the returned CCS.
 
     `next` says how the turn ended, `gap` what is left for your user, and the CCS points to the deliverable and everything behind it. Whether to open them is up to your skill.
 
-- The acceptance criteria and rules do not change in the middle of a task.
+- What the deliverable should be and the rules do not change in the middle of a task.
 
     Each time turn returns a CCS, a script checks that the parts your plugin wrote are unchanged.
 
@@ -74,14 +78,14 @@ flowchart LR
   I[CCS] --> M[The generator makes it]
   M --> U[The first user tries it]
   U --> L[The learner finds the causes]
-  L --> J{The evaluator compares it with the criteria}
+  L --> J{The evaluator compares it with what it should be}
   J -->|a gap| M
   J -->|no gap, let go, or something for the user or the skill to decide| O[New CCS]
 ```
 
-- The generator, the first user, the learner and the evaluator are separate agents. turn calls them in turn and passes on what each returns. Only the evaluator makes decisions.
+- The generator, the first user, the learner and the evaluator are separate agents. turn calls them in turn and passes on what each returns. Only the evaluator makes decisions, each against what the deliverable should be.
 
-    Whoever made the deliverable goes easy on it when checking it. The first user is told neither the discussion nor the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show.
+    Whoever made the deliverable goes easy on it when checking it. The first user is told only the deliverable, who the receiver is and what they use it for, never the discussion or the acceptance criteria; it takes the receiver's place and starts from where the receiver starts. If it knew the criteria, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show.
 
 - Each time the deliverable is tried, the learner finds why it stumbled.
 
@@ -93,11 +97,34 @@ flowchart LR
 
 ## Writing a CCS
 
-A CCS is one JSON file. It has all nine parts, and each part is a list of `{"kind": "value"}` entries. The kind says what the value is: in `{"deliverable": "SETUP.md"}`, the kind `deliverable` says that `SETUP.md` is where the deliverable goes. A part with nothing in it is an empty list `[]`. Do not copy the content of the deliverable or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
+A CCS is one JSON file. What matters most in it is what the deliverable should be: only you can write it, and every decision in a turn is measured against it.
 
-The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the two tables below are allowed: the skill and the agents find the entries they need by kind, and an entry with a kind not in the tables is stopped by the script check. Other values are written in the language of the deliverable.
+### What the deliverable should be
 
-### What the plugin writes
+Four kinds of entry say what the deliverable should be.
+
+| Kind | What to write | Who uses it, and for what |
+|---|---|---|
+| `receiver` | The person who receives and uses the deliverable, and where they start from | The first user takes this person's place |
+| `use` | What the receiver uses the deliverable for | The first user uses it for this |
+| `acceptance` | What the receiver must be able to do with the deliverable for it to pass | The evaluator decides by it which stumbles must be fixed. The first user is never told it |
+| `viewpoint` | A viewpoint file: what a good deliverable is in your domain. One or more | The generator makes the deliverable by it; the learner and the evaluator judge by it |
+
+The generator and the evaluator get all four. Write them so that trying the deliverable shows whether it meets them:
+
+- `receiver`: a person in a situation, with what they have and do not have. "A new team member on their first day, starting the app from the guide alone" tells the first user where to start; "developers" does not.
+- `use` and `acceptance`: what the receiver does, and what shows it worked. "Starts the app by following the guide, without asking anyone" can be tried; "a clear guide" cannot.
+- `viewpoint`: what a good deliverable is in your domain, each line something the deliverable can be checked against. For a setup guide, it might say:
+
+```markdown
+- Go from a fresh clone to a running app, as steps of commands to type and what each one shows.
+- Every step has been typed and checked in the current repository.
+- For anything that needs asking someone (such as secret values), say who to ask.
+```
+
+When these are not enough to decide a stumble, turn comes back with `to the caller` and the reason. Write a new CCS with them fixed, and call again.
+
+### The form of a CCS
 
 ```json
 {
@@ -123,13 +150,17 @@ The names of parts and kinds, and fixed words such as the values of `next`, stay
 }
 ```
 
+A CCS has all nine parts, and each part is a list of `{"kind": "value"}` entries. The kind says what the value is: in `{"deliverable": "SETUP.md"}`, the kind `deliverable` says that `SETUP.md` is where the deliverable goes. A part with nothing in it is an empty list `[]`. Do not copy the content of the deliverable or of sources into it; write only where they are. Things inside the repository are written as paths relative to the repository; the viewpoint files inside the plugin are written as absolute paths.
+
+The names of parts and kinds, and fixed words such as the values of `next`, stay in English. Only the kinds in the tables are allowed: the skill and the agents find the entries they need by kind, and an entry with a kind not in the tables is stopped by the script check. Other values are written in the language of the deliverable.
+
 | Part | Kind | What to write | Required |
 |---|---|---|---|
 | `focal_entities` | `deliverable` | Where the deliverable to make goes, inside the repository | Yes |
-| | `receiver` | The person who receives and uses the deliverable | Yes |
-| `goal_orientation` | `acceptance` | What the receiver must be able to do with the deliverable for it to pass | Yes |
-| | `use` | What the receiver uses the deliverable for | |
-| `retrieved_artifacts` | `viewpoint` | A viewpoint file. One or more | Yes |
+| | `receiver` | See above | Yes |
+| `goal_orientation` | `acceptance` | See above | Yes |
+| | `use` | See above | |
+| `retrieved_artifacts` | `viewpoint` | See above | Yes |
 | | `source` | Material the deliverable is based on | |
 | `constraints` | `language` | The language the deliverable is written in | |
 | | `rule` | A rule to keep | |
@@ -138,14 +169,6 @@ The names of parts and kinds, and fixed words such as the values of `next`, stay
 `focal_entities`, `goal_orientation` and `retrieved_artifacts` stay the same for the whole task. In `constraints`, lines once written never change; new lines are added after them. turn adds the rules it learned (`rule`), and the skill adds the user's answers (`answer`).
 
 Viewpoint files live inside the plugin. The skill writes their place as `${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md` and copies it into the CCS. Claude Code replaces `${CLAUDE_PLUGIN_ROOT}` with the current location when it loads the skill. If the path goes stale, on another machine or after an update, turn stops at the check it runs on receiving the CCS; write the CCS again with the current path and call again.
-
-A viewpoint file says what a good deliverable is in the domain, in a form the generator, the learner and the evaluator can judge by. For a setup guide, it might say:
-
-```markdown
-- Go from a fresh clone to a running app, as steps of commands to type and what each one shows.
-- Every step has been typed and checked in the current repository.
-- For anything that needs asking someone (such as secret values), say who to ask.
-```
 
 ### What turn writes
 
@@ -227,7 +250,7 @@ jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 |---|---|
 | `done` | Commits the deliverable and the CCS and finishes. |
 | `ask the user` | Asks the user each `gap`. Adds the answers as `answer` to `constraints` of the returned CCS, writes it to a new file (`task-3.json`), and calls again with it as `in`. |
-| `to the caller: <reason>` | Reads the reason and decides. For example, it writes a new CCS with the acceptance criteria or the viewpoints fixed and calls again, or it talks it over with the user. |
+| `to the caller: <reason>` | Reads the reason and decides. For example, it writes a new CCS with what the deliverable should be fixed and calls again, or it talks it over with the user. |
 | `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
 
 - If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
