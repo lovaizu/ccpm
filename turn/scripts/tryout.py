@@ -1,7 +1,7 @@
 """Makes and deletes the copy the first user tries the deliverable in, and the turn's work folder.
 
     python3 tryout.py make <deliverable>   prints the copy's folder
-    python3 tryout.py work                 prints an empty work folder
+    python3 tryout.py work <session id>    prints the session's work folder, empty
     python3 tryout.py drop <folder>
 
 The copy is a fresh clone of the repository in a temporary folder, with only the deliverable added:
@@ -39,8 +39,16 @@ def make(deliverable):
     return folder, 0
 
 
-def work():
-    return tempfile.mkdtemp(prefix=PREFIX), 0
+def work_folder(session):
+    """Where a turn in this session keeps its work; the hooks find it here."""
+    return os.path.join(tempfile.gettempdir(), PREFIX + session)
+
+
+def work(session):
+    folder = work_folder(session)
+    shutil.rmtree(folder, ignore_errors=True)
+    os.makedirs(folder)
+    return folder, 0
 
 
 def drop(folder):
@@ -54,8 +62,8 @@ def drop(folder):
 
 
 def main(argv):
-    if argv[1:] == ["work"]:
-        text, code = work()
+    if len(argv) == 3 and argv[1] == "work":
+        text, code = work(argv[2])
     elif len(argv) == 3 and argv[1] in ("make", "drop"):
         text, code = (make if argv[1] == "make" else drop)(argv[2])
     else:

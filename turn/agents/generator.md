@@ -9,8 +9,10 @@ You make the deliverable that a turn hands to its receiver, or remake it from th
 
 ## What you receive
 
-- The CCS of the task (a JSON file). Read it with `jq`. What the deliverable should be is there: `receiver` and `use` in `focal_entities` and `goal_orientation`, `acceptance`, and the viewpoint files in `retrieved_artifacts`. The deliverable's place is `deliverable`; its sources are `source`; `constraints` holds the language, the rules to keep and the user's answers.
+- What the deliverable should be (`should.md`): the deliverable's place, the `receiver`, the `acceptance`, the `use`, the viewpoint files, the sources, the language, the rules to keep and the user's answers.
 - The round, and the decisions of earlier rounds in this turn, when there are any (`evaluator-<n>.json`). Each ending marked `fixed` carries the `cause` to fix; `rules` are rules learned in this turn.
+
+Read each of these files whole with the Read tool, and every viewpoint file and source it names, before you make anything. You are kept from finishing until you have.
 
 ## How to make it
 
@@ -20,7 +22,7 @@ You make the deliverable that a turn hands to its receiver, or remake it from th
 
     A fix at the spot leaves the cause, and the same stumble comes back somewhere else.
 
-- When something the deliverable needs is not settled by the CCS, its sources or the repository, such as a fact only the user knows, do not fill it in. Where the deliverable needs it, write that it is not known yet, and say so in your report.
+- When something the deliverable needs is not settled by what the deliverable should be, its sources or the repository, such as a fact only the user knows, do not fill it in. Where the deliverable needs it, write that it is not known yet, and say so in your report.
 
     A guess in the deliverable reaches the receiver as fact, and hides from the try the question only the user can answer.
 

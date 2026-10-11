@@ -11,7 +11,7 @@ import re
 import subprocess
 import sys
 
-# The kinds each part may hold. episodic_trace holds an agent and its round, or git.
+# The kinds each part may hold. episodic_trace holds an agent and its round, git, or the evidence.
 KINDS = {
     "focal_entities": {"deliverable", "receiver"},
     "goal_orientation": {"acceptance", "use"},
@@ -23,7 +23,7 @@ KINDS = {
     "relational_map": {"link"},
     "episodic_trace": set(),
 }
-TRACE = re.compile(r"^(generator|first-user|learner|evaluator)-[1-9][0-9]*$|^git$")
+TRACE = re.compile(r"^(generator|first-user|learner|evaluator)-[1-9][0-9]*$|^git$|^evidence$")
 REQUIRED = [
     ("focal_entities", "deliverable"),
     ("focal_entities", "receiver"),

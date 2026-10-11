@@ -109,11 +109,12 @@ class TryoutTest(unittest.TestCase):
         self.assertTrue(os.path.isdir(other))
         self.assertTrue(os.path.isdir(self.repo))
 
-    def test_work_makes_an_empty_folder_that_drop_deletes(self):
+    def test_work_makes_the_session_s_empty_folder_that_drop_deletes(self):
         # Given
-        made = self.run_tryout("work")
+        made = self.run_tryout("work", "s1")
         folder = made.stdout.strip()
         self.assertEqual(made.returncode, 0, made.stdout + made.stderr)
+        self.assertEqual(folder, os.path.join(tempfile.gettempdir(), "turn-try-s1"))
         self.assertEqual(os.listdir(folder), [])
         # When
         result = self.run_tryout("drop", folder)
@@ -121,9 +122,20 @@ class TryoutTest(unittest.TestCase):
         self.assertEqual((result.returncode, result.stdout), (0, ""))
         self.assertFalse(os.path.exists(folder))
 
+    def test_work_empties_what_a_turn_cut_off_in_the_session_left(self):
+        # Given
+        folder = self.run_tryout("work", "s2").stdout.strip()
+        self.addCleanup(shutil.rmtree, folder, True)
+        with open(os.path.join(folder, "turn.json"), "w", encoding="utf-8") as f:
+            f.write("{}")
+        # When
+        again = self.run_tryout("work", "s2").stdout.strip()
+        # Then
+        self.assertEqual((again, os.listdir(folder)), (folder, []))
+
     def test_a_call_without_make_or_drop_shows_how_to_call_it(self):
         # Given
-        args = ["work", "SETUP.md"]
+        args = ["work"]
         # When
         result = self.run_tryout(*args)
         # Then

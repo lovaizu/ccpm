@@ -3,7 +3,8 @@
     python3 assemble.py <in> <out> <work> [stopped: <where from>]
 
 <work> holds evaluator-1.json, evaluator-2.json and so on, one per round, each
-{"endings": [{"stumble": "...", "ending": "..."}], "rules": [...], "gaps": [...], "links": [...]}.
+{"endings": [{"stumble": "...", "ending": "...", "grounds": ["first-user-1#3", "SETUP.md:12"]}],
+"rules": [...], "gaps": [...], "links": [...]}.
 episodic_trace is left empty for trace.py.
 """
 import copy
@@ -21,6 +22,12 @@ def rounds(work):
     return [os.path.join(work, n) for n in sorted(names, key=lambda n: int(n[10:-5]))]
 
 
+def grounded(entry):
+    """Whether the entry names the steps or deliverable lines it rests on."""
+    g = entry.get("grounds")
+    return isinstance(g, list) and bool(g) and all(isinstance(x, str) for x in g)
+
+
 def decision(path):
     """The decision in path, or None when it is out of form."""
     try:
@@ -33,7 +40,7 @@ def decision(path):
         return None
     for e in d["endings"]:
         if not (isinstance(e, dict) and isinstance(e.get("stumble"), str)
-                and isinstance(e.get("ending"), str) and ENDING.match(e["ending"])):
+                and isinstance(e.get("ending"), str) and ENDING.match(e["ending"]) and grounded(e)):
             return None
     return d
 

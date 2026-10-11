@@ -68,10 +68,10 @@ class AssembleTest(unittest.TestCase):
 
     def test_every_round_s_endings_and_new_rules_are_kept_and_the_last_round_s_gaps_ask_the_user(self):
         # Given
-        self.decide(1, {"endings": [{"stumble": "Stopped at step 4: var/ missing", "ending": "fixed"}],
+        self.decide(1, {"endings": [{"stumble": "Stopped at step 4: var/ missing", "ending": "fixed", "grounds": ["first-user-1#2"]}],
                         "rules": ["Type each step first", "Run each step in a fresh clone"],
                         "gaps": [], "links": []})
-        self.decide(2, {"endings": [{"stumble": "No source for the token", "ending": "to the caller: ask the user"}],
+        self.decide(2, {"endings": [{"stumble": "No source for the token", "ending": "to the caller: ask the user", "grounds": ["first-user-1#2"]}],
                         "rules": [], "gaps": ["Who gives the API token?"], "links": ["SETUP.md ← app.py"]})
         # When
         result = self.run_assemble()
@@ -88,7 +88,7 @@ class AssembleTest(unittest.TestCase):
     def test_rounds_are_read_in_number_order(self):
         # Given
         for n in (1, 2, 10):
-            self.decide(n, {"endings": [{"stumble": f"round {n}", "ending": "fixed"}], "rules": [],
+            self.decide(n, {"endings": [{"stumble": f"round {n}", "ending": "fixed", "grounds": ["first-user-1#2"]}], "rules": [],
                             "gaps": [], "links": []})
         # When
         self.run_assemble("stopped: generator-11")
@@ -99,9 +99,9 @@ class AssembleTest(unittest.TestCase):
     def test_a_reason_for_the_caller_comes_before_questions_for_the_user(self):
         # Given
         self.decide(1, {"endings": [
-            {"stumble": "Docker or not", "ending": "to the caller: the acceptance says nothing on Docker"},
-            {"stumble": "Same cause after remake", "ending": "to the caller: the cause remains"},
-            {"stumble": "No token", "ending": "to the caller: ask the user"}],
+            {"stumble": "Docker or not", "ending": "to the caller: the acceptance says nothing on Docker", "grounds": ["first-user-1#2"]},
+            {"stumble": "Same cause after remake", "ending": "to the caller: the cause remains", "grounds": ["first-user-1#2"]},
+            {"stumble": "No token", "ending": "to the caller: ask the user", "grounds": ["first-user-1#2"]}],
             "rules": [], "gaps": ["Who gives the API token?"], "links": []})
         # When
         self.run_assemble()
@@ -111,7 +111,7 @@ class AssembleTest(unittest.TestCase):
 
     def test_a_stopped_turn_returns_stopped_with_the_rounds_decided_so_far(self):
         # Given
-        self.decide(1, {"endings": [{"stumble": "var/ missing", "ending": "fixed"}], "rules": [],
+        self.decide(1, {"endings": [{"stumble": "var/ missing", "ending": "fixed", "grounds": ["first-user-1#2"]}], "rules": [],
                         "gaps": [], "links": []})
         # When
         result = self.run_assemble("stopped: generator-2")
@@ -145,9 +145,14 @@ class AssembleTest(unittest.TestCase):
 
     def test_a_decision_out_of_form_names_its_file_and_writes_nothing(self):
         # Given
-        cases = ["{not json", {"endings": [{"stumble": "x"}], "rules": [], "gaps": [], "links": []},
+        cases = ["{not json", {"endings": [{"stumble": "x", "grounds": ["a#1"]}], "rules": [], "gaps": [], "links": []},
                  {"endings": [], "rules": "one", "gaps": [], "links": []}, {"endings": []},
-                 {"endings": [{"stumble": "x", "ending": "patched"}], "rules": [], "gaps": [], "links": []}]
+                 {"endings": [{"stumble": "x", "ending": "patched", "grounds": ["first-user-1#2"]}], "rules": [], "gaps": [], "links": []},
+                 {"endings": [{"stumble": "x", "ending": "fixed"}], "rules": [], "gaps": [], "links": []},
+                 {"endings": [{"stumble": "x", "ending": "fixed", "grounds": []}], "rules": [], "gaps": [],
+                  "links": []},
+                 {"endings": [{"stumble": "x", "ending": "fixed", "grounds": [3]}], "rules": [], "gaps": [],
+                  "links": []}]
         for text in cases:
             with self.subTest(text=text):
                 self.decide(1, text)

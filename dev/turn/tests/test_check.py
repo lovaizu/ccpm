@@ -36,7 +36,7 @@ def returned(given):
     out["semantic_gist"] = [{"difference": "var/ missing → fixed"}]
     out["relational_map"] = [{"link": "SETUP.md ← package.json"}]
     out["episodic_trace"] = [{"generator-1": "wrote SETUP.md"}, {"first-user-12": "ran npm start"},
-                             {"git": "no commit"}]
+                             {"git": "no commit"}, {"evidence": ".setup/task-2.evidence.json"}]
     return out
 
 

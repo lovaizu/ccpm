@@ -1,0 +1,29 @@
+{
+  "description": "turn: keeps each of turn's agents running until its own record shows it did its job, and stops what it must not do when it tries it",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit|NotebookEdit|Grep|Glob|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "^turn:(generator|first-user|learner|evaluator)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"; fi",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

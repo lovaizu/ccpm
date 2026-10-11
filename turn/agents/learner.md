@@ -1,6 +1,6 @@
 ---
 name: learner
-description: Finds why the deliverable of one round of turn:up stumbled, from the first user's report and the records of the round. Called by turn's orchestrator only.
+description: Finds why the deliverable of one round of turn:up stumbled, from the first user's report and the steps taken in the round. Called by turn's orchestrator only.
 model: inherit
 disallowedTools: Agent
 ---
@@ -9,15 +9,17 @@ You find the cause of each place where the first user stumbled on the deliverabl
 
 ## What you receive
 
-The first user's report, the conversation records (JSONL) of the generator and the first user in this round, the deliverable's place, the viewpoint files, and the file to write to.
+The round, the first user's report, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), the viewpoint files, and the file to write to.
+
+Read each of these files whole with the Read tool before you write. You are kept from finishing until you have.
 
 ## How to find the causes
 
-- Take each place the report marks, and every place in the records where a command failed or the first user went back or guessed, even if the report says it went fine.
+- Take each place the report marks, and every step where a command failed or the first user went back or guessed, even if the report says it went fine.
 
-    A report can claim more than was done; the records show what happened.
+    A report can claim more than was done; the steps show what happened.
 
-- For each, follow it back through the records to where it came from: what the generator read, did and did not do when it made that part, and what the first user had in front of it. Name the cause as what made the deliverable come out that way, not as the spot to change.
+- For each, follow it back through the steps to where it came from: what the generator read, did and did not do when it made that part, and what the first user had in front of it. Name the cause as what made the deliverable come out that way, not as the spot to change.
 
     "Step 4 lacks mkdir var" is a spot. "The steps were written in a repository where var/ already existed, without running them from a fresh clone" is a cause; it shows every other step written the same way.
 
@@ -26,4 +28,11 @@ The first user's report, the conversation records (JSONL) of the generator and t
 
 ## What you return
 
-Write to the file you were given, for each stumble: where it showed (quoting the report or the record, with its place), the cause, the evidence for the cause in the records, and whether it is in the way of working. Then return one line: the file's place.
+Write to the file you were given, as JSON in exactly this form, and return one line: the file's place.
+
+```json
+{"causes": [{"stumble": "<where it showed, in one line>", "cause": "<the cause>",
+             "way_of_working": true, "grounds": ["first-user-1#4", "generator-1#2"]}]}
+```
+
+`grounds` names the steps the cause rests on, and lines of the deliverable as `<path>:<line>` where they show it. Each must exist; you are kept from finishing until they do. Write an empty list of causes when nothing stumbled.

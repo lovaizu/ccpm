@@ -30,11 +30,13 @@ ANSWER = "Monday."
 RULE = "Read every source of a fact before writing it."
 DECISIONS = [
     {"endings": [{"stumble": "the hours are missing", "cause": "hours.txt was not read",
-                  "ending": "fixed"}],
+                  "ending": "fixed", "grounds": ["first-user-1#1", "NOTE.md:3"]}],
      "rules": [RULE], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
-    {"endings": [{"stumble": "the closing day is not known", "ending": "to the caller: ask the user"}],
+    {"endings": [{"stumble": "the closing day is not known", "ending": "to the caller: ask the user",
+                  "grounds": ["first-user-2#1"]}],
      "rules": [], "gaps": [QUESTION], "links": ["NOTE.md ← hours.txt"]},
-    {"endings": [{"stumble": "the title is plain", "ending": "let go: the visitor still finds the hours"}],
+    {"endings": [{"stumble": "the title is plain", "ending": "let go: the visitor still finds the hours",
+                  "grounds": ["NOTE.md:1"]}],
      "rules": [], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
 ]
 CALLS = ["generator-1", "first-user-1", "learner-1", "evaluator-1",
@@ -42,19 +44,23 @@ CALLS = ["generator-1", "first-user-1", "learner-1", "evaluator-1",
          "generator-3",
          "generator-4", "first-user-3", "learner-3", "evaluator-3"]
 KEPT = ("focal_entities", "goal_orientation", "retrieved_artifacts")
+WORKDIR = Path()
 
 STANDIN = """\
 ---
 name: {role}
 description: Stands in for turn's {role} in a check of turn's flow.
 model: sonnet
-tools: Bash
+tools: Bash, Read
 ---
 
 Run this one command, putting in the file you were told to write your report or decision to, or
 `none` if you were told of none, and return its output word for word as your whole answer:
 
-    python3 {script} {role} <file>
+    {cd}python3 {script} {role} <file>
+
+If you are then told to read files whole, read each of them with the Read tool, all of it, and give
+the same answer again.
 """
 
 SCRIPT = """\
@@ -72,6 +78,9 @@ if role == "generator":
     print("Wrote NOTE.md from hours.txt.")
 elif role == "evaluator":
     open(target, "w").write(json.dumps({decisions!r}[n - 1]))
+    print(target)
+elif role == "learner":
+    open(target, "w").write(json.dumps({{"causes": []}}))
     print(target)
 else:
     open(target, "w").write(f"{{role}} report: read the note, found the hours.\\n")
@@ -97,7 +106,8 @@ def setup(workdir):
     (workdir / "standin.py").write_text(SCRIPT.format(log=str(workdir / "calls.jsonl"), decisions=DECISIONS))
     for role in ROLES:
         (plugin / "agents" / f"{role}.md").write_text(
-            STANDIN.format(role=role, script=workdir / "standin.py"))
+            STANDIN.format(role=role, script=workdir / "standin.py",
+                           cd="cd <the folder you were told to work in> && " if role == "first-user" else ""))
     return repo, plugin
 
 
@@ -158,6 +168,15 @@ def task(repo, k):
     return json.loads(path.read_text()) if path.exists() else {}
 
 
+def evidence(ccs):
+    """The evidence a returned CCS points to; the repository it lies in is found from the task."""
+    places = [e["evidence"] for e in ccs.get("episodic_trace", []) if "evidence" in e]
+    for top in (WORKDIR / "repo", WORKDIR / "other"):
+        if places and (top / places[0]).exists():
+            return json.loads((top / places[0]).read_text())
+    return {"rounds": []}
+
+
 def values(ccs, part, kind):
     return [e[kind] for e in ccs.get(part, []) if kind in e]
 
@@ -170,6 +189,8 @@ def main(argv):
     if workdir.exists():
         sys.exit(f"{workdir} exists; give a new folder")
     workdir.mkdir(parents=True)
+    global WORKDIR
+    WORKDIR = workdir
     tries_before = {n for n in os.listdir(tempfile.gettempdir()) if n.startswith("turn-try-")}
     repo, plugin = setup(workdir)
     start = git(repo, "rev-parse", "HEAD")
@@ -208,6 +229,9 @@ def main(argv):
         "no temporary folder left": not left,
         "the first user is never told the acceptance": not any(
             ACCEPTANCE in p for p in agent_prompts(workdir, "first-user")),
+        "each returned CCS points to its evidence, with each round's steps": [
+            [r["round"] for r in evidence(t)["rounds"] if any("first-user" in s["step"] for s in r["steps"])]
+            for t in (tasks[1], tasks[3], tasks[4])] == [[1, 2], [], [1]],
     }
     (workdir / "summary.json").write_text(json.dumps(checks, ensure_ascii=False, indent=2))
     print(json.dumps(checks, ensure_ascii=False, indent=2))
