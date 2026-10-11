@@ -42,7 +42,7 @@ flowchart LR
   U --> L[The learner finds why it came out away from what it should be]
   L --> J{The evaluator gives each point Good or More}
   J -->|a More| M
-  J -->|every point Good, no point closer, or something for the user or the skill to decide| O[New CCS]
+  J -->|every point Good, no closer than before, or something for the user or the skill to decide| O[New CCS]
 ```
 
 - The generator, the first user, the learner and the evaluator are separate agents, each with one job. turn calls them in turn and passes on what each returns.
@@ -173,6 +173,7 @@ turn checks the form of the CCS with a script when it receives one and when it r
   - All nine parts are there and no others. Every kind is one in the tables, and every value is a string.
   - The four required kinds are there.
   - The places written in `retrieved_artifacts` exist. `deliverable` points inside the repository. Since the deliverable is new, `deliverable` may not exist yet.
+  - The deliverable is none of the viewpoint files and sources, and holds none of them.
   - The file to return to does not exist yet.
 - On returning
   - `focal_entities`, `goal_orientation` and `retrieved_artifacts` are as received, and `constraints` keeps its original lines with any new ones after them.

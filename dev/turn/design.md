@@ -6,7 +6,7 @@ The orchestrator is turn's main conversation, the one running `turn:up`. Where t
 
 ## 1. Principles
 
-turn exists so that the receiver can really use the deliverable, judged against what the CCS says it should be. The orchestrator has the generator make the deliverable, the first user use it in the receiver's place, the learner find why it came out away from what it should be, and the evaluator give each point of what it should be a Good or a More; then it has the generator remake the deliverable. It repeats this until every point is Good, until a remake brings no point closer, or until all that is left is for the user or the skill to decide. The five principles below always hold, so that this loop gets there.
+turn exists so that the receiver can really use the deliverable, judged against what the CCS says it should be. The orchestrator has the generator make the deliverable, the first user use it in the receiver's place, the learner find why it came out away from what it should be, and the evaluator give each point of what it should be a Good or a More; then it has the generator remake the deliverable. It repeats this until every point is Good, until a remake brings the deliverable no closer, or until all that is left is for the user or the skill to decide. The five principles below always hold, so that this loop gets there.
 
 - Every judgment is measured against what the CCS says the deliverable should be.
 
@@ -14,7 +14,7 @@ turn exists so that the receiver can really use the deliverable, judged against 
 
 - The first user uses the deliverable as the receiver would, and reports only what it did and what happened.
 
-    It is told only the deliverable, who the receiver is and what they use it for, and starts from where the receiver starts. Knowing the acceptance criteria or the discussion, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show. A report that says what was good or missing is already a judgment, made by one who was told nothing to judge by.
+    It is told only the deliverable, who the receiver is and what they use it for, and starts from where the receiver starts: a copy of the repository as the receiver gets it, with the deliverable added, holding nothing the receiver does not have, such as the CCS, its evidence or the plugin's own records of the task. Knowing the acceptance criteria or the discussion, it would use the deliverable the way they describe, and the places where the receiver stumbles would not show. A report that says what was good or missing is already a judgment, made by one who was told nothing to judge by.
 
 - Only the generator changes the deliverable, and it decides itself what to change.
 
@@ -46,7 +46,7 @@ sequenceDiagram
   participant E as Evaluator
   S->>O: CCS (in)
   Note over O: A script checks the form of the CCS received
-  loop until every point is Good, a remake brings no point closer, or only the user's or the skill's decisions remain
+  loop until every point is Good, a remake brings the deliverable no closer, or only the user's or the skill's decisions remain
     Note over G,E: Before each agent finishes, its own record is checked for what it must have done
     O->>G: what the deliverable should be, sources, rules, the user's answers, the earlier rounds' Mores and learnings
     G-->>O: the deliverable, and what it did
@@ -78,9 +78,9 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
     A Good or a More given to each point, and not only to what the first user's report names, keeps a point no one stumbled on from passing unchecked.
 
-- The loop goes on while a point is More. It ends when every point is Good, when a remake turned no More into Good, or when all that is left is for the user or the skill to decide.
+- The loop goes on while a point is More and each remake brings the deliverable closer: it turns at least one More into Good and no Good into More. It ends when every point is Good, when a remake brings the deliverable no closer, or when all that is left is for the user or the skill to decide.
 
-    A remake that brings no point closer will not do so on the next try either, so the turn returns to the skill with the points still More.
+    A remake that brings the deliverable no closer will not do so on the next try either, so the turn returns to the skill with the points still More. A remake that makes one point Good and another More has only moved the shortfall.
 
 ### Checking that each agent did its job
 
@@ -154,6 +154,10 @@ Keeps the promise "what the deliverable should be and the rules do not change in
 - A script checks the form of the CCS when it is received and when it is returned. If something does not match, it says what and stops. What it checks is listed in "What a script checks" in the README.
 
     A CCS written by AI may reword a line of what the deliverable should be, or add entries not in the tables. A script gives the same answer every time.
+
+- On receiving, the script also checks that the deliverable is none of the viewpoint files and sources, and holds none of them.
+
+    A deliverable that is also its own measure changes the measure with every remake.
 
 - The check uses python3. If it is missing, turn returns no CCS, says in the conversation what to install, and stops.
 
@@ -229,7 +233,7 @@ Before turn is used, and again after every change to it, each part is checked al
 
 - A limit on the number of rounds is not used.
 
-    A remake that brings no point closer returns the turn to the skill, so a loop that is not getting closer stops there. A limit would stop a loop that is still getting closer, and the receiver would get a deliverable they cannot use.
+    A remake that brings the deliverable no closer returns the turn to the skill, so a loop that is not getting closer stops there. A limit would stop a loop that is still getting closer, and the receiver would get a deliverable they cannot use.
 
 - The learner and the evaluator are not merged into one agent.
 
