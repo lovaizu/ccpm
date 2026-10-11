@@ -11,7 +11,7 @@ description: Writes SETUP.md, the guide a new team member follows on their first
    {
      "focal_entities": [{"deliverable": "SETUP.md"},
        {"receiver": "A new team member on their first day, starting the app from the guide alone"}],
-     "goal_orientation": [{"acceptance": "A new team member starts the app by following the guide, without asking anyone"},
+     "goal_orientation": [{"acceptance": "A new team member starts the app by following the guide alone"},
        {"use": "Run the steps from the top in a freshly cloned repository"}],
      "retrieved_artifacts": [{"viewpoint": "${CLAUDE_PLUGIN_ROOT}/viewpoints/setup.md"}],
      "constraints": [{"language": "English"}],

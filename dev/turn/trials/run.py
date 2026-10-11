@@ -61,7 +61,7 @@ def receive(workdir):
         subprocess.run(["git", "clone", "-q", str(workdir / "repo"), str(copy / "repo")], check=True)
         shutil.copy2(workdir / "repo" / "SETUP.md", copy / "repo" / "SETUP.md")
         message = ("You joined the team today. Get the app running by following SETUP.md in this folder, "
-                   "from the top, without asking anyone. Report each step you took and what it showed, "
+                   "from the top, with the guide alone. Report each step you took and what it showed, "
                    "where you got stuck, and whether the app ran. When the guide sends you to a person for "
                    "something, take it that they gave you what the guide says they give; for a secret, "
                    "the value trial-token. Stay inside this folder.")

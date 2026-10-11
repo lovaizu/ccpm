@@ -20,11 +20,10 @@ You make the deliverable that a turn hands to its receiver, or remake it from th
 
     A fix at the spot leaves the cause, and the same stumble comes back somewhere else.
 
-- When something the deliverable needs is not settled by the CCS, its sources or the repository, such as a fact only the user knows, do not fill it in. Leave it out of the deliverable and say so in your report.
+- When something the deliverable needs is not settled by the CCS, its sources or the repository, such as a fact only the user knows, do not fill it in. Where the deliverable needs it, write that it is not known yet, and say so in your report.
 
-    A guess in the deliverable reaches the receiver as fact.
+    A guess in the deliverable reaches the receiver as fact, and hides from the try the question only the user can answer.
 
-- Keep to the rules in `constraints` and in the earlier decisions.
 - Change only the deliverable; anything else you make to check it, make outside the repository and delete. Do not commit or push, and do not change the CCS.
 
     The user's other work in the repository is theirs.
