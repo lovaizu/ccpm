@@ -30,6 +30,8 @@ def required(role, t):
 def shown(transcript):
     """The line numbers each file's successful Reads showed, by real path."""
     seen = {}
+    if not os.path.isfile(transcript):
+        return seen
     for c, r in steps.pairs(transcript):
         if c["name"] == "Read" and r and not r.get("is_error"):
             lines = seen.setdefault(os.path.realpath(c.get("input", {}).get("file_path", "")), set())

@@ -84,6 +84,18 @@ class HandbackTest(unittest.TestCase):
                 "transcript_path": os.path.join(self.root, "records", f"{session}.jsonl")}
         return subprocess.run([sys.executable, HOOK], input=json.dumps(data), capture_output=True, text=True)
 
+    def asks_to_write(self, agent, path, entries, tool="Write"):
+        """The agent asks to write path, with its record as Claude Code keeps it beside the session's."""
+        agent_id = uuid.uuid4().hex
+        record = os.path.join(self.root, "records", self.session, "subagents", f"agent-{agent_id}.jsonl")
+        os.makedirs(os.path.dirname(record), exist_ok=True)
+        with open(record, "w", encoding="utf-8") as f:
+            f.write("".join(json.dumps(e) + "\n" for e in entries))
+        data = {"session_id": self.session, "hook_event_name": "PreToolUse", "tool_name": tool,
+                "tool_input": {"file_path": path}, "agent_id": agent_id, "agent_type": agent, "cwd": self.repo,
+                "transcript_path": os.path.join(self.root, "records", f"{self.session}.jsonl")}
+        return subprocess.run([sys.executable, HOOK], input=json.dumps(data), capture_output=True, text=True)
+
     def blocked(self, result):
         self.assertIn(result.returncode, (0, 2), result.stderr)
         return result.stderr.strip() if result.returncode == 2 else None
@@ -174,6 +186,45 @@ class HandbackTest(unittest.TestCase):
         reason = self.blocked(self.stop("turn:generator", self.generator_reads()))
         # Then: it is told what to remake from is not read
         self.assertIn(os.path.join(self.work, "remake-2.md") + " (not read)", reason)
+
+    def test_a_generator_changing_the_deliverable_before_it_read_everything_whole_is_told_which(self):
+        # Given: a generator that read all but one source file, and one that read everything
+        cases = [(self.generator_reads()[:-2], "src/lib/util.py (not read)"), (self.generator_reads(), None)]
+        for entries, said in cases:
+            with self.subTest(said=said):
+                # When: each asks to write the deliverable, and to edit it
+                for tool in ("Write", "Edit"):
+                    reason = self.blocked(self.asks_to_write("turn:generator", os.path.join(self.repo, "SETUP.md"), entries, tool))
+                    # Then: the first is stopped and told the file not read, and the second goes through
+                    if said is None:
+                        self.assertIsNone(reason)
+                    else:
+                        self.assertIn(said, reason)
+
+    def test_a_generator_writing_outside_the_deliverable_is_not_asked_to_have_read_anything(self):
+        # Given: a generator that read nothing
+        entries = []
+        # When: it asks to write a scratch file outside the repository
+        reason = self.blocked(self.asks_to_write("turn:generator", os.path.join(self.root, "scratch.sh"), entries))
+        # Then: it goes through
+        self.assertIsNone(reason)
+
+    def test_a_learner_or_evaluator_writing_its_file_before_it_read_everything_whole_is_told_which(self):
+        # Given: round 1's files, and a learner and an evaluator that each read nothing, beside ones that read everything
+        self.round_one_files()
+        cases = [("turn:learner", "learner-1.json", [], "should.md (not read)"),
+                 ("turn:evaluator", "evaluator-1.json", [], "should.md (not read)"),
+                 ("turn:learner", "learner-1.json", self.learner_reads(), None),
+                 ("turn:evaluator", "evaluator-1.json", self.evaluator_reads(), None)]
+        for agent, name, entries, said in cases:
+            with self.subTest(agent=agent, read=bool(entries)):
+                # When: each asks to write its own file
+                reason = self.blocked(self.asks_to_write(agent, os.path.join(self.work, name), entries))
+                # Then: the ones that read nothing are stopped and told what is not read, and the others go through
+                if said is None:
+                    self.assertIsNone(reason)
+                else:
+                    self.assertIn(said, reason)
 
     def test_the_first_user_is_not_asked_to_read_anything_whole(self):
         # Given: a first user that read nothing

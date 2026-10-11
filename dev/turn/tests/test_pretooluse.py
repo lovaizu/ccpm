@@ -128,11 +128,8 @@ class PreToolUseTest(unittest.TestCase):
             with self.subTest(tool=tool, given=given):
                 # When: each is asked for
                 reason = self.call(tool, given, agent="turn:generator")
-                # Then: all go through but the edit, which is stopped as not the deliverable
-                if said is None:
-                    self.assertIsNone(reason)
-                else:
-                    self.assertIn(said, reason)
+                # Then: only the edit is stopped as not the deliverable
+                self.assertEqual(reason is not None and "only the deliverable" in reason, said is not None)
 
     def test_only_the_generator_changes_the_deliverable(self):
         # Given: the learner and the evaluator editing and writing the deliverable, writing their own files in the work folder, and reading the deliverable
