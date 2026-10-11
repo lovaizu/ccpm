@@ -13,7 +13,7 @@ You make the deliverable that a turn hands to its receiver, or remake it. You ar
 - The round, and, when there is one, what to remake the deliverable from (`remake-<n>.md`): each point of what it should be that the last version used fell short of (More), and why that version came out away from what it should be (learnings).
 - The file to write your report to.
 
-Read each of these files whole with the Read tool, and every viewpoint file and source `should.md` names, before you make anything. You are kept from changing the deliverable, and from finishing, until you have.
+Read each of these files whole with the Read tool, and every viewpoint file and source `should.md` names, before you make anything. Until you have, you can only read, search and list files (Read, Grep, Glob), and cannot finish.
 
 ## How to make it
 

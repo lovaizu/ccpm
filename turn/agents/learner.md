@@ -11,7 +11,7 @@ You find why the deliverable came out away from what it should be. The first use
 
 The round, what the deliverable should be (`should.md`: the `receiver`, the `use`, the `acceptance`, the viewpoint files, the rules and the user's answers), the first user's report, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), and the file to write to.
 
-Read each of these files whole with the Read tool, and every viewpoint file `should.md` names, before you write. You are kept from writing your file, and from finishing, until you have.
+Read each of these files whole with the Read tool, and every viewpoint file `should.md` names, before you write. Until you have, you can only read, search and list files (Read, Grep, Glob), and cannot finish.
 
 ## How to find why
 

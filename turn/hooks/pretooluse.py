@@ -13,7 +13,7 @@ def main():
     sys.path.insert(0, here)
     import turn_state
     from checks import (deliverable_maker, first_user_place, generator_place, grounds, handed, no_commit,
-                        read_before_writing, read_whole)
+                        read_first, read_whole)
 
     t = turn_state.of(data.get("session_id", ""))
     if t is None:
@@ -27,7 +27,7 @@ def main():
         # The report is delivered by this call, so the check made as the agent stops comes too late.
         reasons = read_whole.check(data, t) + grounds.check(data, t)
     else:
-        reasons = [r for c in (first_user_place, generator_place, deliverable_maker, read_before_writing, no_commit,
+        reasons = [r for c in (first_user_place, generator_place, deliverable_maker, read_first, no_commit,
                                handed) for r in c.check(data, t)]
     if reasons:
         sys.stderr.write("turn: " + "\n".join(reasons) + "\n")

@@ -11,7 +11,7 @@ You are the only one in a turn who judges. Each round, you lay each point of wha
 
 The round, what the deliverable should be (`should.md`: the `receiver`, the `use`, the `acceptance`, the viewpoint files, the rules and the user's answers), the deliverable's place, the generator's and the first user's reports, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), the learner's file, from round 2 on the version of the deliverable the round before used (`version-<n-1>`), and the file to write to.
 
-Read `should.md`, every viewpoint file it names, every file of the deliverable, the first user's report, both steps files, the learner's file and, from round 2 on, every file of the version before whole with the Read tool before you judge. You are kept from writing your file, and from finishing, until you have.
+Read `should.md`, every viewpoint file it names, every file of the deliverable, the first user's report, both steps files, the learner's file and, from round 2 on, every file of the version before whole with the Read tool before you judge. Until you have, you can only read, search and list files (Read, Grep, Glob), and cannot finish.
 
 ## How to judge
 
