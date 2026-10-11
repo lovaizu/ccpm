@@ -30,11 +30,10 @@ def ccs(viewpoint):
 
 def returned(given):
     out = copy.deepcopy(given)
-    out["constraints"].append({"rule": "Type each step before writing it"})
     out["predictive_cue"] = [{"next": "ask the user"}]
-    out["uncertainty_signal"] = [{"gap": "Who gives the API token?"}]
-    out["semantic_gist"] = [{"difference": "var/ missing → fixed"}]
-    out["relational_map"] = [{"link": "SETUP.md ← package.json"}]
+    out["uncertainty_signal"] = [{"more": "Starts the app without asking anyone: step 3 needs var/"},
+                                 {"gap": "Who gives the API token?"}]
+    out["relational_map"] = [{"learning": "The steps were written where var/ already existed"}]
     out["episodic_trace"] = [{"generator-1": "wrote SETUP.md"}, {"first-user-12": "ran npm start"},
                              {"git": "no commit"}, {"evidence": ".setup/task-2.evidence.json"}]
     return out
@@ -94,7 +93,7 @@ class CheckTest(unittest.TestCase):
         self.assertEqual((result.returncode, result.stdout), (0, ""), result.stderr)
 
     def test_a_ccs_that_keeps_what_was_received_is_returned_with_no_output(self):
-        # Given: a CCS to return that keeps what was received and adds a rule, next, a gap, a difference, a link and the records
+        # Given: a CCS to return that keeps what was received and adds next, a More, a gap, a learning and the records
         data = returned(self.given)
         # When: it is checked as returned
         result = self.check_out(data)
@@ -148,7 +147,7 @@ class CheckTest(unittest.TestCase):
         # Given: a CCS with a part that is not a list, entries of more or fewer than one kind, a value that is not text, and kinds not in the tables
         data = self.given
         data["semantic_gist"] = "a summary"
-        data["relational_map"] = [{"link": "a", "note": "b"}, "c"]
+        data["relational_map"] = [{"learning": "a", "note": "b"}, "c"]
         data["constraints"] = [{"language": 1}, {"tone": "polite"}]
         data["episodic_trace"] = [{"reviewer-1": "read it"}, {"generator-0": "wrote"}]
         # When: it is checked as received
@@ -160,7 +159,7 @@ class CheckTest(unittest.TestCase):
             "constraints: kind tone is not in the tables",
             "episodic_trace: kind reviewer-1 is not in the tables",
             "episodic_trace: kind generator-0 is not in the tables",
-            "relational_map: {\"link\": \"a\", \"note\": \"b\"} is not one",
+            "relational_map: {\"learning\": \"a\", \"note\": \"b\"} is not one",
             "relational_map: \"c\" is not one",
             "semantic_gist is not a list")
 
@@ -198,6 +197,20 @@ class CheckTest(unittest.TestCase):
         self.assertProblems(result, "deliverable ../SETUP.md is not a path inside",
                             "deliverable /tmp/SETUP.md is not a path inside")
 
+    def test_a_deliverable_that_is_or_holds_a_viewpoint_or_a_source_is_reported(self):
+        # Given: a CCS whose deliverable is its source, and one whose deliverable is a folder holding its source
+        self.write(os.path.join(self.repo, "docs", "app.md"), "# App\n")
+        cases = [("package.json", "package.json"), ("docs", "docs/app.md")]
+        for deliverable, source in cases:
+            with self.subTest(deliverable=deliverable):
+                data = copy.deepcopy(self.given)
+                data["focal_entities"][0] = {"deliverable": deliverable}
+                data["retrieved_artifacts"][1] = {"source": source}
+                # When: it is checked as received
+                result = self.check_in(data)
+                # Then: it fails and says the deliverable would change the measure
+                self.assertProblems(result, f"deliverable {deliverable} is or holds source {source}")
+
     def test_a_file_to_return_to_that_already_exists_is_reported(self):
         # Given: a file already where the CCS is to be returned
         self.save("task-2.json", "{}")
@@ -222,6 +235,17 @@ class CheckTest(unittest.TestCase):
         result = self.check_out(data)
         # Then: it fails and names that kind
         self.assertProblems(result, "semantic_gist: kind summary is not in the tables")
+
+    def test_a_returned_ccs_with_entries_that_turn_does_not_write_is_reported(self):
+        # Given: a returned CCS holding an entry in semantic_gist and a link in relational_map
+        data = returned(self.given)
+        data["semantic_gist"] = [{"difference": "var/ missing → fixed"}]
+        data["relational_map"] = [{"link": "SETUP.md ← package.json"}]
+        # When: it is checked as returned
+        result = self.check_out(data)
+        # Then: it fails and names both kinds
+        self.assertProblems(result, "relational_map: kind link is not in the tables",
+                            "semantic_gist: kind difference is not in the tables")
 
     def test_a_returned_ccs_that_changed_what_the_plugin_wrote_is_reported(self):
         # Given: a returned CCS with its acceptance changed and a rule put before the received constraints

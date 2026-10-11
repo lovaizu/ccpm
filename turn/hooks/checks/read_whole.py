@@ -14,15 +14,14 @@ SHOWN = re.compile(r"^\s*(\d+)\t", re.M)
 def required(role, t):
     work, n = t["work"], t["round"]
     in_work = lambda *names: [os.path.join(work, x) for x in names]  # noqa: E731
-    earlier = in_work(*[f"evaluator-{k}.json" for k in range(1, n)])
-    steps = in_work(f"steps-generator-{n}.md", f"steps-first-user-{n}.md")
+    should = in_work("should.md") + t["viewpoints"]
+    seen = in_work(f"first-user-{n}.md", f"steps-generator-{n}.md", f"steps-first-user-{n}.md")
     if role == "generator":
-        paths = in_work("should.md") + t["viewpoints"] + t["sources"] + earlier
+        paths = should + t["sources"] + in_work(f"remake-{n}.md")
     elif role == "learner":
-        paths = in_work(f"first-user-{n}.md") + steps + t["viewpoints"]
+        paths = should + seen
     elif role == "evaluator":
-        paths = (in_work("should.md") + t["viewpoints"] + files(os.path.join(t["repo"], t["deliverable"]))
-                 + in_work(f"first-user-{n}.md") + steps + in_work(f"learner-{n}.json") + earlier)
+        paths = should + files(os.path.join(t["repo"], t["deliverable"])) + seen + in_work(f"learner-{n}.json")
     else:
         paths = []
     return [p for p in paths if os.path.isfile(p)]

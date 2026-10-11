@@ -19,9 +19,9 @@ KINDS = {
     "retrieved_artifacts": {"viewpoint", "source"},
     "constraints": {"language", "rule", "answer"},
     "predictive_cue": {"next"},
-    "uncertainty_signal": {"gap"},
-    "semantic_gist": {"difference"},
-    "relational_map": {"link"},
+    "uncertainty_signal": {"more", "gap"},
+    "semantic_gist": set(),
+    "relational_map": {"learning"},
     "episodic_trace": set(),
 }
 TRACE = re.compile(r"^(generator|first-user|learner|evaluator)-[1-9][0-9]*$|^git$|^evidence$")
@@ -85,6 +85,13 @@ def places(ccs, repo):
         inside = os.path.realpath(os.path.join(repo, v))
         if os.path.isabs(v) or os.path.commonpath([repo, inside]) != repo:
             out.append(f"deliverable {v} is not a path inside the repository")
+            continue
+        # A deliverable that is part of the measure would change it with every remake.
+        for kind in ("viewpoint", "source"):
+            for m in values(ccs, "retrieved_artifacts", kind):
+                measure = os.path.realpath(os.path.join(repo, m))
+                if os.path.commonpath([inside, measure]) == inside:
+                    out.append(f"deliverable {v} is or holds {kind} {m}")
     return out
 
 

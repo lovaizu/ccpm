@@ -12,7 +12,8 @@ def main():
     here = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, here)
     import turn_state
-    from checks import first_user_place, generator_place, grounds, handed, no_commit, read_whole
+    from checks import (deliverable_maker, first_user_place, generator_place, grounds, handed, no_commit,
+                        read_whole)
 
     t = turn_state.of(data.get("session_id", ""))
     if t is None:
@@ -26,7 +27,7 @@ def main():
             f"agent-{data.get('agent_id', '')}.jsonl")
         reasons = read_whole.check(data, t) + grounds.check(data, t)
     else:
-        reasons = [r for c in (first_user_place, generator_place, no_commit, handed) for r in c.check(data, t)]
+        reasons = [r for c in (first_user_place, generator_place, deliverable_maker, no_commit, handed) for r in c.check(data, t)]
     if reasons:
         sys.stderr.write("turn: " + "\n".join(reasons) + "\n")
         return 2

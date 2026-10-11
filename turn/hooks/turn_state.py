@@ -33,4 +33,5 @@ def of(session):
             "deliverable": values(ccs, "focal_entities", "deliverable")[0],
             "acceptance": values(ccs, "goal_orientation", "acceptance"),
             "viewpoints": [place(v) for v in values(ccs, "retrieved_artifacts", "viewpoint")],
+            "viewpoints_as_written": values(ccs, "retrieved_artifacts", "viewpoint"),
             "sources": [f for v in values(ccs, "retrieved_artifacts", "source") for f in files(place(v))]}

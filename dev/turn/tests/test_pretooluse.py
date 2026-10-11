@@ -134,6 +134,22 @@ class PreToolUseTest(unittest.TestCase):
                 else:
                     self.assertIn(said, reason)
 
+    def test_only_the_generator_changes_the_deliverable(self):
+        # Given: the learner and the evaluator editing and writing the deliverable, writing their own files in the work folder, and reading the deliverable
+        deliverable = os.path.join(self.repo, "SETUP.md")
+        cases = [("turn:learner", "Edit", {"file_path": deliverable}, True),
+                 ("turn:evaluator", "Write", {"file_path": deliverable}, True),
+                 ("turn:learner", "Write", {"file_path": os.path.join(self.work, "learner-1.json")}, False),
+                 ("turn:evaluator", "Write", {"file_path": os.path.join(self.work, "evaluator-1.json")}, False),
+                 ("turn:evaluator", "Read", {"file_path": deliverable}, False)]
+        for agent, tool, given, stopped in cases:
+            with self.subTest(agent=agent, tool=tool, given=given):
+                # When: each is asked for
+                reason = self.call(tool, given, agent=agent)
+                # Then: every change to the deliverable is stopped, and the rest go through
+                self.assertEqual(reason is not None and "only the generator changes the deliverable" in reason,
+                                 stopped)
+
     def test_no_agent_of_turn_commits_or_pushes(self):
         # Given: commits and pushes by the generator, evaluator and learner, one inside a longer command and one with an unclosed quote, beside git status and a commit by an agent not of turn
         cases = [("git commit -m x", "turn:generator", True), ("git -C . push", "turn:evaluator", True),
