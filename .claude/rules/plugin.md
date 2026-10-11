@@ -22,6 +22,11 @@ official plugins.
   their questions.**
   - Rationale: the first user reads once, so a fix made after that reading is checked by nothing
     else; turn's README opening grew with additions made without the essentials (2026-10-11).
+- **Keep the README and the design to the simplest mechanism that serves the purpose; add no
+  special path for an irregular case that an existing check already stops and its user can fix.**
+  - Rationale: every special path is one more thing for each user to learn and each builder to keep
+    right; turn's README grew a third call argument for a path that only goes stale on another
+    machine, where the intake check already stops it (2026-10-11).
 - **Put each prompt through writ's `prompt.md`, by running it, before the plugin's trials.**
   - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds the
     prompts' slips, not whether the plugin keeps its promises.
