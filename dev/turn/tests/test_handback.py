@@ -238,13 +238,14 @@ class HandbackTest(unittest.TestCase):
         self.assertIn("evaluator-1.json is not in the form", reason)
 
     def test_an_evaluator_naming_grounds_that_do_not_exist_is_told_which(self):
-        # Given: an evaluator that read everything, with a judgment resting on a step of a round not run, a line past the deliverable's end, a line of a file not the deliverable, and words that are neither
+        # Given: an evaluator that read everything, with a judgment resting on a step of a round not run, a line past the deliverable's end, a span of lines, a line of a file not the deliverable, and words that are neither
         self.round_one_files()
-        self.judge(["first-user-1#2", "generator-3#1", "SETUP.md:9", "README.md:1", "somewhere"])
+        self.judge(["first-user-1#2", "generator-3#1", "SETUP.md:9", "SETUP.md:3-4", "README.md:1", "somewhere"])
         # When: it hands back its report
         reason = self.blocked(self.stop("turn:evaluator", self.evaluator_reads()))
-        # Then: it is told each of the four does not exist
+        # Then: it is told each of the five does not exist
         for said in ("generator-3#1 is not a step", "SETUP.md:9 is not a line of the deliverable",
+                     "SETUP.md:3-4 is not a line of the deliverable",
                      "README.md:1 is not a line of the deliverable", "somewhere is not a step"):
             self.assertIn(said, reason)
 

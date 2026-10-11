@@ -405,6 +405,33 @@ class UpTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertFalse(os.path.exists(os.path.join(self.repo, "SETUP.md")))
 
+    def test_end_when_stopped_puts_back_a_deliverable_folder_as_the_turn_found_it(self):
+        # Given: a deliverable folder from an earlier turn, and the user stopped this turn after round 1's generator rewrote it
+        self.write(".t/in.json", json.dumps(dict(CCS, focal_entities=[{"deliverable": "docs"},
+                                                                      {"receiver": "A new team member"}])))
+        self.write("docs/a.md", "from the turn before\n")
+        work = self.start()
+        os.remove(os.path.join(self.repo, "docs", "a.md"))
+        self.write("docs/b.md", "never judged\n")
+        self.agent("g1")
+        # When: the turn is ended as stopped
+        result = self.run_up("end", work, "stopped: first-user-1", "generator-1=g1")
+        # Then: the folder holds what the turn found, and nothing the generator wrote
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(os.listdir(os.path.join(self.repo, "docs")), ["a.md"])
+
+    def test_end_with_a_judgment_out_of_form_shows_it_and_leaves_no_ccs(self):
+        # Given: a turn whose round 1 judgment is not valid JSON
+        work = self.start()
+        self.judge(work, 1, "{not json")
+        # When: the turn is ended
+        result = self.run_up("end", work, "generator-1=g1")
+        # Then: it fails, names the file, writes no CCS and leaves no work folder
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("evaluator-1.json is not a judgment", result.stdout)
+        self.assertFalse(os.path.exists(os.path.join(self.repo, ".t", "out.json")))
+        self.assertFalse(os.path.exists(work))
+
     def test_end_writes_the_evidence_of_every_round_beside_the_returned_ccs(self):
         # Given: a turn of two rounds, the first with a More, each with both agents' reports
         work = self.start()
