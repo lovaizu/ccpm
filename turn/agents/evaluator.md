@@ -29,7 +29,9 @@ The CCS of the task, the deliverable's place, the first user's report, the learn
 
     Sending the same cause again does not bring the deliverable any closer.
 
-- A checked cause in the way of working becomes a rule: one sentence a generator can keep.
+- A checked cause in the way of working becomes a rule: one sentence a generator can keep, saying how to work so that the deliverable comes out as it should be wherever that cause would act.
+
+    The rule goes on to later tasks. One that only answers the place where the cause showed is a fix at the spot, carried into every task after it.
 - Note how the deliverable connects to its sources, as links such as `SETUP.md ← app.py`.
 
 ## What you return
