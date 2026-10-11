@@ -98,6 +98,17 @@ class AssembleTest(unittest.TestCase):
         self.assertEqual(out["uncertainty_signal"], [{"gap": "Who gives the token?"}])
         self.assertEqual(out["relational_map"], [{"learning": "The token step rests on a fact no source gives"}])
 
+    def test_a_question_several_points_carry_is_one_gap(self):
+        # Given: one round in which two points carry the same question, and a third a different one
+        self.judge(1, unsettled(STARTS, "no source names a command", "Which command starts it?"),
+                   unsettled(TYPED, "no source names a command", "Which command starts it?"),
+                   unsettled("/plugin/viewpoints/setup.md:2", "no source says where it is kept", "Where is it kept?"))
+        self.learn(1)
+        # When: the CCS to return is built
+        out = self.returned()
+        # Then: each question is one gap, in the order first carried
+        self.assertEqual(out["uncertainty_signal"], [{"gap": "Which command starts it?"}, {"gap": "Where is it kept?"}])
+
     def test_a_point_what_it_should_be_does_not_settle_goes_to_the_caller_before_the_user(self):
         # Given: one round with a point the measure does not settle, and a question for the user
         self.judge(1, unsettled(STARTS, "the acceptance says nothing on Docker"),

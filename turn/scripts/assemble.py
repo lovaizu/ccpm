@@ -118,7 +118,8 @@ def main(argv):
         points, learned = rounds[k - 1]
         out["uncertainty_signal"] = ([{"more": f"{p['point']}: {p['fell_short']}"} for p in points
                                       if p["judgment"] == "more"]
-                                     + [{"gap": p["question"]} for p in points if "question" in p])
+                                     + [{"gap": q} for q in dict.fromkeys(p["question"] for p in points
+                                                                          if "question" in p)])
         out["relational_map"] = [{"learning": e["learning"]} for e in learned]
     out["predictive_cue"] = [{"next": stopped or next_step(rounds[k - 1][0], no_closer)}]
     out["semantic_gist"] = []
