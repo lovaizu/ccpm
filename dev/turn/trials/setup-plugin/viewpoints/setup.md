@@ -1,3 +1,0 @@
-- Go from a fresh clone to a running app, as steps of commands to type and what each one shows.
-- Every step has been typed and checked in the current repository.
-- For anything that needs asking someone (such as secret values), say who to ask.

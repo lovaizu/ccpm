@@ -1,6 +1,0 @@
-{
-  "name": "setup",
-  "description": "Trial plugin for turn: writes a setup guide for new team members through turn:up.",
-  "version": "0.0.0",
-  "author": { "name": "lovaizu" }
-}

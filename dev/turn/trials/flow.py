@@ -1,16 +1,16 @@
-"""Run turn:up with stand-in agents that return set reports, down one way a round can end.
+"""Run turn's whole flow with stand-in agents, from a calling plugin, across turns and machines.
 
-    python3 dev/turn/trials/flow.py <workdir> fix|ended|ask|caller|stop
+    python3 dev/turn/trials/flow.py <workdir>
 
-fix     round 1 has a stumble to fix; round 2 ends every stumble       next: done, two rounds
-ended   round 1 ends every stumble                                     next: done, one round
-ask     round 1 has a question only the user can answer                next: ask the user
-caller  round 1 has a stumble the CCS cannot decide                    next: to the caller: ...
-stop    the user asks to stop once the generator has finished          next: stopped: ...
+The note plugin writes a CCS and calls the real turn:up; only turn's four agents are stand-ins that
+return set reports. One task goes through every way a turn can go:
 
-The orchestrator is the real turn:up; only the four agents are stand-ins. Everything lands in
-<workdir>: the repository, the stand-ins' log, the run's output and a summary to read beside the
-conversation records (JSONL).
+turn 1   round 1 has a stumble to fix and a rule; round 2 a question only the user can answer
+turn 2   the skill adds the user's answer and calls again; the user stops it after the generator
+turn 3   in another clone, with only the CCS and the deliverable, the task carries on and is done
+
+Everything lands in <workdir>: both repositories, the stand-ins' log, each session's output and
+summary.json. It passes when summary.json shows every check true; read the records (JSONL) beside it.
 """
 import json
 import os
@@ -25,39 +25,28 @@ TRIALS = Path(__file__).resolve().parent
 REPO = TRIALS.parents[2]
 ROLES = ("generator", "first-user", "learner", "evaluator")
 ACCEPTANCE = "A visitor finds the opening hours in the note alone"
-CCS = {
-    "focal_entities": [{"deliverable": "NOTE.md"},
-                       {"receiver": "A visitor who has only the note"}],
-    "goal_orientation": [{"acceptance": ACCEPTANCE}, {"use": "Read the note to find when to come"}],
-    "retrieved_artifacts": [{"viewpoint": "VIEWPOINT.md"}],
-    "constraints": [{"language": "English"}],
-    "episodic_trace": [], "semantic_gist": [], "relational_map": [], "predictive_cue": [],
-    "uncertainty_signal": [],
-}
-
-
-def decision(endings, gaps=()):
-    return {"endings": endings, "rules": [], "gaps": list(gaps), "links": ["NOTE.md ← hours.txt"]}
-
-
-LET_GO = {"stumble": "the title is plain", "ending": "let go: the visitor still finds the hours"}
-PATHS = {
-    "fix": ([decision([{"stumble": "the hours are missing", "cause": "hours.txt was not read",
-                        "ending": "fixed"}]), decision([LET_GO])], "done"),
-    "ended": ([decision([LET_GO])], "done"),
-    "ask": ([decision([{"stumble": "the closing day is not known",
-                        "ending": "to the caller: ask the user"}],
-                      ["Which day of the week is the shop closed?"])], "ask the user"),
-    "caller": ([decision([{"stumble": "the note could be for staff or visitors",
-                           "ending": "to the caller: the CCS does not say which visitors"}])],
-               "to the caller: the CCS does not say which visitors"),
-    "stop": ([], "stopped: first-user-1"),
-}
+QUESTION = "Which day of the week is the shop closed?"
+ANSWER = "Monday."
+RULE = "Read every source of a fact before writing it."
+DECISIONS = [
+    {"endings": [{"stumble": "the hours are missing", "cause": "hours.txt was not read",
+                  "ending": "fixed"}],
+     "rules": [RULE], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
+    {"endings": [{"stumble": "the closing day is not known", "ending": "to the caller: ask the user"}],
+     "rules": [], "gaps": [QUESTION], "links": ["NOTE.md ← hours.txt"]},
+    {"endings": [{"stumble": "the title is plain", "ending": "let go: the visitor still finds the hours"}],
+     "rules": [], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
+]
+CALLS = ["generator-1", "first-user-1", "learner-1", "evaluator-1",
+         "generator-2", "first-user-2", "learner-2", "evaluator-2",
+         "generator-3",
+         "generator-4", "first-user-3", "learner-3", "evaluator-3"]
+KEPT = ("focal_entities", "goal_orientation", "retrieved_artifacts")
 
 STANDIN = """\
 ---
 name: {role}
-description: Stands in for turn's {role} in a check of the orchestrator's flow.
+description: Stands in for turn's {role} in a check of turn's flow.
 model: sonnet
 tools: Bash
 ---
@@ -68,27 +57,24 @@ Run this one command, putting in the file you were told to write your report or 
     python3 {script} {role} <file>
 """
 
-
-def standin_script(workdir, decisions):
-    """The script every stand-in runs: it logs the call and writes the set report."""
-    return f"""\
-import json, sys
+SCRIPT = """\
+import json, subprocess, sys
 role, target = sys.argv[1], sys.argv[2]
-log = {str(workdir / "calls.jsonl")!r}
+log = {log!r}
 try:
     n = sum(1 for line in open(log) if json.loads(line)["role"] == role) + 1
 except FileNotFoundError:
     n = 1
-open(log, "a").write(json.dumps({{"role": role, "round": n, "file": target}}) + "\\n")
-decisions = {decisions!r}
+open(log, "a").write(json.dumps({{"role": role, "call": n, "file": target}}) + "\\n")
 if role == "generator":
-    open({str(workdir / "repo" / "NOTE.md")!r}, "w").write("# Visiting\\n\\nOpen 9 to 5.\\n")
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
+    open(top + "/NOTE.md", "w").write("# Visiting\\n\\nOpen 9 to 5.\\n")
     print("Wrote NOTE.md from hours.txt.")
 elif role == "evaluator":
-    open(target, "w").write(json.dumps(decisions[n - 1]))
+    open(target, "w").write(json.dumps({decisions!r}[n - 1]))
     print(target)
 else:
-    open(target, "w").write(f"{{role}} report, round {{n}}: read the note, found the hours.\\n")
+    open(target, "w").write(f"{{role}} report: read the note, found the hours.\\n")
     print(target)
 """
 
@@ -98,20 +84,17 @@ def git(cwd, *args):
                           cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
 
 
-def setup(workdir, decisions):
+def setup(workdir):
     repo = workdir / "repo"
     repo.mkdir(parents=True)
     (repo / "hours.txt").write_text("Open 9 to 5, closed one day a week.\n")
-    (repo / "VIEWPOINT.md").write_text("- A visitor learns when to come.\n")
-    (repo / "NOTE.md").write_text("# Visiting\n")
-    (repo / ".t").mkdir()
-    (repo / ".t" / "in.json").write_text(json.dumps(CCS, indent=2))
+    (repo / ".gitignore").write_text(".note/\nNOTE.md\n")
     git(repo, "init", "-q")
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "shop")
     plugin = workdir / "turn"
     shutil.copytree(REPO / "turn", plugin)
-    (workdir / "standin.py").write_text(standin_script(workdir, decisions))
+    (workdir / "standin.py").write_text(SCRIPT.format(log=str(workdir / "calls.jsonl"), decisions=DECISIONS))
     for role in ROLES:
         (plugin / "agents" / f"{role}.md").write_text(
             STANDIN.format(role=role, script=workdir / "standin.py"))
@@ -123,83 +106,112 @@ def calls(workdir):
     return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
 
 
-def agent_calls(workdir):
-    """The inputs of the orchestrator's Agent calls, from the run's output."""
+class Session:
+    """A Claude Code conversation the user types into, one message at a time."""
+
+    def __init__(self, workdir, name, repo, plugin):
+        self.output = workdir / f"{name}.jsonl"
+        cmd = ["claude", "-p", "--model", "opus", "--input-format", "stream-json",
+               "--output-format", "stream-json", "--verbose", "--permission-mode", "auto",
+               "--plugin-dir", str(plugin), "--plugin-dir", str(TRIALS / "note-plugin")]
+        self.out = open(self.output, "w")
+        self.p = subprocess.Popen(cmd, cwd=repo, stdin=subprocess.PIPE, stdout=self.out,
+                                  stderr=subprocess.STDOUT, text=True)
+
+    def results(self):
+        return self.output.read_text().count('"type":"result"')
+
+    def say(self, text):
+        seen = self.results()
+        self.p.stdin.write(json.dumps({"type": "user", "message": {"role": "user", "content": text}}) + "\n")
+        self.p.stdin.flush()
+        return seen
+
+    def wait(self, seen):
+        """Waits for the reply that comes after `seen` replies."""
+        while self.p.poll() is None and self.results() <= seen:
+            time.sleep(2)
+
+    def close(self):
+        self.p.stdin.close()
+        self.p.wait()
+        self.out.close()
+
+
+def agent_prompts(workdir, role):
     out = []
-    for line in (workdir / "run.jsonl").read_text().splitlines():
-        try:
-            m = json.loads(line)
-        except ValueError:
-            continue
-        content = m.get("message", {}).get("content") if m.get("type") == "assistant" else None
-        out += [c["input"] for c in content or [] if c.get("type") == "tool_use" and c["name"] == "Agent"]
+    for path in workdir.glob("session-*.jsonl"):
+        for line in path.read_text().splitlines():
+            try:
+                m = json.loads(line)
+            except ValueError:
+                continue
+            content = m.get("message", {}).get("content") if m.get("type") == "assistant" else None
+            out += [c["input"].get("prompt", "") for c in content or []
+                    if c.get("type") == "tool_use" and c["name"] == "Agent"
+                    and c["input"].get("subagent_type") == f"turn:{role}"]
     return out
 
 
-def results(workdir):
-    return (workdir / "run.jsonl").read_text().count('"type":"result"')
+def task(repo, k):
+    path = repo / ".note" / f"task-{k}.json"
+    return json.loads(path.read_text()) if path.exists() else {}
 
 
-def message(text):
-    return json.dumps({"type": "user", "message": {"role": "user", "content": text}}) + "\n"
-
-
-def run(workdir, repo, plugin, stop):
-    cmd = ["claude", "-p", "--model", "opus", "--input-format", "stream-json",
-           "--output-format", "stream-json", "--verbose", "--plugin-dir", str(plugin),
-           "--permission-mode", "auto"]
-    out = open(workdir / "run.jsonl", "w")
-    p = subprocess.Popen(cmd, cwd=repo, stdin=subprocess.PIPE, stdout=out, stderr=subprocess.STDOUT,
-                         text=True)
-    p.stdin.write(message("/turn:up in: .t/in.json\nout: .t/out.json"))
-    p.stdin.flush()
-    seen = 0
-    if stop:
-        while not any(c["role"] == "generator" for c in calls(workdir)) and p.poll() is None:
-            time.sleep(2)
-        # The stop may be taken in the turn already running, so wait for the next result after it.
-        seen = results(workdir)
-        p.stdin.write(message("Stop the task here, please."))
-        p.stdin.flush()
-    while p.poll() is None:
-        if results(workdir) > seen:
-            break
-        time.sleep(2)
-    p.stdin.close()
-    p.wait()
-    out.close()
+def values(ccs, part, kind):
+    return [e[kind] for e in ccs.get(part, []) if kind in e]
 
 
 def main(argv):
-    if len(argv) != 3 or argv[2] not in PATHS:
+    if len(argv) != 2:
         print(__doc__.strip())
         return 2
     workdir = Path(argv[1]).resolve()
     if workdir.exists():
         sys.exit(f"{workdir} exists; give a new folder")
-    decisions, expected = PATHS[argv[2]]
     workdir.mkdir(parents=True)
     tries_before = {n for n in os.listdir(tempfile.gettempdir()) if n.startswith("turn-try-")}
-    repo, plugin = setup(workdir, decisions)
+    repo, plugin = setup(workdir)
     start = git(repo, "rev-parse", "HEAD")
-    run(workdir, repo, plugin, argv[2] == "stop")
-    out = repo / ".t" / "out.json"
-    ccs = json.loads(out.read_text()) if out.exists() else {}
+
+    first = Session(workdir, "session-1", repo, plugin)
+    first.wait(first.say("/note:note"))
+    seen = first.say(ANSWER)
+    while sum(c["role"] == "generator" for c in calls(workdir)) < 3 and first.p.poll() is None:
+        time.sleep(2)
+    first.say("Stop the task here, please.")
+    first.wait(seen)
+    first.close()
+
+    other = workdir / "other"
+    subprocess.run(["git", "clone", "-q", str(repo), str(other)], check=True)
+    shutil.copytree(repo / ".note", other / ".note")
+    shutil.copy2(repo / "NOTE.md", other / "NOTE.md")
+    second = Session(workdir, "session-2", other, plugin)
+    second.wait(second.say("/note:note"))
+    second.close()
+
+    tasks = [task(repo, k) for k in (1, 2, 3, 4)] + [task(other, 5)]
     left = {n for n in os.listdir(tempfile.gettempdir()) if n.startswith("turn-try-")} - tries_before
-    summary = {
-        "next": [e["next"] for e in ccs.get("predictive_cue", [])],
-        "expected next": expected,
-        "calls": [f"{c['role']}-{c['round']}" for c in calls(workdir)],
-        "commits since start": git(repo, "rev-list", "--count", f"{start}..HEAD"),
-        "in.json unchanged": json.loads((repo / ".t" / "in.json").read_text()) == CCS,
-        "temporary folders left": sorted(left),
-        "acceptance told to the first user": any(
-            ACCEPTANCE in a.get("prompt", "") for a in agent_calls(workdir)
-            if a.get("subagent_type") == "turn:first-user"),
+    answer = f"{QUESTION} — {ANSWER}"
+    checks = {
+        "turns return ask the user, stopped, done": [values(tasks[k], "predictive_cue", "next")
+                                                     for k in (1, 3, 4)]
+        == [["ask the user"], ["stopped: first-user-1"], ["done"]],
+        "the question is the one gap": values(tasks[1], "uncertainty_signal", "gap") == [QUESTION],
+        "the agents are called in this order": [f"{c['role']}-{c['call']}" for c in calls(workdir)] == CALLS,
+        "the rule and the answer reach the last CCS": [RULE, answer] == [
+            v for e in tasks[4].get("constraints", []) for k, v in e.items() if k in ("rule", "answer")],
+        "what the plugin wrote is unchanged": all(t.get(p) == tasks[0].get(p) for t in tasks for p in KEPT),
+        "no commit": git(repo, "rev-list", "--count", f"{start}..HEAD") == "0"
+        and git(other, "rev-list", "--count", f"{start}..HEAD") == "0",
+        "no temporary folder left": not left,
+        "the first user is never told the acceptance": not any(
+            ACCEPTANCE in p for p in agent_prompts(workdir, "first-user")),
     }
-    (workdir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2))
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0
+    (workdir / "summary.json").write_text(json.dumps(checks, ensure_ascii=False, indent=2))
+    print(json.dumps(checks, ensure_ascii=False, indent=2))
+    return 0 if all(checks.values()) else 1
 
 
 if __name__ == "__main__":

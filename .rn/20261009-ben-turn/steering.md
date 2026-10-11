@@ -101,16 +101,18 @@ Completion criteria:
 ### [ ] #6: turn built and tried
 
 Purpose: turn's smallest form is built from the signed-off README and design; its prompts go through
-`prompt.md` before any trial; a trial carries a task with a pitfall through a small calling plugin,
-and what happened is read from the conversation records.
+`prompt.md`, and its whole flow passes a trial with stand-in agents, before it is used; then pith,
+writ and rn are made through turn one at a time, in a session of their own, and turn is fixed from
+what the records of that work show.
 
 Serves: A1, A2, M1, M3
 
 Completion criteria:
 
-- Attractive quality: in the trial, the receiver uses the work once without stumbling, and the
-  calling plugin decides its next move from the returned record alone.
-- Must-be quality: tests cover every line, and the plugin and marketplace validate.
+- Attractive quality: in making pith, writ and rn, each returned deliverable is used by its receiver
+  without stumbling, and the calling skill decides its next move from the returned CCS alone.
+- Must-be quality: tests cover every line, the flow trial passes, and the plugin and marketplace
+  validate.
 
 # Not yet specified
 

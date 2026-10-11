@@ -42,7 +42,14 @@ Next:
    CCS by hand; decided by the user (2026-10-11): the steps that need no judgment are one script,
    `turn/scripts/up.py` (start, copy, round, end), so the orchestrator only calls the agents and
    that script. Rerun on all five: as expected, and the orchestrator ran nothing but up.py.
-   Next (start here): the real trial (`dev/turn/trials/run.py`), read from every JSONL.
+   Decided by the user (2026-10-11): no made-up trial. turn is checked by making pith, writ and rn
+   through it, one at a time; the user starts a session for each and this session sends it the
+   work and decides turn's fixes from the records (the one who works does not judge turn). Design
+   section 4 says so; `run.py`, its fixture and setup-plugin are gone. The whole flow is a trial
+   instead: `dev/turn/trials/flow.py` with the note plugin and stand-in agents (ask, answer, stop,
+   carry on in another clone, done); it passed on the first run, about 3 minutes.
+   Next (start here): the user signs off design section 4; then the user starts the session for
+   the first of pith, writ and rn, and this session sends it the work.
    Earlier points, now settled except the README clash: how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
    in the design; `trace.py`'s output was long and hard to read; the full trial runner came before

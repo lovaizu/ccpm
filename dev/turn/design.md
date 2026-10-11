@@ -167,43 +167,27 @@ The plugin writes the CCS and keeps it; turn reads it, and so do later versions 
 
 ## 4. How it is checked
 
-The checking effort goes first to whether the promises reach the plugin's users, by trials. The trials live in `dev/turn/trials/` and run turn the way its users do. Whoever runs a trial decides whether it passed by reading every conversation and agent record (JSONL).
+The promises are checked where turn is really used: pith, writ and rn are made through turn, one at a time. A made-up task shows only that the made-up task passes; making these three is what turn is for, so the receivers, the stumbles and the time a turn takes are real. The work is done in a session of its own, and whoever builds turn reads every conversation and agent record (JSONL) of each turn and the returned deliverable as its receiver would. turn is fixed only for a cause found in the records and traced to this design; the one who does the work does not judge turn, for the same reason the evaluator is split from the generator.
 
-- "The deliverable shown has already been used, with its stumbles fixed"
+A real task has no stumble set in advance, so a turn that finds nothing can mean the deliverable is fine or the stumble was missed. Each promise is judged from the records of the real work:
 
-    Scene: a task with a pitfall the receiver would stumble on, such as a setup guide that is easy to write assuming a folder a fresh clone does not have. Without turn, an AI writing it leaves that stumble in. It passes when a new agent with no tie to turn, taking the receiver's place, uses the returned deliverable once and meets the acceptance criteria without stumbling.
+- "The deliverable shown has already been used, with its stumbles fixed": the deliverable returned was used from start to end after the last remake, and using it as its receiver shows no stumble the evaluator let through.
+- "You do not write the make, try and fix loop in your own skill": the calling skill only writes the CCS, calls `turn:up` and acts on `next`.
+- "The deliverable is judged against what you write it should be, and nothing else": what the CCS does not settle comes back as `to the caller` or `gap`, and is not settled in the deliverable.
+- "Everything your skill needs for its next step can be traced from the returned CCS": the next step decided from the CCS and what it points to is the same as the one decided after also reading the records.
+- "They are asked only what only they can decide": every question in `gap` is one only the user can answer.
 
-- "You do not write the make, try and fix loop in your own skill"
-
-    Scene: the trial above, run from a small plugin that only writes the CCS, calls `turn:up` and reads `next`. It passes when the trial above passes though that plugin's skill has no steps for making, trying or fixing.
-
-- "The deliverable is judged against what you write it should be, and nothing else"
-
-    Scene: a setup guide task whose CCS does not say whether the receiver already has Docker, while the guide can be written either way. It passes when that point comes back as `to the caller` or `gap`, and the returned deliverable does not settle it on its own.
-
-- "Everything your skill needs for its next step can be traced from the returned CCS"
-
-    Scene: the CCS returned in the trial above. It passes when the next step decided from the CCS and what it points to is the same as the one decided after also reading the conversation records. This shows that nothing needed for the next step was left only in the conversation.
-
-- "They are asked only what only they can decide"
-
-    Scene: a task with one thing only the user knows, such as who hands over the API token. It passes when that thing is in `gap`, `gap` holds no other question, and calling again with the user's answer added gives a deliverable that uses the answer.
-
-- "If they stop partway, the task carries on from where it stopped"
-
-    Scene: a task where the user asks to stop after the generator has finished. It passes when calling again with only the returned CCS and the deliverable placed in another clone carries on from the deliverable already made, and passes the same way.
-
-Before the trials run, each part is checked alone where its behavior is decided, so that a trial shows whether the promises reach the users, and a slip is found in the part that made it.
+Before turn is used, and again after every change to it, each part is checked alone where its behavior is decided, so that a slip is found in the part that made it.
 
 - Each agent's prompt is run alone on set inputs and checked with writ's `prompt.md`.
 
-    A trial on unchecked prompts finds the prompts' slips, not whether the promises hold, and the slip it finds is hard to place among five agents.
+    A run on unchecked prompts finds the prompts' slips, not whether the promises hold, and the slip it finds is hard to place among five agents.
 
-- The orchestrator's flow is run with stand-in agents that return set reports, down every way a round can end: a stumble to fix, every stumble ended, stopped by the user, a question for the user, and returned to the skill.
+- The whole flow is run as a trial in `dev/turn/trials/`, with stand-in agents that return set reports, from a small calling plugin: a stumble to fix and a rule, a question for the user, the user's answer added, a stop after the generator, and carrying on in another clone with only the CCS and the deliverable until it is done.
 
-    A real trial goes down only the path its task leads to; the other paths would reach users unchecked.
+    Real work goes down only the paths its task leads to; the other paths, and "if they stop partway, the task carries on from where it stopped", would reach users unchecked.
 
-"What the deliverable should be and the rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time. The effort of the trials goes to whether the other promises reach the users.
+"What the deliverable should be and the rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time.
 
 ## 5. Options not taken
 
