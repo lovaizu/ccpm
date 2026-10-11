@@ -48,18 +48,17 @@ Next:
    section 4 says so; `run.py`, its fixture and setup-plugin are gone. The whole flow is a trial
    instead: `dev/turn/trials/flow.py` with the note plugin and stand-in agents (ask, answer, stop,
    carry on in another clone, done); it passed on the first run, about 3 minutes.
-   Decided by the user (2026-10-11): each turn writes the evidence (`<out>.evidence.json`, beside the
-   returned CCS, pointed to from `episodic_trace`): items made by a script (each line of what the
-   deliverable should be, each first-user step from its record, each learner cause), and for each
-   item many entries (item, round, role, looked_at, thought, result in fixed words, ground) from the
-   generator, learner and evaluator. Agents write only their own entries file; a script checks it
-   (fields, result words, every given item, no unknown item) before adding, else a new agent of that
-   role. Named for its purpose ("evidence", not a container name). Design 2 "Writing the evidence
-   for every item", principle 5 and README are written; the user signed off them and section 4.
-   Next (start here): build the evidence test-first (scripts, up.py, the agents' prompts, the
-   evaluator's decision coming from its entries); rerun the flow trial; then read every record it
-   made, one file at a time from a list made first (2 sessions + every agent, and the .note files),
-   writing what each shows and its ground, before reporting.
+   Decided by the user (2026-10-11), replacing the per-item entries: the aim is that every agent
+   really opens the deliverable and the records and decides from facts, which asking in words does
+   not get. So each agent's own record is checked when it tries to finish (a SubagentStop hook in
+   turn's hooks/hooks.json, matched by `^turn:<agent>$`; plugin agents cannot hold hooks; a block
+   keeps the same agent running with the reason), what must not be done is stopped as it is tried
+   (PreToolUse), the first user's record is turned into numbered steps for the learner and the
+   evaluator, and each cause and ending names the steps and deliverable lines it rests on, every
+   error step named by some ending. The evidence file keeps the steps and the endings with their
+   grounds. Confirmed in code.claude.com/docs/en/hooks and /sub-agents. Design 2 "Checking that each
+   agent did its job" and the README's evidence lines are rewritten; waiting for the user's look.
+   Next: once signed off, build it test-first; rerun the flow trial; read every record it made.
    Then: the user starts the session for the first of pith, writ and rn; this session sends it the
    work and judges turn from the records and the evidence.
 4. Decided by the user (2026-10-11): turn is used in two ways. When each plugin runs, its skill hands

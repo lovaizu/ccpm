@@ -46,18 +46,19 @@ sequenceDiagram
   participant E as Evaluator
   S->>O: CCS (in)
   Note over O: A script checks the form of the CCS received
-  Note over O,E: Each round, a script makes the items and adds each agent's entries to the evidence once they are complete
   loop until trying matches what the deliverable should be, or only the user's or the skill's decisions remain
+    Note over G,E: Before each agent finishes, its own record is checked for what it must have done
     O->>G: what the deliverable should be, sources, rules, the user's answers, the causes to fix
     G-->>O: the deliverable, and what it did
     O->>U: the deliverable, the receiver, what it is used for (in a temporary copy)
     U-->>O: what it did, and what happened
-    O->>L: the first user's report, the records of that round, the viewpoint files
+    Note over O: A script turns the first user's record into numbered steps
+    O->>L: the first user's report and steps, the generator's record, the viewpoint files
     L-->>O: the causes of the stumbles
-    O->>E: what the deliverable should be, the deliverable, both reports, the records of that round, how earlier stumbles ended
+    O->>E: what the deliverable should be, the deliverable, the first user's report and steps, the causes, how earlier stumbles ended
     E-->>O: how each stumble ends, the causes to fix, the rules, the questions for the user
   end
-  Note over O: A script writes episodic_trace and checks the form of the CCS to return
+  Note over O: A script writes the evidence and episodic_trace and checks the form of the CCS to return
   O-->>S: new CCS (out)
 ```
 
@@ -85,39 +86,40 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
     When the skill copies it into the next task's CCS, the same stumble does not come back across tasks either.
 
-### Writing the evidence for every item
+### Checking that each agent did its job
 
 Keeps the promises "the deliverable shown has already been used, with its stumbles fixed", "the deliverable is judged against what you write it should be, and nothing else" and "everything your skill needs for its next step can be traced from the returned CCS".
 
-- Each turn writes one evidence file: for every item to be covered, what each role looked at, how it thought, and what it decided. Every conclusion in the returned CCS rests on it.
+- Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to finish. If something is missing, the same agent is kept running and told what.
 
-    "Read everything" asked in words is met by skimming: an agent that decides without opening a record passes as one that read it. With the items fixed in advance, a blank shows; with each conclusion written beside what it rests on, anyone who doubts the CCS can follow it back to the facts instead of taking it on trust.
+    "Read the deliverable and the records, and decide from the facts" asked in words is met by skimming, and an account can claim a read that never happened. The record is written by Claude Code, not by the agent, so it shows what was done. Claude Code's hooks are made for this: one runs as an agent tries to stop and can keep it running with the reason.
 
-- The items are made by a script, never by an agent:
-  - each line of what the deliverable should be: `receiver`, `use`, `acceptance`, each line of each viewpoint file, each `rule` and `answer` in `constraints`;
-  - each step the first user took, from its record: what it ran or opened, and what came out;
-  - each cause the learner names, added once the learner has written it.
+- What each agent must have opened before it finishes:
 
-    An agent that chose its own items could leave out the one it skipped.
+    | Agent | Opened |
+    |---|---|
+    | Generator | The CCS, every viewpoint file and source, and the earlier rounds' decisions |
+    | First user | The deliverable, in its copy |
+    | Learner | The first user's report, its steps, the generator's record and the viewpoint files |
+    | Evaluator | The CCS, the deliverable, the first user's report and steps, the learner's causes and the earlier rounds' decisions |
 
-- Each item gets an entry from each role that works on it, in each round, so an item has many entries:
-  - the generator, for each line of what the deliverable should be and each cause sent to be fixed: where the deliverable meets it and how it checked;
-  - the learner, for each step that failed or went back and each stumble the first user's report names: the cause and its evidence in the records;
-  - the evaluator, for every item: whether the deliverable and the records bear out what the other roles wrote, and then how each stumble ends.
+- What an agent must not do is stopped when it tries: the first user reading or changing anything outside its copy or changing the deliverable, the generator changing anything but the deliverable, and any agent committing or pushing.
 
-    The first user writes no entries: its steps are taken from its record, which shows what happened rather than its own account of it. The one who checks goes down the same items as the one who did the work, so a claim nothing bears out shows at its item.
+    Found afterwards, the harm is already done: a first user that read the repository has used knowledge the receiver does not have.
 
-- An entry says the item, the round and the role; what it looked at; what it thought; its result, in the words fixed for that role; and its ground.
+- The first user's record is turned by a script into its steps, numbered: what it ran or opened, and what came out. The learner and the evaluator are handed these steps.
 
-    The result words are fixed so a script can read them; the thought and the ground are free, so a judgment is never forced into a word that does not fit.
+    The record is long, and a long record gets skimmed. The steps are the same facts, short enough to be read whole.
 
-- An agent writes its entries to a file of its own, never to the evidence file. A script checks that file before adding it: every field is there, every result is one of the fixed words, every item the role was given has an entry, and no item is unknown. If any of these fails, nothing is added and a new agent of that role is called.
+- Each cause the learner gives and each ending the evaluator decides names the steps and the lines of the deliverable it rests on. Before the agent finishes, these are checked to exist, and every step that ended in an error is checked to be named by some ending.
 
-    One agent writing a shared file can break what others wrote. The script compares items by number, not by wording, so an agent is never sent back for how it put something. Entries are only added, never changed, so earlier rounds stay as they were.
+    A conclusion that names its ground can be followed back to the facts. An error is a fact a script can see, so none passes without an ending.
 
-- The evidence file is written beside the returned CCS, named after it (`task-4.json` gets `task-4.evidence.json`), and the CCS points to it in `episodic_trace`. The returned CCS is assembled from the evaluator's entries.
+- What a script cannot see is judged by reading the records of real use (section 4): whether an agent thought well, and a stumble that leaves no error, such as going back or guessing.
 
-    The plugin decides where its CCS lives, so the evidence stays with it, and is committed with it or not as the plugin decides.
+- The evidence, each round's steps and each ending with the steps and lines it rests on, is written beside the returned CCS, named after it (`task-4.json` gets `task-4.evidence.json`), and the CCS points to it in `episodic_trace`.
+
+    Anyone who doubts the CCS can follow it back to what happened instead of taking it on trust. The plugin decides where its CCS lives, so the evidence stays with it, and is committed with it or not as the plugin decides.
 
 ### Leaving the user's other work untouched
 

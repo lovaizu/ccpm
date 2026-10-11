@@ -16,7 +16,7 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
 - Everything your skill needs for its next step can be traced from the returned CCS.
 
-    `next` says how the turn ended, `gap` what is left for your user, and the CCS points to the deliverable and everything behind it, the evidence among them: for every line of what the deliverable should be and every step taken in trying it, what each agent looked at, how it thought and what it decided. Whether to open them is up to your skill.
+    `next` says how the turn ended, `gap` what is left for your user, and the CCS points to the deliverable and everything behind it, the evidence among them: each step taken in trying it, as the conversation records show it, and each ending with the steps and the lines of the deliverable it rests on. Whether to open them is up to your skill.
 
 - What the deliverable should be and the rules do not change in the middle of a task.
 
@@ -165,7 +165,7 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
 | `constraints` | `rule` | A rule about the way of working, learned in this turn |
 | `relational_map` | `link` | How the deliverable connects to its sources and other things |
 | `episodic_trace` | The agent and which round (`generator-1` is the generator's first round; likewise `first-user-1`, `learner-1` and `evaluator-1`), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
-| | `evidence` | Where the evidence is: for every item, what each agent looked at, how it thought and what it decided. Written beside the returned CCS |
+| | `evidence` | Where the evidence is: each step taken in trying the deliverable, and each ending with the steps and lines it rests on. Written beside the returned CCS |
 
 ### What a script checks
 
