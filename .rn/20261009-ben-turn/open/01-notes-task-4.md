@@ -68,7 +68,7 @@ Next:
    with SubagentHandback before they stop, so a SubagentStop block does nothing; refusing the
    SubagentHandback call in PreToolUse does keep the agent running. Design 2 says so (uncommitted
    line committed with this note).
-   Flow trial flow-3 (scratchpad): 8 of 9 checks pass; "the agents are called in this order" fails
+   Flow trial flow-3 (/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-fix-rn/d5695834-5148-4652-a8df-59584d951228/scratchpad/flow-3, with dump.py beside it to print a record): 8 of 9 checks pass; "the agents are called in this order" fails
    because in round 2 the learner's stand-in command ran twice (learner-2, learner-3 in calls.jsonl).
    Not yet known whether one learner kept running by the hook ran it again or the orchestrator called
    two learners. Do not run unit tests while a flow trial runs (they make turn-try-* folders the
