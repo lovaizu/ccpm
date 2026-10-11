@@ -52,7 +52,7 @@ What holds for every role follows from the principles:
 | Generator | What the deliverable should be; the sources; the last round's Mores and learnings, or, in a turn's first round, those of the CCS received | The deliverable; a report of what it did and of what the deliverable needs that it could not settle | The deliverable stays at its place. The report goes to the evaluator |
 | First user | A copy holding only what the receiver has, the deliverable's place in it, the receiver and the use | A report of what it did and what happened | To the learner and the evaluator |
 | Learner | What the deliverable should be; the first user's report; both agents' steps | The learnings: why the deliverable came out away from what it should be | To the generator and the evaluator. The learnings of the returned version's round go into `relational_map` as `learning` |
-| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings | For each point, Good, More with what fell short, or what the deliverable should be does not settle; one question for each thing only the user can settle, asked once however many points need it | Each More goes to the generator, and, for the returned version's round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
+| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings; from round 2 on, the version before | For each point, Good, More with what fell short, or what the deliverable should be does not settle; from round 2 on, for each More, whether the version before fell short the same way; one question for each thing only the user can settle, asked once however many points need it | Each More goes to the generator, and, for the returned version's round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
 | Scripts | The records of every agent called, and git | The steps of each round; what each agent read, changed and ran | The steps and every agent's output go into the evidence; what each agent read, changed and ran goes into `episodic_trace`, with the place of the evidence |
 
 What the generator could not settle reaches the user through the evaluator, which gives the point that needs it no Good or More but a question or an unsettled reason. Only the evaluator judges, so a gap the generator leaves is weighed against what the deliverable should be like any other point.
@@ -91,9 +91,9 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
     A Good or a More given to each point, and not only to what the first user's report names, keeps a point no one stumbled on from passing unchecked.
 
-- The loop goes on while a point is More and each remake brings the deliverable closer: it turns at least one More into Good and no Good into More. It ends when every point is Good, when a remake brings the deliverable no closer, or when all that is left is for the user or the skill to decide.
+- The loop goes on while a point is More and each remake brings the deliverable closer: it turns at least one More into Good and no Good into More. A Good turned into More counts against the remake only when the evaluator finds that the version before did not fall short the same way; when it did, the earlier Good was a slip, and the point counts as More in both rounds. It ends when every point is Good, when a remake brings the deliverable no closer, or when all that is left is for the user or the skill to decide.
 
-    A remake that brings the deliverable no closer will not do so on the next try either, so the turn returns to the skill with the points still More. A remake that makes one point Good and another More has only moved the shortfall.
+    A remake that brings the deliverable no closer will not do so on the next try either, so the turn returns to the skill with the points still More. A remake that makes one point Good and another More has only moved the shortfall. A remake is judged by what it changed, and a Good can slip: set side by side, two separate judgments would blame the remake for a shortfall the version before already had. The evaluator lays the two versions side by side itself, and never sees the earlier judgments, so it judges fresh.
 
 ### Checking that each agent did its job
 
@@ -113,7 +113,7 @@ Keeps the promises "the deliverable shown has already been used, and what still 
     |---|---|
     | Generator | What the deliverable should be with the rules and the user's answers, every viewpoint file and source, and the last round's Mores and learnings, or, in a turn's first round, those of the CCS received |
     | Learner | What the deliverable should be with the rules and the user's answers, every viewpoint file, the first user's report and both agents' steps |
-    | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps and the learnings |
+    | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps and the learnings, and from round 2 on, the version before |
 
     Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it, and at the end, a read made after the work cannot be told from one that shaped it. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
 
