@@ -24,7 +24,7 @@ turn exists so that the receiver can really use the deliverable, judged against 
 
     The learner finds why the deliverable came out away from what it should be; it neither judges nor says how to fix. The evaluator lays each point beside what the deliverable should be and the viewpoint files and gives it Good or More; it neither finds causes nor says how to fix. Whoever made the deliverable goes easy on it, and whoever found a cause goes easy on that cause, so the one who judges has made and found nothing. A report or a learning can claim more than was done, so the evaluator checks both against the facts, the deliverable and the steps taken from the conversation records (JSONL), and checks a Good as hard as a More. Taking "it worked" on trust passes the stumble on to the receiver.
 
-    The orchestrator reads none of this content. It calls the agents and passes on what they return. Making, using, learning and judging all mean reading the deliverable and long records; held in the orchestrator's conversation, round after round, that content would fill it, and, as the README opens with, it would drift from its goal and rules. Each of the other agents starts in a new conversation every round.
+    The orchestrator reads none of this content. It calls the agents and passes on what they return. Making, using, learning and judging all mean reading the deliverable and long records; held in the orchestrator's conversation, round after round, that content would fill it, and, as the README opens with, it would drift from its goal and rules.
 
 - The next turn starts from the returned CCS and the deliverable alone.
 
@@ -34,33 +34,42 @@ turn exists so that the receiver can really use the deliverable, judged against 
 
 The promises each feature keeps are those under "For plugin authors" and "For your plugin's users" in the README. The scenes where they work are "Calling turn" and "Deciding from the returned CCS".
 
-Who passes what to whom within one turn:
+### Who hands what, and where it goes
 
-```mermaid
-sequenceDiagram
-  participant S as Skill
-  participant O as Orchestrator
-  participant G as Generator
-  participant U as First user
-  participant L as Learner
-  participant E as Evaluator
-  S->>O: CCS (in)
-  Note over O: A script checks the form of the CCS received
-  loop until every point is Good, a remake brings the deliverable no closer, or only the user's or the skill's decisions remain
-    Note over G,E: Before each agent finishes, its own record is checked for what it must have done
-    O->>G: what the deliverable should be, sources, rules, the user's answers, the earlier rounds' Mores and learnings
-    G-->>O: the deliverable, and what it did
-    O->>U: the deliverable, the receiver, what it is used for (in a temporary copy)
-    U-->>O: what it did, and what happened
-    Note over O: A script turns the generator's and the first user's records into numbered steps
-    O->>L: what the deliverable should be, the first user's report, both agents' steps
-    L-->>O: the learnings
-    O->>E: what the deliverable should be, the deliverable, the first user's report, both agents' steps, the learnings
-    E-->>O: Good or More for each point, the questions for the user
-  end
-  Note over O: A script writes the evidence and episodic_trace and checks the form of the CCS to return
-  O-->>S: new CCS (out)
-```
+Each round, the orchestrator calls the four agents in this order and passes on what each returns. Scripts do the steps that need no judgment: checking the CCS, turning records into steps, deciding whether the loop goes on, and writing the evidence and the returned CCS.
+
+What holds for every role follows from the principles:
+
+- Every output has a set place, in the returned CCS or in the evidence. A finding with no place is lost to the next turn and to anyone who doubts the CCS.
+- Every judgment and every finding is measured against what the deliverable should be, which here always means the receiver, the use, the acceptance criteria, the viewpoint files, the rules and the user's answers. Anything else is a picture the plugin never wrote.
+- Every judgment and every finding names the steps and lines it rests on. A conclusion that names its ground can be followed back to the facts.
+- Each role does only its own job. A role doing another's goes easy on its own work, or does that job outside the checks made for it.
+- Each agent starts fresh every round from what it is handed. What it remembers would reach neither the next turn nor anyone checking it.
+- No one commits, pushes, or changes what the CCS says the deliverable should be. Committing is the plugin's, and the measure is the plugin's.
+
+| Role | Receives | Returns | Where it goes |
+|---|---|---|---|
+| Generator | What the deliverable should be; the sources; the last round's Mores and learnings, or, in a turn's first round, those of the CCS received | The deliverable; a report of what it did and of what the deliverable needs that it could not settle | The deliverable stays at its place. The report goes to the evaluator |
+| First user | A copy holding only what the receiver has, the deliverable's place in it, the receiver and the use | A report of what it did and what happened | To the learner and the evaluator |
+| Learner | What the deliverable should be; the first user's report; both agents' steps | The learnings: why the deliverable came out away from what it should be | To the generator and the evaluator. The last judged round's learnings go into `relational_map` as `learning` |
+| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings | For each point, Good, More with what fell short, or what the deliverable should be does not settle; a question for each point only the user can settle | Each More goes to the generator, and, after the last judged round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
+| Scripts | The records of every agent called, and git | The steps of each round; what each agent read, changed and ran | The steps and every agent's output go into the evidence; what each agent read, changed and ran goes into `episodic_trace`, with the place of the evidence |
+
+What the generator could not settle reaches the user through the evaluator, which gives the point that needs it no Good or More but a question or an unsettled reason. Only the evaluator judges, so a gap the generator leaves is weighed against what the deliverable should be like any other point.
+
+Learnings go into `relational_map` because the ACC paper defines that part as encoding "causal and temporal dependencies", and a learning is why the deliverable came out as it did. Mores and questions go into `uncertainty_signal`, which the paper defines as "unresolved or low confidence state". A point that is Good needs nothing carried on; the evidence holds it.
+
+### How a turn ends
+
+| How it ends | What is written | `next` |
+|---|---|---|
+| Every point is Good | The returned CCS, with no `more` | `done` |
+| What is left needs only the user | The returned CCS, with each question as `gap` | `ask the user` |
+| A point what the deliverable should be does not settle, or a remake brought the deliverable no closer | The returned CCS, with the Mores left and any questions | `to the caller: <the points, and why>`. It comes before `ask the user`, since what the skill decides may change what the deliverable should be and with it the questions |
+| The user asked to stop | The returned CCS up to the last round the evaluator judged | `stopped: <where from>` |
+| Cut off, python3 missing, or the check of the CCS fails | No CCS. When python3 is missing or the check fails, turn says in the conversation what to install or what did not match | None. The skill calls again with the same `in` once the cause is gone, or with a corrected CCS |
+
+Every ending that returns a CCS writes the evidence beside it.
 
 ### Using the deliverable as the receiver, and remaking it
 
@@ -74,7 +83,7 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
     The first user's report shows where it stumbled, not why. The learner looks for the why in the report and in the steps the generator and the first user took in that round, measured against what the deliverable should be.
 
-- The evaluator gives each point of what the deliverable should be, each acceptance criterion and each point of the viewpoint files, a Good or a More. A point that what the deliverable should be does not settle gets neither: it is returned to the skill (`to the caller`), and, when only the user can settle it, as a question in `gap`. How each point ended goes into `difference` in the returned CCS.
+- The evaluator gives each point of what the deliverable should be, each acceptance criterion and each point of the viewpoint files, a Good or a More. A point that what the deliverable should be does not settle gets neither: it is returned to the skill (`to the caller`), and, when only the user can settle it, as a question in `gap`.
 
     A Good or a More given to each point, and not only to what the first user's report names, keeps a point no one stumbled on from passing unchecked.
 
@@ -112,9 +121,9 @@ Keeps the promises "the deliverable shown has already been used, with its stumbl
 
     Found afterwards, the harm is already done: a first user that read the repository has used knowledge the receiver does not have. A command can reach places its call does not name; those are judged from the records of real use.
 
-- Each learning and each Good or More names the steps and the lines it rests on, and these are checked to exist.
+- The steps and lines each learning and each Good or More names are checked to exist.
 
-    A conclusion that names its ground can be followed back to the facts.
+    A named ground that does not exist rests the conclusion on nothing.
 
 - The evidence, each round's steps, learnings, and Goods and Mores with the steps and lines they rest on, is written beside the returned CCS, named after it (`task-4.json` gets `task-4.evidence.json`), and the CCS points to it in `episodic_trace`.
 
@@ -134,7 +143,7 @@ Keeps the promise "their other work is left untouched".
 Keeps the promise "they are asked only what only they can decide".
 
 - What the CCS and its sources, the user's answers and the viewpoints settle, the evaluator judges.
-- Only what they do not settle and only the user can decide goes into `gap`, as a question that can be asked as it is, with `next` set to `ask the user`.
+- Only what they do not settle and only the user can decide goes into `gap`, as a question that can be asked as it is.
 
     turn does not talk to the user. It does not know what the plugin has agreed with the user outside the turn. If turn decided what to ask, users would be asked the same thing again, or find decisions in the deliverable they never meant to make.
 
@@ -142,8 +151,8 @@ Keeps the promise "they are asked only what only they can decide".
 
 Keeps the promise "everything your skill needs for its next step can be traced from the returned CCS".
 
-- The orchestrator writes, from the evaluator's judgments, how each point ended (`difference`), what only the user can decide (`gap`), how the deliverable connects to its sources (`link`) and what to do next (`next`).
-- What each agent actually read, wrote and ran (`episodic_trace`) is written by a script from the conversation records and git before the turn returns, with the place of the evidence.
+- The returned CCS is written by a script from the agents' outputs, as laid out in "Who hands what, and where it goes" and "How a turn ends".
+- What each agent actually read, changed and ran (`episodic_trace`) is taken from the conversation records and git, not from the agents' reports.
 
     An agent's own account can claim more than it did.
 
@@ -167,9 +176,9 @@ Keeps the promise "what the deliverable should be and the rules do not change in
 
 Keeps the promise "if they stop partway, the task carries on from where it stopped".
 
-- When the user asks in the conversation to stop, the orchestrator calls no new agent. It writes a new CCS up to the last round the evaluator judged, and returns it with `next` set to `stopped: <where from>`.
+- When the user asks in the conversation to stop, the orchestrator calls no new agent, and the turn ends as "How a turn ends" says.
 
-    The judged points, and the deliverable made so far, remain in the CCS and on disk. A round not yet judged is done again in the next turn. That needs less machinery than adding a form to keep it in the CCS.
+    The Mores and learnings of the last judged round, and the deliverable made so far, remain in the CCS and on disk. A round not yet judged is done again in the next turn. That needs less machinery than adding a form to keep it in the CCS.
 
 - A turn cut off without returning a CCS leaves nothing behind. The skill calls again with the same `in`, and the turn starts over.
 
@@ -193,7 +202,8 @@ The plugin writes the CCS and keeps it; turn reads it, and so do later versions 
 
 - The parts turn writes are rewritten by each turn. They are read by the skill and by the next turn.
   - The skill decides its next step from `next` and `gap`.
-  - The next turn reads every part as the state it starts from. After `stopped`, it learns from `difference` and `episodic_trace` how far the deliverable got. From `link`, it learns what to look at again when a source changes.
+  - The next turn starts from `more` and `learning`: its generator remakes the deliverable from them, as from a round of its own.
+  - turn writes nothing in `semantic_gist`, which the ACC paper defines as "the dominant intent or topic": the intent is what the plugin wrote in `goal_orientation`.
 
     The next step needs only the results up to the turn just before it.
 

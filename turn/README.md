@@ -137,17 +137,15 @@ Viewpoint files live inside the plugin. The skill writes their place as `${CLAUD
 
 ### What turn writes
 
-The parts turn writes are made anew at every turn. A returned CCS looks like this (the parts the plugin wrote are left out):
+The parts turn writes are made anew at every turn. The next turn starts from `more` and `learning`. A returned CCS looks like this (the parts the plugin wrote, and `semantic_gist`, which turn leaves empty, are left out):
 
 ```json
 {
   "predictive_cue": [{"next": "ask the user"}],
   "uncertainty_signal": [{"gap": "Who gives a new team member the API token?"}],
-  "semantic_gist": [
-    {"difference": "A new team member starts the app by following the guide alone → Good"},
-    {"difference": "For anything that needs asking someone, say who to ask → to the caller: ask the user"}
+  "relational_map": [
+    {"learning": "The token step rests on a fact no source or answer gives: who hands out the token"}
   ],
-  "relational_map": [{"link": "SETUP.md ← scripts in package.json"}],
   "episodic_trace": [
     {"generator-1": "wrote SETUP.md"},
     {"first-user-1": "ran npm start"},
@@ -159,9 +157,9 @@ The parts turn writes are made anew at every turn. A returned CCS looks like thi
 | Part | Kind | Content |
 |---|---|---|
 | `predictive_cue` | `next` | What to do next. One of the values in the table in "Deciding from the returned CCS" |
-| `uncertainty_signal` | `gap` | Something only the user can decide, as a question that can be asked as it is |
-| `semantic_gist` | `difference` | Each point of what the deliverable should be, and how it ended when the deliverable was last used: `Good`, `More: <what fell short>` or `to the caller: <reason>` (left to the skill) |
-| `relational_map` | `link` | How the deliverable connects to its sources and other things |
+| `uncertainty_signal` | `more` | A point of what the deliverable should be that the deliverable, as last used, fell short of, and what fell short |
+| | `gap` | Something only the user can decide, as a question that can be asked as it is |
+| `relational_map` | `learning` | Why the deliverable, as last used, came out away from what it should be. Never how to fix it |
 | `episodic_trace` | The agent and which round (`generator-1` is the generator's first round; likewise `first-user-1`, `learner-1` and `evaluator-1`), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
 | | `evidence` | Where the evidence is: each step taken in trying the deliverable, and each learning and each Good or More with the steps and lines it rests on. Written beside the returned CCS |
 
@@ -213,11 +211,11 @@ jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 |---|---|
 | `done` | Commits the deliverable and the CCS and finishes. |
 | `ask the user` | Asks the user each `gap`. Adds the answers as `answer` to `constraints` of the returned CCS, writes it to a new file (`task-3.json`), and calls again with it as `in`. |
-| `to the caller: <reason>` | Reads the reason and decides. For example, it writes a new CCS with what the deliverable should be fixed and calls again, or it talks it over with the user. |
+| `to the caller: <reason>` | The reason names the points what the deliverable should be does not settle, or says that a remake brought the deliverable no closer. When there are also `gap` questions, this comes first, since what the skill decides may change them. Reads the reason and decides. For example, it writes a new CCS with what the deliverable should be fixed and calls again, or it talks it over with the user. |
 | `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
 
 - If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
-- If python3 is missing, turn returns no CCS; it says in the conversation what to install, and stops.
+- If python3 is missing, or the CCS fails the check, turn returns no CCS; it says in the conversation what to install or what did not match, and stops.
 
 ## What stays with your plugin
 
