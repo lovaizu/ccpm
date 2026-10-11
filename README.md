@@ -15,3 +15,7 @@ Add the marketplace once, then install any plugin from it:
 > /plugin marketplace add lovaizu/ccpm
 > /plugin install rn@ccpm
 ```
+
+## Building the plugins
+
+Each plugin's design, tests and trials are in [`dev/`](./dev/README.md), outside the folder that is installed.

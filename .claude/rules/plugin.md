@@ -32,6 +32,12 @@ official plugins.
   `dev/<plugin>/`.**
   - Rationale: the README is read by people deciding to use the plugin, and installing copies the
     plugin's folder, so what only builders need stays out of both.
+- **Put a `README.md` in each folder where a visitor picks where to go next: the repository root,
+  `dev/`, and each `dev/<plugin>/`; put none deeper.** The root leads users to each plugin's README
+  and builders to `dev/`; `dev/` lists each plugin's folder and links these rules; `dev/<plugin>/`
+  links the design and says how to run the tests and trials, once they exist.
+  - Rationale: GitHub shows a folder's README when it is opened, so a visitor finds the way by
+    opening folders; a README further down repeats its parent's and drifts from it.
 - **Write what the plugin runs on its users' machines in Python 3 with the standard library only, on
   3.9 or later, and say so in its README.** A script that only calls an existing tool may be sh.
   - Rationale: what the plugin makes can be wrong, so it is held by tests; python3 is wherever git
