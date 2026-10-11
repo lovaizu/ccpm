@@ -29,7 +29,15 @@ Next:
    A lacking viewpoint is added where it is missing, in any plugin: writ's prompt.md now asks how
    the AI gets from a problem to what it changes (#53 notes it); turn's prompts were read against
    it and the evaluator's rule now holds wherever the cause acts.
-   Open (start here): next is checking each prompt alone, then the flow with stand-in agents.
+   Done (2026-10-11, afe0d15): each agent's prompt run alone with prompt.md (runs kept in the
+   session scratchpad, not in the repository). The evaluator now decides from the records; the
+   generator marks what is not known where it is needed. Let go, as the loop catches them: the
+   generator naming a stand-in beside "not known yet", its claims of checks it did not run, the
+   learner adding advice, the first user testing error lines beyond the guide, and a remake whose
+   edit failed going to the caller.
+   Open for the user: README's CCS example (`turn/README.md:98`) says "without asking anyone"
+   beside a gap asking who gives the token; the trial plugin now says "following the guide alone".
+   Next: the orchestrator's flow with stand-in agents.
    Earlier points, now settled except the README clash: how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
    in the design; `trace.py`'s output was long and hard to read; the full trial runner came before
