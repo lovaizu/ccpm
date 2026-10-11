@@ -13,8 +13,9 @@ verification: dev/pith/trials
 Whoever makes a work, a person or a plugin such as writ or rn, has it checked by a first user who
 knows nothing of the talk and uses it as its receiver would, and gets back where it fell short of
 the aim; for a kind of work with no essentials file, pith writes one. pith is its own plugin, built
-on turn, and installed alone it works without writ (#52, #35). Its README, design and prompts are
-made through `turn:up`, with writ's essentials files as the viewpoints.
+on turn, and installed alone it works without writ (#52, #35). When pith runs, it hands each of
+its jobs to `turn:up`. Its README, design and prompts are made through `turn:up` too, with writ's
+essentials files as the viewpoints.
 
 # Acceptance criteria
 
@@ -39,16 +40,19 @@ made through `turn:up`, with writ's essentials files as the viewpoints.
 # Assumptions
 
 - Fact, from #52: pith is built on turn, in a pull request of its own.
-- Fact, from the request: the README, the design and the prompts are each made by writing a CCS and
-  calling `turn:up`; the viewpoints are writ's essentials files. rn is not used.
+- Fact, decided by the user: the README, the design and the prompts are each made by writing a CCS
+  and calling `turn:up`; the viewpoints are writ's essentials files. rn is not used.
+- Fact, decided by the user: when pith runs, it hands each of its jobs to `turn:up`, as every
+  plugin does.
 - Fact, decided by the user: trials and agents run on Opus; Haiku is not used.
 - Fact, decided by the user: this session fixes turn while it makes pith.
 - Fact, decided by the user: rn, writ and pith are released together, so this pull request does not
   release pith.
-- Not yet decided: what pith leaves to turn and what it keeps (for example, whether checking a work
-  that is already made goes through `turn:up`). Settled with the user, one point at a time, in #2.
-- Not yet decided: whether this pull request removes pith from writ, or leaves writ as it is until
-  writ is rebuilt (#53).
+- Not yet decided: pith is built on turn; what is left for pith itself (for example, writing an
+  essentials file for a kind of work that has none) is settled with the user, one point at a time,
+  in #2.
+- Not yet decided: whether this pull request removes pith from writ. Recommended: leave writ as it
+  is, and handle it when writ is rebuilt (#53), so this pull request holds pith alone.
 
 # Rules
 
