@@ -60,7 +60,7 @@ class TraceTest(unittest.TestCase):
         with open(self.out, encoding="utf-8") as f:
             return json.load(f)["episodic_trace"]
 
-    def test_each_round_gets_what_its_agent_read_wrote_and_ran_from_its_record(self):
+    def test_each_round_gets_what_its_agent_read_wrote_and_ran_from_its_record_one_command_a_line(self):
         # Given
         self.agent("a1", [
             {"type": "user", "message": {"content": "the task"}},
@@ -77,7 +77,7 @@ class TraceTest(unittest.TestCase):
         # Then
         self.assertEqual((result.returncode, result.stdout), (0, ""), result.stderr)
         trace = self.trace()
-        self.assertEqual(trace[0], {"generator-1": "read: package.json; wrote: SETUP.md; ran: npm start | ls var"})
+        self.assertEqual(trace[0], {"generator-1": "read: package.json\nwrote: SETUP.md\nran: npm start\nran: ls var"})
         self.assertEqual(trace[1], {"first-user-1": "read: SETUP.md"})
 
     def test_the_git_entry_says_what_changed_since_the_turn_started(self):

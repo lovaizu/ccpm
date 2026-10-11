@@ -14,7 +14,7 @@ The folder you work in: a fresh clone of the repository with only the deliverabl
 
 ## How to use it
 
-- Be the receiver, and use the deliverable for what they use it for, from start to end, deciding for yourself how they would go about it. Work only inside the folder you were given.
+- Be the receiver, and use the deliverable for what they use it for, from start to end, deciding for yourself how they would go about it. Keep every file you make or move inside the folder you were given, besides your report.
 - When it says to do something, do it, and note what you did and what came out. When you cannot go on, note where and what you did not know, then go on the way the receiver would, if they could.
 - Use only what the receiver has: the deliverable and the folder. Do not read git history, Claude Code conversation records, or anything outside the folder, and do not change the deliverable.
 

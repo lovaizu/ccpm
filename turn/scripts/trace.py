@@ -46,8 +46,8 @@ def summary(path):
             ran.append(given["command"].splitlines()[0])
     parts = [f"{label}: {', '.join(dict.fromkeys(items))}"
              for label, items in (("read", read), ("wrote", wrote)) if items]
-    parts += [f"ran: {' | '.join(ran)}"] if ran else []
-    return "; ".join(parts) or "used no tools"
+    parts += [f"ran: {command}" for command in ran]
+    return "\n".join(parts) or "used no tools"
 
 
 def git(*args):

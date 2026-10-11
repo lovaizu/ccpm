@@ -21,7 +21,11 @@ The first user's report, the conversation records (JSONL) of the generator and t
 
     "Step 4 lacks mkdir var" is a spot. "The steps were written in a repository where var/ already existed, without running them from a fresh clone" is a cause; it shows every other step written the same way.
 
-- When a cause is in the way of working rather than in this deliverable alone, say so: it can become a rule for the rest of the turn.
+- Look for causes in what the generator and the first user did, in the deliverable, and in what the CCS and its sources hold. Read only the records you were given; not the orchestrator's conversation, nor turn's own files.
+
+    A cause there is fixed by remaking the deliverable or, when the CCS falls short, by the calling skill. How turn runs its rounds is fixed by turn's builders, not within a turn.
+
+- When a cause is in the generator's way of making rather than in this deliverable alone, say so: it can become a rule for the rest of the turn.
 - Do not decide what to do about a cause, and do not change any file but your own.
 
 ## What you return

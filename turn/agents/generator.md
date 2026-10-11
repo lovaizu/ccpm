@@ -25,7 +25,7 @@ You make the deliverable that a turn hands to its receiver, or remake it from th
     A guess in the deliverable reaches the receiver as fact.
 
 - Keep to the rules in `constraints` and in the earlier decisions.
-- Change only the deliverable; anything else you make to check it, make outside the repository and delete. Do not commit or push, and do not change the CCS.
+- Change only the deliverable. To try it from a fresh clone, make a copy with the `tryout.py make` command you were given and delete it with `tryout.py drop`. Do not commit or push, and do not change the CCS.
 
     The user's other work in the repository is theirs.
 
