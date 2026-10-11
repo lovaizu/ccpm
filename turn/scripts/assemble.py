@@ -7,7 +7,8 @@
 "why": "<on an unsettled point>", "question": "<when only the user can settle it>",
 "before": "same" | "not" (on a More from round 2 on), "grounds": ["first-user-1#3"]}]}
 and learner-n.json {"learnings": [{"learning": "...", "grounds": ["generator-1#2", "SETUP.md:12"]}]}.
-The returned CCS carries the judgments of the version returned. episodic_trace is left empty for trace.py.
+The returned CCS carries the judgments of the version returned, and also the Mores the next round found that
+version shared. episodic_trace is left empty for trace.py.
 """
 import copy
 import json
