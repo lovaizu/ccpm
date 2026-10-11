@@ -68,16 +68,13 @@ Next:
    with SubagentHandback before they stop, so a SubagentStop block does nothing; refusing the
    SubagentHandback call in PreToolUse does keep the agent running. Design 2 says so (uncommitted
    line committed with this note).
-   Flow trial flow-3 (/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-fix-rn/d5695834-5148-4652-a8df-59584d951228/scratchpad/flow-3, with dump.py beside it to print a record): 8 of 9 checks pass; "the agents are called in this order" fails
-   because in round 2 the learner's stand-in command ran twice (learner-2, learner-3 in calls.jsonl).
-   Not yet known whether one learner kept running by the hook ran it again or the orchestrator called
-   two learners. Do not run unit tests while a flow trial runs (they make turn-try-* folders the
-   trial counts).
-   Next (start here): read every record of flow-3 from a list made first (both sessions and every
-   agent under ~/.claude/projects/*flow-3*), checking above all that each agent was kept running until
-   it had read what it must; then decide the cause of the double learner run; then put the changed
-   prompts through writ's prompt.md; then the first real use (pith, writ or rn) in a session the user
-   starts.
+   Flow trial flow-3 failed one check only because a learner kept running by the hook ran its
+   stand-in command again; every record showed the orchestrator calling the agents in order and each
+   generator, learner and evaluator kept running until it had read its files. flow.py now reads the
+   order from the orchestrator's calls; flow-4 passed all 9 checks.
+   Next (start here): put the prompts changed since afe0d15 (four agents and up's SKILL.md) through
+   writ's prompt.md, as before (one first user per prompt, runs in the session scratchpad); then the
+   first real use (pith, writ or rn) in a session the user starts.
    Then: the user starts the session for the first of pith, writ and rn; this session sends it the
    work and judges turn from the records and the evidence.
 4. Decided by the user (2026-10-11): turn is used in two ways. When each plugin runs, its skill hands

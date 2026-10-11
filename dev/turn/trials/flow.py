@@ -39,10 +39,7 @@ DECISIONS = [
                   "grounds": ["NOTE.md:1"]}],
      "rules": [], "gaps": [], "links": ["NOTE.md ← hours.txt"]},
 ]
-CALLS = ["generator-1", "first-user-1", "learner-1", "evaluator-1",
-         "generator-2", "first-user-2", "learner-2", "evaluator-2",
-         "generator-3",
-         "generator-4", "first-user-3", "learner-3", "evaluator-3"]
+CALLS = [*ROLES, *ROLES, "generator", *ROLES]
 KEPT = ("focal_entities", "goal_orientation", "retrieved_artifacts")
 WORKDIR = Path()
 
@@ -68,9 +65,11 @@ import json, subprocess, sys
 role, target = sys.argv[1], sys.argv[2]
 log = {log!r}
 try:
-    n = sum(1 for line in open(log) if json.loads(line)["role"] == role) + 1
+    files = [json.loads(line)["file"] for line in open(log) if json.loads(line)["role"] == role]
 except FileNotFoundError:
-    n = 1
+    files = []
+files = list(dict.fromkeys(files + [target]))
+n = files.index(target) + 1
 open(log, "a").write(json.dumps({{"role": role, "call": n, "file": target}}) + "\\n")
 if role == "generator":
     top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
@@ -111,11 +110,6 @@ def setup(workdir):
     return repo, plugin
 
 
-def calls(workdir):
-    path = workdir / "calls.jsonl"
-    return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
-
-
 class Session:
     """A Claude Code conversation the user types into, one message at a time."""
 
@@ -148,18 +142,19 @@ class Session:
         self.out.close()
 
 
-def agent_prompts(workdir, role):
+def agent_calls(workdir):
+    """The agents the orchestrator called, in order, as (role, prompt); a stand-in kept running by
+    turn's check may run its command again, so the order is read from the calls, not the log."""
     out = []
-    for path in workdir.glob("session-*.jsonl"):
+    for path in sorted(workdir.glob("session-*.jsonl")):
         for line in path.read_text().splitlines():
             try:
                 m = json.loads(line)
             except ValueError:
                 continue
             content = m.get("message", {}).get("content") if m.get("type") == "assistant" else None
-            out += [c["input"].get("prompt", "") for c in content or []
-                    if c.get("type") == "tool_use" and c["name"] == "Agent"
-                    and c["input"].get("subagent_type") == f"turn:{role}"]
+            out += [(c["input"].get("subagent_type", "").removeprefix("turn:"), c["input"].get("prompt", ""))
+                    for c in content or [] if c.get("type") == "tool_use" and c["name"] == "Agent"]
     return out
 
 
@@ -198,7 +193,7 @@ def main(argv):
     first = Session(workdir, "session-1", repo, plugin)
     first.wait(first.say("/note:note"))
     seen = first.say(ANSWER)
-    while sum(c["role"] == "generator" for c in calls(workdir)) < 3 and first.p.poll() is None:
+    while sum(r == "generator" for r, _ in agent_calls(workdir)) < 3 and first.p.poll() is None:
         time.sleep(2)
     first.say("Stop the task here, please.")
     first.wait(seen)
@@ -219,7 +214,7 @@ def main(argv):
                                                      for k in (1, 3, 4)]
         == [["ask the user"], ["stopped: first-user-1"], ["done"]],
         "the question is the one gap": values(tasks[1], "uncertainty_signal", "gap") == [QUESTION],
-        "the agents are called in this order": [f"{c['role']}-{c['call']}" for c in calls(workdir)] == CALLS,
+        "the agents are called in this order": [r for r, _ in agent_calls(workdir)] == CALLS,
         "the rule and the answer reach the last CCS": [
             (k, v if k == "rule" else v.startswith(QUESTION)) for e in tasks[4].get("constraints", [])
             for k, v in e.items() if k in ("rule", "answer")] == [("rule", RULE), ("answer", True)],
@@ -228,7 +223,7 @@ def main(argv):
         and git(other, "rev-list", "--count", f"{start}..HEAD") == "0",
         "no temporary folder left": not left,
         "the first user is never told the acceptance": not any(
-            ACCEPTANCE in p for p in agent_prompts(workdir, "first-user")),
+            ACCEPTANCE in p for r, p in agent_calls(workdir) if r == "first-user"),
         "each returned CCS points to its evidence, with each round's steps": [
             [r["round"] for r in evidence(t)["rounds"] if any("first-user" in s["step"] for s in r["steps"])]
             for t in (tasks[1], tasks[3], tasks[4])] == [[1, 2], [], [1]],
