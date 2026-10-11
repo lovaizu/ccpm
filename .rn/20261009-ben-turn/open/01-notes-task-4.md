@@ -39,8 +39,9 @@ Next:
    Done (2026-10-11): the orchestrator's flow with stand-in agents (`dev/turn/trials/flow.py`), all
    five ways a round can end gave the expected `next`, agents, no commit, no copy left, the CCS
    received unchanged, the acceptance never told to the first user. Every run fumbled reading the
-   CCS (step 4 named no expression); SKILL.md now gives it, and a rerun read it in one call. Left as
-   is: the orchestrator's last message runs to several lines, not one.
+   CCS by hand; decided by the user (2026-10-11): the steps that need no judgment are one script,
+   `turn/scripts/up.py` (start, copy, round, end), so the orchestrator only calls the agents and
+   that script. Rerun on all five: as expected, and the orchestrator ran nothing but up.py.
    Next (start here): the real trial (`dev/turn/trials/run.py`), read from every JSONL.
    Earlier points, now settled except the README clash: how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
