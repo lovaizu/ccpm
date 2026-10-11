@@ -52,7 +52,7 @@ What holds for every role follows from the principles:
 | Generator | What the deliverable should be; the sources; the last round's Mores and learnings, or, in a turn's first round, those of the CCS received | The deliverable; a report of what it did and of what the deliverable needs that it could not settle | The deliverable stays at its place. The report goes to the evaluator |
 | First user | A copy holding only what the receiver has, the deliverable's place in it, the receiver and the use | A report of what it did and what happened | To the learner and the evaluator |
 | Learner | What the deliverable should be; the first user's report; both agents' steps | The learnings: why the deliverable came out away from what it should be | To the generator and the evaluator. The learnings of the returned version's round go into `relational_map` as `learning` |
-| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings | For each point, Good, More with what fell short, or what the deliverable should be does not settle; a question for each point only the user can settle | Each More goes to the generator, and, for the returned version's round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
+| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings | For each point, Good, More with what fell short, or what the deliverable should be does not settle; one question for each thing only the user can settle, asked once however many points need it | Each More goes to the generator, and, for the returned version's round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
 | Scripts | The records of every agent called, and git | The steps of each round; what each agent read, changed and ran | The steps and every agent's output go into the evidence; what each agent read, changed and ran goes into `episodic_trace`, with the place of the evidence |
 
 What the generator could not settle reaches the user through the evaluator, which gives the point that needs it no Good or More but a question or an unsettled reason. Only the evaluator judges, so a gap the generator leaves is weighed against what the deliverable should be like any other point.
@@ -99,7 +99,7 @@ Keeps the promises "the deliverable is judged against what you write it should b
 
 Keeps the promises "the deliverable shown has already been used, and what still falls short is named", "the deliverable is judged against what you write it should be, and nothing else" and "everything your skill needs for its next step can be traced from the returned CCS".
 
-- Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to finish. If something is missing, the same agent is kept running and told what.
+- Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to write what it returns and when it tries to finish. If something is missing, the same agent is kept running and told what.
 
     "Read the deliverable and the records, and decide from the facts" asked in words is met by skimming, and an account can claim a read that never happened. The record is written by Claude Code, not by the agent, so it shows what was done. Claude Code's hooks are made for this: one runs before the call that hands back an agent's report and can refuse it with the reason, which keeps the agent running.
 
@@ -107,7 +107,7 @@ Keeps the promises "the deliverable shown has already been used, and what still 
 
     A record is long and a CCS is read a part at a time, so whether either was read through cannot be told. The files the script makes hold the same facts, and a file read with Claude Code's Read tool leaves in the record which lines were read.
 
-- Each agent must have read whole, before it finishes:
+- Each agent must have read whole before it writes what it returns: the generator before it first changes the deliverable, and the learner and the evaluator before they write their file. The same is checked when it finishes, for a generator that changes nothing:
 
     | Agent | Read whole |
     |---|---|
@@ -115,7 +115,7 @@ Keeps the promises "the deliverable shown has already been used, and what still 
     | Learner | What the deliverable should be with the rules and the user's answers, every viewpoint file, the first user's report and both agents' steps |
     | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps and the learnings |
 
-    Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
+    Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it, and at the end, a read made after the work cannot be told from one that shaped it. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
 
 - What the first user is handed is checked when it is called: it never holds the acceptance criteria.
 
