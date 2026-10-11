@@ -161,7 +161,7 @@ class UpTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(folder, "SETUP.md")))
         self.assertTrue(os.path.isfile(os.path.join(folder, "setup.md")))
 
-    def test_copy_without_the_deliverable_says_so_and_fails(self):
+    def test_copy_without_the_deliverable_says_so_fails_and_leaves_nothing(self):
         # Given
         self.write(".t/in.json", json.dumps(dict(CCS, focal_entities=[{"deliverable": "GUIDE.md"}, {"receiver": "A new team member"}])))
         work = self.start()
@@ -170,6 +170,7 @@ class UpTest(unittest.TestCase):
         # Then
         self.assertEqual(result.returncode, 1)
         self.assertIn("deliverable GUIDE.md does not exist", result.stdout)
+        self.assertFalse(os.path.exists(work))
 
     def test_steps_turns_the_round_s_generator_and_first_user_records_into_numbered_steps(self):
         # Given
