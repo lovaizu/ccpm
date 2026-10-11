@@ -104,7 +104,7 @@ Keeps the promise "they are asked only what only they can decide".
 
 ### Deciding from the returned CCS alone
 
-Keeps the promise "you decide the next step without reading the work".
+Keeps the promise "your skill decides its next step from the returned CCS alone".
 
 - The orchestrator writes, from the evaluator's decisions, how each stumble ended (`difference`), what only the user can decide (`gap`), the rules (`rule`), how the work connects to its sources (`link`) and what to do next (`next`).
 - What each agent actually read, wrote and ran (`episodic_trace`) is written by a script from the conversation records and git before the turn returns.
@@ -177,7 +177,7 @@ Whether the promises reach the plugin's users is checked first, by trials. The t
 
     Scene: the trial above, run from a small plugin that only writes the CCS, calls `turn:up` and reads `next`. It passes when the trial above passes though that plugin's skill has no steps for making, trying or fixing.
 
-- "You decide the next step without reading the work"
+- "Your skill decides its next step from the returned CCS alone"
 
     Scene: the CCS returned in the trial above. It passes when the next step decided from the CCS alone is the same as the one decided after also reading the work and the conversation records.
 

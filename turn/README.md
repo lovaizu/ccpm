@@ -10,9 +10,9 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
     All you write is the task's CCS and a viewpoint file that says what good work is in your domain. If the loop needs a fix, it is fixed in one place, turn.
 
-- You decide the next step without reading the work.
+- Your skill decides its next step from the returned CCS alone.
 
-    Read `next` from the returned CCS with one line of `jq`, and you know whether the task is done or there is something to ask your user.
+    One line of `jq` reads `next` from it and tells your skill whether the task is done or there is something to ask your user. Your skill does not have to open the work to find out.
 
 - The acceptance criteria and rules do not change in the middle of a task.
 
