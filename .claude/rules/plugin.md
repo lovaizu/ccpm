@@ -56,6 +56,10 @@ official plugins.
   would receive, and check a case it stops as well as one it lets through.
   - Rationale: installing copies the plugin's whole folder; a check that never stops anything looks
     the same as one that works.
+- **Write each test before the code it checks, run it and see it fail, then write the code until it
+  passes.**
+  - Rationale: a test written after the code is fitted to what the code does, not to what it must
+    do; a test never seen failing may check nothing.
 - **Name each test by what must happen, as one sentence, and mark its body `# Given`, `# When`,
   `# Then`.**
   - Rationale: a test whose Then checks nothing stands out.

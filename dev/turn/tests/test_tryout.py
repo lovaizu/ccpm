@@ -89,6 +89,7 @@ class TryoutTest(unittest.TestCase):
         # Given
         self.write("SETUP.md", "# Setup\n")
         folder = self.run_tryout("make", "SETUP.md").stdout.strip()
+        self.assertTrue(folder and os.path.isdir(folder), folder)
         # When
         result = self.run_tryout("drop", folder)
         # Then
