@@ -10,7 +10,7 @@ import sys
 def main():
     data = json.loads(sys.stdin.read())
     here = os.path.dirname(os.path.abspath(__file__))
-    sys.path[:0] = [here, os.path.join(here, "..", "scripts")]
+    sys.path.insert(0, here)
     import turn_state
     from checks import first_user_place, generator_place, grounds, handed, no_commit, read_whole
 

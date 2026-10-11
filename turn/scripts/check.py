@@ -8,8 +8,9 @@ Prints what does not match and exits 1; prints nothing and exits 0 when the CCS 
 import json
 import os
 import re
-import subprocess
 import sys
+
+import tryout
 
 # The kinds each part may hold. episodic_trace holds an agent and its round, git, or the evidence.
 KINDS = {
@@ -73,11 +74,6 @@ def values(ccs, part, kind):
     return [v for e in ccs[part] for k, v in e.items() if k == kind]
 
 
-def top():
-    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
-    return os.path.realpath(r.stdout.strip()) if r.returncode == 0 else ""
-
-
 def places(ccs, repo):
     """What does not match in the places the CCS points to."""
     out = []
@@ -128,7 +124,7 @@ def main(argv):
         print(__doc__.strip())
         return 2
     _, mode, in_path, out_path = argv
-    repo = top()
+    repo = tryout.top()
     if not repo:
         print("not inside a git repository")
         return 1

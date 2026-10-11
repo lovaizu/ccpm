@@ -24,8 +24,8 @@ def shorten(out):
     return "\n".join(lines[:HEAD] + [f"({len(lines) - HEAD - TAIL} lines left out)"] + lines[-TAIL:])
 
 
-def steps(record, name):
-    """The steps in the record, as dicts with step, did, came_out and error."""
+def pairs(record):
+    """Each tool call in a conversation record, in order, with its result ({} when none came back)."""
     calls, results = [], {}
     with open(record, encoding="utf-8") as f:
         for line in f:
@@ -35,12 +35,16 @@ def steps(record, name):
                     calls.append(c)
                 elif c.get("type") == "tool_result":
                     results[c.get("tool_use_id")] = c
+    return [(c, results.get(c.get("id"), {})) for c in calls]
+
+
+def steps(record, name):
+    """The steps in the record, as dicts with step, did, came_out and error."""
     out = []
-    for n, c in enumerate(calls, 1):
+    for n, (c, r) in enumerate(pairs(record), 1):
         given = c.get("input", {})
         key = PLACE.get(c["name"])
         did = given[key] if key in given else json.dumps(given, ensure_ascii=False)
-        r = results.get(c.get("id"), {})
         out.append({"step": f"{name}#{n}", "did": f"{c['name']} {did}", "came_out": shorten(text(r.get("content"))),
                     "error": bool(r.get("is_error"))})
     return out

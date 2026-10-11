@@ -6,10 +6,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scripts"))
 
 import tryout  # noqa: E402
-
-
-def values(ccs, part, kind):
-    return [e[kind] for e in ccs[part] if kind in e]
+from check import values  # noqa: E402
 
 
 def files(path):

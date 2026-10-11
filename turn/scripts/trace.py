@@ -12,6 +12,8 @@ import os
 import subprocess
 import sys
 
+import steps
+
 READS = {"Read": "file_path", "Grep": "path", "Glob": "path"}
 WRITES = {"Write": "file_path", "Edit": "file_path", "NotebookEdit": "notebook_path"}
 
@@ -23,21 +25,10 @@ def record(session, agent):
     return found[0] if found else ""
 
 
-def calls(path):
-    """The tool calls in a conversation record, in order, as (tool name, input)."""
-    out = []
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            content = json.loads(line).get("message", {}).get("content")
-            for c in content if isinstance(content, list) else []:
-                if c.get("type") == "tool_use":
-                    out.append((c["name"], c.get("input", {})))
-    return out
-
-
 def summary(path):
     read, wrote, ran = [], [], []
-    for name, given in calls(path):
+    for c, _ in steps.pairs(path):
+        name, given = c["name"], c.get("input", {})
         if name in READS and given.get(READS[name]):
             read.append(given[READS[name]])
         elif name in WRITES:

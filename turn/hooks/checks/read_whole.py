@@ -2,10 +2,10 @@
 
 Asked in words, reading is met by skimming; the record shows which lines each Read showed.
 """
-import json
 import os
 import re
 
+import steps
 from turn_state import files
 
 SHOWN = re.compile(r"^\s*(\d+)\t", re.M)
@@ -30,18 +30,11 @@ def required(role, t):
 
 def shown(transcript):
     """The line numbers each file's successful Reads showed, by real path."""
-    calls, seen = {}, {}
-    with open(transcript, encoding="utf-8") as f:
-        for line in f:
-            content = json.loads(line).get("message", {}).get("content")
-            for c in content if isinstance(content, list) else []:
-                if c.get("type") == "tool_use" and c.get("name") == "Read":
-                    calls[c.get("id")] = os.path.realpath(c.get("input", {}).get("file_path", ""))
-                elif c.get("type") == "tool_result" and c.get("tool_use_id") in calls and not c.get("is_error"):
-                    body = c.get("content")
-                    text = body if isinstance(body, str) else "\n".join(x.get("text", "") for x in body or [])
-                    lines = seen.setdefault(calls[c["tool_use_id"]], set())
-                    lines.update(int(m) for m in SHOWN.findall(text))
+    seen = {}
+    for c, r in steps.pairs(transcript):
+        if c["name"] == "Read" and r and not r.get("is_error"):
+            lines = seen.setdefault(os.path.realpath(c.get("input", {}).get("file_path", "")), set())
+            lines.update(int(m) for m in SHOWN.findall(steps.text(r.get("content"))))
     return seen
 
 
