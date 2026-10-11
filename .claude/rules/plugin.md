@@ -73,6 +73,10 @@ official plugins.
 - **Judge a trial from the JSONL of every conversation and agent it started, not from its outcome
   alone.**
   - Rationale: the outcome shows that something went wrong, the records show where.
+- **Change a prompt or a document after a run only for a cause confirmed in the records and traced
+  to what the README and design say it should be; never to fit what one run did.**
+  - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
+    different slip in the next, and the additions never settle.
 - **Run a trial that needs a real GitHub repository in the private `lovaizu/rn-try`, one
   at a time.**
   - Rationale: pull requests and pushes a run makes stay out of every repository people use, and

@@ -31,44 +31,6 @@ turn puts one such turn into a form that plugins which have AI make something ca
 
     The deliverable is tried out in a copy inside a temporary folder that is deleted afterward. turn never commits or pushes.
 
-## An example
-
-Take a plugin `setup` that writes setup guides for new team members. When a user calls the plugin, it goes like this:
-
-```text
-> /setup:guide
-
-  Writing the setup guide (SETUP.md).
-  ⎿ turn: making it
-  ⎿ turn: trying it as a new team member, in a freshly cloned copy
-  ⎿ turn: stopped at step 4 (var/ does not exist). The cause: the steps were written without running them. Rewriting them while running each one, then trying again
-  ⎿ turn: it worked to the end
-
-  One question for you:
-  Who gives a new team member the API token?
-
-> Sato from operations
-
-  ⎿ turn: adding the answer and trying the token step again
-
-  SETUP.md is ready. Tried as a new team member, it got the app running without asking anyone.
-```
-
-Behind this, the plugin's skill and turn pass a CCS back and forth.
-
-```mermaid
-flowchart LR
-  W[The skill writes a CCS] --> T[It calls turn:up]
-  T --> R[A new CCS comes back]
-  R --> N{next}
-  N -->|done| D[Commit and finish]
-  N -->|ask the user| A[Ask the user, write a CCS with the answer added] --> T
-  N -->|to the caller| P[The skill decides]
-  N -->|stopped| T
-```
-
-The skill does three things: it writes the CCS, calls `turn:up`, and decides what to do from `next` in the returned CCS. turn does the making, the trying and the fixing.
-
 ## How a turn works
 
 A person tries out what they made, fixes what tripped them up, and only then hands it to the person who will use it (the receiver). turn does this whole stretch in one call to `turn:up`.

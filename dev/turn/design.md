@@ -32,7 +32,7 @@ The orchestrator works toward what the CCS says the deliverable should be. It ha
 
 ## 2. Features
 
-The promises each feature keeps are those under "For plugin authors" and "For your plugin's users" in the README. The scenes where they work are "An example" and "Deciding from the returned CCS".
+The promises each feature keeps are those under "For plugin authors" and "For your plugin's users" in the README. The scenes where they work are "Calling turn" and "Deciding from the returned CCS".
 
 Who passes what to whom within one turn:
 
