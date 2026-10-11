@@ -86,14 +86,15 @@ def leave_out_acceptance(folder, deliverable, acceptance):
     kept = os.path.join(folder, deliverable)
     for top, dirs, names in os.walk(folder):
         dirs[:] = [d for d in dirs if d != ".git"]
-        for name in names:
-            path = os.path.join(top, name)
-            if os.path.samefile(path, kept) or path.startswith(kept + os.sep):
-                continue
-            with open(path, encoding="utf-8", errors="replace") as f:
-                text = f.read()
-            if any(a in text for a in acceptance):
+        for path in [os.path.join(top, n) for n in names]:
+            if not (os.path.samefile(path, kept) or path.startswith(kept + os.sep)) and holds(path, acceptance):
                 os.remove(path)
+
+
+def holds(path, words):
+    with open(path, encoding="utf-8", errors="replace") as f:
+        text = f.read()
+    return any(w in text for w in words)
 
 
 def make_steps(work, generator, first_user):
