@@ -73,7 +73,8 @@ class PreToolUseTest(unittest.TestCase):
                  ("Grep", {"pattern": "x", "path": self.repo}, "outside"),
                  ("Glob", {"pattern": "*.md"}, "outside"),
                  ("Write", {"file_path": os.path.join(self.copy, "var/log"), "content": ""}, None),
-                 ("Edit", {"file_path": os.path.join(self.copy, "SETUP.md")}, "the deliverable")]
+                 ("Edit", {"file_path": os.path.join(self.copy, "SETUP.md")}, "the deliverable"),
+                 ("Agent", {"subagent_type": "Explore", "prompt": "look"}, None)]
         for tool, given, said in cases:
             with self.subTest(tool=tool, given=given):
                 # When
@@ -89,7 +90,8 @@ class PreToolUseTest(unittest.TestCase):
         cases = [({"command": f"cd {self.copy} && npm start"}, self.repo, None),
                  ({"command": "npm start"}, self.copy, None),
                  ({"command": "npm start"}, self.repo, "cd into"),
-                 ({"command": f"cat {self.repo}/setup.md"}, self.copy, "outside")]
+                 ({"command": f"cat {self.repo}/setup.md"}, self.copy, "outside"),
+                 ({"command": f'cd {self.copy} && echo "unclosed'}, self.repo, None)]
         for given, cwd, said in cases:
             with self.subTest(given=given, cwd=cwd):
                 # When
@@ -121,7 +123,7 @@ class PreToolUseTest(unittest.TestCase):
         # Given
         cases = [("git commit -m x", "turn:generator", True), ("git -C . push", "turn:evaluator", True),
                  ("npm test && git commit -am y", "turn:learner", True), ("git status", "turn:generator", False),
-                 ("git commit -m x", "Explore", False)]
+                 ("git commit -m x", "Explore", False), ('git commit -m "unclosed', "turn:generator", True)]
         for command, agent, stopped in cases:
             with self.subTest(command=command, agent=agent):
                 # When

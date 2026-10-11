@@ -196,6 +196,7 @@ class SubagentStopTest(unittest.TestCase):
         entries = [e for p in ("first-user-1.md", "steps-generator-1.md", "steps-first-user-1.md")
                    for e in self.read(os.path.join(self.work, p))] + self.read(os.path.join(self.repo, "views/setup.md"))
         cases = {"{no": "is not in the form", '{"causes": [{"stumble": "x"}]}': "is not in the form",
+                 '{"causes": "x"}': "is not in the form",
                  json.dumps({"causes": [{"stumble": "x", "cause": "y", "way_of_working": False,
                                          "grounds": ["first-user-1#9"]}]}): "first-user-1#9 is not a step"}
         for text, said in cases.items():
