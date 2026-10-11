@@ -1,5 +1,6 @@
 """Keep the learner and the evaluator running until their output is in form, each learning and judgment names
-steps or deliverable lines that exist, and each point judged is one of what the deliverable should be."""
+steps or deliverable lines that exist, each point judged is one of what the deliverable should be, and every
+acceptance criterion is judged."""
 import json
 import os
 
@@ -68,5 +69,8 @@ def check(data, t):
     named = [g for e in entries for g in e["grounds"]]
     out = [w for w in (wrong(g, t) for g in dict.fromkeys(named)) if w]
     if role == "evaluator":
-        out += [w for w in (not_a_point(p, t) for p in dict.fromkeys(e["point"] for e in entries)) if w]
+        judged = dict.fromkeys(e["point"] for e in entries)
+        out += [w for w in (not_a_point(p, t) for p in judged) if w]
+        # A script cannot list a viewpoint file's points, so only the acceptance criteria are checked for a judgment.
+        out += [f"{a} is an acceptance criterion with no judgment" for a in t["acceptance"] if a not in judged]
     return out

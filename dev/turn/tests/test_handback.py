@@ -262,6 +262,16 @@ class HandbackTest(unittest.TestCase):
                 self.assertIn(f"{point} is neither an acceptance criterion as written nor a line of a viewpoint file",
                               reason)
 
+    def test_an_evaluator_that_left_an_acceptance_criterion_unjudged_is_told_which(self):
+        # Given: an evaluator that read everything and judged only a point of the viewpoint, leaving out the acceptance criterion
+        self.round_one_files()
+        self.judge(["first-user-1#2"], point="views/setup.md:1")
+        # When: it hands back its report
+        reason = self.blocked(self.stop("turn:evaluator", self.evaluator_reads()))
+        # Then: it is told the acceptance criterion has no judgment
+        self.assertIn(f"{CCS['goal_orientation'][0]['acceptance']} is an acceptance criterion with no judgment",
+                      reason)
+
     def test_a_deliverable_folder_must_be_read_file_by_file_and_its_lines_can_be_grounds(self):
         # Given: a turn whose deliverable is a folder, and an evaluator that read everything but the file in it and rests a judgment on a line of that file
         with open(os.path.join(self.repo, ".t/in.json"), encoding="utf-8") as f:
