@@ -51,8 +51,8 @@ What holds for every role follows from the principles:
 |---|---|---|---|
 | Generator | What the deliverable should be; the sources; the last round's Mores and learnings, or, in a turn's first round, those of the CCS received | The deliverable; a report of what it did and of what the deliverable needs that it could not settle | The deliverable stays at its place. The report goes to the evaluator |
 | First user | A copy holding only what the receiver has, the deliverable's place in it, the receiver and the use | A report of what it did and what happened | To the learner and the evaluator |
-| Learner | What the deliverable should be; the first user's report; both agents' steps | The learnings: why the deliverable came out away from what it should be | To the generator and the evaluator. The last judged round's learnings go into `relational_map` as `learning` |
-| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings | For each point, Good, More with what fell short, or what the deliverable should be does not settle; a question for each point only the user can settle | Each More goes to the generator, and, after the last judged round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
+| Learner | What the deliverable should be; the first user's report; both agents' steps | The learnings: why the deliverable came out away from what it should be | To the generator and the evaluator. The learnings of the returned version's round go into `relational_map` as `learning` |
+| Evaluator | What the deliverable should be; the deliverable; the generator's and the first user's reports; both agents' steps; the learnings | For each point, Good, More with what fell short, or what the deliverable should be does not settle; a question for each point only the user can settle | Each More goes to the generator, and, for the returned version's round, into `uncertainty_signal` as `more`. Each question goes into `uncertainty_signal` as `gap`. Each unsettled point goes into the reason of `next` |
 | Scripts | The records of every agent called, and git | The steps of each round; what each agent read, changed and ran | The steps and every agent's output go into the evidence; what each agent read, changed and ran goes into `episodic_trace`, with the place of the evidence |
 
 What the generator could not settle reaches the user through the evaluator, which gives the point that needs it no Good or More but a question or an unsettled reason. Only the evaluator judges, so a gap the generator leaves is weighed against what the deliverable should be like any other point.
@@ -66,18 +66,22 @@ Learnings go into `relational_map` because the ACC paper defines that part as en
 | Every point is Good | The returned CCS, with no `more` | `done` |
 | What is left needs only the user | The returned CCS, with each question as `gap` | `ask the user` |
 | A point what the deliverable should be does not settle, or a remake brought the deliverable no closer | The returned CCS, with the Mores left and any questions | `to the caller: <the points, and why>`. It comes before `ask the user`, since what the skill decides may change what the deliverable should be and with it the questions |
-| The user asked to stop | The returned CCS up to the last round the evaluator judged | `stopped: <where from>` |
+| The user asked to stop | The returned CCS, with the judgments of the returned version | `stopped: <where from>` |
 | Cut off, python3 missing, or the check of the CCS fails | No CCS. When python3 is missing or the check fails, turn says in the conversation what to install or what did not match | None. The skill calls again with the same `in` once the cause is gone, or with a corrected CCS |
 
-Every ending that returns a CCS writes the evidence beside it.
+Every ending that returns a CCS writes the evidence beside it, and leaves the returned version at the deliverable's place.
 
 ### Using the deliverable as the receiver, and remaking it
 
 Keeps the promises "the deliverable is judged against what you write it should be, and nothing else", "the deliverable shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
 
-- The deliverable returned is the one the first user used from start to end after the last remake.
+- The deliverable returned is the closest version the first user used from start to end and the evaluator judged, and the returned CCS carries that version's Mores and learnings. Since every remake the loop goes on from brought the deliverable closer, it is the last judged version, unless the last remake brought it no closer; then it is the version before that remake.
 
-    A deliverable that was made but not used, or used again only at the changed spot, has not been down the receiver's path.
+    A deliverable that was made but not used, or used again only at the changed spot, has not been down the receiver's path. A remake that turned a Good into More is farther from what the deliverable should be than the version it replaced. And the next turn starts from the CCS and the deliverable together, so the judgments must be those of the deliverable on disk.
+
+- turn keeps each version the first user used in its work folder. Before the turn returns, a script puts the returned version back at the deliverable's place, so a later version that was not judged, or that brought the deliverable no closer, is not left there.
+
+    The version put back is the generator's own, so the generator is still the only one who decides what the deliverable says. A later version's steps and judgments stay in the evidence.
 
 - Each time the first user finishes, the learner finds why the deliverable came out away from what it should be.
 
@@ -178,7 +182,7 @@ Keeps the promise "if they stop partway, the task carries on from where it stopp
 
 - When the user asks in the conversation to stop, the orchestrator calls no new agent, and the turn ends as "How a turn ends" says.
 
-    The Mores and learnings of the last judged round, and the deliverable made so far, remain in the CCS and on disk. A round not yet judged is done again in the next turn. That needs less machinery than adding a form to keep it in the CCS.
+    The returned version, with its Mores and learnings, remains on disk and in the CCS. A round not yet judged is done again in the next turn. That needs less machinery than adding a form to keep it in the CCS.
 
 - A turn cut off without returning a CCS leaves nothing behind. The skill calls again with the same `in`, and the turn starts over.
 
@@ -221,7 +225,7 @@ The promises are checked where turn is really used: writ and rn are made through
 
 A real task has no stumble set in advance, so a turn that finds nothing can mean the deliverable is fine or the stumble was missed. Each promise is judged from the records of the real work:
 
-- "The deliverable shown has already been used, with its stumbles fixed": the deliverable returned was used from start to end after the last remake, and using it as its receiver shows no point the evaluator gave Good that falls short.
+- "The deliverable shown has already been used, with its stumbles fixed": the deliverable returned is the closest version the first user used from start to end, and using it as its receiver shows no point the evaluator gave Good that falls short.
 - "You do not write the make, try and fix loop in your own skill": the calling skill only writes the CCS, calls `turn:up` and acts on `next`.
 - "The deliverable is judged against what you write it should be, and nothing else": what the CCS does not settle comes back as `to the caller` or `gap`, and is not settled in the deliverable.
 - "Everything your skill needs for its next step can be traced from the returned CCS": the next step decided from the CCS and what it points to is the same as the one decided after also reading the records.

@@ -157,9 +157,9 @@ The parts turn writes are made anew at every turn. The next turn starts from `mo
 | Part | Kind | Content |
 |---|---|---|
 | `predictive_cue` | `next` | What to do next. One of the values in the table in "Deciding from the returned CCS" |
-| `uncertainty_signal` | `more` | A point of what the deliverable should be that the deliverable, as last used, fell short of, and what fell short |
+| `uncertainty_signal` | `more` | A point of what the deliverable should be that the returned deliverable fell short of when it was used, and what fell short |
 | | `gap` | Something only the user can decide, as a question that can be asked as it is |
-| `relational_map` | `learning` | Why the deliverable, as last used, came out away from what it should be. Never how to fix it |
+| `relational_map` | `learning` | Why the returned deliverable came out away from what it should be. Never how to fix it |
 | `episodic_trace` | The agent and which round (`generator-1` is the generator's first round; likewise `first-user-1`, `learner-1` and `evaluator-1`), or `git` | What each agent actually read, wrote and ran. A script writes this from the conversation records and git |
 | | `evidence` | Where the evidence is: each step taken in trying the deliverable, and each learning and each Good or More with the steps and lines it rests on. Written beside the returned CCS |
 
@@ -211,7 +211,7 @@ jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 |---|---|
 | `done` | Commits the deliverable and the CCS and finishes. |
 | `ask the user` | Asks the user each `gap`. Adds the answers as `answer` to `constraints` of the returned CCS, writes it to a new file (`task-3.json`), and calls again with it as `in`. |
-| `to the caller: <reason>` | The reason names the points what the deliverable should be does not settle, or says that a remake brought the deliverable no closer. When there are also `gap` questions, this comes first, since what the skill decides may change them. Reads the reason and decides. For example, it writes a new CCS with what the deliverable should be fixed and calls again, or it talks it over with the user. |
+| `to the caller: <reason>` | The reason names the points what the deliverable should be does not settle, or says that a remake brought the deliverable no closer; then the deliverable returned is the version before that remake. When there are also `gap` questions, this comes first, since what the skill decides may change them. Reads the reason and decides. For example, it writes a new CCS with what the deliverable should be fixed and calls again, or it talks it over with the user. |
 | `stopped: <where from>` | The user asked, in the conversation, for turn to stop partway. Call again with the returned CCS as `in`, and it carries on from there. |
 
 - If turn ends without returning a CCS (for example, the machine stopped), call again with the same `in`. That turn starts over from the beginning.
