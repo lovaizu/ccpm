@@ -162,6 +162,22 @@ class AssembleTest(unittest.TestCase):
         self.assertEqual(out["relational_map"], [{"learning": "round 2's learning"}])
         self.assertEqual(out["uncertainty_signal"], [{"more": f"{TYPED}: step 2 was never typed"}])
 
+    def test_a_returned_version_carries_the_mores_the_next_round_found_it_shared(self):
+        # Given: round 1 with a More on one point, and round 2, no closer, with Mores the version before shared on that point and on a point round 1 gave Good
+        other = "/plugin/viewpoints/setup.md:2"
+        self.judge(1, more(STARTS), good(TYPED), good(other))
+        self.learn(1, "round 1's learning")
+        self.judge(2, dict(more(STARTS, "still needs var/"), before="same"),
+                   dict(more(TYPED, "step 2 was never typed"), before="same"),
+                   dict(more(other, "a new gap"), before="not"))
+        self.learn(2, "round 2's learning")
+        # When: the CCS to return is built
+        out = self.returned()
+        # Then: round 1 is returned with its own More, and the shared More round 1 had given Good, but not the one round 2 alone has
+        self.assertEqual(out["relational_map"], [{"learning": "round 1's learning"}])
+        self.assertEqual(out["uncertainty_signal"], [{"more": f"{STARTS}: step 3 needs var/"},
+                                                     {"more": f"{TYPED}: step 2 was never typed"}])
+
     def test_a_remake_that_turns_no_more_into_good_brings_it_no_closer(self):
         # Given: round 1 with a More, and round 2 in which it is still More
         self.judge(1, more(STARTS), good(TYPED))

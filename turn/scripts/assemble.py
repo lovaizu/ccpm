@@ -120,8 +120,12 @@ def main(argv):
     k, no_closer = returned([points for points, _ in rounds])
     if k:
         points, learned = rounds[k - 1]
-        out["uncertainty_signal"] = ([{"more": f"{p['point']}: {p['fell_short']}"} for p in points
-                                      if p["judgment"] == "more"]
+        mores = [p for p in points if p["judgment"] == "more"]
+        if k < len(rounds):
+            # A More the next round found this version shared is a fact about the version on disk.
+            own = {p["point"] for p in mores}
+            mores += [p for p in rounds[k][0] if p.get("before") == "same" and p["point"] not in own]
+        out["uncertainty_signal"] = ([{"more": f"{p['point']}: {p['fell_short']}"} for p in mores]
                                      + [{"gap": q} for q in dict.fromkeys(p["question"] for p in points
                                                                           if "question" in p)])
         out["relational_map"] = [{"learning": e["learning"]} for e in learned]
