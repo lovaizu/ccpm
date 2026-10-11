@@ -207,6 +207,8 @@ jq -r '.predictive_cue[].next // empty' .setup/task-2.json
 jq -r '.uncertainty_signal[].gap // empty' .setup/task-2.json
 ```
 
+Whatever `next` says, the deliverable at its place is the version the returned CCS judges; when the turn was stopped before anything was judged, it is the deliverable as the turn found it.
+
 | `next` | What the skill does |
 |---|---|
 | `done` | Commits the deliverable and the CCS and finishes. |
