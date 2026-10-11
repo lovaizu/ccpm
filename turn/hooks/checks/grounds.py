@@ -24,6 +24,12 @@ def line_of(line, path):
 
 def wrong(ground, t):
     """Why the ground does not exist, or None when it does."""
+    version = f"version-{t['round'] - 1}"
+    if t["round"] > 1 and (ground.startswith(version + ":") or ground.startswith(version + "/")):
+        place, line = ground.rsplit(":", 1)
+        if line_of(line, os.path.join(t["work"], place)):
+            return None
+        return f"{ground} is not a line of {version}"
     if ":" in ground and "#" not in ground:
         place, line = ground.rsplit(":", 1)
         deliverable = t["deliverable"].rstrip("/")
@@ -49,12 +55,26 @@ def not_a_point(point, t):
     return f"{point} is neither an acceptance criterion as written nor a line of a viewpoint file"
 
 
+def compared(more, t):
+    """From round 2 on, what a More lacks in saying whether the version before fell short the same way."""
+    if t["round"] < 2:
+        return []
+    version = f"version-{t['round'] - 1}"
+    if "before" not in more:
+        return [f"{more['point']}: the More says nothing of whether {version} fell short the same way "
+                '("before": "same" or "not")']
+    if not any(g.startswith(version + ":") or g.startswith(version + "/") for g in more["grounds"]):
+        return [f"{more['point']}: the More names no line of {version} ({version}:<line>)"]
+    return []
+
+
 FORM = {
     "learner": '{"learnings": [{"learning": "...", "grounds": ["first-user-1#3", "SETUP.md:12"]}]}',
     "evaluator": ('{"points": [{"point": "<an acceptance criterion as written, or <viewpoint file>:<line>>", '
                   '"judgment": "good" | "more" | "unsettled", "fell_short": "<on a More>", '
                   '"why": "<on an unsettled point>", "question": "<only on an unsettled point only the user can '
-                  'settle>", "grounds": ["first-user-1#3", "SETUP.md:12"]}]}'),
+                  'settle>", "before": "same" | "not" (on a More from round 2 on), '
+                  '"grounds": ["first-user-1#3", "SETUP.md:12"]}]}'),
 }
 
 
@@ -73,4 +93,5 @@ def check(data, t):
         out += [w for w in (not_a_point(p, t) for p in judged) if w]
         # A script cannot list a viewpoint file's points, so only the acceptance criteria are checked for a judgment.
         out += [f"{a} is an acceptance criterion with no judgment" for a in t["acceptance"] if a not in judged]
+        out += [w for e in entries if e["judgment"] == "more" for w in compared(e, t)]
     return out

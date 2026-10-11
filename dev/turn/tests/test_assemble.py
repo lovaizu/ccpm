@@ -134,10 +134,10 @@ class AssembleTest(unittest.TestCase):
         self.assertEqual(out["relational_map"], [{"learning": "round 2's learning"}])
 
     def test_a_remake_that_brings_it_no_closer_returns_the_version_before_it_to_the_caller(self):
-        # Given: round 1 with a More and a Good, and round 2 that turned the More into Good and the Good into More
+        # Given: round 1 with a More and a Good, and round 2 that turned the More into Good and the Good into More, which the version before did not fall short of
         self.judge(1, more(STARTS), good(TYPED))
         self.learn(1, "round 1's learning")
-        self.judge(2, good(STARTS), more(TYPED, "step 2 was never typed"))
+        self.judge(2, good(STARTS), dict(more(TYPED, "step 2 was never typed"), before="not"))
         self.learn(2, "round 2's learning")
         # When: the CCS to return is built
         out = self.returned()
@@ -146,6 +146,21 @@ class AssembleTest(unittest.TestCase):
                          [{"next": "to the caller: a remake brought the deliverable no closer"}])
         self.assertEqual(out["uncertainty_signal"], [{"more": f"{STARTS}: step 3 needs var/"}])
         self.assertEqual(out["relational_map"], [{"learning": "round 1's learning"}])
+
+    def test_a_good_turned_into_more_that_the_version_before_shared_does_not_count_against_the_remake(self):
+        # Given: round 1 with a More and a Good, and round 2 that turned the More into Good and the Good into a More the version before fell short the same way on
+        self.judge(1, more(STARTS), good(TYPED))
+        self.learn(1, "round 1's learning")
+        self.judge(2, good(STARTS), dict(more(TYPED, "step 2 was never typed"), before="same"))
+        self.learn(2, "round 2's learning")
+        # When: the CCS to return is built
+        result = self.run_assemble()
+        # Then: the remake brought it closer, so round 2 is returned, with its More
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        with open(self.out_path, encoding="utf-8") as f:
+            out = json.load(f)
+        self.assertEqual(out["relational_map"], [{"learning": "round 2's learning"}])
+        self.assertEqual(out["uncertainty_signal"], [{"more": f"{TYPED}: step 2 was never typed"}])
 
     def test_a_remake_that_turns_no_more_into_good_brings_it_no_closer(self):
         # Given: round 1 with a More, and round 2 in which it is still More
@@ -209,14 +224,15 @@ class AssembleTest(unittest.TestCase):
         self.assertFalse(os.path.exists(self.out_path))
 
     def test_a_judgment_out_of_form_names_its_file_and_writes_nothing(self):
-        # Given: judgments out of form: not JSON, no list of points, a point not text, a judgment not one of the three, a More without what fell short, an unsettled point without why or with a question not text, and grounds missing, empty or not text
+        # Given: judgments out of form: not JSON, no list of points, a point not text, a judgment not one of the three, a More without what fell short, an unsettled point without why or with a question not text, grounds missing, empty or not text, and before neither same nor not, or on a Good
         cases = ["{not json", {"judgments": []}, {"points": [dict(good(STARTS), point=3)]},
                  {"points": [dict(good(STARTS), judgment="fixed")]},
                  {"points": [{"point": STARTS, "judgment": "more", "grounds": ["first-user-1#1"]}]},
                  {"points": [{"point": STARTS, "judgment": "unsettled", "grounds": ["first-user-1#1"]}]},
                  {"points": [unsettled(STARTS, "x", 3)]},
                  {"points": [{"point": STARTS, "judgment": "good"}]}, {"points": [dict(good(STARTS), grounds=[])]},
-                 {"points": [dict(good(STARTS), grounds=[3])]}]
+                 {"points": [dict(good(STARTS), grounds=[3])]}, {"points": [dict(more(STARTS), before="maybe")]},
+                 {"points": [dict(good(STARTS), before="same")]}]
         self.learn(1)
         for text in cases:
             with self.subTest(text=text):

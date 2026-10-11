@@ -4,7 +4,8 @@
 
 <work> holds, for each judged round n, evaluator-n.json
 {"points": [{"point": "...", "judgment": "good" | "more" | "unsettled", "fell_short": "<on a More>",
-"why": "<on an unsettled point>", "question": "<when only the user can settle it>", "grounds": ["first-user-1#3"]}]}
+"why": "<on an unsettled point>", "question": "<when only the user can settle it>",
+"before": "same" | "not" (on a More from round 2 on), "grounds": ["first-user-1#3"]}]}
 and learner-n.json {"learnings": [{"learning": "...", "grounds": ["generator-1#2", "SETUP.md:12"]}]}.
 The returned CCS carries the judgments of the version returned. episodic_trace is left empty for trace.py.
 """
@@ -44,7 +45,8 @@ def load(path, key, holds):
 def judgments(path):
     def holds(p):
         return (text(p, "point") and p.get("judgment") in NEEDS and all(text(p, k) for k in NEEDS[p["judgment"]])
-                and ("question" not in p or (p["judgment"] == "unsettled" and text(p, "question"))))
+                and ("question" not in p or (p["judgment"] == "unsettled" and text(p, "question")))
+                and ("before" not in p or (p["judgment"] == "more" and p["before"] in ("same", "not"))))
     return load(path, "points", holds)
 
 
@@ -59,8 +61,10 @@ def judged(work):
 
 
 def closer(before, after):
-    """Whether after turns at least one More of before into Good and no Good into More."""
+    """Whether after turns at least one More of before into Good and no Good into More. A More whose version before
+    fell short the same way was More before too: the Good given then was a slip, not something the remake undid."""
     was = {p["point"]: p["judgment"] for p in before}
+    was.update({p["point"]: "more" for p in after if p.get("before") == "same"})
     now = {p["point"]: p["judgment"] for p in after}
     return (any(now.get(p) == "good" for p, j in was.items() if j == "more")
             and not any(now.get(p) == "more" for p, j in was.items() if j == "good"))

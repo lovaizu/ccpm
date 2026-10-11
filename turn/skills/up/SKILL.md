@@ -26,7 +26,7 @@ Round n starts at 1. Call each agent with the Agent tool, in the foreground, as 
 3. `turn:first-user`: the copy's folder, the deliverable's place in it, the receiver, the use, and its report file `<work>/first-user-<n>.md`. Hand it nothing else.
 4. `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py steps <work> <generator's agent id> <first user's agent id>`. It writes the steps both agents took, `<work>/steps-generator-<n>.md` and `<work>/steps-first-user-<n>.md`.
 5. `turn:learner`: the round, `<work>/should.md`, the first user's report, both steps files, and its file `<work>/learner-<n>.json`.
-6. `turn:evaluator`: the round, `<work>/should.md`, the deliverable's place, the generator's and the first user's reports, both steps files, the learner's file, and its file `<work>/evaluator-<n>.json`.
+6. `turn:evaluator`: the round, `<work>/should.md`, the deliverable's place, the generator's and the first user's reports, both steps files, the learner's file, from round 2 on the version before (`<work>/version-<n-1>`), and its file `<work>/evaluator-<n>.json`.
 7. `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py round <work>`. On `next round`, go to round n+1; on `end`, the turn ends. If it exits with 1, show what it printed as it is, and stop without writing a CCS.
 
 ## When the user asks to stop

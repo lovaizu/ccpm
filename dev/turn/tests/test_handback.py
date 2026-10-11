@@ -116,6 +116,31 @@ class HandbackTest(unittest.TestCase):
         self.put("first-user-1.md", "1. Ran npm start; it stopped.\n")
         self.put("learner-1.json", {"learnings": [{"learning": "var/ was assumed", "grounds": ["first-user-1#2"]}]})
 
+    def round_two_files(self):
+        """Round 2's files, with round 1's version kept as version-1."""
+        with open(os.path.join(self.work, "turn.json"), encoding="utf-8") as f:
+            s = json.load(f)
+        self.put("turn.json", dict(s, round=2))
+        self.put("version-1", "# Setup\n\nRun npm start.\n")
+        for role in ("generator", "first-user"):
+            self.put(f"steps-{role}-2.md", f"# Steps of {role}-2\n")
+            self.put(f"steps-{role}-2.json", [{"step": f"{role}-2#1", "did": "Read SETUP.md", "came_out": "",
+                                               "error": False}])
+        self.put("first-user-2.md", "1. Ran npm start.\n")
+        self.put("learner-2.json", {"learnings": [{"learning": "x", "grounds": ["first-user-2#1"]}]})
+
+    def round_two_reads(self, version=True):
+        paths = ["should.md", "steps-generator-2.md", "steps-first-user-2.md", "first-user-2.md", "learner-2.json"]
+        paths += ["version-1"] if version else []
+        return [e for p in [os.path.join(self.work, p) for p in paths]
+                + [os.path.join(self.repo, "views/setup.md"), os.path.join(self.repo, "SETUP.md")]
+                for e in self.read(p)]
+
+    def judge_two(self, **more):
+        self.put("evaluator-2.json", {"points": [dict({"point": CCS["goal_orientation"][0]["acceptance"],
+                                                       "judgment": "more", "fell_short": "it stopped",
+                                                       "grounds": ["first-user-2#1"]}, **more)]})
+
     def learner_reads(self):
         return [e for p in [os.path.join(self.work, p) for p in
                             ("should.md", "first-user-1.md", "steps-generator-1.md", "steps-first-user-1.md")]
@@ -322,6 +347,38 @@ class HandbackTest(unittest.TestCase):
         # Then: it is told the acceptance criterion has no judgment
         self.assertIn(f"{CCS['goal_orientation'][0]['acceptance']} is an acceptance criterion with no judgment",
                       reason)
+
+    def test_an_evaluator_in_a_later_round_says_for_each_more_whether_the_version_before_fell_short_the_same_way(self):
+        # Given: round 2, and an evaluator that read everything, with a More that says the version before fell short the same way, on a line of that version
+        self.round_two_files()
+        self.judge_two(before="same", grounds=["first-user-2#1", "version-1:3"])
+        # When: it hands back its report
+        result = self.stop("turn:evaluator", self.round_two_reads())
+        # Then: it is let through
+        self.assertIsNone(self.blocked(result))
+
+    def test_an_evaluator_in_a_later_round_with_a_more_not_compared_with_the_version_before_is_told_so(self):
+        # Given: round 2, and an evaluator that read everything, with a More saying nothing of the version before, one resting on no line of it, and one on a line past its end
+        self.round_two_files()
+        cases = [({}, "says nothing of whether version-1 fell short the same way"),
+                 ({"before": "not"}, "names no line of version-1"),
+                 ({"before": "not", "grounds": ["version-1:9"]}, "version-1:9 is not a line of version-1")]
+        for more, said in cases:
+            with self.subTest(more=more):
+                self.judge_two(**more)
+                # When: it hands back its report
+                reason = self.blocked(self.stop("turn:evaluator", self.round_two_reads()))
+                # Then: it is told what is missing
+                self.assertIn(said, reason)
+
+    def test_an_evaluator_in_a_later_round_must_read_the_version_before(self):
+        # Given: round 2, and an evaluator that read everything but the version before
+        self.round_two_files()
+        self.judge_two(before="same", grounds=["first-user-2#1", "version-1:3"])
+        # When: it hands back its report
+        reason = self.blocked(self.stop("turn:evaluator", self.round_two_reads(version=False)))
+        # Then: it is told the version before is not read
+        self.assertIn(os.path.join(self.work, "version-1") + " (not read)", reason)
 
     def test_a_deliverable_folder_must_be_read_file_by_file_and_its_lines_can_be_grounds(self):
         # Given: a turn whose deliverable is a folder, and an evaluator that read everything but the file in it and rests a judgment on a line of that file

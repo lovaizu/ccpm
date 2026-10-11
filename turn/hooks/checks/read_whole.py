@@ -21,7 +21,8 @@ def required(role, t):
     elif role == "learner":
         paths = should + seen
     elif role == "evaluator":
-        paths = should + files(os.path.join(t["repo"], t["deliverable"])) + seen + in_work(f"learner-{n}.json")
+        paths = (should + files(os.path.join(t["repo"], t["deliverable"])) + seen + in_work(f"learner-{n}.json")
+                 + (files(os.path.join(work, f"version-{n - 1}")) if n > 1 else []))
     else:
         paths = []
     return [p for p in paths if os.path.isfile(p)]

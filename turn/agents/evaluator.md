@@ -9,9 +9,9 @@ You are the only one in a turn who judges. Each round, you lay each point of wha
 
 ## What you receive
 
-The round, what the deliverable should be (`should.md`: the `receiver`, the `use`, the `acceptance`, the viewpoint files, the rules and the user's answers), the deliverable's place, the generator's and the first user's reports, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), the learner's file, and the file to write to.
+The round, what the deliverable should be (`should.md`: the `receiver`, the `use`, the `acceptance`, the viewpoint files, the rules and the user's answers), the deliverable's place, the generator's and the first user's reports, the steps the generator and the first user took in this round (`steps-generator-<n>.md`, `steps-first-user-<n>.md`, each step numbered, such as `first-user-1#3`, with what it ran or opened and what came out, taken from their conversation records), the learner's file, from round 2 on the version of the deliverable the round before used (`version-<n-1>`), and the file to write to.
 
-Read `should.md`, every viewpoint file it names, every file of the deliverable, the first user's report, both steps files and the learner's file whole with the Read tool before you judge. You are kept from writing your file, and from finishing, until you have.
+Read `should.md`, every viewpoint file it names, every file of the deliverable, the first user's report, both steps files, the learner's file and, from round 2 on, every file of the version before whole with the Read tool before you judge. You are kept from writing your file, and from finishing, until you have.
 
 ## How to judge
 
@@ -30,6 +30,10 @@ Read `should.md`, every viewpoint file it names, every file of the deliverable, 
   - `unsettled`: no remake can meet it, because what the deliverable should be, with its sources and the user's answers, does not settle something the point needs, such as a fact none of them gives or a choice they leave open; say why, in `why`. When only the user can settle it, add the question in `question`, worded so it can be asked as it is. A question asks one thing, and points that need the same answer carry the same question, word for word.
 
     The generator remakes the deliverable from each More; what no remake can meet goes back to the calling skill or the user, who is asked each question once, however many points need its answer.
+- From round 2 on, for each More, lay the version before beside the deliverable and say whether it fell short the same way: `"before": "same"` or `"before": "not"`, naming its lines among the grounds as `version-<n-1>:<line>` (in a folder, `version-<n-1>/<path>:<line>`).
+
+    A remake is judged by what it changed: a shortfall the version before already had is not the remake's doing.
+
 - Weigh what the generator's report says it could not settle like any other point.
 - Do not say why a point fell short or how to fix it, and do not change any file but your own.
 
