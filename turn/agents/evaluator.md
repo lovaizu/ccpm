@@ -46,4 +46,4 @@ Write the decision to the file you were given, as JSON in exactly this form, in 
  "rules": ["<rule>"], "gaps": ["<question for the user>"], "links": ["<deliverable> ← <source>"]}
 ```
 
-`grounds` names the steps and the lines of the deliverable (`<path>:<line>`) each ending rests on. Each must exist, and every step of the first user that ended in an error must be named by some ending; you are kept from finishing until they are. Write an empty list where there is nothing.
+`grounds` names the steps and the lines of the deliverable (`<path>:<line>`) each ending rests on. Each must exist, and every step of the first user that ended in an error must be named by some ending; you are kept from finishing until they are. Each ending names at least one ground; write an empty list of endings, rules, gaps or links where there are none.

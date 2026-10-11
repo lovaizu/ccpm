@@ -162,6 +162,7 @@ class AssembleTest(unittest.TestCase):
         # Given: decisions out of form: not JSON, a part missing or not a list, an ending missing, not one of the allowed endings or with words after asking the user, and grounds missing, empty or not text
         cases = ["{not json", {"endings": [{"stumble": "x", "grounds": ["a#1"]}], "rules": [], "gaps": [], "links": []},
                  {"endings": [], "rules": "one", "gaps": [], "links": []}, {"endings": []},
+                 {"endings": [], "rules": [], "gaps": [3], "links": []},
                  {"endings": [{"stumble": "x", "ending": "patched", "grounds": ["first-user-1#2"]}], "rules": [], "gaps": [], "links": []},
                  {"endings": [{"stumble": "x", "ending": "to the caller: ask the user. The viewpoint says so",
                                "grounds": ["first-user-1#2"]}], "rules": [], "gaps": ["Who?"], "links": []},

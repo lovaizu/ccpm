@@ -36,7 +36,8 @@ def decision(path):
     except ValueError:
         return None
     keys = ("endings", "rules", "gaps", "links")
-    if not (isinstance(d, dict) and all(isinstance(d.get(k), list) for k in keys)):
+    if not (isinstance(d, dict) and all(isinstance(d.get(k), list) for k in keys)
+            and all(isinstance(x, str) for k in keys[1:] for x in d[k])):
         return None
     for e in d["endings"]:
         if not (isinstance(e, dict) and isinstance(e.get("stumble"), str)

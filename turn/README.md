@@ -41,8 +41,8 @@ flowchart LR
   M --> U[The first user tries it]
   U --> L[The learner finds the causes]
   L --> J{The evaluator compares it with what it should be}
-  J -->|a gap| M
-  J -->|no gap, let go, or something for the user or the skill to decide| O[New CCS]
+  J -->|a stumble to fix| M
+  J -->|nothing to fix, let go, or something for the user or the skill to decide| O[New CCS]
 ```
 
 - The generator, the first user, the learner and the evaluator are separate agents. turn calls them in turn and passes on what each returns. Only the evaluator makes decisions, each against what the deliverable should be.
@@ -70,7 +70,7 @@ Four kinds of entry say what the deliverable should be.
 | `receiver` | The person who receives and uses the deliverable, and where they start from | The first user takes this person's place |
 | `use` | What the receiver uses the deliverable for | The first user uses it for this |
 | `acceptance` | What the receiver must be able to do with the deliverable for it to pass | The evaluator decides by it which stumbles must be fixed. The first user is never told it |
-| `viewpoint` | A viewpoint file: what a good deliverable is in your domain. One or more | The generator makes the deliverable by it; the learner and the evaluator judge by it |
+| `viewpoint` | A viewpoint file: what a good deliverable is in your domain. One or more | The generator makes the deliverable by it; the learner traces causes by it, and the evaluator decides by it |
 
 The generator and the evaluator get all four. Write them so that trying the deliverable shows whether it meets them:
 

@@ -143,14 +143,13 @@ def end(work, rest):
     for name, *args in (("assemble.py", s["in"], s["out"], work, *stopped),
                         ("trace.py", s["out"], s["session"], s["start"], *pairs),
                         ("check.py", "out", s["in"], s["out"])):
-        if name == "check.py":
-            evidence(work, s)
         problems, ok = script(name, *args)
         if not ok:
             if os.path.exists(s["out"]):
                 os.remove(s["out"])
             script("tryout.py", "drop", work)
             return problems, 1
+    evidence(work, s)
     script("tryout.py", "drop", work)
     nexts = [e["next"] for e in load(s["out"])["predictive_cue"]]
     return f"next: {nexts[0]}\nccs: {s['out']}", 0
