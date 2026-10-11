@@ -1,32 +1,27 @@
 # Plugin rules (ccpm)
 
 How a plugin in this marketplace is written and tested, checked for structure, registered and
-released. How a plugin carries a task on turn is in [turn/README.md](../../turn/README.md); why turn
-is shaped as it is, in [dev/turn/design.md](../../dev/turn/design.md).
+released.
 
 Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces) and the
 official plugins.
 
 ## 1. Order of work
 
-- **Write the README and the design first, put each through writ's essentials (`doc.md` with
-  `readme.md` or `design.md`), and have the user sign off the design before any code or prompt is
-  written.**
+- **Write the README and the design before any code or prompt, and have the user sign off the
+  design.**
   - Rationale: the code is derived from the documents; code written first stands on a measure no one
-    has settled, and turn's first build had to be thrown away for it (2026-10-10).
+    has settled.
+- **Write and fix each document with its writ essentials open (`doc.md` with `readme.md` or
+  `design.md`).**
+  - Rationale: the first user reads only once, so a fix made without them is checked by nothing.
 - **Have each document read once, as its reader would, by a first user who does not know the
   discussion, and settle each finding by fixing the decision or principle it comes from.**
   - Rationale: a reading after every fix turns each finding into a patch, and the document drifts
     from its aim while every reading passes.
-- **Write each document, and make each fix to it, with its essentials open, holding the change to
-  their questions.**
-  - Rationale: the first user reads once, so a fix made after that reading is checked by nothing
-    else; turn's README opening grew with additions made without the essentials (2026-10-11).
-- **Keep the README and the design to the simplest mechanism that serves the purpose; add no
-  special path for an irregular case that an existing check already stops and its user can fix.**
-  - Rationale: every special path is one more thing for each user to learn and each builder to keep
-    right; turn's README grew a third call argument for a path that only goes stale on another
-    machine, where the intake check already stops it (2026-10-11).
+- **Keep each document to the simplest mechanism that serves the purpose; add no special path for a
+  case an existing check already stops.**
+  - Rationale: every special path is one more thing for users to learn and builders to keep right.
 - **Put each prompt through writ's `prompt.md`, by running it, before the plugin's trials.**
   - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds the
     prompts' slips, not whether the plugin keeps its promises.
