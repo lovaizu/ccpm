@@ -11,5 +11,11 @@ Next:
    root.
 3. The user signs off the design; only then the prompts, scripts and tests, derived from it.
 
+Agreed for the design (2026-10-11): its principles start from how the conductor uses the maker,
+the user and the learner to bring the work to where the receiver can really use it. The conductor
+holds what the work should be, from the receiver, the acceptance and the viewpoints, and judges each
+stumble against it; what is fixed is the cause of a stumble, and the work is remade from it, never
+patched spot by spot. The README says so (no "その場で直す").
+
 Carry over: converse in plain everyday Japanese; never use 「得られること」「得るもの」 or "UX" as a
 name or in conversation; one name per thing (the record is "CCS").
