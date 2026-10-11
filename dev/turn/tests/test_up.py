@@ -159,6 +159,16 @@ class UpTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(folder, "SETUP.md")))
         self.assertTrue(os.path.isfile(os.path.join(folder, "setup.md")))
 
+    def test_copy_leaves_out_every_committed_file_that_holds_the_acceptance(self):
+        # Given: a turn whose CCS, holding the acceptance, is committed in the repository
+        work = self.start()
+        # When: the copy for the first user is made
+        folder = self.copy(work)
+        # Then: the copy has no CCS, and keeps the deliverable and the other files
+        self.assertFalse(os.path.exists(os.path.join(folder, ".t", "in.json")))
+        self.assertTrue(os.path.isfile(os.path.join(folder, "SETUP.md")))
+        self.assertTrue(os.path.isfile(os.path.join(folder, "setup.md")))
+
     def test_copy_without_the_deliverable_says_so_fails_and_leaves_nothing(self):
         # Given: a turn whose deliverable was never made
         self.write(".t/in.json", json.dumps(dict(CCS, focal_entities=[{"deliverable": "GUIDE.md"}, {"receiver": "A new team member"}])))

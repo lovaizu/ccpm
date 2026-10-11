@@ -69,13 +69,31 @@ def start(in_path, out_path, session):
 
 
 def copy(work):
-    deliverable = [e["deliverable"] for e in load(state(work)["in"])["focal_entities"] if "deliverable" in e][0]
+    ccs = load(state(work)["in"])
+    deliverable = [e["deliverable"] for e in ccs["focal_entities"] if "deliverable" in e][0]
     folder, ok = script("tryout.py", "make", deliverable)
     if not ok:
         script("tryout.py", "drop", work)
         return folder, 1
+    leave_out_acceptance(folder, deliverable, [e["acceptance"] for e in ccs["goal_orientation"] if "acceptance" in e])
     state(work, copy=folder)
     return folder, 0
+
+
+def leave_out_acceptance(folder, deliverable, acceptance):
+    """Deletes from the copy each file but the deliverable that holds the acceptance, such as a
+    committed CCS: the receiver is never told it, so the first user must not find it either."""
+    kept = os.path.join(folder, deliverable)
+    for top, dirs, names in os.walk(folder):
+        dirs[:] = [d for d in dirs if d != ".git"]
+        for name in names:
+            path = os.path.join(top, name)
+            if path == kept or path.startswith(kept + os.sep):
+                continue
+            with open(path, encoding="utf-8", errors="replace") as f:
+                text = f.read()
+            if any(a in text for a in acceptance):
+                os.remove(path)
 
 
 def make_steps(work, generator, first_user):
