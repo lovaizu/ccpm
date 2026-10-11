@@ -18,6 +18,10 @@ This file has three readers. The generator reads it as the form to aim for when 
 
     When what the user decides is handed back to the user, the user makes their own decision and does not mistake the AI's guess for fact. When the AI decides and goes on, the decision stays the AI's guess until the user finds it later. Asking even what could be found out by looking spends the user's time on what is not their decision. Even a prompt that does not talk with the user lets the user decide, if the result shows what was left undecided.
 
+- When it met a problem, in what it was given or in what it made, how did the AI get from the problem to what it changed?
+
+    When the AI lays the problem beside what the result should be, follows it back to what made it, and changes that, the change brings the result closer to its purpose, and the same problem does not come back elsewhere. An AI that changes the spot where the problem showed leaves its cause in place. What an AI does varies from run to run, so a change fitted to one run's slip meets a different slip in the next, and the changes pile up without settling. The AI does this when the prompt gives it what the result should be and asks for the cause; given only what to check, it fixes what it saw.
+
 - When you gave it the same situation several times, where did the AI's actions differ from run to run?
 
     A single run cannot tell whether acting in line with the purpose was luck or the prompt's doing. Where the runs differed is where the prompt did not give the AI what to decide by. If every difference is fine in light of the purpose, that is where the AI can be left to choose.

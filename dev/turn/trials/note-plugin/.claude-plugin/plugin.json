@@ -1,0 +1,6 @@
+{
+  "name": "note",
+  "description": "Trial plugin for turn: writes a visitor's note through turn:up, to run turn's whole flow.",
+  "version": "0.0.0",
+  "author": { "name": "lovaizu" }
+}
