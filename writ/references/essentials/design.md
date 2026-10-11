@@ -18,6 +18,10 @@ This file has three readers. The generator reads it as the form to aim for when 
 
     With a feature for each benefit, maintainers see how the user actually gets it. A feature is what the product offers toward a benefit, such as having the work checked by someone who did not write it. A benefit no feature serves has no way to reach the user. A part named after its mechanism, or writing in which a mechanism follows right after a benefit, hides which part brings which benefit. For the benefits, the flow of use and why each step is good for the user, pointing to the README's steps that already say them is enough. Said again in the design document, they drift from the README.
 
+- For each role or part, and for each way the product can end, what did you take each receives and returns, and where that goes, and where could you not tell?
+
+    When every output has a set place, what each role found reaches the one who needs it next, and each way of ending leaves what it should. A design that leaves a handoff unplaced loses what that role found.
+
 - After the change you picked, what did you take it must always hold?
 
     When it reads, at the decision it concerns, as a condition that holds after every operation, maintainers know what must keep holding even when they change one place. A condition read as one step of a procedure is broken when the procedure changes.
