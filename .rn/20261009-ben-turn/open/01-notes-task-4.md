@@ -23,7 +23,10 @@ Next:
    with set inputs (`prompt.md`); the README's promises by one real trial at the end.
    Decided by the user (2026-10-11): checking in four levels; design section 4 now has the prompt
    checks and the orchestrator's flow with stand-in agents, before the trials.
-   Open, for the user (start here): how far to roll back, and whether turn is still simple. Points
+   Decided by the user (2026-10-11): only b564b05 is taken back; scripts, prompts and the trial
+   plugin stay, and the prompts go through the new checks.
+   Open (start here): next is checking each prompt alone, then the flow with stand-in agents.
+   Earlier points, now settled except the README clash: how far to roll back, and whether turn is still simple. Points
    to weigh: b564b05 is a patch from one trial; `assemble.py` and the evaluator's JSON file are not
    in the design; `trace.py`'s output was long and hard to read; the full trial runner came before
    the middle checks. Also for the user: the README example asks Sato for the token yet says the
