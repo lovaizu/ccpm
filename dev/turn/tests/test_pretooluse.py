@@ -17,7 +17,7 @@ ACCEPTANCE = "Starts the app by following the guide alone"
 CCS = {
     "focal_entities": [{"deliverable": "SETUP.md"}, {"receiver": "A new team member"}],
     "goal_orientation": [{"acceptance": ACCEPTANCE}],
-    "retrieved_artifacts": [{"viewpoint": "setup.md"}],
+    "retrieved_artifacts": [{"viewpoint": "viewpoint.md"}],
     "constraints": [], "episodic_trace": [], "semantic_gist": [], "relational_map": [],
     "predictive_cue": [], "uncertainty_signal": [],
 }
@@ -31,7 +31,7 @@ class PreToolUseTest(unittest.TestCase):
         cls.repo = os.path.join(cls.root, "repo")
         cls.session = str(uuid.uuid4())
         os.makedirs(cls.repo)
-        for path, text in (("setup.md", "- Steps run as typed.\n"), (".t/in.json", json.dumps(CCS))):
+        for path, text in (("viewpoint.md", "- Steps run as typed.\n"), (".t/in.json", json.dumps(CCS))):
             os.makedirs(os.path.dirname(os.path.join(cls.repo, path)), exist_ok=True)
             with open(os.path.join(cls.repo, path), "w", encoding="utf-8") as f:
                 f.write(text)
@@ -68,8 +68,8 @@ class PreToolUseTest(unittest.TestCase):
 
     def test_the_first_user_works_on_files_inside_its_copy_only(self):
         # Given: the first user's file and agent calls: reading and writing in its copy, reading and searching outside it, editing the deliverable, and starting an agent
-        cases = [("Read", {"file_path": os.path.join(self.copy, "setup.md")}, None),
-                 ("Read", {"file_path": "setup.md"}, "outside"),
+        cases = [("Read", {"file_path": os.path.join(self.copy, "viewpoint.md")}, None),
+                 ("Read", {"file_path": "viewpoint.md"}, "outside"),
                  ("Grep", {"pattern": "x", "path": self.repo}, "outside"),
                  ("Glob", {"pattern": "*.md"}, "outside"),
                  ("Write", {"file_path": os.path.join(self.copy, "var/log"), "content": ""}, None),
@@ -105,7 +105,7 @@ class PreToolUseTest(unittest.TestCase):
         cases = [({"command": f"cd {self.copy} && npm start"}, self.repo, None),
                  ({"command": "npm start"}, self.copy, None),
                  ({"command": "npm start"}, self.repo, "cd into"),
-                 ({"command": f"cat {self.repo}/setup.md"}, self.copy, "outside"),
+                 ({"command": f"cat {self.repo}/viewpoint.md"}, self.copy, "outside"),
                  ({"command": f'cd {self.copy} && echo "unclosed'}, self.repo, None)]
         for given, cwd, said in cases:
             with self.subTest(given=given, cwd=cwd):
@@ -121,9 +121,9 @@ class PreToolUseTest(unittest.TestCase):
         # Given: the generator writing the deliverable, editing another file in the repository, writing outside the repository, and reading in it
         outside = os.path.join(self.root, "scratch", "try.sh")
         cases = [("Write", {"file_path": os.path.join(self.repo, "SETUP.md")}, None),
-                 ("Edit", {"file_path": os.path.join(self.repo, "setup.md")}, "only the deliverable"),
+                 ("Edit", {"file_path": os.path.join(self.repo, "viewpoint.md")}, "only the deliverable"),
                  ("Write", {"file_path": outside}, None),
-                 ("Read", {"file_path": os.path.join(self.repo, "setup.md")}, None)]
+                 ("Read", {"file_path": os.path.join(self.repo, "viewpoint.md")}, None)]
         for tool, given, said in cases:
             with self.subTest(tool=tool, given=given):
                 # When: each is asked for

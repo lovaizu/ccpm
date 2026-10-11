@@ -88,7 +88,7 @@ def leave_out_acceptance(folder, deliverable, acceptance):
         dirs[:] = [d for d in dirs if d != ".git"]
         for name in names:
             path = os.path.join(top, name)
-            if path == kept or path.startswith(kept + os.sep):
+            if os.path.samefile(path, kept) or path.startswith(kept + os.sep):
                 continue
             with open(path, encoding="utf-8", errors="replace") as f:
                 text = f.read()

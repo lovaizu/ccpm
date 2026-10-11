@@ -16,7 +16,7 @@ CCS = {
     "focal_entities": [{"deliverable": "SETUP.md"}, {"receiver": "A new team member"}],
     "goal_orientation": [{"acceptance": "Starts the app by following the guide alone"},
                          {"use": "Run the steps from the top"}],
-    "retrieved_artifacts": [{"viewpoint": "setup.md"}],
+    "retrieved_artifacts": [{"viewpoint": "viewpoint.md"}],
     "constraints": [{"language": "English"}],
     "episodic_trace": [], "semantic_gist": [], "relational_map": [], "predictive_cue": [],
     "uncertainty_signal": [],
@@ -37,7 +37,7 @@ class UpTest(unittest.TestCase):
         self.repo = os.path.join(self.root, "repo")
         os.makedirs(self.repo)
         self.git("init", "-q")
-        self.write("setup.md", "- Steps run as typed.\n")
+        self.write("viewpoint.md", "- Steps run as typed.\n")
         self.write(".t/in.json", json.dumps(CCS))
         self.git("add", "-A")
         self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "start")
@@ -101,13 +101,13 @@ class UpTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(lines[0], "work: " + os.path.join(tempfile.gettempdir(), "turn-try-" + SESSION))
         self.assertEqual(lines[1:], ["deliverable: SETUP.md", "receiver: A new team member",
-                                     "use: Run the steps from the top", "viewpoint: setup.md"])
+                                     "use: Run the steps from the top", "viewpoint: viewpoint.md"])
 
     def test_start_writes_out_what_the_deliverable_should_be_to_be_read_whole(self):
         # Given: a CCS with a rule, a user's answer and a source
         self.write(".t/in.json", json.dumps(dict(CCS, constraints=[
             {"language": "English"}, {"rule": "Type each step first"}, {"answer": "Ask Sato"}],
-            retrieved_artifacts=[{"viewpoint": "setup.md"}, {"source": "setup.md"}])))
+            retrieved_artifacts=[{"viewpoint": "viewpoint.md"}, {"source": "viewpoint.md"}])))
         # When: a turn starts on it
         work = self.start()
         # Then: should.md holds every line of what the deliverable should be, the rule and the answer among them
@@ -115,7 +115,7 @@ class UpTest(unittest.TestCase):
             self.assertEqual(f.read(), "# What the deliverable should be\n\n"
                              "- deliverable: SETUP.md\n- receiver: A new team member\n"
                              "- acceptance: Starts the app by following the guide alone\n"
-                             "- use: Run the steps from the top\n- viewpoint: setup.md\n- source: setup.md\n"
+                             "- use: Run the steps from the top\n- viewpoint: viewpoint.md\n- source: viewpoint.md\n"
                              "- language: English\n- rule: Type each step first\n- answer: Ask Sato\n")
 
     def test_start_after_a_stop_hands_on_how_the_turn_before_ended_each_stumble(self):
@@ -157,7 +157,7 @@ class UpTest(unittest.TestCase):
         folder = self.copy(work)
         # Then: the copy holds the repository's files and the deliverable
         self.assertTrue(os.path.isfile(os.path.join(folder, "SETUP.md")))
-        self.assertTrue(os.path.isfile(os.path.join(folder, "setup.md")))
+        self.assertTrue(os.path.isfile(os.path.join(folder, "viewpoint.md")))
 
     def test_copy_leaves_out_every_committed_file_that_holds_the_acceptance(self):
         # Given: a turn whose CCS, holding the acceptance, is committed in the repository
@@ -167,7 +167,19 @@ class UpTest(unittest.TestCase):
         # Then: the copy has no CCS, and keeps the deliverable and the other files
         self.assertFalse(os.path.exists(os.path.join(folder, ".t", "in.json")))
         self.assertTrue(os.path.isfile(os.path.join(folder, "SETUP.md")))
-        self.assertTrue(os.path.isfile(os.path.join(folder, "setup.md")))
+        self.assertTrue(os.path.isfile(os.path.join(folder, "viewpoint.md")))
+
+    def test_copy_keeps_the_deliverable_even_when_it_quotes_the_acceptance(self):
+        # Given: a turn whose deliverable quotes the acceptance
+        work = self.start()
+        self.write("SETUP.md", "# Setup\n\nStarts the app by following the guide alone.\n")
+        # When: the copy for the first user is made
+        result = self.run_up("copy", work)
+        folder = result.stdout.strip()
+        self.addCleanup(shutil.rmtree, folder, True)
+        # Then: the deliverable is in the copy as it was made
+        with open(os.path.join(folder, "SETUP.md"), encoding="utf-8") as f:
+            self.assertIn("Starts the app by following the guide alone", f.read())
 
     def test_copy_without_the_deliverable_says_so_fails_and_leaves_nothing(self):
         # Given: a turn whose deliverable was never made
