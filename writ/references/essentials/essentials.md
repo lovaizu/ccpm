@@ -61,18 +61,19 @@ something.
 
 The checklist lets a tool read it the way it reads every other checklist.
 
-- Achieved: a tool read, in this order, the purpose, then `## Benefit`, `## Usability` and
-  `## Format`, each holding items written as `### <B, U or F>-<number>: <name>`, a sentence, an
-  `- Achieved:` line and a `- Not achieved:` line, or `None: <why>`.
+- Achieved: a tool read the purpose, then `## Benefit`, `## Usability` and `## Format` in that
+  order. Each held `None: <why>`, or items: a `### <B, U or F>-<number>: <name>` heading, a
+  sentence, and the `- Achieved:` and `- Not achieved:` lines.
 - Not achieved: the tool could not read one of these.
 
 ### F-2: IDs that keep their meaning
 
-The checklist lets a record name an item by its ID for as long as the record is kept.
+The checklist lets anything that names an item by its ID, such as a judgment kept from an earlier
+use, keep pointing at that item.
 
-- Achieved: every ID a record named still meant the item it meant then; a removed item left its
-  number unused, and an item moved to another section took a new number there.
-- Not achieved: an ID named in a record now means another item, or none.
+- Achieved: every ID named earlier still meant the same item; a removed item left its number
+  unused, and an item moved to another section took a new number there.
+- Not achieved: an ID named earlier now means another item, or none.
 
 ### F-3: Sections left empty on purpose
 
