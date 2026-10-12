@@ -3,10 +3,10 @@
 How a plugin in this marketplace is written and tested, checked for structure, registered and
 released.
 
-Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces) and the
-official plugins.
+Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces, prompting
+best practices / skill authoring best practices) and the official plugins.
 
-## 1. Order of work
+## 1. Documents and order of work
 
 - **Write the README and the design before any code or prompt, and have the user sign off the
   design.**
@@ -14,12 +14,13 @@ official plugins.
     has settled.
 - **Write and fix each document with its writ essentials open (`doc.md` with `readme.md` or
   `design.md`).**
-  - Rationale: the first user reads only once, so a fix made without them is checked by nothing.
+  - Rationale: with the measure open while each line is written, the document is made right as it
+    is written instead of patched after a reading.
 - **Have each document read once, as its reader would, by a first user who does not know the
   discussion, and settle each finding by fixing the decision or principle it comes from.**
   - Rationale: a reading after every fix turns each finding into a patch, and the document drifts
     from its aim while every reading passes.
-- **Keep each document to the simplest mechanism that serves the purpose; add no special path for a
+- **Keep each plugin to the simplest mechanism that serves its purpose; add no special path for a
   case an existing check already stops.**
   - Rationale: every special path is one more thing for users to learn and builders to keep right.
 - **When a document or prompt needs something its essentials file does not ask, add the question to
@@ -29,9 +30,6 @@ official plugins.
 - **Put each prompt through writ's `prompt.md`, by running it, before the plugin's trials.**
   - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds the
     prompts' slips, not whether the plugin keeps its promises.
-
-## 2. Code and tests
-
 - **Keep a plugin's README for its users, and its design and all its builders need in
   `dev/<plugin>/`.**
   - Rationale: the README is read by people deciding to use the plugin, and installing copies the
@@ -42,6 +40,9 @@ official plugins.
   links the design and says how to run the tests and trials, once they exist.
   - Rationale: GitHub shows a folder's README when it is opened, so a visitor finds the way by
     opening folders; a README further down repeats its parent's and drifts from it.
+
+## 2. Code and tests
+
 - **Write what the plugin runs on its users' machines in Python 3 with the standard library only, on
   3.9 or later, and say so in its README.** A script that only calls an existing tool may be sh.
   - Rationale: what the plugin makes can be wrong, so it is held by tests; python3 is wherever git
@@ -54,9 +55,6 @@ official plugins.
     was needed, cannot be told from one made on the whole.
 - **When a tool the plugin runs on, such as python3 or jq, is missing, stop and say how to install it.**
   - Rationale: a skipped check goes unnoticed.
-- **Put each hook check in its own named file, one entry file per hook event**, as the official
-  `hookify` does.
-  - Rationale: each check is read, fixed and tested on its own.
 - **Keep tests in `dev/<plugin>/tests/` with `unittest`, outside the plugin.** Feed in what the code
   would receive, and check a case it stops as well as one it lets through.
   - Rationale: installing copies the plugin's whole folder; a check that never stops anything looks
@@ -73,21 +71,6 @@ official plugins.
 - **Have the tests run every line the plugin runs itself, and delete a line no test has a reason to
   run.** `# pragma: no cover`, with its reason beside it, only where whether a line runs depends on
   an environment the tests cannot make. CI counts the lines on every push and fails on any not run.
-- **Keep the code that runs the plugin as its user would in `dev/<plugin>/trials/`, out of the line
-  count, and run it on the models the plugin's agents name, never a smaller one.**
-  - Rationale: CI cannot start Claude Code, so each run is its own check; a smaller model's slips
-    are not the plugin's.
-- **Judge a trial from the JSONL of every conversation and agent it started, not from its outcome
-  alone.**
-  - Rationale: the outcome shows that something went wrong, the records show where.
-- **Change a prompt or a document after a run only for a cause confirmed in the records and traced
-  to what the README and design say it should be; never to fit what one run did.**
-  - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
-    different slip in the next, and the additions never settle.
-- **Run a trial that needs a real GitHub repository in the private `lovaizu/rn-try`, one
-  at a time.**
-  - Rationale: pull requests and pushes a run makes stay out of every repository people use, and
-    two runs at once would mix in it.
 
 ## 3. Prompts and hooks
 
@@ -107,19 +90,40 @@ official plugins.
 - **Write the role and every step as what to do, not as what to avoid.**
   - Rationale: the official guidance tells Claude what to do instead of what not to do; a
     prohibition names the slip and leaves the right action to be guessed.
-- **Have the hooks check the process the steps set: a step begun before the one it follows is
+- **Have the hooks check the process the steps set: a step begun before the steps ahead of it are
   done, a step left out, an input not read or an output not written where its step says. Have each
   stop say which step went wrong and what that step needs.**
   - Rationale: the steps say what must happen and the hooks see whether it did, so a slip in the
     process is caught as it is made, not found later in a result that looks right.
+- **Put each hook check in its own named file, one entry file per hook event**, as the official
+  `hookify` does.
+  - Rationale: each check is read, fixed and tested on its own.
 
-## 4. Structure check
+## 4. Trials
+
+- **Keep the code that runs the plugin as its user would in `dev/<plugin>/trials/`, out of the line
+  count, and run it on the models the plugin's agents name, never a smaller one.**
+  - Rationale: CI cannot start Claude Code, so each run is its own check; a smaller model's slips
+    are not the plugin's.
+- **Judge a trial from the JSONL of every conversation and agent it started, not from its outcome
+  alone.**
+  - Rationale: the outcome shows that something went wrong, the records show where.
+- **Change a prompt or a document after a run only for a cause confirmed in the records and traced
+  to what the README and design say it should be; never to fit what one run did.**
+  - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
+    different slip in the next, and the additions never settle.
+- **Run a trial that needs a real GitHub repository in the private `lovaizu/rn-try`, one
+  at a time.**
+  - Rationale: pull requests and pushes a run makes stay out of every repository people use, and
+    two runs at once would mix in it.
+
+## 5. Structure check
 
 - **Pass both `claude plugin validate <plugin-path> --strict` and `claude plugin validate
   <marketplace-root> --strict`.**
   - Rationale: a malformed manifest fails for every user at install, before any behavior is reached.
 
-## 5. Register
+## 6. Register
 
 - **Add every plugin to `.claude-plugin/marketplace.json`** — one entry under `plugins` with `name`,
   `description`, `source` (e.g. `./rn`), and `category`. This is what Claude Code reads to install it.
@@ -128,7 +132,7 @@ official plugins.
 - **Change the two together** when a plugin is added, renamed, or removed.
   - Rationale: a plugin counts as shipped only once both the machine and a human reader can reach it.
 
-## 6. Release
+## 7. Release
 
 ### Version number
 
