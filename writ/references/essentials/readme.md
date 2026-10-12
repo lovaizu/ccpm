@@ -6,7 +6,8 @@ A README is read by someone meeting a product for the first time. It lets them:
 - tell why to choose it over the other ways they could do the same work;
 - picture using it on their own work, from starting to the result;
 - get from deciding to their first result with the README alone;
-- tell where to go for more.
+- tell where to go for more;
+- tell on what terms they may use it.
 
 What only the product's builders need, such as its design or how to contribute, is not for this
 reader. Each item of `doc.md` also applies to a README.
@@ -48,8 +49,8 @@ own work, or one without what the product gives back, is read as someone else's 
 
 Can a reader who has decided to use the product get to their first result with the README alone?
 
-Look for what that needs: what must be in place beforehand, how to install the product, and the
-first use.
+Look for what that needs: what must be in place beforehand, how to install the product, and a first
+use the reader can repeat.
 
 Why: each place the reader has to look elsewhere is a place they may stop.
 
@@ -60,6 +61,12 @@ each version, and where to ask for help?
 
 Why: a README that holds only what a newcomer needs stays short only when the rest has somewhere the
 reader can reach.
+
+### B-7: Terms of use
+
+Can the reader tell on what terms they may use the product?
+
+Why: a reader who cannot tell whether they may use it, or on what terms, cannot decide to use it.
 
 ## Usability
 
@@ -81,5 +88,39 @@ a reader who does not need them.
 
 ## Format
 
-None: a README's sections follow what the product needs to show; what every README must give is
-asked above.
+### F-1: Shape
+
+Does the README follow this template, headings included?
+
+```markdown
+# <Product name>
+
+<What the reader gains, who it is for, and what only this product gives>
+
+## Example
+
+<Using it on one piece of work, from starting to the result, with what the product gives back>
+
+## Requirements
+
+<Each thing that must be in place beforehand, and why it is needed>
+
+## Installation
+
+## Documentation
+
+<Where fuller use and what changed in each version are written>
+
+## Support
+
+<Where to ask for help>
+
+## License
+```
+
+- The opening has no heading, so it sits right under the name, where the reader looks first.
+- The example comes before installation, so the reader sees using it before deciding to install it;
+  repeated after installation, it is the first use.
+
+Why: a reader looks for requirements, installation or the license under the headings READMEs
+commonly give them, and finds each where they look only when every README puts it there.
