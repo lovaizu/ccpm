@@ -48,4 +48,4 @@ repository.
 11. In round 1, run `up.py round <folder>`. If it prints JSON, the round is its `round` and the
     forms are in that round's folder: go to step 3.
 12. Run `up.py end <folder> <round>`. Say what it printed and where the CCS is written, in one
-    line, and return to the caller.
+    line and nothing more, and return to the caller.

@@ -42,10 +42,12 @@ class AgentCalled(unittest.TestCase):
     def test_an_agent_handed_its_brief_is_called(self):
         # Given: the generator's brief made
         _, out = run(self.repo, "brief", ".turn/out", "1", "generator")
-        # When: the orchestrator calls the generator with the brief's path
-        code, _ = call(self.repo, "turn:generator", out.strip())
-        # Then: the call goes on
-        self.assertEqual(code, 0)
+        for name, path in (("from the top", out.strip()), ("in full", os.path.join(self.repo.path, out.strip()))):
+            with self.subTest(name):
+                # When: the orchestrator calls the generator with the brief's path
+                code, _ = call(self.repo, "turn:generator", path)
+                # Then: the call goes on
+                self.assertEqual(code, 0)
 
     def test_an_agent_handed_anything_but_its_brief_is_stopped_saying_which_step(self):
         cases = [("words of its own", "turn:generator", "Write the README.", "step 3"),

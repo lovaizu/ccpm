@@ -292,8 +292,22 @@ Progress:
 - Decided by the user (2026-10-13): More goes back to the user and the caller with how it would get
   a Good, not with why it has none; `turn/README.md` (45, 60, 64, 69), the callers' page (91-94)
   and the design (35, 56, 259, 274) say so.
-- Next: make those document changes, then build unit 3 (the learner, the second round, More with
-  how it would get a Good, rules returned), tried as units 1 and 2 were.
+- Those document changes made (34616aa). Unit 3 built (8fb0501): the learner, `up.py round`, the
+  end refused after round 1 while a way lies in the work, More returned with how it would get a
+  Good, `to the caller` when the way lies in what the caller wrote. Tried on `turn/README.md`
+  against `doc.md` and `readme.md` (`dev/turn/trials/turn-readme.json`): the learner put a way in
+  the work and a lesson of making into one entry, so a rule only for this README went back to the
+  caller; the form now holds them apart (`way`, `in`, `making`; 8f889c1), and the second trial
+  returned three rules that hold for any document.
+- Decided by the user (2026-10-13): every input and output is set as a form and every step is
+  written as what to do, and hooks feed back by mechanism. So each agent is handed one brief the
+  script writes (`up.py brief`), which is refused, naming the step, until the steps before it are
+  done; a hook stops an agent of turn called with anything but its brief, and another keeps the
+  orchestrator from stopping before `end` (935f731).
+- Unit 3 tried a third time: every agent was called with its brief, the hook stopped one call made
+  with the brief's full path (now accepted), the learner gave a way in the work and a rule for any
+  document, and round 2 ended `done` with all 25 items met. Unit 3 holds.
+- Next: unit 4 (questions only the user can answer), built and tried as units 1 to 3 were.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
