@@ -105,6 +105,14 @@ Is each operation that must give the same result on every run done by a script t
 Why: a script gives the same result every time and spends no attention; the same operation worked
 out by the AI varies from run to run.
 
+### U-7: Only what is used
+
+Is each field in the form of what the AI receives and hands back used, by the AI or by whoever
+receives its work, toward the purpose?
+
+Why: a field nobody uses still has to be read and filled on every run, and drifts from what the
+work actually is, since nothing checks it.
+
 ## Format
 
 ### F-1: Shape
@@ -132,3 +140,11 @@ description: <What it does, and when to use it, in the third person>
 
 Why: the AI finds what is expected and what to do in the same place in every prompt, and a reader
 checks a prompt against its design by these two parts.
+
+### F-2: Form of what goes in and out
+
+Is the form of what the AI receives and of what it hands back set, in the prompt or in a template
+or schema the prompt names?
+
+Why: whoever receives the work, a person, the next step or a script, reads it by its form; a form
+the AI chooses afresh on each run breaks them.
