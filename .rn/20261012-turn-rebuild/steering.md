@@ -120,6 +120,15 @@ Completion criteria:
 - Attractive quality: building turn needs nothing the rules do not say.
 - Must-be quality: each rule has its reason, and no step needs a tool that does not exist yet.
 
+Progress:
+
+- `.claude/rules/plugin.md`: agreed with the user (2026-10-12), rewritten as eight steps in the
+  order a plugin is built; units are built and tried one at a time, the first carrying one
+  attractive quality by the thinnest path, then the whole is checked against the design's
+  Verification; registration is part of the first release. Whether building turn needs nothing more
+  is seen in #3.
+- Next, #3: turn's README, by step 1 of `plugin.md`, with `doc.md` and `readme.md` open.
+
 ### [ ] #3: turn from nothing
 
 Purpose: turn's README, design, prompts, hooks, scripts and tests are made from nothing against the
