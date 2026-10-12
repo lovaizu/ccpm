@@ -57,6 +57,14 @@ something.
   [doc.md](doc.md), the checklist for every document.
 - Not achieved: two items always came out the same, because they ask the same thing.
 
+### U-3: Empty sections explained
+
+The checklist lets the judge tell a section thought through from a section forgotten.
+
+- Achieved: every section with no item held `None: <why the kind needs none>`, with a reason the
+  judge could check.
+- Not achieved: a section was empty, or its `None:` gave no reason.
+
 ## Format
 
 ### F-1: Same shape
@@ -97,11 +105,3 @@ use, keep pointing at the same item.
   file, such as `release-notes.md U-2`. A removed item left its number unused, and an item moved to
   another section took a new number there.
 - Not achieved: an ID named earlier now meant another item, or none.
-
-### F-3: Empty sections explained
-
-The checklist lets the judge tell a section thought through from a section forgotten.
-
-- Achieved: every section with no item held `None: <why the kind needs none>`, with a reason the
-  judge could check.
-- Not achieved: a section was empty, or its `None:` gave no reason.
