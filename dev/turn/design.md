@@ -1,242 +1,250 @@
 # turn design
 
-This document is for the people who build and maintain turn. For each promise in the [README](../../turn/README.md), it says which feature keeps it and how that is checked. Whether a change fits the design is decided by the principles below and by what the plugin's users would lose.
+This document says what turn must achieve for the user, how each part of that is checked, and how
+turn is built to achieve it. It serves the benefits the [README](../../turn/README.md) promises.
 
-The orchestrator is turn's main conversation, the one running `turn:up`. Where the README says "turn calls them", it is the orchestrator that calls.
+## Goals
 
-## 1. Principles
+### Attractive quality
 
-The orchestrator works toward what the CCS says the deliverable should be. It has the generator make the deliverable, the first user try it in the receiver's place, the learner find the causes of the stumbles, and the evaluator decide each one; then it has the generator remake the deliverable from the causes to fix. It repeats this until trying the deliverable matches what it should be, or until all that is left is for the user or the skill to decide. The result is a deliverable the receiver can really use. The five principles below always hold, so that this loop gets there.
+- Work comes back already read in the receiver's place, with what the reader missed made again from
+  its cause, so the user can hand it on without first reading it as its receiver.
+- The user is asked only what only they can decide.
+- While turn works, the user sees how far it has come and what it means to make, and can stop it
+  before a wrong aim is carried through.
+- A plugin hands turn one task and decides its next step from what turn returns, without writing
+  the loop of making, reading and making again itself.
 
-- Every decision is measured against what the CCS says the deliverable should be.
+### One-dimensional quality
 
-    What the deliverable should be is what the plugin writes: the receiver (`receiver`), the acceptance criteria (`acceptance`), what the deliverable is used for (`use`) and the viewpoint files (`viewpoint`). A turn knows only what is in the CCS, so a picture an agent forms on its own reaches neither the next turn nor a resumed one. The plugin decides what the deliverable should be; turn neither makes it up nor changes it. This keeps the promises that the deliverable is judged against what the plugin writes it should be and nothing else, and that what the deliverable should be and the rules do not change in the middle of a task. When that is not enough to decide, turn returns to the skill.
+- The share of tasks that end in the first round with nothing missed: the more work is right when
+  first made, the less the user waits and the less is spent.
+- The time and the tokens one task takes.
 
-- The first user uses the deliverable as the receiver would.
+### Must-be quality
 
-    It is told only the deliverable, who the receiver is and what they use it for; never the acceptance criteria or the discussion. It works in a fresh clone in a temporary folder with only the deliverable added, the same state the receiver starts from, less any file that holds the acceptance criteria, such as a committed CCS. Then the first user stumbles where the receiver would, and the promise that the deliverable shown has already been used, with its stumbles fixed, holds for real. Knowing the criteria, the first user would use the deliverable the way they describe. In the working repository, files the receiver does not have would help it along and hide the stumbles.
+- turn changes nothing in the user's repository but the deliverable and its own records, and never
+  commits or pushes.
+- What the work should be does not change during a task: turn never rewrites what the caller wrote.
+- No change reaches the user unread: every version returned is the one the reader last read.
+- A task stopped partway carries on from where it stopped; one cut off starts over from what the
+  caller wrote.
+- Each judgment can be followed to what it rests on, including the version of each checklist it was
+  made by.
+- When python3 or jq is missing, turn stops before any work and says what to install.
 
-- What gets fixed is the cause of a stumble, and the deliverable is remade from it.
+### Backward compatibility
 
-    Patching only the spot leaves the cause in place, the same stumble comes back elsewhere, and the deliverable drifts away from what it should be. Remaking it from the cause brings it closer with every try, until the deliverable shown has been used with its stumbles fixed. No fix is made that does not bring the deliverable closer.
+None: turn has not been released. From the first release, what calling plugins and later versions
+of turn rely on is the CCS (its parts, kinds and the values of `next`) and `turn:up` with its two
+arguments; the console wording and the agents' prompts may change.
 
-- Only the evaluator decides, and it checks each report against what the deliverable should be, the deliverable itself and the facts.
+### Non-goals
 
-    The generator, the first user and the learner each do one job and report what they did and what happened. They do not judge. Whoever made the deliverable goes easy on it, and whoever found a cause goes easy on that cause; once decisions spread across agents, no one can say which fix serves what the deliverable should be. A report can claim more than was done, so the evaluator checks it against the deliverable and the steps taken from the conversation records (JSONL). It checks a report that something worked as hard as one that it stumbled, and the learner's causes just as hard. Taking "it worked" on trust passes the stumble on to the receiver, and the deliverable shown is no longer a deliverable that has been used and fixed.
+- Deciding what the work should be. The caller writes it; turn measures against it and returns what
+  it cannot decide.
+- Talking to the user. turn returns its questions to the caller, which knows what was already agreed
+  with the user and asks them.
+- Running until nothing is missed. Two rounds at most: what a second round still misses points to a
+  fault in turn, in the checklist or in what the caller wrote, which is fixed there, not looped over.
+- Holding checklists. They belong to whoever knows the kind of work, such as writ; turn reads the
+  ones it is given.
+- Code. A program is checked by running its tests, not by reading.
 
-    The orchestrator reads none of this content. It calls the agents and passes on what they return. Making, trying, finding causes and checking them all mean reading the deliverable and long records; held in the orchestrator's conversation, round after round, that content would fill it, and, as the README opens with, it would drift from its goal and rules. Each of the other agents starts in a new conversation every round.
+### Constraints
 
-- The next turn starts from the returned CCS and the deliverable alone.
+- turn runs inside Claude Code, and is built only from what a plugin can hold: skills, agents, hooks
+  and scripts. Installing copies only turn's own folder.
+- What runs on users' machines is Python 3.9 or later with the standard library only, and jq.
+- The work is in a git repository, since the reader starts from a fresh copy of it.
+- The conversation that runs turn is the user's or the calling plugin's own; what turn holds in it
+  takes room from that conversation's work.
 
-    Not from the evidence, conversation records or anything an agent remembers: those show why, not where things stand. turn never rewrites the CCS it received; it writes a new CCS to a separate file. This keeps the promise that a task stopped partway carries on from where it stopped, and, once the CCS and the deliverable are committed, on another machine too. A turn cut off partway can start over from the same CCS. And everything the plugin needs for its next step can be traced from the returned CCS.
+## Verification
 
-## 2. Features
+### Attractive quality
 
-The promises each feature keeps are those under "For plugin authors" and "For your plugin's users" in the README. The scenes where they work are "Calling turn" and "Deciding from the returned CCS".
+Each is tried on real work: writ's documents and prompts, and turn's own, are made through turn, and
+whoever builds turn reads every conversation and agent record (JSONL) of the run. A made-up task
+shows only that the made-up task passes.
 
-Who passes what to whom within one turn:
+- Read in the receiver's place: the returned work, read again by a fresh reader on the same
+  checklist, shows nothing missed that the judge let through as Good.
+- Asked only what only the user can decide: no returned question can be answered from what the
+  caller wrote or from its sources.
+- Seeing the work as it goes: the plan and the aim appear before anything is written, and each line
+  of the console says which round and step it belongs to.
+- A plugin decides from what turn returns: the next step decided from the returned CCS alone is the
+  same as the one decided after also reading the records.
+
+### One-dimensional quality
+
+Measured on the same set of real tasks, against the version in use: the share ending in round 1,
+and the time and tokens per task, from the records.
+
+### Must-be quality
+
+Each is checked by a test that runs the script or hook that keeps it:
+
+- Repository untouched: a write outside the deliverable and turn's records, a commit and a push are
+  each stopped.
+- What the work should be unchanged: a returned CCS whose caller-written parts differ from those
+  received is stopped.
+- Nothing unread: a run whose last version was written after the last reading cannot be returned.
+- Stop and start over: a stopped run returns `stopped`, and a run called again with it carries on
+  from that point; a run called again with the same input after being cut off starts from the
+  beginning.
+- Traceable: every judgment names the lines it rests on and they exist, and the evidence names the
+  commit of each checklist.
+- Missing tools: with python3 or jq missing, turn stops and says what to install.
+
+### Backward compatibility
+
+None: turn has not been released.
+
+## Architecture
+
+### Principles
+
+- Every judgment is measured against what the caller wrote the work should be, and nothing else.
+  Protects: read in the receiver's place, what the work should be unchanged.
+- Each role does one job with set inputs and outputs, and answers every checklist item in its
+  output; a step skipped, an input not read or an output not written is stopped where it happens.
+  Protects: read in the receiver's place, the first-round share. A slip caught as it is made costs a
+  step; found in the result, it costs a round.
+- What was missed is made again from its cause, and only what has been read is returned. Protects:
+  read in the receiver's place, nothing unread. A patch at the spot leaves the cause to show again
+  elsewhere.
+- Only the judge decides; the conductor reads no content and passes only where things are. Protects:
+  read in the receiver's place, the time and tokens. One who made the work, or found a cause, goes
+  easy on it; content held in the conductor's conversation crowds out the work of the conversation
+  it runs in.
+- The next step starts from the returned CCS and the deliverable alone. Protects: a plugin decides
+  from what turn returns, stop and start over.
+
+### Structure
 
 ```mermaid
 sequenceDiagram
-  participant S as Skill
-  participant O as Orchestrator
-  participant G as Generator
-  participant U as First user
+  participant C as Caller
+  participant O as Conductor (turn:up)
+  participant M as Maker
+  participant R as Reader
   participant L as Learner
-  participant E as Evaluator
-  S->>O: CCS (in)
-  Note over O: A script checks the form of the CCS received
-  loop until trying matches what the deliverable should be, or only the user's or the skill's decisions remain
-    Note over G,E: Before each agent finishes, its own record is checked for what it must have done
-    O->>G: what the deliverable should be, sources, rules, the user's answers, the causes to fix
-    G-->>O: the deliverable, and what it did
-    O->>U: the deliverable, the receiver, what it is used for (in a temporary copy)
-    U-->>O: what it did, and what happened
-    Note over O: A script turns the generator's and the first user's records into numbered steps
-    O->>L: the first user's report, both agents' steps, the viewpoint files
-    L-->>O: the causes of the stumbles
-    O->>E: what the deliverable should be, the deliverable, the first user's report, both agents' steps, the causes, how earlier stumbles ended
-    E-->>O: how each stumble ends, the causes to fix, the rules, the questions for the user
+  participant J as Judge
+  C->>O: CCS (what to make, for whom, from what, against which checklists)
+  Note over O: Script: checks the CCS, makes the list from the checklists
+  O-->>C: plan and aim shown in the console
+  loop round 1, and round 2 only if something was missed
+    O->>M: CCS, list, sources (round 2: the causes and the judgment)
+    M-->>O: aim, the work, the list answered as the receiver
+    O->>R: the work, the receiver, its use, the list (in a fresh copy)
+    R-->>O: for each item, what was taken and what was not
+    O->>L: the list, the work, the reading, the maker's answers, both records
+    L-->>O: causes in the work and in the process
+    O->>J: all of the above
+    J-->>O: Good or More for each item, questions for the user
   end
-  Note over O: A script writes the evidence and episodic_trace and checks the form of the CCS to return
-  O-->>S: new CCS (out)
+  Note over O: Script: writes the evidence and checks the CCS to return
+  O-->>C: new CCS
 ```
 
-### Trying the deliverable as the receiver, and fixing the cause
-
-Keeps the promises "the deliverable is judged against what you write it should be, and nothing else", "the deliverable shown has already been used, with its stumbles fixed" and "you do not write the make, try and fix loop in your own skill".
-
-- The deliverable returned is the one the first user used from start to end after the last remake.
-
-    A deliverable that was made but not used, or used again only at the fixed spot, has not been down the receiver's path. Remaking from a cause can change more than the spot where it stumbled.
-
-- Each time the first user finishes, the learner finds the causes of its stumbles.
-
-    The first user's report shows where it stumbled, not why. The learner looks for the cause in the report and in the steps the generator and the first user took in that round, as their records show them.
-
-- The evaluator checks each stumble and its cause, and decides it against what the deliverable should be as one of the following. How it ends goes into `difference` in the returned CCS.
-  - A stumble that keeps the receiver from meeting the acceptance criteria: its cause goes to the generator, which remakes the deliverable (`fixed`).
-  - A stumble that does not keep the receiver from meeting them: let go, with the reason (`let go`).
-  - A stumble that what the deliverable should be cannot decide: returned to the skill (`to the caller`). If only the user can decide it, it goes into `gap` as a question.
-  - A stumble with the same cause that remains after the deliverable was remade and tried again: the cause was misjudged, or what the deliverable should be cannot decide it. Returned to the skill (`to the caller`).
-
-    Repeating the same fix does not bring the deliverable any closer. The evaluator starts in a new conversation every round, so the orchestrator passes it how earlier stumbles ended.
-
-- A checked cause in the way of working becomes a rule (`rule`). For the rest of the turn the orchestrator passes it to the generator, which keeps it, and to the evaluator, which checks the remade deliverable against it; the first user is not told how the deliverable was made. It is added to `constraints` in the returned CCS.
-
-    When the skill copies it into the next task's CCS, the same stumble does not come back across tasks either.
-
-### Checking that each agent did its job
-
-Keeps the promises "the deliverable shown has already been used, with its stumbles fixed", "the deliverable is judged against what you write it should be, and nothing else" and "everything your skill needs for its next step can be traced from the returned CCS".
-
-- Whether an agent did its job is checked on its own conversation record, not on its account, when it tries to finish. If something is missing, the same agent is kept running and told what.
-
-    "Read the deliverable and the records, and decide from the facts" asked in words is met by skimming, and an account can claim a read that never happened. The record is written by Claude Code, not by the agent, so it shows what was done. Claude Code's hooks are made for this: one runs before the call that hands back an agent's report and can refuse it with the reason, which keeps the agent running. The report is delivered by that call, so a check made once the agent has stopped comes too late.
-
-- No agent reads a conversation record or the CCS itself for what it must know whole. A script turns the generator's and the first user's records into their steps, numbered: what it ran or opened, and what came out. It writes out what the deliverable should be, the rules and the user's answers from the CCS the same way.
-
-    A record is long and a CCS is read a part at a time, so whether either was read through cannot be told. The files the script makes hold the same facts, and a file read with Claude Code's Read tool leaves in the record which lines were read.
-
-- Each agent must have read whole, before it finishes:
-
-    | Agent | Read whole |
-    |---|---|
-    | Generator | What the deliverable should be with the rules and the user's answers, every viewpoint file and source, and the earlier rounds' decisions |
-    | Learner | The first user's report, both agents' steps and the viewpoint files |
-    | Evaluator | What the deliverable should be with the rules and the user's answers, every viewpoint file, the deliverable, the first user's report, both agents' steps, the learner's causes and the earlier rounds' decisions |
-
-    Read whole means every line is covered by its reads. A judgment made without the whole cannot be told from one made with it. The first user is not asked to read anything whole: it uses the deliverable as the receiver would, and its steps show how it did.
-
-- What each agent was handed is checked on its record too: the first user's never holds the acceptance criteria.
-
-    Handed them, the first user would use the deliverable the way they describe, and the receiver's stumbles would not show.
-
-- What an agent must not do is stopped when it tries, as far as the call names it: the first user reading or changing anything outside its copy or changing the deliverable, the generator changing anything in the repository but the deliverable, and any agent committing or pushing.
-
-    Found afterwards, the harm is already done: a first user that read the repository has used knowledge the receiver does not have. A command can reach places its call does not name; those are judged from the records of real use.
-
-- Each cause the learner gives and each ending the evaluator decides names the steps and the lines of the deliverable it rests on. These are checked to exist, and every step of the first user that ended in an error is checked to be named by some ending.
-
-    A conclusion that names its ground can be followed back to the facts. An error is a fact a script can see, so none passes without an ending.
-
-- What a script cannot see is judged by reading the records of real use (section 4): whether an agent thought well, and a stumble that leaves no error, such as going back or guessing.
-
-- The evidence, each round's steps and each ending with the steps and lines it rests on, is written beside the returned CCS, named after it (`task-4.json` gets `task-4.evidence.json`), and the CCS points to it in `episodic_trace`.
-
-    Anyone who doubts the CCS can follow it back to what happened instead of taking it on trust. The plugin decides where its CCS lives, so the evidence stays with it, and is committed with it or not as the plugin decides.
-
-### Leaving the user's other work untouched
-
-Keeps the promise "their other work is left untouched".
-
-- The temporary copy the first user works in is deleted when it is done.
-- turn never commits or pushes.
-
-    Whether to commit is decided by the plugin, which knows the user and the order of tasks.
-
-### Returning only what only the user can decide
-
-Keeps the promise "they are asked only what only they can decide".
-
-- What the CCS and its sources, the user's answers and the viewpoints settle, the evaluator decides.
-- Only what they do not settle and only the user can decide goes into `gap`, as a question that can be asked as it is, with `next` set to `ask the user`.
-
-    turn does not talk to the user. It does not know what the plugin has agreed with the user outside the turn. If turn decided what to ask, users would be asked the same thing again, or find decisions in the deliverable they never meant to make.
-
-### Tracing the next step from the returned CCS
-
-Keeps the promise "everything your skill needs for its next step can be traced from the returned CCS".
-
-- The orchestrator writes, from the evaluator's decisions, how each stumble ended (`difference`), what only the user can decide (`gap`), the rules (`rule`), how the deliverable connects to its sources (`link`) and what to do next (`next`).
-- What each agent actually read, wrote and ran (`episodic_trace`) is written by a script from the conversation records and git before the turn returns, with the place of the evidence.
-
-    An agent's own account can claim more than it did.
-
-### Keeping what the deliverable should be unchanged
-
-Keeps the promise "what the deliverable should be and the rules do not change in the middle of a task".
-
-- A script checks the form of the CCS when it is received and when it is returned. If something does not match, it says what and stops. What it checks is listed in "What a script checks" in the README.
-
-    A CCS written by AI may reword a line of what the deliverable should be, or add entries not in the tables. A script gives the same answer every time.
-
-- The check uses python3. If it is missing, turn returns no CCS, says in the conversation what to install, and stops.
-
-    Going on without the check, no one would notice a change.
-
-### Carrying on from where it stopped
-
-Keeps the promise "if they stop partway, the task carries on from where it stopped".
-
-- When the user asks in the conversation to stop, the orchestrator calls no new agent. It writes a new CCS up to the point where every stumble so far has an ending, and returns it with `next` set to `stopped: <where from>`.
-
-    Stumbles with an ending, and the deliverable made so far, remain in the CCS and on disk. A round whose stumbles have no ending yet is done again in the next turn. That needs less machinery than adding a form to keep them in the CCS.
-
-- A turn cut off without returning a CCS leaves nothing behind. The skill calls again with the same `in`, and the turn starts over.
-
-    Carrying on from a half-written CCS would go on from a half-finished state. The CCS received is untouched, so starting over is always possible.
-
-## 3. The CCS contract
-
-The plugin writes the CCS and keeps it; turn reads it, and so do later versions of turn and other machines. Its form is defined entirely by "Writing a CCS" in the README. This section says who reads each part, what always holds, and why.
-
-- A CCS has all nine parts of ACC and no others.
-
-    The nine parts are what the ACC paper defines as the state needed for the next step. Adding a part departs from ACC, and every reader would have to change with it.
-
-- The parts the plugin writes (`focal_entities`, `goal_orientation`, `retrieved_artifacts`) stay the same for the whole task.
-
-    They are what the deliverable should be, and every turn measures against them.
-
-- In `constraints`, written lines never change; new lines are only added after them.
-
-    The user's answers and rules, once settled, are kept in later turns too.
-
-- The parts turn writes are rewritten by each turn. They are read by the skill and by the next turn.
-  - The skill decides its next step from `next` and `gap`, and copies `rule` into the next task.
-  - The next turn reads every part as the state it starts from. After `stopped`, it learns from `difference` and `episodic_trace` how far the deliverable got. From `link`, it learns what to look at again when a source changes.
-
-    The next step needs only the results up to the turn just before it.
-
-- The content of the deliverable and of sources is never copied in; only where they are.
-
-    A copy drifts from the real thing, and the CCS grows.
-
-- Only the kinds in the README's tables are used. The names of parts and kinds, and the values of `next`, stay in English. The words inside values are free.
-
-    The skill and the next turn find the entries they need by kind; the skill reads `next` and `gap` with `jq` to decide its next step. Renaming them leaves the skills that read them unable to decide.
-
-## 4. How it is checked
-
-The promises are checked where turn is really used: pith, writ and rn are made through turn, one at a time. A made-up task shows only that the made-up task passes; making these three is what turn is for, so the receivers, the stumbles and the time a turn takes are real. The work is done in a session of its own, and whoever builds turn reads every conversation and agent record (JSONL) of each turn and the returned deliverable as its receiver would. turn is fixed only for a cause found in the records and traced to this design; the one who does the work does not judge turn, for the same reason the evaluator is split from the generator.
-
-A real task has no stumble set in advance, so a turn that finds nothing can mean the deliverable is fine or the stumble was missed. Each promise is judged from the records of the real work:
-
-- "The deliverable shown has already been used, with its stumbles fixed": the deliverable returned was used from start to end after the last remake, and using it as its receiver shows no stumble the evaluator let through.
-- "You do not write the make, try and fix loop in your own skill": the calling skill only writes the CCS, calls `turn:up` and acts on `next`.
-- "The deliverable is judged against what you write it should be, and nothing else": what the CCS does not settle comes back as `to the caller` or `gap`, and is not settled in the deliverable.
-- "Everything your skill needs for its next step can be traced from the returned CCS": the next step decided from the CCS and what it points to is the same as the one decided after also reading the records.
-- "They are asked only what only they can decide": every question in `gap` is one only the user can answer.
-
-Before turn is used, and again after every change to it, each part is checked alone where its behavior is decided, so that a slip is found in the part that made it.
-
-- Each agent's prompt is run alone on set inputs and checked with writ's `prompt.md`.
-
-    A run on unchecked prompts finds the prompts' slips, not whether the promises hold, and the slip it finds is hard to place among five agents.
-
-- The whole flow is run as a trial in `dev/turn/trials/`, with stand-in agents that return set reports, from a small calling plugin: a stumble to fix and a rule, a question for the user, the user's answer added, a stop after the generator, and carrying on in another clone with only the CCS and the deliverable until it is done.
-
-    Real work goes down only the paths its task leads to; the other paths, and "if they stop partway, the task carries on from where it stopped", would reach users unchecked.
-
-"What the deliverable should be and the rules do not change in the middle of a task" and "their other work is left untouched" are checked by scripts and their tests: checking the form of the CCS, deleting the copy, and making no commit. A script can decide these, so the checks are fast and give the same answer every time.
-
-## 5. Options not taken
-
-- A limit on the number of rounds is not used.
-
-    A stumble whose cause remains is returned to the skill, so a loop that is not getting closer stops there. A limit would stop a loop that is still getting closer, and the receiver would get a deliverable they cannot use.
-
-- The learner and the evaluator are not merged into one agent.
-
-    One agent would read the same steps once instead of twice, but it would then check the causes it found itself, and go easy on them.
+The caller is a plugin's step, or Claude in the user's conversation, which writes the CCS from the
+request. Hooks watch each agent as it finishes; scripts make what must come out the same every time.
+The copy the reader works in is made from git and deleted when the reader is done.
+
+### Reading in the receiver's place
+
+Achieves: read in the receiver's place.
+
+The reader starts where the receiver starts: a fresh copy of the repository with only the work added,
+told who the receiver is, what they use it for, and the list. It is told nothing of how the work was
+made, so it stops where the receiver would. For each item it says what it took from the work and
+what it could not, each with the words it rests on.
+
+- Must hold: the reader's copy holds nothing the receiver would not have, and the reading has an
+  entry for every item.
+- Weighed: reading in the working repository was not chosen, since files the receiver lacks would
+  help the reader along and hide what is missing. Not telling the reader the checklist was not
+  chosen, since then whether every item was looked at cannot be told; the cost is that the reader
+  looks where the checklist points.
+
+### Making again from the cause
+
+Achieves: read in the receiver's place, nothing unread, the first-round share.
+
+The learner finds, for what the reader could not take, its cause in the work and in the process, and
+puts items that share one cause together. The judge decides each item Good or More by the item's
+question and its reason, from the reading and the work. When anything is More, the maker makes the
+work again in round 2 from those causes, keeping what was Good, and the new version is read and
+judged once more. What round 2 still judges More is returned as it is, with why.
+
+- Must hold: round 2 begins only after a More; nothing is written to the work after its last
+  reading.
+- Weighed: running until nothing is missed was not chosen, since a loop that does not settle
+  hides a fault that belongs to turn or the checklist; a cap reached is no answer either. Having the
+  conductor fix round 2's More before returning was not chosen, since that change would reach the
+  user unread.
+
+### Lists every role fills
+
+Achieves: read in the receiver's place, the first-round share, traceable.
+
+A script makes, from the checklists the CCS names, one list of every item with its whole text. The
+maker answers it as the receiver before handing the work over, saying for each item what the
+receiver gets from the work, not only where; the reader and the judge each fill it too. Each role
+reads only the inputs the conductor names, and what the sources do not settle goes to the user as a
+question and stays out of the work.
+
+- Must hold: every filled list has every item of the list; every role read each of its inputs whole
+  and nothing beyond them. A hook checks both on the agent's record as it finishes, and keeps it
+  running with what is missing.
+- Weighed: one reader per side of the checklist was not chosen; one reader answering every item
+  costs less and misses nothing a side would catch. A check of the content by hook was not chosen,
+  since a hook can see only that an entry is there; whether it answers its item is the judge's.
+
+### Showing the work as it goes
+
+Achieves: seeing the work as it goes.
+
+Before the first round, the conductor shows the plan once: write, read, check, and once more if
+something was missed, two rounds at most. Then each line, grouped by round, says its step and gives
+the path of what was made: the aim before writing, what the reader could not take in plain words,
+and at the end where the work is and what the user must decide. Three marks are used, each with one
+meaning: ⚠️ something missed, ✅ nothing missed, ❓ the user must decide.
+
+- Must hold: the aim is shown before the maker writes, so the user can stop it with Esc.
+- Weighed: item IDs and counts were not shown, since the user would have to learn the checklist to
+  read them. Circled numbers were not used, since terminals give them different widths.
+
+### The CCS
+
+Achieves: a plugin decides from what turn returns, what the work should be unchanged, stop and start
+over, traceable.
+
+A CCS is one JSON file in the nine parts of ACC, each a list of entries of a fixed kind; its full
+form is in [ccs.md](../../turn/skills/up/ccs.md), which the caller's step names. The caller writes
+what the work should be: where it goes, its receiver, what they use it for, the checklists and the
+sources. turn writes a new CCS beside it: what to do next (`done`, `ask the user`, `to the caller`,
+`stopped`), the questions only the user can answer, each item still More with why, the rules it
+learned, and where the evidence is, including the commit of each checklist. Each round's work,
+lists and records are kept in a folder named after the returned CCS. The caller adds the user's
+answers to a new CCS and calls again.
+
+- Must hold: the parts the caller wrote are the same in the returned CCS, except new lines added
+  after the old in `constraints`; every part and kind is one of those defined; a script checks both
+  on receiving and on returning, and stops with what does not match.
+- Weighed: a free-form handover was not chosen, since the caller and the next run find what they
+  need by kind, and a form an AI chooses afresh breaks them. Copying the work into the CCS was not
+  chosen; only places are written, since a copy drifts from the real thing.
+
+### Leaving the user's work alone
+
+Achieves: repository untouched, missing tools.
+
+Hooks stop, as an agent tries them, a write outside the work and turn's records, and any commit or
+push; the caller decides whether to commit. A script checks for python3 and jq before anything
+starts.
+
+- Must hold: after a run, the only changes in the repository are the work and turn's records.
+- Weighed: checking afterwards was not chosen, since the harm is done by then.
