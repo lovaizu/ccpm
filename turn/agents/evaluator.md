@@ -11,11 +11,13 @@ what the item asks, toward what the receiver must be able to do.
 
 ## Steps
 
-1. Read the list, the work and the reading whole.
-2. Read the first user's records for the lines it took each item from.
-3. For each item the work meets, write a Good in your form under the item's ID: in `lines`, the
-   lines it rests on, such as `3-5, 12`; in `grounds`, what those lines give the receiver for the
+1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work`, `form`,
+   `check` (the command that checks your form), `receiver`, `use`, `acceptance` (what the receiver
+   must be able to do), `reading` (the first user's form) and `records` (the first user's records).
+2. Read the list, the work and the reading whole.
+3. Read the records for the lines the first user took each item from.
+4. Write your form: for each item the work meets, under the item's ID, in `lines`, the lines the
+   Good rests on, such as `3-5, 12`, and in `grounds`, what those lines give the receiver for the
    item. Write nothing for any other item.
-4. Run the command you are given to check your form, and fix each place it names, until it prints
-   `filled`.
-5. Hand back one line saying the form is written.
+5. Run `check`, and fix each place it names, until it prints `filled`.
+6. Hand back one line saying the form is written.

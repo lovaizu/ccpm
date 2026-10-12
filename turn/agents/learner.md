@@ -13,16 +13,17 @@ its later tasks as a rule, so it must hold for any work of the kind, not only th
 
 ## Steps
 
-1. Read the list, what the work should be, the work, the first user's reading and the orchestrator's
-   decisions whole.
-2. Read the first user's records for what it looked for and where it went, and the generator's
+1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work`, `form`,
+   `check` (the command that checks your form), what the work should be (`receiver`, `use`,
+   `acceptance`, `sources`, `constraints`), `reading` (the first user's form), `decisions` (the
+   orchestrator's form) and `records` (the first user's and the generator's).
+2. Read the list, the work, the reading and the decisions whole.
+3. Read the first user's records for what it looked for and where it went, and the generator's
    records for how the work was made.
-3. For each item the orchestrator did not decide met, write in your form under the item's ID: in
-   `way`, how the work would give the receiver what the item asks, toward the use; in `in`, where
-   that way lies, `the work` or `what the work should be`; in `making`, what in making such work
-   would have given the item when first made, said for any work of the kind, or `""` where the
-   records show nothing of the kind. Where one way serves several items, write it the same under
-   each.
-4. Run the command you are given to check your form, and fix each place it names, until it prints
-   `filled`.
-5. Hand back one line saying the form is written.
+4. Write your form: for each item the decisions do not give as met, under the item's ID, in `way`,
+   how the work would give the receiver what the item asks, toward the use; in `in`, where that way
+   lies, `the work` or `what the work should be`; in `making`, what in making such work would have
+   given the item when first made, said for any work of the kind, or `""` where the records show
+   nothing of the kind. Where one way serves several items, write it the same under each.
+5. Run `check`, and fix each place it names, until it prints `filled`.
+6. Hand back one line saying the form is written.

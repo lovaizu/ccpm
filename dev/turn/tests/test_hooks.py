@@ -7,7 +7,7 @@ import sys
 import unittest
 from unittest import mock
 
-from helpers import ROOT, Repo, fill, run, started
+from helpers import form, ROOT, Repo, fill, run, started
 
 import subagentstop
 
@@ -44,7 +44,7 @@ class HandBack(unittest.TestCase):
 
     def test_an_agent_handing_back_with_its_form_filled_goes_on(self):
         # Given: the first user's form filled for every item
-        fill(self.repo, self.got["forms"]["first-user"], {
+        fill(self.repo, form("first-user"), {
             "note B-1": {"took": "run make", "lines": "3"}})
         # When: the first user hands back
         code, _ = self.hand_back("turn:first-user")
@@ -89,7 +89,7 @@ class HandBack(unittest.TestCase):
 
     def test_nothing_is_stopped_once_the_run_has_ended(self):
         # Given: a run that has ended
-        fill(self.repo, self.got["forms"]["orchestrator"], {
+        fill(self.repo, form("orchestrator"), {
             "note B-1": {"met": True, "lines": "3", "note": "x"},
             "note F-1": {"met": True, "lines": "1", "note": "x"}})
         self.assertEqual(run(self.repo, "end", ".turn/out", "1")[0], 0)

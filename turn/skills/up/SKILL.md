@@ -6,9 +6,9 @@ description: Makes the document or prompt a CCS asks for, has it read in its rec
 ## Role
 
 You are turn's orchestrator. You alone decide which items of the list the work gives its receiver,
-reading the whole work for each item; what your agents hand back shows you where to look first. The
-caller hands the work on to its receiver on your decisions, so for each item you decide is met you
-name the lines that give it.
+reading the whole work for each item, as the receiver, for the use; what your agents hand back and
+the lines coverage prints show you where to look first. The caller hands the work on to its receiver
+on your decisions, so for each item you decide is met you name the lines that give it.
 
 ## Steps
 
@@ -16,54 +16,36 @@ The arguments:
 
 $ARGUMENTS
 
-1. From the top of the repository, run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" start <in> <out> ${CLAUDE_SESSION_ID}`. If
-   python3 is not found, say to install Python 3.9 or later, and end. If it exits with 1, show what
-   it printed, and end. Otherwise it prints, as JSON, the run's folder, the list, each role's form,
-   where the work is made, and what the work should be. The round is 1.
+`up.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py"`, run from the top of the
+repository.
+
+1. Run `up.py start <in> <out> ${CLAUDE_SESSION_ID}`. If python3 is not found, say to install
+   Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it
+   prints, as JSON, `folder`, `list`, `round`, `work`, your two forms `hand-on` and `orchestrator`,
+   and `receiver`, `use` and `acceptance`.
 2. Read the list whole.
-3. Call the `turn:generator` agent. Hand it the list, its form, where the work is made, the
-   receiver, the use, the acceptance, the sources and the constraints, all as `start` printed them,
-   and the command that checks its form:
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> <round> generator`. In round 2,
-   hand it also each way to a Good with the items it serves, and add the rules to the constraints,
-   all as `round` printed them.
-4. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" coverage <folder> <round> generator`. It
-   prints the lines with text that no item of the generator's form names.
-5. Read the work whole and the generator's form. For each item, read the whole work for it as the
-   receiver, for the use, starting from the lines the generator names and the lines coverage
-   printed, and look for the lines that give the receiver what the item asks. Write your decision
-   in the form `hand-on` with `jq`: where you find them, `met` true, those lines, and in `note` what
-   the receiver gets from them; where you do not, `met` false, and in `note` how the work would give
-   it. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> <round> hand-on`, and fill
-   each place it names, until it prints `filled`.
-6. While an item of `hand-on` is not met, call the `turn:generator` agent again, handing it what
-   step 3 names and, for each item not met, its `note`; then do steps 4 and 5 again.
-7. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" copy <folder> <round>`. It prints the copy's
-   folder.
-8. Call the `turn:first-user` agent. Hand it the copy's folder, the deliverable's path in it, the
-   receiver, the use, the list, its form, and the command that checks its form, with `first-user`
-   as the role. Hand it nothing more, so it stops where the receiver would.
-9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" drop <copy>`, then
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" records <folder> <the first user's agent id>`,
-   which prints where its records are.
-10. Call the `turn:evaluator` agent. Hand it the list, the work, the first user's form as its
-    reading, the first user's records, the receiver, the use, the acceptance, its form, and the
-    command that checks its form, with `evaluator` as the role. Then run
-    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" coverage <folder> <round> evaluator`.
-11. Read the work whole, the first user's form and the evaluator's form. For each item, read the
-    whole work for it as the receiver, for the use, starting from the lines the evaluator names and
-    the lines coverage printed, and look for the lines that give the receiver what the item asks.
-    Write your decision in your form with `jq`: where you find them, `met` true, those lines, and in
-    `note` what the receiver gets from them, in plain words; where you do not, `met` false.
-12. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> <round> orchestrator`, and
-    fill each place it names, until it prints `filled`.
-13. If every item of your form is met, go to step 15. Otherwise run `records` for the generator's
-    last agent id, and call the `turn:learner` agent. Hand it the list, the receiver, the use, the
-    acceptance, the sources and the constraints as `start` printed them, the work, the first user's
-    form as its reading, your form as the decisions, the first user's and the generator's records,
-    its form, and the command that checks its form, with `learner` as the role.
-14. In round 1, run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" round <folder>`. If it prints
-    JSON, the round is 2: go to step 3 with the forms and the work it names. Otherwise go on.
-15. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> <round>`. Say what it printed
-    and where the CCS is written, in one line and nothing more, and return to the caller.
+3. Run `up.py brief <folder> <round> generator`, and call the `turn:generator` agent with the path
+   it prints as the whole prompt.
+4. Run `up.py coverage <folder> <round> generator`. It prints the lines with text that no item of
+   the generator's form names.
+5. Read the work and the generator's form whole. Write the form `hand-on` with `jq`, for every
+   item: `met`, true or false; `lines`, where met, the lines that give it, such as `3-5, 12`;
+   `note`, where met, what the receiver gets from those lines, and where not, how the work would
+   give it. Run `up.py check <folder> <round> hand-on`, and fill each place it names, until it
+   prints `filled`.
+6. If an item of `hand-on` is not met, go to step 3.
+7. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the
+   path it prints as the whole prompt.
+8. Run `up.py brief <folder> <round> evaluator`, and call the `turn:evaluator` agent with the path
+   it prints as the whole prompt. Then run `up.py coverage <folder> <round> evaluator`.
+9. Read the work, the first user's form and the evaluator's form whole. Write your form
+   `orchestrator` with `jq`, for every item: `met`, true or false; `lines`, where met, the lines
+   that give it; `note`, where met, what the receiver gets from those lines, in plain words. Run
+   `up.py check <folder> <round> orchestrator`, and fill each place it names, until it prints
+   `filled`.
+10. If an item of your form is not met, run `up.py brief <folder> <round> learner`, and call the
+    `turn:learner` agent with the path it prints as the whole prompt.
+11. In round 1, run `up.py round <folder>`. If it prints JSON, the round is its `round` and the
+    forms are in that round's folder: go to step 3.
+12. Run `up.py end <folder> <round>`. Say what it printed and where the CCS is written, in one
+    line, and return to the caller.

@@ -104,3 +104,8 @@ def started(repo, c=None):
 def fill(repo, form, items):
     """Writes a role's form, as the role fills it."""
     repo.write(form, json.dumps(items))
+
+
+def form(role, n=1):
+    """Where a role's form is in round n of the run the tests start."""
+    return f".turn/out/{n}/{role}.json"

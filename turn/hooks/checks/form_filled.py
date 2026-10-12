@@ -1,20 +1,16 @@
 """An agent of a run hands back only once every place of its form is filled, so the orchestrator
 decides from answers to every item."""
 
-import json
 import os
 
 import up
+from checks.open_run import open_run
 
 
 def check(data):
     role = data.get("agent_type", "").partition("turn:")[2]
-    run_file = os.path.join(data.get("cwd", ""), up.RUN)
-    if data.get("hook_event_name") != "SubagentStop" or role not in up.ROLES or not os.path.isfile(run_file):
-        return []
-    with open(run_file) as f:
-        run = json.load(f)
-    if run["session"] != data.get("session_id"):
+    run = open_run(data) if data.get("hook_event_name") == "SubagentStop" and role in up.ROLES else None
+    if run is None:
         return []
     here = os.getcwd()
     os.chdir(data["cwd"])

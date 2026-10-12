@@ -24,14 +24,14 @@ PARTS = {
 }
 ROLES = ("generator", "hand-on", "first-user", "evaluator", "orchestrator", "learner")
 PLACES = ("the work", "what the work should be")
+AGENTS = {"generator": 3, "first-user": 7, "evaluator": 8, "learner": 10}
+SCRIPT = os.path.abspath(__file__)
 DECIDING = ("hand-on", "orchestrator")
 RUN = os.path.join(".turn", "run.json")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
 USAGE = """usage: up.py start <in> <out> <session>
+       up.py brief <work folder> <round> <generator|first-user|evaluator|learner>
        up.py coverage <work folder> <round> <generator|evaluator>
-       up.py copy <work folder> <round>
-       up.py drop <copy>
-       up.py records <work folder> <agent id>
        up.py check <work folder> <round> <generator|hand-on|first-user|evaluator|orchestrator|learner>
        up.py round <work folder>
        up.py end <work folder> <round>"""
@@ -145,14 +145,13 @@ def start(src, out, session):
     print(json.dumps({
         "folder": work,
         "list": os.path.join(work, "list.json"),
-        "forms": {r: os.path.join(work, "1", f"{r}.json") for r in ROLES},
+        "round": 1,
         "work": os.path.join(work, "1", os.path.basename(deliverable)),
-        "deliverable": deliverable,
+        "hand-on": os.path.join(work, "1", "hand-on.json"),
+        "orchestrator": os.path.join(work, "1", "orchestrator.json"),
         "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
         "use": "; ".join(entries(ccs, "goal_orientation", "use")),
         "acceptance": entries(ccs, "goal_orientation", "acceptance"),
-        "sources": entries(ccs, "retrieved_artifacts", "source"),
-        "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
     }, indent=1, ensure_ascii=False))
 
 
@@ -161,13 +160,13 @@ def lay(work, n, laid):
         write_json(os.path.join(work, str(n), f"{role}.json"), laid[role])
 
 
-def the_work(work, n):
+def the_work(work, n, written=True):
     """The run's CCS as received, and the path of the work made in round n."""
     run = read_json(RUN, RUN)
     ccs = read_json(run["in"], run["in"])
     deliverable = entries(ccs, "focal_entities", "deliverable")[0]
     path = os.path.join(work, str(n), os.path.basename(deliverable))
-    if not os.path.isfile(path):
+    if written and not os.path.isfile(path):
         raise Stop(f"{path} is not written")
     return run, ccs, deliverable, path
 
@@ -232,7 +231,7 @@ def learner_faults(form, left):
     return found
 
 
-def ways(work, n):
+def learned(work, n):
     """The ways the learner gave in round n, each once with the items it serves, and what it learned
     of making such work."""
     found = check(work, n, "orchestrator") or check(work, n, "learner")
@@ -250,7 +249,7 @@ def round_two(work):
     run = read_json(RUN, RUN)
     if run["round"] != 1:
         raise Stop("a run has two rounds at most")
-    given, rules = ways(work, 1)
+    given, _ = learned(work, 1)
     if not any(w["in"] == PLACES[0] for w in given):
         raise Stop("no way for the generator to take, so the run ends after round 1")
     _, _, _, path = the_work(work, 1)
@@ -259,12 +258,7 @@ def round_two(work):
     shutil.copyfile(path, made)
     run["round"] = 2
     write_json(RUN, run)
-    print(json.dumps({
-        "forms": {r: os.path.join(work, "2", f"{r}.json") for r in ROLES},
-        "work": made,
-        "ways": [w for w in given if w["in"] == PLACES[0]],
-        "rules": [f"rule: {r}" for r in rules],
-    }, indent=1, ensure_ascii=False))
+    print(json.dumps({"round": 2, "work": made}))
 
 
 def coverage(work, n, role):
@@ -279,17 +273,18 @@ def coverage(work, n, role):
     print(f"lines no item names: {', '.join(map(str, left))}" if left else "every line is named")
 
 
-def copy(work, n):
-    run, _, deliverable, path = the_work(work, n)
-    form = read_json(os.path.join(work, str(n), "hand-on.json"), "the form")
-    unseen = [i for i, p in form.items() if p.get("met") is not True]
-    if unseen:
-        raise Stop("not yet seen given: " + ", ".join(unseen))
-    place = tempfile.mkdtemp(prefix="turn-copy-")
-    subprocess.run(["git", "clone", "-q", ".", place], check=True)
-    os.makedirs(os.path.dirname(os.path.join(place, deliverable)), exist_ok=True)
-    shutil.copyfile(path, os.path.join(place, deliverable))
-    print(place)
+def records(role):
+    """The records Claude Code keeps of the run's last agent of the role."""
+    session = read_json(RUN, RUN)["session"]
+    found = []
+    for meta in glob.glob(os.path.join(os.path.expanduser("~"), ".claude", "projects", "*", session,
+                                       "subagents", "agent-*.meta.json")):
+        path = meta[:-len(".meta.json")] + ".jsonl"
+        if read_json(meta, meta).get("agentType") == f"turn:{role}" and os.path.isfile(path):
+            found.append((os.path.getmtime(path), path))
+    if not found:
+        raise Stop(f"no records of the {role.replace('-', ' ')} in session {session}")
+    return max(found)[1]
 
 
 def drop(place):
@@ -299,18 +294,75 @@ def drop(place):
     shutil.rmtree(place)
 
 
-def records(work, agent):
-    session = read_json(RUN, RUN)["session"]
-    found = glob.glob(os.path.join(os.path.expanduser("~"), ".claude", "projects", "*", session,
-                                   "subagents", f"agent-{agent}.jsonl"))
-    if not found:
-        raise Stop(f"no records of agent {agent} in session {session}")
-    print(found[0])
+def brief(work, n, role):
+    """Writes what the agent of the role is handed, once the steps before it are done."""
+    if role not in AGENTS:
+        raise Stop(f"no brief for {role}; briefs are for {', '.join(AGENTS)}")
+    run = read_json(RUN, RUN)
+    if int(n) != run["round"]:
+        raise Stop(f"round {run['round']} is running")
+    n = int(n)
+    _, ccs, deliverable, path = the_work(work, n, written=role != "generator")
+    here = os.path.join(work, str(n))
+    should = {
+        "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
+        "use": "; ".join(entries(ccs, "goal_orientation", "use")),
+        "acceptance": entries(ccs, "goal_orientation", "acceptance"),
+        "sources": entries(ccs, "retrieved_artifacts", "source"),
+        "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
+    }
+    given = {"list": os.path.join(work, "list.json"), "work": path, "form": os.path.join(here, f"{role}.json"),
+             "check": f'cd "{os.getcwd()}" && python3 "{SCRIPT}" check {work} {n} {role}'}
+    hand_on = read_json(os.path.join(here, "hand-on.json"), "the form")
+    if role == "generator":
+        sent = [{"way": p["note"], "items": [i]} for i, p in hand_on.items() if p.get("met") is False]
+        if sent or n == 1:
+            ways = sent
+        else:
+            ways = [{"way": w["way"], "items": w["items"]} for w in learned(work, 1)[0] if w["in"] == PLACES[0]]
+            should["constraints"] += [f"rule: {r}" for r in learned(work, 1)[1]]
+        given.update(should, ways=ways)
+    elif role == "first-user":
+        unseen = [i for i, p in hand_on.items() if p.get("met") is not True]
+        if unseen:
+            raise Stop("step 6: the work goes back to the generator until every item is seen given; "
+                       "not yet: " + ", ".join(unseen))
+        place = tempfile.mkdtemp(prefix="turn-copy-")
+        subprocess.run(["git", "clone", "-q", ".", place], check=True)
+        os.makedirs(os.path.dirname(os.path.join(place, deliverable)), exist_ok=True)
+        shutil.copyfile(path, os.path.join(place, deliverable))
+        given = {"copy": place, "deliverable": deliverable, "receiver": should["receiver"], "use": should["use"],
+                 "list": os.path.abspath(given["list"]), "form": given["form"], "check": given["check"]}
+    elif role == "evaluator":
+        first = os.path.join(here, "first-user-brief.json")
+        if not os.path.isfile(first):
+            raise Stop("step 7: the first user has not been handed the work")
+        read = records("first-user")
+        found = check(work, n, "first-user")
+        if found:
+            raise Stop("\n".join(found))
+        place = read_json(first, "the first user's brief")["copy"]
+        if os.path.exists(place):
+            drop(place)
+        given.update({k: should[k] for k in ("receiver", "use", "acceptance")},
+                     reading=os.path.join(here, "first-user.json"), records=read)
+    else:
+        found = check(work, n, "orchestrator")
+        if found:
+            raise Stop("\n".join(found))
+        if not without_good(work, n):
+            raise Stop("every item is met, so there is nothing to learn")
+        given.update(should, reading=os.path.join(here, "first-user.json"),
+                     decisions=os.path.join(here, "orchestrator.json"),
+                     records={"first user": records("first-user"), "generator": records("generator")})
+    out = os.path.join(here, f"{role}-brief.json")
+    write_json(out, given)
+    print(out)
 
 
 def end(work, n):
     n = int(n)
-    left, _ = ways(work, n)
+    left, _ = learned(work, n)
     if n == 1 and any(w["in"] == PLACES[0] for w in left):
         raise Stop("a way lies with the generator: start the second round")
     run, ccs, deliverable, path = the_work(work, n)
@@ -320,7 +372,7 @@ def end(work, n):
     caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[1] for i in w["items"]]
     nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences else "done"
     for k in range(1, n + 1):
-        for rule in ways(work, k)[1]:
+        for rule in learned(work, k)[1]:
             if {"rule": rule} not in ccs["constraints"]:
                 ccs["constraints"].append({"rule": rule})
     evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
@@ -333,8 +385,8 @@ def end(work, n):
     print(nxt)
 
 
-COMMANDS = {"start": (start, 3), "coverage": (coverage, 3), "copy": (copy, 2), "drop": (drop, 1), "records": (records, 2),
-            "round": (round_two, 1), "end": (end, 2)}
+COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),
+            "end": (end, 2)}
 
 
 def main(argv):

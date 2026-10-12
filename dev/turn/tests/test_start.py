@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from helpers import Repo, ccs, run, started
+from helpers import form, Repo, ccs, run, started
 
 
 class Start(unittest.TestCase):
@@ -12,33 +12,28 @@ class Start(unittest.TestCase):
         self.repo.close()
 
     def test_a_run_lays_out_the_list_and_an_empty_form_for_each_role(self):
-        # Given: a task to be written in English, naming a checklist with two items and a fenced example
+        # Given: a task naming a checklist with two items and a fenced example
         # When: a run starts
-        got = started(self.repo, ccs(constraints=[{"language": "English"}]))
+        got = started(self.repo)
         # Then: the list holds the checklist's opening and both items, not the example
         listed = self.repo.json(got["list"])
         self.assertEqual(listed["checklists"][0]["checklist"], "note")
         self.assertTrue(listed["checklists"][0]["opening"].startswith("A note is read by a teammate"))
         self.assertEqual([i["id"] for i in listed["items"]], ["note B-1", "note F-1"])
         self.assertIn("Why: a note is for acting.", listed["items"][0]["text"])
-        # Then: each role's form has a place for every item, the evaluator's and the learner's none to start with
-        forms = got["forms"]
-        self.assertEqual(self.repo.json(forms["generator"]),
+        # Then: each role's form has a place for every item, the agents' that write per item none
+        # to start with
+        self.assertEqual(self.repo.json(form("generator")),
                          {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}})
-        self.assertEqual(self.repo.json(forms["first-user"]), {})
-        self.assertEqual(self.repo.json(forms["hand-on"])["note B-1"], {"met": None, "lines": "", "note": ""})
-        self.assertEqual(self.repo.json(forms["evaluator"]), {})
-        self.assertEqual(self.repo.json(forms["learner"]), {})
-        self.assertEqual(self.repo.json(forms["orchestrator"])["note F-1"],
-                         {"met": None, "lines": "", "note": ""})
-        # Then: what the agents are handed is given, and the work goes in the run's folder
-        self.assertEqual(got["receiver"], "a new teammate")
-        self.assertEqual(got["use"], "to start work")
-        self.assertEqual(got["acceptance"], ["they can start alone"])
-        self.assertEqual(got["sources"], ["notes.md"])
-        self.assertEqual(got["constraints"], ["language: English"])
-        self.assertEqual(got["folder"], ".turn/out")
-        self.assertEqual(got["work"], ".turn/out/1/note.md")
+        for role in ("first-user", "evaluator", "learner"):
+            self.assertEqual(self.repo.json(form(role)), {})
+        for role in ("hand-on", "orchestrator"):
+            self.assertEqual(self.repo.json(form(role))["note F-1"], {"met": None, "lines": "", "note": ""})
+        # Then: the orchestrator is given what it decides from and where it writes, and no more
+        self.assertEqual(got, {
+            "folder": ".turn/out", "list": ".turn/out/list.json", "round": 1,
+            "work": ".turn/out/1/note.md", "hand-on": form("hand-on"), "orchestrator": form("orchestrator"),
+            "receiver": "a new teammate", "use": "to start work", "acceptance": ["they can start alone"]})
         self.assertFalse(self.repo.exists("out.json"))
 
     def test_a_task_without_a_use_is_run_with_none(self):

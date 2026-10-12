@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from helpers import Repo, fill, run, started
+from helpers import form, Repo, fill, run, started
 
 WORK = "# Note\n\nRun make.\n"
 WORK_WAY = "the work: say what make builds"
@@ -57,10 +57,10 @@ class Learner(unittest.TestCase):
                                      "note B-1": {"way": "x", "in": "the work", "making": ""}},
              "note B-1: has a Good"),
         ]
-        for name, form, said in cases:
+        for name, filled, said in cases:
             with self.subTest(name):
                 # Given: the learner's form with this place left or wrong
-                fill(self.repo, ".turn/out/1/learner.json", form)
+                fill(self.repo, ".turn/out/1/learner.json", filled)
                 # When: it is checked
                 code, out = self.check()
                 # Then: it is stopped, naming the place
@@ -77,39 +77,33 @@ class SecondRound(unittest.TestCase):
     def tearDown(self):
         self.repo.close()
 
-    def test_the_second_round_starts_from_the_work_with_the_ways_to_a_good(self):
-        # Given: round 1 decided with two items without a Good, each given a way in the work, and one
-        # with what in making such work would have given it
-        decide(self.repo, ".turn/out/1", f1=False, b1=False)
-        learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY, "note B-1": "the work: say why to run make"},
-              making={"note B-1": RULE})
+    def test_the_second_round_starts_from_the_work_of_the_first(self):
+        # Given: round 1 decided with an item without a Good, given a way in the work
+        decide(self.repo, ".turn/out/1", f1=False)
+        learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY})
         # When: the second round is started
         code, out = run(self.repo, "round", ".turn/out")
         # Then: the work of round 1 is where the generator makes it again, with fresh forms
         self.assertEqual(code, 0, out)
-        got = json.loads(out)
-        self.assertEqual(got["work"], ".turn/out/2/note.md")
+        self.assertEqual(json.loads(out), {"round": 2, "work": ".turn/out/2/note.md"})
         self.assertEqual(self.repo.read(".turn/out/2/note.md"), WORK)
-        self.assertEqual(self.repo.json(got["forms"]["generator"]),
+        self.assertEqual(self.repo.json(form("generator", 2)),
                          {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}})
         self.assertEqual(self.repo.json(".turn/run.json")["round"], 2)
-        # Then: the ways are handed on with their items, and what was learned of making as a rule
-        self.assertEqual(got["ways"], [
-            {"way": "say what make builds", "in": "the work", "items": ["note F-1"]},
-            {"way": "say why to run make", "in": "the work", "items": ["note B-1"]}])
-        self.assertEqual(got["rules"], [f"rule: {RULE}"])
 
-    def test_items_one_way_serves_are_handed_on_together(self):
-        # Given: one way given for both items
+    def test_items_one_way_serves_are_handed_to_the_generator_together(self):
+        # Given: one way given for both items, and something learned of making for one
         decide(self.repo, ".turn/out/1", f1=False, b1=False)
-        learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY, "note B-1": WORK_WAY})
-        # When: the second round is started
-        code, out = run(self.repo, "round", ".turn/out")
-        # Then: the way is handed on once, with both items
+        learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY, "note B-1": WORK_WAY},
+              making={"note B-1": RULE})
+        run(self.repo, "round", ".turn/out")
+        # When: the generator's brief for round 2 is made
+        code, out = run(self.repo, "brief", ".turn/out", "2", "generator")
+        # Then: the way is handed on once, with both items, and the rule with the constraints
         self.assertEqual(code, 0, out)
-        self.assertEqual(json.loads(out)["ways"],
-                         [{"way": "say what make builds", "in": "the work",
-                           "items": ["note B-1", "note F-1"]}])
+        got = self.repo.json(out.strip())
+        self.assertEqual(got["ways"], [{"way": "say what make builds", "items": ["note B-1", "note F-1"]}])
+        self.assertEqual(got["constraints"], [f"rule: {RULE}"])
 
     def test_there_is_no_third_round(self):
         # Given: a second round already started

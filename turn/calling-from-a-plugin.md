@@ -89,9 +89,9 @@ The step reads four kinds:
 - `next`, in `predictive_cue`: always one; what the step does next, below.
 - `gap`, in `uncertainty_signal`: one for each question only the user can answer.
 - `difference`, in `semantic_gist`: one for each item still More, that is, an item of the
-  checklists the work does not yet meet, with how the work would meet it.
+  checklists the work does not yet meet, with what the work would need to meet it.
 - `evidence`, in `episodic_trace`: where in `.turn/` turn keeps, for each item, the lines of the
-  work that show it met or how it would be met.
+  work that show it met or what the work would need to meet it.
 
 The other entries are turn's own; the step need not read them, and hands them on as they are when
 it calls turn again.

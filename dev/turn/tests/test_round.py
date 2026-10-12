@@ -2,80 +2,18 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 import unittest
-from unittest import mock
 
-from helpers import ROOT, Repo, fill, run, started
+from helpers import form, ROOT, Repo, fill, run, started
 
 WORK = "# Note\n\nRun make.\n"
 
 
-def seen(repo, got, f1=True):
+def seen(repo, f1=True):
     """The orchestrator's form before the reading, with F-1 seen given or not."""
-    fill(repo, got["forms"]["hand-on"], {
+    fill(repo, form("hand-on"), {
         "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
         "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else "cut it to one line"}})
-
-
-class Copy(unittest.TestCase):
-    def setUp(self):
-        self.repo = Repo()
-        self.got = started(self.repo)
-
-    def tearDown(self):
-        self.repo.close()
-
-    def test_the_first_user_reads_a_fresh_copy_holding_only_what_the_receiver_has(self):
-        # Given: the work written and seen to give every item, and a file the user has not committed
-        self.repo.write(self.got["work"], WORK)
-        seen(self.repo, self.got)
-        self.repo.write("draft.md", "not committed")
-        # When: the copy is made
-        code, out = run(self.repo, "copy", ".turn/out", "1")
-        copy = out.strip()
-        # Then: it holds what is committed and the work at its place, and nothing else of the user's
-        self.assertEqual(code, 0)
-        with open(os.path.join(copy, "docs/note.md")) as f:
-            self.assertEqual(f.read(), WORK)
-        self.assertTrue(os.path.exists(os.path.join(copy, "notes.md")))
-        self.assertFalse(os.path.exists(os.path.join(copy, "draft.md")))
-        self.assertFalse(os.path.exists(os.path.join(copy, ".turn")))
-        # When: the copy is dropped
-        code, _ = run(self.repo, "drop", copy)
-        # Then: it is gone
-        self.assertEqual(code, 0)
-        self.assertFalse(os.path.exists(copy))
-
-    def test_a_copy_is_not_made_before_the_work_is_written(self):
-        # Given: no work written yet
-        # When: the copy is made
-        code, out = run(self.repo, "copy", ".turn/out", "1")
-        # Then: it ends saying the work is missing
-        self.assertEqual(code, 1)
-        self.assertIn(".turn/out/1/note.md is not written", out)
-
-    def test_a_copy_is_not_made_before_the_orchestrator_sees_every_item_given(self):
-        # Given: the work written, with one item not yet seen given
-        self.repo.write(self.got["work"], WORK)
-        seen(self.repo, self.got, f1=False)
-        # When: the copy is made
-        code, out = run(self.repo, "copy", ".turn/out", "1")
-        # Then: it ends naming the item, so the work goes back to the generator first
-        self.assertEqual(code, 1)
-        self.assertIn("note F-1", out)
-        self.assertNotIn("note B-1", out)
-
-    def test_only_a_copy_turn_made_is_dropped(self):
-        # Given: a folder turn did not make
-        other = tempfile.mkdtemp()
-        # When: it is asked to be dropped
-        code, out = run(self.repo, "drop", other)
-        # Then: it is left alone
-        self.assertEqual(code, 1)
-        self.assertIn("not a copy turn made", out)
-        self.assertTrue(os.path.exists(other))
-        os.rmdir(other)
 
 
 class Coverage(unittest.TestCase):
@@ -94,53 +32,20 @@ class Coverage(unittest.TestCase):
                   "every line is named"),
                  ("evaluator", {"note B-1": {"lines": "3", "grounds": "says run make"}},
                   "lines no item names: 1")]
-        for role, form, said in cases:
+        for role, filled, said in cases:
             with self.subTest(role=role, said=said):
                 # Given: the role's form naming these lines
-                fill(self.repo, self.got["forms"][role], form)
+                fill(self.repo, form(role), filled)
                 # When: the coverage is asked for
                 code, out = run(self.repo, "coverage", ".turn/out", "1", role)
                 # Then: the lines with text that no place names are shown, blank lines left out
                 self.assertEqual((code, out.strip()), (0, said))
 
 
-class Records(unittest.TestCase):
-    def setUp(self):
-        self.repo = Repo()
-        self.home = tempfile.TemporaryDirectory()
-        started(self.repo)
-
-    def tearDown(self):
-        self.repo.close()
-        self.home.cleanup()
-
-    def test_the_records_of_an_agent_of_this_session_are_found(self):
-        # Given: the records Claude Code keeps for an agent of the run's session
-        path = os.path.join(self.home.name, ".claude/projects/p/s1/subagents/agent-a1.jsonl")
-        os.makedirs(os.path.dirname(path))
-        open(path, "w").close()
-        # When: they are asked for
-        with mock.patch.dict(os.environ, {"HOME": self.home.name}):
-            code, out = run(self.repo, "records", ".turn/out", "a1")
-        # Then: their path is given
-        self.assertEqual(code, 0)
-        self.assertEqual(out.strip(), path)
-
-    def test_records_that_are_not_kept_are_said_to_be_missing(self):
-        # Given: no records for the agent
-        # When: they are asked for
-        with mock.patch.dict(os.environ, {"HOME": self.home.name}):
-            code, out = run(self.repo, "records", ".turn/out", "a9")
-        # Then: it ends saying so
-        self.assertEqual(code, 1)
-        self.assertIn("no records of agent a9", out)
-
-
 class Check(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.forms = self.got["forms"]
         self.repo.write(self.got["work"], WORK)
 
     def tearDown(self):
@@ -151,14 +56,14 @@ class Check(unittest.TestCase):
 
     def test_a_form_filled_for_every_item_on_lines_the_work_holds_passes(self):
         # Given: each role's form filled as its steps ask
-        fill(self.repo, self.forms["generator"], {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
-        fill(self.repo, self.forms["first-user"], {
+        fill(self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
+        fill(self.repo, form("first-user"), {
             "note B-1": {"took": "run make", "lines": "3"}})
-        fill(self.repo, self.forms["evaluator"], {"note B-1": {"lines": "3", "grounds": "says run make"}})
-        fill(self.repo, self.forms["orchestrator"], {
+        fill(self.repo, form("evaluator"), {"note B-1": {"lines": "3", "grounds": "says run make"}})
+        fill(self.repo, form("orchestrator"), {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
             "note F-1": {"met": False, "lines": "", "note": ""}})
-        seen(self.repo, self.got)
+        seen(self.repo)
         for role in ("generator", "hand-on", "first-user", "evaluator", "orchestrator"):
             with self.subTest(role):
                 # When: the form is checked
@@ -203,10 +108,10 @@ class Check(unittest.TestCase):
              "note B-1: the note is not given"),
             ("not JSON", "generator", "{", "the form is not JSON"),
         ]
-        for name, role, form, said in cases:
+        for name, role, filled, said in cases:
             with self.subTest(name):
                 # Given: the form with this place left or wrong
-                self.repo.write(self.forms[role], form if isinstance(form, str) else json.dumps(form))
+                self.repo.write(form(role), filled if isinstance(filled, str) else json.dumps(filled))
                 # When: it is checked
                 code, out = self.check(role)
                 # Then: it is stopped, naming the place
@@ -233,7 +138,7 @@ class End(unittest.TestCase):
         self.repo.close()
 
     def decide(self, b1, f1):
-        fill(self.repo, self.got["forms"]["orchestrator"], {
+        fill(self.repo, form("orchestrator"), {
             "note B-1": {"met": b1, "lines": "3" if b1 else "", "note": "the step is given"},
             "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "the title is short" if f1 else ""}})
 

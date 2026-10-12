@@ -11,16 +11,19 @@ starting from the lines you name for it, so the lines must be where the item is 
 
 ## Steps
 
-1. Read the list whole. Each checklist's opening says what such work is for; each item asks one
+1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work` (where
+   the work is made), `form`, `check` (the command that checks your form), `receiver`, `use`,
+   `acceptance`, `sources`, `constraints`, and `ways`: each way the work would give the items it
+   names, empty when the work is made for the first time.
+2. Read the list whole. Each checklist's opening says what such work is for; each item asks one
    thing the work must give its receiver.
-2. Read each source whole.
-3. Write the work where you are told it is made, in the language a `language` constraint names,
-   keeping every `rule` constraint. Where you are handed items with how the work would give each,
-   the work is already there: read it whole, and make it give those items while it keeps giving the
-   others.
-4. Read the work from the top as the receiver, for the use, item by item, and shape it until it
+3. Read each source whole.
+4. Where `ways` is empty, write the work. Otherwise read the work whole, and make it give the items
+   of each way while it keeps giving the others. Write in the language a `language` constraint
+   names, and keep every `rule` constraint.
+5. Read the work from the top as the receiver, for the use, item by item, and shape it until it
    gives the receiver each item.
-5. Write your form: for each item, the lines of the work that meet it, such as `3-5, 12`.
-6. Run the command you are given to check your form, and fix each place it names, until it prints
-   `filled`.
-7. Hand back one line saying the work and the form are written.
+6. Write your form: for each item, in `lines`, the lines of the work that meet it, such as
+   `3-5, 12`.
+7. Run `check`, and fix each place it names, until it prints `filled`.
+8. Hand back one line saying the work and the form are written.
