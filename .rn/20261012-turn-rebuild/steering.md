@@ -227,7 +227,23 @@ Progress:
   already where the work goes is written over only when git holds it as it stands. The README tells
   how to put a checklist in the repository, and loses the coverage sentence and the plugin example,
   which ccs.md holds. ccs.md says what happens to a file already where the work goes.
-- Next: the user's agreement to the README (plugin.md step 1) and the design (step 2).
+- Decided by the user (2026-10-12): the role names go back to those released on main
+  (orchestrator, generator, first user, evaluator, learner); they were changed in this rebuild
+  without agreement. The design is written again from nothing, half its length or less: no
+  specification (console details, the hooks' checks, steps the callers' page holds), no history
+  beyond one ground, Weighed only for choices a builder might want to change, principles only where
+  they span approaches, and a figure of who takes part, what each is for and what it depends on in
+  place of the table.
+- Found with the user (2026-10-12): the assistant, as orchestrator by hand, asked for agreement
+  without deciding every item itself, Goods included, so the user did the orchestrator's work. The
+  cause: no record shows the check was made, so a cheaper check passed for it. Decided: before asking
+  for agreement, the orchestrator fills, for each document, a form made from its list with every
+  item decided (met or not, the lines, what was fixed), a script sees every item filled, and the
+  real thing is checked too (the figures as GitHub renders them, one reading from the top as the
+  receiver). turn's orchestrator follows the same steps.
+- Next: write the design again by the decisions above; then fill the orchestrator's form for the
+  README, the callers' page and the design, fix what it finds, and only then ask the user to agree to
+  the README (plugin.md step 1) and the design (step 2).
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
