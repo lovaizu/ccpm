@@ -247,7 +247,10 @@ Progress:
   decided and met (`python3 dev/turn/trials/check_form.py <form> <checklist>...`); the figure was
   checked as mermaid-cli renders it.
 - `turn/README.md`: agreed with the user (2026-10-12), plugin.md step 1.
-- Next: ask the user to agree to the design (step 2).
+- `dev/turn/design.md`: agreed with the user (2026-10-12), plugin.md step 2; its length is not a
+  measure.
+- Next: plugin.md step 3, one reading of the README and the design by first users who do not know
+  the discussion.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
