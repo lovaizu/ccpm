@@ -32,7 +32,8 @@ The words used throughout:
 
 - Read in the receiver's place: the work comes back already read in the receiver's place by an agent
   that did not write it, each Good shown in its lines, and what that reading could not take made
-  again from its cause. The user hands the work on without first reading it as its receiver.
+  again on how it would be given. The user hands the work on without first reading it as its
+  receiver.
 - Asked only what only the user can decide: nothing is asked that what the work should be, or its
   sources, already answers.
 - Seeing the work as it goes: the user can tell from the console how far a run has come, and stop a
@@ -40,7 +41,7 @@ The words used throughout:
 - A plugin decides from what turn returns: a plugin hands turn one task and decides its next move
   from the returned CCS alone, without writing the loop of making, reading and making again.
 - Following each item back: the user can later find, for each item, the lines its Good rests on or
-  why it has none, and the version of the checklist it was judged by.
+  how it would get one, and the version of the checklist it was judged by.
 
 ### One-dimensional quality
 
@@ -53,7 +54,7 @@ Each must be no worse than in the version in use.
 ### Must-be quality
 
 - Nothing passes unshown: an item counts as met only with a Good whose grounds are lines the work
-  holds; every other item is returned as More, with its cause.
+  holds; every other item is returned as More, with how it would get a Good.
 - What the work should be unchanged: turn never rewrites what the caller wrote.
 - Nothing unread: the work turn writes where the work goes is the version last read.
 - Repository untouched: during a run, turn changes nothing but where the work goes and its folder
@@ -111,8 +112,8 @@ passes.
   stopped on its aim has written no work of that aim, and then makes what the user said.
 - A plugin decides from what turn returns: tried on runs that end in each value of `next`, the move
   decided from the returned CCS alone is the one decided after also reading the records.
-- Following each item back: `.turn/` alone gives, for any item, the lines of its Good or why it has
-  none, and the version of its checklist.
+- Following each item back: `.turn/` alone gives, for any item, the lines of its Good or how it
+  would get one, and the version of its checklist.
 
 ### One-dimensional quality
 
@@ -256,8 +257,8 @@ write Goods only still wrote on other items. Coverage shows where a slip may be:
 name does nothing for the receiver or holds one, since every useful line meets some item
 (assumption). The orchestrator reads the whole work for each item, from the grounds and coverage,
 and decides each on its form. A script keeps in `.turn/` each round's work, list and reading, each
-Good, each item without one with its cause, and each checklist's commit, since a commit names a
-version exactly.
+Good, each item without one with how it would get one, and each checklist's commit, since a commit
+names a version exactly.
 
 - Must hold: every Good names lines the work holds and is decided by the orchestrator; no run
   returns before every item of every document is decided on its form.
@@ -271,8 +272,8 @@ Achieves: read in the receiver's place, nothing unread.
 The learner asks, for each item left without a Good, how the work would give it, in the work and in
 the process, and groups the items one way serves. The generator makes the work again on those ways
 in a second round, read and decided as the first; what it leaves without a Good is returned as More
-with its cause. A way that lies in how such work is made is returned as a rule the caller carries
-into later tasks; one in what the caller wrote goes back to the caller.
+with how it would get a Good. A way that lies in how such work is made is returned as a rule the
+caller carries into later tasks; one in what the caller wrote goes back to the caller.
 
 - Must hold: a run has at most two rounds, and returns the version last read.
 - Weighed: a third round was not allowed, since a loop that does not settle hides a fault in turn or

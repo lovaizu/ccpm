@@ -42,7 +42,7 @@ Round 1
   3 check   ⚠️ The reader could not tell which Python version the tool needs.
             ⚠️ The reader could not picture the result on their own files.
 Round 2
-  1 write   To make: the same, made again from why each was missing.
+  1 write   To make: the same, made again on how each would be given.
             .turn/readme/2/README.md
   2 read    Read again, as the same developer.
             .turn/readme/2/reading.json
@@ -56,17 +56,17 @@ The line after `To make:` is shown before turn writes. If it is not what you wan
 what you want instead; Claude passes your words to turn, which starts again from the work as it
 stands.
 
-Each ⚠️ is something the reader could not take from the work. The next round makes the work again
-from why it was missing, rather than patching the line where it showed, and has it read again.
+Each ⚠️ is something the reader could not take from the work. The next round makes the work again on
+how the reader would take it, rather than patching the line where it showed, and has it read again.
 
 Answer the question marked ❓ in the conversation: Claude adds your answer to the task and starts
 turn again, which has the changed work read again before you get it. If something is still missing
-after the second round, it comes back to you in the same way, with why, and you choose whether to
-run turn again.
+after the second round, it comes back to you in the same way, with how it would be given, and you
+choose whether to run turn again.
 
 The paths are in `.turn/` in your repository, where turn keeps what you may want to open later:
 each round's work and its reading; for each item of the checklist, the lines that show it met, or
-why none do; and the version of the checklist the work was checked by.
+how it would be met; and the version of the checklist the work was checked by.
 
 ## Requirements
 

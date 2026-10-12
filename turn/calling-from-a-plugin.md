@@ -89,9 +89,9 @@ The step reads four kinds:
 - `next`, in `predictive_cue`: always one; what the step does next, below.
 - `gap`, in `uncertainty_signal`: one for each question only the user can answer.
 - `difference`, in `semantic_gist`: one for each item still More, that is, an item of the
-  checklists the work does not yet meet, with why.
+  checklists the work does not yet meet, with how the work would meet it.
 - `evidence`, in `episodic_trace`: where in `.turn/` turn keeps, for each item, the lines of the
-  work that show it met or why none do.
+  work that show it met or how it would be met.
 
 The other entries are turn's own; the step need not read them, and hands them on as they are when
 it calls turn again.
@@ -103,15 +103,15 @@ it calls turn again.
 - `ask the user`: the work is where `deliverable` says. Put each `gap` and each `difference` to the
   user, add their answers as `answer` entries in `constraints`, and call turn again. If the user
   takes the work as it is, the step moves on.
-- `to the caller: <reason>`: the CCS cannot be run, or a cause lies in what the step wrote the work
-  should be, which turn never rewrites. The reason says which. The step corrects its own parts and
-  calls turn again, or puts the reason to the user.
+- `to the caller: <reason>`: the CCS cannot be run, or an item would be met only by a change in what
+  the step wrote the work should be, which turn never rewrites. The reason says which. The step
+  corrects its own parts and calls turn again, or puts the reason to the user.
 - `stopped: <where>`: the user pressed Esc and said what they want instead; `<where>` is where the
   run was. Add their words as an `answer` entry and call turn again; the new run starts from the
   work as it stood.
 
 ### Rules to carry on
 
-When turn finds a cause in how such work is made, it adds a `rule` entry after yours in
-`constraints`. Copy these entries into the CCS of the step's later tasks, so that they are made with
-what turn has learned.
+When turn finds that an item would be met by a change in how such work is made, it adds a `rule`
+entry after yours in `constraints`. Copy these entries into the CCS of the step's later tasks, so
+that they are made with what turn has learned.
