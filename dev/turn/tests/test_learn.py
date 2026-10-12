@@ -5,7 +5,8 @@ from helpers import Repo, fill, run, started
 
 WORK = "# Note\n\nRun make.\n"
 WORK_WAY = "the work: say what make builds"
-MAKING_WAY = "how such work is made: read the sources for what each command does"
+CALLER_WAY = "what the work should be: name the receiver's machine"
+RULE = "read the sources for what each command does"
 
 
 def decide(repo, folder, f1, b1=True):
@@ -14,10 +15,12 @@ def decide(repo, folder, f1, b1=True):
         "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else ""}})
 
 
-def learn(repo, folder, ways):
-    """The learner's form: for each item, its way to a Good and where the way lies."""
+def learn(repo, folder, ways, making=None):
+    """The learner's form: for each item, its way to a Good, where the way lies, and what in making
+    such work would have given it."""
     fill(repo, f"{folder}/learner.json",
-         {i: {"way": w.partition(": ")[2], "in": w.partition(": ")[0]} for i, w in ways.items()})
+         {i: {"way": w.partition(": ")[2], "in": w.partition(": ")[0], "making": (making or {}).get(i, "")}
+          for i, w in ways.items()})
 
 
 class Learner(unittest.TestCase):
@@ -44,11 +47,14 @@ class Learner(unittest.TestCase):
     def test_a_learner_form_with_a_place_left_or_wrong_is_stopped_saying_which(self):
         cases = [
             ("no place", {}, "note F-1: not filled"),
-            ("no way", {"note F-1": {"way": "", "in": "the work"}}, "note F-1: the way is not given"),
-            ("nowhere", {"note F-1": {"way": "say what make builds", "in": "luck"}},
+            ("no way", {"note F-1": {"way": "", "in": "the work", "making": ""}},
+             "note F-1: the way is not given"),
+            ("nowhere", {"note F-1": {"way": "say what make builds", "in": "luck", "making": ""}},
              "note F-1: in must be one of"),
-            ("an item with a Good", {"note F-1": {"way": "x", "in": "the work"},
-                                     "note B-1": {"way": "x", "in": "the work"}},
+            ("making not a text", {"note F-1": {"way": "say what make builds", "in": "the work"}},
+             "note F-1: making is not given"),
+            ("an item with a Good", {"note F-1": {"way": "x", "in": "the work", "making": ""},
+                                     "note B-1": {"way": "x", "in": "the work", "making": ""}},
              "note B-1: has a Good"),
         ]
         for name, form, said in cases:
@@ -72,10 +78,11 @@ class SecondRound(unittest.TestCase):
         self.repo.close()
 
     def test_the_second_round_starts_from_the_work_with_the_ways_to_a_good(self):
-        # Given: round 1 decided with two items without a Good, each given a way, one in how such
-        # work is made
+        # Given: round 1 decided with two items without a Good, each given a way in the work, and one
+        # with what in making such work would have given it
         decide(self.repo, ".turn/out/1", f1=False, b1=False)
-        learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY, "note B-1": MAKING_WAY})
+        learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY, "note B-1": "the work: say why to run make"},
+              making={"note B-1": RULE})
         # When: the second round is started
         code, out = run(self.repo, "round", ".turn/out")
         # Then: the work of round 1 is where the generator makes it again, with fresh forms
@@ -86,12 +93,11 @@ class SecondRound(unittest.TestCase):
         self.assertEqual(self.repo.json(got["forms"]["generator"]),
                          {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}})
         self.assertEqual(self.repo.json(".turn/run.json")["round"], 2)
-        # Then: the ways are handed on with their items, and the way in making as a rule too
+        # Then: the ways are handed on with their items, and what was learned of making as a rule
         self.assertEqual(got["ways"], [
             {"way": "say what make builds", "in": "the work", "items": ["note F-1"]},
-            {"way": "read the sources for what each command does", "in": "how such work is made",
-             "items": ["note B-1"]}])
-        self.assertEqual(got["rules"], ["rule: read the sources for what each command does"])
+            {"way": "say why to run make", "in": "the work", "items": ["note B-1"]}])
+        self.assertEqual(got["rules"], [f"rule: {RULE}"])
 
     def test_items_one_way_serves_are_handed_on_together(self):
         # Given: one way given for both items
@@ -129,7 +135,7 @@ class SecondRound(unittest.TestCase):
     def test_a_second_round_is_not_started_when_nothing_in_turn_would_change(self):
         cases = [("every item met", True, {}),
                  ("only what the caller wrote", False,
-                  {"note F-1": "what the work should be: name the receiver's machine"})]
+                  {"note F-1": CALLER_WAY})]
         for name, f1, ways in cases:
             with self.subTest(name):
                 # Given: round 1 decided, with no way the generator could take
@@ -151,9 +157,9 @@ class EndAfterLearning(unittest.TestCase):
     def tearDown(self):
         self.repo.close()
 
-    def second_round(self, ways):
+    def second_round(self, ways, making=None):
         decide(self.repo, ".turn/out/1", f1=False, b1=False)
-        learn(self.repo, ".turn/out/1", ways)
+        learn(self.repo, ".turn/out/1", ways, making)
         code, out = run(self.repo, "round", ".turn/out")
         assert code == 0, out
         self.repo.write(".turn/out/2/note.md", WORK + "\nmake builds the site.\n")
@@ -180,9 +186,9 @@ class EndAfterLearning(unittest.TestCase):
         self.assertIn("note F-1: not filled", out)
 
     def test_more_returns_with_how_it_would_get_a_good_and_rules_learned_carry_on(self):
-        # Given: round 1's way for B-1 lay in how such work is made, round 2 met B-1, and F-1 is
-        # left with a way in the work
-        self.second_round({"note F-1": WORK_WAY, "note B-1": MAKING_WAY})
+        # Given: round 1 learned, for B-1, something of making such work, round 2 met B-1, and F-1
+        # is left with a way in the work
+        self.second_round({"note F-1": WORK_WAY, "note B-1": WORK_WAY}, making={"note B-1": RULE})
         decide(self.repo, ".turn/out/2", f1=False)
         learn(self.repo, ".turn/out/2", {"note F-1": "the work: cut the second line"})
         # When: the run ends
@@ -194,8 +200,7 @@ class EndAfterLearning(unittest.TestCase):
         back = self.repo.json("out.json")
         self.assertEqual(back["semantic_gist"],
                          [{"difference": "note F-1 (Is it short?): cut the second line"}])
-        self.assertEqual(back["constraints"],
-                         [{"rule": "read the sources for what each command does"}])
+        self.assertEqual(back["constraints"], [{"rule": RULE}])
         self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/2/orchestrator.json"},
                                                   {"evidence": ".turn/out/2/learner.json"}])
 
@@ -203,7 +208,7 @@ class EndAfterLearning(unittest.TestCase):
         # Given: round 2 left F-1 with a way only the caller can take
         self.second_round({"note F-1": WORK_WAY, "note B-1": WORK_WAY})
         decide(self.repo, ".turn/out/2", f1=False)
-        learn(self.repo, ".turn/out/2", {"note F-1": "what the work should be: name the receiver's machine"})
+        learn(self.repo, ".turn/out/2", {"note F-1": CALLER_WAY})
         # When: the run ends
         code, out = run(self.repo, "end", ".turn/out", "2")
         # Then: the CCS goes to the caller, saying which item and how
@@ -212,14 +217,15 @@ class EndAfterLearning(unittest.TestCase):
                          [{"next": "to the caller: note F-1: name the receiver's machine"}])
 
     def test_a_first_round_whose_only_ways_lie_with_the_caller_returns_to_the_caller(self):
-        # Given: round 1 left F-1 with a way only the caller can take
+        # Given: round 1 left F-1 with a way only the caller can take, and something learned of making
         decide(self.repo, ".turn/out/1", f1=False)
-        learn(self.repo, ".turn/out/1", {"note F-1": "what the work should be: name the receiver's machine"})
+        learn(self.repo, ".turn/out/1", {"note F-1": CALLER_WAY}, making={"note F-1": RULE})
         # When: the run ends after round 1
         code, out = run(self.repo, "end", ".turn/out", "1")
-        # Then: it returns to the caller
+        # Then: it returns to the caller, with what was learned of making as a rule
         self.assertEqual(code, 0)
         self.assertTrue(out.startswith("to the caller: note F-1"))
+        self.assertEqual(self.repo.json("out.json")["constraints"], [{"rule": RULE}])
 
 
 if __name__ == "__main__":

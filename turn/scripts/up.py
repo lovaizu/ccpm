@@ -23,8 +23,7 @@ PARTS = {
     "episodic_trace": None,
 }
 ROLES = ("generator", "hand-on", "first-user", "evaluator", "orchestrator", "learner")
-PLACES = ("the work", "how such work is made", "what the work should be")
-FOR_GENERATOR = PLACES[:2]
+PLACES = ("the work", "what the work should be")
 DECIDING = ("hand-on", "orchestrator")
 RUN = os.path.join(".turn", "run.json")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
@@ -228,26 +227,31 @@ def learner_faults(form, left):
             found.append(f"{i}: the way is not given")
         if place.get("in") not in PLACES:
             found.append(f"{i}: in must be one of: {', '.join(PLACES)}")
+        if not isinstance(place.get("making"), str):
+            found.append(f"{i}: making is not given; write \"\" where nothing is learned of making")
     return found
 
 
 def ways(work, n):
-    """The ways the learner gave in round n, each once with the items it serves."""
+    """The ways the learner gave in round n, each once with the items it serves, and what it learned
+    of making such work."""
     found = check(work, n, "orchestrator") or check(work, n, "learner")
     if found:
         raise Stop("\n".join(found))
-    grouped = {}
+    grouped, rules = {}, []
     for i, p in read_json(os.path.join(work, str(n), "learner.json"), "the form").items():
         grouped.setdefault((p["way"], p["in"]), []).append(i)
-    return [{"way": w, "in": where, "items": sorted(items)} for (w, where), items in grouped.items()]
+        if p["making"] and p["making"] not in rules:
+            rules.append(p["making"])
+    return [{"way": w, "in": where, "items": sorted(items)} for (w, where), items in grouped.items()], rules
 
 
 def round_two(work):
     run = read_json(RUN, RUN)
     if run["round"] != 1:
         raise Stop("a run has two rounds at most")
-    given = ways(work, 1)
-    if not any(w["in"] in FOR_GENERATOR for w in given):
+    given, rules = ways(work, 1)
+    if not any(w["in"] == PLACES[0] for w in given):
         raise Stop("no way for the generator to take, so the run ends after round 1")
     _, _, _, path = the_work(work, 1)
     lay(work, 2, forms([i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]))
@@ -258,8 +262,8 @@ def round_two(work):
     print(json.dumps({
         "forms": {r: os.path.join(work, "2", f"{r}.json") for r in ROLES},
         "work": made,
-        "ways": [w for w in given if w["in"] in FOR_GENERATOR],
-        "rules": [f"rule: {w['way']}" for w in given if w["in"] == PLACES[1]],
+        "ways": [w for w in given if w["in"] == PLACES[0]],
+        "rules": [f"rule: {r}" for r in rules],
     }, indent=1, ensure_ascii=False))
 
 
@@ -306,19 +310,19 @@ def records(work, agent):
 
 def end(work, n):
     n = int(n)
-    left = ways(work, n)
-    if n == 1 and any(w["in"] in FOR_GENERATOR for w in left):
+    left, _ = ways(work, n)
+    if n == 1 and any(w["in"] == PLACES[0] for w in left):
         raise Stop("a way lies with the generator: start the second round")
     run, ccs, deliverable, path = the_work(work, n)
     items = {i["id"]: i for i in read_json(os.path.join(work, "list.json"), "the list")["items"]}
     differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]}): {w['way']}"}
                    for w in left for i in w["items"]]
-    caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[2] for i in w["items"]]
+    caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[1] for i in w["items"]]
     nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences else "done"
-    learned = [w for k in range(1, n + 1) for w in ways(work, k) if w["in"] == PLACES[1]]
-    for w in learned:
-        if {"rule": w["way"]} not in ccs["constraints"]:
-            ccs["constraints"].append({"rule": w["way"]})
+    for k in range(1, n + 1):
+        for rule in ways(work, k)[1]:
+            if {"rule": rule} not in ccs["constraints"]:
+                ccs["constraints"].append({"rule": rule})
     evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
     os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
     shutil.copyfile(path, deliverable)
