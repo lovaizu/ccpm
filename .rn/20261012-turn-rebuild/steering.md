@@ -90,8 +90,10 @@ Progress:
   Docs principles, Google technical writing, Diátaxis, the pyramid principle, plain language,
   cognitive load); B-7 asks for no overlap between documents only, and allows some repetition
   within one.
-- Next, `readme.md`, written from nothing in the shape of `essentials.md`, after researching README
-  best practice.
+- `readme.md`: agreed with the user (2026-10-12), on GitHub's and makeareadme's README guidance; it
+  sets the headings a reader looks for, with Requirements apart from Installation, and no support
+  section, since where to ask is where the reader already looks.
+- Next, `design.md`, written from nothing after researching design document best practice.
 - Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
   before it is handed over.
 - Names left to settle with the files: the folder `essentials/` and the file `essentials.md`, now
