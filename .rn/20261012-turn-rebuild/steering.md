@@ -262,7 +262,26 @@ Progress:
   7. Following each item back: the evidence in `.turn/` with each checklist's commit.
   8. Leaving the user's work alone: hooks in a run only, nothing overwritten unsaved, missing tools.
   The code of the earlier turn is removed and written again from nothing, unit by unit (M2).
-- Next: unit 1.
+- Unit 1 built (a05faf7): `turn/scripts/up.py`, the hook on SubagentStop that keeps an agent of a
+  run at its form until every place is filled (a PreToolUse hook on SubagentHandback never fires
+  when an agent hands back without a tool call, seen live), the skill and three agents; tests cover
+  every line (measure locally in a venv: a user-site `coverage` does not count subprocesses).
+  Trial: `python3 dev/turn/trials/run.py <new folder> dev/turn/trials/dev-readme.json out.json`.
+- Unit 1 tried twice (2026-10-13) on `dev/turn/README.md`, each checked by a fresh reader outside
+  the run, as the design's Verification asks. Both runs ended, 12 of 15 items decided met; the
+  fresh reader took 9 of those 12 both times. Run 1 slipped B-5, U-2, U-6; run 2 slipped B-2, B-5,
+  U-5. All but B-2 were items the evaluator gave no Good and the orchestrator decided met on its own
+  knowledge of the run and the repository; telling it in step 8 to decide in the receiver's place did
+  not hold. B-2 (run 2) the evaluator and the orchestrator both passed: neither ran the README's
+  coverage commands, which fail at 99% in a user-site install.
+- Asked of the user, not yet answered: may the orchestrator decide met an item the evaluator gave no
+  Good? The design says the orchestrator alone decides, but not whether it may add Goods.
+  Recommended: no; a Good needs the evaluator's Good, which the orchestrator confirms or turns down
+  after reading the whole work, so every Good rests on the receiver's reading by structure (one
+  sentence in the design's "Deciding every item", and `up.py check` refuses met on an item without
+  the evaluator's Good). This agrees with the user's decision above that the judge gives Goods and
+  the conductor checks each against the facts. B-2's kind is taken up after this is settled.
+- Next: the user's answer to that question; then unit 1 again, tried and checked by a fresh reader.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
