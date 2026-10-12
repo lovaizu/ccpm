@@ -165,6 +165,17 @@ Progress:
   the conductor checks each Good against the facts, and every item without a Good it has confirmed
   is More. So the final decision is the conductor's, and an item not shown to be met never passes.
   The design takes this in once the round now running has ended.
+- Decided by the user (2026-10-12): every role aims only at every item being Good, and thinks
+  forward: the learner asks why no Good came out, the conductor how a Good is reached. The lists
+  handed to and filled by the roles have a field for a Good and its grounds only, and none for
+  More, so no role can write a shortfall; More is a word of the CCS alone, kept as the caller's
+  interface.
+- Decided by the user (2026-10-12): a slip the maker puts into the work is caught by coverage, as
+  tests are by line coverage: a script counts the parts of the work that no item's grounds rest on,
+  once when the maker hands the work over (from the words it gives for each item; the conductor
+  sends it back before any reading) and once when the judge hands back its Goods (from their
+  grounds; before the conductor checks them). A part no Good rests on has no job or holds a slip.
+  What still slips through is of a kind no item asks about, and goes into the checklist.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
