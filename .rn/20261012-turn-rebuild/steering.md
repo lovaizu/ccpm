@@ -176,6 +176,9 @@ Progress:
   sends it back before any reading) and once when the judge hands back its Goods (from their
   grounds; before the conductor checks them). A part no Good rests on has no job or holds a slip.
   What still slips through is of a kind no item asks about, and goes into the checklist.
+- Decided by the user (2026-10-12): no role doubts, the conductor included; its aim is how more
+  items reach Good, and what brings a slip to light is the coverage, a mechanism. The conductor
+  counts a Good only once it has seen, in the lines the Good rests on, that the item is met.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
