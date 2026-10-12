@@ -115,7 +115,7 @@ def checklist(path):
 def forms(ids):
     return {
         "generator": {i: {"lines": ""} for i in ids},
-        "first-user": {i: {"took": "", "lines": ""} for i in ids},
+        "first-user": {},
         "evaluator": {},
         "orchestrator": {i: {"met": None, "lines": "", "note": ""} for i in ids},
     }
@@ -177,13 +177,13 @@ def check(work, n, role):
     ids = [i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]
     form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
-    for i in ids if role != "evaluator" else [i for i in ids if i in form]:
+    for i in ids if role not in ("first-user", "evaluator") else [i for i in ids if i in form]:
         place = form.get(i)
         if place is None:
             found.append(f"{i}: not filled")
             continue
         lines = place.get("lines", "")
-        needed = role in ("generator", "evaluator") or (role == "orchestrator" and place.get("met"))
+        needed = role in ("generator", "first-user", "evaluator") or (role == "orchestrator" and place.get("met"))
         if role == "first-user" and not place.get("took"):
             found.append(f"{i}: what was taken is not given")
         if role == "evaluator" and not place.get("grounds"):

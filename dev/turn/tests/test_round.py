@@ -108,8 +108,7 @@ class Check(unittest.TestCase):
         # Given: each role's form filled as its steps ask
         fill(self.repo, self.forms["generator"], {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
         fill(self.repo, self.forms["first-user"], {
-            "note B-1": {"took": "run make", "lines": "3"},
-            "note F-1": {"took": "nothing", "lines": ""}})
+            "note B-1": {"took": "run make", "lines": "3"}})
         fill(self.repo, self.forms["evaluator"], {"note B-1": {"lines": "3", "grounds": "says run make"}})
         fill(self.repo, self.forms["orchestrator"], {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
@@ -134,9 +133,10 @@ class Check(unittest.TestCase):
             ("generator", "generator", {"note B-1": {"lines": "3"}, "note F-1": {"lines": "3"},
                                         "note X-1": {"lines": "3"}},
              "note X-1: not an item of the list"),
-            ("first user", "first-user", {"note B-1": {"took": "", "lines": ""},
-                                          "note F-1": {"took": "it", "lines": "1"}},
+            ("first user", "first-user", {"note B-1": {"took": "", "lines": "3"}},
              "note B-1: what was taken is not given"),
+            ("first user without lines", "first-user", {"note B-1": {"took": "run make", "lines": ""}},
+             "note B-1: lines are not given"),
             ("evaluator", "evaluator", {"note B-1": {"lines": "3", "grounds": ""}},
              "note B-1: grounds are not given"),
             ("orchestrator", "orchestrator", {

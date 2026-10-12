@@ -25,7 +25,7 @@ class Start(unittest.TestCase):
         forms = got["forms"]
         self.assertEqual(self.repo.json(forms["generator"]),
                          {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}})
-        self.assertEqual(set(self.repo.json(forms["first-user"])), {"note B-1", "note F-1"})
+        self.assertEqual(self.repo.json(forms["first-user"]), {})
         self.assertEqual(self.repo.json(forms["evaluator"]), {})
         self.assertEqual(self.repo.json(forms["orchestrator"])["note F-1"],
                          {"met": None, "lines": "", "note": ""})

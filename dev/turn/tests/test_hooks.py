@@ -45,7 +45,7 @@ class HandBack(unittest.TestCase):
     def test_an_agent_handing_back_with_its_form_filled_goes_on(self):
         # Given: the first user's form filled for every item
         fill(self.repo, self.got["forms"]["first-user"], {
-            "note B-1": {"took": "run make", "lines": "3"}, "note F-1": {"took": "nothing", "lines": ""}})
+            "note B-1": {"took": "run make", "lines": "3"}})
         # When: the first user hands back
         code, _ = self.hand_back("turn:first-user")
         # Then: it goes on

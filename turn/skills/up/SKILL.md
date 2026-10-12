@@ -44,5 +44,5 @@ $ARGUMENTS
    them, in plain words; where you do not, `met` false.
 9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 orchestrator`, and fill
    each place it names, until it prints `filled`.
-10. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say in one line what it
-    printed and where the CCS is written, and return to the caller.
+10. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say what it printed and
+    where the CCS is written, in one line and nothing more, and return to the caller.
