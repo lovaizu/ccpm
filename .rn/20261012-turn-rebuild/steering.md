@@ -157,11 +157,17 @@ Progress:
 - Decided by the user (2026-10-12): the order in a round is reader, then judge, then learner on the
   items the conductor has confirmed as More only, so that no role is set to find something; Good is
   as full an answer as More, the judge gives grounds for both, and the conductor checks both.
-- Next: put the current README and design through one more round in that order: readers (lists
-  from `make_list.py`, README against readme.md + doc.md, design against design.md + doc.md), the
-  judge, the conductor's check, the learner on the confirmed Mores, the maker if any; judge the
-  result by the quality of the documents read as their readers, against the version before, not by
-  counts. Then ask the user to agree to the README (plugin.md step 1) and the design (step 2).
+- Run of 2026-10-12 done (README 9e479da, design 7a18991), two rounds each. README round 2 left
+  five items without a Good: the figure laid over the console and prose, "question" for two things,
+  rules for both routes under one route's heading, a claim on AI behaviour stated flatly. Design
+  round 2 left nine: the CCS's parts named nowhere, ideas added mid-making not given in full
+  (coverage's "part", the marks), items across the two documents checked in one only, decisions
+  spliced in at lines and the whole not read again, assumptions marked by place not by rule, choices
+  weighed only where a Weighed line already was. Seen in the run: a judge told to write Goods only
+  still wrote on items without one, so the form must hold it, not words.
+- Next: one run on the README and the design together, made whole from these causes and the
+  decisions above, the README telling how a run goes forward by Good and what coverage brings to
+  light; then ask the user to agree to the README (plugin.md step 1) and the design (step 2).
 - Decided by the user (2026-10-12): the judge gives Good only, each with its grounds, and no More;
   the conductor checks each Good against the facts, and every item without a Good it has confirmed
   is More. So the final decision is the conductor's, and an item not shown to be met never passes.
