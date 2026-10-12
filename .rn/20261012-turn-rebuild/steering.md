@@ -93,7 +93,11 @@ Progress:
 - `readme.md`: agreed with the user (2026-10-12), on GitHub's and makeareadme's README guidance; it
   sets the headings a reader looks for, with Requirements apart from Installation, and no support
   section, since where to ask is where the reader already looks.
-- Next, `design.md`, written from nothing after researching design document best practice.
+- `design.md`: agreed with the user (2026-10-12), on Google's design docs, ADRs and arc42; it is
+  set as Goals (attractive, one-dimensional and must-be quality, backward compatibility, non-goals,
+  constraints), Verification of each quality, then Architecture, since what is aimed at and how it is
+  checked do not depend on how the product is built.
+- Next, `prompt.md`, written from nothing after researching prompt best practice.
 - Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
   before it is handed over.
 
