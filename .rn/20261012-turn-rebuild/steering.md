@@ -165,9 +165,19 @@ Progress:
   spliced in at lines and the whole not read again, assumptions marked by place not by rule, choices
   weighed only where a Weighed line already was. Seen in the run: a judge told to write Goods only
   still wrote on items without one, so the form must hold it, not words.
-- Next: one run on the README and the design together, made whole from these causes and the
-  decisions above, the README telling how a run goes forward by Good and what coverage brings to
-  light; then ask the user to agree to the README (plugin.md step 1) and the design (step 2).
+- Run of 2026-10-12 (second) done: README, design and a new `turn/skills/up/ccs.md` (55437af),
+  two rounds. Counted Goods: README 9 then 13 of 25, design 20 then 25 of 34, ccs.md 8 of 15.
+  Not converging: the same slips came back each round, all in the conductor's hand work: the
+  maker's grounds were taken from its account, never counted at hand-over, so gaps visible before
+  the reading reached it; send-backs asked in words for whole re-reading and got changes at lines;
+  Goods naming the whole document came back though the judge was told in words not to; on unchanged
+  lines two judges disagreed. What held was the form: a judge given a place for Goods only wrote
+  nothing on other items.
+- Next, proposed to the user and not yet decided: stop running by hand; ask the user to agree to
+  the README and the design (plugin.md steps 1 and 2), with the items still without a Good and their
+  causes; then build first, as turn's scripts, what the run showed words do not hold: the maker's
+  grounds as lines per item in a set form, coverage counted from them at hand-over with no reading
+  before it is empty, and grounds over most of the work sent back.
 - Decided by the user (2026-10-12): the judge gives Good only, each with its grounds, and no More;
   the conductor checks each Good against the facts, and every item without a Good it has confirmed
   is More. So the final decision is the conductor's, and an item not shown to be met never passes.
