@@ -137,16 +137,18 @@ checklists give a list with every opening and item; every place a returned CCS p
 
 ### Principles
 
-- The orchestrator alone decides, from the work itself: for each item it reads the whole work, and
-  what agents and scripts hand back only shows it where to look first. In turn's by-hand runs, where
-  agents' answers were taken as they were, a slip of the same kind came back every round. Protects:
-  nothing passes unshown, read in the receiver's place.
-- Every agent aims at every item being Good, and none is set to find something, since one set to
-  find something finds it whether it is there or not (assumption). Each prompt sets as steps what
-  its agent receives, hands back and must do in full, and leaves how it thinks within a step to it.
-  Each answers, as the orchestrator decides, in a form with one place per item, handed on only once
-  a script sees every place filled, since the form, not the wording, holds it to its aim; during a
-  run, hooks catch a step not kept. Protects: nothing passes unshown, the first-round share.
+- The orchestrator alone decides, from the work itself: for each item it reads the whole work for
+  where the item is given, and what agents and scripts hand back only shows it where to look first,
+  since a Good on one part does not show what the whole gives. Protects: nothing passes unshown,
+  read in the receiver's place.
+- Every role, the orchestrator included, looks only for Goods and aims at every item being Good;
+  none finds fault, and none is set to find something, since one set to find something finds it
+  whether it is there or not (assumption). Coverage, a script, is the one place that looks for what
+  may be wrong. Each prompt sets as steps what its agent receives, hands back and must do in full,
+  and leaves how it thinks within a step to it. Each answers, as the orchestrator decides, in a form
+  with one place per item, handed on only once a script sees every place filled, since the form, not
+  the wording, holds it to its aim; during a run, hooks catch a step not kept. Protects: nothing
+  passes unshown, the first-round share.
 - What must come out the same every time is done by a script or a hook. Protects: nothing passes
   unshown, what the work should be unchanged, repository untouched, following each item back.
 
@@ -248,13 +250,14 @@ and where.
 Achieves: nothing passes unshown, read in the receiver's place, following each item back, `.turn/`.
 
 The evaluator gives a Good with grounds for each item the work meets, judged from the reading
-against what the receiver must be able to do, and reads the records to see the reading came from the
-work. Its form has places for Goods only, since in a trial an evaluator told in words to write Goods
-only still wrote on other items. Coverage shows where a slip may be: a line no grounds name does
-nothing for the receiver or holds one, since every useful line meets some item (assumption). The
-orchestrator reads the whole work for each item, from the grounds and coverage, and decides each on
-its form. A script keeps in `.turn/` each round's work, list and reading, each Good, each item
-without one with its cause, and each checklist's commit, since a commit names a version exactly.
+against what the receiver must be able to do, and reads the records for the lines the reading took
+each item from. Its form has places for Goods only, since in a trial an evaluator told in words to
+write Goods only still wrote on other items. Coverage shows where a slip may be: a line no grounds
+name does nothing for the receiver or holds one, since every useful line meets some item
+(assumption). The orchestrator reads the whole work for each item, from the grounds and coverage,
+and decides each on its form. A script keeps in `.turn/` each round's work, list and reading, each
+Good, each item without one with its cause, and each checklist's commit, since a commit names a
+version exactly.
 
 - Must hold: every Good names lines the work holds and is decided by the orchestrator; no run
   returns before every item of every document is decided on its form.

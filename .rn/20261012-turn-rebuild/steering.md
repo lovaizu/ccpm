@@ -267,21 +267,16 @@ Progress:
   when an agent hands back without a tool call, seen live), the skill and three agents; tests cover
   every line (measure locally in a venv: a user-site `coverage` does not count subprocesses).
   Trial: `python3 dev/turn/trials/run.py <new folder> dev/turn/trials/dev-readme.json out.json`.
-- Unit 1 tried twice (2026-10-13) on `dev/turn/README.md`, each checked by a fresh reader outside
-  the run, as the design's Verification asks. Both runs ended, 12 of 15 items decided met; the
-  fresh reader took 9 of those 12 both times. Run 1 slipped B-5, U-2, U-6; run 2 slipped B-2, B-5,
-  U-5. All but B-2 were items the evaluator gave no Good and the orchestrator decided met on its own
-  knowledge of the run and the repository; telling it in step 8 to decide in the receiver's place did
-  not hold. B-2 (run 2) the evaluator and the orchestrator both passed: neither ran the README's
-  coverage commands, which fail at 99% in a user-site install.
-- Asked of the user, not yet answered: may the orchestrator decide met an item the evaluator gave no
-  Good? The design says the orchestrator alone decides, but not whether it may add Goods.
-  Recommended: no; a Good needs the evaluator's Good, which the orchestrator confirms or turns down
-  after reading the whole work, so every Good rests on the receiver's reading by structure (one
-  sentence in the design's "Deciding every item", and `up.py check` refuses met on an item without
-  the evaluator's Good). This agrees with the user's decision above that the judge gives Goods and
-  the conductor checks each against the facts. B-2's kind is taken up after this is settled.
-- Next: the user's answer to that question; then unit 1 again, tried and checked by a fresh reader.
+- Unit 1 tried twice (2026-10-13) on `dev/turn/README.md`. Both runs ended, 12 of 15 items decided
+  met. A fresh reader outside the run, asked where it stopped or had to guess, found something in
+  each run; judged by the README's purpose, the orchestrator's decisions held, and the fresh
+  reader's findings were small gaps such a document always has. Asking a role for gaps never ends.
+- Decided by the user (2026-10-13): every role, the orchestrator included, looks only for Goods,
+  never for faults; coverage alone looks for what may be wrong, the lines no Good rests on. The
+  design's principles and the prompts now say so: the first user writes `nothing` where it took
+  nothing, the orchestrator writes a note only for an item met, and the trial's fresh reader answers
+  per item what it took toward the use, as the first user does.
+- Next: unit 1 again, tried and checked by a fresh reader that answers only what it took.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 

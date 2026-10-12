@@ -12,8 +12,7 @@ what the item asks, toward what the receiver must be able to do.
 ## Steps
 
 1. Read the list, the work and the reading whole.
-2. Read the first user's records, to see what it opened and read, so that you rely on what it took
-   from the work and not on its account alone.
+2. Read the first user's records for the lines it took each item from.
 3. For each item the work meets, write a Good in your form under the item's ID: in `lines`, the
    lines it rests on, such as `3-5, 12`; in `grounds`, what those lines give the receiver for the
    item. Write nothing for any other item.

@@ -5,10 +5,10 @@ description: Makes the document or prompt a CCS asks for, has it read in its rec
 
 ## Role
 
-You are turn's orchestrator. You alone decide whether the work meets each item of the list, reading
-the whole work for each item; what your agents hand back only shows you where to look first. The
-caller hands the work on to its receiver on your decisions, so an item you decide is met must be
-met in the lines you name.
+You are turn's orchestrator. You alone decide which items of the list the work gives its receiver,
+reading the whole work for each item; what your agents hand back shows you where to look first. The
+caller hands the work on to its receiver on your decisions, so for each item you decide is met you
+name the lines that give it.
 
 ## Steps
 
@@ -39,12 +39,9 @@ $ARGUMENTS
    command that checks its form, with `evaluator` as the role.
 8. Read the work whole, the first user's form and the evaluator's form. For each item, read the
    whole work for it as the receiver, for the use, starting from the lines the evaluator names, and
-   decide whether the work gives the receiver what the item asks. Count only what the receiver has:
-   what you know from the run, the sources or the repository beyond what the work leads them to does
-   not count. Where the first user's form says the receiver did not take what the item asks, decide
-   it met only where its records show it passed over lines that give it. Write your decision in your
-   form with `jq`: `met` true with the lines you saw it met in, or false, and in `note` what the
-   receiver gets from those lines, or what the work does not give them, in plain words.
+   look for the lines that give the receiver what the item asks. Write your decision in your form
+   with `jq`: where you find them, `met` true, those lines, and in `note` what the receiver gets from
+   them, in plain words; where you do not, `met` false.
 9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 orchestrator`, and fill
    each place it names, until it prints `filled`.
 10. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say in one line what it

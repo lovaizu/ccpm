@@ -190,7 +190,7 @@ def check(work, n, role):
             found.append(f"{i}: grounds are not given")
         if role == "orchestrator" and not isinstance(place.get("met"), bool):
             found.append(f"{i}: not decided")
-        if role == "orchestrator" and not place.get("note"):
+        if role == "orchestrator" and place.get("met") and not place.get("note"):
             found.append(f"{i}: the note is not given")
         if needed and not lines:
             found.append(f"{i}: lines are not given")
@@ -231,7 +231,7 @@ def end(work, n):
     run, ccs, deliverable, path = the_work(work, n)
     items = {i["id"]: i for i in read_json(os.path.join(work, "list.json"), "the list")["items"]}
     form = read_json(os.path.join(work, str(n), "orchestrator.json"), "the form")
-    differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]}): {p['note']}"}
+    differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]})"}
                    for i, p in form.items() if not p["met"]]
     nxt = "ask the user" if differences else "done"
     os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)

@@ -15,8 +15,8 @@ itself, as the receiver would take it.
 2. Read the work once from the top, as the receiver, for the use. Open what the receiver would open
    from it, inside the copy only, since the copy holds what the receiver has.
 3. Write your form: for each item, in `took`, what you took from the work for it, in your own words;
-   in `lines`, the lines you took it from, such as `3-5, 12`. Where you took nothing, write in
-   `took` what you looked for and where you stopped, and leave `lines` empty.
+   in `lines`, the lines you took it from, such as `3-5, 12`. Where you took nothing for an item,
+   write `nothing` in `took` and leave `lines` empty.
 4. Run the command you are given to check your form, and fix each place it names, until it prints
    `filled`.
 5. Hand back one line saying the form is written.

@@ -113,7 +113,7 @@ class Check(unittest.TestCase):
         fill(self.repo, self.forms["evaluator"], {"note B-1": {"lines": "3", "grounds": "says run make"}})
         fill(self.repo, self.forms["orchestrator"], {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-            "note F-1": {"met": False, "lines": "", "note": "the reader took nothing"}})
+            "note F-1": {"met": False, "lines": "", "note": ""}})
         for role in ("generator", "first-user", "evaluator", "orchestrator"):
             with self.subTest(role):
                 # When: the form is checked
@@ -147,9 +147,9 @@ class Check(unittest.TestCase):
                 "note B-1": {"met": False, "lines": "", "note": "x"},
                 "note F-1": {"met": True, "lines": "", "note": "x"}},
              "note F-1: lines are not given"),
-            ("orchestrator without a note", "orchestrator", {
-                "note B-1": {"met": False, "lines": "", "note": ""},
-                "note F-1": {"met": False, "lines": "", "note": "x"}},
+            ("orchestrator met without a note", "orchestrator", {
+                "note B-1": {"met": True, "lines": "3", "note": ""},
+                "note F-1": {"met": False, "lines": "", "note": ""}},
              "note B-1: the note is not given"),
             ("not JSON", "generator", "{", "the form is not JSON"),
         ]
@@ -185,7 +185,7 @@ class End(unittest.TestCase):
     def decide(self, b1, f1):
         fill(self.repo, self.got["forms"]["orchestrator"], {
             "note B-1": {"met": b1, "lines": "3" if b1 else "", "note": "the step is given"},
-            "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "the title says nothing"}})
+            "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "the title is short" if f1 else ""}})
 
     def test_a_run_with_every_item_met_returns_the_work_and_done(self):
         # Given: every item decided met
@@ -204,17 +204,17 @@ class End(unittest.TestCase):
         self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/1/orchestrator.json"}])
         self.assertEqual(out.strip(), "done")
 
-    def test_a_run_with_an_item_not_met_asks_the_user_with_the_item_and_why(self):
+    def test_a_run_with_an_item_not_met_asks_the_user_with_the_item(self):
         # Given: one item decided not met
         self.decide(True, False)
         # When: the run ends
         code, out = run(self.repo, "end", ".turn/out", "1")
-        # Then: the CCS asks the user, with that item, its question and why it is not met
+        # Then: the CCS asks the user, with that item and its question
         self.assertEqual(code, 0)
         back = self.repo.json("out.json")
         self.assertEqual(back["predictive_cue"], [{"next": "ask the user"}])
         self.assertEqual(back["semantic_gist"],
-                         [{"difference": "note F-1 (Is it short?): the title says nothing"}])
+                         [{"difference": "note F-1 (Is it short?)"}])
         self.assertEqual(out.strip(), "ask the user")
 
     def test_a_run_does_not_return_before_every_item_is_decided(self):
