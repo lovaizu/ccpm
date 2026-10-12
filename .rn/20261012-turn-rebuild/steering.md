@@ -246,7 +246,8 @@ Progress:
   orchestrator's forms for the design, the README and the callers' page are in `forms/`, every item
   decided and met (`python3 dev/turn/trials/check_form.py <form> <checklist>...`); the figure was
   checked as mermaid-cli renders it.
-- Next: ask the user to agree to the README (plugin.md step 1) and the design (step 2).
+- `turn/README.md`: agreed with the user (2026-10-12), plugin.md step 1.
+- Next: ask the user to agree to the design (step 2).
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
