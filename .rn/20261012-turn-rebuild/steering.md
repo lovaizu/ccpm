@@ -97,7 +97,13 @@ Progress:
   set as Goals (attractive, one-dimensional and must-be quality, backward compatibility, non-goals,
   constraints), Verification of each quality, then Architecture, since what is aimed at and how it is
   checked do not depend on how the product is built.
-- Next, `prompt.md`, written from nothing after researching prompt best practice.
+- `prompt.md`: agreed with the user (2026-10-12), on Anthropic's prompting and skill authoring best
+  practice; it holds what a prompt gives the AI that runs it, including a set and minimal form for
+  what goes in and out, and leaves how a prompt is made, judged and tried to turn. Rules about
+  prompts now in `.claude/rules/plugin.md` section 3 move to it in #2, which keeps only how a plugin
+  is built, such as hooks.
+- All five checklists are agreed, and none names a role of turn or a way of trying a deliverable.
+  Not yet checked: whether two judges give the same answers.
 - Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
   before it is handed over.
 
