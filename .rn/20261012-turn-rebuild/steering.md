@@ -48,8 +48,8 @@ rebuilt on this turn in the next pull request (#53).
 - Fact, decided by the user: each part is agreed with the user one at a time; no worker session is
   used.
 - Fact, decided by the user: a viewpoint file opens with the purpose alone, then always has the
-  same five sides (PUR, COR, SUP, CHG, IO), each with points or `None` and why; each point has an
-  ID of kind, side and number, never used again, a sentence of what the work lets its receiver do,
+  same three sides (Benefit, Usability, Format), each with points or `None` and why; each point has
+  an ID of side letter and number, never used again, a sentence of what the work lets its receiver do,
   and an Achieved and a Not achieved line. It carries no version or frontmatter, since git keeps
   its versions.
 - Fact, decided by the user: turn makes from each viewpoint file, by script, a checklist the maker
