@@ -1,40 +1,48 @@
 ---
 name: up
-description: Carries one task of a plugin through making the deliverable, having it used in the receiver's place, finding why it stumbled and remaking it from the cause, and writes a new CCS. Called by a plugin's skill with two lines as its arguments, `in: <CCS file>` and `out: <file to write>`.
+description: Makes the document or prompt a CCS asks for, has it read in its receiver's place, decides each checklist item from the whole work, and writes the work and a CCS back. Use when a conversation or a plugin's step hands turn a task as two lines, `in: <CCS file>` and `out: <file to write>`.
 ---
 
-# turn:up
+## Role
 
-You are turn's orchestrator. You bring the deliverable to where its receiver can really use it, measured against what the CCS says it should be, and return a CCS from which the calling skill can trace its next step. You do it by calling agents and passing on the places of what they write: the generator makes the deliverable, the first user uses it in the receiver's place, the learner finds why it stumbled, and the evaluator decides how each stumble ends. Only the evaluator decides.
+You are turn's orchestrator. You alone decide whether the work meets each item of the list, reading
+the whole work for each item; what your agents hand back only shows you where to look first. The
+caller hands the work on to its receiver on your decisions, so an item you decide is met must be
+met in the lines you name.
 
-Do not read the deliverable, the reports or the records yourself. Making, trying, finding causes and checking them all mean reading long content; held in your conversation round after round, it would fill it, and you would drift from the goal and the rules.
+## Steps
 
 The arguments:
 
 $ARGUMENTS
 
-## Before the first round
-
-Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py start <in> <out> ${CLAUDE_SESSION_ID}` from the repository. If python3 is not found, say to install Python 3.9 or later, and stop. If the script exits with 1, show what it printed as it is, and stop without writing a CCS. Otherwise it prints the work folder and what you pass on: `deliverable`, `receiver`, `use` and each `viewpoint`.
-
-## Each round
-
-Round n starts at 1. Call each agent with the Agent tool, in the foreground, as a new agent every round, and note the agent id it returns. Before each call, say in one line in the conversation what is happening, such as "turn: trying it as <the receiver>, in a freshly cloned copy". Hand each agent the places below; the files in the work folder are made by up.py or by the agents before it. An agent may be kept running by turn's own check until it has read what it must; wait for it.
-
-1. `turn:generator`: the round, `<work>/should.md` (what the deliverable should be, naming the viewpoint files and sources), and the earlier rounds' decisions (`<work>/evaluator-<k>.json`) when there are any.
-2. Make the copy: `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py copy <work>`. It prints the copy's folder. If it exits with 1, show what it printed as it is, and stop without writing a CCS.
-3. `turn:first-user`: the copy's folder, the deliverable's place in it, the receiver, the use, and its report file `<work>/first-user-<n>.md`. Hand it nothing else: knowing the acceptance or the talk, it would use the deliverable the way they describe and pass where the receiver stumbles.
-4. `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py steps <work> <generator's agent id> <first user's agent id>`. It writes the steps both agents took, `<work>/steps-generator-<n>.md` and `<work>/steps-first-user-<n>.md`.
-5. `turn:learner`: the round, the first user's report, both steps files, each `viewpoint`, and its file `<work>/learner-<n>.json`.
-6. `turn:evaluator`: the round, `<work>/should.md`, the deliverable, the first user's report, both steps files, the learner's file, the earlier rounds' decisions, and its file `<work>/evaluator-<n>.json`.
-7. `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py round <work>`. On `next round`, go to round n+1; on `end`, the turn ends. If it exits with 1, show what it printed as it is, and stop without writing a CCS.
-
-## When the user asks to stop
-
-Call no new agent, and end the turn with `stopped: <the agent and round that would have come next, such as first-user-2>`. A round whose evaluator has not written its decision is done again in the next turn.
-
-## Ending the turn
-
-Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/up.py end <work> generator-1=<id> first-user-1=<id> learner-1=<id> evaluator-1=<id> ...`, naming every agent called in this turn, with `"stopped: <where from>"` after the work folder when stopped.
-
-If it exits with 1, show what it printed as it is, and stop. Otherwise say in one line the `next` it printed and the CCS's place, and return to the calling skill. Do not commit or push.
+1. From the top of the repository, run
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" start <in> <out> ${CLAUDE_SESSION_ID}`. If
+   python3 is not found, say to install Python 3.9 or later, and end. If it exits with 1, show what
+   it printed, and end. Otherwise it prints, as JSON, the run's folder, the list, each role's form,
+   where the work is made, and what the work should be.
+2. Read the list whole.
+3. Call the `turn:generator` agent. Hand it the list, its form, where the work is made, the
+   receiver, the use, the acceptance, the sources and the constraints, all as `start` printed them,
+   and the command that checks its form:
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 generator`.
+4. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" copy <folder> 1`. It prints the copy's
+   folder.
+5. Call the `turn:first-user` agent. Hand it the copy's folder, the deliverable's path in it, the
+   receiver, the use, the list, its form, and the command that checks its form, with `first-user`
+   as the role. Hand it nothing more, so it stops where the receiver would.
+6. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" drop <copy>`, then
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" records <folder> <the first user's agent id>`,
+   which prints where its records are.
+7. Call the `turn:evaluator` agent. Hand it the list, the work, the first user's form as its
+   reading, the first user's records, the receiver, the use, the acceptance, its form, and the
+   command that checks its form, with `evaluator` as the role.
+8. Read the work whole, and the evaluator's form. For each item, read the whole work for it,
+   starting from the lines the evaluator names, and decide whether the work gives the receiver what
+   the item asks. Write your decision in your form with `jq`: `met` true with the lines you saw it
+   met in, or false, and in `note` what the receiver gets from those lines, or what the work does
+   not give them, in plain words.
+9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 orchestrator`, and fill
+   each place it names, until it prints `filled`.
+10. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say in one line what it
+    printed and where the CCS is written, and return to the caller.

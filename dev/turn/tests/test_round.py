@@ -1,0 +1,254 @@
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest import mock
+
+from helpers import ROOT, Repo, fill, run, started
+
+WORK = "# Note\n\nRun make.\n"
+
+
+class Copy(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+        self.got = started(self.repo)
+
+    def tearDown(self):
+        self.repo.close()
+
+    def test_the_first_user_reads_a_fresh_copy_holding_only_what_the_receiver_has(self):
+        # Given: the work written, and a file the user has not committed
+        self.repo.write(self.got["work"], WORK)
+        self.repo.write("draft.md", "not committed")
+        # When: the copy is made
+        code, out = run(self.repo, "copy", ".turn/out", "1")
+        copy = out.strip()
+        # Then: it holds what is committed and the work at its place, and nothing else of the user's
+        self.assertEqual(code, 0)
+        with open(os.path.join(copy, "docs/note.md")) as f:
+            self.assertEqual(f.read(), WORK)
+        self.assertTrue(os.path.exists(os.path.join(copy, "notes.md")))
+        self.assertFalse(os.path.exists(os.path.join(copy, "draft.md")))
+        self.assertFalse(os.path.exists(os.path.join(copy, ".turn")))
+        # When: the copy is dropped
+        code, _ = run(self.repo, "drop", copy)
+        # Then: it is gone
+        self.assertEqual(code, 0)
+        self.assertFalse(os.path.exists(copy))
+
+    def test_a_copy_is_not_made_before_the_work_is_written(self):
+        # Given: no work written yet
+        # When: the copy is made
+        code, out = run(self.repo, "copy", ".turn/out", "1")
+        # Then: it ends saying the work is missing
+        self.assertEqual(code, 1)
+        self.assertIn(".turn/out/1/note.md is not written", out)
+
+    def test_only_a_copy_turn_made_is_dropped(self):
+        # Given: a folder turn did not make
+        other = tempfile.mkdtemp()
+        # When: it is asked to be dropped
+        code, out = run(self.repo, "drop", other)
+        # Then: it is left alone
+        self.assertEqual(code, 1)
+        self.assertIn("not a copy turn made", out)
+        self.assertTrue(os.path.exists(other))
+        os.rmdir(other)
+
+
+class Records(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+        self.home = tempfile.TemporaryDirectory()
+        started(self.repo)
+
+    def tearDown(self):
+        self.repo.close()
+        self.home.cleanup()
+
+    def test_the_records_of_an_agent_of_this_session_are_found(self):
+        # Given: the records Claude Code keeps for an agent of the run's session
+        path = os.path.join(self.home.name, ".claude/projects/p/s1/subagents/agent-a1.jsonl")
+        os.makedirs(os.path.dirname(path))
+        open(path, "w").close()
+        # When: they are asked for
+        with mock.patch.dict(os.environ, {"HOME": self.home.name}):
+            code, out = run(self.repo, "records", ".turn/out", "a1")
+        # Then: their path is given
+        self.assertEqual(code, 0)
+        self.assertEqual(out.strip(), path)
+
+    def test_records_that_are_not_kept_are_said_to_be_missing(self):
+        # Given: no records for the agent
+        # When: they are asked for
+        with mock.patch.dict(os.environ, {"HOME": self.home.name}):
+            code, out = run(self.repo, "records", ".turn/out", "a9")
+        # Then: it ends saying so
+        self.assertEqual(code, 1)
+        self.assertIn("no records of agent a9", out)
+
+
+class Check(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+        self.got = started(self.repo)
+        self.forms = self.got["forms"]
+        self.repo.write(self.got["work"], WORK)
+
+    def tearDown(self):
+        self.repo.close()
+
+    def check(self, role):
+        return run(self.repo, "check", ".turn/out", "1", role)
+
+    def test_a_form_filled_for_every_item_on_lines_the_work_holds_passes(self):
+        # Given: each role's form filled as its steps ask
+        fill(self.repo, self.forms["generator"], {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
+        fill(self.repo, self.forms["first-user"], {
+            "note B-1": {"took": "run make", "lines": "3"},
+            "note F-1": {"took": "nothing", "lines": ""}})
+        fill(self.repo, self.forms["evaluator"], {"note B-1": {"lines": "3", "grounds": "says run make"}})
+        fill(self.repo, self.forms["orchestrator"], {
+            "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+            "note F-1": {"met": False, "lines": "", "note": "the reader took nothing"}})
+        for role in ("generator", "first-user", "evaluator", "orchestrator"):
+            with self.subTest(role):
+                # When: the form is checked
+                code, out = self.check(role)
+                # Then: it passes
+                self.assertEqual((code, out.strip()), (0, "filled"))
+
+    def test_a_form_with_a_place_left_or_wrong_is_stopped_saying_which(self):
+        cases = [
+            ("generator", "generator", {"note B-1": {"lines": "3"}, "note F-1": {"lines": ""}},
+             "note F-1: lines are not given"),
+            ("generator", "generator", {"note B-1": {"lines": "3"}, "note F-1": {"lines": "2-9"}},
+             "note F-1: lines 2-9 are not in the work"),
+            ("generator", "generator", {"note B-1": {"lines": "3"}, "note F-1": {"lines": "end"}},
+             "note F-1: lines end are not in the work"),
+            ("generator", "generator", {"note B-1": {"lines": "3"}},
+             "note F-1: not filled"),
+            ("generator", "generator", {"note B-1": {"lines": "3"}, "note F-1": {"lines": "3"},
+                                        "note X-1": {"lines": "3"}},
+             "note X-1: not an item of the list"),
+            ("first user", "first-user", {"note B-1": {"took": "", "lines": ""},
+                                          "note F-1": {"took": "it", "lines": "1"}},
+             "note B-1: what was taken is not given"),
+            ("evaluator", "evaluator", {"note B-1": {"lines": "3", "grounds": ""}},
+             "note B-1: grounds are not given"),
+            ("orchestrator", "orchestrator", {
+                "note B-1": {"met": None, "lines": "", "note": "x"},
+                "note F-1": {"met": True, "lines": "", "note": "x"}},
+             "note B-1: not decided"),
+            ("orchestrator met without lines", "orchestrator", {
+                "note B-1": {"met": False, "lines": "", "note": "x"},
+                "note F-1": {"met": True, "lines": "", "note": "x"}},
+             "note F-1: lines are not given"),
+            ("orchestrator without a note", "orchestrator", {
+                "note B-1": {"met": False, "lines": "", "note": ""},
+                "note F-1": {"met": False, "lines": "", "note": "x"}},
+             "note B-1: the note is not given"),
+            ("not JSON", "generator", "{", "the form is not JSON"),
+        ]
+        for name, role, form, said in cases:
+            with self.subTest(name):
+                # Given: the form with this place left or wrong
+                self.repo.write(self.forms[role], form if isinstance(form, str) else json.dumps(form))
+                # When: it is checked
+                code, out = self.check(role)
+                # Then: it is stopped, naming the place
+                self.assertEqual(code, 1)
+                self.assertIn(said, out)
+
+    def test_a_form_is_stopped_when_the_work_is_not_written(self):
+        # Given: the work removed
+        os.remove(os.path.join(self.repo.path, self.got["work"]))
+        # When: the generator's form is checked
+        code, out = self.check("generator")
+        # Then: it is stopped saying the work is missing
+        self.assertEqual(code, 1)
+        self.assertIn(".turn/out/1/note.md is not written", out)
+
+
+class End(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+        self.got = started(self.repo)
+        self.repo.write(self.got["work"], WORK)
+
+    def tearDown(self):
+        self.repo.close()
+
+    def decide(self, b1, f1):
+        fill(self.repo, self.got["forms"]["orchestrator"], {
+            "note B-1": {"met": b1, "lines": "3" if b1 else "", "note": "the step is given"},
+            "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "the title says nothing"}})
+
+    def test_a_run_with_every_item_met_returns_the_work_and_done(self):
+        # Given: every item decided met
+        self.decide(True, True)
+        # When: the run ends
+        code, out = run(self.repo, "end", ".turn/out", "1")
+        # Then: the work is where it goes, and the CCS says done with the caller's parts unchanged
+        self.assertEqual(code, 0)
+        self.assertEqual(self.repo.read("docs/note.md"), WORK)
+        back = self.repo.json("out.json")
+        sent = self.repo.json("in.json")
+        for part in ("focal_entities", "goal_orientation", "retrieved_artifacts", "constraints"):
+            self.assertEqual(back[part], sent[part])
+        self.assertEqual(back["predictive_cue"], [{"next": "done"}])
+        self.assertEqual(back["semantic_gist"], [])
+        self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/1/orchestrator.json"}])
+        self.assertEqual(out.strip(), "done")
+
+    def test_a_run_with_an_item_not_met_asks_the_user_with_the_item_and_why(self):
+        # Given: one item decided not met
+        self.decide(True, False)
+        # When: the run ends
+        code, out = run(self.repo, "end", ".turn/out", "1")
+        # Then: the CCS asks the user, with that item, its question and why it is not met
+        self.assertEqual(code, 0)
+        back = self.repo.json("out.json")
+        self.assertEqual(back["predictive_cue"], [{"next": "ask the user"}])
+        self.assertEqual(back["semantic_gist"],
+                         [{"difference": "note F-1 (Is it short?): the title says nothing"}])
+        self.assertEqual(out.strip(), "ask the user")
+
+    def test_a_run_does_not_return_before_every_item_is_decided(self):
+        # Given: the orchestrator's form with an item undecided
+        self.decide(True, None)
+        # When: the run ends
+        code, out = run(self.repo, "end", ".turn/out", "1")
+        # Then: it is stopped, and nothing is written back
+        self.assertEqual(code, 1)
+        self.assertIn("note F-1: not decided", out)
+        self.assertFalse(self.repo.exists("out.json"))
+        self.assertFalse(self.repo.exists("docs/note.md"))
+
+
+class Usage(unittest.TestCase):
+    def test_an_unknown_command_says_how_to_call(self):
+        # Given: a call with no command turn knows
+        repo = Repo()
+        # When: it is run
+        code, out = run(repo, "fly")
+        # Then: it ends with how to call it
+        self.assertEqual(code, 1)
+        self.assertIn("usage:", out)
+        repo.close()
+
+    def test_the_script_run_on_its_own_says_how_to_call(self):
+        # Given: the script, as the skill runs it
+        script = os.path.join(ROOT, "turn", "scripts", "up.py")
+        # When: it is run with no command
+        done = subprocess.run([sys.executable, script], capture_output=True, text=True)
+        # Then: it ends with how to call it
+        self.assertEqual(done.returncode, 1)
+        self.assertIn("usage:", done.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

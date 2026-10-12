@@ -1,9 +1,9 @@
 {
-  "description": "turn: keeps each of turn's agents running until its own record shows it did its job, and stops what it must not do when it tries it",
+  "description": "turn: keeps each agent of a run at its form until every place is filled",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Read|Write|Edit|NotebookEdit|Grep|Glob|Agent|SubagentHandback",
+        "matcher": "SubagentHandback",
         "hooks": [
           {
             "type": "command",
