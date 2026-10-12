@@ -7,22 +7,14 @@ it did. This file is the checklist for checklists, and is written in the shape i
 
 ## Benefit
 
-### B-1: Purpose first
-
-The checklist lets the maker and the judge decide a case that no item settles.
-
-- Achieved: where no item settled a case, the maker or the judge decided it by the purpose the
-  checklist opens with.
-- Not achieved: where no item settled a case, they guessed, or decided against the purpose.
-
-### B-2: Everything the deliverable needs
+### B-1: Everything the deliverable needs
 
 The checklist lets the maker know everything the deliverable needs to serve its user.
 
 - Achieved: each way the deliverable fell short for its user was one that an item asks about.
 - Not achieved: the deliverable fell short for its user in a way that no item asks about.
 
-### B-3: Good told from bad
+### B-2: Good told from bad
 
 The checklist lets the judge tell a deliverable that served its user from one that did not.
 
@@ -31,16 +23,24 @@ The checklist lets the judge tell a deliverable that served its user from one th
 - Not achieved: a deliverable that did not serve its user was Achieved on every item, or one that did
   was Not achieved on one.
 
-### B-4: One answer per item
+## Usability
+
+### U-1: Purpose first
+
+The checklist lets the maker and the judge decide a case that no item settles.
+
+- Achieved: where no item settled a case, the maker or the judge decided it by the purpose the
+  checklist opens with.
+- Not achieved: where no item settled a case, they guessed, or decided against the purpose.
+
+### U-2: One answer per item
 
 The checklist lets the judge settle every item from what happened when the deliverable was used.
 
 - Achieved: for every item, exactly one of its two lines held.
 - Not achieved: for some item, both lines held, or neither did.
 
-## Usability
-
-### U-1: One thing per item
+### U-3: One thing per item
 
 The checklist lets the maker know what to change from an item that is Not achieved.
 
@@ -48,7 +48,7 @@ The checklist lets the maker know what to change from an item that is Not achiev
 - Not achieved: the item asked about more than one thing, and the maker had to work out which fell
   short.
 
-### U-2: No repeats
+### U-4: No repeats
 
 The checklist lets the maker and the judge spend their attention only on items that settle
 something.
@@ -57,13 +57,22 @@ something.
   [doc.md](doc.md), the checklist for every document.
 - Not achieved: two items always came out the same, because they ask the same thing.
 
-### U-3: Empty sections explained
+### U-5: Empty sections explained
 
 The checklist lets the judge tell a section thought through from a section forgotten.
 
 - Achieved: every section with no item held `None: <why the kind needs none>`, with a reason the
   judge could check.
 - Not achieved: a section was empty, or its `None:` gave no reason.
+
+### U-6: Each item in its section
+
+The checklist lets the maker and the judge find an item where its section says it belongs.
+
+- Achieved: each item sat in the section this test puts it in. Benefit: without the item, the user
+  loses what they get from the deliverable. Usability: without it, they still get it, but with more
+  effort or less surely. Format: a person or a tool reads that shape to use the deliverable.
+- Not achieved: an item sat in a section the test does not put it in.
 
 ## Format
 
