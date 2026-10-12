@@ -139,6 +139,12 @@ Completion criteria:
 - For writ's steps (next pull request): find a checklist's items by listing the parts a deliverable
   of the kind has and asking what each does for the purpose in each section's sense; try a
   checklist on one deliverable that served its user and one that did not.
+- For writ's steps (next pull request), decided by the user: a checklist that holds for every
+  document can be met by steps, so writ's steps for writing a document are drawn from `doc.md` and
+  name the items each step makes hold by ID, without copying their words. One step, before any part
+  is written, sets out what each section and paragraph is for (B-4), since that is where documents
+  are most often weak. Items that only a reading shows, such as B-2, are held by a last step that
+  reads the document as its reader and answers every item.
 - Whether writ's steps use the usual ways a deliverable fails (wrong, too little, for someone
   else, a shape it cannot take) as a hint when finding items.
 
