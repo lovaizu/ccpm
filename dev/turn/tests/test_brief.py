@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import Repo, fill, form, run, started
+from helpers import Repo, fill, form, run, started, up
 
 WORK = "# Note\n\nRun make.\n"
 
@@ -46,7 +46,10 @@ class Briefs(unittest.TestCase):
         code, out = self.brief(role, n)
         assert code == 0, out
         self.assertEqual(out, f".turn/out/{n}/{role}-brief.json")
-        return self.repo.json(out)
+        got = self.repo.json(out)
+        if role == "first-user":
+            self.addCleanup(lambda: os.path.isdir(got["copy"]) and up.drop(got["copy"]))
+        return got
 
     def ran(self, role, agent):
         """The records Claude Code keeps for an agent of the run's session."""
