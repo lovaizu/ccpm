@@ -49,7 +49,7 @@ rebuilt on this turn in the next pull request (#53).
   used.
 - Fact, decided by the user: a viewpoint file opens with the purpose alone, then always has the
   same three sides (Benefit, Usability, Format), each with points or `None` and why; each point has
-  an ID of side letter and number, never used again, a sentence of what the work lets its receiver do,
+  an ID of side letter and number, never used again, a question the judge answers from what happened when the deliverable was used,
   and an Achieved and a Not achieved line. It carries no version or frontmatter, since git keeps
   its versions.
 - Fact, decided by the user: turn makes from each viewpoint file, by script, a checklist the maker

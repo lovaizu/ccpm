@@ -1,65 +1,62 @@
 # Checklist
 
-A checklist is written for one kind of deliverable, such as research findings, a proposal, a design
-document, code or tests. Two people use it: the maker, to know what a deliverable of the kind needs
-to serve its user, and the judge, to decide from what happened when the deliverable was used whether
-it did. This file is the checklist for checklists, and is written in the shape it asks for.
+A checklist says how a deliverable of one kind, such as research findings, a proposal, a design
+document, code or tests, is judged after it has been used: the judge answers its questions from what
+happened. Whoever makes a deliverable of the kind reads it first, to know how the deliverable will
+be judged. This file is the checklist for checklists, and is written in the shape it asks for.
 
 ## Benefit
 
-### B-1: Everything the deliverable needs
+### B-1: No misses
 
-The checklist lets the maker know everything the deliverable needs to serve its user.
+When the deliverable fell short for its user, did an item catch it?
 
-- Achieved: each way the deliverable fell short for its user was one that an item asks about.
-- Not achieved: the deliverable fell short for its user in a way that no item asks about.
+- Achieved: every way the deliverable fell short for its user made some item Not achieved.
+- Not achieved: the deliverable fell short for its user in a way that left every item Achieved.
 
-### B-2: Good told from bad
+### B-2: No false alarms
 
-The checklist lets the judge tell a deliverable that served its user from one that did not.
+When the deliverable served its user, did it pass every item?
 
-- Achieved: a deliverable that served its user was Achieved on every item, and one that did not was
-  Not achieved on at least one.
-- Not achieved: a deliverable that did not serve its user was Achieved on every item, or one that did
-  was Not achieved on one.
+- Achieved: a deliverable that served its user was Achieved on every item.
+- Not achieved: a deliverable that served its user was Not achieved on some item.
 
 ## Usability
 
 ### U-1: Purpose first
 
-The checklist lets the maker and the judge decide a case that no item settles.
+Where no item settled a case, could the judge decide it by the purpose the checklist opens with?
 
-- Achieved: where no item settled a case, the maker or the judge decided it by the purpose the
-  checklist opens with.
-- Not achieved: where no item settled a case, they guessed, or decided against the purpose.
+- Achieved: the judge decided each case no item settled by the purpose at the top.
+- Not achieved: the judge had to guess a case no item settled, or the purpose at the top did not
+  settle it.
 
 ### U-2: One answer per item
 
-The checklist lets the judge settle every item from what happened when the deliverable was used.
+Did exactly one of each item's two lines hold?
 
 - Achieved: for every item, exactly one of its two lines held.
 - Not achieved: for some item, both lines held, or neither did.
 
 ### U-3: One thing per item
 
-The checklist lets the maker know what to change from an item that is Not achieved.
+When an item was Not achieved, did it point to one thing to change?
 
-- Achieved: from the item alone, the maker knew the one thing that fell short.
-- Not achieved: the item asked about more than one thing, and the maker had to work out which fell
+- Achieved: from each item that was Not achieved, the maker knew the one thing to change.
+- Not achieved: an item asked about more than one thing, and the maker had to work out which fell
   short.
 
 ### U-4: No repeats
 
-The checklist lets the maker and the judge spend their attention only on items that settle
-something.
+Did each item's answer tell something that no other item's did?
 
-- Achieved: each item's answer told something that no other item's did, in this checklist or in
-  [doc.md](doc.md), the checklist for every document.
+- Achieved: no two items, in this checklist or in [doc.md](doc.md), the checklist for every
+  document, always came out the same.
 - Not achieved: two items always came out the same, because they ask the same thing.
 
 ### U-5: Empty sections explained
 
-The checklist lets the judge tell a section thought through from a section forgotten.
+Did each section with no item say why?
 
 - Achieved: every section with no item held `None: <why the kind needs none>`, with a reason the
   judge could check.
@@ -67,7 +64,7 @@ The checklist lets the judge tell a section thought through from a section forgo
 
 ### U-6: Each item in its section
 
-The checklist lets the maker and the judge find an item where its section says it belongs.
+Did each item sit in the section these questions put it in?
 
 Ask of each item, in this order, and stop at the first yes:
 
@@ -82,7 +79,7 @@ Ask of each item, in this order, and stop at the first yes:
 
 ### F-1: Same shape
 
-The checklist lets a tool read it as it reads every other checklist.
+Could a tool read every part of the checklist as a part of this template?
 
 ```markdown
 # <Kind of deliverable>
@@ -93,9 +90,9 @@ The checklist lets a tool read it as it reads every other checklist.
 
 ### B-1: <Item name>
 
-<What the deliverable lets its user do>
+<Question the judge answers from what happened when the deliverable was used>
 
-<Only what the item needs to be judged exactly, such as a template; most items need nothing>
+<Only what the question needs to be answered exactly, such as a template; most need nothing>
 
 - Achieved: <what happened when the deliverable served its user here>
 - Not achieved: <what happened when it did not>
@@ -105,13 +102,13 @@ The checklist lets a tool read it as it reads every other checklist.
 ## Format
 ```
 
-- Achieved: a tool read every part of the checklist as one of the parts above.
+- Achieved: a tool read every part of the checklist as a part of the template.
 - Not achieved: the tool met a part it could not read as one of them.
 
 ### F-2: Stable IDs
 
-The checklist lets anything that names an item by its ID, such as a judgment kept from an earlier
-use, keep pointing at the same item.
+Did every ID named earlier, such as in a judgment kept from an earlier use, still mean the same
+item?
 
 - Achieved: every ID named earlier still meant the same item. An ID is the section's first letter
   and a number counted up within the section, such as `U-2`; across checklists it goes with the
