@@ -67,19 +67,34 @@ rebuilt on this turn in the next pull request (#53).
 
 # Tasks
 
-### [ ] #1: Viewpoint files as they should be
+### [ ] #1: Checklists as they should be
 
-Purpose: writ's viewpoint files say what a good work of each kind gives its receiver, with nothing
-about any flow; `essentials.md`, the measure for the others, comes first, then `doc.md`,
-`readme.md`, `design.md` and `prompt.md`.
+Purpose: writ's checklists (once called viewpoint files) say, as yes-or-no questions, what a
+deliverable of each kind must be to serve its purpose, with nothing about any flow;
+`essentials.md`, the checklist for checklists, comes first, then `doc.md`, `readme.md`, `design.md`
+and `prompt.md`.
 
 Serves: A1, M1, M2
 
 Completion criteria:
 
-- Attractive quality: each file can be held open while writing a work of its kind, and can be laid
-  beside what happened when that work was used.
-- Must-be quality: no file names a reader, an agent or a way of trying a work.
+- Attractive quality: a maker reads a checklist before making a deliverable and knows how it will
+  be judged, and two judges give the same answers.
+- Must-be quality: each checklist meets every item of `essentials.md`; no file names a reader, an
+  agent or a way of trying a deliverable.
+
+Progress:
+
+- `essentials.md`: agreed with the user (2026-10-12).
+- Next, `doc.md`, written from nothing in the shape of `essentials.md`. Carry in, as an item: each
+  part of a document does a job for the document's purpose, and does it. Take from the old
+  `doc.md` only what its questions were after (what the reader took they should do, parts skipped,
+  what they had to guess, where they stopped, headings, piecing together who does what, how sure
+  each statement is), each judged again against the new shape.
+- Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
+  before it is handed over.
+- Names left to settle with the files: the folder `essentials/` and the file `essentials.md`, now
+  that they hold checklists.
 
 ### [ ] #2: Plugin rules as steps
 
