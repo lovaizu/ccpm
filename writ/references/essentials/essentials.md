@@ -1,25 +1,26 @@
 # Checklist
 
 A checklist is written for one kind of deliverable, such as research findings, a proposal, a design
-document, code or tests. It lets whoever makes a deliverable of the kind know what it needs to serve
-its purpose, and lets whoever judges it, after someone has used it, decide whether it did.
+document, code or tests. Two people use it: the maker, to know what a deliverable of the kind needs
+to serve its user, and the judge, to decide from what happened when the deliverable was used whether
+it did. This file is the checklist for checklists, and is written in the shape it asks for.
 
 ## Benefit
 
-### B-1: Cases decided by the purpose
+### B-1: Purpose first
 
-The checklist lets the maker and the judge decide a case no item settles.
+The checklist lets the maker and the judge decide a case that no item settles.
 
 - Achieved: where no item settled a case, the maker or the judge decided it by the purpose the
   checklist opens with.
 - Not achieved: where no item settled a case, they guessed, or decided against the purpose.
 
-### B-2: What the deliverable needs
+### B-2: Everything the deliverable needs
 
 The checklist lets the maker know everything the deliverable needs to serve its user.
 
-- Achieved: each way the deliverable fell short for its user was one an item asks about.
-- Not achieved: the deliverable fell short for its user in a way no item asks about.
+- Achieved: each way the deliverable fell short for its user was one that an item asks about.
+- Not achieved: the deliverable fell short for its user in a way that no item asks about.
 
 ### B-3: Good told from bad
 
@@ -27,10 +28,10 @@ The checklist lets the judge tell a deliverable that served its user from one th
 
 - Achieved: a deliverable that served its user was Achieved on every item, and one that did not was
   Not achieved on at least one.
-- Not achieved: a deliverable that did not serve its user passed every item, or one that did failed
-  an item.
+- Not achieved: a deliverable that did not serve its user was Achieved on every item, or one that did
+  was Not achieved on one.
 
-### B-4: One verdict per item
+### B-4: One answer per item
 
 The checklist lets the judge settle every item from what happened when the deliverable was used.
 
@@ -39,45 +40,68 @@ The checklist lets the judge settle every item from what happened when the deliv
 
 ## Usability
 
-### U-1: What to change, from the item alone
+### U-1: One thing per item
 
-The checklist lets the maker know what to change when an item is Not achieved.
+The checklist lets the maker know what to change from an item that is Not achieved.
 
-- Achieved: from the item alone, the maker knew which one thing fell short.
-- Not achieved: the maker had to work out which of the things the item held fell short.
+- Achieved: from the item alone, the maker knew the one thing that fell short.
+- Not achieved: the item asked about more than one thing, and the maker had to work out which fell
+  short.
 
-### U-2: No item repeats another
+### U-2: No repeats
 
 The checklist lets the maker and the judge spend their attention only on items that settle
 something.
 
-- Achieved: each item's verdict told something no other item's did, in this checklist or in
+- Achieved: each item's answer told something that no other item's did, in this checklist or in
   [doc.md](doc.md), the checklist for every document.
-- Not achieved: two items came out the same in every use, because they ask the same thing.
+- Not achieved: two items always came out the same, because they ask the same thing.
 
 ## Format
 
-### F-1: The same shape in every checklist
+### F-1: Same shape
 
-The checklist lets a tool read it the way it reads every other checklist.
+The checklist lets a tool read it as it reads every other checklist.
 
-- Achieved: a tool read the purpose, then `## Benefit`, `## Usability` and `## Format` in that
-  order. Each held `None: <why>`, or items: a `### <B, U or F>-<number>: <name>` heading, a
-  sentence, and the `- Achieved:` and `- Not achieved:` lines.
-- Not achieved: the tool could not read one of these.
+```markdown
+# <Kind of deliverable>
 
-### F-2: IDs that keep their meaning
+<Purpose: what the deliverable lets its user decide or do>
+
+## Benefit
+
+### B-1: <Item name>
+
+<What the deliverable lets its user do>
+
+<Only what the item needs to be judged exactly, such as a template; most items need nothing>
+
+- Achieved: <what happened when the deliverable served its user here>
+- Not achieved: <what happened when it did not>
+
+## Usability
+
+## Format
+```
+
+- Achieved: a tool read every part of the checklist as one of the parts above.
+- Not achieved: the tool met a part it could not read as one of them.
+
+### F-2: Stable IDs
 
 The checklist lets anything that names an item by its ID, such as a judgment kept from an earlier
-use, keep pointing at that item.
+use, keep pointing at the same item.
 
-- Achieved: every ID named earlier still meant the same item; a removed item left its number
-  unused, and an item moved to another section took a new number there.
-- Not achieved: an ID named earlier now means another item, or none.
+- Achieved: every ID named earlier still meant the same item. An ID is the section's first letter
+  and a number counted up within the section, such as `U-2`; across checklists it goes with the
+  file, such as `release-notes.md U-2`. A removed item left its number unused, and an item moved to
+  another section took a new number there.
+- Not achieved: an ID named earlier now meant another item, or none.
 
-### F-3: Sections left empty on purpose
+### F-3: Empty sections explained
 
-The checklist lets the judge tell a section thought through from one forgotten.
+The checklist lets the judge tell a section thought through from a section forgotten.
 
-- Achieved: every section with no item held `None:` with a reason the judge could check.
+- Achieved: every section with no item held `None: <why the kind needs none>`, with a reason the
+  judge could check.
 - Not achieved: a section was empty, or its `None:` gave no reason.
