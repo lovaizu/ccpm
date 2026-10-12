@@ -171,6 +171,10 @@ Completion criteria:
   against the facts before acting on it. The reader returns only what it took, for each item; the
   learner learns from what each item asks less what was taken; the judge decides Good or More from
   all the inputs and the facts, without bias.
+- For turn (#3), decided by the user: the conductor sends the maker's work back with no limit,
+  since settling it is the conductor's work. Every role takes its standpoint from the checklist
+  alone: the list made from a checklist carries its opening (its purpose and who reads the work)
+  with the items, so the maker, the conductor and the reader measure under the same condition.
 - For turn (#3), decided by the user: the CCS is the interface between the caller and turn, and is
   kept as it was decided; inside turn, the conductor hands each role the parts it needs in forms set
   for that role.

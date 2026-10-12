@@ -8,9 +8,10 @@ asking in a conversation or from the steps of their own plugin.
 
 When Claude writes something and checks it itself, it checks as the writer, who already knows what
 each line means. turn's reader knows nothing of how the work was made: it starts where the receiver
-starts, and answers every question of a checklist for that kind of work. Where it missed something,
-turn finds why, makes the work again from that cause, and has the new version read once more before
-you get it.
+starts, and answers every question of a checklist for that kind of work, a list you choose of
+yes-or-no questions on what such work must give its receiver. Where it missed something, turn finds
+why, makes the work again from that cause, and has the new version read once more before you get
+it.
 
 ## Example
 
@@ -30,25 +31,27 @@ Plan: 1 write → 2 read → 3 check   (once more if something was missed; two r
 
 Round 1
   1 write   Developers who find the tool on GitHub can tell what it saves them and run it
-            on their own files.                            .turn/task-2/1/README.md
+            on their own files.                            .turn/readme/1/README.md
   2 read    Read as a developer who meets the tool on GitHub.
+                                                           .turn/readme/1/reading.json
   3 check   ⚠️ The reader could not tell which Python version the tool needs.
             ⚠️ The reader could not picture the result on their own files.
-                                                           .turn/task-2/1/judgment.json
 Round 2
-  1 write   Made again from why each was missed.           .turn/task-2/2/README.md
-  2 read    Read again, as the same developer.
+  1 write   Made again from why each was missed.           .turn/readme/2/README.md
+  2 read    Read again, as the same developer.             .turn/readme/2/reading.json
   3 check   ✅ Nothing missed.
 
 The README is at README.md.
 ❓ Which license is the tool under? Your notes do not say, so the README leaves it out.
 ```
 
+The paths are where each round's work and what the reader took from it are kept, under turn's
+folder `.turn/`, so you can open them while turn works or after.
+
 Answer the question, and turn runs again with your answer. When the first round misses nothing,
 turn stops there. When the second round still misses something, you get the work as it is, with
 what was missed and why, and decide whether to run it again; turn does not change it again unread.
-Each round's work and what the reader and the check found stay under `.turn/`. turn changes nothing
-else in your repository, and never commits or pushes.
+turn changes nothing in your repository but the work and `.turn/`, and never commits or pushes.
 
 From a plugin, a step writes the task as a CCS, a JSON file of what to make, for whom, from what and
 against which checklists, and calls `turn:up` with where it is and where to write the result:
@@ -73,10 +76,10 @@ user what only they can decide, or decide itself what was left to it.
 - Python 3.9 or later, as `python3`: turn checks what it is asked to make, and what it returns,
   with it, using nothing beyond what comes with Python.
 - jq: turn reads parts of what it is asked to make with it, and so do plugins that call turn.
-- A checklist for each kind of work: a Markdown file of yes-or-no questions, each under a heading
-  `### <ID>: <title>`, on what that kind of work must give its receiver. The reader answers each of
-  them. The [writ checklists](../writ/references/essentials/) cover documents, READMEs, design
-  documents and prompts, and can be used as they are.
+- A checklist for each kind of work, as a Markdown file with each question under a heading
+  `### <ID>: <title>`: the reader answers the questions one by one. The
+  [writ checklists](../writ/references/essentials/) cover documents, READMEs, design documents and
+  prompts, and can be used as they are.
 
 ## Installation
 
@@ -92,8 +95,8 @@ names it in `dependencies` in its `.claude-plugin/plugin.json`.
 
 ## Documentation
 
-- [ccs.md](skills/up/ccs.md): the form of a CCS, what turn writes back, and what each `next` asks of
-  the caller.
+- [ccs.md](skills/up/ccs.md): the form of a CCS, what turn writes back, and what the calling step
+  can do next with it.
 - [CHANGELOG.md](CHANGELOG.md): what changed in each version.
 
 ## License
