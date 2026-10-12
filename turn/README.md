@@ -1,15 +1,16 @@
 # turn
 
-Have Claude Code make a document or a prompt with turn, and it comes back already read by a second
-AI in the place of the person it is for, its receiver, with what that reader could not take made again, and only
-what you alone can decide left to you. turn is for anyone who has Claude Code make such work, by
+Have Claude Code make a document or a prompt with turn, and you can hand it on without first
+reading it as the person it is for, its receiver. Before you get it, a second AI, the reader, has
+read it in the receiver's place; what the reader could not take has been made again; and only what
+you alone can decide is left to you. turn is for anyone who has Claude Code make such work, by
 asking in a conversation or from the steps of their own plugin.
 
 When Claude writes something and checks it itself, it checks as the writer, who already knows what
-each line means. With turn, the reader is an AI that knows nothing of how the work was made: it
-starts where the receiver starts, and answers every question of a checklist for that kind of work.
-Where it missed something, turn finds why, makes the work again from that cause, and has the new
-version read once more before you get it.
+each line means. turn's reader knows nothing of how the work was made: it starts where the receiver
+starts, and answers every question of a checklist for that kind of work. Where it missed something,
+turn finds why, makes the work again from that cause, and has the new version read once more before
+you get it.
 
 ## Example
 
@@ -47,8 +48,7 @@ Answer the question, and turn runs again with your answer. When the first round 
 turn stops there. When the second round still misses something, you get the work as it is, with
 what was missed and why, and decide whether to run it again; turn does not change it again unread.
 Each round's work and what the reader and the check found stay under `.turn/`. turn changes nothing
-else in your repository, and never commits or pushes. If you stop it partway, ask again and it
-carries on from where it stopped.
+else in your repository, and never commits or pushes.
 
 From a plugin, a step writes the task as a CCS, a JSON file of what to make, for whom, from what and
 against which checklists, and calls `turn:up` with where it is and where to write the result:
@@ -70,9 +70,9 @@ user what only they can decide, or decide itself what was left to it.
 
 - Claude Code: turn runs inside it.
 - A git repository: the reader starts from a fresh copy of it, as the receiver would.
-- Python 3.9 or later, as `python3`: turn checks each CCS with it, using nothing beyond what comes
-  with Python.
-- jq: turn, and the plugins that call it, read parts of a CCS with it.
+- Python 3.9 or later, as `python3`: turn checks what it is asked to make, and what it returns,
+  with it, using nothing beyond what comes with Python.
+- jq: turn reads parts of what it is asked to make with it, and so do plugins that call turn.
 - A checklist for each kind of work: a Markdown file of yes-or-no questions, each under a heading
   `### <ID>: <title>`, on what that kind of work must give its receiver. The reader answers each of
   them. The [writ checklists](../writ/references/essentials/) cover documents, READMEs, design
