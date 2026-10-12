@@ -108,17 +108,15 @@ None: turn has not been released.
 
 - Every judgment is measured against what the caller wrote the work should be, and nothing else.
   Protects: read in the receiver's place, what the work should be unchanged.
-- Each role does one job with set inputs and outputs, and answers every checklist item in its
-  output; a step skipped, an input not read or an output not written is stopped where it happens.
-  Protects: read in the receiver's place, the first-round share. A slip caught as it is made costs a
-  step; found in the result, it costs a round.
+- Each role is given one aim it can work toward, set inputs and a set output. Protects: read in the
+  receiver's place, the first-round share. An AI works toward the aim it is given; told the steps
+  instead, it follows them and loses the aim.
+- A shortfall is sent back to where it was made, as early as it can be seen. Protects: the
+  first-round share, the time and tokens. What the conductor can see in the maker's work, the
+  reader and the judge would find a round later.
 - What was missed is made again from its cause, and only what has been read is returned. Protects:
   read in the receiver's place, nothing unread. A patch at the spot leaves the cause to show again
   elsewhere.
-- Only the judge decides; the conductor reads no content and passes only where things are. Protects:
-  read in the receiver's place, the time and tokens. One who made the work, or found a cause, goes
-  easy on it; content held in the conductor's conversation crowds out the work of the conversation
-  it runs in.
 - The next step starts from the returned CCS and the deliverable alone. Protects: a plugin decides
   from what turn returns, stop and start over.
 
@@ -132,26 +130,63 @@ sequenceDiagram
   participant R as Reader
   participant L as Learner
   participant J as Judge
-  C->>O: CCS (what to make, for whom, from what, against which checklists)
+  C->>O: CCS
   Note over O: Script: checks the CCS, makes the list from the checklists
-  O-->>C: plan and aim shown in the console
-  loop round 1, and round 2 only if something was missed
-    O->>M: CCS, list, sources (round 2: the causes and the judgment)
-    M-->>O: aim, the work, the list answered as the receiver
+  O-->>C: plan and aim, shown in the console
+  loop round 1, and round 2 only if the judge found More
+    O->>M: what the work should be, sources, list (round 2: causes, judgment)
+    M-->>O: the work, and for each item where in it the item is met
+    Note over O: sends it back to the maker until every item is met
     O->>R: the work, the receiver, its use, the list (in a fresh copy)
-    R-->>O: for each item, what was taken and what was not
-    O->>L: the list, the work, the reading, the maker's answers, both records
-    L-->>O: causes in the work and in the process
-    O->>J: all of the above
+    R-->>O: for each item, what was taken, and where
+    O->>L: the list, the work, the reading, both records
+    L-->>O: causes of what was not taken
+    O->>J: all of the above, and what the work should be
     J-->>O: Good or More for each item, questions for the user
+    Note over O: decides from the aim, the judgment and the facts
   end
   Note over O: Script: writes the evidence and checks the CCS to return
   O-->>C: new CCS
 ```
 
 The caller is a plugin's step, or Claude in the user's conversation, which writes the CCS from the
-request. Hooks watch each agent as it finishes; scripts make what must come out the same every time.
-The copy the reader works in is made from git and deleted when the reader is done.
+request. The conductor is turn's own conversation, running in the caller's. Hooks watch each agent as
+it finishes; scripts make what must come out the same every time. The copy the reader works in is
+made from git and deleted when the reader is done.
+
+| Role | Aim | Hands back |
+|---|---|---|
+| Maker | A work that meets every item of the checklists | The work, and for each item where in it the item is met |
+| Conductor | The work meets what it should be, by the shortest way | The maker's work sent back or passed on; after the judgment, the next round or the CCS to return |
+| Reader | Use the work as its receiver | For each item, what was taken from the work, and where |
+| Learner | Why what the list asks was not taken | Each cause, with the items it explains and where it shows |
+| Judge | Whether each item is met, without bias, from every input and the facts | Good or More for each item, with why, and the questions only the user can answer |
+
+### The checklist as the measure
+
+Achieves: read in the receiver's place, the first-round share.
+
+The checklists are written so that a work meeting every item serves its purpose and is what it
+should be; every role works against the same list, made by a script from them with each item's whole
+text. A gap found that no item asks about belongs in the checklist, not in a role's answer.
+
+- Must hold: every role's output has an entry for every item of the list, and nothing outside it.
+- Weighed: letting the reader also say what it could not take was not chosen; with no item to bound
+  it, it reads as a search for faults, and its answers vary from run to run.
+
+### Making it right first
+
+Achieves: the first-round share, the time and tokens.
+
+The maker is given what the work should be, the sources and the list, and makes a work that meets
+every item, saying for each where in the work it is met. The conductor reads the work and the list,
+and sends the work back with each item not met until every item is. What the sources do not settle
+goes to the user as a question and stays out of the work.
+
+- Must hold: no work reaches the reader with an item the conductor sees unmet.
+- Weighed: leaving the conductor out of the content was not chosen. It keeps the caller's
+  conversation smaller, but every shortfall the maker leaves then costs a full round to find; with
+  two rounds at most, what the conductor reads is bounded.
 
 ### Reading in the receiver's place
 
@@ -159,49 +194,29 @@ Achieves: read in the receiver's place.
 
 The reader starts where the receiver starts: a fresh copy of the repository with only the work added,
 told who the receiver is, what they use it for, and the list. It is told nothing of how the work was
-made, so it stops where the receiver would. For each item it says what it took from the work and
-what it could not, each with the words it rests on.
+made, nor what the caller wrote it must achieve, so it stops where the receiver would. For each item
+it says what it took from the work and where.
 
-- Must hold: the reader's copy holds nothing the receiver would not have, and the reading has an
-  entry for every item.
+- Must hold: the reader's copy holds nothing the receiver would not have.
 - Weighed: reading in the working repository was not chosen, since files the receiver lacks would
-  help the reader along and hide what is missing. Not telling the reader the checklist was not
-  chosen, since then whether every item was looked at cannot be told; the cost is that the reader
-  looks where the checklist points.
+  help the reader along and hide what is missing.
 
 ### Making again from the cause
 
-Achieves: read in the receiver's place, nothing unread, the first-round share.
+Achieves: read in the receiver's place, nothing unread.
 
-The learner finds, for what the reader could not take, its cause in the work and in the process, and
-puts items that share one cause together. The judge decides each item Good or More by the item's
-question and its reason, from the reading and the work. When anything is More, the maker makes the
-work again in round 2 from those causes, keeping what was Good, and the new version is read and
-judged once more. What round 2 still judges More is returned as it is, with why.
+The learner takes what each item asks less what the reader took, and finds why each remainder was
+not taken, in the work and in the process, putting items that share a cause together. The judge
+reads every input and the records, and decides each item Good or More from the facts. The conductor
+decides from the aim, the judgment and the facts: when anything is More, the maker makes the work
+again in round 2 from those causes, keeping what was Good, and it is read and judged once more. What
+round 2 still judges More is returned as it is, with why.
 
-- Must hold: round 2 begins only after a More; nothing is written to the work after its last
-  reading.
-- Weighed: running until nothing is missed was not chosen, since a loop that does not settle
-  hides a fault that belongs to turn or the checklist; a cap reached is no answer either. Having the
-  conductor fix round 2's More before returning was not chosen, since that change would reach the
-  user unread.
-
-### Lists every role fills
-
-Achieves: read in the receiver's place, the first-round share, traceable.
-
-A script makes, from the checklists the CCS names, one list of every item with its whole text. The
-maker answers it as the receiver before handing the work over, saying for each item what the
-receiver gets from the work, not only where; the reader and the judge each fill it too. Each role
-reads only the inputs the conductor names, and what the sources do not settle goes to the user as a
-question and stays out of the work.
-
-- Must hold: every filled list has every item of the list; every role read each of its inputs whole
-  and nothing beyond them. A hook checks both on the agent's record as it finishes, and keeps it
-  running with what is missing.
-- Weighed: one reader per side of the checklist was not chosen; one reader answering every item
-  costs less and misses nothing a side would catch. A check of the content by hook was not chosen,
-  since a hook can see only that an entry is there; whether it answers its item is the judge's.
+- Must hold: nothing is written to the work after its last reading.
+- Weighed: running until nothing is missed was not chosen, since a loop that does not settle hides a
+  fault that belongs to turn or the checklist. Having the conductor fix round 2's More before
+  returning was not chosen, since that change would reach the user unread. The learner and the judge
+  are kept apart, since one who found a cause goes easy on it.
 
 ### Showing the work as it goes
 
@@ -224,16 +239,19 @@ over, traceable.
 
 A CCS is one JSON file in the nine parts of ACC, each a list of entries of a fixed kind; its full
 form is in [ccs.md](../../turn/skills/up/ccs.md), which the caller's step names. The caller writes
-what the work should be: where it goes, its receiver, what they use it for, the checklists and the
-sources. turn writes a new CCS beside it: what to do next (`done`, `ask the user`, `to the caller`,
-`stopped`), the questions only the user can answer, each item still More with why, the rules it
-learned, and where the evidence is, including the commit of each checklist. Each round's work,
-lists and records are kept in a folder named after the returned CCS. The caller adds the user's
-answers to a new CCS and calls again.
+what the work should be: where it goes, its receiver, what they use it for, what the receiver must
+be able to do with it (`acceptance`), the checklists (`viewpoint`) and the sources. turn writes a
+new CCS beside it: what to do next (`done`, `ask the user`, `to the caller`, `stopped`), the
+questions only the user can answer, each item still More with why, the rules it learned, and where
+the evidence is, including the commit of each checklist. Each round's work, lists and records are
+kept in a folder named after the returned CCS. The caller adds the user's answers to a new CCS and
+calls again.
 
 - Must hold: the parts the caller wrote are the same in the returned CCS, except new lines added
   after the old in `constraints`; every part and kind is one of those defined; a script checks both
   on receiving and on returning, and stops with what does not match.
+- The CCS is the caller's interface only. Inside turn, the conductor hands each role the parts it
+  needs in forms set for that role, and changes them without touching the CCS.
 - Weighed: a free-form handover was not chosen, since the caller and the next run find what they
   need by kind, and a form an AI chooses afresh breaks them. Copying the work into the CCS was not
   chosen; only places are written, since a copy drifts from the real thing.
