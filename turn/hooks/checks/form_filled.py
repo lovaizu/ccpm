@@ -10,7 +10,7 @@ import up
 def check(data):
     role = data.get("agent_type", "").partition("turn:")[2]
     run_file = os.path.join(data.get("cwd", ""), up.RUN)
-    if data.get("tool_name") != "SubagentHandback" or role not in up.ROLES or not os.path.isfile(run_file):
+    if data.get("hook_event_name") != "SubagentStop" or role not in up.ROLES or not os.path.isfile(run_file):
         return []
     with open(run_file) as f:
         run = json.load(f)

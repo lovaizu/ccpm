@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""PreToolUse entry of turn's hooks: runs each check on the call, and stops it with what they say."""
+"""SubagentStop entry of turn's hooks: runs each check as an agent stops, and keeps it at work with
+what they say."""
 
 import json
 import os

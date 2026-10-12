@@ -9,15 +9,15 @@ from unittest import mock
 
 from helpers import ROOT, Repo, fill, run, started
 
-import pretooluse
+import subagentstop
 
 
 def hook(repo, **data):
-    """Runs the PreToolUse hook as Claude Code does; returns its exit code and what it told the agent."""
+    """Runs the SubagentStop hook as Claude Code does; returns its exit code and what it told the agent."""
     data.setdefault("cwd", repo.path)
     err = io.StringIO()
     with mock.patch("sys.stdin", io.StringIO(json.dumps(data))), contextlib.redirect_stderr(err):
-        code = pretooluse.main()
+        code = subagentstop.main()
     return code, err.getvalue()
 
 
@@ -31,7 +31,7 @@ class HandBack(unittest.TestCase):
         self.repo.close()
 
     def hand_back(self, agent, session="s1"):
-        return hook(self.repo, session_id=session, tool_name="SubagentHandback", agent_type=agent)
+        return hook(self.repo, session_id=session, hook_event_name="SubagentStop", agent_type=agent)
 
     def test_an_agent_handing_back_with_its_form_unfilled_is_kept_at_it(self):
         # Given: the generator's form left empty in an open run
@@ -62,8 +62,8 @@ class HandBack(unittest.TestCase):
 
     def test_the_hook_run_as_claude_code_runs_it_stops_an_unfilled_form(self):
         # Given: the hook's entry file, and an empty form in an open run
-        entry = os.path.join(ROOT, "turn", "hooks", "pretooluse.py")
-        data = {"cwd": self.repo.path, "session_id": "s1", "tool_name": "SubagentHandback",
+        entry = os.path.join(ROOT, "turn", "hooks", "subagentstop.py")
+        data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "SubagentStop",
                 "agent_type": "turn:generator"}
         # When: Claude Code runs it on a hand-back
         done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True,
@@ -74,16 +74,16 @@ class HandBack(unittest.TestCase):
 
     def test_nothing_outside_the_run_is_stopped(self):
         cases = [
-            ("another session", "turn:generator", "s2", "SubagentHandback"),
-            ("an agent not of turn", "other:writer", "s1", "SubagentHandback"),
-            ("an agent of turn with no form", "turn:learner", "s1", "SubagentHandback"),
-            ("another tool", "turn:generator", "s1", "Read"),
+            ("another session", "turn:generator", "s2", "SubagentStop"),
+            ("an agent not of turn", "other:writer", "s1", "SubagentStop"),
+            ("an agent of turn with no form", "turn:learner", "s1", "SubagentStop"),
+            ("another event", "turn:generator", "s1", "Stop"),
         ]
-        for name, agent, session, tool in cases:
+        for name, agent, session, event in cases:
             with self.subTest(name):
                 # Given: an empty form, and a call from outside what the check covers
                 # When: the call is made
-                code, _ = hook(self.repo, session_id=session, tool_name=tool, agent_type=agent)
+                code, _ = hook(self.repo, session_id=session, hook_event_name=event, agent_type=agent)
                 # Then: it goes on
                 self.assertEqual(code, 0)
 
@@ -102,7 +102,7 @@ class HandBack(unittest.TestCase):
         # Given: a repository where turn has never run
         other = Repo()
         # When: an agent named like turn's hands back
-        code, _ = hook(other, session_id="s1", tool_name="SubagentHandback", agent_type="turn:generator")
+        code, _ = hook(other, session_id="s1", hook_event_name="SubagentStop", agent_type="turn:generator")
         # Then: it goes on
         self.assertEqual(code, 0)
         other.close()

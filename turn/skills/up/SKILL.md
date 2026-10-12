@@ -37,11 +37,14 @@ $ARGUMENTS
 7. Call the `turn:evaluator` agent. Hand it the list, the work, the first user's form as its
    reading, the first user's records, the receiver, the use, the acceptance, its form, and the
    command that checks its form, with `evaluator` as the role.
-8. Read the work whole, and the evaluator's form. For each item, read the whole work for it,
-   starting from the lines the evaluator names, and decide whether the work gives the receiver what
-   the item asks. Write your decision in your form with `jq`: `met` true with the lines you saw it
-   met in, or false, and in `note` what the receiver gets from those lines, or what the work does
-   not give them, in plain words.
+8. Read the work whole, the first user's form and the evaluator's form. For each item, read the
+   whole work for it as the receiver, for the use, starting from the lines the evaluator names, and
+   decide whether the work gives the receiver what the item asks. Count only what the receiver has:
+   what you know from the run, the sources or the repository beyond what the work leads them to does
+   not count. Where the first user's form says the receiver did not take what the item asks, decide
+   it met only where its records show it passed over lines that give it. Write your decision in your
+   form with `jq`: `met` true with the lines you saw it met in, or false, and in `note` what the
+   receiver gets from those lines, or what the work does not give them, in plain words.
 9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 orchestrator`, and fill
    each place it names, until it prints `filled`.
 10. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say in one line what it

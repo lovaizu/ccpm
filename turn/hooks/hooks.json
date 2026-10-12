@@ -1,13 +1,12 @@
 {
   "description": "turn: keeps each agent of a run at its form until every place is filled",
   "hooks": {
-    "PreToolUse": [
+    "SubagentStop": [
       {
-        "matcher": "SubagentHandback",
         "hooks": [
           {
             "type": "command",
-            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"; fi",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"; fi",
             "timeout": 10
           }
         ]

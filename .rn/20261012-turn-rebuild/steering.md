@@ -152,8 +152,7 @@ Progress:
   assistant as conductor sent them back until it saw every item met, then readers, a learner and a
   judge ran, and the maker made them again. Last pushed in d480274; not yet agreed with the user.
 - Found while running the flow, and settled: the list made from a checklist must carry its opening,
-  or the maker and the reader measure under different conditions (`dev/turn/trials/make_list.py`
-  makes it: `python3 dev/turn/trials/make_list.py <checklist>... > list.json`); `design.md` lacked an
+  or the maker and the reader measure under different conditions; `design.md` lacked an
   item asking that a design hold nothing of the specification, so U-2 was added; the maker read
   files beyond its inputs in every run, so a hook must stop that.
 - Decided by the user (2026-10-12): the order in a round is reader, then judge, then learner on the
@@ -246,8 +245,7 @@ Progress:
 - Design written again from nothing (544 to 320 lines, 280 without the figure), with main's role
   names and a sequence figure of who takes part, each one's aim and what each depends on. The
   orchestrator's forms for the design, the README and the callers' page are in `forms/`, every item
-  decided and met (`python3 dev/turn/trials/check_form.py <form> <checklist>...`); the figure was
-  checked as mermaid-cli renders it.
+  decided and met; the figure was checked as mermaid-cli renders it.
 - `turn/README.md`: agreed with the user (2026-10-12), plugin.md step 1.
 - `dev/turn/design.md`: agreed with the user (2026-10-12), plugin.md step 2; its length is not a
   measure.
