@@ -56,8 +56,8 @@ Why: each place the reader has to look elsewhere is a place they may stop.
 
 ### B-6: Where to go for more
 
-Can the reader tell where to find what the README leaves out, such as fuller use, what changed in
-each version, and where to ask for help?
+Can the reader tell where to find what the README leaves out, such as fuller use and what changed
+in each version?
 
 Why: a README that holds only what a newcomer needs stays short only when the rest has somewhere the
 reader can reach.
@@ -110,10 +110,6 @@ Does the README follow this template, headings included?
 ## Documentation
 
 <Where fuller use and what changed in each version are written>
-
-## Support
-
-<Where to ask for help>
 
 ## License
 ```
