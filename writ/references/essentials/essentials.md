@@ -34,13 +34,13 @@ This file is for writing such a viewpoint file.
 ## Writing the points
 
 - Work each point back from the purpose: ask what the receiver must get from the work to do what it
-  is for, and make each such thing a point. Look for them from each of these sides in turn; a side
+  is for, and make each such thing a point. Look for them from each of these sides; a side
   that brings up nothing needs no point:
-  1. The purpose itself: the receiver can do what the work is for.
-  2. Correctness: what the work says or does is right, so the receiver can rely on it.
-  3. What supports it: speed, ease of use, the receiver's effort.
-  4. Those who change it later: whoever keeps or takes over the work can change it.
-  5. What it takes in and hands on: the form the next reader, person or tool, relies on.
+  - The purpose itself: the receiver can do what the work is for.
+  - Correctness: what the work says or does is right, so the receiver can rely on it.
+  - What supports it: speed, ease of use, the receiver's effort.
+  - Those who change it later: whoever keeps or takes over the work can change it.
+  - What it takes in and hands on: the form the next reader, person or tool, relies on.
 - Leave style to a checker. It holds as well for a work that misses its purpose, so it is no point.
 - Give each point one thing. A point that holds two hides the one that falls short behind the one
   that holds.
