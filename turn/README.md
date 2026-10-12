@@ -98,6 +98,8 @@ Then ask as in the [Example](#example), with your own notes and checklist.
 
 - [Calling turn from a plugin's step](skills/up/ccs.md).
 - [Changelog](CHANGELOG.md): what changed in each version.
+- [turn design](../dev/turn/design.md): what turn must achieve and how it is built, for whoever
+  builds or changes it.
 
 ## License
 
