@@ -289,8 +289,11 @@ Progress:
   reading, the generator called again with how each item not seen given would be given, and no
   copy for the first user until every item is seen given. Tried once: the orchestrator sent B-7
   back once, the generator made it given, and the run ended `done` with all 15 items met.
-- Next: unit 3, once the user says whether More goes back to the user and the caller with how it
-  would get a Good (recommended) or with why it has none, as the agreed README says now.
+- Decided by the user (2026-10-13): More goes back to the user and the caller with how it would get
+  a Good, not with why it has none; `turn/README.md` (45, 60, 64, 69), the callers' page (91-94)
+  and the design (35, 56, 259, 274) say so.
+- Next: make those document changes, then build unit 3 (the learner, the second round, More with
+  how it would get a Good, rules returned), tried as units 1 and 2 were.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
