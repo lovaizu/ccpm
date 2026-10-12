@@ -63,8 +63,10 @@ rebuilt on this turn in the next pull request (#53).
 
 - The documents are written in English from the start; the user reads them through machine
   translation, so each thing keeps one plain word.
-- Nothing is written before the user agrees to it; a finding goes back to the measure it comes from,
-  and the part is written again from there.
+- The checklists, the rules, the README and the design are written only once the user agrees to
+  them; a finding goes back to the measure it comes from, and the part is written again from there.
+- Decided by the user (2026-10-12): once the README and the design are agreed, the rest is building
+  them and needs no agreement; the user is asked only when the README or the design should change.
 
 # Tasks
 
@@ -251,7 +253,18 @@ Progress:
   measure.
 - plugin.md step 3 is done: readers who did not know the discussion read the README and the design
   in the two runs of 2026-10-12, and their findings were settled in the decisions above.
-- Next: plugin.md step 4, the list of units.
+- Units (plugin.md step 4), in order, each through the user's whole path:
+  1. Read in the receiver's place, by the thinnest path: one round of generator, first user and
+     evaluator, every item decided on the orchestrator's form, the work and a CCS returned.
+  2. Made right first: coverage, and the orchestrator sending the generator's work back.
+  3. Made again from the cause: the learner, the second round, More with its cause, rules returned.
+  4. Asked only what only the user can decide: questions raised, dropped when answered, returned.
+  5. Seeing the work as it goes, and stop and start over: the console, Esc, a stopped CCS.
+  6. A plugin decides from what turn returns: every `next`, the CCS checked both ways.
+  7. Following each item back: the evidence in `.turn/` with each checklist's commit.
+  8. Leaving the user's work alone: hooks in a run only, nothing overwritten unsaved, missing tools.
+  The code of the earlier turn is removed and written again from nothing, unit by unit (M2).
+- Next: unit 1.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
