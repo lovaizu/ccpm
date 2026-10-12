@@ -96,8 +96,6 @@ Progress:
 - Next, `design.md`, written from nothing after researching design document best practice.
 - Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
   before it is handed over.
-- Names left to settle with the files: the folder `essentials/` and the file `essentials.md`, now
-  that they hold checklists.
 
 ### [ ] #2: Plugin rules as steps
 
@@ -147,6 +145,9 @@ Completion criteria:
   is written, sets out what each section and paragraph is for (B-4), since that is where documents
   are most often weak. Items that only a reading shows, such as B-2, are held by a last step that
   reads the document as its reader and answers every item.
+- When writ is rebuilt (next pull request): rename the folder `essentials/` and the file
+  `essentials.md`, now that they hold checklists; the current writ's skills, agents and scripts
+  name them, and are replaced then.
 - Whether writ's steps use the usual ways a deliverable fails (wrong, too little, for someone
   else, a shape it cannot take) as a hint when finding items.
 
