@@ -50,6 +50,9 @@ rebuilt on this turn in the next pull request (#53).
 - Fact, decided by the user: a viewpoint file opens with the purpose alone, and each point has a
   heading, a sentence of what the work lets its receiver do, and an Achieved and a Not achieved
   line; it carries no version or frontmatter, since git keeps its versions.
+- Fact, decided by the user: turn makes from each viewpoint file, by script, a checklist the maker
+  and the judge fill point by point, and a hook stops one left unfilled; there is one learner and
+  one judge, not one for each side a point is looked for from.
 - Fact, seen by the user: the old README, design and viewpoint files had grown long; what was mixed
   into them could not be told.
 
