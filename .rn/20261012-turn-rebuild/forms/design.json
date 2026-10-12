@@ -1,0 +1,209 @@
+{
+ "document": "dev/turn/design.md",
+ "items": [
+  {
+   "id": "doc B-1",
+   "lines": "3-8",
+   "met": true,
+   "note": "Covers what turn must achieve, how checked, how built; leaves out use (README), the caller's forms (callers' page), prompts' wording and steps (code). Fixed: the leaving-out was missing."
+  },
+  {
+   "id": "doc B-2",
+   "lines": "1-320",
+   "met": true,
+   "note": "Read from the top as a builder: goals, then checks, then the orchestrator-centred build; the picture matches the decisions in steering Task #3."
+  },
+  {
+   "id": "doc B-3",
+   "lines": "12-27,302-306",
+   "met": true,
+   "note": "Each idea given in full: roles, Good/More, coverage, rounds. Fixed: where the work stays until a run returns (stop and start over) was not given."
+  },
+  {
+   "id": "doc B-4",
+   "lines": "1-320",
+   "met": true,
+   "note": "Each section serves a quality or its check; one history line kept as the ground of principle 1 (140-143)."
+  },
+  {
+   "id": "doc B-5",
+   "lines": "7-8,104-107,145,208-209,252-254",
+   "met": true,
+   "note": "Unchecked claims marked (assumption); the trial ground of the Goods-only form says it was seen in a trial. Fixed: that ground was stated flatly."
+  },
+  {
+   "id": "doc B-6",
+   "lines": "1-320",
+   "met": true,
+   "note": "No status, versions or steps; only purposes, decisions and reasons."
+  },
+  {
+   "id": "doc B-7",
+   "lines": "3-8,69-78",
+   "met": true,
+   "note": "The CCS's parts, kinds and the call are only named, with the callers' page as their one place; usage is the README's."
+  },
+  {
+   "id": "doc U-1",
+   "lines": "29-320",
+   "met": true,
+   "note": "Each approach opens with what it achieves, then how; Goals before Verification before Architecture."
+  },
+  {
+   "id": "doc U-2",
+   "lines": "10-27",
+   "met": true,
+   "note": "The roles, CCS, list, Good, More, coverage are given before use. Fixed: orchestrator and its agents were used before the Structure introduced them."
+  },
+  {
+   "id": "doc U-3",
+   "lines": "1-320",
+   "met": true,
+   "note": "Rewritten from 544 to 320 lines; 280 without the figure."
+  },
+  {
+   "id": "doc U-4",
+   "lines": "3",
+   "met": true,
+   "note": "One use: understanding what turn must do and why it is built so."
+  },
+  {
+   "id": "doc U-5",
+   "lines": "15-16,27,235,268",
+   "met": true,
+   "note": "Tied to a function call, test coverage, a fresh clone, a post-mortem. Fixed: the function-call comparison was dropped in the rewrite."
+  },
+  {
+   "id": "doc U-6",
+   "lines": "1-320",
+   "met": true,
+   "note": "Role names are main's (orchestrator, generator, first user, evaluator, learner); 'work' throughout; 'reading' named at 238. Fixed: 'maker' left in Verification."
+  },
+  {
+   "id": "doc U-7",
+   "lines": "29-320",
+   "met": true,
+   "note": "Headings name qualities and approaches in plain words."
+  },
+  {
+   "id": "doc U-8",
+   "lines": "153-198",
+   "met": true,
+   "note": "One sequence figure of who takes part, aims, what passes in order, and Claude Code, git, python3 and jq they depend on; checked as rendered by mermaid-cli."
+  },
+  {
+   "id": "design B-1",
+   "lines": "31-44",
+   "met": true,
+   "note": "Five benefits, matching the README's promises."
+  },
+  {
+   "id": "design B-2",
+   "lines": "45-51",
+   "met": true,
+   "note": "First-round share; time and tokens."
+  },
+  {
+   "id": "design B-3",
+   "lines": "53-66",
+   "met": true,
+   "note": "Six must-be qualities."
+  },
+  {
+   "id": "design B-4",
+   "lines": "67-78",
+   "met": true,
+   "note": "Call (plugins), CCS (callers), checklist form (users and writ), .turn/ (user and next run), what holds and what may change. Fixed: who relies on .turn/ was not said."
+  },
+  {
+   "id": "design B-5",
+   "lines": "79-87",
+   "met": true,
+   "note": "Deciding, talking to the user, running until all Good, finding what no item asks, holding checklists, code."
+  },
+  {
+   "id": "design B-6",
+   "lines": "88-94",
+   "met": true,
+   "note": "Used by Claude, Claude Code plugin limits, Python/jq, git."
+  },
+  {
+   "id": "design B-7",
+   "lines": "98-116",
+   "met": true,
+   "note": "Each benefit with its situation and pass condition. Fixed: the plugin benefit had no situation."
+  },
+  {
+   "id": "design B-8",
+   "lines": "117-121",
+   "met": true,
+   "note": "From records of the same tasks, against the version in use."
+  },
+  {
+   "id": "design B-9",
+   "lines": "122-129",
+   "met": true,
+   "note": "One test per must-be case on the script or hook that holds it."
+  },
+  {
+   "id": "design B-10",
+   "lines": "130-134",
+   "met": true,
+   "note": "Per released version, called as its callers did."
+  },
+  {
+   "id": "design B-11",
+   "lines": "138-152",
+   "met": true,
+   "note": "Three principles, each with what it protects."
+  },
+  {
+   "id": "design B-12",
+   "lines": "153-202",
+   "met": true,
+   "note": "Figure with participants' aims, passes in order, dependencies; the skill choice beneath."
+  },
+  {
+   "id": "design B-13",
+   "lines": "204-320",
+   "met": true,
+   "note": "Every quality named in some Achieves line. Fixed: .turn/ had none."
+  },
+  {
+   "id": "design B-14",
+   "lines": "204-320",
+   "met": true,
+   "note": "Each approach names its parts and how they act together."
+  },
+  {
+   "id": "design B-15",
+   "lines": "212,227,241,259,275,289,303,317",
+   "met": true,
+   "note": "Each approach has a Must hold."
+  },
+  {
+   "id": "design B-16",
+   "lines": "200-202,213,228,242,261,276,304,318",
+   "met": true,
+   "note": "Weighed only where a builder might change: first user's scope, no send-back limit, first user's inputs, coverage over a slip-finding agent, two rounds, CCS per agent, blocking, jq, skill over subagent."
+  },
+  {
+   "id": "design U-1",
+   "lines": "138-152",
+   "met": true,
+   "note": "Each principle spans several approaches; single-approach rules are with their approach."
+  },
+  {
+   "id": "design U-2",
+   "lines": "1-320",
+   "met": true,
+   "note": "No console wording, hook checks, file layout or call syntax; only names others rely on (turn:up, next, .turn/)."
+  },
+  {
+   "id": "design F-1",
+   "lines": "1-320",
+   "met": true,
+   "note": "Headings follow the template; no section empty."
+  }
+ ]
+}

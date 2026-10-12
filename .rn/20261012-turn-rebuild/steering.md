@@ -241,9 +241,12 @@ Progress:
   item decided (met or not, the lines, what was fixed), a script sees every item filled, and the
   real thing is checked too (the figures as GitHub renders them, one reading from the top as the
   receiver). turn's orchestrator follows the same steps.
-- Next: write the design again by the decisions above; then fill the orchestrator's form for the
-  README, the callers' page and the design, fix what it finds, and only then ask the user to agree to
-  the README (plugin.md step 1) and the design (step 2).
+- Design written again from nothing (544 to 320 lines, 280 without the figure), with main's role
+  names and a sequence figure of who takes part, each one's aim and what each depends on. The
+  orchestrator's forms for the design, the README and the callers' page are in `forms/`, every item
+  decided and met (`python3 dev/turn/trials/check_form.py <form> <checklist>...`); the figure was
+  checked as mermaid-cli renders it.
+- Next: ask the user to agree to the README (plugin.md step 1) and the design (step 2).
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 

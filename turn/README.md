@@ -98,7 +98,6 @@ Then ask as in the [Example](#example), with your own notes and checklist.
 
 - [Calling turn from a plugin's step](calling-from-a-plugin.md)
 - [Changelog](CHANGELOG.md)
-- [turn design](../dev/turn/design.md)
 
 ## License
 
