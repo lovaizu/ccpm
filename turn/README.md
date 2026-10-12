@@ -1,20 +1,21 @@
 # turn
 
-turn has Claude Code make a document or a prompt, such as a README, a design document or a skill,
-and gives it back already read by someone in the place of the person it is for, made again where
-that reading could not take what it needed, with only the questions you alone can answer. It is for
-anyone who has Claude Code write such work, by asking in a conversation or from the steps of their
-own plugin. It does not make code, which is checked by running its tests rather than by reading.
+turn has Claude Code write a document or a prompt for you, such as a README, a design document or
+a skill. Before you get it, another AI reads it as the person it is for. Where that reader could not
+find what it needed, the work is made again. You are asked only what you alone can answer.
 
-What only turn gives is a reading by an AI that did not write the work, in a fresh copy of your
-repository that holds only what the person the work is for would have, against a checklist you
-choose for that kind of work. Each item of the checklist, each thing it asks, counts as met only
-where the lines of the work show it. When Claude checks what it has just written, it checks as the
-writer, who knows what each line means, and is likely to pass what a newcomer would miss, as a
-person reviewing their own writing does; turn is built on that assumption.
+turn is for anyone who has Claude Code write such work, in a conversation or from a step of their
+own plugin. It does not write code, since code is checked by running its tests, not by reading it.
 
-This README takes you to a first result by asking in a conversation. How a step of your own plugin
-hands turn a task is in [ccs.md](skills/up/ccs.md).
+Why another reader: when Claude checks what it has just written, it reads as the writer. It knows
+what each line means, so it can miss what a newcomer would not understand, as people do with their
+own writing. turn is built on this assumption. Its reader did not write the work, and reads it in a
+fresh copy of your repository that holds only what the person it is for would have. The work is
+checked against a checklist you choose for its kind, and each item of the checklist counts as met
+only where lines of the work show it.
+
+This README shows how to get a first result by asking in a conversation. To call turn from a step of
+your own plugin, see [ccs.md](skills/up/ccs.md).
 
 ## Example
 
@@ -63,9 +64,9 @@ turn again, which has the changed work read again before you get it. If somethin
 after the second round, it comes back to you in the same way, with why, and you choose whether to
 run turn again.
 
-The paths are in `.turn/` in your repository. turn leaves each round's work and its reading there
-for you to open, and for each item of the checklist, the lines of the work that show it met or why
-none do, and the version of the checklist the work was made and checked by.
+The paths are in `.turn/` in your repository, where turn keeps what you may want to open later:
+each round's work and its reading; for each item of the checklist, the lines that show it met, or
+why none do; and the version of the checklist the work was checked by.
 
 ## Requirements
 
@@ -76,12 +77,11 @@ none do, and the version of the checklist the work was made and checked by.
   record in `.turn/`.
 - jq: the task is kept in a JSON file, and turn, and whoever writes the task, Claude in your
   conversation or your plugin's step, read and change parts of it with jq.
-- A checklist for each kind of work, in your repository, since the work is made and checked by its
-  items and the task names the checklist by its path there: a Markdown file that opens with what
-  such work is for, followed by each item under a heading `### <ID>: <title>`. The
+- A checklist for each kind of work: the work is made and checked by its items. It is a Markdown
+  file that opens with what such work is for, followed by each item under a heading
+  `### <ID>: <title>`. Keep it in your repository, since the task names it by its path there. The
   [writ checklists](../writ/references/essentials/) cover documents, READMEs, design documents and
-  prompts; copy the ones you need into your repository, as `checklists/readme.md` is in the
-  Example.
+  prompts; copy the ones you need, as `checklists/readme.md` is in the Example.
 
 ## Installation
 
