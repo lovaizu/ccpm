@@ -142,6 +142,27 @@ Completion criteria:
   and the user can later tell which version of each viewpoint file a work was made and judged by.
 - Must-be quality: tests cover every line, and the plugin and marketplace validate.
 
+Progress:
+
+- README and design written from nothing on the checklists and the decisions of the old design that
+  still hold, then put through turn's flow by hand: a maker subagent made them meet every item, the
+  assistant as conductor sent them back until it saw every item met, then readers, a learner and a
+  judge ran, and the maker made them again. Last pushed in d480274; not yet agreed with the user.
+- Found while running the flow, and settled: the list made from a checklist must carry its opening,
+  or the maker and the reader measure under different conditions (`dev/turn/trials/make_list.py`
+  makes it: `python3 dev/turn/trials/make_list.py <checklist>... > list.json`); `design.md` lacked an
+  item asking that a design hold nothing of the specification, so U-2 was added; the maker read
+  files beyond its inputs in every run, so a hook must stop that.
+- Decided by the user (2026-10-12): the order in a round is reader, then judge, then learner on the
+  items the conductor has confirmed as More only, so that no role is set to find something; Good is
+  as full an answer as More, the judge gives grounds for both, and the conductor checks both.
+- Next: put the current README and design through one more round in that order: readers (lists
+  from `make_list.py`, README against readme.md + doc.md, design against design.md + doc.md), the
+  judge, the conductor's check, the learner on the confirmed Mores, the maker if any; judge the
+  result by the quality of the documents read as their readers, against the version before, not by
+  counts. Then ask the user to agree to the README (plugin.md step 1) and the design (step 2).
+- The design does not yet say the new order; change it in that round.
+
 ### [ ] #4: The rules use turn, and turn goes through turn
 
 Purpose: once turn works, the rules have documents and prompts made through turn, and turn's own
