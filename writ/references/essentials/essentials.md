@@ -9,15 +9,27 @@ document, code or tests, and serves two people:
 
 This file is for writing such a viewpoint file.
 
-## What a viewpoint file holds
+## The form
 
-- A heading naming the kind.
-- The purpose: what a work of the kind is for, as what its receiver can decide or do once they have
-  used it, with the receiver named in general. A kind can have more than one receiver: code is run
-  by its users and changed by those who keep it.
-- The points, each one list item. Its sentence says what the work lets its receiver do; this is
-  what the maker aims at. Under it, an indented paragraph says what, in what came of using the work,
-  shows the point achieved, and what shows it not; this is what the judge decides by.
+```markdown
+# <Kind>
+
+<What a work of the kind lets its receiver decide or do, with the receiver named in general>
+
+## <Point name>
+
+<What the work lets its receiver do>
+
+- Achieved: <what, in what came of using the work, shows it achieved>
+- Not achieved: <what shows it not>
+```
+
+- The opening holds the purpose and nothing else. Every point is worked back from it, and where a
+  point's words do not reach, the maker and the judge decide by it. A kind can have more than one
+  receiver: code is run by its users and changed by those who keep it.
+- Each point has a heading, so it is named, not found by its place in the file.
+- Its sentence is what the maker aims at; its two lines are what the judge decides by, as one of
+  the two.
 
 ## Writing the points
 
@@ -28,8 +40,8 @@ This file is for writing such a viewpoint file.
 - Keep a point only if a work that misses its purpose fails it. Picture the usual ways a work of the
   kind fails: what it says is wrong, it says too little, or it is written for someone else. A point
   about a part being there, or how the work looks, passes all three.
-- Write each paragraph in terms of what the receiver did, said or got in using the work, so that
-  any use of any work of the kind shows whether the point was achieved.
+- Write the two lines in terms of what the receiver did, said or got in using the work, so that any
+  use of any work of the kind shows which one holds.
 - Leave out what [doc.md](doc.md) already holds for every document.
 
 ## Checking the file
@@ -46,15 +58,19 @@ from the purpose, not to fit that one use.
 Release notes let someone who uses the product decide whether to upgrade to a version, and, once
 upgraded, go on working without being caught out by what changed.
 
-- They let the reader tell what they must do differently once they upgrade.
+## What the upgrade asks
 
-    Achieved when what the reader said they must do is what the version asked of them when they
-    upgraded and went on working, "nothing" included. Not achieved when they learned it only when
-    something stopped them.
+The notes let the reader tell what they must do differently once they upgrade.
 
-- They let the reader weigh the upgrade by their own work.
+- Achieved: what the reader said they must do is what the version asked of them when they upgraded
+  and went on working, "nothing" included.
+- Not achieved: the reader learned what it asked of them only when something stopped them.
 
-    Achieved when the reader named what the version changes in their own work and decided on that.
-    Not achieved when they repeated the product's terms, or could not tell this version from any
-    other.
+## What the upgrade gives
+
+The notes let the reader weigh the upgrade by their own work.
+
+- Achieved: the reader named what the version changes in their own work, and decided on that.
+- Not achieved: the reader repeated the product's terms, or could not tell this version from any
+  other.
 ```

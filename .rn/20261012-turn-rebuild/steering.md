@@ -47,6 +47,9 @@ rebuilt on this turn in the next pull request (#53).
   turn is built, and to use writ once writ is built.
 - Fact, decided by the user: each part is agreed with the user one at a time; no worker session is
   used.
+- Fact, decided by the user: a viewpoint file opens with the purpose alone, and each point has a
+  heading, a sentence of what the work lets its receiver do, and an Achieved and a Not achieved
+  line; it carries no version or frontmatter, since git keeps its versions.
 - Fact, seen by the user: the old README, design and viewpoint files had grown long; what was mixed
   into them could not be told.
 
@@ -94,7 +97,8 @@ Serves: A3, M1, M2, M3
 
 Completion criteria:
 
-- Attractive quality: a plugin hands turn one task and decides its next move from what turn returns.
+- Attractive quality: a plugin hands turn one task and decides its next move from what turn returns,
+  and the user can later tell which version of each viewpoint file a work was made and judged by.
 - Must-be quality: tests cover every line, and the plugin and marketplace validate.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
