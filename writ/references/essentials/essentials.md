@@ -41,8 +41,8 @@ This file says how to write a checklist.
     shared with the user's other work.
 - A section with no item says `None: <why this kind needs none>`. Then a section that was thought
   through and one that was forgotten can be told apart.
-- An item's sentence is what the maker aims for. Its two lines are how the judge decides; exactly
-  one of them holds.
+- An item's sentence is what the maker aims for. Its two lines are how the judge decides; in any use,
+  exactly one of them holds.
 
 ## IDs
 
@@ -53,8 +53,10 @@ This file says how to write a checklist.
 
 ## Writing the items
 
-- For each section, ask what the user needs from the deliverable to get its purpose, and make each
-  answer an item.
+- Find the items from the purpose, section by section. List the parts a deliverable of the kind
+  usually has, and for each part ask what it does for the purpose in that section's sense: what the
+  user gets from it, what makes that easy, what shape is relied on. Each answer is an item. A part
+  that does nothing for the purpose gives no item.
 - One item, one thing. When an item holds two, the one that fails hides behind the one that passes.
 - Keep an item only if a bad deliverable fails it. Think of how deliverables of the kind usually go
   wrong: what they say is wrong, they say too little, they are written for someone else, or they
@@ -66,47 +68,57 @@ This file says how to write a checklist.
 
 ## Testing the checklist
 
-Have a real deliverable of the kind used as its user would use it, and judge each item from what
-happened. When an item cannot be judged from that, or a deliverable you know is bad passes it,
-rewrite the item from the purpose, not to fit that one use.
+Try the checklist on two real deliverables of the kind: one that served its user and one that did
+not. Have each used as its user would use it, and judge every item from what happened.
+
+- Each item has exactly one of its two lines hold in each use.
+- The deliverable that did not serve its user fails at least one item.
+
+When an item breaks either, rewrite it from the purpose, not to fit that one use.
 
 ## Example
 
 ```markdown
 # Release notes
 
-Release notes let someone who uses the product decide whether to upgrade to a version, and, once
-upgraded, keep working without being caught out by what changed.
+Release notes let the product's user decide whether to upgrade to a version, and, once upgraded,
+keep working without being caught out by what changed.
 
 ## Benefit
 
 ### B-1: What the upgrade requires
 
-The notes let the reader know what they must do differently after upgrading.
+The notes let the user know beforehand what upgrading requires of them.
 
-- Achieved: after upgrading and going back to work, the reader had already done what the version
-  required, or knew it required nothing.
-- Not achieved: something the version required stopped the reader before they knew of it.
+- Achieved: before upgrading, the user knew everything the version then required of them, including
+  that it required nothing.
+- Not achieved: before upgrading, the user did not know something the version then required of them.
 
 ### B-2: What the upgrade gives
 
-The notes let the reader weigh the upgrade against their own work.
+The notes let the user weigh the upgrade against their own work.
 
-- Achieved: the reader named what the version changes in their own work, and decided on that.
-- Not achieved: the reader repeated the product's wording, or could not tell this version from any
-  other.
+- Achieved: the gains the user named for their own work were ones the version gave them once they
+  upgraded.
+- Not achieved: the user named a gain the version did not give them, or could name none.
 
 ## Usability
 
 ### U-1: What matters is found first
 
-The notes let the reader find what affects them without reading every entry.
+The notes let the user find what affects them without reading every entry.
 
-- Achieved: the reader found the entries that affect their work before deciding.
-- Not achieved: the reader decided before finding an entry that affects their work, or had to read
-  every entry.
+- Achieved: the user reached the entries that affect their work without reading every entry.
+- Not achieved: the user read every entry to find them, or did not find them.
 
 ## Format
 
-None: people read release notes, and no tool takes them in.
+### F-1: Each version in the same place
+
+The notes let the user and their tools find a version's entries by its number.
+
+- Achieved: the user or tool went to a version by its number and found that version's entries under
+  it.
+- Not achieved: the user or tool could not find a version's entries by its number, or found another
+  version's.
 ```
