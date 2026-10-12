@@ -120,4 +120,8 @@ Completion criteria:
 
 # Not yet specified
 
+- For writ's steps (next pull request): find a checklist's items by listing the parts a deliverable
+  of the kind has and asking what each does for the purpose in each section's sense; try a
+  checklist on one deliverable that served its user and one that did not.
+
 - Registration in the marketplace and the root README, and release.
