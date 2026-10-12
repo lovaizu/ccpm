@@ -20,8 +20,8 @@ The words used throughout:
   decides each item; a run has one round or two.
 - The orchestrator runs a run and alone decides each item. Its agents give it what it decides from:
   the generator makes the work, the first user reads it in the receiver's place and hands back its
-  reading, the evaluator shows which items the work meets, and the learner finds why an item does
-  not.
+  reading, the evaluator shows which items the work meets, and the learner finds how an item without a
+  Good would get one.
 - A Good: an item the orchestrator has decided the work meets, with its grounds, the lines it rests
   on. More: an item without a Good when a run returns.
 - Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
@@ -166,14 +166,14 @@ sequenceDiagram
   participant G as Generator<br/>meets every item
   participant F as First user<br/>takes what the receiver would
   participant E as Evaluator<br/>Goods with grounds
-  participant L as Learner<br/>why no Good
+  participant L as Learner<br/>how to a Good
   participant S as Scripts, on python3 and jq<br/>same result every time
   participant CC as Claude Code
   participant GIT as git
   C->>O: CCS
   O->>S: CCS, checklists
   S-->>O: CCS checked, the list
-  loop round 1, and round 2 from the causes
+  loop round 1, and round 2 from the ways to a Good
     O-->>U: console: the aim, before the work is written
     O->>G: what the work should be, the list
     G-->>O: work, grounds, questions
@@ -190,9 +190,9 @@ sequenceDiagram
     S-->>O: coverage
     Note over O: decides every item on its form
     O->>L: items without a Good
-    L-->>O: causes, each with its items
+    L-->>O: ways to a Good, each with its items
   end
-  O->>S: decisions, causes, new CCS
+  O->>S: decisions, ways to a Good, new CCS
   S-->>O: evidence in .turn/, CCS checked
   O-->>C: new CCS
   C-->>U: questions only the user can answer
@@ -264,16 +264,15 @@ version exactly.
 - Weighed: coverage was chosen over an agent set to look for slips, since a script comes out the
   same every time. The cost: a slip in a line some grounds name is found only by the orchestrator.
 
-### Making again from the cause
+### Making again toward a Good
 
 Achieves: read in the receiver's place, nothing unread.
 
-As a post-mortem asks why something failed rather than where, the learner asks why each item left
-without a Good has none, in the work and in the process, and groups the items that share a cause.
-The generator makes the work again from those causes in a second round, read and decided as the
-first; what it leaves without a Good is returned as More with its cause. A cause in how such work is
-made is returned as a rule the caller carries into later tasks; one in what the caller wrote goes
-back to the caller.
+The learner asks, for each item left without a Good, how the work would give it, in the work and in
+the process, and groups the items one way serves. The generator makes the work again on those ways
+in a second round, read and decided as the first; what it leaves without a Good is returned as More
+with its cause. A way that lies in how such work is made is returned as a rule the caller carries
+into later tasks; one in what the caller wrote goes back to the caller.
 
 - Must hold: a run has at most two rounds, and returns the version last read.
 - Weighed: a third round was not allowed, since a loop that does not settle hides a fault in turn or

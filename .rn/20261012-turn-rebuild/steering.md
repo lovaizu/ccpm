@@ -276,7 +276,14 @@ Progress:
   design's principles and the prompts now say so: the first user writes `nothing` where it took
   nothing, the orchestrator writes a note only for an item met, and the trial's fresh reader answers
   per item what it took toward the use, as the first user does.
-- Next: unit 1 again, tried and checked by a fresh reader that answers only what it took.
+- Decided by the user (2026-10-13): Goods first, even if More is left; More is taken up after.
+  The learner asks how an item without a Good would get one, not why it has none.
+- Unit 1 tried a third time (2026-10-13): the evaluator and the orchestrator's form held to Goods;
+  the first user still wrote what it missed inside `took`, and the orchestrator's last message
+  listed what each unmet item lacked. A fresh reader answering Goods only took 9 of the 11 items
+  decided met, and gave Goods to 3 the orchestrator did not, so the readings vary both ways.
+- Next: the user's answer on moving to unit 2 once those two slips are fixed (recommended), and on
+  saying More to the user and the caller as how it would get a Good.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
