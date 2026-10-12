@@ -89,13 +89,37 @@ official plugins.
   - Rationale: pull requests and pushes a run makes stay out of every repository people use, and
     two runs at once would mix in it.
 
-## 3. Structure check
+## 3. Prompts and hooks
+
+- **Give each prompt the plugin runs, a skill or an agent, a `## Role` and a `## Steps` heading.
+  Under `## Role`, say plainly what is expected of it; under `## Steps`, number every step in the
+  order it is done.**
+  - Rationale: with what is expected of it and its process set, the AI spends its judgment on the
+    work, not on working out what it is for and what comes next; what is expected is also what it
+    checks its work against, and a reader checks the prompt against the design by these two parts.
+- **Put in the steps everything that must happen every time: what it receives and where it reads
+  it, what it hands back and where it writes it, and each thing it must do in full, such as reading
+  a file whole or checking its work before it hands it back. Leave how it thinks within a step to
+  it.**
+  - Rationale: the official guidance sets numbered steps where order or completeness matters, and
+    leaves reasoning free, since the model often reasons better than a hand-written plan; a check
+    given only as advice is the step that gets skipped.
+- **Write the role and every step as what to do, not as what to avoid.**
+  - Rationale: the official guidance tells Claude what to do instead of what not to do; a
+    prohibition names the slip and leaves the right action to be guessed.
+- **Have the hooks check the process the steps set: a step begun before the one it follows is
+  done, a step left out, an input not read or an output not written where its step says. Have each
+  stop say which step went wrong and what that step needs.**
+  - Rationale: the steps say what must happen and the hooks see whether it did, so a slip in the
+    process is caught as it is made, not found later in a result that looks right.
+
+## 4. Structure check
 
 - **Pass both `claude plugin validate <plugin-path> --strict` and `claude plugin validate
   <marketplace-root> --strict`.**
   - Rationale: a malformed manifest fails for every user at install, before any behavior is reached.
 
-## 4. Register
+## 5. Register
 
 - **Add every plugin to `.claude-plugin/marketplace.json`** — one entry under `plugins` with `name`,
   `description`, `source` (e.g. `./rn`), and `category`. This is what Claude Code reads to install it.
@@ -104,7 +128,7 @@ official plugins.
 - **Change the two together** when a plugin is added, renamed, or removed.
   - Rationale: a plugin counts as shipped only once both the machine and a human reader can reach it.
 
-## 5. Release
+## 6. Release
 
 ### Version number
 
