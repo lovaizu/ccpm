@@ -53,8 +53,9 @@ rebuilt on this turn in the next pull request (#53).
   and nothing else. It carries no version or frontmatter, since git keeps
   its versions.
 - Fact, decided by the user: turn makes from each viewpoint file, by script, a checklist the maker
-  and the judge fill point by point, and a hook stops one left unfilled; there is one learner and
-  one judge, not one for each side a point is looked for from.
+  and the judge fill point by point; there is one learner and one judge. An item left unfilled is
+  not stopped: it has no Good, so it goes to the learner or is sent back before it reaches the
+  user.
 - Fact, seen by the user: the old README, design and viewpoint files had grown long; what was mixed
   into them could not be told.
 
