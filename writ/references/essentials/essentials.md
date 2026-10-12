@@ -1,77 +1,74 @@
-# Viewpoint files
+# Checklists
 
-A viewpoint file is written for one kind of work, such as research findings, a proposal, a design
-document, code or tests, and serves two people:
+A checklist is written for one kind of deliverable, such as research findings, a proposal, a design
+document, code or tests. It is used twice:
 
-- To whoever makes a work of the kind, it shows what the work needs to achieve its purpose.
-- To whoever judges the work from what came of using it, it is the measure of whether the work
-  achieved its purpose.
+- While a deliverable of that kind is made: it says what the deliverable needs to serve its purpose.
+- After someone has used the deliverable: it is what you judge by, item by item, whether it served
+  its purpose.
 
-This file is for writing such a viewpoint file.
+This file says how to write a checklist.
 
-## The form
+## Form
 
 ```markdown
-# <Kind>
+# <Kind of deliverable>
 
-<What a work of the kind lets its receiver decide or do, with the receiver named in general>
+<What the deliverable lets its user decide or do>
 
 ## Benefit
 
-### B-1: <Point name>
+### B-1: <Item name>
 
-<What the work lets its receiver do>
+<What the deliverable lets its user do>
 
-- Achieved: <what, in what came of using the work, shows it achieved>
-- Not achieved: <what shows it not>
+- Achieved: <what you see when the user used it and it worked>
+- Not achieved: <what you see when it did not>
 
 ## Usability
 
 ## Format
 ```
 
-- The opening holds the purpose and nothing else. Every point is worked back from it, and where a
-  point's words do not reach, the maker and the judge decide by it. A kind can have more than one
-  receiver: code is run by its users and changed by those who keep it.
-- Every file has the same three sides, so the points are always looked for, talked over and judged
-  from all three:
-  - Benefit: what the receiver gets from the work, the work as it should be. That it is right, and
-    that whoever changes it later can, belong here.
-  - Usability: what supports the benefit, such as speed, ease of use and the receiver's effort.
-  - Format: the form the receiver or a tool relies on, such as what the work takes in and hands on,
-    or the style it shares with the receiver's other works.
-- A side with no point holds `None: <why a work of the kind needs none here>`. Left empty, a side
-  thought through and a side forgotten look the same.
-- A point's sentence is what the maker aims at; its two lines are what the judge decides by, as one
-  of the two.
+- Start with the purpose, and nothing else. Every item comes from it, and where an item does not
+  settle a case, decide by the purpose. A kind can have more than one user: code is run by people
+  and changed by those who maintain it.
+- Every checklist has the same three sections, so none is skipped:
+  - Benefit: what the user gets, the deliverable as it should be. That it is correct, and that
+    whoever maintains it can change it, belong here.
+  - Usability: what makes the benefit easy to get, such as speed, ease of use and effort.
+  - Format: the shape the user or a tool relies on, such as what goes in and comes out, or a style
+    shared with the user's other work.
+- A section with no item says `None: <why this kind needs none>`. Then a section that was thought
+  through and one that was forgotten can be told apart.
+- An item's sentence is what the maker aims for. Its two lines are how the judge decides; exactly
+  one of them holds.
 
 ## IDs
 
-- A point's ID is its side's letter and a number counted up within the side: `B-2`. Across files, a
-  point is named with its file: `release-notes.md B-2`.
-- An ID is never used again. A point taken out leaves its number unused; a point moved to another
-  side has changed its meaning, and takes a new number there. So a record that names an ID always
-  means the same point.
+- An item's ID is its section's letter and a number: `B-2`. Across checklists, add the file:
+  `release-notes.md B-2`.
+- Never reuse an ID. A removed item leaves its number unused, and an item moved to another section
+  gets a new number there. Then an ID always means the same item.
 
-## Writing the points
+## Writing the items
 
-- Work each point back from the purpose: for each side, ask what the receiver must get from the
-  work to do what it is for, and make each such thing a point.
-- Give each point one thing. A point that holds two hides the one that falls short behind the one
-  that holds.
-- Keep a point only if a work that fails its receiver on that side fails it. Picture the usual ways
-  a work of the kind fails: what it says is wrong, it says too little, it is written for someone
-  else, or it comes in a form its receiver or tool cannot take. A point about a part being there
-  passes them all.
-- Write the two lines in terms of what the receiver did, said or got in using the work, so that any
-  use of any work of the kind shows which one holds.
-- Leave out what [doc.md](doc.md) already holds for every document.
+- For each section, ask what the user needs from the deliverable to get its purpose, and make each
+  answer an item.
+- One item, one thing. When an item holds two, the one that fails hides behind the one that passes.
+- Keep an item only if a bad deliverable fails it. Think of how deliverables of the kind usually go
+  wrong: what they say is wrong, they say too little, they are written for someone else, or they
+  come in a shape the user or a tool cannot take. An item such as "has an examples section" passes
+  all of these, so drop it.
+- Write the two lines as what the user did or got when using the deliverable, not as what the
+  deliverable contains. Then any use shows which line holds.
+- Leave out what [doc.md](doc.md), the checklist for every document, already covers.
 
-## Checking the file
+## Testing the checklist
 
-Use a real work of the kind as its receiver would, and judge each point from what came of it. Where
-a point cannot be judged from that, or a work known to fall short passes it, write the point again
-from the purpose, not to fit that one use.
+Have a real deliverable of the kind used as its user would use it, and judge each item from what
+happened. When an item cannot be judged from that, or a deliverable you know is bad passes it,
+rewrite the item from the purpose, not to fit that one use.
 
 ## Example
 
@@ -79,37 +76,37 @@ from the purpose, not to fit that one use.
 # Release notes
 
 Release notes let someone who uses the product decide whether to upgrade to a version, and, once
-upgraded, go on working without being caught out by what changed.
+upgraded, keep working without being caught out by what changed.
 
 ## Benefit
 
-### B-1: What the upgrade asks
+### B-1: What the upgrade requires
 
-The notes let the reader tell what they must do differently once they upgrade.
+The notes let the reader know what they must do differently after upgrading.
 
-- Achieved: what the reader said they must do is what the version asked of them when they upgraded
-  and went on working, "nothing" included.
-- Not achieved: the reader learned what it asked of them only when something stopped them.
+- Achieved: after upgrading and going back to work, the reader had already done what the version
+  required, or knew it required nothing.
+- Not achieved: something the version required stopped the reader before they knew of it.
 
 ### B-2: What the upgrade gives
 
-The notes let the reader weigh the upgrade by their own work.
+The notes let the reader weigh the upgrade against their own work.
 
 - Achieved: the reader named what the version changes in their own work, and decided on that.
-- Not achieved: the reader repeated the product's terms, or could not tell this version from any
+- Not achieved: the reader repeated the product's wording, or could not tell this version from any
   other.
 
 ## Usability
 
-### U-1: What matters found first
+### U-1: What matters is found first
 
-The notes let the reader find what concerns them without reading every entry.
+The notes let the reader find what affects them without reading every entry.
 
-- Achieved: the reader reached the entries that changed their own work before deciding.
-- Not achieved: the reader decided before reaching an entry that changed their work, or read every
-  entry to find it.
+- Achieved: the reader found the entries that affect their work before deciding.
+- Not achieved: the reader decided before finding an entry that affects their work, or had to read
+  every entry.
 
 ## Format
 
-None: the notes are read by people, and no tool takes them in.
+None: people read release notes, and no tool takes them in.
 ```
