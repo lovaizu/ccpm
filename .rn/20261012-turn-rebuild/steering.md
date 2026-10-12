@@ -167,6 +167,14 @@ Completion criteria:
   deliverable, by asking in a conversation or from their own plugin's steps, since a person never
   writes a call to turn. Its Example shows what turn shows in the console as it works, since how the
   work is made and tried is what only turn gives, while the deliverable itself depends on the task.
+- For turn (#3), agreed with the user, to be improved as it is used: the console serves a user who
+  looks in now and then. It shows the whole flow first (write, have it read, check; once more if
+  something is missing, two rounds at most) and each line's place in it, grouped by round; what turn
+  means to make, before it writes, so the user can stop it early with Esc and say otherwise; the path
+  of each round's deliverable and reading; what the reader could not take, in plain words, without
+  item IDs or counts; and at the end where the deliverable is and what the user must decide. Only
+  three marks are used, each with one meaning: ⚠️ what the reader could not take, ✅ nothing missing,
+  ❓ what the user must decide.
 - For turn (#3), decided by the user: turn runs at most two rounds. When the first gives no More, it
   ends; otherwise the More items are made again and tried in a second round, so every change is
   tried once before it is returned. What the second round leaves as More is returned as it is, with
