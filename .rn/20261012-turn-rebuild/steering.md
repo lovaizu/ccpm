@@ -173,11 +173,30 @@ Progress:
   Goods naming the whole document came back though the judge was told in words not to; on unchanged
   lines two judges disagreed. What held was the form: a judge given a place for Goods only wrote
   nothing on other items.
-- Next, proposed to the user and not yet decided: stop running by hand; ask the user to agree to
-  the README and the design (plugin.md steps 1 and 2), with the items still without a Good and their
-  causes; then build first, as turn's scripts, what the run showed words do not hold: the maker's
-  grounds as lines per item in a set form, coverage counted from them at hand-over with no reading
-  before it is empty, and grounds over most of the work sent back.
+- Seen in that run (the conductor's own account to the user): the conductor passed work it had not
+  checked, looking only at the lines the maker named, not reading the whole for each item; after
+  the reader found an exception, it did not look for the same kind across the work. Only the judge
+  had a form; nothing held the maker or the conductor to cover everything.
+- Decided by the user (2026-10-12): every role is defined in full, and a script holds each to cover
+  all of it. The forms each role fills are made by script from the list: one place per item for an
+  item met somewhere in the work, and one place per item and section for an item over the whole
+  work (one name, said once, every part has a job, nothing to guess, as short as can be). No role
+  hands on until every place is filled and its script check passes. Maker: what the work should
+  be, sources, list (round 2: causes) → the lines that meet each place; the script checks every
+  place is filled, the lines exist, and no line is named by no place. Conductor: the work, the
+  maker's form, coverage → each place seen met in its lines, or sent back; nothing goes to the
+  reader until every place is seen met and nothing is sent back. Reader: the work in a fresh copy,
+  receiver, use, list → what it took and where, for each place. Judge: list, work, reading,
+  records → a Good with grounds per place, and no place for anything else; the grounds exist; an
+  item over the whole work is Good only with a Good in every section. Learner: each place without
+  a counted Good and each line no Good names → a cause for each. Each form is filled again for
+  every document on every hand-over, and the script checks it was filled for the current version.
+  The work is every document made together and every document they link.
+- Decided by the user (2026-10-12): a Good on lines unchanged since the round it was counted in is
+  carried to the next round, so only what changed is judged again; a judge's variation on the same
+  text then touches nothing that did not change.
+- Next: write these two decisions into the design, then build the scripts that make and check the
+  forms (plugin.md step 5), and put the README, the design and ccs.md through them.
 - Decided by the user (2026-10-12): the judge gives Good only, each with its grounds, and no More;
   the conductor checks each Good against the facts, and every item without a Good it has confirmed
   is More. So the final decision is the conductor's, and an item not shown to be met never passes.
