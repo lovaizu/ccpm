@@ -69,10 +69,14 @@ The checklist lets the judge tell a section thought through from a section forgo
 
 The checklist lets the maker and the judge find an item where its section says it belongs.
 
-- Achieved: each item sat in the section this test puts it in. Benefit: without the item, the user
-  loses what they get from the deliverable. Usability: without it, they still get it, but with more
-  effort or less surely. Format: a person or a tool reads that shape to use the deliverable.
-- Not achieved: an item sat in a section the test does not put it in.
+Ask of each item, in this order, and stop at the first yes:
+
+1. Does it ask for a set shape that a person or a tool relies on to read the deliverable? Format.
+2. Without it, does the user lose what they get from the deliverable? Benefit.
+3. Otherwise: Usability.
+
+- Achieved: each item sat in the section these questions put it in.
+- Not achieved: an item sat in a section these questions do not put it in.
 
 ## Format
 
