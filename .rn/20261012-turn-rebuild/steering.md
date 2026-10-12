@@ -47,9 +47,11 @@ rebuilt on this turn in the next pull request (#53).
   turn is built, and to use writ once writ is built.
 - Fact, decided by the user: each part is agreed with the user one at a time; no worker session is
   used.
-- Fact, decided by the user: a viewpoint file opens with the purpose alone, and each point has a
-  heading, a sentence of what the work lets its receiver do, and an Achieved and a Not achieved
-  line; it carries no version or frontmatter, since git keeps its versions.
+- Fact, decided by the user: a viewpoint file opens with the purpose alone, then always has the
+  same five sides (PUR, COR, SUP, CHG, IO), each with points or `None` and why; each point has an
+  ID of kind, side and number, never used again, a sentence of what the work lets its receiver do,
+  and an Achieved and a Not achieved line. It carries no version or frontmatter, since git keeps
+  its versions.
 - Fact, decided by the user: turn makes from each viewpoint file, by script, a checklist the maker
   and the judge fill point by point, and a hook stops one left unfilled; there is one learner and
   one judge, not one for each side a point is looked for from.
