@@ -86,11 +86,12 @@ Completion criteria:
 Progress:
 
 - `essentials.md`: agreed with the user (2026-10-12).
-- Next, `doc.md`, written from nothing in the shape of `essentials.md`. Carry in, as an item: each
-  part of a document does a job for the document's purpose, and does it. Take from the old
-  `doc.md` only what its questions were after (what the reader took they should do, parts skipped,
-  what they had to guess, where they stopped, headings, piecing together who does what, how sure
-  each statement is), each judged again against the new shape.
+- `doc.md`: agreed with the user (2026-10-12), built on documentation best practice (Write the
+  Docs principles, Google technical writing, Diátaxis, the pyramid principle, plain language,
+  cognitive load); B-7 asks for no overlap between documents only, and allows some repetition
+  within one.
+- Next, `readme.md`, written from nothing in the shape of `essentials.md`, after researching README
+  best practice.
 - Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
   before it is handed over.
 - Names left to settle with the files: the folder `essentials/` and the file `essentials.md`, now
