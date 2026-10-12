@@ -15,7 +15,7 @@ checked against a checklist you choose for its kind, and each item of the checkl
 only where lines of the work show it.
 
 This README shows how to get a first result by asking in a conversation. To call turn from a step of
-your own plugin, see [Calling turn from a plugin's step](skills/up/ccs.md).
+your own plugin, see [Calling turn from a plugin's step](calling-from-a-plugin.md).
 
 ## Example
 
@@ -96,7 +96,7 @@ Then ask as in the [Example](#example), with your own notes and checklist.
 
 ## Documentation
 
-- [Calling turn from a plugin's step](skills/up/ccs.md)
+- [Calling turn from a plugin's step](calling-from-a-plugin.md)
 - [Changelog](CHANGELOG.md)
 - [turn design](../dev/turn/design.md)
 

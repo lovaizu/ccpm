@@ -4,9 +4,10 @@ This document is for whoever builds or changes turn. It says what turn must achi
 quality is checked, and how turn is built to achieve it and why, in service of the benefits
 [turn](../../turn/README.md) promises. How to use turn is in that README, and the forms a caller
 writes and reads, the call and the CCS, are in
-[Calling turn from a plugin's step](../../turn/skills/up/ccs.md); here they are named only as what
-must keep holding. Each prompt's wording, the steps and the file layout are left to the code. A statement not yet checked is marked "(assumption)", and what a trial has shown says
-how far it was seen.
+[Calling turn from a plugin's step](../../turn/calling-from-a-plugin.md), the callers' page; here
+they are named only as what must keep holding. Each prompt's wording, the steps and the file layout are left to the
+code. A statement not yet checked is marked "(assumption)", and what a trial has shown says how far
+it was seen.
 
 The words used throughout:
 
@@ -84,12 +85,12 @@ Neither has a fixed limit; each must be no worse than in the version in use.
 
 ### Backward compatibility
 
-- The call: plugins' steps call the skill `turn:up` with the two arguments ccs.md gives, `in` and
-  `out`, and name `turn` in their dependencies. These must keep holding. An argument may be added
+- The call: plugins' steps call the skill `turn:up` with the two arguments the callers' page gives,
+  `in` and `out`, and name `turn` in their dependencies. These must keep holding. An argument may be added
   only if a call without it runs as before, since callers written for an earlier version do not pass
   it.
-- The CCS: callers write and read it in the form ccs.md gives: its nine parts, the kinds of entry in
-  each, and the values of `next`. None may be added, removed or renamed, since a caller breaks on
+- The CCS: callers write and read it in the form the callers' page gives: its nine parts, the kinds
+  of entry in each, and the values of `next`. None may be added, removed or renamed, since a caller breaks on
   one it does not know as much as on one that is gone. This holds for `viewpoint`, the CCS's kind
   for a checklist. What turn writes in its entries, other than `next`, may change in wording, since
   callers put it to the user or hand it on rather than act on its words.
@@ -480,8 +481,8 @@ on however the rest of `.turn/` was laid out.
 
 - Must hold: `in` is never written, nor an `out` that already exists. What the work should be is the
   same in the returned CCS, and the received `constraints` entries stay first. Every part, kind and
-  `next` value is one of those ccs.md gives. Every place the CCS points to exists. Where the work
-  goes is written only with the last-read work, on a return that is not stopped.
+  `next` value is one of those the callers' page gives. Every place the CCS points to exists. Where
+  the work goes is written only with the last-read work, on a return that is not stopped.
 - Weighed: ACC's nine parts were taken since ACC defines them as the state the next step needs.
   Adding a part departs from ACC, and every reader of the CCS would have to change with it. Handing
   each agent the CCS itself was not chosen, since a change made for one agent would change what

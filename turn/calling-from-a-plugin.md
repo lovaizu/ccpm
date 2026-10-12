@@ -5,7 +5,7 @@ and decides its next move from the CCS turn writes back. It works like a functio
 write is the arguments, the CCS turn writes back is the return value, and its `next` says what to
 do with it. This page gives the call, the CCS you write, and what to read in the one turn writes
 back. For what turn does with the task, and what it needs installed, see
-[turn](../../README.md).
+[turn](README.md).
 
 ## A step that calls turn
 
