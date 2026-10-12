@@ -123,5 +123,7 @@ Completion criteria:
 - For writ's steps (next pull request): find a checklist's items by listing the parts a deliverable
   of the kind has and asking what each does for the purpose in each section's sense; try a
   checklist on one deliverable that served its user and one that did not.
+- Whether writ's steps use the usual ways a deliverable fails (wrong, too little, for someone
+  else, a shape it cannot take) as a hint when finding items.
 
 - Registration in the marketplace and the root README, and release.
