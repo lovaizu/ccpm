@@ -9,21 +9,17 @@ This file is the checklist for checklists, and is written in the shape it asks f
 
 ### B-1: User and purpose
 
-Does the opening say who uses a deliverable of the kind, and what it lets them decide or do,
-concretely enough to picture?
+Does the opening name who uses a deliverable of the kind, and each thing it lets them decide or
+do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
 
-### B-2: Usual failures caught
+### B-2: Every part of the purpose checked
 
-For each usual way a deliverable of the kind fails its user, does some item answer no?
+For each thing the opening says the user decides or does, does some item check that they can?
 
-- What it says is wrong.
-- It says too little.
-- It is written for someone else.
-- It comes in a shape its user or their tool cannot take.
-
-Why: a failure no item catches lets a deliverable that misses its purpose pass.
+Why: items drawn from the purpose, one for each thing it names, are enough when every thing has
+one; a thing with no item lets a deliverable that misses that part of the purpose pass.
 
 ## Usability
 
