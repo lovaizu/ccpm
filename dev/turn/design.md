@@ -57,8 +57,6 @@ arguments; the console wording and the agents' prompts may change.
   and scripts. Installing copies only turn's own folder.
 - What runs on users' machines is Python 3.9 or later with the standard library only, and jq.
 - The work is in a git repository, since the reader starts from a fresh copy of it.
-- The conversation that runs turn is the user's or the calling plugin's own; what turn holds in it
-  takes room from that conversation's work.
 
 ## Verification
 
@@ -114,6 +112,9 @@ None: turn has not been released.
 - A shortfall is sent back to where it was made, as early as it can be seen. Protects: the
   first-round share, the time and tokens. What the conductor can see in the maker's work, the
   reader and the judge would find a round later.
+- The conductor makes the final decision, and checks every verdict against the work and the
+  records before acting on it. Protects: read in the receiver's place, asked only what only the user
+  can decide. A verdict taken on trust passes its slip on to the user.
 - What was missed is made again from its cause, and only what has been read is returned. Protects:
   read in the receiver's place, nothing unread. A patch at the spot leaves the cause to show again
   elsewhere.
@@ -143,7 +144,7 @@ sequenceDiagram
     L-->>O: causes of what was not taken
     O->>J: all of the above, and what the work should be
     J-->>O: Good or More for each item, questions for the user
-    Note over O: decides from the aim, the judgment and the facts
+    Note over O: checks each verdict against the facts, then decides
   end
   Note over O: Script: writes the evidence and checks the CCS to return
   O-->>C: new CCS
@@ -157,7 +158,7 @@ made from git and deleted when the reader is done.
 | Role | Aim | Hands back |
 |---|---|---|
 | Maker | A work that meets every item of the checklists | The work, and for each item where in it the item is met |
-| Conductor | The work meets what it should be, by the shortest way | The maker's work sent back or passed on; after the judgment, the next round or the CCS to return |
+| Conductor | The final decision: the work meets what it should be, by the shortest way | The maker's work sent back or passed on; each verdict checked against the facts; the next round or the CCS to return |
 | Reader | Use the work as its receiver | For each item, what was taken from the work, and where |
 | Learner | Why what the list asks was not taken | Each cause, with the items it explains and where it shows |
 | Judge | Whether each item is met, without bias, from every input and the facts | Good or More for each item, with why, and the questions only the user can answer |
@@ -184,9 +185,8 @@ and sends the work back with each item not met until every item is. What the sou
 goes to the user as a question and stays out of the work.
 
 - Must hold: no work reaches the reader with an item the conductor sees unmet.
-- Weighed: leaving the conductor out of the content was not chosen. It keeps the caller's
-  conversation smaller, but every shortfall the maker leaves then costs a full round to find; with
-  two rounds at most, what the conductor reads is bounded.
+- Weighed: passing the maker's work straight to the reader was not chosen, since every shortfall
+  it leaves then costs a full round to find.
 
 ### Reading in the receiver's place
 
@@ -208,7 +208,9 @@ Achieves: read in the receiver's place, nothing unread.
 The learner takes what each item asks less what the reader took, and finds why each remainder was
 not taken, in the work and in the process, putting items that share a cause together. The judge
 reads every input and the records, and decides each item Good or More from the facts. The conductor
-decides from the aim, the judgment and the facts: when anything is More, the maker makes the work
+makes the final decision: it checks each Good and More against the work, the reading and the
+records, sends a verdict the facts do not bear out back to the judge with what does not hold, and
+then decides from the aim, the judgment and the facts. When anything is More, the maker makes the work
 again in round 2 from those causes, keeping what was Good, and it is read and judged once more. What
 round 2 still judges More is returned as it is, with why.
 
