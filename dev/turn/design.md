@@ -23,15 +23,16 @@ The words used throughout:
   names: each opening, and every item with its whole text.
 - A run goes from one CCS to the one turn writes back. A round makes the work, reads it and judges
   it once, as a draft goes through one review; a run has one round or two.
-- The conductor runs a run, as an editor hands each part of a piece to one person and decides from
-  what comes back. It has four agents: the maker makes the work; the reader reads it as the
-  receiver, for the use, and hands back its reading; the judge shows which items the work meets; the
-  learner finds why an item was not shown met.
+- The conductor runs a run and alone decides whether each item is met, as an editor hands each part
+  of a piece to one person and decides from what comes back. Its four agents give it what it decides
+  from: the maker makes the work; the reader reads it as the receiver, for the use, and hands back
+  its reading; the judge shows which items the work meets; the learner finds why an item has no
+  Good.
 - Grounds: the lines an answer to an item rests on, with their words.
-- A Good: an item the work meets, given by the judge with its grounds in the work and the reading.
-  The conductor counts a Good only once it has seen, in those lines, that the item is met.
-- More: an item not met when a run returns, as the CCS names it for the caller, who reads each as a
-  `difference` with its cause. Inside turn such an item is called not met, and no agent writes More.
+- A Good: an item the conductor has decided the work meets, having read the whole work for it. The
+  maker's grounds, the judge's and coverage show it where to look first.
+- More: an item without a Good when a run returns, as the CCS names it for the caller, who reads
+  each as a `difference` with its cause.
 - Coverage: the lines of the work that no item's grounds name, found by a script, as test coverage
   finds the lines no test runs.
 - The intent: what turn means the work to let its receiver do, shown before the maker writes.
@@ -44,7 +45,7 @@ The words used throughout:
 ### Attractive quality
 
 - Read in the receiver's place: the work comes back read by an agent that did not write it, in the
-  receiver's place, with each item counted as met shown in the lines of the work, and what the
+  receiver's place, with each item that has a Good shown in the lines of the work, and what the
   reading could not take made again from its cause; so the user can hand the work on without first
   reading it as its receiver.
 - Asked only what only the user can decide: nothing is asked that what the work should be, or its
@@ -60,15 +61,16 @@ The words used throughout:
 
 Neither has a fixed limit; each must be no worse than in the version in use.
 
-- The first-round share: the share of runs whose first round ends with every item Good and every
-  line named by a counted Good. The more work is right when first made, the less the user waits and
-  the less is spent.
+- The first-round share: the share of runs whose first round ends with every item Good. The more
+  work is right when first made, the less the user waits and the less is spent.
 - Time and tokens: what one run takes, from the call to the returned CCS.
 
 ### Must-be quality
 
 - Nothing passes unshown: an item counts as met, in the returned CCS and the evidence, only with a
   Good whose grounds are lines the work holds; every other item is returned as More, with its cause.
+- Nothing overwritten unsaved: turn writes over a file already where the work goes only when git
+  holds that file as it stands.
 - Repository untouched: during a run, turn changes nothing in the user's repository but where the
   work goes and `.turn/`, and never commits or pushes.
 - The user's own work alone: outside its runs, turn blocks nothing the user or Claude does in any
@@ -136,9 +138,9 @@ shows only that the made-up task passes.
 - Read in the receiver's place: tried on work written for a receiver who lacks what the maker knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh reader with no part in the run, reading the returned work as the same receiver, for
-  the same use if one is named, on the same list, takes from it every item the run counted Good. It
-  also passes only when each item round 1 left without a Good has one on that reading, as has every
-  other item its cause explains, so it was made again from its cause and not patched.
+  the same use if one is named, on the same list, takes from it every item the run returned as
+  Good. It also passes only when each item round 1 left without a Good has one on that reading, as
+  has every other item its cause explains, so it was made again from its cause and not patched.
 - Asked only what only the user can decide: tried on a task whose sources settle some choices and
   leave one open. It passes when the open choice is asked and no returned question can be answered
   from what the work should be or from its sources.
@@ -162,7 +164,9 @@ on the version in use: the first-round share, and the time and tokens per run.
 Each is decided by a test, on the script or hook that holds it:
 
 - Nothing passes unshown: given Goods some of whose grounds name lines the work does not hold, the
-  returned CCS gives those items as More, and the evidence as not met.
+  returned CCS gives those items as More, and the evidence as without a Good.
+- Nothing overwritten unsaved: with a file where the work goes that has changes git does not hold,
+  turn ends before any work and says why, and the file is as it was.
 - Repository untouched: during a run, a write outside where the work goes and `.turn/`, a commit and
   a push are each blocked.
 - The user's own work alone: outside a run, including while one goes on in another session, a write
@@ -195,27 +199,27 @@ For each released version, a test calls turn as that version's callers call it:
 
 ### Principles
 
-- Every agent aims only at every item being Good, and thinks forward, from what would make an item
-  Good, not from what is wrong. No agent is set to find something; the conductor, too, aims at as
-  many items reaching Good as it can. Protects: read in the receiver's place, the first-round share.
-  Assumption: an AI works toward the aim it is given, and one set to find something finds it whether
-  it is there or not.
-- Each agent answers in a form laid out before it begins, with a place for each item and no place to
-  write that an item is not met. The form, not the wording, holds an agent to its aim: in one trial,
-  a judge told in words to write Goods only still wrote on items without one. Protects: read in the
-  receiver's place, nothing passes unshown.
-- Every agent that measures the work measures from the same list and receiver, and the same use when
-  the CCS names one, and reads nothing beyond the inputs set for it, since what it reads besides
-  changes where it measures from. Protects: read in the receiver's place, the first-round share.
-- An unmet item or a line that meets none goes back to the maker as soon as it can be seen. What can
-  be seen in the maker's work costs a whole round when it is found in a reading instead. Protects:
-  the first-round share, time and tokens.
-- The conductor decides each move from the work and the records, not from an agent's account alone.
-  Protects: nothing passes unshown, asked only what only the user can decide. Assumption: an account
-  can say more than the work holds, and what it says beyond the work would pass on to the user.
+- The conductor alone decides, and decides from the work itself: for each item it reads the whole
+  work, with what its agents hand back showing it where to look first. Its agents give it what it
+  decides from, and decide nothing. In the by-hand runs of turn's flow, where the conductor took
+  the agents' answers as they were, a slip of the same kind came back in every round. Protects:
+  nothing passes unshown, read in the receiver's place, asked only what only the user can decide.
+- Every agent aims at every item being Good, and thinks forward, from what would make an item Good,
+  not from what is wrong. No agent is set to find something. Protects: read in the receiver's
+  place, the first-round share. Assumption: an AI works toward the aim it is given, and one set to
+  find something finds it whether it is there or not.
+- Each agent answers in a form laid out from the list before it begins, with a place for each item,
+  and hands it on only once a script has checked it. The form, not the wording, holds an agent to
+  its aim: in one trial, a judge told in words to write Goods only still wrote on items
+  without one. Protects: read in the receiver's place, the first-round share.
+- Every part that measures the work, the conductor among them, measures from the same list and
+  receiver, and the same use when the CCS names one. Protects: read in the receiver's place, the first-round share.
+- An item the conductor does not yet see met goes back to the maker as soon as the conductor sees
+  it. What can be seen in the maker's work costs a whole round when it is found in a reading
+  instead. Protects: the first-round share, time and tokens.
 - What must come out the same every time is done by a script or a hook, not by an agent. Protects:
-  nothing passes unshown, what the work should be unchanged, repository untouched, following each
-  item back.
+  nothing passes unshown, what the work should be unchanged, repository untouched, nothing
+  overwritten unsaved, following each item back.
 
 ### Structure
 
@@ -236,24 +240,24 @@ sequenceDiagram
   O->>S: CCS, checklists
   S-->>O: CCS checked; the list
   O-->>U: the plan of the run (console)
-  loop round 1; round 2 only if round 1 leaves an item or a line without a counted Good
+  loop round 1; round 2 only if round 1 leaves an item without a Good
     O-->>U: the intent (console)
     O->>M: what the work should be, the list (round 2: the causes, the work)
     M-->>O: the work; for each item, its grounds; questions
     O->>S: the work, the maker's grounds
     S-->>O: coverage
-    Note over O,M: sent back until every item is seen met and coverage is empty
+    Note over O,M: the conductor reads the whole work for each item; sent back until it sees every item met
     O->>R: the work in a fresh copy, the receiver, the use if named, the list
     R-->>O: for each item, what was taken, and where
     O->>J: what the work should be, the list, the work, the reading, the records
     J-->>O: a Good with its grounds for each item the work meets
     O->>S: the work, the Goods' grounds
     S-->>O: coverage
-    Note over O,J: a Good counted once its lines are seen to meet the item
+    Note over O,J: the conductor reads the whole work for each item and decides each Good
     O-->>U: what the reader could not take (console)
-    opt an item or a line without a counted Good
-      O->>L: those items and lines, what the work should be, the list, the work, the reading, the records
-      L-->>O: each cause, in the work or in the process, with the items and lines it explains
+    opt an item without a Good
+      O->>L: those items, what the work should be, the list, the work, the reading, the records
+      L-->>O: each cause, in the work or in the process, with the items it explains
     end
   end
   O->>S: Goods, causes, checklists, new CCS
@@ -273,11 +277,11 @@ Each part's aim, and what it cannot work without:
 |---|---|---|
 | User | Work they can hand on, deciding only what only they can | The caller, to ask them |
 | Caller | What the work should be, written once for the task | The CCS's form |
-| Conductor | As many items reaching Good as it can | Claude Code, which runs it as a skill in the caller's conversation |
+| Conductor | Each item decided from the whole work | Claude Code, which runs it as a skill in the caller's conversation |
 | Maker | A work that meets every item | Claude Code, which runs it as a subagent |
 | Reader | Take from the work what the receiver would | A fresh copy made from git, removed when done |
-| Judge | Every item the work meets, shown | The records Claude Code keeps |
-| Learner | Why no Good came out, for each item and line without one | The records Claude Code keeps |
+| Judge | Every item the work meets, shown with its grounds | The records Claude Code keeps |
+| Learner | Why no Good came out, for each item without one | The records Claude Code keeps |
 | Scripts | What must come out the same every time | python3, jq, git |
 | Hooks | A step not kept, caught as it is made, during a run only | Claude Code's hook events |
 
@@ -307,43 +311,40 @@ checklist, not into an agent's answer.
 Achieves: the first-round share, time and tokens, asked only what only the user can decide.
 
 The maker makes a work that meets every item. For each item it gives its grounds, the lines
-themselves rather than the heading they sit under, so the conductor weighs the words. What the
-sources do not settle the maker raises as a question for the user, and keeps out of the work. The
-conductor reads the work against the list, with coverage beside it, and drops any question the work
-or its sources answer. It sends the work back with each item it does not yet see met and each line
-coverage finds, saying for each how a Good would be reached, as many times as it takes, since
-settling the work is its own work.
+themselves rather than the heading they sit under. What the sources do not settle the maker raises
+as a question for the user, and keeps out of the work. The conductor then reads the whole work for
+each item, starting from the maker's grounds and coverage, and drops any question the work or its
+sources answer. It sends the work back with each item it does not yet see met, saying how it would
+be, as many times as it takes, since settling the work is its own work.
 
-- Must hold: no work reaches the reader with an item the conductor sees unmet or a line coverage
-  finds.
+- Must hold: no work reaches the reader with an item the conductor does not see met.
 - Weighed: passing the maker's work straight to the reader was not chosen, since every item it
-  leaves unmet then costs a round to find. The cost: the conductor reads every item before each
-  reading. A limit on sending back was not chosen, since a work sent on unsettled costs a round. The
-  cost: a round's length is not bounded; a maker that never settles runs until the user stops it
-  with Esc, and time and tokens show it. Having the conductor raise the questions was not chosen,
-  since the maker meets what the sources leave open while it writes. The cost: the conductor reads
-  each question against the sources.
+  leaves unmet then costs a round to find. Taking the maker's grounds as they are was not chosen: in
+  the by-hand runs, grounds that named one place passed items asked of the whole work, and the reader
+  found an exception elsewhere in every round. The cost of both: the conductor reads the whole work
+  for each item before each reading. A limit on sending back was not chosen, since a work sent on
+  unsettled costs a round. The cost: a round's length is not bounded; a maker that never settles
+  runs until the user stops it with Esc, and time and tokens show it. Having the conductor raise the
+  questions was not chosen, since the maker meets what the sources leave open while it writes. The
+  cost: the conductor reads each question against the sources.
 
 ### Coverage
 
-Achieves: read in the receiver's place, nothing passes unshown, the first-round share.
+Achieves: read in the receiver's place, the first-round share.
 
-Coverage is found by a script, twice in each round. The first time is when the maker hands the work
-over, from its grounds, before any reading. The second is when the judge hands back its Goods, from
-their grounds, before the conductor checks them. A line coverage finds either does nothing for the
-receiver or holds a mistake, since every line that does something for the receiver meets some item
-(assumption, which rests on the checklists asking all such work must give). So what coverage finds
-at the maker's hand-over goes back to the maker, and a line that no counted Good names after the
-judge's is treated as an item without a Good: it goes to the learner with those items and, like
-them, brings on round 2 in round 1, or is returned as More after round 2. What slips through both is
-of a kind no item asks about, and goes into the checklist.
+Coverage is found by a script, twice in each round: when the maker hands the work over, from its
+grounds, and when the judge hands back its Goods, from theirs. It shows the conductor where to look:
+a line no grounds name may do nothing for the receiver or hold a mistake, since every line that does
+something for the receiver meets some item (assumption, which rests on the checklists asking all
+such work must give). The conductor reads each such line and decides which item, if any, it keeps
+from being met. What no item asks about goes into the checklist.
 
-- Must hold: no work reaches the reader, and no Good is counted, before the conductor has coverage.
+- Must hold: no work reaches the reader, and no Good is decided, before the conductor has coverage.
 - Weighed: an agent set to look for mistakes was not chosen, since it would be set to find
   something, while a script needs no AI and comes out the same every time. The cost: a mistake
-  inside a line some item's grounds name is not found. A section or a paragraph as the unit was not
-  chosen, since one line that meets an item would then cover the lines beside it; a line is also the
-  unit grounds are given in. The cost: grounds name every line they rest on.
+  inside a line some grounds name is found only by the conductor's reading. A section or a paragraph
+  as the unit was not chosen, since one line that meets an item would then cover the lines beside
+  it; a line is also the unit grounds are given in. The cost: grounds name every line they rest on.
 
 ### Reading in the receiver's place
 
@@ -360,33 +361,32 @@ receiver would (assumption). For each item it says what it took from the work an
 - Weighed: reading in the working repository was not chosen, since files the receiver lacks could
   carry the reader past what is missing (assumption). The cost: a copy for each reading. Telling the
   reader what the receiver must be able to do was not chosen, since it would then look for that
-  rather than take what the work gives (assumption). The cost: only the judge weighs the reading
-  against what the receiver must be able to do.
+  rather than take what the work gives (assumption). The cost: only the judge and the conductor
+  weigh the reading against what the receiver must be able to do.
 
-### Judging every item
+### Deciding every item
 
 Achieves: read in the receiver's place, nothing passes unshown, following each item back.
 
 After the reading, the judge gives a Good, with its grounds, for each item the work meets, judged
 from the reading against what the receiver must be able to do. It reads the records to see that the
-reading was taken from the work, as the reader says. It writes nothing for an item it cannot ground.
-The conductor has coverage of the Goods before it, and reads, for every Good, the lines it rests on;
-it counts the Good once it sees there that the item is met, as a teacher gives the mark once the
-working shows the answer. This reading is needed beside coverage, which shows the lines no Good
-names but not a Good whose lines do not meet its item. Each line no counted Good names goes on with
-the items without one, as under Coverage. An item without a counted Good when the run returns is
-returned as More. One judge is used.
+reading was taken from the work, as the reader says, and writes nothing for an item it cannot
+ground. The conductor then reads the whole work for each item, starting from the judge's grounds and
+coverage, and decides whether it is met, as an editor decides on a piece from the reviews and the
+piece itself. An item it decides is met is a Good; every other item goes to the learner, and is
+returned as More if the run ends with it still without a Good. One judge is used.
 
-- Must hold: every Good names the lines it rests on. An item is Good only once the conductor has
-  seen, in those lines, that it is met.
-- Weighed: having the judge also say which items are not met was not chosen, since one asked for
-  what is missing finds it whether it is there or not (assumption). The cost: the judge says nothing
-  of why an item has no Good, which the learner asks. A Good without grounds was not allowed, since
-  it could not be seen in its lines. The cost: grounds written and read for every Good. Judging from
-  the reading alone was not chosen, since a reading is an account, and may say more than the reader
-  took from the work. The cost: the judge reads the records. Several judges were not chosen, since
-  the checklists are written so that two judges give the same answers (assumption, which turn's
-  trials check). The cost: a judge's mistake is caught only by the conductor's reading of the lines.
+- Must hold: every Good names the lines it rests on, and is decided by the conductor.
+- Weighed: counting the judge's Goods by a rule on their grounds was not chosen. In the by-hand
+  runs, Goods whose grounds named one place passed items asked of the whole work, a Good whose
+  grounds named the whole work could never be counted, and the judge answered differently on lines
+  that had not changed. The cost: the conductor reads the whole work for each item in each round.
+  Having the judge also say which items are not met was not chosen, since one asked for what is
+  missing finds it whether it is there or not (assumption). The cost: the judge says nothing of why
+  an item has no Good, which the learner asks. Judging from the reading alone was not chosen, since
+  a reading is an account, and may say more than the reader took from the work. The cost: the judge
+  reads the records. Several judges were not chosen, since the conductor decides each item from the
+  work. The cost: a judge's slip is caught only by the conductor's reading.
 
 ### Making again from the cause
 
@@ -394,16 +394,16 @@ Achieves: read in the receiver's place, nothing unread, following each item back
 
 Like a post-mortem that asks why something failed rather than where, the learner asks why no Good
 came out, in the work and in the process, reading the records for the process. It takes only the
-items the conductor has confirmed without a Good, after the judge, with the lines no counted Good
-names, and puts those that share a cause together. If round 1 leaves such items or lines, the maker
-makes the work again in round 2 from those causes, keeping what was Good. The work is then read,
-judged and learned from once more. What round 2 leaves without a Good is returned as it is, as More,
-with its cause. A cause in the process is returned as a rule for making such work, which the caller
-carries into its later tasks. A cause in what the caller wrote the work should be is returned to the
-caller with its reason, since turn never rewrites it.
+items the conductor has decided have no Good, after the judge, and puts those that share a cause
+together. If round 1 leaves such items, the maker makes the work again in round 2 from those causes,
+keeping what was Good. The work is then read, judged, decided and learned from once more. What round
+2 leaves without a Good is returned as it is, as More, with its cause. A cause in the process is
+returned as a rule for making such work, which the caller carries into its later tasks. A cause in
+what the caller wrote the work should be is returned to the caller with its reason, since turn never
+rewrites it.
 
-- Must hold: the learner is given only items the conductor has confirmed without a Good, and lines
-  no counted Good names. A run has at most two rounds. The work returned is the version last read.
+- Must hold: the learner is given only items the conductor has decided have no Good. A run has at
+  most two rounds. The work returned is the version last read.
 - Weighed: fixing each item where it showed was not chosen, since a patch at the spot leaves the
   cause to show again elsewhere. The cost: the learner's pass in each round that leaves an item
   without a Good. Putting the learner before the judge was not chosen, since the learner would then
@@ -420,18 +420,20 @@ caller with its reason, since turn never rewrites it.
 Achieves: read in the receiver's place, the first-round share.
 
 Each agent's prompt says what is expected of it, and sets as steps what it receives, what it hands
-back and what it must do in full; how it thinks within a step is left to it. During a run, hooks
-check that each agent keeps the process its steps set, and block a step begun before the ones ahead
-of it and a file read beyond the agent's inputs. In each of the by-hand runs of turn's flow, the
-maker read files beyond its inputs. An item an agent leaves unanswered is not blocked: it has no
-Good, so the conductor sends it back to the maker or gives it to the learner.
+back and what it must do in full; how it thinks within a step is left to it. Its form is made by a
+script from the list, and a script checks it before it is handed on. During a run, hooks check that
+each agent keeps the process its steps set: a step begun before the ones ahead of it, a step left
+out, an input not read or an answer not written where its step says.
 
-- Must hold: no agent reads beyond its inputs, and an item left unanswered is never taken as met.
+- Must hold: no agent's answer reaches the conductor before its form is checked, and nothing an
+  agent writes is taken as met until the conductor decides it.
 - Weighed: leaving the process to the prompts alone was not chosen, since a step not kept then shows
   only later, in a result that looks right. The cost: a check on each tool an agent uses during a
-  run. Setting how an agent thinks as steps too was not chosen, since a hook can see what an agent
-  reads and hands back but not how it thinks, and an AI given room within a step works better than
-  one told each move (assumption).
+  run. Blocking reads beyond an agent's inputs was not chosen: the maker needs the repository it
+  writes about, the reader's standpoint is held by its fresh copy, and the conductor decides from
+  the work whatever an agent read. Setting how an agent thinks as steps too was not chosen, since a
+  hook can see what an agent reads and hands back but not how it thinks, and an AI given room within
+  a step works better than one told each move (assumption).
 
 ### The console
 
@@ -506,29 +508,36 @@ a subagent could not do, and its console lines and the user's Esc are where the 
 
 Achieves: following each item back, `.turn/`.
 
-A script writes into `.turn/`, for each run: each round's work, list and reading, each counted Good
-with its grounds, each item not met with its cause, and the commit of each checklist, since git
+A script writes into `.turn/`, for each run: each round's work, list and reading, each Good with
+its grounds, each item without a Good with its cause, and the commit of each checklist, since git
 already keeps every version and a commit names one exactly.
 
-- Must hold: every Good, every item not met and every checklist of a run can be found in `.turn/`,
-  and every place a returned CCS points to exists.
+- Must hold: every Good, every item without a Good and every checklist of a run can be found in
+  `.turn/`, and every place a returned CCS points to exists.
 - Weighed: copying each checklist into `.turn/` was not chosen, since the commit names the same text
   without a second copy. The cost: following a checklist back needs the repository's history.
 
 ### Leaving the user's work alone
 
-Achieves: repository untouched, the user's own work alone, missing tools.
+Achieves: repository untouched, the user's own work alone, nothing overwritten unsaved, missing
+tools.
 
 During a run, hooks block, as an agent tries them, a write outside where the work goes and `.turn/`,
 and any commit or push. The caller decides whether to commit. The hooks act only on the tool calls
 of the session whose run is open, so outside its runs, and in other sessions, turn blocks nothing.
-Before anything starts, a check looks for python3 and jq.
+Before anything starts, a check looks for python3 and jq, and for changes git does not hold in a
+file already where the work goes; with either, turn ends before any work and says why. A file there
+is written over with the work, as asked, since git keeps the version before it; to make the work
+from it, the caller names it as a source too.
 
 - Must hold: during a run, the only changes in the repository are where the work goes and `.turn/`.
-  Outside one, turn blocks nothing and a missing tool breaks nothing.
+  Outside one, turn blocks nothing and a missing tool breaks nothing. No change git does not hold is
+  written over.
 - Weighed: checking afterwards was not chosen, since the harm is done by then. The cost: a check on
   each write, commit and push an agent tries. Blocking outside runs too was not chosen, since the
   hooks run in every session where turn is installed, and the user's own work is theirs. jq was
   chosen for the agents' reading and changing of parts of the CCS over a script of turn's own, since
-  agents already know jq, and a script's use would be one more thing in each prompt. Python with the
-  standard library was chosen for the scripts by the constraint above.
+  agents already know jq, and a script's use would be one more thing in each prompt. The cost: jq is
+  one more thing the user installs. Refusing a file already where the work goes was not chosen,
+  since making a document again where it stands is common work. The cost: the caller commits first
+  what it wants kept, or turn ends.

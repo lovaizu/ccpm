@@ -195,8 +195,6 @@ Progress:
 - Decided by the user (2026-10-12): a Good on lines unchanged since the round it was counted in is
   carried to the next round, so only what changed is judged again; a judge's variation on the same
   text then touches nothing that did not change.
-- Next: write these two decisions into the design, then build the scripts that make and check the
-  forms (plugin.md step 5), and put the README, the design and ccs.md through them.
 - Decided by the user (2026-10-12): the judge gives Good only, each with its grounds, and no More;
   the conductor checks each Good against the facts, and every item without a Good it has confirmed
   is More. So the final decision is the conductor's, and an item not shown to be met never passes.
@@ -215,6 +213,21 @@ Progress:
 - Decided by the user (2026-10-12): no role doubts, the conductor included; its aim is how more
   items reach Good, and what brings a slip to light is the coverage, a mechanism. The conductor
   counts a Good only once it has seen, in the lines the Good rests on, that the item is met.
+- Found in the records of the second run (2026-10-12): it did not converge because the conductor
+  took the agents' answers as they were. Grounds naming one place passed items asked of the whole
+  work, so the reader found an exception elsewhere in each round; a Good naming the whole work was
+  dropped by the conductor's counting rule; the judge answered differently on unchanged lines.
+- Decided by the user (2026-10-12): the conductor alone decides, reading the whole work for each
+  item against its purpose; the other roles support it. This replaces the forms per item and
+  section and the carrying of Goods to the next round, which are dropped. Forms per item and
+  coverage stay, as what shows the conductor where to look.
+- Done at the user's word to make all of it as it should be (2026-10-12): the design is made on the
+  conductor as the one who decides, with one name for an item without a Good; the hook on reads
+  beyond an agent's inputs is dropped, since the maker needs the repository it writes about; a file
+  already where the work goes is written over only when git holds it as it stands. The README tells
+  how to put a checklist in the repository, and loses the coverage sentence and the plugin example,
+  which ccs.md holds. ccs.md says what happens to a file already where the work goes.
+- Next: the user's agreement to the README (plugin.md step 1) and the design (step 2).
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 

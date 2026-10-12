@@ -64,7 +64,7 @@ The first four parts are yours:
 
 | Part | Kinds | Needed |
 |---|---|---|
-| `focal_entities` | `deliverable`: where the work goes, a path inside the repository; `receiver`: who the work is for | both |
+| `focal_entities` | `deliverable`: where the work goes, a path inside the repository; a file already there is written over, and must have no change git does not hold; name it as a `source` too to make the work from it; `receiver`: who the work is for | both |
 | `goal_orientation` | `use`: what the receiver uses the work for; `acceptance`: what the receiver must be able to do with it | `acceptance` |
 | `retrieved_artifacts` | `viewpoint`: a checklist to make and check the work by, a file that must exist; `source`: a file to make the work from, which must exist | `viewpoint` |
 | `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: what the user said, to a question or when stopping a run | none |

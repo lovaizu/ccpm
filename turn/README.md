@@ -9,11 +9,9 @@ own plugin. It does not make code, which is checked by running its tests rather 
 What only turn gives is a reading by an AI that did not write the work, in a fresh copy of your
 repository that holds only what the person the work is for would have, against a checklist you
 choose for that kind of work. Each item of the checklist, each thing it asks, counts as met only
-where the lines of the work show it, and a line that meets no item is sent back to be cut or made
-to do its job, as test coverage shows the code no test runs. When Claude checks what it has just
-written, it checks as the writer, who knows what each line means, and is likely to pass what a
-newcomer would miss, as a person reviewing their own writing does; turn is built on that
-assumption.
+where the lines of the work show it. When Claude checks what it has just written, it checks as the
+writer, who knows what each line means, and is likely to pass what a newcomer would miss, as a
+person reviewing their own writing does; turn is built on that assumption.
 
 This README takes you to a first result by asking in a conversation. How a step of your own plugin
 hands turn a task is in [ccs.md](skills/up/ccs.md).
@@ -69,30 +67,21 @@ The paths are in `.turn/` in your repository. turn leaves each round's work and 
 for you to open, and for each item of the checklist, the lines of the work that show it met or why
 none do, and the version of the checklist the work was made and checked by.
 
-A step of your own plugin can hand turn the same task. It writes the task down in a JSON file, calls
-turn with where that file is and where to write back, and decides its next move from what turn
-writes back:
-
-````markdown
-Write the README task to .tasks/readme.json, call the `turn:up` skill with
-`in: .tasks/readme.json` and `out: .tasks/readme-back.json`, and go on as its `next` says.
-````
-
-[ccs.md](skills/up/ccs.md) gives how to write that file and read what comes back.
-
 ## Requirements
 
 - Claude Code: turn runs inside it.
 - A git repository: the reader's fresh copy is made from it.
 - Python 3.9 or later, as `python3`, with nothing beyond what comes with it: turn's own scripts run
-  on it, for what must come out the same every time, such as checking the task file and finding the
-  lines of the work that meet no item.
-- jq: turn, and whoever writes its task file, Claude in your conversation or your plugin's step,
-  read and change parts of that file with it.
-- A checklist for each kind of work, since the work is made and checked by its items: a Markdown
-  file that opens with what such work is for, followed by each item under a heading
-  `### <ID>: <title>`. The [writ checklists](../writ/references/essentials/) cover documents,
-  READMEs, design documents and prompts, and can be used as they are.
+  on it, for what must come out the same every time, such as checking the task and keeping the
+  record in `.turn/`.
+- jq: the task is kept in a JSON file, and turn, and whoever writes the task, Claude in your
+  conversation or your plugin's step, read and change parts of it with jq.
+- A checklist for each kind of work, in your repository, since the work is made and checked by its
+  items and the task names the checklist by its path there: a Markdown file that opens with what
+  such work is for, followed by each item under a heading `### <ID>: <title>`. The
+  [writ checklists](../writ/references/essentials/) cover documents, READMEs, design documents and
+  prompts; copy the ones you need into your repository, as `checklists/readme.md` is in the
+  Example.
 
 ## Installation
 
