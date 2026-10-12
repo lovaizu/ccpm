@@ -1,11 +1,11 @@
 # turn design
 
 This document is for whoever builds or changes turn. It says what turn must achieve, how each
-quality is checked, and how turn is built to achieve it and why, in service of the benefits the
-[README](../../turn/README.md) promises. How to use turn is in the README, and the forms a caller
-writes and reads, the call and the CCS, are in [ccs.md](../../turn/skills/up/ccs.md); here they are
-named only as what must keep holding. Each prompt's wording, the steps and the file layout are left
-to the code. A statement not yet checked is marked "(assumption)", and what a trial has shown says
+quality is checked, and how turn is built to achieve it and why, in service of the benefits
+[turn](../../turn/README.md) promises. How to use turn is in that README, and the forms a caller
+writes and reads, the call and the CCS, are in
+[Calling turn from a plugin's step](../../turn/skills/up/ccs.md); here they are named only as what
+must keep holding. Each prompt's wording, the steps and the file layout are left to the code. A statement not yet checked is marked "(assumption)", and what a trial has shown says
 how far it was seen.
 
 The words used throughout:

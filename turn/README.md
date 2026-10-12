@@ -97,8 +97,8 @@ Then ask as in the [Example](#example), with your own notes and checklist.
 ## Documentation
 
 - [Calling turn from a plugin's step](skills/up/ccs.md).
-- [What changed in each version](CHANGELOG.md).
+- [Changelog](CHANGELOG.md): what changed in each version.
 
 ## License
 
-[MIT](../LICENSE)
+[MIT License](../LICENSE)

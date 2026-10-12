@@ -4,8 +4,8 @@ A step of your plugin can hand turn one task: it writes the task in a CCS, a JSO
 and decides its next move from the CCS turn writes back. It works like a function call: the CCS you
 write is the arguments, the CCS turn writes back is the return value, and its `next` says what to
 do with it. This page gives the call, the CCS you write, and what to read in the one turn writes
-back. What turn does with the task, and what it needs installed, are in the
-[README](../../README.md).
+back. For what turn does with the task, and what it needs installed, see
+[turn](../../README.md).
 
 ## A step that calls turn
 
