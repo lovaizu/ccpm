@@ -148,6 +148,15 @@ Why: few principles can be kept in mind and weighed against each other; a rule t
 approach belongs with that approach, and listed among the principles adds one more thing to keep in
 mind everywhere.
 
+### U-2: Nothing of the specification
+
+Does the document leave out what is decided anew with each build, such as steps, full definitions,
+values, settings and file names, and name only what others rely on?
+
+Why: such details change with each rebuild, so a design that holds them must be rewritten with the
+code, and the reader can no longer tell a decision that must hold from a detail that may change; an
+idea the design takes up is given in full as a decision and its reason, not as its specification.
+
 ## Format
 
 ### F-1: Shape
