@@ -11,6 +11,13 @@ from helpers import ROOT, Repo, fill, run, started
 WORK = "# Note\n\nRun make.\n"
 
 
+def seen(repo, got, f1=True):
+    """The orchestrator's form before the reading, with F-1 seen given or not."""
+    fill(repo, got["forms"]["hand-on"], {
+        "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+        "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else "cut it to one line"}})
+
+
 class Copy(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
@@ -20,8 +27,9 @@ class Copy(unittest.TestCase):
         self.repo.close()
 
     def test_the_first_user_reads_a_fresh_copy_holding_only_what_the_receiver_has(self):
-        # Given: the work written, and a file the user has not committed
+        # Given: the work written and seen to give every item, and a file the user has not committed
         self.repo.write(self.got["work"], WORK)
+        seen(self.repo, self.got)
         self.repo.write("draft.md", "not committed")
         # When: the copy is made
         code, out = run(self.repo, "copy", ".turn/out", "1")
@@ -47,6 +55,17 @@ class Copy(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn(".turn/out/1/note.md is not written", out)
 
+    def test_a_copy_is_not_made_before_the_orchestrator_sees_every_item_given(self):
+        # Given: the work written, with one item not yet seen given
+        self.repo.write(self.got["work"], WORK)
+        seen(self.repo, self.got, f1=False)
+        # When: the copy is made
+        code, out = run(self.repo, "copy", ".turn/out", "1")
+        # Then: it ends naming the item, so the work goes back to the generator first
+        self.assertEqual(code, 1)
+        self.assertIn("note F-1", out)
+        self.assertNotIn("note B-1", out)
+
     def test_only_a_copy_turn_made_is_dropped(self):
         # Given: a folder turn did not make
         other = tempfile.mkdtemp()
@@ -57,6 +76,32 @@ class Copy(unittest.TestCase):
         self.assertIn("not a copy turn made", out)
         self.assertTrue(os.path.exists(other))
         os.rmdir(other)
+
+
+class Coverage(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+        self.got = started(self.repo)
+        self.repo.write(self.got["work"], WORK)
+
+    def tearDown(self):
+        self.repo.close()
+
+    def test_the_lines_with_text_that_no_item_names_are_shown(self):
+        cases = [("generator", {"note B-1": {"lines": "3"}, "note F-1": {"lines": "3"}},
+                  "lines no item names: 1"),
+                 ("generator", {"note B-1": {"lines": "1"}, "note F-1": {"lines": "3"}},
+                  "every line is named"),
+                 ("evaluator", {"note B-1": {"lines": "3", "grounds": "says run make"}},
+                  "lines no item names: 1")]
+        for role, form, said in cases:
+            with self.subTest(role=role, said=said):
+                # Given: the role's form naming these lines
+                fill(self.repo, self.got["forms"][role], form)
+                # When: the coverage is asked for
+                code, out = run(self.repo, "coverage", ".turn/out", "1", role)
+                # Then: the lines with text that no place names are shown, blank lines left out
+                self.assertEqual((code, out.strip()), (0, said))
 
 
 class Records(unittest.TestCase):
@@ -113,7 +158,8 @@ class Check(unittest.TestCase):
         fill(self.repo, self.forms["orchestrator"], {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
             "note F-1": {"met": False, "lines": "", "note": ""}})
-        for role in ("generator", "first-user", "evaluator", "orchestrator"):
+        seen(self.repo, self.got)
+        for role in ("generator", "hand-on", "first-user", "evaluator", "orchestrator"):
             with self.subTest(role):
                 # When: the form is checked
                 code, out = self.check(role)
@@ -150,6 +196,10 @@ class Check(unittest.TestCase):
             ("orchestrator met without a note", "orchestrator", {
                 "note B-1": {"met": True, "lines": "3", "note": ""},
                 "note F-1": {"met": False, "lines": "", "note": ""}},
+             "note B-1: the note is not given"),
+            ("hand-on without how", "hand-on", {
+                "note B-1": {"met": False, "lines": "", "note": ""},
+                "note F-1": {"met": True, "lines": "1", "note": "x"}},
              "note B-1: the note is not given"),
             ("not JSON", "generator", "{", "the form is not JSON"),
         ]

@@ -22,14 +22,16 @@ PARTS = {
     "relational_map": None,
     "episodic_trace": None,
 }
-ROLES = ("generator", "first-user", "evaluator", "orchestrator")
+ROLES = ("generator", "hand-on", "first-user", "evaluator", "orchestrator")
+DECIDING = ("hand-on", "orchestrator")
 RUN = os.path.join(".turn", "run.json")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
 USAGE = """usage: up.py start <in> <out> <session>
+       up.py coverage <work folder> <round> <generator|evaluator>
        up.py copy <work folder> <round>
        up.py drop <copy>
        up.py records <work folder> <agent id>
-       up.py check <work folder> <round> <generator|first-user|evaluator|orchestrator>
+       up.py check <work folder> <round> <generator|hand-on|first-user|evaluator|orchestrator>
        up.py end <work folder> <round>"""
 
 
@@ -117,6 +119,7 @@ def forms(ids):
         "generator": {i: {"lines": ""} for i in ids},
         "first-user": {},
         "evaluator": {},
+        "hand-on": {i: {"met": None, "lines": "", "note": ""} for i in ids},
         "orchestrator": {i: {"met": None, "lines": "", "note": ""} for i in ids},
     }
 
@@ -183,14 +186,14 @@ def check(work, n, role):
             found.append(f"{i}: not filled")
             continue
         lines = place.get("lines", "")
-        needed = role in ("generator", "first-user", "evaluator") or (role == "orchestrator" and place.get("met"))
+        needed = role in ("generator", "first-user", "evaluator") or (role in DECIDING and place.get("met"))
         if role == "first-user" and not place.get("took"):
             found.append(f"{i}: what was taken is not given")
         if role == "evaluator" and not place.get("grounds"):
             found.append(f"{i}: grounds are not given")
-        if role == "orchestrator" and not isinstance(place.get("met"), bool):
+        if role in DECIDING and not isinstance(place.get("met"), bool):
             found.append(f"{i}: not decided")
-        if role == "orchestrator" and place.get("met") and not place.get("note"):
+        if role in DECIDING and (place.get("met") or role == "hand-on") and not place.get("note"):
             found.append(f"{i}: the note is not given")
         if needed and not lines:
             found.append(f"{i}: lines are not given")
@@ -199,8 +202,24 @@ def check(work, n, role):
     return found
 
 
+def coverage(work, n, role):
+    _, _, _, path = the_work(work, n)
+    with open(path) as f:
+        text = [k for k, line in enumerate(f.read().splitlines(), 1) if line.strip()]
+    named = set()
+    for place in read_json(os.path.join(work, str(n), f"{role}.json"), "the form").values():
+        for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", place.get("lines", "")):
+            named.update(range(int(a), int(b or a) + 1))
+    left = [k for k in text if k not in named]
+    print(f"lines no item names: {', '.join(map(str, left))}" if left else "every line is named")
+
+
 def copy(work, n):
     run, _, deliverable, path = the_work(work, n)
+    form = read_json(os.path.join(work, str(n), "hand-on.json"), "the form")
+    unseen = [i for i, p in form.items() if p.get("met") is not True]
+    if unseen:
+        raise Stop("not yet seen given: " + ", ".join(unseen))
     place = tempfile.mkdtemp(prefix="turn-copy-")
     subprocess.run(["git", "clone", "-q", ".", place], check=True)
     os.makedirs(os.path.dirname(os.path.join(place, deliverable)), exist_ok=True)
@@ -243,7 +262,7 @@ def end(work, n):
     print(nxt)
 
 
-COMMANDS = {"start": (start, 3), "copy": (copy, 2), "drop": (drop, 1), "records": (records, 2),
+COMMANDS = {"start": (start, 3), "coverage": (coverage, 3), "copy": (copy, 2), "drop": (drop, 1), "records": (records, 2),
             "end": (end, 2)}
 
 

@@ -26,23 +26,34 @@ $ARGUMENTS
    receiver, the use, the acceptance, the sources and the constraints, all as `start` printed them,
    and the command that checks its form:
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 generator`.
-4. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" copy <folder> 1`. It prints the copy's
-   folder.
-5. Call the `turn:first-user` agent. Hand it the copy's folder, the deliverable's path in it, the
+4. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" coverage <folder> 1 generator`. It prints
+   the lines with text that no item of the generator's form names.
+5. Read the work whole and the generator's form. For each item, read the whole work for it as the
+   receiver, for the use, starting from the lines the generator names and the lines coverage
+   printed, and look for the lines that give the receiver what the item asks. Write your decision
+   in the form `hand-on` with `jq`: where you find them, `met` true, those lines, and in `note` what
+   the receiver gets from them; where you do not, `met` false, and in `note` how the work would give
+   it. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 hand-on`, and fill each
+   place it names, until it prints `filled`.
+6. While an item of `hand-on` is not met, call the `turn:generator` agent again, handing it what
+   step 3 names and, for each item not met, its `note`; then do steps 4 and 5 again.
+7. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" copy <folder> 1`. It prints the copy's folder.
+8. Call the `turn:first-user` agent. Hand it the copy's folder, the deliverable's path in it, the
    receiver, the use, the list, its form, and the command that checks its form, with `first-user`
    as the role. Hand it nothing more, so it stops where the receiver would.
-6. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" drop <copy>`, then
+9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" drop <copy>`, then
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" records <folder> <the first user's agent id>`,
    which prints where its records are.
-7. Call the `turn:evaluator` agent. Hand it the list, the work, the first user's form as its
-   reading, the first user's records, the receiver, the use, the acceptance, its form, and the
-   command that checks its form, with `evaluator` as the role.
-8. Read the work whole, the first user's form and the evaluator's form. For each item, read the
-   whole work for it as the receiver, for the use, starting from the lines the evaluator names, and
-   look for the lines that give the receiver what the item asks. Write your decision in your form
-   with `jq`: where you find them, `met` true, those lines, and in `note` what the receiver gets from
-   them, in plain words; where you do not, `met` false.
-9. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 orchestrator`, and fill
-   each place it names, until it prints `filled`.
-10. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say what it printed and
+10. Call the `turn:evaluator` agent. Hand it the list, the work, the first user's form as its
+    reading, the first user's records, the receiver, the use, the acceptance, its form, and the
+    command that checks its form, with `evaluator` as the role. Then run
+    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" coverage <folder> 1 evaluator`.
+11. Read the work whole, the first user's form and the evaluator's form. For each item, read the
+    whole work for it as the receiver, for the use, starting from the lines the evaluator names and
+    the lines coverage printed, and look for the lines that give the receiver what the item asks.
+    Write your decision in your form with `jq`: where you find them, `met` true, those lines, and in
+    `note` what the receiver gets from them, in plain words; where you do not, `met` false.
+12. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" check <folder> 1 orchestrator`, and fill
+    each place it names, until it prints `filled`.
+13. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py" end <folder> 1`. Say what it printed and
     where the CCS is written, in one line and nothing more, and return to the caller.

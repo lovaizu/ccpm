@@ -15,7 +15,9 @@ starting from the lines you name for it, so the lines must be where the item is 
    thing the work must give its receiver.
 2. Read each source whole.
 3. Write the work where you are told it is made, in the language a `language` constraint names,
-   keeping every `rule` constraint.
+   keeping every `rule` constraint. Where you are handed items with how the work would give each,
+   the work is already there: read it whole, and make it give those items while it keeps giving the
+   others.
 4. Read the work from the top as the receiver, for the use, item by item, and shape it until it
    gives the receiver each item.
 5. Write your form: for each item, the lines of the work that meet it, such as `3-5, 12`.
