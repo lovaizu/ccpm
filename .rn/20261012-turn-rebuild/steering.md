@@ -179,9 +179,10 @@ Completion criteria:
 
 - For turn (#3), told by the user: three roles, none of which gives a way to fix. The user reads the
   checklist and the deliverable, and returns, for each item, what they could take from it, at
-  possibly several places. The learner reads the checklist, the user's result, the deliverable and
-  the JSONL, and returns what was learned about the content and about the process. The judge reads
-  the learner's result and all the above, and gives Good or More. Each role fills a list made by
+  possibly several places. The judge reads the checklist, the user's result, the deliverable and
+  the JSONL, and gives Good or More, each with its grounds. The learner reads the same for the Mores
+  the conductor confirmed, and returns what was learned about the content and about the process.
+  Each role fills a list made by
   script from the checklist, seen before the work begins and filled by following its steps, so that
   every item is done.
 - For turn (#3), decided by the user: each role is given one aim it can work toward, on the
@@ -190,8 +191,8 @@ Completion criteria:
   final decision: it reads the maker's work and report and sends the work back until every item is
   met, so a shortfall is sent back where it was made (shift left), and it checks each Good and More
   against the facts before acting on it. The reader returns only what it took, for each item; the
-  learner learns from what each item asks less what was taken; the judge decides Good or More from
-  all the inputs and the facts, without bias.
+  judge decides Good or More from the reading and the facts, without bias; the learner learns why
+  each confirmed More was not taken.
 - For turn (#3), decided by the user: the conductor sends the maker's work back with no limit,
   since settling it is the conductor's work. Every role takes its standpoint from the checklist
   alone: the list made from a checklist carries its opening (its purpose and who reads the work)

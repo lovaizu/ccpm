@@ -10,9 +10,11 @@ an AI behaves is an assumption until the trials in Verification measure it, and 
 The caller, a plugin's step or Claude in the user's conversation, hands turn one task as a CCS, a
 JSON file in which the caller writes what the work should be. turn writes back a new CCS, whose
 `next` tells the caller what to do. In between, turn's conductor has agents make the work (the
-maker), read it in the place of the person it is for, its receiver (the reader), find why the reader
-missed what it missed (the learner), and give each checklist item a verdict, Good (met) or More (not
-yet met) (the judge). It works like a review by a first-time user, run as a set process.
+maker), read it in the place of the person it is for, its receiver (the reader), and give each
+checklist item a verdict, Good (met) or More (not yet met), each with its grounds (the judge). The
+conductor checks every verdict against the facts, and for each More it confirms, an agent learns why
+the reader did not take it (the learner), so that the maker makes the work again from that cause. It
+works like a review by a first-time user, run as a set process.
 
 ## Goals
 
@@ -118,8 +120,8 @@ Each is checked by a test that runs the script or hook that keeps it:
 - Stop and start over: a stopped run returns `stopped`, and a run called again with it carries on
   from that point; a run called again with the same CCS after being cut off starts from the
   beginning.
-- Traceable: every verdict names the lines it rests on and they exist, and the evidence names the
-  commit of each checklist.
+- Traceable: every verdict, Good as well as More, names the lines it rests on and they exist, and
+  the evidence names the commit of each checklist.
 - Missing tools: with python3 or jq missing, turn stops and says what to install.
 
 ### Backward compatibility
@@ -137,12 +139,13 @@ For each released version, a test calls turn as that version's callers call it:
 
 - Every verdict and decision is measured against what the work should be, and nothing else.
   Protects: read in the receiver's place, what the work should be unchanged.
-- Each role is given one aim it can work toward, set inputs and a set output. Protects: read in the
-  receiver's place, the first-round share. Assumption: an AI works toward the aim it is given;
-  told the steps instead, it follows them and loses the aim.
+- Each role is given one aim it can work toward, set inputs and a set output, and no role is set to
+  find something. Protects: read in the receiver's place, the first-round share. Assumption: an AI
+  works toward the aim it is given; told the steps instead, it follows them and loses the aim, and
+  set to find something, it finds it whether it is there or not.
 - A shortfall is sent back to where it was made, as early as it can be seen. Protects: the
-  first-round share, time and tokens. What the conductor can see in the maker's work, the reader and
-  the judge would find only a round later.
+  first-round share, time and tokens. What the conductor can see in the maker's work, the reading and
+  the verdicts would show only a round later.
 - The conductor decides each move of the work, sending it back, passing it on, running another
   round or returning, from the work and the records, not from a role's report alone. Protects: read
   in the receiver's place, asked only what only the user can decide. A report taken on trust passes
@@ -158,24 +161,26 @@ sequenceDiagram
   participant S as Scripts
   participant M as Maker
   participant R as Reader
-  participant L as Learner
   participant J as Judge
+  participant L as Learner
   C->>O: CCS
   O->>S: CCS, checklists
   S-->>O: CCS checked; the list of every item
   O-->>U: the plan, then what turn means to make (console)
-  loop round 1, and round 2 only if an item is still More after the conductor's check
-    O->>M: what the work should be, sources, list (round 2: causes, judgment)
+  loop round 1, and round 2 only if round 1 leaves a More the conductor confirmed
+    O->>M: what the work should be, sources, list (round 2: the confirmed More and their causes)
     M-->>O: the work, and for each item where in it the item is met
     Note over O,M: sent back until the conductor sees every item met
     O->>R: the work, the receiver, its use, the list (in a fresh copy)
     R-->>O: for each item, what was taken, and where
-    O->>L: the list, the work, the reading, the maker's and reader's records
-    L-->>O: causes of what was not taken
-    O->>J: all of the above, and what the work should be
-    J-->>O: Good or More for each item, questions for the user
-    Note over O,J: each verdict checked against the facts, sent back if they do not bear it out
+    O->>J: the list, the work, the reading, the records, what the work should be
+    J-->>O: Good or More for each item, each with its grounds; questions for the user
+    Note over O,J: every Good and every More checked against the facts, sent back if they do not bear it out
     O-->>U: what the reader could not take (console)
+    opt a More the conductor confirmed
+      O->>L: the confirmed More with their grounds, the list, the work, the reading, the records
+      L-->>O: for each, why it was not taken, with the items each cause explains
+    end
   end
   O->>S: records, verdicts, checklists, new CCS
   S-->>O: evidence written; new CCS checked
@@ -190,11 +195,11 @@ push, and an output with an item unfilled.
 | Part | Aim | Hands back | Depends on |
 |---|---|---|---|
 | Caller | What the work should be, written once for the task | The CCS; the user's answers in a new CCS | The CCS's form |
-| Conductor | The final decision: the work meets what it should be | The maker's work sent back until every item is met; each verdict checked against the facts; the next round or the CCS to return | Claude Code, which runs it as a skill |
+| Conductor | The final decision: the work meets what it should be | The maker's work sent back until every item is met; every Good and More checked against the facts; the next round or the CCS to return | Claude Code, which runs it as a skill |
 | Maker | A work that meets every item | The work, and for each item where in it the item is met | What the work should be, the sources, the list |
 | Reader | Use the work as its receiver | For each item, what was taken from the work, and where | A fresh copy made from git, removed when it is done |
-| Learner | Why what each item asks was not taken | Each cause, with the items it explains | The records (JSONL) Claude Code keeps |
-| Judge | Whether each item is met, without bias, from every input and the facts | Good or More for each item, with why; the questions only the user can answer | The learner's causes |
+| Judge | Whether each item is met, without bias, from the reading and the facts | Good or More for each item, each with its grounds; the questions only the user can answer | The reader's reading; the records (JSONL) Claude Code keeps |
+| Learner | Why each More the conductor confirmed was not taken | Each cause, with the items it explains | The conductor's confirmed More; the records (JSONL) |
 | Scripts | What must come out the same every time | The list; the CCS checked on receiving and returning; the evidence | python3, jq |
 | Hooks | Slips caught as an agent makes them | A stop, with what is missing | Claude Code's hook events |
 
@@ -243,32 +248,49 @@ work and where.
 - Weighed: reading in the working repository was not chosen, since files the receiver lacks would
   help the reader along and hide what is missing. The cost: a copy is made for each reading.
 
+### Judging every item
+
+Achieves: read in the receiver's place, asked only what only the user can decide, traceable.
+
+Once the reader has read, the judge decides, from the reading, the work and the records, whether
+each item is met, as an examiner marks every answer, not only the wrong ones. It gives each item Good
+or More with its grounds, the lines of the work and of the reading it rests on, and a Good is
+grounded as fully as a More. A question goes to the user only when neither what the work should be
+nor its sources answer it. The conductor then checks every Good and every More, and each question,
+against the work, the reading and the records, sends one the facts do not bear out back to the judge
+with what does not hold, and decides only on verdicts the facts bear out.
+
+- Must hold: every verdict, Good or More, names the lines it rests on; no verdict is acted on before
+  the conductor has checked it.
+- Weighed: grounding only the More was not chosen, since a Good without grounds cannot be checked,
+  and a wrong Good is the slip nothing looks at again: the work reaches the user with it unmet. The
+  cost: grounds written and checked for every item. Having the judge work from the learner's causes,
+  with the learner before it, was not chosen: a learner on every item is set to find what was
+  missed, and a verdict resting on its account judges the account rather than the work. The cost: a
+  wrong Good gets no cause, and only the conductor's check of every Good catches it.
+
 ### Making again from the cause
 
-Achieves: read in the receiver's place, asked only what only the user can decide, nothing unread,
-traceable.
+Achieves: read in the receiver's place, nothing unread, traceable.
 
-Like a post-mortem that asks why something failed rather than where, the learner takes what each
-item asks less what the reader took, and finds why each remainder was not taken, in the work and in
-the process, putting items that share a cause together. The judge reads every input and the
-records, and gives each item Good or More, naming the lines of the work and the records it rests on;
-a question goes to the user only when neither what the work should be nor its sources answer it. The
-conductor checks each verdict and question against the work, the reading and the records, sends one
-the facts do not bear out back to the judge with what does not hold, and then decides. When anything
-is More, the maker makes the work again in round 2 from those causes, keeping what was Good, and it
-is read and judged once more. What round 2 still judges More is returned as it is, with why. A cause
-found in the process rather than in the work is returned as a rule, which the caller carries into
-the CCS of its later tasks.
+Like a post-mortem that asks why something failed rather than where, the learner takes only the More
+the conductor confirmed, and learns why the reader did not take each, in the work and in the
+process, putting items that share a cause together. The maker then makes the work again in round 2
+from those causes, keeping what was Good, and it is read, judged and checked once more, and what is
+still More is learned from once more. What round 2 leaves as More is returned as it is, with the
+judge's grounds and the learner's cause. A cause found in the process rather than in the work is
+returned as a rule, which the caller carries into the CCS of its later tasks.
 
-- Must hold: nothing is written to the work after its last reading.
+- Must hold: the learner is given only More the conductor confirmed; nothing is written to the work
+  after its last reading.
 - Weighed: fixing each missed item where it shows was not chosen, since a patch at the spot leaves
-  the cause to show again elsewhere; the cost is the learner's pass each round. Having one agent
-  both find the causes and judge was not chosen, since, as an author reviewing their own change,
-  one who found a cause goes easy on it (assumption); the cost is one more agent each round.
-  Running until nothing is missed, and having the conductor fix round 2's More before returning,
-  were not chosen: a loop that does not settle hides a fault that belongs to turn or the checklist,
-  and a fix after the last reading reaches the user unread. The cost of both: some work comes back
-  with More, for the user to decide on.
+  the cause to show again elsewhere; the cost is the learner's pass in each round that leaves a
+  More. Having the judge also give the causes was not chosen, since one who explains a More as it
+  judges it holds to that explanation, as an author reviewing their own change does (assumption);
+  the cost is one more agent in such a round. Running until nothing is missed, and having the
+  conductor fix round 2's More before returning, were not chosen: a loop that does not settle hides
+  a fault that belongs to turn or the checklist, and a fix after the last reading reaches the user
+  unread. The cost of both: some work comes back with More, for the user to decide on.
 
 ### The console
 
