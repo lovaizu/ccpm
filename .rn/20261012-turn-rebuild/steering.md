@@ -163,6 +163,17 @@ Completion criteria:
   the learner's result and all the above, and gives Good or More. Each role fills a list made by
   script from the checklist, seen before the work begins and filled by following its steps, so that
   every item is done.
+- For turn (#3), decided by the user: each role is given one aim it can work toward, on the
+  premise that a work meeting every checklist item serves its purpose. The maker makes a work that
+  meets every item and reports, for each, where in the work it is met. The conductor makes the
+  final decision: it reads the maker's work and report and sends the work back until every item is
+  met, so a shortfall is sent back where it was made (shift left), and it checks each Good and More
+  against the facts before acting on it. The reader returns only what it took, for each item; the
+  learner learns from what each item asks less what was taken; the judge decides Good or More from
+  all the inputs and the facts, without bias.
+- For turn (#3), decided by the user: the CCS is the interface between the caller and turn, and is
+  kept as it was decided; inside turn, the conductor hands each role the parts it needs in forms set
+  for that role.
 - For turn (#3), decided by the user: the README's reader is anyone who has an AI make a
   deliverable, by asking in a conversation or from their own plugin's steps, since a person never
   writes a call to turn. Its Example shows what turn shows in the console as it works, since how the
