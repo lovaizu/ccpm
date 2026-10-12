@@ -33,6 +33,9 @@ Why: when an item checks two things, the one that falls short hides behind the o
 
 Can each item be answered yes or no, with the same answer whoever answers it?
 
+A question that holds a word whose bar depends on who answers, such as concrete, clear, enough or
+appropriate, does not. Such a word is replaced by what is looked at to answer yes.
+
 Why: when the answer depends on who judges, the maker cannot tell what passes, and judgments of the
 same deliverable differ.
 
