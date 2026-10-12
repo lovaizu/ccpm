@@ -282,8 +282,15 @@ Progress:
   the first user still wrote what it missed inside `took`, and the orchestrator's last message
   listed what each unmet item lacked. A fresh reader answering Goods only took 9 of the 11 items
   decided met, and gave Goods to 3 the orchestrator did not, so the readings vary both ways.
-- Next: the user's answer on moving to unit 2 once those two slips are fixed (recommended), and on
-  saying More to the user and the caller as how it would get a Good.
+- The two slips fixed (c17a6de): the first user's form holds places only for what it took, and the
+  orchestrator ends in one line. Unit 1 tried a fourth time: every role wrote Goods only, all 15
+  items met, `done`. Unit 1 holds, at the user's word to go on.
+- Unit 2 built (e8371e8): `up.py coverage`, the orchestrator's `hand-on` form decided before the
+  reading, the generator called again with how each item not seen given would be given, and no
+  copy for the first user until every item is seen given. Tried once: the orchestrator sent B-7
+  back once, the generator made it given, and the run ended `done` with all 15 items met.
+- Next: unit 3, once the user says whether More goes back to the user and the caller with how it
+  would get a Good (recommended) or with why it has none, as the agreed README says now.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
