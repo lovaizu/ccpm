@@ -163,6 +163,17 @@ Completion criteria:
   the learner's result and all the above, and gives Good or More. Each role fills a list made by
   script from the checklist, seen before the work begins and filled by following its steps, so that
   every item is done.
+- For turn (#3), decided by the user: the README's reader is anyone who has an AI make a
+  deliverable, by asking in a conversation or from their own plugin's steps, since a person never
+  writes a call to turn. Its Example shows what turn shows in the console as it works, since how the
+  work is made and tried is what only turn gives, while the deliverable itself depends on the task.
+- For turn (#3), decided by the user: turn runs at most two rounds. When the first gives no More, it
+  ends; otherwise the More items are made again and tried in a second round, so every change is
+  tried once before it is returned. What the second round leaves as More is returned as it is, with
+  its reasons, and the user decides; it is not changed again, since an untried change is a patch.
+  The learner and the judge judge from what the deliverable should be, by their steps and set inputs
+  and outputs, so that a More is made again from its cause and not patched; the aim is that the
+  first round gives no More.
 - For writ's steps (next pull request): find a checklist's items by listing the parts a deliverable
   of the kind has and asking what each does for the purpose in each section's sense; try a
   checklist on one deliverable that served its user and one that did not.
