@@ -161,7 +161,10 @@ Progress:
   judge, the conductor's check, the learner on the confirmed Mores, the maker if any; judge the
   result by the quality of the documents read as their readers, against the version before, not by
   counts. Then ask the user to agree to the README (plugin.md step 1) and the design (step 2).
-- The design does not yet say the new order; change it in that round.
+- Decided by the user (2026-10-12): the judge gives Good only, each with its grounds, and no More;
+  the conductor checks each Good against the facts, and every item without a Good it has confirmed
+  is More. So the final decision is the conductor's, and an item not shown to be met never passes.
+  The design takes this in once the round now running has ended.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
@@ -180,8 +183,8 @@ Completion criteria:
 - For turn (#3), told by the user: three roles, none of which gives a way to fix. The user reads the
   checklist and the deliverable, and returns, for each item, what they could take from it, at
   possibly several places. The judge reads the checklist, the user's result, the deliverable and
-  the JSONL, and gives Good or More, each with its grounds. The learner reads the same for the Mores
-  the conductor confirmed, and returns what was learned about the content and about the process.
+  the JSONL, and gives Good only, each with its grounds; what has no Good the conductor confirmed is
+  More. The learner reads the same for those Mores, and returns what was learned about the content and about the process.
   Each role fills a list made by
   script from the checklist, seen before the work begins and filled by following its steps, so that
   every item is done.
@@ -191,8 +194,8 @@ Completion criteria:
   final decision: it reads the maker's work and report and sends the work back until every item is
   met, so a shortfall is sent back where it was made (shift left), and it checks each Good and More
   against the facts before acting on it. The reader returns only what it took, for each item; the
-  judge decides Good or More from the reading and the facts, without bias; the learner learns why
-  each confirmed More was not taken.
+  judge gives each Good it finds from the reading and the facts, with its grounds, without bias; the
+  learner learns why each More was not taken.
 - For turn (#3), decided by the user: the conductor sends the maker's work back with no limit,
   since settling it is the conductor's work. Every role takes its standpoint from the checklist
   alone: the list made from a checklist carries its opening (its purpose and who reads the work)
