@@ -249,8 +249,9 @@ Progress:
 - `turn/README.md`: agreed with the user (2026-10-12), plugin.md step 1.
 - `dev/turn/design.md`: agreed with the user (2026-10-12), plugin.md step 2; its length is not a
   measure.
-- Next: plugin.md step 3, one reading of the README and the design by first users who do not know
-  the discussion.
+- plugin.md step 3 is done: readers who did not know the discussion read the README and the design
+  in the two runs of 2026-10-12, and their findings were settled in the decisions above.
+- Next: plugin.md step 4, the list of units.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
