@@ -3,10 +3,10 @@
 A design document is read by someone who builds or maintains a product. It lets them:
 
 - tell each quality the product must have, and within what limits;
+- tell how each quality is checked;
 - see how each quality is achieved, from the whole to each part;
 - decide whether a change fits the design;
-- tell why each choice was made over the other options;
-- tell how each quality is checked.
+- tell why each choice was made over the other options.
 
 How the product is used is the README's; code, full definitions, steps, settings and file names
 are not for this reader, since they change with each rebuild. Each item of `doc.md` also applies to
@@ -60,7 +60,37 @@ who uses it?
 
 Why: a change weighed without them turns the design into one that cannot run where it must.
 
-### B-7: Principles to judge a change
+### B-7: Attractive quality checked
+
+For each benefit, can the reader tell in what situation it is tried, and what must happen to the
+user for it to pass?
+
+Why: a check in a situation the other ways handle as well passes without showing the benefit, and a
+check of whether the output has the intended shape passes while the benefit is missed.
+
+### B-8: One-dimensional quality measured
+
+For each one-dimensional quality, can the reader tell how it is measured and what it is compared
+with?
+
+Why: a quality not measured worsens without anyone noticing; measured against the version in use, a
+change shows whether it made the product better or worse.
+
+### B-9: Must-be quality checked
+
+For each must-be quality, can the reader tell which test checks it?
+
+Why: what a test can decide gives the same answer every time, and what the user takes for granted is
+noticed only when it breaks.
+
+### B-10: Backward compatibility checked
+
+For each thing others rely on, can the reader tell which test shows it still works as earlier
+versions left it?
+
+Why: a break in backward compatibility shows first to the users who rely on it, after the release.
+
+### B-11: Principles to judge a change
 
 Can the reader decide whether a change fits the design from its principles, each with the quality or
 the constraint it protects?
@@ -68,7 +98,7 @@ the constraint it protects?
 Why: a principle tied to what it protects tells what breaks when it is not kept, so principles can
 be weighed against each other; one tied to nothing is kept out of habit.
 
-### B-8: Who takes part
+### B-12: Who takes part
 
 Can the reader see, in one place, who takes part, what each does, what passes between them, and what
 each depends on?
@@ -79,64 +109,34 @@ product runs in, other programs and the tools it needs.
 Why: a maintainer changing one part needs to know what it hands to and takes from the others, and
 what it cannot work without.
 
-### B-9: An approach for each quality
+### B-13: An approach for each quality
 
 For each quality the design must have, can the reader find the approach that achieves it?
 
 Why: a quality no approach serves has no way to come about, and an approach that serves no quality
 is kept for nothing.
 
-### B-10: How each approach is built
+### B-14: How each approach is built
 
 For each approach, can the reader tell the parts it uses and how they work together?
 
 Why: a maintainer changes an approach through its parts, and a part whose role is not known is
 changed without knowing what it holds up.
 
-### B-11: What must always hold
+### B-15: What must always hold
 
 For each approach, can the reader tell what must hold after every operation?
 
 Why: read as a condition, it keeps holding when one place is changed; read as one step of a
 procedure, it is lost when the procedure changes.
 
-### B-12: Why this way
+### B-16: Why this way
 
 For each choice a maintainer might want to change, can the reader tell which other options were
 weighed, why they were not chosen, and what the choice costs?
 
 Why: without the reasons, a decision is either kept blindly or overturned without knowing what it
 cost.
-
-### B-13: Attractive quality checked
-
-For each benefit, can the reader tell in what situation it is tried, and what must happen to the
-user for it to pass?
-
-Why: a check in a situation the other ways handle as well passes without showing the benefit, and a
-check of whether the output has the intended shape passes while the benefit is missed.
-
-### B-14: One-dimensional quality measured
-
-For each one-dimensional quality, can the reader tell how it is measured and what it is compared
-with?
-
-Why: a quality not measured worsens without anyone noticing; measured against the version in use, a
-change shows whether it made the product better or worse.
-
-### B-15: Must-be quality checked
-
-For each must-be quality, can the reader tell which test checks it?
-
-Why: what a test can decide gives the same answer every time, and what the user takes for granted is
-noticed only when it breaks.
-
-### B-16: Backward compatibility checked
-
-For each thing others rely on, can the reader tell which test shows it still works as earlier
-versions left it?
-
-Why: a break in backward compatibility shows first to the users who rely on it, after the release.
 
 ## Usability
 
@@ -173,16 +173,6 @@ Does the design document follow this template, headings included?
 
 ### Constraints
 
-## Solution
-
-### Principles
-
-### Architecture
-
-### <Approach name>
-
-<The qualities it achieves, how it is built, what must always hold, and the options weighed>
-
 ## Verification
 
 ### Attractive quality
@@ -192,12 +182,24 @@ Does the design document follow this template, headings included?
 ### Must-be quality
 
 ### Backward compatibility
+
+## Architecture
+
+### Principles
+
+### Structure
+
+### <Approach name>
+
+<The qualities it achieves, how it is built, what must always hold, and the options weighed>
 ```
 
 - A section with nothing to hold keeps its heading and says `None:` and why, so a section thought
   through is told from a section forgotten.
-- Solution names each quality by its heading in Goals, and Verification checks each one there, so
-  each quality is traced from what it is to how it is achieved to how it is checked.
+- Verification checks each quality by its heading in Goals, and each approach in Architecture names
+  the qualities it achieves, so each quality is traced from what it is to how it is checked and how
+  it is achieved.
 
 Why: a maintainer moving between products finds the same thing under the same heading in each, and
-reads what is aimed at before how it is achieved, and that before how it is checked.
+settles what is aimed at and how it is checked, neither of which depends on how the product is
+built, before reading how it is built.
