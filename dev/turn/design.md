@@ -239,15 +239,15 @@ sequenceDiagram
   participant L as Learner
   C->>O: CCS
   O->>S: CCS, checklists
-  S-->>O: CCS checked; the list
+  S-->>O: CCS checked, and the list
   O-->>U: the plan of the run (console)
-  loop round 1; round 2 only if round 1 leaves an item without a Good
+  loop round 1, and round 2 only if round 1 leaves an item without a Good
     O-->>U: the intent (console)
     O->>M: what the work should be, the list (round 2: the causes, the work)
-    M-->>O: the work; for each item, its grounds; questions
+    M-->>O: the work, each item's grounds, questions
     O->>S: the work, the maker's grounds
     S-->>O: coverage
-    Note over O,M: the conductor reads the whole work for each item; sent back until it sees every item met
+    Note over O,M: the conductor reads the whole work for each item, and sends it back until it sees every item met
     O->>R: the work in a fresh copy, the receiver, the use if named, the list
     R-->>O: for each item, what was taken, and where
     O->>J: what the work should be, the list, the work, the reading, the records
@@ -262,7 +262,7 @@ sequenceDiagram
     end
   end
   O->>S: Goods, causes, checklists, new CCS
-  S-->>O: evidence written; new CCS checked
+  S-->>O: evidence written, new CCS checked
   O-->>U: where the work is, and what the user must decide (console)
   O-->>C: new CCS
   C-->>U: the questions only the user can answer
