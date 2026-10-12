@@ -1,0 +1,14 @@
+{
+  "focal_entities": [{"deliverable": "turn/README.md"},
+                     {"receiver": "someone who has Claude Code write documents or prompts, in a conversation or from a step of their own plugin, meeting turn for the first time on GitHub"}],
+  "goal_orientation": [{"use": "to decide whether to use turn, and to get a first result by asking in a conversation"},
+                       {"acceptance": "they can tell what turn gives them over Claude checking its own writing, install it, and run it once on their own work"}],
+  "retrieved_artifacts": [{"viewpoint": "writ/references/essentials/doc.md"},
+                          {"viewpoint": "writ/references/essentials/readme.md"},
+                          {"source": "dev/turn/design.md"},
+                          {"source": "turn/calling-from-a-plugin.md"},
+                          {"source": "turn/.claude-plugin/plugin.json"}],
+  "constraints": [{"language": "English"}],
+  "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
+  "relational_map": [], "episodic_trace": []
+}

@@ -21,13 +21,14 @@ class Start(unittest.TestCase):
         self.assertTrue(listed["checklists"][0]["opening"].startswith("A note is read by a teammate"))
         self.assertEqual([i["id"] for i in listed["items"]], ["note B-1", "note F-1"])
         self.assertIn("Why: a note is for acting.", listed["items"][0]["text"])
-        # Then: each role's form has a place for every item, the evaluator's none to start with
+        # Then: each role's form has a place for every item, the evaluator's and the learner's none to start with
         forms = got["forms"]
         self.assertEqual(self.repo.json(forms["generator"]),
                          {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}})
         self.assertEqual(self.repo.json(forms["first-user"]), {})
         self.assertEqual(self.repo.json(forms["hand-on"])["note B-1"], {"met": None, "lines": "", "note": ""})
         self.assertEqual(self.repo.json(forms["evaluator"]), {})
+        self.assertEqual(self.repo.json(forms["learner"]), {})
         self.assertEqual(self.repo.json(forms["orchestrator"])["note F-1"],
                          {"met": None, "lines": "", "note": ""})
         # Then: what the agents are handed is given, and the work goes in the run's folder

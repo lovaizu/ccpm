@@ -76,7 +76,7 @@ class HandBack(unittest.TestCase):
         cases = [
             ("another session", "turn:generator", "s2", "SubagentStop"),
             ("an agent not of turn", "other:writer", "s1", "SubagentStop"),
-            ("an agent of turn with no form", "turn:learner", "s1", "SubagentStop"),
+            ("an agent of turn with no form", "turn:helper", "s1", "SubagentStop"),
             ("another event", "turn:generator", "s1", "Stop"),
         ]
         for name, agent, session, event in cases:

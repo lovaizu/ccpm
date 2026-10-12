@@ -22,7 +22,9 @@ PARTS = {
     "relational_map": None,
     "episodic_trace": None,
 }
-ROLES = ("generator", "hand-on", "first-user", "evaluator", "orchestrator")
+ROLES = ("generator", "hand-on", "first-user", "evaluator", "orchestrator", "learner")
+PLACES = ("the work", "how such work is made", "what the work should be")
+FOR_GENERATOR = PLACES[:2]
 DECIDING = ("hand-on", "orchestrator")
 RUN = os.path.join(".turn", "run.json")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
@@ -31,7 +33,8 @@ USAGE = """usage: up.py start <in> <out> <session>
        up.py copy <work folder> <round>
        up.py drop <copy>
        up.py records <work folder> <agent id>
-       up.py check <work folder> <round> <generator|hand-on|first-user|evaluator|orchestrator>
+       up.py check <work folder> <round> <generator|hand-on|first-user|evaluator|orchestrator|learner>
+       up.py round <work folder>
        up.py end <work folder> <round>"""
 
 
@@ -121,6 +124,7 @@ def forms(ids):
         "evaluator": {},
         "hand-on": {i: {"met": None, "lines": "", "note": ""} for i in ids},
         "orchestrator": {i: {"met": None, "lines": "", "note": ""} for i in ids},
+        "learner": {},
     }
 
 
@@ -136,8 +140,7 @@ def start(src, out, session):
     listed = {"checklists": [c for c, _ in lists], "items": [i for _, items in lists for i in items]}
     write_json(os.path.join(work, "list.json"), listed)
     laid = forms([i["id"] for i in listed["items"]])
-    for role in ROLES:
-        write_json(os.path.join(work, "1", f"{role}.json"), laid[role])
+    lay(work, 1, laid)
     deliverable = entries(ccs, "focal_entities", "deliverable")[0]
     write_json(RUN, {"session": session, "work": work, "in": src, "out": out, "round": 1})
     print(json.dumps({
@@ -152,6 +155,11 @@ def start(src, out, session):
         "sources": entries(ccs, "retrieved_artifacts", "source"),
         "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
     }, indent=1, ensure_ascii=False))
+
+
+def lay(work, n, laid):
+    for role in ROLES:
+        write_json(os.path.join(work, str(n), f"{role}.json"), laid[role])
 
 
 def the_work(work, n):
@@ -180,6 +188,8 @@ def check(work, n, role):
     ids = [i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]
     form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
+    if role == "learner":
+        return found + learner_faults(form, without_good(work, n))
     for i in ids if role not in ("first-user", "evaluator") else [i for i in ids if i in form]:
         place = form.get(i)
         if place is None:
@@ -200,6 +210,57 @@ def check(work, n, role):
         elif lines and bad_lines(lines, count):
             found.append(f"{i}: lines {lines} are not in the work")
     return found
+
+
+def without_good(work, n):
+    return [i for i, p in read_json(os.path.join(work, str(n), "orchestrator.json"), "the form").items()
+            if p.get("met") is not True]
+
+
+def learner_faults(form, left):
+    found = [f"{i}: has a Good, so needs no way" for i in form if i not in left]
+    for i in left:
+        place = form.get(i)
+        if place is None:
+            found.append(f"{i}: not filled")
+            continue
+        if not place.get("way"):
+            found.append(f"{i}: the way is not given")
+        if place.get("in") not in PLACES:
+            found.append(f"{i}: in must be one of: {', '.join(PLACES)}")
+    return found
+
+
+def ways(work, n):
+    """The ways the learner gave in round n, each once with the items it serves."""
+    found = check(work, n, "orchestrator") or check(work, n, "learner")
+    if found:
+        raise Stop("\n".join(found))
+    grouped = {}
+    for i, p in read_json(os.path.join(work, str(n), "learner.json"), "the form").items():
+        grouped.setdefault((p["way"], p["in"]), []).append(i)
+    return [{"way": w, "in": where, "items": sorted(items)} for (w, where), items in grouped.items()]
+
+
+def round_two(work):
+    run = read_json(RUN, RUN)
+    if run["round"] != 1:
+        raise Stop("a run has two rounds at most")
+    given = ways(work, 1)
+    if not any(w["in"] in FOR_GENERATOR for w in given):
+        raise Stop("no way for the generator to take, so the run ends after round 1")
+    _, _, _, path = the_work(work, 1)
+    lay(work, 2, forms([i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]))
+    made = os.path.join(work, "2", os.path.basename(path))
+    shutil.copyfile(path, made)
+    run["round"] = 2
+    write_json(RUN, run)
+    print(json.dumps({
+        "forms": {r: os.path.join(work, "2", f"{r}.json") for r in ROLES},
+        "work": made,
+        "ways": [w for w in given if w["in"] in FOR_GENERATOR],
+        "rules": [f"rule: {w['way']}" for w in given if w["in"] == PLACES[1]],
+    }, indent=1, ensure_ascii=False))
 
 
 def coverage(work, n, role):
@@ -244,26 +305,32 @@ def records(work, agent):
 
 
 def end(work, n):
-    found = check(work, n, "orchestrator")
-    if found:
-        raise Stop("\n".join(found))
+    n = int(n)
+    left = ways(work, n)
+    if n == 1 and any(w["in"] in FOR_GENERATOR for w in left):
+        raise Stop("a way lies with the generator: start the second round")
     run, ccs, deliverable, path = the_work(work, n)
     items = {i["id"]: i for i in read_json(os.path.join(work, "list.json"), "the list")["items"]}
-    form = read_json(os.path.join(work, str(n), "orchestrator.json"), "the form")
-    differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]})"}
-                   for i, p in form.items() if not p["met"]]
-    nxt = "ask the user" if differences else "done"
+    differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]}): {w['way']}"}
+                   for w in left for i in w["items"]]
+    caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[2] for i in w["items"]]
+    nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences else "done"
+    learned = [w for k in range(1, n + 1) for w in ways(work, k) if w["in"] == PLACES[1]]
+    for w in learned:
+        if {"rule": w["way"]} not in ccs["constraints"]:
+            ccs["constraints"].append({"rule": w["way"]})
+    evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
     os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
     shutil.copyfile(path, deliverable)
     ccs.update(predictive_cue=[{"next": nxt}], semantic_gist=differences,
-               episodic_trace=[{"evidence": os.path.join(work, str(n), "orchestrator.json")}])
+               episodic_trace=[{"evidence": os.path.join(work, str(n), e)} for e in evidence])
     write_json(run["out"], ccs)
     os.remove(RUN)
     print(nxt)
 
 
 COMMANDS = {"start": (start, 3), "coverage": (coverage, 3), "copy": (copy, 2), "drop": (drop, 1), "records": (records, 2),
-            "end": (end, 2)}
+            "round": (round_two, 1), "end": (end, 2)}
 
 
 def main(argv):

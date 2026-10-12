@@ -254,19 +254,6 @@ class End(unittest.TestCase):
         self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/1/orchestrator.json"}])
         self.assertEqual(out.strip(), "done")
 
-    def test_a_run_with_an_item_not_met_asks_the_user_with_the_item(self):
-        # Given: one item decided not met
-        self.decide(True, False)
-        # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "1")
-        # Then: the CCS asks the user, with that item and its question
-        self.assertEqual(code, 0)
-        back = self.repo.json("out.json")
-        self.assertEqual(back["predictive_cue"], [{"next": "ask the user"}])
-        self.assertEqual(back["semantic_gist"],
-                         [{"difference": "note F-1 (Is it short?)"}])
-        self.assertEqual(out.strip(), "ask the user")
-
     def test_a_run_does_not_return_before_every_item_is_decided(self):
         # Given: the orchestrator's form with an item undecided
         self.decide(True, None)
