@@ -103,7 +103,8 @@ Progress:
   prompts now in `.claude/rules/plugin.md` section 3 move to it in #2, which keeps only how a plugin
   is built, such as hooks.
 - All five checklists are agreed, and none names a role of turn or a way of trying a deliverable.
-  Not yet checked: whether two judges give the same answers.
+  Whether two judges give the same answers is checked in #3, by running turn on them, since judging
+  is turn's flow.
 - Each file is shown to the user in Japanese, and read against `doc.md` and `essentials.md`
   before it is handed over.
 
@@ -146,6 +147,13 @@ Completion criteria:
 
 # Not yet specified
 
+- For turn (#3), told by the user: three roles, none of which gives a way to fix. The user reads the
+  checklist and the deliverable, and returns, for each item, what they could take from it, at
+  possibly several places. The learner reads the checklist, the user's result, the deliverable and
+  the JSONL, and returns what was learned about the content and about the process. The judge reads
+  the learner's result and all the above, and gives Good or More. Each role fills a list made by
+  script from the checklist, seen before the work begins and filled by following its steps, so that
+  every item is done.
 - For writ's steps (next pull request): find a checklist's items by listing the parts a deliverable
   of the kind has and asking what each does for the purpose in each section's sense; try a
   checklist on one deliverable that served its user and one that did not.
