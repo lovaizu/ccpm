@@ -133,9 +133,15 @@ Progress:
   after two rounds; the opening is two sentences, but the whole grew from 105 to 127 lines, mostly
   from a list of every file turn writes, which a rule turn learned in the writ run asked for.
 - Decided by the user (2026-10-13): what is learned in a run goes into the checklists, not on as
-  rules in the next task. Of the three rules the writ run learned, two were already items of
-  `doc.md` and `readme.md`; the third gave `readme.md` 0.4.0 its question whether a requirement comes
-  with the product. turn's README is made again with no rules carried.
+  rules in the next task.
+- Root cause, from the runs' records (2026-10-13): each round, the first user's guesses fell under
+  `doc.md` B-3 (each idea given in full), and the generator met them by adding explanation, such as
+  a list of every file turn writes; B-4 and U-3 let it pass, as each addition gives the reader
+  something. `readme.md` applied `doc.md` whole, with the product's whole as the subject. Decided by
+  the user: `readme.md` 0.4.0 judges the items of `doc.md` with deciding and getting to the first
+  result as a README's subject, and the rest goes to pages reached from Documentation. Both READMEs
+  are made again through turn on it, with no rules carried, so the patches made by hand go with
+  them.
 - Found in the run, for turn: the learner makes a rule for every later task from one finding, and
   `calling-from-a-plugin.md` tells the caller to carry it on unchecked; whether turn makes such rules
   at all is turn's to settle.

@@ -15,7 +15,9 @@ A README is read by someone meeting a product for the first time. It lets them:
 - tell on what terms they may use it.
 
 What only the product's builders need, such as its design or how to contribute, is not for this
-reader. Each item of `doc.md` also applies to a README.
+reader. Each item of `doc.md` also applies to a README, with deciding and getting to the first result
+as its subject: the whole picture, the ideas given in full and the job of each part are judged by
+that, and what lies beyond it goes in a page reached from Documentation, not in the README.
 
 ## Benefit
 
@@ -85,13 +87,13 @@ spent on what they do not use.
 
 ### U-2: Getting ready their own way
 
-For each thing that must be in place beforehand, can the reader tell what it is, whether it comes
-with the product or they must get it, and, where they could not see why it is needed, why?
+For each thing that must be in place beforehand, can the reader tell what it is, and, where they
+could not see why it is needed, why?
 
 Why: a reader who knows what is needed gets it ready in their own way, or sees that they already
 have it; one way of getting it ready, given alone, reads as the only way and gives steps to a
-reader who does not need them; a thing named without saying whether it comes on its own is
-completed by a guess; a reason the reader could see for themselves only lengthens the list.
+reader who does not need them; a reason the reader could see for themselves only lengthens the
+list.
 
 ### U-3: An opening only for deciding
 
