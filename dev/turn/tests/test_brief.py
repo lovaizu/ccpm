@@ -108,7 +108,7 @@ class Briefs(unittest.TestCase):
         code, out = self.brief("first-user")
         # Then: it is refused, naming the step and the item
         self.assertEqual(code, 1)
-        self.assertIn("step 6", out)
+        self.assertIn("step 8", out)
         self.assertIn("note F-1", out)
 
     def test_the_evaluator_is_handed_the_reading_and_its_records_and_the_copy_is_dropped(self):
@@ -126,7 +126,7 @@ class Briefs(unittest.TestCase):
         self.assertFalse(os.path.exists(copy))
 
     def test_the_evaluator_is_not_handed_a_reading_that_is_not_there(self):
-        cases = [("no reading made", False, False, "step 7"),
+        cases = [("no reading made", False, False, "step 9"),
                  ("a reading without records", True, False, "no records of the first user"),
                  ("a reading with its form left", True, True, "what was taken is not given")]
         for name, briefed, recorded, said in cases:

@@ -50,10 +50,10 @@ class AgentCalled(unittest.TestCase):
                 self.assertEqual(code, 0)
 
     def test_an_agent_handed_anything_but_its_brief_is_stopped_saying_which_step(self):
-        cases = [("words of its own", "turn:generator", "Write the README.", "step 3"),
-                 ("a brief not made", "turn:first-user", ".turn/out/1/first-user-brief.json", "step 7"),
-                 ("the evaluator", "turn:evaluator", "read it", "step 8"),
-                 ("the learner", "turn:learner", "learn", "step 10")]
+        cases = [("words of its own", "turn:generator", "Write the README.", "step 4"),
+                 ("a brief not made", "turn:first-user", ".turn/out/1/first-user-brief.json", "step 9"),
+                 ("the evaluator", "turn:evaluator", "read it", "step 10"),
+                 ("the learner", "turn:learner", "learn", "step 12")]
         for name, agent, prompt, step in cases:
             with self.subTest(name):
                 # Given: an open run with no brief made for the agent
@@ -73,7 +73,7 @@ class AgentCalled(unittest.TestCase):
         done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True, text=True)
         # Then: it stops the call
         self.assertEqual(done.returncode, 2)
-        self.assertIn("step 3", done.stderr)
+        self.assertIn("step 4", done.stderr)
 
     def test_nothing_outside_the_run_is_stopped(self):
         cases = [("another session", "turn:generator", "Agent", "s2"),
@@ -105,7 +105,7 @@ class Stopping(unittest.TestCase):
         code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False)
         # Then: it is kept at work, told the last step
         self.assertEqual(code, 2)
-        self.assertIn("turn: step 12:", said)
+        self.assertIn("turn: step 14:", said)
         self.assertIn("end .turn/out", said)
         # When: it stops again after being told
         code, _ = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=True)
@@ -134,7 +134,7 @@ class Stopping(unittest.TestCase):
         done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True, text=True)
         # Then: it keeps it at work
         self.assertEqual(done.returncode, 2)
-        self.assertIn("step 12", done.stderr)
+        self.assertIn("step 14", done.stderr)
 
 
 if __name__ == "__main__":

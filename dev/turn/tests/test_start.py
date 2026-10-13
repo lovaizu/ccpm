@@ -33,7 +33,8 @@ class Start(unittest.TestCase):
         self.assertEqual(got, {
             "folder": ".turn/out", "list": ".turn/out/list.json", "round": 1,
             "work": ".turn/out/1/note.md", "hand-on": form("hand-on"), "orchestrator": form("orchestrator"),
-            "questions": form("questions"), "receiver": "a new teammate", "use": "to start work", "acceptance": ["they can start alone"]})
+            "questions": ".turn/out/questions.json", "receiver": "a new teammate", "use": "to start work", "acceptance": ["they can start alone"],
+            "sources": ["notes.md"], "constraints": []})
         self.assertFalse(self.repo.exists("out.json"))
 
     def test_a_task_without_a_use_is_run_with_none(self):
