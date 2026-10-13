@@ -96,11 +96,9 @@ To check an item, open README.md at its lines; you need not read the whole docum
 
 ### When an item is still not met
 
-When an item is still not met after the second round, the report marks it ⚠️ with what the document
-would need to meet it, and writ asks you what to do. Answer in the conversation, in your own words,
-in one of three ways. Say what you want, such as "The readers are data analysts, not developers",
-and writ has turn make the document again from your words. Say "Run it again", and turn makes it
-again from the document as it is. Or say "Take it as it is", and writ stops there.
+When an item is still not met after turn's second round, writ has turn make the document again on
+what it still needs. It asks you only what that needs and only you can decide, such as who the
+readers are; answer in your own words, and writ has turn make the document again from them.
 
 ### Fixing a document you already have
 
