@@ -1,6 +1,6 @@
 ---
 name: design
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Design document
@@ -164,6 +164,16 @@ Why: such details change with each rebuild, so a design that holds them must be 
 code, and the reader can no longer tell a decision that must hold from a detail that may change; a
 name made a promise where others rely only on what it gives ties the design to the build; an idea
 the design takes up is given in full as a decision and its reason, not as its specification.
+
+### U-3: No case a principle settles
+
+Does the document leave out how the product behaves in one case, where the reader could work it out
+from a principle the document already gives?
+
+Why: maintainers work out each case from the principles and the decisions; a case written down reads
+as one more rule to keep beside them, and must change with the implementation though no decision
+did. A trial's finding is traced to the principle it breaks and fixed in the implementation, not
+added to the design.
 
 ## Format
 
