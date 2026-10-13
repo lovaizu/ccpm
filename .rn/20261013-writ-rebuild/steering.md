@@ -127,8 +127,11 @@ Progress:
   rounds; the two left (what a checklist is, before the example uses it; what writ leaves in the
   repository) were fixed by hand on the learner's way.
 - To do in #4: `writ/.claude-plugin/plugin.json` names turn in `dependencies`, which the README's
-  Installation now promises; turn's README is made again on `readme.md` 0.3.0, as its opening has
-  the same length for the same cause.
+  Installation now promises; `turn/calling-from-a-plugin.md` points to turn's README for what both
+  say (the checklist's front matter, writing over a file git holds, Esc).
+- turn's README made again through `turn:up` on `readme.md` 0.3.0 (2026-10-13): every item met
+  after two rounds; the opening is two sentences, but the whole grew from 105 to 127 lines, mostly
+  from a list of every file turn writes, which a rule turn learned in the writ run asked for.
 - Next: the user agrees to the README.
 
 ### [ ] #3: writ's design
