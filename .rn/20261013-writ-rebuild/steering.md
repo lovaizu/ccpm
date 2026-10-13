@@ -91,7 +91,23 @@ Progress:
   confirm: a checklist writ makes goes to `.writ/checklists/<kind>.md` in the user's repository; the
   old README's lint tools and Claude Code choosing writ on its own are left out, since the scene
   does not hold them.
-- Next: the user agrees to it on the pull request, then #3.
+- The assistant wrote it by hand, not through `turn:up` as #53 says, so it was made again through
+  `turn:up` (two rounds, 24 of 25 items met). The installed turn was an older copy under the same
+  version, so it was installed again from the marketplace.
+- Decided by the user (2026-10-13): a checklist writ makes goes to `.writ/checklists/<kind>.md` in
+  the user's repository.
+- Settled from the sources (2026-10-13): writ also fixes a document the user already has; the
+  released README promises it, #53 drops nothing of it, and turn takes a deliverable already there.
+- Found in the run, for turn (decided by the user, 2026-10-13): an answer must reach the generator at
+  work at once; turn's step 5 only writes it to the questions file, so it reaches the work only on
+  the next generator call. Fixed in turn's steps within this rebuild.
+- Found in the run: the orchestrator asked the user a question the sources answer; a question goes
+  to the user only when no source settles it.
+- Decided by the user (2026-10-13): when turn returns `ask the user` with a way that lies in the
+  work, the caller does not put it to the user but has it fixed; the user is asked only what they
+  alone can decide. The README's section on an item still not met is written again from this in
+  #3's design. The one item left (headings for the cases) was fixed by hand.
+- Next: the user agrees to the README on the pull request, then #3.
 
 ### [ ] #3: writ's design
 

@@ -1,27 +1,31 @@
 # writ
 
-With writ, Claude Code writes a document, new or one you already have, that its reader understands in
-one reading and acts on. You can hand it on without reading it over, and judge it from one report:
-for each question a good document of its kind must answer yes to, whether it does.
+With writ, Claude Code writes a document that its reader understands in one reading and acts on: a
+new one, or one you already have, made again. writ keeps checklists: one for every document, and one
+for each kind, such as READMEs. Each item of a checklist says what a good document gives its reader.
+With the document you get one report: for each item, whether the document meets it, and the lines of
+the document that show it. You can hand the document on from that report, without reading it over.
 
 writ is for anyone who has Claude Code write READMEs, design documents, prompts or other documents
-for someone else to read.
+for someone else to read. It takes documents only, not code.
 
 What writ gives that asking Claude to write the document does not:
 
-- It knows what a good document of each kind is. It keeps a checklist for each kind, and asks you,
-  one question at a time, only what the checklist needs and your request and repository do not
+- It knows what a good document of each kind is, from that kind's checklist, and asks you, one
+  question at a time, only what the checklist's items need and your request and repository do not
   tell.
 - Another AI, who does not know your conversation, reads the document as its reader before you get
   it, and what that reader does not get from it is written again. Claude reading its own work reads
-  as the writer, and can miss where a newcomer trips, as people do with their own writing. writ has
-  [turn](../turn/README.md) do this.
+  as the writer, and can miss where a newcomer trips, as people do with their own writing.
 - For a kind it has no checklist for, it can make one with you first, and uses it from then on.
+
+writ has [turn](../turn/README.md), another plugin, do the writing, the reading and the checking.
 
 ## Example
 
 You have a small command-line tool that tidies CSV files, with notes on it in `docs/notes.md`, and
-you want its README. In Claude Code you call:
+you want its README. In Claude Code you call `/writ:up`. In the consoles below, what you type
+follows `>`, and what writ says follows `●`:
 
 ```console
 > /writ:up Write the README of this tool
@@ -46,7 +50,11 @@ tell why to choose this tool, so writ asks what it gives that other ways do not.
 out from your request and repository, it puts to you as a proposal, and you only say whether it is
 right.
 
-writ then hands the work to turn, which writes, has the reader read, checks, and shows each step:
+writ then hands the work to turn. turn works in rounds; in a round it does three steps: 1 write the
+document, 2 have the other AI read it as the developer, 3 check from that reading which items are
+met. After `To make:`, turn says what the document must let its reader do. A ❓ is a question only
+you can answer; answer it when it shows, and writing goes on with your answer. A ⚠️ is something the
+reader did not yet get, which starts a second round; ✅ means nothing is missing:
 
 ```console
 Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
@@ -67,29 +75,38 @@ Round 2
 done
 ```
 
-A question that comes up while the work goes on, like the license, is asked at once; answer it and
-writing goes on. Then writ reports:
+Then writ reports. Under each checklist it used, named with its version so you can tell later which
+checklist the document was checked by, the report lists each of that checklist's items by its ID
+and title, marked ✅ when met, with the lines of README.md that show it:
 
 ```console
 ● README.md is written, and every item of the two checklists is met. You can hand it on as it is.
 
-  Every document (doc 0.1.0)
+  Every document (version 0.1.0)
     ✅ B-1 What it covers: lines 1-4
     ✅ B-2 The picture as meant: lines 1-30
     (every item gets a line the same way)
-  README (readme 0.1.0)
+  README (version 0.1.0)
     ✅ B-1 What they gain: line 3
     ✅ B-3 Why this one: lines 5-8
     (every item gets a line the same way)
 ```
 
-Each item names the lines that show it met, so you can check any one without reading the whole
-document. Where an item is still not met after turn's second round, it is marked ⚠️ with what the
-document would need to meet it; you say what you want, have turn run again, or take the document as
-it is.
+To check an item, open README.md at its lines; you need not read the whole document.
 
-To fix a document you already have, name it: `/writ:up docs/typing-guide.md`. writ reads it, asks
-only what the document and the repository do not tell, and makes it again from what is there.
+### When an item is still not met
+
+When an item is still not met after the second round, the report marks it ⚠️ with what the document
+would need to meet it, and writ asks you what to do. Answer in the conversation, in your own words,
+in one of three ways. Say what you want, such as "The readers are data analysts, not developers",
+and writ has turn make the document again from your words. Say "Run it again", and turn makes it
+again from the document as it is. Or say "Take it as it is", and writ stops there.
+
+### Fixing a document you already have
+
+To have a document you already have made again, name it: `/writ:up docs/typing-guide.md`. writ
+reads it, asks only what the document and your repository do not tell, and makes it again from what
+is there. Commit it first: writ writes over it, and git keeps what it was.
 
 ### A kind writ has no checklist for
 
@@ -104,9 +121,10 @@ only what the document and the repository do not tell, and makes it again from w
 ```
 
 Choose 1 for a one-off. Choose 2 for a kind you will write again: writ asks what release notes are
-for in your team, one question at a time, and has turn make the checklist against its checklist for
-checklists. It puts it at `.writ/checklists/release-notes.md`, then writes the release notes to it.
-Next time, writ finds it there. Commit it, and your team writes to the same checklist.
+for in your team, one question at a time, and has turn make the checklist against writ's
+[checklist for checklists](references/essentials/essentials.md). It puts it at
+`.writ/checklists/release-notes.md` in your repository, then writes the release notes to it. Next
+time, writ finds it there. Commit it, and your team writes to the same checklist.
 
 ## Requirements
 
