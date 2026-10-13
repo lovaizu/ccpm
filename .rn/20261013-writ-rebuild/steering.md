@@ -113,10 +113,12 @@ Progress:
   example are for, not a length; `readme.md` 0.2.0 asks it (B-4, U-3). Also seen: the judges looked
   only for lines that meet an item, never for lines no reader needs, and a gap was met by adding an
   explanation rather than removing what needed it; this is turn's to settle.
-- Next (the user agreed to go on, 2026-10-13): make the README again through `turn:up` (enabled in
-  the user's Claude Code) with `doc.md` and `readme.md` 0.2.0 as viewpoints, the committed README,
-  this file and `turn/README.md` as sources, and only the scene rule beyond the language; the rule on
-  turn's console is not added, since `readme.md` now asks it. Then the user agrees to the README.
+- Made again through `turn:up` with `doc.md` and `readme.md` 0.2.0 (2026-10-13): two rounds, every
+  item met. The example now shows only what the user types and what writ says back, and turn is
+  named once, under Requirements.
+- Found in the run, for turn: while an agent of the run works in the background, turn's Stop hook
+  blocks the conversation from ending its turn to wait, saying the run is open.
+- Next: the user agrees to the README.
 
 ### [ ] #3: writ's design
 

@@ -1,31 +1,29 @@
 # writ
 
-With writ, Claude Code writes a document that its reader understands in one reading and acts on: a
-new one, or one you already have, made again. writ keeps checklists: one for every document, and one
-for each kind, such as READMEs. Each item of a checklist says what a good document gives its reader.
-With the document you get one report: for each item, whether the document meets it, and the lines of
-the document that show it. You can hand the document on from that report, without reading it over.
+With writ, Claude Code writes a document, such as a README, a design document or a prompt, that its
+reader understands in one reading. writ keeps a checklist of what a good document of each kind
+gives its reader, and with the document you get, for each item of it, whether the document meets
+it. You can hand the document on from that report, without reading it over.
 
-writ is for anyone who has Claude Code write READMEs, design documents, prompts or other documents
-for someone else to read. It takes documents only, not code.
+writ is for anyone who has Claude Code write documents for someone else to read. It writes
+documents only, not code.
 
-What writ gives that asking Claude to write the document does not:
+What writ gives that asking Claude alone does not:
 
-- It knows what a good document of each kind is, from that kind's checklist, and asks you, one
-  question at a time, only what the checklist's items need and your request and repository do not
-  tell.
-- Another AI, who does not know your conversation, reads the document as its reader before you get
-  it, and what that reader does not get from it is written again. Claude reading its own work reads
-  as the writer, and can miss where a newcomer trips, as people do with their own writing.
-- For a kind it has no checklist for, it can make one with you first, and uses it from then on.
-
-writ has [turn](../turn/README.md), another plugin, do the writing, the reading and the checking.
+- It asks you only what the checklist needs and your request and repository do not tell.
+- Before you get the document, another AI that does not know your conversation reads it as its
+  reader. Claude reading its own work reads as the writer, and misses where a newcomer trips.
+- For a kind of document it has no checklist for, it can make one with you, and uses it from then
+  on.
 
 ## Example
 
 You have a small command-line tool that tidies CSV files, with notes on it in `docs/notes.md`, and
-you want its README. In Claude Code you call `/writ:up`. In the consoles below, what you type
-follows `>`, and what writ says follows `●`:
+you want its README. In Claude Code you call `/writ:up`. Below, what you type follows `>`, and what
+writ says follows `●`. Each question writ asks comes from an item of the checklists, and what it can
+work out from your request and repository it puts to you to confirm. Its report lists, under each
+checklist it used, named with its version, each item by its ID and title, with the lines of the
+document that show it.
 
 ```console
 > /writ:up Write the README of this tool
@@ -43,62 +41,34 @@ follows `>`, and what writ says follows `●`:
 ● I'll write it to README.md, from docs/notes.md. Is that right?
 
 > Yes.
-```
 
-Each question comes from an item of a checklist: the README checklist asks whether a newcomer can
-tell why to choose this tool, so writ asks what it gives that other ways do not. What writ can work
-out from your request and repository, it puts to you as a proposal, and you only say whether it is
-right.
+● Writing README.md now. Another AI will read it as such a developer, and it will be checked
+  against the checklists. I'll report once every item is met.
 
-writ then hands the work to turn. turn works in rounds; in a round it does three steps: 1 write the
-document, 2 have the other AI read it as the developer, 3 check from that reading which items are
-met. After `To make:`, turn says what the document must let its reader do. A ❓ is a question only
-you can answer; answer it when it shows, and writing goes on with your answer. A ⚠️ is something the
-reader did not yet get, which starts a second round; ✅ means nothing is missing:
-
-```console
-Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
-
-Round 1
-  1 write   To make: developers who find the tool on GitHub can tell what it saves them
-            and tidy their own folder with it.
-            ❓ Which license is the tool under? Your notes do not say.
+● Which license is the tool under? Your notes do not say.
 
 > MIT
 
-  2 read    Read as a developer who finds the tool on GitHub.
-  3 check   ⚠️ Not yet: the developer can tell which Python version the tool needs.
-Round 2
-  1 write   To make: the same, now naming the Python version.
-  2 read    Read again, as the same developer.
-  3 check   ✅ Nothing missing.
-done
-```
-
-Then writ reports. Under each checklist it used, named with its version so you can tell later which
-checklist the document was checked by, the report lists each of that checklist's items by its ID
-and title, marked ✅ when met, with the lines of README.md that show it:
-
-```console
 ● README.md is written, and every item of the two checklists is met. You can hand it on as it is.
 
   Every document (version 0.1.0)
     ✅ B-1 What it covers: lines 1-4
     ✅ B-2 The picture as meant: lines 1-30
     (every item gets a line the same way)
-  README (version 0.1.0)
+  README (version 0.2.0)
     ✅ B-1 What they gain: line 3
     ✅ B-3 Why this one: lines 5-8
     (every item gets a line the same way)
 ```
 
-To check an item, open README.md at its lines; you need not read the whole document.
+To check an item, open README.md at its lines.
 
-### Fixing a document you already have
+### A document you already have
 
-To have a document you already have made again, name it: `/writ:up docs/typing-guide.md`. writ
-reads it, asks only what the document and your repository do not tell, and makes it again from what
-is there. Commit it first: writ writes over it, and git keeps what it was.
+Name it: `/writ:up docs/typing-guide.md`. writ asks only what the document and your repository do
+not tell. What the document says is the material, and writ makes it again to the checklists, so its
+wording, its order, and parts its reader does not need may change. Commit it first: writ writes over
+it, and git keeps what it was and shows what changed.
 
 ### A kind writ has no checklist for
 
@@ -112,18 +82,18 @@ is there. Commit it first: writ writes over it, and git keeps what it was.
 > 2
 ```
 
-Choose 1 for a one-off. Choose 2 for a kind you will write again: writ asks what release notes are
-for in your team, one question at a time, and has turn make the checklist against writ's
-[checklist for checklists](references/essentials/essentials.md). It puts it at
-`.writ/checklists/release-notes.md` in your repository, then writes the release notes to it. Next
-time, writ finds it there. Commit it, and your team writes to the same checklist.
+Choose 1 for a one-off, and 2 for a kind you will write again. With 2, writ asks what release notes
+are for in your team, makes the checklist against writ's
+[checklist for checklists](references/essentials/essentials.md), and puts it at
+`.writ/checklists/release-notes.md`. Next time, writ finds it there; commit it, and your team writes
+to the same checklist.
 
 ## Requirements
 
 - Claude Code: writ runs inside it.
-- turn: writ hands it every piece of writing and checking. Installing writ installs it.
-- What turn needs: a git repository, Python 3.9 or later as `python3`, and jq. turn's
-  [Requirements](../turn/README.md#requirements) say why each is needed.
+- [turn](../turn/README.md), another plugin: writ has it do the writing, the reading and the
+  checking. Installing writ installs it. It needs a git repository, Python 3.9 or later as
+  `python3`, and jq; its [Requirements](../turn/README.md#requirements) say why each is needed.
 
 ## Installation
 
@@ -134,7 +104,7 @@ In Claude Code, add the marketplace once, then install writ:
 > /plugin install writ@ccpm
 ```
 
-Then call `/writ:up` as in the [Example](#example), with a document of your own.
+Then call `/writ:up` as in the [Example](#example), for a document of your own.
 
 ## Documentation
 
