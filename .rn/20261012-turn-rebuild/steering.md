@@ -379,16 +379,16 @@ Progress:
   the user had answered "unknown; leave it out", so the difference asked the user again.
 - Unit 7 judged first on the files the unit 5 trials left (t5c to t5f): for every item, the last
   round's `orchestrator.json` gives the lines of its Good, and `learner.json` how an item without
-  one would get it; no checklist's version was kept. Built (eb034aa): the list keeps each
-  checklist's path and the commit that holds it, a run is refused while a checklist is not
-  committed as it stands (changed, new or ignored), and the CCS's evidence points to the list too;
-  the callers' page says so. Checked on a clone: the commit kept gives the checklist as read, and a
-  changed checklist stops the run. No new trial, since the agents' part is unchanged and the
-  trials' files already show it.
-- Next: the README's Requirements says a checklist is kept in the repository but not that it must
-  be committed as it stands, which the run now asks; this needs the user's word, as the README is
-  agreed. Then unit 8. Whether the README's Example should show the hook's prefix
-  (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
+  one would get it; no checklist's version was kept.
+- Decided by the user (2026-10-13): a checklist gives its own `name` and `version` in front matter,
+  turn requires them when a run starts, and the checklist for checklists asks for them; a commit
+  named the version only of a checklist in the user's repository, and writ's are in the plugin.
+  Done (00e0d5b): the list keeps each checklist's name and version, items are named by the name,
+  the CCS's evidence points to the list too, and the README, the design, the callers' page and the
+  five writ checklists say so. Checked on a clone. No new trial, since the agents' part is
+  unchanged and the trials' files already show it. Unit 7 holds.
+- Next: unit 8, leaving the user's work alone. Whether the README's Example should show the hook's
+  prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
