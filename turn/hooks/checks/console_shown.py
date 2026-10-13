@@ -8,7 +8,7 @@ import re
 import up
 from checks.open_run import open_run
 
-CLOSING = re.compile(r'up\.py"?\s+(end|stop)\b')
+CLOSING = re.compile(r'up\.py"?\s+(?:end|stop)\s+([^\s;&|]+)')
 
 
 def check(data):
@@ -17,9 +17,7 @@ def check(data):
         return [], []
     run = open_run(data)
     if run is None:
-        closing = CLOSING.search(data["tool_input"].get("command", ""))
-        said = data["tool_response"].get("stdout", "") if closing else ""
-        return [], said.splitlines()
+        return [], closed(data)
     here = os.getcwd()
     os.chdir(data["cwd"])
     try:
@@ -28,3 +26,15 @@ def check(data):
         return [str(stop)], []
     finally:
         os.chdir(here)
+
+
+def closed(data):
+    """The last lines of a run the command just closed, taken once."""
+    closing = CLOSING.search(data["tool_input"].get("command", ""))
+    path = os.path.join(data["cwd"], closing.group(1).strip("'\""), up.CLOSING) if closing else ""
+    if not os.path.isfile(path):
+        return []
+    with open(path) as f:
+        lines = f.read().splitlines()
+    os.remove(path)
+    return lines

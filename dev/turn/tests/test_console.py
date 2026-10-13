@@ -189,18 +189,22 @@ class Console(unittest.TestCase):
         self.assertEqual(self.shown()[:2],
                          ["            .turn/out/2/note.md", "  2 read    Read again, as a new teammate."])
 
-    def ended(self, n):
-        out = "\n".join(self.say("end", ".turn/out", n))
-        code, lines, told = post(self.repo, **bash(f'python3 "{up.SCRIPT}" end .turn/out {n}', out))
+    def ended(self, *args):
+        out = "\n".join(self.say(*args))
+        command = f'python3 "{up.SCRIPT}" {" ".join(args)}; echo "EXIT $?"'
+        code, lines, told = post(self.repo, **bash(command, out + "\nEXIT 0"))
         self.assertEqual(code, 0, told)
+        again = post(self.repo, **bash(command, out + "\nEXIT 0"))[1]
+        self.assertEqual(again, [])
         return lines
 
     def test_the_end_says_where_the_work_is(self):
         # Given: round 1 read, with every item decided met
         self.read()
         # When: the run ends
-        # Then: the user is shown the next move and where the work is
-        self.assertEqual(self.ended("1"), ["done", "The work is at docs/note.md."])
+        # Then: the user is shown the next move and where the work is, once, and nothing else the
+        # command printed
+        self.assertEqual(self.ended("end", ".turn/out", "1"), ["done", "The work is at docs/note.md."])
 
     def test_the_end_asks_the_user_what_only_they_decide_when_something_is_left(self):
         # Given: both rounds read, with an item left without a Good
@@ -213,9 +217,16 @@ class Console(unittest.TestCase):
         fill(self.repo, form("learner", 2), {"note F-1": WAY})
         # When: the run ends
         # Then: the next move, where the work is, and what the user must decide are shown
-        self.assertEqual(self.ended("2"),
+        self.assertEqual(self.ended("end", ".turn/out", "2"),
                          ["ask the user", "The work is at docs/note.md.",
                           "❓ Run turn again on what is still missing, or take the work as it is?"])
+
+    def test_a_stop_says_where_the_run_was(self):
+        # Given: a run stopped on its aim
+        self.say("aim", ".turn/out", "1", AIM)
+        # When: the orchestrator stops the run
+        # Then: the user is shown where it was and where its CCS is, once
+        self.assertEqual(self.ended("stop", ".turn/out"), ["stopped: round 1, write — CCS: out.json"])
 
     def test_nothing_is_shown_outside_the_run(self):
         self.say("aim", ".turn/out", "1", AIM)

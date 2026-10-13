@@ -61,11 +61,11 @@ for line in claude.stdout:
         say(stopped)
         stopped = None
     elif event.get("type") == "result":
+        if not os.path.exists(os.path.join(place, ".turn", "run.json")):
+            break
         if asked:
             say(answers.pop(0) if answers else "I don't know; leave it out of the work.")
             asked -= 1
-        elif not os.path.exists(os.path.join(place, ".turn", "run.json")):
-            break
 claude.stdin.close()
 claude.wait()
 print("session:", event.get("session_id"), "cost:", event.get("total_cost_usd"))

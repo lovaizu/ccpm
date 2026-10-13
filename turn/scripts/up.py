@@ -29,6 +29,7 @@ AGENTS = {"generator": 4, "first-user": 9, "evaluator": 10, "learner": 12}
 SCRIPT = os.path.abspath(__file__)
 DECIDING = ("hand-on", "orchestrator")
 RUN = os.path.join(".turn", "run.json")
+CLOSING = "closing.txt"
 NAMES_LINES = re.compile(r"\blines?\s*\d|\b\d+\s*-\s*\d+\b")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
 USAGE = """usage: up.py start <in> <out> <session>
@@ -490,10 +491,17 @@ def end(work, n):
                semantic_gist=differences,
                episodic_trace=[{"evidence": os.path.join(work, str(n), e)} for e in evidence])
     write_json(run["out"], ccs)
+    close(work, [nxt, f"The work is at {deliverable}."] +
+          (["❓ Run turn again on what is still missing, or take the work as it is?"]
+           if nxt == "ask the user" else []))
+
+
+def close(work, lines):
+    """Closes the run, keeping its last lines for the console to show once."""
+    with open(os.path.join(work, CLOSING), "w") as f:
+        f.write("\n".join(lines))
     os.remove(RUN)
-    print("\n".join([nxt, f"The work is at {deliverable}."] +
-                    (["❓ Run turn again on what is still missing, or take the work as it is?"]
-                     if nxt == "ask the user" else [])))
+    print("\n".join(lines))
 
 
 def aim(work, n, text):
@@ -570,8 +578,7 @@ def stop(work):
     ccs.update(predictive_cue=[{"next": f"stopped: round {n}, {step}"}], semantic_gist=[],
                episodic_trace=[{"work": begun}] if begun else [])
     write_json(run["out"], ccs)
-    os.remove(RUN)
-    print(f"stopped: round {n}, {step} — CCS: {run['out']}")
+    close(work, [f"stopped: round {n}, {step} — CCS: {run['out']}"])
 
 
 COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),
