@@ -17,7 +17,7 @@ PARTS = {
     "retrieved_artifacts": {"viewpoint", "source"},
     "constraints": {"language", "rule", "answer"},
     "predictive_cue": {"next"},
-    "uncertainty_signal": {"gap"},
+    "uncertainty_signal": None,
     "semantic_gist": {"difference"},
     "relational_map": None,
     "episodic_trace": None,
@@ -230,14 +230,7 @@ def asked_numbers(work):
 
 
 def unanswered(work):
-    return [k for k, q in enumerate(asked(work), 1) if q.get("ask") and "answer" not in q and not q.get("left")]
-
-
-def waiting(work, n):
-    """The items of round n's work that wait on a question the user left, so go on without a Good."""
-    left = [k for k, q in enumerate(asked(work), 1) if q.get("left")]
-    return [i for i, p in read_json(os.path.join(work, str(n), "hand-on.json"), "the form").items()
-            if p.get("question") in left]
+    return [k for k, q in enumerate(asked(work), 1) if q.get("ask") and "answer" not in q]
 
 
 def question_faults(work, decided):
@@ -258,7 +251,7 @@ def question_faults(work, decided):
 
 def without_good(work, n):
     return [i for i, p in read_json(os.path.join(work, str(n), "orchestrator.json"), "the form").items()
-            if p.get("met") is not True and i not in waiting(work, n)]
+            if p.get("met") is not True]
 
 
 def aim_faults(i, place, count):
@@ -407,7 +400,7 @@ def brief(work, n, role):
             should["constraints"] += [f"rule: {r}" for r in learned(work, 1)[1]]
         given.update(should, ways=ways, questions=os.path.join(work, "questions.json"))
     elif role == "first-user":
-        unseen = [i for i, p in hand_on.items() if p.get("met") is not True and i not in waiting(work, n)]
+        unseen = [i for i, p in hand_on.items() if p.get("met") is not True]
         if unanswered(work):
             raise Stop("step 8: wait for the user: " + ", ".join(f"question {k} is not answered"
                                                                  for k in unanswered(work)))
@@ -454,7 +447,6 @@ def end(work, n):
     found = question_faults(work, decided=True) + [f"question {k} is not answered" for k in unanswered(work)]
     if found:
         raise Stop("\n".join(found))
-    gaps = [q["question"] for q in asked(work) if q.get("left")]
     if n == 1 and any(w["in"] == PLACES[0] for w in left):
         raise Stop("a way lies with the generator: start the second round")
     run, ccs, deliverable, path = the_work(work, n)
@@ -462,7 +454,7 @@ def end(work, n):
     differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]}): {w['way']}"}
                    for w in left for i in w["items"]]
     caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[1] for i in w["items"]]
-    nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences or gaps else "done"
+    nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences else "done"
     ccs["constraints"] += [{"answer": f"{q['question']} {q['answer']}"} for q in asked(work) if "answer" in q]
     for k in range(1, n + 1):
         for rule in learned(work, k)[1]:
@@ -471,12 +463,12 @@ def end(work, n):
     evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
     os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
     shutil.copyfile(path, deliverable)
-    ccs.update(predictive_cue=[{"next": nxt}], uncertainty_signal=[{"gap": q} for q in gaps],
+    ccs.update(predictive_cue=[{"next": nxt}],
                semantic_gist=differences,
                episodic_trace=[{"evidence": os.path.join(work, str(n), e)} for e in evidence])
     write_json(run["out"], ccs)
     os.remove(RUN)
-    print("\n".join([nxt] + [f"❓ {q}" for q in gaps]))
+    print(nxt)
 
 
 COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),

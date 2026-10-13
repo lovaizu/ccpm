@@ -31,11 +31,10 @@ repository.
    answered.
 4. Run `up.py brief <folder> <round> generator`, and call the `turn:generator` agent with the path
    it prints as the whole prompt; call it in the background while a question in `questions` is
-   asked and has neither `answer` nor `left`.
+   asked and has no `answer`.
 5. Put each question asked that the user has not yet seen to the user, one line each starting with
    ❓, and end your turn. When the user answers, write the answer to `answer` of its question with
-   `jq`, or `left: true` where the user chooses not to answer. Once the generator has handed back,
-   go on.
+   `jq`. Once the generator has handed back, go on.
 6. Run `up.py coverage <folder> <round> generator`. It prints the lines with text that no item of
    the generator's form names.
 7. Read the work, the generator's form and `questions` whole. Decide each question the generator
@@ -51,8 +50,7 @@ repository.
    be taken only with the answer to a question, the question's number, counted from 1. Run
    `up.py check <folder> <round> hand-on`, and fill each place it names, until it prints `filled`.
 8. If a question is asked that the user has not yet seen, do step 5. If an item of `hand-on` is not
-   met, other than one whose way needs a question the user left, go to step 4 once each question
-   its way needs is answered.
+   met, go to step 4 once each question its way needs is answered.
 9. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the
    path it prints as the whole prompt.
 10. Run `up.py brief <folder> <round> evaluator`, and call the `turn:evaluator` agent with the path
@@ -62,10 +60,9 @@ repository.
     that give it; `note`, where met, what the receiver gets from those lines, in plain words. Run
     `up.py check <folder> <round> orchestrator`, and fill each place it names, until it prints
     `filled`.
-12. If an item of your form is not met, other than one whose way needs a question the user left, run
-    `up.py brief <folder> <round> learner`, and call the `turn:learner` agent with the path it
-    prints as the whole prompt. Then decide each question the learner added, as in step 7, and do
-    step 5 for those asked.
+12. If an item of your form is not met, run `up.py brief <folder> <round> learner`, and call the
+    `turn:learner` agent with the path it prints as the whole prompt. Then decide each question the
+    learner added, as in step 7, and do step 5 for those asked.
 13. In round 1, run `up.py round <folder>`. If it prints JSON, the round is its `round` and the
     forms are in that round's folder: go to step 4.
 14. Run `up.py end <folder> <round>`. Say its first line and where the CCS is written, in one

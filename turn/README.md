@@ -65,9 +65,8 @@ need to give it, such as a line on the Python version, makes the work again with
 patching the line where it showed, and has it read again.
 
 Answer a question marked ❓ when it shows. turn goes on writing meanwhile, and puts your answer
-into the work before it is read. If you would rather not answer, say so: the work comes back without
-it, and the question with it. If something is still missing after the second round, it comes back to
-you with what the work would need to give it, and you choose whether to run turn again.
+into the work before it is read. If something is still missing after the second round, it comes
+back to you with what the work would need to give it, and you choose whether to run turn again.
 
 The paths are in `.turn/` in your repository, where turn keeps what you may want to open later:
 each round's work and its reading; for each item of the checklist, the lines that show it met, or

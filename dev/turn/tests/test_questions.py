@@ -14,7 +14,6 @@ LICENSE = "Which license is the note under? The notes do not say, so the note le
 NAME = "What is the tool called? The notes do not say."
 OPEN = {"question": LICENSE, "ask": True}
 ANSWERED = {"question": LICENSE, "ask": True, "answer": "MIT"}
-LEFT = {"question": LICENSE, "ask": True, "left": True}
 
 
 def seen(repo, f1=None):
@@ -109,7 +108,6 @@ class Questions(unittest.TestCase):
     def test_the_work_is_not_read_while_a_question_waits_for_the_user(self):
         cases = [("open", [OPEN], None, "question 1 is not answered"),
                  ("answered", [ANSWERED], None, None),
-                 ("left, with an item waiting on it", [LEFT], 1, None),
                  ("answered, with an item still waiting on it", [ANSWERED], 1, "not yet: note F-1")]
         for name, questions, waits, said in cases:
             with self.subTest(name):
@@ -118,8 +116,8 @@ class Questions(unittest.TestCase):
                 seen(self.repo, waits)
                 # When: the first user's brief is asked for
                 code, out = run(self.repo, "brief", ".turn/out", "1", "first-user")
-                # Then: it is made only once the user has answered or left the question, and no item
-                # waits on an answer given
+                # Then: it is made only once the user has answered, and no item waits on an answer
+                # given
                 if said is None:
                     self.assertEqual(code, 0, out)
                     up.drop(self.repo.json(out.strip())["copy"])
@@ -127,25 +125,24 @@ class Questions(unittest.TestCase):
                     self.assertEqual(code, 1)
                     self.assertIn(said, out)
 
-    def test_answers_return_in_the_ccs_and_a_question_left_returns_to_the_user(self):
-        # Given: one question answered, one left with F-1 waiting on it, and B-1 met
-        fill(self.repo, QUESTIONS, [ANSWERED, dict(LEFT, question=NAME)])
-        seen(self.repo, 2)
-        decided(self.repo, f1=False)
+    def test_answers_return_in_the_ccs_after_the_callers_constraints(self):
+        # Given: one question answered, one answered by the notes, and every item met
+        fill(self.repo, QUESTIONS, [ANSWERED, {"question": NAME, "ask": False, "answered": "notes.md 1"}])
+        seen(self.repo)
+        decided(self.repo)
         # When: the run ends
         code, out = run(self.repo, "end", ".turn/out", "1")
-        # Then: the answer follows the caller's constraints, the question left is asked with ❓, and
-        # the item waiting on it needs no way from the learner
+        # Then: the user's answer follows the caller's constraints, and nothing is left for the user
         self.assertEqual(code, 0, out)
-        self.assertEqual(out.strip().splitlines(), ["ask the user", f"❓ {NAME}"])
+        self.assertEqual(out.strip().splitlines(), ["done"])
         back = self.repo.json("out.json")
         self.assertEqual(back["constraints"], [{"language": "English"}, {"answer": f"{LICENSE} MIT"}])
-        self.assertEqual(back["uncertainty_signal"], [{"gap": NAME}])
-        self.assertEqual(back["semantic_gist"], [])
+        self.assertEqual(back["uncertainty_signal"], [])
 
     def test_a_run_does_not_return_with_a_question_open(self):
         for name, questions, said in [("undecided", [{"question": LICENSE}], "question 1: not decided"),
-                                      ("not answered", [OPEN], "question 1 is not answered")]:
+                                      ("not answered", [OPEN], "question 1 is not answered"),
+                                      ("marked as left", [dict(OPEN, left=True)], "question 1 is not answered")]:
             with self.subTest(name):
                 # Given: every item met, and a question not decided or not answered
                 seen(self.repo)

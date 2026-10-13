@@ -239,11 +239,10 @@ the work or the sources answer it. So the user answers while the work goes on, a
 added to the CCS as `answer`. The orchestrator reads the whole work for each item, from those lines
 and coverage, and sends the work back with each answer and each item it does not see met, saying how
 it would be, until every question is answered and every item is met, since what can be seen here
-costs a whole round when found in the reading. A question the user chooses not to answer is returned
-with the work, and an item that waits only on it goes on without a Good.
+costs a whole round when found in the reading.
 
-- Must hold: no work reaches the first user with a question the user has neither answered nor
-  chosen to leave, or with any other item the orchestrator does not see met.
+- Must hold: no work reaches the first user with a question the user has not answered, or with any
+  other item the orchestrator does not see met.
 - Weighed: sending back has no limit, since a work sent on unsettled costs a round. The cost: a
   generator that never settles runs until the user stops it, and time and tokens show it.
 - Weighed: the orchestrator asks the user itself, not through the caller, since the user would

@@ -6,7 +6,7 @@ and prints the conversation as it goes.
 
 The CCS's paths are from the top of the repository. The clone holds this working tree's committed
 state, so commit what the trial must see first. A question asked when no answer is left is answered
-"Leave it; go on without it."
+as a user who does not know would answer it.
 """
 
 import json
@@ -48,7 +48,7 @@ for line in claude.stdout:
                 print(last, flush=True)
     elif event.get("type") == "result":
         if "❓" in last:
-            say(answers.pop(0) if answers else "Leave it; go on without it.")
+            say(answers.pop(0) if answers else "I don't know; leave it out of the work.")
             last = ""
         elif not os.path.exists(os.path.join(place, ".turn", "run.json")):
             break

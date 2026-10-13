@@ -74,7 +74,7 @@ The other five parts are turn's: write each as an empty list.
 | Part | Kinds turn writes |
 |---|---|
 | `predictive_cue` | `next` |
-| `uncertainty_signal` | `gap` |
+| `uncertainty_signal` | turn's own entries |
 | `semantic_gist` | `difference` |
 | `relational_map` | turn's own entries |
 | `episodic_trace` | `evidence`, among turn's own entries |
@@ -84,10 +84,9 @@ entries first in `constraints`.
 
 ## The CCS turn writes back
 
-The step reads four kinds:
+The step reads three kinds:
 
 - `next`, in `predictive_cue`: always one; what the step does next, below.
-- `gap`, in `uncertainty_signal`: one for each question the user chose not to answer.
 - `difference`, in `semantic_gist`: one for each item still More, that is, an item of the
   checklists the work does not yet meet, with what the work would need to meet it.
 - `evidence`, in `episodic_trace`: where in `.turn/` turn keeps, for each item, the lines of the
@@ -100,9 +99,9 @@ it calls turn again.
 
 - `done`: the work is where `deliverable` says, and nothing is left for the user. The step moves
   on.
-- `ask the user`: the work is where `deliverable` says. Put each `gap` and each `difference` to the
-  user, add their answers as `answer` entries in `constraints`, and call turn again. If the user
-  takes the work as it is, the step moves on.
+- `ask the user`: the work is where `deliverable` says. Put each `difference` to the user, add
+  their answers as `answer` entries in `constraints`, and call turn again. If the user takes the
+  work as it is, the step moves on.
 - `to the caller: <reason>`: the CCS cannot be run, or an item would be met only by a change in what
   the step wrote the work should be, which turn never rewrites. The reason says which. The step
   corrects its own parts and calls turn again, or puts the reason to the user.
