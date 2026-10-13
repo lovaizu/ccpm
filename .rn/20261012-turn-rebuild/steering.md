@@ -404,9 +404,21 @@ Progress:
   agents' part is unchanged: all 251 writes and shell commands made in their runs go through the
   new hooks, none stopped, and an agent's records carry its parent's session, so the hooks act in
   the agents too. CI passes. Unit 8 holds; every unit is built.
-- Next: plugin.md step 6, turn tried as its user from start to end, every quality of the design's
-  Verification checked. Whether the README's Example should show the hook's prefix
-  (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
+- Step 6 tried on ffeca5d (t6, turn's own README, 14 minutes, $5.08): two rounds, `done`, every
+  item Good; only the work and the run's evidence changed, nothing committed, the work the version
+  last read. Judged from the records: (1) the console's lines for round 1's reading and check were
+  shown to the first user and the learner, since an agent's shell command runs the hook in the same
+  session; a hook run inside an agent is given its `agent_id` (seen in a probe). (2) The
+  orchestrator copied the evaluator's form with jq and changed three items, so 22 of 23 notes in
+  round 1 and 24 of 25 in round 2 were the evaluator's grounds word for word (none in t5c to t5f);
+  doc B-3's Good rested on the evaluator's "the first user completed nothing by guess", which the
+  reading does not say, and a fresh reader outside the run took 24 items but had to guess five
+  things for doc B-3, so read in the receiver's place is not met. Both settled at their units
+  (51555b3): the console shows nothing to an agent and leaves its lines for the orchestrator's next
+  command, and the orchestrator's form is refused where a note is the evaluator's grounds. No
+  question was asked, and none was left open by the sources. No version is released, so the
+  one-dimensional qualities have nothing to be compared with.
+- Next: step 6 tried again on 51555b3, on the same task, and judged the same way.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
