@@ -35,8 +35,8 @@ Then do what `next` in .tasks/setup-back.json asks.
 What happens, in order:
 
 1. The step writes the CCS to `in` and calls `turn:up` with `in` and `out`.
-2. turn runs in the same conversation. The user sees its progress there and may stop it with Esc
-   and say what they want instead.
+2. turn runs in the same conversation. The user sees its progress there, answers there what only
+   they can decide, and may stop it with Esc and say what they want instead.
 3. turn writes the work where `deliverable` says, once it has been read, and its CCS to `out`. It
    never writes `in`.
 4. The step reads `next` in `out` and does what it asks. To run turn again, the step adds to the
@@ -67,7 +67,7 @@ The first four parts are yours:
 | `focal_entities` | `deliverable`: where the work goes, a path inside the repository; a file already there is written over, and must have no change git does not hold; name it as a `source` too to make the work from it; `receiver`: who the work is for | both |
 | `goal_orientation` | `use`: what the receiver uses the work for; `acceptance`: what the receiver must be able to do with it | `acceptance` |
 | `retrieved_artifacts` | `viewpoint`: a checklist to make and check the work by, a file that must exist; `source`: a file to make the work from, which must exist | `viewpoint` |
-| `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: what the user said, to a question or when stopping a run | none |
+| `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: what the user said when stopping a run; turn adds the user's answers to its questions in the same kind, after your entries | none |
 
 The other five parts are turn's: write each as an empty list.
 
@@ -87,7 +87,7 @@ entries first in `constraints`.
 The step reads four kinds:
 
 - `next`, in `predictive_cue`: always one; what the step does next, below.
-- `gap`, in `uncertainty_signal`: one for each question only the user can answer.
+- `gap`, in `uncertainty_signal`: one for each question the user chose not to answer.
 - `difference`, in `semantic_gist`: one for each item still More, that is, an item of the
   checklists the work does not yet meet, with what the work would need to meet it.
 - `evidence`, in `episodic_trace`: where in `.turn/` turn keeps, for each item, the lines of the

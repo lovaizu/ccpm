@@ -34,8 +34,8 @@ The words used throughout:
   that did not write it, each Good shown in its lines, and what that reading could not take made
   again on how it would be given. The user hands the work on without first reading it as its
   receiver.
-- Asked only what only the user can decide: nothing is asked that what the work should be, or its
-  sources, already answers.
+- Asked only what only the user can decide, as soon as it is seen: nothing is asked that what the
+  work should be, or its sources, already answers, and the work goes on while the user answers.
 - Seeing the work as it goes: the user can tell from the console how far a run has come, and stop a
   run whose aim they do not want before the work is written, saying what they want instead.
 - A plugin decides from what turn returns: a plugin hands turn one task and decides its next move
@@ -79,8 +79,7 @@ Each must be no worse than in the version in use.
 
 ### Non-goals
 
-- Deciding what the work should be, or talking to the user: the caller does both, knowing what was
-  already agreed.
+- Deciding what the work should be: the caller does it, knowing what was already agreed.
 - Running until every item is Good: what a second round leaves without a Good points to a fault in
   turn, the checklist or what the work should be, to be fixed there (assumption).
 - Finding what no item asks, which goes into the checklist; holding checklists, which belong to
@@ -106,8 +105,10 @@ passes.
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver on the same
   list, takes every item returned as Good, including each the first round left without one.
-- Asked only what only the user can decide: on sources that settle some choices and leave one open,
-  that one is asked, and no question is answered by what the work should be or its sources.
+- Asked only what only the user can decide, as soon as it is seen: on sources that settle some
+  choices and leave one open, that one is asked before the work is first written, the generator
+  goes on while the user answers, the answer is in the work the first user reads, and no question
+  is answered by what the work should be or its sources.
 - Seeing the work as it goes: the console alone tells the round and step the records show; a run
   stopped on its aim has written no work of that aim, and then makes what the user said.
 - A plugin decides from what turn returns: tried on runs that end in each value of `next`, the move
@@ -174,13 +175,16 @@ sequenceDiagram
   C->>O: CCS
   O->>S: CCS, checklists
   S-->>O: CCS checked, the list
+  O-->>U: what the sources leave open
   loop round 1, and round 2 from the ways to a Good
     O-->>U: console: the aim, before the work is written
     O->>G: what the work should be, the list
+    U-->>O: answers, while the generator works
     G-->>O: work, grounds, questions
+    O-->>U: questions raised in the making
     O->>S: work, grounds
     S-->>O: coverage
-    Note over O,G: sent back until the orchestrator sees every item met
+    Note over O,G: sent back with each answer until every question is answered and every item seen met
     S->>GIT: a fresh copy with the work
     O->>F: the copy, receiver, use, list
     F-->>O: what it took, and where
@@ -196,12 +200,11 @@ sequenceDiagram
   O->>S: decisions, ways to a Good, new CCS
   S-->>O: evidence in .turn/, CCS checked
   O-->>C: new CCS
-  C-->>U: questions only the user can answer
   Note over G,CC: during a run, turn's hooks, run by Claude Code, check each agent keeps its steps
 ```
 
-The orchestrator is a skill, so it runs in the caller's conversation, where it can start the agents
-and the user sees its console and presses Esc. A subagent could not start the agents; the cost is
+The orchestrator is a skill, so it runs in the caller's conversation, where it can start the agents,
+ask the user while they work, and the user sees its console and presses Esc. A subagent could not start the agents; the cost is
 room in the caller's conversation, and no call from inside a subagent.
 
 ### The checklist as the measure
@@ -221,15 +224,24 @@ given the same list, with every opening, and the same receiver and use, so all m
 
 Achieves: the first-round share, time and tokens, asked only what only the user can decide.
 
-The generator makes a work that meets every item and names the lines that meet each; what the
-sources do not settle it raises as a question and keeps out of the work. The orchestrator reads the
-whole work for each item, from those lines and coverage, drops questions the work or sources answer,
-and sends the work back with each item it does not see met, saying how it would be, until all are
-met, since what can be seen here costs a whole round when found in the reading.
+Before the work is first written, the orchestrator reads each item against what the work should be
+and its sources, and asks the user at once what they leave open. The generator makes, in the
+background, a work that meets every item and names the lines that meet each; what the sources do not
+settle it keeps out of the work and raises as a question, which the orchestrator asks at once unless
+the work or the sources answer it. So the user answers while the work goes on, and the answers are
+added to the CCS as `answer`. The orchestrator reads the whole work for each item, from those lines
+and coverage, and sends the work back with each answer and each item it does not see met, saying how
+it would be, until every question is answered and every item is met, since what can be seen here
+costs a whole round when found in the reading. A question the user chooses not to answer is returned
+with the work, and an item that waits only on it goes on without a Good.
 
-- Must hold: no work reaches the first user with an item the orchestrator does not see met.
+- Must hold: no work reaches the first user with a question the user has neither answered nor
+  chosen to leave, or with any other item the orchestrator does not see met.
 - Weighed: sending back has no limit, since a work sent on unsettled costs a round. The cost: a
   generator that never settles runs until the user stops it, and time and tokens show it.
+- Weighed: the orchestrator asks the user itself, not through the caller, since the user would
+  otherwise wait a whole run to be asked, and the work made meanwhile would be made again. The
+  cost: turn talks to the user, and a caller learns the answers from the returned CCS.
 
 ### Reading in the receiver's place
 
@@ -298,8 +310,8 @@ over, the call, the CCS.
 
 The CCS (Compressed Cognitive State) takes the nine parts that [ACC (Agent Cognitive
 Compressor)](https://arxiv.org/abs/2601.11653) sets as the state the next step needs. A script
-checks it on receiving and on returning. Every change of course, such as the user's answer, goes
-through the caller as a new run, which starts from nothing but its CCS and the places it points to.
+checks it on receiving and on returning. Every change of course the user makes by stopping a run
+goes through the caller as a new run, which starts from nothing but its CCS and the places it points to.
 Until a run returns, the work is only in `.turn/`, so a stopped or cut-off run leaves where the work
 goes untouched, and a stopped CCS points to the work there.
 

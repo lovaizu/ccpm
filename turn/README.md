@@ -2,7 +2,8 @@
 
 turn has Claude Code write a document or a prompt for you, such as a README, a design document or
 a skill. Before you get it, another AI reads it as the person it is for. Where that reader could not
-find what it needed, the work is made again. You are asked only what you alone can answer.
+find what it needed, the work is made again. You are asked only what you alone can answer, as soon as it comes up, while the
+work goes on.
 
 turn is for anyone who has Claude Code write such work, in a conversation or from a step of their
 own plugin. It does not write code, since code is checked by running its tests, not by reading it.
@@ -36,6 +37,10 @@ Plan: 1 write → 2 read → 3 check   (once more if something is missing; two r
 Round 1
   1 write   To make: developers who find the tool on GitHub can tell what it saves them
             and run it on their own files.
+            ❓ Which license is the tool under? Your notes do not say.
+
+> MIT
+
             .turn/readme/1/README.md
   2 read    Read as a developer who finds the tool on GitHub.
             .turn/readme/1/reading.json
@@ -49,7 +54,6 @@ Round 2
   3 check   ✅ Nothing missing.
 
 The README is at README.md.
-❓ Which license is the tool under? Your notes do not say, so the README leaves it out.
 ```
 
 The line after `To make:` is shown before turn writes. If it is not what you want, press Esc and say
@@ -60,10 +64,10 @@ Each ⚠️ is something the reader could not take from the work. turn works out
 need to give it, such as a line on the Python version, makes the work again with that rather than
 patching the line where it showed, and has it read again.
 
-Answer the question marked ❓ in the conversation: Claude adds your answer to the task and starts
-turn again, which has the changed work read again before you get it. If something is still missing
-after the second round, it comes back to you in the same way, with what the work would need to give
-it, and you choose whether to run turn again.
+Answer a question marked ❓ when it shows. turn goes on writing meanwhile, and puts your answer
+into the work before it is read. If you would rather not answer, say so: the work comes back without
+it, and the question with it. If something is still missing after the second round, it comes back to
+you with what the work would need to give it, and you choose whether to run turn again.
 
 The paths are in `.turn/` in your repository, where turn keeps what you may want to open later:
 each round's work and its reading; for each item of the checklist, the lines that show it met, or
