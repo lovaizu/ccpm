@@ -157,6 +157,13 @@ Purpose: `dev/writ/design.md` written with `doc.md` and `design.md` open, and ag
 
 Serves: A1, A2, M1, M2
 
+Progress:
+
+- Next (2026-10-14): turn's README is agreed by the user. Write the design through `turn:up` with
+  `doc.md` and `design.md` as viewpoints, carrying no rules. turn's Stop-hook fix is in the
+  repository but not in the installed turn 0.1.0, so its stop messages still show while agents work;
+  it is checked for real once a turn with the fix runs.
+
 ### [ ] #4: writ built and checked
 
 Purpose: plugin.md steps 3 to 7; #36 and #37 judged against the rebuilt writ.
