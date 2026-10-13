@@ -56,7 +56,7 @@ writ keeps the checklists that say what a good work of each kind is, and hands e
 
 # Tasks
 
-### [ ] #1: The scene
+### [x] #1: The scene
 
 Purpose: the user and the assistant agree, in about five lines, on what the user does with writ and
 what happens, before anything is made.
@@ -76,7 +76,7 @@ Progress:
   5. For a kind writ has no checklist for (say, release notes), writ asks whether to make it with
      the general `doc.md` alone, or to make that kind's checklist first with turn against
      `essentials.md` and use it.
-- Not yet agreed. Next: ask the user to agree to it, then #2.
+- Agreed by the user (2026-10-13).
 
 ### [ ] #2: writ's README
 
@@ -84,6 +84,14 @@ Purpose: `writ/README.md` written from the agreed scene with `doc.md` and `readm
 agreed with the user (plugin.md step 1).
 
 Serves: A1, A2, M1
+
+Progress:
+
+- Written from the scene with `doc.md` and `readme.md` open. Decided in writing it, for the user to
+  confirm: a checklist writ makes goes to `.writ/checklists/<kind>.md` in the user's repository; the
+  old README's lint tools and Claude Code choosing writ on its own are left out, since the scene
+  does not hold them.
+- Next: the user agrees to it on the pull request, then #3.
 
 ### [ ] #3: writ's design
 
