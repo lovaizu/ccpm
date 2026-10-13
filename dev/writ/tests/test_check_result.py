@@ -29,6 +29,42 @@ ESSENTIALS = textwrap.dedent("""\
     ```
     """)
 
+CHECKLIST = textwrap.dedent("""\
+    ---
+    name: readme
+    version: 0.1.0
+    ---
+
+    # README
+
+    A README lets its reader:
+
+    - decide whether the product is for them;
+
+    ## Benefit
+
+    ### B-1: The gain
+
+    What did you take as the gain on reading the opening?
+
+    Why: the reader decides from the opening.
+
+    ## Usability
+
+    ### U-1: Installing
+
+    How far did you get installing
+    from this README alone?
+
+    Why: a reader who cannot install leaves.
+
+    ```markdown
+    ### X-9: not an item
+
+    not a question
+    ```
+    """)
+
 WORK = textwrap.dedent("""\
     # tool
 
@@ -134,6 +170,25 @@ class CheckResultTest(unittest.TestCase):
         result = self.run_check(GOOD_RESULT)
         # Then
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_a_checklist_with_item_headings_has_its_questions_read_from_the_items(self):
+        # Given: the essentials file is a checklist whose items each sit under a heading with an ID,
+        # and the result answers each item's question word for word
+        self.write("essentials/readme.md", CHECKLIST)
+        # When: the result is checked against it
+        result = self.run_check(GOOD_RESULT)
+        # Then: it passes, so the opening's list and the example in a fence are not taken as questions
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_an_item_of_a_checklist_without_a_section_is_reported(self):
+        # Given: the essentials file is a checklist with item headings, and the result leaves out
+        # the section of its second item
+        self.write("essentials/readme.md", CHECKLIST)
+        text = GOOD_RESULT.split("## readme.md: How far")[0]
+        # When: the result is checked against it
+        result = self.run_check(text)
+        # Then: the missing item is reported by its question
+        self.assertProblems(result, "no section `## readme.md: How far did you get")
 
     def test_a_question_without_a_section_is_reported(self):
         # Given

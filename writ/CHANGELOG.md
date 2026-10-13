@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- The checklists writ checks a document by (`doc`, `readme`, `design`, `prompt`, `essentials`) are rewritten as yes-or-no items, each under a heading with its ID, and pith reads questions from such items — each question asks what the reader gets from the document, so two checks give the same answer.
+
 ## [0.1.0] - 2026-10-06
 
 ### Added
