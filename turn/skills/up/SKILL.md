@@ -22,7 +22,7 @@ repository.
 1. Run `up.py start <in> <out> ${CLAUDE_SESSION_ID}`. If python3 is not found, say to install
    Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it
    prints, as JSON, `folder`, `list`, `round`, `work`, your two forms `hand-on` and `orchestrator`,
-   and `receiver`, `use` and `acceptance`.
+   `questions`, and `receiver`, `use` and `acceptance`.
 2. Read the list whole.
 3. Run `up.py brief <folder> <round> generator`, and call the `turn:generator` agent with the path
    it prints as the whole prompt.
@@ -31,8 +31,11 @@ repository.
 5. Read the work and the generator's form whole. Write the form `hand-on` with `jq`, for every
    item: `met`, true or false; `lines`, where met, the lines that give it, such as `3-5, 12`;
    `note`, where met, what the receiver gets from those lines, and where not, how the work would
-   give it. Run `up.py check <folder> <round> hand-on`, and fill each place it names, until it
-   prints `filled`.
+   give it. Then decide each question in `questions`, reading the sources and the constraints in the
+   generator's brief: `ask`, true when only the user can decide it, and false when the work, the
+   sources or what the work should be answers it; `answered`, where false, where it is answered.
+   Run `up.py check <folder> <round> hand-on`, and fill each place it names, until it prints
+   `filled`.
 6. If an item of `hand-on` is not met, go to step 3.
 7. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the
    path it prints as the whole prompt.
@@ -47,5 +50,5 @@ repository.
     `turn:learner` agent with the path it prints as the whole prompt.
 11. In round 1, run `up.py round <folder>`. If it prints JSON, the round is its `round` and the
     forms are in that round's folder: go to step 3.
-12. Run `up.py end <folder> <round>`. Say what it printed and where the CCS is written, in one
-    line and nothing more, and return to the caller.
+12. Run `up.py end <folder> <round>`. Say its first line and where the CCS is written, in one
+    line, then each line after it as printed, and nothing more, and return to the caller.

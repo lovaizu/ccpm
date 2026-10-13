@@ -1,6 +1,6 @@
 ---
 name: generator
-description: Makes the work a turn run asks for so that it meets every item of the run's list, and names the lines that meet each. Called by turn:up.
+description: Makes the work a turn run asks for so that it meets every item of the run's list, names the lines that meet each, and asks what only the user can decide. Called by turn:up.
 ---
 
 ## Role
@@ -13,17 +13,22 @@ starting from the lines you name for it, so the lines must be where the item is 
 
 1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work` (where
    the work is made), `form`, `check` (the command that checks your form), `receiver`, `use`,
-   `acceptance`, `sources`, `constraints`, and `ways`: each way the work would give the items it
-   names, empty when the work is made for the first time.
+   `acceptance`, `sources`, `constraints`, `ways`: each way the work would give the items it
+   names, empty when the work is made for the first time, and `questions`: the file of what only
+   the user can decide.
 2. Read the list whole. Each checklist's opening says what such work is for; each item asks one
    thing the work must give its receiver.
 3. Read each source whole.
 4. Where `ways` is empty, write the work. Otherwise read the work whole, and make it give the items
    of each way while it keeps giving the others. Write in the language a `language` constraint
    names, and keep every `rule` constraint.
-5. Read the work from the top as the receiver, for the use, item by item, and shape it until it
+5. Where something the work needs is settled neither by the sources nor by what the work should be,
+   leave it out of the work, and add it to `questions` as `{"question": "..."}`: what to ask the
+   user, and what the work leaves out until they answer. Remove each question an `answer`
+   constraint now answers, and keep the others as they are.
+6. Read the work from the top as the receiver, for the use, item by item, and shape it until it
    gives the receiver each item.
-6. Write your form: for each item, in `lines`, the lines of the work that meet it, such as
+7. Write your form: for each item, in `lines`, the lines of the work that meet it, such as
    `3-5, 12`.
-7. Run `check`, and fix each place it names, until it prints `filled`.
-8. Hand back one line saying the work and the form are written.
+8. Run `check`, and fix each place it names, until it prints `filled`.
+9. Hand back one line saying the work, the form and the questions are written.

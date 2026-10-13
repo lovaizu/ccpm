@@ -149,15 +149,17 @@ def start(src, out, session):
         "work": os.path.join(work, "1", os.path.basename(deliverable)),
         "hand-on": os.path.join(work, "1", "hand-on.json"),
         "orchestrator": os.path.join(work, "1", "orchestrator.json"),
+        "questions": os.path.join(work, "1", "questions.json"),
         "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
         "use": "; ".join(entries(ccs, "goal_orientation", "use")),
         "acceptance": entries(ccs, "goal_orientation", "acceptance"),
     }, indent=1, ensure_ascii=False))
 
 
-def lay(work, n, laid):
+def lay(work, n, laid, questions=()):
     for role in ROLES:
         write_json(os.path.join(work, str(n), f"{role}.json"), laid[role])
+    write_json(os.path.join(work, str(n), "questions.json"), list(questions))
 
 
 def the_work(work, n, written=True):
@@ -188,6 +190,8 @@ def check(work, n, role):
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
     if role == "learner":
         return found + learner_faults(form, without_good(work, n))
+    if role in ("generator", "hand-on"):
+        found += question_faults(work, n, decided=role == "hand-on")
     for i in ids if role not in ("first-user", "evaluator") else [i for i in ids if i in form]:
         place = form.get(i)
         if place is None:
@@ -207,6 +211,26 @@ def check(work, n, role):
             found.append(f"{i}: lines are not given")
         elif lines and bad_lines(lines, count):
             found.append(f"{i}: lines {lines} are not in the work")
+    return found
+
+
+def asked(work, n):
+    return read_json(os.path.join(work, str(n), "questions.json"), "the questions")
+
+
+def question_faults(work, n, decided):
+    """Says each question left without its words, or, once decided, neither asked nor shown answered."""
+    questions = asked(work, n)
+    if not isinstance(questions, list):
+        return ["the questions are not a list"]
+    found = []
+    for k, q in enumerate(questions, 1):
+        if not (isinstance(q, dict) and q.get("question")):
+            found.append(f"question {k}: the question is not given")
+        elif decided and not isinstance(q.get("ask"), bool):
+            found.append(f"question {k}: not decided")
+        elif decided and not q["ask"] and not q.get("answered"):
+            found.append(f"question {k}: where it is answered is not given")
     return found
 
 
@@ -253,7 +277,8 @@ def round_two(work):
     if not any(w["in"] == PLACES[0] for w in given):
         raise Stop("no way for the generator to take, so the run ends after round 1")
     _, _, _, path = the_work(work, 1)
-    lay(work, 2, forms([i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]))
+    lay(work, 2, forms([i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]),
+        asked(work, 1))
     made = os.path.join(work, "2", os.path.basename(path))
     shutil.copyfile(path, made)
     run["round"] = 2
@@ -321,7 +346,7 @@ def brief(work, n, role):
         else:
             ways = [{"way": w["way"], "items": w["items"]} for w in learned(work, 1)[0] if w["in"] == PLACES[0]]
             should["constraints"] += [f"rule: {r}" for r in learned(work, 1)[1]]
-        given.update(should, ways=ways)
+        given.update(should, ways=ways, questions=os.path.join(here, "questions.json"))
     elif role == "first-user":
         unseen = [i for i, p in hand_on.items() if p.get("met") is not True]
         if unseen:
@@ -363,6 +388,10 @@ def brief(work, n, role):
 def end(work, n):
     n = int(n)
     left, _ = learned(work, n)
+    found = question_faults(work, n, decided=True)
+    if found:
+        raise Stop("\n".join(found))
+    gaps = [q["question"] for q in asked(work, n) if q["ask"]]
     if n == 1 and any(w["in"] == PLACES[0] for w in left):
         raise Stop("a way lies with the generator: start the second round")
     run, ccs, deliverable, path = the_work(work, n)
@@ -370,7 +399,7 @@ def end(work, n):
     differences = [{"difference": f"{i} ({items[i]['text'].splitlines()[0]}): {w['way']}"}
                    for w in left for i in w["items"]]
     caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[1] for i in w["items"]]
-    nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences else "done"
+    nxt = f"to the caller: {'; '.join(caller)}" if caller else "ask the user" if differences or gaps else "done"
     for k in range(1, n + 1):
         for rule in learned(work, k)[1]:
             if {"rule": rule} not in ccs["constraints"]:
@@ -378,11 +407,12 @@ def end(work, n):
     evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
     os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
     shutil.copyfile(path, deliverable)
-    ccs.update(predictive_cue=[{"next": nxt}], semantic_gist=differences,
+    ccs.update(predictive_cue=[{"next": nxt}], uncertainty_signal=[{"gap": q} for q in gaps],
+               semantic_gist=differences,
                episodic_trace=[{"evidence": os.path.join(work, str(n), e)} for e in evidence])
     write_json(run["out"], ccs)
     os.remove(RUN)
-    print(nxt)
+    print("\n".join([nxt] + [f"❓ {q}" for q in gaps]))
 
 
 COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),
