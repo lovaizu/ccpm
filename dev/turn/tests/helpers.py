@@ -12,7 +12,12 @@ sys.path.insert(0, os.path.join(ROOT, "turn", "hooks"))
 
 import up  # noqa: E402
 
-CHECKLIST = """# Note
+CHECKLIST = """---
+name: note
+version: 1.2.0
+---
+
+# Note
 
 A note is read by a teammate. It lets them act on it.
 

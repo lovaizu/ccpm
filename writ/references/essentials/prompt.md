@@ -1,3 +1,8 @@
+---
+name: prompt
+version: 0.1.0
+---
+
 # Prompt
 
 A prompt, such as a skill or an agent, is read by the AI that runs it. It lets the AI:

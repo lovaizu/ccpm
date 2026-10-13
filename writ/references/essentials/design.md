@@ -1,3 +1,8 @@
+---
+name: design
+version: 0.1.0
+---
+
 # Design document
 
 A design document is read by someone who builds or maintains a product. It lets them:

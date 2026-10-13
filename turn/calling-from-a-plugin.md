@@ -66,7 +66,7 @@ The first four parts are yours:
 |---|---|---|
 | `focal_entities` | `deliverable`: where the work goes, a path inside the repository; a file already there is written over, and must have no change git does not hold; name it as a `source` too to make the work from it; `receiver`: who the work is for | both |
 | `goal_orientation` | `use`: what the receiver uses the work for; `acceptance`: what the receiver must be able to do with it | `acceptance` |
-| `retrieved_artifacts` | `viewpoint`: a checklist to make and check the work by, a file that must exist and be committed as it stands; `source`: a file to make the work from, which must exist | `viewpoint` |
+| `retrieved_artifacts` | `viewpoint`: a checklist to make and check the work by, a file that must exist and open with front matter giving its `name` and `version`; `source`: a file to make the work from, which must exist | `viewpoint` |
 | `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: turn's own, the user's answer to a question turn asked, added after your entries | none |
 
 The other five parts are turn's: write each as an empty list.
@@ -90,8 +90,8 @@ The step reads three kinds:
 - `difference`, in `semantic_gist`: one for each item still More, that is, an item of the
   checklists the work does not yet meet, with what the work would need to meet it.
 - `evidence`, in `episodic_trace`: where in `.turn/` turn keeps, for each item, the lines of the
-  work that show it met or what the work would need to meet it, and the commit of each checklist
-  the work was checked by.
+  work that show it met or what the work would need to meet it, and each checklist's name and
+  version.
 
 The other entries are turn's own; the step need not read them, and hands them on as they are when
 it calls turn again.

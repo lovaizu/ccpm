@@ -1,5 +1,4 @@
 import json
-import subprocess
 import unittest
 
 from helpers import form, Repo, ccs, run, started
@@ -18,7 +17,8 @@ class Start(unittest.TestCase):
         got = started(self.repo)
         # Then: the list holds the checklist's opening and both items, not the example
         listed = self.repo.json(got["list"])
-        self.assertEqual(listed["checklists"][0]["checklist"], "note")
+        self.assertEqual((listed["checklists"][0]["checklist"], listed["checklists"][0]["version"]),
+                         ("note", "1.2.0"))
         self.assertTrue(listed["checklists"][0]["opening"].startswith("A note is read by a teammate"))
         self.assertEqual([i["id"] for i in listed["items"]], ["note B-1", "note F-1"])
         self.assertIn("Why: a note is for acting.", listed["items"][0]["text"])
@@ -38,37 +38,13 @@ class Start(unittest.TestCase):
             "sources": ["notes.md"], "constraints": []})
         self.assertFalse(self.repo.exists("out.json"))
 
-    def test_each_checklist_is_kept_with_the_commit_that_holds_it_as_read(self):
-        # Given: a checklist committed, then the repository moved on by a commit that leaves it alone
-        held = subprocess.run(["git", "-C", self.repo.path, "rev-parse", "HEAD"], capture_output=True,
-                              text=True, check=True).stdout.strip()
-        self.repo.write("notes.md", "Run make test.\n")
-        subprocess.run(["git", "-C", self.repo.path, "-c", "user.name=t", "-c", "user.email=t@t",
-                        "commit", "-qam", "notes"], check=True)
-        # When: a run starts
-        got = started(self.repo)
-        # Then: the list names the checklist by its path and by the commit its text was last changed in
-        kept = self.repo.json(got["list"])["checklists"][0]
-        self.assertEqual((kept["path"], kept["commit"]), ("checklists/note.md", held))
-
-    def test_a_task_is_refused_when_a_checklist_is_not_as_git_holds_it(self):
-        def ignored(r):
-            r.write(".gitignore", "checklists/new.md\n")
-            r.write("checklists/new.md", "# New\n")
-        for name, change in (("changed", lambda r: r.write("checklists/note.md", "# Other\n")),
-                             ("new", lambda r: r.write("checklists/new.md", "# New\n")),
-                             ("ignored", ignored)):
-            with self.subTest(name):
-                # Given: a checklist whose text no commit holds
-                change(self.repo)
-                c = ccs(retrieved_artifacts=[{"viewpoint": f"checklists/{'note' if name == 'changed' else 'new'}.md"}])
-                self.repo.write("in.json", json.dumps(c))
-                # When: a run starts
-                code, out = run(self.repo, "start", "in.json", "out.json", "s1")
-                # Then: it ends asking for the checklist to be committed, and starts nothing
-                self.assertEqual(code, 1)
-                self.assertIn("is not committed as it stands", out)
-                self.assertFalse(self.repo.exists(".turn"))
+    def test_each_item_is_named_by_its_checklist_s_name_not_by_the_file_s(self):
+        # Given: the checklist kept in a file named otherwise than the name it gives itself
+        self.repo.write("checklists/handover.md", self.repo.read("checklists/note.md"))
+        # When: a run starts on it
+        got = started(self.repo, ccs(retrieved_artifacts=[{"viewpoint": "checklists/handover.md"}]))
+        # Then: its items are named by the checklist's own name
+        self.assertEqual([i["id"] for i in self.repo.json(got["list"])["items"]], ["note B-1", "note F-1"])
 
     def test_a_task_without_a_use_is_run_with_none(self):
         # Given: a task that names no use
@@ -109,6 +85,12 @@ class Start(unittest.TestCase):
              "focal_entities needs a receiver"),
             ("no acceptance", ccs(goal_orientation=[{"use": "u"}]),
              "goal_orientation needs an acceptance"),
+            ("a checklist without its name and version",
+             ccs(retrieved_artifacts=[{"viewpoint": "notes.md"}]),
+             "notes.md: open the checklist with front matter giving its name and version"),
+            ("a checklist without its version",
+             ccs(retrieved_artifacts=[{"viewpoint": "nameonly.md"}]),
+             "nameonly.md: open the checklist with front matter giving its name and version"),
             ("a checklist that is not there",
              ccs(retrieved_artifacts=[{"viewpoint": "checklists/none.md"}]),
              "checklists/none.md does not exist"),
@@ -119,6 +101,7 @@ class Start(unittest.TestCase):
              ccs(focal_entities=[{"deliverable": "../x.md"}, {"receiver": "r"}]),
              "../x.md is outside the repository"),
         ]
+        self.repo.write("nameonly.md", "---\nname: note\n---\n\n# Note\n")
         for name, c, said in cases:
             with self.subTest(name):
                 # Given: a task whose CCS has this fault

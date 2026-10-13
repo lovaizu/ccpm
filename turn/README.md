@@ -82,8 +82,8 @@ what the work would need to meet it; and the version of the checklist the work w
 - jq: the task is kept in a JSON file, and turn, and whoever writes the task, Claude in your
   conversation or your plugin's step, read and change parts of it with jq.
 - A checklist for each kind of work: the work is made and checked by its items. It is a Markdown
-  file that opens with what such work is for, followed by each item under a heading
-  `### <ID>: <title>`. Keep it in your repository, since the task names it by its path there. The
+  file that opens with front matter giving its `name` and `version`, then says what such work is
+  for, followed by each item under a heading `### <ID>: <title>`. Keep it in your repository, since the task names it by its path there. The
   [writ checklists](../writ/references/essentials/) cover documents, READMEs, design documents and
   prompts; copy the ones you need, as `checklists/readme.md` is in the Example.
 

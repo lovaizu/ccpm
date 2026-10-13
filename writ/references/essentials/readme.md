@@ -1,3 +1,8 @@
+---
+name: readme
+version: 0.1.0
+---
+
 # README
 
 A README is read by someone meeting a product for the first time. It lets them:

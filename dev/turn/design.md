@@ -275,8 +275,8 @@ write Goods only still wrote on other items. Coverage shows where a slip may be:
 name does nothing for the receiver or holds one, since every useful line meets some item
 (assumption). The orchestrator reads the whole work for each item, from the grounds and coverage,
 and decides each on its form. A script keeps in `.turn/` each round's work, list and reading, each
-Good, each item without one with how it would get one, and each checklist's commit, since a commit
-names a version exactly.
+Good, each item without one with how it would get one, and each checklist's name and version, which the
+checklist gives itself, since it may be kept outside the repository, as a plugin's checklists are.
 
 - Must hold: every Good names lines the work holds and is decided by the orchestrator; no run
   returns before every item of every document is decided on its form.

@@ -1,3 +1,8 @@
+---
+name: doc
+version: 0.1.0
+---
+
 # Document
 
 A document is read by the reader it is written for. It lets them:

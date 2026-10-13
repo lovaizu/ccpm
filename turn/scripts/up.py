@@ -93,18 +93,33 @@ def faults(ccs):
     for kind in ("viewpoint", "source"):
         found += [f"{p} does not exist" for p in entries(ccs, "retrieved_artifacts", kind)
                   if not os.path.isfile(p)]
+    found += [f"{p}: open the checklist with front matter giving its name and version"
+              for p in entries(ccs, "retrieved_artifacts", "viewpoint")
+              if os.path.isfile(p) and not {"name", "version"} <= front(p).keys()]
     for p in entries(ccs, "focal_entities", "deliverable"):
         if os.path.isabs(p) or os.path.normpath(p).startswith(".."):
             found.append(f"{p} is outside the repository")
     return found
 
 
+def front(path):
+    """The fields of the front matter the file opens with."""
+    with open(path) as f:
+        lines = f.read().splitlines()
+    if lines[:1] != ["---"] or "---" not in lines[1:]:
+        return {}
+    return dict(re.match(r"(\w+):\s*(.*)", line).groups() for line in lines[1:lines.index("---", 1)]
+                if re.match(r"\w+:", line))
+
+
 def checklist(path):
-    """Reads a checklist: its opening, and each item with its whole text."""
-    name = os.path.splitext(os.path.basename(path))[0]
+    """Reads a checklist: its name and version, its opening, and each item with its whole text."""
+    named = front(path)
+    name = named["name"]
     opening, items, item, fence, seen = [], [], None, False, False
     with open(path) as f:
-        for line in f:
+        lines = f.read().splitlines(keepends=True)
+        for line in lines[lines.index("---\n", 1) + 1:]:
             if line.startswith("```"):
                 fence = not fence
             heading = None if fence else re.match(r"(#{1,3}) (?:([A-Z]-\d+): )?(.+)", line)
@@ -121,17 +136,7 @@ def checklist(path):
                 opening.append(line)
     for i in items:
         i["text"] = i["text"].strip()
-    return {"checklist": name, "opening": "".join(opening).strip(), "path": path, "commit": held(path)}, items
-
-
-def held(path):
-    """The commit that holds the file as it stands, so the version it was read in can be found later."""
-    git = [subprocess.run(["git", *args, "--", path], capture_output=True, text=True, check=True).stdout.strip()
-           for args in (["status", "--porcelain", "--ignored"], ["log", "-1", "--format=%H"])]
-    if git[0]:
-        raise Stop(f"{path} is not committed as it stands; commit it, so the work can be followed back "
-                   "to the version it was checked by")
-    return git[1]
+    return {"checklist": name, "version": named["version"], "opening": "".join(opening).strip()}, items
 
 
 def forms(ids):

@@ -1,3 +1,8 @@
+---
+name: checklist
+version: 0.1.0
+---
+
 # Checklist
 
 A checklist says what a deliverable of one kind, such as research findings, a proposal, a design
@@ -67,6 +72,11 @@ holds what its name says.
 Does the checklist follow this template, IDs included?
 
 ```markdown
+---
+name: <kind-of-deliverable>
+version: <x.y.z>
+---
+
 # <Kind of deliverable>
 
 <Who uses it, and what it lets them decide or do>
@@ -88,10 +98,12 @@ None: <why the kind needs no item here>
 ## Format
 ```
 
+- The front matter gives the checklist's `name`, which every ID goes with, and its `version`
+  (semver), raised on every change to its text, so a judgment names the text it was made by.
 - Every checklist has the three sections, in this order. A section with no item holds `None:` and
   its reason, so a section thought through is told from a section forgotten.
 - An item's ID is its section's first letter and a number counted up within the section, such as
-  `U-2`; across checklists it goes with the file, such as `release-notes.md U-2`.
+  `U-2`; across checklists it goes with the name, such as `release-notes U-2`.
 - An ID is never used again. A removed item leaves its number unused, and an item moved to another
   section takes a new number there, so an ID named earlier always means the same item.
 
