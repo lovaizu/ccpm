@@ -2,11 +2,12 @@
 tree in place of the installed one, answering each question turn asks with the next answer given,
 and prints the conversation as it goes.
 
-    python3 dev/turn/trials/run.py <new folder> <CCS file> <out name> [<answer> ...]
+    python3 dev/turn/trials/run.py <new folder> <CCS file> <out name> [--stop <words>] [<answer> ...]
 
 The CCS's paths are from the top of the repository. The clone holds this working tree's committed
 state, so commit what the trial must see first. A question asked when no answer is left is answered
-as a user who does not know would answer it.
+as a user who does not know would answer it. With --stop, the run is stopped as by Esc the first
+time the console shows what it will make, and the words are said in its place.
 """
 
 import json
@@ -18,6 +19,8 @@ import threading
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 place, ccs, out, *answers = sys.argv[1:]
+stop = answers[1] if answers[:1] == ["--stop"] else None
+answers = answers[2:] if stop else answers
 subprocess.run(["git", "clone", "-q", ROOT, place], check=True)
 os.makedirs(os.path.join(place, ".tasks"), exist_ok=True)
 shutil.copyfile(ccs, os.path.join(place, ".tasks", "in.json"))
@@ -38,7 +41,7 @@ def say(text):
 
 
 say(f"/turn:up in: .tasks/in.json\nout: .tasks/{out}")
-last = ""
+last, stopped = "", None
 for line in claude.stdout:
     event = json.loads(line)
     if event.get("type") == "assistant":
@@ -46,6 +49,15 @@ for line in claude.stdout:
             if part["type"] == "text":
                 last = part["text"]
                 print(last, flush=True)
+                if stop and "To make:" in last:
+                    print("[Esc]", flush=True)
+                    claude.stdin.write(json.dumps({"type": "control_request", "request_id": "esc",
+                                                   "request": {"subtype": "interrupt"}}) + "\n")
+                    claude.stdin.flush()
+                    stopped, stop, last = stop, None, ""
+    elif event.get("type") == "result" and stopped:
+        say(stopped)
+        stopped = None
     elif event.get("type") == "result":
         if "❓" in last:
             say(answers.pop(0) if answers else "I don't know; leave it out of the work.")

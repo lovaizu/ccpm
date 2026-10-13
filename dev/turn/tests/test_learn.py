@@ -101,6 +101,7 @@ class SecondRound(unittest.TestCase):
         learn(self.repo, ".turn/out/1", {"note F-1": WORK_WAY, "note B-1": WORK_WAY},
               making={"note B-1": RULE})
         run(self.repo, "round", ".turn/out")
+        run(self.repo, "aim", ".turn/out", "2", AIM)
         # When: the generator's brief for round 2 is made
         code, out = run(self.repo, "brief", ".turn/out", "2", "generator")
         # Then: the way is handed on once, with both items, and the rule with the constraints
@@ -194,7 +195,7 @@ class EndAfterLearning(unittest.TestCase):
         code, out = run(self.repo, "end", ".turn/out", "2")
         # Then: the work of round 2 is returned, the user asked about F-1 with how it would get a
         # Good, and the rule learned added after the caller's constraints
-        self.assertEqual((code, out.strip()), (0, "ask the user"))
+        self.assertEqual((code, out.splitlines()[0]), (0, "ask the user"))
         self.assertIn("make builds the site.", self.repo.read("docs/note.md"))
         back = self.repo.json("out.json")
         self.assertEqual(back["semantic_gist"],

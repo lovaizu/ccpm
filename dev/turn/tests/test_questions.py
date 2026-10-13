@@ -37,6 +37,7 @@ class Questions(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo, ccs(constraints=[{"language": "English"}]))
+        run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
         self.repo.write(self.got["work"], WORK)
         fill(self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
 
@@ -134,7 +135,7 @@ class Questions(unittest.TestCase):
         code, out = run(self.repo, "end", ".turn/out", "1")
         # Then: the user's answer follows the caller's constraints, and nothing is left for the user
         self.assertEqual(code, 0, out)
-        self.assertEqual(out.strip().splitlines(), ["done"])
+        self.assertEqual(out.splitlines()[0], "done")
         back = self.repo.json("out.json")
         self.assertEqual(back["constraints"], [{"language": "English"}, {"answer": f"{LICENSE} MIT"}])
         self.assertEqual(back["uncertainty_signal"], [])

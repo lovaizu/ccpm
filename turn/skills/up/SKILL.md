@@ -17,7 +17,8 @@ The arguments:
 $ARGUMENTS
 
 `up.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py"`, run from the top of the
-repository.
+repository. Say to the user only what `aim`, `console`, `stop` and `end` print, as printed, and what
+step 1 says to say.
 
 1. Run `up.py start <in> <out> ${CLAUDE_SESSION_ID}`. If python3 is not found, say to install
    Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it
@@ -29,11 +30,13 @@ repository.
    give it. Add to `questions` with `jq`, as `{"question": "...", "ask": true}`, each thing they leave
    open that only the user can decide: what to ask, and what the work leaves out until it is
    answered.
-4. Run `up.py brief <folder> <round> generator`, and call the `turn:generator` agent with the path
-   it prints as the whole prompt; call it in the background while a question in `questions` is
-   asked and has no `answer`.
-5. Put each question asked that the user has not yet seen to the user, one line each starting with
-   ❓, and end your turn. When the user answers, write the answer to `answer` of its question with
+4. If the round has no aim yet, write in one sentence, in the language the user writes in, what the
+   work will let its receiver do, from what the work should be; run `up.py aim <folder> <round>
+   "<the sentence>"`, and say what it prints. Then run `up.py brief <folder> <round> generator`, and
+   call the `turn:generator` agent with the path it prints as the whole prompt; call it in the
+   background while a question in `questions` is asked and has no `answer`.
+5. Run `up.py console <folder>`, and say what it prints. If a question is asked and has no
+   `answer`, end your turn. When the user answers, write the answer to `answer` of its question with
    `jq`. Once the generator has handed back, go on.
 6. Run `up.py coverage <folder> <round> generator`. It prints the lines with text that no item of
    the generator's form names.
@@ -51,15 +54,17 @@ repository.
    `up.py check <folder> <round> hand-on`, and fill each place it names, until it prints `filled`.
 8. If a question is asked that the user has not yet seen, do step 5. If an item of `hand-on` is not
    met, go to step 4 once each question its way needs is answered.
-9. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the
-   path it prints as the whole prompt.
-10. Run `up.py brief <folder> <round> evaluator`, and call the `turn:evaluator` agent with the path
+9. Run `up.py brief <folder> <round> first-user`, then run `up.py console <folder>` and say what it
+   prints, and call the `turn:first-user` agent with the path the brief printed as the whole
+   prompt.
+10. Run `up.py console <folder>`, and say what it prints. Run `up.py brief <folder> <round>
+    evaluator`, and call the `turn:evaluator` agent with the path
     it prints as the whole prompt. Then run `up.py coverage <folder> <round> evaluator`.
 11. Read the work, the first user's form and the evaluator's form whole. Write your form
     `orchestrator` with `jq`, for every item: `met`, true or false; `lines`, where met, the lines
     that give it; `note`, where met, what the receiver gets from those lines, in plain words. Run
     `up.py check <folder> <round> orchestrator`, and fill each place it names, until it prints
-    `filled`.
+    `filled`. Run `up.py console <folder>`, and say what it prints.
 12. If an item of your form is not met, run `up.py brief <folder> <round> learner`, and call the
     `turn:learner` agent with the path it prints as the whole prompt. Then decide each question the
     learner added, as in step 7, and do step 5 for those asked.
@@ -67,3 +72,8 @@ repository.
     forms are in that round's folder: go to step 4.
 14. Run `up.py end <folder> <round>`. Say its first line and where the CCS is written, in one
     line, then each line after it as printed, and nothing more, and return to the caller.
+15. If the user stops you with Esc, or answers a question by saying what they want instead, stop
+    each agent of the run still at work, run `up.py stop <folder>`, and say what it prints. If a
+    plugin's step called you, return to it. Otherwise, add what the user said to `constraints` of
+    the CCS it wrote, as `{"answer": "..."}`, with `jq`, and start again from step 1 with that
+    file as `in` and a new `out`.

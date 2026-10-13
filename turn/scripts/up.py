@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """What turn:up needs to come out the same on every run: the CCS checked, the list and the forms
-laid out, each form checked, the first user's copy, and the work and the CCS written back."""
+laid out, each form checked, the first user's copy, the console, and the work and the CCS written
+back, or a stopped run's CCS."""
 
 import glob
 import json
@@ -34,8 +35,13 @@ USAGE = """usage: up.py start <in> <out> <session>
        up.py brief <work folder> <round> <generator|first-user|evaluator|learner>
        up.py coverage <work folder> <round> <generator|evaluator>
        up.py check <work folder> <round> <generator|hand-on|first-user|evaluator|orchestrator|learner>
+       up.py aim <work folder> <round> <what the work will let its receiver do>
+       up.py console <work folder>
        up.py round <work folder>
-       up.py end <work folder> <round>"""
+       up.py end <work folder> <round>
+       up.py stop <work folder>"""
+PLAN = "Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)"
+INDENT = " " * 12
 
 
 class Stop(Exception):
@@ -143,7 +149,13 @@ def start(src, out, session):
     lay(work, 1, laid)
     write_json(os.path.join(work, "questions.json"), [])
     deliverable = entries(ccs, "focal_entities", "deliverable")[0]
-    write_json(RUN, {"session": session, "work": work, "in": src, "out": out, "round": 1})
+    run = {"session": session, "work": work, "in": src, "out": out, "round": 1}
+    for begun in entries(ccs, "episodic_trace", "work"):
+        if not os.path.isfile(begun):
+            raise Stop(f"{begun} is not there, so the run cannot start from it")
+        shutil.copyfile(begun, os.path.join(work, "1", os.path.basename(deliverable)))
+        run["from"] = begun
+    write_json(RUN, run)
     print(json.dumps({
         "folder": work,
         "list": os.path.join(work, "list.json"),
@@ -378,7 +390,7 @@ def brief(work, n, role):
     if int(n) != run["round"]:
         raise Stop(f"round {run['round']} is running")
     n = int(n)
-    _, ccs, deliverable, path = the_work(work, n, written=role != "generator")
+    run, ccs, deliverable, path = the_work(work, n, written=role != "generator")
     here = os.path.join(work, str(n))
     should = {
         "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
@@ -392,6 +404,11 @@ def brief(work, n, role):
              "check": f'cd "{os.getcwd()}" && python3 "{SCRIPT}" check {work} {n} {role}'}
     hand_on = read_json(os.path.join(here, "hand-on.json"), "the form")
     if role == "generator":
+        if not os.path.isfile(os.path.join(here, "aim.txt")):
+            raise Stop(f"step 4: set the aim with `up.py aim {work} {n} <text>` and say what it prints, "
+                       "before the work is written")
+        if n == 1 and "from" in run:
+            given["started from"] = run["from"]
         sent = [serves([dict(p, item=i)], p["way"]) for i, p in hand_on.items() if p.get("met") is False]
         if sent or n == 1:
             ways = sent
@@ -468,11 +485,88 @@ def end(work, n):
                episodic_trace=[{"evidence": os.path.join(work, str(n), e)} for e in evidence])
     write_json(run["out"], ccs)
     os.remove(RUN)
-    print(nxt)
+    print("\n".join([nxt, f"The work is at {deliverable}."] +
+                    (["❓ Run turn again on what is still missing, or take the work as it is?"]
+                     if nxt == "ask the user" else [])))
+
+
+def aim(work, n, text):
+    """Sets what round n's work will let its receiver do, and shows it before the work is written."""
+    if int(n) != read_json(RUN, RUN)["round"]:
+        raise Stop(f"round {read_json(RUN, RUN)['round']} is running")
+    with open(os.path.join(work, str(n), "aim.txt"), "w") as f:
+        f.write(text)
+    console(work)
+
+
+def shown_lines(work):
+    """Every line the console has for the run as it stands, each with a key it is shown once by."""
+    _, ccs, _, _ = the_work(work, 1, written=False)
+    receiver = "; ".join(entries(ccs, "focal_entities", "receiver"))
+    lines = [("plan", PLAN)]
+    for n in (1, 2):
+        here = os.path.join(work, str(n))
+        if not os.path.isdir(here):
+            continue
+        said = [f"Round {n}"]
+        if os.path.isfile(os.path.join(here, "aim.txt")):
+            with open(os.path.join(here, "aim.txt")) as f:
+                said.append(f"  1 write   To make: {f.read().strip()}")
+        if os.path.isfile(os.path.join(here, "first-user-brief.json")):
+            said += [INDENT + the_work(work, n)[3],
+                     f"  2 read    {'Read as' if n == 1 else 'Read again, as'} {receiver}."]
+        if not os.path.isfile(the_work(work, n, written=False)[3]):
+            lines += [(f"{n}:{line}", line) for line in said]
+            continue
+        reading = read_json(os.path.join(here, "first-user.json"), "the form")
+        if reading and not check(work, n, "first-user"):
+            said.append(INDENT + os.path.join(here, "first-user.json"))
+        if not check(work, n, "orchestrator"):
+            if not without_good(work, n):
+                said.append("  3 check   ✅ Nothing missing.")
+            elif read_json(os.path.join(here, "learner.json"), "the form") and not check(work, n, "learner"):
+                aims = dict.fromkeys(p["aim"] for p in read_json(os.path.join(here, "learner.json"), "the form").values())
+                said += [("  3 check   " if k == 0 else INDENT) + f"⚠️ Not yet: {a}" for k, a in enumerate(aims)]
+        lines += [(f"{n}:{line}", line) for line in said]
+    lines += [(f"q:{q['question']}", f"{INDENT}❓ {q['question']}") for q in asked(work) if q.get("ask")]
+    return lines
+
+
+def console(work):
+    """Prints each line of the console not yet shown."""
+    record = os.path.join(work, "console.json")
+    shown = read_json(record, "the console") if os.path.isfile(record) else []
+    new = [(key, line) for key, line in shown_lines(work) if key not in shown]
+    write_json(record, shown + [key for key, _ in new])
+    if new:
+        print("\n".join(line for _, line in new))
+
+
+def stop(work):
+    """Ends a run the user stopped, with a CCS saying where it was and the work as it stands."""
+    if not os.path.isfile(RUN):
+        raise Stop("no run is open, so there is nothing to stop")
+    run, ccs, _, path = the_work(work, read_json(RUN, RUN)["round"], written=False)
+    n, here = run["round"], os.path.join(work, str(run["round"]))
+    step = ("check" if os.path.isfile(os.path.join(here, "evaluator-brief.json")) else
+            "read" if os.path.isfile(os.path.join(here, "first-user-brief.json")) else "write")
+    if step == "write":
+        begun = the_work(work, 1)[3] if n == 2 else run.get("from")
+    else:
+        begun = path
+    first = os.path.join(here, "first-user-brief.json")
+    if os.path.isfile(first) and os.path.exists(read_json(first, "the first user's brief")["copy"]):
+        drop(read_json(first, "the first user's brief")["copy"])
+    ccs["constraints"] += [{"answer": f"{q['question']} {q['answer']}"} for q in asked(work) if "answer" in q]
+    ccs.update(predictive_cue=[{"next": f"stopped: round {n}, {step}"}], semantic_gist=[],
+               episodic_trace=[{"work": begun}] if begun else [])
+    write_json(run["out"], ccs)
+    os.remove(RUN)
+    print(f"stopped: round {n}, {step} — CCS: {run['out']}")
 
 
 COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),
-            "end": (end, 2)}
+            "end": (end, 2), "aim": (aim, 3), "console": (console, 1), "stop": (stop, 1)}
 
 
 def main(argv):

@@ -32,6 +32,7 @@ class Briefs(unittest.TestCase):
         self.env = mock.patch.dict(os.environ, {"HOME": self.home.name})
         self.env.start()
         self.got = started(self.repo)
+        run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
         self.repo.write(self.got["work"], WORK)
 
     def tearDown(self):
@@ -178,6 +179,7 @@ class Briefs(unittest.TestCase):
             "aim": "the teammate takes it in at a glance", "way": "cut it to one line", "reach": "1-3",
             "in": "the work", "making": "say each thing once"}})
         self.assertEqual(run(self.repo, "round", ".turn/out")[0], 0)
+        run(self.repo, "aim", ".turn/out", "2", "the same, cut to one line")
         # When: the generator's brief for round 2 is made
         got = self.handed("generator", 2)
         # Then: it holds round 1's way with its item, and the rule among the constraints

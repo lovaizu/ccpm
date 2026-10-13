@@ -34,6 +34,7 @@ class AgentCalled(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         started(self.repo)
+        run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
         self.repo.write(".turn/out/1/note.md", "# Note\n")
 
     def tearDown(self):

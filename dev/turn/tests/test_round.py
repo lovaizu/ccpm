@@ -167,7 +167,7 @@ class End(unittest.TestCase):
         self.assertEqual(back["predictive_cue"], [{"next": "done"}])
         self.assertEqual(back["semantic_gist"], [])
         self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/1/orchestrator.json"}])
-        self.assertEqual(out.strip(), "done")
+        self.assertEqual(out.splitlines()[0], "done")
 
     def test_a_run_does_not_return_before_every_item_is_decided(self):
         # Given: the orchestrator's form with an item undecided
