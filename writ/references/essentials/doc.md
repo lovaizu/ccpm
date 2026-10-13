@@ -1,31 +1,139 @@
-# Every document
+---
+name: doc
+version: 0.1.0
+---
 
-This file has three readers. The generator reads it as the form to aim for when it writes a document. The first user takes the reader and purpose handed over with the document, settles from them what that reader decides and does once they finish reading, reads the document once from the top as that reader, and reports, for each question here, what it did and what happened. When the purpose does not settle it, it reports that it was not settled. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the document was read as its reader, whether it lets the reader decide and act. A README, a design document and a prompt are also checked with the questions of their own files.
+# Document
 
-- Once you finished reading, what did you take it you should decide and do?
+A document is read by the reader it is written for. It lets them:
 
-    Laid beside the aim, what the reader took in differs exactly where the document did not get across. The writer cannot go back to a mind that does not know the discussion, so reading it over does not find those places. A place where a word changes meaning partway, or where one thing goes by two names, shows up here as a different understanding the reader never noticed.
+- tell from its opening what it covers and what its point is;
+- take in, in one reading from the top, the writer's whole picture of its subject;
+- spend on it only the effort the subject itself asks;
+- rely on what it says for as long as it is kept.
 
-- Which parts did you use to decide or act, which did you skip without using, and where did you find yourself reading again what you had already read?
+## Benefit
 
-    Knowing the parts that were skipped shows what can be taken out, so the reader decides and acts without wading through what they do not need. The parts skipped are often those meant for someone else, such as a reviewer, background placed before the reader knows why they are reading, the history of how a decision was reached, restatements, and figures that only repeat what the text already said. A restatement is often not skipped but skimmed, so it shows only when asked for; once the reader skims a run of repeats, they also skim the one new point among them.
+### B-1: What it covers
 
-- In trying to decide or act, what was not in the document, so that you could only guess or ask someone?
+From the opening, can the reader tell what the document covers, and what it leaves out that they
+might expect it to cover?
 
-    Knowing what is missing lets the reader act from the document alone. A decision that no part supports leaves the reader to guess it or sends them off to ask. A gap covered by smooth sentences is acted on without the reader noticing, so if it does not show here, it shows as a difference in the answer to the first question.
+Why: a reader decides from the opening whether to read on; without its reach, they read a document
+that does not hold what they need, or pass over one that does.
 
-- Reading through, where did you stop, go back or look ahead, and what did you not understand there?
+### B-2: The picture as meant
 
-    When the reading does not stop, the reader has always taken in what a sentence rests on before reaching it. A word used before it is explained, a decision whose reason sits elsewhere, jargon or coined terms, and two parts that disagree stop the reader or send them the wrong way.
+After one reading, is the reader's picture of the subject the same as the writer's?
 
-- When you looked for a part to read again by its heading, under which heading did you find it, and under which did you not?
+Why: the reader acts on the picture they took in; where it differs from the writer's, they act
+otherwise without noticing.
 
-    When headings are the words the reader looks for, a reader who picks parts reaches their own at once. A heading in the writer's in-house words is passed over.
+### B-3: Nothing left to guess
 
-- Where, while reading, did you have to piece together in your head who does what, what passes, and in what order?
+Is each idea the document takes up given in full, so the reader guesses nothing to complete it?
 
-    Drawn as a figure grasped at a glance, what the reader had to piece together is taken in at once instead of built up sentence by sentence. An AI reads a figure as text, in order, so for an AI reader a figure only repeats the text.
+Why: an idea touched on in part is completed by a guess, and a gap covered by smooth sentences is
+acted on without the reader noticing.
 
-- How certain did you take each statement you relied on to decide or act?
+### B-4: Every part has a job
 
-    When the reader can tell a checked fact from an assumption, a proposal or a decision, and, if it was checked, how far, they believe each statement as far as it is certain and check again what was not checked before relying on it. An unchecked claim stated flatly is acted on as fact. A check whose reach is not written is taken as having checked everything.
+Does each part give the reader something their picture of the subject needs?
+
+Ask of each part what it is there to give the reader, and whether the reader gets it.
+
+Why: a part with no job, such as one meant for someone else or the history of how a decision was
+reached, costs the reader effort and buries the parts that do have one.
+
+### B-5: How sure each statement is
+
+For each statement the reader relies on, can they tell whether it is a checked fact, and how far it
+was checked, an assumption, a proposal or a decision?
+
+Why: an unchecked claim stated flatly is acted on as fact, and a check whose reach is not written is
+taken as having checked everything.
+
+### B-6: Still true later
+
+Will what the reader relies on stay true for as long as the subject's purpose and decisions stand?
+
+What stays true is the purpose, the decisions and their reasons; steps, status and how the work went
+change with each piece of work.
+
+Why: a document that has turned wrong is worse than none, since it is believed.
+
+### B-7: Said in one place
+
+Does the reader find each thing the document says only here, and not also in another document or in
+what the deliverable itself shows?
+
+Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
+tell which holds.
+
+## Usability
+
+### U-1: Main point first
+
+In the document and in each section, does the reader meet the main point before its details,
+exceptions and background?
+
+Why: a reader who stops early still has what matters most, and each detail is read knowing what it
+supports.
+
+### U-2: Nothing ahead of what it rests on
+
+Does the reader meet each word, reason and step before the sentence that rests on it?
+
+Look for: a word used before it is explained; a decision whose reason is elsewhere; a term the reader
+does not know that is never explained.
+
+Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
+guess.
+
+### U-3: As short as the subject allows
+
+Is each part said in as few words as it can be without the reader losing anything?
+
+Why: the effort the subject itself asks cannot be cut, but every word beyond it is effort spent on
+how the document is written instead of on the subject.
+
+### U-4: One use
+
+Does the whole document serve one use: learning, getting a task done, looking something up, or
+understanding why?
+
+Why: a reader comes for one use, and parts written for another stand in their way.
+
+### U-5: Tied to what the reader knows
+
+Can the reader place each new idea against something they already know, by a comparison or an
+example?
+
+Why: an idea with nothing to hold it is read but not kept.
+
+### U-6: One name for one thing
+
+Does the reader always know what a name means, because each thing goes by one name and each name
+means one thing, from start to end?
+
+Why: a reader takes a second name for a second thing, and a name whose meaning shifts carries its
+first meaning into the place where it has changed.
+
+### U-7: Headings to find a part again
+
+Can the reader find a part they want to read again by its heading?
+
+Why: a reader who comes back picks a part by its heading, and passes over one in the writer's own
+terms.
+
+### U-8: Who does what, in one place
+
+Can the reader see who does what, what passes between them and in what order in one place, instead
+of piecing it together from sentences spread through the document?
+
+Why: pieced together in the head, it costs effort and goes wrong; for a person, a figure often shows
+it at once.
+
+## Format
+
+None: a document's shape is set by its kind, and the checklist for each kind sets it.

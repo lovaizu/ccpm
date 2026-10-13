@@ -20,7 +20,7 @@
     },
     {
       "name": "turn",
-      "description": "Hands one task of a plugin that has AI make something to a turn that makes the deliverable, has it used in the receiver's place, finds why it stumbled and remakes it from the cause, and returns a CCS the plugin decides its next step from.",
+      "description": "With turn, Claude Code can make any work, such as a document, a prompt or code, that passes your checklist: another AI reads it as the one it is for, and what does not pass yet is made again.",
       "source": "./turn",
       "category": "development"
     }

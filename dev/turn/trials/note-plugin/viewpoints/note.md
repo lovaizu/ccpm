@@ -1,1 +1,0 @@
-- A visitor learns when to come.

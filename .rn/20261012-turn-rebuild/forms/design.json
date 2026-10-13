@@ -1,0 +1,209 @@
+{
+ "document": "dev/turn/design.md",
+ "items": [
+  {
+   "id": "doc B-1",
+   "lines": "3-8",
+   "met": true,
+   "note": "Covers what turn must achieve, how each is checked and how it is built; leaves use to the README, the caller's forms to the callers' page, prompts' wording and steps to the code."
+  },
+  {
+   "id": "doc B-2",
+   "lines": "1-400",
+   "met": true,
+   "note": "Read from the top as a builder: goals, checks, then each approach with the parts that hold it; the picture matches the decisions in steering Task #3, including the checklist's own name and version and the end-of-run naming of side effects."
+  },
+  {
+   "id": "doc B-3",
+   "lines": "10-31, 230-400",
+   "met": true,
+   "note": "Each term is defined before use; each approach gives its parts, when they act and what they do, so nothing of how a quality is held is left to guess. Fixed: hooks were named without what they stop."
+  },
+  {
+   "id": "doc B-4",
+   "lines": "1-400",
+   "met": true,
+   "note": "Every section serves a checklist item; the history lines ('four trials of four') were cut to one ground."
+  },
+  {
+   "id": "doc B-5",
+   "lines": "8, 237, 243, 294, 303, 315, 359",
+   "met": true,
+   "note": "Assumptions are marked; the one trial-based ground says 'seen in trials'."
+  },
+  {
+   "id": "doc B-6",
+   "lines": "1-400",
+   "met": true,
+   "note": "Holds purpose, decisions and reasons only; no folder names or field names that change with the build. Fixed: `.turn/` and `answer` removed."
+  },
+  {
+   "id": "doc B-7",
+   "lines": "3-8, 74-86",
+   "met": true,
+   "note": "The CCS's form and the call are left to the callers' page, use to the README; the design names only what is relied on."
+  },
+  {
+   "id": "doc U-1",
+   "lines": "32-48, 230-240, 247-252, 273-278",
+   "met": true,
+   "note": "Goals come before checks and build; each approach opens with its point before its parts."
+  },
+  {
+   "id": "doc U-2",
+   "lines": "10-31",
+   "met": true,
+   "note": "Every term (caller, checklist, run, round, roles, Good, More, coverage, the run's evidence) is defined before use."
+  },
+  {
+   "id": "doc U-3",
+   "lines": "1-400",
+   "met": true,
+   "note": "Each statement is said once; principles no longer repeat what an approach section holds. Fixed: the form clause of the second principle."
+  },
+  {
+   "id": "doc U-4",
+   "lines": "3-4",
+   "met": true,
+   "note": "One use: understanding what turn must achieve and why it is built so."
+  },
+  {
+   "id": "doc U-5",
+   "lines": "27, 293-294",
+   "met": true,
+   "note": "Coverage is tied to test coverage, the first user's copy to a new team member's fresh clone."
+  },
+  {
+   "id": "doc U-6",
+   "lines": "26-31, 107",
+   "met": true,
+   "note": "One name each. Fixed: 'the run's record' clashed with 'the records' (the JSONL); it is now 'the run's evidence', the CCS's own word."
+  },
+  {
+   "id": "doc U-7",
+   "lines": "32-400",
+   "met": true,
+   "note": "Headings name the quality or the approach a reader looks for."
+  },
+  {
+   "id": "doc U-8",
+   "lines": "175-224",
+   "met": true,
+   "note": "The figure shows who takes part, what passes between them and in what order, and what turn depends on; hooks are in its last note."
+  },
+  {
+   "id": "design B-1",
+   "lines": "34-48",
+   "met": true,
+   "note": "Five attractive qualities, each from the README's promises."
+  },
+  {
+   "id": "design B-2",
+   "lines": "49-56",
+   "met": true,
+   "note": "The first-round share and time and tokens, against the version in use."
+  },
+  {
+   "id": "design B-3",
+   "lines": "57-73",
+   "met": true,
+   "note": "Six must-be qualities, each with what the user takes for granted and, for the repository, why."
+  },
+  {
+   "id": "design B-4",
+   "lines": "74-86",
+   "met": true,
+   "note": "The call, the CCS, the checklist form and what a returned CCS points to, each with who relies on it and what may change. Fixed: `.turn/` as a name became what the CCS points to."
+  },
+  {
+   "id": "design B-5",
+   "lines": "87-94",
+   "met": true,
+   "note": "Three non-goals with reasons."
+  },
+  {
+   "id": "design B-6",
+   "lines": "95-102",
+   "met": true,
+   "note": "Runs in Claude Code, Python 3.9 standard library and jq, a git repository, used by Claude."
+  },
+  {
+   "id": "design B-7",
+   "lines": "105-125",
+   "met": true,
+   "note": "Each attractive quality with its situation and what must happen to pass."
+  },
+  {
+   "id": "design B-8",
+   "lines": "126-130",
+   "met": true,
+   "note": "Both measured from the same tasks on this version and the version in use."
+  },
+  {
+   "id": "design B-9",
+   "lines": "131-139",
+   "met": true,
+   "note": "Each must-be quality's breaking case as a test, now including a shell side effect and a checklist without its name or version."
+  },
+  {
+   "id": "design B-10",
+   "lines": "140-145",
+   "met": true,
+   "note": "A test per released version calling turn as its callers did."
+  },
+  {
+   "id": "design B-11",
+   "lines": "148-174",
+   "met": true,
+   "note": "Five principles, each with what it protects."
+  },
+  {
+   "id": "design B-12",
+   "lines": "175-224",
+   "met": true,
+   "note": "The figure names user, caller, roles, scripts, Claude Code and git, and what passes between them."
+  },
+  {
+   "id": "design B-13",
+   "lines": "230-400",
+   "met": true,
+   "note": "Every quality is named under some approach's Achieves."
+  },
+  {
+   "id": "design B-14",
+   "lines": "238-240, 254-264, 280-286, 296-300, 310-319, 333-341, 356-360, 373-377, 386-396",
+   "met": true,
+   "note": "Each part says when it acts, what it looks at and what it does; each hook names its event and what it stops. Fixed: the hooks were not defined."
+  },
+  {
+   "id": "design B-15",
+   "lines": "242, 265, 287, 301, 320, 342, 361, 378, 396",
+   "met": true,
+   "note": "A Must hold under each approach."
+  },
+  {
+   "id": "design B-16",
+   "lines": "243, 267, 269, 302, 322, 343, 379, 398, 226-229",
+   "met": true,
+   "note": "Each choice a maintainer might change gives the option weighed and its cost; the end-of-run naming of side effects is weighed against blocking."
+  },
+  {
+   "id": "design U-1",
+   "lines": "148-174",
+   "met": true,
+   "note": "Each principle spans more than one approach; the hooks' session rule spans every hook."
+  },
+  {
+   "id": "design U-2",
+   "lines": "1-400",
+   "met": true,
+   "note": "No file names, field names, values or steps; names kept are relied on as names: `turn:up`, `next`, the CCS's parts, Esc, python3, jq. Fixed: `.turn/`, `answer`."
+  },
+  {
+   "id": "design F-1",
+   "lines": "1-400",
+   "met": true,
+   "note": "Headings follow the template; no section is empty."
+  }
+ ]
+}

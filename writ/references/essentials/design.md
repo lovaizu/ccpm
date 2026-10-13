@@ -1,47 +1,222 @@
+---
+name: design
+version: 0.2.0
+---
+
 # Design document
 
-This file has three readers. The generator reads it as the form to aim for when it writes a design document. The first user takes the design document together with its README and implementation, and reads it as someone who builds or maintains the product: it picks one likely change and tries to decide whether it fits the design, and tries to check one benefit. It then reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when it was used by someone who builds or maintains the product, whether the design document lets its reader learn which feature brings each of the README's benefits to the user and how each is built, check that the user gets each one, and say whether a change fits the design and, if not, why.
+A design document is read by someone who builds or maintains a product. It lets them:
 
-- Having picked one likely change, how did you decide, from what the user would lose, whether it fits the design?
+- tell each quality the product must have, and within what limits;
+- tell how each quality is checked;
+- see how each quality is achieved, from the whole to each part;
+- decide whether a change fits the design;
+- tell why each choice was made over the other options.
 
-    When they find, for each feature, the benefit it serves, the step of the README's usage where it works, and as much of how it is built as the change touches, maintainers weigh a change by what the user loses.
+How the product is used is the README's; code, full definitions, steps, settings and file names
+are not for this reader, since they change with each rebuild. Each item of `doc.md` also applies to
+a design document.
 
-- When you were unsure whether a change fits the design, which principle did you recall and use?
+## Benefit
 
-    With few principles, builders can weigh them against each other and decide where situations differ. A rule that concerns only one feature sits beside that feature. Listed among the principles, it adds one more thing to keep in mind everywhere.
+### B-1: Attractive quality
 
-- For each principle you used, what did you take it would break if it were not kept?
+Can the reader tell which benefits, of those the README promises, the design must bring the user?
 
-    When a principle ties to a benefit, or to a condition the design cannot change, such as the environment the product is used in or its user, builders know what breaks and can weigh principles against each other. A principle tied to neither is kept out of habit.
+Why: the benefits are why the user chooses the product, and every other part of the design serves
+them or keeps them safe.
 
-- For each of the README's benefits, through which feature did you take it the user gets it?
+### B-2: One-dimensional quality
 
-    With a feature for each benefit, maintainers see how the user actually gets it. A feature is what the product offers toward a benefit, such as having the work checked by someone who did not write it. A benefit no feature serves has no way to reach the user. A part named after its mechanism, or writing in which a mechanism follows right after a benefit, hides which part brings which benefit. For the benefits, the flow of use and why each step is good for the user, pointing to the README's steps that already say them is enough. Said again in the design document, they drift from the README.
+Can the reader tell which qualities are better the more of them there is, such as less time taken
+or fewer tokens spent?
 
-- After the change you picked, what did you take it must always hold?
+Why: such a quality is weighed against the others in every choice, and one left unnamed is given up
+without anyone deciding to.
 
-    When it reads, at the decision it concerns, as a condition that holds after every operation, maintainers know what must keep holding even when they change one place. A condition read as one step of a procedure is broken when the procedure changes.
+### B-3: Must-be quality
 
-- In trying to check one benefit, what did you take it must happen for the check to pass?
+Can the reader tell what the user takes for granted, such as not losing work?
 
-    Checking whether the user actually got the benefit shows whether the user would choose the product at all. If the aim is to approve work from a summary without reading it again, the check is whether a user who read only the summary decides the same as one who read the work. A passing bar written as what happens to the reader or the user lets every builder check the same way. A check of whether the output has the shape meant for the benefit, or whether a feature works as designed, passes even when the benefit is missed.
+Why: the user does not ask for it and notices it only when it breaks, so a design that does not name
+it is free to break it.
 
-- In what situation did you take it that check is run?
+### B-4: Backward compatibility
 
-    When the check runs in a situation where the user would plainly struggle without the benefit, a pass is real proof of the benefit. In a situation the alternatives handle just as well, it passes without checking anything.
+For each thing someone outside the product relies on, can the reader tell who relies on it, what
+must keep holding, and what may change?
 
-- Where did you take it the checking effort goes?
+What others rely on: commands and settings users type, what other programs call or read, and what
+the product leaves in the user's environment.
 
-    Checking the benefits first puts the effort where it shows whether the user would choose the product. Quality the user takes for granted, such as nothing being lost, is easy to check and easy to see when broken, so placed first, its checks multiply and all pass, while no one has checked the benefits. Leaving to a script what a script can decide, such as whether a form is kept or whether a link is broken, is fast and gives the same answer every time.
+Why: a change to it breaks those who rely on it, who are not there to object; the design document is
+the one place that outlives a rebuild of the code.
 
-- Where you were tempted to replace the current way with another option, why did you take it the current way was chosen?
+### B-5: Non-goals
 
-    Knowing what replacing it loses and why that option was not chosen, maintainers weigh a change against the decisions already made. Without it, they overturn a decision without knowing its cost. An option maintainers would not reach for first needs no mention.
+Can the reader tell what the design could have aimed at but leaves out on purpose?
 
-- Supposing the change you picked were made, which sentences would have to be rewritten though the intent stays the same?
+Why: without the non-goals, a maintainer takes up what was left out on purpose as a gap to fill.
 
-    Kept to what does not change when the product is rebuilt, the design document stays true across rebuilds. Settings, procedures, how the code is split, file and function names, and internal data structures go stale with every rebuild.
+### B-6: Constraints
 
-- In trying to change the form of something left in the user's environment for later versions or people to read, which fields did you take it could be changed without breaking those who read it?
+Can the reader tell which conditions the design cannot change, such as where the product runs and
+who uses it?
 
-    What later versions or people read from the user's environment is a contract with the outside, read from outside, so its form is part of the design. When it is in the design document, the one place that survives a rebuild of the implementation, maintainers see why each field exists, what always holds, and what the form is, and can tell which fields can change without breaking those who read it. The implementation keeps no copy; two copies drift apart. Handoffs between roles are not a contract with the outside.
+Why: a change weighed without them turns the design into one that cannot run where it must.
+
+### B-7: Attractive quality checked
+
+For each benefit, can the reader tell in what situation it is tried, and what must happen to the
+user for it to pass?
+
+Why: a check in a situation the other ways handle as well passes without showing the benefit, and a
+check of whether the output has the intended shape passes while the benefit is missed.
+
+### B-8: One-dimensional quality measured
+
+For each one-dimensional quality, can the reader tell how it is measured and what it is compared
+with?
+
+Why: a quality not measured worsens without anyone noticing; measured against the version in use, a
+change shows whether it made the product better or worse.
+
+### B-9: Must-be quality checked
+
+For each must-be quality, can the reader tell which test checks it?
+
+Why: what a test can decide gives the same answer every time, and what the user takes for granted is
+noticed only when it breaks.
+
+### B-10: Backward compatibility checked
+
+For each thing others rely on, can the reader tell which test shows it still works as earlier
+versions left it?
+
+Why: a break in backward compatibility shows first to the users who rely on it, after the release.
+
+### B-11: Principles to judge a change
+
+Can the reader decide whether a change fits the design from its principles, each with the quality or
+the constraint it protects?
+
+Why: a principle tied to what it protects tells what breaks when it is not kept, so principles can
+be weighed against each other; one tied to nothing is kept out of habit.
+
+### B-12: Who takes part
+
+Can the reader see, in one place, who takes part, what each does, what passes between them, and what
+each depends on?
+
+Who takes part: the user, the product's own parts, and what is outside it, such as the host the
+product runs in, other programs and the tools it needs.
+
+Why: a maintainer changing one part needs to know what it hands to and takes from the others, and
+what it cannot work without.
+
+### B-13: An approach for each quality
+
+For each quality the design must have, can the reader find the approach that achieves it?
+
+Why: a quality no approach serves has no way to come about, and an approach that serves no quality
+is kept for nothing.
+
+### B-14: How each approach is built
+
+For each approach, can the reader tell each part it uses, when the part acts, what it looks at and
+what it does, such as the event a hook runs on and what it stops?
+
+Why: a maintainer changes an approach through its parts; a part named without what it does is built
+however its builder reads it, and the quality it was to hold is left to that reading.
+
+### B-15: What must always hold
+
+For each approach, can the reader tell what must hold after every operation?
+
+Why: read as a condition, it keeps holding when one place is changed; read as one step of a
+procedure, it is lost when the procedure changes.
+
+### B-16: Why this way
+
+For each choice a maintainer might want to change, can the reader tell which other options were
+weighed, why they were not chosen, and what the choice costs?
+
+Why: without the reasons, a decision is either kept blindly or overturned without knowing what it
+cost.
+
+## Usability
+
+### U-1: Few principles
+
+Is each principle needed across more than one approach?
+
+Why: few principles can be kept in mind and weighed against each other; a rule that concerns one
+approach belongs with that approach, and listed among the principles adds one more thing to keep in
+mind everywhere.
+
+### U-2: Nothing of the specification
+
+Does the document leave out what is decided anew with each build, such as steps, full definitions,
+values, settings and file names, and say what others rely on by what it lets them do, naming a
+name, a path or a value only where they rely on that very name?
+
+Why: such details change with each rebuild, so a design that holds them must be rewritten with the
+code, and the reader can no longer tell a decision that must hold from a detail that may change; a
+name made a promise where others rely only on what it gives ties the design to the build; an idea
+the design takes up is given in full as a decision and its reason, not as its specification.
+
+## Format
+
+### F-1: Shape
+
+Does the design document follow this template, headings included?
+
+```markdown
+# <Product name> design
+
+<What this document covers, with a link to the README whose benefits it serves>
+
+## Goals
+
+### Attractive quality
+
+### One-dimensional quality
+
+### Must-be quality
+
+### Backward compatibility
+
+### Non-goals
+
+### Constraints
+
+## Verification
+
+### Attractive quality
+
+### One-dimensional quality
+
+### Must-be quality
+
+### Backward compatibility
+
+## Architecture
+
+### Principles
+
+### Structure
+
+### <Approach name>
+
+<The qualities it achieves, how it is built, what must always hold, and the options weighed>
+```
+
+- A section with nothing to hold keeps its heading and says `None:` and why, so a section thought
+  through is told from a section forgotten.
+- Verification checks each quality by its heading in Goals, and each approach in Architecture names
+  the qualities it achieves, so each quality is traced from what it is to how it is checked and how
+  it is achieved.
+
+Why: a maintainer moving between products finds the same thing under the same heading in each, and
+settles what is aimed at and how it is checked, neither of which depends on how the product is
+built, before reading how it is built.

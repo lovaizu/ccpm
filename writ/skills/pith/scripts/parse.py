@@ -9,6 +9,7 @@ ITEM = re.compile(r"^- (Good|More):\s*(.*)$")
 LOCATION = re.compile(r"^`([^`]+)`")
 LOCATION_PARTS = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
 EVIDENCE = re.compile(r"^\s+- Evidence \((work|report)\):\s*(.*)$")
+ITEM_HEADING = re.compile(r"^### [A-Z]-\d+: ")
 
 
 def collapse(text: str) -> str:
@@ -101,7 +102,12 @@ def parse_result(path: str) -> Result:
 
 
 def parse_questions(path: str) -> List[str]:
-    """Return the top-level `- ` list items of an essentials file, outside code fences."""
+    """Return the questions of an essentials file: in a checklist whose items sit under `### <ID>:`
+    headings, the first paragraph of each item; otherwise the top-level `- ` list items. Both outside
+    code fences."""
+    items = parse_items(path)
+    if items:
+        return items
     questions: List[str] = []
     current: Optional[List[str]] = None
     fenced = False
@@ -122,6 +128,27 @@ def parse_questions(path: str) -> List[str]:
             continue
         questions[-1] = collapse(" ".join(current))
     return questions
+
+
+def parse_items(path: str) -> List[str]:
+    """Return the first paragraph under each `### <ID>: <title>` heading, outside code fences."""
+    items: List[List[str]] = []
+    current: Optional[List[str]] = None
+    fenced = False
+    for line in read_text(path).splitlines():
+        if line.lstrip().startswith(("```", "~~~")):
+            fenced = not fenced
+            current = None
+        elif fenced:
+            continue
+        elif ITEM_HEADING.match(line):
+            current = []
+            items.append(current)
+        elif current is not None and line.strip():
+            current.append(line)
+        elif current:
+            current = None
+    return [collapse(" ".join(item)) for item in items]
 
 
 def heading_for(essentials_path: str, question: str) -> str:

@@ -1,13 +1,47 @@
 {
-  "description": "turn: keeps each of turn's agents running until its own record shows it did its job, and stops what it must not do when it tries it",
+  "description": "turn: keeps the orchestrator and each agent of a run to their steps, and the user's work as it was",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Read|Write|Edit|NotebookEdit|Grep|Glob|Agent|SubagentHandback",
+        "matcher": "Agent|Write|Edit|NotebookEdit|Bash",
         "hooks": [
           {
             "type": "command",
             "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py\"; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/stop.py\"; fi",
             "timeout": 10
           }
         ]

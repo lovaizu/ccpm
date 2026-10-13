@@ -1,31 +1,163 @@
+---
+name: prompt
+version: 0.1.0
+---
+
 # Prompt
 
-This file has three readers. The generator reads it as the form to aim for when it writes a prompt. The first user picks, from the purpose handed over with the prompt, the situations to give the AI, actually gives the prompt to an AI through `claude -p` or the like and runs it, and reports, for each question here, what it did and what happened. It does not judge. The conductor lays the report beside the aim and gives each question a Good or More. Once they have read it through, they can tell, from what happened when the prompt was given to an AI and run, whether the AI that receives it acts in line with the purpose even in situations the writer did not foresee, and which instructions are not needed.
+A prompt, such as a skill or an agent, is read by the AI that runs it. It lets the AI:
 
-- When you gave it a situation the writer foresaw, what did the AI do?
+- tell what is expected of it, and why;
+- go through the same steps, in the same order and in full, on every run;
+- decide for itself how to think within each step;
+- check its work, and fix it, before handing it back;
+- hand back to the user what only the user decides;
+- read only what it needs, when it needs it.
 
-    Laid beside the aim, what the AI did and what it left show whether the prompt reaches its purpose, from what happened when it ran rather than from what was taken in by reading. Even an instruction that is clear to read, the AI misreads when it acts, or drops under the push of other instructions. If it goes wrong in a situation the writer foresaw, it goes wrong all the more in one they did not.
+How a prompt is made, judged and tried is not for this reader. Each item of `doc.md` also applies to
+a prompt.
 
-- When you gave it a situation that no step reaches, what did the AI do?
+## Benefit
 
-    Given the purpose and why it is needed, the AI can choose for itself, where the steps run out, the action that fits the purpose. An AI given only what to do stops at the end of the steps or goes on by guessing. Such a situation is one the purpose covers but no step touches. Situations the writer pictured show only whether the AI can follow the steps.
+### B-1: What is expected
 
-- When you gave it a situation where following the steps leads away from the purpose, what did the AI do?
+From the Role, can the AI tell what is expected of it?
 
-    When the steps are narrowed to rules that break things if they slip and cannot be worked out from the purpose, such as the form of a handoff, the AI acts in line with the purpose everywhere else. The AI keeps steps exactly as written, so steps that only copy a workflow, and sentences meant as explanation, are carried out even in situations where they work against the purpose.
+Why: what is expected is what the AI spends its judgment on and checks its work against; without it,
+the AI spends that judgment working out what the prompt is for.
 
-- When it met something the user or the people around them decide, what did the AI do?
+### B-2: Why it is needed
 
-    When what the user decides is handed back to the user, the user makes their own decision and does not mistake the AI's guess for fact. When the AI decides and goes on, the decision stays the AI's guess until the user finds it later. Asking even what could be found out by looking spends the user's time on what is not their decision. Even a prompt that does not talk with the user lets the user decide, if the result shows what was left undecided.
+From the Role, can the AI tell why its work is needed?
 
-- When it met a problem, in what it was given or in what it made, how did the AI get from the problem to what it changed?
+Why: an AI that knows why chooses, where the steps run out, the action that fits the purpose; given
+only what to do, it stops at the end of the steps or goes on by guessing.
 
-    When the AI lays the problem beside what the result should be, follows it back to what made it, and changes that, the change brings the result closer to its purpose, and the same problem does not come back elsewhere. An AI that changes the spot where the problem showed leaves its cause in place. What an AI does varies from run to run, so a change fitted to one run's slip meets a different slip in the next, and the changes pile up without settling. The AI does this when the prompt gives it what the result should be and asks for the cause; given only what to check, it fixes what it saw.
+### B-3: Everything that must happen every time
 
-- When you gave it the same situation several times, where did the AI's actions differ from run to run?
+Do the Steps say, in the order it is done, everything that must happen on every run?
 
-    A single run cannot tell whether acting in line with the purpose was luck or the prompt's doing. Where the runs differed is where the prompt did not give the AI what to decide by. If every difference is fine in light of the purpose, that is where the AI can be left to choose.
+Look for: what the AI receives and where it reads it, what it hands back and where it writes it, and
+each thing it must do in full, such as reading a file whole.
 
-- When you took out one instruction and ran it again on the same situation, what changed in what the AI did?
+Why: what is left out of the steps is done on some runs and not on others; a check given only as
+advice is the step that gets skipped.
 
-    If nothing changed, the instruction is not needed. The AI already does it, working it out from the purpose or doing it without being told. The AI tries to keep even an unneeded instruction in every situation, so it takes effect in situations that go against the purpose and draws attention away from the other instructions. The instruction to take out is chosen from those that showed in none of the AI's actions in the situations run for the other questions.
+### B-4: Its own judgment within a step
+
+Is the AI left to decide how to think within each step, with only what is fragile, or must come out
+the same on every run, set down exactly?
+
+Why: the AI often reasons better than a plan written for it, so a step set down in more detail than
+its work needs narrows the AI where it would have done better; a fragile step left loose breaks.
+
+### B-5: Checked before handed back
+
+Do the Steps have the AI check its work against what it should be, and fix what falls short, before
+handing it back?
+
+Why: a check followed by a fix and another check catches a slip while it is cheap to fix; what is
+handed back unchecked carries the slip to whoever receives it.
+
+### B-6: The user's decisions handed back
+
+When the AI meets something only the user decides, or an action that is hard to undo, can it tell
+from the prompt that it hands that to the user?
+
+Why: an AI that decides for the user leaves its guess to be taken as the user's choice, and an action
+hard to undo cannot be taken back once the user sees it.
+
+## Usability
+
+### U-1: Only what the AI does not already know
+
+Does each sentence give the AI something it would not know or do without it?
+
+Why: every sentence competes for the AI's attention with the work in front of it, and an
+instruction the AI already follows draws attention from the ones it needs.
+
+### U-2: What to do
+
+Is each instruction written as what to do, rather than what to avoid?
+
+Why: an instruction that names what to avoid leaves the right action to be guessed.
+
+### U-3: Details read when needed
+
+Can the AI find each detail it needs only on some runs in a file it reads then, named directly in
+the prompt?
+
+Why: a detail read on every run costs attention on the runs that do not need it, and a file reached
+only through another file is often read in part.
+
+### U-4: Examples close to the real work
+
+Does each example look like the work the AI will actually be given?
+
+Why: the AI copies examples closely, and one far from the real work steers it away from that work.
+
+### U-5: Examples alike only on purpose
+
+Do the examples differ from each other in everything they are not meant to share?
+
+Why: the AI takes what its examples share as part of what is asked, so a likeness left by chance is
+copied too.
+
+### U-6: Scripts for what must come out the same
+
+Is each operation that must give the same result on every run done by a script the AI runs?
+
+Why: a script gives the same result every time and spends no attention; the same operation worked
+out by the AI varies from run to run.
+
+### U-7: Only what is used
+
+Is each field in the form of what the AI receives and hands back used, by the AI or by whoever
+receives its work, toward the purpose?
+
+Why: a field nobody uses still has to be read and filled on every run, and drifts from what the
+work actually is, since nothing checks it.
+
+### U-8: What the user must see, shown by a tool
+
+Is each thing the user must see on every run, while the AI is still at work, shown by a script or a
+hook rather than by the AI's words between its tool calls?
+
+Why: the AI writes words between its tool calls on some runs and not on others, so what rests on
+them reaches the user only sometimes; a hook shows it on every run.
+
+## Format
+
+### F-1: Shape
+
+Does the prompt follow this template, headings included?
+
+```markdown
+---
+name: <name>
+description: <What it does, and when to use it, in the third person>
+---
+
+## Role
+
+<What is expected of the AI, and why>
+
+## Steps
+
+1. <What to do>
+```
+
+- `name` and `description` are what Claude Code reads to choose a skill or an agent; the
+  description says when to use it, since that is what the choice is made on.
+- Every step is numbered in the order it is done.
+
+Why: the AI finds what is expected and what to do in the same place in every prompt, and a reader
+checks a prompt against its design by these two parts.
+
+### F-2: Form of what goes in and out
+
+Is the form of what the AI receives and of what it hands back set, in the prompt or in a template
+or schema the prompt names?
+
+Why: whoever receives the work, a person, the next step or a script, reads it by its form; a form
+the AI chooses afresh on each run breaks them.
