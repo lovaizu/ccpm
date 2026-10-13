@@ -44,7 +44,9 @@ repository.
    false, where it is answered. Write the form `hand-on` with `jq`, for every item: `met`, true or
    false; `lines`, where met, the lines that give it, such as `3-5, 12`; `note`, where met, what the
    receiver gets from those lines, and where not, how the work would give it; `question`, where not
-   met only for want of a question's answer, the question's number, counted from 1. Run
+   met only for want of a question's answer and the work already leaves out what the answer
+   settles, the question's number, counted from 1; where the work still says it, the item is not
+   met, and the note says to leave it out until the answer comes. Run
    `up.py check <folder> <round> hand-on`, and fill each place it names, until it prints `filled`.
 8. If a question is asked that the user has not yet seen, do step 5. If an item of `hand-on` is not
    met, other than one waiting on a question the user left, go to step 4 once each question it
