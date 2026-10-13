@@ -139,7 +139,10 @@ Progress:
 - Found in the runs, for turn: the learner makes a rule for every later task from one finding, and
   `calling-from-a-plugin.md` tells the caller to carry it on unchecked; whether turn makes such rules
   at all is turn's to settle.
-- To do: turn's README is made again the same way, as the one committed was made with rules carried.
+- turn's README made again the same way (2026-10-14): every item met after two rounds, 129 lines.
+- Found in the run, for turn: its console prints each step's file path under `.turn/`, which the
+  reader of turn's README took as inner workings they need neither to decide nor to start; whether
+  the console shows them is turn's to settle.
 - To do in #4: `writ/.claude-plugin/plugin.json` names turn in `dependencies`, which the README's
   Installation promises; `turn/calling-from-a-plugin.md` points to turn's README for what both say
   (the checklist's front matter, writing over a file git holds, Esc).
