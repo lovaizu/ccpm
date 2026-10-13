@@ -166,7 +166,8 @@ class End(unittest.TestCase):
             self.assertEqual(back[part], sent[part])
         self.assertEqual(back["predictive_cue"], [{"next": "done"}])
         self.assertEqual(back["semantic_gist"], [])
-        self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/1/orchestrator.json"}])
+        self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/list.json"},
+                                                  {"evidence": ".turn/out/1/orchestrator.json"}])
         self.assertEqual(out.splitlines()[0], "done")
 
     def test_a_run_does_not_return_before_every_item_is_decided(self):

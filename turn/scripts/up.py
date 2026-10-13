@@ -121,7 +121,17 @@ def checklist(path):
                 opening.append(line)
     for i in items:
         i["text"] = i["text"].strip()
-    return {"checklist": name, "opening": "".join(opening).strip()}, items
+    return {"checklist": name, "opening": "".join(opening).strip(), "path": path, "commit": held(path)}, items
+
+
+def held(path):
+    """The commit that holds the file as it stands, so the version it was read in can be found later."""
+    git = [subprocess.run(["git", *args, "--", path], capture_output=True, text=True, check=True).stdout.strip()
+           for args in (["status", "--porcelain", "--ignored"], ["log", "-1", "--format=%H"])]
+    if git[0]:
+        raise Stop(f"{path} is not committed as it stands; commit it, so the work can be followed back "
+                   "to the version it was checked by")
+    return git[1]
 
 
 def forms(ids):
@@ -484,12 +494,12 @@ def end(work, n):
         for rule in learned(work, k)[1]:
             if {"rule": rule} not in ccs["constraints"]:
                 ccs["constraints"].append({"rule": rule})
-    evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
+    evidence = [os.path.join(str(n), e) for e in ["orchestrator.json"] + (["learner.json"] if left else [])]
     os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
     shutil.copyfile(path, deliverable)
     ccs.update(predictive_cue=[{"next": nxt}],
                semantic_gist=differences,
-               episodic_trace=[{"evidence": os.path.join(work, str(n), e)} for e in evidence])
+               episodic_trace=[{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence])
     write_json(run["out"], ccs)
     close(work, [nxt, f"The work is at {deliverable}."] +
           (["❓ Run turn again on what is still missing, or take the work as it is?"]

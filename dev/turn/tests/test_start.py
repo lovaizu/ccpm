@@ -1,4 +1,5 @@
 import json
+import subprocess
 import unittest
 
 from helpers import form, Repo, ccs, run, started
@@ -36,6 +37,38 @@ class Start(unittest.TestCase):
             "questions": ".turn/out/questions.json", "receiver": "a new teammate", "use": "to start work", "acceptance": ["they can start alone"],
             "sources": ["notes.md"], "constraints": []})
         self.assertFalse(self.repo.exists("out.json"))
+
+    def test_each_checklist_is_kept_with_the_commit_that_holds_it_as_read(self):
+        # Given: a checklist committed, then the repository moved on by a commit that leaves it alone
+        held = subprocess.run(["git", "-C", self.repo.path, "rev-parse", "HEAD"], capture_output=True,
+                              text=True, check=True).stdout.strip()
+        self.repo.write("notes.md", "Run make test.\n")
+        subprocess.run(["git", "-C", self.repo.path, "-c", "user.name=t", "-c", "user.email=t@t",
+                        "commit", "-qam", "notes"], check=True)
+        # When: a run starts
+        got = started(self.repo)
+        # Then: the list names the checklist by its path and by the commit its text was last changed in
+        kept = self.repo.json(got["list"])["checklists"][0]
+        self.assertEqual((kept["path"], kept["commit"]), ("checklists/note.md", held))
+
+    def test_a_task_is_refused_when_a_checklist_is_not_as_git_holds_it(self):
+        def ignored(r):
+            r.write(".gitignore", "checklists/new.md\n")
+            r.write("checklists/new.md", "# New\n")
+        for name, change in (("changed", lambda r: r.write("checklists/note.md", "# Other\n")),
+                             ("new", lambda r: r.write("checklists/new.md", "# New\n")),
+                             ("ignored", ignored)):
+            with self.subTest(name):
+                # Given: a checklist whose text no commit holds
+                change(self.repo)
+                c = ccs(retrieved_artifacts=[{"viewpoint": f"checklists/{'note' if name == 'changed' else 'new'}.md"}])
+                self.repo.write("in.json", json.dumps(c))
+                # When: a run starts
+                code, out = run(self.repo, "start", "in.json", "out.json", "s1")
+                # Then: it ends asking for the checklist to be committed, and starts nothing
+                self.assertEqual(code, 1)
+                self.assertIn("is not committed as it stands", out)
+                self.assertFalse(self.repo.exists(".turn"))
 
     def test_a_task_without_a_use_is_run_with_none(self):
         # Given: a task that names no use

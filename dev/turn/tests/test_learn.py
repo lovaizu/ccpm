@@ -201,7 +201,8 @@ class EndAfterLearning(unittest.TestCase):
         self.assertEqual(back["semantic_gist"],
                          [{"difference": "note F-1 (Is it short?): cut the second line"}])
         self.assertEqual(back["constraints"], [{"rule": RULE}])
-        self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/2/orchestrator.json"},
+        self.assertEqual(back["episodic_trace"], [{"evidence": ".turn/out/list.json"},
+                                                  {"evidence": ".turn/out/2/orchestrator.json"},
                                                   {"evidence": ".turn/out/2/learner.json"}])
 
     def test_more_whose_way_lies_in_what_the_caller_wrote_goes_to_the_caller(self):
