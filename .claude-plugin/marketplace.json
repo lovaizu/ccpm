@@ -20,7 +20,7 @@
     },
     {
       "name": "turn",
-      "description": "Has Claude Code write a document or a prompt, and gives it back already read by another AI as the person it is for, made again where that reader could not find what it needed; you are asked only what you alone can answer, in a conversation or from a step of your own plugin.",
+      "description": "Has Claude Code make any work, such as a document, a prompt or code, and gives it back already read by another AI as the person it is for, made again where that reader could not find what it needed; you are asked only what you alone can answer, in a conversation or from a step of your own plugin.",
       "source": "./turn",
       "category": "development"
     }

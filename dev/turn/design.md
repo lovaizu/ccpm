@@ -89,8 +89,8 @@ Each must be no worse than in the version in use.
 - Deciding what the work should be: the caller does it, knowing what was already agreed.
 - Running until every item is Good: what a second round leaves without a Good points to a fault in
   turn, the checklist or what the work should be, to be fixed there (assumption).
-- Finding what no item asks, which goes into the checklist; holding checklists, which belong to
-  whoever knows the kind of work, such as writ; and code, which is checked by its tests.
+- Finding what no item asks, which goes into the checklist; and holding checklists, which belong to
+  whoever knows the kind of work, such as writ.
 
 ### Constraints
 

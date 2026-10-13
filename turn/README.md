@@ -1,12 +1,12 @@
 # turn
 
-turn has Claude Code write a document or a prompt for you, such as a README, a design document or
-a skill. Before you get it, another AI reads it as the person it is for. Where that reader could not
-find what it needed, the work is made again. You are asked only what you alone can answer, as soon as it comes up, while the
-work goes on.
+turn has Claude Code make a work for you, such as a README, a design document, a skill or code.
+Before you get it, another AI reads it as the person it is for. Where that reader could not find
+what it needed, the work is made again. You are asked only what you alone can answer, as soon as it
+comes up, while the work goes on.
 
-turn is for anyone who has Claude Code write such work, in a conversation or from a step of their
-own plugin. It does not write code, since code is checked by running its tests, not by reading it.
+turn is for anyone who has Claude Code make such work, in a conversation or from a step of their
+own plugin. Any kind of work fits, as long as there is a checklist to measure it by.
 
 Why another reader: when Claude checks what it has just written, it reads as the writer. It knows
 what each line means, so it can miss what a newcomer would not understand, as people do with their

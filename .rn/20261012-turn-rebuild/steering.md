@@ -436,6 +436,9 @@ Progress:
   as 0.2.0 with turn 0.1.0. The README's Example and the design's console said ⚠️ shows what the
   first user could not take; at the user's word they now say what the console shows, what the work
   does not yet give as what the receiver will be able to do.
+- Found with the user (2026-10-13): the README and the design limited turn to documents and prompts,
+  leaving code out, a limit the assistant wrote in during the rebuild and the user never decided.
+  turn takes any work and its checklists through the CCS, so the limit is dropped everywhere.
 - Next: the user merges; then tag `writ--v0.2.0` and `turn--v0.1.0` and publish their Releases.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
