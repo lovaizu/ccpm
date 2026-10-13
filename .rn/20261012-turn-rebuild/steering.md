@@ -377,10 +377,18 @@ Progress:
   and that a stopped run leaves where the work goes as it was; the page now says so. Unit 6 holds.
   Seen once, judged only: t5f's round-2 learner gave a way made "from the answer" to two questions
   the user had answered "unknown; leave it out", so the difference asked the user again.
-- Next: unit 7, following each item back: the evidence in `.turn/` with each checklist's commit,
-  judged first on the files the trials left (t5c to t5f, in
-  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-fix-rn/cb763d29-b670-4dcb-9081-cf11f18172dc/scratchpad/`, each with its `.turn/` and `.tasks/`). Whether the README's Example should show the hook's
-  prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
+- Unit 7 judged first on the files the unit 5 trials left (t5c to t5f): for every item, the last
+  round's `orchestrator.json` gives the lines of its Good, and `learner.json` how an item without
+  one would get it; no checklist's version was kept. Built (eb034aa): the list keeps each
+  checklist's path and the commit that holds it, a run is refused while a checklist is not
+  committed as it stands (changed, new or ignored), and the CCS's evidence points to the list too;
+  the callers' page says so. Checked on a clone: the commit kept gives the checklist as read, and a
+  changed checklist stops the run. No new trial, since the agents' part is unchanged and the
+  trials' files already show it.
+- Next: the README's Requirements says a checklist is kept in the repository but not that it must
+  be committed as it stands, which the run now asks; this needs the user's word, as the README is
+  agreed. Then unit 8. Whether the README's Example should show the hook's prefix
+  (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
