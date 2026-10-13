@@ -177,6 +177,17 @@ class Questions(unittest.TestCase):
                 # Then: it may stop while it waits, and is kept at work otherwise
                 self.assertEqual(code, kept, said)
 
+    def test_a_question_said_in_the_last_message_counts_before_the_record_holds_it(self):
+        fill(self.repo, QUESTIONS, [OPEN])
+        for name, last, kept in [("said last", f"❓ {LICENSE}", 0), ("not said", "Working on it.", 2)]:
+            with self.subTest(name):
+                # Given: a question open, and the conversation's record not yet holding the last message
+                # When: the orchestrator stops, its last message saying the question or not
+                code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False,
+                                  transcript_path=talk(self.repo), last_assistant_message=last)
+                # Then: it may stop once the question is said, and is kept at work otherwise
+                self.assertEqual(code, kept, said)
+
 
 class LearnersQuestions(unittest.TestCase):
     """A way to a Good that needs what only the user can decide is asked before the second round."""
