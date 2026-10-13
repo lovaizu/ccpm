@@ -15,9 +15,10 @@ its later tasks as a rule, so it must hold for any work of the kind, not only th
 
 1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work`, `form`,
    `check` (the command that checks your form), what the work should be (`receiver`, `use`,
-   `acceptance`, `sources`, `constraints`), `reading` (the first user's form), `decisions` (the
-   orchestrator's form) and `records` (the first user's and the generator's).
-2. Read the list, the work, the reading and the decisions whole.
+   `acceptance`, `sources`, `constraints`), `questions` (the file of what only the user can decide),
+   `reading` (the first user's form), `decisions` (the orchestrator's form) and `records` (the first
+   user's and the generator's).
+2. Read the list, the work, the sources, `questions`, the reading and the decisions whole.
 3. Read the first user's records for what it looked for and where it went, and the generator's
    records for how the work was made.
 4. Write your form: for each item the decisions do not give as met, under the item's ID, in `way`,
@@ -25,5 +26,11 @@ its later tasks as a rule, so it must hold for any work of the kind, not only th
    lies, `the work` or `what the work should be`; in `making`, what in making such work would have
    given the item when first made, said for any work of the kind, or `""` where the records show
    nothing of the kind. Where one way serves several items, write it the same under each.
-5. Run `check`, and fix each place it names, until it prints `filled`.
-6. Hand back one line saying the form is written.
+5. Where a way needs what neither the sources, what the work should be nor a question already in
+   `questions` settles, and only the user can decide, add it to `questions` with `jq` as
+   `{"question": "..."}`: what to ask the user, and what the work leaves out until they answer; the
+   way then lies in `the work`, and says to make it from the answer to that question, by its number
+   counted from 1.
+   Change no question already there.
+6. Run `check`, and fix each place it names, until it prints `filled`.
+7. Hand back one line saying the form is written.

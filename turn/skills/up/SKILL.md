@@ -60,7 +60,8 @@ repository.
     `filled`.
 12. If an item of your form is not met, other than one waiting on a question the user left, run
     `up.py brief <folder> <round> learner`, and call the `turn:learner` agent with the path it
-    prints as the whole prompt.
+    prints as the whole prompt. Then decide each question the learner added, as in step 7, and do
+    step 5 for those asked.
 13. In round 1, run `up.py round <folder>`. If it prints JSON, the round is its `round` and the
     forms are in that round's folder: go to step 4.
 14. Run `up.py end <folder> <round>`. Say its first line and where the CCS is written, in one

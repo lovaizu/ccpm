@@ -191,7 +191,7 @@ def check(work, n, role):
     form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
     if role == "learner":
-        return found + learner_faults(form, without_good(work, n))
+        return found + learner_faults(form, without_good(work, n)) + question_faults(work, decided=False)
     if role in ("generator", "hand-on"):
         found += question_faults(work, decided=role == "hand-on")
     for i in ids if role not in ("first-user", "evaluator") else [i for i in ids if i in form]:
@@ -293,6 +293,9 @@ def round_two(work):
     if run["round"] != 1:
         raise Stop("a run has two rounds at most")
     given, _ = learned(work, 1)
+    found = question_faults(work, decided=True)
+    if found:
+        raise Stop("\n".join(found))
     if not any(w["in"] == PLACES[0] for w in given):
         raise Stop("no way for the generator to take, so the run ends after round 1")
     _, _, _, path = the_work(work, 1)
@@ -410,7 +413,8 @@ def brief(work, n, role):
             raise Stop("\n".join(found))
         if not without_good(work, n):
             raise Stop("every item is met, so there is nothing to learn")
-        given.update(should, reading=os.path.join(here, "first-user.json"),
+        given.update(should, questions=os.path.join(work, "questions.json"),
+                     reading=os.path.join(here, "first-user.json"),
                      decisions=os.path.join(here, "orchestrator.json"),
                      records={"first user": records("first-user"), "generator": records("generator")})
     out = os.path.join(here, f"{role}-brief.json")

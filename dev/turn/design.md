@@ -151,6 +151,12 @@ checklists give a list with every opening and item; every place a returned CCS p
   with one place per item, handed on only once a script sees every place filled, since the form, not
   the wording, holds it to its aim; during a run, hooks catch a step not kept. Protects: nothing
   passes unshown, the first-round share.
+- A question for the user may come from the roles given the sources: the orchestrator, the
+  generator and the learner; the orchestrator decides each, asking it at once or showing where it is
+  answered. The first user and the evaluator raise none, since without the sources they cannot tell
+  what only the user can decide, and a place for what they did not find would be a place for faults;
+  what they did not take reaches the learner as an item without a Good. Protects: asked only what
+  only the user can decide.
 - What must come out the same every time is done by a script or a hook. Protects: nothing passes
   unshown, what the work should be unchanged, repository untouched, following each item back.
 
@@ -195,7 +201,8 @@ sequenceDiagram
     S-->>O: coverage
     Note over O: decides every item on its form
     O->>L: items without a Good
-    L-->>O: ways to a Good, each with its items
+    L-->>O: ways to a Good, each with its items, questions
+    O-->>U: questions raised by the learner
   end
   O->>S: decisions, ways to a Good, new CCS
   S-->>O: evidence in .turn/, CCS checked
@@ -282,8 +289,9 @@ names a version exactly.
 Achieves: read in the receiver's place, nothing unread.
 
 The learner asks, for each item left without a Good, how the work would give it, in the work and in
-the process, and groups the items one way serves. The generator makes the work again on those ways
-in a second round, read and decided as the first; what it leaves without a Good is returned as More
+the process, and groups the items one way serves. Where a way needs what only the user can decide,
+it raises a question, which the orchestrator asks at once, as in the making. The generator makes
+the work again on those ways, with the answers, in a second round, read and decided as the first; what it leaves without a Good is returned as More
 with how it would get a Good. A way that lies in how such work is made is returned as a rule the
 caller carries into later tasks; one in what the caller wrote goes back to the caller.
 

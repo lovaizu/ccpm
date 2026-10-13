@@ -1,5 +1,7 @@
 import os
+import tempfile
 import unittest
+from unittest import mock
 
 from helpers import Repo, ccs, fill, form, run, started, up
 
@@ -172,6 +174,64 @@ class Questions(unittest.TestCase):
                 code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False)
                 # Then: it may stop while it waits, and is kept at work otherwise
                 self.assertEqual(code, kept, said)
+
+
+class LearnersQuestions(unittest.TestCase):
+    """A way to a Good that needs what only the user can decide is asked before the second round."""
+
+    def setUp(self):
+        self.repo = Repo()
+        self.home = tempfile.TemporaryDirectory()
+        self.env = mock.patch.dict(os.environ, {"HOME": self.home.name})
+        self.env.start()
+        self.addCleanup(self.env.stop)
+        self.addCleanup(self.home.cleanup)
+        self.addCleanup(self.repo.close)
+        started(self.repo)
+        self.repo.write(".turn/out/1/note.md", WORK)
+        seen(self.repo)
+        decided(self.repo, f1=False)
+        fill(self.repo, form("learner"), {"note F-1": {"way": "say why, from the answer to question 1",
+                                                       "in": "the work", "making": ""}})
+
+    def test_the_learner_is_told_where_the_questions_are(self):
+        # Given: the records of the run's agents
+        folder = os.path.join(self.home.name, ".claude/projects/p/s1/subagents")
+        os.makedirs(folder)
+        for role in ("first-user", "generator"):
+            with open(os.path.join(folder, f"agent-{role}.meta.json"), "w") as f:
+                f.write('{"agentType": "turn:%s"}' % role)
+            open(os.path.join(folder, f"agent-{role}.jsonl"), "w").close()
+        # When: the learner's brief is made
+        code, out = run(self.repo, "brief", ".turn/out", "1", "learner")
+        # Then: it says where to add a question
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.repo.json(out.strip())["questions"], QUESTIONS)
+
+    def test_a_learners_question_without_its_words_is_stopped(self):
+        # Given: the learner added a question without its words
+        fill(self.repo, QUESTIONS, [{"question": ""}])
+        # When: the learner's form is checked
+        code, out = run(self.repo, "check", ".turn/out", "1", "learner")
+        # Then: it is stopped, naming the question
+        self.assertEqual(code, 1)
+        self.assertIn("question 1: the question is not given", out)
+
+    def test_the_second_round_starts_only_once_each_question_is_decided(self):
+        for name, questions, said in [("undecided", [{"question": LICENSE}], "question 1: not decided"),
+                                      ("asked", [OPEN], None)]:
+            with self.subTest(name):
+                # Given: the learner's question, decided by the orchestrator or not
+                fill(self.repo, QUESTIONS, questions)
+                # When: the second round is asked for
+                code, out = run(self.repo, "round", ".turn/out")
+                # Then: it starts only once the question is decided; the generator may work while
+                # the user answers
+                if said is None:
+                    self.assertEqual(code, 0, out)
+                else:
+                    self.assertEqual(code, 1)
+                    self.assertIn(said, out)
 
 
 if __name__ == "__main__":
