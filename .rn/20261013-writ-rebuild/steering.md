@@ -1,0 +1,99 @@
+---
+rn: 0.9.0
+pr: none yet
+status: running
+artifact-language: English
+conversation-language: Japanese
+issue: https://github.com/lovaizu/ccpm/issues/53
+readme: writ/README.md
+design: dev/writ/design.md
+verification: dev/writ/trials
+---
+
+# Goal
+
+writ is rebuilt on turn (#53): it hands back a document its reader understands in one reading and
+acts on, which the user can pass on without reading it over, and judges from the final report alone.
+writ keeps the checklists that say what a good work of each kind is, and hands each job to
+`turn:up`; the pith inside writ goes.
+
+# Acceptance criteria
+
+## Attractive quality
+
+- A1: The user asks for a document of a kind and gets it finished, asked only what the checklist
+  needs and their request and repository do not tell.
+- A2: For a kind writ has no checklist for, the user chooses between the general one and having one
+  made first, and a checklist made is used from then on.
+
+## Must-be quality
+
+- M1: Each part follows official best practice or says why it does not, and holds nothing its
+  purpose does not need.
+- M2: Checking a work is turn's alone; writ holds no second copy of it.
+- M3: `claude plugin validate --strict` passes for writ and for the marketplace, and CI passes.
+
+# Assumptions
+
+- Fact, decided by the user: the plugin is built by `.claude/rules/plugin.md`, step by step; only the
+  README and the design are agreed with the user, and the rest is built and checked without asking
+  unless the README or the design should change.
+- Fact, decided by the user: before the README, the user and the assistant agree on a scene of what
+  the user does and what happens.
+- Fact, decided by the user (2026-10-13): writ reads the checklist's items and asks the user, one
+  question at a time, what the items need and the request and the repository do not tell; what it
+  can infer, it puts as a proposal.
+- Fact, decided by the user (2026-10-13): for a kind writ has no checklist for, writ asks the user
+  whether to make the document with the general `doc.md` alone or to make that kind's checklist
+  first with turn, against `essentials.md`.
+- Fact, from #53: #36 and #37 are judged against the rebuilt writ by running what each describes.
+
+# Rules
+
+- The documents are written in English from the start; the user reads them through machine
+  translation, so each thing keeps one plain word.
+- Questions to the user are asked one at a time.
+
+# Tasks
+
+### [ ] #1: The scene
+
+Purpose: the user and the assistant agree, in about five lines, on what the user does with writ and
+what happens, before anything is made.
+
+Serves: A1, A2
+
+Progress:
+
+- Proposed (2026-10-13), with points 2 and 5 changed at the user's word:
+  1. The user asks `/writ:up` to write this tool's README.
+  2. writ picks the checklists for the kind (`doc.md` and `readme.md`), reads their items, and asks,
+     one question at a time, what they need and the request and repository do not tell; what it can
+     infer it puts as a proposal to confirm.
+  3. writ hands the job to `turn:up`: turn writes, another AI reads it as the reader, and it is
+     checked against the checklists; what only the user can decide is asked while the work goes on.
+  4. The user gets the finished README and, for each item of the checklists, whether it is met.
+  5. For a kind writ has no checklist for (say, release notes), writ asks whether to make it with
+     the general `doc.md` alone, or to make that kind's checklist first with turn against
+     `essentials.md` and use it.
+- Not yet agreed. Next: ask the user to agree to it, then #2.
+
+### [ ] #2: writ's README
+
+Purpose: `writ/README.md` written from the agreed scene with `doc.md` and `readme.md` open, and
+agreed with the user (plugin.md step 1).
+
+Serves: A1, A2, M1
+
+### [ ] #3: writ's design
+
+Purpose: `dev/writ/design.md` written with `doc.md` and `design.md` open, and agreed with the user
+(plugin.md step 2), taking in "Essentials to add" from #53.
+
+Serves: A1, A2, M1, M2
+
+### [ ] #4: writ built and checked
+
+Purpose: plugin.md steps 3 to 7; #36 and #37 judged against the rebuilt writ.
+
+Serves: A1, A2, M1, M2, M3
