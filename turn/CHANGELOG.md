@@ -4,4 +4,4 @@
 
 ### Added
 
-- `turn:up` has Claude Code make any work, such as a document, a prompt or code, and has another AI read it as the person it is for, making it again where that reader could not find what it needed, asked in a conversation or from a plugin's step — you get work already read in its receiver's place, and are asked only what you alone can answer.
+- `turn:up` lets Claude Code make any work, such as a document, a prompt or code, that passes your checklist, asked in a conversation or from a plugin's step — another AI reads it as the one it is for and what does not pass yet is made again, so you hand it on without first reading it as its receiver, and are asked only what you alone can answer.

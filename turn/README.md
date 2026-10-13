@@ -1,9 +1,9 @@
 # turn
 
-turn has Claude Code make a work for you, such as a README, a design document, a skill or code.
-Before you get it, another AI reads it as the person it is for. Where that reader could not find
-what it needed, the work is made again. You are asked only what you alone can answer, as soon as it
-comes up, while the work goes on.
+With turn, Claude Code can make any work for you, such as a README, a design document, a skill or
+code, that passes your checklist. Another AI reads the work as the person it is for, and what does
+not pass yet is made again. You are asked only what you alone can answer, as soon as it comes up,
+while the work goes on.
 
 turn is for anyone who has Claude Code make such work, in a conversation or from a step of their
 own plugin. Any kind of work fits, as long as there is a checklist to measure it by.
@@ -11,9 +11,8 @@ own plugin. Any kind of work fits, as long as there is a checklist to measure it
 Why another reader: when Claude checks what it has just written, it reads as the writer. It knows
 what each line means, so it can miss what a newcomer would not understand, as people do with their
 own writing. turn is built on this assumption. Its reader did not write the work, and reads it in a
-fresh copy of your repository that holds only what the person it is for would have. The work is
-checked against a checklist you choose for its kind, and each item of the checklist counts as met
-only where lines of the work show it.
+fresh copy of your repository that holds only what the person it is for would have. Each item of
+the checklist counts as passed only where lines of the work show it.
 
 This README shows how to get a first result by asking in a conversation. To call turn from a step of
 your own plugin, see [Calling turn from a plugin's step](calling-from-a-plugin.md).
