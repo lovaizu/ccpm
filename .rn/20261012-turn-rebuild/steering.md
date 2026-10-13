@@ -350,10 +350,29 @@ Progress:
   the user's words and calls turn again, as if asked so from the start; `answer` holds only the
   answers to turn's questions. In t5b the words were added as `answer` beside a receiver that said
   otherwise, and the generator followed the receiver.
-- Next: make that change in the callers' page (`stopped:` and `answer`), `turn/README.md` (59-61)
-  and the skill's step 15, then try unit 5 again: one run straight through, one stopped on its aim
-  with "write it for people who maintain csvtidy"; judge by the design's Verification for "seeing
-  the work as it goes" and by whether the new aim and work are for maintainers; then unit 6.
+- That change made (e4b4123): the callers' page, `turn/README.md` and the skill's step 15 say the
+  caller rewrites its own parts from the user's words; `ask the user` takes the user's words the same
+  way, so `answer` holds only the answers to turn's questions.
+- Seen in t5c and t5d (2026-10-13), confirmed in the records: the orchestrator again did not say the
+  aim between its tool calls (in t5d it wrote it only in its thinking), so the hook stopped the
+  generator four times, and the orchestrator took the hook for broken. Four trials of four.
+- Decided by the user (2026-10-13), on best practice: the official plugins show progress by the task
+  list or by a hook's `systemMessage` (ralph-loop); the task list is withheld by default on current
+  models (tools-reference, "Task tool availability"), so turn's PostToolUse hook shows each console
+  line, and the steps that had the orchestrator say them and the two hooks that checked it are
+  dropped (03e02e1). The design says why, and `prompt.md` U-8 asks it of every prompt. Decided too:
+  what is decided in building a plugin goes into the checklists.
+- A run's end and stop show only the lines they leave in the run's folder, once (adc7b7c), since
+  in t5e and t5f the hook showed all a command printed, `echo` and `cat` included.
+- Unit 5 tried on 03e02e1 (t5e straight through, t5f stopped on its aim with "write it for data
+  analysts who have never used a terminal"): every step reached the user through the hook in both;
+  t5f's first run wrote no work, its CCS said `stopped: round 1, write`, the caller rewrote only the
+  receiver, and the new run made the README for that reader. Unit 5 holds. Seen, judged only: the
+  orchestrator still narrated between steps in its own words.
+- Next: unit 6, a plugin decides from what turn returns: runs ending in each `next`, the move decided
+  from the CCS alone checked against the one decided from the records. Whether the README's Example
+  should show the hook's prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the
+  interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
