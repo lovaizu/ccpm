@@ -395,13 +395,18 @@ Progress:
   the hooks are defined, `.turn/` and `answer` are gone, the run's evidence is one name, and a shell
   command's side effect, which no hook can tell beforehand, is named to the user when the run
   returns. Self-evident intent is not written; the core is. Agreed by the user (2026-10-13, 8ce5701).
-- Next: unit 8, leaving the user's work alone, as the design's "Leaving the user's work alone"
-  defines it: python3 and jq checked before any work, a file where the work goes with changes git
-  does not hold refused, a hook before a write or edit stopping one outside where the work goes and
-  the run's evidence, a hook before a shell command stopping a git commit or push, and the files a
-  shell command changed elsewhere named when the run returns; every hook only in the session whose
-  run is open. Tests first, then judge first from the trials' files whether a new trial is needed. Whether the README's Example should show the hook's
-  prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
+- Unit 8 built (6987d43): `up.py start` refuses a run without jq, outside git, or where the work
+  goes holds changes git does not (changed, never committed or ignored), and keeps what git does not
+  hold as committed; a hook before Write, Edit and NotebookEdit stops a write anywhere but where the
+  work goes and the run's evidence, and one before a shell command stops a git commit or push, each
+  only in the session whose run is open; `end` and `stop` name each other file changed since the
+  run started. Judged on the unit 5 trials' records (t5c to t5f) with no new trial, since the
+  agents' part is unchanged: all 251 writes and shell commands made in their runs go through the
+  new hooks, none stopped, and an agent's records carry its parent's session, so the hooks act in
+  the agents too. CI passes. Unit 8 holds; every unit is built.
+- Next: plugin.md step 6, turn tried as its user from start to end, every quality of the design's
+  Verification checked. Whether the README's Example should show the hook's prefix
+  (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
