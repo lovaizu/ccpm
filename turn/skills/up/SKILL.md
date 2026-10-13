@@ -47,18 +47,17 @@ it again.
    false, where it is answered. Write the form `hand-on` with `jq`, for every item: `met`, true or
    false; where met, `lines`, the lines that give it, such as `3-5, 12`, and `note`, what the
    receiver gets from those lines; where not, first `aim`, what the whole work gives the receiver
-   once the item is met, said from the item and its checklist's opening, then `reach`, every line
-   of the work whose shape stands between it and the aim, and then `way`, how the work's shape
-   becomes the aim, said from the aim and taken at every line of the reach, with no line named in
-   the aim or the way; `question`, where the way can
-   be taken only with the answer to a question, the question's number, counted from 1. Run
-   `up.py check <folder> <round> hand-on`, and fill each place it names, until it prints `filled`.
+   once the item is met, said from the item and its checklist's opening, then `reach`, every line of
+   the work whose shape stands between it and the aim, and then `way`, how the work's shape becomes
+   the aim, said from the aim and taken at every line of the reach, with no line named in the aim or
+   the way; `question`, where the way can be taken only with the answer to a question, the
+   question's number, counted from 1. Run `up.py check <folder> <round> hand-on`, and fill each
+   place it names, until it prints `filled`.
 8. If a question is asked that the user has not yet seen, do step 5. If an item of `hand-on` is not
    met, go to step 4 once each question its way needs is answered.
-9. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the path the brief printed as the whole
-   prompt.
-10. Run `up.py brief <folder> <round>
-    evaluator`, and call the `turn:evaluator` agent with the path
+9. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the path
+   the brief printed as the whole prompt.
+10. Run `up.py brief <folder> <round> evaluator`, and call the `turn:evaluator` agent with the path
     it prints as the whole prompt. Then run `up.py coverage <folder> <round> evaluator`.
 11. Read the work, the first user's form and the evaluator's form whole. Write your form
     `orchestrator` with `jq`, for every item: `met`, true or false; `lines`, where met, the lines

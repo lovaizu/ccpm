@@ -4,4 +4,4 @@
 
 ### Added
 
-- `turn:up` carries one task of a plugin through making the deliverable, having it used in the receiver's place, finding why it stumbled and remaking it from the cause — the plugin hands its user work that has already been used, and decides its next step from the returned CCS alone.
+- `turn:up` has Claude Code write a document or a prompt and has another AI read it as the person it is for, making it again where that reader could not find what it needed, asked in a conversation or from a plugin's step — you get work already read in its receiver's place, and are asked only what you alone can answer.
