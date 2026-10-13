@@ -163,6 +163,21 @@ Progress:
   `doc.md` and `design.md` as viewpoints, carrying no rules. turn's Stop-hook fix is in the
   repository but not in the installed turn 0.1.0, so its stop messages still show while agents work;
   it is checked for real once a turn with the fix runs.
+- `design.md` 0.3.0 asks U-3 (no case a principle settles), from #53's "Essentials to add"; agreed
+  by the user (2026-10-14).
+- Round 1 through `turn:up` (stopped): 33 of 34 items met; the one left asked whether writ promises
+  a way for another plugin's step to call it, since rn 0.9.0 calls writ from a subagent.
+- Found in checking it: turn says it must be called from the main conversation because a subagent
+  cannot start others (`turn/calling-from-a-plugin.md:51-52`, `dev/turn/design.md:99`); Claude
+  Code's subagent documentation now lets a subagent start its own, three layers deep by default
+  since 2.1.219. What does tie turn to the main conversation is its questions while it works: a
+  subagent has no AskUserQuestion and no way to reach its caller mid-run.
+- Decided by the user (2026-10-14): turn asks nothing while it works. The caller settles what the
+  checklists need before the call; what the sources leave open turn leaves open and returns at the
+  end as `ask the user` with its differences; stopping and correcting a run are the caller's, by
+  stopping or messaging it. So turn runs the same wherever it is called. turn's README and design,
+  and writ's README example (the license asked mid-run), change first; then the design is written
+  again.
 
 ### [ ] #4: writ built and checked
 
