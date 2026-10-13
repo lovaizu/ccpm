@@ -240,6 +240,16 @@ class Console(unittest.TestCase):
                 # Then: nothing is shown
                 self.assertEqual((code, lines), (0, []))
 
+    def test_a_command_of_an_agent_shows_it_nothing_and_leaves_the_lines_for_the_user(self):
+        # Given: the aim set, and an agent of the run running a shell command
+        self.say("aim", ".turn/out", "1", AIM)
+        data = dict(bash("python3 up.py check .turn/out 1 first-user"), agent_id="a1", agent_type="turn:first-user")
+        # When: the command has run
+        code, lines, _ = post(self.repo, **data)
+        # Then: the agent is shown nothing, and the user is shown the lines at the orchestrator's next command
+        self.assertEqual((code, lines), (0, []))
+        self.assertEqual(self.shown(), [PLAN, "Round 1", f"  1 write   To make: {AIM}"])
+
     def test_the_entry_run_as_claude_code_runs_it_shows_the_user_the_new_lines(self):
         # Given: the hook's entry file, and the aim set
         self.say("aim", ".turn/out", "1", AIM)

@@ -256,6 +256,7 @@ def check(work, n, role):
     ids = [i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]
     form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
+    grounds = read_json(os.path.join(work, str(n), "evaluator.json"), "the form") if role == "orchestrator" else {}
     if role == "learner":
         return found + learner_faults(form, without_good(work, n), count) + question_faults(work, decided=False)
     if role in ("generator", "hand-on"):
@@ -275,6 +276,9 @@ def check(work, n, role):
             found.append(f"{i}: not decided")
         if role in DECIDING and place.get("met") and not place.get("note"):
             found.append(f"{i}: the note is not given")
+        elif place.get("met") and place.get("note") == grounds.get(i, {}).get("grounds"):
+            found.append(f"{i}: the note is the evaluator's grounds; read the work for the item, and say "
+                         "what the receiver gets from the lines")
         if role == "hand-on" and place.get("met") is False:
             found += aim_faults(i, place, count)
         if needed and not lines:

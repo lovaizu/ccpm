@@ -1,6 +1,7 @@
 """The user is shown each line of the console as the run reaches it, and what the run's end or stop
 says, by the hook itself, since what the orchestrator writes between its tool calls does not reach
-the user on every run."""
+the user on every run; an agent's commands run the hook in the same session, and show it nothing,
+since what they would show reaches only the agent."""
 
 import os
 import re
@@ -13,7 +14,7 @@ CLOSING = re.compile(r'up\.py"?\s+(?:end|stop)\s+([^\s;&|]+)')
 
 def check(data):
     """Returns what to tell the orchestrator, and the lines to show the user."""
-    if data.get("tool_name") != "Bash":
+    if data.get("tool_name") != "Bash" or data.get("agent_id"):
         return [], []
     run = open_run(data)
     if run is None:

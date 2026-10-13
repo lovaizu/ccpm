@@ -128,6 +128,18 @@ class Check(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
 
+    def test_a_decision_copied_from_the_evaluator_is_stopped(self):
+        # Given: the evaluator's grounds for an item, and the orchestrator's note for it the same words
+        fill(self.repo, form("evaluator"), {"note B-1": {"lines": "3", "grounds": "says run make"}})
+        fill(self.repo, form("orchestrator"), {
+            "note B-1": {"met": True, "lines": "3", "note": "says run make"},
+            "note F-1": {"met": False, "lines": "", "note": ""}})
+        # When: the orchestrator's form is checked
+        code, out = self.check("orchestrator")
+        # Then: it is stopped, told to decide the item from the work itself
+        self.assertEqual(code, 1)
+        self.assertIn("note B-1: the note is the evaluator's grounds; read the work for the item", out)
+
     def test_a_form_is_stopped_when_the_work_is_not_written(self):
         # Given: the work removed
         os.remove(os.path.join(self.repo.path, self.got["work"]))
