@@ -425,8 +425,12 @@ Progress:
   the same 23 items and missed the same two for the same reasons, so read in the receiver's place
   holds. Found: round 2's learner raised a question (how long a run takes) and gave a way made "from
   the answer to question 1"; the orchestrator answered it itself from what the work should be, as
-  step 7 allows, but the way returned to the caller still waits on that answer. The design does not
-  say what becomes of a way whose question the orchestrator answers; brought to the user.
+  step 7 allows, but the way returned to the caller still waits on that answer.
+- Decided by the user (2026-10-13): the design and the steps set the usual path; what falls outside
+  it is left to the role's judgment, and the aim is a work with every item Good. So that finding
+  changes nothing, and step 6 holds.
+- Step 7 holds: `claude plugin validate --strict` passes for turn and for the marketplace.
+- Next: the final check of the whole change before asking the user to merge (`final-check.md`).
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
