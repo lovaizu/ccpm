@@ -3,7 +3,8 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import Repo, ccs, fill, form, run, started, up
+from helpers import Repo, ccs, fill, form, run, started
+from repo import drop
 
 import stop
 from test_step_hooks import hook
@@ -123,7 +124,7 @@ class Questions(unittest.TestCase):
                 # given
                 if said is None:
                     self.assertEqual(code, 0, out)
-                    up.drop(self.repo.json(out.strip())["copy"])
+                    drop(self.repo.json(out.strip())["copy"])
                 else:
                     self.assertEqual(code, 1)
                     self.assertIn(said, out)

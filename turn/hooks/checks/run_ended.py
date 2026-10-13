@@ -4,7 +4,8 @@ in a loop."""
 
 import os
 
-import up
+from brief import SCRIPT
+from lifecycle import at_rest
 from checks.open_run import open_run
 
 
@@ -15,9 +16,9 @@ def check(data):
     here = os.getcwd()
     os.chdir(data["cwd"])
     try:
-        resting = up.at_rest(run)
+        resting = at_rest(run)
     finally:
         os.chdir(here)
     if resting:
         return []
-    return [f"step 14: the run is open; run `python3 \"{up.SCRIPT}\" end {run['work']} {run['round']}`"]
+    return [f"step 14: the run is open; run `python3 \"{SCRIPT}\" end {run['work']} {run['round']}`"]

@@ -6,7 +6,8 @@ since what they would show reaches only the agent."""
 import os
 import re
 
-import up
+from console import console
+import state
 from checks.open_run import open_run
 
 CLOSING = re.compile(r'up\.py"?\s+(?:end|stop)\s+([^\s;&|]+)')
@@ -22,8 +23,8 @@ def check(data):
     here = os.getcwd()
     os.chdir(data["cwd"])
     try:
-        return [], up.console(run["work"])
-    except up.Stop as stop:
+        return [], console(run["work"])
+    except state.Stop as stop:
         return [str(stop)], []
     finally:
         os.chdir(here)
@@ -32,7 +33,7 @@ def check(data):
 def closed(data):
     """The last lines of a run the command just closed, taken once."""
     closing = CLOSING.search(data["tool_input"].get("command", ""))
-    path = os.path.join(data["cwd"], closing.group(1).strip("'\""), up.CLOSING) if closing else ""
+    path = os.path.join(data["cwd"], closing.group(1).strip("'\""), state.CLOSING) if closing else ""
     if not os.path.isfile(path):
         return []
     with open(path) as f:

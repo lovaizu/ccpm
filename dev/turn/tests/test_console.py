@@ -8,7 +8,9 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import ROOT, Repo, fill, form, run, started, up
+from helpers import ROOT, Repo, fill, form, run, started
+from brief import SCRIPT
+from repo import drop
 
 import posttooluse
 
@@ -81,7 +83,7 @@ class Console(unittest.TestCase):
         if n == 1:
             self.repo.write(".turn/out/1/note.md", WORK)
         copy = self.repo.json(self.say("brief", ".turn/out", str(n), "first-user")[0])["copy"]
-        self.addCleanup(lambda: os.path.isdir(copy) and up.drop(copy))
+        self.addCleanup(lambda: os.path.isdir(copy) and drop(copy))
         self.ran("first-user")
         fill(self.repo, form("first-user", n), {"note B-1": {"took": "run make", "lines": "3"}})
         met(self.repo, "orchestrator", f1, n)
@@ -143,7 +145,7 @@ class Console(unittest.TestCase):
         met(self.repo, "hand-on")
         self.repo.write(".turn/out/1/note.md", WORK)
         copy = self.repo.json(self.say("brief", ".turn/out", "1", "first-user")[0])["copy"]
-        self.addCleanup(lambda: os.path.isdir(copy) and up.drop(copy))
+        self.addCleanup(lambda: os.path.isdir(copy) and drop(copy))
         # Then: the work's path and the reading are shown
         self.assertEqual(self.shown(),
                          ["            .turn/out/1/note.md", "  2 read    Read as a new teammate."])
@@ -191,7 +193,7 @@ class Console(unittest.TestCase):
 
     def ended(self, *args):
         out = "\n".join(self.say(*args))
-        command = f'python3 "{up.SCRIPT}" {" ".join(args)}; echo "EXIT $?"'
+        command = f'python3 "{SCRIPT}" {" ".join(args)}; echo "EXIT $?"'
         code, lines, told = post(self.repo, **bash(command, out + "\nEXIT 0"))
         self.assertEqual(code, 0, told)
         again = post(self.repo, **bash(command, out + "\nEXIT 0"))[1]

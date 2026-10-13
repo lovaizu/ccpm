@@ -2,7 +2,8 @@ import json
 import os
 import unittest
 
-from helpers import Repo, ccs, fill, form, run, started, up
+from helpers import Repo, ccs, fill, form, run, started
+from state import RUN
 
 WORK = "# Note\n\nRun make.\n"
 AIM = "a new teammate can start work alone"
@@ -131,7 +132,7 @@ class Stop(unittest.TestCase):
 
     def test_nothing_is_stopped_when_no_run_is_open(self):
         # Given: no run open
-        os.remove(os.path.join(self.repo.path, up.RUN))
+        os.remove(os.path.join(self.repo.path, RUN))
         # When: a stop is asked for
         code, out = run(self.repo, "stop", ".turn/out")
         # Then: it is refused, and nothing is written

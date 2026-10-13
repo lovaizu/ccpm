@@ -3,7 +3,8 @@ takes turn's change as one diff."""
 
 import os
 
-import up
+from ccs import entries
+from state import read_json
 from checks.open_run import open_run
 
 TOOLS = {"Write": "file_path", "Edit": "file_path", "NotebookEdit": "notebook_path"}
@@ -14,7 +15,7 @@ def check(data):
     if run is None:
         return []
     written = os.path.realpath(os.path.join(data["cwd"], data["tool_input"].get(TOOLS[data["tool_name"]], "")))
-    deliverable = up.entries(up.read_json(os.path.join(data["cwd"], run["in"]), run["in"]),
+    deliverable = entries(read_json(os.path.join(data["cwd"], run["in"]), run["in"]),
                              "focal_entities", "deliverable")[0]
     if written == os.path.realpath(os.path.join(data["cwd"], deliverable)) or \
             written.startswith(os.path.realpath(os.path.join(data["cwd"], run["work"])) + os.sep):

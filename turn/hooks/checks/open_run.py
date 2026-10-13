@@ -3,11 +3,11 @@
 import json
 import os
 
-import up
+from state import RUN
 
 
 def open_run(data):
-    run_file = os.path.join(data.get("cwd", ""), up.RUN)
+    run_file = os.path.join(data.get("cwd", ""), RUN)
     if not os.path.isfile(run_file):
         return None
     with open(run_file) as f:

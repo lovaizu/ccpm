@@ -4,7 +4,8 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import Repo, fill, form, run, started, up
+from helpers import Repo, fill, form, run, started
+from repo import drop
 
 WORK = "# Note\n\nRun make.\n"
 
@@ -50,7 +51,7 @@ class Briefs(unittest.TestCase):
         self.assertEqual(out, f".turn/out/{n}/{role}-brief.json")
         got = self.repo.json(out)
         if role == "first-user":
-            self.addCleanup(lambda: os.path.isdir(got["copy"]) and up.drop(got["copy"]))
+            self.addCleanup(lambda: os.path.isdir(got["copy"]) and drop(got["copy"]))
         return got
 
     def ran(self, role, agent):
