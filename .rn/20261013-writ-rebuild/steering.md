@@ -78,7 +78,7 @@ Progress:
      `essentials.md` and use it.
 - Agreed by the user (2026-10-13).
 
-### [ ] #2: writ's README
+### [x] #2: writ's README
 
 Purpose: `writ/README.md` written from the agreed scene with `doc.md` and `readme.md` open, and
 agreed with the user (plugin.md step 1).
@@ -143,7 +143,9 @@ Progress:
 - To do in #4: `writ/.claude-plugin/plugin.json` names turn in `dependencies`, which the README's
   Installation promises; `turn/calling-from-a-plugin.md` points to turn's README for what both say
   (the checklist's front matter, writing over a file git holds, Esc).
-- Next: the user agrees to the README.
+- Agreed by the user (2026-10-14).
+- Decided by the user (2026-10-14): pith is removed now, so CI tells a real failure again; `/writ:up`
+  still calls it until #4 rebuilds writ.
 
 ### [ ] #3: writ's design
 
