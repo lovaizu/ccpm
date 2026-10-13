@@ -47,14 +47,12 @@ repository.
    once the item is met, said from the item and its checklist's opening, then `reach`, every line
    of the work whose shape stands between it and the aim, and then `way`, how the work's shape
    becomes the aim, said from the aim and taken at every line of the reach, with no line named in
-   the aim or the way; `question`, where not
-   met only for want of a question's answer and the work already leaves out what the answer
-   settles, the question's number, counted from 1; where the work still says it, the item is not
-   met, and the note says to leave it out until the answer comes. Run
+   the aim or the way; `question`, where the way can
+   be taken only with the answer to a question, the question's number, counted from 1. Run
    `up.py check <folder> <round> hand-on`, and fill each place it names, until it prints `filled`.
 8. If a question is asked that the user has not yet seen, do step 5. If an item of `hand-on` is not
-   met, other than one waiting on a question the user left, go to step 4 once each question it
-   waits on is answered.
+   met, other than one whose way needs a question the user left, go to step 4 once each question
+   its way needs is answered.
 9. Run `up.py brief <folder> <round> first-user`, and call the `turn:first-user` agent with the
    path it prints as the whole prompt.
 10. Run `up.py brief <folder> <round> evaluator`, and call the `turn:evaluator` agent with the path
@@ -64,7 +62,7 @@ repository.
     that give it; `note`, where met, what the receiver gets from those lines, in plain words. Run
     `up.py check <folder> <round> orchestrator`, and fill each place it names, until it prints
     `filled`.
-12. If an item of your form is not met, other than one waiting on a question the user left, run
+12. If an item of your form is not met, other than one whose way needs a question the user left, run
     `up.py brief <folder> <round> learner`, and call the `turn:learner` agent with the path it
     prints as the whole prompt. Then decide each question the learner added, as in step 7, and do
     step 5 for those asked.
