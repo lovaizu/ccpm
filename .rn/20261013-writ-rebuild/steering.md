@@ -118,6 +118,17 @@ Progress:
   named once, under Requirements.
 - Found in the run, for turn: while an agent of the run works in the background, turn's Stop hook
   blocks the conversation from ending its turn to wait, saying the run is open.
+- Seen by the user (2026-10-13): the opening was still far longer than READMEs commonly have.
+  Compared with five common tools and five official Claude Code plugins, `readme.md` asked for two
+  things they do not: three points in the opening, and a reason for every requirement. Decided by the
+  user: `readme.md` 0.3.0 asks for an opening of one or two sentences, why to choose the product in
+  its own section after the example, and a reason only where the reader could not see it.
+- Made again through `turn:up` on `readme.md` 0.3.0 (2026-10-13): 23 of 25 items met after two
+  rounds; the two left (what a checklist is, before the example uses it; what writ leaves in the
+  repository) were fixed by hand on the learner's way.
+- To do in #4: `writ/.claude-plugin/plugin.json` names turn in `dependencies`, which the README's
+  Installation now promises; turn's README is made again on `readme.md` 0.3.0, as its opening has
+  the same length for the same cause.
 - Next: the user agrees to the README.
 
 ### [ ] #3: writ's design
