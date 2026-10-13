@@ -336,7 +336,24 @@ Progress:
   asked at once; "I don't know" was taken as an answer and nothing was asked again at the end.
   Unit 4 holds. Seen once, judged only: in round 2 the orchestrator's note on an unchanged item
   said it was judged in round 1, not read again.
-- Next: unit 5, seeing the work as it goes and stop and start over.
+- Unit 5 built (9e000fd, b1ae183): `up.py aim` sets and shows what the work will let its receiver
+  do, `up.py console` shows each line once by round and step, `up.py stop` returns a CCS saying
+  where the run was and pointing to the work last written for an aim the user did not reject, and
+  `start` begins from it; the generator's brief is refused until the aim is set, a hook keeps the
+  generator from being called until the aim was said, another keeps the orchestrator from waiting
+  for the user until each question was said, and a question naming an item is refused. Trials
+  (`dev/turn/trials/run.py ... --stop <words>`): t5a never said the console and t5b called the
+  generator before the aim was said, which the hooks now stop; the stop itself worked (the
+  background generator was stopped, the CCS said `stopped: round 1, write`, a new run began).
+- Found in t5b and decided by the user (2026-10-13): saying what they want instead corrects the
+  request, so the caller rewrites its own parts (receiver, use, acceptance, sources, rules) from
+  the user's words and calls turn again, as if asked so from the start; `answer` holds only the
+  answers to turn's questions. In t5b the words were added as `answer` beside a receiver that said
+  otherwise, and the generator followed the receiver.
+- Next: make that change in the callers' page (`stopped:` and `answer`), `turn/README.md` (59-61)
+  and the skill's step 15, then try unit 5 again: one run straight through, one stopped on its aim
+  with "write it for people who maintain csvtidy"; judge by the design's Verification for "seeing
+  the work as it goes" and by whether the new aim and work are for maintainers; then unit 6.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
