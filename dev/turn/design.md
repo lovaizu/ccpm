@@ -283,7 +283,7 @@ as it happens, not found later in an answer that looks right.
 - A hook, as an agent of the run stops, keeps it at work until a script sees every place of its
   form filled.
 - A hook, as the orchestrator stops, keeps it at work while the run is open, unless it waits for the
-  user or for the generator; it says so once, so the orchestrator is never held in a loop.
+  user or for an agent of the run; it says so once, so the orchestrator is never held in a loop.
 - Must hold: every answer the orchestrator decides from fills every place of its form.
 
 ### Reading in the receiver's place

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- While a run waits for the AI that reads or checks the work, it is no longer told to end the run — the run waits for the reading and the check instead of ending without them, and no stop message shows while it waits.
+
 ## [0.1.0] - 2026-10-13
 
 ### Added

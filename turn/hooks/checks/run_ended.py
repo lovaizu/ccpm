@@ -1,6 +1,6 @@
 """The orchestrator stops only once the run has returned the work and the CCS, or while it waits for
-the user or the generator, so a run is never left half done; it is told once, so it is never held
-in a loop."""
+the user or an agent of the run, so a run is never left half done; it is told once, so it is never
+held in a loop."""
 
 import os
 

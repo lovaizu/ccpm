@@ -4,6 +4,7 @@ import unittest
 from unittest import mock
 
 from helpers import Repo, ccs, fill, form, run, started
+from brief import AGENTS
 from repo import drop
 
 import stop
@@ -159,19 +160,21 @@ class Questions(unittest.TestCase):
                 self.assertIn(said, out)
                 self.assertFalse(self.repo.exists("out.json"))
 
-    def test_the_orchestrator_may_stop_while_it_waits_for_the_user_or_the_generator(self):
-        run(self.repo, "brief", ".turn/out", "1", "generator")
-        fill(self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
-        cases = [("a question open", [OPEN], False, 0),
-                 ("the generator at work", [ANSWERED], True, 0),
-                 ("nothing to wait for", [ANSWERED], False, 2)]
+    def test_the_orchestrator_may_stop_while_it_waits_for_the_user_or_an_agent_of_the_run(self):
+        cases = [("a question open", [OPEN], None, 0)] + \
+                [(f"the {role} at work", [ANSWERED], role, 0) for role in AGENTS] + \
+                [("nothing to wait for", [ANSWERED], None, 2)]
         for name, questions, at_work, kept in cases:
             with self.subTest(name):
-                # Given: the questions so, and the generator handed its brief after its form or not
+                # Given: the questions so, and each agent handed its brief after its form, or before
+                # it for the one at work
                 fill(self.repo, QUESTIONS, questions)
-                brief = os.path.join(self.repo.path, ".turn/out/1/generator-brief.json")
-                later = os.path.getmtime(os.path.join(self.repo.path, form("generator"))) + (1 if at_work else -1)
-                os.utime(brief, (later, later))
+                for role in AGENTS:
+                    self.repo.write(f".turn/out/1/{role}-brief.json", "{}")
+                    brief = os.path.join(self.repo.path, f".turn/out/1/{role}-brief.json")
+                    later = os.path.getmtime(os.path.join(self.repo.path, form(role))) + \
+                        (1 if role == at_work else -1)
+                    os.utime(brief, (later, later))
                 # When: the orchestrator stops
                 code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False)
                 # Then: it may stop while it waits, and is kept at work otherwise

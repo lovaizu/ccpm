@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 
+from brief import AGENTS
 from ccs import checklist, entries, faults
 from forms import PLACES, forms, lay, learned
 from questions import asked, question_faults, unanswered
@@ -76,13 +77,15 @@ def round_two(work):
 
 
 def at_rest(run):
-    """Why the orchestrator may stop with the run open: it waits for the user or for the generator."""
+    """Why the orchestrator may stop with the run open: it waits for the user or for an agent of the
+    run, one handed its brief after its form was last written."""
     work, n = run["work"], str(run["round"])
     if unanswered(work):
         return "waiting for the user"
-    brief = os.path.join(work, n, "generator-brief.json")
-    if os.path.isfile(brief) and os.path.getmtime(brief) > os.path.getmtime(os.path.join(work, n, "generator.json")):
-        return "waiting for the generator"
+    for role in AGENTS:
+        brief = os.path.join(work, n, f"{role}-brief.json")
+        if os.path.isfile(brief) and os.path.getmtime(brief) > os.path.getmtime(os.path.join(work, n, f"{role}.json")):
+            return f"waiting for the {role}"
     return None
 
 
