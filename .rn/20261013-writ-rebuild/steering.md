@@ -132,6 +132,13 @@ Progress:
 - turn's README made again through `turn:up` on `readme.md` 0.3.0 (2026-10-13): every item met
   after two rounds; the opening is two sentences, but the whole grew from 105 to 127 lines, mostly
   from a list of every file turn writes, which a rule turn learned in the writ run asked for.
+- Decided by the user (2026-10-13): what is learned in a run goes into the checklists, not on as
+  rules in the next task. Of the three rules the writ run learned, two were already items of
+  `doc.md` and `readme.md`; the third gave `readme.md` 0.4.0 its question whether a requirement comes
+  with the product. turn's README is made again with no rules carried.
+- Found in the run, for turn: the learner makes a rule for every later task from one finding, and
+  `calling-from-a-plugin.md` tells the caller to carry it on unchecked; whether turn makes such rules
+  at all is turn's to settle.
 - Next: the user agrees to the README.
 
 ### [ ] #3: writ's design

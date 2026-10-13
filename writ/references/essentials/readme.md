@@ -1,6 +1,6 @@
 ---
 name: readme
-version: 0.3.0
+version: 0.4.0
 ---
 
 # README
@@ -85,13 +85,13 @@ spent on what they do not use.
 
 ### U-2: Getting ready their own way
 
-For each thing that must be in place beforehand, can the reader tell what it is, and, where they
-could not see why it is needed, why?
+For each thing that must be in place beforehand, can the reader tell what it is, whether it comes
+with the product or they must get it, and, where they could not see why it is needed, why?
 
 Why: a reader who knows what is needed gets it ready in their own way, or sees that they already
 have it; one way of getting it ready, given alone, reads as the only way and gives steps to a
-reader who does not need them; a reason the reader could see for themselves only lengthens the
-list.
+reader who does not need them; a thing named without saying whether it comes on its own is
+completed by a guess; a reason the reader could see for themselves only lengthens the list.
 
 ### U-3: An opening only for deciding
 
