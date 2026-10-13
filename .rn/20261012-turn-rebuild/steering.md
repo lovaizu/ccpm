@@ -326,9 +326,17 @@ Progress:
 - Tried on csvtidy (before 88f7070): questions were asked within 15 seconds, answered while the
   generator worked, and the answers were in the work read; the learner's question was asked before
   round 2. Seen once, judged only: the orchestrator once asked without ❓, so the trial waited.
-- Next: read the records of the trial run on 88f7070 and its later commit (scratchpad `t4e`, log
-  `t4e.log`; if lost, run it again as above) and judge unit 4 by the design's Verification for
-  "asked only what only the user can decide"; then unit 5.
+- Decided by the user (2026-10-13): a question is asked because the work needs what only the user
+  can say, so there is no way to pass it by; a user who does not know says so, and that is the
+  answer. The path for a question left unanswered (`left`, `gap`, asked again at the end) is
+  dropped from the design, the README, the callers' page and the code (ac9de39).
+- Unit 4 tried on ac9de39 (csvtidy): the license and the changelog were asked 5 seconds after the
+  generator began, in the background, and both answers were in the work read; the generator's, the
+  learner's and the orchestrator's questions were each on what the notes leave open, and were
+  asked at once; "I don't know" was taken as an answer and nothing was asked again at the end.
+  Unit 4 holds. Seen once, judged only: in round 2 the orchestrator's note on an unchanged item
+  said it was judged in round 1, not read again.
+- Next: unit 5, seeing the work as it goes and stop and start over.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
