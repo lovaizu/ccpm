@@ -394,8 +394,13 @@ Progress:
   them do (1220b68). The design was gone through again against it: each approach gives its parts,
   the hooks are defined, `.turn/` and `answer` are gone, the run's evidence is one name, and a shell
   command's side effect, which no hook can tell beforehand, is named to the user when the run
-  returns. Self-evident intent is not written; the core is. Waiting for the user's agreement.
-- Next: once the design is agreed, unit 8, leaving the user's work alone. Whether the README's Example should show the hook's
+  returns. Self-evident intent is not written; the core is. Agreed by the user (2026-10-13, 8ce5701).
+- Next: unit 8, leaving the user's work alone, as the design's "Leaving the user's work alone"
+  defines it: python3 and jq checked before any work, a file where the work goes with changes git
+  does not hold refused, a hook before a write or edit stopping one outside where the work goes and
+  the run's evidence, a hook before a shell command stopping a git commit or push, and the files a
+  shell command changed elsewhere named when the run returns; every hook only in the session whose
+  run is open. Tests first, then judge first from the trials' files whether a new trial is needed. Whether the README's Example should show the hook's
   prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
