@@ -1,6 +1,6 @@
 ---
 name: checklist
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Checklist
@@ -99,7 +99,9 @@ None: <why the kind needs no item here>
 ```
 
 - The front matter gives the checklist's `name`, which every ID goes with, and its `version`
-  (semver), raised on every change to its text, so a judgment names the text it was made by.
+  (semver), raised once for each change to its text that reaches those who judge by it, such as a
+  release or a merge to a shared branch, from the version they last had, so a judgment names the
+  text it was made by and no draft between takes a number.
 - Every checklist has the three sections, in this order. A section with no item holds `None:` and
   its reason, so a section thought through is told from a section forgotten.
 - An item's ID is its section's first letter and a number counted up within the section, such as
