@@ -113,6 +113,14 @@ receives its work, toward the purpose?
 Why: a field nobody uses still has to be read and filled on every run, and drifts from what the
 work actually is, since nothing checks it.
 
+### U-8: What the user must see, shown by a tool
+
+Is each thing the user must see on every run, while the AI is still at work, shown by a script or a
+hook rather than by the AI's words between its tool calls?
+
+Why: the AI writes words between its tool calls on some runs and not on others, so what rests on
+them reaches the user only sometimes; a hook shows it on every run.
+
 ## Format
 
 ### F-1: Shape

@@ -497,12 +497,12 @@ def end(work, n):
 
 
 def aim(work, n, text):
-    """Sets what round n's work will let its receiver do, and shows it before the work is written."""
+    """Sets what round n's work will let its receiver do; the console shows it before the work is
+    written."""
     if int(n) != read_json(RUN, RUN)["round"]:
         raise Stop(f"round {read_json(RUN, RUN)['round']} is running")
     with open(os.path.join(work, str(n), "aim.txt"), "w") as f:
         f.write(text)
-    console(work)
 
 
 def shown_lines(work):
@@ -534,12 +534,13 @@ def shown_lines(work):
                 aims = dict.fromkeys(p["aim"] for p in read_json(os.path.join(here, "learner.json"), "the form").values())
                 said += [("  3 check   " if k == 0 else INDENT) + f"⚠️ Not yet: {a}" for k, a in enumerate(aims)]
         lines += [(f"{n}:{line}", line) for line in said]
-    lines += [(f"q:{q['question']}", f"{INDENT}❓ {q['question']}") for q in asked(work) if q.get("ask")]
+    if os.path.isfile(os.path.join(work, "1", "aim.txt")):
+        lines += [(f"q:{q['question']}", f"{INDENT}❓ {q['question']}") for q in asked(work) if q.get("ask")]
     return lines
 
 
 def console(work):
-    """Prints each line of the console not yet shown."""
+    """Each line of the console not yet shown, now marked shown."""
     found = question_faults(work, decided=False)
     if found:
         raise Stop("\n".join(found))
@@ -547,8 +548,7 @@ def console(work):
     shown = read_json(record, "the console") if os.path.isfile(record) else []
     new = [(key, line) for key, line in shown_lines(work) if key not in shown]
     write_json(record, shown + [key for key, _ in new])
-    if new:
-        print("\n".join(line for _, line in new))
+    return [line for _, line in new]
 
 
 def stop(work):
@@ -575,7 +575,7 @@ def stop(work):
 
 
 COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),
-            "end": (end, 2), "aim": (aim, 3), "console": (console, 1), "stop": (stop, 1)}
+            "end": (end, 2), "aim": (aim, 3), "stop": (stop, 1)}
 
 
 def main(argv):

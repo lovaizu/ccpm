@@ -9,12 +9,12 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
-from checks import aim_said, brief_handed  # noqa: E402
+from checks import brief_handed  # noqa: E402
 
 
 def main():
     data = json.loads(sys.stdin.read())
-    said = brief_handed.check(data) or aim_said.check(data)
+    said = brief_handed.check(data)
     if said:
         sys.stderr.write("turn: " + "\n".join(said) + "\n")
         return 2

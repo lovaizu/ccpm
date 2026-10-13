@@ -307,6 +307,8 @@ line by round, named by its step. Before the generator writes, it shows what the
 receiver do, so a wrong aim is stopped before a round is spent. It says in plain words what the
 first user could not take, with the path of each, and ends with where the work is and what the user
 must decide. Item IDs and counts are not shown, since the user would have to learn the checklist.
+turn's hook shows each line as the run reaches it, since what the orchestrator writes between its
+tool calls does not reach the user on every run (four trials of four).
 
 - Must hold: no work is written whose aim the console has not shown first.
 
