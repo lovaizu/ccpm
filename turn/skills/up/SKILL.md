@@ -18,7 +18,7 @@ $ARGUMENTS
 
 `up.py` below is `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/up.py"`, run from the top of the
 repository. Say to the user only what `aim`, `console`, `stop` and `end` print, as printed, and what
-step 1 says to say.
+step 1 says to say. After step 1, when a command exits with 1, do what it says and run it again.
 
 1. Run `up.py start <in> <out> ${CLAUDE_SESSION_ID}`. If python3 is not found, say to install
    Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it

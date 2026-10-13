@@ -6,7 +6,7 @@ from unittest import mock
 from helpers import Repo, ccs, fill, form, run, started, up
 
 import stop
-from test_step_hooks import hook
+from test_step_hooks import hook, talk
 
 WORK = "# Note\n\nRun make.\n"
 QUESTIONS = ".turn/out/questions.json"
@@ -58,12 +58,14 @@ class Questions(unittest.TestCase):
         self.assertEqual((self.got["sources"], self.got["constraints"]), (["notes.md"], ["language: English"]))
         self.assertEqual(self.repo.json(out.strip())["questions"], QUESTIONS)
 
-    def test_a_question_without_its_words_is_stopped(self):
+    def test_a_question_without_its_words_or_naming_an_item_is_stopped(self):
         cases = [("no question", [{"question": ""}], "question 1: the question is not given"),
-                 ("not a list", {"question": LICENSE}, "the questions are not a list")]
+                 ("not a list", {"question": LICENSE}, "the questions are not a list"),
+                 ("an item named", [{"question": f"{LICENSE} (note F-1)"}],
+                  "question 1: names note F-1; say in plain words what the work leaves out")]
         for name, questions, said in cases:
             with self.subTest(name):
-                # Given: the questions with one left without its words, or not a list
+                # Given: the questions with one left without its words, naming an item, or not a list
                 fill(self.repo, QUESTIONS, questions)
                 # When: the generator's form is checked
                 code, out = self.check("generator")
@@ -169,8 +171,9 @@ class Questions(unittest.TestCase):
                 brief = os.path.join(self.repo.path, ".turn/out/1/generator-brief.json")
                 later = os.path.getmtime(os.path.join(self.repo.path, form("generator"))) + (1 if at_work else -1)
                 os.utime(brief, (later, later))
-                # When: the orchestrator stops
-                code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False)
+                # When: the orchestrator stops, having said the question
+                code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False,
+                                  transcript_path=talk(self.repo, f"❓ {LICENSE}"))
                 # Then: it may stop while it waits, and is kept at work otherwise
                 self.assertEqual(code, kept, said)
 

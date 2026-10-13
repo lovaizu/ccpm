@@ -23,8 +23,20 @@ def hook(entry, repo, **data):
     return code, err.getvalue()
 
 
-def call(repo, agent, prompt, session="s1"):
+AIM = "a new teammate can start work alone"
+
+
+def talk(repo, *texts):
+    """The conversation's record, with what Claude said in it."""
+    repo.write("talk.jsonl", "".join(json.dumps({"type": "assistant", "message": {"content": [
+        {"type": "text", "text": t}, {"type": "tool_use", "name": "Bash", "input": {}}]}}) + "\n" for t in texts)
+        + json.dumps({"type": "user", "message": {"content": "hello"}}) + "\n")
+    return os.path.join(repo.path, "talk.jsonl")
+
+
+def call(repo, agent, prompt, session="s1", said=(f"  1 write   To make: {AIM}",)):
     return hook(pretooluse, repo, session_id=session, hook_event_name="PreToolUse", tool_name="Agent",
+                transcript_path=talk(repo, *said),
                 tool_input={"subagent_type": agent, "prompt": prompt, "description": "x"})
 
 
@@ -34,7 +46,7 @@ class AgentCalled(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         started(self.repo)
-        run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
+        run(self.repo, "aim", ".turn/out", "1", AIM)
         self.repo.write(".turn/out/1/note.md", "# Note\n")
 
     def tearDown(self):
@@ -49,6 +61,20 @@ class AgentCalled(unittest.TestCase):
                 code, _ = call(self.repo, "turn:generator", path)
                 # Then: the call goes on
                 self.assertEqual(code, 0)
+
+    def test_the_generator_is_called_only_once_the_aim_has_been_said(self):
+        # Given: the generator's brief made
+        _, out = run(self.repo, "brief", ".turn/out", "1", "generator")
+        for name, said, code in (("not said", ("Writing the README.",), 2),
+                                 ("said", ("Writing.", f"Round 1\n  1 write   To make: {AIM}"), 0)):
+            with self.subTest(name):
+                # Given: the aim said in the conversation or not
+                # When: the orchestrator calls the generator
+                got, told = call(self.repo, "turn:generator", out.strip(), said=said)
+                # Then: the call goes on only once the aim was said, and is otherwise told the step
+                self.assertEqual(got, code, told)
+                if code:
+                    self.assertIn("turn: step 4: say what `up.py aim` printed", told)
 
     def test_an_agent_handed_anything_but_its_brief_is_stopped_saying_which_step(self):
         cases = [("words of its own", "turn:generator", "Write the README.", "step 4"),
@@ -112,6 +138,21 @@ class Stopping(unittest.TestCase):
         code, _ = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=True)
         # Then: it is let stop, so it is never held in a loop
         self.assertEqual(code, 0)
+
+    def test_waiting_for_the_user_is_let_only_once_each_question_was_said(self):
+        # Given: an open run waiting on a question
+        started(self.repo)
+        self.repo.write(".turn/out/questions.json", json.dumps([{"question": "Which license?", "ask": True}]))
+        for name, said, code in (("not said", "Please tell me the license.", 2),
+                                 ("said", "            ❓ Which license?", 0)):
+            with self.subTest(name):
+                # When: the orchestrator stops to wait, having said the question or not
+                got, told = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False,
+                                 transcript_path=talk(self.repo, said))
+                # Then: it is let wait only once the question was said, and is otherwise told the step
+                self.assertEqual(got, code, told)
+                if code:
+                    self.assertIn("turn: step 5: say what `up.py console` printed", told)
 
     def test_stopping_outside_an_open_run_goes_on(self):
         cases = [("no run", False, "s1"), ("another session's run", True, "s2")]

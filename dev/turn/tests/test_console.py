@@ -65,6 +65,15 @@ class Console(unittest.TestCase):
         # Then: the plan, the round, the aim and the question are shown, in that order
         self.assertEqual(said, [PLAN, "Round 1", f"  1 write   To make: {AIM}", f"            ❓ {LICENSE}"])
 
+    def test_a_question_naming_an_item_is_not_shown(self):
+        # Given: a question that names an item of the list
+        fill(self.repo, ".turn/out/questions.json", [{"question": f"{LICENSE} (note F-1)", "ask": True}])
+        # When: the console is asked for
+        code, out = run(self.repo, "console", ".turn/out")
+        # Then: it is refused, saying to put it in plain words
+        self.assertEqual(code, 1)
+        self.assertIn("question 1: names note F-1", out)
+
     def test_no_work_is_written_before_its_aim_is_shown(self):
         # Given: a run just started, with no aim set
         # When: the generator's brief is asked for
