@@ -101,13 +101,16 @@ it calls turn again.
   on.
 - `ask the user`: the work is where `deliverable` says. Put each `difference` to the user. If they
   say what they want, rewrite your own parts from their words, as if they had asked so from the
-  start, and call turn again. If the user takes the work as it is, the step moves on.
+  start, and call turn again. If they want turn to run again on it as it is, call turn again with
+  your parts unchanged. If the user takes the work as it is, the step moves on.
 - `to the caller: <reason>`: the CCS cannot be run, or an item would be met only by a change in what
-  the step wrote the work should be, which turn never rewrites. The reason says which. The step
-  corrects its own parts and calls turn again, or puts the reason to the user.
+  the step wrote the work should be, which turn never rewrites. The reason says which; in the
+  second case the work is where `deliverable` says. The step corrects its own parts and calls turn
+  again, or puts the reason to the user.
 - `stopped: <where>`: the user pressed Esc and said what they want instead; `<where>` is where the
-  run was. Their words correct what the step asked: rewrite your own parts from them, as if the user
-  had asked so from the start, and call turn again; the new run starts from the work as it stood.
+  run was, and where the work goes is as it was before the run. Their words correct what the step
+  asked: rewrite your own parts from them, as if the user had asked so from the start, and call
+  turn again; the new run starts from the work as it stood.
 
 ### Rules to carry on
 

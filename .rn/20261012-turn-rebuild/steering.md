@@ -369,10 +369,17 @@ Progress:
   t5f's first run wrote no work, its CCS said `stopped: round 1, write`, the caller rewrote only the
   receiver, and the new run made the README for that reader. Unit 5 holds. Seen, judged only: the
   orchestrator still narrated between steps in its own words.
-- Next: unit 6, a plugin decides from what turn returns: runs ending in each `next`, the move decided
-  from the CCS alone checked against the one decided from the records. Whether the README's Example
-  should show the hook's prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the
-  interactive console is seen.
+- Unit 6 judged on the CCSs the unit 5 trials returned, one for each `next` (t5c `to the caller`,
+  t5e `done`, t5f `stopped` and `ask the user`), with no new trial: a fresh agent given the callers'
+  page and each CCS alone decided the same move as the records show is right for all four. Where it
+  could not decide, the page did not say what the README promises or what the code does: running
+  turn again on `ask the user` as it is, that the work is written for `to the caller` on an item,
+  and that a stopped run leaves where the work goes as it was; the page now says so. Unit 6 holds.
+  Seen once, judged only: t5f's round-2 learner gave a way made "from the answer" to two questions
+  the user had answered "unknown; leave it out", so the difference asked the user again.
+- Next: unit 7, following each item back: the evidence in `.turn/` with each checklist's commit,
+  judged first on the files the trials left. Whether the README's Example should show the hook's
+  prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
