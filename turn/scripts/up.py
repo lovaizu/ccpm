@@ -4,6 +4,7 @@ laid out, each form checked, the first user's copy, the console, and the work an
 back, or a stopped run's CCS."""
 
 import glob
+import hashlib
 import json
 import os
 import re
@@ -153,10 +154,17 @@ def forms(ids):
 def start(src, out, session):
     if os.path.exists(out):
         raise Stop(f"{out} already exists; turn never writes over a file, so name a new out")
+    if shutil.which("jq") is None:
+        raise Stop("jq is not installed; install it (https://jqlang.org/download/) and run turn again")
     ccs = read_json(src, src)
     found = faults(ccs)
     if found:
         raise Stop("\n".join(found))
+    deliverable = entries(ccs, "focal_entities", "deliverable")[0]
+    if git("status", "--porcelain", "--ignored", "--", deliverable):
+        raise Stop(f"{deliverable} has changes git does not hold; commit or remove them, so that what was "
+                   "there can be got back once turn writes the work there")
+    before = changed()
     work = os.path.join(".turn", os.path.splitext(os.path.basename(out))[0])
     lists = [checklist(p) for p in entries(ccs, "retrieved_artifacts", "viewpoint")]
     listed = {"checklists": [c for c, _ in lists], "items": [i for _, items in lists for i in items]}
@@ -164,8 +172,7 @@ def start(src, out, session):
     laid = forms([i["id"] for i in listed["items"]])
     lay(work, 1, laid)
     write_json(os.path.join(work, "questions.json"), [])
-    deliverable = entries(ccs, "focal_entities", "deliverable")[0]
-    run = {"session": session, "work": work, "in": src, "out": out, "round": 1}
+    run = {"session": session, "work": work, "in": src, "out": out, "round": 1, "before": before}
     for begun in entries(ccs, "episodic_trace", "work"):
         if not os.path.isfile(begun):
             raise Stop(f"{begun} is not there, so the run cannot start from it")
@@ -186,6 +193,36 @@ def start(src, out, session):
         "sources": entries(ccs, "retrieved_artifacts", "source"),
         "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
     }, indent=1, ensure_ascii=False))
+
+
+def git(*args):
+    done = subprocess.run(["git", *args], capture_output=True, text=True)
+    if done.returncode:
+        raise Stop(done.stderr.strip())
+    return done.stdout
+
+
+def changed():
+    """Each file git does not hold as committed, with what it holds now, or None where it is gone."""
+    found = {}
+    for entry in git("status", "--porcelain", "-z", "--untracked-files=all", "--no-renames").split("\0"):
+        path = entry[3:]
+        if path:
+            found[path] = None
+            if os.path.isfile(path):
+                with open(path, "rb") as f:
+                    found[path] = hashlib.sha1(f.read()).hexdigest()
+    return found
+
+
+def elsewhere(run, deliverable):
+    """The line naming each file changed since the run started outside where the work goes and the
+    run's evidence, or none."""
+    now = changed()
+    ours = (deliverable, run["out"], RUN)
+    names = sorted(p for p in set(run["before"]) | set(now) if run["before"].get(p, "") != now.get(p, "")
+                   and p not in ours and not p.startswith(run["work"] + "/"))
+    return [f"Also changed during the run, outside the work: {', '.join(names)}"] if names else []
 
 
 def lay(work, n, laid):
@@ -508,7 +545,7 @@ def end(work, n):
     write_json(run["out"], ccs)
     close(work, [nxt, f"The work is at {deliverable}."] +
           (["❓ Run turn again on what is still missing, or take the work as it is?"]
-           if nxt == "ask the user" else []))
+           if nxt == "ask the user" else []) + elsewhere(run, deliverable))
 
 
 def close(work, lines):
@@ -578,7 +615,7 @@ def stop(work):
     """Ends a run the user stopped, with a CCS saying where it was and the work as it stands."""
     if not os.path.isfile(RUN):
         raise Stop("no run is open, so there is nothing to stop")
-    run, ccs, _, path = the_work(work, read_json(RUN, RUN)["round"], written=False)
+    run, ccs, deliverable, path = the_work(work, read_json(RUN, RUN)["round"], written=False)
     n, here = run["round"], os.path.join(work, str(run["round"]))
     step = ("check" if os.path.isfile(os.path.join(here, "evaluator-brief.json")) else
             "read" if os.path.isfile(os.path.join(here, "first-user-brief.json")) else "write")
@@ -593,7 +630,7 @@ def stop(work):
     ccs.update(predictive_cue=[{"next": f"stopped: round {n}, {step}"}], semantic_gist=[],
                episodic_trace=[{"work": begun}] if begun else [])
     write_json(run["out"], ccs)
-    close(work, [f"stopped: round {n}, {step} — CCS: {run['out']}"])
+    close(work, [f"stopped: round {n}, {step} — CCS: {run['out']}"] + elsewhere(run, deliverable))
 
 
 COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),

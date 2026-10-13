@@ -1,9 +1,9 @@
 {
-  "description": "turn: keeps the orchestrator and each agent of a run to their steps",
+  "description": "turn: keeps the orchestrator and each agent of a run to their steps, and the user's work as it was",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Agent",
+        "matcher": "Agent|Write|Edit|NotebookEdit|Bash",
         "hooks": [
           {
             "type": "command",
