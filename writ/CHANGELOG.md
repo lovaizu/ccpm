@@ -4,7 +4,7 @@
 
 ### Changed
 
-- The README checklist asks that the opening hold only what the reader needs to decide whether to read on, and that the example show only what the reader does and gets back — a README no longer buries what it gives under how the product works.
+- The README checklist asks for an opening of one or two sentences saying what the product is and what it gives whom, an example that shows only what the reader does and gets back, why to choose it in its own section after the example, and a reason for a requirement only where the reader could not see it — a README reads as the ones people are used to, and no longer buries what it gives under how the product works.
 
 ## [0.2.0] - 2026-10-13
 

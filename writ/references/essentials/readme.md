@@ -1,13 +1,13 @@
 ---
 name: readme
-version: 0.2.0
+version: 0.3.0
 ---
 
 # README
 
 A README is read by someone meeting a product for the first time. It lets them:
 
-- decide from its first lines whether the product is for them;
+- decide from its first sentence or two what the product is and whether it is for them;
 - tell why to choose it over the other ways they could do the same work;
 - picture using it on their own work, from starting to the result;
 - get from deciding to their first result with the README alone;
@@ -21,15 +21,14 @@ reader. Each item of `doc.md` also applies to a README.
 
 ### B-1: What they gain
 
-From the first lines, can the reader tell what they gain from the product?
+From the opening, can the reader tell what the product is and what they gain from it?
 
-Why: the reader decides from the first lines whether to read on; when those lines say what the
-product does or how it works instead, the reader is left to work out what they gain, and often
-leaves first.
+Why: the reader decides from the opening whether to read on; when it says how the product works
+instead, the reader is left to work out what they gain, and often leaves first.
 
 ### B-2: Who it is for
 
-From the first lines, can the reader tell whether they are someone the product is for?
+From the opening, can the reader tell whether they are someone the product is for?
 
 Why: a reader who cannot place themselves reads on to find out, or leaves a product that would have
 served them.
@@ -86,20 +85,21 @@ spent on what they do not use.
 
 ### U-2: Getting ready their own way
 
-For each thing that must be in place beforehand, can the reader tell what it is and why it is
-needed?
+For each thing that must be in place beforehand, can the reader tell what it is, and, where they
+could not see why it is needed, why?
 
-Why: a reader who knows what is needed and why gets it ready in their own way, or sees that they
-already have it; one way of getting it ready, given alone, reads as the only way and gives steps to
-a reader who does not need them.
+Why: a reader who knows what is needed gets it ready in their own way, or sees that they already
+have it; one way of getting it ready, given alone, reads as the only way and gives steps to a
+reader who does not need them; a reason the reader could see for themselves only lengthens the
+list.
 
 ### U-3: An opening only for deciding
 
-Does the opening hold only what the reader needs to decide whether to read on, leaving how the
-product works to the example?
+Is the opening one or two sentences that say what the product is, what the reader gains and who it
+is for, leaving why to choose it to its own section and how it works to the example?
 
-Why: the reader decides from the opening; how the product works, met before they know whether it
-is for them, is where they stop reading.
+Why: the reader decides from the opening whether to read on; reasons and workings met before they
+know whether it is for them are where they stop reading.
 
 ## Format
 
@@ -110,15 +110,19 @@ Does the README follow this template, headings included?
 ```markdown
 # <Product name>
 
-<What the reader gains, who it is for, and what only this product gives>
+<What the product is, and what it gives whom, in one or two sentences>
 
 ## Example
 
 <Using it on one piece of work, from starting to the result, with what the product gives back>
 
+## Why <product name>
+
+<What only this product gives, set against the other ways of doing the same work>
+
 ## Requirements
 
-<Each thing that must be in place beforehand, and why it is needed>
+<Each thing that must be in place beforehand, and why where the reader could not see it>
 
 ## Installation
 
@@ -132,6 +136,8 @@ Does the README follow this template, headings included?
 - The opening has no heading, so it sits right under the name, where the reader looks first.
 - The example comes before installation, so the reader sees using it before deciding to install it;
   repeated after installation, it is the first use.
+- Why to choose it follows the example, so the reader weighs it against the use they have just
+  seen.
 
 Why: a reader looks for requirements, installation or the license under the headings READMEs
 commonly give them, and finds each where they look only when every README puts it there.
