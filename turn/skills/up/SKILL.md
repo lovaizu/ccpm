@@ -42,8 +42,12 @@ repository.
    added, from the sources and what the work should be: `ask`, true when only the user can decide
    it, and false when the work, the sources or what the work should be answers it; `answered`, where
    false, where it is answered. Write the form `hand-on` with `jq`, for every item: `met`, true or
-   false; `lines`, where met, the lines that give it, such as `3-5, 12`; `note`, where met, what the
-   receiver gets from those lines, and where not, how the work would give it; `question`, where not
+   false; where met, `lines`, the lines that give it, such as `3-5, 12`, and `note`, what the
+   receiver gets from those lines; where not, first `aim`, what the whole work gives the receiver
+   once the item is met, said from the item and its checklist's opening, then `reach`, every line
+   of the work whose shape stands between it and the aim, and then `way`, how the work's shape
+   becomes the aim, said from the aim and taken at every line of the reach, with no line named in
+   the aim or the way; `question`, where not
    met only for want of a question's answer and the work already leaves out what the answer
    settles, the question's number, counted from 1; where the work still says it, the item is not
    met, and the note says to leave it out until the answer comes. Run

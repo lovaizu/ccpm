@@ -28,6 +28,7 @@ AGENTS = {"generator": 4, "first-user": 9, "evaluator": 10, "learner": 12}
 SCRIPT = os.path.abspath(__file__)
 DECIDING = ("hand-on", "orchestrator")
 RUN = os.path.join(".turn", "run.json")
+NAMES_LINES = re.compile(r"\blines?\s*\d|\b\d+\s*-\s*\d+\b")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
 USAGE = """usage: up.py start <in> <out> <session>
        up.py brief <work folder> <round> <generator|first-user|evaluator|learner>
@@ -191,7 +192,7 @@ def check(work, n, role):
     form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
     if role == "learner":
-        return found + learner_faults(form, without_good(work, n)) + question_faults(work, decided=False)
+        return found + learner_faults(form, without_good(work, n), count) + question_faults(work, decided=False)
     if role in ("generator", "hand-on"):
         found += question_faults(work, decided=role == "hand-on")
     for i in ids if role not in ("first-user", "evaluator") else [i for i in ids if i in form]:
@@ -207,8 +208,10 @@ def check(work, n, role):
             found.append(f"{i}: grounds are not given")
         if role in DECIDING and not isinstance(place.get("met"), bool):
             found.append(f"{i}: not decided")
-        if role in DECIDING and (place.get("met") or role == "hand-on") and not place.get("note"):
+        if role in DECIDING and place.get("met") and not place.get("note"):
             found.append(f"{i}: the note is not given")
+        if role == "hand-on" and place.get("met") is False:
+            found += aim_faults(i, place, count)
         if needed and not lines:
             found.append(f"{i}: lines are not given")
         elif lines and bad_lines(lines, count):
@@ -258,15 +261,31 @@ def without_good(work, n):
             if p.get("met") is not True and i not in waiting(work, n)]
 
 
-def learner_faults(form, left):
+def aim_faults(i, place, count):
+    """Says where a way to a Good is not made from the aim: the aim and the way said of the whole work,
+    and the reach, every line the same shape reaches."""
+    found = []
+    for key, said in (("aim", "say it of the whole work"), ("way", "say it from the aim")):
+        if not place.get(key):
+            found.append(f"{i}: the {key} is not given")
+        elif NAMES_LINES.search(place[key]):
+            found.append(f"{i}: the {key} names lines; {said}")
+    reach = place.get("reach", "")
+    if not reach:
+        found.append(f"{i}: reach is not given")
+    elif bad_lines(reach, count):
+        found.append(f"{i}: reach {reach} is not in the work")
+    return found
+
+
+def learner_faults(form, left, count):
     found = [f"{i}: has a Good, so needs no way" for i in form if i not in left]
     for i in left:
         place = form.get(i)
         if place is None:
             found.append(f"{i}: not filled")
             continue
-        if not place.get("way"):
-            found.append(f"{i}: the way is not given")
+        found += aim_faults(i, place, count)
         if place.get("in") not in PLACES:
             found.append(f"{i}: in must be one of: {', '.join(PLACES)}")
         if not isinstance(place.get("making"), str):
@@ -282,10 +301,17 @@ def learned(work, n):
         raise Stop("\n".join(found))
     grouped, rules = {}, []
     for i, p in read_json(os.path.join(work, str(n), "learner.json"), "the form").items():
-        grouped.setdefault((p["way"], p["in"]), []).append(i)
+        grouped.setdefault((p["way"], p["in"]), []).append(p)
+        p["item"] = i
         if p["making"] and p["making"] not in rules:
             rules.append(p["making"])
-    return [{"way": w, "in": where, "items": sorted(items)} for (w, where), items in grouped.items()], rules
+    return [dict(serves(places, w), **{"in": where}) for (w, where), places in grouped.items()], rules
+
+
+def serves(places, way):
+    """One way with the items it serves, their aims and every line it reaches, each said once."""
+    aims, reach = (list(dict.fromkeys(p[key] for p in places)) for key in ("aim", "reach"))
+    return {"way": way, "items": sorted(p["item"] for p in places), "aims": aims, "reach": reach}
 
 
 def round_two(work):
@@ -373,11 +399,11 @@ def brief(work, n, role):
              "check": f'cd "{os.getcwd()}" && python3 "{SCRIPT}" check {work} {n} {role}'}
     hand_on = read_json(os.path.join(here, "hand-on.json"), "the form")
     if role == "generator":
-        sent = [{"way": p["note"], "items": [i]} for i, p in hand_on.items() if p.get("met") is False]
+        sent = [serves([dict(p, item=i)], p["way"]) for i, p in hand_on.items() if p.get("met") is False]
         if sent or n == 1:
             ways = sent
         else:
-            ways = [{"way": w["way"], "items": w["items"]} for w in learned(work, 1)[0] if w["in"] == PLACES[0]]
+            ways = [{k: v for k, v in w.items() if k != "in"} for w in learned(work, 1)[0] if w["in"] == PLACES[0]]
             should["constraints"] += [f"rule: {r}" for r in learned(work, 1)[1]]
         given.update(should, ways=ways, questions=os.path.join(work, "questions.json"))
     elif role == "first-user":

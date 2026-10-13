@@ -13,7 +13,8 @@ def seen(repo, f1=True):
     """The orchestrator's form before the reading, with F-1 seen given or not."""
     fill(repo, form("hand-on"), {
         "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-        "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else "cut it to one line"}})
+        "note F-1": {"met": True, "lines": "1-3", "note": "three lines"} if f1 else
+        {"met": False, "aim": "the teammate takes it in at a glance", "way": "cut it to one line", "reach": "1-3"}})
 
 
 class Coverage(unittest.TestCase):
@@ -102,10 +103,19 @@ class Check(unittest.TestCase):
                 "note B-1": {"met": True, "lines": "3", "note": ""},
                 "note F-1": {"met": False, "lines": "", "note": ""}},
              "note B-1: the note is not given"),
-            ("hand-on without how", "hand-on", {
-                "note B-1": {"met": False, "lines": "", "note": ""},
+            ("hand-on without the aim", "hand-on", {
+                "note B-1": {"met": False, "aim": "", "way": "say what make does", "reach": "3"},
                 "note F-1": {"met": True, "lines": "1", "note": "x"}},
-             "note B-1: the note is not given"),
+             "note B-1: the aim is not given"),
+            ("hand-on with a way made from lines", "hand-on", {
+                "note B-1": {"met": False, "aim": "they know what to run", "way": "add to line 3", "reach": "3"},
+                "note F-1": {"met": True, "lines": "1", "note": "x"}},
+             "note B-1: the way names lines; say it from the aim"),
+            ("hand-on with a reach outside the work", "hand-on", {
+                "note B-1": {"met": False, "aim": "they know what to run", "way": "say what make does",
+                             "reach": "9"},
+                "note F-1": {"met": True, "lines": "1", "note": "x"}},
+             "note B-1: reach 9 is not in the work"),
             ("not JSON", "generator", "{", "the form is not JSON"),
         ]
         for name, role, filled, said in cases:

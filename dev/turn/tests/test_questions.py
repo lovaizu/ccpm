@@ -22,7 +22,8 @@ def seen(repo, f1=None):
     fill(repo, form("hand-on"), {
         "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
         "note F-1": {"met": True, "lines": "1-3", "note": "three lines"} if f1 is None else
-        {"met": False, "lines": "", "note": "the license", "question": f1}})
+        {"met": False, "aim": "the teammate knows the terms", "way": "name the license", "reach": "1",
+         "question": f1}})
 
 
 def decided(repo, f1=True):
@@ -191,8 +192,9 @@ class LearnersQuestions(unittest.TestCase):
         self.repo.write(".turn/out/1/note.md", WORK)
         seen(self.repo)
         decided(self.repo, f1=False)
-        fill(self.repo, form("learner"), {"note F-1": {"way": "say why, from the answer to question 1",
-                                                       "in": "the work", "making": ""}})
+        fill(self.repo, form("learner"), {"note F-1": {
+            "aim": "the teammate knows the terms", "way": "say the terms, from the answer to question 1",
+            "reach": "1", "in": "the work", "making": ""}})
 
     def test_the_learner_is_told_where_the_questions_are(self):
         # Given: the records of the run's agents

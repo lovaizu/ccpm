@@ -7,6 +7,7 @@ WORK = "# Note\n\nRun make.\n"
 WORK_WAY = "the work: say what make builds"
 CALLER_WAY = "what the work should be: name the receiver's machine"
 RULE = "read the sources for what each command does"
+AIM = "the teammate knows what make gives them"
 
 
 def decide(repo, folder, f1, b1=True):
@@ -19,8 +20,11 @@ def learn(repo, folder, ways, making=None):
     """The learner's form: for each item, its way to a Good, where the way lies, and what in making
     such work would have given it."""
     fill(repo, f"{folder}/learner.json",
-         {i: {"way": w.partition(": ")[2], "in": w.partition(": ")[0], "making": (making or {}).get(i, "")}
-          for i, w in ways.items()})
+         {i: {"aim": AIM, "way": w.partition(": ")[2], "reach": "3", "in": w.partition(": ")[0],
+              "making": (making or {}).get(i, "")} for i, w in ways.items()})
+
+
+PLACE = {"aim": AIM, "way": "say what make builds", "reach": "3", "in": "the work", "making": ""}
 
 
 class Learner(unittest.TestCase):
@@ -47,15 +51,15 @@ class Learner(unittest.TestCase):
     def test_a_learner_form_with_a_place_left_or_wrong_is_stopped_saying_which(self):
         cases = [
             ("no place", {}, "note F-1: not filled"),
-            ("no way", {"note F-1": {"way": "", "in": "the work", "making": ""}},
-             "note F-1: the way is not given"),
-            ("nowhere", {"note F-1": {"way": "say what make builds", "in": "luck", "making": ""}},
-             "note F-1: in must be one of"),
-            ("making not a text", {"note F-1": {"way": "say what make builds", "in": "the work"}},
+            ("no way", {"note F-1": dict(PLACE, way="")}, "note F-1: the way is not given"),
+            ("no aim", {"note F-1": dict(PLACE, aim="")}, "note F-1: the aim is not given"),
+            ("an aim made from lines", {"note F-1": dict(PLACE, aim="lines 1-3 say it")},
+             "note F-1: the aim names lines; say it of the whole work"),
+            ("no reach", {"note F-1": dict(PLACE, reach="")}, "note F-1: reach is not given"),
+            ("nowhere", {"note F-1": dict(PLACE, **{"in": "luck"})}, "note F-1: in must be one of"),
+            ("making not a text", {"note F-1": {k: v for k, v in PLACE.items() if k != "making"}},
              "note F-1: making is not given"),
-            ("an item with a Good", {"note F-1": {"way": "x", "in": "the work", "making": ""},
-                                     "note B-1": {"way": "x", "in": "the work", "making": ""}},
-             "note B-1: has a Good"),
+            ("an item with a Good", {"note F-1": PLACE, "note B-1": PLACE}, "note B-1: has a Good"),
         ]
         for name, filled, said in cases:
             with self.subTest(name):
@@ -102,7 +106,8 @@ class SecondRound(unittest.TestCase):
         # Then: the way is handed on once, with both items, and the rule with the constraints
         self.assertEqual(code, 0, out)
         got = self.repo.json(out.strip())
-        self.assertEqual(got["ways"], [{"way": "say what make builds", "items": ["note B-1", "note F-1"]}])
+        self.assertEqual(got["ways"], [{"way": "say what make builds", "items": ["note B-1", "note F-1"],
+                                        "aims": [AIM], "reach": ["3"]}])
         self.assertEqual(got["constraints"], [f"rule: {RULE}"])
 
     def test_there_is_no_third_round(self):

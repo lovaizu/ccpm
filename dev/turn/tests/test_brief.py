@@ -13,7 +13,8 @@ def seen(repo, f1=True, n=1):
     """The orchestrator's form before the reading, with F-1 seen given or not."""
     fill(repo, form("hand-on", n), {
         "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-        "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else "cut it to one line"}})
+        "note F-1": {"met": True, "lines": "1-3", "note": "three lines"} if f1 else
+        {"met": False, "aim": "the teammate takes it in at a glance", "way": "cut it to one line", "reach": "1-3"}})
 
 
 def decided(repo, f1, n=1):
@@ -82,7 +83,7 @@ class Briefs(unittest.TestCase):
         # When: the generator's brief is made again
         got = self.handed("generator")
         # Then: it holds F-1 with how it would be given
-        self.assertEqual(got["ways"], [{"way": "cut it to one line", "items": ["note F-1"]}])
+        self.assertEqual(got["ways"], [{"way": "cut it to one line", "items": ["note F-1"], "aims": ["the teammate takes it in at a glance"], "reach": ["1-3"]}])
 
     def test_the_first_user_is_handed_a_fresh_copy_holding_only_what_the_receiver_has(self):
         # Given: the work seen to give every item, and a file the user has not committed
@@ -173,14 +174,15 @@ class Briefs(unittest.TestCase):
     def test_round_two_hands_the_generator_the_ways_and_the_rules_learned(self):
         # Given: round 1 left F-1 with a way in the work and something learned of making
         decided(self.repo, f1=False)
-        fill(self.repo, form("learner"), {"note F-1": {"way": "cut it to one line", "in": "the work",
-                                                       "making": "say each thing once"}})
+        fill(self.repo, form("learner"), {"note F-1": {
+            "aim": "the teammate takes it in at a glance", "way": "cut it to one line", "reach": "1-3",
+            "in": "the work", "making": "say each thing once"}})
         self.assertEqual(run(self.repo, "round", ".turn/out")[0], 0)
         # When: the generator's brief for round 2 is made
         got = self.handed("generator", 2)
         # Then: it holds round 1's way with its item, and the rule among the constraints
         self.assertEqual(got["work"], ".turn/out/2/note.md")
-        self.assertEqual(got["ways"], [{"way": "cut it to one line", "items": ["note F-1"]}])
+        self.assertEqual(got["ways"], [{"way": "cut it to one line", "items": ["note F-1"], "aims": ["the teammate takes it in at a glance"], "reach": ["1-3"]}])
         self.assertEqual(got["constraints"], ["rule: say each thing once"])
 
     def test_a_brief_is_made_only_for_the_round_now_running_and_an_agent_of_turn(self):

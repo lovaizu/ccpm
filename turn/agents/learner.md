@@ -21,9 +21,12 @@ its later tasks as a rule, so it must hold for any work of the kind, not only th
 2. Read the list, the work, the sources, `questions`, the reading and the decisions whole.
 3. Read the first user's records for what it looked for and where it went, and the generator's
    records for how the work was made.
-4. Write your form: for each item the decisions do not give as met, under the item's ID, in `way`,
-   how the work would give the receiver what the item asks, toward the use; in `in`, where that way
-   lies, `the work` or `what the work should be`; in `making`, what in making such work would have
+4. Write your form: for each item the decisions do not give as met, under the item's ID, first in
+   `aim`, what the whole work gives the receiver once the item is met, toward the use, said from
+   the item and its checklist's opening; then in `reach`, every line of the work whose shape stands
+   between it and the aim, such as `3-5, 12`; then in `way`, how the work's shape becomes the aim,
+   said from the aim and taken at every line of the reach. Name no line in the aim or the way. In
+   `in`, write where that way lies, `the work` or `what the work should be`; in `making`, what in making such work would have
    given the item when first made, said for any work of the kind, or `""` where the records show
    nothing of the kind. Where one way serves several items, write it the same under each.
 5. Where a way needs what neither the sources, what the work should be nor a question already in

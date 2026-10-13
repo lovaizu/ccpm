@@ -13,14 +13,15 @@ starting from the lines you name for it, so the lines must be where the item is 
 
 1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work` (where
    the work is made), `form`, `check` (the command that checks your form), `receiver`, `use`,
-   `acceptance`, `sources`, `constraints`, `ways`: each way the work would give the items it
-   names, empty when the work is made for the first time, and `questions`: the file of what only
+   `acceptance`, `sources`, `constraints`, `ways`: each `way` the work's shape would take
+   to give the `aims` of the `items` it names, at every line of its `reach`, empty when the work
+   is made for the first time, and `questions`: the file of what only
    the user can decide.
 2. Read the list whole. Each checklist's opening says what such work is for; each item asks one
    thing the work must give its receiver.
 3. Read each source whole.
-4. Where `ways` is empty, write the work. Otherwise read the work whole, and make it give the items
-   of each way while it keeps giving the others. Write in the language a `language` constraint
+4. Where `ways` is empty, write the work. Otherwise read the work whole, and take each way at every
+   line of its reach, so the work gives its aims while it keeps giving the others. Write in the language a `language` constraint
    names, and keep every `rule` constraint.
 5. Where something the work needs is settled neither by the sources nor by what the work should be,
    nor by a question already in `questions`, leave it out of the work, and add it to `questions`
