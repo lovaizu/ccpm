@@ -307,7 +307,28 @@ Progress:
 - Unit 3 tried a third time: every agent was called with its brief, the hook stopped one call made
   with the brief's full path (now accepted), the learner gave a way in the work and a rule for any
   document, and round 2 ended `done` with all 25 items met. Unit 3 holds.
-- Next: unit 4 (questions only the user can answer), built and tried as units 1 to 3 were.
+- Decided by the user (2026-10-13), unit 4: a question only the user can decide is asked at once by
+  the orchestrator, not held to the end; the orchestrator lists them before the work is first
+  written, the generator works in the background meanwhile, and the answers reach the work and
+  come back in the CCS as `answer`. A question may come from the orchestrator, the generator and
+  the learner, whom the sources are given; the first user and the evaluator raise none. The design,
+  the README and the callers' page say so (1353b0e, e2c1c31). Checked first on a small plugin: an
+  agent ran on while the orchestrator asked, and the orchestrator went on when it ended; trials
+  answer through `claude -p --input-format stream-json` (`dev/turn/trials/run.py <folder> <task>
+  <out> [<answer> ...]`, task `dev/turn/trials/csvtidy-readme.json`).
+- Decided by the user (2026-10-13): a change is a patch when it is made from the place a slip
+  showed, and as it should be when it is made from the purpose: first what the whole work gives the
+  receiver once the item is met, then every place the same shape reaches, then the change of shape.
+  So a way to a Good, the learner's and the orchestrator's send-back alike, is `aim` (said of the
+  whole work), `reach` (every line the shape reaches) and `way` (from the aim, taken at every line
+  of the reach), and the script refuses an aim or a way that names lines (88f7070). An item whose
+  way can be taken only with an answer gives that question's number, as where its way lies.
+- Tried on csvtidy (before 88f7070): questions were asked within 15 seconds, answered while the
+  generator worked, and the answers were in the work read; the learner's question was asked before
+  round 2. Seen once, judged only: the orchestrator once asked without ❓, so the trial waited.
+- Next: read the records of the trial run on 88f7070 and its later commit (scratchpad `t4e`, log
+  `t4e.log`; if lost, run it again as above) and judge unit 4 by the design's Verification for
+  "asked only what only the user can decide"; then unit 5.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
