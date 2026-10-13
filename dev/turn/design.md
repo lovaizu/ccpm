@@ -349,9 +349,9 @@ Achieves: seeing the work as it goes.
 
 The console serves a user who looks in now and then: it shows where the run is by step, what the
 work will let its receiver do before it is written, so a wrong aim is stopped before a round is
-spent, what the first user could not take, in plain words, and at the end where the work is and
-what the user must decide. Item IDs and counts are not shown, since the user would have to learn
-the checklist.
+spent, what the work does not yet give, said as what the receiver will be able to do once it does,
+in plain words, and at the end where the work is and what the user must decide. Item IDs and counts
+are not shown, since the user would have to learn the checklist.
 
 - A script refuses the generator its brief until the round's aim is set.
 - A hook, after each shell command of the run, shows the user the lines of the console not yet

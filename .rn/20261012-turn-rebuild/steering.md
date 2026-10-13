@@ -430,7 +430,13 @@ Progress:
   it is left to the role's judgment, and the aim is a work with every item Good. So that finding
   changes nothing, and step 6 holds.
 - Step 7 holds: `claude plugin validate --strict` passes for turn and for the marketplace.
-- Next: the final check of the whole change before asking the user to merge (`final-check.md`).
+- Final check (2026-10-13): the plugin's description and changelog said what the earlier turn did,
+  and were made to say what the README promises. The released writ read the rewritten checklists'
+  opening as its questions; at the user's word, pith reads them from the items, and writ is released
+  as 0.2.0 with turn 0.1.0. The README's Example and the design's console said ⚠️ shows what the
+  first user could not take; at the user's word they now say what the console shows, what the work
+  does not yet give as what the receiver will be able to do.
+- Next: the user merges; then tag `writ--v0.2.0` and `turn--v0.1.0` and publish their Releases.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 

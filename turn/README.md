@@ -43,26 +43,27 @@ Round 1
 
             .turn/readme/1/README.md
   2 read    Read as a developer who finds the tool on GitHub.
-            .turn/readme/1/reading.json
-  3 check   ⚠️ The reader could not tell which Python version the tool needs.
-            ⚠️ The reader could not picture the result on their own files.
+            .turn/readme/1/first-user.json
+  3 check   ⚠️ Not yet: the developer can tell which Python version the tool needs.
+            ⚠️ Not yet: the developer can picture the result on their own files.
 Round 2
   1 write   To make: the same, now naming the Python version and showing a result on a sample file.
             .turn/readme/2/README.md
   2 read    Read again, as the same developer.
-            .turn/readme/2/reading.json
+            .turn/readme/2/first-user.json
   3 check   ✅ Nothing missing.
-
-The README is at README.md.
+done
+The work is at README.md.
 ```
 
 The line after `To make:` is shown before turn writes. If it is not what you want, press Esc and say
 what you want instead; Claude rewrites its request to turn from your words, as if you had asked so
 from the start, and turn starts again from the work as it stands.
 
-Each ⚠️ is something the reader could not take from the work. turn works out what the work would
-need to give it, such as a line on the Python version, makes the work again with that rather than
-patching the line where it showed, and has it read again.
+Each ⚠️ is something the work does not yet give the person it is for, said as what they will be
+able to do once it does. turn works out how the work would give it, such as a line on the Python
+version, makes the work again with that rather than patching the line where it showed, and has it
+read again.
 
 Answer a question marked ❓ when it shows. turn goes on writing meanwhile, and puts your answer
 into the work before it is read. If something is still missing after the second round, it comes
