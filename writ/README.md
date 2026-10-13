@@ -94,12 +94,6 @@ and title, marked ✅ when met, with the lines of README.md that show it:
 
 To check an item, open README.md at its lines; you need not read the whole document.
 
-### When an item is still not met
-
-When an item is still not met after turn's second round, writ has turn make the document again on
-what it still needs. It asks you only what that needs and only you can decide, such as who the
-readers are; answer in your own words, and writ has turn make the document again from them.
-
 ### Fixing a document you already have
 
 To have a document you already have made again, name it: `/writ:up docs/typing-guide.md`. writ

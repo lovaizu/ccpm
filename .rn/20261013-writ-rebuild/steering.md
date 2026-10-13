@@ -105,7 +105,8 @@ Progress:
   to the user only when no source settles it.
 - Decided by the user (2026-10-13): when turn returns `ask the user` with a way that lies in the
   work, the caller does not put it to the user but has it fixed; the user is asked only what they
-  alone can decide. The README's section on an item still not met says so. The one item left (headings for the cases) was fixed by hand.
+  alone can decide. The README says nothing of it: the user only answers what they alone can decide, which the
+  README already says, and how writ gets the rest met is its own work. The one item left (headings for the cases) was fixed by hand.
 - Next: the user agrees to the README on the pull request, then #3.
 
 ### [ ] #3: writ's design
