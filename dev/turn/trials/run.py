@@ -5,9 +5,10 @@ and prints the conversation as it goes.
     python3 dev/turn/trials/run.py <new folder> <CCS file> <out name> [--stop <words>] [<answer> ...]
 
 The CCS's paths are from the top of the repository. The clone holds this working tree's committed
-state, so commit what the trial must see first. A question asked when no answer is left is answered
-as a user who does not know would answer it. With --stop, the run is stopped as by Esc the first
-time the console shows what it will make, and the words are said in its place.
+state, so commit what the trial must see first. Each question shown is answered in turn, once
+Claude waits; one asked when no answer is left is answered as a user who does not know would. With
+--stop, the run is stopped as by Esc the first time the console shows what it will make, and the
+words are said in its place.
 """
 
 import json
@@ -41,27 +42,28 @@ def say(text):
 
 
 say(f"/turn:up in: .tasks/in.json\nout: .tasks/{out}")
-last, stopped = "", None
+asked, stopped = 0, None
 for line in claude.stdout:
     event = json.loads(line)
-    if event.get("type") == "assistant":
-        for part in event["message"]["content"]:
-            if part["type"] == "text":
-                last = part["text"]
-                print(last, flush=True)
-                if stop and "To make:" in last:
-                    print("[Esc]", flush=True)
-                    claude.stdin.write(json.dumps({"type": "control_request", "request_id": "esc",
-                                                   "request": {"subtype": "interrupt"}}) + "\n")
-                    claude.stdin.flush()
-                    stopped, stop, last = stop, None, ""
-    elif event.get("type") == "result" and stopped:
+    shown = [p["text"] for p in event["message"]["content"] if p["type"] == "text"] \
+        if event.get("type") == "assistant" else [event["content"]] \
+        if event.get("type") == "system" and event.get("subtype") == "informational" else []
+    for text in shown:
+        print(text, flush=True)
+        asked += text.count("❓")
+        if stop and "To make:" in text:
+            print("[Esc]", flush=True)
+            claude.stdin.write(json.dumps({"type": "control_request", "request_id": "esc",
+                                           "request": {"subtype": "interrupt"}}) + "\n")
+            claude.stdin.flush()
+            stopped, stop, asked = stop, None, 0
+    if event.get("type") == "result" and stopped:
         say(stopped)
         stopped = None
     elif event.get("type") == "result":
-        if "❓" in last:
+        if asked:
             say(answers.pop(0) if answers else "I don't know; leave it out of the work.")
-            last = ""
+            asked -= 1
         elif not os.path.exists(os.path.join(place, ".turn", "run.json")):
             break
 claude.stdin.close()
