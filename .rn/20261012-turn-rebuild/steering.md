@@ -418,7 +418,15 @@ Progress:
   command, and the orchestrator's form is refused where a note is the evaluator's grounds. No
   question was asked, and none was left open by the sources. No version is released, so the
   one-dimensional qualities have nothing to be compared with.
-- Next: step 6 tried again on 51555b3, on the same task, and judged the same way.
+- Step 6 tried again on fb9a1aa (t7, the same task, $5.19): two rounds, `ask the user`, 23 of 25
+  items Good, doc B-3 and doc U-6 returned with their ways; only the work and the run's evidence
+  changed, nothing committed. Both fixes of 51555b3 held: no agent's records hold a console line,
+  and no note of the orchestrator is the evaluator's grounds. A fresh reader outside the run took
+  the same 23 items and missed the same two for the same reasons, so read in the receiver's place
+  holds. Found: round 2's learner raised a question (how long a run takes) and gave a way made "from
+  the answer to question 1"; the orchestrator answered it itself from what the work should be, as
+  step 7 allows, but the way returned to the caller still waits on that answer. The design does not
+  say what becomes of a way whose question the orchestrator answers; brought to the user.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
 
