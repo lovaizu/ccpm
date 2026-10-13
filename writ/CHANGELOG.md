@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- The README checklist asks that the opening hold only what the reader needs to decide whether to read on, and that the example show only what the reader does and gets back — a README no longer buries what it gives under how the product works.
+
 ## [0.2.0] - 2026-10-13
 
 ### Changed

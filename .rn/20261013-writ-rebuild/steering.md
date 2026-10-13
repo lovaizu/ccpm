@@ -107,7 +107,13 @@ Progress:
   work, the caller does not put it to the user but has it fixed; the user is asked only what they
   alone can decide. The README says nothing of it: the user only answers what they alone can decide, which the
   README already says, and how writ gets the rest met is its own work. The one item left (headings for the cases) was fixed by hand.
-- Next: the user agrees to the README on the pull request, then #3.
+- Seen by the user (2026-10-13): the README made through turn was too long; they stopped at the
+  opening. The checklist let it pass: its opening held how writ works, and its example showed turn's
+  progress with a key to read it. Decided by the user: the measure is what the opening and the
+  example are for, not a length; `readme.md` 0.2.0 asks it (B-4, U-3). Also seen: the judges looked
+  only for lines that meet an item, never for lines no reader needs, and a gap was met by adding an
+  explanation rather than removing what needed it; this is turn's to settle.
+- Next: make the README again through turn against `readme.md` 0.2.0, then the user agrees to it.
 
 ### [ ] #3: writ's design
 

@@ -1,6 +1,6 @@
 ---
 name: readme
-version: 0.1.0
+version: 0.2.0
 ---
 
 # README
@@ -45,10 +45,12 @@ losing work, does not decide the choice, and placed first it hides what does.
 ### B-4: Using it on their own work
 
 Can the reader picture using the product on their own work, from starting to the result, from an
-example that shows what they do and what they get back at each point?
+example that shows only what they do and what they get back?
 
 Why: a reader who can picture it decides on what they will actually get; an example far from their
-own work, or one without what the product gives back, is read as someone else's story.
+own work, or one without what the product gives back, is read as someone else's story; and each step
+the product takes inside, shown in the example, is one more thing to learn before the reader has
+decided.
 
 ### B-5: Started from the README alone
 
@@ -90,6 +92,14 @@ needed?
 Why: a reader who knows what is needed and why gets it ready in their own way, or sees that they
 already have it; one way of getting it ready, given alone, reads as the only way and gives steps to
 a reader who does not need them.
+
+### U-3: An opening only for deciding
+
+Does the opening hold only what the reader needs to decide whether to read on, leaving how the
+product works to the example?
+
+Why: the reader decides from the opening; how the product works, met before they know whether it
+is for them, is where they stop reading.
 
 ## Format
 
