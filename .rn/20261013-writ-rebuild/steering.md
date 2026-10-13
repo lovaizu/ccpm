@@ -121,30 +121,28 @@ Progress:
 - Seen by the user (2026-10-13): the opening was still far longer than READMEs commonly have.
   Compared with five common tools and five official Claude Code plugins, `readme.md` asked for two
   things they do not: three points in the opening, and a reason for every requirement. Decided by the
-  user: `readme.md` 0.3.0 asks for an opening of one or two sentences, why to choose the product in
-  its own section after the example, and a reason only where the reader could not see it.
-- Made again through `turn:up` on `readme.md` 0.3.0 (2026-10-13): 23 of 25 items met after two
-  rounds; the two left (what a checklist is, before the example uses it; what writ leaves in the
-  repository) were fixed by hand on the learner's way.
-- To do in #4: `writ/.claude-plugin/plugin.json` names turn in `dependencies`, which the README's
-  Installation now promises; `turn/calling-from-a-plugin.md` points to turn's README for what both
-  say (the checklist's front matter, writing over a file git holds, Esc).
-- turn's README made again through `turn:up` on `readme.md` 0.3.0 (2026-10-13): every item met
-  after two rounds; the opening is two sentences, but the whole grew from 105 to 127 lines, mostly
-  from a list of every file turn writes, which a rule turn learned in the writ run asked for.
+  user: `readme.md` asks for an opening of one or two sentences, why to choose the product in its
+  own section after the example, and a reason only where the reader could not see it.
 - Decided by the user (2026-10-13): what is learned in a run goes into the checklists, not on as
   rules in the next task.
 - Root cause, from the runs' records (2026-10-13): each round, the first user's guesses fell under
   `doc.md` B-3 (each idea given in full), and the generator met them by adding explanation, such as
   a list of every file turn writes; B-4 and U-3 let it pass, as each addition gives the reader
   something. `readme.md` applied `doc.md` whole, with the product's whole as the subject. Decided by
-  the user: `readme.md` 0.4.0 judges the items of `doc.md` with deciding and getting to the first
-  result as a README's subject, and the rest goes to pages reached from Documentation. Both READMEs
-  are made again through turn on it, with no rules carried, so the patches made by hand go with
-  them.
-- Found in the run, for turn: the learner makes a rule for every later task from one finding, and
+  the user: `readme.md` judges the items of `doc.md` with deciding and getting to the first result
+  as a README's subject, and the rest goes to pages reached from Documentation.
+- Decided by the user (2026-10-13): a checklist's version goes up once for a release, not with each
+  change on a branch; `readme.md` is 0.2.0 here, against 0.1.0 released.
+- Made again through `turn:up` on that `readme.md`, with no rules carried (2026-10-13): 24 of 26
+  items met after two rounds. The one left, that writ reports once every item is met, was written in
+  by hand, as decided above; the learner's way, to show an item not met, went against that decision.
+- Found in the runs, for turn: the learner makes a rule for every later task from one finding, and
   `calling-from-a-plugin.md` tells the caller to carry it on unchecked; whether turn makes such rules
   at all is turn's to settle.
+- To do: turn's README is made again the same way, as the one committed was made with rules carried.
+- To do in #4: `writ/.claude-plugin/plugin.json` names turn in `dependencies`, which the README's
+  Installation promises; `turn/calling-from-a-plugin.md` points to turn's README for what both say
+  (the checklist's front matter, writing over a file git holds, Esc).
 - Next: the user agrees to the README.
 
 ### [ ] #3: writ's design
