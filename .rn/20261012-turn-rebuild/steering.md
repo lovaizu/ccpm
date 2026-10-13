@@ -378,7 +378,8 @@ Progress:
   Seen once, judged only: t5f's round-2 learner gave a way made "from the answer" to two questions
   the user had answered "unknown; leave it out", so the difference asked the user again.
 - Next: unit 7, following each item back: the evidence in `.turn/` with each checklist's commit,
-  judged first on the files the trials left. Whether the README's Example should show the hook's
+  judged first on the files the trials left (t5c to t5f, in
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-fix-rn/cb763d29-b670-4dcb-9081-cf11f18172dc/scratchpad/`, each with its `.turn/` and `.tasks/`). Whether the README's Example should show the hook's
   prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
