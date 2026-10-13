@@ -1,6 +1,6 @@
 ---
 name: design
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Design document
@@ -123,10 +123,11 @@ is kept for nothing.
 
 ### B-14: How each approach is built
 
-For each approach, can the reader tell the parts it uses and how they work together?
+For each approach, can the reader tell each part it uses, when the part acts, what it looks at and
+what it does, such as the event a hook runs on and what it stops?
 
-Why: a maintainer changes an approach through its parts, and a part whose role is not known is
-changed without knowing what it holds up.
+Why: a maintainer changes an approach through its parts; a part named without what it does is built
+however its builder reads it, and the quality it was to hold is left to that reading.
 
 ### B-15: What must always hold
 
@@ -156,11 +157,13 @@ mind everywhere.
 ### U-2: Nothing of the specification
 
 Does the document leave out what is decided anew with each build, such as steps, full definitions,
-values, settings and file names, and name only what others rely on?
+values, settings and file names, and say what others rely on by what it lets them do, naming a
+name, a path or a value only where they rely on that very name?
 
 Why: such details change with each rebuild, so a design that holds them must be rewritten with the
-code, and the reader can no longer tell a decision that must hold from a detail that may change; an
-idea the design takes up is given in full as a decision and its reason, not as its specification.
+code, and the reader can no longer tell a decision that must hold from a detail that may change; a
+name made a promise where others rely only on what it gives ties the design to the build; an idea
+the design takes up is given in full as a decision and its reason, not as its specification.
 
 ## Format
 
