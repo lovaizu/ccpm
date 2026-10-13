@@ -57,8 +57,8 @@ The README is at README.md.
 ```
 
 The line after `To make:` is shown before turn writes. If it is not what you want, press Esc and say
-what you want instead; Claude passes your words to turn, which starts again from the work as it
-stands.
+what you want instead; Claude rewrites its request to turn from your words, as if you had asked so
+from the start, and turn starts again from the work as it stands.
 
 Each ⚠️ is something the reader could not take from the work. turn works out what the work would
 need to give it, such as a line on the Python version, makes the work again with that rather than

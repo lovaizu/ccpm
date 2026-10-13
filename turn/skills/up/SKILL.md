@@ -74,6 +74,8 @@ step 1 says to say. After step 1, when a command exits with 1, do what it says a
     line, then each line after it as printed, and nothing more, and return to the caller.
 15. If the user stops you with Esc, or answers a question by saying what they want instead, stop
     each agent of the run still at work, run `up.py stop <folder>`, and say what it prints. If a
-    plugin's step called you, return to it. Otherwise, add what the user said to `constraints` of
-    the CCS it wrote, as `{"answer": "..."}`, with `jq`, and start again from step 1 with that
-    file as `in` and a new `out`.
+    plugin's step called you, return to it. Otherwise the conversation is the caller: in the CCS it
+    wrote, rewrite with `jq` the caller's parts (`focal_entities`, `goal_orientation`,
+    `retrieved_artifacts`, and the entries of `constraints` before turn's) from what the user said,
+    as if they had asked so from the start, and start again from step 1 with that file as `in` and
+    a new `out`.
