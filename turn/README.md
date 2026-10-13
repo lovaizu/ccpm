@@ -23,8 +23,8 @@ itself. The person the work is for, here developers who find the tool on GitHub,
 checklist you name beside it, are what the task is made from.
 
 In each round turn writes the work, has an AI that did not write it, the reader, read it as the
-developer would, and checks each item of your checklist against that reading. turn shows each step
-as it reaches it, with the file the step left in the run's folder under `.turn/`:
+developer would, and checks each item of your checklist against that reading. It asks you nothing
+while it works, and shows each step as it reaches it:
 
 ```console
 Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
@@ -32,20 +32,23 @@ Plan: 1 write → 2 read → 3 check   (once more if something is missing; two r
 Round 1
   1 write   To make: developers who find the tool on GitHub can tell what it saves them
             and run it on their own files.
-            ❓ Which license is the tool under? Your notes do not say.
-
-> MIT
-
-            .turn/readme/1/README.md
   2 read    Read as a developer who finds the tool on GitHub.
-            .turn/readme/1/first-user.json
   3 check   ⚠️ Not yet: the developer can tell which Python version the tool needs.
             ⚠️ Not yet: the developer can picture the result on their own files.
 Round 2
   1 write   To make: the same, now naming the Python version and showing a result on a sample file.
-            .turn/readme/2/README.md
   2 read    Read again, as the same developer.
-            .turn/readme/2/first-user.json
+  3 check   ✅ Nothing missing.
+The work is at README.md, waiting on you for one point.
+❓ Which license is the tool under? Your notes do not say, so the README names none yet.
+
+> MIT
+
+Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
+
+Round 1
+  1 write   To make: the same, now naming the MIT license.
+  2 read    Read again, as the same developer.
   3 check   ✅ Nothing missing.
 done
 The work is at README.md.
@@ -55,11 +58,14 @@ The line after `To make:` is what the work will let the developer do, shown befo
 it is not what you want, press Esc and say what you want instead; turn starts over with your words,
 from the work as it stands.
 
-Answer a question marked ❓ when it shows; turn goes on writing meanwhile.
-
 Each ⚠️ is something the work does not give the developer yet. In the next round turn makes the
 work again to give it, and the reader reads it again. If something is still missing after the
 second round, turn shows it and asks whether to run again or take the work as it is.
+
+Each ❓ is something only you can decide, which your notes and checklist leave open. turn leaves it
+out of the work and ends the run by asking it, with every other such question, instead of with
+`done`. When you answer, Claude runs turn again with your answers, from the work as it stands, and
+the run ends with `done` once nothing is left for you.
 
 ## Why turn
 
@@ -70,11 +76,12 @@ assumption, and what it gives over asking Claude alone follows from it:
 - The work is read by the reader, which did not write it. The reader works in a fresh copy of your
   repository as committed, with the work put in, so it has only what the person the work is for
   would have.
-- turn's check counts an item as passed only where lines of the work give it, and `.turn/` keeps
-  those lines, so you can check a pass instead of taking it on trust.
+- turn's check counts an item as passed only where lines of the work give it, and keeps those lines
+  in `.turn/` in your repository, so you can check a pass instead of taking it on trust.
 - What falls short is made again from what the work should give, not patched where it showed, and
   the work is made to keep giving every item it already gave.
-- You are asked only what you alone can answer, as soon as it comes up, while the work goes on.
+- You are asked only what you alone can decide, and only at the end, so you can leave turn at work
+  and answer everything at once.
 
 ## Requirements
 
