@@ -1,6 +1,6 @@
 ---
 rn: 0.9.0
-pr: none yet
+pr: https://github.com/lovaizu/ccpm/pull/61
 status: running
 artifact-language: English
 conversation-language: Japanese
