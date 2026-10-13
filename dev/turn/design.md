@@ -25,6 +25,9 @@ The words used throughout:
 - A Good: an item the orchestrator has decided the work meets, with its grounds, the lines it rests
   on. More: an item without a Good when a run returns.
 - Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
+- The run's evidence: what a run keeps in the repository for the user and the next run: each round's
+  work, reading and decisions, each way to a Good, and the list with each checklist's name and
+  version. The work stays there until the run returns.
 
 ## Goals
 
@@ -57,11 +60,14 @@ Each must be no worse than in the version in use.
   holds; every other item is returned as More, with how it would get a Good.
 - What the work should be unchanged: turn never rewrites what the caller wrote.
 - Nothing unread: the work turn writes where the work goes is the version last read.
-- Repository untouched: during a run, turn changes nothing but where the work goes and its folder
-  `.turn/`, and never commits or pushes; a file where the work goes is written over only when git
-  holds it as it stands. Outside its runs, turn blocks nothing.
-- Stop and start over: a stopped run returns a CCS saying so, and called with it and the user's
-  answer starts from the work as it stands; a run cut off leaves where the work goes untouched.
+- Repository untouched: during a run, turn changes nothing in the repository but where the work goes
+  and the run's evidence, and never commits or pushes, so the user takes turn's change as one diff
+  and decides themselves what to commit; a file where the work goes is written over only when git
+  holds it as it stands, so what was there can be got back; a change a shell command of the run
+  makes elsewhere as a side effect is named to the user. Outside its runs, turn blocks nothing.
+- Stop and start over: a stopped run returns a CCS saying so, and called again with the request
+  rewritten from what the user said, starts from the work as it stands; a run cut off leaves where
+  the work goes untouched.
 - Missing tools: without python3 or jq, turn ends before any work and says what to install; outside
   a run, a missing tool breaks nothing.
 
@@ -74,8 +80,9 @@ Each must be no worse than in the version in use.
   that is gone; the wording in an entry may change, since callers do not act on it. A CCS an earlier
   version returned is accepted, so a stopped task carries on after an update.
 - The checklist form the README's Requirements gives, since users and writ write checklists in it.
-- `.turn/`: the user and the next run open what a returned CCS points to there, so every such place
-  exists; the rest of `.turn/` may change.
+- What a returned CCS points to: the user opens it to follow each item back, and the next run starts
+  from the work a stopped CCS points to, so every place a returned CCS points to exists; where the
+  run's evidence is kept, and the rest of it, may change.
 
 ### Non-goals
 
@@ -113,8 +120,8 @@ passes.
   stopped on its aim has written no work of that aim, and then makes what the user said.
 - A plugin decides from what turn returns: tried on runs that end in each value of `next`, the move
   decided from the returned CCS alone is the one decided after also reading the records.
-- Following each item back: `.turn/` alone gives, for any item, the lines of its Good or how it
-  would get one, and the version of its checklist.
+- Following each item back: the run's evidence alone gives, for any item, the lines of its Good or
+  how it would get one, and the version of its checklist.
 
 ### One-dimensional quality
 
@@ -125,9 +132,10 @@ the version in use.
 
 Each is a test on the script or hook that holds it, in the case that would break it: grounds naming
 lines the work lacks; a returned CCS whose caller part differs; a version written after the last
-reading; a write outside the work and `.turn/`, a commit or a push in a run; a file where the work
-goes with changes git lacks; the same outside a run, with another session's run open; a run stopped
-at each step, and one cut off; each tool missing, in a run and outside one.
+reading; a write outside the work and the run's evidence, a commit or a push in a run; a shell
+command in a run that changes another file; a file where the work goes with changes git lacks; the
+same outside a run, with another session's run open; a run stopped at each step, and one cut off;
+each tool missing, in a run and outside one; a checklist without its name or version.
 
 ### Backward compatibility
 
@@ -148,17 +156,21 @@ checklists give a list with every opening and item; every place a returned CCS p
   whether it is there or not (assumption). Coverage, a script, is the one place that looks for what
   may be wrong. Each prompt sets as steps what its agent receives, hands back and must do in full,
   and leaves how it thinks within a step to it. Each answers, as the orchestrator decides, in a form
-  with one place per item, handed on only once a script sees every place filled, since the form, not
-  the wording, holds it to its aim; during a run, hooks catch a step not kept. Protects: nothing
-  passes unshown, the first-round share.
+  with one place per item, since the form, not the wording, holds it to its aim. Protects: nothing passes unshown, the first-round share.
 - A question for the user may come from the roles given the sources: the orchestrator, the
   generator and the learner; the orchestrator decides each, asking it at once or showing where it is
   answered. The first user and the evaluator raise none, since without the sources they cannot tell
   what only the user can decide, and a place for what they did not find would be a place for faults;
   what they did not take reaches the learner as an item without a Good. Protects: asked only what
   only the user can decide.
-- What must come out the same every time is done by a script or a hook. Protects: nothing passes
-  unshown, what the work should be unchanged, repository untouched, following each item back.
+- What must come out the same every time is done by a script or a hook: a script does what a step
+  asks, and refuses a step whose steps before it are not done; a hook sees, as Claude Code runs the
+  run, that a step was not left out or done otherwise, and stops it saying which step and what it
+  needs. Protects: nothing passes unshown, what the work should be unchanged, repository untouched,
+  following each item back.
+- turn's hooks act only in the session whose run is open, and do nothing elsewhere, even without
+  python3, since they run in every session where turn is installed. Protects: repository untouched,
+  missing tools.
 
 ### Structure
 
@@ -205,23 +217,28 @@ sequenceDiagram
     O-->>U: questions raised by the learner
   end
   O->>S: decisions, ways to a Good, new CCS
-  S-->>O: evidence in .turn/, CCS checked
+  S-->>O: the run's evidence, CCS checked
   O-->>C: new CCS
-  Note over G,CC: during a run, turn's hooks, run by Claude Code, check each agent keeps its steps
+  Note over G,CC: during a run, turn's hooks, run by Claude Code, keep each role to its steps, show the console, and stop what would change the user's work
 ```
 
-The orchestrator is a skill, so it runs in the caller's conversation, where it can start the agents,
-ask the user while they work, and the user sees its console and presses Esc. A subagent could not start the agents; the cost is
-room in the caller's conversation, and no call from inside a subagent.
+The orchestrator is a skill, so it runs in the caller's conversation, where it can start the agents
+and ask the user while they work, and where the user sees its console and presses Esc. A subagent
+could not start the agents; the cost is room in the caller's conversation, and no call from inside
+a subagent.
 
 ### The checklist as the measure
 
-Achieves: read in the receiver's place, the first-round share, the checklist form.
+Achieves: read in the receiver's place, the first-round share, following each item back, the
+checklist form.
 
 A work that meets every item of its checklists serves its purpose (assumption, which the
 attractive-quality trials test). Everything that measures the work, the orchestrator included, is
 given the same list, with every opening, and the same receiver and use, so all measure alike.
 
+- When a run starts, a script reads each checklist into the list and refuses one that does not
+  open with its name and version, since a checklist may be kept outside the repository, as a
+  plugin's are, and only what it says of itself names the version a Good was judged by.
 - Must hold: nothing measures the work by anything but the list, the receiver and the use.
 - Weighed: letting the first user also report what it missed outside the items was not chosen, since
   unbounded by an item it becomes a search for faults that varies from run to run (assumption). The
@@ -231,16 +248,20 @@ given the same list, with every opening, and the same receiver and use, so all m
 
 Achieves: the first-round share, time and tokens, asked only what only the user can decide.
 
-Before the work is first written, the orchestrator reads each item against what the work should be
-and its sources, and asks the user at once what they leave open. The generator makes, in the
-background, a work that meets every item and names the lines that meet each; what the sources do not
-settle it keeps out of the work and raises as a question, which the orchestrator asks at once unless
-the work or the sources answer it. So the user answers while the work goes on, and the answers are
-added to the CCS as `answer`. The orchestrator reads the whole work for each item, from those lines
-and coverage, and sends the work back with each answer and each item it does not see met, saying how
-it would be, until every question is answered and every item is met, since what can be seen here
-costs a whole round when found in the reading.
+What can be seen before the reading costs a whole round when found in it, so the work reaches the
+first user only once nothing in it is left open.
 
+- Before the work is first written, the orchestrator reads each item against what the work should
+  be and its sources, and asks the user at once what they leave open.
+- The generator makes, in the background, a work that meets every item, and names on its form the
+  lines that meet each; what the sources do not settle it keeps out of the work and raises as a
+  question, which the orchestrator asks at once unless the work or the sources answer it. So the
+  user answers while the work goes on, and the answers go back to the caller in the CCS.
+- When the generator hands back, a script prints its coverage, and the orchestrator reads the whole
+  work for each item from the lines named and coverage, and sends the work back with each answer
+  and each item it does not see met, saying how it would be.
+- A script hands the first user nothing until every question is answered and every item is seen
+  met.
 - Must hold: no work reaches the first user with a question the user has not answered, or with any
   other item the orchestrator does not see met.
 - Weighed: sending back has no limit, since a work sent on unsettled costs a round. The cost: a
@@ -249,16 +270,34 @@ costs a whole round when found in the reading.
   otherwise wait a whole run to be asked, and the work made meanwhile would be made again. The
   cost: turn talks to the user, and a caller learns the answers from the returned CCS.
 
+### Keeping each role to its steps
+
+Achieves: nothing passes unshown, the first-round share.
+
+Each role's steps are what make its answer usable, so a step left out or done otherwise is stopped
+as it happens, not found later in an answer that looks right.
+
+- A script writes what each agent is handed, and refuses to while the steps before it are not done.
+- A hook, before an agent of turn is called, stops a call made with anything but what the script
+  wrote for it.
+- A hook, as an agent of the run stops, keeps it at work until a script sees every place of its
+  form filled.
+- A hook, as the orchestrator stops, keeps it at work while the run is open, unless it waits for the
+  user or for the generator; it says so once, so the orchestrator is never held in a loop.
+- Must hold: every answer the orchestrator decides from fills every place of its form.
+
 ### Reading in the receiver's place
 
 Achieves: read in the receiver's place.
 
-The first user starts where the receiver starts, as a new team member starts from a fresh clone: a
-copy of the repository with the work added, removed afterwards. It is given the receiver, the use
-and the list, and nothing of how the work was made, its sources or what the receiver must be able to
-do, so it stops where the receiver would (assumption). Its reading says, for each item, what it took
-and where.
+The first user starts where the receiver starts, as a new team member starts from a fresh clone, so
+it stops where the receiver would (assumption).
 
+- When the first user is handed the work, a script makes a copy of the repository from git with the
+  work added, and removes it once the reading is handed back.
+- The first user is given the receiver, the use and the list, and nothing of how the work was made,
+  its sources or what the receiver must be able to do. Its reading says, for each item, what it took
+  and where.
 - Must hold: the copy holds nothing the receiver would not have.
 - Weighed: telling it what the receiver must be able to do was not chosen, since it would look for
   that rather than take what the work gives (assumption). The cost: only the evaluator and the
@@ -266,18 +305,18 @@ and where.
 
 ### Deciding every item
 
-Achieves: nothing passes unshown, read in the receiver's place, following each item back, `.turn/`.
+Achieves: nothing passes unshown, read in the receiver's place, following each item back.
 
-The evaluator gives a Good with grounds for each item the work meets, judged from the reading
-against what the receiver must be able to do, and reads the records for the lines the reading took
-each item from. Its form has places for Goods only, since in a trial an evaluator told in words to
-write Goods only still wrote on other items. Coverage shows where a slip may be: a line no grounds
-name does nothing for the receiver or holds one, since every useful line meets some item
-(assumption). The orchestrator reads the whole work for each item, from the grounds and coverage,
-and decides each on its form. A script keeps in `.turn/` each round's work, list and reading, each
-Good, each item without one with how it would get one, and each checklist's name and version, which the
-checklist gives itself, since it may be kept outside the repository, as a plugin's checklists are.
-
+- The evaluator gives a Good with grounds for each item the work meets, judged from the reading
+  against what the receiver must be able to do, and reads the records for the lines the reading
+  took each item from. Its form has places for Goods only, since in a trial an evaluator told in
+  words to write Goods only still wrote on other items.
+- A script prints the coverage of the Goods' grounds. A line no grounds name does nothing for the
+  receiver or holds a slip, since every useful line meets some item (assumption).
+- The orchestrator reads the whole work for each item, from the grounds and coverage, and decides
+  each on its form, naming the lines of each Good.
+- A script keeps every form in the run's evidence, and the returned CCS points to the decisions, the
+  ways to a Good and the list, so each item can be followed back.
 - Must hold: every Good names lines the work holds and is decided by the orchestrator; no run
   returns before every item of every document is decided on its form.
 - Weighed: coverage was chosen over an agent set to look for slips, since a script comes out the
@@ -287,13 +326,19 @@ checklist gives itself, since it may be kept outside the repository, as a plugin
 
 Achieves: read in the receiver's place, nothing unread.
 
-The learner asks, for each item left without a Good, how the work would give it, in the work and in
-the process, and groups the items one way serves. Where a way needs what only the user can decide,
-it raises a question, which the orchestrator asks at once, as in the making. The generator makes
-the work again on those ways, with the answers, in a second round, read and decided as the first; what it leaves without a Good is returned as More
-with how it would get a Good. A way that lies in how such work is made is returned as a rule the
-caller carries into later tasks; one in what the caller wrote goes back to the caller.
+A change made from the place a slip showed fixes that place and leaves the same shape elsewhere, so
+a way to a Good is made from the purpose: what the whole work gives the receiver once the item is
+met, every line the same shape reaches, and the change of shape taken at each of them.
 
+- The learner gives, for each item left without a Good, that way, and says whether it lies in the
+  work, in what the caller wrote, or in how such work is made; it groups the items one way serves.
+  A script refuses a way said of lines rather than of the whole work. Where a way needs what only
+  the user can decide, the learner raises a question, which the orchestrator asks at once.
+- A script refuses to end the run after round 1 while a way lies in the work. The generator makes
+  the work again on those ways, with the answers, in a second round, read and decided as the first.
+- What round 2 leaves without a Good is returned as More with its way; a way in how such work is
+  made is returned as a rule the caller carries into later tasks, and one in what the caller wrote
+  goes back to the caller.
 - Must hold: a run has at most two rounds, and returns the version last read.
 - Weighed: a third round was not allowed, since a loop that does not settle hides a fault in turn or
   the checklist. The cost: some work comes back with More, for the user to decide on.
@@ -302,14 +347,17 @@ caller carries into later tasks; one in what the caller wrote goes back to the c
 
 Achieves: seeing the work as it goes.
 
-The console serves a user who looks in now and then. It shows the plan of the run once, then each
-line by round, named by its step. Before the generator writes, it shows what the work will let its
-receiver do, so a wrong aim is stopped before a round is spent. It says in plain words what the
-first user could not take, with the path of each, and ends with where the work is and what the user
-must decide. Item IDs and counts are not shown, since the user would have to learn the checklist.
-turn's hook shows each line as the run reaches it, since what the orchestrator writes between its
-tool calls does not reach the user on every run (four trials of four).
+The console serves a user who looks in now and then: it shows where the run is by step, what the
+work will let its receiver do before it is written, so a wrong aim is stopped before a round is
+spent, what the first user could not take, in plain words, and at the end where the work is and
+what the user must decide. Item IDs and counts are not shown, since the user would have to learn
+the checklist.
 
+- A script refuses the generator its brief until the round's aim is set.
+- A hook, after each shell command of the run, shows the user the lines of the console not yet
+  shown, made by a script from the run's evidence, and the run's last lines once it ends or stops.
+  What the orchestrator writes between its tool calls does not reach the user on every run (seen in
+  trials), so the console does not rest on it.
 - Must hold: no work is written whose aim the console has not shown first.
 
 ### The CCS
@@ -318,12 +366,15 @@ Achieves: a plugin decides from what turn returns, what the work should be uncha
 over, the call, the CCS.
 
 The CCS (Compressed Cognitive State) takes the nine parts that [ACC (Agent Cognitive
-Compressor)](https://arxiv.org/abs/2601.11653) sets as the state the next step needs. A script
-checks it on receiving and on returning. Every change of course the user makes by stopping a run
-goes through the caller as a new run, which starts from nothing but its CCS and the places it points to.
-Until a run returns, the work is only in `.turn/`, so a stopped or cut-off run leaves where the work
-goes untouched, and a stopped CCS points to the work there.
+Compressor)](https://arxiv.org/abs/2601.11653) sets as the state the next step needs. Every change of
+course the user makes by stopping a run goes through the caller as a new run, which starts from
+nothing but its CCS and the places it points to.
 
+- A script checks the CCS when a run starts and when it returns, and writes the returned one with
+  the caller's part as received.
+- Until a run returns, the work is only in the run's evidence, so a stopped or cut-off run leaves
+  where the work goes untouched. When the user stops a run, a script writes a CCS saying where it
+  stopped and pointing to the work as it stands, from which the next run starts.
 - Must hold: the received CCS is never written over; the caller's part comes back the same.
 - Weighed: handing agents the CCS itself was not chosen, since a change made for one agent would
   change what callers rely on. The cost: the orchestrator writes each agent's inputs from the CCS.
@@ -332,13 +383,18 @@ goes untouched, and a stopped CCS points to the work there.
 
 Achieves: repository untouched, missing tools.
 
-During a run, hooks block a write outside where the work goes and `.turn/`, and any commit or push,
-in the session whose run is open only; elsewhere they do nothing, even without python3. Before any
-work, a script checks for python3 and jq, and for changes git does not hold in a file where the work
-goes, and ends the run with why if either fails. Such a file is otherwise written over, since git
-keeps the version before it and making a document again where it stands is common work.
-
-- Must hold: during a run, the only changes are where the work goes and `.turn/`.
-- Weighed: blocking, not checking afterwards, since the harm is done by then. The cost: a check on
-  each write, commit and push. jq for the agents' changes to parts of the CCS, since agents know it.
-  The cost: one more tool to install.
+- Before any work, the orchestrator ends the run saying what to install if python3 is missing, and
+  a script, if jq is missing or a file where the work goes has changes git does not hold. Such a file is otherwise written
+  over, since git keeps the version before it and making a document again where it stands is common
+  work.
+- A hook, before a file is written or edited in a run, stops a write anywhere but where the work
+  goes and the run's evidence.
+- A hook, before a shell command in a run, stops a git commit or push.
+- What a shell command changes as a side effect, such as a file its tests leave, cannot be told
+  before it runs, so a script, when the run returns, names each file changed since the run started
+  anywhere but where the work goes and the run's evidence.
+- Must hold: during a run, the only changes are where the work goes and the run's evidence, or they
+  are named to the user.
+- Weighed: blocking, not checking afterwards, wherever the change can be told beforehand, since the
+  harm is done by then. The cost: a check on each write and shell command. jq for the agents'
+  changes to parts of the CCS, since agents know it. The cost: one more tool to install.

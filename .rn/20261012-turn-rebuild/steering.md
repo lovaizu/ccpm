@@ -387,7 +387,15 @@ Progress:
   the CCS's evidence points to the list too, and the README, the design, the callers' page and the
   five writ checklists say so. Checked on a clone. No new trial, since the agents' part is
   unchanged and the trials' files already show it. Unit 7 holds.
-- Next: unit 8, leaving the user's work alone. Whether the README's Example should show the hook's
+- Found with the user (2026-10-13), on unit 8: the design read as a specification: rules without
+  the parts that hold them (a hook named without its event or what it stops), and names of the
+  build made promises (`.turn/`). The design checklist let it pass, so B-14 now asks when each part
+  acts, what it looks at and what it does, and U-2 promises what others rely on by what it lets
+  them do (1220b68). The design was gone through again against it: each approach gives its parts,
+  the hooks are defined, `.turn/` and `answer` are gone, the run's evidence is one name, and a shell
+  command's side effect, which no hook can tell beforehand, is named to the user when the run
+  returns. Self-evident intent is not written; the core is. Waiting for the user's agreement.
+- Next: once the design is agreed, unit 8, leaving the user's work alone. Whether the README's Example should show the hook's
   prefix (`PostToolUse:Bash says:` in `claude -p`) is open until the interactive console is seen.
 
 ### [ ] #4: The rules use turn, and turn goes through turn
