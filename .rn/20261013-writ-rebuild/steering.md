@@ -198,8 +198,11 @@ Progress:
   2. `writ/references/essentials/` became `writ/checklists/`, and `essentials.md` became
      `checklist.md` (agreed by the user, 2026-10-14). rn's own `rn/references/essentials/` is rn's
      (#39); the old writ files #4 replaces had only their paths changed.
-  3. Then make this repository meet the code checklist: count branches in `.coveragerc` and CI, and
-     add a linter and a type checker to CI, proposing the tools; `plugin.md` step 5 names `code.md`.
+  3. This repository meets the code checklist (2026-10-14): coverage counts branches, and every
+     branch is taken; Ruff checks and formats every file, and Pyrefly checks types for Python 3.9
+     (decided by the user: mypy 2.0 and later cannot check code for 3.9, and ty is in beta); all
+     of it runs by `dev/check.sh`, on every push and for builders; `plugin.md` step 5 names
+     `code.md`.
   4. Then turn's design and code to the agreed README, writ's README example (no question mid-run),
      and writ's design again (#3).
 
