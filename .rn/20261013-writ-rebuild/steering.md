@@ -368,3 +368,15 @@ Progress:
 - The writ design from `d3` (464 lines, `done`) is not taken: it built state across a step's calls
   and cases no purpose needs. Next, after the checklists: make it again, given that each call
   brings every answer and decision so far and writ keeps nothing between calls.
+- The six checklists are made again through turn against `checklist.md` (`404668f` to `7d0b420`).
+- Where to resume (2026-10-14):
+  1. Running: the writ design from nothing on the new checklists, given that each call brings every
+     answer and decision so far and writ keeps nothing between calls (CCS
+     `.../scratchpad/design-thin.json`, clone `.../scratchpad/d5`, log `.../scratchpad/d5.log`,
+     scratchpad `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/5b8dfbaf-6002-4c66-aec0-eba4d5bb782f/scratchpad`).
+     When it returns (`d5/.tasks/out.json`), judge it from the purpose (a thin wrapper), call turn
+     again only when the design must change, then copy `d5/dev/writ/design.md` here.
+  2. Check writ's README against the design (the link to the callers' page goes).
+  3. Make turn's README and design again through turn on the new checklists (the two-reading
+     change was written by hand), and show them to the user for agreement.
+  4. Rebuild writ's code thin from the design, try it, and finish #4.
