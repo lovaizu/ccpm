@@ -233,8 +233,10 @@ Progress:
      prerequisites settle, each with a recommended answer, facts looked up rather than asked, done
      when every item of the checklists is settled. Its way is taken into writ's steps, not
      depended on, since the dependency installs 27 skills, `grilling` starts on any "grill", and
-     its tags (`v1.3.1`) cannot pin a version. To settle in writ's design: `grilling` asks every
-     question ready at once, numbered, where the decision of 2026-10-13 says one at a time.
+     its tags (`v1.3.1`) cannot pin a version. Decided by the user (2026-10-14): one question at a
+     time, as the decision of 2026-10-13 says and as `grilling` asked up to its 2026-07-13 version
+     ("Asking multiple questions at once is bewildering"), which the user has used and found
+     right; its later version asks every question ready at once.
   7. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
