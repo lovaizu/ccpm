@@ -222,7 +222,8 @@ Progress:
      caller writes no loop beyond that. This changes turn's README (the plan line, "two rounds at
      most"), its design (the goal that a plugin writes no loop, "`next` gains no value", the second
      round, the learner's place), the code and tests, and the callers' page; then writ's README
-     example (`3e514b3`, not yet agreed by the user) as it follows. To do next, with the sources.
+     example (`3e514b3`, not yet agreed by the user) as it follows. turn's README (`b09b7be`):
+     agreed by the user (2026-10-14). Next: turn's design.
   6. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked

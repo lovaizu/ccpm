@@ -16,8 +16,8 @@ The words used throughout:
   returns a value.
 - A checklist says what a work of one kind must give its receiver: an opening on what such work is
   for, then items, each one question. The list is a task's checklists put together.
-- A run goes from one CCS to the one turn writes back. A round makes the work, has it read and
-  decides each item; a run has one round or two.
+- A run goes from one CCS to the one turn writes back: it makes the work, has it read, decides each
+  item and finds how each item without a Good would get one.
 - The orchestrator runs a run and alone decides each item. Its agents give it what it decides from:
   the generator makes the work, the first user reads it in the receiver's place and hands back its
   reading, the evaluator shows which items the work meets, and the learner finds how an item without a
@@ -25,8 +25,8 @@ The words used throughout:
 - A Good: an item the orchestrator has decided the work meets, with its grounds, the lines it rests
   on. More: an item without a Good when a run returns.
 - Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
-- The run's evidence: what a run keeps in the repository for the user and the next run: each round's
-  work, reading and decisions, each way to a Good, and the list with each checklist's name and
+- The run's evidence: what a run keeps in the repository for the user and the next run: the work,
+  its reading and decisions, each way to a Good, and the list with each checklist's name and
   version. The work stays there until the run returns.
 
 ## Goals
@@ -42,8 +42,8 @@ The words used throughout:
   user can leave turn at work.
 - Seeing the work as it goes: the user can tell from the console how far a run has come, and stop a
   run whose aim they do not want before the work is written, saying what they want instead.
-- A plugin decides from what turn returns: a plugin hands turn one task and decides its next move
-  from the returned CCS alone, without writing the loop of making, reading and making again.
+- A plugin decides from what turn returns: a plugin hands turn one task and decides from the
+  returned CCS alone whether to call it again, ask the user or move on.
 - Following each item back: the user can later find, for each item, the lines its Good rests on or
   how it would get one, and the version of the checklist it was judged by.
 
@@ -51,7 +51,7 @@ The words used throughout:
 
 Each must be no worse than in the version in use.
 
-- The first-round share: runs whose first round ends with every item Good. The more work is right
+- The first-run share: tasks whose first run ends with every item Good. The more work is right
   when first made, the less the user waits and the less is spent.
 - Time and tokens: what one run takes, from the call to the returned CCS.
 
@@ -89,8 +89,8 @@ Each must be no worse than in the version in use.
 ### Non-goals
 
 - Deciding what the work should be: the caller does it, knowing what was already agreed.
-- Running until every item is Good: what a second round leaves without a Good points to a fault in
-  turn, the checklist or what the work should be, to be fixed there (assumption).
+- Deciding whether to run again: the caller does it from what a run returns, knowing what was
+  agreed.
 - Finding what no item asks, which goes into the checklist; and holding checklists, which belong to
   whoever knows the kind of work, such as writ.
 
@@ -114,12 +114,12 @@ passes.
 - Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver on the same
-  list, takes every item returned as Good, including each the first round left without one.
+  list, takes every item returned as Good, including each an earlier run left without one.
 - Asked only what only the user can decide, all at once at the end: on sources that settle some
   choices and leave one open, nothing is asked while the run works, the run ends with `ask the user`
   and that one choice, and, run again with the answer, it ends with `done` and the answer in the
   work; no question is answered by what the work should be or its sources.
-- Seeing the work as it goes: the console alone tells the round and step the records show; a run
+- Seeing the work as it goes: the console alone tells the step the records show; a run
   stopped on its aim has written no work of that aim, and then makes what the user said.
 - A plugin decides from what turn returns: tried on runs that end in each value of `next`, the move
   decided from the returned CCS alone is the one decided after also reading the records.
@@ -159,7 +159,7 @@ checklists give a list with every opening and item; every place a returned CCS p
   whether it is there or not (assumption). Coverage, a script, is the one place that looks for what
   may be wrong. Each prompt sets as steps what its agent receives, hands back and must do in full,
   and leaves how it thinks within a step to it. Each answers, as the orchestrator decides, in a form
-  with one place per item, since the form, not the wording, holds it to its aim. Protects: nothing passes unshown, the first-round share.
+  with one place per item, since the form, not the wording, holds it to its aim. Protects: nothing passes unshown, the first-run share.
 - A question for the user may come from the roles given the sources: the orchestrator, the
   generator and the learner; the orchestrator decides each, showing where it is answered or leaving
   it open, and the run returns every open one at its end. The first user and the evaluator raise
@@ -199,25 +199,23 @@ sequenceDiagram
   C->>O: CCS
   O->>S: CCS, checklists
   S-->>O: CCS checked, the list
-  loop round 1, and round 2 from the ways to a Good
-    O-->>U: console: the aim, before the work is written
-    O->>G: what the work should be, the list
-    G-->>O: work, grounds, questions
-    O->>S: work, grounds
-    S-->>O: coverage
-    Note over O,G: sent back until every item is seen met or waits on a question left open
-    S->>GIT: a fresh copy with the work
-    O->>F: the copy, receiver, use, list
-    F-->>O: what it took, and where
-    O->>E: work, reading, list
-    E->>CC: reads the records of the reading
-    E-->>O: Goods with grounds
-    O->>S: grounds
-    S-->>O: coverage
-    Note over O: decides every item on its form
-    O->>L: items without a Good
-    L-->>O: ways to a Good, each with its items, questions
-  end
+  O-->>U: console: the aim, before the work is written
+  O->>G: what the work should be, the list, the ways to a Good of the run it starts from
+  G-->>O: work, grounds, questions
+  O->>S: work, grounds
+  S-->>O: coverage
+  Note over O,G: sent back until every item is seen met or waits on a question left open
+  S->>GIT: a fresh copy with the work
+  O->>F: the copy, receiver, use, list
+  F-->>O: what it took, and where
+  O->>E: work, reading, list
+  E->>CC: reads the records of the reading
+  E-->>O: Goods with grounds
+  O->>S: grounds
+  S-->>O: coverage
+  Note over O: decides every item on its form
+  O->>L: items without a Good
+  L-->>O: ways to a Good, each with its items, questions
   O->>S: decisions, ways to a Good, questions left open, new CCS
   S-->>O: the run's evidence, CCS checked
   O-->>C: new CCS
@@ -232,7 +230,7 @@ context.
 
 ### The checklist as the measure
 
-Achieves: read in the receiver's place, the first-round share, following each item back, the
+Achieves: read in the receiver's place, the first-run share, following each item back, the
 checklist form.
 
 A work that meets every item of its checklists serves its purpose (assumption, which the
@@ -249,9 +247,9 @@ given the same list, with every opening, and the same receiver and use, so all m
 
 ### Making it right first
 
-Achieves: the first-round share, time and tokens, asked only what only the user can decide.
+Achieves: the first-run share, time and tokens, asked only what only the user can decide.
 
-What can be seen before the reading costs a whole round when found in it, so the work reaches the
+What can be seen before the reading costs a whole run when found in it, so the work reaches the
 first user only once nothing in it is left open.
 
 - Before the work is first written, the orchestrator reads each item against what the work should
@@ -269,7 +267,7 @@ first user only once nothing in it is left open.
   answers, from the work as it stands.
 - Must hold: no work reaches the first user with an item the orchestrator does not see met, but
   one that waits on a question left open; no run returns `done` with a question left open.
-- Weighed: sending back has no limit, since a work sent on unsettled costs a round. The cost: a
+- Weighed: sending back has no limit, since a work sent on unsettled costs a run. The cost: a
   generator that never settles runs until the user stops it, and time and tokens show it.
 - Weighed: every question at the end, not each as it is seen, since a subagent cannot ask the user,
   so only a run that asks nothing runs the same wherever it is called, and the user can leave it at
@@ -277,7 +275,7 @@ first user only once nothing in it is left open.
 
 ### Keeping each role to its steps
 
-Achieves: nothing passes unshown, the first-round share.
+Achieves: nothing passes unshown, the first-run share.
 
 Each role's steps are what make its answer usable, so a step left out or done otherwise is stopped
 as it happens, not found later in an answer that looks right.
@@ -340,26 +338,27 @@ met, every line the same shape reaches, and the change of shape taken at each of
   A script refuses a way said of lines rather than of the whole work. Where a way needs what only
   the user can decide, the learner raises a question, which the orchestrator leaves open unless the
   work or the sources answer it.
-- A script refuses to end the run after round 1 while a way lies in the work. The generator makes
-  the work again on those ways in a second round, read and decided as the first.
-- What round 2 leaves without a Good is returned as More with its way; a way in how such work is
-  made is returned as a rule the caller carries into later tasks, and one in what the caller wrote
-  goes back to the caller.
-- Must hold: a run has at most two rounds, and returns the version last read.
-- Weighed: a third round was not allowed, since a loop that does not settle hides a fault in turn or
-  the checklist. The cost: some work comes back with More, for the user to decide on.
+- Each item without a Good is returned as More with its way, and `next` is `ask the user`; a way in
+  how such work is made is returned as a rule the caller carries into later tasks, and one in what
+  the caller wrote goes back to the caller with `to the caller`.
+- The caller decides whether to call turn again, which makes the work again on the ways that lie in
+  it, from the work as it stands, or to put them to the user.
+- Must hold: a run makes, reads and decides the work once, and returns the version last read.
+- Weighed: one making per run, the caller deciding whether to run again, since the caller knows what
+  was agreed, and already calls turn again with the user's answers, so making again is one more call
+  of the same kind. The cost: the caller reads what each run returns before deciding.
 
 ### The console
 
 Achieves: seeing the work as it goes.
 
 The console serves a user who looks in now and then: it shows where the run is by step, what the
-work will let its receiver do before it is written, so a wrong aim is stopped before a round is
+work will let its receiver do before it is written, so a wrong aim is stopped before a run is
 spent, what the work does not yet give, said as what the receiver will be able to do once it does,
 in plain words, and at the end where the work is and what the user must decide. Item IDs and counts
 are not shown, since the user would have to learn the checklist.
 
-- A script refuses the generator its brief until the round's aim is set.
+- A script refuses the generator its brief until the run's aim is set.
 - A hook, after each shell command of the run, shows the user the lines of the console not yet
   shown, made by a script from the run's evidence, and the run's last lines once it ends or stops.
   What the orchestrator writes between its tool calls does not reach the user on every run (seen in
