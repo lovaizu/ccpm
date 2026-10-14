@@ -343,8 +343,8 @@ met, every line the same shape reaches, and the change of shape taken at each of
   the caller wrote goes back to the caller with `to the caller`.
 - The caller decides whether to call turn again, which makes the work again on the ways that lie in
   it, from the work as it stands, or to put them to the user.
-- Must hold: a run makes, reads and decides the work once, and returns the version last read.
-- Weighed: one making per run, the caller deciding whether to run again, since the caller knows what
+- Must hold: a run has the work read and decided once, and returns the version last read.
+- Weighed: one reading per run, the caller deciding whether to run again, since the caller knows what
   was agreed, and already calls turn again with the user's answers, so making again is one more call
   of the same kind. The cost: the caller reads what each run returns before deciding.
 
