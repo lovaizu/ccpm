@@ -358,3 +358,13 @@ Progress:
 - Running (2026-10-14): the same design CCS on that turn, from nothing, in `.../scratchpad/d3`, log
   `.../scratchpad/d3.log`. Next: see that one call read the work twice, judge what it returns, then
   as above.
+- Decided by the user (2026-10-14): each check shows one quality, the flow apart from the work, in
+  the smallest situation that shows it; added to `plugin.md` step 5e, turn's design Verification,
+  and, through turn, to `design.md` and `code.md` (`27021d6`, `4016b98`). The flow of two readings
+  is tried on `dev/turn/trials/flow/`.
+- Found (2026-10-14): checklist changes and turn's docs were written by hand, not through turn. Decided
+  by the user: the six checklists are made again through turn against `checklist.md`, keeping what
+  each asks (CCS `.../scratchpad/re-<kind>.json`; `checklist.md` first, then the other five).
+- The writ design from `d3` (464 lines, `done`) is not taken: it built state across a step's calls
+  and cases no purpose needs. Next, after the checklists: make it again, given that each call
+  brings every answer and decision so far and writ keeps nothing between calls.
