@@ -5,7 +5,7 @@ import sys
 import unittest
 from unittest import mock
 
-from helpers import CHECKLISTS, NOTES, ROOT, Repo, laid, run, settle, started
+from helpers import CHECKLISTS, NOTES, ROOT, Repo, laid, returned, run, settle, started
 
 
 class Start(unittest.TestCase):
@@ -250,19 +250,43 @@ class End(unittest.TestCase):
     def tearDown(self):
         self.repo.close()
 
-    def test_a_job_turn_returned_done_ends_with_where_the_document_is(self):
-        # Given: turn returned done on the job's CCS
+    def test_a_job_turn_returned_done_ends_with_the_report_of_turn_s_decisions(self):
+        # Given: turn returned done, with every item of both checklists decided Good
+        folder = laid(self.repo, "doc", "readme")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "done", More=())
+        # When: the job ends
+        code, out = run(self.repo, "end", folder)
+        # Then: it gives, under each checklist, every item with the lines turn's evidence names
+        self.assertEqual(code, 0, out)
+        report = self.repo.read(f"{folder}/report.md")
+        self.assertTrue(
+            out.startswith(
+                "README.md is written, and every item of the checklists is met. The report, with "
+                "the lines that meet each item:\n\n"
+            )
+        )
+        self.assertIn(report, out)
+        self.assertTrue(report.startswith("Document 0.1.0\n  ✅ B-1 What it covers: lines 1\n"))
+        self.assertIn("\nREADME 0.2.0\n  ✅ B-1 What they gain: lines 1\n", report)
+        self.assertEqual(report.count("✅"), len(self.repo.json(f"{folder}/form.json")["items"]))
+        # Then: the job is closed
+        self.assertFalse(self.repo.exists(".writ/job.json"))
+
+    def test_no_report_is_made_while_turn_s_evidence_decides_an_item_more(self):
+        # Given: turn's evidence decides one item More
         folder = laid(self.repo, "doc")
         settle(self.repo, folder)
         run(self.repo, "ccs", folder)
-        ccs = self.repo.json(f"{folder}/in-1.json")
-        ccs["predictive_cue"] = [{"next": "done"}]
-        self.repo.write(f"{folder}/out-1.json", json.dumps(ccs))
+        returned(self.repo, folder, "done", More=("doc B-2",))
         # When: the job ends
         code, out = run(self.repo, "end", folder)
-        # Then: it says where the document is, and the job is closed
-        self.assertEqual((code, out), (0, "README.md is written.\n"))
-        self.assertFalse(self.repo.exists(".writ/job.json"))
+        # Then: no report is made, the item is named, and the job stays open
+        self.assertEqual(code, 1)
+        self.assertIn("doc B-2 is not met in turn's evidence, so no report is made", out)
+        self.assertFalse(self.repo.exists(f"{folder}/report.md"))
+        self.assertTrue(self.repo.exists(".writ/job.json"))
 
     def test_a_job_ends_only_on_what_turn_returned(self):
         # Given: the CCS was written, and turn has returned nothing yet
@@ -275,3 +299,83 @@ class End(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn(f"{folder}/out-1.json is not there", out)
         self.assertTrue(self.repo.exists(".writ/job.json"))
+
+
+class Again(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+
+    def tearDown(self):
+        self.repo.close()
+
+    def test_turn_is_called_again_with_what_it_returned_and_writ_s_parts_from_the_form(self):
+        # Given: turn returned a way, with a rule of its own, and writ settled one more decision
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder, language="English")
+        run(self.repo, "ccs", folder)
+        back = returned(self.repo, folder, "ask the user", More=("doc B-2",))
+        back["constraints"].append({"rule": "a rule turn learned"})
+        self.repo.write(f"{folder}/out-1.json", json.dumps(back))
+        form = self.repo.json(f"{folder}/form.json")
+        form["items"]["doc B-2"].update(decision="Leaves out tabs.", settled="answer")
+        form["receiver"] = "developers"
+        self.repo.write(f"{folder}/form.json", json.dumps(form))
+        # When: the CCS is asked for again
+        code, out = run(self.repo, "ccs", folder)
+        # Then: turn is called with a new pair of files
+        self.assertEqual((code, out), (0, f"in: {folder}/in-2.json\nout: {folder}/out-2.json\n"))
+        # Then: what turn returned is handed on as it is, and writ's parts are the form's
+        again = self.repo.json(f"{folder}/in-2.json")
+        for part in ("predictive_cue", "semantic_gist", "episodic_trace"):
+            self.assertEqual(again[part], back[part])
+        self.assertEqual(again["focal_entities"][1], {"receiver": "developers"})
+        self.assertEqual(
+            again["constraints"], [{"language": "English"}, {"rule": "a rule turn learned"}]
+        )
+        self.assertIn(
+            "Leaves out tabs.\n\nSettled by: answer\n", self.repo.read(f"{folder}/decisions.md")
+        )
+
+    def test_a_ccs_asked_for_again_before_turn_returns_takes_the_place_of_the_last(self):
+        # Given: the CCS was written, and turn has not been called on it
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        settle(self.repo, folder, receiver="developers")
+        # When: the CCS is asked for again
+        code, out = run(self.repo, "ccs", folder)
+        # Then: the same pair of files is named, and the CCS holds the form as it is now
+        self.assertEqual((code, out), (0, f"in: {folder}/in-1.json\nout: {folder}/out-1.json\n"))
+        self.assertEqual(
+            self.repo.json(f"{folder}/in-1.json")["focal_entities"][1], {"receiver": "developers"}
+        )
+
+    def test_the_job_ends_on_what_turn_returned_last(self):
+        # Given: turn was called twice, and returned done the second time
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "ask the user", More=("doc B-2",))
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "done", More=(), n=2)
+        # When: the job ends
+        code, out = run(self.repo, "end", folder)
+        # Then: the report is made from the second run's evidence
+        self.assertEqual(code, 0, out)
+        self.assertIn("✅ B-2", self.repo.read(f"{folder}/report.md"))
+
+    def test_a_job_the_user_ends_before_every_item_is_met_has_no_report(self):
+        # Given: turn returned with items not met, and the user takes the document as it is
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "ask the user", More=("doc B-2", "doc U-1"))
+        # When: the job ends
+        code, out = run(self.repo, "end", folder)
+        # Then: it says which items are not met, makes no report, and closes the job
+        self.assertEqual(
+            (code, out),
+            (0, "README.md is written; not met: doc B-2, doc U-1. No report is made.\n"),
+        )
+        self.assertFalse(self.repo.exists(f"{folder}/report.md"))
+        self.assertFalse(self.repo.exists(".writ/job.json"))

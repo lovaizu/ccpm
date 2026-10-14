@@ -115,3 +115,37 @@ def settle(repo, folder, **places):
     form.update(places)
     repo.write(path, json.dumps(form))
     return form
+
+
+def returned(repo, folder, nxt, More, n=1):
+    """Writes what turn returns on the job's n-th CCS: next, and its evidence deciding every item
+    Good on line 1 but those given as More, each with a way."""
+    ccs = repo.json(f"{folder}/in-{n}.json")
+    items = list(repo.json(f"{folder}/form.json")["items"])
+    work = f".turn/out-{n}"
+    repo.write(
+        f"{work}/list.json",
+        json.dumps(
+            {"checklists": [], "items": [{"id": i, "title": "", "text": ""} for i in items]}
+        ),
+    )
+    repo.write(
+        f"{work}/orchestrator.json",
+        json.dumps(
+            {
+                i: {"met": False, "lines": "", "note": ""}
+                if i in More
+                else {"met": True, "lines": "1", "note": "given"}
+                for i in items
+            }
+        ),
+    )
+    ccs["predictive_cue"] = [{"next": nxt}]
+    ccs["semantic_gist"] = [{"difference": f"{i} (its question): a way"} for i in More]
+    ccs["episodic_trace"] = [
+        {"work": f"{work}/README.md"},
+        {"evidence": f"{work}/list.json"},
+        {"evidence": f"{work}/orchestrator.json"},
+    ]
+    repo.write(f"{folder}/out-{n}.json", json.dumps(ccs))
+    return ccs

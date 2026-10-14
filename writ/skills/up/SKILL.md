@@ -50,5 +50,21 @@ repository. When a command exits with 1 after step 1, do what it says and run it
    another AI will read it as its reader and it will be checked against the checklists, so they can
    leave it at work.
 7. Call the `turn:up` skill with the two lines step 5 printed, as they are.
-8. When turn returns, run `up.py end <folder>`, and show the user what it printed. If the `next`
-   turn wrote in `<folder>/out-1.json` is not `done`, show the user each `difference` it wrote there.
+8. When turn returns, read `next` and each `difference` in the CCS it wrote to `out`:
+   - `done`: run `up.py end <folder>`, show the user what it printed, and end.
+   - `stopped: <step>`: the user stopped turn and said what they want instead. Settle it in the
+     form as in step 4, and go to step 5.
+   - `ask the user`, or `to the caller: <ways>`: judge each `difference` from the document's
+     receiver, use and acceptance. A way that lies in the document needs nothing from you: turn
+     takes it when called again. Settle in the form, as in step 4, each question or way that lies
+     in what the document should be; where the purpose does not need what it asks, settle that the
+     document leaves it out and why. Ask the user, one question per message, only what they alone
+     can decide.
+9. If what you settled or a way that lies in the document changes the document, go to step 5.
+   Otherwise, and whenever the user says to take the document as it is, run `up.py end <folder>`,
+   show the user what it printed, and end.
+10. When an item comes back not met again, once every point it rests on is settled, its checklist
+    asks more than this kind of document needs. Put to the user, as an addition to the kind's
+    checklist, how this kind meets the item, and once they agree, make it as
+    `${CLAUDE_PLUGIN_ROOT}/skills/up/making-a-checklist.md` says. Then run `up.py form` again with
+    the addition among the checklists, settle its items as in step 4, and go to step 5.

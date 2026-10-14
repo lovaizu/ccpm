@@ -13,6 +13,13 @@ CHECKLISTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 USERS = os.path.join(".writ", "checklists")
 PLACES = ("deliverable", "receiver", "acceptance")
 ASKED = ("answer", "proposal confirmed")
+TURNS = (
+    "predictive_cue",
+    "uncertainty_signal",
+    "semantic_gist",
+    "relational_map",
+    "episodic_trace",
+)
 
 
 def front(path):
@@ -107,33 +114,88 @@ def ccs(folder):
             f.write(
                 f"\n## {i}: {item['title']}\n\n{item['decision']}\n\nSettled by: {item['settled']}\n"
             )
-    given = os.path.join(folder, "in-1.json")
-    write_json(
-        given,
-        {
-            "focal_entities": [
-                {"deliverable": settled["deliverable"]},
-                {"receiver": settled["receiver"]},
-            ],
-            "goal_orientation": [{k: settled[k]} for k in ("use", "acceptance") if settled[k]],
-            "retrieved_artifacts": [{"viewpoint": p} for p in settled["checklists"]]
-            + [{"source": p} for p in [decisions] + settled["sources"]],
-            "constraints": [{"language": settled["language"]}] if settled["language"] else [],
-            "predictive_cue": [],
-            "uncertainty_signal": [],
-            "semantic_gist": [],
-            "relational_map": [],
-            "episodic_trace": [],
-        },
+    ours = {
+        "focal_entities": [
+            {"deliverable": settled["deliverable"]},
+            {"receiver": settled["receiver"]},
+        ],
+        "goal_orientation": [{k: settled[k]} for k in ("use", "acceptance") if settled[k]],
+        "retrieved_artifacts": [{"viewpoint": p} for p in settled["checklists"]]
+        + [{"source": p} for p in [decisions] + settled["sources"]],
+        "constraints": [{"language": settled["language"]}] if settled["language"] else [],
+    }
+    n = calls(folder) + 1
+    given = {p: [] for p in TURNS}
+    if n > 1:
+        # turn is called again with the CCS it returned: its own parts as they are, and writ's
+        # parts, which turn keeps first in constraints, taken again from the form.
+        before = read_json(os.path.join(folder, f"in-{n - 1}.json"), "the last CCS")
+        given = read_json(os.path.join(folder, f"out-{n - 1}.json"), "what turn returned")
+        given["constraints"] = given["constraints"][len(before["constraints"]) :]
+    ours["constraints"] += given.pop("constraints", [])
+    given.update(ours)
+    write_json(os.path.join(folder, f"in-{n}.json"), given)
+    print(
+        f"in: {os.path.join(folder, f'in-{n}.json')}\nout: {os.path.join(folder, f'out-{n}.json')}"
     )
-    print(f"in: {given}\nout: {os.path.join(folder, 'out-1.json')}")
+
+
+def calls(folder):
+    """How many times turn has returned in the job."""
+    n = 0
+    while os.path.isfile(os.path.join(folder, f"out-{n + 1}.json")):
+        n += 1
+    return n
 
 
 def end(folder):
-    returned = os.path.join(folder, "out-1.json")
-    if not os.path.isfile(returned):
+    n = calls(folder)
+    returned = os.path.join(folder, f"out-{max(n, 1)}.json")
+    if not n:
         raise Stop(f"{returned} is not there; call turn with the CCS first")
     ccs = read_json(returned, returned)
     deliverable = ccs["focal_entities"][0]["deliverable"]
+    if ccs["predictive_cue"] != [{"next": "done"}]:
+        left = [i for i, d in decisions_of(ccs).items() if not d["met"]]
+        os.remove(JOB)
+        print(f"{deliverable} is written; not met: {', '.join(left)}. No report is made.")
+        return
+    report = made_report(folder, ccs)
+    with open(os.path.join(folder, "report.md"), "w") as f:
+        f.write(report)
     os.remove(JOB)
-    print(f"{deliverable} is written.")
+    print(
+        f"{deliverable} is written, and every item of the checklists is met. The report, with the "
+        f"lines that meet each item:\n\n{report}"
+    )
+
+
+def decisions_of(ccs):
+    """turn's decision on each item, from the evidence the CCS it returned points to."""
+    evidence = {
+        os.path.basename(v): v
+        for e in ccs["episodic_trace"]
+        for k, v in e.items()
+        if k == "evidence"
+    }
+    return read_json(evidence["orchestrator.json"], "turn's decisions")
+
+
+def made_report(folder, ccs):
+    """Under each checklist, every item with the lines of its Good, as turn's evidence gives them."""
+    decided = decisions_of(ccs)
+    More = [i for i, d in decided.items() if not d["met"]]
+    if More:
+        raise Stop(
+            "\n".join(f"{i} is not met in turn's evidence, so no report is made" for i in More)
+        )
+    lines = []
+    for path in read_json(os.path.join(folder, "form.json"), "the form")["checklists"]:
+        named = front(path)
+        title, items = headings(path)
+        lines.append(f"{title} {named['version']}")
+        name = named["name"]
+        lines += [
+            f"  ✅ {i} {t}: lines {decided[name + ' ' + i]['lines']}" for i, t in items.items()
+        ]
+    return "\n".join(lines) + "\n"
