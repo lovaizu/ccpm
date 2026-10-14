@@ -121,22 +121,23 @@ shows that something went wrong and the records show where.
 
 - Handed on without reading over: tried on a README for a tool whose notes hold more than its reader
   needs and leave out what they need to start, where Claude alone writes from the notes as they stand
-  (assumption). It passes when a fresh agent outside the job, reading the returned document as its
-  reader on the same checklists, takes every item from it.
+  (assumption). It passes when the job ends with every item Good, and the builder, reading the
+  returned document for its reader's use, finds nothing the user would have to read over and fix.
+  The builder judges the result and adds no AI check of their own, since a second check disagrees
+  with turn's at times and leaves no one sure which holds.
 - Asked only what the user alone can decide: tried on notes that settle some of what the checklists
   need, leave one point writ can infer and one only the user can decide, and leave out a fact the
   repository shows. It passes when the user is asked the one point, alone in its message, is given
   the inferred one as a proposal, is never asked the fact, and gets the document with both answers
   in it.
 - Judged from the report: tried on the README of the first trial. It passes when, for every item,
-  a fresh agent outside the job, reading only the lines the report gives, takes the item from them.
+  the lines the report gives are lines of the document that give it, as the builder reads them.
 - A kind writ has no checklist for: tried on release notes. It passes when the user is offered the
   two choices; with the second, the checklist is made with the user and put at
   `.writ/checklists/<kind>.md`, and a second request of that kind uses it without asking again.
 - A document the user already has: tried on a committed document that misses some items. It passes
-  when a fresh agent outside the job, reading the returned document as its reader on the same
-  checklists, takes every item from it, the document is made again from what it held, and git shows
-  what it was.
+  when the job ends with every item Good, the document is made again from what it held, and git
+  shows what it was.
 
 ### One-dimensional quality
 
