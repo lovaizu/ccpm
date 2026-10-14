@@ -306,9 +306,8 @@ what to do next; whether an item is met stays turn's.
   document; called again, turn starts from the document as it stands. A rule turn adds to that CCS,
   for how such work is made, rides in the job's later calls of turn and in no later job, since what
   is learned goes into the checklists.
-- An item writ judges the document's purpose does not need, so that no call of turn is spent on
-  it, stays More, and the report shows it with writ's reason, for the user to judge.
-- Must hold: writ never changes turn's decision on an item, and never writes the document itself.
+- Must hold: writ never changes turn's decision on an item, never writes the document itself, and
+  ends a job with a report only when every item is Good.
 - Weighed: calling turn again on everything it returns, as a matter of course, was not chosen, since
   each run on points the document's purpose did not need raised finer ones (seen in trials). The
   cost: writ judges each thing turn returns before it calls again.
@@ -323,19 +322,14 @@ what to do next; whether an item is met stays turn's.
 
 Achieves: judged from the report, the report is turn's decisions.
 
-The report is to the document what a test run's summary is to code: each item, and where it is met
-or why it is not.
+The report is to the document what a test run's summary is to code: each item, and where it is met.
 
-- Once writ has nothing left to settle or to have turn make, a script makes the report from turn's
-  evidence: for each checklist, each item's ID and title, and the lines of its Good, or, for an item
-  still More, writ's reason for leaving it, and refuses an item left More without a reason. writ
-  gives the report to the user with the document, or hands both back to the calling plugin.
-- Must hold: every Good in the report comes from turn's evidence, unchanged, and every item still
-  More is shown as More, with writ's reason.
-- Weighed: leaving an item the purpose does not need as More in the report, rather than calling
-  turn until it is Good, since such a run spends time and tokens on what the reader does not need
-  and raises finer points (seen in trials), and the report still tells the user which items are not
-  met. The cost: a report may hold an item unmet, which the user judges from writ's reason.
+- Only a job that ends with every item Good has a report: once turn returns `done` with every item
+  Good, a script makes the report from turn's evidence, for each checklist, each item's ID and
+  title, and the lines of its Good, and refuses evidence with an item still More. writ gives the
+  report to the user with the document, or hands both back to the calling plugin.
+- Must hold: every line of the report comes from a Good in turn's evidence, unchanged, and no report
+  is made while an item is More.
 - Weighed: a script, not writ's skill, writes the report, since a report copied by hand may differ
   from the decisions it reports, and the user trusts each line without opening the evidence.
 
