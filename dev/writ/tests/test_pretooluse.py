@@ -198,7 +198,9 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
             hook = json.load(handle)["hooks"]["PreToolUse"][0]["hooks"][0]
         self.command = hook["command"]
         self.bin = tempfile.mkdtemp()
-        os.symlink(shutil.which("cat"), os.path.join(self.bin, "cat"))
+        cat = shutil.which("cat")
+        assert cat, "the tests need cat"
+        os.symlink(cat, os.path.join(self.bin, "cat"))
 
     def tearDown(self):
         shutil.rmtree(self.bin)

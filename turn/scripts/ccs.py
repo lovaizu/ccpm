@@ -70,11 +70,8 @@ def front(path):
         lines = f.read().splitlines()
     if lines[:1] != ["---"] or "---" not in lines[1:]:
         return {}
-    return dict(
-        re.match(r"(\w+):\s*(.*)", line).groups()
-        for line in lines[1 : lines.index("---", 1)]
-        if re.match(r"\w+:", line)
-    )
+    fields = (re.match(r"(\w+):\s*(.*)", line) for line in lines[1 : lines.index("---", 1)])
+    return dict(m.groups() for m in fields if m)
 
 
 def checklist(path):

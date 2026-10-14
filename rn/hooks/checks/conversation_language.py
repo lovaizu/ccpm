@@ -82,7 +82,7 @@ def unquoted(text, message):
     """The message without what it quotes from the record, which is in the artifact language: the
     map's goal line, the goal, and the task names."""
     message = re.sub(r"^\s*── .* ──\s*$", " ", message, flags=re.MULTILINE)
-    quoted = [l.strip() for l in section(text, "# Goal", 1) if l.strip()]
+    quoted: list[str] = [l.strip() for l in section(text, "# Goal", 1) if l.strip()]
     for line in text.splitlines():
         m = re.match(r"^### \[[ x]\] #\d+: (.+)$", line)
         if m:

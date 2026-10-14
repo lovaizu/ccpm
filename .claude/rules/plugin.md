@@ -57,24 +57,24 @@ special path for a case an existing check already stops.
 
 **For each unit, in order, do a to e.**
 
-a. **Write its tests in `dev/<plugin>/tests/` with `unittest`, run them and see them fail.** Feed
-   in what the code would receive, and check a case it stops as well as one it lets through. Name
-   each test by what must happen, as one sentence, and mark its body `# Given: <the situation>`,
-   `# When: <what is done>`, `# Then: <what must be so>`, each in plain words, not in terms of the
-   code.
+a. **Write its tests in `dev/<plugin>/tests/` with `unittest` and `code.md` open, run them and
+   see them fail.** Feed in what the code would receive, and check a case it stops as well as one
+   it lets through. Name each test by what must happen, as one sentence, and mark its body
+   `# Given: <the situation>`, `# When: <what is done>`, `# Then: <what must be so>`, each in plain
+   words, not in terms of the code.
    - Rationale: a test written after the code is fitted to what the code does, not to what it must
      do; a test never seen failing may check nothing; a check that never stops anything looks the
      same as one that works; a Then whose code checks less than its words say stands out.
 
-b. **Write the code until the tests pass.** What runs on users' machines is Python 3, 3.9 or later,
-   with the standard library only, and the README says so; a script that only calls an existing
-   tool may be sh. What the plugin's agents read and write as data is JSON; where they need only a
+b. **Write the code with `code.md` open until the tests pass.** What runs on users' machines is
+   Python 3, 3.9 or later, with the standard library only, and the README says so; a script that
+   only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON; where they need only a
    part, they read and change it with `jq`, and where the purpose needs it read whole, they read it
    whole. When a tool the plugin runs on, such as python3 or jq, is missing, the plugin stops and
    says how to install it. The tests run every line the plugin runs; delete a line no test has a
    reason to run, and mark `# pragma: no cover`, with its reason beside it, only where whether a
-   line runs depends on an environment the tests cannot make. CI counts the lines on every push
-   and fails on any not run.
+   line runs depends on an environment the tests cannot make. CI counts the lines and branches on
+   every push and fails on any not run.
    - Rationale: what the plugin makes can be wrong, so it is held by tests, and python3 is wherever
      git is while Node.js may not be; an agent changes only the part it needs with a tool it
      already knows, and a judgment made on a part where the whole was needed cannot be told from
