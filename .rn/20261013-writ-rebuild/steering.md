@@ -286,7 +286,8 @@ Progress:
         change to its checklist (leaving it More for the user to judge was tried and withdrawn:
         it hands the judging to the user). Left as not
         needed: the form and job files in full (the specification, `design.md` U-2), and
-        comparisons for each idea. Next: the user reads the design for agreement.
+        comparisons for each idea. Trimmed what repeats a principle or is turn's own decision.
+        Next: the user reads the design for agreement (`dev/writ/design.md`); then #4.
 
 ### [ ] #4: writ built and checked
 

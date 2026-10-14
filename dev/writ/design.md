@@ -248,8 +248,8 @@ checklists in `writ/checklists/`, a checklist writ made.
 - Where there is no checklist for the kind, the choice between the checklist for every document
   alone and making the kind's checklist first is an open point like any other, with making it first
   recommended when the user will write that kind again.
-- Must hold: every checklist used opens with its name and version, so each Good in the report can be followed back to the text it
-  was judged by.
+- Must hold: every checklist used opens with its name and version, so each Good in the report can
+  be followed back to the text it was judged by.
 - Weighed: writing to the checklist for every document alone, without asking, was not chosen, since
   a kind written again would miss what only its own checklist asks every time. The cost: one more
   question the first time a kind is met.
@@ -264,8 +264,8 @@ as a run spent; asked after the writing, it costs another. So writ settles each 
 called, as deeply as turn's reading would test it, as an editor agrees the brief with the author
 before a draft is begun.
 
-- Before its first question, writ's skill ends the job saying what to install if python3 is
-  missing, and a script does so if jq is.
+- Before its first question, writ checks for python3 and jq, so no answer is lost to a tool found
+  missing later.
 - writ's skill reads each item of the checklists against the request, the repository and the
   sources, and sets the decisions they need as a tree, each taken up once the decisions it rests on
   are settled. A fact the repository or the official documentation shows is looked up, never asked.
@@ -281,8 +281,9 @@ before a draft is begun.
   than depended on, since the dependency installs 27 skills, `grilling` starts on any mention of
   "grill", and its tags cannot pin a version. One question at a time, as `grilling` once asked and
   as the user found right in use, not every ready question at once as it asks now, since asking
-  several at once has many reports of questions bundled that depend on each other. The cost: writ's steps carry the way, and improvements to `grilling` reach
-  writ only when they are taken in by hand.
+  several at once has many reports of questions bundled that depend on each other. The cost: writ's
+  steps carry the way, and improvements to `grilling` reach writ only when they are taken in by
+  hand.
 - Weighed: leaving every open point to the questions turn returns at the end was not chosen, since
   each run of turn on unsettled sources raised finer questions that the document's purpose did not
   need, and a document written without the answers was written again (seen in trials). The cost: the
@@ -316,12 +317,6 @@ what to do next; whether an item is met stays turn's.
 - Weighed: calling turn again on everything it returns, as a matter of course, was not chosen, since
   each run on points the document's purpose did not need raised finer ones (seen in trials). The
   cost: writ judges each thing turn returns before it calls again.
-- Weighed: writ checking the document again itself was not chosen, as the principle says; the check
-  would be a second one beside turn's. The cost: writ's report is only as sound as turn's
-  reading.
-- Weighed: a loop of runs inside turn was not chosen, since turn's caller knows what was agreed and
-  already calls turn again with the user's answers. The cost: writ reads what each run returns
-  before deciding.
 
 ### The report
 
