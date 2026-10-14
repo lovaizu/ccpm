@@ -249,7 +249,14 @@ Progress:
      what the user alone can decide, and calls turn again only when that is needed, never as a
      matter of course. This is writ's steps, since everything is made through writ; turn's README
      stays as agreed.
-  9. Then writ's design again (#3).
+  9. Decided by the user (2026-10-14): writ is also called from other plugins' steps, since
+     everything made goes through writ. In both calls writ goes through the checklists' items for
+     what the request, the repository and the sources leave open, as deeply as when it questions,
+     with a recommended answer where it can infer one. Called by the user with `/writ:up`, it asks
+     those points one at a time; called from a plugin's step, it asks nothing and returns them
+     with their recommended answers to the caller, which decides and calls writ again. From there
+     on both are the same: turn makes the work, and writ judges what turn returns.
+  10. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
