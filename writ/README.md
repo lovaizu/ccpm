@@ -24,17 +24,16 @@ you type follows `>`, and what writ says follows `●`.
 
 > It tidies a whole folder in one command, and keeps the originals.
 
+● Which license is the tool under? Your notes do not say, and the repository has no license file.
+
+> MIT
+
 ● Writing README.md now, from docs/notes.md. Another AI will read it as such a developer, and it
   will be checked against the checklists; what is not met yet is written again, and I'll report
   once every item is met.
 
-● README.md is written. One point is left for you: which license is the tool under? Your notes
-  do not say, so the README names none yet.
-
-> MIT
-
-● README.md now names the MIT license, and every item of the two checklists is met. The report,
-  with the lines that meet each item:
+● README.md is written, and every item of the two checklists is met. The report, with the lines
+  that meet each item:
 
   Every document
     ✅ B-1 What it covers: lines 1-4
@@ -44,8 +43,8 @@ you type follows `>`, and what writ says follows `●`.
     (every item gets a line the same way)
 ```
 
-A question only you can answer, such as the license, comes at the end with any other such
-question, so you can leave writ at work. To check an item, open README.md at the lines the report
+writ asks what it needs before it writes, so once it says it is writing, you can leave it at work;
+a question only you can answer that shows up only in the writing comes at the end. To check an item, open README.md at the lines the report
 gives for it.
 
 ### A document you already have
