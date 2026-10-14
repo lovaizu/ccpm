@@ -338,10 +338,10 @@ met, every line the same shape reaches, and the change of shape taken at each of
   A script refuses a way said of lines rather than of the whole work. Where a way needs what only
   the user can decide, the learner raises a question, which the orchestrator leaves open unless the
   work or the sources answer it.
-- When the first reading leaves an item without a Good whose way lies in the work, and nothing for
-  the user or the caller to decide, a script starts the run's second reading: the work is made again on those ways,
-  from the work as it stands, and read and decided once more, as if the caller had called turn
-  again on what the first reading returned.
+- When the first reading leaves an item without a Good whose way lies in the work, a script starts
+  the run's second reading: the work is made again on those ways, from the work as it stands, and
+  read and decided once more, as if the caller had called turn again on what the first reading
+  returned. A question the first reading left open stays open into the second.
 - Each item still without a Good is returned as More with its way, and `next` is `ask the user`; a
   way in how such work is made is returned as a rule the caller carries into later tasks, and one in
   what the caller wrote goes back to the caller with `to the caller`.
@@ -350,10 +350,11 @@ met, every line the same shape reaches, and the change of shape taken at each of
 - Must hold: a run has the work read and decided at most twice, and returns the version last read.
 - Weighed: a second reading by default, since the first reading is where the generator first sees
   where the receiver stops, and in every run of writ's rebuild it left items whose way lay in the
-  work, so the caller called again without deciding anything new. The cost: a run takes up to twice as long.
-- Weighed: no second reading while a question or a way in what the caller wrote is left, since the
-  work is made again with the answer or the caller's change anyway. The cost: items whose way lies
-  in the work wait for that run.
+  work, so the caller called again without deciding anything new. The cost: a run takes up to twice
+  as long.
+- Weighed: a second reading even with a question or a way in what the caller wrote left, since an
+  answer or a change of the caller's touches a part of the work, and the rest made right first
+  leaves less to the run that takes it. The cost: a part the answer changes may be made twice.
 - Weighed: no third reading, since the caller knows what was agreed and decides from what a second
   reading still leaves whether to fix the work, the request or a checklist. The cost: the caller
   reads what the run returns before deciding.

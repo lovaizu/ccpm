@@ -30,7 +30,8 @@ it again.
 3. For each item, see whether what the work should be and the sources settle what the work needs to
    give it. Add to `questions` with `jq`, as `{"question": "...", "ask": true}`, each thing they leave
    open that only the user can decide: what to ask, and what the work leaves out until it is
-   answered. The run asks it at its end.
+   answered. The run asks it at its end. In a second reading, `questions` already holds what the
+   first left open; add only what it does not hold.
 4. If the run has no aim yet, write in one sentence, in the language the user writes in, what the
    work will let its receiver do, from what the work should be; run `up.py aim <folder> "<the
    sentence>"`. Then run `up.py brief <folder> generator`, and call the

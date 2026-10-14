@@ -221,18 +221,22 @@ class End(unittest.TestCase):
         # Then: the caller gets the rule once
         self.assertEqual(self.repo.json("out.json")["constraints"], [{"rule": RULE}])
 
-    def test_more_with_a_question_left_open_returns_without_a_second_reading(self):
+    def test_a_question_left_open_is_carried_into_the_second_reading_and_asked_at_the_end(self):
         # Given: the first reading left F-1 with a way in the work, and a question left open
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
-        decide(self.repo, ".turn/out", f1=False)
-        learn(self.repo, ".turn/out", {"note F-1": WORK_WAY})
-        # When: the reading ends
-        code, out = run(self.repo, "end", ".turn/out")
-        # Then: no second reading begins; the user is asked the question
+        second(self.repo, {"note F-1": WORK_WAY})
+        # When: the second reading meets every item and ends
+        self.assertEqual(
+            self.repo.json(f"{SECOND}/questions.json"), [{"question": LICENSE, "ask": True}]
+        )
+        decide(self.repo, SECOND, f1=True)
+        code, out = run(self.repo, "end", SECOND)
+        # Then: the question is still open, and the user is asked it at the end
         self.assertEqual(code, 0, out)
         self.assertEqual(out.splitlines()[1], f"❓ {LICENSE}")
-        self.assertEqual(self.repo.json("out.json")["predictive_cue"], [{"next": "ask the user"}])
-        self.assertFalse(self.repo.exists(SECOND))
+        back = self.repo.json("out.json")
+        self.assertEqual(back["predictive_cue"], [{"next": "ask the user"}])
+        self.assertEqual(back["semantic_gist"], [{"difference": LICENSE}])
 
     def test_a_second_reading_stopped_returns_to_the_caller(self):
         # Given: the second reading begun
@@ -246,10 +250,10 @@ class End(unittest.TestCase):
         self.assertEqual(back["episodic_trace"], [{"work": ".turn/out/note.md"}])
 
     def test_more_whose_way_lies_in_what_the_caller_wrote_goes_to_the_caller(self):
-        # Given: the first reading left F-1 with a way only the caller can take, and B-1 with a
-        # way in the work
-        decide(self.repo, ".turn/out", f1=False, b1=False)
-        learn(self.repo, ".turn/out", {"note F-1": CALLER_WAY, "note B-1": WORK_WAY})
+        # Given: the first reading left F-1 with a way only the caller can take, and nothing in the
+        # work
+        decide(self.repo, ".turn/out", f1=False)
+        learn(self.repo, ".turn/out", {"note F-1": CALLER_WAY})
         # When: the reading ends
         code, out = run(self.repo, "end", ".turn/out")
         # Then: no second reading begins; the CCS goes to the caller, saying which item and how,
@@ -258,6 +262,19 @@ class End(unittest.TestCase):
         said = "to the caller: note F-1: name the receiver's machine"
         self.assertEqual(self.repo.json("out.json")["predictive_cue"], [{"next": said}])
         self.assertEqual(out.splitlines()[0], said)
+        self.assertFalse(self.repo.exists(SECOND))
+
+    def test_a_way_in_what_the_caller_wrote_waits_for_the_second_reading_to_end(self):
+        # Given: the first reading left F-1 with a way only the caller can take, and B-1 with a
+        # way in the work
+        decide(self.repo, ".turn/out", f1=False, b1=False)
+        learn(self.repo, ".turn/out", {"note F-1": CALLER_WAY, "note B-1": WORK_WAY})
+        # When: the reading ends
+        code, out = run(self.repo, "end", ".turn/out")
+        # Then: the second reading begins, and nothing goes to the caller yet
+        self.assertEqual(code, 0, out)
+        self.assertEqual(json.loads(out)["folder"], SECOND)
+        self.assertFalse(self.repo.exists("out.json"))
 
 
 class RunAgain(unittest.TestCase):
