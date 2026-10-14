@@ -1,8 +1,8 @@
 # writ
 
-With writ, Claude Code writes documents, such as a README, a design document or a prompt, that
-their reader understands in one reading, so you can hand them on without reading them over. It is
-for anyone who has Claude Code write documents, not code, for someone else to read.
+With writ, Claude Code makes work for someone else, such as a README, a design document, a prompt,
+or code and its tests, that its reader understands in one reading, so you can hand it on without
+reading it over. It is for anyone who has Claude Code make such work.
 
 ## Example
 
