@@ -377,8 +377,33 @@ Progress:
      changes it made to the request, points it settled itself); the README's "report once every
      item is met" changes to the design. Settled from the README (46-47): a point writ cannot judge
      goes to the user at the end.
-  2. Running: writ's README made again through turn against the design (the link to the callers'
-     page goes).
-  3. Make turn's README and design again through turn on the new checklists (the two-reading
-     change was written by hand), and show them to the user for agreement.
-  4. Rebuild writ's code thin from the design, try it, and finish #4.
+  2. writ's README through turn (2026-10-15): with the agreed README and the design as sources,
+     turn's learned rules piled up (11) and pushed in how writ works inside (the order of a call, a
+     list of five report kinds); with a file of what to write, item by item, as the only source
+     (`readme-content.md`), the first run kept to it, and the second drifted again: turn's
+     orchestrator read `dev/writ/design.md` and `turn/README.md`, not given, by `sed`/`grep`.
+     The README stays as agreed until turn is fixed.
+  3. Decided by the user (2026-10-15), for turn (README, design, code) and the checklists:
+     - The caller decides what the work says: one file, item by item of the checklists, in
+       bullets. The caller reads an existing document and draws that file from it; turn only makes
+       new, and an existing document is not its input.
+     - The CCS states each input by its intent for the work, and turn decides from it what each
+       role is handed: `checklist` (was `viewpoint`), `content` (what the work says, item by item),
+       `reference` (what the work follows or draws on, a file or a folder), `receiver_opens` (what
+       the receiver opens with the work, such as pages it links; the caller checks it before
+       handing). `answer` goes into `content`. `difference` splits into `question` and `unmet`;
+       turn returns the rules it learns in its own part as `rule` and no longer adds them to the
+       caller's `constraints`. The first user reads only the work and `receiver_opens`, not a
+       whole copy of the repository. Brief fields follow the same intent.
+     - Every prompt, the orchestrator's and each role's, says in positive words to work from the
+       inputs it is given alone, with why (to work without bias). A hook stops a Read, Grep or Glob
+       outside the run's inputs and says why; the orchestrator's Bash runs only turn's scripts;
+       the roles' Bash stays open (tests and builds need it), and what they read by it shows in the
+       records. A stop gives its intent, not only the rule.
+     - `prompt.md` changes (wording agreed): B-3 adds that each step is an instruction to act, not
+       a rule; B-12 asks for positive terms even beside what to do; B-20 the reason for each
+       instruction; B-21 the scope of its inputs (the whole of what the AI reads, what it works on
+       and what it consults, such as other code it follows).
+  4. Next: `prompt.md` through turn; turn's README and design made again through turn on those
+     decisions, from content files, shown to the user; turn's code; then writ's README from its
+     content file, writ's code, and finish #4.
