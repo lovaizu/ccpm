@@ -346,3 +346,8 @@ Progress:
   check the README against it, rebuild the code thin from the design (the current code is not
   patched; what the design does not need is deleted), try it as its user, and finish #4 (plugin.md
   steps 5 to 7, #36 and #37 judged). Never patch; judge every point from what writ should be.
+- Running (2026-10-14): the design from nothing through `dev/turn/trials/run.py`, on the CCS
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/5b8dfbaf-6002-4c66-aec0-eba4d5bb782f/scratchpad/design.json`
+  (the thin-wrapper decisions given as constraints; the current code not a source), in the clone
+  `.../scratchpad/d1` with `dev/writ/design.md` removed, log `.../scratchpad/d1.log`. Next: judge
+  what it returns from the purpose, copy the design here, then the README against it.
