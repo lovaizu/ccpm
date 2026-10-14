@@ -307,3 +307,18 @@ Progress:
     what it adds, at `.writ/checklists/<kind>.md`, and used with writ's checklist from then on;
     writ's own checklists are not changed in place (they are outside git on a user's machine, and
     an update replaces them). Once writ's checklist takes in the same, the two only repeat it.
+  - Settled by the assistant: the wording findings (`67110ea`); the rest are the code's to settle
+    unit by unit.
+- Units (plugin.md step 4), in order, each through the user's whole path:
+  1. Asked only what the user alone can decide, by the thinnest path: `/writ:up` with a request, the
+     checklists listed, the form settled one question at a time, the CCS written from it, turn
+     called, and the document handed back on `done`. The old writ's code goes first.
+  2. Judged from the report: the report made from turn's evidence.
+  3. Judging what turn returns: every `next`, calling turn again only when the document must
+     change, and an addition to a checklist.
+  4. A document the user already has: a path, and its changes git does not hold found before the
+     first question.
+  5. A kind writ has no checklist for: the choice, and a checklist made.
+  6. Called from a calling plugin: the open points handed back, and the callers' page.
+  7. Keeping writ's steps: the hooks, outside a job included.
+  8. Installing with turn: the manifest, and `claude plugin validate --strict`.

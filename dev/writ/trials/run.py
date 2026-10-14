@@ -1,175 +1,96 @@
-"""Run writ in a scene as its user would, and leave what happened for the conductor to read.
+"""Runs writ as its user does, in a new repository holding a copy of a trial's files, with the writ
+and turn of this working tree in place of the installed ones, and prints the conversation as it
+goes. Each time writ waits on the user, another Claude answers as the user, from what the user
+knows and nothing else.
 
-    python3 dev/writ/trials/run.py play <scene> <workdir>     set the scene up and run writ once
-    python3 dev/writ/trials/run.py judge <scene> <workdir>    the user decides from writ's report, then the document
-    python3 dev/writ/trials/run.py read <scene> <workdir>     a reader reads the finished document once
-    python3 dev/writ/trials/run.py compare <scene> <workdir>  a reader compares it with the version before
+    python3 dev/writ/trials/run.py <new folder> <trial's files> <what the user knows> <request>
 
-Everything lands in <workdir>/<scene>/. A run takes many minutes.
+The job ends once writ's job is closed, or after an hour.
 """
 
 import json
-import random
+import os
 import shutil
 import subprocess
 import sys
-import time
-from pathlib import Path
+import threading
 
-from scenes import SCENES
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+place, files, knows, request = sys.argv[1:]
+shutil.copytree(files, place)
+for args in (
+    ["init", "-q"],
+    ["add", "."],
+    ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "the trial's files"],
+):
+    subprocess.run(["git", "-C", place, *args], check=True)
+with open(knows) as f:
+    known = f.read()
+claude = subprocess.Popen(
+    [
+        "claude",
+        "-p",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--model",
+        "opus",
+        "--plugin-dir",
+        os.path.join(ROOT, "writ"),
+        "--plugin-dir",
+        os.path.join(ROOT, "turn"),
+        "--settings",
+        '{"enabledPlugins": {"writ@ccpm": false, "turn@ccpm": false}}',
+        "--permission-mode",
+        "bypassPermissions",
+    ],
+    cwd=place,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    text=True,
+)
+assert claude.stdin and claude.stdout
+limit = threading.Timer(3600, claude.kill)
+limit.daemon = True
+limit.start()
 
-TRIALS = Path(__file__).resolve().parent
-REPO = TRIALS.parents[2]
-WRIT = REPO / "writ"
-ROLES = TRIALS / "roles"
 
-
-def claude(message, cwd, extra):
-    cmd = ["claude", "-p", message, "--model", "opus", "--output-format", "json", *extra]
-    t0 = time.time()
-    out = subprocess.run(
-        cmd, check=False, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True
+def say(text):
+    print(f"> {text}", flush=True)
+    claude.stdin.write(
+        json.dumps({"type": "user", "message": {"role": "user", "content": text}}) + "\n"
     )
-    minutes = (time.time() - t0) / 60
-    try:
-        data = json.loads(out.stdout)
-    except json.JSONDecodeError:
-        sys.exit(f"claude did not return JSON (exit {out.returncode}):\n{out.stderr or out.stdout}")
-    return data.get("result", ""), minutes
+    claude.stdin.flush()
 
 
-def writ(message, repo):
-    return claude(message, repo, ["--plugin-dir", str(WRIT), "--permission-mode", "auto"])
-
-
-def reader(message, cwd):
-    return claude(message, cwd, ["--tools", "Read,Grep,Glob"])
-
-
-def git(repo, *args):
-    return subprocess.run(
-        ["git", *args], cwd=repo, check=True, capture_output=True, text=True
-    ).stdout
-
-
-def setup(name, scene_dir):
-    repo = scene_dir / "repo"
-    if scene_dir.exists():
-        sys.exit(f"{scene_dir} exists; give a new workdir")
-    if SCENES[name]["source"] == "fixture":
-        shutil.copytree(TRIALS / "fixture", repo)
-    else:
-        repo.mkdir(parents=True)
-        archive = subprocess.run(
-            ["git", "archive", "HEAD"], cwd=REPO, check=True, capture_output=True
-        )
-        subprocess.run(["tar", "-x"], cwd=repo, input=archive.stdout, check=True)
-    git(repo, "init", "-q")
-    git(repo, "add", "-A")
-    git(repo, "commit", "-q", "-m", "Initial commit")
-    return repo
-
-
-def play(name, scene_dir):
-    scene = SCENES[name]
-    repo = setup(name, scene_dir)
-    reply, minutes = writ(scene["opening"], repo)
-    (scene_dir / "report.md").write_text(reply)
-    (scene_dir / "play.md").write_text(
-        f"# {name}\n\nBenefits: {', '.join(scene['benefits'])}\nLook at: {scene['look']}\n\n"
-        f"## Request\n\n{scene['opening']}\n\n## writ ({minutes:.1f} min)\n\n{reply}\n\n"
-        "## The scene at the end\n\n```\n"
-        + git(repo, "status", "--short")
-        + git(repo, "log", "--oneline")
-        + "```\n\n"
-        + changed_only_target(name, repo)
+def answer(said):
+    """What the user, knowing only what they know, says back to writ's last words."""
+    done = subprocess.run(
+        ["claude", "-p", "--model", "opus", "--tools", ""],
+        input=f"{known}\nwrit has just said to you:\n\n{said}\n\nReply as this user would, "
+        "in a sentence or two, and nothing else.",
+        capture_output=True,
+        text=True,
+        check=True,
     )
-    print(scene_dir / "play.md")
+    return done.stdout.strip()
 
 
-def changed_only_target(name, repo):
-    """Only the target work and the result files in open/ may differ from the scene as set up."""
-    first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
-    changed = set(
-        (
-            git(repo, "diff", "--name-only", first)
-            + git(repo, "ls-files", "--others", "--exclude-standard")
-        ).split()
-    )
-    others = sorted(p for p in changed if not p.startswith(".writ/open/"))
-    target = SCENES[name]["target"]
-    passed = others == [target] or others == [] if target else len(others) <= 1
-    return f"Changed besides `.writ/open/`: {others or 'nothing'} — {'as expected' if passed else 'MORE THAN THE TARGET WORK'}\n"
-
-
-def judge(name, scene_dir):
-    repo = scene_dir / "repo"
-    prompt = (
-        (ROLES / "judge.md")
-        .read_text()
-        .format(
-            reader=SCENES[name]["reader"],
-            doc=target(name, repo),
-            report=(scene_dir / "report.md").read_text(),
-        )
-    )
-    answer, _ = reader(prompt, repo)
-    (scene_dir / "judge.md").write_text(f"# {name}: judged from the report\n\n{answer}\n")
-    print(scene_dir / "judge.md")
-
-
-def target(name, repo):
-    path = SCENES[name]["target"]
-    if path:
-        return path
-    first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
-    added = git(repo, "diff", "--name-only", "--diff-filter=A", first) + git(
-        repo, "ls-files", "--others", "--exclude-standard"
-    )
-    docs = [p for p in set(added.split()) if p.endswith(".md") and not p.startswith(".writ/")]
-    if len(docs) != 1:
-        sys.exit(f"cannot tell the document writ wrote: {docs}")
-    return docs[0]
-
-
-def read(name, scene_dir):
-    repo, out = scene_dir / "repo", scene_dir / "read"
-    doc = target(name, repo)
-    out.mkdir()
-    shutil.copy(repo / doc, out / Path(doc).name)
-    prompt = (
-        (ROLES / "reader.md").read_text().format(reader=SCENES[name]["reader"], doc=Path(doc).name)
-    )
-    report, _ = reader(prompt, out)
-    (scene_dir / "read.md").write_text(f"# {name}: {doc}, read once\n\n{report}\n")
-    print(scene_dir / "read.md")
-
-
-def compare(name, scene_dir):
-    repo, out = scene_dir / "repo", scene_dir / "compare"
-    doc = target(name, repo)
-    first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
-    versions = {"before": git(repo, "show", f"{first}:{doc}"), "after": (repo / doc).read_text()}
-    order = random.sample(["before", "after"], 2)
-    out.mkdir()
-    for label, version in zip("XY", order):
-        (out / f"{label}.md").write_text(versions[version])
-    prompt = (ROLES / "compare.md").read_text().format(reader=SCENES[name]["reader"])
-    report, _ = reader(prompt, out)
-    (scene_dir / "compare.md").write_text(
-        f"# {name}: {doc}, before and after\n\nX is {order[0]}, Y is {order[1]}.\n\n{report}\n"
-    )
-    print(scene_dir / "compare.md")
-
-
-if __name__ == "__main__":
-    if (
-        len(sys.argv) != 4
-        or sys.argv[1] not in ("play", "judge", "read", "compare")
-        or sys.argv[2] not in SCENES
-    ):
-        sys.exit(__doc__ + "\nScenes: " + ", ".join(SCENES))
-    command, name, workdir = sys.argv[1:]
-    {"play": play, "judge": judge, "read": read, "compare": compare}[command](
-        name, Path(workdir).resolve() / name
-    )
+say(f"/writ:up {request}")
+last, event = "", {}
+for line in claude.stdout:
+    event = json.loads(line)
+    if event.get("type") == "assistant":
+        for part in event["message"]["content"]:
+            if part["type"] == "text":
+                print(part["text"], flush=True)
+                last = part["text"]
+    elif event.get("type") == "result":
+        if not os.path.exists(os.path.join(place, ".writ", "job.json")):
+            break
+        say(answer(last))
+claude.stdin.close()
+claude.wait()
+print("session:", event.get("session_id"), "cost:", event.get("total_cost_usd"))
