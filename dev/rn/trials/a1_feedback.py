@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """A1's second scene: the account session at its first Plan sign-off is given
 /rn:gm a user whose last name is null is shown "Ann null", to the next Plan sign-off."""
+
 from common import ACCOUNT_PART, MAX_TURNS, Trial
 
 FEEDBACK = '/rn:gm a user whose last name is null is shown "Ann null"'

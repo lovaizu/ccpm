@@ -34,7 +34,9 @@ def check(data):
 def closed(data):
     """The last lines of a run the command just closed, taken once."""
     closing = CLOSING.search(data["tool_input"].get("command", ""))
-    path = os.path.join(data["cwd"], closing.group(1).strip("'\""), state.CLOSING) if closing else ""
+    path = (
+        os.path.join(data["cwd"], closing.group(1).strip("'\""), state.CLOSING) if closing else ""
+    )
     if not os.path.isfile(path):
         return []
     with open(path) as f:

@@ -26,10 +26,28 @@ subprocess.run(["git", "clone", "-q", ROOT, place], check=True)
 os.makedirs(os.path.join(place, ".tasks"), exist_ok=True)
 shutil.copyfile(ccs, os.path.join(place, ".tasks", "in.json"))
 claude = subprocess.Popen(
-    ["claude", "-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose",
-     "--model", "opus", "--plugin-dir", os.path.join(ROOT, "turn"),
-     "--settings", '{"enabledPlugins": {"turn@ccpm": false}}', "--permission-mode", "bypassPermissions"],
-    cwd=place, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    [
+        "claude",
+        "-p",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--model",
+        "opus",
+        "--plugin-dir",
+        os.path.join(ROOT, "turn"),
+        "--settings",
+        '{"enabledPlugins": {"turn@ccpm": false}}',
+        "--permission-mode",
+        "bypassPermissions",
+    ],
+    cwd=place,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    text=True,
+)
 limit = threading.Timer(3600, claude.kill)
 limit.daemon = True
 limit.start()
@@ -37,7 +55,9 @@ limit.start()
 
 def say(text):
     print(f"> {text}", flush=True)
-    claude.stdin.write(json.dumps({"type": "user", "message": {"role": "user", "content": text}}) + "\n")
+    claude.stdin.write(
+        json.dumps({"type": "user", "message": {"role": "user", "content": text}}) + "\n"
+    )
     claude.stdin.flush()
 
 
@@ -45,16 +65,28 @@ say(f"/turn:up in: .tasks/in.json\nout: .tasks/{out}")
 asked, stopped = 0, None
 for line in claude.stdout:
     event = json.loads(line)
-    shown = [p["text"] for p in event["message"]["content"] if p["type"] == "text"] \
-        if event.get("type") == "assistant" else [event["content"]] \
-        if event.get("type") == "system" and event.get("subtype") == "informational" else []
+    shown = (
+        [p["text"] for p in event["message"]["content"] if p["type"] == "text"]
+        if event.get("type") == "assistant"
+        else [event["content"]]
+        if event.get("type") == "system" and event.get("subtype") == "informational"
+        else []
+    )
     for text in shown:
         print(text, flush=True)
         asked += text.count("❓")
         if stop and "To make:" in text:
             print("[Esc]", flush=True)
-            claude.stdin.write(json.dumps({"type": "control_request", "request_id": "esc",
-                                           "request": {"subtype": "interrupt"}}) + "\n")
+            claude.stdin.write(
+                json.dumps(
+                    {
+                        "type": "control_request",
+                        "request_id": "esc",
+                        "request": {"subtype": "interrupt"},
+                    }
+                )
+                + "\n"
+            )
             claude.stdin.flush()
             stopped, stop, asked = stop, None, 0
     if event.get("type") == "result" and stopped:

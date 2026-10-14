@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """UserPromptExpansion hook for rn: remembers that the user typed /rn:ty, /rn:gm or /rn:dn, which
 check 7 spends on the commit that records it."""
+
 import json
 import os
 import sys

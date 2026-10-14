@@ -1,4 +1,5 @@
 """rn's record as the checks read it: the session directory, its steering.md, and git."""
+
 import os
 import re
 import subprocess
@@ -96,7 +97,7 @@ def section(text, heading, stop_level):
     except ValueError:
         return []
     out = []
-    for line in lines[i + 1:]:
+    for line in lines[i + 1 :]:
         if re.match(rf"^#{{1,{stop_level}}} ", line):
             break
         out.append(line)

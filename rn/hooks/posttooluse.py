@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """PostToolUse hook for rn: checks 1 to 3 right after a record file is written, and checks 4 to 7 on
 a conductor commit right after it is made, before it is pushed."""
+
 import json
 import os
 import sys
@@ -26,10 +27,12 @@ def main():
     if not data.get("agent_type") and shell.on_repo(shell.runs_of(data, cwd), ("commit",), top):
         msg = record.head_message(top)
         rel = os.path.relpath(sdir, top)
-        return record.report(decision_line.check(msg) + settled_whole.check(top, rel, msg)
-                             + stop_commit.check(top, sdir, msg)
-                             + typed_command.check(top, rel, msg, record.store(),
-                                                   data.get("session_id", "")))
+        return record.report(
+            decision_line.check(msg)
+            + settled_whole.check(top, rel, msg)
+            + stop_commit.check(top, sdir, msg)
+            + typed_command.check(top, rel, msg, record.store(), data.get("session_id", ""))
+        )
     return 0
 
 

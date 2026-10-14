@@ -40,8 +40,17 @@ Is it short?
 ```
 """
 
-PARTS = ["focal_entities", "goal_orientation", "retrieved_artifacts", "constraints",
-         "predictive_cue", "uncertainty_signal", "semantic_gist", "relational_map", "episodic_trace"]
+PARTS = [
+    "focal_entities",
+    "goal_orientation",
+    "retrieved_artifacts",
+    "constraints",
+    "predictive_cue",
+    "uncertainty_signal",
+    "semantic_gist",
+    "relational_map",
+    "episodic_trace",
+]
 
 
 def ccs(**parts):
@@ -61,8 +70,11 @@ class Repo:
         self.path = os.path.realpath(self.tmp.name)
         self.write("checklists/note.md", CHECKLIST)
         self.write("notes.md", "Run make.\n")
-        for args in (["init", "-q"], ["add", "."],
-                     ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "first"]):
+        for args in (
+            ["init", "-q"],
+            ["add", "."],
+            ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "first"],
+        ):
             subprocess.run(["git", "-C", self.path, *args], check=True)
 
     def write(self, rel, text):

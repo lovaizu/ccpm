@@ -20,7 +20,9 @@ def git(*args):
 def changed():
     """Each file git does not hold as committed, with what it holds now, or None where it is gone."""
     found = {}
-    for entry in git("status", "--porcelain", "-z", "--untracked-files=all", "--no-renames").split("\0"):
+    for entry in git("status", "--porcelain", "-z", "--untracked-files=all", "--no-renames").split(
+        "\0"
+    ):
         path = entry[3:]
         if path:
             found[path] = None
@@ -35,13 +37,19 @@ def elsewhere(run, deliverable):
     run's evidence, or none."""
     now = changed()
     ours = (deliverable, run["out"], RUN)
-    names = sorted(p for p in set(run["before"]) | set(now) if run["before"].get(p, "") != now.get(p, "")
-                   and p not in ours and not p.startswith(run["work"] + "/"))
+    names = sorted(
+        p
+        for p in set(run["before"]) | set(now)
+        if run["before"].get(p, "") != now.get(p, "")
+        and p not in ours
+        and not p.startswith(run["work"] + "/")
+    )
     return [f"Also changed during the run, outside the work: {', '.join(names)}"] if names else []
 
 
 def drop(place):
-    if not os.path.basename(place).startswith("turn-copy-") or \
-            os.path.dirname(os.path.realpath(place)) != os.path.realpath(tempfile.gettempdir()):
+    if not os.path.basename(place).startswith("turn-copy-") or os.path.dirname(
+        os.path.realpath(place)
+    ) != os.path.realpath(tempfile.gettempdir()):
         raise Stop(f"{place} is not a copy turn made")
     shutil.rmtree(place)

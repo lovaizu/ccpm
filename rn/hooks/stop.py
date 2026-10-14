@@ -2,6 +2,7 @@
 """Stop hook for rn: checks 1 to 3, 8, 13 and 14 on every end of the conductor's turn, the second
 end included, but for check 13: any end may speak to the user, and any may leave commits only on
 this machine."""
+
 import json
 import os
 import sys

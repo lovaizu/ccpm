@@ -24,8 +24,15 @@ USAGE = """usage: up.py start <in> <out> <session>
        up.py stop <work folder>"""
 
 
-COMMANDS = {"start": (start, 3), "brief": (brief, 3), "coverage": (coverage, 3), "round": (round_two, 1),
-            "end": (end, 2), "aim": (aim, 3), "stop": (stop, 1)}
+COMMANDS = {
+    "start": (start, 3),
+    "brief": (brief, 3),
+    "coverage": (coverage, 3),
+    "round": (round_two, 1),
+    "end": (end, 2),
+    "aim": (aim, 3),
+    "stop": (stop, 1),
+}
 
 
 def main(argv):

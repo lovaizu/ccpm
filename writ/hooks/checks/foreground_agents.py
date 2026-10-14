@@ -1,4 +1,5 @@
 """Run writ's own agents in the foreground, so whoever called writ gets a finished work back."""
+
 from __future__ import annotations
 
 WRIT_AGENTS = ("writ:generator", "writ:first-user")

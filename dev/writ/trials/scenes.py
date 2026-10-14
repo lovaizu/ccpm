@@ -19,43 +19,50 @@ PR_REVIEW_AIM = (
 
 SCENES = {
     "migration-plan": {
-        "benefits": ["understands it in one reading", "hand it straight on",
-                     "judge from the report", "asked instead of covered over"],
+        "benefits": [
+            "understands it in one reading",
+            "hand it straight on",
+            "judge from the report",
+            "asked instead of covered over",
+        ],
         "source": "fixture",
         "opening": "/writ:up Write a TypeScript migration plan for the team's engineers, at "
-                   "docs/migration-plan.md. This app is moving from JavaScript to TypeScript. Once "
-                   "they have read it, the team agrees on which directories to move first, and each "
-                   "engineer volunteers for the parts they want; they do not start moving code right "
-                   "after reading. No one owns any part yet. The order of directories, how the UI is "
-                   "built, and whether cli/ is included are not decided; the team decides them after "
-                   "reading." + ASK_BACK,
+        "docs/migration-plan.md. This app is moving from JavaScript to TypeScript. Once "
+        "they have read it, the team agrees on which directories to move first, and each "
+        "engineer volunteers for the parts they want; they do not start moving code right "
+        "after reading. No one owns any part yet. The order of directories, how the UI is "
+        "built, and whether cli/ is included are not decided; the team decides them after "
+        "reading." + ASK_BACK,
         "look": "the owners and the open choices are left visibly undecided, each with the reason, "
-                "and the report alone decides approval",
+        "and the report alone decides approval",
         "target": None,
         "reader": "an engineer on the team, who reads the plan before the team meets to agree which "
-                  "directories to move first and who takes which part",
+        "directories to move first and who takes which part",
     },
     "typing-guide": {
-        "benefits": ["understands it in one reading", "hand it straight on",
-                     "asked instead of covered over"],
+        "benefits": [
+            "understands it in one reading",
+            "hand it straight on",
+            "asked instead of covered over",
+        ],
         "source": "fixture",
         "opening": "/writ:up Fix docs/typing-guide.md. The readers are the engineers who move files "
-                   "from JavaScript to TypeScript; they read it to write types that pass review "
-                   "without being sent back. The move has not started and tsconfig.json does not "
-                   "exist yet. Whether `any` is allowed is not decided, and nothing beyond what the "
-                   "guide says has been decided." + ASK_BACK,
+        "from JavaScript to TypeScript; they read it to write types that pass review "
+        "without being sent back. The move has not started and tsconfig.json does not "
+        "exist yet. Whether `any` is allowed is not decided, and nothing beyond what the "
+        "guide says has been decided." + ASK_BACK,
         "look": "`any` comes back as a question and no rule on it is written; the parts readers "
-                "used before the fix are kept",
+        "used before the fix are kept",
         "target": "docs/typing-guide.md",
         "reader": "an engineer on the team, who is about to move a JavaScript file to TypeScript and "
-                  "add types that pass review",
+        "add types that pass review",
     },
     "pr-review-hole": {
         "benefits": ["check by what happened in use"],
         "source": "fixture",
         "opening": "/writ:pith check .github/prompts/pr-review.md. " + PR_REVIEW_AIM,
         "look": "a More points at the missing check on response fields, with what happened in use as "
-                "its evidence",
+        "its evidence",
         "target": None,
         "reader": None,
     },
@@ -71,11 +78,11 @@ SCENES = {
         "benefits": ["write essentials worked back from the purpose"],
         "source": "fixture",
         "opening": "/writ:pith Write essentials for our CLI's release notes. Put them at "
-                   "docs/essentials/release-notes.md. The readers are the developers in the company "
-                   "who use this CLI, reading to decide whether to upgrade now. The CLI is in cli/, and "
-                   "docs/releases/ holds its real release notes." + ASK_BACK,
+        "docs/essentials/release-notes.md. The readers are the developers in the company "
+        "who use this CLI, reading to decide whether to upgrade now. The CLI is in cli/, and "
+        "docs/releases/ holds its real release notes." + ASK_BACK,
         "look": "every question is answered from what happened in use, and the answers decide "
-                "whether to upgrade on 1.4",
+        "whether to upgrade on 1.4",
         "target": None,
         "reader": None,
     },
@@ -83,31 +90,31 @@ SCENES = {
         "benefits": ["understands it in one reading", "hand it straight on"],
         "source": "repo",
         "opening": "/writ:up Fix writ/README.md. The reader is a Claude Code user who has not used "
-                   "writ: they read it top to bottom to decide whether to install writ, and then use "
-                   "it on their own documents and work. Once finished, they should grasp what writ "
-                   "does for them and how to use it, through examples they can picture as their own "
-                   "work. The README's facts must match writ's prompts and design in this repository "
-                   "(writ/skills, writ/agents, writ/docs/design.md). Do not ask me anything; return "
-                   "any question as your result.",
+        "writ: they read it top to bottom to decide whether to install writ, and then use "
+        "it on their own documents and work. Once finished, they should grasp what writ "
+        "does for them and how to use it, through examples they can picture as their own "
+        "work. The README's facts must match writ's prompts and design in this repository "
+        "(writ/skills, writ/agents, writ/docs/design.md). Do not ask me anything; return "
+        "any question as your result.",
         "look": "the parts readers used before the fix are kept",
         "target": "writ/README.md",
         "reader": "a Claude Code user who has not used writ, deciding whether to install it and then "
-                  "how to use it on their own documents",
+        "how to use it on their own documents",
     },
     "design": {
         "benefits": ["understands it in one reading", "hand it straight on"],
         "source": "repo",
         "opening": "/writ:up Fix writ/docs/design.md. The reader is whoever builds or fixes writ, and "
-                   "the user who approves its design: they read it top to bottom before changing "
-                   "writ's prompts, agents or hooks. Once finished, they should grasp how writ brings "
-                   "the README's benefits: who takes part, what passes between them, and why each "
-                   "decision was made, so they can change writ without breaking a decision. The "
-                   "design's facts must match this repository (writ/README.md, writ/skills, "
-                   "writ/agents, writ/hooks). Do not ask me anything; return any question as your "
-                   "result.",
+        "the user who approves its design: they read it top to bottom before changing "
+        "writ's prompts, agents or hooks. Once finished, they should grasp how writ brings "
+        "the README's benefits: who takes part, what passes between them, and why each "
+        "decision was made, so they can change writ without breaking a decision. The "
+        "design's facts must match this repository (writ/README.md, writ/skills, "
+        "writ/agents, writ/hooks). Do not ask me anything; return any question as your "
+        "result.",
         "look": "the parts readers used before the fix are kept",
         "target": "writ/docs/design.md",
         "reader": "whoever is about to change writ's prompts, agents or hooks without breaking a "
-                  "decision in its design",
+        "decision in its design",
     },
 }

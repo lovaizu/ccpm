@@ -1,5 +1,6 @@
 """rn's PostToolUse hook: checks 1 to 3 after a record file is written, and checks 4 to 7
 on a commit right after it is made."""
+
 import os
 import unittest
 
@@ -46,8 +47,10 @@ class PostToolUse(Session):
 
     def test_steering_repeating_a_criterion_id_is_stopped(self):
         # Given a second A1
-        self.r.write(f"{SDIR}/steering.md",
-                     STEERING.replace("## Must-be quality", "- A1: again\n\n## Must-be quality"))
+        self.r.write(
+            f"{SDIR}/steering.md",
+            STEERING.replace("## Must-be quality", "- A1: again\n\n## Must-be quality"),
+        )
         # When it is written
         code, out = self.post_write(f"{SDIR}/steering.md")
         # Then it is stopped, naming A1
@@ -56,8 +59,9 @@ class PostToolUse(Session):
 
     def test_steering_missing_a_front_matter_key_is_stopped(self):
         # Given a front matter that does not say where the verification document is
-        self.r.write(f"{SDIR}/steering.md",
-                     STEERING.replace("verification: docs/verification.md\n", ""))
+        self.r.write(
+            f"{SDIR}/steering.md", STEERING.replace("verification: docs/verification.md\n", "")
+        )
         # When it is written
         code, out = self.post_write(f"{SDIR}/steering.md")
         # Then it is stopped, naming the key
@@ -164,8 +168,9 @@ class PostToolUse(Session):
 
     def test_task_serving_an_undefined_criterion_is_stopped(self):
         # Given a planned task serving A9, which no acceptance criterion has
-        self.r.write(f"{SDIR}/steering.md",
-                     STEERING + "### [ ] #3: move cart\n\nServes: A1, M1, A9\n")
+        self.r.write(
+            f"{SDIR}/steering.md", STEERING + "### [ ] #3: move cart\n\nServes: A1, M1, A9\n"
+        )
         # When it is written
         code, out = self.post_write(f"{SDIR}/steering.md")
         # Then it is stopped, naming A9
@@ -204,8 +209,10 @@ class PostToolUse(Session):
     def test_decision_line_followed_by_trailers_passes(self):
         # Given a decision line with a Co-Authored-By trailer after it
         self.r.write("a.txt", "a\n")
-        self.r.commit("rn: a\n\n● #3 cart ── decided: fix → #3 cart\n\n"
-                      "Co-Authored-By: Claude <noreply@anthropic.com>")
+        self.r.commit(
+            "rn: a\n\n● #3 cart ── decided: fix → #3 cart\n\n"
+            "Co-Authored-By: Claude <noreply@anthropic.com>"
+        )
         # When the commit is checked
         code, _ = self.r.after_commit()
         # Then it passes
@@ -250,8 +257,11 @@ class PostToolUse(Session):
         self.r.commit("rn: reports\n\n● plan ── reports in → settle")
         for name in items:
             os.remove(os.path.join(self.r.dir, SDIR, "open", name))
-        quoted = "".join(f"{name}:\n    # Report\n\n    Doing as written, the build failed at "
-                         f"cart.ts:3.\n\n{tail[name]}\n\n" for name in items)
+        quoted = "".join(
+            f"{name}:\n    # Report\n\n    Doing as written, the build failed at "
+            f"cart.ts:3.\n\n{tail[name]}\n\n"
+            for name in items
+        )
         self.r.commit("rn: settle\n\n" + quoted + "● plan ── settled → asking the user")
 
     def test_settled_question_report_ending_the_message_is_stopped_only_for_its_decision_line(self):
@@ -259,8 +269,10 @@ class PostToolUse(Session):
         self.r.write(f"{SDIR}/open/02-report-question.md", REPORT)
         self.r.commit("rn: reports\n\n● plan ── reports in → settle")
         os.remove(os.path.join(self.r.dir, SDIR, "open", "02-report-question.md"))
-        self.r.commit("rn: settle\n\n02-report-question.md:\n    # Report\n\n    Doing as written, "
-                      "the build failed at cart.ts:3.")
+        self.r.commit(
+            "rn: settle\n\n02-report-question.md:\n    # Report\n\n    Doing as written, "
+            "the build failed at cart.ts:3."
+        )
         # When the commit is checked
         code, out = self.r.after_commit()
         # Then it is stopped for the decision line, not for a More let go
@@ -270,9 +282,13 @@ class PostToolUse(Session):
 
     def test_settled_report_on_a_question_letting_a_more_go_is_stopped(self):
         # Given a report on a question settled with a More let go
-        self.settle(["02-report-question.md"],
-                    {"02-report-question.md": "- More A1: no way tells users apart\n"
-                                              "  → let go: displayName takes only the user"})
+        self.settle(
+            ["02-report-question.md"],
+            {
+                "02-report-question.md": "- More A1: no way tells users apart\n"
+                "  → let go: displayName takes only the user"
+            },
+        )
         # When the commit is checked
         code, out = self.r.after_commit()
         # Then it is stopped, naming the report
@@ -281,9 +297,13 @@ class PostToolUse(Session):
 
     def test_settled_report_on_a_question_fixing_every_more_passes(self):
         # Given a report on a question settled with its More fixed
-        self.settle(["02-report-question.md"],
-                    {"02-report-question.md": "- More A1: no way tells users apart\n"
-                                              "  → fixed: the user is asked first"})
+        self.settle(
+            ["02-report-question.md"],
+            {
+                "02-report-question.md": "- More A1: no way tells users apart\n"
+                "  → fixed: the user is asked first"
+            },
+        )
         # When the commit is checked
         code, out = self.r.after_commit()
         # Then it passes
@@ -291,9 +311,13 @@ class PostToolUse(Session):
 
     def test_more_let_go_on_another_report_settled_beside_a_question_passes(self):
         # Given a question's report fixed, and a plan report after it letting a must-be More go
-        self.settle(["02-report-question.md", "03-report-plan.md"],
-                    {"02-report-question.md": "- More A1: x\n  → fixed: y",
-                     "03-report-plan.md": "- More M1: z\n  → let go: off the golden path"})
+        self.settle(
+            ["02-report-question.md", "03-report-plan.md"],
+            {
+                "02-report-question.md": "- More A1: x\n  → fixed: y",
+                "03-report-plan.md": "- More M1: z\n  → let go: off the golden path",
+            },
+        )
         # When the commit is checked
         code, out = self.r.after_commit()
         # Then it passes
@@ -349,8 +373,15 @@ class PostToolUse(Session):
         self.r.write("a.txt", "a\n")
         self.r.commit(PROPOSAL)
         self.r.after_commit()
-        sh(self.r.dir, "git", "commit", "-q", "--amend", "-m",
-           PROPOSAL.replace("- More:", "- More M1:"))
+        sh(
+            self.r.dir,
+            "git",
+            "commit",
+            "-q",
+            "--amend",
+            "-m",
+            PROPOSAL.replace("- More:", "- More M1:"),
+        )
         # When the commit is checked
         code, _ = self.r.after_commit()
         # Then it passes
@@ -495,8 +526,9 @@ class PostToolUse(Session):
         self.r.write("a.txt", "a\n")
         self.r.commit("rn: a")
         # When it was made with an option before the subcommand
-        code, _ = self.r.hook("posttooluse", tool_name="Bash",
-                              tool_input={"command": "git --no-pager commit -m x"})
+        code, _ = self.r.hook(
+            "posttooluse", tool_name="Bash", tool_input={"command": "git --no-pager commit -m x"}
+        )
         # Then it is stopped
         self.assertEqual(code, 2)
 

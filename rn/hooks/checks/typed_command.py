@@ -1,5 +1,6 @@
 """Check 7: a sign-off is passed, or the session finished, only after the user typed /rn:ty;
 feedback is taken only after /rn:gm, and a pause made only after /rn:dn."""
+
 import json
 import os
 import re
@@ -57,8 +58,9 @@ def take_note(store, session_id, cmd, parent):
 def needed_command(top, rel_sdir, msg):
     last = last_line(msg)
     diff = git("diff", "HEAD~1", "HEAD", "--", rel_sdir + "/steering.md", cwd=top)
-    if re.search(r"^\+### \[x\] #\d+: .*sign-off", diff, re.MULTILINE | re.IGNORECASE) or \
-            re.search(r"^\+status: finished", diff, re.MULTILINE):
+    if re.search(r"^\+### \[x\] #\d+: .*sign-off", diff, re.MULTILINE | re.IGNORECASE) or re.search(
+        r"^\+status: finished", diff, re.MULTILINE
+    ):
         return "ty"
     if "── feedback in " in last:
         return "gm"
@@ -71,6 +73,10 @@ def check(top, rel_sdir, msg, store, session_id):
     need = needed_command(top, rel_sdir, msg)
     parent = git("rev-parse", "HEAD~1", cwd=top).strip()
     if need and not take_note(store, session_id, need, parent):
-        return [(f"this commit records what only the user's /rn:{need} may; "
-                "undo it with git reset --soft HEAD~1")]
+        return [
+            (
+                f"this commit records what only the user's /rn:{need} may; "
+                "undo it with git reset --soft HEAD~1"
+            )
+        ]
     return []

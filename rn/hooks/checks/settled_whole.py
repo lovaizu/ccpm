@@ -1,5 +1,6 @@
 """Check 5: a settled open/ item is whole in the commit message, and a settled report on a question
 lets no More go."""
+
 import os
 import re
 
@@ -14,8 +15,16 @@ def norm(s):
 
 def check(top, rel_sdir, msg):
     problems = []
-    gone = git("diff", "--name-only", "--diff-filter=D", "HEAD~1", "HEAD", "--",
-               rel_sdir + "/open", cwd=top).split()
+    gone = git(
+        "diff",
+        "--name-only",
+        "--diff-filter=D",
+        "HEAD~1",
+        "HEAD",
+        "--",
+        rel_sdir + "/open",
+        cwd=top,
+    ).split()
     flat = norm(msg)
     lines = msg.splitlines()
     for path in gone:
@@ -24,12 +33,14 @@ def check(top, rel_sdir, msg):
         if norm(body) not in flat:
             problems.append(f"commit message: {name} left open/ but is not whole in the message")
         elif "-report-question" in name and name + ":" in lines:
-            for line in lines[lines.index(name + ":") + 1:]:
+            for line in lines[lines.index(name + ":") + 1 :]:
                 if ITEM.match(line) or line.startswith("● "):
                     break
                 if "→ let go" in line:
-                    problems.append(f"commit message: a More on {name} is let go; fix the question "
-                                    "or ask the user what the result must do, since the user meets "
-                                    "what it leaves")
+                    problems.append(
+                        f"commit message: a More on {name} is let go; fix the question "
+                        "or ask the user what the result must do, since the user meets "
+                        "what it leaves"
+                    )
                     break
     return problems

@@ -1,4 +1,5 @@
 """rn's SessionStart hook: after a summary, the conductor reads the record again."""
+
 import unittest
 
 from harness import SDIR, STEERING, Session, sh
@@ -18,7 +19,9 @@ class SessionStart(Session):
     def test_after_compact_the_session_is_found_past_other_folders_and_blank_lines(self):
         # Given a folder under .rn/ with no steering.md, and a blank line in the session's front matter
         self.r.write(".rn/notes/a.md", "a\n")
-        self.r.write(f"{SDIR}/steering.md", STEERING.replace("status: running\n", "status: running\n\n"))
+        self.r.write(
+            f"{SDIR}/steering.md", STEERING.replace("status: running\n", "status: running\n\n")
+        )
         self.r.commit("notes")
         # When the conversation is summarized
         _, out = self.r.hook("sessionstart", source="compact")

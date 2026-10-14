@@ -22,4 +22,4 @@ def check(data):
         os.chdir(here)
     if resting:
         return []
-    return [f"step 14: the run is open; run `python3 \"{SCRIPT}\" end {run['work']} {run['round']}`"]
+    return [f'step 14: the run is open; run `python3 "{SCRIPT}" end {run["work"]} {run["round"]}`']

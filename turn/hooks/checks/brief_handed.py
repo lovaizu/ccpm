@@ -18,5 +18,9 @@ def check(data):
     handed = os.path.join(data["cwd"], str(given.get("prompt", "")).strip())
     if os.path.isfile(brief) and os.path.realpath(handed) == os.path.realpath(brief):
         return []
-    return [(f"step {AGENTS[role]}: run `python3 \"{SCRIPT}\" brief {run['work']} {run['round']} {role}` "
-            f"and hand the agent only the path it prints")]
+    return [
+        (
+            f'step {AGENTS[role]}: run `python3 "{SCRIPT}" brief {run["work"]} {run["round"]} {role}` '
+            f"and hand the agent only the path it prints"
+        )
+    ]

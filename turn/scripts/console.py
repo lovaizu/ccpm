@@ -34,8 +34,10 @@ def shown_lines(work):
             with open(os.path.join(here, "aim.txt")) as f:
                 said.append(f"  1 write   To make: {f.read().strip()}")
         if os.path.isfile(os.path.join(here, "first-user-brief.json")):
-            said += [INDENT + the_work(work, n)[3],
-                     f"  2 read    {'Read as' if n == 1 else 'Read again, as'} {receiver}."]
+            said += [
+                INDENT + the_work(work, n)[3],
+                f"  2 read    {'Read as' if n == 1 else 'Read again, as'} {receiver}.",
+            ]
         if not os.path.isfile(the_work(work, n, written=False)[3]):
             lines += [(f"{n}:{line}", line) for line in said]
             continue
@@ -45,12 +47,24 @@ def shown_lines(work):
         if not check(work, n, "orchestrator"):
             if not without_good(work, n):
                 said.append("  3 check   ✅ Nothing missing.")
-            elif read_json(os.path.join(here, "learner.json"), "the form") and not check(work, n, "learner"):
-                aims = dict.fromkeys(p["aim"] for p in read_json(os.path.join(here, "learner.json"), "the form").values())
-                said += [("  3 check   " if k == 0 else INDENT) + f"⚠️ Not yet: {a}" for k, a in enumerate(aims)]
+            elif read_json(os.path.join(here, "learner.json"), "the form") and not check(
+                work, n, "learner"
+            ):
+                aims = dict.fromkeys(
+                    p["aim"]
+                    for p in read_json(os.path.join(here, "learner.json"), "the form").values()
+                )
+                said += [
+                    ("  3 check   " if k == 0 else INDENT) + f"⚠️ Not yet: {a}"
+                    for k, a in enumerate(aims)
+                ]
         lines += [(f"{n}:{line}", line) for line in said]
     if os.path.isfile(os.path.join(work, "1", "aim.txt")):
-        lines += [(f"q:{q['question']}", f"{INDENT}❓ {q['question']}") for q in asked(work) if q.get("ask")]
+        lines += [
+            (f"q:{q['question']}", f"{INDENT}❓ {q['question']}")
+            for q in asked(work)
+            if q.get("ask")
+        ]
     return lines
 
 

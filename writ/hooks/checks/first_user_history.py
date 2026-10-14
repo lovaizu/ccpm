@@ -1,4 +1,5 @@
 """Stop the first user from reading how the work was made: git history and conversation records."""
+
 from __future__ import annotations
 
 import re
@@ -7,13 +8,23 @@ import shlex
 FIRST_USER = "writ:first-user"
 HISTORY_COMMANDS = {"log", "show", "blame", "reflog", "stash", "diff"}
 # git options placed before the subcommand that take the next word as their value
-OPTIONS_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--super-prefix",
-                      "--config-env", "--exec-path"}
+OPTIONS_WITH_VALUE = {
+    "-C",
+    "-c",
+    "--git-dir",
+    "--work-tree",
+    "--namespace",
+    "--super-prefix",
+    "--config-env",
+    "--exec-path",
+}
 CONVERSATION_RECORDS = re.compile(r"/\.claude/projects(?:/|$|[\s\"'`;|&)])")
 SEPARATORS = re.compile(r"&&|\|\||[;|&\n()`]|\$\(")
 
-REASON = ("writ: the first user does not read how the work was made "
-          "(git history or Claude Code conversation records); use the work as it is.")
+REASON = (
+    "writ: the first user does not read how the work was made "
+    "(git history or Claude Code conversation records); use the work as it is."
+)
 
 
 def _words(segment: str) -> list[str]:
@@ -29,7 +40,7 @@ def _runs_git_history(command: str) -> bool:
         for index, word in enumerate(words):
             if word != "git" and not word.endswith("/git"):
                 continue
-            rest = words[index + 1:]
+            rest = words[index + 1 :]
             while rest and rest[0].startswith("-"):
                 option = rest.pop(0)
                 if option in OPTIONS_WITH_VALUE and rest:

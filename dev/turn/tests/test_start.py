@@ -17,25 +17,45 @@ class Start(unittest.TestCase):
         got = started(self.repo)
         # Then: the list holds the checklist's opening and both items, not the example
         listed = self.repo.json(got["list"])
-        self.assertEqual((listed["checklists"][0]["checklist"], listed["checklists"][0]["version"]),
-                         ("note", "1.2.0"))
-        self.assertTrue(listed["checklists"][0]["opening"].startswith("A note is read by a teammate"))
+        self.assertEqual(
+            (listed["checklists"][0]["checklist"], listed["checklists"][0]["version"]),
+            ("note", "1.2.0"),
+        )
+        self.assertTrue(
+            listed["checklists"][0]["opening"].startswith("A note is read by a teammate")
+        )
         self.assertEqual([i["id"] for i in listed["items"]], ["note B-1", "note F-1"])
         self.assertIn("Why: a note is for acting.", listed["items"][0]["text"])
         # Then: each role's form has a place for every item, the agents' that write per item none
         # to start with
-        self.assertEqual(self.repo.json(form("generator")),
-                         {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}})
+        self.assertEqual(
+            self.repo.json(form("generator")),
+            {"note B-1": {"lines": ""}, "note F-1": {"lines": ""}},
+        )
         for role in ("first-user", "evaluator", "learner"):
             self.assertEqual(self.repo.json(form(role)), {})
         for role in ("hand-on", "orchestrator"):
-            self.assertEqual(self.repo.json(form(role))["note F-1"], {"met": None, "lines": "", "note": ""})
+            self.assertEqual(
+                self.repo.json(form(role))["note F-1"], {"met": None, "lines": "", "note": ""}
+            )
         # Then: the orchestrator is given what it decides from and where it writes, and no more
-        self.assertEqual(got, {
-            "folder": ".turn/out", "list": ".turn/out/list.json", "round": 1,
-            "work": ".turn/out/1/note.md", "hand-on": form("hand-on"), "orchestrator": form("orchestrator"),
-            "questions": ".turn/out/questions.json", "receiver": "a new teammate", "use": "to start work", "acceptance": ["they can start alone"],
-            "sources": ["notes.md"], "constraints": []})
+        self.assertEqual(
+            got,
+            {
+                "folder": ".turn/out",
+                "list": ".turn/out/list.json",
+                "round": 1,
+                "work": ".turn/out/1/note.md",
+                "hand-on": form("hand-on"),
+                "orchestrator": form("orchestrator"),
+                "questions": ".turn/out/questions.json",
+                "receiver": "a new teammate",
+                "use": "to start work",
+                "acceptance": ["they can start alone"],
+                "sources": ["notes.md"],
+                "constraints": [],
+            },
+        )
         self.assertFalse(self.repo.exists("out.json"))
 
     def test_each_item_is_named_by_its_checklist_s_name_not_by_the_file_s(self):
@@ -44,7 +64,9 @@ class Start(unittest.TestCase):
         # When: a run starts on it
         got = started(self.repo, ccs(retrieved_artifacts=[{"viewpoint": "checklists/handover.md"}]))
         # Then: its items are named by the checklist's own name
-        self.assertEqual([i["id"] for i in self.repo.json(got["list"])["items"]], ["note B-1", "note F-1"])
+        self.assertEqual(
+            [i["id"] for i in self.repo.json(got["list"])["items"]], ["note B-1", "note F-1"]
+        )
 
     def test_a_task_without_a_use_is_run_with_none(self):
         # Given: a task that names no use
@@ -69,37 +91,71 @@ class Start(unittest.TestCase):
     def test_a_task_is_refused_when_its_ccs_does_not_match_the_form(self):
         cases = [
             ("not JSON", "{", "in.json is not JSON"),
-            ("a part missing", {k: v for k, v in ccs().items() if k != "episodic_trace"},
-             "episodic_trace is missing"),
+            (
+                "a part missing",
+                {k: v for k, v in ccs().items() if k != "episodic_trace"},
+                "episodic_trace is missing",
+            ),
             ("a part not a list", ccs(constraints={}), "constraints is not a list"),
-            ("an entry of two kinds", ccs(constraints=[{"language": "a", "rule": "b"}]),
-             "constraints has an entry that is not one kind and a string"),
-            ("an unknown kind", ccs(constraints=[{"colour": "red"}]),
-             "constraints has a kind it cannot hold: colour"),
+            (
+                "an entry of two kinds",
+                ccs(constraints=[{"language": "a", "rule": "b"}]),
+                "constraints has an entry that is not one kind and a string",
+            ),
+            (
+                "an unknown kind",
+                ccs(constraints=[{"colour": "red"}]),
+                "constraints has a kind it cannot hold: colour",
+            ),
             ("no checklist", ccs(retrieved_artifacts=[]), "retrieved_artifacts needs a viewpoint"),
-            ("two deliverables",
-             ccs(focal_entities=[{"deliverable": "a.md"}, {"deliverable": "b.md"},
-                                 {"receiver": "r"}]),
-             "focal_entities needs one deliverable"),
-            ("no receiver", ccs(focal_entities=[{"deliverable": "a.md"}]),
-             "focal_entities needs a receiver"),
-            ("no acceptance", ccs(goal_orientation=[{"use": "u"}]),
-             "goal_orientation needs an acceptance"),
-            ("a checklist without its name and version",
-             ccs(retrieved_artifacts=[{"viewpoint": "notes.md"}]),
-             "notes.md: open the checklist with front matter giving its name and version"),
-            ("a checklist without its version",
-             ccs(retrieved_artifacts=[{"viewpoint": "nameonly.md"}]),
-             "nameonly.md: open the checklist with front matter giving its name and version"),
-            ("a checklist that is not there",
-             ccs(retrieved_artifacts=[{"viewpoint": "checklists/none.md"}]),
-             "checklists/none.md does not exist"),
-            ("a source that is not there",
-             ccs(retrieved_artifacts=[{"viewpoint": "checklists/note.md"}, {"source": "gone.md"}]),
-             "gone.md does not exist"),
-            ("a deliverable outside the repository",
-             ccs(focal_entities=[{"deliverable": "../x.md"}, {"receiver": "r"}]),
-             "../x.md is outside the repository"),
+            (
+                "two deliverables",
+                ccs(
+                    focal_entities=[
+                        {"deliverable": "a.md"},
+                        {"deliverable": "b.md"},
+                        {"receiver": "r"},
+                    ]
+                ),
+                "focal_entities needs one deliverable",
+            ),
+            (
+                "no receiver",
+                ccs(focal_entities=[{"deliverable": "a.md"}]),
+                "focal_entities needs a receiver",
+            ),
+            (
+                "no acceptance",
+                ccs(goal_orientation=[{"use": "u"}]),
+                "goal_orientation needs an acceptance",
+            ),
+            (
+                "a checklist without its name and version",
+                ccs(retrieved_artifacts=[{"viewpoint": "notes.md"}]),
+                "notes.md: open the checklist with front matter giving its name and version",
+            ),
+            (
+                "a checklist without its version",
+                ccs(retrieved_artifacts=[{"viewpoint": "nameonly.md"}]),
+                "nameonly.md: open the checklist with front matter giving its name and version",
+            ),
+            (
+                "a checklist that is not there",
+                ccs(retrieved_artifacts=[{"viewpoint": "checklists/none.md"}]),
+                "checklists/none.md does not exist",
+            ),
+            (
+                "a source that is not there",
+                ccs(
+                    retrieved_artifacts=[{"viewpoint": "checklists/note.md"}, {"source": "gone.md"}]
+                ),
+                "gone.md does not exist",
+            ),
+            (
+                "a deliverable outside the repository",
+                ccs(focal_entities=[{"deliverable": "../x.md"}, {"receiver": "r"}]),
+                "../x.md is outside the repository",
+            ),
         ]
         self.repo.write("nameonly.md", "---\nname: note\n---\n\n# Note\n")
         for name, c, said in cases:

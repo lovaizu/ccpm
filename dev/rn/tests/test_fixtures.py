@@ -1,5 +1,6 @@
 """Each trial fixture in the current form passes the form checks, so a trial starts from a state the
 rn under test can read."""
+
 import os
 import sys
 import unittest
@@ -18,7 +19,9 @@ class FixturesTest(unittest.TestCase):
         current = []
         for name in sorted(os.listdir(FIXTURES)):
             tree = os.path.join(FIXTURES, name, "tree")
-            for sdir in (os.path.join(tree, ".rn", s) for s in os.listdir(os.path.join(tree, ".rn"))):
+            for sdir in (
+                os.path.join(tree, ".rn", s) for s in os.listdir(os.path.join(tree, ".rn"))
+            ):
                 if read(os.path.join(sdir, "steering.md")).startswith("---"):
                     current.append((name, tree, sdir))
         self.assertGreater(len(current), 0)
@@ -28,6 +31,7 @@ class FixturesTest(unittest.TestCase):
                 problems = form.check(tree, sdir)
                 # Then they find nothing
                 self.assertEqual(problems, [])
+
 
 if __name__ == "__main__":
     unittest.main()

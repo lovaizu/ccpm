@@ -43,8 +43,7 @@ class HandBack(unittest.TestCase):
 
     def test_an_agent_handing_back_with_its_form_filled_goes_on(self):
         # Given: the first user's form filled for every item
-        fill(self.repo, form("first-user"), {
-            "note B-1": {"took": "run make", "lines": "3"}})
+        fill(self.repo, form("first-user"), {"note B-1": {"took": "run make", "lines": "3"}})
         # When: the first user hands back
         code, _ = self.hand_back("turn:first-user")
         # Then: it goes on
@@ -62,11 +61,20 @@ class HandBack(unittest.TestCase):
     def test_the_hook_run_as_claude_code_runs_it_stops_an_unfilled_form(self):
         # Given: the hook's entry file, and an empty form in an open run
         entry = os.path.join(ROOT, "turn", "hooks", "subagentstop.py")
-        data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "SubagentStop",
-                "agent_type": "turn:generator"}
+        data = {
+            "cwd": self.repo.path,
+            "session_id": "s1",
+            "hook_event_name": "SubagentStop",
+            "agent_type": "turn:generator",
+        }
         # When: Claude Code runs it on a hand-back
-        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True,
-                              text=True)
+        done = subprocess.run(
+            [sys.executable, entry],
+            check=False,
+            input=json.dumps(data),
+            capture_output=True,
+            text=True,
+        )
         # Then: it stops the call with what is missing
         self.assertEqual(done.returncode, 2)
         self.assertIn("note B-1: lines are not given", done.stderr)
@@ -82,15 +90,22 @@ class HandBack(unittest.TestCase):
             with self.subTest(name):
                 # Given: an empty form, and a call from outside what the check covers
                 # When: the call is made
-                code, _ = hook(self.repo, session_id=session, hook_event_name=event, agent_type=agent)
+                code, _ = hook(
+                    self.repo, session_id=session, hook_event_name=event, agent_type=agent
+                )
                 # Then: it goes on
                 self.assertEqual(code, 0)
 
     def test_nothing_is_stopped_once_the_run_has_ended(self):
         # Given: a run that has ended
-        fill(self.repo, form("orchestrator"), {
-            "note B-1": {"met": True, "lines": "3", "note": "x"},
-            "note F-1": {"met": True, "lines": "1", "note": "x"}})
+        fill(
+            self.repo,
+            form("orchestrator"),
+            {
+                "note B-1": {"met": True, "lines": "3", "note": "x"},
+                "note F-1": {"met": True, "lines": "1", "note": "x"},
+            },
+        )
         self.assertEqual(run(self.repo, "end", ".turn/out", "1")[0], 0)
         # When: an agent named like turn's hands back with an empty form
         code, _ = self.hand_back("turn:generator")
@@ -101,7 +116,9 @@ class HandBack(unittest.TestCase):
         # Given: a repository where turn has never run
         other = Repo()
         # When: an agent named like turn's hands back
-        code, _ = hook(other, session_id="s1", hook_event_name="SubagentStop", agent_type="turn:generator")
+        code, _ = hook(
+            other, session_id="s1", hook_event_name="SubagentStop", agent_type="turn:generator"
+        )
         # Then: it goes on
         self.assertEqual(code, 0)
         other.close()

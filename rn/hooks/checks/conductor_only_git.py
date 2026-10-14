@@ -1,4 +1,5 @@
 """Check 9: only the conductor commits or pushes on the session's repository."""
+
 from shell import on_repo
 
 

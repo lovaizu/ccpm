@@ -32,11 +32,12 @@ def hook_input(tool_name, tool_input, agent_type=FIRST_USER):
 
 
 def run_entry(stdin):
-    return subprocess.run([sys.executable, ENTRY], check=False, input=stdin, capture_output=True, text=True)
+    return subprocess.run(
+        [sys.executable, ENTRY], check=False, input=stdin, capture_output=True, text=True
+    )
 
 
 class FirstUserHistoryTest(unittest.TestCase):
-
     def assertBlocked(self, result):
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertEqual(len(result.stderr.strip().splitlines()), 1)
@@ -48,17 +49,19 @@ class FirstUserHistoryTest(unittest.TestCase):
 
     def test_first_user_reading_git_history_is_blocked(self):
         # Given
-        commands = ("git log --oneline",
-                    "git show HEAD~1:README.md",
-                    "git blame README.md",
-                    "git reflog",
-                    "git stash list",
-                    "git diff HEAD~1",
-                    "git -C /Users/someone/repo log -3",
-                    "git --no-pager -c core.pager=cat diff",
-                    "cd repo && git log | head -5",
-                    "ls; /usr/bin/git show HEAD",
-                    'git log --format="%h;%s" -3')
+        commands = (
+            "git log --oneline",
+            "git show HEAD~1:README.md",
+            "git blame README.md",
+            "git reflog",
+            "git stash list",
+            "git diff HEAD~1",
+            "git -C /Users/someone/repo log -3",
+            "git --no-pager -c core.pager=cat diff",
+            "cd repo && git log | head -5",
+            "ls; /usr/bin/git show HEAD",
+            'git log --format="%h;%s" -3',
+        )
         for command in commands:
             with self.subTest(command=command):
                 # When
@@ -68,8 +71,13 @@ class FirstUserHistoryTest(unittest.TestCase):
 
     def test_first_user_running_other_commands_passes(self):
         # Given
-        commands = ("git status", "git ls-files", "git -C repo rev-parse --show-toplevel",
-                    "cat README.md | grep -n install", "python3 -m unittest")
+        commands = (
+            "git status",
+            "git ls-files",
+            "git -C repo rev-parse --show-toplevel",
+            "cat README.md | grep -n install",
+            "python3 -m unittest",
+        )
         for command in commands:
             with self.subTest(command=command):
                 # When
@@ -84,7 +92,7 @@ class FirstUserHistoryTest(unittest.TestCase):
             ("Grep", {"pattern": "design", "path": "/Users/someone/.claude/projects/"}),
             ("Glob", {"pattern": "**/*.jsonl", "path": "/Users/someone/.claude/projects"}),
             ("Bash", {"command": "ls ~/.claude/projects/"}),
-            ("Bash", {"command": "grep -r aim \"$HOME/.claude/projects\""}),
+            ("Bash", {"command": 'grep -r aim "$HOME/.claude/projects"'}),
         ]
         for tool_name, tool_input in cases:
             with self.subTest(tool=tool_name, input=tool_input):
@@ -114,8 +122,13 @@ class FirstUserHistoryTest(unittest.TestCase):
             with self.subTest(agent_type=agent_type):
                 # When
                 git_log = run_entry(hook_input("Bash", {"command": "git log -3"}, agent_type))
-                records = run_entry(hook_input(
-                    "Read", {"file_path": "/Users/someone/.claude/projects/repo/a.jsonl"}, agent_type))
+                records = run_entry(
+                    hook_input(
+                        "Read",
+                        {"file_path": "/Users/someone/.claude/projects/repo/a.jsonl"},
+                        agent_type,
+                    )
+                )
                 # Then
                 self.assertPassed(git_log)
                 self.assertPassed(records)
@@ -131,8 +144,12 @@ class ForegroundAgentsTest(unittest.TestCase):
         for agent in ("writ:generator", "writ:first-user"):
             with self.subTest(agent=agent):
                 # Given
-                tool_input = {"description": "write", "prompt": "Write docs/x.md",
-                              "subagent_type": agent, "run_in_background": True}
+                tool_input = {
+                    "description": "write",
+                    "prompt": "Write docs/x.md",
+                    "subagent_type": agent,
+                    "run_in_background": True,
+                }
                 # When
                 result = self.run_start(tool_input)
                 # Then
@@ -148,14 +165,21 @@ class ForegroundAgentsTest(unittest.TestCase):
         # When
         result = self.run_start(tool_input, "general-purpose")
         # Then
-        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["updatedInput"],
-                         {"prompt": "Use docs/x.md", "subagent_type": "writ:first-user",
-                          "run_in_background": False})
+        self.assertEqual(
+            json.loads(result.stdout)["hookSpecificOutput"]["updatedInput"],
+            {
+                "prompt": "Use docs/x.md",
+                "subagent_type": "writ:first-user",
+                "run_in_background": False,
+            },
+        )
 
     def test_other_agents_and_foreground_writ_agents_are_left_as_they_are(self):
         # Given
-        inputs = ({"prompt": "hi", "subagent_type": "general-purpose", "run_in_background": True},
-                  {"prompt": "hi", "subagent_type": "writ:generator", "run_in_background": False})
+        inputs = (
+            {"prompt": "hi", "subagent_type": "general-purpose", "run_in_background": True},
+            {"prompt": "hi", "subagent_type": "writ:generator", "run_in_background": False},
+        )
         for tool_input in inputs:
             with self.subTest(tool_input=tool_input):
                 # When
@@ -181,13 +205,21 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
 
     def run_without_python(self, stdin):
         env = {"PATH": self.bin, "CLAUDE_PLUGIN_ROOT": PLUGIN_ROOT}
-        return subprocess.run(["/bin/sh", "-c", self.command], check=False, input=stdin, env=env,
-                              capture_output=True, text=True)
+        return subprocess.run(
+            ["/bin/sh", "-c", self.command],
+            check=False,
+            input=stdin,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
 
     def test_without_python_first_user_is_blocked_and_told_to_install(self):
         # Given
-        stdins = (hook_input("Read", {"file_path": "/Users/someone/repo/README.md"}),
-                  hook_input("Bash", {"command": "ls"}).replace('": "', '":"'))
+        stdins = (
+            hook_input("Read", {"file_path": "/Users/someone/repo/README.md"}),
+            hook_input("Bash", {"command": "ls"}).replace('": "', '":"'),
+        )
         for stdin in stdins:
             with self.subTest(stdin=stdin[:40]):
                 # When
@@ -198,9 +230,12 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
 
     def test_without_python_writ_agents_are_blocked_and_told_to_install(self):
         # Given
-        stdins = (hook_input("Agent", {"prompt": "p", "subagent_type": "writ:generator"}, None),
-                  hook_input("Agent", {"prompt": "p", "subagent_type": "writ:first-user"},
-                             None).replace('": "', '":"'))
+        stdins = (
+            hook_input("Agent", {"prompt": "p", "subagent_type": "writ:generator"}, None),
+            hook_input("Agent", {"prompt": "p", "subagent_type": "writ:first-user"}, None).replace(
+                '": "', '":"'
+            ),
+        )
         for stdin in stdins:
             with self.subTest(stdin=stdin[-60:]):
                 # When
@@ -211,7 +246,9 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
 
     def test_without_python_other_agents_pass(self):
         # Given
-        stdin = hook_input("Bash", {"command": "echo agent_type writ:first-user"}, "general-purpose")
+        stdin = hook_input(
+            "Bash", {"command": "echo agent_type writ:first-user"}, "general-purpose"
+        )
         # When
         result = self.run_without_python(stdin)
         # Then
@@ -220,12 +257,19 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
 
     def test_with_python_the_entry_file_blocks_git_log(self):
         # Given
-        env = {"PATH": os.path.dirname(sys.executable) + os.pathsep + self.bin,
-               "CLAUDE_PLUGIN_ROOT": PLUGIN_ROOT}
+        env = {
+            "PATH": os.path.dirname(sys.executable) + os.pathsep + self.bin,
+            "CLAUDE_PLUGIN_ROOT": PLUGIN_ROOT,
+        }
         # When
-        result = subprocess.run(["/bin/sh", "-c", self.command], check=False,
-                                input=hook_input("Bash", {"command": "git log"}),
-                                env=env, capture_output=True, text=True)
+        result = subprocess.run(
+            ["/bin/sh", "-c", self.command],
+            check=False,
+            input=hook_input("Bash", {"command": "git log"}),
+            env=env,
+            capture_output=True,
+            text=True,
+        )
         # Then
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertIn("first user does not read how the work was made", result.stderr)

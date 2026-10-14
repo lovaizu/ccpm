@@ -1,6 +1,7 @@
 """Check 11: the first user does not read the session's commit messages or history, notes, or
 earlier reports. A question or proposal item it is given to take up is the work it uses, so it reads
 that."""
+
 import os
 import re
 
@@ -24,8 +25,9 @@ def reads_maker_account(path, sdir, own):
 
 
 def check_history(data, runs, top):
-    if data.get("agent_type") == FIRST_USER and \
-            on_repo(runs, ("log", "show", "blame", "reflog"), top):
+    if data.get("agent_type") == FIRST_USER and on_repo(
+        runs, ("log", "show", "blame", "reflog"), top
+    ):
         return ["the first user does not read commit messages or history"]
     return []
 
@@ -33,7 +35,11 @@ def check_history(data, runs, top):
 def check_files(data, sdir, store):
     inp = data.get("tool_input") or {}
     path = inp.get("file_path") or inp.get("path") or ""
-    if data.get("agent_type") == FIRST_USER and data.get("tool_name") in ("Read", "Grep", "Glob") \
-            and path and reads_maker_account(path, sdir, own_report(store, data)):
+    if (
+        data.get("agent_type") == FIRST_USER
+        and data.get("tool_name") in ("Read", "Grep", "Glob")
+        and path
+        and reads_maker_account(path, sdir, own_report(store, data))
+    ):
         return ["the first user does not read notes or earlier reports"]
     return []

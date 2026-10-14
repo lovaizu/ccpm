@@ -2,6 +2,7 @@
 """A3: the account session paused with its plan settled and its proposal not yet drafted, /rn:up to
 the Plan sign-off. Two stand-ins with the same part and the same instruction decide, one from the
 proposal alone and one from the pull request; both are recorded, neither is sent."""
+
 import os
 import re
 import subprocess
@@ -12,20 +13,26 @@ DECIDE = """Decide this sign-off as the user. Reply with /rn:ty if what you read
 your reason, what you know, and your decisions, and otherwise /rn:gm followed by what you saw. Then,
 after a line '---', list in a few lines what you based it on."""
 
-PROPOSAL_READER = """rn has put this proposal to you:
+PROPOSAL_READER = (
+    """rn has put this proposal to you:
 
 {said}
 
 You read only this proposal; do not look at the code, the pull request, or anything else.
 
-""" + DECIDE
+"""
+    + DECIDE
+)
 
-PR_READER = """Read the real thing, not rn's message: the pull request {url} (use gh pr view / gh pr diff,
+PR_READER = (
+    """Read the real thing, not rn's message: the pull request {url} (use gh pr view / gh pr diff,
 and read the files on its branch in this clone; run git fetch and git checkout of the branch first).
 Read the plan (.rn/*/steering.md) and anything else on the branch as far as you need to decide. Do not
 change, commit, or push anything.
 
-""" + DECIDE
+"""
+    + DECIDE
+)
 
 
 def with_answers(part, answers):
@@ -37,8 +44,13 @@ def with_answers(part, answers):
 
 def proposal_reader(said, answers):
     prompt = with_answers(ACCOUNT_PART, answers) + "\n\n" + PROPOSAL_READER.format(said=said)
-    r = subprocess.run(["claude", "-p", prompt,
-                        "--model", "opus", "--tools", ""], check=False, cwd=t.out, capture_output=True, text=True)
+    r = subprocess.run(
+        ["claude", "-p", prompt, "--model", "opus", "--tools", ""],
+        check=False,
+        cwd=t.out,
+        capture_output=True,
+        text=True,
+    )
     return r.stdout.strip()
 
 
@@ -48,11 +60,26 @@ def pr_reader(said, answers):
     m = re.search(r"https://github\.com/\S+/pull/\d+", said)
     url = m.group(0) if m else "(the open pull request of lovaizu/rn-try)"
     part = with_answers(ACCOUNT_PART, answers).replace(
-        "You never look at the code or the pull request yourself.", "")
-    r = subprocess.run(["claude", "-p", part + "\n\n" + PR_READER.format(url=url), "--model", "opus",
-                        "--allowedTools", ("Bash(gh:*) Bash(git fetch:*) Bash(git checkout:*) "
-                        "Bash(git log:*) Bash(git show:*) Bash(git diff:*) Read Grep Glob")], check=False,
-                       cwd=reader, capture_output=True, text=True)
+        "You never look at the code or the pull request yourself.", ""
+    )
+    r = subprocess.run(
+        [
+            "claude",
+            "-p",
+            part + "\n\n" + PR_READER.format(url=url),
+            "--model",
+            "opus",
+            "--allowedTools",
+            (
+                "Bash(gh:*) Bash(git fetch:*) Bash(git checkout:*) "
+                "Bash(git log:*) Bash(git show:*) Bash(git diff:*) Read Grep Glob"
+            ),
+        ],
+        check=False,
+        cwd=reader,
+        capture_output=True,
+        text=True,
+    )
     return r.stdout.strip()
 
 

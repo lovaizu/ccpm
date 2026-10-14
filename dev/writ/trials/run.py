@@ -7,6 +7,7 @@
 
 Everything lands in <workdir>/<scene>/. A run takes many minutes.
 """
+
 import json
 import random
 import shutil
@@ -26,7 +27,9 @@ ROLES = TRIALS / "roles"
 def claude(message, cwd, extra):
     cmd = ["claude", "-p", message, "--model", "opus", "--output-format", "json", *extra]
     t0 = time.time()
-    out = subprocess.run(cmd, check=False, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True)
+    out = subprocess.run(
+        cmd, check=False, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True
+    )
     minutes = (time.time() - t0) / 60
     try:
         data = json.loads(out.stdout)
@@ -44,7 +47,9 @@ def reader(message, cwd):
 
 
 def git(repo, *args):
-    return subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True).stdout
+    return subprocess.run(
+        ["git", *args], cwd=repo, check=True, capture_output=True, text=True
+    ).stdout
 
 
 def setup(name, scene_dir):
@@ -55,7 +60,9 @@ def setup(name, scene_dir):
         shutil.copytree(TRIALS / "fixture", repo)
     else:
         repo.mkdir(parents=True)
-        archive = subprocess.run(["git", "archive", "HEAD"], cwd=REPO, check=True, capture_output=True)
+        archive = subprocess.run(
+            ["git", "archive", "HEAD"], cwd=REPO, check=True, capture_output=True
+        )
         subprocess.run(["tar", "-x"], cwd=repo, input=archive.stdout, check=True)
     git(repo, "init", "-q")
     git(repo, "add", "-A")
@@ -71,15 +78,24 @@ def play(name, scene_dir):
     (scene_dir / "play.md").write_text(
         f"# {name}\n\nBenefits: {', '.join(scene['benefits'])}\nLook at: {scene['look']}\n\n"
         f"## Request\n\n{scene['opening']}\n\n## writ ({minutes:.1f} min)\n\n{reply}\n\n"
-        "## The scene at the end\n\n```\n" + git(repo, "status", "--short")
-        + git(repo, "log", "--oneline") + "```\n\n" + changed_only_target(name, repo))
+        "## The scene at the end\n\n```\n"
+        + git(repo, "status", "--short")
+        + git(repo, "log", "--oneline")
+        + "```\n\n"
+        + changed_only_target(name, repo)
+    )
     print(scene_dir / "play.md")
 
 
 def changed_only_target(name, repo):
     """Only the target work and the result files in open/ may differ from the scene as set up."""
     first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
-    changed = set((git(repo, "diff", "--name-only", first) + git(repo, "ls-files", "--others", "--exclude-standard")).split())
+    changed = set(
+        (
+            git(repo, "diff", "--name-only", first)
+            + git(repo, "ls-files", "--others", "--exclude-standard")
+        ).split()
+    )
     others = sorted(p for p in changed if not p.startswith(".writ/open/"))
     target = SCENES[name]["target"]
     passed = others == [target] or others == [] if target else len(others) <= 1
@@ -88,8 +104,15 @@ def changed_only_target(name, repo):
 
 def judge(name, scene_dir):
     repo = scene_dir / "repo"
-    prompt = (ROLES / "judge.md").read_text().format(
-        reader=SCENES[name]["reader"], doc=target(name, repo), report=(scene_dir / "report.md").read_text())
+    prompt = (
+        (ROLES / "judge.md")
+        .read_text()
+        .format(
+            reader=SCENES[name]["reader"],
+            doc=target(name, repo),
+            report=(scene_dir / "report.md").read_text(),
+        )
+    )
     answer, _ = reader(prompt, repo)
     (scene_dir / "judge.md").write_text(f"# {name}: judged from the report\n\n{answer}\n")
     print(scene_dir / "judge.md")
@@ -100,7 +123,9 @@ def target(name, repo):
     if path:
         return path
     first = git(repo, "rev-list", "--max-parents=0", "HEAD").strip()
-    added = git(repo, "diff", "--name-only", "--diff-filter=A", first) + git(repo, "ls-files", "--others", "--exclude-standard")
+    added = git(repo, "diff", "--name-only", "--diff-filter=A", first) + git(
+        repo, "ls-files", "--others", "--exclude-standard"
+    )
     docs = [p for p in set(added.split()) if p.endswith(".md") and not p.startswith(".writ/")]
     if len(docs) != 1:
         sys.exit(f"cannot tell the document writ wrote: {docs}")
@@ -112,7 +137,9 @@ def read(name, scene_dir):
     doc = target(name, repo)
     out.mkdir()
     shutil.copy(repo / doc, out / Path(doc).name)
-    prompt = (ROLES / "reader.md").read_text().format(reader=SCENES[name]["reader"], doc=Path(doc).name)
+    prompt = (
+        (ROLES / "reader.md").read_text().format(reader=SCENES[name]["reader"], doc=Path(doc).name)
+    )
     report, _ = reader(prompt, out)
     (scene_dir / "read.md").write_text(f"# {name}: {doc}, read once\n\n{report}\n")
     print(scene_dir / "read.md")
@@ -130,12 +157,19 @@ def compare(name, scene_dir):
     prompt = (ROLES / "compare.md").read_text().format(reader=SCENES[name]["reader"])
     report, _ = reader(prompt, out)
     (scene_dir / "compare.md").write_text(
-        f"# {name}: {doc}, before and after\n\nX is {order[0]}, Y is {order[1]}.\n\n{report}\n")
+        f"# {name}: {doc}, before and after\n\nX is {order[0]}, Y is {order[1]}.\n\n{report}\n"
+    )
     print(scene_dir / "compare.md")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4 or sys.argv[1] not in ("play", "judge", "read", "compare") or sys.argv[2] not in SCENES:
+    if (
+        len(sys.argv) != 4
+        or sys.argv[1] not in ("play", "judge", "read", "compare")
+        or sys.argv[2] not in SCENES
+    ):
         sys.exit(__doc__ + "\nScenes: " + ", ".join(SCENES))
     command, name, workdir = sys.argv[1:]
-    {"play": play, "judge": judge, "read": read, "compare": compare}[command](name, Path(workdir).resolve() / name)
+    {"play": play, "judge": judge, "read": read, "compare": compare}[command](
+        name, Path(workdir).resolve() / name
+    )

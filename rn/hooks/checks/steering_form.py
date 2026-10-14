@@ -1,12 +1,28 @@
 """Check 1: steering.md has its front matter and headings, and task and criterion IDs are unique."""
+
 import re
 
 from record import criteria, front_matter
 
-FRONT_KEYS = ("rn", "pr", "status", "artifact-language", "conversation-language", "readme", "design",
-              "verification")
-HEADINGS = ("# Goal", "# Acceptance criteria", "## Attractive quality", "## Must-be quality",
-            "# Assumptions", "# Rules", "# Tasks")
+FRONT_KEYS = (
+    "rn",
+    "pr",
+    "status",
+    "artifact-language",
+    "conversation-language",
+    "readme",
+    "design",
+    "verification",
+)
+HEADINGS = (
+    "# Goal",
+    "# Acceptance criteria",
+    "## Attractive quality",
+    "## Must-be quality",
+    "# Assumptions",
+    "# Rules",
+    "# Tasks",
+)
 TASK = re.compile(r"^### \[( |x)\] #(\d+): \S")
 
 

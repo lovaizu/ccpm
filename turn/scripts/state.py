@@ -29,7 +29,6 @@ def write_json(path, value):
         f.write("\n")
 
 
-
 def the_work(work, n, written=True):
     """The run's CCS as received, and the path of the work made in round n."""
     run = read_json(RUN, RUN)

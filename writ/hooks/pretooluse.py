@@ -18,9 +18,17 @@ def main():
         return 2
     updated = foreground_agents.update(data)
     if updated is not None:
-        print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse",
-                                                 "permissionDecision": "allow",
-                                                 "updatedInput": updated}}))
+        print(
+            json.dumps(
+                {
+                    "hookSpecificOutput": {
+                        "hookEventName": "PreToolUse",
+                        "permissionDecision": "allow",
+                        "updatedInput": updated,
+                    }
+                }
+            )
+        )
     return 0
 
 

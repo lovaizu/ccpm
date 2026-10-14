@@ -17,8 +17,13 @@ WORK = "# Note\n\nRun make.\n"
 def pre(repo, tool, given, session="s1"):
     """Runs the PreToolUse entry as Claude Code does before a tool call; returns its exit code and what
     it told Claude."""
-    data = {"cwd": repo.path, "session_id": session, "hook_event_name": "PreToolUse", "tool_name": tool,
-            "tool_input": given}
+    data = {
+        "cwd": repo.path,
+        "session_id": session,
+        "hook_event_name": "PreToolUse",
+        "tool_name": tool,
+        "tool_input": given,
+    }
     err = io.StringIO()
     with mock.patch("sys.stdin", io.StringIO(json.dumps(data))), contextlib.redirect_stderr(err):
         code = pretooluse.main()
@@ -26,7 +31,10 @@ def pre(repo, tool, given, session="s1"):
 
 
 def commit(repo, message="more"):
-    for args in (["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message]):
+    for args in (
+        ["add", "-A"],
+        ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message],
+    ):
         subprocess.run(["git", "-C", repo.path, *args], check=True)
 
 
@@ -119,9 +127,11 @@ class WritesKeptToTheRun(unittest.TestCase):
         return os.path.join(self.repo.path, rel)
 
     def test_a_write_where_the_work_goes_or_in_the_run_s_evidence_goes_on(self):
-        cases = [("the work in the run", "Write", {"file_path": self.at(".turn/out/1/note.md")}),
-                 ("a form", "Edit", {"file_path": self.at(form("first-user"))}),
-                 ("where the work goes", "Write", {"file_path": self.at("docs/note.md")})]
+        cases = [
+            ("the work in the run", "Write", {"file_path": self.at(".turn/out/1/note.md")}),
+            ("a form", "Edit", {"file_path": self.at(form("first-user"))}),
+            ("where the work goes", "Write", {"file_path": self.at("docs/note.md")}),
+        ]
         for name, tool, given in cases:
             with self.subTest(name):
                 # Given: an open run
@@ -131,11 +141,13 @@ class WritesKeptToTheRun(unittest.TestCase):
                 self.assertEqual((code, said), (0, ""))
 
     def test_a_write_anywhere_else_is_stopped_saying_where_a_run_writes(self):
-        cases = [("a source", "Edit", {"file_path": self.at("notes.md")}),
-                 ("the checklist", "Write", {"file_path": self.at("checklists/note.md")}),
-                 ("a notebook", "NotebookEdit", {"notebook_path": self.at("a.ipynb")}),
-                 ("outside the repository", "Write", {"file_path": "/tmp/x.md"}),
-                 ("beside the run's evidence", "Write", {"file_path": self.at(".turn/out-other/x")})]
+        cases = [
+            ("a source", "Edit", {"file_path": self.at("notes.md")}),
+            ("the checklist", "Write", {"file_path": self.at("checklists/note.md")}),
+            ("a notebook", "NotebookEdit", {"notebook_path": self.at("a.ipynb")}),
+            ("outside the repository", "Write", {"file_path": "/tmp/x.md"}),
+            ("beside the run's evidence", "Write", {"file_path": self.at(".turn/out-other/x")}),
+        ]
         for name, tool, given in cases:
             with self.subTest(name):
                 # Given: an open run
@@ -146,8 +158,12 @@ class WritesKeptToTheRun(unittest.TestCase):
                 self.assertIn("a run writes only docs/note.md and .turn/out/", said)
 
     def test_a_git_commit_or_push_in_a_run_is_stopped(self):
-        for command in ("git commit -am x", "git -C . push origin main", "jq . a.json && git commit -m x",
-                        "git -c user.name=t commit -m x"):
+        for command in (
+            "git commit -am x",
+            "git -C . push origin main",
+            "jq . a.json && git commit -m x",
+            "git -c user.name=t commit -m x",
+        ):
             with self.subTest(command):
                 # Given: an open run
                 # When: a shell command commits or pushes
@@ -157,7 +173,12 @@ class WritesKeptToTheRun(unittest.TestCase):
                 self.assertIn("a run never commits or pushes", said)
 
     def test_other_shell_commands_in_a_run_go_on(self):
-        for command in ("git status --short", "git clone -q . /tmp/x", "git commit-tree x", "jq . a.json"):
+        for command in (
+            "git status --short",
+            "git clone -q . /tmp/x",
+            "git commit-tree x",
+            "jq . a.json",
+        ):
             with self.subTest(command):
                 # Given: an open run
                 # When: a shell command that neither commits nor pushes is run
@@ -171,28 +192,46 @@ class WritesKeptToTheRun(unittest.TestCase):
             with self.subTest(name):
                 # Given: a write and a commit made outside the run
                 if session is None:
-                    fill(self.repo, form("orchestrator"), {
-                        "note B-1": {"met": True, "lines": "3", "note": "x"},
-                        "note F-1": {"met": True, "lines": "1", "note": "x"}})
+                    fill(
+                        self.repo,
+                        form("orchestrator"),
+                        {
+                            "note B-1": {"met": True, "lines": "3", "note": "x"},
+                            "note F-1": {"met": True, "lines": "1", "note": "x"},
+                        },
+                    )
                     self.repo.write(".turn/out/1/note.md", WORK)
                     self.assertEqual(run(self.repo, "end", ".turn/out", "1")[0], 0)
                 # When: they are made
-                done = [pre(self.repo, "Write", {"file_path": self.at("notes.md")}, session or "s1"),
-                        pre(self.repo, "Bash", {"command": "git commit -m x"}, session or "s1")]
+                done = [
+                    pre(self.repo, "Write", {"file_path": self.at("notes.md")}, session or "s1"),
+                    pre(self.repo, "Bash", {"command": "git commit -m x"}, session or "s1"),
+                ]
                 # Then: they go on
                 self.assertEqual(done, [(0, ""), (0, "")])
 
     def test_the_hooks_do_nothing_without_python3(self):
         # Given: each command Claude Code runs for turn's hooks, on a machine without python3
         with open(os.path.join(ROOT, "turn", "hooks", "hooks.json")) as f:
-            commands = [h["command"] for event in json.load(f)["hooks"].values() for m in event
-                        for h in m["hooks"]]
+            commands = [
+                h["command"]
+                for event in json.load(f)["hooks"].values()
+                for m in event
+                for h in m["hooks"]
+            ]
         empty = tempfile.TemporaryDirectory()
         for command in commands:
             with self.subTest(command):
                 # When: Claude Code runs it in a session with a run open
-                done = subprocess.run(["/bin/sh", "-c", command], check=False, input="{}", capture_output=True, text=True,
-                                      cwd=self.repo.path, env={"PATH": empty.name, "CLAUDE_PLUGIN_ROOT": ROOT})
+                done = subprocess.run(
+                    ["/bin/sh", "-c", command],
+                    check=False,
+                    input="{}",
+                    capture_output=True,
+                    text=True,
+                    cwd=self.repo.path,
+                    env={"PATH": empty.name, "CLAUDE_PLUGIN_ROOT": ROOT},
+                )
                 # Then: it lets the session go on, saying nothing
                 self.assertEqual((done.returncode, done.stdout, done.stderr), (0, "", ""))
         empty.cleanup()
@@ -200,10 +239,21 @@ class WritesKeptToTheRun(unittest.TestCase):
     def test_the_entry_run_as_claude_code_runs_it_stops_a_write_elsewhere(self):
         # Given: the hook's entry file, and an open run
         entry = os.path.join(ROOT, "turn", "hooks", "pretooluse.py")
-        data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "PreToolUse", "tool_name": "Write",
-                "tool_input": {"file_path": self.at("notes.md")}}
+        data = {
+            "cwd": self.repo.path,
+            "session_id": "s1",
+            "hook_event_name": "PreToolUse",
+            "tool_name": "Write",
+            "tool_input": {"file_path": self.at("notes.md")},
+        }
         # When: Claude Code runs it before the write
-        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True, text=True)
+        done = subprocess.run(
+            [sys.executable, entry],
+            check=False,
+            input=json.dumps(data),
+            capture_output=True,
+            text=True,
+        )
         # Then: it stops the write
         self.assertEqual(done.returncode, 2)
         self.assertIn("a run writes only", done.stderr)
@@ -219,8 +269,14 @@ class ChangesElsewhereNamed(unittest.TestCase):
         self.repo.write("log.txt", "before\n")
         started(self.repo)
         self.repo.write(".turn/out/1/note.md", WORK)
-        fill(self.repo, form("orchestrator"), {"note B-1": {"met": True, "lines": "3", "note": "x"},
-                                               "note F-1": {"met": True, "lines": "1", "note": "x"}})
+        fill(
+            self.repo,
+            form("orchestrator"),
+            {
+                "note B-1": {"met": True, "lines": "3", "note": "x"},
+                "note F-1": {"met": True, "lines": "1", "note": "x"},
+            },
+        )
 
     def tearDown(self):
         self.repo.close()
@@ -237,8 +293,10 @@ class ChangesElsewhereNamed(unittest.TestCase):
                 code, out = run(self.repo, *command)
                 # Then: the user is told of those three files, and of none turn wrote or that was left
                 self.assertEqual(code, 0, out)
-                self.assertEqual(out.splitlines()[-1],
-                                 "Also changed during the run, outside the work: build/out.txt, log.txt, notes.md")
+                self.assertEqual(
+                    out.splitlines()[-1],
+                    "Also changed during the run, outside the work: build/out.txt, log.txt, notes.md",
+                )
                 self.repo.close()
                 self.setUp()
 

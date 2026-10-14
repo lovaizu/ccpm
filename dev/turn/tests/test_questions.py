@@ -20,17 +20,37 @@ ANSWERED = {"question": LICENSE, "ask": True, "answer": "MIT"}
 
 def seen(repo, f1=None):
     """The orchestrator's form before the reading, with F-1 met, or waiting on question 1 when not."""
-    fill(repo, form("hand-on"), {
-        "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-        "note F-1": {"met": True, "lines": "1-3", "note": "three lines"} if f1 is None else
-        {"met": False, "aim": "the teammate knows the terms", "way": "name the license", "reach": "1",
-         "question": f1}})
+    fill(
+        repo,
+        form("hand-on"),
+        {
+            "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+            "note F-1": {"met": True, "lines": "1-3", "note": "three lines"}
+            if f1 is None
+            else {
+                "met": False,
+                "aim": "the teammate knows the terms",
+                "way": "name the license",
+                "reach": "1",
+                "question": f1,
+            },
+        },
+    )
 
 
 def decided(repo, f1=True):
-    fill(repo, form("orchestrator"), {
-        "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-        "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else ""}})
+    fill(
+        repo,
+        form("orchestrator"),
+        {
+            "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+            "note F-1": {
+                "met": f1,
+                "lines": "1-3" if f1 else "",
+                "note": "three lines" if f1 else "",
+            },
+        },
+    )
 
 
 class Questions(unittest.TestCase):
@@ -41,7 +61,9 @@ class Questions(unittest.TestCase):
         self.got = started(self.repo, ccs(constraints=[{"language": "English"}]))
         run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
         self.repo.write(self.got["work"], WORK)
-        fill(self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}})
+        fill(
+            self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}}
+        )
 
     def tearDown(self):
         self.repo.close()
@@ -57,14 +79,21 @@ class Questions(unittest.TestCase):
         # given the sources and constraints to see what they leave open
         self.assertEqual(self.repo.json(QUESTIONS), [])
         self.assertEqual(self.got["questions"], QUESTIONS)
-        self.assertEqual((self.got["sources"], self.got["constraints"]), (["notes.md"], ["language: English"]))
+        self.assertEqual(
+            (self.got["sources"], self.got["constraints"]), (["notes.md"], ["language: English"])
+        )
         self.assertEqual(self.repo.json(out.strip())["questions"], QUESTIONS)
 
     def test_a_question_without_its_words_or_naming_an_item_is_stopped(self):
-        cases = [("no question", [{"question": ""}], "question 1: the question is not given"),
-                 ("not a list", {"question": LICENSE}, "the questions are not a list"),
-                 ("an item named", [{"question": f"{LICENSE} (note F-1)"}],
-                  "question 1: names note F-1; say in plain words what the work leaves out")]
+        cases = [
+            ("no question", [{"question": ""}], "question 1: the question is not given"),
+            ("not a list", {"question": LICENSE}, "the questions are not a list"),
+            (
+                "an item named",
+                [{"question": f"{LICENSE} (note F-1)"}],
+                "question 1: names note F-1; say in plain words what the work leaves out",
+            ),
+        ]
         for name, questions, said in cases:
             with self.subTest(name):
                 # Given: the questions with one left without its words, naming an item, or not a list
@@ -78,13 +107,26 @@ class Questions(unittest.TestCase):
     def test_each_question_and_each_item_waiting_on_one_must_be_decided_before_the_reading(self):
         cases = [
             ("asked", [OPEN], None, None),
-            ("dropped with where it is answered", [{"question": NAME, "ask": False, "answered": "notes.md 1"}],
-             None, None),
+            (
+                "dropped with where it is answered",
+                [{"question": NAME, "ask": False, "answered": "notes.md 1"}],
+                None,
+                None,
+            ),
             ("an item waiting on a question asked", [OPEN], 1, None),
             ("undecided", [{"question": LICENSE}], None, "question 1: not decided"),
-            ("dropped without where it is answered", [{"question": NAME, "ask": False}], None,
-             "question 1: where it is answered is not given"),
-            ("an item waiting on no question asked", [OPEN], 2, "note F-1: question 2 is not asked"),
+            (
+                "dropped without where it is answered",
+                [{"question": NAME, "ask": False}],
+                None,
+                "question 1: where it is answered is not given",
+            ),
+            (
+                "an item waiting on no question asked",
+                [OPEN],
+                2,
+                "note F-1: question 2 is not asked",
+            ),
         ]
         for name, questions, waits, said in cases:
             with self.subTest(name):
@@ -103,17 +145,25 @@ class Questions(unittest.TestCase):
 
     def test_the_users_answers_reach_the_generator(self):
         # Given: the user has answered a question
-        fill(self.repo, QUESTIONS, [ANSWERED, {"question": NAME, "ask": False, "answered": "notes.md 1"}])
+        fill(
+            self.repo,
+            QUESTIONS,
+            [ANSWERED, {"question": NAME, "ask": False, "answered": "notes.md 1"}],
+        )
         # When: the generator's brief is made
         _code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
         # Then: the answer is among what the work should be
-        self.assertEqual(self.repo.json(out.strip())["constraints"],
-                         ["language: English", f"answer: {LICENSE} MIT"])
+        self.assertEqual(
+            self.repo.json(out.strip())["constraints"],
+            ["language: English", f"answer: {LICENSE} MIT"],
+        )
 
     def test_the_work_is_not_read_while_a_question_waits_for_the_user(self):
-        cases = [("open", [OPEN], None, "question 1 is not answered"),
-                 ("answered", [ANSWERED], None, None),
-                 ("answered, with an item still waiting on it", [ANSWERED], 1, "not yet: note F-1")]
+        cases = [
+            ("open", [OPEN], None, "question 1 is not answered"),
+            ("answered", [ANSWERED], None, None),
+            ("answered, with an item still waiting on it", [ANSWERED], 1, "not yet: note F-1"),
+        ]
         for name, questions, waits, said in cases:
             with self.subTest(name):
                 # Given: a question so, and F-1 met or waiting on it
@@ -132,7 +182,11 @@ class Questions(unittest.TestCase):
 
     def test_answers_return_in_the_ccs_after_the_callers_constraints(self):
         # Given: one question answered, one answered by the notes, and every item met
-        fill(self.repo, QUESTIONS, [ANSWERED, {"question": NAME, "ask": False, "answered": "notes.md 1"}])
+        fill(
+            self.repo,
+            QUESTIONS,
+            [ANSWERED, {"question": NAME, "ask": False, "answered": "notes.md 1"}],
+        )
         seen(self.repo)
         decided(self.repo)
         # When: the run ends
@@ -141,13 +195,17 @@ class Questions(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertEqual(out.splitlines()[0], "done")
         back = self.repo.json("out.json")
-        self.assertEqual(back["constraints"], [{"language": "English"}, {"answer": f"{LICENSE} MIT"}])
+        self.assertEqual(
+            back["constraints"], [{"language": "English"}, {"answer": f"{LICENSE} MIT"}]
+        )
         self.assertEqual(back["uncertainty_signal"], [])
 
     def test_a_run_does_not_return_with_a_question_open(self):
-        for name, questions, said in [("undecided", [{"question": LICENSE}], "question 1: not decided"),
-                                      ("not answered", [OPEN], "question 1 is not answered"),
-                                      ("marked as left", [dict(OPEN, left=True)], "question 1 is not answered")]:
+        for name, questions, said in [
+            ("undecided", [{"question": LICENSE}], "question 1: not decided"),
+            ("not answered", [OPEN], "question 1 is not answered"),
+            ("marked as left", [dict(OPEN, left=True)], "question 1 is not answered"),
+        ]:
             with self.subTest(name):
                 # Given: every item met, and a question not decided or not answered
                 seen(self.repo)
@@ -161,9 +219,11 @@ class Questions(unittest.TestCase):
                 self.assertFalse(self.repo.exists("out.json"))
 
     def test_the_orchestrator_may_stop_while_it_waits_for_the_user_or_an_agent_of_the_run(self):
-        cases = [("a question open", [OPEN], None, 0)] + \
-                [(f"the {role} at work", [ANSWERED], role, 0) for role in AGENTS] + \
-                [("nothing to wait for", [ANSWERED], None, 2)]
+        cases = (
+            [("a question open", [OPEN], None, 0)]
+            + [(f"the {role} at work", [ANSWERED], role, 0) for role in AGENTS]
+            + [("nothing to wait for", [ANSWERED], None, 2)]
+        )
         for name, questions, at_work, kept in cases:
             with self.subTest(name):
                 # Given: the questions so, and each agent handed its brief after its form, or before
@@ -172,8 +232,9 @@ class Questions(unittest.TestCase):
                 for role in AGENTS:
                     self.repo.write(f".turn/out/1/{role}-brief.json", "{}")
                     brief = os.path.join(self.repo.path, f".turn/out/1/{role}-brief.json")
-                    later = os.path.getmtime(os.path.join(self.repo.path, form(role))) + \
-                        (1 if role == at_work else -1)
+                    later = os.path.getmtime(os.path.join(self.repo.path, form(role))) + (
+                        1 if role == at_work else -1
+                    )
                     os.utime(brief, (later, later))
                 # When: the orchestrator stops
                 code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False)
@@ -196,9 +257,19 @@ class LearnersQuestions(unittest.TestCase):
         self.repo.write(".turn/out/1/note.md", WORK)
         seen(self.repo)
         decided(self.repo, f1=False)
-        fill(self.repo, form("learner"), {"note F-1": {
-            "aim": "the teammate knows the terms", "way": "say the terms, from the answer to question 1",
-            "reach": "1", "in": "the work", "making": ""}})
+        fill(
+            self.repo,
+            form("learner"),
+            {
+                "note F-1": {
+                    "aim": "the teammate knows the terms",
+                    "way": "say the terms, from the answer to question 1",
+                    "reach": "1",
+                    "in": "the work",
+                    "making": "",
+                }
+            },
+        )
 
     def test_the_learner_is_told_where_the_questions_are(self):
         # Given: the records of the run's agents
@@ -224,8 +295,10 @@ class LearnersQuestions(unittest.TestCase):
         self.assertIn("question 1: the question is not given", out)
 
     def test_the_second_round_starts_only_once_each_question_is_decided(self):
-        for name, questions, said in [("undecided", [{"question": LICENSE}], "question 1: not decided"),
-                                      ("asked", [OPEN], None)]:
+        for name, questions, said in [
+            ("undecided", [{"question": LICENSE}], "question 1: not decided"),
+            ("asked", [OPEN], None),
+        ]:
             with self.subTest(name):
                 # Given: the learner's question, decided by the orchestrator or not
                 fill(self.repo, QUESTIONS, questions)

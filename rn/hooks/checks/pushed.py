@@ -1,4 +1,5 @@
 """Check 8: every commit is pushed."""
+
 from record import git
 
 

@@ -32,8 +32,10 @@ def lay(work, n, laid):
 def bad_lines(given, count):
     if not LINES.match(given):
         return True
-    return any(not 1 <= int(a) <= int(b or a) <= count
-               for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", given))
+    return any(
+        not 1 <= int(a) <= int(b or a) <= count
+        for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", given)
+    )
 
 
 def check(work, n, role):
@@ -44,9 +46,17 @@ def check(work, n, role):
     ids = [i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]
     form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
-    grounds = read_json(os.path.join(work, str(n), "evaluator.json"), "the form") if role == "orchestrator" else {}
+    grounds = (
+        read_json(os.path.join(work, str(n), "evaluator.json"), "the form")
+        if role == "orchestrator"
+        else {}
+    )
     if role == "learner":
-        return found + learner_faults(form, without_good(work, n), count) + question_faults(work, decided=False)
+        return (
+            found
+            + learner_faults(form, without_good(work, n), count)
+            + question_faults(work, decided=False)
+        )
     if role in ("generator", "hand-on"):
         found += question_faults(work, decided=role == "hand-on")
     for i in ids if role not in ("first-user", "evaluator") else [i for i in ids if i in form]:
@@ -55,7 +65,9 @@ def check(work, n, role):
             found.append(f"{i}: not filled")
             continue
         lines = place.get("lines", "")
-        needed = role in ("generator", "first-user", "evaluator") or (role in DECIDING and place.get("met"))
+        needed = role in ("generator", "first-user", "evaluator") or (
+            role in DECIDING and place.get("met")
+        )
         if role == "first-user" and not place.get("took"):
             found.append(f"{i}: what was taken is not given")
         if role == "evaluator" and not place.get("grounds"):
@@ -65,22 +77,31 @@ def check(work, n, role):
         if role in DECIDING and place.get("met") and not place.get("note"):
             found.append(f"{i}: the note is not given")
         elif place.get("met") and place.get("note") == grounds.get(i, {}).get("grounds"):
-            found.append(f"{i}: the note is the evaluator's grounds; read the work for the item, and say "
-                         "what the receiver gets from the lines")
+            found.append(
+                f"{i}: the note is the evaluator's grounds; read the work for the item, and say "
+                "what the receiver gets from the lines"
+            )
         if role == "hand-on" and place.get("met") is False:
             found += aim_faults(i, place, count)
         if needed and not lines:
             found.append(f"{i}: lines are not given")
         elif lines and bad_lines(lines, count):
             found.append(f"{i}: lines {lines} are not in the work")
-        if role == "hand-on" and "question" in place and place["question"] not in asked_numbers(work):
+        if (
+            role == "hand-on"
+            and "question" in place
+            and place["question"] not in asked_numbers(work)
+        ):
             found.append(f"{i}: question {place['question']} is not asked")
     return found
 
 
 def without_good(work, n):
-    return [i for i, p in read_json(os.path.join(work, str(n), "orchestrator.json"), "the form").items()
-            if p.get("met") is not True]
+    return [
+        i
+        for i, p in read_json(os.path.join(work, str(n), "orchestrator.json"), "the form").items()
+        if p.get("met") is not True
+    ]
 
 
 def aim_faults(i, place, count):
@@ -111,7 +132,7 @@ def learner_faults(form, left, count):
         if place.get("in") not in PLACES:
             found.append(f"{i}: in must be one of: {', '.join(PLACES)}")
         if not isinstance(place.get("making"), str):
-            found.append(f"{i}: making is not given; write \"\" where nothing is learned of making")
+            found.append(f'{i}: making is not given; write "" where nothing is learned of making')
     return found
 
 
@@ -127,7 +148,9 @@ def learned(work, n):
         p["item"] = i
         if p["making"] and p["making"] not in rules:
             rules.append(p["making"])
-    return [dict(serves(places, w), **{"in": where}) for (w, where), places in grouped.items()], rules
+    return [
+        dict(serves(places, w), **{"in": where}) for (w, where), places in grouped.items()
+    ], rules
 
 
 def serves(places, way):

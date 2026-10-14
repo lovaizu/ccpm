@@ -32,7 +32,9 @@ def question_faults(work, decided):
             continue
         named = [i for i in ids if re.search(rf"\b{i.split()[-1]}\b", q["question"])]
         if named:
-            found.append(f"question {k}: names {named[0]}; say in plain words what the work leaves out")
+            found.append(
+                f"question {k}: names {named[0]}; say in plain words what the work leaves out"
+            )
         elif decided and not isinstance(q.get("ask"), bool):
             found.append(f"question {k}: not decided")
         elif decided and not q["ask"] and not q.get("answered"):

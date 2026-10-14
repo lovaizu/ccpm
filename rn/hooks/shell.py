@@ -1,6 +1,7 @@
 """Which git commands a shell command runs, and where. Only git run as a command counts, and only on
 the session's repository: a first user runs the work in a clone of its own, and text such as
 `grep 'git push'` runs no git."""
+
 import os
 import re
 import shlex

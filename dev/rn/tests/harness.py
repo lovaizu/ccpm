@@ -1,5 +1,6 @@
 """A repository with an rn session in it, and a way to run rn's hooks on it with the JSON Claude
 Code sends, through their entry files."""
+
 import json
 import os
 import subprocess
@@ -101,8 +102,15 @@ class Repo:
         data.setdefault("cwd", self.dir)
         data.setdefault("session_id", "s1")
         env = dict(os.environ, CLAUDE_PLUGIN_DATA=self.data)
-        r = subprocess.run(["python3", os.path.join(HOOKS, entry + ".py")], check=False, input=json.dumps(data),
-                           cwd=self.dir, capture_output=True, text=True, env=env)
+        r = subprocess.run(
+            ["python3", os.path.join(HOOKS, entry + ".py")],
+            check=False,
+            input=json.dumps(data),
+            cwd=self.dir,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
         return r.returncode, r.stdout + r.stderr
 
     def after_commit(self):
@@ -110,23 +118,34 @@ class Repo:
 
 
 PROPOSE = "rn: propose\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off"
-FEEDBACK = ("rn: feedback\n\n● #1 Plan sign-off ── feedback in 01-feedback-plan.md → working out "
-            "the plan again")
+FEEDBACK = (
+    "rn: feedback\n\n● #1 Plan sign-off ── feedback in 01-feedback-plan.md → working out "
+    "the plan again"
+)
 PAUSE = "rn: pause\n\n● #3 cart ── half → paused at #3 cart"
 REPORT = "# Report\n\nDoing as written, the build failed at cart.ts:3.\n"
-PROPOSAL = ("rn: propose\n\n### What you get\n- Good A1: the build stops each bug, at a.ts:3\n"
-            "- More: the key is unchecked, at b.ts:9\n\n"
-            "● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off")
-FINISHED = STEERING.replace("status: running", "status: finished") \
-    .replace("### [ ] #1:", "### [x] #1:").replace("### [ ] #2:", "### [x] #2:")
-QUOTING = STEERING.replace("### [ ] #2: Design sign-off",
-                           "### [x] #2: Design sign-off\n### [ ] #3: Apply the discount before "
-                           "the coupon\n\nServes: A1, M1")
-PAUSED_MAP = ("── typescript: A wrong type fails the build. ──\n"
-              "✅ #1 Plan sign-off / #2 Design sign-off\n"
-              "👉 #3 Apply the discount before the coupon ── ここで一時停止\n\n"
-              "● #3 Apply the discount before the coupon ── half → paused at #3 Apply the discount "
-              "before the coupon\n\n次: /clear してから /rn:up")
+PROPOSAL = (
+    "rn: propose\n\n### What you get\n- Good A1: the build stops each bug, at a.ts:3\n"
+    "- More: the key is unchecked, at b.ts:9\n\n"
+    "● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off"
+)
+FINISHED = (
+    STEERING.replace("status: running", "status: finished")
+    .replace("### [ ] #1:", "### [x] #1:")
+    .replace("### [ ] #2:", "### [x] #2:")
+)
+QUOTING = STEERING.replace(
+    "### [ ] #2: Design sign-off",
+    "### [x] #2: Design sign-off\n### [ ] #3: Apply the discount before "
+    "the coupon\n\nServes: A1, M1",
+)
+PAUSED_MAP = (
+    "── typescript: A wrong type fails the build. ──\n"
+    "✅ #1 Plan sign-off / #2 Design sign-off\n"
+    "👉 #3 Apply the discount before the coupon ── ここで一時停止\n\n"
+    "● #3 Apply the discount before the coupon ── half → paused at #3 Apply the discount "
+    "before the coupon\n\n次: /clear してから /rn:up"
+)
 
 
 class Session(unittest.TestCase):
@@ -137,15 +156,20 @@ class Session(unittest.TestCase):
         self.r.tmp.cleanup()
 
     def post_write(self, rel):
-        return self.r.hook("posttooluse", tool_name="Write",
-                           tool_input={"file_path": os.path.join(self.r.dir, rel)})
+        return self.r.hook(
+            "posttooluse",
+            tool_name="Write",
+            tool_input={"file_path": os.path.join(self.r.dir, rel)},
+        )
 
     def settle_report_whole(self):
         self.r.write(f"{SDIR}/open/01-report-task-3.md", REPORT)
         self.r.commit("rn: report\n\n● #3 cart ── report in → settle")
         os.remove(os.path.join(self.r.dir, SDIR, "open/01-report-task-3.md"))
-        self.r.commit("rn: settle\n\n01-report-task-3.md:\n    # Report\n\n    Doing as written, the "
-                      "build failed at cart.ts:3.\n\n● #3 cart ── purpose fulfilled → #4")
+        self.r.commit(
+            "rn: settle\n\n01-report-task-3.md:\n    # Report\n\n    Doing as written, the "
+            "build failed at cart.ts:3.\n\n● #3 cart ── purpose fulfilled → #4"
+        )
 
     def move_main_ahead(self):
         sh(self.r.dir, "git", "switch", "-q", "main")
@@ -159,19 +183,34 @@ class Session(unittest.TestCase):
         self.r.write("a.txt", "a\n")
         self.r.commit(PAUSE)
         self.r.after_commit()
-        sh(self.r.dir, "git", "commit", "-q", "--amend", "-m",
-           "rn: pause at #3\n\n● #3 cart ── half → paused at #3 cart")
+        sh(
+            self.r.dir,
+            "git",
+            "commit",
+            "-q",
+            "--amend",
+            "-m",
+            "rn: pause at #3\n\n● #3 cart ── half → paused at #3 cart",
+        )
 
     def commit_quoting_record_and_push(self):
         self.r.write(f"{SDIR}/steering.md", QUOTING)
-        self.r.commit("rn: pause\n\n● #3 Apply the discount before the coupon ── half → paused at #3 "
-                      "Apply the discount before the coupon")
+        self.r.commit(
+            "rn: pause\n\n● #3 Apply the discount before the coupon ── half → paused at #3 "
+            "Apply the discount before the coupon"
+        )
         sh(self.r.dir, "git", "push", "-q")
 
     def first_user_write(self, path):
-        return self.r.hook("pretooluse", agent_type="rn:first-user", agent_id="f1", tool_name="Write",
-                           tool_input={"file_path": path})
+        return self.r.hook(
+            "pretooluse",
+            agent_type="rn:first-user",
+            agent_id="f1",
+            tool_name="Write",
+            tool_input={"file_path": path},
+        )
 
     def first_user_pre(self, tool, inp):
-        return self.r.hook("pretooluse", agent_type="rn:first-user", agent_id="f2", tool_name=tool,
-                           tool_input=inp)
+        return self.r.hook(
+            "pretooluse", agent_type="rn:first-user", agent_id="f2", tool_name=tool, tool_input=inp
+        )

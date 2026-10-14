@@ -1,4 +1,5 @@
 """rn's agents are defined so the first user and the generator keep to their roles."""
+
 import os
 import unittest
 

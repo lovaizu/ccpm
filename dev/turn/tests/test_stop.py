@@ -11,8 +11,14 @@ WANTED = {"answer": "Write it for the operators, not for new teammates."}
 
 
 def met(repo, role, n=1):
-    fill(repo, form(role, n), {"note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-                               "note F-1": {"met": True, "lines": "1-3", "note": "three lines"}})
+    fill(
+        repo,
+        form(role, n),
+        {
+            "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+            "note F-1": {"met": True, "lines": "1-3", "note": "three lines"},
+        },
+    )
 
 
 class Stop(unittest.TestCase):
@@ -23,7 +29,11 @@ class Stop(unittest.TestCase):
         self.repo = Repo()
         self.task = ccs(constraints=[{"language": "English"}])
         started(self.repo, self.task)
-        fill(self.repo, ".turn/out/questions.json", [{"question": "Which license?", "ask": True, "answer": "MIT"}])
+        fill(
+            self.repo,
+            ".turn/out/questions.json",
+            [{"question": "Which license?", "ask": True, "answer": "MIT"}],
+        )
         run(self.repo, "aim", ".turn/out", "1", AIM)
 
     def tearDown(self):
@@ -51,9 +61,16 @@ class Stop(unittest.TestCase):
         self.assertEqual(said, "stopped: round 1, write — CCS: out.json")
         self.assertEqual(back["predictive_cue"], [{"next": "stopped: round 1, write"}])
         self.assertEqual(back["episodic_trace"], [])
-        self.assertEqual(back["constraints"], [{"language": "English"}, {"answer": "Which license? MIT"}])
-        self.assertEqual({k: back[k] for k in ("focal_entities", "goal_orientation", "retrieved_artifacts")},
-                         {k: self.task[k] for k in ("focal_entities", "goal_orientation", "retrieved_artifacts")})
+        self.assertEqual(
+            back["constraints"], [{"language": "English"}, {"answer": "Which license? MIT"}]
+        )
+        self.assertEqual(
+            {k: back[k] for k in ("focal_entities", "goal_orientation", "retrieved_artifacts")},
+            {
+                k: self.task[k]
+                for k in ("focal_entities", "goal_orientation", "retrieved_artifacts")
+            },
+        )
         self.assertFalse(self.repo.exists(".turn/run.json"))
         self.assertFalse(self.repo.exists("docs/note.md"))
 
@@ -83,7 +100,9 @@ class Stop(unittest.TestCase):
         self.to_reading()
         met(self.repo, "orchestrator")
         fill(self.repo, form("learner"), {})
-        self.repo.write(".turn/run.json", json.dumps(dict(self.repo.json(".turn/run.json"), round=2)))
+        self.repo.write(
+            ".turn/run.json", json.dumps(dict(self.repo.json(".turn/run.json"), round=2))
+        )
         # When: the user stops the run
         _said, back = self.stop()
         # Then: the CCS points to the work last read
@@ -119,11 +138,16 @@ class Stop(unittest.TestCase):
         code, out = run(self.repo, "stop", ".turn/out-2")
         # Then: it points to the work it started from
         self.assertEqual(code, 0, out)
-        self.assertEqual(self.repo.json("out-2.json")["episodic_trace"], [{"work": ".turn/out/1/note.md"}])
+        self.assertEqual(
+            self.repo.json("out-2.json")["episodic_trace"], [{"work": ".turn/out/1/note.md"}]
+        )
 
     def test_a_ccs_pointing_to_work_that_is_not_there_is_not_run(self):
         # Given: a stopped CCS whose work is gone
-        self.repo.write("again.json", json.dumps(dict(self.task, episodic_trace=[{"work": ".turn/gone/1/note.md"}])))
+        self.repo.write(
+            "again.json",
+            json.dumps(dict(self.task, episodic_trace=[{"work": ".turn/gone/1/note.md"}])),
+        )
         # When: turn is called with it
         code, out = run(self.repo, "start", "again.json", "out-2.json", "s1")
         # Then: it ends before any work, saying why

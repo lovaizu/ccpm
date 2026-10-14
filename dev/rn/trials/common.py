@@ -3,6 +3,7 @@
 A trial runs rn as its user would, through `claude -p`, and writes the conversation to
 `<out>/transcript.md` for the first user to read with the clone it ran in.
 """
+
 import argparse
 import json
 import os
@@ -13,7 +14,9 @@ import subprocess
 import sys
 import time
 
-RN = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn"))
+RN = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn")
+)
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 REPO = "lovaizu/rn-try"
 MAX_TURNS = 60
@@ -76,17 +79,34 @@ class Trial:
             f.write(f"\n## {who} ({time.strftime('%H:%M:%S')})\n\n{text}\n")
 
     def git(self, *args):
-        return subprocess.run(["git", *args], check=False, cwd=self.work, capture_output=True, text=True).stdout
+        return subprocess.run(
+            ["git", *args], check=False, cwd=self.work, capture_output=True, text=True
+        ).stdout
 
     def turn(self, prompt, sid=None, stop_when=None):
         """One turn of rn; `stop_when`, checked every 15 seconds, interrupts it as a user would."""
-        cmd = ["claude", "-p", prompt, "--output-format", "json", "--model", "opus", *self.dirs,
-               "--dangerously-skip-permissions"]
+        cmd = [
+            "claude",
+            "-p",
+            prompt,
+            "--output-format",
+            "json",
+            "--model",
+            "opus",
+            *self.dirs,
+            "--dangerously-skip-permissions",
+        ]
         if sid:
             cmd += ["--resume", sid]
         self.log("stand-in → rn", prompt)
-        p = subprocess.Popen(cmd, cwd=self.work, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             text=True, start_new_session=True)
+        p = subprocess.Popen(
+            cmd,
+            cwd=self.work,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+        )
         stopped = False
         while p.poll() is None:
             time.sleep(15)
@@ -111,11 +131,20 @@ class Trial:
         return said, sid, stopped
 
     def stand_in(self, part, said):
-        prompt = (part + "\n\nrn just said:\n\n" + said +
-                  "\n\nReply as the user would, in Japanese, or with the command you would type. "
-                  "Output only your reply.")
-        r = subprocess.run(["claude", "-p", prompt, "--model", "opus"], check=False, cwd=self.out,
-                           capture_output=True, text=True)
+        prompt = (
+            part
+            + "\n\nrn just said:\n\n"
+            + said
+            + "\n\nReply as the user would, in Japanese, or with the command you would type. "
+            "Output only your reply."
+        )
+        r = subprocess.run(
+            ["claude", "-p", prompt, "--model", "opus"],
+            check=False,
+            cwd=self.out,
+            capture_output=True,
+            text=True,
+        )
         return r.stdout.strip()
 
     def waiting_for(self):
@@ -134,10 +163,28 @@ class Trial:
         self.git("add", "-A")
         self.commit(message)
         self.git("push", "-q", "-u", "origin", branch)
-        url = subprocess.run(["gh", "pr", "create", "-R", REPO, "--draft", "--base", "main",
-                              "--head", branch, "--title", f"Fixture {fixture}", "--body",
-                              f"Fixture {fixture}"], check=False,
-                             cwd=self.work, capture_output=True, text=True).stdout.strip()
+        url = subprocess.run(
+            [
+                "gh",
+                "pr",
+                "create",
+                "-R",
+                REPO,
+                "--draft",
+                "--base",
+                "main",
+                "--head",
+                branch,
+                "--title",
+                f"Fixture {fixture}",
+                "--body",
+                f"Fixture {fixture}",
+            ],
+            check=False,
+            cwd=self.work,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
         for root, _, files in os.walk(os.path.join(self.work, ".rn")):
             for name in files:
                 path = os.path.join(root, name)
@@ -151,8 +198,13 @@ class Trial:
         self.log("trial", f"Started from fixture `{fixture}` on {branch}: {url}")
 
     def commit(self, message, *args):
-        subprocess.run(["git", "commit", "-q", *args, "-F", "-"], cwd=self.work, input=message,
-                       text=True, check=True)
+        subprocess.run(
+            ["git", "commit", "-q", *args, "-F", "-"],
+            cwd=self.work,
+            input=message,
+            text=True,
+            check=True,
+        )
 
     def head(self):
         return self.git("rev-parse", "HEAD").strip()
@@ -172,8 +224,13 @@ class Trial:
         main and the next run starts where the verification document says; the clone keeps all."""
         branch = self.git("branch", "--show-current").strip()
         if branch and branch != "main":
-            subprocess.run(["gh", "pr", "close", branch, "-R", REPO, "--delete-branch"], check=False,
-                           cwd=self.work, capture_output=True, text=True)
+            subprocess.run(
+                ["gh", "pr", "close", branch, "-R", REPO, "--delete-branch"],
+                check=False,
+                cwd=self.work,
+                capture_output=True,
+                text=True,
+            )
 
 
 def read(path):

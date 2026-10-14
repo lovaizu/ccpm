@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """A4: /rn:up on the coupon session paused in its first build task, to the first edit of the code or
 the first call to the stand-in."""
+
 from common import Trial
 
 

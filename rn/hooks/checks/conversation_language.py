@@ -1,5 +1,6 @@
 """Check 14: the conductor's last message in a turn is in the conversation-language, judged by its
 script. What it quotes from the record, in the artifact language, does not count."""
+
 import re
 
 from record import front_matter, section, steering
@@ -26,9 +27,25 @@ LANGUAGES = {  # language name, lower-cased, to the scripts its text is written 
     ("hebrew",): ("hebrew",),
     ("hindi",): ("devanagari",),
     ("thai",): ("thai",),
-    ("english", "french", "german", "spanish", "portuguese", "italian", "dutch", "swedish",
-     "norwegian", "danish", "finnish", "polish", "czech", "turkish", "vietnamese", "indonesian",
-     "英語"): ("latin",),
+    (
+        "english",
+        "french",
+        "german",
+        "spanish",
+        "portuguese",
+        "italian",
+        "dutch",
+        "swedish",
+        "norwegian",
+        "danish",
+        "finnish",
+        "polish",
+        "czech",
+        "turkish",
+        "vietnamese",
+        "indonesian",
+        "英語",
+    ): ("latin",),
 }
 
 
@@ -44,7 +61,9 @@ def script_share(text, scripts):
     """How much of the text's prose is in the given scripts: a word of a script that spaces its
     words counts one, a character of one that does not counts a half. None when too short to say."""
     text = re.sub(r"```.*?```", " ", text, flags=re.DOTALL)
-    text = re.sub(r"^\s*(?:[-*]\s+)?● .*$", " ", text, flags=re.MULTILINE)  # a decision line quoted from the record
+    text = re.sub(
+        r"^\s*(?:[-*]\s+)?● .*$", " ", text, flags=re.MULTILINE
+    )  # a decision line quoted from the record
     text = re.sub(r"`[^`]*`", " ", text)
     text = re.sub(r"\S*[/\\]\S*", " ", text)
     units, prev = {}, None
@@ -82,6 +101,10 @@ def check(sdir, message):
         return []
     share = script_share(unquoted(text, message), scripts)
     if share is not None and share < 0.5:
-        return [(f"your message to the user is not in {front['conversation-language']}, the "
-                "conversation language steering.md records: say it again in that language")]
+        return [
+            (
+                f"your message to the user is not in {front['conversation-language']}, the "
+                "conversation language steering.md records: say it again in that language"
+            )
+        ]
     return []

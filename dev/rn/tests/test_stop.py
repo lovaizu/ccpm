@@ -1,4 +1,5 @@
 """rn's Stop hook: checks 8, 13 and 14 when the conductor ends its turn."""
+
 import unittest
 
 from harness import PAUSED_MAP, PROPOSE, SDIR, STEERING, Session, sh
@@ -109,9 +110,11 @@ class Stop(Session):
         self.assertEqual(out.strip(), "")
 
     def test_ending_a_turn_at_a_stop_passes(self):
-        for line in ("● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off",
-                     "● #1 Plan sign-off ── approved → #2 Design sign-off",
-                     "● #3 cart ── half → paused at #3 cart"):
+        for line in (
+            "● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off",
+            "● #1 Plan sign-off ── approved → #2 Design sign-off",
+            "● #3 cart ── half → paused at #3 cart",
+        ):
             # Given a pushed commit stopping for the user
             self.r.write("a.txt", line + "\n")
             self.r.commit("rn: x\n\n" + line + "\n\nCo-Authored-By: Claude <noreply@anthropic.com>")
@@ -137,7 +140,9 @@ class Stop(Session):
         self.r.write("a.txt", "a\n")
         self.r.commit(PROPOSE)
         sh(self.r.dir, "git", "push", "-q")
-        english = "Which word should come before the code? I recommend A, since it matches the screen."
+        english = (
+            "Which word should come before the code? I recommend A, since it matches the screen."
+        )
         for active in (False, True):
             # When the turn ends, the first time or the second, with an English message
             _, out = self.r.hook("stop", last_assistant_message=english, stop_hook_active=active)
@@ -150,12 +155,18 @@ class Stop(Session):
         self.r.write("a.txt", "a\n")
         self.r.commit(PROPOSE)
         sh(self.r.dir, "git", "push", "-q")
-        for text in (("`src/account` を TypeScript にすることで、何を得たいですか？ "
-                     "推奨は A です。`DISPLAY_NAME_KEY` を設定しないとアプリは起動しません。"),
-                     ("── typescript: 型の誤りがビルドで止まる ──\n✅ #1 Plan sign-off\n"
-                     "👉 #2 Design sign-off ── PR で読んで /rn:ty で承認、/rn:gm で修正依頼\n\n"
-                     "メールだけで登録したユーザーにも、ちゃんとした名前を出します。"),
-                     "OK"):
+        for text in (
+            (
+                "`src/account` を TypeScript にすることで、何を得たいですか？ "
+                "推奨は A です。`DISPLAY_NAME_KEY` を設定しないとアプリは起動しません。"
+            ),
+            (
+                "── typescript: 型の誤りがビルドで止まる ──\n✅ #1 Plan sign-off\n"
+                "👉 #2 Design sign-off ── PR で読んで /rn:ty で承認、/rn:gm で修正依頼\n\n"
+                "メールだけで登録したユーザーにも、ちゃんとした名前を出します。"
+            ),
+            "OK",
+        ):
             # When the turn ends with a Japanese message, or one too short to judge
             _, out = self.r.hook("stop", last_assistant_message=text)
             # Then nothing is said
@@ -172,9 +183,15 @@ class Stop(Session):
     def test_japanese_list_of_quoted_decision_lines_passes(self):
         # Given a pushed pause whose task name is English
         self.commit_quoting_record_and_push()
-        bullets = "前回の承認からの変更:\n" + "".join(
-            f"- ● #{n} Apply the discount before the coupon ── half → paused at #{n} Apply the "
-            "discount before the coupon\n" for n in range(3, 9)) + "確認してください。"
+        bullets = (
+            "前回の承認からの変更:\n"
+            + "".join(
+                f"- ● #{n} Apply the discount before the coupon ── half → paused at #{n} Apply the "
+                "discount before the coupon\n"
+                for n in range(3, 9)
+            )
+            + "確認してください。"
+        )
         # When the turn ends with a Japanese list of quoted decision lines
         _, out = self.r.hook("stop", last_assistant_message=bullets)
         # Then nothing is said
@@ -184,7 +201,8 @@ class Stop(Session):
         # Given a pushed pause whose task name is English
         self.commit_quoting_record_and_push()
         english = PAUSED_MAP.replace("ここで一時停止", "paused here").replace(
-            "次: /clear してから /rn:up", "Next: clear the conversation, then take it up again.")
+            "次: /clear してから /rn:up", "Next: clear the conversation, then take it up again."
+        )
         # When the turn ends with the same map, its own words in English
         _, out = self.r.hook("stop", last_assistant_message=english)
         # Then the end is blocked, naming Japanese

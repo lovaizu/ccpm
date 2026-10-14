@@ -12,16 +12,36 @@ WORK = "# Note\n\nRun make.\n"
 
 def seen(repo, f1=True, n=1):
     """The orchestrator's form before the reading, with F-1 seen given or not."""
-    fill(repo, form("hand-on", n), {
-        "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-        "note F-1": {"met": True, "lines": "1-3", "note": "three lines"} if f1 else
-        {"met": False, "aim": "the teammate takes it in at a glance", "way": "cut it to one line", "reach": "1-3"}})
+    fill(
+        repo,
+        form("hand-on", n),
+        {
+            "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+            "note F-1": {"met": True, "lines": "1-3", "note": "three lines"}
+            if f1
+            else {
+                "met": False,
+                "aim": "the teammate takes it in at a glance",
+                "way": "cut it to one line",
+                "reach": "1-3",
+            },
+        },
+    )
 
 
 def decided(repo, f1, n=1):
-    fill(repo, form("orchestrator", n), {
-        "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
-        "note F-1": {"met": f1, "lines": "1-3" if f1 else "", "note": "three lines" if f1 else ""}})
+    fill(
+        repo,
+        form("orchestrator", n),
+        {
+            "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
+            "note F-1": {
+                "met": f1,
+                "lines": "1-3" if f1 else "",
+                "note": "three lines" if f1 else "",
+            },
+        },
+    )
 
 
 class Briefs(unittest.TestCase):
@@ -72,7 +92,7 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["list"], ".turn/out/list.json")
         self.assertEqual(got["work"], ".turn/out/1/note.md")
         self.assertEqual(got["form"], form("generator"))
-        self.assertTrue(got["check"].endswith("up.py\" check .turn/out 1 generator"))
+        self.assertTrue(got["check"].endswith('up.py" check .turn/out 1 generator'))
         self.assertEqual((got["receiver"], got["use"]), ("a new teammate", "to start work"))
         self.assertEqual(got["acceptance"], ["they can start alone"])
         self.assertEqual(got["sources"], ["notes.md"])
@@ -85,7 +105,17 @@ class Briefs(unittest.TestCase):
         # When: the generator's brief is made again
         got = self.handed("generator")
         # Then: it holds F-1 with how it would be given
-        self.assertEqual(got["ways"], [{"way": "cut it to one line", "items": ["note F-1"], "aims": ["the teammate takes it in at a glance"], "reach": ["1-3"]}])
+        self.assertEqual(
+            got["ways"],
+            [
+                {
+                    "way": "cut it to one line",
+                    "items": ["note F-1"],
+                    "aims": ["the teammate takes it in at a glance"],
+                    "reach": ["1-3"],
+                }
+            ],
+        )
 
     def test_the_first_user_is_handed_a_fresh_copy_holding_only_what_the_receiver_has(self):
         # Given: the work seen to give every item, and a file the user has not committed
@@ -101,7 +131,9 @@ class Briefs(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(copy, "draft.md")))
         self.assertFalse(os.path.exists(os.path.join(copy, ".turn")))
         # Then: it holds the receiver, the use and the list, and nothing of the sources or acceptance
-        self.assertEqual(sorted(got), ["check", "copy", "deliverable", "form", "list", "receiver", "use"])
+        self.assertEqual(
+            sorted(got), ["check", "copy", "deliverable", "form", "list", "receiver", "use"]
+        )
         self.assertTrue(os.path.isabs(got["list"]))
 
     def test_the_first_user_is_not_handed_the_work_before_every_item_is_seen_given(self):
@@ -142,9 +174,11 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["records"], records)
 
     def test_the_evaluator_is_not_handed_a_reading_that_is_not_there(self):
-        cases = [("no reading made", False, False, "step 9"),
-                 ("a reading without records", True, False, "no records of the first user"),
-                 ("a reading with its form left", True, True, "what was taken is not given")]
+        cases = [
+            ("no reading made", False, False, "step 9"),
+            ("a reading without records", True, False, "no records of the first user"),
+            ("a reading with its form left", True, True, "what was taken is not given"),
+        ]
         for name, briefed, recorded, said in cases:
             with self.subTest(name):
                 # Given: the first user not run, run without records, or with its form wrong
@@ -174,8 +208,10 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["sources"], ["notes.md"])
 
     def test_the_learner_is_not_handed_a_round_with_nothing_to_learn(self):
-        cases = [("every item met", True, "every item is met"),
-                 ("an item undecided", None, "note F-1: not decided")]
+        cases = [
+            ("every item met", True, "every item is met"),
+            ("an item undecided", None, "note F-1: not decided"),
+        ]
         for name, f1, said in cases:
             with self.subTest(name):
                 # Given: round 1 with every item met, or one undecided
@@ -189,21 +225,43 @@ class Briefs(unittest.TestCase):
     def test_round_two_hands_the_generator_the_ways_and_the_rules_learned(self):
         # Given: round 1 left F-1 with a way in the work and something learned of making
         decided(self.repo, f1=False)
-        fill(self.repo, form("learner"), {"note F-1": {
-            "aim": "the teammate takes it in at a glance", "way": "cut it to one line", "reach": "1-3",
-            "in": "the work", "making": "say each thing once"}})
+        fill(
+            self.repo,
+            form("learner"),
+            {
+                "note F-1": {
+                    "aim": "the teammate takes it in at a glance",
+                    "way": "cut it to one line",
+                    "reach": "1-3",
+                    "in": "the work",
+                    "making": "say each thing once",
+                }
+            },
+        )
         self.assertEqual(run(self.repo, "round", ".turn/out")[0], 0)
         run(self.repo, "aim", ".turn/out", "2", "the same, cut to one line")
         # When: the generator's brief for round 2 is made
         got = self.handed("generator", 2)
         # Then: it holds round 1's way with its item, and the rule among the constraints
         self.assertEqual(got["work"], ".turn/out/2/note.md")
-        self.assertEqual(got["ways"], [{"way": "cut it to one line", "items": ["note F-1"], "aims": ["the teammate takes it in at a glance"], "reach": ["1-3"]}])
+        self.assertEqual(
+            got["ways"],
+            [
+                {
+                    "way": "cut it to one line",
+                    "items": ["note F-1"],
+                    "aims": ["the teammate takes it in at a glance"],
+                    "reach": ["1-3"],
+                }
+            ],
+        )
         self.assertEqual(got["constraints"], ["rule: say each thing once"])
 
     def test_a_brief_is_made_only_for_the_round_now_running_and_an_agent_of_turn(self):
-        cases = [("another round", "generator", 2, "round 1 is running"),
-                 ("not an agent", "orchestrator", 1, "no brief for orchestrator")]
+        cases = [
+            ("another round", "generator", 2, "round 1 is running"),
+            ("not an agent", "orchestrator", 1, "no brief for orchestrator"),
+        ]
         for name, role, n, said in cases:
             with self.subTest(name):
                 # Given: a run in round 1

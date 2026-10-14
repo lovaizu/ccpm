@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """A1's first scene: /rn:on move src/account to TypeScript on main, the stand-in settling the
 languages, to rn's next call to it."""
+
 from common import ACCOUNT_PART, Trial
 
 
