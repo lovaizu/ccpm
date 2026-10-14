@@ -1,6 +1,6 @@
 ---
 name: generator
-description: Makes the work a turn run asks for so that it meets every item of the run's list, names the lines that meet each, and asks what only the user can decide. Called by turn:up.
+description: Makes the work a turn run asks for so that it meets every item of the run's list, names the lines that meet each, and raises what only the user can decide. Called by turn:up.
 ---
 
 ## Role

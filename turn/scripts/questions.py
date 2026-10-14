@@ -1,4 +1,4 @@
-"""The questions only the user can decide, and what makes each asked or shown answered."""
+"""The questions only the user can decide, and what makes each left open or shown answered."""
 
 import os
 import re
@@ -14,13 +14,14 @@ def asked_numbers(work):
     return [k for k, q in enumerate(asked(work), 1) if q.get("ask")]
 
 
-def unanswered(work):
-    return [k for k, q in enumerate(asked(work), 1) if q.get("ask") and "answer" not in q]
+def left_open(work):
+    """The questions the run asks the user at its end."""
+    return [q["question"] for q in asked(work) if q.get("ask")]
 
 
 def question_faults(work, decided):
-    """Says each question left without its words or naming an item, or, once decided, neither asked
-    nor shown answered."""
+    """Says each question left without its words or naming an item, or, once decided, neither left
+    open nor shown answered."""
     questions = asked(work)
     if not isinstance(questions, list):
         return ["the questions are not a list"]

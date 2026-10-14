@@ -29,11 +29,7 @@ class Stop(unittest.TestCase):
         self.repo = Repo()
         self.task = ccs(constraints=[{"language": "English"}])
         started(self.repo, self.task)
-        fill(
-            self.repo,
-            ".turn/out/questions.json",
-            [{"question": "Which license?", "ask": True, "answer": "MIT"}],
-        )
+        fill(self.repo, ".turn/out/questions.json", [{"question": "Which license?", "ask": True}])
         run(self.repo, "aim", ".turn/out", "1", AIM)
 
     def tearDown(self):
@@ -56,14 +52,12 @@ class Stop(unittest.TestCase):
         self.repo.write(".turn/out/1/note.md", "# Half\n")
         # When: the user stops the run
         said, back = self.stop()
-        # Then: the CCS says where it stopped and points to no work, the caller's part and the
-        # answers given come back, the run is closed, and where the work goes is untouched
+        # Then: the CCS says where it stopped and points to no work, the caller's part comes back
+        # as given, the run is closed, and where the work goes is untouched
         self.assertEqual(said, "stopped: round 1, write — CCS: out.json")
         self.assertEqual(back["predictive_cue"], [{"next": "stopped: round 1, write"}])
         self.assertEqual(back["episodic_trace"], [])
-        self.assertEqual(
-            back["constraints"], [{"language": "English"}, {"answer": "Which license? MIT"}]
-        )
+        self.assertEqual(back["constraints"], [{"language": "English"}])
         self.assertEqual(
             {k: back[k] for k in ("focal_entities", "goal_orientation", "retrieved_artifacts")},
             {

@@ -2,9 +2,9 @@
 
 ## [Unreleased]
 
-### Fixed
+### Changed
 
-- While a run waits for the AI that reads or checks the work, it is no longer told to end the run — the run waits for the reading and the check instead of ending without them, and no stop message shows while it waits.
+- turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work.
 
 ## [0.1.0] - 2026-10-13
 

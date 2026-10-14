@@ -8,7 +8,6 @@ import tempfile
 
 from ccs import entries
 from forms import PLACES, check, learned, serves, without_good
-from questions import asked, unanswered
 from repo import drop
 from state import RUN, Stop, read_json, the_work, write_json
 
@@ -54,8 +53,7 @@ def brief(work, n, role):
         "use": "; ".join(entries(ccs, "goal_orientation", "use")),
         "acceptance": entries(ccs, "goal_orientation", "acceptance"),
         "sources": entries(ccs, "retrieved_artifacts", "source"),
-        "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()]
-        + [f"answer: {q['question']} {q['answer']}" for q in asked(work) if "answer" in q],
+        "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
     }
     given = {
         "list": os.path.join(work, "list.json"),
@@ -73,7 +71,9 @@ def brief(work, n, role):
         if n == 1 and "from" in run:
             given["started from"] = run["from"]
         sent = [
-            serves([dict(p, item=i)], p["way"]) for i, p in hand_on.items() if p.get("met") is False
+            serves([dict(p, item=i)], p["way"])
+            for i, p in hand_on.items()
+            if p.get("met") is False and "question" not in p
         ]
         if sent or n == 1:
             ways = sent
@@ -86,16 +86,11 @@ def brief(work, n, role):
             should["constraints"] += [f"rule: {r}" for r in learned(work, 1)[1]]
         given.update(should, ways=ways, questions=os.path.join(work, "questions.json"))
     elif role == "first-user":
-        unseen = [i for i, p in hand_on.items() if p.get("met") is not True]
-        if unanswered(work):
-            raise Stop(
-                "step 8: wait for the user: "
-                + ", ".join(f"question {k} is not answered" for k in unanswered(work))
-            )
+        unseen = [i for i, p in hand_on.items() if p.get("met") is not True and "question" not in p]
         if unseen:
             raise Stop(
-                "step 8: the work goes back to the generator until every item is seen given; "
-                "not yet: " + ", ".join(unseen)
+                "step 8: the work goes back to the generator until every item is seen given or "
+                "waits on a question left open; not yet: " + ", ".join(unseen)
             )
         place = tempfile.mkdtemp(prefix="turn-copy-")
         subprocess.run(["git", "clone", "-q", ".", place], check=True)

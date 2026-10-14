@@ -110,12 +110,12 @@ class Console(unittest.TestCase):
         # Given: a run just started, with a question the sources leave open
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
         # When: the orchestrator runs a command before it sets the aim
-        # Then: the user is shown the plan and the round, and the question waits for the aim
+        # Then: the user is shown the plan and the round
         self.assertEqual(self.shown(), [PLAN, "Round 1"])
         # When: the orchestrator sets what the work will let its receiver do
         self.say("aim", ".turn/out", "1", AIM)
-        # Then: the user is shown the aim, and then the question
-        self.assertEqual(self.shown(), [f"  1 write   To make: {AIM}", f"            ❓ {LICENSE}"])
+        # Then: the user is shown the aim, and not the question, which waits for the end
+        self.assertEqual(self.shown(), [f"  1 write   To make: {AIM}"])
 
     def test_a_question_naming_an_item_is_not_shown(self):
         # Given: a question that names an item of the list
@@ -159,17 +159,10 @@ class Console(unittest.TestCase):
         # When: the console is asked for with nothing new
         # Then: nothing is shown again
         self.assertEqual(self.shown(), [])
-        # When: a question raised in the making is asked
-        fill(
-            self.repo,
-            ".turn/out/questions.json",
-            [
-                {"question": LICENSE, "ask": True, "answer": "MIT"},
-                {"question": "What is it called?", "ask": False, "answered": "notes.md 1"},
-            ],
-        )
-        # Then: only the question asked is shown
-        self.assertEqual(self.shown(), [f"            ❓ {LICENSE}"])
+        # When: a question is raised in the making
+        fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
+        # Then: nothing is shown while the run works
+        self.assertEqual(self.shown(), [])
         # When: the work is handed to the first user, and read
         met(self.repo, "hand-on")
         self.repo.write(".turn/out/1/note.md", WORK)
@@ -240,6 +233,17 @@ class Console(unittest.TestCase):
         # command printed
         self.assertEqual(
             self.ended("end", ".turn/out", "1"), ["done", "The work is at docs/note.md."]
+        )
+
+    def test_the_end_asks_the_user_each_question_left_open(self):
+        # Given: round 1 read with every item met, and a question left open
+        fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
+        self.read()
+        # When: the run ends
+        # Then: the user is shown where the work is and the question, once
+        self.assertEqual(
+            self.ended("end", ".turn/out", "1"),
+            ["The work is at docs/note.md, waiting on you for one point.", f"❓ {LICENSE}"],
         )
 
     def test_the_end_asks_the_user_what_only_they_decide_when_something_is_left(self):

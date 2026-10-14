@@ -5,10 +5,9 @@ import json
 import os
 import shutil
 
-from brief import AGENTS
 from ccs import checklist, entries, faults
 from forms import PLACES, forms, lay, learned
-from questions import asked, question_faults, unanswered
+from questions import left_open, question_faults
 from repo import changed, drop, elsewhere, git
 from state import CLOSING, RUN, Stop, read_json, the_work, write_json
 
@@ -93,49 +92,29 @@ def round_two(work):
     print(json.dumps({"round": 2, "work": made}))
 
 
-def at_rest(run):
-    """Why the orchestrator may stop with the run open: it waits for the user or for an agent of the
-    run, one handed its brief after its form was last written."""
-    work, n = run["work"], str(run["round"])
-    if unanswered(work):
-        return "waiting for the user"
-    for role in AGENTS:
-        brief = os.path.join(work, n, f"{role}-brief.json")
-        if os.path.isfile(brief) and os.path.getmtime(brief) > os.path.getmtime(
-            os.path.join(work, n, f"{role}.json")
-        ):
-            return f"waiting for the {role}"
-    return None
-
-
 def end(work, n):
     n = int(n)
     left, _ = learned(work, n)
-    found = question_faults(work, decided=True) + [
-        f"question {k} is not answered" for k in unanswered(work)
-    ]
+    found = question_faults(work, decided=True)
     if found:
         raise Stop("\n".join(found))
     if n == 1 and any(w["in"] == PLACES[0] for w in left):
         raise Stop("a way lies with the generator: start the second round")
     run, ccs, deliverable, path = the_work(work, n)
     items = {i["id"]: i for i in read_json(os.path.join(work, "list.json"), "the list")["items"]}
-    differences = [
+    questions = left_open(work)
+    differences = [{"difference": q} for q in questions] + [
         {"difference": f"{i} ({items[i]['text'].splitlines()[0]}): {w['way']}"}
         for w in left
         for i in w["items"]
     ]
     caller = [f"{i}: {w['way']}" for w in left if w["in"] == PLACES[1] for i in w["items"]]
-    nxt = (
-        f"to the caller: {'; '.join(caller)}"
-        if caller
-        else "ask the user"
-        if differences
-        else "done"
-    )
-    ccs["constraints"] += [
-        {"answer": f"{q['question']} {q['answer']}"} for q in asked(work) if "answer" in q
-    ]
+    if not differences:
+        nxt = "done"
+    elif caller and not questions:
+        nxt = f"to the caller: {'; '.join(caller)}"
+    else:
+        nxt = "ask the user"
     for k in range(1, n + 1):
         for rule in learned(work, k)[1]:
             if {"rule": rule} not in ccs["constraints"]:
@@ -151,16 +130,15 @@ def end(work, n):
         episodic_trace=[{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence],
     )
     write_json(run["out"], ccs)
-    close(
-        work,
-        [nxt, f"The work is at {deliverable}."]
-        + (
-            ["❓ Run turn again on what is still missing, or take the work as it is?"]
-            if nxt == "ask the user"
-            else []
-        )
-        + elsewhere(run, deliverable),
-    )
+    if questions:
+        points = "one point" if len(questions) == 1 else f"{len(questions)} points"
+        said = [f"The work is at {deliverable}, waiting on you for {points}."]
+        said += [f"❓ {q}" for q in questions]
+    else:
+        said = [nxt, f"The work is at {deliverable}."]
+        if nxt == "ask the user":
+            said.append("❓ Run turn again on what is still missing, or take the work as it is?")
+    close(work, said + elsewhere(run, deliverable))
 
 
 def close(work, lines):
@@ -191,9 +169,6 @@ def stop(work):
     first = os.path.join(here, "first-user-brief.json")
     if os.path.isfile(first) and os.path.exists(read_json(first, "the first user's brief")["copy"]):
         drop(read_json(first, "the first user's brief")["copy"])
-    ccs["constraints"] += [
-        {"answer": f"{q['question']} {q['answer']}"} for q in asked(work) if "answer" in q
-    ]
     ccs.update(
         predictive_cue=[{"next": f"stopped: round {n}, {step}"}],
         semantic_gist=[],

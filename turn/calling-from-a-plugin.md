@@ -35,8 +35,8 @@ Then do what `next` in .tasks/setup-back.json asks.
 What happens, in order:
 
 1. The step writes the CCS to `in` and calls `turn:up` with `in` and `out`.
-2. turn runs in the same conversation. The user sees its progress there, answers there what only
-   they can decide, and may stop it with Esc and say what they want instead.
+2. turn runs in the same conversation, and asks nothing while it works. The user sees its progress
+   there, and may stop it with Esc and say what they want instead.
 3. turn writes the work where `deliverable` says, once it has been read, and its CCS to `out`. It
    never writes `in`.
 4. The step reads `next` in `out` and does what it asks. To run turn again, the step changes its own
@@ -67,7 +67,7 @@ The first four parts are yours:
 | `focal_entities` | `deliverable`: where the work goes, a path inside the repository; a file already there is written over, and must have no change git does not hold; name it as a `source` too to make the work from it; `receiver`: who the work is for | both |
 | `goal_orientation` | `use`: what the receiver uses the work for; `acceptance`: what the receiver must be able to do with it | `acceptance` |
 | `retrieved_artifacts` | `viewpoint`: a checklist to make and check the work by, a file that must exist and open with front matter giving its `name` and `version`; `source`: a file to make the work from, which must exist | `viewpoint` |
-| `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: turn's own, the user's answer to a question turn asked, added after your entries | none |
+| `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: the user's answer to a question a run of turn left open | none |
 
 The other five parts are turn's: write each as an empty list.
 
@@ -100,9 +100,11 @@ it calls turn again.
 
 - `done`: the work is where `deliverable` says, and nothing is left for the user. The step moves
   on.
-- `ask the user`: the work is where `deliverable` says. Put each `difference` to the user. If they
-  say what they want, rewrite your own parts from their words, as if they had asked so from the
-  start, and call turn again. If they want turn to run again on it as it is, call turn again with
+- `ask the user`: the work is where `deliverable` says. Put each `difference` to the user: a
+  question only they can decide, or what the work does not give yet. Add each answer to a question
+  as an `answer` in `constraints`, and call turn again. If they say what they want, rewrite your
+  own parts from their words, as if they had asked so from the start, and call turn again. If they
+  want turn to run again on it as it is, call turn again with
   your parts unchanged. If the user takes the work as it is, the step moves on.
 - `to the caller: <reason>`: the CCS cannot be run, or an item would be met only by a change in what
   the step wrote the work should be, which turn never rewrites. The reason says which; in the

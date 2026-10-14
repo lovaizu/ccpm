@@ -33,7 +33,7 @@ its later tasks as a rule, so it must hold for any work of the kind, not only th
 5. Where a way needs what neither the sources, what the work should be nor a question already in
    `questions` settles, and only the user can decide, add it to `questions` with `jq` as
    `{"question": "..."}`: what to ask the user, and what the work leaves out until they answer; the
-   way then lies in `the work`, and says to make it from the answer to that question, by its number
-   counted from 1. Change no question already there.
+   way then lies in `what the work should be`, where the answer comes, and says to make it from the
+   answer to that question, by its number counted from 1. Change no question already there.
 6. Run `check`, and fix each place it names, until it prints `filled`.
 7. Hand back one line saying the form is written.

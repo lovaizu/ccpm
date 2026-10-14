@@ -1,10 +1,10 @@
-"""What the user sees of a run as it goes: the plan, each round's aim and steps, and the questions."""
+"""What the user sees of a run as it goes: the plan, and each round's aim and steps."""
 
 import os
 
 from ccs import entries
 from forms import check, without_good
-from questions import asked, question_faults
+from questions import question_faults
 from state import RUN, Stop, read_json, the_work, write_json
 
 PLAN = "Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)"
@@ -59,12 +59,6 @@ def shown_lines(work):
                     for k, a in enumerate(aims)
                 ]
         lines += [(f"{n}:{line}", line) for line in said]
-    if os.path.isfile(os.path.join(work, "1", "aim.txt")):
-        lines += [
-            (f"q:{q['question']}", f"{INDENT}❓ {q['question']}")
-            for q in asked(work)
-            if q.get("ask")
-        ]
     return lines
 
 
