@@ -276,6 +276,15 @@ Progress:
       (`d1/.tasks/out.json`, `d1/dev/writ/design.md`) and its records, judge each question and
       item without a Good from the purpose as step 8 says, copy the design here, and show it to
       the user for agreement.
+      - Returned (2026-10-14): one question and nine items without a Good. Settled from the purpose
+        by the assistant (`2926f25`, `0924e90`, `9467341`): history words out; the subagent ground
+        given with its reach; what turn returns judged from the purpose, calling turn again only
+        when the document must change; writ makes every kind it has a checklist for, code and its
+        tests among them (the question, settled by the code checklist the user decided), and the
+        README says so; an item the purpose does not need is left More and the report gives
+        writ's reason, and the README's example says writ reports on every item. Left as not
+        needed: the form and job files in full (the specification, `design.md` U-2), and
+        comparisons for each idea. Next: the user reads the design for agreement.
 
 ### [ ] #4: writ built and checked
 
