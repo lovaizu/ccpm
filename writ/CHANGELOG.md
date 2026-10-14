@@ -12,6 +12,8 @@
 - A checklist's version goes up once for each change that reaches those who judge by it, such as a release or a merge to a shared branch, not on every edit — a version names text people judged by, and drafts in between take no number.
 - The design checklist asks that a design leave out how the product behaves in one case where a principle it gives settles it — a design holds principles and decisions, and does not grow a rule beside them for each case a trial meets.
 
+- The checklists are in `checklists/`, and the checklist for checklists is `checklist.md` — the files are called by the name the README calls them.
+
 ### Removed
 
 - `/writ:pith` — turn now has every work read in its receiver's place and checked against its checklist, so a second way to check in writ is not needed.

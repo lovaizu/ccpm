@@ -1,7 +1,7 @@
 # Plugin rules (ccpm)
 
 How a plugin in this marketplace is built, step by step in the order the work is done. Each step
-names the checklists in `writ/references/essentials/` to open while doing it; a checklist says what
+names the checklists in `writ/checklists/` to open while doing it; a checklist says what
 the work must be, and this file says how the work goes.
 
 When a step's work needs something its checklist does not ask, add the question to that checklist,

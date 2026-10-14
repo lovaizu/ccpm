@@ -110,7 +110,7 @@ assumption, and what it gives over asking Claude alone follows from it:
   Can the developer tell which Python version the tool needs?
   ```
 
-  The [writ checklists](../writ/references/essentials/) in this repository cover documents,
+  The [writ checklists](../writ/checklists/) in this repository cover documents,
   READMEs, design documents and prompts; copy the ones you need into your repository.
 
 ## Installation

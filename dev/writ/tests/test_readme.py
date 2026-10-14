@@ -5,7 +5,7 @@ import re
 import unittest
 
 PLUGIN_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "writ")
-ESSENTIALS = os.path.join(PLUGIN_ROOT, "references", "essentials")
+CHECKLISTS = os.path.join(PLUGIN_ROOT, "checklists")
 
 
 def read(*parts):
@@ -24,14 +24,14 @@ class ReadmeTest(unittest.TestCase):
         for link in relative:
             self.assertTrue(os.path.exists(os.path.join(PLUGIN_ROOT, link)), link)
 
-    def test_every_essentials_file_is_linked(self):
+    def test_every_checklist_is_linked(self):
         # Given
-        names = os.listdir(ESSENTIALS)
+        names = os.listdir(CHECKLISTS)
         # When
         readme = read("README.md")
         # Then
         for name in names:
-            self.assertIn("(references/essentials/{})".format(name), readme)
+            self.assertIn("(checklists/{})".format(name), readme)
 
     def test_the_commands_taught_are_exactly_the_skills(self):
         # Given

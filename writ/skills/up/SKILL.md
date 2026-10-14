@@ -39,7 +39,7 @@ How good a document is can be measured only once its reader and purpose are set;
 
 - Look up every fact the document will state in the repository and the code; never infer one. The reader believes what is written and decides wrongly on a guess.
 
-- Choose the essentials files: always `${CLAUDE_PLUGIN_ROOT}/references/essentials/doc.md`, plus whichever of `readme.md`, `design.md`, `prompt.md` and `essentials.md` in the same directory fits the kind of document, when one does.
+- Choose the essentials files: always `${CLAUDE_PLUGIN_ROOT}/checklists/doc.md`, plus whichever of `readme.md`, `design.md`, `prompt.md` and `checklist.md` in the same directory fits the kind of document, when one does.
 
 ## 2. Have the generator write
 

@@ -195,11 +195,9 @@ Progress:
 - Agreed by the user (2026-10-14): the code checklist (`code` 0.1.0, B-1 to B-22 and F-1).
 - Where to resume (2026-10-14), one point at a time with the user:
   1. turn's README (`48f5dee`, turn asks nothing while it works): agreed by the user (2026-10-14).
-  2. The user asked whether `essentials` becomes `checklists`, folder name included. To propose:
-     `writ/references/essentials/` becomes `writ/checklists/`, and `essentials.md` becomes
-     `checklist.md`, its front-matter name already; the README calls them checklists, so one thing
-     keeps one word. Paths that name it: `.claude/rules/plugin.md`, `turn/README.md`, `writ/README.md`,
-     `writ/CHANGELOG.md`, rn's files, and the old writ files #4 replaces.
+  2. `writ/references/essentials/` became `writ/checklists/`, and `essentials.md` became
+     `checklist.md` (agreed by the user, 2026-10-14). rn's own `rn/references/essentials/` is rn's
+     (#39); the old writ files #4 replaces had only their paths changed.
   3. Then make this repository meet the code checklist: count branches in `.coveragerc` and CI, and
      add a linter and a type checker to CI, proposing the tools; `plugin.md` step 5 names `code.md`.
   4. Then turn's design and code to the agreed README, writ's README example (no question mid-run),

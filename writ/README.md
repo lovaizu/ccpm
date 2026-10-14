@@ -63,7 +63,7 @@ keeps what it was.
 ```
 
 Choose 1 for a one-off, and 2 for a kind you will write again. With 2, writ makes the checklist with
-you against its [checklist for checklists](references/essentials/essentials.md), puts it at
+you against its [checklist for checklists](checklists/checklist.md), puts it at
 `.writ/checklists/release-notes.md`, and finds it there next time; commit it, and your team writes
 to the same checklist.
 
@@ -100,9 +100,10 @@ own.
 
 ## Documentation
 
-- The checklists writ keeps: [every document](references/essentials/doc.md),
-  [README](references/essentials/readme.md), [design document](references/essentials/design.md),
-  [prompt](references/essentials/prompt.md), and [checklists](references/essentials/essentials.md)
+- The checklists writ keeps: [every document](checklists/doc.md),
+  [README](checklists/readme.md), [design document](checklists/design.md),
+  [prompt](checklists/prompt.md), [code and its tests](checklists/code.md), and
+  [checklists](checklists/checklist.md)
 - [Changelog](CHANGELOG.md)
 
 ## License
