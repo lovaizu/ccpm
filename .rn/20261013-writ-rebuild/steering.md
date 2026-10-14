@@ -370,17 +370,15 @@ Progress:
   brings every answer and decision so far and writ keeps nothing between calls.
 - The six checklists are made again through turn against `checklist.md` (`404668f` to `7d0b420`).
 - Where to resume (2026-10-14):
-  1. Running: the writ design from nothing on the new checklists, given that each call brings every
-     answer and decision so far and writ keeps nothing between calls (CCS
-     `.../scratchpad/design-thin.json`, clone `.../scratchpad/d5`, log `.../scratchpad/d5.log`,
-     scratchpad `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/5b8dfbaf-6002-4c66-aec0-eba4d5bb782f/scratchpad`).
-     It returned `ask the user` (`d5/.tasks/out.json`). Decided by the user: writ builds nothing
-     for adding to a checklist; it hands its caller everything it decided or did not act on (turn's
-     rules, questions it judged not needed, items left with why, changes it made to the request,
-     facts it settled), the report leading with them; the README's "report once every item is met"
-     changes to the design. Running again with those answers (`design-thin-2.json`, out
-     `d5/.tasks/out2.json`, log `d5-2.log`); it asked what writ does when it cannot tell whether a point is needed, settled from the README (46-47): ask the user at the end. Running again (`design-thin-3.json`, out `out3.json`, log `d5-3.log`). Then copy `d5/dev/writ/design.md` here.
-  2. Check writ's README against the design (the link to the callers' page goes).
+  1. Done: the writ design from nothing on the new checklists, through turn in three runs (`done`,
+     every item met), copied to `dev/writ/design.md`. Decided by the user on the way: writ builds
+     nothing for adding to a checklist; it hands its caller, first in the report, everything it
+     decided or did not act on (turn's rules, questions it judged not needed, items left with why,
+     changes it made to the request, points it settled itself); the README's "report once every
+     item is met" changes to the design. Settled from the README (46-47): a point writ cannot judge
+     goes to the user at the end.
+  2. Running: writ's README made again through turn against the design (the link to the callers'
+     page goes).
   3. Make turn's README and design again through turn on the new checklists (the two-reading
      change was written by hand), and show them to the user for agreement.
   4. Rebuild writ's code thin from the design, try it, and finish #4.
