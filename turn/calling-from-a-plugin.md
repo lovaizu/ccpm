@@ -64,7 +64,7 @@ The first four parts are yours:
 
 | Part | Kinds | Needed |
 |---|---|---|
-| `focal_entities` | `deliverable`: where the work goes, a path inside the repository; a file already there is written over, and must have no change git does not hold; name it as a `source` too to make the work from it; `receiver`: who the work is for | both |
+| `focal_entities` | `deliverable`: where the work goes, a path inside the repository; a file already there is written over, and must have no change git does not hold, unless it is the work turn returned in the CCS you call it with, unchanged; name it as a `source` too to make the work from it; `receiver`: who the work is for | both |
 | `goal_orientation` | `use`: what the receiver uses the work for; `acceptance`: what the receiver must be able to do with it | `acceptance` |
 | `retrieved_artifacts` | `viewpoint`: a checklist to make and check the work by, a file that must exist and open with front matter giving its `name` and `version`; `source`: a file to make the work from, which must exist | `viewpoint` |
 | `constraints` | `language`: the language to write in; `rule`: a rule the work or its making follows; `answer`: the user's answer to a question a run of turn left open | none |
@@ -87,7 +87,8 @@ entries first in `constraints`.
 The step reads three kinds:
 
 - `next`, in `predictive_cue`: always one; what the step does next, below.
-- `difference`, in `semantic_gist`: one for each item still More, that is, an item of the
+- `difference`, in `semantic_gist`: one for each question only the user can decide, which the
+  work leaves out until it is answered, and one for each item still More, that is, an item of the
   checklists the work does not yet meet, with what the work would need to meet it.
 - `evidence`, in `episodic_trace`: where in `.turn/` turn keeps, for each item, the lines of the
   work that show it met or what the work would need to meet it, and each checklist's name and

@@ -4,7 +4,7 @@
 
 ### Changed
 
-- turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work.
+- turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work. Called again with your answers, turn starts from the work it returned and writes over it without your committing it first, unless you changed it since.
 
 ## [0.1.0] - 2026-10-13
 

@@ -1,6 +1,7 @@
 """A run from start to end: started on a CCS, taken to its second round, and ended or stopped with
 the work and a CCS written back."""
 
+import filecmp
 import json
 import os
 import shutil
@@ -24,7 +25,17 @@ def start(src, out, session):
     if found:
         raise Stop("\n".join(found))
     deliverable = entries(ccs, "focal_entities", "deliverable")[0]
-    if git("status", "--porcelain", "--ignored", "--", deliverable):
+    begun = entries(ccs, "episodic_trace", "work")
+    for path in begun:
+        if not os.path.isfile(path):
+            raise Stop(f"{path} is not there, so the run cannot start from it")
+    # What is there is written over only when git holds it, or when it is the work a run returned
+    # with this CCS, unchanged since, which that run's evidence keeps.
+    if (
+        git("status", "--porcelain", "--ignored", "--", deliverable)
+        and os.path.isfile(deliverable)
+        and not any(filecmp.cmp(path, deliverable, shallow=False) for path in begun)
+    ):
         raise Stop(
             f"{deliverable} has changes git does not hold; commit or remove them, so that what was "
             "there can be got back once turn writes the work there"
@@ -41,11 +52,9 @@ def start(src, out, session):
     lay(work, 1, laid)
     write_json(os.path.join(work, "questions.json"), [])
     run = {"session": session, "work": work, "in": src, "out": out, "round": 1, "before": before}
-    for begun in entries(ccs, "episodic_trace", "work"):
-        if not os.path.isfile(begun):
-            raise Stop(f"{begun} is not there, so the run cannot start from it")
-        shutil.copyfile(begun, os.path.join(work, "1", os.path.basename(deliverable)))
-        run["from"] = begun
+    for path in begun:
+        shutil.copyfile(path, os.path.join(work, "1", os.path.basename(deliverable)))
+        run["from"] = path
     write_json(RUN, run)
     print(
         json.dumps(
@@ -127,7 +136,8 @@ def end(work, n):
     ccs.update(
         predictive_cue=[{"next": nxt}],
         semantic_gist=differences,
-        episodic_trace=[{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence],
+        episodic_trace=[{"work": path}]
+        + [{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence],
     )
     write_json(run["out"], ccs)
     if questions:

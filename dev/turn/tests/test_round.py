@@ -300,7 +300,11 @@ class End(unittest.TestCase):
         self.assertEqual(back["semantic_gist"], [])
         self.assertEqual(
             back["episodic_trace"],
-            [{"evidence": ".turn/out/list.json"}, {"evidence": ".turn/out/1/orchestrator.json"}],
+            [
+                {"work": ".turn/out/1/note.md"},
+                {"evidence": ".turn/out/list.json"},
+                {"evidence": ".turn/out/1/orchestrator.json"},
+            ],
         )
         self.assertEqual(out.splitlines()[0], "done")
 

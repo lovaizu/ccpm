@@ -190,6 +190,38 @@ class Questions(unittest.TestCase):
         self.assertEqual(back["semantic_gist"], [{"difference": LICENSE}])
         self.assertEqual(back["constraints"], [{"language": "English"}])
 
+    def test_called_again_with_the_answer_the_run_starts_from_the_work_it_returned(self):
+        # Given: a run that ended asking the user, and the caller adding the answer to its CCS
+        fill(self.repo, QUESTIONS, [OPEN])
+        seen(self.repo)
+        decided(self.repo)
+        run(self.repo, "end", ".turn/out", "1")
+        back = self.repo.json("out.json")
+        back["constraints"].append({"answer": f"{LICENSE} MIT"})
+        self.repo.write("again.json", json.dumps(back))
+        # When: turn is called with it, the returned work not committed
+        code, out = run(self.repo, "start", "again.json", "out-2.json", "s1")
+        # Then: the new run starts from the work as it was returned, with the answer among what
+        # the work should be
+        self.assertEqual(code, 0, out)
+        got = json.loads(out)
+        self.assertEqual(self.repo.read(got["work"]), WORK)
+        self.assertIn(f"answer: {LICENSE} MIT", got["constraints"])
+
+    def test_called_again_after_the_returned_work_was_changed_the_run_is_refused(self):
+        # Given: a run that ended asking the user, and its work changed since, not committed
+        fill(self.repo, QUESTIONS, [OPEN])
+        seen(self.repo)
+        decided(self.repo)
+        run(self.repo, "end", ".turn/out", "1")
+        self.repo.write("docs/note.md", WORK + "A line of the user's.\n")
+        self.repo.write("again.json", json.dumps(self.repo.json("out.json")))
+        # When: turn is called again on the CCS it returned
+        code, out = run(self.repo, "start", "again.json", "out-2.json", "s1")
+        # Then: it is refused, so the user's line is not written over
+        self.assertEqual(code, 1)
+        self.assertIn("docs/note.md has changes git does not hold", out)
+
     def test_a_run_with_every_question_answered_by_the_sources_is_done(self):
         # Given: every item met, and the one question answered by the notes
         fill(self.repo, QUESTIONS, [{"question": NAME, "ask": False, "answered": "notes.md 1"}])

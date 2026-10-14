@@ -64,7 +64,8 @@ Each must be no worse than in the version in use.
 - Repository untouched: during a run, turn changes nothing in the repository but where the work goes
   and the run's evidence, and never commits or pushes, so the user takes turn's change as one diff
   and decides themselves what to commit; a file where the work goes is written over only when git
-  holds it as it stands, so what was there can be got back; a change a shell command of the run
+  holds it as it stands, or it is the work a run returned and is unchanged since, so what was there
+  can be got back; a change a shell command of the run
   makes elsewhere as a side effect is named to the user. Outside its runs, turn blocks nothing.
 - Stop and start over: a stopped run returns a CCS saying so, and called again with the request
   rewritten from what the user said, starts from the work as it stands; a run cut off leaves where
@@ -379,7 +380,9 @@ nothing but its CCS and the places it points to.
   the caller's part as received.
 - Until a run returns, the work is only in the run's evidence, so a stopped or cut-off run leaves
   where the work goes untouched. When the user stops a run, a script writes a CCS saying where it
-  stopped and pointing to the work as it stands, from which the next run starts.
+  stopped and pointing to the work as it stands, from which the next run starts. A run that returns
+  points to the work it returned in the same way, so a run called again with the user's answers
+  starts from it.
 - Must hold: the received CCS is never written over; the caller's part comes back the same.
 - Weighed: handing agents the CCS itself was not chosen, since a change made for one agent would
   change what callers rely on. The cost: the orchestrator writes each agent's inputs from the CCS.
@@ -389,9 +392,10 @@ nothing but its CCS and the places it points to.
 Achieves: repository untouched, missing tools.
 
 - Before any work, the orchestrator ends the run saying what to install if python3 is missing, and
-  a script, if jq is missing or a file where the work goes has changes git does not hold. Such a file is otherwise written
-  over, since git keeps the version before it and making a document again where it stands is common
-  work.
+  a script, if jq is missing or a file where the work goes has changes git does not hold, unless it
+  is the work the CCS's run returned, unchanged since, which that run's evidence keeps. Such a file
+  is otherwise written over, since git or the evidence keeps the version before it, and making a
+  document again where it stands is common work.
 - A hook, before a file is written or edited in a run, stops a write anywhere but where the work
   goes and the run's evidence.
 - A hook, before a shell command in a run, stops a git commit or push.

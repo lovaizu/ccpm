@@ -83,6 +83,16 @@ class StartLeavesWorkAlone(unittest.TestCase):
                 self.assertFalse(self.repo.exists(".turn"))
                 self.assertTrue(self.repo.read("docs/note.md").startswith("kept"))
 
+    def test_a_run_starts_where_a_committed_file_was_removed(self):
+        # Given: a file where the work goes, committed and then removed
+        self.repo.write("docs/note.md", "kept\n")
+        commit(self.repo)
+        os.remove(os.path.join(self.repo.path, "docs/note.md"))
+        # When: a run starts
+        code, out = self.start()
+        # Then: it starts, since git holds what was there
+        self.assertEqual(code, 0, out)
+
     def test_a_run_is_refused_where_the_work_goes_is_ignored_by_git(self):
         # Given: a file where the work goes that git is told to ignore
         self.repo.write(".gitignore", "docs/\n")
