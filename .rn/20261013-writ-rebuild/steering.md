@@ -225,7 +225,9 @@ Progress:
      example (`3e514b3`, not yet agreed by the user) as it follows. turn's README (`b09b7be`):
      agreed by the user (2026-10-14). turn's design (`631b628`, `db63479`): agreed by the user
      (2026-10-14); `next` keeps its four values, and items left More with a way in the work come
-     back with `ask the user`, for the caller to decide. Next: turn's code and tests.
+     back with `ask the user`, for the caller to decide. turn's code, tests and callers' page meet
+     them (`136bf30`, CI passes); the console no longer shows turn's file paths. writ's README
+     example needs no change for it: writ already runs turn again until every item is met.
   6. Decided by the user (2026-10-14): writ questions the user before calling turn as deeply as
      mattpocock's `grilling` (behind grill-me): the decisions as a tree, asked as their
      prerequisites settle, each with a recommended answer, facts looked up rather than asked, done
