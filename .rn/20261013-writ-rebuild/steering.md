@@ -203,8 +203,18 @@ Progress:
      (decided by the user: mypy 2.0 and later cannot check code for 3.9, and ty is in beta); all
      of it runs by `dev/check.sh`, on every push and for builders; `plugin.md` step 5 names
      `code.md`.
-  4. Then turn's design and code to the agreed README, writ's README example (no question mid-run),
-     and writ's design again (#3).
+  4. turn's design and code meet the agreed README (2026-10-14, design agreed by the user): turn
+     asks nothing while it works, returns every question left open with `ask the user`, and a run
+     called again on the CCS it returned starts from the work it returned, written over though git
+     does not hold it. Tried on the csvtidy README: run 1 asked nothing and ended with six
+     questions; run 2, with the answers, had them all in the work, and raised three finer ones.
+     Writ's README example asks the license at the end (`3e514b3`), waiting for the user.
+     - Found in the run, for #4: each run raises finer questions (tabs, quotes, every other tool),
+       since `doc.md` B-3 (each idea given in full) and `readme.md` B-3 (over another tool) set no
+       bound; the checklists' root cause, not the timing of questions.
+     - Left for a trial: called from a subagent (the design's assumption); until then
+       `turn/calling-from-a-plugin.md` still says to call turn from the main conversation.
+  5. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
