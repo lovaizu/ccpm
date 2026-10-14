@@ -374,8 +374,12 @@ Progress:
      answer and decision so far and writ keeps nothing between calls (CCS
      `.../scratchpad/design-thin.json`, clone `.../scratchpad/d5`, log `.../scratchpad/d5.log`,
      scratchpad `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/5b8dfbaf-6002-4c66-aec0-eba4d5bb782f/scratchpad`).
-     When it returns (`d5/.tasks/out.json`), judge it from the purpose (a thin wrapper), call turn
-     again only when the design must change, then copy `d5/dev/writ/design.md` here.
+     It returned `ask the user` (`d5/.tasks/out.json`). Decided by the user: writ builds nothing
+     for adding to a checklist; it hands its caller everything it decided or did not act on (turn's
+     rules, questions it judged not needed, items left with why, changes it made to the request,
+     facts it settled), the report leading with them; the README's "report once every item is met"
+     changes to the design. Running again with those answers (`design-thin-2.json`, out
+     `d5/.tasks/out2.json`, log `d5-2.log`). Then copy `d5/dev/writ/design.md` here.
   2. Check writ's README against the design (the link to the callers' page goes).
   3. Make turn's README and design again through turn on the new checklists (the two-reading
      change was written by hand), and show them to the user for agreement.
