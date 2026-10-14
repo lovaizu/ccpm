@@ -11,6 +11,7 @@
 
 ### Changed
 
+- Every checklist asks one thing per item, each item asks what the reader or user gets rather than what is in the work, and each sits in the section its kind of question belongs to — a no names the one thing that falls short, and anyone judging gets the same answer.
 - `/writ:up` settles every item of the checklists before anything is written: it looks up what the repository shows, puts what it can infer to you to confirm, and asks you only the rest, one question at a time; turn then writes the document, has it read as its reader and checks it, and you get the report of each item with the lines that meet it — you answer once, before the writing, and can leave writ at work after.
 - writ needs turn, which installing writ installs, and Python 3.9 and jq, which turn needs — the writing, reading and checking are turn's, done one way for every plugin.
 - The README checklist asks for an opening of one or two sentences saying what the product is and what it gives whom, an example that shows only what the reader does and gets back, why to choose it in its own section after the example, a reason for a requirement only where the reader could not see it, and nothing beyond deciding and getting to the first result, which goes to pages reached from Documentation — a README reads as the ones people are used to, and no longer buries what it gives under how the product works.
