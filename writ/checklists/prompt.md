@@ -17,7 +17,8 @@ A prompt, such as a skill or an agent, is read by the AI that runs it. It lets t
 - find its slips before it hands its work back;
 - fix them before it hands its work back;
 - spend its attention only on what it would not know or do without the prompt;
-- tell from each instruction the action to take;
+- tell from each instruction the action to take, and why it is there;
+- do all its work from a scope of inputs the prompt sets;
 - read each detail only on the runs that need it;
 - reach each such detail straight from the prompt, and so read it whole;
 - learn from each example what the real work asks;
@@ -60,10 +61,12 @@ Does the AI do, on every run, everything that must happen, because each such thi
 
 Look for: what the AI receives and where it reads it, what it hands back and where it writes it, and
 each thing it must do in full, such as reading a file whole; one given only as advice, or not at
-all, fails.
+all, fails. Each is written in the Steps as an instruction to act; one given as a rule or principle
+to keep fails.
 
 Why: what is left out of the steps is done on some runs and not on others; a check given only as
-advice is the step that gets skipped.
+advice is the step that gets skipped; a rule says what must hold, not what to do, so the AI judges
+when it applies and keeps it on some runs only.
 
 ### B-4: Its own judgment within a step
 
@@ -146,9 +149,11 @@ instruction the AI already follows draws attention from the ones it needs.
 
 Can the AI tell from each instruction the action to take?
 
-Look at: each instruction names what to do; one that names only what to avoid fails.
+Look at: each instruction says the action in positive terms; one that says what to avoid, even
+beside what to do, fails.
 
-Why: an instruction that names what to avoid leaves the right action to be guessed.
+Why: an instruction that names what to avoid leaves the right action to be guessed, and puts what
+to avoid in the AI's attention.
 
 ### B-13: Details read only when needed
 
@@ -214,6 +219,25 @@ calls fails.
 
 Why: the AI writes words between its tool calls on some runs and not on others, so what rests on
 them reaches the user only sometimes; a hook shows it on every run.
+
+### B-20: The reason for each instruction
+
+Can the AI tell why each instruction is there?
+
+Look at: each instruction whose reason the Role does not already give carries its reason beside it.
+
+Why: an AI that knows why applies the instruction to cases it did not name, and keeps to it where a
+bare rule is read narrowly.
+
+### B-21: The scope of its inputs
+
+Does the AI do all its work from a scope of inputs the prompt sets?
+
+Look at: the prompt names the whole of what the AI reads, what it works on and what it consults for
+reference, such as other code it follows, and has the AI work from that scope.
+
+Why: what the AI reads outside a set scope shapes its work without anyone having chosen it; what it
+is meant to consult, left unnamed, is found on some runs and missed on others.
 
 ## Usability
 

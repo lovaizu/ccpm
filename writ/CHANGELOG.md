@@ -18,6 +18,7 @@
 - A checklist's version goes up once for each change that reaches those who judge by it, such as a release or a merge to a shared branch, not on every edit — a version names text people judged by, and drafts in between take no number.
 - The design checklist asks that a design leave out how the product behaves in one case where a principle it gives settles it — a design holds principles and decisions, and does not grow a rule beside them for each case a trial meets.
 - The design checklist asks that each check show one quality, the flow of the parts be checked apart from what each part makes, and each check be tried in the smallest situation that shows it — a failing check says which quality broke, and no check pays for real work it does not need.
+- The prompt checklist asks that each step be an instruction to act rather than a rule, said in positive terms, with the reason for each instruction, and that the prompt set the whole scope of what the AI reads — the AI does what the steps say on every run, applies them to cases they did not name, and works from the inputs it was given, not from whatever it happened to open.
 
 - The checklists are in `checklists/`, and the checklist for checklists is `checklist.md` — the files are called by the name the README calls them.
 
