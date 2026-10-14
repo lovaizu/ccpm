@@ -95,12 +95,14 @@ d. **Write the hooks that check the process the prompts' steps set:** a step beg
 
 e. **Try the unit as its user**, with the code that runs it kept in `dev/<plugin>/trials/`, out of
    the line count, on the models the plugin's agents name and never a smaller one. Judge it from
-   the JSONL of every conversation and agent it started, by the design's Verification. A trial that
-   needs a real GitHub repository runs in the private `lovaizu/rn-try`, one at a time.
+   the JSONL of every conversation and agent it started, by the design's Verification. Try the flow
+   of the steps apart from what a step makes, each on the smallest task that still shows it. A
+   trial that needs a real GitHub repository runs in the private `lovaizu/rn-try`, one at a time.
    - Rationale: CI cannot start Claude Code, so each run is its own check, and a smaller model's
      slips are not the plugin's; the outcome shows that something went wrong, the records show
-     where; pull requests and pushes a run makes stay out of every repository people use, and two
-     runs at once would mix in it.
+     where; a trial that tries the flow and the work at once costs the whole work each time it
+     runs, and, failing, does not say which went wrong; pull requests and pushes a run makes stay
+     out of every repository people use, and two runs at once would mix in it.
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
 to what the README and the design say it should be.**

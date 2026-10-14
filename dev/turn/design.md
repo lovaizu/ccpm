@@ -107,14 +107,18 @@ Each must be no worse than in the version in use.
 
 ### Attractive quality
 
-Each is tried on real work, writ's and turn's own documents and prompts, and judged from the records
-(the JSONL of every conversation and agent of the run), since a made-up task shows only that it
-passes.
+Each is judged from the records (the JSONL of every conversation and agent of the run), and tried
+apart from the others. What the work gives its receiver is tried on real work, writ's and turn's own
+documents and prompts, against the items in question, since a made-up task shows only that it
+passes; the flow of a run is tried on the smallest task that still shows it, such as a short note
+against a checklist of a few items.
 
 - Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver on the same
-  list, takes every item returned as Good, including each an earlier run left without one.
+  list, takes every item returned as Good, including each an earlier run left without one. Its
+  flow passes when, on a task whose first reading leaves an item with a way in the work and a
+  question open, one call reads the work twice and asks the question at its end.
 - Asked only what only the user can decide, all at once at the end: on sources that settle some
   choices and leave one open, nothing is asked while the run works, the run ends with `ask the user`
   and that one choice, and, run again with the answer, it ends with `done` and the answer in the
