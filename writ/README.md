@@ -25,8 +25,8 @@ you type follows `>`, and what writ says follows `●`.
 > It tidies a whole folder in one command, and keeps the originals.
 
 ● Writing README.md now, from docs/notes.md. Another AI will read it as such a developer, and it
-  will be checked against the checklists; what is not met yet is written again, and I'll report
-  once every item is met.
+  will be checked against the checklists; what is not met yet and its reader needs is written
+  again, and I'll report on every item.
 
 ● README.md is written. One point is left for you: which license is the tool under? Your notes
   do not say, so the README names none yet.
