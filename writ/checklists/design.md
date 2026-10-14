@@ -8,7 +8,7 @@ version: 0.3.0
 A design document is read by someone who builds or maintains a product. It lets them:
 
 - tell each quality the product must have, and within what limits;
-- tell how each quality is checked, each apart and at the least cost that shows it;
+- tell how each quality is checked;
 - see how each quality is achieved, from the whole to each part;
 - decide whether a change fits the design;
 - tell why each choice was made over the other options.
@@ -95,16 +95,7 @@ versions left it?
 
 Why: a break in backward compatibility shows first to the users who rely on it, after the release.
 
-### B-11: Each check the smallest that shows it
-
-For each check, can the reader tell that it shows one quality apart from the others, the flow of
-the parts apart from what each part makes, in the smallest situation that still shows it?
-
-Why: a check that holds several qualities costs as much as its largest part each time it runs, and,
-failing, does not say which quality broke; a flow tried on real work spends that work's cost on
-showing only that the parts hand on to each other.
-
-### B-12: Principles to judge a change
+### B-11: Principles to judge a change
 
 Can the reader decide whether a change fits the design from its principles, each with the quality or
 the constraint it protects?
@@ -112,7 +103,7 @@ the constraint it protects?
 Why: a principle tied to what it protects tells what breaks when it is not kept, so principles can
 be weighed against each other; one tied to nothing is kept out of habit.
 
-### B-13: Who takes part
+### B-12: Who takes part
 
 Can the reader see, in one place, who takes part, what each does, what passes between them, and what
 each depends on?
@@ -123,14 +114,14 @@ product runs in, other programs and the tools it needs.
 Why: a maintainer changing one part needs to know what it hands to and takes from the others, and
 what it cannot work without.
 
-### B-14: An approach for each quality
+### B-13: An approach for each quality
 
 For each quality the design must have, can the reader find the approach that achieves it?
 
 Why: a quality no approach serves has no way to come about, and an approach that serves no quality
 is kept for nothing.
 
-### B-15: How each approach is built
+### B-14: How each approach is built
 
 For each approach, can the reader tell each part it uses, when the part acts, what it looks at and
 what it does, such as the event a hook runs on and what it stops?
@@ -138,14 +129,14 @@ what it does, such as the event a hook runs on and what it stops?
 Why: a maintainer changes an approach through its parts; a part named without what it does is built
 however its builder reads it, and the quality it was to hold is left to that reading.
 
-### B-16: What must always hold
+### B-15: What must always hold
 
 For each approach, can the reader tell what must hold after every operation?
 
 Why: read as a condition, it keeps holding when one place is changed; read as one step of a
 procedure, it is lost when the procedure changes.
 
-### B-17: Why this way
+### B-16: Why this way
 
 For each choice a maintainer might want to change, can the reader tell which other options were
 weighed, why they were not chosen, and what the choice costs?

@@ -7,7 +7,7 @@
 - A plugin's step can call `writ:up`, from a subagent too, and gets back the document with its report, or the points only it can decide, each with writ's recommended answer — anything a plugin makes goes through writ, with no one there to answer.
 - A checklist writ makes for a kind it has none for, or an addition to one of writ's, is kept at `.writ/checklists/<kind>.md` and used from then on — a kind you write again is held to what it needs, and your team shares it by committing it.
 
-- A checklist for code and its tests (`code`): tests held to what the README and the design ask and seen failing, each told in Given / When / Then and checking one behavior with the least setup that shows it, every branch run, static checks and one style by tool, and stops that say what went wrong and what to do — code and tests are made and judged by one measure, as documents and prompts are.
+- A checklist for code and its tests (`code`): tests held to what the README and the design ask and seen failing, each told in Given / When / Then, every branch run, static checks and one style by tool, and stops that say what went wrong and what to do — code and tests are made and judged by one measure, as documents and prompts are.
 
 ### Changed
 
@@ -16,7 +16,6 @@
 - The README checklist asks for an opening of one or two sentences saying what the product is and what it gives whom, an example that shows only what the reader does and gets back, why to choose it in its own section after the example, a reason for a requirement only where the reader could not see it, and nothing beyond deciding and getting to the first result, which goes to pages reached from Documentation — a README reads as the ones people are used to, and no longer buries what it gives under how the product works.
 - A checklist's version goes up once for each change that reaches those who judge by it, such as a release or a merge to a shared branch, not on every edit — a version names text people judged by, and drafts in between take no number.
 - The design checklist asks that a design leave out how the product behaves in one case where a principle it gives settles it — a design holds principles and decisions, and does not grow a rule beside them for each case a trial meets.
-- The design checklist asks that each check try one quality apart from the others, the flow of the parts apart from what each makes, in the smallest situation that shows it — a check costs only what it must, and a failing one says which quality broke.
 
 - The checklists are in `checklists/`, and the checklist for checklists is `checklist.md` — the files are called by the name the README calls them.
 
