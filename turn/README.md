@@ -23,8 +23,9 @@ itself. The person the work is for, here developers who find the tool on GitHub,
 checklist you name beside it, are what the task is made from.
 
 Each run of turn writes the work, has an AI that did not write it, the reader, read it as the
-developer would, and checks each item of your checklist against that reading. It asks you nothing
-while it works, and shows each step as it reaches it:
+developer would, and checks each item of your checklist against that reading; when the check finds
+something the work itself can give, it writes, reads and checks once more in the same run. It asks
+you nothing while it works, and shows each step as it reaches it:
 
 ```console
 Plan: 1 write → 2 read → 3 check
@@ -34,7 +35,6 @@ Plan: 1 write → 2 read → 3 check
   2 read    Read as a developer who finds the tool on GitHub.
   3 check   ⚠️ Not yet: the developer can tell which Python version the tool needs.
             ⚠️ Not yet: the developer can picture the result on their own files.
-The work is at README.md; running again can give what is not yet there.
 
 Plan: 1 write → 2 read → 3 check
 
@@ -60,9 +60,10 @@ it is not what you want, press Esc and say what you want instead; turn starts ov
 from the work as it stands.
 
 Each ⚠️ is something the work does not give the developer yet. When the work itself can give it,
-turn ends the run saying so, and Claude runs turn again from the work as it stands, as above. When
-Claude judges another run will not give it, Claude stops and tells you what is still missing, for
-you to decide whether to run again or take the work as it is.
+turn makes the work again on it, as above. If the second reading still finds something missing,
+turn ends the run saying so; Claude then runs turn again from the work as it stands, or, when it
+judges another run will not give it, tells you what is still missing, for you to decide whether to
+run again or take the work as it is.
 
 Each ❓ is something only you can decide, which your notes and checklist leave open. turn leaves it
 out of the work and ends the run by asking it, with every other such question, instead of with

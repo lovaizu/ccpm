@@ -89,8 +89,8 @@ Each must be no worse than in the version in use.
 ### Non-goals
 
 - Deciding what the work should be: the caller does it, knowing what was already agreed.
-- Deciding whether to run again: the caller does it from what a run returns, knowing what was
-  agreed.
+- Deciding whether to run again after a run's second reading: the caller does it from what the run
+  returns, knowing what was agreed.
 - Finding what no item asks, which goes into the checklist; and holding checklists, which belong to
   whoever knows the kind of work, such as writ.
 
@@ -338,15 +338,24 @@ met, every line the same shape reaches, and the change of shape taken at each of
   A script refuses a way said of lines rather than of the whole work. Where a way needs what only
   the user can decide, the learner raises a question, which the orchestrator leaves open unless the
   work or the sources answer it.
-- Each item without a Good is returned as More with its way, and `next` is `ask the user`; a way in
-  how such work is made is returned as a rule the caller carries into later tasks, and one in what
-  the caller wrote goes back to the caller with `to the caller`.
+- When the first reading leaves an item without a Good whose way lies in the work, and no question
+  is left open, a script starts the run's second reading: the work is made again on those ways,
+  from the work as it stands, and read and decided once more, as if the caller had called turn
+  again on what the first reading returned.
+- Each item still without a Good is returned as More with its way, and `next` is `ask the user`; a
+  way in how such work is made is returned as a rule the caller carries into later tasks, and one in
+  what the caller wrote goes back to the caller with `to the caller`.
 - The caller decides whether to call turn again, which makes the work again on the ways that lie in
   it, from the work as it stands, or to put them to the user.
-- Must hold: a run has the work read and decided once, and returns the version last read.
-- Weighed: one reading per run, the caller deciding whether to run again, since the caller knows what
-  was agreed, and already calls turn again with the user's answers, so making again is one more call
-  of the same kind. The cost: the caller reads what each run returns before deciding.
+- Must hold: a run has the work read and decided at most twice, and returns the version last read.
+- Weighed: a second reading by default, since the first reading is where the generator first sees
+  where the receiver stops, and in every run of writ's rebuild it left items whose way lay in the
+  work, so the caller called again without deciding anything new. The cost: a run takes up to twice as long.
+- Weighed: no second reading while a question is left open, since the work is made again with the
+  answer anyway. The cost: items whose way lies in the work wait for the run with the answer.
+- Weighed: no third reading, since the caller knows what was agreed and decides from what a second
+  reading still leaves whether to fix the work, the request or a checklist. The cost: the caller
+  reads what the run returns before deciding.
 
 ### The console
 

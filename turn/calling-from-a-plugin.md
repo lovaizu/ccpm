@@ -102,12 +102,13 @@ it calls turn again.
 - `done`: the work is where `deliverable` says, and nothing is left for the user. The step moves
   on.
 - `ask the user`: the work is where `deliverable` says. Each `difference` is a question only the
-  user can decide, or what the work does not give yet with how it would. For what the work does not
-  give yet, the step decides: call turn again with the CCS it returned, which makes the work again
-  on those ways from the work as it stands, or put it to the user. Put each question to the user,
-  add each answer as an `answer` in `constraints`, and call turn again. If the user says what they
-  want, rewrite your own parts from their words, as if they had asked so from the start, and call
-  turn again. If the user takes the work as it is, the step moves on.
+  user can decide, or what the work does not give yet with how it would. When no question was left
+  open, the run has already made the work again once on what it did not give. For what the work
+  still does not give, the step decides: call turn again with the CCS it returned, which makes the
+  work again on those ways from the work as it stands, or put it to the user. Put each question to
+  the user, add each answer as an `answer` in `constraints`, and call turn again. If the user says
+  what they want, rewrite your own parts from their words, as if they had asked so from the start,
+  and call turn again. If the user takes the work as it is, the step moves on.
 - `to the caller: <reason>`: the CCS cannot be run, or an item would be met only by a change in what
   the step wrote the work should be, which turn never rewrites. The reason says which; in the
   second case the work is where `deliverable` says. The step corrects its own parts and calls turn
