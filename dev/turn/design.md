@@ -37,8 +37,9 @@ The words used throughout:
   that did not write it, each Good shown in its lines, and what that reading could not take made
   again on how it would be given. The user hands the work on without first reading it as its
   receiver.
-- Asked only what only the user can decide, as soon as it is seen: nothing is asked that what the
-  work should be, or its sources, already answers, and the work goes on while the user answers.
+- Asked only what only the user can decide, all at once at the end: nothing is asked that what the
+  work should be, or its sources, already answers, and nothing is asked while the run works, so the
+  user can leave turn at work.
 - Seeing the work as it goes: the user can tell from the console how far a run has come, and stop a
   run whose aim they do not want before the work is written, saying what they want instead.
 - A plugin decides from what turn returns: a plugin hands turn one task and decides its next move
@@ -96,7 +97,8 @@ Each must be no worse than in the version in use.
 
 - turn is used by Claude, on a person's behalf, in a conversation or a plugin's step.
 - turn runs in Claude Code and holds only skills, agents, hooks and scripts; installing copies only
-  its folder; its hooks run in every session where it is installed; a subagent cannot start others.
+  its folder; its hooks run in every session where it is installed; a subagent can neither ask the
+  user nor hear from its caller while it works.
 - Users' machines run Python 3.9 or later with the standard library only, and jq.
 - The work is in a git repository.
 
@@ -112,10 +114,10 @@ passes.
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver on the same
   list, takes every item returned as Good, including each the first round left without one.
-- Asked only what only the user can decide, as soon as it is seen: on sources that settle some
-  choices and leave one open, that one is asked before the work is first written, the generator
-  goes on while the user answers, the answer is in the work the first user reads, and no question
-  is answered by what the work should be or its sources.
+- Asked only what only the user can decide, all at once at the end: on sources that settle some
+  choices and leave one open, nothing is asked while the run works, the run ends with `ask the user`
+  and that one choice, and, run again with the answer, it ends with `done` and the answer in the
+  work; no question is answered by what the work should be or its sources.
 - Seeing the work as it goes: the console alone tells the round and step the records show; a run
   stopped on its aim has written no work of that aim, and then makes what the user said.
 - A plugin decides from what turn returns: tried on runs that end in each value of `next`, the move
@@ -158,11 +160,14 @@ checklists give a list with every opening and item; every place a returned CCS p
   and leaves how it thinks within a step to it. Each answers, as the orchestrator decides, in a form
   with one place per item, since the form, not the wording, holds it to its aim. Protects: nothing passes unshown, the first-round share.
 - A question for the user may come from the roles given the sources: the orchestrator, the
-  generator and the learner; the orchestrator decides each, asking it at once or showing where it is
-  answered. The first user and the evaluator raise none, since without the sources they cannot tell
-  what only the user can decide, and a place for what they did not find would be a place for faults;
-  what they did not take reaches the learner as an item without a Good. Protects: asked only what
-  only the user can decide.
+  generator and the learner; the orchestrator decides each, showing where it is answered or leaving
+  it open, and the run returns every open one at its end. The first user and the evaluator raise
+  none, since without the sources they cannot tell what only the user can decide, and a place for
+  what they did not find would be a place for faults; what they did not take reaches the learner as
+  an item without a Good. Protects: asked only what only the user can decide.
+- turn asks nothing while it works, so it runs the same wherever it is called, a subagent included,
+  and is stopped or corrected only from where it was called. Protects: asked only what only the user can
+  decide, a plugin decides from what turn returns.
 - What must come out the same every time is done by a script or a hook: a script does what a step
   asks, and refuses a step whose steps before it are not done; a hook sees, as Claude Code runs the
   run, that a step was not left out or done otherwise, and stops it saying which step and what it
@@ -193,16 +198,13 @@ sequenceDiagram
   C->>O: CCS
   O->>S: CCS, checklists
   S-->>O: CCS checked, the list
-  O-->>U: what the sources leave open
   loop round 1, and round 2 from the ways to a Good
     O-->>U: console: the aim, before the work is written
     O->>G: what the work should be, the list
-    U-->>O: answers, while the generator works
     G-->>O: work, grounds, questions
-    O-->>U: questions raised in the making
     O->>S: work, grounds
     S-->>O: coverage
-    Note over O,G: sent back with each answer until every question is answered and every item seen met
+    Note over O,G: sent back until every item is seen met or waits on a question left open
     S->>GIT: a fresh copy with the work
     O->>F: the copy, receiver, use, list
     F-->>O: what it took, and where
@@ -214,18 +216,18 @@ sequenceDiagram
     Note over O: decides every item on its form
     O->>L: items without a Good
     L-->>O: ways to a Good, each with its items, questions
-    O-->>U: questions raised by the learner
   end
-  O->>S: decisions, ways to a Good, new CCS
+  O->>S: decisions, ways to a Good, questions left open, new CCS
   S-->>O: the run's evidence, CCS checked
   O-->>C: new CCS
+  O-->>U: console: where the work is, and every question left open
   Note over G,CC: during a run, turn's hooks, run by Claude Code, keep each role to its steps, show the console, and stop what would change the user's work
 ```
 
-The orchestrator is a skill, so it runs in the caller's conversation, where it can start the agents
-and ask the user while they work, and where the user sees its console and presses Esc. A subagent
-could not start the agents; the cost is room in the caller's conversation, and no call from inside
-a subagent.
+The orchestrator is a skill, so it runs where its caller runs and can start the agents there: in a
+conversation, the user sees its console and presses Esc; in a subagent, which may start agents of
+its own, the caller reads what it returns (assumption). The cost is room in the caller's
+context.
 
 ### The checklist as the measure
 
@@ -252,23 +254,25 @@ What can be seen before the reading costs a whole round when found in it, so the
 first user only once nothing in it is left open.
 
 - Before the work is first written, the orchestrator reads each item against what the work should
-  be and its sources, and asks the user at once what they leave open.
-- The generator makes, in the background, a work that meets every item, and names on its form the
-  lines that meet each; what the sources do not settle it keeps out of the work and raises as a
-  question, which the orchestrator asks at once unless the work or the sources answer it. So the
-  user answers while the work goes on, and the answers go back to the caller in the CCS.
+  be and its sources, and leaves open as a question what they do not settle.
+- The generator makes a work that meets every item, and names on its form the lines that meet each;
+  what the sources do not settle it keeps out of the work and raises as a question, which the
+  orchestrator leaves open unless the work or the sources answer it.
 - When the generator hands back, a script prints its coverage, and the orchestrator reads the whole
-  work for each item from the lines named and coverage, and sends the work back with each answer
-  and each item it does not see met, saying how it would be.
-- A script hands the first user nothing until every question is answered and every item is seen
-  met.
-- Must hold: no work reaches the first user with a question the user has not answered, or with any
-  other item the orchestrator does not see met.
+  work for each item from the lines named and coverage, and sends the work back with each item it
+  does not see met, saying how it would be.
+- A script hands the first user nothing until every item is seen met or waits on a question left
+  open.
+- When the run returns, each question left open goes to the caller with the item it keeps from a
+  Good, and `next` is `ask the user`; the caller asks the user and calls turn again with the
+  answers, from the work as it stands.
+- Must hold: no work reaches the first user with an item the orchestrator does not see met, but
+  one that waits on a question left open; no run returns `done` with a question left open.
 - Weighed: sending back has no limit, since a work sent on unsettled costs a round. The cost: a
   generator that never settles runs until the user stops it, and time and tokens show it.
-- Weighed: the orchestrator asks the user itself, not through the caller, since the user would
-  otherwise wait a whole run to be asked, and the work made meanwhile would be made again. The
-  cost: turn talks to the user, and a caller learns the answers from the returned CCS.
+- Weighed: every question at the end, not each as it is seen, since a subagent cannot ask the user,
+  so only a run that asks nothing runs the same wherever it is called, and the user can leave it at
+  work. The cost: a work with a question left open is made again in a run with the answer.
 
 ### Keeping each role to its steps
 
@@ -282,8 +286,8 @@ as it happens, not found later in an answer that looks right.
   wrote for it.
 - A hook, as an agent of the run stops, keeps it at work until a script sees every place of its
   form filled.
-- A hook, as the orchestrator stops, keeps it at work while the run is open, unless it waits for the
-  user or for an agent of the run; it says so once, so the orchestrator is never held in a loop.
+- A hook, as the orchestrator stops, keeps it at work while the run is open; it says so once, so
+  the orchestrator is never held in a loop.
 - Must hold: every answer the orchestrator decides from fills every place of its form.
 
 ### Reading in the receiver's place
@@ -333,9 +337,10 @@ met, every line the same shape reaches, and the change of shape taken at each of
 - The learner gives, for each item left without a Good, that way, and says whether it lies in the
   work, in what the caller wrote, or in how such work is made; it groups the items one way serves.
   A script refuses a way said of lines rather than of the whole work. Where a way needs what only
-  the user can decide, the learner raises a question, which the orchestrator asks at once.
+  the user can decide, the learner raises a question, which the orchestrator leaves open unless the
+  work or the sources answer it.
 - A script refuses to end the run after round 1 while a way lies in the work. The generator makes
-  the work again on those ways, with the answers, in a second round, read and decided as the first.
+  the work again on those ways in a second round, read and decided as the first.
 - What round 2 leaves without a Good is returned as More with its way; a way in how such work is
   made is returned as a rule the caller carries into later tasks, and one in what the caller wrote
   goes back to the caller.
