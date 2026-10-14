@@ -214,7 +214,16 @@ Progress:
        bound; the checklists' root cause, not the timing of questions.
      - Left for a trial: called from a subagent (the design's assumption); until then
        `turn/calling-from-a-plugin.md` still says to call turn from the main conversation.
-  5. Then writ's design again (#3).
+  5. Decided by the user (2026-10-14): turn runs one round per call (write, read, check) and
+     returns; whether to run again, or what to fix (the work, the request or a checklist), is the
+     caller's to decide, since the caller knows what was agreed, and the loop of answering and
+     calling again already lives with the caller. So `next` says to run again when a way lies in
+     the work, and the caller calls again with the CCS returned or stops by its own judgment; the
+     caller writes no loop beyond that. This changes turn's README (the plan line, "two rounds at
+     most"), its design (the goal that a plugin writes no loop, "`next` gains no value", the second
+     round, the learner's place), the code and tests, and the callers' page; then writ's README
+     example (`3e514b3`, not yet agreed by the user) as it follows. To do next, with the sources.
+  6. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
