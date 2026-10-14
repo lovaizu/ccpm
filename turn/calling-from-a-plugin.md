@@ -48,8 +48,8 @@ What happens, in order:
 - `out`: where turn writes its CCS back. It must not exist yet: if it does, turn writes nothing,
   ends before any work and says why, since it never writes over a file.
 
-Call turn from the main conversation, not from inside a subagent. turn starts agents of its own, and
-a subagent cannot start other subagents (Claude Code's documentation on subagents).
+turn runs the same from the main conversation or from inside a subagent: it asks nothing while it
+works, and a subagent can start the agents turn starts (Claude Code's documentation on subagents).
 
 Name `turn` in `dependencies` in your plugin's `.claude-plugin/plugin.json`, so that installing your
 plugin installs turn.

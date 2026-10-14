@@ -225,7 +225,7 @@ sequenceDiagram
 
 The orchestrator is a skill, so it runs where its caller runs and can start the agents there: in a
 conversation, the user sees its console and presses Esc; in a subagent, which may start agents of
-its own, the caller reads what it returns (assumption). The cost is room in the caller's
+its own, the caller reads what it returns. The cost is room in the caller's
 context.
 
 ### The checklist as the measure

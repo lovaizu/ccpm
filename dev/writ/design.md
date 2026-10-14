@@ -235,7 +235,7 @@ sequenceDiagram
 writ's skill runs where it is called, in the user's conversation or in a calling plugin's step, and
 calls turn from there. Claude Code lets a subagent start agents of its own (Claude Code's
 documentation on subagents), and turn asks nothing while it works, so it runs the same in either
-place (assumption: turn has not yet been tried from a subagent).
+place.
 
 ### Choosing the checklists
 
