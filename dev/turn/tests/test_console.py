@@ -16,6 +16,7 @@ from repo import drop
 WORK = "# Note\n\nRun make.\n"
 AIM = "a new teammate can start work alone"
 PLAN = "Plan: 1 write → 2 read → 3 check"
+SECOND = ".turn/out/2"
 LICENSE = "Which license is the note under? The notes do not say."
 WAY = {
     "aim": "the teammate takes it in at a glance",
@@ -191,18 +192,21 @@ class Console(unittest.TestCase):
         # Then: what the work is still to give is shown in the learner's words, with no item named
         self.assertEqual(lines, [f"  3 check   ⚠️ Not yet: {WAY['aim']}"])
 
-    def test_a_run_from_the_work_an_earlier_run_returned_reads_it_again(self):
-        # Given: a run that returned an item with a way in the work, called again on its CCS
+    def second(self):
+        """The first reading ended on a way in the work, its lines shown, and the second begun."""
         self.say("aim", ".turn/out", AIM)
         self.read(f1=False)
         fill(self.repo, form("learner"), {"note F-1": WAY})
-        self.say("end", ".turn/out")
-        self.repo.write("again.json", self.repo.read("out.json"))
-        self.say("start", "again.json", "out-2.json", "s1")
-        # When: its aim is set, and its work read
-        self.say("aim", ".turn/out-2", "the same, cut to one line")
-        self.read(work=".turn/out-2")
-        code, lines, told = post(self.repo, **bash("jq . .turn/out-2/questions.json"))
+        self.shown()
+        return self.say("end", ".turn/out")
+
+    def test_the_second_reading_reads_the_work_again(self):
+        # Given: the first reading ended on a way in the work
+        self.second()
+        # When: the second reading's aim is set, and its work read
+        self.say("aim", SECOND, "the same, cut to one line")
+        self.read(work=SECOND)
+        code, lines, told = post(self.repo, **bash(f"jq . {SECOND}/questions.json"))
         # Then: the user is shown the plan, its aim, and that the work is read again as the same
         # receiver
         self.assertEqual(code, 0, told)
@@ -215,6 +219,16 @@ class Console(unittest.TestCase):
                 "  2 read    Read again, as a new teammate.",
             ],
         )
+
+    def test_the_end_of_the_first_reading_shows_the_second_begin(self):
+        # Given: the first reading's lines shown, with a way in the work
+        # When: the first reading ends
+        out = "\n".join(self.second())
+        command = f'python3 "{SCRIPT}" end .turn/out; echo "EXIT $?"'
+        code, lines, told = post(self.repo, **bash(command, out + "\nEXIT 0"))
+        # Then: the user is shown the second reading's plan, and not where the work is
+        self.assertEqual(code, 0, told)
+        self.assertEqual(lines, [PLAN])
 
     def ended(self, *args):
         out = "\n".join(self.say(*args))
@@ -245,15 +259,17 @@ class Console(unittest.TestCase):
         )
 
     def test_the_end_says_running_again_can_give_what_the_work_does_not_yet_give(self):
-        # Given: the work read, with an item left without a Good, given a way in the work
-        self.say("aim", ".turn/out", AIM)
-        self.read(f1=False)
-        fill(self.repo, form("learner"), {"note F-1": WAY})
+        # Given: the second reading's work read, with an item still without a Good, given a way in
+        # the work
+        self.second()
+        self.say("aim", SECOND, AIM)
+        self.read(f1=False, work=SECOND)
+        fill(self.repo, form("learner", SECOND), {"note F-1": WAY})
         # When: the run ends
         # Then: the user is shown where the work is, and that running again can give what is not
         # yet there
         self.assertEqual(
-            self.ended("end", ".turn/out"),
+            self.ended("end", SECOND),
             ["The work is at docs/note.md; running again can give what is not yet there."],
         )
 

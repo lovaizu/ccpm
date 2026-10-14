@@ -338,8 +338,8 @@ met, every line the same shape reaches, and the change of shape taken at each of
   A script refuses a way said of lines rather than of the whole work. Where a way needs what only
   the user can decide, the learner raises a question, which the orchestrator leaves open unless the
   work or the sources answer it.
-- When the first reading leaves an item without a Good whose way lies in the work, and no question
-  is left open, a script starts the run's second reading: the work is made again on those ways,
+- When the first reading leaves an item without a Good whose way lies in the work, and nothing for
+  the user or the caller to decide, a script starts the run's second reading: the work is made again on those ways,
   from the work as it stands, and read and decided once more, as if the caller had called turn
   again on what the first reading returned.
 - Each item still without a Good is returned as More with its way, and `next` is `ask the user`; a
@@ -351,8 +351,9 @@ met, every line the same shape reaches, and the change of shape taken at each of
 - Weighed: a second reading by default, since the first reading is where the generator first sees
   where the receiver stops, and in every run of writ's rebuild it left items whose way lay in the
   work, so the caller called again without deciding anything new. The cost: a run takes up to twice as long.
-- Weighed: no second reading while a question is left open, since the work is made again with the
-  answer anyway. The cost: items whose way lies in the work wait for the run with the answer.
+- Weighed: no second reading while a question or a way in what the caller wrote is left, since the
+  work is made again with the answer or the caller's change anyway. The cost: items whose way lies
+  in the work wait for that run.
 - Weighed: no third reading, since the caller knows what was agreed and decides from what a second
   reading still leaves whether to fix the work, the request or a checklist. The cost: the caller
   reads what the run returns before deciding.

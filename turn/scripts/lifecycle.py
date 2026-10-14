@@ -13,7 +13,9 @@ from repo import changed, drop, elsewhere, git
 from state import CLOSING, RUN, Stop, read_json, the_work, write_json
 
 
-def start(src, out, session):
+def start(src, out, session, work=None, before=None):
+    """Starts a run on a CCS; a run's second reading starts in a folder of the first's, with what the
+    repository held before the first."""
     if os.path.exists(out):
         raise Stop(f"{out} already exists; turn never writes over a file, so name a new out")
     if shutil.which("jq") is None:
@@ -48,8 +50,9 @@ def start(src, out, session):
             f"{deliverable} has changes git does not hold; commit or remove them, so that what was "
             "there can be got back once turn writes the work there"
         )
-    before = changed()
-    work = os.path.join(".turn", os.path.splitext(os.path.basename(out))[0])
+    second = work is not None
+    before = changed() if before is None else before
+    work = work or os.path.join(".turn", os.path.splitext(os.path.basename(out))[0])
     lists = [checklist(p) for p in entries(ccs, "retrieved_artifacts", "viewpoint")]
     listed = {
         "checklists": [c for c, _ in lists],
@@ -60,6 +63,8 @@ def start(src, out, session):
     lay(work, laid)
     write_json(os.path.join(work, "questions.json"), [])
     run = {"session": session, "work": work, "in": src, "out": out, "ways": ways, "before": before}
+    if second:
+        run["second"] = True
     for path in begun:
         shutil.copyfile(path, os.path.join(work, os.path.basename(deliverable)))
         run["from"] = path
@@ -117,6 +122,14 @@ def end(work):
         episodic_trace=[{"work": path}]
         + [{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence],
     )
+    if nxt == "ask the user" and not questions and not run.get("second"):
+        # The first reading left ways only in the work: the run reads the work a second time, as
+        # the caller would call turn again on what the first returned.
+        again = os.path.join(work, "again.json")
+        write_json(again, ccs)
+        os.remove(RUN)
+        start(again, run["out"], run["session"], os.path.join(work, "2"), run["before"])
+        return
     write_json(run["out"], ccs)
     if questions:
         points = "one point" if len(questions) == 1 else f"{len(questions)} points"

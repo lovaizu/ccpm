@@ -37,12 +37,14 @@ def elsewhere(run, deliverable):
     run's evidence, or none."""
     now = changed()
     ours = (deliverable, run["out"], RUN)
+    # A second reading's folder lies in the first's, and both hold the run's evidence.
+    kept = os.path.dirname(run["work"]) if run.get("second") else run["work"]
     names = sorted(
         p
         for p in set(run["before"]) | set(now)
         if run["before"].get(p, "") != now.get(p, "")
         and p not in ours
-        and not p.startswith(run["work"] + "/")
+        and not p.startswith(kept + "/")
     )
     return [f"Also changed during the run, outside the work: {', '.join(names)}"] if names else []
 

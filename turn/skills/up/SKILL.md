@@ -66,7 +66,8 @@ it again.
 12. If an item of your form is not met, run `up.py brief <folder> learner`, and call the
     `turn:learner` agent with the path it prints as the whole prompt. Then decide each question the
     learner added, as in step 7.
-13. Run `up.py end <folder>`, and return to the caller.
+13. Run `up.py end <folder>`. If it prints what step 1 prints, the run's second reading has begun
+    in the folder it names: go on from step 2 with it. Otherwise return to the caller.
 14. If the user stops you with Esc, stop each agent of the run still at work, and run
     `up.py stop <folder>`. If a
     plugin's step called you, return to it. Otherwise the conversation is the caller: in the CCS it
