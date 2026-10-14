@@ -128,14 +128,15 @@ shows that something went wrong and the records show where.
   repository shows. It passes when the user is asked the one point, alone in its message, is given
   the inferred one as a proposal, is never asked the fact, and gets the document with both answers
   in it.
-- Judged from the report: it passes when, for every item, the lines the report gives are the lines
-  turn's decision names, and a fresh agent reading only those lines takes the item from them.
+- Judged from the report: tried on the README of the first trial. It passes when, for every item,
+  a fresh agent outside the job, reading only the lines the report gives, takes the item from them.
 - A kind writ has no checklist for: tried on release notes. It passes when the user is offered the
   two choices; with the second, the checklist is made with the user and put at
   `.writ/checklists/<kind>.md`, and a second request of that kind uses it without asking again.
 - A document the user already has: tried on a committed document that misses some items. It passes
-  when the document comes back meeting every item, made again from what it held, and git shows what
-  it was.
+  when a fresh agent outside the job, reading the returned document as its reader on the same
+  checklists, takes every item from it, the document is made again from what it held, and git shows
+  what it was.
 
 ### One-dimensional quality
 
@@ -150,13 +151,13 @@ Each is a test on the script or hook that holds it, in the case that would break
 - Nothing guessed: a CCS asked for while an item of the checklists has no place filled, which the
   script refuses.
 - The report is turn's decisions: a returned CCS whose evidence decides an item More, which the
-  script refuses to make a report from, and one whose evidence names other lines than the report
-  would give, which the report keeps as turn decided.
+  script refuses to make a report from, and one whose evidence decides every item Good, from which
+  the report gives each item the lines turn's evidence names.
 - The user's files can be got back: writ's skill writing or editing a file outside its own job
   files during a job, which a hook stops.
 - Missing tools: python3 missing, and jq missing, at the start of a job.
-- Outside a job: each hook run in a session with no job of writ open, python3 missing included,
-  which does nothing.
+- Outside a job: each hook run in a session with no job of writ open, another session's job open
+  and python3 missing included, which does nothing.
 - Installing works: `claude plugin validate --strict` on writ and on the marketplace, in CI.
 
 ### Backward compatibility
@@ -211,7 +212,7 @@ sequenceDiagram
   participant GIT as git
   U->>W: /writ:up and a request, or a document's path
   P->>W: writ:up and a request
-  W->>S: is jq there
+  W->>S: are python3 and jq there
   W->>K: the checklists for the document's kind
   W->>U: a question at a time, each with a recommended answer
   U-->>W: answer

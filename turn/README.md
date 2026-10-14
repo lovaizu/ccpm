@@ -113,7 +113,8 @@ assumption, and what it gives over asking Claude alone follows from it:
   ```
 
   The [writ checklists](../writ/checklists/) in this repository cover documents,
-  READMEs, design documents and prompts; copy the ones you need into your repository.
+  READMEs, design documents, prompts, code and its tests, and checklists; copy the ones you need
+  into your repository.
 
 ## Installation
 
