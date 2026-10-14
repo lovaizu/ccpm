@@ -2,6 +2,7 @@
 from it, and the job closed on what turn returned."""
 
 import datetime
+import hashlib
 import json
 import os
 import re
@@ -103,7 +104,9 @@ def form(folder, *checklists):
         for p in checklists
         for i, t in headings(p)[1].items()
     }
-    laid: dict = {p: "" for p in ("deliverable", "receiver", "use", "acceptance", "language")}
+    laid: dict = {
+        p: "" for p in ("deliverable", "receiver", "use", "acceptance", "language", "asking")
+    }
     laid.update(sources=[], open=[])
     # Laid again with another checklist, the form keeps every place already settled.
     path = os.path.join(folder, "form.json")
@@ -124,8 +127,12 @@ def ccs(folder):
         if item["settled"] not in ASKED and not os.path.isfile(item["settled"].split(":")[0]):
             found.append(f"{i}: say where it is settled: answer, proposal confirmed, or a file")
     found += [f"{o['item']} is open: {o['question']}" for o in settled["open"]]
+    if settled["asking"]:
+        found.append(f"a question waits on the user: {settled['asking']}")
     if found:
         raise Stop("\n".join(found))
+    n = calls(folder) + 1
+    by_turn(folder, settled["deliverable"], n - 1)
     decisions = os.path.join(folder, "decisions.md")
     with open(decisions, "w") as f:
         f.write(
@@ -147,7 +154,6 @@ def ccs(folder):
         + [{"source": p} for p in [decisions] + settled["sources"]],
         "constraints": [{"language": settled["language"]}] if settled["language"] else [],
     }
-    n = calls(folder) + 1
     given = {p: [] for p in TURNS}
     if n > 1:
         # turn is called again with the CCS it returned: its own parts as they are, and writ's
@@ -158,6 +164,13 @@ def ccs(folder):
     ours["constraints"] += given.pop("constraints", [])
     given.update(ours)
     write_json(os.path.join(folder, f"in-{n}.json"), given)
+    # The hook on turn's call checks that turn is called with this CCS, as the script wrote it.
+    job = read_json(JOB, JOB)
+    job["given"] = [
+        os.path.join(folder, f"in-{n}.json"),
+        digest(os.path.join(folder, f"in-{n}.json")),
+    ]
+    write_json(JOB, job)
     print(
         f"in: {os.path.join(folder, f'in-{n}.json')}\nout: {os.path.join(folder, f'out-{n}.json')}"
     )
@@ -178,6 +191,7 @@ def end(folder, out=""):
         raise Stop(f"{returned} is not there; call turn with the CCS first")
     ccs = read_json(returned, returned)
     deliverable = ccs["focal_entities"][0]["deliverable"]
+    by_turn(folder, deliverable, n)
     if ccs["predictive_cue"] != [{"next": "done"}]:
         left = [i for i, d in decisions_of(ccs).items() if not d["met"]]
         if out:
@@ -256,3 +270,24 @@ def changed(*paths):
         text=True,
     ).stdout
     return [line[3:] for line in status.splitlines()]
+
+
+def digest(path):
+    with open(path, "rb") as f:
+        return hashlib.sha1(f.read()).hexdigest()
+
+
+def by_turn(folder, deliverable, n):
+    """Stops when the document is not as turn left it: as git holds it before turn's first return,
+    and as the work turn returned last after it."""
+    if n:
+        ccs = read_json(os.path.join(folder, f"out-{n}.json"), "what turn returned")
+        work = next(v for e in ccs["episodic_trace"] for k, v in e.items() if k == "work")
+        kept = os.path.isfile(deliverable) and digest(deliverable) == digest(work)
+    else:
+        kept = not changed(deliverable)
+    if not kept:
+        raise Stop(
+            f"{deliverable} was written outside turn; the document is written by turn alone, so "
+            "put it back as turn left it"
+        )

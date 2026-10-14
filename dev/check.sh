@@ -22,3 +22,10 @@ for tests in dev/*/tests; do
 done
 coverage combine
 coverage report
+
+# A malformed manifest fails for every user at install, so each plugin and the marketplace pass
+# Claude Code's own check of them.
+for manifest in */.claude-plugin/plugin.json; do
+  claude plugin validate "${manifest%/.claude-plugin/plugin.json}" --strict
+done
+claude plugin validate . --strict

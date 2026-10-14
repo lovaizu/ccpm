@@ -1,6 +1,7 @@
 {
   "name": "writ",
-  "description": "Makes a document read as if a person wrote it for its reader: settles who reads it and what they do next, writes it, has it checked by a role that does not know the discussion, and returns it with Good and More for every question.",
+  "description": "With writ, Claude Code makes work for someone else, such as a README, a design document, a prompt, or code and its tests, that its reader understands in one reading, so you can hand it on without reading it over.",
   "version": "0.2.0",
-  "author": { "name": "lovaizu" }
+  "author": { "name": "lovaizu" },
+  "dependencies": ["turn"]
 }

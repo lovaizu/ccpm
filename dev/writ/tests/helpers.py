@@ -140,6 +140,8 @@ def returned(repo, folder, nxt, More, n=1):
             }
         ),
     )
+    repo.write(f"{work}/README.md", "# csvtidy\n")
+    repo.write("README.md", "# csvtidy\n")
     ccs["predictive_cue"] = [{"next": nxt}]
     ccs["semantic_gist"] = [{"difference": f"{i} (its question): a way"} for i in More]
     ccs["episodic_trace"] = [

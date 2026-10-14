@@ -55,7 +55,8 @@ from any file.
    - What you can infer but no file says, put to the user as a proposal to confirm; once confirmed,
      `settled` is `proposal confirmed`.
    - What only the user can decide, ask with the answer you recommend; `settled` is `answer`.
-   Ask one question per message, and wait for the answer before the next.
+   Ask one question per message: write it to `asking` in the form, ask it, and wait for the
+   answer; once it is settled, empty `asking` before the next.
 5. If a plugin's step called you and a point is open, run `up.py back <folder> <out>`, and end.
    Otherwise run `up.py ccs <folder>`. It prints the two lines to call turn with.
 6. Tell the user, in one message, that the document is being written from the sources, that

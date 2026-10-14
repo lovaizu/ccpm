@@ -136,6 +136,7 @@ class Form(unittest.TestCase):
                 "use": "",
                 "acceptance": "",
                 "language": "",
+                "asking": "",
                 "sources": [],
                 "open": [],
                 "checklists": [
@@ -202,6 +203,43 @@ class Ccs(unittest.TestCase):
         self.assertIn("receiver is not settled", out)
         self.assertIn("doc B-2: the decision is not settled", out)
         self.assertFalse(self.repo.exists(f"{folder}/in-1.json"))
+
+    def test_no_ccs_is_written_while_a_question_waits_on_the_user(self):
+        # Given: every place is settled, and a question waits on the user
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder, asking="Which license is the tool under?")
+        # When: the CCS is asked for
+        code, out = run(self.repo, "ccs", folder)
+        # Then: the question is named, and no CCS is written
+        self.assertEqual(code, 1)
+        self.assertIn("a question waits on the user: Which license is the tool under?", out)
+        self.assertFalse(self.repo.exists(f"{folder}/in-1.json"))
+
+    def test_no_ccs_is_written_once_the_document_was_written_outside_turn(self):
+        # Given: the document was written before turn was called
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        self.repo.write("README.md", "# csvtidy\n")
+        # When: the CCS is asked for
+        code, out = run(self.repo, "ccs", folder)
+        # Then: it says the document is written by turn alone
+        self.assertEqual(code, 1)
+        self.assertIn("README.md was written outside turn; the document is written by turn", out)
+
+    def test_no_ccs_or_report_is_made_once_the_document_differs_from_what_turn_returned(self):
+        # Given: turn returned the document, and it was changed after
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "done", More=())
+        self.repo.write(".turn/out-1/README.md", "# csvtidy\n")
+        self.repo.write("README.md", "# csvtidy, changed\n")
+        # When: the CCS is asked for again, and the job is ended
+        got = [run(self.repo, "ccs", folder), run(self.repo, "end", folder)]
+        # Then: both say the document is written by turn alone
+        for code, out in got:
+            self.assertEqual(code, 1)
+            self.assertIn("README.md was written outside turn", out)
 
     def test_a_form_broken_while_it_was_filled_is_named_as_such(self):
         # Given: the form was left as text that is not JSON
