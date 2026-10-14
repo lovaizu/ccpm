@@ -10,33 +10,67 @@ document, code or tests, must be to serve its purpose, as questions answered yes
 a deliverable of the kind reads it before making it, and whoever judges the deliverable answers it.
 This file is the checklist for checklists, and is written in the shape it asks for.
 
+A checklist lets whoever makes or judges a deliverable of its kind:
+
+- learn who uses the deliverable and each thing it lets them decide or do, so every item is
+  judged against that;
+- trust that a deliverable that passes every item serves every part of that purpose;
+- trust that a yes means the deliverable's user gets something from it, not only that something is
+  in it;
+- learn, from each no, the one thing that falls short;
+- settle each item as passed or failed;
+- know before making what passes, because an item gets the same answer whoever answers it.
+
+And it lets them, and the tools that read checklists:
+
+- read any checklist in one shape;
+- tell a section thought through from a section forgotten;
+- tell which text of a checklist a judgment was made by;
+- name an item by an ID that always means the same item, in whichever checklist it is.
+
 ## Benefit
 
 ### B-1: User and purpose
 
-Does the opening name who uses a deliverable of the kind, and each thing it lets them decide or
-do?
+Can whoever makes or judges a deliverable of the kind learn, from the opening, who uses it and each
+thing it lets them decide or do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
 
 ### B-2: Every part of the purpose checked
 
-For each thing the opening says the user decides or does, does some item check that they can?
+For each thing the opening says the user decides or does, can whoever judges learn from some item
+whether the user can?
 
 Why: items drawn from the purpose, one for each thing it names, are enough when every thing has
 one; a thing with no item lets a deliverable that misses that part of the purpose pass.
 
-## Usability
+### B-3: What the user gets, not what is there
 
-### U-1: One thing per item
+Does a yes to each Benefit and Usability item tell whoever judges that the user gets something from
+the deliverable, rather than that something is in it?
 
-Does each item check one thing only?
+Why: an item about what is there passes a deliverable its user cannot use, and fails a good one that
+does without that part.
+
+### B-4: One thing per item
+
+Can whoever judges tell, from each item answered no, the one thing that falls short?
+
+An item that checks two things does not.
 
 Why: when an item checks two things, the one that falls short hides behind the one that holds.
 
-### U-2: Same answer from anyone
+### B-5: Answered yes or no
 
-Can each item be answered yes or no, with the same answer whoever answers it?
+Can whoever judges answer each item yes or no?
+
+Why: an answer that is neither leaves the deliverable neither passed nor failed, so no one can tell
+whether it serves its purpose.
+
+### B-6: Same answer from anyone
+
+Can the maker know what passes, because each item gets the same answer whoever answers it?
 
 A question that holds a word whose bar depends on who answers, such as concrete, clear, enough or
 appropriate, does not. Such a word is replaced by what is looked at to answer yes.
@@ -44,17 +78,11 @@ appropriate, does not. Such a word is replaced by what is looked at to answer ye
 Why: when the answer depends on who judges, the maker cannot tell what passes, and judgments of the
 same deliverable differ.
 
-### U-3: What the user gets, not what is there
-
-Does each Benefit and Usability item ask whether the user gets something from the deliverable,
-rather than whether something is in it?
-
-Why: an item about what is there passes a deliverable its user cannot use, and fails a good one that
-does without that part.
+## Usability
 
 ### U-4: Each item in its section
 
-Does each item sit in the section these questions put it in?
+Can whoever uses the checklist find each item in the section these questions put it in?
 
 Ask of each item, in this order, and stop at the first yes:
 
@@ -69,7 +97,7 @@ holds what its name says.
 
 ### F-1: Shape
 
-Does the checklist follow this template, IDs included?
+Does the checklist follow this template?
 
 ```markdown
 ---
@@ -98,15 +126,42 @@ None: <why the kind needs no item here>
 ## Format
 ```
 
-- The front matter gives the checklist's `name`, which every ID goes with, and its `version`
-  (semver), raised once for each change to its text that reaches those who judge by it, such as a
-  release or a merge to a shared branch, from the version they last had, so a judgment names the
-  text it was made by and no draft between takes a number.
-- Every checklist has the three sections, in this order. A section with no item holds `None:` and
-  its reason, so a section thought through is told from a section forgotten.
-- An item's ID is its section's first letter and a number counted up within the section, such as
-  `U-2`; across checklists it goes with the name, such as `release-notes U-2`.
-- An ID is never used again. A removed item leaves its number unused, and an item moved to another
-  section takes a new number there, so an ID named earlier always means the same item.
+Every checklist has the three sections, in this order.
 
 Why: every checklist in the same shape keeps their quality even, and lets a tool read any of them.
+
+### F-2: A section with no item
+
+Does each section with no item hold `None:` and its reason?
+
+Why: a section thought through is told from a section forgotten.
+
+### F-3: Version
+
+Is the `version` in the front matter semver?
+
+Why: a judgment names the text it was made by in a form people and tools read the same way.
+
+### F-4: Item IDs
+
+Is each item's ID its section's first letter and a number counted up within the section, such as
+`U-2`?
+
+Across checklists, an ID is named with the checklist's `name`, such as `release-notes U-2`.
+
+Why: a judgment names each item by its ID, and the name tells whose item it is when several
+checklists are judged at once.
+
+### F-5: An ID never used again
+
+Compared with the version last released, is every ID that a removed or moved item had left unused,
+with a moved item taking a new number in its new section?
+
+Why: an ID named earlier always means the same item.
+
+### F-6: Version raised once for each release
+
+Is the `version` raised once for each release from the version last released, and not with each
+change on a branch?
+
+Why: a judgment names the text it was made by, and no draft between releases takes a number.
