@@ -1,11 +1,12 @@
 """Runs writ as its user does, in a new repository holding a copy of a trial's files, with the writ
 and turn of this working tree in place of the installed ones, and prints the conversation as it
-goes. Each time writ waits on the user, another Claude answers as the user, from what the user
-knows and nothing else.
+goes. Each time Claude waits on the user while writ's job is open, another Claude answers as the
+user, from what the user knows and nothing else.
 
-    python3 dev/writ/trials/run.py <new folder> <trial's files> <what the user knows> <request>
+    python3 dev/writ/trials/run.py <new folder> <what the user knows> <first message> <files> ...
 
-The job ends once writ's job is closed, or after an hour.
+Each folder of files is copied over the ones before it. The trial ends once writ's job is closed,
+or after an hour.
 """
 
 import json
@@ -16,8 +17,9 @@ import sys
 import threading
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-place, files, knows, request = sys.argv[1:]
-shutil.copytree(files, place)
+place, knows, first, *files = sys.argv[1:]
+for folder in files:
+    shutil.copytree(folder, place, dirs_exist_ok=True)
 for args in (
     ["init", "-q"],
     ["add", "."],
@@ -78,7 +80,7 @@ def answer(said):
     return done.stdout.strip()
 
 
-say(f"/writ:up {request}")
+say(first)
 last, event = "", {}
 for line in claude.stdout:
     event = json.loads(line)
