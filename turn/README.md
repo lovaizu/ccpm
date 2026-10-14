@@ -22,20 +22,22 @@ Naming turn is what has Claude hand your request to turn as a task, instead of w
 itself. The person the work is for, here developers who find the tool on GitHub, and the notes and
 checklist you name beside it, are what the task is made from.
 
-In each round turn writes the work, has an AI that did not write it, the reader, read it as the
+Each run of turn writes the work, has an AI that did not write it, the reader, read it as the
 developer would, and checks each item of your checklist against that reading. It asks you nothing
 while it works, and shows each step as it reaches it:
 
 ```console
-Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
+Plan: 1 write → 2 read → 3 check
 
-Round 1
   1 write   To make: developers who find the tool on GitHub can tell what it saves them
             and run it on their own files.
   2 read    Read as a developer who finds the tool on GitHub.
   3 check   ⚠️ Not yet: the developer can tell which Python version the tool needs.
             ⚠️ Not yet: the developer can picture the result on their own files.
-Round 2
+The work is at README.md; running again can give what is not yet there.
+
+Plan: 1 write → 2 read → 3 check
+
   1 write   To make: the same, now naming the Python version and showing a result on a sample file.
   2 read    Read again, as the same developer.
   3 check   ✅ Nothing missing.
@@ -44,9 +46,8 @@ The work is at README.md, waiting on you for one point.
 
 > MIT
 
-Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)
+Plan: 1 write → 2 read → 3 check
 
-Round 1
   1 write   To make: the same, now naming the MIT license.
   2 read    Read again, as the same developer.
   3 check   ✅ Nothing missing.
@@ -58,9 +59,10 @@ The line after `To make:` is what the work will let the developer do, shown befo
 it is not what you want, press Esc and say what you want instead; turn starts over with your words,
 from the work as it stands.
 
-Each ⚠️ is something the work does not give the developer yet. In the next round turn makes the
-work again to give it, and the reader reads it again. If something is still missing after the
-second round, turn shows it and asks whether to run again or take the work as it is.
+Each ⚠️ is something the work does not give the developer yet. When the work itself can give it,
+turn ends the run saying so, and Claude runs turn again from the work as it stands, as above. When
+Claude judges another run will not give it, Claude stops and tells you what is still missing, for
+you to decide whether to run again or take the work as it is.
 
 Each ❓ is something only you can decide, which your notes and checklist leave open. turn leaves it
 out of the work and ends the run by asking it, with every other such question, instead of with
