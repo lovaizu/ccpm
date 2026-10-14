@@ -299,4 +299,9 @@ Serves: A1, A2, M1, M2, M3
 
 Progress:
 
-- Next (2026-10-14): plugin.md step 3, a first user reads writ's README and design once.
+- plugin.md step 3 (2026-10-14): a fresh reader read writ's README and the design once.
+  - Decided by the user: the README's example asks the license before writing, as writ settles
+    what the checklists need before turn is called; a question that shows up only in the writing
+    comes at the end.
+  - For the user to decide next: who writes a checklist's change, and where, when an item does not
+    settle; writ's own checklists are outside git on a user's machine, so turn cannot write them.

@@ -44,8 +44,8 @@ you type follows `>`, and what writ says follows `●`.
 ```
 
 writ asks what it needs before it writes, so once it says it is writing, you can leave it at work;
-a question only you can answer that shows up only in the writing comes at the end. To check an item, open README.md at the lines the report
-gives for it.
+a question only you can answer that shows up only in the writing comes at the end. To check an
+item, open README.md at the lines the report gives for it.
 
 ### A document you already have
 
