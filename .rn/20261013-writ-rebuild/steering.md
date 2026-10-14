@@ -243,12 +243,7 @@ Progress:
      raised finer questions (tabs, encodings, line endings, uneven rows) that neither deciding nor
      starting needs. The trial was run wrong as a caller: the assistant made up answers and called
      again, where judging the questions by the README's purpose would have ended at the first call.
-  8. Decided by the user (2026-10-14): turn returns no questions. Every role aims only at Goods, and
-     coverage is the only doubt; what the sources do not give is an item without a Good, returned
-     with its way, and the caller decides whether to ask the user, call again or take the work. The
-     question channel let gap-hunting in, and the caller, knowing what was agreed, decides better.
-     turn's README and design change first, then its code.
-  9. Then writ's design again (#3).
+  8. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
