@@ -322,3 +322,27 @@ Progress:
   6. Called from a calling plugin: the open points handed back, and the callers' page.
   7. Keeping writ's steps: the hooks, outside a job included.
   8. Installing with turn: the manifest, and `claude plugin validate --strict`.
+- Units 1 to 8 built (`9b0ede3` to `d3e4bcd`) and tried on csvtidy (`dev/writ/trials/`): a README
+  from nothing, a README the user has, release notes with a checklist made first, and a call from a
+  plugin's step inside a subagent, where turn's agents ran one level deeper (turn runs from a
+  subagent: `dfe6409`). Against the version in use (writ 0.2.0) on the same request: 5 answers,
+  11.0 min, $4.09 here; 5 answers, 17.3 min, $4.42 and 3 answers, 26.8 min, $6.25 there.
+- Decided by the user (2026-10-14): the builder judges turn's result and adds no AI check of their
+  own (`dev/writ/design.md` Verification changed); a fresh agent set to check a README judged beyond
+  the README's scope and disagreed with turn.
+- Decided by the user (2026-10-14), on reading back the whole: writ is a thin wrapper of turn. It
+  keeps the checklists, hears the user grilling-style (only what the user alone can decide, one
+  question at a time, with a recommended answer, facts looked up), and judges turn's result (hand
+  it back, ask the user, or run turn again when the document must change). README, design and code
+  all become thin. What goes, as more than the purpose needs:
+  - the form with a decision for every item, and the script that refuses a CCS until each is filled;
+  - writ telling turn that the document leaves a point out, which bends turn's check;
+  - the `asking` place, the Stop hook, the check that the document was not written outside turn,
+    the check that turn is called with the CCS as the script wrote it, and jobs nested inside jobs;
+    one hook stays: during a job, the document is written by turn alone;
+  - the link to a callers' page the assistant added to the agreed README without asking.
+- Next (user's instruction, 2026-10-14): make the design again from nothing as that thin wrapper,
+  through `turn:up` (viewpoints `doc.md`, `design.md`); the user does not need to review it. Then
+  check the README against it, rebuild the code thin from the design (the current code is not
+  patched; what the design does not need is deleted), try it as its user, and finish #4 (plugin.md
+  steps 5 to 7, #36 and #37 judged). Never patch; judge every point from what writ should be.
