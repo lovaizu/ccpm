@@ -9,6 +9,9 @@ A design document is read by someone who builds or maintains a product. It lets 
 
 - tell each quality the product must have, and within what limits;
 - tell how each quality is checked;
+- tell, when a check fails, which quality broke;
+- check how the parts hand on to each other apart from what each part makes;
+- try each check without paying for more than shows its quality;
 - see how each quality is achieved, from the whole to each part;
 - decide whether a change fits the design;
 - tell why each choice was made over the other options.
@@ -143,6 +146,33 @@ weighed, why they were not chosen, and what the choice costs?
 
 Why: without the reasons, a decision is either kept blindly or overturned without knowing what it
 cost.
+
+### B-17: Which quality broke
+
+When a check fails, can the reader tell which quality broke, because each check shows one quality
+only?
+
+Why: a check that holds several qualities, failing, does not say which of them broke, and costs as
+much as its largest part each time it runs.
+
+### B-18: The flow apart from the work
+
+Can the reader tell how the flow of the parts, which part hands what to which and in what order, is
+checked apart from what each part makes?
+
+Apart means on a task that asks each part only for something to hand on, so the check neither
+spends the cost of real work nor fails where only a part's work falls short.
+
+Why: a flow tried on real work spends that work's cost on every run, and, failing, does not say
+whether the flow or the work broke.
+
+### B-19: The smallest situation that shows it
+
+For each check, can the reader try it in a situation from which nothing could be left out with the
+check still showing its quality?
+
+Why: whatever a situation holds beyond what shows the quality is paid for on every run, and is one
+more place a failure can come from that the quality does not.
 
 ## Usability
 
