@@ -55,6 +55,40 @@ class Start(unittest.TestCase):
         self.assertIn("install it (https://jqlang.org/download/)", out)
         self.assertFalse(self.repo.exists(".writ/job.json"))
 
+    def test_a_job_started_inside_another_hands_back_to_it_when_it_ends(self):
+        # Given: a job for a README is open, and a checklist is to be made inside it
+        outer = started(self.repo)["folder"]
+        # When: a job starts for the checklist, in the same second, and ends
+        inner = started(self.repo)["folder"]
+        run(self.repo, "form", inner, os.path.join(CHECKLISTS, "checklist.md"))
+        settle(self.repo, inner)
+        run(self.repo, "ccs", inner)
+        returned(self.repo, inner, "done", More=())
+        code, out = run(self.repo, "end", inner)
+        # Then: the README's job is open again, as it was
+        self.assertEqual(code, 0, out)
+        self.assertNotEqual(inner, outer)
+        self.assertEqual(self.repo.json(".writ/job.json"), {"session": "s1", "folder": outer})
+
+    def test_a_document_with_changes_git_does_not_hold_is_found_before_anything_is_asked(self):
+        # Given: the document the user names has a change not committed
+        self.repo.write("docs/notes.md", "Tidies CSV files, and more.\n")
+        # When: a job starts on it
+        code, out = run(self.repo, "start", "s1", "docs/notes.md")
+        # Then: it says to commit it first, and opens no job
+        self.assertEqual(code, 1)
+        self.assertIn("docs/notes.md has changes git does not hold; commit them first", out)
+        self.assertFalse(self.repo.exists(".writ/job.json"))
+
+    def test_a_committed_document_or_a_new_one_starts_a_job(self):
+        # Given: one document committed as it stands, and one not written yet
+        for document in ("docs/notes.md", "docs/new.md"):
+            # When: a job starts on it
+            code, out = run(self.repo, "start", "s1", document)
+            # Then: the job is open
+            self.assertEqual(code, 0, out)
+            self.assertTrue(self.repo.exists(".writ/job.json"))
+
     def test_a_command_writ_does_not_have_is_answered_with_how_to_call_it(self):
         # Given: a job is open
         started(self.repo)
@@ -103,6 +137,7 @@ class Form(unittest.TestCase):
                 "acceptance": "",
                 "language": "",
                 "sources": [],
+                "open": [],
                 "checklists": [
                     os.path.join(CHECKLISTS, "doc.md"),
                     os.path.join(CHECKLISTS, "readme.md"),
@@ -118,6 +153,22 @@ class Form(unittest.TestCase):
         run(self.repo, "form", folder, ".writ/checklists/notes.md")
         # Then: only the real item has a place
         self.assertEqual(list(self.repo.json(f"{folder}/form.json")["items"]), ["notes B-1"])
+
+    def test_a_form_laid_again_with_another_checklist_keeps_what_is_settled(self):
+        # Given: a settled form for a README
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        # When: it is laid again with the user's addition among the checklists
+        self.repo.write(".writ/checklists/notes.md", NOTES)
+        paths = [os.path.join(CHECKLISTS, "doc.md"), ".writ/checklists/notes.md"]
+        code, out = run(self.repo, "form", folder, *paths)
+        # Then: every place settled before is kept, and the addition's item waits to be settled
+        form = self.repo.json(f"{folder}/form.json")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(form["receiver"], "developers with messy CSV files")
+        self.assertEqual(form["items"]["doc B-1"]["settled"], "docs/notes.md:1")
+        self.assertEqual(form["items"]["notes B-1"]["decision"], "")
+        self.assertEqual(form["checklists"], paths)
 
     def test_a_file_that_is_not_a_checklist_is_refused(self):
         # Given: a job is open
@@ -379,3 +430,74 @@ class Again(unittest.TestCase):
         )
         self.assertFalse(self.repo.exists(f"{folder}/report.md"))
         self.assertFalse(self.repo.exists(".writ/job.json"))
+
+
+class FromAPlugin(unittest.TestCase):
+    def setUp(self):
+        self.repo = Repo()
+
+    def tearDown(self):
+        self.repo.close()
+
+    def test_the_open_points_go_back_to_the_calling_plugin_with_their_recommended_answers(self):
+        # Given: a plugin's step called writ, and one point only its caller can decide is open
+        folder = laid(self.repo, "doc")
+        open_point = {"item": "doc B-1", "question": "Which license?", "recommended": "MIT"}
+        settle(self.repo, folder, open=[open_point])
+        # When: the open points are handed back
+        code, out = run(self.repo, "back", folder, "back.json")
+        # Then: the caller gets each with its recommended answer, and the job is closed
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.repo.json("back.json"), {"next": "decide", "open": [open_point]})
+        self.assertFalse(self.repo.exists(".writ/job.json"))
+
+    def test_nothing_is_handed_back_while_no_point_is_open(self):
+        # Given: every place of the form is settled
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        # When: the open points are handed back
+        code, out = run(self.repo, "back", folder, "back.json")
+        # Then: it says there is none, and writes nothing
+        self.assertEqual((code, out), (1, "no point is open; run ccs and call turn\n"))
+        self.assertFalse(self.repo.exists("back.json"))
+
+    def test_no_ccs_is_written_while_a_point_is_open(self):
+        # Given: one point is open
+        folder = laid(self.repo, "doc")
+        point = {"item": "doc B-1", "question": "Which license?", "recommended": "MIT"}
+        settle(self.repo, folder, open=[point])
+        # When: the CCS is asked for
+        code, out = run(self.repo, "ccs", folder)
+        # Then: the open point is named, and no CCS is written
+        self.assertEqual(code, 1)
+        self.assertIn("doc B-1 is open: Which license?", out)
+        self.assertFalse(self.repo.exists(f"{folder}/in-1.json"))
+
+    def test_the_finished_document_and_its_report_go_back_to_the_calling_plugin(self):
+        # Given: turn returned done on a job a plugin's step called
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "done", More=())
+        # When: the job ends
+        code, out = run(self.repo, "end", folder, "back.json")
+        # Then: the caller gets where the document and its report are
+        self.assertEqual(code, 0, out)
+        self.assertEqual(
+            self.repo.json("back.json"),
+            {"next": "done", "document": "README.md", "report": f"{folder}/report.md"},
+        )
+
+    def test_a_document_left_with_items_not_met_goes_back_with_them(self):
+        # Given: turn returned with an item not met, and the job ends as it is
+        folder = laid(self.repo, "doc")
+        settle(self.repo, folder)
+        run(self.repo, "ccs", folder)
+        returned(self.repo, folder, "ask the user", More=("doc B-2",))
+        # When: the job ends
+        run(self.repo, "end", folder, "back.json")
+        # Then: the caller gets the document and the items not met
+        self.assertEqual(
+            self.repo.json("back.json"),
+            {"next": "not met", "document": "README.md", "not met": ["doc B-2"]},
+        )

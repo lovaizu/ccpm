@@ -6,6 +6,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 
 from state import JOB, Stop, read_json, write_json
 
@@ -48,10 +49,16 @@ def headings(path):
     return title, items
 
 
-def start(session):
+def start(session, document=""):
     if shutil.which("jq") is None:
         raise Stop(
             "jq is not installed; install it (https://jqlang.org/download/) and call writ again"
+        )
+    # Found before the first question, so no answer is lost to a document turn will not write over.
+    if document and os.path.isfile(document) and changed(document):
+        raise Stop(
+            f"{document} has changes git does not hold; commit them first, so that what it was "
+            "can be got back once writ makes it again"
         )
     listed = []
     for whose, place in (("writ", CHECKLISTS), ("the user", USERS)):
@@ -68,9 +75,17 @@ def start(session):
                     "whose": whose,
                 }
             )
-    folder = os.path.join(".writ", "jobs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
-    os.makedirs(folder, exist_ok=True)
-    write_json(JOB, {"session": session, "folder": folder})
+    stamp = os.path.join(".writ", "jobs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+    folder, n = stamp, 1
+    while os.path.exists(folder):
+        n += 1
+        folder = f"{stamp}-{n}"
+    os.makedirs(folder)
+    job = {"session": session, "folder": folder}
+    # A job started inside another, such as one making a checklist, hands back to it when it ends.
+    if os.path.isfile(JOB):
+        job["within"] = read_json(JOB, JOB)
+    write_json(JOB, job)
     print(json.dumps({"folder": folder, "checklists": listed}, indent=1, ensure_ascii=False))
 
 
@@ -89,7 +104,14 @@ def form(folder, *checklists):
         for i, t in headings(p)[1].items()
     }
     laid: dict = {p: "" for p in ("deliverable", "receiver", "use", "acceptance", "language")}
-    laid.update(sources=[], checklists=list(checklists), items=items)
+    laid.update(sources=[], open=[])
+    # Laid again with another checklist, the form keeps every place already settled.
+    path = os.path.join(folder, "form.json")
+    if os.path.isfile(path):
+        before = read_json(path, "the form")
+        laid.update((k, v) for k, v in before.items() if k in laid)
+        items.update((i, v) for i, v in before["items"].items() if i in items)
+    laid.update(checklists=list(checklists), items=items)
     write_json(os.path.join(folder, "form.json"), laid)
 
 
@@ -101,6 +123,7 @@ def ccs(folder):
             found.append(f"{i}: the decision is not settled")
         if item["settled"] not in ASKED and not os.path.isfile(item["settled"].split(":")[0]):
             found.append(f"{i}: say where it is settled: answer, proposal confirmed, or a file")
+    found += [f"{o['item']} is open: {o['question']}" for o in settled["open"]]
     if found:
         raise Stop("\n".join(found))
     decisions = os.path.join(folder, "decisions.md")
@@ -148,7 +171,7 @@ def calls(folder):
     return n
 
 
-def end(folder):
+def end(folder, out=""):
     n = calls(folder)
     returned = os.path.join(folder, f"out-{max(n, 1)}.json")
     if not n:
@@ -157,13 +180,17 @@ def end(folder):
     deliverable = ccs["focal_entities"][0]["deliverable"]
     if ccs["predictive_cue"] != [{"next": "done"}]:
         left = [i for i, d in decisions_of(ccs).items() if not d["met"]]
-        os.remove(JOB)
+        if out:
+            write_json(out, {"next": "not met", "document": deliverable, "not met": left})
+        close()
         print(f"{deliverable} is written; not met: {', '.join(left)}. No report is made.")
         return
     report = made_report(folder, ccs)
     with open(os.path.join(folder, "report.md"), "w") as f:
         f.write(report)
-    os.remove(JOB)
+    if out:
+        write_json(out, {"next": "done", "document": deliverable, "report": f.name})
+    close()
     print(
         f"{deliverable} is written, and every item of the checklists is met. The report, with the "
         f"lines that meet each item:\n\n{report}"
@@ -199,3 +226,33 @@ def made_report(folder, ccs):
             f"  ✅ {i} {t}: lines {decided[name + ' ' + i]['lines']}" for i, t in items.items()
         ]
     return "\n".join(lines) + "\n"
+
+
+def close():
+    """Closes the job, opening again the job it was started inside, if any."""
+    within = read_json(JOB, JOB).get("within")
+    if within:
+        write_json(JOB, within)
+    else:
+        os.remove(JOB)
+
+
+def back(folder, out):
+    """Hands the open points back to the plugin whose step called writ, each with the answer writ
+    recommends, for the plugin to decide and call writ again."""
+    points = read_json(os.path.join(folder, "form.json"), "the form")["open"]
+    if not points:
+        raise Stop("no point is open; run ccs and call turn")
+    write_json(out, {"next": "decide", "open": points})
+    close()
+
+
+def changed(*paths):
+    """The files git does not hold as committed, among the paths given, or anywhere."""
+    status = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all", "--", *paths],
+        check=False,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return [line[3:] for line in status.splitlines()]

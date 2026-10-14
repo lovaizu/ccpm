@@ -105,6 +105,7 @@ own.
   [README](checklists/readme.md), [design document](checklists/design.md),
   [prompt](checklists/prompt.md), [code and its tests](checklists/code.md), and
   [checklists](checklists/checklist.md)
+- [Calling writ from a plugin's step](calling-from-a-plugin.md)
 - [Changelog](CHANGELOG.md)
 
 ## License
