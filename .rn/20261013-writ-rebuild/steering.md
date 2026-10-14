@@ -243,7 +243,13 @@ Progress:
      raised finer questions (tabs, encodings, line endings, uneven rows) that neither deciding nor
      starting needs. The trial was run wrong as a caller: the assistant made up answers and called
      again, where judging the questions by the README's purpose would have ended at the first call.
-  8. Then writ's design again (#3).
+  8. Decided by the user (2026-10-14): turn keeps its questions. The caller gives, before the call,
+     what the checklists need to pass; what turn still returns, questions and items without a
+     Good, the caller judges each from the purpose, settles itself what it can, asks the user only
+     what the user alone can decide, and calls turn again only when that is needed, never as a
+     matter of course. This is writ's steps, since everything is made through writ; turn's README
+     stays as agreed.
+  9. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
