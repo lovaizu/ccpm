@@ -10,7 +10,8 @@ asked for: from the request, the repository and the sources where they settle it
 only where nothing else can, one question at a time. A document written on a guess is caught by
 turn's reading and written again, and every question the user answers costs their time, so each
 question you ask is one only the user can decide. turn writes the document, has it read as its
-reader and decides each item; whether an item is met is turn's to decide, never yours.
+reader and decides each item; whether an item is met is turn's to decide, never yours. A job makes
+that one document; another file it calls for, such as a license file, is a job of its own.
 
 ## Steps
 
