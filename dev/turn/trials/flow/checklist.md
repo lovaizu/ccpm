@@ -22,6 +22,10 @@ Can the reader tell under which license they may use the tool?
 Can the reader see, before running the tool, a sample file of several rows as it is and as the tool
 leaves it?
 
+### B-4: Every link opens
+
+Can the reader open every file the README links to, in the repository as they find it?
+
 ## Format
 
 ### F-1: One screen
