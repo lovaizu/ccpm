@@ -7,7 +7,8 @@ version: 0.2.0
 
 A README is read by someone meeting a product for the first time. It lets them:
 
-- decide from its first sentence or two what the product is and whether it is for them;
+- decide from its first sentence or two what the product is, what they would gain from it and
+  whether it is for them;
 - tell why to choose it over the other ways they could do the same work;
 - picture using it on their own work, from starting to the result;
 - get from deciding to their first result with the README alone;
@@ -23,7 +24,7 @@ that, and what lies beyond it goes in a page reached from Documentation, not in 
 
 ### B-1: What they gain
 
-From the opening, can the reader tell what the product is and what they gain from it?
+From the opening, can the reader tell what they gain from the product?
 
 Why: the reader decides from the opening whether to read on; when it says how the product works
 instead, the reader is left to work out what they gain, and often leaves first.
@@ -45,20 +46,21 @@ losing work, does not decide the choice, and placed first it hides what does.
 
 ### B-4: Using it on their own work
 
-Can the reader picture using the product on their own work, from starting to the result, from an
-example that shows only what they do and what they get back?
+Can a reader of those the opening says the product is for picture using it on their own work, from
+starting to the result, with what they do and what they get back?
 
-Why: a reader who can picture it decides on what they will actually get; an example far from their
-own work, or one without what the product gives back, is read as someone else's story; and each step
-the product takes inside, shown in the example, is one more thing to learn before the reader has
-decided.
+Look for an example set on a piece of work of a kind the opening names, that goes from starting to
+the result and shows what the product gives back.
+
+Why: a reader who can picture it decides on what they will actually get; an example on work of
+another kind, or one without what the product gives back, is read as someone else's story.
 
 ### B-5: Started from the README alone
 
 Can a reader who has decided to use the product get to their first result with the README alone?
 
-Look for what that needs: what must be in place beforehand, how to install the product, and a first
-use the reader can repeat.
+Look for what must be in place beforehand, how to install the product, and a first use the reader
+can repeat by following the README.
 
 Why: each place the reader has to look elsewhere is a place they may stop.
 
@@ -67,8 +69,8 @@ Why: each place the reader has to look elsewhere is a place they may stop.
 Can the reader tell where to find what the README leaves out, such as fuller use and what changed
 in each version?
 
-Why: a README that holds only what a newcomer needs stays short only when the rest has somewhere the
-reader can reach.
+Why: a reader who wants what the README leaves out and cannot tell where it is goes without it, or
+takes it from somewhere that may not hold for this product.
 
 ### B-7: Terms of use
 
@@ -76,32 +78,58 @@ Can the reader tell on what terms they may use the product?
 
 Why: a reader who cannot tell whether they may use it, or on what terms, cannot decide to use it.
 
+### B-8: What it is
+
+From the opening, can the reader tell what the product is?
+
+Why: a reader who cannot tell what kind of thing it is cannot weigh what it gives against what they
+already use, and reads on only to find out.
+
+### B-9: Why each requirement is needed
+
+For each thing that must be in place beforehand, can the reader tell why it is needed, from
+something the product does that uses it?
+
+Look for, for each such thing, something the product does that uses it, named in the opening, in the
+example or beside the thing under Requirements.
+
+Why: a reader who cannot tell why a thing is needed doubts it and leaves it out, or gets it ready in
+a way the product cannot use, and does not reach their first result.
+
 ## Usability
 
-### U-1: Nothing to learn that neither deciding nor starting needs
+### U-1: Nothing to learn of the product's inside
 
-Can the reader decide and start without learning names or workings that neither needs?
+Can the reader decide and start without learning the names of the product's inner parts, the cases
+where it acts otherwise than the example shows, or the steps it takes inside?
 
-Why: each name of an inner part or an exception the reader must take in before going on is effort
-spent on what they do not use.
+Look for, in the opening, the example, Requirements and Installation: a name of a part inside the
+product, a case where the product acts otherwise than the example shows, and a step the product
+takes that the reader neither takes nor sees in what it gives back.
+
+Why: each such name, case or step the reader must take in before going on is effort spent on what
+they do not use, and one more thing to learn before they have decided.
 
 ### U-2: Getting ready their own way
 
-For each thing that must be in place beforehand, can the reader tell what it is, and, where they
-could not see why it is needed, why?
+For each thing that must be in place beforehand, can the reader get it ready in their own way, or
+see that they already have it, because they are told what the thing is and not only one way of
+getting it ready?
 
-Why: a reader who knows what is needed gets it ready in their own way, or sees that they already
-have it; one way of getting it ready, given alone, reads as the only way and gives steps to a
-reader who does not need them; a reason the reader could see for themselves only lengthens the
-list.
+Why: one way of getting it ready, given alone, reads as the only way, and the reader follows its
+steps even where they already have the thing or would get it ready another way.
 
 ### U-3: An opening only for deciding
 
-Is the opening one or two sentences that say what the product is, what the reader gains and who it
-is for, leaving why to choose it to its own section and how it works to the example?
+Can the reader decide from the opening whether to read on without reading anything there beyond
+what the product is, what they gain and whom it is for?
 
-Why: the reader decides from the opening whether to read on; reasons and workings met before they
-know whether it is for them are where they stop reading.
+It cannot when the opening also gives why to choose the product, which belongs in its own section,
+or how it works, which belongs in the example.
+
+Why: the reader decides from the opening whether to read on; each reason or working met there is
+read before they know whether the product is for them, and stands between them and what they decide
+by.
 
 ## Format
 
@@ -124,7 +152,8 @@ Does the README follow this template, headings included?
 
 ## Requirements
 
-<Each thing that must be in place beforehand, and why where the reader could not see it>
+<Each thing that must be in place beforehand, beside something the product does that uses it where
+the opening and the example name none>
 
 ## Installation
 
