@@ -379,7 +379,7 @@ Progress:
      rules, questions it judged not needed, items left with why, changes it made to the request,
      facts it settled), the report leading with them; the README's "report once every item is met"
      changes to the design. Running again with those answers (`design-thin-2.json`, out
-     `d5/.tasks/out2.json`, log `d5-2.log`). Then copy `d5/dev/writ/design.md` here.
+     `d5/.tasks/out2.json`, log `d5-2.log`); it asked what writ does when it cannot tell whether a point is needed, settled from the README (46-47): ask the user at the end. Running again (`design-thin-3.json`, out `out3.json`, log `d5-3.log`). Then copy `d5/dev/writ/design.md` here.
   2. Check writ's README against the design (the link to the callers' page goes).
   3. Make turn's README and design again through turn on the new checklists (the two-reading
      change was written by hand), and show them to the user for agreement.
