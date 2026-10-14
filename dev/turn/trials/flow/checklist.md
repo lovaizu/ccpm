@@ -19,7 +19,8 @@ Can the reader tell under which license they may use the tool?
 
 ### B-3: The result
 
-Can the reader picture what the tool makes of their own file before running it?
+Can the reader see, before running the tool, a sample file of several rows as it is and as the tool
+leaves it?
 
 ## Format
 
