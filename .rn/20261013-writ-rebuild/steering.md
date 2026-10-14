@@ -237,7 +237,18 @@ Progress:
      time, as the decision of 2026-10-13 says and as `grilling` asked up to its 2026-07-13 version
      ("Asking multiple questions at once is bewildering"), which the user has used and found
      right; its later version asks every question ready at once.
-  7. Then writ's design again (#3).
+  7. Tried on the csvtidy README (2026-10-14), three calls, each answering the last one's
+     questions: every call read the work once, asked nothing while it worked, started from the work
+     returned, and the way in the work the second call returned was taken in the third. Each call
+     raised finer questions (tabs, encodings, line endings, uneven rows) that neither deciding nor
+     starting needs. The trial was run wrong as a caller: the assistant made up answers and called
+     again, where judging the questions by the README's purpose would have ended at the first call.
+  8. Decided by the user (2026-10-14): turn returns no questions. Every role aims only at Goods, and
+     coverage is the only doubt; what the sources do not give is an item without a Good, returned
+     with its way, and the caller decides whether to ask the user, call again or take the work. The
+     question channel let gap-hunting in, and the caller, knowing what was agreed, decides better.
+     turn's README and design change first, then its code.
+  9. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
