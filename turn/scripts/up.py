@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """What turn:up needs to come out the same on every run: the CCS checked, the list and the forms
 laid out, each form checked, the first user's copy, the console, and the work and the CCS written
 back, or a stopped run's CCS. Each command is in the file of what it is about."""
@@ -8,11 +7,11 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from brief import brief  # noqa: E402
-from console import aim  # noqa: E402
-from forms import check, coverage  # noqa: E402
-from lifecycle import end, round_two, start, stop  # noqa: E402
-from state import Stop  # noqa: E402
+from brief import brief
+from console import aim
+from forms import check, coverage
+from lifecycle import end, round_two, start, stop
+from state import Stop
 
 USAGE = """usage: up.py start <in> <out> <session>
        up.py brief <work folder> <round> <generator|first-user|evaluator|learner>

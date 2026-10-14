@@ -76,7 +76,7 @@ class Trial:
             f.write(f"\n## {who} ({time.strftime('%H:%M:%S')})\n\n{text}\n")
 
     def git(self, *args):
-        return subprocess.run(["git", *args], cwd=self.work, capture_output=True, text=True).stdout
+        return subprocess.run(["git", *args], check=False, cwd=self.work, capture_output=True, text=True).stdout
 
     def turn(self, prompt, sid=None, stop_when=None):
         """One turn of rn; `stop_when`, checked every 15 seconds, interrupts it as a user would."""
@@ -114,7 +114,7 @@ class Trial:
         prompt = (part + "\n\nrn just said:\n\n" + said +
                   "\n\nReply as the user would, in Japanese, or with the command you would type. "
                   "Output only your reply.")
-        r = subprocess.run(["claude", "-p", prompt, "--model", "opus"], cwd=self.out,
+        r = subprocess.run(["claude", "-p", prompt, "--model", "opus"], check=False, cwd=self.out,
                            capture_output=True, text=True)
         return r.stdout.strip()
 
@@ -136,7 +136,7 @@ class Trial:
         self.git("push", "-q", "-u", "origin", branch)
         url = subprocess.run(["gh", "pr", "create", "-R", REPO, "--draft", "--base", "main",
                               "--head", branch, "--title", f"Fixture {fixture}", "--body",
-                              f"Fixture {fixture}"],
+                              f"Fixture {fixture}"], check=False,
                              cwd=self.work, capture_output=True, text=True).stdout.strip()
         for root, _, files in os.walk(os.path.join(self.work, ".rn")):
             for name in files:
@@ -172,7 +172,7 @@ class Trial:
         main and the next run starts where the verification document says; the clone keeps all."""
         branch = self.git("branch", "--show-current").strip()
         if branch and branch != "main":
-            subprocess.run(["gh", "pr", "close", branch, "-R", REPO, "--delete-branch"],
+            subprocess.run(["gh", "pr", "close", branch, "-R", REPO, "--delete-branch"], check=False,
                            cwd=self.work, capture_output=True, text=True)
 
 

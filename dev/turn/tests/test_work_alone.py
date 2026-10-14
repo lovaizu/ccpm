@@ -8,9 +8,8 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import ROOT, Repo, ccs, fill, form, run, started
-
 import pretooluse
+from helpers import ROOT, Repo, ccs, fill, form, run, started
 
 WORK = "# Note\n\nRun make.\n"
 
@@ -192,7 +191,7 @@ class WritesKeptToTheRun(unittest.TestCase):
         for command in commands:
             with self.subTest(command):
                 # When: Claude Code runs it in a session with a run open
-                done = subprocess.run(["/bin/sh", "-c", command], input="{}", capture_output=True, text=True,
+                done = subprocess.run(["/bin/sh", "-c", command], check=False, input="{}", capture_output=True, text=True,
                                       cwd=self.repo.path, env={"PATH": empty.name, "CLAUDE_PLUGIN_ROOT": ROOT})
                 # Then: it lets the session go on, saying nothing
                 self.assertEqual((done.returncode, done.stdout, done.stderr), (0, "", ""))
@@ -204,7 +203,7 @@ class WritesKeptToTheRun(unittest.TestCase):
         data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "PreToolUse", "tool_name": "Write",
                 "tool_input": {"file_path": self.at("notes.md")}}
         # When: Claude Code runs it before the write
-        done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True, text=True)
+        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True, text=True)
         # Then: it stops the write
         self.assertEqual(done.returncode, 2)
         self.assertIn("a run writes only", done.stderr)

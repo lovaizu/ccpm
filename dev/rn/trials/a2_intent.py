@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """A2: the account session with the stand-in's reason recorded and no criterion yet written, /rn:up
 to rn's second call to the stand-in, which answers the first; its answer to the second is recorded
 but not sent, so whether it asks back shows."""

@@ -7,8 +7,13 @@ import sys
 TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*: \S")
 
 
+def read(path):
+    with open(path) as f:
+        return f.read()
+
+
 def git(*args, cwd=None):
-    r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
+    r = subprocess.run(["git", *args], check=False, cwd=cwd, capture_output=True, text=True)
     return r.stdout if r.returncode == 0 else ""
 
 
@@ -28,7 +33,7 @@ def store():
 def front_matter(text):
     """The front matter's keys and values, or None when the text has none: a session started by an
     older rn, which /rn:up brings to the current form."""
-    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
+    m = re.match(r"---\n(.*?)\n---\n", text, re.DOTALL)
     if not m:
         return None
     out = {}
@@ -47,7 +52,7 @@ def session(top):
     for name in sorted(os.listdir(base), reverse=True):
         st = os.path.join(base, name, "steering.md")
         if os.path.isfile(st):
-            front = front_matter(open(st).read())
+            front = front_matter(read(st))
             if front is not None and front.get("status") != "finished":
                 return os.path.join(base, name)
     return None
@@ -81,7 +86,7 @@ def find(data, finished_too=False):
 
 
 def steering(sdir):
-    return open(os.path.join(sdir, "steering.md")).read()
+    return read(os.path.join(sdir, "steering.md"))
 
 
 def section(text, heading, stop_level):
@@ -92,7 +97,7 @@ def section(text, heading, stop_level):
         return []
     out = []
     for line in lines[i + 1:]:
-        if re.match(r"^#{1,%d} " % stop_level, line):
+        if re.match(rf"^#{{1,{stop_level}}} ", line):
             break
         out.append(line)
     return out

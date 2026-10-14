@@ -11,7 +11,7 @@ from state import RUN, Stop
 
 
 def git(*args):
-    done = subprocess.run(["git", *args], capture_output=True, text=True)
+    done = subprocess.run(["git", *args], check=False, capture_output=True, text=True)
     if done.returncode:
         raise Stop(done.stderr.strip())
     return done.stdout

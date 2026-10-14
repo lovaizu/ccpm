@@ -1,6 +1,5 @@
 """Run writ's own agents in the foreground, so whoever called writ gets a finished work back."""
-
-from typing import Optional
+from __future__ import annotations
 
 WRIT_AGENTS = ("writ:generator", "writ:first-user")
 
@@ -10,7 +9,7 @@ def is_writ_agent_start(input_data: dict) -> bool:
     return input_data.get("tool_name") == "Agent" and tool_input.get("subagent_type") in WRIT_AGENTS
 
 
-def update(input_data: dict) -> Optional[dict]:
+def update(input_data: dict) -> dict | None:
     """Return the tool input to use instead, or None to leave it as it is."""
     if not is_writ_agent_start(input_data):
         return None

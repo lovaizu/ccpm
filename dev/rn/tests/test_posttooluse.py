@@ -3,8 +3,19 @@ on a commit right after it is made."""
 import os
 import unittest
 
-from harness import (FEEDBACK, FINISHED, PAUSE, PROPOSAL, PROPOSE, REPORT, SDIR, STEERING,
-                     VERIFICATION, Session, sh)
+from harness import (
+    FEEDBACK,
+    FINISHED,
+    PAUSE,
+    PROPOSAL,
+    PROPOSE,
+    REPORT,
+    SDIR,
+    STEERING,
+    VERIFICATION,
+    Session,
+    sh,
+)
 
 
 class PostToolUse(Session):

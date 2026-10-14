@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
 sys.path.insert(0, os.path.join(ROOT, "turn", "hooks"))
 
-import up  # noqa: E402
+import up
 
 CHECKLIST = """---
 name: note

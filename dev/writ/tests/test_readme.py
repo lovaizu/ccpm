@@ -31,7 +31,7 @@ class ReadmeTest(unittest.TestCase):
         readme = read("README.md")
         # Then
         for name in names:
-            self.assertIn("(checklists/{})".format(name), readme)
+            self.assertIn(f"(checklists/{name})", readme)
 
     def test_the_commands_taught_are_exactly_the_skills(self):
         # Given
@@ -40,8 +40,8 @@ class ReadmeTest(unittest.TestCase):
         readme = read("README.md")
         # Then
         for skill in skills:
-            self.assertIn("/writ:{}".format(skill), readme)
-            self.assertIn("name: {}\n".format(skill), read("skills", skill, "SKILL.md"))
+            self.assertIn(f"/writ:{skill}", readme)
+            self.assertIn(f"name: {skill}\n", read("skills", skill, "SKILL.md"))
         self.assertEqual(set(re.findall(r"/writ:(\w+)", readme)), set(skills))
 
 

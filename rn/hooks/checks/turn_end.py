@@ -11,7 +11,7 @@ def check(data, top, sdir):
     stop = STOP.search(last_line(head_message(top)))
     asking = any("-notes-question" in n for n in open_items(sdir))
     if not stop and not asking and not data.get("stop_hook_active"):
-        return ["nothing here is for the user to decide: go on with the next move. End the turn "
+        return [("nothing here is for the user to decide: go on with the next move. End the turn "
                 "only at a sign-off or with a question, or again if you were answering the user's "
-                "own words"]
+                "own words")]
     return []

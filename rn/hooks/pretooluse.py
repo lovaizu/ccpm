@@ -8,11 +8,16 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import form  # noqa: E402
-import record  # noqa: E402
-import shell  # noqa: E402
-from checks import (commit_then_push, conductor_only_git, first_user_reads,  # noqa: E402
-                    first_user_writes, foreground_agents)
+import form
+import record
+import shell
+from checks import (
+    commit_then_push,
+    conductor_only_git,
+    first_user_reads,
+    first_user_writes,
+    foreground_agents,
+)
 
 
 def first_user_called(data, top, sdir):

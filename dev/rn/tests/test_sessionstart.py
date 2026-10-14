@@ -1,7 +1,7 @@
 """rn's SessionStart hook: after a summary, the conductor reads the record again."""
 import unittest
 
-from harness import Session, sh, SDIR, STEERING
+from harness import SDIR, STEERING, Session, sh
 
 
 class SessionStart(Session):

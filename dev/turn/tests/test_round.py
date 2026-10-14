@@ -4,7 +4,7 @@ import subprocess
 import sys
 import unittest
 
-from helpers import form, ROOT, Repo, fill, run, started
+from helpers import ROOT, Repo, fill, form, run, started
 
 WORK = "# Note\n\nRun make.\n"
 
@@ -209,7 +209,7 @@ class Usage(unittest.TestCase):
         # Given: the script, as the skill runs it
         script = os.path.join(ROOT, "turn", "scripts", "up.py")
         # When: it is run with no command
-        done = subprocess.run([sys.executable, script], capture_output=True, text=True)
+        done = subprocess.run([sys.executable, script], check=False, capture_output=True, text=True)
         # Then: it ends with how to call it
         self.assertEqual(done.returncode, 1)
         self.assertIn("usage:", done.stdout)

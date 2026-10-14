@@ -7,10 +7,10 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import form  # noqa: E402
-import record  # noqa: E402
-import shell  # noqa: E402
-from checks import decision_line, settled_whole, stop_commit, typed_command  # noqa: E402
+import form
+import record
+import shell
+from checks import decision_line, settled_whole, stop_commit, typed_command
 
 
 def main():

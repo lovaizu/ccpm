@@ -5,6 +5,7 @@ import os
 import re
 
 from shell import on_repo
+
 from checks.first_user_writes import FIRST_USER, own_report
 
 

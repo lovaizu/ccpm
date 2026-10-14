@@ -8,9 +8,9 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import form  # noqa: E402
-import record  # noqa: E402
-from checks import conversation_language, pushed, turn_end  # noqa: E402
+import form
+import record
+from checks import conversation_language, pushed, turn_end
 
 
 def main():

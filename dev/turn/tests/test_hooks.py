@@ -7,9 +7,8 @@ import sys
 import unittest
 from unittest import mock
 
-from helpers import form, ROOT, Repo, fill, run, started
-
 import subagentstop
+from helpers import ROOT, Repo, fill, form, run, started
 
 
 def hook(repo, **data):
@@ -66,7 +65,7 @@ class HandBack(unittest.TestCase):
         data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "SubagentStop",
                 "agent_type": "turn:generator"}
         # When: Claude Code runs it on a hand-back
-        done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True,
+        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True,
                               text=True)
         # Then: it stops the call with what is missing
         self.assertEqual(done.returncode, 2)

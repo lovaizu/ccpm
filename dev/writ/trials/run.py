@@ -26,7 +26,7 @@ ROLES = TRIALS / "roles"
 def claude(message, cwd, extra):
     cmd = ["claude", "-p", message, "--model", "opus", "--output-format", "json", *extra]
     t0 = time.time()
-    out = subprocess.run(cmd, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True)
+    out = subprocess.run(cmd, check=False, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True)
     minutes = (time.time() - t0) / 60
     try:
         data = json.loads(out.stdout)

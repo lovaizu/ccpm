@@ -19,8 +19,8 @@ class PreToolUse(Session):
             self.assertIn("separate commands", out)
 
     def test_conductor_committing_or_pushing_alone_passes(self):
-        for cmd in ("git commit -m x", "git push", "git add -A && git commit -F - <<'EOF'\n"
-                    "rn: x\n\npush it later with git push\n\n● a ── b → c\nEOF"):
+        for cmd in ("git commit -m x", "git push", ("git add -A && git commit -F - <<'EOF'\n"
+                    "rn: x\n\npush it later with git push\n\n● a ── b → c\nEOF")):
             # Given the conductor about to commit or push alone, `git push` at most in the message
             # When the command is checked
             code, _ = self.r.hook("pretooluse", tool_name="Bash", tool_input={"command": cmd})

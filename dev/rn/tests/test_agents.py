@@ -7,7 +7,8 @@ from harness import PLUGIN
 
 class Agents(unittest.TestCase):
     def front(self, name):
-        text = open(os.path.join(PLUGIN, "agents", name)).read()
+        with open(os.path.join(PLUGIN, "agents", name)) as f:
+            text = f.read()
         return text.split("---")[1]
 
     def test_first_user_starts_without_claude_md(self):

@@ -43,8 +43,8 @@ def script_of(ch):
 def script_share(text, scripts):
     """How much of the text's prose is in the given scripts: a word of a script that spaces its
     words counts one, a character of one that does not counts a half. None when too short to say."""
-    text = re.sub(r"```.*?```", " ", text, flags=re.S)
-    text = re.sub(r"^\s*(?:[-*]\s+)?● .*$", " ", text, flags=re.M)  # a decision line quoted from the record
+    text = re.sub(r"```.*?```", " ", text, flags=re.DOTALL)
+    text = re.sub(r"^\s*(?:[-*]\s+)?● .*$", " ", text, flags=re.MULTILINE)  # a decision line quoted from the record
     text = re.sub(r"`[^`]*`", " ", text)
     text = re.sub(r"\S*[/\\]\S*", " ", text)
     units, prev = {}, None
@@ -62,7 +62,7 @@ def script_share(text, scripts):
 def unquoted(text, message):
     """The message without what it quotes from the record, which is in the artifact language: the
     map's goal line, the goal, and the task names."""
-    message = re.sub(r"^\s*── .* ──\s*$", " ", message, flags=re.M)
+    message = re.sub(r"^\s*── .* ──\s*$", " ", message, flags=re.MULTILINE)
     quoted = [l.strip() for l in section(text, "# Goal", 1) if l.strip()]
     for line in text.splitlines():
         m = re.match(r"^### \[[ x]\] #\d+: (.+)$", line)
@@ -82,6 +82,6 @@ def check(sdir, message):
         return []
     share = script_share(unquoted(text, message), scripts)
     if share is not None and share < 0.5:
-        return [f"your message to the user is not in {front['conversation-language']}, the "
-                "conversation language steering.md records: say it again in that language"]
+        return [(f"your message to the user is not in {front['conversation-language']}, the "
+                "conversation language steering.md records: say it again in that language")]
     return []

@@ -5,6 +5,7 @@ import re
 import subprocess
 
 from record import criteria, git, last_line, open_items, steering
+
 from checks.trace import ID
 
 PROPOSAL_POINT = re.compile(r"^- (Good|More)\b(.*?):")
@@ -28,7 +29,7 @@ def check(top, sdir, msg):
                     problems.append(f"proposal: `{line.strip()[:60]}` names no acceptance criterion "
                                     "by its ID")
             head = git("rev-parse", "--abbrev-ref", "origin/HEAD", cwd=top).strip()
-            if head and subprocess.run(["git", "merge-base", "--is-ancestor", head, "HEAD"],
+            if head and subprocess.run(["git", "merge-base", "--is-ancestor", head, "HEAD"], check=False,
                                        cwd=top).returncode != 0:
                 problems.append(f"stop at a sign-off: {head} is not merged into the branch")
     if "── feedback in " in last and "feedback" not in kinds:

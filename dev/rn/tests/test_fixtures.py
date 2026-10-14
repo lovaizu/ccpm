@@ -8,7 +8,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PLUGIN = os.path.join(HERE, "..", "..", "..", "rn")
 FIXTURES = os.path.join(HERE, "..", "trials", "fixtures")
 sys.path.insert(0, os.path.join(PLUGIN, "hooks"))
-import form  # noqa: E402
+import form
+from record import read
 
 
 class FixturesTest(unittest.TestCase):
@@ -18,7 +19,7 @@ class FixturesTest(unittest.TestCase):
         for name in sorted(os.listdir(FIXTURES)):
             tree = os.path.join(FIXTURES, name, "tree")
             for sdir in (os.path.join(tree, ".rn", s) for s in os.listdir(os.path.join(tree, ".rn"))):
-                if open(os.path.join(sdir, "steering.md")).read().startswith("---"):
+                if read(os.path.join(sdir, "steering.md")).startswith("---"):
                     current.append((name, tree, sdir))
         self.assertGreater(len(current), 0)
         for name, tree, sdir in current:

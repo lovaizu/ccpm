@@ -2,7 +2,7 @@
 import os
 import re
 
-from record import git
+from record import git, read
 
 FIRST_USER = "rn:first-user"
 
@@ -14,7 +14,7 @@ def own_path(store, data):
 def own_report(store, data):
     """The name of the report this first user has written, or ""."""
     p = own_path(store, data)
-    return open(p).read().strip() if os.path.isfile(p) else ""
+    return read(p).strip() if os.path.isfile(p) else ""
 
 
 def check(data, top, sdir, store):
@@ -32,7 +32,8 @@ def check(data, top, sdir, store):
               and not git("ls-files", target, cwd=top).strip())
         if not ok:
             return [f"the first user writes only its own new report in open/, not {name}"]
-        open(own_path(store, data), "w").write(name)
+        with open(own_path(store, data), "w") as f:
+            f.write(name)
     elif name != own or os.path.dirname(target) != os.path.join(sdir, "open"):
         return [f"the first user writes only its report {own}"]
     return []

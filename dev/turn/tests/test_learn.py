@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from helpers import form, Repo, fill, run, started
+from helpers import Repo, fill, form, run, started
 
 WORK = "# Note\n\nRun make.\n"
 WORK_WAY = "the work: say what make builds"
@@ -222,7 +222,7 @@ class EndAfterLearning(unittest.TestCase):
         decide(self.repo, ".turn/out/2", f1=False)
         learn(self.repo, ".turn/out/2", {"note F-1": CALLER_WAY})
         # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "2")
+        code, _out = run(self.repo, "end", ".turn/out", "2")
         # Then: the CCS goes to the caller, saying which item and how
         self.assertEqual(code, 0)
         self.assertEqual(self.repo.json("out.json")["predictive_cue"],

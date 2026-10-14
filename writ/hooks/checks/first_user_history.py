@@ -1,8 +1,8 @@
 """Stop the first user from reading how the work was made: git history and conversation records."""
+from __future__ import annotations
 
 import re
 import shlex
-from typing import List, Optional
 
 FIRST_USER = "writ:first-user"
 HISTORY_COMMANDS = {"log", "show", "blame", "reflog", "stash", "diff"}
@@ -16,7 +16,7 @@ REASON = ("writ: the first user does not read how the work was made "
           "(git history or Claude Code conversation records); use the work as it is.")
 
 
-def _words(segment: str) -> List[str]:
+def _words(segment: str) -> list[str]:
     try:
         return shlex.split(segment)
     except ValueError:
@@ -39,7 +39,7 @@ def _runs_git_history(command: str) -> bool:
     return False
 
 
-def check(input_data: dict) -> Optional[str]:
+def check(input_data: dict) -> str | None:
     if input_data.get("agent_type") != FIRST_USER:
         return None
     tool_name = input_data.get("tool_name", "")

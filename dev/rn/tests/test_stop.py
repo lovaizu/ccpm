@@ -1,7 +1,7 @@
 """rn's Stop hook: checks 8, 13 and 14 when the conductor ends its turn."""
 import unittest
 
-from harness import Session, sh, SDIR, STEERING, PROPOSE, PAUSED_MAP
+from harness import PAUSED_MAP, PROPOSE, SDIR, STEERING, Session, sh
 
 
 class Stop(Session):
@@ -150,11 +150,11 @@ class Stop(Session):
         self.r.write("a.txt", "a\n")
         self.r.commit(PROPOSE)
         sh(self.r.dir, "git", "push", "-q")
-        for text in ("`src/account` を TypeScript にすることで、何を得たいですか？ "
-                     "推奨は A です。`DISPLAY_NAME_KEY` を設定しないとアプリは起動しません。",
-                     "── typescript: 型の誤りがビルドで止まる ──\n✅ #1 Plan sign-off\n"
+        for text in (("`src/account` を TypeScript にすることで、何を得たいですか？ "
+                     "推奨は A です。`DISPLAY_NAME_KEY` を設定しないとアプリは起動しません。"),
+                     ("── typescript: 型の誤りがビルドで止まる ──\n✅ #1 Plan sign-off\n"
                      "👉 #2 Design sign-off ── PR で読んで /rn:ty で承認、/rn:gm で修正依頼\n\n"
-                     "メールだけで登録したユーザーにも、ちゃんとした名前を出します。",
+                     "メールだけで登録したユーザーにも、ちゃんとした名前を出します。"),
                      "OK"):
             # When the turn ends with a Japanese message, or one too short to judge
             _, out = self.r.hook("stop", last_assistant_message=text)

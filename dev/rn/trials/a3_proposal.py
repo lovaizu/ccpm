@@ -38,7 +38,7 @@ def with_answers(part, answers):
 def proposal_reader(said, answers):
     prompt = with_answers(ACCOUNT_PART, answers) + "\n\n" + PROPOSAL_READER.format(said=said)
     r = subprocess.run(["claude", "-p", prompt,
-                        "--model", "opus", "--tools", ""], cwd=t.out, capture_output=True, text=True)
+                        "--model", "opus", "--tools", ""], check=False, cwd=t.out, capture_output=True, text=True)
     return r.stdout.strip()
 
 
@@ -50,8 +50,8 @@ def pr_reader(said, answers):
     part = with_answers(ACCOUNT_PART, answers).replace(
         "You never look at the code or the pull request yourself.", "")
     r = subprocess.run(["claude", "-p", part + "\n\n" + PR_READER.format(url=url), "--model", "opus",
-                        "--allowedTools", "Bash(gh:*) Bash(git fetch:*) Bash(git checkout:*) "
-                        "Bash(git log:*) Bash(git show:*) Bash(git diff:*) Read Grep Glob"],
+                        "--allowedTools", ("Bash(gh:*) Bash(git fetch:*) Bash(git checkout:*) "
+                        "Bash(git log:*) Bash(git show:*) Bash(git diff:*) Read Grep Glob")], check=False,
                        cwd=reader, capture_output=True, text=True)
     return r.stdout.strip()
 

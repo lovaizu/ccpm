@@ -4,7 +4,8 @@ on its `Serves:` line the criteria it rests on, or `goal`."""
 import os
 import re
 
-from record import criteria, front_matter, open_items, section, steering
+from record import criteria, front_matter, open_items, read, section, steering
+
 from checks.steering_form import TASK
 
 ID = re.compile(r"\b([AM]\d+)\b")
@@ -20,8 +21,8 @@ def check(top, sdir):
         problems.append(f"steering.md: task refers to {i}, which no acceptance criterion has")
     vpath = os.path.join(top, front.get("verification", "docs/verification.md"))
     if os.path.isfile(vpath):
-        vtext = open(vpath).read()
-        heads = re.findall(r"^### ([AM]\d+):", vtext, re.M)
+        vtext = read(vpath)
+        heads = re.findall(r"^### ([AM]\d+):", vtext, re.MULTILINE)
         named = set(ID.findall(vtext))
         for i in sorted(named - defined):
             problems.append(f"verification: refers to {i}, which steering.md does not define")
@@ -36,7 +37,7 @@ def check(top, sdir):
     for name in open_items(sdir):
         if "-notes-question" not in name:
             continue
-        first = (open(os.path.join(sdir, "open", name)).read().strip().splitlines() or [""])[0]
+        first = (read(os.path.join(sdir, "open", name)).strip().splitlines() or [""])[0]
         m = re.match(r"^Serves: (.+)$", first)
         named = set(ID.findall(m.group(1))) if m else set()
         if not m or (m.group(1).strip() != "goal" and not named):

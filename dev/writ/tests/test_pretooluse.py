@@ -32,7 +32,7 @@ def hook_input(tool_name, tool_input, agent_type=FIRST_USER):
 
 
 def run_entry(stdin):
-    return subprocess.run([sys.executable, ENTRY], input=stdin, capture_output=True, text=True)
+    return subprocess.run([sys.executable, ENTRY], check=False, input=stdin, capture_output=True, text=True)
 
 
 class FirstUserHistoryTest(unittest.TestCase):
@@ -181,7 +181,7 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
 
     def run_without_python(self, stdin):
         env = {"PATH": self.bin, "CLAUDE_PLUGIN_ROOT": PLUGIN_ROOT}
-        return subprocess.run(["/bin/sh", "-c", self.command], input=stdin, env=env,
+        return subprocess.run(["/bin/sh", "-c", self.command], check=False, input=stdin, env=env,
                               capture_output=True, text=True)
 
     def test_without_python_first_user_is_blocked_and_told_to_install(self):
@@ -223,7 +223,7 @@ class HooksJsonWithoutPythonTest(unittest.TestCase):
         env = {"PATH": os.path.dirname(sys.executable) + os.pathsep + self.bin,
                "CLAUDE_PLUGIN_ROOT": PLUGIN_ROOT}
         # When
-        result = subprocess.run(["/bin/sh", "-c", self.command],
+        result = subprocess.run(["/bin/sh", "-c", self.command], check=False,
                                 input=hook_input("Bash", {"command": "git log"}),
                                 env=env, capture_output=True, text=True)
         # Then

@@ -89,7 +89,8 @@ class Repo:
     def write(self, rel, text):
         p = os.path.join(self.dir, rel)
         os.makedirs(os.path.dirname(p), exist_ok=True)
-        open(p, "w").write(text)
+        with open(p, "w") as f:
+            f.write(text)
         return p
 
     def commit(self, msg):
@@ -100,7 +101,7 @@ class Repo:
         data.setdefault("cwd", self.dir)
         data.setdefault("session_id", "s1")
         env = dict(os.environ, CLAUDE_PLUGIN_DATA=self.data)
-        r = subprocess.run(["python3", os.path.join(HOOKS, entry + ".py")], input=json.dumps(data),
+        r = subprocess.run(["python3", os.path.join(HOOKS, entry + ".py")], check=False, input=json.dumps(data),
                            cwd=self.dir, capture_output=True, text=True, env=env)
         return r.returncode, r.stdout + r.stderr
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """PreToolUse entry of turn's hooks: runs each check as a tool is called, and stops the call with what
 they say."""
 
@@ -9,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
-from checks import brief_handed, no_commit, write_in_run  # noqa: E402
+from checks import brief_handed, no_commit, write_in_run
 
 
 def main():

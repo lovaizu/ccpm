@@ -7,10 +7,9 @@ import sys
 import unittest
 from unittest import mock
 
-from helpers import ROOT, Repo, run, started
-
 import pretooluse
 import stop
+from helpers import ROOT, Repo, run, started
 
 
 def hook(entry, repo, **data):
@@ -74,7 +73,7 @@ class AgentCalled(unittest.TestCase):
         data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "PreToolUse",
                 "tool_name": "Agent", "tool_input": {"subagent_type": "turn:generator", "prompt": "go"}}
         # When: Claude Code runs it on the call
-        done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True, text=True)
+        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True, text=True)
         # Then: it stops the call
         self.assertEqual(done.returncode, 2)
         self.assertIn("step 4", done.stderr)
@@ -135,7 +134,7 @@ class Stopping(unittest.TestCase):
         entry = os.path.join(ROOT, "turn", "hooks", "stop.py")
         data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "Stop", "stop_hook_active": False}
         # When: Claude Code runs it as the orchestrator stops
-        done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True, text=True)
+        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True, text=True)
         # Then: it keeps it at work
         self.assertEqual(done.returncode, 2)
         self.assertIn("step 14", done.stderr)

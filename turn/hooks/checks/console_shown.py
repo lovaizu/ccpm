@@ -6,8 +6,9 @@ since what they would show reaches only the agent."""
 import os
 import re
 
-from console import console
 import state
+from console import console
+
 from checks.open_run import open_run
 
 CLOSING = re.compile(r'up\.py"?\s+(?:end|stop)\s+([^\s;&|]+)')

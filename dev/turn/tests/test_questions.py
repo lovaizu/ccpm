@@ -1,13 +1,13 @@
+import json
 import os
 import tempfile
 import unittest
 from unittest import mock
 
-from helpers import Repo, ccs, fill, form, run, started
-from brief import AGENTS
-from repo import drop
-
 import stop
+from brief import AGENTS
+from helpers import Repo, ccs, fill, form, run, started
+from repo import drop
 from test_step_hooks import hook
 
 WORK = "# Note\n\nRun make.\n"
@@ -52,7 +52,7 @@ class Questions(unittest.TestCase):
     def test_a_run_starts_with_no_question_and_the_orchestrator_is_given_what_settles_them(self):
         # Given: a run just started
         # When: the generator's brief is made
-        code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
+        _code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
         # Then: the questions are an empty list kept for the whole run, and the orchestrator is
         # given the sources and constraints to see what they leave open
         self.assertEqual(self.repo.json(QUESTIONS), [])
@@ -105,7 +105,7 @@ class Questions(unittest.TestCase):
         # Given: the user has answered a question
         fill(self.repo, QUESTIONS, [ANSWERED, {"question": NAME, "ask": False, "answered": "notes.md 1"}])
         # When: the generator's brief is made
-        code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
+        _code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
         # Then: the answer is among what the work should be
         self.assertEqual(self.repo.json(out.strip())["constraints"],
                          ["language: English", f"answer: {LICENSE} MIT"])
@@ -206,7 +206,7 @@ class LearnersQuestions(unittest.TestCase):
         os.makedirs(folder)
         for role in ("first-user", "generator"):
             with open(os.path.join(folder, f"agent-{role}.meta.json"), "w") as f:
-                f.write('{"agentType": "turn:%s"}' % role)
+                json.dump({"agentType": f"turn:{role}"}, f)
             open(os.path.join(folder, f"agent-{role}.jsonl"), "w").close()
         # When: the learner's brief is made
         code, out = run(self.repo, "brief", ".turn/out", "1", "learner")

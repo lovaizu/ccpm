@@ -61,7 +61,7 @@ class Stop(unittest.TestCase):
         # Given: round 1's work handed to the first user
         copy = self.to_reading()
         # When: the user stops the run
-        said, back = self.stop()
+        _said, back = self.stop()
         # Then: it says where it stopped, points to the work, and drops the first user's copy
         self.assertEqual(back["predictive_cue"], [{"next": "stopped: round 1, read"}])
         self.assertEqual(back["episodic_trace"], [{"work": ".turn/out/1/note.md"}])
@@ -73,7 +73,7 @@ class Stop(unittest.TestCase):
         fill(self.repo, form("first-user"), {"note B-1": {"took": "run make", "lines": "3"}})
         self.repo.write(".turn/out/1/evaluator-brief.json", "{}")
         # When: the user stops the run
-        said, back = self.stop()
+        _said, back = self.stop()
         # Then: it says where it stopped, and points to the work
         self.assertEqual(back["predictive_cue"], [{"next": "stopped: round 1, check"}])
         self.assertEqual(back["episodic_trace"], [{"work": ".turn/out/1/note.md"}])
@@ -85,7 +85,7 @@ class Stop(unittest.TestCase):
         fill(self.repo, form("learner"), {})
         self.repo.write(".turn/run.json", json.dumps(dict(self.repo.json(".turn/run.json"), round=2)))
         # When: the user stops the run
-        said, back = self.stop()
+        _said, back = self.stop()
         # Then: the CCS points to the work last read
         self.assertEqual(back["predictive_cue"], [{"next": "stopped: round 2, write"}])
         self.assertEqual(back["episodic_trace"], [{"work": ".turn/out/1/note.md"}])

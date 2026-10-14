@@ -8,11 +8,10 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import ROOT, Repo, fill, form, run, started
-from brief import SCRIPT
-from repo import drop
-
 import posttooluse
+from brief import SCRIPT
+from helpers import ROOT, Repo, fill, form, run, started
+from repo import drop
 
 WORK = "# Note\n\nRun make.\n"
 AIM = "a new teammate can start work alone"
@@ -258,7 +257,7 @@ class Console(unittest.TestCase):
         entry = os.path.join(ROOT, "turn", "hooks", "posttooluse.py")
         data = dict(bash("jq . .turn/out/questions.json"), cwd=self.repo.path, session_id="s1")
         # When: Claude Code runs it after a Bash call of the orchestrator
-        done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True, text=True)
+        done = subprocess.run([sys.executable, entry], check=False, input=json.dumps(data), capture_output=True, text=True)
         # Then: it hands Claude Code the new lines to show the user
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertIn(f"To make: {AIM}", json.loads(done.stdout)["systemMessage"])

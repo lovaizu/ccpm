@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """PostToolUse entry of turn's hooks: runs each check after a tool call, shows the user what they
 show, and tells Claude what they say."""
 
@@ -9,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
-from checks import console_shown  # noqa: E402
+from checks import console_shown
 
 
 def main():

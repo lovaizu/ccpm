@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """SubagentStop entry of turn's hooks: runs each check as an agent stops, and keeps it at work with
 what they say."""
 
@@ -9,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
-from checks import form_filled  # noqa: E402
+from checks import form_filled
 
 
 def main():
