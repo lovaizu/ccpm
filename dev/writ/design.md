@@ -301,7 +301,12 @@ what to do next; whether an item is met stays turn's.
   document's purpose what each needs, settles itself what the purpose and the sources settle,
   puts to the user one at a time, or hands back to the calling plugin, only what the user alone can
   decide, and corrects its own part of the CCS where the way lies in what writ told turn the
-  document should be.
+  document should be. A point the purpose does not need is settled too: writ tells turn, as part of
+  what the document should be, that the document leaves it out and why, so the item is judged
+  against that decision rather than left open.
+- An item that does not settle once every point it rests on is decided points to its checklist
+  asking more than its kind's purpose needs; writ brings the checklist's change to the user, since
+  what is learned goes into the checklists and a checklist changes only on the user's agreement.
 - writ calls turn again, with the CCS turn returned, only when what it settled or a way changes the
   document; called again, turn starts from the document as it stands. A rule turn adds to that CCS,
   for how such work is made, rides in the job's later calls of turn and in no later job, since what
