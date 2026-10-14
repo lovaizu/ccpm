@@ -351,3 +351,10 @@ Progress:
   (the thin-wrapper decisions given as constraints; the current code not a source), in the clone
   `.../scratchpad/d1` with `dev/writ/design.md` removed, log `.../scratchpad/d1.log`. Next: judge
   what it returns from the purpose, copy the design here, then the README against it.
+- Seen (2026-10-14): the design's first call met 25 of 35 items, its second 33 of 35, and every
+  trial of this rebuild needed a second reading. Decided by the user: turn reads the work twice by
+  default; the second reading runs within the call when the first leaves only ways in the work
+  (turn's README, design and callers' page `d56940e`, agreed; code `3e7dec3`, CI checks pass).
+- Running (2026-10-14): the same design CCS on that turn, from nothing, in `.../scratchpad/d3`, log
+  `.../scratchpad/d3.log`. Next: see that one call read the work twice, judge what it returns, then
+  as above.
