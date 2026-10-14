@@ -15,7 +15,7 @@ from repo import drop
 
 WORK = "# Note\n\nRun make.\n"
 AIM = "a new teammate can start work alone"
-PLAN = "Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)"
+PLAN = "Plan: 1 write → 2 read → 3 check"
 LICENSE = "Which license is the note under? The notes do not say."
 WAY = {
     "aim": "the teammate takes it in at a glance",
@@ -50,10 +50,10 @@ def post(repo, session="s1", **data):
     return code, shown, err.getvalue()
 
 
-def met(repo, role, f1=True, n=1):
+def met(repo, role, f1=True, work=".turn/out"):
     fill(
         repo,
-        form(role, n),
+        form(role, work),
         {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
             "note F-1": {"met": True, "lines": "1-3", "note": "three lines"}
@@ -64,7 +64,7 @@ def met(repo, role, f1=True, n=1):
 
 
 class Console(unittest.TestCase):
-    """The console shows how far a run has come, each line once, by round and step."""
+    """The console shows how far a run has come, each line once, by step."""
 
     def setUp(self):
         self.repo = Repo()
@@ -95,25 +95,25 @@ class Console(unittest.TestCase):
             f.write(f'{{"agentType": "turn:{role}"}}')
         open(os.path.join(folder, f"agent-{role}.jsonl"), "w").close()
 
-    def read(self, n=1, f1=True):
-        """Round n made, seen given, read and decided, with F-1 met or not."""
-        met(self.repo, "hand-on", n=n)
-        if n == 1:
-            self.repo.write(".turn/out/1/note.md", WORK)
-        copy = self.repo.json(self.say("brief", ".turn/out", str(n), "first-user")[0])["copy"]
+    def read(self, f1=True, work=".turn/out"):
+        """The run's work made, seen given, read and decided, with F-1 met or not."""
+        met(self.repo, "hand-on", work=work)
+        if not os.path.isfile(os.path.join(self.repo.path, work, "note.md")):
+            self.repo.write(f"{work}/note.md", WORK)
+        copy = self.repo.json(self.say("brief", work, "first-user")[0])["copy"]
         self.addCleanup(lambda: os.path.isdir(copy) and drop(copy))
         self.ran("first-user")
-        fill(self.repo, form("first-user", n), {"note B-1": {"took": "run make", "lines": "3"}})
-        met(self.repo, "orchestrator", f1, n)
+        fill(self.repo, form("first-user", work), {"note B-1": {"took": "run make", "lines": "3"}})
+        met(self.repo, "orchestrator", f1, work)
 
     def test_the_aim_is_shown_with_the_plan_before_anything_is_written(self):
         # Given: a run just started, with a question the sources leave open
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
         # When: the orchestrator runs a command before it sets the aim
-        # Then: the user is shown the plan and the round
-        self.assertEqual(self.shown(), [PLAN, "Round 1"])
+        # Then: the user is shown the plan
+        self.assertEqual(self.shown(), [PLAN])
         # When: the orchestrator sets what the work will let its receiver do
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         # Then: the user is shown the aim, and not the question, which waits for the end
         self.assertEqual(self.shown(), [f"  1 write   To make: {AIM}"])
 
@@ -133,28 +133,21 @@ class Console(unittest.TestCase):
     def test_no_work_is_written_before_its_aim_is_shown(self):
         # Given: a run just started, with no aim set
         # When: the generator's brief is asked for
-        code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
+        code, out = run(self.repo, "brief", ".turn/out", "generator")
         # Then: it is refused, naming the step that sets the aim
         self.assertEqual(code, 1)
-        self.assertIn("step 4: set the aim", out)
+        self.assertIn("step 4: set the aim with `up.py aim .turn/out <text>`", out)
         # Given: the aim set
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         # When: the generator's brief is asked for again
         # Then: it is made
         self.assertEqual(
-            self.say("brief", ".turn/out", "1", "generator"), [".turn/out/1/generator-brief.json"]
+            self.say("brief", ".turn/out", "generator"), [".turn/out/generator-brief.json"]
         )
-
-    def test_an_aim_is_set_only_for_the_round_now_running(self):
-        # Given: round 1 running
-        # When: an aim is set for round 2
-        code, out = run(self.repo, "aim", ".turn/out", "2", AIM)
-        # Then: it is refused, naming the round running
-        self.assertEqual((code, out.strip()), (1, "round 1 is running"))
 
     def test_each_line_is_shown_once_as_the_run_reaches_it(self):
         # Given: the aim shown
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         self.shown()
         # When: the console is asked for with nothing new
         # Then: nothing is shown again
@@ -163,17 +156,17 @@ class Console(unittest.TestCase):
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
         # Then: nothing is shown while the run works
         self.assertEqual(self.shown(), [])
-        # When: the work is handed to the first user, and read
+        # When: the work is handed to the first user
         met(self.repo, "hand-on")
-        self.repo.write(".turn/out/1/note.md", WORK)
-        copy = self.repo.json(self.say("brief", ".turn/out", "1", "first-user")[0])["copy"]
+        self.repo.write(".turn/out/note.md", WORK)
+        copy = self.repo.json(self.say("brief", ".turn/out", "first-user")[0])["copy"]
         self.addCleanup(lambda: os.path.isdir(copy) and drop(copy))
-        # Then: the work's path and the reading are shown
-        self.assertEqual(
-            self.shown(), ["            .turn/out/1/note.md", "  2 read    Read as a new teammate."]
-        )
+        # Then: the reading is shown
+        self.assertEqual(self.shown(), ["  2 read    Read as a new teammate."])
+        # When: the first user hands back its reading
         fill(self.repo, form("first-user"), {"note B-1": {"took": "run make", "lines": "3"}})
-        self.assertEqual(self.shown(), ["            .turn/out/1/first-user.json"])
+        # Then: nothing new is shown
+        self.assertEqual(self.shown(), [])
 
     def check_shown(self, f1, learned):
         self.read(f1=f1)
@@ -181,13 +174,13 @@ class Console(unittest.TestCase):
         return [x for x in self.shown() if x.startswith("  3 check") or "⚠️" in x]
 
     def test_the_check_shows_nothing_missing_when_every_item_is_met(self):
-        # Given: round 1 read, with every item decided met
+        # Given: the work read, with every item decided met
         # When: the console is asked for
         # Then: nothing missing is shown
         self.assertEqual(self.check_shown(True, {}), ["  3 check   ✅ Nothing missing."])
 
     def test_the_check_shows_in_plain_words_what_is_still_to_give_once_learned(self):
-        # Given: round 1 read, with an item not met and no way learned yet
+        # Given: the work read, with an item not met and no way learned yet
         # When: the console is asked for
         # Then: no check is shown yet
         self.assertEqual(self.check_shown(False, {}), [])
@@ -198,22 +191,29 @@ class Console(unittest.TestCase):
         # Then: what the work is still to give is shown in the learner's words, with no item named
         self.assertEqual(lines, [f"  3 check   ⚠️ Not yet: {WAY['aim']}"])
 
-    def test_the_second_round_is_shown_under_its_own_heading(self):
-        # Given: round 1 read with a way for the generator, and round 2 begun
-        self.say("aim", ".turn/out", "1", AIM)
+    def test_a_run_from_the_work_an_earlier_run_returned_reads_it_again(self):
+        # Given: a run that returned an item with a way in the work, called again on its CCS
+        self.say("aim", ".turn/out", AIM)
         self.read(f1=False)
         fill(self.repo, form("learner"), {"note F-1": WAY})
-        self.shown()
-        self.say("round", ".turn/out")
-        # When: the aim of round 2 is set, and its work read
-        self.say("aim", ".turn/out", "2", "the same, cut to one line")
-        said = self.shown()
-        self.read(n=2)
-        # Then: round 2 has its heading and aim, and is read again as the same receiver
-        self.assertEqual(said, ["Round 2", "  1 write   To make: the same, cut to one line"])
+        self.say("end", ".turn/out")
+        self.repo.write("again.json", self.repo.read("out.json"))
+        self.say("start", "again.json", "out-2.json", "s1")
+        # When: its aim is set, and its work read
+        self.say("aim", ".turn/out-2", "the same, cut to one line")
+        self.read(work=".turn/out-2")
+        code, lines, told = post(self.repo, **bash("jq . .turn/out-2/questions.json"))
+        # Then: the user is shown the plan, its aim, and that the work is read again as the same
+        # receiver
+        self.assertEqual(code, 0, told)
         self.assertEqual(
-            self.shown()[:2],
-            ["            .turn/out/2/note.md", "  2 read    Read again, as a new teammate."],
+            lines[:4],
+            [
+                PLAN,
+                "",
+                "  1 write   To make: the same, cut to one line",
+                "  2 read    Read again, as a new teammate.",
+            ],
         )
 
     def ended(self, *args):
@@ -226,57 +226,46 @@ class Console(unittest.TestCase):
         return lines
 
     def test_the_end_says_where_the_work_is(self):
-        # Given: round 1 read, with every item decided met
+        # Given: the work read, with every item decided met
         self.read()
         # When: the run ends
         # Then: the user is shown the next move and where the work is, once, and nothing else the
         # command printed
-        self.assertEqual(
-            self.ended("end", ".turn/out", "1"), ["done", "The work is at docs/note.md."]
-        )
+        self.assertEqual(self.ended("end", ".turn/out"), ["done", "The work is at docs/note.md."])
 
     def test_the_end_asks_the_user_each_question_left_open(self):
-        # Given: round 1 read with every item met, and a question left open
+        # Given: the work read with every item met, and a question left open
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
         self.read()
         # When: the run ends
         # Then: the user is shown where the work is and the question, once
         self.assertEqual(
-            self.ended("end", ".turn/out", "1"),
+            self.ended("end", ".turn/out"),
             ["The work is at docs/note.md, waiting on you for one point.", f"❓ {LICENSE}"],
         )
 
-    def test_the_end_asks_the_user_what_only_they_decide_when_something_is_left(self):
-        # Given: both rounds read, with an item left without a Good
-        self.say("aim", ".turn/out", "1", AIM)
+    def test_the_end_says_running_again_can_give_what_the_work_does_not_yet_give(self):
+        # Given: the work read, with an item left without a Good, given a way in the work
+        self.say("aim", ".turn/out", AIM)
         self.read(f1=False)
         fill(self.repo, form("learner"), {"note F-1": WAY})
-        self.say("round", ".turn/out")
-        self.say("aim", ".turn/out", "2", AIM)
-        self.read(n=2, f1=False)
-        fill(self.repo, form("learner", 2), {"note F-1": WAY})
         # When: the run ends
-        # Then: the next move, where the work is, and what the user must decide are shown
+        # Then: the user is shown where the work is, and that running again can give what is not
+        # yet there
         self.assertEqual(
-            self.ended("end", ".turn/out", "2"),
-            [
-                "ask the user",
-                "The work is at docs/note.md.",
-                "❓ Run turn again on what is still missing, or take the work as it is?",
-            ],
+            self.ended("end", ".turn/out"),
+            ["The work is at docs/note.md; running again can give what is not yet there."],
         )
 
     def test_a_stop_says_where_the_run_was(self):
         # Given: a run stopped on its aim
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         # When: the orchestrator stops the run
         # Then: the user is shown where it was and where its CCS is, once
-        self.assertEqual(
-            self.ended("stop", ".turn/out"), ["stopped: round 1, write — CCS: out.json"]
-        )
+        self.assertEqual(self.ended("stop", ".turn/out"), ["stopped: write — CCS: out.json"])
 
     def test_nothing_is_shown_outside_the_run(self):
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         cases = [
             ("another session", "s2", bash("jq . .turn/out/questions.json")),
             ("another tool", "s1", {"tool_name": "Read", "tool_input": {}}),
@@ -291,9 +280,9 @@ class Console(unittest.TestCase):
 
     def test_a_command_of_an_agent_shows_it_nothing_and_leaves_the_lines_for_the_user(self):
         # Given: the aim set, and an agent of the run running a shell command
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         data = dict(
-            bash("python3 up.py check .turn/out 1 first-user"),
+            bash("python3 up.py check .turn/out first-user"),
             agent_id="a1",
             agent_type="turn:first-user",
         )
@@ -301,11 +290,11 @@ class Console(unittest.TestCase):
         code, lines, _ = post(self.repo, **data)
         # Then: the agent is shown nothing, and the user is shown the lines at the orchestrator's next command
         self.assertEqual((code, lines), (0, []))
-        self.assertEqual(self.shown(), [PLAN, "Round 1", f"  1 write   To make: {AIM}"])
+        self.assertEqual(self.shown(), [PLAN, "", f"  1 write   To make: {AIM}"])
 
     def test_the_entry_run_as_claude_code_runs_it_shows_the_user_the_new_lines(self):
         # Given: the hook's entry file, and the aim set
-        self.say("aim", ".turn/out", "1", AIM)
+        self.say("aim", ".turn/out", AIM)
         entry = os.path.join(ROOT, "turn", "hooks", "posttooluse.py")
         data = dict(bash("jq . .turn/out/questions.json"), cwd=self.repo.path, session_id="s1")
         # When: Claude Code runs it after a Bash call of the orchestrator

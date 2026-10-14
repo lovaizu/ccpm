@@ -123,6 +123,6 @@ def fill(repo, form, items):
     repo.write(form, json.dumps(items))
 
 
-def form(role, n=1):
-    """Where a role's form is in round n of the run the tests start."""
-    return f".turn/out/{n}/{role}.json"
+def form(role, work=".turn/out"):
+    """Where a role's form is in the run the tests start, or in the run of the given folder."""
+    return f"{work}/{role}.json"

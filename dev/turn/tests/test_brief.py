@@ -10,11 +10,11 @@ from repo import drop
 WORK = "# Note\n\nRun make.\n"
 
 
-def seen(repo, f1=True, n=1):
+def seen(repo, f1=True):
     """The orchestrator's form before the reading, with F-1 seen given or not."""
     fill(
         repo,
-        form("hand-on", n),
+        form("hand-on"),
         {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
             "note F-1": {"met": True, "lines": "1-3", "note": "three lines"}
@@ -29,10 +29,10 @@ def seen(repo, f1=True, n=1):
     )
 
 
-def decided(repo, f1, n=1):
+def decided(repo, f1):
     fill(
         repo,
-        form("orchestrator", n),
+        form("orchestrator"),
         {
             "note B-1": {"met": True, "lines": "3", "note": "the step is given"},
             "note F-1": {
@@ -53,7 +53,7 @@ class Briefs(unittest.TestCase):
         self.env = mock.patch.dict(os.environ, {"HOME": self.home.name})
         self.env.start()
         self.got = started(self.repo)
-        run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
+        run(self.repo, "aim", ".turn/out", "a new teammate can start work alone")
         self.repo.write(self.got["work"], WORK)
 
     def tearDown(self):
@@ -61,14 +61,14 @@ class Briefs(unittest.TestCase):
         self.repo.close()
         self.home.cleanup()
 
-    def brief(self, role, n=1):
-        code, out = run(self.repo, "brief", ".turn/out", str(n), role)
+    def brief(self, role):
+        code, out = run(self.repo, "brief", ".turn/out", role)
         return code, out.strip()
 
-    def handed(self, role, n=1):
-        code, out = self.brief(role, n)
+    def handed(self, role):
+        code, out = self.brief(role)
         assert code == 0, out
-        self.assertEqual(out, f".turn/out/{n}/{role}-brief.json")
+        self.assertEqual(out, f".turn/out/{role}-brief.json")
         got = self.repo.json(out)
         if role == "first-user":
             self.addCleanup(lambda: os.path.isdir(got["copy"]) and drop(got["copy"]))
@@ -90,9 +90,9 @@ class Briefs(unittest.TestCase):
         got = self.handed("generator")
         # Then: it holds what the work should be, where it is made, its form and how to check it
         self.assertEqual(got["list"], ".turn/out/list.json")
-        self.assertEqual(got["work"], ".turn/out/1/note.md")
+        self.assertEqual(got["work"], ".turn/out/note.md")
         self.assertEqual(got["form"], form("generator"))
-        self.assertTrue(got["check"].endswith('up.py" check .turn/out 1 generator'))
+        self.assertTrue(got["check"].endswith('up.py" check .turn/out generator'))
         self.assertEqual((got["receiver"], got["use"]), ("a new teammate", "to start work"))
         self.assertEqual(got["acceptance"], ["they can start alone"])
         self.assertEqual(got["sources"], ["notes.md"])
@@ -195,7 +195,7 @@ class Briefs(unittest.TestCase):
                 self.assertIn(said, out)
 
     def test_the_learner_is_handed_the_decisions_and_both_records(self):
-        # Given: round 1 decided with F-1 not met, and the agents' records kept
+        # Given: the run decided with F-1 not met, and the agents' records kept
         made = self.ran("generator", "g1")
         read = self.ran("first-user", "f1")
         decided(self.repo, f1=False)
@@ -207,14 +207,14 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["records"], {"first user": read, "generator": made})
         self.assertEqual(got["sources"], ["notes.md"])
 
-    def test_the_learner_is_not_handed_a_round_with_nothing_to_learn(self):
+    def test_the_learner_is_not_handed_a_run_with_nothing_to_learn(self):
         cases = [
             ("every item met", True, "every item is met"),
             ("an item undecided", None, "note F-1: not decided"),
         ]
         for name, f1, said in cases:
             with self.subTest(name):
-                # Given: round 1 with every item met, or one undecided
+                # Given: the run decided with every item met, or with one undecided
                 decided(self.repo, f1=f1)
                 # When: the learner's brief is made
                 code, out = self.brief("learner")
@@ -222,54 +222,13 @@ class Briefs(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
 
-    def test_round_two_hands_the_generator_the_ways_and_the_rules_learned(self):
-        # Given: round 1 left F-1 with a way in the work and something learned of making
-        decided(self.repo, f1=False)
-        fill(
-            self.repo,
-            form("learner"),
-            {
-                "note F-1": {
-                    "aim": "the teammate takes it in at a glance",
-                    "way": "cut it to one line",
-                    "reach": "1-3",
-                    "in": "the work",
-                    "making": "say each thing once",
-                }
-            },
-        )
-        self.assertEqual(run(self.repo, "round", ".turn/out")[0], 0)
-        run(self.repo, "aim", ".turn/out", "2", "the same, cut to one line")
-        # When: the generator's brief for round 2 is made
-        got = self.handed("generator", 2)
-        # Then: it holds round 1's way with its item, and the rule among the constraints
-        self.assertEqual(got["work"], ".turn/out/2/note.md")
-        self.assertEqual(
-            got["ways"],
-            [
-                {
-                    "way": "cut it to one line",
-                    "items": ["note F-1"],
-                    "aims": ["the teammate takes it in at a glance"],
-                    "reach": ["1-3"],
-                }
-            ],
-        )
-        self.assertEqual(got["constraints"], ["rule: say each thing once"])
-
-    def test_a_brief_is_made_only_for_the_round_now_running_and_an_agent_of_turn(self):
-        cases = [
-            ("another round", "generator", 2, "round 1 is running"),
-            ("not an agent", "orchestrator", 1, "no brief for orchestrator"),
-        ]
-        for name, role, n, said in cases:
-            with self.subTest(name):
-                # Given: a run in round 1
-                # When: a brief is asked for another round, or for a role that is no agent
-                code, out = self.brief(role, n)
-                # Then: it is refused
-                self.assertEqual(code, 1)
-                self.assertIn(said, out)
+    def test_a_brief_is_made_only_for_an_agent_of_turn(self):
+        # Given: an open run
+        # When: a brief is asked for a role that is no agent
+        code, out = self.brief("orchestrator")
+        # Then: it is refused, naming the agents that have briefs
+        self.assertEqual(code, 1)
+        self.assertIn("no brief for orchestrator; briefs are for generator", out)
 
     def test_only_a_copy_turn_made_is_dropped(self):
         # Given: a first user's brief naming a folder turn did not make

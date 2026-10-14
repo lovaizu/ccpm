@@ -10,4 +10,4 @@ def check(data):
     run = open_run(data) if not data.get("stop_hook_active") else None
     if run is None:
         return []
-    return [f'step 14: the run is open; run `python3 "{SCRIPT}" end {run["work"]} {run["round"]}`']
+    return [f'step 13: the run is open; run `python3 "{SCRIPT}" end {run["work"]}`']

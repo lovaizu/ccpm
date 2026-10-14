@@ -21,13 +21,11 @@ def check(data):
     here = os.getcwd()
     os.chdir(data["cwd"])
     try:
-        found = forms.check(run["work"], run["round"], role)
+        found = forms.check(run["work"], role)
     except Stop as stop:
         found = [str(stop)]
     finally:
         os.chdir(here)
     if found:
-        return [
-            f"fill your form before handing back ({run['work']}/{run['round']}/{role}.json):"
-        ] + found
+        return [f"fill your form before handing back ({run['work']}/{role}.json):"] + found
     return []

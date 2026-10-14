@@ -1,65 +1,47 @@
-"""What the user sees of a run as it goes: the plan, and each round's aim and steps."""
+"""What the user sees of a run as it goes: the plan, its aim and its steps."""
 
 import os
 
 from ccs import entries
 from forms import check, without_good
 from questions import question_faults
-from state import RUN, Stop, read_json, the_work, write_json
+from state import Stop, read_json, the_work, write_json
 
-PLAN = "Plan: 1 write → 2 read → 3 check   (once more if something is missing; two rounds at most)"
+PLAN = "Plan: 1 write → 2 read → 3 check"
 INDENT = " " * 12
 
 
-def aim(work, n, text):
-    """Sets what round n's work will let its receiver do; the console shows it before the work is
+def aim(work, text):
+    """Sets what the work will let its receiver do; the console shows it before the work is
     written."""
-    if int(n) != read_json(RUN, RUN)["round"]:
-        raise Stop(f"round {read_json(RUN, RUN)['round']} is running")
-    with open(os.path.join(work, str(n), "aim.txt"), "w") as f:
+    with open(os.path.join(work, "aim.txt"), "w") as f:
         f.write(text)
 
 
 def shown_lines(work):
     """Every line the console has for the run as it stands, each with a key it is shown once by."""
-    _, ccs, _, _ = the_work(work, 1, written=False)
+    run, ccs, _, path = the_work(work, written=False)
     receiver = "; ".join(entries(ccs, "focal_entities", "receiver"))
-    lines = [("plan", PLAN)]
-    for n in (1, 2):
-        here = os.path.join(work, str(n))
-        if not os.path.isdir(here):
-            continue
-        said = [f"Round {n}"]
-        if os.path.isfile(os.path.join(here, "aim.txt")):
-            with open(os.path.join(here, "aim.txt")) as f:
-                said.append(f"  1 write   To make: {f.read().strip()}")
-        if os.path.isfile(os.path.join(here, "first-user-brief.json")):
+    said = [PLAN, ""]
+    if os.path.isfile(os.path.join(work, "aim.txt")):
+        with open(os.path.join(work, "aim.txt")) as f:
+            said.append(f"  1 write   To make: {f.read().strip()}")
+    if os.path.isfile(os.path.join(work, "first-user-brief.json")):
+        said.append(f"  2 read    {'Read again, as' if 'from' in run else 'Read as'} {receiver}.")
+    if os.path.isfile(path) and not check(work, "orchestrator"):
+        if not without_good(work):
+            said.append("  3 check   ✅ Nothing missing.")
+        elif read_json(os.path.join(work, "learner.json"), "the form") and not check(
+            work, "learner"
+        ):
+            aims = dict.fromkeys(
+                p["aim"] for p in read_json(os.path.join(work, "learner.json"), "the form").values()
+            )
             said += [
-                INDENT + the_work(work, n)[3],
-                f"  2 read    {'Read as' if n == 1 else 'Read again, as'} {receiver}.",
+                ("  3 check   " if k == 0 else INDENT) + f"⚠️ Not yet: {a}"
+                for k, a in enumerate(aims)
             ]
-        if not os.path.isfile(the_work(work, n, written=False)[3]):
-            lines += [(f"{n}:{line}", line) for line in said]
-            continue
-        reading = read_json(os.path.join(here, "first-user.json"), "the form")
-        if reading and not check(work, n, "first-user"):
-            said.append(INDENT + os.path.join(here, "first-user.json"))
-        if not check(work, n, "orchestrator"):
-            if not without_good(work, n):
-                said.append("  3 check   ✅ Nothing missing.")
-            elif read_json(os.path.join(here, "learner.json"), "the form") and not check(
-                work, n, "learner"
-            ):
-                aims = dict.fromkeys(
-                    p["aim"]
-                    for p in read_json(os.path.join(here, "learner.json"), "the form").values()
-                )
-                said += [
-                    ("  3 check   " if k == 0 else INDENT) + f"⚠️ Not yet: {a}"
-                    for k, a in enumerate(aims)
-                ]
-        lines += [(f"{n}:{line}", line) for line in said]
-    return lines
+    return [(f"{k}:{line}", line) for k, line in enumerate(said)]
 
 
 def console(work):

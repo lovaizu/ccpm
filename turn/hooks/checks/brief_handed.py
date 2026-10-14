@@ -14,13 +14,13 @@ def check(data):
     run = open_run(data) if data.get("tool_name") == "Agent" and role in AGENTS else None
     if run is None:
         return []
-    brief = os.path.join(data["cwd"], run["work"], str(run["round"]), f"{role}-brief.json")
+    brief = os.path.join(data["cwd"], run["work"], f"{role}-brief.json")
     handed = os.path.join(data["cwd"], str(given.get("prompt", "")).strip())
     if os.path.isfile(brief) and os.path.realpath(handed) == os.path.realpath(brief):
         return []
     return [
         (
-            f'step {AGENTS[role]}: run `python3 "{SCRIPT}" brief {run["work"]} {run["round"]} {role}` '
+            f'step {AGENTS[role]}: run `python3 "{SCRIPT}" brief {run["work"]} {role}` '
             f"and hand the agent only the path it prints"
         )
     ]

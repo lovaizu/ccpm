@@ -138,7 +138,7 @@ class WritesKeptToTheRun(unittest.TestCase):
 
     def test_a_write_where_the_work_goes_or_in_the_run_s_evidence_goes_on(self):
         cases = [
-            ("the work in the run", "Write", {"file_path": self.at(".turn/out/1/note.md")}),
+            ("the work in the run", "Write", {"file_path": self.at(".turn/out/note.md")}),
             ("a form", "Edit", {"file_path": self.at(form("first-user"))}),
             ("where the work goes", "Write", {"file_path": self.at("docs/note.md")}),
         ]
@@ -210,8 +210,8 @@ class WritesKeptToTheRun(unittest.TestCase):
                             "note F-1": {"met": True, "lines": "1", "note": "x"},
                         },
                     )
-                    self.repo.write(".turn/out/1/note.md", WORK)
-                    self.assertEqual(run(self.repo, "end", ".turn/out", "1")[0], 0)
+                    self.repo.write(".turn/out/note.md", WORK)
+                    self.assertEqual(run(self.repo, "end", ".turn/out")[0], 0)
                 # When: they are made
                 done = [
                     pre(self.repo, "Write", {"file_path": self.at("notes.md")}, session or "s1"),
@@ -278,7 +278,7 @@ class ChangesElsewhereNamed(unittest.TestCase):
         self.repo.write("draft.md", "left as it was\n")
         self.repo.write("log.txt", "before\n")
         started(self.repo)
-        self.repo.write(".turn/out/1/note.md", WORK)
+        self.repo.write(".turn/out/note.md", WORK)
         fill(
             self.repo,
             form("orchestrator"),
@@ -292,7 +292,7 @@ class ChangesElsewhereNamed(unittest.TestCase):
         self.repo.close()
 
     def test_a_returned_run_names_each_file_changed_elsewhere_and_no_other(self):
-        for command in (("end", ".turn/out", "1"), ("stop", ".turn/out")):
+        for command in (("end", ".turn/out"), ("stop", ".turn/out")):
             with self.subTest(command[0]):
                 # Given: during the run, a command left a new file, changed one already changed, deleted a
                 # committed one, and left another as it was
@@ -313,7 +313,7 @@ class ChangesElsewhereNamed(unittest.TestCase):
     def test_a_returned_run_that_changed_nothing_elsewhere_says_nothing_of_it(self):
         # Given: a run during which nothing outside the work changed
         # When: the run returns
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: nothing is said of other files
         self.assertEqual(code, 0, out)
         self.assertNotIn("Also changed", out)

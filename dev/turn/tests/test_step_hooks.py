@@ -42,15 +42,15 @@ class AgentCalled(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         started(self.repo)
-        run(self.repo, "aim", ".turn/out", "1", AIM)
-        self.repo.write(".turn/out/1/note.md", "# Note\n")
+        run(self.repo, "aim", ".turn/out", AIM)
+        self.repo.write(".turn/out/note.md", "# Note\n")
 
     def tearDown(self):
         self.repo.close()
 
     def test_an_agent_handed_its_brief_is_called(self):
         # Given: the generator's brief made
-        _, out = run(self.repo, "brief", ".turn/out", "1", "generator")
+        _, out = run(self.repo, "brief", ".turn/out", "generator")
         for name, path in (
             ("from the top", out.strip()),
             ("in full", os.path.join(self.repo.path, out.strip())),
@@ -64,7 +64,7 @@ class AgentCalled(unittest.TestCase):
     def test_an_agent_handed_anything_but_its_brief_is_stopped_saying_which_step(self):
         cases = [
             ("words of its own", "turn:generator", "Write the README.", "step 4"),
-            ("a brief not made", "turn:first-user", ".turn/out/1/first-user-brief.json", "step 9"),
+            ("a brief not made", "turn:first-user", ".turn/out/first-user-brief.json", "step 9"),
             ("the evaluator", "turn:evaluator", "read it", "step 10"),
             ("the learner", "turn:learner", "learn", "step 12"),
         ]
@@ -76,7 +76,7 @@ class AgentCalled(unittest.TestCase):
                 # Then: the call is stopped, naming the step and the command that makes the brief
                 self.assertEqual(code, 2)
                 self.assertIn(f"turn: {step}:", said)
-                self.assertIn(f"brief .turn/out 1 {agent[5:]}", said)
+                self.assertIn(f"brief .turn/out {agent[5:]}", said)
 
     def test_the_entry_run_as_claude_code_runs_it_stops_a_call_without_its_brief(self):
         # Given: the hook's entry file, and an open run
@@ -138,7 +138,7 @@ class Stopping(unittest.TestCase):
         code, said = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=False)
         # Then: it is kept at work, told the last step
         self.assertEqual(code, 2)
-        self.assertIn("turn: step 14:", said)
+        self.assertIn("turn: step 13:", said)
         self.assertIn("end .turn/out", said)
         # When: it stops again after being told
         code, _ = hook(stop, self.repo, hook_event_name="Stop", stop_hook_active=True)
@@ -183,7 +183,7 @@ class Stopping(unittest.TestCase):
         )
         # Then: it keeps it at work
         self.assertEqual(done.returncode, 2)
-        self.assertIn("step 14", done.stderr)
+        self.assertIn("step 13", done.stderr)
 
 
 if __name__ == "__main__":

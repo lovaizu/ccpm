@@ -29,12 +29,12 @@ def write_json(path, value):
         f.write("\n")
 
 
-def the_work(work, n, written=True):
-    """The run's CCS as received, and the path of the work made in round n."""
+def the_work(work, written=True):
+    """The run's CCS as received, and the path of the work it makes."""
     run = read_json(RUN, RUN)
     ccs = read_json(run["in"], run["in"])
     deliverable = entries(ccs, "focal_entities", "deliverable")[0]
-    path = os.path.join(work, str(n), os.path.basename(deliverable))
+    path = os.path.join(work, os.path.basename(deliverable))
     if written and not os.path.isfile(path):
         raise Stop(f"{path} is not written")
     return run, ccs, deliverable, path

@@ -56,7 +56,7 @@ class HandBack(unittest.TestCase):
         code, said = self.hand_back("turn:generator")
         # Then: it is stopped, told the work is missing
         self.assertEqual(code, 2)
-        self.assertIn(".turn/out/1/note.md is not written", said)
+        self.assertIn(".turn/out/note.md is not written", said)
 
     def test_the_hook_run_as_claude_code_runs_it_stops_an_unfilled_form(self):
         # Given: the hook's entry file, and an empty form in an open run
@@ -106,7 +106,7 @@ class HandBack(unittest.TestCase):
                 "note F-1": {"met": True, "lines": "1", "note": "x"},
             },
         )
-        self.assertEqual(run(self.repo, "end", ".turn/out", "1")[0], 0)
+        self.assertEqual(run(self.repo, "end", ".turn/out")[0], 0)
         # When: an agent named like turn's hands back with an empty form
         code, _ = self.hand_back("turn:generator")
         # Then: it goes on

@@ -24,9 +24,9 @@ def forms(ids):
     }
 
 
-def lay(work, n, laid):
+def lay(work, laid):
     for role in ROLES:
-        write_json(os.path.join(work, str(n), f"{role}.json"), laid[role])
+        write_json(os.path.join(work, f"{role}.json"), laid[role])
 
 
 def bad_lines(given, count):
@@ -38,23 +38,23 @@ def bad_lines(given, count):
     )
 
 
-def check(work, n, role):
+def check(work, role):
     """Says each place of the role's form that is left or wrong; nothing when every place is filled."""
-    _, _, _, path = the_work(work, n)
+    _, _, _, path = the_work(work)
     with open(path) as f:
         count = len(f.read().splitlines())
     ids = [i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]
-    form = read_json(os.path.join(work, str(n), f"{role}.json"), "the form")
+    form = read_json(os.path.join(work, f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
     grounds = (
-        read_json(os.path.join(work, str(n), "evaluator.json"), "the form")
+        read_json(os.path.join(work, "evaluator.json"), "the form")
         if role == "orchestrator"
         else {}
     )
     if role == "learner":
         return (
             found
-            + learner_faults(form, without_good(work, n), count)
+            + learner_faults(form, without_good(work), count)
             + question_faults(work, decided=False)
         )
     if role in ("generator", "hand-on"):
@@ -96,10 +96,10 @@ def check(work, n, role):
     return found
 
 
-def without_good(work, n):
+def without_good(work):
     return [
         i
-        for i, p in read_json(os.path.join(work, str(n), "orchestrator.json"), "the form").items()
+        for i, p in read_json(os.path.join(work, "orchestrator.json"), "the form").items()
         if p.get("met") is not True
     ]
 
@@ -136,14 +136,20 @@ def learner_faults(form, left, count):
     return found
 
 
-def learned(work, n):
-    """The ways the learner gave in round n, each once with the items it serves, and what it learned
+def learned(work):
+    """The ways the learner gave in the run, each once with the items it serves, and what it learned
     of making such work."""
-    found = check(work, n, "orchestrator") or check(work, n, "learner")
+    found = check(work, "orchestrator") or check(work, "learner")
     if found:
         raise Stop("\n".join(found))
+    return ways_in(os.path.join(work, "learner.json"))
+
+
+def ways_in(form):
+    """The ways a learner's form gives, each once with the items it serves, and what it learned of
+    making such work."""
     grouped, rules = {}, []
-    for i, p in read_json(os.path.join(work, str(n), "learner.json"), "the form").items():
+    for i, p in read_json(form, "the form").items():
         grouped.setdefault((p["way"], p["in"]), []).append(p)
         p["item"] = i
         if p["making"] and p["making"] not in rules:
@@ -159,12 +165,12 @@ def serves(places, way):
     return {"way": way, "items": sorted(p["item"] for p in places), "aims": aims, "reach": reach}
 
 
-def coverage(work, n, role):
-    _, _, _, path = the_work(work, n)
+def coverage(work, role):
+    _, _, _, path = the_work(work)
     with open(path) as f:
         text = [k for k, line in enumerate(f.read().splitlines(), 1) if line.strip()]
     named = set()
-    for place in read_json(os.path.join(work, str(n), f"{role}.json"), "the form").values():
+    for place in read_json(os.path.join(work, f"{role}.json"), "the form").values():
         for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", place.get("lines", "")):
             named.update(range(int(a), int(b or a) + 1))
     left = [k for k in text if k not in named]

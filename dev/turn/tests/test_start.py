@@ -44,8 +44,7 @@ class Start(unittest.TestCase):
             {
                 "folder": ".turn/out",
                 "list": ".turn/out/list.json",
-                "round": 1,
-                "work": ".turn/out/1/note.md",
+                "work": ".turn/out/note.md",
                 "hand-on": form("hand-on"),
                 "orchestrator": form("orchestrator"),
                 "questions": ".turn/out/questions.json",

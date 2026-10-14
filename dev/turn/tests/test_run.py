@@ -60,7 +60,7 @@ class Coverage(unittest.TestCase):
                 # Given: the role's form naming these lines
                 fill(self.repo, form(role), filled)
                 # When: the coverage is asked for
-                code, out = run(self.repo, "coverage", ".turn/out", "1", role)
+                code, out = run(self.repo, "coverage", ".turn/out", role)
                 # Then: the lines with text that no place names are shown, blank lines left out
                 self.assertEqual((code, out.strip()), (0, said))
 
@@ -75,7 +75,7 @@ class Check(unittest.TestCase):
         self.repo.close()
 
     def check(self, role):
-        return run(self.repo, "check", ".turn/out", "1", role)
+        return run(self.repo, "check", ".turn/out", role)
 
     def test_a_form_filled_for_every_item_on_lines_the_work_holds_passes(self):
         # Given: each role's form filled as its steps ask
@@ -258,7 +258,7 @@ class Check(unittest.TestCase):
         code, out = self.check("generator")
         # Then: it is stopped saying the work is missing
         self.assertEqual(code, 1)
-        self.assertIn(".turn/out/1/note.md is not written", out)
+        self.assertIn(".turn/out/note.md is not written", out)
 
 
 class End(unittest.TestCase):
@@ -288,7 +288,7 @@ class End(unittest.TestCase):
         # Given: every item decided met
         self.decide(True, True)
         # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: the work is where it goes, and the CCS says done with the caller's parts unchanged
         self.assertEqual(code, 0)
         self.assertEqual(self.repo.read("docs/note.md"), WORK)
@@ -301,9 +301,9 @@ class End(unittest.TestCase):
         self.assertEqual(
             back["episodic_trace"],
             [
-                {"work": ".turn/out/1/note.md"},
+                {"work": ".turn/out/note.md"},
                 {"evidence": ".turn/out/list.json"},
-                {"evidence": ".turn/out/1/orchestrator.json"},
+                {"evidence": ".turn/out/orchestrator.json"},
             ],
         )
         self.assertEqual(out.splitlines()[0], "done")
@@ -312,7 +312,7 @@ class End(unittest.TestCase):
         # Given: the orchestrator's form with an item undecided
         self.decide(True, None)
         # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: it is stopped, and nothing is written back
         self.assertEqual(code, 1)
         self.assertIn("note F-1: not decided", out)

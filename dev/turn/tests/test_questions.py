@@ -60,7 +60,7 @@ class Questions(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo, ccs(constraints=[{"language": "English"}]))
-        run(self.repo, "aim", ".turn/out", "1", "a new teammate can start work alone")
+        run(self.repo, "aim", ".turn/out", "a new teammate can start work alone")
         self.repo.write(self.got["work"], WORK)
         fill(
             self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}}
@@ -70,12 +70,12 @@ class Questions(unittest.TestCase):
         self.repo.close()
 
     def check(self, role):
-        return run(self.repo, "check", ".turn/out", "1", role)
+        return run(self.repo, "check", ".turn/out", role)
 
     def test_a_run_starts_with_no_question_and_the_orchestrator_is_given_what_settles_them(self):
         # Given: a run just started
         # When: the generator's brief is made
-        _code, out = run(self.repo, "brief", ".turn/out", "1", "generator")
+        _code, out = run(self.repo, "brief", ".turn/out", "generator")
         # Then: the questions are an empty list kept for the whole run, and the orchestrator is
         # given the sources and constraints to see what they leave open
         self.assertEqual(self.repo.json(QUESTIONS), [])
@@ -156,7 +156,7 @@ class Questions(unittest.TestCase):
                 fill(self.repo, QUESTIONS, questions)
                 seen(self.repo, waits)
                 # When: the first user's brief is asked for
-                code, out = run(self.repo, "brief", ".turn/out", "1", "first-user")
+                code, out = run(self.repo, "brief", ".turn/out", "first-user")
                 # Then: the work goes to the reading without waiting for the user, and goes back to
                 # the generator only for an item that waits on no question
                 if said is None:
@@ -176,7 +176,7 @@ class Questions(unittest.TestCase):
         seen(self.repo)
         decided(self.repo)
         # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: the work is written, the user is asked the question left open and nothing else,
         # and the CCS returns it for the caller to put to the user, its own constraints as given
         self.assertEqual(code, 0, out)
@@ -195,7 +195,7 @@ class Questions(unittest.TestCase):
         fill(self.repo, QUESTIONS, [OPEN])
         seen(self.repo)
         decided(self.repo)
-        run(self.repo, "end", ".turn/out", "1")
+        run(self.repo, "end", ".turn/out")
         back = self.repo.json("out.json")
         back["constraints"].append({"answer": f"{LICENSE} MIT"})
         self.repo.write("again.json", json.dumps(back))
@@ -213,7 +213,7 @@ class Questions(unittest.TestCase):
         fill(self.repo, QUESTIONS, [OPEN])
         seen(self.repo)
         decided(self.repo)
-        run(self.repo, "end", ".turn/out", "1")
+        run(self.repo, "end", ".turn/out")
         self.repo.write("docs/note.md", WORK + "A line of the user's.\n")
         self.repo.write("again.json", json.dumps(self.repo.json("out.json")))
         # When: turn is called again on the CCS it returned
@@ -228,7 +228,7 @@ class Questions(unittest.TestCase):
         seen(self.repo)
         decided(self.repo)
         # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: it is done, and nothing is left for the user
         self.assertEqual((code, out.splitlines()[0]), (0, "done"))
         self.assertEqual(self.repo.json("out.json")["semantic_gist"], [])
@@ -239,7 +239,7 @@ class Questions(unittest.TestCase):
         decided(self.repo)
         fill(self.repo, QUESTIONS, [{"question": LICENSE}])
         # When: the run ends
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: it is refused, and nothing is written back
         self.assertEqual(code, 1)
         self.assertIn("question 1: not decided", out)
@@ -252,8 +252,8 @@ class Questions(unittest.TestCase):
                 # was written, or no agent briefed
                 fill(self.repo, QUESTIONS, [OPEN])
                 if at_work:
-                    self.repo.write(f".turn/out/1/{at_work}-brief.json", "{}")
-                    brief = os.path.join(self.repo.path, f".turn/out/1/{at_work}-brief.json")
+                    self.repo.write(f".turn/out/{at_work}-brief.json", "{}")
+                    brief = os.path.join(self.repo.path, f".turn/out/{at_work}-brief.json")
                     later = os.path.getmtime(os.path.join(self.repo.path, form(at_work))) + 1
                     os.utime(brief, (later, later))
                 # When: the orchestrator stops
@@ -274,7 +274,7 @@ class LearnersQuestions(unittest.TestCase):
         self.addCleanup(self.home.cleanup)
         self.addCleanup(self.repo.close)
         started(self.repo)
-        self.repo.write(".turn/out/1/note.md", WORK)
+        self.repo.write(".turn/out/note.md", WORK)
         seen(self.repo)
         decided(self.repo, f1=False)
         fill(
@@ -300,7 +300,7 @@ class LearnersQuestions(unittest.TestCase):
                 json.dump({"agentType": f"turn:{role}"}, f)
             open(os.path.join(folder, f"agent-{role}.jsonl"), "w").close()
         # When: the learner's brief is made
-        code, out = run(self.repo, "brief", ".turn/out", "1", "learner")
+        code, out = run(self.repo, "brief", ".turn/out", "learner")
         # Then: it says where to add a question
         self.assertEqual(code, 0, out)
         self.assertEqual(self.repo.json(out.strip())["questions"], QUESTIONS)
@@ -309,31 +309,16 @@ class LearnersQuestions(unittest.TestCase):
         # Given: the learner added a question without its words
         fill(self.repo, QUESTIONS, [{"question": ""}])
         # When: the learner's form is checked
-        code, out = run(self.repo, "check", ".turn/out", "1", "learner")
+        code, out = run(self.repo, "check", ".turn/out", "learner")
         # Then: it is stopped, naming the question
         self.assertEqual(code, 1)
         self.assertIn("question 1: the question is not given", out)
 
-    def test_a_way_waiting_on_the_users_answer_starts_no_second_round(self):
-        for name, questions, said in [
-            ("undecided", [{"question": LICENSE}], "question 1: not decided"),
-            ("left open", [OPEN], "no way for the generator to take"),
-        ]:
-            with self.subTest(name):
-                # Given: the learner's question, decided by the orchestrator or not
-                fill(self.repo, QUESTIONS, questions)
-                # When: the second round is asked for
-                code, out = run(self.repo, "round", ".turn/out")
-                # Then: it is refused: until the question is decided, and then since only the
-                # user's answer gives the way
-                self.assertEqual(code, 1)
-                self.assertIn(said, out)
-
     def test_a_way_waiting_on_the_users_answer_ends_the_run_by_asking_the_user(self):
         # Given: the learner's question left open
         fill(self.repo, QUESTIONS, [OPEN])
-        # When: the run ends after round 1
-        code, out = run(self.repo, "end", ".turn/out", "1")
+        # When: the run ends
+        code, out = run(self.repo, "end", ".turn/out")
         # Then: the user is asked the question, and the caller gets it with the way it gives
         self.assertEqual(code, 0, out)
         self.assertEqual(out.splitlines()[1], f"❓ {LICENSE}")

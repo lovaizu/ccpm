@@ -10,34 +10,32 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brief import brief
 from console import aim
 from forms import check, coverage
-from lifecycle import end, round_two, start, stop
+from lifecycle import end, start, stop
 from state import Stop
 
 USAGE = """usage: up.py start <in> <out> <session>
-       up.py brief <work folder> <round> <generator|first-user|evaluator|learner>
-       up.py coverage <work folder> <round> <generator|evaluator>
-       up.py check <work folder> <round> <generator|hand-on|first-user|evaluator|orchestrator|learner>
-       up.py aim <work folder> <round> <what the work will let its receiver do>
+       up.py brief <work folder> <generator|first-user|evaluator|learner>
+       up.py coverage <work folder> <generator|evaluator>
+       up.py check <work folder> <generator|hand-on|first-user|evaluator|orchestrator|learner>
+       up.py aim <work folder> <what the work will let its receiver do>
        up.py console <work folder>
-       up.py round <work folder>
-       up.py end <work folder> <round>
+       up.py end <work folder>
        up.py stop <work folder>"""
 
 
 COMMANDS = {
     "start": (start, 3),
-    "brief": (brief, 3),
-    "coverage": (coverage, 3),
-    "round": (round_two, 1),
-    "end": (end, 2),
-    "aim": (aim, 3),
+    "brief": (brief, 2),
+    "coverage": (coverage, 2),
+    "end": (end, 1),
+    "aim": (aim, 2),
     "stop": (stop, 1),
 }
 
 
 def main(argv):
     try:
-        if argv[:1] == ["check"] and len(argv) == 4:
+        if argv[:1] == ["check"] and len(argv) == 3:
             found = check(*argv[1:])
             print("\n".join(found) or "filled")
             return 1 if found else 0
