@@ -4,10 +4,15 @@
 
 ### Added
 
+- A plugin's step can call `writ:up`, from a subagent too, and gets back the document with its report, or the points only it can decide, each with writ's recommended answer — anything a plugin makes goes through writ, with no one there to answer.
+- A checklist writ makes for a kind it has none for, or an addition to one of writ's, is kept at `.writ/checklists/<kind>.md` and used from then on — a kind you write again is held to what it needs, and your team shares it by committing it.
+
 - A checklist for code and its tests (`code`): tests held to what the README and the design ask and seen failing, each told in Given / When / Then, every branch run, static checks and one style by tool, and stops that say what went wrong and what to do — code and tests are made and judged by one measure, as documents and prompts are.
 
 ### Changed
 
+- `/writ:up` settles every item of the checklists before anything is written: it looks up what the repository shows, puts what it can infer to you to confirm, and asks you only the rest, one question at a time; turn then writes the document, has it read as its reader and checks it, and you get the report of each item with the lines that meet it — you answer once, before the writing, and can leave writ at work after.
+- writ needs turn, which installing writ installs, and Python 3.9 and jq, which turn needs — the writing, reading and checking are turn's, done one way for every plugin.
 - The README checklist asks for an opening of one or two sentences saying what the product is and what it gives whom, an example that shows only what the reader does and gets back, why to choose it in its own section after the example, a reason for a requirement only where the reader could not see it, and nothing beyond deciding and getting to the first result, which goes to pages reached from Documentation — a README reads as the ones people are used to, and no longer buries what it gives under how the product works.
 - A checklist's version goes up once for each change that reaches those who judge by it, such as a release or a merge to a shared branch, not on every edit — a version names text people judged by, and drafts in between take no number.
 - The design checklist asks that a design leave out how the product behaves in one case where a principle it gives settles it — a design holds principles and decisions, and does not grow a rule beside them for each case a trial meets.
@@ -15,6 +20,8 @@
 - The checklists are in `checklists/`, and the checklist for checklists is `checklist.md` — the files are called by the name the README calls them.
 
 ### Removed
+
+- The Vale and textlint settings, and Claude Code starting writ on its own when it is about to write a document — writ runs when you or a plugin call it, and what a document must be is in its checklists.
 
 - `/writ:pith` — turn now has every work read in its receiver's place and checked against its checklist, so a second way to check in writ is not needed.
 
