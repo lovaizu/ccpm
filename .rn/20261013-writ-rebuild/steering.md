@@ -178,6 +178,13 @@ Progress:
   stopping or messaging it. So turn runs the same wherever it is called. turn's README and design,
   and writ's README example (the license asked mid-run), change first; then the design is written
   again.
+- Seen by the user (2026-10-14): turn and writ hold code (scripts, hooks) and its tests, but no
+  checklist says what good code is; `plugin.md` step 5 names checklists for documents and prompts
+  only. Decided by the user: writ gets a checklist for code and its tests, made through `turn:up`
+  against `essentials.md`, asking at least: tests written first and held to what the code must do,
+  not fitted to it (TDD); each test's intent told by Given / When / Then; every branch run by a
+  test (C1 coverage at 100%), so code no test needs and a test left unwritten both show; and the
+  other common best practices for code and test code, such as a linter.
 
 ### [ ] #4: writ built and checked
 
