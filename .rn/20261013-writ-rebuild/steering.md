@@ -150,7 +150,7 @@ Progress:
 - Decided by the user (2026-10-14): pith is removed now, so CI tells a real failure again; `/writ:up`
   still calls it until #4 rebuilds writ.
 
-### [ ] #3: writ's design
+### [x] #3: writ's design
 
 Purpose: `dev/writ/design.md` written with `doc.md` and `design.md` open, and agreed with the user
 (plugin.md step 2), taking in "Essentials to add" from #53.
@@ -287,10 +287,16 @@ Progress:
         it hands the judging to the user). Left as not
         needed: the form and job files in full (the specification, `design.md` U-2), and
         comparisons for each idea. Trimmed what repeats a principle or is turn's own decision.
-        Next: the user reads the design for agreement (`dev/writ/design.md`); then #4.
+        Agreed by the user (2026-10-14), after asking how writ and turn hand work to each other
+        and what setting the decisions as a tree means (`grilling`'s "walk down each branch of
+        the design tree, resolving dependencies between decisions one-by-one").
 
 ### [ ] #4: writ built and checked
 
 Purpose: plugin.md steps 3 to 7; #36 and #37 judged against the rebuilt writ.
 
 Serves: A1, A2, M1, M2, M3
+
+Progress:
+
+- Next (2026-10-14): plugin.md step 3, a first user reads writ's README and design once.
