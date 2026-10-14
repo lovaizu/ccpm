@@ -192,6 +192,18 @@ Progress:
 - Found in the run, for turn: called again on a work with one item left, the generator rewrote the
   work from nothing rather than from the work as it stood, and lost items it had met; turn's README
   promises the work keeps giving every item it already gave.
+- Agreed by the user (2026-10-14): the code checklist (`code` 0.1.0, B-1 to B-22 and F-1).
+- Where to resume (2026-10-14), one point at a time with the user:
+  1. turn's README (`48f5dee`, turn asks nothing while it works) waits for the user's agreement.
+  2. The user asked whether `essentials` becomes `checklists`, folder name included. To propose:
+     `writ/references/essentials/` becomes `writ/checklists/`, and `essentials.md` becomes
+     `checklist.md`, its front-matter name already; the README calls them checklists, so one thing
+     keeps one word. Paths that name it: `.claude/rules/plugin.md`, `turn/README.md`, `writ/README.md`,
+     `writ/CHANGELOG.md`, rn's files, and the old writ files #4 replaces.
+  3. Then make this repository meet the code checklist: count branches in `.coveragerc` and CI, and
+     add a linter and a type checker to CI, proposing the tools; `plugin.md` step 5 names `code.md`.
+  4. Then turn's design and code to the agreed README, writ's README example (no question mid-run),
+     and writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
