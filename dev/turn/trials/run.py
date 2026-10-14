@@ -1,6 +1,7 @@
 """Runs turn as its user does, on a fresh clone of this repository, with the turn of this working
 tree in place of the installed one, answering each question turn asks with the next answer given,
-and prints the conversation as it goes.
+and prints the conversation as it goes. Given a folder a trial already made, it calls turn again
+there, as a caller does on the CCS a run returned.
 
     python3 dev/turn/trials/run.py <new folder> <CCS file> <out name> [--stop <words>] [<answer> ...]
 
@@ -22,9 +23,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 place, ccs, out, *answers = sys.argv[1:]
 stop = answers[1] if answers[:1] == ["--stop"] else None
 answers = answers[2:] if stop else answers
-subprocess.run(["git", "clone", "-q", ROOT, place], check=True)
+if not os.path.isdir(place):
+    subprocess.run(["git", "clone", "-q", ROOT, place], check=True)
 os.makedirs(os.path.join(place, ".tasks"), exist_ok=True)
-shutil.copyfile(ccs, os.path.join(place, ".tasks", "in.json"))
+given = f"in-{out}"
+shutil.copyfile(ccs, os.path.join(place, ".tasks", given))
 claude = subprocess.Popen(
     [
         "claude",
@@ -62,7 +65,7 @@ def say(text):
     claude.stdin.flush()
 
 
-say(f"/turn:up in: .tasks/in.json\nout: .tasks/{out}")
+say(f"/turn:up in: .tasks/{given}\nout: .tasks/{out}")
 asked, stopped = 0, None
 for line in claude.stdout:
     event = json.loads(line)
