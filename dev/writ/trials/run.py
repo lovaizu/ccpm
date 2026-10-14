@@ -3,10 +3,13 @@ and turn of this working tree in place of the installed ones, and prints the con
 goes. Each time Claude waits on the user while writ's job is open, another Claude answers as the
 user, from what the user knows and nothing else.
 
-    python3 dev/writ/trials/run.py <new folder> <what the user knows> <first message> <files> ...
+    python3 dev/writ/trials/run.py [--writ <folder>] <new folder> <what the user knows>
+        <first message> <files> ...
 
-Each folder of files is copied over the ones before it. The trial ends once writ's job is closed,
-or after an hour.
+Each folder of files is copied over the ones before it. With --writ, that writ runs in place of this
+working tree's, such as the version in use, to compare with; turn is left out, as that version does
+not use it. The trial ends once writ's job is closed, or, for a writ that keeps no job, once the
+user has nothing to answer; and after an hour.
 """
 
 import json
@@ -17,7 +20,9 @@ import sys
 import threading
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-place, knows, first, *files = sys.argv[1:]
+args = sys.argv[1:]
+writ = args[1] if args[:1] == ["--writ"] else ""
+place, knows, first, *files = args[2:] if writ else args
 for folder in files:
     shutil.copytree(folder, place, dirs_exist_ok=True)
 for args in (
@@ -40,9 +45,8 @@ claude = subprocess.Popen(
         "--model",
         "opus",
         "--plugin-dir",
-        os.path.join(ROOT, "writ"),
-        "--plugin-dir",
-        os.path.join(ROOT, "turn"),
+        writ or os.path.join(ROOT, "writ"),
+        *([] if writ else ["--plugin-dir", os.path.join(ROOT, "turn")]),
         "--settings",
         '{"enabledPlugins": {"writ@ccpm": false, "turn@ccpm": false}}',
         "--permission-mode",
@@ -72,7 +76,7 @@ def answer(said):
     done = subprocess.run(
         ["claude", "-p", "--model", "opus", "--tools", ""],
         input=f"{known}\nwrit has just said to you:\n\n{said}\n\nReply as this user would, "
-        "in a sentence or two, and nothing else.",
+        "in a sentence or two, and nothing else; if writ asks you nothing, reply DONE.",
         capture_output=True,
         text=True,
         check=True,
@@ -81,7 +85,7 @@ def answer(said):
 
 
 say(first)
-last, event = "", {}
+last, event, took, asked = "", {}, 0, 0
 for line in claude.stdout:
     event = json.loads(line)
     if event.get("type") == "assistant":
@@ -90,9 +94,23 @@ for line in claude.stdout:
                 print(part["text"], flush=True)
                 last = part["text"]
     elif event.get("type") == "result":
-        if not os.path.exists(os.path.join(place, ".writ", "job.json")):
+        took += event.get("duration_ms", 0)
+        if not writ and not os.path.exists(os.path.join(place, ".writ", "job.json")):
             break
-        say(answer(last))
+        reply = answer(last)
+        if reply == "DONE":
+            break
+        say(reply)
+        asked += 1
 claude.stdin.close()
 claude.wait()
-print("session:", event.get("session_id"), "cost:", event.get("total_cost_usd"))
+print(
+    "session:",
+    event.get("session_id"),
+    "answers:",
+    asked,
+    "minutes:",
+    round(took / 60000, 1),
+    "cost:",
+    event.get("total_cost_usd"),
+)
