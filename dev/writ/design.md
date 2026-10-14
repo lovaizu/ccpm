@@ -85,8 +85,9 @@ Each must be no worse than in the version in use.
   opens with its name and version, and keeps the form turn's README gives for a checklist. Its items
   may change, with its version raised once for each release that changes them, so that a version
   names one text people judged by.
-- A checklist writ made at `.writ/checklists/<kind>.md` in the user's repository: writ finds it there
-  in every later version, and keeps using it as the user's own.
+- A checklist writ made at `.writ/checklists/<kind>.md` in the user's repository, for a kind of its
+  own or as an addition to writ's: writ finds it there in every later version, and keeps using it as
+  the user's own.
 - Everything else writ writes for a job is its own and may change.
 
 ### Non-goals
@@ -242,7 +243,8 @@ checklists in `writ/checklists/`, a checklist writ made.
 
 - When a job starts, a script lists the kinds there are checklists for, writ's own and those in the
   user's `.writ/checklists/`, each with its name and version. writ's skill names the document's kind
-  from the request, or, for a path, from the document there, and takes the checklists of the job.
+  from the request, or, for a path, from the document there, and takes the checklists of the job;
+  where both writ and the user have one for the kind, it takes both, the user's as an addition.
 - A path the request names is both where the document goes and what it is made from, so turn makes
   it again from what it holds.
 - Where there is no checklist for the kind, the choice between the checklist for every document
@@ -306,8 +308,10 @@ what to do next; whether an item is met stays turn's.
   what the document should be, that the document leaves it out and why, so the item is judged
   against that decision rather than left open.
 - An item that does not settle once every point it rests on is decided points to its checklist
-  asking more than its kind's purpose needs; writ brings the checklist's change to the user, since
-  what is learned goes into the checklists and a checklist changes only on the user's agreement.
+  asking more than its kind's purpose needs; writ puts to the user, as an addition to the kind's
+  checklist, how this kind meets that item, and once the user agrees, makes it as a checklist is
+  made and uses it from then on, since what is learned goes into the checklists and a checklist
+  changes only on the user's agreement.
 - writ calls turn again, with the CCS turn returned, only when what it settled or a way changes the
   document; called again, turn starts from the document as it stands. A rule turn adds to that CCS,
   for how such work is made, rides in the job's later calls of turn and in no later job, since what
@@ -341,11 +345,16 @@ Achieves: a kind writ has no checklist for, a checklist writ made.
   checklist is writ's checklist for checklists, its reader is whoever writes or judges that kind,
   and it is settled with the user in the same way before turn makes it at
   `.writ/checklists/<kind>.md`. The document is then made against it.
+- An addition to a kind writ has a checklist for is made the same way at the same place, and holds
+  only what it adds; every later job of that kind takes it with writ's checklist.
 - Must hold: a checklist writ makes opens with its name and version, as turn needs, and is found by
   the next job that asks for its kind.
 - Weighed: keeping the user's checklists in the user's repository, not in writ's folder, since an
   update of writ replaces its folder, and a checklist committed with the repository is shared with
   the team. The cost: the user commits it.
+- Weighed: an addition holds only what it adds, not a changed copy of writ's checklist, so later
+  versions of writ's checklist still reach the user. The cost: once writ's checklist takes in the
+  same, the two say it twice.
 
 ### Keeping writ's steps
 

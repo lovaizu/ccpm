@@ -303,5 +303,7 @@ Progress:
   - Decided by the user: the README's example asks the license before writing, as writ settles
     what the checklists need before turn is called; a question that shows up only in the writing
     comes at the end.
-  - For the user to decide next: who writes a checklist's change, and where, when an item does not
-    settle; writ's own checklists are outside git on a user's machine, so turn cannot write them.
+  - Decided by the user: when an item does not settle, the change is written as an addition, only
+    what it adds, at `.writ/checklists/<kind>.md`, and used with writ's checklist from then on;
+    writ's own checklists are not changed in place (they are outside git on a user's machine, and
+    an update replaces them). Once writ's checklist takes in the same, the two only repeat it.
