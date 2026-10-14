@@ -256,7 +256,19 @@ Progress:
      those points one at a time; called from a plugin's step, it asks nothing and returns them
      with their recommended answers to the caller, which decides and calls writ again. From there
      on both are the same: turn makes the work, and writ judges what turn returns.
-  10. Then writ's design again (#3).
+  10. Settled by the assistant for writ's design, from the sources (2026-10-14):
+      - One-dimensional: the time and tokens from the request to the finished document, and how
+        many questions the user answers, each compared with the version in use; #37 is one call
+        weighing about three checks.
+      - What others rely on: `/writ:up` as users type it; the `writ:up` skill as other plugins'
+        steps call it; the checklists' place and form in writ, which turn's README points users to
+        and turn reads; a checklist writ made at `.writ/checklists/<kind>.md`, which writ finds
+        again. rn 0.9.0 calls `writ:up` from an agent with instructions in words and a report file;
+        rn and writ are rebuilt on turn and released together (#39), so that call is replaced
+        rather than kept.
+      - Non-goals: checking a work, which is turn's alone (M2); lint tools, and Claude Code choosing
+        writ on its own, which the README leaves out.
+  11. Then writ's design again (#3).
 
 ### [ ] #4: writ built and checked
 
