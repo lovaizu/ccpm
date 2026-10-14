@@ -9,6 +9,7 @@ Code is run by its users and changed by whoever maintains it; its tests are read
 maintainer. Code and its tests let the maintainer:
 
 - trust, from the tests passing, that the code does what its README and its design ask;
+- take each test failure as a fault in what the code must do;
 - tell from each test, read alone, what the code must do and in what situation;
 - see that every branch of the code is run by a test, so a missing test and code no test needs
   both show;
@@ -19,13 +20,16 @@ maintainer. Code and its tests let the maintainer:
 - test the flow of the parts apart from what each part does;
 - test each behavior with the least input and setup that still shows it;
 - change a behavior by changing the one place it is written;
+- find every place a thing is used by searching for its name;
+- learn from the comments why the code is as it is;
 - read any part of the code without first learning the habits of whoever wrote it;
 - trust that what a tool can find without running the code, such as a misused part of the language
   or a wrong type, is already found.
 
 And they let whoever runs the code:
 
-- run it with only what its README says it needs;
+- run it with only what its README says it needs, on any version of the runtime the README says it
+  supports;
 - be stopped before anything they gave it wrong is used;
 - tell, when it stops, what went wrong;
 - tell, when it stops, what to do about it.
@@ -56,18 +60,27 @@ Look at: break the line the test is about, run the test, see whether it fails, a
 Why: a test never seen failing may check nothing, and one that checks nothing looks the same as one
 that works.
 
-### B-3: Both sides of each check
+### B-3: A check tested on what it stops
 
-For each check the code makes on what it receives, can the maintainer find a test where the check
-stops the input and one where it lets the input through?
+For each check the code makes on what it receives, can the maintainer learn from a test that the
+check stops an input it must stop?
 
-Why: a check tested only on what it lets through looks the same as no check at all, and one tested
-only on what it stops may stop everything.
+Look at: for each such check, a test that gives it an input it must stop and sees it stopped.
 
-### B-4: What each test checks, told in plain words
+Why: a check tested only on what it lets through looks the same as no check at all.
 
-From each test read alone, can the maintainer tell, in words that name nothing of the code, the
-situation, what is done in it, and what must then be so?
+### B-4: A check tested on what it lets through
+
+For each check the code makes on what it receives, can the maintainer learn from a test that the
+check lets through an input it must let through?
+
+Look at: for each such check, a test that gives it an input it must let through and sees it used.
+
+Why: a check tested only on what it stops may stop everything.
+
+### B-5: What each test checks, told in plain words
+
+From each test read alone, can the maintainer tell what it checks without reading its code?
 
 Look at: the test's Given, When and Then; one that names a function, a variable or another part of
 the code fails.
@@ -76,7 +89,7 @@ Why: a maintainer who changes the code decides from the test whether a failure i
 code or a behavior that was meant to change; a test whose intent must be read out of its code is
 kept or deleted by guess.
 
-### B-5: Each Then checked in full
+### B-6: Each Then checked in full
 
 Can the maintainer trust that the code under each Then checks everything its words say?
 
@@ -86,7 +99,7 @@ check fails.
 Why: a Then whose code checks less than its words lets a fault pass under a test that reads as if it
 caught it.
 
-### B-6: Each Then checked no further
+### B-7: Each Then checked no further
 
 Can the maintainer change what a Then does not name without that test failing?
 
@@ -96,7 +109,7 @@ fails.
 Why: a check the words do not name fails on a change the test never meant to stop, and the
 maintainer cannot tell from the test whether the change broke what it must do.
 
-### B-7: Every branch run
+### B-8: Every branch run
 
 Can the maintainer see, from the coverage report of the whole test run, that every branch of the
 code is taken by some test?
@@ -106,7 +119,7 @@ Look at: the report, counting branches as well as lines, lists no branch and no 
 Why: a branch no test takes may be broken without any test failing, and a missing test shows as a
 branch not taken.
 
-### B-8: Nothing no test needs
+### B-9: Nothing no test needs
 
 Can the maintainer trust that every line of the code is there for a behavior some test checks?
 
@@ -115,7 +128,7 @@ Look at: remove each line, run the tests, and put it back; a line whose removal 
 Why: a line no test needs is either a missing test or code with no purpose, and both are kept by
 every later maintainer without knowing why.
 
-### B-9: Lines left out of the count say why
+### B-10: Lines left out of the count say why
 
 For each line left out of the coverage count, can the maintainer tell from what is written beside it
 which environment, one the tests cannot make, decides whether the line runs?
@@ -123,18 +136,29 @@ which environment, one the tests cannot make, decides whether the line runs?
 Why: a line left out without its reason cannot be told from a line left out to make the count pass,
 and the next maintainer keeps the gap.
 
-### B-10: Each failure learned from every push
+### B-11: A failing test learned from every push
 
 Does the maintainer learn, from every push and without running anything by hand, of each test that
-fails and each branch no test takes?
+fails?
 
-Look at: the repository's automated runs, which on every push run the whole test suite and the
-coverage count, and fail on a test that fails or a branch not taken.
+Look at: the repository's automated runs, which on every push run the whole test suite and fail on
+a test that fails.
 
-Why: a check left to be run by hand is skipped, and a skipped check goes unnoticed until the fault
-reaches a user.
+Why: a test left to be run by hand is skipped, and a skipped test lets a fault reach a user
+unnoticed.
 
-### B-11: The same result on every run
+### B-12: A branch not run learned from every push
+
+Does the maintainer learn, from every push and without running anything by hand, of each branch no
+test takes?
+
+Look at: the repository's automated runs, which on every push run the coverage count, counting
+branches as well as lines, and fail on a branch or a line not run.
+
+Why: a coverage count left to be run by hand is skipped, and a branch no test takes goes unnoticed
+until its fault reaches a user.
+
+### B-13: The same result on every run
 
 Can the maintainer take each test failure as a fault, because each test gives the same result
 whenever it is run, alone or with the others, in any order?
@@ -145,7 +169,7 @@ files or state behind for the next one; a test that needs another to run first. 
 Why: a test that fails on some runs and not on others teaches the maintainer to rerun it rather than
 read it, and then a real failure is rerun too.
 
-### B-12: Run with only what the README names
+### B-14: Run with only what the README names
 
 Can whoever runs the code run it with only the runtime, libraries and tools its README names?
 
@@ -154,7 +178,7 @@ Look at: what the code imports and calls, against what the README names.
 Why: what the code uses beyond them is missing on some user's machine, and the code fails there for
 a reason the user was never told.
 
-### B-13: Run on the oldest version it supports
+### B-15: Run on the oldest version it supports
 
 Can users on the oldest version of the runtime the README says the code supports run it?
 
@@ -162,7 +186,7 @@ Look at: the tests, run on that version by the repository's automated runs, pass
 
 Why: code written on a newer version uses what the older one lacks, and fails for the users on it.
 
-### B-14: Stopped before a wrong input is used
+### B-16: Stopped before a wrong input is used
 
 When whoever runs the code gives it something wrong, such as a file, an argument or what another
 program hands it, are they stopped before the code uses it?
@@ -173,7 +197,7 @@ check that stops a wrong one lies between them.
 Why: a wrong input used fails far from where it came in, or does harm, such as writing outside the
 folder it was meant for, and the user cannot tell from the failure what they gave wrong.
 
-### B-15: A stop says what went wrong
+### B-17: A stop says what went wrong
 
 When the code stops, can whoever runs it tell from what it says what went wrong?
 
@@ -182,7 +206,7 @@ Look at: each message the code gives when it stops names the input or the condit
 Why: a stop that says only that something failed leaves the user to read the code to learn what
 they gave wrong.
 
-### B-16: A stop says what to do
+### B-18: A stop says what to do
 
 When the code stops, can whoever runs it tell from what it says what to do about it?
 
@@ -192,7 +216,7 @@ instead or how to install a tool that is missing.
 Why: a user who knows what went wrong but not how to put it right is left to work out the fix from
 the code.
 
-### B-17: Slips found by a tool
+### B-19: Slips found by a tool
 
 Can the maintainer trust that what a tool finds without running the code, such as a misused part of
 the language or a wrong type, is already found?
@@ -204,18 +228,7 @@ kept in the repository, reports nothing on the code and its tests.
 Why: a slip a tool finds on every run needs no test written for it and no review spent on it, and a
 reader finds it only sometimes.
 
-### B-18: One style in every file
-
-Can the maintainer read any part of the code and its tests without first learning how its writer
-lays out code?
-
-Look at: the style the project names, checked by a tool such as a linter's style rules or a
-formatter, run with the settings kept in the repository, reports nothing on the code and its tests.
-
-Why: a style checked by a tool is the same in every file, so the maintainer reads each part without
-stopping at how it is written, and no review spends time on it.
-
-### B-19: One name for one thing
+### B-20: One name for one thing
 
 Can the maintainer find every place a thing is used by searching for its name?
 
@@ -225,7 +238,7 @@ or an idea, called by one name in all of them; a thing called by two names fails
 Why: a maintainer who meets two names takes them for two things, and a search for one finds only
 half of where the thing is used.
 
-### B-20: Comments say why
+### B-21: Comments say why
 
 Can the maintainer learn from each comment why the code is as it is?
 
@@ -235,7 +248,7 @@ the code beside it fails.
 Why: a comment that repeats the code is one more thing to keep in step with it, and drifts; the why
 is the one thing the code cannot say.
 
-### B-21: Each piece of logic in one place
+### B-22: Each piece of logic in one place
 
 Can the maintainer change a behavior by changing the one place it is written?
 
@@ -245,17 +258,27 @@ such pair fails.
 Why: logic written twice is changed in one place and left in the other, and the two drift apart
 without any test failing.
 
-### B-22: The tests run by the commands given
+### B-23: The tests run by the command given
 
-Can the maintainer run the whole test suite, and the coverage count, by the commands the README for
-those who build the code gives?
+Can the maintainer run the whole test suite by the command the README for those who build the code
+gives?
 
-Look at: each command run as written, in a fresh copy of the repository, runs every test and prints
-the coverage count.
+Look at: the command run as written, in a fresh copy of the repository, runs every test.
 
 Why: a maintainer who must work out how to run the tests runs them less often, or runs only some.
 
-### B-23: A failure names the behavior that broke
+### B-24: The coverage count run by the command given
+
+Can the maintainer get the coverage count by the command the README for those who build the code
+gives?
+
+Look at: the command run as written, in a fresh copy of the repository, prints the coverage count of
+lines and branches over the whole test suite.
+
+Why: a maintainer who must work out how to count coverage counts it less often, and a branch no test
+takes is found late.
+
+### B-25: A failure names the behavior that broke
 
 When a test fails, can the maintainer tell from that failure alone which one behavior broke?
 
@@ -266,7 +289,7 @@ asked by two sentences fails.
 Why: a test that holds several behaviors, failing, leaves the maintainer to read its code to learn
 which of them broke.
 
-### B-24: Nothing run that only another behavior needs
+### B-26: Nothing run that only another behavior needs
 
 Can the maintainer test each behavior without running the code that only another behavior needs?
 
@@ -277,19 +300,30 @@ a test of how one input is checked that runs the whole program to reach that che
 Why: a test that runs another behavior's code fails when that behavior breaks, so its failure no
 longer says which broke, and every run pays the time that code takes.
 
-### B-25: The flow apart from what each part does
+### B-27: The flow tested on stand-ins
 
-Can the maintainer test the order in which the parts run and what they hand one another apart from
-what each part does?
+Can the maintainer test the order in which the parts run and what they hand one another without
+running each part's own work?
 
 Look at: each test whose Then names the order of the parts or what they hand one another; one that
 runs a part's own work where a stand-in giving the least that part hands on would still show the
-flow fails, and so does one whose Then names both the flow and what a part makes.
+flow fails.
 
 Why: a test of the flow that does each part's whole work fails whenever any part's work goes wrong,
 so its failure does not say whether the flow broke, and every run pays for all the parts' work.
 
-### B-26: The least input and setup that shows it
+### B-28: The flow checked apart from what a part makes
+
+When a test of the flow fails, can the maintainer tell that the flow broke, and not what a part
+makes?
+
+Look at: each test whose Then names the order of the parts or what they hand one another; one whose
+Then also names what a part makes fails.
+
+Why: a test that checks the flow and a part's work at once fails when either breaks, so its failure
+does not say which.
+
+### B-29: The least input and setup that shows it
 
 From each test's input and setup, can the maintainer tell what the behavior rests on, because
 nothing in them could be left out with the behavior still shown?
@@ -302,8 +336,8 @@ and every run pays to make them.
 
 ## Usability
 
-None: each thing that makes code and its tests easy to work on is one the opening names the
-maintainer or whoever runs the code gets from them, so its item is in Benefit.
+None: each item that is not a set shape is one without which the maintainer or whoever runs the
+code loses something the opening names they get, so it is in Benefit.
 
 ## Format
 
@@ -324,3 +358,12 @@ def test_<what must happen, as one sentence>(self):
 
 Why: the maintainer finds the intent of every test in the same place, and a tool listing the tests
 lists what the code must do.
+
+### F-2: One style in every file
+
+Do the code and its tests follow the layout style the project names, so that the tool that checks
+it, such as a linter's style rules or a formatter, run with the settings kept in the repository,
+reports nothing?
+
+Why: a style checked by a tool is the same in every file, so the maintainer reads each part without
+stopping at how it is written, and no review spends time on it.
