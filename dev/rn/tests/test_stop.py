@@ -53,6 +53,19 @@ class Stop(Session):
         # Then the end is blocked, saying it is not pushed
         self.assertIn("not pushed", out)
 
+    def test_unpushed_finishing_commit_settling_an_open_item_blocks_the_end(self):
+        # Given an open item, and the commit finishing the session that also settles it, not pushed
+        self.r.write(f"{SDIR}/open/01-feedback-plan.md", "Name the screen first.\n")
+        self.r.commit("rn: feedback\n\n● #1 Plan sign-off ── feedback → plan again")
+        sh(self.r.dir, "git", "push", "-q")
+        sh(self.r.dir, "git", "rm", "-q", f"{SDIR}/open/01-feedback-plan.md")
+        self.r.write(f"{SDIR}/steering.md", STEERING.replace("status: running", "status: finished"))
+        self.r.commit("rn: finish\n\n● #2 Design sign-off ── approved → finished")
+        # When the turn ends
+        _, out = self.r.hook("stop")
+        # Then the end is blocked, saying it is not pushed
+        self.assertIn("not pushed", out)
+
     def test_pushed_finishing_commit_lets_the_end_through(self):
         # Given the commit finishing the session, pushed
         self.r.write(f"{SDIR}/steering.md", STEERING.replace("status: running", "status: finished"))

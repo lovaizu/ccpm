@@ -205,6 +205,17 @@ class EndAfterLearning(unittest.TestCase):
                                                   {"evidence": ".turn/out/2/orchestrator.json"},
                                                   {"evidence": ".turn/out/2/learner.json"}])
 
+    def test_a_rule_learned_in_both_rounds_is_returned_once(self):
+        # Given: round 1 and round 2 both learned the same thing of making such work
+        self.second_round({"note F-1": WORK_WAY, "note B-1": WORK_WAY}, making={"note B-1": RULE})
+        decide(self.repo, ".turn/out/2", f1=False)
+        learn(self.repo, ".turn/out/2", {"note F-1": "the work: cut the second line"},
+              making={"note F-1": RULE})
+        # When: the run ends
+        run(self.repo, "end", ".turn/out", "2")
+        # Then: the caller gets the rule once
+        self.assertEqual(self.repo.json("out.json")["constraints"], [{"rule": RULE}])
+
     def test_more_whose_way_lies_in_what_the_caller_wrote_goes_to_the_caller(self):
         # Given: round 2 left F-1 with a way only the caller can take
         self.second_round({"note F-1": WORK_WAY, "note B-1": WORK_WAY})

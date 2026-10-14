@@ -41,5 +41,4 @@ def main():
                          or first_user_called(data, top, sdir))
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+sys.exit(main())

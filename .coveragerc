@@ -1,4 +1,5 @@
 [run]
+branch = true
 patch = subprocess
 parallel = true
 

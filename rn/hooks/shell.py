@@ -14,14 +14,13 @@ PREFIX = ("env", "command", "exec", "time", "nohup", "sudo")
 def without_heredocs(cmd):
     out, end = [], None
     for line in cmd.split("\n"):
-        if end is not None:
-            if line.strip() == end:
-                end = None
-            continue
-        out.append(line)
-        m = HEREDOC.search(line)
-        if m:
-            end = m.group(2)
+        if end is None:
+            out.append(line)
+            m = HEREDOC.search(line)
+            if m:
+                end = m.group(2)
+        elif line.strip() == end:
+            end = None
     return "\n".join(out)
 
 

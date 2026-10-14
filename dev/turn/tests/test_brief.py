@@ -128,6 +128,19 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["acceptance"], ["they can start alone"])
         self.assertFalse(os.path.exists(copy))
 
+    def test_the_evaluator_is_handed_its_brief_again_once_the_copy_is_dropped(self):
+        # Given: the evaluator's brief was made, and the copy dropped with it
+        seen(self.repo)
+        self.handed("first-user")
+        records = self.ran("first-user", "a1")
+        fill(self.repo, form("first-user"), {"note B-1": {"took": "run make", "lines": "3"}})
+        self.handed("evaluator")
+        # When: the evaluator's brief is made again
+        got = self.handed("evaluator")
+        # Then: it holds the same reading and records
+        self.assertEqual(got["reading"], form("first-user"))
+        self.assertEqual(got["records"], records)
+
     def test_the_evaluator_is_not_handed_a_reading_that_is_not_there(self):
         cases = [("no reading made", False, False, "step 9"),
                  ("a reading without records", True, False, "no records of the first user"),

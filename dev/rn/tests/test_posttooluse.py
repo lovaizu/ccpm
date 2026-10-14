@@ -243,6 +243,20 @@ class PostToolUse(Session):
                          f"cart.ts:3.\n\n{tail[name]}\n\n" for name in items)
         self.r.commit("rn: settle\n\n" + quoted + "● plan ── settled → asking the user")
 
+    def test_settled_question_report_ending_the_message_is_stopped_only_for_its_decision_line(self):
+        # Given a report on a question settled whole, with nothing after it in the message
+        self.r.write(f"{SDIR}/open/02-report-question.md", REPORT)
+        self.r.commit("rn: reports\n\n● plan ── reports in → settle")
+        os.remove(os.path.join(self.r.dir, SDIR, "open", "02-report-question.md"))
+        self.r.commit("rn: settle\n\n02-report-question.md:\n    # Report\n\n    Doing as written, "
+                      "the build failed at cart.ts:3.")
+        # When the commit is checked
+        code, out = self.r.after_commit()
+        # Then it is stopped for the decision line, not for a More let go
+        self.assertEqual(code, 2)
+        self.assertIn("decision line", out)
+        self.assertNotIn("let go", out)
+
     def test_settled_report_on_a_question_letting_a_more_go_is_stopped(self):
         # Given a report on a question settled with a More let go
         self.settle(["02-report-question.md"],
@@ -459,8 +473,27 @@ class PostToolUse(Session):
         # Given a commit with no decision line
         self.r.write("a.txt", "a\n")
         self.r.commit("rn: a")
-        # When a command that makes no commit has run
-        code, _ = self.r.hook("posttooluse", tool_name="Bash", tool_input={"command": "ls"})
+        for cmd in ("ls", "git --version", "cat <<'EOF'\ngit commit -m x\nEOF"):
+            # When a command that makes no commit has run, git named only in a heredoc at most
+            code, _ = self.r.hook("posttooluse", tool_name="Bash", tool_input={"command": cmd})
+            # Then it passes
+            self.assertEqual(code, 0, cmd)
+
+    def test_commit_after_a_git_option_is_checked(self):
+        # Given a commit with no decision line
+        self.r.write("a.txt", "a\n")
+        self.r.commit("rn: a")
+        # When it was made with an option before the subcommand
+        code, _ = self.r.hook("posttooluse", tool_name="Bash",
+                              tool_input={"command": "git --no-pager commit -m x"})
+        # Then it is stopped
+        self.assertEqual(code, 2)
+
+    def test_writing_a_file_outside_the_record_is_not_checked(self):
+        # Given a steering.md out of form
+        self.r.write(f"{SDIR}/steering.md", STEERING.replace("### [ ] #2:", "### #2"))
+        # When a source file is written
+        code, _ = self.post_write("src.ts")
         # Then it passes
         self.assertEqual(code, 0)
 
