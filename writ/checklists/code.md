@@ -14,6 +14,10 @@ maintainer. Code and its tests let the maintainer:
   both show;
 - change the code and learn at once, by running the tests or from any push, whether it still does
   what it must;
+- learn, when a test fails, which behavior broke;
+- test each behavior without running what only another behavior needs;
+- test the flow of the parts apart from what each part does;
+- test each behavior with the least input and setup that still shows it;
 - change a behavior by changing the one place it is written;
 - read any part of the code without first learning the habits of whoever wrote it;
 - trust that what a tool can find without running the code, such as a misused part of the language
@@ -250,6 +254,51 @@ Look at: each command run as written, in a fresh copy of the repository, runs ev
 the coverage count.
 
 Why: a maintainer who must work out how to run the tests runs them less often, or runs only some.
+
+### B-23: A failure names the behavior that broke
+
+When a test fails, can the maintainer tell from that failure alone which one behavior broke?
+
+Look at: for each test, the behaviors whose fault would make its checks fail, each matched to the
+sentence of the README or the design that asks it; a test whose checks would fail on behaviors
+asked by two sentences fails.
+
+Why: a test that holds several behaviors, failing, leaves the maintainer to read its code to learn
+which of them broke.
+
+### B-24: Nothing run that only another behavior needs
+
+Can the maintainer test each behavior without running the code that only another behavior needs?
+
+Look at: for each test, the code it runs against the code its Then rests on; a part of the code
+that runs only to reach the behavior, and that a test of another behavior is about, fails, such as
+a test of how one input is checked that runs the whole program to reach that check.
+
+Why: a test that runs another behavior's code fails when that behavior breaks, so its failure no
+longer says which broke, and every run pays the time that code takes.
+
+### B-25: The flow apart from what each part does
+
+Can the maintainer test the order in which the parts run and what they hand one another apart from
+what each part does?
+
+Look at: each test whose Then names the order of the parts or what they hand one another; one that
+runs a part's own work where a stand-in giving the least that part hands on would still show the
+flow fails, and so does one whose Then names both the flow and what a part makes.
+
+Why: a test of the flow that does each part's whole work fails whenever any part's work goes wrong,
+so its failure does not say whether the flow broke, and every run pays for all the parts' work.
+
+### B-26: The least input and setup that shows it
+
+From each test's input and setup, can the maintainer tell what the behavior rests on, because
+nothing in them could be left out with the behavior still shown?
+
+Look at: leave out each part of the test's input and setup, run the test, and put the part back; a
+part whose leaving out still has the test pass with its Then true fails.
+
+Why: input and setup beyond what the behavior needs hide which part of them the behavior rests on,
+and every run pays to make them.
 
 ## Usability
 

@@ -7,7 +7,7 @@
 - A plugin's step can call `writ:up`, from a subagent too, and gets back the document with its report, or the points only it can decide, each with writ's recommended answer — anything a plugin makes goes through writ, with no one there to answer.
 - A checklist writ makes for a kind it has none for, or an addition to one of writ's, is kept at `.writ/checklists/<kind>.md` and used from then on — a kind you write again is held to what it needs, and your team shares it by committing it.
 
-- A checklist for code and its tests (`code`): tests held to what the README and the design ask and seen failing, each told in Given / When / Then, every branch run, static checks and one style by tool, and stops that say what went wrong and what to do — code and tests are made and judged by one measure, as documents and prompts are.
+- A checklist for code and its tests (`code`): tests held to what the README and the design ask and seen failing, each told in Given / When / Then, each failure naming the one behavior that broke, the flow tested apart from each part's work with the least input and setup, every branch run, static checks and one style by tool, and stops that say what went wrong and what to do — code and tests are made and judged by one measure, as documents and prompts are.
 
 ### Changed
 
