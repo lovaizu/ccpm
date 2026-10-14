@@ -185,6 +185,13 @@ Progress:
   not fitted to it (TDD); each test's intent told by Given / When / Then; every branch run by a
   test (C1 coverage at 100%), so code no test needs and a test left unwritten both show; and the
   other common best practices for code and test code, such as a linter.
+- Made through `turn:up` (2026-10-14): two rounds, every item but one item per thing met; the three
+  joined items (a Then checked in full and no further, a stop's what went wrong and what to do,
+  slips and style by tool) were split by hand, since a third run rewrote the checklist from nothing
+  and dropped half its items, the type checker the user asked for among them.
+- Found in the run, for turn: called again on a work with one item left, the generator rewrote the
+  work from nothing rather than from the work as it stood, and lost items it had met; turn's README
+  promises the work keeps giving every item it already gave.
 
 ### [ ] #4: writ built and checked
 

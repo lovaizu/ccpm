@@ -16,14 +16,15 @@ maintainer. Code and its tests let the maintainer:
   what it must;
 - change a behavior by changing the one place it is written;
 - read any part of the code without first learning the habits of whoever wrote it;
-- trust that what a tool can find without running the code, such as a style kept in no other file,
-  a misused part of the language or a wrong type, is already found.
+- trust that what a tool can find without running the code, such as a misused part of the language
+  or a wrong type, is already found.
 
 And they let whoever runs the code:
 
 - run it with only what its README says it needs;
 - be stopped before anything they gave it wrong is used;
-- tell, when it stops, what went wrong and what to do about it.
+- tell, when it stops, what went wrong;
+- tell, when it stops, what to do about it.
 
 What the code must do is set by its README and its design; this checklist judges the code and its
 tests against them, from the code, the tests and their results.
@@ -71,18 +72,27 @@ Why: a maintainer who changes the code decides from the test whether a failure i
 code or a behavior that was meant to change; a test whose intent must be read out of its code is
 kept or deleted by guess.
 
-### B-5: Each Then checked as said
+### B-5: Each Then checked in full
 
-Can the maintainer trust that the code under each Then checks what its words say, all of it and no
-more?
+Can the maintainer trust that the code under each Then checks everything its words say?
 
-Look at: each thing the Then's words name, matched to a check under it, and each check under it,
-matched to a thing its words name; a thing or a check left without a match fails.
+Look at: each thing the Then's words name, matched to a check under it; a thing left without a
+check fails.
 
 Why: a Then whose code checks less than its words lets a fault pass under a test that reads as if it
-caught it; one that checks more fails on a change the test never meant to stop.
+caught it.
 
-### B-6: Every branch run
+### B-6: Each Then checked no further
+
+Can the maintainer change what a Then does not name without that test failing?
+
+Look at: each check under the Then, matched to a thing its words name; a check left without one
+fails.
+
+Why: a check the words do not name fails on a change the test never meant to stop, and the
+maintainer cannot tell from the test whether the change broke what it must do.
+
+### B-7: Every branch run
 
 Can the maintainer see, from the coverage report of the whole test run, that every branch of the
 code is taken by some test?
@@ -92,7 +102,7 @@ Look at: the report, counting branches as well as lines, lists no branch and no 
 Why: a branch no test takes may be broken without any test failing, and a missing test shows as a
 branch not taken.
 
-### B-7: Nothing no test needs
+### B-8: Nothing no test needs
 
 Can the maintainer trust that every line of the code is there for a behavior some test checks?
 
@@ -101,7 +111,7 @@ Look at: remove each line, run the tests, and put it back; a line whose removal 
 Why: a line no test needs is either a missing test or code with no purpose, and both are kept by
 every later maintainer without knowing why.
 
-### B-8: Lines left out of the count say why
+### B-9: Lines left out of the count say why
 
 For each line left out of the coverage count, can the maintainer tell from what is written beside it
 which environment, one the tests cannot make, decides whether the line runs?
@@ -109,7 +119,7 @@ which environment, one the tests cannot make, decides whether the line runs?
 Why: a line left out without its reason cannot be told from a line left out to make the count pass,
 and the next maintainer keeps the gap.
 
-### B-9: Each failure learned from every push
+### B-10: Each failure learned from every push
 
 Does the maintainer learn, from every push and without running anything by hand, of each test that
 fails and each branch no test takes?
@@ -120,7 +130,7 @@ coverage count, and fail on a test that fails or a branch not taken.
 Why: a check left to be run by hand is skipped, and a skipped check goes unnoticed until the fault
 reaches a user.
 
-### B-10: The same result on every run
+### B-11: The same result on every run
 
 Can the maintainer take each test failure as a fault, because each test gives the same result
 whenever it is run, alone or with the others, in any order?
@@ -131,7 +141,7 @@ files or state behind for the next one; a test that needs another to run first. 
 Why: a test that fails on some runs and not on others teaches the maintainer to rerun it rather than
 read it, and then a real failure is rerun too.
 
-### B-11: Run with only what the README names
+### B-12: Run with only what the README names
 
 Can whoever runs the code run it with only the runtime, libraries and tools its README names?
 
@@ -140,7 +150,7 @@ Look at: what the code imports and calls, against what the README names.
 Why: what the code uses beyond them is missing on some user's machine, and the code fails there for
 a reason the user was never told.
 
-### B-12: Run on the oldest version it supports
+### B-13: Run on the oldest version it supports
 
 Can users on the oldest version of the runtime the README says the code supports run it?
 
@@ -148,7 +158,7 @@ Look at: the tests, run on that version by the repository's automated runs, pass
 
 Why: code written on a newer version uses what the older one lacks, and fails for the users on it.
 
-### B-13: Stopped before a wrong input is used
+### B-14: Stopped before a wrong input is used
 
 When whoever runs the code gives it something wrong, such as a file, an argument or what another
 program hands it, are they stopped before the code uses it?
@@ -159,30 +169,49 @@ check that stops a wrong one lies between them.
 Why: a wrong input used fails far from where it came in, or does harm, such as writing outside the
 folder it was meant for, and the user cannot tell from the failure what they gave wrong.
 
-### B-14: A stop says what to do
+### B-15: A stop says what went wrong
 
-When the code stops, can whoever runs it tell from what it says what went wrong and what to do about
-it?
+When the code stops, can whoever runs it tell from what it says what went wrong?
 
-Look at: each message the code gives when it stops names the input or the condition that was wrong,
-and an action to take, such as a value to give instead or how to install a tool that is missing.
+Look at: each message the code gives when it stops names the input or the condition that was wrong.
 
 Why: a stop that says only that something failed leaves the user to read the code to learn what
-they must change.
+they gave wrong.
 
-### B-15: The static checks pass
+### B-16: A stop says what to do
 
-Can the maintainer trust that what a tool finds without running the code is already found?
+When the code stops, can whoever runs it tell from what it says what to do about it?
 
-Look at: every check the project names that a tool makes without running the code, such as a linter
-and, where the language has one, a type checker, run with the settings kept in the repository,
-reports nothing on the code and its tests.
+Look at: each message the code gives when it stops names an action to take, such as a value to give
+instead or how to install a tool that is missing.
+
+Why: a user who knows what went wrong but not how to put it right is left to work out the fix from
+the code.
+
+### B-17: Slips found by a tool
+
+Can the maintainer trust that what a tool finds without running the code, such as a misused part of
+the language or a wrong type, is already found?
+
+Look at: every check the project names that finds such slips without running the code, such as a
+linter's rules for faults and, where the language has one, a type checker, run with the settings
+kept in the repository, reports nothing on the code and its tests.
+
+Why: a slip a tool finds on every run needs no test written for it and no review spent on it, and a
+reader finds it only sometimes.
+
+### B-18: One style in every file
+
+Can the maintainer read any part of the code and its tests without first learning how its writer
+lays out code?
+
+Look at: the style the project names, checked by a tool such as a linter's style rules or a
+formatter, run with the settings kept in the repository, reports nothing on the code and its tests.
 
 Why: a style checked by a tool is the same in every file, so the maintainer reads each part without
-learning its writer's habits; a misused part of the language or a wrong type found by a tool needs
-no test written for it and no review spent on it.
+stopping at how it is written, and no review spends time on it.
 
-### B-16: One name for one thing
+### B-19: One name for one thing
 
 Can the maintainer find every place a thing is used by searching for its name?
 
@@ -192,7 +221,7 @@ or an idea, called by one name in all of them; a thing called by two names fails
 Why: a maintainer who meets two names takes them for two things, and a search for one finds only
 half of where the thing is used.
 
-### B-17: Comments say why
+### B-20: Comments say why
 
 Can the maintainer learn from each comment why the code is as it is?
 
@@ -202,7 +231,7 @@ the code beside it fails.
 Why: a comment that repeats the code is one more thing to keep in step with it, and drifts; the why
 is the one thing the code cannot say.
 
-### B-18: Each piece of logic in one place
+### B-21: Each piece of logic in one place
 
 Can the maintainer change a behavior by changing the one place it is written?
 
@@ -212,7 +241,7 @@ such pair fails.
 Why: logic written twice is changed in one place and left in the other, and the two drift apart
 without any test failing.
 
-### B-19: The tests run by the commands given
+### B-22: The tests run by the commands given
 
 Can the maintainer run the whole test suite, and the coverage count, by the commands the README for
 those who build the code gives?

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- A checklist for code and its tests (`code`): tests held to what the README and the design ask and seen failing, each told in Given / When / Then, every branch run, static checks and one style by tool, and stops that say what went wrong and what to do — code and tests are made and judged by one measure, as documents and prompts are.
+
 ### Changed
 
 - The README checklist asks for an opening of one or two sentences saying what the product is and what it gives whom, an example that shows only what the reader does and gets back, why to choose it in its own section after the example, a reason for a requirement only where the reader could not see it, and nothing beyond deciding and getting to the first result, which goes to pages reached from Documentation — a README reads as the ones people are used to, and no longer buries what it gives under how the product works.
