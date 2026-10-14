@@ -18,8 +18,11 @@ The words used throughout:
   writ is turn's caller, as [Calling turn from a plugin's step](../../turn/calling-from-a-plugin.md)
   describes; Good, More, a way to a Good and `next` are turn's words, used here as turn's design
   gives them.
+- A document: any work writ makes, of every kind it has a checklist for, code and its tests among
+  them, and of any other kind once its checklist is made.
 - A checklist says what a document of one kind must give its reader, as items. The checklists of a
-  job are the one for every document and the one for the document's kind, if there is one.
+  job are the one for every document and the one for the document's kind, if there is one; code and
+  its tests have their own, which stands alone.
 - A job: one call of writ, from the request to the finished document with its report, or, when a
   plugin's step called it, to the points it hands back.
 - A calling plugin: another plugin whose step calls writ, as rn's steps do.
@@ -239,15 +242,13 @@ checklists in `writ/checklists/`, a checklist writ made.
 
 - When a job starts, a script lists the kinds there are checklists for, writ's own and those in the
   user's `.writ/checklists/`, each with its name and version. writ's skill names the document's kind
-  from the request, or, for a path, from the document there, and takes the checklist for every
-  document with the one for that kind.
+  from the request, or, for a path, from the document there, and takes the checklists of the job.
 - A path the request names is both where the document goes and what it is made from, so turn makes
   it again from what it holds.
 - Where there is no checklist for the kind, the choice between the checklist for every document
   alone and making the kind's checklist first is an open point like any other, with making it first
   recommended when the user will write that kind again.
-- Must hold: every job's checklists include the one for every document, and every checklist used
-  opens with its name and version, so each Good in the report can be followed back to the text it
+- Must hold: every checklist used opens with its name and version, so each Good in the report can be followed back to the text it
   was judged by.
 - Weighed: writing to the checklist for every document alone, without asking, was not chosen, since
   a kind written again would miss what only its own checklist asks every time. The cost: one more
