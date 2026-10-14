@@ -268,7 +268,14 @@ Progress:
         rather than kept.
       - Non-goals: checking a work, which is turn's alone (M2); lint tools, and Claude Code choosing
         writ on its own, which the README leaves out.
-  11. Then writ's design again (#3).
+  11. Then writ's design again (#3). Running (2026-10-14): `dev/turn/trials/run.py` on the CCS
+      `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/ebf71383-9619-40a9-8b2c-8e0716add473/scratchpad/design.json`
+      (deliverable `dev/writ/design.md`; viewpoints `doc.md`, `design.md`; sources: writ's README,
+      this file, turn's README, callers' page and design, `plugin.md`, rn's `conduct.md`), in the
+      clone `.../scratchpad/d1`, log `.../scratchpad/d1.log`. Next: read what it returns
+      (`d1/.tasks/out.json`, `d1/dev/writ/design.md`) and its records, judge each question and
+      item without a Good from the purpose as step 8 says, copy the design here, and show it to
+      the user for agreement.
 
 ### [ ] #4: writ built and checked
 
