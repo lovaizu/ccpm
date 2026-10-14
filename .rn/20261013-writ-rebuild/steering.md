@@ -281,8 +281,10 @@ Progress:
         given with its reach; what turn returns judged from the purpose, calling turn again only
         when the document must change; writ makes every kind it has a checklist for, code and its
         tests among them (the question, settled by the code checklist the user decided), and the
-        README says so; an item the purpose does not need is left More and the report gives
-        writ's reason, and the README's example says writ reports on every item. Left as not
+        README says so; a point the purpose does not need is settled by writ as a decision given
+        to turn, so every item is met; an item that still does not settle goes to the user as a
+        change to its checklist (leaving it More for the user to judge was tried and withdrawn:
+        it hands the judging to the user). Left as not
         needed: the form and job files in full (the specification, `design.md` U-2), and
         comparisons for each idea. Next: the user reads the design for agreement.
 
