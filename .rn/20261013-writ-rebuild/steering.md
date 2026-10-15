@@ -352,8 +352,10 @@ Progress:
   opening, which asks for each part's when and what it looks at, so it added items and left a
   513-line design that reads as a specification. The user's words (2026-10-15) are the measure: a
   design holds the approach, the way of thinking, and who takes part with their roles and
-  dependencies, to bring about the UX the README promises; it is not a specification. A second
-  worker runs on those words.
+  dependencies, to bring about the UX the README promises; it is not a specification. The cause,
+  the opening and B-14, B-27 to B-29 asking each part's behavior, is fixed first by the assistant
+  (`8555dcb`); a worker then tries the changed checklist, judged by those words. A worker is never
+  run again on an unchanged checklist and input, since that only hopes for a different result.
 
 ### [ ] #4: writ built and checked
 
