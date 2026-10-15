@@ -1,15 +1,14 @@
 """Runs writ as its user does, in a new repository holding a copy of a trial's files, with the writ
 and turn of this working tree in place of the installed ones, and prints the conversation as it
-goes. Each time Claude waits on the user while writ's job is open, another Claude answers as the
-user, from what the user knows and nothing else.
+goes. Each time Claude waits on the user, another Claude answers as the user, from what the user
+knows and nothing else.
 
     python3 dev/writ/trials/run.py [--writ <folder>] <new folder> <what the user knows>
         <first message> <files> ...
 
 Each folder of files is copied over the ones before it. With --writ, that writ runs in place of this
 working tree's, such as the version in use, to compare with; turn is left out, as that version does
-not use it. The trial ends once writ's job is closed, or, for a writ that keeps no job, once the
-user has nothing to answer; and after an hour.
+not use it. The trial ends once the user has nothing to answer, and after an hour.
 """
 
 import json
@@ -102,8 +101,6 @@ for line in claude.stdout:
                 last = part["text"]
     elif event.get("type") == "result":
         took += event.get("duration_ms", 0)
-        if not writ and not os.path.exists(os.path.join(place, ".writ", "job.json")):
-            break
         reply = answer(last)
         if reply == "DONE":
             break
