@@ -42,6 +42,8 @@
   evidence until the run returns, and the copy is gone by then.
 
 ## design
+- One static figure shows each of these, its responsibility in one line, and what it cannot
+  work without; beside it, only where the orchestrator runs and what that costs.
 
 ### B-1: Attractive quality
 - Said in the README's words, since the reader comes from it.
@@ -198,8 +200,32 @@
 - turn's hooks act only in the session whose run is open, and do nothing elsewhere, even without
   python3, since they run in every session where turn is installed. Protects: repository untouched,
   missing tools.
+- Everything that measures the work measures by the same list, with every checklist's opening,
+  the same receiver and the same use; a checklist says its own name and version, so a Good is
+  followed back to the text it was judged by. Protects: read in the receiver's place, the
+  first-run share, following each item back, the checklist form.
+- The work reaches the first user only once the orchestrator sees every item met or waiting on a
+  question left open; what the inputs do not settle is kept out of the work and asked when the
+  run returns. Protects: the first-run share, time and tokens, asked only what only the user can
+  decide.
+- The first user reads the work with only what the receiver opens with it, and nothing of how it
+  was made. Protects: read in the receiver's place.
+- A run reads the work at most twice: a way in the work is taken in a second round within the
+  call, and what the second leaves, or lies in what the caller gave, goes back to the caller, who
+  knows what was agreed. Protects: read in the receiver's place, nothing unread, time and tokens.
+- A run starts from its CCS alone; the work is made in a copy of the repository and stays in the
+  run's evidence until the run returns; the received CCS is never written over and the caller's
+  parts come back the same. Protects: what the caller gave unchanged, repository untouched, stop
+  and start over, the CCS.
+- The console shows the aim before the work is written and each step as it is reached, made by a
+  script from the run's evidence, in the user's words with no item IDs. Protects: seeing the work
+  as it goes.
+- What can be told before it happens is stopped then: a write outside the run's copy and the
+  work's place, a commit or a push, a write over a file where the work goes unless git holds it or
+  it is a returned work unchanged; what cannot, a shell command's side effect, is named to the
+  user when the run returns. Protects: repository untouched, missing tools.
 
-### B-12: Who takes part
+### B-12: Who is responsible for what
 - The user, who hands the work on; the caller, who says what the work should be; the orchestrator,
   the skill `turn:up`, which decides each item; the generator, which meets every item; the first
   user, which takes what the receiver would; the evaluator, which gives Goods with grounds; the
@@ -215,112 +241,3 @@
   conversation, the user sees its console and presses Esc; in a subagent, which may start agents of
   its own, the caller reads what it returns. The cost is room in the caller's context.
 
-### B-25: What passes between them
-- The caller and the orchestrator: the caller hands the CCS; the orchestrator hands back a new CCS.
-- The orchestrator and the generator: the orchestrator hands the receiver, the use, what the
-  receiver must be able to do, the list, the content, the references, and the ways to a Good when
-  there are any; the generator hands back the work, its form and its questions.
-- The orchestrator and the first user: the orchestrator hands the work, what the receiver opens with
-  it, the receiver, the use and the list; the first user hands back the reading.
-- The orchestrator and the evaluator: the orchestrator hands the work, the reading and its records,
-  the list and what the receiver must be able to do; the evaluator hands back Goods with grounds.
-- The orchestrator and the learner: the orchestrator hands the work, the items without a Good, the
-  content, the references and the records; the learner hands back ways to a Good and questions.
-- turn's scripts and the user: the console, which shows the aim, where the run is, and at the end
-  where the work is and every question left open. turn's scripts keep every form as the run's
-  evidence.
-- turn's hooks, run by Claude Code, keep each role to its steps and its inputs, show the console,
-  and stop what would change the user's work.
-
-### B-13: An approach for each quality
-- The checklist as the measure. Brings about: read in the receiver's place, the first-run share,
-  following each item back, the checklist form. Idea: a work that meets every item of its checklists
-  serves its purpose (assumption, which the attractive-quality trials test), so everything that
-  measures the work, the orchestrator included, measures by the same list, with every opening, and
-  the same receiver and use, and so all measure alike. A checklist says its own name and version, so
-  a Good can be followed back to the text it was judged by, wherever the checklist is kept. Who
-  takes part: the caller, who names the checklists; turn's scripts, which read them into the list;
-  every role. Weighed: letting the first user also report what it missed outside the items; not
-  chosen, since unbounded by an item it becomes a search for faults that varies from run to run
-  (assumption).
-- Working from the inputs alone. Brings about: made from what the caller decided, read in the
-  receiver's place. Idea: each role is handed only the inputs it needs, and reads nothing else, so
-  the work follows what the caller decided, without bias from what was not given. Who takes part:
-  turn's scripts, which hand each role its inputs; turn's hooks, which hold each role to them and
-  the orchestrator to turn's own commands; the agents' shell stays open, since tests and builds need
-  it, and what they read by it shows in the records. Weighed: telling the roles in words only; not
-  chosen, since in a trial on 2026-10-15 the orchestrator read files not given, and what it read
-  shaped the work.
-- Making it right first. Brings about: the first-run share, time and tokens, asked only what only
-  the user can decide. Idea: what can be seen before the reading costs a whole run when found in it,
-  so the work reaches the first user only once the orchestrator sees every item met or waiting on a
-  question left open; what the inputs do not settle is kept out of the work and asked at the end.
-  Who takes part: the orchestrator, which reads each item against the inputs before the work is
-  written and reads the whole work when it comes back; the generator, which makes the work to meet
-  every item and names where; turn's scripts, which give coverage and hold the work back from the
-  first user until then. Weighed: a limit on sending back; not chosen, since a work sent on
-  unsettled costs a run. Weighed: asking each question as it is seen; not chosen, since a subagent
-  cannot ask the user, so only a run that asks nothing runs the same wherever it is called.
-- Keeping each role to its steps. Brings about: nothing passes unshown, the first-run share. Idea:
-  each role's steps are what make its answer usable, so a step left out or done otherwise is stopped
-  as it happens, not found later in an answer that looks right. Who takes part: turn's scripts,
-  which hand an agent its inputs only once the steps before it are done; turn's hooks, which hold
-  each agent and the orchestrator to their steps and say which step and why when they stop one.
-  Weighed: telling each role its steps in words only; not chosen, since a step left out still gives
-  an answer that looks right (assumption).
-- Reading in the receiver's place. Brings about: read in the receiver's place. Idea: the first user
-  reads the work with only what the receiver opens with it, so it stops where the receiver would
-  (assumption), and takes from the work only what it gives. Who takes part: the caller, who names
-  what the receiver opens; the first user, given the work, those files, the receiver, the use and
-  the list, and nothing of how the work was made, its content or references, or what the receiver
-  must be able to do. Weighed: a fresh copy of the whole repository; not chosen, since a receiver
-  opens the work and what it links, not every file, and the copy let the reader take from the
-  sources what the work did not give. Weighed: telling the first user what the receiver must be able
-  to do; not chosen, since it would look for that rather than take what the work gives (assumption).
-- Deciding every item. Brings about: nothing passes unshown, read in the receiver's place, following
-  each item back, what a returned CCS points to. Idea: the evaluator shows, for each item the work
-  meets, the lines and why, judged from the reading; coverage shows the lines no Good names, since
-  every useful line meets some item (assumption); the orchestrator alone decides each item from the
-  whole work, and every decision is kept so each item can be followed back, from the returned CCS,
-  which points to them. Who takes part: the evaluator, turn's scripts, the orchestrator. Weighed: an
-  agent set to look for slips; not chosen, since one set to find something finds it whether it is
-  there or not, and a script comes out the same every time.
-- Making again toward a Good. Brings about: read in the receiver's place, nothing unread. Idea: a
-  change made from the place a slip showed fixes that place and leaves the same shape elsewhere, so
-  a way to a Good is made from the purpose: what the whole work gives once the item is met, every
-  line the same shape reaches, and the change taken at each. A way in the work is taken in a second
-  round within the same call; a way in what the caller gave, or in how such work is made, goes back
-  to the caller, who decides what follows. Who takes part: the learner, which finds each way and
-  where it lies; the generator, which takes the ways in the work; the caller. Weighed: no second
-  round by default; not chosen, since the first round is where the generator first sees where the
-  receiver stops, and in every run of writ's rebuild it left ways in the work. Weighed: a third
-  round; not chosen, since the caller knows what was agreed and decides from what a second round
-  leaves, while further rounds without that knowledge raise finer points the purpose does not need
-  (assumption; three calls on a CSV tool's README, 2026-10-14, each raised finer questions than the
-  last). Weighed: adding each rule learned to the caller's `constraints`; not chosen, since rules
-  piled up over runs and pushed into the work what the caller had not asked (eleven rules on writ's
-  README, 2026-10-15).
-- The console. Brings about: seeing the work as it goes. Idea: the console serves a user who looks
-  in now and then: where the run is, what the work will let its receiver do before it is written, so
-  a wrong aim is stopped before a run is spent, what the work does not yet give, in plain words, and
-  at the end where the work is and what the user must decide; no item IDs or counts, since the user
-  would have to learn the checklist. Who takes part: the orchestrator, which writes the aim; turn's
-  scripts and hooks, which make and show the console. Weighed: the orchestrator telling the user
-  where it is in its own words; not chosen, since in four trials of four (2026-10-12) it did not
-  write the aim between its tool calls.
-- The CCS. Brings about: a plugin decides from what turn returns, what the caller gave unchanged,
-  stop and start over, the call, the CCS. Idea: the CCS (Compressed Cognitive State) takes the nine
-  parts that ACC (Agent Cognitive Compressor, https://arxiv.org/abs/2601.11653) sets as the state
-  the next step needs; each kind the caller writes says what the input is for, so turn decides from
-  it which role is handed it; every change of course goes through the caller as a new run, which
-  starts from its CCS alone; until a run returns, the work is only in the run's evidence. Who takes
-  part: the caller, the orchestrator, turn's scripts. Weighed: handing agents the CCS itself; not
-  chosen, since a change made for one agent would change what callers rely on.
-- Leaving the user's work alone. Brings about: repository untouched, missing tools. Idea: what can
-  be told before it happens is stopped then: a write outside where the work's files go and the run's
-  evidence, a commit or a push, and a write over a file where the work goes unless git holds it as
-  it stands or it is the work a run returned, unchanged since; what cannot, a side effect of a shell
-  command, is named to the user when the run returns; a missing tool ends the run before any work.
-  Who takes part: turn's scripts and hooks, git. Weighed: checking afterwards only; not chosen,
-  since the harm is done by then. Weighed: python3 alone for the agents' changes to the forms; not
-  chosen, since agents already know jq.
