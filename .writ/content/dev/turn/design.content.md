@@ -138,8 +138,8 @@
   how it would get one, and the version of its checklist.
 
 ### B-8: One-dimensional quality measured
-- Both are measured from the records of the same tasks, run from the same CCS on this version and on
-  the version in use.
+- Both are measured from the records of the same tasks, run on this version and on the version in
+  use from the same CCS, written in each version's kinds where they differ, as from 0.1.0 to 0.2.0.
 
 ### B-9: Must-be quality checked
 - Each is a test on the script or hook that holds it, in the case that would break it: grounds naming
@@ -330,7 +330,8 @@
   written, so a wrong aim is stopped before a run is spent, what the work does not yet give, said as
   what the receiver will be able to do once it does, in plain words, and at the end where the work
   is and what the user must decide. Item IDs and counts are not shown, since the user would have to
-  learn the checklist. A script refuses the generator its brief until the run's aim is set. A hook,
+  learn the checklist. The orchestrator writes the run's aim in one sentence from the inputs before
+  the work is written. A script refuses the generator its brief until the run's aim is set. A hook,
   after each shell command of the run, shows the user the lines of the console not yet shown, made
   by a script from the run's evidence, and the run's last lines once it ends or stops. What the
   orchestrator writes between its tool calls does not reach the user on every run (seen in trials),
