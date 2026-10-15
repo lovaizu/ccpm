@@ -434,6 +434,11 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   the unit of a run as a purpose with one or more files; bring the design run's question, whether
   `.turn/` is a path kept from 0.2.0 on; then remake turn's design from content checked statement
   by statement against what it rests on.
+- `to the caller` fixed (`89d9c1f`): it comes only with a work written; a CCS that cannot be run
+  stops before any work.
+- Decided by the user (2026-10-15): a run's unit is one purpose with one or more files, such as code
+  and its tests, written, read and checked together; the git check and where each file goes are per
+  file. turn's README says so; the design takes it when remade, and the code after.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 

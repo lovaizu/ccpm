@@ -1,8 +1,8 @@
 # turn
 
 turn is a plugin for Claude Code. With it, Claude Code makes a work for you, such as a README, a
-design document, a skill or code, that passes your checklist of what the work must give the person
-it is for, so you can hand it on without first reading it in their place. It is for anyone who has
+design document, a skill, or code with its tests, that passes your checklist of what the work
+must give the person it is for, so you can hand it on without first reading it in their place. It is for anyone who has
 Claude Code make such work, by asking in a conversation, as this page shows, or from a step of their
 own plugin, as
 [Calling turn from a plugin's step](calling-from-a-plugin.md) shows.
@@ -60,7 +60,8 @@ The work is at README.md.
   it out of the work and ends the run asking it, together with every other such question; your
   answer starts the next run, as `> MIT` does above.
 - The work goes where your request says, or where Claude takes it from your request: here,
-  `README.md` at the top of the repository.
+  `README.md` at the top of the repository. A work can be several files that serve one purpose,
+  such as code and its tests; turn writes, reads and checks them together.
 
 ## Why turn
 
@@ -83,8 +84,8 @@ what a newcomer would not understand, as people do with their own writing. turn 
 ## Requirements
 
 - Claude Code: turn runs inside it.
-- A git repository: if the work goes to a file already there, commit the file first, so you can get
-  the old one back; until you do, turn stops before any work and says so.
+- A git repository: if the work goes to files already there, commit them first, so you can get
+  the old ones back; until you do, turn stops before any work and says so.
 - Python 3.9 or later as `python3`, with nothing beyond what comes with it: turn's own scripts run on
   it.
 - jq: turn reads and changes its own JSON files with it.
