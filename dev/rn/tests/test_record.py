@@ -7,353 +7,448 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from pathlib import Path
 from unittest import mock
 
-ROOT = Path(__file__).resolve().parents[3]
-HOOKS = ROOT / "rn" / "hooks"
-sys.path.insert(0, str(HOOKS))
+from test_form import FOLDER, HOOKS, PLAN, PLAN_FORM
 
+sys.path.insert(0, HOOKS)
+
+import posttooluse
 import record
-from test_form import PLAN, VERIFICATION
+import stop
+from checks import Record, open_names, steering_form, trace
 
-INSTALL = "rn: its checks need python3 (3.9 or later); install it and run again"
-HOOKS_JSON = json.loads((HOOKS / "hooks.json").read_text())["hooks"]
+RN = os.path.dirname(HOOKS)
+# A plan in the current form holding only what the hooks read of it to find a session's record: its
+# rn field and the path of its verification document.
+CURRENT = "---\nrn: 0.9.0\nverification: docs/verification.md\n---\n"
+NO_PYTHON = "rn: its checks need python3 (3.9 or later); install it and run again\n"
+NO_PR = (
+    f'rn: in "Working out the plan" of conduct.md, {FOLDER}/steering.md has no `pr` key in its'
+    f" front matter; add `pr` as the template in rn's checklists/plan.md gives it, {PLAN_FORM}\n"
+)
 
 
-def git(cwd, *args):
+def git(top, *args):
     subprocess.run(
-        [
-            "git",
-            "-c",
-            "user.name=t",
-            "-c",
-            "user.email=t@t",
-            "-c",
-            "commit.gpgsign=false",
-            "-C",
-            str(cwd),
-            *args,
-        ],
+        ["git", "-C", top, "-c", "user.name=rn", "-c", "user.email=rn@example.com"]
+        + ["-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", *args],
         check=True,
         capture_output=True,
     )
 
 
-def write(path, text):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text)
+def write(top, files):
+    for path, text in files.items():
+        os.makedirs(os.path.dirname(os.path.join(top, path)), exist_ok=True)
+        with open(os.path.join(top, path), "w", encoding="utf-8") as f:
+            f.write(text)
 
 
-class Repository(unittest.TestCase):
-    """One repository for the class: a session on the default branch, and on the branch `work` a
-    running session with a misnamed item of open/, a finished one, two from an earlier rn, and one
-    plan written but not committed."""
+def repository(case, base, branch, removed=(), default_branch=True):
+    """`base` is committed on main and `branch` on a branch from it, so what the branch changed,
+    which is how a session is found, stands apart from what main already held."""
+    top = tempfile.mkdtemp()
+    case.addClassCleanup(shutil.rmtree, top)
+    git(top, "init", "-q", "-b", "main")
+    write(top, base)
+    git(top, "add", "-A")
+    git(top, "commit", "-q", "--allow-empty", "-m", "base")
+    if default_branch:
+        git(top, "update-ref", "refs/remotes/origin/HEAD", "HEAD")
+    git(top, "checkout", "-q", "-b", "work")
+    write(top, branch)
+    for path in removed:
+        git(top, "rm", "-q", path)
+    git(top, "add", "-A")
+    git(top, "commit", "-q", "-m", "work")
+    return os.path.realpath(top)
+
+
+def run(entry, event):
+    """Runs an entry file in this process, so a test of where and when the checks run takes
+    milliseconds; `hook` alone runs the command as Claude Code does."""
+    err = io.StringIO()
+    code = 0
+    with contextlib.redirect_stderr(err):
+        try:
+            entry.main(io.StringIO(event if isinstance(event, str) else json.dumps(event)))
+        except SystemExit as stopped:
+            code = stopped.code
+    return code, err.getvalue()
+
+
+def write_event(top, path):
+    return {"cwd": top, "tool_input": {"file_path": os.path.join(top, path)}}
+
+
+def hook(event_name, cwd, event, path):
+    """Runs the command hooks.json gives in `sh`, as Claude Code does, with PATH deciding whether
+    python3 is found, so the guard without it is tried as it would run."""
+    with open(os.path.join(HOOKS, "hooks.json"), encoding="utf-8") as f:
+        command = json.load(f)["hooks"][event_name][0]["hooks"][0]["command"]
+    done = subprocess.run(
+        [shutil.which("sh") or "sh", "-c", command],
+        input=json.dumps(event),
+        cwd=cwd,
+        env=dict(os.environ, PATH=path, CLAUDE_PLUGIN_ROOT=RN),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return done.returncode, done.stderr
+
+
+# A check standing in for the form checks, so that a test of where and when the checks run fails
+# only when that breaks, and not when a check of the form does.
+STAND_IN = (lambda found: [f"rn: {found.folder} checked."],)
+
+
+def checked(folder):
+    return f"rn: {folder} checked.\n"
+
+
+def stand_in(case):
+    for entry in (posttooluse, stop):
+        patcher = mock.patch.object(entry, "CHECKS", STAND_IN)
+        patcher.start()
+        case.addCleanup(patcher.stop)
+
+
+def without_python(case):
+    """A PATH with git and grep but no python3, so the guard in `sh`, not the entry file, is what
+    answers."""
+    folder = tempfile.mkdtemp()
+    case.addClassCleanup(shutil.rmtree, folder)
+    for tool in ("git", "grep"):
+        os.symlink(shutil.which(tool) or tool, os.path.join(folder, tool))
+    return folder
+
+
+class EventTest(unittest.TestCase):
+    def test_an_event_that_is_not_a_json_object_with_a_folder_is_let_through(self):
+        # Given: what Claude Code hands the hook is not JSON, not an object, or names no folder
+        # When: the hook reads it
+        # Then: there is no event to judge
+        for text in ("not json", "[]", '{"tool_name": "Write"}'):
+            with self.subTest(text=text):
+                self.assertIsNone(record.read_event(io.StringIO(text)))
+
+    def test_a_hook_given_what_is_not_json_lets_the_call_through(self):
+        # Given: what Claude Code hands the hook is not JSON
+        # When: the hook runs after a write, or at the end of the turn
+        # Then: nothing is stopped and nothing is said
+        for entry in (posttooluse, stop):
+            with self.subTest(entry=entry.__name__):
+                self.assertEqual(run(entry, "not json"), (0, ""))
+
+    def test_an_event_naming_its_folder_is_read(self):
+        # Given: an event that is a JSON object naming the folder the session works in
+        # When: the hook reads it
+        # Then: the event is read as given
+        event = {"cwd": "/work"}
+        self.assertEqual(record.read_event(io.StringIO(json.dumps(event))), event)
+
+    def test_nothing_is_stopped_where_git_is_missing(self):
+        # Given: a machine where git cannot be found
+        # When: the turn ends in a folder
+        # Then: nothing is stopped and nothing is said
+        with mock.patch.dict(os.environ, {"PATH": ""}):
+            self.assertEqual(run(stop, {"cwd": HOOKS}), (0, ""))
+
+    def test_a_stop_writes_each_sentence_to_standard_error_and_exits_2(self):
+        # Given: two sentences of a stop
+        # When: they are reported
+        # Then: each is written on a line of its own to standard error, and the hook exits 2
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as stopped:
+            record.report(["rn: one.", "rn: two."])
+        self.assertEqual((stopped.exception.code, err.getvalue()), (2, "rn: one.\nrn: two.\n"))
+
+    def test_nothing_to_report_says_nothing(self):
+        # Given: no sentence of a stop
+        # When: they are reported
+        # Then: nothing is written and the hook goes on
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            record.report([])
+        self.assertEqual(err.getvalue(), "")
+
+
+class SessionsTest(unittest.TestCase):
+    """Two plans the branch adds, one it deletes and one main already holds: each way a plan can
+    stand to the branch, so the sessions found are seen to be the added two alone."""
+
+    OTHER = ".rn/20261003-other"
 
     @classmethod
     def setUpClass(cls):
-        cls.tmp = Path(os.path.realpath(tempfile.mkdtemp()))
-        origin, cls.top = cls.tmp / "origin.git", cls.tmp / "work"
-        git(cls.tmp, "init", "--bare", str(origin))
-        git(origin, "symbolic-ref", "HEAD", "refs/heads/main")
-        git(cls.tmp, "clone", str(origin), str(cls.top))
-        git(cls.top, "checkout", "-b", "main")
-        write(cls.top / ".rn/20260901-main/steering.md", PLAN)
-        git(cls.top, "add", ".")
-        git(cls.top, "commit", "-m", "main")
-        git(cls.top, "push", "origin", "main")
-        git(cls.top, "checkout", "-b", "work")
-        write(cls.top / ".rn/20261001-open/steering.md", PLAN)
-        write(cls.top / ".rn/20261001-open/open/01-note-plan.md", "Where the plan stands.\n")
-        write(cls.top / "docs/verification.md", VERIFICATION)
-        write(
-            cls.top / ".rn/20261002-finished/steering.md",
-            PLAN.replace("status: running", "status: finished"),
+        cls.top = repository(
+            cls,
+            {".rn/20260901-merged/steering.md": "Merged.\n", ".rn/20260902-gone/steering.md": ""},
+            {f"{FOLDER}/steering.md": "Added.\n", f"{cls.OTHER}/steering.md": "Added.\n"},
+            removed=(".rn/20260902-gone/steering.md",),
         )
-        write(cls.top / ".rn/20261003-old/steering.md", "Rn version: 0.8.0\n\n# Goal\n")
-        write(cls.top / ".rn/20261004-lower/steering.md", PLAN.replace("rn: 0.9.0", "rn: 0.8.9"))
-        git(cls.top, "add", ".")
-        git(cls.top, "commit", "-m", "sessions")
-        write(
-            cls.top / ".rn/20261005-new/steering.md",
-            PLAN.replace("docs/verification.md", "docs/none.md"),
-        )
-        cls.with_python3, cls.without_python3 = cls.tmp / "with", cls.tmp / "without"
-        for folder, tools in (
-            (cls.with_python3, {"git": shutil.which("git"), "python3": sys.executable}),
-            (cls.without_python3, {"git": shutil.which("git")}),
-        ):
-            folder.mkdir()
-            for tool, target in tools.items():
-                (folder / tool).symlink_to(target or tool)
+
+    def test_the_open_sessions_are_the_unfinished_plans_the_branch_changed_and_holds(self):
+        # Given: a branch that added two plans and deleted a third, on a main holding a fourth
+        # When: the open sessions are found
+        # Then: they are the two the branch added
+        self.assertEqual(set(record.sessions(self.top)), {FOLDER, self.OTHER})
+
+
+class BuildTest(unittest.TestCase):
+    """A session with every part the record has, one whose verification document is not yet written
+    and one an earlier rn started with neither, so `build` is seen to give each part where it is
+    and None where it is not."""
+
+    OLDER = ".rn/20261003-older"
+    UNWRITTEN = ".rn/20261004-unwritten"
 
     @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(cls.tmp)
-
-    def found(self):
-        return [rec.session for rec in record.records({"cwd": str(self.top)})]
-
-    def test_a_running_session_the_branch_changed_is_found(self):
-        # Given: a running session whose plan the branch changed
-        # When: the hooks look for the open session
-        # Then: that session is found
-        self.assertIn(".rn/20261001-open", self.found())
-
-    def test_a_plan_written_but_not_yet_committed_is_found(self):
-        # Given: a plan the conductor wrote on the branch and has not committed
-        # When: the hooks look for the open session
-        # Then: that session is found
-        self.assertIn(".rn/20261005-new", self.found())
-
-    def test_a_finished_session_is_not_found(self):
-        # Given: a session the branch changed whose status is finished
-        # When: the hooks look for the open session
-        # Then: that session is not found
-        self.assertNotIn(".rn/20261002-finished", self.found())
-
-    def test_a_session_started_under_an_earlier_rn_is_not_found(self):
-        # Given: a session the branch changed whose plan has no rn field, and one whose rn field is below 0.9
-        # When: the hooks look for the open session
-        # Then: neither is found, since /rn:up brings such a record to the current form
-        for session in (".rn/20261003-old", ".rn/20261004-lower"):
-            with self.subTest(session=session):
-                self.assertNotIn(session, self.found())
-
-    def test_a_session_the_branch_did_not_change_is_not_found(self):
-        # Given: a running session on the default branch that this branch left as it was
-        # When: the hooks look for the open session
-        # Then: that session is not found
-        self.assertNotIn(".rn/20260901-main", self.found())
-
-    def test_the_record_holds_the_plan_the_items_of_open_the_verification_document_and_the_rn_field(
-        self,
-    ):
-        # Given: the running session, with an item of open/ and the verification document its plan names
-        # When: its record is built
-        # Then: the record holds the plan, each item by its name, the verification document and the rn field
-        rec = record.build(str(self.top), ".rn/20261001-open")
-        assert rec is not None
-        self.assertEqual(
-            (rec.plan, rec.items, rec.verification, rec.rn),
-            (PLAN, {"01-note-plan.md": "Where the plan stands.\n"}, VERIFICATION, "0.9.0"),
+    def setUpClass(cls):
+        cls.top = tempfile.mkdtemp()
+        cls.addClassCleanup(shutil.rmtree, cls.top)
+        write(
+            cls.top,
+            {
+                f"{FOLDER}/steering.md": CURRENT,
+                f"{FOLDER}/open/01-notes-question.md": "Serves: goal\n",
+                "docs/verification.md": "Scenes.\n",
+                f"{cls.UNWRITTEN}/steering.md": "---\nverification: docs/unwritten.md\n---\n",
+                f"{cls.OLDER}/steering.md": "# Goal\n",
+            },
         )
 
-    def test_a_verification_document_that_does_not_exist_is_read_as_none(self):
-        # Given: a plan naming a verification document that does not exist, and no open/
+    def test_a_sessions_record_holds_its_plan_items_verification_document_and_rn(self):
+        # Given: a session with an item in open/ and the verification document its plan names
         # When: its record is built
-        # Then: the record holds no verification document and no item
-        rec = record.build(str(self.top), ".rn/20261005-new")
-        assert rec is not None
-        self.assertEqual((rec.verification, rec.items), (None, {}))
+        # Then: the record holds the plan, each item by name, the document and the rn field
+        self.assertEqual(
+            record.build(self.top, FOLDER),
+            Record(
+                FOLDER, CURRENT, {"01-notes-question.md": "Serves: goal\n"}, "Scenes.\n", "0.9.0"
+            ),
+        )
 
-    def test_a_write_to_the_record_is_checked(self):
-        # Given: a write to the plan, an item of open/ or the verification document the plan names
-        # When: the hook asks whether the write is the record's
-        # Then: it is
-        rec = record.build(str(self.top), ".rn/20261001-open")
-        assert rec is not None
+    def test_a_record_without_items_or_a_verification_document_holds_none(self):
+        # Given: a session with no open/ folder and a plan naming no verification document
+        # When: its record is built
+        # Then: the record holds no item, no document and no rn field
+        self.assertEqual(
+            record.build(self.top, self.OLDER), Record(self.OLDER, "# Goal\n", {}, None, None)
+        )
+
+    def test_a_record_whose_verification_document_is_not_yet_written_holds_none(self):
+        # Given: a session whose plan names a verification document that does not exist yet
+        # When: its record is built
+        # Then: the record holds no document
+        self.assertIsNone(record.build(self.top, self.UNWRITTEN).verification)
+
+
+class WriteTest(unittest.TestCase):
+    """A session in the current form beside one an earlier rn started, so each write is seen to be
+    checked or passed by according to which session it belongs to."""
+
+    OLDER = ".rn/20261003-older"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.top = repository(
+            cls, {}, {f"{FOLDER}/steering.md": CURRENT, f"{cls.OLDER}/steering.md": "# Goal\n"}
+        )
+
+    def setUp(self):
+        stand_in(self)
+
+    def test_a_write_to_a_plan_an_item_or_the_verification_document_is_checked(self):
+        # Given: a session in the current form
+        # When: its plan, an item of its open/, or the verification document its plan names is
+        #   written
+        # Then: the write is stopped with what the checks say of that session
         for path in (
-            ".rn/20261001-open/steering.md",
-            ".rn/20261001-open/open/02-notes-question.md",
+            f"{FOLDER}/steering.md",
+            f"{FOLDER}/open/02-notes-question.md",
             "docs/verification.md",
-            str(self.top / "docs/verification.md"),
         ):
             with self.subTest(path=path):
-                self.assertTrue(
-                    record.written({"cwd": str(self.top), "tool_input": {"file_path": path}}, rec)
-                )
+                event = write_event(self.top, path)
+                self.assertEqual(run(posttooluse, event), (2, checked(FOLDER)))
 
-    def test_a_write_elsewhere_is_not_checked(self):
-        # Given: a write outside the record, to another session's plan, or with no file named
-        # When: the hook asks whether the write is the record's
-        # Then: it is not
-        rec = record.build(str(self.top), ".rn/20261001-open")
-        assert rec is not None
-        for tool_input in (
-            {"file_path": "src/app.py"},
-            {"file_path": ".rn/20261005-new/steering.md"},
-            {"file_path": "docs/design.md"},
+    def test_a_write_named_through_another_path_to_the_repository_is_checked(self):
+        # Given: a session in the current form, and a link to its repository
+        # When: its plan is written by a path through the link
+        # Then: the write is stopped with what the checks say of that session
+        folder = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, folder)
+        link = os.path.join(folder, "link")
+        os.symlink(self.top, link)
+        event = write_event(link, f"{FOLDER}/steering.md")
+        self.assertEqual(run(posttooluse, event), (2, checked(FOLDER)))
+
+    def test_a_write_outside_the_record_is_let_through(self):
+        # Given: a session in the current form
+        # When: a file outside its record is written
+        # Then: nothing is stopped and nothing is said
+        self.assertEqual(run(posttooluse, write_event(self.top, "README.md")), (0, ""))
+
+    def test_a_write_to_an_older_sessions_plan_is_checked(self):
+        # Given: a session an earlier rn started
+        # When: its plan is written
+        # Then: the write is stopped with what the checks say of that session
+        event = write_event(self.top, f"{self.OLDER}/steering.md")
+        self.assertEqual(run(posttooluse, event), (2, checked(self.OLDER)))
+
+    def test_a_write_to_an_older_sessions_item_is_let_through(self):
+        # Given: a session an earlier rn started
+        # When: an item of its open/ is written
+        # Then: nothing is stopped and nothing is said
+        event = write_event(self.top, f"{self.OLDER}/open/01-notes-pause.md")
+        self.assertEqual(run(posttooluse, event), (0, ""))
+
+
+class EntryTest(unittest.TestCase):
+    def test_each_entry_runs_the_checks_of_the_plan_the_names_of_open_and_the_references(self):
+        # Given: the hook run after a write, and the hook run at the end of the turn
+        # When: what each runs on a session's record is read
+        # Then: it runs the check of the plan's form, that of the names in open/, and that of
+        #   the criteria the record refers to
+        for entry in (posttooluse, stop):
+            for check in (steering_form, open_names, trace):
+                with self.subTest(entry=entry.__name__, check=check.__name__):
+                    self.assertIn(check.check, entry.CHECKS)
+
+
+class TurnEndTest(unittest.TestCase):
+    def setUp(self):
+        stand_in(self)
+
+    def test_the_end_of_a_turn_passes_an_older_session_by(self):
+        # Given: a session an earlier rn started
+        # When: the turn ends
+        # Then: nothing is said of it
+        self.assertEqual(stop.at_turn_end(Record(FOLDER, "", {}, None, None)), [])
+
+    def test_the_end_of_a_turn_checks_a_session_from_rn_0_9_0_on(self):
+        # Given: a session rn 0.9.0 started
+        # When: the turn ends
+        # Then: what the checks say of it is given
+        found = Record(FOLDER, "", {}, None, "0.9.0")
+        self.assertEqual(stop.at_turn_end(found), [checked(FOLDER).strip()])
+
+
+class BrokenSessionTest(unittest.TestCase):
+    """A plan lacking its `pr` key, the smallest breach of the form, so a stop is seen to reach
+    standard error and exit 2 through each entry file as Claude Code runs it."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.top = repository(
+            cls,
             {},
-        ):
-            with self.subTest(tool_input=tool_input):
-                self.assertFalse(
-                    record.written({"cwd": str(self.top), "tool_input": tool_input}, rec)
-                )
+            {f"{FOLDER}/steering.md": PLAN.replace("pr: https://github.com/o/r/pull/1\n", "")},
+        )
+        cls.no_python = without_python(cls)
 
-    def test_a_directory_outside_any_repository_lets_every_call_through(self):
-        # Given: an event from a directory in no repository, while the hook itself runs in a repository with an open session
-        # When: the hooks look for the open session
-        # Then: none is found, since only the event's directory says which repository it concerns
-        outside = self.tmp / "outside"
-        outside.mkdir()
-        self.addCleanup(outside.rmdir)
+    def test_the_end_of_a_turn_is_stopped_with_what_the_checks_say_of_an_open_session(self):
+        # Given: an open session
+        # When: the turn ends
+        # Then: the turn is stopped with what the checks say of that session
+        stand_in(self)
+        event = {"cwd": self.top}
+        self.assertEqual(run(stop, event), (2, checked(FOLDER)))
+
+    def test_nothing_is_stopped_outside_a_repository_even_when_run_from_one(self):
+        # Given: a folder that is in no git repository, and the hook itself started from a
+        #   repository whose session breaks its form
+        # When: the turn ends in that folder
+        # Then: nothing is stopped and nothing is said
+        stand_in(self)
+        folder = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, folder)
         self.addCleanup(os.chdir, os.getcwd())
         os.chdir(self.top)
-        self.assertEqual(record.records({"cwd": str(outside)}), [])
+        self.assertEqual(run(stop, {"cwd": folder}), (0, ""))
 
-    def test_an_entry_of_open_that_is_not_a_file_is_left_out_of_the_record(self):
-        # Given: the running session, with a folder inside its open/
-        # When: its record is built
-        # Then: the record holds no item for the folder
-        folder = self.top / ".rn/20261001-open/open/drafts"
-        folder.mkdir()
-        self.addCleanup(folder.rmdir)
-        rec = record.build(str(self.top), ".rn/20261001-open")
-        assert rec is not None
-        self.assertNotIn("drafts", rec.items)
+    def test_a_write_hook_run_as_claude_code_runs_it_stops_a_write_breaking_the_form(self):
+        # Given: a session whose plan lacks a key of its form, and python3 on the machine
+        # When: Claude Code runs the hook after the plan is written
+        # Then: the hook exits 2 with the sentence naming the missing key
+        event = write_event(self.top, f"{FOLDER}/steering.md")
+        self.assertEqual(hook("PostToolUse", self.top, event, os.environ["PATH"]), (2, NO_PR))
 
-    def test_an_item_of_open_not_in_utf_8_is_read_with_its_broken_bytes_replaced(self):
-        # Given: the running session, with an item of open/ holding a byte that is not UTF-8
-        # When: its record is built
-        # Then: the record holds the item, the byte replaced and the rest as written
-        item = self.top / ".rn/20261001-open/open/02-notes-plan.md"
-        item.write_bytes(b"Where \xff stands.\n")
-        self.addCleanup(item.unlink)
-        rec = record.build(str(self.top), ".rn/20261001-open")
-        assert rec is not None
-        self.assertEqual(rec.items["02-notes-plan.md"], "Where \ufffd stands.\n")
+    def test_a_turn_end_hook_run_as_claude_code_runs_it_stops_a_record_breaking_the_form(self):
+        # Given: a session whose plan lacks a key of its form, and python3 on the machine
+        # When: Claude Code runs the hook at the end of the turn
+        # Then: the hook exits 2 with the sentence naming the missing key
+        event = {"cwd": self.top}
+        self.assertEqual(hook("Stop", self.top, event, os.environ["PATH"]), (2, NO_PR))
 
-    def test_the_write_hook_is_run_only_after_a_write_or_an_edit(self):
-        # Given: the hooks rn gives Claude Code
-        # When: Claude Code picks the tool calls the write hook is run after
-        # Then: they are Write and Edit, each by its exact name, and no other
-        matcher = HOOKS_JSON["PostToolUse"][0]["matcher"]
-        self.assertRegex(matcher, r"^[A-Za-z|]+$")
-        self.assertEqual(sorted(matcher.split("|")), ["Edit", "Write"])
-
-    def test_the_write_hook_checks_a_write_to_the_record_and_lets_a_write_elsewhere_through(self):
-        # Given: the running session, with an item of open/ not named by the form, and python3 found
-        # When: Claude Code runs the write hook's command after a write to that item, and after a write outside the record
-        # Then: the first exits 2 with a sentence naming the item on standard error; the second exits 0 and says nothing
-        for path, code, said in (
-            (
-                ".rn/20261001-open/open/01-note-plan.md",
-                2,
-                "rn: .rn/20261001-open/open/01-note-plan.md",
-            ),
-            ("src/app.py", 0, ""),
+    def test_without_python3_a_running_session_is_stopped_with_how_to_install_it(self):
+        # Given: a working tree holding a running session's plan, and no python3
+        # When: Claude Code runs the hook after a write, or at the end of the turn
+        # Then: the hook exits 2 saying python3 is needed and to install it
+        for event_name, event in (
+            ("PostToolUse", write_event(self.top, "README.md")),
+            ("Stop", {"cwd": self.top}),
         ):
-            with self.subTest(path=path):
-                done = self.run_command(
-                    "PostToolUse",
-                    self.top,
-                    self.with_python3,
-                    {
-                        "cwd": str(self.top),
-                        "tool_name": "Write",
-                        "tool_input": {"file_path": str(self.top / path)},
-                    },
-                )
-                self.assertEqual(done.returncode, code)
-                self.assertEqual(done.stderr[: len(said)], said)
-                self.assertEqual(bool(done.stderr), bool(said))
+            with self.subTest(event_name=event_name):
+                self.assertEqual(hook(event_name, self.top, event, self.no_python), (2, NO_PYTHON))
 
-    def test_the_end_of_turn_hook_stops_while_the_form_is_broken(self):
-        # Given: the running session, with an item of open/ not named by the form, and python3 found
-        # When: Claude Code runs the end of turn hook's command
-        # Then: it exits 2 with a sentence naming the item on standard error
-        done = self.run_command("Stop", self.top, self.with_python3, {"cwd": str(self.top)})
-        self.assertEqual(done.returncode, 2)
-        self.assertIn("rn: .rn/20261001-open/open/01-note-plan.md", done.stderr)
-
-    def test_without_python3_a_repository_with_rn_is_told_to_install_it(self):
-        # Given: a machine without python3, in a repository with .rn/
-        # When: Claude Code runs each hook's command
-        # Then: it exits 2, saying python3 is needed and how to go on
-        for event in sorted(HOOKS_JSON):
-            with self.subTest(event=event):
-                done = self.run_command(event, self.top, self.without_python3, {})
-                self.assertEqual((done.returncode, done.stderr.strip()), (2, INSTALL))
-
-    def test_without_python3_nothing_is_stopped_outside_a_repository_with_rn(self):
-        # Given: a machine without python3, in a directory outside any repository with .rn/
-        # When: Claude Code runs each hook's command
-        # Then: it exits 0 and says nothing
-        for event in sorted(HOOKS_JSON):
-            with self.subTest(event=event):
-                done = self.run_command(event, self.tmp, self.without_python3, {})
-                self.assertEqual((done.returncode, done.stderr), (0, ""))
-
-    def run_command(self, event, cwd, path, data):
-        """The hook's command as Claude Code runs it: by a shell, in the session's directory, with
-        the plugin's folder in CLAUDE_PLUGIN_ROOT and the event on standard input."""
-        return subprocess.run(
-            ["/bin/sh", "-c", HOOKS_JSON[event][0]["hooks"][0]["command"]],
-            cwd=cwd,
-            env={"PATH": str(path), "CLAUDE_PLUGIN_ROOT": str(HOOKS.parent)},
-            input=json.dumps(data),
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+    def test_without_python3_the_second_end_of_the_turn_is_let_through(self):
+        # Given: a working tree holding a running session's plan, no python3, and a turn already
+        #   stopped once for it
+        # When: Claude Code runs the hook at the end of the turn again
+        # Then: the turn ends, with nothing said
+        event = {"cwd": self.top, "stop_hook_active": True}
+        self.assertEqual(hook("Stop", self.top, event, self.no_python), (0, ""))
 
 
-class NoSession(unittest.TestCase):
-    def test_an_event_that_is_not_a_json_object_lets_the_call_through(self):
-        # Given: an event on standard input that is not JSON, or JSON that is not an object
-        # When: the hook reads it
-        # Then: no record is found to check
-        for text in ("not json", "[]"):
-            with self.subTest(text=text):
-                self.assertEqual(record.records(record.event(text)), [])
+class FinishedSessionTest(unittest.TestCase):
+    """A finished session, so the hooks are seen to stop nothing on a branch whose only session is
+    closed, with or without python3."""
 
-    def test_a_repository_without_rn_is_left_as_it_was(self):
-        # Given: a repository with no .rn/ directory, whose remote's default branch it has not yet asked
-        # When: the hooks look for the open session
-        # Then: none is found, and the repository has still not asked its remote
-        with tempfile.TemporaryDirectory() as tmp:
-            origin, top = Path(tmp) / "origin.git", Path(tmp) / "work"
-            git(tmp, "init", "--bare", str(origin))
-            git(tmp, "init", str(top))
-            git(top, "commit", "--allow-empty", "-m", "first")
-            git(top, "push", str(origin), "HEAD:refs/heads/main")
-            git(origin, "symbolic-ref", "HEAD", "refs/heads/main")
-            git(top, "remote", "add", "origin", str(origin))
-            git(top, "-c", "remote.origin.followRemoteHEAD=never", "fetch", "origin")
-            self.assertEqual(record.records({"cwd": str(top)}), [])
-            asked = subprocess.run(
-                ["git", "-C", str(top), "symbolic-ref", "refs/remotes/origin/HEAD"],
-                capture_output=True,
-                check=False,
-            )
-            self.assertNotEqual(asked.returncode, 0)
+    @classmethod
+    def setUpClass(cls):
+        finished = PLAN.replace("status: running", "status: finished")
+        cls.top = repository(cls, {}, {f"{FOLDER}/steering.md": finished})
+        cls.no_python = without_python(cls)
 
-    def test_a_repository_whose_default_branch_cannot_be_found_lets_every_call_through(self):
-        # Given: a repository with .rn/ and no remote to tell its default branch
-        # When: the hooks look for the open session
-        # Then: none is found
-        with tempfile.TemporaryDirectory() as tmp:
-            git(tmp, "init")
-            write(Path(tmp) / ".rn/20261001-a/steering.md", PLAN)
-            self.assertEqual(record.records({"cwd": tmp}), [])
+    def test_a_finished_session_is_not_open(self):
+        # Given: a branch whose only plan is finished
+        # When: the open sessions are found
+        # Then: there is none
+        self.assertEqual(record.sessions(self.top), [])
 
-    def test_a_machine_without_git_lets_every_call_through(self):
-        # Given: a machine where git cannot be found
-        # When: the hooks look for the open session
-        # Then: none is found
-        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"PATH": tmp}):
-            self.assertEqual(record.records({"cwd": tmp}), [])
+    def test_without_python3_nothing_is_stopped_where_no_session_runs(self):
+        # Given: no python3, in a repository whose sessions are all finished, or in a folder in
+        #   no repository
+        # When: Claude Code runs the hook after a write, or at the end of the turn
+        # Then: nothing is stopped and nothing is said
+        outside = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, outside)
+        for cwd in (self.top, outside):
+            for event_name, event in (
+                ("PostToolUse", write_event(cwd, "README.md")),
+                ("Stop", {"cwd": cwd}),
+            ):
+                with self.subTest(cwd=cwd, event_name=event_name):
+                    self.assertEqual(hook(event_name, cwd, event, self.no_python), (0, ""))
 
 
-class Report(unittest.TestCase):
-    def test_a_call_with_nothing_broken_exits_0_and_says_nothing(self):
-        # Given: no check stopped the call
-        # When: the hook reports
-        # Then: it exits 0 and writes nothing to standard error
-        err = io.StringIO()
-        with contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as end:
-            record.report([])
-        self.assertEqual((end.exception.code, err.getvalue()), (0, ""))
+class NoDefaultBranchTest(unittest.TestCase):
+    """A running session where origin/HEAD was never set, so the hooks are seen to stop nothing
+    rather than guess the default branch, which the conductor sets as each session starts."""
 
-    def test_a_stop_writes_each_sentence_to_standard_error_and_exits_2(self):
-        # Given: two checks each stopped the call with a sentence
-        # When: the hook reports
-        # Then: it exits 2 with each sentence on its own line of standard error
-        err = io.StringIO()
-        with contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as end:
-            record.report(["rn: one.", "rn: two."])
-        self.assertEqual((end.exception.code, err.getvalue()), (2, "rn: one.\nrn: two.\n"))
+    @classmethod
+    def setUpClass(cls):
+        cls.top = repository(cls, {}, {f"{FOLDER}/steering.md": PLAN}, default_branch=False)
+
+    def test_no_session_is_open_without_a_default_branch_to_compare_with(self):
+        # Given: a branch adding a running plan, where origin's default branch is not known
+        # When: the open sessions are found
+        # Then: there is none
+        self.assertEqual(record.sessions(self.top), [])
 
 
 if __name__ == "__main__":

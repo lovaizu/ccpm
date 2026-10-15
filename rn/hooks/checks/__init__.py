@@ -1,84 +1,94 @@
-"""The checks of rn's hooks, one to a file.
+"""The checks of the record's form.
 
-Each check is a function `check(record)` that takes the session's record as values and returns the
-sentences of a stop, or an empty list. It reads no file and runs no command, so that its tests give
-it strings; `record.py` alone reads the repository. What more than one check reads the record by is
-here, so that each form is read in one place.
+Each module here holds one check, `check(record)`, which takes the record of a session as values
+and returns the sentences of a stop, or an empty list. A check reads no file and runs no command:
+`record.py` alone reads the repository, so each check is tested on strings. `FORM` names the checks
+of the record's form, which each entry file runs among the checks of its event.
 """
 
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping
-from types import MappingProxyType
-from typing import NamedTuple
+from collections.abc import Iterable
+from typing import Callable, NamedTuple
+
+TASK = re.compile(r"### \[[ x]\] #(\d+): (\S.*)")
 
 
 class Record(NamedTuple):
-    """The session's record as values; `top` is the repository it was read from, kept so that a
-    write can be matched to the record."""
+    """A session's record as values, so each check is a function of strings and its tests give it
+    strings. The folder is kept so a stop names where, and the `rn` field so the checks tell a
+    session an earlier rn started, which `/rn:up` brings to the current form, from one that lost
+    its key."""
 
-    session: str
+    folder: str
     plan: str
-    items: Mapping[str, str] = MappingProxyType({})
-    verification: str | None = None
-    rn: str = ""
-    top: str = ""
+    open: dict[str, str]
+    verification: str | None
+    rn: str | None
+
+
+def run(checks: Iterable[Callable[[Record], list[str]]], record: Record) -> list[str]:
+    return [sentence for check in checks for sentence in check(record)]
+
+
+def older(record: Record) -> bool:
+    """Whether an earlier rn started the session, which `/rn:up` brings to the current form."""
+    if record.rn is None:
+        return True
+    version = re.match(r"(\d+)\.(\d+)\.(\d+)", record.rn)
+    return version is not None and tuple(int(part) for part in version.groups()) < (0, 9, 0)
+
+
+def stop(step: str, where: str, broken: str, fix: str, why: str) -> str:
+    """One sentence of a stop, naming the part of rn's references/conduct.md it concerns by that
+    part's heading, so the conductor goes back to the step itself."""
+    return f'rn: in "{step}" of conduct.md, {where} {broken}; {fix}, since {why}.'
 
 
 def front_matter(text: str) -> dict[str, str] | None:
-    """None, not an empty dict, for a text without `---` lines at its top, so that a check tells a
-    text with no front matter from one missing a key."""
-    lines = text.split("\n")
-    if lines[0] != "---" or "---" not in lines[1:]:
+    match = re.match(r"---\n(.*?)\n---\n", text, re.DOTALL)
+    if match is None:
         return None
-    end = lines.index("---", 1)
-    return {
-        key.strip(): value.strip()
-        for key, _, value in (line.partition(":") for line in lines[1:end])
-    }
+    fields = {}
+    for line in match.group(1).splitlines():
+        key, _, value = line.partition(":")
+        fields[key.strip()] = value.strip()
+    return fields
 
 
-def version(rn: str) -> tuple[int, int]:
-    """A field with no numbers reads as (0, 0), so that a plan without an rn field counts as one
-    from before rn 0.9."""
-    found = re.match(r"(\d+)\.(\d+)", rn)
-    return (int(found[1]), int(found[2])) if found else (0, 0)
-
-
-def verification_path(plan: str) -> str:
-    return (front_matter(plan) or {}).get("verification", "")
+def field(plan: str, key: str) -> str | None:
+    return (front_matter(plan) or {}).get(key)
 
 
 def section(text: str, heading: str) -> str:
-    """A section ends only at a heading of its level or higher, so that it holds its subsections, as
-    `# Acceptance criteria` holds both qualities."""
-    lines = text.split("\n")
+    """A section holds the headings below its level, as the criteria under `# Acceptance criteria`
+    sit beneath `## Attractive quality` and `## Must-be quality`, and the tasks beneath
+    `# Tasks`."""
+    lines = text.splitlines()
     if heading not in lines:
         return ""
-    start = lines.index(heading) + 1
-    level = re.compile(f"#{{1,{heading.index(' ')}}} ")
-    end = next((i for i in range(start, len(lines)) if level.match(lines[i])), len(lines))
-    return "\n".join(lines[start:end])
+    level = heading.index(" ")
+    body = []
+    for line in lines[lines.index(heading) + 1 :]:
+        found = re.match(r"(#+) ", line)
+        if found and len(found.group(1)) <= level:
+            break
+        body.append(line)
+    return "\n".join(body)
 
 
-def criteria(text: str) -> list[str]:
-    """A list, not a set, so that an ID given twice is counted twice."""
-    return re.findall(r"^- ([AM]\d+):", text, re.MULTILINE)
+def criteria(plan: str, heading: str = "# Acceptance criteria") -> list[str]:
+    return re.findall(r"^- ([AM]\d+):", section(plan, heading), re.MULTILINE)
 
 
-def tasks(plan: str) -> list[tuple[str, str]]:
-    """Each task keeps the lines under its own heading, so that its `Serves:` line is read from
-    those alone."""
-    found: list[tuple[str, list[str]]] = []
-    for line in section(plan, "# Tasks").split("\n"):
-        if line.startswith("### "):
-            found.append((line, []))
-        elif found:
-            found[-1][1].append(line)
-    return [(heading, "\n".join(body)) for heading, body in found]
+def task_blocks(plan: str) -> list[str]:
+    """Each task apart, so a `Serves:` line counts for the task it is written under only."""
+    blocks = re.split(r"^(?=### )", section(plan, "# Tasks"), flags=re.MULTILINE)
+    return [block for block in blocks if block.startswith("### ")]
 
 
-def serves(text: str) -> list[str]:
-    found = re.search(r"^Serves:(.*)$", text, re.MULTILINE)
-    return re.findall(r"[^,\s]+", found[1]) if found else []
+# Imported last, since each check takes the parts above from this package.
+from . import open_names, steering_form, trace
+
+FORM = (steering_form.check, open_names.check, trace.check)
