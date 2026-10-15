@@ -1,15 +1,19 @@
 # writ
 
-With writ, Claude Code makes work for someone else, such as a README, a design document, a prompt,
-or code and its tests, that its reader understands in one reading, so you can hand it on without
-reading it over. It is for anyone who has Claude Code make such work.
+writ is a Claude Code plugin with which Claude makes work for someone else, such as a README, a
+design document, a prompt, or code and its tests, that its reader understands in one reading, so you
+can hand it on without reading it over. It is for anyone who has Claude Code make such work.
 
 ## Example
 
 You have a small command-line tool that tidies CSV files, with notes on it in `docs/notes.md`, and
-you want its README. writ keeps a checklist for each kind of document: a list of items, each one
-thing a good document of that kind gives its reader. In Claude Code you call `/writ:up`. Below, what
-you type follows `>`, and what writ says follows `●`.
+you want its README.
+
+writ keeps a checklist for every document, and one for each kind of document: a list of items, each
+one thing a good document gives its reader.
+
+In Claude Code you type `/writ:up Write the README of this tool`. What follows is what writ says
+and asks in this example, with what you type after `>` and what writ says after `●`:
 
 ```console
 > /writ:up Write the README of this tool
@@ -20,20 +24,25 @@ you type follows `>`, and what writ says follows `●`.
 
 > Yes.
 
-● What does the tool give them that tidying the file in a spreadsheet does not? Your notes do not say.
+● What does the tool give them that tidying the file in a spreadsheet does not? Your notes do not
+  say.
 
 > It tidies a whole folder in one command, and keeps the originals.
 
 ● Which license is the tool under? Your notes do not say, and the repository has no license file.
+  I'd suggest MIT, the usual one for a small tool.
 
 > MIT
 
 ● Writing README.md now, from docs/notes.md. Another AI will read it as such a developer, and it
-  will be checked against the checklists; what is not met yet is written again, and I'll report
-  once every item is met.
+  will be checked against the checklists; what is not met yet is written again. I'll hand it back
+  with the report.
 
-● README.md is written, and every item of the two checklists is met. The report, with the lines
-  that meet each item:
+● README.md is written. The report:
+
+  Decided for you
+    The README names no other tool to compare with: your notes name none, and the comparison with
+    a spreadsheet covers what a developer weighs.
 
   Every document
     ✅ B-2 The picture as meant: lines 1-4
@@ -43,70 +52,64 @@ you type follows `>`, and what writ says follows `●`.
     (every item gets a line the same way)
 ```
 
-writ asks what it needs before it writes, so once it says it is writing, you can leave it at work;
-a question only you can answer that shows up only in the writing comes at the end. To check an
-item, open README.md at the lines the report gives for it.
-
-### A document you already have
-
-Name it: `/writ:up docs/typing-guide.md`. writ makes it again to the checklists, so its wording, its
-order, and parts its reader does not need may change. Commit it first: writ writes over it, and git
-keeps what it was.
-
-### A kind writ has no checklist for
-
-```console
-> /writ:up Write the release notes for 1.4
-
-● I have no checklist for release notes. Which do you want?
-  1. Write them to the checklist for every document alone.
-  2. First make a checklist for release notes with you, then write them to it.
-```
-
-Choose 1 for a one-off, and 2 for a kind you will write again. With 2, writ makes the checklist with
-you against its [checklist for checklists](checklists/checklist.md), puts it at
-`.writ/checklists/release-notes.md`, and finds it there next time; commit it, and your team writes
-to the same checklist.
+writ asks what it needs before it writes, so once it says it is writing, you can leave it to run. A
+question only you can answer that shows up only in the writing comes at the end, with the report.
+To check an item, open README.md at the lines the report gives for it.
 
 ## Why writ
 
 Asking Claude alone also gets you a document. What writ adds:
 
-- Claude alone fills what it does not know with guesses. writ asks you, one question at a time,
-  only what the checklists need and your request and repository do not tell, and puts what it can
-  work out to you to confirm.
-- Claude reading its own work reads as the writer, and misses where a newcomer trips. Before you get
-  the document, another AI that does not know your conversation reads it as its reader, and what it
-  could not take from it is written again.
-- You judge the document from the report, item by item, at the lines it gives, instead of reading
-  it all over.
+- writ asks you what it does not know, where Claude alone guesses.
+
+  A guess reads as smoothly as a fact, so you would have to find it in the document yourself. writ
+  asks only what the checklists need and your request and repository do not tell, so each answer
+  settles a point the document would otherwise get wrong.
+
+- The document is read in its reader's place before you get it, where Claude alone reads it as its
+  writer.
+
+  Claude reading its own document knows what it meant, and misses where its reader would trip.
+  Another AI that does not know your conversation has only the document, as its reader will, so what
+  it could not take from it is written again before it reaches you.
+
+- You judge the document from the report, where with Claude alone you read it all over.
+
+  The report sets out what writ decided for you and the lines that give each item, so you look at
+  the document only where you doubt it.
 
 ## Requirements
 
-- Claude Code.
-- A git repository, Python 3.9 or later as `python3`, and jq: writ has another plugin,
-  [turn](../turn/README.md), do the writing, the reading and the checking, and turn needs them.
+- Claude Code, which writ runs inside.
+- Your project kept in a git repository, Python 3.9 or later run as `python3`, and jq, the
+  command-line JSON processor, run as `jq`.
+
+  writ has another plugin, turn ([`../turn/README.md`](../turn/README.md)), do the writing, the
+  reading of the document in its reader's place, and the checking against the checklists, and turn
+  needs them.
 
 ## Installation
 
-In Claude Code, add the marketplace once, then install writ:
+In Claude Code, add the marketplace once, then install writ. This also installs turn.
 
 ```console
-> /plugin marketplace add lovaizu/ccpm
-> /plugin install writ@ccpm
+/plugin marketplace add lovaizu/ccpm
+/plugin install writ@ccpm
 ```
 
-This also installs turn. Then call `/writ:up` as in the [Example](#example), for a document of your
-own.
+Then call `/writ:up` as in the example, for a document of your own.
 
 ## Documentation
 
-- The checklists writ keeps: [every document](checklists/doc.md),
-  [README](checklists/readme.md), [design document](checklists/design.md),
-  [prompt](checklists/prompt.md), [code and its tests](checklists/code.md), and
-  [checklists](checklists/checklist.md)
-- [Calling writ from a plugin's step](calling-from-a-plugin.md)
-- [Changelog](CHANGELOG.md)
+- [Beyond the first document](beyond-the-first-document.md): a document you already have, and a kind
+  writ has no checklist for
+- [The checklist for every document](checklists/doc.md)
+- [The checklist for READMEs](checklists/readme.md)
+- [The checklist for design documents](checklists/design.md)
+- [The checklist for prompts](checklists/prompt.md)
+- [The checklist for code and its tests](checklists/code.md)
+- [The checklist for checklists](checklists/checklist.md)
+- [What changed in each version](CHANGELOG.md)
 
 ## License
 

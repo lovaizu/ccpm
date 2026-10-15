@@ -69,22 +69,6 @@
   a question only you can answer that shows up only in the writing comes at the end, with the
   report.
 - To check an item, open README.md at the lines the report gives for it.
-- A document you already have: name it, as `/writ:up docs/typing-guide.md`. writ makes it again to
-  the checklists, so its wording, its order, and parts its reader does not need may change. Commit
-  it first: writ writes over it, and git keeps what it was.
-- A kind writ has no checklist for, such as release notes: writ asks which you want, to write them
-  to the checklist for every document alone, or to first make a checklist for release notes with
-  you, then write them to it. Choose the first for a one-off, and the second for a kind you will
-  write again. With the second, writ makes the checklist with you against its checklist for
-  checklists (`checklists/checklist.md`), puts it at `.writ/checklists/release-notes.md`, and finds
-  it there next time; commit it, and your team writes to the same checklist.
-  ```console
-  > /writ:up Write the release notes for 1.4
-
-  ● I have no checklist for release notes. Which do you want?
-    1. Write them to the checklist for every document alone.
-    2. First make a checklist for release notes with you, then write them to it.
-  ```
 
 ### B-5: Started from the README alone
 - Installing: in Claude Code, add the marketplace once with `/plugin marketplace add lovaizu/ccpm`,
@@ -100,6 +84,8 @@
   (`../turn/README.md`), do the writing, the reading and the checking, and turn needs them.
 
 ### F-1: Under Documentation
+- Beyond the first document (`beyond-the-first-document.md`): a document you already have, and a
+  kind writ has no checklist for.
 - The checklists writ keeps: every document (`checklists/doc.md`), README (`checklists/readme.md`),
   design document (`checklists/design.md`), prompt (`checklists/prompt.md`), code and its tests
   (`checklists/code.md`), and checklists (`checklists/checklist.md`).
