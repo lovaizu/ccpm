@@ -173,20 +173,23 @@ commits, the pull request and the product. Each passes on what happens to the us
 shape of what rn writes.
 
 The flow, from `/rn:up` through the plan, the design, one task and the Deliverable sign-off, is
-tried apart from what turn makes, on the smallest session that shows it: a one-line change in a
-repository of one file, with a plan of one attractive criterion. So this flow session spends no
-real work's cost and fails only where the flow breaks.
+tried apart from what turn makes, on the smallest session that shows it: one line added to the
+practice repository's README, with a plan of one attractive criterion. So this flow session
+spends no real work's cost and fails only where the flow breaks. The scenes, their fixtures and
+their trials are given in [rn's verification document](verification.md); here is what each
+passes on.
 
 The benefits are tried on real work in one session: `/rn:up move src/account to TypeScript` on a
 repository whose account helpers show "undefined undefined" for a user with no name. This is the
 account session.
 
-- What they really want from rough words: the account session, from its start to the Plan
-  sign-off.
+- What they really want from rough words: the account session, from its start to its first
+  call to the stand-in, and from its first Plan sign-off, with feedback on a name shown as "Ann
+  null", to the next.
 
-  Passes when, before any way is offered, rn asks why the user wants it and what the result should
-  do for a user with no name, and the plan it stops with covers every form an absent name takes
-  that the stand-in named: missing, `null` and `""`.
+  Passes when, before any way is offered, rn asks why the user wants it, and the plan it stops
+  with after the feedback covers every form an absent name takes that the stand-in named: missing,
+  `null` and `""`.
 - Called only for decisions that are theirs: the account session, from the stand-in's reason
   recorded to the Plan sign-off.
 
@@ -195,8 +198,7 @@ account session.
   point. Beside the trial, the hooks that hold it are tested in each case that would break it: an
   agent started in the background, a turn ended with nothing to decide, and a last message in the
   wrong language.
-- Decided from the proposal alone: the account session at its Plan sign-off and at its
-  Deliverable sign-off.
+- Decided from the proposal alone: the account session at its Plan sign-off.
 
   Passes when the stand-in, given only the proposal, decides without asking back, and each item the
   proposal shows met is met at the lines it names.
@@ -204,8 +206,7 @@ account session.
   paused with `/rn:dn` in the middle of a task and taken up with `/rn:up` in a fresh conversation.
 
   Passes when the fresh conversation goes on from the task's state with no question to the
-  stand-in, and the task's result is the same as an unpaused run's by the checklist of the task's
-  kind.
+  stand-in, and carries the task to its decision line.
 - Read in its receiver's place before the user sees it: each sign-off of the account session.
 
   Passes when the records show the plan, the three documents and the proposal made by turn and read

@@ -32,8 +32,10 @@
 - rn and turn from the branch under test, as their marketplace installs them, copied when the
   trial starts so a change made while it runs does not reach it; Claude Code 2.1.296 or later, on
   Opus, the model the user's conversation runs.
-- After a run, a revert commit puts back the tree of `c3b5f8e` on `main`, and the run's branches
-  and pull requests are closed.
+- After a run, the trial closes the run's pull request and deletes its branch; `main` is never
+  changed by rn (M1), so nothing is put back.
+- The document's own front matter: `name: verification`, `version: 0.1.0`, raised once for each
+  release of rn that changes it.
 
 ### B-2: How a run goes
 - A trial runs each turn of the conversation with `claude -p --plugin-dir <rn> --plugin-dir
@@ -56,10 +58,12 @@
   customer by mistake, and decides, when asked, that a coupon that is not a discount refuses the
   order.
 - The flow session is the smallest that shows the course from `/rn:up` to the Deliverable
-  sign-off: `/rn:up add to README.md that the shop closes on Sundays`, on the same start; the
-  stand-in wants it because customers kept coming on Sundays, and answers nothing else. Its trial
-  is `dev/rn/trials/flow.py`, run first after any change, since it spends no real work's cost and
-  fails only where the course breaks; it also shows M1, M2 and M4 on a real run.
+  sign-off: `/rn:up add to README.md that the shop closes on Sundays`, on the same start, the
+  practice repository; the stand-in wants it because customers kept coming on Sundays, and answers
+  nothing else. Its trial is `dev/rn/trials/flow.py`, run first after any change, since it spends
+  no real work's cost and fails only where the course breaks; it also shows M1, M2 and M4 on a real
+  run. The design's Verification says what each scene passes on and points here for the scenes,
+  their fixtures and their trials; this document is the one place that holds them.
 - The maintainer judges each scene from the run's records against its pass: the conversation's
   JSONL and every agent's, `steering.md`, `open/`, `content/`, the commits, the pull request, the
   product, and the run's output, where each hook that stops says why.
@@ -77,14 +81,13 @@
   Passes when, before any call asks the stand-in to choose a way, a call asks what it wants the
   result to do for it, the ways a call then offers each give what it said, none asks what the
   repository or a run could tell, and each message asks one point.
-- A3: the account session at its Plan sign-off (fixture `account-plan`) and at its Deliverable
-  sign-off (fixture `account-ready`): the stand-in is given only the proposal (`a3_proposal.py`).
-  Passes when it decides without asking back, and each item the proposal shows met is met at the
-  lines it names.
+- A3: the account session with its plan settled and its Plan sign-off's proposal not yet made
+  (fixture `account-ready`): `/rn:up`, to the proposal; the stand-in is given only the proposal
+  (`a3_proposal.py`). Passes when it decides without asking back, and each item the proposal shows
+  met is met at the lines it names.
 - A4: the coupon session paused with `/rn:dn` while a task is under way (fixture `coupon-paused`):
   `/clear`, then `/rn:up` (`a4_resume.py`). Passes when the fresh conversation goes on from the
-  task with no question to the stand-in, and the task's result is the same as an unpaused run's by
-  the checklist of the task's kind. And: the coupon session as rn 0.8.0 recorded it (fixture
+  task with no question to the stand-in, and carries the task to its decision line. And: the coupon session as rn 0.8.0 recorded it (fixture
   `coupon-0.8.0`): `/rn:up` (`a4_from_080.py`). Passes when rn works the goal out again from the
   old record, asking only what it leaves unclear, and stops at a new Plan sign-off.
 - A5: the records of the A1 and A3 scenes. Passes when they show the plan, the three documents and
