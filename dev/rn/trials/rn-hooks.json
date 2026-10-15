@@ -9,6 +9,7 @@
                      {"deliverable": "rn/hooks/shell.py"},
                      {"deliverable": "rn/hooks/checks/__init__.py"},
                      {"deliverable": "rn/hooks/checks/conductor_only_git.py"},
+                     {"deliverable": "rn/hooks/checks/default_branch.py"},
                      {"deliverable": "rn/hooks/checks/commit_then_push.py"},
                      {"deliverable": "rn/hooks/checks/foreground_agents.py"},
                      {"deliverable": "rn/hooks/checks/steering_form.py"},

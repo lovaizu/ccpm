@@ -69,7 +69,10 @@ the standard library only.
   or `git push` on it is stopped with `rn: only the conductor commits or pushes, since every commit
   records a decision that is the conductor's; an agent returns its result and the conductor
   commits it`; git run elsewhere, such as in a clone of the agent's own, or named only in text such
-  as `grep 'git push'`, passes); `commit_then_push` (a conductor command that both commits and
+  as `grep 'git push'`, passes); `default_branch` (a `git commit` while the repository is on its
+  default branch, or a `git push` whose target is the default branch, is stopped with `rn: the
+  default branch changes only when the user merges; a session works on its own branch`);
+  `commit_then_push` (a conductor command that both commits and
   pushes is stopped with `rn: commit first and push in a command of its own, since the checks on a
   commit run after it is made and before it is pushed, so a breach does not reach the pull
   request`); `foreground_agents` (an `Agent` call with `run_in_background` true, or a `SendMessage`
