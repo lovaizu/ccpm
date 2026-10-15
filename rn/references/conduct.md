@@ -86,37 +86,36 @@ by half-decided.
 3. Ask it straight in the message, and write its answer into `steering.md`, which is written
    next.
 
-### 4. Writing the content
+### 4. Writing the decisions
 
-1. For each item of the work's checklists, write what the work must say or do for its receiver and
-   use, taken from the plan, the design, the repository, the user's answers or a document already
-   there, read for it, so nothing is a guess:
-
-   - For a document: its facts, its decisions, its examples, the meaning of its terms and what it
-     leaves out.
-   - For code: what it does, the inputs it stops and lets through, what a stop tells its user,
-     what it needs to run, and the reasons for its decisions.
-
-   Write each as a plain statement, with the value itself where exactness matters, such as a
-   command, what a screen shows or an error's text. Leave shape, order, length, naming and
-   structure to turn, since form written here is copied into the work.
-2. Write the file in this form, so turn reads each line as content of one item:
+1. Write, for each item of the work's checklists, what was decided for this work that the item
+   needs: what the work must say or do, and what it leaves out, from the plan, the design, the
+   user's answers and the points agreed with them. Write each as a plain statement, with the value
+   itself where exactness matters, such as a command, what a screen shows or an error's text.
+2. Hand what the work draws on as it stands, the plan, the design, the code it describes or a
+   document already there, as a reference in step 5 instead of copying it here, since turn's
+   generator reads each reference where it stands, and a copy drifts from its source; the
+   decisions hold only what no reference holds.
+3. Write the file in this form, so turn reads each line as a decision for one item; the order,
+   headings and lists here are notes to turn, and the work takes its shape from its checklists:
 
    ```
-   # What <the work's path> says
+   # Decisions for <the work's path>
 
    ## <checklist name>
 
    ### <item ID>: <item title>
 
-   - <what the work says or does>
+   - <what the work must say or do, or leave out>
    ```
 
-3. Read every entry back, and take out each that is not what the receiver gets.
+4. Read every entry back, and take out each that a reference already holds or that is not what the
+   receiver gets.
 
 ### 5. Making a work through turn
 
-Hand turn the work as one task, with its checklists and content, and judge what it returns.
+Hand turn the work as one task, with its checklists, decisions and references, and judge what it
+returns.
 
 1. Take the work's checklists where the step that called for the work already ran
    `up.py checklists`; otherwise run `up.py checklists <kind>`. The kinds are `plan` for the plan;
@@ -126,9 +125,9 @@ Hand turn the work as one task, with its checklists and content, and judge what 
 2. For a kind with no checklist, make its checklist first, with the user, through these same steps:
    kind `checklist`, which `up.py checklists checklist` gives as
    `${CLAUDE_PLUGIN_ROOT}/checklists/checklist.md`, written to `.rn/checklists/<kind>.md`.
-3. Take the work's content file where the step that called for the work already wrote it, as for
+3. Take the work's decisions file where the step that called for the work already wrote it, as for
    the plan and the three documents; otherwise run
-   `up.py content <session folder> <the work's first file>` for where it goes, and write it as
+   `up.py decisions <session folder> <the work's first file>` for where it goes, and write it as
    step 4 says.
 4. Run `up.py task <session folder>` with these flags. It writes the task as a CCS, the JSON file
    that hands turn one task, and prints two lines: `in:`, that file's path, and `out:`, where turn
@@ -139,8 +138,9 @@ Hand turn the work as one task, with its checklists and content, and judge what 
    - `--use` what the receiver uses it for
    - `--acceptance` what the receiver must be able to do with it
    - `--checklist` each checklist
-   - `--content` the content file
-   - `--reference` each file or folder the work follows or draws on
+   - `--decisions` the decisions file
+   - `--reference` each file or folder the work follows or draws on, the plan and the design
+     among them, and what step 4 handed over instead of copying
    - `--opens` each file the receiver opens with the work
    - `--language` the artifact language
 
@@ -196,8 +196,9 @@ Then act on `next`:
 
   1. Ask the user now, one per message as step 2 says, each question the purpose needs that only
      the user can decide, and each one you cannot judge either way.
-  2. Where serving the purpose needs a large change in the content, such as a gap, a mistake or an
-     answer that changes much of the work, correct the content and have turn make the work again,
+  2. Where serving the purpose needs a large change in the decisions, such as a gap, a mistake or
+     an answer that changes much of the work, correct the decisions and have turn make the work
+     again,
      since turn on the same inputs returns the same judgments.
   3. Otherwise, where the work can be made to serve the purpose by changing it, such as an answer
      of a few lines put in or a part the receiver does not need taken out, change it now, after
@@ -206,7 +207,8 @@ Then act on `next`:
   4. Leave each question or item the purpose does not need, with the use or decision that does not
      rest on it, in the judgments file.
 
-- `stopped: <where>`: correct the content from the user's words and have turn make the work again.
+- `stopped: <where>`: correct the decisions from the user's words and have turn make the work
+  again.
 - No CCS at `out`: put to the user why turn ended before any work, as it said.
 
 On each item, what the receiver gains is a Good, which every fix keeps, and what they will struggle
@@ -240,14 +242,14 @@ do meanwhile, as step 2 says.
    conflict. When the merge changes what the plan or the design rests on, work it out again, as
    step 9 or 10 says, before the sign-off.
 2. Run `up.py checklists proposal` for the proposal's checklists, and
-   `up.py content <session folder> <session folder>/open/{NN}-notes-proposal.md` for where its
-   content file goes. Write the proposal's content as step 4 says, item by item of those
+   `up.py decisions <session folder> <session folder>/open/{NN}-notes-proposal.md` for where its
+   decisions file goes. Write the proposal's decisions as step 4 says, item by item of those
    checklists, the final state only, taking what changed since the last approval from the decision
    lines and each checklist item of a work from its report, while the reports are still in
    `open/`.
 3. Settle each report and each `feedback` item still in `open/`, each in a commit of its own, so
    that the stop commit's body is the proposal alone.
-4. Have turn make the proposal as step 5 says, with the checklists and the content file of 2:
+4. Have turn make the proposal as step 5 says, with the checklists and the decisions file of 2:
    `open/{NN}-notes-proposal.md` as where it goes, kind `proposal`, and the work it proposes on as
    what the receiver opens. Settle its report in a commit of its own, before the stop commit.
 5. Make the stop commit, with the proposal as the message body and, last, the decision line
@@ -321,13 +323,13 @@ Keep going until a stop for the user.
      requests it replaces.
 
 2. Run `up.py checklists plan` for the plan's checklists, and
-   `up.py content <session folder> <steering.md's path>` once, for where the plan's content file
+   `up.py decisions <session folder> <steering.md's path>` once, for where the plan's decisions file
    goes. Write each point into it as it is agreed, item by item of those checklists, as step 4
    says, and commit and push.
 3. When the goal's wording changes, retitle the pull request to it with
    `gh pr edit <pr> --title "<the goal in one line>"`, so the pull request always names the goal.
 4. When nothing is left to settle, have turn make the plan as step 5 says, with the checklists and
-   the content file of 2: `steering.md` as where it goes, kind `plan`, the user alone as receiver,
+   the decisions file of 2: `steering.md` as where it goes, kind `plan`, the user alone as receiver,
    and what the repository holds that the plan draws on as references.
 5. Stop at the Plan sign-off, as step 7 says.
 
@@ -338,14 +340,14 @@ Keep going until a stop for the user.
    settle.
 2. For each of the README, the design document and the verification document, at the paths
    `steering.md` names, run `up.py checklists <kind>`, with `readme`, `design` or `verification`
-   as its kind, for its checklists, and `up.py content <session folder> <the document's path>`
-   once, for where its content file goes. Write each point, as it is agreed, into the content of
+   as its kind, for its checklists, and `up.py decisions <session folder> <the document's path>`
+   once, for where its decisions file goes. Write each point, as it is agreed, into the decisions of
    the document it belongs to, item by item of its checklists, as step 4 says, and commit and push.
 3. Have the verification document hold where a run starts and how it goes; for each attractive
    criterion the fewest golden-path scenes that show the user getting it, each with what is put in and what must happen; and the machine checks,
    as commands naming the criteria they check. Fix each scene's input and pass here, since fixed
    after the work they could be chosen so that the work passes.
-4. Have turn make each of the three documents as step 5 says, with its checklists and content file
+4. Have turn make each of the three documents as step 5 says, with its checklists and decisions file
    of 2, the README first, each with its kind, `readme`, `design` or `verification`. Make all
    three even when no point changed a document, since every Design sign-off proposes on all three.
 5. Stop at the Design sign-off, as step 7 says.
@@ -381,7 +383,7 @@ After a later Design sign-off, revise the tasks not yet done by the design it ap
 3. Commit and push with that line as the decision line, settling the task's report in that commit
    as record.md's step 4 says, and, when the purpose is fulfilled, marking the task `[x]` in
    `steering.md`.
-4. When the purpose is not fulfilled, correct the content and go on from 1.
+4. When the purpose is not fulfilled, correct the decisions and go on from 1.
 
 When the tasks planned after the last Design sign-off are done, use the deliverable once:
 
@@ -394,7 +396,13 @@ When the tasks planned after the last Design sign-off are done, use the delivera
    with the scene it fell short in as its Completion criteria, and carry it out as a task, checked
    on the real thing against that scene. Use the whole deliverable this once, since each fresh use
    raises points that are not essential.
-4. Stop at the Deliverable sign-off, as step 7 says.
+4. Take stock of the learnings: every `rule` turn returned in the session, printed by
+   `jq -r '.semantic_gist[]? | .rule // empty' <session folder>/tasks/*.back.json`. Put each to
+   the user, one per message as step 2 says, with what you recommend: an item for
+   `.rn/checklists/<kind>.md`, an issue opened with `gh issue create`, or letting it go; do what the
+   user decides, and record it in the commit that settles the question, since a learning left in
+   the tasks alone is never acted on.
+5. Stop at the Deliverable sign-off, as step 7 says.
 
 ### 13. Feedback
 

@@ -41,7 +41,7 @@
       "checklist": "rn/checklists/prompt.md"
     },
     {
-      "content": ".writ/content/rn/prompts.content.md"
+      "decisions": ".writ/decisions/rn/prompts.decisions.md"
     },
     {
       "reference": "rn/checklists/plan.md"

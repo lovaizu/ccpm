@@ -91,7 +91,7 @@ class Briefs(unittest.TestCase):
         self.assertTrue(got["check"].endswith('up.py" check .turn/out generator'))
         self.assertEqual((got["receiver"], got["use"]), ("a new teammate", "to start work"))
         self.assertEqual(got["acceptance"], ["they can start alone"])
-        self.assertEqual(got["content"], ["notes.md"])
+        self.assertEqual(got["decisions"], ["notes.md"])
         self.assertEqual(got["references"], [])
         self.assertEqual(got["constraints"], [])
         self.assertEqual(got["ways"], [])
@@ -121,7 +121,7 @@ class Briefs(unittest.TestCase):
         c = ccs(
             retrieved_artifacts=[
                 {"checklist": "checklists/note.md"},
-                {"content": "notes.md"},
+                {"decisions": "notes.md"},
                 {"receiver_opens": "CONTRIBUTING.md"},
             ]
         )
@@ -136,7 +136,7 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["work"], [".turn/out/work/docs/note.md"])
         self.assertEqual(got["deliverable"], ["docs/note.md"])
         self.assertEqual(got["opens"], ["CONTRIBUTING.md"])
-        # Then: it holds the receiver, the use and the list, and nothing of the content, the
+        # Then: it holds the receiver, the use and the list, and nothing of the decisions, the
         # references or the acceptance
         self.assertEqual(
             sorted(got),
@@ -201,18 +201,18 @@ class Briefs(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
 
-    def test_the_learner_is_handed_the_decisions_and_both_records(self):
+    def test_the_learner_is_handed_the_judged_items_and_both_records(self):
         # Given: the run decided with F-1 not met, and the agents' records kept
         made = self.ran("generator", "g1")
         read = self.ran("first-user", "f1")
         decided(self.repo, f1=False)
         # When: the learner's brief is made
         got = self.handed("learner")
-        # Then: it holds what the work should be, the reading, the decisions and both records
-        self.assertEqual(got["decisions"], form("orchestrator"))
+        # Then: it holds what the work should be, the reading, the judged items and both records
+        self.assertEqual(got["judged"], form("orchestrator"))
         self.assertEqual(got["reading"], form("first-user"))
         self.assertEqual(got["records"], {"first user": read, "generator": made})
-        self.assertEqual(got["content"], ["notes.md"])
+        self.assertEqual(got["decisions"], ["notes.md"])
 
     def test_the_learner_is_not_handed_a_run_with_nothing_to_learn(self):
         cases = [

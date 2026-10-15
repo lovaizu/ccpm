@@ -5,7 +5,7 @@
                        {"acceptance": "they can tell what rn gives them over asking Claude in a conversation, install it, and start a session on their own repository, knowing what they will be asked to decide and when"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
                           {"checklist": "rn/checklists/readme.md"},
-                          {"content": ".writ/content/rn/README.content.md"},
+                          {"decisions": ".writ/decisions/rn/README.decisions.md"},
                           {"receiver_opens": "rn/during-a-session.md"},
                           {"receiver_opens": "turn/README.md"}],
   "constraints": [{"language": "English"}],

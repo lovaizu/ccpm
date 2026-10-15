@@ -51,7 +51,7 @@ class Start(unittest.TestCase):
                 "receiver": "a new teammate",
                 "use": "to start work",
                 "acceptance": ["they can start alone"],
-                "content": ["notes.md"],
+                "decisions": ["notes.md"],
                 "references": [],
                 "constraints": [],
             },
@@ -91,7 +91,7 @@ class Start(unittest.TestCase):
         c = ccs(
             retrieved_artifacts=[
                 {"checklist": "checklists/note.md"},
-                {"content": "notes.md"},
+                {"decisions": "notes.md"},
                 {"reference": "src"},
                 {"receiver_opens": "docs/guide"},
             ]
@@ -183,11 +183,11 @@ class Start(unittest.TestCase):
                 "checklists/none.md does not exist",
             ),
             (
-                "a content file that is not there",
+                "a decisions file that is not there",
                 ccs(
                     retrieved_artifacts=[
                         {"checklist": "checklists/note.md"},
-                        {"content": "gone.md"},
+                        {"decisions": "gone.md"},
                     ]
                 ),
                 "gone.md does not exist",

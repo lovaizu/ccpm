@@ -76,11 +76,11 @@ class Questions(unittest.TestCase):
         # When: the generator's brief is made
         _code, out = run(self.repo, "brief", ".turn/out", "generator")
         # Then: the questions are an empty list kept for the whole run, and the orchestrator is
-        # given the content, the references and the constraints to see what they leave open
+        # given the decisions, the references and the constraints to see what they leave open
         self.assertEqual(self.repo.json(QUESTIONS), [])
         self.assertEqual(self.got["questions"], QUESTIONS)
         self.assertEqual(
-            (self.got["content"], self.got["references"], self.got["constraints"]),
+            (self.got["decisions"], self.got["references"], self.got["constraints"]),
             (["notes.md"], [], ["language: English"]),
         )
         self.assertEqual(self.repo.json(out.strip())["questions"], QUESTIONS)
@@ -213,7 +213,7 @@ class Questions(unittest.TestCase):
         self.assertEqual(back["constraints"], [{"language": "English"}])
 
     def test_called_again_with_the_answer_in_the_content_the_run_makes_the_work_anew(self):
-        # Given: a run that ended asking the user, and the caller adding the answer to the content
+        # Given: a run that ended asking the user, and the caller adding the answer to the decisions
         fill(self.repo, QUESTIONS, [OPEN])
         seen(self.repo)
         decided(self.repo)
@@ -221,12 +221,12 @@ class Questions(unittest.TestCase):
         self.repo.write("notes.md", "Run make.\nThe note is under MIT.\n")
         # When: turn is called again on the same task, the returned work not committed
         code, out = run(self.repo, "start", "in.json", "out-2.json", "s1")
-        # Then: the new run starts with no work yet, and the orchestrator is given the content
+        # Then: the new run starts with no work yet, and the orchestrator is given the decisions
         # holding the answer
         self.assertEqual(code, 0, out)
         got = json.loads(out)
         self.assertFalse(self.repo.exists(got["work"][0]))
-        self.assertIn("MIT", self.repo.read(got["content"][0]))
+        self.assertIn("MIT", self.repo.read(got["decisions"][0]))
 
     def test_called_again_after_the_returned_work_was_changed_the_run_is_refused(self):
         # Given: a run that ended asking the user, and its work changed since, not committed

@@ -15,7 +15,7 @@
                        {"acceptance": "every test passes and holds a sentence of the content; every stop names the moment, what went wrong and why; nothing is stopped where no session is open; the checks are functions of values and their tests run in milliseconds; the first two units' checks still run as before"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/code.md"},
                           {"checklist": "rn/checklists/hook.md"},
-                          {"content": ".writ/content/rn/hooks-course.content.md"},
+                          {"decisions": ".writ/decisions/rn/hooks-course.decisions.md"},
                           {"reference": "rn/hooks/checks"},
                           {"reference": "rn/hooks/shell.py"},
                           {"reference": "rn/hooks/posttooluse.py"},

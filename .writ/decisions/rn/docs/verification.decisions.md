@@ -71,7 +71,7 @@
   each sign-off passed) on a real run. The design's Verification says what each scene passes on and points here for the scenes,
   their fixtures and their trials; this document is the one place that holds them.
 - The maintainer judges each scene from the run's records against its pass: the conversation's
-  JSONL and every agent's, `steering.md`, `open/`, `content/`, the commits, the pull request, the
+  JSONL and every agent's, `steering.md`, `open/`, `decisions/`, the commits, the pull request, the
   product, and the run's output, where each hook that stops says why.
 
 ### B-3: Each scene shows the user getting what they chose the product for

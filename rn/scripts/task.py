@@ -1,18 +1,18 @@
-"""The content file's place in the session folder, and the task written as a CCS for turn."""
+"""The decisions file's place in the session folder, and the task written as a CCS for turn."""
 
 import json
 import os
 
 
-def content_file(session, document):
+def decisions_file(session, document):
     path = os.path.normpath(document)
     if os.path.isabs(path) or path.split(os.sep)[0] == "..":
         raise ValueError(f"{document} is outside the repository; name a path from its top")
-    return os.path.join(session, "content", os.path.splitext(path)[0] + ".content.md")
+    return os.path.join(session, "decisions", os.path.splitext(path)[0] + ".decisions.md")
 
 
 def write(args):
-    for path in args.checklist + [args.content] + args.reference + args.opens:
+    for path in args.checklist + [args.decisions] + args.reference + args.opens:
         if not os.path.exists(path):
             raise ValueError(
                 f"{path} does not exist; name it by its path from the top of the repository"
@@ -23,7 +23,7 @@ def write(args):
         "goal_orientation": ([{"use": args.use}] if args.use else [])
         + [{"acceptance": args.acceptance}],
         "retrieved_artifacts": [{"checklist": path} for path in args.checklist]
-        + [{"content": args.content}]
+        + [{"decisions": args.decisions}]
         + [{"reference": path} for path in args.reference]
         + [{"receiver_opens": path} for path in args.opens],
         "constraints": [{"language": args.language}] if args.language else [],

@@ -37,10 +37,10 @@ folder, in the form `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` gives.
 
    - `steering.md`: the plan.
    - `open/`: what is not yet settled, one file per item.
-   - `content/`: what each work was asked to say, one file per work.
+   - `decisions/`: what each work was asked to say, one file per work.
    - `tasks/`: each task handed to turn and the CCS turn wrote back.
 
-   Commit `content/` and `tasks/` with the decision that made them. Leave turn's evidence, under
+   Commit `decisions/` and `tasks/` with the decision that made them. Leave turn's evidence, under
    `.turn/` at the top of the repository, uncommitted.
 
 3. Name each item in `open/` as `{NN}-{kind}-{about}.md`, since rn's checks find each item by these

@@ -53,7 +53,7 @@
       "checklist": "rn/checklists/hook.md"
     },
     {
-      "content": ".writ/content/rn/hooks-form.content.md"
+      "decisions": ".writ/decisions/rn/hooks-form.decisions.md"
     },
     {
       "reference": "rn/references/record.md"

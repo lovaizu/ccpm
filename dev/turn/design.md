@@ -9,9 +9,10 @@ A caller, Claude in the user's conversation or a step of the user's plugin, hand
 a CCS, a JSON file in the form [the callers' page](../../turn/calling-from-a-plugin.md) gives, and
 turn writes back a CCS with what the caller needs next, as a function takes arguments and returns
 a value. The CCS holds the run's inputs; among them are the work's place, where the work's files
-go; the receiver, the person the work is for, and their use of it; the content, what the work says
-or does item by item; and the references, what the work follows or draws on. The CCS turn writes
-back carries the caller's parts, what the caller wrote, as they were handed, beside what turn adds.
+go; the receiver, the person the work is for, and their use of it; the decisions, what the caller
+decided the work must say or do, and leave out; and the references, what the work follows or
+draws on, read in place of a copy. The CCS turn writes back carries the caller's parts, what the
+caller wrote, as they were handed, beside what turn adds.
 
 The work is what one task makes for one purpose, one file or several, such as code and its tests,
 written, read and decided together, since the receiver may get what they need only from them
@@ -36,10 +37,10 @@ first, and returns the work as last read with what that round leaves.
 - Made from what you decided: the work follows your notes and checklist, not whatever turn happened
   to open.
 
-  Your notes are the content; each run of the same task works from the same inputs.
+  Your notes are the decisions; each run of the same task works from the same inputs.
 
 - Asked only what only the user can decide, all at once at the end: nothing is asked that the
-  content and checklist already answer, and nothing is asked while turn works.
+  decisions and checklist already answer, and nothing is asked while turn works.
 
   So the user can leave turn at work.
 
@@ -132,12 +133,12 @@ version is measured.
 ### Non-goals
 
 - Deciding what the work should say: the caller does it, knowing what was already agreed, and gives
-  it as the content.
+  it as the decisions.
 
 - Making the work from one already there: turn makes new work only.
 
   What it is handed it follows, wording and slips included, so the caller reads the existing work
-  and puts what it says into the content.
+  and puts what it says into the decisions, or gives it as a reference.
 
 - Deciding whether to run again after a run's second round: the caller does it from what the run
   returns, knowing what was agreed.
@@ -185,7 +186,7 @@ the items in question, since a made-up task shows only that it passes.
   Tests show both stopped: a read outside the run's inputs, and a shell command of the
   orchestrator's other than turn's scripts.
 
-- Asked only what only the user can decide, all at once at the end: on content that settles some
+- Asked only what only the user can decide, all at once at the end: on decisions that settle some
   choices and leaves one open, the run ends with `ask the user` and that one choice.
 
   Nothing is asked while the run works, and no question is answered by the inputs.
@@ -253,8 +254,8 @@ flowchart TB
   user["The user<br/>hands the work on; when the run returns, answers what only they can decide"]
   caller["The caller: Claude in the user's conversation, or the user's plugin<br/>says what the work should be in a CCS of the callers' page's form;<br/>decides from the CCS turn writes back what follows"]
   orch["The orchestrator, the skill turn:up<br/>runs the run; decides each question an agent raises,<br/>showing where the inputs answer it or leaving it open for the user;<br/>sends the work back to the generator until every item passes or waits on an open question,<br/>and only then to the first user;<br/>alone decides each item from the whole work, giving each that passes a Good with its lines;<br/>takes the learner's ways in the work in one second round;<br/>returns what that round leaves, or what lies in what the caller gave, to the caller"]
-  gen["The generator<br/>makes the work in the run's copy to pass every item,<br/>from the content and the references; names where each item passes;<br/>raises what the inputs do not settle as a question"]
-  fu["The first user<br/>reads the work as the receiver, for the use, with only what the receiver opens;<br/>hands back its reading: what it took for each item, and where;<br/>raises no question, since without the content it cannot tell what only the user can decide"]
+  gen["The generator<br/>makes the work in the run's copy to pass every item,<br/>from the decisions and the references, in the order the list gives; names where each item passes;<br/>raises what the inputs do not settle as a question"]
+  fu["The first user<br/>reads the work as the receiver, for the use, with only what the receiver opens;<br/>hands back its reading: what it took for each item, and where;<br/>raises no question, since without the decisions it cannot tell what only the user can decide"]
   ev["The evaluator<br/>shows which items the work passes, each with its lines and grounds,<br/>which the orchestrator looks at first; raises no question"]
   le["The learner<br/>finds, for each item not passed, how the work would pass it, from the purpose,<br/>for every line the same shape reaches, and whether that way lies in the work<br/>or in what the caller gave; raises what only the user can decide"]
   scripts["turn's scripts<br/>give the same result every time: check the CCS; lay out the list and each role's answer file;<br/>make the run's copy; hand each agent its inputs, refusing a step whose steps before are not done;<br/>find the lines of the work no grounds name, Coverage;<br/>make the console, showing the aim before the work is written and each step as it is reached,<br/>in the user's words with no item IDs; write the work and the CCS back"]
@@ -280,7 +281,7 @@ flowchart TB
   fu -->|"the work and what the receiver opens"| scripts
   ev -->|"the reading"| fu
   ev -->|"the reading's records"| cc
-  le -->|"the work, the items not passed, the content and the references"| scripts
+  le -->|"the work, the items not passed, the decisions and the references"| scripts
   scripts --> tools
   scripts -->|"the repository as committed"| git
   hooks -->|"running them"| cc

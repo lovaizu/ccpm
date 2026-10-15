@@ -13,7 +13,7 @@ last for fixes that change nothing you do.
 - The report shows each item's lines as they stand in the document you get, mapped through what rn changed after turn — you open the line the report names and find the item there.
 - The proposal at each sign-off puts first what rn decided for you, each with its ground, and lists each item of the work's checklist met with the lines that give it — you see what is yours to overturn before anything else, and open the work only where you doubt it.
 - The checklists live in rn, with four new ones: the plan, a proposal, a verification document and a hook — one measure for everything a session makes, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
-- What each piece of work was asked to say, item by item, is kept under `.rn/<session>/content/`, and each call to turn under `.rn/<session>/tasks/`, committed with the decision that made them — each item met traces back to what was asked of it, and a fresh conversation settles points from them.
+- The decisions for each piece of work, what it must say or do and leave out, are kept under `.rn/<session>/decisions/`, and each call to turn under `.rn/<session>/tasks/`, committed with the decision that made them — each item met traces back to what was asked of it, and a fresh conversation settles points from them.
 - A commit on your default branch, or a push to it, is stopped — a session changes your default branch only when you merge.
 
 ### Changed

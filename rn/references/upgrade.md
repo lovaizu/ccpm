@@ -21,7 +21,7 @@ the goal out again from it, since an older record may not hold why the user want
 6. Work out the plan as conduct.md's step 9, Working out the plan, says, with the session's
    branch, pull request and session folder in place of new ones, and the old record as the
    request. Ask the user only what the old record leaves unclear.
-7. Write what an old design the user approved settled into the design's content as agreed points,
+7. Write what an old design the user approved settled into the design's decisions as agreed points,
    as conduct.md's step 10 says, and what was done as Facts in Assumptions, each saying where.
 8. Remove the other old files with `git rm`; they stay readable in git.
 9. Stop at a new Plan sign-off, as conduct.md's step 7 says.

@@ -5,7 +5,7 @@
                        {"acceptance": "they can tell what turn gives them over Claude checking its own writing, install it, and run it once on their own work"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
                           {"checklist": "rn/checklists/readme.md"},
-                          {"content": ".writ/content/turn/README.content.md"},
+                          {"decisions": ".writ/decisions/turn/README.decisions.md"},
                           {"receiver_opens": "turn/calling-from-a-plugin.md"}],
   "constraints": [{"language": "English"}],
   "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],

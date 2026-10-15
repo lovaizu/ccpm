@@ -5,7 +5,7 @@
                        {"acceptance": "it takes from the work only what the receiver would, writes its form for each item it took something for, and hands it back checked"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
                           {"checklist": "rn/checklists/prompt.md"},
-                          {"content": ".writ/content/turn/agents/first-user.content.md"}],
+                          {"decisions": ".writ/decisions/turn/agents/first-user.decisions.md"}],
   "constraints": [{"language": "English"}],
   "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
   "relational_map": [], "episodic_trace": []

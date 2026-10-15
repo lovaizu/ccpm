@@ -57,7 +57,7 @@ def ccs(**parts):
     c = {p: [] for p in PARTS}
     c["focal_entities"] = [{"deliverable": "docs/note.md"}, {"receiver": "a new teammate"}]
     c["goal_orientation"] = [{"use": "to start work"}, {"acceptance": "they can start alone"}]
-    c["retrieved_artifacts"] = [{"checklist": "checklists/note.md"}, {"content": "notes.md"}]
+    c["retrieved_artifacts"] = [{"checklist": "checklists/note.md"}, {"decisions": "notes.md"}]
     c.update(parts)
     return c
 

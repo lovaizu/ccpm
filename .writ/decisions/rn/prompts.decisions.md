@@ -88,7 +88,7 @@ form, read only when such a session is found.
   it is already stopped there, safe to clear, and that `/rn:ty` or `/rn:gm` answers it, and end;
   when turn is at work, stop it with Esc as turn's callers' page says, so its work stays in its
   evidence; write to a `notes` item in `open/` what the next conversation needs and nothing else
-  records: what was under way and how far it came, the task's content file and the last task
+  records: what was under way and how far it came, the task's decisions file and the last task
   handed to turn when a task was under way, and in a talk with the user the points agreed and the
   point still open; commit and push with `● {#id task name | plan | design} ── {how far it came} →
   paused at {#id task name | plan | design}`; end, opening the message with the map as the proposal
@@ -126,8 +126,8 @@ form, read only when such a session is found.
     runs asked unless the repository shows them, and what the product does today is checked on
     each; what the user does not know but says to go on with is an `Assumption`; the languages,
     the issues the work closes or serves and the pull requests it replaces are among the points.
-    Each point is written into the plan's content as agreed: `up.py content <session folder>
-    <steering.md's path>` once for where the content file goes, then item by item of `plan.md`,
+    Each point is written into the plan's decisions as agreed: `up.py decisions <session folder>
+    <steering.md's path>` once for where the decisions file goes, then item by item of `plan.md`,
     committed and pushed; the pull request's title stays the goal; until the Design sign-off is
     approved the only tasks are the Plan and Design sign-offs, and what the deliverable needs goes
     under Not yet specified. When nothing is left to settle, turn makes the plan as Making a work
@@ -135,9 +135,9 @@ form, read only when such a session is found.
     checklists plan` prints, what the repository holds that the plan draws on as references; then
     the Plan sign-off, as Stopping for the user says.
   - Working out the design: one point at a time as above, the user asked only what the product
-    should be and what trades effort against safety; each point agreed goes into the content of
+    should be and what trades effort against safety; each point agreed goes into the decisions of
     the document it belongs to, the README, the design document or the verification document, at
-    the place `up.py content` gives, committed and pushed; the verification document holds where a
+    the place `up.py decisions` gives, committed and pushed; the verification document holds where a
     run starts, how it goes, for each attractive criterion the fewest golden-path scenes that show
     the user getting it, each with what is put in and what must happen, and the machine checks as
     commands naming the criteria they check, each scene's input and pass fixed here since fixed
@@ -157,7 +157,7 @@ form, read only when such a session is found.
     repository's rules as what it follows, and the checklists its kind gets, `code` for code and
     its tests; the conductor checks what turn returned against the task's purpose on the real
     thing and says what it decided in one line, `● #{id} {task name} ── decided: purpose fulfilled
-    → {next}` or `── decided: purpose not fulfilled ({why}) → fix`, correcting the content and
+    → {next}` or `── decided: purpose not fulfilled ({why}) → fix`, correcting the decisions and
     having turn make it again; falling short the same way again means the work cannot go on; a
     result the design does not let it fulfil is a fix to the design, so back to Working out the
     design; something only the user can decide is asked; commit and push, the task marked `[x]` in
@@ -168,18 +168,22 @@ form, read only when such a session is found.
     decision line is `● deliverable ── used → ...`; each More to fix becomes a task added before the
     Deliverable sign-off, with the scene it fell short in as its Completion criteria, and carried
     out as a task, checked on the real thing against that scene; the whole is not
-    used again, since each fresh use raises points that are not essential; then the Deliverable
-    sign-off.
-  - Making a work through turn: `up.py content <session folder> <the work's first file>` for where
-    the content file goes, written as Writing the content says; `up.py checklists <kind>` for its
+    used again, since each fresh use raises points that are not essential; then the learnings
+    taken stock of: every `rule` turn returned in the session, `jq -r '.semantic_gist[]? | .rule //
+    empty' <session folder>/tasks/*.back.json`, each put to the user one per message as Asking the
+    user says with a recommendation, an item for `.rn/checklists/<kind>.md`, an issue opened with
+    `gh issue create`, or letting it go, done as the user decides and recorded in the commit that
+    settles the question; then the Deliverable sign-off.
+  - Making a work through turn: `up.py decisions <session folder> <the work's first file>` for where
+    the decisions file goes, written as Writing the decisions says; `up.py checklists <kind>` for its
     checklists; the kinds: `plan` for the plan, `readme`, `design` and `verification` for the
     three documents, `proposal` for a proposal, `code` for code and its tests, and for any other
     document its kind or `doc`; the deliverable's use takes no kind: its checklist is the session's
     verification document itself; a kind with none is made first with the user against
     `${CLAUDE_PLUGIN_ROOT}/checklists/checklist.md`, with `up.py checklists checklist`, written to
     `.rn/checklists/<kind>.md`; `up.py task <session folder>` with `--deliverable` each file,
-    `--receiver`, `--use`, `--acceptance`, `--checklist` each checklist, `--content`, `--reference`
-    each file or folder the work follows or draws on, `--opens` each file the receiver opens with
+    `--receiver`, `--use`, `--acceptance`, `--checklist` each checklist, `--decisions`, `--reference`
+    each file or folder the work follows or draws on, the plan and the design among them, `--opens` each file the receiver opens with
     the work, `--language` the artifact language, which prints `in:` and `out:`; the `turn:up`
     skill called with those two lines as its arguments, as printed, and waited for, since turn asks
     nothing while it works; what turn returned judged as Judging what turn returns says; the
@@ -188,29 +192,30 @@ form, read only when such a session is found.
     `{"question", "judged"}`), `unmet` (each `unmet` item, `{"item": "<its ID>", "judged"}`),
     `changed` (each change made after turn, `{"lines", "why"}`); `up.py report <out> <that file>`
     prints the report, written to a `report` item in `open/` and settled as record.md says.
-  - Writing the content: for each item of the checklists, what the work must say or do for its
-    receiver and use, taken from the plan, the design, the repository, the user's answers or a
-    document already there, read for it, so nothing is a guess; for a document its facts,
-    decisions, examples, the meaning of its terms and what it leaves out; for code what it does,
-    the inputs it stops and lets through, what a stop tells its user, what it needs to run, and the
-    reasons for its decisions; each a plain statement, with the value itself where exactness
-    matters, such as a command, what a screen shows or an error's text; shape, order, length,
-    naming and structure left to turn, since form written here is copied into the work; the file's
-    form, so turn reads each line as content of one item: `# What <the work's path> says`, `##
-    <checklist name>`, `### <item ID>: <item title>`, then bullets of what the work says or does;
-    every entry read back and each that is not what the receiver gets taken out.
+  - Writing the decisions: for each item of the checklists, what was decided for this work that the
+    item needs, what it must say or do and what it leaves out, from the plan, the design, the user's
+    answers and the points agreed; each a plain statement, with the value itself where exactness
+    matters, such as a command, what a screen shows or an error's text; what the work draws on as
+    it stands, the plan, the design, the code it describes or a document already there, handed as a
+    reference instead of copied, since turn's generator reads each reference where it stands and a
+    copy drifts from its source, so the decisions hold only what no reference holds; the file's
+    form, so turn reads each line as a decision for one item, its order and lists being notes to
+    turn and not the work's shape: `# Decisions for <the work's path>`, `## <checklist name>`,
+    `### <item ID>: <item title>`, then bullets of what the work must say or do, or leave out;
+    every entry read back and each that a reference holds, or that is not what the receiver gets,
+    taken out.
   - Judging what turn returns: the CCS at `out` and the work read as its receiver would, by the one
     test: a question or an item is needed when the receiver's use, or a decision of the user's,
     rests on it; `done`: nothing left; `ask the user` or `to the caller`: a question the purpose
     needs and only the user can decide, or one the conductor cannot judge either way, asked now,
-    one per message; then where serving the purpose needs a large change in the content, a gap, a
-    mistake, an answer that changes much of the work, the content corrected and turn run again,
+    one per message; then where serving the purpose needs a large change in the decisions, a gap, a
+    mistake, an answer that changes much of the work, the decisions corrected and turn run again,
     and only then, since turn on the same inputs returns the same judgments; otherwise where the
     work can be made to serve the purpose by changing it, an answer of a few lines put in or a
     part the receiver does not need taken out, changed now, after turn's last run, since turn
     writes over a file only when git holds it, each change's lines and why kept for the report; a
     question or item the purpose does not need left, with the use or decision that does not rest
-    on it, in the report; `stopped`: the content corrected from the user's words and turn run
+    on it, in the report; `stopped`: the decisions corrected from the user's words and turn run
     again; no CCS at `out`: turn ended before any work and said why, which is put to the user. On
     each item, what the receiver gains is a Good, which a fix must not take away, and what they
     will struggle with is a More; a More that brings an attractive criterion closer, or a must-be
@@ -241,7 +246,7 @@ form, read only when such a session is found.
   - Stopping for the user: only at a sign-off; when the work waits on someone outside, what to do
     meanwhile is a question; at a sign-off every report and feedback is settled, each in a commit
     of its own before the stop commit, whose body is the proposal alone, and the branch has the
-    latest default branch merged in; the proposal's content is written, the final state only,
+    latest default branch merged in; the proposal's decisions are written, the final state only,
     item by item of `proposal.md`: what the conductor proposes next and why it serves the goal; the
     goal and every acceptance criterion as `steering.md` words them; for each attractive criterion
     how far the work now gives it and what came closer since the last proposal; what changed since
@@ -258,9 +263,9 @@ form, read only when such a session is found.
 - `record.md`: the session is its directory `.rn/{yyyymmdd}-{slug}/`, the README, design document
   and verification document its plan names, and git; the plan's own form is
   `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md`. The directory: `steering.md`; `open/`, what is not
-  yet settled, one file per item; `content/`, what each work was asked to say, one file per work;
-  `tasks/`, each task handed to turn and the CCS turn wrote back; `content/` and `tasks/` are
-  written by `up.py content` and `up.py task` and committed with the decision that made them;
+  yet settled, one file per item; `decisions/`, what each work was asked to say, one file per work;
+  `tasks/`, each task handed to turn and the CCS turn wrote back; `decisions/` and `tasks/` are
+  written by `up.py decisions` and `up.py task` and committed with the decision that made them;
   turn's evidence under `.turn/` at the top of the repository is left uncommitted. `open/` names:
   `{NN}-{kind}-{about}.md`, `{NN}` one more than the highest number there or `01`, `{kind}` one of
   `report` (the report `up.py report` printed for one work, such as `04-report-task-3.md`),
@@ -301,7 +306,7 @@ form, read only when such a session is found.
   does on a start, with the session's branch, pull request and directory in place of new ones and
   the old record as the request, asking only what it leaves unclear; the first write of the new
   `steering.md` replaces the old one; what an old design the user approved settled goes into the
-  design's content as agreed points, what was done becomes Facts in Assumptions each saying where,
+  design's decisions as agreed points, what was done becomes Facts in Assumptions each saying where,
   the other old files are removed and stay readable in git; stop at a new Plan sign-off.
 
 ### B-8: What breaks, set down exactly
@@ -320,8 +325,8 @@ form, read only when such a session is found.
   form and the map.
 
 ### B-17: Scripts for what must come out the same
-- `tools.sh` checks the tools; `up.py checklists`, `content`, `task` and `report` give the
-  checklists for a kind, the content file's place, the task as a CCS and the report; what each
+- `tools.sh` checks the tools; `up.py checklists`, `decisions`, `task` and `report` give the
+  checklists for a kind, the decisions file's place, the task as a CCS and the report; what each
   prints is used as printed.
 
 ### B-19: What the user must see, shown by a tool
@@ -335,7 +340,7 @@ form, read only when such a session is found.
   only through the report the script writes.
 
 ### F-2: Form of what goes in and out
-- The skills take `$ARGUMENTS`, the user's words; `conduct.md` names the content file's form, the
+- The skills take `$ARGUMENTS`, the user's words; `conduct.md` names the decisions file's form, the
   judgments file's fields and the task script's flags; `record.md` the record's layout, names and
   the decision line.
 
@@ -344,5 +349,5 @@ form, read only when such a session is found.
 ### B-13: One name for each thing
 - "the conductor" for the AI running these prompts, "turn" for the plugin that makes each work,
   "the user" for the person, "the record" for the session's directory and git, "a work" for one
-  thing turn makes, "the content" for what a work must say, "the report" for what `up.py report`
+  thing turn makes, "the decisions" for what a work must say, "the report" for what `up.py report`
   prints, "a sign-off", "the plan", "the design", "the deliverable", "a Good" and "a More".

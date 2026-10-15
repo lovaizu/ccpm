@@ -124,6 +124,6 @@ def make(ccs_path, judgments_path):
     lines += [
         "",
         "The document: " + ", ".join(goes),
-        "What it says, item by item: " + ", ".join(entries(ccs["retrieved_artifacts"], "content")),
+        "Its decisions: " + ", ".join(entries(ccs["retrieved_artifacts"], "decisions")),
     ]
     return "\n".join(lines)

@@ -28,7 +28,7 @@
     "goal_orientation": [{"use": "to get the project running on their machine"},
                          {"acceptance": "they can run the tests without asking anyone"}],
     "retrieved_artifacts": [{"checklist": "checklists/doc.md"},
-                            {"content": "notes/setup.content.md"},
+                            {"content": "notes/setup.decisions.md"},
                             {"reference": "Makefile"},
                             {"receiver_opens": "CONTRIBUTING.md"}],
     "constraints": [{"language": "English"}],

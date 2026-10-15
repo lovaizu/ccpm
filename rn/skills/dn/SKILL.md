@@ -33,7 +33,7 @@ record, so everything it needs is left there.
 
    ## Task
 
-   - Content: <the task's content file>
+   - Content: <the task's decisions file>
    - Last handed to turn: <the in path of the last task handed to turn>
 
    ## Talk

@@ -17,10 +17,13 @@
   written, read and decided together, since what the receiver needs may be given only by them
   together.
 - What the caller gives: where each file of the work goes; the receiver it is for; their use of it,
-  when named; what they must be able to do with it; the checklists; the content, what the work says
-  or does item by item of the checklists; the references, files or folders the work follows or
-  draws on; what the receiver opens with the work; and the constraints, such as the language to
-  write in. These are the run's inputs.
+  when named; what they must be able to do with it; the checklists; the decisions, what the caller
+  decided the work must say or do, and leave out, item by item of the checklists, holding nothing a
+  reference already holds; the references, files or folders the work follows or draws on, which
+  turn reads in place of a copy, so a fact has one source; what the receiver opens with the work;
+  and the constraints, such as the language to write in. These are the run's inputs.
+- A checklist's Format gives the shape the work takes, first; its other items stand in the order
+  the maker meets them writing the work from the top, those that hold over the whole last.
 - A checklist says what a work of one kind must give its receiver: an opening on what such work is
   for, then items, each one question. The list is a task's checklists put together.
 - A run goes from one CCS to the one turn writes back: it makes the work, has it read, decides each
@@ -104,9 +107,10 @@
 
 ### B-5: Non-goals
 - Deciding what the work should say: the caller does it, knowing what was already agreed, and gives
-  it as the content.
+  it as the decisions.
 - Making the work from one already there: the caller reads it and puts what it says into the
-  content; turn makes new work only, since what it is handed it follows, wording and slips included.
+  decisions, or gives it as a reference; turn makes new work only, since what it is handed it
+  follows, wording and slips included.
 - Deciding whether to run again after a run's second round: the caller does it from what the run
   returns, knowing what was agreed.
 - Finding what no item asks, which goes into the checklist; and holding checklists, which belong to
@@ -133,7 +137,7 @@
   run left without one.
 - Made from what the caller decided: on a task in a repository holding files the inputs do not name,
   the records show no role reading one, and the work says nothing the inputs do not give.
-- Asked only what only the user can decide, all at once at the end: on content that settles some
+- Asked only what only the user can decide, all at once at the end: on decisions that settle some
   choices and leaves one open, nothing is asked while the run works, the run ends with `ask the
   user` and that one choice; no question is answered by the inputs.
 - Seeing the work as it goes: the console alone tells the step the records show; a run stopped on
@@ -212,18 +216,22 @@
   in one second round, and returns what the second round leaves, or what lies in what the caller
   gave, to the caller. It needs the CCS, turn's scripts and Claude Code to start its agents.
 - The generator: makes the work in the run's copy of the repository to pass every item, from the
-  content and the references, names where each item passes, and raises what the inputs do not
-  settle as a question. It needs the inputs a script hands it and a shell for tests and builds.
+  decisions and the references, in the order the list gives: the shape first, then part by part
+  from the top, then the items that hold over the whole, each over the whole work; names where
+  each item passes, and raises what the inputs do not settle as a question. It needs the inputs a
+  script hands it and a shell for tests and builds.
 - The first user: reads the work as the receiver, for the use, with only the work and what the
   receiver opens with it, and hands back what it took for each item and where; it raises no
-  question, since without the content it cannot tell what only the user can decide. It needs the
+  question, since without the decisions it cannot tell what only the user can decide. It needs the
   work and what the receiver opens.
 - The evaluator: shows which items the work passes, each with its lines and grounds, judged from
   the first user's reading; it raises no question. It needs the reading and its records.
 - The learner: finds, for each item not passed, how the work would pass it, from the purpose and
   for every line the same shape reaches, and where that way lies: in the work, or in what the
-  caller gave; and raises what only the user can decide. It needs the work, the items not passed,
-  the content and the references.
+  caller gave; and raises what only the user can decide; and returns as a rule what in making such
+  work would have given an item when first made, only where no item of the list already asks it,
+  since the caller takes each rule up with the user. It needs the work, the items not passed, the
+  decisions and the references.
 - turn's scripts: give the same result every time: check the CCS, lay out the list and the forms,
   make the run's copy and hand each agent its inputs once the steps before are done, find the
   lines of the work no grounds name (Coverage), make the console that shows the aim before the

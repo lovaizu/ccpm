@@ -6,7 +6,7 @@ import re
 PARTS = {
     "focal_entities": {"deliverable", "receiver"},
     "goal_orientation": {"use", "acceptance"},
-    "retrieved_artifacts": {"checklist", "content", "reference", "receiver_opens"},
+    "retrieved_artifacts": {"checklist", "decisions", "reference", "receiver_opens"},
     "constraints": {"language", "rule"},
     "predictive_cue": {"next"},
     "uncertainty_signal": None,
@@ -31,7 +31,7 @@ def should(ccs):
         "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
         "use": "; ".join(entries(ccs, "goal_orientation", "use")),
         "acceptance": entries(ccs, "goal_orientation", "acceptance"),
-        "content": entries(ccs, "retrieved_artifacts", "content"),
+        "decisions": entries(ccs, "retrieved_artifacts", "decisions"),
         "references": entries(ccs, "retrieved_artifacts", "reference"),
         "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
     }
@@ -70,7 +70,7 @@ def faults(ccs):
             found.append(f"{part} needs {'an' if kind[0] in 'aeiou' else 'a'} {kind}")
     for kind, there in (
         ("checklist", os.path.isfile),
-        ("content", os.path.isfile),
+        ("decisions", os.path.isfile),
         ("reference", os.path.exists),
         ("receiver_opens", os.path.exists),
     ):

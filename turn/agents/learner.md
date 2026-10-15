@@ -18,23 +18,25 @@ bias from what it was not; turn's hook stops a read of anything else, and names 
 
 1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work`, `form`,
    `check` (the command that checks your form), what the work should be (`receiver`, `use`,
-   `acceptance`, `content`, `references`, `constraints`), `questions` (the file of what only the
-   user can decide), `reading` (the first user's form), `decisions` (the orchestrator's form) and
+   `acceptance`, `decisions`, `references`, `constraints`), `questions` (the file of what only the
+   user can decide), `reading` (the first user's form), `judged` (the orchestrator's form) and
    `records` (the first user's and the generator's).
-2. Read the list, the work, the content, each reference, `questions`, the reading and the decisions
-   whole.
+2. Read the list, the work, the decisions, each reference, `questions`, the reading and the judged
+   items whole.
 3. Read the first user's records for what it looked for and where it went, and the generator's
    records for how the work was made.
-4. Write your form: for each item the decisions do not give as met, under the item's ID, first in
-   `aim`, what the whole work gives the receiver once the item is met, toward the use, said from the
+4. Write your form: for each item the judged items do not give as met, under the item's ID, first
+   in `aim`, what the whole work gives the receiver once the item is met, toward the use, said from the
    item and its checklist's opening; then in `reach`, every line of the work whose shape stands
    between it and the aim, such as `3-5, 12`, or, where the work is several files, `docs/a.md:3-5; src/b.py:12`, each file by its path in the CCS; then in `way`, how the work's shape becomes the aim,
    said from the aim and taken at every line of the reach. Name no line in the aim or the way. In
    `in`, write where that way lies, `the work` or `what the work should be`; in `making`, what in
    making such work would have given the item when first made, said for any work of the kind, or
-   `""` where the records show nothing of the kind. Where one way serves several items, write it the
+   `""` where the records show nothing of the kind or where an item of the list already asks it,
+   since the caller takes each `making` up with the user as a learning, and one that says an item
+   again costs that talk and teaches nothing. Where one way serves several items, write it the
    same under each.
-5. Where a way needs what neither what the work should be, the content, the references nor a
+5. Where a way needs what neither what the work should be, the decisions, the references nor a
    question already in `questions` settles, and only the user can decide, add it to `questions` with
    `jq` as `{"question": "..."}`: what to ask the user, and what the work leaves out until they
    answer; the way then lies in `what the work should be`, where the answer comes, and says to make

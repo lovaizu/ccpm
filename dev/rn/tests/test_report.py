@@ -104,19 +104,19 @@ class TestReport(RepoTest):
         self.assertEqual(out.split("\n\n")[1], "doc 0.2.0\n  ✅ B-1 Purpose first: 1-3")
 
     def test_the_report_ends_with_the_document_and_its_content_file(self):
-        # Given: turn's CCS for a document of two files and its content file
+        # Given: turn's CCS for a document of two files and its decisions file
         # When: rn makes the report
-        # Then: it ends with the document's files and the content file, and ends well
+        # Then: it ends with the document's files and the decisions file, and ends well
         self.turn(
             focal_entities=[{"deliverable": "README.md"}, {"deliverable": "docs/use.md"}],
-            retrieved_artifacts=[{"content": "notes/README.content.md"}],
+            retrieved_artifacts=[{"decisions": "notes/README.decisions.md"}],
         )
         code, out = self.report({})
         self.assertEqual(code, 0)
         self.assertTrue(
             out.endswith(
                 "\n\nThe document: README.md, docs/use.md\n"
-                "What it says, item by item: notes/README.content.md\n"
+                "Its decisions: notes/README.decisions.md\n"
             )
         )
 

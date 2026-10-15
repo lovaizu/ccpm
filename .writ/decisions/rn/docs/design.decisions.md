@@ -124,7 +124,7 @@
   the plan checklist's form, `open/` with its kinds and names, the decision lines and the stop
   commits. Must keep holding: a session recorded by 0.9.0 is taken up as it stands, since its form
   is the same; a session from before 0.9.0 has its goal worked out again, as 0.9.0 did. May
-  change: what is added under `content/`.
+  change: what is added under `decisions/`.
 - The pull request, relied on by the user and by GitHub: its body links `steering.md`, with
   `Closes #N`, `Refs #N` and the pull requests it replaces, and it is marked ready on the
   Deliverable sign-off. Must keep holding: those links and that mark.
@@ -222,12 +222,14 @@
 ### B-12: Who is responsible for what
 - The user decides: what they want, at each sign-off, and what only they can know.
 - The conductor, the conversation with the user: hears one point at a time until nothing is
-  silently assumed; writes the content of each work from what was agreed; calls turn once for
-  each work, and again only when the content must change much, finishing a small More
+  silently assumed; writes the decisions for each work from what was agreed, handing what the
+  work draws on as references; calls turn once for each work, and again only when the decisions
+  must change much, finishing a small More
   itself; judges each question and item turn returns by what the purpose needs; plans the tasks
   once the design is approved, attractive quality first, and judges each result on the real thing
   against its purpose; has the deliverable used once against the verification document; takes
-  feedback back to before the sign-off it answers and stops there again; proposes at each
+  stock of the learnings turn returned, one at a time with the user, before the Deliverable
+  sign-off, each put into a checklist, an issue, or let go; takes feedback back to before the sign-off it answers and stops there again; proposes at each
   sign-off with the final state, what it decided for the user first; and alone uses git.
 - turn: makes each work from its CCS, has it read or used in its receiver's place, checks each
   item, and returns the questions only the user can decide and the items not met.
@@ -240,7 +242,7 @@
   the user, or a message in the wrong language; they judge the course, never the work's worth.
 - rn's checklists: say what each kind of work must give its receiver; one the user made at
   `.rn/checklists/<kind>.md` is used for its kind.
-- The record: the session's folder, `steering.md`, `open/`, `content/`, the content of each
+- The record: the session's folder, `steering.md`, `open/`, `decisions/`, the decisions for each
   work, `tasks/`, each task handed to turn and the CCS turn wrote back, and the commits with their
   decision lines, on the session's branch with its draft pull request; turn's evidence under
   `.turn/` stays uncommitted.

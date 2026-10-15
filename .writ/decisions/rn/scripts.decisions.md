@@ -21,9 +21,9 @@ only; `tools.sh` is sh since python3 itself may be missing.
 ### B-16: Stopped before a wrong input is used
 - `up.py` prints the usage and exits 1 on a command it does not know, on a wrong count of
   arguments, and when run with none; the usage lists every command with its arguments:
-  `up.py checklists <kind>`, `up.py content <session folder> <document>`, `up.py task <session
+  `up.py checklists <kind>`, `up.py decisions <session folder> <document>`, `up.py task <session
   folder> --deliverable <path> [<path> ...] --receiver <who> [--use <what for>] --acceptance <what
-  they can do> --checklist <path> [<path> ...] --content <path> [--reference <path> ...] [--opens
+  they can do> --checklist <path> [<path> ...] --decisions <path> [--reference <path> ...] [--opens
   <path> ...] [--language <language>]`, `up.py report <CCS turn wrote back> <judgments>`. Every stop
   of every command prints its sentence to standard output and exits 1; a command that ends well
   exits 0.
@@ -44,14 +44,14 @@ only; `tools.sh` is sh since python3 itself may be missing.
   the checklist with front matter giving its name and version`. The nine kinds rn keeps, `doc`,
   `readme`, `design`, `prompt`, `code`, `checklist`, `plan`, `proposal`, `verification`, are each
   found by name; `readme` gets `doc` first, then `readme`; `code` gets `code` alone.
-- `content <session folder> <document>`: prints `<session folder>/content/<the document's path
-  without its extension>.content.md`, so `turn/README.md` in session `.rn/20261016-x` gives
-  `.rn/20261016-x/content/turn/README.content.md` and `src/tidy.py` gives
-  `.rn/20261016-x/content/src/tidy.content.md`; a document path that is absolute or leaves the
+- `decisions <session folder> <document>`: prints `<session folder>/decisions/<the document's path
+  without its extension>.decisions.md`, so `turn/README.md` in session `.rn/20261016-x` gives
+  `.rn/20261016-x/decisions/turn/README.decisions.md` and `src/tidy.py` gives
+  `.rn/20261016-x/decisions/src/tidy.decisions.md`; a document path that is absolute or leaves the
   repository (`..`) stops with `<path> is outside the repository; name a path from its top`.
 - `task <session folder> ...`: `--deliverable` and `--checklist` take one or more paths, `--reference`
   and `--opens` zero or more, and a flag given twice adds to what it was given before (argparse
-  `action="extend"`); `--receiver`, `--acceptance` and `--content` are required, `--use` and
+  `action="extend"`); `--receiver`, `--acceptance` and `--decisions` are required, `--use` and
   `--language` optional; a call missing a required flag stops with the usage. Each checklist, the
   content, each reference and each file the receiver opens must exist, else the command stops before
   writing anything with `<path> does not exist; name it by its path from the top of the repository`.
@@ -101,7 +101,7 @@ only; `tools.sh` is sh since python3 itself may be missing.
   call the command.
 
 ### B-20: One name for one thing
-- "the session folder", "the content file", "the task", "the CCS", "the judgments", "the report",
+- "the session folder", "the decisions file", "the task", "the CCS", "the judgments", "the report",
   "a checklist", "a kind" throughout the scripts, their messages and their tests.
 
 ### B-21: Comments say why

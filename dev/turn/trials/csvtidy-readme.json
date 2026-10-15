@@ -5,7 +5,7 @@
                        {"acceptance": "they can tell what csvtidy saves them, install it and clean their own file"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
                           {"checklist": "rn/checklists/readme.md"},
-                          {"content": "dev/turn/trials/csvtidy/notes.md"}],
+                          {"decisions": "dev/turn/trials/csvtidy/notes.md"}],
   "constraints": [{"language": "English"}],
   "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
   "relational_map": [], "episodic_trace": []

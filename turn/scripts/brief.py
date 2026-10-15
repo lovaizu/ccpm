@@ -101,7 +101,7 @@ def brief(work, role):
             wanted,
             questions=os.path.join(work, "questions.json"),
             reading=os.path.join(work, "first-user.json"),
-            decisions=os.path.join(work, "orchestrator.json"),
+            judged=os.path.join(work, "orchestrator.json"),
             records={"first user": records("first-user"), "generator": records("generator")},
         )
     out = os.path.join(work, f"{role}-brief.json")

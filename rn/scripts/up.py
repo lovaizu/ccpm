@@ -13,10 +13,10 @@ import task
 
 USAGE = """usage:
   up.py checklists <kind>
-  up.py content <session folder> <document>
+  up.py decisions <session folder> <document>
   up.py task <session folder> --deliverable <path> [<path> ...] --receiver <who>
       [--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...]
-      --content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]
+      --decisions <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]
   up.py report <CCS turn wrote back> <judgments>"""
 
 
@@ -34,7 +34,7 @@ def parse_task(argv):
     parser.add_argument("--use")
     parser.add_argument("--acceptance", required=True)
     parser.add_argument("--checklist", nargs="+", action="extend", required=True)
-    parser.add_argument("--content", required=True)
+    parser.add_argument("--decisions", required=True)
     parser.add_argument("--reference", nargs="*", action="extend", default=[])
     parser.add_argument("--opens", nargs="*", action="extend", default=[])
     parser.add_argument("--language")
@@ -45,8 +45,8 @@ def run(argv):
     command, args = (argv[0], argv[1:]) if argv else ("", [])
     if command == "checklists" and len(args) == 1:
         return checklists.find(args[0])
-    if command == "content" and len(args) == 2:
-        return task.content_file(args[0], args[1])
+    if command == "decisions" and len(args) == 2:
+        return task.decisions_file(args[0], args[1])
     if command == "task":
         return task.write(parse_task(args))
     if command == "report" and len(args) == 2:

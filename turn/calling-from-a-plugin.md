@@ -29,9 +29,11 @@ The first four parts are the step's:
   - `checklist`, at least one: a checklist the work is made and checked by, in the form turn's
     README gives under Requirements: a file that opens with front matter giving its `name` and
     `version`, and holds items, each one thing the work must give.
-  - `content`: a file of what the work says or does, item by item of the checklists.
-  - `reference`: a file or a folder the work follows or draws on, such as code it describes or a
-    page whose form it follows.
+  - `decisions`: a file of what the step decided the work must say or do, and leave out, item by
+    item of the checklists: the choices made for this work, and nothing a reference already
+    holds, since a fact copied here and there drifts from its source, and turn reads the source.
+  - `reference`: a file or a folder the work follows or draws on, such as code it describes, a
+    document whose facts it states or a page whose form it follows.
   - `receiver_opens`: a file or a folder the receiver opens with the work, such as a page it links.
 - `constraints`:
   - `language`: the language to write in.
@@ -39,7 +41,7 @@ The first four parts are the step's:
 
 turn and each agent it starts read only the files and folders the CCS names, and stop a read outside
 them, so that the work is made without bias. So name everything the work follows or draws on as
-`content` or `reference`, and everything the receiver opens with the work as `receiver_opens`.
+`decisions` or `reference`, and everything the receiver opens with the work as `receiver_opens`.
 Before calling, check each `receiver_opens`: that it exists and is what the receiver opens with the
 work, since turn reads the work as the receiver with these alone.
 
@@ -92,7 +94,7 @@ The CCS in that example:
   "goal_orientation": [{"use": "to get the project running on their machine"},
                        {"acceptance": "they can run the tests without asking anyone"}],
   "retrieved_artifacts": [{"checklist": "checklists/doc.md"},
-                          {"content": "notes/setup.content.md"},
+                          {"decisions": "notes/setup.decisions.md"},
                           {"reference": "Makefile"},
                           {"receiver_opens": "CONTRIBUTING.md"}],
   "constraints": [{"language": "English"}],
@@ -135,7 +137,7 @@ turn's own; the step need not read it.
     answer of a few lines or taking out a part the receiver does not need, it changes the work and
     moves on;
   - where serving the purpose needs a large change in what turn was given, such as a gap or a
-    mistake in the content file, it corrects its own parts or its files and calls turn again.
+    mistake in the decisions file, it corrects its own parts or its files and calls turn again.
 - `to the caller: <reason>`: an item would be met only by a change in what the step wrote, which
   turn never rewrites. The reason names each such item and the change; the work is where
   `deliverable` says. The step corrects its own parts and calls turn again, or puts the reason to

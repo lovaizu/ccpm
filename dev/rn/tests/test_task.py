@@ -11,23 +11,23 @@ from helpers import SCRIPTS, RepoTest
 SESSION = ".rn/20261016-x"
 COMMANDS = [
     "up.py checklists <kind>",
-    "up.py content <session folder> <document>",
+    "up.py decisions <session folder> <document>",
     (
         "up.py task <session folder> --deliverable <path> [<path> ...] --receiver <who>"
         " [--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...]"
-        " --content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]"
+        " --decisions <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]"
     ),
     "up.py report <CCS turn wrote back> <judgments>",
 ]
 USAGE = "usage: " + " ".join(COMMANDS)
 CHECKLIST = "checklists/doc.md"
-CONTENT = "notes.content.md"
+DECISIONS = "notes.decisions.md"
 REQUIRED = {
     "--deliverable": "docs/setup.md",
     "--receiver": "a developer",
     "--acceptance": "they run the tests",
     "--checklist": CHECKLIST,
-    "--content": CONTENT,
+    "--decisions": DECISIONS,
 }
 
 
@@ -54,7 +54,7 @@ class TestCommand(RepoTest):
         for argv in [
             ["checklists"],
             ["checklists", "doc", "readme"],
-            ["content", SESSION],
+            ["decisions", SESSION],
             ["content", SESSION, "a.md", "b.md"],
             ["report", "back.json"],
             ["report", "back.json", "judgments.json", "more.json"],
@@ -95,26 +95,26 @@ class TestContent(RepoTest):
     def test_the_content_file_lies_in_the_session_folder_by_the_documents_path(self):
         # Given: a document at the top of the repository, in a folder, or in a folder whose name
         #   begins with two dots
-        # When: rn is asked where its content file goes
-        # Then: it prints the path under the session folder's content folder, the document's path
-        #   without its extension and ending .content.md, and ends well
+        # When: rn is asked where its decisions file goes
+        # Then: it prints the path under the session folder's decisions folder, the document's path
+        #   without its extension and ending .decisions.md, and ends well
         for document, path in [
-            ("README.md", SESSION + "/content/README.content.md"),
-            ("turn/README.md", SESSION + "/content/turn/README.content.md"),
-            ("src/tidy.py", SESSION + "/content/src/tidy.content.md"),
-            ("..notes/a.md", SESSION + "/content/..notes/a.content.md"),
+            ("README.md", SESSION + "/decisions/README.decisions.md"),
+            ("turn/README.md", SESSION + "/decisions/turn/README.decisions.md"),
+            ("src/tidy.py", SESSION + "/decisions/src/tidy.decisions.md"),
+            ("..notes/a.md", SESSION + "/decisions/..notes/a.decisions.md"),
         ]:
             with self.subTest(document=document):
-                self.assertEqual(self.rn("content", SESSION, document), (0, path + "\n"))
+                self.assertEqual(self.rn("decisions", SESSION, document), (0, path + "\n"))
 
     def test_a_document_outside_the_repository_stops(self):
         # Given: a document named by an absolute path, or by a path that leaves the repository
-        # When: rn is asked where its content file goes
+        # When: rn is asked where its decisions file goes
         # Then: rn stops, naming the path and saying to name it from the top of the repository
         for document in ["/etc/a.md", "../a.md", "docs/../../a.md", ".."]:
             with self.subTest(document=document):
                 self.assertEqual(
-                    self.rn("content", SESSION, document),
+                    self.rn("decisions", SESSION, document),
                     (1, f"{document} is outside the repository; name a path from its top\n"),
                 )
 
@@ -125,7 +125,7 @@ class TestTask(RepoTest):
             self.write(path, "x\n")
 
     def task(self, *flags, leave_out=()):
-        self.given(CHECKLIST, CONTENT)
+        self.given(CHECKLIST, DECISIONS)
         argv = ["task", SESSION]
         for flag, value in REQUIRED.items():
             if flag not in leave_out:
@@ -160,7 +160,7 @@ class TestTask(RepoTest):
                 ],
                 "retrieved_artifacts": [
                     {"checklist": CHECKLIST},
-                    {"content": CONTENT},
+                    {"decisions": DECISIONS},
                     {"reference": "Makefile"},
                     {"receiver_opens": "CONTRIBUTING.md"},
                 ],
@@ -252,7 +252,7 @@ class TestTask(RepoTest):
 
     def test_a_task_missing_a_required_flag_prints_the_usage(self):
         # Given: a task given without one of the deliverable, the receiver, the acceptance, the
-        #   checklist or the content
+        #   checklist or the decisions
         # When: rn is asked to write it
         # Then: it prints the usage and stops
         for flag in REQUIRED:
@@ -260,12 +260,12 @@ class TestTask(RepoTest):
                 self.assertEqual(usage(self.task(leave_out=[flag])), (1, USAGE))
 
     def test_a_named_file_not_there_stops_before_anything_is_written(self):
-        # Given: a checklist, the content, a reference or a file the receiver opens that does
+        # Given: a checklist, the decisions, a reference or a file the receiver opens that does
         #   not exist
         # When: rn is asked to write the task
         # Then: rn stops, naming the path and saying to name it from the top of the repository,
         #   and writes no task
-        for flag in ["--checklist", "--content", "--reference", "--opens"]:
+        for flag in ["--checklist", "--decisions", "--reference", "--opens"]:
             with self.subTest(flag=flag):
                 self.assertEqual(
                     self.task(flag, "missing.md"),

@@ -5,7 +5,7 @@
                        {"acceptance": "they can set up a run, run each scene and each machine check as written, and tell for each criterion whether it passed"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
                           {"checklist": "rn/checklists/verification.md"},
-                          {"content": ".writ/content/rn/docs/verification.content.md"},
+                          {"decisions": ".writ/decisions/rn/docs/verification.decisions.md"},
                           {"receiver_opens": "rn/docs/design.md"},
                           {"receiver_opens": "dev/rn/trials"}],
   "constraints": [{"language": "English"}],

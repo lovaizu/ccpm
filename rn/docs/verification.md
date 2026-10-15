@@ -125,7 +125,7 @@ sequenceDiagram
 
   The records are the conversation's JSONL and every agent's, in the folder under
   `~/.claude/projects/` that Claude Code keeps for the clone in the out folder; `steering.md`,
-  `open/`, `content/`, the commits and the product in the clone; the session's pull request; and
+  `open/`, `decisions/`, the commits and the product in the clone; the session's pull request; and
   the trial's own transcript in the out folder, which holds what each call printed, where each hook
   that stops says why.
 

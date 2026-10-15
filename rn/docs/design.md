@@ -2,9 +2,9 @@
 
 rn keeps what its [README](../README.md) promises by one split: the conductor, the conversation
 with the user, decides everything, and turn, the plugin rn is built on, makes everything. For each
-work, one thing made for one purpose, one file or several, the conductor writes the content, what
-the work must say or do item by item of its checklists, from what was agreed with the user, and
-hands turn one task for it in a CCS, the JSON file that carries the task to turn and turn's result
+work, one thing made for one purpose, one file or several, the conductor writes the decisions, what
+the work must say or do and leave out, item by item of its checklists, from what was agreed with
+the user, and hands turn one task for it in a CCS, the JSON file that carries the task to turn and turn's result
 back. turn makes the work, has it read or used by an AI that did not make it, as the person it is
 for would, and checks each item. At each sign-off, a point where the user looks at the work before
 it goes past and approves with `/rn:ty` or gives feedback with `/rn:gm`, the conductor puts to the
@@ -54,8 +54,8 @@ How to use rn is in its README; what turn does with a task is in
 
   On each item of a work's checklists, turn finds a Good, what the user gains, which a fix must
   not take away, or leaves a More, what the user will struggle with. The conductor finishes a
-  small More itself; where fixing a More would change the content much, turn makes the work again
-  from the changed content; and a fatal More, one without whose fix the goal cannot be achieved
+  small More itself; where fixing a More would change the decisions much, turn makes the work again
+  from the changed decisions; and a fatal More, one without whose fix the goal cannot be achieved
   and whose fix only the user can decide, is put to the user in the proposal. So no More reaches
   the user unsettled except as a decision of theirs.
 
@@ -139,7 +139,7 @@ record names.
   `steering.md` in the plan checklist's form, `open/` with its kinds and names, the decision lines
   and the stop commits. Must keep holding: a session recorded by 0.9.0 is taken up as it stands,
   since its form is the same; a session from before 0.9.0 has its goal worked out again, as 0.9.0
-  did. May change: what is added under `content/`, which holds the content of each work.
+  did. May change: what is added under `decisions/`, which holds the decisions for each work.
 
 - The pull request is relied on by the user and by GitHub.
 
@@ -188,7 +188,7 @@ record names.
 
 - rn uses turn only through the CCS, as turn's callers' page gives it.
 
-  rn relies on it for this alone: it hands turn the content and the checklists of a work, starting
+  rn relies on it for this alone: it hands turn the decisions, the references and the checklists of a work, starting
   the skill `turn:up`, and reads back from the CCS turn writes the next move, the questions only
   the user can decide and the items not met, since turn may change everything inside.
 
@@ -295,12 +295,12 @@ conversation, the same one throughout the session.
 ```mermaid
 flowchart TB
   user["<b>The user</b><br/>decides what they want, at each sign-off,<br/>and what only they can know"]
-  conductor["<b>The conductor</b><br/>hears one point at a time until nothing is silently assumed;<br/>writes the content of each work from what was agreed;<br/>calls turn once for each work and settles each More turn leaves;<br/>judges each question and item turn returns by what the purpose needs:<br/>needed when the receiver's use or a decision of the user's rests on it,<br/>otherwise left with why;<br/>plans the tasks once the design is approved, attractive quality first,<br/>and judges each result on the real thing against its purpose;<br/>has the deliverable used once against the verification document;<br/>takes feedback back to before the sign-off it answers and stops there again;<br/>proposes at each sign-off with the final state, what it decided for the user first;<br/>alone uses git"]
+  conductor["<b>The conductor</b><br/>hears one point at a time until nothing is silently assumed;<br/>writes the decisions for each work from what was agreed;<br/>calls turn once for each work and settles each More turn leaves;<br/>judges each question and item turn returns by what the purpose needs:<br/>needed when the receiver's use or a decision of the user's rests on it,<br/>otherwise left with why;<br/>plans the tasks once the design is approved, attractive quality first,<br/>and judges each result on the real thing against its purpose;<br/>has the deliverable used once against the verification document;<br/>takes stock of the learnings turn returned, one at a time with the user,<br/>before the Deliverable sign-off;<br/>takes feedback back to before the sign-off it answers and stops there again;<br/>proposes at each sign-off with the final state, what it decided for the user first;<br/>alone uses git"]
   turn["<b>turn</b><br/>makes each work from its CCS, has it read or used in its receiver's place,<br/>checks each item, and returns the questions only the user can decide<br/>and the items not met"]
   scripts["<b>rn's scripts</b><br/>find the checklists for a kind; write the CCS from the parts the conductor gives;<br/>write the report; build the record for the hooks"]
   hooks["<b>rn's hooks</b><br/>hold The default branch, Every decision pushed, The record's form,<br/>Only the user passes a sign-off and The conductor stays on course,<br/>stopping each break where it happens;<br/>they judge the course, never the work's worth"]
   checklists["<b>rn's checklists</b><br/>say what each kind of work must give its receiver;<br/>one the user made at .rn/checklists/&lt;kind&gt;.md is used for its kind"]
-  record["<b>The record</b><br/>the session's folder: steering.md, open/,<br/>content/ with the content of each work,<br/>tasks/ with each task handed to turn and the CCS turn wrote back;<br/>and the commits with their decision lines,<br/>on the session's branch with its draft pull request;<br/>turn's evidence under .turn/ stays uncommitted"]
+  record["<b>The record</b><br/>the session's folder: steering.md, open/,<br/>decisions/ with the decisions for each work,<br/>tasks/ with each task handed to turn and the CCS turn wrote back;<br/>and the commits with their decision lines,<br/>on the session's branch with its draft pull request;<br/>turn's evidence under .turn/ stays uncommitted"]
   github["<b>git and GitHub, through gh</b><br/>hold the record and the pull request;<br/>the pull request needs gh logged in with push access"]
   claude["<b>Claude Code</b><br/>runs the conductor, the hooks and turn"]
   tools["<b>python3 and jq</b>"]

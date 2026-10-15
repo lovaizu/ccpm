@@ -18,7 +18,8 @@ PATHS = (
     "questions",
     "reading",
     "records",
-    "content",
+    "decisions",
+    "judged",
     "references",
 )
 
@@ -37,7 +38,7 @@ def inputs(data, run):
         ccs = read_json(os.path.join(cwd, run["in"]), run["in"])
         found = [run["in"]] + [
             p
-            for kind in ("checklist", "content", "reference")
+            for kind in ("checklist", "decisions", "reference")
             for p in entries(ccs, "retrieved_artifacts", kind)
         ]
         return found + [run["work"]]

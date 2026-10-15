@@ -39,7 +39,7 @@ for this sign-off as the feedback, so you can comment where you read.
 ## What a session leaves
 
 Besides your product, the session leaves its `.rn/` directory: `steering.md`, the plan as it was
-agreed, and, under `content/`, what each piece of work was asked to say, item by item. The pull
+agreed, and, under `decisions/`, what each piece of work was asked to say, item by item. The pull
 request's history holds each report and what was decided on it, so you or a teammate can later see
 why things came out as they did. turn keeps the lines that give each item under `.turn/`, which
 rn leaves uncommitted; delete it when you no longer need to follow an item back.

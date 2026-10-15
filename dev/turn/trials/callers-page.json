@@ -4,7 +4,7 @@
   "goal_orientation": [{"use": "to write the step that calls turn and acts on what it returns"},
                        {"acceptance": "they can write the CCS, call turn, and decide the step's next move from each value of next turn returns"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
-                          {"content": ".writ/content/turn/calling-from-a-plugin.content.md"},
+                          {"decisions": ".writ/decisions/turn/calling-from-a-plugin.decisions.md"},
                           {"receiver_opens": "turn/README.md"}],
   "constraints": [{"language": "English"}],
   "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],

@@ -21,7 +21,7 @@ repository. turn's hook shows the user each step of the run as you reach it, so 
 user but what step 1 says to say. After step 1, when a command exits with 1, do what it says and run
 it again.
 
-You work from the run's inputs alone: the CCS, the list, the content and the references step 1
+You work from the run's inputs alone: the CCS, the list, the decisions and the references step 1
 prints, and the run's folder, so that the work is made from what the caller decided, without bias
 from what it did not give. Read files with Read, and in the shell run `up.py`, and `jq`, `mv` and
 `cd` on those files, since the steps need nothing else; turn's hook stops any other read or
@@ -31,11 +31,11 @@ command, and names what you may read.
    Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it
    prints, as JSON, `folder`, `list`, `work` (where each file of the work is made, one path per
    file, in the order the CCS names them), your two forms `hand-on` and `orchestrator`,
-   `questions`, and what the work should be: `receiver`, `use`, `acceptance`, `content` (what the
-   work says, item by item), `references` (what the work follows or draws on, each a file or a
-   folder) and `constraints`.
-2. Read the list, the content and each reference whole.
-3. For each item, see whether what the work should be, the content and the references settle what
+   `questions`, and what the work should be: `receiver`, `use`, `acceptance`, `decisions` (what
+   the caller decided the work must say or do, and leave out, that the references do not hold),
+   `references` (what the work follows or draws on, each a file or a folder) and `constraints`.
+2. Read the list, the decisions and each reference whole.
+3. For each item, see whether what the work should be, the decisions and the references settle what
    the work needs to give it. Add to `questions` with `jq`, as `{"question": "...", "ask": true}`,
    each thing they leave open that only the user can decide: what to ask, and what the work leaves
    out until it is answered. The run asks it at its end. In a second round, `questions` already
@@ -50,9 +50,9 @@ command, and names what you may read.
 6. Run `up.py coverage <folder> generator`. It prints the lines with text that no item of
    the generator's form names.
 7. Read the work, the generator's form and `questions` whole. Decide each question the generator
-   added, from what the work should be, the content and the references: `ask`, true when only the
+   added, from what the work should be, the decisions and the references: `ask`, true when only the
    user can decide it, so the run leaves it open and asks it at its end, and false when the work,
-   what the work should be, the content or the references answer it; `answered`, where
+   what the work should be, the decisions or the references answer it; `answered`, where
    false, where it is answered. Write the form `hand-on` with `jq`, for every item: `met`, true or
    false; where met, `lines`, the lines that give it, such as `3-5, 12`, or, where the work is several files, `docs/a.md:3-5; src/b.py:12`, each file by its path in the CCS, and `note`, what the
    receiver gets from those lines; where not, first `aim`, what the whole work gives the receiver

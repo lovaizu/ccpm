@@ -69,7 +69,7 @@ class OrchestratorReadsItsInputs(unittest.TestCase):
         cases = [
             ("the CCS", "Read", {"file_path": self.at("in.json")}),
             ("the checklist", "Read", {"file_path": self.at("checklists/note.md")}),
-            ("the content", "Read", {"file_path": "notes.md"}),
+            ("the decisions", "Read", {"file_path": "notes.md"}),
             ("a file in a reference folder", "Read", {"file_path": self.at("docs/guide/a.md")}),
             ("the work", "Read", {"file_path": self.at(".turn/out/work/docs/note.md")}),
             ("turn's own file", "Read", {"file_path": UP}),
