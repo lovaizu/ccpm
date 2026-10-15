@@ -344,6 +344,16 @@ Progress:
   `checklist.md` F-5 and F-6 do not say how a new or renamed checklist finds its last release, and
   nothing asks that a Look-for be checked against every candidate. The content files of turn's
   README and callers' page each hold a gap the workers worked around.
+- Done: `prompt.md` (`f4b7e07`, on turn's first user; turn's own first user kept, since it passed
+  both flow runs) and `checklist.md` (`152c470`, on release notes), with a new B-8: each item named
+  by what it gives; the names in `checklist.md`, `doc.md`, `prompt.md` and `readme.md` that said what
+  is absent are renamed; `design.md` and `code.md` wait for their workers.
+- `design.md`: the first worker's result is not taken. It judged the work by the checklist's own
+  opening, which asks for each part's when and what it looks at, so it added items and left a
+  513-line design that reads as a specification. The user's words (2026-10-15) are the measure: a
+  design holds the approach, the way of thinking, and who takes part with their roles and
+  dependencies, to bring about the UX the README promises; it is not a specification. A second
+  worker runs on those words.
 
 ### [ ] #4: writ built and checked
 
