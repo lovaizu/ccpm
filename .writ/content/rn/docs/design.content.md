@@ -163,31 +163,28 @@
 - Each is tried as its user on the practice repository `lovaizu/rn-try`, one run at a time, from a
   fixed state, with a stand-in playing the user from a part that says only what the user knows,
   and judged from the run's transcripts, the JSONL Claude Code keeps of the conversation and of
-  every agent, with the commits, the pull request and the product. Each passes on what happens to the user, not on the shape of what
-  rn writes.
-- What they really want from rough words: `/rn:up move src/account to TypeScript` on a repository
-  whose account helpers show "undefined undefined" for a user with no name. Passes when, before any
-  way is offered, rn asks why the user wants it and what the result should do for a user with no
-  name, and the plan it stops with covers every form an absent name takes that the stand-in named,
-  missing, `null` and `""`.
-- Called only for decisions that are theirs: the same session, from the stand-in's reason recorded
-  to the Plan sign-off. Passes when no question asks what the repository or a run could tell, each
-  means question comes after the stand-in said what it wants and gives each way's cost, and each
+  every agent, with the commits, the pull request and the product. Each passes on what happens to
+  the user, not on the shape of what rn writes. The scenes, their fixtures and their trials are in
+  the verification document (`verification.md`), the one place that holds them; the design says
+  only what each passes on.
+- What they really want from rough words: passes when rn's first call to the user asks why they
+  want the goal, and when, after feedback that one form of an absent name is shown wrong, the plan
+  put up covers every form an absent name takes.
+- Called only for decisions that are theirs: passes when, before any way is offered, a call asks
+  what the user wants the result to do for them; the ways then offered each give what they said,
+  with their costs; none asks what the repository or running its code could tell; and each
   message asks one point.
-- Decided from the proposal alone: the same session at its Plan sign-off and at its Deliverable
-  sign-off. Passes when the stand-in, given only the proposal, decides without asking back, and
-  each item the proposal shows met is met at the lines it names.
-- Goes on from where it stopped: the coupon session, a second session on the same repository,
-  paused with `/rn:dn` in the middle of a task and taken up with `/rn:up` in a fresh conversation. Passes when the fresh conversation goes on from
-  the task's state with no question to the stand-in, and the task's result is the same as an
-  unpaused run's by the deliverable's checklist.
-- Read in its receiver's place before the user sees it: on each sign-off of the same session, the
-  run's transcripts show the plan, the three documents and the proposal made by turn and read by its first
-  user before the stop commit, and each task's result used by it before the conductor decided.
+- Decided from the proposal alone: passes when a stand-in given only the proposal decides without
+  asking back, and decides the same as one that reads the pull request and its branch.
+- Goes on from where it stopped: passes when a fresh conversation, after a pause in the middle of
+  a task, goes on from the task with no question to the user and carries it to its decision line.
+- Read in its receiver's place before the user sees it: passes when the transcripts show the plan,
+  the three documents and each proposal made by turn and read by its first user before the stop
+  commit, and the deliverable used by turn's first user before the conductor decided.
 - The flow, from `/rn:up` through the plan, the design, one task and the Deliverable sign-off, is
-  tried apart from what turn makes, on the smallest session that shows it: a one-line change in a
-  repository of one file, with a plan of one attractive criterion, so the trial spends no real
-  work's cost and fails only where the flow breaks.
+  tried apart from what turn makes in the flow session, the smallest that shows it: a one-line
+  change to the practice repository's README, so the trial spends no real work's cost and fails
+  only where the flow breaks; it is run first after any change.
 
 ### B-8: One-dimensional quality measured
 - All three are measured from the transcripts of the account session, run on this version and on the

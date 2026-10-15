@@ -661,6 +661,20 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   document runs beside it as `v6`, both in this session's scratchpad
   `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/2b5caff4-d0fc-4a9b-83a0-22f95dbc4db8/scratchpad/`,
   logs beside them. `hf3` is still going in the earlier scratchpad.
+- rn's design taken in from `nd5` (2026-10-16, Opus, $9.24, two rounds, 405 lines, one question):
+  the block of words is gone, but the run moved the README's words (plan, design, deliverable,
+  sign-offs, the Kano citation) into one explanation under the last attractive quality, since the
+  generator is not handed the README; cut by hand, Good and More kept there. The four unmet items
+  (whole ideas, terms, one account, fewest words) are finished by hand with it. The sessions are
+  named sessions, not trials, as the verification document names them.
+- rn's verification document taken in from `v6` (2026-10-16, Opus, $6.66, two rounds, 180 lines,
+  five questions): settled from the sources and finished by hand: the scenes live in the
+  verification document and the design's Verification says only what each passes on and points
+  there (the design and its content brought to the decision of 2026-10-16, which they had not
+  taken); A5's "it" is turn's first user, using the flow session's deliverable as the product's
+  user; the stand-in's parts and how rn and turn reach the clone said as the trials do; the start
+  given as commands to see and to bring back; each pass said as the decision line the records
+  hold. The rules of both runs each apply an item that exists; none taken.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins

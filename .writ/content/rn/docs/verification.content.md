@@ -29,11 +29,19 @@
   branch and no open pull request, so no earlier session's plan or code is there to be found. A
   trial that starts partway through a session commits its fixture on that session's branch of a
   fresh clone, with a draft pull request.
-- rn and turn from the branch under test, as their marketplace installs them, copied when the
-  trial starts so a change made while it runs does not reach it; Claude Code 2.1.296 or later, on
-  Opus, the model the user's conversation runs.
+- rn and turn are the `rn/` and `turn/` folders of the branch under test, copied when the trial
+  starts so a change made while it runs does not reach it, and passed to Claude Code with
+  `--plugin-dir`; Claude Code 2.1.296 or later, on Opus, the model the user's conversation runs.
 - After a run, the trial closes the run's pull request and deletes its branch; `main` is never
-  changed by rn (M1), so nothing is put back.
+  changed by rn (M1), so nothing is put back. Before a run, the maintainer sees that the start
+  holds and brings it back where a run that stopped partway left something: the branches
+  (`gh api repos/lovaizu/rn-try/branches --jq '.[].name'`, `main` alone), the open pull
+  requests (`gh pr list -R lovaizu/rn-try --state open`, none) and `main`'s commit
+  (`git ls-remote https://github.com/lovaizu/rn-try.git main`, `c3b5f8e`); a pull request left
+  open is closed with `gh pr close <number> -R lovaizu/rn-try --delete-branch`, a branch left
+  without one deleted with `git push https://github.com/lovaizu/rn-try.git --delete <branch>`,
+  and `main` moved put back with `git push --force https://github.com/lovaizu/rn-try.git
+  c3b5f8e:main`.
 - The document's own front matter: `name: verification`, `version: 0.1.0`, raised once for each
   release of rn that changes it.
 
@@ -45,17 +53,18 @@
 - The stand-in's part for each session, everything it knows and decides, is in
   `dev/rn/trials/common.py` (`ACCOUNT_PART`, `COUPON_PART`) and `dev/rn/trials/flow.py`
   (`FLOW_PART`), the one place that holds them, since that is what reaches the stand-in. It talks in
-  Japanese and asks the repository to be written in English, and asks back whenever a question does
-  not give it what it needs to decide. What the passes rest on: in the account session, started
+  Japanese and asks the repository to be written in English, and says so when asked what it does
+  not know. What the passes rest on: in the account session, started
   with `/rn:up move src/account to TypeScript`, it wants the goal because users who signed up with
   only an email see "undefined undefined" as their name, knows that `nickname`, `firstName` and
   `lastName` can each be missing, `null` or `""`, and wants for a user with no name something that
-  tells users apart and gives away nothing private; in the coupon session it wants every coupon to
+  tells users apart and gives away nothing private, and, asked to choose among ways, asks back
+  when no way gives what it wants or the question leaves out what they cost; in the coupon session it wants every coupon to
   be a discount and decides that a coupon that is not one refuses the order.
 - The flow session is the smallest that shows the course from `/rn:up` to the Deliverable
   sign-off: `/rn:up add to README.md that the shop closes on Sundays`, on the same start, the
-  practice repository; the stand-in wants it because customers kept coming on Sundays, and answers
-  nothing else. Its trial is `dev/rn/trials/flow.py`, run first after any change, since it spends
+  practice repository; the stand-in wants it because customers kept coming on Sundays, and, asked anything
+  else, says it does not know and to go on as rn proposes. Its trial is `dev/rn/trials/flow.py`, run first after any change, since it spends
   no real work's cost and fails only where the course breaks. It passes when the session reaches
   the Deliverable sign-off approved and no hook stopped a call on the way; its records show M1
   (no commit on `main`), M2 (every commit pushed as it was made) and M4 (`/rn:ty` typed before
@@ -79,17 +88,20 @@
   result to do for it, the ways a call then offers each give what it said, none asks what the
   repository or a run could tell, and each message asks one point.
 - A3: the account session with its plan settled and its Plan sign-off's proposal not yet made
-  (fixture `account-ready`): `/rn:up`, to the proposal; then two stand-ins with the same part
-  decide, one given the proposal alone and one given the pull request as well, neither answer sent
-  (`a3_proposal.py`). Passes when the one with the proposal alone decides without asking back, and
-  the two decide the same, so each item the proposal shows met is met where it names.
+  (fixture `account-ready`): `/rn:up`, to the proposal; then two of the stand-in, each given the account
+  session's part and what it answered rn on the way, decide, one given the proposal alone and no
+  tools, and one that reads the pull request and the files on its branch in a clone of its own,
+  neither answer sent (`a3_proposal.py`). Passes when the one with the proposal alone answers
+  `/rn:ty` or `/rn:gm` without asking back, and the two answer the same, so each item the proposal shows met is met where it names.
 - A4: the coupon session paused with `/rn:dn` while a task is under way (fixture `coupon-paused`):
   `/clear`, then `/rn:up` (`a4_resume.py`). Passes when the fresh conversation goes on from the
   task with no question to the stand-in, and carries the task to its decision line.
 - A5: the records of the A1, A3 and flow scenes: the JSONL Claude Code keeps of the conversation
   and of each agent turn started, under `~/.claude/projects/`. Passes when they show the plan, the
   three documents and each proposal made by turn's generator and read by turn's first user before
-  the stop commit, and the task's result used by it before the conductor's decision line.
+  the stop commit, and the flow session's deliverable used by turn's first user, as the product's user in each
+  scene of the session's verification document, before the conductor's decision line
+  `● deliverable ── used → ...`.
 
 ### B-4: What passes is fixed before the work is seen
 - Each scene's input and pass were fixed with the design, before this version of rn was built, and
