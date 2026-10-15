@@ -3,8 +3,8 @@
 ## doc
 
 ### B-1: What it covers
-- A step of a plugin hands turn one task: it writes the task in a CCS, a JSON file, calls turn, and
-  decides its next move from the CCS turn writes back.
+- A step of a plugin hands turn one task: it writes the task in a CCS (Compressed Cognitive State), a
+  JSON file, calls turn, and decides its next move from the CCS turn writes back.
 - It works like a function call: the CCS the step writes is the arguments, the CCS turn writes back
   is the return value, and its `next` says what to do with it.
 - The page gives the call, the CCS the step writes, and what to read in the one turn writes back.
@@ -61,8 +61,9 @@
     `receiver`, who the work is for, needed.
   - `goal_orientation`: `use`, what the receiver uses the work for; `acceptance`, what the receiver
     must be able to do with it, needed.
-  - `retrieved_artifacts`: `checklist`, a checklist the work is made and checked by, a file that
-    opens with front matter giving its `name` and `version`, at least one; `content`, a file of what
+  - `retrieved_artifacts`: `checklist`, a checklist the work is made and checked by, in the form
+    turn's README gives under Requirements: a file that opens with front matter giving its `name`
+    and `version`, and holds items, each one thing the work must give; at least one; `content`, a file of what
     the work says or does, item by item of the checklists; `reference`, a file or a folder the work
     follows or draws on, such as code it describes or a page whose form it follows;
     `receiver_opens`, a file or a folder the receiver opens with the work, such as a page it links.
@@ -99,8 +100,11 @@
 - Calling turn again: the step writes a new CCS with its own parts as they now stand, turn's parts
   empty, and a new `out`. turn makes the work anew from it; a file already where the work goes is
   not one of its inputs.
-- A run on the same inputs returns the same judgments, so the step calls turn again only when what it
-  gives turn has changed.
+- The step calls turn again only when what it gives turn has changed: turn works from those inputs
+  alone, so a call on the same ones repeats its judgment rather than adding to it.
+- When turn ends before any work, because `out` already exists, python3 or jq is missing, or the
+  file at `deliverable` has changes git does not hold, it writes neither the work nor a CCS, and says
+  why in the conversation; the step puts that to the user.
 - Each `rule` turn returns is the step's to judge: it may put it into its later tasks as a `rule` in
   `constraints`, into its checklist, or leave it.
 
