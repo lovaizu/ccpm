@@ -121,7 +121,9 @@
 - Each is judged from the records, the JSONL of every conversation and agent of the run, and tried
   apart from the others. What the work gives its receiver is tried on real work, writ's and turn's
   own documents and prompts, against the items in question, since a made-up task shows only that it
-  passes.
+  passes; the flow of a run is tried apart from the work, on the smallest task that still shows it,
+  such as a short note against a checklist of a few items, each item there to make a round end as
+  the check needs.
 - Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver with the same

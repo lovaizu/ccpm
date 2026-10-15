@@ -5,9 +5,7 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by someone who builds or maintains a product. It holds the approach, the
-way of thinking, and who takes part with their roles and what they depend on, by which the product
-brings about what its README promises; it is not a specification. It lets them:
+A design document is read by someone who builds or maintains a product. It lets them:
 
 - tell each quality the product must have: which benefits the design must bring the user, which
   qualities are better the more of them there is, what the user takes for granted, and, for each
@@ -20,6 +18,8 @@ brings about what its README promises; it is not a specification. It lets them:
   and what its measure is compared with; for each must-be quality and each thing others rely on,
   how a test shows it holds;
 - tell, when a check fails, which quality broke;
+- tell how the flow of the parts is checked apart from what each part makes;
+- try each check in the smallest situation that shows its quality;
 - see how each quality comes about: the approach to it, said as the idea of how it comes about and
   who takes part in it, and what must hold after every operation; and who takes part in the whole
   product, what each does, what passes between them and what each cannot work without, seen in one
@@ -154,6 +154,26 @@ only?
 
 Why: a check that holds several qualities, failing, does not say which of them broke, and costs as
 much as its largest part each time it runs.
+
+### B-18: The flow apart from the work
+
+Can the reader tell how the flow of the parts, which part hands what to which and in what order, is
+checked apart from what each part makes?
+
+Apart means on a task that asks each part only for something to hand on, so the check neither
+spends the cost of real work nor fails where only a part's work falls short.
+
+Why: a flow tried on real work spends that work's cost on every run, and, failing, does not say
+whether the flow or the work broke.
+
+### B-19: The smallest situation that shows it
+
+For each check, can the reader try it in the smallest situation that shows its quality, because each
+thing the situation holds is given with what it does toward showing the quality, so a thing with
+nothing to do there is seen?
+
+Why: whatever a situation holds beyond what shows the quality is paid for on every run, and is one
+more place a failure can come from that the quality does not.
 
 ### B-20: Who relies on each thing
 
