@@ -1,85 +1,45 @@
-"""The content file's place in a session, and the task rn hands turn, written in the form turn's
-callers' page gives, so it is the same on every call."""
+"""The content file's place in the session folder, and the task written as a CCS for turn."""
 
-import argparse
 import json
 import os
 
-from checklists import Stop
 
-USAGE = (
-    "usage: up.py task <session folder> --deliverable <path> [<path> ...] --receiver <who> "
-    "[--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...] "
-    "--content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]"
-)
-
-
-def inside(path):
-    if os.path.isabs(path) or os.path.normpath(path).startswith(".."):
-        raise Stop(f"{path} is outside the repository; name a path from its top")
-    return os.path.normpath(path)
+def content_file(session, document):
+    path = os.path.normpath(document)
+    if os.path.isabs(path) or path.split(os.sep)[0] == "..":
+        raise ValueError(f"{document} is outside the repository; name a path from its top")
+    return os.path.join(session, "content", os.path.splitext(path)[0] + ".content.md")
 
 
-def content(session, document):
-    """Prints where the content file of the document goes in the session: by the document's folder
-    and name, so it is found from the document's path and not taken for the document."""
-    stem = os.path.splitext(inside(document))[0]
-    print(os.path.join(session, "content", f"{stem}.content.md"))
-
-
-def task(session, *args):
-    """Writes the task as a CCS in the session's tasks/, and prints the two lines turn is called
-    with."""
-    parser = argparse.ArgumentParser(usage=USAGE[len("usage: ") :], add_help=False)
-    for name, nargs in (
-        ("deliverable", "+"),
-        ("checklist", "+"),
-        ("reference", "*"),
-        ("opens", "*"),
-    ):
-        # Given twice, the flag adds to what it was given before.
-        parser.add_argument(
-            f"--{name}", nargs=nargs, action="extend", default=[], required=nargs == "+"
-        )
-    for name in ("receiver", "acceptance", "content"):
-        parser.add_argument(f"--{name}", required=True)
-    for name in ("use", "language"):
-        parser.add_argument(f"--{name}", default="")
-    try:
-        got = parser.parse_args(args)
-    except SystemExit:
-        raise Stop(USAGE)
-    gone = [
-        f"{p} does not exist; name it by its path from the top of the repository"
-        for p in got.checklist + [got.content] + got.reference + got.opens
-        if not os.path.exists(p)
-    ]
-    if gone:
-        raise Stop("\n".join(gone))
-    tasks = os.path.join(session, "tasks")
-    stem = os.path.splitext(os.path.basename(got.deliverable[0]))[0]
-    n = 1
-    while os.path.exists(os.path.join(tasks, f"{stem}-{n}.json")):
-        n += 1
-    given, back = (os.path.join(tasks, f"{stem}-{n}{e}.json") for e in ("", ".back"))
+def write(args):
+    for path in args.checklist + [args.content] + args.reference + args.opens:
+        if not os.path.exists(path):
+            raise ValueError(
+                f"{path} does not exist; name it by its path from the top of the repository"
+            )
     ccs = {
-        "focal_entities": [{"deliverable": inside(d)} for d in got.deliverable]
-        + [{"receiver": got.receiver}],
-        "goal_orientation": ([{"use": got.use}] if got.use else [])
-        + [{"acceptance": got.acceptance}],
-        "retrieved_artifacts": [{"checklist": p} for p in got.checklist]
-        + [{"content": got.content}]
-        + [{"reference": p} for p in got.reference]
-        + [{"receiver_opens": p} for p in got.opens],
-        "constraints": [{"language": got.language}] if got.language else [],
+        "focal_entities": [{"deliverable": path} for path in args.deliverable]
+        + [{"receiver": args.receiver}],
+        "goal_orientation": ([{"use": args.use}] if args.use else [])
+        + [{"acceptance": args.acceptance}],
+        "retrieved_artifacts": [{"checklist": path} for path in args.checklist]
+        + [{"content": args.content}]
+        + [{"reference": path} for path in args.reference]
+        + [{"receiver_opens": path} for path in args.opens],
+        "constraints": [{"language": args.language}] if args.language else [],
         "predictive_cue": [],
         "uncertainty_signal": [],
         "semantic_gist": [],
         "relational_map": [],
         "episodic_trace": [],
     }
-    os.makedirs(tasks, exist_ok=True)
-    with open(given, "w") as f:
-        json.dump(ccs, f, indent=1, ensure_ascii=False)
-        f.write("\n")
-    print(f"in: {given}\nout: {back}")
+    folder = os.path.join(args.session, "tasks")
+    os.makedirs(folder, exist_ok=True)
+    stem = os.path.splitext(os.path.basename(args.deliverable[0]))[0]
+    n = 1
+    while os.path.exists(os.path.join(folder, f"{stem}-{n}.json")):
+        n += 1
+    path = os.path.join(folder, f"{stem}-{n}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(ccs, indent=1, ensure_ascii=False) + "\n")
+    return f"in: {path}\nout: {os.path.join(folder, f'{stem}-{n}.back.json')}"

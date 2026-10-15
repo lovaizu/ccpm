@@ -1,110 +1,168 @@
+import contextlib
+import io
 import os
-import unittest
+import runpy
+import subprocess
+import sys
+from unittest import mock
 
-from helpers import CHECKLISTS, SESSION, Repo, run
+from helpers import SCRIPTS, RepoTest
 
-DOC = os.path.join(CHECKLISTS, "doc.md")
-README = os.path.join(CHECKLISTS, "readme.md")
-CONTENT = f"{SESSION}/content/README.content.md"
-
-
-def task(repo, *args):
-    return run(
-        repo,
-        "task",
-        SESSION,
-        "--deliverable",
-        "README.md",
-        "--receiver",
-        "a developer who finds the tool on GitHub",
-        "--use",
-        "to decide whether to use it",
-        "--acceptance",
-        "they can install it and run it once",
-        "--checklist",
-        DOC,
-        README,
-        "--content",
-        CONTENT,
-        *args,
-    )
-
-
-class Content(unittest.TestCase):
-    def test_the_content_file_is_named_from_the_document_s_path_under_the_session(self):
-        cases = [
-            ("turn/README.md", f"{SESSION}/content/turn/README.content.md"),
-            ("README.md", f"{SESSION}/content/README.content.md"),
-            ("src/tidy.py", f"{SESSION}/content/src/tidy.content.md"),
-        ]
-        repo = Repo()
-        for document, content in cases:
-            with self.subTest(document):
-                # Given: a document's path and the session it is made in
-                # When: its content file is asked for
-                code, out = run(repo, "content", SESSION, document)
-                # Then: it is under the session's content/, by the document's folder and name
-                self.assertEqual((code, out.strip()), (0, content))
-        repo.close()
-
-    def test_a_document_outside_the_repository_is_stopped(self):
-        # Given: a document's path that leaves the repository
-        repo = Repo()
-        # When: its content file is asked for
-        code, out = run(repo, "content", SESSION, "../README.md")
-        # Then: it is stopped, saying the path must be inside the repository
-        self.assertEqual(code, 1)
-        self.assertIn("../README.md is outside the repository", out)
-        repo.close()
+SESSION = ".rn/20261016-x"
+COMMANDS = [
+    "up.py checklists <kind>",
+    "up.py content <session folder> <document>",
+    (
+        "up.py task <session folder> --deliverable <path> [<path> ...] --receiver <who>"
+        " [--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...]"
+        " --content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]"
+    ),
+    "up.py report <CCS turn wrote back> <judgments>",
+]
+USAGE = "usage: " + " ".join(COMMANDS)
+CHECKLIST = "checklists/doc.md"
+CONTENT = "notes.content.md"
+REQUIRED = {
+    "--deliverable": "docs/setup.md",
+    "--receiver": "a developer",
+    "--acceptance": "they run the tests",
+    "--checklist": CHECKLIST,
+    "--content": CONTENT,
+}
 
 
-class Task(unittest.TestCase):
-    def setUp(self):
-        self.repo = Repo()
-        self.repo.write(CONTENT, "# What README.md says\n")
+def usage(run):
+    # The content gives each command as one line, and rn wraps the long one for reading, so the
+    # usage is compared with its line breaks and indents ignored.
+    code, out = run
+    return code, " ".join(out.split())
 
-    def tearDown(self):
-        self.repo.close()
 
-    def test_the_task_is_written_in_turn_s_form_and_the_two_lines_to_call_it_are_printed(self):
-        # Given: a document, its reader, use and acceptance, its checklists, content, a reference,
-        # what the reader opens and the language
-        self.repo.write("docs/notes.md", "notes\n")
-        self.repo.write("LICENSE", "MIT\n")
-        # When: the task is written
-        code, out = task(
-            self.repo,
+class TestCommand(RepoTest):
+    def test_no_command_or_an_unknown_one_prints_the_usage(self):
+        # Given: rn run with no command, or with one it does not know
+        # When: it is run
+        # Then: it prints the usage, which lists every command with every argument, and stops
+        for argv in [[], ["tidy"]]:
+            with self.subTest(argv=argv):
+                self.assertEqual(usage(self.rn(*argv)), (1, USAGE))
+
+    def test_a_command_given_the_wrong_count_of_arguments_prints_the_usage(self):
+        # Given: a command given one argument too few or too many
+        # When: it is run
+        # Then: it prints the usage and stops
+        for argv in [
+            ["checklists"],
+            ["checklists", "doc", "readme"],
+            ["content", SESSION],
+            ["content", SESSION, "a.md", "b.md"],
+            ["report", "back.json"],
+            ["report", "back.json", "judgments.json", "more.json"],
+            ["task"],
+        ]:
+            with self.subTest(argv=argv):
+                self.assertEqual(usage(self.rn(*argv)), (1, USAGE))
+
+    def test_the_script_run_as_a_program_with_no_command_prints_the_usage(self):
+        # Given: rn's script run as a program, given no command
+        # When: it is run
+        # Then: it prints the usage and exits with 1
+        out = io.StringIO()
+        script = os.path.join(SCRIPTS, "up.py")
+        with contextlib.ExitStack() as stack:
+            stack.enter_context(mock.patch.object(sys, "argv", [script]))
+            stack.enter_context(mock.patch.object(sys, "path", sys.path[:]))
+            stack.enter_context(contextlib.redirect_stdout(out))
+            end = stack.enter_context(self.assertRaises(SystemExit))
+            runpy.run_path(script, run_name="__main__")
+        self.assertEqual(usage((end.exception.code, out.getvalue())), (1, USAGE))
+
+    def test_the_script_run_on_its_own_finds_its_commands_and_prints_the_usage(self):
+        # Given: rn's script run on its own by Python, in the isolated mode that leaves the
+        #   script's folder off the places Python looks for code
+        # When: it is run with no command
+        # Then: it prints the usage and stops
+        run = subprocess.run(
+            [sys.executable, "-I", os.path.join(SCRIPTS, "up.py")],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(usage((run.returncode, run.stdout)), (1, USAGE))
+
+
+class TestContent(RepoTest):
+    def test_the_content_file_lies_in_the_session_folder_by_the_documents_path(self):
+        # Given: a document at the top of the repository, in a folder, or in a folder whose name
+        #   begins with two dots
+        # When: rn is asked where its content file goes
+        # Then: it prints the path under the session folder's content folder, the document's path
+        #   without its extension and ending .content.md, and ends well
+        for document, path in [
+            ("README.md", SESSION + "/content/README.content.md"),
+            ("turn/README.md", SESSION + "/content/turn/README.content.md"),
+            ("src/tidy.py", SESSION + "/content/src/tidy.content.md"),
+            ("..notes/a.md", SESSION + "/content/..notes/a.content.md"),
+        ]:
+            with self.subTest(document=document):
+                self.assertEqual(self.rn("content", SESSION, document), (0, path + "\n"))
+
+    def test_a_document_outside_the_repository_stops(self):
+        # Given: a document named by an absolute path, or by a path that leaves the repository
+        # When: rn is asked where its content file goes
+        # Then: rn stops, naming the path and saying to name it from the top of the repository
+        for document in ["/etc/a.md", "../a.md", "docs/../../a.md", ".."]:
+            with self.subTest(document=document):
+                self.assertEqual(
+                    self.rn("content", SESSION, document),
+                    (1, f"{document} is outside the repository; name a path from its top\n"),
+                )
+
+
+class TestTask(RepoTest):
+    def given(self, *paths):
+        for path in paths:
+            self.write(path, "x\n")
+
+    def task(self, *flags, leave_out=()):
+        self.given(CHECKLIST, CONTENT)
+        argv = ["task", SESSION]
+        for flag, value in REQUIRED.items():
+            if flag not in leave_out:
+                argv += [flag, value]
+        return self.rn(*argv, *flags)
+
+    def written(self, out):
+        return self.read_json(out.split("\n")[0][len("in: ") :])
+
+    def test_a_task_with_every_flag_is_written_as_a_ccs_holding_each_value(self):
+        # Given: every flag given once
+        # When: rn writes the task
+        # Then: the CCS holds each value in its part, and turn's parts empty
+        self.given("Makefile", "CONTRIBUTING.md")
+        self.task(
+            "--use",
+            "to run the project",
             "--reference",
-            "docs/notes.md",
+            "Makefile",
             "--opens",
-            "LICENSE",
+            "CONTRIBUTING.md",
             "--language",
             "English",
         )
-        # Then: the two lines name the task under the session and where turn writes back, and the
-        # task holds each input under turn's kind for it, with turn's five parts empty
-        self.assertEqual(code, 0)
         self.assertEqual(
-            out.splitlines(),
-            [f"in: {SESSION}/tasks/README-1.json", f"out: {SESSION}/tasks/README-1.back.json"],
-        )
-        self.assertEqual(
-            self.repo.json(f"{SESSION}/tasks/README-1.json"),
+            self.read_json(SESSION + "/tasks/setup-1.json"),
             {
-                "focal_entities": [
-                    {"deliverable": "README.md"},
-                    {"receiver": "a developer who finds the tool on GitHub"},
-                ],
+                "focal_entities": [{"deliverable": "docs/setup.md"}, {"receiver": "a developer"}],
                 "goal_orientation": [
-                    {"use": "to decide whether to use it"},
-                    {"acceptance": "they can install it and run it once"},
+                    {"use": "to run the project"},
+                    {"acceptance": "they run the tests"},
                 ],
                 "retrieved_artifacts": [
-                    {"checklist": DOC},
-                    {"checklist": README},
+                    {"checklist": CHECKLIST},
                     {"content": CONTENT},
-                    {"reference": "docs/notes.md"},
-                    {"receiver_opens": "LICENSE"},
+                    {"reference": "Makefile"},
+                    {"receiver_opens": "CONTRIBUTING.md"},
                 ],
                 "constraints": [{"language": "English"}],
                 "predictive_cue": [],
@@ -114,129 +172,109 @@ class Task(unittest.TestCase):
                 "episodic_trace": [],
             },
         )
-        self.assertFalse(self.repo.exists(f"{SESSION}/tasks/README-1.back.json"))
 
-    def test_a_second_task_for_the_same_document_takes_the_next_number(self):
-        # Given: a task already written for the document, and turn's answer to it
-        task(self.repo)
-        self.repo.write(f"{SESSION}/tasks/README-1.back.json", "{}")
-        # When: another task is written
-        code, out = task(self.repo)
-        # Then: it takes the next number, leaving the first and its answer as they are
-        self.assertEqual(code, 0)
-        self.assertEqual(out.splitlines()[0], f"in: {SESSION}/tasks/README-2.json")
-        self.assertEqual(self.repo.read(f"{SESSION}/tasks/README-1.back.json"), "{}")
-
-    def test_a_flag_given_twice_adds_to_what_it_was_given_before(self):
-        # Given: the checklists and the references each given as two flags, as a skill writes them
-        self.repo.write("docs/notes.md", "notes\n")
-        self.repo.write("pyproject.toml", "[project]\n")
-        # When: the task is written
-        code, out = task(
-            self.repo,
-            "--checklist",
-            os.path.join(CHECKLISTS, "code.md"),
-            "--reference",
-            "docs/notes.md",
-            "--reference",
-            "pyproject.toml",
-        )
-        # Then: the task holds every checklist and every reference, in the order given
-        self.assertEqual(code, 0, out)
-        written = self.repo.json(f"{SESSION}/tasks/README-1.json")
+    def test_a_written_task_prints_where_the_ccs_is_and_where_turn_writes_it_back(self):
+        # Given: a task given the flags it needs
+        # When: rn writes the task
+        # Then: rn prints, as in and out, where the CCS is and where turn writes its CCS back,
+        #   and ends well
         self.assertEqual(
-            [p for e in written["retrieved_artifacts"] for k, p in e.items() if k == "checklist"],
-            [DOC, README, os.path.join(CHECKLISTS, "code.md")],
-        )
-        self.assertEqual(
-            [p for e in written["retrieved_artifacts"] for k, p in e.items() if k == "reference"],
-            ["docs/notes.md", "pyproject.toml"],
+            self.task(),
+            (0, f"in: {SESSION}/tasks/setup-1.json\nout: {SESSION}/tasks/setup-1.back.json\n"),
         )
 
-    def test_a_task_with_several_files_names_each(self):
-        # Given: a work of code and its tests
-        self.repo.write(f"{SESSION}/content/src/tidy.content.md", "# What src/tidy.py says\n")
-        # When: the task is written
-        code, out = run(
-            self.repo,
-            "task",
-            SESSION,
-            "--deliverable",
-            "src/tidy.py",
-            "tests/test_tidy.py",
-            "--receiver",
-            "the maintainer",
-            "--acceptance",
-            "they can change it",
-            "--checklist",
-            os.path.join(CHECKLISTS, "code.md"),
-            "--content",
-            f"{SESSION}/content/src/tidy.content.md",
-        )
-        # Then: the task names each file as a deliverable, in order, and is named by the first
-        self.assertEqual(code, 0)
-        self.assertEqual(out.splitlines()[0], f"in: {SESSION}/tasks/tidy-1.json")
+    def test_the_ccs_is_json_indented_by_one_keeping_non_ascii_and_ending_in_a_newline(self):
+        # Given: a language named in Japanese
+        # When: rn writes the task
+        # Then: the file is the CCS as JSON indented by one space, the Japanese kept as it is,
+        #   ending in a newline
+        self.task("--language", "日本語")
+        text = self.read_text(SESSION + "/tasks/setup-1.json")
+        self.assertIn('\n "constraints": [\n  {\n   "language": "日本語"\n  }\n ],\n', text)
+        self.assertTrue(text.endswith("}\n"))
+
+    def test_use_and_language_left_out_leave_no_entry(self):
+        # Given: a task given without a use or a language
+        # When: rn writes the task
+        # Then: the CCS holds the acceptance alone in its goal, and no constraint
+        self.task()
+        ccs = self.read_json(SESSION + "/tasks/setup-1.json")
+        self.assertEqual(ccs["goal_orientation"], [{"acceptance": "they run the tests"}])
+        self.assertEqual(ccs["constraints"], [])
+
+    def test_several_deliverables_are_kept_in_order_and_the_first_names_the_task(self):
+        # Given: a task given two deliverables after one flag
+        # When: rn writes the task
+        # Then: the CCS lists both in the order given before the receiver, and the task is named
+        #   after the first
+        self.task("--deliverable", "src/tidy.py", "tests/test_tidy.py", leave_out=["--deliverable"])
         self.assertEqual(
-            self.repo.json(f"{SESSION}/tasks/tidy-1.json")["focal_entities"],
+            self.read_json(SESSION + "/tasks/tidy-1.json")["focal_entities"],
             [
                 {"deliverable": "src/tidy.py"},
                 {"deliverable": "tests/test_tidy.py"},
-                {"receiver": "the maintainer"},
+                {"receiver": "a developer"},
             ],
         )
 
-    def test_a_task_without_a_use_or_a_language_leaves_them_out(self):
-        # Given: a task with no use and no language given
-        # When: it is written
-        code, out = run(
-            self.repo,
-            "task",
-            SESSION,
-            "--deliverable",
-            "README.md",
-            "--receiver",
-            "r",
-            "--acceptance",
-            "a",
-            "--checklist",
-            DOC,
-            "--content",
-            CONTENT,
+    def test_a_flag_given_twice_adds_to_what_it_was_given_before(self):
+        # Given: the deliverable, the checklist, the reference or the file the receiver opens
+        #   given twice, one path each
+        # When: rn writes the task
+        # Then: the CCS holds both paths in the order given
+        self.given("one.md", "two.md")
+        for flag, kind in [
+            ("--deliverable", "deliverable"),
+            ("--checklist", "checklist"),
+            ("--reference", "reference"),
+            ("--opens", "receiver_opens"),
+        ]:
+            with self.subTest(flag=flag):
+                _, out = self.task(flag, "one.md", flag, "two.md", leave_out=[flag])
+                self.assertEqual(
+                    [e[kind] for part in self.written(out).values() for e in part if kind in e],
+                    ["one.md", "two.md"],
+                )
+
+    def test_a_second_task_takes_the_next_number_and_leaves_the_first(self):
+        # Given: a first task and the CCS turn wrote back for it
+        # When: rn writes a second task for the same deliverable
+        # Then: it is numbered 2, and the first task and turn's CCS are left as they were
+        self.task()
+        self.write(SESSION + "/tasks/setup-1.back.json", "back\n")
+        first = self.read_text(SESSION + "/tasks/setup-1.json")
+        _, out = self.task()
+        self.assertEqual(
+            out, f"in: {SESSION}/tasks/setup-2.json\nout: {SESSION}/tasks/setup-2.back.json\n"
         )
-        # Then: the task holds neither
-        self.assertEqual(code, 0, out)
-        written = self.repo.json(f"{SESSION}/tasks/README-1.json")
-        self.assertEqual(written["goal_orientation"], [{"acceptance": "a"}])
-        self.assertEqual(written["constraints"], [])
+        self.assertEqual(self.read_text(SESSION + "/tasks/setup-1.json"), first)
+        self.assertEqual(self.read_text(SESSION + "/tasks/setup-1.back.json"), "back\n")
 
-    def test_a_task_naming_a_file_that_is_not_there_is_stopped_before_it_is_written(self):
-        cases = [
-            (["--reference", "docs/gone.md"], "docs/gone.md does not exist"),
-            (["--opens", "LICENSE"], "LICENSE does not exist"),
-            (["--content", "gone.md"], "gone.md does not exist"),
-            (["--checklist", "x.md"], "x.md does not exist"),
-        ]
-        for args, said in cases:
-            with self.subTest(said):
-                # Given: a task naming a file that is not there
-                # When: it is written
-                code, out = task(self.repo, *args)
-                # Then: it is stopped, naming the file, and no task is written
-                self.assertEqual(code, 1)
-                self.assertIn(said, out)
-                self.assertFalse(self.repo.exists(f"{SESSION}/tasks"))
+    def test_a_task_missing_a_required_flag_prints_the_usage(self):
+        # Given: a task given without one of the deliverable, the receiver, the acceptance, the
+        #   checklist or the content
+        # When: rn is asked to write it
+        # Then: it prints the usage and stops
+        for flag in REQUIRED:
+            with self.subTest(left_out=flag):
+                self.assertEqual(usage(self.task(leave_out=[flag])), (1, USAGE))
 
-    def test_a_task_missing_what_turn_needs_says_how_to_call(self):
-        for args in (("task", SESSION, "--receiver", "r"), ("task",)):
-            with self.subTest(args):
-                # Given: a call with no deliverable, or no session
-                # When: the task is written
-                code, out = run(self.repo, *args)
-                # Then: it is stopped with how to call it
-                self.assertEqual(code, 1)
-                self.assertIn("usage:", out)
-                self.assertIn("--deliverable", out)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_a_named_file_not_there_stops_before_anything_is_written(self):
+        # Given: a checklist, the content, a reference or a file the receiver opens that does
+        #   not exist
+        # When: rn is asked to write the task
+        # Then: rn stops, naming the path and saying to name it from the top of the repository,
+        #   and writes no task
+        for flag in ["--checklist", "--content", "--reference", "--opens"]:
+            with self.subTest(flag=flag):
+                self.assertEqual(
+                    self.task(flag, "missing.md"),
+                    (
+                        1,
+                        (
+                            "missing.md does not exist; name it by its path from the top of the "
+                            "repository\n"
+                        ),
+                    ),
+                )
+                self.assertFalse(os.path.exists(SESSION + "/tasks"))

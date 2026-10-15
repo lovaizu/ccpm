@@ -1,74 +1,75 @@
-"""The report the conductor hands back with the work: first what the caller decides, then each item as
-turn decided it, so an item shows met only where turn's evidence shows it."""
+"""The report: what was decided for the user, each item as turn judged it, and the document."""
 
 import json
 import os
 
-from checklists import Stop
 
-
-def read(path):
-    try:
-        with open(path) as f:
+def load(path):
+    with open(path, encoding="utf-8") as f:
+        try:
             return json.load(f)
-    except ValueError:
-        raise Stop(f"{path} is not JSON")
+        except json.JSONDecodeError:
+            raise ValueError(f"{path} is not JSON; give the file as turn or the conductor wrote it")
 
 
-def entries(ccs, part, kind):
-    return [v for e in ccs[part] for k, v in e.items() if k == kind]
+def entries(part, kind):
+    return [entry[kind] for entry in part if kind in entry]
 
 
-def judged(given, key, name, found, what):
-    """The judgment given on each thing turn returned, or a stop naming the first left unjudged."""
-    said = {j[key]: j["judged"] for j in given.get(name, [])}
-    for thing in found:
-        if thing not in said:
-            raise Stop(f"judge the {what} first: {thing}")
-    return said
-
-
-def report(back, judgments):
-    """Prints the report from turn's CCS back, its evidence and the conductor's judgments."""
-    ccs, given = read(back), read(judgments)
-    evidence = [p for p in entries(ccs, "episodic_trace", "evidence") if p.endswith("list.json")]
-    if not evidence:
-        raise Stop(f"{back} names no evidence; turn was stopped, so there is no report to make")
-    folder = os.path.dirname(evidence[0])
-    listed = read(os.path.join(folder, "list.json"))
-    decided = read(os.path.join(folder, "orchestrator.json"))
-    titles = {i["id"]: i["title"] for i in listed["items"]}
-    questions = entries(ccs, "semantic_gist", "question")
-    unmet = {
-        u.partition(" (")[0]: u.partition("): ")[2] for u in entries(ccs, "semantic_gist", "unmet")
-    }
-    asked = judged(given, "question", "questions", questions, "question")
-    left = judged(given, "item", "unmet", unmet, "item")
-    first = [f"  {d['point']}: {d['ground']}" for d in given.get("decided", [])]
-    first += [f"  Question: {q}: {asked[q]}" for q in questions]
-    for item, way in unmet.items():
-        first += [f"  Not met: {item} {titles[item]}: {left[item]}", f"    turn: {way}"]
-    first += [f"  Rule from turn: {r}" for r in entries(ccs, "semantic_gist", "rule")]
-    first += [f"  Changed after turn: {c['lines']}: {c['why']}" for c in given.get("changed", [])]
-    if given.get("changed"):
-        first.append(
-            "  The lines below are as turn read the document; a change above may have moved them."
+def decided(ccs, judgments, titles):
+    gist = ccs["semantic_gist"]
+    lines = [f"{d['point']}: {d['ground']}" for d in judgments.get("decided", [])]
+    questions = {q["question"]: q["judged"] for q in judgments.get("questions", [])}
+    for question in entries(gist, "question"):
+        if question not in questions:
+            raise ValueError(f"judge the question first: {question}")
+        lines.append(f"Question: {question}: {questions[question]}")
+    items = {u["item"]: u["judged"] for u in judgments.get("unmet", [])}
+    for unmet in entries(gist, "unmet"):
+        item = unmet.split(" (", 1)[0]
+        if item not in items:
+            raise ValueError(f"judge the item first: {item}")
+        lines.append(f"Not met: {item} {titles[item]}: {items[item]}")
+        lines.append(f"  turn: {unmet.split('): ', 1)[1]}")
+    lines += [f"Rule from turn: {rule}" for rule in entries(gist, "rule")]
+    changed = judgments.get("changed", [])
+    lines += [f"Changed after turn: {c['lines']}: {c['why']}" for c in changed]
+    if changed:
+        lines.append(
+            "The lines below are as turn read the document; a change above may have moved them."
         )
-    lines = ["Decided for you"] + (first or ["  Nothing."])
-    for c in listed["checklists"]:
-        lines += ["", f"{c['checklist']} {c['version']}"]
-        for i in listed["items"]:
-            if i["id"].split()[0] == c["checklist"]:
-                short = i["id"].split()[1]
-                place = decided.get(i["id"], {})
+    return lines
+
+
+def make(ccs_path, judgments_path):
+    ccs = load(ccs_path)
+    judgments = load(judgments_path)
+    evidence = entries(ccs["episodic_trace"], "evidence")
+    lists = [path for path in evidence if path.endswith("list.json")]
+    if not lists:
+        raise ValueError(
+            f"{ccs_path} names no evidence; turn was stopped, so there is no report to make; "
+            "call turn again to get one"
+        )
+    list_ = load(lists[0])
+    orchestrator = load(os.path.join(os.path.dirname(lists[0]), "orchestrator.json"))
+    titles = {item["id"]: item["title"] for item in list_["items"]}
+    lines = ["Decided for you"]
+    lines += [f"  {line}" for line in decided(ccs, judgments, titles)] or ["  Nothing."]
+    for checklist in list_["checklists"]:
+        lines += ["", f"{checklist['checklist']} {checklist['version']}"]
+        for item in list_["items"]:
+            name, _, short = item["id"].partition(" ")
+            if name == checklist["checklist"]:
+                met = orchestrator[item["id"]]
                 lines.append(
-                    f"  ✅ {short} {i['title']}: {place['lines']}"
-                    if place.get("met")
-                    else f"  ⬜ {short} {i['title']}"
+                    f"  ✅ {short} {item['title']}: {met['lines']}"
+                    if met["met"]
+                    else f"  ⬜ {short} {item['title']}"
                 )
     lines += [
         "",
-        f"The document: {', '.join(entries(ccs, 'focal_entities', 'deliverable'))}",
-        "What it says, item by item: " + ", ".join(entries(ccs, "retrieved_artifacts", "content")),
+        "The document: " + ", ".join(entries(ccs["focal_entities"], "deliverable")),
+        "What it says, item by item: " + ", ".join(entries(ccs["retrieved_artifacts"], "content")),
     ]
-    print("\n".join(lines))
+    return "\n".join(lines)

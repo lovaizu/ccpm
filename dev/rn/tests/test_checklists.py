@@ -1,118 +1,141 @@
 import json
-import os
-import subprocess
-import sys
-import unittest
 
-from helpers import CHECKLISTS, NOTES, SCRIPTS, Repo, run
+from helpers import RepoTest, rn_checklist
 
 
-def found(repo, kind):
-    code, out = run(repo, "checklists", kind)
-    assert code == 0, out
-    return [(c["path"], c["name"], c["version"]) for c in json.loads(out)]
-
-
-class Checklists(unittest.TestCase):
-    def setUp(self):
-        self.repo = Repo()
-
-    def tearDown(self):
-        self.repo.close()
-
-    def test_a_kind_rn_has_a_checklist_for_gets_it_with_the_ones_its_opening_says_apply(self):
-        # Given: a kind rn keeps a checklist for, whose opening says the one for every document
-        # applies
-        # When: the checklists for the kind are asked for
-        got = found(self.repo, "readme")
-        # Then: the one for every document comes first, then the kind's, each with name and version
-        self.assertEqual(
-            [(os.path.basename(p), n) for p, n, _ in got],
-            [("doc.md", "doc"), ("readme.md", "readme")],
-        )
-        self.assertEqual(got[0][0], os.path.join(CHECKLISTS, "doc.md"))
-        self.assertTrue(all(v for _, _, v in got))
-
-    def test_each_kind_rn_keeps_is_found_by_its_name(self):
-        for kind in ("plan", "proposal", "verification", "design", "prompt", "code", "checklist"):
-            with self.subTest(kind):
-                # Given: a kind of work rn keeps a checklist for
-                # When: the checklists for the kind are asked for
-                got = found(self.repo, kind)
-                # Then: the kind's own is among them, named as the kind
-                self.assertIn(kind, [n for _, n, _ in got])
-                self.assertEqual(got[-1][0], os.path.join(CHECKLISTS, f"{kind}.md"))
-
-    def test_a_kind_whose_checklist_names_no_other_gets_it_alone(self):
-        # Given: the kind code, whose checklist's opening names no other checklist
-        # When: the checklists for the kind are asked for
-        got = found(self.repo, "code")
-        # Then: it is the only one
-        self.assertEqual([n for _, n, _ in got], ["code"])
-
-    def test_a_checklist_the_user_made_is_found_for_its_kind(self):
-        # Given: a checklist the user made for release notes, whose opening says doc applies
-        self.repo.write(".rn/checklists/release-notes.md", NOTES)
-        # When: the checklists for the kind are asked for
-        got = found(self.repo, "release-notes")
-        # Then: the one for every document and the user's are found
-        self.assertEqual(
-            [(os.path.basename(p), n, v) for p, n, v in got],
-            [("doc.md", "doc", got[0][2]), ("release-notes.md", "release-notes", "1.0.0")],
-        )
-        self.assertEqual(got[1][0], os.path.join(".rn", "checklists", "release-notes.md"))
-
-    def test_a_kind_with_no_checklist_gets_none(self):
-        # Given: a kind neither rn nor the user has a checklist for
-        # When: the checklists for the kind are asked for
-        got = found(self.repo, "release-notes")
-        # Then: none are found, and the command does not fail
-        self.assertEqual(got, [])
-
-    def test_a_kind_that_is_not_a_name_is_stopped(self):
-        # Given: a kind with a path in it
-        # When: the checklists for it are asked for
-        code, out = run(self.repo, "checklists", "../etc")
-        # Then: it is stopped, saying what a kind is
-        self.assertEqual(code, 1)
-        self.assertIn("a kind is a word or words joined by hyphens", out)
-
-    def test_a_user_s_checklist_without_a_name_or_version_is_stopped(self):
-        cases = [
-            ("without its version", "---\nname: release-notes\n---\n# R\n"),
-            ("without front matter", "# R\n"),
-        ]
-        for name, text in cases:
-            with self.subTest(name):
-                # Given: a checklist the user made that opens so
-                self.repo.write(".rn/checklists/release-notes.md", text)
-                # When: the checklists for the kind are asked for
-                code, out = run(self.repo, "checklists", "release-notes")
-                # Then: it is stopped, naming the file and what it must open with
-                self.assertEqual(code, 1)
-                self.assertIn(
-                    ".rn/checklists/release-notes.md: open the checklist with front matter "
-                    "giving its name and version",
-                    out,
+class TestChecklists(RepoTest):
+    def test_each_kind_rn_keeps_is_found_with_the_checklists_its_opening_applies(self):
+        # Given: a repository with no checklists of its own
+        # When: rn is asked for the checklists of each of the nine kinds it keeps
+        # Then: it lists rn's checklist for the kind, after rn's doc checklist where the kind's
+        #   opening applies it, and ends well
+        expected = {
+            "doc": ["doc"],
+            "readme": ["doc", "readme"],
+            "design": ["doc", "design"],
+            "prompt": ["doc", "prompt"],
+            "code": ["code"],
+            "checklist": ["doc", "checklist"],
+            "plan": ["doc", "plan"],
+            "proposal": ["doc", "proposal"],
+            "verification": ["doc", "verification"],
+        }
+        for kind, names in expected.items():
+            with self.subTest(kind=kind):
+                code, out = self.rn("checklists", kind)
+                self.assertEqual(code, 0)
+                self.assertEqual(
+                    [(c["path"], c["name"]) for c in json.loads(out)],
+                    [(rn_checklist(name), name) for name in names],
                 )
 
-    def test_an_unknown_command_says_how_to_call(self):
-        # Given: a call with no command rn knows
-        # When: it is run
-        code, out = run(self.repo, "fly")
-        # Then: it ends with how to call it
-        self.assertEqual(code, 1)
-        self.assertIn("usage:", out)
+    def test_a_kind_with_no_checklist_found_gives_an_empty_list(self):
+        # Given: a repository with no checklists of its own
+        # When: rn is asked for a kind neither rn nor the user keeps
+        # Then: it prints an empty list and ends well
+        code, out = self.rn("checklists", "release-notes")
+        self.assertEqual((code, json.loads(out)), (0, []))
 
-    def test_the_script_run_on_its_own_says_how_to_call(self):
-        # Given: the script, as the skill runs it
-        script = os.path.join(SCRIPTS, "up.py")
-        # When: it is run with no command
-        done = subprocess.run([sys.executable, script], check=False, capture_output=True, text=True)
-        # Then: it ends with how to call it
-        self.assertEqual(done.returncode, 1)
-        self.assertIn("usage:", done.stdout)
+    def test_a_kind_that_is_not_words_joined_by_hyphens_stops(self):
+        # Given: a kind that holds a path, a capital letter or a stray hyphen
+        # When: rn is asked for its checklists
+        # Then: rn stops, saying the kind is not words joined by hyphens and giving one that is
+        for kind in ["../code", "notes/code", "Code", "-code", "code-", "release--notes"]:
+            with self.subTest(kind=kind):
+                self.assertEqual(
+                    self.rn("checklists", kind),
+                    (
+                        1,
+                        (
+                            f"{kind}: a kind is a word or words joined by hyphens, "
+                            "such as release-notes\n"
+                        ),
+                    ),
+                )
 
+    def test_the_users_checklist_comes_after_rns_for_the_same_kind(self):
+        # Given: the user keeps a checklist of their own for code
+        # When: rn is asked for the checklists of code
+        # Then: rn's comes first, then the user's, with the name and version its front matter gives
+        self.write(".rn/checklists/code.md", "---\nname: our-code\nversion: 1.2.0\n---\n")
+        _, out = self.rn("checklists", "code")
+        listed = json.loads(out)
+        self.assertEqual(
+            [c["path"] for c in listed], [rn_checklist("code"), ".rn/checklists/code.md"]
+        )
+        self.assertEqual(
+            listed[1], {"path": ".rn/checklists/code.md", "name": "our-code", "version": "1.2.0"}
+        )
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_a_checklist_the_users_opening_names_comes_first(self):
+        # Given: the user's checklist for a kind rn does not keep, whose opening names doc.md
+        # When: rn is asked for the checklists of that kind
+        # Then: rn's doc checklist comes first, then the user's
+        self.write(
+            ".rn/checklists/release-notes.md",
+            "---\nname: release-notes\nversion: 0.1.0\n---\n`doc.md`\n",
+        )
+        _, out = self.rn("checklists", "release-notes")
+        self.assertEqual(
+            [c["path"] for c in json.loads(out)],
+            [rn_checklist("doc"), ".rn/checklists/release-notes.md"],
+        )
+
+    def test_a_checklist_an_opening_names_that_rn_does_not_keep_is_left_out(self):
+        # Given: the user's checklist whose opening names a checklist rn does not have
+        # When: rn is asked for the checklists of its kind
+        # Then: only the user's checklist is listed
+        self.write(
+            ".rn/checklists/release-notes.md",
+            "---\nname: release-notes\nversion: 0.1.0\n---\n`style-guide.md`\n",
+        )
+        _, out = self.rn("checklists", "release-notes")
+        self.assertEqual([c["path"] for c in json.loads(out)], [".rn/checklists/release-notes.md"])
+
+    def test_a_checklist_named_below_the_opening_does_not_apply(self):
+        # Given: the user's checklist that names doc.md only under its first section heading
+        # When: rn is asked for the checklists of its kind
+        # Then: rn's doc checklist is not listed
+        self.write(
+            ".rn/checklists/release-notes.md",
+            "---\nname: release-notes\nversion: 0.1.0\n---\n## Benefit\n`doc.md`\n",
+        )
+        _, out = self.rn("checklists", "release-notes")
+        self.assertEqual([c["path"] for c in json.loads(out)], [".rn/checklists/release-notes.md"])
+
+    def test_a_checklist_named_by_two_openings_is_listed_once(self):
+        # Given: the user's readme checklist whose opening names doc.md, as rn's readme one does
+        # When: rn is asked for the checklists of readme
+        # Then: rn's doc checklist is listed once, first
+        self.write(
+            ".rn/checklists/readme.md",
+            "---\nname: our-readme\nversion: 0.1.0\n---\n`doc.md`\n",
+        )
+        _, out = self.rn("checklists", "readme")
+        self.assertEqual(
+            [c["path"] for c in json.loads(out)],
+            [rn_checklist("doc"), rn_checklist("readme"), ".rn/checklists/readme.md"],
+        )
+
+    def test_a_checklist_without_its_name_and_version_stops(self):
+        # Given: the user's checklist with no front matter, or front matter lacking the name or
+        #   the version
+        # When: rn is asked for the checklists of its kind
+        # Then: rn stops, naming the checklist and saying to open it with its name and version
+        for text in [
+            "",
+            "---\nversion: 0.1.0\n---\n",
+            "---\nname: release-notes\n---\n",
+        ]:
+            with self.subTest(text=text):
+                self.write(".rn/checklists/release-notes.md", text)
+                self.assertEqual(
+                    self.rn("checklists", "release-notes"),
+                    (
+                        1,
+                        (
+                            ".rn/checklists/release-notes.md: open the checklist with front matter "
+                            "giving its name and version\n"
+                        ),
+                    ),
+                )

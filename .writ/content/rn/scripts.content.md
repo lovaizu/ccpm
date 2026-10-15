@@ -31,7 +31,7 @@ only; `tools.sh` is sh since python3 itself may be missing.
   missing stops with, respectively, `python3 is not found; install Python 3.9 or later
   (https://www.python.org/downloads/) and run rn again`, `jq is not found; install it
   (https://jqlang.org/download/) and run rn again`, `gh is not found; install the GitHub CLI
-  (https://cli.github.com) and log in with push access`, printed to standard output, exit 1; with
+  (https://cli.github.com) and log in with push access, then run rn again`, printed to standard output, exit 1; with
   all three in place it prints nothing and exits 0.
 - `checklists <kind>`: `<kind>` is a word or words joined by hyphens (`[a-z]+(-[a-z]+)*`); any
   other stops with `<kind>: a kind is a word or words joined by hyphens, such as release-notes`.
@@ -66,11 +66,11 @@ only; `tools.sh` is sh since python3 itself may be missing.
   `uncertainty_signal`, `semantic_gist`, `relational_map` and `episodic_trace` are empty lists.
   JSON with indent 1 and non-ASCII kept, ending in a newline.
 - `report <CCS turn wrote back> <judgments>`: both are JSON files; one that is not JSON stops with
-  `<path> is not JSON`. The CCS's `episodic_trace` names turn's evidence; the entry ending
+  `<path> is not JSON; give the file as turn or the conductor wrote it`. The CCS's `episodic_trace` names turn's evidence; the entry ending
   `list.json` gives the folder, where `list.json` holds `checklists` (each with `checklist`,
   `version`) and `items` (each with `id`, `title`) and `orchestrator.json` holds, per item ID,
   `met` and `lines`. A CCS naming no evidence stops with `<path> names no evidence; turn was
-  stopped, so there is no report to make`. The judgments file holds `decided` (each `{"point",
+  stopped, so there is no report to make; call turn again to get one`. The judgments file holds `decided` (each `{"point",
   "ground"}`), `questions` (each `{"question", "judged"}`), `unmet` (each `{"item", "judged"}`)
   and `changed` (each `{"lines", "why"}`), any of them absent. Every `question` entry of the CCS's
   `semantic_gist` must have a judgment, else the command stops with `judge the question first:

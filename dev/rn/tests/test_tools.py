@@ -1,66 +1,57 @@
 import os
-import shutil
 import subprocess
-import tempfile
-import unittest
 
-from helpers import SCRIPTS
-
-TOOLS = os.path.join(SCRIPTS, "tools.sh")
-NEEDED = ("python3", "jq", "gh")
+from helpers import SCRIPTS, RepoTest
 
 
-def run_with(tools):
-    """Runs the check with a PATH holding only the named tools; a tool this machine lacks is stood
-    in for by a script that does nothing, since only its presence is checked."""
-    with tempfile.TemporaryDirectory() as folder:
-        for tool in tools:
-            real = shutil.which(tool)
-            path = os.path.join(folder, tool)
-            if real:
-                os.symlink(real, path)
-            else:
-                with open(path, "w") as f:
-                    f.write("#!/bin/sh\n")
-                os.chmod(path, 0o755)
+class TestTools(RepoTest):
+    def check_tools(self, *found):
+        # The check only looks whether each tool is found, so a stand-in that does nothing is
+        # enough, and the tools on the machine running the tests are kept out of the PATH.
+        for tool in found:
+            path = os.path.join(self.repo, tool)
+            self.write(path, "#!/bin/sh\n")
+            os.chmod(path, 0o755)
         return subprocess.run(
-            [shutil.which("sh") or "sh", TOOLS],
-            env={"PATH": folder},
+            ["/bin/sh", os.path.join(SCRIPTS, "tools.sh")],
+            check=False,
             capture_output=True,
             text=True,
-            check=False,
+            env={"PATH": self.repo},
         )
 
-
-class Tools(unittest.TestCase):
-    def test_with_every_tool_in_place_the_check_passes_quietly(self):
-        # Given: python3, jq and gh on the PATH
-        # When: the check runs
-        done = run_with(NEEDED)
-        # Then: it passes, saying nothing
-        self.assertEqual((done.returncode, done.stdout), (0, ""))
-
-    def test_a_missing_tool_stops_the_check_saying_what_to_install(self):
-        cases = [
-            ("python3", "python3 is not found; install Python 3.9 or later"),
-            ("jq", "jq is not found; install it (https://jqlang.org/download/)"),
+    def test_the_first_tool_not_found_stops_rn_with_how_to_install_it(self):
+        # Given: python3, jq and gh looked for in that order, the ones before a missing tool
+        #   found
+        # When: the tool check runs
+        # Then: it names the missing tool and how to install it, and stops
+        for found, missing in [
             (
-                "gh",
+                (),
                 (
-                    "gh is not found; install the GitHub CLI (https://cli.github.com) and log in "
-                    "with push access"
+                    "python3 is not found; install Python 3.9 or later "
+                    "(https://www.python.org/downloads/) and run rn again\n"
                 ),
             ),
-        ]
-        for missing, said in cases:
-            with self.subTest(missing):
-                # Given: one of the three missing from the PATH
-                # When: the check runs
-                done = run_with([t for t in NEEDED if t != missing])
-                # Then: it stops before anything else, saying what to install
-                self.assertEqual(done.returncode, 1)
-                self.assertIn(said, done.stdout)
+            (
+                ("python3",),
+                "jq is not found; install it (https://jqlang.org/download/) and run rn again\n",
+            ),
+            (
+                ("python3", "jq"),
+                (
+                    "gh is not found; install the GitHub CLI (https://cli.github.com) "
+                    "and log in with push access, then run rn again\n"
+                ),
+            ),
+        ]:
+            with self.subTest(found=found):
+                run = self.check_tools(*found)
+                self.assertEqual((run.returncode, run.stdout), (1, missing))
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_with_every_tool_found_the_check_prints_nothing_and_ends_well(self):
+        # Given: python3, jq and gh all found
+        # When: the tool check runs
+        # Then: it prints nothing and ends well
+        run = self.check_tools("python3", "jq", "gh")
+        self.assertEqual((run.returncode, run.stdout), (0, ""))
