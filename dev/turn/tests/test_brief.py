@@ -4,8 +4,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from helpers import Repo, fill, form, run, started
-from repo import drop
+from helpers import Repo, ccs, fill, form, run, started
 
 WORK = "# Note\n\nRun make.\n"
 
@@ -69,10 +68,7 @@ class Briefs(unittest.TestCase):
         code, out = self.brief(role)
         assert code == 0, out
         self.assertEqual(out, f".turn/out/{role}-brief.json")
-        got = self.repo.json(out)
-        if role == "first-user":
-            self.addCleanup(lambda: os.path.isdir(got["copy"]) and drop(got["copy"]))
-        return got
+        return self.repo.json(out)
 
     def ran(self, role, agent):
         """The records Claude Code keeps for an agent of the run's session."""
@@ -95,7 +91,8 @@ class Briefs(unittest.TestCase):
         self.assertTrue(got["check"].endswith('up.py" check .turn/out generator'))
         self.assertEqual((got["receiver"], got["use"]), ("a new teammate", "to start work"))
         self.assertEqual(got["acceptance"], ["they can start alone"])
-        self.assertEqual(got["sources"], ["notes.md"])
+        self.assertEqual(got["content"], ["notes.md"])
+        self.assertEqual(got["references"], [])
         self.assertEqual(got["constraints"], [])
         self.assertEqual(got["ways"], [])
 
@@ -117,22 +114,32 @@ class Briefs(unittest.TestCase):
             ],
         )
 
-    def test_the_first_user_is_handed_a_fresh_copy_holding_only_what_the_receiver_has(self):
-        # Given: the work seen to give every item, and a file the user has not committed
+    def test_the_first_user_is_handed_the_work_and_only_what_the_receiver_opens_with_it(self):
+        # Given: a task naming a page the receiver opens with the work, and the work seen to give
+        # every item
+        self.repo.write("CONTRIBUTING.md", "Ask first.\n")
+        c = ccs(
+            retrieved_artifacts=[
+                {"checklist": "checklists/note.md"},
+                {"content": "notes.md"},
+                {"receiver_opens": "CONTRIBUTING.md"},
+            ]
+        )
+        started(self.repo, c)
+        run(self.repo, "aim", ".turn/out", "a new teammate can start work alone")
+        self.repo.write(".turn/out/note.md", WORK)
         seen(self.repo)
-        self.repo.write("draft.md", "not committed")
         # When: the first user's brief is made
         got = self.handed("first-user")
-        # Then: it names a copy with what is committed and the work at its place, and nothing else
-        copy = got["copy"]
-        with open(os.path.join(copy, got["deliverable"])) as f:
-            self.assertEqual(f.read(), WORK)
-        self.assertTrue(os.path.exists(os.path.join(copy, "notes.md")))
-        self.assertFalse(os.path.exists(os.path.join(copy, "draft.md")))
-        self.assertFalse(os.path.exists(os.path.join(copy, ".turn")))
-        # Then: it holds the receiver, the use and the list, and nothing of the sources or acceptance
+        # Then: it names the work, where it will sit, and what the receiver opens with it
+        self.assertEqual(got["work"], ".turn/out/note.md")
+        self.assertEqual(got["deliverable"], "docs/note.md")
+        self.assertEqual(got["opens"], ["CONTRIBUTING.md"])
+        # Then: it holds the receiver, the use and the list, and nothing of the content, the
+        # references or the acceptance
         self.assertEqual(
-            sorted(got), ["check", "copy", "deliverable", "form", "list", "receiver", "use"]
+            sorted(got),
+            ["check", "deliverable", "form", "list", "opens", "receiver", "use", "work"],
         )
         self.assertTrue(os.path.isabs(got["list"]))
 
@@ -146,22 +153,21 @@ class Briefs(unittest.TestCase):
         self.assertIn("step 8", out)
         self.assertIn("note F-1", out)
 
-    def test_the_evaluator_is_handed_the_reading_and_its_records_and_the_copy_is_dropped(self):
-        # Given: the first user has read the copy and filled its form
+    def test_the_evaluator_is_handed_the_reading_and_its_records(self):
+        # Given: the first user has read the work and filled its form
         seen(self.repo)
-        copy = self.handed("first-user")["copy"]
+        self.handed("first-user")
         records = self.ran("first-user", "a1")
         fill(self.repo, form("first-user"), {"note B-1": {"took": "run make", "lines": "3"}})
         # When: the evaluator's brief is made
         got = self.handed("evaluator")
-        # Then: it holds the reading and the first user's records, and the copy is gone
+        # Then: it holds the reading and the first user's records
         self.assertEqual(got["reading"], form("first-user"))
         self.assertEqual(got["records"], records)
         self.assertEqual(got["acceptance"], ["they can start alone"])
-        self.assertFalse(os.path.exists(copy))
 
-    def test_the_evaluator_is_handed_its_brief_again_once_the_copy_is_dropped(self):
-        # Given: the evaluator's brief was made, and the copy dropped with it
+    def test_the_evaluator_is_handed_its_brief_again(self):
+        # Given: the evaluator's brief was made
         seen(self.repo)
         self.handed("first-user")
         records = self.ran("first-user", "a1")
@@ -205,7 +211,7 @@ class Briefs(unittest.TestCase):
         self.assertEqual(got["decisions"], form("orchestrator"))
         self.assertEqual(got["reading"], form("first-user"))
         self.assertEqual(got["records"], {"first user": read, "generator": made})
-        self.assertEqual(got["sources"], ["notes.md"])
+        self.assertEqual(got["content"], ["notes.md"])
 
     def test_the_learner_is_not_handed_a_run_with_nothing_to_learn(self):
         cases = [
@@ -229,24 +235,6 @@ class Briefs(unittest.TestCase):
         # Then: it is refused, naming the agents that have briefs
         self.assertEqual(code, 1)
         self.assertIn("no brief for orchestrator; briefs are for generator", out)
-
-    def test_only_a_copy_turn_made_is_dropped(self):
-        # Given: a first user's brief naming a folder turn did not make
-        seen(self.repo)
-        self.handed("first-user")
-        other = tempfile.mkdtemp()
-        brief = self.repo.json(form("first-user-brief"))
-        brief["copy"] = other
-        fill(self.repo, form("first-user-brief"), brief)
-        self.ran("first-user", "a3")
-        fill(self.repo, form("first-user"), {})
-        # When: the evaluator's brief is made
-        code, out = self.brief("evaluator")
-        # Then: it is refused, and the folder is left alone
-        self.assertEqual(code, 1)
-        self.assertIn("not a copy turn made", out)
-        self.assertTrue(os.path.exists(other))
-        os.rmdir(other)
 
 
 if __name__ == "__main__":

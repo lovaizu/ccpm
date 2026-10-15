@@ -6,11 +6,11 @@ import re
 PARTS = {
     "focal_entities": {"deliverable", "receiver"},
     "goal_orientation": {"use", "acceptance"},
-    "retrieved_artifacts": {"viewpoint", "source"},
-    "constraints": {"language", "rule", "answer"},
+    "retrieved_artifacts": {"checklist", "content", "reference", "receiver_opens"},
+    "constraints": {"language", "rule"},
     "predictive_cue": {"next"},
     "uncertainty_signal": None,
-    "semantic_gist": {"difference"},
+    "semantic_gist": {"question", "unmet", "rule"},
     "relational_map": None,
     "episodic_trace": None,
 }
@@ -43,19 +43,22 @@ def faults(ccs):
     for part, kind in (
         ("focal_entities", "receiver"),
         ("goal_orientation", "acceptance"),
-        ("retrieved_artifacts", "viewpoint"),
+        ("retrieved_artifacts", "checklist"),
     ):
         if not entries(ccs, part, kind):
             found.append(f"{part} needs {'an' if kind[0] in 'aeiou' else 'a'} {kind}")
-    for kind in ("viewpoint", "source"):
+    for kind, there in (
+        ("checklist", os.path.isfile),
+        ("content", os.path.isfile),
+        ("reference", os.path.exists),
+        ("receiver_opens", os.path.exists),
+    ):
         found += [
-            f"{p} does not exist"
-            for p in entries(ccs, "retrieved_artifacts", kind)
-            if not os.path.isfile(p)
+            f"{p} does not exist" for p in entries(ccs, "retrieved_artifacts", kind) if not there(p)
         ]
     found += [
         f"{p}: open the checklist with front matter giving its name and version"
-        for p in entries(ccs, "retrieved_artifacts", "viewpoint")
+        for p in entries(ccs, "retrieved_artifacts", "checklist")
         if os.path.isfile(p) and not {"name", "version"} <= front(p).keys()
     ]
     for p in entries(ccs, "focal_entities", "deliverable"):

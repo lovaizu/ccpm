@@ -2,13 +2,9 @@
 
 import glob
 import os
-import shutil
-import subprocess
-import tempfile
 
 from ccs import entries
 from forms import check, serves, without_good
-from repo import drop
 from state import RUN, Stop, read_json, the_work, write_json
 
 AGENTS = {"generator": 4, "first-user": 9, "evaluator": 10, "learner": 12}
@@ -47,7 +43,8 @@ def brief(work, role):
         "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
         "use": "; ".join(entries(ccs, "goal_orientation", "use")),
         "acceptance": entries(ccs, "goal_orientation", "acceptance"),
-        "sources": entries(ccs, "retrieved_artifacts", "source"),
+        "content": entries(ccs, "retrieved_artifacts", "content"),
+        "references": entries(ccs, "retrieved_artifacts", "reference"),
         "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
     }
     given = {
@@ -63,8 +60,6 @@ def brief(work, role):
                 f"step 4: set the aim with `up.py aim {work} <text>` and say what it prints, "
                 "before the work is written"
             )
-        if "from" in run:
-            given["started from"] = run["from"]
         sent = [
             serves([dict(p, item=i)], p["way"])
             for i, p in hand_on.items()
@@ -80,13 +75,10 @@ def brief(work, role):
                 "step 8: the work goes back to the generator until every item is seen given or "
                 "waits on a question left open; not yet: " + ", ".join(unseen)
             )
-        place = tempfile.mkdtemp(prefix="turn-copy-")
-        subprocess.run(["git", "clone", "-q", ".", place], check=True)
-        os.makedirs(os.path.dirname(os.path.join(place, deliverable)), exist_ok=True)
-        shutil.copyfile(path, os.path.join(place, deliverable))
         given = {
-            "copy": place,
+            "work": path,
             "deliverable": deliverable,
+            "opens": entries(ccs, "retrieved_artifacts", "receiver_opens"),
             "receiver": should["receiver"],
             "use": should["use"],
             "list": os.path.abspath(given["list"]),
@@ -101,9 +93,6 @@ def brief(work, role):
         found = check(work, "first-user")
         if found:
             raise Stop("\n".join(found))
-        place = read_json(first, "the first user's brief")["copy"]
-        if os.path.exists(place):
-            drop(place)
         given.update(
             {k: should[k] for k in ("receiver", "use", "acceptance")},
             reading=os.path.join(work, "first-user.json"),

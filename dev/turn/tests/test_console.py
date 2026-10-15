@@ -11,7 +11,6 @@ from unittest import mock
 import posttooluse
 from brief import SCRIPT
 from helpers import ROOT, Repo, fill, form, run, started
-from repo import drop
 
 WORK = "# Note\n\nRun make.\n"
 AIM = "a new teammate can start work alone"
@@ -101,8 +100,7 @@ class Console(unittest.TestCase):
         met(self.repo, "hand-on", work=work)
         if not os.path.isfile(os.path.join(self.repo.path, work, "note.md")):
             self.repo.write(f"{work}/note.md", WORK)
-        copy = self.repo.json(self.say("brief", work, "first-user")[0])["copy"]
-        self.addCleanup(lambda: os.path.isdir(copy) and drop(copy))
+        self.say("brief", work, "first-user")
         self.ran("first-user")
         fill(self.repo, form("first-user", work), {"note B-1": {"took": "run make", "lines": "3"}})
         met(self.repo, "orchestrator", f1, work)
@@ -160,8 +158,7 @@ class Console(unittest.TestCase):
         # When: the work is handed to the first user
         met(self.repo, "hand-on")
         self.repo.write(".turn/out/note.md", WORK)
-        copy = self.repo.json(self.say("brief", ".turn/out", "first-user")[0])["copy"]
-        self.addCleanup(lambda: os.path.isdir(copy) and drop(copy))
+        self.say("brief", ".turn/out", "first-user")
         # Then: the reading is shown
         self.assertEqual(self.shown(), ["  2 read    Read as a new teammate."])
         # When: the first user hands back its reading
@@ -258,7 +255,7 @@ class Console(unittest.TestCase):
             ["The work is at docs/note.md, waiting on you for one point.", f"❓ {LICENSE}"],
         )
 
-    def test_the_end_says_running_again_can_give_what_the_work_does_not_yet_give(self):
+    def test_the_end_says_where_the_work_is_and_that_the_ccs_holds_what_it_lacks(self):
         # Given: the second reading's work read, with an item still without a Good, given a way in
         # the work
         self.second()
@@ -266,11 +263,11 @@ class Console(unittest.TestCase):
         self.read(f1=False, work=SECOND)
         fill(self.repo, form("learner", SECOND), {"note F-1": WAY})
         # When: the run ends
-        # Then: the user is shown where the work is, and that running again can give what is not
-        # yet there
+        # Then: the user is shown where the work is, and that the CCS holds what it does not give
+        # yet
         self.assertEqual(
             self.ended("end", SECOND),
-            ["The work is at docs/note.md; running again can give what is not yet there."],
+            ["The work is at docs/note.md, with what it does not give yet in the CCS."],
         )
 
     def test_a_stop_says_where_the_run_was(self):

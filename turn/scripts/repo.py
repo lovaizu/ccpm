@@ -1,11 +1,8 @@
-"""What turn keeps of the user's repository: what git holds, what changed during a run, and the
-first user's copy."""
+"""What turn keeps of the user's repository: what git holds, and what changed during a run."""
 
 import hashlib
 import os
-import shutil
 import subprocess
-import tempfile
 
 from state import RUN, Stop
 
@@ -47,11 +44,3 @@ def elsewhere(run, deliverable):
         and not p.startswith(kept + "/")
     )
     return [f"Also changed during the run, outside the work: {', '.join(names)}"] if names else []
-
-
-def drop(place):
-    if not os.path.basename(place).startswith("turn-copy-") or os.path.dirname(
-        os.path.realpath(place)
-    ) != os.path.realpath(tempfile.gettempdir()):
-        raise Stop(f"{place} is not a copy turn made")
-    shutil.rmtree(place)

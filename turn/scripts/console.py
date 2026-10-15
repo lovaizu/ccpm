@@ -27,7 +27,9 @@ def shown_lines(work):
         with open(os.path.join(work, "aim.txt")) as f:
             said.append(f"  1 write   To make: {f.read().strip()}")
     if os.path.isfile(os.path.join(work, "first-user-brief.json")):
-        said.append(f"  2 read    {'Read again, as' if 'from' in run else 'Read as'} {receiver}.")
+        said.append(
+            f"  2 read    {'Read again, as' if run.get('second') else 'Read as'} {receiver}."
+        )
     if os.path.isfile(path) and not check(work, "orchestrator"):
         if not without_good(work):
             said.append("  3 check   ✅ Nothing missing.")

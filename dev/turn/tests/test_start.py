@@ -51,7 +51,8 @@ class Start(unittest.TestCase):
                 "receiver": "a new teammate",
                 "use": "to start work",
                 "acceptance": ["they can start alone"],
-                "sources": ["notes.md"],
+                "content": ["notes.md"],
+                "references": [],
                 "constraints": [],
             },
         )
@@ -61,11 +62,28 @@ class Start(unittest.TestCase):
         # Given: the checklist kept in a file named otherwise than the name it gives itself
         self.repo.write("checklists/handover.md", self.repo.read("checklists/note.md"))
         # When: a run starts on it
-        got = started(self.repo, ccs(retrieved_artifacts=[{"viewpoint": "checklists/handover.md"}]))
+        got = started(self.repo, ccs(retrieved_artifacts=[{"checklist": "checklists/handover.md"}]))
         # Then: its items are named by the checklist's own name
         self.assertEqual(
             [i["id"] for i in self.repo.json(got["list"])["items"]], ["note B-1", "note F-1"]
         )
+
+    def test_a_folder_may_be_a_reference_or_what_the_receiver_opens(self):
+        # Given: a task naming a folder as a reference and one as what the receiver opens
+        self.repo.write("src/tidy.py", "print(1)\n")
+        self.repo.write("docs/guide/a.md", "A\n")
+        c = ccs(
+            retrieved_artifacts=[
+                {"checklist": "checklists/note.md"},
+                {"content": "notes.md"},
+                {"reference": "src"},
+                {"receiver_opens": "docs/guide"},
+            ]
+        )
+        # When: a run starts
+        got = started(self.repo, c)
+        # Then: it starts, and the orchestrator is given the reference
+        self.assertEqual(got["references"], ["src"])
 
     def test_a_task_without_a_use_is_run_with_none(self):
         # Given: a task that names no use
@@ -106,7 +124,7 @@ class Start(unittest.TestCase):
                 ccs(constraints=[{"colour": "red"}]),
                 "constraints has a kind it cannot hold: colour",
             ),
-            ("no checklist", ccs(retrieved_artifacts=[]), "retrieved_artifacts needs a viewpoint"),
+            ("no checklist", ccs(retrieved_artifacts=[]), "retrieved_artifacts needs a checklist"),
             (
                 "two deliverables",
                 ccs(
@@ -130,25 +148,53 @@ class Start(unittest.TestCase):
             ),
             (
                 "a checklist without its name and version",
-                ccs(retrieved_artifacts=[{"viewpoint": "notes.md"}]),
+                ccs(retrieved_artifacts=[{"checklist": "notes.md"}]),
                 "notes.md: open the checklist with front matter giving its name and version",
             ),
             (
                 "a checklist without its version",
-                ccs(retrieved_artifacts=[{"viewpoint": "nameonly.md"}]),
+                ccs(retrieved_artifacts=[{"checklist": "nameonly.md"}]),
                 "nameonly.md: open the checklist with front matter giving its name and version",
             ),
             (
                 "a checklist that is not there",
-                ccs(retrieved_artifacts=[{"viewpoint": "checklists/none.md"}]),
+                ccs(retrieved_artifacts=[{"checklist": "checklists/none.md"}]),
                 "checklists/none.md does not exist",
             ),
             (
-                "a source that is not there",
+                "a content file that is not there",
                 ccs(
-                    retrieved_artifacts=[{"viewpoint": "checklists/note.md"}, {"source": "gone.md"}]
+                    retrieved_artifacts=[
+                        {"checklist": "checklists/note.md"},
+                        {"content": "gone.md"},
+                    ]
                 ),
                 "gone.md does not exist",
+            ),
+            (
+                "a reference that is not there",
+                ccs(
+                    retrieved_artifacts=[
+                        {"checklist": "checklists/note.md"},
+                        {"reference": "src/"},
+                    ]
+                ),
+                "src/ does not exist",
+            ),
+            (
+                "what the receiver opens, not there",
+                ccs(
+                    retrieved_artifacts=[
+                        {"checklist": "checklists/note.md"},
+                        {"receiver_opens": "LICENSE"},
+                    ]
+                ),
+                "LICENSE does not exist",
+            ),
+            (
+                "a kind of 0.1.0",
+                ccs(retrieved_artifacts=[{"viewpoint": "checklists/note.md"}]),
+                "retrieved_artifacts has a kind it cannot hold: viewpoint",
             ),
             (
                 "a deliverable outside the repository",

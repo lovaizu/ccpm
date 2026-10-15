@@ -6,7 +6,6 @@ from unittest import mock
 
 import stop
 from helpers import Repo, ccs, fill, form, run, started
-from repo import drop
 from test_step_hooks import hook
 
 WORK = "# Note\n\nRun make.\n"
@@ -77,11 +76,12 @@ class Questions(unittest.TestCase):
         # When: the generator's brief is made
         _code, out = run(self.repo, "brief", ".turn/out", "generator")
         # Then: the questions are an empty list kept for the whole run, and the orchestrator is
-        # given the sources and constraints to see what they leave open
+        # given the content, the references and the constraints to see what they leave open
         self.assertEqual(self.repo.json(QUESTIONS), [])
         self.assertEqual(self.got["questions"], QUESTIONS)
         self.assertEqual(
-            (self.got["sources"], self.got["constraints"]), (["notes.md"], ["language: English"])
+            (self.got["content"], self.got["references"], self.got["constraints"]),
+            (["notes.md"], [], ["language: English"]),
         )
         self.assertEqual(self.repo.json(out.strip())["questions"], QUESTIONS)
 
@@ -161,7 +161,6 @@ class Questions(unittest.TestCase):
                 # the generator only for an item that waits on no question
                 if said is None:
                     self.assertEqual(code, 0, out)
-                    drop(self.repo.json(out.strip())["copy"])
                 else:
                     self.assertEqual(code, 1)
                     self.assertIn(said, out)
@@ -187,26 +186,24 @@ class Questions(unittest.TestCase):
         self.assertTrue(self.repo.exists("docs/note.md"))
         back = self.repo.json("out.json")
         self.assertEqual(back["predictive_cue"], [{"next": "ask the user"}])
-        self.assertEqual(back["semantic_gist"], [{"difference": LICENSE}])
+        self.assertEqual(back["semantic_gist"], [{"question": LICENSE}])
         self.assertEqual(back["constraints"], [{"language": "English"}])
 
-    def test_called_again_with_the_answer_the_run_starts_from_the_work_it_returned(self):
-        # Given: a run that ended asking the user, and the caller adding the answer to its CCS
+    def test_called_again_with_the_answer_in_the_content_the_run_makes_the_work_anew(self):
+        # Given: a run that ended asking the user, and the caller adding the answer to the content
         fill(self.repo, QUESTIONS, [OPEN])
         seen(self.repo)
         decided(self.repo)
         run(self.repo, "end", ".turn/out")
-        back = self.repo.json("out.json")
-        back["constraints"].append({"answer": f"{LICENSE} MIT"})
-        self.repo.write("again.json", json.dumps(back))
-        # When: turn is called with it, the returned work not committed
-        code, out = run(self.repo, "start", "again.json", "out-2.json", "s1")
-        # Then: the new run starts from the work as it was returned, with the answer among what
-        # the work should be
+        self.repo.write("notes.md", "Run make.\nThe note is under MIT.\n")
+        # When: turn is called again on the same task, the returned work not committed
+        code, out = run(self.repo, "start", "in.json", "out-2.json", "s1")
+        # Then: the new run starts with no work yet, and the orchestrator is given the content
+        # holding the answer
         self.assertEqual(code, 0, out)
         got = json.loads(out)
-        self.assertEqual(self.repo.read(got["work"]), WORK)
-        self.assertIn(f"answer: {LICENSE} MIT", got["constraints"])
+        self.assertFalse(self.repo.exists(got["work"]))
+        self.assertIn("MIT", self.repo.read(got["content"][0]))
 
     def test_called_again_after_the_returned_work_was_changed_the_run_is_refused(self):
         # Given: a run that ended asking the user, and its work changed since, not committed
@@ -324,8 +321,8 @@ class LearnersQuestions(unittest.TestCase):
         self.assertEqual(out.splitlines()[1], f"❓ {LICENSE}")
         back = self.repo.json("out.json")
         self.assertEqual(back["predictive_cue"], [{"next": "ask the user"}])
-        self.assertEqual(back["semantic_gist"][0], {"difference": LICENSE})
-        self.assertIn("from the answer to question 1", back["semantic_gist"][1]["difference"])
+        self.assertEqual(back["semantic_gist"][0], {"question": LICENSE})
+        self.assertIn("from the answer to question 1", back["semantic_gist"][1]["unmet"])
 
 
 if __name__ == "__main__":

@@ -301,7 +301,6 @@ class End(unittest.TestCase):
         self.assertEqual(
             back["episodic_trace"],
             [
-                {"work": ".turn/out/note.md"},
                 {"evidence": ".turn/out/list.json"},
                 {"evidence": ".turn/out/orchestrator.json"},
             ],
