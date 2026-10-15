@@ -236,11 +236,12 @@ weighed and turned down.
 
 ### B-32: The whole in one place
 
-Can the reader see the whole of who takes part in one place, instead of piecing it together from the
-approaches?
+Can the reader see the whole of who takes part in one figure, instead of piecing it together from
+the approaches or from tables?
 
 The whole: what each one that takes part does, what passes between them and what each cannot work
-without, as B-12, B-25 and B-26 ask.
+without, as B-12, B-25 and B-26 ask. What the figure cannot show is said beside it, and nothing it
+shows is said again.
 
 Why: a maintainer changing one part needs all it touches at once; pieced together in the head, it
 costs effort and goes wrong.

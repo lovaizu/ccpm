@@ -144,10 +144,13 @@ Why: an idea with nothing to hold it is read but not kept.
 ### B-16: Who does what, in one place
 
 Can the reader see who does what, what passes between them and in what order in one place, instead
-of piecing it together from sentences spread through the document?
+of piecing it together from sentences spread through the document: for a reader who is a person,
+in one figure, with the text beside it saying only what the figure cannot show?
 
-Why: pieced together in the head, it costs effort and goes wrong; for a person, a figure often shows
-it at once.
+Look for: who does what, or what passes between them, given only in sentences or tables.
+
+Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
+what rows of a table make them assemble, while an AI reading a prompt takes it from the steps.
 
 ## Usability
 
@@ -182,4 +185,18 @@ terms.
 
 ## Format
 
-None: a document's shape is set by its kind, and the checklist for each kind sets it.
+### F-1: Items and their explanations
+
+Does each list follow this shape?
+
+```markdown
+- An item said in one sentence that is understood alone
+
+  Its explanation, after a blank line, indented under the item.
+```
+
+- No item, and no first cell of a table, is set in bold.
+- An item that needs no explanation is the one sentence alone.
+
+Why: the reader skims the items alone and reads an explanation only where they need it; bold on
+every item marks nothing out, and an explanation run on after the item on its line hides the item.
