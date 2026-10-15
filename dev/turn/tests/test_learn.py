@@ -221,6 +221,15 @@ class End(unittest.TestCase):
         self.assertEqual([e for e in back["semantic_gist"] if "rule" in e], [{"rule": RULE}])
         self.assertEqual(back["constraints"], [mine])
 
+    def test_a_rule_learned_in_the_first_reading_alone_is_returned(self):
+        # Given: the first reading learned a rule, and the second met every item
+        second(self.repo, {"note F-1": WORK_WAY}, making={"note F-1": RULE})
+        decide(self.repo, SECOND, f1=True)
+        # When: the run ends
+        run(self.repo, "end", SECOND)
+        # Then: the caller gets the rule
+        self.assertEqual(self.repo.json("out.json")["semantic_gist"], [{"rule": RULE}])
+
     def test_a_question_left_open_is_carried_into_the_second_reading_and_asked_at_the_end(self):
         # Given: the first reading left F-1 with a way in the work, and a question left open
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])

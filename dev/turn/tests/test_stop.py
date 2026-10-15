@@ -81,7 +81,8 @@ class Stop(unittest.TestCase):
                     self.repo.write(".turn/out/evaluator-brief.json", "{}")
                 # When: the user stops the run
                 _said, back = self.stop()
-                # Then: it says where it stopped, and points to no work
+                # Then: it says where it stopped, points to no work, and leaves where the work goes
+                # untouched
                 self.assertEqual(back["predictive_cue"], [{"next": f"stopped: {step}"}])
                 self.assertEqual(back["episodic_trace"], [])
                 self.assertFalse(self.repo.exists("docs/note.md"))

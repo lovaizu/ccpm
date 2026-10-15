@@ -7,7 +7,7 @@ import json
 import os
 import shutil
 
-from ccs import checklist, entries, faults
+from ccs import checklist, entries, faults, should
 from forms import PLACES, forms, lay, learned
 from questions import left_open, question_faults
 from repo import changed, elsewhere, git
@@ -86,12 +86,7 @@ def start(src, out, session, work=None, before=None, questions=(), begun=None, w
                 "hand-on": os.path.join(work, "hand-on.json"),
                 "orchestrator": os.path.join(work, "orchestrator.json"),
                 "questions": os.path.join(work, "questions.json"),
-                "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
-                "use": "; ".join(entries(ccs, "goal_orientation", "use")),
-                "acceptance": entries(ccs, "goal_orientation", "acceptance"),
-                "content": entries(ccs, "retrieved_artifacts", "content"),
-                "references": entries(ccs, "retrieved_artifacts", "reference"),
-                "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
+                **should(ccs),
             },
             indent=1,
             ensure_ascii=False,

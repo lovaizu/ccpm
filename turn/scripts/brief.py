@@ -3,7 +3,7 @@
 import glob
 import os
 
-from ccs import entries
+from ccs import entries, should
 from forms import check, serves, without_good
 from state import RUN, Stop, read_json, the_work, write_json
 
@@ -39,14 +39,7 @@ def brief(work, role):
     if role not in AGENTS:
         raise Stop(f"no brief for {role}; briefs are for {', '.join(AGENTS)}")
     run, ccs, deliverable, path = the_work(work, written=role != "generator")
-    should = {
-        "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
-        "use": "; ".join(entries(ccs, "goal_orientation", "use")),
-        "acceptance": entries(ccs, "goal_orientation", "acceptance"),
-        "content": entries(ccs, "retrieved_artifacts", "content"),
-        "references": entries(ccs, "retrieved_artifacts", "reference"),
-        "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
-    }
+    wanted = should(ccs)
     given = {
         "list": os.path.join(work, "list.json"),
         "work": path,
@@ -66,7 +59,7 @@ def brief(work, role):
             if p.get("met") is False and "question" not in p
         ]
         given.update(
-            should, ways=sent or run["ways"], questions=os.path.join(work, "questions.json")
+            wanted, ways=sent or run["ways"], questions=os.path.join(work, "questions.json")
         )
     elif role == "first-user":
         unseen = [i for i, p in hand_on.items() if p.get("met") is not True and "question" not in p]
@@ -79,8 +72,8 @@ def brief(work, role):
             "work": path,
             "deliverable": deliverable,
             "opens": entries(ccs, "retrieved_artifacts", "receiver_opens"),
-            "receiver": should["receiver"],
-            "use": should["use"],
+            "receiver": wanted["receiver"],
+            "use": wanted["use"],
             "list": os.path.abspath(given["list"]),
             "form": given["form"],
             "check": given["check"],
@@ -94,7 +87,7 @@ def brief(work, role):
         if found:
             raise Stop("\n".join(found))
         given.update(
-            {k: should[k] for k in ("receiver", "use", "acceptance")},
+            {k: wanted[k] for k in ("receiver", "use", "acceptance")},
             reading=os.path.join(work, "first-user.json"),
             records=read,
         )
@@ -105,7 +98,7 @@ def brief(work, role):
         if not without_good(work):
             raise Stop("every item is met, so there is nothing to learn")
         given.update(
-            should,
+            wanted,
             questions=os.path.join(work, "questions.json"),
             reading=os.path.join(work, "first-user.json"),
             decisions=os.path.join(work, "orchestrator.json"),

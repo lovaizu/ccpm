@@ -20,6 +20,18 @@ def entries(ccs, part, kind):
     return [v for e in ccs[part] for k, v in e.items() if k == kind]
 
 
+def should(ccs):
+    """What the work should be, as the orchestrator and the agents that make it are given it."""
+    return {
+        "receiver": "; ".join(entries(ccs, "focal_entities", "receiver")),
+        "use": "; ".join(entries(ccs, "goal_orientation", "use")),
+        "acceptance": entries(ccs, "goal_orientation", "acceptance"),
+        "content": entries(ccs, "retrieved_artifacts", "content"),
+        "references": entries(ccs, "retrieved_artifacts", "reference"),
+        "constraints": [f"{k}: {v}" for e in ccs["constraints"] for k, v in e.items()],
+    }
+
+
 def faults(ccs):
     """Says each way the CCS does not match the form the callers' page gives."""
     found = []
@@ -54,7 +66,9 @@ def faults(ccs):
         ("receiver_opens", os.path.exists),
     ):
         found += [
-            f"{p} does not exist" for p in entries(ccs, "retrieved_artifacts", kind) if not there(p)
+            f"{p} does not exist; name the {kind} by its path from the top of the repository"
+            for p in entries(ccs, "retrieved_artifacts", kind)
+            if not there(p)
         ]
     found += [
         f"{p}: open the checklist with front matter giving its name and version"
