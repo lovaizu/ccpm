@@ -291,6 +291,45 @@ Progress:
         and what setting the decisions as a tree means (`grilling`'s "walk down each branch of
         the design tree, resolving dependencies between decisions one-by-one").
 
+Order, decided by the user (2026-10-15): finish one thing at a time, #5, then #4; #6 runs beside
+#5. Spreading work over turn, writ and six checklists at once left each nearly done, and a
+checklist with a gap kept shaping what was made with it.
+
+### [ ] #5: turn finished
+
+Purpose: turn's prompts, hooks and code meet its README and design, tried as its user; what writ
+builds on is settled first.
+
+Serves: M1, M2, M3
+
+Progress:
+
+- Hooks done (`7e17437`, CI green): each role reads only its inputs; the orchestrator's shell runs
+  only turn's script, and jq, mv and cd on the run's files.
+- Next: the prompts, as in #4's "Where to resume" 7; then a trial on the flow task; then turn's
+  design read again with the finished `design.md` from #6.
+
+### [ ] #6: Each checklist finished
+
+Purpose: each checklist in `writ/checklists/`, once used, gives a work its reader is served by, shown
+by using it once on a real work and judging the work, not only the checklist's form.
+
+Serves: M1
+
+Progress:
+
+- How (decided by the user, 2026-10-15): one checklist at a time, beside #5. For each, the assistant
+  starts a fresh Claude Code once, hands it the work to make with that checklist, judges the work by
+  its purpose, and fixes the checklist where the cause lies in it; the wording of each change is
+  shown to the user before it lands.
+- Findings so far, each to its checklist (from #4's 6 and 8):
+  - design: B-14 and B-27 to B-29 (what each part does, when it acts, what it looks at) push the
+    design toward a specification, against U-2; U-2 and U-3 are titled by what is absent, not by
+    what the reader gets; B-16 and B-30 had turn ask five questions a builder does not need.
+  - doc: B-16 had turn add a six-step list repeating the console sample.
+  - code: no item pushed unneeded work (turn's code and hooks).
+- First: `design.md`, since the turn and writ designs are made with it.
+
 ### [ ] #4: writ built and checked
 
 Purpose: plugin.md steps 3 to 7; #36 and #37 judged against the rebuilt writ.
@@ -414,7 +453,7 @@ Progress:
   6. Decided by the user (2026-10-15): turn's code is written by hand, since turn is the tool in
      use, but as turn works: with the checklist open, then read as the first user and given a Good
      per item with its lines, so each checklist is tried on its kind and refined. Findings on the
-     checklists, gathered for one change shown to the user at the end:
+     checklists, now taken up in #6:
      - doc B-16 (who does what, in one place): had turn add a six-step list to turn's README, saying
        again what the console sample shows.
      - design B-16, B-30 (options weighed and cost for every choice): had turn ask five questions
@@ -445,10 +484,9 @@ Progress:
      PreToolUse inside a subagent carries `agent_id` and `agent_type`, and the main session's
      carries neither. Checked against `code.md`: B-2 and B-9 (each line removed, the tests run)
      found `jq -f` and a command after a newline untested, now tested, and a lexer setting no test
-     needed, removed; no item pushed work the purpose does not need. Open for the user: the hook
-     also lets each role read its session's `tool-results/`, where Claude Code puts a long tool
-     output and has the role Read it; the design's "Working from the inputs alone" does not say so.
-     Next: the prompts, as in 7.
+     needed, removed; no item pushed work the purpose does not need. The hook also lets each role
+     read its session's `tool-results/`, the output of its own commands, which the design's
+     "inputs alone" already covers. Next: #5.
   5. Next: the user agrees turn's README and writ's design (PR #61); turn's design and
      `turn/calling-from-a-plugin.md` on the decisions in 3, through turn and finished by hand;
      turn's code; writ's README from its content file (the "report once every item is met"
