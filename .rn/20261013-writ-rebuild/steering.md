@@ -317,8 +317,16 @@ Progress:
   showed: the checklist finished first against what a design is (`90c3ab7`), then the content file
   written to answer every item of it and checked item by item before turn is called (`cdc0f68`),
   then turn. A first run on content not yet made to the checklist was stopped.
-- Next: judge what turn returns by the user's words on a design; then CHANGELOG, the whole tried
-  once, and `claude plugin validate --strict`.
+- The user (2026-10-15): their words on a design were what they want to know, not a new definition;
+  the checklist's purpose, qualities and checks stand, and B-18 and B-19, decided on 2026-10-14,
+  are kept (`1dcf36b`). What changed in `design.md` rests on what building turn showed: each part's
+  behavior (B-14, B-27 to B-29) made a 576-line design that differed from the code in detail;
+  options per choice drew questions no builder needs; "which test" drew a test inventory.
+- turn's design done (`8b61d3d`, 481 lines): made through turn on the finished checklists, every
+  item met but doc B-11, which the caller finished by writing the hand-offs by pair, as the content
+  gave them, in place of a step table that pointed ahead. The five rules turn returned each say
+  again what `doc.md` already asks; not taken.
+- Next: CHANGELOG, the whole tried once, and `claude plugin validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
