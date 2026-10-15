@@ -15,6 +15,8 @@ last for fixes that change nothing you do.
 - The checklists live in rn, with four new ones: the plan, a proposal, a verification document and a hook — one measure for everything a session makes, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
 - The decisions for each piece of work, what it must say or do and leave out, are kept under `.rn/<session>/decisions/`, and each call to turn under `.rn/<session>/tasks/`, committed with the decision that made them — each item met traces back to what was asked of it, and a fresh conversation settles points from them.
 - A commit on your default branch, or a push to it, is stopped — a session changes your default branch only when you merge.
+- Before the Deliverable sign-off, rn takes stock of every learning turn returned in the session and puts each to you, one per message, with what it recommends: an item for your checklist at `.rn/checklists/<kind>.md`, an issue, or letting it go — what a session learned about making its kind of work is decided by you once, instead of being left in the records or pushed into the next work unasked.
+- Each checklist gives the shape of its kind first, and its items stand in the order the maker meets them writing from the top, those over the whole last — the maker takes the items as it writes, and you read a checklist in the order the document it measures is read.
 
 ### Changed
 

@@ -18,6 +18,8 @@
 - turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work. Called again with your answers, turn starts from the work it returned and writes over it without your committing it first, unless you changed it since.
 - turn takes a second pass only when the first leaves something the work itself can give, and returns what the second still leaves with how it would be given, with your questions — Claude, or your plugin's step, which knows what you agreed, decides whether to run again.
 - The console shows only each step, not the paths of turn's own files — you follow the run without learning how turn keeps it.
+- The work is written in the checklist's order: its shape first, then part by part from the top, each part to the items met in it, then the items that hold over the whole, one at a time — a term is said where it is first used and a repeat is cut over the whole, instead of being found by the reader and made again.
+- A rule turn returns is one no item of the checklist asks already — what comes back to you is a learning to act on, not the checklist said again.
 
 ## [0.1.0] - 2026-10-13
 
