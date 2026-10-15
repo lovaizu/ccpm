@@ -3,9 +3,9 @@
 ## readme
 
 ### B-1: What they gain
-- With turn, Claude Code makes a work for you, such as a README, a design document, a skill or code,
-  that passes your checklist of what the work must give the person it is for, so you can hand it on
-  without first reading it in their place.
+- turn is a plugin with which Claude Code makes a work for you, such as a README, a design document,
+  a skill or code with its tests, that passes your checklist of what the work must give the person
+  it is for, so you can hand it on without first reading it in their place.
 
 ### B-2: Who it is for
 - Anyone who has Claude Code make such work, by asking in a conversation, or from a step of their
@@ -89,9 +89,6 @@
 
 ### B-7: Terms of use
 - MIT License (`../LICENSE`).
-
-### B-8: What it is
-- turn is a plugin for Claude Code.
 
 ### B-9: Why each requirement is needed
 - Claude Code: turn runs inside it.
