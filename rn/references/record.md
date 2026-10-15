@@ -1,100 +1,115 @@
-# The session's record
+# The record of an rn session
 
-A session is its directory `.rn/{yyyymmdd}-{slug}/`, the README, design document and verification
-document its plan names, and git. A fresh conversation, and every later version of rn, goes on from
-these alone, so the layout, names and markers stay exactly as written here; the plan's own form is
-`${CLAUDE_PLUGIN_ROOT}/checklists/plan.md`.
+## Role
 
-## The directory
+You keep the record of an rn session, so that a fresh conversation and every later version of rn
+go on from it alone: the user may clear the conversation at any stop, and the next conversation
+knows only what the record holds. Keep its layout, names and markers exactly as written here,
+since rn's commands, scripts and hooks find their way by them.
 
-```
-.rn/{yyyymmdd}-{slug}/
-├── steering.md       the plan, in the form plan.md gives
-├── open/             what is not yet settled, one file per item
-├── content/          what each work was asked to say, item by item, one file per work
-└── tasks/            each task handed to turn, and the CCS turn wrote back
-```
+The record is the session folder `.rn/{yyyymmdd}-{slug}/`, the README, the design document and
+the verification document its plan names, and git. The plan is `steering.md` in the session
+folder, in the form `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` gives.
 
-`content/` and `tasks/` are written by `up.py content` and `up.py task`, and committed with the
-decision that made them; a later conversation settles points from them as from any file. turn's
-evidence under `.turn/` at the top of the repository is left uncommitted.
+## Steps
 
-## open/
+1. Find the session, in this order:
 
-One file per item, named `{NN}-{kind}-{about}.md`: `{NN}` is one more than the highest number in
-`open/`, or `01` when it is empty; `{kind}` is one of
+   - The `steering.md` this conversation has been working on, when there is one.
+   - Otherwise, the one the current branch changed whose `status` is not `finished`.
 
-- `report`: the report `up.py report` printed for one work, such as `04-report-task-3.md`;
-- `feedback`: the user's words from `/rn:gm`, whole, in their own language;
-- `notes`: a question being put to the user, a proposal being made, or where a task stands when
-  `/rn:dn` pauses. A question's first line is `Serves:` with the criterion IDs it rests on, or
-  `goal`.
+     Run `git fetch origin`; when `git rev-parse --verify --quiet origin/HEAD` prints nothing, run
+     `git remote set-head origin --auto`; then list the candidates with
+     `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'` and
+     read the `status` in each one's front matter.
 
-`{about}` names what it is about, such as `plan`, `design`, `task-3` or `deliverable`; a question
-being put to the user is `question`, and a proposal at a sign-off `proposal`, since the checks find
-them by these names.
+   - None, and `/rn:up` was given words: `/rn:up` starts a session from them.
+   - None, and no words: tell the user there is no session on this branch, and that they can check
+     out the session's branch or give `/rn:up` what to do; end.
+   - Only sessions whose `status` is `finished`: tell the user the session is finished; end.
 
-An item leaves `open/` in the commit that settles it, copied whole into that commit's message under
-its file name, with what was decided on each shortfall:
+   Then read the `rn` field of the session's `steering.md`. At `0.9.0` or later, take the session
+   up as it stands. With no `rn` field, or a lower one, an earlier rn started it: `/rn:up` brings
+   it to the current form as `${CLAUDE_PLUGIN_ROOT}/references/upgrade.md` says; any other command
+   asks the user to run `/rn:up` first, and ends.
 
-```
-04-report-task-3.md:
-    <the report, whole, each line indented>
+2. Keep the session folder in this layout:
 
-- Good A1: <what the user gains, at path:line>
-- More A1: <what the user will struggle with, at path:line>
-  → fixed: <how> | → let go: <why fixing it would not bring the work closer> | → to the user: <the question, or back to the plan or the design>
-```
+   - `steering.md`: the plan.
+   - `open/`: what is not yet settled, one file per item.
+   - `content/`: what each work was asked to say, one file per work.
+   - `tasks/`: each task handed to turn and the CCS turn wrote back.
 
-## The decision line
+   Commit `content/` and `tasks/` with the decision that made them. Leave turn's evidence, under
+   `.turn/` at the top of the repository, uncommitted.
 
-Every commit the conductor makes has a subject line saying what it records, such as
-`rn: settle the report on #3 move src/cart`, and ends with one line saying what was decided and
-what comes next; the first, from `/rn:up`, is `● plan ── started → working out the plan`:
+3. Name each item in `open/` as `{NN}-{kind}-{about}.md`, since rn's checks find each item by these
+   names:
 
-```
-● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}
-```
+   - `{NN}` is one more than the highest number in `open/`, or `01` when it is empty.
+   - `{kind}` is `report`, `feedback` or `notes`.
 
-`●`, `──`, `→`, `waiting for`, `paused at`, `approved` and `feedback in`, and `Good` and `More` with
-their criterion ID at the start of a line, stay as written whatever the artifact language, since the
-commands and checks find their way by them. The last decision line on the branch is where the
-session stands. The commits where rn stops for the user end as follows, and leave in `open/` only
-what is listed:
+     A `report` is the report `up.py report` printed for one work; a `feedback` item, the user's
+     words from `/rn:gm`, whole, in their own language; a `notes` item, a question being put to
+     the user, a proposal being made, or where the session stands on `/rn:dn`.
 
-| Stop | Ends with | `open/` holds |
-|---|---|---|
-| At a sign-off, with the proposal as the message body | `→ waiting for #{id} {sign-off name}` | nothing |
-| After `/rn:ty` | `── approved → {the next task, or finished}` | nothing |
-| After `/rn:gm` | `── feedback in {file} → {working out the plan or the design again, or the tasks for it}` | the `feedback` item |
-| A pause, on `/rn:dn` | `→ paused at {#id task name, plan, or design}` | whatever is unsettled, and a `notes` item on where the task stands |
+   - `{about}` is what the item is about: `plan`, `design`, `task-{id}` or `deliverable`,
+     `question` for a question and `proposal` for a proposal.
 
-## Finding the session
+   For example `04-report-task-3.md`.
 
-1. The `steering.md` this conversation has been working on.
-2. Otherwise the one the current branch changed whose `status` is not `finished`:
-   `git diff --name-only $(git merge-base HEAD origin/HEAD) HEAD -- '.rn/*/steering.md'`
-   (`git remote set-head origin --auto` first when `origin/HEAD` is not set).
+4. Settle an item in the commit that records what was decided on it, by removing it from `open/`
+   with `git rm` in that commit. In that commit's message, copy the item whole under its file name,
+   each line indented by four spaces, and write what was decided on each shortfall of a report,
+   each on a line of its own:
 
-None, and `/rn:up` was given words → start a session from them. None, and no words → say there is
-no session on this branch: check out the session's branch, or give `/rn:up` what to do. Only one
-whose `status` is `finished` → say it is finished. Either way, stop.
+   ```
+   - Good A1: <what the user gains, at path:line>
+   - More A1: <what the user will struggle with, at path:line>
+     → fixed: <how> | → let go: <why> | → to the user: <the question, or back to the plan or the design>
+   ```
 
-A session whose `rn` field's first two numbers are `0.9` is taken up as it stands, since its record
-has this form. One with no `rn` field, or lower, was started under an earlier rn: `/rn:up` brings
-it to the current form; any other command asks the user to run `/rn:up` first, and stops.
+   `A1` stands for the ID of the criterion the line is about, and the `→` line takes one of its
+   three forms, indented under its More.
 
-## Bringing an older session to the current form
+5. Write every commit you make with a subject line saying what it records, in the artifact
+   language, and end its message with the decision line, then push:
 
-The old record is the user's request and what was done so far. The goal is worked out again from
-it, since an older record may not hold why the user wants the goal, and every later decision is
-judged by it.
+   ```
+   git commit -F - <<'EOF'
+   rn: settle the report on #3 move src/cart
 
-1. Read the old `steering.md` and whatever else the old version left in the session's directory.
-2. Work out the plan as `/rn:up` does on a start, with the session's branch, pull request and
-   directory in place of new ones and the old record as the request: ask only what it leaves
-   unclear.
-3. The first write of the new `steering.md` replaces the old one. What an old design the user
-   approved settled goes into the design's content as agreed points; what was done becomes Facts in
-   Assumptions, each saying where; the other old files are removed, and stay readable in git.
-4. Stop at a new Plan sign-off.
+   <the body, when the commit settles an item or stops for the user>
+
+   ● #3 move src/cart ── decided: purpose fulfilled → #4 Deliverable sign-off
+   EOF
+   git push
+   ```
+
+   The decision line is `● {#id task name | plan | design | deliverable} ── {what was decided} →
+   {next move}`, the first in a session being `● plan ── started → working out the plan`. Keep
+   `●`, `──`, `→`, `waiting for`, `paused at`, `approved` and `feedback in`, and `Good` and `More`
+   with their criterion ID at the start of a line, as written here whatever the artifact language.
+
+6. At each of the session's four kinds of stop, write the decision line and leave `open/` as
+   follows:
+
+   - At a sign-off, `● #{id} {sign-off name} ── proposed: {what} → waiting for #{id} {sign-off name}`, with the proposal as the message body and nothing left in `open/`.
+   - After `/rn:ty`, `● #{id} {sign-off name} ── approved → {next}`, with nothing left in `open/`.
+
+     `{next}` is `planning the tasks` after the Design sign-off, `finished` after the Deliverable
+     sign-off, and otherwise the first task in `steering.md` not yet `[x]`.
+
+   - After `/rn:gm`, `● #{id} {sign-off name} ── feedback in {file} → {next}`, with the `feedback` item left in `open/`.
+
+     `{next}` is `working out the plan again` at the Plan sign-off, `working out the design again`
+     at the Design sign-off, and `tasks for it` at the Deliverable sign-off.
+
+   - On a pause by `/rn:dn`, `● {#id task name | plan | design} ── {how far it came} → paused at {#id task name | plan | design}`, with whatever is unsettled and a `notes` item on where the session stands left in `open/`.
+
+7. Read where the session stands from the last decision line on the branch, the last line beginning
+   `● ` in the message `git log -1 --grep='^● ' --format=%B` prints:
+
+   - When it ends `→ waiting for #{id} {sign-off name}`, the session is waiting for that sign-off,
+     and the commit it ends is the stop commit.
+   - Otherwise the session goes on from the next move the line names.

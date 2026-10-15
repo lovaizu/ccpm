@@ -1,53 +1,68 @@
 ---
 name: up
-description: Start an rn session from what the user asks for, or take up the session on the branch where it stopped, and carry the work to the next sign-off. It writes files, commits, pushes, and on a start opens a pull request, so run it only on an explicit /rn:up.
+description: Starts an rn session from the words the user gives, or takes up the session on the current branch where it stopped, and carries the session to the next sign-off. Used when the user types /rn:up, with what they want done to start, or with nothing to go on.
 disable-model-invocation: true
 ---
 
-# /rn:up — Start or go on
-
 ## Role
 
-Every piece of work and every decision in a session rests on the goal set at its start, so the
-goal must be what the user really wants, not their first words; and the user can clear the
-conversation at any stop and come back without explaining anything again, since the session goes
-on from where they left it by what its record says. One command serves both, since the record
-tells whether a session is there.
+You are the conductor of an rn session, the main conversation with the user. `/rn:up` starts a
+session from the words the user gave, or takes up the session on this branch where it stopped, and
+carries the session to the next sign-off, where the user approves the plan, the design or the
+deliverable.
+
+Every work and every decision rests on the goal set at the start, so the goal must be what
+the user really wants, not their first words. A user who comes back goes on without explaining
+anything again, since the record holds all the session needs.
+
+The user's words are `$ARGUMENTS`.
 
 ## Steps
 
-What the user gave:
+1. Run `sh "${CLAUDE_PLUGIN_ROOT}/scripts/tools.sh"`. When it exits with 1, show the user what it
+   printed and end, since every later step needs the tools it checks.
+2. Read step 1 of `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, The frame, and keep it from here
+   on.
+3. Read `${CLAUDE_PLUGIN_ROOT}/references/record.md` whole, and find the session as its step 1
+   says. With a session there, go to step 12; with none and words, start one from step 4.
 
-$ARGUMENTS
+Starting a session:
 
-1. Run `sh "${CLAUDE_PLUGIN_ROOT}/scripts/tools.sh"`; if it exits with 1, show what it printed and
-   end, since rn and turn run on python3, jq and gh.
-2. Read `${CLAUDE_PLUGIN_ROOT}/references/record.md` whole, and find the session as it says. A
-   session there → go to step 6. None, and no words were given → say so as it says, and end.
-3. Start a session: when the working tree has uncommitted changes, say so without touching them,
-   and end. Work on a new branch from the latest default branch, pushed to a branch of the same
-   name on the remote, in `.rn/{yyyymmdd}-{slug}/`, the slug naming what the words ask for.
-4. Ask the user, as one point, the languages: one to write everything that goes into the
-   repository in, and one to talk in, proposing what the repository and the user's instructions
-   already set, or else English for the repository, which reaches the most readers later, and the
-   one they write in for the talk, so a single yes settles both. Write `steering.md` in the form
-   `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` gives, with what they chose, `rn` from
-   `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and the goal as the words give it for now.
-5. Commit and push, in the chosen artifact language as every commit from here on, with the subject
-   and the decision line record.md gives, and open a draft pull request titled with the goal in one
-   line, its body linking `steering.md`. Write its URL in `pr`, commit and push with
-   `● plan ── pull request opened → working out the plan`, and go on as
-   `${CLAUDE_PLUGIN_ROOT}/references/conduct.md` says from Working out the plan: the session stops
-   at the Plan sign-off.
-6. Take up the session: when an older rn started it, bring it to the current form as record.md
-   says instead. Say where it resumes, in the `conversation-language` of `steering.md`:
+4. When `git status --porcelain` prints anything, tell the user the working tree has uncommitted
+   changes, and end, so that the changes stay the user's; a new branch would carry them along.
+5. Name the slug: what the words ask for, in a word or words joined by hyphens. Make the branch
+   `{slug}` from the latest default branch with `git fetch origin`,
+   `git remote set-head origin --auto` and `git switch -c {slug} origin/HEAD`, setting the remote's
+   default branch first, since the record finds the session by what the branch changed from that
+   default branch. Make the session folder `.rn/{yyyymmdd}-{slug}/`, with today's date.
+6. Read the rest of `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, from step 2 to the end, since
+   its steps carry the session from here.
+7. Choose the two languages with the user, as conduct.md's step 3 says.
+8. Read `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` whole, and write `steering.md` in the session
+   folder in the form it gives: the two languages; `rn` as
+   `jq -r .version "${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json"` prints it; and the goal as
+   the words give it for now.
+9. Commit as record.md's step 5 says, with the decision line
+   `● plan ── started → working out the plan`, and push with `git push -u origin {slug}`.
+10. Open a draft pull request with
+    `gh pr create --draft --title "<the goal in one line>" --body "<a link to steering.md on the branch>"`,
+    write the URL it prints in `pr` in `steering.md`, and commit and push with the decision line
+    `● plan ── pull request opened → working out the plan`.
+11. Go on as conduct.md's step 9, Working out the plan, says.
 
-   ```
-   ● {resuming {slug} at #{id}: {task name}, or at the next move of the last decision line}
-   ```
+Taking up a session:
 
-7. When the last decision line ends `waiting for #{id} {sign-off name}`, and the branch is level
-   with the latest default branch, give the proposal again as that commit's message body prints it,
-   the decision line included, translated into the conversation language when the two differ,
-   adding nothing and leaving nothing out, and end. Otherwise take up the session as conduct.md
-   says from Taking up the session, with any words the user gave as what they say to you.
+12. When record.md found a session an earlier rn started, read
+    `${CLAUDE_PLUGIN_ROOT}/references/upgrade.md` whole and bring the session to the current form
+    as it says; it carries the session to a new Plan sign-off, where this command ends.
+13. Tell the user where the session resumes: `● resuming {slug} at #{id}: {task name}`, or
+    `● resuming {slug} at {the next move of the last decision line}` when no task is under way.
+14. When the session is waiting for a sign-off, as record.md's step 7 tells, run `git fetch origin`.
+    When `git merge-base --is-ancestor origin/HEAD HEAD` exits with 0, the branch is level with the
+    latest default branch: give the user the proposal as
+    `git log -1 --grep='^● ' --format=%b` prints it, the decision line included, word for word,
+    or translated whole into the conversation language when the two languages differ, and end,
+    since the session is still waiting for that sign-off.
+15. Otherwise read the rest of `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, from step 2 to the
+    end, and go on as its step 8, Taking up the session, says, with any words the user gave as
+    what they say.

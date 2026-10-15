@@ -166,7 +166,8 @@ form, read only when such a session is found.
     changed, whose receiver is the product's user and whose checklist is the verification
     document, so turn uses the product in each scene; the conductor runs the machine checks; the
     decision line is `● deliverable ── used → ...`; each More to fix becomes a task added before the
-    Deliverable sign-off, and once such a task is done turn checks its item alone; the whole is not
+    Deliverable sign-off, with the scene it fell short in as its Completion criteria, and carried
+    out as a task, checked on the real thing against that scene; the whole is not
     used again, since each fresh use raises points that are not essential; then the Deliverable
     sign-off.
   - Making a work through turn: `up.py content <session folder> <the work's first file>` for where
@@ -224,8 +225,8 @@ form, read only when such a session is found.
   - Feedback: a `feedback` item goes back to before the sign-off it answers, the plan or the design
     worked out again with the mismatch behind the words as the first point, since fixing only what
     the words say leaves it in place; feedback on the deliverable gets tasks for it, or goes back to
-    the design when it changes what the product should be; the item is settled in the commit that
-    stops at the next sign-off; once approved, the plan and the documents go back through their
+    the design when it changes what the product should be; the item is settled at the next
+    sign-off in a commit of its own before the stop commit; once approved, the plan and the documents go back through their
     sign-off, added with the next unused id before the tasks not yet done, only when what they say
     changes without the user having decided it; a change the user made by answering a question is
     written without stopping.
@@ -268,7 +269,8 @@ form, read only when such a session is found.
   first line is `Serves:` with the criterion IDs it rests on, or `goal`); `{about}` names what it
   is about, `plan`, `design`, `task-3`, `deliverable`, a question `question`, a proposal
   `proposal`, since the checks find them by these names; an item leaves `open/` in the commit that
-  settles it, copied whole into that commit's message under its file name, each line indented,
+  settles it, copied whole into that commit's message under its file name, each line indented by
+  four spaces,
   with what was decided on each shortfall as `- Good A1: <what the user gains, at path:line>`,
   `- More A1: <what the user will struggle with, at path:line>` and, on its own line indented
   under the More, `→ fixed: <how> | → let go: <why> | → to the user: <the question, or back to the

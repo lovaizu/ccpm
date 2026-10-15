@@ -630,6 +630,18 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   --out <new folder>` first), CHANGELOG versions, the final check, and the report of every
   decision above. The hand-made hooks of the fork are gone; until units two and three land, rn's
   hooks check only the record's form.
+- rn's prompts taken in from `p4` (2026-10-16, Opus, $15.45, two rounds, 33 of 40 met, three
+  questions): the seven files copied in, the questions settled from the sources and the seven
+  unmet finished by hand, each a small change: the feedback item is settled in a commit of its own
+  before the stop commit (the content's Feedback line was stale, fixed); a More from the
+  deliverable's use becomes a task checked on the real thing against its scene, no item checked
+  alone by turn (decision 17, to report); a settled item is indented by four spaces, as the
+  record's example already showed; the proposal's content is written before the reports it draws
+  on are settled; taking up a session that waits for a sign-off stops at it again with the
+  proposal made anew; `<pr>`, the intent and means question, the criteria IDs and the golden path
+  said where first met; where Mores contradict, the undecided point is asked where it is the
+  user's. The 13 rules turn returned each apply an item that exists (doc B-7, B-11, B-12, B-13,
+  prompt B-12, B-20, F-2); none taken.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
