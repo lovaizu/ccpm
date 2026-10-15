@@ -618,6 +618,18 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   figure of who is responsible for what and what each depends on, and principles; the approach
   sections (B-13, B-31) go, since they grew into specification; the figure shows responsibilities,
   not a sequence. `design.md` 0.3.0 rewritten so; both design contents reshaped to it.
+- Where to resume (2026-10-16, before a `/clear`): four turn runs were going in the scratchpad
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/fec3f6a4-1caa-4408-b639-3e5fab7753f7/scratchpad/`,
+  each with its log beside it: `p4` (rn's prompts, `dev/rn/trials/rn-prompts.json`), `nd4` (rn's
+  design), `d5` (turn's design), `hf3` (rn's hooks, first unit, with the five points settled).
+  Judge each from its `<folder>/.tasks/<name>.json` and the work in the folder, by the purpose;
+  finish small shortfalls by hand, correct the content and run again for large ones; take the
+  files in and commit. Then the second and third hooks units (`rn-hooks-commits.json`,
+  `rn-hooks-course.json`, each after the one before is taken in), the verification document
+  (`rn-verification.json`, after rn's design), the trials on rn-try (`dev/rn/trials/flow.py
+  --out <new folder>` first), CHANGELOG versions, the final check, and the report of every
+  decision above. The hand-made hooks of the fork are gone; until units two and three land, rn's
+  hooks check only the record's form.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
