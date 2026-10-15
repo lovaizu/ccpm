@@ -11,13 +11,17 @@ last for fixes that change nothing you do.
 
 - Every piece of work, the plan, the design documents, each task's result and each proposal, is made by turn and read or used by an AI that did not make it, as the person it is for would, and checked item by item against a checklist — nothing reaches you that was not read in its receiver's place, and what fell short was made again or settled before you see it.
 - The proposal at each sign-off puts first what rn decided for you, each with its ground, and lists each item of the work's checklist met with the lines that give it — you see what is yours to overturn before anything else, and open the work only where you doubt it.
-- The checklists live in rn, with three new ones: the plan, a proposal and a verification document — one measure for everything a session makes, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
+- The checklists live in rn, with four new ones: the plan, a proposal, a verification document and a hook — one measure for everything a session makes, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
+- What each piece of work was asked to say, item by item, is kept under `.rn/<session>/content/`, and each call to turn under `.rn/<session>/tasks/`, committed with the decision that made them — each item met traces back to what was asked of it, and a fresh conversation settles points from them.
+- A commit on your default branch, or a push to it, is stopped — a session changes your default branch only when you merge.
 
 ### Changed
 
 - `/rn:on` is folded into `/rn:up`: `/rn:up <what you want>` starts a session on a branch that has none, and `/rn:up` takes up the one on the branch — one command, whether you start or come back.
 - rn needs turn, which installing rn installs, and no longer needs writ — the writing, reading and checking are turn's, done one way for every piece of work.
 - turn's evidence under `.turn/` is left uncommitted — the report in the pull request's history holds what the record needs, and you delete `.turn/` when you no longer need to follow an item back.
+- A session recorded by rn 0.9.0 is taken up as it stands, since its record has the same form; only a session from before 0.9.0 has its goal worked out again — you lose nothing of a session you started on 0.9.0.
+- A question only you can decide that turn finds while making a piece of work is asked when turn returns, one per message with a recommended answer — you answer a few at a time instead of watching the work.
 
 ## [0.9.0] - 2026-10-06
 

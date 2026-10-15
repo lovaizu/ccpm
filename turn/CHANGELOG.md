@@ -12,7 +12,8 @@
 - The work reaches where it goes only when the run returns — a run stopped or cut off leaves your files as they were.
 - A change to the work after it has been handed to the reader is stopped — the version read is the version you get back.
 - Each stop turn's hooks make names the step it concerns and why — you and Claude see at once what went wrong and what that step needs.
-
+- The CCS names each input by what it is for: `checklist`, `content` (what the work says, item by item), `reference` (what it follows or draws on) and `receiver_opens` (what the receiver opens with it); `viewpoint`, `answer` and `difference` of 0.1.0 are gone, and turn returns the rules it learns in its own part instead of adding them to your constraints — your plugin's step says what each file is for once, and nothing it did not ask piles up across calls.
+- turn and each agent it starts read only the files the CCS names, turn's own files and their own commands' output; a read outside them is stopped — the work follows what you decided, not whatever turn happened to open.
 - turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work. Called again with your answers, turn starts from the work it returned and writes over it without your committing it first, unless you changed it since.
 - turn takes a second pass only when the first leaves something the work itself can give, and returns what the second still leaves with how it would be given, with your questions — Claude, or your plugin's step, which knows what you agreed, decides whether to run again.
 - The console shows only each step, not the paths of turn's own files — you follow the run without learning how turn keeps it.
