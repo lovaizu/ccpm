@@ -105,9 +105,10 @@ branch not taken.
 
 Can the maintainer trust that every line of the code is there for a behavior some test checks?
 
-Look at: remove each line, and each condition a line holds, such as one of two conditions joined by
-`and` or a bound on where a match may end, or loosen it, such as `is True` to any true value; run
-the tests, and put it back; a line or a condition whose removal or loosening fails no test fails.
+Look at: each line, and each condition a line holds, such as one of two conditions joined by `and`
+or a bound on where a match may end, matched to the behavior a test's Then names that would break
+without it; a line or a condition matched to none fails. Whether a line runs at all is the
+coverage count's to tell, not this item's.
 
 Why: a line no test needs is either a missing test or code with no purpose, and both are kept by
 every later maintainer without knowing why.

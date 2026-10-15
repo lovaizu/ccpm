@@ -5,15 +5,18 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by whoever builds or changes the product, to know how it should be built.
-Following the design, they implement it and secure its quality without hesitating.
+A design document is read by whoever builds or changes the product, to know what it must achieve,
+how that is checked, what every change must keep, and who is responsible for what. Holding only
+these, they implement it and secure its quality without hesitating, and decide every detail
+themselves.
 
 How the product is used is the README's; how each part behaves, with its steps, definitions,
 settings and file names, is the code's, since these change with each rebuild while the design
-holds. Each item of `doc.md` applies to a design document with how the product brings about its
-promises as its subject, and its B-16 is answered by the figure B-32 asks for. The reader comes from
-the README, so Goals and Verification are said in its words, and each name of a part inside the
-product is first met in that figure.
+holds. Each item of `doc.md` applies to a design document with what the product must achieve and
+who brings it about as its subject; its B-16 is answered by the structure figure, since the order
+things happen in is the README's to show. The reader comes from the README, so Goals and
+Verification are said in its words, and each name of a part inside the product is first met in
+the figure.
 
 ## Benefit
 
@@ -41,11 +44,11 @@ it is free to break it.
 
 ### B-4: Backward compatibility
 
-For each thing someone outside the product relies on, can the reader tell what must keep holding?
+For each thing someone outside the product relies on, can the reader tell who relies on it and what
+must keep holding for them?
 
 What others rely on: commands and settings users type, what other programs call or read, and what
-the product leaves in the user's environment, each with who relies on it. What must keep holding is
-what each lets them do.
+the product leaves in the user's environment. What must keep holding is what each lets them do.
 
 Why: a change to it breaks those who rely on it, who are not there to object; the design document is
 the one place that outlives a rebuild of the code.
@@ -65,15 +68,19 @@ Why: a change weighed without them turns the design into one that cannot run whe
 
 ### B-7: Attractive quality checked
 
-For each benefit, can the reader tell what must happen to the user for its check to pass?
+For each benefit, can the reader tell in what situation it is tried and what must happen to the
+user for its check to pass?
 
-Why: a check of whether the output has the intended shape passes while the benefit is missed.
+Why: a check of whether the output has the intended shape passes while the benefit is missed, and a
+check in a situation the other ways handle as well passes without showing the benefit.
 
 ### B-8: One-dimensional quality measured
 
-For each one-dimensional quality, can the reader tell how it is measured?
+For each one-dimensional quality, can the reader tell how it is measured and what the measure is
+compared with?
 
-Why: a quality not measured worsens without anyone noticing.
+Why: a quality not measured worsens without anyone noticing, and a measure compared with nothing
+shows neither better nor worse.
 
 ### B-9: Must-be quality checked
 
@@ -92,90 +99,34 @@ Why: a break in backward compatibility shows first to the users who rely on it, 
 
 ### B-11: Principles to judge a change
 
-Can the reader decide whether a change fits the design from its principles, because each principle
-is said as what a change must keep, so whether a change fits is read off it?
+Can the reader decide whether a change fits the design from its principles, because each is said as
+what a change must keep, with the quality or the constraint it protects?
 
 Why: without principles, a change can be held only against the code as it stands, where every
-difference looks like a break and none can be told from one that matters.
+difference looks like a break; a principle tied to what it protects tells what breaks when it is
+not kept, so principles can be weighed against each other, and one tied to nothing is kept out of
+habit.
 
-### B-12: Who takes part
+### B-12: Who is responsible for what
 
-Can the reader tell what each one that takes part in the product's work does?
+Can the reader see in one figure every one that takes part in the product's work, the user and
+what is outside the product included, what each is responsible for, and what each cannot work
+without?
 
-Who takes part: the user, the product's own parts, and what is outside it, such as the host the
-product runs in, other programs and the tools it needs.
+What the figure cannot show is said beside it, and nothing it shows is said again.
 
-Why: a maintainer changing one part needs to know every other its change can reach; one left
+Why: a maintainer changing one part needs to know every other its change can reach and what the
+part rests on; pieced together from prose, it costs effort and goes wrong, and a part left
 untold is reached without anyone seeing it.
-
-### B-13: An approach for each quality
-
-For each quality the design must have, can the reader find the approach that brings it about, said
-as the idea of how it comes about and who takes part in it?
-
-Why: a quality no approach serves has no way to come about.
-
-### B-22: Where each benefit is tried
-
-For each benefit, can the reader tell in what situation it is tried?
-
-Why: a check in a situation the other ways handle as well passes without showing the benefit.
-
-### B-23: What a measure is compared with
-
-For each one-dimensional quality, can the reader tell what its measure is compared with?
-
-Why: measured against the version in use, a change shows whether it made the product better or
-worse; a measure compared with nothing shows neither.
-
-### B-24: What each principle protects
-
-Can the reader weigh two principles against each other where a change keeps only one, because each
-names the quality or the constraint it protects?
-
-Why: a principle tied to what it protects tells what breaks when it is not kept; one tied to nothing
-is kept out of habit, and cannot be weighed.
-
-### B-25: What passes between them
-
-Can the reader tell what passes between each two that take part, from which to which?
-
-Why: a maintainer changing one part needs to know what it hands to and takes from the others.
-
-### B-26: What each one depends on
-
-Can the reader tell what each one that takes part cannot work without?
-
-Why: a part changed without knowing what it rests on stops working wherever that is missing.
-
-### B-31: Why each option was turned down
-
-For each other approach that was weighed, can the reader tell why it was not chosen?
-
-Why: without the reasons, a decision is either kept blindly or overturned for an option already
-weighed and turned down.
-
-### B-32: The whole in one place
-
-Can the reader see the whole of who takes part in one figure, instead of piecing it together from
-the approaches or from tables?
-
-The whole: what each one that takes part does, what passes between them and what each cannot work
-without, as B-12, B-25 and B-26 ask. What the figure cannot show is said beside it, and nothing it
-shows is said again.
-
-Why: a maintainer changing one part needs all it touches at once; pieced together in the head, it
-costs effort and goes wrong.
 
 ## Usability
 
 ### U-1: Few principles
 
-Can the reader keep every principle in mind, because each is one needed across more than one
-approach?
+Can the reader keep every principle in mind, because each is one a change anywhere must keep?
 
 Why: few principles can be kept in mind and weighed against each other; a rule that concerns one
-approach belongs with that approach, and listed among the principles adds one more thing to keep in
+part belongs with that part's code, and listed among the principles adds one more thing to keep in
 mind everywhere.
 
 ### U-2: Decisions told from details
@@ -185,18 +136,17 @@ document holds nothing decided anew with each build, such as steps, full definit
 settings and file names?
 
 Why: such details change with each rebuild, so a design that holds them must be rewritten with the
-code, and the reader can no longer tell a decision that must hold from a detail that may change; an
-idea the design takes up is given in full as a decision and its reason, not as its specification.
+code, and the reader can no longer tell a decision that must hold from a detail that may change.
 
 ### U-3: Each case left to the principles
 
-Can the reader keep in mind only the principles and the decisions, because the document writes down
-no case of how the product behaves that one of its principles already settles?
+Can the reader keep in mind only the principles and the responsibilities, because the document
+writes down no case of how the product behaves that they already settle, and no way of bringing a
+quality about that the builder could choose?
 
-Why: maintainers work out each case from the principles and the decisions; a case written down reads
-as one more rule to keep beside them, and must change with the implementation though no decision
-did. A trial's finding is traced to the principle it breaks and fixed in the implementation, not
-added to the design.
+Why: builders work out each case and each way from the principles and the responsibilities; a case
+or a way written down reads as one more rule to keep beside them, and must change with the
+implementation though no decision did.
 
 ### U-4: What others rely on, by what it gives them
 
@@ -241,22 +191,17 @@ Does the design document follow this template, headings included?
 
 ### Backward compatibility
 
-## Architecture
+## Structure
 
-### Structure
+<One figure: each one that takes part, its responsibility, what it cannot work without>
 
-### Principles
-
-### <Approach name>
-
-<The qualities it brings about, the idea of how, who takes part, and why each other approach
-weighed was not chosen>
+## Principles
 ```
 
 Why: a maintainer moving between products finds the same thing under the same heading in each, and
 settles what is aimed at and how it is checked, neither of which depends on how the product is
-built, before reading how it is built; and meets who takes part before the principles and approaches
-that name them.
+built, before reading who brings it about and what every change must keep; and meets who takes
+part before the principles that name them.
 
 ### F-2: A section thought through
 
@@ -270,10 +215,10 @@ Does Verification check each quality under the heading it has in Goals?
 
 Why: each quality is traced from what it is to how it is checked.
 
-### F-4: Each approach names its qualities
+### F-5: Each principle names what it protects
 
-Does each approach in Architecture name the qualities it achieves by the headings they have in
-Goals?
+Does each principle name, by the headings and names Goals gives them, the qualities or constraints
+it protects?
 
-Why: each quality is followed from Goals to the approach that achieves it, and an approach that
-names no Goals heading, kept for nothing, shows.
+Why: a quality is followed from Goals to the principles that keep it, and a principle that names
+nothing, kept for nothing, shows.

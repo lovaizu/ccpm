@@ -57,6 +57,8 @@ claude = subprocess.Popen(
     text=True,
 )
 assert claude.stdin and claude.stdout
+# A guard against a run that never ends, not a budget: a run of two rounds on a work of a few
+# hundred lines takes under an hour, so one still going at two is stuck.
 limit = threading.Timer(2 * 3600, claude.kill)
 limit.daemon = True
 limit.start()
