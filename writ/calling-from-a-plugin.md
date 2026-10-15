@@ -29,5 +29,9 @@ A JSON object at `out`, whose `next` says what the step does next:
   shows it to a user: first what writ decided or left, each with its ground, then each item of the
   checklists, met with the lines that give it or not met.
 
-When writ ends before any of this, because python3 or jq is missing, there is no `out` to read:
-writ says why in the conversation, and the step puts that to the user.
+- `stopped`: `reason` says why writ ended before the document was made, such as turn finding
+  that a file where the document goes has changes the repository does not hold. The step puts the
+  reason to the user.
+
+When python3 or jq is missing, there is no `out` to read: writ says why in the conversation, and
+the step puts that to the user.

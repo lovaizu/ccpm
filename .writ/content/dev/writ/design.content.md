@@ -52,9 +52,13 @@
 - What turn hands back: the document, written where the task says, and the CCS the run writes back.
   In that CCS, `next` names one of four outcomes: `done`, nothing is left for the user; `ask the
   user`, the CCS holds each question only the user can decide and each item not met with how it
-  would be met; `to the caller`, the CCS cannot be run, or an item would be met only by a change in
-  what writ wrote in the task; `stopped`, the user pressed Esc during the run and said what they
-  want instead, and the document is as it was before the run.
+  would be met; `to the caller`, an item would be met only by a change in what writ wrote in the
+  task; `stopped`, the user pressed Esc during the run and said what they want instead, and the
+  document is as it was before the run. When turn ends before any work, because python3 or jq is
+  missing, the `out` file already exists, the CCS does not match its form, or a file where the
+  document goes has changes git does not hold and is not the document a run returned unchanged,
+  turn writes no CCS and says why in the conversation; writ puts that reason to its caller as it
+  is.
 
 ## design
 
@@ -269,11 +273,17 @@
   gives it.
 - What to say is writ's, how to say it is turn's: the content file holds what the document says or
   does, and turn makes the form against the checklists. Protects: handed on without reading it over,
-  since form written into the content is copied into the document or overrides turn's check.
+  since form written into the content is copied into the document (seen on turn's README,
+  2026-10-15, where the content's wording came through as it was) or overrides turn's check
+  (assumption).
 - turn is given everything at once and runs once: what turn returns, met against the checklists, is
   finished by writ where the purpose needs, and turn runs again only when what it was given must
-  change. Protects: time and tokens, since a run on the same inputs returns the same judgments, and
-  each further run raised finer points the purpose did not need.
+  change, and writ's own changes to the document come after turn's last run, since turn writes
+  over a file only when git holds it or it is the document a run returned unchanged. Protects: time
+  and tokens, since a run on the same inputs returns the same judgments (seen on turn's README,
+  2026-10-15, where a second run on unchanged inputs made the same document again, a part the
+  purpose did not need included), and each further run raised finer points the purpose did not
+  need.
 - Only what the user alone can decide reaches the user: writ settles a point from the request, the
   repository or the sources alone, puts to the user what these do not settle, and does not ask at
   all a point the purpose does not need. Protects: asked what Claude alone would guess and only
@@ -318,7 +328,8 @@
   request with every decision it has made as answers; any other call is the user's. Whether writ
   runs in a subagent is not looked at, since a calling step may run in the main conversation.
   Started by the user, writ asks one point per question, since with several the user answers the
-  one they follow and the rest go half-decided; started by a calling step, it asks nothing and
+  one they follow and the rest go half-decided (the user's own experience, 2026-10-14); started by
+  a calling step, it asks nothing and
   returns at once every open point it would have asked, each with its recommended answer, and the
   call ends; the calling step decides them and starts writ again with the same request and its
   answers. Who takes part: the skill, the user or the calling step, a script for the tools. Weighed:
@@ -344,8 +355,10 @@
   as a command, what a screen shows or an error's text, the value itself is written. A document the
   user already has is read by writ, and what it says goes into the content file the same way; turn
   makes the document anew and is not handed the old one, since what it is handed it follows,
-  wording and slips included. Who takes part: the skill. Weighed: the content written into the
-  task's answers; not chosen, since it runs long and mixes with turn's rules there.
+  wording and slips included (assumption, from turn's own design, which has turn make new work
+  only). Who takes part: the skill. Weighed: the content written into the task's answers; not
+  chosen, decided by the user (2026-10-15) after eleven rules turn returned piled up beside the
+  answers in one task's constraints and pushed into the work what the caller had not asked.
 - Handing the task to turn. Brings about: handed on without reading it over, nothing of the user's
   lost. Idea: writ hands turn one task with everything turn works from, and turn works from it
   alone: where the document goes, its reader and their use, what they must be able to do, the
@@ -362,13 +375,15 @@
   document that meets the checklists from what it was given; writ judges it by the purpose,
   finishes it itself, and runs turn again only when what turn was given must change. writ reads
   the document as its reader would, and the CCS turn returned, by the test of what the purpose
-  needs; where writ can make the document serve the purpose by changing it, it changes it and is
-  done, such as a part the reader does not need, a slip, or an answer the user gave that fits in a
-  few lines, each change going into the report with why; where serving the purpose needs a large
-  change in what turn was given, such as a gap or a mistake in the content file, or an answer that
-  changes much of the document, writ corrects the content file or the task and runs turn again,
-  making the document anew, and only then, since a run on the same inputs returns the same
-  judgments. writ weighs each question and item not met that `ask the user` holds as an editor
+  needs. Where serving the purpose needs a large change in what turn was given, such as a gap or
+  a mistake in the content file, or an answer that changes much of the document, writ corrects the
+  content file or the task and runs turn again, making the document anew, and only then, since a
+  run on the same inputs returns the same judgments. Where writ can make the document serve the
+  purpose by changing it, such as a part the reader does not need, a slip, or an answer the user
+  gave that fits in a few lines, it changes it after turn's last run and is done, each change going
+  into the report with why; the order holds because turn writes over a file only when git holds it
+  or it is the document a run returned unchanged, so a change of writ's own before another run
+  would stop that run. writ weighs each question and item not met that `ask the user` holds as an editor
   sorts a reviewer's notes into those the author must settle and those the piece does without; the
   test, not the editor's feel, decides where the line falls, and one the purpose does not need goes
   into the report with the use or decision of the reader that does not rest on it. A question the

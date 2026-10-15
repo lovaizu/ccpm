@@ -94,14 +94,19 @@ ends leaves only the document, its content file, the task and turn's evidence.
     - `stopped: <where>`: the user stopped turn and said what they want instead; correct the
       content file, or what you give `up.py task`, from their words, and go to step 9.
     - `ask the user`, or `to the caller: <reason>`: judge each `question` and `unmet` by the test.
-      Where you can make the document serve the purpose by changing it, such as putting in an
-      answer of a few lines or taking out a part the reader does not need, change it, and keep each
-      change's lines and why for step 11. Where serving the purpose needs a large change in what
-      turn was given, such as a gap or a mistake in the content file, correct it and go to step 9,
-      and only then, since turn on the same inputs returns the same judgments. A question the
-      purpose needs that only the user can decide, or one you cannot judge either way: when the
-      user called you, ask it now, one per message with a recommended answer, and put the answer in
-      as above; when a plugin's step called you, go to step 6 with it.
+      A question the purpose needs that only the user can decide, or one you cannot judge either
+      way: when the user called you, ask it now, one per message with a recommended answer; when a
+      plugin's step called you, go to step 6 with it. Then, where serving the purpose needs a large
+      change in what turn was given, such as a gap or a mistake in the content file, or an answer
+      that changes much of the document, correct the content file and go to step 9, and only then,
+      since turn on the same inputs returns the same judgments. Otherwise, where you can make the
+      document serve the purpose by changing it, such as putting in an answer of a few lines or
+      taking out a part the reader does not need, change it now, after turn's last run, since turn
+      writes over a file only when git holds it or it is the document a run returned unchanged, and
+      keep each change's lines and why for step 11.
+    - No CCS at `out`, because turn ended before any work and said why: put its reason to the user
+      as it is, or to the plugin's step at its `out` file as `{"next": "stopped", "reason": "..."}`,
+      and end.
 11. Write, with `jq`, the judgments file beside the task, `<in path without .json>.judged.json`:
     `decided`, each point you settled yourself, `{"point", "ground"}`; `questions`, each `question`
     turn returned, `{"question", "judged"}`, the answer put in or why the purpose does not need it;
