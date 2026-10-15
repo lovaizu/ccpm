@@ -13,9 +13,9 @@
 - The criteria, by the IDs the design's Goals give them in order: A1 what they really want from
   rough words, A2 called only for decisions that are theirs, A3 decided from the proposal alone,
   A4 goes on from where it stopped, A5 read in its receiver's place before the user sees it; M1
-  the default branch untouched, M2 every decision pushed, M3 the record's form, M4 a sign-off
-  passed only by approval, M5 nothing reaches the user unread, M6 missing tools, M7 installs with
-  turn.
+  the default branch untouched, M2 every decision pushed, M3 the record's form, M4 only the user
+  passes a sign-off, gives feedback or pauses, M5 nothing reaches the user unread, M6 missing tools, M7 installs with
+  turn, M8 the conductor stays on course.
 - A trial: a script in `dev/rn/trials/` that runs one scene as rn's user would; a fixture: a state
   partway through a session, kept in `dev/rn/trials/fixtures/`, from which a trial starts; the
   stand-in: an AI playing the user, given only its part and what rn says to it.
@@ -96,11 +96,11 @@
   change only with it.
 
 ### B-5: Every must-be criterion is checked somewhere
-- M1 to M7 are each a test run by `sh dev/check.sh`, in the case that would break it, as the
+- M1 to M8 are each a test run by `sh dev/check.sh`, in the case that would break it, as the
   design's Verification lists; the flow session shows M1, M2 and M4 on a real run as well.
 
 ### B-6: The machine checks run as written
 - `sh dev/check.sh`, from the top of the repository in a virtual environment made with `pip
-  install -r dev/requirements.txt`: M1, M2, M3, M4, M5, M6, M7.
+  install -r dev/requirements.txt`: M1, M2, M3, M4, M5, M6, M7, M8.
 - `python3 dev/rn/trials/flow.py --out <a new folder>`: M1, M2, M4, and the course of a session.
   Every trial takes `--out <a new folder>` for its clone and record.
