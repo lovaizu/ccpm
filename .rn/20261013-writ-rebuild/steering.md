@@ -566,6 +566,13 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
       request and what a session leaves go to `rn/during-a-session.md`.
   15. rn 0.10.0 (a breaking change on 0.x), released with turn 0.2.0 from this pull request; writ's
       marketplace entry removed, writ 0.2.0 stays installed where it is.
+  16. Decided by the user (2026-10-16): rn's prompts, hooks and scripts are made through turn too,
+      not by hand; a `hook` checklist added for the hooks, beside `code`; the checklists grow with
+      each kind of work rn makes.
+- rn's README through turn (2026-10-16, Opus, $5.42, two rounds, 27 of 27, no question): read whole
+  as a newcomer; the orchestrator held 11 items the evaluator left (the opening's length, resuming
+  said in several places); one repeat of resuming cut and the opening split by hand (`487363c`).
+  The three rules turn returned apply `doc.md` B-12, U-1 and F-1; no checklist change.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
