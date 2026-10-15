@@ -12,6 +12,7 @@
 - A statement no trial has checked yet is marked "(assumption)".
 
 ### B-12: Every term known
+- What each term below means, said where the work first uses it.
 - The caller: Claude in the user's conversation, or a step of the user's plugin. It hands turn one
   task in a CCS, a JSON file, and turn writes back what the caller needs next, as a function takes
   arguments and returns a value.

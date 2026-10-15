@@ -112,12 +112,15 @@ guess, so the picture is not taken in by one reading from the top.
 
 ### B-12: Every term known
 
-Can the reader tell what each term means, because they already know it or the document explains it?
+Can the reader tell what each term means where they meet it, because they already know it or the
+document explains it where it is first used?
 
 A term is any word the document uses for a thing of its subject, whether set in code or not.
 
 Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
-someone who acts in it, that no sentence explains.
+someone who acts in it, that no sentence explains; and terms explained in a list apart from where
+they are used, such as a glossary ahead of the content, which the reader must take in before
+knowing why.
 
 Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
 from the writer's where the guess is wrong.
