@@ -100,7 +100,7 @@ a way the product cannot use, and does not reach their first result.
 
 ## Usability
 
-### U-1: Nothing to learn of the product's inside
+### U-1: Deciding and starting from the outside
 
 Can the reader decide and start without learning the names of the product's inner parts, the cases
 where it acts otherwise than the example shows, or the steps it takes inside?

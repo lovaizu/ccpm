@@ -31,7 +31,7 @@ After one reading from the top, does the reader hold the same picture of the sub
 Why: the reader acts on the picture they took in; where it differs from the writer's, they act
 otherwise without noticing.
 
-### B-3: Nothing left to guess
+### B-3: Each idea taken in whole
 
 Can the reader take in each idea the document takes up whole, without guessing any part of it?
 
@@ -98,7 +98,7 @@ For each checked fact the reader relies on, can they tell how far it was checked
 
 Why: a check whose reach is not written is taken as having checked everything.
 
-### B-11: Nothing ahead of what it rests on
+### B-11: Read once from the top
 
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?

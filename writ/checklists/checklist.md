@@ -39,13 +39,13 @@ Why: every item is judged against the user and the purpose; without them, no ite
 
 ### B-2: Every part of the purpose checked
 
-For each thing the opening says the user decides or does, can whoever judges learn from some item
-whether the user can?
+For each thing the opening says the user decides or does, can whoever judges learn from some item,
+in whichever section it sits, whether the user can?
 
 Why: items drawn from the purpose, one for each thing it names, are enough when every thing has
 one; a thing with no item lets a deliverable that misses that part of the purpose pass.
 
-### B-3: What the user gets, not what is there
+### B-3: What the user gets
 
 Does a yes to each Benefit and Usability item tell whoever judges that the user gets something from
 the deliverable, rather than that something is in it?
@@ -73,10 +73,37 @@ whether it serves its purpose.
 Can the maker know what passes, because each item gets the same answer whoever answers it?
 
 A question that holds a word whose bar depends on who answers, such as concrete, clear, enough or
-appropriate, does not. Such a word is replaced by what is looked at to answer yes.
+appropriate, does not; nor does one that counts in a unit it does not say, such as one change or
+one idea. Such a word is replaced by what is looked at to answer yes, and such a count by what
+counts as one.
 
 Why: when the answer depends on who judges, the maker cannot tell what passes, and judgments of the
 same deliverable differ.
+
+### B-7: How `doc.md` applies
+
+Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
+`doc.md` applies to the kind?
+
+Look for: what the kind's subject is, for the items that ask about the reader's picture of it; and,
+for each item of `doc.md` that the kind's shape settles otherwise, such as an opening its template
+has no place for, how it is answered for the kind. An item not named is answered as `doc.md` asks
+it.
+
+Why: `doc.md` is answered beside the kind's checklist; an item of it that the kind's shape cannot
+meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves its
+reader, and the maker cannot tell what passes.
+
+### B-8: Each item named by what it gives
+
+Can whoever makes the deliverable tell from each item's name alone what the user gets when the item
+is met?
+
+Look for: a name that says what is absent or kept out, such as "Nothing of the specification" or
+"No case a principle settles"; it fails.
+
+Why: an item is named alone in a judgment and in the maker's mind; a name of what is kept out is
+read as a rule, and the maker writes to avoid it rather than to give the user something.
 
 ## Usability
 
@@ -86,7 +113,8 @@ Can whoever uses the checklist find each item in the section these questions put
 
 Ask of each item, in this order, and stop at the first yes:
 
-1. Does it ask for a set shape that a person or a tool relies on? Format.
+1. Does it ask for a shape that a person or a tool tells without reading what the deliverable
+   says, such as a heading, a name, a marking or a number's form? Format.
 2. Without it, does the user lose what they get from the deliverable? Benefit.
 3. Otherwise: Usability.
 
@@ -109,6 +137,8 @@ version: <x.y.z>
 
 <Who uses it, and what it lets them decide or do>
 
+<Where the kind is a document, how `doc.md` applies to it>
+
 ## Benefit
 
 ### B-1: <Item name>
@@ -130,7 +160,7 @@ Every checklist has the three sections, in this order.
 
 Why: every checklist in the same shape keeps their quality even, and lets a tool read any of them.
 
-### F-2: A section with no item
+### F-2: A section thought through
 
 Does each section with no item hold `None:` and its reason?
 
@@ -157,11 +187,15 @@ checklists are judged at once.
 Compared with the version last released, is every ID that a removed or moved item had left unused,
 with a moved item taking a new number in its new section?
 
+A checklist not yet released has no such ID, and passes.
+
 Why: an ID named earlier always means the same item.
 
 ### F-6: Version raised once for each release
 
 Is the `version` raised once for each release from the version last released, and not with each
 change on a branch?
+
+A checklist not yet released is `0.1.0`.
 
 Why: a judgment names the text it was made by, and no draft between releases takes a number.

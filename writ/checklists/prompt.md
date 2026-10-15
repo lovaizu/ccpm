@@ -136,7 +136,7 @@ sending.
 
 Why: an action hard to undo cannot be taken back once the user sees it.
 
-### B-11: Only what the AI does not already know
+### B-11: Attention on what changes what it does
 
 Does the AI spend its attention only on sentences that change what it does?
 
@@ -204,7 +204,7 @@ Look at: each such operation done by a script the AI runs; one the AI works out 
 Why: a script gives the same result every time and spends no attention; the same operation worked
 out by the AI varies from run to run.
 
-### B-18: Only fields that are used
+### B-18: Each field used by someone
 
 Does the AI fill only the fields that someone uses?
 
