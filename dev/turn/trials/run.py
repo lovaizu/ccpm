@@ -57,7 +57,7 @@ claude = subprocess.Popen(
     text=True,
 )
 assert claude.stdin and claude.stdout
-limit = threading.Timer(4 * 3600, claude.kill)
+limit = threading.Timer(2 * 3600, claude.kill)
 limit.daemon = True
 limit.start()
 
