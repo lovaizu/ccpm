@@ -8,7 +8,7 @@ version: 0.1.0
 Code is run by its users and changed by whoever maintains it; its tests are read and run by that
 maintainer. Code and its tests let the maintainer:
 
-- trust, from the tests passing, that the code does what its README and its design ask;
+- trust, from the tests passing, that the code does what its sources ask;
 - take each test failure as a fault in what the code must do;
 - tell from each test, read alone, what the code must do and in what situation;
 - see that every branch of the code is run by a test, so a missing test and code no test needs
@@ -34,18 +34,19 @@ And they let whoever runs the code:
 - tell, when it stops, what went wrong;
 - tell, when it stops, what to do about it.
 
-What the code must do is set by its README and its design; this checklist judges the code and its
-tests against them, from the code, the tests and their results.
+What the code must do is set by its README, its design and what calls it, such as the steps of a
+prompt that runs it, here called its sources; this checklist judges the code and its tests against
+them, from the code, the tests and their results.
 
 ## Benefit
 
 ### B-1: Tests hold what the code must do
 
-Can the maintainer trust, from each test passing, that the code does a behavior the README or the
-design asks of it?
+Can the maintainer trust, from each test passing, that the code does a behavior its sources ask of
+it?
 
-Look at: for each test, the sentence of the README or the design that asks the behavior it checks;
-a test with no such sentence fails.
+Look at: for each test, the sentence of its sources that asks the behavior its Then checks, quoted;
+a test for which no sentence can be quoted fails.
 
 Why: a test written after the code is fitted to what the code does, so it passes a fault the code
 was written with; a test written first, from what the code must do, holds the code to it.
@@ -65,18 +66,25 @@ that works.
 For each check the code makes on what it receives, can the maintainer learn from a test that the
 check stops an input it must stop?
 
-Look at: for each such check, a test that gives it an input it must stop and sees it stopped.
+Look at: for each such check, each way an input may lack what its sources say it
+holds, such as a text with no words where they say what it asks, or hold what they say it must not,
+in each form that takes, such as each form an ID may take; and a test that gives it one of each
+and sees it stopped.
 
-Why: a check tested only on what it lets through looks the same as no check at all.
+Why: a check tested only on what it lets through looks the same as no check at all, and one tested
+on one form of what it must stop lets the other forms through.
 
 ### B-4: A check tested on what it lets through
 
 For each check the code makes on what it receives, can the maintainer learn from a test that the
 check lets through an input it must let through?
 
-Look at: for each such check, a test that gives it an input it must let through and sees it used.
+Look at: for each such check, a test that gives it an input it must let through and sees it used,
+among them the input one change away from one it must stop, such as a value one short of a limit, or
+a name that holds a stopped one as its first letters.
 
-Why: a check tested only on what it stops may stop everything.
+Why: a check tested only on what it stops may stop everything, and one tested only on inputs far
+from what it stops may stop its neighbors.
 
 ### B-5: What each test checks, told in plain words
 
@@ -99,7 +107,7 @@ check fails.
 Why: a Then whose code checks less than its words lets a fault pass under a test that reads as if it
 caught it.
 
-### B-7: Each Then checked no further
+### B-7: Each check named by its Then
 
 Can the maintainer change what a Then does not name without that test failing?
 
@@ -119,11 +127,13 @@ Look at: the report, counting branches as well as lines, lists no branch and no 
 Why: a branch no test takes may be broken without any test failing, and a missing test shows as a
 branch not taken.
 
-### B-9: Nothing no test needs
+### B-9: Each line needed by a test
 
 Can the maintainer trust that every line of the code is there for a behavior some test checks?
 
-Look at: remove each line, run the tests, and put it back; a line whose removal fails no test fails.
+Look at: remove each line, and each condition a line holds, such as one of two conditions joined by
+`and` or a bound on where a match may end, or loosen it, such as `is True` to any true value; run
+the tests, and put it back; a line or a condition whose removal or loosening fails no test fails.
 
 Why: a line no test needs is either a missing test or code with no purpose, and both are kept by
 every later maintainer without knowing why.
@@ -192,7 +202,8 @@ When whoever runs the code gives it something wrong, such as a file, an argument
 program hands it, are they stopped before the code uses it?
 
 Look at: each place the code takes in something from outside, against the first place it uses it; a
-check that stops a wrong one lies between them.
+check that stops one lacking what its sources say it holds, or holding what they say
+it must not, lies between them.
 
 Why: a wrong input used fails far from where it came in, or does harm, such as writing outside the
 folder it was meant for, and the user cannot tell from the failure what they gave wrong.
@@ -283,13 +294,13 @@ takes is found late.
 When a test fails, can the maintainer tell from that failure alone which one behavior broke?
 
 Look at: for each test, the behaviors whose fault would make its checks fail, each matched to the
-sentence of the README or the design that asks it; a test whose checks would fail on behaviors
+sentence of its sources that asks it; a test whose checks would fail on behaviors
 asked by two sentences fails.
 
 Why: a test that holds several behaviors, failing, leaves the maintainer to read its code to learn
 which of them broke.
 
-### B-26: Nothing run that only another behavior needs
+### B-26: Each behavior tested on its own code
 
 Can the maintainer test each behavior without running the code that only another behavior needs?
 
@@ -333,6 +344,17 @@ part whose leaving out still has the test pass with its Then true fails.
 
 Why: input and setup beyond what the behavior needs hide which part of them the behavior rests on,
 and every run pays to make them.
+
+### B-30: Each behavior asked has a test
+
+For each sentence of its sources that asks a behavior of the code, can the maintainer
+learn from some test that the code does it?
+
+Look at: each such sentence, matched to a test whose Then checks the behavior it asks; a sentence
+left without one fails, whichever file holds the code that does it.
+
+Why: the tests passing give trust only in the behaviors they hold, and a test chosen from the lines
+not yet run holds the lines, not what the design asks of them.
 
 ## Usability
 
