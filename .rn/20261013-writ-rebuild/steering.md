@@ -536,9 +536,36 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   Every item of both checklists met. writ offered to delete `.turn/` and `.writ/` at the end,
   which no step asks.
 - Decided by the user (2026-10-15): writ is never used without rn, so writ is folded into rn in
-  #54: rn keeps its session, sign-offs, record and one question at a time, and takes from writ the
-  checklists, the content file, turn called with a CCS, the judgment of what turn returns and the
-  report; the writ plugin retires once rn holds them. turn stays a plugin of its own.
+  this pull request: the conductor hears (one point at a time, intent before means, facts looked
+  up) and judges; turn makes every work, the plan, the three documents, each task's result, the
+  deliverable's use and each proposal, and reads it in its receiver's place; questions are the
+  conductor's and are not made by turn; after turn, a small shortfall the conductor fixes itself,
+  and only a large change to the content runs turn again; `/rn:on` folds into `/rn:up`; trials
+  secure the attractive quality on rn-try and tests the must-be quality. The writ plugin goes.
+  Decisions made on the way, to report:
+  8. `/rn:dn` stays: a task under way is turn at work, which `/rn:dn` stops with Esc so its work
+     stays in turn's evidence; the record keeps 0.9.0's form, so a 0.9.0 session is taken up as it
+     stands.
+  9. The plan, `steering.md`, is made by turn at the Plan sign-off from its content, which the
+     conductor writes point by point as agreed; between sign-offs the conductor edits only the
+     record's machine parts (`[x]`, `status`, `pr`).
+  10. The verification document is itself a checklist: front matter `name: verification`, each
+      scene a `### A1:` item, so the deliverable is used by turn against it; turn accepts `A1` as
+      an item ID beside `A-1`. turn's first user sees each scene's pass, as it sees every item;
+      rn's rule that the first user never sees the pass is given up with rn's own first user.
+  11. Three checklists added to rn: `plan`, `proposal`, `verification`; the proposal puts first what
+      rn decided for the user and lists the checklist items met, in place of every Good and More of
+      every use (#46).
+  12. The content of each work lives at `.rn/{session}/content/`, the tasks at
+      `.rn/{session}/tasks/`, both committed; turn's `.turn/` is left uncommitted. The user's own
+      checklists at `.rn/checklists/<kind>.md`.
+  13. rn's hooks keep checks 1–9 and 12–14; the first-user checks go with rn's first user; the
+      proposal check asks for the `Toward` lines per attractive criterion and the `Decided for you`
+      heading.
+  14. The README keeps `/rn:gm` in the example once; `/rn:dn`, resuming, feedback from the pull
+      request and what a session leaves go to `rn/during-a-session.md`.
+  15. rn 0.10.0 (a breaking change on 0.x), released with turn 0.2.0 from this pull request; writ's
+      marketplace entry removed, writ 0.2.0 stays installed where it is.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
