@@ -396,7 +396,12 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   picture taken in by one reading and acted on without asking, no effort beyond the subject. Kept
   as conditions of it; B-1 and B-8 (an opening that tells what is covered) folded into B-9, the
   point from the opening; B-10 into B-5; U-4 into B-4, which takes back the 10/06 question on
-  parts skipped or read twice; B-15 (a comparison for each idea) removed. Next: `readme.md`.
+  parts skipped or read twice; B-15 (a comparison for each idea) removed.
+- `readme.md` done the same way (2026-10-15): someone meeting the product decides from the README
+  alone whether it is for them and, if so, gets to their first result. B-6 (where to go for more)
+  removed as beyond that purpose, the Documentation heading kept as the place READMEs give it; U-4
+  removed, since `doc.md` B-11 asks it; the opening says the example answers `doc.md` B-16. Next:
+  `design.md`, then the README and a design made with the three and read for noise.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 

@@ -5,22 +5,12 @@ version: 0.2.0
 
 # README
 
-A README is read by someone meeting a product for the first time. It lets them:
+A README is read by someone meeting the product for the first time. From it alone they decide
+whether the product is for them, and if it is, get to their first result with it.
 
-- decide from its first sentence or two what the product is, what they would gain from it and
-  whether it is for them;
-- tell why to choose it over the other ways they could do the same work;
-- picture using it on their own work, from starting to the result;
-- get from deciding to their first result with the README alone;
-- tell where to go for more;
-- tell on what terms they may use it.
-
-What only the product's builders need, such as its design or how to contribute, is not for this
-reader. Each item of `doc.md` also applies to a README, with deciding and getting to the first result
-as its subject: the whole picture, the ideas given in full and the job of each part are judged by
-that, and what lies beyond it goes in a page reached from Documentation, not in the README. What the
-README leaves out is told under Documentation, where the reader is sent for it, and `doc.md`'s B-8
-is answered there rather than from the opening.
+Each item of `doc.md` applies to a README with deciding and getting to the first result as its
+subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation. Where
+the README shows who does what, the example shows it, and `doc.md`'s B-16 is answered there.
 
 ## Benefit
 
@@ -65,14 +55,6 @@ Look for what must be in place beforehand, how to install the product, and a fir
 can repeat by following the README.
 
 Why: each place the reader has to look elsewhere is a place they may stop.
-
-### B-6: Where to go for more
-
-Can the reader tell where to find what the README leaves out, such as fuller use and what changed
-in each version?
-
-Why: a reader who wants what the README leaves out and cannot tell where it is goes without it, or
-takes it from somewhere that may not hold for this product.
 
 ### B-7: Terms of use
 
@@ -133,15 +115,6 @@ or how it works, which belongs in the example.
 Why: the reader decides from the opening whether to read on; each reason or working met there is
 read before they know whether the product is for them, and stands between them and what they decide
 by.
-
-### U-4: The example taken in from the top
-
-Can the reader take in the example in one reading from the top, because what they do comes first,
-what the product gives back next, and what each part of what it gives back means after it, where
-they have just seen it?
-
-Why: a meaning told before the thing it belongs to is held in the head until the thing comes, or
-sends the reader ahead to find it and back again, so the picture is not taken in by one reading.
 
 ### U-5: What they gain right after what it is
 
