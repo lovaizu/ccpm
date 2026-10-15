@@ -404,6 +404,14 @@ Progress:
        a rule; B-12 asks for positive terms even beside what to do; B-20 the reason for each
        instruction; B-21 the scope of its inputs (the whole of what the AI reads, what it works on
        and what it consults, such as other code it follows).
-  4. Next: `prompt.md` through turn; turn's README and design made again through turn on those
-     decisions, from content files, shown to the user; turn's code; then writ's README from its
-     content file, writ's code, and finish #4.
+  4. Done: `prompt.md` through turn (aadb265); turn's README through turn from its content file,
+     then finished by hand from its purpose (5b58f2f), its content file at
+     `.writ/content/turn/README.content.md`; writ's design takes the content file (place, name,
+     form, five steps), writ finishing turn's result itself and running turn again only on changed
+     inputs, and drops the hook (8925167). The user decided (2026-10-15): turn's output meets the
+     checklists, so the caller judges it by the purpose and fixes it; turn runs again only when
+     its inputs must change much.
+  5. Next: the user agrees turn's README and writ's design (PR #61); turn's design and
+     `turn/calling-from-a-plugin.md` on the decisions in 3, through turn and finished by hand;
+     turn's code; writ's README from its content file (the "report once every item is met"
+     promise, the callers' page link); writ's code; the stale CHANGELOG lines; finish #4.
