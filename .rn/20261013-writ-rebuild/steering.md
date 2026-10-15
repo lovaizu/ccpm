@@ -675,6 +675,14 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   user; the stand-in's parts and how rn and turn reach the clone said as the trials do; the start
   given as commands to see and to bring back; each pass said as the decision line the records
   hold. The rules of both runs each apply an item that exists; none taken.
+- The practice repository's start (2026-10-16): `main` of `lovaizu/rn-try` held `1fdec5b`, "Start:
+  the team's plugins", a README alone, set on 2026-10-07 for turn's earlier trials, and the branch
+  `20261009-pr-intent-rules` of the closed pull request #79 was left. Decision 18, to report: that
+  `main` is kept as the tag `team-plugins-2026-10-07`, `main` is put back to `c3b5f8e`, the shop
+  app the verification document and the fixtures rest on, and the branch is deleted, as the
+  verification document says of a start left otherwise. The flow trial runs as `flow1` in this
+  session's scratchpad, on rn with the hooks' first unit alone, to try the prompts and the scripts
+  end to end while the hooks' other units are made.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
