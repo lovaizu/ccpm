@@ -411,6 +411,17 @@ Progress:
      inputs, and drops the hook (8925167). The user decided (2026-10-15): turn's output meets the
      checklists, so the caller judges it by the purpose and fixes it; turn runs again only when
      its inputs must change much.
+  6. Decided by the user (2026-10-15): turn's code is written by hand, since turn is the tool in
+     use, but as turn works: with the checklist open, then read as the first user and given a Good
+     per item with its lines, so each checklist is tried on its kind and refined. Findings on the
+     checklists, gathered for one change shown to the user at the end:
+     - doc B-16 (who does what, in one place): had turn add a six-step list to turn's README, saying
+       again what the console sample shows.
+     - design B-16, B-30 (options weighed and cost for every choice): had turn ask five questions
+       on turn's design that a builder's judging a change does not need.
+     - code (on 8491db1): B-2, B-7, B-9, B-18 and B-22 each found a real gap, fixed in 579e991;
+       no item pushed work the purpose does not need. B-20 found "round" in turn's design and
+       "reading" in turn's code and tests for one thing; settle with the prompts.
   5. Next: the user agrees turn's README and writ's design (PR #61); turn's design and
      `turn/calling-from-a-plugin.md` on the decisions in 3, through turn and finished by hand;
      turn's code; writ's README from its content file (the "report once every item is met"
