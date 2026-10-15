@@ -422,6 +422,25 @@ Progress:
      - code (on 8491db1): B-2, B-7, B-9, B-18 and B-22 each found a real gap, fixed in 579e991;
        no item pushed work the purpose does not need. B-20 found "round" in turn's design and
        "reading" in turn's code and tests for one thing; settle with the prompts.
+  7. Where to resume (2026-10-15): turn's scripts and tests are on the new CCS (8491db1, 579e991;
+     CI green, coverage 100%); turn's prompts and hooks are not yet, so a trial run breaks until
+     they are. Next, each by hand with its checklist open, then read as the first user with a Good
+     per item, findings added to 6:
+     - Hooks (`code.md`): a check that stops Read, Grep and Glob outside the role's inputs (for an
+       agent, the paths in its brief but `deliverable`, plus the brief; for the orchestrator, the
+       run's evidence folder, `in`, content, references and checklists; turn's own folder for all),
+       saying it is to work without bias and naming what may be read; a check that lets the
+       orchestrator's Bash run only turn's `up.py`, `jq`, `mv` and `cd` on those paths; add Read,
+       Grep and Glob to the PreToolUse matcher; give every stop message its intent. First confirm
+       from a trial's records that PreToolUse inside a subagent carries `agent_type`
+       (`console_shown.py` already relies on `agent_id`).
+     - Prompts (`prompt.md`, B-20, B-21): the skill and the four agents name their inputs as the
+       whole of what they read, in positive words with why; `sources` becomes content and
+       references; the first user reads `work` and `opens`, no copy; the generator has no `started
+       from`; step 14 rewrites the caller's parts with no turn entries in `constraints`. Settle
+       "round" (design) against "reading" (code, tests, prompts) to one name.
+     - Then a trial on the flow task, CHANGELOG (turn 0.2.0 with the old-to-new kind table; writ's
+       stale lines), writ's README from its content file, writ's code, and finish #4.
   5. Next: the user agrees turn's README and writ's design (PR #61); turn's design and
      `turn/calling-from-a-plugin.md` on the decisions in 3, through turn and finished by hand;
      turn's code; writ's README from its content file (the "report once every item is met"
