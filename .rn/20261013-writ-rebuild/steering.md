@@ -392,6 +392,11 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   dropped, such as nothing the reader would skip. Decisions the user made since 10/13 stay. Then
   make the README and the design with it and see that no noise comes out. Today's additions (doc
   B-12 on terms, B-16 on a figure, F-1 on lists; design B-32 on a figure) are judged the same way.
+- `doc.md` done against its purpose, agreed with the user (2026-10-15): one reader, one use, the
+  picture taken in by one reading and acted on without asking, no effort beyond the subject. Kept
+  as conditions of it; B-1 and B-8 (an opening that tells what is covered) folded into B-9, the
+  point from the opening; B-10 into B-5; U-4 into B-4, which takes back the 10/06 question on
+  parts skipped or read twice; B-15 (a comparison for each idea) removed. Next: `readme.md`.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 

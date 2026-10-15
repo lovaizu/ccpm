@@ -36,7 +36,7 @@ you type follows `>`, and what writ says follows `●`.
   that meet each item:
 
   Every document
-    ✅ B-1 What it covers: lines 1-4
+    ✅ B-2 The picture as meant: lines 1-4
     (every item gets a line the same way)
   README
     ✅ B-3 Why this one: lines 5-8

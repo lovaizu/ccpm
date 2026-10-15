@@ -5,24 +5,11 @@ version: 0.2.0
 
 # Document
 
-A document is read by the reader it is written for. It lets them:
-
-- tell from its opening what it covers, what it leaves out that they might expect it to cover, and
-  what its point is;
-- take in, in one reading from the top, the writer's whole picture of its subject;
-- tell how far they can rely on each thing it says;
-- rely on what it says for as long as it is kept.
-
-And it lets them do so spending only the effort the subject itself asks.
+A document is written for one reader who comes to it for one use. Reading it once from the top,
+that reader takes in the writer's picture of the subject and can act on it without asking the
+writer, spending no more effort than the subject itself asks.
 
 ## Benefit
-
-### B-1: What it covers
-
-From the opening, can the reader tell what the document covers?
-
-Why: a reader decides from the opening whether to read on; without its reach, they read a document
-that does not hold what they need, or pass over one that does.
 
 ### B-2: The picture as meant
 
@@ -38,21 +25,27 @@ Can the reader take in each idea the document takes up whole, without guessing a
 Why: an idea touched on in part is completed by a guess, and a gap covered by smooth sentences is
 acted on without the reader noticing.
 
-### B-4: Every part has a job
+### B-4: Every part used
 
-Does each part give the reader something their picture of the subject needs?
+Does the reader use each part in the one use they came for, without skipping it or reading again
+what they already took in?
 
-Ask of each part what it is there to give the reader, and whether the reader gets it.
+Look for: a part meant for someone other than the reader, such as a reviewer; an opening or a
+section that tells what the document is or does in place of telling the subject; terms gathered
+ahead of the content; the history of how a decision was reached; a comparison or an example for an
+idea the reader already holds; a part that says again, in other words or in a figure, what another
+part says.
 
-Why: a part with no job, such as one meant for someone else or the history of how a decision was
-reached, costs the reader effort and buries the parts that do have one.
+Why: a part the reader skips or reads twice costs effort beyond the subject, and buries the parts
+they need; once the reader skims a run of repeats, they skim the one new point among them too.
 
-### B-5: What kind each statement is
+### B-5: How far to rely
 
-For each statement the reader relies on, can they tell whether it is a checked fact, an assumption,
-a proposal or a decision?
+For each statement the reader relies on, can they tell how far to rely on it: whether it is a
+checked fact, and how far it was checked, an assumption, a proposal or a decision?
 
-Why: an unchecked claim stated flatly is acted on as fact.
+Why: an unchecked claim stated flatly is acted on as fact, and a check whose reach is not told is
+taken as having checked everything.
 
 ### B-6: Still true later
 
@@ -67,45 +60,27 @@ Why: a document that has turned wrong is worse than none, since it is believed.
 ### B-7: Said in one place
 
 Can the reader take each thing the document says as the one account of it, because it is said in
-one place of the document, with every case where it does not hold beside it, and not also in
-another place of it, in another document or by the deliverable itself?
-
-Look for: a fact, a rule or a step stated in two sections, in the same words or in others; a rule
-in one section and a case where it does not hold in another, so that the two disagree when read
-apart.
+one place, with every case where it does not hold beside it, and not also in another place of the
+document, in another document or by the deliverable itself?
 
 Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
-tell which holds.
-
-### B-8: What it leaves out
-
-From the opening, can the reader tell what the document leaves out that they might expect it to
-cover?
-
-Why: a reader who expects a document to cover something it does not looks there for it, and takes
-its silence as an answer.
+tell which holds; a rule read apart from the case where it does not hold is followed there too.
 
 ### B-9: The point from the opening
 
-From the opening, can the reader tell the document's main point?
+From the opening, does the reader have the document's main point, and so know whether the document
+is the one for their use?
 
-Why: a reader who stops after the opening still has what matters most, and one who reads on reads
-each part knowing what it supports.
-
-### B-10: How far each check reached
-
-For each checked fact the reader relies on, can they tell how far it was checked?
-
-Why: a check whose reach is not written is taken as having checked everything.
+Why: a reader who stops after the opening still has what matters most, one who reads on reads each
+part knowing what it supports, and one who came to the wrong document turns away at once.
 
 ### B-11: Read once from the top
 
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?
 
-Look for: a name used before the sentence that says what it names; a reason moved ahead of the
-names it uses, so that it comes first; a decision whose reason comes later or elsewhere; a link or
-a pointer that sends the reader ahead for what a sentence rests on, in place of putting it before.
+Look for: a name used before the sentence that says what it names; a decision whose reason comes
+later or elsewhere; a link or a pointer that sends the reader ahead for what a sentence rests on.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
 guess, so the picture is not taken in by one reading from the top.
@@ -113,14 +88,12 @@ guess, so the picture is not taken in by one reading from the top.
 ### B-12: Every term known
 
 Can the reader tell what each term means where they meet it, because they already know it or the
-document explains it where it is first used?
+sentence where it is first used explains it?
 
 A term is any word the document uses for a thing of its subject, whether set in code or not.
 
 Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
-someone who acts in it, that no sentence explains; and terms explained in a list apart from where
-they are used, such as a glossary ahead of the content, which the reader must take in before
-knowing why.
+someone who acts in it, that no sentence explains.
 
 Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
 from the writer's where the guess is wrong.
@@ -137,23 +110,16 @@ Does each name keep one meaning for the reader from start to end?
 
 Why: a name whose meaning shifts carries its first meaning into the place where it has changed.
 
-### B-15: Tied to what the reader knows
+### B-16: Who does what, at a glance
 
-Can the reader place each new idea against something they already know, by a comparison or an
-example?
+Can the reader see who does what, what passes between them and in what order at a glance, instead
+of piecing it together from sentences spread through the document?
 
-Why: an idea with nothing to hold it is read but not kept.
-
-### B-16: Who does what, in one place
-
-Can the reader see who does what, what passes between them and in what order in one place, instead
-of piecing it together from sentences spread through the document: for a reader who is a person,
-in one figure, with the text beside it saying only what the figure cannot show?
-
-Look for: who does what, or what passes between them, given only in sentences or tables.
+For a reader who is a person, that is one figure, with the text beside it saying only what the
+figure cannot show; for an AI reading a prompt, it is the steps.
 
 Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
-what rows of a table make them assemble, while an AI reading a prompt takes it from the steps.
+what rows of a table make them assemble, while an AI reads a figure as text, in order.
 
 ## Usability
 
@@ -169,15 +135,8 @@ supports.
 
 Does each word the reader reads give them something they would lose without it?
 
-Why: the effort the subject itself asks cannot be cut, but every word beyond it is effort spent on
-how the document is written instead of on the subject.
-
-### U-4: One use
-
-Does every part serve the reader in the one use they come to the document for: learning, getting a
-task done, looking something up, or understanding why?
-
-Why: a reader comes for one use, and parts written for another stand in their way.
+Why: every word beyond what the subject asks is effort spent on how the document is written instead
+of on the subject.
 
 ### U-7: Headings to find a part again
 

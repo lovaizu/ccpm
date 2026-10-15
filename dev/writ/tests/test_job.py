@@ -123,7 +123,7 @@ class Form(unittest.TestCase):
         # Then: there is an empty place for every item of both, named as turn names them
         form = self.repo.json(f"{folder}/form.json")
         self.assertEqual(
-            form["items"]["doc B-1"], {"title": "What it covers", "decision": "", "settled": ""}
+            form["items"]["doc B-9"], {"title": "The point from the opening", "decision": "", "settled": ""}
         )
         self.assertIn("readme B-3", form["items"])
         self.assertTrue(all(i.split()[0] in ("doc", "readme") for i in form["items"]))
@@ -167,7 +167,7 @@ class Form(unittest.TestCase):
         form = self.repo.json(f"{folder}/form.json")
         self.assertEqual(code, 0, out)
         self.assertEqual(form["receiver"], "developers with messy CSV files")
-        self.assertEqual(form["items"]["doc B-1"]["settled"], "docs/notes.md:1")
+        self.assertEqual(form["items"]["doc B-9"]["settled"], "docs/notes.md:1")
         self.assertEqual(form["items"]["notes B-1"]["decision"], "")
         self.assertEqual(form["checklists"], paths)
 
@@ -254,7 +254,7 @@ class Ccs(unittest.TestCase):
         # Given: one decision settled by nothing named, one from a file that is not there
         folder = laid(self.repo, "doc")
         form = settle(self.repo, folder)
-        form["items"]["doc B-1"]["settled"] = "I think so"
+        form["items"]["doc B-9"]["settled"] = "I think so"
         form["items"]["doc B-2"]["settled"] = "docs/gone.md:3"
         form["items"]["doc B-3"]["settled"] = ""
         self.repo.write(f"{folder}/form.json", json.dumps(form))
@@ -262,7 +262,7 @@ class Ccs(unittest.TestCase):
         code, out = run(self.repo, "ccs", folder)
         # Then: each is named with what it must say
         self.assertEqual(code, 1)
-        for item in ("doc B-1", "doc B-2", "doc B-3"):
+        for item in ("doc B-9", "doc B-2", "doc B-3"):
             self.assertIn(
                 f"{item}: say where it is settled: answer, proposal confirmed, or a file", out
             )
@@ -271,7 +271,7 @@ class Ccs(unittest.TestCase):
         # Given: every place is settled, by the notes, an answer and a confirmed proposal
         folder = laid(self.repo, "doc")
         form = settle(self.repo, folder, sources=["docs/notes.md"], language="English")
-        form["items"]["doc B-1"].update(decision="Under the MIT license.", settled="answer")
+        form["items"]["doc B-9"].update(decision="Under the MIT license.", settled="answer")
         form["items"]["doc B-2"].update(decision="Leaves out tabs.", settled="proposal confirmed")
         self.repo.write(f"{folder}/form.json", json.dumps(form))
         # When: the CCS is asked for
@@ -313,7 +313,7 @@ class Ccs(unittest.TestCase):
         # Then: the decisions say, for each item, what the document gives and where it was settled
         decisions = self.repo.read(f"{folder}/decisions.md")
         self.assertIn(
-            "## doc B-1: What it covers\n\nUnder the MIT license.\n\nSettled by: answer\n",
+            "## doc B-9: The point from the opening\n\nUnder the MIT license.\n\nSettled by: answer\n",
             decisions,
         )
         self.assertIn("Leaves out tabs.\n\nSettled by: proposal confirmed\n", decisions)
@@ -357,7 +357,7 @@ class End(unittest.TestCase):
             )
         )
         self.assertIn(report, out)
-        self.assertTrue(report.startswith("Document 0.2.0\n  ✅ B-1 What it covers: lines 1\n"))
+        self.assertTrue(report.startswith("Document 0.2.0\n  ✅ B-2 The picture as meant: lines 1\n"))
         self.assertIn("\nREADME 0.2.0\n  ✅ B-1 What they gain: lines 1\n", report)
         self.assertEqual(report.count("✅"), len(self.repo.json(f"{folder}/form.json")["items"]))
         # Then: the job is closed
@@ -480,7 +480,7 @@ class FromAPlugin(unittest.TestCase):
     def test_the_open_points_go_back_to_the_calling_plugin_with_their_recommended_answers(self):
         # Given: a plugin's step called writ, and one point only its caller can decide is open
         folder = laid(self.repo, "doc")
-        open_point = {"item": "doc B-1", "question": "Which license?", "recommended": "MIT"}
+        open_point = {"item": "doc B-9", "question": "Which license?", "recommended": "MIT"}
         settle(self.repo, folder, open=[open_point])
         # When: the open points are handed back
         code, out = run(self.repo, "back", folder, "back.json")
@@ -502,13 +502,13 @@ class FromAPlugin(unittest.TestCase):
     def test_no_ccs_is_written_while_a_point_is_open(self):
         # Given: one point is open
         folder = laid(self.repo, "doc")
-        point = {"item": "doc B-1", "question": "Which license?", "recommended": "MIT"}
+        point = {"item": "doc B-9", "question": "Which license?", "recommended": "MIT"}
         settle(self.repo, folder, open=[point])
         # When: the CCS is asked for
         code, out = run(self.repo, "ccs", folder)
         # Then: the open point is named, and no CCS is written
         self.assertEqual(code, 1)
-        self.assertIn("doc B-1 is open: Which license?", out)
+        self.assertIn("doc B-9 is open: Which license?", out)
         self.assertFalse(self.repo.exists(f"{folder}/in-1.json"))
 
     def test_the_finished_document_and_its_report_go_back_to_the_calling_plugin(self):
