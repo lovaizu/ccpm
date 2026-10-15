@@ -38,7 +38,10 @@ def task(*args):
         ("reference", "*"),
         ("opens", "*"),
     ):
-        parser.add_argument(f"--{name}", nargs=nargs, default=[], required=nargs == "+")
+        # Given twice, the flag adds to what it was given before.
+        parser.add_argument(
+            f"--{name}", nargs=nargs, action="extend", default=[], required=nargs == "+"
+        )
     for name in ("receiver", "acceptance", "content"):
         parser.add_argument(f"--{name}", required=True)
     for name in ("use", "language"):

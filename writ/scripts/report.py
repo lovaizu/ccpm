@@ -50,6 +50,10 @@ def report(back, judgments):
         first += [f"  Not met: {item} {titles[item]}: {left[item]}", f"    turn: {way}"]
     first += [f"  Rule from turn: {r}" for r in entries(ccs, "semantic_gist", "rule")]
     first += [f"  Changed after turn: {c['lines']}: {c['why']}" for c in given.get("changed", [])]
+    if given.get("changed"):
+        first.append(
+            "  The lines below are as turn read the document; a change above may have moved them."
+        )
     lines = ["Decided for you"] + (first or ["  Nothing."])
     for c in listed["checklists"]:
         lines += ["", f"{c['checklist']} {c['version']}"]

@@ -61,6 +61,7 @@ REPORT = """Decided for you
     turn: say what the tool keeps of each file
   Rule from turn: Name the license beside the install line.
   Changed after turn: README.md:12: put in the license you named
+  The lines below are as turn read the document; a change above may have moved them.
 
 doc 0.2.0
   ✅ B-2 The picture as meant: 1-4

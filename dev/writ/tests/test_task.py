@@ -125,6 +125,32 @@ class Task(unittest.TestCase):
         self.assertEqual(out.splitlines()[0], "in: .writ/tasks/README-2.json")
         self.assertEqual(self.repo.read(".writ/tasks/README-1.back.json"), "{}")
 
+    def test_a_flag_given_twice_adds_to_what_it_was_given_before(self):
+        # Given: the checklists and the references each given as two flags, as a skill writes them
+        self.repo.write("docs/notes.md", "notes\n")
+        self.repo.write("pyproject.toml", "[project]\n")
+        # When: the task is written
+        code, out = task(
+            self.repo,
+            "--checklist",
+            os.path.join(CHECKLISTS, "code.md"),
+            "--reference",
+            "docs/notes.md",
+            "--reference",
+            "pyproject.toml",
+        )
+        # Then: the task holds every checklist and every reference, in the order given
+        self.assertEqual(code, 0, out)
+        written = self.repo.json(".writ/tasks/README-1.json")
+        self.assertEqual(
+            [p for e in written["retrieved_artifacts"] for k, p in e.items() if k == "checklist"],
+            [DOC, README, os.path.join(CHECKLISTS, "code.md")],
+        )
+        self.assertEqual(
+            [p for e in written["retrieved_artifacts"] for k, p in e.items() if k == "reference"],
+            ["docs/notes.md", "pyproject.toml"],
+        )
+
     def test_a_task_with_several_files_names_each(self):
         # Given: a work of code and its tests
         self.repo.write(".writ/content/src/tidy.content.md", "# What src/tidy.py says\n")
