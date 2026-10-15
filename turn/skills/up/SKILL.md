@@ -29,7 +29,8 @@ command, and names what you may read.
 
 1. Run `up.py start <in> <out> ${CLAUDE_SESSION_ID}`. If python3 is not found, say to install
    Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it
-   prints, as JSON, `folder`, `list`, `work`, your two forms `hand-on` and `orchestrator`,
+   prints, as JSON, `folder`, `list`, `work` (where each file of the work is made, one path per
+   file, in the order the CCS names them), your two forms `hand-on` and `orchestrator`,
    `questions`, and what the work should be: `receiver`, `use`, `acceptance`, `content` (what the
    work says, item by item), `references` (what the work follows or draws on, each a file or a
    folder) and `constraints`.
@@ -53,10 +54,11 @@ command, and names what you may read.
    user can decide it, so the run leaves it open and asks it at its end, and false when the work,
    what the work should be, the content or the references answer it; `answered`, where
    false, where it is answered. Write the form `hand-on` with `jq`, for every item: `met`, true or
-   false; where met, `lines`, the lines that give it, such as `3-5, 12`, and `note`, what the
+   false; where met, `lines`, the lines that give it, such as `3-5, 12`, or, where the work is several files, `docs/a.md:3-5; src/b.py:12`, each file by its path in the CCS, and `note`, what the
    receiver gets from those lines; where not, first `aim`, what the whole work gives the receiver
    once the item is met, said from the item and its checklist's opening, then `reach`, every line of
-   the work whose shape stands between it and the aim, and then `way`, how the work's shape becomes
+   the work whose shape stands between it and the aim, in the form of `lines`, and then `way`, how
+   the work's shape becomes
    the aim, said from the aim and taken at every line of the reach, with no line named in the aim or
    the way; `question`, where the way can be taken only with the answer to a question left open,
    the question's number, counted from 1. Run `up.py check <folder> hand-on`, and fill each
@@ -68,7 +70,8 @@ command, and names what you may read.
     it prints as the whole prompt. Then run `up.py coverage <folder> evaluator`.
 11. Read the work, the first user's form and the evaluator's form whole. Write your form
     `orchestrator` with `jq`, for every item: `met`, true or false; `lines`, where met, the lines
-    that give it; `note`, where met, what the receiver gets from those lines, in plain words. Run
+    that give it, in the form of step 7; `note`, where met, what the receiver gets from those
+    lines, in plain words. Run
     `up.py check <folder> orchestrator`, and fill each place it names, until it prints
     `filled`.
 12. If an item of your form is not met, run `up.py brief <folder> learner`, and call the

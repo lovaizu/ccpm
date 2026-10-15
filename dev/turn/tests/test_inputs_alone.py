@@ -71,7 +71,7 @@ class OrchestratorReadsItsInputs(unittest.TestCase):
             ("the checklist", "Read", {"file_path": self.at("checklists/note.md")}),
             ("the content", "Read", {"file_path": "notes.md"}),
             ("a file in a reference folder", "Read", {"file_path": self.at("docs/guide/a.md")}),
-            ("the work", "Read", {"file_path": self.at(".turn/out/note.md")}),
+            ("the work", "Read", {"file_path": self.at(".turn/out/work/docs/note.md")}),
             ("turn's own file", "Read", {"file_path": UP}),
             (
                 "a tool's output Claude Code kept",
@@ -103,8 +103,10 @@ class OrchestratorReadsItsInputs(unittest.TestCase):
                 # Given: an open run
                 # When: the orchestrator reads or searches elsewhere
                 code, said = self.claude.pre(tool, given)
-                # Then: it is stopped, told it works from its inputs alone and which they are
+                # Then: it is stopped, told which steps, that it works from its inputs alone, and
+                # which they are
                 self.assertEqual(code, 2)
+                self.assertIn("steps 2 to 12: the orchestrator reads only its inputs", said)
                 self.assertIn("so the work is made without bias from what was not given", said)
                 self.assertIn("in.json, checklists/note.md, notes.md, docs/guide, .turn/out", said)
 
@@ -129,8 +131,8 @@ class AgentReadsItsBrief(unittest.TestCase):
             self.repo,
             ".turn/out/first-user-brief.json",
             {
-                "work": ".turn/out/note.md",
-                "deliverable": "docs/note.md",
+                "work": [".turn/out/work/docs/note.md"],
+                "deliverable": ["docs/note.md"],
                 "opens": ["CONTRIBUTING.md"],
                 "list": self.at(".turn/out/list.json"),
                 "form": ".turn/out/first-user.json",
@@ -146,7 +148,7 @@ class AgentReadsItsBrief(unittest.TestCase):
     def test_a_read_of_what_the_brief_names_goes_on(self):
         for path in (
             ".turn/out/first-user-brief.json",
-            ".turn/out/note.md",
+            ".turn/out/work/docs/note.md",
             "CONTRIBUTING.md",
             ".turn/out/list.json",
         ):
@@ -169,17 +171,17 @@ class AgentReadsItsBrief(unittest.TestCase):
                 )
                 # Then: it is stopped, told why and what its brief lets it read
                 self.assertEqual(code, 2)
-                self.assertIn("the first user reads only its inputs", said)
+                self.assertIn("step 9: the first user reads only its inputs", said)
                 self.assertIn("so the work is made without bias from what was not given", said)
-                self.assertIn(".turn/out/note.md, CONTRIBUTING.md", said)
-                self.assertNotIn("docs/note.md,", said)
+                self.assertIn(".turn/out/work/docs/note.md, CONTRIBUTING.md", said)
+                self.assertNotIn(" docs/note.md,", said)
 
     def test_an_agent_without_a_brief_reads_only_turn_s_files(self):
         # Given: no brief written for the learner
         # When: the learner reads the work, and turn's script
         done = [
             self.claude.pre("Read", {"file_path": self.at(p)}, agent="turn:learner")[0]
-            for p in (".turn/out/note.md", UP)
+            for p in (".turn/out/work/docs/note.md", UP)
         ]
         # Then: the work is stopped, and turn's script goes on
         self.assertEqual(done, [2, 0])
@@ -254,7 +256,8 @@ class OrchestratorShell(unittest.TestCase):
                 # Then: it is stopped, told what it may run and to read files with Read
                 self.assertEqual(code, 2)
                 self.assertIn(
-                    "the orchestrator runs only turn's up.py, and jq, mv and cd on the run's files",
+                    "steps 1 to 14: the orchestrator runs only turn's up.py, and jq, mv and cd on "
+                    "the run's files",
                     said,
                 )
                 self.assertIn("read a file with Read", said)

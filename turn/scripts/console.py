@@ -20,7 +20,7 @@ def aim(work, text):
 
 def shown_lines(work):
     """Every line the console has for the run as it stands, each with a key it is shown once by."""
-    run, ccs, _, path = the_work(work, written=False)
+    run, ccs, _, paths = the_work(work, written=False)
     receiver = "; ".join(entries(ccs, "focal_entities", "receiver"))
     said = [PLAN, ""]
     if os.path.isfile(os.path.join(work, "aim.txt")):
@@ -30,7 +30,7 @@ def shown_lines(work):
         said.append(
             f"  2 read    {'Read again, as' if run.get('second') else 'Read as'} {receiver}."
         )
-    if os.path.isfile(path) and not check(work, "orchestrator"):
+    if all(os.path.isfile(p) for p in paths) and not check(work, "orchestrator"):
         if not without_good(work):
             said.append("  3 check   ✅ Nothing missing.")
         elif read_json(os.path.join(work, "learner.json"), "the form") and not check(

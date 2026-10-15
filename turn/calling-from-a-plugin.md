@@ -18,7 +18,9 @@ several. Paths are from the top of the repository.
 The first four parts are the step's:
 
 - `focal_entities`:
-  - `deliverable`, needed: where the work goes, a path inside the repository.
+  - `deliverable`, needed, one or more: where each file of the work goes, a path inside the
+    repository. A work is one purpose with one or more files, such as code and its tests, written,
+    read and checked together.
   - `receiver`, needed: who the work is for.
 - `goal_orientation`:
   - `use`: what the receiver uses the work for.
@@ -41,8 +43,8 @@ them, so that the work is made without bias. So name everything the work follows
 Before calling, check each `receiver_opens`: that it exists and is what the receiver opens with the
 work, since turn reads the work as the receiver with these alone.
 
-A file already at `deliverable` is written over only when git holds every change to it, or when it
-is the work turn returned in the step's last call, unchanged since.
+A file already at a `deliverable` is written over only when git holds every change to it, or when
+it is the work turn returned in the step's last call, unchanged since.
 
 The other five parts are turn's, and the step writes each as an empty list: `predictive_cue`,
 `uncertainty_signal`, `semantic_gist`, `relational_map` and `episodic_trace`. turn fills them in the
@@ -101,7 +103,7 @@ What happens, in order:
 |---|---|
 | The step | Writes the CCS to `in`, and calls `turn:up` with `in` and `out`. |
 | turn | Runs in the same conversation and asks nothing while it works. The user sees its progress there, and may stop it with Esc and say what they want instead. |
-| turn | Writes the work where `deliverable` says, once it has been read, and its CCS to `out`. It never writes `in`. |
+| turn | Writes each file of the work where its `deliverable` says, when the run returns, and its CCS to `out`. It never writes `in`. |
 | The step | Reads `next` in `out` and does what it asks. |
 
 ## What to read in the CCS turn writes back
@@ -139,8 +141,9 @@ turn's own; the step need not read it.
   from the user's words, as if the user had asked so from the start, and calls turn again.
 
 When turn ends before any work, because `out` already exists, python3 or jq is missing, the CCS
-cannot be run, or the file at `deliverable` has changes git does not hold, there is no `next` to read: turn writes neither the
-work nor a CCS, and says why in the conversation. The step puts that to the user.
+cannot be run, or a file at a `deliverable` has changes git does not hold, there is no `next` to
+read: turn writes neither the work nor a CCS, and says why in the conversation. The step puts that to
+the user.
 
 Each `rule` turn returns is the step's to judge: it may put it into its later tasks as a `rule` in
 `constraints`, into its checklist, or leave it.

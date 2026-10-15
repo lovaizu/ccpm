@@ -43,7 +43,7 @@ class AgentCalled(unittest.TestCase):
         self.repo = Repo()
         started(self.repo)
         run(self.repo, "aim", ".turn/out", AIM)
-        self.repo.write(".turn/out/note.md", "# Note\n")
+        self.repo.write(".turn/out/work/docs/note.md", "# Note\n")
 
     def tearDown(self):
         self.repo.close()

@@ -11,4 +11,9 @@ def check(data):
     run = open_run(data) if data.get("tool_name") == "Bash" else None
     if run is None or not COMMIT.search(data["tool_input"].get("command", "")):
         return []
-    return ["a run never commits or pushes; the user decides what to commit once the run returns"]
+    return [
+        (
+            "steps 1 to 14: a run never commits or pushes, so the user decides what to commit once "
+            "the run returns"
+        )
+    ]

@@ -24,7 +24,7 @@ class HandBack(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], "# Note\n\nRun make.\n")
+        self.repo.write(self.got["work"][0], "# Note\n\nRun make.\n")
 
     def tearDown(self):
         self.repo.close()
@@ -36,9 +36,10 @@ class HandBack(unittest.TestCase):
         # Given: the generator's form left empty in an open run
         # When: the generator hands back
         code, said = self.hand_back("turn:generator")
-        # Then: it is stopped, told which step and what is missing
+        # Then: it is stopped, told which step, why, and what is missing
         self.assertEqual(code, 2)
-        self.assertIn("turn: fill your form before handing back", said)
+        self.assertIn("turn: step 4: fill your form before handing back", said)
+        self.assertIn("so the orchestrator decides from an answer to every item", said)
         self.assertIn("note B-1: lines are not given", said)
 
     def test_an_agent_handing_back_with_its_form_filled_goes_on(self):
@@ -51,12 +52,12 @@ class HandBack(unittest.TestCase):
 
     def test_an_agent_handing_back_before_the_work_is_written_is_told_so(self):
         # Given: the work not written
-        os.remove(os.path.join(self.repo.path, self.got["work"]))
+        os.remove(os.path.join(self.repo.path, self.got["work"][0]))
         # When: the generator hands back
         code, said = self.hand_back("turn:generator")
         # Then: it is stopped, told the work is missing
         self.assertEqual(code, 2)
-        self.assertIn(".turn/out/note.md is not written", said)
+        self.assertIn(".turn/out/work/docs/note.md is not written", said)
 
     def test_the_hook_run_as_claude_code_runs_it_stops_an_unfilled_form(self):
         # Given: the hook's entry file, and an empty form in an open run

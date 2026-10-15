@@ -40,14 +40,14 @@ class Stop(unittest.TestCase):
         return out.strip(), self.repo.json("out.json")
 
     def to_reading(self):
-        self.repo.write(".turn/out/note.md", WORK)
+        self.repo.write(".turn/out/work/docs/note.md", WORK)
         met(self.repo, "hand-on")
         code, out = run(self.repo, "brief", ".turn/out", "first-user")
         assert code == 0, out
 
     def test_a_run_stopped_on_its_aim_returns_no_work_of_that_aim(self):
         # Given: the run with its aim shown, and the generator's work begun
-        self.repo.write(".turn/out/note.md", "# Half\n")
+        self.repo.write(".turn/out/work/docs/note.md", "# Half\n")
         # When: the user stops the run
         said, back = self.stop()
         # Then: the CCS says where it stopped and points to no work, the caller's part comes back
@@ -102,7 +102,7 @@ class Stop(unittest.TestCase):
         # Then: the new run starts with no work yet, for the receiver the user named
         self.assertEqual(code, 0, out)
         got = json.loads(out)
-        self.assertFalse(self.repo.exists(got["work"]))
+        self.assertFalse(self.repo.exists(got["work"][0]))
         self.assertEqual(got["receiver"], "an operator")
 
     def test_nothing_is_stopped_when_no_run_is_open(self):

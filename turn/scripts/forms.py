@@ -33,20 +33,42 @@ def lay(work, laid):
         write_json(os.path.join(work, f"{role}.json"), laid[role])
 
 
-def bad_lines(given, count):
-    if not LINES.match(given):
-        return True
-    return any(
-        not 1 <= int(a) <= int(b or a) <= count
-        for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", given)
-    )
+def named(given, counts):
+    """The lines a place names, by the file of the work they are in, or None where a segment names
+    no file of the work or lines it does not hold. With one file, a segment may leave the file
+    unnamed."""
+    found = {}
+    for segment in given.split(";"):
+        path, colon, spans = segment.partition(":")
+        if not colon:
+            path, spans = next(iter(counts)) if len(counts) == 1 else "", path
+        path = path.strip()
+        if path not in counts or not LINES.match(spans):
+            return None
+        spans = [(int(a), int(b or a)) for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", spans)]
+        if any(not 1 <= a <= b <= counts[path] for a, b in spans):
+            return None
+        found.setdefault(path, set()).update(k for a, b in spans for k in range(a, b + 1))
+    return found
+
+
+def bad_lines(given, counts):
+    return named(given, counts) is None
+
+
+def counted(work):
+    """How many lines each file of the work holds, by where it goes."""
+    _, _, goes, paths = the_work(work)
+    counts = {}
+    for deliverable, path in zip(goes, paths):
+        with open(path) as f:
+            counts[deliverable] = len(f.read().splitlines())
+    return counts
 
 
 def check(work, role):
     """Says each place of the role's form that is left or wrong; nothing when every place is filled."""
-    _, _, _, path = the_work(work)
-    with open(path) as f:
-        count = len(f.read().splitlines())
+    counts = counted(work)
     ids = [i["id"] for i in read_json(os.path.join(work, "list.json"), "the list")["items"]]
     form = read_json(os.path.join(work, f"{role}.json"), "the form")
     found = [f"{i}: not an item of the list" for i in form if i not in ids]
@@ -58,7 +80,7 @@ def check(work, role):
     if role == "learner":
         return (
             found
-            + learner_faults(form, without_good(work), count)
+            + learner_faults(form, without_good(work), counts)
             + question_faults(work, decided=False)
         )
     if role in ("generator", "hand-on"):
@@ -89,10 +111,10 @@ def check(work, role):
                 "what the receiver gets from the lines"
             )
         if role == "hand-on" and place.get("met") is False:
-            found += aim_faults(i, place, count)
+            found += aim_faults(i, place, counts)
         if needed and not lines:
             found.append(f"{i}: lines are not given" + (LEFT_OUT if role == "generator" else ""))
-        elif lines and bad_lines(lines, count):
+        elif lines and bad_lines(lines, counts):
             found.append(f"{i}: lines {lines} are not in the work")
         if (
             role == "hand-on"
@@ -117,7 +139,7 @@ def without_good(work):
     ]
 
 
-def aim_faults(i, place, count):
+def aim_faults(i, place, counts):
     """Says where a way to a Good is not made from the aim: the aim and the way said of the whole work,
     and the reach, every line the same shape reaches."""
     found = []
@@ -129,19 +151,19 @@ def aim_faults(i, place, count):
     reach = place.get("reach", "")
     if not reach:
         found.append(f"{i}: reach is not given")
-    elif bad_lines(reach, count):
+    elif bad_lines(reach, counts):
         found.append(f"{i}: reach {reach} is not in the work")
     return found
 
 
-def learner_faults(form, left, count):
+def learner_faults(form, left, counts):
     found = [f"{i}: has a Good, so needs no way" for i in form if i not in left]
     for i in left:
         place = form.get(i)
         if place is None:
             found.append(f"{i}: not filled")
             continue
-        found += aim_faults(i, place, count)
+        found += aim_faults(i, place, counts)
         if place.get("in") not in PLACES:
             found.append(f"{i}: in must be one of: {', '.join(PLACES)}")
         if not isinstance(place.get("making"), str):
@@ -179,12 +201,19 @@ def serves(places, way):
 
 
 def coverage(work, role):
-    _, _, _, path = the_work(work)
-    with open(path) as f:
-        text = [k for k, line in enumerate(f.read().splitlines(), 1) if line.strip()]
-    named = set()
+    """Prints, for each file of the work, the lines with text that no place of the role's form
+    names."""
+    _, _, goes, paths = the_work(work)
+    counts = counted(work)
+    shown = {d: set() for d in goes}
     for place in read_json(os.path.join(work, f"{role}.json"), "the form").values():
-        for a, b in re.findall(r"(\d+)(?:\s*-\s*(\d+))?", place.get("lines", "")):
-            named.update(range(int(a), int(b or a) + 1))
-    left = [k for k in text if k not in named]
-    print(f"lines no item names: {', '.join(map(str, left))}" if left else "every line is named")
+        for d, lines in (named(place.get("lines", ""), counts) or {}).items():
+            shown[d].update(lines)
+    said = []
+    for deliverable, path in zip(goes, paths):
+        with open(path) as f:
+            text = [k for k, line in enumerate(f.read().splitlines(), 1) if line.strip()]
+        left = [k for k in text if k not in shown[deliverable]]
+        if left:
+            said.append(f"lines no item names: {deliverable}: {', '.join(map(str, left))}")
+    print("\n".join(said) if said else "every line is named")

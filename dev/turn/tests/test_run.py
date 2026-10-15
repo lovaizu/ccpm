@@ -32,7 +32,7 @@ class Coverage(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
 
     def tearDown(self):
         self.repo.close()
@@ -42,7 +42,7 @@ class Coverage(unittest.TestCase):
             (
                 "generator",
                 {"note B-1": {"lines": "3"}, "note F-1": {"lines": "3"}},
-                "lines no item names: 1",
+                "lines no item names: docs/note.md: 1",
             ),
             (
                 "generator",
@@ -52,7 +52,7 @@ class Coverage(unittest.TestCase):
             (
                 "evaluator",
                 {"note B-1": {"lines": "3", "grounds": "says run make"}},
-                "lines no item names: 1",
+                "lines no item names: docs/note.md: 1",
             ),
         ]
         for role, filled, said in cases:
@@ -69,7 +69,7 @@ class Check(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
 
     def tearDown(self):
         self.repo.close()
@@ -253,19 +253,19 @@ class Check(unittest.TestCase):
 
     def test_a_form_is_stopped_when_the_work_is_not_written(self):
         # Given: the work removed
-        os.remove(os.path.join(self.repo.path, self.got["work"]))
+        os.remove(os.path.join(self.repo.path, self.got["work"][0]))
         # When: the generator's form is checked
         code, out = self.check("generator")
         # Then: it is stopped saying the work is missing
         self.assertEqual(code, 1)
-        self.assertIn(".turn/out/note.md is not written", out)
+        self.assertIn(".turn/out/work/docs/note.md is not written", out)
 
 
 class End(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
 
     def tearDown(self):
         self.repo.close()

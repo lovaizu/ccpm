@@ -20,7 +20,7 @@ receiver had them; turn's hook stops a read of anything else, and names what you
 2. Read the list, the work and the reading whole.
 3. Read the records for the lines the first user took each item from.
 4. Write your form: for each item the work meets, under the item's ID, in `lines`, the lines the
-   Good rests on, such as `3-5, 12`, and in `grounds`, what those lines give the receiver for the
-   item. Write nothing for any other item.
+   Good rests on, such as `3-5, 12`, or, where the work is several files, `docs/a.md:3-5; src/b.py:12`, each file by its path in the CCS, and in `grounds`, what those lines give the receiver for the item. Write
+   nothing for any other item.
 5. Run `check`, and fix each place it names, until it prints `filled`.
 6. Hand back one line saying the form is written.

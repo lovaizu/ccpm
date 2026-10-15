@@ -140,7 +140,7 @@ class WritesKeptToTheRun(unittest.TestCase):
 
     def test_a_write_where_the_work_goes_or_in_the_run_s_evidence_goes_on(self):
         cases = [
-            ("the work in the run", "Write", {"file_path": self.at(".turn/out/note.md")}),
+            ("the work in the run", "Write", {"file_path": self.at(".turn/out/work/docs/note.md")}),
             ("a form", "Edit", {"file_path": self.at(form("first-user"))}),
             ("where the work goes", "Write", {"file_path": self.at("docs/note.md")}),
         ]
@@ -165,9 +165,10 @@ class WritesKeptToTheRun(unittest.TestCase):
                 # Given: an open run
                 # When: a file elsewhere is written
                 code, said = pre(self.repo, tool, given)
-                # Then: the write is stopped, told where a run writes
+                # Then: the write is stopped, told which steps, where a run writes and why
                 self.assertEqual(code, 2)
-                self.assertIn("a run writes only docs/note.md and .turn/out/", said)
+                self.assertIn("steps 4 to 12: a run writes only docs/note.md and .turn/out/", said)
+                self.assertIn("so the user takes turn's change as one diff", said)
 
     def test_a_git_commit_or_push_in_a_run_is_stopped(self):
         for command in (
@@ -180,9 +181,9 @@ class WritesKeptToTheRun(unittest.TestCase):
                 # Given: an open run
                 # When: a shell command commits or pushes
                 code, said = pre(self.repo, "Bash", {"command": command})
-                # Then: it is stopped, told the user commits
+                # Then: it is stopped, told which steps and that the user commits
                 self.assertEqual(code, 2)
-                self.assertIn("a run never commits or pushes", said)
+                self.assertIn("steps 1 to 14: a run never commits or pushes", said)
 
     def test_other_shell_commands_in_a_run_go_on(self):
         for command in (
@@ -212,7 +213,7 @@ class WritesKeptToTheRun(unittest.TestCase):
                             "note F-1": {"met": True, "lines": "1", "note": "x"},
                         },
                     )
-                    self.repo.write(".turn/out/note.md", WORK)
+                    self.repo.write(".turn/out/work/docs/note.md", WORK)
                     self.assertEqual(run(self.repo, "end", ".turn/out")[0], 0)
                 # When: they are made
                 done = [
@@ -280,7 +281,7 @@ class ChangesElsewhereNamed(unittest.TestCase):
         self.repo.write("draft.md", "left as it was\n")
         self.repo.write("log.txt", "before\n")
         started(self.repo)
-        self.repo.write(".turn/out/note.md", WORK)
+        self.repo.write(".turn/out/work/docs/note.md", WORK)
         fill(
             self.repo,
             form("orchestrator"),

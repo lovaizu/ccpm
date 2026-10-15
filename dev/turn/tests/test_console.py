@@ -98,8 +98,8 @@ class Console(unittest.TestCase):
     def read(self, f1=True, work=".turn/out"):
         """The run's work made, seen given, read and decided, with F-1 met or not."""
         met(self.repo, "hand-on", work=work)
-        if not os.path.isfile(os.path.join(self.repo.path, work, "note.md")):
-            self.repo.write(f"{work}/note.md", WORK)
+        if not os.path.isfile(os.path.join(self.repo.path, work, "work/docs/note.md")):
+            self.repo.write(f"{work}/work/docs/note.md", WORK)
         self.say("brief", work, "first-user")
         self.ran("first-user")
         fill(self.repo, form("first-user", work), {"note B-1": {"took": "run make", "lines": "3"}})
@@ -157,7 +157,7 @@ class Console(unittest.TestCase):
         self.assertEqual(self.shown(), [])
         # When: the work is handed to the first user
         met(self.repo, "hand-on")
-        self.repo.write(".turn/out/note.md", WORK)
+        self.repo.write(".turn/out/work/docs/note.md", WORK)
         self.say("brief", ".turn/out", "first-user")
         # Then: the reading is shown
         self.assertEqual(self.shown(), ["  2 read    Read as a new teammate."])

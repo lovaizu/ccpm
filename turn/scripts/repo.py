@@ -29,11 +29,11 @@ def changed():
     return found
 
 
-def elsewhere(run, deliverable):
+def elsewhere(run, deliverables):
     """The line naming each file changed since the run started outside where the work goes and the
     run's evidence, or none."""
     now = changed()
-    ours = (deliverable, run["out"], RUN)
+    ours = (*deliverables, run["out"], RUN)
     # A second round's folder lies in the first's, and both hold the run's evidence.
     kept = os.path.dirname(run["work"]) if run.get("second") else run["work"]
     names = sorted(

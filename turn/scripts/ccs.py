@@ -20,6 +20,11 @@ def entries(ccs, part, kind):
     return [v for e in ccs[part] for k, v in e.items() if k == kind]
 
 
+def deliverables(ccs):
+    """Where each file of the work goes, in the order the caller names them."""
+    return entries(ccs, "focal_entities", "deliverable")
+
+
 def should(ccs):
     """What the work should be, as the orchestrator and the agents that make it are given it."""
     return {
@@ -50,9 +55,13 @@ def faults(ccs):
                     found.append(f"{part} has a kind it cannot hold: {next(iter(e))}")
     if found:
         return found
-    if len(entries(ccs, "focal_entities", "deliverable")) != 1:
-        found.append("focal_entities needs one deliverable")
+    found += [
+        f"focal_entities names {p} twice"
+        for k, p in enumerate(deliverables(ccs))
+        if p in deliverables(ccs)[:k]
+    ]
     for part, kind in (
+        ("focal_entities", "deliverable"),
         ("focal_entities", "receiver"),
         ("goal_orientation", "acceptance"),
         ("retrieved_artifacts", "checklist"),
@@ -75,7 +84,7 @@ def faults(ccs):
         for p in entries(ccs, "retrieved_artifacts", "checklist")
         if os.path.isfile(p) and not {"name", "version"} <= front(p).keys()
     ]
-    for p in entries(ccs, "focal_entities", "deliverable"):
+    for p in deliverables(ccs):
         if os.path.isabs(p) or os.path.normpath(p).startswith(".."):
             found.append(f"{p} is outside the repository")
     return found

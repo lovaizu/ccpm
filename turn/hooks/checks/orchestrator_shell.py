@@ -26,9 +26,9 @@ def check(data):
     if outside(command, os.path.realpath(data["cwd"]), readable(data, run), [work]):
         return [
             (
-                "the orchestrator runs only turn's up.py, and jq, mv and cd on the run's files, since "
-                "its steps need no other command and any other would read or change what the run was "
-                f"not given; read a file with Read. Not run: {command}"
+                "steps 1 to 14: the orchestrator runs only turn's up.py, and jq, mv and cd on the "
+                "run's files, since its steps need no other command and any other would read or "
+                f"change what the run was not given; read a file with Read. Not run: {command}"
             )
         ]
     return []

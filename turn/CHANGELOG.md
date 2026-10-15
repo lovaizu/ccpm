@@ -2,7 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- A work can be several files that serve one purpose, such as code and its tests, each named as a `deliverable` — turn writes, reads and checks them together, so what the receiver needs only from them together is checked as one.
+
 ### Changed
+
+- The work reaches where it goes only when the run returns — a run stopped or cut off leaves your files as they were.
+- A change to the work after it has been handed to the reader is stopped — the version read is the version you get back.
+- Each stop turn's hooks make names the step it concerns and why — you and Claude see at once what went wrong and what that step needs.
 
 - turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work. Called again with your answers, turn starts from the work it returned and writes over it without your committing it first, unless you changed it since.
 - turn takes a second pass only when the first leaves something the work itself can give, and returns what the second still leaves with how it would be given, with your questions — Claude, or your plugin's step, which knows what you agreed, decides whether to run again.

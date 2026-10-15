@@ -60,7 +60,7 @@ class Questions(unittest.TestCase):
         self.repo = Repo()
         self.got = started(self.repo, ccs(constraints=[{"language": "English"}]))
         run(self.repo, "aim", ".turn/out", "a new teammate can start work alone")
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
         fill(
             self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": {"lines": "1-3"}}
         )
@@ -225,7 +225,7 @@ class Questions(unittest.TestCase):
         # holding the answer
         self.assertEqual(code, 0, out)
         got = json.loads(out)
-        self.assertFalse(self.repo.exists(got["work"]))
+        self.assertFalse(self.repo.exists(got["work"][0]))
         self.assertIn("MIT", self.repo.read(got["content"][0]))
 
     def test_called_again_after_the_returned_work_was_changed_the_run_is_refused(self):
@@ -294,7 +294,7 @@ class LearnersQuestions(unittest.TestCase):
         self.addCleanup(self.home.cleanup)
         self.addCleanup(self.repo.close)
         started(self.repo)
-        self.repo.write(".turn/out/note.md", WORK)
+        self.repo.write(".turn/out/work/docs/note.md", WORK)
         seen(self.repo)
         decided(self.repo, f1=False)
         fill(

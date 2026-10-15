@@ -4,7 +4,7 @@ makes."""
 import json
 import os
 
-from ccs import entries
+from ccs import deliverables
 
 RUN = os.path.join(".turn", "run.json")
 CLOSING = "closing.txt"
@@ -30,11 +30,14 @@ def write_json(path, value):
 
 
 def the_work(work, written=True):
-    """The run's CCS as received, and the path of the work it makes."""
+    """The run's CCS as received, where each file of the work goes, and the path of each in the
+    run's folder."""
     run = read_json(RUN, RUN)
     ccs = read_json(run["in"], run["in"])
-    deliverable = entries(ccs, "focal_entities", "deliverable")[0]
-    path = os.path.join(work, os.path.basename(deliverable))
-    if written and not os.path.isfile(path):
-        raise Stop(f"{path} is not written")
-    return run, ccs, deliverable, path
+    goes = deliverables(ccs)
+    paths = [os.path.join(work, "work", d) for d in goes]
+    if written:
+        for path in paths:
+            if not os.path.isfile(path):
+                raise Stop(f"{path} is not written")
+    return run, ccs, goes, paths

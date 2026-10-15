@@ -59,7 +59,7 @@ def second(repo, ways, making=None):
     learn(repo, ".turn/out", ways, making)
     code, out = run(repo, "end", ".turn/out")
     assert code == 0, out
-    repo.write(f"{SECOND}/note.md", WORK)
+    repo.write(f"{SECOND}/work/docs/note.md", WORK)
 
 
 PLACE = {"aim": AIM, "way": "say what make builds", "reach": "3", "in": "the work", "making": ""}
@@ -69,7 +69,7 @@ class Learner(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
         decide(self.repo, ".turn/out", f1=False)
 
     def tearDown(self):
@@ -123,7 +123,7 @@ class End(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
 
     def tearDown(self):
         self.repo.close()
@@ -145,18 +145,18 @@ class End(unittest.TestCase):
         learn(self.repo, ".turn/out", {"note F-1": WORK_WAY}, making={"note F-1": RULE})
         # When: the reading ends
         code, out = run(self.repo, "end", ".turn/out")
-        # Then: nothing is returned to the caller yet; the work read is where it goes; the second
-        # reading begins in its own folder, its generator handed the way and the work read, and
-        # the rule is kept out of the constraints
+        # Then: nothing is returned to the caller yet, and nothing is where the work goes; the
+        # second reading begins in its own folder, its generator handed the way and the work read,
+        # and the rule is kept out of the constraints
         self.assertEqual(code, 0, out)
         self.assertFalse(self.repo.exists("out.json"))
-        self.assertEqual(self.repo.read("docs/note.md"), WORK)
+        self.assertFalse(self.repo.exists("docs/note.md"))
         self.assertEqual(json.loads(out)["folder"], SECOND)
         self.assertEqual(run(self.repo, "aim", SECOND, AIM)[0], 0)
         code, out = run(self.repo, "brief", SECOND, "generator")
         self.assertEqual(code, 0, out)
         got = self.repo.json(out.strip())
-        self.assertEqual(self.repo.read(got["work"]), WORK)
+        self.assertEqual(self.repo.read(got["work"][0]), WORK)
         self.assertEqual([w["way"] for w in got["ways"]], ["say what make builds"])
         self.assertEqual(got["constraints"], [])
 
@@ -210,7 +210,7 @@ class End(unittest.TestCase):
         mine = {"rule": "write for a first day"}
         self.repo.write("in.json", json.dumps(ccs(constraints=[mine])))
         self.assertEqual(run(self.repo, "start", "in.json", "out.json", "s1")[0], 0)
-        self.repo.write(".turn/out/note.md", WORK)
+        self.repo.write(".turn/out/work/docs/note.md", WORK)
         second(self.repo, {"note F-1": WORK_WAY}, making={"note F-1": RULE})
         decide(self.repo, SECOND, f1=False)
         learn(self.repo, SECOND, {"note F-1": WORK_WAY}, making={"note F-1": RULE})
@@ -293,7 +293,7 @@ class RunAgain(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
         self.got = started(self.repo)
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
         second(self.repo, {"note F-1": WORK_WAY})
         decide(self.repo, SECOND, f1=False)
         learn(self.repo, SECOND, {"note F-1": WORK_WAY})
@@ -313,7 +313,7 @@ class RunAgain(unittest.TestCase):
         self.assertEqual(code, 0, out)
         got = self.repo.json(out.strip())
         self.assertEqual(got["ways"], [])
-        self.assertFalse(self.repo.exists(".turn/out-2/note.md"))
+        self.assertFalse(self.repo.exists(".turn/out-2/work/docs/note.md"))
 
     def test_the_work_a_run_returned_is_written_over_while_unchanged_and_kept_once_changed(self):
         cases = [("unchanged", None, 0), ("changed by the user since", "# Mine\n", 1)]

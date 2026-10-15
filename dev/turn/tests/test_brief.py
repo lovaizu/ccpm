@@ -53,7 +53,7 @@ class Briefs(unittest.TestCase):
         self.env.start()
         self.got = started(self.repo)
         run(self.repo, "aim", ".turn/out", "a new teammate can start work alone")
-        self.repo.write(self.got["work"], WORK)
+        self.repo.write(self.got["work"][0], WORK)
 
     def tearDown(self):
         self.env.stop()
@@ -86,7 +86,7 @@ class Briefs(unittest.TestCase):
         got = self.handed("generator")
         # Then: it holds what the work should be, where it is made, its form and how to check it
         self.assertEqual(got["list"], ".turn/out/list.json")
-        self.assertEqual(got["work"], ".turn/out/note.md")
+        self.assertEqual(got["work"], [".turn/out/work/docs/note.md"])
         self.assertEqual(got["form"], form("generator"))
         self.assertTrue(got["check"].endswith('up.py" check .turn/out generator'))
         self.assertEqual((got["receiver"], got["use"]), ("a new teammate", "to start work"))
@@ -127,13 +127,14 @@ class Briefs(unittest.TestCase):
         )
         started(self.repo, c)
         run(self.repo, "aim", ".turn/out", "a new teammate can start work alone")
-        self.repo.write(".turn/out/note.md", WORK)
+        self.repo.write(".turn/out/work/docs/note.md", WORK)
         seen(self.repo)
         # When: the first user's brief is made
         got = self.handed("first-user")
-        # Then: it names the work, where it will sit, and what the receiver opens with it
-        self.assertEqual(got["work"], ".turn/out/note.md")
-        self.assertEqual(got["deliverable"], "docs/note.md")
+        # Then: it names each file of the work, where each will sit, and what the receiver opens
+        # with it
+        self.assertEqual(got["work"], [".turn/out/work/docs/note.md"])
+        self.assertEqual(got["deliverable"], ["docs/note.md"])
         self.assertEqual(got["opens"], ["CONTRIBUTING.md"])
         # Then: it holds the receiver, the use and the list, and nothing of the content, the
         # references or the acceptance

@@ -38,11 +38,11 @@ def brief(work, role):
     """Writes what the agent of the role is handed, once the steps before it are done."""
     if role not in AGENTS:
         raise Stop(f"no brief for {role}; briefs are for {', '.join(AGENTS)}")
-    run, ccs, deliverable, path = the_work(work, written=role != "generator")
+    run, ccs, deliverables, paths = the_work(work, written=role != "generator")
     wanted = should(ccs)
     given = {
         "list": os.path.join(work, "list.json"),
-        "work": path,
+        "work": paths,
         "form": os.path.join(work, f"{role}.json"),
         "check": f'cd "{os.getcwd()}" && python3 "{SCRIPT}" check {work} {role}',
     }
@@ -69,8 +69,8 @@ def brief(work, role):
                 "waits on a question left open; not yet: " + ", ".join(unseen)
             )
         given = {
-            "work": path,
-            "deliverable": deliverable,
+            "work": paths,
+            "deliverable": deliverables,
             "opens": entries(ccs, "retrieved_artifacts", "receiver_opens"),
             "receiver": wanted["receiver"],
             "use": wanted["use"],

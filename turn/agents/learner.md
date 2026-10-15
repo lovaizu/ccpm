@@ -28,7 +28,7 @@ bias from what it was not; turn's hook stops a read of anything else, and names 
 4. Write your form: for each item the decisions do not give as met, under the item's ID, first in
    `aim`, what the whole work gives the receiver once the item is met, toward the use, said from the
    item and its checklist's opening; then in `reach`, every line of the work whose shape stands
-   between it and the aim, such as `3-5, 12`; then in `way`, how the work's shape becomes the aim,
+   between it and the aim, such as `3-5, 12`, or, where the work is several files, `docs/a.md:3-5; src/b.py:12`, each file by its path in the CCS; then in `way`, how the work's shape becomes the aim,
    said from the aim and taken at every line of the reach. Name no line in the aim or the way. In
    `in`, write where that way lies, `the work` or `what the work should be`; in `making`, what in
    making such work would have given the item when first made, said for any work of the kind, or

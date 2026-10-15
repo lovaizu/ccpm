@@ -7,21 +7,29 @@ import json
 import os
 import shutil
 
-from ccs import checklist, entries, faults, should
+from ccs import checklist, deliverables, entries, faults, should
 from forms import PLACES, forms, lay, learned
 from questions import left_open, question_faults
 from repo import changed, elsewhere, git
 from state import CLOSING, RUN, Stop, read_json, the_work, write_json
 
+CALLERS = ("focal_entities", "goal_orientation", "retrieved_artifacts", "constraints")
+TURNS = (
+    "predictive_cue",
+    "uncertainty_signal",
+    "semantic_gist",
+    "relational_map",
+    "episodic_trace",
+)
+
 
 def kept(deliverable):
-    """Whether a run's evidence keeps the file where the work goes as it stands, so writing over it
-    loses nothing."""
+    """Whether a run's evidence keeps the file where the work goes as it stands, at that very path,
+    so writing over it loses nothing."""
     return any(
         filecmp.cmp(path, deliverable, shallow=False)
-        for path in glob.glob(
-            os.path.join(".turn", "**", os.path.basename(deliverable)), recursive=True
-        )
+        for pattern in (("*", "work"), ("*", "2", "work"))
+        for path in glob.glob(os.path.join(".turn", *pattern, deliverable))
     )
 
 
@@ -39,20 +47,21 @@ def start(src, out, session, work=None, before=None, questions=(), begun=None, w
     found = faults(ccs)
     if found:
         raise Stop("\n".join(found))
-    deliverable = entries(ccs, "focal_entities", "deliverable")[0]
     # What is there is written over only when git holds it, or a run's evidence keeps it as it
     # stands, so what was there can be got back.
-    if (
-        git("status", "--porcelain", "--ignored", "--", deliverable)
-        and os.path.isfile(deliverable)
-        and not kept(deliverable)
-    ):
-        raise Stop(
-            f"{deliverable} has changes git does not hold; commit or remove them, so that what was "
-            "there can be got back once turn writes the work there"
-        )
+    for deliverable in deliverables(ccs):
+        if (
+            git("status", "--porcelain", "--ignored", "--", deliverable)
+            and os.path.isfile(deliverable)
+            and not kept(deliverable)
+        ):
+            raise Stop(
+                f"{deliverable} has changes git does not hold; commit or remove them, so that what "
+                "was there can be got back once turn writes the work there"
+            )
     before = changed() if before is None else before
     work = work or os.path.join(".turn", os.path.splitext(os.path.basename(out))[0])
+    paths = [os.path.join(work, "work", d) for d in deliverables(ccs)]
     lists = [checklist(p) for p in entries(ccs, "retrieved_artifacts", "checklist")]
     listed = {
         "checklists": [c for c, _ in lists],
@@ -75,14 +84,16 @@ def start(src, out, session, work=None, before=None, questions=(), begun=None, w
     }
     if begun is not None:
         run["second"] = True
-        shutil.copyfile(begun, os.path.join(work, os.path.basename(deliverable)))
+        for deliverable, path in zip(deliverables(ccs), paths):
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            shutil.copyfile(os.path.join(begun, "work", deliverable), path)
     write_json(RUN, run)
     print(
         json.dumps(
             {
                 "folder": work,
                 "list": os.path.join(work, "list.json"),
-                "work": os.path.join(work, os.path.basename(deliverable)),
+                "work": paths,
                 "hand-on": os.path.join(work, "hand-on.json"),
                 "orchestrator": os.path.join(work, "orchestrator.json"),
                 "questions": os.path.join(work, "questions.json"),
@@ -99,7 +110,7 @@ def end(work):
     found = question_faults(work, decided=True)
     if found:
         raise Stop("\n".join(found))
-    run, ccs, deliverable, path = the_work(work)
+    run, ccs, goes, paths = the_work(work)
     rules = list(dict.fromkeys(run.get("rules", []) + learnt))
     items = {i["id"]: i for i in read_json(os.path.join(work, "list.json"), "the list")["items"]}
     questions = left_open(work)
@@ -116,8 +127,6 @@ def end(work):
     else:
         nxt = "ask the user"
     evidence = ["orchestrator.json"] + (["learner.json"] if left else [])
-    os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
-    shutil.copyfile(path, deliverable)
     if any(w["in"] == PLACES[0] for w in left) and not run.get("second"):
         # The first round left ways in the work: the run reads the work a second time, made again
         # on those ways from the work as it stands.
@@ -130,26 +139,46 @@ def end(work):
             os.path.join(work, "2"),
             run["before"],
             questions,
-            path,
+            work,
             ways,
             rules,
         )
         return
-    ccs.update(
-        predictive_cue=[{"next": nxt}],
-        semantic_gist=[{"question": q} for q in questions] + unmet + [{"rule": r} for r in rules],
-        episodic_trace=[{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence],
+    # The work reaches where it goes only now, as the run returns, so a run stopped or cut off
+    # leaves it as it was.
+    for deliverable, path in zip(goes, paths):
+        os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
+        shutil.copyfile(path, deliverable)
+    write_json(
+        run["out"],
+        returned(
+            ccs,
+            predictive_cue=[{"next": nxt}],
+            semantic_gist=[{"question": q} for q in questions]
+            + unmet
+            + [{"rule": r} for r in rules],
+            episodic_trace=[{"evidence": os.path.join(work, e)} for e in ["list.json"] + evidence],
+        ),
     )
-    write_json(run["out"], ccs)
+    where = ", ".join(goes)
     if questions:
         points = "one point" if len(questions) == 1 else f"{len(questions)} points"
-        said = [f"The work is at {deliverable}, waiting on you for {points}."]
+        said = [f"The work is at {where}, waiting on you for {points}."]
         said += [f"❓ {q}" for q in questions]
     elif nxt == "ask the user":
-        said = [f"The work is at {deliverable}, with what it does not give yet in the CCS."]
+        said = [f"The work is at {where}, with what it does not give yet in the CCS."]
     else:
-        said = [nxt, f"The work is at {deliverable}."]
-    close(work, said + elsewhere(run, deliverable))
+        said = [nxt, f"The work is at {where}."]
+    close(work, said + elsewhere(run, goes))
+
+
+def returned(ccs, **turns):
+    """The CCS written back: the caller's four parts as received, and turn's five holding only what
+    this run gives."""
+    return {
+        **{part: ccs[part] for part in CALLERS},
+        **{part: turns.get(part, []) for part in TURNS},
+    }
 
 
 def close(work, lines):
@@ -164,7 +193,7 @@ def stop(work):
     """Ends a run the user stopped, with a CCS saying where it was."""
     if not os.path.isfile(RUN):
         raise Stop("no run is open, so there is nothing to stop")
-    run, ccs, deliverable, _ = the_work(work, written=False)
+    run, ccs, goes, _ = the_work(work, written=False)
     step = (
         "check"
         if os.path.isfile(os.path.join(work, "evaluator-brief.json"))
@@ -172,6 +201,5 @@ def stop(work):
         if os.path.isfile(os.path.join(work, "first-user-brief.json"))
         else "write"
     )
-    ccs.update(predictive_cue=[{"next": f"stopped: {step}"}], semantic_gist=[], episodic_trace=[])
-    write_json(run["out"], ccs)
-    close(work, [f"stopped: {step} — CCS: {run['out']}"] + elsewhere(run, deliverable))
+    write_json(run["out"], returned(ccs, predictive_cue=[{"next": f"stopped: {step}"}]))
+    close(work, [f"stopped: {step} — CCS: {run['out']}"] + elsewhere(run, goes))

@@ -44,7 +44,7 @@ class Start(unittest.TestCase):
             {
                 "folder": ".turn/out",
                 "list": ".turn/out/list.json",
-                "work": ".turn/out/note.md",
+                "work": [".turn/out/work/docs/note.md"],
                 "hand-on": form("hand-on"),
                 "orchestrator": form("orchestrator"),
                 "questions": ".turn/out/questions.json",
@@ -126,15 +126,20 @@ class Start(unittest.TestCase):
             ),
             ("no checklist", ccs(retrieved_artifacts=[]), "retrieved_artifacts needs a checklist"),
             (
-                "two deliverables",
+                "no deliverable",
+                ccs(focal_entities=[{"receiver": "r"}]),
+                "focal_entities needs a deliverable",
+            ),
+            (
+                "one file named twice",
                 ccs(
                     focal_entities=[
                         {"deliverable": "a.md"},
-                        {"deliverable": "b.md"},
+                        {"deliverable": "a.md"},
                         {"receiver": "r"},
                     ]
                 ),
-                "focal_entities needs one deliverable",
+                "focal_entities names a.md twice",
             ),
             (
                 "no receiver",
