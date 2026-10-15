@@ -12,6 +12,92 @@ This file is the checklist for checklists, and is written in the shape it asks f
 `doc.md` applies to a checklist, with what a good deliverable of the kind gives its user as its
 subject.
 
+## Format
+
+### F-1: Shape
+
+Does the checklist follow this template?
+
+```markdown
+---
+name: <kind-of-deliverable>
+version: <x.y.z>
+---
+
+# <Kind of deliverable>
+
+<The purpose in one or two sentences: who uses it, and what they can then do>
+
+<Where the kind is a document, how `doc.md` applies to it>
+
+## Format
+
+### F-1: Shape
+
+<The template the deliverable follows>
+
+## Benefit
+
+### B-1: <Item name>
+
+<Question answered yes or no>
+
+<Only what the question needs to be answered, such as a list or a template; most need nothing>
+
+Why: <what goes wrong without it>
+
+## Usability
+
+None: <why the kind needs no item here>
+```
+
+Every checklist has the three sections, in this order: the shape the maker takes before writing,
+then what the user gets, then what makes it easy to use.
+
+Why: every checklist in the same shape keeps their quality even, lets a tool read any of them, and
+gives the maker the shape first, so each item after it is met inside a shape already taken.
+
+### F-2: A section thought through
+
+Does each section with no item hold `None:` and its reason?
+
+Why: a section thought through is told from a section forgotten.
+
+### F-3: Version
+
+Is the `version` in the front matter semver?
+
+Why: a judgment names the text it was made by in a form people and tools read the same way.
+
+### F-4: Item IDs
+
+Is each item's ID its section's first letter and a number counted up within the section, such as
+`U-2`?
+
+Across checklists, an ID is named with the checklist's `name`, such as `release-notes U-2`.
+
+Why: a judgment names each item by its ID, and the name tells whose item it is when several
+checklists are judged at once.
+
+### F-5: An ID never used again
+
+Compared with the version last released, is every ID that a removed or moved item had left unused,
+with a moved item taking a new number in its new section?
+
+The version last released is the one in the last release of the plugin that holds the checklist,
+under whatever name it had then. A checklist in no release yet has no such ID, and passes.
+
+Why: an ID named earlier always means the same item.
+
+### F-6: Version raised once for each release
+
+Is the `version` raised once for each release from the version last released, and not with each
+change on a branch?
+
+A checklist in no release yet is `0.1.0`.
+
+Why: a judgment names the text it was made by, and no draft between releases takes a number.
+
 ## Benefit
 
 ### B-1: User and purpose
@@ -20,6 +106,20 @@ Can whoever makes or judges a deliverable of the kind learn, from the opening, i
 sentences, who uses it and what they can then do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
+
+### B-7: How `doc.md` applies
+
+Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
+`doc.md` applies to the kind?
+
+Look for: what the kind's subject is, for the items that ask about the reader's picture of it; and,
+for each item of `doc.md` that the kind's shape settles otherwise, such as an opening its template
+has no place for, how it is answered for the kind. An item not named is answered as `doc.md` asks
+it.
+
+Why: `doc.md` is answered beside the kind's checklist; an item of it that the kind's shape cannot
+meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves its
+reader, and the maker cannot tell what passes.
 
 ### B-2: Every part of the purpose checked
 
@@ -69,20 +169,6 @@ counts as one.
 Why: when the answer depends on who judges, the maker cannot tell what passes, and judgments of the
 same deliverable differ.
 
-### B-7: How `doc.md` applies
-
-Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
-`doc.md` applies to the kind?
-
-Look for: what the kind's subject is, for the items that ask about the reader's picture of it; and,
-for each item of `doc.md` that the kind's shape settles otherwise, such as an opening its template
-has no place for, how it is answered for the kind. An item not named is answered as `doc.md` asks
-it.
-
-Why: `doc.md` is answered beside the kind's checklist; an item of it that the kind's shape cannot
-meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves its
-reader, and the maker cannot tell what passes.
-
 ### B-8: Each item named by what it gives
 
 Can whoever makes the deliverable tell from each item's name alone what the user gets when the item
@@ -110,82 +196,11 @@ Ask of each item, in this order, and stop at the first yes:
 Why: with every item where the questions put it, anyone finds it where they look, and each section
 holds what its name says.
 
-## Format
+### U-5: Items in the order the maker meets them
 
-### F-1: Shape
+Can the maker take the items in the order they write, because within each section the items stand
+in the order the maker meets them writing the deliverable from the top, and those that hold over
+the whole, such as one name for each thing, stand last?
 
-Does the checklist follow this template?
-
-```markdown
----
-name: <kind-of-deliverable>
-version: <x.y.z>
----
-
-# <Kind of deliverable>
-
-<The purpose in one or two sentences: who uses it, and what they can then do>
-
-<Where the kind is a document, how `doc.md` applies to it>
-
-## Benefit
-
-### B-1: <Item name>
-
-<Question answered yes or no>
-
-<Only what the question needs to be answered, such as a list or a template; most need nothing>
-
-Why: <what goes wrong without it>
-
-## Usability
-
-None: <why the kind needs no item here>
-
-## Format
-```
-
-Every checklist has the three sections, in this order.
-
-Why: every checklist in the same shape keeps their quality even, and lets a tool read any of them.
-
-### F-2: A section thought through
-
-Does each section with no item hold `None:` and its reason?
-
-Why: a section thought through is told from a section forgotten.
-
-### F-3: Version
-
-Is the `version` in the front matter semver?
-
-Why: a judgment names the text it was made by in a form people and tools read the same way.
-
-### F-4: Item IDs
-
-Is each item's ID its section's first letter and a number counted up within the section, such as
-`U-2`?
-
-Across checklists, an ID is named with the checklist's `name`, such as `release-notes U-2`.
-
-Why: a judgment names each item by its ID, and the name tells whose item it is when several
-checklists are judged at once.
-
-### F-5: An ID never used again
-
-Compared with the version last released, is every ID that a removed or moved item had left unused,
-with a moved item taking a new number in its new section?
-
-The version last released is the one in the last release of the plugin that holds the checklist,
-under whatever name it had then. A checklist in no release yet has no such ID, and passes.
-
-Why: an ID named earlier always means the same item.
-
-### F-6: Version raised once for each release
-
-Is the `version` raised once for each release from the version last released, and not with each
-change on a branch?
-
-A checklist in no release yet is `0.1.0`.
-
-Why: a judgment names the text it was made by, and no draft between releases takes a number.
+Why: a maker who writes from the top meets each item where its part comes, instead of holding every
+item in mind at once; and an item that holds over the whole is checked once the whole is there.

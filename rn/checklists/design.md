@@ -18,6 +18,73 @@ things happen in is the README's to show. The reader comes from the README, so G
 Verification are said in its words, and each name of a part inside the product is first met in
 the figure.
 
+## Format
+
+### F-1: Shape
+
+Does the design document follow this template, headings included?
+
+```markdown
+# <Product name> design
+
+<The design's main point, with a link to the README whose promises it keeps>
+
+## Goals
+
+### Attractive quality
+
+### One-dimensional quality
+
+### Must-be quality
+
+### Backward compatibility
+
+### Non-goals
+
+### Constraints
+
+## Verification
+
+### Attractive quality
+
+### One-dimensional quality
+
+### Must-be quality
+
+### Backward compatibility
+
+## Structure
+
+<One figure: each one that takes part, its responsibility, what it cannot work without>
+
+## Principles
+```
+
+Why: a maintainer moving between products finds the same thing under the same heading in each, and
+settles what is aimed at and how it is checked, neither of which depends on how the product is
+built, before reading who brings it about and what every change must keep; and meets who takes
+part before the principles that name them.
+
+### F-2: A section thought through
+
+Does each section with nothing to hold say, after `None:`, why it holds nothing?
+
+Why: a section thought through is told from a section forgotten.
+
+### F-3: Each quality checked under its heading
+
+Does Verification check each quality under the heading it has in Goals?
+
+Why: each quality is traced from what it is to how it is checked.
+
+### F-5: Each principle names what it protects
+
+Does each principle name, by the headings and names Goals gives them, the qualities or constraints
+it protects?
+
+Why: a quality is followed from Goals to the principles that keep it, and a principle that names
+nothing, kept for nothing, shows.
+
 ## Benefit
 
 ### B-1: Attractive quality
@@ -97,16 +164,6 @@ versions left it?
 
 Why: a break in backward compatibility shows first to the users who rely on it, after the release.
 
-### B-11: Principles to judge a change
-
-Can the reader decide whether a change fits the design from its principles, because each is said as
-what a change must keep, with the quality or the constraint it protects?
-
-Why: without principles, a change can be held only against the code as it stands, where every
-difference looks like a break; a principle tied to what it protects tells what breaks when it is
-not kept, so principles can be weighed against each other, and one tied to nothing is kept out of
-habit.
-
 ### B-12: Who is responsible for what
 
 Can the reader see in one figure every one that takes part in the product's work, the user and
@@ -119,15 +176,25 @@ Why: a maintainer changing one part needs to know every other its change can rea
 part rests on; pieced together from prose, it costs effort and goes wrong, and a part left
 untold is reached without anyone seeing it.
 
+### B-11: Principles to judge a change
+
+Can the reader decide whether a change fits the design from its principles, because each is said as
+what a change must keep, with the quality or the constraint it protects?
+
+Why: without principles, a change can be held only against the code as it stands, where every
+difference looks like a break; a principle tied to what it protects tells what breaks when it is
+not kept, so principles can be weighed against each other, and one tied to nothing is kept out of
+habit.
+
 ## Usability
 
-### U-1: Few principles
+### U-4: What others rely on, by what it gives them
 
-Can the reader keep every principle in mind, because each is one a change anywhere must keep?
+Can the reader tell a name that must be kept from one the build may change, because the design gives
+a name, a path or a value of what others rely on only where they rely on that very name?
 
-Why: few principles can be kept in mind and weighed against each other; a rule that concerns one
-part belongs with that part's code, and listed among the principles adds one more thing to keep in
-mind everywhere.
+Why: a name made a promise where others rely only on what it gives ties the design to the build,
+and must be kept when the build would change it.
 
 ### U-2: Decisions told from details
 
@@ -148,77 +215,10 @@ Why: builders work out each case and each way from the principles and the respon
 or a way written down reads as one more rule to keep beside them, and must change with the
 implementation though no decision did.
 
-### U-4: What others rely on, by what it gives them
+### U-1: Few principles
 
-Can the reader tell a name that must be kept from one the build may change, because the design gives
-a name, a path or a value of what others rely on only where they rely on that very name?
+Can the reader keep every principle in mind, because each is one a change anywhere must keep?
 
-Why: a name made a promise where others rely only on what it gives ties the design to the build,
-and must be kept when the build would change it.
-
-## Format
-
-### F-1: Shape
-
-Does the design document follow this template, headings included?
-
-```markdown
-# <Product name> design
-
-<The design's main point, with a link to the README whose promises it keeps>
-
-## Goals
-
-### Attractive quality
-
-### One-dimensional quality
-
-### Must-be quality
-
-### Backward compatibility
-
-### Non-goals
-
-### Constraints
-
-## Verification
-
-### Attractive quality
-
-### One-dimensional quality
-
-### Must-be quality
-
-### Backward compatibility
-
-## Structure
-
-<One figure: each one that takes part, its responsibility, what it cannot work without>
-
-## Principles
-```
-
-Why: a maintainer moving between products finds the same thing under the same heading in each, and
-settles what is aimed at and how it is checked, neither of which depends on how the product is
-built, before reading who brings it about and what every change must keep; and meets who takes
-part before the principles that name them.
-
-### F-2: A section thought through
-
-Does each section with nothing to hold say, after `None:`, why it holds nothing?
-
-Why: a section thought through is told from a section forgotten.
-
-### F-3: Each quality checked under its heading
-
-Does Verification check each quality under the heading it has in Goals?
-
-Why: each quality is traced from what it is to how it is checked.
-
-### F-5: Each principle names what it protects
-
-Does each principle name, by the headings and names Goals gives them, the qualities or constraints
-it protects?
-
-Why: a quality is followed from Goals to the principles that keep it, and a principle that names
-nothing, kept for nothing, shows.
+Why: few principles can be kept in mind and weighed against each other; a rule that concerns one
+part belongs with that part's code, and listed among the principles adds one more thing to keep in
+mind everywhere.

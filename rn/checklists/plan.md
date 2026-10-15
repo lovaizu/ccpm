@@ -12,6 +12,79 @@ reached as its subject; its B-16 is answered by the tasks in order, since a plan
 acting in turn. Before the tasks that make the deliverable are planned, the items on tasks are
 answered as met.
 
+## Format
+
+### F-1: Shape
+
+Does the plan follow this template, front matter, headings and markers included?
+
+```markdown
+---
+rn: <installed rn version>
+pr: <the session's pull request URL>
+status: running
+artifact-language: <the language everything written to the repository is in>
+conversation-language: <the language the user is spoken to in>
+readme: <path of the README; README.md unless agreed otherwise>
+design: <path of the design document; docs/design.md unless agreed otherwise>
+verification: <path of the verification document; docs/verification.md unless agreed otherwise>
+---
+
+# Goal
+
+<what the user wants and why, as agreed with them>
+
+# Acceptance criteria
+
+## Attractive quality
+
+- A1: <what the user or their users gain, which would make them choose the result>
+
+## Must-be quality
+
+- M1: <what the user takes for granted>
+
+# Assumptions
+
+- Fact, <how it was checked, or "decided by the user">: <what the plan rests on>
+- Assumption: <what the plan rests on without having checked it>
+
+# Rules
+
+- <what the work must follow that the goal does not tell, such as this repository's conventions>
+
+# Tasks
+
+### [ ] #1: Plan sign-off
+### [ ] #2: Design sign-off
+### [ ] #3: <task name>
+
+Purpose: <what this task does for the goal>
+
+Serves: <criterion IDs>
+
+Completion criteria:
+
+- Attractive quality: <a state checked on the real thing>
+- Must-be quality: <a state checked on the real thing>
+
+### [ ] #4: Deliverable sign-off
+
+# Not yet specified
+
+- <what cannot yet be stated as a task>
+```
+
+- Criterion IDs are `A1`, `A2`... and `M1`, `M2`..., never reused once given.
+- Until the Design sign-off is approved, the only tasks are the Plan and Design sign-offs, and what
+  the deliverable needs is under Not yet specified; the tasks planned then take the next ids, and
+  the Deliverable sign-off comes last. A task added later takes the next unused id and goes before
+  the sign-off it leads to.
+- `status` becomes `finished` when the Deliverable sign-off is approved.
+
+Why: the commands and checks of rn read the plan by this form, so a plan in another form stops the
+session, and a later version of rn goes on from it only when the form holds.
+
 ## Benefit
 
 ### B-1: Why the user wants the goal
@@ -100,76 +173,3 @@ reason to choose the work goes unchecked, past the time to change course.
 
 None: each thing that makes a plan easy to carry on from is one its readers get from it, so its
 item is in Benefit.
-
-## Format
-
-### F-1: Shape
-
-Does the plan follow this template, front matter, headings and markers included?
-
-```markdown
----
-rn: <installed rn version>
-pr: <the session's pull request URL>
-status: running
-artifact-language: <the language everything written to the repository is in>
-conversation-language: <the language the user is spoken to in>
-readme: <path of the README; README.md unless agreed otherwise>
-design: <path of the design document; docs/design.md unless agreed otherwise>
-verification: <path of the verification document; docs/verification.md unless agreed otherwise>
----
-
-# Goal
-
-<what the user wants and why, as agreed with them>
-
-# Acceptance criteria
-
-## Attractive quality
-
-- A1: <what the user or their users gain, which would make them choose the result>
-
-## Must-be quality
-
-- M1: <what the user takes for granted>
-
-# Assumptions
-
-- Fact, <how it was checked, or "decided by the user">: <what the plan rests on>
-- Assumption: <what the plan rests on without having checked it>
-
-# Rules
-
-- <what the work must follow that the goal does not tell, such as this repository's conventions>
-
-# Tasks
-
-### [ ] #1: Plan sign-off
-### [ ] #2: Design sign-off
-### [ ] #3: <task name>
-
-Purpose: <what this task does for the goal>
-
-Serves: <criterion IDs>
-
-Completion criteria:
-
-- Attractive quality: <a state checked on the real thing>
-- Must-be quality: <a state checked on the real thing>
-
-### [ ] #4: Deliverable sign-off
-
-# Not yet specified
-
-- <what cannot yet be stated as a task>
-```
-
-- Criterion IDs are `A1`, `A2`... and `M1`, `M2`..., never reused once given.
-- Until the Design sign-off is approved, the only tasks are the Plan and Design sign-offs, and what
-  the deliverable needs is under Not yet specified; the tasks planned then take the next ids, and
-  the Deliverable sign-off comes last. A task added later takes the next unused id and goes before
-  the sign-off it leads to.
-- `status` becomes `finished` when the Deliverable sign-off is approved.
-
-Why: the commands and checks of rn read the plan by this form, so a plan in another form stops the
-session, and a later version of rn goes on from it only when the form holds.

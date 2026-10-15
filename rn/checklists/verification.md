@@ -13,6 +13,53 @@ to it with the product's checks as its subject. It is also the checklist the del
 against: each scene is an item, so a reader who uses the product as the scene says can tell
 whether it passed.
 
+## Format
+
+### F-1: Shape
+
+Does the verification document follow this template, headings and IDs included?
+
+```markdown
+---
+name: verification
+version: <x.y.z>
+---
+
+# <Product name> verification
+
+<What to run these checks for, in one or two sentences>
+
+## Where a run starts
+
+<the state each run starts from, fixed>
+
+## How a run goes
+
+<how a run is carried through>
+
+## Scenes
+
+### A1: <the criterion as the plan words it>
+
+- <what is put in: what the user says, knows, and decides>
+
+  Passes when <what must happen>.
+
+## Machine checks
+
+| Command | Criteria |
+|---|---|
+| <the command as it is run> | <the IDs it checks> |
+```
+
+- The front matter names the document as a checklist, so turn uses the deliverable against it: each
+  `### A1:` heading is an item, and the deliverable gives it when, doing as the scene says, what
+  must happen happens.
+- Every attractive criterion of the plan has a heading under Scenes, by its ID.
+
+Why: rn's checks find each criterion's scene and machine check by this form, and the deliverable
+is used against the same document the user approved.
+
 ## Benefit
 
 ### B-1: Each run starts the same
@@ -65,50 +112,3 @@ Why: a check that must be worked out before it runs is run less often, or not at
 
 None: each thing that makes a verification document quick to run is one its reader gets from it,
 so its item is in Benefit.
-
-## Format
-
-### F-1: Shape
-
-Does the verification document follow this template, headings and IDs included?
-
-```markdown
----
-name: verification
-version: <x.y.z>
----
-
-# <Product name> verification
-
-<What to run these checks for, in one or two sentences>
-
-## Where a run starts
-
-<the state each run starts from, fixed>
-
-## How a run goes
-
-<how a run is carried through>
-
-## Scenes
-
-### A1: <the criterion as the plan words it>
-
-- <what is put in: what the user says, knows, and decides>
-
-  Passes when <what must happen>.
-
-## Machine checks
-
-| Command | Criteria |
-|---|---|
-| <the command as it is run> | <the IDs it checks> |
-```
-
-- The front matter names the document as a checklist, so turn uses the deliverable against it: each
-  `### A1:` heading is an item, and the deliverable gives it when, doing as the scene says, what
-  must happen happens.
-- Every attractive criterion of the plan has a heading under Scenes, by its ID.
-
-Why: rn's checks find each criterion's scene and machine check by this form, and the deliverable
-is used against the same document the user approved.
