@@ -35,6 +35,8 @@ you may read.
 6. Read the work from the top as the receiver, for the use, item by item, and shape it until it
    gives the receiver each item.
 7. Write your form: for each item, in `lines`, the lines of the work that meet it, such as
-   `3-5, 12`.
+   `3-5, 12`; for an item the work leaves out until a question of step 5 is answered, in
+   `question`, that question's number, counted from 1, so the orchestrator sees it waits on the
+   user and not on the work.
 8. Run `check`, and fix each place it names, until it prints `filled`.
 9. Hand back one line saying the work, the form and the questions are written.

@@ -105,6 +105,29 @@ class Questions(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
 
+    def test_the_generator_names_for_an_item_left_out_the_question_it_waits_on(self):
+        cases = [
+            ("waiting on the question it added", {"question": 1}, None),
+            ("neither lines nor a question", {}, "note F-1: lines are not given"),
+            ("waiting on a question not added", {"question": 2}, "note F-1: question 2 is not"),
+        ]
+        for name, place, said in cases:
+            with self.subTest(name):
+                # Given: the generator left F-1 out of the work, added the question it waits on,
+                # and wrote of F-1 the question, no lines, or a question it did not add
+                fill(self.repo, QUESTIONS, [{"question": LICENSE}])
+                fill(self.repo, form("generator"), {"note B-1": {"lines": "3"}, "note F-1": place})
+                # When: the generator's form is checked
+                code, out = self.check("generator")
+                # Then: it passes only with a question added, and otherwise says to give the lines
+                # or the question's number
+                if said is None:
+                    self.assertEqual((code, out.strip()), (0, "filled"))
+                else:
+                    self.assertEqual(code, 1)
+                    self.assertIn(said, out)
+                    self.assertIn("or, where the work leaves the item out until a question", out)
+
     def test_each_question_and_each_item_waiting_on_one_must_be_decided_before_the_reading(self):
         cases = [
             ("asked", [OPEN], None, None),

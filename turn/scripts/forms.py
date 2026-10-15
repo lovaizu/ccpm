@@ -3,12 +3,16 @@
 import os
 import re
 
-from questions import asked_numbers, question_faults
+from questions import asked, asked_numbers, question_faults
 from state import Stop, read_json, the_work, write_json
 
 ROLES = ("generator", "hand-on", "first-user", "evaluator", "orchestrator", "learner")
 PLACES = ("the work", "what the work should be")
 DECIDING = ("hand-on", "orchestrator")
+LEFT_OUT = (
+    "; name the lines that meet it, or, where the work leaves the item out until a question is "
+    "answered, give that question's number as `question`"
+)
 NAMES_LINES = re.compile(r"\blines?\s*\d|\b\d+\s*-\s*\d+\b")
 LINES = re.compile(r"\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$")
 
@@ -65,8 +69,11 @@ def check(work, role):
             found.append(f"{i}: not filled")
             continue
         lines = place.get("lines", "")
-        needed = role in ("generator", "first-user", "evaluator") or (
-            role in DECIDING and place.get("met")
+        # An item the generator leaves out until a question is answered has no lines yet.
+        needed = (
+            role in ("first-user", "evaluator")
+            or (role == "generator" and "question" not in place)
+            or (role in DECIDING and place.get("met"))
         )
         if role == "first-user" and not place.get("took"):
             found.append(f"{i}: what was taken is not given")
@@ -84,7 +91,7 @@ def check(work, role):
         if role == "hand-on" and place.get("met") is False:
             found += aim_faults(i, place, count)
         if needed and not lines:
-            found.append(f"{i}: lines are not given")
+            found.append(f"{i}: lines are not given" + (LEFT_OUT if role == "generator" else ""))
         elif lines and bad_lines(lines, count):
             found.append(f"{i}: lines {lines} are not in the work")
         if (
@@ -93,6 +100,12 @@ def check(work, role):
             and place["question"] not in asked_numbers(work)
         ):
             found.append(f"{i}: question {place['question']} is not asked")
+        if (
+            role == "generator"
+            and "question" in place
+            and place["question"] not in range(1, len(asked(work)) + 1)
+        ):
+            found.append(f"{i}: question {place['question']} is not in the questions{LEFT_OUT}")
     return found
 
 
