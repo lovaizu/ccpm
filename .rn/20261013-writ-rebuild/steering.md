@@ -569,6 +569,26 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   16. Decided by the user (2026-10-16): rn's prompts, hooks and scripts are made through turn too,
       not by hand; a `hook` checklist added for the hooks, beside `code`; the checklists grow with
       each kind of work rn makes.
+  17. A More from the deliverable's use becomes a task checked on the real thing against its scene;
+      turn checks no item alone.
+  18. The practice repository's `main` put back to `c3b5f8e`, its later state kept as the tag
+      `team-plugins-2026-10-07`, and the branch of the closed pull request #79 deleted.
+  19. Decided by the user (2026-10-16): rn does nothing with the rules turn returns as they come;
+      before the Deliverable sign-off it takes stock of every rule the session's runs returned and,
+      one at a time, agrees with the user what to do with each, an item for `.rn/checklists/<kind>.md`,
+      an issue, or letting it go.
+  20. Decided by the user (2026-10-16): the caller hands turn `decisions` (was `content`): what it
+      decided the work must say or do and leave out, item by item, holding nothing a reference
+      holds; what the work draws on, the plan, the design, code, a document already there, is
+      handed as a reference and read by turn where it stands, since a copy drifts from its source
+      (the cause of most of the questions turn returned on 2026-10-16). In rn, `up.py decisions`,
+      `--decisions`, `.rn/{session}/decisions/`.
+  21. Decided by the user (2026-10-16): a checklist's Format comes first, the shape the maker takes
+      before writing, and the items of Benefit and Usability stand in the order the maker meets
+      them writing from the top, those over the whole last (`checklist.md` F-1, U-5); turn's
+      generator takes the shape, writes part by part in that order, then goes through the items
+      over the whole one at a time, then reads once as the receiver; the learner returns a rule
+      only where no item of the list asks it.
 - rn's README through turn (2026-10-16, Opus, $5.42, two rounds, 27 of 27, no question): read whole
   as a newcomer; the orchestrator held 11 items the evaluator left (the opening's length, resuming
   said in several places); one repeat of resuming cut and the opening split by hand (`487363c`).
@@ -689,6 +709,21 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   only where a running session's plan is in the working tree, and at the end of the turn once,
   letting the second pass, marked `stop_hook_active`, end the turn. Run again as `hf4` in this
   session's scratchpad.
+- Decided by the user (2026-10-16), on the rules turn returns: rn does nothing with them as they
+  come; at the end of its work it takes stock of every rule the session's runs returned and, one
+  at a time, agrees with the user what to do with each and whether to open an issue for it. To
+  put into rn's design and prompts (the conductor's steps before the Deliverable sign-off) and
+  into the record. Seen on the way: of the rules returned today, one was a real learning for
+  turn's generator, that a content entry listing terms is a meaning to say where each is first
+  used and not a block to copy; the rest said checklist items again.
+- Decisions 20 and 21 built (`4280354`, `339f36c`): the checklists reordered, `content` renamed to
+  `decisions` in turn and rn (code, tests, CCS files, `.writ/decisions/`), turn's generator and
+  learner rewritten, rn's conduct.md step 4 (Writing the decisions), step 5's flags and step 12's
+  stock-taking written by hand, the designs and decisions files of both brought along. Tried first
+  on turn's own design as `d6` in this session's scratchpad. Seen in the flow trial (`flow1`,
+  08:16): rn put to the stand-in whether a one-line change should get the three documents in
+  `docs/`, and the stand-in chose to keep them in the session's folder; to judge from the whole
+  transcript when the trial ends.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
