@@ -1,10 +1,12 @@
 # What rn's prompts say
 
-The work is six files that serve one purpose, the conductor's prompts: the skills
+The work is seven files that serve one purpose, the conductor's prompts: the skills
 `rn/skills/up/SKILL.md`, `rn/skills/ty/SKILL.md`, `rn/skills/gm/SKILL.md` and
-`rn/skills/dn/SKILL.md`, each a command the user types, and two files the skills name and the AI
+`rn/skills/dn/SKILL.md`, each a command the user types, and three files the skills name and the AI
 reads when a step calls for them: `rn/references/conduct.md`, how the conductor carries a session,
-and `rn/references/record.md`, the session's record and where the session stands.
+`rn/references/record.md`, the session's record and where the session stands, and
+`rn/references/upgrade.md`, how a session recorded by an rn before 0.9.0 is brought to the current
+form, read only when such a session is found.
 
 ## prompt
 
@@ -48,9 +50,9 @@ and `rn/references/record.md`, the session's record and where the session stands
 - `up`: run `sh "${CLAUDE_PLUGIN_ROOT}/scripts/tools.sh"`, and when it exits with 1 show what it
   printed and end; read `record.md` whole and find the session as it says; a session there → take
   it up; none and no words → say so and end; none and words → start: when the working tree has
-  uncommitted changes, say so without touching them and end; work on a new branch from the latest
-  default branch, pushed to a branch of the same name on the remote, in `.rn/{yyyymmdd}-{slug}/`,
-  the slug naming what the words ask for; ask the user, as one point, the two languages, proposing
+  uncommitted changes, say so without touching them and end; work on a new branch named `{slug}`,
+  the slug naming what the words ask for in a word or words joined by hyphens, from the latest
+  default branch, pushed to a branch of the same name on the remote, in `.rn/{yyyymmdd}-{slug}/`; ask the user, as one point, the two languages, proposing
   what the repository and the user's instructions already set, or else English for the repository
   and the user's own for the talk, so a single yes settles both; write `steering.md` in the form
   `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` gives, with the languages, `rn` from
@@ -169,7 +171,11 @@ and `rn/references/record.md`, the session's record and where the session stands
     sign-off.
   - Making a work through turn: `up.py content <session folder> <the work's first file>` for where
     the content file goes, written as Writing the content says; `up.py checklists <kind>` for its
-    checklists, a kind with none made first with the user against the checklist for checklists at
+    checklists; the kinds: `plan` for the plan, `readme`, `design` and `verification` for the
+    three documents, `proposal` for a proposal, `code` for code and its tests, and for any other
+    document its kind or `doc`; the deliverable's use takes no kind: its checklist is the session's
+    verification document itself; a kind with none is made first with the user against
+    `${CLAUDE_PLUGIN_ROOT}/checklists/checklist.md`, with `up.py checklists checklist`, written to
     `.rn/checklists/<kind>.md`; `up.py task <session folder>` with `--deliverable` each file,
     `--receiver`, `--use`, `--acceptance`, `--checklist` each checklist, `--content`, `--reference`
     each file or folder the work follows or draws on, `--opens` each file the receiver opens with
@@ -232,8 +238,9 @@ and `rn/references/record.md`, the session's record and where the session stands
     conversation language when the two differ; the item leaves `open/` in the commit that records
     the answer; a question is not a stop.
   - Stopping for the user: only at a sign-off; when the work waits on someone outside, what to do
-    meanwhile is a question; at a sign-off every report and feedback is settled and the branch has
-    the latest default branch merged in; the proposal's content is written, the final state only,
+    meanwhile is a question; at a sign-off every report and feedback is settled, each in a commit
+    of its own before the stop commit, whose body is the proposal alone, and the branch has the
+    latest default branch merged in; the proposal's content is written, the final state only,
     item by item of `proposal.md`: what the conductor proposes next and why it serves the goal; the
     goal and every acceptance criterion as `steering.md` words them; for each attractive criterion
     how far the work now gives it and what came closer since the last proposal; what changed since
@@ -263,8 +270,9 @@ and `rn/references/record.md`, the session's record and where the session stands
   `proposal`, since the checks find them by these names; an item leaves `open/` in the commit that
   settles it, copied whole into that commit's message under its file name, each line indented,
   with what was decided on each shortfall as `- Good A1: <what the user gains, at path:line>`,
-  `- More A1: <what the user will struggle with, at path:line>` and `→ fixed: <how> | → let go:
-  <why> | → to the user: <the question, or back to the plan or the design>`. The decision line:
+  `- More A1: <what the user will struggle with, at path:line>` and, on its own line indented
+  under the More, `→ fixed: <how> | → let go: <why> | → to the user: <the question, or back to the
+  plan or the design>`. The decision line:
   every commit the conductor makes has a subject line saying what it records, such as `rn: settle
   the report on #3 move src/cart`, and ends with `● {#id task name | plan | design | deliverable}
   ── {what was decided} → {next move}`, the first being `● plan ── started → working out the plan`;
@@ -282,17 +290,17 @@ and `rn/references/record.md`, the session's record and where the session stands
   `origin/HEAD` is not set); none and `/rn:up` was given words → start a session from them; none
   and no words → say there is no session on this branch, check out the session's branch or give
   `/rn:up` what to do; only one whose `status` is `finished` → say it is finished; either way end.
-  A session whose `rn` field's first two numbers are `0.9` is taken up as it stands; one with no
-  `rn` field, or lower, was started under an earlier rn: `/rn:up` brings it to the current form,
-  any other command asks the user to run `/rn:up` first and ends. Bringing an older session to the
-  current form: the old record is the user's request and what was done so far, and the goal is
-  worked out again from it; read the old `steering.md` and whatever else the old version left;
-  work out the plan as `/rn:up` does on a start, with the session's branch, pull request and
-  directory in place of new ones and the old record as the request, asking only what it leaves
-  unclear; the first write of the new `steering.md` replaces the old one; what an old design the
-  user approved settled goes into the design's content as agreed points, what was done becomes
-  Facts in Assumptions each saying where, the other old files are removed and stay readable in
-  git; stop at a new Plan sign-off.
+  A session whose `rn` field is `0.9.0` or later is taken up as it stands; one with no `rn`
+  field, or lower, was started under an earlier rn: `/rn:up` brings it to the current form as
+  `upgrade.md` says, any other command asks the user to run `/rn:up` first and ends.
+- `upgrade.md`: the old record is the user's request and what was done so far, and the goal is
+  worked out again from it, since an older record may not hold why the user wants the goal; read
+  the old `steering.md` and whatever else the old version left; work out the plan as `/rn:up`
+  does on a start, with the session's branch, pull request and directory in place of new ones and
+  the old record as the request, asking only what it leaves unclear; the first write of the new
+  `steering.md` replaces the old one; what an old design the user approved settled goes into the
+  design's content as agreed points, what was done becomes Facts in Assumptions each saying where,
+  the other old files are removed and stay readable in git; stop at a new Plan sign-off.
 
 ### B-8: What breaks, set down exactly
 - Every command, path, field name, decision line, marker and file name above is written as it
@@ -305,8 +313,8 @@ and `rn/references/record.md`, the session's record and where the session stands
   Deliverable sign-off.
 
 ### B-13: Details read only when needed
-- `conduct.md` and `record.md` are files of their own, named in the skills, read when a step calls
-  for them; `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` and `proposal.md` likewise, for the plan's
+- `conduct.md`, `record.md` and `upgrade.md` are files of their own, named in the skills, read
+  when a step calls for them, `upgrade.md` only when an older session is found; `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` and `proposal.md` likewise, for the plan's
   form and the map.
 
 ### B-17: Scripts for what must come out the same
