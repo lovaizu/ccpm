@@ -113,7 +113,7 @@
 
   Can the developer tell which Python version the tool needs?
   ```
-- The checklists in this repository (`../writ/checklists/`) cover documents, READMEs, design
+- The checklists in this repository (`../rn/checklists/`) cover documents, READMEs, design
   documents, prompts, code and its tests, and checklists; you copy the ones you need into your
   repository.
 - Installing: in Claude Code, you add the marketplace once with `/plugin marketplace add

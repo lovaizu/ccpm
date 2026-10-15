@@ -125,7 +125,7 @@ what a newcomer would not understand, as people do with their own writing. turn 
   Can the developer tell which Python version the tool needs?
   ```
 
-  The checklists in this repository ([`../writ/checklists/`](../writ/checklists/)) cover documents,
+  The checklists in this repository ([`../rn/checklists/`](../rn/checklists/)) cover documents,
   READMEs, design documents, prompts, code and its tests, and checklists; you copy the ones you need
   into your repository.
 

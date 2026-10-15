@@ -3,7 +3,7 @@
                      {"receiver": "whoever maintains turn's scripts"}],
   "goal_orientation": [{"use": "to keep and change how turn holds the questions only the user can decide"},
                        {"acceptance": "the code gives the behavior its content asks, its tests show it, and the maintainer understands it and changes it with confidence"}],
-  "retrieved_artifacts": [{"checklist": "writ/checklists/code.md"},
+  "retrieved_artifacts": [{"checklist": "rn/checklists/code.md"},
                           {"content": ".writ/content/turn/scripts/questions.content.md"},
                           {"reference": "turn/scripts/state.py"},
                           {"reference": "dev/turn/tests/test_questions.py"},
