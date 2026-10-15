@@ -441,6 +441,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   file. turn's README says so; the design takes it when remade, and the code after.
 - Decided by the user (2026-10-15): `.turn/` is kept as the place of a run's evidence from 0.2.0
   on, since the README names it; its layout inside may change. The design's content says so.
+- The design's content checked statement by statement against turn's code, prompts, README,
+  callers' page, tests, rules and records (about 200 statements, every one): where the content was
+  wrong it is fixed, a run's unit as one purpose with one or more files put in. Where the content
+  is right and the code falls short, the code is fixed after the design: nothing stops the work
+  changing after its reading (`turn/hooks/checks/write_in_run.py:24-27`); the work is copied to
+  where it goes before a second round (`turn/scripts/lifecycle.py:119-120`), so a run stopped there
+  leaves the first round's work; several hooks' stops name no step or reason; no test for a run cut
+  off, python3 missing in a run, jq missing outside one, or a returned CCS whose caller part
+  differs.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 
