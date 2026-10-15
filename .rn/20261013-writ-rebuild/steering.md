@@ -400,8 +400,14 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
 - `readme.md` done the same way (2026-10-15): someone meeting the product decides from the README
   alone whether it is for them and, if so, gets to their first result. B-6 (where to go for more)
   removed as beyond that purpose, the Documentation heading kept as the place READMEs give it; U-4
-  removed, since `doc.md` B-11 asks it; the opening says the example answers `doc.md` B-16. Next:
-  `design.md`, then the README and a design made with the three and read for noise.
+  removed, since `doc.md` B-11 asks it; the opening says the example answers `doc.md` B-16.
+- `design.md` done the same way (2026-10-15): its purpose names, as the user asked, the principles,
+  the approach to each promise and the structure in one figure (who takes part, each role, what each
+  depends on). B-17 to B-19 (how checks are cut) removed, since `plugin.md` already rules them;
+  B-21 removed, since what must keep holding (B-4) leaves the rest free; B-16 folded into B-31, so
+  no approach is made to list options when none was weighed; the template's opening gives the main
+  point, not what the document covers. Next: the README and a design made with the three and read
+  for noise.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 

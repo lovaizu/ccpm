@@ -5,34 +5,16 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by someone who builds or maintains a product. It lets them:
+A design document is read by someone who builds or maintains the product. From it they learn how
+the product brings about what its README promises: the principles it follows, the approach to each
+promise, and its structure, seen in one figure: who takes part, each one's role and what each
+depends on. With that they can build it, tell whether it keeps those promises, and judge whether a
+change fits.
 
-- tell each quality the product must have: which benefits the design must bring the user, which
-  qualities are better the more of them there is, what the user takes for granted, and, for each
-  thing someone outside the product relies on, who relies on it, what must keep holding and what
-  of it may change;
-- tell within what limits each quality is kept: what the design leaves out on purpose, and which
-  conditions it cannot change;
-- tell how each quality is checked: for each benefit, in what situation it is tried and what must
-  happen to the user for its check to pass; for each one-dimensional quality, how it is measured
-  and what its measure is compared with; for each must-be quality and each thing others rely on,
-  how a test shows it holds;
-- tell, when a check fails, which quality broke;
-- tell how the flow of the parts is checked apart from what each part makes;
-- try each check in the smallest situation that shows its quality;
-- see how each quality comes about: the approach to it, said as the idea of how it comes about and
-  who takes part in it, and what must hold after every operation; and who takes part in the whole
-  product, what each does, what passes between them and what each cannot work without, seen in one
-  place;
-- decide whether a change fits the design from its principles, and tell the quality or the
-  constraint each principle protects;
-- tell, for each approach, which other approaches were weighed, or that none was, why each was
-  not chosen, and what the one chosen costs.
-
-How the product is used is the README's; how each part behaves, such as when a hook runs and what
-it looks at, is the code's, with its code, full definitions, steps, settings and file names, since
-these change with each rebuild while the approach holds. Each item of `doc.md` also applies to
-a design document.
+How the product is used is the README's; how each part behaves, with its steps, definitions,
+settings and file names, is the code's, since these change with each rebuild while the design
+holds. Each item of `doc.md` applies to a design document with how the product brings about its
+promises as its subject, and its B-16 is answered by the figure B-32 asks for.
 
 ## Benefit
 
@@ -141,52 +123,11 @@ For each approach, can the reader tell what must hold after every operation?
 Why: read as a condition, it keeps holding when one place is changed; read as one step of a
 procedure, it is lost when the procedure changes.
 
-### B-16: The options weighed
-
-For each approach, can the reader tell which other approaches were weighed, or that none was?
-
-Why: a maintainer who thinks of an option cannot tell whether it is new or was already weighed.
-
-### B-17: Which quality broke
-
-When a check fails, can the reader tell which quality broke, because each check shows one quality
-only?
-
-Why: a check that holds several qualities, failing, does not say which of them broke, and costs as
-much as its largest part each time it runs.
-
-### B-18: The flow apart from the work
-
-Can the reader tell how the flow of the parts, which part hands what to which and in what order, is
-checked apart from what each part makes?
-
-Apart means on a task that asks each part only for something to hand on, so the check neither
-spends the cost of real work nor fails where only a part's work falls short.
-
-Why: a flow tried on real work spends that work's cost on every run, and, failing, does not say
-whether the flow or the work broke.
-
-### B-19: The smallest situation that shows it
-
-For each check, can the reader try it in the smallest situation that shows its quality, because each
-thing the situation holds is given with what it does toward showing the quality, so a thing with
-nothing to do there is seen?
-
-Why: whatever a situation holds beyond what shows the quality is paid for on every run, and is one
-more place a failure can come from that the quality does not.
-
 ### B-20: Who relies on each thing
 
 For each thing someone outside the product relies on, can the reader tell who relies on it?
 
 Why: a change is weighed by whom it breaks, and those it breaks are not there to say so.
-
-### B-21: What may change
-
-For each thing someone outside the product relies on, can the reader tell what of it may change?
-
-Why: without it, a maintainer either holds every detail fixed for fear of breaking someone, or
-changes what was promised along with what was not.
 
 ### B-22: Where each benefit is tried
 
@@ -229,7 +170,7 @@ after its cost has outgrown what it gives.
 
 ### B-31: Why each option was turned down
 
-For each approach weighed and not chosen, can the reader tell why it was not chosen?
+For each other approach that was weighed, can the reader tell why it was not chosen?
 
 Why: without the reasons, a decision is either kept blindly or overturned for an option already
 weighed and turned down.
@@ -294,7 +235,7 @@ Does the design document follow this template, headings included?
 ```markdown
 # <Product name> design
 
-<What this document covers, with a link to the README whose benefits it serves>
+<The design's main point, with a link to the README whose promises it keeps>
 
 ## Goals
 
@@ -328,8 +269,8 @@ Does the design document follow this template, headings included?
 
 ### <Approach name>
 
-<The qualities it brings about, the idea of how, who takes part, what must always hold, and the
-approaches weighed>
+<The qualities it brings about, the idea of how, who takes part, what must always hold, what it
+costs, and why each other approach weighed was not chosen>
 ```
 
 Why: a maintainer moving between products finds the same thing under the same heading in each, and
