@@ -3,9 +3,9 @@
                      {"receiver": "someone who cleans CSV exports for their scripts, finding csvtidy on GitHub"}],
   "goal_orientation": [{"use": "to decide whether to use csvtidy, and to run it on their own file"},
                        {"acceptance": "they can tell what csvtidy saves them, install it and clean their own file"}],
-  "retrieved_artifacts": [{"viewpoint": "writ/checklists/doc.md"},
-                          {"viewpoint": "writ/checklists/readme.md"},
-                          {"source": "dev/turn/trials/csvtidy/notes.md"}],
+  "retrieved_artifacts": [{"checklist": "writ/checklists/doc.md"},
+                          {"checklist": "writ/checklists/readme.md"},
+                          {"content": "dev/turn/trials/csvtidy/notes.md"}],
   "constraints": [{"language": "English"}],
   "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
   "relational_map": [], "episodic_trace": []

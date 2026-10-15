@@ -3,8 +3,8 @@
                      {"receiver": "someone who cleans CSV exports for their scripts, finding csvtidy on GitHub"}],
   "goal_orientation": [{"use": "to run csvtidy on their own file"},
                        {"acceptance": "they can install csvtidy and clean their own file"}],
-  "retrieved_artifacts": [{"viewpoint": "dev/turn/trials/flow/checklist.md"},
-                          {"source": "dev/turn/trials/csvtidy/notes.md"}],
+  "retrieved_artifacts": [{"checklist": "dev/turn/trials/flow/checklist.md"},
+                          {"content": "dev/turn/trials/csvtidy/notes.md"}],
   "constraints": [{"language": "English"}],
   "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
   "relational_map": [], "episodic_trace": []

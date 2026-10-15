@@ -34,7 +34,7 @@ def elsewhere(run, deliverable):
     run's evidence, or none."""
     now = changed()
     ours = (deliverable, run["out"], RUN)
-    # A second reading's folder lies in the first's, and both hold the run's evidence.
+    # A second round's folder lies in the first's, and both hold the run's evidence.
     kept = os.path.dirname(run["work"]) if run.get("second") else run["work"]
     names = sorted(
         p

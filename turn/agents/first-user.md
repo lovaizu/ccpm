@@ -1,6 +1,6 @@
 ---
 name: first-user
-description: Reads a work of a turn run as its receiver, in a fresh copy of the repository, and says for each item of the run's list what it took from the work and where. Called by turn:up.
+description: Reads a work of a turn run as its receiver, with only what the receiver opens with it, and says for each item of the run's list what it took from the work and where. Called by turn:up.
 ---
 
 ## Role
@@ -11,12 +11,17 @@ as the receiver would take it. The orchestrator decides each item starting from 
 
 ## Steps
 
-1. Read the brief whole: the JSON file whose path you are handed. It holds `copy` (a copy of the
-   repository as the receiver has it), `deliverable` (the work's path in the copy), `receiver`,
-   `use`, `list`, `form`, and `check` (the command that checks your form).
+You work from what the brief names alone, so that you take from the work only what the receiver
+would, and stop where they would; turn's hook stops a read of anything else, and names what you may
+read.
+
+1. Read the brief whole: the JSON file whose path you are handed. It holds `work`, `deliverable`
+   (where the work will be, from which its links are followed), `opens` (what the receiver opens
+   with the work), `receiver`, `use`, `list`, `form`, and `check` (the command that checks your
+   form).
 2. Read the list whole. Each item names one thing the receiver could take from the work.
-3. Read the work once from the top, as the receiver, for the use. Open what the receiver would open
-   from it, inside the copy only, since the copy holds what the receiver has.
+3. Read the work once from the top, as the receiver, for the use. Where it leads the receiver to a
+   file of `opens`, open that file as they would.
 4. Write your form: for each item you took something for, under the item's ID, in `took`, what
    you took from the work for it, in your own words, and in `lines`, the lines you took it from,
    such as `3-5, 12`. Write nothing for any other item.

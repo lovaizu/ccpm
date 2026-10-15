@@ -53,7 +53,7 @@ SECOND = ".turn/out/2"
 
 
 def second(repo, ways, making=None):
-    """The first reading of the run ended on ways in the work, and the second begun, its work made
+    """The first round of the run ended on ways in the work, and the second begun, its work made
     again."""
     decide(repo, ".turn/out", f1=False, b1="note B-1" not in ways)
     learn(repo, ".turn/out", ways, making)
@@ -139,7 +139,7 @@ class End(unittest.TestCase):
         self.assertFalse(self.repo.exists("out.json"))
 
     def test_more_whose_way_lies_in_the_work_starts_the_runs_second_reading(self):
-        # Given: the first reading decided with F-1 left without a Good, given a way in the work,
+        # Given: the first round decided with F-1 left without a Good, given a way in the work,
         # and something learned of making such work
         decide(self.repo, ".turn/out", f1=False)
         learn(self.repo, ".turn/out", {"note F-1": WORK_WAY}, making={"note F-1": RULE})
@@ -161,7 +161,7 @@ class End(unittest.TestCase):
         self.assertEqual(got["constraints"], [])
 
     def test_more_after_the_second_reading_returns_for_the_caller_to_decide(self):
-        # Given: a second reading that again left F-1 without a Good, given a way in the work
+        # Given: a second round that again left F-1 without a Good, given a way in the work
         second(self.repo, {"note F-1": WORK_WAY}, making={"note F-1": RULE})
         decide(self.repo, SECOND, f1=False)
         learn(self.repo, SECOND, {"note F-1": WORK_WAY}, making={"note F-1": RULE})
@@ -169,7 +169,7 @@ class End(unittest.TestCase):
         code, out = run(self.repo, "end", SECOND)
         # Then: the user is told where the work is and that the CCS holds what it does not give
         # yet; the CCS asks the user, with F-1 unmet and how it would get a Good, the rule once in
-        # turn's part, the caller's parts as given, and the second reading's evidence
+        # turn's part, the caller's parts as given, and the second round's evidence
         self.assertEqual(code, 0, out)
         self.assertEqual(
             out.splitlines(),
@@ -194,7 +194,7 @@ class End(unittest.TestCase):
         )
 
     def test_a_second_reading_with_every_item_met_returns_done(self):
-        # Given: a second reading that met every item
+        # Given: a second round that met every item
         second(self.repo, {"note F-1": WORK_WAY})
         decide(self.repo, SECOND, f1=True)
         # When: the reading ends
@@ -203,8 +203,8 @@ class End(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertEqual(self.repo.json("out.json")["predictive_cue"], [{"next": "done"}])
 
-    def test_a_rule_learned_in_both_readings_is_returned_once_and_the_caller_s_rules_kept(self):
-        # Given: a task carrying a rule of the caller's, and both readings learning another
+    def test_a_rule_learned_in_both_rounds_is_returned_once_and_the_caller_s_rules_kept(self):
+        # Given: a task carrying a rule of the caller's, and both rounds learning another
         self.repo.close()
         self.repo = Repo()
         mine = {"rule": "write for a first day"}
@@ -222,7 +222,7 @@ class End(unittest.TestCase):
         self.assertEqual(back["constraints"], [mine])
 
     def test_a_rule_learned_in_the_first_reading_alone_is_returned(self):
-        # Given: the first reading learned a rule, and the second met every item
+        # Given: the first round learned a rule, and the second met every item
         second(self.repo, {"note F-1": WORK_WAY}, making={"note F-1": RULE})
         decide(self.repo, SECOND, f1=True)
         # When: the run ends
@@ -231,10 +231,10 @@ class End(unittest.TestCase):
         self.assertEqual(self.repo.json("out.json")["semantic_gist"], [{"rule": RULE}])
 
     def test_a_question_left_open_is_carried_into_the_second_reading_and_asked_at_the_end(self):
-        # Given: the first reading left F-1 with a way in the work, and a question left open
+        # Given: the first round left F-1 with a way in the work, and a question left open
         fill(self.repo, ".turn/out/questions.json", [{"question": LICENSE, "ask": True}])
         second(self.repo, {"note F-1": WORK_WAY})
-        # When: the second reading meets every item and ends
+        # When: the second round meets every item and ends
         self.assertEqual(
             self.repo.json(f"{SECOND}/questions.json"), [{"question": LICENSE, "ask": True}]
         )
@@ -248,7 +248,7 @@ class End(unittest.TestCase):
         self.assertEqual(back["semantic_gist"], [{"question": LICENSE}])
 
     def test_a_second_reading_stopped_returns_to_the_caller(self):
-        # Given: the second reading begun
+        # Given: the second round begun
         second(self.repo, {"note F-1": WORK_WAY})
         # When: the user stops it
         code, out = run(self.repo, "stop", SECOND)
@@ -259,13 +259,13 @@ class End(unittest.TestCase):
         self.assertEqual(back["episodic_trace"], [])
 
     def test_more_whose_way_lies_in_what_the_caller_wrote_goes_to_the_caller(self):
-        # Given: the first reading left F-1 with a way only the caller can take, and nothing in the
+        # Given: the first round left F-1 with a way only the caller can take, and nothing in the
         # work
         decide(self.repo, ".turn/out", f1=False)
         learn(self.repo, ".turn/out", {"note F-1": CALLER_WAY})
         # When: the reading ends
         code, out = run(self.repo, "end", ".turn/out")
-        # Then: no second reading begins; the CCS goes to the caller, saying which item and how,
+        # Then: no second round begins; the CCS goes to the caller, saying which item and how,
         # and the user is told so
         self.assertEqual(code, 0)
         said = "to the caller: note F-1: name the receiver's machine"
@@ -274,13 +274,13 @@ class End(unittest.TestCase):
         self.assertFalse(self.repo.exists(SECOND))
 
     def test_a_way_in_what_the_caller_wrote_waits_for_the_second_reading_to_end(self):
-        # Given: the first reading left F-1 with a way only the caller can take, and B-1 with a
+        # Given: the first round left F-1 with a way only the caller can take, and B-1 with a
         # way in the work
         decide(self.repo, ".turn/out", f1=False, b1=False)
         learn(self.repo, ".turn/out", {"note F-1": CALLER_WAY, "note B-1": WORK_WAY})
         # When: the reading ends
         code, out = run(self.repo, "end", ".turn/out")
-        # Then: the second reading begins, and nothing goes to the caller yet
+        # Then: the second round begins, and nothing goes to the caller yet
         self.assertEqual(code, 0, out)
         self.assertEqual(json.loads(out)["folder"], SECOND)
         self.assertFalse(self.repo.exists("out.json"))

@@ -21,17 +21,24 @@ repository. turn's hook shows the user each step of the run as you reach it, so 
 user but what step 1 says to say. After step 1, when a command exits with 1, do what it says and run
 it again.
 
+You work from the run's inputs alone: the CCS, the list, the content and the references step 1
+prints, and the run's folder, so that the work is made from what the caller decided, without bias
+from what it did not give. Read files with Read, and in the shell run `up.py`, and `jq`, `mv` and
+`cd` on those files, since the steps need nothing else; turn's hook stops any other read or
+command, and names what you may read.
+
 1. Run `up.py start <in> <out> ${CLAUDE_SESSION_ID}`. If python3 is not found, say to install
    Python 3.9 or later, and end. If it exits with 1, show what it printed, and end. Otherwise it
    prints, as JSON, `folder`, `list`, `work`, your two forms `hand-on` and `orchestrator`,
-   `questions`, and what the work should be: `receiver`, `use`, `acceptance`, `sources` and
-   `constraints`.
-2. Read the list and each source whole.
-3. For each item, see whether what the work should be and the sources settle what the work needs to
-   give it. Add to `questions` with `jq`, as `{"question": "...", "ask": true}`, each thing they leave
-   open that only the user can decide: what to ask, and what the work leaves out until it is
-   answered. The run asks it at its end. In a second reading, `questions` already holds what the
-   first left open; add only what it does not hold.
+   `questions`, and what the work should be: `receiver`, `use`, `acceptance`, `content` (what the
+   work says, item by item), `references` (what the work follows or draws on, each a file or a
+   folder) and `constraints`.
+2. Read the list, the content and each reference whole.
+3. For each item, see whether what the work should be, the content and the references settle what
+   the work needs to give it. Add to `questions` with `jq`, as `{"question": "...", "ask": true}`,
+   each thing they leave open that only the user can decide: what to ask, and what the work leaves
+   out until it is answered. The run asks it at its end. In a second round, `questions` already
+   holds what the first left open; add only what it does not hold.
 4. If the run has no aim yet, write in one sentence, in the language the user writes in, what the
    work will let its receiver do, from what the work should be; run `up.py aim <folder> "<the
    sentence>"`. Then run `up.py brief <folder> generator`, and call the
@@ -42,9 +49,9 @@ it again.
 6. Run `up.py coverage <folder> generator`. It prints the lines with text that no item of
    the generator's form names.
 7. Read the work, the generator's form and `questions` whole. Decide each question the generator
-   added, from the sources and what the work should be: `ask`, true when only the user can decide
-   it, so the run leaves it open and asks it at its end, and false when the work, the sources or
-   what the work should be answers it; `answered`, where
+   added, from what the work should be, the content and the references: `ask`, true when only the
+   user can decide it, so the run leaves it open and asks it at its end, and false when the work,
+   what the work should be, the content or the references answer it; `answered`, where
    false, where it is answered. Write the form `hand-on` with `jq`, for every item: `met`, true or
    false; where met, `lines`, the lines that give it, such as `3-5, 12`, and `note`, what the
    receiver gets from those lines; where not, first `aim`, what the whole work gives the receiver
@@ -67,12 +74,12 @@ it again.
 12. If an item of your form is not met, run `up.py brief <folder> learner`, and call the
     `turn:learner` agent with the path it prints as the whole prompt. Then decide each question the
     learner added, as in step 7.
-13. Run `up.py end <folder>`. If it prints what step 1 prints, the run's second reading has begun
+13. Run `up.py end <folder>`. If it prints what step 1 prints, the run's second round has begun
     in the folder it names: go on from step 2 with it. Otherwise return to the caller.
 14. If the user stops you with Esc, stop each agent of the run still at work, and run
     `up.py stop <folder>`. If a
     plugin's step called you, return to it. Otherwise the conversation is the caller: in the CCS it
     wrote, rewrite with `jq` the caller's parts (`focal_entities`, `goal_orientation`,
-    `retrieved_artifacts`, and the entries of `constraints` before turn's) from what the user said,
+    `retrieved_artifacts` and `constraints`) from what the user said,
     as if they had asked so from the start, and start again from step 1 with that file as `in` and
     a new `out`.

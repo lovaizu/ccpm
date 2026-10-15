@@ -190,7 +190,7 @@ class Console(unittest.TestCase):
         self.assertEqual(lines, [f"  3 check   ⚠️ Not yet: {WAY['aim']}"])
 
     def second(self):
-        """The first reading ended on a way in the work, its lines shown, and the second begun."""
+        """The first round ended on a way in the work, its lines shown, and the second begun."""
         self.say("aim", ".turn/out", AIM)
         self.read(f1=False)
         fill(self.repo, form("learner"), {"note F-1": WAY})
@@ -198,9 +198,9 @@ class Console(unittest.TestCase):
         return self.say("end", ".turn/out")
 
     def test_the_second_reading_reads_the_work_again(self):
-        # Given: the first reading ended on a way in the work
+        # Given: the first round ended on a way in the work
         self.second()
-        # When: the second reading's aim is set, and its work read
+        # When: the second round's aim is set, and its work read
         self.say("aim", SECOND, "the same, cut to one line")
         self.read(work=SECOND)
         code, lines, told = post(self.repo, **bash(f"jq . {SECOND}/questions.json"))
@@ -218,12 +218,12 @@ class Console(unittest.TestCase):
         )
 
     def test_the_end_of_the_first_reading_shows_the_second_begin(self):
-        # Given: the first reading's lines shown, with a way in the work
-        # When: the first reading ends
+        # Given: the first round's lines shown, with a way in the work
+        # When: the first round ends
         out = "\n".join(self.second())
         command = f'python3 "{SCRIPT}" end .turn/out; echo "EXIT $?"'
         code, lines, told = post(self.repo, **bash(command, out + "\nEXIT 0"))
-        # Then: the user is shown the second reading's plan, and not where the work is
+        # Then: the user is shown the second round's plan, and not where the work is
         self.assertEqual(code, 0, told)
         self.assertEqual(lines, [PLAN])
 
@@ -256,7 +256,7 @@ class Console(unittest.TestCase):
         )
 
     def test_the_end_says_where_the_work_is_and_that_the_ccs_holds_what_it_lacks(self):
-        # Given: the second reading's work read, with an item still without a Good, given a way in
+        # Given: the second round's work read, with an item still without a Good, given a way in
         # the work
         self.second()
         self.say("aim", SECOND, AIM)

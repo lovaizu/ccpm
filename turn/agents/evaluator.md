@@ -11,6 +11,9 @@ what the item asks, toward what the receiver must be able to do.
 
 ## Steps
 
+You work from what the brief names alone, so that each Good rests on the work and the reading as the
+receiver had them; turn's hook stops a read of anything else, and names what you may read.
+
 1. Read the brief whole: the JSON file whose path you are handed. It holds `list`, `work`, `form`,
    `check` (the command that checks your form), `receiver`, `use`, `acceptance` (what the receiver
    must be able to do), `reading` (the first user's form) and `records` (the first user's records).
