@@ -1,8 +1,9 @@
 # Calling writ from a plugin's step
 
 A plugin's step that needs a document calls writ, and gets back either the finished document with
-its report, or the points that only the step can decide, each with the answer writ recommends. writ
-asks the user nothing when a step calls it, so the step may run where no one can answer.
+its report, or the points only the step can decide, each with the answer writ recommends. writ
+asks the user nothing when a step calls it, so the step may run where no one can answer, such as a
+subagent.
 
 ## The call
 
@@ -20,10 +21,13 @@ plugin installs writ, and turn with it.
 
 A JSON object at `out`, whose `next` says what the step does next:
 
-- `decide`: `open` lists each point the request, the repository and the sources leave open, as
-  `{"item", "question", "recommended"}`. Decide each, write your decisions in a file, in words, and
-  call writ again with the same request, a new `out`, and a line `decisions: <that file>`.
-- `done`: the document is at `document`, and every item of its checklists is met; `report` is the
-  file that gives, for each item, the lines that meet it.
-- `not met`: the document is at `document`, but the job ended, at the user's word, before every
-  item was met; `not met` lists those items, and there is no report.
+- `decide`: `open` lists each point the request, the repository and the sources leave open and the
+  document's purpose needs, as `{"point", "recommended"}`. Decide each, and call writ again with
+  the same request, your decisions added to it in words, and a new `out`; writ then goes on as if
+  they had been settled from the start.
+- `done`: `document` lists each file of the document, written; `report` is the report, as writ
+  shows it to a user: first what writ decided or left, each with its ground, then each item of the
+  checklists, met with the lines that give it or not met.
+
+When writ ends before any of this, because python3 or jq is missing, there is no `out` to read:
+writ says why in the conversation, and the step puts that to the user.

@@ -25,3 +25,8 @@ Choose the first for a one-off, and the second for a kind you will write again. 
 writ makes the checklist with you against its [checklist for checklists](checklists/checklist.md),
 puts it at `.writ/checklists/release-notes.md`, and finds it there next time; commit it, and your
 team writes to the same checklist.
+
+## From a step of your own plugin
+
+A step of your plugin can call writ and get the document, or the points only it can decide, back
+in a file: [Calling writ from a plugin's step](calling-from-a-plugin.md).

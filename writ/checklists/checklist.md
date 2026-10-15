@@ -8,7 +8,9 @@ version: 0.2.0
 A checklist is read by whoever makes or judges a deliverable of one kind, to make it serve its
 purpose. Answering its items, they make or judge the deliverable to that purpose alone, nothing
 missing and nothing more, and anyone answering reaches the same judgment.
-This file is the checklist for checklists, and is written in the shape it asks for.
+This file is the checklist for checklists, and is written in the shape it asks for. Each item of
+`doc.md` applies to a checklist, with what a good deliverable of the kind gives its user as its
+subject.
 
 ## Benefit
 

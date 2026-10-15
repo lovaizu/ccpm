@@ -25,6 +25,11 @@ stop = answers[1] if answers[:1] == ["--stop"] else None
 answers = answers[2:] if stop else answers
 if not os.path.isdir(place):
     subprocess.run(["git", "clone", "-q", ROOT, place], check=True)
+# The turn of this working tree as it is now, so that a change made while the trial runs does not
+# reach it halfway.
+plugin = place.rstrip("/") + "-turn"
+if not os.path.isdir(plugin):
+    shutil.copytree(os.path.join(ROOT, "turn"), plugin)
 os.makedirs(os.path.join(place, ".tasks"), exist_ok=True)
 given = f"in-{out}"
 shutil.copyfile(ccs, os.path.join(place, ".tasks", given))
@@ -40,7 +45,7 @@ claude = subprocess.Popen(
         "--model",
         "opus",
         "--plugin-dir",
-        os.path.join(ROOT, "turn"),
+        plugin,
         "--settings",
         '{"enabledPlugins": {"turn@ccpm": false}}',
         "--permission-mode",

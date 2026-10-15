@@ -25,6 +25,13 @@ writ = args[1] if args[:1] == ["--writ"] else ""
 place, knows, first, *files = args[2:] if writ else args
 for folder in files:
     shutil.copytree(folder, place, dirs_exist_ok=True)
+# The writ and turn of this working tree as they are now, so that a change made while the trial
+# runs does not reach them halfway.
+plugins = {}
+for name in ("writ", "turn"):
+    plugins[name] = place.rstrip("/") + "-" + name
+    if not os.path.isdir(plugins[name]):
+        shutil.copytree(os.path.join(ROOT, name), plugins[name])
 for args in (
     ["init", "-q"],
     ["add", "."],
@@ -45,8 +52,8 @@ claude = subprocess.Popen(
         "--model",
         "opus",
         "--plugin-dir",
-        writ or os.path.join(ROOT, "writ"),
-        *([] if writ else ["--plugin-dir", os.path.join(ROOT, "turn")]),
+        writ or plugins["writ"],
+        *([] if writ else ["--plugin-dir", plugins["turn"]]),
         "--settings",
         '{"enabledPlugins": {"writ@ccpm": false, "turn@ccpm": false}}',
         "--permission-mode",

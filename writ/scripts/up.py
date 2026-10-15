@@ -1,30 +1,28 @@
-"""What writ:up needs to come out the same on every job: the checklists listed, the form laid, the
-CCS for turn written only from a settled form, and the job closed on what turn returned."""
+"""What writ:up needs to come out the same on every call: the checklists for a kind, the content
+file's place, the task turn is handed, and the report. Each command is in the file of what it is
+about."""
 
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from job import back, ccs, end, form, start
-from state import Stop
+from checklists import Stop, checklists
+from report import report
+from task import content, task
 
-USAGE = """usage: up.py start <session> [<document>]
-       up.py form <job folder> <checklist> [<checklist> ...]
-       up.py ccs <job folder>
-       up.py back <job folder> <out>
-       up.py end <job folder> [<out>]"""
+USAGE = """usage: up.py checklists <kind>
+       up.py content <document>
+       up.py task --deliverable <path> [<path> ...] --receiver <who> [--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...] --content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]
+       up.py report <CCS turn wrote back> <judgments>"""
 
-COMMANDS = {"start": (start, 1), "ccs": (ccs, 1), "back": (back, 2), "end": (end, 1)}
+COMMANDS = {"checklists": (checklists, 1), "content": (content, 1), "report": (report, 2)}
 
 
 def main(argv):
     try:
-        if argv[:1] == ["form"] and len(argv) >= 3:
-            form(*argv[1:])
-            return 0
-        if argv[:1] in (["start"], ["end"]) and len(argv) == 3:
-            {"start": start, "end": end}[argv[0]](*argv[1:])
+        if argv[:1] == ["task"]:
+            task(*argv[1:])
             return 0
         command, count = COMMANDS.get(argv[0] if argv else "", (None, -1))
         if command is None or len(argv) - 1 != count:
