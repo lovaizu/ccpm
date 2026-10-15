@@ -482,6 +482,32 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   `checklist.md` B-3 looks for an item that asks of every deliverable a part only some need, F-5
   and F-6 say which release counts. `prompt.md` unchanged. Next: #5, turn's README through turn on
   Opus (the user, 2026-10-15: trials on Opus 5.5 only; the work and the judging here).
+- Instruction from the user (2026-10-15): build turn and writ through, judging from the purpose
+  and from what each should be, and bring every decision made on the way to the user at the end,
+  who then judges. Decisions made so far, to report:
+  1. turn's README keeps the Esc line, which the first user skimmed: it is the one thing the user
+     can do while turn works, and the agreed README had it.
+  2. writ's README keeps only the one example; a document the user already has, and a kind writ has
+     no checklist for, go to `writ/beyond-the-first-document.md`, reached from Documentation,
+     since `readme.md` keeps the README to deciding and starting (turn raised it as a question);
+     the line that a question found in the writing comes at the end stays, as part of the shown
+     run. The callers' page stays and is reached from that page, since the user had the link
+     taken out of the README, not the page.
+  3. `checklist.md`'s opening says `doc.md` applies to a checklist, so a checklist writ makes is
+     made against both, as the release-notes trial did.
+  4. writ holds no hooks and keeps nothing between calls: four scripts (`checklists`, `content`,
+     `task`, `report`) and `tools.sh`; a calling step gets back `{"next": "decide", "open": [...]}`
+     or `{"next": "done", "document": [...], "report": "..."}` at its `out` file, and brings its
+     answers in the request's words. The report is written by a script from turn's evidence and a
+     judgments file writ writes, which must judge every question and item turn returned.
+  5. turn's code (by a fork of this session): the work's files at `.turn/<run>/work/<path>`;
+     `lines` and `reach` as `<path>:<ranges>` with several files; the work reaches its place only
+     when the run returns; a write to the work after the reading is stopped; the first user's
+     shell stays open, as the design says of the agents' shell.
+  6. The trial harnesses run on a snapshot of the plugins: the turn design trial broke halfway
+     when the fork changed the scripts under it (`.turn/.../work/` moved), and is run again.
+  7. The console lines turn's orchestrator writes come out in Japanese in trials, since the clone
+     runs under the user's global CLAUDE.md; left as is, since the user's conversations do too.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
