@@ -596,6 +596,28 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   rn never changes `main`; the document's version is its own, 0.1.0. Run a third time.
 - rn's hooks through turn: the first run was cut off at the harness's one-hour limit while the
   generator made its second pass; the limit is now four hours and the run goes again.
+- Found with the user (2026-10-16), on why a hooks run took hours: what was carried from 0.9.0
+  or patched instead of judged from what it should be, and the fix for each:
+  - the hooks' tests made a git repository per test (0.9.0's harness, copied into the content):
+    each check is now a function of values with tests in milliseconds, the repository read in
+    `record.py` alone;
+  - `code.md` B-9 read as "remove each line and run the tests", which the generator did for 2,400
+    lines until the shell's limit: B-9 now matches each line to a test's behavior statically;
+  - the hooks list copied from 0.9.0: judged one by one; `conductor_only_git` goes (turn's own
+    hook stops its agents), `typed_command` reads the user's last prompt from the transcript
+    instead of a side file; one unit per quality the hooks protect, three in all;
+  - turn's work folder was a partial tree, so the caller had to say "copy X beside the work to run
+    the tests": the work is now made in a working copy of the repository (a git worktree per run);
+  - the report's note that lines may have moved: the lines are mapped through the diff of the
+    document as turn kept it and as it stands;
+  - the harness's limit moved 1 → 4 → 2 hours: fixed at two as a guard against a stuck run, with
+    its reason beside it;
+  - the verification scenes and fixtures copied from 0.9.0: the scenes are derived from the
+    design's qualities, and fixtures are made from this version's runs.
+  Decided by the user (2026-10-16): the design checklist asks for goals, verification, one static
+  figure of who is responsible for what and what each depends on, and principles; the approach
+  sections (B-13, B-31) go, since they grew into specification; the figure shows responsibilities,
+  not a sequence. `design.md` 0.3.0 rewritten so; both design contents reshaped to it.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
