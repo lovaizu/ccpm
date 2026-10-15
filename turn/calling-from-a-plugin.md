@@ -130,16 +130,16 @@ turn's own; the step need not read it.
     moves on;
   - where serving the purpose needs a large change in what turn was given, such as a gap or a
     mistake in the content file, it corrects its own parts or its files and calls turn again.
-- `to the caller: <reason>`: either the CCS cannot be run, or an item would be met only by a change
-  in what the step wrote, which turn never rewrites. The reason says which; in the second case the
-  work is where `deliverable` says. The step corrects its own parts and calls turn again, or puts
-  the reason to the user.
+- `to the caller: <reason>`: an item would be met only by a change in what the step wrote, which
+  turn never rewrites. The reason names each such item and the change; the work is where
+  `deliverable` says. The step corrects its own parts and calls turn again, or puts the reason to
+  the user.
 - `stopped: <where>`: the user pressed Esc and said what they want instead. `<where>` is where the
   run was, and what is at `deliverable` is as it was before the run. The step rewrites its own parts
   from the user's words, as if the user had asked so from the start, and calls turn again.
 
-When turn ends before any work, because `out` already exists, python3 or jq is missing, or the file
-at `deliverable` has changes git does not hold, there is no `next` to read: turn writes neither the
+When turn ends before any work, because `out` already exists, python3 or jq is missing, the CCS
+cannot be run, or the file at `deliverable` has changes git does not hold, there is no `next` to read: turn writes neither the
 work nor a CCS, and says why in the conversation. The step puts that to the user.
 
 Each `rule` turn returns is the step's to judge: it may put it into its later tasks as a `rule` in
