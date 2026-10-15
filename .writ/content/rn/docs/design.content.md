@@ -19,39 +19,54 @@
 ### B-5: How far to rely
 - A statement no trial has checked yet is marked "(assumption)".
 
-### B-12: Who is responsible for what
-- The user decides: what they want, at each sign-off, and what only they can know.
-- The conductor, the conversation with the user: hears one point at a time until nothing is
-  silently assumed; writes the content of each work from what was agreed; calls turn once for
-  each work, and again only when the content must change much, finishing a small shortfall
-  itself; judges each question and item turn returns by what the purpose needs; plans the tasks
-  once the design is approved, attractive quality first, and judges each result on the real thing
-  against its purpose; has the deliverable used once against the verification document; takes
-  feedback back to before the sign-off it answers and stops there again; proposes at each
-  sign-off with the final state, what it decided for the user first; and alone uses git.
-- turn: makes each work from its CCS, has it read or used in its receiver's place, checks each
-  item, and returns the questions only the user can decide and the items not met.
-- rn's scripts: find the checklists for a kind; write the CCS from the parts the conductor gives;
-  write the report from turn's evidence and the conductor's judgments, with each item's lines as
-  they stand; build the record for the hooks.
-- rn's hooks: stop, where it happens, a write that breaks the record's form, a commit without
-  its decision line or a settled item whole, a commit on the default branch, a sign-off passed
-  without the typed command, an agent started in the background, a turn ended with nothing for
-  the user, or a message in the wrong language; they judge the course, never the work's worth.
-- rn's checklists: say what each kind of work must give its receiver; one the user made at
-  `.rn/checklists/<kind>.md` is used for its kind.
-- The record: the session's folder, `steering.md`, `open/`, `content/`, `tasks/`, and the
-  commits with their decision lines, on the session's branch with its draft pull request; turn's
-  evidence under `.turn/` stays uncommitted.
-- git and GitHub, through `gh`: hold the record and the pull request; Claude Code: runs the
-  conductor, the hooks and turn.
-- What each cannot work without: the conductor, the record, turn, rn's scripts and checklists,
-  and git with its remote on GitHub; turn, the CCS, git, python3 and jq, as its README says; rn's
-  scripts, python3 and jq; rn's hooks, python3 and Claude Code to run them; the pull request,
-  `gh` logged in with push access.
-- One static figure shows each of these, its responsibility in one line, and what it cannot work
-  without; beside it, only where the conductor runs: in the user's conversation, the same one
-  throughout the session.
+### B-12: Every term known
+- A session: one goal carried through to the end, on its own branch with a draft pull request,
+  recorded in `.rn/{yyyymmdd}-{slug}/`.
+- The conductor: the main conversation with the user, the same one throughout the session; it
+  alone decides every next move and uses git.
+- A sign-off: where the user looks at the work before it goes past that point, and approves with
+  `/rn:ty` or gives feedback with `/rn:gm`. There are three: the plan, the design, the
+  deliverable.
+- The plan: `steering.md`, the goal and why, the acceptance criteria, the facts and assumptions
+  the work rests on, the rules, and the tasks.
+- The acceptance criteria: split after the Kano model (Kano, Seraku, Takahashi and Tsuji,
+  "Attractive quality and must-be quality", 1984) into attractive quality, what would make the
+  user choose the result, `A1`..., and must-be quality, what they take for granted, `M1`...; each
+  task, check and judgment refers to a criterion by its ID.
+- The design: the README, the design document and the verification document the plan names, as
+  they will stand once the goal is achieved; they belong to the product and stay after the
+  session.
+- The deliverable: everything the session changed apart from its directory under `.rn/`.
+- A work: one thing turn makes for one purpose, one file or several, such as the plan, one of the
+  three documents, a task's result, or a proposal.
+- The content: what a work must say or do, item by item of its checklists, written by the
+  conductor from what was agreed; turn makes the work from it.
+- A task for turn: the content, the checklists, where each file of the work goes, its receiver and
+  their use, what they must be able to do, what the work follows and what the receiver opens with
+  it, handed to turn as a CCS, the JSON file turn's callers' page gives, and returned as one that
+  names the next move, each question only the user can decide, each item not met with how it
+  would be met, and where turn keeps its evidence.
+- The report: what the conductor writes, with rn's script, from turn's evidence and returned CCS
+  for each work: first what it decided for the user, each with its ground, each question and item
+  turn left with the judgment on it, and each change the conductor made after turn; then each
+  item of the checklists, met with the lines that give it as they stand, or not met. It is an item
+  of `open/` until the commit that settles it; the proposal at a sign-off gives each item as the
+  latest report shows it, so the user never opens a report.
+- A Good and a More: on each item, what the user gains, which a fix must not take away, and what
+  the user will struggle with; a fatal More is one without whose fix the goal cannot be achieved
+  and whose fix only the user can decide.
+- What the purpose needs: the one test the conductor applies to each question and item turn
+  returns: needed when the receiver's use, or a decision of the user's, rests on it; otherwise
+  not, and it is left with why.
+- `open/`: what is not yet settled, one file per item, of three kinds: a `report` on a work, the
+  user's `feedback` in their own words, or `notes` on a question being put to the user or where a
+  paused task stands. What each stop may leave there: at a sign-off and after `/rn:ty`, nothing;
+  after `/rn:gm`, the `feedback` item; on `/rn:dn`, whatever is unsettled and the `notes` item on
+  where the task stands.
+- The decision line: the last line of every commit the conductor makes,
+  `● {#id task name | plan | design | deliverable} ── {what was decided} → {next move}`; the one
+  on the branch's last commit is where the session stands. A stop commit is one where rn stops
+  for the user: at a sign-off, after `/rn:ty` or `/rn:gm`, or on `/rn:dn`.
 
 ### B-1: Attractive quality
 - Said in the README's words, since the reader comes from it.
@@ -88,8 +103,9 @@
   shows each finding beside what became of it.
 - The record keeps the form every command and check reads it by: the plan, the names of the files
   in `open/`, the verification document, and every ID referred to exists.
-- A sign-off is passed only by the user's `/rn:ty`, and is put to them with nothing unsettled
-  behind it.
+- Only the user passes a sign-off, gives feedback or pauses, by typing `/rn:ty`, `/rn:gm` or
+  `/rn:dn`; a sign-off is put to them with nothing unsettled behind it and the latest default
+  branch merged in.
 - Nothing reaches the user unread: each work the user sees was last read in its receiver's place
   by turn, or the conductor's change after that reading is in the report with its lines.
 - Missing tools: without python3, jq or gh, rn stops before anything and says what to install;
@@ -185,7 +201,7 @@
   an `open/` name or a verification document off its form, and an ID that does not exist; a
   sign-off passed without `/rn:ty` typed, feedback taken without `/rn:gm`, a pause without
   `/rn:dn`; a stop commit with more in `open/` than its kind allows, or at a sign-off without the
-  default branch merged; a proposal naming an item met that turn's evidence does not; each tool
+  default branch merged, each under only the user passes a sign-off; a proposal naming an item met that turn's evidence does not; each tool
   missing, in a session and outside one; rn's own hooks in a repository without `.rn/`; and, for
   the conductor staying on course, an agent started in the background, a turn ended with nothing
   to decide, and a last message in the wrong language.
@@ -207,13 +223,38 @@
   verification document, and the test on the record's form reads one.
 
 ### B-12: Who is responsible for what
-- The user, who decides; the conductor, which hears, writes the content, hands turn each task,
-  judges what turn returns, proposes and uses git; turn, which makes each work, has it read in its
-  receiver's place and checks it; rn's scripts, which find the checklists for a kind, write the
-  task as a CCS, write the report from turn's evidence, and check the record's form; rn's hooks,
-  which hold the conductor to the record and the session's course; git and GitHub, through `gh`,
-  which hold the record and the pull request; Claude Code, which runs the conductor, the hooks and
-  turn.
+- The user decides: what they want, at each sign-off, and what only they can know.
+- The conductor, the conversation with the user: hears one point at a time until nothing is
+  silently assumed; writes the content of each work from what was agreed; calls turn once for
+  each work, and again only when the content must change much, finishing a small shortfall
+  itself; judges each question and item turn returns by what the purpose needs; plans the tasks
+  once the design is approved, attractive quality first, and judges each result on the real thing
+  against its purpose; has the deliverable used once against the verification document; takes
+  feedback back to before the sign-off it answers and stops there again; proposes at each
+  sign-off with the final state, what it decided for the user first; and alone uses git.
+- turn: makes each work from its CCS, has it read or used in its receiver's place, checks each
+  item, and returns the questions only the user can decide and the items not met.
+- rn's scripts: find the checklists for a kind; write the CCS from the parts the conductor gives;
+  write the report from turn's evidence and the conductor's judgments, with each item's lines as
+  they stand; build the record for the hooks.
+- rn's hooks: stop, where it happens, a write that breaks the record's form, a commit without
+  its decision line or a settled item whole, a commit on the default branch, a sign-off passed
+  without the typed command, an agent started in the background, a turn ended with nothing for
+  the user, or a message in the wrong language; they judge the course, never the work's worth.
+- rn's checklists: say what each kind of work must give its receiver; one the user made at
+  `.rn/checklists/<kind>.md` is used for its kind.
+- The record: the session's folder, `steering.md`, `open/`, `content/`, `tasks/`, and the
+  commits with their decision lines, on the session's branch with its draft pull request; turn's
+  evidence under `.turn/` stays uncommitted.
+- git and GitHub, through `gh`: hold the record and the pull request; Claude Code: runs the
+  conductor, the hooks and turn.
+- What each cannot work without: the conductor, the record, turn, rn's scripts and checklists,
+  and git with its remote on GitHub; turn, the CCS, git, python3 and jq, as its README says; rn's
+  scripts, python3 and jq; rn's hooks, python3 and Claude Code to run them; the pull request,
+  `gh` logged in with push access.
+- One static figure shows each of these, its responsibility in one line, and what it cannot work
+  without; beside it, only where the conductor runs: in the user's conversation, the same one
+  throughout the session.
 
 ### B-11: Principles to judge a change
 - Attractive quality is the goal: its checks are the fewest that confirm it, each improvement
@@ -245,5 +286,5 @@
 - What a machine can judge of the course is checked by a hook at the moment it could break, each
   stop naming the step and why (assumption: that a stop keeps the conductor to a step where a
   rule in words would not, taken from turn's design). Protects: every decision pushed, the
-  record's form, a sign-off passed only by approval, the conductor stays on course.
+  record's form, only the user passes a sign-off, the conductor stays on course.
 
