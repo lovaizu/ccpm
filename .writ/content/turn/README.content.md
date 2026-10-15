@@ -82,7 +82,7 @@
 - After installing, you ask as in the example, naming turn, with the person your work is for and your
   own notes and checklist.
 
-### B-6: Where to go for more
+### F-1: Under Documentation
 - "Calling turn from a plugin's step" (`calling-from-a-plugin.md`): handing turn a task from a step of
   your own plugin, and what to do with what it hands back.
 - The changelog (`CHANGELOG.md`): what changed in each version.
