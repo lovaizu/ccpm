@@ -1,6 +1,6 @@
-"""During a run, a file is written only where the work goes and in the run's evidence, so the user
-takes turn's change as one diff; and a file of the work is not written once the first user has been
-handed it, so the version read is the version returned."""
+"""During a run, a file is written only in the run's evidence, and reaches where the work goes when
+the run returns, so the user takes turn's change as one diff; and a file of the work is not written
+once the first user has been handed it, so the version read is the version returned."""
 
 import os
 
@@ -22,13 +22,12 @@ def check(data):
     )
     goes = deliverables(read_json(os.path.join(cwd, run["in"]), run["in"]))
     folder = os.path.realpath(os.path.join(cwd, run["work"]))
-    if written in [os.path.realpath(os.path.join(cwd, d)) for d in goes]:
-        return []
     if not written.startswith(folder + os.sep):
         return [
             (
-                f"steps 4 to 12: a run writes only {', '.join(goes)} and {run['work']}/, so the user "
-                f"takes turn's change as one diff; {written} is left as it is"
+                f"steps 4 to 12: a run writes only in {run['work']}/, and the work reaches "
+                f"{', '.join(goes)} when the run returns, so the user takes turn's change as one "
+                f"diff; {written} is left as it is"
             )
         ]
     if written.startswith(os.path.join(folder, "work") + os.sep) and os.path.isfile(

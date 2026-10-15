@@ -126,7 +126,8 @@ class StartLeavesWorkAlone(unittest.TestCase):
 
 
 class WritesKeptToTheRun(unittest.TestCase):
-    """During a run, files are written only where the work goes and in the run's evidence."""
+    """During a run, files are written only in the run's evidence; the work reaches its place when
+    the run returns."""
 
     def setUp(self):
         self.repo = Repo()
@@ -138,11 +139,10 @@ class WritesKeptToTheRun(unittest.TestCase):
     def at(self, rel):
         return os.path.join(self.repo.path, rel)
 
-    def test_a_write_where_the_work_goes_or_in_the_run_s_evidence_goes_on(self):
+    def test_a_write_in_the_run_s_evidence_goes_on(self):
         cases = [
             ("the work in the run", "Write", {"file_path": self.at(".turn/out/work/docs/note.md")}),
             ("a form", "Edit", {"file_path": self.at(form("first-user"))}),
-            ("where the work goes", "Write", {"file_path": self.at("docs/note.md")}),
         ]
         for name, tool, given in cases:
             with self.subTest(name):
@@ -155,6 +155,11 @@ class WritesKeptToTheRun(unittest.TestCase):
     def test_a_write_anywhere_else_is_stopped_saying_where_a_run_writes(self):
         cases = [
             ("a source", "Edit", {"file_path": self.at("notes.md")}),
+            (
+                "where the work goes, before the run returns",
+                "Write",
+                {"file_path": self.at("docs/note.md")},
+            ),
             ("the checklist", "Write", {"file_path": self.at("checklists/note.md")}),
             ("a notebook", "NotebookEdit", {"notebook_path": self.at("a.ipynb")}),
             ("outside the repository", "Write", {"file_path": "/tmp/x.md"}),
@@ -167,7 +172,8 @@ class WritesKeptToTheRun(unittest.TestCase):
                 code, said = pre(self.repo, tool, given)
                 # Then: the write is stopped, told which steps, where a run writes and why
                 self.assertEqual(code, 2)
-                self.assertIn("steps 4 to 12: a run writes only docs/note.md and .turn/out/", said)
+                self.assertIn("steps 4 to 12: a run writes only in .turn/out/", said)
+                self.assertIn("the work reaches docs/note.md when the run returns", said)
                 self.assertIn("so the user takes turn's change as one diff", said)
 
     def test_a_git_commit_or_push_in_a_run_is_stopped(self):
