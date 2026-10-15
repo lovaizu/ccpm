@@ -408,6 +408,17 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   no approach is made to list options when none was weighed; the template's opening gives the main
   point, not what the document covers. Next: the README and a design made with the three and read
   for noise.
+- Every checklist's opening agreed with the user, one at a time (2026-10-15): who reads it, for what
+  purpose, and what they then do, in the reader's actions rather than the work's parts; the opening
+  steers the maker, as the 513-line design made on the old design opening showed. Items judged
+  against each: no change in prompt, code or design beyond those above; checklist B-3 looks for an
+  item met by writing something in. The design template meets Structure before Principles, with
+  Goals in the README's words, since turn's design opened on a glossary to name its roles first.
+- Raised by the user, to settle in #5 with turn's README and design: turn takes one file per run
+  (`turn/scripts/ccs.py:53`), while a purpose often needs several, such as code and its tests;
+  the unit should be the purpose.
+- Next: all six checklists tried at once on real works (`dev/turn/trials/*.json`,
+  `dev/writ/trials/release-notes-checklist.json`), each work read for noise.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 
