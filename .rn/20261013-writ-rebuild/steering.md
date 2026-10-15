@@ -683,6 +683,12 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   verification document says of a start left otherwise. The flow trial runs as `flow1` in this
   session's scratchpad, on rn with the hooks' first unit alone, to try the prompts and the scripts
   end to end while the hooks' other units are made.
+- rn's hooks, first unit, from `hf3` (2026-10-16, Opus, $18.75, two rounds, two questions, three
+  unmet) not taken: both questions are the guard without python3, settled in the content from the
+  design (outside a session the hooks do nothing; a stop never holds the AI): the `sh` guard stops
+  only where a running session's plan is in the working tree, and at the end of the turn once,
+  letting the second pass, marked `stop_hook_active`, end the turn. Run again as `hf4` in this
+  session's scratchpad.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
