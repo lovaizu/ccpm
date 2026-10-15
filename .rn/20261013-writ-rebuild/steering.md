@@ -651,6 +651,16 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   the console and `.turn/` in the figure; the pointer to the README and the line on the README's
   words taken out; the shell command's side effect said under the last principle. The eight rules
   each apply an item that exists (doc B-3, B-7, B-11, B-12, B-14, design B-12); none taken.
+- rn's design from `nd4` (2026-10-16, Opus, $9.35, two rounds, 367 lines, 27 of 41 met, three
+  questions) taken in for now (`801ce7e`): the questions settled in the content, More as the one
+  word for what falls short, since the record's commits use Good and More; `tasks/` said by what
+  it holds; the hooks' need of the record drawn; the version in use named by its role. The block
+  of fifteen words ahead of Goals, which turn made from the content's "Every term known" entries
+  and which eight of the unmet items trace to, is a large change in the work, so the task gets a
+  rule, each word said where it is first used, and turn runs again as `nd5`; the verification
+  document runs beside it as `v6`, both in this session's scratchpad
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/2b5caff4-d0fc-4a9b-83a0-22f95dbc4db8/scratchpad/`,
+  logs beside them. `hf3` is still going in the earlier scratchpad.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
