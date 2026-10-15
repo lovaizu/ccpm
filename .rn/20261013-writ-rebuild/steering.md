@@ -417,8 +417,18 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
 - Raised by the user, to settle in #5 with turn's README and design: turn takes one file per run
   (`turn/scripts/ccs.py:53`), while a purpose often needs several, such as code and its tests;
   the unit should be the purpose.
-- Next: all six checklists tried at once on real works (`dev/turn/trials/*.json`,
-  `dev/writ/trials/release-notes-checklist.json`), each work read for noise.
+- All six tried at once on real works through turn (`dev/turn/trials/*.json`,
+  `dev/writ/trials/release-notes-checklist.json`), each work read whole and checked against what
+  it rests on: no opening about itself, glossary, bold or table in place of a figure in any;
+  turn's design names its parts first in the figure. `doc.md` B-4 found the callers' page's
+  restated analogy. `readme.md` now says its example answers `doc.md` B-16, since the README run
+  was held unmet for want of a figure that would repeat the example.
+- Every wrong fact in the works came from content files written without checking each statement
+  against what it rests on, turn's code or the rules: the callers' page says `to the caller`
+  answers a CCS that cannot be run, which `turn/scripts/lifecycle.py:38-40` stops without writing
+  (the page on this branch says it too, `turn/calling-from-a-plugin.md:133`); "the item's ID" made
+  the questions script stop only `doc B-2`, not `B-2`. turn follows its content by design, so the
+  caller checks each statement before calling.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 

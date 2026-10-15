@@ -9,8 +9,9 @@ A README is read by someone meeting the product for the first time. From it alon
 whether the product is for them, and if it is, get to their first result with it.
 
 Each item of `doc.md` applies to a README with deciding and getting to the first result as its
-subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation. Where
-the README shows who does what, the example shows it, and `doc.md`'s B-16 is answered there.
+subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
+`doc.md`'s B-16 is answered by the example, which shows the reader using the product from start to
+result; a README holds no figure of who does what, since it would say the example again.
 
 ## Benefit
 
