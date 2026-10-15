@@ -508,6 +508,10 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      when the fork changed the scripts under it (`.turn/.../work/` moved), and is run again.
   7. The console lines turn's orchestrator writes come out in Japanese in trials, since the clone
      runs under the user's global CLAUDE.md; left as is, since the user's conversations do too.
+- turn's code tried on the flow task (2026-10-15, Opus, $1.40, one round): the work made at
+  `.turn/flow/work/csvtidy/README.md`, placed at `csvtidy/README.md` on return, 4 of 5 met, the
+  license left as a question with `ask the user`, an unmet with its way, a rule, and the evidence
+  paths; every hook let the run through.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
