@@ -596,6 +596,17 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   rn never changes `main`; the document's version is its own, 0.1.0. Run a third time.
 - rn's hooks through turn: the first run was cut off at the harness's one-hour limit while the
   generator made its second pass; the limit is now four hours and the run goes again.
+- Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
+  verification document (fourth, after the third's nine points were settled: the stand-in's parts
+  live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
+  said, the flow session's pass said, the must-be checks listed in the design alone) were killed
+  before they ended. Where to resume: run `dev/turn/trials/run.py` again on
+  `dev/rn/trials/rn-prompts.json`, `rn-hooks.json` and `rn-verification.json` (each in a new
+  folder), judge each by the purpose, finish by hand, take the files in; then the trials on
+  rn-try (`dev/rn/trials/flow.py` first, then `a1_first_call`, `a1_feedback`, `a2_intent`,
+  `a3_proposal`, `a4_resume`, `a4_from_080`), with fixtures remade from this version's runs where
+  a scene's premise differs; `claude plugin validate --strict`; rn 0.10.0 and turn 0.2.0 in
+  CHANGELOGs; the final check; then report every decision above to the user.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
