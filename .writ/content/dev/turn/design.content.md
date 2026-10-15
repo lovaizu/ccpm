@@ -2,17 +2,14 @@
 
 ## doc
 
-### B-1: What it covers
-- For whoever builds or changes turn: what turn must achieve, how each quality is checked, and the
-  approach, the way of thinking, and who takes part with their roles and what they depend on, by
-  which turn brings about what its README (`../../turn/README.md`) promises.
-- How to use turn is in that README; the forms a caller writes and reads are on the callers' page,
-  "Calling turn from a plugin's step" (`../../turn/calling-from-a-plugin.md`); prompts' wording and
-  steps, and how each script and hook behaves, are left to the code.
-- A statement no trial has checked yet is marked "(assumption)".
+### B-9: The point from the opening
+- turn keeps what its README (`../../turn/README.md`) promises by one idea: the work is read in its
+  receiver's place by an agent that did not write it, and one orchestrator decides each item of the
+  checklists from the whole work, so nothing passes that the work does not show.
+- How to use turn is in that README, and the forms a caller writes and reads are on the callers'
+  page (`../../turn/calling-from-a-plugin.md`).
 
 ### B-12: Every term known
-- What each term below means, said where the work first uses it.
 - The caller: Claude in the user's conversation, or a step of the user's plugin. It hands turn one
   task in a CCS, a JSON file, and turn writes back what the caller needs next, as a function takes
   arguments and returns a value.
@@ -119,18 +116,14 @@
 - Tests and builds a work needs run by shell commands, so the agents' shell stays open.
 
 ### B-7: Attractive quality checked
-- Each is judged from the records, the JSONL of every conversation and agent of the run, and tried
-  apart from the others. What the work gives its receiver is tried on real work, writ's and turn's
-  own documents and prompts, against the items in question, since a made-up task shows only that it
-  passes; the flow of a run is tried apart from the work, on the smallest task that still shows it,
-  such as a short note against a checklist of a few items, each item there to make a round end as
-  the check needs.
+- Each is judged from the records, the JSONL of every conversation and agent of the run. What the
+  work gives its receiver is tried on real work, writ's and turn's own documents and prompts,
+  against the items in question, since a made-up task shows only that it passes.
 - Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver with the same
   files it opens and the same list, takes every item returned as Good, including each an earlier
-  run left without one. Its flow passes when, on a task whose first round leaves an item with a way
-  in the work and a question open, one call reads and decides the work twice and asks the question at its end.
+  run left without one.
 - Made from what the caller decided: on a task in a repository holding files the inputs do not name,
   the records show no role reading one, and the work says nothing the inputs do not give.
 - Asked only what only the user can decide, all at once at the end: on content that settles some
@@ -231,9 +224,6 @@
   and stop what would change the user's work.
 
 ### B-13: An approach for each quality
-- Each approach is said as its idea, who takes part, what must always hold, and the approaches
-  weighed, with why each was not chosen and what the one chosen costs. How each script and hook
-  behaves is the code's.
 - The checklist as the measure. Brings about: read in the receiver's place, the first-run share,
   following each item back, the checklist form. Idea: a work that meets every item of its checklists
   serves its purpose (assumption, which the attractive-quality trials test), so everything that
