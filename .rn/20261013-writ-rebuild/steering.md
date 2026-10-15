@@ -313,7 +313,12 @@ Progress:
   question is answered, so it named lines that do not give it; fixed (`b018982`), and the second
   run named the question. In both, the orchestrator's one `cat` was stopped by the hook and it went
   on with Read.
-- Next: turn's design read again with the finished `design.md` from #6.
+- turn's design, made through turn (decided by the user, 2026-10-15), in the order the README's
+  showed: the checklist finished first against what a design is (`90c3ab7`), then the content file
+  written to answer every item of it and checked item by item before turn is called (`cdc0f68`),
+  then turn. A first run on content not yet made to the checklist was stopped.
+- Next: judge what turn returns by the user's words on a design; then CHANGELOG, the whole tried
+  once, and `claude plugin validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
