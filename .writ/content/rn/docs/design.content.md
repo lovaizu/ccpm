@@ -64,6 +64,12 @@
   for the user: at a sign-off, after `/rn:ty` or `/rn:gm`, or on `/rn:dn`.
 
 ## design
+- The conductor cannot work without the record, turn, rn's scripts and checklists, and git with
+  the remote on GitHub; turn, without the task as a CCS, git, python3 and jq, as its README says;
+  rn's scripts, without python3 and jq; rn's hooks, without python3 and Claude Code to run them;
+  the pull request, without `gh` logged in with push access.
+- One static figure shows each of these, its responsibility in one line, and what it cannot
+  work without; beside it, only where the conductor runs.
 
 ### B-1: Attractive quality
 - Said in the README's words, since the reader comes from it.
@@ -176,8 +182,6 @@
 - Read in its receiver's place before the user sees it: on each sign-off of the same session, the
   records show the plan, the three documents and the proposal made by turn and read by its first
   user before the stop commit, and each task's result used by it before the conductor decided.
-
-### B-22: Where each benefit is tried
 - The flow, from `/rn:up` through the plan, the design, one task and the Deliverable sign-off, is
   tried apart from what turn makes, on the smallest session that shows it: a one-line change in a
   repository of one file, with a plan of one attractive criterion, so the trial spends no real
@@ -187,8 +191,6 @@
 - All three are measured from the records of the account session, run on this version and on the
   version in use: the questions the stand-in answered, the minutes and tokens to each sign-off,
   and the lines of each proposal.
-
-### B-23: What a measure is compared with
 - Each is compared with the same session on the version in use, rn 0.9.0.
 
 ### B-9: Must-be quality checked
@@ -218,7 +220,7 @@
 - The verification document: the flow trial's deliverable is used by turn against the session's
   verification document, and the test on the record's form reads one.
 
-### B-12: Who takes part
+### B-12: Who is responsible for what
 - The user, who decides; the conductor, which hears, writes the content, hands turn each task,
   judges what turn returns, proposes and uses git; turn, which makes each work, has it read in its
   receiver's place and checks it; rn's scripts, which find the checklists for a kind, write the
@@ -226,34 +228,6 @@
   which hold the conductor to the record and the session's course; git and GitHub, through `gh`,
   which hold the record and the pull request; Claude Code, which runs the conductor, the hooks and
   turn.
-
-### B-26: What each one depends on
-- The conductor cannot work without the record, turn, rn's scripts and checklists, and git with
-  the remote on GitHub; turn, without the task as a CCS, git, python3 and jq, as its README says;
-  rn's scripts, without python3 and jq; rn's hooks, without python3 and Claude Code to run them;
-  the pull request, without `gh` logged in with push access.
-
-### B-25: What passes between them
-- The user and the conductor: rough words and answers, one point at a time; proposals, questions
-  and the decision line where rn stopped.
-- The conductor and the record: each decision written as it is made, committed and pushed; on
-  `/rn:up`, the plan, `open/` and the last decision line read back.
-- The conductor and turn: for each work, the task as a CCS; back, the CCS with the next move, the
-  questions, the items not met, and where the evidence is.
-- The conductor and rn's scripts: the kind, and back its checklists; the task's parts, and back
-  the two lines to call turn with; turn's evidence, the returned CCS and the conductor's
-  judgments, and back the report.
-- The conductor and the pull request: the record pushed, the body's links, the comments read as
-  feedback, and the mark ready.
-- rn's hooks and the conductor: each stop, naming the step and why.
-
-### B-32: The whole in one place
-- One figure, a sequence diagram, with the user, the conductor, rn's scripts, turn, rn's hooks and
-  git with GitHub, each with what it is for in its label, and the passes above in the order of a
-  session: the words, the hearing, the plan made by turn and proposed, the approval, the design
-  made by turn and proposed, the tasks each made by turn and judged, the deliverable used by turn
-  against the verification document, the proposal, and the pull request marked ready; after the
-  figure, only what it cannot show: where the conductor runs and what each cannot work without.
 
 ### B-11: Principles to judge a change
 - Attractive quality is the goal: its checks are the fewest that confirm it, and each improvement
@@ -286,136 +260,25 @@
 - Decisions are written into the record before the work that follows them, and the record holds
   only what holds now; how a thing was reached lives in the commit messages. Protects: goes on from
   where it stopped, every decision pushed.
+- A session works on its own branch from the latest default branch, with a draft pull request,
+  never takes in the user's uncommitted changes, and is brought up to the default branch when
+  taken up and before each sign-off. Protects: the default branch untouched, goes on from where it
+  stopped.
+- The user is heard by the conductor itself, one point per message, what they want before any
+  way, facts looked up never asked, until nothing is silently assumed; the plan has its own
+  sign-off. Protects: what they really want, called only for decisions that are theirs.
+- The tasks are planned only once the design is approved, raise attractive quality first, and each
+  is judged on the real thing against its purpose; the deliverable is used once, against the
+  verification document, and each shortfall becomes a task. Protects: what they really want,
+  questions answered.
+- Feedback sends the session back to before the sign-off it answers, from the mismatch behind the
+  words, and the session stops at that sign-off again. Protects: what they really want, decided
+  from the proposal alone.
+- A sign-off's proposal gives the final state only, made by turn as a work; what rn decided for
+  the user comes first. Protects: decided from the proposal alone, what the user reads at a
+  sign-off.
+- What a machine can judge of the course is checked by a hook at the moment it could break, and
+  each stop names the step and why; a hook judges the record's form and the course, never the
+  work's worth. Protects: every decision pushed, the record's form, a sign-off passed only by
+  approval.
 
-### B-13: An approach for each quality
-- Hearing what the user really wants. Brings about: what they really want, called only for
-  decisions that are theirs, questions answered. Idea: the conductor works out the plan itself, in
-  the conversation it holds, before anything else, and the plan has its own sign-off, since a
-  design worked out on a wrong goal is wasted. It asks the way of a careful interviewer working
-  down a tree of decisions, as in mattpocock's `grilling` skill (MIT, commit `d81f3a1`): only a
-  point whose prerequisites are settled is asked; an intent question asks why the user wants the
-  goal and what a result should do for them, with no way offered and no recommended answer, and
-  its answer is written in the user's words as an attractive criterion; a means question offers
-  ways only where the criteria allow ways that give different things, each with what it gives and
-  costs and the one recommended; facts the repository, the official documentation or best
-  practice can show are looked up, and a fact none can show, such as what the user's records hold
-  or every form an input takes where the product runs, is asked; done when nothing is silently
-  assumed, and what the user does not know but says to go on with is an assumption. Each point is
-  written into the plan's content as it is agreed, committed and pushed, so a pause loses none;
-  the languages the record and the talk are in, and the issues the work closes, are among the
-  points. Who takes part: the user, the conductor, the record. Weighed: depending on `grilling`
-  instead of taking its way in; not chosen, since installing it brings many skills, it starts on
-  any mention of "grill", and its tags cannot pin a version. Weighed: every ready question at
-  once; not chosen, since with several the user answers the one they follow and the rest go
-  half-decided (the user's own experience).
-- Making a work through turn. Brings about: read in its receiver's place, nothing reaches the user
-  unread, decided from the proposal alone, time and tokens. Idea: for each work, the plan at the
-  Plan sign-off, the three documents at the Design sign-off, each task's result, the deliverable's
-  use and each proposal, the conductor writes the content, what the work must say or do item by
-  item of its checklists, from what was agreed and nothing else, at
-  `.rn/{session}/content/<the work's path>.content.md`; hands turn the task with a script, as a
-  CCS naming the content, the checklists for the kind, where each file goes, the receiver, their
-  use and what they must be able to do, what the work follows and what the receiver opens with
-  it; waits for turn, which asks nothing while it works; then judges each question and item turn
-  returns by what the purpose needs: where serving the purpose needs a large change in the
-  content, it corrects the content and runs turn again, and only then; otherwise it finishes the
-  work itself after turn's last run, each change kept for the report; a question the purpose needs
-  and only the user can decide is asked, one per message. A script writes the report from turn's
-  evidence, the returned CCS and the conductor's judgments, and stops until every question and
-  item turn returned is judged, so nothing turn returned is dropped. The report goes to `open/`
-  and is settled whole in the commit that settles it. Who takes part: the conductor, rn's scripts,
-  turn, the user. Weighed: running turn until every item is met; not chosen, since each run raised
-  finer questions the purpose did not need (seen in three runs on a CSV tool's README,
-  2026-10-14). Weighed: an agent of rn's own set to check turn's result; not chosen, since a fresh
-  agent set to check a README judged beyond the README's scope and disagreed with turn (seen once,
-  2026-10-14), and only the conductor knows what was agreed. Weighed: the conductor asking the user
-  each question as it is seen; not chosen, since turn asks nothing while it works, so all its
-  questions come at once at the end.
-- Sign-offs and proposals. Brings about: decided from the proposal alone, what the user reads at a
-  sign-off, a sign-off passed only by approval. Idea: at a sign-off, every report and feedback is
-  settled, the branch has the latest default branch merged in, and the conductor writes the
-  proposal's content, the final state only: what it proposes next and why, how far the work gives
-  each attractive criterion and what came closer, what changed since the last approval and what
-  the design takes away, what it decided for the user, each shortfall left, each assumption as a
-  shortfall, and each item of the work's checklists as turn's evidence shows it; turn makes the
-  proposal against the proposal checklist, read as the user would, and the conductor commits it as
-  the stop commit's body, with the decision line last, and gives the user that body translated
-  into the conversation language, adding nothing and leaving nothing out. The points and fixes
-  along the way are left out, since the user approves the final state; a must-be gap let go off
-  the golden path stays in the record, not in the proposal. Who takes part: the conductor, turn,
-  the record, the user. Weighed: a report of where things stand; not chosen, since it leaves the
-  user to work out what to do next, which is the work they left to rn. Weighed: every Good and
-  More of every use listed; not chosen, since the proposal then grew with the work checked, not
-  with what the user decides (#46).
-- Feedback. Brings about: what they really want, decided from the proposal alone. Idea: feedback is
-  the user's words with `/rn:gm`, or, when none are given, every comment the `gh` user wrote on
-  the pull request after the stop commit; it is kept whole in a `feedback` item in `open/`, and
-  the session goes back to working out the plan or the design, taking the mismatch behind the
-  words as the first point, since fixing only what the words say leaves the mismatch in place;
-  feedback on the deliverable gets tasks for it, or goes back to the design when it changes what
-  the product should be; work that went back always stops at that sign-off again. Once approved,
-  the plan and the documents go back through their sign-off only when what they say changes
-  without the user having decided it. Who takes part: the user, the conductor, the pull request.
-  Weighed: acting on feedback point by point as worded; not chosen, since the mismatch behind the
-  words stayed in place.
-- Tasks and the deliverable. Brings about: what they really want, called only for decisions that
-  are theirs. Idea: the tasks are planned only once the design is approved, since tasks planned
-  before it would mostly be rewritten, in the way of `wayfinder` in the same repository: decisions
-  settled one at a time, each before the tasks that rest on it, what cannot yet be stated kept
-  under Not yet specified; each task names its purpose, the criteria it serves and completion
-  criteria split by Kano quality, and tasks raise attractive quality first. Each task is a work
-  made through turn, with the design and the repository's rules as what it follows and the code
-  checklist, or the kind's, as its measure; the conductor checks what turn returned against the
-  task's purpose on the real thing, in one decision line, sends it back with the content corrected
-  where the purpose is not fulfilled, goes back to the design where the design does not let it be
-  fulfilled, and asks the user what only they can decide. When the tasks planned after the last
-  Design sign-off are done, the deliverable is used once: turn uses the product as its user would
-  against the verification document, whose scenes are its items, and the conductor runs the machine
-  checks; each More to fix becomes a task before the Deliverable sign-off, and the whole is not
-  used again, since each fresh use raises points that are not essential. Who takes part: the
-  conductor, turn, the record. Weighed: a generator and a first user of rn's own for each task;
-  not chosen, since turn makes, reads and checks every work one way, and rn's own reading was the
-  second copy of it.
-- The record and the pull request. Brings about: goes on from where it stopped, every decision
-  pushed, the default branch untouched. Idea: a session works on its own branch from the latest
-  default branch, with a draft pull request whose body links `steering.md` and the issues, and
-  never takes in the user's uncommitted changes; every decision is committed and pushed as it is
-  made, with a decision line, so `/rn:up` takes up the next move from the last one; `open/` holds
-  what is not yet settled, and a settled item leaves it in the commit that settles it, copied whole
-  into the message with what was decided on each point, so the record lives in git and shows each
-  finding beside what became of it; the content of each work stays under `content/` so each item
-  met traces back to what was asked of it; turn's evidence under `.turn/` is left uncommitted, since
-  the report holds what the record needs. When a session is taken up, and before each sign-off,
-  the branch is brought up to the latest default branch, and what that changes is worked out again
-  before the sign-off. When Claude Code summarizes the conversation partway, a hook has the
-  conductor read the record again, since a summary drops details the record holds whole. Who takes
-  part: the conductor, git and GitHub, rn's hooks. Weighed: findings kept as files under `.rn/`;
-  not chosen, since the record then held what was read past, and the commit messages already hold
-  each finding beside its decision.
-- The commands. Brings about: goes on from where it stopped, a sign-off passed only by approval,
-  missing tools: `/rn:up` checks python3, jq and gh before anything and says what to install; rn's
-  hooks run only where python3 is found and a session is open.
-  Idea: `/rn:up` starts a session from the words given it when the branch has none, and otherwise
-  takes up the one on the branch from its record, so one command serves both and the user need
-  not remember which; `/rn:ty` and `/rn:gm` record the user's answer and stop, so the user can
-  clear the conversation at any sign-off; `/rn:dn` records how far the session has come, a task
-  under way included, and stops. Each command runs only when the user types it. Who takes part:
-  the user, the conductor, the record. Weighed: keeping `/rn:on` beside `/rn:up`; not chosen,
-  since the record tells whether a session is there, and two commands for one move are one more
-  thing to learn.
-- Hooks check rn's rules as it goes. Brings about: every decision pushed, the record's form, a
-  sign-off passed only by approval, nothing reaches the user unread, called only for decisions that
-  are theirs. Idea: what a machine can judge is checked by hooks, so a breach is stopped where it
-  happens, and each stop says which step and why: the record's form after each write; the decision
-  line, a settled item whole, a stop commit's `open/` and merged default branch, and a sign-off
-  passed only after `/rn:ty` typed, on each commit before it is pushed; only the conductor commits
-  or pushes; no agent in the background; every commit pushed and the last message in the
-  conversation language at each end of the turn; and a turn ended with nothing to decide sent on
-  once. A proposal naming an item met that turn's evidence does not is stopped. Who takes part:
-  rn's hooks, Claude Code, the conductor. Weighed: telling the conductor its rules in words only;
-  not chosen, since a rule in words is kept on some runs only (assumption, from turn's design).
-- Installing with turn. Brings about: rn installs with turn. Idea: rn's manifest names turn among
-  its dependencies, so installing rn installs turn, and the manifest passes
-  `claude plugin validate --strict`, alone and in the marketplace. Who takes part: rn's manifest,
-  Claude Code. Weighed: telling the user to install turn as well; not chosen, since a user who
-  misses it gets an rn that cannot work.
