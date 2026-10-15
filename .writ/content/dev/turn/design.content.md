@@ -93,8 +93,8 @@
   callers do not act on it. A CCS an earlier version from 0.2.0 on returned is accepted, so a
   stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since no caller relies
   on one.
-- The checklist form the README's Requirements gives, relied on by users and writ, who write
-  checklists in it: a checklist that opens with its name and version and gives its items as
+- The checklist form the README's Requirements gives, relied on by users and by plugins built on
+  turn, such as rn, which write checklists in it: a checklist that opens with its name and version and gives its items as
   headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
   long as a checklist in that form needs nothing more.
 - What a returned CCS points to, relied on by the user, who opens it to follow each item back:
@@ -110,7 +110,7 @@
 - Deciding whether to run again after a run's second round: the caller does it from what the run
   returns, knowing what was agreed.
 - Finding what no item asks, which goes into the checklist; and holding checklists, which belong to
-  whoever knows the kind of work, such as writ.
+  whoever knows the kind of work, such as rn, a plugin built on turn.
 
 ### B-6: Constraints
 - turn is used by Claude, on a person's behalf, in a conversation or a plugin's step.
@@ -124,7 +124,7 @@
 
 ### B-7: Attractive quality checked
 - Each is judged from the records, the JSONL of every conversation and agent of the run. What the
-  work gives its receiver is tried on real work, writ's and turn's own documents and prompts,
+  work gives its receiver is tried on real work, rn's and turn's own documents and prompts,
   against the items in question, since a made-up task shows only that it passes.
 - Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes

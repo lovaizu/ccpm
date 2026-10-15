@@ -642,6 +642,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   said where first met; where Mores contradict, the undecided point is asked where it is the
   user's. The 13 rules turn returned each apply an item that exists (doc B-7, B-11, B-12, B-13,
   prompt B-12, B-20, F-2); none taken.
+- turn's design taken in from `d5` (2026-10-16, Opus, $7.95, two rounds, 351 lines, 34 of 41 met,
+  one question): the one question, what writ is, came from the content naming writ, which this
+  pull request folds into rn; the content and the design now say rn, a plugin built on turn. The
+  six unmet finished by hand, each small: the orchestrator said as the skill and the caller's
+  parts said in the opening; the second round read and decided again; "form" kept for the
+  checklist and the CCS, a role's answer called its answer file; the user's arrows to the caller,
+  the console and `.turn/` in the figure; the pointer to the README and the line on the README's
+  words taken out; the shell command's side effect said under the last principle. The eight rules
+  each apply an item that exists (doc B-3, B-7, B-11, B-12, B-14, design B-12); none taken.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
