@@ -66,8 +66,13 @@ Why: a document that has turned wrong is worse than none, since it is believed.
 
 ### B-7: Said in one place
 
-Can the reader take what the document says as the one account of it, because nothing it says is
-also said in another document or shown by the deliverable itself?
+Can the reader take each thing the document says as the one account of it, because it is said in
+one place of the document, with every case where it does not hold beside it, and not also in
+another place of it, in another document or by the deliverable itself?
+
+Look for: a fact, a rule or a step stated in two sections, in the same words or in others; a rule
+in one section and a case where it does not hold in another, so that the two disagree when read
+apart.
 
 Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
 tell which holds.
@@ -98,7 +103,9 @@ Why: a check whose reach is not written is taken as having checked everything.
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?
 
-Look for: a word used before it is explained; a decision whose reason comes later or elsewhere.
+Look for: a name used before the sentence that says what it names; a reason moved ahead of the
+names it uses, so that it comes first; a decision whose reason comes later or elsewhere; a link or
+a pointer that sends the reader ahead for what a sentence rests on, in place of putting it before.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
 guess, so the picture is not taken in by one reading from the top.
@@ -106,6 +113,11 @@ guess, so the picture is not taken in by one reading from the top.
 ### B-12: Every term known
 
 Can the reader tell what each term means, because they already know it or the document explains it?
+
+A term is any word the document uses for a thing of its subject, whether set in code or not.
+
+Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
+someone who acts in it, that no sentence explains.
 
 Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
 from the writer's where the guess is wrong.
