@@ -9,41 +9,46 @@
 - How to use turn is in that README, and the forms a caller writes and reads are on the callers'
   page (`../../turn/calling-from-a-plugin.md`).
 
-### B-12: Every term known
-- The caller: Claude in the user's conversation, or a step of the user's plugin. It hands turn one
-  task in a CCS, a JSON file, and turn writes back what the caller needs next, as a function takes
-  arguments and returns a value.
-- The work: what one task makes for one purpose, one file or several, such as code and its tests,
-  written, read and decided together, since what the receiver needs may be given only by them
-  together.
-- What the caller gives: where each file of the work goes; the receiver it is for; their use of it,
-  when named; what they must be able to do with it; the checklists; the content, what the work says
-  or does item by item of the checklists; the references, files or folders the work follows or
-  draws on; what the receiver opens with the work; and the constraints, such as the language to
-  write in. These are the run's inputs.
-- A checklist says what a work of one kind must give its receiver: an opening on what such work is
-  for, then items, each one question. The list is a task's checklists put together.
-- A run goes from one CCS to the one turn writes back: it makes the work, has it read, decides each
-  item and finds how each item without a Good would get one.
-- The orchestrator runs a run and alone decides each item. Its agents give it what it decides from:
-  the generator makes the work, the first user reads it in the receiver's place and hands back its
-  reading, the evaluator shows which items the work meets, and the learner finds how an item
-  without a Good would get one.
-- A Good: an item the orchestrator has decided the work meets, with its grounds, the lines it rests
-  on. More: an item without a Good when a run returns.
-- A form: the answer a role writes, a JSON file with one place per item, which the agents read
-  and change with jq; what the role hands back is its form. The reading: the first user's form,
-  what it took from the work for each item and where.
-- Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
-- The run's evidence: what a run keeps in the repository for the user and later runs: the work, its
-  reading and decisions, each way to a Good, and the list with each checklist's name and version.
-  The work is made in a working copy of the repository as it is committed, kept in the evidence
-  while the run goes, so the tests and builds the work needs run in place; the work stays in the
-  evidence until the run returns, and the copy is gone by then.
-
-## design
-- One static figure shows each of these, its responsibility in one line, and what it cannot
-  work without; beside it, only where the orchestrator runs and what that costs.
+### B-12: Who is responsible for what
+- The user hands the work on, and answers, when the run returns, what only they can decide.
+- The caller, Claude in the user's conversation or the user's plugin: says what the work should
+  be, in a CCS of the callers' page's form, and decides from the CCS turn writes back what follows:
+  finishing the work itself, calling turn again, asking the user, or moving on.
+- The orchestrator, the skill `turn:up`: runs the run; decides each question the generator or the
+  learner raises, showing where the inputs answer it or leaving it open for the user; sends the
+  work back to the generator until every item passes or waits on a question left open, and only
+  then hands it to the first user; alone decides whether each item passes, from the whole work,
+  giving each that passes a Good with the lines that give it; takes the learner's ways in the work
+  in one second round, and returns what the second round leaves, or what lies in what the caller
+  gave, to the caller. It needs the CCS, turn's scripts and Claude Code to start its agents.
+- The generator: makes the work in the run's copy of the repository to pass every item, from the
+  content and the references, names where each item passes, and raises what the inputs do not
+  settle as a question. It needs the inputs a script hands it and a shell for tests and builds.
+- The first user: reads the work as the receiver, for the use, with only the work and what the
+  receiver opens with it, and hands back what it took for each item and where; it raises no
+  question, since without the content it cannot tell what only the user can decide. It needs the
+  work and what the receiver opens.
+- The evaluator: shows which items the work passes, each with its lines and grounds, judged from
+  the first user's reading; it raises no question. It needs the reading and its records.
+- The learner: finds, for each item not passed, how the work would pass it, from the purpose and
+  for every line the same shape reaches, and where that way lies: in the work, or in what the
+  caller gave; and raises what only the user can decide. It needs the work, the items not passed,
+  the content and the references.
+- turn's scripts: give the same result every time: check the CCS, lay out the list and the forms,
+  make the run's copy and hand each agent its inputs once the steps before are done, find the
+  lines of the work no grounds name (Coverage), make the console that shows the aim before the
+  work is written and each step as it is reached, in the user's words with no item IDs, and write
+  the work and the CCS back. They need python3 3.9 or later and jq.
+- turn's hooks: keep each role to its steps and its inputs, stop a write outside the run's copy
+  and the work's place, a commit or a push, and show the console; they act only in the session
+  whose run is open. They need Claude Code to run them.
+- Claude Code: runs the orchestrator, its agents and the hooks, and keeps the records.
+- git: holds the repository as committed, from which the run's copy is made and what was where
+  the work goes is got back. It needs the work in a git repository.
+- One static figure shows each of these, its responsibility in one line, and what it cannot work
+  without; beside it, only where the orchestrator runs: as a skill, where its caller runs, so in a
+  conversation the user sees its console and presses Esc, and in a subagent the caller reads what
+  it returns, at the cost of room in the caller's context.
 
 ### B-1: Attractive quality
 - Said in the README's words, since the reader comes from it.
@@ -167,63 +172,41 @@
   exists.
 
 ### B-11: Principles to judge a change
-- The orchestrator alone decides, from the work itself: for each item it reads the whole work for
-  where the item is given, and what agents and scripts hand back only shows it where to look first,
-  since a Good on one part does not show what the whole gives. Protects: nothing passes unshown, read
-  in the receiver's place.
-- Every role, the orchestrator included, looks only for Goods and aims at every item being Good;
-  none finds fault, and none is set to find something, since one set to find something finds it
-  whether it is there or not (assumption). Coverage, a script, is the one place that looks for what
-  may be wrong. Each answers, as the orchestrator decides, in a form with one place per item, since
-  the form, not the wording, holds it to its aim. Protects: nothing passes unshown, the first-run
-  share.
-- Every role works from the inputs it is handed alone. Each prompt names them as the whole of what
-  it reads, says in positive words to work from them, and gives why: so the work follows what the
-  caller decided, without bias from what was not given. Each prompt sets as steps what its agent
-  receives, hands back and must do in full, as instructions with their reasons, and leaves how it
-  thinks within a step to it. Protects: made from what the caller decided, read in the receiver's
-  place.
-- A question for the user may come from the roles given the content: the orchestrator, the generator
-  and the learner; the orchestrator decides each, showing where it is answered or leaving it open,
-  and the run returns every open one at its end. The first user and the evaluator raise none, since
-  without the content they cannot tell what only the user can decide, and a place for what they did
-  not find would be a place for faults; what they did not take reaches the learner as an item
-  without a Good. Protects: asked only what only the user can decide.
-- turn asks nothing while it works, so it runs the same wherever it is called, a subagent included,
-  and is stopped or corrected only from where it was called. Protects: asked only what only the user
-  can decide, a plugin decides from what turn returns.
-- What must come out the same every time is done by a script or a hook: a script does what a step
-  asks, and refuses a step whose steps before it are not done; a hook sees, as Claude Code runs the
-  run, that a step was not left out or done otherwise, and stops it saying which step, what it needs,
-  and why. Protects: nothing passes unshown, what the caller gave unchanged, repository untouched,
-  made from what the caller decided, following each item back.
-- turn's hooks act only in the session whose run is open, and do nothing elsewhere, even without
-  python3, since they run in every session where turn is installed. Protects: repository untouched,
-  missing tools.
+- The orchestrator alone decides whether each item passes, from the work itself: for each item it
+  reads the whole work for where the item is given, and what agents and scripts hand back only
+  shows it where to look first, since an item shown passing in one part does not show what the
+  whole gives. Protects: nothing passes unshown, read in the receiver's place.
+- Every role looks only for where items pass and aims at every item passing; none finds fault,
+  and none is set to find something, since one set to find something finds it whether it is there
+  or not (assumption); Coverage, a script, is the one place that looks for what may be wrong; each
+  role answers in a form with one place per item, since the form, not the wording, holds it to
+  its aim. Protects: nothing passes unshown, the first-run share.
+- Every role works from the inputs it is handed alone; each prompt names them as the whole of what
+  it reads, says in positive words to work from them and gives why, sets as steps what its agent
+  receives, hands back and must do in full, and leaves how it thinks within a step to it.
+  Protects: made from what the caller decided, read in the receiver's place.
+- turn asks nothing while it works, so it runs the same wherever it is called, a subagent
+  included, and is stopped or corrected only from where it was called; every question comes back
+  at once when the run returns. Protects: asked only what only the user can decide, a plugin
+  decides from what turn returns.
 - Everything that measures the work measures by the same list, with every checklist's opening,
   the same receiver and the same use; a checklist says its own name and version, so a Good is
   followed back to the text it was judged by. Protects: read in the receiver's place, the
   first-run share, following each item back, the checklist form.
-- The work reaches the first user only once the orchestrator sees every item met or waiting on a
-  question left open; what the inputs do not settle is kept out of the work and asked when the
-  run returns. Protects: the first-run share, time and tokens, asked only what only the user can
-  decide.
-- The first user reads the work with only what the receiver opens with it, and nothing of how it
-  was made. Protects: read in the receiver's place.
-- A run reads the work at most twice: a way in the work is taken in a second round within the
-  call, and what the second leaves, or lies in what the caller gave, goes back to the caller, who
-  knows what was agreed. Protects: read in the receiver's place, nothing unread, time and tokens.
-- A run starts from its CCS alone; the work is made in a copy of the repository and stays in the
-  run's evidence until the run returns; the received CCS is never written over and the caller's
-  parts come back the same. Protects: what the caller gave unchanged, repository untouched, stop
-  and start over, the CCS.
-- The console shows the aim before the work is written and each step as it is reached, made by a
-  script from the run's evidence, in the user's words with no item IDs. Protects: seeing the work
-  as it goes.
-- What can be told before it happens is stopped then: a write outside the run's copy and the
-  work's place, a commit or a push, a write over a file where the work goes unless git holds it or
-  it is a returned work unchanged; what cannot, a shell command's side effect, is named to the
-  user when the run returns. Protects: repository untouched, missing tools.
+- A run starts from its CCS alone, makes the work in a copy of the repository as committed, and
+  keeps the work in the run's evidence until the run returns; the received CCS is never written
+  over and the caller's parts come back the same. Protects: what the caller gave unchanged,
+  repository untouched, stop and start over, the CCS.
+- What must come out the same every time is done by a script or a hook: a script does what a
+  step asks and refuses a step whose steps before it are not done; a hook stops a step left out or
+  done otherwise, saying which step, what it needs and why, and acts only in the session whose
+  run is open, even without python3. Protects: nothing passes unshown, what the caller gave
+  unchanged, repository untouched, missing tools, following each item back.
+- What can be told before it happens is stopped then, and what cannot is named to the user when
+  the run returns: stopped, a write outside the run's copy and the work's place, a commit or a
+  push, a write over a file where the work goes unless git holds what is there or it is a work
+  an earlier run returned, unchanged since; named, a shell command's side effect. Protects:
+  repository untouched.
 
 ### B-12: Who is responsible for what
 - The user, who hands the work on; the caller, who says what the work should be; the orchestrator,
