@@ -20,17 +20,18 @@ A design document is read by someone who builds or maintains a product. It lets 
 - tell, when a check fails, which quality broke;
 - tell how the flow of the parts is checked apart from what each part makes;
 - try each check in the smallest situation that shows its quality;
-- see how each quality is achieved: what each one that takes part does, what passes between them
-  and what each cannot work without, seen in one place; the approach that achieves each quality;
-  each part an approach is built from, what it does, when it acts and what it looks at; and what
-  must hold after every operation;
+- see how each quality comes about: the approach to it, said as the idea of how it comes about and
+  who takes part in it, and what must hold after every operation; and who takes part in the whole
+  product, what each does, what passes between them and what each cannot work without, seen in one
+  place;
 - decide whether a change fits the design from its principles, and tell the quality or the
   constraint each principle protects;
-- tell, for each choice the design makes, which other options were weighed, why each was not
-  chosen, and what the choice costs.
+- tell, for each approach, which other approaches were weighed, why each was not chosen, and what
+  the one chosen costs.
 
-How the product is used is the README's; code, full definitions, steps, settings and file names
-are not for this reader, since they change with each rebuild. Each item of `doc.md` also applies to
+How the product is used is the README's; how each part behaves, such as when a hook runs and what
+it looks at, is the code's, with its code, full definitions, steps, settings and file names, since
+these change with each rebuild while the approach holds. Each item of `doc.md` also applies to
 a design document.
 
 ## Benefit
@@ -127,16 +128,10 @@ untold is reached without anyone seeing it.
 
 ### B-13: An approach for each quality
 
-For each quality the design must have, can the reader find the approach that achieves it?
+For each quality the design must have, can the reader find the approach that brings it about, said
+as the idea of how it comes about and who takes part in it?
 
 Why: a quality no approach serves has no way to come about.
-
-### B-14: How each approach is built
-
-For each approach, can the reader tell each part it is built from?
-
-Why: a maintainer changes an approach through its parts; a part left untold is changed or dropped
-without anyone knowing the approach rests on it.
 
 ### B-15: What must always hold
 
@@ -147,7 +142,7 @@ procedure, it is lost when the procedure changes.
 
 ### B-16: The options weighed
 
-For each choice the design makes, can the reader tell which other options were weighed?
+For each approach, can the reader tell which other approaches were weighed?
 
 Why: a maintainer who thinks of an option cannot tell whether it is new or was already weighed.
 
@@ -224,40 +219,16 @@ Can the reader tell what each one that takes part cannot work without?
 
 Why: a part changed without knowing what it rests on stops working wherever that is missing.
 
-### B-27: What each part does
+### B-30: What each approach costs
 
-For each part an approach is built from, can the reader tell what it does, such as what a hook
-stops?
+For each approach, can the reader tell what it costs?
 
-Why: a part named without what it does is built however its builder reads it, and the quality it
-was to hold is left to that reading.
-
-### B-28: When each part acts
-
-For each part an approach is built from, can the reader tell when it acts, such as the event a hook
-runs on?
-
-Why: a part that does the right thing at a moment other than the one the design meant holds nothing
-the approach needs, and its builder cannot tell.
-
-### B-29: What each part looks at
-
-For each part an approach is built from, can the reader tell what it looks at to decide what it
-does?
-
-Why: a part that looks at other than what the design meant acts where it should not, or does not
-act where it should.
-
-### B-30: What each choice costs
-
-For each choice the design makes, can the reader tell what it costs?
-
-Why: a choice whose cost is not told is overturned without anyone knowing what it cost, or kept
+Why: an approach whose cost is not told is overturned without anyone knowing what it cost, or kept
 after its cost has outgrown what it gives.
 
 ### B-31: Why each option was turned down
 
-For each option weighed and not chosen, can the reader tell why it was not chosen?
+For each approach weighed and not chosen, can the reader tell why it was not chosen?
 
 Why: without the reasons, a decision is either kept blindly or overturned for an option already
 weighed and turned down.
@@ -284,7 +255,7 @@ Why: few principles can be kept in mind and weighed against each other; a rule t
 approach belongs with that approach, and listed among the principles adds one more thing to keep in
 mind everywhere.
 
-### U-2: Nothing of the specification
+### U-2: Decisions told from details
 
 Can the reader tell each decision that must hold from a detail that may change, because the
 document holds nothing decided anew with each build, such as steps, full definitions, values,
@@ -294,7 +265,7 @@ Why: such details change with each rebuild, so a design that holds them must be 
 code, and the reader can no longer tell a decision that must hold from a detail that may change; an
 idea the design takes up is given in full as a decision and its reason, not as its specification.
 
-### U-3: No case a principle settles
+### U-3: Each case left to the principles
 
 Can the reader keep in mind only the principles and the decisions, because the document writes down
 no case of how the product behaves that one of its principles already settles?
@@ -355,14 +326,15 @@ Does the design document follow this template, headings included?
 
 ### <Approach name>
 
-<The qualities it achieves, how it is built, what must always hold, and the options weighed>
+<The qualities it brings about, the idea of how, who takes part, what must always hold, and the
+approaches weighed>
 ```
 
 Why: a maintainer moving between products finds the same thing under the same heading in each, and
 settles what is aimed at and how it is checked, neither of which depends on how the product is
 built, before reading how it is built.
 
-### F-2: A section with nothing to hold
+### F-2: A section thought through
 
 Does each section with nothing to hold say, after `None:`, why it holds nothing?
 
