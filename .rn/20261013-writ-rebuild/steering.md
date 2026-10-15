@@ -429,6 +429,11 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   (the page on this branch says it too, `turn/calling-from-a-plugin.md:133`); "the item's ID" made
   the questions script stop only `doc B-2`, not `B-2`. turn follows its content by design, so the
   caller checks each statement before calling.
+- Next, agreed with the user (2026-10-15), back in #5: fix the callers' page's `to the caller`
+  against `turn/scripts/lifecycle.py`; bring to the user, as a change to turn's README and design,
+  the unit of a run as a purpose with one or more files; bring the design run's question, whether
+  `.turn/` is a path kept from 0.2.0 on; then remake turn's design from content checked statement
+  by statement against what it rests on.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 
