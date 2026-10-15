@@ -89,7 +89,7 @@
   breaks on one it does not know as on one that is gone; the wording in an entry may change, since
   callers do not act on it. A CCS an earlier version from 0.2.0 on returned is accepted, so a
   stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since writ, turn's one
-  caller, is released with 0.2.0 (decided by the user, 2026-10-15).
+  caller, is released with 0.2.0.
 - The checklist form the README's Requirements gives, relied on by users and writ, who write
   checklists in it: a checklist that opens with its name and version and gives its items as
   headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
