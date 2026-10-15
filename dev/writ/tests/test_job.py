@@ -357,7 +357,7 @@ class End(unittest.TestCase):
             )
         )
         self.assertIn(report, out)
-        self.assertTrue(report.startswith("Document 0.1.0\n  ✅ B-1 What it covers: lines 1\n"))
+        self.assertTrue(report.startswith("Document 0.2.0\n  ✅ B-1 What it covers: lines 1\n"))
         self.assertIn("\nREADME 0.2.0\n  ✅ B-1 What they gain: lines 1\n", report)
         self.assertEqual(report.count("✅"), len(self.repo.json(f"{folder}/form.json")["items"]))
         # Then: the job is closed
