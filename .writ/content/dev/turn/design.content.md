@@ -92,8 +92,8 @@
   headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
   long as a checklist in that form needs nothing more.
 - What a returned CCS points to, relied on by the user, who opens it to follow each item back:
-  every place a returned CCS points to exists; where the run's evidence is kept, and the rest of
-  it, may change.
+  every place a returned CCS points to exists. The run's evidence is kept under `.turn/` at the top
+  of the repository, since the README names that place to the user; how it is laid out inside `.turn/` may change.
 
 ### B-5: Non-goals
 - Deciding what the work should say: the caller does it, knowing what was already agreed, and gives

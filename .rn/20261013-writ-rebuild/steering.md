@@ -439,6 +439,8 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
 - Decided by the user (2026-10-15): a run's unit is one purpose with one or more files, such as code
   and its tests, written, read and checked together; the git check and where each file goes are per
   file. turn's README says so; the design takes it when remade, and the code after.
+- Decided by the user (2026-10-15): `.turn/` is kept as the place of a run's evidence from 0.2.0
+  on, since the README names it; its layout inside may change. The design's content says so.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
 
