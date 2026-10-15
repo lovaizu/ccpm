@@ -2,15 +2,12 @@
 
 ## doc
 
-### B-1: What it covers
+### B-9: The point from the opening
 - A step of a plugin hands turn one task: it writes the task in a CCS (Compressed Cognitive State), a
   JSON file, calls turn, and decides its next move from the CCS turn writes back.
 - It works like a function call: the CCS the step writes is the arguments, the CCS turn writes back
   is the return value, and its `next` says what to do with it.
-- The page gives the call, the CCS the step writes, and what to read in the one turn writes back.
-
-### B-8: What it leaves out
-- What turn does with the task, and what it needs installed: turn's README (`README.md`).
+- What turn does with the task, and what it needs installed, are in turn's README (`README.md`).
 
 ### B-2: The picture as meant
 - A step that calls turn, as the step's own text:
@@ -45,7 +42,7 @@
   says, once it has been read, and its CCS to `out`, and never writes `in`; the step reads `next` in
   `out` and does what it asks.
 
-### B-3: Nothing left to guess
+### B-3: Each idea taken in whole
 - `in`: the CCS the step wrote.
 - `out`: where turn writes its CCS back. It must not exist yet: if it does, turn writes nothing,
   ends before any work and says why, since it never writes over a file.
@@ -108,14 +105,14 @@
 - Each `rule` turn returns is the step's to judge: it may put it into its later tasks as a `rule` in
   `constraints`, into its checklist, or leave it.
 
-### B-5: What kind each statement is
+### B-5: How far to rely
 - That a subagent can start the agents turn starts rests on Claude Code's documentation on subagents.
 
 ### B-6: Still true later
 - A file already where the work goes is written over only when git holds every change to it, or when
   it is the work turn returned in the step's last call, unchanged since.
 
-### B-11: Nothing ahead of what it rests on
+### B-11: Read once from the top
 - turn and each of its roles read only the files and folders the CCS names, and stop a read outside
   them, saying it is to make the work without bias. So everything the work follows or draws on is
   named as `content` or `reference`, and everything the receiver opens with the work as
