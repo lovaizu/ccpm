@@ -512,6 +512,16 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   `.turn/flow/work/csvtidy/README.md`, placed at `csvtidy/README.md` on return, 4 of 5 met, the
   license left as a question with `ask the user`, an unmet with its way, a rule, and the evidence
   paths; every hook let the run through.
+- writ tried as its user on the csvtidy README (2026-10-15, Opus): 3 answers, 6.7 min, $2.34
+  (writ 0.2.0 on the same request: 5 answers, 17.3 min, $4.42). One turn run, four agents, so
+  #37's three pith runs are gone; no hook stops a read of saved tool output, and turn's lets it
+  through by test, so #36 is gone. writ asked who reads it (the notes read as internal, no remote),
+  the license, and what to do about the tool overwriting `.orig.csv` on a second run, which it
+  found by running the tool; the user chose to have the code fixed first, and writ fixed it and
+  wrote a LICENSE at the user's word. Found: `up.py task` kept only the last `--checklist` flag, so
+  turn checked `readme.md` alone; fixed (`4709b03`), and the report now says its lines are as turn
+  read the document when writ changed it after. To the user: whether writ should offer to change
+  the user's code while making a document (it recommended documenting the behavior instead).
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
