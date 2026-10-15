@@ -56,9 +56,13 @@ the checks on commits and on the conductor's course to these entry files.
 - A session is open when the repository the event's `cwd` is in has a `.rn/` directory and the
   branch changed a `.rn/*/steering.md` whose `status` is not `finished`, found as
   `rn/references/record.md` says; without one, every hook lets every call through. The commands in
-  `hooks.json` run `python3` only when it is found, and otherwise exit 0 outside a repository with
-  `.rn/`, and inside one write `rn: its checks need python3 (3.9 or later); install it and run
-  again` to standard error and exit 2.
+  `hooks.json` run `python3` only when it is found; otherwise the guard, in `sh`, stops only where
+  the working tree holds a `.rn/*/steering.md` whose `status` is `running`, the sign of an open
+  session it can see without python3, writing `rn: its checks need python3 (3.9 or later);
+  install it and run again` to standard error and exiting 2, and exits 0 everywhere else, a
+  repository with `.rn/` whose sessions are all finished included. At the end of the turn, the
+  guard stops once and lets the turn end on the second pass, which the event marks with
+  `stop_hook_active`, since the conductor cannot install python3 itself.
 
 ### B-4: Only the call it judges
 - `hooks.json`: `PostToolUse` with the matcher `Write|Edit` runs `posttooluse.py`; `Stop` runs
@@ -95,7 +99,8 @@ the checks on commits and on the conductor's course to these entry files.
   sentences and exits 2; the entries call the three checks on it.
 
 ### B-7: A stop never holds the AI in a loop
-- Each stop names what to change in the record, which the conductor can always do.
+- Each stop names what to change in the record, which the conductor can always do; the stop for a
+  missing python3 at the end of the turn is made once, and the second pass ends the turn.
 
 ### F-1: Shape
 - `hooks.json` as above; each entry file reads standard input, builds the record, runs its checks
