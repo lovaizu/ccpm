@@ -193,7 +193,7 @@
 
 ### B-9: Must-be quality checked
 - Each is a test on the hook or script that holds it, in the case that would break it: a commit
-  without a decision line; a commit not pushed; a settled item not whole in its commit; a plan,
+  made on the default branch, and a push to it; a commit without a decision line; a commit not pushed; a settled item not whole in its commit; a plan,
   an `open/` name or a verification document off its form, and an ID that does not exist; a
   sign-off passed without `/rn:ty` typed, feedback taken without `/rn:gm`, a pause without
   `/rn:dn`; a stop commit with more in `open/` than its kind allows, or at a sign-off without the
@@ -392,7 +392,9 @@
   part: the conductor, git and GitHub, rn's hooks. Weighed: findings kept as files under `.rn/`;
   not chosen, since the record then held what was read past, and the commit messages already hold
   each finding beside its decision.
-- The commands. Brings about: goes on from where it stopped, a sign-off passed only by approval.
+- The commands. Brings about: goes on from where it stopped, a sign-off passed only by approval,
+  missing tools: `/rn:up` checks python3, jq and gh before anything and says what to install; rn's
+  hooks run only where python3 is found and a session is open.
   Idea: `/rn:up` starts a session from the words given it when the branch has none, and otherwise
   takes up the one on the branch from its record, so one command serves both and the user need
   not remember which; `/rn:ty` and `/rn:gm` record the user's answer and stop, so the user can
