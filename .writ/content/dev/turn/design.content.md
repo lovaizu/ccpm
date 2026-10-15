@@ -38,44 +38,43 @@
 ## design
 
 ### B-1: Attractive quality
-- Read in the receiver's place: the work comes back already read in the receiver's place by an agent
-  that did not write it, with only what the receiver would open, each Good shown in its lines, and
-  what that reading could not take made again on how it would be given. The user hands the work on
-  without first reading it as its receiver.
-- Made from what the caller decided: turn makes the work from the run's inputs alone, so the work
-  follows what the caller decided rather than whatever turn happened to open, and each run of the
-  same task works from the same inputs.
-- Asked only what only the user can decide, all at once at the end: nothing is asked that the
-  inputs already answer, and nothing is asked while the run works, so the user can leave turn at
+- Said in the README's words, since the reader comes from it.
+- Read in the place of the person the work is for: the work comes back already read, as that person
+  would, by an AI that did not write it and has only what that person would open; each item passed
+  is shown in the lines that give it, and what that reading could not take is made again. The user
+  hands the work on without first reading it in that person's place.
+- Made from what you decided: the work follows your notes and checklist, not whatever turn happened
+  to open, and each run of the same request works from the same inputs.
+- Asked only what only the user can decide, all at once at the end: nothing is asked that the notes
+  and checklist already answer, and nothing is asked while turn works, so the user can leave it at
   work.
-- Seeing the work as it goes: the user can tell from the console how far a run has come, and stop a
-  run whose aim they do not want before the work is written, saying what they want instead.
-- A plugin decides from what turn returns: a plugin hands turn one task and decides from the
-  returned CCS alone whether to finish the work itself, call turn again, ask the user or move on.
-- Following each item back: the user can later find, for each item, the lines its Good rests on or
-  how it would get one, and the version of the checklist it was judged by.
+- Seeing the work as it goes: the user can tell from what turn shows how far it has come, and stop
+  it, with Esc, when what the work will let its person do is not what they want, before the work is
+  written, saying what they want instead.
+- A plugin decides from what turn returns: a plugin's step hands turn one task and decides from the
+  CCS turn writes back alone whether to finish the work itself, call turn again, ask the user or
+  move on.
+- Following each item back: the user can later find in `.turn/`, for each item, the lines that give
+  it or how the work would give it, and the version of the checklist it was judged by.
 
 ### B-2: One-dimensional quality
 - Each must be no worse than in the version in use.
-- The first-run share: tasks whose first run ends with every item Good. The more work is right when
-  first made, the less the user waits and the less is spent.
-- Time and tokens: what one run takes, from the call to the returned CCS.
+- The first-run share: requests whose first run passes every item. The more work is right when first
+  made, the less the user waits and the less is spent.
+- Time and tokens: what one run takes, from the request to the result.
 
 ### B-3: Must-be quality
-- Nothing passes unshown: an item counts as met only with a Good whose grounds are lines the work
-  holds; every other item is returned as unmet, with how it would get a Good.
-- What the caller gave unchanged: turn never rewrites the caller's parts of the CCS or the files they
-  name.
-- Nothing unread: the work turn writes where the work goes is the version last read.
+- Nothing passes unshown: an item counts as passed only where lines the work holds give it; every
+  other item comes back as not passed, with how the work would give it.
+- What the caller gave unchanged: turn never rewrites the task a caller hands it or the files the
+  task names.
+- Nothing unread: the work turn writes is the version last read.
 - Repository untouched: during a run, turn changes nothing in the repository but where the work goes
-  and the run's evidence, and never commits or pushes, so the user takes turn's change as one diff
-  and decides themselves what to commit. A file where the work goes is written over only when git
-  holds it as it stands, or it is the work a run returned and is unchanged since, so what was there
-  can be got back. A change a shell command of the run makes elsewhere as a side effect is named to
-  the user. Outside its runs, turn blocks nothing.
-- Stop and start over: a stopped run returns a CCS saying so; called again with the task rewritten
-  from what the user said, turn makes the work anew from it. A run cut off leaves where the work goes
-  untouched.
+  and `.turn/`, and never commits or pushes, so the user takes turn's change as one diff and decides
+  what to commit; what was where the work goes can always be got back. Outside its runs, turn blocks
+  nothing.
+- Stop and start over: a stopped run says so; asked again with the user's words, turn makes the work
+  anew from them. A run cut off leaves where the work goes untouched.
 - Missing tools: without python3 or jq, turn ends before any work and says what to install; outside
   a run, a missing tool breaks nothing.
 
@@ -86,8 +85,8 @@
   callers' page gives them, are neither added to, removed nor renamed from 0.2.0 on, since a caller
   breaks on one it does not know as on one that is gone; the wording in an entry may change, since
   callers do not act on it. A CCS an earlier version from 0.2.0 on returned is accepted, so a
-  stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since writ, turn's one
-  caller, is released with 0.2.0.
+  stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since no caller relies
+  on one.
 - The checklist form the README's Requirements gives, relied on by users and writ, who write
   checklists in it: a checklist that opens with its name and version and gives its items as
   headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
@@ -326,12 +325,13 @@
   caller's part comes back the same. Weighed: handing agents the CCS itself; not chosen, since a
   change made for one agent would change what callers rely on. The cost: turn's scripts write each
   agent's inputs from the CCS.
-- Leaving the user's work alone. Brings about: repository untouched, missing tools. Idea: a run
-  changes only where the work goes and its evidence, as Repository untouched says; what can be told
-  before it happens is stopped then, and what cannot, a
-  side effect of a shell command, is named to the user when the run returns; a missing tool ends the
-  run before any work. Who takes part: turn's scripts and hooks, git. Must hold: during a run, the
-  only changes are where the work goes and the run's evidence, or they are named to the user.
-  Weighed: checking afterwards only; not chosen, since the harm is done by then. The cost: a check on
-  each write, read and shell command. Weighed: python3 alone for the agents' changes to the forms;
-  not chosen, since agents already know jq. The cost: one more tool to install.
+- Leaving the user's work alone. Brings about: repository untouched, missing tools. Idea: what can be
+  told before it happens is stopped then: a write outside where the work goes and the run's
+  evidence, a commit or a push, and a write over a file where the work goes unless git holds it as it stands or it is the work a run returned, unchanged since; what cannot, a
+  side effect of a shell command, is named to the user when the run returns; a missing tool ends
+  the run before any work. Who takes part: turn's scripts and hooks, git. Must
+  hold: during a run, the only changes are where the work goes and the run's evidence, or they are
+  named to the user. Weighed: checking afterwards only; not chosen, since the harm is done by then.
+  The cost: a check on each write, read and shell command. Weighed: python3 alone for the agents'
+  changes to the forms; not chosen, since agents already know jq. The cost: one more tool to
+  install.

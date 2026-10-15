@@ -14,7 +14,9 @@ change fits.
 How the product is used is the README's; how each part behaves, with its steps, definitions,
 settings and file names, is the code's, since these change with each rebuild while the design
 holds. Each item of `doc.md` applies to a design document with how the product brings about its
-promises as its subject, and its B-16 is answered by the figure B-32 asks for.
+promises as its subject, and its B-16 is answered by the figure B-32 asks for. The reader comes from
+the README, so Goals and Verification are said in its words, and each name of a part inside the
+product is first met in that figure.
 
 ## Benefit
 
@@ -263,9 +265,9 @@ Does the design document follow this template, headings included?
 
 ## Architecture
 
-### Principles
-
 ### Structure
+
+### Principles
 
 ### <Approach name>
 
@@ -275,7 +277,8 @@ costs, and why each other approach weighed was not chosen>
 
 Why: a maintainer moving between products finds the same thing under the same heading in each, and
 settles what is aimed at and how it is checked, neither of which depends on how the product is
-built, before reading how it is built.
+built, before reading how it is built; and meets who takes part before the principles and approaches
+that name them.
 
 ### F-2: A section thought through
 
