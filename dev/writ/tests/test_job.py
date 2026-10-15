@@ -123,7 +123,8 @@ class Form(unittest.TestCase):
         # Then: there is an empty place for every item of both, named as turn names them
         form = self.repo.json(f"{folder}/form.json")
         self.assertEqual(
-            form["items"]["doc B-9"], {"title": "The point from the opening", "decision": "", "settled": ""}
+            form["items"]["doc B-9"],
+            {"title": "The point from the opening", "decision": "", "settled": ""},
         )
         self.assertIn("readme B-3", form["items"])
         self.assertTrue(all(i.split()[0] in ("doc", "readme") for i in form["items"]))
@@ -357,7 +358,9 @@ class End(unittest.TestCase):
             )
         )
         self.assertIn(report, out)
-        self.assertTrue(report.startswith("Document 0.2.0\n  ✅ B-2 The picture as meant: lines 1\n"))
+        self.assertTrue(
+            report.startswith("Document 0.2.0\n  ✅ B-2 The picture as meant: lines 1\n")
+        )
         self.assertIn("\nREADME 0.2.0\n  ✅ B-1 What they gain: lines 1\n", report)
         self.assertEqual(report.count("✅"), len(self.repo.json(f"{folder}/form.json")["items"]))
         # Then: the job is closed
