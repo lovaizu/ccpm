@@ -18,7 +18,9 @@ A README is read by someone meeting a product for the first time. It lets them:
 What only the product's builders need, such as its design or how to contribute, is not for this
 reader. Each item of `doc.md` also applies to a README, with deciding and getting to the first result
 as its subject: the whole picture, the ideas given in full and the job of each part are judged by
-that, and what lies beyond it goes in a page reached from Documentation, not in the README.
+that, and what lies beyond it goes in a page reached from Documentation, not in the README. What the
+README leaves out is told under Documentation, where the reader is sent for it, and `doc.md`'s B-8
+is answered there rather than from the opening.
 
 ## Benefit
 
@@ -105,7 +107,8 @@ where it acts otherwise than the example shows, or the steps it takes inside?
 
 Look for, in the opening, the example, Requirements and Installation: a name of a part inside the
 product, a case where the product acts otherwise than the example shows, and a step the product
-takes that the reader neither takes nor sees in what it gives back.
+takes that the reader neither takes nor sees in what it gives back. A stop when a thing under
+Requirements is not in place is part of that thing, not such a case.
 
 Why: each such name, case or step the reader must take in before going on is effort spent on what
 they do not use, and one more thing to learn before they have decided.
@@ -131,6 +134,24 @@ Why: the reader decides from the opening whether to read on; each reason or work
 read before they know whether the product is for them, and stands between them and what they decide
 by.
 
+### U-4: The example taken in from the top
+
+Can the reader take in the example in one reading from the top, because what they do comes first,
+what the product gives back next, and what each part of what it gives back means after it, where
+they have just seen it?
+
+Why: a meaning told before the thing it belongs to is held in the head until the thing comes, or
+sends the reader ahead to find it and back again, so the picture is not taken in by one reading.
+
+### U-5: What they gain right after what it is
+
+Does the reader meet what they gain right after what the product is, before anything else in the
+opening?
+
+Why: the reader decides by what they gain, and places themselves once they want it; whom it is for,
+or how it is used, met first is read without knowing why to care, and what the reader decides by
+comes last.
+
 ## Format
 
 ### F-1: Shape
@@ -140,7 +161,7 @@ Does the README follow this template, headings included?
 ```markdown
 # <Product name>
 
-<What the product is, and what it gives whom, in one or two sentences>
+<What the product is, and what it gives whom, in one or two sentences, under no heading>
 
 ## Example
 
@@ -157,6 +178,8 @@ the opening and the example name none>
 
 ## Installation
 
+<How to install, then the first use, as in the example>
+
 ## Documentation
 
 <Where fuller use and what changed in each version are written>
@@ -164,11 +187,8 @@ the opening and the example name none>
 ## License
 ```
 
-- The opening has no heading, so it sits right under the name, where the reader looks first.
-- The example comes before installation, so the reader sees using it before deciding to install it;
-  repeated after installation, it is the first use.
-- Why to choose it follows the example, so the reader weighs it against the use they have just
-  seen.
-
 Why: a reader looks for requirements, installation or the license under the headings READMEs
-commonly give them, and finds each where they look only when every README puts it there.
+commonly give them, and finds each where they look only when every README puts it there; the
+opening sits right under the name, where the reader looks first; the example comes before
+installation, so the reader sees using it before deciding to install it; and why to choose it
+follows the example, so the reader weighs it against the use they have just seen.
