@@ -71,15 +71,10 @@
   it is not what you want, you press Esc and say what you want instead, and turn starts over with
   your words.
 - Each ⚠️ is something the work does not give yet. When the work itself can give it, turn makes the
-  work again on it in the same run. If the second reading still finds something missing, the run
-  ends saying so, and Claude decides whether to run turn again, or tells you what is still missing
-  for you to decide.
+  work again on it in the same run.
 - Each ❓ is something only you can decide, which your notes and checklist leave open. turn leaves it
   out of the work and ends the run asking it, with every other such question. When you answer,
-  Claude adds your answer to what the work says and runs turn again, from the work it returned.
-- turn may also return a rule it learned, a change in how such work is made that would have met an
-  item; Claude tells you each at the end of the run, and it is yours to take into your checklist or
-  your next request, or to leave.
+  Claude adds your answer to what the work says and runs turn again.
 - The work goes where your request says, or where Claude takes it from your request: here,
   README.md at the top of the repository.
 
@@ -100,8 +95,8 @@
 
 ### B-9: Why each requirement is needed
 - Claude Code: turn runs inside it.
-- A git repository: turn writes over a file already there only when git holds every change to it, so
-  you can get the old one back; otherwise it stops before any work and says so.
+- A git repository: if the work goes to a file already there, commit the file first, so you can get
+  the old one back; until you do, turn stops before any work and says so.
 - Python 3.9 or later as `python3`, with nothing beyond what comes with it: turn's own scripts run on
   it.
 - jq: turn reads and changes its own JSON files with it.
@@ -126,6 +121,10 @@
   repository.
 - Installing: in Claude Code, you add the marketplace once with `/plugin marketplace add
   lovaizu/ccpm`, then install turn with `/plugin install turn@ccpm`.
+- A checklist file: `name` and `version`, under which turn keeps each item's result in `.turn/`, so
+  you can later tell which version an item was judged by; the paragraph under the title, what such
+  work is for, which turn reads with every item; and each heading that starts with an ID, which makes
+  an item, one thing the work must give, asked as a question.
 
 ## readme: Usability
 
