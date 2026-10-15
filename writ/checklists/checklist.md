@@ -5,8 +5,9 @@ version: 0.2.0
 
 # Checklist
 
-A checklist is read by whoever makes or judges a deliverable of one kind. From it they know whom
-the deliverable is for and what that person can then do, and make or judge it to that alone.
+A checklist is read by whoever makes or judges a deliverable of one kind, to make it serve its
+purpose. Answering its items, they make or judge the deliverable to that purpose alone, nothing
+missing and nothing more, and anyone answering reaches the same judgment.
 This file is the checklist for checklists, and is written in the shape it asks for.
 
 ## Benefit
