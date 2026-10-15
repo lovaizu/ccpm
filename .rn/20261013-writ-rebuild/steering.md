@@ -318,10 +318,12 @@ Serves: M1
 
 Progress:
 
-- How (decided by the user, 2026-10-15): one checklist at a time, beside #5. For each, the assistant
-  starts a fresh Claude Code once, hands it the work to make with that checklist, judges the work by
-  its purpose, and fixes the checklist where the cause lies in it; the wording of each change is
-  shown to the user before it lands.
+- How (decided by the user, 2026-10-15): all six at once, beside #5, each by a one-off Claude Code
+  on Fable in its own clone: an Opus subagent makes a real work with the checklist, Fable judges the
+  work as its reader and fixes the checklist at the cause, against `checklist.md`. Each changes only
+  its own checklist and reports what it finds in `doc.md` or `checklist.md`. The assistant checks
+  each report against the work and the records and brings the change in; the user is not shown the
+  wording, since `checklist.md` is the measure for it.
 - Findings so far, each to its checklist (from #4's 6 and 8):
   - design: B-14 and B-27 to B-29 (what each part does, when it acts, what it looks at) push the
     design toward a specification, against U-2; U-2 and U-3 are titled by what is absent, not by
