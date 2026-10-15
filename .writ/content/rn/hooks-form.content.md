@@ -26,16 +26,20 @@ the checks on commits and on the conductor's course to these entry files.
   `subprocess` with the event's JSON on standard input, as Claude Code runs it, on that repository.
 
 ### B-14: Run with only what the README names
-- Only the standard library, and git as a command.
+- Only the standard library, and git as a command, on macOS or Linux, where `hooks.json`'s guard
+  runs in `sh`; paths are matched as Python gives them there.
 
 ### B-16: Stopped before a wrong input is used
 - Each entry file reads the event's JSON from standard input; one that is not JSON, or has no
   session open, lets the call through.
 
 ### B-17: A stop says what went wrong
-- Every stop is one sentence to standard error, prefixed `rn:`, naming what of the record's form
-  is broken, where (the file and the key, heading, ID or name), and why the form matters, and
-  exits 2; a call let through exits 0 and says nothing.
+- Every stop is one sentence to standard error, prefixed `rn:`, naming the part of the conductor's
+  steps in `rn/references/conduct.md` it concerns by that part's heading (such as `Working out the
+  plan` for the plan's form, `Asking the user` for a question item, `Stopping for the user` for a
+  proposal item, `Working out the design` for the verification document), what of the record's
+  form is broken, where (the file and the key, heading, ID or name), and why the form matters,
+  and exits 2; a call let through exits 0 and says nothing.
 
 ### B-20: One name for one thing
 - "the session", "the record", "the plan" (for `steering.md`), "an item of open/", "the
@@ -81,6 +85,12 @@ the checks on commits and on the conductor's course to these entry files.
   task that serves it; a question item's first line is `Serves:` with criterion IDs that exist or
   `goal`; a session whose `rn` field is `0.9.x` may have a verification document without front
   matter, since 0.9.0 wrote none.
+- A plan with no `rn` field, or one below 0.9.0, is an older session that `/rn:up` brings to the
+  current form: at the end of the turn the hooks pass it by; but a write to the plan is always
+  checked against the form, since a plan written without its front matter or its `rn` key looks
+  the same and must be stopped where it happens.
+- The automated run on every push and the coverage count are the repository's (`sh dev/check.sh`),
+  not this unit's; the tests of the hooks this unit replaces are gone from the repository.
 - `record.py` builds the record from the repository and gives `report(problems)`, which writes the
   sentences and exits 2; the entries call the three checks on it.
 

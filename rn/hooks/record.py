@@ -1,139 +1,130 @@
-"""rn's record as the checks read it: the session directory, its steering.md, and git."""
+"""The one file of rn's hooks that reads the repository: it finds the open session as
+references/record.md gives, builds its record for the checks, and reports their stops."""
 
+from __future__ import annotations
+
+import json
 import os
-import re
 import subprocess
 import sys
+from typing import NoReturn
 
-TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*: \S")
+from checks import (
+    Record,
+    front_matter,
+    open_names,
+    steering_form,
+    trace,
+    verification_path,
+    version,
+)
 
-
-def read(path):
-    with open(path) as f:
-        return f.read()
-
-
-def git(*args, cwd=None):
-    r = subprocess.run(["git", *args], check=False, cwd=cwd, capture_output=True, text=True)
-    return r.stdout if r.returncode == 0 else ""
-
-
-def root(cwd):
-    top = git("rev-parse", "--show-toplevel", cwd=cwd).strip()
-    return os.path.realpath(top) if top else ""
+PLANS = ".rn/*/steering.md"
 
 
-def store():
-    """Where rn keeps what a hook must remember between calls, such as the commands the user
-    typed."""
-    path = os.environ.get("CLAUDE_PLUGIN_DATA") or os.path.join(os.path.expanduser("~"), ".rn-data")
-    os.makedirs(path, exist_ok=True)
-    return path
-
-
-def front_matter(text):
-    """The front matter's keys and values, or None when the text has none: a session started by an
-    older rn, which /rn:up brings to the current form."""
-    m = re.match(r"---\n(.*?)\n---\n", text, re.DOTALL)
-    if not m:
-        return None
-    out = {}
-    for line in m.group(1).splitlines():
-        if ":" in line:
-            k, v = line.split(":", 1)
-            out[k.strip()] = v.strip()
-    return out
-
-
-def session(top):
-    """The session directory on this branch whose status is not finished, or None."""
-    base = os.path.join(top, ".rn")
-    if not os.path.isdir(base):
-        return None
-    for name in sorted(os.listdir(base), reverse=True):
-        st = os.path.join(base, name, "steering.md")
-        if os.path.isfile(st):
-            front = front_matter(read(st))
-            if front is not None and front.get("status") != "finished":
-                return os.path.join(base, name)
-    return None
-
-
-def finished_by_head(top):
-    """The session directory whose steering.md the last commit set to finished, or None: the commit
-    that finishes a session is still checked, and still has to be pushed."""
-    for path in git("diff", "--name-only", "HEAD~1", "HEAD", "--", ".rn", cwd=top).split():
-        parts = path.split("/")
-        if len(parts) == 3 and parts[2] == "steering.md":
-            front = front_matter(git("show", "HEAD:" + path, cwd=top)) or {}
-            before = front_matter(git("show", "HEAD~1:" + path, cwd=top)) or {}
-            if front.get("status") == "finished" and before.get("status") != "finished":
-                return os.path.join(top, ".rn", parts[1])
-    return None
-
-
-def find(data, finished_too=False):
-    """(the directory the hook runs in, the repository's top, the session directory), or None when
-    no rn session is running on this branch. With finished_too, the session the last commit finished
-    counts as running."""
-    cwd = data.get("cwd") or os.getcwd()
-    top = root(cwd)
-    if not top:
-        return None
-    sdir = session(top)
-    if not sdir and finished_too:
-        sdir = finished_by_head(top)
-    return (cwd, top, sdir) if sdir else None
-
-
-def steering(sdir):
-    return read(os.path.join(sdir, "steering.md"))
-
-
-def section(text, heading, stop_level):
-    lines = text.splitlines()
+def event(text: str) -> dict:
+    """The event Claude Code hands the hook; one that is not a JSON object is read as empty, so that
+    nothing is stopped on it."""
     try:
-        i = lines.index(heading)
+        data = json.loads(text)
     except ValueError:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def records(data: dict) -> list[Record]:
+    """A repository without `.rn/` is left before git is asked about its remote, so that rn changes
+    nothing in a repository it is not used in."""
+    cwd = data.get("cwd")
+    top = git(cwd, "rev-parse", "--show-toplevel").strip() if isinstance(cwd, str) else ""
+    if not top or not os.path.isdir(os.path.join(top, ".rn")):
         return []
-    out = []
-    for line in lines[i + 1 :]:
-        if re.match(rf"^#{{1,{stop_level}}} ", line):
-            break
-        out.append(line)
-    return out
+    found = [build(top, session) for session in sessions(top)]
+    return [rec for rec in found if rec is not None]
 
 
-def criteria(text):
-    out = []
-    for line in section(text, "# Acceptance criteria", 1):
-        m = re.match(r"^- ([AM]\d+):", line)
-        if m:
-            out.append(m.group(1))
-    return out
+def sessions(top: str) -> list[str]:
+    """A plan written but not yet committed counts as changed, since the write hook checks the plan
+    the conductor has just written."""
+    base = git(top, "merge-base", "HEAD", "origin/HEAD").strip()
+    if not base:
+        git(top, "remote", "set-head", "origin", "--auto")
+        base = git(top, "merge-base", "HEAD", "origin/HEAD").strip()
+    if not base:
+        return []
+    changed = git(top, "diff", "--name-only", base, "--", PLANS) + git(
+        top, "ls-files", "--others", "--exclude-standard", "--", PLANS
+    )
+    return sorted({os.path.dirname(path) for path in changed.split()})
 
 
-def open_items(sdir):
-    od = os.path.join(sdir, "open")
-    return sorted(os.listdir(od)) if os.path.isdir(od) else []
+def build(top: str, session: str) -> Record | None:
+    """The session's record, or None when its plan is gone, finished, or from before rn 0.9, whose
+    record /rn:up brings to the current form."""
+    plan = read(os.path.join(top, session, "steering.md"))
+    fields = front_matter(plan or "") or {}
+    if plan is None or fields.get("status") == "finished" or version(fields.get("rn", "")) < (0, 9):
+        return None
+    folder = os.path.join(top, session, "open")
+    texts = {
+        name: read(os.path.join(folder, name))
+        for name in (os.listdir(folder) if os.path.isdir(folder) else [])
+    }
+    items = {name: text for name, text in texts.items() if text is not None}
+    return Record(
+        session, plan, items, read(os.path.join(top, verification_path(plan))), fields["rn"], top
+    )
 
 
-def last_line(msg):
-    """The message's last line, past the trailers (e.g. Co-Authored-By) git or the harness adds."""
-    lines = [l.strip() for l in msg.strip().splitlines() if l.strip()]
-    while lines and TRAILER.match(lines[-1]):
-        lines.pop()
-    return lines[-1] if lines else ""
+def form(rec: Record) -> list[str]:
+    """Both entry files and the fixtures test run the form checks from here, so that which checks
+    the record's form is held to is changed in one place."""
+    return [
+        sentence for check in (steering_form, open_names, trace) for sentence in check.check(rec)
+    ]
 
 
-def head_message(top):
-    return git("log", "-1", "--format=%B", cwd=top)
+def written(data: dict, rec: Record) -> bool:
+    """A path given relative is read from the event's `cwd`, so that a write is matched to the
+    record however its path is given."""
+    path = (data.get("tool_input") or {}).get("file_path")
+    if not isinstance(path, str):
+        return False
+    rel = os.path.relpath(
+        os.path.realpath(os.path.join(data["cwd"], path)), os.path.realpath(rec.top)
+    )
+    rel = rel.replace(os.sep, "/")
+    return (
+        rel == f"{rec.session}/steering.md"
+        or rel.startswith(f"{rec.session}/open/")
+        or rel == os.path.normpath(verification_path(rec.plan))
+    )
 
 
-def report(problems):
-    """Show the problems to the agent, which Claude Code does on exit code 2, so it corrects
-    them."""
-    if problems:
-        print("rn check:\n- " + "\n- ".join(problems), file=sys.stderr)
-        return 2
-    return 0
+def report(problems: list[str]) -> NoReturn:
+    """Exit 2 is the code on which Claude Code hands standard error to the AI, so that the conductor
+    reads each stop and mends the record."""
+    sys.stderr.write("".join(f"{problem}\n" for problem in problems))
+    sys.exit(2 if problems else 0)
+
+
+def git(cwd: str, *args: str) -> str:
+    """A git that fails or cannot be run prints nothing here, so a repository rn cannot read is
+    taken as one with no open session: a hook must not stop work it cannot tell is rn's."""
+    try:
+        done = subprocess.run(
+            ["git", "-C", cwd, *args], capture_output=True, text=True, check=False
+        )
+    except OSError:
+        return ""
+    return done.stdout
+
+
+def read(path: str) -> str | None:
+    """None for what cannot be read as a file, such as a folder inside open/; bytes not in UTF-8 are
+    replaced, so that one broken byte does not keep the rest of the record from being checked."""
+    try:
+        with open(path, encoding="utf-8", errors="replace") as file:
+            return file.read()
+    except OSError:
+        return None

@@ -1,20 +1,19 @@
-"""Check 2: open/ files are named {NN}-{kind}-{about}.md, the kind report, feedback, or notes."""
+"""Each item of open/ is named `{NN}-{kind}-{about}.md`, as references/record.md gives."""
+
+from __future__ import annotations
 
 import re
 
-from record import open_items
+from checks import Record
 
-KINDS = ("report", "feedback", "notes")
+NAME = re.compile(r"\d{2}-(report|feedback|notes)-.+\.md")
 
 
-def check(sdir):
-    problems = []
-    for name in open_items(sdir):
-        m = re.match(r"^(\d{2})-([a-z]+)-[a-z0-9][a-z0-9-]*\.md$", name)
-        if not m or m.group(2) not in KINDS:
-            problems.append(
-                f"open/{name}: not named {{NN}}-{{kind}}-{{about}}.md with kind "
-                + " | ".join(KINDS)
-                + ", which the checks find each item by"
-            )
-    return problems
+def check(record: Record) -> list[str]:
+    return [
+        f"rn: {record.session}/open/{name} is not named `{{NN}}-{{kind}}-{{about}}.md` with the kind "
+        f"`report`, `feedback` or `notes`; rename it so, since rn's commands and checks find each "
+        f"item of open/ by its number, kind and name, as references/record.md gives."
+        for name in sorted(record.items)
+        if not NAME.fullmatch(name)
+    ]

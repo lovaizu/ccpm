@@ -1,36 +1,25 @@
-"""Each trial fixture in the current form passes the form checks, so a trial starts from a state the
-rn under test can read."""
-
-import os
 import sys
 import unittest
+from pathlib import Path
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-PLUGIN = os.path.join(HERE, "..", "..", "..", "rn")
-FIXTURES = os.path.join(HERE, "..", "trials", "fixtures")
-sys.path.insert(0, os.path.join(PLUGIN, "hooks"))
-import form
-from record import read
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "rn" / "hooks"))
+
+import record
 
 
-class FixturesTest(unittest.TestCase):
-    def test_current_form_fixtures_pass_the_form_checks(self):
-        # Given every trial fixture whose steering.md is in the current form
-        current = []
-        for name in sorted(os.listdir(FIXTURES)):
-            tree = os.path.join(FIXTURES, name, "tree")
-            for sdir in (
-                os.path.join(tree, ".rn", s) for s in os.listdir(os.path.join(tree, ".rn"))
-            ):
-                if read(os.path.join(sdir, "steering.md")).startswith("---"):
-                    current.append((name, tree, sdir))
-        self.assertGreater(len(current), 0)
-        for name, tree, sdir in current:
-            with self.subTest(fixture=name):
-                # When the form checks run on it
-                problems = form.check(tree, sdir)
-                # Then they find nothing
-                self.assertEqual(problems, [])
+class Fixtures(unittest.TestCase):
+    def test_the_record_of_every_trial_fixture_keeps_the_form(self):
+        # Given: the record in each fixture's tree the trials start from
+        # When: the form checks run on it as the hooks run them
+        # Then: none stops it, so a trial is never stopped by its own starting record
+        trees = sorted((ROOT / "dev/rn/trials/fixtures").glob("*/tree"))
+        self.assertTrue(trees)
+        for tree in trees:
+            for plan in sorted(tree.glob(".rn/*/steering.md")):
+                with self.subTest(plan=str(plan.relative_to(ROOT))):
+                    rec = record.build(str(tree), f".rn/{plan.parent.name}")
+                    self.assertEqual([] if rec is None else record.form(rec), [])
 
 
 if __name__ == "__main__":
