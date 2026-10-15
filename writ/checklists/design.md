@@ -44,8 +44,8 @@ it is free to break it.
 For each thing someone outside the product relies on, can the reader tell what must keep holding?
 
 What others rely on: commands and settings users type, what other programs call or read, and what
-the product leaves in the user's environment. What must keep holding is what each lets those who
-rely on it do.
+the product leaves in the user's environment, each with who relies on it. What must keep holding is
+what each lets them do.
 
 Why: a change to it breaks those who rely on it, who are not there to object; the design document is
 the one place that outlives a rebuild of the code.
@@ -115,19 +115,6 @@ as the idea of how it comes about and who takes part in it?
 
 Why: a quality no approach serves has no way to come about.
 
-### B-15: What must always hold
-
-For each approach, can the reader tell what must hold after every operation?
-
-Why: read as a condition, it keeps holding when one place is changed; read as one step of a
-procedure, it is lost when the procedure changes.
-
-### B-20: Who relies on each thing
-
-For each thing someone outside the product relies on, can the reader tell who relies on it?
-
-Why: a change is weighed by whom it breaks, and those it breaks are not there to say so.
-
 ### B-22: Where each benefit is tried
 
 For each benefit, can the reader tell in what situation it is tried?
@@ -143,10 +130,11 @@ worse; a measure compared with nothing shows neither.
 
 ### B-24: What each principle protects
 
-For each principle, can the reader tell the quality or the constraint it protects?
+Can the reader weigh two principles against each other where a change keeps only one, because each
+names the quality or the constraint it protects?
 
-Why: a principle tied to what it protects tells what breaks when it is not kept, so principles can
-be weighed against each other; one tied to nothing is kept out of habit.
+Why: a principle tied to what it protects tells what breaks when it is not kept; one tied to nothing
+is kept out of habit, and cannot be weighed.
 
 ### B-25: What passes between them
 
@@ -159,13 +147,6 @@ Why: a maintainer changing one part needs to know what it hands to and takes fro
 Can the reader tell what each one that takes part cannot work without?
 
 Why: a part changed without knowing what it rests on stops working wherever that is missing.
-
-### B-30: What each approach costs
-
-For each approach, can the reader tell what it costs?
-
-Why: an approach whose cost is not told is overturned without anyone knowing what it cost, or kept
-after its cost has outgrown what it gives.
 
 ### B-31: Why each option was turned down
 
@@ -268,8 +249,8 @@ Does the design document follow this template, headings included?
 
 ### <Approach name>
 
-<The qualities it brings about, the idea of how, who takes part, what must always hold, what it
-costs, and why each other approach weighed was not chosen>
+<The qualities it brings about, the idea of how, who takes part, and why each other approach
+weighed was not chosen>
 ```
 
 Why: a maintainer moving between products finds the same thing under the same heading in each, and

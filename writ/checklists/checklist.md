@@ -33,7 +33,8 @@ Does a yes to each Benefit and Usability item tell whoever judges that the user 
 the deliverable, rather than that something is in it?
 
 Look for: an item met by writing something in, such as an opening that tells what the deliverable
-covers, whether its user needs it or not.
+covers, whether its user needs it or not; and an item that asks of every deliverable of the kind a
+part only some need, such as a figure of who does what where nothing acts in turn.
 
 Why: an item about what is there passes a deliverable its user cannot use, and fails a good one that
 does without that part; and since the maker meets every item, what such an item asks for is added
@@ -173,7 +174,8 @@ checklists are judged at once.
 Compared with the version last released, is every ID that a removed or moved item had left unused,
 with a moved item taking a new number in its new section?
 
-A checklist not yet released has no such ID, and passes.
+The version last released is the one in the last release of the plugin that holds the checklist,
+under whatever name it had then. A checklist in no release yet has no such ID, and passes.
 
 Why: an ID named earlier always means the same item.
 
@@ -182,6 +184,6 @@ Why: an ID named earlier always means the same item.
 Is the `version` raised once for each release from the version last released, and not with each
 change on a branch?
 
-A checklist not yet released is `0.1.0`.
+A checklist in no release yet is `0.1.0`.
 
 Why: a judgment names the text it was made by, and no draft between releases takes a number.

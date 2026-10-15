@@ -40,11 +40,11 @@ they need; once the reader skims a run of repeats, they skim the one new point a
 
 ### B-5: How far to rely
 
-For each statement the reader relies on, can they tell how far to rely on it: whether it is a
-checked fact, and how far it was checked, an assumption, a proposal or a decision?
+Can the reader take each statement as what it is, because one that is not a checked fact, such as
+an assumption, a proposal, a decision or a check that reached only so far, says so where it stands?
 
-Why: an unchecked claim stated flatly is acted on as fact, and a check whose reach is not told is
-taken as having checked everything.
+Why: the reader takes a statement said flatly as a fact; an assumption or an unchecked claim said
+so is acted on as fact, and a check whose reach is not told is taken as having checked everything.
 
 ### B-6: Still true later
 
@@ -78,8 +78,9 @@ part knowing what it supports, and one who came to the wrong document turns away
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?
 
-Look for: a name used before the sentence that says what it names; a decision whose reason comes
-later or elsewhere; a link or a pointer that sends the reader ahead for what a sentence rests on.
+Look for: a name used before the reader has met what it names, in a sentence, an example or a
+figure; a decision whose reason comes later or elsewhere; a link or a pointer that sends the reader
+ahead for what a sentence rests on.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
 guess, so the picture is not taken in by one reading from the top.
@@ -87,7 +88,7 @@ guess, so the picture is not taken in by one reading from the top.
 ### B-12: Every term known
 
 Can the reader tell what each term means where they meet it, because they already know it or the
-sentence where it is first used explains it?
+place where it is first used, a sentence, an example or a figure, shows what it means?
 
 A term is any word the document uses for a thing of its subject, whether set in code or not.
 
@@ -111,11 +112,13 @@ Why: a name whose meaning shifts carries its first meaning into the place where 
 
 ### B-16: Who does what, at a glance
 
-Can the reader see who does what, what passes between them and in what order at a glance, instead
-of piecing it together from sentences spread through the document?
+Where the document tells of several that act in turn, can the reader see who does what, what passes
+between them and in what order at a glance, instead of piecing it together from sentences spread
+through the document?
 
 For a reader who is a person, that is one figure, with the text beside it saying only what the
-figure cannot show; for an AI reading a prompt, it is the steps.
+figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
+thing passes.
 
 Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
 what rows of a table make them assemble, while an AI reads a figure as text, in order.

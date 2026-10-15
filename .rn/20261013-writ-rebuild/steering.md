@@ -472,6 +472,16 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      `claude plugin validate --strict`.
   3. #4: writ the same way, README first, since its README and design were agreed before the
      checklists were finished.
+- #6 done by the assistant by hand (2026-10-15), each item judged against its checklist's opening,
+  with `checklist.md` B-3 as the measure: `readme.md` B-8 and U-5 removed, B-1 says the gain with
+  the kind of thing that gives it; `doc.md` B-16 asks only where several act in turn, B-5 only that
+  what is not a checked fact says so, B-11 and B-12 take a thing shown in an example or a figure as
+  met; `design.md` B-15 (what must always hold), B-20 (who relies, now in B-4's words) and B-30
+  (what each approach costs) removed as "each X with Y" items the purpose does not need, B-24 said as
+  what the reader can then do; `code.md` B-27 and B-28 removed as cases B-26 and B-25 settle;
+  `checklist.md` B-3 looks for an item that asks of every deliverable a part only some need, F-5
+  and F-6 say which release counts. `prompt.md` unchanged. Next: #5, turn's README through turn on
+  Opus (the user, 2026-10-15: trials on Opus 5.5 only; the work and the judging here).
 
 ### [ ] #4: writ built and checked
 

@@ -280,33 +280,11 @@ Can the maintainer test each behavior without running the code that only another
 
 Look at: for each test, the code it runs against the code its Then rests on; a part of the code
 that runs only to reach the behavior, and that a test of another behavior is about, fails, such as
-a test of how one input is checked that runs the whole program to reach that check.
+a test of how one input is checked that runs the whole program to reach that check, or a test of
+the order the parts run in that does each part's own work where a stand-in would show the order.
 
 Why: a test that runs another behavior's code fails when that behavior breaks, so its failure no
 longer says which broke, and every run pays the time that code takes.
-
-### B-27: The flow tested on stand-ins
-
-Can the maintainer test the order in which the parts run and what they hand one another without
-running each part's own work?
-
-Look at: each test whose Then names the order of the parts or what they hand one another; one that
-runs a part's own work where a stand-in giving the least that part hands on would still show the
-flow fails.
-
-Why: a test of the flow that does each part's whole work fails whenever any part's work goes wrong,
-so its failure does not say whether the flow broke, and every run pays for all the parts' work.
-
-### B-28: The flow checked apart from what a part makes
-
-When a test of the flow fails, can the maintainer tell that the flow broke, and not what a part
-makes?
-
-Look at: each test whose Then names the order of the parts or what they hand one another; one whose
-Then also names what a part makes fails.
-
-Why: a test that checks the flow and a part's work at once fails when either breaks, so its failure
-does not say which.
 
 ### B-29: The least input and setup that shows it
 

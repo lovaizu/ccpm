@@ -17,10 +17,13 @@ result; a README holds no figure of who does what, since it would say the exampl
 
 ### B-1: What they gain
 
-From the opening, can the reader tell what they gain from the product?
+From the opening, can the reader tell what they gain from the product, said with the kind of thing
+that gives it, such as a tool run from their editor?
 
-Why: the reader decides from the opening whether to read on; when it says how the product works
-instead, the reader is left to work out what they gain, and often leaves first.
+Why: the reader decides from the opening whether to read on, and weighs what they gain against what
+they already use, which takes the kind of thing; when the opening says how the product works
+instead, the reader is left to work out what they gain, and often leaves first; and the kind said
+as a sentence of its own, before the gain, gives the reader nothing to decide by.
 
 ### B-2: Who it is for
 
@@ -63,13 +66,6 @@ Can the reader tell on what terms they may use the product?
 
 Why: a reader who cannot tell whether they may use it, or on what terms, cannot decide to use it.
 
-### B-8: What it is
-
-From the opening, can the reader tell what the product is?
-
-Why: a reader who cannot tell what kind of thing it is cannot weigh what it gives against what they
-already use, and reads on only to find out.
-
 ### B-9: Why each requirement is needed
 
 For each thing that must be in place beforehand, can the reader tell why it is needed, from
@@ -108,7 +104,7 @@ steps even where they already have the thing or would get it ready another way.
 ### U-3: An opening only for deciding
 
 Can the reader decide from the opening whether to read on without reading anything there beyond
-what the product is, what they gain and whom it is for?
+what they gain and whom it is for?
 
 It cannot when the opening also gives why to choose the product, which belongs in its own section,
 or how it works, which belongs in the example.
@@ -116,15 +112,6 @@ or how it works, which belongs in the example.
 Why: the reader decides from the opening whether to read on; each reason or working met there is
 read before they know whether the product is for them, and stands between them and what they decide
 by.
-
-### U-5: What they gain right after what it is
-
-Does the reader meet what they gain right after what the product is, before anything else in the
-opening?
-
-Why: the reader decides by what they gain, and places themselves once they want it; whom it is for,
-or how it is used, met first is read without knowing why to care, and what the reader decides by
-comes last.
 
 ## Format
 
@@ -135,7 +122,8 @@ Does the README follow this template, headings included?
 ```markdown
 # <Product name>
 
-<What the product is, and what it gives whom, in one or two sentences, under no heading>
+<What the reader gains, with the kind of thing that gives it, and whom it is for, in one or two
+sentences, under no heading>
 
 ## Example
 
