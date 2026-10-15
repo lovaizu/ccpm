@@ -99,7 +99,7 @@
 - The default branch changes only when the user merges.
 - Every decision is committed and pushed as it is made, with a decision line, and every settled
   item of `open/` is whole in the commit that settles it: the commit that removes the item's file
-  carries the item's text whole in its message, with the decision on each shortfall, so the record
+  carries the item's text whole in its message, with the decision on each More, so the record
   shows each finding beside what became of it.
 - The record keeps the form every command and check reads it by: the plan, the names of the files
   in `open/`, the verification document, and every ID referred to exists.
@@ -182,7 +182,7 @@
   the task's state with no question to the stand-in, and the task's result is the same as an
   unpaused run's by the deliverable's checklist.
 - Read in its receiver's place before the user sees it: on each sign-off of the same session, the
-  records show the plan, the three documents and the proposal made by turn and read by its first
+  run's transcripts show the plan, the three documents and the proposal made by turn and read by its first
   user before the stop commit, and each task's result used by it before the conductor decided.
 - The flow, from `/rn:up` through the plan, the design, one task and the Deliverable sign-off, is
   tried apart from what turn makes, on the smallest session that shows it: a one-line change in a
@@ -190,10 +190,10 @@
   work's cost and fails only where the flow breaks.
 
 ### B-8: One-dimensional quality measured
-- All three are measured from the records of the account session, run on this version and on the
+- All three are measured from the transcripts of the account session, run on this version and on the
   version in use: the questions the stand-in answered, the minutes and tokens to each sign-off,
   and the lines of each proposal.
-- Each is compared with the same session on the version in use, rn 0.9.0.
+- Each is compared with the same session on the version in use, which the trial's record names.
 
 ### B-9: Must-be quality checked
 - Each is a test on the hook or script that holds it, in the case that would break it: a commit
@@ -226,7 +226,7 @@
 - The user decides: what they want, at each sign-off, and what only they can know.
 - The conductor, the conversation with the user: hears one point at a time until nothing is
   silently assumed; writes the content of each work from what was agreed; calls turn once for
-  each work, and again only when the content must change much, finishing a small shortfall
+  each work, and again only when the content must change much, finishing a small More
   itself; judges each question and item turn returns by what the purpose needs; plans the tasks
   once the design is approved, attractive quality first, and judges each result on the real thing
   against its purpose; has the deliverable used once against the verification document; takes
@@ -243,14 +243,16 @@
   the user, or a message in the wrong language; they judge the course, never the work's worth.
 - rn's checklists: say what each kind of work must give its receiver; one the user made at
   `.rn/checklists/<kind>.md` is used for its kind.
-- The record: the session's folder, `steering.md`, `open/`, `content/`, `tasks/`, and the
-  commits with their decision lines, on the session's branch with its draft pull request; turn's
-  evidence under `.turn/` stays uncommitted.
+- The record: the session's folder, `steering.md`, `open/`, `content/`, the content of each
+  work, `tasks/`, each task handed to turn and the CCS turn wrote back, and the commits with their
+  decision lines, on the session's branch with its draft pull request; turn's evidence under
+  `.turn/` stays uncommitted.
 - git and GitHub, through `gh`: hold the record and the pull request; Claude Code: runs the
   conductor, the hooks and turn.
 - What each cannot work without: the conductor, the record, turn, rn's scripts and checklists,
   and git with its remote on GitHub; turn, the CCS, git, python3 and jq, as its README says; rn's
-  scripts, python3 and jq; rn's hooks, python3 and Claude Code to run them; the pull request,
+  scripts, python3 and jq; rn's hooks, the record they read, python3 and Claude Code to run them;
+  the pull request,
   `gh` logged in with push access.
 - One static figure shows each of these, its responsibility in one line, and what it cannot work
   without; beside it, only where the conductor runs: in the user's conversation, the same one
@@ -272,7 +274,7 @@
 - The user is asked only what the goal, the repository, the documentation and best practice
   cannot settle, one point per message, what they want before any way, with the ways' costs and
   the one recommended; what only the user knows and they do not know is an assumption, shown as a
-  shortfall until checked. Protects: what they really want, called only for decisions that are
+  More until checked. Protects: what they really want, called only for decisions that are
   theirs.
 - Everything is made and checked by the same checklists, and rn is improved by sharpening them,
   not by adding steps; a checklist asks what the receiver gets, so it fits situations no one
