@@ -306,8 +306,14 @@ Progress:
 
 - Hooks done (`7e17437`, CI green): each role reads only its inputs; the orchestrator's shell runs
   only turn's script, and jq, mv and cd on the run's files.
-- Next: the prompts, as in #4's "Where to resume" 7; then a trial on the flow task; then turn's
-  design read again with the finished `design.md` from #6.
+- Prompts done (`872e13b`): each works from its inputs alone, with why; content and references in
+  place of sources; the first user reads the work and `opens`; "round" for one pass.
+- Flow trial (`dev/turn/trials/flow/`, two runs): write, read and check in order, one question asked
+  at the end. The first run showed the generator's form had no place for an item left out until a
+  question is answered, so it named lines that do not give it; fixed (`b018982`), and the second
+  run named the question. In both, the orchestrator's one `cat` was stopped by the hook and it went
+  on with Read.
+- Next: turn's design read again with the finished `design.md` from #6.
 
 ### [ ] #6: Each checklist finished
 
@@ -331,6 +337,13 @@ Progress:
   - doc: B-16 had turn add a six-step list repeating the console sample.
   - code: no item pushed unneeded work (turn's code and hooks).
 - First: `design.md`, since the turn and writ designs are made with it.
+- Done: `doc.md` (`f4ee97b`, on turn's callers' page) and `readme.md` (`7fbbfcc`, on turn's
+  README), each claim checked against the works and records. Their reports' findings for `doc.md`
+  and `checklist.md` wait for the other four: doc B-10 asks a reference page what it cannot say;
+  doc B-11 reads the wrong way for a thing shown; doc B-16 reads as asking for a figure;
+  `checklist.md` F-5 and F-6 do not say how a new or renamed checklist finds its last release, and
+  nothing asks that a Look-for be checked against every candidate. The content files of turn's
+  README and callers' page each hold a gap the workers worked around.
 
 ### [ ] #4: writ built and checked
 
