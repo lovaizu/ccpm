@@ -370,6 +370,31 @@ Progress:
   (`8555dcb`); a worker then tries the changed checklist, judged by those words. A worker is never
   run again on an unchanged checklist and input, since that only hopes for a different result.
 
+Where to resume (2026-10-15), before anything else in #5 and #6:
+
+- Found with the user: every work made through turn grows noise (an opening that describes the
+  document, a glossary ahead of the content, bold on every item, a comparison for every idea, tables
+  where a figure was needed). The cause is the checklists, not turn. On 2026-10-13 (`4aa3887`) the
+  user decided that a checklist says only what a good work gives its reader, not how it is tried;
+  the assistant, moving the 10/06 questions over, turned them into conditions on what is written
+  ("the opening says what it covers") and dropped the one that found excess ("which parts did you
+  skip"). Since then every finding was answered by adding an item, never by removing (design 19 to
+  36 items, doc 15 to 21), and turn, which meets every item and looks only for Goods, writes each
+  item in, noise included.
+- Decided by the user: a checklist is its document's purpose, written as conditions. Its opening
+  says the purpose in one or two sentences (who reads, what they can then do); each item is one
+  condition of that purpose, said as what the reader gets, never as what is written; nothing in it
+  makes the work grow beyond the purpose.
+- Next, one checklist at a time, starting with `doc.md`: agree its opening, the purpose, with the
+  user; then judge every item of the latest version against it: keep a condition on what the reader
+  gets, say again as one a condition on what is written, remove one that only adds text; the 10/06
+  version (`6cc61d5`, `writ/references/essentials/`) serves only to find conditions that were
+  dropped, such as nothing the reader would skip. Decisions the user made since 10/13 stay. Then
+  make the README and the design with it and see that no noise comes out. Today's additions (doc
+  B-12 on terms, B-16 on a figure, F-1 on lists; design B-32 on a figure) are judged the same way.
+- turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
+  itself); it is made again once the checklists are done.
+
 ### [ ] #4: writ built and checked
 
 Purpose: plugin.md steps 3 to 7; #36 and #37 judged against the rebuilt writ.
