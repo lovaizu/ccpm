@@ -16,9 +16,8 @@
   what a newcomer would not understand, as people do with their own writing. turn is built on this.
 - The work is read by an AI that did not write it, the reader, which has only the work and what the
   person it is for would open with it.
-- turn makes the work from your notes and checklist alone. So the work follows what you decided
-  rather than whatever turn happened to open, and each run of the same request works from the same
-  inputs.
+- turn makes the work from your notes and checklist alone: it opens nothing beyond what you name, so
+  the work follows what you decided, and each run of the same request works from the same inputs.
 - turn counts an item as passed only where lines of the work give it, and keeps those lines in
   `.turn/` in your repository, so you can check a pass instead of taking it on trust.
 - What falls short is made again from what the work should give, not patched where it showed, and
@@ -76,7 +75,8 @@
   out of the work and ends the run asking it, with every other such question. When you answer,
   Claude adds your answer to what the work says and runs turn again.
 - The work goes where your request says, or where Claude takes it from your request: here,
-  README.md at the top of the repository.
+  README.md at the top of the repository. A work can be several files that serve one purpose, such
+  as code and its tests; turn writes, reads and checks them together.
 
 ### B-5: Started from the README alone
 - After installing, you ask as in the example, naming turn, with the person your work is for and your
@@ -113,15 +113,14 @@
 
   Can the developer tell which Python version the tool needs?
   ```
-- The writ checklists in this repository (`../writ/checklists/`) cover documents, READMEs, design
+- The checklists in this repository (`../writ/checklists/`) cover documents, READMEs, design
   documents, prompts, code and its tests, and checklists; you copy the ones you need into your
   repository.
 - Installing: in Claude Code, you add the marketplace once with `/plugin marketplace add
   lovaizu/ccpm`, then install turn with `/plugin install turn@ccpm`.
-- A checklist file: `name` and `version`, under which turn keeps each item's result in `.turn/`, so
-  you can later tell which version an item was judged by; the paragraph under the title, what such
-  work is for, which turn reads with every item; and each heading that starts with an ID, which makes
-  an item, one thing the work must give, asked as a question.
+- A checklist file: `name` and `version`, which label the results turn keeps; the paragraph under
+  the title, what such work is for, which turn reads with every item; and each heading that starts
+  with an ID, which makes an item, one thing the work must give, asked as a question.
 
 ## readme: Usability
 

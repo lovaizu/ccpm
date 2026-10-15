@@ -482,6 +482,19 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   `checklist.md` B-3 looks for an item that asks of every deliverable a part only some need, F-5
   and F-6 say which release counts. `prompt.md` unchanged. Next: #5, turn's README through turn on
   Opus (the user, 2026-10-15: trials on Opus 5.5 only; the work and the judging here).
+- #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
+  readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
+  table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
+  content file: a contrast with its other side unnamed, and "writ" named where the reader has not
+  met it. Finished by hand, as the user decided: those two, the several-files sentence the content
+  file had dropped, and the checklist's name and version said only as labels, which the first user
+  skimmed. The five rules turn returned each apply an item that exists (doc B-5, F-1, B-3, B-12),
+  so no checklist changes. Orchestrator's console lines came out in Japanese, since the clone runs
+  under the user's global CLAUDE.md. Next: the user agrees `turn/README.md`, then the design.
+- writ's README through turn in parallel (the user, 2026-10-15), from a content file drawn from the
+  agreed README and the decisions since: the report puts first what writ decided, the callers' page
+  link left out, each question with a recommended answer. Its design waits for the README, whose
+  words its Goals use.
 
 ### [ ] #4: writ built and checked
 
