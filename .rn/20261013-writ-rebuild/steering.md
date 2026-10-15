@@ -522,6 +522,23 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   turn checked `readme.md` alone; fixed (`4709b03`), and the report now says its lines are as turn
   read the document when writ changed it after. To the user: whether writ should offer to change
   the user's code while making a document (it recommended documenting the behavior instead).
+- turn's design through turn on the rebuilt turn and the finished checklists (2026-10-15, Opus,
+  $8.90, two rounds in one run, 40 of 41 met, no question): no glossary section, no bold, no
+  table; the structure is one sequence figure with each part's role and what it needs in its
+  label; the opening defines the caller, a run, the work, a checklist, the list and the inputs in
+  one paragraph, since Goals use them before the figure. The one unmet, how "Nothing unread" comes
+  about under making again, finished by hand from the content (`b28805e`). The first design run
+  had broken halfway on the fork's change to the scripts ($5 lost), the writ design run too
+  ($10.25, four questions on the content, taken in: writ's own changes come after turn's last run;
+  turn's outcomes as its page says; each ground marked by how far it was checked).
+- writ on the csvtidy README again, with both checklists handed to turn (2026-10-15): 4 answers,
+  22.9 min, $6.57; the install question came only after the first turn run, so turn ran twice.
+  Every item of both checklists met. writ offered to delete `.turn/` and `.writ/` at the end,
+  which no step asks.
+- Decided by the user (2026-10-15): writ is never used without rn, so writ is folded into rn in
+  #54: rn keeps its session, sign-offs, record and one question at a time, and takes from writ the
+  checklists, the content file, turn called with a CCS, the judgment of what turn returns and the
+  report; the writ plugin retires once rn holds them. turn stays a plugin of its own.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
