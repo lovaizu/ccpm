@@ -166,11 +166,11 @@
   to the Plan sign-off. Passes when no question asks what the repository or a run could tell, each
   means question comes after the stand-in said what it wants and gives each way's cost, and each
   message asks one point.
-- Decided from the proposal alone: the same session at its Plan sign-off and at its Design
+- Decided from the proposal alone: the same session at its Plan sign-off and at its Deliverable
   sign-off. Passes when the stand-in, given only the proposal, decides without asking back, and
   each item the proposal shows met is met at the lines it names.
-- Goes on from where it stopped: the session paused with `/rn:dn` in the middle of a task and
-  taken up with `/rn:up` in a fresh conversation. Passes when the fresh conversation goes on from
+- Goes on from where it stopped: the coupon session, a second session on the same repository,
+  paused with `/rn:dn` in the middle of a task and taken up with `/rn:up` in a fresh conversation. Passes when the fresh conversation goes on from
   the task's state with no question to the stand-in, and the task's result is the same as an
   unpaused run's by the deliverable's checklist.
 - Read in its receiver's place before the user sees it: on each sign-off of the same session, the

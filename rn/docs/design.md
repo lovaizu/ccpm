@@ -195,13 +195,13 @@ account session.
   point. Beside the trial, the hooks that hold it are tested in each case that would break it: an
   agent started in the background, a turn ended with nothing to decide, and a last message in the
   wrong language.
-- Decided from the proposal alone: the account session at its Plan sign-off and at its Design
-  sign-off.
+- Decided from the proposal alone: the account session at its Plan sign-off and at its
+  Deliverable sign-off.
 
   Passes when the stand-in, given only the proposal, decides without asking back, and each item the
   proposal shows met is met at the lines it names.
-- Goes on from where it stopped: the account session paused with `/rn:dn` in the middle of a task
-  and taken up with `/rn:up` in a fresh conversation.
+- Goes on from where it stopped: the coupon session, a second session on the same repository,
+  paused with `/rn:dn` in the middle of a task and taken up with `/rn:up` in a fresh conversation.
 
   Passes when the fresh conversation goes on from the task's state with no question to the
   stand-in, and the task's result is the same as an unpaused run's by the checklist of the task's
