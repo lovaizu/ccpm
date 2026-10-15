@@ -4,15 +4,16 @@ This document is for whoever builds or changes writ: what writ must achieve, how
 checked, and how writ is built to achieve it, for the benefits [writ's README](../../writ/README.md)
 promises. Its point: writ is a thin wrapper of turn. turn makes the document, has it read in its
 reader's place and checks it; writ adds only what turn cannot know: which checklists measure the
-document, what the user decides, and which of what turn returns the document's purpose needs, by
-the one test given with the words below; and it hands its caller every decision it made or left. A
-change fits when it keeps writ to that and costs the user no question, time or tokens that test
-does not call for.
+document, what the document must say for its reader, item by item, and whether what turn returns
+serves the document's purpose, by the one test given with the words below, finishing it where it
+falls short; and it hands its caller every decision it made or left. A change fits when it keeps
+writ to that and costs the user no question, time or tokens that test does not call for.
 
 Left out, though a builder might look for it here: how to use writ, which is the README's; how turn
 makes, reads and checks a work, which is [turn's design](../turn/design.md); what each checklist
 asks, which the checklists say; and the wording of writ's prompt, its file names and the forms it
-writes, which are the code's and change with each build. A statement no trial has checked yet is
+writes, which are the code's and change with each build, all but the content file's, which stays
+in the user's repository. A statement no trial has checked yet is
 marked "(assumption)".
 
 The words used throughout:
@@ -36,13 +37,16 @@ The words used throughout:
   state outright. writ settles one itself only from the request, the repository or the sources,
   never by a guess; one these do not settle goes to the user, and is answered by the user or by a
   calling step in the user's place.
+- The content file: what the document must say for its reader, item by item of the checklists, as
+  writ settles it with the request, the repository, the sources and the answers. It holds only what
+  the document says or does, never how it is written, since how is turn's.
 - The task: what writ hands turn: where the document goes, its reader, their use of it and what they
-  must be able to do with it, the checklists, the sources and every answer. It is written as a CCS,
-  the JSON file turn takes and writes back, in the form
+  must be able to do with it, the checklists, the content file, and what the document follows or
+  draws on. It is written as a CCS, the JSON file turn takes and writes back, in the form
   [turn's page for plugins' steps](../../turn/calling-from-a-plugin.md) gives.
 - A run: turn at work once, from the task it is handed to the CCS it writes back.
 - The report: what writ hands back with the document: first what the caller decides, then each
-  item met with its lines.
+  item met with its lines, and each line writ changed after turn.
 - What the purpose needs: the one test writ applies wherever it weighs whether to ask, meet or leave
   something. The purpose is the document's reader, their use of it and what they must be able to do
   with it, as the task states them. An open point, an item or a question is needed when the
@@ -54,8 +58,7 @@ The words used throughout:
   whether the reader's use rests on it, the test leaves the case undecided, and writ puts it to the
   user as a question with a recommended answer, since a point that may change what the reader does
   is the user's to decide. The cost: one more question for each such case, counted in questions
-  answered, and, for a case that shows up only in what turn returns, the run of turn that puts its
-  answer in.
+  answered, and, for a case that shows up only in what turn returns, putting its answer in.
 - What turn hands back: the document, written where the task says, and the CCS the run writes back,
   in the form [turn's page for plugins' steps](../../turn/calling-from-a-plugin.md) gives for it. In
   that CCS, `next` always names one of four outcomes, each telling writ one thing:
@@ -69,12 +72,8 @@ The words used throughout:
   - `stopped`: the user pressed Esc during the run and said what they want instead, and the
     document is as it was before the run.
 
-  With it come the rules turn adds after writ's own entries, and where turn keeps its evidence.
-  What writ does on each outcome is in Judging what turn returns.
-- The job: the stretch of one call from just before writ first starts turn until writ stops, by
-  handing the document back or by putting points to the caller.
-- The job's mark: what tells writ's hook that a job is open, and on which document. It holds the
-  document's full path and the session the job was opened in.
+  With it come the rules turn returns, and where turn keeps its evidence. What writ does on each
+  outcome is in Judging what turn returns.
 
 ## Goals
 
@@ -85,9 +84,9 @@ The words used throughout:
   user, one question at a time, each with a recommended answer, those of the rest the purpose needs
   or the test leaves undecided. Once writ says it is writing, the user can leave it at work.
 - **Handed on without reading it over**: the document comes back with every item the purpose needs
-  met, as turn last read it in its reader's place and checked it, whether written anew or made again
-  from one the user already has; an item left not met is one the purpose does not need, or one the
-  user, asked, chose to leave.
+  met, as turn last read it in its reader's place and checked it and writ finished it for the
+  purpose, whether written anew or made again from what one the user already has says; an item left
+  not met is one the purpose does not need, or one the user, asked, chose to leave.
 - **Judged from the report**: the caller reads first what is theirs to decide, each with its ground,
   and judges each item met at the lines the report gives for it, instead of reading the document
   over.
@@ -108,13 +107,12 @@ Each must be no worse than in the version in use.
 
 - **The report holds**: every item the report shows met is one turn showed met, at the lines turn
   named, and every item turn left not met, every question it left open and every rule it returned is
-  in what the report puts first; writ holds no check of its own.
-- **The document is turn's**: the document handed back is the version turn last read, since during a
-  job nothing but turn writes it.
+  in what the report puts first, as is every line writ changed after turn, with why; writ holds no
+  check of its own.
 - **Nothing of the user's lost**: a document already there is written over only when git holds it as
   it stands.
 - **Missing tools**: without python3 or jq, writ stops before its first question and says what to
-  install; outside a call, a missing tool breaks nothing.
+  install.
 - **Installs with turn**: installing writ installs turn, and writ's manifest passes validation.
 
 ### Backward compatibility
@@ -149,9 +147,12 @@ Each must be no worse than in the version in use.
   to check a README judged beyond the README's scope and disagreed with turn, seen once, on one
   README, 2026-10-14). The cost: a slip turn's check lets through reaches the caller with nothing
   from writ to flag it.
-- Keeping anything between calls: each call brings everything settled so far, and a call that ends
-  leaves no job behind. The cost: the conversation or the calling step holds every answer and brings
-  it again, and a call cut off is started again from them.
+- Keeping anything between calls: each call brings everything settled so far, and writ reads back
+  nothing it wrote in an earlier call except as the repository holds it. The content file stays in
+  the repository beside turn's evidence, so each item met traces back to what was asked of it, and
+  a later call may settle points from it as from any file there. The cost: the conversation or the
+  calling step holds every answer and brings it again, and a call cut off is started again from
+  them.
 - Telling turn what the document may leave out, or shaping turn's check in any other way: what turn
   returns is judged afterwards, by writ. The cost: turn may return questions and items not met that
   the purpose does not need, finer ones with each run; writ weighs each by the test of what the
@@ -166,9 +167,9 @@ Each must be no worse than in the version in use.
 
 ### Constraints
 
-- writ runs in Claude Code and holds only skills, hooks and scripts. Installing copies only its
-  folder, so its checklists travel in it and a checklist made for the user lives in their
-  repository; its hooks run in every session where it is installed.
+- writ runs in Claude Code and holds only skills and scripts. Installing copies only its folder, so
+  its checklists travel in it, and a checklist made for the user and each content file live in their
+  repository.
 - writ uses turn only as turn's page for plugins' steps,
   [Calling turn from a plugin's step](../../turn/calling-from-a-plugin.md), gives it: the skill
   `turn:up` started with a CCS, and the CCS turn writes back, since turn may change everything
@@ -190,8 +191,8 @@ of what writ writes.
 The flow, from the request through the open points, the task and turn's return to the handing back,
 is tried apart from what turn makes, on the smallest task that shows it: a note of a few lines
 against a checklist of two items, one of which the note's sources leave to the user. The flow passes
-when writ asks that one point, runs turn once, and hands back the note with its report, the answer
-in it. The note asks turn only for something to hand on, so the trial spends no real document's cost
+when writ asks that one point, writes the content file with the answer in it, runs turn once, and
+hands back the note with its report, the answer in it. The note asks turn only for something to hand on, so the trial spends no real document's cost
 and does not fail where only turn's work falls short.
 
 ### Attractive quality
@@ -229,19 +230,15 @@ answered, the minutes, and the tokens from the request to the document handed ba
 
 ### Must-be quality
 
-Each is a test on the script or hook that holds it, in the case that would break it:
+Each is a test on the script that holds it, in the case that would break it:
 
 - **The report holds**: given turn's evidence and returned CCS with items met and not met, a
   question left open and a rule, the report shows met only the items the evidence shows met, with
-  their lines, and puts first every item not met, the question and the rule.
-- **The document is turn's**: the hook stops a write and an edit of the document in the session
-  whose job is open, and lets through a write of another file, the same document in another session,
-  and anything once no job is open; a job left open by a call cut off stops nothing once writ is
-  started again in that session.
+  their lines, and puts first every item not met, the question, the rule and each line writ changed
+  after turn, with why.
 - **Nothing of the user's lost**: turn's own test, on a file where the work goes with changes git
   does not hold; writ adds none, since turn's check stops the case.
-- **Missing tools**: with python3 or jq missing, writ's first check says what to install; the hook,
-  run where python3 is missing, stops nothing.
+- **Missing tools**: with python3 or jq missing, writ's first check says what to install.
 - **Installs with turn**: `claude plugin validate --strict` passes for writ and for the marketplace
   on every push, and writ's manifest names turn among its dependencies.
 
@@ -263,11 +260,18 @@ Each is a test on the script or hook that holds it, in the case that would break
 
 ### Principles
 
-- writ adds to turn only what turn cannot know: which checklists measure the document, what was
-  decided, and which of what turn returns the purpose needs. Making, reading and checking
+- writ adds to turn only what turn cannot know: which checklists measure the document, what the
+  document must say, and whether what turn returns serves the purpose. Making, reading and checking
   stay turn's; writ neither repeats a check turn makes nor shapes it. Protects: the report holds,
-  the document is turn's, time and tokens, and the constraint that writ uses turn only as turn's
-  page for plugins' steps gives it.
+  time and tokens, and the constraint that writ uses turn only as turn's page for plugins' steps
+  gives it.
+- What to say is writ's, how to say it is turn's: the content file holds what the document says or
+  does, and turn makes the form against the checklists. Protects: handed on without reading it
+  over, since form written into the content is copied into the document or overrides turn's check.
+- turn is given everything at once and runs once: what turn returns, met against the checklists, is
+  finished by writ where the purpose needs, and turn runs again only when what it was given must
+  change. Protects: time and tokens, since a run on the same inputs returns the same judgments, and
+  each further run raised finer points the purpose did not need.
 - Only what the user alone can decide reaches the user: writ settles a point from the request, the
   repository or the sources alone, puts to the user what these do not settle, and does not ask at
   all a point the purpose does not need. Protects: asked only what the user alone can decide,
@@ -275,13 +279,14 @@ Each is a test on the script or hook that holds it, in the case that would break
 - Each call brings everything settled so far, and writ keeps nothing between calls: what was decided
   lives in the conversation or in the calling step, as the request and its answers, and what writ
   decided or left goes back to the caller in the report. So a call from a calling step and one from
-  the user go the same way, and a call that ends leaves nothing behind. Protects: `writ:up` from a
-  calling step, judged from the report, the document is turn's.
+  the user go the same way, and a call that ends leaves nothing behind but the document, the content
+  file and turn's evidence. Protects: `writ:up` from a calling step, judged from the report.
 
 ### Structure
 
-writ's skill stands between its caller and turn: it hears the caller, hands turn the task, and
-judges what turn returns, with scripts and one hook doing what must come out the same every time.
+writ's skill stands between its caller and turn: it hears the caller, writes the content file,
+hands turn the task, and judges and finishes what turn returns, with scripts doing what must come
+out the same every time.
 The figure shows who takes part and what each is for, what passes between them and in what order;
 the list after it, what each cannot work without.
 
@@ -291,7 +296,6 @@ sequenceDiagram
   participant P as Calling step<br/>decides as the user's agent
   participant W as Skill writ:up<br/>open points, the task, judging
   participant S as writ's scripts<br/>same result every time
-  participant H as writ's hook<br/>the document is turn's
   participant T as turn<br/>makes, reads, checks
   U->>W: /writ:up and the request
   P->>W: "a calling step", the request and its answers so far
@@ -300,26 +304,21 @@ sequenceDiagram
   W->>U: one open point at a time, with a recommended answer
   U-->>W: the answer
   W-->>P: every open point, with a recommended answer (the call ends)
-  W->>S: the job opens: set the job's mark
+  W->>W: the content file
   W->>T: the task, as a CCS
   T-->>W: CCS back: next, questions, items not met, rules, evidence
-  Note over W,T: turn runs again only when the document must change
-  W->>S: turn's evidence and returned CCS, writ's judgments
+  W->>W: the document finished for the purpose
+  Note over W,T: turn runs again only when what it was given must change
+  W->>S: turn's evidence and returned CCS, writ's judgments and changes
   S-->>W: the report
-  W->>S: the job closes: remove the mark
   W-->>U: the document and its report
   W-->>P: the document and its report
-  Note over H: before Claude's file tools write, stops a write of the marked document in the mark's session
 ```
 
 - The skill runs in its caller's conversation: the user's, or the calling step's, a subagent
-  included. It cannot work without turn, the checklists, and Claude Code, which runs it and the
-  hook.
-- The scripts run on python3 and jq; the hook runs on python3, and without it does nothing.
-- turn cannot work without the task as a CCS, git, python3 and jq, as its README says. It writes
-  the document by its own script when a run returns, not with Claude's file tools (checked in
-  turn's scripts as this repository holds them at commit `8062147`; turn's hooks and agents were
-  not read for it), so writ's hook never stops turn.
+  included. It cannot work without turn, the checklists, and Claude Code, which runs it.
+- The scripts run on python3 and jq.
+- turn cannot work without the task as a CCS, git, python3 and jq, as its README says.
 
 ### Picking the checklists
 
@@ -381,8 +380,8 @@ the test leaves undecided, one point at a time, each with a recommended answer.
   returns at once every open point it would have asked, each with its recommended answer, and the
   call ends; the calling step decides them and starts writ again with the same request and its
   answers.
-- When no open point is left, writ writes the task with every answer, the user's, the calling step's
-  and its own.
+- When no open point is left, writ writes the content file with every answer, the user's, the
+  calling step's and its own, as in Writing the content file.
 - Must hold: no question reaches the user whose answer the request, the repository or the sources
   hold, or that the purpose does not need.
 - Weighed: depending on `grilling` instead of taking its way into writ's prompt. Not chosen, since
@@ -394,104 +393,123 @@ the test leaves undecided, one point at a time, each with a recommended answer.
   chosen, for the reason above, and since up to that version it asked one at a time ("Asking
   multiple questions at once is bewildering"), which the user has used and found right. The cost:
   more turns of the conversation.
-- Weighed: a form with a decision for every item, which a script refuses to turn into a task until
-  each is filled. Not chosen, as more than a thin wrapper of turn calls for: whether each item is
-  met is turn's to decide, and a decision written per item repeats it. The cost: whether writ went
-  through every item shows only in the records, not in a refusal.
+- Weighed: a script that refuses to start turn until the content file has an entry for every item.
+  Not chosen, as more than a thin wrapper of turn calls for: an item whose form is turn's has no
+  entry, and whether each item is met is turn's to decide. The cost: whether writ went through
+  every item shows only in the content file and the records, not in a refusal.
 - Weighed: a place in the repository for the questions being asked. Not chosen, since the answers
   live in the conversation or the calling step. The cost is that of keeping nothing between calls
   (Non-goals).
 
-### Handing the job to turn
+### Writing the content file
 
-Achieves: handed on without reading it over, the document is turn's, nothing of the user's lost.
+Achieves: handed on without reading it over, judged from the report.
 
-During the job, the document is written by turn alone, held so by one hook.
+writ writes down, item by item, what the document must say or do for its reader, and nothing of how
+it is written.
 
-- writ writes the task as a CCS and starts `turn:up` with it. A document the user already has is
-  named both as where the document goes and as a source, so turn makes it again from it.
-- The job opens just before writ starts `turn:up`: a script, run by the skill, sets the job's mark.
-  The skill hands the script its session as Claude Code writes it into a skill's text.
-- The mark is kept in writ's own data directory, which Claude Code keeps for each plugin outside
-  every repository, so the hook in any session can read it, and once the job closes nothing of it
-  is left there or in the user's repository; its file name is the code's. Weighed: keeping it in
-  the user's repository. Not chosen, since it would show among the user's changes, and one left by
-  a call cut off would stay in their work. The cost of the data directory: a mark left by a call
-  cut off, in a session where writ is never started again, stays there as a small file that stops
-  nothing.
-- The hook acts before Claude's file tools write or edit a file. It takes its own session from the
-  input Claude Code hands every hook, looks for a mark of that session, and compares the file's
-  path with the mark's; it stops the write when they are the same, saying that during writ's job
-  the document is turn's to write, and a change to it goes to turn in the task. With no mark of its
-  session, or another file, it does nothing, so the hook of every other session never acts on the
-  mark. How the skill and the hook each get the session is as Claude Code's skills and hooks
-  documentation gives it, as read on 2026-10-14; that the two name the same session when writ runs
-  inside a subagent is an assumption until the calling-step trial shows it.
-- The job closes whenever writ stops, by handing back or by putting points to the caller: the
-  script removes the mark. When writ is started, the script also removes a mark of that same
-  session, so one left by a call cut off lasts only until then. The cost: until then, Claude's file
-  tools cannot write the document in that session, even when the user asks for a change to it
-  outside writ; starting writ again or opening a new session frees it.
+- The content file is at `.writ/content/<the document's folder>/<its name without the
+  extension>.content.md`, such as `.writ/content/turn/README.content.md` for `turn/README.md`, so the document's content file is found from its path and is not taken for the
+  document. writ writes it anew on each call; git keeps the one before.
+- Its form, so each line is read as content of one item:
+
+  ```markdown
+  # What <the document's path> says
+
+  ## <checklist name>
+
+  ### <item ID>: <item title>
+  - <what the document says or does>
+  ```
+
+- writ fills it in five steps, each for the reason beside it:
+  1. For each item, decide what the document must say or do for this reader and use. For a
+     document: its facts, decisions, examples, the meaning of its terms, and what it leaves out. For
+     code: what it does, the inputs it stops and lets through, what a stop tells its user, what it
+     needs to run, and the reasons for its decisions. Only the caller knows these.
+  2. Take each from the request, the repository, the sources, the answers, or a document or code
+     already there that writ has read. So nothing in it is a guess.
+  3. Write each as a plain statement of what the document says or does, under the item's ID; where
+     exactness matters, such as a command, what a screen shows or an error's text, write the value
+     itself. turn reads each line as content to give.
+  4. Leave the items of form to turn: shape, order, length, naming and structure. Form is turn's,
+     made and judged against the checklists; written into the content file, it is copied into the
+     document or overrides turn's check.
+  5. Read every entry and ask whether it is what the reader gets from the document, and take out
+     each that is not. A slip here reaches the document as text.
+- A document the user already has is read by writ, and what it says goes into the content file
+  through these steps; turn makes the document anew and is not handed the old one, since what it is
+  handed it follows, wording and slips included.
+- Must hold: every entry is what the document says or does; none says how it is written.
+- Weighed: the content written into the task's answers. Not chosen, since it runs long and mixes
+  with turn's rules there. The cost: one more file in the user's repository.
+
+### Handing the task to turn
+
+Achieves: handed on without reading it over, nothing of the user's lost.
+
+writ hands turn one task with everything turn works from, and turn works from it alone.
+
+- writ writes the task as a CCS, naming where the document goes, its reader and their use, the
+  checklists, the content file, and each file or folder the document follows or draws on, such as
+  code it describes; and starts `turn:up` with it.
 - A file where the document goes with changes git does not hold is turn's to stop; writ adds no
   check of its own.
-- Must hold: during a job, the document changes only by turn; no job outlives the call that opened
-  it, except one cut off, which lasts until writ is next started in its session.
-- Weighed, and dropped as more than a thin wrapper of turn calls for, each for its own reason:
-  - a Stop hook keeping writ at work until it hands back, since turn keeps its own run to its end
-    and writ's skill ends when it hands back; the cost: writ stopping early shows only in the
-    records;
-  - a check after the job that the document was not written outside turn, since the hook stops such
-    a write as it is made; the cost: a shell command that writes the document is seen by neither;
-  - a check that turn is started with the CCS as a script wrote it, since turn checks the CCS
-    itself; the cost: a task with a wrong answer in it shows only in the records.
 - Weighed: checking for changes git does not hold before the first question, so the user is not
   heard and then refused. Not chosen, since turn's check already stops the case and this
   repository's plugin rules add no special path for it. The cost: such a user commits and asks
   again, with the answers still in the conversation.
+- Weighed: a hook that stops any write of the document but turn's while writ is at work. Not chosen,
+  since writ finishes what turn returns itself. The cost: a change writ makes to the document is
+  checked by writ's own reading for the purpose, not by turn's reader, which the report shows.
 
 ### Judging what turn returns
 
 Achieves: handed on without reading it over, asked only what the user alone can decide, questions
 answered, time and tokens.
 
-writ makes one of three moves on what turn returns, each decided by the test of what the purpose
-needs: hand the document back, ask the user, or run turn again.
+turn returns a document that meets the checklists from what it was given; writ judges it by the
+purpose, finishes it itself, and runs turn again only when what turn was given must change.
+
+1. writ reads the document as its reader would, and the CCS turn returned, by the test of what the
+   purpose needs. Where writ can make the document serve the purpose by changing it, it changes it
+   and is done: a part the reader does not need, a slip, an answer the user gave that fits in a few
+   lines. Each change goes into the report with why.
+2. Where serving the purpose needs a large change in what turn was given, such as a gap or a mistake
+   in the content file, or an answer that changes much of the document, writ corrects the content
+   file or the task and runs turn again, making the document anew. It does so only then, since a
+   run on the same inputs returns the same judgments.
 
 - writ weighs each question and item not met that `ask the user` holds as an editor sorts a
   reviewer's notes into those the author must settle and those the piece does without; the test,
-  not the editor's feel, decides where the line falls.
-- Hand the document back: on `done`, and on `ask the user` when all it holds is what the purpose
-  does not need; each such question and item goes into the report with the use or decision of the
-  reader that does not rest on it.
-- Ask the user: a question the purpose needs and only the user can decide, and a question or an
-  item the test leaves undecided, one at a time with a recommended answer, at the end, since the
+  not the editor's feel, decides where the line falls. One the purpose does not need goes into the
+  report with the use or decision of the reader that does not rest on it.
+- A question the purpose needs and only the user can decide, and a question or an item the test
+  leaves undecided, go to the user one at a time with a recommended answer, at the end, since the
   README promises that a question only the user can answer which shows up only in the writing comes
   at the end; and, on `to the caller`, the point itself, when the request, the repository and the
   sources do not settle how to correct what writ wrote. Started by a calling step, writ returns
-  these to the calling step instead. The cost of asking at the end, after turn has run, rather than
-  before: a further run of turn on the document with the answer.
-- Run turn again, with the CCS turn returned, from the document as it stands, only when the document
-  must change: an answer to put in; a point writ settles from the request, the repository or the
-  sources; an item not met that the purpose needs, taken only from those `ask the user` holds; on
-  `stopped`, the request rewritten from the user's words; or, on `to the caller`, what writ wrote
-  corrected where the request, the repository or the sources settle the correction, which goes
-  into the report as a change to what the request asked.
-- A rule turn returns is carried into turn's next run within the call, since turn adds it to the
-  CCS it returns, and goes into the report; whether it reaches a checklist or the caller's later
+  these to the calling step instead. The answer is put in by step 1 or step 2.
+- On `stopped`, the user's words change what turn is given, so writ corrects the content file or
+  the task from them and runs turn again.
+- A rule turn returns goes into the report; whether it reaches a checklist or the caller's later
   work is the caller's to decide.
-- Must hold: turn is never run again with nothing new to change the document; writ never changes the
-  document itself.
+- Must hold: turn is never run again on what it was given before; each change writ makes to the
+  document is in the report.
 - Weighed: running turn until every item is met. Not chosen, since each run raised finer questions,
   such as tabs, encodings and line endings, that the purpose does not need (seen in three runs on
   the CSV tool's README, 2026-10-14), so time and tokens grew with nothing gained. The cost: a
   document can come back with an item not met, which the report puts first with why and how it
   would be met.
+- Weighed: turn making every change, writ changing nothing itself. Not chosen, since a run on
+  unchanged inputs repeats turn's judgment and makes the document again from it, so a part the
+  purpose does not need, which turn added for an item, comes back (seen on turn's README,
+  2026-10-15). The cost: what writ changes is not read by turn's reader.
 - Weighed: putting every question turn returns to the user. Not chosen, since the user would answer
   questions the purpose does not need. The cost: writ may judge a point not needed that the user
   would have wanted settled (assumption: not yet seen in a trial), which the report puts first for
   them to see; a point writ cannot judge either way goes to the user, at the cost of one more
-  question and a further run of turn for each, so the risk lies only in a point the test seemed to
-  decide.
+  question for each, so the risk lies only in a point the test seemed to decide.
 
 ### The report
 
@@ -504,9 +522,11 @@ never costs what reading the document over would.
   judged the purpose does not need, with the use or decision of the reader that does not rest on
   it; each item left not met, with why writ left it, by the same test or by the user's choice, and
   how it would be met; each change writ made to what the request asked, when turn returned `to the
-  caller`; and each point writ settled itself, with the request, the repository or the source it
-  settled it from. The caller decides what follows from each.
-- Then each checklist with its name and version, and each item met with the lines turn named.
+  caller`; each point writ settled itself, with the request, the repository or the source it
+  settled it from; and each change writ made to the document after turn, with its lines and why,
+  since turn's reader did not read it. The caller decides what follows from each.
+- Then each checklist with its name and version, each item met with the lines turn named, as they
+  stand in the document handed back, and where the content file is.
 - When writ hands back, a script writes the report from turn's evidence and returned CCS, with
   writ's judgments beside what they concern.
 - Must hold: each item's state in the report is turn's decision, as turn's evidence holds it, and
