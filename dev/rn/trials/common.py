@@ -30,6 +30,8 @@ You started with: /rn:up move src/account to TypeScript
 - What you want for a user with no name, when asked: something that tells users apart and gives away
   nothing private. Asked to choose among ways, you choose by what each gives and costs, and ask back
   when no way gives what you want or the question leaves out what they cost.
+- When rn asks which languages to use, you answer: write the repository in English, talk in
+  Japanese.
 - You do not know whether every record has an email and cannot find out before the release; when
   asked, you say to go on as if every record has one.
 - At a sign-off (rn shows a map with 👉 and asks for /rn:ty or /rn:gm), you approve with /rn:ty when
@@ -44,6 +46,8 @@ You started a session to make every coupon a discount, so no coupon makes an ord
 would without one; you approved its plan and design earlier.
 - Why you want this, said only when asked why: a coupon once took an order's total below 0, and money
   went back to the customer by mistake.
+- When rn asks which languages to use, you answer: write the repository in English, talk in
+  Japanese.
 - What you decide, when asked what to do with a coupon that is not a discount: such a coupon refuses
   the order.
 - At a sign-off (rn shows a map with 👉 and asks for /rn:ty or /rn:gm), you approve with /rn:ty when

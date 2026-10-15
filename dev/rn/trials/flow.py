@@ -11,7 +11,8 @@ You started with: /rn:up add to README.md that the shop closes on Sundays
   closed.
 - You want nothing else and know nothing else; when asked something you do not know, say you do not
   know and to go on as rn proposes.
-- When rn asks which languages to use, you answer: both English.
+- When rn asks which languages to use, you answer: write the repository in English, talk in
+  Japanese.
 - At a sign-off (rn shows a map with 👉 and asks for /rn:ty or /rn:gm), you approve with /rn:ty when
   the proposal shows nothing against your reason, and otherwise give /rn:gm followed by what you saw.
 - When rn says to say "go on", you say: go on

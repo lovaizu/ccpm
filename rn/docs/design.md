@@ -207,7 +207,8 @@ account session.
 
   Passes when the fresh conversation goes on from the task's state with no question to the
   stand-in, and carries the task to its decision line.
-- Read in its receiver's place before the user sees it: each sign-off of the account session.
+- Read in its receiver's place before the user sees it: the records of the account session's
+  scenes and of the flow session.
 
   Passes when the records show the plan, the three documents and the proposal made by turn and read
   by an AI in its receiver's place before the stop commit, and each task's result used by it before
