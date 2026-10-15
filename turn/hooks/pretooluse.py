@@ -10,12 +10,18 @@ sys.path.insert(
     0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
 )
 
-from checks import brief_handed, no_commit, write_in_run
+from checks import brief_handed, no_commit, orchestrator_shell, read_in_inputs, write_in_run
 
 
 def main():
     data = json.loads(sys.stdin.read())
-    said = brief_handed.check(data) + write_in_run.check(data) + no_commit.check(data)
+    said = (
+        brief_handed.check(data)
+        + write_in_run.check(data)
+        + no_commit.check(data)
+        + read_in_inputs.check(data)
+        + orchestrator_shell.check(data)
+    )
     if said:
         sys.stderr.write("turn: " + "\n".join(said) + "\n")
         return 2

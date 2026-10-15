@@ -441,6 +441,14 @@ Progress:
        "round" (design) against "reading" (code, tests, prompts) to one name.
      - Then a trial on the flow task, CHANGELOG (turn 0.2.0 with the old-to-new kind table; writ's
        stale lines), writ's README from its content file, writ's code, and finish #4.
+  8. Done (2026-10-15): turn's hooks for working from the inputs alone. Confirmed in a run that
+     PreToolUse inside a subagent carries `agent_id` and `agent_type`, and the main session's
+     carries neither. Checked against `code.md`: B-2 and B-9 (each line removed, the tests run)
+     found `jq -f` and a command after a newline untested, now tested, and a lexer setting no test
+     needed, removed; no item pushed work the purpose does not need. Open for the user: the hook
+     also lets each role read its session's `tool-results/`, where Claude Code puts a long tool
+     output and has the role Read it; the design's "Working from the inputs alone" does not say so.
+     Next: the prompts, as in 7.
   5. Next: the user agrees turn's README and writ's design (PR #61); turn's design and
      `turn/calling-from-a-plugin.md` on the decisions in 3, through turn and finished by hand;
      turn's code; writ's README from its content file (the "report once every item is met"

@@ -14,9 +14,9 @@ from helpers import ROOT, Repo, ccs, fill, form, run, started
 WORK = "# Note\n\nRun make.\n"
 
 
-def pre(repo, tool, given, session="s1"):
-    """Runs the PreToolUse entry as Claude Code does before a tool call; returns its exit code and what
-    it told Claude."""
+def pre(repo, tool, given, session="s1", agent=None):
+    """Runs the PreToolUse entry as Claude Code does before a tool call of the orchestrator, or of the
+    agent named; returns its exit code and what it told Claude."""
     data = {
         "cwd": repo.path,
         "session_id": session,
@@ -24,6 +24,8 @@ def pre(repo, tool, given, session="s1"):
         "tool_name": tool,
         "tool_input": given,
     }
+    if agent:
+        data.update(agent_id="a1", agent_type=agent)
     err = io.StringIO()
     with mock.patch("sys.stdin", io.StringIO(json.dumps(data))), contextlib.redirect_stderr(err):
         code = pretooluse.main()
@@ -191,8 +193,8 @@ class WritesKeptToTheRun(unittest.TestCase):
         ):
             with self.subTest(command):
                 # Given: an open run
-                # When: a shell command that neither commits nor pushes is run
-                code, said = pre(self.repo, "Bash", {"command": command})
+                # When: an agent runs a shell command that neither commits nor pushes
+                code, said = pre(self.repo, "Bash", {"command": command}, agent="turn:generator")
                 # Then: it goes on
                 self.assertEqual((code, said), (0, ""))
 
