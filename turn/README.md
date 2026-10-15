@@ -1,33 +1,27 @@
 # turn
 
-With turn, Claude Code makes a work for you, such as a README, a design document, a skill or code,
-that passes your checklist of what the work must give the person it is for, so you can hand it on
-without first reading it in their place. It is for anyone who has Claude Code make such work, by
-asking in a conversation, as this page shows, or from a step of their own plugin, as
+turn is a plugin for Claude Code. With it, Claude Code makes a work for you, such as a README, a
+design document, a skill or code, that passes your checklist of what the work must give the person
+it is for, so you can hand it on without first reading it in their place. It is for anyone who has
+Claude Code make such work, by asking in a conversation, as this page shows, or from a step of their
+own plugin, as
 [Calling turn from a plugin's step](calling-from-a-plugin.md) shows.
 
 ## Example
 
 You want the README of a small command-line tool. You have notes on it in `docs/notes.md`, and a
 checklist for READMEs in `checklists/readme.md`: a list of items, each one thing a README must give
-the person the work is for, such as being able to tell which Python version the tool needs. In
-Claude Code you ask:
+the person it is for, such as being able to tell which Python version the tool needs.
 
-```console
-> With turn, write the README of this tool for developers who find it on GitHub,
-  from docs/notes.md, against checklists/readme.md.
+In Claude Code, you type:
+
+```
+With turn, write the README of this tool for developers who find it on GitHub, from docs/notes.md, against checklists/readme.md.
 ```
 
-Naming turn is what has Claude hand your request to turn as a task, instead of writing the README
-itself. The person the work is for, here developers who find the tool on GitHub, and the notes and
-checklist you name beside it, are what the task is made from.
+Here is what turn shows in this example:
 
-Each run of turn writes the work, has an AI that did not write it, the reader, read it as the
-developer would, and checks each item of your checklist against that reading; when the check finds
-something the work itself can give, it writes, reads and checks once more in the same run. It asks
-you nothing while it works, and shows each step as it reaches it:
-
-```console
+```
 Plan: 1 write → 2 read → 3 check
 
   1 write   To make: developers who find the tool on GitHub can tell what it saves them
@@ -55,50 +49,49 @@ done
 The work is at README.md.
 ```
 
-The line after `To make:` is what the work will let the developer do, shown before turn writes. If
-it is not what you want, press Esc and say what you want instead; turn starts over with your words,
-from the work as it stands.
-
-Each ⚠️ is something the work does not give the developer yet. When the work itself can give it,
-turn makes the work again on it, as above. If the second reading still finds something missing,
-turn ends the run saying so; Claude then runs turn again from the work as it stands, or, when it
-judges another run will not give it, tells you what is still missing, for you to decide whether to
-run again or take the work as it is.
-
-Each ❓ is something only you can decide, which your notes and checklist leave open. turn leaves it
-out of the work and ends the run by asking it, with every other such question, instead of with
-`done`. When you answer, Claude runs turn again with your answers, from the work as it stands, and
-the run ends with `done` once nothing is left for you.
+- Each `Plan:` line starts one writing, reading and checking. A run of turn does this once, or twice
+  when the check finds something the work itself can give; here the first run has two, and the run
+  after your answer has one.
+- The line after `To make:` is what the work will let the developer do, shown before turn writes. If
+  it is not what you want, press Esc and say what you want instead; turn starts over with your words.
+- Each ⚠️ is something the work does not give yet. When the work itself can give it, turn makes the
+  work again on it in the same run.
+- Each ❓ is something only you can decide, which your notes and checklist leave open. turn leaves
+  it out of the work and ends the run asking it, together with every other such question; your
+  answer starts the next run, as `> MIT` does above.
+- The work goes where your request says, or where Claude takes it from your request: here,
+  `README.md` at the top of the repository.
 
 ## Why turn
 
 When Claude checks what it has just written, it already knows what each line means, so it can miss
-what a newcomer would not understand, as people do with their own writing. turn is built on this
-assumption, and what it gives over asking Claude alone follows from it:
+what a newcomer would not understand, as people do with their own writing. turn is built on this:
 
-- The work is read by the reader, which did not write it. The reader works in a fresh copy of your
-  repository as committed, with the work put in, so it has only what the person the work is for
-  would have.
-- turn's check counts an item as passed only where lines of the work give it, and keeps those lines
-  in `.turn/` in your repository, so you can check a pass instead of taking it on trust.
+- The work is read by the reader, which did not write it and has only the work and what the person it
+  is for would open with it.
+- turn makes the work from your notes and checklist alone. So the work follows what you decided
+  rather than whatever turn happened to open, and each run of the same request works from the same
+  inputs.
+- turn counts an item as passed only where lines of the work give it, and keeps those lines in
+  `.turn/` in your repository, where you can open them and check each item yourself instead of
+  taking it on trust.
 - What falls short is made again from what the work should give, not patched where it showed, and
-  the work is made to keep giving every item it already gave.
+  the work keeps giving every item it already gave.
 - You are asked only what you alone can decide, and only at the end, so you can leave turn at work
   and answer everything at once.
 
 ## Requirements
 
 - Claude Code: turn runs inside it.
-- A git repository: the reader's copy is made from it. turn writes over a file already there only
-  when git holds every change to it, so you can get the old one back; otherwise it stops before any
-  work and says so.
-- Python 3.9 or later, as `python3`, with nothing beyond what comes with it: turn's own scripts run
-  on it.
+- A git repository: if the work goes to a file already there, commit the file first, so you can get
+  the old one back; until you do, turn stops before any work and says so.
+- Python 3.9 or later as `python3`, with nothing beyond what comes with it: turn's own scripts run on
+  it.
 - jq: turn reads and changes its own JSON files with it.
 - A checklist for each kind of work, as a Markdown file in your repository, named in your request by
-  its path. Each item's ID is a capital letter, a hyphen and a number:
+  its path. A short checklist file:
 
-  ```markdown
+  ```
   ---
   name: readme
   version: 0.1.0
@@ -113,21 +106,28 @@ assumption, and what it gives over asking Claude alone follows from it:
   Can the developer tell which Python version the tool needs?
   ```
 
-  The [writ checklists](../writ/checklists/) in this repository cover documents,
-  READMEs, design documents, prompts, code and its tests, and checklists; copy the ones you need
-  into your repository.
+  - `name` and `version`: turn keeps each item's result in `.turn/` under them, so you can later
+    tell which version of your checklist an item was judged by.
+  - The paragraph under the title: what such work is for. turn reads it with every item when it
+    reads and checks the work.
+  - A heading that starts with an ID, a capital letter, a hyphen and a number such as `B-1`, makes
+    an item: one thing the work must give, asked as a question. Other headings are not items.
+
+  You can write your own, or copy the ones you need from the [writ checklists](../writ/checklists/)
+  in this repository, which cover documents, READMEs, design documents, prompts, code and its tests,
+  and checklists.
 
 ## Installation
 
 In Claude Code, add the marketplace once, then install turn:
 
-```console
-> /plugin marketplace add lovaizu/ccpm
-> /plugin install turn@ccpm
+```
+/plugin marketplace add lovaizu/ccpm
+/plugin install turn@ccpm
 ```
 
-Then ask as in the [Example](#example), naming turn, with the person your work is for and your own
-notes and checklist.
+Then ask as in the example, naming turn, with the person your work is for and your own notes and
+checklist.
 
 ## Documentation
 
@@ -137,4 +137,4 @@ notes and checklist.
 
 ## License
 
-[MIT License](../LICENSE)
+[MIT License](../LICENSE).
