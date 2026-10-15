@@ -5,36 +5,8 @@ version: 0.2.0
 
 # Prompt
 
-A prompt, such as a skill or an agent, is read by the AI that runs it. It lets the AI:
-
-- tell what is expected of it;
-- tell why its work is needed;
-- do, on every run, everything that must happen;
-- do it in the order it must be done;
-- decide for itself how to think within each step;
-- do, the same way on every run, what breaks when done a little differently;
-- get the same result on every run from each operation that must give it;
-- find its slips before it hands its work back;
-- fix them before it hands its work back;
-- spend its attention only on what it would not know or do without the prompt;
-- tell from each instruction the action to take, and why it is there;
-- do all its work from a scope of inputs the prompt sets;
-- read each detail only on the runs that need it;
-- reach each such detail straight from the prompt, and so read it whole;
-- learn from each example what the real work asks;
-- take from the examples only what they are meant to share;
-- fill only the fields that someone uses;
-- find what is expected of it and what to do in the same place in every prompt.
-
-It lets the user the AI works for:
-
-- make each decision that is only theirs;
-- stop an action that is hard to undo before it is taken;
-- see, on every run, what they must see while the AI is still at work.
-
-It lets Claude Code choose the skill or the agent for a task from its name and description, and
-lets whoever receives the AI's work, a person, the next step or a script, read it by a form that is
-the same on every run.
+A prompt, a skill or an agent, is read by the AI that runs it. Following it alone, the AI does its
+work right on every run, and leaves to the user what only they can decide.
 
 How a prompt is made, judged and tried is not for this reader. Each item of `doc.md` also applies to
 a prompt.

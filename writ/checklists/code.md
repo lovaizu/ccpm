@@ -5,34 +5,8 @@ version: 0.1.0
 
 # Code
 
-Code is run by its users and changed by whoever maintains it; its tests are read and run by that
-maintainer. Code and its tests let the maintainer:
-
-- trust, from the tests passing, that the code does what its sources ask;
-- take each test failure as a fault in what the code must do;
-- tell from each test, read alone, what the code must do and in what situation;
-- see that every branch of the code is run by a test, so a missing test and code no test needs
-  both show;
-- change the code and learn at once, by running the tests or from any push, whether it still does
-  what it must;
-- learn, when a test fails, which behavior broke;
-- test each behavior without running what only another behavior needs;
-- test the flow of the parts apart from what each part does;
-- test each behavior with the least input and setup that still shows it;
-- change a behavior by changing the one place it is written;
-- find every place a thing is used by searching for its name;
-- learn from the comments why the code is as it is;
-- read any part of the code without first learning the habits of whoever wrote it;
-- trust that what a tool can find without running the code, such as a misused part of the language
-  or a wrong type, is already found.
-
-And they let whoever runs the code:
-
-- run it with only what its README says it needs, on any version of the runtime the README says it
-  supports;
-- be stopped before anything they gave it wrong is used;
-- tell, when it stops, what went wrong;
-- tell, when it stops, what to do about it.
+Code is run by its users and changed by its maintainer. Users run it with only what its README
+names, and the maintainer, after each change, learns from its tests at once whether it still works.
 
 What the code must do is set by its README, its design and what calls it, such as the steps of a
 prompt that runs it, here called its sources; this checklist judges the code and its tests against

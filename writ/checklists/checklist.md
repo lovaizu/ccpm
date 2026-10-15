@@ -5,35 +5,16 @@ version: 0.2.0
 
 # Checklist
 
-A checklist says what a deliverable of one kind, such as research findings, a proposal, a design
-document, code or tests, must be to serve its purpose, as questions answered yes or no. Whoever makes
-a deliverable of the kind reads it before making it, and whoever judges the deliverable answers it.
+A checklist is read by whoever makes or judges a deliverable of one kind. From it they know whom
+the deliverable is for and what that person can then do, and make or judge it to that alone.
 This file is the checklist for checklists, and is written in the shape it asks for.
-
-A checklist lets whoever makes or judges a deliverable of its kind:
-
-- learn who uses the deliverable and each thing it lets them decide or do, so every item is
-  judged against that;
-- trust that a deliverable that passes every item serves every part of that purpose;
-- trust that a yes means the deliverable's user gets something from it, not only that something is
-  in it;
-- learn, from each no, the one thing that falls short;
-- settle each item as passed or failed;
-- know before making what passes, because an item gets the same answer whoever answers it.
-
-And it lets them, and the tools that read checklists:
-
-- read any checklist in one shape;
-- tell a section thought through from a section forgotten;
-- tell which text of a checklist a judgment was made by;
-- name an item by an ID that always means the same item, in whichever checklist it is.
 
 ## Benefit
 
 ### B-1: User and purpose
 
-Can whoever makes or judges a deliverable of the kind learn, from the opening, who uses it and each
-thing it lets them decide or do?
+Can whoever makes or judges a deliverable of the kind learn, from the opening, in one or two
+sentences, who uses it and what they can then do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
 
@@ -50,8 +31,12 @@ one; a thing with no item lets a deliverable that misses that part of the purpos
 Does a yes to each Benefit and Usability item tell whoever judges that the user gets something from
 the deliverable, rather than that something is in it?
 
+Look for: an item met by writing something in, such as an opening that tells what the deliverable
+covers, whether its user needs it or not.
+
 Why: an item about what is there passes a deliverable its user cannot use, and fails a good one that
-does without that part.
+does without that part; and since the maker meets every item, what such an item asks for is added
+to every deliverable of the kind, needed or not.
 
 ### B-4: One thing per item
 
@@ -135,7 +120,7 @@ version: <x.y.z>
 
 # <Kind of deliverable>
 
-<Who uses it, and what it lets them decide or do>
+<The purpose in one or two sentences: who uses it, and what they can then do>
 
 <Where the kind is a document, how `doc.md` applies to it>
 

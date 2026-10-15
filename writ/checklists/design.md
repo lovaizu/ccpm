@@ -5,11 +5,9 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by someone who builds or maintains the product. From it they learn how
-the product brings about what its README promises: the principles it follows, the approach to each
-promise, and its structure, seen in one figure: who takes part, each one's role and what each
-depends on. With that they can build it, tell whether it keeps those promises, and judge whether a
-change fits.
+A design document is read by whoever builds or maintains the product. From its principles and one
+figure of who takes part, each one's role and what each depends on, they can build it to keep its
+README's promises, check that it does, and judge whether a change fits.
 
 How the product is used is the README's; how each part behaves, with its steps, definitions,
 settings and file names, is the code's, since these change with each rebuild while the design
