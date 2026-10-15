@@ -441,13 +441,17 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   file. turn's README says so; the design takes it when remade, and the code after.
 - Decided by the user (2026-10-15): `.turn/` is kept as the place of a run's evidence from 0.2.0
   on, since the README names it; its layout inside may change. The design's content says so.
-- The design's content checked statement by statement against turn's code, prompts, README,
-  callers' page, tests, rules and records (about 200 statements, every one): where the content was
-  wrong it is fixed, a run's unit as one purpose with one or more files put in. Where the content
-  is right and the code falls short, the code is fixed after the design: nothing stops the work
-  changing after its reading (`turn/hooks/checks/write_in_run.py:24-27`); the work is copied to
-  where it goes before a second round (`turn/scripts/lifecycle.py:119-120`), so a run stopped there
-  leaves the first round's work; several hooks' stops name no step or reason; no test for a run cut
+- The design's content checked statement by statement against turn's code and records (about 200
+  statements). The design says how turn should be, so only facts it rests on, such as what a trial
+  showed, are fixed from the records; where the code differs, the code is fixed after the design,
+  not the design bent to it (a first pass did bend it, and was undone). Put in: a run's unit as one
+  purpose with one or more files, and the caller's constraints among the inputs. The code falls
+  short in: nothing stops the work changing after its reading
+  (`turn/hooks/checks/write_in_run.py:24-27`); the work is copied to where it goes before a second
+  round (`turn/scripts/lifecycle.py:119-120`), so a run stopped there leaves the first round's work;
+  the first user's shell is open, so it can read what the receiver would not open; a file where the
+  work goes is written over when any copy in `.turn/` matches (`turn/scripts/lifecycle.py:17-25`),
+  wider than the callers' page; several hooks' stops name no step or reason; no test for a run cut
   off, python3 missing in a run, jq missing outside one, or a returned CCS whose caller part
   differs.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
