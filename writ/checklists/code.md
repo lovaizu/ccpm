@@ -5,8 +5,8 @@ version: 0.1.0
 
 # Code
 
-Code is run by its users and changed by its maintainer. Users run it with only what its README
-names, and the maintainer, after each change, learns from its tests at once whether it still works.
+Code is run and maintained. It gives the behavior expected of it, shows that it does, and reads
+easily for its maintainer, who understands it and changes it at once and with confidence.
 
 What the code must do is set by its README, its design and what calls it, such as the steps of a
 prompt that runs it, here called its sources; this checklist judges the code and its tests against
