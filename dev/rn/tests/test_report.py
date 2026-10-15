@@ -28,7 +28,7 @@ class TestReport(RepoTest):
         #   point decided, the question and the item judged and a change made after turn
         # When: rn makes the report
         # Then: under Decided for you it lists the point, the question, the item with turn's way,
-        #   the rule, the change and the note that lines may have moved
+        #   the rule and the change
         self.turn(
             list_={"checklists": [], "items": [NOT_MET]},
             semantic_gist=[
@@ -53,8 +53,7 @@ class TestReport(RepoTest):
             "  Not met: doc B-2 No question left: left for the user\n"
             "    turn: say where the logs go\n"
             "  Rule from turn: name the port in every example\n"
-            "  Changed after turn: 4: the port put in\n"
-            "  The lines below are as turn read the document; a change above may have moved them.",
+            "  Changed after turn: 4: the port put in",
         )
 
     def test_each_checklist_is_shown_with_its_items_met_ones_with_their_lines(self):
@@ -124,7 +123,7 @@ class TestReport(RepoTest):
     def test_a_report_with_nothing_for_the_caller_says_nothing_was_decided(self):
         # Given: turn's CCS with no question, item not met or rule, and empty judgments
         # When: rn makes the report
-        # Then: under Decided for you it says Nothing, and no note on moved lines
+        # Then: under Decided for you it says Nothing
         self.turn()
         _, out = self.report({})
         self.assertEqual(out.split("\n\n")[0], "Decided for you\n  Nothing.")
@@ -180,3 +179,68 @@ class TestReport(RepoTest):
         # Then: rn stops, saying to judge that item first
         self.turn(semantic_gist=[{"unmet": UNMET}])
         self.assertEqual(self.report({}), (1, "judge the item first: doc B-2\n"))
+
+
+class TestLinesAsTheyStand(RepoTest):
+    """The lines an item names are shown as they stand in the document handed back, mapped through
+    what the conductor changed after turn."""
+
+    def turn(self, kept, now, lines):
+        self.write_json(
+            "back.json",
+            {
+                "focal_entities": [{"deliverable": "README.md"}],
+                "retrieved_artifacts": [],
+                "semantic_gist": [],
+                "episodic_trace": TRACE,
+            },
+        )
+        self.write_json(
+            EVIDENCE + "/list.json",
+            {
+                "checklists": [{"checklist": "doc", "version": "0.2.0"}],
+                "items": [{"id": "doc B-1", "title": "Purpose first"}],
+            },
+        )
+        self.write_json(EVIDENCE + "/orchestrator.json", {"doc B-1": {"met": True, "lines": lines}})
+        if kept is not None:
+            self.write(EVIDENCE + "/kept/README.md", kept)
+        self.write("README.md", now)
+        self.write_json("judgments.json", {})
+        return self.rn("report", "back.json", "judgments.json")[1]
+
+    def test_lines_below_an_insertion_move_down(self):
+        # Given: the document as turn kept it, and a line put in above the item's lines since
+        # When: rn makes the report
+        # Then: the item's lines are shown where they now stand
+        out = self.turn("a\nb\nc\n", "x\na\nb\nc\n", "2-3")
+        self.assertIn("  ✅ B-1 Purpose first: 3-4\n", out)
+
+    def test_lines_in_a_block_deleted_since_say_changed(self):
+        # Given: the item's lines all taken out of the document since turn kept it
+        # When: rn makes the report
+        # Then: the item says its lines changed after turn
+        out = self.turn("a\nb\nc\n", "a\n", "2-3")
+        self.assertIn("  ✅ B-1 Purpose first: changed after turn\n", out)
+
+    def test_lines_partly_deleted_show_what_survives(self):
+        # Given: one of the item's lines taken out and the other left
+        # When: rn makes the report
+        # Then: the item shows the surviving line where it now stands
+        out = self.turn("a\nb\nc\n", "a\nc\n", "2-3")
+        self.assertIn("  ✅ B-1 Purpose first: 2\n", out)
+
+    def test_an_unchanged_document_keeps_its_lines(self):
+        # Given: the document as turn kept it, unchanged
+        # When: rn makes the report
+        # Then: the lines are as turn gave them, with a path kept when it named one
+        out = self.turn("a\nb\nc\n", "a\nb\nc\n", "README.md:1-3")
+        self.assertIn("  ✅ B-1 Purpose first: README.md:1-3\n", out)
+
+    def test_without_the_kept_copy_lines_are_as_turn_read_them_and_the_report_says_so(self):
+        # Given: no copy of the document as turn kept it
+        # When: rn makes the report
+        # Then: the lines are as turn gave them, and one line says so
+        out = self.turn(None, "x\na\nb\nc\n", "2-3")
+        self.assertIn("  Lines are as turn read the document.\n", out)
+        self.assertIn("  ✅ B-1 Purpose first: 2-3\n", out)

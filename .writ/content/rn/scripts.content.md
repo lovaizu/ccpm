@@ -79,9 +79,14 @@ only; `tools.sh` is sh since python3 itself may be missing.
   output: `Decided for you`, then, indented two spaces, each decided point as `<point>: <ground>`,
   each question as `Question: <question>: <judged>`, each unmet item as `Not met: <item ID> <item
   title>: <judged>` followed by a line indented four spaces `turn: <the way>`, each rule of the CCS
-  as `Rule from turn: <rule>`, each change as `Changed after turn: <lines>: <why>`, and, when any
-  change was made, `The lines below are as turn read the document; a change above may have moved
-  them.`; when none of these, the one line `  Nothing.`. Then, for each checklist of the list, a
+  as `Rule from turn: <rule>`, each change as `Changed after turn: <lines>: <why>`; when none of these, the one line
+  `  Nothing.`. Each item met shows its lines as they stand in the document handed back: for each
+  deliverable the script compares the copy turn kept, `<the evidence folder>/kept/<path>`, with the
+  document now, line by line (`difflib.SequenceMatcher`), and maps each range an item names through
+  the changes: lines below an insertion move down, a range all of whose lines are gone shows
+  `changed after turn`, one partly gone shows the surviving lines; a kept copy missing for a
+  deliverable leaves that item's lines as turn gave them, and the one line `  Lines are as turn read
+  the document.` under Decided for you says so. Then, for each checklist of the list, a
   blank line, `<checklist name> <version>`, and for each item of that checklist, indented two
   spaces, `✅ <short ID> <title>: <lines>` when the orchestrator's form says met, else `⬜ <short
   ID> <title>`, the short ID being the item's ID without the checklist name. Then a blank line,

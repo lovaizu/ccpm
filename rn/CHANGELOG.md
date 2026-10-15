@@ -10,6 +10,7 @@ last for fixes that change nothing you do.
 ### Added
 
 - Every piece of work, the plan, the design documents, each task's result and each proposal, is made by turn and read or used by an AI that did not make it, as the person it is for would, and checked item by item against a checklist — nothing reaches you that was not read in its receiver's place, and what fell short was made again or settled before you see it.
+- The report shows each item's lines as they stand in the document you get, mapped through what rn changed after turn — you open the line the report names and find the item there.
 - The proposal at each sign-off puts first what rn decided for you, each with its ground, and lists each item of the work's checklist met with the lines that give it — you see what is yours to overturn before anything else, and open the work only where you doubt it.
 - The checklists live in rn, with four new ones: the plan, a proposal, a verification document and a hook — one measure for everything a session makes, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
 - What each piece of work was asked to say, item by item, is kept under `.rn/<session>/content/`, and each call to turn under `.rn/<session>/tasks/`, committed with the decision that made them — each item met traces back to what was asked of it, and a fresh conversation settles points from them.

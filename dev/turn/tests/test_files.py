@@ -96,7 +96,7 @@ class SeveralFiles(unittest.TestCase):
                 # the work goes with that text, not committed
                 self.repo.close()
                 self.setUp()
-                self.repo.write(f".turn/old/work/{kept_at}", NOTE)
+                self.repo.write(f".turn/old/kept/{kept_at}", NOTE)
                 self.repo.write("docs/note.md", NOTE)
                 self.repo.write("in.json", json.dumps(ccs()))
                 # When: a run starts

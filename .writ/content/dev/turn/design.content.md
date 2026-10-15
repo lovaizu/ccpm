@@ -37,7 +37,9 @@
 - Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
 - The run's evidence: what a run keeps in the repository for the user and later runs: the work, its
   reading and decisions, each way to a Good, and the list with each checklist's name and version.
-  The work stays there until the run returns.
+  The work is made in a working copy of the repository as it is committed, kept in the evidence
+  while the run goes, so the tests and builds the work needs run in place; the work stays in the
+  evidence until the run returns, and the copy is gone by then.
 
 ## design
 
@@ -119,7 +121,8 @@
   user nor hear from its caller while it works.
 - Users' machines run Python 3.9 or later with the standard library only, and jq.
 - The work is in a git repository.
-- Tests and builds a work needs run by shell commands, so the agents' shell stays open.
+- Tests and builds a work needs run by shell commands, in a working copy of the repository, so the
+  agents' shell stays open.
 
 ### B-7: Attractive quality checked
 - Each is judged from the records, the JSONL of every conversation and agent of the run. What the

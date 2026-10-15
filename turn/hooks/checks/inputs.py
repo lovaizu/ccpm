@@ -78,4 +78,6 @@ def readable(data, run):
 def named(data, run):
     """What the role may read, as a stop says it."""
     found = inputs(data, run)
+    if role(data) == "orchestrator":
+        found[-1] += " (in its copy of the repository, the work's files alone)"
     return (", ".join(found) + " and " if found else "") + "turn's own files"

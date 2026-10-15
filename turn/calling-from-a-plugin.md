@@ -62,6 +62,10 @@ turn runs the same from the main conversation or from inside a subagent: it asks
 works, and a subagent can start the agents turn starts, as Claude Code's documentation on subagents
 says.
 
+turn makes the work in a copy of the repository as it is committed, under `.turn/`, so the tests
+and builds the work needs run there as they would where the work goes; the work reaches
+`deliverable` when the run returns, and the copy is gone by then.
+
 The step's plugin names `turn` in `dependencies` in its `.claude-plugin/plugin.json`, so that
 installing the plugin installs turn.
 

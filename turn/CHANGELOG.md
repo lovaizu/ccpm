@@ -10,6 +10,7 @@
 ### Changed
 
 - The work reaches where it goes only when the run returns — a run stopped or cut off leaves your files as they were.
+- The work is made in a copy of the repository as it is committed, kept under `.turn/` while the run goes — the tests and builds the work needs run there as they would in place, and nothing has to be copied beside the work for them.
 - A change to the work after it has been handed to the reader is stopped — the version read is the version you get back.
 - Each stop turn's hooks make names the step it concerns and why — you and Claude see at once what went wrong and what that step needs.
 - The CCS names each input by what it is for: `checklist`, `content` (what the work says, item by item), `reference` (what it follows or draws on) and `receiver_opens` (what the receiver opens with it); `viewpoint`, `answer` and `difference` of 0.1.0 are gone, and turn returns the rules it learns in its own part instead of adding them to your constraints — your plugin's step says what each file is for once, and nothing it did not ask piles up across calls.

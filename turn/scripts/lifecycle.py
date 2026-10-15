@@ -28,9 +28,53 @@ def kept(deliverable):
     so writing over it loses nothing."""
     return any(
         filecmp.cmp(path, deliverable, shallow=False)
-        for pattern in (("*", "work"), ("*", "2", "work"))
+        for pattern in (("*", "kept"), ("*", "2", "kept"))
         for path in glob.glob(os.path.join(".turn", *pattern, deliverable))
     )
+
+
+def copies():
+    """The working copies git keeps under .turn/, as their full paths."""
+    top = os.path.realpath(".turn")
+    return [
+        line[len("worktree ") :]
+        for line in git("worktree", "list", "--porcelain").splitlines()
+        if line.startswith("worktree ") and line[len("worktree ") :].startswith(top + os.sep)
+    ]
+
+
+def copy_out(path, goes, keep=None):
+    """Makes the run's work folder as a working copy of the repository as it is committed, with
+    where the work goes empty, so the tests and builds the work needs run there and the work is
+    made anew. A copy a cut-off run left is removed first, since only one run is open at a time;
+    the first round's copy is kept until the second has taken the work from it."""
+    try:
+        git("rev-parse", "--verify", "-q", "HEAD")
+    except Stop:
+        raise Stop(
+            "the repository has no commit yet; commit once, so that turn can make the work in a "
+            "copy of it"
+        )
+    git("worktree", "prune")
+    for old in copies():
+        if keep is None or old != os.path.realpath(os.path.join(keep, "work")):
+            git("worktree", "remove", "--force", old)
+    git("worktree", "add", "-q", "--detach", path, "HEAD")
+    for deliverable in goes:
+        if os.path.isfile(os.path.join(path, deliverable)):
+            os.remove(os.path.join(path, deliverable))
+
+
+def retire(work, goes):
+    """Keeps what the run wrote of the work in its evidence and removes its working copy, so the
+    evidence holds the work without a copy of the repository lingering."""
+    for deliverable in goes:
+        made = os.path.join(work, "work", deliverable)
+        if os.path.isfile(made):
+            held = os.path.join(work, "kept", deliverable)
+            os.makedirs(os.path.dirname(held), exist_ok=True)
+            shutil.copyfile(made, held)
+    git("worktree", "remove", "--force", os.path.join(work, "work"))
 
 
 def start(src, out, session, work=None, before=None, questions=(), begun=None, ways=(), rules=()):
@@ -62,6 +106,7 @@ def start(src, out, session, work=None, before=None, questions=(), begun=None, w
     before = changed() if before is None else before
     work = work or os.path.join(".turn", os.path.splitext(os.path.basename(out))[0])
     paths = [os.path.join(work, "work", d) for d in deliverables(ccs)]
+    copy_out(os.path.join(work, "work"), deliverables(ccs), begun)
     lists = [checklist(p) for p in entries(ccs, "retrieved_artifacts", "checklist")]
     listed = {
         "checklists": [c for c, _ in lists],
@@ -87,6 +132,7 @@ def start(src, out, session, work=None, before=None, questions=(), begun=None, w
         for deliverable, path in zip(deliverables(ccs), paths):
             os.makedirs(os.path.dirname(path), exist_ok=True)
             shutil.copyfile(os.path.join(begun, "work", deliverable), path)
+        retire(begun, deliverables(ccs))
     write_json(RUN, run)
     print(
         json.dumps(
@@ -149,6 +195,7 @@ def end(work):
     for deliverable, path in zip(goes, paths):
         os.makedirs(os.path.dirname(deliverable) or ".", exist_ok=True)
         shutil.copyfile(path, deliverable)
+    retire(work, goes)
     write_json(
         run["out"],
         returned(
@@ -201,5 +248,6 @@ def stop(work):
         if os.path.isfile(os.path.join(work, "first-user-brief.json"))
         else "write"
     )
+    retire(work, goes)
     write_json(run["out"], returned(ccs, predictive_cue=[{"next": f"stopped: {step}"}]))
     close(work, [f"stopped: {step} — CCS: {run['out']}"] + elsewhere(run, goes))
