@@ -456,6 +456,22 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   differs.
 - turn's design at `8b61d3d` reads badly (no figure, bold everywhere, a glossary, an opening about
   itself); it is made again once the checklists are done.
+- Seen by the user (2026-10-15): turn's README opens on "turn is a plugin for Claude Code.", a
+  sentence that gives the reader nothing; its cause is `readme.md` B-8 (what it is) and U-5 (what
+  it is before what they gain), which make "what it is" a sentence of its own. The README was
+  made before the checklists were finished, so it is made again with them, and the design after
+  it, as `plugin.md` orders; a design run started on the old README was stopped.
+- Order, decided by the user (2026-10-15), replacing the one above:
+  1. #6: finish the checklists: `readme.md` B-8 and U-5 so that what the product is comes inside
+     what the reader gains, never as its own sentence; then the findings held for `doc.md` and
+     `checklist.md` above.
+  2. #5: turn's README made again through turn with the finished checklists, agreed with the user;
+     then its design, agreed with the user; then its code (a run as one purpose with one or more
+     files; the shortfalls listed above), each unit tried as its user on the small flow trial
+     (`dev/turn/trials/flow/`), and the whole tried once on a real work; then CHANGELOG and
+     `claude plugin validate --strict`.
+  3. #4: writ the same way, README first, since its README and design were agreed before the
+     checklists were finished.
 
 ### [ ] #4: writ built and checked
 
