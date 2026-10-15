@@ -5,9 +5,8 @@ version: 0.2.0
 
 # Document
 
-A document is written for one reader who comes to it for one use. Reading it once from the top,
-that reader takes in the writer's picture of the subject and can act on it without asking the
-writer, spending no more effort than the subject itself asks.
+A document is read by someone who comes to it for a purpose. Reading it from the top, they take it
+in smoothly, meeting nothing they do not need and left with no question, and achieve that purpose.
 
 ## Benefit
 
@@ -27,7 +26,7 @@ acted on without the reader noticing.
 
 ### B-4: Every part used
 
-Does the reader use each part in the one use they came for, without skipping it or reading again
+Does the reader use each part toward the purpose they came for, without skipping it or reading again
 what they already took in?
 
 Look for: a part meant for someone other than the reader, such as a reviewer; an opening or a
@@ -69,7 +68,7 @@ tell which holds; a rule read apart from the case where it does not hold is foll
 ### B-9: The point from the opening
 
 From the opening, does the reader have the document's main point, and so know whether the document
-is the one for their use?
+is the one for their purpose?
 
 Why: a reader who stops after the opening still has what matters most, one who reads on reads each
 part knowing what it supports, and one who came to the wrong document turns away at once.
