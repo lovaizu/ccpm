@@ -3,8 +3,9 @@
 ## doc
 
 ### B-1: What it covers
-- For whoever builds or changes turn: what turn must achieve, how each quality is checked, and how
-  turn is built to achieve it, for the benefits turn's README (`../../turn/README.md`) promises.
+- For whoever builds or changes turn: what turn must achieve, how each quality is checked, and the
+  approach, the way of thinking, and who takes part with their roles and what they depend on, by
+  which turn brings about what its README (`../../turn/README.md`) promises.
 - How to use turn is in that README; the forms a caller writes and reads are on the callers' page,
   "Calling turn from a plugin's step" (`../../turn/calling-from-a-plugin.md`); prompts' wording and
   steps, and how each script and hook behaves, are left to the code.
@@ -28,6 +29,9 @@
   without a Good would get one.
 - A Good: an item the orchestrator has decided the work meets, with its grounds, the lines it rests
   on. More: an item without a Good when a run returns.
+- A form: the answer a role writes, a JSON file with one place per item, which the agents read
+  and change with jq; what the role hands back is its form. The reading: the first user's form,
+  what it took from the work for each item and where.
 - Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
 - The run's evidence: what a run keeps in the repository for the user and later runs: the work, its
   reading and decisions, each way to a Good, and the list with each checklist's name and version.
@@ -80,19 +84,19 @@
 ### B-4: Backward compatibility
 - The call: plugins call the skill `turn:up` with the arguments the callers' page gives, and name
   `turn` in their dependencies. An argument may be added only if a call without it runs as before.
-- The CCS: its parts, kinds of entry and values of `next`, as the callers' page gives them. In
-  0.2.0 the kinds change to say what each input is for: `viewpoint` becomes `checklist`; `source`
-  becomes `content` and `reference`; `receiver_opens` is added; `answer` goes into the content;
-  `difference` becomes `question` and `unmet`; a learned `rule` comes back in turn's part rather than
-  in the caller's `constraints`. A CCS of 0.1.0 is not accepted, since writ, turn's one caller, is
-  rebuilt on 0.2.0 and released with it (decided by the user, 2026-10-15). From 0.2.0 on, the kinds
-  and values are neither added to, removed nor renamed, since a caller breaks on one it does not
-  know as on one that is gone; the wording in an entry may change, since callers do not act on it.
-  A CCS an earlier version from 0.2.0 on returned is accepted, so a stopped task carries on after an
-  update.
-- The checklist form the README's Requirements gives, since users and writ write checklists in it.
-- What a returned CCS points to: the user opens it to follow each item back, so every place a
-  returned CCS points to exists; where the run's evidence is kept, and the rest of it, may change.
+- The CCS, relied on by every caller: its parts, kinds of entry and values of `next`, as the
+  callers' page gives them, are neither added to, removed nor renamed from 0.2.0 on, since a caller
+  breaks on one it does not know as on one that is gone; the wording in an entry may change, since
+  callers do not act on it. A CCS an earlier version from 0.2.0 on returned is accepted, so a
+  stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since writ, turn's one
+  caller, is released with 0.2.0 (decided by the user, 2026-10-15).
+- The checklist form the README's Requirements gives, relied on by users and writ, who write
+  checklists in it: a checklist that opens with its name and version and gives its items as
+  headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
+  long as a checklist in that form needs nothing more.
+- What a returned CCS points to, relied on by the user, who opens it to follow each item back:
+  every place a returned CCS points to exists; where the run's evidence is kept, and the rest of
+  it, may change.
 
 ### B-5: Non-goals
 - Deciding what the work should say: the caller does it, knowing what was already agreed, and gives
@@ -117,8 +121,7 @@
 - Each is judged from the records, the JSONL of every conversation and agent of the run, and tried
   apart from the others. What the work gives its receiver is tried on real work, writ's and turn's
   own documents and prompts, against the items in question, since a made-up task shows only that it
-  passes; the flow of a run is tried on the smallest task that still shows it, such as a short note
-  against a checklist of a few items.
+  passes.
 - Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
   where a writer checking their own work passes what a newcomer would miss (assumption). It passes
   when a fresh agent outside the run, reading the returned work as the same receiver with the same
@@ -197,26 +200,32 @@
   user, which takes what the receiver would; the evaluator, which gives Goods with grounds; the
   learner, which finds how to a Good; turn's scripts, on python3 and jq, for the same result every
   time; Claude Code, which runs the agents and hooks and keeps the records; and git.
+- What each cannot work without: the caller, the callers' page's form; the orchestrator, the CCS,
+  turn's scripts and Claude Code to start its agents; the generator, the inputs a script hands it
+  and a shell for tests and builds; the first user, the work and what the receiver opens with it;
+  the evaluator, the reading and its records; the learner, the work, the items without a Good, the
+  content and the references; turn's scripts, python3 3.9 or later and jq; turn's hooks, Claude
+  Code to run them and a run open in their session; git, the work being in a git repository.
 - The orchestrator is a skill, so it runs where its caller runs and can start the agents there: in a
   conversation, the user sees its console and presses Esc; in a subagent, which may start agents of
   its own, the caller reads what it returns. The cost is room in the caller's context.
 
 ### B-25: What passes between them
-- In order: the caller hands the orchestrator the CCS; a script checks it and reads the checklists
-  into the list; the console shows the user the aim before the work is written; the orchestrator
-  hands the generator the receiver, use, acceptance, list, content, references and the ways to a
-  Good when there are any; the generator hands back the work, grounds and questions; a script gives
-  coverage; the work is sent back until every item is seen met or waits on a question left open;
-  the orchestrator hands the first user the work, what the receiver opens with it, the receiver, the
-  use and the list; the first user hands back what it took and where; the evaluator is handed the
-  work, the reading, the list and the acceptance, reads the records of the reading, and hands back
-  Goods with grounds; a script gives coverage; the orchestrator decides every item on its form; the
-  learner is handed the work, the items without a Good, the content and the references, and hands
-  back ways to a Good, each with its items, and questions; a script keeps the decisions, ways,
-  questions and rules as the run's evidence and writes the new CCS; the orchestrator hands the
-  caller the new CCS, and the console shows the user where the work is and every question left open.
-- During a run, turn's hooks, run by Claude Code, keep each role to its steps and its inputs, show
-  the console, and stop what would change the user's work.
+- The caller and the orchestrator: the caller hands the CCS; the orchestrator hands back a new CCS.
+- The orchestrator and the generator: the orchestrator hands the receiver, the use, what the
+  receiver must be able to do, the list, the content, the references, and the ways to a Good when
+  there are any; the generator hands back the work, its form and its questions.
+- The orchestrator and the first user: the orchestrator hands the work, what the receiver opens with
+  it, the receiver, the use and the list; the first user hands back the reading.
+- The orchestrator and the evaluator: the orchestrator hands the work, the reading and its records,
+  the list and what the receiver must be able to do; the evaluator hands back Goods with grounds.
+- The orchestrator and the learner: the orchestrator hands the work, the items without a Good, the
+  content, the references and the records; the learner hands back ways to a Good and questions.
+- turn's scripts and the user: the console, which shows the aim, where the run is, and at the end
+  where the work is and every question left open. turn's scripts keep every form as the run's
+  evidence.
+- turn's hooks, run by Claude Code, keep each role to its steps and its inputs, show the console,
+  and stop what would change the user's work.
 
 ### B-13: An approach for each quality
 - Each approach is said as its idea, who takes part, what must always hold, and the approaches
@@ -240,8 +249,8 @@
   the orchestrator to turn's own commands; the agents' shell stays open, since tests and builds need
   it, and what they read by it shows in the records. Must hold: no role reads by Claude's file tools
   anything outside its inputs, turn's own files and the output of its own commands. Weighed: telling
-  the roles in words only; not chosen, since in trials the orchestrator read files not given, and
-  what it read shaped the work. The cost: a file the work needs, left out of the CCS, cannot be read
+  the roles in words only; not chosen, since in two trials on 2026-10-15 the orchestrator read
+  files not given, and what it read shaped the work. The cost: a file the work needs, left out of the CCS, cannot be read
   in the run; the caller names it and calls again.
 - Making it right first. Brings about: the first-run share, time and tokens, asked only what only
   the user can decide. Idea: what can be seen before the reading costs a whole run when found in it,
@@ -262,7 +271,10 @@
   as it happens, not found later in an answer that looks right. Who takes part: turn's scripts, which
   hand an agent its inputs only once the steps before it are done; turn's hooks, which hold each agent
   and the orchestrator to their steps and say which step and why when they stop one. Must hold: every
-  answer the orchestrator decides from fills every place of its form.
+  answer the orchestrator decides from fills every place of its form. Weighed: telling each role its
+  steps in words only; not chosen, since a step left out still gives an answer that looks right, as
+  when a generator named lines for an item the work left out (one flow trial, 2026-10-15). The cost:
+  a check on each call and each hand-back, and a stop the role must act on.
 - Reading in the receiver's place. Brings about: read in the receiver's place. Idea: the first user
   reads the work with only what the receiver opens with it, so it stops where the receiver would
   (assumption), and takes from the work only what it gives. Who takes part: the caller, who names
@@ -276,12 +288,13 @@
   take what the work gives (assumption). The cost: only the evaluator and the orchestrator weigh the
   reading against it.
 - Deciding every item. Brings about: nothing passes unshown, read in the receiver's place, following
-  each item back. Idea: the evaluator shows, for each item the work meets, the lines and why, judged
+  each item back, what a returned CCS points to. Idea: the evaluator shows, for each item the work meets, the lines and why, judged
   from the reading; coverage shows the lines no Good names, since every useful line meets some item
   (assumption); the orchestrator alone decides each item from the whole work, and every decision is
-  kept so each item can be followed back. Who takes part: the evaluator, turn's scripts, the
-  orchestrator. Must hold: every Good names lines the work holds and is decided by the orchestrator;
-  no run returns before every item is decided. Weighed: an agent set to look for slips; not chosen,
+  kept so each item can be followed back, from the returned CCS, which points to them. Who takes
+  part: the evaluator, turn's scripts, the orchestrator. Must hold: every Good names lines the work
+  holds and is decided by the orchestrator; no run returns before every item is decided; every
+  place a returned CCS points to exists. Weighed: an agent set to look for slips; not chosen,
   since one set to find something finds it whether it is there or not, and a script comes out the
   same every time. The cost: a slip in a line some Good names is found only by the orchestrator.
 - Making again toward a Good. Brings about: read in the receiver's place, nothing unread. Idea: a
@@ -296,18 +309,20 @@
   stops, and in every run of writ's rebuild it left ways in the work. The cost: a run takes up to
   twice as long. Weighed: a third round; not chosen, since the caller knows what was agreed and
   decides from what a second round leaves, and further rounds raised finer points the purpose did not
-  need. The cost: the caller reads what the run returns before deciding. Weighed: adding each rule
+  need (three runs on a CSV tool's README, 2026-10-14). The cost: the caller reads what the run returns before deciding. Weighed: adding each rule
   learned to the caller's `constraints`; not chosen, since rules piled up over runs and pushed into
-  the work what the caller had not asked. The cost: a rule reaches later work only when the caller
+  the work what the caller had not asked (eleven rules on writ's README, 2026-10-15). The cost: a rule reaches later work only when the caller
   takes it in.
 - The console. Brings about: seeing the work as it goes. Idea: the console serves a user who looks in
   now and then: where the run is, what the work will let its receiver do before it is written, so a
   wrong aim is stopped before a run is spent, what the work does not yet give, in plain words, and at
   the end where the work is and what the user must decide; no item IDs or counts, since the user
-  would have to learn the checklist. turn shows it itself, since what the orchestrator writes between
-  its tool calls does not reach the user on every run (seen in trials). Who takes part: the
-  orchestrator, which writes the aim; turn's scripts and hooks, which make and show the console. Must
-  hold: no work is written whose aim the console has not shown first.
+  would have to learn the checklist. Who takes part: the orchestrator, which writes the aim; turn's
+  scripts and hooks, which make and show the console. Must hold: no work is written whose aim the
+  console has not shown first. Weighed: the orchestrator telling the user where it is in its own
+  words; not chosen, since what it writes between its tool calls did not reach the user on every
+  run (seen in trials; how many was not kept). The cost: the console says only what its script
+  makes of the run's evidence.
 - The CCS. Brings about: a plugin decides from what turn returns, what the caller gave unchanged,
   stop and start over, the call, the CCS. Idea: the CCS (Compressed Cognitive State) takes the nine
   parts that ACC (Agent Cognitive Compressor, https://arxiv.org/abs/2601.11653) sets as the state the
@@ -319,8 +334,8 @@
   change made for one agent would change what callers rely on. The cost: turn's scripts write each
   agent's inputs from the CCS.
 - Leaving the user's work alone. Brings about: repository untouched, missing tools. Idea: a run
-  changes only where the work goes and its evidence, and what was where the work goes can be got back
-  from git or the evidence; what can be told before it happens is stopped then, and what cannot, a
+  changes only where the work goes and its evidence, as Repository untouched says; what can be told
+  before it happens is stopped then, and what cannot, a
   side effect of a shell command, is named to the user when the run returns; a missing tool ends the
   run before any work. Who takes part: turn's scripts and hooks, git. Must hold: during a run, the
   only changes are where the work goes and the run's evidence, or they are named to the user.
