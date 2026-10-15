@@ -68,6 +68,22 @@ class Start(unittest.TestCase):
             [i["id"] for i in self.repo.json(got["list"])["items"]], ["note B-1", "note F-1"]
         )
 
+    def test_an_item_id_without_a_hyphen_makes_an_item_too(self):
+        # Given: a verification document as rn writes it, its scenes headed by the plan's criterion
+        # IDs, which have no hyphen, with its name and version in front
+        self.repo.write(
+            "docs/verification.md",
+            "---\nname: verification\nversion: 0.1.0\n---\n\n# shop verification\n\n## Scenes\n\n"
+            "### A1: Each bug fails the build\n\n- A scene.\n\n## Machine checks\n\n| a | A1 |\n",
+        )
+        # When: a run starts on it as a checklist
+        got = started(self.repo, ccs(retrieved_artifacts=[{"checklist": "docs/verification.md"}]))
+        # Then: each scene is an item, named by the checklist's name and the scene's ID
+        self.assertEqual(
+            [(i["id"], i["title"]) for i in self.repo.json(got["list"])["items"]],
+            [("verification A1", "Each bug fails the build")],
+        )
+
     def test_a_folder_may_be_a_reference_or_what_the_receiver_opens(self):
         # Given: a task naming a folder as a reference and one as what the receiver opens
         self.repo.write("src/tidy.py", "print(1)\n")

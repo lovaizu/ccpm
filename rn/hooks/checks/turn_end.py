@@ -14,7 +14,8 @@ def check(data, top, sdir):
     if not stop and not asking and not data.get("stop_hook_active"):
         return [
             (
-                "nothing here is for the user to decide: go on with the next move. End the turn "
+                "at the end of the turn: nothing here is for the user to decide, so go on with the "
+                "next move, since a turn that ends leaves the user watching the work. End the turn "
                 "only at a sign-off or with a question, or again if you were answering the user's "
                 "own words"
             )

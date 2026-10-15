@@ -1,10 +1,9 @@
-"""rn's PreToolUse hook: checks 9 to 12, the conductor's commit and push kept apart,
-and checks 1 to 3 before the first user is called."""
+"""rn's PreToolUse hook: checks 9 and 12, and the conductor's commit and push kept apart."""
 
 import os
 import unittest
 
-from harness import SDIR, STEERING, Session, sh
+from harness import Session, sh
 
 
 class PreToolUse(Session):
@@ -18,9 +17,10 @@ class PreToolUse(Session):
             # Given the conductor about to commit and push in one command
             # When the command is checked
             code, out = self.r.hook("pretooluse", tool_name="Bash", tool_input={"command": cmd})
-            # Then it is stopped, asking for separate commands
+            # Then it is stopped, saying when and why to keep them apart
             self.assertEqual(code, 2, cmd)
             self.assertIn("separate commands", out)
+            self.assertIn("before it is pushed", out)
 
     def test_conductor_committing_or_pushing_alone_passes(self):
         for cmd in (
@@ -39,17 +39,18 @@ class PreToolUse(Session):
 
     # Check 12
     def test_conductor_starting_an_agent_in_the_background_is_stopped(self):
-        # Given the conductor about to start the generator in the background
-        inp = {"subagent_type": "rn:generator", "prompt": "x", "run_in_background": True}
+        # Given the conductor about to start an agent in the background
+        inp = {"subagent_type": "general-purpose", "prompt": "x", "run_in_background": True}
         # When the start is checked
         code, out = self.r.hook("pretooluse", tool_name="Agent", tool_input=inp)
-        # Then it is stopped, asking for the foreground
+        # Then it is stopped, asking for the foreground and saying why
         self.assertEqual(code, 2)
         self.assertIn("foreground", out)
+        self.assertIn("turn that has already ended", out)
 
     def test_conductor_starting_an_agent_in_the_foreground_passes(self):
-        # Given the conductor about to start the generator in the foreground
-        inp = {"subagent_type": "rn:generator", "prompt": "x", "run_in_background": False}
+        # Given the conductor about to start an agent in the foreground, as turn's orchestrator does
+        inp = {"subagent_type": "turn:generator", "prompt": "x", "run_in_background": False}
         # When the start is checked
         code, _ = self.r.hook("pretooluse", tool_name="Agent", tool_input=inp)
         # Then it passes
@@ -67,17 +68,18 @@ class PreToolUse(Session):
 
     # Check 9
     def test_subagent_committing_is_stopped(self):
-        for agent in ("rn:generator", "rn:first-user", "general-purpose"):
+        for agent in ("turn:generator", "turn:first-user", "general-purpose"):
             # Given a subagent
             # When it is about to commit
-            code, _ = self.r.hook(
+            code, out = self.r.hook(
                 "pretooluse",
                 agent_type=agent,
                 tool_name="Bash",
                 tool_input={"command": "git commit -m x"},
             )
-            # Then it is stopped
+            # Then it is stopped, saying why only the conductor commits
             self.assertEqual(code, 2, agent)
+            self.assertIn("records a decision", out)
 
     def test_subagent_committing_behind_a_prefix_an_option_or_unusual_quoting_is_stopped(self):
         for cmd in (
@@ -90,7 +92,7 @@ class PreToolUse(Session):
             # When it is about to commit by a command that does more than name git
             code, _ = self.r.hook(
                 "pretooluse",
-                agent_type="rn:generator",
+                agent_type="turn:generator",
                 tool_name="Bash",
                 tool_input={"command": cmd},
             )
@@ -106,12 +108,11 @@ class PreToolUse(Session):
         # Then it passes
         self.assertEqual(code, 0)
 
-    # Checks 9 and 11
     def test_agent_git_outside_the_sessions_repository_passes(self):
         # Given a clone of the session's repository for an agent to try the work in
         clone = os.path.join(self.r.tmp.name, "try")
         sh(self.r.tmp.name, "git", "clone", "-q", self.r.dir, clone)
-        for agent in ("rn:generator", "rn:first-user"):
+        for agent in ("turn:generator", "turn:first-user"):
             for cmd in (
                 f"cd {clone} && git commit -qam try",
                 f"(cd {clone} && git commit -qam try)",
@@ -134,7 +135,7 @@ class PreToolUse(Session):
         # Given a clone of the session's repository for an agent to try the work in
         clone = os.path.join(self.r.tmp.name, "try")
         sh(self.r.tmp.name, "git", "clone", "-q", self.r.dir, clone)
-        for agent in ("rn:generator", "rn:first-user"):
+        for agent in ("turn:generator", "turn:first-user"):
             for cmd in (
                 f"cd {clone} && git log; cd {self.r.dir} && git commit -m x",
                 f"(cd {clone} && git log) && git commit -m x",
@@ -150,95 +151,6 @@ class PreToolUse(Session):
                 )
                 # Then it is stopped
                 self.assertEqual(code, 2, (agent, cmd))
-
-    # Check 10
-    def test_first_user_writing_outside_open_is_stopped(self):
-        # Given a first user that has written nothing
-        # When it is about to write a source file
-        code, _ = self.first_user_write(os.path.join(self.r.dir, "src.ts"))
-        # Then it is stopped
-        self.assertEqual(code, 2)
-
-    def test_first_user_writing_its_new_report_passes(self):
-        # Given a first user that has written nothing
-        # When it is about to write a new report in open/
-        code, _ = self.first_user_write(os.path.join(self.r.dir, SDIR, "open/03-report-task-3.md"))
-        # Then it passes
-        self.assertEqual(code, 0)
-
-    def test_first_user_writing_its_report_again_passes(self):
-        # Given a first user that has written its report
-        mine = os.path.join(self.r.dir, SDIR, "open/03-report-task-3.md")
-        self.first_user_write(mine)
-        # When it is about to write that report again
-        code, _ = self.first_user_write(mine)
-        # Then it passes
-        self.assertEqual(code, 0)
-
-    def test_first_user_writing_another_report_is_stopped(self):
-        # Given a first user that has written its report
-        self.first_user_write(os.path.join(self.r.dir, SDIR, "open/03-report-task-3.md"))
-        # When it is about to write another report
-        code, _ = self.first_user_write(os.path.join(self.r.dir, SDIR, "open/04-report-task-4.md"))
-        # Then it is stopped
-        self.assertEqual(code, 2)
-
-    # Check 11
-    def test_first_user_reading_notes_is_blocked(self):
-        # Given a first user
-        # When it is about to read the generator's notes
-        notes = os.path.join(self.r.dir, SDIR, "open/01-notes-task-3.md")
-        code, _ = self.first_user_pre("Read", {"file_path": notes})
-        # Then it is stopped
-        self.assertEqual(code, 2)
-
-    def test_first_user_reading_git_history_is_blocked(self):
-        # Given a first user
-        # When it is about to read the git log
-        code, _ = self.first_user_pre("Bash", {"command": "git log -3"})
-        # Then it is stopped
-        self.assertEqual(code, 2)
-
-    def test_first_user_reading_a_question_or_proposal_passes(self):
-        for name in ("01-notes-question.md", "03-notes-proposal.md"):
-            # Given a first user
-            # When it is about to read the question or proposal it is given
-            given = os.path.join(self.r.dir, SDIR, "open", name)
-            code, _ = self.first_user_pre("Read", {"file_path": given})
-            # Then it passes
-            self.assertEqual(code, 0, name)
-
-    def test_first_user_reading_the_readme_passes(self):
-        # Given a first user
-        # When it is about to read the README
-        code, _ = self.first_user_pre("Read", {"file_path": os.path.join(self.r.dir, "README.md")})
-        # Then it passes
-        self.assertEqual(code, 0)
-
-    # Checks 1 to 3 before the first user is called
-    def test_calling_the_first_user_while_the_record_is_out_of_form_is_stopped(self):
-        # Given a task heading without its box and name
-        self.r.write(f"{SDIR}/steering.md", STEERING.replace("### [ ] #2:", "### #2"))
-        # When the conductor is about to call the first user
-        code, out = self.r.hook(
-            "pretooluse",
-            tool_name="Agent",
-            tool_input={"subagent_type": "rn:first-user", "prompt": "x"},
-        )
-        # Then it is stopped, naming the task heading
-        self.assertEqual(code, 2)
-        self.assertIn("task heading", out)
-
-    def test_calling_the_first_user_with_the_record_in_form_passes(self):
-        # Given the steering.md the session started with
-        # When the conductor is about to call the first user
-        code, _ = self.r.hook(
-            "pretooluse",
-            tool_name="Agent",
-            tool_input={"subagent_type": "rn:first-user", "prompt": "x"},
-        )
-        # Then it passes
-        self.assertEqual(code, 0)
 
     # No session: nothing is checked.
     def test_tool_call_outside_any_git_repository_passes(self):

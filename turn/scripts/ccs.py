@@ -110,7 +110,7 @@ def checklist(path):
         for line in lines[lines.index("---\n", 1) + 1 :]:
             if line.startswith("```"):
                 fence = not fence
-            heading = None if fence else re.match(r"(#{1,3}) (?:([A-Z]-\d+): )?(.+)", line)
+            heading = None if fence else re.match(r"(#{1,3}) (?:([A-Z]-?\d+): )?(.+)", line)
             if heading:
                 seen = seen or heading.group(1) == "##"
                 item = None

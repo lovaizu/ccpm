@@ -20,8 +20,8 @@ class Checklists(unittest.TestCase):
     def tearDown(self):
         self.repo.close()
 
-    def test_a_kind_writ_has_a_checklist_for_gets_it_with_the_ones_its_opening_says_apply(self):
-        # Given: a kind writ keeps a checklist for, whose opening says the one for every document
+    def test_a_kind_rn_has_a_checklist_for_gets_it_with_the_ones_its_opening_says_apply(self):
+        # Given: a kind rn keeps a checklist for, whose opening says the one for every document
         # applies
         # When: the checklists for the kind are asked for
         got = found(self.repo, "readme")
@@ -33,6 +33,16 @@ class Checklists(unittest.TestCase):
         self.assertEqual(got[0][0], os.path.join(CHECKLISTS, "doc.md"))
         self.assertTrue(all(v for _, _, v in got))
 
+    def test_each_kind_rn_keeps_is_found_by_its_name(self):
+        for kind in ("plan", "proposal", "verification", "design", "prompt", "code", "checklist"):
+            with self.subTest(kind):
+                # Given: a kind of work rn keeps a checklist for
+                # When: the checklists for the kind are asked for
+                got = found(self.repo, kind)
+                # Then: the kind's own is among them, named as the kind
+                self.assertIn(kind, [n for _, n, _ in got])
+                self.assertEqual(got[-1][0], os.path.join(CHECKLISTS, f"{kind}.md"))
+
     def test_a_kind_whose_checklist_names_no_other_gets_it_alone(self):
         # Given: the kind code, whose checklist's opening names no other checklist
         # When: the checklists for the kind are asked for
@@ -42,7 +52,7 @@ class Checklists(unittest.TestCase):
 
     def test_a_checklist_the_user_made_is_found_for_its_kind(self):
         # Given: a checklist the user made for release notes, whose opening says doc applies
-        self.repo.write(".writ/checklists/release-notes.md", NOTES)
+        self.repo.write(".rn/checklists/release-notes.md", NOTES)
         # When: the checklists for the kind are asked for
         got = found(self.repo, "release-notes")
         # Then: the one for every document and the user's are found
@@ -50,10 +60,10 @@ class Checklists(unittest.TestCase):
             [(os.path.basename(p), n, v) for p, n, v in got],
             [("doc.md", "doc", got[0][2]), ("release-notes.md", "release-notes", "1.0.0")],
         )
-        self.assertEqual(got[1][0], os.path.join(".writ", "checklists", "release-notes.md"))
+        self.assertEqual(got[1][0], os.path.join(".rn", "checklists", "release-notes.md"))
 
     def test_a_kind_with_no_checklist_gets_none(self):
-        # Given: a kind neither writ nor the user has a checklist for
+        # Given: a kind neither rn nor the user has a checklist for
         # When: the checklists for the kind are asked for
         got = found(self.repo, "release-notes")
         # Then: none are found, and the command does not fail
@@ -75,19 +85,19 @@ class Checklists(unittest.TestCase):
         for name, text in cases:
             with self.subTest(name):
                 # Given: a checklist the user made that opens so
-                self.repo.write(".writ/checklists/release-notes.md", text)
+                self.repo.write(".rn/checklists/release-notes.md", text)
                 # When: the checklists for the kind are asked for
                 code, out = run(self.repo, "checklists", "release-notes")
                 # Then: it is stopped, naming the file and what it must open with
                 self.assertEqual(code, 1)
                 self.assertIn(
-                    ".writ/checklists/release-notes.md: open the checklist with front matter "
+                    ".rn/checklists/release-notes.md: open the checklist with front matter "
                     "giving its name and version",
                     out,
                 )
 
     def test_an_unknown_command_says_how_to_call(self):
-        # Given: a call with no command writ knows
+        # Given: a call with no command rn knows
         # When: it is run
         code, out = run(self.repo, "fly")
         # Then: it ends with how to call it

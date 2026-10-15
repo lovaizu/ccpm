@@ -10,5 +10,10 @@ DECISION = re.compile(r"^● .+ ── .+ → .+$")
 
 def check(msg):
     if not DECISION.match(last_line(msg)):
-        return ["commit message: the last line is not a decision line `● … ── … → …`"]
+        return [
+            (
+                "on a commit: the message's last line is not a decision line `● … ── … → …`, "
+                "so a later conversation cannot read what was decided and what comes next"
+            )
+        ]
     return []

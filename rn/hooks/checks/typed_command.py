@@ -75,8 +75,8 @@ def check(top, rel_sdir, msg, store, session_id):
     if need and not take_note(store, session_id, need, parent):
         return [
             (
-                f"this commit records what only the user's /rn:{need} may; "
-                "undo it with git reset --soft HEAD~1"
+                f"on a commit: it records what only the user's /rn:{need} may, since a sign-off, "
+                "feedback or a pause is theirs; undo it with git reset --soft HEAD~1"
             )
         ]
     return []

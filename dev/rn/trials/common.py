@@ -1,7 +1,8 @@
 """What every trial shares: the practice repository, a turn of rn, the stand-in, and the record.
 
-A trial runs rn as its user would, through `claude -p`, and writes the conversation to
-`<out>/transcript.md` for the first user to read with the clone it ran in.
+A trial runs rn as its user would, through `claude -p`, with the rn and turn of this working tree
+copied as they are when the trial starts, so a change made while it runs does not reach it halfway,
+and writes the conversation to `<out>/transcript.md` for the reader to read with the clone it ran in.
 """
 
 import argparse
@@ -14,15 +15,14 @@ import subprocess
 import sys
 import time
 
-RN = os.path.abspath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn")
-)
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+PLUGINS = ("rn", "turn")
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 REPO = "lovaizu/rn-try"
 MAX_TURNS = 60
 
 ACCOUNT_PART = """You are the user of a small shop backend, talking with a tool called rn in Japanese.
-You started with: /rn:on move src/account to TypeScript
+You started with: /rn:up move src/account to TypeScript
 - Why you want this, said only when asked why: users who signed up with only an email see
   "undefined undefined" as their name, and support keeps getting tickets about it.
 - What you know, said only when asked: in a user record, nickname, firstName, and lastName can each
@@ -61,17 +61,19 @@ class Stop(Exception):
 class Trial:
     def __init__(self, description):
         ap = argparse.ArgumentParser(description=description)
-        ap.add_argument("--writ", required=True, help="the writ plugin directory")
         ap.add_argument("--out", required=True, help="a new directory for the clone and record")
         a = ap.parse_args()
         if os.path.exists(a.out):
             sys.exit(f"{a.out} exists; give a new directory")
         os.makedirs(a.out)
         self.out = os.path.abspath(a.out)
-        self.writ = os.path.abspath(a.writ)
         self.work = os.path.join(self.out, "work")
         self.record = os.path.join(self.out, "transcript.md")
-        self.dirs = ["--plugin-dir", RN, "--plugin-dir", self.writ]
+        self.dirs = []
+        for name in PLUGINS:
+            plugin = os.path.join(self.out, name)
+            shutil.copytree(os.path.join(ROOT, name), plugin)
+            self.dirs += ["--plugin-dir", plugin]
         clone(self.work)
 
     def log(self, who, text):

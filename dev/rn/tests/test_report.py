@@ -1,6 +1,6 @@
 import unittest
 
-from helpers import Repo, run
+from helpers import SESSION, Repo, run
 
 LIST = {
     "checklists": [
@@ -25,7 +25,7 @@ BACK = {
     "goal_orientation": [{"use": "to decide"}, {"acceptance": "they can start"}],
     "retrieved_artifacts": [
         {"checklist": "x/doc.md"},
-        {"content": ".writ/content/README.content.md"},
+        {"content": f"{SESSION}/content/README.content.md"},
     ],
     "constraints": [],
     "predictive_cue": [{"next": "ask the user"}],
@@ -72,7 +72,7 @@ readme 0.2.0
   ✅ B-1 What they gain: 1-2
 
 The document: README.md
-What it says, item by item: .writ/content/README.content.md
+What it says, item by item: .rn/20261003-typescript/content/README.content.md
 """
 
 
@@ -81,8 +81,8 @@ class Report(unittest.TestCase):
         self.repo = Repo()
         self.repo.write(".turn/README-1/list.json", LIST)
         self.repo.write(".turn/README-1/orchestrator.json", DECIDED)
-        self.repo.write(".writ/tasks/README-1.back.json", BACK)
-        self.repo.write(".writ/tasks/README-1.judged.json", JUDGED)
+        self.repo.write(f"{SESSION}/tasks/README-1.back.json", BACK)
+        self.repo.write(f"{SESSION}/tasks/README-1.judged.json", JUDGED)
 
     def tearDown(self):
         self.repo.close()
@@ -91,13 +91,13 @@ class Report(unittest.TestCase):
         return run(
             self.repo,
             "report",
-            ".writ/tasks/README-1.back.json",
-            ".writ/tasks/README-1.judged.json",
+            f"{SESSION}/tasks/README-1.back.json",
+            f"{SESSION}/tasks/README-1.judged.json",
         )
 
     def test_the_report_puts_first_what_the_caller_decides_then_each_item_as_turn_decided_it(self):
         # Given: turn's evidence with two items met and one not, its CCS back with a question, that
-        # item and a rule, and writ's judgment on each and on a point it settled and a line it changed
+        # item and a rule, and rn's judgment on each and on a point it settled and a line it changed
         # When: the report is made
         code, out = self.report()
         # Then: it puts first the point, the question, the item, the rule and the change, each with
@@ -115,10 +115,10 @@ class Report(unittest.TestCase):
             },
         )
         self.repo.write(
-            ".writ/tasks/README-1.back.json",
+            f"{SESSION}/tasks/README-1.back.json",
             dict(BACK, predictive_cue=[{"next": "done"}], semantic_gist=[]),
         )
-        self.repo.write(".writ/tasks/README-1.judged.json", {})
+        self.repo.write(f"{SESSION}/tasks/README-1.judged.json", {})
         # When: the report is made
         code, out = self.report()
         # Then: the first part says nothing was decided for the caller
@@ -135,8 +135,8 @@ class Report(unittest.TestCase):
         ]
         for judged, said in cases:
             with self.subTest(said):
-                # Given: writ's judgments missing one thing turn returned
-                self.repo.write(".writ/tasks/README-1.judged.json", judged)
+                # Given: rn's judgments missing one thing turn returned
+                self.repo.write(f"{SESSION}/tasks/README-1.judged.json", judged)
                 # When: the report is made
                 code, out = self.report()
                 # Then: it is stopped, naming what to judge, so nothing turn returned is dropped
@@ -151,24 +151,24 @@ class Report(unittest.TestCase):
         )
         # When: the report is made
         code, out = self.report()
-        # Then: that item is shown not met, whatever writ wrote
+        # Then: that item is shown not met, whatever rn wrote
         self.assertEqual(code, 0)
         self.assertIn("  ⬜ B-2 The picture as meant\n", out)
         self.assertNotIn("✅ B-2", out)
 
     def test_a_judgments_file_that_is_not_json_is_stopped(self):
-        # Given: writ's judgments written as something other than JSON
-        self.repo.write(".writ/tasks/README-1.judged.json", "{")
+        # Given: rn's judgments written as something other than JSON
+        self.repo.write(f"{SESSION}/tasks/README-1.judged.json", "{")
         # When: the report is made
         code, out = self.report()
         # Then: it is stopped, naming the file
         self.assertEqual(code, 1)
-        self.assertIn(".writ/tasks/README-1.judged.json is not JSON", out)
+        self.assertIn(".rn/20261003-typescript/tasks/README-1.judged.json is not JSON", out)
 
     def test_a_report_on_a_ccs_that_names_no_evidence_is_stopped(self):
         # Given: a CCS back with no evidence, as turn writes when it was stopped
         self.repo.write(
-            ".writ/tasks/README-1.back.json",
+            f"{SESSION}/tasks/README-1.back.json",
             dict(BACK, predictive_cue=[{"next": "stopped: write"}], episodic_trace=[]),
         )
         # When: the report is made

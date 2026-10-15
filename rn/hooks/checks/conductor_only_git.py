@@ -5,5 +5,10 @@ from shell import on_repo
 
 def check(agent, runs, top):
     if agent and on_repo(runs, ("commit", "push"), top):
-        return [f"only the conductor uses git; {agent} may not commit or push"]
+        return [
+            (
+                "only the conductor uses git, so every commit records a decision someone made; "
+                f"{agent} may not commit or push"
+            )
+        ]
     return []

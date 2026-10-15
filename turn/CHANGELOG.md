@@ -4,6 +4,7 @@
 
 ### Added
 
+- A checklist's item IDs may be `A1` as well as `A-1` — a verification document whose scenes are `### A1:` headings is read as a checklist, so a product is used against the same document its user approved.
 - A work can be several files that serve one purpose, such as code and its tests, each named as a `deliverable` — turn writes, reads and checks them together, so what the receiver needs only from them together is checked as one.
 
 ### Changed

@@ -9,15 +9,17 @@ def check(data):
     if tool == "Agent" and (data.get("tool_input") or {}).get("run_in_background"):
         return [
             (
-                "start the agent in the foreground and wait for what it returns; your turn ends "
-                "only when you stop for the user or ask them a question"
+                "start the agent in the foreground and wait for what it returns, since an agent "
+                "left running reports to a turn that has already ended; your turn ends only when "
+                "you stop for the user or ask them a question"
             )
         ]
     if tool == "SendMessage":
         return [
             (
-                "an agent continued by message runs in the background; start a fresh agent in the "
-                "foreground with the paths of what the last one left, and wait for what it returns"
+                "an agent continued by message runs in the background and reports to a turn that "
+                "has already ended; start a fresh agent in the foreground with the paths of what "
+                "the last one left, and wait for what it returns"
             )
         ]
     return []

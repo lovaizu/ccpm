@@ -1,5 +1,5 @@
-"""The content file's place, and the task writ hands turn, written in the form turn's callers' page
-gives, so it is the same on every call."""
+"""The content file's place in a session, and the task rn hands turn, written in the form turn's
+callers' page gives, so it is the same on every call."""
 
 import argparse
 import json
@@ -7,12 +7,10 @@ import os
 
 from checklists import Stop
 
-CONTENT = os.path.join(".writ", "content")
-TASKS = os.path.join(".writ", "tasks")
 USAGE = (
-    "usage: up.py task --deliverable <path> [<path> ...] --receiver <who> [--use <what for>] "
-    "--acceptance <what they can do> --checklist <path> [<path> ...] --content <path> "
-    "[--reference <path> ...] [--opens <path> ...] [--language <language>]"
+    "usage: up.py task <session folder> --deliverable <path> [<path> ...] --receiver <who> "
+    "[--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...] "
+    "--content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]"
 )
 
 
@@ -22,15 +20,16 @@ def inside(path):
     return os.path.normpath(path)
 
 
-def content(document):
-    """Prints where the content file of the document goes: by its folder and name, so it is found
-    from the document's path and not taken for the document."""
+def content(session, document):
+    """Prints where the content file of the document goes in the session: by the document's folder
+    and name, so it is found from the document's path and not taken for the document."""
     stem = os.path.splitext(inside(document))[0]
-    print(os.path.join(CONTENT, f"{stem}.content.md"))
+    print(os.path.join(session, "content", f"{stem}.content.md"))
 
 
-def task(*args):
-    """Writes the task as a CCS, and prints the two lines turn is called with."""
+def task(session, *args):
+    """Writes the task as a CCS in the session's tasks/, and prints the two lines turn is called
+    with."""
     parser = argparse.ArgumentParser(usage=USAGE[len("usage: ") :], add_help=False)
     for name, nargs in (
         ("deliverable", "+"),
@@ -57,11 +56,12 @@ def task(*args):
     ]
     if gone:
         raise Stop("\n".join(gone))
+    tasks = os.path.join(session, "tasks")
     stem = os.path.splitext(os.path.basename(got.deliverable[0]))[0]
     n = 1
-    while os.path.exists(os.path.join(TASKS, f"{stem}-{n}.json")):
+    while os.path.exists(os.path.join(tasks, f"{stem}-{n}.json")):
         n += 1
-    given, back = (os.path.join(TASKS, f"{stem}-{n}{e}.json") for e in ("", ".back"))
+    given, back = (os.path.join(tasks, f"{stem}-{n}{e}.json") for e in ("", ".back"))
     ccs = {
         "focal_entities": [{"deliverable": inside(d)} for d in got.deliverable]
         + [{"receiver": got.receiver}],
@@ -78,7 +78,7 @@ def task(*args):
         "relational_map": [],
         "episodic_trace": [],
     }
-    os.makedirs(TASKS, exist_ok=True)
+    os.makedirs(tasks, exist_ok=True)
     with open(given, "w") as f:
         json.dump(ccs, f, indent=1, ensure_ascii=False)
         f.write("\n")

@@ -1,6 +1,6 @@
-"""What writ:up needs to come out the same on every call: the checklists for a kind, the content
-file's place, the task turn is handed, and the report. Each command is in the file of what it is
-about."""
+"""What the conductor needs to come out the same on every call: the checklists for a kind, the
+content file's place, the task turn is handed, and the report. Each command is in the file of what
+it is about."""
 
 import os
 import sys
@@ -12,16 +12,16 @@ from report import report
 from task import content, task
 
 USAGE = """usage: up.py checklists <kind>
-       up.py content <document>
-       up.py task --deliverable <path> [<path> ...] --receiver <who> [--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...] --content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]
+       up.py content <session folder> <document>
+       up.py task <session folder> --deliverable <path> [<path> ...] --receiver <who> [--use <what for>] --acceptance <what they can do> --checklist <path> [<path> ...] --content <path> [--reference <path> ...] [--opens <path> ...] [--language <language>]
        up.py report <CCS turn wrote back> <judgments>"""
 
-COMMANDS = {"checklists": (checklists, 1), "content": (content, 1), "report": (report, 2)}
+COMMANDS = {"checklists": (checklists, 1), "content": (content, 2), "report": (report, 2)}
 
 
 def main(argv):
     try:
-        if argv[:1] == ["task"]:
+        if argv[:1] == ["task"] and len(argv) >= 2:
             task(*argv[1:])
             return 0
         command, count = COMMANDS.get(argv[0] if argv else "", (None, -1))

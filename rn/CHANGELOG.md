@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 A version goes up by what changes for you: the middle number for anything you would notice, the
 last for fixes that change nothing you do.
 
+## [Unreleased]
+
+### Added
+
+- Every piece of work, the plan, the design documents, each task's result and each proposal, is made by turn and read or used by an AI that did not make it, as the person it is for would, and checked item by item against a checklist — nothing reaches you that was not read in its receiver's place, and what fell short was made again or settled before you see it.
+- The proposal at each sign-off puts first what rn decided for you, each with its ground, and lists each item of the work's checklist met with the lines that give it — you see what is yours to overturn before anything else, and open the work only where you doubt it.
+- The checklists live in rn, with three new ones: the plan, a proposal and a verification document — one measure for everything a session makes, and your own checklist at `.rn/checklists/<kind>.md` is used for its kind.
+
+### Changed
+
+- `/rn:on` is folded into `/rn:up`: `/rn:up <what you want>` starts a session on a branch that has none, and `/rn:up` takes up the one on the branch — one command, whether you start or come back.
+- rn needs turn, which installing rn installs, and no longer needs writ — the writing, reading and checking are turn's, done one way for every piece of work.
+- turn's evidence under `.turn/` is left uncommitted — the report in the pull request's history holds what the record needs, and you delete `.turn/` when you no longer need to follow an item back.
+
 ## [0.9.0] - 2026-10-06
 
 0.9.0 rebuilds how a session runs, from your first words to the last sign-off.

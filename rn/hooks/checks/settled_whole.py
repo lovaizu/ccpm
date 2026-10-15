@@ -31,7 +31,10 @@ def check(top, rel_sdir, msg):
         name = os.path.basename(path)
         body = git("show", "HEAD~1:" + path, cwd=top)
         if norm(body) not in flat:
-            problems.append(f"commit message: {name} left open/ but is not whole in the message")
+            problems.append(
+                f"on a commit: {name} left open/ but is not whole in the message, so the record "
+                "would lose what was found and what became of it"
+            )
         elif "-report-question" in name and name + ":" in lines:
             for line in lines[lines.index(name + ":") + 1 :]:
                 if ITEM.match(line) or line.startswith("● "):

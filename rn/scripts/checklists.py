@@ -1,12 +1,12 @@
-"""The checklists a kind of document is made and judged by: writ's for the kind, the user's for it,
-and each one their openings say applies with them."""
+"""The checklists a kind of work is made and judged by: rn's for the kind, the user's for it, and
+each one their openings say applies with them."""
 
 import json
 import os
 import re
 
-WRIT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "checklists")
-USER = os.path.join(".writ", "checklists")
+OWN = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "checklists")
+USER = os.path.join(".rn", "checklists")
 KIND = re.compile(r"^[a-z]+(-[a-z]+)*$")
 
 
@@ -25,14 +25,14 @@ def front(path):
 
 
 def applies(path):
-    """The names of writ's checklists the opening, the text before the first section, says apply."""
+    """The names of rn's checklists the opening, the text before the first section, says apply."""
     with open(path) as f:
         opening = f.read().partition("\n## ")[0]
-    return [n for n in re.findall(r"`([a-z-]+)\.md`", opening) if os.path.isfile(writs(n))]
+    return [n for n in re.findall(r"`([a-z-]+)\.md`", opening) if os.path.isfile(own(n))]
 
 
-def writs(name):
-    return os.path.join(WRIT, f"{name}.md")
+def own(name):
+    return os.path.join(OWN, f"{name}.md")
 
 
 def named(path):
@@ -46,6 +46,6 @@ def checklists(kind):
     """Prints, as JSON, the checklists for the kind, those that apply with them first."""
     if not KIND.match(kind):
         raise Stop(f"{kind}: a kind is a word or words joined by hyphens, such as release-notes")
-    own = [p for p in (writs(kind), os.path.join(USER, f"{kind}.md")) if os.path.isfile(p)]
-    found = [writs(n) for p in own for n in applies(p)]
-    print(json.dumps([named(p) for p in dict.fromkeys(found + own)], indent=1))
+    mine = [p for p in (own(kind), os.path.join(USER, f"{kind}.md")) if os.path.isfile(p)]
+    found = [own(n) for p in mine for n in applies(p)]
+    print(json.dumps([named(p) for p in dict.fromkeys(found + mine)], indent=1))

@@ -15,5 +15,6 @@ def check(sdir):
             problems.append(
                 f"open/{name}: not named {{NN}}-{{kind}}-{{about}}.md with kind "
                 + " | ".join(KINDS)
+                + ", which the checks find each item by"
             )
     return problems

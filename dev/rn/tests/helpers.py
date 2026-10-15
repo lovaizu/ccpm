@@ -1,3 +1,5 @@
+"""A user's repository, and a way to run rn's scripts in it, as the conductor does."""
+
 import contextlib
 import io
 import json
@@ -6,11 +8,13 @@ import sys
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-CHECKLISTS = os.path.join(ROOT, "writ", "checklists")
-SCRIPTS = os.path.join(ROOT, "writ", "scripts")
+CHECKLISTS = os.path.join(ROOT, "rn", "checklists")
+SCRIPTS = os.path.join(ROOT, "rn", "scripts")
 sys.path.insert(0, SCRIPTS)
 
 import up
+
+SESSION = ".rn/20261003-typescript"
 
 NOTES = """---
 name: release-notes

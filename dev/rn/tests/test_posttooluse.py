@@ -7,8 +7,9 @@ import unittest
 from harness import (
     FEEDBACK,
     FINISHED,
+    FRONT,
     PAUSE,
-    PROPOSAL,
+    PROPOSAL_BODY,
     PROPOSE,
     REPORT,
     SDIR,
@@ -187,6 +188,25 @@ class PostToolUse(Session):
             self.assertEqual(code, 2, heading)
             self.assertIn(f"`{heading}` is missing", out)
 
+    def test_verification_without_its_name_and_version_in_front_is_stopped(self):
+        # Given a verification document that does not open with its name and version
+        self.r.write("docs/verification.md", VERIFICATION.replace(FRONT, ""))
+        # When it is written
+        code, out = self.post_write("docs/verification.md")
+        # Then it is stopped, saying what turn needs in front and why
+        self.assertEqual(code, 2)
+        self.assertIn("name: verification", out)
+        self.assertIn("uses the deliverable against it", out)
+
+    def test_verification_of_a_session_recorded_by_0_9_0_passes_without_front_matter(self):
+        # Given a session recorded by rn 0.9.0, whose verification document has no front matter
+        self.r.write(f"{SDIR}/steering.md", STEERING.replace("rn: 0.10.0", "rn: 0.9.0"))
+        self.r.write("docs/verification.md", VERIFICATION.replace(FRONT, ""))
+        # When it is written
+        code, out = self.post_write("docs/verification.md")
+        # Then it passes, since a 0.9.0 record is taken up as it stands
+        self.assertEqual(code, 0, out)
+
     def test_must_be_criterion_named_in_no_scene_or_check_is_stopped(self):
         # Given a verification document that names M1 nowhere
         self.r.write("docs/verification.md", VERIFICATION.replace(", and M1 holds", ""))
@@ -224,9 +244,10 @@ class PostToolUse(Session):
         self.r.commit("rn: a")
         # When the commit is checked
         code, out = self.r.after_commit()
-        # Then it is stopped, asking for the decision line
+        # Then it is stopped, asking for the decision line and saying why
         self.assertEqual(code, 2)
         self.assertIn("decision line", out)
+        self.assertIn("later conversation", out)
 
     # Check 5
     def test_settled_report_quoted_whole_in_the_commit_passes(self):
@@ -358,34 +379,38 @@ class PostToolUse(Session):
         # Then it passes
         self.assertEqual(code, 0)
 
-    def test_proposal_point_naming_no_criterion_is_stopped(self):
-        # Given a proposal whose More point names no criterion
+    def test_proposal_not_saying_how_close_the_work_is_to_a_criterion_is_stopped(self):
+        # Given a proposal whose "Toward what you would choose it for" lines leave out A1
         self.r.write("a.txt", "a\n")
-        self.r.commit(PROPOSAL)
+        self.r.commit(PROPOSE.replace("- A1: each bug is named", "- A2: each bug is named"))
         # When the commit is checked
         code, out = self.r.after_commit()
-        # Then it is stopped, quoting that point
+        # Then it is stopped, naming A1 and why the user needs it
         self.assertEqual(code, 2)
-        self.assertIn("More: the key", out)
+        self.assertIn("Toward what you would choose it for", out)
+        self.assertIn("A1", out)
+        self.assertIn("decides when it is close enough", out)
 
-    def test_proposal_whose_every_point_names_a_criterion_passes(self):
-        # Given the proposal amended so its More point names M1
+    def test_proposal_missing_one_of_its_parts_is_stopped(self):
+        for part in ("Goal:", "Judged by:", "Decided for you", "── typescript"):
+            # Given a proposal without that part
+            self.r.write("a.txt", part + "\n")
+            self.r.commit(PROPOSE.replace(part, "x"))
+            # When the commit is checked
+            code, out = self.r.after_commit()
+            # Then it is stopped, naming the part
+            self.assertEqual(code, 2, part)
+            self.assertIn("map line" if part.startswith("──") else part, out)
+
+    def test_proposal_in_its_form_passes(self):
+        # Given a proposal in the form the proposal checklist gives
         self.r.write("a.txt", "a\n")
-        self.r.commit(PROPOSAL)
-        self.r.after_commit()
-        sh(
-            self.r.dir,
-            "git",
-            "commit",
-            "-q",
-            "--amend",
-            "-m",
-            PROPOSAL.replace("- More:", "- More M1:"),
-        )
+        self.r.commit(PROPOSE)
         # When the commit is checked
-        code, _ = self.r.after_commit()
+        code, out = self.r.after_commit()
         # Then it passes
-        self.assertEqual(code, 0)
+        self.assertEqual(code, 0, out)
+        self.assertIn("Decided for you", PROPOSAL_BODY)
 
     def test_feedback_stop_with_no_feedback_item_is_stopped(self):
         # Given the user typed /rn:gm, then a feedback stop commit with no feedback item in open/

@@ -43,7 +43,10 @@ def check(text):
         if line.startswith("### "):
             m = TASK.match(line)
             if not m:
-                problems.append(f"steering.md: task heading `{line}` is not `### [ ] #N: name`")
+                problems.append(
+                    f"steering.md: task heading `{line}` is not `### [ ] #N: name`, which the "
+                    "commands find the tasks by"
+                )
             else:
                 ids.append(m.group(2))
     dup = sorted({i for i in ids if ids.count(i) > 1})

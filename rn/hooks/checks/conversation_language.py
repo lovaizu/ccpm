@@ -103,8 +103,9 @@ def check(sdir, message):
     if share is not None and share < 0.5:
         return [
             (
-                f"your message to the user is not in {front['conversation-language']}, the "
-                "conversation language steering.md records: say it again in that language"
+                "at the end of the turn: your message to the user is not in "
+                f"{front['conversation-language']}, the conversation language steering.md records, "
+                "so say it again in that language"
             )
         ]
     return []

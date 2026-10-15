@@ -12,7 +12,7 @@ PLUGIN = os.path.join(HERE, "..", "..", "..", "rn")
 HOOKS = os.path.join(PLUGIN, "hooks")
 
 STEERING = """---
-rn: 0.9.0
+rn: 0.10.0
 pr: https://github.com/you/repo/pull/1
 status: running
 artifact-language: English
@@ -46,7 +46,16 @@ A wrong type fails the build.
 ### [ ] #2: Design sign-off
 """
 
-VERIFICATION = """# verification
+FRONT = """---
+name: verification
+version: 0.1.0
+---
+
+"""
+
+VERIFICATION = (
+    FRONT
+    + """# verification
 
 ## Scenes
 
@@ -58,6 +67,7 @@ VERIFICATION = """# verification
 
 ## Machine checks
 """
+)
 
 SDIR = ".rn/20261003-typescript"
 
@@ -117,18 +127,38 @@ class Repo:
         return self.hook("posttooluse", tool_name="Bash", tool_input={"command": "git commit -F m"})
 
 
-PROPOSE = "rn: propose\n\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off"
+# A proposal in the form rn's proposal checklist gives, as the body of a sign-off's stop commit.
+PROPOSAL_BODY = """── typescript: A wrong type fails the build. ──
+👉 #1 Plan sign-off ── read it on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
+⬜ #2 Design sign-off
+
+Draft PR: https://github.com/you/repo/pull/1
+
+Work out the design on this plan: it says what you want and why.
+
+Goal: A wrong type fails the build.
+Judged by:
+- A1: Code reproducing each bug fails the build
+- M1: The app builds as before
+
+Toward what you would choose it for:
+- A1: each bug is named with how its failing build is checked (first proposal)
+
+Decided for you
+- Which files count as the app: src/ and test/ (steering.md:14)
+
+plan
+- ✅ P-1 Why you want the goal: steering.md:5-7
+"""
+PROPOSE = (
+    f"rn: propose\n\n{PROPOSAL_BODY}\n● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off"
+)
 FEEDBACK = (
     "rn: feedback\n\n● #1 Plan sign-off ── feedback in 01-feedback-plan.md → working out "
     "the plan again"
 )
 PAUSE = "rn: pause\n\n● #3 cart ── half → paused at #3 cart"
 REPORT = "# Report\n\nDoing as written, the build failed at cart.ts:3.\n"
-PROPOSAL = (
-    "rn: propose\n\n### What you get\n- Good A1: the build stops each bug, at a.ts:3\n"
-    "- More: the key is unchecked, at b.ts:9\n\n"
-    "● #1 Plan sign-off ── proposed → waiting for #1 Plan sign-off"
-)
 FINISHED = (
     STEERING.replace("status: running", "status: finished")
     .replace("### [ ] #1:", "### [x] #1:")
@@ -200,17 +230,3 @@ class Session(unittest.TestCase):
             "Apply the discount before the coupon"
         )
         sh(self.r.dir, "git", "push", "-q")
-
-    def first_user_write(self, path):
-        return self.r.hook(
-            "pretooluse",
-            agent_type="rn:first-user",
-            agent_id="f1",
-            tool_name="Write",
-            tool_input={"file_path": path},
-        )
-
-    def first_user_pre(self, tool, inp):
-        return self.r.hook(
-            "pretooluse", agent_type="rn:first-user", agent_id="f2", tool_name=tool, tool_input=inp
-        )

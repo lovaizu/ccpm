@@ -1,4 +1,4 @@
-"""The report writ hands back with the document: first what the caller decides, then each item as
+"""The report the conductor hands back with the work: first what the caller decides, then each item as
 turn decided it, so an item shows met only where turn's evidence shows it."""
 
 import json
@@ -29,7 +29,7 @@ def judged(given, key, name, found, what):
 
 
 def report(back, judgments):
-    """Prints the report from turn's CCS back, its evidence and writ's judgments."""
+    """Prints the report from turn's CCS back, its evidence and the conductor's judgments."""
     ccs, given = read(back), read(judgments)
     evidence = [p for p in entries(ccs, "episodic_trace", "evidence") if p.endswith("list.json")]
     if not evidence:

@@ -1,16 +1,18 @@
 import os
 import unittest
 
-from helpers import CHECKLISTS, Repo, run
+from helpers import CHECKLISTS, SESSION, Repo, run
 
 DOC = os.path.join(CHECKLISTS, "doc.md")
 README = os.path.join(CHECKLISTS, "readme.md")
+CONTENT = f"{SESSION}/content/README.content.md"
 
 
 def task(repo, *args):
     return run(
         repo,
         "task",
+        SESSION,
         "--deliverable",
         "README.md",
         "--receiver",
@@ -23,25 +25,25 @@ def task(repo, *args):
         DOC,
         README,
         "--content",
-        ".writ/content/README.content.md",
+        CONTENT,
         *args,
     )
 
 
 class Content(unittest.TestCase):
-    def test_the_content_file_is_named_from_the_document_s_path(self):
+    def test_the_content_file_is_named_from_the_document_s_path_under_the_session(self):
         cases = [
-            ("turn/README.md", ".writ/content/turn/README.content.md"),
-            ("README.md", ".writ/content/README.content.md"),
-            ("src/tidy.py", ".writ/content/src/tidy.content.md"),
+            ("turn/README.md", f"{SESSION}/content/turn/README.content.md"),
+            ("README.md", f"{SESSION}/content/README.content.md"),
+            ("src/tidy.py", f"{SESSION}/content/src/tidy.content.md"),
         ]
         repo = Repo()
         for document, content in cases:
             with self.subTest(document):
-                # Given: a document's path
+                # Given: a document's path and the session it is made in
                 # When: its content file is asked for
-                code, out = run(repo, "content", document)
-                # Then: it is under .writ/content, by the document's folder and name
+                code, out = run(repo, "content", SESSION, document)
+                # Then: it is under the session's content/, by the document's folder and name
                 self.assertEqual((code, out.strip()), (0, content))
         repo.close()
 
@@ -49,7 +51,7 @@ class Content(unittest.TestCase):
         # Given: a document's path that leaves the repository
         repo = Repo()
         # When: its content file is asked for
-        code, out = run(repo, "content", "../README.md")
+        code, out = run(repo, "content", SESSION, "../README.md")
         # Then: it is stopped, saying the path must be inside the repository
         self.assertEqual(code, 1)
         self.assertIn("../README.md is outside the repository", out)
@@ -59,7 +61,7 @@ class Content(unittest.TestCase):
 class Task(unittest.TestCase):
     def setUp(self):
         self.repo = Repo()
-        self.repo.write(".writ/content/README.content.md", "# What README.md says\n")
+        self.repo.write(CONTENT, "# What README.md says\n")
 
     def tearDown(self):
         self.repo.close()
@@ -79,15 +81,15 @@ class Task(unittest.TestCase):
             "--language",
             "English",
         )
-        # Then: the two lines name the task and where turn writes back, and the task holds each
-        # input under turn's kind for it, with turn's five parts empty
+        # Then: the two lines name the task under the session and where turn writes back, and the
+        # task holds each input under turn's kind for it, with turn's five parts empty
         self.assertEqual(code, 0)
         self.assertEqual(
             out.splitlines(),
-            ["in: .writ/tasks/README-1.json", "out: .writ/tasks/README-1.back.json"],
+            [f"in: {SESSION}/tasks/README-1.json", f"out: {SESSION}/tasks/README-1.back.json"],
         )
         self.assertEqual(
-            self.repo.json(".writ/tasks/README-1.json"),
+            self.repo.json(f"{SESSION}/tasks/README-1.json"),
             {
                 "focal_entities": [
                     {"deliverable": "README.md"},
@@ -100,7 +102,7 @@ class Task(unittest.TestCase):
                 "retrieved_artifacts": [
                     {"checklist": DOC},
                     {"checklist": README},
-                    {"content": ".writ/content/README.content.md"},
+                    {"content": CONTENT},
                     {"reference": "docs/notes.md"},
                     {"receiver_opens": "LICENSE"},
                 ],
@@ -112,18 +114,18 @@ class Task(unittest.TestCase):
                 "episodic_trace": [],
             },
         )
-        self.assertFalse(self.repo.exists(".writ/tasks/README-1.back.json"))
+        self.assertFalse(self.repo.exists(f"{SESSION}/tasks/README-1.back.json"))
 
     def test_a_second_task_for_the_same_document_takes_the_next_number(self):
         # Given: a task already written for the document, and turn's answer to it
         task(self.repo)
-        self.repo.write(".writ/tasks/README-1.back.json", "{}")
+        self.repo.write(f"{SESSION}/tasks/README-1.back.json", "{}")
         # When: another task is written
         code, out = task(self.repo)
         # Then: it takes the next number, leaving the first and its answer as they are
         self.assertEqual(code, 0)
-        self.assertEqual(out.splitlines()[0], "in: .writ/tasks/README-2.json")
-        self.assertEqual(self.repo.read(".writ/tasks/README-1.back.json"), "{}")
+        self.assertEqual(out.splitlines()[0], f"in: {SESSION}/tasks/README-2.json")
+        self.assertEqual(self.repo.read(f"{SESSION}/tasks/README-1.back.json"), "{}")
 
     def test_a_flag_given_twice_adds_to_what_it_was_given_before(self):
         # Given: the checklists and the references each given as two flags, as a skill writes them
@@ -141,7 +143,7 @@ class Task(unittest.TestCase):
         )
         # Then: the task holds every checklist and every reference, in the order given
         self.assertEqual(code, 0, out)
-        written = self.repo.json(".writ/tasks/README-1.json")
+        written = self.repo.json(f"{SESSION}/tasks/README-1.json")
         self.assertEqual(
             [p for e in written["retrieved_artifacts"] for k, p in e.items() if k == "checklist"],
             [DOC, README, os.path.join(CHECKLISTS, "code.md")],
@@ -153,11 +155,12 @@ class Task(unittest.TestCase):
 
     def test_a_task_with_several_files_names_each(self):
         # Given: a work of code and its tests
-        self.repo.write(".writ/content/src/tidy.content.md", "# What src/tidy.py says\n")
+        self.repo.write(f"{SESSION}/content/src/tidy.content.md", "# What src/tidy.py says\n")
         # When: the task is written
         code, out = run(
             self.repo,
             "task",
+            SESSION,
             "--deliverable",
             "src/tidy.py",
             "tests/test_tidy.py",
@@ -168,13 +171,13 @@ class Task(unittest.TestCase):
             "--checklist",
             os.path.join(CHECKLISTS, "code.md"),
             "--content",
-            ".writ/content/src/tidy.content.md",
+            f"{SESSION}/content/src/tidy.content.md",
         )
         # Then: the task names each file as a deliverable, in order, and is named by the first
         self.assertEqual(code, 0)
-        self.assertEqual(out.splitlines()[0], "in: .writ/tasks/tidy-1.json")
+        self.assertEqual(out.splitlines()[0], f"in: {SESSION}/tasks/tidy-1.json")
         self.assertEqual(
-            self.repo.json(".writ/tasks/tidy-1.json")["focal_entities"],
+            self.repo.json(f"{SESSION}/tasks/tidy-1.json")["focal_entities"],
             [
                 {"deliverable": "src/tidy.py"},
                 {"deliverable": "tests/test_tidy.py"},
@@ -188,6 +191,7 @@ class Task(unittest.TestCase):
         code, out = run(
             self.repo,
             "task",
+            SESSION,
             "--deliverable",
             "README.md",
             "--receiver",
@@ -197,11 +201,11 @@ class Task(unittest.TestCase):
             "--checklist",
             DOC,
             "--content",
-            ".writ/content/README.content.md",
+            CONTENT,
         )
         # Then: the task holds neither
         self.assertEqual(code, 0, out)
-        written = self.repo.json(".writ/tasks/README-1.json")
+        written = self.repo.json(f"{SESSION}/tasks/README-1.json")
         self.assertEqual(written["goal_orientation"], [{"acceptance": "a"}])
         self.assertEqual(written["constraints"], [])
 
@@ -220,16 +224,18 @@ class Task(unittest.TestCase):
                 # Then: it is stopped, naming the file, and no task is written
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
-                self.assertFalse(self.repo.exists(".writ/tasks"))
+                self.assertFalse(self.repo.exists(f"{SESSION}/tasks"))
 
     def test_a_task_missing_what_turn_needs_says_how_to_call(self):
-        # Given: a call with no deliverable
-        # When: the task is written
-        code, out = run(self.repo, "task", "--receiver", "r")
-        # Then: it is stopped with how to call it
-        self.assertEqual(code, 1)
-        self.assertIn("usage:", out)
-        self.assertIn("--deliverable", out)
+        for args in (("task", SESSION, "--receiver", "r"), ("task",)):
+            with self.subTest(args):
+                # Given: a call with no deliverable, or no session
+                # When: the task is written
+                code, out = run(self.repo, *args)
+                # Then: it is stopped with how to call it
+                self.assertEqual(code, 1)
+                self.assertIn("usage:", out)
+                self.assertIn("--deliverable", out)
 
 
 if __name__ == "__main__":
