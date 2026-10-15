@@ -573,6 +573,29 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   as a newcomer; the orchestrator held 11 items the evaluator left (the opening's length, resuming
   said in several places); one repeat of resuming cut and the opening split by hand (`487363c`).
   The three rules turn returned apply `doc.md` B-12, U-1 and F-1; no checklist change.
+- rn's design through turn (2026-10-16, $9.46, two rounds, two questions and three wordings left):
+  finished by hand (`d39f281`): the default branch gets a hook check, missing tools their approach
+  under the commands, what is handed to turn is the CCS and a task stays the plan's, what turn
+  writes back said in the callers' page's words with Good and More as the conductor's names.
+- rn's scripts and their tests through turn (2026-10-16, $14.13, two rounds, 36 tests, 23 of 29
+  met): the six waiting on CI and the type checker, which the repository already holds, and on
+  three stops without what to do, added by hand with the content; one test in 3.10's grammar made
+  3.9's (`f39f8d3`). `dev/check.sh` passes, 121 tests, every line and branch.
+- rn's prompts through turn (2026-10-16, $13.74, seven questions): settled in the content and run
+  again: the branch is the slug as 0.9.0's fixtures have it; a More's decision on its own line
+  under it, as the hooks read it; the kinds `plan`, `readme`, `design`, `verification`,
+  `proposal`, `code`, `doc`, the deliverable's use against the verification document; feedback
+  settled in its own commit before the stop commit; sessions from 0.9.0 on taken up as they
+  stand; `upgrade.md` for older ones.
+- rn's verification document through turn twice (2026-10-16, $5.56 and $5.98, seven questions
+  each): the content had departed from the design and the fixtures; settled: the scenes live in the
+  verification document and the design points there and says only what each passes on; the flow
+  session runs on the practice repository (one line in its README); A3 from fixture
+  `account-ready` to the plan's proposal; A4 passes on the task carried to its decision line, not
+  on a comparison; the trial closes the pull request and deletes the branch, nothing put back since
+  rn never changes `main`; the document's version is its own, 0.1.0. Run a third time.
+- rn's hooks through turn: the first run was cut off at the harness's one-hour limit while the
+  generator made its second pass; the limit is now four hours and the run goes again.
 - #5, turn's README through turn on the finished checklists (2026-10-15, Opus, $5.24, two
   readings in one run, 24 of 27 met, no question): no opening about itself, no glossary, no bold, no
   table; the kind of thing sits inside the gain. The three unmet (doc B-3, B-11, B-12) traced to the
