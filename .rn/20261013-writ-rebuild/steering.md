@@ -724,6 +724,32 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   08:16): rn put to the stand-in whether a one-line change should get the three documents in
   `docs/`, and the stand-in chose to keep them in the session's folder; to judge from the whole
   transcript when the trial ends.
+- Where to resume (2026-10-16, before a `/clear`): three runs are going in this session's
+  scratchpad
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/2b5caff4-d0fc-4a9b-83a0-22f95dbc4db8/scratchpad/`,
+  each with its log beside it (a run is alive while `pgrep -f "run.py <folder> "` finds it, and
+  done when `<folder>/.tasks/<name>.json` exists):
+  1. `d6`, turn's own design on the new generator and the decisions
+     (`dev/turn/trials/turn-design.json`): judge by the purpose and compare its first round with
+     `d5`'s (34 of 41 after two rounds): whether fewer items on terms, names and repeats come back
+     unmet; finish small shortfalls by hand, take `dev/turn/design.md` in and commit.
+  2. `hf4`, rn's hooks' first unit (`dev/rn/trials/rn-hooks-form.json`, started before the rename,
+     so its CCS says `content`): judge, take the eleven files in, run
+     `sh dev/check.sh` (tools in this scratchpad's `venv/bin`, or make one from
+     `dev/requirements.txt`), commit; then the second and third units
+     (`rn-hooks-commits.json`, `rn-hooks-course.json`, one after the other, each with
+     `python3 dev/turn/trials/run.py <new folder> <CCS> <out name>`).
+  3. `flow1`, the flow trial on rn-try (`flow1/transcript.md`, the clone in `flow1/work`): read
+     the whole transcript and the clone's commits when it ends, judge by the design's
+     Verification (the flow session passes when the last decision line is `── approved →
+     finished` and no hook stopped a call), and note what the prompts should be; it ran on the rn
+     before the rename and the stock-taking step. If it is still going at resume, leave it.
+  Then: rn's prompts and design are changed by hand already for decisions 19 to 21; the remaining
+  trials on rn-try (`a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`, `a4_resume`,
+  `a4_from_080`, one at a time, each `--out <new folder>`, with fixtures remade where a scene's
+  premise differs); rn 0.10.0 and turn 0.2.0 in the CHANGELOGs (turn's names `decisions`, the
+  checklist order, the generator's order; rn's the stock-taking, `decisions/`); `claude plugin
+  validate --strict`; the final check; then the report of decisions 1 to 21 to the user.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
