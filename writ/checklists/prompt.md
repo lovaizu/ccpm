@@ -100,8 +100,9 @@ Why: an AI that decides for the user leaves its guess to be taken as the user's 
 
 Does the AI do each thing that must happen in the order it must be done?
 
-Look at: the steps, read from the first, against the order the work needs, such as reading an input
-before the step that uses it.
+Look at: the steps, read from the first, against the order the work needs: an input is read before
+the step that uses it, and a thing done only when an earlier step calls for it, such as opening a
+file the work links, comes after that step; one placed before it fails.
 
 Why: a thing done before what it rests on is done on a guess, and a check done after the work is
 handed back catches nothing in time.
@@ -159,10 +160,13 @@ to avoid in the AI's attention.
 
 Does the AI read each detail it needs only on some runs on those runs alone?
 
-Look at: each such detail kept in a file of its own, which the prompt says when to read; one written
-in the prompt itself fails.
+Look at: each such detail of the prompt's own kept in a file of its own, which the prompt says when
+to read; one written in the prompt itself fails. Each input the AI needs only when something in the
+run calls for it, such as a file the work links, read where the steps meet that call; one read on
+every run, because the prompt names it, fails.
 
-Why: a detail read on every run costs attention on the runs that do not need it.
+Why: a detail read on every run costs attention on the runs that do not need it, and an input read
+on a run that did not call for it shapes the work there, as the AI would not have had it.
 
 ### B-14: Detail files named in the prompt
 
@@ -279,3 +283,17 @@ or schema the prompt names?
 
 Why: whoever receives the work, a person, the next step or a script, reads it by its form; a form
 the AI chooses afresh on each run breaks them.
+
+### F-3: When a place is written
+
+Is each place of the form that the AI may fill or leave, such as one per item, written on the
+condition that whoever reads the form takes a written place to mean, because the prompt sets that
+condition?
+
+Look at: the prompt's words on when such a place is written, against what the step or script that
+reads the form takes a place to mean, such as the receiver getting what the item asks; a prompt that
+leaves the condition to the AI, or sets a looser one, such as a part of what the item asks or what
+the AI can say about the item, fails.
+
+Why: a place written on a looser condition than its reader counts on is read as what it is not, such
+as a note that nothing was found read as a find.
