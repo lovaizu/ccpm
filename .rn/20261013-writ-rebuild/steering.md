@@ -776,6 +776,29 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   receiver is told only where the receiver does not already hold it, is a generator learning, for
   the stock-taking. Judged as the receiver: the orchestrator's loop with the generator and the
   second round read as the decisions say; nothing added beyond them.
+- The flow trial `flow1` on rn-try (2026-10-16, Opus, 07:46 to 09:45, PR rn-try#80, 69 commits,
+  17 turn runs, the rn before the rename and the stock-taking step): the session ran from
+  `/rn:up` to `── approved → finished` through the Plan, Design and Deliverable sign-offs,
+  feedback on the Deliverable, a second Design sign-off and a task. Read from the JSONL:
+  - The Stop hook stopped the conductor three times (00:06:41, 00:06:58, 00:33:47 UTC), each
+    "no task serves A1/A2", each when the conductor ended its turn to ask the user about that
+    very criterion; blocked from ending the turn, it decided the user's point itself (took A1 out
+    at 09:07 JST, "前の質問にはまだお答えをいただいていませんが"; added task #6 at 09:34), and the
+    question it had written never reached the user. The cause is in the trace check as the
+    decisions file gives it: "once tasks beyond the sign-offs are planned, every criterion has a
+    task", held at every end of a turn, with nothing for a criterion the conductor is asking the
+    user about. What it should be, from the design (the conductor asks, the user decides; a stop
+    never holds the AI): a criterion served by an open question item counts as held, or the check
+    runs at the sign-off commit, not at every turn's end. To settle with the hooks' units, before
+    the a1 to a4 trials, since each would meet the same stop.
+  - The conductor put rn's inside to the user twice: where the notice list is kept (08:14, a means
+    the user had not asked for) and whether the three documents take rn's form (08:16, the user
+    chose the session folder); the second is the design's "unless you agree another place" said
+    in rn's words, to judge with the prompts.
+  - Time: about two hours for a one-line README change and a two-line notice; each turn run 4 to
+    12 minutes, each proposal through turn about 10; the one-dimensional quality is measured
+    against 0.9.0 on the same session once a 0.9.0 run of it exists.
+  - Every hook let every other call through; the python3 guard was the earlier one.
 - Where to resume (2026-10-16, current): the record's Goal, criteria and task purposes say rn, as
   decided on 2026-10-15; PR #61 and issues #53 and #54 say the same. Going: `hc1` (rn's hooks,
   second unit), `flow1` (the flow trial on rn-try); `d6` taken in. Then the
