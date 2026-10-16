@@ -4,34 +4,36 @@ pr: https://github.com/lovaizu/ccpm/pull/61
 status: running
 artifact-language: English
 conversation-language: Japanese
-issue: https://github.com/lovaizu/ccpm/issues/53
-readme: writ/README.md
-design: dev/writ/design.md
-verification: dev/writ/trials
+issue: https://github.com/lovaizu/ccpm/issues/54
+readme: rn/README.md
+design: rn/docs/design.md
+verification: rn/docs/verification.md
 ---
 
 # Goal
 
-writ is rebuilt on turn (#53): it hands back a document its reader understands in one reading and
-acts on, which the user can pass on without reading it over, and judges from the final report alone.
-writ keeps the checklists that say what a good work of each kind is, and hands each job to
-`turn:up`; the pith inside writ goes.
+rn is rebuilt on turn (#54), with writ folded into it (#53) and the writ plugin removed: the
+conductor hears what the user wants one point at a time and judges; turn makes every piece of work,
+the plan, the three documents, each task's result and each proposal, and reads it in its receiver's
+place; the user decides only at the sign-offs and what is theirs. rn 0.10.0 and turn 0.2.0 are
+released from this pull request.
 
 # Acceptance criteria
 
 ## Attractive quality
 
-- A1: The user asks for a document of a kind and gets it finished, asked only what the checklist
-  needs and their request and repository do not tell.
-- A2: For a kind writ has no checklist for, the user chooses between the general one and having one
-  made first, and a checklist made is used from then on.
+- A1: The user asks rn for work in rough words and gets it carried to a pull request ready to
+  merge, asked only what the checklists need and their words and repository do not tell, one point
+  at a time.
+- A2: At each sign-off the user decides from the proposal alone: what rn decided for them first,
+  then each item of the work's checklist met with the lines that give it.
 
 ## Must-be quality
 
 - M1: Each part follows official best practice or says why it does not, and holds nothing its
   purpose does not need.
-- M2: Checking a work is turn's alone; writ holds no second copy of it.
-- M3: `claude plugin validate --strict` passes for writ and for the marketplace, and CI passes.
+- M2: Checking a work is turn's alone; rn holds no second copy of it.
+- M3: `claude plugin validate --strict` passes for rn, turn and the marketplace, and CI passes.
 
 # Assumptions
 
@@ -40,13 +42,14 @@ writ keeps the checklists that say what a good work of each kind is, and hands e
   unless the README or the design should change.
 - Fact, decided by the user: before the README, the user and the assistant agree on a scene of what
   the user does and what happens.
-- Fact, decided by the user (2026-10-13): writ reads the checklist's items and asks the user, one
-  question at a time, what the items need and the request and the repository do not tell; what it
-  can infer, it puts as a proposal.
-- Fact, decided by the user (2026-10-13): for a kind writ has no checklist for, writ asks the user
-  whether to make the document with the general `doc.md` alone or to make that kind's checklist
-  first with turn, against `essentials.md`.
-- Fact, from #53: #36 and #37 are judged against the rebuilt writ by running what each describes.
+- Fact, decided by the user (2026-10-15): writ is never used without rn, so writ is folded into rn
+  in this pull request and the writ plugin goes; the conductor hears and judges, turn makes every
+  work and reads it in its receiver's place; the checklists live in rn.
+- Fact, decided by the user (2026-10-16): rn's prompts, hooks and scripts are made through turn, not
+  by hand; the caller hands turn `decisions`, what the work must say or do and leave out, and what
+  the work draws on as references read in place.
+- Fact, from #53 and #54: the issues each lists are judged against the rebuilt rn by running what
+  each describes.
 
 # Rules
 
@@ -297,7 +300,7 @@ checklist with a gap kept shaping what was made with it.
 
 ### [ ] #5: turn finished
 
-Purpose: turn's prompts, hooks and code meet its README and design, tried as its user; what writ
+Purpose: turn's prompts, hooks and code meet its README and design, tried as its user; what rn
 builds on is settled first.
 
 Serves: M1, M2, M3
@@ -330,7 +333,7 @@ Progress:
 
 ### [ ] #6: Each checklist finished
 
-Purpose: each checklist in `writ/checklists/`, once used, gives a work its reader is served by, shown
+Purpose: each checklist in `rn/checklists/`, once used, gives a work its reader is served by, shown
 by using it once on a real work and judging the work, not only the checklist's form.
 
 Serves: M1
@@ -764,6 +767,12 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   The second unit runs as `hc1` in this session's scratchpad
   `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/739e9824-08e7-4ea5-b189-7ac3c92712c3/scratchpad/`,
   log beside it; `d6` and `flow1` still go in the earlier one.
+- Where to resume (2026-10-16, current): the record's Goal, criteria and task purposes say rn, as
+  decided on 2026-10-15; PR #61 and issues #53 and #54 say the same. Going: `hc1` (rn's hooks,
+  second unit), `flow1` (the flow trial on rn-try); `d6` ended, to judge against `d5`. Then the
+  third hooks unit (`rn-hooks-course.json`), the trials `a1_first_call`, `a1_feedback`,
+  `a2_intent`, `a3_proposal`, `a4_resume`, `a4_from_080` one at a time, the issues #4 names judged,
+  the final check, then the report of every decision above.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
@@ -789,9 +798,10 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   link left out, each question with a recommended answer. Its design waits for the README, whose
   words its Goals use.
 
-### [ ] #4: writ built and checked
+### [ ] #4: rn built and checked
 
-Purpose: plugin.md steps 3 to 7; #36 and #37 judged against the rebuilt writ.
+Purpose: plugin.md steps 5 to 7 for rn, with writ folded in, tried on the practice repository;
+#36, #37, #39, #41, #43, #44, #45 and #46 judged against the rebuilt rn.
 
 Serves: A1, A2, M1, M2, M3
 
