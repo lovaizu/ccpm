@@ -30,32 +30,31 @@ Does the prompt follow this template, headings included?
 ```markdown
 ---
 name: <name>
-description: <What it does, and when to use it, in the third person>
+description: <What it achieves, and when it is used, in the third person>
 ---
 
 ## Role
 
-<What is expected of the AI, and why>
+<The role expected of the AI, and why; what it hands back to the user>
 
 ## Steps
 
 1. <What to do>
+   - In: <what it takes in, and its form>; if any of it is missing, it hands the step back to
+     whoever gave it, saying what is missing, before starting
+   - Out: <what it hands on, and its form>; before handing it on, it checks it against the step's
+     purpose, such as a document being where it was asked for or code's tests running and
+     passing, and fixes what falls short
 ```
 
 - `name` and `description` are what Claude Code reads to choose a skill or an agent; the
   description says when to use it, since that is what the choice is made on.
-- Every step is numbered in the order it is done.
+- Every step is numbered in the order it is done; a form may be set in a template or schema the
+  step names.
 
-Why: the AI finds what is expected and what to do in the same place in every prompt, and a reader
-checks a prompt against its design by these two parts.
-
-### F-2: Form of what goes in and out
-
-Is the form of what the AI receives and of what it hands back set, in the prompt or in a template
-or schema the prompt names?
-
-Why: whoever receives the work, a person, the next step or a script, reads it by its form; a form
-the AI chooses afresh on each run breaks them.
+Why: the AI finds its purpose, its role and what to do in the same place in every prompt, each the
+ground of the next; a step that checks what it takes in sends a gap back where it is cheapest to
+fill, and one that checks what it hands on against its purpose hands on no slip it could have found.
 
 ### F-3: When a place is written
 
