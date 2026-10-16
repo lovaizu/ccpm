@@ -832,21 +832,17 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   decisions. Decision 23, to report (replaces the order Goals, Structure, Verification,
   Principles).
 - Where to resume (2026-10-16, before a `/clear`):
-  1. `rn/checklists/design.md` is rewritten to the shape above in the working tree, uncommitted
-     (F-1, F-5, B-11, B-33, U-1, U-3, U-5 new; B-5, B-6 stay as items, their content under Design
-     decisions). Read it once against `checklist.md`, then commit.
-  2. Bring both decisions files (`.writ/decisions/dev/turn/design.decisions.md`,
-     `.writ/decisions/rn/docs/design.decisions.md`, B-7 to B-10 drafts already uncommitted) to it:
-     B-11 as decisions, each with the goals it serves and what they would lose the other way, and
-     nothing obvious; B-5 and B-6 placed under Design decisions; B-33 as the sentences under the
-     figure for what lies inside one part. Commit.
-  3. Run `dev/turn/trials/turn-design.json` and `dev/rn/trials/rn-design.json` again in new
-     folders in this session's scratchpad, on Opus; judge by the purpose (the figure: names in the
-     boxes, the relation on each arrow, the table, each goal's part), finish small shortfalls by
-     hand, take `dev/turn/design.md` and `rn/docs/design.md` in, commit.
-  4. `hc1`, rn's hooks' second unit, was cut off at the usage limit in its second round: run
-     `rn-hooks-commits.json` again in a new folder, judge, take the files in, `sh dev/check.sh`,
-     commit.
+  1. Done (`a5e4697`): `rn/checklists/design.md` read against `checklist.md`; B-11 asks only that
+     each decision says what must hold, F-5 holding the goals, and U-5 covers the decisions.
+  2. Done (`7b1395f`): both decisions files to it: Design decisions with the goals each serves and
+     what they would lose the other way, the sentences under the figure for what lies inside one
+     part, the design items under their own `## design`, rn's must-be qualities named.
+  3. Running in this session's scratchpad on Opus: `td8` (turn's design) and `rd7` (rn's design);
+     judge by the purpose (the figure: names in the boxes, the relation on each arrow, the table,
+     each goal's part), finish small shortfalls by hand, take `dev/turn/design.md` and
+     `rn/docs/design.md` in, commit.
+  4. Running in this session's scratchpad: `hc2`, `rn-hooks-commits.json` again; judge, take the
+     files in, `sh dev/check.sh`, commit.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
   about is not a stop (the flow trial's finding above), settled with the hooks' third unit
   (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
