@@ -14,3 +14,13 @@
 - turn is for an AI alone: it deals only with the AI that calls it. Nothing is shown to a person
   watching, and nothing is stopped or said again by one, so the progress shown on the console, the
   stop with Esc and the start again from a person's words go.
+
+### B-19: The stories achieved by interactions
+- The generator makes the work and names, as its own check, the lines it meant to meet each item;
+  that is its claim, not a judgment.
+- The orchestrator checks the claim against the work and sends back what it can see falls short
+  before the first user reads, so the costly reading is not spent on it.
+- The first user reads the work in the receiver's place; the evaluator shows from that reading the
+  items met, with their lines; the orchestrator checks those lines against the work and decides
+  each item; the learner finds, for each item not met, how the work would meet it, and the
+  orchestrator sends that back to the generator.
