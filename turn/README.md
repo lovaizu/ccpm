@@ -1,10 +1,12 @@
 # turn
 
 turn is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
-their own plugin. A step hands it a task with your checklist, a file of items that each ask one
-thing the work must give, and what it makes, the work, comes back meeting the checklist: a reader
-that did not make the work reads it in the place of the person it is for, and what falls short is
-made again before it comes back.
+their own plugin. Each call is one turn of [ACC](https://arxiv.org/abs/2601.11653), which carries a
+long AI task from turn to turn in a small state, the CCS, instead of the whole conversation: a step
+hands turn a CCS and goes on from the new CCS turn returns. What the turn makes, the work, comes
+back meeting your checklist, a file of items that each ask one thing the work must give, since a
+reader that did not make the work reads it in the place of the person it is for, and what falls
+short is made again before it comes back.
 
 ## Example
 
@@ -14,9 +16,10 @@ The step's AI first asks the user, one point at a time, what each item of the ch
 this project, such as whom the project is for and what example to show, and writes what is decided
 to `notes/readme.decisions.md`.
 
-Then it hands turn the task in a CCS, a JSON file of nine parts. The step writes four of them: what
-is made, who reads it and for what, the checklists and decisions, and rules such as the language.
-The other five it leaves empty, for turn to fill in the CCS it writes back.
+Then it hands turn the task in a CCS, a JSON file of the nine parts ACC gives the state. The step
+writes the parts that say the task: what is made, who reads it and for what, the checklists and
+decisions, and rules such as the language. The parts that say how the task stands after a turn,
+such as what to do next and what is not settled, are empty, since no turn has run yet.
 
 ```json
 {
@@ -41,28 +44,35 @@ with these two lines:
     in: .tasks/readme.json
     out: .tasks/readme-back.json
 
-When it returns, check README.md against what .tasks/readme-back.json says for each
-item, fix what you find, and do what its `next` says.
+When it returns, check README.md against what the new CCS in .tasks/readme-back.json
+says for each item, fix what you find, and do what its `next` says.
 ```
 
 While the step waits, a reader that did not write README.md reads it as the developer meeting the
 project would, each item of the checklist is judged from that reading, and what falls short is made
 again. The user sees turn's agents at work in the panel below the prompt input.
 
-When turn returns, README.md is in place, and the CCS it wrote back says for each item whether
-README.md meets it and which lines do. Its `next` is `ask the user`, with a question asking under
-which license people may use the project, since the user had not chosen one; README.md leaves the
-license out until it is answered.
+When turn returns, README.md is in place, and the new CCS says for each item whether README.md meets
+it and which lines do. Its `next` is `ask the user`, with a question asking under which license
+people may use the project, since the user had not chosen one; README.md leaves the license out
+until it is answered.
 
 The step's AI checks each answer against README.md, puts the question to the user, writes the
 answer into README.md, and the step ends.
 
 ## Why turn
 
-When the AI that made a work checks it, it knows what each line means, and misses where the person
-it is for, meeting it for the first time, would stop. turn gives what that check does not.
+turn gives your plugin's AI what it does not get by doing the work and checking it itself.
 
+- It carries only the CCS from step to step, so however many steps it goes through, what it holds
+  does not swell and it does not drift from its goal.
+
+  An AI that carries the whole conversation instead holds more with every step, and loses the goal
+  and the rules under what it has piled up.
 - turn's reader did not make the work, and opens only what the person it is for opens.
+
+  The AI that made a work knows what each line means, and misses where the person it is for,
+  meeting it for the first time, would stop.
 - The work is made from the decisions and checklists handed over alone, so it does not stray from
   what was decided.
 - An item counts as met only where named lines give it, so each judgment can be checked instead of
