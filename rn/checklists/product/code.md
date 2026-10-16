@@ -9,9 +9,16 @@ Code is used by whoever runs it and whoever maintains it, a person or an AI. Who
 the behavior they asked for. Whoever maintains it trusts, from its tests passing, that the behavior
 holds, and so changes the code at once and with confidence.
 
-What the code must do is set by its README, its design and what calls it, such as the steps of a
-prompt that runs it, here called its sources; this checklist judges the code and its tests against
-them, from the code, the tests and their results.
+Code is written in this order, each step the ground of the next:
+
+1. Check the inputs: the requirements, how it is made, how it is checked and the development rules
+   are all there, and settle what the code needs. What is missing goes back to whoever gave it.
+2. Design it: how it is split into functions and modules, what each takes in and gives back, and
+   where what comes from outside is checked. These are the units the tests are written for.
+3. Run the existing tests and see them pass, before changing anything.
+4. Build it test first: for each behavior, write a test, see it fail, write the least code that
+   passes it, then tidy it.
+5. Check it by the development rules and by how it is checked.
 
 ## Format
 
