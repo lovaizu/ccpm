@@ -944,13 +944,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   names and its Verification checks them. The UX checklist loses its quality step, template part
   and B-4, B-5; the design checklist gains step 4, a Quality section, B-27 and B-28. Decision 37,
   to report.
+- Decided by the user (2026-10-16): turn's UX is at `dev/turn/ux.md`, beside its design, since
+  only its builders read it and what only builders need stays in `dev/`. Decision 38, to report.
 - Where to resume (2026-10-16): through turn on the new checklists, turn's UX, README and design,
   then rn's the same way (rn's grilling step is part of rn's design). For each, the decisions turn
   takes in are made by asking the user one point at a time, in Japanese and plain words, without
   item IDs, written in English to `.writ/decisions/<plugin>/<work>.decisions.md`. turn's UX
   (`.writ/decisions/turn/UX.decisions.md`) has its user (the AI running a plugin's step, such as
-  rn's conductor), its scenes and its benefit agreed; next, where the UX file goes (decision 27),
-  then turn's README, rewritten for that user, and its design, then judging `hc4` and the rest of
+  rn's conductor), its scenes and its benefit agreed, and its place (decision 38); next, made by
+  turn from those decisions, then turn's README, rewritten for that user, and its design, then judging `hc4` and the rest of
   #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
