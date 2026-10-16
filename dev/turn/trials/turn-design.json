@@ -4,7 +4,7 @@
       "deliverable": "dev/turn/design.md"
     },
     {
-      "receiver": "someone who builds or changes turn, coming from its README"
+      "receiver": "someone who builds or changes turn, coming from its UX"
     }
   ],
   "goal_orientation": [
@@ -26,16 +26,10 @@
       "decisions": ".writ/decisions/dev/turn/design.decisions.md"
     },
     {
-      "receiver_opens": "turn/README.md"
+      "receiver_opens": "dev/turn/ux.md"
     },
     {
-      "receiver_opens": "turn/calling-from-a-plugin.md"
-    },
-    {
-      "reference": "turn/README.md"
-    },
-    {
-      "reference": "turn/calling-from-a-plugin.md"
+      "reference": "dev/turn/ux.md"
     }
   ],
   "constraints": [
