@@ -894,8 +894,16 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   `rn/docs/verification.md` and what uses them (conduct.md, the hooks in `trace.py`, their tests)
   are removed in rn's rebuild under #4, where rn's design says what replaces them. Decision 30, to
   report.
+- Decided by the user (2026-10-16): the readability checklist made again from its purpose
+  (`172460d`..`bbc256e`): a reader, a person or an AI, takes a document in once from the top in a
+  short time; thought through in the order the reader reads (opening, reading on, nothing not
+  needed, no question left); a shape drawn from those steps; one item for each step, B-9, B-17, B-4,
+  B-18, with the finer checks under each; Usability none. The former style.md's tables, heading
+  depth, parentheses, roles and code length came from no step and are left out. Every checklist
+  still names `readability.md` in its opening, so it comes with each kind without being passed.
+  Decision 31, to report.
 - Where to resume (2026-10-16): remake the other checklists with the user the same way, one point
-  at a time, in this order: readability (with the rules of the former style.md), prompt, code,
+  at a time, in this order: prompt, code,
   hook, plan, proposal, checklist (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
