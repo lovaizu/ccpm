@@ -82,3 +82,9 @@
     on a guess can look met and still miss what the user meant.
   - Nothing but where the work goes is changed, and nothing is committed or pushed, since the
     calling AI checks the work alone and any other change stays unchecked.
+  Better the more, each measured on every trial and compared with the last version:
+  - The time a run takes, since the calling AI cannot go on with its step while it waits.
+  - The cost of a run, since the four roles and the orchestrator run every time, at the user's
+    expense.
+  - How much the calling AI fixes after the work returns, counted as the items it fixes itself,
+    since the more is settled inside turn, the more the benefit gives.
