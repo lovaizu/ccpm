@@ -6,7 +6,7 @@ version: 0.3.0
 # Design document
 
 A design document is read by whoever builds or changes the product. From it they understand, in a
-short time, the mechanism that brings about the UX the product must bring about, and how that is
+short time, the mechanism that brings about the UX the product must give, and how that is
 checked, and build or change the product to it.
 
 Each item of `doc.md` applies to a design document with the mechanism and its checks as its
