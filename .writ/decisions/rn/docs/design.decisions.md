@@ -153,42 +153,73 @@
 
 ### B-6: Constraints
 - rn runs in Claude Code, on a person's behalf, and holds only skills, hooks, scripts and
-  checklists; installing copies only its folder, with turn installed beside it.
+  checklists; installing copies only its folder, with turn installed beside it. Serves: installs
+  with turn.
 - rn uses turn only as turn's callers' page gives it: the skill `turn:up` started with a CCS, and
   the CCS turn writes back, since turn may change everything inside.
 - A subagent cannot ask the user, and turn asks nothing while it works.
 - The repository has its remote on GitHub, and `gh` is logged in with push access; users' machines
-  run Python 3.9 or later with the standard library only, and jq.
+  run Python 3.9 or later with the standard library only, and jq. Serves: missing tools.
 - rn's hooks run in every session where rn is installed, in repositories without rn as well.
 
-### B-7: Attractive quality checked
-- Each attractive quality is checked as its user on the practice repository `lovaizu/rn-try`, one
-  run at a time, from a fixed state, with a stand-in playing the user from a part that says only
-  what the user knows; the check is judged from the run's records, the JSONL Claude Code keeps of
-  the conversation and of every agent, with the commits, the pull request and the product, and
-  passes on what happens to the user, not on the shape of what rn writes. The scenes, what each
-  passes on, their fixtures and their trials are in the verification document
-  (`rn/docs/verification.md`) and `dev/rn/trials/`. The flow, from `/rn:up` through the plan, the
-  design, one task and the Deliverable sign-off, is tried apart from what turn makes, on the
-  smallest change that shows it, first after any change.
+### B-7: Attractive quality verified
+- How each is checked: as its user, on the practice repository `lovaizu/rn-try`, one run at a
+  time, from a fixed state, with a stand-in playing the user from a part that says only what the
+  user knows; judged from the run's records, the JSONL of the conversation and of every agent, with
+  the commits, the pull request and the product; the scenes, their fixtures and trials are in the
+  verification document (`rn/docs/verification.md`) and `dev/rn/trials/`. The flow, from `/rn:up`
+  through the plan, the design, one task and the Deliverable sign-off, is tried apart from what
+  turn makes, on the smallest change that shows it, first after any change.
+- What they really want from rough words: from the stand-in's rough words, the plan it approves
+  says what its part says the user wants, and no way was offered before it said what it wants.
+- Called only for decisions that are theirs: every question the stand-in is asked between
+  sign-offs is one only its part can answer.
+- Decided from the proposal alone: at each sign-off, the stand-in decides from the proposal alone
+  as it decides after also reading the work.
+- Goes on from where it stopped: `/rn:up` in a fresh conversation on a paused session reaches the
+  next stop with the stand-in explaining nothing.
+- Read in its receiver's place before the user sees it: the records show every work the user sees
+  read by turn's first user after its last change, or that change in the report.
 
-### B-8: One-dimensional quality measured
-- All three are measured from the records of the same session, run on this version and on the
-  version in use, which the trial's record names: the questions the stand-in answered, the minutes
-  and tokens to each sign-off, and the lines of each proposal.
+### B-8: One-dimensional quality verified
+- How each is measured: from the records of the same session, run on this version and on the
+  version in use, which the trial's record names.
+- Questions answered: the questions the stand-in answers beyond the sign-offs are no more than on
+  the version in use.
+- Time and tokens to each sign-off: the minutes and tokens to each sign-off are no more than on the
+  version in use.
+- What the user reads at a sign-off: the lines of each proposal are no more than on the version in
+  use.
 
-### B-9: Must-be quality checked
-- Each must-be quality is checked by a test on the hook or script that holds it, in the case that
-  would break it; the tests are in `dev/rn/tests/`, run on every push with every line and branch
-  counted; that rn installs with turn is checked by `claude plugin validate --strict` on rn and the
-  marketplace on every push.
+### B-9: Must-be quality verified
+- How each is checked: by a test on the hook or script that holds it, in `dev/rn/tests/`, run on
+  every push with every line and branch counted.
+- The default branch: a commit on the default branch is stopped.
+- Every decision pushed: a commit without its decision line, and one that removes an item of
+  `open/` without its text whole, are stopped.
+- The record's form: a write that breaks the plan's form, the names in `open/` or the verification
+  document's form, or that refers to an ID that does not exist, is stopped.
+- Only the user passes a sign-off: a commit that passes a sign-off without the typed command is
+  stopped.
+- Nothing reaches the user unread: the report rn's script writes names each change the conductor
+  made after turn's last reading.
+- Missing tools: with each tool missing, rn stops before anything saying what to install, and
+  outside a session rn's hooks do nothing.
+- Installs with turn: `claude plugin validate --strict` on rn and on the marketplace passes on
+  every push.
+- The conductor stays on course: an agent started in the background, a turn ended with nothing for
+  the user, and a message in another language than the user's are stopped.
 
-### B-10: Backward compatibility checked
-- Each thing others rely on is checked by a test or a trial that uses it as the earlier version
-  left it: the commands typed on the flow session, a session recorded by 0.9.0 and one by 0.8.0
-  taken up from fixtures, the pull request's links and mark on the flow trial, every checklist read
-  by turn's own script, and the verification document used by turn against the flow trial's
-  deliverable; the tests in `dev/rn/tests/`, the trials in `dev/rn/trials/`.
+### B-10: Backward compatibility verified
+- How each is checked: by a test in `dev/rn/tests/` or a trial in `dev/rn/trials/` that uses it as
+  the earlier version left it.
+- The commands: on the flow session, each command typed does what it did, and `/rn:on` says to use
+  `/rn:up` with the same words.
+- The record: a session recorded by 0.9.0 and one by 0.8.0 are taken up from their fixtures.
+- The pull request: on the flow trial, its body holds the links and it is marked ready at the
+  Deliverable sign-off.
+- rn's checklists: every checklist read by turn's own script yields its opening and every item.
+- The verification document: turn uses the flow trial's deliverable against it.
 
 ### B-12: Who does what to what
 - Structure opens with how rn divides, in one sentence: rn is the conductor, which alone decides
@@ -243,7 +274,7 @@
   inside the Claude Code session the user talks in; nothing of rn runs in CI, and the product's
   own checks run where its verification document says.
 
-### B-33: Each goal and decision held by a part
+### B-33: Every goal and decision placed
 - Held by where the figure and the table place the parts, so nothing more is said: read in its
   receiver's place before the user sees it (turn); the default branch, every decision pushed, the
   record's form, only the user passes a sign-off and the conductor stays on course (rn's hooks);
@@ -272,43 +303,49 @@
   and finished last.
   - Serves: what they really want from rough words; questions answered; time and tokens to each
     sign-off.
-  - The other way: the time goes to gaps off the path the user takes, and what would make the
-    user choose the result comes last or not at all.
+  - What a builder could get wrong: close every must-be gap first, so what would make the user
+    choose the result comes last or not at all.
 - Only the conductor decides what happens next, and only the conductor uses git.
   - Serves: decided from the proposal alone; every decision pushed; goes on from where it stopped.
-  - The other way: a move decided by an agent that knows neither the goal nor the conversation,
-    and a commit no one decided, leave a record the user cannot stand behind.
+  - What a builder could get wrong: let an agent or turn choose the next move or commit, without
+    the goal and the conversation, leaving a record the user cannot stand behind.
 - Every work the user sees is made by turn from what the conductor decided, and read in its
   receiver's place before the user sees it; what the conductor finishes after turn's last run is
   in the report.
   - Serves: read in its receiver's place before the user sees it; nothing reaches the user unread.
-  - The other way: work the conductor makes itself is read only by its writer, who passes what its
-    receiver would miss, and the user is the one who finds it.
+  - What a builder could get wrong: have the conductor write a small work itself, read only by its
+    writer, who passes what its receiver would miss.
 - The user is asked only what the goal, the repository, the documentation and best practice
   cannot settle, one point per message, what they want before any way.
   - Serves: what they really want from rough words; called only for decisions that are theirs;
     questions answered.
-  - The other way: the user answers what rn could have looked up, or picks among ways before
-    saying what they want, and gets what was offered rather than what they meant.
+  - What a builder could get wrong: ask whatever comes up, or offer ways before the user has said
+    what they want, so they get what was offered rather than what they meant.
 - Everything is made and checked by the same checklists, and rn is improved by sharpening them,
   not by adding steps.
   - Serves: read in its receiver's place before the user sees it; what the user reads at a
     sign-off; rn's checklists.
-  - The other way: a step added meets only the case it was added for and is one more thing to keep
-    right, while an item that asks what the receiver gets fits cases no one foresaw.
+  - What a builder could get wrong: add a step for each slip a trial shows, which meets only that
+    case and is one more thing to keep right.
 - Every reader is handed the paths of what it reads, never a summary of them, and every agent
   leaves its whole result in a file and returns only where it is.
   - Serves: what they really want from rough words; goes on from where it stopped.
-  - The other way: a summary drops what its writer thought did not matter, and a result held only
-    in a reply is lost with the conversation.
+  - What a builder could get wrong: hand a reader a summary, which drops what its writer thought
+    did not matter, or keep a result only in a reply, lost with the conversation.
 - Decisions are written into the record before the work that follows them, and the record holds
   only what holds now; how a thing was reached lives in the commit messages.
   - Serves: goes on from where it stopped; every decision pushed.
-  - The other way: work done before its decision is written is lost when the session stops, and a
-    record mixed with its history is read as if all of it held.
+  - What a builder could get wrong: do the work first and write the decision after, so it is lost
+    when the session stops, or keep the history in the record, read as if all of it held.
 - What a machine can judge of the course is checked by a hook at the moment it could break, each
   stop naming the step and why (assumption: that a stop keeps the conductor to a step where a rule
   in words would not, taken from turn's design).
   - Serves: every decision pushed; the record's form; only the user passes a sign-off; the
     conductor stays on course.
-  - The other way: a slip in the course shows only later, in a record that looks right.
+  - What a builder could get wrong: leave the course to the prompts' words, so a slip shows only
+    later, in a record that looks right.
+- What others rely on, the commands, the record, the pull request, rn's checklists and the
+  verification document, changes only by what earlier versions' users and sessions can still use.
+  - Serves: the commands; the record; the pull request; rn's checklists; the verification document.
+  - What a builder could get wrong: reshape the record for a new step, so a session an earlier
+    version left can no longer be taken up.
