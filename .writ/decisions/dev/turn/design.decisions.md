@@ -40,3 +40,19 @@
   built.
 - `claude -p` is not used: the docs say `--bare`, which reads no subscription login, will become
   its default, and moving its use to separate credits was announced and only paused.
+
+### B-20: How each component is realized
+- The orchestrator and the four roles are agent definitions. What must come out the same on every
+  run is done by Python 3 scripts with jq, and the hooks are Python checks, one file each, with one
+  entry file per hook event, as `plugin.md` sets.
+- The console and the stop with Esc go, as turn deals with no person.
+
+### B-21: Where each component is placed
+- The work is made where it goes, in the user's repository, not in a copy. A copy was there so
+  that a person's stop with Esc left where the work goes as it was; turn has no such stop now. A run
+  cut off leaves its writing as changes git shows, which the calling AI undoes or finishes, and the
+  calling AI checks and fixes the work in place in any case. Runs at once make different files, as
+  rn starts them for work that can go in parallel. Nothing of a run is put outside the repository.
+
+### B-22: What each component depends on outside
+- Claude Code, python3 3.9 or later, jq and git.

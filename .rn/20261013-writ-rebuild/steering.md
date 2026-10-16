@@ -970,8 +970,9 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   not from rearranging sources, written in English to `.writ/decisions/<plugin>/<work>.decisions.md`.
   1. turn's design (`.writ/decisions/dev/turn/design.decisions.md`): one user story, five
      components and their interactions, the orchestrator as an agent definition, runs at once,
-     agreed. Next: the rest of the physical view (scripts in Python 3 and jq, hooks, `.turn/`;
-     the console and Esc go), then the must-be and better-the-more qualities for each benefit,
+     agreed; the work made where it goes, no copy, nothing outside the repository, agreed. Next:
+     where the roles' answers to one another are kept (as each role's reply, or files removed at
+     the run's end, with what a run cut off leaves), then the must-be and better-the-more qualities for each benefit,
      then Verification; then turn makes `dev/turn/design.md` from them.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
