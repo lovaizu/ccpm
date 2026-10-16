@@ -9,10 +9,17 @@ A design document is read by whoever builds or changes the product. From it they
 short time, the mechanism that brings about the UX the product must give, and how that is checked,
 and build or change the product to it.
 
-The UX is what the user experiences using the product. Design is analyzing the UX to find the
-essential, minimal functions that make it possible, and deciding the components that take on those
-functions. Many UX are held up by few functions, and one component takes on several functions, so
-the numbers narrow in the order UX, functions, components.
+The UX is what the user experiences using the product. Design thinks in this order:
+
+1. Analyze the UX to find the essential, minimal functions that make it possible.
+2. Decide the logical components that take on those functions, and the interactions between them.
+   A logical component is divided by what it takes on; its physical form is not decided yet.
+3. Choose the technology that realizes each component, and decide how it is realized physically
+   and where it is placed. Technology is chosen here first.
+4. Check each physical unit on its own, build those checks up, then check the whole.
+
+Many UX are held up by few functions, and one component takes on several functions, so the numbers
+narrow in the order UX, functions, components.
 
 Each item of `doc.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -36,8 +43,8 @@ Does the design document follow this template, headings included?
 
 ### Logical view
 
-<One figure: a box for each component, holding its name alone; an arrow from each to the component
-it acts on, labelled with what it does>
+<One figure: a box for each logical component, holding its name alone; an arrow from each to the
+component it acts on, labelled with what it does>
 
 - <A function, and the components and interactions that achieve it, in one sentence>
 
@@ -72,22 +79,30 @@ Are the functions the minimum the UX essentially needs?
 Why: functions that follow the UX one by one restate it, and the mechanism that makes it possible is
 never found; the builder makes a separate mechanism for each, and the design grows with the UX.
 
-### B-18: Every component the functions need
+### B-18: Every logical component the functions need
 
-Is every component the functions need there?
+Is every logical component the functions need there?
 
 Why: a component left out is found only when a function it serves is built, and the architecture
 must change then.
 
 ### B-19: The functions achieved by interactions
 
-Do the interactions between the components achieve every function?
+Do the interactions between the logical components achieve every function?
 
 Why: components that each do their part achieve no function unless their interactions do.
 
+### B-25: No technology before it is chosen
+
+Are the functions and the logical components free of technology?
+
+Why: technology brought in first shapes the functions and components to it, so they no longer
+follow from what the UX essentially needs, and changing the technology means making the functions
+again.
+
 ### B-20: How each component is realized
 
-Can the reader tell how each component is realized physically?
+Can the reader tell the technology chosen for each component and how it is realized physically?
 
 Why: the builder makes each component as it is realized, and each way is made and changed in its
 own way.
@@ -107,7 +122,7 @@ Why: what the product depends on is where it breaks for the user first.
 
 ### B-23: Checks built up unit by unit
 
-Can the reader tell how the checks build up unit by unit?
+Can the reader tell how each physical unit is checked on its own, and how those checks build up?
 
 Why: the whole is built up from units checked one by one, and a unit left unchecked breaks the
 whole where no check shows it.
