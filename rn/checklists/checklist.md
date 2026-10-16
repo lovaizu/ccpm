@@ -9,6 +9,17 @@ A checklist is used by whoever makes a deliverable of one kind and whoever judge
 items as they make it, the maker makes a deliverable that serves the kind's purpose, nothing missing
 and nothing more; answering its items, the judge can tell whether a deliverable serves that purpose.
 
+A checklist is worked out in this order, each step the ground of the next:
+
+1. Decide its purpose: who uses a deliverable of the kind, and what they can then do, in one or two
+   sentences.
+2. From the purpose, decide the order in which whoever makes the kind decides it; for how readable
+   a document is, the order follows what its reader meets as they read.
+3. From that order, decide the template of what every deliverable of the kind holds, tied to no
+   language or tool.
+4. From the opening, its purpose and its order, draw the key points alone as items, each asking one
+   thing; what the steps already bring about is not asked again.
+
 This file is the checklist
 for checklists, and is written in the shape it asks for. Each item of `readability.md` applies to a
 checklist, with what a good deliverable of the kind gives its user as its subject.
