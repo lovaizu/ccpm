@@ -750,6 +750,20 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   premise differs); rn 0.10.0 and turn 0.2.0 in the CHANGELOGs (turn's names `decisions`, the
   checklist order, the generator's order; rn's the stock-taking, `decisions/`); `claude plugin
   validate --strict`; the final check; then the report of decisions 1 to 21 to the user.
+- CHANGELOGs (2026-10-16, `32ff4b0`): turn's generator order and rule condition, rn's stock-taking
+  and checklist order added under `[Unreleased]`; versions wait for the release. `claude plugin
+  validate --strict` passes on rn, turn and the marketplace.
+- rn's hooks, first unit, taken in from `hf4` (2026-10-16, Opus, $20.34, two rounds, 37 of 38 met,
+  one question turn settled itself from record.md: the hooks fetch nothing, since the conductor
+  fetches as each session starts): the eleven files replace the earlier run's (`b03e46f`); sessions
+  found with `git diff base HEAD` as record.md says; the guard as the user settled it. The one unmet,
+  code B-21, finished by hand: thirteen comments and docstrings that said what the code beside them
+  says now give the reason or are gone (`a1b9397`; `dev/check.sh` passes, every line and branch;
+  CI green). The seven rules each apply an item that exists (code B-3, B-6, B-9, B-22, B-4, B-29,
+  B-21); none taken.
+  The second unit runs as `hc1` in this session's scratchpad
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/739e9824-08e7-4ea5-b189-7ac3c92712c3/scratchpad/`,
+  log beside it; `d6` and `flow1` still go in the earlier one.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
