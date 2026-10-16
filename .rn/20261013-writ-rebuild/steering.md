@@ -853,7 +853,13 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      decision 24, to report.
   3. Running in this session's scratchpad on Opus 5.5: `td10` (turn's design), `rd9` (rn's
      design), `hc3` (`rn-hooks-commits.json`); judge each by the purpose, finish small shortfalls
-     by hand, take the files in, `sh dev/check.sh`, commit.
+     by hand, take the files in, `sh dev/check.sh`, commit. A design is judged by whether it
+     serves its purpose, not by its shape, which turn checks (the user, 2026-10-16): read as its
+     builder, applied to real changes (turn: an entry added to the CCS returned, the second round
+     dropped; rn: #37, #39, the trace check stopping on a criterion being asked about), each must
+     be decided from the design alone: whether it keeps or breaks each decision, which parts it
+     touches and what else it reaches, how it is then verified, with no need to open the code or
+     the README. A no is traced to the checklist or the decisions file and fixed there.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
   about is not a stop (the flow trial's finding above), settled with the hooks' third unit
   (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
