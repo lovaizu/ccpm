@@ -206,12 +206,15 @@ check in the other.
 
 ### B-33: Each goal brought about by a part
 
-Can the reader tell, for each quality in Goals, which part or parts bring it about, from the
-figure and the table alone?
+Can the reader tell, for each quality in Goals, which part or parts bring it about, each named by
+its name alone?
+
+A quality that one part brings about by a mechanism inside it is given that part's name, and no
+more; how the part does it is the code's.
 
 Why: a quality no part brings about is promised and never built; a part that brings about none is
 built for nothing; and the maintainer changing a part learns from this which qualities the change
-can break.
+can break, while a mechanism written here must change with the code though no decision did.
 
 ### B-11: Principles to judge a change
 

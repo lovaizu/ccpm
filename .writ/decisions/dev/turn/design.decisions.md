@@ -258,19 +258,15 @@
   turn runs in CI.
 
 ### B-33: Each goal brought about by a part
-- Each quality in Goals is brought about by the parts named for it, read from the figure and the
-  table: read in the place of the person the work is for, the first user and the orchestrator;
-  made from what you decided, the generator, the scripts that hand each agent its inputs alone,
-  and the hooks that stop a read outside them; asked only what only the user can decide, all at
-  once at the end, the orchestrator, which settles each question the inputs answer and carries
-  the rest to the CCS; seeing the work as it goes, the scripts' console and the hooks that show
-  it; a plugin decides from what turn returns, the scripts that write the CCS back; following
-  each item back, the run's evidence; the first-run share, the generator and the learner's rules;
-  time and tokens, the orchestrator's one second round; nothing passes unshown, the orchestrator
-  and Coverage; what the caller gave unchanged, the scripts that write the caller's parts back as
-  they came and the hooks; nothing unread, the hooks that stop a write to the work after its
-  reading; repository untouched, the hooks and the run's copy; stop and start over, the scripts
-  that write the work only when the run returns; missing tools, the skill's first step; the call
-  and the CCS, the scripts that check the CCS; how a checklist is written, the scripts that read
-  each checklist into the list; what a returned CCS points to, the run's evidence.
+- Each quality in Goals names the parts that bring it about, by name alone, with no word on how:
+  read in the place of the person the work is for: the first user, the orchestrator; made from
+  what you decided: the generator, the scripts, the hooks; asked only what only the user can
+  decide, all at once at the end: the orchestrator; seeing the work as it goes: the scripts, the
+  hooks; a plugin decides from what turn returns: the scripts; following each item back: the
+  run's evidence; the first-run share: the generator, the learner; time and tokens: the
+  orchestrator; nothing passes unshown: the orchestrator, the scripts; what the caller gave
+  unchanged: the scripts, the hooks; nothing unread: the hooks; repository untouched: the hooks,
+  the run's evidence; stop and start over: the scripts; missing tools: the orchestrator; the call:
+  the orchestrator; the CCS: the scripts; how a checklist is written: the scripts; what a returned
+  CCS points to: the run's evidence.
 

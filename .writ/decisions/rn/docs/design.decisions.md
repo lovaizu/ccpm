@@ -273,21 +273,18 @@
   own checks run where its verification document says.
 
 ### B-33: Each goal brought about by a part
-- Each quality in Goals is brought about by the parts named for it, read from the figure and the
-  table: what they really want from rough words, the conductor; called only for decisions that
-  are theirs, the conductor and the checklists, which settle what a good work gives so no
-  question of it goes to the user; decided from the proposal alone, turn, which makes the
-  proposal, the scripts' report, and the conductor; goes on from where it stopped, the record and
-  the hooks that keep every decision pushed with its decision line; read in its receiver's place,
-  turn; questions answered, the conductor; time and tokens to each sign-off, turn and the
-  conductor; what the user reads at a sign-off, the proposal checklist and the scripts' report;
-  the default branch, the hooks; every decision pushed, the hooks and the conductor; the record's
-  form, the hooks; only the user passes a sign-off, the hooks; nothing reaches the user unread,
-  turn and the report's lines as they stand; missing tools, the scripts and the hooks' guard;
-  installs with turn, rn's manifest, shipped with it; the conductor stays on course, the hooks;
-  the commands, the conductor; the record, the record and the hooks; the pull request, the
-  conductor; the checklists, the checklists and the scripts; the verification document, turn and
-  the hooks.
+- Each quality in Goals names the parts that bring it about, by name alone, with no word on how:
+  what they really want from rough words: the conductor; called only for decisions that are
+  theirs: the conductor, rn's checklists; decided from the proposal alone: turn, rn's scripts, the
+  conductor; goes on from where it stopped: the record, rn's hooks; read in its receiver's place:
+  turn; questions answered: the conductor; time and tokens to each sign-off: turn, the conductor;
+  what the user reads at a sign-off: rn's checklists, rn's scripts; the default branch: rn's
+  hooks; every decision pushed: rn's hooks, the conductor; the record's form: rn's hooks; only
+  the user passes a sign-off: rn's hooks; nothing reaches the user unread: turn, rn's scripts;
+  missing tools: rn's scripts, rn's hooks; rn installs with turn: rn's manifest; the conductor
+  stays on course: rn's hooks; the commands: the conductor; the record: the record, rn's hooks;
+  the pull request: the conductor; rn's checklists: rn's checklists, rn's scripts; the
+  verification document: turn, rn's hooks.
 
 ### B-11: Principles to judge a change
 - Attractive quality is the goal: its checks are the fewest that confirm it, each improvement
