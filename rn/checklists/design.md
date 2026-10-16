@@ -60,13 +60,20 @@ then how each unit and the whole are checked, each the ground of the next.
 
 ## Benefit
 
-### B-40: What the UX needs, in the fewest goals
+### B-40: Everything the UX needs
 
-Can the reader tell what the UX needs from goals that are the fewest, each one such that the UX
-lacks something without it and no other goal says it?
+Can the reader tell from the goals everything that must hold for the UX the README and its pages
+define to come about?
 
-Why: the goals are what everything below is built and checked toward; a goal more is built and
-kept for nothing, and two goals that say one thing are built twice.
+Why: the goals are what everything below is built and checked toward; what the UX needs and no goal
+names is built by chance or not at all.
+
+### B-44: Each goal needed
+
+Can the reader tell, for each goal, what the UX would lack without it?
+
+Why: a goal the UX does not need is built and kept for nothing, and the builder takes in more than
+the mechanism needs.
 
 ### B-41: How the roles achieve the goals
 
@@ -74,21 +81,39 @@ Can the reader tell the roles the goals need, and how their interactions achieve
 
 Why: a goal no interaction of roles achieves is promised and never built.
 
-### B-42: How and where each role is made
+### B-42: How each role is made
 
-Can the reader tell how each role is made physically, where it is kept and runs, and what it
-depends on outside the product?
+Can the reader tell how each role is made physically, such as a prompt, a script, a hook or data?
 
-Why: the builder makes and places each role from this, and what the product depends on is where it
-breaks for the user first.
+Why: each is made, changed and checked in its own way, and the builder cannot make a role without
+knowing which.
 
-### B-43: How the units and the whole are checked
+### B-45: Where each role is placed
 
-Can the reader tell how each unit is checked, and how the whole is checked to have achieved each
-goal?
+Can the reader tell where each role is kept and where it runs, such as shipped with the product, in
+the user's repository, on the user's machine or in CI?
 
-Why: units checked one by one build up to the whole, and only a check of the whole shows a goal
-achieved.
+Why: where a role is kept decides who owns it and when a change reaches the user, and where it runs
+decides where it can be checked.
+
+### B-46: What each role depends on
+
+Can the reader tell what each role depends on outside the product?
+
+Why: what the product needs in place is where it breaks for the user first.
+
+### B-43: How each unit is checked
+
+Can the reader tell how each unit is checked, and where?
+
+Why: the whole is built up from units checked one by one; a unit left unchecked breaks the whole
+where no check shows it.
+
+### B-47: How the whole is checked for each goal
+
+Can the reader tell how the whole is checked to have achieved each goal, and where?
+
+Why: units can each pass while a goal is missed; only a check of the whole shows a goal achieved.
 
 ## Usability
 
