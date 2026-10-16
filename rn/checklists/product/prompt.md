@@ -253,8 +253,3 @@ matched to something the prompt asks; a shared thing matched to nothing fails.
 
 Why: the AI takes what its examples share as part of what is asked, so a likeness left by chance is
 copied too.
-
-## Usability
-
-None: each thing that makes a prompt easy for the AI to follow is one the opening names the AI or
-its user gets from it, so its item is in Benefit.

@@ -40,6 +40,8 @@ version: <x.y.z>
 
 <The purpose in one or two sentences: who uses it, and what they can then do>
 
+<The order the kind is worked out in, as numbered steps>
+
 <Where the kind is a document, how `readability.md` applies to it>
 
 ## Format
@@ -57,17 +59,11 @@ version: <x.y.z>
 <Only what the question needs to be answered, such as a list or a template; most need nothing>
 
 Why: <what goes wrong without it>
-
-## Usability
-
-None: <why the kind needs no item here>
 ```
 
-Every checklist has the three sections, in this order: the shape the maker takes before writing,
-then what the user gets, then what makes it easy to use.
-
 Why: every checklist in the same shape keeps their quality even, lets a tool read any of them, and
-gives the maker the shape first, so each item after it is met inside a shape already taken.
+gives the maker the purpose, then the order, then the shape, before the items, so each item is met
+inside what those already set.
 
 ### F-2: A section thought through
 

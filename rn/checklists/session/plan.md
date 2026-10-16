@@ -181,8 +181,3 @@ attractive criteria are nearly met?
 
 Why: must-be quality is easier to build and check, and started first it takes the effort while the
 reason to choose the work goes unchecked, past the time to change course.
-
-## Usability
-
-None: each thing that makes a plan easy to carry on from is one its readers get from it, so its
-item is in Benefit.

@@ -143,7 +143,3 @@ is compared with the last version?
 
 Why: such a quality is neither achieved nor missed, so no check of a function shows it; left
 unmeasured, it grows worse with each change without anyone seeing.
-
-## Usability
-
-None: what lets the design be understood in a short time is `readability.md`'s.

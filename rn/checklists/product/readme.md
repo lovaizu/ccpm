@@ -139,7 +139,3 @@ reader can reach.
 Can the reader tell on what terms they may use the product?
 
 Why: a reader who cannot tell whether they may use it, or on what terms, cannot decide to use it.
-
-## Usability
-
-None: what lets the README be read easily is `readability.md`'s.

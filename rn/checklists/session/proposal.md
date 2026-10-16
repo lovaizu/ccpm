@@ -135,8 +135,3 @@ Look for: a ground the proposal names but does not give; a word of the work's in
 not met; a place named without what is there.
 
 Why: each thing the user must fetch to decide is time spent on what they left to rn.
-
-## Usability
-
-None: each thing that makes a proposal quick to decide from is one the user gets from it, so its
-item is in Benefit.

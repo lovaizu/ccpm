@@ -176,8 +176,3 @@ or an idea, called by one name in all of them; a thing called by two names fails
 
 Why: a maintainer who meets two names takes them for two things, and a search for one finds only
 half of where the thing is used.
-
-## Usability
-
-None: each thing that makes code easy to run or change is one the opening names its user gets from
-it, so its item is in Benefit.

@@ -102,7 +102,3 @@ Can the reader tell what satisfies users more the better it is?
 
 Why: such a quality is weighed against the others in every choice, and one left unnamed is given up
 without anyone deciding to.
-
-## Usability
-
-None: what lets the UX be understood in a short time is `readability.md`'s.

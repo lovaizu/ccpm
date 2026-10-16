@@ -164,7 +164,3 @@ After one reading from the top, does the reader hold the same picture of the sub
 
 Why: the reader acts on the picture they took in; where it differs from the writer's, they act
 otherwise without noticing.
-
-## Usability
-
-None: taking the document in in a short time is its purpose, so every item is a benefit.
