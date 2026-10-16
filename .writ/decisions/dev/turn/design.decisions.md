@@ -144,3 +144,14 @@
 - Inside turn, each role is checked at both ends too, in its own forms, not the CCS: a hook lets a
   role start only with the input the orchestrator is to give it, and stops a role's reply that
   does not fill its form, every item answered and each line named in the work.
+- The kinds turn defines, all else the caller's:
+  - `focal_entities`: `deliverable`, where the work goes; `receiver`, who reads it. The caller's.
+  - `goal_orientation`: `use`, what the receiver reads it for; `acceptance`, when it is enough. The
+    caller's.
+  - `retrieved_artifacts`: `checklist`, `decisions`, `reference`, `receiver_opens`. The caller's.
+  - `constraints`: `language`. The caller's.
+  - `episodic_trace`: `item`, for each item whether it is met and the lines that meet it. turn's.
+  - `uncertainty_signal`: `question`, for the user; `unmet`, an item not met and why. turn's.
+  - `predictive_cue`: `next`, one of `done`, `ask the user`, `fix`, the caller fixes. turn's.
+  - `semantic_gist`, `relational_map`: none.
+  That the work was written is read from `deliverable`, so no kind says it again.
