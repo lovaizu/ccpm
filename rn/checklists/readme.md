@@ -62,6 +62,10 @@ the opening and the example name none>
 
 <Where fuller use and what changed in each version are written>
 
+## Development
+
+<A link to the entrance to the design and development>
+
 ## License
 ```
 
@@ -69,7 +73,9 @@ Why: a reader looks for requirements, installation or the license under the head
 commonly give them, and finds each where they look only when every README puts it there; the
 opening sits right under the name, where the reader looks first; the example comes before
 installation, so the reader sees using it before deciding to install it; and why to choose it
-follows the example, so the reader weighs it against the use they have just seen.
+follows the example, so the reader weighs it against the use they have just seen; and the way on for
+those who build it stands apart from Documentation, so a user does not read through links they do
+not use.
 
 ## Benefit
 
