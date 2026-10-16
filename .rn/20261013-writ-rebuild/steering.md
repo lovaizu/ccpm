@@ -842,24 +842,34 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   quality stay in Goals, so what the README's use does not show is not lost; coverage both ways,
   nothing below serving nothing above; each item judged yes or no. Decision 24, to report
   (replaces the checklist part of decision 23).
-- Where to resume (2026-10-16):
-  1. Done: `rn/checklists/design.md` rewritten so (`c688ca7`); both decisions files to it
-     (`7ce947f`, `6b3cf15`).
-  2. Decided by the user (2026-10-16): Structure as two static figures, the logical (the
-     placement of responsibilities and their dependencies) and the physical (a frame for each
-     place things are kept or run, each unit in it by its kind and the logical parts it makes,
-     with what it depends on), the table gone into the physical figure; a decision's intent and a
-     criterion's method as nested one-sentence items (`783889d`, `28b027a`, `d1c1f11`). Part of
-     decision 24, to report.
-  3. Running in this session's scratchpad on Opus 5.5: `td10` (turn's design), `rd9` (rn's
-     design), `hc3` (`rn-hooks-commits.json`); judge each by the purpose, finish small shortfalls
-     by hand, take the files in, `sh dev/check.sh`, commit. A design is judged by whether it
-     serves its purpose, not by its shape, which turn checks (the user, 2026-10-16): read as its
-     builder, applied to real changes (turn: an entry added to the CCS returned, the second round
-     dropped; rn: #37, #39, the trace check stopping on a criterion being asked about), each must
-     be decided from the design alone: whether it keeps or breaks each decision, which parts it
-     touches and what else it reaches, how it is then verified, with no need to open the code or
-     the README. A no is traced to the checklist or the decisions file and fixed there.
+- Found (2026-10-16), on `td10`, turn's design made to the checklist of decision 24: it reads as
+  a list (18 goals, 18 decisions, 9 sentences under the figure, 20 criteria), as other documents
+  did. The cause as judged with the user: README, Goals, Design decisions and Verification each
+  say the same promise again in another form, and coverage asked across the layers multiplies the
+  restatements; the decisions files, written as everything listed, are followed as given. Decided
+  by the user (2026-10-16): try the design as Structure and Verification alone: the opening's main
+  point, the logical and physical figures with the sentences under the logical one, and a
+  criterion with its method for each promise of the README in its words; a decision goes either
+  into a criterion or into the figures, and one that fits neither is suspected not core;
+  non-goals and constraints left out at first, kept only if the builder is then found to hesitate.
+  Decision 25, to report (replaces Goals and Design decisions of decision 24).
+- Where to resume (2026-10-16, before a `/clear`):
+  1. Read the user's own words first: the picture of the design document in session
+     `739e9824-08e7-4ea5-b189-7ac3c92712c3` (2026-10-16T01:19Z) and the later points in
+     `7e42789b-e819-4c53-8eb2-185f1e2e75be` (01:31Z, 01:33Z) and in the session that wrote this
+     (decision 25 above).
+  2. Rework `rn/checklists/design.md` to decision 25 (Structure and Verification; B-17 to B-20,
+     B-27, B-5, B-6, B-11, F-5, U-1 judged against it, not patched), and
+     `.writ/decisions/dev/turn/design.decisions.md` to it, holding only what the design must say,
+     not everything listed. Run turn's design alone (`dev/turn/trials/turn-design.json`, a new
+     folder, Opus 5.5). Judge it as its builder on real changes (an entry added to the CCS
+     returned, the second round dropped, a role set to find faults, the evidence moved out of
+     `.turn/`): each decided from the design alone, with no need to open the code or the README;
+     show the user; then rn's.
+  3. `hc3` (`rn-hooks-commits.json`) was running in the old session's scratchpad
+     (`/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/1976f783-b178-4e30-8e77-96adc68af046/scratchpad/hc3`);
+     if it did not finish, run it again in a new folder; judge, take the files in,
+     `sh dev/check.sh`, commit.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
   about is not a stop (the flow trial's finding above), settled with the hooks' third unit
   (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
