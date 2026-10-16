@@ -5,12 +5,12 @@ version: 0.1.0
 
 # Hook
 
-A hook is run by Claude Code at an event of a session, and is read by its maintainer, who changes
-it with confidence, and by whoever its stop reaches, who then knows what went wrong and what to
-do. It keeps the AI to the steps its prompts set: a step begun before the steps ahead of it are
-done, a step left out, an input not read or an output not written where its step says, each
-stopped as it happens. Each item of `code.md` applies to a hook and its tests, with what the hook
-stops and lets through as its behavior.
+A hook stops the AI, as it happens, when it strays from the steps its prompt sets, and says at
+which step and what is missing. The AI goes back to the steps, so the user gets, on every run, the
+result the steps bring about.
+
+Each item of `code.md` applies to a hook and its tests, with what the hook stops and lets through
+as its behavior.
 
 ## Format
 
