@@ -26,3 +26,8 @@
   every item of the checklists, those the evaluator shows met and those it does not, and decides
   each item; the learner finds, for each item not met, how the work would meet it, and the
   orchestrator sends that back to the generator.
+- The orchestrator runs as a subagent, so the calling AI's context holds only what comes back; the
+  calling AI runs it in the background and waits, so it can still take the user's pause and stop
+  the run, by a message or by stopping the subagent. The four roles are the orchestrator's own
+  subagents. The progress a person sees is the subagent panel's. When a message reaches a running
+  subagent is tried when built.
