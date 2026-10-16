@@ -971,9 +971,11 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   1. turn's design (`.writ/decisions/dev/turn/design.decisions.md`): one user story, five
      components and their interactions, the orchestrator as an agent definition, runs at once,
      agreed; the work made where it goes, no copy, nothing outside the repository, the roles'
-     answers as replies, no resume, the qualities and Verification, agreed. turn makes
-     `dev/turn/design.md` from them (run `tdes1` in the scratchpad, 5c99d74); judge it by the
-     purpose, finish by hand, take it in.
+     answers as replies, no resume, the qualities and Verification, agreed. The user (2026-10-16):
+     redo turn straight, in the order of `plugin.md`; everything to be remade is deleted (the
+     README, the callers' page, the design, the code, tests and trials), leaving the UX, the
+     decisions, CHANGELOG and plugin.json. Next: turn's README first, with its checklists open,
+     agreed with the user, then the design from the decisions above.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
