@@ -62,9 +62,9 @@ relation>
 ### Physical structure
 
 <One static figure: a frame for each place things are kept or run, such as what is shipped, the
-user's repository, a service or the user's machine; in each, a box for each unit kept there, named
-by its kind and the logical parts it makes; an arrow from each to what it depends on, labelled
-with that relation>
+user's repository, a service or the user's machine, holding the place's name alone; in each, a box
+for each unit kept there, holding its kind and the logical parts it makes alone; an arrow from each
+to what it depends on, labelled with that relation>
 
 ## Verification
 
@@ -153,6 +153,19 @@ Can the reader say of the product, for each goal, whether it meets it, yes or no
 
 Why: the goals are the ground of every decision; one that cannot be judged met or not settles
 nothing, and every decision drawn from it can be argued either way.
+
+### B-27: Each goal one thing
+
+Does each goal say one thing the user gets or takes for granted, with no reason for it and no way
+of bringing it about beside it?
+
+A goal that holds several things, such as what is written, what is named and what is never done,
+splits into one goal each; its reason belongs to the decisions that serve it, and its details to
+the criteria that verify it.
+
+Why: a goal is the ground every later section is judged against; one that holds several things or
+carries its reasons is judged in parts, and a decision or a criterion can serve one part while the
+others go unnoticed.
 
 ### B-11: Decisions to judge a change
 

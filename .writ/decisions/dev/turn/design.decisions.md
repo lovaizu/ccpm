@@ -47,65 +47,54 @@
 ## design
 
 ### B-1: Attractive quality
-- Said in the README's words, since the reader comes from it.
-- Read in the place of the person the work is for: the work comes back already read, as that person
-  would, by an AI that did not write it and has only what that person would open; each item passed
-  is shown in the lines that give it, and what that reading could not take is made again. The user
-  hands the work on without first reading it in that person's place.
-- Made from what you decided: the work follows your notes and checklist, not whatever turn happened
-  to open, and each run of the same request works from the same inputs.
-- Asked only what only the user can decide, all at once at the end: nothing is asked that the notes
-  and checklist already answer, and nothing is asked while turn works, so the user can leave it at
+- Said in the README's words, since the reader comes from it; each goal one thing, its reasons
+  in the decisions and its details in the criteria.
+- Read in the place of the person the work is for: the work comes back already read as its
+  receiver would read it, so the user hands it on without reading it in that person's place first.
+- Made from what you decided: the work follows the user's notes and checklist, not whatever turn
+  happened to open.
+- Asked only what only the user can decide, all at once at the end: the user can leave turn at
   work.
-- Seeing the work as it goes: the user can tell from what turn shows how far it has come, and stop
-  it, with Esc, when what the work will let its person do is not what they want, before the work is
-  written, saying what they want instead.
-- A plugin decides from what turn returns: a plugin's step hands turn one task and decides from the
-  CCS turn writes back alone whether to finish the work itself, call turn again, ask the user or
-  move on.
+- Seeing the work as it goes: the user can tell from what turn shows how far it has come.
+- Stopping before the work is written: the user can stop turn with Esc when what the work will let
+  its receiver do is not what they want, and say what they want instead.
+- A plugin decides from what turn returns: a plugin's step decides its next move from the CCS turn
+  writes back alone.
 - Following each item back: the user can later find in `.turn/`, for each item, the lines that give
   it or how the work would give it, and the version of the checklist it was judged by.
 
 ### B-2: One-dimensional quality
-- Each must be no worse than in the version in use.
-- The first-run share: requests whose first run passes every item. The more work is right when first
-  made, the less the user waits and the less is spent.
-- Time and tokens: what one run takes, from the request to the result.
+- The first-run share: the share of tasks whose first run passes every item.
+- Time and tokens: what one run takes, from the task handed in to the CCS written back.
 
 ### B-3: Must-be quality
-- Nothing passes unshown: an item counts as passed only where lines the work holds give it; every
-  other item comes back as not passed, with how the work would give it.
+- Nothing passes unshown: an item counts as passed only where lines of the work give it.
+- Nothing lost when made again: work made again keeps giving every item it already gave.
 - What the caller gave unchanged: turn never rewrites the task a caller hands it or the files the
   task names as inputs.
 - Nothing unread: the work turn writes is the version last read.
-- Repository untouched: during a run, turn writes nothing in the repository but where the work's
-  files go and `.turn/`, names to the user any other file a run's commands changed, and never
-  commits or pushes, so the user takes turn's change as one diff and decides what to commit; what
-  was where each file of the work goes can always be got back. Outside its runs, turn blocks
-  nothing.
-- Stop and start over: a stopped run says so; asked again with the user's words, turn makes the work
-  anew from them. A run stopped or cut off leaves where the work's files go as they were before
-  the run.
-- Missing tools: without python3 or jq, turn ends before any work and says what to install; outside
-  a run, a missing tool breaks nothing.
+- Repository untouched: a run writes nothing in the repository but where the work goes and
+  `.turn/`.
+- No commit or push: turn never commits or pushes, so the user decides what to commit.
+- Other changes named: a file a run's commands changed elsewhere is named to the user.
+- Stop leaves things as they were: a run stopped or cut off leaves where the work goes as it was
+  before the run.
+- Start over: asked again after a stop, turn makes the work anew from the user's words.
+- Missing tools: without python3 or jq, turn ends before any work and says what to install.
+- Nothing in the way outside a run: outside its runs, turn blocks nothing, and a missing tool
+  breaks nothing.
 
 ### B-4: Backward compatibility
-- The call: plugins call the skill `turn:up` with the arguments the callers' page gives, and name
-  `turn` in their dependencies. An argument may be added only if a call without it runs as before.
-- The CCS, relied on by every caller: its parts, kinds of entry and values of `next`, as the
-  callers' page gives them, are neither added to, removed nor renamed from 0.2.0 on, since a caller
-  breaks on one it does not know as on one that is gone; the wording in an entry may change, since
-  callers do not act on it. A CCS an earlier version from 0.2.0 on returned is accepted, so a
-  stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since no caller relies
-  on one.
-- The checklist form the README's Requirements gives, relied on by users and by plugins built on
-  turn, such as rn, which write checklists in it: a checklist that opens with its name and version
-  and gives its items as headings with IDs keeps being read. What turn takes from a checklist
-  beyond that may change, as long as a checklist in that form needs nothing more.
-- What a returned CCS points to, relied on by the user, who opens it to follow each item back:
-  every place a returned CCS points to exists. The run's evidence is kept under `.turn/` at the top
-  of the repository, since the README names that place to the user; how it is laid out inside
-  `.turn/` may change.
+- The call: plugins that call the skill `turn:up` as the callers' page gives it, and name `turn` in
+  their dependencies, keep running.
+- The CCS written back: callers keep reading every CCS turn writes back, its parts, kinds of entry
+  and values of `next` being those of 0.2.0.
+- A stopped task carries on: a CCS an earlier version from 0.2.0 on returned is accepted after an
+  update.
+- The checklist layout: users and plugins built on turn, such as rn, keep having read a checklist
+  that opens with its name and version and gives its items as headings with IDs.
+- What a returned CCS points to: the user, following each item back, finds every place a returned
+  CCS points to, under `.turn/`, which the README names.
 
 ### B-5: Non-goals
 - Deciding what the work should say: the caller does it, knowing what was already agreed, and gives
@@ -140,10 +129,11 @@
 - Asked only what only the user can decide, all at once at the end: nothing is asked while the
   run works, and the run ends asking only the choice the decisions leave open.
   - Checked by a trial on decisions that leave one choice open, judged from the JSONL.
-- Seeing the work as it goes: the console alone tells the step the records show, and a run stopped
-  on its aim has written no work of that aim and then makes what the user said.
-  - Checked by a trial stopped as by Esc when the console shows the aim, judged from the console
-    and the JSONL.
+- Seeing the work as it goes: the console alone tells the step the records show.
+  - Checked on the trials above, from the console and the JSONL.
+- Stopping before the work is written: a run stopped on its aim has written no work of that aim,
+  and then makes what the user said.
+  - Checked by a trial stopped as by Esc when the console shows the aim.
 - A plugin decides from what turn returns: the move decided from the returned CCS alone is the one
   decided after also reading the records.
   - Checked on trials that end in each value of `next`.
@@ -152,8 +142,7 @@
   - Checked on the evidence the trials above leave.
 
 ### B-8: One-dimensional quality verified
-- The first-run share: the share of tasks whose first run passes every item is no lower than on
-  the version in use.
+- The first-run share: no lower than on the version in use.
   - Measured from the records of the same tasks, run on this version and on the version in use
     from the same CCS, written in each version's kinds where they differ.
 - Time and tokens: the minutes and tokens of each run are no more than on the version in use.
@@ -163,41 +152,58 @@
 - Nothing passes unshown: grounds naming lines the work lacks are refused.
   - Checked by a test on turn's scripts in `dev/turn/tests/`, run on every push with every line
     and branch counted, as is each test below.
+- Nothing lost when made again: a second round lays out and decides every item of the list, not
+  only those left without a Good.
+  - Checked by a test on turn's scripts.
 - What the caller gave unchanged: a CCS written back whose caller parts differ from those received
   is refused.
   - Checked by a test on turn's scripts.
 - Nothing unread: a write to the work after the first user was handed it is stopped.
   - Checked by a test on turn's hooks.
-- Repository untouched: in a run, a write outside the run's copy and the work's place, a commit and
-  a push are stopped, and outside a run nothing is.
+- Repository untouched: in a run, a write outside the run's copy and where the work goes is
+  stopped.
   - Checked by a test on turn's hooks.
-- Stop and start over: a run stopped at each step, and one cut off, leaves where the work goes as it
-  was before the run.
+- No commit or push: in a run, a commit and a push are stopped.
+  - Checked by a test on turn's hooks.
+- Other changes named: a file a shell command changed in a run outside the work is named in what
+  the run returns.
   - Checked by a test on turn's scripts.
-- Missing tools: with each tool missing, a run ends before any work saying what to install, and
-  outside a run nothing breaks.
-  - Checked by a test on turn's scripts and hooks with each tool taken away.
+- Stop leaves things as they were: a run stopped at each step, and one cut off, leaves where the
+  work goes as it was before the run.
+  - Checked by a test on turn's scripts.
+- Start over: after a stop, a run started with the user's words makes the work from them.
+  - Checked by a test on turn's scripts.
+- Missing tools: with each tool missing, a run ends before any work saying what to install.
+  - Checked by a test on turn's scripts with each tool taken away.
+- Nothing in the way outside a run: with no run open, or with a tool missing, the hooks stop
+  nothing.
+  - Checked by a test on turn's hooks.
 
 ### B-10: Backward compatibility verified
-- The call: a call as the callers' page gives it runs.
+- The call: a call as the callers' page gives it runs, as does one without an argument added since.
   - Checked by a test in `dev/turn/tests/` that calls turn as the callers of each released version
     from 0.2.0 on did, run on every push, as is each test below.
-- The CCS: a CCS each such version returned is accepted and carried on, and every `next` returned is
-  one its callers know.
+- The CCS written back: every part, kind of entry and value of `next` written back is one 0.2.0's
+  callers know; the wording in an entry may differ.
+  - Checked by a test on a CCS written back.
+- A stopped task carries on: a CCS each version from 0.2.0 on returned is accepted and carried on,
+  and one of 0.1.0, which no caller relies on, is refused.
   - Checked by a test with a CCS of each such version.
-- The checklist form: a checklist in the form the README gives yields a list with its opening and
-  every item.
-  - Checked by a test on a checklist in that form.
-- What a returned CCS points to: every place a returned CCS points to exists.
+- The checklist layout: a checklist so laid out yields a list with its opening and every item.
+  - Checked by a test on a checklist so laid out.
+- What a returned CCS points to: every place a returned CCS points to exists, under `.turn/`.
   - Checked by a test on a returned CCS.
 
 ### B-11: Decisions to judge a change
-- The orchestrator alone decides whether each item passes, from the whole work.
-  - Serves: nothing passes unshown; read in the place of the person the work is for.
+- The orchestrator alone decides whether each item passes, every item in every round, from the
+  whole work.
+  - Serves: nothing passes unshown; nothing lost when made again; read in the place of the person
+    the work is for.
   - What a builder could get wrong: take an agent's word that an item passes, from the part it
     looked at, though the whole work does not give it.
 - Every role looks only for where items pass, and answers in a form with one place per item;
-  Coverage is the one place that looks for what may be wrong.
+  Coverage is the one place that looks for what may be wrong, and the orchestrator reads it as
+  where to look first.
   - Serves: nothing passes unshown; the first-run share.
   - What a builder could get wrong: set a role to find faults, which finds them whether they are
     there or not (assumption), so the work is made again for faults it does not have.
@@ -211,6 +217,11 @@
     from what turn returns.
   - What a builder could get wrong: ask the user as soon as a choice comes up, which cannot be
     heard in a subagent and keeps the user at the screen.
+- The orchestrator runs as a skill where its caller runs, and each agent as a subagent.
+  - Serves: seeing the work as it goes; stopping before the work is written; a plugin decides from
+    what turn returns.
+  - What a builder could get wrong: run the orchestrator as a subagent, where the user sees no
+    console and cannot press Esc; in a subagent, the cost is room in the caller's context.
 - Everything that makes or measures the work works by the same list, receiver and use, and each
   checklist says its own name and version.
   - Serves: read in the place of the person the work is for; the first-run share; following each
@@ -219,23 +230,25 @@
     to one bar and judged by another, and a Good cannot be followed back to its text.
 - A run starts from its CCS alone and makes the work in a copy of the repository as committed,
   writing it where it goes only when the run returns.
-  - Serves: what the caller gave unchanged; repository untouched; stop and start over; following
-    each item back; what a returned CCS points to.
+  - Serves: what the caller gave unchanged; repository untouched; stop leaves things as they
+    were; start over; following each item back; what a returned CCS points to.
   - What a builder could get wrong: make the work in place, so a run stopped part way leaves
     half-made files where the work goes.
 - What must come out the same every time is done by a script or held by a hook, not left to a
   prompt.
-  - Serves: nothing passes unshown; what the caller gave unchanged; nothing unread; repository
-    untouched; missing tools; seeing the work as it goes.
+  - Serves: nothing passes unshown; nothing lost when made again; what the caller gave unchanged;
+    nothing unread; repository untouched; no commit or push; other changes named; missing tools;
+    nothing in the way outside a run; seeing the work as it goes.
   - What a builder could get wrong: leave such a step to a prompt, which an AI does differently
     from run to run, so a slip shows only later, in a result that looks right.
 - A caller reaches turn only through the call and the CCS; everything inside turn may change.
-  - Serves: the call; the CCS; a plugin decides from what turn returns.
+  - Serves: the call; the CCS written back; a stopped task carries on; a plugin decides from what
+    turn returns.
   - What a builder could get wrong: let a caller read the run's forms or evidence, which then
     cannot change without breaking it.
 - What can be told before it happens is stopped then, and what cannot is named to the user when
   the run returns.
-  - Serves: repository untouched.
+  - Serves: repository untouched; no commit or push; other changes named.
   - What a builder could get wrong: stop every command that might do harm, which closes the tests
     and builds the work needs, or check only afterwards, when the harm is done.
 
@@ -281,8 +294,8 @@
 - One sentence under the logical figure for each held inside one part, saying what the part holds:
   - The orchestrator holds nothing passes unshown: it alone decides each item, from the whole
     work.
-  - The orchestrator holds asking only at the end: it puts no question while the run goes and
-    returns every one when it ends.
+  - The orchestrator holds asked only what only the user can decide: it puts no question while the
+    run goes and returns every one when it ends.
   - The orchestrator holds time and tokens: a run has at most one second round.
   - The generator holds the first-run share: it makes the work to every item of the list from the
     first round; the learner holds it for the second, finding how each item left would pass.
@@ -290,12 +303,17 @@
     written over, and the one written back has the parts and values the callers' page gives.
   - turn's scripts hold a plugin deciding from what turn returns: the CCS they write back names
     the next move and every question.
-  - turn's scripts hold Coverage: they find the lines of the work no grounds name.
+  - turn's scripts hold nothing lost when made again: they lay out every item of the list for
+    each round.
+  - turn's scripts hold other changes named: they name each file a run's commands changed outside
+    the work.
+  - turn's scripts find Coverage, which the orchestrator reads as where to look first.
+  - turn's hooks hold nothing in the way outside a run: they act only in the session whose run is
+    open, and do nothing where python3 is missing.
   - turn's hooks hold nothing unread: they stop a write to the work once the first user has been
     handed it.
-  - The orchestrator, turn's scripts and turn's hooks hold missing tools: the orchestrator says to
-    install python3 when it is not found, the scripts end a run before any work when jq is
-    missing, and the hooks do nothing where python3 is missing.
+  - The orchestrator and turn's scripts hold missing tools: the orchestrator says to install
+    python3 when it is not found, and the scripts end a run before any work when jq is missing.
 
 ### B-26: What kind of thing each unit is
 - The physical figure names each unit by its kind: turn's skill, the orchestrator's prompt; turn's
@@ -311,9 +329,7 @@
 
 ### B-24: Where each part runs
 - A frame for the user's machine, where every unit of turn runs, inside the Claude Code session
-  that called it: the orchestrator where its caller runs, so in a conversation the user sees its
-  console and presses Esc, and in a subagent the caller reads what it returns, at the cost of room
-  in the caller's context; each agent as a subagent; nothing of turn runs in CI.
+  that called it; nothing of turn runs in CI.
 
 ### B-25: What the product depends on
 - Arrows, each labelled: turn's scripts → python3 3.9 or later and jq: run on; turn's scripts →
