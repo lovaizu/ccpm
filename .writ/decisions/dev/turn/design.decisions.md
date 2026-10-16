@@ -88,3 +88,11 @@
     expense.
   - How much the calling AI fixes after the work returns, counted as the items it fixes itself,
     since the more is settled inside turn, the more the benefit gives.
+
+### B-23: Checks built up unit by unit
+- The scripts: unittest fed what the calling AI hands over, a case each stops and one each lets
+  through, every line and branch counted in CI on every push.
+- The hook checks: unittest fed what Claude Code hands each hook, a step stopped where it must be
+  and let through where it must be, counted the same way.
+- The orchestrator and the four roles: each run on its own on a small task, on Opus 5.5, and judged
+  from the JSONL by whether it did what its steps say.
