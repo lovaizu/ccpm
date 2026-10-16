@@ -909,9 +909,18 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   role, then steps; a shape whose every step names what it takes in, sending back what is missing,
   and what it hands on, checked against the step's purpose; one thing per item, drawn from the
   steps. Decision 32, to report.
+- Decided by the user (2026-10-16): the code checklist made again from its purpose
+  (`43cae5c`..): whoever runs the code gets the behavior asked, and whoever maintains it trusts
+  from its tests passing that the behavior holds, so changes it at once and with confidence;
+  written in five steps, inputs checked (requirements, how it is made, how it is checked,
+  development rules), design (by responsibility, one thing each, each piece of knowledge in one
+  place), existing tests passing, test first, a self-check; a shape for modules, functions and
+  tests in any language; fourteen items, the key points only, since what the steps already bring
+  about is not asked again; running the tests and coverage by a command and on every push left to
+  the development rules. Decision 33, to report.
 - Where to resume (2026-10-16): remake the other checklists with the user the same way, one point
-  at a time, judging each item from the opening and one thing per item, in this order: code,
-  hook, plan, proposal, checklist (whether the Usability section stays is settled there). Then
+  at a time, judging each item from the opening and one thing per item, key points only, in this
+  order: hook, plan, proposal, checklist (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
