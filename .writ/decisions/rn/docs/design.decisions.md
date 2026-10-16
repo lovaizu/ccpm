@@ -163,71 +163,85 @@
 - rn's hooks run in every session where rn is installed, in repositories without rn as well.
 
 ### B-7: Attractive quality verified
-- How each is checked: as its user, on the practice repository `lovaizu/rn-try`, one run at a
-  time, from a fixed state, with a stand-in playing the user from a part that says only what the
-  user knows; judged from the run's records, the JSONL of the conversation and of every agent, with
-  the commits, the pull request and the product; the scenes, their fixtures and trials are in the
-  verification document (`rn/docs/verification.md`) and `dev/rn/trials/`. The flow, from `/rn:up`
-  through the plan, the design, one task and the Deliverable sign-off, is tried apart from what
-  turn makes, on the smallest change that shows it, first after any change.
 - What they really want from rough words: from the stand-in's rough words, the plan it approves
   says what its part says the user wants, and no way was offered before it said what it wants.
+  - Checked by a trial as its user on the practice repository `lovaizu/rn-try`, one run at a
+    time, from a fixed state, with a stand-in playing the user from a part that says only what the
+    user knows, judged from the JSONL of the conversation and of every agent, with the commits,
+    the pull request and the product; the scenes are in `rn/docs/verification.md`, the trials and
+    fixtures in `dev/rn/trials/`, as for each quality below.
+  - Tried first, after any change, on the flow from `/rn:up` through the plan, the design, one task
+    and the Deliverable sign-off, apart from what turn makes, on the smallest change that shows it.
 - Called only for decisions that are theirs: every question the stand-in is asked between
   sign-offs is one only its part can answer.
+  - Checked on the same trials, from the questions in the JSONL.
 - Decided from the proposal alone: at each sign-off, the stand-in decides from the proposal alone
   as it decides after also reading the work.
+  - Checked by a trial that has the stand-in decide each proposal twice, without and with the work.
 - Goes on from where it stopped: `/rn:up` in a fresh conversation on a paused session reaches the
   next stop with the stand-in explaining nothing.
-- Read in its receiver's place before the user sees it: the records show every work the user sees
-  read by turn's first user after its last change, or that change in the report.
+  - Checked by trials from fixtures paused at each stop, one of them left by 0.9.0.
+- Read in its receiver's place before the user sees it: every work the user sees was read by
+  turn's first user after its last change, or that change is in the report.
+  - Checked on the same trials, from the JSONL and the reports.
 
 ### B-8: One-dimensional quality verified
-- How each is measured: from the records of the same session, run on this version and on the
-  version in use, which the trial's record names.
 - Questions answered: the questions the stand-in answers beyond the sign-offs are no more than on
   the version in use.
+  - Measured from the records of the same session, run on this version and on the version in use,
+    which the trial's record names, as is each below.
 - Time and tokens to each sign-off: the minutes and tokens to each sign-off are no more than on the
   version in use.
+  - Measured from the same records.
 - What the user reads at a sign-off: the lines of each proposal are no more than on the version in
   use.
+  - Measured from the same records.
 
 ### B-9: Must-be quality verified
-- How each is checked: by a test on the hook or script that holds it, in `dev/rn/tests/`, run on
-  every push with every line and branch counted.
 - The default branch: a commit on the default branch is stopped.
+  - Checked by a test on rn's hooks in `dev/rn/tests/`, run on every push with every line and
+    branch counted, as is each test below.
 - Every decision pushed: a commit without its decision line, and one that removes an item of
   `open/` without its text whole, are stopped.
+  - Checked by a test on rn's hooks.
 - The record's form: a write that breaks the plan's form, the names in `open/` or the verification
   document's form, or that refers to an ID that does not exist, is stopped.
+  - Checked by a test on rn's hooks.
 - Only the user passes a sign-off: a commit that passes a sign-off without the typed command is
   stopped.
+  - Checked by a test on rn's hooks.
 - Nothing reaches the user unread: the report rn's script writes names each change the conductor
   made after turn's last reading.
+  - Checked by a test on rn's scripts.
 - Missing tools: with each tool missing, rn stops before anything saying what to install, and
   outside a session rn's hooks do nothing.
-- Installs with turn: `claude plugin validate --strict` on rn and on the marketplace passes on
-  every push.
+  - Checked by a test on rn's scripts and hooks with each tool taken away.
+- Installs with turn: `claude plugin validate --strict` on rn and on the marketplace passes.
+  - Checked in CI on every push.
 - The conductor stays on course: an agent started in the background, a turn ended with nothing for
   the user, and a message in another language than the user's are stopped.
+  - Checked by a test on rn's hooks.
 
 ### B-10: Backward compatibility verified
-- How each is checked: by a test in `dev/rn/tests/` or a trial in `dev/rn/trials/` that uses it as
-  the earlier version left it.
-- The commands: on the flow session, each command typed does what it did, and `/rn:on` says to use
-  `/rn:up` with the same words.
-- The record: a session recorded by 0.9.0 and one by 0.8.0 are taken up from their fixtures.
-- The pull request: on the flow trial, its body holds the links and it is marked ready at the
-  Deliverable sign-off.
+- The commands: each command typed does what it did, and `/rn:on` says to use `/rn:up` with the
+  same words.
+  - Checked on the flow trial in `dev/rn/trials/`.
+- The record: a session recorded by 0.9.0 and one by 0.8.0 are taken up.
+  - Checked by trials from their fixtures in `dev/rn/trials/`.
+- The pull request: its body holds the links, and it is marked ready at the Deliverable sign-off.
+  - Checked on the flow trial.
 - rn's checklists: every checklist read by turn's own script yields its opening and every item.
+  - Checked by a test in `dev/rn/tests/`.
 - The verification document: turn uses the flow trial's deliverable against it.
+  - Checked on the flow trial.
 
 ### B-12: Who does what to what
 - Structure opens with how rn divides, in one sentence: rn is the conductor, which alone decides
   each next move and uses git, and turn, which makes every work; they meet only in the record,
   where the conductor writes what each work must say and turn's task, and rn's scripts and hooks
   hold the conductor to the record's form and course.
-- One figure, a box for each one that takes part holding its name alone, and an arrow from each to
-  what it reads, writes, copies or calls, labelled with that relation:
+- The logical figure, a box for each one that takes part holding its name alone, and an arrow from
+  each to what it reads, writes, copies or calls, labelled with that relation:
   - the user → the conductor: asks, answers one point at a time, types `/rn:ty`, `/rn:gm` or
     `/rn:dn`
   - the user → the pull request: reads each proposal, comments
@@ -252,35 +266,14 @@
     without the typed command, an agent started in the background, a turn ended with nothing for
     the user, or a message in the wrong language
   - git and GitHub → the record and the pull request: hold them
-- Beside the figure, only what it cannot show: the conductor is the user's conversation, the same
-  one throughout the session, and turn's evidence under `.turn/` stays uncommitted.
-
-### B-34: What kind of thing each part is
-- A table of the parts inside rn, one row each, with its kind: the conductor, prompts, the skills
-  `rn:up`, `rn:ty`, `rn:gm` and `rn:dn` with the steps they follow; rn's scripts, python3 scripts
-  with jq; rn's hooks, `sh` entries that run python3 checks; rn's checklists, data, one markdown
-  file per kind of work; the record, data, the session's folder under `.rn/` and the commits on
-  its branch; the pull request, data held by GitHub; turn, a plugin of its own, used as its
-  callers' page gives it.
-
-### B-35: Where each part is kept
-- In the same table: the prompts, scripts, hooks and checklists are shipped with rn and copied to
-  the user's machine at install; a checklist the user made is theirs, at `.rn/checklists/<kind>.md`
-  in their repository; the record is in the user's repository, committed on the session's branch,
-  and `.turn/` beside it uncommitted; the pull request is on GitHub; turn is installed beside rn.
-
-### B-36: Where each part runs
-- In the same table: the conductor, the scripts, the hooks and turn run on the user's machine,
-  inside the Claude Code session the user talks in; nothing of rn runs in CI, and the product's
-  own checks run where its verification document says.
 
 ### B-33: Every goal and decision placed
-- Held by where the figure and the table place the parts, so nothing more is said: read in its
-  receiver's place before the user sees it (turn); the default branch, every decision pushed, the
-  record's form, only the user passes a sign-off and the conductor stays on course (rn's hooks);
-  installs with turn and the commands (the table); the pull request (the conductor, through `gh`);
-  rn's checklists (rn's checklists and rn's scripts).
-- One sentence under the figure for each held inside one part, saying what the part holds:
+- Held by where the figures place the parts, so nothing more is said: read in its receiver's place
+  before the user sees it (turn); the default branch, every decision pushed, the record's form, only
+  the user passes a sign-off and the conductor stays on course (rn's hooks); installs with turn (the
+  physical figure); the commands (rn's skills); the pull request (the conductor, through `gh`); rn's
+  checklists (rn's checklists and rn's scripts).
+- One sentence under the logical figure for each held inside one part, saying what the part holds:
   - The conductor holds what they really want from rough words: it hears why the user wants the
     goal and what the result should do for them before it offers any way.
   - The conductor holds called only for decisions that are theirs and questions answered: it
@@ -296,6 +289,32 @@
     the user decides, not for the work checked.
   - rn's scripts and rn's hooks hold missing tools: the scripts stop before anything when a tool
     is missing, and the hooks do nothing outside a session.
+
+### B-26: What kind of thing each unit is
+- The physical figure names each unit by its kind: rn's skills, the conductor's prompts, `rn:up`,
+  `rn:ty`, `rn:gm` and `rn:dn`; rn's scripts, python3 with jq; rn's hooks, `sh` entries that run
+  python3 checks; rn's checklists, one markdown file per kind of work; the record, the session's
+  folder under `.rn/` and the commits on its branch; the pull request, held by GitHub.
+
+### B-23: Where each part is kept
+- Frames: shipped with rn, copied to the user's machine at install, holding rn's skills, scripts,
+  hooks and checklists; the user's repository, holding the record, committed on the session's
+  branch, a checklist the user made at `.rn/checklists/<kind>.md`, `.turn/` uncommitted beside the
+  record, and the product; GitHub, holding the pull request and the pushed branch. The record is
+  one logical part made of units in two frames: the session's folder and commits in the
+  repository, and its pushed branch on GitHub.
+
+### B-24: Where each part runs
+- A frame for the user's machine, where the conductor, rn's scripts and hooks, and turn run,
+  inside the Claude Code session the user talks in, the conductor being that conversation, the
+  same one throughout the session; nothing of rn runs in CI, and the product's own checks run where
+  its verification document says.
+
+### B-25: What the product depends on
+- Arrows, each labelled: rn → turn: installed beside it and called as turn's callers' page gives
+  it; rn's scripts → python3 3.9 or later and jq: run on; the conductor → git and `gh`: commits,
+  pushes and opens the pull request; `gh` → GitHub: logged in with push access; rn's hooks →
+  Claude Code: run in every session where rn is installed, in repositories without rn as well.
 
 ### B-11: Decisions to judge a change
 - Attractive quality comes first: its checks are the fewest that confirm it, and must-be quality
