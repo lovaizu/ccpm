@@ -931,8 +931,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   template; the plan's template loses `verification:` (decision 30); the proposal's items that held
   two things are split, so ten each, numbered anew since neither was released with IDs; no item
   added. Decision 35, to report.
-- Where to resume (2026-10-16): remake the checklist checklist with the user the same way, one
-  point at a time, judging each item from the opening and one thing per item, key points only (whether the Usability section stays is settled there). Then
+- Decided by the user (2026-10-16): the checklist checklist made again from its purpose
+  (`f5ce26b`..): the maker makes a deliverable that serves the kind's purpose, nothing missing and
+  nothing more, and the judge tells whether it does; worked out as purpose, the order the maker
+  decides in, a template drawn from that order and tied to no language or tool, then the key
+  points as items, one thing each, what the steps bring about not asked again; the template gains
+  the order and loses the Usability section, which every remade checklist had empty, so F-2 and
+  U-4 go and U-5 moves to B-12. Decision 36, to report.
+- Where to resume (2026-10-16): every checklist is remade. Next, rn's grilling step, turn's
+  design, judging `hc4`, and the rest of #4. (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts

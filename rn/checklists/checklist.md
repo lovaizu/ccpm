@@ -20,9 +20,9 @@ A checklist is worked out in this order, each step the ground of the next:
 4. From the opening, its purpose and its order, draw the key points alone as items, each asking one
    thing; what the steps already bring about is not asked again.
 
-This file is the checklist
-for checklists, and is written in the shape it asks for. Each item of `readability.md` applies to a
-checklist, with what a good deliverable of the kind gives its user as its subject.
+This file is the checklist for checklists, and is written in the shape it asks for. Each item of
+`readability.md` applies to a checklist, with what a good deliverable of the kind gives its user as
+its subject.
 
 ## Format
 
@@ -65,12 +65,6 @@ Why: every checklist in the same shape keeps their quality even, lets a tool rea
 gives the maker the purpose, then the order, then the shape, before the items, so each item is met
 inside what those already set.
 
-### F-2: A section thought through
-
-Does each section with no item hold `None:` and its reason?
-
-Why: a section thought through is told from a section forgotten.
-
 ### F-3: Version
 
 Is the `version` in the front matter semver?
@@ -80,9 +74,9 @@ Why: a judgment names the text it was made by in a form people and tools read th
 ### F-4: Item IDs
 
 Is each item's ID its section's first letter and a number counted up within the section, such as
-`U-2`?
+`B-2`?
 
-Across checklists, an ID is named with the checklist's `name`, such as `release-notes U-2`.
+Across checklists, an ID is named with the checklist's `name`, such as `release-notes B-2`.
 
 Why: a judgment names each item by its ID, and the name tells whose item it is when several
 checklists are judged at once.
@@ -115,6 +109,24 @@ sentences, who uses it and what they can then do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
 
+### B-9: The order the maker decides in
+
+Can whoever makes a deliverable of the kind take its decisions in the order the opening gives,
+each step drawn from the purpose and the ground of the next?
+
+Why: a maker who decides in an order of their own decides a later thing before what it rests on,
+and the deliverable is then fitted to a guess.
+
+### B-10: A template drawn from the order
+
+Can whoever makes a deliverable of the kind fill the template with what every deliverable of the
+kind holds, each part drawn from a step of the order?
+
+Look for: a part only some deliverables need; a part from no step; a form of one language or tool.
+
+Why: a part only some need is added to every deliverable, and a part from no step is filled with
+nothing the purpose asks.
+
 ### B-7: How `readability.md` applies
 
 Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
@@ -131,16 +143,16 @@ its reader, and the maker cannot tell what passes.
 
 ### B-2: Every part of the purpose checked
 
-For each thing the opening says the user decides or does, can whoever judges learn from some item,
-in whichever section it sits, whether the user can?
+For each thing the opening says the user decides or does, can whoever judges learn from some item
+whether the user can?
 
 Why: items drawn from the purpose, one for each thing it names, are enough when every thing has
 one; a thing with no item lets a deliverable that misses that part of the purpose pass.
 
 ### B-3: What the user gets
 
-Does a yes to each Benefit and Usability item tell whoever judges that the user gets something from
-the deliverable, rather than that something is in it?
+Does a yes to each item tell whoever judges that the user gets something from the deliverable,
+rather than that something is in it?
 
 Look for: an item met by writing something in, such as an opening that tells what the deliverable
 covers, whether its user needs it or not; and an item that asks of every deliverable of the kind a
@@ -149,6 +161,16 @@ part only some need, such as a figure of who does what where nothing acts in tur
 Why: an item about what is there passes a deliverable its user cannot use, and fails a good one that
 does without that part; and since the maker meets every item, what such an item asks for is added
 to every deliverable of the kind, needed or not.
+
+### B-11: The key points alone
+
+Does each item ask something that following the order alone may still leave unmet?
+
+Look for: an item whose yes follows from having taken a step, such as a test seen failing where the
+order has each test written and seen failing first.
+
+Why: an item that asks again what a step brings about is one more to answer for nothing, and the
+items that matter are lost among them.
 
 ### B-4: One thing per item
 
@@ -188,27 +210,12 @@ Look for: a name that says what is absent or kept out, such as "Nothing of the s
 Why: an item is named alone in a judgment and in the maker's mind; a name of what is kept out is
 read as a rule, and the maker writes to avoid it rather than to give the user something.
 
-## Usability
+### B-12: Items in the order the maker meets them
 
-### U-4: Each item in its section
+Can the maker take the items in the order they work, because the items stand in the order of the
+steps they are drawn from, and those that hold over the whole, such as one name for each thing,
+stand last?
 
-Can whoever uses the checklist find each item in the section these questions put it in?
-
-Ask of each item, in this order, and stop at the first yes:
-
-1. Does it ask for a shape that a person or a tool tells without reading what the deliverable
-   says, such as a heading, a name, a marking or a number's form? Format.
-2. Without it, does the user lose what they get from the deliverable? Benefit.
-3. Otherwise: Usability.
-
-Why: with every item where the questions put it, anyone finds it where they look, and each section
-holds what its name says.
-
-### U-5: Items in the order the maker meets them
-
-Can the maker take the items in the order they write, because within each section the items stand
-in the order the maker meets them writing the deliverable from the top, and those that hold over
-the whole, such as one name for each thing, stand last?
-
-Why: a maker who writes from the top meets each item where its part comes, instead of holding every
-item in mind at once; and an item that holds over the whole is checked once the whole is there.
+Why: a maker who works through the steps meets each item where its part comes, instead of holding
+every item in mind at once; and an item that holds over the whole is checked once the whole is
+there.
