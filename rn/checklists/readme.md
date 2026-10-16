@@ -118,6 +118,15 @@ and repeat the example themselves, with the README alone?
 
 Why: each place the reader has to look elsewhere is a place they may stop.
 
+### B-8: Getting ready their own way
+
+For each thing that must be in place beforehand, can the reader get it ready in their own way, or
+see that they already have it, because they are told what the thing is and not only one way of
+getting it ready?
+
+Why: one way of getting it ready, given alone, reads as the only way, and the reader follows its
+steps even where they already have the thing or would get it ready another way.
+
 ### B-6: Where to go next
 
 Can the reader find where to go next: a user, fuller use and what changed in each version; someone
@@ -134,36 +143,4 @@ Why: a reader who cannot tell whether they may use it, or on what terms, cannot 
 
 ## Usability
 
-### U-3: An opening only for deciding
-
-Can the reader decide from the opening whether to read on without reading anything there beyond
-what they gain and whom it is for?
-
-It cannot when the opening also gives why to choose the product, which belongs in its own section,
-or how it works, which belongs in the example.
-
-Why: the reader decides from the opening whether to read on; each reason or working met there is
-read before they know whether the product is for them, and stands between them and what they decide
-by.
-
-### U-1: Deciding and starting from the outside
-
-Can the reader decide and start without learning the names of the product's inner parts, the cases
-where it acts otherwise than the example shows, or the steps it takes inside?
-
-Look for, in the opening, the example, Requirements and Installation: a name of a part inside the
-product, a case where the product acts otherwise than the example shows, and a step the product
-takes that the reader neither takes nor sees in what it gives back. A stop when a thing under
-Requirements is not in place is part of that thing, not such a case.
-
-Why: each such name, case or step the reader must take in before going on is effort spent on what
-they do not use, and one more thing to learn before they have decided.
-
-### U-2: Getting ready their own way
-
-For each thing that must be in place beforehand, can the reader get it ready in their own way, or
-see that they already have it, because they are told what the thing is and not only one way of
-getting it ready?
-
-Why: one way of getting it ready, given alone, reads as the only way, and the reader follows its
-steps even where they already have the thing or would get it ready another way.
+None: what lets the README be read easily is `doc.md`'s.
