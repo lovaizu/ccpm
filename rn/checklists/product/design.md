@@ -16,7 +16,10 @@ The UX is what the user experiences using the product. Design thinks in this ord
    A logical component is divided by what it takes on; its physical form is not decided yet.
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
-4. Check each physical unit on its own, build those checks up, then check the whole.
+4. For each benefit the UX names, decide, with how it is realized, the qualities that come with
+   giving it: must-be, what must be kept for the benefit to hold; and better the more, what
+   satisfies the user more the better it is, such as less time or less cost.
+5. Check each physical unit on its own, build those checks up, then check the whole.
 
 Many UX are held up by few functions, and one component takes on several functions, so the numbers
 narrow in the order UX, functions, components.
@@ -54,6 +57,12 @@ component it acts on, labelled with what it does>
 there, holding how it is made and the components it realizes; an arrow from each unit to what it
 depends on outside the product, labelled with that relation>
 
+## Quality
+
+- <A benefit the UX names>
+  - Must-be: <what must be kept for it to hold, in one sentence>
+  - Better the more: <what satisfies the user more the better it is, in one sentence>
+
 ## Verification
 
 ### Units
@@ -65,12 +74,15 @@ depends on outside the product, labelled with that relation>
 
 - <A function>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
-- <A quality the UX names as better the more>: <what is measured, in one sentence>
+- <A must-be quality>: <what shows it kept, in one sentence>
+  - <How and where that is checked, in one sentence>
+- <A better-the-more quality>: <what is measured, in one sentence>
   - <How and where it is measured and compared with the last version, in one sentence>
 ```
 
 Why: the builder reads the functions, then the components that achieve them and how they are
-realized, then how the units and the whole are checked, each the ground of the next.
+realized, then the qualities that come with each benefit, then how the units and the whole are
+checked, each the ground of the next.
 
 ## Benefit
 
@@ -122,6 +134,14 @@ Can the reader tell what each component depends on outside the product?
 
 Why: what the product depends on is where it breaks for the user first.
 
+### B-27: The qualities that come with each benefit
+
+Can the reader tell, for each benefit the UX names, what must be kept for it to hold and what is
+better the more in giving it?
+
+Why: these qualities come with giving a benefit in the way chosen; drawn from nothing they never
+end, and a quality left unnamed is broken or given up without anyone deciding to.
+
 ### B-23: Checks built up unit by unit
 
 Can the reader tell how the checks of each physical unit, made on its own, build up to the whole?
@@ -136,9 +156,16 @@ Can the reader tell how the whole is checked to have achieved each function?
 Why: units can each pass while a function is missed; only a check of the whole shows a function
 achieved.
 
+### B-28: Must-be, checked
+
+Can the reader tell how each must-be quality is checked as kept?
+
+Why: a must-be quality is not a function, so no check of a function shows it kept; left unchecked,
+it breaks without anyone seeing.
+
 ### B-26: Better the more, measured
 
-Can the reader tell, for each quality the UX names as better the more, what is measured and how it
+Can the reader tell, for each better-the-more quality, what is measured and how it
 is compared with the last version?
 
 Why: such a quality is neither achieved nor missed, so no check of a function shows it; left

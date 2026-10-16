@@ -13,18 +13,8 @@ UX is making that experience clear, in this order:
 
 1. Decide the users and the goal each wants to achieve.
 2. Draw, as scenes, what the user does and gets back until they achieve the goal.
-3. Decide what the user gains when they achieve the goal with this product: the benefits.
-4. Decide the qualities the experience must keep:
-   - Must-be: what users take for granted without saying it, and notice only when it breaks; it is
-     checked as kept or not.
-     - For example, work is never lost.
-     - For example, after an update, the ways the product has been used, and the ways other
-       products call it, still work.
-   - Better the more: what satisfies users more the better it is; it is measured, and checked as no
-     worse than the last version.
-     - For example, less time taken.
-     - For example, less cost.
-     - For example, fewer questions the user answers.
+3. Decide what the user gains when they achieve the goal with this product: the benefits, which are
+   why the user chooses it.
 
 Each item of `readability.md` applies to a UX with the users' experience as its subject; its B-16 is
 answered by the scenes.
@@ -51,20 +41,10 @@ Does the UX follow this template, headings included?
 ## Benefits
 
 - <What the user gains when they achieve the goal>
-
-## Quality
-
-### Must-be
-
-- <What must be kept as a matter of course>
-
-### Better the more
-
-- <What satisfies users more the better it is>
 ```
 
 Why: the builder reads who the users are and what they want, then how they get it, then what they
-gain, then what must be kept, each the ground of the next.
+gain, each the ground of the next.
 
 ## Benefit
 
@@ -88,17 +68,3 @@ Can the reader tell what the user gains when they achieve the goal with this pro
 
 Why: the benefits are why the user chooses the product; a builder who does not know them can build
 every scene and still give the user nothing worth choosing.
-
-### B-4: What must be kept
-
-Can the reader tell what users take for granted and notice only when it breaks?
-
-Why: users do not ask for it and the scenes do not show it, so a builder who is not told is free to
-break it.
-
-### B-5: What is better the more
-
-Can the reader tell what satisfies users more the better it is?
-
-Why: such a quality is weighed against the others in every choice, and one left unnamed is given up
-without anyone deciding to.
