@@ -9,6 +9,13 @@ A document is read by a reader who comes to it for a purpose; the reader may be 
 Reading it once from the top, they take in what it holds in a short time, meeting nothing they do
 not need and left with no question, and achieve that purpose.
 
+A document is made readable by thinking through what the reader meets, in the order they read:
+
+1. On opening it, they can tell whether it serves their purpose.
+2. Reading on from the top, they understand each word and idea where they meet it.
+3. They stop at nothing they do not need.
+4. When they finish, no question is left, and they achieve their purpose.
+
 ## Format
 
 ### F-1: Items and their explanations
