@@ -946,6 +946,14 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   to report.
 - Decided by the user (2026-10-16): turn's UX is at `dev/turn/ux.md`, beside its design, since
   only its builders read it and what only builders need stays in `dev/`. Decision 38, to report.
+- Decided by the user (2026-10-16), rn's UX (`.writ/decisions/rn/UX.decisions.md`): every point
+  a work's checklists leave to decide is confirmed with the user one point per message before the
+  work is made, the points rn could look up included, with what it found and the answer it
+  recommends; one such procedure, walking the points as a tree, serves every work, and turn makes
+  the work from what is settled; a sign-off checks only that the work is as settled and what
+  changed while it was made. For rn's design, as must-be qualities of its benefits: hooks stop a
+  slip in the course where it happens, the default branch is untouched until the merge and the
+  session's branch is kept up to date with it. Decision 39, to report.
 - Where to resume (2026-10-16): through turn on the new checklists, turn's UX, README and design,
   then rn's the same way (rn's grilling step is part of rn's design). For each, the decisions turn
   takes in are made by asking the user one point at a time, in Japanese and plain words, without

@@ -24,3 +24,17 @@ to turn as the decisions the work is made from.
 5. The finished product is used as the user would use it, and rn stops at the deliverable sign-off;
    on `/rn:ty` the pull request is marked ready, and the merge is the user's.
 6. Wherever the user stops, `/rn:up` in a fresh conversation goes on from there.
+
+### B-3: The benefits
+- What the user gets is what they really wanted, not what their first words said, and going back
+  over finished work becomes far rarer, since every point is settled with them before a work is
+  made.
+- Each work reaches the user only after it has been read and used in its receiver's place.
+- At each sign-off the user checks only that the work is as settled and what changed while it was
+  made, without reading it all again.
+- Work that takes days goes on from wherever the user stopped.
+- What was decided, and why, stays: the README and the design in the product, each decision and
+  what became of each finding in the record and the commits, so the next work, or a teammate,
+  starts from it.
+- What a session learned is put to the user one point at a time, and what they add to their
+  checklists makes every later work better.
