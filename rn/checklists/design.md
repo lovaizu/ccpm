@@ -5,8 +5,8 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by whoever builds or changes the product. From it they quickly
-understand the mechanism that brings about the UX the README and its pages define, and how that is
+A design document is read by whoever builds or changes the product. From it they understand,
+in a short time, the mechanism that brings about the UX the README and its pages define, and how that is
 checked, and build or change the product to it.
 
 Each item of `doc.md` applies to a design document with the mechanism and its checks as its
@@ -109,4 +109,4 @@ change.
 
 ## Usability
 
-None: what makes the design quick to take in is `doc.md`'s.
+None: what lets the design be understood in a short time is `doc.md`'s.
