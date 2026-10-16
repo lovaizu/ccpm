@@ -51,8 +51,7 @@ sentences, under no heading>
 
 ## Requirements
 
-<Each thing that must be in place beforehand, beside something the product does that uses it where
-the opening and the example name none>
+<Each thing that must be in place beforehand, said as what it is>
 
 ## Installation
 
