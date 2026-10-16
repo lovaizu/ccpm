@@ -141,3 +141,6 @@
   definition, stopping with what is wrong and where the definition is; before it returns, that the
   new CCS meets the definition and that what must come back as received has not changed, returning
   nothing otherwise. Each check is tested.
+- Inside turn, each role is checked at both ends too, in its own forms, not the CCS: a hook lets a
+  role start only with the input the orchestrator is to give it, and stops a role's reply that
+  does not fill its form, every item answered and each line named in the work.
