@@ -1,14 +1,51 @@
 {
-  "focal_entities": [{"deliverable": "dev/turn/design.md"},
-                     {"receiver": "someone who builds or changes turn, coming from its README"}],
-  "goal_orientation": [{"use": "to know how turn should be built before changing any part of it"},
-                       {"acceptance": "they can build or change turn and secure its quality without hesitating, following the design"}],
-  "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
-                          {"checklist": "rn/checklists/design.md"},
-                          {"decisions": ".writ/decisions/dev/turn/design.decisions.md"},
-                          {"receiver_opens": "turn/README.md"},
-                          {"receiver_opens": "turn/calling-from-a-plugin.md"}],
-  "constraints": [{"language": "English"}],
-  "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
-  "relational_map": [], "episodic_trace": []
+  "focal_entities": [
+    {
+      "deliverable": "dev/turn/design.md"
+    },
+    {
+      "receiver": "someone who builds or changes turn, coming from its README"
+    }
+  ],
+  "goal_orientation": [
+    {
+      "use": "to know how turn should be built before changing any part of it"
+    },
+    {
+      "acceptance": "they can build or change turn and secure its quality without hesitating, following the design"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/doc.md"
+    },
+    {
+      "checklist": "rn/checklists/design.md"
+    },
+    {
+      "decisions": ".writ/decisions/dev/turn/design.decisions.md"
+    },
+    {
+      "receiver_opens": "turn/README.md"
+    },
+    {
+      "receiver_opens": "turn/calling-from-a-plugin.md"
+    },
+    {
+      "reference": "turn/README.md"
+    },
+    {
+      "reference": "turn/calling-from-a-plugin.md"
+    }
+  ],
+  "constraints": [
+    {
+      "language": "English"
+    }
+  ],
+  "predictive_cue": [],
+  "uncertainty_signal": [],
+  "semantic_gist": [],
+  "relational_map": [],
+  "episodic_trace": []
 }

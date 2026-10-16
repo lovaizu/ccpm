@@ -38,7 +38,7 @@ Does the design document follow this template, headings included?
 holding its name alone; an arrow from each to what it reads, writes or calls, labelled with that
 relation>
 
-- <A part, and the promise a mechanism inside it holds, by the promise's name, in one sentence>
+- <The parts that hold a promise, by the promise's name, and what they hold, in one sentence>
 
 ### Physical structure
 
@@ -99,14 +99,14 @@ goes wrong, and a part left untold is reached without anyone seeing it.
 
 ### B-38: Every promise placed
 
-Can the reader tell, for each promise the criteria name, which parts hold it: from the figures
-where the placement itself holds it, and from an item under the logical figure, naming the part,
-where a mechanism inside one part holds it?
+Can the reader tell, for each promise the criteria name, which parts hold it, from an item under
+the logical figure that names the parts and the promise?
 
-What the part holds is said, not how it does it; how is the code's.
+What the parts hold is said, not how they do it; how is the code's.
 
 Why: a promise no part holds is never built, and the builder changing a part learns from this what
-the change can break.
+the change can break; the figure's boxes hold names alone, so the figure cannot say which promise a
+part holds.
 
 ### B-26: What kind of thing each unit is
 

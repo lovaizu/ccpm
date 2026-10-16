@@ -3,44 +3,27 @@
 ## doc
 
 ### B-9: The point from the opening
-- The opening is the idea of design B-37, with a link to the README (`../../turn/README.md`).
-- How to use turn is in that README, and the forms a caller writes and reads are on the callers'
-  page (`../../turn/calling-from-a-plugin.md`).
+- The opening is the idea of design B-37, with a link to the README (`../../turn/README.md`) and
+  to the callers' page (`../../turn/calling-from-a-plugin.md`).
 
 ### B-12: Every term known
-- The caller: Claude in the user's conversation, or a step of the user's plugin. It hands turn one
-  task in a CCS, a JSON file, and turn writes back what the caller needs next, as a function takes
-  arguments and returns a value.
-- The work: what one task makes for one purpose, one file or several, such as code and its tests,
-  written, read and decided together, since what the receiver needs may be given only by them
-  together.
-- What the caller gives: where each file of the work goes; the receiver it is for; their use of it,
-  when named; what they must be able to do with it; the checklists; the decisions, what the caller
-  decided the work must say or do, and leave out, item by item of the checklists, holding nothing a
-  reference already holds; the references, files or folders the work follows or draws on, which
-  turn reads in place of a copy, so a fact has one source; what the receiver opens with the work;
-  and the constraints, such as the language to write in. These are the run's inputs.
-- A checklist's Format gives the shape the work takes, first; its other items stand in the order
-  the maker meets them writing the work from the top, those that hold over the whole last.
-- A checklist says what a work of one kind must give its receiver: an opening on what such work is
-  for, then items, each one question. The list is a task's checklists put together.
-- A run goes from one CCS to the one turn writes back: it makes the work, has it read, decides each
-  item and finds how each item without a Good would get one.
-- The orchestrator runs a run and alone decides each item. Its agents give it what it decides from:
-  the generator makes the work, the first user reads it in the receiver's place and hands back its
-  reading, the evaluator shows which items the work meets, and the learner finds how an item
-  without a Good would get one.
+- The terms the README and the callers' page give, such as the caller, the CCS, the work, a
+  checklist and the run's inputs, are used as they give them and not said again; the reader opens
+  both.
+- The orchestrator runs a run and alone decides each item; turn's agents give it what it decides
+  from: the generator makes the work, the first user reads it in the receiver's place, the
+  evaluator shows which items the work meets, and the learner finds how an item without a Good
+  would get one.
 - A Good: an item the orchestrator has decided the work meets, with its grounds, the lines it rests
-  on. More: an item without a Good when a run returns.
-- A form: the answer a role writes, a JSON file with one place per item, which the agents read
-  and change with jq; what the role hands back is its form. The reading: the first user's form,
-  what it took from the work for each item and where.
+  on.
+- A round: the work made, read and decided; a run has a first round and, when items are left
+  without a Good, a second, which makes the work again.
+- A form: the answer an agent writes, a JSON file with one place per item. The reading: the first
+  user's form.
 - Coverage: the lines of the work no grounds name, as test coverage finds the lines no test runs.
-- The run's evidence: what a run keeps in the repository for the user and later runs: the work, its
-  reading and decisions, each way to a Good, and the list with each checklist's name and version.
-  The work is made in a working copy of the repository as it is committed, kept in the evidence
-  while the run goes, so the tests and builds the work needs run in place; the work stays in the
-  evidence until the run returns, and the copy is gone by then.
+- The run's evidence: what a run keeps under `.turn/` for the user and later runs, the run's copy
+  among it, a working copy of the repository as committed, where the work is made so the tests and
+  builds it needs run in place.
 
 ## design
 
@@ -52,67 +35,62 @@
 ### B-12: Who does what to what
 - The logical figure, a box for each one that takes part holding its name alone, the four agents
   grouped as turn's agents, and an arrow from each to what it reads, writes, copies or calls,
-  labelled with that relation:
+  labelled with that relation alone; what each stops or holds is the criteria's and the items':
   - the user → the caller: asks for the work, and answers what the run returns
   - the user → the orchestrator: watches the console, stops it with Esc
   - the caller → the orchestrator: hands the CCS
   - the orchestrator → the caller: writes the CCS back
-  - the orchestrator → turn's scripts: calls, for every step that must come out the same
+  - the orchestrator → turn's scripts: calls
   - the orchestrator → each agent: starts with its brief
-  - the orchestrator → the run's evidence: reads the work and every form, writes its decision on
-    each item
-  - the generator → the run's evidence: reads its brief, writes the work in the run's copy and
-    names where each item passes in its form
-  - the first user → the run's evidence: reads the work and what the receiver opens, writes its
+  - the orchestrator → the run's evidence: reads the work, every form and Coverage, writes its
+    decision on each item
+  - the generator → the run's evidence: writes the work in the run's copy, and its form
+  - the first user → the run's evidence: reads the work and what the receiver opens, writes the
     reading
-  - the evaluator → the run's evidence: reads the reading and the work, writes which items pass
-    with their lines
-  - the learner → the run's evidence: reads the work, the forms, the decisions and the
-    references, writes how each item left would pass and where that lies
-  - turn's scripts → the run's evidence: lay out the list, the forms and the briefs, make the
-    run's copy, find Coverage, show the console
-  - turn's scripts → git: copy the repository as committed, and get back what was where the work
-    goes
+  - the evaluator → the run's evidence: reads the reading and the work, writes its form
+  - the learner → the run's evidence: reads the work, the forms and the inputs, writes its form
+  - turn's scripts → the run's evidence: lay out the list, the forms and the briefs, find Coverage
+  - turn's scripts → git: copy the repository as committed
   - turn's scripts → where the work goes: write the work when the run returns
-  - turn's hooks → the orchestrator and its agents: stop a read outside the role's inputs, a write
-    outside the run's copy and where the work goes, a commit or a push, and a step done out of
-    order
+  - turn's hooks → the orchestrator and its agents: stop a step
 
 ### B-38: Every promise placed
-- Held by where the figures place the parts, with no item under the figure: read in the place of
-  the person the work is for (the first user, apart from the generator); made from what you
-  decided, repository untouched and no commit or push (turn's hooks); seeing the work as it goes
-  and stopping before the work is written (the orchestrator, a skill where its caller runs);
-  following each item back and what a returned CCS points to (the run's evidence); the call and a
-  plugin decides from what turn returns (only the CCS between the caller and the orchestrator).
-- One item under the logical figure for each held inside one part:
-  - The orchestrator holds nothing passes unshown: it alone decides each item, from the whole
-    work, every item in every round.
-  - The orchestrator holds asked only what only the user can decide: it puts no question while
-    the run goes and returns every one when it ends.
+- One item under the logical figure for each promise, by its name in the criteria:
+  - The first user holds where the work fails the person it is for: it reads the work it did not
+    write, with only what the receiver opens.
+  - turn's hooks hold the work follows what you decided: they stop a read of a file the inputs do
+    not name.
+  - The orchestrator holds a pass you can check: it alone decides each item, from the whole work,
+    every item in every round, and keeps each Good's grounds in the run's evidence.
+  - turn's scripts hold made again, keeping every item it gave: they lay out every item of the
+    list for the second round, not only those left.
+  - The orchestrator holds leave turn at work and answer everything at once: it asks nothing while
+    the run goes and returns every question when it ends.
+  - The orchestrator holds seeing each step and stopping before turn writes: it runs as a skill in
+    the caller's session, so the user sees its console and can press Esc there.
+  - turn's scripts hold a plugin decides from what turn returns, the CCS written back and what the
+    caller gave unchanged: they write back a CCS with the parts and values the callers' page gives
+    and never write over the one received.
+  - turn's agents hold the first-run share: each looks only for where the work meets items, and
+    Coverage is the one place that looks for what may be wrong.
   - The orchestrator holds time and tokens: a run has at most one second round.
-  - turn's agents hold the first-run share: each looks only for where items pass, in a form with
-    one place per item, and Coverage, which turn's scripts find, is the one place that looks for
-    what may be wrong.
-  - turn's scripts hold what the caller gave unchanged and the CCS written back: the CCS received
-    is never written over, and the one written back has the parts and values the callers' page
-    gives.
-  - turn's scripts hold a stopped task carries on: they accept a CCS each version from 0.2.0 on
-    returned.
-  - turn's scripts hold the checklist layout: they make the list from each checklist's name,
-    version, opening and items.
-  - turn's scripts hold nothing lost when made again: they lay out every item of the list for
-    each round.
   - turn's scripts hold stop leaves things as they were and start over: the work is made in the
     run's copy and written where it goes only when the run returns.
   - turn's scripts hold other changes named: they name each file a run's commands changed outside
     the work.
-  - turn's hooks hold nothing unread: they stop a write to the work once the first user has been
-    handed it.
+  - turn's hooks hold nothing unread, repository untouched and no commit or push: they stop a
+    write to the work once the first user has it, a write outside the run's copy and where the work
+    goes, and a commit or a push.
   - turn's hooks hold nothing in the way outside a run: they act only in the session whose run is
     open, and do nothing where python3 is missing.
   - The orchestrator and turn's scripts hold missing tools: the orchestrator says to install
     python3 when it is not found, and the scripts end a run before any work when jq is missing.
+  - turn's scripts hold a stopped task carries on and the checklist layout: they accept a CCS each
+    version from 0.2.0 on returned, and make the list from each checklist's name, version, opening
+    and items.
+  - The run's evidence holds what a returned CCS points to: every place a returned CCS names is in
+    it, under `.turn/`.
+  - The orchestrator holds the call: it is the skill `turn:up`.
 
 ### B-26: What kind of thing each unit is
 - The physical figure names each unit by its kind: turn's skill, the orchestrator's prompt; turn's
@@ -137,43 +115,46 @@
   skill and as subagents; a plugin built on turn → turn: names it in its dependencies.
 
 ### B-7: Attractive quality verified
-- Read in the place of the person the work is for: every item a run returns as Good is taken as
-  given by a fresh agent outside the run, reading the returned work as the same receiver.
-  - Checked by a trial in `dev/turn/trials/` on one of rn's or turn's own documents, since a
-    made-up task shows only that it passes, the fresh agent given the same files and list.
-- Made from what you decided: no role reads a file the inputs do not name, and the work says
-  nothing the inputs do not give.
-  - Checked by a trial in a repository holding files the inputs do not name, judged from the
-    JSONL of every agent of the run.
-- Asked only what only the user can decide, all at once at the end: nothing is asked while the
-  run works, and the run ends asking only the choice the decisions leave open.
-  - Checked by a trial on decisions that leave one choice open, judged from the JSONL.
-- Seeing the work as it goes: the console alone tells the step the records show.
-  - Checked on the trials above, from the console and the JSONL.
-- Stopping before the work is written: a run stopped on its aim has written no work of that aim,
-  and then makes what the user said.
-  - Checked by a trial stopped as by Esc when the console shows the aim.
+- Each criterion names a promise of the README in its words, and each check is a trial in
+  `dev/turn/trials/`, judged from the JSONL of every agent of the run.
+- Where the work fails the person it is for: every item a run returns as Good is taken as given by
+  a fresh agent outside the run, reading the returned work as the same receiver.
+  - Checked by a trial on one of rn's or turn's own documents, since a made-up task shows only that
+    it passes, the fresh agent given the same files and list.
+- The work follows what you decided: no part of turn reads a file the inputs do not name, and the
+  work says nothing the inputs do not give.
+  - Checked by a trial in a repository holding files the inputs do not name.
+- A pass you can check: the run's evidence alone gives, for any item with a Good, the lines of the
+  work that give it, and the version of its checklist.
+  - Checked on the evidence the trials here leave.
+- Made again, keeping every item it gave: a run whose first round leaves an item without a Good
+  makes the work again in the same run, and every item the first round gave a Good has one again.
+  - Checked by a trial whose first round leaves an item the work can give.
+- Leave turn at work and answer everything at once: nothing is asked while the run works, and the
+  run ends asking only the choice the decisions leave open.
+  - Checked by a trial on decisions that leave one choice open.
+- Seeing each step: the console alone tells the step the records show.
+  - Checked on the trials here, from the console and the records.
+- Stopping before turn writes: a run stopped when the console shows what the work will let its
+  receiver do has written no work of it, and then makes what the user said.
+  - Checked by a trial stopped as by Esc at that line.
 - A plugin decides from what turn returns: the move decided from the returned CCS alone is the one
   decided after also reading the records.
-  - Checked on trials that end in each value of `next`.
-- Following each item back: the run's evidence alone gives, for any item, the lines of its Good or
-  how it would get one, and the version of its checklist.
-  - Checked on the evidence the trials above leave.
+  - Checked on trials that end in each value of `next` the callers' page gives.
 
 ### B-8: One-dimensional quality verified
-- The first-run share: no lower than on the version in use.
-  - Measured from the records of the same tasks, run on this version and on the version in use
-    from the same CCS, written in each version's kinds where they differ.
-- Time and tokens: the minutes and tokens of each run are no more than on the version in use.
+- The first-run share: the share of tasks whose first round gives every item a Good is no lower
+  than on the version last released.
+  - Measured from the records of the same tasks, run on both versions from the same CCS, written
+    in each version's kinds where they differ.
+- Time and tokens: the minutes and tokens of each run are no more than on the version last
+  released.
   - Measured from the records of the same runs.
 
 ### B-9: Must-be quality verified
 - Nothing passes unshown: grounds naming lines the work lacks are refused.
   - Checked by a test on turn's scripts in `dev/turn/tests/`, run on every push with every line
     and branch counted, as is each test below.
-- Nothing lost when made again: a second round lays out and decides every item of the list, not
-  only those left without a Good.
-  - Checked by a test on turn's scripts.
 - What the caller gave unchanged: a CCS written back whose caller parts differ from those received
   is refused.
   - Checked by a test on turn's scripts.
@@ -208,7 +189,9 @@
 - A stopped task carries on: a CCS each version from 0.2.0 on returned is accepted and carried on,
   and one of 0.1.0, which no caller relies on, is refused.
   - Checked by a test with a CCS of each such version.
-- The checklist layout: a checklist so laid out yields a list with its opening and every item.
+- The checklist layout: a checklist laid out as the README of 0.2.0 gives, with a name, a version,
+  an opening and items, yields a list with its opening and every item.
   - Checked by a test on a checklist so laid out.
-- What a returned CCS points to: every place a returned CCS points to exists, under `.turn/`.
+- What a returned CCS points to: every place a returned CCS points to exists, under `.turn/`, for
+  a CCS of each version from 0.2.0 on.
   - Checked by a test on a returned CCS.
