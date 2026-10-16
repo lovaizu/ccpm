@@ -15,7 +15,7 @@ The design stands between the README and the code: how the product is used is th
 how each part works, with its steps, definitions, settings and file names, is the code's, since
 these change with each rebuild while the design holds. Each item of `doc.md` applies to a design
 document with what the product must achieve and which part holds it as its subject; its B-16 is
-answered by the structure figure, since the order things happen in is the README's to show. The
+answered by the logical figure, since the order things happen in is the README's to show. The
 reader comes from the README, so Goals and Verification are said in its words. Verification holds
 the criterion and the method for each goal; the scenes are the verification document's and the
 cases the tests'.
@@ -46,28 +46,32 @@ Does the design document follow this template, headings included?
 ## Design decisions
 
 - <What must hold toward the goals, in one sentence>
-
-  <Its intent: the goals it serves, by their names in Goals, and what a builder working from the
-  goals alone could get wrong>
+  - <The goals it serves, by their names in Goals, in one sentence>
+  - <What a builder working from the goals alone could get wrong, in one sentence>
 
 ## Structure
+
+### Logical structure
 
 <One static figure: a box for each part, the user and what is outside the product included,
 holding its name alone; an arrow from each to what it reads, writes or calls, labelled with that
 relation>
 
-<A table of the parts inside the product: what kind of thing each is, where it is kept, where it
-runs>
-
 - <A part, and the goal or decision a mechanism inside it holds, in one sentence>
+
+### Physical structure
+
+<One static figure: a frame for each place things are kept or run, such as what is shipped, the
+user's repository, a service or the user's machine; in each, a box for each unit kept there, named
+by its kind and the logical parts it makes; an arrow from each to what it depends on, labelled
+with that relation>
 
 ## Verification
 
 ### Attractive quality
 
 - <The criterion that shows a goal reached, naming the goal, in one sentence>
-
-  <How it is checked, and where the check is>
+  - <How it is checked, and where the check is, in one sentence>
 
 ### One-dimensional quality
 
@@ -76,11 +80,13 @@ runs>
 ### Backward compatibility
 ```
 
-Each list follows `doc.md`'s F-1: one sentence an item, its explanation indented under it.
+Each item is one sentence; under a decision or a criterion, its intent or its method stands as
+nested items of one sentence each, in place of `doc.md`'s F-1 explanation.
 
 Why: a builder moving between products finds the same thing under the same heading in each; each
-section is read against the one before, so it comes after it; and one sentence an item keeps each
-goal, decision and criterion short enough to judge at once.
+section is read against the one before, so it comes after it; the logical structure places each
+responsibility and the physical where each lives, which are not one to one; and one sentence an
+item keeps each goal, decision and criterion short enough to judge at once.
 
 ### F-2: A section thought through
 
@@ -190,41 +196,16 @@ Why: a change weighed without them turns the design into one that cannot run whe
 ### B-12: Who does what to what
 
 Can the reader tell, for each part that takes part in the product's work, the user and what is
-outside the product included, what it does and to what, from the figure's arrows alone?
+outside the product included, what it does and to what, from the logical figure's arrows alone?
 
 Why: a builder changing one part needs to know every other its change can reach and what the part
 rests on; pieced together from prose, or read out of sentences inside the boxes, it costs effort and
 goes wrong, and a part left untold is reached without anyone seeing it.
 
-### B-34: What kind of thing each part is
-
-Can the reader tell, for each part inside the product, what kind of thing it is: a prompt an AI
-follows, a script, a hook, data, or a person?
-
-Why: a change is made differently to each kind, and the reader who cannot tell the kind cannot tell
-what a change to the part costs or how it is checked.
-
-### B-35: Where each part is kept
-
-Can the reader tell, for each part inside the product, where it is kept: shipped with the product,
-left in the user's repository, or held by a service such as GitHub?
-
-Why: what is shipped changes with a release, what is left with the user outlives it and is theirs,
-and what a service holds is reached only through it; a change that moves a part between these
-changes who owns it.
-
-### B-36: Where each part runs
-
-Can the reader tell, for each part inside the product that runs, where it runs: on the user's
-machine, in CI, or in both?
-
-Why: what runs in both must give the same result in both, and a part that runs only in one has no
-check in the other.
-
 ### B-33: Every goal and decision placed
 
-Can the reader tell, for each goal and each decision, which parts hold it: from the figure where
-the placement itself holds it, and from an item under the figure, naming the part, where a
+Can the reader tell, for each goal and each decision, which parts hold it: from the figures where
+the placement itself holds it, and from an item under the logical figure, naming the part, where a
 mechanism inside one part holds it?
 
 What the part holds is said, not how it does it; how is the code's.
@@ -238,6 +219,40 @@ Can the reader tell, for each part, which goal or decision it holds?
 
 Why: a part that holds none is built and kept for nothing, and the builder cannot tell whether it
 may go.
+
+### B-26: What kind of thing each unit is
+
+Can the reader tell from the physical figure what kind of thing each unit is: a prompt an AI
+follows, a script, a hook, or data?
+
+Why: a change is made differently to each kind, and the reader who cannot tell the kind cannot tell
+what a change to the unit costs or how it is checked.
+
+### B-23: Where each part is kept
+
+Can the reader tell from the physical figure, for each logical part, the units that make it and
+where each is kept: shipped with the product, left in the user's repository, or held by a service
+such as GitHub?
+
+Why: one logical part may be made of units kept in several places; what is shipped changes with a
+release, what is left with the user outlives it and is theirs, and what a service holds is reached
+only through it, so a builder who moves a unit between them changes who owns it.
+
+### B-24: Where each part runs
+
+Can the reader tell from the physical figure, for each unit that runs, where it runs: on the user's
+machine, in CI, or in both?
+
+Why: what runs in both must give the same result in both, and a unit that runs only in one has no
+check in the other.
+
+### B-25: What the product depends on
+
+Can the reader tell from the physical figure's arrows what each unit depends on outside the
+product, such as another plugin, a tool on the user's machine or a service?
+
+Why: what the product needs to be in place is where it breaks for the user first, and a dependency
+no figure shows is added or dropped without anyone deciding to.
 
 ### B-7: Attractive quality verified
 
