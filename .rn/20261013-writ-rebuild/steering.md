@@ -938,8 +938,21 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   points as items, one thing each, what the steps bring about not asked again; the template gains
   the order and loses the Usability section, which every remade checklist had empty, so F-2 and
   U-4 go and U-5 moves to B-12. Decision 36, to report.
-- Where to resume (2026-10-16): every checklist is remade. Next, rn's grilling step, turn's
-  design, judging `hc4`, and the rest of #4. (whether the Usability section stays is settled there). Then
+- Where to resume (2026-10-16, before a `/clear`): every checklist is remade. Next, as the user
+  set it: through turn on the new checklists, turn's UX, README and design, then rn's the same
+  way (rn's grilling step is part of rn's design, not a work before it). For each, the decisions
+  turn takes in are made by grilling the user item by item of the checklists, proposing, one point
+  at a time, in Japanese, written in English to `.writ/decisions/<plugin>/<work>.decisions.md`.
+  turn's UX (`.writ/decisions/turn/UX.decisions.md`): ux B-1 agreed (the two users, in a
+  conversation and from a plugin's step). Proposed and waiting: ux B-2, the scenes, drawn from
+  `turn/README.md:20-58` and `turn/calling-from-a-plugin.md`: in a conversation, ask naming the
+  work, its reader, the notes and the checklist; see `To make:` before writing, Esc to say again;
+  see write, read, check as they go, a shortfall made again in the run; get the work's place and
+  every question only the user decides at the end; answer, and Claude runs turn again from the
+  work returned. From a plugin's step, write the CCS and hand it as `in:` and `out:`; get the work
+  and the CCS back with each item's judgment, its lines and the open questions; ask the user and
+  hand it again with the answers. Then ux B-3 to B-5, and where the UX file goes (decision 27).
+  After that, judging `hc4` and the rest of #4. (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
