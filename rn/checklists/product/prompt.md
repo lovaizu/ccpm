@@ -18,8 +18,7 @@ A prompt is worked out in this order, each step the ground of the next:
 3. From the role, decide the steps that bring the same result each time it is run, with the form
    of what each step takes in and hands on.
 
-How a prompt is made, judged and tried is not for this reader. Each item of `readability.md` also
-applies to a prompt.
+Each item of `readability.md` also applies to a prompt.
 
 ## Format
 
@@ -56,21 +55,17 @@ Why: the AI finds its purpose, its role and what to do in the same place in ever
 ground of the next; a step that checks what it takes in sends a gap back where it is cheapest to
 fill, and one that checks what it hands on against its purpose hands on no slip it could have found.
 
-### F-3: When a place is written
-
-Is each place of the form that the AI may fill or leave, such as one per item, written on the
-condition that whoever reads the form takes a written place to mean, because the prompt sets that
-condition?
-
-Look at: the prompt's words on when such a place is written, against what the step or script that
-reads the form takes a place to mean, such as the receiver getting what the item asks; a prompt that
-leaves the condition to the AI, or sets a looser one, such as a part of what the item asks or what
-the AI can say about the item, fails.
-
-Why: a place written on a looser condition than its reader counts on is read as what it is not, such
-as a note that nothing was found read as a find.
-
 ## Benefit
+
+### B-22: When it is used
+
+From the `description`, can Claude Code tell the runs the skill or agent is for?
+
+Look at: the description says what the prompt achieves and the situations it is used in, in the
+words a request for it would carry.
+
+Why: Claude Code chooses a skill or an agent by its description alone; one that does not say when
+is not chosen where it is needed, or is chosen where it is not.
 
 ### B-1: What is expected
 
@@ -85,6 +80,23 @@ From the Role, can the AI tell why its work is needed?
 
 Why: an AI that knows why chooses, where the steps run out, the action that fits the purpose; given
 only what to do, it stops at the end of the steps or goes on by guessing.
+
+### B-6: The user's decisions handed back
+
+When the AI meets something only the user decides, does the user make that decision?
+
+Look at: the prompt has the AI hand such a thing to the user rather than settle it.
+
+Why: an AI that decides for the user leaves its guess to be taken as the user's choice.
+
+### B-10: An action hard to undo, asked first
+
+Can the user stop an action that is hard to undo before the AI takes it?
+
+Look at: the prompt has the AI ask the user before such an action, such as deleting, pushing or
+sending.
+
+Why: an action hard to undo cannot be taken back once the user sees it.
 
 ### B-21: The scope of its inputs
 
@@ -170,71 +182,6 @@ Look at: each such file named directly in the prompt; one named only in another 
 
 Why: a file reached only through another file is often read in part.
 
-### B-15: Examples close to the real work
-
-Does the AI learn from each example what the work it will actually be given asks?
-
-Look at: each example, against a task the prompt is actually given: the same kind of input and the
-same kind of result.
-
-Why: the AI copies examples closely, and one far from the real work steers it away from that work.
-
-### B-16: Examples alike only on purpose
-
-Does the AI take from the examples only what they are meant to share?
-
-Look at: each thing all the examples share, such as their length, subject, wording or order,
-matched to something the prompt asks; a shared thing matched to nothing fails.
-
-Why: the AI takes what its examples share as part of what is asked, so a likeness left by chance is
-copied too.
-
-### B-5: Slips found before handing back
-
-Does the AI find its slips before it hands its work back?
-
-Look at: a step, before the one that hands the work back, that has the AI check its work against
-what it should be, such as its form, a checklist or a script's result.
-
-Why: a check catches a slip while it is cheap to fix; what is handed back unchecked carries the slip
-to whoever receives it.
-
-### B-9: Slips fixed before handing back
-
-Does the AI fix what its check finds before it hands its work back?
-
-Look at: a step that has the AI fix what the check finds and check again, until the check passes.
-
-Why: a check followed by a fix and another check leaves the work as it should be; a check whose
-findings are only noted hands the slip on all the same.
-
-### B-6: The user's decisions handed back
-
-When the AI meets something only the user decides, does the user make that decision?
-
-Look at: the prompt has the AI hand such a thing to the user rather than settle it.
-
-Why: an AI that decides for the user leaves its guess to be taken as the user's choice.
-
-### B-10: An action hard to undo, asked first
-
-Can the user stop an action that is hard to undo before the AI takes it?
-
-Look at: the prompt has the AI ask the user before such an action, such as deleting, pushing or
-sending.
-
-Why: an action hard to undo cannot be taken back once the user sees it.
-
-### B-18: Each field used by someone
-
-Does the AI fill only the fields that someone uses?
-
-Look at: each field in the form of what the AI receives and hands back, matched to the AI or to
-whoever receives its work, using it toward the purpose; a field matched to no one fails.
-
-Why: a field nobody uses still has to be read and filled on every run, and drifts from what the
-work actually is, since nothing checks it.
-
 ### B-4: Its own judgment within a step
 
 Is the AI left to decide how to think within each step?
@@ -264,15 +211,48 @@ Look at: each instruction whose reason the Role does not already give carries it
 Why: an AI that knows why applies the instruction to cases it did not name, and keeps to it where a
 bare rule is read narrowly.
 
-### B-11: Attention on what changes what it does
+### B-18: Each field used by someone
 
-Does the AI spend its attention only on sentences that change what it does?
+Does the AI fill only the fields that someone uses?
 
-Look at: for each sentence, whether a run of the prompt without it does what the sentence asks all
-the same; one that does fails.
+Look at: each field in the form of what the AI receives and hands back, matched to the AI or to
+whoever receives its work, using it toward the purpose; a field matched to no one fails.
 
-Why: every sentence competes for the AI's attention with the work in front of it, and an
-instruction the AI already follows draws attention from the ones it needs.
+Why: a field nobody uses still has to be read and filled on every run, and drifts from what the
+work actually is, since nothing checks it.
+
+### B-23: When a place is written
+
+Is each place of the form that the AI may fill or leave, such as one per item, written on the
+condition that whoever reads the form takes a written place to mean, because the prompt sets that
+condition?
+
+Look at: the prompt's words on when such a place is written, against what the step or script that
+reads the form takes a place to mean, such as the receiver getting what the item asks; a prompt that
+leaves the condition to the AI, or sets a looser one, such as a part of what the item asks or what
+the AI can say about the item, fails.
+
+Why: a place written on a looser condition than its reader counts on is read as what it is not, such
+as a note that nothing was found read as a find.
+
+### B-15: Examples close to the real work
+
+Does the AI learn from each example what the work it will actually be given asks?
+
+Look at: each example, against a task the prompt is actually given: the same kind of input and the
+same kind of result.
+
+Why: the AI copies examples closely, and one far from the real work steers it away from that work.
+
+### B-16: Examples alike only on purpose
+
+Does the AI take from the examples only what they are meant to share?
+
+Look at: each thing all the examples share, such as their length, subject, wording or order,
+matched to something the prompt asks; a shared thing matched to nothing fails.
+
+Why: the AI takes what its examples share as part of what is asked, so a likeness left by chance is
+copied too.
 
 ## Usability
 
