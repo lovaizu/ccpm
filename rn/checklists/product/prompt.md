@@ -5,9 +5,9 @@ version: 0.2.0
 
 # Prompt
 
-A prompt, a skill or an agent, is read by an AI to achieve the purpose expected of it. Understanding
-the role expected of it, the AI judges and acts for itself, and by following the steps alone it
-achieves that purpose again and again, while the user decides what only they can.
+A prompt, a skill or an agent, is read by an AI. From it alone, the AI can judge for itself, and
+achieves the same purpose however often it is run. What only the user can decide, it hands back to
+the user.
 
 How a prompt is made, judged and tried is not for this reader. Each item of `readability.md` also
 applies to a prompt.
