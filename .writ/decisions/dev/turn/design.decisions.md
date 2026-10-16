@@ -64,3 +64,21 @@
 
 ### B-22: What each component depends on outside
 - Claude Code, python3 3.9 or later, jq and git.
+
+### B-27: The qualities that come with each benefit
+- The benefit: the work read inside turn by a reader other than the one that made it, as its own
+  readers would, and made again where that reading found it short. Must-be:
+  - The first user is not the generator and reads only what the work's receiver opens, since the
+    generator's claim or the decisions handed over would be read into the work.
+  - The first user reads the whole work, for every item, since an item not read comes back as the
+    generator's claim.
+  - The work returned is as it was last read: what is made again is read again before it returns,
+    the second reading included, since a part not read again is the generator's assumption again.
+  - The orchestrator decides each item by reading the work itself, taking neither the generator's
+    claim nor the evaluator's lines on trust.
+  - An answer comes back for every item, and each line named is in the work and meets the item, so
+    the calling AI has firm ground to check against.
+  - What only the user can decide comes back as a question, not filled by a guess, since work made
+    on a guess can look met and still miss what the user meant.
+  - Nothing but where the work goes is changed, and nothing is committed or pushed, since the
+    calling AI checks the work alone and any other change stays unchecked.
