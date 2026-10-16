@@ -6,7 +6,8 @@ version: 0.2.0
 # README
 
 A README is read by someone meeting the product for the first time. From it alone they decide
-whether the product is for them, and if it is, get to their first result with it.
+whether the product is for them, and if it is, get to their first result with it. A README is made
+from the UX.
 
 Each item of `doc.md` applies to a README with deciding and getting to the first result as its
 subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
