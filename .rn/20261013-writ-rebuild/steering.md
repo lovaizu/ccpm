@@ -810,6 +810,31 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   parts by name), U-2 (where a part is kept is a decision). Both designs' decisions files
   reshaped to it (`454441b`, `46995b9`), and both designs run again as `td7` and `rd6` in this
   session's scratchpad. Decision 22, to report.
+- Decided by the user (2026-10-16): the design's order is Goals, Structure, Verification,
+  Principles, since the checks on must-be quality and compatibility name parts, which the reader
+  first meets in the figure; and Verification holds only how each kind of quality is checked and
+  where the checks are: the scenes are the verification document's (`rn/docs/verification.md` for
+  rn, `dev/turn/trials/` for turn) and the cases the tests'. The section keeps the name
+  Verification, since attractive quality is checked by use, not by a test. Drafted in the working
+  tree, uncommitted, until the discussion below ends: `design.md` (F-1, B-7 to B-10, the opening),
+  both decisions files (B-7 to B-10); `td7` and `rd6` stopped and removed. Decision 23, to report.
+- Discussion open (2026-10-16, before a `/clear`), to finish before anything is committed or run:
+  whether this shape of the design document achieves the design's purpose. The user proposed, and
+  asked whether Principles belong before Structure:
+  1. Goal: what is needed to meet the UX, one-sentence bullets, simple enough to judge by; does
+     it cover the UX?
+  2. Design decisions (Principles?): the decisions toward the goal and their intent, bullets, one
+     sentence each, nested; what the implementation rests on; do they cover the goals?
+  3. Structure: the placement of responsibilities that brings the decisions about, physical and
+     logical, one static figure of the parts and their dependencies; does it cover the goals and the
+     decisions? What the placement covers stands in the figure; what a mechanism or a function
+     inside a part covers stands under the figure as one-sentence bullets.
+  4. Verification: the criteria and the way of checking that the goal is reached, bullets, one
+     sentence each, nested; what the checks rest on; do they cover the goals?
+  To judge against the design's purpose (`design.md`'s opening: whoever builds or changes the
+  product knows what it must achieve, how that is checked, what every change must keep and who is
+  responsible for what, and decides every detail themselves), then settle `design.md`, the two
+  decisions files, and run both designs again.
 - Where to resume (2026-10-16, before a `/clear`): three turn runs are going in this session's
   scratchpad
   `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/739e9824-08e7-4ea5-b189-7ac3c92712c3/scratchpad/`,
@@ -818,10 +843,11 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   1. `hc1`, rn's hooks' second unit (`dev/rn/trials/rn-hooks-commits.json`, out
      `rn-hooks-commits.json`): judge by the purpose, take the sixteen files in, run `sh dev/check.sh`
      with the tools of `dev/requirements.txt` on PATH, finish small shortfalls by hand, commit.
-  2. `td7`, turn's design (`turn-design.json`) and 3. `rd6`, rn's design (`rn-design.json`), both on
-     the Structure decided as decision 22: judge the figure as the user asked (names in the boxes,
-     the relation on each arrow, the table, each goal's parts), finish small shortfalls by hand,
-     take `dev/turn/design.md` and `rn/docs/design.md` in, commit.
+  2. The designs: first finish the discussion above on the design document's shape, then settle
+     `design.md` and the two decisions files (drafts uncommitted in the working tree), then run
+     `turn-design.json` and `rn-design.json` again in new folders, judge the figure as the user
+     asked (names in the boxes, the relation on each arrow, the table, each goal's parts), finish
+     small shortfalls by hand, take `dev/turn/design.md` and `rn/docs/design.md` in, commit.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
   about is not a stop (the flow trial's finding above), settled with the hooks' third unit
   (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
