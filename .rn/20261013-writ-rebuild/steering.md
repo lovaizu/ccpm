@@ -954,13 +954,16 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   changed while it was made. For rn's design, as must-be qualities of its benefits: hooks stop a
   slip in the course where it happens, the default branch is untouched until the merge and the
   session's branch is kept up to date with it. Decision 39, to report.
+- Decided by the user (2026-10-16): rn's UX is at `dev/rn/ux.md`, as turn's is. Decision 40, to
+  report.
 - Where to resume (2026-10-16): through turn on the new checklists, turn's UX, README and design,
   then rn's the same way (rn's grilling step is part of rn's design). For each, the decisions turn
   takes in are made by asking the user one point at a time, in Japanese and plain words, without
   item IDs, written in English to `.writ/decisions/<plugin>/<work>.decisions.md`. turn's UX
   (`.writ/decisions/turn/UX.decisions.md`) has its user (the AI running a plugin's step, such as
-  rn's conductor), its scenes and its benefit agreed, and its place (decision 38); next, made by
-  turn from those decisions, then turn's README, rewritten for that user, and its design, then judging `hc4` and the rest of
+  rn's conductor), its scenes and its benefit agreed, and made by turn at `dev/turn/ux.md`; rn's
+  UX agreed the same way (decisions 39, 40) and being made by turn (`dev/rn/trials/rn-ux.json`).
+  Next, turn's README, rewritten for that user, and its design, then judging `hc4` and the rest of
   #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
