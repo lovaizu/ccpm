@@ -18,3 +18,6 @@ documents or code; its example is the UX's scene, a plugin's step calling turn.
   AI asks the user, one point at a time, what the checklist's items need, writes down what is
   decided, calls turn, gets back the work with each item's judgment and the lines that meet it,
   checks those against the work, fixes it and ends.
+- It shows, from start to result: the step's text that calls turn, kept short; turn's progress as it
+  writes, reads and checks, and makes again what falls short; and what comes back, the work's place
+  with each item's judgment and lines, then the AI checking, fixing and ending the step.
