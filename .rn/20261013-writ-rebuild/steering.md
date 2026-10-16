@@ -845,7 +845,13 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
 - Where to resume (2026-10-16):
   1. Done: `rn/checklists/design.md` rewritten so (`c688ca7`); both decisions files to it
      (`7ce947f`, `6b3cf15`).
-  2. Running in this session's scratchpad on Opus 5.5: `td9` (turn's design), `rd8` (rn's
+  2. Decided by the user (2026-10-16): Structure as two static figures, the logical (the
+     placement of responsibilities and their dependencies) and the physical (a frame for each
+     place things are kept or run, each unit in it by its kind and the logical parts it makes,
+     with what it depends on), the table gone into the physical figure; a decision's intent and a
+     criterion's method as nested one-sentence items (`783889d`, `28b027a`, `d1c1f11`). Part of
+     decision 24, to report.
+  3. Running in this session's scratchpad on Opus 5.5: `td10` (turn's design), `rd9` (rn's
      design), `hc3` (`rn-hooks-commits.json`); judge each by the purpose, finish small shortfalls
      by hand, take the files in, `sh dev/check.sh`, commit.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
