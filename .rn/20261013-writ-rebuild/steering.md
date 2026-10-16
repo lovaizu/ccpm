@@ -878,12 +878,26 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
 - `hc4`, the hooks' second unit (`rn-hooks-commits.json`), ended ($26) with questions, not yet
   judged; its folder is this session's scratchpad
   (`/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/3b75ad56-53b9-4ae2-996d-bc66987528bd/scratchpad/hc4`).
-- Where to resume (2026-10-16, before a `/clear`): remake the README checklist with the user, one
-  point at a time: its purpose first, then its order of thinking, shape and items, the README made
-  from the UX; agree each in Japanese, write English, check against `checklist.md`, never rewording
-  what was agreed. Then the other checklists in this order: verification, doc, prompt, code, hook,
-  plan, proposal, checklist. Then rn's grilling step, turn's design, judging `hc4`, and the rest
-  of #4.
+- Decided by the user (2026-10-16): the README checklist made again from its purpose
+  (`rn/checklists/product/readme.md`, `6d31fa7`..`1a95a46`): a README lets someone meeting the
+  product decide and get to a first result, and lets someone joining its builders reach the design
+  and development; it is made from the UX in six steps, the last two from the repository; a
+  Development section; Benefit items drawn one per question from the steps, B-1 to B-8; Usability
+  left to the readability checklist, as in the design and UX checklists. Decision 28, to report.
+- Decided by the user (2026-10-16): the checklists kept by what each is for (`a0940b4`):
+  `readability.md` (was `doc.md`, and the rules of the former `writ/references/style.md` not yet in
+  it are judged when it is remade) and `checklist.md` at the top, `product/` for what goes into
+  the product, `session/` for rn's plan and proposal. Decision 29, to report.
+- Decided by the user (2026-10-16): no verification document; the design's Verification checks
+  the units and the whole, and its Acceptance also measures each quality the UX names as better
+  the more against the last version (`b4e0c21`, design B-26). `rn/checklists/verification.md`,
+  `rn/docs/verification.md` and what uses them (conduct.md, the hooks in `trace.py`, their tests)
+  are removed in rn's rebuild under #4, where rn's design says what replaces them. Decision 30, to
+  report.
+- Where to resume (2026-10-16): remake the other checklists with the user the same way, one point
+  at a time, in this order: readability (with the rules of the former style.md), prompt, code,
+  hook, plan, proposal, checklist (whether the Usability section stays is settled there). Then
+  rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
