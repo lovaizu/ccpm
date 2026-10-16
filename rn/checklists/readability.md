@@ -18,21 +18,29 @@ A document is made readable by thinking through what the reader meets, in the or
 
 ## Format
 
-### F-1: Items and their explanations
+### F-1: Shape
 
-Does each list follow this shape?
+Does the document follow this shape, inside the template its own kind gives?
 
 ```markdown
-- An item said in one sentence that is understood alone
+# <Title>
 
-  Its explanation, after a blank line, indented under the item.
+<The main point: what the reader can do with the document>
+
+## <A section, in the order the reader needs it>
+
+<The section's main point first>
+
+- <An item said in one sentence that is understood alone>
+
+  <Its explanation, after a blank line, indented under the item>
 ```
 
-- No item, and no first cell of a table, is set in bold.
-- An item that needs no explanation is the one sentence alone.
+No item is set in bold, and an item that needs no explanation is the one sentence alone.
 
-Why: the reader skims the items alone and reads an explanation only where they need it; bold on
-every item marks nothing out, and an explanation run on after the item on its line hides the item.
+Why: the reader sees on opening it whether the document serves their purpose, reads the sections in
+the order they need them, and skims the items alone, reading an explanation only where they need it;
+bold marks where to stop, and on every item it marks nothing out.
 
 ## Benefit
 
