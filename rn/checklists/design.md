@@ -5,18 +5,20 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by whoever builds or changes the product, to know what it must achieve,
-how that is checked, what every change must keep, and who is responsible for what. Holding only
-these, they implement it and secure its quality without hesitating, and decide every detail
-themselves.
+A design document is read by whoever builds or changes the product, to know the least that must
+hold for the product to keep what its README promises: what it must achieve, what every change
+must keep, who holds what, and how each goal is checked. Holding only these, they build and
+change it without hesitating, and decide everything else themselves.
 
-How the product is used is the README's; how each part behaves, with its steps, definitions,
-settings and file names, is the code's, since these change with each rebuild while the design
-holds. Each item of `doc.md` applies to a design document with what the product must achieve and
-who brings it about as its subject; its B-16 is answered by the structure figure, since the order
-things happen in is the README's to show. The reader comes from the README, so Goals and
-Verification are said in its words, and each name of a part inside the product is first met in
-the figure.
+The design stands between the README and the code: how the product is used is the README's, and
+how each part behaves, with its steps, definitions, settings and file names, is the code's, since
+these change with each rebuild while the design holds. Each item of `doc.md` applies to a design
+document with what the product must achieve and who brings it about as its subject; its B-16 is
+answered by the structure figure, since the order things happen in is the README's to show. The
+reader comes from the README, so Goals and Verification are said in its words, and each name of
+a part inside the product is said by what the part holds where it is first used, and placed by
+the figure. Verification holds how each kind of quality is checked and where the checks are; the
+scenes are the verification document's and the cases the tests'.
 
 ## Format
 
@@ -39,19 +41,11 @@ Does the design document follow this template, headings included?
 
 ### Backward compatibility
 
-### Non-goals
+## Design decisions
 
-### Constraints
-
-## Verification
-
-### Attractive quality
-
-### One-dimensional quality
-
-### Must-be quality
-
-### Backward compatibility
+<Each decision as one sentence of what must hold, with the goals it serves and what they would
+lose the other way under it; what is left out on purpose and what is taken as given stand here
+too>
 
 ## Structure
 
@@ -63,13 +57,24 @@ what it reads, writes, copies or calls, labelled with that relation>
 <A table of the parts inside the product: what kind of thing each is, where it is kept, where it
 runs>
 
-## Principles
+<For each goal or decision brought about inside one part, one sentence naming the part and what
+it holds for it>
+
+## Verification
+
+### Attractive quality
+
+### One-dimensional quality
+
+### Must-be quality
+
+### Backward compatibility
 ```
 
-Why: a maintainer moving between products finds the same thing under the same heading in each, and
-settles what is aimed at and how it is checked, neither of which depends on how the product is
-built, before reading who brings it about and what every change must keep; and meets who takes
-part before the principles that name them.
+Why: a maintainer moving between products finds the same thing under the same heading in each;
+settles what is aimed at, then what was decided toward it, then who holds it, then how it is
+checked, each section read against the one before; and meets each part in the figure before the
+checks that name it.
 
 ### F-2: A section thought through
 
@@ -83,12 +88,11 @@ Does Verification check each quality under the heading it has in Goals?
 
 Why: each quality is traced from what it is to how it is checked.
 
-### F-5: Each principle names what it protects
+### F-5: Each decision names the goals it serves
 
-Does each principle name, by the headings and names Goals gives them, the qualities or constraints
-it protects?
+Does each decision name, by the headings and names Goals gives them, the goals it serves?
 
-Why: a quality is followed from Goals to the principles that keep it, and a principle that names
+Why: a goal is followed from Goals to the decisions that keep it, and a decision that names
 nothing, kept for nothing, shows.
 
 ## Benefit
@@ -126,6 +130,16 @@ the product leaves in the user's environment. What must keep holding is what eac
 Why: a change to it breaks those who rely on it, who are not there to object; the design document is
 the one place that outlives a rebuild of the code.
 
+### B-11: Decisions to judge a change
+
+Can the reader decide whether a change fits the design from its decisions, because each is said as
+what must hold, with the goals it serves?
+
+Why: without the decisions, a change can be held only against the code as it stands, where every
+difference looks like a break; a decision tied to the goals it serves tells what breaks when it is
+not kept, so decisions can be weighed against each other, and one tied to nothing is kept out of
+habit.
+
 ### B-5: Non-goals
 
 Can the reader tell what the design could have aimed at but leaves out on purpose?
@@ -134,41 +148,10 @@ Why: without the non-goals, a maintainer takes up what was left out on purpose a
 
 ### B-6: Constraints
 
-Can the reader tell which conditions the design cannot change, such as where the product runs and
+Can the reader tell which conditions the design takes as given, such as where the product runs and
 who uses it?
 
 Why: a change weighed without them turns the design into one that cannot run where it must.
-
-### B-7: Attractive quality checked
-
-For each benefit, can the reader tell in what situation it is tried and what must happen to the
-user for its check to pass?
-
-Why: a check of whether the output has the intended shape passes while the benefit is missed, and a
-check in a situation the other ways handle as well passes without showing the benefit.
-
-### B-8: One-dimensional quality measured
-
-For each one-dimensional quality, can the reader tell how it is measured and what the measure is
-compared with?
-
-Why: a quality not measured worsens without anyone noticing, and a measure compared with nothing
-shows neither better nor worse.
-
-### B-9: Must-be quality checked
-
-For each must-be quality, can the reader tell how a test shows it holds, such as the case that
-would break it?
-
-Why: what a test can decide gives the same answer every time, and what the user takes for granted is
-noticed only when it breaks.
-
-### B-10: Backward compatibility checked
-
-For each thing others rely on, can the reader tell how a test shows it still works as earlier
-versions left it?
-
-Why: a break in backward compatibility shows first to the users who rely on it, after the release.
 
 ### B-12: Who does what to what
 
@@ -204,27 +187,55 @@ machine, in CI, or in both?
 Why: what runs in both must give the same result in both, and a part that runs only in one has no
 check in the other.
 
-### B-33: Each goal brought about by a part
+### B-33: Each goal and decision held by a part
 
-Can the reader tell, for each quality in Goals, which part or parts bring it about, each named by
-its name alone?
+Can the reader tell, for each goal and each decision, which part or parts hold it: from the figure
+where the placement itself holds it, and from one sentence under the figure, naming the part and
+what it holds, where it lies inside one part?
 
-A quality that one part brings about by a mechanism inside it is given that part's name, and no
-more; how the part does it is the code's.
+What the part holds is said, not how it does it; how is the code's.
 
-Why: a quality no part brings about is promised and never built; a part that brings about none is
-built for nothing; and the maintainer changing a part learns from this which qualities the change
-can break, while a mechanism written here must change with the code though no decision did.
+Why: a goal or decision no part holds is promised and never built; a part that holds none is built
+for nothing; and the maintainer changing a part learns from this what the change can break, while
+how a part does it, written here, must change with the code though no decision did.
 
-### B-11: Principles to judge a change
+### B-7: Attractive quality checked
 
-Can the reader decide whether a change fits the design from its principles, because each is said as
-what a change must keep, with the quality or the constraint it protects?
+Can the reader tell how the attractive qualities are checked: on what the product is used, by
+whom in the user's place, from which records the check is judged, and where each quality's scene
+and what it passes on are kept?
 
-Why: without principles, a change can be held only against the code as it stands, where every
-difference looks like a break; a principle tied to what it protects tells what breaks when it is
-not kept, so principles can be weighed against each other, and one tied to nothing is kept out of
-habit.
+The scenes themselves, what is put in and what must then happen to the user, are the verification
+document's, not the design's.
+
+Why: a check of whether the output has the intended shape passes while the benefit is missed; and
+a scene written into the design must change with the product though no decision did, while the
+way of checking holds.
+
+### B-8: One-dimensional quality measured
+
+Can the reader tell how the one-dimensional qualities are measured, from what, and what each
+measure is compared with?
+
+Why: a quality not measured worsens without anyone noticing, and a measure compared with nothing
+shows neither better nor worse.
+
+### B-9: Must-be quality checked
+
+Can the reader tell how the must-be qualities are checked: by what kind of test, on which part,
+and where the tests are?
+
+The case each test tries, such as the one that would break the quality, is the test's.
+
+Why: what a test can decide gives the same answer every time, and what the user takes for granted is
+noticed only when it breaks.
+
+### B-10: Backward compatibility checked
+
+Can the reader tell how what others rely on is checked to still work as earlier versions left it:
+by what kind of test, against which versions, and where the tests are?
+
+Why: a break in backward compatibility shows first to the users who rely on it, after the release.
 
 ## Usability
 
@@ -235,6 +246,16 @@ a name, a path or a value of what others rely on only where they rely on that ve
 
 Why: a name made a promise where others rely only on what it gives ties the design to the build,
 and must be kept when the build would change it.
+
+### U-5: Each line a choice
+
+Can the reader take each decision, and each sentence under the figure, as one that a builder could
+have made otherwise, because what the goals would lose the other way is said under each decision?
+
+A thing any builder would do anyway, such as reading the files a step needs, stays out.
+
+Why: a line with no other way to lose by is read and kept like the others, and each such one costs
+the reader the attention the real choices need.
 
 ### U-2: Decisions told from details
 
@@ -248,20 +269,20 @@ to it shows rest on them.
 Why: such details change with each rebuild, so a design that holds them must be rewritten with the
 code, and the reader can no longer tell a decision that must hold from a detail that may change.
 
-### U-3: Each case left to the principles
+### U-3: Each case left to the decisions
 
-Can the reader keep in mind only the principles and the responsibilities, because the document
-writes down no case of how the product behaves that they already settle, and no way of bringing a
-quality about that the builder could choose?
+Can the reader keep in mind only the decisions and the structure, because the document writes down
+no case of how the product behaves that they already settle, and no way of bringing a goal about
+that the builder could choose?
 
-Why: builders work out each case and each way from the principles and the responsibilities; a case
-or a way written down reads as one more rule to keep beside them, and must change with the
+Why: builders work out each case and each way from the decisions and the structure; a case or a
+way written down reads as one more rule to keep beside them, and must change with the
 implementation though no decision did.
 
-### U-1: Few principles
+### U-1: Few decisions
 
-Can the reader keep every principle in mind, because each is one a change anywhere must keep?
+Can the reader keep every decision in mind, because each is one a change anywhere must keep?
 
-Why: few principles can be kept in mind and weighed against each other; a rule that concerns one
-part belongs with that part's code, and listed among the principles adds one more thing to keep in
+Why: few decisions can be kept in mind and weighed against each other; a rule that concerns one
+part belongs with that part's code, and listed among the decisions adds one more thing to keep in
 mind everywhere.

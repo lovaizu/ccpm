@@ -127,44 +127,25 @@
   agents' shell stays open.
 
 ### B-7: Attractive quality checked
-- Each is judged from the records, the JSONL of every conversation and agent of the run. What the
-  work gives its receiver is tried on real work, rn's and turn's own documents and prompts,
-  against the items in question, since a made-up task shows only that it passes.
-- Read in the receiver's place: tried on work for a receiver who lacks what the generator knows,
-  where a writer checking their own work passes what a newcomer would miss (assumption). It passes
-  when a fresh agent outside the run, reading the returned work as the same receiver with the same
-  files it opens and the same list, takes every item returned as Good, including each an earlier
-  run left without one.
-- Made from what the caller decided: on a task in a repository holding files the inputs do not name,
-  the records show no role reading one, and the work says nothing the inputs do not give.
-- Asked only what only the user can decide, all at once at the end: on decisions that settle some
-  choices and leaves one open, nothing is asked while the run works, the run ends with `ask the
-  user` and that one choice; no question is answered by the inputs.
-- Seeing the work as it goes: the console alone tells the step the records show; a run stopped on
-  its aim has written no work of that aim, and then makes what the user said.
-- A plugin decides from what turn returns: tried on runs that end in each value of `next`, the move
-  decided from the returned CCS alone is the one decided after also reading the records.
-- Following each item back: the run's evidence alone gives, for any item, the lines of its Good or
-  how it would get one, and the version of its checklist.
+- Each attractive quality is checked on real work, rn's and turn's own documents and prompts,
+  since a made-up task shows only that it passes; the product is used by a fresh agent in the
+  receiver's place, with the same files the receiver opens and the same list; the check is judged
+  from the records, the JSONL of every conversation and agent of the run. The scenes, what is put
+  in and what must then happen, and what each passes on are kept with the trials in
+  `dev/turn/trials/`, one per quality, and run on the models turn's agents name.
 
 ### B-8: One-dimensional quality measured
 - Both are measured from the records of the same tasks, run on this version and on the version in
   use from the same CCS, written in each version's kinds where they differ, as from 0.1.0 to 0.2.0.
 
 ### B-9: Must-be quality checked
-- Each is a test on the script or hook that holds it, in the case that would break it: grounds naming
-  lines the work lacks; a returned CCS whose caller part differs; a version written after the last
-  reading; a write outside the work and the run's evidence, a commit or a push in a run; a read
-  outside the run's inputs; a shell command of the orchestrator's that is not turn's script; a shell
-  command in a run that changes another file; a file where the work goes with changes git lacks; the
-  same outside a run, with another session's run open; a run stopped at each step, and one cut off;
-  each tool missing, in a run and outside one; a checklist without its name or version.
+- Each must-be quality is checked by a test on the script or hook that holds it, in the case that
+  would break it; the tests are in `dev/turn/tests/`, run on every push with every line and branch
+  counted.
 
 ### B-10: Backward compatibility checked
-- For each released version from 0.2.0 on, a test calls turn as its callers did: the call runs; its
-  CCS, a stopped one included, is accepted and carried on; every `next` returned is one its callers
-  know; its checklists give a list with every opening and item; every place a returned CCS points to
-  exists.
+- Each thing callers rely on is checked by a test that calls turn as the callers of each released
+  version from 0.2.0 on did, in `dev/turn/tests/`, run on every push.
 
 ### B-11: Principles to judge a change
 - The orchestrator alone decides whether each item passes, from the work itself: for each item it

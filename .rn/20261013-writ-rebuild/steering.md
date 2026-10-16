@@ -818,42 +818,40 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   Verification, since attractive quality is checked by use, not by a test. Drafted in the working
   tree, uncommitted, until the discussion below ends: `design.md` (F-1, B-7 to B-10, the opening),
   both decisions files (B-7 to B-10); `td7` and `rd6` stopped and removed. Decision 23, to report.
-- Discussion open (2026-10-16, before a `/clear`), to finish before anything is committed or run:
-  whether this shape of the design document achieves the design's purpose. The user proposed, and
-  asked whether Principles belong before Structure:
-  1. Goal: what is needed to meet the UX, one-sentence bullets, simple enough to judge by; does
-     it cover the UX?
-  2. Design decisions (Principles?): the decisions toward the goal and their intent, bullets, one
-     sentence each, nested; what the implementation rests on; do they cover the goals?
-  3. Structure: the placement of responsibilities that brings the decisions about, physical and
-     logical, one static figure of the parts and their dependencies; does it cover the goals and the
-     decisions? What the placement covers stands in the figure; what a mechanism or a function
-     inside a part covers stands under the figure as one-sentence bullets.
-  4. Verification: the criteria and the way of checking that the goal is reached, bullets, one
-     sentence each, nested; what the checks rest on; do they cover the goals?
-  To judge against the design's purpose (`design.md`'s opening: whoever builds or changes the
-  product knows what it must achieve, how that is checked, what every change must keep and who is
-  responsible for what, and decides every detail themselves), then settle `design.md`, the two
-  decisions files, and run both designs again.
-- Where to resume (2026-10-16, before a `/clear`): three turn runs are going in this session's
-  scratchpad
-  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/739e9824-08e7-4ea5-b189-7ac3c92712c3/scratchpad/`,
-  each with its log beside it (alive while `pgrep -f "run.py <folder> "` finds it, done when
-  `<folder>/.tasks/<name>.json` exists):
-  1. `hc1`, rn's hooks' second unit (`dev/rn/trials/rn-hooks-commits.json`, out
-     `rn-hooks-commits.json`): judge by the purpose, take the sixteen files in, run `sh dev/check.sh`
-     with the tools of `dev/requirements.txt` on PATH, finish small shortfalls by hand, commit.
-  2. The designs: first finish the discussion above on the design document's shape, then settle
-     `design.md` and the two decisions files (drafts uncommitted in the working tree), then run
-     `turn-design.json` and `rn-design.json` again in new folders, judge the figure as the user
-     asked (names in the boxes, the relation on each arrow, the table, each goal's parts), finish
-     small shortfalls by hand, take `dev/turn/design.md` and `rn/docs/design.md` in, commit.
+- Decided by the user (2026-10-16), on the design document's shape: the design is the least,
+  core and unchanging layer between the README and the code, not a full account; without it the
+  code would answer to the UX alone and nothing would hold. It has four sections, each the ground
+  of the next activity and read against the one before: Goals (what the UX needs, one sentence
+  each), Design decisions (what must hold toward the goals, one sentence each, the intent nested
+  under it; non-goals and constraints stand here), Structure (the placement of responsibilities,
+  physical and logical, as one static figure of names and labelled arrows and a table; a goal or
+  decision held inside one part gets one sentence under the figure, naming the part and what it
+  holds, never how), Verification (how each kind of quality is checked and where). Nothing obvious
+  goes in: each decision says what the goals would lose the other way. The structure stays even
+  so, since without it the builder is free to place anything anywhere. Principles renamed Design
+  decisions. Decision 23, to report (replaces the order Goals, Structure, Verification,
+  Principles).
+- Where to resume (2026-10-16, before a `/clear`):
+  1. `rn/checklists/design.md` is rewritten to the shape above in the working tree, uncommitted
+     (F-1, F-5, B-11, B-33, U-1, U-3, U-5 new; B-5, B-6 stay as items, their content under Design
+     decisions). Read it once against `checklist.md`, then commit.
+  2. Bring both decisions files (`.writ/decisions/dev/turn/design.decisions.md`,
+     `.writ/decisions/rn/docs/design.decisions.md`, B-7 to B-10 drafts already uncommitted) to it:
+     B-11 as decisions, each with the goals it serves and what they would lose the other way, and
+     nothing obvious; B-5 and B-6 placed under Design decisions; B-33 as the sentences under the
+     figure for what lies inside one part. Commit.
+  3. Run `dev/turn/trials/turn-design.json` and `dev/rn/trials/rn-design.json` again in new
+     folders in this session's scratchpad, on Opus; judge by the purpose (the figure: names in the
+     boxes, the relation on each arrow, the table, each goal's part), finish small shortfalls by
+     hand, take `dev/turn/design.md` and `rn/docs/design.md` in, commit.
+  4. `hc1`, rn's hooks' second unit, was cut off at the usage limit in its second round: run
+     `rn-hooks-commits.json` again in a new folder, judge, take the files in, `sh dev/check.sh`,
+     commit.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
   about is not a stop (the flow trial's finding above), settled with the hooks' third unit
   (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
   `a4_resume`, `a4_from_080` on rn-try, one at a time, each `--out <new folder>`; the issues #4
-  names judged; the final check; then the report of decisions 1 to 22 to the user. The record's
-  Goal, criteria and task purposes say rn; PR #61 and issues #53, #54 say the same.
+  names judged; the final check; then the report of decisions 1 to 23 to the user.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins

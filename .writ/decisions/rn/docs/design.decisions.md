@@ -160,64 +160,33 @@
 - rn's hooks run in every session where rn is installed, in repositories without rn as well.
 
 ### B-7: Attractive quality checked
-- Each is tried as its user on the practice repository `lovaizu/rn-try`, one run at a time, from a
-  fixed state, with a stand-in playing the user from a part that says only what the user knows,
-  and judged from the run's transcripts, the JSONL Claude Code keeps of the conversation and of
-  every agent, with the commits, the pull request and the product. Each passes on what happens to
-  the user, not on the shape of what rn writes. The scenes, their fixtures and their trials are in
-  the verification document (`verification.md`), the one place that holds them; the design says
-  only what each passes on.
-- What they really want from rough words: passes when rn's first call to the user asks why they
-  want the goal, and when, after feedback that one form of an absent name is shown wrong, the plan
-  put up covers every form an absent name takes.
-- Called only for decisions that are theirs: passes when, before any way is offered, a call asks
-  what the user wants the result to do for them; the ways then offered each give what they said,
-  with their costs; none asks what the repository or running its code could tell; and each
-  message asks one point.
-- Decided from the proposal alone: passes when a stand-in given only the proposal decides without
-  asking back, and decides the same as one that reads the pull request and its branch.
-- Goes on from where it stopped: passes when a fresh conversation, after a pause in the middle of
-  a task, goes on from the task with no question to the user and carries it to its decision line.
-- Read in its receiver's place before the user sees it: passes when the transcripts show the plan,
-  the three documents and each proposal made by turn and read by its first user before the stop
-  commit, and the deliverable used by turn's first user before the conductor decided.
-- The flow, from `/rn:up` through the plan, the design, one task and the Deliverable sign-off, is
-  tried apart from what turn makes in the flow session, the smallest that shows it: a one-line
-  change to the practice repository's README, so the trial spends no real work's cost and fails
-  only where the flow breaks; it is run first after any change.
+- Each attractive quality is checked as its user on the practice repository `lovaizu/rn-try`, one
+  run at a time, from a fixed state, with a stand-in playing the user from a part that says only
+  what the user knows; the check is judged from the run's records, the JSONL Claude Code keeps of
+  the conversation and of every agent, with the commits, the pull request and the product, and
+  passes on what happens to the user, not on the shape of what rn writes. The scenes, what each
+  passes on, their fixtures and their trials are in the verification document
+  (`rn/docs/verification.md`) and `dev/rn/trials/`. The flow, from `/rn:up` through the plan, the
+  design, one task and the Deliverable sign-off, is tried apart from what turn makes, on the
+  smallest change that shows it, first after any change.
 
 ### B-8: One-dimensional quality measured
-- All three are measured from the transcripts of the account session, run on this version and on the
-  version in use: the questions the stand-in answered, the minutes and tokens to each sign-off,
-  and the lines of each proposal.
-- Each is compared with the same session on the version in use, which the trial's record names.
+- All three are measured from the records of the same session, run on this version and on the
+  version in use, which the trial's record names: the questions the stand-in answered, the minutes
+  and tokens to each sign-off, and the lines of each proposal.
 
 ### B-9: Must-be quality checked
-- Each is a test on the hook or script that holds it, in the case that would break it: a commit
-  made on the default branch, and a push to it; a commit without a decision line; a commit not pushed; a settled item not whole in its commit; a plan,
-  an `open/` name or a verification document off its form, and an ID that does not exist; a
-  sign-off passed without `/rn:ty` typed, feedback taken without `/rn:gm`, a pause without
-  `/rn:dn`; a stop commit with more in `open/` than its kind allows, or at a sign-off without the
-  default branch merged, each under only the user passes a sign-off; a proposal naming an item met that turn's evidence does not; each tool
-  missing, in a session and outside one; rn's own hooks in a repository without `.rn/`; and, for
-  the conductor staying on course, an agent started in the background, a turn ended with nothing
-  to decide, and a last message in the wrong language.
-- rn installs with turn: `claude plugin validate --strict` passes for rn and for the marketplace
-  on every push, and rn's manifest names turn among its dependencies.
+- Each must-be quality is checked by a test on the hook or script that holds it, in the case that
+  would break it; the tests are in `dev/rn/tests/`, run on every push with every line and branch
+  counted; that rn installs with turn is checked by `claude plugin validate --strict` on rn and the
+  marketplace on every push.
 
 ### B-10: Backward compatibility checked
-- The commands: a trial types each, and `/rn:on`, on the flow session, and passes when each does
-  what Backward compatibility says.
-- The record: a test takes up a session recorded by 0.9.0 from a fixture and passes when `/rn:up`
-  goes on from its last decision line; a session from 0.8.0 passes when its goal is worked out
-  again.
-- The pull request: the flow trial passes when the body holds the links and the request is marked
-  ready on the Deliverable sign-off.
-- The checklists: a test has turn's own script read every checklist rn keeps into its list and
-  finds each one's name, version and items; a test on the script that finds the checklists for a
-  kind finds `.rn/checklists/<kind>.md`.
-- The verification document: the flow trial's deliverable is used by turn against the session's
-  verification document, and the test on the record's form reads one.
+- Each thing others rely on is checked by a test or a trial that uses it as the earlier version
+  left it: the commands typed on the flow session, a session recorded by 0.9.0 and one by 0.8.0
+  taken up from fixtures, the pull request's links and mark on the flow trial, every checklist read
+  by turn's own script, and the verification document used by turn against the flow trial's
+  deliverable; the tests in `dev/rn/tests/`, the trials in `dev/rn/trials/`.
 
 ### B-12: Who does what to what
 - Structure opens with how rn divides, in one sentence: rn is the conductor, which alone decides
