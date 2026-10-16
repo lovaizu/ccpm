@@ -18,9 +18,14 @@ documents or code; its example is the UX's scene, a plugin's step calling turn.
   AI asks the user, one point at a time, what the checklist's items need, writes down what is
   decided, calls turn, gets back the work with each item's judgment and the lines that meet it,
   checks those against the work, fixes it and ends.
-- It shows, from start to result: the step's text that calls turn, kept short; turn's progress as it
-  writes, reads and checks, and makes again what falls short; and what comes back, the work's place
-  with each item's judgment and lines, then the AI checking, fixing and ending the step.
+- It shows, from start to result: the step's text that calls turn with a CCS, kept short, and the
+  CCS's four parts the step writes (what is made, who reads it and for what, the checklists and
+  decisions, the rules such as the language), the five turn fills said to go empty, their writing
+  left to the callers' page; that while the step waits, a reader other than the one that made the
+  work reads it in its receiver's place and what falls short is made again, which the person sees
+  in the panel below the prompt input; and the CCS that comes back, with what to do next, each
+  item's judgment and lines and the questions for the user, then the AI checking, fixing and
+  ending the step.
 
 ### B-3: Why this one
 - When the AI that made a work checks it, it knows what each line means and misses where a newcomer
