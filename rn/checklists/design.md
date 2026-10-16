@@ -60,31 +60,32 @@ then how each unit and the whole are checked, each the ground of the next.
 
 ## Benefit
 
-### B-40: Goals
+### B-40: What the UX needs, in the fewest goals
 
-Are the goals that bring about the UX the fewest, each one such that the UX lacks something without
-it and no other goal says it?
+Can the reader tell what the UX needs from goals that are the fewest, each one such that the UX
+lacks something without it and no other goal says it?
 
 Why: the goals are what everything below is built and checked toward; a goal more is built and
 kept for nothing, and two goals that say one thing are built twice.
 
-### B-41: Roles
+### B-41: How the roles achieve the goals
 
-Are the roles the goals need found, and do their interactions achieve every goal?
+Can the reader tell the roles the goals need, and how their interactions achieve every goal?
 
 Why: a goal no interaction of roles achieves is promised and never built.
 
-### B-42: Realization
+### B-42: How and where each role is made
 
-Is it clear how each role is made physically, where each is kept and runs, and what each depends on
-outside the product?
+Can the reader tell how each role is made physically, where it is kept and runs, and what it
+depends on outside the product?
 
 Why: the builder makes and places each role from this, and what the product depends on is where it
 breaks for the user first.
 
-### B-43: Checks
+### B-43: How the units and the whole are checked
 
-Is it clear how each unit is checked, and how the whole is checked to have achieved each goal?
+Can the reader tell how each unit is checked, and how the whole is checked to have achieved each
+goal?
 
 Why: units checked one by one build up to the whole, and only a check of the whole shows a goal
 achieved.
