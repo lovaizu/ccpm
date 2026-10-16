@@ -3,8 +3,9 @@
 ## design
 
 ### B-29: The user stories
-- One story: as the calling AI, I want to have a work made from the decisions and checklists I hand
-  over. Reading, judging and making again are how it is done, decided in the components.
+- One story: as the calling AI, I want to hand turn a CCS and get back the work and a new CCS, as one
+  turn of ACC. Reading, judging and making again are how the work is made, decided in the
+  components.
 
 ### B-18: Every logical component the stories need
 - Five components: the generator, the first user, the evaluator, the learner and the orchestrator.
