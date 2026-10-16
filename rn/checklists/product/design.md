@@ -65,6 +65,8 @@ depends on outside the product, labelled with that relation>
 
 - <A function>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
+- <A quality the UX names as better the more>: <what is measured, in one sentence>
+  - <How and where it is measured and compared with the last version, in one sentence>
 ```
 
 Why: the builder reads the functions, then the components that achieve them and how they are
@@ -133,6 +135,14 @@ Can the reader tell how the whole is checked to have achieved each function?
 
 Why: units can each pass while a function is missed; only a check of the whole shows a function
 achieved.
+
+### B-26: Better the more, measured
+
+Can the reader tell, for each quality the UX names as better the more, what is measured and how it
+is compared with the last version?
+
+Why: such a quality is neither achieved nor missed, so no check of a function shows it; left
+unmeasured, it grows worse with each change without anyone seeing.
 
 ## Usability
 
