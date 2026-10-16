@@ -18,9 +18,11 @@
 ### B-19: The stories achieved by interactions
 - The generator makes the work and names, as its own check, the lines it meant to meet each item;
   that is its claim, not a judgment.
-- The orchestrator checks the claim against the work and sends back what it can see falls short
-  before the first user reads, so the costly reading is not spent on it.
+- The orchestrator does not take the claim on trust: it reads the work against every item of the
+  checklists and sends back what it can see falls short before the first user reads, so the costly
+  reading is not spent on it.
 - The first user reads the work in the receiver's place; the evaluator shows from that reading the
-  items met, with their lines; the orchestrator checks those lines against the work and decides
+  items met, with their lines; the orchestrator does not take those on trust either: it reads the work against
+  every item of the checklists, those the evaluator shows met and those it does not, and decides
   each item; the learner finds, for each item not met, how the work would meet it, and the
   orchestrator sends that back to the generator.
