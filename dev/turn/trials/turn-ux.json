@@ -1,0 +1,39 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "dev/turn/ux.md"
+    },
+    {
+      "receiver": "someone who builds or changes turn"
+    }
+  ],
+  "goal_orientation": [
+    {
+      "use": "to know the experience turn must give its user before building or changing any part of it"
+    },
+    {
+      "acceptance": "they can tell who uses turn and for what goal, what that user does and gets back until the goal, and what it gains, and build turn to it"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/readability.md"
+    },
+    {
+      "checklist": "rn/checklists/product/ux.md"
+    },
+    {
+      "decisions": ".writ/decisions/turn/UX.decisions.md"
+    }
+  ],
+  "constraints": [
+    {
+      "language": "English"
+    }
+  ],
+  "predictive_cue": [],
+  "uncertainty_signal": [],
+  "semantic_gist": [],
+  "relational_map": [],
+  "episodic_trace": []
+}
