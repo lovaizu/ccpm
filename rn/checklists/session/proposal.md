@@ -6,7 +6,7 @@ version: 0.1.0
 # Proposal
 
 A proposal is read by the user at a sign-off, to say yes or no from it alone, without reading the
-work over, and to read the work only where they want to. Each item of `doc.md` applies to a
+work over, and to read the work only where they want to. Each item of `readability.md` applies to a
 proposal with the work as it now stands as its subject.
 
 ## Format

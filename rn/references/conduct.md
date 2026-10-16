@@ -120,7 +120,7 @@ returns.
 1. Take the work's checklists where the step that called for the work already ran
    `up.py checklists`; otherwise run `up.py checklists <kind>`. The kinds are `plan` for the plan;
    `readme`, `design` and `verification` for the three documents; `proposal` for a proposal;
-   `code` for code and its tests; and for any other document its kind, or `doc`. The deliverable's
+   `code` for code and its tests; and for any other document its kind, or `readability`. The deliverable's
    use takes no kind: its checklist is the session's verification document itself.
 2. For a kind with no checklist, make its checklist first, with the user, through these same steps:
    kind `checklist`, which `up.py checklists checklist` gives as
@@ -358,7 +358,7 @@ Once the Design sign-off is approved:
 
 1. Settle the decisions the tasks rest on one at a time, as step 9 says, each before the tasks
    that rest on it.
-2. Write the tasks into `steering.md` in the form `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md`
+2. Write the tasks into `steering.md` in the form `${CLAUDE_PLUGIN_ROOT}/checklists/session/plan.md`
    gives, numbered on from the sign-offs, with the Deliverable sign-off after them. Give each its
    purpose, the IDs of the criteria it serves, and Completion criteria split into Attractive
    quality and Must-be quality, each a state checked on the real thing. Put the tasks that raise

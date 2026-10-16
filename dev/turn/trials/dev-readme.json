@@ -3,7 +3,7 @@
                      {"receiver": "a developer who will build or change turn, new to this repository"}],
   "goal_orientation": [{"use": "to find how turn is built and how to check a change to it"},
                        {"acceptance": "they can run turn's tests and a trial of turn, and know where the design is"}],
-  "retrieved_artifacts": [{"checklist": "rn/checklists/doc.md"},
+  "retrieved_artifacts": [{"checklist": "rn/checklists/readability.md"},
                           {"reference": "dev/turn/design.md"},
                           {"reference": "dev/turn/trials/run.py"},
                           {"reference": ".claude/rules/plugin.md"}],

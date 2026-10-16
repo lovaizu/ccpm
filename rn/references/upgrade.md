@@ -11,7 +11,7 @@ the goal out again from it, since an older record may not hold why the user want
 1. Read the old `steering.md` and whatever else the old version left in the session folder.
 2. Read the rest of `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, from step 2 to the end, since
    its steps carry the session from here.
-3. Read `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` whole, since the new `steering.md` is written in
+3. Read `${CLAUDE_PLUGIN_ROOT}/checklists/session/plan.md` whole, since the new `steering.md` is written in
    the form it gives.
 4. When the old record does not give the two languages, choose them as conduct.md's step 3 says.
 5. Write the new `steering.md` in the session folder in the form `plan.md` gives, replacing the old

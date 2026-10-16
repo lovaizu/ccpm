@@ -38,7 +38,7 @@ Starting a session:
 6. Read the rest of `${CLAUDE_PLUGIN_ROOT}/references/conduct.md`, from step 2 to the end, since
    its steps carry the session from here.
 7. Choose the two languages with the user, as conduct.md's step 3 says.
-8. Read `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` whole, and write `steering.md` in the session
+8. Read `${CLAUDE_PLUGIN_ROOT}/checklists/session/plan.md` whole, and write `steering.md` in the session
    folder in the form it gives: the two languages; `rn` as
    `jq -r .version "${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json"` prints it; and the goal as
    the words give it for now.

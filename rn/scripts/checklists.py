@@ -11,8 +11,17 @@ CHECKLIST = re.compile(r"---\n(.*?)\n---\n(.*?)(?:^## |\Z)", re.DOTALL | re.MULT
 RN = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "checklists")
 
 
+# Those for every document lie at the top, those for what goes into the product in product/, and
+# those for rn's own conduct of a session in session/.
+FOLDERS = [RN, os.path.join(RN, "product"), os.path.join(RN, "session")]
+
+
 def rn_checklist(kind):
-    return os.path.join(RN, kind + ".md")
+    for folder in FOLDERS:
+        path = os.path.join(folder, kind + ".md")
+        if os.path.isfile(path):
+            return path
+    return None
 
 
 def read(path):
@@ -34,12 +43,12 @@ def find(kind):
             f"{kind}: a kind is a word or words joined by hyphens, such as release-notes"
         )
     user = os.path.join(".rn", "checklists", kind + ".md")
-    found = [read(path) for path in [rn_checklist(kind), user] if os.path.isfile(path)]
+    found = [read(path) for path in [rn_checklist(kind), user] if path and os.path.isfile(path)]
     applied = [
         read(rn_checklist(name))
         for _, opening in found
         for name in NAMED.findall(opening)
-        if os.path.isfile(rn_checklist(name))
+        if rn_checklist(name)
     ]
     listed = []
     for checklist, _ in applied + found:

@@ -158,7 +158,7 @@ class PlanFormTest(unittest.TestCase):
                 (
                     f'rn: in "Working out the plan" of conduct.md, {FOLDER}/steering.md opens with no'
                     " front matter between two `---` lines; put back the front matter of the template"
-                    f" in rn's checklists/plan.md, {PLAN_FORM}"
+                    f" in rn's checklists/session/plan.md, {PLAN_FORM}"
                 )
             ],
         )
@@ -186,7 +186,7 @@ class PlanFormTest(unittest.TestCase):
                         (
                             f'rn: in "Working out the plan" of conduct.md, {FOLDER}/steering.md has no'
                             f" `{key}` key in its front matter; add `{key}` as the template in rn's"
-                            f" checklists/plan.md gives it, {PLAN_FORM}"
+                            f" checklists/session/plan.md gives it, {PLAN_FORM}"
                         )
                     ],
                 )
@@ -234,7 +234,7 @@ class PlanFormTest(unittest.TestCase):
                         (
                             f'rn: in "Working out the plan" of conduct.md, {FOLDER}/steering.md has no'
                             f" `{heading}` heading; put it back where the template in rn's"
-                            f" checklists/plan.md has it, {PLAN_FORM}"
+                            f" checklists/session/plan.md has it, {PLAN_FORM}"
                         )
                     ],
                 )

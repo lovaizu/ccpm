@@ -17,10 +17,10 @@
   ],
   "retrieved_artifacts": [
     {
-      "checklist": "rn/checklists/doc.md"
+      "checklist": "rn/checklists/readability.md"
     },
     {
-      "checklist": "rn/checklists/design.md"
+      "checklist": "rn/checklists/product/design.md"
     },
     {
       "decisions": ".writ/decisions/dev/turn/design.decisions.md"

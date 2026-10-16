@@ -25,7 +25,7 @@ CURRENT = "---\nrn: 0.9.0\nverification: docs/verification.md\n---\n"
 NO_PYTHON = "rn: its checks need python3 (3.9 or later); install it and run again\n"
 NO_PR = (
     f'rn: in "Working out the plan" of conduct.md, {FOLDER}/steering.md has no `pr` key in its'
-    f" front matter; add `pr` as the template in rn's checklists/plan.md gives it, {PLAN_FORM}\n"
+    f" front matter; add `pr` as the template in rn's checklists/session/plan.md gives it, {PLAN_FORM}\n"
 )
 
 

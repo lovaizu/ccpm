@@ -12,7 +12,7 @@
                      {"receiver": "the maintainer of rn, who changes these scripts and runs their tests, and the conductor's steps, which run them"}],
   "goal_orientation": [{"use": "to give the conductor, on every run, the checklists for a kind, the content file's place, the task as a CCS and the report, the same way each time"},
                        {"acceptance": "every test passes and holds a sentence of the content; every stop says what went wrong and what to do; every line of the scripts is there for a behavior some test checks"}],
-  "retrieved_artifacts": [{"checklist": "rn/checklists/code.md"},
+  "retrieved_artifacts": [{"checklist": "rn/checklists/product/code.md"},
                           {"decisions": ".writ/decisions/rn/scripts.decisions.md"},
                           {"reference": "rn/checklists"},
                           {"reference": "turn/calling-from-a-plugin.md"},

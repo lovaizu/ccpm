@@ -2,8 +2,8 @@ from helpers import RepoTest
 
 EVIDENCE = ".turn/setup"
 TRACE = [{"evidence": EVIDENCE + "/list.json"}]
-UNMET = "doc B-2 (Is the reader...): say where the logs go"
-NOT_MET = {"id": "doc B-2", "title": "No question left"}
+UNMET = "readability B-2 (Is the reader...): say where the logs go"
+NOT_MET = {"id": "readability B-2", "title": "No question left"}
 
 
 class TestReport(RepoTest):
@@ -41,7 +41,7 @@ class TestReport(RepoTest):
             {
                 "decided": [{"point": "Port 8080", "ground": "the Makefile uses it"}],
                 "questions": [{"question": "Which port?", "judged": "8080, from the Makefile"}],
-                "unmet": [{"item": "doc B-2", "judged": "left for the user"}],
+                "unmet": [{"item": "readability B-2", "judged": "left for the user"}],
                 "changed": [{"lines": "4", "why": "the port put in"}],
             }
         )
@@ -50,7 +50,7 @@ class TestReport(RepoTest):
             "Decided for you\n"
             "  Port 8080: the Makefile uses it\n"
             "  Question: Which port?: 8080, from the Makefile\n"
-            "  Not met: doc B-2 No question left: left for the user\n"
+            "  Not met: readability B-2 No question left: left for the user\n"
             "    turn: say where the logs go\n"
             "  Rule from turn: name the port in every example\n"
             "  Changed after turn: 4: the port put in",
@@ -64,18 +64,18 @@ class TestReport(RepoTest):
         self.turn(
             list_={
                 "checklists": [
-                    {"checklist": "doc", "version": "0.2.0"},
+                    {"checklist": "readability", "version": "0.2.0"},
                     {"checklist": "readme", "version": "0.3.0"},
                 ],
                 "items": [
-                    {"id": "doc B-1", "title": "Purpose first"},
+                    {"id": "readability B-1", "title": "Purpose first"},
                     NOT_MET,
                     {"id": "readme B-1", "title": "First result"},
                 ],
             },
             orchestrator={
-                "doc B-1": {"met": True, "lines": "1-3"},
-                "doc B-2": {"met": False},
+                "readability B-1": {"met": True, "lines": "1-3"},
+                "readability B-2": {"met": False},
                 "readme B-1": {"met": True, "lines": "5, 9"},
             },
         )
@@ -83,7 +83,7 @@ class TestReport(RepoTest):
         self.assertEqual(
             out.split("\n\n")[1:3],
             [
-                "doc 0.2.0\n  ✅ B-1 Purpose first: 1-3\n  ⬜ B-2 No question left",
+                "readability 0.2.0\n  ✅ B-1 Purpose first: 1-3\n  ⬜ B-2 No question left",
                 "readme 0.3.0\n  ✅ B-1 First result: 5, 9",
             ],
         )
@@ -94,14 +94,14 @@ class TestReport(RepoTest):
         # Then: it shows the checklist and the item of the list, as the orchestrator decided it
         self.turn(
             list_={
-                "checklists": [{"checklist": "doc", "version": "0.2.0"}],
-                "items": [{"id": "doc B-1", "title": "Purpose first"}],
+                "checklists": [{"checklist": "readability", "version": "0.2.0"}],
+                "items": [{"id": "readability B-1", "title": "Purpose first"}],
             },
-            orchestrator={"doc B-1": {"met": True, "lines": "1-3"}},
+            orchestrator={"readability B-1": {"met": True, "lines": "1-3"}},
             episodic_trace=[{"evidence": ".turn/other/first-user.json"}, *TRACE],
         )
         _, out = self.report({})
-        self.assertEqual(out.split("\n\n")[1], "doc 0.2.0\n  ✅ B-1 Purpose first: 1-3")
+        self.assertEqual(out.split("\n\n")[1], "readability 0.2.0\n  ✅ B-1 Purpose first: 1-3")
 
     def test_the_report_ends_with_the_document_and_its_content_file(self):
         # Given: turn's CCS for a document of two files and its decisions file
@@ -133,11 +133,11 @@ class TestReport(RepoTest):
         # When: rn makes the report
         # Then: the item is shown unmet, without lines
         self.turn(
-            list_={"checklists": [{"checklist": "doc", "version": "0.2.0"}], "items": [NOT_MET]},
-            orchestrator={"doc B-2": {"met": False}},
+            list_={"checklists": [{"checklist": "readability", "version": "0.2.0"}], "items": [NOT_MET]},
+            orchestrator={"readability B-2": {"met": False}},
             semantic_gist=[{"unmet": UNMET}],
         )
-        _, out = self.report({"unmet": [{"item": "doc B-2", "judged": "met"}]})
+        _, out = self.report({"unmet": [{"item": "readability B-2", "judged": "met"}]})
         self.assertIn("\n  ⬜ B-2 No question left\n", out)
 
     def test_a_file_that_is_not_json_stops(self):
@@ -178,7 +178,7 @@ class TestReport(RepoTest):
         # When: rn is asked for the report
         # Then: rn stops, saying to judge that item first
         self.turn(semantic_gist=[{"unmet": UNMET}])
-        self.assertEqual(self.report({}), (1, "judge the item first: doc B-2\n"))
+        self.assertEqual(self.report({}), (1, "judge the item first: readability B-2\n"))
 
 
 class TestLinesAsTheyStand(RepoTest):
@@ -198,11 +198,11 @@ class TestLinesAsTheyStand(RepoTest):
         self.write_json(
             EVIDENCE + "/list.json",
             {
-                "checklists": [{"checklist": "doc", "version": "0.2.0"}],
-                "items": [{"id": "doc B-1", "title": "Purpose first"}],
+                "checklists": [{"checklist": "readability", "version": "0.2.0"}],
+                "items": [{"id": "readability B-1", "title": "Purpose first"}],
             },
         )
-        self.write_json(EVIDENCE + "/orchestrator.json", {"doc B-1": {"met": True, "lines": lines}})
+        self.write_json(EVIDENCE + "/orchestrator.json", {"readability B-1": {"met": True, "lines": lines}})
         if kept is not None:
             self.write(EVIDENCE + "/kept/README.md", kept)
         self.write("README.md", now)

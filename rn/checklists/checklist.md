@@ -9,7 +9,7 @@ A checklist is read by whoever makes or judges a deliverable of one kind, to mak
 purpose. Answering its items, they make or judge the deliverable to that purpose alone, nothing
 missing and nothing more, and anyone answering reaches the same judgment.
 This file is the checklist for checklists, and is written in the shape it asks for. Each item of
-`doc.md` applies to a checklist, with what a good deliverable of the kind gives its user as its
+`readability.md` applies to a checklist, with what a good deliverable of the kind gives its user as its
 subject.
 
 ## Format
@@ -28,7 +28,7 @@ version: <x.y.z>
 
 <The purpose in one or two sentences: who uses it, and what they can then do>
 
-<Where the kind is a document, how `doc.md` applies to it>
+<Where the kind is a document, how `readability.md` applies to it>
 
 ## Format
 
@@ -107,17 +107,17 @@ sentences, who uses it and what they can then do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
 
-### B-7: How `doc.md` applies
+### B-7: How `readability.md` applies
 
 Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
-`doc.md` applies to the kind?
+`readability.md` applies to the kind?
 
 Look for: what the kind's subject is, for the items that ask about the reader's picture of it; and,
-for each item of `doc.md` that the kind's shape settles otherwise, such as an opening its template
-has no place for, how it is answered for the kind. An item not named is answered as `doc.md` asks
+for each item of `readability.md` that the kind's shape settles otherwise, such as an opening its template
+has no place for, how it is answered for the kind. An item not named is answered as `readability.md` asks
 it.
 
-Why: `doc.md` is answered beside the kind's checklist; an item of it that the kind's shape cannot
+Why: `readability.md` is answered beside the kind's checklist; an item of it that the kind's shape cannot
 meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves its
 reader, and the maker cannot tell what passes.
 

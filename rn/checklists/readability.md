@@ -1,5 +1,5 @@
 ---
-name: doc
+name: readability
 version: 0.2.0
 ---
 

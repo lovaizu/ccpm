@@ -35,19 +35,19 @@
   ],
   "retrieved_artifacts": [
     {
-      "checklist": "rn/checklists/doc.md"
+      "checklist": "rn/checklists/readability.md"
     },
     {
-      "checklist": "rn/checklists/prompt.md"
+      "checklist": "rn/checklists/product/prompt.md"
     },
     {
       "decisions": ".writ/decisions/rn/prompts.decisions.md"
     },
     {
-      "reference": "rn/checklists/plan.md"
+      "reference": "rn/checklists/session/plan.md"
     },
     {
-      "reference": "rn/checklists/proposal.md"
+      "reference": "rn/checklists/session/proposal.md"
     },
     {
       "reference": "turn/calling-from-a-plugin.md"

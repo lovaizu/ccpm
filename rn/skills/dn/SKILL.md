@@ -44,7 +44,7 @@ record, so everything it needs is left there.
 
    Task is for a task that was under way, and Talk for a talk with the user.
 
-6. Read `${CLAUDE_PLUGIN_ROOT}/checklists/proposal.md` whole. Commit and push as record.md's step 5
+6. Read `${CLAUDE_PLUGIN_ROOT}/checklists/session/proposal.md` whole. Commit and push as record.md's step 5
    says, with this body: the map, the lines that head every message where rn stops, as the
    template in proposal.md shows them, with the first task in `steering.md` not yet `[x]`, a
    sign-off included, as `👉 #{id} {task name} ── paused here`; then the decision line record.md's step 6 gives for a

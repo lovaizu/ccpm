@@ -24,9 +24,9 @@ UX, in this order:
 
 Steps 5 and 6 are written from what is in the repository, not from the UX.
 
-Each item of `doc.md` applies to a README with deciding and getting to the first result as its
+Each item of `readability.md` applies to a README with deciding and getting to the first result as its
 subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
-`doc.md`'s B-16 is answered by the example, which shows the reader using the product from start to
+`readability.md`'s B-16 is answered by the example, which shows the reader using the product from start to
 result; a README holds no figure of who does what, since it would say the example again.
 
 ## Format
@@ -142,4 +142,4 @@ Why: a reader who cannot tell whether they may use it, or on what terms, cannot 
 
 ## Usability
 
-None: what lets the README be read easily is `doc.md`'s.
+None: what lets the README be read easily is `readability.md`'s.

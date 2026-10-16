@@ -93,7 +93,7 @@ The CCS in that example:
                      {"receiver": "a developer who has just cloned the project"}],
   "goal_orientation": [{"use": "to get the project running on their machine"},
                        {"acceptance": "they can run the tests without asking anyone"}],
-  "retrieved_artifacts": [{"checklist": "checklists/doc.md"},
+  "retrieved_artifacts": [{"checklist": "checklists/readability.md"},
                           {"decisions": "notes/setup.decisions.md"},
                           {"reference": "Makefile"},
                           {"receiver_opens": "CONTRIBUTING.md"}],

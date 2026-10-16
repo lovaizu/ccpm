@@ -26,7 +26,7 @@ UX is making that experience clear, in this order:
      - For example, less cost.
      - For example, fewer questions the user answers.
 
-Each item of `doc.md` applies to a UX with the users' experience as its subject; its B-16 is
+Each item of `readability.md` applies to a UX with the users' experience as its subject; its B-16 is
 answered by the scenes.
 
 ## Format
@@ -105,4 +105,4 @@ without anyone deciding to.
 
 ## Usability
 
-None: what lets the UX be understood in a short time is `doc.md`'s.
+None: what lets the UX be understood in a short time is `readability.md`'s.

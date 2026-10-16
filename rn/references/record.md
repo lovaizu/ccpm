@@ -9,7 +9,7 @@ since rn's commands, scripts and hooks find their way by them.
 
 The record is the session folder `.rn/{yyyymmdd}-{slug}/`, the README, the design document and
 the verification document its plan names, and git. The plan is `steering.md` in the session
-folder, in the form `${CLAUDE_PLUGIN_ROOT}/checklists/plan.md` gives.
+folder, in the form `${CLAUDE_PLUGIN_ROOT}/checklists/session/plan.md` gives.
 
 ## Steps
 

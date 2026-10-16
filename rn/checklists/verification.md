@@ -8,7 +8,7 @@ version: 0.1.0
 A verification document is read by whoever runs the product's checks again after a change, the
 conductor at the Deliverable sign-off first, to see whether the product still gives what the user
 chose it for and whether something that worked broke; and by the user at the Design sign-off, to
-see how they will know the product works before anything is built. Each item of `doc.md` applies
+see how they will know the product works before anything is built. Each item of `readability.md` applies
 to it with the product's checks as its subject. It is also the checklist the deliverable is used
 against: each scene is an item, so a reader who uses the product as the scene says can tell
 whether it passed.

@@ -47,10 +47,10 @@
   ],
   "retrieved_artifacts": [
     {
-      "checklist": "rn/checklists/code.md"
+      "checklist": "rn/checklists/product/code.md"
     },
     {
-      "checklist": "rn/checklists/hook.md"
+      "checklist": "rn/checklists/product/hook.md"
     },
     {
       "decisions": ".writ/decisions/rn/hooks-form.decisions.md"
@@ -62,7 +62,7 @@
       "reference": "rn/references/conduct.md"
     },
     {
-      "reference": "rn/checklists/plan.md"
+      "reference": "rn/checklists/session/plan.md"
     },
     {
       "reference": "rn/checklists/verification.md"

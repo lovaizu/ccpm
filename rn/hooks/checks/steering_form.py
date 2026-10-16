@@ -1,5 +1,5 @@
 """The plan keeps the front matter, headings and task headings of the template in rn's
-checklists/plan.md, with each task and criterion ID given once."""
+checklists/session/plan.md, with each task and criterion ID given once."""
 
 from checks import TASK, Record, criteria, front_matter, stop, task_blocks
 
@@ -28,7 +28,7 @@ WHY = (
     "rn's commands and checks read the plan by that form, and a later conversation goes on from"
     " it only when the form holds"
 )
-TEMPLATE = "the template in rn's checklists/plan.md"
+TEMPLATE = "the template in rn's checklists/session/plan.md"
 
 
 def twice(values: list[str]) -> list[str]:

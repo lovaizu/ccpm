@@ -21,7 +21,7 @@ The UX is what the user experiences using the product. Design thinks in this ord
 Many UX are held up by few functions, and one component takes on several functions, so the numbers
 narrow in the order UX, functions, components.
 
-Each item of `doc.md` applies to a design document with the mechanism and its checks as its
+Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
 
 ## Format
@@ -136,4 +136,4 @@ achieved.
 
 ## Usability
 
-None: what lets the design be understood in a short time is `doc.md`'s.
+None: what lets the design be understood in a short time is `readability.md`'s.
