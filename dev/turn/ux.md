@@ -1,7 +1,6 @@
 # turn UX
 
-turn is one turn of ACC, the Agent Cognitive Compressor
-(https://arxiv.org/abs/2601.11653), for an AI that runs a step of a plugin: it takes a CCS, the
+turn is one turn of ACC, the [Agent Cognitive Compressor](https://arxiv.org/abs/2601.11653), for an AI that runs a step of a plugin: it takes a CCS, the
 Compressed Cognitive State that ACC hands from one turn to the next in place of the whole
 conversation, makes the work of that step meeting the step's checklist, and returns a new CCS. The
 checklist is the list of items the plugin gives for that work, each a question the work must meet.
