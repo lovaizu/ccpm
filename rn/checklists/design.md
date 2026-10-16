@@ -5,9 +5,9 @@ version: 0.3.0
 
 # Design document
 
-A design document is read by whoever builds or changes the product. From it they understand,
-in a short time, the mechanism that brings about the UX the README and its pages define, and how
-that is checked, and build or change the product to it.
+A design document is read by whoever builds or changes the product. From it they understand, in a
+short time, the mechanism that brings about the UX the README and its pages define, and how that is
+checked, and build or change the product to it.
 
 Each item of `doc.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -31,14 +31,14 @@ Does the design document follow this template, headings included?
 
 ### Logical view
 
-<One figure: a box for each role, the user and what is outside the product included, holding its
-name alone; an arrow from each to the role it acts on, labelled with what it does>
+<One figure: a box for each role, holding its name alone; an arrow from each to the role it acts
+on, labelled with what it does>
 
 - <A goal, and the roles and interactions that achieve it, in one sentence>
 
 ### Physical view
 
-<One figure: a frame for each place, holding its name alone; in each, a box for each unit kept
+<One figure: a frame for each place, holding its name alone; in each, a box for each unit placed
 there, holding how it is made and the roles it realizes; an arrow from each unit to what it depends
 on outside the product, labelled with that relation>
 
@@ -55,63 +55,67 @@ on outside the product, labelled with that relation>
   - <How and where that is checked, in one sentence>
 ```
 
-Why: the builder reads what must be achieved, then how roles achieve it and where they are made,
-then how each unit and the whole are checked, each the ground of the next.
+Why: the builder reads the goals, then the roles that achieve them and how they are realized, then
+how the units and the whole are checked, each the ground of the next.
 
 ## Benefit
 
-### B-40: Everything the UX needs
-
-Can the reader tell from the goals everything that must hold for the UX the README and its pages
-define to come about?
-
-Why: the goals are what everything below is built and checked toward; what the UX needs and no goal
-names is built by chance or not at all.
-
-### B-44: Each goal needed
+### B-17: Each goal needed
 
 Can the reader tell, for each goal, what the UX would lack without it?
 
-Why: a goal the UX does not need is built and kept for nothing, and the builder takes in more than
-the mechanism needs.
+Why: the goals bringing about the UX are the fewest only when each is needed; a goal more is built
+and kept for nothing.
 
-### B-41: How the roles achieve the goals
+### B-18: No two goals overlapping
 
-Can the reader tell the roles the goals need, and how their interactions achieve every goal?
+Can the reader tell, for each goal, what it holds that no other goal holds?
 
-Why: a goal no interaction of roles achieves is promised and never built.
+Why: two goals that hold one thing are achieved twice, in two ways that may not fit together.
 
-### B-42: How each role is made
+### B-19: The roles the goals need
 
-Can the reader tell how each role is made physically, such as a prompt, a script, a hook or data?
+Can the reader tell every role the goals need?
 
-Why: each is made, changed and checked in its own way, and the builder cannot make a role without
-knowing which.
+Why: a role left out is found only when a goal it serves is built, and the architecture must
+change then.
 
-### B-45: Where each role is placed
+### B-20: Each goal achieved by interactions
 
-Can the reader tell where each role is kept and where it runs, such as shipped with the product, in
-the user's repository, on the user's machine or in CI?
+Can the reader tell, for each goal, how the interactions between roles achieve it?
 
-Why: where a role is kept decides who owns it and when a change reaches the user, and where it runs
-decides where it can be checked.
+Why: roles that each do their part achieve no goal unless their interactions do.
 
-### B-46: What each role depends on
+### B-21: How each role is realized
+
+Can the reader tell how each role is realized physically?
+
+Why: the builder makes each role as it is realized, and each way of realizing is made and changed
+in its own way.
+
+### B-22: Where each role is placed
+
+Can the reader tell where each role is placed?
+
+Why: where a role is placed decides who owns it, where it runs and when a change to it reaches the
+user.
+
+### B-23: What each role depends on outside
 
 Can the reader tell what each role depends on outside the product?
 
-Why: what the product needs in place is where it breaks for the user first.
+Why: what the product depends on is where it breaks for the user first.
 
-### B-43: How each unit is checked
+### B-24: Checks built up unit by unit
 
-Can the reader tell how each unit is checked, and where?
+Can the reader tell, for each unit of the physical view, how it is checked?
 
-Why: the whole is built up from units checked one by one; a unit left unchecked breaks the whole
-where no check shows it.
+Why: the check of the whole is built up from units checked one by one, and a unit left unchecked
+breaks the whole where no check shows it.
 
-### B-47: How the whole is checked for each goal
+### B-25: The whole checked for each goal
 
-Can the reader tell how the whole is checked to have achieved each goal, and where?
+Can the reader tell, for each goal, how the whole is checked to have achieved it?
 
 Why: units can each pass while a goal is missed; only a check of the whole shows a goal achieved.
 
