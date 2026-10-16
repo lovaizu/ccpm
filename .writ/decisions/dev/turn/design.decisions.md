@@ -96,3 +96,28 @@
   and let through where it must be, counted the same way.
 - The orchestrator and the four roles: each run on its own on a small task, on Opus 5.5, and judged
   from the JSONL by whether it did what its steps say.
+
+### B-24: The whole checked
+- Trials in the private `lovaizu/rn-try`, one at a time: a stand-in for the calling AI is handed a
+  small task's decisions and checklist and calls turn; judged from the JSONL and the work. The
+  story is achieved when the work comes back where it goes with an answer and lines for every
+  item, each answer checked by reading the work.
+
+### B-28: Must-be, checked
+- The first user apart and reading only what the receiver opens: a test that the hook stops any
+  other read; in a trial, everything the first user opened is what the receiver opens.
+- The whole work read for every item: a test that the hook stops a reply that leaves an item out;
+  in a trial, the first user opened all of the work.
+- The work returned as last read: in a trial, nothing is written to the work after the last reading
+  begins.
+- The orchestrator deciding by its own reading: in a trial, it opens the work before it decides.
+- An answer for every item, with lines that are in the work: a tested script checks each line named
+  is in the work; in a trial, each line is read for whether it meets its item.
+- A question, not a guess: a trial on a task with one decision left out returns a question.
+- Nothing changed but where the work goes, no commit or push: a test that the hooks stop them; after
+  a trial, git shows changes to the work alone.
+
+### B-26: Better the more, measured
+- The time and the cost of a run from the trial's JSONL, its timestamps and usage; the items the
+  calling AI fixes after the work returns counted from the stand-in's JSONL; each compared with the
+  last version.
