@@ -53,6 +53,14 @@
   cut off leaves its writing as changes git shows, which the calling AI undoes or finishes, and the
   calling AI checks and fixes the work in place in any case. Runs at once make different files, as
   rn starts them for work that can go in parallel. Nothing of a run is put outside the repository.
+- The roles' answers to one another, the generator's claim, the first user's reading and the
+  evaluator's lines, are not files: each role gives its answer as its reply to the orchestrator, so
+  a run leaves nothing behind, and only the orchestrator holds them, so the first user cannot see
+  the generator's claim. How a hook checks that a reply answers every item is tried when built.
+- A run asked to stop ends with a reply saying the items decided so far and where it stopped. A
+  run cut off leaves the work as written so far; the calling AI calls turn again, the generator
+  makes the work again from what is there and the readings start again. No resuming part way:
+  being cut off is rare, and a reading again costs less than a resume to build and keep right.
 
 ### B-22: What each component depends on outside
 - Claude Code, python3 3.9 or later, jq and git.
