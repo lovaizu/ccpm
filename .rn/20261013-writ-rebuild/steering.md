@@ -767,9 +767,18 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   The second unit runs as `hc1` in this session's scratchpad
   `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/739e9824-08e7-4ea5-b189-7ac3c92712c3/scratchpad/`,
   log beside it; `d6` and `flow1` still go in the earlier one.
+- turn's design taken in from `d6` (2026-10-16, Opus, $8.06, two rounds, 388 lines, 39 of 41 met,
+  no question): the two unmet, doc B-3 and B-12, are one point, "version in use" used before it is
+  said, finished by hand at its first use. Against `d5` (34 of 41 after two rounds): the first round
+  left 8 of the orchestrator's 36 items where `d5` left 6, the same kinds (terms, names, repeats),
+  so the generator's order (decision 21) showed no gain in the first round; the second round
+  converged further (2 left where `d5` left 7). The one rule, a term the decisions list for the
+  receiver is told only where the receiver does not already hold it, is a generator learning, for
+  the stock-taking. Judged as the receiver: the orchestrator's loop with the generator and the
+  second round read as the decisions say; nothing added beyond them.
 - Where to resume (2026-10-16, current): the record's Goal, criteria and task purposes say rn, as
   decided on 2026-10-15; PR #61 and issues #53 and #54 say the same. Going: `hc1` (rn's hooks,
-  second unit), `flow1` (the flow trial on rn-try); `d6` ended, to judge against `d5`. Then the
+  second unit), `flow1` (the flow trial on rn-try); `d6` taken in. Then the
   third hooks unit (`rn-hooks-course.json`), the trials `a1_first_call`, `a1_feedback`,
   `a2_intent`, `a3_proposal`, `a4_resume`, `a4_from_080` one at a time, the issues #4 names judged,
   the final check, then the report of every decision above.
