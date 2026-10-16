@@ -810,12 +810,24 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   parts by name), U-2 (where a part is kept is a decision). Both designs' decisions files
   reshaped to it (`454441b`, `46995b9`), and both designs run again as `td7` and `rd6` in this
   session's scratchpad. Decision 22, to report.
-- Where to resume (2026-10-16, current): the record's Goal, criteria and task purposes say rn, as
-  decided on 2026-10-15; PR #61 and issues #53 and #54 say the same. Going: `hc1` (rn's hooks,
-  second unit), `flow1` (the flow trial on rn-try); `d6` taken in. Then the
-  third hooks unit (`rn-hooks-course.json`), the trials `a1_first_call`, `a1_feedback`,
-  `a2_intent`, `a3_proposal`, `a4_resume`, `a4_from_080` one at a time, the issues #4 names judged,
-  the final check, then the report of every decision above.
+- Where to resume (2026-10-16, before a `/clear`): three turn runs are going in this session's
+  scratchpad
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/739e9824-08e7-4ea5-b189-7ac3c92712c3/scratchpad/`,
+  each with its log beside it (alive while `pgrep -f "run.py <folder> "` finds it, done when
+  `<folder>/.tasks/<name>.json` exists):
+  1. `hc1`, rn's hooks' second unit (`dev/rn/trials/rn-hooks-commits.json`, out
+     `rn-hooks-commits.json`): judge by the purpose, take the sixteen files in, run `sh dev/check.sh`
+     with the tools of `dev/requirements.txt` on PATH, finish small shortfalls by hand, commit.
+  2. `td7`, turn's design (`turn-design.json`) and 3. `rd6`, rn's design (`rn-design.json`), both on
+     the Structure decided as decision 22: judge the figure as the user asked (names in the boxes,
+     the relation on each arrow, the table, each goal's parts), finish small shortfalls by hand,
+     take `dev/turn/design.md` and `rn/docs/design.md` in, commit.
+  Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
+  about is not a stop (the flow trial's finding above), settled with the hooks' third unit
+  (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
+  `a4_resume`, `a4_from_080` on rn-try, one at a time, each `--out <new folder>`; the issues #4
+  names judged; the final check; then the report of decisions 1 to 22 to the user. The record's
+  Goal, criteria and task purposes say rn; PR #61 and issues #53, #54 say the same.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
