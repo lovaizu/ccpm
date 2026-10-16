@@ -22,7 +22,8 @@ UX, in this order:
    version; for those who build it, the entrance to the design and development.
 6. Write the terms on which the product may be used, the license.
 
-Steps 5 and 6 are written from what is in the repository, not from the UX.
+Steps 4 to 6 are written from the design and what is in the repository, not from the UX, once
+they are built.
 
 Each item of `readability.md` applies to a README with deciding and getting to the first result as
 its subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
