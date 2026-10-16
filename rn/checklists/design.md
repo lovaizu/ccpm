@@ -102,7 +102,7 @@ again.
 
 ### B-20: How each component is realized
 
-Can the reader tell the technology chosen for each component and how it is realized physically?
+Can the reader tell how each component is realized physically, with the technology chosen for it?
 
 Why: the builder makes each component as it is realized, and each way is made and changed in its
 own way.
@@ -122,7 +122,7 @@ Why: what the product depends on is where it breaks for the user first.
 
 ### B-23: Checks built up unit by unit
 
-Can the reader tell how each physical unit is checked on its own, and how those checks build up?
+Can the reader tell how the checks of each physical unit, made on its own, build up to the whole?
 
 Why: the whole is built up from units checked one by one, and a unit left unchecked breaks the
 whole where no check shows it.
