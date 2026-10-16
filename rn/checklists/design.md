@@ -6,11 +6,11 @@ version: 0.3.0
 # Design document
 
 A design document is read by whoever builds or changes the product. From it they understand,
-in a short time, the mechanism that brings about the UX the README and its pages define, and how that is
-checked, and build or change the product to it.
+in a short time, the mechanism that brings about the UX the README and its pages define, and how
+that is checked, and build or change the product to it.
 
 Each item of `doc.md` applies to a design document with the mechanism and its checks as its
-subject; its B-16 is answered by the logical figure.
+subject; its B-16 is answered by the logical view.
 
 ## Format
 
@@ -25,87 +25,69 @@ Does the design document follow this template, headings included?
 
 ## Goals
 
-- <What must hold for the UX to come about, in one sentence>
+- <A goal, in one sentence>
 
-## Logical structure
+## Architecture
 
-<One figure: a box for each part, the user and what is outside the product included, holding its
-name alone; an arrow from each to what it acts on, labelled with what it does>
+### Logical view
 
-- <A goal, and the parts that hold it, in one sentence>
+<One figure: a box for each role, the user and what is outside the product included, holding its
+name alone; an arrow from each to the role it acts on, labelled with what it does>
 
-## Physical structure
+- <A goal, and the roles and interactions that achieve it, in one sentence>
+
+### Physical view
 
 <One figure: a frame for each place, holding its name alone; in each, a box for each unit kept
-there, holding its kind and the parts it makes; an arrow from each unit to what it depends on,
-labelled with that relation>
+there, holding how it is made and the roles it realizes; an arrow from each unit to what it depends
+on outside the product, labelled with that relation>
 
 ## Verification
 
-- <A goal>: <what shows it holds, in one sentence>
+### Units
+
+- <A unit>: <what is checked of it, in one sentence>
+  - <How and where that is checked, in one sentence>
+
+### Acceptance
+
+- <A goal>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
 ```
 
-Why: the builder reads what must hold, then where it is held, then how it is checked, each the
-ground of the next, and finds the same thing under the same heading in every product.
+Why: the builder reads what must be achieved, then how roles achieve it and where they are made,
+then how each unit and the whole are checked, each the ground of the next.
 
 ## Benefit
 
-### B-40: What the UX needs
+### B-40: Goals
 
-Can the reader tell, from the goals, everything that must hold for the UX the README and its pages
-define to come about, including what the user takes for granted and what others rely on?
+Are the goals that bring about the UX the fewest, each one such that the UX lacks something without
+it and no other goal says it?
 
-Why: the goals are what the builder builds toward; what the UX needs and no goal names is built by
-chance or not at all.
+Why: the goals are what everything below is built and checked toward; a goal more is built and
+kept for nothing, and two goals that say one thing are built twice.
 
-### B-41: The parts that hold each goal
+### B-41: Roles
 
-Can the reader tell, for each goal, which parts hold it?
+Are the roles the goals need found, and do their interactions achieve every goal?
 
-Why: a builder who cannot tell where a goal is held builds it twice or not at all, and the one
-changing a part cannot tell which goals the change can break.
+Why: a goal no interaction of roles achieves is promised and never built.
 
-### B-42: How the parts work together
+### B-42: Realization
 
-Can the reader tell from the logical figure what each part does and to which other part?
+Is it clear how each role is made physically, where each is kept and runs, and what each depends on
+outside the product?
 
-Why: a goal is held by parts acting on one another; a builder who sees only the parts cannot tell
-what a change to one does to the others.
+Why: the builder makes and places each role from this, and what the product depends on is where it
+breaks for the user first.
 
-### B-43: Where each part is kept
+### B-43: Checks
 
-Can the reader tell from the physical figure where each part is kept, such as shipped with the
-product, in the user's repository or in a service?
+Is it clear how each unit is checked, and how the whole is checked to have achieved each goal?
 
-Why: where a part is kept decides who owns it and when a change to it reaches the user.
-
-### B-44: Where each part runs
-
-Can the reader tell from the physical figure where each part runs, such as on the user's machine or
-in CI?
-
-Why: a part runs only where it is placed, and is checked only there.
-
-### B-45: What each part depends on
-
-Can the reader tell from the physical figure what each part depends on outside the product?
-
-Why: what the product needs in place is where it breaks for the user first.
-
-### B-46: What shows each goal holds
-
-Can the reader tell, for each goal, what shows it holds, and say of the product whether it does,
-yes or no?
-
-Why: a goal that cannot be shown to hold is taken as held because no one can show it does not.
-
-### B-47: How each goal is checked
-
-Can the reader tell, for each goal, how what shows it holds is checked, and where that check is?
-
-Why: a check the builder cannot find or run is not made, and the goal goes unchecked after each
-change.
+Why: units checked one by one build up to the whole, and only a check of the whole shows a goal
+achieved.
 
 ## Usability
 
