@@ -21,3 +21,13 @@ documents or code; its example is the UX's scene, a plugin's step calling turn.
 - It shows, from start to result: the step's text that calls turn, kept short; turn's progress as it
   writes, reads and checks, and makes again what falls short; and what comes back, the work's place
   with each item's judgment and lines, then the AI checking, fixing and ending the step.
+
+### B-3: Why this one
+- When the AI that made a work checks it, it knows what each line means and misses where a newcomer
+  stops; in turn a reader that did not make it reads it with only what the person it is for opens.
+- turn makes the work from the decisions and checklists it is given alone and opens nothing else, so
+  the work does not stray from what was decided.
+- An item counts as met only where lines of the work give it, and those lines are named, so a
+  judgment can be checked instead of taken on trust.
+- What falls short is made again from what the work should give, not patched where it showed, and
+  every item already met stays met.
