@@ -831,18 +831,23 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   so, since without it the builder is free to place anything anywhere. Principles renamed Design
   decisions. Decision 23, to report (replaces the order Goals, Structure, Verification,
   Principles).
-- Where to resume (2026-10-16, before a `/clear`):
-  1. Done (`a5e4697`): `rn/checklists/design.md` read against `checklist.md`; B-11 asks only that
-     each decision says what must hold, F-5 holding the goals, and U-5 covers the decisions.
-  2. Done (`7b1395f`): both decisions files to it: Design decisions with the goals each serves and
-     what they would lose the other way, the sentences under the figure for what lies inside one
-     part, the design items under their own `## design`, rn's must-be qualities named.
-  3. Running in this session's scratchpad on Opus: `td8` (turn's design) and `rd7` (rn's design);
-     judge by the purpose (the figure: names in the boxes, the relation on each arrow, the table,
-     each goal's part), finish small shortfalls by hand, take `dev/turn/design.md` and
-     `rn/docs/design.md` in, commit.
-  4. Running in this session's scratchpad: `hc2`, `rn-hooks-commits.json` again; judge, take the
-     files in, `sh dev/check.sh`, commit.
+- Decided by the user (2026-10-16), on the design checklist: written again from the user's own
+  picture of the design document, not from the earlier checklist: Goals, what the README's use
+  needs, one-sentence items covering it; Design decisions, what must hold toward the goals with
+  its intent nested, covering the goals; Structure, the placement of responsibilities, physical
+  and logical, as a static figure of parts and dependencies, covering the goals and decisions by
+  placement or by one-sentence items under the figure for a mechanism inside a part;
+  Verification, the criterion and method for each goal, covering the goals; each section the
+  ground of the next step and judged simply. With three points the user agreed: the four kinds of
+  quality stay in Goals, so what the README's use does not show is not lost; coverage both ways,
+  nothing below serving nothing above; each item judged yes or no. Decision 24, to report
+  (replaces the checklist part of decision 23).
+- Where to resume (2026-10-16):
+  1. Done: `rn/checklists/design.md` rewritten so (`c688ca7`); both decisions files to it
+     (`7ce947f`, `6b3cf15`).
+  2. Running in this session's scratchpad on Opus 5.5: `td9` (turn's design), `rd8` (rn's
+     design), `hc3` (`rn-hooks-commits.json`); judge each by the purpose, finish small shortfalls
+     by hand, take the files in, `sh dev/check.sh`, commit.
   Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
   about is not a stop (the flow trial's finding above), settled with the hooks' third unit
   (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
