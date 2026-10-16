@@ -11,8 +11,10 @@ and build or change the product to it.
 
 The UX is what the user experiences using the product. Design thinks in this order:
 
-1. Analyze the UX to find the essential, minimal functions that make it possible.
-2. Decide the logical components that take on those functions, and the interactions between them.
+1. From the UX, write a user story for each thing a user does with the product, such as each
+   command they run: "As <the user>, I want <what they do>." Their reasons are the UX's benefits,
+   and are not written again.
+2. Decide the logical components that take on those stories, and the interactions between them.
    A logical component is divided by what it takes on; its physical form is not decided yet.
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
@@ -21,8 +23,8 @@ The UX is what the user experiences using the product. Design thinks in this ord
    satisfies the user more the better it is, such as less time or less cost.
 5. Check each physical unit on its own, build those checks up, then check the whole.
 
-Many UX are held up by few functions, and one component takes on several functions, so the numbers
-narrow in the order UX, functions, components.
+Many scenes are held up by few stories, and one component takes on several stories, so the numbers
+narrow in the order scenes, stories, components.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -38,9 +40,9 @@ Does the design document follow this template, headings included?
 
 <The design's main point, with a link to where the UX is defined>
 
-## Functions
+## User stories
 
-- <A function, in one sentence>
+- As <the user>, I want <what they do with the product>.
 
 ## Architecture
 
@@ -49,7 +51,7 @@ Does the design document follow this template, headings included?
 <One figure: a box for each logical component, holding its name alone; an arrow from each to the
 component it acts on, labelled with what it does>
 
-- <A function, and the components and interactions that achieve it, in one sentence>
+- <A story, and the components and interactions that achieve it, in one sentence>
 
 ### Physical view
 
@@ -72,7 +74,7 @@ depends on outside the product, labelled with that relation>
 
 ### Acceptance
 
-- <A function>: <what shows it achieved, in one sentence>
+- <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
 - <A must-be quality>: <what shows it kept, in one sentence>
   - <How and where that is checked, in one sentence>
@@ -80,38 +82,38 @@ depends on outside the product, labelled with that relation>
   - <How and where it is measured and compared with the last version, in one sentence>
 ```
 
-Why: the builder reads the functions, then the components that achieve them and how they are
+Why: the builder reads the user stories, then the components that achieve them and how they are
 realized, then the qualities that come with each benefit, then how the units and the whole are
 checked, each the ground of the next.
 
 ## Benefit
 
-### B-17: The minimal functions
+### B-29: Each story serving a benefit
 
-Are the functions the minimum the UX essentially needs?
+Does each user story serve one or more of the UX's benefits?
 
-Why: functions that follow the UX one by one restate it, and the mechanism that makes it possible is
-never found; the builder makes a separate mechanism for each, and the design grows with the UX.
+Why: a story that serves none is something the user does for nothing, and the builder builds and
+keeps it for nothing.
 
-### B-18: Every logical component the functions need
+### B-18: Every logical component the stories need
 
-Is every logical component the functions need there?
+Is every logical component the stories need there?
 
-Why: a component left out is found only when a function it serves is built, and the architecture
+Why: a component left out is found only when a story it serves is built, and the architecture
 must change then.
 
-### B-19: The functions achieved by interactions
+### B-19: The stories achieved by interactions
 
-Do the interactions between the logical components achieve every function?
+Do the interactions between the logical components achieve every user story?
 
-Why: components that each do their part achieve no function unless their interactions do.
+Why: components that each do their part achieve no story unless their interactions do.
 
 ### B-25: No technology before it is chosen
 
-Are the functions and the logical components free of technology?
+Are the user stories and the logical components free of technology?
 
-Why: technology brought in first shapes the functions and components to it, so they no longer
-follow from what the UX essentially needs, and changing the technology means making the functions
+Why: technology brought in first shapes the stories and components to it, so they no longer
+follow from what the UX essentially needs, and changing the technology means making the stories
 again.
 
 ### B-20: How each component is realized
@@ -151,16 +153,16 @@ whole where no check shows it.
 
 ### B-24: The whole checked
 
-Can the reader tell how the whole is checked to have achieved each function?
+Can the reader tell how the whole is checked to have achieved each user story?
 
-Why: units can each pass while a function is missed; only a check of the whole shows a function
+Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
 ### B-28: Must-be, checked
 
 Can the reader tell how each must-be quality is checked as kept?
 
-Why: a must-be quality is not a function, so no check of a function shows it kept; left unchecked,
+Why: a must-be quality is not a story, so no check of a story shows it kept; left unchecked,
 it breaks without anyone seeing.
 
 ### B-26: Better the more, measured
@@ -168,5 +170,5 @@ it breaks without anyone seeing.
 Can the reader tell, for each better-the-more quality, what is measured and how it
 is compared with the last version?
 
-Why: such a quality is neither achieved nor missed, so no check of a function shows it; left
+Why: such a quality is neither achieved nor missed, so no check of a story shows it; left
 unmeasured, it grows worse with each change without anyone seeing.
