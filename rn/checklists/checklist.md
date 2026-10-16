@@ -5,9 +5,11 @@ version: 0.2.0
 
 # Checklist
 
-A checklist is read by whoever makes or judges a deliverable of one kind, to make it serve its
-purpose. Answering its items, they make or judge the deliverable to that purpose alone, nothing
-missing and nothing more, and anyone answering reaches the same judgment. This file is the checklist
+A checklist is used by whoever makes a deliverable of one kind and whoever judges it. Answering its
+items as they make it, the maker makes a deliverable that serves the kind's purpose, nothing missing
+and nothing more; answering its items, the judge can tell whether a deliverable serves that purpose.
+
+This file is the checklist
 for checklists, and is written in the shape it asks for. Each item of `readability.md` applies to a
 checklist, with what a good deliverable of the kind gives its user as its subject.
 
