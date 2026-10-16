@@ -1,389 +1,385 @@
-# turn design
-
-turn keeps what its [README](../../turn/README.md) promises by one idea: the work is read in its
-receiver's place by an agent that did not write it, and one orchestrator, the skill that runs each
-task, decides whether each item of the checklists passes from the whole work, so nothing passes
-that the work does not show. How to use turn is in that README, and what a caller writes and reads
-is on the [callers' page](../../turn/calling-from-a-plugin.md).
-
-## Goals
-
-### Attractive quality
-
-Each is said in the README's words, since the reader comes from it.
-
-- Read in the place of the person the work is for
-
-  The work, what one task asks turn to make for one purpose, one file or several such as code and
-  its tests, comes back already read as that person, its receiver, would read it, by an AI that did
-  not write it and has only what the receiver would open, and what that reading could not take is
-  made again. An item passes only where lines of the work give it, and a Good is the orchestrator's
-  decision that it passes, with its grounds, the lines it rests on. The files of the work are
-  written, read and decided together, since what the receiver needs may be given only by them
-  together. The user hands the work on without first reading it in the receiver's place.
-
-- Made from what you decided
-
-  The work follows the user's notes and checklists, not whatever turn happened to open. turn takes
-  the notes as the decisions, what was decided the work must say or do, and leave out, item by
-  item, holding nothing a reference holds; the checklists put together as the list; and the
-  references, files or folders the work follows or draws on, read in place of a copy so a fact has
-  one source. These, with where the work's files go, the receiver, their use of the work when
-  named, what they must be able to do with it, what they open with it, and the constraints, such as
-  the language to write in, are the inputs, from which the same request is always made the same.
-
-- Asked only what only the user can decide, all at once at the end
-
-  Nothing is asked that the notes and checklists already answer, and nothing is asked while turn
-  works, so the user can leave it at work.
-
-- Seeing the work as it goes
-
-  The user can tell from what turn shows how far it has come, and stop it with Esc, saying what they
-  want instead, when what the work will let the receiver do is not what they want, before the work
-  is written.
-
-- A plugin decides from what turn returns
-
-  The caller, Claude in the user's conversation or a step of the user's plugin, hands turn one task
-  in a CCS, a JSON file, and turn writes back a CCS with what the caller needs next, as a function
-  takes arguments and returns a value. A run goes from the one CCS to the other. In its first
-  round, the work is made, read in the receiver's place and decided item by item, and for each item
-  left without a Good, the way the work would get one is found. Then, once, a second round makes
-  the work again from those ways and has it read and decided again as the first, since the work
-  turn writes must be the version last read; the run returns to the caller what is still without a
-  Good. A plugin's step decides from the CCS turn writes back alone whether to finish the work
-  itself, call turn again, ask the user or move on.
-
-- Following each item back
-
-  The user can later find in `.turn/`, for each item, the lines that give it or how the work would
-  give it, and the version of the checklist it was judged by.
-
-### One-dimensional quality
-
-Each must be no worse than in the version in use, the released version users run now, which the
-version being built replaces, as 0.1.0 is for 0.2.0.
-
-- The first-run share
-
-  The share of requests whose first run passes every item. The more work is right when first made,
-  the less the user waits and the less is spent.
-
-- Time and tokens
-
-  What one run takes, from the request to the result.
-
-### Must-be quality
-
-- Nothing passes unshown
-
-  An item passes only where lines the work holds give it; every other item comes back without a
-  Good, with how the work would give it.
-
-- What the caller gave unchanged
-
-  turn never rewrites the task a caller hands it or the files the task names as inputs.
-
-- Nothing unread
-
-  The work turn writes is the version last read.
-
-- Repository untouched
-
-  During a run, turn writes nothing in the repository but where the work's files go and `.turn/`,
-  where it keeps the run's evidence: the work, what was taken from it and decided for each item,
-  how each item without a Good would get one, and the list with each checklist's name and version,
-  for the user and for later runs. turn names to the user any other file a run's commands changed,
-  and never commits or pushes, so the user takes turn's change as one diff and decides what to
-  commit; what was where the work's files go can always be got back. Outside its runs, turn blocks
-  nothing.
-
-- Stop and start over
-
-  A stopped run says so; asked again with the user's words, turn makes the work anew from them. A
-  run stopped or cut off leaves where the work's files go as they were before the run.
-
-- Missing tools
-
-  Without python3 or jq, turn ends before any work and says what to install; outside a run, a
-  missing tool breaks nothing.
-
-### Backward compatibility
-
-- The call
-
-  Plugins call the skill `turn:up` with the arguments the callers' page gives, and name `turn` in
-  their dependencies. An argument may be added only if a call without it runs as before.
-
-- The CCS
-
-  Every caller relies on the CCS's parts, kinds of entry and values of `next`, the part that tells
-  the caller what to do next, as the callers' page gives them. From 0.2.0 on, none is added,
-  removed or renamed, since a caller breaks on one it does not know as on one that is gone; the
-  wording in an entry may change, since callers do not act on it. A CCS an earlier version from
-  0.2.0 on returned is accepted, so a stopped task carries on after an update. A CCS of 0.1.0 is not
-  accepted, since no caller relies on one.
-
-- How a checklist is written
-
-  Users, and plugins built on turn such as rn, write checklists as the README's Requirements gives:
-  a checklist that opens with its name and version and gives its items as headings with IDs keeps
-  being read. What turn takes from a checklist beyond that may change, as long as a checklist so
-  written needs nothing more.
-
-- What a returned CCS points to
-
-  The user opens a returned CCS to follow each item back, so every place it points to exists. The
-  run's evidence is kept under `.turn/` at the top of the repository, since the README names that
-  place to the user; how it is laid out inside `.turn/` may change.
-
-### Non-goals
-
-- Deciding what the work should say
-
-  The caller does it, knowing what was already agreed, and gives it as the decisions.
-
-- Making the work from one already there
-
-  The caller reads it and puts what it says into the decisions, or gives it as a reference; turn
-  makes new work only, since what it is handed it follows, wording and slips included.
-
-- Deciding whether to run again after a run's second round
-
-  The caller does it from what the run returns, knowing what was agreed.
-
-- Finding what no item asks, and holding checklists
-
-  What no item asks goes into the checklist, and checklists belong to whoever knows the kind of
-  work, such as rn.
-
-### Constraints
-
-- turn is used by Claude, on a person's behalf, in a conversation or a plugin's step.
-- turn runs in Claude Code and holds only skills, agents, hooks and scripts.
-
-  Installing copies only its folder; its hooks run in every session where it is installed; a
-  subagent can neither ask the user nor hear from its caller while it works.
-
-- Users' machines run Python 3.9 or later with the standard library only, and jq.
-- The work is in a git repository.
-- The tests and builds a work needs run by shell commands, so the agents' shell stays open.
-
-  They run in the run's copy, a working copy of the repository as it is committed, kept in the
-  run's evidence while the run goes, so they run in place.
-
-## Verification
-
-### Attractive quality
-
-Each is judged from the records, the JSONL of every conversation and agent of the run. What the work
-gives its receiver is tried on real work, rn's and turn's own documents and prompts, against the
-items in question, since a made-up task shows only that it passes.
-
-- Read in the place of the person the work is for
-
-  Tried on work for a receiver who lacks what the maker of the work knows, where a writer checking
-  their own work passes what a newcomer would miss; that this is where the difference shows is an
-  assumption, not yet checked. The check passes when a fresh agent outside the run, reading the
-  returned work as the same receiver with the same files they open and the same list, decides that
-  every item returned with a Good passes, including each an earlier run left without one.
-
-- Made from what you decided
-
-  Tried on a task in a repository holding files the inputs do not name: the records show nothing
-  in the run reading one, and the work says nothing the inputs do not give. A test on the hooks
-  also tries, in a run, a read outside the run's inputs.
-
-- Asked only what only the user can decide, all at once at the end
-
-  Tried on decisions that settle some choices and leave one open: nothing is asked while the run
-  works, the run ends with `next` set to `ask the user` and that one choice, and no question is
-  answered by the inputs.
-
-- Seeing the work as it goes
-
-  Tried on a run on real work called in the user's conversation, where the console, what turn shows
-  as it goes, appears and Esc is pressed: once watched to its end, and once stopped with Esc when
-  the console shows an aim, what the work will let the receiver do, that is not what the user
-  wants. It passes when the user tells from the console alone the step the records show, and, after
-  the stop, finds no work written toward that aim and then gets work made from what they said.
-
-- A plugin decides from what turn returns
-
-  Tried on runs that end in each value of `next`: the move decided from the returned CCS alone is
-  the one decided after also reading the records.
-
-- Following each item back
-
-  Tried later, after a run has returned items that pass and items that do not, the checklist has
-  gone to a newer version and the work has been changed. It passes when the user, from what the run
-  left in `.turn/` alone, finds for any item the lines its Good rests on or how the work would get
-  one, and the name and version of the checklist it was judged by.
-
-### One-dimensional quality
-
-Both are measured from the records of the same tasks, run on this version and on the version in use
-from the same CCS, written in each version's kinds where they differ, as from 0.1.0 to 0.2.0.
-
-- The first-run share
-
-  The share of those tasks whose first run passes every item, against the version in use.
-
-- Time and tokens
-
-  The time and tokens each run takes, against the version in use.
-
-### Must-be quality
-
-Each is a test on the script or hook that holds it, in the case that would break it.
-
-- Nothing passes unshown
-
-  Grounds naming lines the work lacks.
-
-- What the caller gave unchanged
-
-  A returned CCS whose caller part differs.
-
-- Nothing unread
-
-  A version of the work written after it was last read.
-
-- Repository untouched
-
-  A write outside where the work's files go and the run's evidence, a commit or a push in a run; a
-  shell command of the orchestrator's other than turn's scripts; a shell command in a run that
-  changes another file; a file already where the work's files go with changes git lacks; the same
-  outside a run, with another session's run open.
-
-- Stop and start over
-
-  A run stopped at each step, and one cut off.
-
-- Missing tools
-
-  Each tool missing, in a run and outside one.
-
-### Backward compatibility
-
-For each released version from 0.2.0 on, a test calls turn as its callers did.
-
-- The call
-
-  The call runs.
-
-- The CCS
-
-  Its CCS, a stopped one included, is accepted and carried on, and every `next` returned is one its
-  callers know.
-
-- How a checklist is written
-
-  Its checklists give a list with every opening and item. Given a checklist without its name or
-  version, turn ends before any work and names what the checklist lacks, since a Good must be
-  followed back to the checklist name and version it was judged by.
-
-- What a returned CCS points to
-
-  Every place a returned CCS points to exists.
-
-## Structure
+# turn architecture
+
+This document follows the [arc42](https://arc42.org) template, with C4's levels drawn as Mermaid
+flowcharts, which GitHub shows in place. How turn is used
+is in its [README](../../turn/README.md), and what a caller writes and reads is on the
+[callers' page](../../turn/calling-from-a-plugin.md); this document says how turn is built to keep
+what they promise.
+
+## 1. Introduction and goals
+
+### 1.1 Requirements overview
+
+turn has Claude make a work, such as a README, a design document, a skill or code with its tests,
+that passes the caller's checklists of what the work must give the person it is for. The work is
+read in that person's place by an agent that did not write it, and every item of the checklists is
+decided from that reading and the whole work, so the user can hand the work on without first reading
+it as that person themselves.
+
+### 1.2 Quality goals
+
+| ID | Quality goal | What it means for the user |
+|---|---|---|
+| QG-1 | Read in the receiver's place | A Good is given only where a reader who did not write the work, holding only what the receiver holds, finds the item given. |
+| QG-2 | Made from what the caller decided | The work follows the caller's inputs alone, so each run of the same request works from the same inputs. |
+| QG-3 | A pass that can be checked | Every Good names the lines of the work that give it, kept in the repository. |
+| QG-4 | Left at work | turn asks nothing while it works, and asks every open question at the end. |
+| QG-5 | The user's repository kept | A run writes only where the work goes, never commits, and a stopped run leaves the repository as it was. |
+
+### 1.3 Stakeholders
+
+| Who | Expects |
+|---|---|
+| The user, in a Claude Code conversation | Work that serves its receiver, without reading it in the receiver's place first. |
+| A plugin author whose step calls turn, such as rn's | A call and a CCS written back that keep working across turn's releases. |
+| Whoever builds or changes turn | To know where each quality goal is held before changing a part. |
+
+## 2. Constraints
+
+| Kind | Constraint |
+|---|---|
+| Technical | turn is a Claude Code plugin: skills, agents, hooks and scripts only; installing copies only its folder. |
+| Technical | A subagent can neither ask the user nor hear from its caller while it works. |
+| Technical | A plugin's hooks run in every session where it is installed. |
+| Technical | Scripts run on Python 3.9 or later with the standard library only, and jq. |
+| Technical | The work is in a git repository. |
+| Organizational | turn is built by `.claude/rules/plugin.md`: every line of its scripts and hooks is run by the tests in `dev/turn/tests/`, counted in CI on every push. |
+| Convention | Documents are in English; JSON the agents read and write is changed with jq. |
+
+## 3. Context and scope
+
+```mermaid
+flowchart LR
+  user(["The user<br/>[Person]"])
+  caller["The caller<br/>[Claude in the conversation, or a plugin's step]"]
+  turn["turn<br/>[Claude Code plugin]"]
+  cc["Claude Code<br/>[external]"]
+  git["git<br/>[external]"]
+  tools["python3 and jq<br/>[external]"]
+  user -->|asks for the work| caller
+  user -->|watches, stops with Esc| turn
+  caller -->|hands a CCS, gets a CCS back| turn
+  turn -->|runs in| cc
+  turn -->|copies the repository from| git
+  turn -->|runs on| tools
+```
+
+| Neighbour | Input to turn | Output from turn |
+|---|---|---|
+| The caller | A CCS: where the work goes, the receiver, the use, the checklists, decisions, references, what the receiver opens, constraints | The work where it goes, and a CCS with `next`, questions, unmet items and where the evidence is |
+| The user | Esc and what they want instead | The console: the plan, the aim, each step |
+| git | The repository as committed | Nothing; turn never commits or pushes |
+
+## 4. Solution strategy
+
+| Quality goal | Approach |
+|---|---|
+| QG-1 | The work is read by the first user, an agent apart from the generator that reads only the work and what the receiver opens; the orchestrator alone decides each item from that reading and the whole work (ADR-2, ADR-3). |
+| QG-2 | Every role reads only the inputs the CCS names; hooks stop any other read (ADR-4). |
+| QG-3 | Each role answers in a form with one place per item, naming lines; scripts check each form is filled, and keep it under `.turn/` (ADR-4). |
+| QG-4 | The orchestrator runs as a skill in the caller's session and keeps each open question to the end of the run (ADR-1). |
+| QG-5 | The work is made in a copy of the repository and written where it goes only when the run returns; hooks stop a write elsewhere, a commit and a push (ADR-5). |
+
+## 5. Building block view
+
+### 5.1 Level 1
 
 ```mermaid
 flowchart TB
-  user["The user: hands the work on, and answers, when the run returns, what only they can decide"]
-  caller["The caller, Claude in the conversation or the user's plugin: says what the work should be in a CCS as the callers' page gives it, and decides from the CCS turn writes back whether to finish the work itself, call turn again, ask the user or move on"]
-  subgraph turn
-    orch["The orchestrator, the skill turn:up: runs the run; settles each question an agent raises by showing where the inputs answer it, or leaves it open for the user; sends the work back to the generator until every item passes or waits on an open question, and only then to the first user; alone decides whether each item passes from the whole work, giving each that passes a Good; runs the second round from the learner's ways, having the work made, read and decided again; returns what is still without a Good after it, or what lies in what the caller gave, to the caller"]
-    subgraph agents["Its agents"]
-      gen["The generator: makes the work in the run's copy to pass every item, from the decisions and the references, in the order the checklists' items stand in: the shape their Format gives first, then part by part from the top, then the items that hold over the whole, each over the whole work; names where each item passes, and raises what the inputs do not settle as a question"]
-      fu["The first user: reads the work as the receiver, for their use, with only the work and what the receiver opens with it, and hands back its reading: what it took for each item and where; raises no question, since without the decisions it cannot tell what only the user can decide"]
-      ev["The evaluator: shows which items pass, each with the lines that give it and its grounds, judged from the reading; raises no question"]
-      le["The learner: finds, for each item without a Good, how the work would give it, from the purpose and at every line the same shape reaches, and whether that lies in the work or in what the caller gave; raises what only the user can decide; returns as a rule what would have given an item when the work was first made, only where no item of the list asks it, since the caller takes each rule up with the user"]
-    end
-    scripts["turn's scripts: give the same result every time: check the CCS; lay out the list and the forms, a JSON file for each role with one place per item, where it writes its answer; make the run's copy; hand each agent its inputs once the steps before are done; find Coverage, the lines of the work no grounds name, as test coverage finds the lines no test runs; show the console: the aim, what the work will let the receiver do, before the work is written and each step as it is reached, in the user's words with no item IDs; write the work and the CCS back"]
-    hooks["turn's hooks: keep each role, the orchestrator or one of its agents, to its steps and its inputs; stop a write outside the run's copy and where the work's files go, a commit or a push; show the console; act only in the session whose run is open"]
+  user(["The user<br/>[Person]"])
+  caller["The caller<br/>[external]"]
+  subgraph turn["turn"]
+    orch["Orchestrator<br/>[skill, a prompt]"]
+    agents["Agents: generator, first user, evaluator, learner<br/>[subagents, prompts]"]
+    scripts["Scripts<br/>[python3 with jq]"]
+    hooks["Hooks<br/>[sh entries running python3 checks]"]
+    evidence[("Run's evidence<br/>[JSON files and a working copy, under .turn/]")]
   end
-  cc["Claude Code: runs the orchestrator, its agents and the hooks, and keeps the records"]
-  tools["python3 3.9 or later and jq: run turn's scripts"]
-  git["git: holds the repository as committed, from which the run's copy is made and what was where the work's files go is got back; needs the work in a git repository"]
-
-  user -->|the work and the open questions| caller
-  caller -->|the CCS written back| orch
-  orch -->|the CCS| caller
-  orch -->|steps done the same each time| scripts
-  orch -->|starting its agents| cc
-  gen -->|its inputs| scripts
-  gen -->|a shell for tests and builds| cc
-  fu -->|the work and what the receiver opens| scripts
-  ev -->|the reading| fu
-  ev -->|the reading's records| cc
-  le -->|the work, the items without a Good, the decisions and the references| scripts
-  scripts -->|running them| tools
-  scripts -->|the repository as committed| git
-  hooks -->|running them| cc
+  user -->|watches, stops with Esc| orch
+  caller -->|hands the CCS| orch
+  orch -->|writes the CCS back| caller
+  orch -->|calls| scripts
+  orch -->|starts each with its brief| agents
+  orch -->|reads the work and forms, writes its decisions| evidence
+  agents -->|read their inputs, write the work and their forms| evidence
+  scripts -->|lay out the list, forms and briefs; find coverage| evidence
+  hooks -->|stop a step| orch
+  hooks -->|stop a step| agents
 ```
 
-Each arrow points from one that takes part to one it cannot work without, labelled with what it
-needs from it. The orchestrator runs as a skill, where its caller runs: in a conversation the user
-sees its console and presses Esc there; in a subagent the caller reads what it returns, at the cost
-of room in the caller's context.
+| Block | Responsibility | Interface | Source |
+|---|---|---|---|
+| Orchestrator | Runs a run; reads the whole work and every form, and alone decides each item; keeps questions to the end. | The skill `turn:up` with `in:` and `out:`. | `turn/skills/up/SKILL.md` |
+| Generator | Makes the work to every item of the list, and names in its form the lines that give each. | Its brief, a path. | `turn/agents/generator.md` |
+| First user | Reads the work as the receiver, with only what the receiver opens, and writes what it took for each item and where. | Its brief, a path. | `turn/agents/first-user.md` |
+| Evaluator | Shows from the reading which items the work gives, with their lines. | Its brief, a path. | `turn/agents/evaluator.md` |
+| Learner | For each item without a Good, finds how the work would give it, and where. | Its brief, a path. | `turn/agents/learner.md` |
+| Scripts | Check the CCS, lay out the list, forms and briefs, check each form, find coverage, show the console, make the run's copy, and write the work and the CCS back or restore on a stop. | `up.py start / aim / brief / coverage / check / end / stop`. | `turn/scripts/` |
+| Hooks | Stop a read outside a role's inputs, a write outside the run's copy, a commit or a push, an agent started without its brief, an agent ending with its form unfilled, and the orchestrator ending before the run returns. | Claude Code's PreToolUse, PostToolUse, SubagentStop and Stop events. | `turn/hooks/` |
+| Run's evidence | Holds the list with each checklist's name and version, each form, the work and the run's copy. | Files read and changed with jq. | `.turn/` in the user's repository |
 
-## Principles
+### 5.2 Level 2: Hooks
 
-- The orchestrator alone decides whether each item passes, from the work itself.
+Each check is its own file under `turn/hooks/checks/`, and each hook event has one entry file, as
+the official `hookify` plugin does.
 
-  For each item it reads the whole work for where the item is given, and what agents and scripts
-  hand back only shows it where to look first, since an item shown passing in one part does not
-  show what the whole gives. Protects: nothing passes unshown, read in the place of the person the
-  work is for.
+| Check | Holds |
+|---|---|
+| `read_in_inputs` | QG-2: a role reads only its inputs, turn's files and its own tool output. |
+| `orchestrator_shell` | QG-2: the orchestrator's shell runs only `up.py`, and jq, mv and cd on the run's files. |
+| `brief_handed` | QG-2: an agent is handed only the brief the scripts wrote for it. |
+| `form_filled` | QG-3: an agent hands back only once every place of its form is filled. |
+| `write_in_run` | QG-5, QG-1: a write lands only in the run's evidence, and not in the work once the first user has it. |
+| `no_commit` | QG-5: no commit and no push during a run. |
+| `run_ended` | QG-4: the orchestrator does not stop before the run returns. |
+| `console_shown` | Shows the user each console line as the run reaches it. |
+| `open_run`, `inputs` | Find the session's open run and each role's inputs; with no open run, every check lets everything through. |
 
-- Every role looks only for where items pass and aims at every item passing.
+## 6. Runtime view
 
-  None finds fault, and none is set to find something, since one set to find something finds it
-  whether it is there or not; this is an assumption, not yet checked. Coverage, a script, is the
-  one place that looks for what may be wrong. Each role answers in its form, read and changed with
-  jq, and hands back that form alone, since the form, not the wording, holds it to its aim.
-  Protects: nothing passes unshown, the first-run share.
+### 6.1 A run with a second round
 
-- Every role works from the inputs it is handed alone.
+```mermaid
+sequenceDiagram
+  participant C as Caller
+  participant O as Orchestrator
+  participant S as Scripts
+  participant G as Generator
+  participant F as First user
+  participant E as Evaluator
+  participant L as Learner
+  C->>O: turn:up in, out
+  O->>S: start (check CCS, lay out list, make the run's copy)
+  O->>S: aim, brief generator
+  O->>G: brief
+  G-->>O: work and form
+  O->>S: coverage, check hand-on
+  O->>S: brief first-user
+  O->>F: brief
+  F-->>O: reading
+  O->>E: brief
+  E-->>O: form
+  O->>S: check orchestrator
+  O->>L: brief (items without a Good)
+  L-->>O: ways
+  O->>S: end
+  S-->>O: second round begun
+  Note over O,L: the same steps once more, on every item of the list
+  O->>S: end
+  S-->>C: the work where it goes, the CCS at out
+```
 
-  Each prompt names them as the whole of what it reads, says in positive words to work from them and
-  gives why, sets as steps what its agent receives, hands back and must do in full, and leaves how
-  it thinks within a step to it. Protects: made from what you decided, read in the place of the
-  person the work is for.
+### 6.2 The user stops the run
 
-- turn asks nothing while it works.
+```mermaid
+sequenceDiagram
+  actor U as User
+  participant O as Orchestrator
+  participant S as Scripts
+  U->>O: Esc, and what they want instead
+  O->>O: stop each agent still at work
+  O->>S: stop
+  S-->>O: where the work goes left as before the run
+  O->>O: rewrite the caller's parts from the user's words, start again
+```
 
-  So it runs the same wherever it is called, a subagent included, and is stopped or corrected only
-  from where it was called; every question comes back at once when the run returns. Protects: asked
-  only what only the user can decide, all at once at the end; a plugin decides from what turn
-  returns.
+### 6.3 A run that cannot start
 
-- Everything that measures the work measures by the same list, receiver and use.
+`up.py start` ends before any work, writing nothing, when `out` exists, the CCS cannot be run, a
+file at a `deliverable` has changes git does not hold, or jq is missing; the orchestrator says why.
+Without python3, the orchestrator says to install it, and the hooks let everything through.
 
-  The list carries every checklist's opening, and a checklist says its own name and version, so a
-  Good is followed back to the text it was judged by. Protects: read in the place of the person the
-  work is for, the first-run share, following each item back, how a checklist is written.
+## 7. Deployment view
 
-- A run starts from its CCS alone and returns the caller's parts as they came.
+```mermaid
+flowchart TB
+  subgraph machine["The user's machine"]
+    subgraph session["Claude Code session"]
+      plugin["turn plugin folder<br/>[skill, agents, scripts, hooks; copied at install]"]
+    end
+    subgraph repo["The user's git repository"]
+      ccs[("CCS files<br/>[JSON, where the caller puts them]")]
+      turndir[(".turn/<br/>[the run's evidence, uncommitted]")]
+      work[("The work<br/>[files, where the CCS says]")]
+    end
+    tools["python3 3.9+, jq, git"]
+  end
+  subgraph ci["GitHub Actions"]
+    tests["dev/turn/tests<br/>[unittest, every line and branch counted]"]
+  end
+  plugin -->|runs on| tools
+  plugin -->|reads| ccs
+  plugin -->|writes| turndir
+  plugin -->|writes when the run returns| work
+  tests -->|tests| plugin
+```
 
-  It makes the work in the run's copy and keeps the work in the run's evidence until the run
-  returns, and the copy is gone by then; the received CCS is never written over. Protects: what the
-  caller gave unchanged, repository untouched, stop and start over, the CCS.
+Nothing of turn runs in CI; only its tests do. A plugin built on turn names it in `dependencies`,
+so installing that plugin installs turn.
 
-- What must come out the same every time is done by a script or a hook.
+## 8. Crosscutting concepts
 
-  A script does what a step asks and refuses a step whose steps before it are not done; a hook stops
-  a step left out or done otherwise, saying which step, what it needs and why, and acts only in the
-  session whose run is open, even without python3. Protects: nothing passes unshown, what the
-  caller gave unchanged, repository untouched, missing tools, following each item back.
+- Forms: every role answers in a JSON form with one place per item, which the scripts lay out and
+  check (ADR-3, ADR-4).
+- What must come out the same every run is done by a script or held by a hook, never left to a
+  prompt (ADR-4).
+- Coverage: the lines of the work no form names, as test coverage finds lines no test runs; the
+  orchestrator reads it as where to look first (ADR-3).
+- The console is shown by a hook, not by the orchestrator's text, since text between tool calls
+  does not reach the user on every run (ADR-1).
 
-- What can be told before it happens is stopped then, and what cannot is named to the user when the
-  run returns.
+## 9. Architecture decisions
 
-  Stopped: a write outside the run's copy and where the work's files go, a commit or a push, a
-  write over a file already where the work's files go unless git holds what is there or it is a
-  work an earlier run returned, unchanged since. Named: a shell command's side effect. Protects:
-  repository untouched.
+| ADR | Title | Status |
+|---|---|---|
+| ADR-1 | The orchestrator runs as a skill in the caller's session | Accepted |
+| ADR-2 | A separate first user reads the work | Accepted |
+| ADR-3 | Every role looks only for where items pass | Accepted |
+| ADR-4 | Same-every-time steps in scripts and hooks | Accepted |
+| ADR-5 | The work is made in a copy of the repository | Accepted |
+| ADR-6 | At most one second round | Accepted |
+
+### ADR-1: The orchestrator runs as a skill in the caller's session
+
+- Context: the user must see the run and stop it with Esc (QG-4); a subagent shows no console.
+- Decision: the orchestrator is the skill `turn:up`; each agent is a subagent.
+- Consequences: the run takes room in the caller's context (R-003).
+
+| Criterion | Skill | Subagent |
+|---|---|---|
+| User sees and stops the run | +1 | -1 |
+| Caller's context kept small | -1 | +1 |
+| Agents can be started | 0 | 0 |
+
+### ADR-2: A separate first user reads the work
+
+- Context: the writer knows what each line means and misses what the receiver would not take in
+  (QG-1).
+- Decision: an agent that did not write the work reads it with only what the receiver opens.
+- Consequences: one more agent per round (R-003); the reader runs on the same model as the writer
+  (R-001).
+
+| Criterion | Separate reader | Writer checks itself |
+|---|---|---|
+| Finds what the receiver misses | +1 | -1 |
+| Time and tokens | -1 | +1 |
+
+### ADR-3: Every role looks only for where items pass
+
+- Context: a role set to find faults finds them whether they are there or not, and the work is made
+  again for faults it does not have.
+- Decision: each role names where items pass; coverage is the one place that looks for what may be
+  wrong, and the orchestrator alone decides.
+- Consequences: a fault no item asks about is not found; it goes into the checklist.
+
+| Criterion | Look for passes | Look for faults |
+|---|---|---|
+| Work not remade for false faults | +1 | -1 |
+| Faults outside the checklist found | -1 | +1 |
+
+### ADR-4: Same-every-time steps in scripts and hooks
+
+- Context: an AI follows a prompt differently from run to run, so a slipped step shows only later
+  (QG-2, QG-3, QG-5).
+- Decision: laying out, checking, writing back and restoring are scripts; holding each role to its
+  steps and inputs is hooks.
+- Consequences: the hooks run in every session where turn is installed (R-002).
+
+| Criterion | Scripts and hooks | Prompt steps |
+|---|---|---|
+| Same result every run | +1 | -1 |
+| Tested in CI | +1 | -1 |
+| Less to build | -1 | +1 |
+
+### ADR-5: The work is made in a copy of the repository
+
+- Context: a run stopped part way must leave where the work goes as it was (QG-5), and the work's
+  tests and builds must run as they would in place.
+- Decision: the work is made in a working copy under `.turn/`, and written where it goes only when
+  the run returns.
+- Consequences: a shell command in the copy may still change a file elsewhere (R-004).
+
+| Criterion | Copy | In place |
+|---|---|---|
+| Stop leaves things as they were | +1 | -1 |
+| Tests and builds run as in place | +1 | +1 |
+| Disk and time | -1 | +1 |
+
+### ADR-6: At most one second round
+
+- Context: each round costs minutes and tokens; whether to go on is the caller's to judge from what
+  it knows was agreed.
+- Decision: a run ends after one second round, returning what is left as `unmet`.
+- Consequences: work that needs a third pass comes back to the caller.
+
+| Criterion | One second round | Until every item passes |
+|---|---|---|
+| Time and tokens bounded | +1 | -1 |
+| Every item met in one call | -1 | +1 |
+
+## 10. Quality requirements
+
+### 10.1 Quality tree
+
+| Quality | Kind |
+|---|---|
+| Read in the receiver's place | Concretises QG-1 |
+| Made from what the caller decided | Concretises QG-2 |
+| A pass that can be checked | Concretises QG-3 |
+| Made again, keeping every item it gave | Derived |
+| Asked only at the end | Concretises QG-4 |
+| Seen and stopped as it goes | Concretises QG-4 |
+| Repository kept | Concretises QG-5 |
+| Time and tokens | Derived |
+| Callers keep working | Derived |
+| Nothing in the way outside a run | Derived |
+
+### 10.2 Quality scenarios
+
+Each scenario is checked as its last line says: a trial in `dev/turn/trials/`, judged from the JSONL
+of every agent of the run, or a test in `dev/turn/tests/`, run on every push.
+
+| ID | Source | Stimulus | Artifact | Environment | Response | Response measure |
+|---|---|---|---|---|---|---|
+| QS-1 (QG-1) | A caller | Hands a task on one of rn's or turn's own documents | A run | Normal | A fresh agent outside the run reads the returned work as the same receiver | 100% of the items returned as Good are found given; trial |
+| QS-2 (QG-2) | A caller | Hands a task in a repository with files the inputs do not name | A run | Normal | No role reads those files | 0 reads outside the inputs in the JSONL; trial, and a test on the hooks |
+| QS-3 (QG-3) | The user | Opens the evidence of a finished run | `.turn/` | After the run | Finds for any Good its lines and its checklist's version | 100% of Goods; trial, and a test that a Good naming lines the work lacks is refused |
+| QS-4 (derived) | A caller | Hands a task whose first round leaves an item the work can give | A run | Normal | The work is made again in the same run | 100% of the items the first round gave a Good have one again; test on the scripts |
+| QS-5 (QG-4) | A caller | Hands decisions that leave one choice open | A run | Normal | Nothing is asked while it works; the run ends asking that choice | 0 questions before the end, 1 at the end; trial |
+| QS-6 (QG-4) | The user | Presses Esc when the console shows what the work will let its receiver do | A run | Running | No work is written; the work is made from what the user said | 0 files changed where the work goes before the restart; trial, and a test on the scripts |
+| QS-7 (QG-5) | An agent | Writes outside the run's copy, commits or pushes | The hooks | During a run | The step is stopped | 100% stopped; test on the hooks |
+| QS-8 (QG-5) | A shell command | Changes a file outside the work | A run | During a run | The file is named in what the run returns | 100% named; test on the scripts |
+| QS-9 (derived) | A caller | Hands the same CCS to this version and the last release | A run | Normal | The run ends | Minutes and tokens no more than the last release's; first-round share of all-Good tasks no lower; trial |
+| QS-10 (derived) | A plugin built on turn 0.2.0 | Calls turn as the callers' page gives, and reads the CCS back | The call and the CCS | After an update | Works as before | Every part, kind of entry and value of `next` is one 0.2.0's callers know; a CCS from 0.2.0 on is carried on; test |
+| QS-11 (derived) | The user | Works in a session with no run open, or without python3 | The hooks | Outside a run | Nothing is stopped | 0 stops; test on the hooks |
+
+## 11. Risks and technical debt
+
+### 11.1 Risks
+
+| ID | Risk | Probability | Impact | Priority | Mitigation |
+|---|---|---|---|---|---|
+| R-001 | The first user runs on the same model as the generator and shares its blind spots, so a Good stands that the real receiver would not give | Medium | High | 1 | QS-1, a fresh agent outside the run; the user's own reading at hand-on |
+| R-003 | A run takes many minutes and tokens, and room in the caller's context | High | Medium | 2 | ADR-6; QS-9 |
+| R-002 | A hook misfires in a session where the user is not running turn | Low | High | 3 | `open_run`: checks act only on the session's open run; QS-11 |
+| R-004 | A test or build the work runs changes a file outside the work | Low | Medium | 4 | QS-8, named when the run returns |
+
+### 11.2 Technical debt
+
+None recorded.
+
+## 12. Glossary
+
+| Term | Meaning |
+|---|---|
+| Caller | Claude in the user's conversation, or a step of the user's plugin, that hands turn a task. |
+| CCS | The JSON file a caller hands turn, and the one turn writes back. |
+| Work | What one task makes for one purpose, one file or several. |
+| Checklist | A file of items, each one question the work must answer yes to for its receiver; the list is a task's checklists put together. |
+| Run | From one CCS to the one turn writes back, in one or two rounds. |
+| Round | The work made, read and decided, and a way found for each item without a Good. |
+| Good | An item the orchestrator decided the work gives, with the lines it rests on. |
+| Form | The JSON answer of a role, one place per item. |
+| Reading | The first user's form: what it took from the work for each item, and where. |
+| Coverage | The lines of the work no form names. |
+| Run's evidence | What a run keeps under `.turn/`: the list, the forms, the work and the run's copy. |
