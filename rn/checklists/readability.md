@@ -5,8 +5,9 @@ version: 0.2.0
 
 # Document
 
-A document is read by someone who comes to it for a purpose. Reading it from the top, they take it
-in smoothly, meeting nothing they do not need and left with no question, and achieve that purpose.
+A document is read by a reader who comes to it for a purpose; the reader may be a person or an AI.
+Reading it once from the top, they take in what it holds in a short time, meeting nothing they do
+not need and left with no question, and achieve that purpose.
 
 ## Format
 
