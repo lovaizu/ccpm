@@ -956,6 +956,10 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   session's branch is kept up to date with it. Decision 39, to report.
 - Decided by the user (2026-10-16): rn's UX is at `dev/rn/ux.md`, as turn's is. Decision 40, to
   report.
+- Decided by the user (2026-10-16): the design checklist's functions become user stories, one for
+  each thing a user does with the product, their reasons left to the UX's benefits; turn has five
+  components, the evaluator and the learner kept for the builder's reasons; turn is for an AI
+  alone, so the console, Esc and the start again from a person's words go. Decision 41, to report.
 - Where to resume (2026-10-16): through turn on the new checklists, turn's UX, README and design,
   then rn's the same way (rn's grilling step is part of rn's design). For each, the decisions turn
   takes in are made by asking the user one point at a time, in Japanese and plain words, without
