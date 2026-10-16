@@ -5,8 +5,9 @@ version: 0.1.0
 
 # Code
 
-Code is run and maintained. It gives the behavior expected of it, shows that it does, and reads
-easily for its maintainer, who understands it and changes it at once and with confidence.
+Code is used by whoever runs it and whoever maintains it, a person or an AI. Whoever runs it gets
+the behavior they asked for. Whoever maintains it trusts, from its tests passing, that the behavior
+holds, and so changes the code at once and with confidence.
 
 What the code must do is set by its README, its design and what calls it, such as the steps of a
 prompt that runs it, here called its sources; this checklist judges the code and its tests against
