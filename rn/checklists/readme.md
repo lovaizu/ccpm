@@ -6,8 +6,23 @@ version: 0.2.0
 # README
 
 A README is read by someone meeting the product for the first time. From it alone they decide
-whether the product is for them, and if it is, get to their first result with it. A README is made
-from the UX.
+whether the product is for them, and if it is, get to their first result with it. Someone joining
+those who build it reaches the design and development documents from it. A README is made from the
+UX, in this order:
+
+1. From the UX's users and goals, and its benefits, say in one or two sentences whom the product is
+   for and what they gain.
+2. Choose one of the UX's scenes and show it as an example, from start to result, with what the
+   user does and what they get back.
+3. From the UX's benefits, take what doing the work by hand or with another tool does not give, as
+   why to choose this one.
+4. Write what the reader needs to repeat the example themselves: what must be in place beforehand,
+   and installing.
+5. Link the documents the reader goes on to: for users, fuller use and what changed in each
+   version; for those who build it, the entrance to the design and development.
+6. Write the terms on which the product may be used, the license.
+
+Steps 5 and 6 are written from what is in the repository, not from the UX.
 
 Each item of `doc.md` applies to a README with deciding and getting to the first result as its
 subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
