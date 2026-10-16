@@ -5,8 +5,8 @@
 ### B-9: The point from the opening
 - The CCS's specification is said here alone, and read both by whoever writes a plugin's step and
   by the calling AI each time it writes a CCS or reads one back, so no plugin copies it into its
-  steps and drifts from it when it changes. How an AI of another plugin reaches this page is
-  decided in the design.
+  steps and drifts from it when it changes. The page is
+  `turn/skills/ccs/references/ccs.md`, read by the calling AI through the `turn:ccs` skill.
 - A step of a plugin hands turn one task: it writes the task in a CCS (Compressed Cognitive State), a
   JSON file, calls turn, and decides its next move from the CCS turn writes back.
 - It works like a function call: the CCS the step writes is the arguments, the CCS turn writes back

@@ -49,6 +49,11 @@
 - The console and the stop with Esc go, as turn deals with no person.
 
 ### B-21: Where each component is placed
+- The CCS's specification is in `turn/skills/ccs/references/ccs.md`, and the `turn:ccs` skill's
+  SKILL.md says only to read it when writing or reading a CCS, as `plugin-dev`'s
+  `skill-development` keeps an API's specification in a skill's `references/` and SKILL.md lean.
+  A skill is called by name from any installed plugin, and a plugin built on turn names it in
+  `dependencies`, so the calling AI reaches the specification wherever plugins are installed.
 - The work is made where it goes, in the user's repository, not in a copy. A copy was there so
   that a person's stop with Esc left where the work goes as it was; turn has no such stop now. A run
   cut off leaves its writing as changes git shows, which the calling AI undoes or finishes, and the
