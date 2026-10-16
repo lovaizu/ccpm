@@ -117,7 +117,11 @@ class TestChecklists(RepoTest):
         _, out = self.rn("checklists", "readme")
         self.assertEqual(
             [c["path"] for c in json.loads(out)],
-            [rn_checklist("readability"), rn_checklist("product/readme"), ".rn/checklists/readme.md"],
+            [
+                rn_checklist("readability"),
+                rn_checklist("product/readme"),
+                ".rn/checklists/readme.md",
+            ],
         )
 
     def test_a_checklist_without_its_name_and_version_stops(self):

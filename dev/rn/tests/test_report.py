@@ -133,7 +133,10 @@ class TestReport(RepoTest):
         # When: rn makes the report
         # Then: the item is shown unmet, without lines
         self.turn(
-            list_={"checklists": [{"checklist": "readability", "version": "0.2.0"}], "items": [NOT_MET]},
+            list_={
+                "checklists": [{"checklist": "readability", "version": "0.2.0"}],
+                "items": [NOT_MET],
+            },
             orchestrator={"readability B-2": {"met": False}},
             semantic_gist=[{"unmet": UNMET}],
         )
@@ -202,7 +205,9 @@ class TestLinesAsTheyStand(RepoTest):
                 "items": [{"id": "readability B-1", "title": "Purpose first"}],
             },
         )
-        self.write_json(EVIDENCE + "/orchestrator.json", {"readability B-1": {"met": True, "lines": lines}})
+        self.write_json(
+            EVIDENCE + "/orchestrator.json", {"readability B-1": {"met": True, "lines": lines}}
+        )
         if kept is not None:
             self.write(EVIDENCE + "/kept/README.md", kept)
         self.write("README.md", now)
