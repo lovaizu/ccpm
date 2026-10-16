@@ -22,7 +22,7 @@ Many UX are held up by few functions, and one component takes on several functio
 narrow in the order UX, functions, components.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
-subject; its B-16 is answered by the logical view.
+subject; the figure its B-17 looks for is given by the logical view.
 
 ## Format
 

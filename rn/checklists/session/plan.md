@@ -6,11 +6,11 @@ version: 0.1.0
 # Plan
 
 A plan, `steering.md`, is read by the user at the Plan sign-off, to approve what they will get and
-why, and by the conductor in any later conversation, to carry the work to what the user really
-wants without asking again. Each item of `readability.md` applies to a plan with the goal and how it is
-reached as its subject; its B-16 is answered by the tasks in order, since a plan tells of no one
-acting in turn. Before the tasks that make the deliverable are planned, the items on tasks are
-answered as met.
+why, and by the conductor in any later conversation, to carry the work to what the user really wants
+without asking again. Each item of `readability.md` applies to a plan with the goal and how it is
+reached as its subject; the figure its B-17 looks for is given by the tasks in order, since a plan
+tells of no one acting in turn. Before the tasks that make the deliverable are planned, the items on
+tasks are answered as met.
 
 ## Format
 

@@ -7,10 +7,9 @@ version: 0.2.0
 
 A checklist is read by whoever makes or judges a deliverable of one kind, to make it serve its
 purpose. Answering its items, they make or judge the deliverable to that purpose alone, nothing
-missing and nothing more, and anyone answering reaches the same judgment.
-This file is the checklist for checklists, and is written in the shape it asks for. Each item of
-`readability.md` applies to a checklist, with what a good deliverable of the kind gives its user as its
-subject.
+missing and nothing more, and anyone answering reaches the same judgment. This file is the checklist
+for checklists, and is written in the shape it asks for. Each item of `readability.md` applies to a
+checklist, with what a good deliverable of the kind gives its user as its subject.
 
 ## Format
 
@@ -113,13 +112,13 @@ Where the kind is a document, can whoever makes or judges it tell from the openi
 `readability.md` applies to the kind?
 
 Look for: what the kind's subject is, for the items that ask about the reader's picture of it; and,
-for each item of `readability.md` that the kind's shape settles otherwise, such as an opening its template
-has no place for, how it is answered for the kind. An item not named is answered as `readability.md` asks
-it.
+for each item of `readability.md` that the kind's shape settles otherwise, such as an opening its
+template has no place for, how it is answered for the kind. An item not named is answered as
+`readability.md` asks it.
 
-Why: `readability.md` is answered beside the kind's checklist; an item of it that the kind's shape cannot
-meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves its
-reader, and the maker cannot tell what passes.
+Why: `readability.md` is answered beside the kind's checklist; an item of it that the kind's shape
+cannot meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves
+its reader, and the maker cannot tell what passes.
 
 ### B-2: Every part of the purpose checked
 

@@ -24,10 +24,11 @@ UX, in this order:
 
 Steps 5 and 6 are written from what is in the repository, not from the UX.
 
-Each item of `readability.md` applies to a README with deciding and getting to the first result as its
-subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation.
-`readability.md`'s B-16 is answered by the example, which shows the reader using the product from start to
-result; a README holds no figure of who does what, since it would say the example again.
+Each item of `readability.md` applies to a README with deciding and getting to the first result as
+its subject; what lies beyond it, such as fuller use, goes in a page reached from Documentation. The
+figure `readability.md`'s B-17 looks for is given by the example, which shows the reader using the
+product from start to result; a README holds no figure of who does what, since it would say the
+example again.
 
 ## Format
 

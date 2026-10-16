@@ -44,139 +44,54 @@ bold marks where to stop, and on every item it marks nothing out.
 
 ## Benefit
 
-### B-9: The point from the opening
+### B-9: Whether it serves their purpose
 
-From the opening, does the reader have the document's main point, and so know whether the document
-is the one for their purpose?
+On opening the document, can the reader tell whether it serves their purpose?
 
-Why: a reader who stops after the opening still has what matters most, one who reads on reads each
-part knowing what it supports, and one who came to the wrong document turns away at once.
+Look for: the main point right under the title.
 
-### B-16: Who does what, at a glance
+Why: a reader who cannot tell reads on to find out, or leaves a document that would have served
+them; one who can reads each part knowing what it supports.
 
-Where the document tells of several that act in turn, can the reader see who does what, what passes
-between them and in what order at a glance, instead of piecing it together from sentences spread
-through the document?
+### B-17: Each word and idea understood where met
 
-For a reader who is a person, that is one figure, with the text beside it saying only what the
-figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
-thing passes.
+Reading on from the top, does the reader understand each word and idea where they meet it?
 
-Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
-what rows of a table make them assemble, while an AI reads a figure as text, in order.
-
-### B-3: Each idea taken in whole
-
-Can the reader take in each idea the document takes up whole, without guessing any part of it?
-
-Why: an idea touched on in part is completed by a guess, and a gap covered by smooth sentences is
-acted on without the reader noticing.
-
-### B-5: How far to rely
-
-Can the reader take each statement as what it is, because one that is not a checked fact, such as
-an assumption, a proposal, a decision or a check that reached only so far, says so where it stands?
-
-Why: the reader takes a statement said flatly as a fact; an assumption or an unchecked claim said
-so is acted on as fact, and a check whose reach is not told is taken as having checked everything.
-
-### B-6: Still true later
-
-Can the reader rely on what the document says for as long as the subject's purpose and decisions
-stand?
-
-What stays true is the purpose, the decisions and their reasons; steps, status and how the work went
-change with each piece of work.
-
-Why: a document that has turned wrong is worse than none, since it is believed.
-
-### B-12: Every term known
-
-Can the reader tell what each term means where they meet it, because they already know it or the
-place where it is first used, a sentence, an example or a figure, shows what it means?
-
-A term is any word the document uses for a thing of its subject, whether set in code or not.
-
-Look for: a plain word used in a sense of its own, such as a word for a part of the subject or for
-someone who acts in it, that no sentence explains.
-
-Why: a term never explained is read with a guess at its meaning, and the reader's picture differs
-from the writer's where the guess is wrong.
-
-### B-11: Read once from the top
-
-Can the reader read each sentence without going back or ahead, because each word, reason and step
-it rests on comes before it?
-
-Look for: a name used before the reader has met what it names, in a sentence, an example or a
-figure; a decision whose reason comes later or elsewhere; a link or a pointer that sends the reader
-ahead for what a sentence rests on.
+Look for: a word no sentence explains, or used in a sense of its own; one thing under two names, or
+one name with two meanings; a sentence that rests on a reason or a word that comes later or
+elsewhere; a story of several that act in turn told in sentences spread through the document, where
+one figure would show a person who does what and in what order, and the steps would show an AI.
 
 Why: each of these stops the reader, sends them back or ahead, or lets them read on with a wrong
-guess, so the picture is not taken in by one reading from the top.
+guess, and the time it costs is spent on how the document is written instead of on its subject.
 
-### B-13: One name for each thing
+### B-4: Nothing they do not need
 
-Does the reader meet each thing under one name from start to end?
-
-Why: a reader takes a second name for a second thing.
-
-### B-14: One meaning for each name
-
-Does each name keep one meaning for the reader from start to end?
-
-Why: a name whose meaning shifts carries its first meaning into the place where it has changed.
-
-### B-7: Said in one place
-
-Can the reader take each thing the document says as the one account of it, because it is said in
-one place, with every case where it does not hold beside it, and not also in another place of the
-document, in another document or by the deliverable itself?
-
-Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
-tell which holds; a rule read apart from the case where it does not hold is followed there too.
-
-### B-4: Every part used
-
-Does the reader use each part toward the purpose they came for, without skipping it or reading again
-what they already took in?
+Does the reader stop at nothing they do not need?
 
 Look for: a part meant for someone other than the reader, such as a reviewer; an opening or a
 section that tells what the document is or does in place of telling the subject; terms gathered
-ahead of the content; the history of how a decision was reached; a comparison or an example for an
-idea the reader already holds; a part that says again, in other words or in a figure, what another
-part says.
+ahead of the content; the history of how a decision was reached; a part that says again, in other
+words or in a figure, what another part says; words that could go without the reader losing
+anything.
 
-Why: a part the reader skips or reads twice costs effort beyond the subject, and buries the parts
-they need; once the reader skims a run of repeats, they skim the one new point among them too.
+Why: each such part costs the reader time and buries the parts they need; once they skim a run of
+repeats, they skim the one new point among them too.
 
-### B-2: The picture as meant
+### B-18: No question left
 
-After one reading from the top, does the reader hold the same picture of the subject as the writer?
+When they finish, is no question left, so that the reader achieves their purpose?
 
-Why: the reader acts on the picture they took in; where it differs from the writer's, they act
-otherwise without noticing.
+Look for: an idea given only in part; a statement that is not a checked fact, such as an assumption,
+a proposal or a check that reached only so far, not said to be so where it stands; a thing said in
+two places, here and in another document or the deliverable itself, or said without the case where
+it does not hold; what will not stay true, such as steps, status or how the work went, in place of
+the purpose, the decisions and their reasons.
+
+Why: a gap is filled by a guess and acted on without the reader noticing; a statement said flatly is
+taken as fact; two places that say one thing come to disagree; and a document that has turned wrong
+is believed.
 
 ## Usability
 
-### U-1: Main point first in each section
-
-Does a reader who stops partway through a section still have its main point, because it comes before
-the section's details, exceptions and background?
-
-Why: a reader who stops early still has what matters most, and each detail is read knowing what it
-supports.
-
-### U-7: Headings to find a part again
-
-Can the reader find a part they want to read again by its heading?
-
-Why: a reader who comes back picks a part by its heading, and passes over one in the writer's own
-terms.
-
-### U-3: As short as the subject allows
-
-Does each word the reader reads give them something they would lose without it?
-
-Why: every word beyond what the subject asks is effort spent on how the document is written instead
-of on the subject.
+None: taking the document in in a short time is its purpose, so every item is a benefit.
