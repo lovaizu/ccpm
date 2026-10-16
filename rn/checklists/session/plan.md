@@ -7,10 +7,24 @@ version: 0.1.0
 
 A plan, `steering.md`, is read by the user at the Plan sign-off, to approve what they will get and
 why, and by the conductor in any later conversation, to carry the work to what the user really wants
-without asking again. Each item of `readability.md` applies to a plan with the goal and how it is
-reached as its subject; its B-16 is answered by the tasks in order, since a plan tells of no one
-acting in turn. Before the tasks that make the deliverable are planned, the items on tasks are
-answered as met.
+without asking them again.
+
+A plan is worked out in this order, each step the ground of the next:
+
+1. Find, from the user's words, why they want it, one point at a time, looking up what the
+   repository, the official documentation or best practice can answer.
+2. From that reason, set the goal, then each gain that would make the user choose the result, in
+   their words, then what they take for granted.
+3. Check what the plan rests on: each fact at its source, what only the user knows from the user,
+   and each form an input the criteria speak of takes where the product runs.
+4. Set the languages, where the documents go, and the rules the work follows that the goal does not
+   tell.
+5. Once the design is approved, plan the tasks that bring each criterion to hold, the attractive
+   ones first.
+
+Each item of `readability.md` applies to a plan with the goal and how it is reached as its subject;
+its B-16 is answered by the tasks in order, since a plan tells of no one acting in turn. Before the
+tasks of step 5 are planned, the items on tasks are answered as met.
 
 ## Format
 
@@ -27,7 +41,6 @@ artifact-language: <the language everything written to the repository is in>
 conversation-language: <the language the user is spoken to in>
 readme: <path of the README; README.md unless agreed otherwise>
 design: <path of the design document; docs/design.md unless agreed otherwise>
-verification: <path of the verification document; docs/verification.md unless agreed otherwise>
 ---
 
 # Goal
@@ -133,7 +146,7 @@ checks it.
 ### B-6: Every form an input takes
 
 Can the reader tell, for each kind of input the criteria speak of, such as "a user with no name",
-every form it takes where the product runs, and what the product does today on each?
+every form it takes where the product runs?
 
 Why: a criterion worded from the one form tried passes while the others still fail, and the user
 meets them all.

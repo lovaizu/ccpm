@@ -924,9 +924,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   checklist held, judging only the calls it is for, stopping nothing outside its session, and
   never holding the AI in a loop, go into rn's design as what its hooks must do, under #4.
   Decision 34, to report.
-- Where to resume (2026-10-16): remake the other checklists with the user the same way, one point
-  at a time, judging each item from the opening and one thing per item, key points only, in this
-  order: plan, proposal, checklist (whether the Usability section stays is settled there). Then
+- Left to the assistant by the user (2026-10-16), judged from rn's purpose in its README: the plan
+  and proposal checklists made again the same way. Each opening gains the order it is worked out
+  in, the plan's from how rn works out a plan with the user (reason, goal and criteria, what it
+  rests on, languages and rules, tasks once the design is approved), the proposal's from its
+  template; the plan's template loses `verification:` (decision 30); the proposal's items that held
+  two things are split, so ten each, numbered anew since neither was released with IDs; no item
+  added. Decision 35, to report.
+- Where to resume (2026-10-16): remake the checklist checklist with the user the same way, one
+  point at a time, judging each item from the opening and one thing per item, key points only (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
