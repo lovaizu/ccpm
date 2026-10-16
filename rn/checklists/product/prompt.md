@@ -9,6 +9,15 @@ A prompt, a skill or an agent, is read by an AI. From it alone, the AI can judge
 achieves the same purpose however often it is run. What only the user can decide, it hands back to
 the user.
 
+A prompt is worked out in this order, each step the ground of the next:
+
+1. Decide its purpose: what it achieves, and when it is used. The `description` is written from
+   this.
+2. From the purpose, decide the role expected of the AI and why, since the AI can judge for itself
+   when it knows both. What only the user can decide is set apart here, outside the role.
+3. From the role, decide the steps that bring the same result each time it is run, with the form
+   of what each step takes in and hands on.
+
 How a prompt is made, judged and tried is not for this reader. Each item of `readability.md` also
 applies to a prompt.
 
