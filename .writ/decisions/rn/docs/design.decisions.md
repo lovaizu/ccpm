@@ -68,6 +68,8 @@
   on the branch's last commit is where the session stands. A stop commit is one where rn stops
   for the user: at a sign-off, after `/rn:ty` or `/rn:gm`, or on `/rn:dn`.
 
+## design
+
 ### B-1: Attractive quality
 - Said in the README's words, since the reader comes from it.
 - What they really want from rough words: rn asks why the user wants the goal and what the result
@@ -96,22 +98,22 @@
   user decides, not with the work checked.
 
 ### B-3: Must-be quality
-- The default branch changes only when the user merges.
-- Every decision is committed and pushed as it is made, with a decision line, and every settled
-  item of `open/` is whole in the commit that settles it: the commit that removes the item's file
-  carries the item's text whole in its message, with the decision on each More, so the record
-  shows each finding beside what became of it.
-- The record keeps the form every command and check reads it by: the plan, the names of the files
-  in `open/`, the verification document, and every ID referred to exists.
-- Only the user passes a sign-off, gives feedback or pauses, by typing `/rn:ty`, `/rn:gm` or
-  `/rn:dn`; a sign-off is put to them with nothing unsettled behind it and the latest default
-  branch merged in.
-- Nothing reaches the user unread: each work the user sees was last read in its receiver's place
-  by turn, or the conductor's change after that reading is in the report with its lines.
+- The default branch: it changes only when the user merges.
+- Every decision pushed: each decision is committed and pushed as it is made, with a decision line,
+  and every settled item of `open/` is whole in the commit that settles it: the commit that removes
+  the item's file carries the item's text whole in its message, with the decision on each More, so
+  the record shows each finding beside what became of it.
+- The record's form: the record keeps the form every command and check reads it by: the plan, the
+  names of the files in `open/`, the verification document, and every ID referred to exists.
+- Only the user passes a sign-off: the user alone passes a sign-off, gives feedback or pauses, by
+  typing `/rn:ty`, `/rn:gm` or `/rn:dn`; a sign-off is put to them with nothing unsettled behind it
+  and the latest default branch merged in.
+- Nothing reaches the user unread: each work the user sees was last read in its receiver's place by
+  turn, or the conductor's change after that reading is in the report with its lines.
 - Missing tools: without python3, jq or gh, rn stops before anything and says what to install;
   outside a session, rn's hooks do nothing.
-- rn installs from the marketplace with turn, and passes strict validation.
-- The conductor stays on course while the user is away: it waits for every agent it starts, ends
+- Installs with turn: rn installs from the marketplace with turn, and passes strict validation.
+- The conductor stays on course: while the user is away, it waits for every agent it starts, ends
   its turn only with something for the user to decide, and speaks in the language the user chose.
 
 ### B-4: Backward compatibility
@@ -241,49 +243,72 @@
   inside the Claude Code session the user talks in; nothing of rn runs in CI, and the product's
   own checks run where its verification document says.
 
-### B-33: Each goal brought about by a part
-- Each quality in Goals names the parts that bring it about, by name alone, with no word on how:
-  what they really want from rough words: the conductor; called only for decisions that are
-  theirs: the conductor, rn's checklists; decided from the proposal alone: turn, rn's scripts, the
-  conductor; goes on from where it stopped: the record, rn's hooks; read in its receiver's place:
-  turn; questions answered: the conductor; time and tokens to each sign-off: turn, the conductor;
-  what the user reads at a sign-off: rn's checklists, rn's scripts; the default branch: rn's
-  hooks; every decision pushed: rn's hooks, the conductor; the record's form: rn's hooks; only
-  the user passes a sign-off: rn's hooks; nothing reaches the user unread: turn, rn's scripts;
-  missing tools: rn's scripts, rn's hooks; rn installs with turn: rn's manifest; the conductor
-  stays on course: rn's hooks; the commands: the conductor; the record: the record, rn's hooks;
-  the pull request: the conductor; rn's checklists: rn's checklists, rn's scripts; the
-  verification document: turn, rn's hooks.
+### B-33: Each goal and decision held by a part
+- Held by where the figure and the table place the parts, so nothing more is said: read in its
+  receiver's place before the user sees it (turn); the default branch, every decision pushed, the
+  record's form, only the user passes a sign-off and the conductor stays on course (rn's hooks);
+  installs with turn and the commands (the table); the pull request (the conductor, through `gh`);
+  rn's checklists (rn's checklists and rn's scripts).
+- One sentence under the figure for each held inside one part, saying what the part holds:
+  - The conductor holds what they really want from rough words: it hears why the user wants the
+    goal and what the result should do for them before it offers any way.
+  - The conductor holds called only for decisions that are theirs and questions answered: it
+    settles whatever the goal, the repository, the documentation and best practice settle.
+  - The conductor holds time and tokens to each sign-off: it finishes by hand what falls short
+    after turn, rather than running turn again.
+  - The record holds goes on from where it stopped: the decision line on the branch's last commit
+    says where the session stands.
+  - rn's scripts hold decided from the proposal alone and nothing reaches the user unread: the
+    report they write puts first what rn decided for the user, and names each change the
+    conductor made after turn's last reading.
+  - rn's checklists hold what the user reads at a sign-off: the proposal's checklist asks for what
+    the user decides, not for the work checked.
+  - rn's scripts and rn's hooks hold missing tools: the scripts stop before anything when a tool
+    is missing, and the hooks do nothing outside a session.
 
-### B-11: Principles to judge a change
-- Attractive quality is the goal: its checks are the fewest that confirm it, each improvement
-  goes where it raises it soonest; must-be quality is checked by machine, fixed where a gap stands
-  in the way on the golden path, and finished last. Protects: what they really want, questions
-  answered, time and tokens.
-- Only the conductor decides what happens next, and only the conductor uses git: a decision is
-  made where the goal and the whole conversation are known, and every commit records one someone
-  made. Protects: decided from the proposal alone, every decision pushed, goes on from where it
-  stopped.
-- Every work is made by turn from what the conductor decided, and read in its receiver's place
-  before the user sees it; the conductor makes nothing the user sees itself but the record and
-  what it finishes after turn's last run, each change in the report. Protects: read in its
-  receiver's place, nothing reaches the user unread.
+### B-11: Decisions to judge a change
+- Attractive quality comes first: its checks are the fewest that confirm it, and must-be quality
+  is checked by machine, fixed where a gap stands on the path the attractive criteria run along,
+  and finished last.
+  - Serves: what they really want from rough words; questions answered; time and tokens to each
+    sign-off.
+  - The other way: the time goes to gaps off the path the user takes, and what would make the
+    user choose the result comes last or not at all.
+- Only the conductor decides what happens next, and only the conductor uses git.
+  - Serves: decided from the proposal alone; every decision pushed; goes on from where it stopped.
+  - The other way: a move decided by an agent that knows neither the goal nor the conversation,
+    and a commit no one decided, leave a record the user cannot stand behind.
+- Every work the user sees is made by turn from what the conductor decided, and read in its
+  receiver's place before the user sees it; what the conductor finishes after turn's last run is
+  in the report.
+  - Serves: read in its receiver's place before the user sees it; nothing reaches the user unread.
+  - The other way: work the conductor makes itself is read only by its writer, who passes what its
+    receiver would miss, and the user is the one who finds it.
 - The user is asked only what the goal, the repository, the documentation and best practice
-  cannot settle, one point per message, what they want before any way, with the ways' costs and
-  the one recommended; what only the user knows and they do not know is an assumption, shown as a
-  More until checked. Protects: what they really want, called only for decisions that are
-  theirs.
+  cannot settle, one point per message, what they want before any way.
+  - Serves: what they really want from rough words; called only for decisions that are theirs;
+    questions answered.
+  - The other way: the user answers what rn could have looked up, or picks among ways before
+    saying what they want, and gets what was offered rather than what they meant.
 - Everything is made and checked by the same checklists, and rn is improved by sharpening them,
-  not by adding steps; a checklist asks what the receiver gets, so it fits situations no one
-  foresaw. Protects: read in its receiver's place, what the user reads at a sign-off.
+  not by adding steps.
+  - Serves: read in its receiver's place before the user sees it; what the user reads at a
+    sign-off; rn's checklists.
+  - The other way: a step added meets only the case it was added for and is one more thing to keep
+    right, while an item that asks what the receiver gets fits cases no one foresaw.
 - Every reader is handed the paths of what it reads, never a summary of them, and every agent
-  leaves its whole result in a file and returns only where it is. Protects: what they really
-  want, goes on from where it stopped.
+  leaves its whole result in a file and returns only where it is.
+  - Serves: what they really want from rough words; goes on from where it stopped.
+  - The other way: a summary drops what its writer thought did not matter, and a result held only
+    in a reply is lost with the conversation.
 - Decisions are written into the record before the work that follows them, and the record holds
-  only what holds now; how a thing was reached lives in the commit messages. Protects: goes on
-  from where it stopped, every decision pushed.
+  only what holds now; how a thing was reached lives in the commit messages.
+  - Serves: goes on from where it stopped; every decision pushed.
+  - The other way: work done before its decision is written is lost when the session stops, and a
+    record mixed with its history is read as if all of it held.
 - What a machine can judge of the course is checked by a hook at the moment it could break, each
-  stop naming the step and why (assumption: that a stop keeps the conductor to a step where a
-  rule in words would not, taken from turn's design). Protects: every decision pushed, the
-  record's form, only the user passes a sign-off, the conductor stays on course.
-
+  stop naming the step and why (assumption: that a stop keeps the conductor to a step where a rule
+  in words would not, taken from turn's design).
+  - Serves: every decision pushed; the record's form; only the user passes a sign-off; the
+    conductor stays on course.
+  - The other way: a slip in the course shows only later, in a record that looks right.

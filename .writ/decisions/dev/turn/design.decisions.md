@@ -44,6 +44,8 @@
   while the run goes, so the tests and builds the work needs run in place; the work stays in the
   evidence until the run returns, and the copy is gone by then.
 
+## design
+
 ### B-1: Attractive quality
 - Said in the README's words, since the reader comes from it.
 - Read in the place of the person the work is for: the work comes back already read, as that person
@@ -97,8 +99,8 @@
   stopped task carries on after an update. A CCS of 0.1.0 is not accepted, since no caller relies
   on one.
 - The checklist form the README's Requirements gives, relied on by users and by plugins built on
-  turn, such as rn, which write checklists in it: a checklist that opens with its name and version and gives its items as
-  headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
+  turn, such as rn, which write checklists in it: a checklist that opens with its name and version
+  and gives its items as headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
   long as a checklist in that form needs nothing more.
 - What a returned CCS points to, relied on by the user, who opens it to follow each item back:
   every place a returned CCS points to exists. The run's evidence is kept under `.turn/` at the top
@@ -147,42 +149,48 @@
 - Each thing callers rely on is checked by a test that calls turn as the callers of each released
   version from 0.2.0 on did, in `dev/turn/tests/`, run on every push.
 
-### B-11: Principles to judge a change
-- The orchestrator alone decides whether each item passes, from the work itself: for each item it
-  reads the whole work for where the item is given, and what agents and scripts hand back only
-  shows it where to look first, since an item shown passing in one part does not show what the
-  whole gives. Protects: nothing passes unshown, read in the receiver's place.
-- Every role looks only for where items pass and aims at every item passing; none finds fault,
-  and none is set to find something, since one set to find something finds it whether it is there
-  or not (assumption); Coverage, a script, is the one place that looks for what may be wrong; each
-  role answers in a form with one place per item, since the form, not the wording, holds it to
-  its aim. Protects: nothing passes unshown, the first-run share.
-- Every role works from the inputs it is handed alone; each prompt names them as the whole of what
-  it reads, says in positive words to work from them and gives why, sets as steps what its agent
-  receives, hands back and must do in full, and leaves how it thinks within a step to it.
-  Protects: made from what the caller decided, read in the receiver's place.
-- turn asks nothing while it works, so it runs the same wherever it is called, a subagent
-  included, and is stopped or corrected only from where it was called; every question comes back
-  at once when the run returns. Protects: asked only what only the user can decide, a plugin
-  decides from what turn returns.
-- Everything that measures the work measures by the same list, with every checklist's opening,
-  the same receiver and the same use; a checklist says its own name and version, so a Good is
-  followed back to the text it was judged by. Protects: read in the receiver's place, the
-  first-run share, following each item back, the checklist form.
-- A run starts from its CCS alone, makes the work in a copy of the repository as committed, and
-  keeps the work in the run's evidence until the run returns; the received CCS is never written
-  over and the caller's parts come back the same. Protects: what the caller gave unchanged,
-  repository untouched, stop and start over, the CCS.
-- What must come out the same every time is done by a script or a hook: a script does what a
-  step asks and refuses a step whose steps before it are not done; a hook stops a step left out or
-  done otherwise, saying which step, what it needs and why, and acts only in the session whose
-  run is open, even without python3. Protects: nothing passes unshown, what the caller gave
-  unchanged, repository untouched, missing tools, following each item back.
+### B-11: Decisions to judge a change
+- The orchestrator alone decides whether each item passes, from the whole work.
+  - Serves: nothing passes unshown; read in the place of the person the work is for.
+  - The other way: an item an agent shows passing in one part passes though the whole work does
+    not give it, and the user hands on work its person cannot use.
+- Every role looks only for where items pass, and answers in a form with one place per item;
+  Coverage is the one place that looks for what may be wrong.
+  - Serves: nothing passes unshown; the first-run share.
+  - The other way: a role set to find faults finds them whether they are there or not
+    (assumption), and the work is made again for faults it does not have.
+- Each role works from the inputs it is handed alone.
+  - Serves: made from what you decided; read in the place of the person the work is for.
+  - The other way: a role that opens whatever it finds makes the work from what no one decided,
+    two runs of one request differ, and a first user who reads more than the receiver takes in
+    what the receiver would miss.
+- turn asks nothing while it works; every question comes back when the run returns.
+  - Serves: asked only what only the user can decide, all at once at the end; a plugin decides
+    from what turn returns.
+  - The other way: a run that asks cannot run in a subagent, where no one hears it, and keeps the
+    user at the screen.
+- Everything that makes or measures the work works by the same list, receiver and use, and each
+  checklist says its own name and version.
+  - Serves: read in the place of the person the work is for; the first-run share; following each
+    item back; the checklist form.
+  - The other way: the work is made to one bar and judged by another, so work made right fails,
+    and a Good cannot be followed back to the text it was judged by.
+- A run starts from its CCS alone and makes the work in a copy of the repository as committed,
+  writing it where it goes only when the run returns.
+  - Serves: what the caller gave unchanged; repository untouched; stop and start over; the CCS.
+  - The other way: a run stopped part way leaves half-made files where the work goes, and a task
+    changed while it runs makes the work from inputs no one gave.
+- What must come out the same every time is done by a script or held by a hook, not left to a
+  prompt.
+  - Serves: nothing passes unshown; what the caller gave unchanged; nothing unread; repository
+    untouched; missing tools; following each item back.
+  - The other way: an AI does a step differently from run to run, and a slip shows only later, in
+    a result that looks right.
 - What can be told before it happens is stopped then, and what cannot is named to the user when
-  the run returns: stopped, a write outside the run's copy and the work's place, a commit or a
-  push, a write over a file where the work goes unless git holds what is there or it is a work
-  an earlier run returned, unchanged since; named, a shell command's side effect. Protects:
-  repository untouched.
+  the run returns.
+  - Serves: repository untouched.
+  - The other way: a harm stopped only once it is done is left in the repository, and stopping
+    every command that might do harm closes the tests and builds the work needs.
 
 ### B-12: Who does what to what
 - Structure opens with how turn divides, in one sentence: turn is one orchestrator, four agents
@@ -238,16 +246,27 @@
   that called it, the orchestrator where its caller runs and each agent as a subagent; nothing of
   turn runs in CI.
 
-### B-33: Each goal brought about by a part
-- Each quality in Goals names the parts that bring it about, by name alone, with no word on how:
-  read in the place of the person the work is for: the first user, the orchestrator; made from
-  what you decided: the generator, the scripts, the hooks; asked only what only the user can
-  decide, all at once at the end: the orchestrator; seeing the work as it goes: the scripts, the
-  hooks; a plugin decides from what turn returns: the scripts; following each item back: the
-  run's evidence; the first-run share: the generator, the learner; time and tokens: the
-  orchestrator; nothing passes unshown: the orchestrator, the scripts; what the caller gave
-  unchanged: the scripts, the hooks; nothing unread: the hooks; repository untouched: the hooks,
-  the run's evidence; stop and start over: the scripts; missing tools: the orchestrator; the call:
-  the orchestrator; the CCS: the scripts; how a checklist is written: the scripts; what a returned
-  CCS points to: the run's evidence.
-
+### B-33: Each goal and decision held by a part
+- Held by where the figure and the table place the parts, so nothing more is said: read in the
+  place of the person the work is for (the first user, apart from the generator); made from what
+  you decided and repository untouched (turn's hooks); seeing the work as it goes and how a
+  checklist is written (turn's scripts); following each item back and what a returned CCS points
+  to (the run's evidence); the call (the orchestrator, the skill `turn:up`).
+- One sentence under the figure for each held inside one part, saying what the part holds:
+  - The orchestrator holds nothing passes unshown: it alone decides each item, from the whole
+    work.
+  - The orchestrator holds asking only at the end: it puts no question while the run goes and
+    returns every one when it ends.
+  - The orchestrator holds time and tokens: a run has at most one second round.
+  - The generator holds the first-run share: it makes the work to every item of the list from the
+    first round; the learner holds it for the second, finding how each item left would pass.
+  - turn's scripts hold what the caller gave unchanged and the CCS: the CCS received is never
+    written over, and the one written back has the parts and values the callers' page gives.
+  - turn's scripts hold a plugin deciding from what turn returns: the CCS they write back names
+    the next move and every question.
+  - turn's scripts hold Coverage: they find the lines of the work no grounds name.
+  - turn's hooks hold nothing unread: they stop a write to the work once the first user has been
+    handed it.
+  - The orchestrator, turn's scripts and turn's hooks hold missing tools: the orchestrator says to
+    install python3 when it is not found, the scripts end a run before any work when jq is
+    missing, and the hooks do nothing where python3 is missing.
