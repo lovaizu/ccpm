@@ -18,7 +18,6 @@ class TestChecklists(RepoTest):
             "design": ["readability", "product/design"],
             "prompt": ["readability", "product/prompt"],
             "code": ["product/code"],
-            "hook": ["product/code", "product/hook"],
             "plan": ["readability", "session/plan"],
             "proposal": ["readability", "session/proposal"],
             "verification": ["readability", "verification"],
