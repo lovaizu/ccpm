@@ -127,3 +127,17 @@
 - The time and the cost of a run from the trial's JSONL, its timestamps and usage; the items the
   calling AI fixes after the work returns counted from the stand-in's JSONL; each compared with the
   last version.
+
+### The CCS
+- turn's CCS definition, `turn/skills/ccs/references/ccs.md`, takes ACC's nine parts with the
+  paper's names and meanings, and defines inside them only the kinds and values turn reads and
+  writes; every other kind is the caller's to define.
+- The new CCS is the state after the turn: the task's parts (what is made, for whom and what for,
+  the materials, the rules) and everything turn does not define come back as received; what the
+  turn changes (what changed in this turn, what is not settled, what to do next) is written anew in
+  place of the last turn's, so the CCS does not swell, and the CCS returned can be handed to turn
+  again as it is.
+- A script checks the CCS at both ends: when a run starts, that the CCS received meets turn's
+  definition, stopping with what is wrong and where the definition is; before it returns, that the
+  new CCS meets the definition and that what must come back as received has not changed, returning
+  nothing otherwise. Each check is tested.
