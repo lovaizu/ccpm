@@ -203,48 +203,74 @@
   an earlier run returned, unchanged since; named, a shell command's side effect. Protects:
   repository untouched.
 
-### B-12: Who is responsible for what
-- The user hands the work on, and answers, when the run returns, what only they can decide.
-- The caller, Claude in the user's conversation or the user's plugin: says what the work should
-  be, in a CCS of the callers' page's form, and decides from the CCS turn writes back what follows:
-  finishing the work itself, calling turn again, asking the user, or moving on.
-- The orchestrator, the skill `turn:up`: runs the run; decides each question the generator or the
-  learner raises, showing where the inputs answer it or leaving it open for the user; sends the
-  work back to the generator until every item passes or waits on a question left open, and only
-  then hands it to the first user; alone decides whether each item passes, from the whole work,
-  giving each that passes a Good with the lines that give it; takes the learner's ways in the work
-  in one second round, and returns what the second round leaves, or what lies in what the caller
-  gave, to the caller. It needs the CCS, turn's scripts and Claude Code to start its agents.
-- The generator: makes the work in the run's copy of the repository to pass every item, from the
-  decisions and the references, in the order the list gives: the shape first, then part by part
-  from the top, then the items that hold over the whole, each over the whole work; names where
-  each item passes, and raises what the inputs do not settle as a question. It needs the inputs a
-  script hands it and a shell for tests and builds.
-- The first user: reads the work as the receiver, for the use, with only the work and what the
-  receiver opens with it, and hands back what it took for each item and where; it raises no
-  question, since without the decisions it cannot tell what only the user can decide. It needs the
-  work and what the receiver opens.
-- The evaluator: shows which items the work passes, each with its lines and grounds, judged from
-  the first user's reading; it raises no question. It needs the reading and its records.
-- The learner: finds, for each item not passed, how the work would pass it, from the purpose and
-  for every line the same shape reaches, and where that way lies: in the work, or in what the
-  caller gave; and raises what only the user can decide; and returns as a rule what in making such
-  work would have given an item when first made, only where no item of the list already asks it,
-  since the caller takes each rule up with the user. It needs the work, the items not passed, the
-  decisions and the references.
-- turn's scripts: give the same result every time: check the CCS, lay out the list and the forms,
-  make the run's copy and hand each agent its inputs once the steps before are done, find the
-  lines of the work no grounds name (Coverage), make the console that shows the aim before the
-  work is written and each step as it is reached, in the user's words with no item IDs, and write
-  the work and the CCS back. They need python3 3.9 or later and jq.
-- turn's hooks: keep each role to its steps and its inputs, stop a write outside the run's copy
-  and the work's place, a commit or a push, and show the console; they act only in the session
-  whose run is open. They need Claude Code to run them.
-- Claude Code: runs the orchestrator, its agents and the hooks, and keeps the records.
-- git: holds the repository as committed, from which the run's copy is made and what was where
-  the work goes is got back. It needs the work in a git repository.
-- One static figure shows each of these, its responsibility in one line, and what it cannot work
-  without; beside it, only where the orchestrator runs: as a skill, where its caller runs, so in a
-  conversation the user sees its console and presses Esc, and in a subagent the caller reads what
-  it returns, at the cost of room in the caller's context.
+### B-12: Who does what to what
+- Structure opens with how turn divides, in one sentence: turn is one orchestrator, four agents
+  and the scripts and hooks that hold them to their steps; the orchestrator and the agents share
+  nothing but the files of the run's evidence under `.turn/`, where each finds its inputs and
+  leaves its answer, and the caller reaches turn only through the CCS.
+- One figure, a box for each one that takes part holding its name alone, the four agents grouped
+  as turn's agents, and an arrow from each to what it reads, writes, copies or calls, labelled
+  with that relation:
+  - the user → the caller: asks for the work, and answers what the run returns
+  - the user → the orchestrator: watches the console, stops it with Esc
+  - the caller → the orchestrator: hands the CCS
+  - the orchestrator → the caller: writes the CCS back
+  - the orchestrator → turn's scripts: calls, for every step that must come out the same
+  - the orchestrator → each agent: starts with its brief
+  - the orchestrator → the run's evidence: reads the work and every form, writes its decision on
+    each item
+  - the generator → the run's evidence: reads its brief, writes the work in the run's copy and
+    names where each item passes in its form
+  - the first user → the run's evidence: reads the work and what the receiver opens, writes its
+    reading
+  - the evaluator → the run's evidence: reads the reading and the work, writes which items pass
+    with their lines
+  - the learner → the run's evidence: reads the work, the forms, the decisions and the
+    references, writes how each item left would pass and where that lies
+  - turn's scripts → the run's evidence: lay out the list, the forms and the briefs, make the
+    run's copy, find Coverage, show the console
+  - turn's scripts → git: copy the repository as committed, and get back what was where the work
+    goes
+  - turn's scripts → where the work goes: write the work when the run returns
+  - turn's hooks → the orchestrator and its agents: stop a read outside the role's inputs, a write
+    outside the run's copy and where the work goes, a commit or a push, and a step done out of
+    order
+- Beside the figure, only what it cannot show: the orchestrator runs as a skill, where its caller
+  runs, so in a conversation the user sees its console and presses Esc, and in a subagent the
+  caller reads what it returns, at the cost of room in the caller's context.
+
+### B-34: What kind of thing each part is
+- A table of the parts inside turn, one row each, with its kind: the orchestrator, a prompt, the
+  skill `turn:up`; the generator, the first user, the evaluator and the learner, each a prompt an
+  agent follows; turn's scripts, python3 scripts with jq; turn's hooks, `sh` entries that run
+  python3 checks; the run's evidence, data: JSON files and a working copy of the repository; the
+  CCS, data: one JSON file; the work, files.
+
+### B-35: Where each part is kept
+- In the same table: the prompts, scripts and hooks are shipped with turn and copied to the
+  user's machine at install; the CCS is where the caller puts it, in the user's repository; the
+  run's evidence is `.turn/` at the top of the user's repository, uncommitted and left to the
+  user; the work is where the task says, in the user's repository.
+
+### B-36: Where each part runs
+- In the same table: every part of turn runs on the user's machine, inside the Claude Code session
+  that called it, the orchestrator where its caller runs and each agent as a subagent; nothing of
+  turn runs in CI.
+
+### B-33: Each goal brought about by a part
+- Each quality in Goals is brought about by the parts named for it, read from the figure and the
+  table: read in the place of the person the work is for, the first user and the orchestrator;
+  made from what you decided, the generator, the scripts that hand each agent its inputs alone,
+  and the hooks that stop a read outside them; asked only what only the user can decide, all at
+  once at the end, the orchestrator, which settles each question the inputs answer and carries
+  the rest to the CCS; seeing the work as it goes, the scripts' console and the hooks that show
+  it; a plugin decides from what turn returns, the scripts that write the CCS back; following
+  each item back, the run's evidence; the first-run share, the generator and the learner's rules;
+  time and tokens, the orchestrator's one second round; nothing passes unshown, the orchestrator
+  and Coverage; what the caller gave unchanged, the scripts that write the caller's parts back as
+  they came and the hooks; nothing unread, the hooks that stop a write to the work after its
+  reading; repository untouched, the hooks and the run's copy; stop and start over, the scripts
+  that write the work only when the run returns; missing tools, the skill's first step; the call
+  and the CCS, the scripts that check the CCS; how a checklist is written, the scripts that read
+  each checklist into the list; what a returned CCS points to, the run's evidence.
 

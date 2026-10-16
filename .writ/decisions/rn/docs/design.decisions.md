@@ -219,43 +219,75 @@
 - The verification document: the flow trial's deliverable is used by turn against the session's
   verification document, and the test on the record's form reads one.
 
-### B-12: Who is responsible for what
-- The user decides: what they want, at each sign-off, and what only they can know.
-- The conductor, the conversation with the user: hears one point at a time until nothing is
-  silently assumed; writes the decisions for each work from what was agreed, handing what the
-  work draws on as references; calls turn once for each work, and again only when the decisions
-  must change much, finishing a small More
-  itself; judges each question and item turn returns by what the purpose needs; plans the tasks
-  once the design is approved, attractive quality first, and judges each result on the real thing
-  against its purpose; has the deliverable used once against the verification document; takes
-  stock of the learnings turn returned, one at a time with the user, before the Deliverable
-  sign-off, each put into a checklist, an issue, or let go; takes feedback back to before the sign-off it answers and stops there again; proposes at each
-  sign-off with the final state, what it decided for the user first; and alone uses git.
-- turn: makes each work from its CCS, has it read or used in its receiver's place, checks each
-  item, and returns the questions only the user can decide and the items not met.
-- rn's scripts: find the checklists for a kind; write the CCS from the parts the conductor gives;
-  write the report from turn's evidence and the conductor's judgments, with each item's lines as
-  they stand; build the record for the hooks.
-- rn's hooks: stop, where it happens, a write that breaks the record's form, a commit without
-  its decision line or a settled item whole, a commit on the default branch, a sign-off passed
-  without the typed command, an agent started in the background, a turn ended with nothing for
-  the user, or a message in the wrong language; they judge the course, never the work's worth.
-- rn's checklists: say what each kind of work must give its receiver; one the user made at
-  `.rn/checklists/<kind>.md` is used for its kind.
-- The record: the session's folder, `steering.md`, `open/`, `decisions/`, the decisions for each
-  work, `tasks/`, each task handed to turn and the CCS turn wrote back, and the commits with their
-  decision lines, on the session's branch with its draft pull request; turn's evidence under
-  `.turn/` stays uncommitted.
-- git and GitHub, through `gh`: hold the record and the pull request; Claude Code: runs the
-  conductor, the hooks and turn.
-- What each cannot work without: the conductor, the record, turn, rn's scripts and checklists,
-  and git with its remote on GitHub; turn, the CCS, git, python3 and jq, as its README says; rn's
-  scripts, python3 and jq; rn's hooks, the record they read, python3 and Claude Code to run them;
-  the pull request,
-  `gh` logged in with push access.
-- One static figure shows each of these, its responsibility in one line, and what it cannot work
-  without; beside it, only where the conductor runs: in the user's conversation, the same one
-  throughout the session.
+### B-12: Who does what to what
+- Structure opens with how rn divides, in one sentence: rn is the conductor, which alone decides
+  each next move and uses git, and turn, which makes every work; they meet only in the record,
+  where the conductor writes what each work must say and turn's task, and rn's scripts and hooks
+  hold the conductor to the record's form and course.
+- One figure, a box for each one that takes part holding its name alone, and an arrow from each to
+  what it reads, writes, copies or calls, labelled with that relation:
+  - the user → the conductor: asks, answers one point at a time, types `/rn:ty`, `/rn:gm` or
+    `/rn:dn`
+  - the user → the pull request: reads each proposal, comments
+  - the conductor → the record: writes the decisions for each work, the items of `open/` and the
+    plan's machine parts; reads where the session stands
+  - the conductor → turn: calls with the CCS of each work, reads the CCS turn writes back
+  - the conductor → rn's scripts: calls, to find the checklists for a kind, write the CCS and
+    write the report
+  - the conductor → git and GitHub: commits and pushes each decision, opens the pull request and
+    marks it ready, through `gh`
+  - turn → the record and the product: writes each work where its task says: the plan, the
+    proposals and the reports' grounds in the record, the three documents and the deliverable in
+    the product
+  - turn → rn's checklists: reads each the CCS names
+  - rn's scripts → rn's checklists: find those for a kind, and the user's own under
+    `.rn/checklists/`
+  - rn's scripts → the record: write the CCS under `tasks/` and the report under `open/`, from
+    turn's evidence and the conductor's judgments
+  - rn's hooks → the record: read it to build what each check judges
+  - rn's hooks → the conductor: stop a write that breaks the record's form, a commit without its
+    decision line or a settled item whole, a commit on the default branch, a sign-off passed
+    without the typed command, an agent started in the background, a turn ended with nothing for
+    the user, or a message in the wrong language
+  - git and GitHub → the record and the pull request: hold them
+- Beside the figure, only what it cannot show: the conductor is the user's conversation, the same
+  one throughout the session, and turn's evidence under `.turn/` stays uncommitted.
+
+### B-34: What kind of thing each part is
+- A table of the parts inside rn, one row each, with its kind: the conductor, prompts, the skills
+  `rn:up`, `rn:ty`, `rn:gm` and `rn:dn` with the steps they follow; rn's scripts, python3 scripts
+  with jq; rn's hooks, `sh` entries that run python3 checks; rn's checklists, data, one markdown
+  file per kind of work; the record, data, the session's folder under `.rn/` and the commits on
+  its branch; the pull request, data held by GitHub; turn, a plugin of its own, used as its
+  callers' page gives it.
+
+### B-35: Where each part is kept
+- In the same table: the prompts, scripts, hooks and checklists are shipped with rn and copied to
+  the user's machine at install; a checklist the user made is theirs, at `.rn/checklists/<kind>.md`
+  in their repository; the record is in the user's repository, committed on the session's branch,
+  and `.turn/` beside it uncommitted; the pull request is on GitHub; turn is installed beside rn.
+
+### B-36: Where each part runs
+- In the same table: the conductor, the scripts, the hooks and turn run on the user's machine,
+  inside the Claude Code session the user talks in; nothing of rn runs in CI, and the product's
+  own checks run where its verification document says.
+
+### B-33: Each goal brought about by a part
+- Each quality in Goals is brought about by the parts named for it, read from the figure and the
+  table: what they really want from rough words, the conductor; called only for decisions that
+  are theirs, the conductor and the checklists, which settle what a good work gives so no
+  question of it goes to the user; decided from the proposal alone, turn, which makes the
+  proposal, the scripts' report, and the conductor; goes on from where it stopped, the record and
+  the hooks that keep every decision pushed with its decision line; read in its receiver's place,
+  turn; questions answered, the conductor; time and tokens to each sign-off, turn and the
+  conductor; what the user reads at a sign-off, the proposal checklist and the scripts' report;
+  the default branch, the hooks; every decision pushed, the hooks and the conductor; the record's
+  form, the hooks; only the user passes a sign-off, the hooks; nothing reaches the user unread,
+  turn and the report's lines as they stand; missing tools, the scripts and the hooks' guard;
+  installs with turn, rn's manifest, shipped with it; the conductor stays on course, the hooks;
+  the commands, the conductor; the record, the record and the hooks; the pull request, the
+  conductor; the checklists, the checklists and the scripts; the verification document, turn and
+  the hooks.
 
 ### B-11: Principles to judge a change
 - Attractive quality is the goal: its checks are the fewest that confirm it, each improvement
