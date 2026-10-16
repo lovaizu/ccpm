@@ -95,6 +95,16 @@
   - How much the calling AI fixes after the work returns, counted as the items it fixes itself,
     since the more is settled inside turn, the more the benefit gives.
 
+- The benefit: one turn of ACC, the calling AI going on from the new CCS alone. Must-be:
+  - The new CCS alone tells the calling AI what to do next, without reading what went on inside
+    the run.
+  - However many times turn is called, the CCS does not swell: what turn writes replaces the last
+    turn's, and nothing is added on.
+  - What must come back as received does not change, held by the script's check before it returns.
+  Better the more, measured on every trial and compared with the last version:
+  - What each call adds to the calling AI's context, the CCS and the orchestrator's last reply,
+    since the less it adds, the longer the calling AI can go on.
+
 ### B-23: Checks built up unit by unit
 - The scripts: unittest fed what the calling AI hands over, a case each stops and one each lets
   through, every line and branch counted in CI on every push.
@@ -123,10 +133,16 @@
 - Nothing changed but where the work goes, no commit or push: a test that the hooks stop them; after
   a trial, git shows changes to the work alone.
 
+- The calling AI going on from the CCS alone: in a trial, the stand-in takes its next move from the
+  new CCS, with nothing of the run's inside in its context.
+- The CCS not swelling: a test that the script writes turn's parts in place of the last turn's; in
+  a trial called twice, the second CCS is no larger than the first beyond what the new turn says.
+- What must come back as received: a test that the script returns nothing when it has changed.
+
 ### B-26: Better the more, measured
 - The time and the cost of a run from the trial's JSONL, its timestamps and usage; the items the
-  calling AI fixes after the work returns counted from the stand-in's JSONL; each compared with the
-  last version.
+  calling AI fixes after the work returns, and what each call adds to its context, counted from the
+  stand-in's JSONL; each compared with the last version.
 
 ### The CCS
 - turn's CCS definition, `turn/skills/ccs/references/ccs.md`, takes ACC's nine parts with the
