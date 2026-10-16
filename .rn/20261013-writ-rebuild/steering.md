@@ -853,28 +853,37 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   into a criterion or into the figures, and one that fits neither is suspected not core;
   non-goals and constraints left out at first, kept only if the builder is then found to hesitate.
   Decision 25, to report (replaces Goals and Design decisions of decision 24).
-- Where to resume (2026-10-16, before a `/clear`):
-  1. Read the user's own words first: the picture of the design document in session
-     `739e9824-08e7-4ea5-b189-7ac3c92712c3` (2026-10-16T01:19Z) and the later points in
-     `7e42789b-e819-4c53-8eb2-185f1e2e75be` (01:31Z, 01:33Z) and in the session that wrote this
-     (decision 25 above).
-  2. Rework `rn/checklists/design.md` to decision 25 (Structure and Verification; B-17 to B-20,
-     B-27, B-5, B-6, B-11, F-5, U-1 judged against it, not patched), and
-     `.writ/decisions/dev/turn/design.decisions.md` to it, holding only what the design must say,
-     not everything listed. Run turn's design alone (`dev/turn/trials/turn-design.json`, a new
-     folder, Opus 5.5). Judge it as its builder on real changes (an entry added to the CCS
-     returned, the second round dropped, a role set to find faults, the evidence moved out of
-     `.turn/`): each decided from the design alone, with no need to open the code or the README;
-     show the user; then rn's.
-  3. `hc3` (`rn-hooks-commits.json`) was running in the old session's scratchpad
-     (`/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/1976f783-b178-4e30-8e77-96adc68af046/scratchpad/hc3`);
-     if it did not finish, run it again in a new folder; judge, take the files in,
-     `sh dev/check.sh`, commit.
-  Then: the trace check of the hooks' first unit so a criterion the conductor is asking the user
-  about is not a stop (the flow trial's finding above), settled with the hooks' third unit
-  (`rn-hooks-course.json`); the trials `a1_first_call`, `a1_feedback`, `a2_intent`, `a3_proposal`,
-  `a4_resume`, `a4_from_080` on rn-try, one at a time, each `--out <new folder>`; the issues #4
-  names judged; the final check; then the report of decisions 1 to 23 to the user.
+- Decided by the user (2026-10-16), replacing decisions 22 to 25 for the design checklist: the
+  checklist was made again from its purpose, agreed one point at a time (`rn/checklists/design.md`,
+  `aa09573`..`48b2a26`): a design document lets whoever builds or changes the product understand,
+  in a short time, the mechanism that brings about the UX the product must give and how that is
+  checked; design thinks in four steps, minimal functions from the UX, logical components and their
+  interactions, technology chosen only then for the physical realization and placement, each
+  physical unit checked before the whole; UX > functions > components in number. Shape: Functions,
+  Architecture (Logical view, Physical view), Verification (Units, Acceptance). No README
+  dependence: the UX wherever it is defined. Decision 26, to report.
+- Decided by the user (2026-10-16): a UX checklist apart from the README's (`rn/checklists/ux.md`
+  0.1.0, `4047a61`): a UX lets whoever builds the product know the experience it must give; worked
+  out as users and goals, scenes to the goal, benefits, then must-be and better-the-more qualities;
+  a README is made from the UX. Where rn writes the UX, and how README and design take it, is not
+  yet decided. Decision 27, to report.
+- Found with the user (2026-10-16): decisions files written by hand listing everything made turn's
+  designs read as lists; turn's input needs the decisions made by grilling the user item by item
+  of the checklists, proposing, one point at a time. rn's conduct.md does not do that now
+  (`rn/references/conduct.md:289` talks from a tree of points and fills items after,
+  `:300` recommends nothing on intent questions); to change in rn's design once the checklists are
+  remade. Every checklist is to be remade the same way, from its purpose agreed with the user.
+- `dev/turn/design.md` holds an arc42 trial (`1db95e6`) the user set aside ("arc42は忘れて"); it is
+  made again to the new design checklist through turn.
+- `hc4`, the hooks' second unit (`rn-hooks-commits.json`), ended ($26) with questions, not yet
+  judged; its folder is this session's scratchpad
+  (`/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/3b75ad56-53b9-4ae2-996d-bc66987528bd/scratchpad/hc4`).
+- Where to resume (2026-10-16, before a `/clear`): remake the README checklist with the user, one
+  point at a time: its purpose first, then its order of thinking, shape and items, the README made
+  from the UX; agree each in Japanese, write English, check against `checklist.md`, never rewording
+  what was agreed. Then the other checklists in this order: verification, doc, prompt, code, hook,
+  plan, proposal, checklist. Then rn's grilling step, turn's design, judging `hc4`, and the rest
+  of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
