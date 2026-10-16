@@ -100,8 +100,8 @@
   on one.
 - The checklist form the README's Requirements gives, relied on by users and by plugins built on
   turn, such as rn, which write checklists in it: a checklist that opens with its name and version
-  and gives its items as headings with IDs keeps being read. What turn takes from a checklist beyond that may change, as
-  long as a checklist in that form needs nothing more.
+  and gives its items as headings with IDs keeps being read. What turn takes from a checklist
+  beyond that may change, as long as a checklist in that form needs nothing more.
 - What a returned CCS points to, relied on by the user, who opens it to follow each item back:
   every place a returned CCS points to exists. The run's evidence is kept under `.turn/` at the top
   of the repository, since the README names that place to the user; how it is laid out inside
@@ -114,7 +114,7 @@
   decisions, or gives it as a reference; turn makes new work only, since what it is handed it
   follows, wording and slips included.
 - Deciding whether to run again after a run's second round: the caller does it from what the run
-  returns, knowing what was agreed.
+  returns, knowing what was agreed; a run ends after one second round. Serves: time and tokens.
 - Finding what no item asks, which goes into the checklist; and holding checklists, which belong to
   whoever knows the kind of work, such as rn, a plugin built on turn.
 
@@ -128,69 +128,102 @@
 - Tests and builds a work needs run by shell commands, in a working copy of the repository, so the
   agents' shell stays open.
 
-### B-7: Attractive quality checked
-- Each attractive quality is checked on real work, rn's and turn's own documents and prompts,
-  since a made-up task shows only that it passes; the product is used by a fresh agent in the
-  receiver's place, with the same files the receiver opens and the same list; the check is judged
-  from the records, the JSONL of every conversation and agent of the run. The scenes, what is put
-  in and what must then happen, and what each passes on are kept with the trials in
-  `dev/turn/trials/`, one per quality, and run on the models turn's agents name.
+### B-7: Attractive quality verified
+- How each is checked: on real work, rn's and turn's own documents and prompts, since a made-up
+  task shows only that it passes; judged from the records, the JSONL of every conversation and
+  agent of the run; the trials in `dev/turn/trials/`, run on the models turn's agents name.
+- Read in the place of the person the work is for: a fresh agent outside the run, reading the
+  returned work as the same receiver with the same files and the same list, takes every item
+  returned as Good.
+- Made from what you decided: on a repository holding files the inputs do not name, the records
+  show no role reading one, and the work says nothing the inputs do not give.
+- Asked only what only the user can decide, all at once at the end: on decisions that leave one
+  choice open, nothing is asked while the run works, and the run ends asking that choice alone.
+- Seeing the work as it goes: the console alone tells the step the records show, and a run stopped
+  on its aim has written no work of that aim and then makes what the user said.
+- A plugin decides from what turn returns: on runs that end in each value of `next`, the move
+  decided from the returned CCS alone is the one decided after also reading the records.
+- Following each item back: the run's evidence alone gives, for any item, the lines of its Good or
+  how it would get one, and the version of its checklist.
 
-### B-8: One-dimensional quality measured
-- Both are measured from the records of the same tasks, run on this version and on the version in
-  use from the same CCS, written in each version's kinds where they differ, as from 0.1.0 to 0.2.0.
+### B-8: One-dimensional quality verified
+- How each is measured: from the records of the same tasks, run on this version and on the version
+  in use from the same CCS, written in each version's kinds where they differ.
+- The first-run share: the share of those tasks whose first run passes every item is no lower than
+  on the version in use.
+- Time and tokens: the minutes and tokens of each run are no more than on the version in use.
 
-### B-9: Must-be quality checked
-- Each must-be quality is checked by a test on the script or hook that holds it, in the case that
-  would break it; the tests are in `dev/turn/tests/`, run on every push with every line and branch
-  counted.
+### B-9: Must-be quality verified
+- How each is checked: by a test on the script or hook that holds it, in `dev/turn/tests/`, run on
+  every push with every line and branch counted.
+- Nothing passes unshown: grounds naming lines the work lacks are refused.
+- What the caller gave unchanged: a CCS written back whose caller parts differ from those received
+  is refused.
+- Nothing unread: a write to the work after the first user was handed it is stopped.
+- Repository untouched: in a run, a write outside the run's copy and the work's place, a commit and
+  a push are stopped, and outside a run nothing is.
+- Stop and start over: a run stopped at each step, and one cut off, leaves where the work goes as it
+  was before the run.
+- Missing tools: with each tool missing, a run ends before any work saying what to install, and
+  outside a run nothing breaks.
 
-### B-10: Backward compatibility checked
-- Each thing callers rely on is checked by a test that calls turn as the callers of each released
-  version from 0.2.0 on did, in `dev/turn/tests/`, run on every push.
+### B-10: Backward compatibility verified
+- How each is checked: by a test in `dev/turn/tests/` that calls turn as the callers of each
+  released version from 0.2.0 on did, run on every push.
+- The call: a call as the callers' page gives it runs.
+- The CCS: a CCS each such version returned is accepted and carried on, and every `next` returned is
+  one its callers know.
+- The checklist form: a checklist in the form the README gives yields a list with its opening and
+  every item.
+- What a returned CCS points to: every place a returned CCS points to exists.
 
 ### B-11: Decisions to judge a change
 - The orchestrator alone decides whether each item passes, from the whole work.
   - Serves: nothing passes unshown; read in the place of the person the work is for.
-  - The other way: an item an agent shows passing in one part passes though the whole work does
-    not give it, and the user hands on work its person cannot use.
+  - What a builder could get wrong: take an agent's word that an item passes, from the part it
+    looked at, though the whole work does not give it.
 - Every role looks only for where items pass, and answers in a form with one place per item;
   Coverage is the one place that looks for what may be wrong.
   - Serves: nothing passes unshown; the first-run share.
-  - The other way: a role set to find faults finds them whether they are there or not
-    (assumption), and the work is made again for faults it does not have.
+  - What a builder could get wrong: set a role to find faults, which finds them whether they are
+    there or not (assumption), so the work is made again for faults it does not have.
 - Each role works from the inputs it is handed alone.
   - Serves: made from what you decided; read in the place of the person the work is for.
-  - The other way: a role that opens whatever it finds makes the work from what no one decided,
-    two runs of one request differ, and a first user who reads more than the receiver takes in
-    what the receiver would miss.
+  - What a builder could get wrong: let a role open whatever helps it, so the work follows what
+    no one decided, and a first user who reads more than the receiver takes in what the receiver
+    would miss.
 - turn asks nothing while it works; every question comes back when the run returns.
   - Serves: asked only what only the user can decide, all at once at the end; a plugin decides
     from what turn returns.
-  - The other way: a run that asks cannot run in a subagent, where no one hears it, and keeps the
-    user at the screen.
+  - What a builder could get wrong: ask the user as soon as a choice comes up, which cannot be
+    heard in a subagent and keeps the user at the screen.
 - Everything that makes or measures the work works by the same list, receiver and use, and each
   checklist says its own name and version.
   - Serves: read in the place of the person the work is for; the first-run share; following each
     item back; the checklist form.
-  - The other way: the work is made to one bar and judged by another, so work made right fails,
-    and a Good cannot be followed back to the text it was judged by.
+  - What a builder could get wrong: hand each role only the items it needs, so the work is made
+    to one bar and judged by another, and a Good cannot be followed back to its text.
 - A run starts from its CCS alone and makes the work in a copy of the repository as committed,
   writing it where it goes only when the run returns.
-  - Serves: what the caller gave unchanged; repository untouched; stop and start over; the CCS.
-  - The other way: a run stopped part way leaves half-made files where the work goes, and a task
-    changed while it runs makes the work from inputs no one gave.
+  - Serves: what the caller gave unchanged; repository untouched; stop and start over; following
+    each item back; what a returned CCS points to.
+  - What a builder could get wrong: make the work in place, so a run stopped part way leaves
+    half-made files where the work goes.
 - What must come out the same every time is done by a script or held by a hook, not left to a
   prompt.
   - Serves: nothing passes unshown; what the caller gave unchanged; nothing unread; repository
-    untouched; missing tools; following each item back.
-  - The other way: an AI does a step differently from run to run, and a slip shows only later, in
-    a result that looks right.
+    untouched; missing tools; seeing the work as it goes.
+  - What a builder could get wrong: leave such a step to a prompt, which an AI does differently
+    from run to run, so a slip shows only later, in a result that looks right.
+- A caller reaches turn only through the call and the CCS; everything inside turn may change.
+  - Serves: the call; the CCS; a plugin decides from what turn returns.
+  - What a builder could get wrong: let a caller read the run's forms or evidence, which then
+    cannot change without breaking it.
 - What can be told before it happens is stopped then, and what cannot is named to the user when
   the run returns.
   - Serves: repository untouched.
-  - The other way: a harm stopped only once it is done is left in the repository, and stopping
-    every command that might do harm closes the tests and builds the work needs.
+  - What a builder could get wrong: stop every command that might do harm, which closes the tests
+    and builds the work needs, or check only afterwards, when the harm is done.
 
 ### B-12: Who does what to what
 - Structure opens with how turn divides, in one sentence: turn is one orchestrator, four agents
@@ -246,7 +279,7 @@
   that called it, the orchestrator where its caller runs and each agent as a subagent; nothing of
   turn runs in CI.
 
-### B-33: Each goal and decision held by a part
+### B-33: Every goal and decision placed
 - Held by where the figure and the table place the parts, so nothing more is said: read in the
   place of the person the work is for (the first user, apart from the generator); made from what
   you decided and repository untouched (turn's hooks); seeing the work as it goes and how a
