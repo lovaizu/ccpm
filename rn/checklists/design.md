@@ -55,7 +55,13 @@ Does the design document follow this template, headings included?
 
 ## Structure
 
-<One figure: each one that takes part, its responsibility, what it cannot work without>
+<How the product divides into its parts and what joins them, in one sentence>
+
+<One figure: a box for each one that takes part, holding its name alone; an arrow from each to
+what it reads, writes, copies or calls, labelled with that relation>
+
+<A table of the parts inside the product: what kind of thing each is, where it is kept, where it
+runs>
 
 ## Principles
 ```
@@ -164,17 +170,48 @@ versions left it?
 
 Why: a break in backward compatibility shows first to the users who rely on it, after the release.
 
-### B-12: Who is responsible for what
+### B-12: Who does what to what
 
-Can the reader see in one figure every one that takes part in the product's work, the user and
-what is outside the product included, what each is responsible for, and what each cannot work
-without?
-
-What the figure cannot show is said beside it, and nothing it shows is said again.
+Can the reader tell, for each one that takes part in the product's work, the user and what is
+outside the product included, what it does and to what, from the figure's arrows alone?
 
 Why: a maintainer changing one part needs to know every other its change can reach and what the
-part rests on; pieced together from prose, it costs effort and goes wrong, and a part left
-untold is reached without anyone seeing it.
+part rests on; pieced together from prose, or read out of sentences inside the boxes, it costs
+effort and goes wrong, and a part left untold is reached without anyone seeing it.
+
+### B-34: What kind of thing each part is
+
+Can the reader tell, for each part inside the product, what kind of thing it is: a prompt an AI
+follows, a script, a hook, data, or a person?
+
+Why: a change is made differently to each kind, and the reader who cannot tell the kind cannot
+tell what a change to the part costs or how it is checked.
+
+### B-35: Where each part is kept
+
+Can the reader tell, for each part inside the product, where it is kept: shipped with the product,
+left in the user's repository, or held by a service such as GitHub?
+
+Why: what is shipped changes with a release, what is left with the user outlives it and is theirs,
+and what a service holds is reached only through it; a change that moves a part between these
+changes who owns it.
+
+### B-36: Where each part runs
+
+Can the reader tell, for each part inside the product that runs, where it runs: on the user's
+machine, in CI, or in both?
+
+Why: what runs in both must give the same result in both, and a part that runs only in one has no
+check in the other.
+
+### B-33: Each goal brought about by a part
+
+Can the reader tell, for each quality in Goals, which part or parts bring it about, from the
+figure and the table alone?
+
+Why: a quality no part brings about is promised and never built; a part that brings about none is
+built for nothing; and the maintainer changing a part learns from this which qualities the change
+can break.
 
 ### B-11: Principles to judge a change
 
@@ -201,6 +238,9 @@ and must be kept when the build would change it.
 Can the reader tell each decision that must hold from a detail that may change, because the
 document holds nothing decided anew with each build, such as steps, full definitions, values,
 settings and file names?
+
+Where a part is kept and where it runs are decisions, since who owns the part and where a change
+to it shows rest on them.
 
 Why: such details change with each rebuild, so a design that holds them must be rewritten with the
 code, and the reader can no longer tell a decision that must hold from a detail that may change.
