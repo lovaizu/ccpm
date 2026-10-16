@@ -13,41 +13,31 @@ Code is written in this order, each step the ground of the next:
 
 1. Check the inputs: the requirements, how it is made, how it is checked and the development rules
    are all there, and settle what the code needs. What is missing goes back to whoever gave it.
-2. Design it: how it is split into functions and modules, what each takes in and gives back, and
+2. Design it: split it into functions and modules by what each takes on, each taking on one thing
+   alone, with each piece of knowledge in one place; decide what each takes in and gives back, and
    where what comes from outside is checked. These are the units the tests are written for.
 3. Run the existing tests and see them pass, before changing anything.
 4. Build it test first: for each behavior, write a test, see it fail, write the least code that
-   passes it, then tidy it.
+   passes it, then tidy it back to the design, such as putting what is written twice in one place.
 5. Check it by the development rules and by how it is checked.
 
 ## Format
 
-### F-1: Shape of each test
+### F-1: Shape
 
-Does each test follow this shape, in the comment form of the code's language?
+Does the code follow this template, in the forms its language and its development rules set?
 
-```python
-def test_<what must happen, as one sentence>(self):
-    # Given: <the situation>
-    # When: <what is done>
-    # Then: <what must be so>
+```text
+<At the top of each module>  what the module does, and why it is there
+<For each function>          what it takes in, what it gives back, and when it stops,
+                             as types where the language has them, otherwise as a comment
+<For each test>              name: what must happen, as one sentence
+                             body: Given: <the situation>, When: <what is done>,
+                             Then: <what must be so>, each in plain words, as comments
 ```
 
-- The name says what must happen, so a failing test's name alone says what broke.
-- A test that tries the same behavior on several inputs keeps one Given, When and Then, and runs
-  each input as its own subtest, so each failing input is named.
-
-Why: the maintainer finds the intent of every test in the same place, and a tool listing the tests
-lists what the code must do.
-
-### F-2: One style in every file
-
-Do the code and its tests follow the layout style the project names, so that the tool that checks
-it, such as a linter's style rules or a formatter, run with the settings kept in the repository,
-reports nothing?
-
-Why: a style checked by a tool is the same in every file, so the maintainer reads each part without
-stopping at how it is written, and no review spends time on it.
+Why: the maintainer finds what each module and function is for, and what each test checks, in the
+same place in every file, written when the design and the tests were decided.
 
 ## Benefit
 
