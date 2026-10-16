@@ -799,6 +799,17 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
     12 minutes, each proposal through turn about 10; the one-dimensional quality is measured
     against 0.9.0 on the same session once a 0.9.0 run of it exists.
   - Every hook let every other call through; the python3 guard was the earlier one.
+- Decided by the user (2026-10-16), from the figures of both designs and feedback from another
+  product's design made against `design.md` 0.3.0 (a figure of thirteen boxes with sentences
+  inside, read as unreadable; the version that passed: one sentence of how the product divides, a
+  figure of names with the relation on each arrow, a table of each part's kind, place and where it
+  runs): Structure is the placement of responsibilities, the physical and the logical, and it
+  covers the goals; a goal brought about by a mechanism inside one part is given that part's name
+  alone. `design.md` changed so (`d0bc5d0`, `46995b9`): F-1's Structure template, B-12 (who does
+  what to what, from the arrows), B-34 to B-36 (kind, where kept, where it runs), B-33 (each goal's
+  parts by name), U-2 (where a part is kept is a decision). Both designs' decisions files
+  reshaped to it (`454441b`, `46995b9`), and both designs run again as `td7` and `rd6` in this
+  session's scratchpad. Decision 22, to report.
 - Where to resume (2026-10-16, current): the record's Goal, criteria and task purposes say rn, as
   decided on 2026-10-15; PR #61 and issues #53 and #54 say the same. Going: `hc1` (rn's hooks,
   second unit), `flow1` (the flow trial on rn-try); `d6` taken in. Then the
