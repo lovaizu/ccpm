@@ -19,7 +19,6 @@
   "goal_orientation": [{"use": "to stop a commit or a command that breaks the record's course where it happens, and to let every other call through"},
                        {"acceptance": "every test passes and holds a sentence of the content; every stop names the moment, what went wrong and why; nothing is stopped where no session is open; the checks are functions of values and their tests run in milliseconds; the first unit's checks still run as before"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/product/code.md"},
-                          {"checklist": "rn/checklists/product/hook.md"},
                           {"decisions": ".writ/decisions/rn/hooks-commits.decisions.md"},
                           {"reference": "rn/hooks/checks/steering_form.py"},
                           {"reference": "rn/hooks/checks/open_names.py"},

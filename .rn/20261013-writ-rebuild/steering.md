@@ -918,9 +918,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   tests in any language; fourteen items, the key points only, since what the steps already bring
   about is not asked again; running the tests and coverage by a command and on every push left to
   the development rules. Decision 33, to report.
+- Decided by the user (2026-10-16): no hook checklist; a hook is code, what it stops is its
+  requirement drawn from the prompt's steps, and Claude Code's hook interface is how it is made, so
+  `code.md` applies to it (`plugin.md` step 5d names it). The three behaviors only the hook
+  checklist held, judging only the calls it is for, stopping nothing outside its session, and
+  never holding the AI in a loop, go into rn's design as what its hooks must do, under #4.
+  Decision 34, to report.
 - Where to resume (2026-10-16): remake the other checklists with the user the same way, one point
   at a time, judging each item from the opening and one thing per item, key points only, in this
-  order: hook, plan, proposal, checklist (whether the Usability section stays is settled there). Then
+  order: plan, proposal, checklist (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts

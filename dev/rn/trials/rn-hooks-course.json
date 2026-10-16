@@ -14,7 +14,6 @@
   "goal_orientation": [{"use": "to keep the conductor on its course while the user is away: waiting for every agent, ending its turn only with something for the user, speaking in the language the user chose, and reading the record again after a compact"},
                        {"acceptance": "every test passes and holds a sentence of the content; every stop names the moment, what went wrong and why; nothing is stopped where no session is open; the checks are functions of values and their tests run in milliseconds; the first two units' checks still run as before"}],
   "retrieved_artifacts": [{"checklist": "rn/checklists/product/code.md"},
-                          {"checklist": "rn/checklists/product/hook.md"},
                           {"decisions": ".writ/decisions/rn/hooks-course.decisions.md"},
                           {"reference": "rn/hooks/checks"},
                           {"reference": "rn/hooks/shell.py"},

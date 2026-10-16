@@ -85,7 +85,7 @@ c. **Write each prompt, a skill or an agent, with `readability.md` and `prompt.m
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds
      the prompts' slips, not whether the plugin keeps its promises.
 
-d. **Write the hooks that check the process the prompts' steps set:** a step begun before the
+d. **Write the hooks, with `code.md` open, that check the process the prompts' steps set:** a step begun before the
    steps ahead of it are done, a step left out, an input not read or an output not written where
    its step says. Each stop says which step went wrong and what that step needs. Put each check in
    its own named file, with one entry file per hook event, as the official `hookify` does.

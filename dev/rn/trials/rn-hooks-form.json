@@ -50,9 +50,6 @@
       "checklist": "rn/checklists/product/code.md"
     },
     {
-      "checklist": "rn/checklists/product/hook.md"
-    },
-    {
       "decisions": ".writ/decisions/rn/hooks-form.decisions.md"
     },
     {
