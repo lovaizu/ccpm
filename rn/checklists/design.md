@@ -133,12 +133,11 @@ the one place that outlives a rebuild of the code.
 ### B-11: Decisions to judge a change
 
 Can the reader decide whether a change fits the design from its decisions, because each is said as
-what must hold, with the goals it serves?
+what must hold, not as what is done?
 
 Why: without the decisions, a change can be held only against the code as it stands, where every
-difference looks like a break; a decision tied to the goals it serves tells what breaks when it is
-not kept, so decisions can be weighed against each other, and one tied to nothing is kept out of
-habit.
+difference looks like a break; a decision said as what is done is broken by any other way of doing
+it, while one said as what must hold leaves every way that keeps it open.
 
 ### B-5: Non-goals
 
@@ -249,8 +248,8 @@ and must be kept when the build would change it.
 
 ### U-5: Each line a choice
 
-Can the reader take each decision, and each sentence under the figure, as one that a builder could
-have made otherwise, because what the goals would lose the other way is said under each decision?
+Can the reader take each decision as one that a builder could have made otherwise, because what the
+goals would lose the other way is said under it?
 
 A thing any builder would do anyway, such as reading the files a step needs, stays out.
 
