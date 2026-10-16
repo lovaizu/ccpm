@@ -971,8 +971,9 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   1. turn's design (`.writ/decisions/dev/turn/design.decisions.md`): one user story, five
      components and their interactions, the orchestrator as an agent definition, runs at once,
      agreed; the work made where it goes, no copy, nothing outside the repository, the roles'
-     answers as replies, no resume, agreed. Next: the must-be and better-the-more qualities for each benefit,
-     then Verification; then turn makes `dev/turn/design.md` from them.
+     answers as replies, no resume, the qualities and Verification, agreed. turn makes
+     `dev/turn/design.md` from them (run `tdes1` in the scratchpad, 5c99d74); judge it by the
+     purpose, finish by hand, take it in.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
