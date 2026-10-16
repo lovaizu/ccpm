@@ -26,8 +26,17 @@
   every item of the checklists, those the evaluator shows met and those it does not, and decides
   each item; the learner finds, for each item not met, how the work would meet it, and the
   orchestrator sends that back to the generator.
-- The orchestrator runs as a subagent, so the calling AI's context holds only what comes back; the
-  calling AI runs it in the background and waits, so it can still take the user's pause and stop
-  the run, by a message or by stopping the subagent. The four roles are the orchestrator's own
-  subagents. The progress a person sees is the subagent panel's. When a message reaches a running
-  subagent is tried when built.
+- The orchestrator is an agent definition, not a skill, so it runs as its own subagent and the
+  calling AI's context holds only what comes back; the calling AI starts it in the background and
+  waits, so it can still take the user's pause. The four roles are the orchestrator's own
+  subagents. The progress a person sees is the subagent panel's.
+- The calling AI stops a run by sending the orchestrator a message; the orchestrator can message
+  the calling AI before it ends. Tried (Claude Code 2.1.301, Opus): two orchestrators started at
+  once each started a worker, sent `main` a message that arrived while they ran, and took a stop
+  sent to their ID after their next tool call.
+- Several runs go at once, as rn starts them for work that can go in parallel: each run keeps its
+  own state, and the hooks tell runs apart by `agent_id`, since every agent of a conversation has
+  the same `session_id`. How a role's `agent_id` is tied to its orchestrator's run is tried when
+  built.
+- `claude -p` is not used: the docs say `--bare`, which reads no subscription login, will become
+  its default, and moving its use to separate credits was announced and only paused.

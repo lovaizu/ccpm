@@ -960,15 +960,27 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
   each thing a user does with the product, their reasons left to the UX's benefits; turn has five
   components, the evaluator and the learner kept for the builder's reasons; turn is for an AI
   alone, so the console, Esc and the start again from a person's words go. Decision 41, to report.
-- Where to resume (2026-10-16): through turn on the new checklists, turn's UX, README and design,
-  then rn's the same way (rn's grilling step is part of rn's design). For each, the decisions turn
-  takes in are made by asking the user one point at a time, in Japanese and plain words, without
-  item IDs, written in English to `.writ/decisions/<plugin>/<work>.decisions.md`. turn's UX
-  (`.writ/decisions/turn/UX.decisions.md`) has its user (the AI running a plugin's step, such as
-  rn's conductor), its scenes and its benefit agreed, and made by turn at `dev/turn/ux.md`; rn's
-  UX agreed the same way (decisions 39, 40) and being made by turn (`dev/rn/trials/rn-ux.json`).
-  Next, turn's README, rewritten for that user, and its design, then judging `hc4` and the rest of
-  #4.
+- Decided by the user (2026-10-16): turn's orchestrator is an agent definition run in the
+  background, messaging the calling AI, several runs at once (tried; see
+  `.writ/decisions/dev/turn/design.decisions.md`); not `claude -p`. The readme checklist is made in
+  two stages, from the UX before the design and from the design and repository once built.
+  Decision 42, to report.
+- Where to resume (2026-10-16, before a `/clear`): asking the user one point at a time, in
+  Japanese and plain words, without item IDs, each proposal drawn from the purpose and the UX goal,
+  not from rearranging sources, written in English to `.writ/decisions/<plugin>/<work>.decisions.md`.
+  1. turn's design (`.writ/decisions/dev/turn/design.decisions.md`): one user story, five
+     components and their interactions, the orchestrator as an agent definition, runs at once,
+     agreed. Next: the rest of the physical view (scripts in Python 3 and jq, hooks, `.turn/`;
+     the console and Esc go), then the must-be and better-the-more qualities for each benefit,
+     then Verification; then turn makes `dev/turn/design.md` from them.
+  2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
+     (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
+     take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
+     when learnings are put, when the pull request opens, whose checklists), and run again.
+  3. turn's README first stage (run `rd1`) not taken in; to discuss with the user: the CCS gave
+     `turn/calling-from-a-plugin.md` as a reference, so the example went into the CCS's parts; and
+     turn judges only met or not met, so the second stage's items count as unmet.
+  4. Then rn's README and design the same way, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
   verification document (fourth, after the third's nine points were settled: the stand-in's parts
   live in the trials and answer the languages, A4's trials run to their pass, A3's two stand-ins
