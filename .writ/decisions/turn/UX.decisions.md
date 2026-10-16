@@ -14,3 +14,7 @@
    meet it.
 4. It checks against the work both the items met and those not met, fixes the work itself, and
    ends.
+
+### B-3: The benefits
+- The AI gets the work already read through the eyes of a reader who did not write it, and made
+  again where that reading found it short, so it does not judge an item met on its own assumption.
