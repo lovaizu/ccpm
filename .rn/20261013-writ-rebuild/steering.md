@@ -897,13 +897,20 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
 - Decided by the user (2026-10-16): the readability checklist made again from its purpose
   (`172460d`..`bbc256e`): a reader, a person or an AI, takes a document in once from the top in a
   short time; thought through in the order the reader reads (opening, reading on, nothing not
-  needed, no question left); a shape drawn from those steps; one item for each step, B-9, B-17, B-4,
-  B-18, with the finer checks under each; Usability none. The former style.md's tables, heading
+  needed, no question left); a shape drawn from those steps; under the steps, one thing per item
+  (`ef2e2b4`, after four items each holding several things were found to break checklist B-4);
+  Usability none. The former style.md's tables, heading
   depth, parentheses, roles and code length came from no step and are left out. Every checklist
   still names `readability.md` in its opening, so it comes with each kind without being passed.
   Decision 31, to report.
+- Decided by the user (2026-10-16): the prompt checklist made again from its purpose
+  (`e640f10`..`ef2e2b4`): from it alone the AI can judge for itself, achieves the same purpose
+  however often it is run, and hands back what only the user can decide; worked out as purpose,
+  role, then steps; a shape whose every step names what it takes in, sending back what is missing,
+  and what it hands on, checked against the step's purpose; one thing per item, drawn from the
+  steps. Decision 32, to report.
 - Where to resume (2026-10-16): remake the other checklists with the user the same way, one point
-  at a time, in this order: prompt, code,
+  at a time, judging each item from the opening and one thing per item, in this order: code,
   hook, plan, proposal, checklist (whether the Usability section stays is settled there). Then
   rn's grilling step, turn's design, judging `hc4`, and the rest of #4.
 - Stopped at the usage limit (2026-10-16): the runs of rn's prompts (second), hooks (second) and
