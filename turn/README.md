@@ -35,7 +35,8 @@ such as what to do next and what is not settled, are empty, since no turn has ru
 }
 ```
 
-So the step's text for handing it over is short:
+How each part is written is on [turn's page for callers](calling-from-a-plugin.md), which your
+plugin's AI also reads when it writes a CCS. So the step's text for handing it over is short:
 
 ```
 Write this CCS to .tasks/readme.json, and start the `turn:up` agent in the background
