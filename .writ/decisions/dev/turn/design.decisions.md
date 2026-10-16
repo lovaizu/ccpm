@@ -160,6 +160,11 @@
 - Inside turn, each role is checked at both ends too, in its own forms, not the CCS: a hook lets a
   role start only with the input the orchestrator is to give it, and stops a role's reply that
   does not fill its form, every item answered and each line named in the work.
+- The orchestrator settles its own judgment of every item, from its own reading of the work,
+  before it sees the evaluator's: a script records it, and a hook lets the evaluator start only once
+  it is recorded. The script then names the items where the two differ, and the orchestrator
+  decides each of them against the first user's JSONL, what it opened and where it stopped. A
+  judgment made after another's is pulled toward it, which words alone do not prevent.
 - The kinds turn defines, all else the caller's:
   - `focal_entities`: `deliverable`, where the work goes; `receiver`, who reads it. The caller's.
   - `goal_orientation`: `use`, what the receiver reads it for; `acceptance`, when it is enough. The
