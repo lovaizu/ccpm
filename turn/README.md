@@ -50,9 +50,8 @@ each item in not_good, and put each question to the user.
 ```
 
 While the step waits, turn writes README.md, and turn's reader, an agent that did not write it,
-reads it as the
-developer meeting the project would, with CONTRIBUTING.md beside it. Where that reading finds no
-Good for an item, turn makes README.md again and reads it once more. The user sees turn's agents
+reads it as the developer meeting the project would, with CONTRIBUTING.md beside it. Where that
+reading finds no Good for an item, turn makes README.md again and reads it once more. The user sees turn's agents
 at work in the panel below the prompt input.
 
 When turn returns, README.md is in place, and the result gives each item's Good and its lines. Any
