@@ -165,6 +165,11 @@
   it is recorded. The script then names the items where the two differ, and the orchestrator
   decides each of them against the first user's JSONL, what it opened and where it stopped. A
   judgment made after another's is pulled toward it, which words alone do not prevent.
+- The learner looks at every item, met and not, in the work and in the JSONL of every role the run
+  started: for an item not met, how the work would meet it; for an item met, what in the work meets
+  it, so that making again keeps it. What fell short often lies in what a role did, which only the
+  JSONL shows, and an item met is broken by a remake that does not know what holds it. What it
+  learns is used within the run.
 - The kinds turn defines, all else the caller's:
   - `focal_entities`: `deliverable`, where the work goes; `receiver`, who reads it. The caller's.
   - `goal_orientation`: `use`, what the receiver reads it for; `acceptance`, when it is enough. The

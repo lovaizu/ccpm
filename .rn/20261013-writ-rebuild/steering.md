@@ -1018,6 +1018,8 @@ Serves: A1, A2, M1, M2, M3
 
 Progress:
 
+- To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
+  decide, in #54's section "From building turn: how rn asks the user to decide".
 - plugin.md step 3 (2026-10-14): a fresh reader read writ's README and the design once.
   - Decided by the user: the README's example asks the license before writing, as writ settles
     what the checklists need before turn is called; a question that shows up only in the writing
