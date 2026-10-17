@@ -7,7 +7,7 @@
   the work and a new CCS, as one turn of ACC. Reading, judging and making again are how the work is made, decided in the
   components.
 
-### B-18: Every logical component the stories need
+### B-17: Every logical component the stories need
 - Five components: the generator, the first user, the evaluator, the learner and the orchestrator.
   The evaluator and the learner are there for the builder's reasons, so that the story is achieved
   reliably: the orchestrator alone did not settle its judgments, and the generator alone patched
@@ -16,7 +16,7 @@
   watching, and nothing is stopped or said again by one, so the progress shown on the console, the
   stop with Esc and the start again from a person's words go.
 
-### B-19: The stories achieved by interactions
+### B-18: The stories achieved by interactions
 - The generator makes the work and names, as its own check, the lines it meant to meet each item;
   that is its claim, not a judgment.
 - The orchestrator does not take the claim on trust: it reads the work against every item of the
@@ -88,7 +88,7 @@
 ### B-22: What each component depends on outside
 - Claude Code, python3 3.9 or later, jq and git.
 
-### B-23: Checks built up unit by unit
+### B-23: Each unit checked, and how far
 - The scripts: unittest fed what the calling AI hands over, a case each stops and one each lets
   through, every line and branch counted in CI on every push.
 - The hook checks: unittest fed what Claude Code hands each hook, a step stopped where it must be
@@ -102,7 +102,7 @@
   story is achieved when the work comes back where it goes with an answer and lines for every
   item, each answer checked by reading the work.
 
-### B-26: Key results, measured
+### B-25: Key results measured
 - From every trial, measured and compared with the targets in turn's UX and the last version: the
   items the stand-in fixes in the work after it comes back, counted from its own check in its
   JSONL; the time from the call to the return, from the JSONL's timestamps.

@@ -54,23 +54,21 @@ component it acts on, labelled with what it does>
 ### Physical view
 
 <Where each unit is placed, how it is made, the components it realizes and what it depends on
-outside the product, in the form that shows it most plainly, such as the directory tree of each
-place where the units are files>
+outside the product>
 
 ## Verification
 
 ### Units
 
 - <A unit>: <what is checked of it, in one sentence>
-  - <How and where that is checked, in one sentence>
+  - <How and where that is checked, and the bar it must pass>
 
 ### Acceptance
 
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
 - <A key result's ID>: <what is measured, in one sentence>
-  - <How and where it is measured, and compared with its target and the last version, in one
-    sentence>
+  - <How and where it is measured, and compared with its target and the last version>
 ```
 
 Why: the builder reads the user stories, then the components that achieve them and how they are
@@ -78,20 +76,20 @@ realized, then how the units and the whole are checked, each the ground of the n
 
 ## Benefit
 
-### B-18: Every logical component the stories need
+### B-17: Every logical component the stories need
 
 Is every logical component the stories need there?
 
 Why: a component left out is found only when a story it serves is built, and the architecture
 must change then.
 
-### B-19: The stories achieved by interactions
+### B-18: The stories achieved by interactions
 
 Do the interactions between the logical components achieve every user story?
 
 Why: components that each do their part achieve no story unless their interactions do.
 
-### B-25: No technology before it is chosen
+### B-19: No technology before it is chosen
 
 Are the user stories and the logical components free of technology?
 
@@ -119,13 +117,12 @@ Can the reader tell what each component depends on outside the product?
 
 Why: what the product depends on is where it breaks for the user first.
 
-### B-23: Checks built up unit by unit
+### B-23: Each unit checked, and how far
 
-Can the reader tell what is checked of each physical unit and how far, said plainly unless a
-reason is needed, and how those checks build up to the whole?
+Can the reader tell what is checked of each physical unit, and the bar it must pass?
 
-Why: the whole is built up from units checked one by one, and a unit left unchecked breaks the
-whole where no check shows it.
+Why: the whole is built from units checked one by one; a unit left unchecked, or checked to no
+stated bar, breaks the whole where no check shows it.
 
 ### B-24: The whole checked
 
@@ -134,10 +131,10 @@ Can the reader tell how the whole is checked to have achieved each user story?
 Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
-### B-26: Key results, measured
+### B-25: Key results measured
 
-Can the reader tell, for each key result of the UX, how it is measured and how close it comes to its
-target, compared with the last version?
+Can the reader tell, for each key result of the UX, how it is measured and compared with its target
+and the last version?
 
-Why: a key result is neither achieved nor missed but come close to, so no check of a story shows it;
-left unmeasured, it grows worse with each change without anyone seeing.
+Why: a key result is not met or missed but come close to, so no check of a story shows it; left
+unmeasured, it grows worse with each change without anyone seeing.

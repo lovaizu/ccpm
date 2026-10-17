@@ -6,14 +6,14 @@ version: 0.1.0
 # UX
 
 A UX is read by whoever builds the product. From it they know the experience the product must give
-its users, and build the product to it.
+its users and how close each version must come to it, and build the product to it.
 
 The UX is a user's experience of using the product until they achieve their goal. Working out the
 UX is making that experience clear, in this order:
 
 1. Decide the users and the goal each wants to achieve.
-2. Decide the key results that show how close the product brings each goal: a result measured,
-   with a target set high, and why reaching it shows the goal achieved.
+2. Decide, for each goal, its key results: what is measured to show how close the product brings
+   the user to it, each with a target set high.
 3. Draw, as scenes, what the user does and gets back until they achieve the goal.
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
@@ -25,7 +25,7 @@ answered by the scenes.
 
 ### F-1: Shape
 
-Does the UX follow this template, headings included?
+Does the UX follow this template, headings and IDs included?
 
 ```markdown
 # <Product name> UX
@@ -38,9 +38,9 @@ Does the UX follow this template, headings included?
 
 ## Key results
 
-- KR1.1: <A result measured for G1, and its target>
+- KR1.1: <What is measured for G1, and its target>
 
-  <Why reaching it shows the goal achieved>
+  <Why reaching it shows G1 achieved>
 
 ## Scenes
 
@@ -52,8 +52,8 @@ Does the UX follow this template, headings included?
 ```
 
 Why: the builder reads who the users are and what they want, how close the product must bring
-them, then how they get it, then what they
-gain, each the ground of the next.
+them, how they get there, then what they gain, each the ground of the next; the design names each
+goal and key result by its ID.
 
 ## Benefit
 
@@ -64,26 +64,38 @@ Can the reader tell the users and the goal each wants to achieve?
 Why: everything else in the UX is the experience of these users reaching these goals; without them,
 the builder cannot tell whom the product is for or when it has done its work.
 
-### B-4: The key results
+### B-2: Results measured
 
-Can the reader tell, for each goal, the results measured to show how close it is reached, each a
-result rather than work done or a thing made, with a target set high and why reaching it shows the
-goal achieved?
+Can the reader tell, for each goal, what is measured to show how close the product brings the user
+to it?
 
-Each goal and key result has an ID, such as `G1` and `KR1.1`, which the design names.
+Look for: work done or a thing made in place of a result the user sees.
 
 Why: what a document or a non-functional part gives is a matter of degree, so each version is judged
-by how close it came; a target within easy reach leaves nothing to aim at, and a result without its
-why can be reached while the goal is not.
+by how close it came; a count of work done grows while the user gains nothing.
 
-### B-2: The scenes to the goal
+### B-3: Targets set high
+
+Is each key result's target one the product is not sure to reach?
+
+Why: a target within easy reach is met and leaves nothing to aim at, so the versions after it stop
+coming closer.
+
+### B-4: Why each key result
+
+Can the reader tell, for each key result, why reaching it shows its goal achieved?
+
+Why: a result without its why can be reached while the goal is not, and no one can tell whether it
+is the right one to measure.
+
+### B-5: The scenes to the goal
 
 Can the reader tell, as scenes, what the user does and gets back until they achieve the goal?
 
 Why: the builder builds what the scenes show the user doing and getting; a step no scene shows is
 built by guess, or not at all.
 
-### B-3: The benefits
+### B-6: The benefits
 
 Can the reader tell what the user gains when they achieve the goal with this product?
 
