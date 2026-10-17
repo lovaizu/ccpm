@@ -78,10 +78,6 @@ turn/                      the plugin, installed by Claude Code
 └── hooks/
     ├── hooks.json         one entry per event
     └── *.py               one check each <Python 3>
-
-<the user's repository>
-├── <the CCS files>        where the calling AI puts them <JSON>
-└── <the work>             where the CCS's deliverable says
 ```
 
 - turn runs on Claude Code, python3 3.9 or later, jq and git.
