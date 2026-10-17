@@ -4,13 +4,13 @@
 
 ### B-1: The stories the scenes rest on
 - One story: as the calling AI, I want to hand turn the path of a CCS and get the work back, with
-  what the turn found of each item. Reading, judging and making again are how the work is made,
+  each item's Good and the lines that give it. Reading, judging and making again are how the work is made,
   decided in the components.
 - ACC and the CCS are rn's, closed inside it. In the paper, the compressor that makes the state is a
   model apart from the agent that acts on it, and the agent's output enters memory only through the
   next compression, after it is checked; so the compressor, the CCS's definition and the store, the
   repository, are the caller's, and turn is the agent that acts: it reads the CCS it is handed,
-  follows it and writes its result where it says.
+  follows it and writes its result where the call says.
 - turn defines nothing of the CCS. A CCS is JSON: parts, each a list of entries, each entry a kind
   and its value. The caller hands turn, as JSON, the CCS's path, the kinds it uses for what turn
   takes from the task's state, and where turn writes its result:
@@ -68,11 +68,10 @@
 - The orchestrator does not take the claim on trust: it reads the work against every item of the
   checklists and sends back what it can see falls short before the first user reads, so the costly
   reading is not spent on it.
-- The first user reads the work in the receiver's place; the evaluator shows from that reading the
-  items met, with their lines; the orchestrator does not take those on trust either: it reads the work against
-  every item of the checklists, those the evaluator shows met and those it does not, and decides
-  each item; the learner finds, for each item not met, how the work would meet it, and the
-  orchestrator sends that back to the generator.
+- The first user uses the work in the receiver's place; the evaluator shows from that reading the
+  Good the work gives, with its lines; the orchestrator does not take those on trust either: it
+  finds each item's Good in the work itself and decides each item; the learner finds what makes
+  the Good, and the orchestrator hands that to the generator.
 - The orchestrator is an agent definition, not a skill, so it runs as its own subagent and the
   calling AI's context holds only what comes back; the calling AI starts it in the background and
   waits, so it can still take the user's pause. The four roles are the orchestrator's own
@@ -138,14 +137,14 @@
   JSONL; the time from the call to the return, from the JSONL's timestamps.
 ### Inside turn
 - Each role is checked at both ends, in its own form: a hook lets a role start only with the input the orchestrator is to give it, and stops a role's reply that
-  does not fill its form, every item answered and each line named in the work.
-- The orchestrator settles its own judgment of every item, from its own reading of the work,
+  does not fill its form, each line named in the work.
+- The orchestrator settles its own finding of every item's Good, from its own reading of the work,
   before it sees the evaluator's: a script records it, and a hook lets the evaluator start only once
   it is recorded. The script then names the items where the two differ, and the orchestrator
   decides each of them against the first user's JSONL, what it opened and where it stopped. A
   judgment made after another's is pulled toward it, which words alone do not prevent.
-- The learner looks at every item, met and not, in the work and in the JSONL of every role the run
-  started: for an item not met, how the work would meet it; for an item met, what in the work meets
-  it, so that making again keeps it. What fell short often lies in what a role did, which only the
-  JSONL shows, and an item met is broken by a remake that does not know what holds it. What it
-  learns is used within the run.
+- The learner looks at every item, with Good and without, in the work and in the JSONL of every
+  role the run started: for an item without Good, how the work would give it; for an item with
+  Good, what in the work gives it, so that making again keeps it. What fell short often lies in what
+  a role did, which only the JSONL shows, and a Good is lost by a remake that does not know what
+  gives it. What it learns is used within the run.

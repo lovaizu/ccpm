@@ -1,42 +1,38 @@
 # What turn's README says
 
 The README is read by people deciding whether to use turn, so it speaks to anyone who has AI make
-documents or code; its example is the UX's scene, a plugin's step calling turn.
+documents or code in the steps of their own plugin; its example is the UX's scene, a plugin's step
+calling turn.
 
 ## readme
 
 ### B-2: Who it is for
-- Anyone who has AI make documents, code and the like.
+- Anyone who has AI make documents, code and the like in the steps of their own plugin.
 
 ### B-1: What they gain
-- Each call is one turn of ACC (https://arxiv.org/abs/2601.11653): a step hands turn a CCS and goes
-  on from the new CCS turn returns, instead of the whole conversation.
-- turn is a Claude Code plugin: what it makes comes back meeting your checklist, since a reader that
-  did not make it reads it in the place of the person it is for, and what falls short is made again
-  before it comes back.
+- turn is a Claude Code plugin: what it makes comes back with the Good each item of your checklist
+  finds in it, since a reader that did not make it reads it in the place of the person it is for,
+  and what gives no Good is made again before it comes back.
 
 ### B-4: Using it on their own work
 - The example is a small plugin of the reader's own kind with a step that writes a README: in it the
-  AI asks the user, one point at a time, what the checklist's items need, writes down what is
-  decided, calls turn, gets back the work with each item's judgment and the lines that meet it,
-  checks those against the work, fixes it and ends.
-- It shows, from start to result: the step's text that calls turn with a CCS, kept short, and the
-  CCS's parts that say the task (what is made, who reads it and for what, the checklists and
-  decisions, the rules such as the language), those that say how the task stands after a turn
-  empty since no turn has run, their writing left to the callers' page, linked right after the CCS; that while the step waits, a reader other than the one that made the
-  work reads it in its receiver's place and what falls short is made again, which the person sees
-  in the panel below the prompt input; and the CCS that comes back, with what to do next, each
-  item's judgment and lines and the questions for the user, then the AI checking, fixing and
+  AI asks the user, one point at a time, what the checklist's items need, writes what is decided
+  into its CCS, calls turn, gets back the work and the result, checks each Good against its lines,
+  fixes and ends.
+- It shows, from start to result: the step's CCS, as an example of the step's own, with ACC named
+  in a few words as where a CCS comes from; the call, the CCS's path, the kinds turn takes from it
+  and where the result goes; the step's text that starts turn, kept short; that while the step
+  waits, a reader other than the one that made the work reads it in its receiver's place and what
+  gives no Good is made again, which the person sees in the panel below the prompt input; and the
+  result, each item's Good and lines and a question for the user, then the AI checking, fixing and
   ending the step.
 
 ### B-3: Why this one
-- That the plugin's AI, carrying only the CCS, does not swell or drift is not given here: it shows
-  only over many turns, so it is the caller's benefit, as in turn's UX.
 - When the AI that made a work checks it, it knows what each line means and misses where a newcomer
   stops; in turn a reader that did not make it reads it with only what the person it is for opens.
-- turn makes the work from the decisions and checklists it is given alone and opens nothing else, so
-  the work does not stray from what was decided.
-- An item counts as met only where lines of the work give it, and those lines are named, so a
-  judgment can be checked instead of taken on trust.
-- What falls short is made again from what the work should give, not patched where it showed, and
-  every item already met stays met.
+- turn makes the work from the CCS and the files it names alone and opens nothing else, so the work
+  does not stray from what was decided.
+- Each Good comes with the lines that give it, so it can be checked instead of taken on trust.
+- turn takes the CCS the step already keeps as it is, naming none of its parts or kinds itself.
+- What gives no Good is made again from what the receiver should get, not patched where it showed,
+  and what each Good rests on is kept.
