@@ -49,10 +49,12 @@
 - The console and the stop with Esc go, as turn deals with no person.
 
 ### B-21: Where each component is placed
-- The CCS's specification is in `turn/skills/ccs/references/ccs.md`, and the `turn:ccs` skill's
-  SKILL.md says only to read it when writing or reading a CCS, as `plugin-dev`'s
-  `skill-development` keeps an API's specification in a skill's `references/` and SKILL.md lean.
-  A skill is called by name from any installed plugin, and a plugin built on turn names it in
+- The `turn:acc` skill, `turn/skills/acc/SKILL.md`, holds in its body how ACC goes for the calling
+  AI (it hands turn a CCS, carries only the new CCS, and hands that on to the next turn) and the
+  CCS's specification. The calling AI uses the CCS well only knowing the ACC it serves, and the
+  swelling and drift ACC prevents are the caller's to prevent. In the body, not in `references/`:
+  `references/` holds what would make the body long, and this is short; a SKILL.md that only says
+  to read a file adds a step and gives nothing. A skill is called by name from any installed plugin, and a plugin built on turn names it in
   `dependencies`, so the calling AI reaches the specification wherever plugins are installed.
 - The work is made where it goes, in the user's repository, not in a copy. A copy was there so
   that a person's stop with Esc left where the work goes as it was; turn has no such stop now. A run
@@ -145,7 +147,7 @@
   stand-in's JSONL; each compared with the last version.
 
 ### The CCS
-- turn's CCS definition, `turn/skills/ccs/references/ccs.md`, takes ACC's nine parts with the
+- turn's CCS definition, in `turn/skills/acc/SKILL.md`, takes ACC's nine parts with the
   paper's names and meanings, and defines inside them only the kinds and values turn reads and
   writes; every other kind is the caller's to define.
 - The new CCS is the state after the turn: the task's parts (what is made, for whom and what for,

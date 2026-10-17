@@ -35,8 +35,9 @@ such as what to do next and what is not settled, are empty, since no turn has ru
 }
 ```
 
-How each part is written is in [the CCS's specification](skills/ccs/references/ccs.md), which your
-plugin's AI also reads, through the `turn:ccs` skill, when it writes a CCS. So the step's text for handing it over is short:
+How ACC goes for your plugin's AI and how each part is written are in the
+[`turn:acc` skill](skills/acc/SKILL.md), which your plugin's AI also reads when it writes a CCS. So
+the step's text for handing it over is short:
 
 ```
 Write this CCS to .tasks/readme.json, and start the `turn:up` agent in the background
