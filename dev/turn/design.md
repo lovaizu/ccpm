@@ -145,8 +145,11 @@ turn/                      the plugin, installed by Claude Code
 ### Units
 
 - The scripts and the hooks: each check stops what it must and lets through what it must.
-  - unittest in `dev/turn/tests/`; lines and branches 100% covered; Ruff's lint and format and
-    Pyrefly's types for Python 3.9 passed; all by [`dev/check.sh`](../check.sh) in CI on every push.
+  - Run by [`dev/check.sh`](../check.sh) in CI on every push:
+    - unittest in `dev/turn/tests/`
+    - Lines and branches 100% covered
+    - Ruff's lint and format
+    - Pyrefly's types for Python 3.9
 - The orchestrator and the four roles: each step done in order, with its inputs, giving its output.
   - Run on its own on a small task, on Opus 5.5, and judged from its JSONL.
 
