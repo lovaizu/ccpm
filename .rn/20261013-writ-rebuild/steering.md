@@ -980,7 +980,9 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      orchestrator judges before the evaluator; the learner sees every item and every role's JSONL;
      the `turn:acc` skill holds ACC's intent and the CCS spec in its body; a role is tied to its run
      by `parentAgentId` (tried); trials in `lovaizu/playground`. The design was rewritten to these
-     (`80c45dd`), waiting for the user's agreement; then plugin.md step 3.
+     (`80c45dd`), and the UX and design checklists rewritten from their purpose; the user agreed to
+     the design (2026-10-17, at `dbaa062`). Now plugin.md step 3: a first user each for the README
+     and the design, read once; settle each finding at its decision or principle; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
