@@ -2,8 +2,8 @@
 
 ## design
 
-### B-29: The user stories
-- One story, serving both key results: as the calling AI, I want to hand turn a CCS and get back
+### The user stories
+- One story: as the calling AI, I want to hand turn a CCS and get back
   the work and a new CCS, as one turn of ACC. Reading, judging and making again are how the work is made, decided in the
   components.
 

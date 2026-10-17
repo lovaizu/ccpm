@@ -78,13 +78,6 @@ realized, then how the units and the whole are checked, each the ground of the n
 
 ## Benefit
 
-### B-29: Each story serving a key result
-
-Does each user story serve one or more of the UX's key results?
-
-Why: a story that serves none is something the user does for nothing, and the builder builds and
-keeps it for nothing.
-
 ### B-18: Every logical component the stories need
 
 Is every logical component the stories need there?
