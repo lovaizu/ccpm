@@ -49,9 +49,13 @@
 - The console and the stop with Esc go, as turn deals with no person.
 
 ### B-21: Where each component is placed
-- The `turn:acc` skill, `turn/skills/acc/SKILL.md`, holds in its body how ACC goes for the calling
-  AI (it hands turn a CCS, carries only the new CCS, and hands that on to the next turn) and the
-  CCS's specification. The calling AI uses the CCS well only knowing the ACC it serves, and the
+- The `turn:acc` skill, `turn/skills/acc/SKILL.md`, holds in its body ACC's intent and the CCS's
+  specification. The intent first: an AI that carries the whole conversation through a long task
+  holds more each turn and loses its goal and rules under it, so ACC keeps instead one small state,
+  made anew each turn from what still matters, and decides from that alone. Knowing why, the calling
+  AI judges what to write into a CCS and what to leave out, and carries the new CCS, not the run;
+  steps alone it would follow by rote and fill the CCS with everything. The calling AI uses the CCS
+  well only knowing the ACC it serves, and the
   swelling and drift ACC prevents are the caller's to prevent. In the body, not in `references/`:
   `references/` holds what would make the body long, and this is short; a SKILL.md that only says
   to read a file adds a step and gives nothing. A skill is called by name from any installed plugin, and a plugin built on turn names it in

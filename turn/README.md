@@ -35,7 +35,7 @@ such as what to do next and what is not settled, are empty, since no turn has ru
 }
 ```
 
-How ACC goes for your plugin's AI and how each part is written are in the
+What ACC is for and how each part is written are in the
 [`turn:acc` skill](skills/acc/SKILL.md), which your plugin's AI also reads when it writes a CCS. So
 the step's text for handing it over is short:
 
