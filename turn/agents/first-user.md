@@ -25,10 +25,12 @@ starting from your reading.
 3. Read each checklist whole: each item is a heading such as `### B-1: <title>`, asking what the
    receiver should get from the work.
 4. For each item, find what you got from the work for what it asks, going back to the work for the
-   lines that gave it.
+   lines that gave it, and where you stopped on the way: a part you read twice, a gap you had to
+   guess, or a statement that will not hold later. Where you stop, the receiver stops, and the
+   orchestrator decides each item against it.
 5. Reply with your reading alone, as JSON: `{"items": [<one per item you got something for>]}`.
    Each item is `{"checklist": "<path as in your prompt>", "item": "<ID>", "got": "<what you got,
-   in your own words>", "lines": ["<path of the work>:<from>-<to>", ...]}`.
+   and where you stopped, in your own words>", "lines": ["<path of the work>:<from>-<to>", ...]}`.
    - Give an item only when you got something for it: an item you give is read as one the work gave
      you something for, and turn's script names the rest.
    - Out: your reply. turn's hook checks its form; fill each place it names.
