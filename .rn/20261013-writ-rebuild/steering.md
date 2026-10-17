@@ -1001,9 +1001,9 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      nothing, in that order, by each checklist's steps, read item by item, no further first
      reading; the UX's benefits are the three agreed (no "the CCS as it is"); a checklist lists what
      the receiver should get, one item each, and a Good is the judgment that the receiver gets what
-     an item asks, with its lines, each said where first met. Done (2026-10-17). Next: the user
-     agrees the README and the design, shown in Japanese one at a time; then step 4. Before: step 3 again, the first users asked whether they received the
-     Good; then step 4.
+     an item asks, with its lines, each said where first met. Done (2026-10-17), and the user
+     agreed the UX, the README and the design (2026-10-17, at `aafcd41`). Next: step 4, list the
+     units, then build each unit and try it (steps 5-7) without asking, reporting by unit.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
