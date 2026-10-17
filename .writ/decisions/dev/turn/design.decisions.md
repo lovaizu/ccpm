@@ -50,9 +50,14 @@
 
 ### B-21: Where each component is placed
 - The `turn:acc` skill, `turn/skills/acc/SKILL.md`, holds in its body ACC's intent and the CCS's
-  specification. The intent first: an AI that carries the whole conversation through a long task
-  holds more each turn and loses its goal and rules under it, so ACC keeps instead one small state,
-  made anew each turn from what still matters, and decides from that alone. Knowing why, the calling
+  specification. The intent first, drawn from the paper (linked as its source, not to be read at run
+  time): an AI that replays the whole conversation through a long task holds more each turn, attends
+  less to what matters, drifts from its constraints and carries forward assumptions no one checked;
+  so ACC keeps one small state, the CCS, and decides from it alone. Each turn the CCS is made anew
+  and replaces the last, so it does not grow; it holds only what is confirmed and what decisions
+  need: the goal, the constraints, which stay as they are unless changed on purpose, what changed,
+  what is not settled, said openly, and what comes next; materials stay outside it as references,
+  not their contents copied in; and its fixed shape is checked without asking a model. Knowing why, the calling
   AI judges what to write into a CCS and what to leave out, and carries the new CCS, not the run;
   steps alone it would follow by rote and fill the CCS with everything. The calling AI uses the CCS
   well only knowing the ACC it serves, and the
