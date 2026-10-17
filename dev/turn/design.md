@@ -6,7 +6,7 @@ from. The goal and the key results it is built to reach are in [turn's UX](ux.md
 
 ## User stories
 
-- As the calling AI, I want to hand turn a CCS and get back the work and a new CCS.
+- As the calling AI, I want to hand turn a CCS and get back the work and a new CCS. (KR1.1, KR1.2)
 
   Reading, judging and making again are how turn makes the work, and lie in its components.
 
@@ -162,9 +162,9 @@ judged from the JSONL of every agent it started and from the work.
 - The story: the work comes back where it goes, with an answer and lines for every item, and the
   stand-in takes its next move from the new CCS alone.
   - Each answer is checked by reading the work.
-- The items the calling AI fixes after the work comes back.
+- KR1.1: the items the calling AI fixes after the work comes back.
   - Counted from the stand-in's own check in its JSONL, and compared with the target of none and
     with the last version.
-- The time from the call to the work coming back.
+- KR1.2: the time from the call to the work coming back.
   - Taken from the JSONL's timestamps for a README-sized work, and compared with the target of three
     minutes and with the last version.

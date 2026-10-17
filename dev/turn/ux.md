@@ -8,18 +8,18 @@ Build and change every part of turn so that this AI gets that on every run.
 
 ## Users and goals
 
-- The calling AI, the AI that runs a step of a plugin and calls turn from it, wants the work that
+- G1: The calling AI, the AI that runs a step of a plugin and calls turn from it, wants the work that
   step makes to come back meeting the step's checklist on every run.
 
   rn's conductor, the AI that runs the steps of the rn plugin, is one such AI.
 
 ## Key results
 
-- The items of the checklist the calling AI fixes in the work after it comes back: none.
+- KR1.1: The items of the checklist the calling AI fixes in the work after it comes back: none.
 
   An item the work meets needs no fixing, and the calling AI counts what it fixes from its own
   check, not from turn's judgment of itself.
-- The time from calling turn to the work coming back, for a work the size of one README: three
+- KR1.2: The time from calling turn to the work coming back, for a work the size of one README: three
   minutes.
 
   The calling AI cannot go on with its step while it waits, so the person using the plugin waits

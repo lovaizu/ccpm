@@ -40,7 +40,7 @@ Does the design document follow this template, headings included?
 
 ## User stories
 
-- As <the user>, I want <what they do with the product>.
+- As <the user>, I want <what they do with the product>. (<the IDs of the key results it serves>)
 
 ## Architecture
 
@@ -68,7 +68,7 @@ place where the units are files>
 
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
-- <A key result of the UX>: <what is measured, in one sentence>
+- <A key result's ID>: <what is measured, in one sentence>
   - <How and where it is measured, and compared with its target and the last version, in one
     sentence>
 ```

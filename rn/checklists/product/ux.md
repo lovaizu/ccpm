@@ -34,11 +34,11 @@ Does the UX follow this template, headings included?
 
 ## Users and goals
 
-- <A user, and the goal they want to achieve>
+- G1: <A user, and the goal they want to achieve>
 
 ## Key results
 
-- <A result measured, and its target>
+- KR1.1: <A result measured for G1, and its target>
 
   <Why reaching it shows the goal achieved>
 
@@ -69,6 +69,8 @@ the builder cannot tell whom the product is for or when it has done its work.
 Can the reader tell, for each goal, the results measured to show how close it is reached, each a
 result rather than work done or a thing made, with a target set high and why reaching it shows the
 goal achieved?
+
+Each goal and key result has an ID, such as `G1` and `KR1.1`, which the design names.
 
 Why: what a document or a non-functional part gives is a matter of degree, so each version is judged
 by how close it came; a target within easy reach leaves nothing to aim at, and a result without its
