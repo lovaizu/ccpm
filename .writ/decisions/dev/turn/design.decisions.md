@@ -12,11 +12,16 @@
   repository, are the caller's, and turn is the agent that acts: it reads the CCS it is handed,
   follows it and writes its result where it says.
 - turn defines nothing of the CCS. A CCS is JSON: parts, each a list of entries, each entry a kind
-  and its value. The caller hands turn, as JSON, the CCS's path and the kinds it uses for the three
-  things turn's scripts and hooks must find without an AI:
-  `{"ccs": "<path>", "kinds": {"work": "<kind>", "checklist": "<kind>", "result": "<kind>"}}`.
-  turn reads each from the CCS by its kind, every entry of it, and the rest whole. The values stay
-  in the CCS alone, so the call and the CCS cannot differ; where the result goes is the caller's.
+  and its value. The caller hands turn, as JSON, the CCS's path, the kinds it uses for what turn
+  takes from the task's state, and where turn writes its result:
+  `{"ccs": "<path>", "kinds": {"work": "<kind>", "checklist": "<kind>", "reader": "<kind>",
+  "use": "<kind>", "opens": "<kind>"}, "result": "<path>"}`. The kinds are the work, the
+  checklists, who reads the work, what they read it for and what they open with it; a script takes
+  every entry of each from the CCS and hands it to the roles that need it, so no AI copies it, and
+  the hooks bound what each role reads by them. The generator reads the CCS whole. The values stay
+  in the CCS alone, so the call and the CCS cannot differ. The result is not a kind: it is where
+  this call's answer goes, not the task's state, which in ACC takes in the agent's output only at
+  the next compression. It is one file, as one call gives one answer for the whole work.
 - turn's result is where the work was written, each item's Good with its lines, the questions only
   the user can decide, and the items without Good, each with what the receiver gets once it is Good.
   A script writes it as a file and checks its shape as it writes: a reply would be copied into a

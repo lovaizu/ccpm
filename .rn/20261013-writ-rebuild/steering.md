@@ -986,8 +986,10 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      and the CCS are rn's, closed inside it, and turn is the agent that acts, reading the CCS
      it is handed by path and writing its result as a file where it says (in the decisions).
      Decided by the user (2026-10-17): turn defines nothing of the CCS; the caller hands, as JSON,
-     the CCS's path and the kinds it uses for where the work goes, the checklists and where the
-     result goes. Next: turn's UX, README and design
+     the CCS's path, the kinds of the work, the checklists, the reader, the use and what the reader
+     opens, and the result's path. Next, one point at a time: each role's input and reply between
+     it and the orchestrator, as JSON (a draft was put: the generator gets the CCS, the others what
+     a script takes from it by kind); then turn's UX, README and design
      rewritten once to these; then step 3 again, the first users asked whether they received the
      Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
