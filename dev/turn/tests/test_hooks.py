@@ -304,6 +304,33 @@ class TestReads(HookTest):
         )
         self.stops(pretooluse, self.tool("turn:generator", "Grep", pattern="x", path="secret"))
 
+    def test_a_command_naming_only_what_the_run_was_given_passes(self):
+        # Given: a generator of a run
+        # When: it runs a command naming the work and a file the CCS names, from the repository's
+        # top, or one whose quoting does not close
+        # Then: it goes through
+        for command in (
+            f"cd {self.repo} && cat -n README.md notes/readme.decisions.md",
+            "python3 - <<'EOF'\nprint('x)\nEOF",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_the_orchestrator_recording_its_reading_passes(self):
+        # Given: an orchestrator whose run is going
+        # When: it records its reading with the script, naming where the result goes
+        # Then: it goes through
+        self.given_prompt(ID, json.dumps(CALL))
+        command = f"python3 {TURN}/scripts/turn.py read {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
+    def test_a_command_naming_a_file_the_run_was_not_given_stops(self):
+        # Given: a generator of a run
+        # When: it runs a command that reads a file of the repository the run was not given
+        # Then: it is stopped, naming what it may read
+        event = self.tool("turn:generator", "Bash", command="cat README.md secret/notes.md")
+        self.stops(pretooluse, event, "notes/readme.decisions.md")
+
     def test_a_search_without_a_path_stops(self):
         # Given: a generator of a run
         # When: it searches with no path, which searches the whole repository
