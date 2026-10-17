@@ -51,7 +51,9 @@ Does the design document follow this template, headings included?
 <One figure: a box for each logical component, holding its name alone; an arrow from each to the
 component it acts on, labelled with what it does>
 
-- <A story, and the components and interactions that achieve it, in one sentence>
+- <Each interaction the stories need, in the order it happens, in one sentence>
+
+  <Why it is so, where the reader would ask>
 
 ### Physical view
 
