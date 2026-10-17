@@ -6,7 +6,7 @@ from. The goal and the key results it is built to reach are in [turn's UX](ux.md
 
 ## User stories
 
-- As the calling AI, I want to hand turn a CCS and get back the work and a new CCS. (KR1.1, KR1.2)
+- As the calling AI, I want to hand turn a CCS and get back the work and a new CCS.
 
   Reading, judging and making again are how turn makes the work, and lie in its components.
 

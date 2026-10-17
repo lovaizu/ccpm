@@ -40,7 +40,7 @@ Does the design document follow this template, headings included?
 
 ## User stories
 
-- As <the user>, I want <what they do with the product>. (<the IDs of the key results it serves>)
+- As <the user>, I want <what they do with the product>.
 
 ## Architecture
 
