@@ -144,12 +144,10 @@ turn/                      the plugin, installed by Claude Code
 
 ### Units
 
-- The scripts: each check stops what it must and lets through what it must.
-  - unittest in `dev/turn/tests/`, fed what the calling AI and the roles hand over, every line and
-    branch counted in CI on every push.
-- The hooks: each check stops a step where it must and lets it through where it must.
-  - unittest in `dev/turn/tests/`, fed what Claude Code hands each hook, counted the same way.
-- The orchestrator and the four roles: each does what its steps say.
+- The scripts and the hooks: each check stops what it must and lets through what it must.
+  - unittest in `dev/turn/tests/`; lines and branches 100% covered; Ruff's lint and format and
+    Pyrefly's types for Python 3.9 passed; all by [`dev/check.sh`](../check.sh) in CI on every push.
+- The orchestrator and the four roles: each step done in order, with its inputs, giving its output.
   - Run on its own on a small task, on Opus 5.5, and judged from its JSONL.
 
 ### Acceptance

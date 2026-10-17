@@ -128,7 +128,8 @@ Why: what the product depends on is where it breaks for the user first.
 
 ### B-23: Checks built up unit by unit
 
-Can the reader tell how the checks of each physical unit, made on its own, build up to the whole?
+Can the reader tell what is checked of each physical unit and how far, said plainly unless a
+reason is needed, and how those checks build up to the whole?
 
 Why: the whole is built up from units checked one by one, and a unit left unchecked breaks the
 whole where no check shows it.
