@@ -1,5 +1,22 @@
 [
- {"commit": "7d19c2d", "unit": 1, "session": "9dd1c55e-cafe-464a-a30b-1815433c0d69",
-  "minutes_to_return": 1.9, "items_fixed_after_return": 2, "questions": 1, "cost_usd": 1.04,
-  "fixed": "readability B-2 and B-3: the README said csvtidy changes nothing but spaces, blank rows and the header, while it also writes \\r\\n line endings"}
+ {
+  "commit": "7d19c2d",
+  "unit": 1,
+  "session": "9dd1c55e-cafe-464a-a30b-1815433c0d69",
+  "minutes_to_return": 1.9,
+  "items_fixed_after_return": 2,
+  "questions": 1,
+  "cost_usd": 1.04,
+  "fixed": "readability B-2 and B-3: the README said csvtidy changes nothing but spaces, blank rows and the header, while it also writes \\r\\n line endings"
+ },
+ {
+  "commit": "a6c77ac",
+  "unit": 1,
+  "session": "8ce3dab8-350b-4882-8b45-84a37171be74",
+  "minutes_to_return": 2.5,
+  "items_fixed_after_return": 3,
+  "questions": 3,
+  "cost_usd": 0.87,
+  "fixed": "readability B-13: two names for the output file; readme B-6 and readability B-5 came back as questions though csvtidy.py and the notes settle them (Development points to csvtidy.py; lines end in \\r\\n)"
+ }
 ]
