@@ -2,7 +2,7 @@
 
 ## design
 
-### B-1: A story for each thing the user does
+### B-1: The stories the scenes rest on
 - One story: as the calling AI, I want to hand turn a CCS and get back
   the work and a new CCS, as one turn of ACC. Reading, judging and making again are how the work is made, decided in the
   components.

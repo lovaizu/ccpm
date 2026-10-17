@@ -9,20 +9,22 @@ A design document is read by whoever builds or changes the product. From it they
 short time, the mechanism that brings about the UX the product must give, and how that is checked,
 and build or change the product to it.
 
-The UX is what the user experiences using the product. Design thinks in this order:
+The UX is what the user experiences using the product, and its key results are how close the
+product must bring them to their goals. Design turns that into a mechanism in layers, each drawn from
+the one before and fewer than it: the UX's scenes rest on a few user stories, each one way the user
+uses the product at its edge, such as a command they run; the stories are taken on by logical
+components, each of which may serve several; and each component is realized by a technology. The
+checks go back up: each unit, then each story, then how close each key result came. Design thinks
+in this order:
 
-1. From the UX, write the user stories that reach its key results, one for each thing a user does
-   with the product, such as each command they run: "As <the user>, I want <what they do>." Their
-   reasons are the UX's goals and key results, and are not written again.
+1. From the UX's scenes, write the user stories they rest on: "As <the user>, I want <what they
+   do>." Their reasons are the UX's goals and key results, and are not written again.
 2. Decide the logical components that take on those stories, and the interactions between them.
    A logical component is divided by what it takes on; its physical form is not decided yet.
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
-4. Check each physical unit on its own, build those checks up, then check the whole: each story
-   achieved, and how close each key result of the UX came to its target.
-
-Many scenes are held up by few stories, and one component takes on several stories, so the numbers
-narrow in the order scenes, stories, components.
+4. Check each physical unit on its own, then check the whole: each story achieved, and how close
+   each key result of the UX came to its target.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -76,13 +78,15 @@ realized, then how the units and the whole are checked, each the ground of the n
 
 ## Benefit
 
-### B-1: A story for each thing the user does
+### B-1: The stories the scenes rest on
 
-Can the reader tell, as user stories, each thing a user does with the product to reach the UX's
-goals?
+Does every scene of the UX rest on a user story, each one way the user uses the product at its
+edge?
 
-Why: the components are decided from the stories; a thing the user does that no story names is
-built by guess, or not at all.
+Look for: a story for a step inside the product, or one that says again what another does.
+
+Why: the components are decided from the stories; a scene no story holds up is built by guess,
+and a story for each step inside multiplies the components without the user doing more.
 
 ### B-2: Every logical component the stories need
 
