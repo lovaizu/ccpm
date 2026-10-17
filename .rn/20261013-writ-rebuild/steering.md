@@ -987,10 +987,10 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      it is handed by path and writing its result as a file where it says (in the decisions).
      Decided by the user (2026-10-17): turn defines nothing of the CCS; the caller hands, as JSON,
      the CCS's path, `kind`, the kinds of the work, the checklists, the reader, the use and what the reader
-     opens, and the result's path. Next, one point at a time: each role's input and reply between
-     it and the orchestrator, as JSON (a draft was put: the generator gets the CCS, the others what
-     a script takes from it by kind); then turn's UX, README and design
-     rewritten once to these; then step 3 again, the first users asked whether they received the
+     opens, and the result's path. Each role's input and reply are JSON, settled by the builder
+     at build (the user: implementation, not asked). turn's UX, README stage 1 and design
+     rewritten to these (`849d9f7`); the callers' page, agent and script decisions under
+     `.writ/decisions/turn/` still say the old turn and are remade at build. Next: step 3 again, the first users asked whether they received the
      Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
