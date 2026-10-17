@@ -3,7 +3,7 @@ branch of its own, calls turn on a task of this folder with the step text the RE
 what comes back and fixes the work where it falls short. Prints the stand-in's session, from whose
 JSONL and its agents' the trial is judged, and the time from the call to the return.
 
-    python3 dev/turn/trials/run.py <task folder, such as dev/turn/trials/readme> <new folder>
+    python3 dev/turn/trials/trial.py <task folder, such as dev/turn/trials/readme> <new folder>
 
 The clone, its branch and the copy of turn are removed when the run ends; the records stay in
 Claude Code's own folder of the session. The turn of this working tree is used as it is when the run
