@@ -1,4 +1,4 @@
-"""The forms the orchestrator's reading and the generator's reply take, each checked against the run's
+"""The forms the orchestrator and each role give their judgments in, each checked against the run's
 items and the work, so a slip is named where it is made."""
 
 from __future__ import annotations
@@ -6,75 +6,94 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Any
+from typing import Any, NamedTuple
 
-SHAPE = '{"items": [...], "questions": [...]}'
 LINES = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
-# What an item may hold, besides its checklist and ID, in each form: the orchestrator judges, so
-# its reading gives a Good, a question or what the receiver gets once it has its Good; the
-# generator only claims, so its reply gives lines or a question.
-READING = (("good", "lines"), ("question",), ("gets",))
-CLAIM = (("lines",), ("question",))
 
 
-def parse(text: str) -> dict[str, Any] | None:
-    """The form as JSON, or None when it is not an object of items and questions."""
+class Form(NamedTuple):
+    """What an item may hold besides its checklist and ID, one shape of keys each; whether every
+    item is given; and whether questions are asked."""
+
+    shapes: tuple[tuple[str, ...], ...]
+    every: bool
+    asks: bool
+
+
+# The orchestrator judges, so its reading and its decision give a Good, a question or what the
+# receiver gets once it has its Good; the generator only claims, so it gives lines or a question.
+# The first user and the evaluator look only for what the work gives, so each names only the items
+# it finds something for, and a script names the rest.
+READING = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=True)
+CLAIM = Form((("lines",), ("question",)), every=True, asks=True)
+GOT = Form((("got", "lines"),), every=False, asks=False)
+GOOD = Form((("good", "lines"),), every=False, asks=False)
+
+
+def parse(text: str, form: Form) -> dict[str, Any] | None:
+    """The form as JSON, or None when it is not an object of the lists it takes."""
     try:
         data = json.loads(text)
     except ValueError:
         return None
-    if not isinstance(data, dict) or not all(
-        isinstance(data.get(k), list) for k in ("items", "questions")
-    ):
+    keys = ("items", "questions") if form.asks else ("items",)
+    if not isinstance(data, dict) or not all(isinstance(data.get(k), list) for k in keys):
         return None
     return data
 
 
-def check(text: str, run: dict[str, Any], shapes: tuple[tuple[str, ...], ...]) -> list[str]:
-    """What is wrong with the form, each said with what to give instead; empty when it is filled."""
-    data = parse(text)
+def check(
+    text: str, items: list[dict[str, str]], work: list[str], form: Form, asked: int = 0
+) -> list[str]:
+    """What is wrong with the form, each said with what to give instead; empty when it is filled.
+    The items are those the form judges; `asked` counts the questions already asked, which its
+    own questions are numbered after."""
+    data = parse(text, form)
     if data is None:
-        return [f"give it as JSON: {SHAPE}"]
-    said = item_problems(data["items"], run, shapes)
-    said += question_problems(data, shapes)
+        shape = '{"items": [...], "questions": [...]}' if form.asks else '{"items": [...]}'
+        return [f"give it as JSON: {shape}"]
+    said = item_problems(data["items"], items, work, form)
+    if form.asks:
+        said += question_problems(data, asked)
     return said
 
 
 def item_problems(
-    given: list[Any], run: dict[str, Any], shapes: tuple[tuple[str, ...], ...]
+    given: list[Any], items: list[dict[str, str]], work: list[str], form: Form
 ) -> list[str]:
-    keys = [(i["checklist"], i["item"]) for i in run["items"]]
+    keys = [(i["checklist"], i["item"]) for i in items]
     said: list[str] = []
     seen: list[tuple[str, str]] = []
-    named = [" with ".join(f'"{k}"' for k in shape) for shape in shapes]
-    allowed = ", ".join(named[:-1]) + " or " + named[-1]
+    named = [" with ".join(f'"{k}"' for k in shape) for shape in form.shapes]
+    allowed = "one of " + ", ".join(named[:-1]) + " or " + named[-1] if named[1:] else named[0]
     for item in given:
         key = (item.get("checklist"), item.get("item")) if isinstance(item, dict) else None
         name = f"{key[0]} {key[1]}" if key else json.dumps(item)
         if key not in keys:
-            said.append(f"{name} is in no checklist of the run; give each item by its checklist")
+            said.append(f"{name} is not an item judged here; give each item by its checklist")
             continue
         if key in seen:
             said.append(f"{name} is given twice; give each item once")
             continue
         seen.append(key)
-        held = [s for s in shapes if all(k in item for k in s)]
+        held = [s for s in form.shapes if all(k in item for k in s)]
         rest = set(item) - {"checklist", "item"} - {k for s in held for k in s}
         if len(held) != 1 or rest:
-            said.append(f"{name} must hold one of {allowed}")
+            said.append(f"{name} must hold {allowed}")
             continue
-        said += value_problems(name, item, run["work"])
-    said += [
-        f"{c} {i} is left out; give every item of every checklist"
-        for c, i in keys
-        if (c, i) not in seen
-    ]
+        said += value_problems(name, item, work)
+    if form.every:
+        said += [
+            f"{c} {i} is left out; give every item judged here"
+            for c, i in keys
+            if (c, i) not in seen
+        ]
     return said
 
 
 def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
     said: list[str] = []
-    for key in ("good", "gets"):
+    for key in ("good", "gets", "got"):
         if key in item and not (isinstance(item[key], str) and item[key].strip()):
             said.append(f'{name} has an empty "{key}"; say it in words')
     if "question" in item and not (
@@ -104,11 +123,11 @@ def in_work(line: Any, work: list[str]) -> bool:
     return 1 <= start <= end <= count
 
 
-def question_problems(data: dict[str, Any], shapes: tuple[tuple[str, ...], ...]) -> list[str]:
+def question_problems(data: dict[str, Any], asked: int) -> list[str]:
     said: list[str] = []
     questions = data["questions"]
     waiting = [i.get("question") for i in data["items"] if isinstance(i, dict)]
-    for n, question in enumerate(questions, 1):
+    for n, question in enumerate(questions, asked + 1):
         if not isinstance(question, dict) or not all(
             isinstance(question.get(k), str) and question[k].strip()
             for k in ("question", "recommended")
@@ -122,6 +141,6 @@ def question_problems(data: dict[str, Any], shapes: tuple[tuple[str, ...], ...])
     said += [
         f"question {n} is waited on but not given; add it to the questions"
         for n in waiting
-        if isinstance(n, int) and not 1 <= n <= len(questions)
+        if isinstance(n, int) and not 1 <= n <= asked + len(questions)
     ]
     return said

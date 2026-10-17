@@ -9,9 +9,9 @@ from typing import IO
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import agents  # noqa: F401  (puts turn's scripts on the path the checks import from)
-from checks import generator_reply, run_returned
+from checks import role_reply, run_returned
 
-CHECKS = (generator_reply, run_returned)
+CHECKS = (role_reply, run_returned)
 
 
 def main(stream: IO[str]) -> int:

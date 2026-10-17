@@ -9,7 +9,7 @@ from helpers import CALL, CCS, SCRIPTS, RepoTest
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py read <result> < <the orchestrator's reading as JSON>"
+    "       turn.py next <result> [< <your reading or decision as JSON>]"
 )
 
 
@@ -34,7 +34,7 @@ class TestUsage(RepoTest):
         # arguments
         # When: it is run
         # Then: it prints the usage, which names every command with its arguments, and stops
-        for argv in [[], ["go"], ["start"], ["read"], ["start", "{}", "x"]]:
+        for argv in [[], ["go"], ["start"], ["next"], ["start", "{}", "x"]]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
 
@@ -54,7 +54,9 @@ class TestStart(RepoTest):
         # When: the run is started
         # Then: the generator is to be started with where the run is kept, the CCS and the work,
         # with nothing sent back yet
-        prompt = json.loads(self.started())
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual((code, json.loads(out)["agent"]), (0, "turn:generator"))
+        prompt = json.loads(json.loads(out)["prompt"])
         self.assertEqual(
             prompt,
             {"run": CALL["result"], "ccs": CALL["ccs"], "work": ["README.md"], "sent_back": []},
@@ -90,6 +92,15 @@ class TestStart(RepoTest):
                 "docs/start.md",
             ],
         )
+
+    def test_the_run_keeps_what_the_readers_may_read(self):
+        # Given: a call naming the kind of what the receiver opens
+        # When: the run is started
+        # Then: the run keeps the work, what the receiver opens and the checklists as what the
+        # first user and the evaluator may read, and not the CCS or the decisions
+        self.started(call_with(opens="page"))
+        running = self.read_json(CALL["result"])["running"]
+        self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
 
     def test_the_optional_kinds_are_taken_when_named(self):
         # Given: a call that also names the kinds of the use and of what the receiver opens

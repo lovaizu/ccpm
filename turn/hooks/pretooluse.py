@@ -11,14 +11,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import agents  # noqa: F401  (puts turn's scripts on the path the checks import from)
 from checks import (
     call_given,
-    generator_given,
     no_commit,
     read_in_given,
+    role_given,
     start_as_called,
-    write_in_work,
+    write_work_alone,
 )
 
-CHECKS = (call_given, start_as_called, generator_given, write_in_work, no_commit, read_in_given)
+CHECKS = (call_given, start_as_called, role_given, write_work_alone, no_commit, read_in_given)
 
 
 def main(stream: IO[str]) -> int:

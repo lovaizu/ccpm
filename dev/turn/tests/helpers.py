@@ -15,8 +15,8 @@ HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
 
-import pretooluse  # noqa: F401  (the hooks' entries, for the hooks' tests)
-import subagentstop  # noqa: F401
+import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
+import subagentstop
 
 import turn
 
@@ -58,6 +58,19 @@ GOOD = {
 }
 WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
 QUESTION = {"question": "Under which license may people use it?", "recommended": "MIT"}
+GOT = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "got": "the name, then what it does, as READMEs open",
+    "lines": ["README.md:1-3"],
+}
+EVALUATED = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "good": "the reader meets the name and what it does first",
+    "lines": ["README.md:1-3"],
+}
+ID = "a1b2c3"
 SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",
@@ -70,7 +83,7 @@ class RepoTest(unittest.TestCase):
     task's CCS, its checklist, its decisions and a work already written."""
 
     def setUp(self):
-        self.repo = tempfile.mkdtemp()
+        self.repo = os.path.realpath(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.repo)
         self.addCleanup(os.chdir, os.getcwd())
         os.chdir(self.repo)
@@ -79,6 +92,8 @@ class RepoTest(unittest.TestCase):
         self.write("notes/readme.decisions.md", "# Decisions\n")
         self.write("docs/start.md", "# Start\n")
         self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
+
+        self.transcript = os.path.join(self.repo, "session.jsonl")
 
     def turn(self, *argv, stdin=""):
         out = io.StringIO()
@@ -91,6 +106,82 @@ class RepoTest(unittest.TestCase):
         code, out = self.turn("start", json.dumps(call or CALL))
         self.assertEqual(code, 0, out)
         return json.loads(out)["prompt"]
+
+    def next(self, given=None):
+        """What the script prints next for the run, handed the orchestrator's reading or decision."""
+        code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
+        self.assertEqual(code, 0, out)
+        return json.loads(out)
+
+    def refused(self, given=None):
+        """What the script prints when it refuses to go on with the run."""
+        code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
+        self.assertEqual(code, 1, out)
+        return out
+
+    def through(self, *evaluated, findings=(GOOD, WAITS), got=(GOT,), opened=()):
+        """The run taken through the orchestrator's findings, the first user's reply and the
+        evaluator's, and what the script prints then."""
+        out = self.next({"items": list(findings), "questions": [QUESTION]})
+        reply = {"items": list(got)}
+        self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
+        out = self.next()
+        self.assertEqual(out["agent"], "turn:evaluator")
+        reply = {"items": list(evaluated)}
+        self.assertEqual(self.replied("turn:evaluator", out["prompt"], reply), (0, ""))
+        return self.next()
+
+    def given_record(self, agent_id, prompt, *tool_uses):
+        """Writes what Claude Code keeps of an agent's conversation: its prompt as the first record,
+        then each tool it used."""
+        path = os.path.join(self.repo, "session", "subagents", f"agent-{agent_id}.jsonl")
+        records = [{"type": "user", "message": {"role": "user", "content": prompt}}]
+        records += [
+            {
+                "type": "assistant",
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "I open it."},
+                        {"type": "tool_use", "name": name, "input": tool_input},
+                    ],
+                },
+            }
+            for name, tool_input in tool_uses
+        ]
+        self.write(path, "".join(json.dumps(r) + "\n" for r in records))
+        return path
+
+    def event(self, name, agent_type=None, **fields):
+        event = {
+            "session_id": "s",
+            "transcript_path": self.transcript,
+            "cwd": self.repo,
+            "hook_event_name": name,
+            **fields,
+        }
+        if agent_type:
+            event.update(agent_id=ID, agent_type=agent_type)
+        return event
+
+    def hook(self, entry, event):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            code = entry.main(io.StringIO(json.dumps(event)))
+        return code, err.getvalue()
+
+    def replied(self, agent_type, prompt, reply, *tool_uses):
+        """A role started with the prompt ends with the reply, after using the tools, as turn's
+        SubagentStop hook sees it."""
+        path = self.given_record(ID, prompt, *tool_uses)
+        event = self.event(
+            "SubagentStop",
+            agent_type,
+            agent_transcript_path=path,
+            last_assistant_message=reply if isinstance(reply, str) else json.dumps(reply),
+            stop_hook_active=False,
+        )
+        return self.hook(subagentstop, event)
 
     def write(self, path, text):
         folder = os.path.dirname(path)

@@ -9,4 +9,4 @@ import agents
 def check(event: dict[str, Any]) -> list[str]:
     if agents.role(event) != "up" or agents.running(event) is None:
         return []
-    return ["the run has not returned; record your reading with `turn.py read` until it does"]
+    return ["the run has not returned; run `turn.py next` with each step's outcome until it does"]

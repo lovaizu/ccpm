@@ -1,5 +1,6 @@
 """What turn:up runs for what must come out the same on every run: the call checked and the run
-started, and each reading recorded, sending items back to the generator or writing the result."""
+started, and each step's outcome taken, giving the agent to start next, the items to decide, or the
+result written."""
 
 import json
 import os
@@ -13,7 +14,7 @@ from call import Stop
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py read <result> < <the orchestrator's reading as JSON>"
+    "       turn.py next <result> [< <your reading or decision as JSON>]"
 )
 
 
@@ -22,9 +23,9 @@ def main(argv: list[str], stdin: IO[str]) -> int:
     gives 1."""
     try:
         if argv[:1] == ["start"] and len(argv) == 2:
-            print(json.dumps({"prompt": run.start(argv[1])}))
-        elif argv[:1] == ["read"] and len(argv) == 2:
-            print(json.dumps(run.read(argv[1], stdin.read())))
+            print(json.dumps(run.start(argv[1]), ensure_ascii=False))
+        elif argv[:1] == ["next"] and len(argv) == 2:
+            print(json.dumps(run.next_step(argv[1], stdin.read()), ensure_ascii=False))
         else:
             print(USAGE)
             return 1
