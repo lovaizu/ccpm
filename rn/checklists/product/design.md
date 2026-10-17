@@ -24,7 +24,9 @@ in this order:
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
 4. Check each physical unit on its own, then check the whole: each story achieved, and how close
-   each key result of the UX came to its target.
+   each key result of the UX came to its target, in the UX's order of priority. A change is taken
+   when every story is still achieved and it brings the key results closer from the highest, never
+   a lower one at the cost of a higher.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -71,8 +73,11 @@ outside the product>
 
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
-- <The ID of each key result of the UX>: <what is measured>
+- <The ID of each key result of the UX, in the UX's order of priority>: <what is measured>
   - <How and where it is measured, compared with its target and the last version>
+
+<A change taken when every story is still achieved and no key result comes closer at the cost of a
+higher one>
 ```
 
 Why: the builder reads the user stories, then the components that achieve them and how they are
@@ -152,3 +157,11 @@ and the last version?
 
 Why: a key result is not met or missed but come close to, so no check of a story shows it; left
 unmeasured, it grows worse with each change without anyone seeing.
+
+### B-11: Changes judged in the order of priority
+
+Can the reader tell that a change is taken only when every story is still achieved and no key
+result comes closer at the cost of one of higher priority?
+
+Why: a change judged by one key result alone can bring it closer while one that matters more moves
+away, and each version then looks better while the user is worse off.

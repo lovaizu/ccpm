@@ -15,6 +15,9 @@ it gets that on every run.
 
 ## Key results
 
+They stand from the highest priority: time is never saved by leaving the calling AI more to fix,
+since a work it must fix costs the user the fixing as well as the wait.
+
 - KR1.1: The items of the checklists the calling AI fixes in the work after it comes back: none.
 
   An item the work meets needs no fixing, and the calling AI counts what it fixes from its own

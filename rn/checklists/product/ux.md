@@ -13,12 +13,14 @@ key results are an OKR: a goal says what the user wants to achieve, and its key 
 measured to show how close the product brings them to it, each with a target set higher than the
 product is sure to reach. Most of what a product gives, such as a document's worth or the time it
 takes, is not met or missed but come close to, so each version is judged by how close it came, and
-a target easily met would leave nothing to aim at. Working out the UX is making that experience
+a target easily met would leave nothing to aim at. The key results stand in order of priority: a
+version comes closer from the highest, and a lower one is never brought closer by moving a higher
+one away. Working out the UX is making that experience
 clear, in this order:
 
 1. Decide the users and the goal each wants to achieve.
 2. Decide, for each goal, its key results: what is measured to show how close the product brings
-   the user to it, each with a target set high.
+   the user to it, each with a target set high, and put them in order of priority.
 3. Draw, as scenes, what the user does and gets back until they achieve the goal.
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
@@ -42,6 +44,8 @@ Does the UX follow this template, headings and IDs included?
 - G1: <A user, and the goal they want to achieve>
 
 ## Key results
+
+<That they stand from the highest priority, and why in that order>
 
 - KR1.1: <What is measured for G1, and its target>
 
@@ -91,6 +95,14 @@ Can the reader tell, for each key result, why reaching it shows its goal achieve
 
 Why: a result without its why can be reached while the goal is not, and no one can tell whether it
 is the right one to measure.
+
+### B-7: The order of priority
+
+Can the reader tell which key result comes first, and why in that order?
+
+Why: bringing one key result closer often moves another away; without an order, the builder trades
+the one that matters more for one easier to move, and a version looks closer while the user is
+worse off.
 
 ### B-5: The scenes to the goal
 

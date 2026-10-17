@@ -171,3 +171,6 @@ from the JSONL of every agent it started and from the work.
 - KR1.2: the time from the call to the work coming back.
   - Taken from the JSONL's timestamps for a README-sized work, and compared with the target of three
     minutes and with the last version's.
+
+A change is taken when the story is still achieved and KR1.2 does not come closer at the cost of
+KR1.1.
