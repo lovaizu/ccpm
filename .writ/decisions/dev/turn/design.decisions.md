@@ -17,6 +17,11 @@
   stop with Esc and the start again from a person's words go.
 
 ### B-3: The stories achieved by interactions
+- Only scripts doubt. Every role that is an AI looks, against the checklists, which say what the
+  work should be, only for the Good each item gives and the lines that give it; a script doubts,
+  such as by naming the lines no Good rests on. An AI that looks for what more the work needs
+  finds more without end, and each find is patched in, so the work drifts from what it should be.
+  Every role, the flow and how each judgment is made follow from this.
 - The generator makes the work and names, as its own check, the lines it meant to meet each item;
   that is its claim, not a judgment.
 - The orchestrator does not take the claim on trust: it reads the work against every item of the
