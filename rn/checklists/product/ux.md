@@ -6,21 +6,20 @@ version: 0.1.0
 # UX
 
 A UX is read by whoever builds the product. From it they know the experience the product must give
-its users and how close each version must come to it, and build the product to it.
+its users and how each version is judged against it, and build the product to it.
 
-The UX is a user's experience of using the product until they achieve their goal. Its goals and
-key results are an OKR: a goal says what the user wants to achieve, and its key results say what is
-measured to show how close the product brings them to it, each with a target set higher than the
-product is sure to reach. Most of what a product gives, such as a document's worth or the time it
-takes, is not met or missed but come close to, so each version is judged by how close it came, and
-a target easily met would leave nothing to aim at. The key results stand in order of priority: a
-version comes closer from the highest, and a lower one is never brought closer by moving a higher
-one away. Working out the UX is making that experience
-clear, in this order:
+The UX is a user's experience of using the product until they achieve their goal. A goal says what
+the user wants to achieve, and its key results say what is measured to show how close the product
+brings them to it. Most of what a product gives, such as a document's worth or the time it takes,
+is not met or missed but come close to, so each version is judged against the version in use on the
+same tasks, with no target value: a value the user's need does not rest under draws the work toward
+the number rather than the user. The key results stand in order of priority: a version comes closer
+from the highest, and a lower one is never brought closer by moving a higher one away. Working out
+the UX is making that experience clear, in this order:
 
 1. Decide the users and the goal each wants to achieve.
 2. Decide, for each goal, its key results: what is measured to show how close the product brings
-   the user to it, each with a target set high, and put them in order of priority.
+   the user to it and which way is better, and put them in order of priority.
 3. Draw, as scenes, what the user does and gets back until they achieve the goal.
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
@@ -47,9 +46,9 @@ Does the UX follow this template, headings and IDs included?
 
 <That they stand from the highest priority, and why in that order>
 
-- KR1.1: <What is measured for G1, and its target>
+- KR1.1: <What is measured for G1, and which way is better>
 
-  <Why reaching it shows G1 achieved>
+  <Why a better value shows the user closer to G1>
 
 ## Scenes
 
@@ -82,18 +81,11 @@ Look for: work done or a thing made in place of a result the user sees.
 
 Why: a count of work done grows while the user gains nothing.
 
-### B-3: Targets set high
-
-Is each key result's target one the product is not sure to reach?
-
-Why: a target within easy reach is met and leaves nothing to aim at, so the versions after it stop
-coming closer.
-
 ### B-4: Why each key result
 
-Can the reader tell, for each key result, why reaching it shows its goal achieved?
+Can the reader tell, for each key result, why a better value shows the user closer to its goal?
 
-Why: a result without its why can be reached while the goal is not, and no one can tell whether it
+Why: a result without its why can grow better while the goal comes no closer, and no one can tell whether it
 is the right one to measure.
 
 ### B-7: The order of priority

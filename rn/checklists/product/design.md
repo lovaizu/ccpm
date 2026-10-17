@@ -9,9 +9,9 @@ A design document is read by whoever builds or changes the product. From it they
 short time, the mechanism that brings about the UX the product must give, and how that is checked,
 and build or change the product to it.
 
-The UX is what the user experiences using the product, and its key results are how close the
-product must bring them to their goals. Design turns that into a mechanism in layers, each drawn from
-the one before and fewer than it: the UX's scenes rest on a few user stories, each one way the user
+The UX is what the user experiences using the product, and its key results are what is measured to
+show how close the product brings them to their goals. Design turns that into a mechanism in
+layers, each drawn from the one before and fewer than it: the UX's scenes rest on a few user stories, each one way the user
 uses the product at its edge, such as a command they run; the stories are taken on by logical
 components, each of which may serve several; and each component is realized by a technology. The
 checks go back up: each unit, then each story, then how close each key result came. Design thinks
@@ -23,10 +23,10 @@ in this order:
    A logical component is divided by what it takes on; its physical form is not decided yet.
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
-4. Check each physical unit on its own, then check the whole: each story achieved, and how close
-   each key result of the UX came to its target, in the UX's order of priority. A change is taken
-   when every story is still achieved and it brings the key results closer from the highest, never
-   a lower one at the cost of a higher.
+4. Check each physical unit on its own, then check the whole: each story achieved, and each key
+   result of the UX measured against the version in use, in the UX's order of priority. A change is
+   taken when every story is still achieved and it brings the key results closer from the highest,
+   never a lower one at the cost of a higher.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -74,7 +74,7 @@ outside the product>
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
 - <The ID of each key result of the UX, in the UX's order of priority>: <what is measured>
-  - <How and where it is measured, compared with its target and the last version>
+  - <How and where it is measured, compared with the version in use on the same tasks>
 
 <A change taken when every story is still achieved and no key result comes closer at the cost of a
 higher one>
@@ -152,8 +152,8 @@ achieved.
 
 ### B-10: Key results measured
 
-Can the reader tell, for each key result of the UX, how it is measured and compared with its target
-and the last version?
+Can the reader tell, for each key result of the UX, how it is measured and compared with the version
+in use on the same tasks?
 
 Why: a key result is not met or missed but come close to, so no check of a story shows it; left
 unmeasured, it grows worse with each change without anyone seeing.

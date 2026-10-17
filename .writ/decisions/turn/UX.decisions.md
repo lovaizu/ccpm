@@ -25,13 +25,13 @@
    question to the user, writes the answer into the work, or into the CCS and calls turn again when
    the answer changes much, and ends.
 
-### B-2: Results measured, B-3: targets set high, B-4: why each
-- The items of the checklists the calling AI fixes in the work after it comes back: none. Counted
-  from the calling AI's own check, not from turn's judgment of itself.
-- The time from calling turn to the work coming back, for a work the size of one README: three
-  minutes, set high above the old turn's 4 to 12 minutes a run, since the calling AI, and the
-  person, wait that long.
-- Each version is judged by how close it comes to these, as an OKR's key results are.
+### B-2: Results measured, B-4: why each, B-7: the order of priority
+- The items of the checklists the calling AI fixes in the work after it comes back; fewer is better.
+  Counted from the calling AI's own check, not from turn's judgment of itself.
+- The time from calling turn to the work coming back, for a work the size of one README; shorter is
+  better, since the calling AI, and the person, wait that long.
+- In that order: time is never saved by leaving the calling AI more to fix.
+- Each version is judged against the version in use on the same task, with no target value.
 
 ### B-6: The benefits
 - The AI gets the work already read through the eyes of a reader who did not make it, in the
