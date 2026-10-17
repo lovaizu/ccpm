@@ -1002,8 +1002,19 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      reading; the UX's benefits are the three agreed (no "the CCS as it is"); a checklist lists what
      the receiver should get, one item each, and a Good is the judgment that the receiver gets what
      an item asks, with its lines, each said where first met. Done (2026-10-17), and the user
-     agreed the UX, the README and the design (2026-10-17, at `aafcd41`). Next: step 4, list the
-     units, then build each unit and try it (steps 5-7) without asking, reporting by unit.
+     agreed the UX, the README and the design (2026-10-17, at `aafcd41`). Step 4, the units, each
+     from the call to the result in the given place, in order:
+     1. One reading by the orchestrator alone: the script checks the call and takes each kind's
+        entries from the CCS, the generator makes the work, the orchestrator sends back what it
+        sees has no Good, and the script writes the result. The thinnest path that moves KR1.1
+        and is timed for KR1.2.
+     2. The first user and the evaluator: the orchestrator's findings recorded first, the reading
+        in the receiver's place, the evaluator's Good, and the orchestrator's decision where they
+        differ.
+     3. The learner and the second reading: what makes the Good, the remake, the reading once
+        more, and the items still without Good returned with what they would give.
+     Each unit's hooks (inputs, reply forms, reads, writes, commits, runs at once by
+     `parentAgentId`) are built in its own step d. Next: build unit 1 (steps 5a-e).
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
