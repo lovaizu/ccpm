@@ -3,14 +3,14 @@
 ## design
 
 ### B-1: The stories the scenes rest on
-- One story: as the calling AI, I want to hand turn what to make and get the work back, with what
-  the turn found of each item. Reading, judging and making again are how the work is made, decided
-  in the components.
-- ACC and the CCS are rn's, closed inside it; turn does not know them. In the paper, the compressor
-  that makes the state is a model apart from the agent that acts on it, and the agent's output
-  enters memory only through the next compression, after it is checked; so the compressor, the CCS
-  and the store, the repository, are the caller's, and turn is the agent that acts: it follows the
-  instruction it is handed and writes its result where the instruction says.
+- One story: as the calling AI, I want to hand turn the path of a CCS and get the work back, with
+  what the turn found of each item. Reading, judging and making again are how the work is made,
+  decided in the components.
+- ACC and the CCS are rn's, closed inside it. In the paper, the compressor that makes the state is a
+  model apart from the agent that acts on it, and the agent's output enters memory only through the
+  next compression, after it is checked; so the compressor, the CCS's definition and the store, the
+  repository, are the caller's, and turn is the agent that acts: it reads the CCS it is handed,
+  follows it and writes its result where it says.
 - turn's result is where the work was written, each item's Good with its lines, the questions only
   the user can decide, and the items without Good, each with what the receiver gets once it is Good.
   A script writes it as a file and checks its shape as it writes: a reply would be copied into a

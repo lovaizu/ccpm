@@ -983,9 +983,9 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      (`80c45dd`), and the UX and design checklists rewritten from their purpose; the user agreed to
      the design (2026-10-17, at `dbaa062`). Step 3's first readings led to a rethink (2026-10-17): only
      scripts doubt and every AI role looks only for the Good; each role's aim in one sentence; ACC
-     and the CCS are rn's, closed inside it, and turn is the agent that acts, following the
-     instruction it is handed and writing its result as a file where it says (in the decisions).
-     Next, one point at a time: what turn's instruction holds; then turn's UX, README and design
+     and the CCS are rn's, closed inside it, and turn is the agent that acts, reading the CCS
+     it is handed by path and writing its result as a file where it says (in the decisions).
+     Next, one point at a time: what turn reads from the CCS; then turn's UX, README and design
      rewritten once to these; then step 3 again, the first users asked whether they received the
      Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
