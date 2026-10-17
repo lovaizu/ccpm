@@ -11,6 +11,10 @@
   next compression, after it is checked; so the compressor, the CCS's definition and the store, the
   repository, are the caller's, and turn is the agent that acts: it reads the CCS it is handed,
   follows it and writes its result where it says.
+- turn defines nothing of the CCS. The CCS is JSON, and the caller hands turn, with the CCS's path,
+  where in it three things are, each as a jq path: where the work goes, the checklists, and where
+  the result goes. turn's scripts and hooks need only these three, found without an AI; turn reads
+  the rest whole. The values stay in the CCS alone, so the call and the CCS cannot differ.
 - turn's result is where the work was written, each item's Good with its lines, the questions only
   the user can decide, and the items without Good, each with what the receiver gets once it is Good.
   A script writes it as a file and checks its shape as it writes: a reply would be copied into a

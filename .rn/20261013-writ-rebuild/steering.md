@@ -985,10 +985,9 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      scripts doubt and every AI role looks only for the Good; each role's aim in one sentence; ACC
      and the CCS are rn's, closed inside it, and turn is the agent that acts, reading the CCS
      it is handed by path and writing its result as a file where it says (in the decisions).
-     Next, one point at a time, in the consultation shape: what turn reads from the CCS. Put to
-     the user, not yet answered: rn defines the CCS's shape and turn reads it whole, except the
-     three places turn's scripts must find without an AI, where the work goes, the checklists and
-     where the result goes, whose place in the CCS turn defines; then then turn's UX, README and design
+     Decided by the user (2026-10-17): turn defines nothing of the CCS; the caller hands, with
+     the CCS's path, the jq paths in it of where the work goes, the checklists and where the
+     result goes. Next: turn's UX, README and design
      rewritten once to these; then step 3 again, the first users asked whether they received the
      Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
