@@ -1,87 +1,65 @@
 # turn
 
 turn is a Claude Code plugin for anyone who has AI make documents, code and the like in the steps of
-their own plugin. What a step has turn make, the work, comes back with its Good for each item of
-your checklists, what it gives the one it is for, its receiver, with the lines that give it.
+their own plugin. What a step has turn make comes back meeting the step's checklists, read first by
+an AI that did not make it, in the place of its reader.
 
 ## Example
 
-Say your plugin has a step that writes a project's README to your checklist `checklists/readme.md`,
-a file of items that each ask one thing the README must give its receiver.
+Say your plugin has a step that writes a project's README to your checklist `checklists/readme.md`.
+A checklist lists what the README's reader should get from it, one item each, asked as a question,
+such as "On opening it, can the reader tell whether the project is for them?"
 
-The step's AI first asks the user, one point at a time, what each item of the checklist needs for
-this project, such as whom the project is for and what example to show, and writes what is decided
-to `notes/readme.decisions.md`.
-
-The step then writes its task in a CCS, a JSON file. CCS is the small state that
-[ACC](https://arxiv.org/abs/2601.11653), a method for long AI tasks, carries from step to step in
-place of the whole conversation. Its shape is fixed, parts, each a list of entries, each entry a
-kind and its value, and every name in it is your plugin's. This step's CCS, `.tasks/readme.json`:
+The step's AI asks the user what the items need for this project, writes what is decided to
+`notes/readme.decisions.md`, and writes its task in a CCS, `.tasks/readme.json`. A CCS is a JSON
+file of parts, each a list of entries, each entry a kind and its value, the shape
+[ACC](https://arxiv.org/abs/2601.11653) gives an AI's state; every name in it is your plugin's:
 
 ```json
-{
-  "focal_entities": [{"deliverable": "README.md"},
-                     {"audience": "a developer meeting the project for the first time"}],
-  "goal_orientation": [{"purpose": "to decide whether to use the project"}],
-  "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
-                          {"decisions": "notes/readme.decisions.md"},
-                          {"read_with": "CONTRIBUTING.md"}],
-  "constraints": [{"language": "English"}]
-}
+{"focal_entities": [{"deliverable": "README.md"},
+                    {"audience": "a developer meeting the project for the first time"}],
+ "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
+                         {"decisions": "notes/readme.decisions.md"}]}
 ```
 
-The step tells turn which of its kinds hold where the work goes, the checklists, the receiver, what
-the receiver reads the work for and what they open with it, and where to write the result. turn
-reads the rest of the CCS, such as the decisions and the language, as the task's own.
-
-```json
-{"ccs": ".tasks/readme.json",
- "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
-          "use": "purpose", "opens": "read_with"},
- "result": ".tasks/readme-result.json"}
-```
-
-So the step's text for calling turn is short:
+The step's text then calls turn with the CCS, the kinds in it that hold the work, the checklist and
+its reader, and where to write the result:
 
 ```
-Start the `turn:up` agent in the background with the JSON above. When it returns,
-check each Good in .tasks/readme-result.json against its lines in README.md, fix
-each item in not_good, and put each question to the user.
+Start the `turn:up` agent in the background with
+{"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
+ "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"}}
+When it returns, check each Good against its lines, and put each question to the user.
 ```
 
-While the step waits, turn writes README.md, and turn's reader, an agent that did not write it,
-reads it as the developer meeting the project would, with CONTRIBUTING.md beside it. Where that
-reading finds no Good for an item, turn makes README.md again and reads it once more. The user sees turn's agents
-at work in the panel below the prompt input.
+While the step waits, turn writes README.md, and an AI that did not write it reads it as the
+developer meeting the project would. Each item is judged from that reading: it gets its Good when
+the reader gets what the item asks, with the lines that give it. Where an item gets none, README.md
+is made again and read once more, and an item still without Good comes back with what the reader
+would get once it has one.
 
-When turn returns, README.md is in place, and the result gives each item's Good and its lines. Any
-item still without Good after the second reading would be in `not_good`, with what the receiver
-gets once it is Good; here there is none. One question is left, under which license people may use
-the project, since the user had not chosen one, and README.md leaves the license out until it is
-answered:
+When turn returns, README.md is in place, and the result gives each item's Good with the lines it
+rests on, and one question, under which license people may use the project, since no one had
+chosen one:
 
 ```json
 {"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
  "questions": [{"question": "Under which license may people use the project?",
-                "recommended": "MIT"}],
- "not_good": []}
+                "recommended": "MIT"}]}
 ```
 
-The step's AI checks each Good against its lines, puts the question to the user, writes the answer
-into README.md, and the step ends.
+The step's AI reads lines 3 and 4 and the others it is pointed to, asks the user the question, adds
+the license, and the step ends.
 
 ## Why turn
 
-turn gives your plugin's AI what it does not get by doing the work and checking it itself.
+turn gives your plugin's AI what it does not get by making the work and checking it itself.
 
-- turn's reader did not make the work, and opens only what the receiver opens.
+- The AI that reads the work did not make it, and opens only what the work's reader opens.
 
-  The AI that made a work knows what each line means, and misses where the receiver, meeting it for
-  the first time, would stop.
+  The AI that made a work knows what each line means, and misses where a reader meeting it for the
+  first time would stop.
+- Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
-- Each Good comes with the lines that give it, so it can be checked instead of taken on trust.
-- turn takes the CCS your step already keeps, as it is, and names none of its parts or kinds itself.
-- What gives no Good is made again from what the receiver should get, not patched where it showed,
-  and what each Good rests on is kept.

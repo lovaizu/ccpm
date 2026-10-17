@@ -1,16 +1,17 @@
 # turn UX
 
-turn makes the work a plugin's step asks for, has it read in the place of its receiver, the one the
-work is for, and returns it with each item's Good. The step's checklists list the items, each a
-question the work must meet; an item's Good is what the work gives its receiver for that item.
-Build and change every part of turn so that the AI calling it gets that on every run.
+turn makes the work a plugin's step asks for and returns it with each item of the step's checklists
+judged by a reader that did not make it. Build and change every part of turn so that the AI calling
+it gets that on every run.
 
 ## Users and goals
 
 - G1: The calling AI, the AI that runs a step of a plugin and calls turn from it, wants the work that
   step makes to come back meeting the step's checklists on every run.
 
-  rn's conductor, the AI that runs the steps of the rn plugin, is one such AI.
+  A checklist lists what the receiver, the one the work is for, should get from the work, one item
+  each, asked as a question. rn's conductor, the AI that runs the steps of the rn plugin, is one
+  such calling AI.
 
 ## Key results
 
@@ -29,26 +30,27 @@ Build and change every part of turn so that the AI calling it gets that on every
 - In its step, the calling AI asks the user what the checklists' items need, and writes a CCS that
   holds what is decided, where the work goes, the checklists and the receiver.
 
-  A CCS, the Compressed Cognitive State of [ACC](https://arxiv.org/abs/2601.11653), a method for
-  long AI tasks, is the small state an AI keeps in place of the whole conversation. It is the
-  calling AI's, with the names it chooses: parts, each a list of entries, each entry a kind and its
-  value.
+  A CCS is the JSON file in which the calling AI keeps its task, in the shape
+  [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
+  and its value, every name the calling AI's own.
 - The calling AI calls turn with the CCS's path, the kinds it uses in it for where the work goes, the
   checklists, the receiver, what the receiver reads the work for and what they open with it, and
   where turn writes its result.
-- The calling AI gets back the work where it goes, and the result: each item's Good with the lines
-  that give it, the questions only the user can decide, and each item still without Good, with what
-  the receiver gets once it is Good.
+- The calling AI gets back the work where it goes, and the result: each item's Good with its lines,
+  the questions only the user can decide, and each item still without Good, with what the receiver
+  gets once it is Good.
+
+  An item's Good is the judgment that the receiver gets from the work what the item asks, with the
+  lines that give it.
 - The calling AI checks each Good against its lines and fixes each item without Good itself; it
   puts each question to the user, writes the answer into the work, or into the CCS and calls turn
   again when the answer changes much, and ends its step.
 
 ## Benefits
 
-- The calling AI hands turn the CCS it already keeps, as it is, since turn defines nothing of it and
-  takes what it needs by the kinds it is told.
-- The calling AI gets the work already read inside turn by a reader other than the one that made
-  it, reading it as the receiver would, and made again where that reading found no Good, so the
-  calling AI does not judge an item on its own assumption.
-- Each Good comes with the lines that give it, so the calling AI checks it by reading those lines,
-  not by taking it on trust.
+- The calling AI gets the work already read by a reader that did not make it, in the receiver's
+  place, and made again where that reading found no Good, so it does not judge an item on its own
+  assumption.
+- Each Good comes with the lines it rests on, so the calling AI checks it by reading those lines.
+- The work is made from the CCS and the files it names alone, so it does not stray from what was
+  decided.

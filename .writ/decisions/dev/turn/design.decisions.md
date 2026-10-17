@@ -17,7 +17,7 @@
   `{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",
   "use": "<kind>", "opens": "<kind>"}, "result": "<path>"}`. The kinds are where the work goes, the
   checklists, the receiver, who reads the work, what they read it for and what they open with it;
-  the first three must each have an entry, and the last two may have none; a script takes
+  the first three must each be named and have an entry, and the last two may be left out; a script takes
   every entry of each from the CCS and hands it to the roles that need it, so no AI copies it, and
   the hooks bound what each role reads by them. The generator reads the CCS whole. The values stay
   in the CCS alone, so the call and the CCS cannot differ. The result is not a kind: it is where

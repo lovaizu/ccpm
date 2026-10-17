@@ -994,7 +994,15 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      (2026-10-17): both readers would use or could build turn; their findings settled at the
      decisions (`2e731ac`): one name, the receiver, so the call's `reader` key became `receiver`;
      when a run returns and what a reading is; what each role is given; what happens to a question.
-     Next: the user agrees the README and the design; then step 4. Before: step 3 again, the first users asked whether they received the
+     The README then read heavy, from a cause in the making: the README and design were rewritten
+     by substituting the new decisions into the old text, not drawn from the UX by each
+     checklist's steps, nor read item by item before going out, and the first reading's findings
+     were met by adding text. Decided by the user: UX, README and design written again from
+     nothing, in that order, by each checklist's steps, read item by item, no further first
+     reading; the UX's benefits are the three agreed (no "the CCS as it is"); a checklist lists what
+     the receiver should get, one item each, and a Good is the judgment that the receiver gets what
+     an item asks, with its lines, each said where first met. Done (2026-10-17). Next: the user
+     agrees the README and the design, shown in Japanese one at a time; then step 4. Before: step 3 again, the first users asked whether they received the
      Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);

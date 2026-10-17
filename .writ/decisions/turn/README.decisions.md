@@ -10,30 +10,24 @@ calling turn.
 - Anyone who has AI make documents, code and the like in the steps of their own plugin.
 
 ### B-1: What they gain
-- turn is a Claude Code plugin: what it makes comes back with the Good each item of your checklist
-  finds in it, since a reader that did not make it reads it in the place of the person it is for,
-  and what gives no Good is made again before it comes back.
+- turn is a Claude Code plugin: what a step has it make comes back meeting the step's checklists,
+  read first by a reader that did not make it, in the place of the one it is for, with each item's
+  Good and the lines it rests on.
+- A checklist and a Good are said as the UX says them, where they are first met.
 
 ### B-4: Using it on their own work
-- The example is a small plugin of the reader's own kind with a step that writes a README: in it the
-  AI asks the user, one point at a time, what the checklist's items need, writes what is decided
-  into its CCS, calls turn, gets back the work and the result, checks each Good against its lines,
-  fixes and ends.
-- It shows, from start to result: the step's CCS, as an example of the step's own, its kinds named
-  apart from turn's call keys so that the names are seen to be the step's, with ACC named in a few
-  words as where a CCS comes from; that turn reads the rest of the CCS as the task's own; the call, the CCS's path, the kinds turn takes from it
-  and where the result goes; the step's text that starts turn, kept short; that while the step
-  waits, a reader other than the one that made the work reads it in its receiver's place and what
-  gives no Good is made again, which the person sees in the panel below the prompt input; and the
-  result, each item's Good and lines, what `not_good` would hold, and a question for the user, then
-  the AI checking, fixing and ending the step.
+- The example is a step of the reader's own kind that writes a README: the step's AI writes its
+  task in a small CCS, calls turn with the CCS's path, its kinds and where the result goes, in a few
+  lines of the step's text; while it waits, turn writes the work, its reader reads it in the
+  receiver's place and what has no Good is made again; turn returns the work and the result, each
+  item's Good and lines and a question for the user; the AI checks each Good, asks, writes the
+  answer and ends.
+- A CCS is said in a sentence, with ACC linked; how to write one and the result's form in full are
+  for the page on calling turn, reached from Documentation.
 
 ### B-3: Why this one
 - When the AI that made a work checks it, it knows what each line means and misses where a newcomer
-  stops; in turn a reader that did not make it reads it with only what the person it is for opens.
-- turn makes the work from the CCS and the files it names alone and opens nothing else, so the work
-  does not stray from what was decided.
-- Each Good comes with the lines that give it, so it can be checked instead of taken on trust.
-- turn takes the CCS the step already keeps as it is, naming none of its parts or kinds itself.
-- What gives no Good is made again from what the receiver should get, not patched where it showed,
-  and what each Good rests on is kept.
+  stops; in turn a reader that did not make it reads it with only what the receiver opens.
+- Each Good comes with the lines it rests on, so it is checked by reading them.
+- The work is made from the CCS and the files it names alone, so it does not stray from what was
+  decided.
