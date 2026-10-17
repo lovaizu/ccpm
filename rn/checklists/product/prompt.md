@@ -253,3 +253,15 @@ matched to something the prompt asks; a shared thing matched to nothing fails.
 
 Why: the AI takes what its examples share as part of what is asked, so a likeness left by chance is
 copied too.
+
+### B-24: What was decided carried out in full
+
+Does the prompt have the AI carry out what the design decided for the agent or skill, its purpose,
+what it takes in, how it judges and what it hands back, neither narrowed nor widened?
+
+Look at: each step against the design's words for the same thing; a step that holds less or more,
+such as one case where the design names a kind of case, fails.
+
+Why: a prompt narrower than its design still reads well as a prompt, so it passes every other item;
+the AI then does less than the rest of the product counts on, and no one reading the prompt alone
+sees it.
