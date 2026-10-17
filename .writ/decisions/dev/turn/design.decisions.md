@@ -31,6 +31,18 @@
   does not find, each said as what the receiver gets once it is Good, not as the edit to make: a
   shortfall plain to see is sent back while it costs least, and in the old turn's trials an edit
   told to the generator broke another item. An item waiting on the user's answer is not sent back.
+- Each role's part is one aim, from the checklists and looking for the Good, so the AI works to
+  the aim rather than to a list of steps: the orchestrator runs the turn so that the Good builds
+  up; the generator passes the checklists; the first user uses the work and looks for the Good; the
+  evaluator looks for the Good the first user found and for any other Good the work gives; the
+  learner looks through every record of the run for what makes the Good. The first user is given
+  the checklists. The evaluator is there because one reader misses Good the work gives, and an
+  item judged not Good by that miss is made again for nothing.
+- How the work becomes Good is the generator's to decide: the orchestrator tells what the receiver
+  gets once an item is Good, and the learner tells what it learned about how to make the work,
+  such as what to read and ask before writing, where no item already asks it. In the old turn's
+  trials, edits told per item broke other items and added what the decisions do not hold, while
+  the learnings about making were the most useful thing the learner gave.
 - The generator makes the work and names, as its own check, the lines it meant to meet each item;
   that is its claim, not a judgment.
 - The orchestrator does not take the claim on trust: it reads the work against every item of the
