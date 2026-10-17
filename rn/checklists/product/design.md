@@ -60,15 +60,15 @@ outside the product>
 
 ### Units
 
-- <A unit>: <what is checked of it, in one sentence>
-  - <How and where that is checked, and the bar it must pass>
+- <A unit>: <what is checked of it>
+  - <Each check, its bar and where it runs, said plainly>
 
 ### Acceptance
 
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
-- <A key result's ID>: <what is measured, in one sentence>
-  - <How and where it is measured, and compared with its target and the last version>
+- <The ID of each key result of the UX>: <what is measured>
+  - <How and where it is measured, compared with its target and the last version>
 ```
 
 Why: the builder reads the user stories, then the components that achieve them and how they are
@@ -76,20 +76,28 @@ realized, then how the units and the whole are checked, each the ground of the n
 
 ## Benefit
 
-### B-17: Every logical component the stories need
+### B-1: A story for each thing the user does
+
+Can the reader tell, as user stories, each thing a user does with the product to reach the UX's
+goals?
+
+Why: the components are decided from the stories; a thing the user does that no story names is
+built by guess, or not at all.
+
+### B-2: Every logical component the stories need
 
 Is every logical component the stories need there?
 
 Why: a component left out is found only when a story it serves is built, and the architecture
 must change then.
 
-### B-18: The stories achieved by interactions
+### B-3: The stories achieved by interactions
 
 Do the interactions between the logical components achieve every user story?
 
 Why: components that each do their part achieve no story unless their interactions do.
 
-### B-19: No technology before it is chosen
+### B-4: No technology before it is chosen
 
 Are the user stories and the logical components free of technology?
 
@@ -97,41 +105,41 @@ Why: technology brought in first shapes the stories and components to it, so the
 follow from what the UX essentially needs, and changing the technology means making the stories
 again.
 
-### B-20: How each component is realized
+### B-5: How each component is realized
 
 Can the reader tell how each component is realized physically, with the technology chosen for it?
 
 Why: the builder makes each component as it is realized, and each way is made and changed in its
 own way.
 
-### B-21: Where each component is placed
+### B-6: Where each component is placed
 
 Can the reader tell where each component is placed?
 
 Why: where a component is placed decides who owns it, where it runs and when a change to it reaches
 the user.
 
-### B-22: What each component depends on outside
+### B-7: What each component depends on outside
 
 Can the reader tell what each component depends on outside the product?
 
 Why: what the product depends on is where it breaks for the user first.
 
-### B-23: Each unit checked, and how far
+### B-8: Each unit checked, and how far
 
 Can the reader tell what is checked of each physical unit, and the bar it must pass?
 
 Why: the whole is built from units checked one by one; a unit left unchecked, or checked to no
 stated bar, breaks the whole where no check shows it.
 
-### B-24: The whole checked
+### B-9: The whole checked
 
 Can the reader tell how the whole is checked to have achieved each user story?
 
 Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
-### B-25: Key results measured
+### B-10: Key results measured
 
 Can the reader tell, for each key result of the UX, how it is measured and compared with its target
 and the last version?

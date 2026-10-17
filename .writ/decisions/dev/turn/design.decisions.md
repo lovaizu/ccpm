@@ -2,12 +2,12 @@
 
 ## design
 
-### The user stories
+### B-1: A story for each thing the user does
 - One story: as the calling AI, I want to hand turn a CCS and get back
   the work and a new CCS, as one turn of ACC. Reading, judging and making again are how the work is made, decided in the
   components.
 
-### B-17: Every logical component the stories need
+### B-2: Every logical component the stories need
 - Five components: the generator, the first user, the evaluator, the learner and the orchestrator.
   The evaluator and the learner are there for the builder's reasons, so that the story is achieved
   reliably: the orchestrator alone did not settle its judgments, and the generator alone patched
@@ -16,7 +16,7 @@
   watching, and nothing is stopped or said again by one, so the progress shown on the console, the
   stop with Esc and the start again from a person's words go.
 
-### B-18: The stories achieved by interactions
+### B-3: The stories achieved by interactions
 - The generator makes the work and names, as its own check, the lines it meant to meet each item;
   that is its claim, not a judgment.
 - The orchestrator does not take the claim on trust: it reads the work against every item of the
@@ -48,13 +48,13 @@
 - `claude -p` is not used: the docs say `--bare`, which reads no subscription login, will become
   its default, and moving its use to separate credits was announced and only paused.
 
-### B-20: How each component is realized
+### B-5: How each component is realized
 - The orchestrator and the four roles are agent definitions. What must come out the same on every
   run is done by Python 3 scripts with jq, and the hooks are Python checks, one file each, with one
   entry file per hook event, as `plugin.md` sets.
 - The console and the stop with Esc go, as turn deals with no person.
 
-### B-21: Where each component is placed
+### B-6: Where each component is placed
 - The `turn:acc` skill, `turn/skills/acc/SKILL.md`, holds in its body ACC's intent and the CCS's
   specification. The intent first, drawn from the paper (linked as its source, not to be read at run
   time): an AI that replays the whole conversation through a long task holds more each turn, attends
@@ -85,10 +85,10 @@
   makes the work again from what is there and the readings start again. No resuming part way:
   being cut off is rare, and a reading again costs less than a resume to build and keep right.
 
-### B-22: What each component depends on outside
+### B-7: What each component depends on outside
 - Claude Code, python3 3.9 or later, jq and git.
 
-### B-23: Each unit checked, and how far
+### B-8: Each unit checked, and how far
 - The scripts: unittest fed what the calling AI hands over, a case each stops and one each lets
   through, every line and branch counted in CI on every push.
 - The hook checks: unittest fed what Claude Code hands each hook, a step stopped where it must be
@@ -96,13 +96,13 @@
 - The orchestrator and the four roles: each run on its own on a small task, on Opus 5.5, and judged
   from the JSONL by whether it did what its steps say.
 
-### B-24: The whole checked
+### B-9: The whole checked
 - Trials in `lovaizu/playground`, one at a time, each on a branch of its own removed after: a stand-in for the calling AI is handed a
   small task's decisions and checklist and calls turn; judged from the JSONL and the work. The
   story is achieved when the work comes back where it goes with an answer and lines for every
   item, each answer checked by reading the work.
 
-### B-25: Key results measured
+### B-10: Key results measured
 - From every trial, measured and compared with the targets in turn's UX and the last version: the
   items the stand-in fixes in the work after it comes back, counted from its own check in its
   JSONL; the time from the call to the return, from the JSONL's timestamps.

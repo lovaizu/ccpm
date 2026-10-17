@@ -8,8 +8,13 @@ version: 0.1.0
 A UX is read by whoever builds the product. From it they know the experience the product must give
 its users and how close each version must come to it, and build the product to it.
 
-The UX is a user's experience of using the product until they achieve their goal. Working out the
-UX is making that experience clear, in this order:
+The UX is a user's experience of using the product until they achieve their goal. Its goals and
+key results are an OKR: a goal says what the user wants to achieve, and its key results say what is
+measured to show how close the product brings them to it, each with a target set higher than the
+product is sure to reach. Most of what a product gives, such as a document's worth or the time it
+takes, is not met or missed but come close to, so each version is judged by how close it came, and
+a target easily met would leave nothing to aim at. Working out the UX is making that experience
+clear, in this order:
 
 1. Decide the users and the goal each wants to achieve.
 2. Decide, for each goal, its key results: what is measured to show how close the product brings
@@ -71,8 +76,7 @@ to it?
 
 Look for: work done or a thing made in place of a result the user sees.
 
-Why: what a document or a non-functional part gives is a matter of degree, so each version is judged
-by how close it came; a count of work done grows while the user gains nothing.
+Why: a count of work done grows while the user gains nothing.
 
 ### B-3: Targets set high
 
