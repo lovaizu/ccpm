@@ -1,7 +1,7 @@
 # Plugin rules (ccpm)
 
 How a plugin in this marketplace is built, step by step in the order the work is done. Each step
-names the checklists in `writ/references/essentials/` to open while doing it; a checklist says what
+names the checklists in `rn/checklists/` to open while doing it; a checklist says what
 the work must be, and this file says how the work goes.
 
 When a step's work needs something its checklist does not ask, add the question to that checklist,
@@ -17,7 +17,7 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the README
 
-**Write `<plugin>/README.md` with `doc.md` and `readme.md` open, and have the user agree to it
+**Write `<plugin>/README.md` with `readability.md` and `readme.md` open, and have the user agree to it
 before anything else is made.**
 
 - Rationale: everything after is built to what the README promises the user; built first, it would
@@ -25,7 +25,7 @@ before anything else is made.**
 
 ### 2. Write the design
 
-**Write `dev/<plugin>/design.md` with `doc.md` and `design.md` open, and have the user agree to it.**
+**Write `dev/<plugin>/design.md` with `readability.md` and `design.md` open, and have the user agree to it.**
 Beside it, put `dev/<plugin>/README.md`, which links the design and says how to run the tests and
 trials once they exist; `dev/README.md` lists each plugin's folder and links these rules, and the
 root `README.md` leads users to each plugin's README and builders to `dev/`. Put no README deeper.
@@ -45,8 +45,8 @@ readers would, and settle each finding by fixing the decision or principle it co
 ### 4. List the units
 
 **List the units to build. A unit is the smallest slice through which the user meets one or more of
-the qualities in the design's Goals, from start to end. The first unit carries one attractive
-quality by the thinnest path.** Keep each unit to the simplest mechanism that serves it, and add no
+the key results in the UX, from start to end. The first unit moves one key result by the
+thinnest path.** Keep each unit to the simplest mechanism that serves it, and add no
 special path for a case an existing check already stops.
 
 - Rationale: a unit run end to end shows early whether the plugin keeps its promise, and the first
@@ -57,35 +57,35 @@ special path for a case an existing check already stops.
 
 **For each unit, in order, do a to e.**
 
-a. **Write its tests in `dev/<plugin>/tests/` with `unittest`, run them and see them fail.** Feed
-   in what the code would receive, and check a case it stops as well as one it lets through. Name
-   each test by what must happen, as one sentence, and mark its body `# Given: <the situation>`,
-   `# When: <what is done>`, `# Then: <what must be so>`, each in plain words, not in terms of the
-   code.
+a. **Write its tests in `dev/<plugin>/tests/` with `unittest` and `code.md` open, run them and
+   see them fail.** Feed in what the code would receive, and check a case it stops as well as one
+   it lets through. Name each test by what must happen, as one sentence, and mark its body
+   `# Given: <the situation>`, `# When: <what is done>`, `# Then: <what must be so>`, each in plain
+   words, not in terms of the code.
    - Rationale: a test written after the code is fitted to what the code does, not to what it must
      do; a test never seen failing may check nothing; a check that never stops anything looks the
      same as one that works; a Then whose code checks less than its words say stands out.
 
-b. **Write the code until the tests pass.** What runs on users' machines is Python 3, 3.9 or later,
-   with the standard library only, and the README says so; a script that only calls an existing
-   tool may be sh. What the plugin's agents read and write as data is JSON; where they need only a
+b. **Write the code with `code.md` open until the tests pass.** What runs on users' machines is
+   Python 3, 3.9 or later, with the standard library only, and the README says so; a script that
+   only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON; where they need only a
    part, they read and change it with `jq`, and where the purpose needs it read whole, they read it
    whole. When a tool the plugin runs on, such as python3 or jq, is missing, the plugin stops and
    says how to install it. The tests run every line the plugin runs; delete a line no test has a
    reason to run, and mark `# pragma: no cover`, with its reason beside it, only where whether a
-   line runs depends on an environment the tests cannot make. CI counts the lines on every push
-   and fails on any not run.
+   line runs depends on an environment the tests cannot make. CI counts the lines and branches on
+   every push and fails on any not run.
    - Rationale: what the plugin makes can be wrong, so it is held by tests, and python3 is wherever
      git is while Node.js may not be; an agent changes only the part it needs with a tool it
      already knows, and a judgment made on a part where the whole was needed cannot be told from
      one made on the whole; a skipped check goes unnoticed.
 
-c. **Write each prompt, a skill or an agent, with `doc.md` and `prompt.md` open, and run it to see
+c. **Write each prompt, a skill or an agent, with `readability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds
      the prompts' slips, not whether the plugin keeps its promises.
 
-d. **Write the hooks that check the process the prompts' steps set:** a step begun before the
+d. **Write the hooks, with `code.md` open, that check the process the prompts' steps set:** a step begun before the
    steps ahead of it are done, a step left out, an input not read or an output not written where
    its step says. Each stop says which step went wrong and what that step needs. Put each check in
    its own named file, with one entry file per hook event, as the official `hookify` does.
@@ -95,12 +95,17 @@ d. **Write the hooks that check the process the prompts' steps set:** a step beg
 
 e. **Try the unit as its user**, with the code that runs it kept in `dev/<plugin>/trials/`, out of
    the line count, on the models the plugin's agents name and never a smaller one. Judge it from
-   the JSONL of every conversation and agent it started, by the design's Verification. A trial that
-   needs a real GitHub repository runs in the private `lovaizu/rn-try`, one at a time.
+   the JSONL of every conversation and agent it started, by the design's Verification. Try the flow
+   of the steps apart from what a step makes, each on the smallest task that still shows it. A
+   trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a
+   branch of its own, and the branch, its pull requests and whatever else it made there are removed
+   when it ends.
    - Rationale: CI cannot start Claude Code, so each run is its own check, and a smaller model's
      slips are not the plugin's; the outcome shows that something went wrong, the records show
-     where; pull requests and pushes a run makes stay out of every repository people use, and two
-     runs at once would mix in it.
+     where; a trial that tries the flow and the work at once costs the whole work each time it
+     runs, and, failing, does not say which went wrong; pull requests and pushes a run makes stay
+     out of every repository people use, `main` there takes nothing but through a reviewed pull
+     request, and two runs at once, or one left behind, would mix with the next.
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
 to what the README and the design say it should be.**
@@ -110,10 +115,10 @@ to what the README and the design say it should be.**
 
 ### 6. Check the whole
 
-**Try the plugin as its user from start to end, and check every quality in the design's
-Verification.** Settle what it finds at the unit its cause lies in, then check the whole again.
+**Try the plugin as its user from start to end, and check every story and how close every key
+result of the UX came, by the design's Verification.** Settle what it finds at the unit its cause lies in, then check the whole again.
 
-- Rationale: each unit was checked on its own; what lies between units, and qualities that show only
+- Rationale: each unit was checked on its own; what lies between units, and key results that show only
   over the whole, such as the time a whole run takes, show only here.
 
 ### 7. Check the structure

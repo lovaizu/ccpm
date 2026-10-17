@@ -1,33 +1,31 @@
-#!/usr/bin/env python3
-"""Stop hook for rn: checks 1 to 3, 8, 13 and 14 on every end of the conductor's turn, the second
-end included, but for check 13: any end may speak to the user, and any may leave commits only on
-this machine."""
-import json
-import os
+"""Stop: at each end of the conductor's turn, every open session's record is checked against its
+form, so a breach made by a shell command, which PostToolUse on Write and Edit does not see, is
+still stopped within the turn it was made in."""
+
+from __future__ import annotations
+
 import sys
+from typing import IO
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from checks import FORM, Record, older, run
+from record import open_sessions, read_event, report
 
-import form  # noqa: E402
-import record  # noqa: E402
-from checks import conversation_language, pushed, turn_end  # noqa: E402
+CHECKS = FORM
 
 
-def main():
-    data = json.load(sys.stdin)
-    found = record.find(data, finished_too=True)
-    if not found:
-        return 0
-    _, top, sdir = found
-    language = conversation_language.check(sdir, data.get("last_assistant_message") or "")
-    problems = form.check(top, sdir) + pushed.check(top)
-    if not problems:
-        problems = turn_end.check(data, top, sdir)
-    problems = language + problems
-    if problems:
-        print(json.dumps({"decision": "block", "reason": "rn check:\n- " + "\n- ".join(problems)}))
-    return 0
+def at_turn_end(record: Record) -> list[str]:
+    """An older session waits for `/rn:up` to bring it to the current form, so it is passed by."""
+    return [] if older(record) else run(CHECKS, record)
+
+
+def main(stream: IO[str]) -> None:
+    event = read_event(stream)
+    if event is None:
+        return
+    report(
+        [sentence for session in open_sessions(event) for sentence in at_turn_end(session.record)]
+    )
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.stdin)

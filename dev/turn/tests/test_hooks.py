@@ -1,112 +1,451 @@
-import contextlib
 import io
 import json
 import os
-import subprocess
+import runpy
 import sys
-import unittest
 from unittest import mock
 
-from helpers import form, ROOT, Repo, fill, run, started
+from helpers import (
+    CALL,
+    EVALUATED,
+    GOOD,
+    GOT,
+    HOOKS,
+    ID,
+    LEARNT,
+    QUESTION,
+    SENT_BACK,
+    TURN,
+    WAITS,
+    RepoTest,
+    pretooluse,
+    subagentstop,
+)
 
-import subagentstop
+
+class HookTest(RepoTest):
+    """Each test hands a hook the event Claude Code would, in a session whose transcripts sit in
+    the temporary repository."""
+
+    def given_prompt(self, agent_id, prompt):
+        return self.given_record(agent_id, prompt)
+
+    def tool(self, agent_type, tool_name, **tool_input):
+        return self.event("PreToolUse", agent_type, tool_name=tool_name, tool_input=tool_input)
+
+    def stops(self, entry, event, *said):
+        code, err = self.hook(entry, event)
+        self.assertEqual(code, 2, err)
+        for words in said:
+            self.assertIn(words, err)
+
+    def passes(self, entry, event):
+        self.assertEqual(self.hook(entry, event), (0, ""))
+
+    def first_user(self, **call):
+        """A run whose first user is to be started next, and the prompt it is to be started with."""
+        self.started(dict(CALL, **call))
+        return self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})["prompt"]
 
 
-def hook(repo, **data):
-    """Runs the SubagentStop hook as Claude Code does; returns its exit code and what it told the agent."""
-    data.setdefault("cwd", repo.path)
-    err = io.StringIO()
-    with mock.patch("sys.stdin", io.StringIO(json.dumps(data))), contextlib.redirect_stderr(err):
-        code = subagentstop.main()
-    return code, err.getvalue()
+class TestCall(HookTest):
+    def call(self, prompt):
+        return self.tool(None, "Agent", subagent_type="turn:up", prompt=prompt)
+
+    def test_a_call_turn_can_take_passes(self):
+        # Given: a calling AI starting the orchestrator with a call whose CCS holds every kind
+        # When: the call is about to be made
+        # Then: it goes through
+        self.passes(pretooluse, self.call(json.dumps(CALL)))
+
+    def test_a_call_turn_cannot_take_stops_at_the_caller(self):
+        # Given: a calling AI starting the orchestrator with a call naming a kind the CCS lacks
+        # When: the call is about to be made
+        # Then: it is stopped there, saying what is wrong, before any run starts
+        call = dict(CALL, kind=dict(CALL["kind"], receiver="reader"))
+        self.stops(pretooluse, self.call(json.dumps(call)), '"reader"')
+        self.assertFalse(os.path.exists(CALL["result"]))
+
+    def test_other_agents_and_tools_pass(self):
+        # Given: a call to an agent that is not turn's, and a tool that is not a call
+        # When: it is about to be made
+        # Then: it goes through
+        self.passes(pretooluse, self.tool(None, "Agent", subagent_type="Explore", prompt="look"))
+        self.passes(pretooluse, self.tool(None, "Bash", command="ls"))
 
 
-class HandBack(unittest.TestCase):
+class TestStartAsCalled(HookTest):
+    def start(self, call):
+        command = f"python3 {TURN}/scripts/turn.py start '{json.dumps(call)}'"
+        return self.tool("turn:up", "Bash", command=command)
+
+    def test_the_run_started_with_the_call_passes(self):
+        # Given: an orchestrator called with a call
+        # When: it starts the run with that call
+        # Then: it goes through
+        self.given_prompt(ID, json.dumps(CALL))
+        self.passes(pretooluse, self.start(CALL))
+
+    def test_the_run_started_with_a_changed_call_stops(self):
+        # Given: an orchestrator called with a call
+        # When: it starts the run with a call that differs from it
+        # Then: it is stopped, saying to start the run with the call as it was given
+        self.given_prompt(ID, json.dumps(CALL))
+        self.stops(pretooluse, self.start(dict(CALL, result="x.json")), "the call as it was given")
+
+    def test_a_start_without_a_call_stops(self):
+        # Given: an orchestrator called with a call
+        # When: it starts the run with no JSON after the command
+        # Then: it is stopped, saying to start the run with the call as it was given
+        self.given_prompt(ID, json.dumps(CALL))
+        event = self.tool("turn:up", "Bash", command=f"python3 {TURN}/scripts/turn.py start")
+        self.stops(pretooluse, event, "the call as it was given")
+
+
+class TestRoleStart(HookTest):
+    def role(self, agent_type, prompt):
+        return self.tool("turn:up", "Agent", subagent_type=agent_type, prompt=prompt)
+
+    def test_the_generator_started_with_the_prompt_the_script_gave_passes(self):
+        # Given: a run started
+        # When: the orchestrator starts the generator with the prompt the script printed
+        # Then: it goes through
+        self.passes(pretooluse, self.role("turn:generator", self.started()))
+
+    def test_the_generator_started_with_another_prompt_stops(self):
+        # Given: a run started
+        # When: the orchestrator starts the generator with a prompt that differs, one that is not
+        # JSON, or one for a run not going
+        # Then: it is stopped, saying to start it with what the script printed last
+        prompt = json.loads(self.started())
+        changed = json.dumps(dict(prompt, sent_back=[SENT_BACK]))
+        elsewhere = json.dumps(dict(prompt, run="other.json"))
+        for given in (changed, "make the README", elsewhere):
+            with self.subTest(given=given):
+                self.stops(
+                    pretooluse,
+                    self.role("turn:generator", given),
+                    "turn:generator with what turn.py printed last",
+                )
+
+    def test_the_first_user_started_with_the_prompt_the_script_gave_passes(self):
+        # Given: a run whose findings are recorded
+        # When: the orchestrator starts the first user with the prompt the script printed
+        # Then: it goes through
+        self.passes(pretooluse, self.role("turn:first-user", self.first_user()))
+
+    def test_a_role_started_before_its_turn_stops(self):
+        # Given: a run whose generator is to be started next
+        # When: the orchestrator starts the first user or the evaluator with the generator's prompt
+        # Then: it is stopped, naming the generator as the one to start
+        prompt = self.started()
+        for agent_type in ("turn:first-user", "turn:evaluator"):
+            with self.subTest(agent_type=agent_type):
+                self.stops(
+                    pretooluse,
+                    self.role(agent_type, prompt),
+                    "turn:generator with what turn.py printed last",
+                )
+
+
+class TestReplies(HookTest):
+    def reply(self, message):
+        path = self.given_prompt(ID, self.started())
+        event = self.event(
+            "SubagentStop",
+            "turn:generator",
+            agent_transcript_path=path,
+            last_assistant_message=message,
+            stop_hook_active=False,
+        )
+        return event
+
+    def test_a_first_users_reply_of_what_it_got_passes(self):
+        # Given: a first user whose reply says what it got for one item and where
+        # When: it ends
+        # Then: it ends
+        self.assertEqual(
+            self.replied("turn:first-user", self.first_user(), {"items": [GOT]}), (0, "")
+        )
+
+    def test_a_learners_reply_leaving_an_item_out_stops(self):
+        # Given: a learner of a run whose first reading left an item without Good
+        # When: it ends with what makes the Good of one item alone
+        # Then: it is kept going, told the item it left out
+        self.started()
+        self.through(dict(EVALUATED, item="B-1"))
+        prompt = self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
+        code, err = self.replied("turn:learner", prompt, {"items": LEARNT[:1]})
+        self.assertEqual(code, 2)
+        self.assertIn("B-1 is left out", err)
+
+    def test_a_readers_reply_out_of_its_form_stops(self):
+        # Given: a first user replying with prose or with a Good, which is the evaluator's to
+        # give, and an evaluator replying with what it got, which is the first user's to say
+        # When: it ends
+        # Then: it is kept going, told the form it gives
+        prompt = self.first_user()
+        for agent_type, reply, said in (
+            ("turn:first-user", "I read it.", '{"items": [...]}'),
+            ("turn:first-user", {"items": [EVALUATED]}, '"got" with "lines"'),
+        ):
+            with self.subTest(reply=reply):
+                code, err = self.replied(agent_type, prompt, reply)
+                self.assertEqual(code, 2)
+                self.assertIn(said, err)
+        self.replied("turn:first-user", prompt, {"items": [GOT]})
+        out = self.next()
+        code, err = self.replied("turn:evaluator", out["prompt"], {"items": [GOT]})
+        self.assertEqual(code, 2)
+        self.assertIn('"good" with "lines"', err)
+
+    def test_a_reply_naming_lines_or_a_question_for_every_item_passes(self):
+        # Given: a generator whose reply names lines for one item and a question for the other
+        # When: it ends
+        # Then: it ends
+        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
+        reply = {"items": [claim, WAITS], "questions": [QUESTION]}
+        self.passes(subagentstop, self.reply(json.dumps(reply)))
+
+    def test_a_reply_out_of_its_form_stops(self):
+        # Given: a generator whose reply is prose, or leaves an item out
+        # When: it ends
+        # Then: it is kept going, told what its reply lacks
+        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
+        for reply, said in (
+            ("Done.", '{"items": [...], "questions": [...]}'),
+            (json.dumps({"items": [claim], "questions": []}), "B-1"),
+        ):
+            with self.subTest(reply=reply):
+                self.stops(subagentstop, self.reply(reply), said)
+
+    def test_a_good_in_the_generators_reply_stops(self):
+        # Given: a generator whose reply judges an item Good, which is not its to judge
+        # When: it ends
+        # Then: it is kept going, told the shapes its items take
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        self.stops(subagentstop, self.reply(json.dumps(reply)), '"lines" or "question"')
+
+    def test_a_generator_of_no_run_going_ends(self):
+        # Given: a generator whose run has returned, or was never started
+        # When: it ends with a reply out of its form
+        # Then: it ends, as no run waits on its reply
+        path = self.given_prompt(ID, json.dumps({"run": "none.json"}))
+        event = self.event(
+            "SubagentStop", "turn:generator", agent_transcript_path=path, last_assistant_message="x"
+        )
+        self.passes(subagentstop, event)
+
+
+class TestReturned(HookTest):
+    def end(self):
+        path = self.given_prompt(ID, json.dumps(CALL))
+        return self.event(
+            "SubagentStop", "turn:up", agent_transcript_path=path, stop_hook_active=False
+        )
+
+    def test_an_orchestrator_ending_with_its_run_going_stops(self):
+        # Given: a run started and not returned
+        # When: the orchestrator ends
+        # Then: it is kept going, told to record its reading until the run returns
+        self.started()
+        self.stops(subagentstop, self.end(), "turn.py next")
+
+    def test_an_orchestrator_ending_after_its_run_returned_passes(self):
+        # Given: a run whose result is written
+        # When: the orchestrator ends
+        # Then: it ends
+        self.started()
+        self.through(EVALUATED)
+        self.passes(subagentstop, self.end())
+
+    def test_an_orchestrator_whose_call_was_refused_ends(self):
+        # Given: an orchestrator whose call never started a run
+        # When: it ends
+        # Then: it ends
+        self.passes(subagentstop, self.end())
+
+    def test_other_agents_end(self):
+        # Given: an agent that is not turn's
+        # When: it ends
+        # Then: it ends
+        self.passes(subagentstop, self.event("SubagentStop", "Explore"))
+
+
+class TestWrites(HookTest):
     def setUp(self):
-        self.repo = Repo()
-        self.got = started(self.repo)
-        self.repo.write(self.got["work"], "# Note\n\nRun make.\n")
+        super().setUp()
+        self.given_prompt(ID, self.started())
 
-    def tearDown(self):
-        self.repo.close()
+    def test_the_generator_writing_the_work_passes(self):
+        # Given: a generator of a run
+        # When: it writes or edits the work
+        # Then: it goes through
+        for tool in ("Write", "Edit"):
+            with self.subTest(tool=tool):
+                event = self.tool("turn:generator", tool, file_path=f"{self.repo}/README.md")
+                self.passes(pretooluse, event)
 
-    def hand_back(self, agent, session="s1"):
-        return hook(self.repo, session_id=session, hook_event_name="SubagentStop", agent_type=agent)
+    def test_the_generator_writing_elsewhere_stops(self):
+        # Given: a generator of a run
+        # When: it writes a file that is not the work, such as a checklist
+        # Then: it is stopped, naming where it may write
+        event = self.tool("turn:generator", "Write", file_path="checklists/readme.md")
+        self.stops(pretooluse, event, "README.md")
 
-    def test_an_agent_handing_back_with_its_form_unfilled_is_kept_at_it(self):
-        # Given: the generator's form left empty in an open run
-        # When: the generator hands back
-        code, said = self.hand_back("turn:generator")
-        # Then: it is stopped, told which step and what is missing
-        self.assertEqual(code, 2)
-        self.assertIn("turn: fill your form before handing back", said)
-        self.assertIn("note B-1: lines are not given", said)
+    def test_any_other_of_turns_agents_writing_stops(self):
+        # Given: the orchestrator and the first user of a run
+        # When: either writes the work
+        # Then: it is stopped, saying the generator alone writes the work
+        self.given_prompt(ID, json.dumps(dict(CALL)))
+        self.stops(pretooluse, self.tool("turn:up", "Edit", file_path="README.md"), "generator")
+        self.given_prompt(ID, self.first_user())
+        event = self.tool("turn:first-user", "Write", file_path="README.md")
+        self.stops(pretooluse, event, "generator")
 
-    def test_an_agent_handing_back_with_its_form_filled_goes_on(self):
-        # Given: the first user's form filled for every item
-        fill(self.repo, form("first-user"), {
-            "note B-1": {"took": "run make", "lines": "3"}})
-        # When: the first user hands back
-        code, _ = self.hand_back("turn:first-user")
-        # Then: it goes on
-        self.assertEqual(code, 0)
+    def test_a_generator_of_no_run_going_writes(self):
+        # Given: a generator whose run has returned
+        # When: it writes a file
+        # Then: it goes through, as no run bounds it
+        self.given_prompt(ID, json.dumps({"run": "none.json"}))
+        self.passes(pretooluse, self.tool("turn:generator", "Write", file_path="other.md"))
 
-    def test_an_agent_handing_back_before_the_work_is_written_is_told_so(self):
-        # Given: the work not written
-        os.remove(os.path.join(self.repo.path, self.got["work"]))
-        # When: the generator hands back
-        code, said = self.hand_back("turn:generator")
-        # Then: it is stopped, told the work is missing
-        self.assertEqual(code, 2)
-        self.assertIn(".turn/out/1/note.md is not written", said)
+    def test_a_role_committing_or_pushing_stops(self):
+        # Given: any of turn's agents
+        # When: it commits or pushes
+        # Then: it is stopped, saying the caller keeps the work in git
+        for command in ("git commit -m x", "git add . && git push"):
+            with self.subTest(command=command):
+                self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "caller")
 
-    def test_the_hook_run_as_claude_code_runs_it_stops_an_unfilled_form(self):
-        # Given: the hook's entry file, and an empty form in an open run
-        entry = os.path.join(ROOT, "turn", "hooks", "subagentstop.py")
-        data = {"cwd": self.repo.path, "session_id": "s1", "hook_event_name": "SubagentStop",
-                "agent_type": "turn:generator"}
-        # When: Claude Code runs it on a hand-back
-        done = subprocess.run([sys.executable, entry], input=json.dumps(data), capture_output=True,
-                              text=True)
-        # Then: it stops the call with what is missing
-        self.assertEqual(done.returncode, 2)
-        self.assertIn("note B-1: lines are not given", done.stderr)
-
-    def test_nothing_outside_the_run_is_stopped(self):
-        cases = [
-            ("another session", "turn:generator", "s2", "SubagentStop"),
-            ("an agent not of turn", "other:writer", "s1", "SubagentStop"),
-            ("an agent of turn with no form", "turn:helper", "s1", "SubagentStop"),
-            ("another event", "turn:generator", "s1", "Stop"),
-        ]
-        for name, agent, session, event in cases:
-            with self.subTest(name):
-                # Given: an empty form, and a call from outside what the check covers
-                # When: the call is made
-                code, _ = hook(self.repo, session_id=session, hook_event_name=event, agent_type=agent)
-                # Then: it goes on
-                self.assertEqual(code, 0)
-
-    def test_nothing_is_stopped_once_the_run_has_ended(self):
-        # Given: a run that has ended
-        fill(self.repo, form("orchestrator"), {
-            "note B-1": {"met": True, "lines": "3", "note": "x"},
-            "note F-1": {"met": True, "lines": "1", "note": "x"}})
-        self.assertEqual(run(self.repo, "end", ".turn/out", "1")[0], 0)
-        # When: an agent named like turn's hands back with an empty form
-        code, _ = self.hand_back("turn:generator")
-        # Then: it goes on
-        self.assertEqual(code, 0)
-
-    def test_nothing_is_stopped_in_a_repository_with_no_run(self):
-        # Given: a repository where turn has never run
-        other = Repo()
-        # When: an agent named like turn's hands back
-        code, _ = hook(other, session_id="s1", hook_event_name="SubagentStop", agent_type="turn:generator")
-        # Then: it goes on
-        self.assertEqual(code, 0)
-        other.close()
+    def test_other_commands_pass(self):
+        # Given: one of turn's agents
+        # When: it runs a command that neither commits nor pushes
+        # Then: it goes through
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command="git diff"))
 
 
-if __name__ == "__main__":
-    unittest.main()
+class TestReads(HookTest):
+    def setUp(self):
+        super().setUp()
+        self.given_prompt(ID, self.started())
+        self.write("secret/notes.md", "x\n")
+
+    def test_reading_what_the_run_was_given_passes(self):
+        # Given: a generator of a run
+        # When: it reads the CCS, a file the CCS names, the work, or turn's own files
+        # Then: it goes through
+        for path in (
+            CALL["ccs"],
+            f"{self.repo}/notes/readme.decisions.md",
+            "README.md",
+            f"{TURN}/agents/generator.md",
+        ):
+            with self.subTest(path=path):
+                self.passes(pretooluse, self.tool("turn:generator", "Read", file_path=path))
+
+    def test_reading_anything_else_stops(self):
+        # Given: a generator of a run
+        # When: it reads a file, or searches a folder, the run was not given
+        # Then: it is stopped, naming what it may read
+        self.stops(
+            pretooluse,
+            self.tool("turn:generator", "Read", file_path="secret/notes.md"),
+            "notes/readme.decisions.md",
+        )
+        self.stops(pretooluse, self.tool("turn:generator", "Grep", pattern="x", path="secret"))
+
+    def test_a_first_user_reading_what_the_receiver_has_passes(self):
+        # Given: a first user of a run whose receiver opens a page with the work
+        # When: it reads the work, the page or the checklist
+        # Then: it goes through
+        self.given_prompt(ID, self.first_user(kind=dict(CALL["kind"], opens="page")))
+        for path in ("README.md", "docs/start.md", "checklists/readme.md"):
+            with self.subTest(path=path):
+                self.passes(pretooluse, self.tool("turn:first-user", "Read", file_path=path))
+
+    def test_a_first_user_reading_what_the_receiver_does_not_have_stops(self):
+        # Given: a first user of a run
+        # When: it reads the CCS or the decisions, which the receiver does not have
+        # Then: it is stopped, naming what it may read
+        self.given_prompt(ID, self.first_user())
+        for path in (CALL["ccs"], "notes/readme.decisions.md"):
+            with self.subTest(path=path):
+                event = self.tool("turn:first-user", "Read", file_path=path)
+                self.stops(pretooluse, event, "README.md, checklists/readme.md")
+
+    def test_a_learner_reads_the_records_of_its_run_alone(self):
+        # Given: a learner of a run whose first reading left an item without Good
+        # When: it reads a role's record, or the work
+        # Then: the record goes through, and the work is stopped, naming the records
+        self.through(dict(EVALUATED, item="B-1"))
+        prompt = self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
+        self.given_prompt(ID, prompt)
+        record = json.loads(prompt)["records"][0]
+        self.passes(pretooluse, self.tool("turn:learner", "Read", file_path=record))
+        self.stops(pretooluse, self.tool("turn:learner", "Read", file_path="README.md"), record)
+
+    def test_a_command_naming_only_what_the_run_was_given_passes(self):
+        # Given: a generator of a run
+        # When: it runs a command naming the work and a file the CCS names, from the repository's
+        # top, or one whose quoting does not close
+        # Then: it goes through
+        for command in (
+            f"cd {self.repo} && cat -n README.md notes/readme.decisions.md",
+            "python3 - <<'EOF'\nprint('x)\nEOF",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_the_orchestrator_recording_its_reading_passes(self):
+        # Given: an orchestrator whose run is going
+        # When: it records its reading with the script, naming where the result goes
+        # Then: it goes through
+        self.given_prompt(ID, json.dumps(CALL))
+        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
+    def test_a_command_naming_a_file_the_run_was_not_given_stops(self):
+        # Given: a generator of a run
+        # When: it runs a command that reads a file of the repository the run was not given
+        # Then: it is stopped, naming what it may read
+        event = self.tool("turn:generator", "Bash", command="cat README.md secret/notes.md")
+        self.stops(pretooluse, event, "notes/readme.decisions.md")
+
+    def test_a_search_without_a_path_stops(self):
+        # Given: a generator of a run
+        # When: it searches with no path, which searches the whole repository
+        # Then: it is stopped
+        self.stops(pretooluse, self.tool("turn:generator", "Glob", pattern="**/*.md"))
+
+    def test_the_orchestrator_reading_its_call_before_starting_passes(self):
+        # Given: an orchestrator whose run is not started yet
+        # When: it reads the CCS
+        # Then: it goes through, as no run bounds it yet
+        self.given_prompt(ID, json.dumps(dict(CALL, result="later.json")))
+        self.passes(pretooluse, self.tool("turn:up", "Read", file_path="secret/notes.md"))
+
+    def test_an_agent_whose_prompt_names_no_run_reads_freely(self):
+        # Given: one of turn's agents started with words, not JSON, or with no record of its start
+        # When: it reads a file
+        # Then: it goes through, as no run bounds it
+        self.given_prompt(ID, "make the README")
+        self.passes(pretooluse, self.tool("turn:generator", "Read", file_path="secret/notes.md"))
+        os.remove(os.path.join(self.repo, "session", "subagents", f"agent-{ID}.jsonl"))
+        self.passes(pretooluse, self.tool("turn:generator", "Read", file_path="secret/notes.md"))
+
+
+class TestEntries(HookTest):
+    def test_each_entry_runs_from_the_shell(self):
+        # Given: Claude Code runs each entry file by its path
+        # When: it hands it an event that concerns turn not at all
+        # Then: it exits without stopping anything
+        for name in ("pretooluse.py", "subagentstop.py"):
+            with self.subTest(name=name):
+                event = json.dumps(self.tool(None, "Bash", command="ls"))
+                with (
+                    mock.patch.object(sys, "stdin", io.StringIO(event)),
+                    self.assertRaises(SystemExit) as end,
+                ):
+                    runpy.run_path(os.path.join(HOOKS, name), run_name="__main__")
+                self.assertEqual(end.exception.code, 0)

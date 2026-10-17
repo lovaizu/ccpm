@@ -1,0 +1,14 @@
+{
+  "focal_entities": [{"deliverable": "rn/docs/verification.md"},
+                     {"receiver": "someone who runs rn's checks again after a change to it, coming from its design"}],
+  "goal_orientation": [{"use": "to see whether rn still gives what its design promises, criterion by criterion, and whether something that worked broke"},
+                       {"acceptance": "they can set up a run, run each scene and each machine check as written, and tell for each criterion whether it passed"}],
+  "retrieved_artifacts": [{"checklist": "rn/checklists/readability.md"},
+                          {"checklist": "rn/checklists/verification.md"},
+                          {"decisions": ".writ/decisions/rn/docs/verification.decisions.md"},
+                          {"receiver_opens": "rn/docs/design.md"},
+                          {"receiver_opens": "dev/rn/trials"}],
+  "constraints": [{"language": "English"}],
+  "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
+  "relational_map": [], "episodic_trace": []
+}

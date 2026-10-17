@@ -1,33 +1,13 @@
 {
+  "description": "Keeps the record of an rn session in the form rn's commands and checks read it by, checked after each write to it and at each end of the conductor's turn. Each command runs its entry file with python3; without python3 it stops only where the working tree holds a running session's plan, since that is the one sign of an open session sh can see, and at the end of a turn only once, since the conductor cannot install python3 itself.",
   "hooks": {
-    "UserPromptExpansion": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/userpromptexpansion.py\""
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Write|Edit|NotebookEdit|Read|Grep|Glob|Agent|SendMessage",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\""
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
-        "matcher": "Bash|Write|Edit",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py\""
+            "command": "command -v python3 >/dev/null 2>&1 && exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py\"; top=$(git rev-parse --show-toplevel 2>/dev/null) && grep -qsx 'status: running' \"$top\"/.rn/*/steering.md && { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; exit 0"
           }
         ]
       }
@@ -37,18 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/stop.py\""
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null || { t=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d \"$t/.rn\" ] || exit 0; echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/sessionstart.py\""
+            "command": "command -v python3 >/dev/null 2>&1 && exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/stop.py\"; grep -q '\"stop_hook_active\": *true' && exit 0; top=$(git rev-parse --show-toplevel 2>/dev/null) && grep -qsx 'status: running' \"$top\"/.rn/*/steering.md && { echo 'rn: its checks need python3 (3.9 or later); install it and run again' >&2; exit 2; }; exit 0"
           }
         ]
       }

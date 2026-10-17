@@ -1,54 +1,150 @@
-"""Check 3: every ID referred to exists; the verification document keeps its form; every acceptance
-criterion has a scene or a machine check, and a task once tasks are planned; a question item names
-on its `Serves:` line the criteria it rests on, or `goal`."""
-import os
+"""Every criterion the record refers to is one the plan has, and each criterion is where rn's
+steps look for it: a scene or machine check in the verification document, and, once tasks are
+planned, a task serving it."""
+
 import re
 
-from record import criteria, front_matter, open_items, section, steering
-from checks.steering_form import TASK
+from checks import TASK, Record, criteria, field, front_matter, section, stop, task_blocks
 
-ID = re.compile(r"\b([AM]\d+)\b")
+ID = re.compile(r"[AM]\d+")
+PLAN_STEP = "Planning the tasks"
+DESIGN_STEP = "Working out the design"
+# rn 0.9.x wrote the verification document without front matter.
+WITHOUT_FRONT_MATTER = re.compile(r"0\.9\.\d+")
 
 
-def check(top, sdir):
+def tasks(record: Record, ids: set[str]) -> list[str]:
+    where = f"{record.folder}/steering.md"
     problems = []
-    text = steering(sdir)
-    front = front_matter(text) or {}
-    defined = set(criteria(text))
-    tasks_text = "\n".join(section(text, "# Tasks", 1))
-    for i in sorted(set(ID.findall(tasks_text)) - defined):
-        problems.append(f"steering.md: task refers to {i}, which no acceptance criterion has")
-    vpath = os.path.join(top, front.get("verification", "docs/verification.md"))
-    if os.path.isfile(vpath):
-        vtext = open(vpath).read()
-        heads = re.findall(r"^### ([AM]\d+):", vtext, re.M)
-        named = set(ID.findall(vtext))
-        for i in sorted(named - defined):
-            problems.append(f"verification: refers to {i}, which steering.md does not define")
-        if "## Scenes" not in vtext.splitlines():
-            problems.append("verification: `## Scenes` is missing")
-        if "## Machine checks" not in vtext.splitlines():
-            problems.append("verification: `## Machine checks` is missing")
-        for i in sorted(d for d in defined if d.startswith("A") and d not in heads):
-            problems.append(f"verification: attractive criterion {i} has no `### {i}:` scene")
-        for i in sorted(d for d in defined if d.startswith("M") and d not in named):
-            problems.append(f"verification: must-be criterion {i} is named in no scene or check")
-    for name in open_items(sdir):
-        if "-notes-question" not in name:
+    served = set()
+    beyond_sign_offs = False
+    for block in task_blocks(record.plan):
+        task = TASK.match(block)
+        if task is None:
             continue
-        first = (open(os.path.join(sdir, "open", name)).read().strip().splitlines() or [""])[0]
-        m = re.match(r"^Serves: (.+)$", first)
-        named = set(ID.findall(m.group(1))) if m else set()
-        if not m or (m.group(1).strip() != "goal" and not named):
-            problems.append(f"open/{name}: the first line must be `Serves:` with the criterion IDs "
-                            "the question rests on, or `goal`")
-        for i in sorted(named - defined):
-            problems.append(f"open/{name}: serves {i}, which steering.md does not define; ask what "
-                            "the result must do and write it as a criterion before offering ways")
-    planned = any(TASK.match(l) and "sign-off" not in l.lower()
-                  for l in section(text, "# Tasks", 1))
-    if planned:
-        served = set(ID.findall(tasks_text))
-        for i in sorted(defined - served):
-            problems.append(f"steering.md: criterion {i} is served by no task")
+        beyond_sign_offs = beyond_sign_offs or not task.group(2).endswith("sign-off")
+        serves = re.search(r"^Serves:(.*)$", block, re.MULTILINE)
+        for criterion in ID.findall(serves.group(1) if serves else ""):
+            served.add(criterion)
+            if criterion not in ids:
+                problems.append(
+                    stop(
+                        PLAN_STEP,
+                        where,
+                        f"has #{task.group(1)} serve {criterion}, which no criterion of the plan"
+                        " has",
+                        "serve only criteria the plan lists under `# Acceptance criteria`",
+                        "each task is judged by the criteria it serves",
+                    )
+                )
+    for criterion in criteria(record.plan) if beyond_sign_offs else []:
+        if criterion not in served:
+            problems.append(
+                stop(
+                    PLAN_STEP,
+                    where,
+                    f"has no task serving {criterion}",
+                    f"add {criterion} to the `Serves:` line of the task that brings it to hold,"
+                    " or plan one",
+                    "a criterion no task serves is never built",
+                )
+            )
+    return problems
+
+
+def questions(record: Record, ids: set[str]) -> list[str]:
+    problems = []
+    fix = "open it with `Serves:` and the IDs of the criteria the question rests on, or `goal`"
+    why = "the question is judged by what it serves"
+    for name in sorted(record.open):
+        if not name.endswith("-notes-question.md"):
+            continue
+        where = f"{record.folder}/open/{name}"
+        first = re.fullmatch(r"Serves:(.*)", record.open[name].split("\n", 1)[0])
+        served = re.findall(r"[^,\s]+", first.group(1)) if first else []
+        if not served:
+            broken = "does not open with `Serves:` and what it serves"
+            problems.append(stop("Asking the user", where, broken, fix, why))
+        for token in served:
+            if token not in ids and token != "goal":
+                broken = f"serves {token}, which is neither a criterion of the plan nor `goal`"
+                problems.append(stop("Asking the user", where, broken, fix, why))
+    return problems
+
+
+def verification(record: Record, where: str, text: str) -> list[str]:
+    problems = []
+    fields = front_matter(text)
+    if fields is None and not WITHOUT_FRONT_MATTER.fullmatch(record.rn or ""):
+        fields = {}
+    if fields is not None and (fields.get("name") != "verification" or "version" not in fields):
+        problems.append(
+            stop(
+                DESIGN_STEP,
+                where,
+                "does not open with front matter giving `name: verification` and its `version`",
+                "put back the front matter of the template in rn's checklists/verification.md",
+                "turn uses the deliverable against the document as a checklist only by that"
+                " front matter",
+            )
+        )
+    lines = text.splitlines()
+    for heading in ("## Scenes", "## Machine checks"):
+        if heading not in lines:
+            problems.append(
+                stop(
+                    DESIGN_STEP,
+                    where,
+                    f"has no `{heading}` heading",
+                    "put it back as the template in rn's checklists/verification.md gives it",
+                    "rn's checks find each criterion's scene and machine check under it",
+                )
+            )
+    scenes = section(text, "## Scenes")
+    headed = re.findall(r"^### ([AM]\d+):", scenes, re.MULTILINE)
+    for criterion in headed:
+        if criterion not in criteria(record.plan):
+            problems.append(
+                stop(
+                    DESIGN_STEP,
+                    where,
+                    f"has a scene for {criterion}, which no criterion of the plan has",
+                    "head each scene with the ID of an attractive criterion of the plan",
+                    "rn's checks find each criterion's scene by its ID",
+                )
+            )
+    for criterion in criteria(record.plan, "## Attractive quality"):
+        if criterion not in headed:
+            problems.append(
+                stop(
+                    DESIGN_STEP,
+                    where,
+                    f"has no scene for {criterion}",
+                    f"add `### {criterion}:` under `## Scenes` with what is put in and what must"
+                    " happen",
+                    "each attractive criterion is checked by the scenes the user approved",
+                )
+            )
+    checked = scenes + "\n" + section(text, "## Machine checks")
+    for criterion in criteria(record.plan, "## Must-be quality"):
+        if not re.search(rf"{criterion}\b", checked):
+            problems.append(
+                stop(
+                    DESIGN_STEP,
+                    where,
+                    f"names {criterion} in no scene's pass and no machine check's criteria",
+                    f"name {criterion} in the machine check that judges it, or in the pass of a"
+                    " scene where no machine can",
+                    "a must-be criterion no check covers breaks unseen",
+                )
+            )
+    return problems
+
+
+def check(record: Record) -> list[str]:
+    ids = set(criteria(record.plan))
+    problems = tasks(record, ids) + questions(record, ids)
+    where = field(record.plan, "verification")
+    if where is not None and record.verification is not None:
+        problems += verification(record, where, record.verification)
     return problems

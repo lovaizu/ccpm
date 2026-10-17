@@ -2,115 +2,206 @@ import contextlib
 import io
 import json
 import os
-import subprocess
+import shutil
 import sys
 import tempfile
+import unittest
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-sys.path.insert(0, os.path.join(ROOT, "turn", "scripts"))
-sys.path.insert(0, os.path.join(ROOT, "turn", "hooks"))
+TURN = os.path.normpath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "turn")
+)
+SCRIPTS = os.path.join(TURN, "scripts")
+HOOKS = os.path.join(TURN, "hooks")
+sys.path.insert(0, SCRIPTS)
+sys.path.insert(0, HOOKS)
 
-import up  # noqa: E402
+import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
+import subagentstop
 
-CHECKLIST = """---
-name: note
-version: 1.2.0
----
+import turn
 
-# Note
+CHECKLIST = """# README
 
-A note is read by a teammate. It lets them act on it.
-
-## Benefit
-
-### B-1: What to do
-
-Can the reader tell what to do?
-
-Why: a note is for acting.
+A README is read by whoever meets the project first.
 
 ## Format
 
-### F-1: Short
+### F-1: Shape
 
-Is it short?
+Does the README follow this template?
 
-```markdown
-### X-9: not an item
-```
+## Benefit
+
+### B-1: Who it is for
+
+On opening it, can the reader tell whether the project is for them?
 """
+CCS = {
+    "focal_entities": [{"deliverable": "README.md"}, {"audience": "a developer new to it"}],
+    "goal_orientation": [{"purpose": "to try it on their own files"}],
+    "retrieved_artifacts": [
+        {"checklist": "checklists/readme.md"},
+        {"decisions": "notes/readme.decisions.md"},
+        {"page": "docs/start.md"},
+    ],
+}
+CALL = {
+    "ccs": ".tasks/readme.json",
+    "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"},
+    "result": ".tasks/readme-result.json",
+}
+GOOD = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "good": "the reader finds each part where a README keeps it",
+    "lines": ["README.md:1-3"],
+}
+WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
+QUESTION = {"question": "Under which license may people use it?", "recommended": "MIT"}
+GOT = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "got": "the name, then what it does, as READMEs open",
+    "lines": ["README.md:1-3"],
+}
+EVALUATED = {
+    "checklist": "checklists/readme.md",
+    "item": "F-1",
+    "good": "the reader meets the name and what it does first",
+    "lines": ["README.md:1-3"],
+}
+ID = "a1b2c3"
+LEARNT = [
+    {
+        "checklist": "checklists/readme.md",
+        "item": "F-1",
+        "learnt": "the name and the opening first",
+    },
+    {"checklist": "checklists/readme.md", "item": "B-1", "learnt": "say whom it is for in line 3"},
+]
+SENT_BACK = {
+    "checklist": "checklists/readme.md",
+    "item": "B-1",
+    "gets": "the reader sees at once that it is for CSV files",
+}
 
-PARTS = ["focal_entities", "goal_orientation", "retrieved_artifacts", "constraints",
-         "predictive_cue", "uncertainty_signal", "semantic_gist", "relational_map", "episodic_trace"]
 
+class RepoTest(unittest.TestCase):
+    """Each test runs turn from a temporary folder standing for the user's repository, holding a
+    task's CCS, its checklist, its decisions and a work already written."""
 
-def ccs(**parts):
-    c = {p: [] for p in PARTS}
-    c["focal_entities"] = [{"deliverable": "docs/note.md"}, {"receiver": "a new teammate"}]
-    c["goal_orientation"] = [{"use": "to start work"}, {"acceptance": "they can start alone"}]
-    c["retrieved_artifacts"] = [{"viewpoint": "checklists/note.md"}, {"source": "notes.md"}]
-    c.update(parts)
-    return c
+    def setUp(self):
+        self.repo = os.path.realpath(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.repo)
+        self.addCleanup(os.chdir, os.getcwd())
+        os.chdir(self.repo)
+        self.write_json(CALL["ccs"], CCS)
+        self.write("checklists/readme.md", CHECKLIST)
+        self.write("notes/readme.decisions.md", "# Decisions\n")
+        self.write("docs/start.md", "# Start\n")
+        self.write("README.md", "# csvtidy\n\nTidies CSV files.\n")
 
+        self.transcript = os.path.join(self.repo, "session.jsonl")
 
-class Repo:
-    """A git repository with a checklist and a source committed, as a user's repository."""
+    def turn(self, *argv, stdin=""):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = turn.main(list(argv), io.StringIO(stdin))
+        return code, out.getvalue()
 
-    def __init__(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.path = os.path.realpath(self.tmp.name)
-        self.write("checklists/note.md", CHECKLIST)
-        self.write("notes.md", "Run make.\n")
-        for args in (["init", "-q"], ["add", "."],
-                     ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "first"]):
-            subprocess.run(["git", "-C", self.path, *args], check=True)
+    def started(self, call=None):
+        """The run started on a call, and the prompt the generator is to be started with."""
+        code, out = self.turn("start", json.dumps(call or CALL))
+        self.assertEqual(code, 0, out)
+        return json.loads(out)["prompt"]
 
-    def write(self, rel, text):
-        full = os.path.join(self.path, rel)
-        os.makedirs(os.path.dirname(full), exist_ok=True)
-        with open(full, "w") as f:
+    def next(self, given=None):
+        """What the script prints next for the run, handed the orchestrator's reading or decision."""
+        code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
+        self.assertEqual(code, 0, out)
+        return json.loads(out)
+
+    def refused(self, given=None):
+        """What the script prints when it refuses to go on with the run."""
+        code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
+        self.assertEqual(code, 1, out)
+        return out
+
+    def through(self, *evaluated, findings=(GOOD, WAITS), got=(GOT,), opened=()):
+        """The run taken through the orchestrator's findings, the first user's reply and the
+        evaluator's, and what the script prints then."""
+        out = self.next({"items": list(findings), "questions": [QUESTION]})
+        reply = {"items": list(got)}
+        self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
+        out = self.next()
+        self.assertEqual(out["agent"], "turn:evaluator")
+        reply = {"items": list(evaluated)}
+        self.assertEqual(self.replied("turn:evaluator", out["prompt"], reply), (0, ""))
+        return self.next()
+
+    def given_record(self, agent_id, prompt, *tool_uses):
+        """Writes what Claude Code keeps of an agent's conversation: its prompt as the first record,
+        then each tool it used, kept twice under one ID as Claude Code keeps it."""
+        path = os.path.join(self.repo, "session", "subagents", f"agent-{agent_id}.jsonl")
+        records = [{"type": "user", "message": {"role": "user", "content": prompt}}]
+        records += [
+            {
+                "type": "assistant",
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "I open it."},
+                        {"type": "tool_use", "id": f"toolu_{n}", "name": name, "input": tool_input},
+                    ],
+                },
+            }
+            for n, (name, tool_input) in enumerate(tool_uses)
+            for _ in range(2)
+        ]
+        self.write(path, "".join(json.dumps(r) + "\n" for r in records))
+        return path
+
+    def event(self, name, agent_type=None, **fields):
+        event = {
+            "session_id": "s",
+            "transcript_path": self.transcript,
+            "cwd": self.repo,
+            "hook_event_name": name,
+            **fields,
+        }
+        if agent_type:
+            event.update(agent_id=ID, agent_type=agent_type)
+        return event
+
+    def hook(self, entry, event):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            code = entry.main(io.StringIO(json.dumps(event)))
+        return code, err.getvalue()
+
+    def replied(self, agent_type, prompt, reply, *tool_uses):
+        """A role started with the prompt ends with the reply, after using the tools, as turn's
+        SubagentStop hook sees it."""
+        path = self.given_record(agent_type.partition(":")[2], prompt, *tool_uses)
+        event = self.event(
+            "SubagentStop",
+            agent_type,
+            agent_transcript_path=path,
+            last_assistant_message=reply if isinstance(reply, str) else json.dumps(reply),
+            stop_hook_active=False,
+        )
+        return self.hook(subagentstop, event)
+
+    def write(self, path, text):
+        folder = os.path.dirname(path)
+        if folder:
+            os.makedirs(folder, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
             f.write(text)
 
-    def read(self, rel):
-        with open(os.path.join(self.path, rel)) as f:
-            return f.read()
+    def write_json(self, path, data):
+        self.write(path, json.dumps(data))
 
-    def json(self, rel):
-        return json.loads(self.read(rel))
-
-    def exists(self, rel):
-        return os.path.exists(os.path.join(self.path, rel))
-
-    def close(self):
-        self.tmp.cleanup()
-
-
-def run(repo, *args):
-    """Runs up.py with args from the repository; returns its exit code and what it printed."""
-    out = io.StringIO()
-    here = os.getcwd()
-    os.chdir(repo.path)
-    try:
-        with contextlib.redirect_stdout(out):
-            code = up.main(list(args))
-    finally:
-        os.chdir(here)
-    return code, out.getvalue()
-
-
-def started(repo, c=None):
-    """Starts a run from a CCS written to in.json; returns what start printed."""
-    repo.write("in.json", json.dumps(c or ccs()))
-    code, out = run(repo, "start", "in.json", "out.json", "s1")
-    assert code == 0, out
-    return json.loads(out)
-
-
-def fill(repo, form, items):
-    """Writes a role's form, as the role fills it."""
-    repo.write(form, json.dumps(items))
-
-
-def form(role, n=1):
-    """Where a role's form is in round n of the run the tests start."""
-    return f".turn/out/{n}/{role}.json"
+    def read_json(self, path):
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)

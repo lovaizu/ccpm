@@ -1,14 +1,17 @@
-"""A run never commits or pushes, so the user decides what to commit once it returns."""
+"""turn's agents neither commit nor push, so the calling AI keeps the work in git on its own
+judgment, after checking it."""
 
 import re
+from typing import Any
 
-from checks.open_run import open_run
+import agents
 
-COMMIT = re.compile(r"\bgit(\s+-[cC]\s+\S+|\s+--?[\w-]+(=\S+)?)*\s+(commit|push)(?=\s|$|[;&|])")
+GIT = re.compile(r"\bgit\s+(commit|push)\b")
 
 
-def check(data):
-    run = open_run(data) if data.get("tool_name") == "Bash" else None
-    if run is None or not COMMIT.search(data["tool_input"].get("command", "")):
+def check(event: dict[str, Any]) -> list[str]:
+    if agents.role(event) is None or event["tool_name"] != "Bash":
         return []
-    return ["a run never commits or pushes; the user decides what to commit once the run returns"]
+    if GIT.search(str(event["tool_input"].get("command", ""))):
+        return ["leave the work uncommitted; the caller checks it and keeps it in git"]
+    return []

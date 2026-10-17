@@ -1,122 +1,198 @@
+---
+name: verification
+version: 0.1.0
+---
+
 # rn verification
 
-Run these after any change to `rn` to see whether it still gives what its
-[design document](./design.md) promises, criterion by criterion, and whether something that worked
-broke.
+Run these checks after any change to rn, to see whether it still gives what its design
+(`design.md`, beside this document) promises and whether something that worked broke: the scenes
+try each attractive criterion, A1 to A5 by the IDs the design's Goals give them, as rn's user, and
+the machine checks test each must-be criterion, M1 to M8. The design's Verification holds the rest,
+the one-dimensional qualities and the backward compatibility checks, and points here for the
+scenes, their fixtures and their trials.
 
 ## Where a run starts
 
-- The practice repository [`lovaizu/rn-try`](https://github.com/lovaizu/rn-try): a small shop backend,
-  its cart and checkout in TypeScript and its account helpers in JavaScript. Its default branch
-  `main` holds the tree of `c3b5f8e`, which has no `.rn/` directory, and it has no other branch and no
-  open pull request, so no earlier session's plan or code is there to be found.
-- `rn` and `writ` from the branch under test, as its marketplace installs them.
-- Claude Code 2.1.285 or later.
+Every run starts from the practice repository `lovaizu/rn-try` in the state below, so no earlier
+session's plan or code is there to be found.
+
+- Its default branch `main` holds the tree of `c3b5f8e`, which has no `.rn/` directory.
+
+  The tree is a small shop backend: its cart and checkout in TypeScript and its account helpers in
+  JavaScript, with a README.
+
+- It has no other branch and no open pull request.
+- Each scene is tried by a trial, a script in `dev/rn/trials/` that plays rn's user; one execution
+  of a trial is a run, and each run makes a fresh clone of the practice repository in a new folder
+  it is given, its out folder.
+
+  A session is one goal carried by rn from `/rn:up` to its end; the scenes use three: the account
+  session, the coupon session and the flow session.
+
+- A run that starts partway through a session commits its fixture on that session's branch of the
+  clone, with a draft pull request.
+
+  A fixture is a state partway through a session, kept in `dev/rn/trials/fixtures/`, from which a
+  run starts.
+
+- rn and turn are the `rn/` and `turn/` folders of the branch under test, copied when the run
+  starts so a change made while it goes does not reach it, and passed to Claude Code with
+  `--plugin-dir`.
+- Claude Code is 2.1.296 or later, on Opus, the model the user's conversation runs.
+- After a run, the trial closes the session's pull request and deletes its branch; nothing else
+  needs putting back, since rn never changes `main` (M1, the default branch untouched).
+- Before a run, see that the start holds, and bring it back where a run that stopped partway left
+  something:
+
+  ```
+  gh api repos/lovaizu/rn-try/branches --jq '.[].name'        # main alone
+  gh pr list -R lovaizu/rn-try --state open                    # none
+  git ls-remote https://github.com/lovaizu/rn-try.git main     # c3b5f8e
+  gh pr close <number> -R lovaizu/rn-try --delete-branch       # a pull request left open
+  git push https://github.com/lovaizu/rn-try.git --delete <branch>   # a branch left without one
+  git push --force https://github.com/lovaizu/rn-try.git c3b5f8e:main   # main moved
+  ```
 
 ## How a run goes
 
-- Each scene is run by its trial in `dev/rn/trials/`, from the state just before the moment it checks
-  to the first result that shows it. A state partway through a session is a fixture in
-  `dev/rn/trials/fixtures/`, committed on its session branch of a fresh clone with a draft pull request.
-  Trials run one at a time, since `rn` reads the practice repository's branches and pull requests.
-- Each turn runs `claude -p --plugin-dir <rn> --plugin-dir <writ>` in that clone, carrying the
-  conversation over with `--resume`. `/clear` is a new `claude -p` without `--resume`.
-- A stand-in plays the user. It is given only its part below and what `rn` says to it, writes in
-  Japanese, and asks back whenever a question does not give it what it needs to decide.
-- A first user is given a scene's input and the run's record: the conversation, `steering.md`,
-  `open/`, the commits, the pull request, the product, and the run's output, where each hook that
-  stops says why. It reports what happened. The maintainer running the verification sets that
-  beside the scene's "Passes when".
-- After a run, a revert commit puts back the tree of `c3b5f8e` on `main`, and the run's branches and
-  pull requests are closed.
+The trial sends the user's messages one by one to Claude Code running rn and turn in the clone,
+hands what rn says to the stand-in, an AI playing the user that is given only its part and what rn
+says to it, and sends its answer as the next message; the maintainer then judges the scene from
+the run's records.
 
-## The stand-in's parts
+```mermaid
+sequenceDiagram
+    participant T as trial
+    participant R as rn and turn (claude -p, in the clone)
+    participant S as stand-in
+    participant M as maintainer
+    T->>R: the scene's first message
+    R-->>T: what rn says
+    T->>S: what rn says
+    S-->>T: its answer
+    T->>R: the answer, as the next message
+    Note over T,S: repeated to where the scene stops
+    T-->>M: the run's records
+    M->>M: judges the scene against its pass
+```
 
-The account session starts from rough words:
+- Each message is sent with `claude -p --plugin-dir <rn> --plugin-dir <turn>` in the clone,
+  carrying the conversation over with `--resume`.
 
-- It starts with `/rn:on move src/account to TypeScript`.
-- Why it wants this, said only when asked why: users who signed up with only an email see
-  "undefined undefined" as their name, and support keeps getting tickets about it.
-- What it knows, said only when asked: in a user record, `nickname`, `firstName`, and `lastName` can
-  each be missing, `null`, or `""`.
-- What it wants for a user with no name, when asked: something that tells users apart and gives
-  away nothing private. Asked to choose among ways, it chooses by what each gives and costs, and asks
-  back when no way gives what it wants or the question leaves out what they cost.
-- It does not know whether every record has an email and cannot find out before the release; when
-  asked, it says to go on as if every record has one.
-- At a sign-off where a scene gives it no words, it approves when the proposal shows nothing against
-  its reason and decisions, and otherwise gives `/rn:gm` with what it saw.
+  `/clear` is a new `claude -p` without `--resume`.
 
-The coupon session asks that every coupon be a discount:
+- A run stops at the point its scene names, and the trial ends there.
 
-- Why the stand-in wants every coupon to be a discount, said only when asked why: a coupon once
-  took an order's total below 0, and money went back to the customer by mistake.
-- What it decides, when asked: a coupon that is not a discount refuses the order.
+  Where that point is an answer from the stand-in, as A2's answer to rn's second call and A3's
+  two answers, the trial records the answer and does not send it.
+
+- Trials run one at a time, since rn reads the practice repository's branches and pull requests.
+- `python3 dev/rn/trials/<trial>.py --help` says what each trial takes.
+
+  Every trial takes `--out <a new folder>` for its out folder.
+
+- The stand-in's part for each session, everything it knows and decides, is in
+  `dev/rn/trials/common.py` (`ACCOUNT_PART`, `COUPON_PART`) and `dev/rn/trials/flow.py`
+  (`FLOW_PART`).
+
+  These are the one place that holds the parts, since that is what reaches the stand-in. In every
+  session the stand-in talks in Japanese and asks the repository to be written in English; asked
+  what it does not know, it says so.
+
+- In the account session, started with `/rn:up move src/account to TypeScript`, the stand-in wants
+  the goal because users who signed up with only an email see "undefined undefined" as their name.
+
+  It knows that `nickname`, `firstName` and `lastName` can each be missing, `null` or `""`, and
+  wants for a user with no name something that tells users apart and gives away nothing private;
+  asked to choose among ways, it asks back when no way gives what it wants or the question leaves
+  out what they cost. The A1 to A3 passes rest on this.
+
+- In the coupon session, the stand-in wants every coupon to be a discount, and decides that a
+  coupon that is not one refuses the order.
+- The flow session, `/rn:up add to README.md that the shop closes on Sundays`, is the smallest
+  that shows the course from `/rn:up` to the Deliverable sign-off, and its run, to that sign-off,
+  is made first after any change.
+
+  Its run starts from the same state as every run. The stand-in wants it because customers kept
+  coming on Sundays, and, asked anything else, says it does not know and to go on as rn proposes.
+  Its trial is `dev/rn/trials/flow.py`, chosen as the smallest session because it spends no real
+  work's cost and fails only where the course breaks. It passes when the last commit's decision
+  line is `── approved → finished` and the trial's transcript shows no hook's stop on the way; the
+  must-be criteria its run shows are in the machine checks table.
+
+- The maintainer judges each scene from the run's records against its pass.
+
+  The records are the conversation's JSONL and every agent's, in the folder under
+  `~/.claude/projects/` that Claude Code keeps for the clone in the out folder; `steering.md`,
+  `open/`, `decisions/`, the commits and the product in the clone; the session's pull request; and
+  the trial's own transcript in the out folder, which holds what each call printed, where each hook
+  that stops says why.
 
 ## Scenes
 
-### A1: The user gets what they really want, though they start from rough words
+Each scene's input and pass are fixed with the design, before the version of rn they try is built,
+and change only with it, since fixed after the work they could be chosen so that the work passes;
+each release of rn that changes this document raises its `version` once.
 
-- `/rn:on move src/account to TypeScript` on `main`, to `rn`'s first call to the stand-in after the
-  languages are settled.
+### A1: What they really want, from rough words
 
-    Passes when `rn` asks why the stand-in wants the goal.
+- `/rn:up move src/account to TypeScript` on `main`, run to rn's first call to the stand-in after
+  the stand-in answered rn's one question on the two languages (`dev/rn/trials/a1_first_call.py`).
 
-- The account session at its first Plan sign-off (fixture `account-plan`), whose plan treats only a
-  missing name as absent: `/rn:gm a user whose last name is null is shown "Ann null"`, to the next
-  Plan sign-off.
+  Passes when that call asks why the stand-in wants the goal.
 
-    Passes when the plan put up covers all three forms an absent name takes, missing, `null`, and
-    `""`, for each name field, not `null` alone.
+- The account session at its first Plan sign-off (fixture `account-plan`), then `/rn:gm a user
+  whose last name is null is shown "Ann null"`, run to the next commit whose decision line ends
+  `waiting for #1 Plan sign-off` (`dev/rn/trials/a1_feedback.py`).
 
-### A2: The user is called only for decisions that are theirs
+  Passes when the plan put up covers all three forms an absent name takes, missing, `null` and
+  `""`, for each name field.
 
-- The account session with the stand-in's reason recorded and no criterion yet written, paused
-  (fixture `account-why`): `/rn:up`, to `rn`'s second call to the stand-in, the stand-in answering
-  the first.
+### A2: Called only for decisions that are theirs
 
-    Passes when, before any call asks the stand-in to choose a way, a call asks what it wants the
-    result to do for it, and the ways a call then offers each give what it said; none asks what the
-    repository or a run could tell. A call to choose gives the ways, what each gives and costs, and
-    the one `rn` recommends and why.
+- The account session paused with the stand-in's reason recorded and no criterion yet written
+  (fixture `account-why`), then `/rn:up`, run to the stand-in's answer to rn's second call
+  (`dev/rn/trials/a2_intent.py`).
 
-### A3: At a sign-off, the user decides from the proposal
+  Passes when, before any call asks the stand-in to choose a way, a call asks what it wants the
+  result to do for it; the ways a call then offers each give what it said; none asks what the
+  repository could tell or running its code could show; and each message asks one point.
 
-- The account session with its plan settled and its proposal not yet drafted, paused (fixture
-  `account-ready`): `/rn:up`, to the Plan sign-off, where the stand-in is given no words.
+### A3: Decided from the proposal alone
 
-    Passes when the stand-in, reading only the proposal, decides as a second stand-in with the same
-    part decides reading the real thing on the pull request; every viewpoint in the proposal has a
-    Good or a More, each holding at its place under the criterion ID it names; and the proposal
-    names as a More each Assumption the plan rests on.
+- The account session with its plan settled and its Plan sign-off's proposal not yet made
+  (fixture `account-ready`), then `/rn:up`, run to the last commit's decision line ending
+  `waiting for #1 Plan sign-off`; then two of the stand-in, each given the account session's part
+  and what it answered rn on the way, decide, one given the proposal alone and no tools, and one
+  that reads the pull request and the files on its branch in a clone of its own, and the trial
+  records both answers (`dev/rn/trials/a3_proposal.py`).
 
-### A4: Work that takes days goes on from where it stopped
+  Passes when the one with the proposal alone answers `/rn:ty` or `/rn:gm` without asking back, and
+  the two answer the same, so each item the proposal shows met is met where it names.
 
-- The coupon session paused in its first build task, its generator's test written and the code not
-  yet changed (fixture `coupon-paused`): `/rn:up`, to the first edit or call to the stand-in.
+### A4: Goes on from where it stopped
 
-    Passes when it goes on with that task, handing the written test to its generator rather than
-    writing it again or asking whose it is, and speaks Japanese.
+- The coupon session paused with `/rn:dn` while a task is under way (fixture `coupon-paused`),
+  then `/clear` and `/rn:up`, run to the task's decision line, a commit whose last line is
+  `● #{id} {task name} ── decided: ...` (`dev/rn/trials/a4_resume.py`).
 
-- The coupon session paused under `rn` 0.8.0 in its first build task (fixture `coupon-0.8.0`):
-  `/rn:up`, to the first call to the stand-in.
+  Passes when the fresh conversation goes on from the task with no question to the stand-in, and
+  carries the task to that line.
 
-    Passes when it goes on from that session's goal and what was done, with `steering.md` in the
-    current form and what the old design approved in a `notes` item, and asks nothing the old record
-    holds.
+### A5: Read in its receiver's place before the user sees it
+
+- The records of the runs of A1, A3 and the flow session: the conversation's JSONL and every
+  agent's, in the folder under `~/.claude/projects/` for each run's clone.
+
+  Passes when they show the plan, the three documents and each proposal made by turn's generator
+  and read by turn's first user before the stop commit, and the flow session's deliverable used by
+  turn's first user, as the product's user in each scene of the session's verification document,
+  before the conductor's decision line `● deliverable ── used → ...`.
 
 ## Machine checks
 
-| Check | Command | Criteria | When |
-|---|---|---|---|
-| Hook checks 1–3: the form of `steering.md`, the names in `open/`, the verification document's form and IDs | the hooks; a stop shows in the run's output | M4 | Every scene |
-| Hook checks 4 and 8: a decision line on every conductor commit, every commit pushed | the hooks; a stop shows in the run's output | M2 | Every scene |
-| Hook check 5: a settled item whole in its commit | the hooks; a stop shows in the run's output | M3 | Every scene |
-| Hook checks 6 and 7: each stop keeps what its kind allows, and every Good and More of a proposal names its criterion; only the user's `/rn:ty` passes a sign-off | the hooks; a stop shows in the run's output | M5, A3 | Every scene |
-| Hook checks 9–11: only the conductor uses git; the first user writes only its report and reads nothing of the maker's account | the hooks; a stop shows in the run's output | M6 | Every scene |
-| Hook checks 12–14: the conductor starts no agent in the background, ends its turn only at a stop or a question, and speaks the conversation language | the hooks; a stop shows in the run's output | A2, A3 | Every scene |
-| Each hook stops its breaking case and lets its passing case through; the first user's definition skips `CLAUDE.md` and the generator's has no Agent tool | `python3 -m unittest discover -s dev/rn/tests`, running at least one test for each check | M2–M6 | Every change to the hooks or agents |
-| `main` of the practice repository has, after a scene, the head it had before it | `git ls-remote origin main`, before and after | M1 | After every scene |
-| Each fixture in the current form passes the form checks | `python3 -m unittest discover -s dev/rn/tests` | M4 | Every change to the fixtures or to the form |
-| Strict validation | `claude plugin validate rn --strict` and `claude plugin validate . --strict` | M7 | Every change to the plugin |
-| Installing `rn` brings `writ` | `claude plugin install rn@ccpm` in a clean configuration | M7 | Before every release |
+| Command | Criteria |
+|---|---|
+| `python3 -m venv <a new folder> && . <a new folder>/bin/activate && pip install -r dev/requirements.txt && sh dev/check.sh`, from the top of the repository | M1 the default branch untouched, M2 every decision pushed, M3 the record's form, M4 only the user passes a sign-off, gives feedback or pauses, M5 nothing reaches the user unread, M6 missing tools, M7 installs with turn, M8 the conductor stays on course; each a test in the case that would break it, as the design's Verification lists |
+| `python3 dev/rn/trials/flow.py --out <a new folder>` | M1 the default branch untouched, M2 every decision pushed, M4 only the user passes a sign-off, gives feedback or pauses, on a real run; and the course of a session |

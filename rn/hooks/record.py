@@ -1,133 +1,96 @@
-"""rn's record as the checks read it: the session directory, its steering.md, and git."""
+"""The one file of rn's hooks that reads the repository: it finds the sessions open where an event
+comes from and builds each one's record as values, so the checks read no file themselves."""
+
+from __future__ import annotations
+
+import json
 import os
-import re
 import subprocess
 import sys
+from typing import IO, NamedTuple
 
-TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*: \S")
-
-
-def git(*args, cwd=None):
-    r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
-    return r.stdout if r.returncode == 0 else ""
+from checks import Record, field
 
 
-def root(cwd):
-    top = git("rev-parse", "--show-toplevel", cwd=cwd).strip()
-    return os.path.realpath(top) if top else ""
+class Session(NamedTuple):
+    top: str
+    folder: str
+    record: Record
 
 
-def store():
-    """Where rn keeps what a hook must remember between calls, such as the commands the user
-    typed."""
-    path = os.environ.get("CLAUDE_PLUGIN_DATA") or os.path.join(os.path.expanduser("~"), ".rn-data")
-    os.makedirs(path, exist_ok=True)
-    return path
-
-
-def front_matter(text):
-    """The front matter's keys and values, or None when the text has none: a session started by an
-    older rn, which /rn:up brings to the current form."""
-    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
-    if not m:
-        return None
-    out = {}
-    for line in m.group(1).splitlines():
-        if ":" in line:
-            k, v = line.split(":", 1)
-            out[k.strip()] = v.strip()
-    return out
-
-
-def session(top):
-    """The session directory on this branch whose status is not finished, or None."""
-    base = os.path.join(top, ".rn")
-    if not os.path.isdir(base):
-        return None
-    for name in sorted(os.listdir(base), reverse=True):
-        st = os.path.join(base, name, "steering.md")
-        if os.path.isfile(st):
-            front = front_matter(open(st).read())
-            if front is not None and front.get("status") != "finished":
-                return os.path.join(base, name)
-    return None
-
-
-def finished_by_head(top):
-    """The session directory whose steering.md the last commit set to finished, or None: the commit
-    that finishes a session is still checked, and still has to be pushed."""
-    for path in git("diff", "--name-only", "HEAD~1", "HEAD", "--", ".rn", cwd=top).split():
-        parts = path.split("/")
-        if len(parts) == 3 and parts[2] == "steering.md":
-            front = front_matter(git("show", "HEAD:" + path, cwd=top)) or {}
-            before = front_matter(git("show", "HEAD~1:" + path, cwd=top)) or {}
-            if front.get("status") == "finished" and before.get("status") != "finished":
-                return os.path.join(top, ".rn", parts[1])
-    return None
-
-
-def find(data, finished_too=False):
-    """(the directory the hook runs in, the repository's top, the session directory), or None when
-    no rn session is running on this branch. With finished_too, the session the last commit finished
-    counts as running."""
-    cwd = data.get("cwd") or os.getcwd()
-    top = root(cwd)
-    if not top:
-        return None
-    sdir = session(top)
-    if not sdir and finished_too:
-        sdir = finished_by_head(top)
-    return (cwd, top, sdir) if sdir else None
-
-
-def steering(sdir):
-    return open(os.path.join(sdir, "steering.md")).read()
-
-
-def section(text, heading, stop_level):
-    lines = text.splitlines()
+def read_event(stream: IO[str]) -> dict | None:
     try:
-        i = lines.index(heading)
+        event = json.load(stream)
     except ValueError:
-        return []
-    out = []
-    for line in lines[i + 1:]:
-        if re.match(r"^#{1,%d} " % stop_level, line):
-            break
-        out.append(line)
-    return out
+        return None
+    if isinstance(event, dict) and isinstance(event.get("cwd"), str):
+        return event
+    return None
 
 
-def criteria(text):
-    out = []
-    for line in section(text, "# Acceptance criteria", 1):
-        m = re.match(r"^- ([AM]\d+):", line)
-        if m:
-            out.append(m.group(1))
-    return out
+def git(cwd: str, *args: str) -> str:
+    """What git prints, or nothing where git fails or is missing, so a hook outside a session
+    stops nothing."""
+    try:
+        done = subprocess.run(
+            ["git", "-C", cwd, *args], capture_output=True, text=True, check=False
+        )
+    except OSError:
+        return ""
+    return done.stdout.strip()
 
 
-def open_items(sdir):
-    od = os.path.join(sdir, "open")
-    return sorted(os.listdir(od)) if os.path.isdir(od) else []
+def read(path: str) -> str:
+    with open(path, encoding="utf-8") as f:
+        return f.read()
 
 
-def last_line(msg):
-    """The message's last line, past the trailers (e.g. Co-Authored-By) git or the harness adds."""
-    lines = [l.strip() for l in msg.strip().splitlines() if l.strip()]
-    while lines and TRAILER.match(lines[-1]):
-        lines.pop()
-    return lines[-1] if lines else ""
+def sessions(top: str) -> list[str]:
+    """The session folders the branch changed whose plan is not finished, found as rn's
+    references/record.md says. The last fetch stands: the conductor fetches as each session
+    starts, and a fetch on every write would wait on the network."""
+    base = git(top, "merge-base", "HEAD", "origin/HEAD")
+    found = []
+    changed = git(top, "diff", "--name-only", base, "HEAD", "--", ".rn/*/steering.md")
+    for path in changed.splitlines():
+        plan = os.path.join(top, path)
+        if os.path.isfile(plan) and field(read(plan), "status") != "finished":
+            found.append(os.path.dirname(path))
+    return found
 
 
-def head_message(top):
-    return git("log", "-1", "--format=%B", cwd=top)
+def verification_file(top: str, plan: str) -> str | None:
+    """None where the plan names no verification document, and `build` gives None where the named
+    file is not there yet: the checks read None as a document the Design sign-off has still to
+    make, and an empty text as one written broken."""
+    name = field(plan, "verification")
+    return os.path.join(top, name) if name else None
 
 
-def report(problems):
-    """Show the problems to the agent, which Claude Code does on exit code 2, so it corrects
-    them."""
-    if problems:
-        print("rn check:\n- " + "\n- ".join(problems), file=sys.stderr)
-        return 2
-    return 0
+def build(top: str, folder: str) -> Record:
+    plan = read(os.path.join(top, folder, "steering.md"))
+    where = os.path.join(top, folder, "open")
+    items = (
+        {name: read(os.path.join(where, name)) for name in os.listdir(where)}
+        if os.path.isdir(where)
+        else {}
+    )
+    verification = verification_file(top, plan)
+    return Record(
+        folder,
+        plan,
+        items,
+        read(verification) if verification and os.path.isfile(verification) else None,
+        field(plan, "rn"),
+    )
+
+
+def open_sessions(event: dict) -> list[Session]:
+    top = git(event["cwd"], "rev-parse", "--show-toplevel")
+    return [Session(top, folder, build(top, folder)) for folder in sessions(top)] if top else []
+
+
+def report(found: list[str]) -> None:
+    if found:
+        sys.stderr.write("".join(sentence + "\n" for sentence in found))
+        raise SystemExit(2)

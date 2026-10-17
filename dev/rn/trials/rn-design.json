@@ -1,0 +1,17 @@
+{
+  "focal_entities": [{"deliverable": "rn/docs/design.md"},
+                     {"receiver": "someone who builds or changes rn, coming from its README"}],
+  "goal_orientation": [{"use": "to know how rn should be built before changing any part of it"},
+                       {"acceptance": "they can build or change rn and secure its quality without hesitating, following the design"}],
+  "retrieved_artifacts": [{"checklist": "rn/checklists/readability.md"},
+                          {"checklist": "rn/checklists/product/design.md"},
+                          {"decisions": ".writ/decisions/rn/docs/design.decisions.md"},
+                          {"receiver_opens": "rn/README.md"},
+                          {"receiver_opens": "turn/calling-from-a-plugin.md"},
+                          {"receiver_opens": "dev/turn/design.md"},
+                          {"receiver_opens": "rn/checklists"}],
+  "constraints": [{"language": "English"},
+                  {"rule": "Say each of rn's own words in the sentence where it is first used, inside the template's sections, or in the figure's box of the part it belongs to; put no list of words ahead of Goals, and say no word the README already gives again, since the reader comes from the README and takes a list ahead of the content as something to skip."}],
+  "predictive_cue": [], "uncertainty_signal": [], "semantic_gist": [],
+  "relational_map": [], "episodic_trace": []
+}

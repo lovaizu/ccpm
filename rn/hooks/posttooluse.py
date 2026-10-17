@@ -1,37 +1,34 @@
-#!/usr/bin/env python3
-"""PostToolUse hook for rn: checks 1 to 3 right after a record file is written, and checks 4 to 7 on
-a conductor commit right after it is made, before it is pushed."""
-import json
+"""PostToolUse on Write and Edit: a write to a session's plan, an item of its open/ or the
+verification document its plan names is checked against the record's form where it happens, so the
+conductor mends the record before building on it; those three are all the record holds, so a write
+elsewhere is not the record's and goes through unread."""
+
 import os
 import sys
+from typing import IO
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from checks import FORM, older, run
+from record import open_sessions, read_event, report, verification_file
 
-import form  # noqa: E402
-import record  # noqa: E402
-import shell  # noqa: E402
-from checks import decision_line, settled_whole, stop_commit, typed_command  # noqa: E402
+CHECKS = FORM
 
 
-def main():
-    data = json.load(sys.stdin)
-    found = record.find(data, finished_too=True)
-    if not found:
-        return 0
-    cwd, top, sdir = found
-    if data.get("tool_name") in ("Write", "Edit"):
-        path = os.path.realpath((data.get("tool_input") or {}).get("file_path", ""))
-        if path.startswith(sdir + os.sep) or path.endswith("verification.md"):
-            return record.report(form.check(top, sdir))
-    if not data.get("agent_type") and shell.on_repo(shell.runs_of(data, cwd), ("commit",), top):
-        msg = record.head_message(top)
-        rel = os.path.relpath(sdir, top)
-        return record.report(decision_line.check(msg) + settled_whole.check(top, rel, msg)
-                             + stop_commit.check(top, sdir, msg)
-                             + typed_command.check(top, rel, msg, record.store(),
-                                                   data.get("session_id", "")))
-    return 0
+def main(stream: IO[str]) -> None:
+    event = read_event(stream)
+    if event is None:
+        return
+    written = os.path.realpath(event["tool_input"]["file_path"])
+    for top, folder, record in open_sessions(event):
+        record_file = os.path.dirname(written) == os.path.join(top, folder, "open") or (
+            written == verification_file(top, record.plan)
+        )
+        # An older session's plan written without its front matter or its rn key looks the same
+        # as the older session itself, so a write to a plan is checked whichever rn started it.
+        if written == os.path.join(top, folder, "steering.md") or (
+            record_file and not older(record)
+        ):
+            report(run(CHECKS, record))
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main(sys.stdin)

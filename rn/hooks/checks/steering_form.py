@@ -1,40 +1,74 @@
-"""Check 1: steering.md has its front matter and headings, and task and criterion IDs are unique."""
-import re
+"""The plan keeps the front matter, headings and task headings of the template in rn's
+checklists/session/plan.md, with each task and criterion ID given once."""
 
-from record import criteria, front_matter
+from checks import TASK, Record, criteria, front_matter, stop, task_blocks
 
-FRONT_KEYS = ("rn", "pr", "status", "artifact-language", "conversation-language", "readme", "design",
-              "verification")
-HEADINGS = ("# Goal", "# Acceptance criteria", "## Attractive quality", "## Must-be quality",
-            "# Assumptions", "# Rules", "# Tasks")
-TASK = re.compile(r"^### \[( |x)\] #(\d+): \S")
+KEYS = (
+    "rn",
+    "pr",
+    "status",
+    "artifact-language",
+    "conversation-language",
+    "readme",
+    "design",
+    "verification",
+)
+HEADINGS = (
+    "# Goal",
+    "# Acceptance criteria",
+    "## Attractive quality",
+    "## Must-be quality",
+    "# Assumptions",
+    "# Rules",
+    "# Tasks",
+    "# Not yet specified",
+)
+STEP = "Working out the plan"
+WHY = (
+    "rn's commands and checks read the plan by that form, and a later conversation goes on from"
+    " it only when the form holds"
+)
+TEMPLATE = "the template in rn's checklists/session/plan.md"
 
 
-def check(text):
+def twice(values: list[str]) -> list[str]:
+    return sorted({value for value in values if values.count(value) > 1})
+
+
+def check(record: Record) -> list[str]:
+    where = f"{record.folder}/steering.md"
+    fields = front_matter(record.plan)
+    if fields is None:
+        broken = "opens with no front matter between two `---` lines"
+        return [stop(STEP, where, broken, f"put back the front matter of {TEMPLATE}", WHY)]
     problems = []
-    front = front_matter(text) or {}
-    for k in FRONT_KEYS:
-        if k not in front:
-            problems.append(f"steering.md: front matter has no `{k}`")
-    if front.get("status") not in ("running", "finished"):
-        problems.append("steering.md: `status` is neither running nor finished")
-    lines = text.splitlines()
-    for h in HEADINGS:
-        if h not in lines:
-            problems.append(f"steering.md: heading `{h}` is missing")
-    ids = []
-    for line in lines:
-        if line.startswith("### "):
-            m = TASK.match(line)
-            if not m:
-                problems.append(f"steering.md: task heading `{line}` is not `### [ ] #N: name`")
-            else:
-                ids.append(m.group(2))
-    dup = sorted({i for i in ids if ids.count(i) > 1})
-    if dup:
-        problems.append("steering.md: task ids repeat: " + ", ".join("#" + i for i in dup))
-    crit = criteria(text)
-    dupc = sorted({i for i in crit if crit.count(i) > 1})
-    if dupc:
-        problems.append("steering.md: criterion ids repeat: " + ", ".join(dupc))
+    for key in KEYS:
+        if key not in fields:
+            broken = f"has no `{key}` key in its front matter"
+            problems.append(stop(STEP, where, broken, f"add `{key}` as {TEMPLATE} gives it", WHY))
+    status = fields.get("status", "running")
+    if status not in ("running", "finished"):
+        fix = "set it to `running`, or to `finished` once the Deliverable sign-off is approved"
+        problems.append(stop(STEP, where, f"has `status: {status}`", fix, WHY))
+    lines = record.plan.splitlines()
+    for heading in HEADINGS:
+        if heading not in lines:
+            fix = f"put it back where {TEMPLATE} has it"
+            problems.append(stop(STEP, where, f"has no `{heading}` heading", fix, WHY))
+    numbers = []
+    for block in task_blocks(record.plan):
+        heading = block.splitlines()[0]
+        task = TASK.fullmatch(heading)
+        if task is None:
+            fix = "write it as `### [ ] #N: name`, or `### [x] #N: name` once the task is done"
+            problems.append(stop(STEP, where, f"has the task heading `{heading}`", fix, WHY))
+        else:
+            numbers.append(task.group(1))
+    for number in twice(numbers):
+        broken = f"gives #{number} to more than one task"
+        problems.append(stop(STEP, where, broken, "give the later task the next unused id", WHY))
+    for criterion in twice(criteria(record.plan)):
+        broken = f"gives {criterion} to more than one criterion"
+        fix = "give the later criterion the next unused ID"
+        problems.append(stop(STEP, where, broken, fix, WHY))
     return problems

@@ -1,25 +1,13 @@
 {
-  "description": "turn: keeps the orchestrator and each agent of a run to their steps, and the user's work as it was",
+  "description": "turn: keeps the calling AI's call, the orchestrator and each role of a run to their steps, and the repository as the calling AI left it. Without python3 the checks do not run; the orchestrator's first step stops the run and says to install it.",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Agent|Write|Edit|NotebookEdit|Bash",
+        "matcher": "Agent|Bash|Write|Edit|Read|Grep|Glob",
         "hooks": [
           {
             "type": "command",
-            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py\"; fi",
+            "command": "command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"",
             "timeout": 10
           }
         ]
@@ -30,18 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if command -v python3 >/dev/null 2>&1; then python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/stop.py\"; fi",
+            "command": "command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"",
             "timeout": 10
           }
         ]
