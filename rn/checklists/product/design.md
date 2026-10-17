@@ -11,17 +11,15 @@ and build or change the product to it.
 
 The UX is what the user experiences using the product. Design thinks in this order:
 
-1. From the UX, write a user story for each thing a user does with the product, such as each
-   command they run: "As <the user>, I want <what they do>." Their reasons are the UX's benefits,
-   and are not written again.
+1. From the UX, write the user stories that reach its key results, one for each thing a user does
+   with the product, such as each command they run: "As <the user>, I want <what they do>." Their
+   reasons are the UX's goals and key results, and are not written again.
 2. Decide the logical components that take on those stories, and the interactions between them.
    A logical component is divided by what it takes on; its physical form is not decided yet.
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
-4. For each benefit the UX names, decide, with how it is realized, the qualities that come with
-   giving it: must-be, what must be kept for the benefit to hold; and better the more, what
-   satisfies the user more the better it is, such as less time or less cost.
-5. Check each physical unit on its own, build those checks up, then check the whole.
+4. Check each physical unit on its own, build those checks up, then check the whole: each story
+   achieved, and how close each key result of the UX came to its target.
 
 Many scenes are held up by few stories, and one component takes on several stories, so the numbers
 narrow in the order scenes, stories, components.
@@ -55,15 +53,9 @@ component it acts on, labelled with what it does>
 
 ### Physical view
 
-<One figure: a frame for each place, holding its name alone; in each, a box for each unit placed
-there, holding how it is made and the components it realizes; an arrow from each unit to what it
-depends on outside the product, labelled with that relation>
-
-## Quality
-
-- <A benefit the UX names>
-  - Must-be: <what must be kept for it to hold, in one sentence>
-  - Better the more: <what satisfies the user more the better it is, in one sentence>
+<Where each unit is placed, how it is made, the components it realizes and what it depends on
+outside the product, in the form that shows it most plainly, such as the directory tree of each
+place where the units are files>
 
 ## Verification
 
@@ -76,21 +68,19 @@ depends on outside the product, labelled with that relation>
 
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
-- <A must-be quality>: <what shows it kept, in one sentence>
-  - <How and where that is checked, in one sentence>
-- <A better-the-more quality>: <what is measured, in one sentence>
-  - <How and where it is measured and compared with the last version, in one sentence>
+- <A key result of the UX>: <what is measured, in one sentence>
+  - <How and where it is measured, and compared with its target and the last version, in one
+    sentence>
 ```
 
 Why: the builder reads the user stories, then the components that achieve them and how they are
-realized, then the qualities that come with each benefit, then how the units and the whole are
-checked, each the ground of the next.
+realized, then how the units and the whole are checked, each the ground of the next.
 
 ## Benefit
 
-### B-29: Each story serving a benefit
+### B-29: Each story serving a key result
 
-Does each user story serve one or more of the UX's benefits?
+Does each user story serve one or more of the UX's key results?
 
 Why: a story that serves none is something the user does for nothing, and the builder builds and
 keeps it for nothing.
@@ -136,14 +126,6 @@ Can the reader tell what each component depends on outside the product?
 
 Why: what the product depends on is where it breaks for the user first.
 
-### B-27: The qualities that come with each benefit
-
-Can the reader tell, for each benefit the UX names, what must be kept for it to hold and what is
-better the more in giving it?
-
-Why: these qualities come with giving a benefit in the way chosen; drawn from nothing they never
-end, and a quality left unnamed is broken or given up without anyone deciding to.
-
 ### B-23: Checks built up unit by unit
 
 Can the reader tell how the checks of each physical unit, made on its own, build up to the whole?
@@ -158,17 +140,10 @@ Can the reader tell how the whole is checked to have achieved each user story?
 Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
-### B-28: Must-be, checked
+### B-26: Key results, measured
 
-Can the reader tell how each must-be quality is checked as kept?
+Can the reader tell, for each key result of the UX, how it is measured and how close it comes to its
+target, compared with the last version?
 
-Why: a must-be quality is not a story, so no check of a story shows it kept; left unchecked,
-it breaks without anyone seeing.
-
-### B-26: Better the more, measured
-
-Can the reader tell, for each better-the-more quality, what is measured and how it
-is compared with the last version?
-
-Why: such a quality is neither achieved nor missed, so no check of a story shows it; left
-unmeasured, it grows worse with each change without anyone seeing.
+Why: a key result is neither achieved nor missed but come close to, so no check of a story shows it;
+left unmeasured, it grows worse with each change without anyone seeing.

@@ -45,8 +45,8 @@ readers would, and settle each finding by fixing the decision or principle it co
 ### 4. List the units
 
 **List the units to build. A unit is the smallest slice through which the user meets one or more of
-the qualities in the design's Goals, from start to end. The first unit carries one attractive
-quality by the thinnest path.** Keep each unit to the simplest mechanism that serves it, and add no
+the key results in the UX, from start to end. The first unit moves one key result by the
+thinnest path.** Keep each unit to the simplest mechanism that serves it, and add no
 special path for a case an existing check already stops.
 
 - Rationale: a unit run end to end shows early whether the plugin keeps its promise, and the first
@@ -97,12 +97,15 @@ e. **Try the unit as its user**, with the code that runs it kept in `dev/<plugin
    the line count, on the models the plugin's agents name and never a smaller one. Judge it from
    the JSONL of every conversation and agent it started, by the design's Verification. Try the flow
    of the steps apart from what a step makes, each on the smallest task that still shows it. A
-   trial that needs a real GitHub repository runs in the private `lovaizu/rn-try`, one at a time.
+   trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a
+   branch of its own, and the branch, its pull requests and whatever else it made there are removed
+   when it ends.
    - Rationale: CI cannot start Claude Code, so each run is its own check, and a smaller model's
      slips are not the plugin's; the outcome shows that something went wrong, the records show
      where; a trial that tries the flow and the work at once costs the whole work each time it
      runs, and, failing, does not say which went wrong; pull requests and pushes a run makes stay
-     out of every repository people use, and two runs at once would mix in it.
+     out of every repository people use, `main` there takes nothing but through a reviewed pull
+     request, and two runs at once, or one left behind, would mix with the next.
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
 to what the README and the design say it should be.**
@@ -112,10 +115,10 @@ to what the README and the design say it should be.**
 
 ### 6. Check the whole
 
-**Try the plugin as its user from start to end, and check every quality in the design's
-Verification.** Settle what it finds at the unit its cause lies in, then check the whole again.
+**Try the plugin as its user from start to end, and check every story and how close every key
+result of the UX came, by the design's Verification.** Settle what it finds at the unit its cause lies in, then check the whole again.
 
-- Rationale: each unit was checked on its own; what lies between units, and qualities that show only
+- Rationale: each unit was checked on its own; what lies between units, and key results that show only
   over the whole, such as the time a whole run takes, show only here.
 
 ### 7. Check the structure

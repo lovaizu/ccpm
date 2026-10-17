@@ -100,8 +100,21 @@ For a reader who is a person, that is one figure, with the text beside it saying
 figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
 thing passes.
 
+In the figure, each box holds its name, with its kind beside it as one short word in angle
+brackets, such as `turn:up <agent>`.
+
 Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once
-what rows of a table make them assemble, while an AI reads a figure as text, in order.
+what rows of a table make them assemble, while an AI reads a figure as text, in order; a box that
+holds a description buries the name the text calls it by.
+
+### B-20: The form that fits
+
+Is each thing shown in the form its reader takes in most easily for that thing, such as a directory
+tree for where files are placed, a table for values set side by side, a figure for who acts on whom,
+and sentences for a reason?
+
+Why: a thing put in a form that does not fit it, such as files drawn as boxes, makes the reader
+turn it back into the shape they know before they can use it.
 
 ### B-4: Every part used
 

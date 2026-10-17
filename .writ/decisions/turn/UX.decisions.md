@@ -15,10 +15,18 @@
 4. It checks against the work both the items met and those not met, fixes the work itself, and
    ends.
 
+### B-4: The key results
+- The items of the checklist the calling AI fixes in the work after it comes back: none. Counted
+  from the calling AI's own check, not from turn's judgment of itself.
+- The time from calling turn to the work coming back, for a work the size of one README: three
+  minutes, set high above the old turn's 4 to 12 minutes a run, since the calling AI, and the
+  person, wait that long.
+- Each version is judged by how close it comes to these, as an OKR's key results are.
+
 ### B-3: The benefits
 - turn is a turn of ACC (Agent Cognitive Compressor, https://arxiv.org/abs/2601.11653): the AI
-  hands it a CCS and goes on from the new CCS it returns, carrying the CCS alone instead of the
-  whole conversation, so however many steps it goes through, what it holds does not swell and it
-  does not drift from its goal.
+  hands it a CCS and gets a new CCS back. That what the AI holds does not swell and it does not
+  drift shows only over many turns, so it is the caller's benefit (rn's), not turn's; the CCS is
+  turn's input and output.
 - The AI gets the work already read through the eyes of a reader who did not write it, and made
   again where that reading found it short, so it does not judge an item met on its own assumption.

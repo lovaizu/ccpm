@@ -13,6 +13,18 @@ Build and change every part of turn so that this AI gets that on every run.
 
   rn's conductor, the AI that runs the steps of the rn plugin, is one such AI.
 
+## Key results
+
+- The items of the checklist the calling AI fixes in the work after it comes back: none.
+
+  An item the work meets needs no fixing, and the calling AI counts what it fixes from its own
+  check, not from turn's judgment of itself.
+- The time from calling turn to the work coming back, for a work the size of one README: three
+  minutes.
+
+  The calling AI cannot go on with its step while it waits, so the person using the plugin waits
+  as long.
+
 ## Scenes
 
 - In its step, the calling AI asks the person using the plugin what the checklist's items need, and
@@ -26,9 +38,6 @@ Build and change every part of turn so that this AI gets that on every run.
 
 ## Benefits
 
-- The calling AI goes on from the new CCS turn returns, carrying the CCS alone instead of the whole
-  conversation, so however many steps it goes through, what it holds does not swell and it does not
-  drift from its goal.
 - The calling AI gets the work already read inside turn by a reader other than the one that made
   it, reading it as the work's own readers would, and made again where that reading found it short
   of an item, so the calling AI does not judge an item met on its own assumption.
