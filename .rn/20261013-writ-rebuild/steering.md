@@ -1014,7 +1014,7 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      3. The learner and the second reading: what makes the Good, the remake, the reading once
         more, and the items still without Good returned with what they would give.
      Each unit's hooks (inputs, reply forms, reads, writes, commits, runs at once by
-     `parentAgentId`) are built in its own step d. Next: build unit 1 (steps 5a-e).
+     `parentAgentId`) are built in its own step d. Unit 1 built and tried twice (2026-10-17, `dev/turn/trials/readme/results.json`): it returns in 1.9 and 2.5 minutes; the caller fixed 2 and 3 items, misses a reader would catch and questions the sources settle. Next: unit 2.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
