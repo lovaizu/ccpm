@@ -22,6 +22,15 @@
   such as by naming the lines no Good rests on. An AI that looks for what more the work needs
   finds more without end, and each find is patched in, so the work drifts from what it should be.
   Every role, the flow and how each judgment is made follow from this.
+- The generator hands back only once it has read the work against each item and named the lines
+  that give its Good; an item it cannot give, since only the user can decide what it needs,
+  becomes a question, and what the decisions do not say is not filled in from its own guess. In
+  the old turn's trials it filled the form from a grep of the headings within seconds, named lines
+  for items it knew it fell short of, and said its doubts only in prose.
+- The orchestrator reads the work first and sends back to the generator the items whose Good it
+  does not find, each said as what the receiver gets once it is Good, not as the edit to make: a
+  shortfall plain to see is sent back while it costs least, and in the old turn's trials an edit
+  told to the generator broke another item. An item waiting on the user's answer is not sent back.
 - The generator makes the work and names, as its own check, the lines it meant to meet each item;
   that is its claim, not a judgment.
 - The orchestrator does not take the claim on trust: it reads the work against every item of the
