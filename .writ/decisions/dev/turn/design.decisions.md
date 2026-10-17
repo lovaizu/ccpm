@@ -37,8 +37,14 @@
   sent to their ID after their next tool call.
 - Several runs go at once, as rn starts them for work that can go in parallel: each run keeps its
   own state, and the hooks tell runs apart by `agent_id`, since every agent of a conversation has
-  the same `session_id`. How a role's `agent_id` is tied to its orchestrator's run is tried when
-  built.
+  the same `session_id`. A hook ties a role to its run by the role's
+  `<transcript_path without .jsonl>/subagents/agent-<agent_id>.meta.json`, whose `parentAgentId` is
+  the orchestrator's `agent_id`: tried on Claude Code 2.1.302 (2026-10-17) with two orchestrators
+  at once in the background, each starting roles, every role's tool use and reply was tied to its
+  own orchestrator. The file is there from a role's first tool use, not yet at `SubagentStart`, so
+  what a role is started with is checked at the orchestrator's own `Agent` call, which carries the
+  orchestrator's `agent_id` and the prompt. The file is Claude Code's own record, not a documented
+  hook input, so the hooks' tests hold its shape and a change to it is seen there.
 - `claude -p` is not used: the docs say `--bare`, which reads no subscription login, will become
   its default, and moving its use to separate credits was announced and only paused.
 
