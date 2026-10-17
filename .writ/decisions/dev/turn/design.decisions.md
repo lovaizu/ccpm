@@ -14,7 +14,7 @@
 - turn defines nothing of the CCS. A CCS is JSON: parts, each a list of entries, each entry a kind
   and its value. The caller hands turn, as JSON, the CCS's path, the kinds it uses for what turn
   takes from the task's state, and where turn writes its result:
-  `{"ccs": "<path>", "kinds": {"work": "<kind>", "checklist": "<kind>", "reader": "<kind>",
+  `{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "reader": "<kind>",
   "use": "<kind>", "opens": "<kind>"}, "result": "<path>"}`. The kinds are the work, the
   checklists, who reads the work, what they read it for and what they open with it; a script takes
   every entry of each from the CCS and hands it to the roles that need it, so no AI copies it, and
