@@ -13,6 +13,7 @@ import forms
 GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
 EVALUATOR = "turn:evaluator"
+LEARNER = "turn:learner"
 
 
 def start(text: str) -> dict[str, str]:
@@ -27,6 +28,7 @@ def generator_prompt(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
         "ccs": run["call"]["ccs"],
         "work": run["work"],
         "sent_back": sent_back,
+        "learnt": run.get("learnt", []),
     }
 
 
@@ -59,6 +61,11 @@ def next_step(result: str, text: str) -> dict[str, Any]:
             f"turn: no run is going with its result at {result}; start one with"
             " `turn.py start '<call JSON>'`"
         )
+    # Each role's record is kept for the learner, which looks for what makes the Good in what the
+    # roles did.
+    record = run["next"].get("record")
+    if record and record not in run.setdefault("records", []):
+        run["records"].append(record)
     if "decide" in run:
         return decide(run, text)
     agent = run["next"]["agent"]
@@ -74,6 +81,9 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         run["got"] = reply["items"]
         run["opened"] = opened(run["next"]["record"])
         return ask(run, EVALUATOR, dict(reader_prompt(run), reading=reply["items"]))
+    if agent == LEARNER:
+        run["learnt"] = reply["items"]
+        return ask(run, GENERATOR, generator_prompt(run, run.pop("unmet")))
     return compare(run, reply["items"])
 
 
@@ -108,7 +118,7 @@ def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
         if ("good" in f) != (key(f) in evaluated)
     ]
     if not apart:
-        return finish(run, findings["items"], findings["questions"])
+        return settle(run, findings["items"], findings["questions"])
     run["decide"] = {"items": apart, "questions": findings["questions"], "opened": run["opened"]}
     write(run["call"]["result"], {"running": run})
     return {"decide": run["decide"]}
@@ -123,12 +133,20 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     decision = json.loads(text)
     decided = {key(i): i for i in decision["items"]}
     items = [decided.get(key(f), f) for f in run["findings"]["items"]]
-    return finish(run, items, asked + decision["questions"])
+    del run["decide"]
+    return settle(run, items, asked + decision["questions"])
 
 
-def finish(run: dict[str, Any], items: list[dict[str, Any]], questions: list) -> dict[str, str]:
-    """Writes the result: each item's Good, each question an item still waits on with the items it
-    settles, and each item without Good with what the receiver gets once it has it."""
+def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) -> dict[str, str]:
+    """After the first reading, an item without Good has the learner find what makes the Good, for
+    the work to be made again; otherwise the run returns. The result holds each item's Good, each
+    question an item still waits on with the items it settles, and each item without Good with
+    what the receiver gets once it has it."""
+    unmet = [i for i in items if "gets" in i]
+    if unmet and "learnt" not in run:
+        run["unmet"] = unmet
+        prompt = {"run": run["call"]["result"], "findings": items, "records": run["records"]}
+        return ask(run, LEARNER, prompt)
     waited = [
         dict(q, items=[{"checklist": i["checklist"], "item": i["item"]} for i in waiting])
         for n, q in enumerate(questions, 1)
@@ -142,7 +160,7 @@ def finish(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
             "work": run["work"],
             "items": [i for i in items if "good" in i],
             "questions": waited,
-            "not_good": [i for i in items if "gets" in i],
+            "not_good": unmet,
         },
     )
     return {"returned": result}

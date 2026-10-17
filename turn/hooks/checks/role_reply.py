@@ -7,7 +7,12 @@ import agents
 import forms
 import run
 
-FORMS = {"generator": forms.CLAIM, "first-user": forms.GOT, "evaluator": forms.GOOD}
+FORMS = {
+    "generator": forms.CLAIM,
+    "first-user": forms.GOT,
+    "evaluator": forms.GOOD,
+    "learner": forms.LEARNT,
+}
 
 
 def check(event: dict[str, Any]) -> list[str]:

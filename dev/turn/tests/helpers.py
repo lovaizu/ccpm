@@ -71,6 +71,14 @@ EVALUATED = {
     "lines": ["README.md:1-3"],
 }
 ID = "a1b2c3"
+LEARNT = [
+    {
+        "checklist": "checklists/readme.md",
+        "item": "F-1",
+        "learnt": "the name and the opening first",
+    },
+    {"checklist": "checklists/readme.md", "item": "B-1", "learnt": "say whom it is for in line 3"},
+]
 SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",
@@ -174,7 +182,7 @@ class RepoTest(unittest.TestCase):
     def replied(self, agent_type, prompt, reply, *tool_uses):
         """A role started with the prompt ends with the reply, after using the tools, as turn's
         SubagentStop hook sees it."""
-        path = self.given_record(ID, prompt, *tool_uses)
+        path = self.given_record(agent_type.partition(":")[2], prompt, *tool_uses)
         event = self.event(
             "SubagentStop",
             agent_type,

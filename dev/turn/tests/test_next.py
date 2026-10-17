@@ -1,6 +1,6 @@
 import json
 
-from helpers import CALL, EVALUATED, GOOD, GOT, QUESTION, SENT_BACK, WAITS, RepoTest
+from helpers import CALL, EVALUATED, GOOD, GOT, LEARNT, QUESTION, SENT_BACK, WAITS, RepoTest
 
 RESULT = CALL["result"]
 
@@ -166,17 +166,22 @@ class TestDecision(ReadTest):
         super().setUp()
         self.through(dict(EVALUATED, item="B-1"))
 
-    def test_a_decision_writes_the_result(self):
+    def test_a_decision_with_every_item_good_or_waiting_writes_the_result(self):
         # Given: both items to decide
-        # When: the orchestrator gives the first Good and sends the second back with what the
-        # receiver gets
-        # Then: the result holds the Good, the item without Good with what the receiver gets, and
-        # no question, as no item waits on it any more
-        out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
+        # When: the orchestrator gives the first Good and has the second wait on a new question
+        # Then: the result holds the Good and the new question alone, as no item waits on the
+        # findings' question any more
+        new = {"question": "Which name?", "recommended": "csvtidy"}
+        out = self.next({"items": [GOOD, dict(WAITS, question=2)], "questions": [new]})
         self.assertEqual(out, {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT),
-            {"work": ["README.md"], "items": [GOOD], "questions": [], "not_good": [SENT_BACK]},
+            {
+                "work": ["README.md"],
+                "items": [GOOD],
+                "questions": [dict(new, items=[ITEM_B1])],
+                "not_good": [],
+            },
         )
 
     def test_a_decision_may_ask_a_new_question_or_keep_one(self):
@@ -206,6 +211,53 @@ class TestDecision(ReadTest):
             with self.subTest(decision=decision):
                 self.assertIn(said, self.refused(decision))
                 self.assertIn("running", self.read_json(RESULT))
+
+
+class TestLearner(ReadTest):
+    def setUp(self):
+        super().setUp()
+        self.through(dict(EVALUATED, item="B-1"))
+        self.learner = self.next({"items": [GOOD, SENT_BACK], "questions": []})
+
+    def test_an_item_left_without_good_starts_the_learner(self):
+        # Given: a first reading whose decision leaves an item without Good
+        # When: the decision is recorded
+        # Then: the learner is to be started with every item's finding and the record of every
+        # role that replied in the run
+        self.assertEqual(self.learner["agent"], "turn:learner")
+        records = [
+            f"{self.repo}/session/subagents/agent-{a}.jsonl" for a in ("first-user", "evaluator")
+        ]
+        self.assertEqual(
+            json.loads(self.learner["prompt"]),
+            {"run": RESULT, "findings": [GOOD, SENT_BACK], "records": records},
+        )
+
+    def test_what_the_learner_found_goes_to_the_generator_with_what_was_sent_back(self):
+        # Given: a learner that replied with what makes each item's Good
+        # When: the orchestrator goes on
+        # Then: the generator is to make the work again with the item without Good and what the
+        # learner found
+        self.replied("turn:learner", self.learner["prompt"], {"items": LEARNT})
+        out = self.next()
+        self.assertEqual(out["agent"], "turn:generator")
+        prompt = json.loads(out["prompt"])
+        self.assertEqual((prompt["sent_back"], prompt["learnt"]), ([SENT_BACK], LEARNT))
+
+    def test_an_item_still_without_good_after_the_second_reading_is_returned(self):
+        # Given: a work made again with what the learner found
+        # When: its second reading leaves an item without Good
+        # Then: the run returns with that item and what the receiver gets once it has its Good,
+        # and no learner is started again
+        self.replied("turn:learner", self.learner["prompt"], {"items": LEARNT})
+        self.next()
+        self.through(dict(EVALUATED, item="B-1"))
+        out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
+        self.assertEqual(out, {"returned": RESULT})
+        self.assertEqual(
+            self.read_json(RESULT),
+            {"work": ["README.md"], "items": [GOOD], "questions": [], "not_good": [SENT_BACK]},
+        )
 
 
 class TestReadingForm(ReadTest):

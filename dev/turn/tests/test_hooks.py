@@ -12,6 +12,7 @@ from helpers import (
     GOT,
     HOOKS,
     ID,
+    LEARNT,
     QUESTION,
     SENT_BACK,
     TURN,
@@ -166,6 +167,17 @@ class TestReplies(HookTest):
         self.assertEqual(
             self.replied("turn:first-user", self.first_user(), {"items": [GOT]}), (0, "")
         )
+
+    def test_a_learners_reply_leaving_an_item_out_stops(self):
+        # Given: a learner of a run whose first reading left an item without Good
+        # When: it ends with what makes the Good of one item alone
+        # Then: it is kept going, told the item it left out
+        self.started()
+        self.through(dict(EVALUATED, item="B-1"))
+        prompt = self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
+        code, err = self.replied("turn:learner", prompt, {"items": LEARNT[:1]})
+        self.assertEqual(code, 2)
+        self.assertIn("B-1 is left out", err)
 
     def test_a_readers_reply_out_of_its_form_stops(self):
         # Given: a first user replying with prose or with a Good, which is the evaluator's to
@@ -361,6 +373,17 @@ class TestReads(HookTest):
             with self.subTest(path=path):
                 event = self.tool("turn:first-user", "Read", file_path=path)
                 self.stops(pretooluse, event, "README.md, checklists/readme.md")
+
+    def test_a_learner_reads_the_records_of_its_run_alone(self):
+        # Given: a learner of a run whose first reading left an item without Good
+        # When: it reads a role's record, or the work
+        # Then: the record goes through, and the work is stopped, naming the records
+        self.through(dict(EVALUATED, item="B-1"))
+        prompt = self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
+        self.given_prompt(ID, prompt)
+        record = json.loads(prompt)["records"][0]
+        self.passes(pretooluse, self.tool("turn:learner", "Read", file_path=record))
+        self.stops(pretooluse, self.tool("turn:learner", "Read", file_path="README.md"), record)
 
     def test_a_command_naming_only_what_the_run_was_given_passes(self):
         # Given: a generator of a run

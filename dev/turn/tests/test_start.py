@@ -59,7 +59,13 @@ class TestStart(RepoTest):
         prompt = json.loads(json.loads(out)["prompt"])
         self.assertEqual(
             prompt,
-            {"run": CALL["result"], "ccs": CALL["ccs"], "work": ["README.md"], "sent_back": []},
+            {
+                "run": CALL["result"],
+                "ccs": CALL["ccs"],
+                "work": ["README.md"],
+                "sent_back": [],
+                "learnt": [],
+            },
         )
 
     def test_the_run_keeps_every_item_of_every_checklist(self):

@@ -17,13 +17,15 @@ lines where the receiver gets what the item asks.
 1. Read your prompt.
    - In: JSON: `run`, where the run is kept; `ccs`, the path of the CCS; `work`, the path of each
      file of the work; `sent_back`, each item the orchestrator sent back, with `gets`, what the
-     receiver gets once it has its Good, empty the first time.
+     receiver gets once it has its Good, empty the first time; `learnt`, what the learner found makes
+     each item's Good, empty until the work is made again after a reading.
 2. Read the CCS whole, then each file it names, whole: among them the checklists, each item a
    heading such as `### B-1: <title>` asking what the receiver should get, and what was decided
    for the work.
 3. Make the work at the paths in `work`. Where `sent_back` is empty, write it from nothing. Otherwise
    read the work whole and change it so that each item sent back gives what its `gets` says, while
-   every other item keeps what it gives.
+   every other item keeps what it gives; `learnt` says how the work would give each, and what gives
+   the others now.
    - Out: the work, at its paths.
 4. Read the work once from the top as the receiver the CCS names, meeting it for the first time,
    and for every item find the lines where the receiver gets what the item asks; where you find

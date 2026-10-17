@@ -9,7 +9,7 @@ from typing import Any
 
 import run
 
-ROLES = (run.GENERATOR, run.FIRST_USER, run.EVALUATOR)
+ROLES = (run.GENERATOR, run.FIRST_USER, run.EVALUATOR, run.LEARNER)
 
 
 def check(event: dict[str, Any]) -> list[str]:

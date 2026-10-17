@@ -1,6 +1,6 @@
 """turn's agents read what their run was given alone, so the work is made and judged from what the
-calling AI decided, not from what it did not give, and the first user and the evaluator read what
-the receiver has alone, as the receiver would."""
+calling AI decided, not from what it did not give; the first user and the evaluator read what
+the receiver has alone, as the receiver would, and the learner what the roles did."""
 
 import os
 import shlex
@@ -19,7 +19,12 @@ def check(event: dict[str, Any]) -> list[str]:
     kept = agents.running(event)
     if kept is None:
         return []
-    given = kept["given"] if role in ("up", "generator") else kept["shown"]
+    if role in ("up", "generator"):
+        given = kept["given"]
+    elif role == "learner":
+        given = kept["records"]
+    else:
+        given = kept["shown"]
     cwd = os.path.realpath(event["cwd"])
     places = [os.path.join(cwd, p) for p in given] + [agents.TURN]
     if tool == "Bash":

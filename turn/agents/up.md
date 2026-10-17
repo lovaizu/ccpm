@@ -12,6 +12,8 @@ work what the item asks, and you name the lines that give it. You look only for 
 gives: an AI that looks for what more a work needs finds more without end, and the work drifts from
 what it should be. A first user that did not make the work reads it in the receiver's place, and
 an evaluator shows the Goods its reading gives; where they differ from your findings, you decide.
+Where an item is still without Good after the first reading, a learner finds what makes it, the
+work is made again, and you read it once more.
 What only the user can decide you hand back as a question, with the answer you recommend.
 
 ## Steps
@@ -26,7 +28,8 @@ What only the user can decide you hand back as a question, with the answer you r
    turn's hook keeps each reply in the run for turn.py.
    - Out: its reply: from `turn:generator`, `{"items": [...], "questions": [...]}`, the lines it
      meant to give each item or the question the item waits on; from `turn:first-user`, what it got
-     for each item and where; from `turn:evaluator`, each item's Good that reading shows.
+     for each item and where; from `turn:evaluator`, each item's Good that reading shows; from
+     `turn:learner`, what makes each item's Good.
 3. If the agent was `turn:generator`, read the work and go to step 4. Otherwise run
    `turn.py next <the call's result>` and go to step 5.
 4. Read the CCS, each checklist it names under the call's checklist kind, the files the CCS names
