@@ -143,25 +143,18 @@ Can the reader tell what is checked of each physical unit, and the bar it must p
 Why: the whole is built from units checked one by one; a unit left unchecked, or checked to no
 stated bar, breaks the whole where no check shows it.
 
-### B-9: The whole checked
+### B-9: Each story shown achieved
 
-Can the reader tell how the whole is checked to have achieved each user story?
+Can the reader tell, from the checks of the whole, whether each user story is achieved?
 
 Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
-### B-10: Key results measured
+### B-10: Each change shown bringing the user closer
 
-Can the reader tell, for each key result of the UX, how it is measured and compared with the version
-in use on the same tasks?
+Can the reader tell, from the measures, whether a change brings the user closer to their goals, the
+key results weighed in the UX's order of priority?
 
-Why: a key result is not met or missed but come close to, so no check of a story shows it; left
-unmeasured, it grows worse with each change without anyone seeing.
-
-### B-11: Changes judged in the order of priority
-
-Can the reader tell that a change is taken only when every story is still achieved and no key
-result comes closer at the cost of one of higher priority?
-
-Why: a change judged by one key result alone can bring it closer while one that matters more moves
-away, and each version then looks better while the user is worse off.
+Why: a key result is not met or missed but come close to, so no check of a story shows it; a change
+judged by no measure, or by one key result alone, can leave the user worse off while each version
+looks better.
