@@ -18,5 +18,15 @@
   "questions": 3,
   "cost_usd": 0.87,
   "fixed": "readability B-13: two names for the output file; readme B-6 and readability B-5 came back as questions though csvtidy.py and the notes settle them (Development points to csvtidy.py; lines end in \\r\\n)"
+ },
+ {
+  "commit": "89142d1",
+  "unit": 2,
+  "session": "e6138a8a-fb25-4880-a0d9-6a455e8c6538",
+  "minutes_to_return": 5.1,
+  "items_fixed_after_return": 0,
+  "questions": 1,
+  "cost_usd": 1.92,
+  "fixed": "none; the license question answered with its recommended MIT. The evaluator gave no Good to six items the orchestrator had found Good (readme B-6, readability B-3, B-4, B-6, B-7, B-19); the orchestrator kept its Good on all six"
  }
 ]

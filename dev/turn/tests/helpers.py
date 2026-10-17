@@ -133,7 +133,7 @@ class RepoTest(unittest.TestCase):
 
     def given_record(self, agent_id, prompt, *tool_uses):
         """Writes what Claude Code keeps of an agent's conversation: its prompt as the first record,
-        then each tool it used."""
+        then each tool it used, kept twice under one ID as Claude Code keeps it."""
         path = os.path.join(self.repo, "session", "subagents", f"agent-{agent_id}.jsonl")
         records = [{"type": "user", "message": {"role": "user", "content": prompt}}]
         records += [
@@ -143,11 +143,12 @@ class RepoTest(unittest.TestCase):
                     "role": "assistant",
                     "content": [
                         {"type": "text", "text": "I open it."},
-                        {"type": "tool_use", "name": name, "input": tool_input},
+                        {"type": "tool_use", "id": f"toolu_{n}", "name": name, "input": tool_input},
                     ],
                 },
             }
-            for name, tool_input in tool_uses
+            for n, (name, tool_input) in enumerate(tool_uses)
+            for _ in range(2)
         ]
         self.write(path, "".join(json.dumps(r) + "\n" for r in records))
         return path

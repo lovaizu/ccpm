@@ -149,15 +149,18 @@ def finish(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
 
 
 def opened(record: str) -> list[str]:
-    """Each tool a role used, by its name and input, as its record keeps them."""
-    used: list[str] = []
+    """Each tool a role used, by its name and input, once each though its record may keep a use
+    more than once."""
+    used: dict[str, str] = {}
     with open(record, encoding="utf-8") as f:
         for line in f:
             content = json.loads(line).get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
                 if part.get("type") == "tool_use":
-                    used.append(f"{part['name']} {json.dumps(part['input'], ensure_ascii=False)}")
-    return used
+                    used[part["id"]] = (
+                        f"{part['name']} {json.dumps(part['input'], ensure_ascii=False)}"
+                    )
+    return list(used.values())
 
 
 def key(item: dict[str, Any]) -> tuple[str, str]:
