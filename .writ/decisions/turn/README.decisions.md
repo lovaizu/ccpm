@@ -30,8 +30,8 @@ documents or code; its example is the UX's scene, a plugin's step calling turn.
   ending the step.
 
 ### B-3: Why this one
-- turn is a turn of ACC: the plugin's AI carries only the CCS from step to step, so what it holds
-  does not swell and it does not drift from its goal, where carrying the whole conversation piles up.
+- That the plugin's AI, carrying only the CCS, does not swell or drift is not given here: it shows
+  only over many turns, so it is the caller's benefit, as in turn's UX.
 - When the AI that made a work checks it, it knows what each line means and misses where a newcomer
   stops; in turn a reader that did not make it reads it with only what the person it is for opens.
 - turn makes the work from the decisions and checklists it is given alone and opens nothing else, so

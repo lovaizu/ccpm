@@ -65,11 +65,6 @@ answer into README.md, and the step ends.
 
 turn gives your plugin's AI what it does not get by doing the work and checking it itself.
 
-- It carries only the CCS from step to step, so however many steps it goes through, what it holds
-  does not swell and it does not drift from its goal.
-
-  An AI that carries the whole conversation instead holds more with every step, and loses the goal
-  and the rules under what it has piled up.
 - turn's reader did not make the work, and opens only what the person it is for opens.
 
   The AI that made a work knows what each line means, and misses where the person it is for,
