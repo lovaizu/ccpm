@@ -19,13 +19,14 @@ calling turn.
   AI asks the user, one point at a time, what the checklist's items need, writes what is decided
   into its CCS, calls turn, gets back the work and the result, checks each Good against its lines,
   fixes and ends.
-- It shows, from start to result: the step's CCS, as an example of the step's own, with ACC named
-  in a few words as where a CCS comes from; the call, the CCS's path, the kinds turn takes from it
+- It shows, from start to result: the step's CCS, as an example of the step's own, its kinds named
+  apart from turn's call keys so that the names are seen to be the step's, with ACC named in a few
+  words as where a CCS comes from; that turn reads the rest of the CCS as the task's own; the call, the CCS's path, the kinds turn takes from it
   and where the result goes; the step's text that starts turn, kept short; that while the step
   waits, a reader other than the one that made the work reads it in its receiver's place and what
   gives no Good is made again, which the person sees in the panel below the prompt input; and the
-  result, each item's Good and lines and a question for the user, then the AI checking, fixing and
-  ending the step.
+  result, each item's Good and lines, what `not_good` would hold, and a question for the user, then
+  the AI checking, fixing and ending the step.
 
 ### B-3: Why this one
 - When the AI that made a work checks it, it knows what each line means and misses where a newcomer

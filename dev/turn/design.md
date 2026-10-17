@@ -2,13 +2,14 @@
 
 turn makes the work a calling AI's CCS asks for, has it read in its receiver's place by a reader
 that did not make it, makes it again where that reading finds no Good, and returns it with each
-item's Good and the lines that give it. The goal and the key results it is built to reach are in
-[turn's UX](ux.md).
+item's Good and the lines that give it. The goal and the key results it is built to reach, and what
+the words CCS, receiver and Good mean, are in [turn's UX](ux.md).
 
 ## User stories
 
 - As the calling AI, I want to hand turn the path of a CCS and get the work back, with each item's
-  Good and the lines that give it.
+  Good and its lines, the questions only the user can decide, and what each item still without Good
+  would give.
 
   Reading, judging and making again are how turn makes the work, and lie in its components.
 
@@ -24,64 +25,71 @@ flowchart LR
   fu["First user"]
   ev["Evaluator"]
   le["Learner"]
-  caller -->|hands the CCS's path, its kinds and where the result goes| orch
-  orch -->|returns the work and the result| caller
-  orch -->|has the work made, or made again| gen
-  orch -->|has the work used in the receiver's place| fu
-  orch -->|has the Good the reading found shown| ev
-  orch -->|has every record looked through| le
+  caller -->|1 hands the CCS's path, its kinds and where the result goes| orch
+  orch -->|2 has the work made| gen
+  orch -->|3 has the work used in the receiver's place| fu
+  orch -->|4 has the Good the reading found shown| ev
+  orch -->|5 has every record looked through, then 2 to 4 once more| le
+  orch -->|6 returns the work and the result| caller
 ```
 
-- Every role that is an AI looks only for the Good each item of the checklists gives and the lines
-  that give it; only a script doubts, such as by naming the lines no Good rests on.
+Each role, the orchestrator and the four it starts, answers the orchestrator in its reply.
+
+- Every role looks only for the Good each item of the checklists gives and the lines that give it;
+  only a script, code that runs the same every time, doubts, such as by naming the lines no Good
+  rests on.
 
   An AI that looks for what more the work needs finds more without end, and each find is patched
   in, so the work drifts from what it should be. Each role's part is one aim, so it works to the aim
   rather than to a list of steps.
-- The calling AI hands the orchestrator the CCS's path, the kinds it uses in it for the work, the
-  checklists, who reads the work, what they read it for and what they open with it, and where the
-  result goes.
+- The calling AI hands the orchestrator the CCS's path, the kinds it uses in it for where the work
+  goes, the checklists, the receiver, what the receiver reads the work for and what they open with
+  it, and where the result goes.
 
-  The CCS is the calling AI's, in the shape it chooses, and turn defines nothing of it: what it
+  The CCS is the calling AI's, with the names it chooses, and turn defines nothing of it: what it
   needs is found by these kinds, and the values stay in the CCS alone, so the call and the CCS
   cannot differ. Where the result goes is not in the CCS, as it is this call's answer, not the
   task's state.
-- The generator makes the work from the CCS and the files it names, so that every item gives its
-  Good, and hands back, for each item, the lines that give it, and the questions only the user can
-  decide.
+- The generator makes the work from the CCS whole, so that every item gives its Good, and hands
+  back, for each item, the lines that give it, and the questions only the user can decide.
 
   It hands back only once it has read the work against each item. What the CCS does not say is not
   filled in from its own guess but becomes a question. The lines are its claim, not a judgment.
 - The orchestrator reads the work against every item, and sends back to the generator the items
-  whose Good it does not find, each said as what the receiver gets once it is Good, before the first
-  user reads.
+  whose Good it does not find, each said as what the receiver gets once it is Good; once it sends
+  nothing back, a script records its findings.
 
-  A shortfall plain to see is sent back while it costs least. How the work becomes Good is the
-  generator's to decide, since an edit told per item broke other items. An item waiting on the
-  user's answer is not sent back.
-- The first user uses the work in the receiver's place, with only what the receiver opens, and says
-  for each item the Good it took from the work and where.
+  A shortfall plain to see is sent back while it costs least, before the costly reading. How the
+  work becomes Good is the generator's to decide, since an edit told per item broke other items.
+  An item only the user's answer can give is not sent back: it comes back as a question.
+- The first user uses the work in the receiver's place, with the work, what the receiver opens, who
+  the receiver is and what for, and the checklists, and says for each item the Good it took and
+  where.
 
   A reader that did not make the work stops where the receiver would, where the maker reads in what
   it meant.
-- The orchestrator settles its own finding of each item's Good before the evaluator starts; the
-  evaluator then shows the Good the first user found, and any other Good the work gives, with their
-  lines; and the orchestrator decides each item where the two differ against what the first user
-  opened and where it stopped.
+- The evaluator, given the same and the first user's reading, shows the Good the first user found,
+  and any other Good the work gives, with their lines; the orchestrator then decides each item
+  where its own finding and the evaluator's differ, against what the first user opened and where it
+  stopped.
 
-  A judgment made after another's is pulled toward it, so the order, not a word of caution, keeps
-  the orchestrator's own. The evaluator is there because one reader misses Good the work gives, and
-  an item judged without Good by that miss is made again for nothing.
-- The learner looks through every item and every record of the run for what makes the Good, and the
-  orchestrator hands what it finds to the generator, which makes the work again.
+  The orchestrator's finding is recorded before the evaluator starts, as a judgment made after
+  another's is pulled toward it, which no word of caution prevents. The evaluator is there because
+  one reader misses Good the work gives, and an item judged without Good by that miss is made again
+  for nothing.
+- When every item has its Good or a question, the run returns; otherwise the learner looks through
+  every item's finding and every role's record of the run for what makes the Good, and the generator
+  makes the work again from what it found.
 
   For an item without Good it finds how the work would give it; for an item with Good, what gives
   it, so that making again keeps it; and about making, such as what to read or ask before writing.
   What fell short often lies in what a role did, which only its record shows.
-- What is made again is read again before it returns, once at most.
+- The work made again is read once more, and then the run returns, with each item still without
+  Good and what the receiver gets once it is Good.
 
-  A second reading settles what the first found; what it still does not find comes back as an item
-  without Good, for the calling AI to judge.
+  A reading is the orchestrator's finding, the first user, the evaluator and the decision. A second
+  reading settles what the first found; what is left is the calling AI's to fix, which costs less
+  than more readings.
 
 ### Physical view
 
@@ -108,10 +116,14 @@ turn/                      the plugin, installed by Claude Code
   `claude -p` is not used, since the docs say `--bare`, which reads no subscription login, will
   become its default.
 - A script checks the call and takes from the CCS every entry of each kind the call names, and
-  hands each role what it needs; the generator reads the CCS whole.
+  hands each role what it is given; the generator reads the CCS whole.
 
-  A call that names a missing file or a kind with no entry is stopped with what is wrong. No AI
-  copies a value from the CCS, so none is copied wrong.
+  A call that names a missing file, or no entry for where the work goes, the checklists or the
+  receiver, is stopped with what is wrong. No AI copies a value from the CCS, so none is copied
+  wrong.
+- The learner reads the record, the JSONL, of each role of its run, which the hooks let it read.
+
+  A role's JSONL lies beside the conversation's transcript, tied to its run as below.
 - Each role gives its answer as its reply to the orchestrator, in a JSON form of its own, not in a
   file, and a hook checks each role at both ends.
 
@@ -153,7 +165,8 @@ turn/                      the plugin, installed by Claude Code
     - Pyrefly's types for Python 3.9
 - The orchestrator and the four roles: each works to its aim, with its inputs alone, giving its
   form.
-  - Run on its own on a small task, on Opus 5.5, and judged from its JSONL.
+  - Run on its own on a small task, on Opus 5.5; passes when its JSONL shows it read only its
+    inputs and worked to its aim, and its reply fills its form.
 
 ### Acceptance
 
@@ -166,7 +179,7 @@ from the JSONL of every agent it started and from the work.
   - Each Good is checked by reading its lines in the work.
 - KR1.1: the items the calling AI fixes after the work comes back.
   - Counted from the stand-in's own check in its JSONL, and compared with the target of none and
-    with the last version.
+    with the last version's, kept with the trial in `dev/turn/trials/`.
 - KR1.2: the time from the call to the work coming back.
   - Taken from the JSONL's timestamps for a README-sized work, and compared with the target of three
-    minutes and with the last version.
+    minutes and with the last version's.

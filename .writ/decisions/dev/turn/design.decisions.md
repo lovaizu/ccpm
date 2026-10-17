@@ -14,9 +14,10 @@
 - turn defines nothing of the CCS. A CCS is JSON: parts, each a list of entries, each entry a kind
   and its value. The caller hands turn, as JSON, the CCS's path, the kinds it uses for what turn
   takes from the task's state, and where turn writes its result:
-  `{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "reader": "<kind>",
-  "use": "<kind>", "opens": "<kind>"}, "result": "<path>"}`. The kinds are the work, the
-  checklists, who reads the work, what they read it for and what they open with it; a script takes
+  `{"ccs": "<path>", "kind": {"work": "<kind>", "checklist": "<kind>", "receiver": "<kind>",
+  "use": "<kind>", "opens": "<kind>"}, "result": "<path>"}`. The kinds are where the work goes, the
+  checklists, the receiver, who reads the work, what they read it for and what they open with it;
+  the first three must each have an entry, and the last two may have none; a script takes
   every entry of each from the CCS and hands it to the roles that need it, so no AI copies it, and
   the hooks bound what each role reads by them. The generator reads the CCS whole. The values stay
   in the CCS alone, so the call and the CCS cannot differ. The result is not a kind: it is where
@@ -148,3 +149,16 @@
   Good, what in the work gives it, so that making again keeps it. What fell short often lies in what
   a role did, which only the JSONL shows, and a Good is lost by a remake that does not know what
   gives it. What it learns is used within the run.
+- A reading is one pass of the work through the first user, the orchestrator's own finding, the
+  evaluator and the orchestrator's decision. The orchestrator reads the work against every item
+  once the generator hands it back, sends back what it can see has no Good, and once nothing is
+  sent back, its findings are recorded and the first user reads. When the reading gives every item
+  its Good or a question, the run returns; otherwise the learner looks and the generator makes the
+  work again, and a second reading follows, after which the run returns with what is still without
+  Good. A question waits for the calling AI: it puts it to the user, and writes the answer into the
+  work itself or into the CCS and calls turn again.
+- What each role is given: the generator, the CCS whole, what is sent back and what the learner
+  found; the first user, the work, what the receiver opens, who the receiver is and what for, and
+  the checklists; the evaluator, the same and the first user's reading; the learner, every item's
+  finding and the JSONL of every role of the run, which the hooks let it read by `parentAgentId`.
+  The JSON forms are the builder's to settle.
