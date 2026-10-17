@@ -100,7 +100,7 @@ For a reader who is a person, that is one figure, with the text beside it saying
 figure cannot show; for an AI reading a prompt, it is the steps. A document that tells of no such
 thing passes.
 
-In the figure, each box holds its name, with its kind beside it as one short word in angle
+In a figure whose boxes are of different kinds, each box holds its name, with its kind beside it as one short word in angle
 brackets, such as `turn:up <agent>`.
 
 Why: pieced together in the head, it costs effort and goes wrong; a figure shows a person at once

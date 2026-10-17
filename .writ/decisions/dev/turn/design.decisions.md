@@ -3,8 +3,8 @@
 ## design
 
 ### B-29: The user stories
-- One story: as the calling AI, I want to hand turn a CCS and get back the work and a new CCS, as one
-  turn of ACC. Reading, judging and making again are how the work is made, decided in the
+- One story, serving both key results: as the calling AI, I want to hand turn a CCS and get back
+  the work and a new CCS, as one turn of ACC. Reading, judging and making again are how the work is made, decided in the
   components.
 
 ### B-18: Every logical component the stories need
@@ -79,7 +79,7 @@
 - The roles' answers to one another, the generator's claim, the first user's reading and the
   evaluator's lines, are not files: each role gives its answer as its reply to the orchestrator, so
   a run leaves nothing behind, and only the orchestrator holds them, so the first user cannot see
-  the generator's claim. How a hook checks that a reply answers every item is tried when built.
+  the generator's claim.
 - A run asked to stop ends with a reply saying the items decided so far and where it stopped. A
   run cut off leaves the work as written so far; the calling AI calls turn again, the generator
   makes the work again from what is there and the readings start again. No resuming part way:
@@ -87,40 +87,6 @@
 
 ### B-22: What each component depends on outside
 - Claude Code, python3 3.9 or later, jq and git.
-
-### B-27: The qualities that come with each benefit
-- The benefit: the work read inside turn by a reader other than the one that made it, as its own
-  readers would, and made again where that reading found it short. Must-be:
-  - The first user is not the generator and reads only what the work's receiver opens, since the
-    generator's claim or the decisions handed over would be read into the work.
-  - The first user reads the whole work, for every item, since an item not read comes back as the
-    generator's claim.
-  - The work returned is as it was last read: what is made again is read again before it returns,
-    the second reading included, since a part not read again is the generator's assumption again.
-  - The orchestrator decides each item by reading the work itself, taking neither the generator's
-    claim nor the evaluator's lines on trust.
-  - An answer comes back for every item, and each line named is in the work and meets the item, so
-    the calling AI has firm ground to check against.
-  - What only the user can decide comes back as a question, not filled by a guess, since work made
-    on a guess can look met and still miss what the user meant.
-  - Nothing but where the work goes is changed, and nothing is committed or pushed, since the
-    calling AI checks the work alone and any other change stays unchecked.
-  Better the more, each measured on every trial and compared with the last version:
-  - The time a run takes, since the calling AI cannot go on with its step while it waits.
-  - The cost of a run, since the four roles and the orchestrator run every time, at the user's
-    expense.
-  - How much the calling AI fixes after the work returns, counted as the items it fixes itself,
-    since the more is settled inside turn, the more the benefit gives.
-
-- The benefit: one turn of ACC, the calling AI going on from the new CCS alone. Must-be:
-  - The new CCS alone tells the calling AI what to do next, without reading what went on inside
-    the run.
-  - However many times turn is called, the CCS does not swell: what turn writes replaces the last
-    turn's, and nothing is added on.
-  - What must come back as received does not change, held by the script's check before it returns.
-  Better the more, measured on every trial and compared with the last version:
-  - What each call adds to the calling AI's context, the CCS and the orchestrator's last reply,
-    since the less it adds, the longer the calling AI can go on.
 
 ### B-23: Checks built up unit by unit
 - The scripts: unittest fed what the calling AI hands over, a case each stops and one each lets
@@ -131,35 +97,18 @@
   from the JSONL by whether it did what its steps say.
 
 ### B-24: The whole checked
-- Trials in the private `lovaizu/rn-try`, one at a time: a stand-in for the calling AI is handed a
+- Trials in `lovaizu/playground`, one at a time, each on a branch of its own removed after: a stand-in for the calling AI is handed a
   small task's decisions and checklist and calls turn; judged from the JSONL and the work. The
   story is achieved when the work comes back where it goes with an answer and lines for every
   item, each answer checked by reading the work.
 
-### B-28: Must-be, checked
-- The first user apart and reading only what the receiver opens: a test that the hook stops any
-  other read; in a trial, everything the first user opened is what the receiver opens.
-- The whole work read for every item: a test that the hook stops a reply that leaves an item out;
-  in a trial, the first user opened all of the work.
-- The work returned as last read: in a trial, nothing is written to the work after the last reading
-  begins.
-- The orchestrator deciding by its own reading: in a trial, it opens the work before it decides.
-- An answer for every item, with lines that are in the work: a tested script checks each line named
-  is in the work; in a trial, each line is read for whether it meets its item.
-- A question, not a guess: a trial on a task with one decision left out returns a question.
-- Nothing changed but where the work goes, no commit or push: a test that the hooks stop them; after
-  a trial, git shows changes to the work alone.
-
-- The calling AI going on from the CCS alone: in a trial, the stand-in takes its next move from the
-  new CCS, with nothing of the run's inside in its context.
-- The CCS not swelling: a test that the script writes turn's parts in place of the last turn's; in
-  a trial called twice, the second CCS is no larger than the first beyond what the new turn says.
-- What must come back as received: a test that the script returns nothing when it has changed.
-
-### B-26: Better the more, measured
-- The time and the cost of a run from the trial's JSONL, its timestamps and usage; the items the
-  calling AI fixes after the work returns, and what each call adds to its context, counted from the
-  stand-in's JSONL; each compared with the last version.
+### B-26: Key results, measured
+- From every trial, measured and compared with the targets in turn's UX and the last version: the
+  items the stand-in fixes in the work after it comes back, counted from its own check in its
+  JSONL; the time from the call to the return, from the JSONL's timestamps.
+- That the new CCS can be handed on as it is, does not swell, and keeps as received what must come
+  back so are functions, either working or not: the script's tests hold them, and the stand-in in a
+  trial takes its next move from the new CCS alone.
 
 ### The CCS
 - turn's CCS definition, in `turn/skills/acc/SKILL.md`, takes ACC's nine parts with the
