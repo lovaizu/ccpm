@@ -990,7 +990,11 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      opens, and the result's path. Each role's input and reply are JSON, settled by the builder
      at build (the user: implementation, not asked). turn's UX, README stage 1 and design
      rewritten to these (`849d9f7`); the callers' page, agent and script decisions under
-     `.writ/decisions/turn/` still say the old turn and are remade at build. Next: step 3 again, the first users asked whether they received the
+     `.writ/decisions/turn/` still say the old turn and are remade at build. Step 3 run on these
+     (2026-10-17): both readers would use or could build turn; their findings settled at the
+     decisions (`2e731ac`): one name, the receiver, so the call's `reader` key became `receiver`;
+     when a run returns and what a reading is; what each role is given; what happens to a question.
+     Next: the user agrees the README and the design; then step 4. Before: step 3 again, the first users asked whether they received the
      Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
