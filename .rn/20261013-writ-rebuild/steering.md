@@ -974,8 +974,13 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      answers as replies, no resume, the qualities and Verification, agreed. The user (2026-10-16):
      redo turn straight, in the order of `plugin.md`; everything to be remade is deleted (the
      README, the callers' page, the design, the code, tests and trials), leaving the UX, the
-     decisions, CHANGELOG and plugin.json. Next: turn's README first, with its checklists open,
-     agreed with the user, then the design from the decisions above.
+     decisions, CHANGELOG and plugin.json. README stage 1 agreed. Then decided with the user
+     (2026-10-17): the UX holds the goal's key results (OKR: none fixed after return, three minutes
+     a README), judged by how close each version comes; ACC's benefit is the caller's; the
+     orchestrator judges before the evaluator; the learner sees every item and every role's JSONL;
+     the `turn:acc` skill holds ACC's intent and the CCS spec in its body; a role is tied to its run
+     by `parentAgentId` (tried); trials in `lovaizu/playground`. The design was rewritten to these
+     (`80c45dd`), waiting for the user's agreement; then plugin.md step 3.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,
