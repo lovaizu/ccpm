@@ -39,5 +39,16 @@
   "questions": null,
   "cost_usd": 2.79,
   "fixed": "not returned: claude -p ended the session at 10.1 minutes while the orchestrator was starting the remake; by then the generator took 1.0, the orchestrator's reading 0.8, the first user 0.7, the evaluator 0.5, the decision 0.5, the learner 2.5 and the orchestrator's copying of the remake's prompt 0.75 minutes"
+ },
+ {
+  "commit": "9024314",
+  "unit": 3,
+  "session": "4e034603-83ad-48ba-aebd-6e77da4e5ca4",
+  "minutes_to_return": 13.4,
+  "items_fixed_after_return": 12,
+  "questions": 1,
+  "cost_usd": 4.26,
+  "fixed": "readme B-6, B-8; readability F-1, B-2, B-3, B-4, B-5, B-6, B-7, B-11, B-14, B-19, each returned without Good; the license answered with its recommended MIT. Its fix still says the values stay as exported while cells are trimmed (readability B-5).",
+  "read": "Every JSONL and the work read. Generator 1.0, orchestrator 1.1, generator 0.7, orchestrator 0.3, first user 1.1, evaluator 0.9 (a copied prompt stopped by the hook once), decision 0.3, learner 2.4, generator 0.9, orchestrator 0.4, first user 0.7, evaluator 0.5, decision 0.4 minutes; some 2 minutes went to copying prompts. Round 1: the first user stopped on readme B-4, B-5, B-8 and readability B-12, yet the evaluator gave them Good, so with the orchestrator agreeing they were never decided. Round 2: the orchestrator read 14 of the work's 71 lines, the remaking generator read it from line 30 alone, and the remake brought new stops (64 'does only what this README describes'; the header promise in Why)."
  }
 ]
