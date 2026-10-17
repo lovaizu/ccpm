@@ -27,7 +27,8 @@
   "items_fixed_after_return": 0,
   "questions": 1,
   "cost_usd": 1.92,
-  "fixed": "none; the license question answered with its recommended MIT. The evaluator gave no Good to six items the orchestrator had found Good (readme B-6, readability B-3, B-4, B-6, B-7, B-19); the orchestrator kept its Good on all six"
+  "fixed": "none; the license question answered with its recommended MIT. The evaluator gave no Good to six items the orchestrator had found Good (readme B-6, readability B-3, B-4, B-6, B-7, B-19); the orchestrator kept its Good on all six",
+  "goods_checked": "Read against README.md and every JSONL: readme B-6's Good holds (63-70). Five do not: readability B-3 and B-7, 44-45 say only spaces, blank rows and header names change, while csvtidy writes \\r\\n line endings, which the orchestrator saw in its own run of the example; B-4 and B-19, 44 says 3-4 again and 54-59 the example's run; B-6, 65 is a status ('yet'). The first user named each of these stops; the orchestrator's decision argued them away. The stand-in, too, passed every Good, so its count of none missed the \\r\\n statement."
  },
  {
   "commit": "6d89b8d",

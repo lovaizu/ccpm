@@ -56,8 +56,10 @@ What only the user can decide you hand back as a question, with the answer you r
 6. Decide each item in `decide.items`, where your finding and the evaluator's differ: each holds
    your finding (`orchestrator`), the evaluator's Good (`evaluator`) and what the first user got
    (`first_user`), `null` where there is none. Read the work at their lines, against what the
-   first user opened (`decide.opened`) and the items it got nothing for, which show where a
-   receiver stops, and decide whether the receiver gets what the item asks. Run
+   first user opened (`decide.opened`) and where it stopped: what it got nothing for, read twice,
+   had to guess or will not hold. Where the first user stopped, the receiver stops too, so the
+   item has no Good there, however the lines read to you: you read the work already knowing what
+   it meant. Decide whether the receiver gets what the item asks. Run
    `turn.py next <the call's result> <<'EOF'` with your decision, ending with `EOF`, and go to
    step 5.
    - Out: your decision, in the form of your reading in step 4, with the items of `decide.items`

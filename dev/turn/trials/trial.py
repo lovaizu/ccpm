@@ -71,6 +71,8 @@ done = subprocess.run(
     ],
     check=True,
     cwd=place,
+    # claude -p stops waiting for turn, which runs in the background, after 10 minutes by default.
+    env={**os.environ, "CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS": str(2 * 60 * 60 * 1000)},
     capture_output=True,
     text=True,
 )
