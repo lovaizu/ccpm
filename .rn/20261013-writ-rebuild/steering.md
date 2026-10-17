@@ -981,8 +981,13 @@ Where to resume (2026-10-15), before anything else in #5 and #6:
      the `turn:acc` skill holds ACC's intent and the CCS spec in its body; a role is tied to its run
      by `parentAgentId` (tried); trials in `lovaizu/playground`. The design was rewritten to these
      (`80c45dd`), and the UX and design checklists rewritten from their purpose; the user agreed to
-     the design (2026-10-17, at `dbaa062`). Now plugin.md step 3: a first user each for the README
-     and the design, read once; settle each finding at its decision or principle; then step 4.
+     the design (2026-10-17, at `dbaa062`). Step 3's first readings led to a rethink (2026-10-17): only
+     scripts doubt and every AI role looks only for the Good; each role's aim in one sentence; ACC
+     and the CCS are rn's, closed inside it, and turn is the agent that acts, following the
+     instruction it is handed and writing its result as a file where it says (in the decisions).
+     Next, one point at a time: what turn's instruction holds; then turn's UX, README and design
+     rewritten once to these; then step 3 again, the first users asked whether they received the
+     Good; then step 4.
   2. rn's UX: decisions agreed (users, scenes, benefits), but the run `rnux1` was not taken in
      (8 of 18 met, nine questions): the decisions carry means words (turn, the record, findings);
      take them out, then put to the user the UX points the run raised (what `/rn:gm` gives back,

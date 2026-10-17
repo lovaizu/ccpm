@@ -3,9 +3,18 @@
 ## design
 
 ### B-1: The stories the scenes rest on
-- One story: as the calling AI, I want to hand turn a CCS and get back
-  the work and a new CCS, as one turn of ACC. Reading, judging and making again are how the work is made, decided in the
-  components.
+- One story: as the calling AI, I want to hand turn what to make and get the work back, with what
+  the turn found of each item. Reading, judging and making again are how the work is made, decided
+  in the components.
+- ACC and the CCS are rn's, closed inside it; turn does not know them. In the paper, the compressor
+  that makes the state is a model apart from the agent that acts on it, and the agent's output
+  enters memory only through the next compression, after it is checked; so the compressor, the CCS
+  and the store, the repository, are the caller's, and turn is the agent that acts: it follows the
+  instruction it is handed and writes its result where the instruction says.
+- turn's result is where the work was written, each item's Good with its lines, the questions only
+  the user can decide, and the items without Good, each with what the receiver gets once it is Good.
+  A script writes it as a file and checks its shape as it writes: a reply would be copied into a
+  file by the calling AI, where a slip goes unseen.
 
 ### B-2: Every logical component the stories need
 - Five components: the generator, the first user, the evaluator, the learner and the orchestrator.
@@ -81,22 +90,6 @@
 - The console and the stop with Esc go, as turn deals with no person.
 
 ### B-6: Where each component is placed
-- The `turn:acc` skill, `turn/skills/acc/SKILL.md`, holds in its body ACC's intent and the CCS's
-  specification. The intent first, drawn from the paper (linked as its source, not to be read at run
-  time): an AI that replays the whole conversation through a long task holds more each turn, attends
-  less to what matters, drifts from its constraints and carries forward assumptions no one checked;
-  so ACC keeps one small state, the CCS, and decides from it alone. Each turn the CCS is made anew
-  and replaces the last, so it does not grow; it holds only what is confirmed and what decisions
-  need: the goal, the constraints, which stay as they are unless changed on purpose, what changed,
-  what is not settled, said openly, and what comes next; materials stay outside it as references,
-  not their contents copied in; and its fixed shape is checked without asking a model. Knowing why, the calling
-  AI judges what to write into a CCS and what to leave out, and carries the new CCS, not the run;
-  steps alone it would follow by rote and fill the CCS with everything. The calling AI uses the CCS
-  well only knowing the ACC it serves, and the
-  swelling and drift ACC prevents are the caller's to prevent. In the body, not in `references/`:
-  `references/` holds what would make the body long, and this is short; a SKILL.md that only says
-  to read a file adds a step and gives nothing. A skill is called by name from any installed plugin, and a plugin built on turn names it in
-  `dependencies`, so the calling AI reaches the specification wherever plugins are installed.
 - The work is made where it goes, in the user's repository, not in a copy. A copy was there so
   that a person's stop with Esc left where the work goes as it was; turn has no such stop now. A run
   cut off leaves its writing as changes git shows, which the calling AI undoes or finishes, and the
@@ -132,25 +125,8 @@
 - From every trial, measured and compared with the targets in turn's UX and the last version: the
   items the stand-in fixes in the work after it comes back, counted from its own check in its
   JSONL; the time from the call to the return, from the JSONL's timestamps.
-- That the new CCS can be handed on as it is, does not swell, and keeps as received what must come
-  back so are functions, either working or not: the script's tests hold them, and the stand-in in a
-  trial takes its next move from the new CCS alone.
-
-### The CCS
-- turn's CCS definition, in `turn/skills/acc/SKILL.md`, takes ACC's nine parts with the
-  paper's names and meanings, and defines inside them only the kinds and values turn reads and
-  writes; every other kind is the caller's to define.
-- The new CCS is the state after the turn: the task's parts (what is made, for whom and what for,
-  the materials, the rules) and everything turn does not define come back as received; what the
-  turn changes (what changed in this turn, what is not settled, what to do next) is written anew in
-  place of the last turn's, so the CCS does not swell, and the CCS returned can be handed to turn
-  again as it is.
-- A script checks the CCS at both ends: when a run starts, that the CCS received meets turn's
-  definition, stopping with what is wrong and where the definition is; before it returns, that the
-  new CCS meets the definition and that what must come back as received has not changed, returning
-  nothing otherwise. Each check is tested.
-- Inside turn, each role is checked at both ends too, in its own forms, not the CCS: a hook lets a
-  role start only with the input the orchestrator is to give it, and stops a role's reply that
+### Inside turn
+- Each role is checked at both ends, in its own form: a hook lets a role start only with the input the orchestrator is to give it, and stops a role's reply that
   does not fill its form, every item answered and each line named in the work.
 - The orchestrator settles its own judgment of every item, from its own reading of the work,
   before it sees the evaluator's: a script records it, and a hook lets the evaluator start only once
@@ -162,14 +138,3 @@
   it, so that making again keeps it. What fell short often lies in what a role did, which only the
   JSONL shows, and an item met is broken by a remake that does not know what holds it. What it
   learns is used within the run.
-- The kinds turn defines, all else the caller's:
-  - `focal_entities`: `deliverable`, where the work goes; `receiver`, who reads it. The caller's.
-  - `goal_orientation`: `use`, what the receiver reads it for; `acceptance`, when it is enough. The
-    caller's.
-  - `retrieved_artifacts`: `checklist`, `decisions`, `reference`, `receiver_opens`. The caller's.
-  - `constraints`: `language`. The caller's.
-  - `episodic_trace`: `item`, for each item whether it is met and the lines that meet it. turn's.
-  - `uncertainty_signal`: `question`, for the user; `unmet`, an item not met and why. turn's.
-  - `predictive_cue`: `next`, one of `done`, `ask the user`, `fix`, the caller fixes. turn's.
-  - `semantic_gist`, `relational_map`: none.
-  That the work was written is read from `deliverable`, so no kind says it again.
