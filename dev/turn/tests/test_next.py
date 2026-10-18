@@ -211,6 +211,14 @@ class TestDecision(ReadTest):
             [dict(QUESTION, items=[ITEM_B1]), dict(new, items=[dict(ITEM_B1, item="F-1")])],
         )
 
+    def test_the_items_to_decide_are_printed_again_when_asked_with_no_decision(self):
+        # Given: a run waiting on the orchestrator's decision
+        # When: the orchestrator runs the script with no input
+        # Then: it is shown the items to decide again, and the run still waits on its decision
+        first = self.read_json(RESULT)["running"]["decide"]
+        self.assertEqual(self.next(), {"decide": first})
+        self.assertIn("decide", self.read_json(RESULT)["running"])
+
     def test_a_decision_out_of_its_form_stops(self):
         # Given: both items to decide
         # When: the decision leaves one out, waits on a question not asked, or asks one no item

@@ -162,6 +162,19 @@ calls fails.
 Why: the AI writes words between its tool calls on some runs and not on others, so what rests on
 them reaches the user only sometimes; a hook shows it on every run.
 
+### B-25: Each step seen done by a hook
+
+Is the AI stopped, while it can still do it, when it leaves out a step that must happen every time
+and that shows in its tool calls?
+
+Look at: each step of B-3 that shows in the AI's tool calls, such as a file read whole, a command
+run or a place written, checked by a hook that names the step and why it is there; one left to the
+AI's word alone fails. What shows in no tool call, such as what the AI weighs, stays with the step
+and its reason.
+
+Why: an AI given a clear step and its reason still leaves it out on some runs, and the result looks
+right; a hook sees it on every run, while the step can still be done.
+
 ### B-13: Details read only when needed
 
 Does the AI read each detail it needs only on some runs on those runs alone?

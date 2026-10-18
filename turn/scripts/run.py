@@ -67,7 +67,9 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     if record and record not in run.setdefault("records", []):
         run["records"].append(record)
     if "decide" in run:
-        return decide(run, text)
+        # Asked with no decision, the items to decide are shown again, so the orchestrator can
+        # always see them whole.
+        return decide(run, text) if text.strip() else {"decide": run["decide"]}
     agent = run["next"]["agent"]
     if agent == GENERATOR:
         return reading(run, text)

@@ -100,6 +100,17 @@ instead or how to install a tool that is missing.
 
 Why: a user who knows what went wrong but not how to put it right is left to work out the fix.
 
+### B-15: A stop cleared by the action it names
+
+When the code stops, can whoever runs it always go on by taking the action it names?
+
+Look at: each stop's action is one whoever is stopped can take with what they have, and taking it
+lets the check through; an action outside what they may do, such as a read another check stops, or
+one after which the check still stops, fails.
+
+Why: a stop its own action does not clear leaves the run stuck, going round or ended, and a check
+there to keep the work right stops the work.
+
 ### B-7: A test for each behavior asked
 
 For each behavior the requirements ask of the code, can the maintainer learn from some test that
