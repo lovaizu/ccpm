@@ -517,6 +517,23 @@ class TestReads(HookTest):
             with self.subTest(command=command):
                 self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
 
+    def test_a_path_quoted_or_holding_signs_is_still_a_read(self):
+        # Given: a generator of a run, and a file it was not given whose name holds a comma
+        # When: its command names a file the run was not given in quotes, or that file
+        # Then: it is stopped
+        self.write("secret/notes,old.md", "x\n")
+        for command in ('cat "secret/notes.md"', "cat secret/notes,old.md"):
+            with self.subTest(command=command):
+                self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_the_orchestrator_asking_the_script_and_naming_another_file_stops(self):
+        # Given: an orchestrator whose run is going
+        # When: it runs turn's script for what a role is given, naming a file it was not given
+        # Then: it is stopped, as the orchestrator's commands are checked whole
+        self.given_record(ID, json.dumps(CALL), *READ_GIVEN)
+        command = f"{SCRIPT} given {CALL['result']} secret/notes.md"
+        self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "read what you")
+
     def test_a_role_reading_where_the_run_is_kept_stops(self):
         # Given: a generator of a run
         # When: it reads where the run is kept, which holds every role's prompt and reply

@@ -22,28 +22,32 @@ def check(event: dict[str, Any]) -> list[str]:
         return []
     if role in ("up", "generator"):
         given = kept["given"]
-    elif role == "learner":
+    # Not mutated: of the roles left, the learner's name sorts last.
+    elif role == "learner":  # pragma: no mutate
         given = kept["records"]
     else:
         given = kept["shown"]
     cwd = os.path.realpath(event["cwd"])
     places = [os.path.join(cwd, p) for p in given] + [agents.TURN]
-    if tool == "Bash":
+    # Not mutated: of the tools checked, Bash's name sorts first.
+    if tool == "Bash":  # pragma: no mutate
         # A command reads through the paths it names; one in the repository and outside what the
         # run was given is a read of it, while the repository's top is where the command runs.
         # Where the run is kept holds every role's prompt and reply, so the orchestrator alone,
         # which records its reading there, reads it; git reads the history of every file.
-        if role == "up":
+        # Not mutated: "up" sorts after each other name of turn's agents.
+        orchestrator = role == "up"  # pragma: no mutate
+        if orchestrator:
             places.append(os.path.join(cwd, kept["call"]["result"]))
         said = words(event)
         # A role takes what it is given, and the learner each record, from turn's script, naming
         # where the run is kept, in a command of that alone.
         command = str(event["tool_input"].get("command", ""))
         asks = agents.runs(command, "given") or agents.runs(command, "record")
-        if role != "up" and asks and not OPERATORS & set(said):
+        if not orchestrator and asks and not OPERATORS & set(said):
             return []
         named = [os.path.realpath(os.path.join(cwd, w)) for w in said]
-        inside = [p for p in named if within(p, [cwd]) and p != cwd and os.path.exists(p)]
+        inside = [p for p in named if p.startswith(cwd + os.sep) and os.path.exists(p)]
         if "git" not in said and all(within(p, places) for p in inside):
             return []
     else:
