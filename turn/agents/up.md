@@ -41,8 +41,6 @@ What only the user can decide you hand back as a question, with the answer you r
      - `"question"`: the number of the question it waits on, counted from 1; the question says
        what to ask the user, and `recommended` the answer you would choose and why, in one
        sentence.
-   - With any question, turn.py returns the questions alone and no work is made: the calling AI
-     asks the user and calls turn again with the answer in the CCS.
 3. Start the agent printed with its `prompt` as its whole prompt, as it is, and wait for its reply.
    turn's hook keeps each reply in the run for turn.py.
    - Out: its reply: from `turn:generator`, `{"items": [...], "questions": [...]}`, the Good it set
