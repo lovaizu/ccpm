@@ -102,6 +102,10 @@ def shown(path: str) -> str:
     with open(path, encoding="utf-8") as f:
         for line in f:
             entry = json.loads(line)
+            # Claude Code keeps beside the role's own entries a copy of each request it sends,
+            # which says again what the role was shown.
+            if entry.get("type") == "api-request-blob":
+                continue
             attachment = entry.get("attachment")
             if isinstance(attachment, dict) and attachment.get("type") == "edited_text_file":
                 lines.append(f"[shown {attachment.get('filename')}] {attachment.get('snippet')}")

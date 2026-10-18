@@ -416,6 +416,19 @@ class TestRecord(ReadTest):
         for words in ("I read it.", "x" * 30000, "[tool_result] done", "[shown README.md]"):
             self.assertIn(words, whole)
 
+    def test_a_record_shows_the_role_alone_not_the_requests_claude_code_copies(self):
+        # Given: a record holding, besides the role's own entries, the copy of a request Claude
+        # Code keeps beside them
+        # When: the learner asks for its page
+        # Then: the copy is not shown
+        path = self.given()["records"][0]
+        copy = {"role": "user", "content": [{"type": "text", "text": "copied request"}]}
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "api-request-blob", "message": copy}) + "\n")
+        code, out = self.turn("record", RESULT, "1", "1")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("copied request", out)
+
     def test_a_record_or_page_out_of_range_stops(self):
         # Given: a learner's run of two records, each of one page
         # When: a record or page outside them, or one not a number, is asked for

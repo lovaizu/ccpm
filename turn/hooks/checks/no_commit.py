@@ -6,7 +6,9 @@ from typing import Any
 
 import agents
 
-GIT = re.compile(r"\bgit\s+(commit|push)\b")
+# git as the command of a statement, with its options, so text that speaks of a commit, such as a
+# reading passed in a heredoc, is not taken for one.
+GIT = re.compile(r"(?:^|[;&|(\n])\s*git(?:\s+-\S+(?:\s+[^-\s]\S*)?)*\s+(commit|push)\b")
 
 
 def check(event: dict[str, Any]) -> list[str]:

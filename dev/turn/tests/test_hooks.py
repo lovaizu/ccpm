@@ -406,6 +406,14 @@ class TestWrites(HookTest):
         # Then: it goes through
         self.passes(pretooluse, self.tool("turn:up", "Bash", command="git diff"))
 
+    def test_words_of_git_inside_a_command_s_text_pass(self):
+        # Given: one of turn's agents
+        # When: it passes text that speaks of a git commit, such as its reading in a heredoc
+        # Then: it goes through, as nothing is committed
+        reading = '{"good": "changes are in the git commit history"}'
+        command = f"python3 turn.py next r.json <<'EOF'\n{reading}\nEOF"
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
 
 class TestReads(HookTest):
     def setUp(self):

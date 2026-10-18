@@ -111,7 +111,11 @@ exactly as it is, and wait for its reply. Then reply with its reply as it is.
         print("record:", path)
         with open(path, encoding="utf-8") as f:
             for line in f:
-                content = json.loads(line).get("message", {}).get("content")
+                entry = json.loads(line)
+                # Claude Code's copy of each request says again what the role did.
+                if entry.get("type") == "api-request-blob":
+                    continue
+                content = entry.get("message", {}).get("content")
                 for part in content if isinstance(content, list) else []:
                     if part.get("type") == "tool_use":
                         print("  use:", part["name"], json.dumps(part["input"], ensure_ascii=False))
