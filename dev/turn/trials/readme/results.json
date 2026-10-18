@@ -109,5 +109,17 @@
   "fixed": "readability B-4 and B-7, returned without Good; readability B-5 and B-3, each given Good by the orchestrator, the first user and the evaluator. The license question came back alone from the first call, before any work; the stand-in added MIT to the decisions and called turn again, and no question followed.",
   "goods_checked": "readability B-5: the README said csvtidy changes nothing but spaces, blank rows and the header's names, as notes/readme.decisions.md says, while csvtidy.py writes with csv.writer, whose rows end in CRLF; the orchestrator's Good says the statements hold against csvtidy.py; the first user and the evaluator, who have only the work and the checklists, gave it as 'reads as a plain fact'. readability B-3: every reader took the header's change as whole where the stand-in found 'underscores' unclear.",
   "read": "Every JSONL and the work read. First call: check 0.8 minutes, the question alone. Second call: check 0.8, generator 1.4, orchestrator's reading 0.6, first user 0.8, evaluator 0.8, decision 0.3, learner 1.5, generator 1.6, orchestrator's reading 1.1, first user 0.7, evaluator 1.1, return 0.4 minutes. Stops: each role's ls or git show outside what it was given, once each; the orchestrator's reading once before it read the changed work whole. The learner was the version before every record was shown page by page."
+ },
+ {
+  "commit": "064a614",
+  "unit": 3,
+  "session": "c5ec371d-73a3-40da-ad10-61aca90739c0",
+  "minutes_to_return": 15.1,
+  "items_fixed_after_return": 4,
+  "questions": 1,
+  "cost_usd": 4.52,
+  "fixed": "readability B-5 and B-3, the README saying csvtidy changes nothing but spaces, blank rows and the header's names while csv.writer ends rows in CRLF and quotes only where needed, given Good by the orchestrator, the first user and the evaluator; readability B-3, 'lower case with underscores' read as every sign turned to '_' where only spaces are; readme B-7, 'used and copied freely', worded by the check before the work in its recommended answer and carried by every role into the License; and the line width the stand-in's own edits broke. The license question came back alone from the first call, before any work.",
+  "goods_checked": "readability B-5: the orchestrator alone read csvtidy.py and gave 'each statement matches csvtidy.py'; the first user and the evaluator, given the work and the checklists, gave Good without it. readability B-7: the evaluator gave none in the second round, naming two things said twice; the orchestrator took the first user's Good, as the design lets it.",
+  "read": "Every JSONL and the work read. First call: check 1.1 minutes, the question alone. Second call: check 0.9, generator 1.8, orchestrator's reading 0.7, generator again for readme B-6 1.0, orchestrator's reading 0.7, first user 0.7, evaluator 0.8, decision 0.4, learner 2.1, generator 0.8, orchestrator's reading 0.4, first user 0.7, evaluator 1.2, decision and return 0.5 minutes. Every role read whole what its step reads before it went on. The learner read its four records in 19 pages by turn.py record and replied, its context at 152,000 tokens. Stops: each role's ls of .tasks once, outside what it was given; the evaluator's second reply in prose before its form, 0.4 minutes. The generator wrote its trial files to /tmp."
  }
 ]
