@@ -1,8 +1,6 @@
 import json
 
-from helpers import GOOD, QUESTION, SENT_BACK, UNSOURCED, WAITS, RepoTest
-
-import forms
+from helpers import GOOD, QUESTION, SENT_BACK, UNSOURCED, WAITS, RepoTest, forms
 
 ITEMS = [
     {"checklist": "checklists/readme.md", "item": "F-1"},

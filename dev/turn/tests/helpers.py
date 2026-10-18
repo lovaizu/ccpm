@@ -17,6 +17,7 @@ HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
 
+import forms  # noqa: F401  (the forms, for their own tests)
 import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
 import run
 import subagentstop
