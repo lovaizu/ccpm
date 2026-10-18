@@ -14,8 +14,9 @@ lines where the receiver gets what the item asks.
 
 ## Steps
 
-1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
-   `{"run": "<where the run is kept>"}`.
+1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
+   JSON.
    - In: what it prints, JSON: `ccs`, the path of the CCS; `work`, the path of each file of the
      work; `sent_back`, each item the orchestrator sent back, with `gets`, what the receiver gets
      once it has its Good, empty the first time; `learnt`, what the learner found makes each item's

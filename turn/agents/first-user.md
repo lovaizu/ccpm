@@ -14,8 +14,9 @@ starting from your reading.
 
 ## Steps
 
-1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
-   `{"run": "<where the run is kept>"}`.
+1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
+   JSON.
    - In: what it prints, JSON: `work`, the path of each file of the work; `opens`, what the receiver
      opens with the work; `receiver`, who the receiver is; `use`, what they read the work for;
      `checklists`, the path of each checklist.

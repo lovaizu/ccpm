@@ -11,8 +11,9 @@ and give the reply set for this call, so that the run takes the way the trial me
 
 ## Steps
 
-1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
-   `{"run": "..."}`. It prints JSON, with `work`, the path of each file of the work, and
+1. Your prompt is `{"run": "<path>"}`. Run
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
+   JSON. It prints JSON, with `work`, the path of each file of the work, and
    `checklists`, the path of each checklist.
 2. Read each file of the work and each checklist whole with Read.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" evaluator`. It prints your reply.

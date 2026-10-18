@@ -7,5 +7,14 @@
   "way": "generator, sent back, generator, first user stopped, evaluator none, decision without Good, learner, generator, second reading, first user, evaluator Good, returned with B-1 Good: every step in the order the set replies mean",
   "hooks": "four stops, each cleared by its action: the orchestrator's ls of notes and .tasks and a generator's ls of notes, outside what they were given; the orchestrator recording its second reading before reading the work the generator had changed, which it then read whole with cat; an evaluator's reply wrapped in the set reply's key, a slip of the stand-in's prompt, fixed after.",
   "read": "Every JSONL read. The decision, shown the items whole, gave no Good where the first user stopped. Read on a file Claude Code thinks unchanged returns no text, so the orchestrator went on to cat."
+ },
+ {
+  "commit": "8d885f1",
+  "session": "2eda99f6-48c9-478a-b929-ab8d5437462c",
+  "minutes_to_return": 5.4,
+  "cost_usd": 1.26,
+  "way": "generator, sent back, generator, first user, evaluator none, decision without Good, learner, generator, second reading, first user, evaluator Good, returned with B-1 Good: every step in the order the set replies mean",
+  "hooks": "the orchestrator's ls of . and .tasks and a generator's ls, outside what they were given; no stop at the reading after the first remake, as Claude Code had put the changed work whole into the orchestrator's context.",
+  "read": "Every JSONL read. Each Agent call carries the one-line prompt and starts some 3 seconds after turn.py printed it. Every role first passed the whole JSON of its prompt to turn.py given and was refused; the step's wording is fixed after this run and tried in the roles trial."
  }
 ]

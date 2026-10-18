@@ -12,8 +12,9 @@ means.
 
 ## Steps
 
-1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
-   `{"run": "..."}`. It prints JSON, with `ccs`, the path of the CCS, and `work`, the path of the
+1. Your prompt is `{"run": "<path>"}`. Run
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
+   JSON. It prints JSON, with `ccs`, the path of the CCS, and `work`, the path of the
    work.
 2. Read the CCS whole with Read, then each file it names that exists, whole with Read, and the work
    if it exists.
