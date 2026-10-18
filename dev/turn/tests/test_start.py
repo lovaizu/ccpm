@@ -92,12 +92,15 @@ class TestUsage(RepoTest):
         self.write_json(CALL["ccs"], ccs)
         call = dict(CALL, result=".tasks/結果.json")
         code, out = self.turn("start", json.dumps(call))
+        self.assertEqual(code, 0, out)
         self.assertIn("checklists/読む.md", out)
         items = [dict(i, can="the template") for i in json.loads(out)["check"]]
         check = json.dumps({"items": items, "questions": []})
         code, out = self.turn("next", call["result"], stdin=check)
+        self.assertEqual(code, 0, out)
         self.assertIn("結果.json", out)
         code, out = self.turn("given", call["result"])
+        self.assertEqual(code, 0, out)
         self.assertIn("はじめに.md", out)
 
 
