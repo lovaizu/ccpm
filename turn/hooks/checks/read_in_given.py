@@ -9,6 +9,7 @@ from typing import Any
 import agents
 
 TOOLS = {"Read": "file_path", "Grep": "path", "Glob": "path"}
+OPERATORS = {";", "|", "||", "&", "&&", ">", ">>", "<", "<<", "(", ")", "`"}
 
 
 def check(event: dict[str, Any]) -> list[str]:
@@ -35,6 +36,11 @@ def check(event: dict[str, Any]) -> list[str]:
         if role == "up":
             places.append(os.path.join(cwd, kept["call"]["result"]))
         said = words(event)
+        # A role takes what it is given from turn's script, naming where the run is kept, in a
+        # command of that alone.
+        command = str(event["tool_input"].get("command", ""))
+        if role != "up" and agents.runs(command, "given") and not OPERATORS & set(said):
+            return []
         named = [os.path.realpath(os.path.join(cwd, w)) for w in said]
         inside = [p for p in named if within(p, [cwd]) and p != cwd and os.path.exists(p)]
         if "git" not in said and all(within(p, places) for p in inside):

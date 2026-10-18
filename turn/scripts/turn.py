@@ -1,6 +1,6 @@
 """What turn:up runs for what must come out the same on every run: the call checked and the run
 started, and each step's outcome taken, giving the agent to start next, the items to decide, or the
-result written."""
+result written; and what each role runs for what it is given."""
 
 import json
 import os
@@ -14,7 +14,8 @@ from call import Stop
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your reading or decision as JSON>]"
+    "       turn.py next <result> [< <your reading or decision as JSON>]\n"
+    "       turn.py given <result>"
 )
 
 
@@ -26,6 +27,8 @@ def main(argv: list[str], stdin: IO[str]) -> int:
             print(json.dumps(run.start(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["next"] and len(argv) == 2:
             print(json.dumps(run.next_step(argv[1], stdin.read()), ensure_ascii=False))
+        elif argv[:1] == ["given"] and len(argv) == 2:
+            print(json.dumps(run.given(argv[1]), ensure_ascii=False))
         else:
             print(USAGE)
             return 1

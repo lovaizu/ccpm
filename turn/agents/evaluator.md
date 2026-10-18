@@ -13,11 +13,12 @@ findings and decides each item where they differ.
 
 ## Steps
 
-1. Read your prompt.
-   - In: JSON: `run`, where the run is kept, for turn's hooks; `work`, the path of each file of the
-     work; `opens`, what the receiver opens with the work; `receiver`, who the receiver is; `use`,
-     what they read the work for; `checklists`, the path of each checklist; `reading`, the first
-     user's reading: for each item it got something for, what it got and the lines it got it from.
+1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
+   `{"run": "<where the run is kept>"}`.
+   - In: what it prints, JSON: `work`, the path of each file of the work; `opens`, what the receiver
+     opens with the work; `receiver`, who the receiver is; `use`, what they read the work for;
+     `checklists`, the path of each checklist; `reading`, the first user's reading: for each item it
+     got something for, what it got and the lines it got it from.
    - These files and the reading are the whole of what you read, since they are what the receiver
      has and what they got; turn's hook stops a read of anything else.
 2. Read each checklist whole, each item a heading such as `### B-1: <title>`, and the work whole.

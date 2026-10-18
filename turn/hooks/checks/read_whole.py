@@ -47,8 +47,8 @@ def check(event: dict[str, Any]) -> list[str]:
     if missing:
         unread = ", ".join(missing)
         said.append(
-            f"read whole, each with Read and no offset or limit, or with cat: {unread}; what is"
-            " left unread is judged on a guess, and the work is read again after it changed"
+            f"read whole, each with `cat -n` or with Read and no offset or limit: {unread}; what"
+            " is left unread is judged on a guess, and the work is read again after it changed"
         )
     return said
 
@@ -72,7 +72,11 @@ def whole(path: str, cwd: str, work: list[str]) -> set[str]:
     seen: set[str] = set()
     with open(path, encoding="utf-8") as f:
         for line in f:
-            content = json.loads(line).get("message", {}).get("content")
+            record = json.loads(line)
+            shown = shown_whole(record.get("attachment"), cwd)
+            if shown:
+                read.add(shown)
+            content = record.get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
                 if part.get("type") != "tool_use" or part["id"] in seen:
                     continue
@@ -87,6 +91,21 @@ def whole(path: str, cwd: str, work: list[str]) -> set[str]:
                 elif name == "Agent" and given.get("subagent_type") == run.GENERATOR:
                     read.difference_update(at(cwd, w) for w in work)
     return read
+
+
+def shown_whole(attachment: Any, cwd: str) -> str | None:
+    """The file Claude Code put whole into the agent's context after another agent changed it, its
+    lines numbered from the first to the last, or None."""
+    if not isinstance(attachment, dict) or attachment.get("type") != "edited_text_file":
+        return None
+    path = at(cwd, str(attachment.get("filename", "")))
+    try:
+        with open(path, encoding="utf-8") as f:
+            count = len(f.read().splitlines())
+    except OSError:
+        return None
+    numbers = [n.partition("\t")[0] for n in str(attachment.get("snippet", "")).splitlines()]
+    return path if numbers == [str(n) for n in range(1, count + 1)] else None
 
 
 def printed(path: str) -> bool:

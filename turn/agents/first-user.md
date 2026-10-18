@@ -14,10 +14,11 @@ starting from your reading.
 
 ## Steps
 
-1. Read your prompt.
-   - In: JSON: `run`, where the run is kept, for turn's hooks; `work`, the path of each file of the
-     work; `opens`, what the receiver opens with the work; `receiver`, who the receiver is; `use`,
-     what they read the work for; `checklists`, the path of each checklist.
+1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
+   `{"run": "<where the run is kept>"}`.
+   - In: what it prints, JSON: `work`, the path of each file of the work; `opens`, what the receiver
+     opens with the work; `receiver`, who the receiver is; `use`, what they read the work for;
+     `checklists`, the path of each checklist.
    - These files are the whole of what you read, since they are what the receiver has; turn's hook
      stops a read of anything else.
 2. Read the work once from the top as the receiver, for the use, opening a file of `opens` where

@@ -13,11 +13,12 @@ stopped at, which only its record shows; so you read the findings against what e
 
 ## Steps
 
-1. Read your prompt.
-   - In: JSON: `run`, where the run is kept, for turn's hooks; `findings`, every item's finding:
-     its Good with the lines that give it, the question it waits on, or `gets`, what the receiver
-     gets once it has its Good; `records`, the path of each role's record of the run, a JSONL file
-     of what it was given, read and did, ending with its reply.
+1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
+   `{"run": "<where the run is kept>"}`.
+   - In: what it prints, JSON: `findings`, every item's finding: its Good with the lines that give
+     it, the question it waits on, or `gets`, what the receiver gets once it has its Good;
+     `records`, the path of each role's record of the run, a JSONL file of what it was given, read
+     and did, ending with its reply.
    - These are the whole of what you read: the records hold the work and its sources as the roles
      read them; turn's hook stops a read of anything else.
 2. Read every finding, then go through each record from start to end with your own commands, such

@@ -12,10 +12,12 @@ means.
 
 ## Steps
 
-1. Read your prompt: JSON, with `ccs`, the path of the CCS, and `work`, the path of the work.
+1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
+   `{"run": "..."}`. It prints JSON, with `ccs`, the path of the CCS, and `work`, the path of the
+   work.
 2. Read the CCS whole with Read, then each file it names that exists, whole with Read, and the work
    if it exists.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" generator`. It prints JSON with `write`, the
    work's text, and `reply`.
-4. Write `write` to the work with Write, then read the work whole with Read.
+4. Write `write` to the work with Write, then read the work whole with `cat -n`.
 5. Reply with `reply` alone, as JSON, as it was printed.

@@ -19,12 +19,11 @@ LEARNER = "turn:learner"
 def start(text: str) -> dict[str, str]:
     """Starts the run the call asks for, and gives the generator to start and its prompt."""
     run = call.check(call.parse(text))
-    return ask(run, GENERATOR, generator_prompt(run, []))
+    return ask(run, GENERATOR, generator_given(run, []))
 
 
-def generator_prompt(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
+def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
     return {
-        "run": run["call"]["result"],
         "ccs": run["call"]["ccs"],
         "work": run["work"],
         "sent_back": sent_back,
@@ -32,11 +31,10 @@ def generator_prompt(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
     }
 
 
-def reader_prompt(run: dict[str, Any]) -> dict[str, Any]:
+def reader_given(run: dict[str, Any]) -> dict[str, Any]:
     """What the first user and the evaluator are given: what the receiver has, and the
     checklists."""
     return {
-        "run": run["call"]["result"],
         "work": run["work"],
         "opens": run["opens"],
         "receiver": run["receiver"],
@@ -45,11 +43,22 @@ def reader_prompt(run: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def ask(run: dict[str, Any], agent: str, prompt: dict[str, Any]) -> dict[str, str]:
-    """Keeps the run with the agent to start next and its prompt, and gives them."""
-    run["next"] = {"agent": agent, "prompt": json.dumps(prompt, ensure_ascii=False)}
+def ask(run: dict[str, Any], agent: str, given: dict[str, Any]) -> dict[str, str]:
+    """Keeps the run with the agent to start next and what it is given, and gives the agent and
+    its prompt. The prompt names the run alone, and the agent takes what it is given from the
+    script, so no AI copies it."""
+    prompt = json.dumps({"run": run["call"]["result"]}, ensure_ascii=False)
+    run["next"] = {"agent": agent, "prompt": prompt, "given": given}
     write(run["call"]["result"], {"running": run})
-    return dict(run["next"])
+    return {"agent": agent, "prompt": prompt}
+
+
+def given(result: str) -> dict[str, Any]:
+    """What the agent started last in the run is given."""
+    run = running(result)
+    if run is None:
+        raise call.Stop(f"turn: no run is going with its result at {result}")
+    return run["next"]["given"]
 
 
 def next_step(result: str, text: str) -> dict[str, Any]:
@@ -82,10 +91,10 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     if agent == FIRST_USER:
         run["got"] = reply["items"]
         run["opened"] = opened(run["next"]["record"])
-        return ask(run, EVALUATOR, dict(reader_prompt(run), reading=reply["items"]))
+        return ask(run, EVALUATOR, dict(reader_given(run), reading=reply["items"]))
     if agent == LEARNER:
         run["learnt"] = reply["items"]
-        return ask(run, GENERATOR, generator_prompt(run, run.pop("unmet")))
+        return ask(run, GENERATOR, generator_given(run, run.pop("unmet")))
     return compare(run, reply["items"])
 
 
@@ -95,12 +104,12 @@ def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
     said = forms.check(text, run["items"], run["work"], forms.READING)
     if said:
         raise call.Stop("turn: the reading is not filled:\n" + "\n".join(said))
-    found = json.loads(text)
+    found = json.loads(forms.unfenced(text))
     sent_back = [i for i in found["items"] if "gets" in i]
     if sent_back:
-        return ask(run, GENERATOR, generator_prompt(run, sent_back))
+        return ask(run, GENERATOR, generator_given(run, sent_back))
     run["findings"] = found
-    return ask(run, FIRST_USER, reader_prompt(run))
+    return ask(run, FIRST_USER, reader_given(run))
 
 
 def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
@@ -132,7 +141,7 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     said = forms.check(text, run["decide"]["items"], run["work"], forms.READING, len(asked))
     if said:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
-    decision = json.loads(text)
+    decision = json.loads(forms.unfenced(text))
     decided = {key(i): i for i in decision["items"]}
     items = [decided.get(key(f), f) for f in run["findings"]["items"]]
     del run["decide"]
@@ -149,8 +158,8 @@ def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
         run["unmet"] = unmet
         # An item waiting on a question gets its Good from the user's answer, not from the work.
         run["learning"] = [named(i) for i in items if "question" not in i]
-        prompt = {"run": run["call"]["result"], "findings": items, "records": run["records"]}
-        return ask(run, LEARNER, prompt)
+        learner = {"findings": items, "records": run["records"]}
+        return ask(run, LEARNER, learner)
     waited = [
         dict(q, items=[named(i) for i in waiting])
         for n, q in enumerate(questions, 1)

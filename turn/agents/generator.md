@@ -14,11 +14,12 @@ lines where the receiver gets what the item asks.
 
 ## Steps
 
-1. Read your prompt.
-   - In: JSON: `run`, where the run is kept; `ccs`, the path of the CCS; `work`, the path of each
-     file of the work; `sent_back`, each item the orchestrator sent back, with `gets`, what the
-     receiver gets once it has its Good, empty the first time; `learnt`, what the learner found makes
-     each item's Good, empty until the work is made again after a reading.
+1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <run>`, `<run>` from your prompt,
+   `{"run": "<where the run is kept>"}`.
+   - In: what it prints, JSON: `ccs`, the path of the CCS; `work`, the path of each file of the
+     work; `sent_back`, each item the orchestrator sent back, with `gets`, what the receiver gets
+     once it has its Good, empty the first time; `learnt`, what the learner found makes each item's
+     Good, empty until the work is made again after a reading.
 2. Read the CCS whole, then each file it names, whole: among them the checklists, each item a
    heading such as `### B-1: <title>` asking what the receiver should get, and what was decided
    for the work.
@@ -27,9 +28,10 @@ lines where the receiver gets what the item asks.
    every other item keeps what it gives; `learnt` says how the work would give each, and what gives
    the others now.
    - Out: the work, at its paths.
-4. Read the work once from the top as the receiver the CCS names, meeting it for the first time,
-   and for every item find the lines where the receiver gets what the item asks; where you find
-   none, make the work give it, and read again.
+4. Read the work once from the top with `cat -n`, whole, as the receiver the CCS names, meeting it
+   for the first time: a work you just wrote is not read yet, and Read gives nothing back for it.
+   For every item find the lines where the receiver gets what the item asks; where you find none,
+   make the work give it, and read again.
 5. Reply with your claim alone, as JSON:
    `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}]}`.
    Each item is `{"checklist": "<path as in the CCS>", "item": "<ID>"}` with one of:

@@ -9,6 +9,8 @@ import re
 from typing import Any, NamedTuple
 
 LINES = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
+# A form given inside a ```json fence, as a model often writes JSON, is the form itself.
+FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 
 
 class Form(NamedTuple):
@@ -36,13 +38,19 @@ LEARNT = Form((("learnt",),), every=True, asks=False)
 def parse(text: str, form: Form) -> dict[str, Any] | None:
     """The form as JSON, or None when it is not an object of the lists it takes."""
     try:
-        data = json.loads(text)
+        data = json.loads(unfenced(text))
     except ValueError:
         return None
     keys = ("items", "questions") if form.asks else ("items",)
     if not isinstance(data, dict) or not all(isinstance(data.get(k), list) for k in keys):
         return None
     return data
+
+
+def unfenced(text: str) -> str:
+    """The text without the ```json fence around it, if it has one."""
+    fenced = FENCE.match(text)
+    return fenced.group(1) if fenced else text
 
 
 def check(

@@ -9,7 +9,8 @@ from helpers import CALL, CCS, SCRIPTS, RepoTest
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your reading or decision as JSON>]"
+    "       turn.py next <result> [< <your reading or decision as JSON>]\n"
+    "       turn.py given <result>"
 )
 
 
@@ -34,7 +35,7 @@ class TestUsage(RepoTest):
         # arguments
         # When: it is run
         # Then: it prints the usage, which names every command with its arguments, and stops
-        for argv in [[], ["go"], ["start"], ["next"], ["start", "{}", "x"]]:
+        for argv in [[], ["go"], ["start"], ["next"], ["given"], ["start", "{}", "x"]]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
 
@@ -52,15 +53,14 @@ class TestStart(RepoTest):
         # Given: a call naming the CCS, the kinds of the work, the checklist and the receiver, and
         # where the result goes
         # When: the run is started
-        # Then: the generator is to be started with where the run is kept, the CCS and the work,
-        # with nothing sent back yet
+        # Then: the generator is to be started with where the run is kept alone, and is given
+        # the CCS and the work, with nothing sent back yet
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual((code, json.loads(out)["agent"]), (0, "turn:generator"))
-        prompt = json.loads(json.loads(out)["prompt"])
+        self.assertEqual(json.loads(json.loads(out)["prompt"]), {"run": CALL["result"]})
         self.assertEqual(
-            prompt,
+            self.given(),
             {
-                "run": CALL["result"],
                 "ccs": CALL["ccs"],
                 "work": ["README.md"],
                 "sent_back": [],

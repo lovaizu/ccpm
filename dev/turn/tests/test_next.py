@@ -30,7 +30,10 @@ class ReadTest(RepoTest):
         self.started()
 
     def read(self, reading):
-        return self.turn("next", RESULT, stdin=json.dumps(reading))
+        return self.read_text(json.dumps(reading))
+
+    def read_text(self, text):
+        return self.turn("next", RESULT, stdin=text)
 
 
 class TestReading(ReadTest):
@@ -41,7 +44,7 @@ class TestReading(ReadTest):
         # gets once it has its Good
         out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
         self.assertEqual(out["agent"], "turn:generator")
-        self.assertEqual(json.loads(out["prompt"])["sent_back"], [SENT_BACK])
+        self.assertEqual(self.given()["sent_back"], [SENT_BACK])
         self.assertEqual(self.read_json(RESULT)["running"]["next"]["prompt"], out["prompt"])
 
     def test_a_reading_with_every_item_good_or_waiting_starts_the_first_user(self):
@@ -55,9 +58,8 @@ class TestReading(ReadTest):
         out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
         self.assertEqual(out["agent"], "turn:first-user")
         self.assertEqual(
-            json.loads(out["prompt"]),
+            self.given(),
             {
-                "run": RESULT,
                 "work": ["README.md"],
                 "opens": ["docs/start.md"],
                 "receiver": ["a developer new to it"],
@@ -84,6 +86,23 @@ class TestReading(ReadTest):
         self.assertEqual(code, 1)
         self.assertIn("elsewhere.json", out)
 
+    def test_what_a_role_is_given_for_a_result_never_started_stops(self):
+        # Given: a result path no run was started for
+        # When: a role asks what it is given there
+        # Then: it stops, naming the path
+        code, out = self.turn("given", "elsewhere.json")
+        self.assertEqual(code, 1)
+        self.assertIn("elsewhere.json", out)
+
+    def test_a_reading_in_a_json_fence_is_recorded(self):
+        # Given: a reading given as JSON inside a ```json fence
+        # When: it is recorded
+        # Then: it is taken as the reading itself
+        reading = json.dumps({"items": [GOOD, SENT_BACK], "questions": []})
+        code, out = self.read_text(f"```json\n{reading}\n```\n")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.given()["sent_back"], [SENT_BACK])
+
 
 class TestReaders(ReadTest):
     def test_the_evaluator_is_started_with_the_first_users_reading(self):
@@ -91,11 +110,11 @@ class TestReaders(ReadTest):
         # When: the orchestrator goes on
         # Then: the evaluator is to be started with what the first user was, and its reading
         out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
-        first = json.loads(out["prompt"])
+        first = self.given()
         self.replied("turn:first-user", out["prompt"], {"items": [GOT]})
         out = self.next()
         self.assertEqual(out["agent"], "turn:evaluator")
-        self.assertEqual(json.loads(out["prompt"]), dict(first, reading=[GOT]))
+        self.assertEqual(self.given(), dict(first, reading=[GOT]))
 
     def test_going_on_before_the_first_user_replies_stops(self):
         # Given: a run whose first user is to be started
@@ -251,8 +270,8 @@ class TestLearner(ReadTest):
             f"{self.repo}/session/subagents/agent-{a}.jsonl" for a in ("first-user", "evaluator")
         ]
         self.assertEqual(
-            json.loads(self.learner["prompt"]),
-            {"run": RESULT, "findings": [GOOD, SENT_BACK], "records": records},
+            self.given(),
+            {"findings": [GOOD, SENT_BACK], "records": records},
         )
 
     def test_what_the_learner_found_goes_to_the_generator_with_what_was_sent_back(self):
@@ -263,7 +282,7 @@ class TestLearner(ReadTest):
         self.replied("turn:learner", self.learner["prompt"], {"items": LEARNT})
         out = self.next()
         self.assertEqual(out["agent"], "turn:generator")
-        prompt = json.loads(out["prompt"])
+        prompt = self.given()
         self.assertEqual((prompt["sent_back"], prompt["learnt"]), ([SENT_BACK], LEARNT))
 
     def test_an_item_still_without_good_after_the_second_reading_is_returned(self):

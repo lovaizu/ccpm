@@ -128,6 +128,12 @@ class RepoTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         return json.loads(out)["prompt"]
 
+    def given(self):
+        """What the role to start next is given, as the script prints it to the role."""
+        code, out = self.turn("given", CALL["result"])
+        self.assertEqual(code, 0, out)
+        return json.loads(out)
+
     def next(self, given=None):
         """What the script prints next for the run, handed the orchestrator's reading or decision."""
         code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")

@@ -238,6 +238,15 @@ class TestReplies(HookTest):
             with self.subTest(reply=reply):
                 self.stops(subagentstop, self.reply(reply), said)
 
+    def test_a_reply_in_a_json_fence_is_kept_as_its_form(self):
+        # Given: a first user whose reply is its form inside a ```json fence
+        # When: it ends
+        # Then: it ends, and its reply is kept as the form itself
+        reply = "```json\n" + json.dumps({"items": [GOT]}) + "\n```"
+        self.assertEqual(self.replied("turn:first-user", self.first_user(), reply), (0, ""))
+        kept = self.read_json(CALL["result"])["running"]["next"]["reply"]
+        self.assertEqual(kept, {"items": [GOT]})
+
     def test_a_good_in_the_generators_reply_stops(self):
         # Given: a generator whose reply judges an item Good, which is not its to judge
         # When: it ends
@@ -400,7 +409,7 @@ class TestReads(HookTest):
         self.through(dict(EVALUATED, item="B-1"))
         prompt = self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
         self.given_prompt(ID, prompt)
-        record = json.loads(prompt)["records"][0]
+        record = self.given()["records"][0]
         self.passes(pretooluse, self.tool("turn:learner", "Read", file_path=record))
         self.stops(pretooluse, self.tool("turn:learner", "Read", file_path="README.md"), record)
 
@@ -454,6 +463,17 @@ class TestReads(HookTest):
         ):
             with self.subTest(event=event):
                 self.stops(pretooluse, event)
+
+    def test_a_role_asking_the_script_what_it_is_given_passes(self):
+        # Given: a generator of a run
+        # When: it runs turn's script for what it is given, naming where the run is kept, alone or
+        # joined to a command reading where the run is kept
+        # Then: the first goes through, and the second is stopped
+        self.given_prompt(ID, self.started())
+        asked = f"{SCRIPT} given {CALL['result']}"
+        self.passes(pretooluse, self.tool("turn:generator", "Bash", command=asked))
+        joined = f"{asked}; cat {CALL['result']}"
+        self.stops(pretooluse, self.tool("turn:generator", "Bash", command=joined))
 
     def test_a_role_reading_the_repositorys_history_stops(self):
         # Given: a generator of a run
@@ -594,6 +614,37 @@ class TestWholeReads(HookTest):
         self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "README.md")
         self.given_record(ID, json.dumps(CALL), *given, generator, part, self.read("README.md"))
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
+    def test_the_orchestrator_shown_the_changed_work_whole_by_claude_code_goes_on(self):
+        # Given: an orchestrator that read what the run was given and started the generator, after
+        # which Claude Code put the changed work into its context, whole or in part, or put in a
+        # file since removed
+        # When: it records its reading with the script
+        # Then: with the work whole it goes through; otherwise it is stopped, naming the work
+        given = [
+            self.read(p)
+            for p in (CALL["ccs"], "README.md", "checklists/readme.md")
+            + ("notes/readme.decisions.md", "docs/start.md")
+        ]
+        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        whole = "1\t# csvtidy\n2\t\n3\tTidies CSV files."
+        for name, snippet, passes in (
+            ("README.md", whole, True),
+            ("README.md", "2\t\n3\tTidies CSV files.", False),
+            ("gone.md", whole, False),
+        ):
+            with self.subTest(name=name, snippet=snippet):
+                path = self.given_record(ID, json.dumps(CALL), *given, generator)
+                shown = {"type": "edited_text_file", "filename": f"{self.repo}/{name}"}
+                record = {"type": "attachment", "attachment": dict(shown, snippet=snippet)}
+                with open(path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(record) + "\n")
+                event = self.tool("turn:up", "Bash", command=command)
+                if passes:
+                    self.passes(pretooluse, event)
+                else:
+                    self.stops(pretooluse, event, "README.md")
 
     def test_the_orchestrator_deciding_on_part_of_what_it_decides_from_stops(self):
         # Given: an orchestrator whose run waits on its decision, which saw the items to decide cut
