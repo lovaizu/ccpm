@@ -431,6 +431,38 @@ class TestReads(HookTest):
         event = self.tool("turn:generator", "Bash", command="cat README.md secret/notes.md")
         self.stops(pretooluse, event, "notes/readme.decisions.md")
 
+    def test_a_path_joined_to_a_shell_operator_is_still_a_read(self):
+        # Given: a generator of a run
+        # When: its command names a file or folder the run was not given right before `;`, `|`
+        # or `&&`
+        # Then: it is stopped
+        for command in (
+            "cat README.md; ls -la secret; echo",
+            "cat secret/notes.md|head",
+            "ls secret&&echo",
+        ):
+            with self.subTest(command=command):
+                self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_a_role_reading_where_the_run_is_kept_stops(self):
+        # Given: a generator of a run
+        # When: it reads where the run is kept, which holds every role's prompt and reply
+        # Then: it is stopped, as only the orchestrator holds the replies
+        for event in (
+            self.tool("turn:generator", "Bash", command=f"cat {CALL['result']}"),
+            self.tool("turn:generator", "Read", file_path=CALL["result"]),
+        ):
+            with self.subTest(event=event):
+                self.stops(pretooluse, event)
+
+    def test_a_role_reading_the_repositorys_history_stops(self):
+        # Given: a generator of a run
+        # When: it runs git, which reads the repository's history beyond what it was given
+        # Then: it is stopped
+        for command in ("git log --stat | head -30", "git show HEAD:secret/notes.md"):
+            with self.subTest(command=command):
+                self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
     def test_a_search_without_a_path_stops(self):
         # Given: a generator of a run
         # When: it searches with no path, which searches the whole repository

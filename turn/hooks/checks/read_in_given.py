@@ -29,12 +29,15 @@ def check(event: dict[str, Any]) -> list[str]:
     places = [os.path.join(cwd, p) for p in given] + [agents.TURN]
     if tool == "Bash":
         # A command reads through the paths it names; one in the repository and outside what the
-        # run was given is a read of it, while the repository's top is where the command runs and
-        # the result is where the orchestrator records its reading.
-        places.append(os.path.join(cwd, kept["call"]["result"]))
-        named = [os.path.realpath(os.path.join(cwd, w)) for w in words(event)]
+        # run was given is a read of it, while the repository's top is where the command runs.
+        # Where the run is kept holds every role's prompt and reply, so the orchestrator alone,
+        # which records its reading there, reads it; git reads the history of every file.
+        if role == "up":
+            places.append(os.path.join(cwd, kept["call"]["result"]))
+        said = words(event)
+        named = [os.path.realpath(os.path.join(cwd, w)) for w in said]
         inside = [p for p in named if within(p, [cwd]) and p != cwd and os.path.exists(p)]
-        if all(within(p, places) for p in inside):
+        if "git" not in said and all(within(p, places) for p in inside):
             return []
     else:
         path = event["tool_input"].get(TOOLS[tool])
@@ -44,9 +47,12 @@ def check(event: dict[str, Any]) -> list[str]:
 
 
 def words(event: dict[str, Any]) -> list[str]:
+    """The command's words, with `;`, `|`, `&&` and the like apart from the paths they follow."""
     command = str(event["tool_input"].get("command", ""))
+    lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
     try:
-        return shlex.split(command)
+        return list(lexer)
     except ValueError:
         return command.split()
 

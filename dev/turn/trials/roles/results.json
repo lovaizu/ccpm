@@ -1,0 +1,15 @@
+[
+ {
+  "commit": "aaaaadf",
+  "sessions": {"generator": "5ac32455-8da2-4246-8c65-4d7952798722", "first-user": "32446247-cc7c-47f2-8ab2-3db255442fb1", "evaluator": "9b209c49-f710-42a0-a32f-3d2a25b0825a", "learner": "9bed9a7e-e14c-481c-97e2-8b0e48111b37"},
+  "minutes": {"generator": 0.4, "first-user": 0.2, "evaluator": 0.2, "learner": 1.1},
+  "read": "Every JSONL read. Each reply filled its form. The first user and the evaluator read the work and the checklist alone, whole. The generator read what it was not given and was not stopped: ls of the repository's top, .tasks and notes, the run's own file .tasks/result.json, and git log --stat; it replied before reading the work it wrote, and the hook kept it going until it did. The learner read README.md and ls, outside its records, unstopped.",
+  "cause": "read_in_given took a path joined to `;` as a word naming nothing, let every role read where the run is kept, and let git through."
+ },
+ {
+  "commit": "after the fix of read_in_given",
+  "sessions": {"generator": "aba671d4-e2bd-4e8f-b164-dfd72496b903", "first-user": "50fe4ae7-db3d-41f1-a98c-7f6b4382d08d", "evaluator": "41a19010-d94a-4dba-96d5-879997a0780d", "learner": "4bf584ce-b72f-4fcc-89e6-fe31c331ccb6"},
+  "minutes": {"generator": 0.5, "first-user": 0.2, "evaluator": 0.2, "learner": 0.5},
+  "read": "Every JSONL read. Each role read only what its step reads and whole, and each reply filled its form. The generator's first command, ls and git log, was stopped, and it went on with Read of what it was given; again it replied before reading the work it wrote, and the hook kept it going until it did. The learner went through the three records with one jq command and read nothing else. For the content trials: the generator wrote terms of MIT the decisions do not give, and the learner cut each part of a record at 1,500 characters."
+ }
+]
