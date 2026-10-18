@@ -544,3 +544,20 @@ class TestWholeReads(HookTest):
         self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "README.md")
         self.given_record(ID, json.dumps(CALL), *given, generator, part, self.read("README.md"))
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
+    def test_a_reader_of_no_run_going_ends_without_reading(self):
+        # Given: a first user whose run has returned, or was never started
+        # When: it ends having read nothing whole
+        # Then: it ends, as no run waits on its reading
+        prompt = json.dumps({"run": "none.json"})
+        part = ("Read", {"file_path": "README.md", "offset": 2})
+        self.assertEqual(self.replied("turn:first-user", prompt, {"items": [GOT]}, part), (0, ""))
+
+    def test_the_orchestrator_going_on_after_a_role_needs_no_new_read(self):
+        # Given: an orchestrator whose run waits on the first user, not on its own reading
+        # When: it runs the script with input, having read nothing whole
+        # Then: it goes through, as only a reading of the work rests on the work read whole
+        self.first_user()
+        self.given_record(ID, json.dumps(CALL))
+        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
