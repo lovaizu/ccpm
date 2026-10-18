@@ -36,9 +36,12 @@ def check(event: dict[str, Any]) -> list[str]:
     missing = [p for p in must if os.path.realpath(os.path.join(cwd, p)) not in read]
     if not missing:
         return []
+    unread = ", ".join(missing)
     return [
-        f"read whole, each with Read and no offset or limit, or with cat: {', '.join(missing)};"
-        " what is left unread is judged on a guess, and the work is read again after it changed"
+        (
+            f"read whole, each with Read and no offset or limit, or with cat: {unread}; what is"
+            " left unread is judged on a guess, and the work is read again after it changed"
+        )
     ]
 
 
