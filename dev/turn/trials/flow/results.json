@@ -16,5 +16,23 @@
   "way": "generator, sent back, generator, first user, evaluator none, decision without Good, learner, generator, second reading, first user, evaluator Good, returned with B-1 Good: every step in the order the set replies mean",
   "hooks": "the orchestrator's ls of . and .tasks and a generator's ls, outside what they were given; no stop at the reading after the first remake, as Claude Code had put the changed work whole into the orchestrator's context.",
   "read": "Every JSONL read. Each Agent call carries the one-line prompt and starts some 3 seconds after turn.py printed it. Every role first passed the whole JSON of its prompt to turn.py given and was refused; the step's wording is fixed after this run and tried in the roles trial."
+ },
+ {
+  "commit": "25e99bd",
+  "session": "96a784d4-a655-457f-81d4-cad44ade2a23",
+  "minutes_to_return": 1.1,
+  "cost_usd": 0.34,
+  "way": "unanswered: start, check with B-1 waiting on the license question, returned with the question alone; no role started and no work made",
+  "hooks": "two stops, each cleared by its action: the orchestrator's git log and ls of notes, outside what it was given; its check recorded after reading the checklist and the decisions with cat inside a for loop, which the hook does not count as read whole, cleared by Read of each.",
+  "read": "Every JSONL read. The question names the license choices and recommends MIT with its why."
+ },
+ {
+  "commit": "25e99bd",
+  "session": "58735b79-aef8-4f26-be09-a9d0d8772122",
+  "minutes_to_return": 4.7,
+  "cost_usd": 1.24,
+  "way": "check with B-1 can from the decisions, generator, sent back, generator, first user, evaluator none, learner, generator, second reading, first user, evaluator Good, returned with B-1 Good: every step in the order the set replies mean",
+  "hooks": "one stop, the orchestrator's ls of . and .tasks, outside what it was given; a Read of README.md before it existed failed and was passed over.",
+  "read": "Every JSONL read. The check named the decision that gives B-1's Good before the generator started."
  }
 ]
