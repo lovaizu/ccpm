@@ -23,7 +23,9 @@ findings and decides each item where they differ.
      found a Good for, the Good and the lines that give it.
    - These files and the reading are the whole of what you read, since they are what the receiver
      has and the Goods they found; turn's hook stops a read of anything else.
-2. Read each checklist whole, each item a heading such as `### B-1: <title>`, and the work whole.
+2. Read each checklist, each item a heading such as `### B-1: <title>`, the work, and each file of
+   `opens`, whole: each file with `cat -n <path>` in a command of its own, or with Read and no
+   offset or limit.
 3. For each item the reading gives a Good, read the work at its lines, and give the Good where the
    receiver gets there what the item asks, for the use.
 4. For each item the reading gives none, or whose Good you did not give in step 3, look through the

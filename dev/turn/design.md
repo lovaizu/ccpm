@@ -140,9 +140,9 @@ turn/                      the plugin, installed by Claude Code
   commit or a push; a stop says why and names what may be read.
 
   A role that reads only what it is given is not bent by what it was not meant to see.
-- The hooks stop a role's reply, and the orchestrator's check, reading and decision, given before
-  what its step reads is read whole since it last changed; the learner, whose records are too long
-  for one read, is left to its scripts.
+- The hooks stop every role's reply, and the orchestrator's check, reading and decision, until
+  every input of its step is read whole since it last changed; a script shows the learner each
+  record page by page, as a record is too long for one read.
 
   An item judged on a part read is judged on a guess for the rest.
 - A script writes the result where the call says, and checks its shape as it writes.

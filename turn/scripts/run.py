@@ -14,6 +14,8 @@ GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
 EVALUATOR = "turn:evaluator"
 LEARNER = "turn:learner"
+# A page of a record is short enough for one read to show it whole.
+PAGE = 20000
 
 
 def start(text: str) -> dict[str, Any]:
@@ -64,6 +66,57 @@ def given(result: str) -> dict[str, Any]:
     if "check" in run:
         raise call.Stop("turn: no role is started before the orchestrator's check is given")
     return run["next"]["given"]
+
+
+def record(result: str, number: str, page: str) -> str:
+    """A page of a role's record of the run, headed by its number and page among all, so the
+    learner is shown every record whole however long it is."""
+    run = running(result)
+    if run is None:
+        raise call.Stop(f"turn: no run is going with its result at {result}")
+    records = run.get("records", [])
+    if not number.isdigit() or not 1 <= int(number) <= len(records):
+        raise call.Stop(f"turn: record {number} is not one of 1 to {len(records)}")
+    path = records[int(number) - 1]
+    split = pages(path)
+    if not page.isdigit() or not 1 <= int(page) <= len(split):
+        raise call.Stop(f"turn: page {page} is not one of 1 to {len(split)} of record {number}")
+    head = f"record {number} of {len(records)}, page {page} of {len(split)}: {path}"
+    return head + "\n" + split[int(page) - 1]
+
+
+def pages(path: str) -> list[str]:
+    """A record's pages: what the role was given, said, used and was shown, in order."""
+    text = shown(path)
+    return [text[i : i + PAGE] for i in range(0, len(text), PAGE)] or [""]
+
+
+def shown(path: str) -> str:
+    lines: list[str] = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            entry = json.loads(line)
+            attachment = entry.get("attachment")
+            if isinstance(attachment, dict) and attachment.get("type") == "edited_text_file":
+                lines.append(f"[shown {attachment.get('filename')}] {attachment.get('snippet')}")
+            content = entry.get("message", {}).get("content")
+            if isinstance(content, str):
+                lines.append(f"[{entry.get('type')}] {content}")
+            for part in content if isinstance(content, list) else []:
+                lines.append(said(part))
+    return "\n".join(lines) + "\n"
+
+
+def said(part: dict[str, Any]) -> str:
+    """One part of a message as the learner reads it."""
+    if part.get("type") == "tool_use":
+        return f"[tool_use {part.get('name')}] {json.dumps(part.get('input'), ensure_ascii=False)}"
+    if part.get("type") == "tool_result":
+        content = part.get("content")
+        if isinstance(content, list):
+            content = "\n".join(str(c.get("text", "")) for c in content)
+        return f"[tool_result] {content}"
+    return f"[{part.get('type')}] {part.get('text', '')}"
 
 
 def next_step(result: str, text: str) -> dict[str, Any]:

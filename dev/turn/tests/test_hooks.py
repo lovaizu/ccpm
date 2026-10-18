@@ -417,6 +417,8 @@ class TestReads(HookTest):
         record = self.given()["records"][0]
         self.passes(pretooluse, self.tool("turn:learner", "Read", file_path=record))
         self.stops(pretooluse, self.tool("turn:learner", "Read", file_path="README.md"), record)
+        command = f"{SCRIPT} record {CALL['result']} 1 1"
+        self.passes(pretooluse, self.tool("turn:learner", "Bash", command=command))
 
     def test_a_command_naming_only_what_the_run_was_given_passes(self):
         # Given: a generator of a run
@@ -696,6 +698,44 @@ class TestWholeReads(HookTest):
         rest = [self.read(p) for p in ("notes/readme.decisions.md", "docs/start.md")]
         self.given_record(ID, json.dumps(CALL), *some, *rest)
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
+    def learner_prompt(self):
+        self.through(dict(EVALUATED, item="B-1"))
+        return self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
+
+    def test_a_learner_that_was_shown_every_page_of_every_record_ends(self):
+        # Given: a learner that asked for every page of every record, unpiped
+        # When: it ends with its reply
+        # Then: it ends
+        prompt = self.learner_prompt()
+        self.assertEqual(self.replied("turn:learner", prompt, {"items": LEARNT}), (0, ""))
+
+    def test_a_learner_that_skipped_or_cut_a_page_is_kept_going(self):
+        # Given: a learner that asked for the first record alone, or for the second cut short in a
+        # pipe
+        # When: it ends with its reply
+        # Then: it is kept going, naming each page not yet shown
+        prompt = self.learner_prompt()
+        run_path = json.loads(prompt)["run"]
+        first = ("Bash", {"command": f"{SCRIPT} record {run_path} 1 1"})
+        cut = ("Bash", {"command": f"{SCRIPT} record {run_path} 2 1 | head -n 5"})
+        for uses in ((first,), (first, cut)):
+            with self.subTest(uses=uses):
+                code, err = self.replied("turn:learner", prompt, {"items": LEARNT}, *uses)
+                self.assertEqual(code, 2)
+                self.assertIn(f"turn.py record {run_path} 2 1", err)
+                self.assertNotIn(f"record {run_path} 1 1", err)
+
+    def test_a_reader_that_did_not_read_what_the_receiver_opens_is_kept_going(self):
+        # Given: a first user of a run whose receiver opens a page with the work, which read the
+        # work and the checklist but not the page
+        # When: it ends with its reply
+        # Then: it is kept going, naming the page
+        os.remove(CALL["result"])
+        prompt = self.first_user(kind=dict(CALL["kind"], opens="page"))
+        code, err = self.replied("turn:first-user", prompt, {"items": [FOUND]})
+        self.assertEqual(code, 2)
+        self.assertIn("docs/start.md", err)
 
     def test_a_reader_of_no_run_going_ends_without_reading(self):
         # Given: a first user whose run has returned, or was never started

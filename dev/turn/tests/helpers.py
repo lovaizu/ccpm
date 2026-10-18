@@ -18,6 +18,7 @@ sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
 
 import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
+import run
 import subagentstop
 
 import turn
@@ -213,7 +214,9 @@ class RepoTest(unittest.TestCase):
         """A role started with the prompt ends with the reply, after using the tools, as turn's
         SubagentStop hook sees it; given no tools, a reader has read the work and the checklist
         whole."""
-        if not tool_uses and agent_type != "turn:learner":
+        if not tool_uses and agent_type == "turn:learner":
+            tool_uses = self.pages_shown(prompt)
+        elif not tool_uses:
             tool_uses = READ_SHOWN
         path = self.given_record(agent_type.partition(":")[2], prompt, *tool_uses)
         event = self.event(
@@ -224,6 +227,16 @@ class RepoTest(unittest.TestCase):
             stop_hook_active=False,
         )
         return self.hook(subagentstop, event)
+
+    def pages_shown(self, prompt):
+        """A learner's commands showing every page of every record of its run."""
+        kept = run.running(json.loads(prompt)["run"])
+        records = kept["records"] if kept else []
+        return tuple(
+            ("Bash", {"command": f"{SCRIPT} record {json.loads(prompt)['run']} {n} {p}"})
+            for n, path in enumerate(records, 1)
+            for p in range(1, len(run.pages(path)) + 1)
+        )
 
     def write(self, path, text):
         folder = os.path.dirname(path)

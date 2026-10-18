@@ -10,7 +10,8 @@ from helpers import CALL, CCS, SCRIPTS, RepoTest
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your reading or decision as JSON>]\n"
-    "       turn.py given <result>"
+    "       turn.py given <result>\n"
+    "       turn.py record <result> <record number> <page>"
 )
 
 
@@ -35,7 +36,7 @@ class TestUsage(RepoTest):
         # arguments
         # When: it is run
         # Then: it prints the usage, which names every command with its arguments, and stops
-        for argv in [[], ["go"], ["start"], ["next"], ["given"], ["start", "{}", "x"]]:
+        for argv in [[], ["go"], ["start"], ["next"], ["given"], ["record", "r", "1"]]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
 

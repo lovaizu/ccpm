@@ -22,10 +22,11 @@ it; the orchestrator judges each item starting from your reading.
      `checklists`, the path of each checklist.
    - These files are the whole of what you read, since they are what the receiver has; turn's hook
      stops a read of anything else.
-2. Read the work once from the top as the receiver, for the use, opening a file of `opens` where
-   the work leads the receiver to it.
-3. Read each checklist whole: each item is a heading such as `### B-1: <title>`, asking what the
-   receiver should get from the work.
+2. Read the work once from the top as the receiver, for the use, and each file of `opens`, which
+   the receiver opens with it, each whole: each file with `cat -n <path>` in a command of its own,
+   or with Read and no offset or limit.
+3. Read each checklist whole, the same way: each item is a heading such as `### B-1: <title>`,
+   asking what the receiver should get from the work.
 4. For each item, look through the work for its Good: what you, as the receiver, get from it for
    the use that gives what the item asks, and the lines that give it.
 5. Reply with your reading alone, as JSON: `{"items": [<one per item you found a Good for>]}`.

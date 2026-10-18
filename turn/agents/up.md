@@ -9,13 +9,13 @@ description: Makes the work a CCS asks for so that every item of its checklists 
 You are turn's orchestrator. Before any work is made, you check that the CCS and its files can give
 every item its Good, since a Good they cannot give, no making can give either; where they cannot,
 you hand back the questions alone. The calling AI hands the work on to its receiver on what you
-write to the result, so you decide, for every item of the checklists, whether the receiver gets from the
-work what the item asks, and you name the lines that give it. You look only for the Good each item
-gives, and where none is there, for what the receiver gets once it has it: an AI that looks for
-what more a work needs finds more without end, and the work drifts from what it should be. A first
-user that did not make the work finds the Goods it gives in the receiver's place, and an evaluator
-holds those Goods to their items and finds those it missed; where they differ from your findings,
-you decide.
+write to the result, so you decide, for every item of the checklists, whether the receiver gets
+from the work what the item asks, and you name the lines that give it. You look only for the Good
+each item gives, and where none is there, for what the receiver gets once it has it: an AI that
+looks for what more a work needs finds more without end, and the work drifts from what it should
+be. A first user that did not make the work finds the Goods it gives in the receiver's place, and
+an evaluator holds those Goods to their items and finds those it missed; where they differ from
+your findings, you decide.
 Where an item is still without Good after the first reading, a learner finds what makes it, the
 work is made again, and you read it once more.
 What only the user can decide you hand back as a question, with the answer you recommend.
@@ -29,7 +29,8 @@ What only the user can decide you hand back as a question, with the answer you r
      later installed, and end. If the command exits with 1, reply with what it printed, and end.
    - Out: `{"check": [<each item, by its checklist and ID>]}`.
 2. Read the CCS, each checklist it names under the call's checklist kind, and every file the CCS
-   names, whole. Then, for every item, find what in them gives its Good: what the receiver the CCS
+   names, whole: each file with `cat -n <path>` in a command of its own, or with Read and no offset
+   or limit. Then, for every item, find what in them gives its Good: what the receiver the CCS
    names is to get, for the use it names, that gives what the item asks. Where nothing in them
    gives it and only the user's answer can, such as a choice they leave open, the item waits on a
    question. Run `turn.py next <the call's result> <<'EOF'` with your check, ending with `EOF`, and
@@ -50,10 +51,10 @@ What only the user can decide you hand back as a question, with the answer you r
 4. If the agent was `turn:generator`, read the work and go to step 5. Otherwise run
    `turn.py next <the call's result>` and go to step 6.
 5. Read the CCS, each checklist it names under the call's checklist kind, the files the CCS names
-   that the work draws on, and the work, whole. Then, for every item, read the work as the
-   receiver the CCS names, for the use it names, and find its Good: what the receiver gets that
-   gives what the item asks. The generator's Goods and lines show you where to look first; the Good
-   is yours to find in the work.
+   that the work draws on, and the work, whole, the same way; the work again each time it changed.
+   Then, for every item, read the work as the receiver the CCS names, for the use it names, and
+   find its Good: what the receiver gets that gives what the item asks. The generator's Goods and
+   lines show you where to look first; the Good is yours to find in the work.
    Run `turn.py next <the call's result> <<'EOF'` with your reading, ending with `EOF`.
    - Out: your reading, as JSON:
      `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}]}`.
@@ -73,11 +74,12 @@ What only the user can decide you hand back as a question, with the answer you r
    - `{"returned": "..."}`: the result is written; reply with that line, and end.
 7. Decide each item in `decide.items`, where your finding and the evaluator's differ: each holds
    your finding (`orchestrator`), the evaluator's Good (`evaluator`) and the first user's Good
-   (`first_user`), `null` where there is none. Read the work at the lines each names, as the
-   receiver for the use, and find there the Good: what the receiver gets that gives what the item
-   asks. Where neither the first user nor the evaluator found a Good, give what the receiver gets
-   once it has it: the calling AI is to get each Good from a reader that did not make the work, and
-   you read it knowing what it meant. Run
+   (`first_user`), `null` where there is none. See `decide.items` as `turn.py next <the call's
+   result>` prints it, with no pipe or redirect, and the work whole as in step 5. Read the work at
+   the lines each names, as the receiver for the use, and find there the Good: what the receiver
+   gets that gives what the item asks. Where neither the first user nor the evaluator found a Good,
+   give what the receiver gets once it has it: the calling AI is to get each Good from a reader that
+   did not make the work, and you read it knowing what it meant. Run
    `turn.py next <the call's result> <<'EOF'` with your decision, ending with `EOF`, and go to
    step 6.
    - Out: your decision, in the form of your reading in step 5, with the items of `decide.items`

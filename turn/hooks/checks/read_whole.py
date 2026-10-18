@@ -1,5 +1,6 @@
-"""Each role reads whole what its step has it read before it answers, and the work again after it
-last changed, so that no item is judged on a part read and the rest guessed."""
+"""Each role reads whole every input of its step before it answers, and the work again after it
+last changed, and the learner is shown every page of every record, so that no item is judged on a
+part read and the rest guessed."""
 
 from __future__ import annotations
 
@@ -12,9 +13,9 @@ from typing import Any
 import agents
 import run
 
-# The learner reads records too long for one read, and takes what it needs from them by script.
-READERS = ("generator", "first-user", "evaluator")
+READERS = ("generator", "first-user", "evaluator", "learner")
 STATEMENT = re.compile(r"&&|\|\||;|\n")
+PAGE = re.compile(r"""turn\.py["']?\s+record\s+\S+\s+(\d+)\s+(\d+)""")
 
 
 def check(event: dict[str, Any]) -> list[str]:
@@ -25,13 +26,15 @@ def check(event: dict[str, Any]) -> list[str]:
     kept = agents.running(event)
     if kept is None:
         return []
+    if role == "learner":
+        return unshown(agents.transcript(event), kept)
     checking = role == "up" and "check" in kept
     deciding = role == "up" and "decide" in kept
     if role == "up" and not (checking or deciding) and kept["next"]["agent"] != run.GENERATOR:
         return []
     cwd = os.path.realpath(event["cwd"])
     if role in ("first-user", "evaluator") or deciding:
-        must = kept["work"] + ([] if deciding else kept["checklist"])
+        must = kept["work"] + ([] if deciding else kept["checklist"] + kept["opens"])
     else:
         # The check comes before the work is made, so it rests on what the work is made from.
         must = [
@@ -57,6 +60,31 @@ def check(event: dict[str, Any]) -> list[str]:
             " is left unread is judged on a guess, and the work is read again after it changed"
         )
     return said
+
+
+def unshown(path: str, kept: dict[str, Any]) -> list[str]:
+    """Each page of each record the learner was not shown whole by turn's script."""
+    seen: set[tuple[int, int]] = set()
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            content = json.loads(line).get("message", {}).get("content")
+            for part in content if isinstance(content, list) else []:
+                command = str(part.get("input", {}).get("command", ""))
+                if part.get("type") == "tool_use" and not {"|", ">"} & set(command):
+                    seen.update((int(n), int(p)) for n, p in PAGE.findall(command))
+    result = kept["call"]["result"]
+    missing = [
+        f"turn.py record {result} {n} {p}"
+        for n, record in enumerate(kept["records"], 1)
+        for p in range(1, len(run.pages(record)) + 1)
+        if (n, p) not in seen
+    ]
+    if not missing:
+        return []
+    return [
+        "be shown every page of every record, each in a command of its own with no pipe or"
+        " redirect: " + ", ".join(missing) + "; a record left unread is learnt from on a guess"
+    ]
 
 
 def recording(event: dict[str, Any], role: str | None) -> bool:

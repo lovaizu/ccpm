@@ -23,9 +23,9 @@ guess. The orchestrator looks for each Good starting from the lines you name.
      work; `sent_back`, each item the orchestrator sent back, with `gets`, what the receiver gets
      once it has its Good, empty the first time; `learnt`, what the learner found makes each item's
      Good, empty until the work is made again after a reading.
-2. Read the CCS whole, then each file it names, whole: among them the checklists, each item a
-   heading such as `### B-1: <title>` asking what the receiver should get, and what was decided
-   for the work.
+2. Read the CCS, then each file it names, whole, each file with `cat -n <path>` in a command of its
+   own, or with Read and no offset or limit: among them the checklists, each item a heading such as
+   `### B-1: <title>` asking what the receiver should get, and what was decided for the work.
 3. For every item, set its Good: what the receiver the CCS names gets from this work, for the use
    it names, that gives what the item asks, and the part of the work that gives it. Where
    `sent_back` holds the item, its Good is what its `gets` says; where `learnt` holds it, set the

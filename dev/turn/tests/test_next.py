@@ -359,6 +359,73 @@ class TestLearner(ReadTest):
         )
 
 
+class TestRecord(ReadTest):
+    def setUp(self):
+        super().setUp()
+        self.through(dict(EVALUATED, item="B-1"))
+        self.next({"items": [GOOD, SENT_BACK], "questions": []})
+
+    def test_a_record_is_shown_with_what_the_role_was_given_did_and_replied(self):
+        # Given: a learner's run, whose first user's record holds its prompt and a Read
+        # When: the learner asks for the first record's first page
+        # Then: it is shown with its number and page among all, the prompt and the tool used
+        code, out = self.turn("record", RESULT, "1", "1")
+        self.assertEqual(code, 0, out)
+        first = out.splitlines()[0]
+        self.assertEqual(first, f"record 1 of 2, page 1 of 1: {self.given()['records'][0]}")
+        self.assertIn('[user] {"run": ".tasks/readme-result.json"}', out)
+        self.assertIn('[tool_use Read] {"file_path": "README.md"}', out)
+
+    def test_a_record_too_long_for_one_read_is_shown_page_by_page(self):
+        # Given: a record holding a tool result longer than a page, a text and a file Claude Code
+        # showed whole
+        # When: the learner asks for each page
+        # Then: the pages together show the whole record, each no longer than a page
+        path = self.given()["records"][0]
+        parts = [
+            {"type": "text", "text": "I read it."},
+            {"type": "tool_result", "content": [{"type": "text", "text": "x" * 30000}]},
+            {"type": "tool_result", "content": "done"},
+        ]
+        shown = {"type": "edited_text_file", "filename": "README.md", "snippet": "1\t# csvtidy"}
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "user", "message": {"content": parts}}) + "\n")
+            f.write(json.dumps({"type": "attachment", "attachment": shown}) + "\n")
+            f.write(json.dumps({"type": "attachment", "attachment": {"type": "date"}}) + "\n")
+        pages = []
+        for page in (1, 2):
+            code, out = self.turn("record", RESULT, "1", str(page))
+            self.assertEqual(code, 0, out)
+            self.assertIn(f"page {page} of 2", out.splitlines()[0])
+            # The page, without its head and the line end print adds.
+            pages.append(out.split("\n", 1)[1][:-1])
+        whole = "".join(pages)
+        for words in ("I read it.", "x" * 30000, "[tool_result] done", "[shown README.md]"):
+            self.assertIn(words, whole)
+
+    def test_a_record_or_page_out_of_range_stops(self):
+        # Given: a learner's run of two records, each of one page
+        # When: a record or page outside them, or one not a number, is asked for
+        # Then: it is stopped, naming what there is
+        for number, page, said in (
+            ("3", "1", "record 3 is not one of 1 to 2"),
+            ("1", "2", "page 2 is not one of 1 to 1"),
+            ("a", "1", "record a is not one of 1 to 2"),
+        ):
+            with self.subTest(number=number, page=page):
+                code, out = self.turn("record", RESULT, number, page)
+                self.assertEqual(code, 1)
+                self.assertIn(said, out)
+
+    def test_a_record_of_no_run_going_stops(self):
+        # Given: no run going at the path
+        # When: a record is asked for
+        # Then: it is stopped
+        code, out = self.turn("record", "none.json", "1", "1")
+        self.assertEqual(code, 1)
+        self.assertIn("no run is going", out)
+
+
 class TestReadingForm(ReadTest):
     def stops(self, reading, *said):
         code, out = self.turn(
