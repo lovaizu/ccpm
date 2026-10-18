@@ -309,6 +309,23 @@ class TestDecision(ReadTest):
         unmet = dict(SENT_BACK, item="F-1")
         self.assertIn("learner", self.next({"items": [unmet, WAITS], "questions": []})["agent"])
 
+    def test_a_good_a_reader_found_passes_beside_an_item_none_found(self):
+        # Given: two items to decide, one whose Good the evaluator found and one no reader found,
+        # either way round
+        # When: the decision gives the first its Good and has the other wait on the question
+        # Then: the run returns, as the Good given is one a reader found
+        for findings, evaluated in (
+            ((GOOD, WAITS), dict(EVALUATED, item="B-1")),
+            ((dict(WAITS, item="F-1"), dict(GOOD, item="B-1")), EVALUATED),
+        ):
+            with self.subTest(evaluated=evaluated["item"]):
+                super().setUp()
+                self.through(evaluated, findings=findings, found=())
+                good = dict(GOOD, item=evaluated["item"])
+                other = "F-1" if evaluated["item"] == "B-1" else "B-1"
+                decision = {"items": [good, dict(WAITS, item=other)], "questions": []}
+                self.assertEqual(self.next(decision), {"returned": RESULT})
+
     def test_a_decision_out_of_its_form_stops(self):
         # Given: both items to decide
         # When: the decision leaves one out, waits on a question not asked, or asks one no item
@@ -390,44 +407,82 @@ class TestRecord(ReadTest):
         self.assertIn('[tool_use Read] {"file_path": "README.md"}', out)
 
     def test_a_record_too_long_for_one_read_is_shown_page_by_page(self):
-        # Given: a record holding a tool result longer than a page, a text and a file Claude Code
-        # showed whole
+        # Given: a record holding a tool result longer than two pages, a text and a file Claude
+        # Code showed whole
         # When: the learner asks for each page
-        # Then: the pages together show the whole record, each no longer than a page
+        # Then: the pages together show the whole record, each of 20000 characters but the last
         path = self.given()["records"][0]
         parts = [
             {"type": "text", "text": "I read it."},
-            {"type": "tool_result", "content": [{"type": "text", "text": "x" * 30000}]},
+            {"type": "tool_result", "content": [{"type": "text", "text": "x" * 45000}]},
             {"type": "tool_result", "content": "done"},
         ]
         shown = {"type": "edited_text_file", "filename": "README.md", "snippet": "1\t# csvtidy"}
         with open(path, "a", encoding="utf-8") as f:
             f.write(json.dumps({"type": "user", "message": {"content": parts}}) + "\n")
             f.write(json.dumps({"type": "attachment", "attachment": shown}) + "\n")
-            f.write(json.dumps({"type": "attachment", "attachment": {"type": "date"}}) + "\n")
         pages = []
-        for page in (1, 2):
+        for page in (1, 2, 3):
             code, out = self.turn("record", RESULT, "1", str(page))
             self.assertEqual(code, 0, out)
-            self.assertIn(f"page {page} of 2", out.splitlines()[0])
+            self.assertIn(f"page {page} of 3", out.splitlines()[0])
             # The page, without its head and the line end print adds.
             pages.append(out.split("\n", 1)[1][:-1])
+        self.assertEqual([len(p) for p in pages[:2]], [20000, 20000])
         whole = "".join(pages)
-        for words in ("I read it.", "x" * 30000, "[tool_result] done", "[shown README.md]"):
+        for words in ("I read it.", "x" * 45000, "[tool_result] done", "[shown README.md]"):
             self.assertIn(words, whole)
 
     def test_a_record_shows_the_role_alone_not_the_requests_claude_code_copies(self):
-        # Given: a record holding, besides the role's own entries, the copy of a request Claude
+        # Given: a record holding, among the role's own entries, the copy of a request Claude
         # Code keeps beside them
         # When: the learner asks for its page
-        # Then: the copy is not shown
+        # Then: the copy is not shown, and the entries after it are
         path = self.given()["records"][0]
         copy = {"role": "user", "content": [{"type": "text", "text": "copied request"}]}
+        after = {"content": [{"type": "text", "text": "read after the copy"}]}
         with open(path, "a", encoding="utf-8") as f:
             f.write(json.dumps({"type": "api-request-blob", "message": copy}) + "\n")
+            f.write(json.dumps({"type": "assistant", "message": after}) + "\n")
         code, out = self.turn("record", RESULT, "1", "1")
         self.assertEqual(code, 0, out)
         self.assertNotIn("copied request", out)
+        self.assertIn("read after the copy", out)
+
+    def test_a_record_shows_each_part_by_its_type_and_no_other_attachment(self):
+        # Given: a record holding a part of a type of its own, a tool used with words beyond
+        # ASCII, and attachments that are not a file shown whole
+        # When: the learner asks for its page
+        # Then: the part is shown by its type, the words as they are, and the attachments not
+        path = self.given()["records"][0]
+        parts = [
+            {"type": "web_search_tool_result", "text": "found"},
+            {"type": "tool_use", "name": "Read", "input": {"file_path": "読む.md"}},
+        ]
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "assistant", "message": {"content": parts}}) + "\n")
+            for kind in ("date", "queued_command"):
+                attachment = {"type": kind, "filename": kind, "snippet": "x"}
+                f.write(json.dumps({"type": "attachment", "attachment": attachment}) + "\n")
+        code, out = self.turn("record", RESULT, "1", "1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("[web_search_tool_result] found", out)
+        self.assertIn('[tool_use Read] {"file_path": "読む.md"}', out)
+        self.assertNotIn("[shown", out)
+
+    def test_each_record_is_shown_by_its_number(self):
+        # Given: a learner's run of three records
+        # When: each is asked for
+        # Then: each is shown, headed by its number and path
+        kept = self.read_json(RESULT)
+        records = kept["running"]["records"]
+        records.append(self.given_record("third", "{}"))
+        self.write_json(RESULT, kept)
+        for n, path in enumerate(records, 1):
+            with self.subTest(n=n):
+                code, out = self.turn("record", RESULT, str(n), "1")
+                self.assertEqual(code, 0, out)
+                self.assertEqual(out.splitlines()[0], f"record {n} of 3, page 1 of 1: {path}")
 
     def test_a_record_or_page_out_of_range_stops(self):
         # Given: a learner's run of two records, each of one page
@@ -435,6 +490,8 @@ class TestRecord(ReadTest):
         # Then: it is stopped, naming what there is
         for number, page, said in (
             ("3", "1", "record 3 is not one of 1 to 2"),
+            ("0", "1", "record 0 is not one of 1 to 2"),
+            ("1", "0", "page 0 is not one of 1 to 1"),
             ("1", "2", "page 2 is not one of 1 to 1"),
             ("a", "1", "record a is not one of 1 to 2"),
         ):

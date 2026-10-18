@@ -22,7 +22,8 @@ def start(text: str) -> dict[str, Any]:
     """Starts the run the call asks for, and gives the items the orchestrator checks can get their
     Good before any work is made."""
     run = call.check(call.parse(text))
-    run["check"] = True
+    # Not mutated: only whether the key is there is read.
+    run["check"] = True  # pragma: no mutate
     write(run["call"]["result"], {"running": run})
     return {"check": run["items"]}
 
@@ -102,9 +103,9 @@ def shown(path: str) -> str:
     with open(path, encoding="utf-8") as f:
         for line in f:
             entry = json.loads(line)
-            # Claude Code keeps beside the role's own entries a copy of each request it sends,
+            # The role's own entries alone: Claude Code also keeps a copy of each request it sends,
             # which says again what the role was shown.
-            if entry.get("type") == "api-request-blob":
+            if entry.get("type") not in ("user", "assistant", "attachment"):
                 continue
             attachment = entry.get("attachment")
             if isinstance(attachment, dict) and attachment.get("type") == "edited_text_file":
@@ -162,10 +163,11 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     if agent == FIRST_USER:
         run["read"] = reply["items"]
         return ask(run, EVALUATOR, dict(reader_given(run), reading=reply["items"]))
-    if agent == LEARNER:
-        run["learnt"] = reply["items"]
-        return ask(run, GENERATOR, generator_given(run, run.pop("unmet"), []))
-    return compare(run, reply["items"])
+    # Not mutated: only the evaluator and the learner come here, and the learner's name sorts after.
+    if agent == EVALUATOR:  # pragma: no mutate
+        return compare(run, reply["items"])
+    run["learnt"] = reply["items"]
+    return ask(run, GENERATOR, generator_given(run, run.pop("unmet"), []))
 
 
 def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -214,7 +216,8 @@ def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
             first_user=read.get(key(f)),
         )
         for f in findings["items"]
-        if ("good" in f) != (key(f) in evaluated)
+        # Not mutated: both sides are True or False, so `is not` is `!=`.
+        if ("good" in f) != (key(f) in evaluated)  # pragma: no mutate
     ]
     if not apart:
         return settle(run, findings["items"], findings["questions"])
@@ -278,7 +281,8 @@ def waited(items: list[dict[str, Any]], questions: list) -> list[dict[str, Any]]
     return [
         dict(q, items=[named(i) for i in waiting])
         for n, q in enumerate(questions, 1)
-        for waiting in [[i for i in items if i.get("question") == n]]
+        # Not mutated: the numbers are small, and Python keeps one of each, so `is` is `==`.
+        for waiting in [[i for i in items if i.get("question") == n]]  # pragma: no mutate
         if waiting
     ]
 
@@ -312,5 +316,11 @@ def write(path: str, data: dict[str, Any]) -> None:
     if folder:
         os.makedirs(folder, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=1, ensure_ascii=False)
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            # Not mutated: how far each line is indented changes nothing the caller reads.
+            indent=1,  # pragma: no mutate
+        )
         f.write("\n")
