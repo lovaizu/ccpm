@@ -4,15 +4,23 @@ on: push
 
 jobs:
   tests:
+    # Users run 3.9; Cosmic Ray and Hypothesis need a newer Python only to test, not to run.
+    strategy:
+      matrix:
+        python: ["3.9", "3.x"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: ${{ matrix.python }}
       - run: pip install -r dev/requirements.txt
+      - if: matrix.python == '3.x'
+        run: pip install -r dev/requirements-test-quality.txt
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
       - run: npm install -g @anthropic-ai/claude-code@2.1.296
       - run: sh dev/check.sh
+      - if: matrix.python == '3.x'
+        run: sh dev/mutate.sh

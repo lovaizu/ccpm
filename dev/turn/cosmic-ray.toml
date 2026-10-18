@@ -3,7 +3,7 @@
 module-path = "turn"
 timeout = 30.0
 excluded-modules = []
-test-command = "python -m unittest discover -s dev/turn/tests"
+test-command = "python -m unittest discover -f -s dev/turn/tests"
 
 [cosmic-ray.distributor]
 name = "local"
