@@ -1,6 +1,7 @@
 """Tries each of turn's four roles on its own: the real role, scripts and hooks, started by a stand-in
 for the orchestrator with the prompt turn.py prints, on the flow trial's task of one item. Between
-the roles the run is set as a trial means: the generator's work is replaced by a set README whose
+the roles the run is set as a trial means: the orchestrator's check finds B-1's Good in the
+decisions, the generator's work is replaced by a set README whose
 license is a bare word, the orchestrator's reading gives B-1 its Good, and the learner is given B-1
 without Good and the records of the three roles before it. Prints, for each role, its record, from
 which the trial is judged, the minutes, each tool it used, each hook stop, and the reply kept.
@@ -25,6 +26,12 @@ CALL = {
     "ccs": ".tasks/ccs.json",
     "result": ".tasks/result.json",
     "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"},
+}
+CHECK = {
+    "items": [
+        {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."}
+    ],
+    "questions": [],
 }
 README = "# demo\n\ndemo prints a greeting.\n\n## License\n\nMIT\n"
 READING = {
@@ -115,7 +122,8 @@ exactly as it is, and wait for its reply. Then reply with its reply as it is.
     return record[0] if record else ""
 
 
-records = [role(turn("start", json.dumps(CALL)))]
+turn("start", json.dumps(CALL))
+records = [role(turn("next", CALL["result"], given=json.dumps(CHECK)))]
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(README)
 records.append(role(turn("next", CALL["result"], given=json.dumps(READING))))
