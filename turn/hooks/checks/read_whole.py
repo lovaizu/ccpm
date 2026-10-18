@@ -20,46 +20,84 @@ PAGE = re.compile(r"""turn\.py["']?\s+record\s+\S+\s+(\d+)\s+(\d+)""")
 
 def check(event: dict[str, Any]) -> list[str]:
     role = agents.role(event)
-    answering = event["hook_event_name"] == "SubagentStop" and role in READERS
-    if not (answering or recording(event, role)):
+    if not (answering(event, role) or recording(event, role)):
         return []
     kept = agents.running(event)
     if kept is None:
         return []
-    if role == "learner":
-        return unshown(agents.transcript(event), kept)
-    checking = role == "up" and "check" in kept
-    deciding = role == "up" and "decide" in kept
-    if role == "up" and not (checking or deciding) and kept["next"]["agent"] != run.GENERATOR:
-        return []
-    cwd = os.path.realpath(event["cwd"])
-    if role in ("first-user", "evaluator") or deciding:
-        must = kept["work"] + ([] if deciding else kept["checklist"] + kept["opens"])
-    else:
+    return HOLDS[str(role)](event, kept)
+
+
+def answering(event: dict[str, Any], role: str | None) -> bool:
+    """Whether a role is ending with its reply."""
+    return event["hook_event_name"] == "SubagentStop" and role in READERS
+
+
+def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
+    """The orchestrator's check rests on what the work is made from, its decision on the items to
+    decide and the work, and its reading on what the run was given; going on after a role rests on
+    nothing read."""
+    if "check" in kept:
         # The check comes before the work is made, so it rests on what the work is made from.
-        must = [
-            p
-            for p in kept["given"]
-            if os.path.isfile(os.path.join(cwd, p)) and not (checking and p in kept["work"])
-        ]
+        return unread(
+            event, kept, [p for p in files(event, kept["given"]) if p not in kept["work"]]
+        )
+    if "decide" in kept:
+        # The items to decide are what turn.py printed last, seen whole only when not piped or sent
+        # to a file.
+        said = []
+        if not printed(agents.transcript(event)):
+            said.append(
+                "see the items to decide whole: run `turn.py next <the call's result>` again with"
+                " no pipe or redirect, since an item decided without where the first user stopped"
+                " is decided on a guess"
+            )
+        return said + unread(event, kept, kept["work"])
+    if kept["next"]["agent"] != run.GENERATOR:
+        return []
+    return unread(event, kept, files(event, kept["given"]))
+
+
+def generator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
+    return unread(event, kept, files(event, kept["given"]))
+
+
+def reader(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
+    """The first user and the evaluator read the work and what the receiver has with it."""
+    return unread(event, kept, kept["work"] + kept["checklist"] + kept["opens"])
+
+
+def learner(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
+    return unshown(agents.transcript(event), kept)
+
+
+HOLDS = {
+    "up": orchestrator,
+    "generator": generator,
+    "first-user": reader,
+    "evaluator": reader,
+    "learner": learner,
+}
+
+
+def files(event: dict[str, Any], paths: list[str]) -> list[str]:
+    """The paths that are files, not folders."""
+    return [p for p in paths if os.path.isfile(os.path.join(event["cwd"], p))]
+
+
+def unread(event: dict[str, Any], kept: dict[str, Any], must: list[str]) -> list[str]:
+    """What is to be read whole and was not."""
+    cwd = os.path.realpath(event["cwd"])
     read = whole(agents.transcript(event), cwd, kept["work"])
     missing = [p for p in must if os.path.realpath(os.path.join(cwd, p)) not in read]
-    said = []
-    # The items to decide are what turn.py printed last, seen whole only when not piped or sent to
-    # a file.
-    if deciding and not printed(agents.transcript(event)):
-        said.append(
-            "see the items to decide whole: run `turn.py next <the call's result>` again with no"
-            " pipe or redirect, since an item decided without where the first user stopped is"
-            " decided on a guess"
-        )
-    if missing:
-        unread = ", ".join(missing)
-        said.append(
-            f"read whole, each with `cat -n` or with Read and no offset or limit: {unread}; what"
-            " is left unread is judged on a guess, and the work is read again after it changed"
-        )
-    return said
+    if not missing:
+        return []
+    unread = ", ".join(missing)
+    said = (
+        f"read whole, each with `cat -n` or with Read and no offset or limit: {unread}; what"
+        " is left unread is judged on a guess, and the work is read again after it changed"
+    )
+    return [said]
 
 
 def unshown(path: str, kept: dict[str, Any]) -> list[str]:
@@ -70,7 +108,7 @@ def unshown(path: str, kept: dict[str, Any]) -> list[str]:
             content = json.loads(line).get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
                 command = str(part.get("input", {}).get("command", ""))
-                if part.get("type") == "tool_use" and not {"|", ">"} & set(command):
+                if not {"|", ">"} & set(command):
                     seen.update((int(n), int(p)) for n, p in PAGE.findall(command))
     result = kept["call"]["result"]
     missing = [
@@ -91,9 +129,7 @@ def recording(event: dict[str, Any], role: str | None) -> bool:
     """Whether the orchestrator is recording its check, reading or decision with the script."""
     command = str(event.get("tool_input", {}).get("command", ""))
     return (
-        role == "up"
-        and event["hook_event_name"] == "PreToolUse"
-        and event["tool_name"] == "Bash"
+        (role, event["hook_event_name"], event.get("tool_name")) == ("up", "PreToolUse", "Bash")
         and agents.runs(command, "next")
         and "<<" in command
     )
@@ -112,19 +148,34 @@ def whole(path: str, cwd: str, work: list[str]) -> set[str]:
                 read.add(shown)
             content = record.get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
-                if part.get("type") != "tool_use" or part["id"] in seen:
+                # A tool used is kept twice under one ID; other parts have none.
+                if "id" not in part or part["id"] in seen:
                     continue
                 seen.add(part["id"])
-                name, given = part["name"], part["input"]
-                if name == "Read" and "offset" not in given and "limit" not in given:
-                    read.add(at(cwd, given.get("file_path", "")))
-                elif name == "Bash":
-                    read.update(at(cwd, p) for p in catted(str(given.get("command", ""))))
-                elif name in ("Write", "Edit"):
-                    read.discard(at(cwd, given.get("file_path", "")))
-                elif name == "Agent" and given.get("subagent_type") == run.GENERATOR:
-                    read.difference_update(at(cwd, w) for w in work)
+                USES.get(part.get("name"), lambda *_: None)(read, part["input"], cwd, work)
     return read
+
+
+def reads(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
+    if "offset" not in given and "limit" not in given:
+        read.add(at(cwd, given.get("file_path", "")))
+
+
+def runs(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
+    read.update(at(cwd, p) for p in catted(str(given.get("command", ""))))
+
+
+def changes(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
+    read.discard(at(cwd, given.get("file_path", "")))
+
+
+def starts(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
+    """The generator started may change the work."""
+    if given.get("subagent_type") == run.GENERATOR:
+        read.difference_update(at(cwd, w) for w in work)
+
+
+USES = {"Read": reads, "Bash": runs, "Write": changes, "Edit": changes, "Agent": starts}
 
 
 def shown_whole(attachment: Any, cwd: str) -> str | None:
@@ -150,11 +201,7 @@ def printed(path: str) -> bool:
             content = json.loads(line).get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
                 command = str(part.get("input", {}).get("command", ""))
-                if (
-                    part.get("type") == "tool_use"
-                    and agents.runs(command, "next")
-                    and "<<" not in command
-                ):
+                if agents.runs(command, "next") and "<<" not in command:
                     shown = not {"|", ">"} & set(command)
     return shown
 
@@ -167,8 +214,9 @@ def catted(command: str) -> list[str]:
             words = shlex.split(statement)
         except ValueError:
             continue
-        if words[:1] == ["cat"] and not {"|", ">", ">>"} & set(words) and "|" not in statement:
-            files += [w for w in words[1:] if not w.startswith("-")]
+        head, *rest = words or [""]
+        if head == "cat" and not {"|", ">", ">>"} & set(rest) and "|" not in statement:
+            files += [w for w in rest if not w.startswith("-")]
     return files
 
 

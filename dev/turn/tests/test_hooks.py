@@ -22,6 +22,7 @@ from helpers import (
     WAITS,
     RepoTest,
     pretooluse,
+    read_whole,
     subagentstop,
 )
 
@@ -818,6 +819,134 @@ class TestWholeReads(HookTest):
         prompt = json.dumps({"run": "none.json"})
         part = ("Read", {"file_path": "README.md", "offset": 2})
         self.assertEqual(self.replied("turn:first-user", prompt, {"items": [FOUND]}, part), (0, ""))
+
+    def given_read(self):
+        """The orchestrator's reads of everything its run was given, and the generator started."""
+        given = [
+            self.read(p)
+            for p in (CALL["ccs"], "README.md", "checklists/readme.md")
+            + ("notes/readme.decisions.md", "docs/start.md")
+        ]
+        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
+        return given, generator
+
+    def recorded(self, *uses):
+        """Whether the orchestrator, having used the tools, may record its reading."""
+        self.given_record(ID, json.dumps(CALL), *uses)
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        return read_whole.check(self.tool("turn:up", "Bash", command=command))
+
+    def test_a_role_other_than_the_generator_started_leaves_the_work_read(self):
+        # Given: an orchestrator that read the work after the generator, then started roles
+        # whose names sort before and after the generator's
+        # When: it records its reading
+        # Then: it goes through, as only the generator changes the work
+        given, generator = self.given_read()
+        others = [
+            ("Agent", {"subagent_type": agent, "prompt": "{}"})
+            for agent in ("turn:first-user", "turn:learner")
+        ]
+        self.assertEqual(self.recorded(*given, generator, self.read("README.md"), *others), [])
+
+    def test_an_attachment_other_than_a_file_shown_whole_is_no_read(self):
+        # Given: an orchestrator that started the generator, after which Claude Code attached
+        # something else holding the work's lines, or the work's first lines alone
+        # When: it records its reading
+        # Then: it is stopped, naming the work
+        given, generator = self.given_read()
+        whole = "1\t# csvtidy\n2\t\n3\tTidies CSV files."
+        for kind, snippet in (
+            ("date", whole),
+            ("queued_command", whole),
+            ("edited_text_file", "1\t# csvtidy\n2\t"),
+        ):
+            with self.subTest(kind=kind, snippet=snippet):
+                path = self.given_record(ID, json.dumps(CALL), *given, generator)
+                shown = {"type": kind, "filename": f"{self.repo}/README.md", "snippet": snippet}
+                with open(path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps({"type": "attachment", "attachment": shown}) + "\n")
+                command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+                said = read_whole.check(self.tool("turn:up", "Bash", command=command))
+                self.assertEqual(len(said), 1)
+                self.assertIn("README.md;", said[0])
+
+    def test_the_orchestrator_is_held_only_as_it_records_with_the_script(self):
+        # Given: an orchestrator whose reading is due and that read nothing
+        # When: it reads a file, or runs a heredoc that is not turn's script
+        # Then: it goes through, as only recording its reading rests on what it read
+        self.given_record(ID, json.dumps(CALL))
+        for event in (
+            self.tool("turn:up", "Read", file_path="README.md"),
+            self.tool("turn:up", "Bash", command="python3 - <<'EOF'\nprint(1)\nEOF"),
+        ):
+            with self.subTest(event=event["tool_name"]):
+                self.assertEqual(read_whole.check(event), [])
+
+    def test_only_the_orchestrator_recording_with_the_script_is_held(self):
+        # Given: a generator that read nothing
+        # When: it runs turn's script with input, as the orchestrator records its reading
+        # Then: it is not held to read, as it is not the orchestrator
+        self.given_record(ID, self.generator_prompt)
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.assertEqual(read_whole.check(self.tool("turn:generator", "Bash", command=command)), [])
+
+    def test_a_reader_is_held_only_as_it_ends(self):
+        # Given: a first user that read nothing
+        # When: an event other than its end comes from it
+        # Then: it is not held to read
+        self.given_record(ID, self.first_user())
+        event = self.event("UserPromptSubmit", "turn:first-user", prompt="x")
+        self.assertEqual(read_whole.check(event), [])
+
+    def test_a_reader_reading_whole_after_a_command_it_could_not_parse_ends(self):
+        # Given: a first user whose command reads the work whole after a statement whose quoting
+        # does not close
+        # When: it ends with its reply
+        # Then: it ends
+        uses = (
+            ("Bash", {"command": "echo don't && cat README.md"}),
+            self.read("checklists/readme.md"),
+        )
+        reply = {"items": [FOUND]}
+        self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
+
+    def test_a_reader_printing_lines_by_another_command_than_cat_is_kept_going(self):
+        # Given: a first user that printed the work's first lines with awk, a name sorting before
+        # cat
+        # When: it ends with its reply
+        # Then: it is kept going, naming the work
+        uses = (("Bash", {"command": "awk 'NR<=2' README.md"}), self.read("checklists/readme.md"))
+        code, err = self.replied("turn:first-user", self.first_user(), {"items": [FOUND]}, *uses)
+        self.assertEqual(code, 2)
+        self.assertIn("README.md", err)
+
+    def test_the_orchestrator_deciding_without_seeing_the_items_stops(self):
+        # Given: an orchestrator whose run waits on its decision, which read the work whole but
+        # never ran the script to see the items to decide
+        # When: it records its decision
+        # Then: it is stopped, told to see the items whole
+        self.through()
+        self.given_record(ID, json.dumps(CALL), self.read("README.md"))
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "see the items")
+
+    def test_a_learner_shown_both_pages_of_a_long_record_ends(self):
+        # Given: a learner whose first record is two pages long, shown every page of every record
+        # When: it ends with its reply
+        # Then: it ends
+        prompt = self.learner_prompt()
+        record = self.given()["records"][0]
+        with open(record, "a", encoding="utf-8") as f:
+            text = {"type": "user", "message": {"content": "x" * 25000}}
+            f.write(json.dumps(text) + "\n")
+        self.assertEqual(self.replied("turn:learner", prompt, {"items": LEARNT}), (0, ""))
+
+    def test_the_orchestrator_going_on_after_the_learner_needs_no_new_read(self):
+        # Given: an orchestrator whose run waits on the learner
+        # When: it runs the script with input, having read nothing whole
+        # Then: it goes through
+        self.learner_prompt()
+        self.assertEqual(self.recorded(), [])
 
     def test_the_orchestrator_going_on_after_a_role_needs_no_new_read(self):
         # Given: an orchestrator whose run waits on the first user, not on its own reading

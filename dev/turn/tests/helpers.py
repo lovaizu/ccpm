@@ -25,6 +25,7 @@ import subagentstop
 from checks import (  # noqa: F401  (each check, for its own tests)
     call_given,
     no_commit,
+    read_whole,
     role_given,
     start_as_called,
 )
