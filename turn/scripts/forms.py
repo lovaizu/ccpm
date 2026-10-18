@@ -143,7 +143,8 @@ def item_problems(
     said: list[str] = []
     seen: list[tuple[str, str]] = []
     named = [" with ".join(f'"{k}"' for k in shape) for shape in form.shapes]
-    allowed = "one of " + ", ".join(named[:-1]) + " or " + named[-1] if named[1:] else named[0]
+    *others, last = named
+    allowed = f"one of {', '.join(others)} or {last}" if others else last
     for item in given:
         key = (item.get("checklist"), item.get("item")) if isinstance(item, dict) else None
         name = f"{key[0]} {key[1]}" if key else json.dumps(item)
@@ -155,7 +156,8 @@ def item_problems(
             continue
         seen.append(key)
         held = [s for s in form.shapes if all(k in item for k in s)]
-        rest = set(item) - {"checklist", "item"} - {k for s in held for k in s}
+        # Not mutated: both sets taken away lie inside the item, so `^` gives the same.
+        rest = set(item) - {"checklist", "item"} - {k for s in held for k in s}  # pragma: no mutate
         if len(held) != 1 or rest:
             said.append(f"{name} must hold {allowed}")
             continue
