@@ -27,14 +27,18 @@ def role(event: dict[str, Any]) -> str | None:
     return kind.partition("turn:")[2] or None if event.get("agent_id") else None
 
 
-def prompt(event: dict[str, Any]) -> str:
-    """What the agent of the event was started with."""
-    path = event.get("agent_transcript_path") or os.path.join(
+def transcript(event: dict[str, Any]) -> str:
+    """Where Claude Code keeps the conversation of the agent of the event."""
+    return event.get("agent_transcript_path") or os.path.join(
         os.path.splitext(event["transcript_path"])[0],
         "subagents",
         f"agent-{event['agent_id']}.jsonl",
     )
-    with open(path, encoding="utf-8") as f:
+
+
+def prompt(event: dict[str, Any]) -> str:
+    """What the agent of the event was started with."""
+    with open(transcript(event), encoding="utf-8") as f:
         return json.loads(f.readline())["message"]["content"]
 
 

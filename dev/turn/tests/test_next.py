@@ -1,6 +1,17 @@
 import json
 
-from helpers import CALL, EVALUATED, GOOD, GOT, LEARNT, QUESTION, SENT_BACK, WAITS, RepoTest
+from helpers import (
+    CALL,
+    EVALUATED,
+    GOOD,
+    GOT,
+    LEARNT,
+    QUESTION,
+    READ_SHOWN,
+    SENT_BACK,
+    WAITS,
+    RepoTest,
+)
 
 RESULT = CALL["result"]
 
@@ -133,7 +144,7 @@ class TestReaders(ReadTest):
         # evaluator's Good and what the first user got, with the questions and what the first user
         # opened, and the run goes on
         good_b1 = dict(EVALUATED, item="B-1")
-        out = self.through(good_b1, opened=[("Read", {"file_path": "README.md"})])
+        out = self.through(good_b1, opened=READ_SHOWN)
         self.assertEqual(
             out,
             {
@@ -154,7 +165,10 @@ class TestReaders(ReadTest):
                         ),
                     ],
                     "questions": [QUESTION],
-                    "opened": ['Read {"file_path": "README.md"}'],
+                    "opened": [
+                        'Read {"file_path": "README.md"}',
+                        'Read {"file_path": "checklists/readme.md"}',
+                    ],
                 }
             },
         )

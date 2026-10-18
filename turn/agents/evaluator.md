@@ -22,7 +22,9 @@ findings and decides each item where they differ.
      has and what they got; turn's hook stops a read of anything else.
 2. Read each checklist whole, each item a heading such as `### B-1: <title>`, and the work whole.
 3. For each item, decide from the reading and the lines of the work it points to whether the
-   receiver gets what the item asks.
+   receiver gets what the item asks. Where the reading says the first user stopped on the item,
+   read twice, had to guess or found a statement that will not hold, the receiver stops there too,
+   so the reading does not give that item its Good.
 4. Reply with your Goods alone, as JSON: `{"items": [<one per item with its Good>]}`. Each item is
    `{"checklist": "<path as in your prompt>", "item": "<ID>", "good": "<what the receiver gets, in
    plain words>", "lines": ["<path of the work>:<from>-<to>", ...]}`.

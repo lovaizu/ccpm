@@ -124,6 +124,11 @@ turn/                      the plugin, installed by Claude Code
   commit or a push; a stop says why and names what may be read.
 
   A role that reads only what it is given is not bent by what it was not meant to see.
+- The hooks stop a role's reply, and the orchestrator's reading, given before what its step reads
+  is read whole since it last changed; the learner, whose records are too long for one read, is
+  left to its scripts.
+
+  An item judged on a part read is judged on a guess for the rest.
 - A script writes the result where the call says, and checks its shape as it writes.
 
   A reply would be copied into a file by the calling AI, where a slip goes unseen.

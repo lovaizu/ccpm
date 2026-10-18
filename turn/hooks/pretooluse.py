@@ -13,12 +13,13 @@ from checks import (
     call_given,
     no_commit,
     read_in_given,
+    read_whole,
     role_given,
     start_as_called,
     write_work_alone,
 )
 
-CHECKS = (call_given, start_as_called, role_given, write_work_alone, no_commit, read_in_given)
+CHECKS = (call_given, start_as_called, role_given, write_work_alone, no_commit, read_in_given, read_whole)
 
 
 def main(stream: IO[str]) -> int:

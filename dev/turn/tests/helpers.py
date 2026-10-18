@@ -79,6 +79,17 @@ LEARNT = [
     },
     {"checklist": "checklists/readme.md", "item": "B-1", "learnt": "say whom it is for in line 3"},
 ]
+# What a first user and an evaluator read whole before they reply: the work and the checklist.
+READ_SHOWN = (
+    ("Read", {"file_path": "README.md"}),
+    ("Read", {"file_path": "checklists/readme.md"}),
+)
+# What a generator and an orchestrator read whole: the CCS and every file it names.
+READ_GIVEN = READ_SHOWN + (
+    ("Read", {"file_path": ".tasks/readme.json"}),
+    ("Read", {"file_path": "notes/readme.decisions.md"}),
+    ("Read", {"file_path": "docs/start.md"}),
+)
 SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",
@@ -181,7 +192,10 @@ class RepoTest(unittest.TestCase):
 
     def replied(self, agent_type, prompt, reply, *tool_uses):
         """A role started with the prompt ends with the reply, after using the tools, as turn's
-        SubagentStop hook sees it."""
+        SubagentStop hook sees it; given no tools, a reader has read the work and the checklist
+        whole."""
+        if not tool_uses and agent_type != "turn:learner":
+            tool_uses = READ_SHOWN
         path = self.given_record(agent_type.partition(":")[2], prompt, *tool_uses)
         event = self.event(
             "SubagentStop",

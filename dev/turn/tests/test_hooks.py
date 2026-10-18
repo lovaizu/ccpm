@@ -14,6 +14,7 @@ from helpers import (
     ID,
     LEARNT,
     QUESTION,
+    READ_GIVEN,
     SENT_BACK,
     TURN,
     WAITS,
@@ -150,7 +151,7 @@ class TestRoleStart(HookTest):
 
 class TestReplies(HookTest):
     def reply(self, message):
-        path = self.given_prompt(ID, self.started())
+        path = self.given_record(ID, self.started(), *READ_GIVEN)
         event = self.event(
             "SubagentStop",
             "turn:generator",
@@ -401,7 +402,7 @@ class TestReads(HookTest):
         # Given: an orchestrator whose run is going
         # When: it records its reading with the script, naming where the result goes
         # Then: it goes through
-        self.given_prompt(ID, json.dumps(CALL))
+        self.given_record(ID, json.dumps(CALL), *READ_GIVEN)
         command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
@@ -449,3 +450,97 @@ class TestEntries(HookTest):
                 ):
                     runpy.run_path(os.path.join(HOOKS, name), run_name="__main__")
                 self.assertEqual(end.exception.code, 0)
+
+
+class TestWholeReads(HookTest):
+    def setUp(self):
+        super().setUp()
+        self.generator_prompt = self.started()
+
+    def read(self, path, **part):
+        return ("Read", dict(file_path=path, **part))
+
+    def generator_ends(self, *tool_uses):
+        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
+        reply = {"items": [claim, WAITS], "questions": [QUESTION]}
+        path = self.given_record(ID, self.generator_prompt, *tool_uses)
+        event = self.event(
+            "SubagentStop",
+            "turn:generator",
+            agent_transcript_path=path,
+            last_assistant_message=json.dumps(reply),
+            stop_hook_active=False,
+        )
+        return self.hook(subagentstop, event)
+
+    def test_a_reader_that_read_the_work_and_the_checklist_whole_ends(self):
+        # Given: a first user that read the work and the checklist, each from top to end, one by
+        # Read and one by a command
+        # When: it ends with its reply
+        # Then: it ends
+        uses = (self.read("README.md"), ("Bash", {"command": "cat checklists/readme.md"}))
+        reply = {"items": [GOT]}
+        self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
+
+    def test_a_reader_that_read_part_of_the_work_is_kept_going(self):
+        # Given: a first user that read the checklist whole but only part of the work, by Read
+        # from a line on, by a command printing some lines, by one cut short in a pipe, or by one
+        # whose quoting does not close
+        # When: it ends with its reply
+        # Then: it is kept going, naming the work to read whole
+        prompt = self.first_user()
+        for part in (
+            self.read("README.md", offset=2),
+            ("Bash", {"command": "sed -n 1,2p README.md"}),
+            ("Bash", {"command": "cat README.md | head -n 2"}),
+            ("Bash", {"command": "cat 'README.md"}),
+        ):
+            with self.subTest(part=part):
+                uses = (part, self.read("checklists/readme.md"))
+                code, err = self.replied("turn:first-user", prompt, {"items": [GOT]}, *uses)
+                self.assertEqual(code, 2)
+                self.assertIn("read whole", err)
+                self.assertIn("README.md", err)
+                self.assertNotIn("checklists/readme.md", err)
+
+    def test_a_generator_that_read_the_work_again_after_its_last_change_ends(self):
+        # Given: a generator that read everything it was given, changed the work, and read the
+        # work again from top to end
+        # When: it ends with its reply
+        # Then: it ends
+        given = [self.read(p) for p in (CALL["ccs"], "notes/readme.decisions.md", "docs/start.md")]
+        given.append(("Bash", {"command": "cat checklists/readme.md README.md"}))
+        change = {"file_path": f"{self.repo}/README.md", "old_string": "a", "new_string": "c"}
+        edit = ("Edit", change)
+        self.assertEqual(self.generator_ends(*given, edit, self.read("README.md")), (0, ""))
+
+    def test_a_generator_that_did_not_read_the_work_after_its_last_change_is_kept_going(self):
+        # Given: a generator that read everything it was given, then changed the work and read
+        # only part of it after
+        # When: it ends with its reply
+        # Then: it is kept going, naming the work to read whole
+        given = [self.read(p) for p in (CALL["ccs"], "notes/readme.decisions.md", "docs/start.md")]
+        given.append(("Bash", {"command": "cat checklists/readme.md README.md"}))
+        edit = ("Write", {"file_path": "README.md", "content": "# csvtidy\n"})
+        code, err = self.generator_ends(*given, edit, self.read("README.md", offset=30))
+        self.assertEqual(code, 2)
+        self.assertIn("README.md", err)
+
+    def test_the_orchestrator_recording_a_reading_of_part_of_the_work_stops(self):
+        # Given: an orchestrator that read what the run was given, started the generator, and
+        # after it read only some lines of the work
+        # When: it records its reading with the script
+        # Then: it is stopped, naming the work to read whole; once it reads the work whole, it
+        # goes through
+        given = [
+            self.read(p)
+            for p in (CALL["ccs"], "README.md", "checklists/readme.md")
+            + ("notes/readme.decisions.md", "docs/start.md")
+        ]
+        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
+        part = ("Bash", {"command": "sed -n '1,10p' README.md"})
+        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.given_record(ID, json.dumps(CALL), *given, generator, part)
+        self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "README.md")
+        self.given_record(ID, json.dumps(CALL), *given, generator, part, self.read("README.md"))
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
