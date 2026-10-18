@@ -85,13 +85,9 @@ c. **Write each prompt, a skill or an agent, with `readability.md` and `prompt.m
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds
      the prompts' slips, not whether the plugin keeps its promises.
 
-d. **Write the hooks, with `code.md` open, that check the process the prompts' steps set:** a step begun before the
-   steps ahead of it are done, a step left out, an input not read or an output not written where
-   its step says. Each stop says which step went wrong and what that step needs. Put each check in
-   its own named file, with one entry file per hook event, as the official `hookify` does.
-   - Rationale: the steps say what must happen and the hooks see whether it did, so a slip is
-     caught as it is made, not found later in a result that looks right; each check is read, fixed
-     and tested on its own.
+d. **Write the hooks the prompts' steps call for, with `prompt.md` and `code.md` open.** Put each
+   check in its own named file, with one entry file per hook event, as the official `hookify` does.
+   - Rationale: each check is read, fixed and tested on its own.
 
 e. **Try the unit as its user**, with the code that runs it kept in `dev/<plugin>/trials/`, out of
    the line count, on the models the plugin's agents name and never a smaller one. Judge it from

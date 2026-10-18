@@ -17,6 +17,10 @@ A prompt is worked out in this order, each step the ground of the next:
    when it knows both. What only the user can decide is set apart here, outside the role.
 3. From the role, decide the steps that bring the same result each time it is run, with the form
    of what each step takes in and hands on.
+4. From the steps, decide what hooks check on every run, where the AI's tool calls show it: they
+   limit the AI to what its steps allow, and hold it at a step until what the step must do is done.
+   A hook backs the step and its reason and does not stand in for them, since what shows in no
+   tool call, such as what the AI weighs, rests on them alone.
 
 Each item of `readability.md` also applies to a prompt.
 
@@ -162,19 +166,6 @@ calls fails.
 Why: the AI writes words between its tool calls on some runs and not on others, so what rests on
 them reaches the user only sometimes; a hook shows it on every run.
 
-### B-25: Each step seen done by a hook
-
-Is the AI stopped, while it can still do it, when it leaves out a step that must happen every time
-and that shows in its tool calls?
-
-Look at: each step of B-3 that shows in the AI's tool calls, such as a file read whole, a command
-run or a place written, checked by a hook that names the step and why it is there; one left to the
-AI's word alone fails. What shows in no tool call, such as what the AI weighs, stays with the step
-and its reason.
-
-Why: an AI given a clear step and its reason still leaves it out on some runs, and the result looks
-right; a hook sees it on every run, while the step can still be done.
-
 ### B-13: Details read only when needed
 
 Does the AI read each detail it needs only on some runs on those runs alone?
@@ -266,6 +257,30 @@ matched to something the prompt asks; a shared thing matched to nothing fails.
 
 Why: the AI takes what its examples share as part of what is asked, so a likeness left by chance is
 copied too.
+
+### B-26: Each step's bounds held by a hook
+
+Is the AI stopped when it does what no step allows and its tool calls show it?
+
+Look at: each bound the steps set, such as the inputs of B-21, the places a step writes and an
+action hard to undo, held by a hook that stops a tool call outside it and says why; one left to the
+AI's word alone fails.
+
+Why: what an AI does outside its steps on some run, such as reading a file it was not given, shapes
+the work unseen; a hook stops it on every run.
+
+### B-25: Each step seen done by a hook
+
+Is the AI stopped, while it can still do it, when it leaves out a step that must happen every time
+and that shows in its tool calls?
+
+Look at: each step of B-3 that shows in the AI's tool calls, such as a file read whole, a step begun
+only once those before it are done, a command run or a place written, checked by a hook that names
+the step and why it is there; one left to the AI's word alone fails. What shows in no tool call,
+such as what the AI weighs, stays with the step and its reason.
+
+Why: an AI given a clear step and its reason still leaves it out on some runs, and the result looks
+right; a hook sees it on every run, while the step can still be done.
 
 ### B-24: What was decided carried out in full
 
