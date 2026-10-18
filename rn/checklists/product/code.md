@@ -12,7 +12,10 @@ holds, and so changes the code at once and with confidence.
 Code is written in this order, each step the ground of the next:
 
 1. Check the inputs: the requirements, how it is made, how it is checked and the development rules
-   are all there, and settle what the code needs. What is missing goes back to whoever gave it.
+   are all there, and settle what the code needs, among it a tool for each of statement and branch
+   coverage (C0/C1), mutation testing and property-based testing in its language, chosen from what
+   is current and kept up now. What is missing, such as a stable tool for one of them, goes back to
+   whoever gave it.
 2. Design it: split it into functions and modules by what each takes on, each taking on one thing
    alone, with each piece of knowledge in one place; decide what each takes in and gives back, and
    where what comes from outside is checked. These are the units the tests are written for.
@@ -126,9 +129,9 @@ Why: the tests passing give trust only in the behaviors they hold.
 When the behavior a test checks is broken in the code, does the maintainer learn of it from that
 test failing?
 
-Look at: a tool that, on every run of the checks, breaks each line of the code in each way it can,
-such as a comparison, an operator or a value replaced, and runs the tests on each; a break no test
-fails on fails.
+Look at: mutation testing on every run of the checks, which makes each small change to the code a
+fault could, such as a comparison, an operator or a value replaced, and runs the tests on each; a
+mutant no test fails on, a survivor, fails.
 
 Why: a test that does not fail when its behavior breaks looks the same as one that works, and lets
 a fault pass.
@@ -162,12 +165,13 @@ type checker, run with the settings kept in the repository, pass on the code and
 Why: what a tool finds on every run needs no review spent on it, and a reader finds it only
 sometimes.
 
-### B-12: Every line and branch run
+### B-12: Every statement and branch run
 
-Can the maintainer see, from the coverage of the whole test run, that every line and every branch
-of the code is taken by some test?
+Can the maintainer see, from the coverage of the whole test run, that every statement and every
+branch of the code is taken by some test?
 
-Look at: the coverage report, counting branches as well as lines, lists none as not run.
+Look at: the statement coverage (C0) and the branch coverage (C1) of the whole test run, on every
+run of the checks; any statement or branch not run fails.
 
 Why: a line or branch no test takes may be broken without any test failing.
 
@@ -179,12 +183,12 @@ which environment, one the tests cannot make, decides whether the line runs?
 Why: a line left out without its reason cannot be told from a line left out to make the count pass,
 and the next maintainer keeps the gap.
 
-### B-16: A break left out says why
+### B-16: Mutants left out say why
 
-For each break of the code left out of B-8's run, can the maintainer tell from what is written
-beside it why no behavior changes with it, such as a type annotation never run?
+For each mutant left out of the mutation testing, can the maintainer tell from what is written
+beside it why no behavior changes with it, such as one in a type annotation never run?
 
-Why: a break left out without its reason cannot be told from one left out to make the run pass,
+Why: a mutant left out without its reason cannot be told from one left out to make the run pass,
 and the next maintainer keeps the gap.
 
 ### B-17: A behavior holds for every input of its kind
@@ -192,9 +196,9 @@ and the next maintainer keeps the gap.
 For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
 from a test that it holds for the inputs no example names?
 
-Look at: a test that makes many inputs of the kind and checks a property every one must have, such
-as a parse giving back what was written; with the inputs fixed on runs that must give the same
-result each time.
+Look at: property-based testing of each such behavior, on every run of the checks, which makes many
+inputs of the kind and checks a property every one must have, such as a parse giving back what was
+written, with its inputs fixed so that each run gives the same result (B-10).
 
 Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 
