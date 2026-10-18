@@ -1,4 +1,6 @@
+import contextlib
 import copy
+import io
 import json
 import os
 import runpy
@@ -36,7 +38,24 @@ class TestUsage(RepoTest):
         # arguments
         # When: it is run
         # Then: it prints the usage, which names every command with its arguments, and stops
-        for argv in [[], ["go"], ["start"], ["next"], ["given"], ["record", "r", "1"]]:
+        # Each command also with one argument too many, and words sorting before and after every
+        # command with as many arguments as a command takes.
+        for argv in [
+            [],
+            ["go"],
+            ["aaa", "r"],
+            ["zzz", "r"],
+            ["aaa", "r", "1", "1"],
+            ["zzz", "r", "1", "1"],
+            ["start"],
+            ["start", "{}", "x"],
+            ["next"],
+            ["next", "r", "x"],
+            ["given"],
+            ["given", "r", "x"],
+            ["record", "r", "1"],
+            ["record", "r", "1", "1", "x"],
+        ]:
             with self.subTest(argv=argv):
                 self.assertEqual(self.turn(*argv), (1, USAGE + "\n"))
 
@@ -47,6 +66,39 @@ class TestUsage(RepoTest):
         with mock.patch.object(sys, "argv", ["turn.py"]), self.assertRaises(SystemExit) as end:
             runpy.run_path(os.path.join(SCRIPTS, "turn.py"), run_name="__main__")
         self.assertEqual(end.exception.code, 1)
+
+    def test_the_script_takes_the_arguments_after_its_own_path(self):
+        # Given: no run going
+        # When: the orchestrator runs the script by its path with a command and its argument
+        # Then: the command is run on that argument, and stops on the run not going
+        out = io.StringIO()
+        argv = ["turn.py", "given", "none.json"]
+        with (
+            mock.patch.object(sys, "argv", argv),
+            contextlib.redirect_stdout(out),
+            self.assertRaises(SystemExit) as end,
+        ):
+            runpy.run_path(os.path.join(SCRIPTS, "turn.py"), run_name="__main__")
+        self.assertEqual(end.exception.code, 1)
+        self.assertIn("no run is going with its result at none.json", out.getvalue())
+
+    def test_what_is_printed_keeps_letters_beyond_ascii_as_they_are(self):
+        # Given: a call whose checklist, work and result are named in Japanese
+        # When: the run is started, the generator's input asked for and the check given
+        # Then: each is printed with the names as they are written
+        os.rename("checklists/readme.md", "checklists/読む.md")
+        ccs = dict(CCS, retrieved_artifacts=[{"checklist": "checklists/読む.md"}])
+        ccs["focal_entities"] = [{"deliverable": "はじめに.md"}, CCS["focal_entities"][1]]
+        self.write_json(CALL["ccs"], ccs)
+        call = dict(CALL, result=".tasks/結果.json")
+        code, out = self.turn("start", json.dumps(call))
+        self.assertIn("checklists/読む.md", out)
+        items = [dict(i, can="the template") for i in json.loads(out)["check"]]
+        check = json.dumps({"items": items, "questions": []})
+        code, out = self.turn("next", call["result"], stdin=check)
+        self.assertIn("結果.json", out)
+        code, out = self.turn("given", call["result"])
+        self.assertIn("はじめに.md", out)
 
 
 class TestStart(RepoTest):
@@ -163,13 +215,14 @@ class TestStartStops(RepoTest):
         # Then: it stops, naming what is missing
         for key in ("ccs", "result", "kind"):
             with self.subTest(key=key):
-                self.stops(call_with(**{key: None}), f'"{key}"')
+                self.stops(call_with(**{key: None}), f'the call has no "{key}"')
 
     def test_a_call_with_an_unknown_key_stops(self):
         # Given: a call with a key turn does not take, at the top or among the kinds
         # When: the run is started
-        # Then: it stops, naming the key and those turn takes
+        # Then: it stops, naming the key, the first of them by name, and those turn takes
         self.stops(dict(CALL, out="x.json"), '"out"', '"ccs", "kind" and "result"')
+        self.stops(dict(CALL, out="x.json", extra="y"), 'holds "extra"')
         call = copy.deepcopy(CALL)
         call["kind"]["reader"] = "audience"
         self.stops(call, '"reader"', '"receiver"')
@@ -189,22 +242,26 @@ class TestStartStops(RepoTest):
         self.stops(call_with(receiver="reader"), '"reader"', CALL["ccs"])
 
     def test_a_ccs_that_is_missing_or_not_a_ccs_stops(self):
-        # Given: a CCS that is not there, not JSON, or not parts of entries of one kind each
+        # Given: a CCS that is not there, not JSON, or not parts of entries of one kind each, the
+        # rest of it a CCS of the call's kinds
         # When: the run is started
-        # Then: it stops, saying what the CCS must be
+        # Then: it stops, saying the CCS is not there, or what a CCS must be
+        self.stops(call_with(ccs="missing.json"), "the CCS missing.json is not there")
         bad = {
-            "missing.json": None,
             "text.json": "not json",
             "list.json": "[]",
-            "part.json": json.dumps({"focal_entities": {"deliverable": "README.md"}}),
-            "entry.json": json.dumps({"focal_entities": [{"a": "x", "b": "y"}]}),
-            "value.json": json.dumps({"focal_entities": [{"deliverable": 3}]}),
+            "part.json": {"notes": {"deliverable": "README.md"}},
+            "entry.json": {"notes": [{"a": "x", "b": "y"}]},
+            "empty.json": {"notes": [{}]},
+            "word.json": {"notes": ["x"]},
+            "value.json": {"notes": [{"deliverable": 3}]},
         }
         for name, text in bad.items():
             with self.subTest(name=name):
-                if text is not None:
-                    self.write(name, text)
-                self.stops(call_with(ccs=name), name)
+                if isinstance(text, dict):
+                    text = json.dumps(dict(CCS, **text))
+                self.write(name, text)
+                self.stops(call_with(ccs=name), f"{name} is not a CCS")
 
     def test_a_checklist_that_is_missing_or_has_no_items_stops(self):
         # Given: a CCS naming a checklist that is not there, or one with no items

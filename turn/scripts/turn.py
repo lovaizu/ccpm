@@ -7,7 +7,8 @@ import os
 import sys
 from typing import IO
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Not mutated: any place on the path finds the module.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # pragma: no mutate
 
 import run
 from call import Stop
@@ -41,5 +42,6 @@ def main(argv: list[str], stdin: IO[str]) -> int:
     return 0
 
 
-if __name__ == "__main__":
+# Not mutated: __name__ is that very string, so `is` or `<=` mean the same.
+if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.argv[1:], sys.stdin))

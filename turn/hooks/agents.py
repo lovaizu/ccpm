@@ -13,9 +13,9 @@ import re
 import sys
 from typing import Any
 
-sys.path.insert(
-    0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
-)
+SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
+# Not mutated: any place on the path finds the module.
+sys.path.insert(0, SCRIPTS)  # pragma: no mutate
 
 import run
 

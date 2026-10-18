@@ -1,0 +1,13 @@
+# Mutation testing of turn, run from the top of the repository on a copy that may be changed.
+[cosmic-ray]
+module-path = "turn"
+timeout = 30.0
+excluded-modules = []
+test-command = "python -m unittest discover -s dev/turn/tests"
+
+[cosmic-ray.distributor]
+name = "local"
+
+# turn's code has `|` only in type annotations, which are never run, so no change to it is a fault.
+[cosmic-ray.filters.operators-filter]
+exclude-operators = ["core/ReplaceBinaryOperator_BitOr_.*"]

@@ -6,7 +6,8 @@ import os
 import sys
 from typing import IO
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Not mutated: any place on the path finds the module.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # pragma: no mutate
 
 import agents  # noqa: F401  (puts turn's scripts on the path the checks import from)
 from checks import read_whole, role_reply, run_returned
@@ -24,5 +25,6 @@ def main(stream: IO[str]) -> int:
     return 0
 
 
-if __name__ == "__main__":
+# Not mutated: __name__ is that very string, so `is` or `<=` mean the same.
+if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.stdin))
