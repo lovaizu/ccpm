@@ -46,39 +46,27 @@ readers would, and settle each finding by fixing the decision or principle it co
 
 **List the units to build. A unit is the smallest slice through which the user meets one or more of
 the key results in the UX, from start to end. The first unit moves one key result by the
-thinnest path.** Keep each unit to the simplest mechanism that serves it, and add no
-special path for a case an existing check already stops.
+thinnest path.**
 
 - Rationale: a unit run end to end shows early whether the plugin keeps its promise, and the first
-  shows soonest whether the user would choose it at all; every special path is one more thing for
-  users to learn and builders to keep right.
+  shows soonest whether the user would choose it at all.
 
 ### 5. Build each unit
 
 **For each unit, in order, do a to e.**
 
 a. **Write its tests in `dev/<plugin>/tests/` with `unittest` and `code.md` open, run them and
-   see them fail.** Feed in what the code would receive, and check a case it stops as well as one
-   it lets through. Name each test by what must happen, as one sentence, and mark its body
-   `# Given: <the situation>`, `# When: <what is done>`, `# Then: <what must be so>`, each in plain
-   words, not in terms of the code.
+   see them fail.**
    - Rationale: a test written after the code is fitted to what the code does, not to what it must
-     do; a test never seen failing may check nothing; a check that never stops anything looks the
-     same as one that works; a Then whose code checks less than its words say stands out.
+     do.
 
 b. **Write the code with `code.md` open until the tests pass.** What runs on users' machines is
    Python 3, 3.9 or later, with the standard library only, and the README says so; a script that
-   only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON; where they need only a
-   part, they read and change it with `jq`, and where the purpose needs it read whole, they read it
-   whole. When a tool the plugin runs on, such as python3 or jq, is missing, the plugin stops and
-   says how to install it. The tests run every line the plugin runs; delete a line no test has a
-   reason to run, and mark `# pragma: no cover`, with its reason beside it, only where whether a
-   line runs depends on an environment the tests cannot make. CI counts the lines and branches on
-   every push and fails on any not run.
-   - Rationale: what the plugin makes can be wrong, so it is held by tests, and python3 is wherever
-     git is while Node.js may not be; an agent changes only the part it needs with a tool it
-     already knows, and a judgment made on a part where the whole was needed cannot be told from
-     one made on the whole; a skipped check goes unnoticed.
+   only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON;
+   where they need only a part, they read and change it with `jq`. CI counts the lines and branches
+   on every push and fails on any not run.
+   - Rationale: python3 is wherever git is while Node.js may not be; an agent changes only the part
+     it needs with a tool it already knows; a skipped check goes unnoticed.
 
 c. **Write each prompt, a skill or an agent, with `readability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**
@@ -89,19 +77,13 @@ d. **Write the hooks the prompts' steps call for, with `prompt.md` and `code.md`
    check in its own named file, with one entry file per hook event, as the official `hookify` does.
    - Rationale: each check is read, fixed and tested on its own.
 
-e. **Try the unit as its user**, with the code that runs it kept in `dev/<plugin>/trials/`, out of
-   the line count, on the models the plugin's agents name and never a smaller one. Judge it from
-   the JSONL of every conversation and agent it started, by the design's Verification. Try the flow
-   of the steps apart from what a step makes, each on the smallest task that still shows it. A
-   trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a
-   branch of its own, and the branch, its pull requests and whatever else it made there are removed
-   when it ends.
-   - Rationale: CI cannot start Claude Code, so each run is its own check, and a smaller model's
-     slips are not the plugin's; the outcome shows that something went wrong, the records show
-     where; a trial that tries the flow and the work at once costs the whole work each time it
-     runs, and, failing, does not say which went wrong; pull requests and pushes a run makes stay
-     out of every repository people use, `main` there takes nothing but through a reviewed pull
-     request, and two runs at once, or one left behind, would mix with the next.
+e. **Try the unit as its user, by the design's Verification**, with the code that runs it kept in
+   `dev/<plugin>/trials/`, out of the line count. A trial that needs a real GitHub repository runs
+   in `lovaizu/playground`, one at a time, on a branch of its own, and the branch, its pull requests
+   and whatever else it made there are removed when it ends.
+   - Rationale: CI cannot start Claude Code, so each run is its own check; pull requests and pushes
+     a run makes stay out of every repository people use, `main` there takes nothing but through a
+     reviewed pull request, and two runs at once, or one left behind, would mix with the next.
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
 to what the README and the design say it should be.**

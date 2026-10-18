@@ -108,6 +108,16 @@ Do the interactions between the logical components achieve every user story?
 
 Why: components that each do their part achieve no story unless their interactions do.
 
+### B-11: Each case met by a mechanism already there
+
+Can the reader tell that each case the stories meet is taken by a component or a check already
+there, with no path of its own?
+
+Look at: each path or component that serves one case alone; one for a case another component already
+handles or a check already stops fails.
+
+Why: every path of its own is one more thing for users to learn and builders to keep right.
+
 ### B-4: No technology before it is chosen
 
 Are the user stories and the logical components free of technology?
@@ -142,6 +152,28 @@ Can the reader tell what is checked of each physical unit, and the bar it must p
 
 Why: the whole is built from units checked one by one; a unit left unchecked, or checked to no
 stated bar, breaks the whole where no check shows it.
+
+### B-12: An AI part checked on the model it names
+
+Can the reader tell that each part run by an AI is checked on the model the part names, never a
+smaller one?
+
+Why: a smaller model's slips are not the product's, and the product's own pass unseen beside them.
+
+### B-13: An AI part judged from its records
+
+Can the reader tell that each part run by an AI is judged from the records of every conversation
+and agent it started, not from its outcome alone?
+
+Why: the outcome shows that something went wrong; only the records show where.
+
+### B-14: The flow checked apart from the work
+
+Can the reader tell that the flow of an AI part's steps is checked apart from what a step makes,
+each on the smallest task that still shows it?
+
+Why: a check of the flow and the work at once costs the whole work each time it runs, and, failing,
+does not say which went wrong.
 
 ### B-9: Each story shown achieved
 

@@ -116,8 +116,8 @@ there to keep the work right stops the work.
 For each behavior the requirements ask of the code, can the maintainer learn from some test that
 the code does it?
 
-Look at: each such behavior, among them each check on what the code takes in, matched to a test
-whose Then checks it; a behavior left without one fails.
+Look at: each such behavior, among them each check on what the code takes in, both a case it stops
+and one it lets through, matched to a test whose Then checks it; a behavior left without one fails.
 
 Why: the tests passing give trust only in the behaviors they hold.
 
