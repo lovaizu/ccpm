@@ -3,11 +3,9 @@
 module-path = "turn"
 timeout = 30.0
 excluded-modules = []
-test-command = "python -m unittest discover -f -s dev/turn/tests"
+# The type checker runs first: a change to a type annotation changes no behavior a test could see,
+# and the type checker is what checks annotations.
+test-command = "sh -c 'pyrefly check --search-path dev/turn/tests --search-path dev/turn/trials --search-path dev/turn/trials/flow --search-path dev/turn/trials/readme --search-path dev/turn/trials/roles --search-path turn/hooks --search-path turn/hooks/checks --search-path turn/scripts turn dev/turn && python -m unittest discover -f -s dev/turn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"
-
-# turn's code has `|` only in type annotations, which are never run, so no change to it is a fault.
-[cosmic-ray.filters.operators-filter]
-exclude-operators = ["core/ReplaceBinaryOperator_BitOr_.*"]

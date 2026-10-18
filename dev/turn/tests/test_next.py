@@ -208,6 +208,16 @@ class TestReaders(ReadTest):
             },
         )
 
+    def test_the_result_is_written_one_key_or_value_to_a_line(self):
+        # Given: a run that returns
+        # When: its result is written
+        # Then: each key and each value of a list stands on a line of its own, indented one space
+        # a level, so the calling AI and the user can read it
+        self.learnt(self.through(EVALUATED))
+        with open(RESULT, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+        self.assertEqual(lines[:4], ["{", ' "work": [', '  "README.md"', " ],"])
+
     def test_a_result_at_the_top_of_the_repository_is_written(self):
         # Given: a run whose result goes at the top of the repository, in no folder
         # When: it returns

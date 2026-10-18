@@ -328,8 +328,8 @@ def item_problems(
             continue
         seen.append(key)
         held = [s for s in form.shapes if all(k in item for k in s)]
-        # Not mutated: both sets taken away lie inside the item, so `^` gives the same.
-        rest = set(item) - {"checklist", "item"} - {k for s in held for k in s}  # pragma: no mutate
+        shaped = [k for s in held for k in s]
+        rest = [k for k in item if k not in ("checklist", "item") and k not in shaped]
         if len(held) != 1 or rest:
             said.append(f"{name} must hold {allowed}")
             continue

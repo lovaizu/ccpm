@@ -13,6 +13,16 @@ FORMS = {
     "evaluator": forms.GOOD,
     "learner": forms.LEARNT,
 }
+# The items each role judges, and the records its quotes and commands are found in: the learner
+# judges the items not waiting on a question and quotes the records it was shown; every other role
+# judges every item, and its commands are found in its own record.
+JUDGES = {
+    "learner": lambda kept, own: (kept["learning"], tuple(run.learnt_from(kept))),
+}
+
+
+def everything(kept: dict[str, Any], own: str) -> tuple[list[dict[str, str]], tuple[str, ...]]:
+    return kept["items"], (own,)
 
 
 def check(event: dict[str, Any]) -> list[str]:
@@ -24,13 +34,7 @@ def check(event: dict[str, Any]) -> list[str]:
     if result is None or kept is None:
         return []
     reply = str(event.get("last_assistant_message", ""))
-    # The learner judges the items not waiting on a question and quotes the records it was shown;
-    # a role's commands are found in its own record.
-    # Not mutated: of the roles that reply, the learner's name sorts last.
-    if role == "learner":  # pragma: no mutate
-        judged, kept_records = kept["learning"], tuple(run.learnt_from(kept))
-    else:
-        judged, kept_records = kept["items"], (event["agent_transcript_path"],)
+    judged, kept_records = JUDGES.get(str(role), everything)(kept, event["agent_transcript_path"])
     said = forms.check(
         reply,
         judged,

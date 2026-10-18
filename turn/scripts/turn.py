@@ -1,47 +1,8 @@
-"""What turn:up runs for what must come out the same on every run: the call checked and the run
-started, and each step's outcome taken, giving the agent to start next, the items to decide, or the
-result written; and what each role runs for what it is given, and the learner for each record."""
+"""What turn:up runs for what must come out the same on every run, and each role for what it is
+given: the steps are run.py's. Python looks first in this file's folder, so run.py is found."""
 
-import json
-import os
 import sys
-from typing import IO
-
-# Not mutated: any place on the path finds the module.
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # pragma: no mutate
 
 import run
-from call import Stop
 
-USAGE = (
-    "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your reading or decision as JSON>]\n"
-    "       turn.py given <result>\n"
-    "       turn.py record <result> <record number> <page>"
-)
-
-
-def main(argv: list[str], stdin: IO[str]) -> int:
-    """Prints what the orchestrator does next as JSON and gives 0, or prints what was wrong and
-    gives 1."""
-    try:
-        if argv[:1] == ["start"] and len(argv) == 2:
-            print(json.dumps(run.start(argv[1]), ensure_ascii=False))
-        elif argv[:1] == ["next"] and len(argv) == 2:
-            print(json.dumps(run.next_step(argv[1], stdin.read()), ensure_ascii=False))
-        elif argv[:1] == ["given"] and len(argv) == 2:
-            print(json.dumps(run.given(argv[1]), ensure_ascii=False))
-        elif argv[:1] == ["record"] and len(argv) == 4:
-            print(run.record(argv[1], argv[2], argv[3]))
-        else:
-            print(USAGE)
-            return 1
-    except Stop as stop:
-        print(stop)
-        return 1
-    return 0
-
-
-# Not mutated: __name__ is that very string, so `is` or `<=` mean the same.
-if __name__ == "__main__":  # pragma: no mutate
-    sys.exit(main(sys.argv[1:], sys.stdin))
+sys.exit(run.main(sys.argv[1:], sys.stdin))

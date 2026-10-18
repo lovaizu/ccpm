@@ -10,6 +10,17 @@ import agents
 import run
 
 TOOLS = {"Read": "file_path", "Grep": "path", "Glob": "path"}
+# What each agent may read: the orchestrator and the generator, what the run was given; the first
+# user and the evaluator, what the receiver has; the learner, the records it is shown.
+GIVEN = {
+    "up": lambda kept: kept["given"],
+    "generator": lambda kept: kept["given"],
+    "first-user": lambda kept: kept["shown"],
+    "evaluator": lambda kept: kept["shown"],
+    "learner": run.learnt_from,
+}
+# The agent that records its readings where the run is kept, and so reads it.
+KEEPS = ("up",)
 OPERATORS = {";", "|", "||", "&", "&&", ">", ">>", "<", "<<", "(", ")", "`"}
 
 
@@ -21,23 +32,19 @@ def check(event: dict[str, Any]) -> list[str]:
     kept = agents.running(event)
     if kept is None:
         return []
-    if role in ("up", "generator"):
-        given = kept["given"]
-    # Not mutated: of the roles left, the learner's name sorts last.
-    elif role == "learner":  # pragma: no mutate
-        given = run.learnt_from(kept)
-    else:
-        given = kept["shown"]
+    given = GIVEN[role](kept)
     cwd = os.path.realpath(event["cwd"])
     places = [os.path.join(cwd, p) for p in given] + [agents.TURN]
-    # Not mutated: of the tools checked, Bash's name sorts first.
-    if tool == "Bash":  # pragma: no mutate
+    if tool in TOOLS:
+        path = event["tool_input"].get(TOOLS[tool])
+        if path and within(os.path.realpath(os.path.join(cwd, path)), places):
+            return []
+    else:
         # A command reads through the paths it names; one in the repository and outside what the
         # run was given is a read of it, while the repository's top is where the command runs.
         # Where the run is kept holds every role's prompt and reply, so the orchestrator alone,
         # which records its reading there, reads it; git reads the history of every file.
-        # Not mutated: "up" sorts after each other name of turn's agents.
-        orchestrator = role == "up"  # pragma: no mutate
+        orchestrator = role in KEEPS
         if orchestrator:
             places.append(os.path.join(cwd, kept["call"]["result"]))
         said = words(event)
@@ -50,10 +57,6 @@ def check(event: dict[str, Any]) -> list[str]:
         named = [os.path.realpath(os.path.join(cwd, w)) for w in said]
         inside = [p for p in named if p.startswith(cwd + os.sep) and os.path.exists(p)]
         if "git" not in said and all(within(p, places) for p in inside):
-            return []
-    else:
-        path = event["tool_input"].get(TOOLS[tool])
-        if path and within(os.path.realpath(os.path.join(cwd, path)), places):
             return []
     return [f"read what you were given alone: {', '.join(given)} and turn's own files"]
 

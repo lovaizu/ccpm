@@ -18,11 +18,10 @@ sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
 
 import agents  # noqa: F401  (the hooks' reading of an event, for its own tests)
+import events
 import forms  # noqa: F401  (the forms, for their own tests)
-import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
 import records
 import run
-import subagentstop
 from checks import (  # noqa: F401  (each check, for its own tests)
     call_given,
     no_commit,
@@ -32,7 +31,9 @@ from checks import (  # noqa: F401  (each check, for its own tests)
     start_as_called,
 )
 
-import turn
+# The checks each entry of the hooks runs, which a test hands an event as that entry would.
+pretooluse = events.PRETOOLUSE
+subagentstop = events.SUBAGENTSTOP
 
 CHECKLIST = """# README
 
@@ -152,7 +153,7 @@ class RepoTest(unittest.TestCase):
     def turn(self, *argv, stdin=""):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
-            code = turn.main(list(argv), io.StringIO(stdin))
+            code = run.main(list(argv), io.StringIO(stdin))
         return code, out.getvalue()
 
     def started(self, call=None):
@@ -225,10 +226,10 @@ class RepoTest(unittest.TestCase):
             event.update(agent_id=ID, agent_type=agent_type)
         return event
 
-    def hook(self, entry, event):
+    def hook(self, checks, event):
         err = io.StringIO()
         with contextlib.redirect_stderr(err):
-            code = entry.main(io.StringIO(json.dumps(event)))
+            code = events.main(checks, io.StringIO(json.dumps(event)))
         return code, err.getvalue()
 
     def replied(self, agent_type, prompt, reply, *tool_uses):

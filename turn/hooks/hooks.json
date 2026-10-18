@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"",
+            "command": "command -v python3 >/dev/null 2>&1 || exit 0; PYTHONPATH=\"${CLAUDE_PLUGIN_ROOT}/scripts${PYTHONPATH:+:$PYTHONPATH}\" exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"",
             "timeout": 10
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"",
+            "command": "command -v python3 >/dev/null 2>&1 || exit 0; PYTHONPATH=\"${CLAUDE_PLUGIN_ROOT}/scripts${PYTHONPATH:+:$PYTHONPATH}\" exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/subagentstop.py\"",
             "timeout": 10
           }
         ]

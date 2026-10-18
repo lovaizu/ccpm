@@ -2,6 +2,7 @@ import io
 import json
 import os
 import runpy
+import subprocess
 import sys
 from unittest import mock
 
@@ -647,6 +648,30 @@ class TestReads(HookTest):
 
 
 class TestEntries(HookTest):
+    def test_each_entry_runs_as_hooks_json_says_before_a_module_of_the_same_name(self):
+        # Given: a folder on PYTHONPATH holding a module named as one of turn's scripts, which
+        # breaks when imported
+        # When: Claude Code runs each hook's command from hooks.json, handed an event that concerns
+        # turn not at all
+        # Then: it exits without stopping anything, as turn's own scripts are found first
+        self.write("elsewhere/run.py", "raise SystemExit('not turn')\n")
+        with open(os.path.join(HOOKS, "hooks.json"), encoding="utf-8") as f:
+            hooks = json.load(f)["hooks"]
+        event = json.dumps(self.tool(None, "Bash", command="ls"))
+        env = dict(os.environ, CLAUDE_PLUGIN_ROOT=TURN, PYTHONPATH="elsewhere")
+        for name, entries in hooks.items():
+            with self.subTest(name=name):
+                command = entries[0]["hooks"][0]["command"]
+                done = subprocess.run(
+                    ["sh", "-c", command],
+                    check=False,
+                    input=event,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual((done.returncode, done.stderr), (0, ""))
+
     def test_each_entry_runs_from_the_shell(self):
         # Given: Claude Code runs each entry file by its path
         # When: it hands it an event that concerns turn not at all

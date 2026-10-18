@@ -4,6 +4,7 @@ import io
 import json
 import os
 import runpy
+import subprocess
 import sys
 from unittest import mock
 
@@ -66,6 +67,21 @@ class TestUsage(RepoTest):
         with mock.patch.object(sys, "argv", ["turn.py"]), self.assertRaises(SystemExit) as end:
             runpy.run_path(os.path.join(SCRIPTS, "turn.py"), run_name="__main__")
         self.assertEqual(end.exception.code, 1)
+
+    def test_the_script_finds_its_own_modules_before_any_of_the_same_name(self):
+        # Given: a folder on PYTHONPATH holding a module named as one of turn's scripts, which
+        # breaks when imported
+        # When: the orchestrator runs the script by its path from the shell, with no command
+        # Then: it prints the usage, as its own modules are found first
+        self.write("elsewhere/run.py", "raise SystemExit('not turn')\n")
+        done = subprocess.run(
+            ["python3", os.path.join(SCRIPTS, "turn.py")],
+            check=False,
+            env=dict(os.environ, PYTHONPATH="elsewhere"),
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual((done.returncode, done.stdout), (1, USAGE + "\n"))
 
     def test_the_script_takes_the_arguments_after_its_own_path(self):
         # Given: no run going

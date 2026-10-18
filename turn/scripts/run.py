@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any
+from typing import IO, Any
 
 import call
 import forms
@@ -15,16 +15,45 @@ GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
 EVALUATOR = "turn:evaluator"
 LEARNER = "turn:learner"
+USAGE = (
+    "usage: turn.py start '<call JSON>'\n"
+    "       turn.py next <result> [< <your reading or decision as JSON>]\n"
+    "       turn.py given <result>\n"
+    "       turn.py record <result> <record number> <page>"
+)
+
+
+def main(argv: list[str], stdin: IO[str]) -> int:
+    """What turn.py runs: the call checked and the run started, each step's outcome taken, giving
+    the agent to start next, the items to decide, or the result written; what each role is given,
+    and each record for the learner. Prints what comes next as JSON and gives 0, or prints what
+    was wrong and gives 1."""
+    try:
+        if argv[:1] == ["start"] and len(argv) == 2:
+            print(json.dumps(start(argv[1]), ensure_ascii=False))
+        elif argv[:1] == ["next"] and len(argv) == 2:
+            print(json.dumps(next_step(argv[1], stdin.read()), ensure_ascii=False))
+        elif argv[:1] == ["given"] and len(argv) == 2:
+            print(json.dumps(given(argv[1]), ensure_ascii=False))
+        elif argv[:1] == ["record"] and len(argv) == 4:
+            print(record(argv[1], argv[2], argv[3]))
+        else:
+            print(USAGE)
+            return 1
+    except call.Stop as stop:
+        print(stop)
+        return 1
+    return 0
 
 
 def start(text: str) -> dict[str, Any]:
     """Starts the run the call asks for, and gives the items the orchestrator checks can get their
     Good before any work is made."""
     run = call.check(call.parse(text))
-    # Not mutated: only whether the key is there is read.
-    run["check"] = True  # pragma: no mutate
+    # The run waits on the orchestrator's check of these items.
+    run["check"] = run["items"]
     write(run["call"]["result"], {"running": run})
-    return {"check": run["items"]}
+    return {"check": run["check"]}
 
 
 def generator_given(run: dict[str, Any], sent_back: list, unsourced: list) -> dict[str, Any]:
@@ -114,7 +143,7 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         )
     if "check" in run:
         # Asked with no check, the items to check are shown again.
-        return checked(run, text) if text.strip() else {"check": run["items"]}
+        return checked(run, text) if text.strip() else {"check": run["check"]}
     # Each role's record is kept for the learner, which looks for what makes the Good in what the
     # roles did.
     record = run["next"].get("record")
@@ -135,13 +164,13 @@ def next_step(result: str, text: str) -> dict[str, Any]:
             f"turn: {agent} has not replied; start {agent} with the prompt turn.py printed last,"
             " and wait for its reply"
         )
-    if agent == FIRST_USER:
-        run["read"] = reply["items"]
-        return ask(run, EVALUATOR, dict(reader_given(run, "evaluator"), reading=reply["items"]))
-    # Not mutated: only the evaluator and the learner come here, and the learner's name sorts after.
-    if agent == EVALUATOR:  # pragma: no mutate
-        return compare(run, reply["items"])
-    return offer(run, reply)
+    return REPLIED[agent](run, reply)
+
+
+def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    """Keeps the first user's reading, and has the evaluator hold it to the items."""
+    run["read"] = reply["items"]
+    return ask(run, EVALUATOR, dict(reader_given(run, "evaluator"), reading=reply["items"]))
 
 
 def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -176,12 +205,15 @@ def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
     return ask(run, FIRST_USER, reader_given(run, "first-user"))
 
 
-def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
-    """Sets the orchestrator's findings beside the evaluator's Goods: where they agree, the run
-    returns; where they differ, the orchestrator decides those items."""
-    evaluated = {key(i): judged(i) for i in goods}
+def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    """Sets the orchestrator's findings beside the evaluator's Goods: where they agree, the
+    learner learns from the reading; where they differ, the orchestrator decides those items."""
+    evaluated = {key(i): judged(i) for i in reply["items"]}
     read = {key(i): judged(i) for i in run["read"]}
     findings = run["findings"]
+    # An item is judged apart where one of the two gives it a Good and the other none.
+    found = {key(f) for f in findings["items"] if "good" in f}
+    differ = found ^ set(evaluated)
     apart = [
         dict(
             named(f),
@@ -190,8 +222,7 @@ def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
             first_user=read.get(key(f)),
         )
         for f in findings["items"]
-        # Not mutated: both sides are True or False, so `is not` is `!=`.
-        if ("good" in f) != (key(f) in evaluated)  # pragma: no mutate
+        if key(f) in differ
     ]
     if not apart:
         return settle(run, findings["items"], findings["questions"])
@@ -296,13 +327,11 @@ def took(run: dict[str, Any], items: list, process: list) -> dict[str, str]:
 
 def waited(items: list[dict[str, Any]], questions: list) -> list[dict[str, Any]]:
     """Each question an item waits on, with the items it settles."""
-    return [
-        dict(q, items=[named(i) for i in waiting])
-        for n, q in enumerate(questions, 1)
-        # Not mutated: the numbers are small, and Python keeps one of each, so `is` is `==`.
-        for waiting in [[i for i in items if i.get("question") == n]]  # pragma: no mutate
-        if waiting
-    ]
+    waiting: dict[Any, list[dict[str, str]]] = {}
+    for i in items:
+        if "question" in i:
+            waiting.setdefault(i["question"], []).append(named(i))
+    return [dict(q, items=waiting[n]) for n, q in enumerate(questions, 1) if n in waiting]
 
 
 def named(item: dict[str, Any]) -> dict[str, str]:
@@ -334,11 +363,10 @@ def write(path: str, data: dict[str, Any]) -> None:
     if folder:
         os.makedirs(folder, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(
-            data,
-            f,
-            ensure_ascii=False,
-            # Not mutated: how far each line is indented changes nothing the caller reads.
-            indent=1,  # pragma: no mutate
-        )
+        # One key or value to a line, so the calling AI and the user can read the result.
+        json.dump(data, f, ensure_ascii=False, indent=1)
         f.write("\n")
+
+
+# What the run does after each role's reply but the generator's, which the orchestrator reads first.
+REPLIED = {FIRST_USER: first_read, EVALUATOR: compare, LEARNER: offer}

@@ -3,24 +3,24 @@ to, read from what Claude Code keeps of each agent's conversation.
 
 An agent's conversation is kept in `<transcript_path without .jsonl>/subagents/agent-<agent_id>.jsonl`,
 its first record the prompt it was started with. That is Claude Code's own record, not a documented
-hook input, so the hooks' tests hold its shape."""
+hook input, so the hooks' tests hold its shape. turn's scripts, which the hooks import, are found
+by the folder hooks.json puts on PYTHONPATH."""
 
 from __future__ import annotations
 
 import json
 import os
 import re
-import sys
 from typing import Any
-
-SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
-# Not mutated: any place on the path finds the module.
-sys.path.insert(0, SCRIPTS)  # pragma: no mutate
 
 import run
 
 TURN = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
+
+# Where the result goes, by the key of the agent's prompt that names it: the orchestrator's call
+# names it as the result, and each role's prompt as the run it is of.
+NAMED = {"up": "result"}
 
 # turn's script as the orchestrator and each role run it, its path quoted or not, and the step it
 # runs.
@@ -61,9 +61,7 @@ def result(event: dict[str, Any]) -> str | None:
         given = json.loads(prompt(event))
     except (OSError, ValueError):
         return None
-    # Not mutated: only turn's agents come here, and "up" sorts after each other name.
-    key = "result" if role(event) == "up" else "run"  # pragma: no mutate
-    value = given.get(key) if isinstance(given, dict) else None
+    value = given.get(NAMED.get(str(role(event)), "run")) if isinstance(given, dict) else None
     return os.path.join(event["cwd"], value) if isinstance(value, str) else None
 
 
