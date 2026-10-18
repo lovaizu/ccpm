@@ -52,5 +52,14 @@
   "way": "check with B-1 can from the decisions, generator, B-1 and README.md:3 sent back, generator, first user, evaluator none, learner, generator, second reading, first user, evaluator Good, returned with B-1 Good: every step in the order the set replies mean",
   "hooks": "two stops: the generator's ls outside what it was given; the learner's first reply before it was shown the records, cleared by being shown each page, as read_whole now looks up by role; the orchestrator's ls with cat of README.md before it existed failed and was passed over.",
   "read": "Every JSONL read. The orchestrator read the work whole before each reading and decision, and went on after the learner with nothing read, as before read_whole was rebuilt."
+ },
+ {
+  "commit": "e63d09f",
+  "session": "2ab009a6-24c2-48b6-bd54-a48f4fdff6ac",
+  "minutes_to_return": 5.5,
+  "cost_usd": 1.73,
+  "way": "every step in the order the set replies mean, with the learner after each reading; its lesson, grounded on a record's words, taken by the orchestrator, given to the second round's generator and kept in the result",
+  "hooks": "two stops: an ls and a redirect, each outside what the step reads.",
+  "read": "Every JSONL read. The run went on e63d09f's code but for remade(), changed while it ran from `\"remade\" not in run` to `not run.get(\"remade\")`."
  }
 ]
