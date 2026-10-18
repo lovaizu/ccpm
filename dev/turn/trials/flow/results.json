@@ -1,0 +1,11 @@
+[
+ {
+  "commit": "70d2332",
+  "session": "8bcfb9af-ebac-4932-92e3-270bac1dfaf2",
+  "minutes_to_return": 4.9,
+  "cost_usd": 1.4,
+  "way": "generator, sent back, generator, first user stopped, evaluator none, decision without Good, learner, generator, second reading, first user, evaluator Good, returned with B-1 Good: every step in the order the set replies mean",
+  "hooks": "four stops, each cleared by its action: the orchestrator's ls of notes and .tasks and a generator's ls of notes, outside what they were given; the orchestrator recording its second reading before reading the work the generator had changed, which it then read whole with cat; an evaluator's reply wrapped in the set reply's key, a slip of the stand-in's prompt, fixed after.",
+  "read": "Every JSONL read. The decision, shown the items whole, gave no Good where the first user stopped. Read on a file Claude Code thinks unchanged returns no text, so the orchestrator went on to cat."
+ }
+]
