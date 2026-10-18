@@ -112,6 +112,17 @@ reference, such as other code it follows, and has the AI work from that scope.
 Why: what the AI reads outside a set scope shapes its work without anyone having chosen it; what it
 is meant to consult, left unnamed, is found on some runs and missed on others.
 
+### B-27: Each input read in a way its tool calls show whole
+
+Does each step name how the AI reads each of its inputs, in a way its tool calls show read whole?
+
+Look at: each input of B-21 the step reads, with its way, such as one file to a command, or a
+script that shows page by page what is too long for one read; a step that says "read" with no way
+fails.
+
+Why: told no way to read, the AI reads in ways a hook cannot count, such as several files in a
+loop or part of a long file, and is stopped for nothing or goes on on a part read.
+
 ### B-3: Everything that must happen every time
 
 Does the AI do, on every run, everything that must happen, because each such thing is a step?
@@ -274,9 +285,10 @@ the work unseen; a hook stops it on every run.
 Is the AI stopped, while it can still do it, when it leaves out a step that must happen every time
 and that shows in its tool calls?
 
-Look at: each step of B-3 that shows in the AI's tool calls, such as a file read whole, a step begun
-only once those before it are done, a command run or a place written, checked by a hook that names
-the step and why it is there; one left to the AI's word alone fails. What shows in no tool call,
+Look at: each step of B-3 that shows in the AI's tool calls, such as every input of the step read
+whole since it last changed, a step begun only once those before it are done, a command run or a
+place written, checked by a hook that names the step and why it is there; one left to the AI's word
+alone fails. What shows in no tool call,
 such as what the AI weighs, stays with the step and its reason.
 
 Why: an AI given a clear step and its reason still leaves it out on some runs, and the result looks
