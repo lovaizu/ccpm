@@ -8,8 +8,9 @@ and a Good are, are in [turn's UX](ux.md).
 ## User stories
 
 - As the calling AI, I want to hand turn the path of a CCS and get the work back, with each item's
-  Good and its lines, the questions only the user can decide, and each item still without Good; or,
-  when the CCS cannot give an item its Good, the questions alone, before any work is made.
+  Good and its lines, the questions only the user can decide, each item still without Good, and the
+  lessons on how the run went; or, when the CCS cannot give an item its Good, the questions alone,
+  before any work is made.
 
   The UX's first and last scenes are the calling AI's own work around this call.
 
@@ -29,7 +30,7 @@ flowchart LR
   orch -->|2 has the work made| gen
   orch -->|3 has it read in the receiver's place| fu
   orch -->|4 has that reading's Goods held to their items, and the Goods it missed found| ev
-  orch -->|5 has what makes the Good found, then 2 to 4 once more| le
+  orch -->|5 after every reading, has what gives each Good and how the run went learnt, then 2 to 4 once more where an item has none| le
   orch -->|6 returns the work and the result| caller
 ```
 
@@ -58,19 +59,24 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   The calling AI asks the user and calls turn again with the answer in the CCS.
 - The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
   each item and where the work gives it, then makes the work to give each, and hands back each
-  item's Good with its lines, each statement the work makes of its subject with the lines of the
-  CCS or the files it names that it rests on, and the questions only the user can decide.
+  item's Good with its lines, each statement the work makes of its subject with its grounds, and
+  the questions only the user can decide. The grounds of a statement are the words of the CCS or
+  the files it names that say it, quoted as written, and, for one of how the product behaves, a
+  command the generator ran and what it printed; a statement with neither is taken out of the work.
 
   A work made to Goods set first gives each where it was meant; one written first and matched to
   the items after is patched item by item. It hands back once it has read the work and found each
   Good at its lines. What the CCS does not say becomes a question, not its own guess. Its Goods are
   its claim, not a judgment. A reader without the sources takes a statement made from nothing as a
-  fact, so the one that wrote it names where each comes from.
+  fact, so the one that wrote it grounds each. A quote is the words themselves, not lines that hold
+  them, so it shows what was read for the statement; a product's code and the decisions about it
+  may say otherwise than it does, and only a run shows what it does.
 - The orchestrator reads the work, finding for every item the Good the receiver gets from it and,
-  at the lines the generator names, each statement's source, and sends back the items whose Good
-  it does not find, each said as what the receiver gets once it has it, and each statement whose
-  source it does not find there or that says otherwise; where a decision of the CCS and a file it
-  names differ, it is a question. Once it sends nothing back, a script records its findings.
+  in each statement's grounds, what the statement says, and sends back the items whose Good it does
+  not find, each said as what the receiver gets once it has it, and each statement its grounds do
+  not say, or that tells how the product behaves with no run; where a decision of the CCS and a
+  file it names differ, it is a question. Once it sends nothing back, a script records its
+  findings.
 
   A shortfall plain to see is sent back before the costly reading. How the work gets the Good is
   the generator's to decide, since an edit told per item broke other items. An item only the user's
@@ -93,15 +99,26 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   without it is made again for nothing; a Good held to its item is one the calling AI can rely on.
   A Good only the orchestrator found would be judged by one that read the work knowing what it
   meant, so a script stops it.
-- When every item has its Good or is a question, the run returns; otherwise the learner looks
-  through every item's finding and every role's record of the run for what makes the Good, and the
-  generator makes the work again with what it found.
+- After every reading, the learner reads every item's finding and the record of every agent of the
+  run, the orchestrator's included, and gives, from what they show, with the words it rests on
+  quoted: for each item, what gives its Good or would give it; and how the run went, whether the
+  Goods came without waste and not by chance, each lesson for the role it is for, or that it found
+  none and what it checked.
 
   For an item without Good it finds how the work would give it; for one with Good, what gives it,
-  so the remake keeps it. What fell short often lies in what a role did, which only its record
-  shows.
-- The work made again is read once more, from the orchestrator's findings to its decision, and then
-  the run returns, with each item still without Good and what the receiver gets once it has it.
+  so a remake keeps it. What fell short often lies in what a role did, which only its record shows;
+  a run where every item got its Good may still have got it by chance, or spent time for nothing,
+  and what is not learnt from is met again. A lesson without the facts it rests on is a guess.
+- The orchestrator takes the lessons it finds hold: what gives each Good goes to the generator when
+  the work is made again, and how the run went goes to each role of the next round and into the
+  result, for the calling AI to hand on to turn's makers.
+
+  The learner sees what each agent did, but the orchestrator decided every step of the run, so it
+  judges which lessons hold.
+- When every item has its Good or is a question, the run returns; otherwise the generator makes the
+  work again, it is read once more, from the orchestrator's findings to its decision and the
+  learner, and then the run returns, with each item still without Good and what the receiver gets
+  once it has it.
 
   A second reading settles what the first found; what is left costs the calling AI less to fix than
   more readings would.
@@ -135,13 +152,16 @@ turn/                      the plugin, installed by Claude Code
 - What each role is given: the generator, the whole CCS, what is sent back and what the learner
   found; the first user, the work, what the receiver opens, who the receiver is and what for, and
   the checklists; the evaluator, the same and the first user's reading; the learner, every item's
-  finding and the JSONL of every role of its run.
+  finding and the JSONL of every agent of its run, the orchestrator's included; and each role of
+  the second round, the lessons taken for it.
 - Each role replies in a JSON form of its own, not in a file, and a hook checks each role at both
   ends.
 
   Only the orchestrator holds the replies, so the first user cannot see the generator's claim. A
   hook lets a role start only with what it is to be given, and stops a reply that does not fill its
-  form; the evaluator starts only once a script holds the orchestrator's findings.
+  form; the evaluator starts only once a script holds the orchestrator's findings. A script checks
+  that each quote is in its file or record as written, and that each command the generator gives
+  is in its own record with what it printed, so a ground cannot be made up.
 - The hooks stop a read outside what a role is given, a write outside where the work goes, and a
   commit or a push; a stop says why and names what may be read.
 
@@ -180,7 +200,7 @@ turn/                      the plugin, installed by Claude Code
   - Flow: on a task of one item, with the four roles stood in for by agents that read what their
     step reads and give a reply set beforehand, one set for each way a run goes: every item Good at
     the first reading, an item sent back, the evaluator differing from the findings, and an item
-    left without Good through the learner and the second reading; and, on the same task with its
+    left without Good through the second reading, with the learner after each reading; and, on the same task with its
     decision taken out, the questions returned before any work is made. On Opus 5.5; passes when
     its JSONL shows each step in its order, each hook stopping where its check should, and the
     result as the set replies make it.

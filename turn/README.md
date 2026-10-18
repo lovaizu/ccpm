@@ -54,10 +54,12 @@ rests on:
 ```json
 {"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
- "questions": [], "not_good": []}
+ "questions": [], "not_good": [], "lessons": [...]}
 ```
 
-The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends.
+The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends. The
+lessons are what turn found on how its own run went, such as time spent for nothing, for you to
+hand on to turn's makers.
 
 ## Why turn
 
