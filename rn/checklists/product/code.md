@@ -126,8 +126,9 @@ Why: the tests passing give trust only in the behaviors they hold.
 When the behavior a test checks is broken in the code, does the maintainer learn of it from that
 test failing?
 
-Look at: break the line the test is about, run the test, see whether it fails, and put the line
-back.
+Look at: a tool that, on every run of the checks, breaks each line of the code in each way it can,
+such as a comparison, an operator or a value replaced, and runs the tests on each; a break no test
+fails on fails.
 
 Why: a test that does not fail when its behavior breaks looks the same as one that works, and lets
 a fault pass.
@@ -177,6 +178,25 @@ which environment, one the tests cannot make, decides whether the line runs?
 
 Why: a line left out without its reason cannot be told from a line left out to make the count pass,
 and the next maintainer keeps the gap.
+
+### B-16: A break left out says why
+
+For each break of the code left out of B-8's run, can the maintainer tell from what is written
+beside it why no behavior changes with it, such as a type annotation never run?
+
+Why: a break left out without its reason cannot be told from one left out to make the run pass,
+and the next maintainer keeps the gap.
+
+### B-17: A behavior holds for every input of its kind
+
+For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
+from a test that it holds for the inputs no example names?
+
+Look at: a test that makes many inputs of the kind and checks a property every one must have, such
+as a parse giving back what was written; with the inputs fixed on runs that must give the same
+result each time.
+
+Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 
 ### B-14: One name for one thing
 

@@ -64,9 +64,12 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
    Python 3, 3.9 or later, with the standard library only, and the README says so; a script that
    only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON;
    where they need only a part, they read and change it with `jq`. CI counts the lines and branches
-   on every push and fails on any not run.
+   on every push and fails on any not run; it breaks the code with Cosmic Ray and fails on any
+   break no test catches, and runs property tests with Hypothesis, its inputs fixed. Each check
+   runs on Python 3.9 and the newest, Cosmic Ray and Hypothesis on the newest alone.
    - Rationale: python3 is wherever git is while Node.js may not be; an agent changes only the part
-     it needs with a tool it already knows; a skipped check goes unnoticed.
+     it needs with a tool it already knows; a skipped check goes unnoticed; users run 3.9, and the
+     two tools need newer versions only to test, not to run.
 
 c. **Write each prompt, a skill or an agent, with `readability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**
