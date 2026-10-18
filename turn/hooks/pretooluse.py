@@ -19,7 +19,15 @@ from checks import (
     write_work_alone,
 )
 
-CHECKS = (call_given, start_as_called, role_given, write_work_alone, no_commit, read_in_given, read_whole)
+CHECKS = (
+    call_given,
+    start_as_called,
+    role_given,
+    write_work_alone,
+    no_commit,
+    read_in_given,
+    read_whole,
+)
 
 
 def main(stream: IO[str]) -> int:
