@@ -60,7 +60,7 @@ def recording(event: dict[str, Any], role: str | None) -> bool:
         role == "up"
         and event["hook_event_name"] == "PreToolUse"
         and event["tool_name"] == "Bash"
-        and "turn.py next" in command
+        and agents.runs(command, "next")
         and "<<" in command
     )
 
@@ -99,7 +99,7 @@ def printed(path: str) -> bool:
                 command = str(part.get("input", {}).get("command", ""))
                 if (
                     part.get("type") == "tool_use"
-                    and "turn.py next" in command
+                    and agents.runs(command, "next")
                     and "<<" not in command
                 ):
                     shown = not {"|", ">"} & set(command)

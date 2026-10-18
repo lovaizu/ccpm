@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from typing import Any
 
@@ -19,6 +20,15 @@ sys.path.insert(
 import run
 
 TURN = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+
+# turn's script as the orchestrator runs it, its path quoted or not, and the step it runs.
+SCRIPT = re.compile(r"""turn\.py["']?\s+(start|next)\b""")
+
+
+def runs(command: str, step: str) -> bool:
+    """Whether the command runs turn's script for the step, `start` or `next`."""
+    return any(m.group(1) == step for m in SCRIPT.finditer(command))
 
 
 def role(event: dict[str, Any]) -> str | None:

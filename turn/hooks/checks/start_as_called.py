@@ -9,7 +9,11 @@ import agents
 
 def check(event: dict[str, Any]) -> list[str]:
     command = str(event["tool_input"].get("command", ""))
-    if agents.role(event) != "up" or event["tool_name"] != "Bash" or "turn.py start" not in command:
+    if (
+        agents.role(event) != "up"
+        or event["tool_name"] != "Bash"
+        or not agents.runs(command, "start")
+    ):
         return []
     given = command[command.find("{") : command.rfind("}") + 1]
     try:

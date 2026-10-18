@@ -15,6 +15,7 @@ from helpers import (
     LEARNT,
     QUESTION,
     READ_GIVEN,
+    SCRIPT,
     SENT_BACK,
     TURN,
     WAITS,
@@ -77,7 +78,7 @@ class TestCall(HookTest):
 
 class TestStartAsCalled(HookTest):
     def start(self, call):
-        command = f"python3 {TURN}/scripts/turn.py start '{json.dumps(call)}'"
+        command = f"{SCRIPT} start '{json.dumps(call)}'"
         return self.tool("turn:up", "Bash", command=command)
 
     def test_the_run_started_with_the_call_passes(self):
@@ -99,7 +100,7 @@ class TestStartAsCalled(HookTest):
         # When: it starts the run with no JSON after the command
         # Then: it is stopped, saying to start the run with the call as it was given
         self.given_prompt(ID, json.dumps(CALL))
-        event = self.tool("turn:up", "Bash", command=f"python3 {TURN}/scripts/turn.py start")
+        event = self.tool("turn:up", "Bash", command=f"{SCRIPT} start")
         self.stops(pretooluse, event, "the call as it was given")
 
 
@@ -420,7 +421,7 @@ class TestReads(HookTest):
         # When: it records its reading with the script, naming where the result goes
         # Then: it goes through
         self.given_record(ID, json.dumps(CALL), *READ_GIVEN)
-        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
     def test_a_command_naming_a_file_the_run_was_not_given_stops(self):
@@ -556,7 +557,7 @@ class TestWholeReads(HookTest):
         ]
         generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
         part = ("Bash", {"command": "sed -n '1,10p' README.md"})
-        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         self.given_record(ID, json.dumps(CALL), *given, generator, part)
         self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "README.md")
         self.given_record(ID, json.dumps(CALL), *given, generator, part, self.read("README.md"))
@@ -569,9 +570,9 @@ class TestWholeReads(HookTest):
         # Then: it is stopped, naming what to read whole; once it saw the items as the script
         # printed them and read the work whole, it goes through
         self.through()
-        shown = f"cd {self.repo} && python3 {TURN}/scripts/turn.py next {CALL['result']}"
+        shown = f"cd {self.repo} && {SCRIPT} next {CALL['result']}"
         work = self.read("README.md")
-        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         for uses, said in (
             (
                 (("Bash", {"command": shown + " | head -c 500"}), work),
@@ -603,5 +604,5 @@ class TestWholeReads(HookTest):
         # Then: it goes through, as only a reading of the work rests on the work read whole
         self.first_user()
         self.given_record(ID, json.dumps(CALL))
-        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))

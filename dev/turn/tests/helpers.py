@@ -11,6 +11,8 @@ TURN = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "turn")
 )
 SCRIPTS = os.path.join(TURN, "scripts")
+# How the orchestrator runs turn's script, as its prompt gives it.
+SCRIPT = f'python3 "{os.path.join(TURN, "scripts", "turn.py")}"'
 HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
