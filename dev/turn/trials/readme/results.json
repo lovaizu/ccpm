@@ -62,5 +62,16 @@
   "fixed": "readme B-3; readability B-2, B-3, B-12, each returned without Good; the license answered with MIT and the byte-order mark question with utf-8-sig, each its recommended answer. The stand-in passed all 18 Goods.",
   "goods_checked": "Read against README.md as returned and the second first user's reading: six Goods are given where the first user stopped or got nothing: readme B-5 (no way to download, 'I assumed'), readme B-6 (nothing got), readability B-6 (92 and 96 'yet', 'become wrong once documents exist'), B-11 (a semicolon file 'I had to work out'), B-4 and B-19 (the Documentation and Development lines said as extra). The evaluator gave none of these; the orchestrator gave all six in its last decision.",
   "read": "Every JSONL and the work read. Generator 1.0, orchestrator 0.7, first user 1.2, the orchestrator copying the evaluator's 10 KB prompt 2.5, evaluator 1.5, decision 2.0 (it ran csvtidy itself, and a question no item waited on was stopped once), learner 5.3, generator 1.3, orchestrator 0.7, first user 1.3, evaluator 0.4, decision 0.4 minutes. The learner read the generator's 128,000-token JSONL with one Read and its reply was cut off mid-stream, 3.0 minutes lost; the design leaves the learner's records to its scripts, the prompt says only to read each whole. Before its last decision the orchestrator printed decide.items through python3 -c, its own finding cut to 120 characters, the evaluator's to 80, and the first user's not at all, so it decided without reading where the first user stopped; the hooks check the orchestrator's reading whole, not its decision. It also wrote and removed files in /tmp, outside the repository."
+ },
+ {
+  "commit": "724f101",
+  "unit": 3,
+  "session": "9a2d8bc2-50bb-4d8f-a034-e1dc1531d40e",
+  "minutes_to_return": 19.3,
+  "items_fixed_after_return": 8,
+  "questions": 1,
+  "cost_usd": 4.87,
+  "fixed": "readme B-4; readability F-1, B-2, B-3, B-4, B-7, B-11, B-19, each returned without Good; the license answered with MIT.",
+  "read": "The learner went through the records with jq, 2.2 minutes (5.3 before). The orchestrator's reply copying the remake's prompt was cut off mid-stream once, 1.5 minutes lost; the orchestrator sent the remade work back once more, so the generator ran three times. The orchestrator recorded its second reading after reading the remade work by sed -n 30,70p and grep, and its last decision after printing the items to decide through python3 -c, and no hook stopped either; no PreToolUse stop shows in the orchestrator's record in this run or the one before, while the roles' are stopped. Not yet found why."
  }
 ]
