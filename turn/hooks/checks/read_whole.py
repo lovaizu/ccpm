@@ -25,24 +25,32 @@ def check(event: dict[str, Any]) -> list[str]:
     kept = agents.running(event)
     if kept is None:
         return []
-    if role == "up" and (kept["next"]["agent"] != run.GENERATOR or "decide" in kept):
+    deciding = role == "up" and "decide" in kept
+    if role == "up" and kept["next"]["agent"] != run.GENERATOR and not deciding:
         return []
     cwd = os.path.realpath(event["cwd"])
-    if role in ("first-user", "evaluator"):
-        must = kept["work"] + kept["checklist"]
+    if role in ("first-user", "evaluator") or deciding:
+        must = kept["work"] + ([] if deciding else kept["checklist"])
     else:
         must = [p for p in kept["given"] if os.path.isfile(os.path.join(cwd, p))]
     read = whole(agents.transcript(event), cwd, kept["work"])
     missing = [p for p in must if os.path.realpath(os.path.join(cwd, p)) not in read]
-    if not missing:
-        return []
-    unread = ", ".join(missing)
-    return [
-        (
+    said = []
+    # The items to decide are what turn.py printed last, seen whole only when not piped or sent to
+    # a file.
+    if deciding and not printed(agents.transcript(event)):
+        said.append(
+            "see the items to decide whole: run `turn.py next <the call's result>` again with no"
+            " pipe or redirect, since an item decided without where the first user stopped is"
+            " decided on a guess"
+        )
+    if missing:
+        unread = ", ".join(missing)
+        said.append(
             f"read whole, each with Read and no offset or limit, or with cat: {unread}; what is"
             " left unread is judged on a guess, and the work is read again after it changed"
         )
-    ]
+    return said
 
 
 def recording(event: dict[str, Any], role: str | None) -> bool:
@@ -79,6 +87,23 @@ def whole(path: str, cwd: str, work: list[str]) -> set[str]:
                 elif name == "Agent" and given.get("subagent_type") == run.GENERATOR:
                     read.difference_update(at(cwd, w) for w in work)
     return read
+
+
+def printed(path: str) -> bool:
+    """Whether the last `turn.py next` the agent ran without input showed its output whole."""
+    shown = False
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            content = json.loads(line).get("message", {}).get("content")
+            for part in content if isinstance(content, list) else []:
+                command = str(part.get("input", {}).get("command", ""))
+                if (
+                    part.get("type") == "tool_use"
+                    and "turn.py next" in command
+                    and "<<" not in command
+                ):
+                    shown = not {"|", ">"} & set(command)
+    return shown
 
 
 def catted(command: str) -> list[str]:

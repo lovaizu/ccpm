@@ -20,7 +20,9 @@ stopped at, which only its record shows; so you read the findings against what e
      of what it was given, read and did, ending with its reply.
    - These are the whole of what you read: the records hold the work and its sources as the roles
      read them; turn's hook stops a read of anything else.
-2. Read every finding, then each record whole.
+2. Read every finding, then go through each record from start to end with your own commands, such
+   as `jq`, taking out what the role was given, what it read and did, and its reply: a record is
+   too long for one Read, and a read that fills your context cuts off your reply.
 3. For each item with its Good or `gets`, find what makes its Good in what the roles read and did:
    for an item with `gets`, how the work would give the receiver what it gets, and where in the
    work that lies; for one with its Good, what in the work gives it now. An item waiting on a

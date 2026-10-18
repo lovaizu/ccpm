@@ -562,6 +562,33 @@ class TestWholeReads(HookTest):
         self.given_record(ID, json.dumps(CALL), *given, generator, part, self.read("README.md"))
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
+    def test_the_orchestrator_deciding_on_part_of_what_it_decides_from_stops(self):
+        # Given: an orchestrator whose run waits on its decision, which saw the items to decide cut
+        # short in a pipe or sent to a file, or did not read the work whole
+        # When: it records its decision with the script
+        # Then: it is stopped, naming what to read whole; once it saw the items as the script
+        # printed them and read the work whole, it goes through
+        self.through()
+        shown = f"cd {self.repo} && python3 {TURN}/scripts/turn.py next {CALL['result']}"
+        work = self.read("README.md")
+        command = f"python3 {TURN}/scripts/turn.py next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        for uses, said in (
+            (
+                (("Bash", {"command": shown + " | head -c 500"}), work),
+                "see the items to decide whole",
+            ),
+            (
+                (("Bash", {"command": shown + " > /tmp/d.json"}), work),
+                "see the items to decide whole",
+            ),
+            ((("Bash", {"command": shown}), self.read("README.md", limit=5)), "README.md"),
+        ):
+            with self.subTest(uses=uses):
+                self.given_record(ID, json.dumps(CALL), *uses)
+                self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), said)
+        self.given_record(ID, json.dumps(CALL), work, ("Bash", {"command": shown}))
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
     def test_a_reader_of_no_run_going_ends_without_reading(self):
         # Given: a first user whose run has returned, or was never started
         # When: it ends having read nothing whole
