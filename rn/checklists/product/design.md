@@ -14,8 +14,16 @@ show how close the product brings them to their goals. Design turns that into a 
 layers, each drawn from the one before and fewer than it: the UX's scenes rest on a few user stories, each one way the user
 uses the product at its edge, such as a command they run; the stories are taken on by logical
 components, each of which may serve several; and each component is realized by a technology. The
-checks go back up: each unit, then each story, then how close each key result came. Design thinks
-in this order:
+checks go back up: each unit, then each story, then how close each key result came.
+
+The checks are built up from the least, so that a problem shows as early as it can and the product
+comes closer to the user's goals for the least work. A part is checked before the whole it is in.
+Its flow, whether each step happens in its order and hands on what the next takes, is checked
+before its content, how good what a step makes is: the flow on the smallest task that shows it,
+with stand-ins for whatever lies around the part being checked, and the content on real work,
+which nothing stands in for. Each check takes the least means that shows what it is for.
+
+Design thinks in this order:
 
 1. From the UX's scenes, write the user stories they rest on: "As <the user>, I want <what they
    do>." Their reasons are the UX's goals and key results, and are not written again.
@@ -23,10 +31,11 @@ in this order:
    A logical component is divided by what it takes on; its physical form is not decided yet.
 3. Choose the technology that realizes each component, and decide how it is realized physically
    and where it is placed. Technology is chosen here first.
-4. Check each physical unit on its own, then check the whole: each story achieved, and each key
-   result of the UX measured against the version in use, in the UX's order of priority. A change is
-   taken when every story is still achieved and it brings the key results closer from the highest,
-   never a lower one at the cost of a higher.
+4. Check each physical unit on its own, its flow and then its content, then check the whole the same
+   way: its flow from end to end, each story achieved, and each key result of the UX measured
+   against the version in use, in the UX's order of priority. A change is taken when every story is
+   still achieved and it brings the key results closer from the highest, never a lower one at the
+   cost of a higher.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -67,10 +76,12 @@ outside the product>
 ### Units
 
 - <A unit>: <what is checked of it>
-  - <Each check, its bar and where it runs, said plainly>
+  - Flow: <the task, what stands in around the unit, the bar and where it runs>
+  - Content: <the real work it makes, the bar and where it runs>, where the unit makes something
 
 ### Acceptance
 
+- Flow: <the whole from end to end: the task, what stands in, and what shows each step happened>
 - <A story>: <what shows it achieved, in one sentence>
   - <How and where that is checked, in one sentence>
 - <The ID of each key result of the UX, in the UX's order of priority>: <what is measured>
@@ -167,13 +178,14 @@ and agent it started, not from its outcome alone?
 
 Why: the outcome shows that something went wrong; only the records show where.
 
-### B-14: The flow checked apart from the work
+### B-14: The flow checked apart from the content
 
-Can the reader tell that the flow of an AI part's steps is checked apart from what a step makes,
-each on the smallest task that still shows it?
+Can the reader tell that each flow is checked apart from the content, on the smallest task that
+shows it, with stand-ins for whatever lies around the part being checked?
 
-Why: a check of the flow and the work at once costs the whole work each time it runs, and, failing,
-does not say which went wrong.
+Why: a check of the flow and the content at once costs the whole work each time it runs, takes
+whatever path the work leads it down rather than the one meant, and, failing, does not say which
+went wrong.
 
 ### B-9: Each story shown achieved
 
