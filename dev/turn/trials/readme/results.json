@@ -73,5 +73,17 @@
   "cost_usd": 4.87,
   "fixed": "readme B-4; readability F-1, B-2, B-3, B-4, B-7, B-11, B-19, each returned without Good; the license answered with MIT.",
   "read": "The learner went through the records with jq, 2.2 minutes (5.3 before). The orchestrator's reply copying the remake's prompt was cut off mid-stream once, 1.5 minutes lost; the orchestrator sent the remade work back once more, so the generator ran three times. The orchestrator recorded its second reading after reading the remade work by sed -n 30,70p and grep, and its last decision after printing the items to decide through python3 -c, and no hook stopped either; no PreToolUse stop shows in the orchestrator's record in this run or the one before, while the roles' are stopped. Not yet found why."
+ },
+ {
+  "commit": "716cb11",
+  "unit": 3,
+  "session": "69e6f9d6-dae8-42a9-be1e-8c18d4ae08d1",
+  "minutes_to_return": 12.8,
+  "items_fixed_after_return": 4,
+  "questions": 1,
+  "cost_usd": 3.75,
+  "fixed": "readability B-2, B-3, B-11, B-19, each returned without Good; the license answered with its recommended MIT. The stand-in passed all 19 Goods.",
+  "goods_checked": "Read against the second first user's reading: three Goods are given where the first user stopped: readme B-4 (it stopped twice, at names that come out the same and at files split by semicolons), readme B-3 (it read the first bullet twice) and readability B-6 (two statements it said may stop holding). The evaluator gave none of these; the orchestrator gave all three in its last decision, against its step 6.",
+  "read": "Every JSONL and the work read. Generator 0.8, orchestrator's reading 1.1, first user 0.8, evaluator 0.7, decision 0.4, learner 1.9, generator 2.0, orchestrator's reading 1.0, first user 1.0, evaluator 0.5, decision 0.3 minutes. Time spent for nothing, some 3.2 minutes: the orchestrator copying the prompts turn.py printed into each Agent call, 1.9 (evaluator 0.4 and 0.5, learner 0.35, remaking generator 0.55); the evaluator and the learner replying in a ```json fence, stopped by the hook and replying again, 0.6; the orchestrator's second reading stopped as the work was not read since it changed, though Claude Code had put the changed work whole into its context, then sent again after a Read that returned nothing, 0.4; the remaking generator replying in prose before reading the work it changed, 0.25. Stops at ls and git of a role or the orchestrator, a few seconds each. The work's statements were each checked against csvtidy.py: all hold."
  }
 ]
