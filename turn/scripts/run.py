@@ -109,7 +109,7 @@ def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
     findings = run["findings"]
     apart = [
         dict(
-            {"checklist": f["checklist"], "item": f["item"]},
+            named(f),
             orchestrator=judged(f),
             evaluator=evaluated.get(key(f)),
             first_user=got.get(key(f)),
@@ -145,10 +145,12 @@ def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
     unmet = [i for i in items if "gets" in i]
     if unmet and "learnt" not in run:
         run["unmet"] = unmet
+        # An item waiting on a question gets its Good from the user's answer, not from the work.
+        run["learning"] = [named(i) for i in items if "question" not in i]
         prompt = {"run": run["call"]["result"], "findings": items, "records": run["records"]}
         return ask(run, LEARNER, prompt)
     waited = [
-        dict(q, items=[{"checklist": i["checklist"], "item": i["item"]} for i in waiting])
+        dict(q, items=[named(i) for i in waiting])
         for n, q in enumerate(questions, 1)
         for waiting in [[i for i in items if i.get("question") == n]]
         if waiting
@@ -179,6 +181,11 @@ def opened(record: str) -> list[str]:
                         f"{part['name']} {json.dumps(part['input'], ensure_ascii=False)}"
                     )
     return list(used.values())
+
+
+def named(item: dict[str, Any]) -> dict[str, str]:
+    """The checklist and ID that name an item."""
+    return {"checklist": item["checklist"], "item": item["item"]}
 
 
 def key(item: dict[str, Any]) -> tuple[str, str]:

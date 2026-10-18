@@ -28,8 +28,8 @@ READING = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=T
 CLAIM = Form((("lines",), ("question",)), every=True, asks=True)
 GOT = Form((("got", "lines"),), every=False, asks=False)
 GOOD = Form((("good", "lines"),), every=False, asks=False)
-# The learner says, for every item, what makes its Good: how the work would give it, or what gives
-# it now, so the remake keeps it.
+# The learner says, for every item but those waiting on a question, what makes its Good: how the
+# work would give it, or what gives it now, so the remake keeps it.
 LEARNT = Form((("learnt",),), every=True, asks=False)
 
 

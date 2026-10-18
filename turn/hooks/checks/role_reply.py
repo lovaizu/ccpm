@@ -24,7 +24,8 @@ def check(event: dict[str, Any]) -> list[str]:
     if result is None or kept is None:
         return []
     reply = str(event.get("last_assistant_message", ""))
-    said = forms.check(reply, kept["items"], kept["work"], FORMS[role])
+    judged = kept["learning"] if role == "learner" else kept["items"]
+    said = forms.check(reply, judged, kept["work"], FORMS[role])
     if said:
         return ["reply with your form alone, filled:"] + said
     kept["next"].update(

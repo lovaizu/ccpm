@@ -180,6 +180,23 @@ class TestReplies(HookTest):
         self.assertEqual(code, 2)
         self.assertIn("B-1 is left out", err)
 
+    def test_a_learner_says_nothing_of_an_item_waiting_on_a_question(self):
+        # Given: a learner of a run whose first reading left one item without Good and one
+        # waiting on the user's answer
+        # When: it ends with what makes the Good of the item without Good alone, or with the
+        # item waiting on the answer as well
+        # Then: the first ends, and the second is kept going, told that item is not its to judge
+        self.started()
+        self.through()
+        unmet = dict(SENT_BACK, item="F-1")
+        prompt = self.next({"items": [unmet], "questions": []})["prompt"]
+        learnt = {"checklist": unmet["checklist"], "item": "F-1", "learnt": "the name first"}
+        self.assertEqual(self.replied("turn:learner", prompt, {"items": [learnt]}), (0, ""))
+        waits = dict(learnt, item="B-1")
+        code, err = self.replied("turn:learner", prompt, {"items": [learnt, waits]})
+        self.assertEqual(code, 2)
+        self.assertIn("B-1 is not an item judged here", err)
+
     def test_a_readers_reply_out_of_its_form_stops(self):
         # Given: a first user replying with prose or with a Good, which is the evaluator's to
         # give, and an evaluator replying with what it got, which is the first user's to say

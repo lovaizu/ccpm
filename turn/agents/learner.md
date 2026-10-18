@@ -21,10 +21,11 @@ stopped at, which only its record shows; so you read the findings against what e
    - These are the whole of what you read: the records hold the work and its sources as the roles
      read them; turn's hook stops a read of anything else.
 2. Read every finding, then each record whole.
-3. For each item, find what makes its Good in what the roles read and did: for an item with
-   `gets`, how the work would give the receiver what it gets, and where in the work that lies; for
-   one with its Good or a question, what in the work gives it now.
-4. Reply with what you found alone, as JSON: `{"items": [<one per item of the findings>]}`. Each
+3. For each item with its Good or `gets`, find what makes its Good in what the roles read and did:
+   for an item with `gets`, how the work would give the receiver what it gets, and where in the
+   work that lies; for one with its Good, what in the work gives it now. An item waiting on a
+   question gets its Good from the user's answer, not from the work, so leave it out.
+4. Reply with what you found alone, as JSON: `{"items": [<one per item of step 3>]}`. Each
    item is `{"checklist": "<path as in the findings>", "item": "<ID>", "learnt": "<what makes its
    Good, in plain words>"}`.
    - Out: your reply. turn's hook checks its form; fill each place it names.
