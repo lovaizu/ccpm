@@ -9,7 +9,7 @@ import run
 
 FORMS = {
     "generator": forms.CLAIM,
-    "first-user": forms.GOT,
+    "first-user": forms.GOOD,
     "evaluator": forms.GOOD,
     "learner": forms.LEARNT,
 }

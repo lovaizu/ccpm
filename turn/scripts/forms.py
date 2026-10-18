@@ -23,12 +23,11 @@ class Form(NamedTuple):
 
 
 # The orchestrator judges, so its reading and its decision give a Good, a question or what the
-# receiver gets once it has its Good; the generator only claims, so it gives lines or a question.
-# The first user and the evaluator look only for what the work gives, so each names only the items
-# it finds something for, and a script names the rest.
+# receiver gets once it has its Good; the generator claims the Good it set for every item, or the
+# question it waits on. The first user and the evaluator look only for the Good the work gives, so
+# each names only the items it finds a Good for, and a script names the rest.
 READING = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=True)
-CLAIM = Form((("lines",), ("question",)), every=True, asks=True)
-GOT = Form((("got", "lines"),), every=False, asks=False)
+CLAIM = Form((("good", "lines"), ("question",)), every=True, asks=True)
 GOOD = Form((("good", "lines"),), every=False, asks=False)
 # The learner says, for every item but those waiting on a question, what makes its Good: how the
 # work would give it, or what gives it now, so the remake keeps it.
@@ -104,7 +103,7 @@ def item_problems(
 
 def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
     said: list[str] = []
-    for key in ("good", "gets", "got", "learnt"):
+    for key in ("good", "gets", "learnt"):
         if key in item and not (isinstance(item[key], str) and item[key].strip()):
             said.append(f'{name} has an empty "{key}"; say it in words')
     if "question" in item and not (

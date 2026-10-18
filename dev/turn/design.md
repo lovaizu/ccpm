@@ -27,15 +27,16 @@ flowchart LR
   caller -->|1 calls with the CCS| orch
   orch -->|2 has the work made| gen
   orch -->|3 has it read in the receiver's place| fu
-  orch -->|4 has the Good in that reading shown| ev
+  orch -->|4 has that reading's Goods held to their items, and the Goods it missed found| ev
   orch -->|5 has what makes the Good found, then 2 to 4 once more| le
   orch -->|6 returns the work and the result| caller
 ```
 
 The orchestrator and the four roles it starts are AIs, each answering the orchestrator in its reply.
 
-- Every role looks only for the Good each item gets and the lines that give it; only a script,
-  code that runs the same every time, doubts, such as by naming the lines no Good rests on.
+- Every role looks only for the Good each item gets and the lines that give it, or for how the work
+  would give it; only a script, code that runs the same every time, doubts, and only by coverage:
+  it names each item no role gave its Good.
 
   An AI that looks for what more the work needs finds more without end, and each find is patched
   in, so the work drifts from what it should be. Each role has one aim, so it works to the aim
@@ -47,30 +48,34 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   The CCS is the calling AI's, and turn defines nothing of it: what turn needs is found by these
   kinds, and the values stay in the CCS alone, so the call and the CCS cannot differ. Where the
   result goes is this call's answer, not the task's state, so it is not in the CCS.
-- The generator makes the work from the whole CCS so that every item gets its Good, and hands back
-  each item's lines and the questions only the user can decide.
+- The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
+  each item and where the work gives it, then makes the work to give each, and hands back each
+  item's Good with its lines and the questions only the user can decide.
 
-  It hands back once it has read the work against each item. What the CCS does not say becomes a
-  question, not its own guess. The lines are its claim, not a judgment.
-- The orchestrator reads the work against every item and sends back the items whose Good it does
-  not find, each said as what the receiver gets once it has it; once it sends nothing back, a script
+  A work made to Goods set first gives each where it was meant; one written first and matched to
+  the items after is patched item by item. It hands back once it has read the work and found each
+  Good at its lines. What the CCS does not say becomes a question, not its own guess. Its Goods are
+  its claim, not a judgment.
+- The orchestrator reads the work, finding for every item the Good the receiver gets from it, and
+  sends back the items whose Good it does not find, each said as what the receiver gets once it has it; once it sends nothing back, a script
   records its findings.
 
   A shortfall plain to see is sent back before the costly reading. How the work gets the Good is
   the generator's to decide, since an edit told per item broke other items. An item only the user's
   answer can give is not sent back; it is a question.
 - The first user reads the work in the receiver's place, with what the receiver opens and the
-  checklists, and says for each item what it got from the work and where.
+  checklists, and gives for each item the Good it found in the work, with its lines.
 
-  A reader that did not make the work stops where the receiver would; the maker reads in what it
-  meant.
-- The evaluator, given the same and that reading, shows each item's Good the reading gives, with
-  its lines; the orchestrator decides each item where its findings and the evaluator's differ,
-  against what the first user opened and where it stopped.
+  A reader that did not make the work finds only the Good its lines give; the maker finds the Good
+  it meant.
+- The evaluator, given the same and that reading, holds each Good of the reading to what its item
+  asks, at its lines, and looks through the whole work for the Good of each item the reading gave
+  none, giving every Good with its lines; the orchestrator decides each item where its findings and
+  the evaluator's differ, finding at the lines each names the Good the receiver gets.
 
   The orchestrator's findings are recorded before the evaluator starts, as a judgment made after
-  another's is pulled toward it. The evaluator is there because one reader misses a Good the work
-  gives, and an item judged without it is made again for nothing.
+  another's is pulled toward it. One reader misses a Good the work gives, and an item judged
+  without it is made again for nothing; a Good held to its item is one the calling AI can rely on.
 - When every item has its Good or is a question, the run returns; otherwise the learner looks
   through every item's finding and every role's record of the run for what makes the Good, and the
   generator makes the work again with what it found.

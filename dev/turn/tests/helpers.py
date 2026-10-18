@@ -60,10 +60,10 @@ GOOD = {
 }
 WAITS = {"checklist": "checklists/readme.md", "item": "B-1", "question": 1}
 QUESTION = {"question": "Under which license may people use it?", "recommended": "MIT"}
-GOT = {
+FOUND = {
     "checklist": "checklists/readme.md",
     "item": "F-1",
-    "got": "the name, then what it does, as READMEs open",
+    "good": "the name, then what it does, as READMEs open",
     "lines": ["README.md:1-3"],
 }
 EVALUATED = {
@@ -146,11 +146,11 @@ class RepoTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         return out
 
-    def through(self, *evaluated, findings=(GOOD, WAITS), got=(GOT,), opened=()):
+    def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=()):
         """The run taken through the orchestrator's findings, the first user's reply and the
         evaluator's, and what the script prints then."""
         out = self.next({"items": list(findings), "questions": [QUESTION]})
-        reply = {"items": list(got)}
+        reply = {"items": list(found)}
         self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
         out = self.next()
         self.assertEqual(out["agent"], "turn:evaluator")

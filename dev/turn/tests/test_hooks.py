@@ -8,8 +8,8 @@ from unittest import mock
 from helpers import (
     CALL,
     EVALUATED,
+    FOUND,
     GOOD,
-    GOT,
     HOOKS,
     ID,
     LEARNT,
@@ -162,12 +162,12 @@ class TestReplies(HookTest):
         )
         return event
 
-    def test_a_first_users_reply_of_what_it_got_passes(self):
-        # Given: a first user whose reply says what it got for one item and where
+    def test_a_first_users_reply_of_the_good_it_found_passes(self):
+        # Given: a first user whose reply gives the Good it found for one item, with its lines
         # When: it ends
         # Then: it ends
         self.assertEqual(
-            self.replied("turn:first-user", self.first_user(), {"items": [GOT]}), (0, "")
+            self.replied("turn:first-user", self.first_user(), {"items": [FOUND]}), (0, "")
         )
 
     def test_a_learners_reply_leaving_an_item_out_stops(self):
@@ -199,41 +199,36 @@ class TestReplies(HookTest):
         self.assertIn("B-1 is not an item judged here", err)
 
     def test_a_readers_reply_out_of_its_form_stops(self):
-        # Given: a first user replying with prose or with a Good, which is the evaluator's to
-        # give, and an evaluator replying with what it got, which is the first user's to say
+        # Given: a first user replying with prose, and an evaluator replying with a Good that names
+        # no lines
         # When: it ends
         # Then: it is kept going, told the form it gives
         prompt = self.first_user()
-        for agent_type, reply, said in (
-            ("turn:first-user", "I read it.", '{"items": [...]}'),
-            ("turn:first-user", {"items": [EVALUATED]}, '"got" with "lines"'),
-        ):
-            with self.subTest(reply=reply):
-                code, err = self.replied(agent_type, prompt, reply)
-                self.assertEqual(code, 2)
-                self.assertIn(said, err)
-        self.replied("turn:first-user", prompt, {"items": [GOT]})
+        code, err = self.replied("turn:first-user", prompt, "I read it.")
+        self.assertEqual(code, 2)
+        self.assertIn('{"items": [...]}', err)
+        self.replied("turn:first-user", prompt, {"items": [FOUND]})
         out = self.next()
-        code, err = self.replied("turn:evaluator", out["prompt"], {"items": [GOT]})
+        bare = {k: v for k, v in EVALUATED.items() if k != "lines"}
+        code, err = self.replied("turn:evaluator", out["prompt"], {"items": [bare]})
         self.assertEqual(code, 2)
         self.assertIn('"good" with "lines"', err)
 
-    def test_a_reply_naming_lines_or_a_question_for_every_item_passes(self):
-        # Given: a generator whose reply names lines for one item and a question for the other
+    def test_a_reply_giving_a_good_or_a_question_for_every_item_passes(self):
+        # Given: a generator whose reply gives the Good it set for one item, with its lines, and a
+        # question for the other
         # When: it ends
         # Then: it ends
-        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
-        reply = {"items": [claim, WAITS], "questions": [QUESTION]}
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
         self.passes(subagentstop, self.reply(json.dumps(reply)))
 
     def test_a_reply_out_of_its_form_stops(self):
         # Given: a generator whose reply is prose, or leaves an item out
         # When: it ends
         # Then: it is kept going, told what its reply lacks
-        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
         for reply, said in (
             ("Done.", '{"items": [...], "questions": [...]}'),
-            (json.dumps({"items": [claim], "questions": []}), "B-1"),
+            (json.dumps({"items": [GOOD], "questions": []}), "B-1"),
         ):
             with self.subTest(reply=reply):
                 self.stops(subagentstop, self.reply(reply), said)
@@ -242,17 +237,18 @@ class TestReplies(HookTest):
         # Given: a first user whose reply is its form inside a ```json fence
         # When: it ends
         # Then: it ends, and its reply is kept as the form itself
-        reply = "```json\n" + json.dumps({"items": [GOT]}) + "\n```"
+        reply = "```json\n" + json.dumps({"items": [FOUND]}) + "\n```"
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply), (0, ""))
         kept = self.read_json(CALL["result"])["running"]["next"]["reply"]
-        self.assertEqual(kept, {"items": [GOT]})
+        self.assertEqual(kept, {"items": [FOUND]})
 
-    def test_a_good_in_the_generators_reply_stops(self):
-        # Given: a generator whose reply judges an item Good, which is not its to judge
+    def test_lines_without_a_good_in_the_generators_reply_stops(self):
+        # Given: a generator whose reply names lines but not the Good they give
         # When: it ends
         # Then: it is kept going, told the shapes its items take
-        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
-        self.stops(subagentstop, self.reply(json.dumps(reply)), '"lines" or "question"')
+        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
+        reply = {"items": [claim, WAITS], "questions": [QUESTION]}
+        self.stops(subagentstop, self.reply(json.dumps(reply)), '"good" with "lines" or "question"')
 
     def test_a_generator_of_no_run_going_ends(self):
         # Given: a generator whose run has returned, or was never started
@@ -531,8 +527,7 @@ class TestWholeReads(HookTest):
         return ("Read", dict(file_path=path, **part))
 
     def generator_ends(self, *tool_uses):
-        claim = {"checklist": GOOD["checklist"], "item": "F-1", "lines": ["README.md:1"]}
-        reply = {"items": [claim, WAITS], "questions": [QUESTION]}
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
         path = self.given_record(ID, self.generator_prompt, *tool_uses)
         event = self.event(
             "SubagentStop",
@@ -549,7 +544,7 @@ class TestWholeReads(HookTest):
         # When: it ends with its reply
         # Then: it ends
         uses = (self.read("README.md"), ("Bash", {"command": "cat checklists/readme.md"}))
-        reply = {"items": [GOT]}
+        reply = {"items": [FOUND]}
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
 
     def test_a_reader_that_read_part_of_the_work_is_kept_going(self):
@@ -567,7 +562,7 @@ class TestWholeReads(HookTest):
         ):
             with self.subTest(part=part):
                 uses = (part, self.read("checklists/readme.md"))
-                code, err = self.replied("turn:first-user", prompt, {"items": [GOT]}, *uses)
+                code, err = self.replied("turn:first-user", prompt, {"items": [FOUND]}, *uses)
                 self.assertEqual(code, 2)
                 self.assertIn("read whole", err)
                 self.assertIn("README.md", err)
@@ -679,7 +674,7 @@ class TestWholeReads(HookTest):
         # Then: it ends, as no run waits on its reading
         prompt = json.dumps({"run": "none.json"})
         part = ("Read", {"file_path": "README.md", "offset": 2})
-        self.assertEqual(self.replied("turn:first-user", prompt, {"items": [GOT]}, part), (0, ""))
+        self.assertEqual(self.replied("turn:first-user", prompt, {"items": [FOUND]}, part), (0, ""))
 
     def test_the_orchestrator_going_on_after_a_role_needs_no_new_read(self):
         # Given: an orchestrator whose run waits on the first user, not on its own reading

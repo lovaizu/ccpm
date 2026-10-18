@@ -89,8 +89,7 @@ def next_step(result: str, text: str) -> dict[str, Any]:
             " and wait for its reply"
         )
     if agent == FIRST_USER:
-        run["got"] = reply["items"]
-        run["opened"] = opened(run["next"]["record"])
+        run["read"] = reply["items"]
         return ask(run, EVALUATOR, dict(reader_given(run), reading=reply["items"]))
     if agent == LEARNER:
         run["learnt"] = reply["items"]
@@ -116,21 +115,21 @@ def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
     """Sets the orchestrator's findings beside the evaluator's Goods: where they agree, the run
     returns; where they differ, the orchestrator decides those items."""
     evaluated = {key(i): judged(i) for i in goods}
-    got = {key(i): judged(i) for i in run["got"]}
+    read = {key(i): judged(i) for i in run["read"]}
     findings = run["findings"]
     apart = [
         dict(
             named(f),
             orchestrator=judged(f),
             evaluator=evaluated.get(key(f)),
-            first_user=got.get(key(f)),
+            first_user=read.get(key(f)),
         )
         for f in findings["items"]
         if ("good" in f) != (key(f) in evaluated)
     ]
     if not apart:
         return settle(run, findings["items"], findings["questions"])
-    run["decide"] = {"items": apart, "questions": findings["questions"], "opened": run["opened"]}
+    run["decide"] = {"items": apart, "questions": findings["questions"]}
     write(run["call"]["result"], {"running": run})
     return {"decide": run["decide"]}
 
@@ -177,21 +176,6 @@ def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
         },
     )
     return {"returned": result}
-
-
-def opened(record: str) -> list[str]:
-    """Each tool a role used, by its name and input, once each though its record may keep a use
-    more than once."""
-    used: dict[str, str] = {}
-    with open(record, encoding="utf-8") as f:
-        for line in f:
-            content = json.loads(line).get("message", {}).get("content")
-            for part in content if isinstance(content, list) else []:
-                if part.get("type") == "tool_use":
-                    used[part["id"]] = (
-                        f"{part['name']} {json.dumps(part['input'], ensure_ascii=False)}"
-                    )
-    return list(used.values())
 
 
 def named(item: dict[str, Any]) -> dict[str, str]:

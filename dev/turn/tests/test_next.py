@@ -3,8 +3,8 @@ import json
 from helpers import (
     CALL,
     EVALUATED,
+    FOUND,
     GOOD,
-    GOT,
     LEARNT,
     QUESTION,
     READ_SHOWN,
@@ -106,15 +106,15 @@ class TestReading(ReadTest):
 
 class TestReaders(ReadTest):
     def test_the_evaluator_is_started_with_the_first_users_reading(self):
-        # Given: a run whose first user has replied with what it got for one item
+        # Given: a run whose first user has replied with the Good it found for one item
         # When: the orchestrator goes on
         # Then: the evaluator is to be started with what the first user was, and its reading
         out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
         first = self.given()
-        self.replied("turn:first-user", out["prompt"], {"items": [GOT]})
+        self.replied("turn:first-user", out["prompt"], {"items": [FOUND]})
         out = self.next()
         self.assertEqual(out["agent"], "turn:evaluator")
-        self.assertEqual(self.given(), dict(first, reading=[GOT]))
+        self.assertEqual(self.given(), dict(first, reading=[FOUND]))
 
     def test_going_on_before_the_first_user_replies_stops(self):
         # Given: a run whose first user is to be started
@@ -160,8 +160,7 @@ class TestReaders(ReadTest):
         # work
         # When: the orchestrator goes on
         # Then: both items come back to decide, each with the orchestrator's finding, the
-        # evaluator's Good and what the first user got, with the questions and what the first user
-        # opened, and the run goes on
+        # evaluator's Good and the first user's, with the questions, and the run goes on
         good_b1 = dict(EVALUATED, item="B-1")
         out = self.through(good_b1, opened=READ_SHOWN)
         self.assertEqual(
@@ -174,7 +173,7 @@ class TestReaders(ReadTest):
                             item="F-1",
                             orchestrator=judged(GOOD),
                             evaluator=None,
-                            first_user=judged(GOT),
+                            first_user=judged(FOUND),
                         ),
                         dict(
                             ITEM_B1,
@@ -184,10 +183,6 @@ class TestReaders(ReadTest):
                         ),
                     ],
                     "questions": [QUESTION],
-                    "opened": [
-                        'Read {"file_path": "README.md"}',
-                        'Read {"file_path": "checklists/readme.md"}',
-                    ],
                 }
             },
         )

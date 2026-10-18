@@ -58,8 +58,8 @@ turn gives your plugin's AI what it does not get by making the work and checking
 
 - The AI that reads the work did not make it, and opens only what the work's reader opens.
 
-  The AI that made a work knows what each line means, and misses where a reader meeting it for the
-  first time would stop.
+  The AI that made a work finds the Good it meant; an AI meeting it for the first time finds only
+  the Good its lines give, which is what the work's reader gets.
 - Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
