@@ -35,7 +35,9 @@ Design thinks in this order:
    way: its flow from end to end, each story achieved, and each key result of the UX measured
    against the version in use, in the UX's order of priority. A change is taken when every story is
    still achieved and it brings the key results closer from the highest, never a lower one at the
-   cost of a higher.
+   cost of a higher. A key result that measures what the user pays, such as time, money or effort,
+   is read from the records in its parts, not only in total, and a part that adds nothing to a
+   higher key result is cut first, traded against nothing.
 
 Each item of `readability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
@@ -202,3 +204,11 @@ key results weighed in the UX's order of priority?
 Why: a key result is not met or missed but come close to, so no check of a story shows it; a change
 judged by no measure, or by one key result alone, can leave the user worse off while each version
 looks better.
+
+### B-15: What the user pays seen in its parts
+
+Can the reader tell that each key result measuring what the user pays, such as time, money or
+effort, is read from the records in its parts, not only in total?
+
+Why: in a total, a part that gives the user nothing hides among those that do, and the user pays
+for it on every use.

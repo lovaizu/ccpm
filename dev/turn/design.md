@@ -184,6 +184,8 @@ from the JSONL of every agent it started and from the work.
 - KR1.2: the time from the call to the work coming back.
   - Taken from the JSONL's timestamps for a README-sized work, and compared with the version in use
     on the same task.
+  - Read step by step from the same timestamps; time that adds nothing to the story or KR1.1 is
+    cut first.
 
 A change is taken when the story is still achieved and KR1.2 does not come closer at the cost of
 KR1.1.
