@@ -61,7 +61,8 @@ def result(event: dict[str, Any]) -> str | None:
         given = json.loads(prompt(event))
     except (OSError, ValueError):
         return None
-    key = "result" if role(event) == "up" else "run"
+    # Not mutated: only turn's agents come here, and "up" sorts after each other name.
+    key = "result" if role(event) == "up" else "run"  # pragma: no mutate
     value = given.get(key) if isinstance(given, dict) else None
     return os.path.join(event["cwd"], value) if isinstance(value, str) else None
 

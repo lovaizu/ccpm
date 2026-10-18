@@ -24,7 +24,8 @@ def check(event: dict[str, Any]) -> list[str]:
     if result is None or kept is None:
         return []
     reply = str(event.get("last_assistant_message", ""))
-    judged = kept["learning"] if role == "learner" else kept["items"]
+    # Not mutated: of the roles that reply, the learner's name sorts last.
+    judged = kept["learning"] if role == "learner" else kept["items"]  # pragma: no mutate
     said = forms.check(reply, judged, kept["work"], FORMS[role], sources=run.sources(kept))
     if said:
         return ["reply with your form alone, filled:"] + said

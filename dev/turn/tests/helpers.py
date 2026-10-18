@@ -17,10 +17,17 @@ HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
 
+import agents  # noqa: F401  (the hooks' reading of an event, for its own tests)
 import forms  # noqa: F401  (the forms, for their own tests)
 import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
 import run
 import subagentstop
+from checks import (  # noqa: F401  (each check, for its own tests)
+    call_given,
+    no_commit,
+    role_given,
+    start_as_called,
+)
 
 import turn
 
