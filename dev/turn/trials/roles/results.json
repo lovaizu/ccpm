@@ -63,5 +63,21 @@
    "learner": 1.2
   },
   "read": "Every JSONL read. Every role ran turn.py given with the path, the generator twice, and read only and whole what its step reads, each reply in its form; the generator named a source line for each of the two statements its work makes, and the learner was shown each record page by page and said B-1's Good wants the full sentence, the trial having replaced the work with a bare MIT. The generator's ls and git log were stopped; the evaluator called ReportFindings with no findings before replying."
+ },
+ {
+  "commit": "14dcc09",
+  "sessions": {
+   "generator": "0236dd6c-192f-44c6-a6b1-6a7bd7f56956",
+   "first-user": "a2875bb0-d78c-411d-ac66-c5759569f75d",
+   "evaluator": "e4025b2b-fc5d-410e-bee8-9bf8a118c10b",
+   "learner": "39a82024-b714-4d47-8cc5-38348e26ca22"
+  },
+  "minutes": {
+   "generator": 0.4,
+   "first-user": 0.4,
+   "evaluator": 0.3,
+   "learner": 0.4
+  },
+  "read": "Every JSONL read. Every role ran turn.py given with the path at its first try and read only and whole what its step reads, each reply in its form. The learner's three records came to one page each, six pages before, and it replied in 0.4 minutes, 1.2 before, with the same finding. The generator's ls and git ls-files were stopped."
  }
 ]
