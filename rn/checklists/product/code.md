@@ -198,7 +198,9 @@ from a test that it holds for the inputs no example names?
 
 Look at: property-based testing of each such behavior, on every run of the checks, which makes many
 inputs of the kind and checks a property every one must have, such as a parse giving back what was
-written, with its inputs fixed so that each run gives the same result (B-10).
+written; its inputs fixed where each run must give the same result, such as CI (B-10), and new on
+each run elsewhere, so that inputs not yet tried are met, and each input that once failed kept as
+an example.
 
 Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 

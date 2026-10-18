@@ -65,7 +65,7 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
    only calls an existing tool may be sh. What the plugin's agents read and write as data is JSON;
    where they need only a part, they read and change it with `jq`. CI counts the lines and branches
    on every push and fails on any not run; it breaks the code with Cosmic Ray and fails on any
-   break no test catches, and runs property tests with Hypothesis, its inputs fixed. Each check
+   break no test catches, and runs property tests with Hypothesis, its inputs fixed there as its `ci` profile does. Each check
    runs on Python 3.9 and the newest, Cosmic Ray and Hypothesis on the newest alone.
    - Rationale: python3 is wherever git is while Node.js may not be; an agent changes only the part
      it needs with a tool it already knows; a skipped check goes unnoticed; users run 3.9, and the
