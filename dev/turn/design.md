@@ -71,11 +71,14 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
 - The evaluator, given the same and that reading, holds each Good of the reading to what its item
   asks, at its lines, and looks through the whole work for the Good of each item the reading gave
   none, giving every Good with its lines; the orchestrator decides each item where its findings and
-  the evaluator's differ, finding at the lines each names the Good the receiver gets.
+  the evaluator's differ, finding at the lines each names the Good the receiver gets, and giving
+  none where neither reader found one.
 
   The orchestrator's findings are recorded before the evaluator starts, as a judgment made after
   another's is pulled toward it. One reader misses a Good the work gives, and an item judged
   without it is made again for nothing; a Good held to its item is one the calling AI can rely on.
+  A Good only the orchestrator found would be judged by one that read the work knowing what it
+  meant, so a script stops it.
 - When every item has its Good or is a question, the run returns; otherwise the learner looks
   through every item's finding and every role's record of the run for what makes the Good, and the
   generator makes the work again with what it found.

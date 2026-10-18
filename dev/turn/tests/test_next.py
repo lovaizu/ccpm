@@ -233,6 +233,19 @@ class TestDecision(ReadTest):
         self.assertEqual(self.next(), {"decide": first})
         self.assertIn("decide", self.read_json(RESULT)["running"])
 
+    def test_a_good_no_reader_found_stops(self):
+        # Given: an item the orchestrator found Good while neither the first user nor the
+        # evaluator found its Good
+        # When: the decision gives it its Good
+        # Then: it stops, asking for what the receiver gets once it has it, and the run goes on
+        super().setUp()
+        self.through(dict(EVALUATED, item="B-1"), found=())
+        decision = {"items": [GOOD, WAITS], "questions": []}
+        self.assertIn("checklists/readme.md F-1 has no Good", self.refused(decision))
+        self.assertIn("running", self.read_json(RESULT))
+        unmet = dict(SENT_BACK, item="F-1")
+        self.assertIn("learner", self.next({"items": [unmet, WAITS], "questions": []})["agent"])
+
     def test_a_decision_out_of_its_form_stops(self):
         # Given: both items to decide
         # When: the decision leaves one out, waits on a question not asked, or asks one no item

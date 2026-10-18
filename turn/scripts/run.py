@@ -141,6 +141,18 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     if said:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
     decision = json.loads(forms.unfenced(text))
+    # The calling AI is to get each Good found by a reader that did not make the work, so an item
+    # neither the first user nor the evaluator found Good gets none from the orchestrator alone.
+    unread = [
+        f"{i['checklist']} {i['item']} has no Good a reader found; give what the receiver gets"
+        " once it has it"
+        for i in run["decide"]["items"]
+        if not (i["evaluator"] or i["first_user"])
+        for d in decision["items"]
+        if key(d) == key(i) and "good" in d
+    ]
+    if unread:
+        raise call.Stop("turn: the decision is not filled:\n" + "\n".join(unread))
     decided = {key(i): i for i in decision["items"]}
     items = [decided.get(key(f), f) for f in run["findings"]["items"]]
     del run["decide"]

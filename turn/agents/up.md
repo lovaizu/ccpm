@@ -60,7 +60,9 @@ What only the user can decide you hand back as a question, with the answer you r
    your finding (`orchestrator`), the evaluator's Good (`evaluator`) and the first user's Good
    (`first_user`), `null` where there is none. Read the work at the lines each names, as the
    receiver for the use, and find there the Good: what the receiver gets that gives what the item
-   asks. Run
+   asks. Where neither the first user nor the evaluator found a Good, give what the receiver gets
+   once it has it: the calling AI is to get each Good from a reader that did not make the work, and
+   you read it knowing what it meant. Run
    `turn.py next <the call's result> <<'EOF'` with your decision, ending with `EOF`, and go to
    step 5.
    - Out: your decision, in the form of your reading in step 4, with the items of `decide.items`
