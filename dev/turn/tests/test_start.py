@@ -80,6 +80,7 @@ class TestStart(RepoTest):
                 "ccs": CALL["ccs"],
                 "work": ["README.md"],
                 "sent_back": [],
+                "unsourced": [],
                 "learnt": [],
             },
         )

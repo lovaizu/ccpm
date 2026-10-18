@@ -1,1 +1,2 @@
+- demo prints a greeting.
 - The license is MIT.

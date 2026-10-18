@@ -27,13 +27,19 @@ def start(text: str) -> dict[str, Any]:
     return {"check": run["items"]}
 
 
-def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
+def generator_given(run: dict[str, Any], sent_back: list, unsourced: list) -> dict[str, Any]:
     return {
         "ccs": run["call"]["ccs"],
         "work": run["work"],
         "sent_back": sent_back,
+        "unsourced": unsourced,
         "learnt": run.get("learnt", []),
     }
+
+
+def sources(run: dict[str, Any]) -> tuple[str, ...]:
+    """What a statement of the work may rest on: the CCS and the files and folders it names."""
+    return tuple(p for p in run["given"] if p not in run["work"])
 
 
 def reader_given(run: dict[str, Any]) -> dict[str, Any]:
@@ -154,7 +160,7 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         return ask(run, EVALUATOR, dict(reader_given(run), reading=reply["items"]))
     if agent == LEARNER:
         run["learnt"] = reply["items"]
-        return ask(run, GENERATOR, generator_given(run, run.pop("unmet")))
+        return ask(run, GENERATOR, generator_given(run, run.pop("unmet"), []))
     return compare(run, reply["items"])
 
 
@@ -171,19 +177,21 @@ def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
     if asked:
         write(run["call"]["result"], {"questions": asked})
         return {"returned": run["call"]["result"]}
-    return ask(run, GENERATOR, generator_given(run, []))
+    return ask(run, GENERATOR, generator_given(run, [], []))
 
 
 def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records the orchestrator's reading: the items it sends back go to the generator again;
-    with none, the reading is kept as its findings and the first user reads the work."""
+    """Records the orchestrator's reading: the items and the statements it sends back go to the
+    generator again; with none, the reading is kept as its findings and the first user reads the
+    work."""
     said = forms.check(text, run["items"], run["work"], forms.READING)
     if said:
         raise call.Stop("turn: the reading is not filled:\n" + "\n".join(said))
     found = json.loads(forms.unfenced(text))
     sent_back = [i for i in found["items"] if "gets" in i]
-    if sent_back:
-        return ask(run, GENERATOR, generator_given(run, sent_back))
+    unsourced = found.pop("unsourced", [])
+    if sent_back or unsourced:
+        return ask(run, GENERATOR, generator_given(run, sent_back, unsourced))
     run["findings"] = found
     return ask(run, FIRST_USER, reader_given(run))
 
@@ -214,7 +222,7 @@ def compare(run: dict[str, Any], goods: list[dict[str, Any]]) -> dict[str, Any]:
 def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     """Records the orchestrator's decision on the items judged apart, and returns the run."""
     asked = run["decide"]["questions"]
-    said = forms.check(text, run["decide"]["items"], run["work"], forms.READING, len(asked))
+    said = forms.check(text, run["decide"]["items"], run["work"], forms.DECISION, len(asked))
     if said:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
     decision = json.loads(forms.unfenced(text))

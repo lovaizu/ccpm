@@ -58,19 +58,25 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   The calling AI asks the user and calls turn again with the answer in the CCS.
 - The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
   each item and where the work gives it, then makes the work to give each, and hands back each
-  item's Good with its lines and the questions only the user can decide.
+  item's Good with its lines, each statement the work makes of its subject with the lines of the
+  CCS or the files it names that it rests on, and the questions only the user can decide.
 
   A work made to Goods set first gives each where it was meant; one written first and matched to
   the items after is patched item by item. It hands back once it has read the work and found each
   Good at its lines. What the CCS does not say becomes a question, not its own guess. Its Goods are
-  its claim, not a judgment.
-- The orchestrator reads the work, finding for every item the Good the receiver gets from it, and
-  sends back the items whose Good it does not find, each said as what the receiver gets once it has it; once it sends nothing back, a script
-  records its findings.
+  its claim, not a judgment. A reader without the sources takes a statement made from nothing as a
+  fact, so the one that wrote it names where each comes from.
+- The orchestrator reads the work, finding for every item the Good the receiver gets from it and,
+  at the lines the generator names, each statement's source, and sends back the items whose Good
+  it does not find, each said as what the receiver gets once it has it, and each statement whose
+  source it does not find there or that says otherwise; where a decision of the CCS and a file it
+  names differ, it is a question. Once it sends nothing back, a script records its findings.
 
   A shortfall plain to see is sent back before the costly reading. How the work gets the Good is
   the generator's to decide, since an edit told per item broke other items. An item only the user's
-  answer can give is not sent back; it is a question.
+  answer can give is not sent back; it is a question. Once the work is made, only the orchestrator
+  holds the sources; the readers after it read as the receiver, who has none, so a statement made
+  up passes them.
 - The first user reads the work in the receiver's place, with what the receiver opens and the
   checklists, and gives for each item the Good it found in the work, with its lines.
 

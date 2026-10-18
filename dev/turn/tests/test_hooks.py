@@ -17,6 +17,7 @@ from helpers import (
     READ_GIVEN,
     SCRIPT,
     SENT_BACK,
+    STATEMENT,
     TURN,
     WAITS,
     RepoTest,
@@ -224,11 +225,59 @@ class TestReplies(HookTest):
         self.assertIn('"good" with "lines"', err)
 
     def test_a_reply_giving_a_good_or_a_question_for_every_item_passes(self):
-        # Given: a generator whose reply gives the Good it set for one item, with its lines, and a
-        # question for the other
+        # Given: a generator whose reply gives the Good it set for one item, with its lines, a
+        # question for the other, and the source of each statement of the work
         # When: it ends
         # Then: it ends
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [STATEMENT]}
+        self.passes(subagentstop, self.reply(json.dumps(reply)))
+
+    def test_a_generators_reply_naming_no_statements_stops(self):
+        # Given: a generator whose reply names no statement of the work and its source
+        # When: it ends
+        # Then: it is kept going, told to give each statement with what it rests on
         reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        self.stops(subagentstop, self.reply(json.dumps(reply)), '"statements"', '"from"')
+
+    def test_a_statement_resting_on_what_the_ccs_does_not_name_stops(self):
+        # Given: a statement said to rest on the work itself, on a file the CCS does not name, on
+        # lines past a file's end, or on no lines
+        # When: the generator ends with it
+        # Then: it is kept going, naming the statement and what it may rest on
+        self.write("other.md", "x\n")
+        for source in (["README.md:1-1"], ["other.md:1-1"], ["docs/start.md:1-5"], []):
+            with self.subTest(source=source):
+                reply = {
+                    "items": [GOOD, WAITS],
+                    "questions": [QUESTION],
+                    "statements": [dict(STATEMENT, **{"from": source})],
+                }
+                self.stops(subagentstop, self.reply(json.dumps(reply)), "statement 1")
+
+    def test_statements_out_of_their_form_stop(self):
+        # Given: statements that are not a list, or one holding other keys than its lines and
+        # source
+        # When: the generator ends with them
+        # Then: it is kept going, told the shape each takes
+        for statements, said in (
+            ({"lines": ["README.md:3-3"]}, "is not a list"),
+            ([dict(STATEMENT, why="x")], 'must hold {"lines", "from"} alone'),
+            (["README.md:3-3"], 'must hold {"lines", "from"} alone'),
+        ):
+            with self.subTest(statements=statements):
+                reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": statements}
+                self.stops(subagentstop, self.reply(json.dumps(reply)), said)
+
+    def test_a_statement_resting_on_a_file_in_a_folder_the_ccs_names_passes(self):
+        # Given: a CCS naming a folder of code, and a statement resting on a file inside it
+        # When: the generator ends with it
+        # Then: it ends
+        ccs = self.read_json(CALL["ccs"])
+        ccs["retrieved_artifacts"].append({"code": "src"})
+        self.write_json(CALL["ccs"], ccs)
+        self.write("src/tidy.py", "def tidy():\n    pass\n")
+        statement = dict(STATEMENT, **{"from": ["src/tidy.py:1-2"]})
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [statement]}
         self.passes(subagentstop, self.reply(json.dumps(reply)))
 
     def test_a_reply_out_of_its_form_stops(self):
@@ -538,7 +587,7 @@ class TestWholeReads(HookTest):
         return ("Read", dict(file_path=path, **part))
 
     def generator_ends(self, *tool_uses):
-        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [STATEMENT]}
         path = self.given_record(ID, self.generator_prompt, *tool_uses)
         event = self.event(
             "SubagentStop",

@@ -99,6 +99,10 @@ CAN = [
     {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
     {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
 ]
+# A statement of the work with the lines of the CCS's files it rests on, as the generator names it,
+# and one the orchestrator sends back, its source not found.
+STATEMENT = {"lines": ["README.md:3-3"], "from": ["notes/readme.decisions.md:1-1"]}
+UNSOURCED = {"lines": ["README.md:3-3"], "gets": "no file the CCS names says it tidies CSV files"}
 SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",

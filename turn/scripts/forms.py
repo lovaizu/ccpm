@@ -13,13 +13,23 @@ LINES = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
 FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 
 
+class Statements(NamedTuple):
+    """A list of the work's statements a form holds beside its items: its key, the keys each
+    statement holds, and whether the list must be given."""
+
+    key: str
+    holds: tuple[str, ...]
+    required: bool
+
+
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each; whether every
-    item is given; and whether questions are asked."""
+    item is given; whether questions are asked; and the statements it holds, if any."""
 
     shapes: tuple[tuple[str, ...], ...]
     every: bool
     asks: bool
+    statements: Statements | None = None
 
 
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
@@ -29,8 +39,17 @@ CHECK = Form((("can",), ("question",)), every=True, asks=True)
 # receiver gets once it has its Good; the generator claims the Good it set for every item, or the
 # question it waits on. The first user and the evaluator look only for the Good the work gives, so
 # each names only the items it finds a Good for, and a script names the rest.
-READING = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=True)
-CLAIM = Form((("good", "lines"), ("question",)), every=True, asks=True)
+# The generator names, for each statement the work makes of its subject, the lines of the CCS or
+# its files it rests on; the orchestrator's reading names each statement it sends back, as one whose
+# source it does not find there, or that says otherwise.
+DECISION = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=True)
+READING = DECISION._replace(statements=Statements("unsourced", ("lines", "gets"), required=False))
+CLAIM = Form(
+    (("good", "lines"), ("question",)),
+    every=True,
+    asks=True,
+    statements=Statements("statements", ("lines", "from"), required=True),
+)
 GOOD = Form((("good", "lines"),), every=False, asks=False)
 # The learner says, for every item but those waiting on a question, what makes its Good: how the
 # work would give it, or what gives it now, so the remake keeps it.
@@ -56,11 +75,16 @@ def unfenced(text: str) -> str:
 
 
 def check(
-    text: str, items: list[dict[str, str]], work: list[str], form: Form, asked: int = 0
+    text: str,
+    items: list[dict[str, str]],
+    work: list[str],
+    form: Form,
+    asked: int = 0,
+    sources: tuple[str, ...] = (),
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
     The items are those the form judges; `asked` counts the questions already asked, which its
-    own questions are numbered after."""
+    own questions are numbered after; `sources` are the files and folders statements rest on."""
     data = parse(text, form)
     if data is None:
         shape = '{"items": [...], "questions": [...]}' if form.asks else '{"items": [...]}'
@@ -68,7 +92,48 @@ def check(
     said = item_problems(data["items"], items, work, form)
     if form.asks:
         said += question_problems(data, asked)
+    if form.statements:
+        said += statement_problems(data, form.statements, work, sources)
     return said
+
+
+def statement_problems(
+    data: dict[str, Any], form: Statements, work: list[str], sources: tuple[str, ...]
+) -> list[str]:
+    shape = "{" + ", ".join(f'"{k}"' for k in form.holds) + "}"
+    if form.key not in data:
+        if not form.required:
+            return []
+        return [f'give "{form.key}": [{shape}, ...], each statement the work makes of its subject']
+    given = data[form.key]
+    if not isinstance(given, list):
+        return [f'"{form.key}" is not a list; give it as [{shape}, ...]']
+    said: list[str] = []
+    for n, statement in enumerate(given, 1):
+        name = f"statement {n} of {form.key}"
+        if not isinstance(statement, dict) or set(statement) != set(form.holds):
+            said.append(f"{name} must hold {shape} alone")
+            continue
+        said += lines_problems(name, statement["lines"], work, "lines of the work")
+        if "from" in statement:
+            said += lines_problems(
+                name, statement["from"], list(sources), "lines of the CCS or a file it names"
+            )
+        if "gets" in statement and not (
+            isinstance(statement["gets"], str) and statement["gets"].strip()
+        ):
+            said.append(f'{name} has an empty "gets"; say it in words')
+    return said
+
+
+def lines_problems(name: str, lines: Any, paths: list[str], what: str) -> list[str]:
+    if not isinstance(lines, list) or not lines:
+        return [f"{name} names no lines; give the lines, each as <path>:<from>-<to>"]
+    return [
+        f"{name}: {line} is not {what}; give each as <path>:<from>-<to>"
+        for line in lines
+        if not in_files(line, paths)
+    ]
 
 
 def item_problems(
@@ -114,21 +179,15 @@ def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str
     ):
         said.append(f"{name}'s \"question\" is not a number; give the question's, from 1")
     if "lines" in item:
-        lines = item["lines"]
-        if not isinstance(lines, list) or not lines:
-            said.append(f"{name} names no lines; give the lines, each as <path>:<from>-<to>")
-        else:
-            said += [
-                f"{name}: {line} is not lines of the work; give each as <path>:<from>-<to>"
-                for line in lines
-                if not in_work(line, work)
-            ]
+        said += lines_problems(name, item["lines"], work, "lines of the work")
     return said
 
 
-def in_work(line: Any, work: list[str]) -> bool:
+def in_files(line: Any, paths: list[str]) -> bool:
+    """Whether the line names lines that are there in one of the files, or in a file inside one
+    of the folders."""
     found = LINES.match(line) if isinstance(line, str) else None
-    if not found or found.group(1) not in work or not os.path.isfile(found.group(1)):
+    if not found or not os.path.isfile(found.group(1)) or not within(found.group(1), paths):
         return False
     start, end = int(found.group(2)), int(found.group(3) or found.group(2))
     with open(found.group(1), encoding="utf-8") as f:
@@ -157,3 +216,12 @@ def question_problems(data: dict[str, Any], asked: int) -> list[str]:
         if isinstance(n, int) and not 1 <= n <= asked + len(questions)
     ]
     return said
+
+
+def within(path: str, paths: list[str]) -> bool:
+    real = os.path.realpath(path)
+    for named in paths:
+        top = os.path.realpath(named)
+        if real == top or (os.path.isdir(top) and real.startswith(top + os.sep)):
+            return True
+    return False

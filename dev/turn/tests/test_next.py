@@ -10,6 +10,7 @@ from helpers import (
     QUESTION,
     READ_SHOWN,
     SENT_BACK,
+    UNSOURCED,
     WAITS,
     RepoTest,
 )
@@ -96,6 +97,18 @@ class TestReading(ReadTest):
         self.assertEqual(out["agent"], "turn:generator")
         self.assertEqual(self.given()["sent_back"], [SENT_BACK])
         self.assertEqual(self.read_json(RESULT)["running"]["next"]["prompt"], out["prompt"])
+
+    def test_a_reading_that_sends_a_statement_back_gives_the_generator_it(self):
+        # Given: a reading finding every item's Good and one statement whose source it does not
+        # find
+        # When: the reading is recorded
+        # Then: the generator is to be started again with the statement and what is wrong with it,
+        # and no item sent back
+        out = self.next(
+            {"items": [GOOD, dict(GOOD, item="B-1")], "questions": [], "unsourced": [UNSOURCED]}
+        )
+        self.assertEqual(out["agent"], "turn:generator")
+        self.assertEqual((self.given()["sent_back"], self.given()["unsourced"]), ([], [UNSOURCED]))
 
     def test_a_reading_with_every_item_good_or_waiting_starts_the_first_user(self):
         # Given: a call naming what the receiver reads the work for and what they open with it, and
@@ -489,6 +502,21 @@ class TestReadingForm(ReadTest):
                     {"items": [dict(GOOD, lines=lines), SENT_BACK], "questions": []},
                     lines[0],
                     "<path>:<from>-<to>",
+                )
+
+    def test_a_statement_sent_back_out_of_its_form_stops(self):
+        # Given: a statement sent back with empty words, or with lines outside the work
+        # When: it is recorded
+        # Then: it stops, naming the statement
+        for statement, said in (
+            (dict(UNSOURCED, gets=" "), 'empty "gets"'),
+            (dict(UNSOURCED, lines=["docs/start.md:1"]), "is not lines of the work"),
+        ):
+            with self.subTest(said=said):
+                self.stops(
+                    {"items": [GOOD, SENT_BACK], "questions": [], "unsourced": [statement]},
+                    "statement 1 of unsourced",
+                    said,
                 )
 
     def test_a_question_number_with_no_question_stops(self):

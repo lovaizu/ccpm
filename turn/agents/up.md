@@ -15,7 +15,9 @@ each item gives, and where none is there, for what the receiver gets once it has
 looks for what more a work needs finds more without end, and the work drifts from what it should
 be. A first user that did not make the work finds the Goods it gives in the receiver's place, and
 an evaluator holds those Goods to their items and finds those it missed; where they differ from
-your findings, you decide.
+your findings, you decide. Once the work is made, only you hold the sources: the first user and the
+evaluator read as the receiver, who has none, so a statement made up passes them; you check each
+statement the work makes at the lines of the CCS and its files the generator names.
 Where an item is still without Good after the first reading, a learner finds what makes it, the
 work is made again, and you read it once more.
 What only the user can decide you hand back as a question, with the answer you recommend.
@@ -44,8 +46,9 @@ What only the user can decide you hand back as a question, with the answer you r
        sentence.
 3. Start the agent printed with its `prompt` as its whole prompt, as it is, and wait for its reply.
    turn's hook keeps each reply in the run for turn.py.
-   - Out: its reply: from `turn:generator`, `{"items": [...], "questions": [...]}`, the Good it set
-     for each item with the lines that give it, or the question the item waits on; from
+   - Out: its reply: from `turn:generator`, `{"items": [...], "questions": [...], "statements":
+     [...]}`, the Good it set for each item with the lines that give it, or the question the item
+     waits on, and each statement of the work with the lines of the sources it rests on; from
      `turn:first-user`, the Good it found for each item and its lines; from `turn:evaluator`, each
      item's Good with its lines; from `turn:learner`, what makes each item's Good.
 4. If the agent was `turn:generator`, read the work and go to step 5. Otherwise run
@@ -54,7 +57,11 @@ What only the user can decide you hand back as a question, with the answer you r
    that the work draws on, and the work, whole, the same way; the work again each time it changed.
    Then, for every item, read the work as the receiver the CCS names, for the use it names, and
    find its Good: what the receiver gets that gives what the item asks. The generator's Goods and
-   lines show you where to look first; the Good is yours to find in the work.
+   lines show you where to look first; the Good is yours to find in the work. Then, for each
+   statement the work makes of its subject, find at the lines the generator names in `from`, as you
+   read them, what the statement says; where they do not say it, or the generator named none for
+   it, send the statement back. Where a decision of the CCS and a file it names differ, the items
+   it touches wait on a question, since only the user can say which holds.
    Run `turn.py next <the call's result> <<'EOF'` with your reading, ending with `EOF`.
    - Out: your reading, as JSON:
      `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}]}`.
@@ -66,6 +73,10 @@ What only the user can decide you hand back as a question, with the answer you r
      - `"gets"`: what the receiver gets once the item has its Good, said from the item, not as
        the edit to make, since how to give it is the generator's to decide and an edit told per
        item breaks other items.
+
+     When you send a statement back, add `"unsourced": [{"lines": [...], "gets": "..."}]`, each
+     with `"lines"`, where the work makes it, and `"gets"`, what its source says, or that no file
+     the CCS names says it.
 6. Go on by what `turn.py` printed:
    - If it exits with 1, do what it says: fill each place it names and run it again, or start the
      agent it names.
