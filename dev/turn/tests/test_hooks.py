@@ -136,6 +136,15 @@ class TestRoleStart(HookTest):
         # Then: it goes through
         self.passes(pretooluse, self.role("turn:first-user", self.first_user()))
 
+    def test_a_role_started_before_the_check_stops(self):
+        # Given: a run started, whose check is not given yet
+        # When: the orchestrator starts the generator
+        # Then: it is stopped, saying to give the check first
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 0, out)
+        prompt = json.dumps({"run": CALL["result"]})
+        self.stops(pretooluse, self.role("turn:generator", prompt), "give your check")
+
     def test_a_role_started_before_its_turn_stops(self):
         # Given: a run whose generator is to be started next
         # When: the orchestrator starts the first user or the evaluator with the generator's prompt
@@ -666,6 +675,26 @@ class TestWholeReads(HookTest):
                 self.given_record(ID, json.dumps(CALL), *uses)
                 self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), said)
         self.given_record(ID, json.dumps(CALL), work, ("Bash", {"command": shown}))
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
+    def test_the_orchestrator_checking_before_reading_what_the_run_was_given_stops(self):
+        # Given: a run started, whose check is not given yet, and an orchestrator that read the
+        # CCS and the checklist but not the other files the CCS names
+        # When: it records its check with the script
+        # Then: it is stopped, naming the files to read whole but not the work, which the check
+        # does not rest on; once it reads them, it goes through
+        os.remove(CALL["result"])
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 0, out)
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        some = [self.read(p) for p in (CALL["ccs"], "checklists/readme.md")]
+        self.given_record(ID, json.dumps(CALL), *some)
+        code, err = self.hook(pretooluse, self.tool("turn:up", "Bash", command=command))
+        self.assertEqual(code, 2)
+        self.assertIn("notes/readme.decisions.md, docs/start.md", err)
+        self.assertNotIn("README.md", err)
+        rest = [self.read(p) for p in ("notes/readme.decisions.md", "docs/start.md")]
+        self.given_record(ID, json.dumps(CALL), *some, *rest)
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
     def test_a_reader_of_no_run_going_ends_without_reading(self):

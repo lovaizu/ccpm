@@ -16,10 +16,13 @@ EVALUATOR = "turn:evaluator"
 LEARNER = "turn:learner"
 
 
-def start(text: str) -> dict[str, str]:
-    """Starts the run the call asks for, and gives the generator to start and its prompt."""
+def start(text: str) -> dict[str, Any]:
+    """Starts the run the call asks for, and gives the items the orchestrator checks can get their
+    Good before any work is made."""
     run = call.check(call.parse(text))
-    return ask(run, GENERATOR, generator_given(run, []))
+    run["check"] = True
+    write(run["call"]["result"], {"running": run})
+    return {"check": run["items"]}
 
 
 def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
@@ -58,6 +61,8 @@ def given(result: str) -> dict[str, Any]:
     run = running(result)
     if run is None:
         raise call.Stop(f"turn: no run is going with its result at {result}")
+    if "check" in run:
+        raise call.Stop("turn: no role is started before the orchestrator's check is given")
     return run["next"]["given"]
 
 
@@ -70,6 +75,9 @@ def next_step(result: str, text: str) -> dict[str, Any]:
             f"turn: no run is going with its result at {result}; start one with"
             " `turn.py start '<call JSON>'`"
         )
+    if "check" in run:
+        # Asked with no check, the items to check are shown again.
+        return checked(run, text) if text.strip() else {"check": run["items"]}
     # Each role's record is kept for the learner, which looks for what makes the Good in what the
     # roles did.
     record = run["next"].get("record")
@@ -95,6 +103,22 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         run["learnt"] = reply["items"]
         return ask(run, GENERATOR, generator_given(run, run.pop("unmet")))
     return compare(run, reply["items"])
+
+
+def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
+    """Records the orchestrator's check: with an item the CCS cannot give its Good, the run returns
+    the questions alone, as no work made without the answer can give it; otherwise the generator
+    makes the work."""
+    said = forms.check(text, run["items"], run["work"], forms.CHECK)
+    if said:
+        raise call.Stop("turn: the check is not filled:\n" + "\n".join(said))
+    found = json.loads(forms.unfenced(text))
+    del run["check"]
+    asked = waited(found["items"], found["questions"])
+    if asked:
+        write(run["call"]["result"], {"questions": asked})
+        return {"returned": run["call"]["result"]}
+    return ask(run, GENERATOR, generator_given(run, []))
 
 
 def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -171,23 +195,27 @@ def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
         run["learning"] = [named(i) for i in items if "question" not in i]
         learner = {"findings": items, "records": run["records"]}
         return ask(run, LEARNER, learner)
-    waited = [
-        dict(q, items=[named(i) for i in waiting])
-        for n, q in enumerate(questions, 1)
-        for waiting in [[i for i in items if i.get("question") == n]]
-        if waiting
-    ]
     result = run["call"]["result"]
     write(
         result,
         {
             "work": run["work"],
             "items": [i for i in items if "good" in i],
-            "questions": waited,
+            "questions": waited(items, questions),
             "not_good": unmet,
         },
     )
     return {"returned": result}
+
+
+def waited(items: list[dict[str, Any]], questions: list) -> list[dict[str, Any]]:
+    """Each question an item waits on, with the items it settles."""
+    return [
+        dict(q, items=[named(i) for i in waiting])
+        for n, q in enumerate(questions, 1)
+        for waiting in [[i for i in items if i.get("question") == n]]
+        if waiting
+    ]
 
 
 def named(item: dict[str, Any]) -> dict[str, str]:

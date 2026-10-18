@@ -92,6 +92,12 @@ READ_GIVEN = READ_SHOWN + (
     ("Read", {"file_path": "notes/readme.decisions.md"}),
     ("Read", {"file_path": "docs/start.md"}),
 )
+# The orchestrator's check before the work is made: what in the CCS and its files gives each item's
+# Good.
+CAN = [
+    {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
+    {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
+]
 SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",
@@ -123,8 +129,13 @@ class RepoTest(unittest.TestCase):
         return code, out.getvalue()
 
     def started(self, call=None):
-        """The run started on a call, and the prompt the generator is to be started with."""
-        code, out = self.turn("start", json.dumps(call or CALL))
+        """The run started on a call and checked to give every item its Good, and the prompt the
+        generator is to be started with."""
+        call = call or CALL
+        code, out = self.turn("start", json.dumps(call))
+        self.assertEqual(code, 0, out)
+        check = json.dumps({"items": CAN, "questions": []})
+        code, out = self.turn("next", call["result"], stdin=check)
         self.assertEqual(code, 0, out)
         return json.loads(out)["prompt"]
 

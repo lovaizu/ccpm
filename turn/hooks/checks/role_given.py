@@ -21,6 +21,8 @@ def check(event: dict[str, Any]) -> list[str]:
     kept = run.running(given["run"]) if given else None
     if kept is None:
         return [f"start {agent} with what turn.py printed last as its prompt, as it is"]
+    if "check" in kept:
+        return ["give your check with `turn.py next` first; no role starts before it"]
     step = kept["next"]
     if step["agent"] == agent and json.loads(step["prompt"]) == given:
         return []

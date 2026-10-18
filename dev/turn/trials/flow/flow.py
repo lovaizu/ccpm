@@ -1,11 +1,12 @@
 """Tries the orchestrator's flow: the real orchestrator, scripts and hooks, with the four roles stood
 in for by agents of this folder that give replies set in replies.json, so the run takes every way a
 run goes: an item sent back, the evaluator differing from the findings, the learner and the work
-made again, and the second reading. A stand-in for the calling AI calls turn on a task of one item
+made again, and the second reading; or, with `unanswered`, the same task with its decision taken
+out, so the run returns the question alone before any work is made. A stand-in for the calling AI calls turn on a task of one item
 in a repository made for the run. Prints the session, from whose JSONL and its agents' the trial is
 judged, the order the agents were started in, the minutes and the result.
 
-    python3 dev/turn/trials/flow/flow.py <new folder>
+    python3 dev/turn/trials/flow/flow.py <new folder> [unanswered]
 
 The repository and the copy of turn are removed when the run ends; the records stay in Claude
 Code's own folder of the session.
@@ -32,6 +33,9 @@ When it returns, reply with the line it returned."""
 
 place = os.path.abspath(sys.argv[1])
 shutil.copytree(os.path.join(HERE, "task"), place)
+if sys.argv[2:] == ["unanswered"]:
+    with open(os.path.join(place, "notes", "decisions.md"), "w", encoding="utf-8") as f:
+        f.write("")
 os.makedirs(os.path.join(place, ".tasks"))
 shutil.move(os.path.join(place, "ccs.json"), os.path.join(place, CALL["ccs"]))
 for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "task"]):

@@ -22,6 +22,9 @@ class Form(NamedTuple):
     asks: bool
 
 
+# Before the work is made, the orchestrator says for every item what in the CCS and its files gives
+# its Good, or the question it waits on.
+CHECK = Form((("can",), ("question",)), every=True, asks=True)
 # The orchestrator judges, so its reading and its decision give a Good, a question or what the
 # receiver gets once it has its Good; the generator claims the Good it set for every item, or the
 # question it waits on. The first user and the evaluator look only for the Good the work gives, so
@@ -103,7 +106,7 @@ def item_problems(
 
 def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
     said: list[str] = []
-    for key in ("good", "gets", "learnt"):
+    for key in ("can", "good", "gets", "learnt"):
         if key in item and not (isinstance(item[key], str) and item[key].strip()):
             said.append(f'{name} has an empty "{key}"; say it in words')
     if "question" in item and not (

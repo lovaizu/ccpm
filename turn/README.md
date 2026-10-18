@@ -32,25 +32,32 @@ Start the `turn:up` agent in the background with
 When it returns, check each Good against its lines, and put each question to the user.
 ```
 
-While the step waits, turn writes README.md, and an AI that did not write it reads it as the
-developer meeting the project would. Each item is judged from that reading: it gets its Good when
-the reader gets what the item asks, with the lines that give it. Where an item gets none, README.md
-is made again and read once more, and an item still without Good comes back with what the reader
-would get once it has one.
+While the step waits, turn first checks that what the CCS and its files say can give every item its
+Good. No one had chosen under which license people may use the project, so turn writes nothing yet
+and comes back with that one question:
+
+```json
+{"questions": [{"question": "Under which license may people use the project?",
+                "recommended": "MIT", "items": [{"item": "B-5", ...}]}]}
+```
+
+The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and calls turn again.
+This time turn writes README.md, and an AI that did not write it reads it as the developer meeting
+the project would. Each item is judged from that reading: it gets its Good when the reader gets
+what the item asks, with the lines that give it. Where an item gets none, README.md is made again
+and read once more, and an item still without Good comes back with what the reader would get once
+it has one.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
-rests on, and one question, under which license people may use the project, since no one had
-chosen one:
+rests on:
 
 ```json
 {"items": [{"item": "B-2", "good": "a developer sees at once that it is for CSV files",
             "lines": ["README.md:3-4"]}, ...],
- "questions": [{"question": "Under which license may people use the project?",
-                "recommended": "MIT"}]}
+ "questions": [], "not_good": []}
 ```
 
-The step's AI reads lines 3 and 4 and the others it is pointed to, asks the user the question, adds
-the license, and the step ends.
+The step's AI reads lines 3 and 4 and the others it is pointed to, and the step ends.
 
 ## Why turn
 

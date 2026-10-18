@@ -42,13 +42,14 @@ since a work it must fix costs the user the fixing as well as the wait.
   where turn writes its result.
 - The calling AI gets back the work where it goes, and the result: each item's Good with its lines,
   the questions only the user can decide, and each item still without Good, with what the receiver
-  gets once it is Good.
+  gets once it is Good. Where the CCS cannot give an item its Good, it gets the questions alone,
+  before any work is made.
 
   An item's Good is the judgment that the receiver gets from the work what the item asks, with the
   lines that give it.
 - The calling AI checks each Good against its lines and fixes each item without Good itself; it
   puts each question to the user, writes the answer into the work, or into the CCS and calls turn
-  again when the answer changes much, and ends its step.
+  again when no work came back or the answer changes much, and ends its step.
 
 ## Benefits
 

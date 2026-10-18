@@ -53,11 +53,26 @@ class TestStart(RepoTest):
         # Given: a call naming the CCS, the kinds of the work, the checklist and the receiver, and
         # where the result goes
         # When: the run is started
+        # Then: the orchestrator is to check every item can get its Good, before any agent starts
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 0, out)
+        self.assertEqual(
+            json.loads(out),
+            {
+                "check": [
+                    {"checklist": "checklists/readme.md", "item": "F-1"},
+                    {"checklist": "checklists/readme.md", "item": "B-1"},
+                ]
+            },
+        )
+
+    def test_a_run_checked_to_give_every_item_its_good_starts_the_generator(self):
+        # Given: a run started
+        # When: the orchestrator's check finds what gives every item its Good
         # Then: the generator is to be started with where the run is kept alone, and is given
         # the CCS and the work, with nothing sent back yet
-        code, out = self.turn("start", json.dumps(CALL))
-        self.assertEqual((code, json.loads(out)["agent"]), (0, "turn:generator"))
-        self.assertEqual(json.loads(json.loads(out)["prompt"]), {"run": CALL["result"]})
+        prompt = self.started()
+        self.assertEqual(json.loads(prompt), {"run": CALL["result"]})
         self.assertEqual(
             self.given(),
             {

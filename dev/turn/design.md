@@ -8,7 +8,8 @@ and a Good are, are in [turn's UX](ux.md).
 ## User stories
 
 - As the calling AI, I want to hand turn the path of a CCS and get the work back, with each item's
-  Good and its lines, the questions only the user can decide, and each item still without Good.
+  Good and its lines, the questions only the user can decide, and each item still without Good; or,
+  when the CCS cannot give an item its Good, the questions alone, before any work is made.
 
   The UX's first and last scenes are the calling AI's own work around this call.
 
@@ -24,7 +25,7 @@ flowchart LR
   fu["First user"]
   ev["Evaluator"]
   le["Learner"]
-  caller -->|1 calls with the CCS| orch
+  caller -->|1 calls with the CCS, which the orchestrator checks can give every item its Good| orch
   orch -->|2 has the work made| gen
   orch -->|3 has it read in the receiver's place| fu
   orch -->|4 has that reading's Goods held to their items, and the Goods it missed found| ev
@@ -48,6 +49,13 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   The CCS is the calling AI's, and turn defines nothing of it: what turn needs is found by these
   kinds, and the values stay in the CCS alone, so the call and the CCS cannot differ. Where the
   result goes is this call's answer, not the task's state, so it is not in the CCS.
+- Before any work is made, the orchestrator reads the CCS, the files it names and the checklists,
+  and finds for every item what in them gives its Good; where nothing does, it returns the
+  questions alone, each with the items it settles, and no work is made.
+
+  A Good the CCS cannot give, the generator cannot give either, and the making and the readings
+  after it would be spent for nothing; an answer may also change how the whole work is laid out.
+  The calling AI asks the user and calls turn again with the answer in the CCS.
 - The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
   each item and where the work gives it, then makes the work to give each, and hands back each
   item's Good with its lines and the questions only the user can decide.
@@ -132,9 +140,9 @@ turn/                      the plugin, installed by Claude Code
   commit or a push; a stop says why and names what may be read.
 
   A role that reads only what it is given is not bent by what it was not meant to see.
-- The hooks stop a role's reply, and the orchestrator's reading and decision, given before what its
-  step reads is read whole since it last changed; the learner, whose records are too long for one
-  read, is left to its scripts.
+- The hooks stop a role's reply, and the orchestrator's check, reading and decision, given before
+  what its step reads is read whole since it last changed; the learner, whose records are too long
+  for one read, is left to its scripts.
 
   An item judged on a part read is judged on a guess for the rest.
 - A script writes the result where the call says, and checks its shape as it writes.
@@ -166,9 +174,10 @@ turn/                      the plugin, installed by Claude Code
   - Flow: on a task of one item, with the four roles stood in for by agents that read what their
     step reads and give a reply set beforehand, one set for each way a run goes: every item Good at
     the first reading, an item sent back, the evaluator differing from the findings, and an item
-    left without Good through the learner and the second reading. On Opus 5.5; passes when its
-    JSONL shows each step in its order, each hook stopping where its check should, and the result
-    as the set replies make it.
+    left without Good through the learner and the second reading; and, on the same task with its
+    decision taken out, the questions returned before any work is made. On Opus 5.5; passes when
+    its JSONL shows each step in its order, each hook stopping where its check should, and the
+    result as the set replies make it.
 - Each of the four roles: works to its aim with what it is given, giving its form.
   - Flow: started on its own with a prompt set beforehand, as the orchestrator would give it, on a
     task of one item, on Opus 5.5; passes when its JSONL shows it read only and whole what its step

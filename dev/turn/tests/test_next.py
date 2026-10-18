@@ -2,6 +2,7 @@ import json
 
 from helpers import (
     CALL,
+    CAN,
     EVALUATED,
     FOUND,
     GOOD,
@@ -21,6 +22,7 @@ def judged(item):
     return {k: v for k, v in item.items() if k not in ("checklist", "item")}
 
 
+ITEM_F1 = {"checklist": "checklists/readme.md", "item": "F-1"}
 ITEM_B1 = {"checklist": "checklists/readme.md", "item": "B-1"}
 
 
@@ -34,6 +36,54 @@ class ReadTest(RepoTest):
 
     def read_text(self, text):
         return self.turn("next", RESULT, stdin=text)
+
+
+class TestCheck(RepoTest):
+    def setUp(self):
+        super().setUp()
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 0, out)
+
+    def test_what_a_role_is_given_before_the_check_stops(self):
+        # Given: a run started, whose check is not given yet
+        # When: a role asks what it is given
+        # Then: it is stopped, as no role is started before the check
+        code, out = self.turn("given", RESULT)
+        self.assertEqual(code, 1)
+        self.assertIn("no role is started", out)
+
+    def test_the_items_to_check_are_printed_again_when_asked_with_no_check(self):
+        # Given: a run started
+        # When: the script is asked to go on with no check given
+        # Then: it prints the items to check again
+        self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
+
+    def test_a_check_with_an_item_waiting_on_a_question_returns_the_questions_alone(self):
+        # Given: a check finding what gives one item its Good and nothing in the CCS for the other
+        # When: the check is recorded
+        # Then: the run returns with no work made, the result holding the question alone with the
+        # item it settles
+        out = self.next({"items": [CAN[0], WAITS], "questions": [QUESTION]})
+        self.assertEqual(out, {"returned": RESULT})
+        self.assertEqual(self.read_json(RESULT), {"questions": [dict(QUESTION, items=[ITEM_B1])]})
+
+    def test_a_check_out_of_its_form_stops(self):
+        # Given: a check leaving an item out, giving one empty words, or one a Good
+        # When: the check is recorded
+        # Then: it is stopped, naming each place to fill, and the run waits on the check still
+        for items, said in (
+            ([CAN[0]], "B-1 is left out"),
+            ([CAN[0], dict(CAN[1], can=" ")], 'empty "can"'),
+            ([CAN[0], dict(ITEM_B1, good="x", lines=["README.md:1-1"])], "must hold"),
+        ):
+            with self.subTest(said=said):
+                code, out = self.turn(
+                    "next", RESULT, stdin=json.dumps({"items": items, "questions": []})
+                )
+                self.assertEqual(code, 1)
+                self.assertIn("the check is not filled", out)
+                self.assertIn(said, out)
+        self.assertEqual(self.next(), {"check": [ITEM_F1, ITEM_B1]})
 
 
 class TestReading(ReadTest):

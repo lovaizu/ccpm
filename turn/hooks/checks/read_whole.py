@@ -25,14 +25,20 @@ def check(event: dict[str, Any]) -> list[str]:
     kept = agents.running(event)
     if kept is None:
         return []
+    checking = role == "up" and "check" in kept
     deciding = role == "up" and "decide" in kept
-    if role == "up" and kept["next"]["agent"] != run.GENERATOR and not deciding:
+    if role == "up" and not (checking or deciding) and kept["next"]["agent"] != run.GENERATOR:
         return []
     cwd = os.path.realpath(event["cwd"])
     if role in ("first-user", "evaluator") or deciding:
         must = kept["work"] + ([] if deciding else kept["checklist"])
     else:
-        must = [p for p in kept["given"] if os.path.isfile(os.path.join(cwd, p))]
+        # The check comes before the work is made, so it rests on what the work is made from.
+        must = [
+            p
+            for p in kept["given"]
+            if os.path.isfile(os.path.join(cwd, p)) and not (checking and p in kept["work"])
+        ]
     read = whole(agents.transcript(event), cwd, kept["work"])
     missing = [p for p in must if os.path.realpath(os.path.join(cwd, p)) not in read]
     said = []
@@ -54,7 +60,7 @@ def check(event: dict[str, Any]) -> list[str]:
 
 
 def recording(event: dict[str, Any], role: str | None) -> bool:
-    """Whether the orchestrator is recording its reading or decision with the script."""
+    """Whether the orchestrator is recording its check, reading or decision with the script."""
     command = str(event.get("tool_input", {}).get("command", ""))
     return (
         role == "up"
