@@ -1,6 +1,18 @@
 import json
+import os
 
-from helpers import GOOD, QUESTION, SENT_BACK, UNSOURCED, WAITS, RepoTest, forms
+from helpers import (
+    CHECKED,
+    GOOD,
+    LESSON,
+    QUESTION,
+    SENT_BACK,
+    STATEMENT,
+    UNSOURCED,
+    WAITS,
+    RepoTest,
+    forms,
+)
 
 ITEMS = [
     {"checklist": "checklists/readme.md", "item": "F-1"},
@@ -10,8 +22,8 @@ WORK = ["README.md"]
 
 
 class FormTest(RepoTest):
-    def said(self, data, form, sources=()):
-        return forms.check(json.dumps(data), ITEMS, WORK, form, sources=sources)
+    def said(self, data, form, sources=(), records=()):
+        return forms.check(json.dumps(data), ITEMS, WORK, form, sources=sources, records=records)
 
 
 class TestItems(FormTest):
@@ -100,17 +112,6 @@ class TestLines(FormTest):
         self.assertEqual(len(said), 1)
         self.assertIn("README.md:0-1 is not lines of the work", said[0])
 
-    def test_a_file_beside_a_folder_named_is_not_inside_it(self):
-        # Given: sources naming the folder docs, and a file outside it
-        # When: a statement rests on that file
-        # Then: the file is named as not a source
-        self.write("other.md", "x\n")
-        statement = {"lines": ["README.md:3-3"], "from": ["other.md:1-1"]}
-        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [statement]}
-        said = self.said(reply, forms.CLAIM, sources=("docs",))
-        self.assertEqual(len(said), 1)
-        self.assertIn("other.md:1-1 is not lines of the CCS or a file it names", said[0])
-
 
 class TestStatements(FormTest):
     def test_each_statement_short_of_its_keys_is_named(self):
@@ -118,8 +119,9 @@ class TestStatements(FormTest):
         # When: they are checked
         # Then: each is named with the keys it must hold
         short = {"lines": UNSOURCED["lines"]}
+        more = dict(UNSOURCED, why="x")
         said = self.said(
-            {"items": [GOOD, SENT_BACK], "questions": [], "unsourced": [short, short]},
+            {"items": [GOOD, SENT_BACK], "questions": [], "unsourced": [short, more]},
             forms.READING,
         )
         self.assertEqual(
@@ -129,3 +131,374 @@ class TestStatements(FormTest):
                 'statement 2 of unsourced must hold {"lines", "gets"} alone',
             ],
         )
+
+    def test_statements_sent_back_as_no_list_stop(self):
+        # Given: a reading sending back one statement bare, not in a list
+        # When: it is checked
+        # Then: it is told to give them as a list
+        said = self.said(
+            {"items": [GOOD, SENT_BACK], "questions": [], "unsourced": UNSOURCED}, forms.READING
+        )
+        self.assertEqual(said, ['"unsourced" is not a list; give it as [{"lines", "gets"}, ...]'])
+
+
+class TestGrounds(FormTest):
+    """A statement of the work rests on the words of the CCS or its files, quoted as written, and,
+    for one of how the product behaves, on a command the generator ran and what it printed."""
+
+    def setUp(self):
+        super().setUp()
+        self.write("csvtidy.py", "def tidy(cell):\n    return cell.strip()\n")
+        self.sources: tuple[str, ...] = ("notes/readme.decisions.md", "csvtidy.py")
+        self.record = self.given_record(
+            "generator",
+            "{}",
+            ("Bash", {"command": "printf ' a \\t' | python3 csvtidy.py"}, "a\n(exit 0)"),
+            ("Bash", {"command": "ls"}),
+        )
+
+    def claim(self, *statements):
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": list(statements)}
+        return self.said(reply, forms.CLAIM, self.sources, (self.record,))
+
+    def test_a_statement_quoting_its_source_as_written_passes(self):
+        # Given: a statement quoting a line of the decisions, and one quoting code across its
+        # line break as one line
+        # When: it is checked
+        # Then: it passes, as the words are there, whatever space lies between them
+        code = {"path": "csvtidy.py", "quote": "def tidy(cell): return cell.strip()"}
+        self.assertEqual(self.claim(STATEMENT, dict(STATEMENT, quotes=[code])), [])
+
+    def test_a_quote_not_in_its_file_as_written_stops(self):
+        # Given: a quote with a word changed, one with its line numbers, and one of a file the CCS
+        # does not name
+        # When: it is checked
+        # Then: each is named, with what to give instead
+        self.write("other.md", "# Decisions\n")
+        for quote, said in (
+            (
+                {"path": "csvtidy.py", "quote": "return cell.lower()"},
+                "quote 1 is not in csvtidy.py",
+            ),
+            ({"path": "csvtidy.py", "quote": "1\tdef tidy(cell):"}, "quote 1 is not in csvtidy.py"),
+            ({"path": "other.md", "quote": "# Decisions"}, "other.md is not the CCS or a file"),
+            ({"path": "README.md", "quote": "# csvtidy"}, "README.md is not the CCS or a file"),
+        ):
+            with self.subTest(quote=quote):
+                said_now = self.claim(dict(STATEMENT, quotes=[quote]))
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(f"statement 1 of statements: {said}", said_now[0])
+
+    def test_quotes_out_of_their_form_stop(self):
+        # Given: quotes that are no list, an empty list, or hold other keys or empty words
+        # When: they are checked
+        # Then: each is named with the form a quote takes
+        for quotes, said in (
+            ("# Decisions", "gives its quotes as no list"),
+            ([], "gives its quotes as no list"),
+            ([{"path": "csvtidy.py"}], 'quote 1 must hold "path" and "quote"'),
+            ([{"path": "csvtidy.py", "quote": " "}], 'quote 1 must hold "path" and "quote"'),
+            ([{"path": 1, "quote": "x"}], 'quote 1 must hold "path" and "quote"'),
+            ([dict(STATEMENT["quotes"][0], line="1")], 'quote 1 must hold "path" and "quote"'),
+        ):
+            with self.subTest(quotes=quotes):
+                said_now = self.claim(dict(STATEMENT, quotes=quotes))
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(said, said_now[0])
+
+    def test_every_quote_out_of_place_is_named(self):
+        # Given: two quotes out of their form, then two of files the CCS does not name, then two
+        # not in their file
+        # When: they are checked
+        # Then: each is named, not only the first
+        wrong = {"path": "csvtidy.py", "quote": "return cell.lower()"}
+        for quotes, said in (
+            ([{"path": "csvtidy.py"}] * 2, "must hold"),
+            ([{"path": "README.md", "quote": "x"}] * 2, "is not the CCS"),
+            ([wrong, wrong], "is not in csvtidy.py"),
+        ):
+            with self.subTest(said=said):
+                said_now = self.claim(dict(STATEMENT, quotes=quotes))
+                self.assertEqual(sum(said in s for s in said_now), 2, said_now)
+
+    def test_a_file_beside_a_folder_named_is_not_inside_it(self):
+        # Given: sources naming the folder docs, and a file outside it
+        # When: a statement quotes that file
+        # Then: the file is named as not a source
+        self.write("other.md", "x\n")
+        self.sources = ("docs",)
+        said = self.claim(dict(STATEMENT, quotes=[{"path": "other.md", "quote": "x"}]))
+        self.assertEqual(
+            said, ["statement 1 of statements: other.md is not the CCS or a file it names"]
+        )
+
+    def test_a_statement_resting_on_a_command_it_ran_passes(self):
+        # Given: a statement of how csvtidy behaves, resting on a command the generator ran, with
+        # words of what it printed, and another on that run and a quote
+        # When: it is checked
+        # Then: it passes
+        ran = {"command": "printf ' a \\t' | python3 csvtidy.py", "output": "a (exit 0)"}
+        lines = {"lines": ["README.md:3-3"], "ran": [ran]}
+        self.assertEqual(self.claim(lines, dict(lines, quotes=STATEMENT["quotes"])), [])
+
+    def test_a_run_not_in_the_generators_record_stops(self):
+        # Given: a command never run, a command run with words it did not print, and one whose
+        # output the record does not hold
+        # When: it is checked
+        # Then: each is named as no command run with what it printed
+        for ran in (
+            {"command": "python3 csvtidy.py --help", "output": "usage"},
+            {"command": "python3 csvtidy.py --help", "output": "a"},
+            {"command": "printf ' a \\t' | python3 csvtidy.py | head", "output": "a"},
+            {"command": "printf", "output": "a"},
+            {"command": "printf ' a \\t' | python3 csvtidy.py", "output": "b"},
+            {"command": "ls", "output": "README.md"},
+        ):
+            with self.subTest(ran=ran):
+                said_now = self.claim({"lines": ["README.md:3-3"], "ran": [ran]})
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn("run 1 is not a command you ran with Bash", said_now[0])
+
+    def test_runs_out_of_their_form_stop(self):
+        # Given: runs that are no list, an empty list, or hold other keys
+        # When: they are checked
+        # Then: each is named with the form a run takes
+        for ran, said in (
+            ({"command": "ls"}, "gives its runs as no list"),
+            ([], "gives its runs as no list"),
+            ([{"command": "ls"}], 'run 1 must hold "command" and "output"'),
+            ([{"command": "ls", "output": " "}], 'run 1 must hold "command" and "output"'),
+            ([{"command": "ls", "output": "a", "why": "x"}], 'run 1 must hold "command"'),
+            (["ls"], 'run 1 must hold "command" and "output"'),
+        ):
+            with self.subTest(ran=ran):
+                said_now = self.claim({"lines": ["README.md:3-3"], "ran": ran})
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(said, said_now[0])
+
+    def test_a_run_is_found_in_a_record_whose_results_come_as_parts(self):
+        # Given: a record whose tool result is given as a list of text parts, beside entries that
+        # are not the generator's own messages
+        # When: a statement rests on that run
+        # Then: it passes
+        parts = [{"type": "text", "text": "a"}, {"type": "text", "text": "(exit 0)"}]
+        self.record = self.given_record("parts", "{}", ("Bash", {"command": "ls"}, parts))
+        with open(self.record, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "progress", "data": {}}) + "\n")
+            f.write(json.dumps({"type": "user", "message": {"content": "go on"}}) + "\n")
+        ran = {"command": "ls", "output": "a (exit 0)"}
+        self.assertEqual(self.claim({"lines": ["README.md:3-3"], "ran": [ran]}), [])
+
+    def test_a_run_is_found_among_bash_s_own_uses_and_results_alone(self):
+        # Given: a record holding, beside a Bash use and its result, parts of other types and tools
+        # holding a command, and parts of other types answering the Bash use
+        # When: a statement rests on a command of those parts, or on words of those answers
+        # Then: it stops, as only a Bash use and the tool result answering it show a run
+        def part(kind, **fields):
+            return {"type": kind, **fields}
+
+        def use(kind, name, n):
+            return part(kind, name=name, id=f"x{n}", input={"command": f"cmd{n}"})
+
+        def back(kind, n, words):
+            return part(kind, tool_use_id=f"x{n}", content=words)
+
+        parts = [
+            use("server_tool_use", "Bash", 1),
+            use("web_fetch", "Bash", 2),
+            use("tool_use", "Agent", 3),
+            use("tool_use", "Monitor", 4),
+            use("tool_use", "Bash", 5),
+            back("tool_result", 1, "one"),
+            back("tool_result", 2, "two"),
+            back("tool_result", 3, "three"),
+            back("tool_result", 4, "four"),
+            back("text", 5, "five"),
+            back("web_fetch_result", 5, "six"),
+            back("tool_result", 5, "done"),
+        ]
+        self.record = os.path.join(self.repo, "parts.jsonl")
+        with open(self.record, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "assistant", "message": {"content": parts}}) + "\n")
+        for command, output in (
+            ("cmd1", "one"),
+            ("cmd2", "two"),
+            ("cmd3", "three"),
+            ("cmd4", "four"),
+            ("cmd5", "five"),
+            ("cmd5", "six"),
+        ):
+            with self.subTest(command=command, output=output):
+                ran = {"command": command, "output": output}
+                said_now = self.claim({"lines": ["README.md:3-3"], "ran": [ran]})
+                self.assertEqual(len(said_now), 1, said_now)
+        ran = {"command": "cmd5", "output": "done"}
+        self.assertEqual(self.claim({"lines": ["README.md:3-3"], "ran": [ran]}), [])
+
+    def test_a_statement_with_no_grounds_or_other_keys_stops(self):
+        # Given: a statement with lines alone, one with an old key beside its quotes, one with no
+        # lines, and one that is no object
+        # When: it is checked
+        # Then: each is named with the keys a statement holds
+        for statement in (
+            {"lines": ["README.md:3-3"]},
+            dict(STATEMENT, **{"from": ["csvtidy.py:1-1"]}),
+            {"quotes": STATEMENT["quotes"]},
+            "README.md:3-3",
+        ):
+            with self.subTest(statement=statement):
+                self.assertEqual(
+                    self.claim(statement, statement),
+                    [
+                        'statement 1 of statements must hold "lines" with "quotes", "ran" or both',
+                        'statement 2 of statements must hold "lines" with "quotes", "ran" or both',
+                    ],
+                )
+
+    def test_statements_given_as_no_list_stop(self):
+        # Given: a claim with no statements, and one with statements that are no list
+        # When: it is checked
+        # Then: it is told to give each statement with its grounds
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        for statements in ((), (STATEMENT,)):
+            with self.subTest(statements=statements):
+                given = dict(reply, statements=statements[0]) if statements else reply
+                said = self.said(given, forms.CLAIM, self.sources, (self.record,))
+                self.assertEqual(len(said), 1, said)
+                self.assertIn('give "statements": [{"lines": [...], "quotes": [...]}', said[0])
+
+
+class TestLessons(FormTest):
+    """The learner gives what gives each item's Good, and how the run went, each lesson resting on
+    the words of a record it was shown."""
+
+    def setUp(self):
+        super().setUp()
+        self.records: tuple[str, ...] = (
+            self.given_record("first-user", "{}"),
+            self.given_record("evaluator", "{}"),
+        )
+
+    def lessons(self, **reply):
+        items = [dict(i, learnt="what gives it") for i in ITEMS]
+        reply = dict({"items": items, "process": [LESSON], "checked": CHECKED}, **reply)
+        return self.said(reply, forms.LEARNT, records=self.records)
+
+    def test_lessons_resting_on_words_of_the_records_pass(self):
+        # Given: a lesson for each role, the orchestrator's included, each quoting a record, and a
+        # reply with no lesson but what it checked
+        # When: it is checked
+        # Then: it passes
+        roles = ("orchestrator", "generator", "first-user", "evaluator", "learner")
+        lessons = [dict(LESSON, role=r, grounds=[{"record": 2, "quote": "{}"}]) for r in roles]
+        self.assertEqual(self.lessons(process=lessons), [])
+        self.assertEqual(self.lessons(process=[]), [])
+
+    def test_a_lesson_out_of_its_form_stops(self):
+        # Given: a lesson for no role of turn, one with empty words, one with other keys, one
+        # quoting no record, a record not given, or words the record does not hold
+        # When: it is checked
+        # Then: each is named with what to give
+        for lesson, said in (
+            (dict(LESSON, role="caller"), 'lesson 1 must hold "role", one of'),
+            (dict(LESSON, lesson=" "), 'lesson 1 must hold "role", one of'),
+            (dict(LESSON, why="x"), 'lesson 1 must hold "role", one of'),
+            ({"role": "generator", "lesson": "x"}, 'lesson 1 must hold "role", one of'),
+            ("read it", 'lesson 1 must hold "role", one of'),
+            (dict(LESSON, grounds=[]), "lesson 1 gives its grounds as no list"),
+            (dict(LESSON, grounds={"record": 1}), "lesson 1 gives its grounds as no list"),
+            (dict(LESSON, grounds=[{"record": 3, "quote": "I"}]), "ground 1 must hold"),
+            (dict(LESSON, grounds=[{"record": 0, "quote": "I"}]), "ground 1 must hold"),
+            (dict(LESSON, grounds=[{"record": True, "quote": "I"}]), "ground 1 must hold"),
+            (dict(LESSON, grounds=[{"record": 1, "quote": ""}]), "ground 1 must hold"),
+            (dict(LESSON, grounds=[{"record": 1}]), "ground 1 must hold"),
+            (dict(LESSON, grounds=[{"record": 1, "quote": "{}", "x": 1}]), "ground 1 must hold"),
+            (dict(LESSON, grounds=["I"]), "ground 1 must hold"),
+            (dict(LESSON, grounds=[{"record": 1, "quote": "I closed it."}]), "is not in record 1"),
+        ):
+            with self.subTest(lesson=lesson):
+                said_now = self.lessons(process=[lesson])
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(said, said_now[0])
+
+    def test_every_lesson_out_of_its_form_is_named(self):
+        # Given: two lessons for no role of turn
+        # When: they are checked
+        # Then: both are named
+        said = self.lessons(process=[dict(LESSON, role="caller")] * 2)
+        self.assertEqual([s[:8] for s in said], ["lesson 1", "lesson 2"])
+
+    def test_a_ground_is_found_in_the_record_it_numbers(self):
+        # Given: three records, each with words of its own
+        # When: a lesson quotes each record's words by its number, or the third's words by
+        # another number
+        # Then: each found where it numbers passes, and the other is named
+        self.records = tuple(self.given_record(f"r{n}", f"words of {n}") for n in (1, 2, 3))
+        for n in (1, 2, 3):
+            with self.subTest(n=n):
+                ground = {"record": n, "quote": f"words of {n}"}
+                self.assertEqual(self.lessons(process=[dict(LESSON, grounds=[ground])]), [])
+        ground = {"record": 2, "quote": "words of 3"}
+        said = self.lessons(process=[dict(LESSON, grounds=[ground])])
+        self.assertIn("is not in record 2", said[0])
+
+    def test_no_process_or_no_scope_checked_stops(self):
+        # Given: a reply with no process, process that is no list, or no scope checked
+        # When: it is checked
+        # Then: each is named
+        items = [dict(i, learnt="what gives it") for i in ITEMS]
+        for reply, said in (
+            ({"items": items, "checked": CHECKED}, 'give "process"'),
+            ({"items": items, "process": LESSON, "checked": CHECKED}, 'give "process"'),
+            ({"items": items, "process": []}, 'give "checked"'),
+            ({"items": items, "process": [], "checked": " "}, 'give "checked"'),
+        ):
+            with self.subTest(reply=reply):
+                said_now = self.said(reply, forms.LEARNT, records=self.records)
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(said, said_now[0])
+
+
+# What the learner found, offered to the orchestrator to take.
+OFFER = {
+    "items": [dict(ITEMS[0], learnt="the name first")],
+    "process": [LESSON, dict(LESSON, role="learner")],
+    "checked": CHECKED,
+}
+
+
+class TestTaken(FormTest):
+    """The orchestrator takes, of what the learner found, what holds."""
+
+    def test_what_is_taken_from_the_offer_passes(self):
+        # Given: the learner's findings offered
+        # When: the orchestrator takes one item and the second lesson, or nothing
+        # Then: it passes
+        for taken in ({"items": [ITEMS[0]], "process": [2]}, {"items": [], "process": []}):
+            with self.subTest(taken=taken):
+                self.assertEqual(forms.taken(json.dumps(taken), OFFER), [])
+
+    def test_what_is_not_in_the_offer_or_out_of_its_form_stops(self):
+        # Given: the learner's findings offered
+        # When: the orchestrator takes an item not offered, one twice, a lesson numbered past the
+        # last, from 0, twice, or not a number, or gives no JSON or no list
+        # Then: each is named
+        for taken, said in (
+            (
+                {"items": [ITEMS[1]], "process": []},
+                "checklists/readme.md B-1 is not an item offered",
+            ),
+            ({"items": [ITEMS[0], ITEMS[0]], "process": []}, "F-1 is given twice"),
+            ({"items": ["F-1"], "process": []}, '"F-1" is not an item offered'),
+            ({"items": [], "process": [3]}, "lesson 3 is not one of 1 to 2"),
+            ({"items": [], "process": [0]}, "lesson 0 is not one of 1 to 2"),
+            ({"items": [], "process": [True]}, "lesson True is not one of 1 to 2"),
+            ({"items": [], "process": [1, 1]}, "lesson 1 is given twice"),
+            ({"items": []}, 'give it as JSON: {"items": [...], "process": [...]}'),
+            ("taken", 'give it as JSON: {"items": [...], "process": [...]}'),
+        ):
+            with self.subTest(taken=taken):
+                text = taken if isinstance(taken, str) else json.dumps(taken)
+                said_now = forms.taken(text, OFFER)
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(said, said_now[0])

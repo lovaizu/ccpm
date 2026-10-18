@@ -183,13 +183,16 @@ which environment, one the tests cannot make, decides whether the line runs?
 Why: a line left out without its reason cannot be told from a line left out to make the count pass,
 and the next maintainer keeps the gap.
 
-### B-16: Mutants left out say why
+### B-16: Each check left out, the user's decision
 
-For each mutant left out of the mutation testing, can the maintainer tell from what is written
-beside it why no behavior changes with it, such as one in a type annotation never run?
+For each line, branch, input or mutant left out of the coverage, the property tests or the
+mutation testing, can the maintainer tell from what is written beside it that the user decided it,
+and why no behavior changes with it, such as one in a type annotation never run?
 
-Why: a mutant left out without its reason cannot be told from one left out to make the run pass,
-and the next maintainer keeps the gap.
+Why: leaving a check out is easier than writing the test, so whoever makes the code and leaves
+them out on their own judgment ends with the checks full of gaps; one left out without the user's
+decision and its reason cannot be told from one left out to make the run pass, and the next
+maintainer keeps the gap.
 
 ### B-17: A behavior holds for every input of its kind
 

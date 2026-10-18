@@ -12,10 +12,13 @@ gives it, and then write the work to give each: a work made to Goods set first g
 was meant, while one written first and matched to the items after is patched item by item. The work
 is made from the CCS and the files it names alone, so that it says what the caller decided and does
 not stray from it; what they leave open that only the user can decide becomes a question, not a
-guess. For each statement the work makes of its subject, you name the lines of the CCS or its files
-it rests on: the readers after the orchestrator read as the receiver, who has no sources, and take
-a statement made from nothing as a fact, so the orchestrator checks each statement at the lines you
-name. The orchestrator looks for each Good starting from the lines you name.
+guess. Each statement the work makes of its subject rests on its grounds: the words of the CCS or
+its files that say it, quoted as written, and, for a statement of how the product behaves, a
+command you ran and what it printed, since its code and the decisions about it may say otherwise
+than it does; a statement with neither is taken out of the work. The readers after the
+orchestrator read as the receiver, who has no sources, and take a statement made from nothing as a
+fact, so the orchestrator checks each statement in its grounds. The orchestrator looks for each Good
+starting from the lines you name.
 
 ## Steps
 
@@ -25,9 +28,10 @@ name. The orchestrator looks for each Good starting from the lines you name.
    - In: what it prints, JSON: `ccs`, the path of the CCS; `work`, the path of each file of the
      work; `sent_back`, each item the orchestrator sent back, with `gets`, what the receiver gets
      once it has its Good, empty the first time; `unsourced`, each statement the orchestrator sent
-     back, with its `lines` in the work and `gets`, what its source says or that none says it,
-     empty the first time; `learnt`, what the learner found makes each item's Good, empty until
-     the work is made again after a reading.
+     back, with its `lines` in the work and `gets`, what its grounds say or that none says it,
+     empty the first time; `learnt`, what the learner found gives each item's Good, and
+     `lessons`, what the orchestrator took for you from how the first round went, each empty
+     until the work is made again after a reading. Do each step with your lessons.
 2. Read the CCS, then each file it names, whole, each file with `cat -n <path>` in a command of its
    own, or with Read and no offset or limit: among them the checklists, each item a heading such as
    `### B-1: <title>` asking what the receiver should get, and what was decided for the work.
@@ -38,18 +42,24 @@ name. The orchestrator looks for each Good starting from the lines you name.
    question.
 4. Make the work at the paths in `work` so that it gives every Good you set. Where `sent_back` is
    empty, write it from nothing. Otherwise read the work whole and change it so that each item sent
-   back gets its Good and each statement in `unsourced` says what the CCS or its files say, while
-   every other item keeps the Good it has.
+   back gets its Good and each statement in `unsourced` says what its grounds say, or is taken out
+   where none says it, while every other item keeps the Good it has.
    - Out: the work, at its paths.
 5. Read the work once from the top with `cat -n`, whole, as the receiver the CCS names, meeting it
    for the first time: a work you just wrote is not read yet, and Read gives nothing back for it.
-   For every item find the lines that give its Good, and for each statement the work makes of its
-   subject, the lines of the CCS or its files it rests on, as you read them in step 2; where you
-   find none, make the work give the Good or say what the sources say, and read again. A statement
-   only the user's answer can ground waits on a question.
+   For every item find the lines that give its Good. For each statement the work makes of its
+   subject, find its grounds:
+   - the words of the CCS or a file it names that say it, as you read them in step 2, quoted as
+     they are written, without the line numbers `cat -n` adds;
+   - for a statement of how the product behaves, such as what a command prints or what it changes,
+     a command you run with Bash that shows it, in a command of its own, with any input it needs
+     made inside the command, in a folder from `mktemp -d` that the command removes at its end.
+   Where the grounds do not say what the statement says, make the work say what they say; where
+   no source says it and no run shows it, take the statement out of the work; then read again. A
+   statement only the user's answer can ground waits on a question.
 6. Reply with your claim alone, as JSON:
    `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}],
-   "statements": [{"lines": [...], "from": [...]}]}`.
+   "statements": [{"lines": [...], "quotes": [...], "ran": [...]}]}`.
    Each item is `{"checklist": "<path as in the CCS>", "item": "<ID>"}` with one of:
    - `"good"`: the Good, what the receiver gets, in plain words, and `"lines"`: the lines that
      give it, each `"<path of the work>:<from>-<to>"`;
@@ -57,6 +67,11 @@ name. The orchestrator looks for each Good starting from the lines you name.
      answer can give it; the question says what to ask, and `recommended` the answer you would
      choose and why, in one sentence.
 
-   Each statement is one the work makes of its subject: `"lines"`, where the work makes it, and
-   `"from"`, the lines of the CCS or a file it names that say it, each `"<path>:<from>-<to>"`.
+   Each statement is one the work makes of its subject: `"lines"`, where the work makes it, each
+   `"<path of the work>:<from>-<to>"`, with one or both of:
+   - `"quotes"`: `[{"path": "<the CCS or a file it names>", "quote": "<its words as written>"}]`;
+   - `"ran"`: `[{"command": "<the command as you ran it>", "output": "<words of what it printed,
+     as printed>"}]`.
+   turn's script finds each quote in its file and each command in your record of this run, with
+   what it printed.
    - Out: your reply. turn's hook checks its form; fill each place it names.

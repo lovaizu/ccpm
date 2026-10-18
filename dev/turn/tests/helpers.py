@@ -20,6 +20,7 @@ sys.path.insert(0, HOOKS)
 import agents  # noqa: F401  (the hooks' reading of an event, for its own tests)
 import forms  # noqa: F401  (the forms, for their own tests)
 import pretooluse  # noqa: F401  (the hooks' entry, for the hooks' tests)
+import records
 import run
 import subagentstop
 from checks import (  # noqa: F401  (each check, for its own tests)
@@ -109,10 +110,21 @@ CAN = [
     {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
     {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
 ]
-# A statement of the work with the lines of the CCS's files it rests on, as the generator names it,
-# and one the orchestrator sends back, its source not found.
-STATEMENT = {"lines": ["README.md:3-3"], "from": ["notes/readme.decisions.md:1-1"]}
+# A statement of the work with the words of the CCS's files it rests on, as the generator quotes
+# them, and one the orchestrator sends back, its source not found.
+STATEMENT = {
+    "lines": ["README.md:3-3"],
+    "quotes": [{"path": "notes/readme.decisions.md", "quote": "# Decisions"}],
+}
 UNSOURCED = {"lines": ["README.md:3-3"], "gets": "no file the CCS names says it tidies CSV files"}
+# A lesson on how the run went, for the generator, resting on words of the first record, which
+# every role's record holds.
+LESSON = {
+    "role": "generator",
+    "lesson": "it opened each file before it wrote",
+    "grounds": [{"record": 1, "quote": "I open it."}],
+}
+CHECKED = "every page of every record"
 SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",
@@ -186,24 +198,19 @@ class RepoTest(unittest.TestCase):
 
     def given_record(self, agent_id, prompt, *tool_uses):
         """Writes what Claude Code keeps of an agent's conversation: its prompt as the first record,
-        then each tool it used, kept twice under one ID as Claude Code keeps it."""
+        then each tool it used, kept twice under one ID as Claude Code keeps it, with what the tool
+        gave back where the use names it third."""
         path = os.path.join(self.repo, "session", "subagents", f"agent-{agent_id}.jsonl")
-        records = [{"type": "user", "message": {"role": "user", "content": prompt}}]
-        records += [
-            {
-                "type": "assistant",
-                "message": {
-                    "role": "assistant",
-                    "content": [
-                        {"type": "text", "text": "I open it."},
-                        {"type": "tool_use", "id": f"toolu_{n}", "name": name, "input": tool_input},
-                    ],
-                },
-            }
-            for n, (name, tool_input) in enumerate(tool_uses)
-            for _ in range(2)
-        ]
-        self.write(path, "".join(json.dumps(r) + "\n" for r in records))
+        entries = [{"type": "user", "message": {"role": "user", "content": prompt}}]
+        for n, (name, tool_input, *back) in enumerate(tool_uses):
+            used = {"type": "tool_use", "id": f"toolu_{n}", "name": name, "input": tool_input}
+            content = [{"type": "text", "text": "I open it."}, used]
+            entry = {"type": "assistant", "message": {"role": "assistant", "content": content}}
+            entries += [entry, entry]
+            if back:
+                result = {"type": "tool_result", "tool_use_id": f"toolu_{n}", "content": back[0]}
+                entries.append({"type": "user", "message": {"role": "user", "content": [result]}})
+        self.write(path, "".join(json.dumps(r) + "\n" for r in entries))
         return path
 
     def event(self, name, agent_type=None, **fields):
@@ -242,14 +249,29 @@ class RepoTest(unittest.TestCase):
         )
         return self.hook(subagentstop, event)
 
+    def learnt(self, out, reply=None, taken=None):
+        """The learner started as the script printed, replying with what it found, by default what
+        gives each item's Good and no lesson on the run; then what the orchestrator takes, by
+        default every item offered; and what the script prints after."""
+        self.assertEqual(out["agent"], "turn:learner")
+        kept = run.running(CALL["result"]) or {}
+        items = [dict(i, learnt="what gives it") for i in kept["learning"]]
+        reply = reply or {"items": items, "process": [], "checked": CHECKED}
+        self.assertEqual(self.replied("turn:learner", out["prompt"], reply), (0, ""))
+        out = self.next()
+        if "take" in out:
+            named = [{"checklist": i["checklist"], "item": i["item"]} for i in out["take"]["items"]]
+            out = self.next(taken or {"items": named, "process": []})
+        return out
+
     def pages_shown(self, prompt):
         """A learner's commands showing every page of every record of its run."""
         kept = run.running(json.loads(prompt)["run"])
-        records = kept["records"] if kept else []
+        paths = run.learnt_from(kept) if kept else []
         return tuple(
             ("Bash", {"command": f"{SCRIPT} record {json.loads(prompt)['run']} {n} {p}"})
-            for n, path in enumerate(records, 1)
-            for p in range(1, len(run.pages(path)) + 1)
+            for n, path in enumerate(paths, 1)
+            for p in range(1, len(records.pages(path)) + 1)
         )
 
     def write(self, path, text):

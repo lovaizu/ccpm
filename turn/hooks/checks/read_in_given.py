@@ -7,6 +7,7 @@ import shlex
 from typing import Any
 
 import agents
+import run
 
 TOOLS = {"Read": "file_path", "Grep": "path", "Glob": "path"}
 OPERATORS = {";", "|", "||", "&", "&&", ">", ">>", "<", "<<", "(", ")", "`"}
@@ -24,7 +25,7 @@ def check(event: dict[str, Any]) -> list[str]:
         given = kept["given"]
     # Not mutated: of the roles left, the learner's name sorts last.
     elif role == "learner":  # pragma: no mutate
-        given = kept["records"]
+        given = run.learnt_from(kept)
     else:
         given = kept["shown"]
     cwd = os.path.realpath(event["cwd"])

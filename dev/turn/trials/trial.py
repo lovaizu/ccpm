@@ -27,9 +27,9 @@ STEP = f"""Start the `turn:up` agent in the background with
 {json.dumps(CALL)}
 When it returns, check each Good against its lines, and put each question to the user.
 
-The user is away: take each question's recommended answer as theirs. If no work came back, add
-each answer to notes/readme.decisions.md and call turn again as above; otherwise write it into the
-work yourself. Then fix in the work whatever falls short of an item of the checklists, and end with a
+The user is away: take each question's recommended answer as theirs. If no work came back, write
+each answer into notes/readme.decisions.md, in place of what it changes there or as a line of its
+own, so the decisions say one thing, and call turn again as above; otherwise write it into the work yourself. Then fix in the work whatever falls short of an item of the checklists, and end with a
 list of each item you fixed and why, or "none"."""
 
 task, place = (os.path.abspath(p) for p in sys.argv[1:3])

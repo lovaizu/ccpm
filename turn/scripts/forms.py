@@ -6,30 +6,37 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Any, NamedTuple
+from typing import Any, Callable, NamedTuple
+
+import records
 
 LINES = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
 # A form given inside a ```json fence, as a model often writes JSON, is the form itself.
 FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 
 
-class Statements(NamedTuple):
-    """A list of the work's statements a form holds beside its items: its key, the keys each
-    statement holds, and whether the list must be given."""
+# The roles a lesson on the run may be for.
+ROLES = ("orchestrator", "generator", "first-user", "evaluator", "learner")
 
-    key: str
-    holds: tuple[str, ...]
-    required: bool
+
+class Grounds(NamedTuple):
+    """What a form's lines and grounds are found in: the work, the files and folders the CCS
+    names, and the records of the agents the form's quotes and commands come from."""
+
+    work: list[str]
+    sources: tuple[str, ...]
+    records: tuple[str, ...]
 
 
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each; whether every
-    item is given; whether questions are asked; and the statements it holds, if any."""
+    item is given; whether questions are asked; and what else the form holds beside its items,
+    checked against the grounds."""
 
     shapes: tuple[tuple[str, ...], ...]
     every: bool
     asks: bool
-    statements: Statements | None = None
+    more: Callable[[dict[str, Any], Grounds], list[str]] | None = None
 
 
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
@@ -39,21 +46,179 @@ CHECK = Form((("can",), ("question",)), every=True, asks=True)
 # receiver gets once it has its Good; the generator claims the Good it set for every item, or the
 # question it waits on. The first user and the evaluator look only for the Good the work gives, so
 # each names only the items it finds a Good for, and a script names the rest.
-# The generator names, for each statement the work makes of its subject, the lines of the CCS or
-# its files it rests on; the orchestrator's reading names each statement it sends back, as one whose
-# source it does not find there, or that says otherwise.
 DECISION = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=True)
-READING = DECISION._replace(statements=Statements("unsourced", ("lines", "gets"), required=False))
-CLAIM = Form(
-    (("good", "lines"), ("question",)),
-    every=True,
-    asks=True,
-    statements=Statements("statements", ("lines", "from"), required=True),
-)
 GOOD = Form((("good", "lines"),), every=False, asks=False)
-# The learner says, for every item but those waiting on a question, what makes its Good: how the
-# work would give it, or what gives it now, so the remake keeps it.
-LEARNT = Form((("learnt",),), every=True, asks=False)
+
+
+def worded(value: Any) -> bool:
+    """Whether the value is words, not empty."""
+    return isinstance(value, str) and bool(value.strip())
+
+
+def spaced(words: str) -> str:
+    """The words with every run of space, tab or line end as one space, so a quote across a line
+    break is found as written."""
+    return " ".join(words.split())
+
+
+def claimed(data: dict[str, Any], at: Grounds) -> list[str]:
+    """The generator gives each statement the work makes of its subject with its grounds: the words
+    of the CCS or its files that say it, quoted as written, and, for how the product behaves, a
+    command it ran with what it printed, both found where it says."""
+    given = data.get("statements")
+    if not isinstance(given, list):
+        shape = (
+            'give "statements": [{"lines": [...], "quotes": [...]}, ...], each statement the work'
+            ' makes of its subject, with "ran": [...] for one of how the product behaves'
+        )
+        return [shape]
+    said: list[str] = []
+    for n, statement in enumerate(given, 1):
+        name = f"statement {n} of statements"
+        keys = set(statement) if isinstance(statement, dict) else set()
+        if "lines" not in keys or not keys & {"quotes", "ran"} or keys - {"lines", "quotes", "ran"}:
+            said.append(f'{name} must hold "lines" with "quotes", "ran" or both')
+            continue
+        said += lines_problems(name, statement["lines"], at.work, "lines of the work")
+        if "quotes" in keys:
+            said += quote_problems(name, statement["quotes"], at.sources)
+        if "ran" in keys:
+            said += run_problems(name, statement["ran"], at.records)
+    return said
+
+
+def quote_problems(name: str, quotes: Any, sources: tuple[str, ...]) -> list[str]:
+    if not isinstance(quotes, list) or not quotes:
+        return [f'{name} gives its quotes as no list; give [{{"path": ..., "quote": ...}}, ...]']
+    said: list[str] = []
+    for k, quote in enumerate(quotes, 1):
+        if (
+            not isinstance(quote, dict)
+            or set(quote) != {"path", "quote"}
+            or not all(worded(v) for v in quote.values())
+        ):
+            said.append(f'{name}: quote {k} must hold "path" and "quote", each in words')
+            continue
+        path = quote["path"]
+        if not os.path.isfile(path) or not within(path, list(sources)):
+            said.append(f"{name}: {path} is not the CCS or a file it names")
+            continue
+        with open(path, encoding="utf-8") as f:
+            whole = spaced(f.read())
+        if spaced(quote["quote"]) not in whole:
+            said.append(
+                f"{name}: quote {k} is not in {path} as written; quote its words as they are,"
+                " without line numbers"
+            )
+    return said
+
+
+def run_problems(name: str, ran: Any, kept: tuple[str, ...]) -> list[str]:
+    if not isinstance(ran, list) or not ran:
+        return [f'{name} gives its runs as no list; give [{{"command": ..., "output": ...}}, ...]']
+    printed = [(c.strip(), spaced(o)) for path in kept for c, o in records.ran(path)]
+    said: list[str] = []
+    for k, run in enumerate(ran, 1):
+        if (
+            not isinstance(run, dict)
+            or set(run) != {"command", "output"}
+            or not all(worded(v) for v in run.values())
+        ):
+            said.append(f'{name}: run {k} must hold "command" and "output", each in words')
+        elif not any(
+            c == run["command"].strip() and spaced(run["output"]) in o for c, o in printed
+        ):
+            said.append(
+                f"{name}: run {k} is not a command you ran with Bash, with what it printed; give"
+                " the command as you ran it, and words of its output as it printed them"
+            )
+    return said
+
+
+def unsourced(data: dict[str, Any], at: Grounds) -> list[str]:
+    """The orchestrator's reading may send back statements, each where the work makes it and what
+    its grounds say, or that none says it."""
+    if "unsourced" not in data:
+        return []
+    given = data["unsourced"]
+    if not isinstance(given, list):
+        return ['"unsourced" is not a list; give it as [{"lines", "gets"}, ...]']
+    said: list[str] = []
+    for n, statement in enumerate(given, 1):
+        name = f"statement {n} of unsourced"
+        if not isinstance(statement, dict) or set(statement) != {"lines", "gets"}:
+            said.append(f'{name} must hold {{"lines", "gets"}} alone')
+            continue
+        said += lines_problems(name, statement["lines"], at.work, "lines of the work")
+        if not worded(statement["gets"]):
+            said.append(f'{name} has an empty "gets"; say it in words')
+    return said
+
+
+def lessons(data: dict[str, Any], at: Grounds) -> list[str]:
+    """The learner gives how the run went, each lesson for a role of turn and resting on words of
+    a record it was shown, and what it checked, so that a reply of no lesson says its scope."""
+    said: list[str] = []
+    process = data.get("process")
+    if not isinstance(process, list):
+        said.append(
+            'give "process": [{"role", "lesson", "grounds"}, ...], each lesson on how the run'
+            " went, or [] when you found none"
+        )
+        process = []
+    if not worded(data.get("checked")):
+        said.append('give "checked": what you checked of the run, in words')
+    for n, lesson in enumerate(process, 1):
+        name = f"lesson {n}"
+        if (
+            not isinstance(lesson, dict)
+            or set(lesson) != {"role", "lesson", "grounds"}
+            or lesson["role"] not in ROLES
+            or not worded(lesson["lesson"])
+        ):
+            said.append(
+                f'{name} must hold "role", one of {", ".join(ROLES)}, "lesson" in words, and'
+                ' "grounds"'
+            )
+            continue
+        said += ground_problems(name, lesson["grounds"], at.records)
+    return said
+
+
+def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]:
+    if not isinstance(grounds, list) or not grounds:
+        return [f'{name} gives its grounds as no list; give [{{"record": ..., "quote": ...}}, ...]']
+    said: list[str] = []
+    for k, ground in enumerate(grounds, 1):
+        number = ground.get("record") if isinstance(ground, dict) else None
+        if (
+            not isinstance(ground, dict)
+            or set(ground) != {"record", "quote"}
+            or not isinstance(number, int)
+            or isinstance(number, bool)
+            or not 1 <= number <= len(kept)
+            or not worded(ground["quote"])
+        ):
+            said.append(
+                f'{name}: ground {k} must hold "record", its number from 1 to {len(kept)}, and'
+                ' "quote", its words'
+            )
+        elif spaced(ground["quote"]) not in spaced(records.shown(kept[number - 1])):
+            said.append(
+                f"{name}: ground {k} is not in record {number} as written; quote its words as they"
+                " are"
+            )
+    return said
+
+
+# The orchestrator's reading names each statement it sends back, as one its grounds do not say.
+# The generator claims the Good it set for every item, or the question it waits on, and grounds
+# each statement of the work.
+READING = DECISION._replace(more=unsourced)
+CLAIM = Form((("good", "lines"), ("question",)), every=True, asks=True, more=claimed)
+# The learner says, for every item but those waiting on a question, what gives its Good or would,
+# and how the run went.
+LEARNT = Form((("learnt",),), every=True, asks=False, more=lessons)
 
 
 def parse(text: str, form: Form) -> dict[str, Any] | None:
@@ -81,10 +246,12 @@ def check(
     form: Form,
     asked: int = 0,
     sources: tuple[str, ...] = (),
+    records: tuple[str, ...] = (),
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
     The items are those the form judges; `asked` counts the questions already asked, which its
-    own questions are numbered after; `sources` are the files and folders statements rest on."""
+    own questions are numbered after; `sources` are the files and folders statements rest on, and
+    `records` the records its quotes of a record and its commands are found in."""
     data = parse(text, form)
     if data is None:
         shape = '{"items": [...], "questions": [...]}' if form.asks else '{"items": [...]}'
@@ -92,37 +259,42 @@ def check(
     said = item_problems(data["items"], items, work, form)
     if form.asks:
         said += question_problems(data, asked)
-    if form.statements:
-        said += statement_problems(data, form.statements, work, sources)
+    if form.more:
+        said += form.more(data, Grounds(work, sources, records))
     return said
 
 
-def statement_problems(
-    data: dict[str, Any], form: Statements, work: list[str], sources: tuple[str, ...]
-) -> list[str]:
-    shape = "{" + ", ".join(f'"{k}"' for k in form.holds) + "}"
-    if form.key not in data:
-        if not form.required:
-            return []
-        return [f'give "{form.key}": [{shape}, ...], each statement the work makes of its subject']
-    given = data[form.key]
-    if not isinstance(given, list):
-        return [f'"{form.key}" is not a list; give it as [{shape}, ...]']
+def taken(text: str, offer: dict[str, Any]) -> list[str]:
+    """What is wrong with what the orchestrator takes of the learner's findings offered: the items
+    it takes by their checklist and ID, and the lessons by their number; empty when it is
+    filled."""
+    try:
+        data = json.loads(unfenced(text))
+    except ValueError:
+        data = None
+    if not isinstance(data, dict) or not all(
+        isinstance(data.get(k), list) for k in ("items", "process")
+    ):
+        return ['give it as JSON: {"items": [...], "process": [...]}']
+    offered = [(i["checklist"], i["item"]) for i in offer["items"]]
     said: list[str] = []
-    for n, statement in enumerate(given, 1):
-        name = f"statement {n} of {form.key}"
-        if not isinstance(statement, dict) or set(statement) != set(form.holds):
-            said.append(f"{name} must hold {shape} alone")
-            continue
-        said += lines_problems(name, statement["lines"], work, "lines of the work")
-        if "from" in statement:
-            said += lines_problems(
-                name, statement["from"], list(sources), "lines of the CCS or a file it names"
-            )
-        if "gets" in statement and not (
-            isinstance(statement["gets"], str) and statement["gets"].strip()
-        ):
-            said.append(f'{name} has an empty "gets"; say it in words')
+    seen: list[Any] = []
+    for item in data["items"]:
+        key = (item.get("checklist"), item.get("item")) if isinstance(item, dict) else None
+        name = f"{key[0]} {key[1]}" if key else json.dumps(item)
+        if key not in offered:
+            said.append(f"{name} is not an item offered; take each by its checklist and ID")
+        elif key in seen:
+            said.append(f"{name} is given twice; take each once")
+        seen.append(key)
+    count = len(offer["process"])
+    numbers: list[Any] = []
+    for n in data["process"]:
+        if not isinstance(n, int) or isinstance(n, bool) or not 1 <= n <= count:
+            said.append(f"lesson {n} is not one of 1 to {count}; take each by its number")
+        elif n in numbers:
+            said.append(f"lesson {n} is given twice; take each once")
+        numbers.append(n)
     return said
 
 
@@ -174,7 +346,7 @@ def item_problems(
 def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
     said: list[str] = []
     for key in ("can", "good", "gets", "learnt"):
-        if key in item and not (isinstance(item[key], str) and item[key].strip()):
+        if key in item and not worded(item[key]):
             said.append(f'{name} has an empty "{key}"; say it in words')
     if "question" in item and not (
         isinstance(item["question"], int) and not isinstance(item["question"], bool)

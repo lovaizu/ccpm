@@ -13,7 +13,7 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import RepoTest, forms, read_in_given, read_whole, run
+from helpers import RepoTest, forms, read_in_given, read_whole, records, run
 
 call = run.call
 
@@ -27,7 +27,8 @@ ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
     ["items", "questions", "checklist", "item", "good", "lines", "question", "gets", "can"]
-    + ["learnt", "statements", "unsourced", "from", "recommended"]
+    + ["learnt", "statements", "unsourced", "quotes", "ran", "path", "quote", "command"]
+    + ["output", "process", "role", "lesson", "grounds", "record", "checked", "recommended"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
 VALUES = st.recursive(
@@ -91,9 +92,9 @@ class TestRecords(RepoTest):
         with open(path, "w", encoding="utf-8") as f:
             entries = ({"type": "user", "message": {"content": text}} for text in texts)
             f.writelines(json.dumps(e) + "\n" for e in entries)
-        pages = run.pages(path)
-        self.assertEqual("".join(pages), run.shown(path))
-        self.assertTrue(all(len(p) <= run.PAGE for p in pages))
+        pages = records.pages(path)
+        self.assertEqual("".join(pages), records.shown(path))
+        self.assertTrue(all(len(p) <= records.PAGE for p in pages))
 
 
 class TestCommands(unittest.TestCase):

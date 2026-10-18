@@ -135,8 +135,10 @@ records.append(role(turn("next", CALL["result"])))
 kept = run.running(CALL["result"])
 if kept is None:
     sys.exit("the run ended before the learner")
-kept.update(unmet=[UNMET], learning=[run.named(UNMET)], records=records)
-role(run.ask(kept, run.LEARNER, {"run": CALL["result"], "findings": [UNMET], "records": records}))
+kept.update(
+    settled={"items": [UNMET], "questions": []}, learning=[run.named(UNMET)], records=records
+)
+role(run.ask(kept, run.LEARNER, {"findings": [UNMET], "records": records, "lessons": []}))
 os.chdir(ROOT)
 shutil.rmtree(place)
 shutil.rmtree(plugin)

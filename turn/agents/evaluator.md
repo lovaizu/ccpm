@@ -20,7 +20,8 @@ findings and decides each item where they differ.
    - In: what it prints, JSON: `work`, the path of each file of the work; `opens`, what the receiver
      opens with the work; `receiver`, who the receiver is; `use`, what they read the work for;
      `checklists`, the path of each checklist; `reading`, the first user's reading: for each item it
-     found a Good for, the Good and the lines that give it.
+     found a Good for, the Good and the lines that give it; `lessons`, what the orchestrator took
+     for you from how the first round went, empty in the first. Do each step with your lessons.
    - These files and the reading are the whole of what you read, since they are what the receiver
      has and the Goods they found; turn's hook stops a read of anything else.
 2. Read each checklist, each item a heading such as `### B-1: <title>`, the work, and each file of

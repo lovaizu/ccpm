@@ -19,7 +19,8 @@ it; the orchestrator judges each item starting from your reading.
    JSON.
    - In: what it prints, JSON: `work`, the path of each file of the work; `opens`, what the receiver
      opens with the work; `receiver`, who the receiver is; `use`, what they read the work for;
-     `checklists`, the path of each checklist.
+     `checklists`, the path of each checklist; `lessons`, what the orchestrator took for you from
+     how the first round went, empty in the first. Do each step with your lessons.
    - These files are the whole of what you read, since they are what the receiver has; turn's hook
      stops a read of anything else.
 2. Read the work once from the top as the receiver, for the use, and each file of `opens`, which

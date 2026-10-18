@@ -140,6 +140,7 @@ class TestStart(RepoTest):
                 "sent_back": [],
                 "unsourced": [],
                 "learnt": [],
+                "lessons": [],
             },
         )
 

@@ -3,10 +3,12 @@ import json
 from helpers import (
     CALL,
     CAN,
+    CHECKED,
     EVALUATED,
     FOUND,
     GOOD,
     LEARNT,
+    LESSON,
     QUESTION,
     READ_SHOWN,
     SENT_BACK,
@@ -128,6 +130,7 @@ class TestReading(ReadTest):
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
                 "checklists": ["checklists/readme.md"],
+                "lessons": [],
             },
         )
 
@@ -135,7 +138,7 @@ class TestReading(ReadTest):
         # Given: a run that has returned
         # When: another reading is given
         # Then: it stops, saying the run has returned and how to start one
-        self.through(EVALUATED)
+        self.learnt(self.through(EVALUATED))
         code, out = self.read({"items": [GOOD, WAITS], "questions": [QUESTION]})
         self.assertEqual(code, 1)
         self.assertIn("no run is going", out)
@@ -190,9 +193,10 @@ class TestReaders(ReadTest):
         # Given: findings with one item's Good and the other waiting, and an evaluator giving a
         # Good to the first item alone
         # When: the orchestrator goes on
-        # Then: the result holds where the work is, the orchestrator's Good with its lines, and the
-        # question with its recommended answer and the item it settles, and the run has returned
-        self.assertEqual(self.through(EVALUATED), {"returned": RESULT})
+        # Then: after the learner, the result holds where the work is, the orchestrator's Good
+        # with its lines, and the question with its recommended answer and the item it settles,
+        # and the run has returned
+        self.assertEqual(self.learnt(self.through(EVALUATED)), {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT),
             {
@@ -200,6 +204,7 @@ class TestReaders(ReadTest):
                 "items": [GOOD],
                 "questions": [dict(QUESTION, items=[ITEM_B1])],
                 "not_good": [],
+                "lessons": [],
             },
         )
 
@@ -213,6 +218,9 @@ class TestReaders(ReadTest):
         self.replied("turn:first-user", json.loads(out)["prompt"], {"items": []})
         _, out = self.turn("next", "result.json")
         self.replied("turn:evaluator", json.loads(out)["prompt"], {"items": [EVALUATED]})
+        _, out = self.turn("next", "result.json")
+        learnt = {"items": [dict(ITEM_F1, learnt="x")], "process": [], "checked": CHECKED}
+        self.replied("turn:learner", json.loads(out)["prompt"], learnt)
         code, out = self.turn("next", "result.json")
         self.assertEqual(code, 0, out)
         self.assertEqual(self.read_json("result.json")["items"], [GOOD])
@@ -264,7 +272,7 @@ class TestDecision(ReadTest):
         # findings' question any more
         new = {"question": "Which name?", "recommended": "csvtidy"}
         out = self.next({"items": [GOOD, dict(WAITS, question=2)], "questions": [new]})
-        self.assertEqual(out, {"returned": RESULT})
+        self.assertEqual(self.learnt(out), {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT),
             {
@@ -272,6 +280,7 @@ class TestDecision(ReadTest):
                 "items": [GOOD],
                 "questions": [dict(new, items=[ITEM_B1])],
                 "not_good": [],
+                "lessons": [],
             },
         )
 
@@ -282,7 +291,7 @@ class TestDecision(ReadTest):
         # Then: the result holds both questions, numbered from 1, each with the item it settles
         new = {"question": "Which name?", "recommended": "csvtidy"}
         decision = {"items": [dict(WAITS, item="F-1", question=2), WAITS], "questions": [new]}
-        self.assertEqual(self.next(decision), {"returned": RESULT})
+        self.assertEqual(self.learnt(self.next(decision)), {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT)["questions"],
             [dict(QUESTION, items=[ITEM_B1]), dict(new, items=[dict(ITEM_B1, item="F-1")])],
@@ -324,7 +333,7 @@ class TestDecision(ReadTest):
                 good = dict(GOOD, item=evaluated["item"])
                 other = "F-1" if evaluated["item"] == "B-1" else "B-1"
                 decision = {"items": [good, dict(WAITS, item=other)], "questions": []}
-                self.assertEqual(self.next(decision), {"returned": RESULT})
+                self.assertEqual(self.learnt(self.next(decision)), {"returned": RESULT})
 
     def test_a_decision_out_of_its_form_stops(self):
         # Given: both items to decide
@@ -348,44 +357,126 @@ class TestLearner(ReadTest):
         self.through(dict(EVALUATED, item="B-1"))
         self.learner = self.next({"items": [GOOD, SENT_BACK], "questions": []})
 
-    def test_an_item_left_without_good_starts_the_learner(self):
+    def offered(self, *lessons):
+        """The learner replied with what gives each Good and the lessons, and what is offered to
+        take."""
+        reply = {"items": LEARNT, "process": list(lessons), "checked": CHECKED}
+        self.assertEqual(self.replied("turn:learner", self.learner["prompt"], reply), (0, ""))
+        return self.next()
+
+    def test_a_reading_leaving_an_item_without_good_starts_the_learner(self):
         # Given: a first reading whose decision leaves an item without Good
         # When: the decision is recorded
-        # Then: the learner is to be started with every item's finding and the record of every
-        # role that replied in the run
+        # Then: the learner is to be started with every item's finding, the record of every
+        # role that replied in the run, and no lesson yet
         self.assertEqual(self.learner["agent"], "turn:learner")
         records = [
             f"{self.repo}/session/subagents/agent-{a}.jsonl" for a in ("first-user", "evaluator")
         ]
         self.assertEqual(
             self.given(),
-            {"findings": [GOOD, SENT_BACK], "records": records},
+            {"findings": [GOOD, SENT_BACK], "records": records, "lessons": []},
         )
 
-    def test_what_the_learner_found_goes_to_the_generator_with_what_was_sent_back(self):
-        # Given: a learner that replied with what makes each item's Good
+    def test_a_reading_with_every_item_good_starts_the_learner_too(self):
+        # Given: a first reading whose evaluator agrees with the findings
         # When: the orchestrator goes on
-        # Then: the generator is to make the work again with the item without Good and what the
-        # learner found
-        self.replied("turn:learner", self.learner["prompt"], {"items": LEARNT})
-        out = self.next()
+        # Then: the learner is to be started, as a run may get its Goods by chance or with waste
+        super().setUp()
+        self.started()
+        self.assertEqual(self.through(EVALUATED)["agent"], "turn:learner")
+
+    def test_the_orchestrators_own_record_is_shown_to_the_learner(self):
+        # Given: a run whose orchestrator's record is kept
+        # When: the learner is started after a reading
+        # Then: it is given the orchestrator's record after every role's
+        super().setUp()
+        self.started()
+        kept = self.read_json(RESULT)
+        kept["running"]["orchestrator"] = "orchestrator.jsonl"
+        self.write_json(RESULT, kept)
+        self.through(EVALUATED)
+        self.assertEqual(self.given()["records"][-1], "orchestrator.jsonl")
+
+    def test_what_the_learner_found_is_offered_to_the_orchestrator_to_take(self):
+        # Given: a learner that replied with what gives each item's Good and a lesson on the run
+        # When: the orchestrator goes on, and again with nothing given
+        # Then: both are offered to take, with what the learner checked, each time
+        offer = {"take": {"items": LEARNT, "process": [LESSON], "checked": CHECKED}}
+        self.assertEqual(self.offered(LESSON), offer)
+        self.assertEqual(self.next(), offer)
+
+    def test_what_is_taken_goes_to_the_generator_and_to_each_role_of_the_second_round(self):
+        # Given: an offer of what gives each item's Good, a lesson for the generator and one for
+        # the first user
+        # When: the orchestrator takes the first item and both lessons
+        # Then: the generator makes the work again with the item without Good, what gives the
+        # first item's Good and its lesson, and the first user of the second round is given its own
+        self.offered(LESSON, dict(LESSON, role="first-user", lesson="read the opening first"))
+        out = self.next({"items": [ITEM_F1], "process": [1, 2]})
         self.assertEqual(out["agent"], "turn:generator")
-        prompt = self.given()
-        self.assertEqual((prompt["sent_back"], prompt["learnt"]), ([SENT_BACK], LEARNT))
+        given = self.given()
+        self.assertEqual(
+            (given["sent_back"], given["learnt"], given["lessons"]),
+            ([SENT_BACK], LEARNT[:1], [LESSON["lesson"]]),
+        )
+        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        self.assertEqual(out["agent"], "turn:first-user")
+        self.assertEqual(self.given()["lessons"], ["read the opening first"])
+
+    def test_each_lesson_taken_is_the_one_its_number_names(self):
+        # Given: an offer of three lessons, each for another role
+        # When: the orchestrator takes the third alone
+        # Then: only the third goes on, to its role
+        roles = ("first-user", "evaluator", "generator")
+        self.offered(*(dict(LESSON, role=r, lesson=f"lesson for {r}") for r in roles))
+        self.next({"items": [], "process": [3]})
+        self.assertEqual(self.given()["lessons"], ["lesson for generator"])
+
+    def test_what_is_taken_out_of_its_form_stops(self):
+        # Given: an offer of what the learner found
+        # When: the orchestrator takes a lesson not offered
+        # Then: it stops, naming it, and the offer still waits
+        self.offered(LESSON)
+        out = self.refused({"items": [], "process": [2]})
+        self.assertIn("what you take is not filled", out)
+        self.assertIn("lesson 2 is not one of 1 to 1", out)
+        self.assertIn("take", self.read_json(RESULT)["running"])
+
+    def test_with_nothing_to_take_the_run_goes_on_without_asking(self):
+        # Given: a reading with every item Good, and a learner that found no lesson on the run
+        # When: the orchestrator goes on
+        # Then: the run returns, as nothing is offered
+        super().setUp()
+        self.started()
+        out = self.through(EVALUATED)
+        reply = {"items": [dict(ITEM_F1, learnt="x")], "process": [], "checked": CHECKED}
+        self.replied("turn:learner", out["prompt"], reply)
+        self.assertEqual(self.next(), {"returned": RESULT})
 
     def test_an_item_still_without_good_after_the_second_reading_is_returned(self):
-        # Given: a work made again with what the learner found
-        # When: its second reading leaves an item without Good
-        # Then: the run returns with that item and what the receiver gets once it has its Good,
-        # and no learner is started again
-        self.replied("turn:learner", self.learner["prompt"], {"items": LEARNT})
-        self.next()
+        # Given: a work made again with what the learner found, and a lesson taken
+        # When: its second reading leaves an item without Good, and the learner after it gives
+        # another lesson, which is taken
+        # Then: what gives each Good is not offered, as no remake follows, and the run returns with
+        # that item, what the receiver gets once it has its Good, and both lessons
+        self.offered(LESSON)
+        self.next({"items": [ITEM_F1, ITEM_B1], "process": [1]})
         self.through(dict(EVALUATED, item="B-1"))
-        out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
-        self.assertEqual(out, {"returned": RESULT})
+        self.learner = self.next({"items": [GOOD, SENT_BACK], "questions": []})
+        self.assertEqual(self.given()["lessons"], [])
+        second = dict(LESSON, role="learner", lesson="it read each record once")
+        self.assertEqual(self.offered(second)["take"]["items"], [])
+        self.assertEqual(self.next({"items": [], "process": [1]}), {"returned": RESULT})
         self.assertEqual(
             self.read_json(RESULT),
-            {"work": ["README.md"], "items": [GOOD], "questions": [], "not_good": [SENT_BACK]},
+            {
+                "work": ["README.md"],
+                "items": [GOOD],
+                "questions": [],
+                "not_good": [SENT_BACK],
+                "lessons": [LESSON, second],
+            },
         )
 
 
@@ -475,7 +566,7 @@ class TestRecord(ReadTest):
         # When: each is asked for
         # Then: each is shown, headed by its number and path
         kept = self.read_json(RESULT)
-        records = kept["running"]["records"]
+        records = kept["running"]["next"]["given"]["records"]
         records.append(self.given_record("third", "{}"))
         self.write_json(RESULT, kept)
         for n, path in enumerate(records, 1):
@@ -499,6 +590,18 @@ class TestRecord(ReadTest):
                 code, out = self.turn("record", RESULT, number, page)
                 self.assertEqual(code, 1)
                 self.assertIn(said, out)
+
+    def test_a_record_before_the_learner_is_started_stops(self):
+        # Given: a run waiting on the orchestrator's check, where no learner is started
+        # When: a record is asked for
+        # Then: it is stopped, as there is none to show
+        self.started(dict(CALL, result="other.json"))
+        code, out = self.turn("record", "other.json", "1", "1")
+        self.assertEqual(code, 1)
+        self.assertIn("record 1 is not one of 1 to 0", out)
+        self.turn("start", json.dumps(dict(CALL, result="checking.json")))
+        code, out = self.turn("record", "checking.json", "1", "1")
+        self.assertIn("record 1 is not one of 1 to 0", out)
 
     def test_a_record_of_no_run_going_stops(self):
         # Given: no run going at the path

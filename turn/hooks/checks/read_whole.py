@@ -11,6 +11,7 @@ import shlex
 from typing import Any
 
 import agents
+import records
 import run
 
 READERS = ("generator", "first-user", "evaluator", "learner")
@@ -53,6 +54,14 @@ def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
                 " is decided on a guess"
             )
         return said + unread(event, kept, kept["work"])
+    if "take" in kept:
+        if printed(agents.transcript(event)):
+            return []
+        said = (
+            "see what the learner found whole: run `turn.py next <the call's result>` again with"
+            " no pipe or redirect, since a lesson taken unseen is taken on a guess"
+        )
+        return [said]
     if kept["next"]["agent"] != run.GENERATOR:
         return []
     return unread(event, kept, files(event, kept["given"]))
@@ -113,8 +122,8 @@ def unshown(path: str, kept: dict[str, Any]) -> list[str]:
     result = kept["call"]["result"]
     missing = [
         f"turn.py record {result} {n} {p}"
-        for n, record in enumerate(kept["records"], 1)
-        for p in range(1, len(run.pages(record)) + 1)
+        for n, record in enumerate(run.learnt_from(kept), 1)
+        for p in range(1, len(records.pages(record)) + 1)
         if (n, p) not in seen
     ]
     if not missing:

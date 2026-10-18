@@ -24,9 +24,21 @@ def check(event: dict[str, Any]) -> list[str]:
     if result is None or kept is None:
         return []
     reply = str(event.get("last_assistant_message", ""))
+    # The learner judges the items not waiting on a question and quotes the records it was shown;
+    # a role's commands are found in its own record.
     # Not mutated: of the roles that reply, the learner's name sorts last.
-    judged = kept["learning"] if role == "learner" else kept["items"]  # pragma: no mutate
-    said = forms.check(reply, judged, kept["work"], FORMS[role], sources=run.sources(kept))
+    if role == "learner":  # pragma: no mutate
+        judged, kept_records = kept["learning"], tuple(run.learnt_from(kept))
+    else:
+        judged, kept_records = kept["items"], (event["agent_transcript_path"],)
+    said = forms.check(
+        reply,
+        judged,
+        kept["work"],
+        FORMS[role],
+        sources=run.sources(kept),
+        records=kept_records,
+    )
     if said:
         return ["reply with your form alone, filled:"] + said
     kept["next"].update(
