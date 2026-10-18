@@ -151,15 +151,21 @@ turn/                      the plugin, installed by Claude Code
 ### Units
 
 - The scripts and the hooks: each check stops what it must and lets through what it must.
-  - Run by [`dev/check.sh`](../check.sh) in CI on every push:
-    - unittest in `dev/turn/tests/`
-    - Lines and branches 100% covered
-    - Ruff's lint and format
-    - Pyrefly's types for Python 3.9
-- The orchestrator and the four roles: each works to its aim with what it is given, giving its
-  form.
-  - Run on its own on a small task, on Opus 5.5; passes when its JSONL shows it read only what it
-    was given and worked to its aim, and its reply fills its form.
+  - Flow: unittest in `dev/turn/tests/`, fed the calls, replies, events and records each receives,
+    run by [`dev/check.sh`](../check.sh) in CI on every push, with lines and branches 100%
+    covered, Ruff's lint and format, and Pyrefly's types for Python 3.9.
+- The orchestrator: takes each step of the run in its order, from the call to the result.
+  - Flow: on a task of one item, with the four roles stood in for by agents that read what their
+    step reads and give a reply set beforehand, one set for each way a run goes: every item Good at
+    the first reading, an item sent back, the evaluator differing from the findings, and an item
+    left without Good through the learner and the second reading. On Opus 5.5; passes when its
+    JSONL shows each step in its order, each hook stopping where its check should, and the result
+    as the set replies make it.
+- Each of the four roles: works to its aim with what it is given, giving its form.
+  - Flow: started on its own with a prompt set beforehand, as the orchestrator would give it, on a
+    task of one item, on Opus 5.5; passes when its JSONL shows it read only and whole what its step
+    reads, and its reply fills its form.
+  - Content: what it makes in the acceptance trials below, read against its JSONL.
 
 ### Acceptance
 
@@ -167,6 +173,8 @@ Each trial runs in `lovaizu/playground`, one at a time, on a branch of its own r
 stand-in for the calling AI is handed a small task's CCS and checklist and calls turn, and is judged
 from the JSONL of every agent it started and from the work.
 
+- Flow: a stand-in for the calling AI calls turn on a task of one item, with every role real, and
+  the work comes back with the result in its form.
 - The story: the work comes back where it goes, and every item has a Good with its lines, a
   question, or what the receiver gets once it has its Good.
   - Each Good is checked by reading its lines in the work.
