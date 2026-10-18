@@ -38,7 +38,7 @@ for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "task"]):
     subprocess.run(["git", "-C", place, *args], check=True)
 plugin = place.rstrip("/") + "-turn"
 shutil.copytree(os.path.join(ROOT, "turn"), plugin)
-for agent in glob.glob(os.path.join(HERE, "agents", "*.md")):
+for agent in glob.glob(os.path.join(HERE, "roles", "*.md")):
     shutil.copyfile(agent, os.path.join(plugin, "agents", os.path.basename(agent)))
 os.makedirs(os.path.join(plugin, "stand"))
 for name in ("stand.py", "replies.json"):
