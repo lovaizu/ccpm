@@ -19,21 +19,20 @@ their purpose, since what is sent back then is made again after all of it is bui
   The goal is asking without preparing and only answering; every other minute is the user's work.
 
 ### B-2: The scenes to the goal
-Before each work is made, the plan, the UX, the README, the design and each task's result, rn and
-the user settle it the same way: rn goes down every point the work's checklists leave to decide,
-those others rest on first, and confirms each with the user one point per message, with what it
-looked up and the answer it recommends, the points it could look up included. What is settled goes
-to turn as the decisions the work is made from.
-1. The user starts with `/rn:up <what they want>`; the plan is settled so, made, and rn stops at the
-   plan sign-off.
-2. At each sign-off the user checks only that the work is as settled, and what changed while it was
-   made; `/rn:ty` approves, `/rn:gm <feedback>` asks for a change they do not agree with.
-3. The UX, the README and the design are settled and made the same way, and stop at the design
-   sign-off.
-4. rn carries out the tasks; the user does not watch, and is called only for a point only they can
-   decide, settled the same way.
-5. The finished product is used as the user would use it, and rn stops at the deliverable sign-off;
-   on `/rn:ty` the pull request is marked ready, and the merge is the user's.
+1. The user starts with `/rn:up <what they want>`. rn confirms each point to decide, one per
+   message, with what it looked up and the answer it recommends, the points it could look up
+   included, since a point decided unasked is made again when it is wrong. The goal and the
+   acceptance criteria, each with an ID, go into the plan, and rn stops at the plan sign-off.
+2. At a sign-off the user reads the proposal and answers `/rn:ty` to approve or
+   `/rn:gm <feedback>` to ask for a change.
+3. The documents the purpose needs, such as the UX, the README and the design, are settled and made
+   the same way, and rn stops at the design sign-off.
+4. rn carries out tasks, each naming the acceptance criteria it serves and checked against them;
+   the user does not watch, and is called only for a point only they can decide, confirmed the same
+   way.
+5. The finished work is used as the user would use it, for each acceptance criterion, and rn stops
+   at the deliverable sign-off; on `/rn:ty` the pull request is marked ready, and the merge is the
+   user's.
 6. Wherever the user stops, `/rn:up` in a fresh conversation goes on from there.
 
 ### B-3: The benefits
