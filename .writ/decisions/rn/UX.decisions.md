@@ -22,7 +22,8 @@ their purpose, since what is sent back then is made again after all of it is bui
 1. The user starts with `/rn:up <what they want>`. rn confirms each point to decide, one per
    message, with what it looked up and the answer it recommends, the points it could look up
    included, since a point decided unasked is made again when it is wrong. The goal and the
-   acceptance criteria, each with an ID, go into the plan, and rn stops at the plan sign-off.
+   acceptance criteria, each with an ID, go into the plan, which rn puts on a draft pull request
+   of its own branch, and rn stops at the plan sign-off.
 2. At a sign-off the user reads the proposal and answers `/rn:ty` to approve or
    `/rn:gm <feedback>` to ask for a change. On `/rn:gm`, rn keeps the feedback and stops, so the
    conversation can be cleared; going on, it finds the point behind the words that it took wrong
