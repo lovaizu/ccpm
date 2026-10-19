@@ -1353,6 +1353,28 @@ Progress:
     parts the work is divided into.
   - turn fixed twice on the way (ac4645a, adf992b): Claude Code now ends some agents with
     SubagentHandback, where SubagentStop gives no reply and its block is ignored.
+  - R12: plugin.md step 3, a first reading of the README and the design by a reader who does not
+    know the discussion, is taken as met by turn's first user, which read each in that place.
+  - R13 (turn's question on the scripts): the plan's CCS holds no language, since the plan is made
+    before it can say them and the plan's own decisions carry them; every later CCS reads them
+    from the plan.
+  - R14: the scripts' turn run stopped at Claude Code's two-hour wait for background work, in its
+    second round; what its first user sent back (the type check, the line run only as a command,
+    the formatter's settings) was checked with `dev/check.sh` and `dev/mutate.sh` and taken by
+    hand, not by running turn again. Later runs wait without a limit.
+  - R15: rn's plan checklist made again to the README: the goal G1 and the criteria AC1...,
+    without the split into attractive and must-be quality the README does not show; the documents
+    and the tasks written after their sign-offs; no sign-off as a task, since `state.json` keeps
+    where the session stands; `status: finished` once the pull request is marked ready, so the
+    lessons are still in the session.
+  - R16: no checklist for proposals, since a script puts the proposal together (R6) and no AI makes
+    it.
+  - R17: the two languages are not a point to decide: the conversation's is the one the user writes
+    in, the artifact's the one the repository is written in, English where it has none; they show
+    on the plan, where the user can send them back. The README's example asks no language.
+  - R18: the draft pull request opens when the session starts, not once the plan is made, so the
+    plan is made with its URL in its front matter, as its checklist's form asks; the design's
+    "opens with the plan" read as the pull request the plan goes on.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
