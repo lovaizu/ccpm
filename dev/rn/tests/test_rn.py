@@ -985,9 +985,9 @@ class CommandTest(RepoTest):
 # .claude/rules/plugin.md has CI run Hypothesis on the newest Python alone, so where it is not
 # installed, as on 3.9, the property tests are not defined, and the examples alone run.
 if importlib.util.find_spec("hypothesis") is not None:
-    import hypothesis
-    import hypothesis.configuration
-    from hypothesis import strategies as st
+    import hypothesis  # pyrefly: ignore[missing-import]
+    import hypothesis.configuration  # pyrefly: ignore[missing-import]
+    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 
     # New inputs on every run; a failure prints how to reproduce it, and the input is then kept as
     # an example. No folder of past inputs is kept, and what Hypothesis caches goes to a temporary
