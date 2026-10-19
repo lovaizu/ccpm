@@ -199,8 +199,14 @@ def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
     found = json.loads(forms.unfenced(text))
     sent_back = [i for i in found["items"] if "gets" in i]
     claim = run["next"].get("reply") or {}
-    unrun = forms.unrun(found.pop("statements"), claim.get("statements", []))
-    unsourced = found.pop("unsourced", []) + unrun
+    unsourced = found.pop("unsourced", [])
+    # A statement the reading sends back itself is sent back once.
+    unrun = [
+        u
+        for u in forms.unrun(found.pop("statements"), claim.get("statements", []))
+        if not any(forms.overlap(u["lines"], s["lines"]) for s in unsourced)
+    ]
+    unsourced += unrun
     if sent_back or unsourced:
         return ask(run, GENERATOR, generator_given(run, sent_back, unsourced))
     run["findings"] = found

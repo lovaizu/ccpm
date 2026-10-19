@@ -21,6 +21,7 @@ ROLES = ("orchestrator", "generator", "first-user", "evaluator", "learner")
 # CCS or its files, how the product behaves on a command run, as its code and the decisions about
 # it may say otherwise than it does.
 KINDS = {"decision": "quotes", "behavior": "ran"}
+RUN = {"behavior"}
 UNGROUNDED = {
     "decision": 'is a decision; give "quotes", the words of the CCS or its files that say it',
     "behavior": 'tells how the product behaves; give "ran", a command you ran that shows it',
@@ -86,8 +87,8 @@ def claimed(data: dict[str, Any], at: Grounds) -> list[str]:
         name = f"statement {n} of statements"
         keys = set(statement) if isinstance(statement, dict) else set()
         if (
-            not {"lines", "kind"} <= keys
-            or statement["kind"] not in KINDS
+            "lines" not in keys
+            or statement.get("kind") not in KINDS
             or not keys & {"quotes", "ran"}
             or keys - {"lines", "kind", "quotes", "ran"}
         ):
@@ -213,7 +214,7 @@ def unrun(marks: list[dict[str, Any]], claim: list[Any]) -> list[dict[str, Any]]
             " shows it, or take it out of the work",
         }
         for m in marks
-        if m["kind"] == "behavior" and not any(overlap(m["lines"], s) for s in shown)
+        if m["kind"] in RUN and not any(overlap(m["lines"], s) for s in shown)
     ]
 
 

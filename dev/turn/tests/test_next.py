@@ -151,6 +151,21 @@ class TestReading(ReadTest):
         )
         self.assertEqual(self.given()["unsourced"], [{"lines": ["README.md:3-3"], "gets": gets}])
 
+    def test_a_statement_the_reading_sends_back_itself_is_sent_back_once(self):
+        # Given: a generator grounding a statement in quotes as a decision, and a reading marking
+        # it how the product behaves and sending it back itself
+        # When: the reading is recorded
+        # Then: the generator is given it once, as the reading sent it back
+        self.claimed(STATEMENT)
+        reading = {
+            "items": [GOOD, dict(GOOD, item="B-1")],
+            "questions": [],
+            "statements": [dict(MARKED, kind="behavior")],
+            "unsourced": [UNSOURCED],
+        }
+        self.next(reading)
+        self.assertEqual(self.given()["unsourced"], [UNSOURCED])
+
     def test_a_statement_marked_how_the_product_behaves_resting_on_a_run_passes(self):
         # Given: a generator grounding a statement over lines 2 to 3 in a run, and a reading
         # marking line 3 how the product behaves

@@ -2,18 +2,47 @@
 # Mutation testing of each plugin that has dev/<plugin>/cosmic-ray.toml, run from the top of the
 # repository with the tools of dev/requirements.txt and dev/requirements-test-quality.txt; fails on any mutant no test catches.
 # cr-rate is not used for that: it takes a limit of 0 as no limit.
-# Cosmic Ray changes the files it tests, so it runs on a copy of the repository.
+# Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for
+# each processor, as each mutant is tested on its own.
 set -e
 
 copy=$(mktemp -d)
-trap 'rm -rf "$copy"' EXIT
-cp -R . "$copy"
-cd "$copy"
+trap 'kill $(jobs -p) 2>/dev/null; rm -rf "$copy"' EXIT
+workers=$(getconf _NPROCESSORS_ONLN)
+for n in $(seq 1 "$workers"); do
+  cp -R . "$copy/worker-$n"
+  (cd "$copy/worker-$n" && exec cosmic-ray http-worker --port $((9875 + n))) >/dev/null 2>&1 &
+done
+python3 - "$workers" <<'EOF'
+import socket
+import sys
+import time
+
+for n in range(1, int(sys.argv[1]) + 1):
+    for _ in range(300):
+        try:
+            socket.create_connection(("localhost", 9875 + n)).close()
+            break
+        except OSError:
+            time.sleep(0.1)
+EOF
 for config in dev/*/cosmic-ray.toml; do
   db="$copy/mutants.sqlite"
   rm -f "$db"
-  cosmic-ray init "$config" "$db"
-  cosmic-ray exec "$config" "$db"
+  python3 - "$config" "$copy/config.toml" "$workers" <<'EOF'
+import sys
+
+# The config's distributor, its last table, is replaced by the workers.
+source, target, workers = sys.argv[1], sys.argv[2], int(sys.argv[3])
+with open(source, encoding="utf-8") as f:
+    text = f.read().split("[cosmic-ray.distributor]")[0]
+urls = ", ".join(f'"http://localhost:{9875 + n}"' for n in range(1, workers + 1))
+with open(target, "w", encoding="utf-8") as f:
+    f.write(f'{text}[cosmic-ray.distributor]\nname = "http"\n\n')
+    f.write(f"[cosmic-ray.distributor.http]\nworker-urls = [{urls}]\n")
+EOF
+  cosmic-ray init "$copy/config.toml" "$db"
+  cosmic-ray exec "$copy/config.toml" "$db"
   cr-report --surviving-only --show-diff "$db" | tee "$copy/report.txt"
   grep -q '^surviving mutants: 0 ' "$copy/report.txt"
 done

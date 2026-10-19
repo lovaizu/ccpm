@@ -182,6 +182,50 @@ class TestStatements(FormTest):
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
 
+    def test_every_mark_out_of_its_form_is_named(self):
+        # Given: a reading with two marks of no kind
+        # When: it is checked
+        # Then: each is named
+        bad = dict(MARKED, kind="fact")
+        reading = {"items": [GOOD, SENT_BACK], "questions": [], "statements": [bad, bad]}
+        said = self.said(reading, forms.READING)
+        self.assertEqual(
+            [s.split(" must")[0] for s in said],
+            ["statement 1 of statements", "statement 2 of statements"],
+        )
+
+
+class TestOverlap(FormTest):
+    """A statement marked as how the product behaves is shown by a run of the generator's only
+    where their lines lie on each other, in the same file."""
+
+    def test_lines_on_each_other_in_one_file_overlap(self):
+        # Given: a line inside a range, a range across another's end, and one line named alone
+        # When: they are compared
+        # Then: each overlaps
+        for lines, others in (
+            (["README.md:3-3"], ["README.md:2-4"]),
+            (["README.md:1-3"], ["README.md:3-5"]),
+            (["README.md:4"], ["README.md:4"]),
+            (["README.md:3"], ["README.md:1-3"]),
+        ):
+            with self.subTest(lines=lines, others=others):
+                self.assertTrue(forms.overlap(lines, others))
+                self.assertTrue(forms.overlap(others, lines))
+
+    def test_lines_apart_or_in_other_files_do_not_overlap(self):
+        # Given: ranges apart in one file, and the same lines in two files
+        # When: they are compared, each way
+        # Then: none overlaps
+        for lines, others in (
+            (["README.md:1-2"], ["README.md:3-4"]),
+            (["README.md:2-4"], ["README.md:5"]),
+            (["README.md:3-3"], ["docs/start.md:3-3"]),
+        ):
+            with self.subTest(lines=lines, others=others):
+                self.assertFalse(forms.overlap(lines, others))
+                self.assertFalse(forms.overlap(others, lines))
+
 
 class TestGrounds(FormTest):
     """A statement of the work rests on the words of the CCS or its files, quoted as written, and,
