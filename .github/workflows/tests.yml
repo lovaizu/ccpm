@@ -2,6 +2,10 @@ name: tests
 
 on: push
 
+# The tests only read the repository, so the token they are given can change nothing.
+permissions:
+  contents: read
+
 jobs:
   tests:
     # Users run 3.9; Cosmic Ray and Hypothesis need a newer Python only to test, not to run.
@@ -14,13 +18,18 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install -r dev/requirements.txt
+      - run: pip install --require-hashes -r dev/requirements.txt
       - if: matrix.python == '3.x'
-        run: pip install -r dev/requirements-test-quality.txt
+        run: pip install --require-hashes -r dev/requirements-test-quality.txt
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
-      - run: npm install -g @anthropic-ai/claude-code@2.1.296
+      # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
+      - working-directory: dev
+        run: |
+          npm ci --ignore-scripts
+          node node_modules/@anthropic-ai/claude-code/install.cjs
+          echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
       - run: sh dev/check.sh
       - if: matrix.python == '3.x'
         run: sh dev/mutate.sh
