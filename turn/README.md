@@ -10,9 +10,7 @@ Say your plugin has a step that writes a project's README to your checklist `che
 A checklist lists what the README's reader should get from it, one item each, asked as a question,
 such as "On opening it, can the reader tell whether the project is for them?", and says under each
 item where it is answered: `Scope: its part`, as here; `each part`, every section on its own; or
-`whole`, the README at once. Its front matter says `check: usability`, as its items ask what the
-reader gets using the README; a checklist asking whether the work says what was decided says
-`check: accuracy`, and is answered by an AI that holds what was decided.
+`whole`, the README at once.
 
 The step's AI asks the user what the items need for this project, writes what is decided to
 `notes/readme.decisions.md`, and writes its task in a CCS, `.tasks/readme.json`. A CCS is a JSON
@@ -46,9 +44,9 @@ and comes back with that one question:
 ```
 
 The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and calls turn again.
-This time turn writes README.md, and an AI that did not write it reads it as the developer meeting
-the project would. Each item is judged from that reading: it gets its Good when the reader gets
-what the item asks, with the lines that give it. Where an item gets none, README.md is made again
+This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
+the developer meeting the project would, running what they would run. Each item is judged from that
+use: it gets its Good when the reader gets what the item asks, with the lines that give it. Where an item gets none, README.md is made again
 and read once more, and an item still without Good comes back with what the reader would get once
 it has one and where it was not found.
 
@@ -77,3 +75,35 @@ turn gives your plugin's AI what it does not get by making the work and checking
 - Each Good comes with the lines it rests on, so it is checked by reading them, not taken on trust.
 - The work is made from the CCS and the files it names alone, so it does not stray from what was
   decided.
+
+## Requirements
+
+- Claude Code, in which turn runs.
+- Python 3.9 or later, run as `python3`, jq, the command-line JSON tool, and git.
+
+  turn's scripts and hooks run on Python and jq, and a run cut off leaves its writing as changes git
+  shows.
+
+## Installation
+
+In Claude Code, add the marketplace once, then install turn:
+
+```console
+/plugin marketplace add lovaizu/ccpm
+/plugin install turn@ccpm
+```
+
+Then have your plugin's step call `turn:up`, as in the example.
+
+## Documentation
+
+- [The changelog](CHANGELOG.md) says what changed in each version.
+
+## Development
+
+[turn's development folder](../dev/turn/README.md) leads to its UX, its design and how it is
+checked.
+
+## License
+
+[MIT License](../LICENSE)
