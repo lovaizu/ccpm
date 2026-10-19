@@ -178,21 +178,15 @@ def whole(path: str, cwd: str, work: list[str]) -> set[str]:
 
 
 def opened(path: str, cwd: str) -> list[str]:
-    """Each file the agent's record shows it opened with Read, whole or in part, or printed with
-    cat."""
+    """Each file the agent's record shows it opened with Read, whole or in part; one printed with
+    cat is printed whole."""
     found: list[str] = []
     with open(path, encoding="utf-8") as f:
         for line in f:
             content = json.loads(line).get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
-                given = part.get("input", {}) if part.get("type") == "tool_use" else {}
-                named = (
-                    [given["file_path"]]
-                    if part.get("name") == "Read" and "file_path" in given
-                    else []
-                )
-                named += catted(str(given.get("command", ""))) if part.get("name") == "Bash" else []
-                found += [at(cwd, n) for n in named if at(cwd, n) not in found]
+                if part.get("name") == "Read":
+                    found.append(at(cwd, part["input"]["file_path"]))
     return found
 
 

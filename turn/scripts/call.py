@@ -22,7 +22,8 @@ EACH = "each part"
 # orchestrator and the generator hold.
 CHECK = re.compile(r"\A---\n(?:.*\n)*?check: (\S+)\n(?:.*\n)*?---\n")
 CHECKS = ("usability", "accuracy")
-USABILITY = "usability"
+# The checks the first user and the evaluator answer.
+READERS = CHECKS[:1]
 
 
 class Stop(Exception):
@@ -84,7 +85,7 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     for path in run["has"]:
         if not os.path.exists(path):
             raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
-    run["usability"] = [p for p in run["checklist"] if check_of(p) == USABILITY]
+    run["usability"] = [p for p in run["checklist"] if check_of(p) in READERS]
     scoped = [item for path in run["checklist"] for item in items(path)]
     run["items"] = [{"checklist": c, "item": i} for c, i, _ in scoped]
     run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope in (EACH,)]

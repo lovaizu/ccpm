@@ -919,6 +919,19 @@ class TestWholeReads(HookTest):
         self.assertEqual(code, 2)
         self.assertIn("docs/start.md", err)
 
+    def test_a_reader_that_opened_in_part_only_what_the_receiver_does_not_have_ends(self):
+        # Given: a first user of a run whose receiver has a page with the work, which read the work
+        # and the checklist whole, and files the receiver does not have in part, named before and
+        # after the page
+        # When: it ends with its reply
+        # Then: it ends, as only what the receiver has is to be read whole once opened
+        prompt = self.first_user(kind=dict(CALL["kind"], has="page"))
+        parts = [("Read", {"file_path": p, "limit": 1}) for p in ("aa.md", "zz.md")]
+        reply = {"items": FIRST_READ}
+        self.assertEqual(
+            self.replied("turn:first-user", prompt, reply, *READ_SHOWN, *parts), (0, "")
+        )
+
     def test_a_reader_that_did_not_open_what_the_receiver_has_ends(self):
         # Given: a first user of a run whose receiver has a page with the work, which read the work
         # and the checklist whole and did not open the page
