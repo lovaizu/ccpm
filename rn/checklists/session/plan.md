@@ -168,3 +168,21 @@ Before the tasks are written, it is answered yes.
 
 Why: a criterion no task serves is never built, and the finished work misses what the user
 approved.
+
+### B-8: Each task a thin slice tried on its own
+
+Scope: its part
+
+Does each task's result do one thing a user of the finished work can try, through every part that
+thing needs, small enough for turn to make in one run, and does each task come after every task it
+builds on?
+
+Look for: a task that makes one layer for later tasks, such as all the tests or a part shared by
+several features, with nothing to try until another task is done; a task holding several things a
+user could try apart.
+
+Before the tasks are written, it is answered yes.
+
+Why: turn makes each task's result in one run and the conductor accepts it before the next starts,
+so a slip shows while only that slice is made; a task that makes much at once shows its slip only
+once all of it is made, and all of it is made again.
