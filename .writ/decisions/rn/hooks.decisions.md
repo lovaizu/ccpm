@@ -15,6 +15,11 @@ names; each serves every unit.
 - Tests in `dev/rn/tests/`, fed the events Claude Code hands each hook in their real shape, with a
   repository made in a temporary folder where a check reads git; every line and branch run, every
   mutant caught, property tests where an input varies.
+- Mutation testing reaches the hooks as well as the scripts: `dev/rn/cosmic-ray.toml` is widened
+  to both, with the type check given both folders.
+- Of `prompt.md`, the hooks answer the items a hook gives, B-6, B-8, B-10, B-12, B-20, B-25 and
+  B-26, read on the checks and their stops; the items on a prompt's own text, its front matter,
+  Role, Steps, forms, details and examples, are the skills', and are answered yes for the hooks.
 - The hooks act only in a repository whose checked-out branch holds a session, or, for the default
   branch, where a session's folder `.rn/<yyyymmdd>-<slug>/` is in the repository, so they never
   stop work that is not rn's.

@@ -1382,6 +1382,10 @@ Progress:
     to another, so commit messages and earlier messages always point to one task. Also taken from
     turn's work beyond the decisions: the plan's title naming the piece of work, and B-5 asking
     that a task does something for each criterion it names, not only names it.
+  - R21 (turn's question on the hooks): mutation testing reaches rn's hooks as well as its scripts,
+    so every mutant of the guards is caught too.
+  - R22 (turn's question on the hooks): the hooks are held to the items of prompt.md a hook gives;
+    the items on a prompt's own text are the skills'.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
