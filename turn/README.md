@@ -8,7 +8,9 @@ an AI that did not make it, in the place of its reader.
 
 Say your plugin has a step that writes a project's README to your checklist `checklists/readme.md`.
 A checklist lists what the README's reader should get from it, one item each, asked as a question,
-such as "On opening it, can the reader tell whether the project is for them?"
+such as "On opening it, can the reader tell whether the project is for them?", and says under each
+item where it is answered: `Scope: its part`, as here; `each part`, every section on its own; or
+`whole`, the README at once.
 
 The step's AI asks the user what the items need for this project, writes what is decided to
 `notes/readme.decisions.md`, and writes its task in a CCS, `.tasks/readme.json`. A CCS is a JSON
@@ -46,7 +48,7 @@ This time turn writes README.md, and an AI that did not write it reads it as the
 the project would. Each item is judged from that reading: it gets its Good when the reader gets
 what the item asks, with the lines that give it. Where an item gets none, README.md is made again
 and read once more, and an item still without Good comes back with what the reader would get once
-it has one.
+it has one and where it was not found.
 
 When turn returns, README.md is in place, and the result gives each item's Good with the lines it
 rests on:

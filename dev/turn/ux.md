@@ -44,7 +44,7 @@ since a work it must fix costs the user the fixing as well as the wait.
   where turn writes its result.
 - The calling AI gets back the work where it goes, and the result: each item's Good with its lines,
   the questions only the user can decide, each item still without Good, with what the receiver
-  gets once it is Good, and the lessons turn took on how its run went, to hand on to turn's makers. Where the CCS cannot give an item its Good, it gets the questions alone,
+  gets once it is Good and where it was not found, and the lessons turn took on how its run went, to hand on to turn's makers. Where the CCS cannot give an item its Good, it gets the questions alone,
   before any work is made.
 
   An item's Good is the judgment that the receiver gets from the work what the item asks, with the

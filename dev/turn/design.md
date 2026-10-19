@@ -30,19 +30,29 @@ flowchart LR
   orch -->|2 has the work made| gen
   orch -->|3 has it read in the receiver's place| fu
   orch -->|4 has that reading's Goods held to their items, and the Goods it missed found| ev
-  orch -->|5 after every reading, has what gives each Good and how the run went learnt, then 2 to 4 once more where an item has none| le
+  orch -->|5 after every reading, has how the run went learnt, then 2 to 4 once more where an item has none| le
   orch -->|6 returns the work and the result| caller
 ```
 
 The orchestrator and the four roles it starts are AIs, each answering the orchestrator in its reply.
 
-- Every role looks only for the Good each item gets and the lines that give it, or for how the work
-  would give it; only a script, code that runs the same every time, doubts, and only by coverage:
-  it names each item no role gave its Good.
+- Every role that judges the work looks only for the Good each item gets and the lines that give
+  it; only a script, code that runs the same every time, doubts, and only by coverage: it names each
+  item no role gave its Good.
 
   An AI that looks for what more the work needs finds more without end, and each find is patched
   in, so the work drifts from what it should be. Each role has one aim, so it works to the aim
   rather than to a list of steps.
+- Each item is answered where its checklist's `Scope` line says: `its part`, at the lines that give
+  it; `each part`, in every part of the work on its own, a Good for each; `whole`, of the work at
+  once. A script splits the work into its parts, a document's sections under its top headings with
+  the title and opening as one, and each other file whole, stops a reply that gives an each-part
+  item without every part, and gives such an item its Good only where every part has one.
+
+  A Good found where one part gives it passes a part that does not, so a remake that breaks one
+  part for another item goes unseen; what lies between the parts, such as one name for each thing,
+  is found only in the whole. The checklist says it once, so every role and every run answers an
+  item at the same place.
 - The calling AI hands the orchestrator the CCS's path, where the result goes, and the kinds it uses
   in the CCS for where the work goes, the checklists and the receiver, and, if it has them, what the
   receiver reads the work for and what they open with it.
@@ -72,20 +82,23 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   fact, so the one that wrote it grounds each. A quote is the words themselves, not lines that hold
   them, so it shows what was read for the statement; a product's code and the decisions about it
   may say otherwise than it does, and only a run shows what it does.
-- The orchestrator reads the work, finding for every item the Good the receiver gets from it and,
-  in each statement's grounds, what the statement says, and sends back the items whose Good it does
-  not find, each said as what the receiver gets once it has it, and each statement its grounds do
-  not say; where a decision of the CCS and a file it names differ, it is a question. It marks each
-  statement as a decision or as how the product behaves on its own, without running anything, and
-  a script sends back each statement either mark calls how the product behaves that has no run.
-  Once nothing is sent back, a script records its findings.
+- The orchestrator reads the work, finding for every item the Good the receiver gets from it and, in
+  each statement's grounds, what the statement says, and sends back the items whose Good it does not
+  find, each said as what the receiver gets once it has it and the places of the work where it is
+  not found, and each statement its grounds do not say; where a decision of the CCS and a file it
+  names differ, it is a question. It marks each statement as a decision or as how the product
+  behaves on its own, without running anything, and a script sends back each statement either mark
+  calls how the product behaves that has no run. Once nothing is sent back, a script records its
+  findings.
 
-  A shortfall plain to see is sent back before the costly reading. How the work gets the Good is
-  the generator's to decide, since an edit told per item broke other items. An item only the user's
-  answer can give is not sent back; it is a question. Once the work is made, only the orchestrator
-  holds the sources; the readers after it read as the receiver, who has none, so a statement made
-  up passes them. A maker that means a statement as decided grounds it in the decision, while the
-  product may do otherwise; a second mark by one that did not make the work catches it.
+  A shortfall plain to see is sent back before the costly reading. How the work gets the Good is the
+  generator's to decide, since an edit told per item broke other items; the places are what the work
+  says there, not an edit, and show the generator what it does not give, which the maker, reading
+  the Good it meant, misses. An item only the user's answer can give is not sent back; it is a
+  question. Once the work is made, only the orchestrator holds the sources; the readers after it
+  read as the receiver, who has none, so a statement made up passes them. A maker that means a
+  statement as decided grounds it in the decision, while the product may do otherwise; a second mark
+  by one that did not make the work catches it.
 - The first user reads the work in the receiver's place, with what the receiver opens and the
   checklists, and gives for each item the Good it found in the work, with its lines.
 
@@ -104,24 +117,24 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   meant, so a script stops it.
 - After every reading, the learner reads every item's finding and the record of every agent of the
   run, the orchestrator's included, and gives, from what they show, with the words it rests on
-  quoted: for each item, what gives its Good or would give it; and how the run went, whether the
-  Goods came without waste and not by chance, each lesson for the role it is for, or that it found
-  none and what it checked.
+  quoted, how the run went: whether the Goods came without waste and not by chance, each lesson for
+  the role it is for, on how it read, checked and replied, or that it found none and what it
+  checked.
 
-  For an item without Good it finds how the work would give it; for one with Good, what gives it,
-  so a remake keeps it. What fell short often lies in what a role did, which only its record shows;
-  a run where every item got its Good may still have got it by chance, or spent time for nothing,
-  and what is not learnt from is met again. A lesson without the facts it rests on is a guess.
-- The orchestrator takes the lessons it finds hold: what gives each Good goes to the generator when
-  the work is made again, and how the run went goes to each role of the next round and into the
-  result, for the calling AI to hand on to turn's makers.
+  A lesson on what the work should say tells the generator how to give a Good, which is the
+  generator's to decide: told to put every change in the opening, it made the opening one sentence
+  of five changes. What fell short often lies in what a role did, which only its record shows; a
+  run where every item got its Good may still have got it by chance, or spent time for nothing, and
+  what is not learnt from is met again. A lesson without the facts it rests on is a guess.
+- The orchestrator takes the lessons it finds hold: each goes to its role in the next round and into
+  the result, for the calling AI to hand on to turn's makers.
 
   The learner sees what each agent did, but the orchestrator decided every step of the run, so it
   judges which lessons hold.
 - When every item has its Good or is a question, the run returns; otherwise the generator makes the
   work again, it is read once more, from the orchestrator's findings to its decision and the
-  learner, and then the run returns, with each item still without Good and what the receiver gets
-  once it has it.
+  learner, and then the run returns, with each item still without Good, what the receiver gets
+  once it has it and where it was not found.
 
   A second reading settles what the first found; what is left costs the calling AI less to fix than
   more readings would.
@@ -152,11 +165,11 @@ turn/                      the plugin, installed by Claude Code
 - A script checks the call and takes every entry of each kind it names from the CCS, so no AI
   copies a value; it stops a call that names a missing file or leaves where the work goes, the
   checklists or the receiver without an entry.
-- What each role is given: the generator, the whole CCS, what is sent back and what the learner
-  found; the first user, the work, what the receiver opens, who the receiver is and what for, and
-  the checklists; the evaluator, the same and the first user's reading; the learner, every item's
-  finding and the JSONL of every agent of its run, the orchestrator's included; and each role of
-  the second round, the lessons taken for it.
+- What each role is given: the generator, the whole CCS and what is sent back; the first user, the
+  work, what the receiver opens, who the receiver is and what for, and the checklists; the
+  evaluator, the same and the first user's reading; the learner, every item's finding and the JSONL
+  of every agent of its run, the orchestrator's included; and each role of the second round, the
+  lessons taken for it.
 - Each role replies in a JSON form of its own, not in a file, and a hook checks each role at both
   ends.
 
@@ -200,24 +213,29 @@ turn/                      the plugin, installed by Claude Code
     run by [`dev/check.sh`](../check.sh) in CI on every push, with lines and branches 100%
     covered, Ruff's lint and format, and Pyrefly's types for Python 3.9.
 - The orchestrator: takes each step of the run in its order, from the call to the result.
-  - Flow: on a task of one item, with the four roles stood in for by agents that read what their
-    step reads and give a reply set beforehand, one set for each way a run goes: every item Good at
-    the first reading, an item sent back, the evaluator differing from the findings, and an item
-    left without Good through the second reading, with the learner after each reading; and, on the same task with its
-    decision taken out, the questions returned before any work is made. On Opus 5.5; passes when
-    its JSONL shows each step in its order, each hook stopping where its check should, and the
-    result as the set replies make it.
+  - Flow: on a task of two items, one answered at its part and one in each part, with the four roles
+    stood in for by agents that read what their step reads and give a reply set beforehand, one set
+    for each way a run goes: every item Good at the first reading, an item sent back with the parts
+    where it is not found, the evaluator differing from the findings, and an item left without Good
+    through the second reading, with the learner after each reading; and, on the same task with its
+    decision taken out, the questions returned before any work is made. On Opus 5.5; passes when its
+    JSONL shows each step in its order, each hook stopping where its check should, and the result as
+    the set replies make it.
 - Each of the four roles: works to its aim with what it is given, giving its form.
   - Flow: started on its own with a prompt set beforehand, as the orchestrator would give it, on a
-    task of one item, on Opus 5.5; passes when its JSONL shows it read only and whole what its step
-    reads, and its reply fills its form.
+    task of two items, one answered at its part and one in each part, on Opus 5.5; passes when its
+    JSONL shows it read only and whole what its step reads, and its reply fills its form.
   - Content: what it makes in the acceptance trials below, read against its JSONL.
 
 ### Acceptance
 
-Each trial runs in `lovaizu/playground`, one at a time, on a branch of its own removed after: a
-stand-in for the calling AI is handed a small task's CCS and checklist and calls turn, and is judged
-from the JSONL of every agent it started and from the work.
+Each trial runs in a clone of `lovaizu/playground` of its own, on a branch of its own, pushing
+nothing, removed after: a stand-in for the calling AI is handed a small task's CCS and checklist and
+calls turn, and is judged from the JSONL of every agent it started and from the work. Each
+acceptance trial is run three times at once.
+
+What an AI does varies from run to run, and one run shows one of its ways; runs that push nothing
+and keep their own folders do not touch each other.
 
 - Flow: a stand-in for the calling AI calls turn on a task of one item, with every role real, and
   the work comes back with the result in its form.
