@@ -26,14 +26,17 @@ their purpose, since what is sent back then is made again after all of it is bui
    current one, the conclusion, its grounds, and the options, the recommended one first, each with
    its trade-off and whether it can be undone; and one question on that point alone, answered by
    the option's letter or in the user's own words. Answers to the user's questions and what rn
-   fixed on its own come first, apart from the points. The goal and the
+   fixed on its own, slips it corrected that leave nothing to decide, come first, apart from the
+   points; no point is settled unasked. The goal and the
    acceptance criteria, each with an ID, go into the plan, which rn puts on a draft pull request
    of its own branch, and rn stops at the plan sign-off.
 2. At a sign-off the user reads the proposal and answers `/rn:ty` to approve or
    `/rn:gm <feedback>` to ask for a change. On `/rn:gm`, rn keeps the feedback and stops, so the
    conversation can be cleared; going on, it finds the point behind the words that it took wrong
    or did not ask, confirms it the same way, makes the work again, and stops at the same sign-off
-   with what changed since the last proposal.
+   with what changed since the last proposal. What the AI that reads and uses a proposal before a
+   sign-off finds lacking, rn makes again before it stops; only a point the user alone can decide
+   comes to them, confirmed the same way.
 3. The documents the purpose needs, such as the UX, the README and the design, are settled and made
    the same way, and rn stops at the design sign-off.
 4. rn carries out tasks, each naming the acceptance criteria it serves and checked against them;
@@ -53,6 +56,8 @@ checklist for gets one made there. rn's own checklists are not changed in place,
 outside git on the user's machine and an update of rn replaces them.
 
 ### B-3: The benefits
+Each benefit is kept with its reason as written: it says why the user chooses rn, which G1 and the
+scenes, though they share words, do not.
 - The user asks without preparing: rough words are enough, and rn finds the points to decide and
   comes to confirm them.
 - The user's purpose is achieved by answering alone: each point is confirmed and each task traced

@@ -1322,6 +1322,18 @@ Serves: A1, A2, M1, M2, M3
 
 Progress:
 
+- The user (2026-10-19): make rn whole through turn, and report what was decided at the end.
+  Decided by the assistant, to report:
+  - R1 (rn UX run 3): "what rn fixed on its own" is slips it corrected that leave nothing to
+    decide; no point is settled unasked (the run read it as matters settled without asking).
+  - R2 (turn's question): what the AI reading a proposal finds lacking, rn makes again before it
+    stops; only a point the user alone can decide comes to them. Not chosen: show the findings with
+    the proposal (the user would check the reading), bring each as a point (most are not theirs).
+  - R3 (turn's question): the six benefits stay with their reasons as agreed, against turn's
+    recommendation to keep three, since a benefit says why the user chooses rn, which G1 and the
+    scenes do not.
+  - turn fixed twice on the way (ac4645a, adf992b): Claude Code now ends some agents with
+    SubagentHandback, where SubagentStop gives no reply and its block is ignored.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
