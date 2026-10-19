@@ -1,5 +1,6 @@
 ---
 name: proposal
+check: usability
 version: 0.1.0
 ---
 
@@ -18,7 +19,7 @@ A proposal is worked out in this order, each step the ground of the next:
 4. Set out what was decided for the user, with its ground, and each shortfall left, with why.
 5. Give each checklist item, met with the lines that give it, or not met.
 
-Each item of `readability.md` applies to a proposal with the work as it now stands as its subject.
+Each item of `usability.md` applies to a proposal with the work as it now stands as its subject.
 
 ## Format
 

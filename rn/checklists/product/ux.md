@@ -1,5 +1,6 @@
 ---
 name: ux
+check: usability
 version: 0.1.0
 ---
 
@@ -25,7 +26,7 @@ the UX is making that experience clear, in this order:
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
 
-Each item of `readability.md` applies to a UX with the users' experience as its subject; its B-16 is
+Each item of `usability.md` applies to a UX with the users' experience as its subject; its B-16 is
 answered by the scenes.
 
 ## Format

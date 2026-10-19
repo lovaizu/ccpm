@@ -2,6 +2,7 @@
                     {"audience": "someone who cleans CSV exports by hand before their scripts read them, finding csvtidy on GitHub"}],
  "goal_orientation": [{"purpose": "to tidy their own CSV file with csvtidy"}],
  "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
-                         {"checklist": "checklists/readability.md"},
+                         {"checklist": "checklists/usability.md"},
+                         {"checklist": "checklists/accuracy.md"},
                          {"source": "csvtidy.py"},
                          {"decisions": "notes/readme.decisions.md"}]}

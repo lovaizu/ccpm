@@ -1,5 +1,6 @@
 ---
 name: plan
+check: usability
 version: 0.1.0
 ---
 
@@ -22,7 +23,7 @@ A plan is worked out in this order, each step the ground of the next:
 5. Once the design is approved, plan the tasks that bring each criterion to hold, the attractive
    ones first.
 
-Each item of `readability.md` applies to a plan with the goal and how it is reached as its subject;
+Each item of `usability.md` applies to a plan with the goal and how it is reached as its subject;
 its B-16 is answered by the tasks in order, since a plan tells of no one acting in turn. Before the
 tasks of step 5 are planned, the items on tasks are answered as met.
 

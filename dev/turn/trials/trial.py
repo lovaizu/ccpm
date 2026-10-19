@@ -44,7 +44,7 @@ for name in ("csvtidy.py", "notes"):
     copy = shutil.copytree if os.path.isdir(source) else shutil.copyfile
     copy(source, os.path.join(place, name))
 os.makedirs(os.path.join(place, "checklists"))
-for name in ("product/readme.md", "readability.md"):
+for name in ("product/readme.md", "usability.md", "accuracy.md"):
     shutil.copyfile(
         os.path.join(ROOT, "rn", "checklists", name),
         os.path.join(place, "checklists", os.path.basename(name)),

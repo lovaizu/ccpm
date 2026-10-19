@@ -20,7 +20,7 @@ COMMANDS = [
     "up.py report <CCS turn wrote back> <judgments>",
 ]
 USAGE = "usage: " + " ".join(COMMANDS)
-CHECKLIST = "checklists/readability.md"
+CHECKLIST = "checklists/usability.md"
 DECISIONS = "notes.decisions.md"
 REQUIRED = {
     "--deliverable": "docs/setup.md",
@@ -53,7 +53,7 @@ class TestCommand(RepoTest):
         # Then: it prints the usage and stops
         for argv in [
             ["checklists"],
-            ["checklists", "readability", "readme"],
+            ["checklists", "usability", "readme"],
             ["decisions", SESSION],
             ["content", SESSION, "a.md", "b.md"],
             ["report", "back.json"],

@@ -1,5 +1,6 @@
 ---
 name: prompt
+check: usability
 version: 0.2.0
 ---
 
@@ -22,7 +23,7 @@ A prompt is worked out in this order, each step the ground of the next:
    A hook backs the step and its reason and does not stand in for them, since what shows in no
    tool call, such as what the AI weighs, rests on them alone.
 
-Each item of `readability.md` also applies to a prompt.
+Each item of `usability.md` also applies to a prompt.
 
 ## Format
 
@@ -341,17 +342,3 @@ such as what the AI weighs, stays with the step and its reason.
 
 Why: an AI given a clear step and its reason still leaves it out on some runs, and the result looks
 right; a hook sees it on every run, while the step can still be done.
-
-### B-24: What was decided carried out in full
-
-Scope: whole
-
-Does the prompt have the AI carry out what the design decided for the agent or skill, its purpose,
-what it takes in, how it judges and what it hands back, neither narrowed nor widened?
-
-Look at: each step against the design's words for the same thing; a step that holds less or more,
-such as one case where the design names a kind of case, fails.
-
-Why: a prompt narrower than its design still reads well as a prompt, so it passes every other item;
-the AI then does less than the rest of the product counts on, and no one reading the prompt alone
-sees it.

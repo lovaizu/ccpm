@@ -1,5 +1,6 @@
 ---
 name: checklist
+check: usability
 version: 0.2.0
 ---
 
@@ -19,9 +20,11 @@ A checklist is worked out in this order, each step the ground of the next:
    language or tool.
 4. From the opening, its purpose and its order, draw the key points alone as items, each asking one
    thing; what the steps already bring about is not asked again.
+5. Split the items by what answers them: what the deliverable's user has and does with it, or the
+   sources it was made from, each in a checklist of its own.
 
 This file is the checklist for checklists, and is written in the shape it asks for. Each item of
-`readability.md` applies to a checklist, with what a good deliverable of the kind gives its user as
+`usability.md` applies to a checklist, with what a good deliverable of the kind gives its user as
 its subject.
 
 ## Format
@@ -34,17 +37,18 @@ Does the checklist follow this template?
 
 ```markdown
 ---
-name: <kind-of-deliverable>
+name: <kind-of-deliverable, or what it judges across kinds>
+check: <usability or accuracy>
 version: <x.y.z>
 ---
 
-# <Kind of deliverable>
+# <Kind of deliverable, or what it judges across kinds>
 
 <The purpose in one or two sentences: who uses it, and what they can then do>
 
 <The order the kind is worked out in, as numbered steps>
 
-<Where the kind is a document, how `readability.md` applies to it>
+<How `usability.md` applies to the kind>
 
 ## Format
 
@@ -70,6 +74,12 @@ or parts that give it; `each part`, in every part of the deliverable on its own,
 section under a top heading of a document, with the title and opening as one, or a file of code;
 `whole`, of the deliverable at once, for what lies between its parts, such as one name for each
 thing.
+
+`check` says what answers every item: `usability`, what the deliverable's user has and does with
+it, such as the whole repository and running its tests for whoever maintains code; `accuracy`, the
+sources it was made from, which that user does not have. A checklist for one kind is named by the
+kind and is `usability`; one that judges every kind, such as `usability.md` and `accuracy.md`, is
+named by what it judges. One that adds no part to its kinds' templates has no Format section.
 
 Why: every checklist in the same shape keeps their quality even, lets a tool read any of them, and
 gives the maker the purpose, then the order, then the shape, before the items, so each item is met
@@ -153,19 +163,19 @@ Look for: a part only some deliverables need; a part from no step; a form of one
 Why: a part only some need is added to every deliverable, and a part from no step is filled with
 nothing the purpose asks.
 
-### B-7: How `readability.md` applies
+### B-7: How `usability.md` applies
 
 Scope: its part
 
-Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
-`readability.md` applies to the kind?
+Can whoever makes or judges a deliverable of the kind tell from the opening how each item of
+`usability.md` applies to the kind?
 
 Look for: what the kind's subject is, for the items that ask about the reader's picture of it; and,
-for each item of `readability.md` that the kind's shape settles otherwise, such as an opening its
+for each item of `usability.md` that the kind's shape settles otherwise, such as an opening its
 template has no place for, how it is answered for the kind. An item not named is answered as
-`readability.md` asks it.
+`usability.md` asks it.
 
-Why: `readability.md` is answered beside the kind's checklist; an item of it that the kind's shape
+Why: `usability.md` is answered beside the kind's checklist; an item of it that the kind's shape
 cannot meet, or that is answered on a subject wider than the kind's, fails a deliverable that serves
 its reader, and the maker cannot tell what passes.
 
@@ -251,6 +261,20 @@ Look for: a name that says what is absent or kept out, such as "Nothing of the s
 
 Why: an item is named alone in a judgment and in the maker's mind; a name of what is kept out is
 read as a rule, and the maker writes to avoid it rather than to give the user something.
+
+### B-13: Each item answered by what its `check` says
+
+Scope: whole
+
+Can each item be answered by what the checklist's `check` says answers it: in a `usability`
+checklist, by one who has only what the deliverable's user has and does what they do with it; in an
+`accuracy` one, by one holding the sources?
+
+Look for: in a `usability` checklist, an item that asks whether the deliverable matches what was
+decided or how the product behaves where the user cannot run it.
+
+Why: an item given to one who cannot answer it is left without an answer, or answered by one who
+holds what the user does not, so a deliverable the user cannot use passes.
 
 ### B-12: Items in the order the maker meets them
 

@@ -1,5 +1,6 @@
 ---
 name: design
+check: usability
 version: 0.3.0
 ---
 
@@ -39,7 +40,7 @@ Design thinks in this order:
    is read from the records in its parts, not only in total, and a part that adds nothing to a
    higher key result is cut first, traded against nothing.
 
-Each item of `readability.md` applies to a design document with the mechanism and its checks as its
+Each item of `usability.md` applies to a design document with the mechanism and its checks as its
 subject; its B-16 is answered by the logical view.
 
 ## Format

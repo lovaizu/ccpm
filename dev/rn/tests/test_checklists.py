@@ -9,18 +9,18 @@ class TestChecklists(RepoTest):
         # Given: a repository with no checklists of its own
         # When: rn is asked for the checklists of each kind it keeps
         # Then: it lists rn's checklist for the kind, from the folder of what the kind is for, after
-        #   rn's readability checklist where the kind's opening applies it, and ends well
+        #   rn's usability checklist where the kind's opening applies it, and ends well
         expected = {
-            "readability": ["readability"],
-            "checklist": ["readability", "checklist"],
-            "readme": ["readability", "product/readme"],
-            "ux": ["readability", "product/ux"],
-            "design": ["readability", "product/design"],
-            "prompt": ["readability", "product/prompt"],
-            "code": ["product/code"],
-            "plan": ["readability", "session/plan"],
-            "proposal": ["readability", "session/proposal"],
-            "verification": ["readability", "verification"],
+            "usability": ["accuracy", "usability"],
+            "checklist": ["usability", "checklist"],
+            "readme": ["usability", "product/readme"],
+            "ux": ["usability", "product/ux"],
+            "design": ["usability", "product/design"],
+            "prompt": ["usability", "product/prompt"],
+            "code": ["usability", "product/code"],
+            "plan": ["usability", "session/plan"],
+            "proposal": ["usability", "session/proposal"],
+            "verification": ["usability", "verification"],
         }
         for kind, names in expected.items():
             with self.subTest(kind=kind):
@@ -58,29 +58,31 @@ class TestChecklists(RepoTest):
     def test_the_users_checklist_comes_after_rns_for_the_same_kind(self):
         # Given: the user keeps a checklist of their own for code
         # When: rn is asked for the checklists of code
-        # Then: rn's comes first, then the user's, with the name and version its front matter gives
+        # Then: rn's comes first, after the one its opening applies, then the user's, with the name
+        #   and version its front matter gives
         self.write(".rn/checklists/code.md", "---\nname: our-code\nversion: 1.2.0\n---\n")
         _, out = self.rn("checklists", "code")
         listed = json.loads(out)
         self.assertEqual(
-            [c["path"] for c in listed], [rn_checklist("product/code"), ".rn/checklists/code.md"]
+            [c["path"] for c in listed],
+            [rn_checklist("usability"), rn_checklist("product/code"), ".rn/checklists/code.md"],
         )
         self.assertEqual(
-            listed[1], {"path": ".rn/checklists/code.md", "name": "our-code", "version": "1.2.0"}
+            listed[2], {"path": ".rn/checklists/code.md", "name": "our-code", "version": "1.2.0"}
         )
 
     def test_a_checklist_the_users_opening_names_comes_first(self):
-        # Given: the user's checklist for a kind rn does not keep, whose opening names readability.md
+        # Given: the user's checklist for a kind rn does not keep, whose opening names usability.md
         # When: rn is asked for the checklists of that kind
-        # Then: rn's readability checklist comes first, then the user's
+        # Then: rn's usability checklist comes first, then the user's
         self.write(
             ".rn/checklists/release-notes.md",
-            "---\nname: release-notes\nversion: 0.1.0\n---\n`readability.md`\n",
+            "---\nname: release-notes\nversion: 0.1.0\n---\n`usability.md`\n",
         )
         _, out = self.rn("checklists", "release-notes")
         self.assertEqual(
             [c["path"] for c in json.loads(out)],
-            [rn_checklist("readability"), ".rn/checklists/release-notes.md"],
+            [rn_checklist("usability"), ".rn/checklists/release-notes.md"],
         )
 
     def test_a_checklist_an_opening_names_that_rn_does_not_keep_is_left_out(self):
@@ -95,29 +97,29 @@ class TestChecklists(RepoTest):
         self.assertEqual([c["path"] for c in json.loads(out)], [".rn/checklists/release-notes.md"])
 
     def test_a_checklist_named_below_the_opening_does_not_apply(self):
-        # Given: the user's checklist that names readability.md only under its first section heading
+        # Given: the user's checklist that names usability.md only under its first section heading
         # When: rn is asked for the checklists of its kind
-        # Then: rn's readability checklist is not listed
+        # Then: rn's usability checklist is not listed
         self.write(
             ".rn/checklists/release-notes.md",
-            "---\nname: release-notes\nversion: 0.1.0\n---\n## Benefit\n`readability.md`\n",
+            "---\nname: release-notes\nversion: 0.1.0\n---\n## Benefit\n`usability.md`\n",
         )
         _, out = self.rn("checklists", "release-notes")
         self.assertEqual([c["path"] for c in json.loads(out)], [".rn/checklists/release-notes.md"])
 
     def test_a_checklist_named_by_two_openings_is_listed_once(self):
-        # Given: the user's readme checklist whose opening names readability.md, as rn's readme one does
+        # Given: the user's readme checklist whose opening names usability.md, as rn's readme one does
         # When: rn is asked for the checklists of readme
-        # Then: rn's readability checklist is listed once, first
+        # Then: rn's usability checklist is listed once, first
         self.write(
             ".rn/checklists/readme.md",
-            "---\nname: our-readme\nversion: 0.1.0\n---\n`readability.md`\n",
+            "---\nname: our-readme\nversion: 0.1.0\n---\n`usability.md`\n",
         )
         _, out = self.rn("checklists", "readme")
         self.assertEqual(
             [c["path"] for c in json.loads(out)],
             [
-                rn_checklist("readability"),
+                rn_checklist("usability"),
                 rn_checklist("product/readme"),
                 ".rn/checklists/readme.md",
             ],

@@ -1,15 +1,21 @@
 ---
-name: readability
+name: usability
+check: usability
 version: 0.2.0
 ---
 
-# Document
+# Usability
 
-A document is read by a reader who comes to it for a purpose; the reader may be a person or an AI.
-Reading it once from the top, they take in what it holds in a short time, meeting nothing they do
-not need and left with no question, and achieve that purpose.
+A deliverable, a document or code, is used by a reader who comes to it for a purpose, with what
+they have beside it; the reader may be a person or an AI. Reading it once from the top, they take
+in what it holds in a short time, meeting nothing they do not need and left with no question, and
+achieve that purpose. Below, a document is either, and each file of code is one of its parts.
 
-A document is made readable by thinking through what the reader meets, in the order they read:
+Each item is answered by what the reader has and does with the deliverable alone, never by the
+sources it was made from, which they do not have; whether it says what those sources decided is
+asked by `accuracy.md`.
+
+A deliverable is made usable by thinking through what the reader meets, in the order they read:
 
 1. On opening it, they can tell whether it serves their purpose.
 2. Reading on from the top, they understand each word and idea where they meet it.
@@ -166,19 +172,6 @@ Can the reader take in each idea the document takes up whole, without guessing a
 Why: an idea touched on in part is completed by a guess, and a gap covered by smooth sentences is
 acted on without the reader noticing.
 
-### B-5: How far to rely
-
-Scope: each part
-
-Can the reader take each statement as what it is, because one that is not a checked fact, such as
-an assumption, a proposal, a decision or a check that reached only so far, says so where it stands?
-
-Look for: a statement of how something behaves, such as what a command prints or what it changes,
-said as fact where only its code or the decisions about it say so, not a run of it.
-
-Why: the reader takes a statement said flatly as a fact; an assumption or an unchecked claim said
-so is acted on as fact, and a check whose reach is not told is taken as having checked everything.
-
 ### B-6: Still true later
 
 Scope: each part
@@ -197,16 +190,7 @@ Scope: whole
 
 Can the reader take each thing the document says as the one account of it, because it is said in
 one place, with every case where it does not hold beside it, and not also in another place of the
-document, in another document or by the deliverable itself?
+document?
 
 Why: two places that say one thing come to disagree as one of them changes, and the reader cannot
 tell which holds; a rule read apart from the case where it does not hold is followed there too.
-
-### B-2: The picture as meant
-
-Scope: whole
-
-After one reading from the top, does the reader hold the same picture of the subject as the writer?
-
-Why: the reader acts on the picture they took in; where it differs from the writer's, they act
-otherwise without noticing.

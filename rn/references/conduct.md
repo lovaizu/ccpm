@@ -120,7 +120,7 @@ returns.
 1. Take the work's checklists where the step that called for the work already ran
    `up.py checklists`; otherwise run `up.py checklists <kind>`. The kinds are `plan` for the plan;
    `readme`, `design` and `verification` for the three documents; `proposal` for a proposal;
-   `code` for code and its tests; and for any other document its kind, or `readability`. The deliverable's
+   `code` for code and its tests; and for any other document its kind, or `usability`. The deliverable's
    use takes no kind: its checklist is the session's verification document itself.
 2. For a kind with no checklist, make its checklist first, with the user, through these same steps:
    kind `checklist`, which `up.py checklists checklist` gives as

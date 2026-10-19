@@ -1,5 +1,6 @@
 ---
 name: code
+check: usability
 version: 0.1.0
 ---
 
@@ -23,6 +24,11 @@ Code is written in this order, each step the ground of the next:
 4. Build it test first: for each behavior, write a test, see it fail, write the least code that
    passes it, then tidy it back to the design, such as putting what is written twice in one place.
 5. Check it by the development rules and by how it is checked.
+
+Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
+subject and each file a part; its F-1 is answered by this F-1, its B-7 by each piece of knowledge,
+such as a rule or a value, written in one place, and its B-13 by one name for each thing across the
+code and its tests, so a search for the name finds every place it is used.
 
 ## Format
 
@@ -68,19 +74,6 @@ Can the maintainer change one thing the code takes on by changing one function o
 Look at: each function and module, against what it takes on; one that takes on two things fails.
 
 Why: a part that takes on two things is changed for one and breaks the other.
-
-### B-3: Each piece of knowledge in one place
-
-Scope: whole
-
-Can the maintainer change a piece of knowledge, such as a rule or a value, by changing the one
-place it is written?
-
-Look at: the same logic or value written in two places, or the same lines with only names changed;
-any such pair fails.
-
-Why: what is written twice is changed in one place and left in the other, and the two drift apart
-without any test failing.
 
 ### B-4: Checked before it is used
 
@@ -239,15 +232,3 @@ written; with new inputs on every run, CI included, so that inputs not yet tried
 input that fails reproduced from what the failure prints, not run again, and kept as an example.
 
 Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
-
-### B-14: One name for one thing
-
-Scope: whole
-
-Can the maintainer find every place a thing is used by searching for its name?
-
-Look at: each thing the code, its tests and its documents name, such as a function, a field, a file
-or an idea, called by one name in all of them; a thing called by two names fails.
-
-Why: a maintainer who meets two names takes them for two things, and a search for one finds only
-half of where the thing is used.
