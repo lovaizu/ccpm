@@ -415,6 +415,44 @@ Progress:
   the evaluator, a held item taking the orchestrator's Good) and run it; then the CHANGELOG, the
   whole tried once, `claude plugin validate --strict`. The user asked (2026-10-19) whether the
   hold step matches their intent; it is the one means not written in the design, said to them.
+- Done (2026-10-19, `dbc8cf5`): CI on `5467de3` failed on 9 surviving mutants; the send count
+  rewritten and tests added, none surviving locally; a role's own SendMessage to the orchestrator
+  stopped by role_given, as the flow trial showed both stand-ins sending their reply by message too
+  and each then stopped to read again. The flow trial updated (B-3 added by flow.py, stand-ins
+  answer a message; not committed) and run on `5467de3` (session
+  `6a6ea2d4-4982-42f4-a1cd-62d8f27c521d`, 8.5 minutes): the orchestrator held B-3 at the first
+  stop, as meant, and then held B-1, the license plainly in the README, at the first user's third
+  stop, giving it its own Good; so holding after a stop is a way round "a Good found by a reader
+  that did not make the work". Root cause: the first user is given items it cannot answer without
+  the sources (readability B-5 whole, B-2, B-7's part on other documents and the deliverable).
+- Being decided with the user (2026-10-19), one point at a time: checks split by what answers
+  them: purpose-based, what the receiver gets using the work alone, judged by the first user,
+  common (readability, which holds for code too: code.md B-3 and B-14 repeat readability B-7 and
+  B-13) and per kind (product/, session/); grounds-based, whether the work matches its sources,
+  judged by the orchestrator. Agreed: the grounds checklist is `rn/checklists/accuracy.md`;
+  the common one is `rn/checklists/usability.md`, in place of `readability.md`. Agreed: the generator and the
+  orchestrator use every checklist, the orchestrator before the work is made and in its reading;
+  the first user is given usability.md and the kind's checklists alone, not accuracy.md, so the
+  hold step goes. Agreed: each checklist says in its front matter whether it is `usability` or
+  `accuracy`, a rule of checklist.md, not set per call; the first user has everything the receiver
+  has and does everything the receiver does, such as the whole repository and running the tests
+  for a maintainer of code, as the CCS says of the receiver. So every kind's checklist is
+  usability, but prompt.md B-24, carrying out what the design decided, which is accuracy.md's
+  'as decided' for a prompt, moved there. checklist.md carries this way of thinking too: items
+  split by what answers them, the front-matter mark, a usability item answered by what the
+  receiver has and does, files named by kind or, across kinds, by what they judge.
+  `verification.md`, read by nothing now but the old rn's decisions, is left to rn's rebuild.
+- Next (agreed by the user, 2026-10-19, to go on after a `/clear`): 1. turn's design
+  (`dev/turn/design.md`) rewritten for the above: the checklists' mark, the first user given the
+  usability checklists alone with everything the receiver has and does, running included, and the
+  hold step removed; shown to the user in Japanese translation for agreement; 2. the checklists:
+  `readability.md` to `usability.md`, `accuracy.md` made (readability B-5, B-2, B-7's part on other
+  documents and the deliverable, prompt.md B-24), items repeating the common ones taken out of the
+  kind checklists (code.md B-3, B-14), checklist.md as above, every reference to readability.md
+  changed; 3. prompts, scripts, hooks, tests, unit by unit; the flow trial (its changes for the
+  hold step are uncommitted in `dev/turn/trials/flow/`, to be redone without it) and the roles
+  trial; 4. CHANGELOG, the whole tried once, validate (it advises an install line in turn's
+  README). In conversation, roles go by the design's English names and the work is 成果物.
 
 ### [ ] #6: Each checklist finished
 
