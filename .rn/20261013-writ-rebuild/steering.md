@@ -1395,6 +1395,8 @@ Progress:
   - R25 (turn's question on the skills): a session rn 0.9.0 left, which has no `state.json`, is
     reported and not gone on with in the first unit; how to go on with it is for the whole check.
   - B-27 of the skills (a long file read whole) fixed by hand in `/rn:up`'s Role.
+  - turn fixed a third time (turn's question on the trial): a folder a CCS names with a trailing
+    slash is kept without it, as every read inside such a folder was stopped.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
