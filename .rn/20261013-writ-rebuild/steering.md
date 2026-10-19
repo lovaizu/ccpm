@@ -556,14 +556,19 @@ Progress:
   giving none, round 2's first user giving every item a Good, B-1's at lines without the license,
   so B-1 is to end without Good), roles (the round set to have sent back three times before the
   evaluator), kept (no reading between), acceptance without accuracy.md.
-- Running at the `/clear` (2026-10-19): CI on `0e49883`; the flow trial and its `unanswered` run,
-  the roles trial and the kept trial, each printing to
-  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/60cd2bc3-2224-458d-b354-ac32163ead92/scratchpad/{flow1,flow2,roles1,kept1}.log`.
-- Next: read each log and the JSONL of each session it names; judge the flow trial by the design's
-  order (no orchestrator reading between the generator's first making and the evaluator's reply;
-  B-1 without Good in the result) and record each in its `results.json`; fix at the cause what a
-  trial shows off the design; then the acceptance trials, three at once
-  (`dev/turn/trials/trial.py`), and the report to the user by how close each key result came.
+- Done (2026-10-19): the flow, roles and kept trials judged and recorded in their `results.json`
+  (8496572); each passes on 9feb4dc. Fixed at the cause: the read check let a command naming the
+  repository's top read it all (an evaluator's `grep -r .`), now a read but where cd goes; the
+  roles trial's set README and the flow trial's set B-2 Good, kept from accuracy.md's time, and the
+  roles trial's call without the receiver's code. CI green on 0e49883 and 18d2816.
+- Running at the `/clear` (2026-10-19): CI on 9feb4dc and 8496572; the acceptance trials, three
+  at once on `dev/turn/trials/readme`, each printing to
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/1100d54c-4e47-4c38-a6cf-4867dd54de51/scratchpad/{acc1,acc2,acc3}.log`,
+  `acc.done` there listing each as it ends.
+- Next: confirm CI; read each acceptance log and every JSONL of its session; judge the story, KR1.1
+  and KR1.2 by the design's Verification against the version in use, record in
+  `dev/turn/trials/readme/results.json`; then the report to the user by how close each key result
+  came.
 
 ### [ ] #6: Each checklist finished
 
