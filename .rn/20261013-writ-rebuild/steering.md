@@ -470,6 +470,17 @@ Progress:
   taking the orchestrator's Good in the decision, the hold step gone; tests pass on 3.9, 100%
   covered, lint and types clean. The flow trial's task has `accuracy.md`, and its set replies take
   every way the design's Verification names; the roles trial names `has` as demo.sh.
+- Done (2026-10-19): CI green at `dce652e` and `12b95cb`, no mutant surviving. Flow trial passed
+  on `26c9ce8` (15.9 minutes, every way the design names; unanswered 0.7 minutes, the question
+  alone); roles trial passed (3.1 minutes; the first user read checklist.md alone and ran
+  `sh demo.sh`). turn's CHANGELOG rewritten from 0.1.0. The acceptance call names `use` and
+  `has` (csvtidy.py). `claude plugin validate --strict` passes for turn, rn and the marketplace,
+  advising an install line in turn's README; turn's README lacks Requirements, Installation and
+  License, which readme.md F-1 asks: to bring to the user, as the README is agreed with them.
+- Next: three acceptance trials at once on `12b95cb` (`python3 dev/turn/trials/trial.py
+  dev/turn/trials/readme <new folder>`, each its own folder), read from every JSONL against KR1.1
+  and KR1.2 and the last trials (36.6, 27.6, 36.2 minutes; none not satisfied), recorded in
+  `dev/turn/trials/readme/results.json`; then report to the user, with the README point.
 
 ### [ ] #6: Each checklist finished
 
