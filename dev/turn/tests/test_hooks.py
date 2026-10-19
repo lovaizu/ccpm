@@ -350,10 +350,9 @@ class TestHandback(HookTest):
     Code gives no last message and keeps no agent going."""
 
     def handback(self, agent_type, prompt, message, *tool_uses):
-        path = self.given_record(ID, prompt, *tool_uses)
-        return self.tool(agent_type, "SubagentHandback", message=message) | {
-            "agent_transcript_path": path
-        }
+        # A tool's event carries no agent_transcript_path; the record is found from the session's.
+        self.given_record(ID, prompt, *tool_uses)
+        return self.tool(agent_type, "SubagentHandback", message=message)
 
     def stopped(self, agent_type, prompt, *tool_uses):
         path = self.given_record(ID, prompt, *tool_uses)
@@ -372,8 +371,11 @@ class TestHandback(HookTest):
         reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
         event = self.handback("turn:generator", self.started(), json.dumps(reply), *READ_GIVEN)
         self.passes(pretooluse, event)
-        kept = self.read_json(CALL["result"])["running"]["next"]["reply"]
-        self.assertEqual(kept, reply)
+        kept = self.read_json(CALL["result"])["running"]["next"]
+        self.assertEqual(kept["reply"], reply)
+        self.assertEqual(
+            kept["record"], os.path.join(self.repo, "session", "subagents", f"agent-{ID}.jsonl")
+        )
 
     def test_a_role_handing_back_a_reply_out_of_its_form_stops(self):
         # Given: a generator that read what it was given whole

@@ -38,9 +38,7 @@ def check(event: dict[str, Any]) -> list[str]:
     )
     if said:
         return ["reply with your form alone, filled:"] + said
-    kept["next"].update(
-        reply=forms.parse(reply, FORMS[role]), record=event["agent_transcript_path"]
-    )
+    kept["next"].update(reply=forms.parse(reply, FORMS[role]), record=agents.transcript(event))
     if kept["next"]["agent"] in run.KEPT:
         kept.setdefault("started", {})[kept["next"]["agent"]] = event["agent_id"]
     run.write(result, {"running": kept})
