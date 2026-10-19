@@ -86,10 +86,12 @@ def claimed(data: dict[str, Any], at: Grounds) -> list[str]:
     for n, statement in enumerate(given, 1):
         name = f"statement {n} of statements"
         keys = set(statement) if isinstance(statement, dict) else set()
+        # An empty list gives no grounds and asks for none, as the form shows both kinds of grounds.
+        grounds = {k for k in ("quotes", "ran") if k in keys and statement[k] != []}
         if (
             "lines" not in keys
             or statement.get("kind") not in KINDS
-            or not keys & {"quotes", "ran"}
+            or not grounds
             or keys - {"lines", "kind", "quotes", "ran"}
         ):
             said.append(
@@ -98,17 +100,17 @@ def claimed(data: dict[str, Any], at: Grounds) -> list[str]:
             )
             continue
         said += lines_problems(name, statement["lines"], at.work, "lines of the work")
-        if KINDS[statement["kind"]] not in keys:
+        if KINDS[statement["kind"]] not in grounds:
             said.append(f"{name} {UNGROUNDED[statement['kind']]}, or take it out of the work")
-        if "quotes" in keys:
+        if "quotes" in grounds:
             said += quote_problems(name, statement["quotes"], at.sources)
-        if "ran" in keys:
+        if "ran" in grounds:
             said += run_problems(name, statement["ran"], at.records)
     return said
 
 
 def quote_problems(name: str, quotes: Any, sources: tuple[str, ...]) -> list[str]:
-    if not isinstance(quotes, list) or not quotes:
+    if not isinstance(quotes, list):
         return [f'{name} gives its quotes as no list; give [{{"path": ..., "quote": ...}}, ...]']
     said: list[str] = []
     for k, quote in enumerate(quotes, 1):
@@ -134,7 +136,7 @@ def quote_problems(name: str, quotes: Any, sources: tuple[str, ...]) -> list[str
 
 
 def run_problems(name: str, ran: Any, kept: tuple[str, ...]) -> list[str]:
-    if not isinstance(ran, list) or not ran:
+    if not isinstance(ran, list):
         return [f'{name} gives its runs as no list; give [{{"command": ..., "output": ...}}, ...]']
     printed = [(c.strip(), spaced(o)) for path in kept for c, o in records.ran(path)]
     said: list[str] = []

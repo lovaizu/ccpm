@@ -275,12 +275,13 @@ class TestGrounds(FormTest):
                 self.assertIn(f"statement 1 of statements: {said}", said_now[0])
 
     def test_quotes_out_of_their_form_stop(self):
-        # Given: quotes that are no list, an empty list, or hold other keys or empty words
+        # Given: quotes that are no list, an empty list as the only grounds, or hold other keys or
+        # empty words
         # When: they are checked
-        # Then: each is named with the form a quote takes
+        # Then: each is named with the form a quote takes, or the grounds a statement holds
         for quotes, said in (
             ("# Decisions", "gives its quotes as no list"),
-            ([], "gives its quotes as no list"),
+            ([], 'and "quotes", "ran" or both'),
             ([{"path": "csvtidy.py"}], 'quote 1 must hold "path" and "quote"'),
             ([{"path": "csvtidy.py", "quote": " "}], 'quote 1 must hold "path" and "quote"'),
             ([{"path": 1, "quote": "x"}], 'quote 1 must hold "path" and "quote"'),
@@ -347,12 +348,12 @@ class TestGrounds(FormTest):
                 self.assertIn("run 1 is not a command you ran with Bash", said_now[0])
 
     def test_runs_out_of_their_form_stop(self):
-        # Given: runs that are no list, an empty list, or hold other keys
+        # Given: runs that are no list, an empty list as the only grounds, or hold other keys
         # When: they are checked
-        # Then: each is named with the form a run takes
+        # Then: each is named with the form a run takes, or the grounds a statement holds
         for ran, said in (
             ({"command": "ls"}, "gives its runs as no list"),
-            ([], "gives its runs as no list"),
+            ([], 'and "quotes", "ran" or both'),
             ([{"command": "ls"}], 'run 1 must hold "command" and "output"'),
             ([{"command": "ls", "output": " "}], 'run 1 must hold "command" and "output"'),
             ([{"command": "ls", "output": "a", "why": "x"}], 'run 1 must hold "command"'),
@@ -447,6 +448,20 @@ class TestGrounds(FormTest):
                     self.claim(statement, statement),
                     [f"statement 1 of statements{shape}", f"statement 2 of statements{shape}"],
                 )
+
+    def test_an_empty_list_beside_the_grounds_its_mark_asks_passes(self):
+        # Given: a decision with its quotes and "ran" as an empty list, and a behavior with its run
+        # and "quotes" as an empty list, as the generator's form shows both
+        # When: they are checked
+        # Then: both pass, an empty list giving no grounds and asking for none
+        ran = {"command": "printf ' a \\t' | python3 csvtidy.py", "output": "a"}
+        self.assertEqual(
+            self.claim(
+                dict(STATEMENT, ran=[]),
+                {"lines": ["README.md:3-3"], "kind": "behavior", "quotes": [], "ran": [ran]},
+            ),
+            [],
+        )
 
     def test_a_statement_is_grounded_as_its_mark_asks(self):
         # Given: a statement of how the product behaves resting on quotes alone, and a decision
