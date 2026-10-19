@@ -588,9 +588,13 @@ Progress:
 - CI on 87b4fa0 failed on Python 3.9's branch count in the heredoc reading, which also kept its end
   word twice; rewritten and tried on a heredoc ending on its line or never ending (d49a0ee), all
   checks green locally on 3.9.
-- Running at the `/clear` (2026-10-19): CI on d49a0ee.
-- Next: confirm CI on d49a0ee (no mutant surviving); then the report to the user by how close each
-  key result came, and #5 closed on their word.
+- CI on d49a0ee failed on 49 surviving mutants of the rewritten shell reading; each caught by a test
+  or the code made simpler with the same behaviour, none left out (efbd060, `dev/turn/tests/test_shell.py`),
+  and a check for an empty word the shell's words never hold dropped (db35aa1); CI green on db35aa1,
+  0 surviving.
+- Reported to the user (2026-10-19): KR1.1 none not satisfied in all three acceptance trials, KR1.2
+  13.4, 19.5 and 13.0 minutes (68.1, 37.6 and 28.0 before).
+- Next: #5 closed on the user's word (asked, not yet answered).
 
 ### [ ] #6: Each checklist finished
 
@@ -1320,6 +1324,27 @@ Progress:
 
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
+- rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
+  with the options weighed), in `.writ/decisions/rn/UX.decisions.md`: G1 whoever hands a whole work
+  to an agent, asking without preparing and only answering; KR1.1 the points sent back at the
+  deliverable sign-off, KR1.2 the user's time; the scenes, every point confirmed, looked-up ones
+  included, in the shape of #54 (its sources checked and rewritten); the documents the purpose
+  needs; tasks traced to the acceptance criteria; `/rn:gm` keeps the feedback and stops, then the
+  point behind it is confirmed; rn's checklists plus the user's additions at
+  `.rn/checklists/<kind>.md`; learnings confirmed after the deliverable is approved, before the
+  merge; a draft pull request with the plan; the benefits, what the documents do not keep written
+  by rn into its commit messages (the user: "rn のことだよ").
+- Next: `dev/rn/ux.md` made through turn from those decisions, on a clone of the branch in the
+  scratchpad, CCS `{"focal_entities": [{"deliverable": "dev/rn/ux.md"}, {"audience": "someone who
+  builds or changes rn"}], "goal_orientation": [{"purpose": "to know the experience rn must give
+  its user, and how each version of rn is judged against it, before building or changing any part
+  of rn"}], "retrieved_artifacts": [{"checklist": "rn/checklists/product/ux.md"}, {"checklist":
+  "rn/checklists/usability.md"}, {"decisions": ".writ/decisions/rn/UX.decisions.md"}],
+  "constraints": [{"language": "English"}]}`, `claude -p` on Opus with `--plugin-dir <clone>/turn`.
+  Stopped (2026-10-19): the auto mode classifier denied `--permission-mode bypassPermissions`; the
+  user to choose: run it once with `!`, add a permission rule, or `--allowedTools`. Then rn's
+  README and design the same way, each agreed with the user; all of rn's works made through turn
+  (the user, 2026-10-19). Clear work goes to Opus subagents, not Fable ones.
 - plugin.md step 3 (2026-10-14): a fresh reader read writ's README and the design once.
   - Decided by the user: the README's example asks the license before writing, as writ settles
     what the checklists need before turn is called; a question that shows up only in the writing
