@@ -236,5 +236,44 @@
   "fixed": "usability B-3 and accuracy B-4, one cause: a byte order mark stays stuck to the first header name, which the orchestrator itself ran after its decision and told in its return; the stand-in added a Requirements item with how to see the mark. Both questions, the license and a LICENSE file with its holder, were answered with their recommended answers; the stand-in wrote LICENSE with the holder from git log.",
   "goods_checked": "Every statement set against csvtidy.py by runs: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The byte order mark is an edge the decisions do not ask for, as on b7e2c35.",
   "read": "Every JSONL read. First call 0.9 minutes, the license question alone; second 27.0: check 0.7, round 1 20.4: generator 4.0, reading 1.1 sending back, generator 1.6, reading 0.7, first user 2.0, generator 2.9, reading 0.8 sending back, generator 1.4, reading 0.65, first user 0.85, generator 2.2, reading 0.8, first user 0.85; evaluator 1.2, decision 1.1 (stopped once to read the work whole after Read answered 'unchanged'), learner 2.7, take and return 0.4. No round 2. Generator replies stopped for their form four times, the first user's once. Two of the orchestrator's readings came after the first user's remakes, as in acc1."
+ },
+ {
+  "commit": "8496572",
+  "unit": 3,
+  "session": "a9376413-02da-4f88-bb47-1156e0e62e1f",
+  "minutes_to_return": 13.4,
+  "items_fixed_after_return": 2,
+  "items_not_satisfied": 0,
+  "questions": 2,
+  "cost_usd": 4.18,
+  "fixed": "readme B-5 and usability B-3, one cause: a byte order mark stays stuck to the first header name; the stand-in added it to Requirements. The first call's question, the license, and the second's, what Documentation and Development point to, were answered with their recommended answers; the stand-in wrote a CHANGELOG.md.",
+  "goods_checked": "Every Good against its lines and a run of the example: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The byte order mark is an edge the decisions do not ask for, as on b7e2c35 and 12b95cb.",
+  "read": "Every JSONL read. Every step in the design's order, the orchestrator reading the work only at the decision; no round 2. First call 0.8 minutes, the license question alone; second: check 0.8, generator 2.1, first user 1.8 sending back, generator 1.2, first user 0.8, evaluator 1.0, decision 0.9, learner 2.0, return 0.4. The orchestrator's one listing of a folder it was not given stopped by the hook. The evaluator gave readme F-1 a Good from the headings alone, where the first user had found Documentation and Development lacking; the decision kept them waiting on the question."
+ },
+ {
+  "commit": "8496572",
+  "unit": 3,
+  "session": "ee41922d-e8da-46c1-81f3-dc81016a44bb",
+  "minutes_to_return": 19.5,
+  "items_fixed_after_return": 4,
+  "items_not_satisfied": 0,
+  "questions": 3,
+  "cost_usd": 5.56,
+  "fixed": "readme B-3 and usability B-3, B-6, B-7, one cause: a cell with a space before its opening quote is split at its comma, which the stand-in added under the line saying cell text is kept; readme B-6 and usability B-6 by writing the CHANGELOG.md the second call asked about. The first call's two questions, the license and what Documentation and Development point to, were answered with their recommended answers in the decisions.",
+  "goods_checked": "Every Good against its lines and a run of the example: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The quote after a space is an edge the decisions do not ask for; the stand-in's note made Why csvtidy heavier.",
+  "read": "Every JSONL read. Every step in the design's order, the orchestrator reading the work only at the decision; no round 2. First call 1.0 minutes, two questions; second: check 0.7, generator 2.0, first user 2.0 sending back, generator 2.1, first user 1.1 sending back, generator 1.2, first user 0.8, evaluator 2.3, decision 1.4, learner 3.3, return 0.4. The evaluator's run in a folder of its own was stopped by the hook, as `cp csvtidy.py .` after `cd \"$D\"` names `.`, which the read check takes for the repository's top; it ran the tidy function in place instead. The decision stopped once by the script for a question naming no item."
+ },
+ {
+  "commit": "8496572",
+  "unit": 3,
+  "session": "13a0199e-dad6-4cbb-9cc3-7af627201f92",
+  "minutes_to_return": 13.0,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 0,
+  "questions": 1,
+  "cost_usd": 4.37,
+  "fixed": "readme B-6 and F-1: Development named csvtidy.py without a link, now a link; usability B-3: a byte order mark stays stuck to the first header name, which the stand-in added as a bullet of Why csvtidy, putting a limit among the reasons. The first call's question, the license, answered with its recommended answer.",
+  "goods_checked": "Every Good against its lines and a run of the example: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The file name without a link loses the receiver nothing, csvtidy.py being beside the README; the byte order mark is an edge.",
+  "read": "Every JSONL read. Every step in the design's order, the orchestrator reading the work only at the decision; no round 2. First call 0.8 minutes, the license question alone; second: check 0.7, generator 1.9, first user 1.3 sending back, generator 1.4, first user 1.3, evaluator 1.0, decision 0.9, learner 1.8, return 0.2."
  }
 ]

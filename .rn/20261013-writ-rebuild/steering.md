@@ -561,14 +561,18 @@ Progress:
   repository's top read it all (an evaluator's `grep -r .`), now a read but where cd goes; the
   roles trial's set README and the flow trial's set B-2 Good, kept from accuracy.md's time, and the
   roles trial's call without the receiver's code. CI green on 0e49883 and 18d2816.
-- Running at the `/clear` (2026-10-19): CI on 9feb4dc and 8496572; the acceptance trials, three
-  at once on `dev/turn/trials/readme`, each printing to
-  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/1100d54c-4e47-4c38-a6cf-4867dd54de51/scratchpad/{acc1,acc2,acc3}.log`,
-  `acc.done` there listing each as it ends.
-- Next: confirm CI; read each acceptance log and every JSONL of its session; judge the story, KR1.1
-  and KR1.2 by the design's Verification against the version in use, record in
-  `dev/turn/trials/readme/results.json`; then the report to the user by how close each key result
-  came.
+- Done (2026-10-19): CI on 9feb4dc failed on one surviving mutant in the read check's word before
+  a path, `cd` tried only at the start of a command; a test with `cd` after other words added
+  (ce380f7), CI green. Three acceptance trials on 8496572, recorded in
+  `dev/turn/trials/readme/results.json`: 13.4, 19.5 and 13.0 minutes to return (68.1, 37.6 and
+  28.0 on 12b95cb), $4.2, $5.6 and $4.4; none not satisfied, no item without Good, questions only
+  where the decisions did not say; every step in the design's order, the orchestrator reading the
+  work only at the decision, no round 2. What the stand-ins fixed were edges (a byte order mark, a
+  quote after a space) or a link, and in acc2 and acc3 their notes made Why csvtidy heavier. Seen:
+  the read check stops a command that goes to a folder of its own with cd and names `.` there
+  (acc2's evaluator, `cp csvtidy.py .` after `cd "$D"`), as it takes `.` for the repository's top.
+- Next: fix the read check at that cause, a path judged from where the command's cd has gone;
+  then the report to the user by how close each key result came, and #5 closed on their word.
 
 ### [ ] #6: Each checklist finished
 
