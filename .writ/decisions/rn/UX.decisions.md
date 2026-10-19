@@ -6,6 +6,18 @@
 - G1: Whoever wants to hand a whole piece of work to an agent: they ask for it without preparing
   anything and only answer what they are asked, and their purpose is achieved.
 
+### B-2 (key results)
+They stand from the highest priority: the user's time is never saved by letting a work pass that
+does not serve their purpose, since finding it after the merge costs them more than any answer.
+- KR1.1: The points of the merged work that, in use, do not serve the user's purpose; fewer is
+  better, and none once the goal is reached.
+  The user approves at each sign-off from the proposal alone, without reading all of it again, so a
+  work that misses their purpose shows only once it is used.
+- KR1.2: The time the user spends from asking to their purpose achieved: answering, checking at the
+  sign-offs, sending back and doing anything by hand; shorter is better, and once the goal is
+  reached only answering what the user alone can decide is left.
+  The goal is asking without preparing and only answering; every other minute is the user's work.
+
 ### B-2: The scenes to the goal
 Before each work is made, the plan, the UX, the README, the design and each task's result, rn and
 the user settle it the same way: rn goes down every point the work's checklists leave to decide,
