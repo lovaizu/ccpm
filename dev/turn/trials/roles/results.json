@@ -131,5 +131,79 @@
    "whole": 3.1
   },
   "read": "Every JSONL read. The generator, sent back twice by message, ran turn.py given and made the work again without reading the CCS or its files again. The first user read checklist.md alone, not accuracy.md, read demo.sh, which the receiver has, and ran `sh demo.sh` as the README says; it stopped at B-1 with places README.md:1-4 and 5-7, and, sent the work made again, gave B-1 its Good at line 3. Seen again: the first user put 'this part says nothing about the terms' inside a B-2 Good."
+ },
+ {
+  "commit": "0e49883, with roles.py's README of a bare-word license",
+  "sessions": {
+   "generator": "2ef4da59-9efb-49a4-8c86-5b65826c6cf9",
+   "first-user": "323b85c6-1ca9-432d-80bc-dbe253714fe9",
+   "evaluator": "d9de6f04-f6c4-44dc-b71c-4e42bcb69f3c",
+   "learner": "34a45ebf-ffb7-40f9-b775-415ea9b71834"
+  },
+  "minutes": {
+   "generator": 0.7,
+   "first-user": 0.3,
+   "evaluator": 0.3,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Each role read only and whole what its step reads, each reply in its form. The set README's bare 'MIT' answers B-1 as the checklist now asks, so both readers gave it a Good while the learner was given B-1 without Good: the set input, kept from when accuracy.md asked for no guessing, was off; roles.py's README now names no license."
+ },
+ {
+  "commit": "roles.py's README naming no license, without has",
+  "sessions": {
+   "generator": "9bc06779-18dc-492b-ae89-8c8f2f5b5418",
+   "first-user": "df6065ff-9c08-41b4-96b4-6888655bf77e",
+   "evaluator": "b87275f9-b241-4ee9-86ce-eba6ad96e091",
+   "learner": "35832aff-04f1-4db5-8f58-62cae0e59637"
+  },
+  "minutes": {
+   "generator": 0.9,
+   "first-user": 0.8,
+   "evaluator": 0.4,
+   "learner": 0.8
+  },
+  "read": "Every JSONL read. The first user stopped at B-1 and did not run demo.sh, as the call gave the receiver nothing beside the work; roles.py's call now gives the code as has, as kept.py's does. The first user's ls of the repository's top went through the hook."
+ },
+ {
+  "commit": "roles.py with has",
+  "sessions": {
+   "generator": "48e10826-bf6e-42e4-9be2-1930829b1211",
+   "first-user": "67d7160c-9410-4c75-b5bc-a7958fb15c93",
+   "evaluator": "4ad5952b-7515-4771-a68b-6cd6d22eaf08",
+   "learner": "5d31aeac-2e84-4e1e-8fd6-1ad63ce19937"
+  },
+  "minutes": {
+   "generator": 0.8,
+   "first-user": 0.5,
+   "evaluator": 0.8,
+   "learner": 0.8
+  },
+  "read": "Every JSONL read. The generator, the first user and the evaluator each ran demo.sh as the README says. The evaluator's `grep -ril licen .` read the whole repository through the hook, as a command naming the repository's top was let through; the read check now takes the top as a read, but where cd goes (9feb4dc)."
+ },
+ {
+  "commit": "9feb4dc",
+  "sessions": {
+   "generator": "5ecae8e5-7a24-4601-a4e2-a5464d141298",
+   "first-user": "465111d0-d6f6-498e-9d32-ebb841e7dca0",
+   "evaluator": "1489d3bd-fefc-4e63-97c1-88bc18c90c4f",
+   "learner": "65aa05dd-38ce-4076-8e6d-b62ddad63f6f"
+  },
+  "minutes": {
+   "generator": 0.7,
+   "first-user": 0.5,
+   "evaluator": 0.6,
+   "learner": 0.9
+  },
+  "read": "Every JSONL read. Every role read only and whole what its step reads, each reply in its form; the generator, the first user and the evaluator ran demo.sh; the first user stopped at B-1 with its places; the learner's lessons stood on the records' words. The generator's ls with git log, and its git status, were stopped; the first user ran an echo that did nothing. The learner's orchestrator lesson rests on the README the trial replaced."
+ },
+ {
+  "commit": "0e49883, by kept.py",
+  "sessions": {
+   "stand-in": "2039bc5b-2db6-46b3-9379-177cb5576a2f"
+  },
+  "minutes": {
+   "whole": 4.8
+  },
+  "read": "Every JSONL read. The generator, sent back by message, ran turn.py given and read the work alone, not the CCS or its files again, found the README replaced and added the license. The first user ran demo.sh, stopped at B-1 with places README.md:1-4 and 5-7, and, sent the work made again, read it whole again, ran demo.sh and gave B-1 its Good at lines 9-13. Seen again: the first user put a caution inside B-1's Good."
  }
 ]

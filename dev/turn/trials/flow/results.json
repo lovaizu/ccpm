@@ -79,5 +79,23 @@
   "way": "check of three items, readme B-1 at its part, B-2 in each part, accuracy B-1 at its part; generator; the reading sent B-1, accuracy B-1 and the 'any language' statement back; generator by message; reading Good; first user stopping at B-1 and B-2's License part; generator by message, reading, first user by message, three times, B-2 given its Good at the next reading, the fourth stop at B-1 going on to the evaluator; evaluator giving B-2 alone; decision giving B-1 gets with its place and accuracy B-1 the orchestrator's Good, no reader given it; learner, its lesson taken; second round started anew, the first user's four stops at B-1 counted anew; evaluator; decision; learner, none; returned with B-2 and accuracy B-1 Good and B-1 not Good: every step in the order the set replies mean",
   "hooks": "the orchestrator's ls and its decision's piped read stopped; each stand-in's reply sent by message stopped and kept; the stand-in learner's piped reads of records stopped, and it read each page bare.",
   "read": "Every JSONL read. The first user and the evaluator were given checklist.md alone, not accuracy.md. The unanswered run (b1584382-5257-4cef-9c2b-cb61286c8a65, 0.7 minutes) returned the license question alone with B-1, no role started."
+ },
+ {
+  "commit": "0e49883",
+  "session": "66da8904-884a-4f87-a635-8a0a56f8e74c",
+  "minutes_to_return": 6.0,
+  "cost_usd": 2.47,
+  "way": "check of two items; generator; first user stopping at B-1 and B-2, generator and first user by message three times, B-2 given its Good at the next reading, the fourth stop at B-1 going on to the evaluator; evaluator giving none; decision; learner, its lesson taken; second round; first user giving every item a Good, B-1's at lines without the license; evaluator giving B-2; decision; learner, none; returned: every step in the design's order, no orchestrator reading between the generator's first making and the evaluator's reply",
+  "hooks": "the stand-ins' replies sent by message stopped and kept.",
+  "read": "Every JSONL read. The orchestrator returned B-2 without Good though both readers gave it: the set Good of README.md:5-7, 'learns how to run it', answers neither what demo is nor its terms, so the decision held to the item; the set reply, not turn, was off, and now says what running the part shows. The unanswered run (95ef136e-8dcd-432e-8795-b0cde1e027b6, 0.6 minutes) returned the license question alone with B-1 and B-2, no role started; its ls and git log stopped."
+ },
+ {
+  "commit": "9feb4dc's replies on 0e49883's turn",
+  "session": "e2e4fcfe-8fcd-4886-9d4f-b0ec55c4d36f",
+  "minutes_to_return": 6.3,
+  "cost_usd": 2.47,
+  "way": "as the run before, the decisions giving B-2 its Good from both readers at the second round and B-1 none: every step in the design's order, no orchestrator reading between the generator's first making and the evaluator's reply; returned with B-2 Good, B-1 not Good and the one lesson",
+  "hooks": "the stand-ins' replies sent by message stopped and kept; the stand-in learner's piped reads of records stopped.",
+  "read": "Every JSONL read; the orchestrator read the work only at each decision."
  }
 ]
