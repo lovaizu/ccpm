@@ -4,7 +4,6 @@ from unittest import mock
 from helpers import (
     CALL,
     CHECKED,
-    CHECKLIST,
     EVALUATED,
     FIRST_READ,
     FOUND,
@@ -152,24 +151,14 @@ class TestFirstUserKept(RoundTest):
         self.assertEqual(self.next()["agent"], "turn:evaluator")
         self.assertEqual(self.given()["reading"], reading)
 
-    def test_the_items_the_first_user_stopped_at_go_to_the_orchestrator_to_hold(self):
+    def test_an_item_the_first_user_stopped_at_goes_to_the_generator_and_back_to_it(self):
         # Given: a first user that finds no Good for one item
-        # When: the orchestrator goes on, and again with nothing given
-        # Then: the item is offered to hold each time, with where the first user looked
+        # When: the orchestrator goes on, the generator replies, its reading finds every Good
+        # Then: the generator is sent the item with its places by message, and the first user is
+        # sent the work made again by message
         prompt = self.first_user_read()
         self.replied("turn:first-user", prompt, {"items": FIRST_READ})
-        self.assertEqual(self.next(), {"hold": {"items": [STOPPED]}})
-        self.assertEqual(self.next(), {"hold": {"items": [STOPPED]}})
-
-    def test_an_item_not_held_goes_to_the_generator_by_message_and_back_to_the_first_user(self):
-        # Given: a first user that finds no Good for one item
-        # When: the orchestrator holds none, the generator replies, its reading finds every Good
-        # Then: the generator is sent the item with its places, and the first user is sent the
-        # work made again by message
-        prompt = self.first_user_read()
-        self.replied("turn:first-user", prompt, {"items": FIRST_READ})
-        self.next()
-        out = self.next({"held": []})
+        out = self.next()
         self.assertEqual(out, {"agent": "turn:generator", "message": self.prompt, "to": ID})
         self.assertEqual(self.given()["sent_back"], [STOPPED])
         self.waited(("turn:generator", CLAIM))
@@ -180,101 +169,37 @@ class TestFirstUserKept(RoundTest):
             self.waited(("turn:first-user", {"items": reading}))["agent"], "turn:evaluator"
         )
 
-    def test_an_item_held_goes_on_to_the_evaluator_and_may_take_the_orchestrators_good(self):
-        # Given: a first user that finds no Good for an item whose Good rests on the sources
-        # When: the orchestrator holds it, the evaluator gives it none, and the decision gives it
-        # the orchestrator's Good
-        # Then: the evaluator is started, and the run goes on to the learner
-        prompt = self.first_user_read()
-        self.replied("turn:first-user", prompt, {"items": FIRST_READ})
-        self.next()
-        out = self.next({"held": [ITEM_B1]})
-        self.assertEqual(out["agent"], "turn:evaluator")
-        self.replied("turn:evaluator", out["prompt"], {"items": [EVALUATED]})
-        self.assertIn("decide", self.next())
-        out = self.next({"items": EVERY["items"], "questions": []})
-        self.assertEqual(out["agent"], "turn:learner")
-
-    def test_an_item_held_once_is_not_offered_again_in_the_round(self):
-        # Given: an item held, and a second item the first user stops at
-        # When: the first user, read again, stops at both
-        # Then: only the second is offered to hold
-        self.write("checklists/readme.md", CHECKLIST + "\n### B-3: More\n\nScope: whole\n\nMore?\n")
-        self.turn("start", json.dumps(CALL))
-        can = [dict(i, can="the decisions") for i in (GOOD, STOPPED, dict(STOPPED, item="B-3"))]
-        can = [{k: v for k, v in i.items() if k in ("checklist", "item", "can")} for i in can]
-        self.prompt = self.next({"items": can, "questions": []})["prompt"]
-        self.claim3()
-        every = dict(EVERY, items=EVERY["items"] + [dict(GOOD, item="B-3")])
-        prompt = self.next(every)["prompt"]
-        stop3 = dict(STOPPED, item="B-3")
-        self.replied("turn:first-user", prompt, {"items": FIRST_READ + [stop3]})
-        self.assertEqual(self.next(), {"hold": {"items": [STOPPED, stop3]}})
-        self.next({"held": [ITEM_B1]})
-        self.waited(("turn:generator", dict(CLAIM, items=every["items"])))
-        self.next(every)
-        out = self.waited(("turn:first-user", {"items": FIRST_READ + [stop3]}))
-        self.assertEqual(out, {"hold": {"items": [stop3]}})
-
-    def claim3(self):
-        items = CLAIM["items"] + [dict(GOOD, item="B-3")]
-        reply = dict(CLAIM, items=items)
-        self.assertEqual(self.replied("turn:generator", self.prompt, reply, *READ_GIVEN), (0, ""))
-
     def test_the_first_user_sends_back_three_times_a_round_at_most(self):
         # Given: a first user that stops at an item every time it reads
-        # When: the orchestrator holds none each time
+        # When: the run goes on each time
         # Then: the generator is sent it three times, and the fourth goes on to the evaluator
         prompt = self.first_user_read()
         self.replied("turn:first-user", prompt, {"items": FIRST_READ})
-        self.next()
-        for _ in range(3):
-            self.assertEqual(self.next({"held": []})["agent"], "turn:generator")
+        self.assertEqual(self.next()["agent"], "turn:generator")
+        for agent in ("turn:generator", "turn:generator", "turn:evaluator"):
             self.waited(("turn:generator", CLAIM))
             self.next(EVERY)
             self.assertEqual(
-                self.waited(("turn:first-user", {"items": FIRST_READ})),
-                {"hold": {"items": [STOPPED]}},
+                self.waited(("turn:first-user", {"items": FIRST_READ}))["agent"], agent
             )
-        self.assertEqual(self.next({"held": []})["agent"], "turn:evaluator")
 
     def test_a_stop_at_an_item_waiting_on_a_question_is_not_sent_back(self):
         # Given: findings with one item waiting on a question
         # When: the first user stops at that item
-        # Then: the evaluator is started, with nothing offered to hold
+        # Then: the evaluator is started
         out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})
         self.replied("turn:first-user", out["prompt"], {"items": FIRST_READ})
         self.assertEqual(self.next()["agent"], "turn:evaluator")
 
-    def test_what_is_held_out_of_its_form_stops(self):
-        # Given: an item offered to hold
-        # When: the orchestrator gives prose, an item not offered, or one twice
-        # Then: it stops, naming what is wrong, and the offer still waits
-        prompt = self.first_user_read()
-        self.replied("turn:first-user", prompt, {"items": FIRST_READ})
-        self.next()
-        for given, said in (
-            ("hold it", 'give it as JSON: {"held": [...]}'),
-            ({"held": [dict(ITEM_B1, item="F-1")]}, "F-1 is not an item offered"),
-            ({"held": [ITEM_B1, ITEM_B1]}, "B-1 is given twice"),
-        ):
-            with self.subTest(said=said):
-                text = given if isinstance(given, str) else json.dumps(given)
-                code, out = self.turn("next", RESULT, stdin=text)
-                self.assertEqual(code, 1)
-                self.assertIn("what you hold is not filled", out)
-                self.assertIn(said, out)
-        self.assertIn("hold", self.read_json(RESULT)["running"])
-
     def test_the_second_round_starts_the_generator_and_the_first_user_anew(self):
         # Given: a first round whose generator and first user replied, leaving an item without Good
         # When: the run goes on to the second round
-        # Then: the generator is started with a prompt, not sent a message, and the reading's
+        # Then: the generator is started with a prompt, not sent a message, and the round's
         # send-backs are counted anew
         prompt = self.first_user_read()
-        self.replied("turn:first-user", prompt, {"items": FIRST_READ})
-        self.next()
-        out = self.next({"held": [ITEM_B1]})
+        reading = [FOUND, dict(FOUND, item="B-1")]
+        self.replied("turn:first-user", prompt, {"items": reading})
+        out = self.next()
         self.replied("turn:evaluator", out["prompt"], {"items": [EVALUATED]})
         self.next()
         out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
@@ -283,7 +208,7 @@ class TestFirstUserKept(RoundTest):
         self.assertEqual(out["agent"], "turn:generator")
         self.assertIn("prompt", out)
         kept = self.read_json(RESULT)["running"]
-        self.assertFalse({"started", "sent", "held"} & set(kept))
+        self.assertFalse({"started", "sent"} & set(kept))
 
 
 class TestMessageHooks(RoundTest):

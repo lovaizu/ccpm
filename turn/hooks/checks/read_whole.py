@@ -57,14 +57,6 @@ def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
                 " is decided on a guess"
             )
         return said + unread(event, kept, kept["work"])
-    if "hold" in kept:
-        if printed(agents.transcript(event)):
-            return []
-        said = (
-            "see the items to hold whole: run `turn.py next <the call's result>` again with no"
-            " pipe or redirect, since an item held unseen is held on a guess"
-        )
-        return [said]
     if "take" in kept:
         if printed(agents.transcript(event)):
             return []
@@ -83,8 +75,13 @@ def generator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
 
 
 def reader(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
-    """The first user and the evaluator read the work and what the receiver has with it."""
-    return unread(event, kept, kept["work"] + kept["checklist"] + kept["opens"])
+    """The first user and the evaluator read the work and the usability checklists, and of what
+    the receiver has with it, each file they opened, as the receiver opens only what they need."""
+    path = agents.transcript(event)
+    cwd = os.path.realpath(event["cwd"])
+    has = [at(cwd, p) for p in kept["has"]]
+    seen = [p for p in opened(path, cwd) if any(p == h or p.startswith(h + os.sep) for h in has)]
+    return unread(event, kept, kept["work"] + kept["usability"] + seen)
 
 
 def learner(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
@@ -178,6 +175,25 @@ def whole(path: str, cwd: str, work: list[str]) -> set[str]:
                 seen.add(part["id"])
                 USES.get(part.get("name"), lambda *_: None)(read, part["input"], cwd, work)
     return read
+
+
+def opened(path: str, cwd: str) -> list[str]:
+    """Each file the agent's record shows it opened with Read, whole or in part, or printed with
+    cat."""
+    found: list[str] = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            content = json.loads(line).get("message", {}).get("content")
+            for part in content if isinstance(content, list) else []:
+                given = part.get("input", {}) if part.get("type") == "tool_use" else {}
+                named = (
+                    [given["file_path"]]
+                    if part.get("name") == "Read" and "file_path" in given
+                    else []
+                )
+                named += catted(str(given.get("command", ""))) if part.get("name") == "Bash" else []
+                found += [at(cwd, n) for n in named if at(cwd, n) not in found]
+    return found
 
 
 def reads(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:

@@ -27,7 +27,6 @@ from helpers import (
     SECTIONED,
     SENT_BACK,
     STATEMENT,
-    STOPPED,
     TURN,
     WAITS,
     RepoTest,
@@ -36,8 +35,6 @@ from helpers import (
     subagentstop,
 )
 
-# A first user's reading stopping at every item, among them one the findings gave its Good.
-FIRST_READ_ALL_STOPPED = [dict(STOPPED, item="F-1"), STOPPED]
 # A learner's reply: a lesson on the run, and what it checked.
 LEARNT_REPLY = {"process": [LESSON], "checked": CHECKED}
 
@@ -522,10 +519,10 @@ class TestReads(HookTest):
         self.stops(pretooluse, self.tool("turn:generator", "Grep", pattern="x", path="secret"))
 
     def test_a_first_user_reading_what_the_receiver_has_passes(self):
-        # Given: a first user of a run whose receiver opens a page with the work
+        # Given: a first user of a run whose receiver has a page with the work
         # When: it reads the work, the page or the checklist
         # Then: it goes through
-        self.given_prompt(ID, self.first_user(kind=dict(CALL["kind"], opens="page")))
+        self.given_prompt(ID, self.first_user(kind=dict(CALL["kind"], has="page")))
         for path in ("README.md", "docs/start.md", "checklists/readme.md"):
             with self.subTest(path=path):
                 self.passes(pretooluse, self.tool("turn:first-user", "Read", file_path=path))
@@ -908,16 +905,27 @@ class TestWholeReads(HookTest):
                 self.assertIn(f"turn.py record {run_path} 2 1", err)
                 self.assertNotIn(f"record {run_path} 1 1", err)
 
-    def test_a_reader_that_did_not_read_what_the_receiver_opens_is_kept_going(self):
-        # Given: a first user of a run whose receiver opens a page with the work, which read the
-        # work and the checklist but not the page
+    def test_a_reader_that_opened_what_the_receiver_has_in_part_is_kept_going(self):
+        # Given: a first user of a run whose receiver has a page with the work, which read the work
+        # and the checklist whole and the page in part
         # When: it ends with its reply
         # Then: it is kept going, naming the page
         os.remove(CALL["result"])
-        prompt = self.first_user(kind=dict(CALL["kind"], opens="page"))
-        code, err = self.replied("turn:first-user", prompt, {"items": FIRST_READ})
+        prompt = self.first_user(kind=dict(CALL["kind"], has="page"))
+        part = ("Read", {"file_path": "docs/start.md", "limit": 1})
+        code, err = self.replied(
+            "turn:first-user", prompt, {"items": FIRST_READ}, *READ_SHOWN, part
+        )
         self.assertEqual(code, 2)
         self.assertIn("docs/start.md", err)
+
+    def test_a_reader_that_did_not_open_what_the_receiver_has_ends(self):
+        # Given: a first user of a run whose receiver has a page with the work, which read the work
+        # and the checklist whole and did not open the page
+        # When: it ends with its reply
+        # Then: it ends, as the receiver opens only what they need of what they have
+        prompt = self.first_user(kind=dict(CALL["kind"], has="page"))
+        self.assertEqual(self.replied("turn:first-user", prompt, {"items": FIRST_READ}), (0, ""))
 
     def test_a_reader_of_no_run_going_ends_without_reading(self):
         # Given: a first user whose run has returned, or was never started
@@ -1117,21 +1125,6 @@ class TestWholeReads(HookTest):
                 )
                 said, err = self.hook(subagentstop, event)
                 self.assertEqual(said, code, err)
-
-    def test_the_orchestrator_holding_without_seeing_what_is_offered_stops(self):
-        # Given: an orchestrator whose run waits on the items it holds, which never ran the
-        # script to see them
-        # When: it records what it holds
-        # Then: it is stopped, told to see them whole; once it saw them, it goes through
-        prompt = self.first_user()
-        self.replied("turn:first-user", prompt, {"items": FIRST_READ_ALL_STOPPED})
-        self.assertIn("hold", self.next())
-        shown = f"{SCRIPT} next {CALL['result']}"
-        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
-        self.given_record(ID, json.dumps(CALL))
-        self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "items to hold")
-        self.given_record(ID, json.dumps(CALL), ("Bash", {"command": shown}))
-        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
     def test_the_orchestrator_going_on_after_the_learner_needs_no_new_read(self):
         # Given: an orchestrator whose run waits on the learner

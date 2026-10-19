@@ -17,22 +17,23 @@ findings and the first user's, and decides every item.
 1. Your prompt is `{"run": "<path>"}`, where the run is kept. Run
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
    JSON.
-   - In: what it prints, JSON: `work`, the path of each file of the work; `opens`, what the receiver
-     opens with the work; `receiver`, who the receiver is; `use`, what they read the work for;
-     `checklists`, the path of each checklist; `parts`, each part of the work as its lines, a
-     document's sections under its top headings with the title and opening as one; `reading`, the
-     first user's reading: for each item it found a Good for, the Good and the lines that give it;
-     `lessons`, what the orchestrator took for you from how the first round went, empty in the
-     first. Do each step with your lessons.
-   - These files and the reading are the whole of what you read, since they are what the receiver
-     has and the Goods they found; turn's hook stops a read of anything else.
-2. Read each checklist, each item a heading such as `### B-1: <title>`, the work, and each file of
-   `opens`, whole: each file with `cat -n <path>` in a command of its own, or with Read and no
-   offset or limit. Each item's `Scope` line says where its Good is: `its part`, at the lines that
-   give it; `each part`, in every part of `parts` on its own, each part's Good at lines inside it,
-   and the item has its Good only where every part gives it; `whole`, of the work at once, such as
-   one name for each thing throughout. A Good found where one part gives it would pass a part
-   that does not.
+   - In: what it prints, JSON: `work`, the path of each file of the work; `has`, each file or folder
+     the receiver has with the work; `receiver`, who the receiver is; `use`, what they read the work
+     for; `checklists`, the path of each checklist you answer; `parts`, each part of the work as its
+     lines, a document's sections under its top headings with the title and opening as one;
+     `reading`, the first user's reading: for each item it found a Good for, the Good and the lines
+     that give it; `lessons`, what the orchestrator took for you from how the first round went,
+     empty in the first. Do each step with your lessons.
+   - The work, `has`, the checklists and the reading are the whole of what you read, since they are
+     what the receiver has and the Goods they found; turn's hook stops a read of anything else.
+2. Read each checklist, each item a heading such as `### B-1: <title>`, and the work, whole: each
+   file with `cat -n <path>` in a command of its own, or with Read and no offset or limit. Of `has`,
+   open what the receiver would open for the use, each file you open whole the same way, and run
+   what they would run with the work, such as its tests or the commands it gives. Each item's
+   `Scope` line says where its Good is: `its part`, at the lines that give it; `each part`, in every
+   part of `parts` on its own, each part's Good at lines inside it, and the item has its Good only
+   where every part gives it; `whole`, of the work at once, such as one name for each thing
+   throughout. A Good found where one part gives it would pass a part that does not.
 3. For each item the reading gives a Good, read the work at its lines, part by part for an item
    asked of each part, and give the Good where the receiver gets there what the item asks, for the
    use.

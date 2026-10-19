@@ -1,6 +1,7 @@
 import json
 
 from helpers import (
+    ACCURATE,
     CALL,
     CAN,
     CHECKED,
@@ -41,6 +42,14 @@ EVERY_GOOD = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": []}
 WAITS_READ = dict(ITEM_B1, places=["README.md:3-3"])
 # The orchestrator's decision keeping its findings: the first item Good, the other waiting.
 AGREED = {"items": [GOOD, WAITS], "questions": []}
+# A generator's claim on a run whose CCS names the accuracy checklist too, after reading it whole
+# with the rest it was given.
+CLAIM_ACCURATE = {
+    "items": [GOOD, dict(GOOD, item="B-1"), ACCURATE],
+    "questions": [],
+    "statements": [],
+}
+READ_ACCURACY = READ_GIVEN + (("Read", {"file_path": "checklists/accuracy.md"}),)
 
 
 class ReadTest(RepoTest):
@@ -200,20 +209,31 @@ class TestReading(ReadTest):
         self.assertEqual(out["agent"], "turn:first-user")
 
     def test_a_reading_with_every_item_good_or_waiting_starts_the_first_user(self):
-        # Given: a call naming what the receiver reads the work for and what they open with it, and
-        # a reading that finds one item's Good and has the other wait on a question
+        # Given: a call naming what the receiver reads the work for and what they have with it, a
+        # CCS naming an accuracy checklist too, and a reading that finds one item's Good and has
+        # the other wait on a question
         # When: the reading is recorded
-        # Then: the first user is to be started with the work, what the receiver opens, who the
-        # receiver is and what for, and the checklists, and not the CCS or the reading
-        call = dict(CALL, kind=dict(CALL["kind"], use="purpose", opens="page"))
-        self.started(call)
-        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})
+        # Then: the first user is to be started with the work, what the receiver has, who the
+        # receiver is and what for, and the usability checklists, and not the CCS, the reading or
+        # the accuracy checklist
+        self.with_accuracy()
+        call = dict(CALL, kind=dict(CALL["kind"], use="purpose", has="page"))
+        self.turn("start", json.dumps(call))
+        can = CAN + [{"checklist": "checklists/accuracy.md", "item": "B-1", "can": "the decisions"}]
+        self.next({"items": can, "questions": []})
+        prompt = json.dumps({"run": RESULT})
+        self.assertEqual(
+            self.replied("turn:generator", prompt, CLAIM_ACCURATE, *READ_ACCURACY), (0, "")
+        )
+        out = self.next(
+            {"items": [GOOD, WAITS, ACCURATE], "questions": [QUESTION], "statements": [MARKED]}
+        )
         self.assertEqual(out["agent"], "turn:first-user")
         self.assertEqual(
             self.given(),
             {
                 "work": ["README.md"],
-                "opens": ["docs/start.md"],
+                "has": ["docs/start.md"],
                 "receiver": ["a developer new to it"],
                 "use": ["to try it on their own files"],
                 "checklists": ["checklists/readme.md"],
@@ -330,10 +350,8 @@ class TestReaders(ReadTest):
         self.started(dict(CALL, result="result.json"))
         reading = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]}
         _, out = self.turn("next", "result.json", stdin=json.dumps(reading))
-        stopped = dict(ITEM_B1, item="F-1", places=["README.md:1-1"])
-        self.replied("turn:first-user", json.loads(out)["prompt"], {"items": [stopped, WAITS_READ]})
-        self.turn("next", "result.json")
-        _, out = self.turn("next", "result.json", stdin=json.dumps({"held": [dict(ITEM_F1)]}))
+        self.replied("turn:first-user", json.loads(out)["prompt"], {"items": [FOUND, WAITS_READ]})
+        _, out = self.turn("next", "result.json")
         self.replied("turn:evaluator", json.loads(out)["prompt"], {"items": [EVALUATED]})
         self.turn("next", "result.json")
         _, out = self.turn("next", "result.json", stdin=json.dumps(AGREED))
@@ -907,3 +925,54 @@ class TestReadingForm(ReadTest):
         # When: it is recorded
         # Then: it stops, naming the question
         self.stops({"items": [GOOD, SENT_BACK], "questions": [QUESTION]}, "question 1")
+
+
+class TestAccuracy(RepoTest):
+    """A run whose CCS names an accuracy checklist beside the README's: its item is answered by
+    the orchestrator alone, which holds the sources."""
+
+    def setUp(self):
+        super().setUp()
+        self.with_accuracy()
+        self.turn("start", json.dumps(CALL))
+        can = CAN + [{"checklist": "checklists/accuracy.md", "item": "B-1", "can": "the decisions"}]
+        prompt = self.next({"items": can, "questions": []})["prompt"]
+        self.assertEqual(
+            self.replied("turn:generator", prompt, CLAIM_ACCURATE, *READ_ACCURACY), (0, "")
+        )
+        reading = {
+            "items": [GOOD, WAITS, ACCURATE],
+            "questions": [QUESTION],
+            "statements": [MARKED],
+        }
+        self.prompt = self.next(reading)["prompt"]
+
+    def test_the_first_user_answers_the_usability_items_alone(self):
+        # Given: a first user started on the run
+        # When: it replies with the accuracy item among its items
+        # Then: it is kept going; replying with the README's items alone, the evaluator is started,
+        # given the usability checklists alone
+        code, err = self.replied(
+            "turn:first-user", self.prompt, {"items": [FOUND, WAITS_READ, ACCURATE]}
+        )
+        self.assertEqual(code, 2, err)
+        self.assertIn("checklists/accuracy.md B-1", err)
+        reply = {"items": [FOUND, WAITS_READ]}
+        self.assertEqual(self.replied("turn:first-user", self.prompt, reply), (0, ""))
+        self.assertEqual(self.next()["agent"], "turn:evaluator")
+        self.assertEqual(self.given()["checklists"], ["checklists/readme.md"])
+
+    def test_an_accuracy_item_takes_the_orchestrators_good_alone(self):
+        # Given: readers that give the README's items alone
+        # When: the decision gives the accuracy item the orchestrator's Good
+        # Then: it is taken, and the result holds it
+        self.replied("turn:first-user", self.prompt, {"items": [FOUND, WAITS_READ]})
+        out = self.next()
+        self.replied("turn:evaluator", out["prompt"], {"items": [EVALUATED]})
+        decide = self.next()["decide"]["items"]
+        accuracy = [i for i in decide if i["checklist"] == "checklists/accuracy.md"]
+        self.assertEqual(accuracy[0]["first_user"], None)
+        self.assertEqual(accuracy[0]["evaluator"], None)
+        out = self.next({"items": [GOOD, WAITS, ACCURATE], "questions": []})
+        self.assertEqual(self.learnt(out), {"returned": RESULT})
+        self.assertEqual(self.read_json(RESULT)["items"], [GOOD, ACCURATE])

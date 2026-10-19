@@ -15,10 +15,13 @@ FORMS = {
     "learner": forms.LEARNT,
 }
 # The items each role judges, and the records its quotes and commands are found in: the learner
-# judges no item and quotes the records it was shown; every other role judges every item, and its
-# commands are found in its own record.
+# judges no item and quotes the records it was shown; the first user and the evaluator judge the
+# usability items; the generator judges every item; the commands of each are found in its own
+# record.
 JUDGES = {
     "learner": lambda kept, own: ([], tuple(run.learnt_from(kept))),
+    "first-user": lambda kept, own: (kept["usable"], (own,)),
+    "evaluator": lambda kept, own: (kept["usable"], (own,)),
 }
 
 

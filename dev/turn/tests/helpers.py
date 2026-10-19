@@ -35,7 +35,13 @@ from checks import (  # noqa: F401  (each check, for its own tests)
 pretooluse = events.PRETOOLUSE
 subagentstop = events.SUBAGENTSTOP
 
-CHECKLIST = """# README
+CHECKLIST = """---
+name: readme
+check: usability
+version: 0.1.0
+---
+
+# README
 
 A README is read by whoever meets the project first.
 
@@ -55,6 +61,30 @@ Scope: its part
 
 On opening it, can the reader tell whether the project is for them?
 """
+# A checklist answered against the sources, which the first user and the evaluator are not given;
+# a CCS naming it beside the README's; and its item's Good, as the orchestrator finds it.
+ACCURACY = """---
+name: accuracy
+check: accuracy
+version: 0.1.0
+---
+
+# Accuracy
+
+## Benefit
+
+### B-1: As decided
+
+Scope: whole
+
+Does the work carry out what its sources decided?
+"""
+ACCURATE = {
+    "checklist": "checklists/accuracy.md",
+    "item": "B-1",
+    "good": "it tidies CSV files, as the decisions say",
+    "lines": ["README.md:3-3"],
+}
 CCS = {
     "focal_entities": [{"deliverable": "README.md"}, {"audience": "a developer new to it"}],
     "goal_orientation": [{"purpose": "to try it on their own files"}],
@@ -213,10 +243,10 @@ class RepoTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         return out
 
-    def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=(), held=()):
+    def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=()):
         """The run taken through the orchestrator's findings, the first user's reading, after the
-        round has sent it back as often as it may, the items the orchestrator holds, and the
-        evaluator's Goods; and what the script prints then."""
+        round has sent it back as often as it may, and the evaluator's Goods; and what the script
+        prints then."""
         out = self.next({"items": list(findings), "questions": [QUESTION], "statements": [MARKED]})
         kept = self.read_json(CALL["result"])
         kept["running"]["sent"] = {run.FIRST_USER: run.SENDS}
@@ -224,21 +254,19 @@ class RepoTest(unittest.TestCase):
         reply = {"items": self.reading(*found)}
         self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
         out = self.next()
-        if "hold" in out:
-            out = self.next({"held": list(held)})
         self.assertEqual(out["agent"], "turn:evaluator")
         reply = {"items": list(evaluated)}
         self.assertEqual(self.replied("turn:evaluator", out["prompt"], reply), (0, ""))
         return self.next()
 
     def reading(self, *found):
-        """A first user's reading giving the Goods found, and every other item of the run the
+        """A first user's reading giving the Goods found, and every other item it is given the
         places it looked for its Good."""
         kept = self.read_json(CALL["result"])["running"]
         given = {(i["checklist"], i["item"]) for i in found}
         return list(found) + [
             dict(i, places=["README.md:1-1"])
-            for i in kept["items"]
+            for i in kept["usable"]
             if (i["checklist"], i["item"]) not in given
         ]
 
@@ -317,6 +345,18 @@ class RepoTest(unittest.TestCase):
             for n, path in enumerate(paths, 1)
             for p in range(1, len(records.pages(path)) + 1)
         )
+
+    def with_accuracy(self):
+        """The task's CCS names the accuracy checklist too, after the README's."""
+        self.write("checklists/accuracy.md", ACCURACY)
+        artifacts = CCS["retrieved_artifacts"]
+        ccs = dict(
+            CCS,
+            retrieved_artifacts=artifacts[:1]
+            + [{"checklist": "checklists/accuracy.md"}]
+            + artifacts[1:],
+        )
+        self.write_json(CALL["ccs"], ccs)
 
     def write(self, path, text):
         folder = os.path.dirname(path)

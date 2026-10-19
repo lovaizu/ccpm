@@ -22,7 +22,7 @@ USAGE = (
 def call_with(**change):
     call = copy.deepcopy(CALL)
     for key, value in change.items():
-        if key in call["kind"] or key in ("use", "opens"):
+        if key in call["kind"] or key in ("use", "has"):
             if value is None:
                 del call["kind"][key]
             else:
@@ -218,23 +218,53 @@ class TestStart(RepoTest):
         )
 
     def test_the_run_keeps_what_the_readers_may_read(self):
-        # Given: a call naming the kind of what the receiver opens
+        # Given: a call naming the kind of what the receiver has, and a CCS naming an accuracy
+        # checklist beside the README's
         # When: the run is started
-        # Then: the run keeps the work, what the receiver opens and the checklists as what the
-        # first user and the evaluator may read, and not the CCS or the decisions
-        self.started(call_with(opens="page"))
+        # Then: the run keeps the work, what the receiver has and the usability checklists as what
+        # the first user and the evaluator may read, and not the CCS, the decisions or the
+        # accuracy checklist
+        self.with_accuracy()
+        self.turn("start", json.dumps(call_with(has="page")))
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
 
+    def test_the_run_keeps_the_items_the_readers_answer(self):
+        # Given: a CCS naming an accuracy checklist beside the README's, which asks one item of
+        # each part
+        # When: the run is started
+        # Then: the run keeps every item, and the README's alone as the items the first user and
+        # the evaluator answer, with its item asked of each part
+        self.with_accuracy()
+        self.write("checklists/readme.md", CHECKLIST + EACH)
+        self.turn("start", json.dumps(CALL))
+        running = self.read_json(CALL["result"])["running"]
+        readme = [{"checklist": "checklists/readme.md", "item": i} for i in ("F-1", "B-1", "B-2")]
+        accuracy = {"checklist": "checklists/accuracy.md", "item": "B-1"}
+        self.assertEqual(running["items"], readme + [accuracy])
+        self.assertEqual(running["usable"], readme)
+        self.assertEqual(running["usability"], ["checklists/readme.md"])
+
     def test_the_optional_kinds_are_taken_when_named(self):
-        # Given: a call that also names the kinds of the use and of what the receiver opens
+        # Given: a call that also names the kinds of the use and of what the receiver has
         # When: the run is started
         # Then: the run keeps each kind's entries
-        call = call_with(use="purpose", opens="page")
+        call = call_with(use="purpose", has="page")
         self.started(call)
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["use"], ["to try it on their own files"])
-        self.assertEqual(running["opens"], ["docs/start.md"])
+        self.assertEqual(running["has"], ["docs/start.md"])
+
+    def test_a_folder_the_receiver_has_is_taken(self):
+        # Given: a CCS whose entry of what the receiver has names a folder, as the repository is
+        # for a maintainer
+        # When: the run is started
+        # Then: the run keeps the folder as what the readers may read
+        self.write_json(CALL["ccs"], dict(CCS, goal_orientation=[{"page": "docs"}]))
+        self.started(call_with(has="page"))
+        running = self.read_json(CALL["result"])["running"]
+        self.assertEqual(running["has"], ["docs", "docs/start.md"])
+        self.assertIn("docs", running["shown"])
 
     def test_a_result_in_a_new_folder_is_written(self):
         # Given: a call whose result goes in a folder not yet there
@@ -315,15 +345,16 @@ class TestStartStops(RepoTest):
     def test_a_checklist_that_is_missing_or_has_no_items_stops(self):
         # Given: a CCS naming a checklist that is not there, or one with no items
         # When: the run is started
-        # Then: it stops, naming the checklist
-        for text in (None, "# Nothing\n"):
+        # Then: it stops, naming the checklist, and for the one with no items, saying it holds none
+        empty = "---\nname: other\ncheck: usability\nversion: 0.1.0\n---\n\n# Nothing\n"
+        for text in (None, empty):
             with self.subTest(text=text):
                 ccs = copy.deepcopy(CCS)
                 ccs["retrieved_artifacts"][0] = {"checklist": "checklists/other.md"}
                 if text is not None:
                     self.write("checklists/other.md", text)
                 self.write_json(CALL["ccs"], ccs)
-                self.stops(CALL, "checklists/other.md")
+                self.stops(CALL, "checklists/other.md", *(["holds no item"] if text else []))
 
     def test_an_item_without_its_scope_stops(self):
         # Given: a checklist item with no Scope line under its heading, or one of no scope turn
@@ -345,12 +376,26 @@ class TestStartStops(RepoTest):
                     "`Scope: its part`, `Scope: each part` or `Scope: whole`",
                 )
 
-    def test_a_file_the_receiver_opens_that_is_missing_stops(self):
-        # Given: a call naming the kind of what the receiver opens, whose file is not there
+    def test_a_file_the_receiver_has_that_is_missing_stops(self):
+        # Given: a call naming the kind of what the receiver has, whose file is not there
         # When: the run is started
         # Then: it stops, naming the file
         os.remove("docs/start.md")
-        self.stops(call_with(opens="page"), "docs/start.md")
+        self.stops(call_with(has="page"), "docs/start.md")
+
+    def test_a_checklist_that_does_not_say_what_answers_it_stops(self):
+        # Given: a checklist whose front matter gives no `check`, or one turn does not know, or
+        # that has no front matter
+        # When: the run is started
+        # Then: it stops, naming the checklist and the values `check` takes
+        for text in (
+            CHECKLIST.replace("check: usability\n", ""),
+            CHECKLIST.replace("check: usability", "check: readability"),
+            CHECKLIST.split("---\n", 2)[2],
+        ):
+            with self.subTest(text=text[:40]):
+                self.write("checklists/readme.md", text)
+                self.stops(CALL, "checklists/readme.md", "`check: usability` or `check: accuracy`")
 
     def test_kinds_that_are_not_an_object_stop(self):
         # Given: a call whose kinds are a list, not an object of names

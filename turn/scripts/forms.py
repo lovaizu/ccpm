@@ -388,31 +388,6 @@ def taken(text: str, offer: dict[str, Any]) -> list[str]:
     return said
 
 
-def held(text: str, offer: list[dict[str, Any]]) -> list[str]:
-    """What is wrong with the items the orchestrator holds of those the first user stopped at,
-    each by its checklist and ID; empty when it is filled."""
-    try:
-        data = json.loads(unfenced(text))
-    except ValueError:
-        data = None
-    if not isinstance(data, dict) or not isinstance(data.get("held"), list):
-        return ['give it as JSON: {"held": [...]}']
-    offered = [(i["checklist"], i["item"]) for i in offer]
-    said: list[str] = []
-    seen: list[tuple[Any, Any]] = []
-    for item in data["held"]:
-        shaped = isinstance(item, dict) and set(item) == {"checklist", "item"}
-        key = (item["checklist"], item["item"]) if shaped else None
-        if key not in offered:
-            name = f"{key[0]} {key[1]}" if key else json.dumps(item)
-            said.append(f"{name} is not an item offered; hold each by its checklist and ID")
-        elif key in seen:
-            said.append(f"{key[0]} {key[1]} is given twice; hold each once")
-        else:
-            seen.append(key)
-    return said
-
-
 def lines_problems(name: str, lines: Any, paths: list[str], what: str) -> list[str]:
     if not isinstance(lines, list) or not lines:
         return [f"{name} names no lines; give the lines, each as <path>:<from>-<to>"]

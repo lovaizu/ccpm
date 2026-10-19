@@ -92,15 +92,21 @@ def each(run: dict[str, Any]) -> list[tuple[str, str]]:
     return [key(i) for i in run["each"]]
 
 
+def usable(run: dict[str, Any]) -> list[tuple[str, str]]:
+    """The items the first user and the evaluator answer, by their checklist and ID: those of the
+    usability checklists, as the receiver has no sources."""
+    return [key(i) for i in run["usable"]]
+
+
 def reader_given(run: dict[str, Any], role: str) -> dict[str, Any]:
-    """What the first user and the evaluator are given: what the receiver has, the checklists,
-    the parts of the work, and the lessons taken for the role."""
+    """What the first user and the evaluator are given: what the receiver has, the usability
+    checklists, the parts of the work, and the lessons taken for the role."""
     return {
         "work": run["work"],
-        "opens": run["opens"],
+        "has": run["has"],
         "receiver": run["receiver"],
         "use": run["use"],
-        "checklists": run["checklist"],
+        "checklists": run["usability"],
         "parts": forms.parts(run["work"]),
         "lessons": lessons(run, role),
     }
@@ -215,8 +221,6 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         return decide(run, text) if text.strip() else {"decide": run["decide"]}
     if "take" in run:
         return taking(run, text) if text.strip() else {"take": run["take"]}
-    if "hold" in run:
-        return holding(run, text) if text.strip() else {"hold": run["hold"]}
     if agent == GENERATOR:
         if messaged:
             # The orchestrator reads the work made again from the generator's reply.
@@ -232,33 +236,14 @@ def next_step(result: str, text: str) -> dict[str, Any]:
 
 
 def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Keeps the Goods of the first user's reading; offers the orchestrator to hold each item it
-    stopped at, but those waiting on a question or held already; with none, the evaluator holds
-    the reading to the items."""
+    """Keeps the Goods of the first user's reading; sends the generator each item it stopped at,
+    with where it stopped, but those waiting on a question, while the round may send them back;
+    otherwise the evaluator holds the reading to the items."""
     run["read"] = [i for i in reply["items"] if good(i)]
     asked = [named(f) for f in run["findings"]["items"] if "question" in f]
-    held = asked + run.get("held", [])
-    stops = [i for i in reply["items"] if "places" in i and named(i) not in held]
-    if not stops:
-        return evaluate(run)
-    run["hold"] = {"items": stops}
-    write(run["call"]["result"], {"running": run})
-    return {"hold": run["hold"]}
-
-
-def holding(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records the items the orchestrator holds, as their Good rests on the sources; the rest go
-    to the generator with where the first user stopped, while the round may send them back, and
-    otherwise the evaluator holds the reading to the items."""
-    stops = run["hold"]["items"]
-    said = forms.held(text, stops)
-    if said:
-        raise call.Stop("turn: what you hold is not filled:\n" + "\n".join(said))
-    run.setdefault("held", []).extend(json.loads(forms.unfenced(text))["held"])
-    del run["hold"]
-    rest = [i for i in stops if named(i) not in run["held"]]
-    if rest and sending(run, FIRST_USER):
-        return ask(run, GENERATOR, generator_given(run, rest, []))
+    stops = [i for i in reply["items"] if "places" in i and named(i) not in asked]
+    if stops and sending(run, FIRST_USER):
+        return ask(run, GENERATOR, generator_given(run, stops, []))
     return evaluate(run)
 
 
@@ -336,15 +321,15 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     if said:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
     decision = json.loads(forms.unfenced(text))
-    # The calling AI is to get each Good found by a reader that did not make the work, so an item
-    # neither the first user nor the evaluator found Good gets none from the orchestrator alone,
-    # but one it held, whose Good rests on the sources no reader has.
-    held = run.get("held", [])
+    # The calling AI is to get each Good found by a reader that did not make the work, so a
+    # usability item neither the first user nor the evaluator found Good gets none from the
+    # orchestrator alone; an accuracy item is answered against the sources, which no reader has.
+    readers = usable(run)
     unread = [
         f"{i['checklist']} {i['item']} has no Good a reader found; give what the receiver gets"
         " once it has it, and where it is not found"
         for i in run["decide"]["items"]
-        if not (i["evaluator"] or i["first_user"]) and named(i) not in held
+        if not (i["evaluator"] or i["first_user"]) and key(i) in readers
         for d in decision["items"]
         if key(d) == key(i) and good(d)
     ]
@@ -402,7 +387,7 @@ def took(run: dict[str, Any], process: list) -> dict[str, str]:
     if again:
         run["remade"] = True
         # The next round starts the generator and the first user anew, and counts anew.
-        for anew in ("started", "sent", "held"):
+        for anew in ("started", "sent"):
             run.pop(anew, None)
         return ask(run, GENERATOR, generator_given(run, unmet, []))
     result = run["call"]["result"]
