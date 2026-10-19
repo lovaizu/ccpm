@@ -493,6 +493,19 @@ class TestReads(HookTest):
         event = self.tool("turn:generator", "Bash", command="cat README.md secret/notes.md")
         self.stops(pretooluse, event, "notes/readme.decisions.md")
 
+    def test_a_command_reading_the_repositorys_top_stops(self):
+        # Given: a generator of a run
+        # When: its command reads the repository's top, by its path or as `.`, other than to go
+        # there with cd
+        # Then: it is stopped, as the top holds what the run was not given
+        for command in (
+            "grep -ril licen .",
+            f"ls -la {self.repo}/",
+            f"cd {self.repo}; grep -r x {self.repo}",
+        ):
+            with self.subTest(command=command):
+                self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
     def test_a_path_joined_to_a_shell_operator_is_still_a_read(self):
         # Given: a generator of a run
         # When: its command names a file or folder the run was not given right before `;`, `|`

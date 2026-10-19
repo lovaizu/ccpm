@@ -43,7 +43,8 @@ def check(event: dict[str, Any]) -> list[str]:
             return []
     else:
         # A command reads through the paths it names; one in the repository and outside what the
-        # run was given is a read of it, while the repository's top is where the command runs.
+        # run was given is a read of it, the repository's top too, as it holds all, but where cd
+        # goes, as that reads nothing.
         # Where the run is kept holds every role's prompt and reply, so the orchestrator alone,
         # which records its reading there, reads it; git reads the history of every file.
         orchestrator = role in KEEPS
@@ -56,8 +57,12 @@ def check(event: dict[str, Any]) -> list[str]:
         asks = any(agents.runs(command, c) for c in ("given", "parts", "record"))
         if not orchestrator and asks and not OPERATORS & set(said):
             return []
-        named = [os.path.realpath(os.path.join(cwd, w)) for w in said]
-        inside = [p for p in named if p.startswith(cwd + os.sep) and os.path.exists(p)]
+        named = [
+            os.path.realpath(os.path.join(cwd, w))
+            for i, w in enumerate(said)
+            if not (i and said[i - 1] == "cd")
+        ]
+        inside = [p for p in named if within(p, [cwd]) and os.path.exists(p)]
         if "git" not in said and all(within(p, places) for p in inside):
             return []
     return [f"read what you were given alone: {', '.join(given)} and turn's own files"]

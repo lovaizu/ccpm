@@ -2,7 +2,7 @@
 for the orchestrator with the prompt turn.py prints, on the flow trial's task of two items, one
 answered at its part and one in each part. Between the roles the run is set as a trial means: the
 orchestrator's check finds each item's Good in the decisions, the generator's work is replaced by a
-set README whose license is a bare word, the round has sent back as often as it may, so the
+set README that names no license, the round has sent back as often as it may, so the
 evaluator follows the first user whatever it finds, and the learner is given B-1 without Good and
 the records of the three roles before it. Prints, for each role, its record, from which the trial
 is judged, the minutes, each tool it used, each hook stop, and the reply kept.
@@ -26,7 +26,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
 CALL = {
     "ccs": ".tasks/ccs.json",
     "result": ".tasks/result.json",
-    "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"},
+    "kind": {
+        "work": "deliverable",
+        "checklist": "checklist",
+        "receiver": "audience",
+        "has": "code",
+    },
 }
 CHECK = {
     "items": [
@@ -39,12 +44,12 @@ CHECK = {
     ],
     "questions": [],
 }
-README = "# demo\n\ndemo prints a greeting.\n\n## License\n\nMIT\n"
+README = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
 UNMET = {
     "checklist": "checklist.md",
     "item": "B-1",
-    "gets": "The reader learns, without guessing, under which license they may use demo.",
-    "places": ["README.md:5-7"],
+    "gets": "The reader learns under which license they may use demo.",
+    "places": ["README.md:1-4", "README.md:5-7"],
 }
 
 place = os.path.abspath(sys.argv[1])

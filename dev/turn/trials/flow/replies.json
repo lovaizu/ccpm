@@ -28,7 +28,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -67,7 +67,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -106,7 +106,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -145,7 +145,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -184,7 +184,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -246,7 +246,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -281,7 +281,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -316,7 +316,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -350,7 +350,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
@@ -383,7 +383,7 @@
        },
        {
         "part": "README.md:5-7",
-        "good": "The reader learns how to run it.",
+        "good": "Running `sh demo.sh` as this part says, the reader sees demo print Hello, so learns what demo does.",
         "lines": [
          "README.md:7-7"
         ]
