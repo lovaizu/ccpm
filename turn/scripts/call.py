@@ -76,7 +76,7 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
             raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
     scoped = [item for path in run["checklist"] for item in items(path)]
     run["items"] = [{"checklist": c, "item": i} for c, i, _ in scoped]
-    run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope == EACH]
+    run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope in (EACH,)]
     run["given"] = given(call["ccs"], ccs, run["work"])
     run["shown"] = run["work"] + run["opens"] + run["checklist"]
     return run
@@ -128,8 +128,9 @@ def items(path: str) -> list[tuple[str, str, str]]:
         heading = None if fenced else ITEM.match(line)
         if heading is None:
             continue
-        scope = lines[n + 2][len("Scope: ") :] if n + 2 < len(lines) else ""
-        if lines[n + 1 : n + 3] != ["", "Scope: " + scope] or scope not in SCOPES:
+        below = lines[n + 1 : n + 3]
+        scope = next((s for s in SCOPES if below == ["", f"Scope: {s}"]), None)
+        if scope is None:
             raise Stop(
                 f"turn: {path} {heading.group(1)} does not say where it is answered; put the line"
                 " `Scope: its part`, `Scope: each part` or `Scope: whole` after a blank line"

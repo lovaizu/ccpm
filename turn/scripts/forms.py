@@ -47,14 +47,13 @@ class Grounds(NamedTuple):
 
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each; whether every
-    item is given; whether questions are asked; what else the form holds beside its items, checked
-    against the grounds; and whether it gives items at all."""
+    item is given; whether questions are asked; and what else the form holds beside its items,
+    checked against the grounds. A form of no shapes gives no items."""
 
     shapes: tuple[tuple[str, ...], ...]
-    every: bool
-    asks: bool
+    every: bool = False
+    asks: bool = False
     more: Callable[[dict[str, Any], Grounds], list[str]] | None = None
-    itemized: bool = True
 
 
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
@@ -66,7 +65,7 @@ CHECK = Form((("can",), ("question",)), every=True, asks=True)
 # the evaluator look only for the Good the work gives, so each names only the items it finds a Good
 # for, and a script names the rest.
 DECISION = Form((ONE, EACH, ("question",), ("gets", "places")), every=True, asks=True)
-GOOD = Form((ONE, EACH), every=False, asks=False)
+GOOD = Form((ONE, EACH))
 
 
 def worded(value: Any) -> bool:
@@ -313,7 +312,7 @@ READING = DECISION._replace(more=read_out)
 CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True, more=claimed)
 # The learner says how the run went alone, since a lesson on what the work should say tells the
 # generator how to give a Good, which is the generator's to decide.
-LEARNT = Form((), every=False, asks=False, more=lessons, itemized=False)
+LEARNT = Form((), more=lessons)
 
 
 def parse(text: str, form: Form) -> dict[str, Any] | None:
@@ -329,7 +328,7 @@ def parse(text: str, form: Form) -> dict[str, Any] | None:
 
 def listed(form: Form) -> tuple[str, ...]:
     """The lists the form takes."""
-    return (("items",) if form.itemized else ()) + (("questions",) if form.asks else ())
+    return (("items",) if form.shapes else ()) + (("questions",) if form.asks else ())
 
 
 def unfenced(text: str) -> str:
@@ -357,9 +356,7 @@ def check(
     if data is None:
         lists = ", ".join(f'"{k}": [...]' for k in listed(form))
         return ["give it as JSON: {" + (lists or '"process": [...], "checked": "..."') + "}"]
-    if not form.itemized:
-        return form.more(data, Grounds(work, sources, records)) if form.more else []
-    said = item_problems(data["items"], items, work, form, list(each))
+    said = item_problems(data["items"], items, work, form, list(each)) if form.shapes else []
     if form.asks:
         said += question_problems(data, asked)
     if form.more:
@@ -419,7 +416,7 @@ def item_problems(
             continue
         seen.append(key)
         # An item asked of each part gives a Good for every part, and any other one Good.
-        shapes = [s for s in form.shapes if s != (ONE if key in each else EACH)]
+        shapes = [s for s in form.shapes if s not in ((ONE,) if key in each else (EACH,))]
         held = [s for s in shapes if all(k in item for k in s)]
         shaped = [k for s in held for k in s]
         rest = [k for k in item if k not in ("checklist", "item") and k not in shaped]
@@ -521,7 +518,9 @@ def parts(work: list[str]) -> list[str]:
         for n, line in enumerate(lines, 1):
             if line.startswith("```"):
                 fenced = not fenced
-            elif path.endswith(DOCUMENT) and not fenced and line.startswith(TOP) and n > 1:
+            elif (
+                path.endswith(DOCUMENT) and not fenced and line.startswith(TOP) and n not in starts
+            ):
                 starts.append(n)
         ends = [n - 1 for n in starts[1:]] + [len(lines)]
         found += [f"{path}:{a}-{b}" for a, b in zip(starts, ends)]
