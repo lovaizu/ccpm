@@ -481,6 +481,9 @@ Progress:
   dev/turn/trials/readme <new folder>`, each its own folder), read from every JSONL against KR1.1
   and KR1.2 and the last trials (36.6, 27.6, 36.2 minutes; none not satisfied), recorded in
   `dev/turn/trials/readme/results.json`; then report to the user, with the README point.
+  The three were started at 08:53 on 2026-10-19, printing to /private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0375165e-a4df-4f7b-8b73-a44b689ed59d/scratchpad/acc1.out, acc2.out and
+  acc3.out (each ends with the session, cost and minutes); where a file is missing or ends
+  without `minutes:`, run that one again.
 
 ### [ ] #6: Each checklist finished
 
