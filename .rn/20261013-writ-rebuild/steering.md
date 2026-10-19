@@ -493,6 +493,19 @@ Progress:
   one remake with both; decide and return; no round 2), recommended; B, round 2 kept, one reading
   and one remake a round; C, the design kept, only the orchestrator's reading taken out of the
   first user's loop.
+- Read (2026-10-19), every README version rebuilt from the reads in the three runs' JSONL: of 15
+  send-backs in round 1 (acc1 8, acc2 6, acc3 4, counting the orchestrator's and the first user's),
+  one change in each run is one a receiver could meet in use, the file's encoding (a Latin-1 export
+  stops csvtidy), and it came from the first user's run, at its second send-back in acc2 and acc3,
+  as places alone did not show the first remake what was missing; on `ddab054` the encoding was
+  judged polish. The rest reworded, moved a summary to the opening or back, or said a decided
+  fact again. Two pairs of items pulled against each other and never settled: usability B-6 (the
+  first user: "yet" is a status) against accuracy B-2 (the orchestrator: the decisions say "There
+  are no other documents yet."), in acc3 removed by one remake and put back by the next, in acc1
+  and acc2 left at every reading; usability B-4 on Development (not for the user) against readme
+  F-1's template, in every first-user reading of acc1 and acc2, acc2's last remake changing nothing.
+  acc1's round 2 took the README from 81 to 99 lines with edges (non-breaking spaces, vertical
+  tabs, a file without a header, a BOM) and put in the one wrong statement the stand-in fixed.
 
 ### [ ] #6: Each checklist finished
 
