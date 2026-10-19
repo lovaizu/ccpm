@@ -473,6 +473,7 @@ class TestReads(HookTest):
         # Then: it goes through
         for command in (
             f"cd {self.repo} && cat -n README.md notes/readme.decisions.md",
+            f"cat README.md && cd {self.repo} && cat -n README.md",
             "python3 - <<'EOF'\nprint('x)\nEOF",
         ):
             with self.subTest(command=command):
