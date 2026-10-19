@@ -1358,10 +1358,13 @@ Progress:
   - R13 (turn's question on the scripts): the plan's CCS holds no language, since the plan is made
     before it can say them and the plan's own decisions carry them; every later CCS reads them
     from the plan.
-  - R14: the scripts' turn run stopped at Claude Code's two-hour wait for background work, in its
-    second round; what its first user sent back (the type check, the line run only as a command,
-    the formatter's settings) was checked with `dev/check.sh` and `dev/mutate.sh` and taken by
-    hand, not by running turn again. Later runs wait without a limit.
+  - R14: the scripts' turn run was cut at Claude Code's two-hour wait for background work, in its
+    first round, while the generator was checking its second remake (from the JSONL: generator
+    56 min, first user's two readings, two remakes; the second fixed what the first user sent back,
+    the type check of `st` and the line run only as a command, with tests, type check and coverage
+    passing, and was running Cosmic Ray when cut). No reader read that remake, so its Goods were
+    checked by `dev/check.sh` and `dev/mutate.sh` instead; nothing was changed by hand. Later runs
+    wait without a limit.
   - R15: rn's plan checklist made again to the README: the goal G1 and the criteria AC1...,
     without the split into attractive and must-be quality the README does not show; the documents
     and the tasks written after their sign-offs; no sign-off as a task, since `state.json` keeps
