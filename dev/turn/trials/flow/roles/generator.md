@@ -16,6 +16,8 @@ means.
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
    JSON. It prints JSON, with `ccs`, the path of the CCS, and `work`, the path of the
    work.
+   - When a message names your run again, the work is sent back: run this step again, and go on
+     from step 3, since you hold the CCS and its files already.
 2. Read the CCS whole with Read, then each file it names that exists, whole with Read, and the work
    if it exists.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" generator`. It prints JSON with `write`, the

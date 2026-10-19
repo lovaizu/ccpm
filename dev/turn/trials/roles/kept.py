@@ -1,9 +1,9 @@
 """Tries the generator and the first user kept started within a round: the real roles, scripts and
 hooks, on the flow trial's task, started and sent messages by a stand-in for the orchestrator that
 gives readings set beforehand. The orchestrator's reading sends B-1 back once; the work is then
-replaced by a set README with no license, so the first user stops at B-1; nothing is held, and the
-generator, sent where the first user stopped, makes the work again, which the first user reads
-again. Prints the stand-in's session, from whose JSONL and its agents' the trial is judged, the
+replaced by a set README with no license, so the first user, given the usability checklist alone
+and demo.sh as what the receiver has, stops at B-1; the generator, sent where the first user
+stopped, makes the work again, which the first user reads again. Prints the stand-in's session, from whose JSONL and its agents' the trial is judged, the
 minutes, each tool every agent used, each hook stop, and what the script printed last.
 
     python3 dev/turn/trials/roles/kept.py <new folder>
@@ -25,8 +25,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
 CALL = {
     "ccs": ".tasks/ccs.json",
     "result": ".tasks/result.json",
-    "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"},
+    "kind": {
+        "work": "deliverable",
+        "checklist": "checklist",
+        "receiver": "audience",
+        "has": "code",
+    },
 }
+ACCURACY = {"checklist": "accuracy.md", "item": "B-1"}
 CHECK = {
     "items": [
         {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."},
@@ -35,6 +41,7 @@ CHECK = {
             "item": "B-2",
             "can": "the decisions on demo and its license",
         },
+        dict(ACCURACY, can="demo.sh, which prints Hello when run"),
     ],
     "questions": [],
 }
@@ -52,6 +59,7 @@ BACK = {
             "gets": "The reader uses each part toward learning what demo is and on what terms.",
             "places": ["README.md:1-1"],
         },
+        dict(ACCURACY, gets="The reader learns demo prints Hello.", places=["README.md:1-1"]),
     ],
     "questions": [],
     "statements": [],
@@ -74,6 +82,7 @@ PASSED = {
                 {"part": "README.md:5-7", "good": "how to run it", "lines": ["README.md:7-7"]},
             ],
         },
+        dict(ACCURACY, good="demo prints a greeting, as it does", lines=["README.md:3-3"]),
     ],
     "questions": [],
     "statements": [],
@@ -129,15 +138,12 @@ first time, and send the `message` turn.py printed last to its `to`, both as pri
 {given(PASSED)}
 5. Start the `turn:first-user` agent, not in the background, with the `prompt` turn.py printed last
    as its whole prompt, exactly as it is, and wait for its reply.
-6. Run `{script} next {result}`. If it prints `{{"hold": ...}}`, run:
-{script} next {result} <<'EOF'
-{{"held": []}}
-EOF
-   and send a message, as above.
+6. Run `{script} next {result}`, and send a message, as above.
 7. Run `{script} parts {result}`, and read README.md whole. Then run `{script} next {result}`
    with, in place of the reading of step 4, one giving B-1 its Good at the lines of README.md that
-   name the license, and B-2 a Good for every part as `parts` printed it, each at the part's first
-   line, in the same form, with `"statements": []`.
+   name the license, B-2 a Good for every part as `parts` printed it, each at the part's first
+   line, and accuracy.md B-1 its Good at the line that says what demo prints, in the same form,
+   with `"statements": []`.
 8. Send a message, as above.
 9. Reply with what turn.py printed last, as it is."""
 

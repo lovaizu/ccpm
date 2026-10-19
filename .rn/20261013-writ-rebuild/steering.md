@@ -453,6 +453,23 @@ Progress:
   hold step are uncommitted in `dev/turn/trials/flow/`, to be redone without it) and the roles
   trial; 4. CHANGELOG, the whole tried once, validate (it advises an install line in turn's
   README). In conversation, roles go by the design's English names and the work is 成果物.
+- Done (2026-10-19): 1. the design, UX and README (`f0c25af`), agreed by the user in Japanese
+  translation, with the two points the assistant chose: of what the receiver has, each file the
+  first user or the evaluator opens is read whole, and the front-matter key is `check`; the call's
+  kind `opens` is now `has`, a file or folder. 2. the checklists (`50f990a`): `usability.md` in
+  place of `readability.md`, for documents and code, without its B-5 and B-2 and with B-7 within
+  the document; `accuracy.md` made, B-1 to B-4 from readability B-5, prompt.md B-24, readability
+  B-7's part on other documents and the product, and readability B-2, with no Format section, as
+  it adds no part to a kind's template; code.md B-3 and B-14 taken out, its opening saying how
+  usability B-7 and B-13 hold for code; checklist.md with `check` in the template, step 5 splitting
+  the items by what answers them, and B-13 asking each item be answerable so; every reference
+  changed. rn's finder lists the checklists a kind's opening names, so `accuracy.md` reaches a
+  kind only through `usability.md`'s opening for now; how rn hands both to every work is left to
+  #4. 3. the scripts, hooks, tests and prompts (`26c9ce8`): the check read from each checklist,
+  the first user and the evaluator given and judged on the usability items alone, an accuracy item
+  taking the orchestrator's Good in the decision, the hold step gone; tests pass on 3.9, 100%
+  covered, lint and types clean. The flow trial's task has `accuracy.md`, and its set replies take
+  every way the design's Verification names; the roles trial names `has` as demo.sh.
 
 ### [ ] #6: Each checklist finished
 

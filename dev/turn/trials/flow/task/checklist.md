@@ -1,3 +1,9 @@
+---
+name: readme
+check: usability
+version: 0.1.0
+---
+
 # README
 
 ### B-1: Under which license
