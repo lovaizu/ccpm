@@ -128,8 +128,7 @@ def written(command: str, cwd: str) -> list[str]:
         found += [path(here, w) for before, w in pairs if before in WRITES]
         # A redirect's target is not an argument of the command.
         plain = [w for before, w in pairs if w not in REDIRECTS and before not in REDIRECTS]
-        # An empty word is no path, such as the suffix macOS's `sed -i ''` takes.
-        args = [w for w in plain[1:] if w and not w.startswith("-")]
+        args = [w for w in plain[1:] if not w.startswith("-")]
         head = plain[0] if plain else ""
         if head in WRITE_EACH:
             found += [path(here, w) for w in args]
