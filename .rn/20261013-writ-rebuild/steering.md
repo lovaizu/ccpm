@@ -370,10 +370,19 @@ Progress:
   `each part` or `whole`, as long-document judging scores what lies between sections once over the
   whole; every checklist marked (`checklist.md` F-1). Three acceptance trials at once, each in its
   own clone, to see how far the AI's runs vary.
-- Next: 1. the design, prompts, scripts, hooks and tests for both; flow and roles trials; the
-  acceptance trial, every JSONL read, judged from the receiver's purpose; 2. consult when reading
-  stops, from that trial; the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin
-  validate --strict`.
+- Done (2026-10-19): checklists marked (`18e0bd4`); turn's README, UX and design (`3c70559`);
+  scripts, hooks and tests (`51340cf`, `74e8752`); prompts (`dad59ec`, `b7e2c35`); CI green at
+  `74e8752`, no mutant surviving. Flow trial passed (7.3 minutes, B-1 and B-2 sent back with
+  places, B-2 Good for every part in round 2; unanswered 0.9 minutes, the question alone); roles
+  trial passed. Three acceptance trials at once on `b7e2c35`'s working tree (the scripts as at
+  `74e8752`): sessions `c97c129f-2936-44ce-9ac9-22fb919915ae` (37.9 minutes, $14.2),
+  `749e43aa-ce1f-4776-986f-02d27a338847` (28.5, $10.2), `1a3a6c1c-c996-4c08-a705-3a30acb7ee45`
+  (37.6, $13.2); not yet read.
+- Next: 1. read the three acceptance trials from every JSONL, judged from the receiver's purpose:
+  whether a part made worse by a remake is now caught, what the calling AI fixed and why, and
+  where the 28 to 38 minutes went (12 to 15 on earlier versions, 31 on `ddab054`), then record
+  them in `dev/turn/trials/readme/results.json`; 2. consult when reading stops, from those trials;
+  the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
