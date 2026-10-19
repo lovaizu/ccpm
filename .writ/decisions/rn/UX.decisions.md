@@ -24,7 +24,10 @@ their purpose, since what is sent back then is made again after all of it is bui
    included, since a point decided unasked is made again when it is wrong. The goal and the
    acceptance criteria, each with an ID, go into the plan, and rn stops at the plan sign-off.
 2. At a sign-off the user reads the proposal and answers `/rn:ty` to approve or
-   `/rn:gm <feedback>` to ask for a change.
+   `/rn:gm <feedback>` to ask for a change. On `/rn:gm`, rn keeps the feedback and stops, so the
+   conversation can be cleared; going on, it finds the point behind the words that it took wrong
+   or did not ask, confirms it the same way, makes the work again, and stops at the same sign-off
+   with what changed since the last proposal.
 3. The documents the purpose needs, such as the UX, the README and the design, are settled and made
    the same way, and rn stops at the design sign-off.
 4. rn carries out tasks, each naming the acceptance criteria it serves and checked against them;
