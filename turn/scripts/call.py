@@ -11,6 +11,9 @@ SHAPE = (
     ' "use": "<kind>", "has": "<kind>"}, "result": "<path>"}'
 )
 REQUIRED = ("work", "checklist", "receiver")
+# The kinds whose entries are paths, kept without a trailing slash or a `./`, so a file inside a
+# folder named `docs/` is found within `docs`.
+PATHS = ("work", "checklist", "has")
 KINDS = REQUIRED + ("use", "has")
 # An item of a checklist is a heading of the form `### B-1: <title>`, outside a fence, with the
 # line under it saying where in the work it is answered.
@@ -65,6 +68,8 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     run: dict[str, Any] = {"call": call}
     for name in KINDS:
         values = entries(ccs, kind[name]) if name in kind else []
+        if name in PATHS:
+            values = [os.path.normpath(v) for v in values]
         if name in REQUIRED and not values:
             raise Stop(
                 f'turn: {call["ccs"]} has no entry of the kind "{kind[name]}", which the call'
@@ -147,7 +152,13 @@ def items(path: str) -> list[tuple[str, str, str]]:
 
 def given(ccs_path: str, ccs: dict[str, list[dict[str, str]]], work: list[str]) -> list[str]:
     """What the roles may read: the CCS, the work and each file or folder an entry names."""
-    named = [v for part in ccs.values() for e in part for v in e.values() if os.path.exists(v)]
+    named = [
+        os.path.normpath(v)
+        for part in ccs.values()
+        for e in part
+        for v in e.values()
+        if os.path.exists(v)
+    ]
     found: list[str] = []
     for path in [ccs_path] + work + named:
         if path not in found:

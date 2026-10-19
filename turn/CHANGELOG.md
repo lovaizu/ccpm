@@ -22,6 +22,7 @@
 ### Fixed
 
 - turn checks each AI's reply as it hands it back, on Claude Code that ends an agent that way, as well as on one that ends it on its last message — a reply out of its form, or the orchestrator ending before its run returned, is sent back instead of passing unchecked and leaving the run unfinished.
+- A folder your CCS names with a trailing slash, such as `docs/`, is taken as the folder — the AIs of a run can read the files inside it instead of being stopped at each.
 
 ### Removed
 

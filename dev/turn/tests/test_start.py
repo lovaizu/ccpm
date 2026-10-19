@@ -246,6 +246,18 @@ class TestStart(RepoTest):
         self.assertEqual(running["has"], ["docs", "docs/start.md"])
         self.assertIn("docs", running["shown"])
 
+    def test_a_folder_named_with_a_trailing_slash_is_kept_as_the_folder(self):
+        # Given: a CCS naming a folder with a trailing slash, as a caller names a folder
+        # When: the run is started
+        # Then: the run keeps the folder without the slash, so the files inside it are found within
+        # it, as what the readers and the roles may read
+        self.write_json(CALL["ccs"], dict(CCS, goal_orientation=[{"page": "docs/"}]))
+        self.started(call_with(has="page"))
+        running = self.read_json(CALL["result"])["running"]
+        self.assertEqual(running["has"], ["docs", "docs/start.md"])
+        self.assertIn("docs", running["given"])
+        self.assertNotIn("docs/", running["given"])
+
     def test_a_result_in_a_new_folder_is_written(self):
         # Given: a call whose result goes in a folder not yet there
         # When: the run is started
