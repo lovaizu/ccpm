@@ -1424,17 +1424,32 @@ Progress:
   `.rn/checklists/<kind>.md`; learnings confirmed after the deliverable is approved, before the
   merge; a draft pull request with the plan; the benefits, what the documents do not keep written
   by rn into its commit messages (the user: "rn のことだよ").
-- Next: `dev/rn/ux.md` made through turn from those decisions, on a clone of the branch in the
-  scratchpad, CCS `{"focal_entities": [{"deliverable": "dev/rn/ux.md"}, {"audience": "someone who
-  builds or changes rn"}], "goal_orientation": [{"purpose": "to know the experience rn must give
-  its user, and how each version of rn is judged against it, before building or changing any part
-  of rn"}], "retrieved_artifacts": [{"checklist": "rn/checklists/product/ux.md"}, {"checklist":
-  "rn/checklists/usability.md"}, {"decisions": ".writ/decisions/rn/UX.decisions.md"}],
-  "constraints": [{"language": "English"}]}`, `claude -p` on Opus with `--plugin-dir <clone>/turn`.
-  Stopped (2026-10-19): the auto mode classifier denied `--permission-mode bypassPermissions`; the
-  user to choose: run it once with `!`, add a permission rule, or `--allowedTools`. Then rn's
-  README and design the same way, each agreed with the user; all of rn's works made through turn
-  (the user, 2026-10-19). Clear work goes to Opus subagents, not Fable ones.
+- Next (2026-10-20), to go on from after a clear. Done for the first unit and pushed: rn.py and
+  its tests, the plan checklist, the three skills; turn fixed three times; CI skips a push of
+  records alone after a passed commit (check it worked on the push of commit "plugin rules:
+  mutation testing by hand..." and that the run before passed). turn takes a work as files alone,
+  never a folder, so each CCS names every file of the work. turn runs as
+  `claude -p "<step>" --output-format json --model opus --plugin-dir <clone>/turn --settings
+  '{"enabledPlugins": {"turn@ccpm": false}}' --permission-mode auto` with
+  `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`, in a fresh clone of this branch in the scratchpad, the
+  CCS copied into `.tasks/`; the runner and the CCSs of the last session are in
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/d56e9331-379c-44c2-af13-3dfb75505571/scratchpad/`
+  (`run-turn.sh`, `tasks/hooks.json`, `tasks/trial.json`).
+  1. The hooks through turn again, the CCS naming the files `rn/hooks/hooks.json`,
+     `rn/hooks/pretooluse.py`, `rn/hooks/events.py`, `rn/hooks/shell.py`,
+     `rn/hooks/repository.py`, `rn/hooks/checks/__init__.py`, `rn/hooks/checks/own_branch.py`,
+     `rn/hooks/checks/signoff.py`, `rn/hooks/checks/plan_form.py`,
+     `rn/hooks/checks/kept_before_turn.py`, `dev/rn/tests/test_hooks.py` and
+     `dev/rn/cosmic-ray.toml`, with `.writ/decisions/rn/hooks.decisions.md` as it now stands (R26,
+     the property tests' inputs). Take it in after `sh dev/check.sh` and `sh dev/mutate.sh rn`.
+  2. The flow trial through turn again, the CCS naming `dev/rn/trials/flow/flow.py`,
+     `dev/rn/trials/flow/stand.py` and `dev/rn/trials/flow/up.md`; then run it in
+     `lovaizu/playground` and judge it from every JSONL. Remove what a run leaves in
+     `/private/tmp/claude-501/` outside the scratchpad, and its branch and pull requests there.
+  3. Then the later units: the documents to the design sign-off, the tasks, the deliverable, the
+     lessons and the pull request marked ready; then the whole check, CHANGELOGs under Unreleased,
+     `claude plugin validate --strict`, the final check, and the report of every decision (R1...)
+     to the user in Japanese.
 - plugin.md step 3 (2026-10-14): a fresh reader read writ's README and the design once.
   - Decided by the user: the README's example asks the license before writing, as writ settles
     what the checklists need before turn is called; a question that shows up only in the writing
