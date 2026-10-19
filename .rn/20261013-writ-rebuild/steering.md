@@ -1332,6 +1332,17 @@ Progress:
   - R3 (turn's question): the six benefits stay with their reasons as agreed, against turn's
     recommendation to keep three, since a benefit says why the user chooses rn, which G1 and the
     scenes do not.
+  - R4: rn's README and design decisions rewritten from the UX, keeping only what the UX does not
+    settle; the old ones described rn before the UX (asking only what cannot be looked up, feedback
+    files, three fixed documents).
+  - R5: no pause command (`/rn:dn` goes): the UX's user stops wherever they stop, and every decision
+    is pushed before the work after it, so any stop is a place to go on from.
+  - R6: the proposal is built by a script from turn's result and the record, so it says nothing an
+    AI did not have read; no separate AI-written report.
+  - R7: no verification document of its own: the design's Verification holds the checks, and the
+    deliverable is used with the plan's acceptance criteria as what it is used for.
+  - R8: the documents the purpose needs are confirmed with the user after the plan sign-off and
+    made in the order their checklists draw them (UX, README, design).
   - turn fixed twice on the way (ac4645a, adf992b): Claude Code now ends some agents with
     SubagentHandback, where SubagentStop gives no reply and its block is ignored.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
