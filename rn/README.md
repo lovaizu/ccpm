@@ -1,208 +1,195 @@
 # rn
 
-rn is a Claude Code plugin that carries work taking days from your rough words to a pull request
-ready to merge, with your time spent only on deciding: what you really want, how it is built, and
-whether the result is what you wanted. You never babysit the work or re-read all of it to approve
-it, and tomorrow, or a fresh conversation, goes on from where you stopped. It is for anyone who has
-Claude Code do work in a git repository on GitHub that takes more than one sitting, such as moving
-an app to TypeScript, and who wants to decide rather than watch.
+rn is a Claude Code plugin that takes a whole piece of work, asked for in your own rough words, to
+a pull request that does what you want it for, while you only answer what it asks. It is for anyone
+who has Claude Code do work in their own git repository on GitHub and would rather hand over a piece of
+work, even one that takes days, than prepare it and watch it being done.
 
 ## Example
 
-Your app is written in JavaScript, and you want it moved to TypeScript, work that takes days.
-
-### How a session goes
-
-A session is one goal carried through to the end. It has three sign-offs, each a point where you
-look at the work before it goes past: the plan, what you want and how you would know it is reached;
-the design, how it is built and how that is checked; and the deliverable, the finished work on the
-pull request. At each, rn stops with a proposal, what it gives you to decide from alone, and you
-approve with `/rn:ty` or ask for changes with `/rn:gm <feedback>`. Between sign-offs rn calls you
-only for a decision that is yours. It works on its own branch and a draft pull request, so your
-default branch is untouched until you merge, and keeps the record of how things were decided, your
-feedback included, in a `.rn/` directory in your repository.
-
-### Starting: the plan
-
-rn works out the plan with you first. It says how it understands your words and asks why, one
-point per message; what the repository, the official documentation or best practice can answer, it
-looks up instead of asking. You start it by typing `/rn:up` in your repository with what you want:
+Your app is written in JavaScript, and you want it moved to TypeScript, work that takes days. In
+your repository, you type what you want:
 
 ```console
 > /rn:up move this app to TypeScript
-
-● Here's how I understand it: three of last quarter's production bugs were a value of the wrong
-  type, undefined where a number was expected. Is catching those before they ship what you're
-  after?
-
-> yes, that's why
-
-● Then the goal is that such a mistake fails the build. Every file ending in .ts is not enough: a
-  file moved with loose types would still let it through. Is that right?
 ```
 
-Knowing why you want it is what shows where your first words would go wrong: every file ending in
-.ts would have let the bugs through.
-
-From your answers rn writes the goal and the acceptance criteria, in two kinds: what would make you
-choose the result (`A1`...) and what you take for granted (`M1`...), each with an ID that every
-later task and check refers to. It also asks which language to write the repository in and which to
-talk in, and which issues the work closes.
-
-### The plan sign-off
-
-Once nothing is silently assumed, rn writes the plan, `steering.md` on the pull request. An AI that
-did not write it reads it as you would and checks it against a checklist, a list of items each
-naming one thing a piece of work must give the person it is for; what falls short is written again
-before you see it. Then rn stops with the proposal:
+rn does not start building on those words. It first finds the points to decide, the choices that
+change what is made, and asks you one per message, even those it could look up, with what it looked
+up and the answer it recommends:
 
 ```console
-● ── typescript: a wrong type fails the build ──
-  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
-  ⬜ #2 Design sign-off
+● Points to decide
+  ▶ 1. What the move is for
+    2. What shows the move is done
 
-  Draft PR: https://github.com/you/repo/pull/42
+  1. What the move is for
+  I take it the move is to stop type mistakes before they ship: three of last quarter's
+  production bugs (#81, #87, #93) were a value of the wrong type, undefined where a number
+  was expected.
+  a. Stop such mistakes before they ship (recommended). Costs more than renaming files, since
+     the types must be strict enough to catch them. Can be changed later.
+  b. Have the code in TypeScript, however loose its types. Quicker, but the three bugs could
+     come back. Can be changed later.
+  What is the move for? Answer with a letter or in your own words.
 
-  I propose working out the design on this plan: it says what you want, why, and how you would
-  know it is achieved.
+> a
 
-  Goal: a wrong type fails the build
-  Judged by:
-  - A1: Code reproducing each of the three bugs fails the build
-  - M1: Every file is .ts
-  - M2: The app builds and runs as before
+● Points to decide
+  ✓ 1. What the move is for: stop type mistakes before they ship
+  ▶ 2. What shows the move is done
 
-  Toward what you would choose it for:
-  - A1: each of the three bugs is named with how its failing build is checked; nothing is built
-    yet (first proposal)
+  2. What shows the move is done
+  I propose that such a mistake fails the build. Every file ending in .ts is not enough: a
+  file moved with loose types would still let the three bugs through.
+  a. A value of the wrong type fails the build (recommended). Each file must be typed
+     strictly. Can be changed later.
+  b. Every file ends in .ts. Done sooner, but does not stop the bugs. Can be changed
+     later.
+  What shows the move is done? Answer with a letter or in your own words.
 
-  Decided for you
-  - Which files count as the app: src/ and test/, since package.json names only those (steering.md:14)
-
-  Plan
-  - ✅ P-1 Why you want the goal: steering.md:5-7
-  - ✅ P-2 What you would choose the result for: steering.md:11-13
-  (every item of the checklist gets a line the same way)
-
-● #1 Plan sign-off ── proposed: work out the design on this plan → waiting for #1 Plan sign-off
+> a
 ```
 
-The map on top heads every message where rn stops: ✅ done, 👉 now, ⬜ ahead. Under it come what rn
-proposes to do next and why, the goal and criteria in the plan's own words, how close the work has
-come to each thing you would choose it for and what came closer since the last proposal (a first
-proposal, marked as here, has no earlier one to compare with), and what rn decided for you with its
-ground. Last come the items of the checklist the plan was checked against, each met with the lines
-that give it or not met with why. You say yes or no from this, and read the plan itself on the pull
-request whenever you want. The last line is what rn records of where it stopped.
-
-### Asking for changes, then approving
-
-Feedback sends rn back to working out, from the mismatch behind your words, until it stops at the
-same sign-off again; approving moves on to the next sign-off. Either way rn stops there, so you can
-clear the conversation and lose nothing:
+From your answers rn writes the plan. It holds the goal, which is your purpose as rn wrote it down,
+and the acceptance criteria, each one thing the finished work must do for that purpose; the goal
+and every criterion get an ID that later messages refer to. Before showing it to you, another AI
+that did not write it, the first reader, reads and uses it in your place, and rn makes it again
+until the first reader finds nothing lacking. Then rn stops at the plan sign-off, the first of three
+stops where it shows you a proposal and waits for your answer:
 
 ```console
-> /rn:gm the three bugs were in cart and checkout; account had none
+● Plan sign-off
+  The plan is on the draft pull request: https://github.com/you/app/pull/42
+  G1: A value of the wrong type fails the build, so mistakes like last quarter's three bugs
+      do not ship.
+  AC1: Code that repeats each of the three bugs fails the build.
+  AC2: The app builds and runs as before.
+  AC3: Every file of the app is TypeScript.
+  /rn:ty to approve, /rn:gm <feedback> to ask for a change.
+```
 
-● #1 Plan sign-off ── feedback in 01-feedback-plan.md → working out the plan again
+The account pages had none of the three bugs, and you would rather leave them for later, so you ask
+for a change. rn keeps your feedback and stops, so you can clear the conversation, or come back
+tomorrow:
 
-  Say "go on", or /clear and then /rn:up.
+```console
+> /rn:gm leave the account pages in JavaScript for now
 
-> go on
+● Your feedback is kept. Clear the conversation if you like, then type /rn:up to go on.
+```
 
-● Then the account files move too, but the checks reproduce only the cart and checkout bugs.
-  Is that right?
+In a fresh conversation, `/rn:up` goes on from where you stopped, with the point behind your
+feedback, one rn did not ask:
 
-> yes
+```console
+> /rn:up
 
-● ── typescript: a wrong type fails the build ──
-  👉 #1 Plan sign-off ── read the plan on the PR: /rn:ty to approve, /rn:gm <feedback> to ask for changes
-  ...
+● Points to decide
+  ✓ 1. What the move is for: stop type mistakes before they ship
+  ✓ 2. What shows the move is done: a value of the wrong type fails the build
+  ▶ 3. Which parts move now
+
+  3. Which parts move now
+  I propose moving the cart and the checkout now: all three bugs were there (#81, #87, #93
+  touch only src/cart and src/checkout).
+  a. The cart and the checkout now, the account pages later (recommended). The account
+     pages can still let a wrong type through. Can be changed later.
+  b. Every part now. The account pages are covered too, but the move takes longer. Can be
+     changed later.
+  Which parts move now? Answer with a letter or in your own words.
+
+> a
+
+● Plan sign-off
+  The plan is on the draft pull request: https://github.com/you/app/pull/42
+  Changed: AC3: Every file of src/cart and src/checkout is TypeScript.
+  (G1, AC1 and AC2 as before)
+  /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 
 > /rn:ty
-
-● #1 Plan sign-off ── approved → #2 Design sign-off
-
-  Say "go on", or /clear and then /rn:up.
 ```
 
-`01-feedback-plan.md` is your feedback, kept in the `.rn/` record.
-
-### The design sign-off
-
-rn works out with you how to build it and how you will see that it works, asking only what the
-product should be and what trades effort against safety. It offers ways only once you have said what
-you want, each with what it gives and costs and the one it recommends:
-
-```console
-● The three bugs are in src/cart and src/checkout. For the check, I propose code that
-  reproduces each of the three, passing when all three fail the build. Strict checks from the
-  start stop all three, but nothing builds until every file is typed; loose first builds sooner,
-  but lets all three through until tightened. I propose strict: stopping those three is why you
-  are moving. Which weighs more for you?
-
-> strict
-```
-
-What you settle goes into your README, design document and verification document, which stay with
-your product. The verification document gives, for each thing you would choose the product for, a
-scene: how the product will be used as you would use it and what must happen then, so the same
-check runs again after any later change. rn stops at the design sign-off with the three documents
-made, read and checked as the plan was, and a proposal of the same form.
-
-### Building
-
-You don't babysit it. rn plans the tasks from the design and carries them out. Each task's result
-is used by an AI that knows nothing of how it was made, checked item by item against its checklist
-and made again where it falls short, before rn sets it beside the task's purpose. Each time rn
-decides what to do next, it says so in one line:
+The same goes for the documents the purpose needs, such as a README or a design for what you are
+building, which rn writes into your repository on the pull request; here it is a design for the
+move. rn asks their points one at a time, such as how the types are made strict file by file, has
+the first reader use them, and stops at the design sign-off, where you answer `/rn:ty` again. Then
+rn divides the work into tasks, such as moving the cart, each checked against the acceptance
+criteria it serves, and carries them out in the conversation without you watching. If a point to
+decide comes up, rn asks it there and waits for your answer; if you close Claude Code meanwhile,
+`/rn:up` in a fresh conversation goes on from where it stopped. When the work is finished, the
+first reader uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
 
 ```console
-● #3 move src/cart ── decided: purpose not fulfilled. It passes only because its types are
-  `any`; last quarter's cart bug would still ship → fix
-● #3 move src/cart ── decided: purpose fulfilled → #4
-```
+● Deliverable sign-off
+  The finished work is on the pull request: https://github.com/you/app/pull/42
+  AC1: Code that repeats each of the three bugs fails the build.
+  AC2: The app builds and runs as before.
+  AC3: Every file of src/cart and src/checkout is TypeScript.
+  /rn:ty to approve, /rn:gm <feedback> to ask for a change.
 
-If a decision only you can make comes up, rn asks you, with what it proposes and why.
-
-### The deliverable sign-off
-
-When the tasks are done, the product is used as you would use it, in each scene of the
-verification document, and rn stops with the proposal. On `/rn:ty` the pull request is marked
-ready, and the merge is yours:
-
-```console
 > /rn:ty
-
-● Approved the deliverable. The pull request is ready: https://github.com/you/repo/pull/42
 ```
 
-Besides your product, the session leaves only its `.rn/` record, and the pull request links the
-issues the work closes.
+rn makes each document and the finished work with its checklist for that kind, which says what that
+kind, such as a README or code, must give its reader. What the session learned, rn offers you as
+lessons, one per message, each with what happened, what it recommends adding to your own
+checklists, and, where the slip was a fault of rn's own, whether to send it to rn's makers as an
+issue; you decide each:
+
+```console
+● Lessons to decide
+  ▶ 1. Values typed any
+
+  1. Values typed any
+  A file of src/checkout was first moved with its values typed any, which would let a wrong
+  type through; the first reader caught it. The slip was not rn's own, so there is no issue
+  for rn's makers.
+  a. Add "No value is typed any" to .rn/checklists/code.md (recommended). Every later piece
+     of code is made to it. Can be taken out of the file at any time.
+  b. Add nothing. Later work may repeat the slip.
+  Add it? Answer with a letter or in your own words.
+
+> a
+
+● The pull request is ready to merge: https://github.com/you/app/pull/42
+```
+
+What you add to your checklists sits in `.rn/checklists/` in your repository and goes into the same
+pull request. The merge is yours.
 
 ## Why rn
 
-Asking Claude in a conversation also gets work done. What rn adds:
+Asking Claude Code for the same work in a conversation also gets it done; what rn gives you beyond
+that:
 
-- What you get is what you meant, not what your first words said.
+- You ask without preparing anything.
 
-  Claude alone builds on your first words; rn first asks why you want it, as in Starting: the plan,
-  and offers ways only after that, as at the design sign-off.
+  Claude Code alone builds on your words as they stand, so you write out what you want first; rn
+  finds the points to decide behind your rough words and comes to ask them.
 
-- Each piece of work is checked by an AI that did not make it before you see it.
+- Your purpose is achieved by answering alone, so the finished work is rarely made again.
 
-  Claude alone judges its own work; rn has the plan, the design and each task's result checked by
-  another AI, as at the plan sign-off and in Building.
+  Each point is confirmed with you before it is built on, and each task is traced to the acceptance
+  criteria, so the finished work does not drift from the purpose you agreed.
 
-- You decide each sign-off from the proposal alone.
+- At each sign-off you decide from the proposal alone.
 
-  With Claude alone, you re-read the work to know where it stands; rn's proposal tells you, as at
-  the plan sign-off.
+  The first reader has read and used it in your place, so you need not read all of it again.
 
-- A fresh conversation, or tomorrow, goes on without you explaining anything again.
+- Work that takes days goes on from wherever you stopped.
 
-  With Claude alone, a fresh conversation starts from nothing; rn pushes each decision as it is
-  made, as at the plan sign-off.
+  A fresh conversation with Claude Code alone starts from nothing; with rn, `/rn:up` goes on.
+
+- What was decided, and why, stays with your repository.
+
+  It is kept in the documents rn writes into your repository, such as the design, and in rn's
+  commit messages, with the options weighed and each feedback with its answer, so your next piece
+  of work, or a teammate, starts from it.
+
+- Every later piece of work gets better.
+
+  Each lesson you take goes into your checklists, which rn makes all later work with.
 
 ## Requirements
 
@@ -212,21 +199,20 @@ Asking Claude in a conversation also gets work done. What rn adds:
 
 - A git repository whose remote is on GitHub.
 
-  rn puts everything you review on a pull request.
+  rn puts the plan and the work on a pull request.
 
-- The GitHub CLI `gh`, logged in to an account that can push to the repository.
+- The GitHub command-line tool `gh`, logged in to an account that can push to the repository.
 
   rn opens and updates the pull request with it.
 
 - Python 3.9 or later, run as `python3`, and jq, the command-line JSON tool.
 
-  rn has another plugin, [turn](../turn/README.md), make each piece of work and have it read and
-  checked by an AI that did not make it, as the plan and each task were in the example; turn and rn
-  itself run on Python and jq.
+  The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses
+  to make the plan, each document and the finished work, and to have the first reader use each.
 
 ## Installation
 
-In Claude Code, add the marketplace once, then install rn; this also installs turn:
+In Claude Code, add the marketplace once, then install rn:
 
 ```console
 /plugin marketplace add lovaizu/ccpm
@@ -237,15 +223,12 @@ Then, in your repository, type `/rn:up` with what you want, as in the example.
 
 ## Documentation
 
-- [During a session](during-a-session.md) tells how to pause with `/rn:dn` and resume in a fresh
-  conversation with `/rn:up`, how to give feedback in the pull request's comments, and what the
-  session leaves in your repository.
-- [rn's design document](docs/design.md) says how rn is built.
-- [rn's verification document](docs/verification.md) gives the scenes rn itself is checked in.
-- [The checklists](checklists/) give what rn checks each kind of work against: the plan, a
-  proposal, a README, a design document, a verification document, code and its tests, a prompt,
-  and any document.
+- The three commands in the example, `/rn:up`, `/rn:ty` and `/rn:gm`, are all there is to use.
 - [The changelog](CHANGELOG.md) says what changed in each version.
+
+## Development
+
+- [rn's development](../dev/rn/README.md) is the entrance for those who build rn.
 
 ## License
 

@@ -1343,6 +1343,8 @@ Progress:
     deliverable is used with the plan's acceptance criteria as what it is used for.
   - R8: the documents the purpose needs are confirmed with the user after the plan sign-off and
     made in the order their checklists draw them (UX, README, design).
+  - R9 (turn's question on the README): no page for fuller use; the README says the example's three
+    commands are all there is to use, since the UX names no other.
   - turn fixed twice on the way (ac4645a, adf992b): Claude Code now ends some agents with
     SubagentHandback, where SubagentStop gives no reply and its block is ignored.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
