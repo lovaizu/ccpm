@@ -30,7 +30,7 @@ flowchart LR
   orch -->|2 has the work made, and made again where no Good is found| gen
   orch -->|3 has it read in the receiver's place, by a new first user each time, back to 2 until every item has its Good| fu
   orch -->|4 has every item's Good looked for, given that reading, then decides every item| ev
-  orch -->|5 has how the run went learnt| le
+  orch -->|5 has how the run went learnt, then 2 to 4 once more where an item has none| le
   orch -->|6 returns the work and the result| caller
 ```
 
@@ -145,14 +145,18 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   of five changes. What fell short often lies in what a role did, which only its record shows; a
   run where every item got its Good may still have got it by chance, or spent time for nothing, and
   what is not learnt from is met again. A lesson without the facts it rests on is a guess.
-- The orchestrator takes the lessons it finds hold into the result, for the calling AI to hand on to
-  turn's makers, and the run returns, with each item still without Good, what the receiver gets
-  once it has it and where it was not found.
+- The orchestrator takes the lessons it finds hold: each goes to its role in the next round and into
+  the result, for the calling AI to hand on to turn's makers.
 
   The learner sees what each agent did, but the orchestrator decided every step of the run, so it
-  judges which lessons hold. Every remake is aimed at where a reader stopped, inside the reading
-  before; the evaluator and the decision judge, and remake nothing, so going round them again gives
-  no Good.
+  judges which lessons hold.
+- When every item has its Good or is a question, the run returns; otherwise the generator makes the
+  work again, it is read once more, from the orchestrator's findings to its decision and the
+  learner, and then the run returns, with each item still without Good, what the receiver gets
+  once it has it and where it was not found.
+
+  A second reading settles what the first found; what is left costs the calling AI less to fix than
+  more readings would.
 
 ### Physical view
 
@@ -183,7 +187,8 @@ turn/                      the plugin, installed by Claude Code
 - What each role is given: the generator, the whole CCS and what is sent back; the first user, the
   work, what the receiver opens, who the receiver is and what for, and the checklists; the
   evaluator, the same and the last first user's reading; the learner, every item's finding and the
-  JSONL of every agent of its run, the orchestrator's included.
+  JSONL of every agent of its run, the orchestrator's included; and each role of the second round,
+  the lessons taken for it.
 - The orchestrator starts the generator once a run and sends it what is sent back with
   SendMessage, which it loads with ToolSearch; every other role it starts anew each time.
 
@@ -236,8 +241,9 @@ turn/                      the plugin, installed by Claude Code
     stood in for by agents that read what their step reads and give a reply set beforehand, one set
     for each way a run goes: every item Good at the first reading, an item sent back with the parts
     where it is not found, an item the first user finds no Good for given at the next first user's
-    reading, a remake leaving an item's places as they were, and the evaluator differing from the
-    findings, with the learner after the decision; and, on the same task with its
+    reading, a remake leaving an item's places as they were, the evaluator differing from the
+    findings, and an item left without Good through the second reading, with the learner after
+    each reading; and, on the same task with its
     decision taken out, the questions returned before any work is made. On Opus 5.5; passes when its
     JSONL shows each step in its order, each hook stopping where its check should, and the result as
     the set replies make it.
