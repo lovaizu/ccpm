@@ -377,12 +377,15 @@ Progress:
   trial passed. Three acceptance trials at once on `b7e2c35`'s working tree (the scripts as at
   `74e8752`): sessions `c97c129f-2936-44ce-9ac9-22fb919915ae` (37.9 minutes, $14.2),
   `749e43aa-ce1f-4776-986f-02d27a338847` (28.5, $10.2), `1a3a6c1c-c996-4c08-a705-3a30acb7ee45`
-  (37.6, $13.2); not yet read.
-- Next: 1. read the three acceptance trials from every JSONL, judged from the receiver's purpose:
-  whether a part made worse by a remake is now caught, what the calling AI fixed and why, and
-  where the 28 to 38 minutes went (12 to 15 on earlier versions, 31 on `ddab054`), then record
-  them in `dev/turn/trials/readme/results.json`; 2. consult when reading stops, from those trials;
-  the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin validate --strict`.
+  (37.6, $13.2).
+- The three acceptance trials read from every JSONL (results.json): 36.6, 27.6 and 36.2 minutes
+  to return; items going on unseen 3, 2 and 1 (the encoding in two, a semicolon export in two, a
+  padded quoted cell mangled in one). A remake made a part worse once, run accounts in five parts,
+  and the orchestrator sent each back with its place. Round 2 took 19.0, 12.4 and 13.6 minutes
+  and moved no item KR1.1 counts in any of the three. `turn/scripts/forms.py:220` counts
+  `"ran": []` as a run, so a behavior statement with no run passes the check.
+- Next: 1. consult when reading stops, from those trials; the Y-statement; 2. CHANGELOG, the
+  whole tried once, `claude plugin validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
