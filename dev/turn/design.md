@@ -201,6 +201,11 @@ turn/                      the plugin, installed by Claude Code
 
   Tried with an agent started by an agent started in the background, as turn's roles are: sent a
   message after its reply, the same agent answered from what it had read, using no tool.
+- The reply of a role sent a message comes back later, not with the send, so the hook that checks
+  each reply keeps it in the run, and the orchestrator waits for it with turn's script.
+
+  Tried: an orchestrator that ended its turn after the send never got the reply; one that waited
+  on a script reading what the hook kept got it word for word.
 - A script counts the rounds and the send-backs of each round, two rounds and three send-backs of
   each kind at most, and names the agent to start or message next with what it is given; a hook
   lets the orchestrator start or message only that agent, with that.

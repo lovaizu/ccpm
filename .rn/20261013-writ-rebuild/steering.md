@@ -384,8 +384,27 @@ Progress:
   and the orchestrator sent each back with its place. Round 2 took 19.0, 12.4 and 13.6 minutes
   and moved no item KR1.1 counts in any of the three. `turn/scripts/forms.py:220` counts
   `"ran": []` as a run, so a behavior statement with no run passes the check.
-- Next: 1. consult when reading stops, from those trials; the Y-statement; 2. CHANGELOG, the
-  whole tried once, `claude plugin validate --strict`.
+- Decided by the user (2026-10-19), read from those trials: round 2 gave no Good because the first
+  user's stops, written after its form, were dropped by the hook, and the decision sent back the
+  item restated over the whole work. The design now (`b1963bd` to the commit after `06b586c`):
+  the generator and the first user stay started within a round and are sent back by SendMessage;
+  the first user gives places for each item it finds no Good for; an item whose Good rests on the
+  sources is the orchestrator's; the evaluator and the decision look at every item; three
+  send-backs of each kind a round, two rounds, counted by the script and held by a hook; a messaged
+  role's reply kept by the SubagentStop hook and waited for with turn.py (tried: a reply after a
+  send arrives later, as a notification an orchestrator that ended its turn never gets).
+- Next: implement that design and try the generator and first user loop first, as its own part.
+  Plan: forms: the first user's form gives every item, a Good or `places`; fix `forms.unrun`
+  counting `"ran": []`. run.py: `started` (role to agent_id, set by role_reply at SubagentStop),
+  `sent` counts per round, `held` items; `ask` gives `{"agent", "message", "to"}` once started;
+  `next` with nothing waits for a messaged reply (about 100 s, then `{"waiting"}`); after the first
+  user, its stops go to the orchestrator to hold those resting on the sources, the rest to the
+  generator, whose remake is read by the orchestrator again before the first user; compare sends
+  every item to the decision; decide lets a held item take the orchestrator's Good; round 2
+  starts both anew. Hooks: role_given checks SendMessage (to, message) and stops an Agent start
+  where a message is due; hooks.json matcher adds SendMessage. Prompts: up.md, generator.md,
+  first-user.md, evaluator.md. Then the CHANGELOG, the whole tried once, `claude plugin validate
+  --strict`.
 
 ### [ ] #6: Each checklist finished
 
