@@ -4,22 +4,24 @@
 
 ### Added
 
-- A checklist's item IDs may be `A1` as well as `A-1` — a verification document whose scenes are `### A1:` headings is read as a checklist, so a product is used against the same document its user approved.
-- A work can be several files that serve one purpose, such as code and its tests, each named as a `deliverable` — turn writes, reads and checks them together, so what the receiver needs only from them together is checked as one.
+- Before any work is made, turn checks that what your CCS and its files say can give every item its Good, and where it cannot, returns the questions alone, each with the items it settles and the answer it recommends — you ask the user once and call again, instead of a work made on a guess.
+- Each checklist says in its front matter `check: usability`, for what the receiver gets using the work, or `check: accuracy`, for whether it says what was decided and what the product does — the AI reading in the receiver's place answers what the receiver can tell, and only the one holding the sources answers the rest, so no Good is given on what the reader could not see.
+- Each checklist item says where it is answered, `Scope: its part`, `each part` or `whole`, and an item asked of each part gets its Good only where every section or file gives it — a part that falls short is not passed because another part gives the item.
+- The AI reading in the receiver's place has what the CCS says the receiver has, such as the whole repository, and does what they do with the work, such as running its tests — a Good that holds only on paper, or one the receiver gets from what lies beside the work, is told apart.
+- Each statement the work makes is checked against what it rests on: a decision against the words of your files, how the product behaves against a command run — a statement made up or never run is sent back before the work reaches you.
+- The result names, for every item, its Good with the lines that give it, the question it waits on, or what the receiver gets once it has it and where it was not found, and the lessons turn took on how its own run went — you check each Good by reading its lines, and hand the lessons on to turn's makers.
+- A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
+- Several runs go at once, each kept apart — your plugin can have several works made at the same time.
 
 ### Changed
 
-- The work reaches where it goes only when the run returns — a run stopped or cut off leaves your files as they were.
-- The work is made in a copy of the repository as it is committed, kept under `.turn/` while the run goes — the tests and builds the work needs run there as they would in place, and nothing has to be copied beside the work for them.
-- A change to the work after it has been handed to the reader is stopped — the version read is the version you get back.
-- Each stop turn's hooks make names the step it concerns and why — you and Claude see at once what went wrong and what that step needs.
-- The CCS names each input by what it is for: `checklist`, `decisions` (what you decided the work must say or do, and leave out), `reference` (what it follows or draws on, which turn reads in place of a copy) and `receiver_opens` (what the receiver opens with it); `viewpoint`, `answer` and `difference` of 0.1.0 are gone, and turn returns the rules it learns in its own part instead of adding them to your constraints — your plugin's step says what each file is for once, and nothing it did not ask piles up across calls.
-- turn and each agent it starts read only the files the CCS names, turn's own files and their own commands' output; a read outside them is stopped — the work follows what you decided, not whatever turn happened to open.
-- turn asks nothing while it works: what only you can decide is left out of the work and asked, with every other such question, when the run ends — you can leave turn at work and answer everything at once, and no stop message shows while it waits for the AIs that write, read and check the work. Called again with your answers, turn starts from the work it returned and writes over it without your committing it first, unless you changed it since.
-- turn takes a second pass only when the first leaves something the work itself can give, and returns what the second still leaves with how it would be given, with your questions — Claude, or your plugin's step, which knows what you agreed, decides whether to run again.
-- The console shows only each step, not the paths of turn's own files — you follow the run without learning how turn keeps it.
-- The work is written in the checklist's order: its shape first, then part by part from the top, each part to the items met in it, then the items that hold over the whole, one at a time — a term is said where it is first used and a repeat is cut over the whole, instead of being found by the reader and made again.
-- A rule turn returns is one no item of the checklist asks already — what comes back to you is a learning to act on, not the checklist said again.
+- turn is called from your plugin's step: started in the background with `{"ccs", "kind", "result"}`, the CCS your step's own JSON file and every name in it yours, turn taking what it needs by the kinds you name — your step keeps its task in its own shape, and its context holds only what comes back.
+- The work is made where it goes, and a run cut off leaves its writing as changes git shows — you undo or finish them and call again.
+- Where a reader finds no Good, the work is made again aimed at the places it stopped, up to three times a round and two rounds — each remake changes only what fell short, and a run that does not settle ends.
+
+### Removed
+
+- Asking in a conversation, the console view of each step, the questions asked while the work goes on, and the `.turn/` folder — what turn returns is the result file your step reads.
 
 ## [0.1.0] - 2026-10-13
 
