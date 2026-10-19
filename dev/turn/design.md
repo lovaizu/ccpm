@@ -1,9 +1,9 @@
 # turn design
 
-turn is built from five AI roles, a few scripts and hooks: one role makes the work, one reads it in
-its receiver's place, and the rest decide from that reading which items get their Good and have the
-work made again where one does not. The goal, the key results, and what a checklist, the receiver
-and a Good are, are in [turn's UX](ux.md).
+turn is built from five AI roles, a few scripts and hooks: one role makes the work and makes it
+again until another, reading it in its receiver's place, finds every item's Good, and the rest
+decide from that reading which items get their Good. The goal, the key results, and what a
+checklist, the receiver and a Good are, are in [turn's UX](ux.md).
 
 ## User stories
 
@@ -27,10 +27,10 @@ flowchart LR
   ev["Evaluator"]
   le["Learner"]
   caller -->|1 calls with the CCS, which the orchestrator checks can give every item its Good| orch
-  orch -->|2 has the work made| gen
-  orch -->|3 has it read in the receiver's place| fu
-  orch -->|4 has that reading's Goods held to their items, and the Goods it missed found| ev
-  orch -->|5 after every reading, has how the run went learnt, then 2 to 4 once more where an item has none| le
+  orch -->|2 has the work made, and made again where no Good is found| gen
+  orch -->|3 has it read in the receiver's place, by a new first user each time, back to 2 until every item has its Good| fu
+  orch -->|4 has every item's Good looked for, given that reading, then decides every item| ev
+  orch -->|5 has how the run went learnt| le
   orch -->|6 returns the work and the result| caller
 ```
 
@@ -82,6 +82,11 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   fact, so the one that wrote it grounds each. A quote is the words themselves, not lines that hold
   them, so it shows what was read for the statement; a product's code and the decisions about it
   may say otherwise than it does, and only a run shows what it does.
+- The generator stays started for the whole run: what is sent back reaches it as a message, and it
+  makes the work again with what it has already read.
+
+  It holds the sources it read and the Good it meant at each line, so it changes only what is sent
+  back, without reading the sources again.
 - The orchestrator reads the work, finding for every item the Good the receiver gets from it and, in
   each statement's grounds, what the statement says, and sends back the items whose Good it does not
   find, each said as what the receiver gets once it has it and the places of the work where it is
@@ -100,44 +105,54 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   statement as decided grounds it in the decision, while the product may do otherwise; a second mark
   by one that did not make the work catches it.
 - The first user reads the work in the receiver's place, with what the receiver opens and the
-  checklists, and gives for each item the Good it found in the work, with its lines.
+  checklists, and gives for each item the Good it found in the work, with its lines, and for each
+  item it finds none, the places of the work where it looked for it.
 
   A reader that did not make the work finds only the Good its lines give; the maker finds the Good
   it meant.
-- The evaluator, given the same and that reading, holds each Good of the reading to what its item
-  asks, at its lines, and looks through the whole work for the Good of each item the reading gave
-  none, giving every Good with its lines; the orchestrator decides each item where its findings and
-  the evaluator's differ, finding at the lines each names the Good the receiver gets, and giving
-  none where neither reader found one.
+- The orchestrator sends the generator each item the first user found no Good for, with its places,
+  and a new first user reads the work made again, until the first user finds every item's Good or
+  a remake leaves an item's places as they were. An item whose Good rests on the sources, such as
+  whether a statement said as fact was checked, is the orchestrator's, from its reading of the
+  grounds, and is not sent back for the first user's reading.
+
+  A remake aimed at where a reader stopped gives the Good there; an item restated over the whole
+  work leaves the generator nothing to aim at, and the remake changes nothing. A first user that
+  has read the work before reads what changed, not the work as the receiver meets it, so each
+  reading is a new one. A remake that leaves the places as they were would meet the same reading
+  again. The receiver has no sources, so no reading of theirs can tell whether a statement was
+  checked.
+- The evaluator, given the same and the last reading, looks through the whole work for every item's
+  Good, holding each Good of the reading to what its item asks, and gives every Good with its
+  lines. The orchestrator then reads the work whole and decides every item from its findings and
+  both readers' Goods, finding the Good the receiver gets, and giving none where neither reader
+  found one, but for an item whose Good rests on the sources.
 
   The orchestrator's findings are recorded before the evaluator starts, as a judgment made after
-  another's is pulled toward it. One reader misses a Good the work gives, and an item judged
-  without it is made again for nothing; a Good held to its item is one the calling AI can rely on.
-  A Good only the orchestrator found would be judged by one that read the work knowing what it
-  meant, so a script stops it.
-- After every reading, the learner reads every item's finding and the record of every agent of the
-  run, the orchestrator's included, and gives, from what they show, with the words it rests on
-  quoted, how the run went: whether the Goods came without waste and not by chance, each lesson for
-  the role it is for, on how it read, checked and replied, or that it found none and what it
-  checked.
+  another's is pulled toward it. One reader misses a Good the work gives; a Good held to its item
+  only at the lines the reading named passes a place elsewhere that does not give it. Readers that
+  agree may still carry a doubt inside a Good, so agreement is decided too. A Good only the
+  orchestrator found would be judged by one that read the work knowing what it meant, so a script
+  stops it.
+- Once the orchestrator has decided, the learner reads every item's finding and the record of every
+  agent of the run, the orchestrator's included, and gives, from what they show, with the words it
+  rests on quoted, how the run went: whether the Goods came without waste and not by chance, each
+  lesson for the role it is for, on how it read, checked and replied, or that it found none and what
+  it checked.
 
   A lesson on what the work should say tells the generator how to give a Good, which is the
   generator's to decide: told to put every change in the opening, it made the opening one sentence
   of five changes. What fell short often lies in what a role did, which only its record shows; a
   run where every item got its Good may still have got it by chance, or spent time for nothing, and
   what is not learnt from is met again. A lesson without the facts it rests on is a guess.
-- The orchestrator takes the lessons it finds hold: each goes to its role in the next round and into
-  the result, for the calling AI to hand on to turn's makers.
-
-  The learner sees what each agent did, but the orchestrator decided every step of the run, so it
-  judges which lessons hold.
-- When every item has its Good or is a question, the run returns; otherwise the generator makes the
-  work again, it is read once more, from the orchestrator's findings to its decision and the
-  learner, and then the run returns, with each item still without Good, what the receiver gets
+- The orchestrator takes the lessons it finds hold into the result, for the calling AI to hand on to
+  turn's makers, and the run returns, with each item still without Good, what the receiver gets
   once it has it and where it was not found.
 
-  A second reading settles what the first found; what is left costs the calling AI less to fix than
-  more readings would.
+  The learner sees what each agent did, but the orchestrator decided every step of the run, so it
+  judges which lessons hold. Every remake is aimed at where a reader stopped, inside the reading
+  before; the evaluator and the decision judge, and remake nothing, so going round them again gives
+  no Good.
 
 ### Physical view
 
@@ -167,9 +182,13 @@ turn/                      the plugin, installed by Claude Code
   checklists or the receiver without an entry.
 - What each role is given: the generator, the whole CCS and what is sent back; the first user, the
   work, what the receiver opens, who the receiver is and what for, and the checklists; the
-  evaluator, the same and the first user's reading; the learner, every item's finding and the JSONL
-  of every agent of its run, the orchestrator's included; and each role of the second round, the
-  lessons taken for it.
+  evaluator, the same and the last first user's reading; the learner, every item's finding and the
+  JSONL of every agent of its run, the orchestrator's included.
+- The orchestrator starts the generator once a run and sends it what is sent back with
+  SendMessage, which it loads with ToolSearch; every other role it starts anew each time.
+
+  Tried with an agent started by an agent started in the background, as turn's roles are: sent a
+  message after its reply, the same agent answered from what it had read, using no tool.
 - Each role replies in a JSON form of its own, not in a file, and a hook checks each role at both
   ends.
 
@@ -216,15 +235,17 @@ turn/                      the plugin, installed by Claude Code
   - Flow: on a task of two items, one answered at its part and one in each part, with the four roles
     stood in for by agents that read what their step reads and give a reply set beforehand, one set
     for each way a run goes: every item Good at the first reading, an item sent back with the parts
-    where it is not found, the evaluator differing from the findings, and an item left without Good
-    through the second reading, with the learner after each reading; and, on the same task with its
+    where it is not found, an item the first user finds no Good for given at the next first user's
+    reading, a remake leaving an item's places as they were, and the evaluator differing from the
+    findings, with the learner after the decision; and, on the same task with its
     decision taken out, the questions returned before any work is made. On Opus 5.5; passes when its
     JSONL shows each step in its order, each hook stopping where its check should, and the result as
     the set replies make it.
 - Each of the four roles: works to its aim with what it is given, giving its form.
   - Flow: started on its own with a prompt set beforehand, as the orchestrator would give it, on a
     task of two items, one answered at its part and one in each part, on Opus 5.5; passes when its
-    JSONL shows it read only and whole what its step reads, and its reply fills its form.
+    JSONL shows it read only and whole what its step reads, and its reply fills its form; the
+    generator, sent back by message, remakes the work without reading its sources again.
   - Content: what it makes in the acceptance trials below, read against its JSONL.
 
 ### Acceptance
