@@ -18,8 +18,9 @@ from the highest, and a lower one is never brought closer by moving a higher one
 the UX is making that experience clear, in this order:
 
 1. Decide the users and the goal each wants to achieve.
-2. Decide, for each goal, its key results: what is measured to show how close the product brings
-   the user to it and which way is better, and put them in order of priority.
+2. Decide, for each goal, its key results, each drawn from the goal: what is counted, how each case
+   is judged to count, and how the value stands once the user has reached the goal; then put them in
+   order of priority.
 3. Draw, as scenes, what the user does and gets back until they achieve the goal.
 4. Decide what the user gains when they achieve the goal with this product: the benefits, which are
    why the user chooses it.
@@ -72,14 +73,15 @@ Can the reader tell the users and the goal each wants to achieve?
 Why: everything else in the UX is the experience of these users reaching these goals; without them,
 the builder cannot tell whom the product is for or when it has done its work.
 
-### B-2: Results measured
+### B-2: Results drawn from the goal
 
-Can the reader tell, for each goal, what is measured to show how close the product brings the user
-to it?
+Can the reader tell, for each key result, what is counted, how each case is judged, and how the
+value stands once the user has reached the goal, each drawn from the goal?
 
 Look for: work done or a thing made in place of a result the user sees.
 
-Why: a count of work done grows while the user gains nothing.
+Why: a measure taken because it is easy to count, or counted by rule rather than by the goal, moves
+while the user comes no closer.
 
 ### B-4: Why each key result
 

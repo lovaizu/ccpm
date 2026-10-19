@@ -224,9 +224,10 @@ from the JSONL of every agent it started and from the work.
 - The story: the work comes back where it goes, and every item has a Good with its lines, a
   question, or what the receiver gets once it has its Good.
   - Each Good is checked by reading its lines in the work.
-- KR1.1: the items the calling AI fixes after the work comes back.
-  - Counted from the stand-in's own check in its JSONL, and compared with the version in use on the
-    same task, kept with the trial in `dev/turn/trials/`.
+- KR1.1: the items of the work the calling AI is not satisfied by when it comes back.
+  - Each item the stand-in fixes in its JSONL, and each the work still misses, judged as the UX's
+    KR1.1 says, and compared with the version in use on the same task, kept with the trial in
+    `dev/turn/trials/`.
 - KR1.2: the time from the call to the work coming back.
   - Taken from the JSONL's timestamps for a README-sized work, and compared with the version in use
     on the same task.
