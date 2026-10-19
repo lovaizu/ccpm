@@ -197,5 +197,44 @@
   "fixed": "readme B-7, the README linking LICENSE with no such file: the stand-in wrote an MIT LICENSE, as the decision it had written says. readability B-7, Installation giving the command again: reworded to point at the example. readability B-6, Documentation and Development saying 'no documents yet': reworded, the Development sentence in no source. The first is what the reader lacked, the other two polish; both came back without Good after round 2 changed neither.",
   "goods_checked": "Every statement set against csvtidy.py by runs: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The LICENSE is a file beside the work, as the decision the stand-in wrote says; the rewording of Installation, Documentation and Development is polish; the semicolon export the trial's judge found is an edge of csvtidy the decisions do not ask for. No remake made a part worse that a role or the stand-in counts; every each-part item was answered for all eight parts by every role. turn/scripts/forms.py:220 counts a statement with \"ran\": [] as shown by a run, so the orchestrator's behavior mark on 40-41 was not sent back; the statement holds, so the reader lost nothing.",
   "read": "Every JSONL read. First call 1.1 minutes, the license question alone, its check giving B-3 'can' while writing that csv.writer rewrites line endings and 'I haven't run the script to confirm this'; second call 1.1, that question alone. Third call 33.5: check 0.95, generator 2.8, reading 1.1 sending back readability B-3 with csvtidy.py's utf-8, generator 2.5, reading 0.9 sending back B-5 and line 56 as unsourced, generator 3.1 (0.9 a reply stopped for prose), reading 0.8, first user 1.8 (0.6 a reply stopped for a list after its form), evaluator 1.2, decision 0.4 (B-4, B-6, B-7 gets restating the item with every part as places), learner 3.5 over 24 pages, take 0.3 taking all ten, among them one sending the evaluator to csvtidy.py, which it is not given; round 2: generator 4.0, reading 0.9, first user 1.1, evaluator 1.3 (that read stopped), decision 0.2, learner 5.6 over 59 pages (23 of them the first learner's record), take and return 0.4. Round 2, 13.6 minutes, gave readability B-4 its Good and took B-5's away; B-6 and B-7 came back as they went. Hook stops and replies sent back some 2.6 minutes."
+ },
+ {
+  "commit": "12b95cb",
+  "unit": 3,
+  "session": "e0cb85a1-7466-4ad2-8d67-215a5d5f7a86",
+  "minutes_to_return": 68.1,
+  "items_fixed_after_return": 3,
+  "items_not_satisfied": 0,
+  "questions": 2,
+  "cost_usd": 34.36,
+  "fixed": "accuracy B-1, usability B-3 and B-7, one cause: the README said every space around a cell is trimmed and utf-8-sig gives full_name, while a space right after a byte order mark stays (\\ufeff_full_name); the stand-in ran it, rewrote the rule with its exception and cut Installation's BOM lines to two. The two questions, the license and what csvtidy changes beyond the decisions, came back alone, one per call, and were answered with their recommended answers.",
+  "goods_checked": "Every statement set against csvtidy.py by runs, the stand-in's and the judge's: all hold after the fix. Not satisfied, judged from the receiver's purpose and the decisions: none. Round 2 filled the README with edges the decisions do not ask for: non-breaking spaces, vertical tabs and form feeds, a BOM followed by a space, a file without a header, the same name for both files.",
+  "read": "Every JSONL read. Three calls: 0.85 minutes, the license question; 1.1, what csvtidy changes, which the first call's check had given 'can' from the decisions' 'changes nothing but' without a run, and the second ran csvtidy and asked; third 65.7: check 0.8, round 1 24.0 (generator, readings, first user, sent back in turn), evaluator 1.3, decision 1.4, learner 3.2, round 2 23.6, evaluator 1.3, decision 1.7, learner 7.5 over 115 tool uses, take and return 0.4. Each remake the first user sent back went through the orchestrator's reading again (turn/scripts/run.py next_step and reading), which the design puts only before the first user."
+ },
+ {
+  "commit": "12b95cb",
+  "unit": 3,
+  "session": "8f5e05da-0d4a-42a5-b360-3a3aa3a6ebba",
+  "minutes_to_return": 37.6,
+  "items_fixed_after_return": 0,
+  "items_not_satisfied": 0,
+  "questions": 4,
+  "cost_usd": 13.12,
+  "fixed": "none of turn's work. Four questions, each answered with its recommended answer: the license alone from the first call; from the second, CRLF and quoting against the decisions' 'changes nothing but' (said in the README), a byte order mark (csvtidy.py changed to utf-8-sig) and UTF-8 in the requirements (the decision changed). The stand-in fixed its own added lines: 'line' to 'row', as a line break inside a cell stays \\n, and one line's width.",
+  "goods_checked": "Every statement set against csvtidy.py by runs: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The byte order mark came back as a question, an edge of csvtidy the decisions do not ask for, answered by changing the product.",
+  "read": "Every JSONL read. First call 0.95 minutes, the license question alone; second 36.4: check 0.7, round 1 27.2: generator 2.7, reading 1.0 sending back one statement, generator 1.3, reading 0.6, first user 2.0, generator 1.8, reading, first user 0.9, generator 7.8 with a reply stopped by the Stop hook for a question naming no item and a reading stopped for a place not a part, reading sending back a statement as unsourced, generator 1.6, reading 1.0 (stopped once to read the work whole), first user 0.8, generator 1.7, first user 0.6; evaluator 1.2, decision 2.6 (stopped twice by hooks and once for its form), learner 4.2, take and return 0.3. The orchestrator ran sleep 150 in the background once and was sent on by the Stop hook. The first user's remakes went through the orchestrator's reading again, as in acc1."
+ },
+ {
+  "commit": "12b95cb",
+  "unit": 3,
+  "session": "bed7eb0a-9852-4dc5-8632-64e8cc9a201a",
+  "minutes_to_return": 28.0,
+  "items_fixed_after_return": 2,
+  "items_not_satisfied": 0,
+  "questions": 2,
+  "cost_usd": 10.51,
+  "fixed": "usability B-3 and accuracy B-4, one cause: a byte order mark stays stuck to the first header name, which the orchestrator itself ran after its decision and told in its return; the stand-in added a Requirements item with how to see the mark. Both questions, the license and a LICENSE file with its holder, were answered with their recommended answers; the stand-in wrote LICENSE with the holder from git log.",
+  "goods_checked": "Every statement set against csvtidy.py by runs: all hold. Not satisfied, judged from the receiver's purpose and the decisions: none. The byte order mark is an edge the decisions do not ask for, as on b7e2c35.",
+  "read": "Every JSONL read. First call 0.9 minutes, the license question alone; second 27.0: check 0.7, round 1 20.4: generator 4.0, reading 1.1 sending back, generator 1.6, reading 0.7, first user 2.0, generator 2.9, reading 0.8 sending back, generator 1.4, reading 0.65, first user 0.85, generator 2.2, reading 0.8, first user 0.85; evaluator 1.2, decision 1.1 (stopped once to read the work whole after Read answered 'unchanged'), learner 2.7, take and return 0.4. No round 2. Generator replies stopped for their form four times, the first user's once. Two of the orchestrator's readings came after the first user's remakes, as in acc1."
  }
 ]

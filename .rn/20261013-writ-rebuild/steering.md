@@ -477,13 +477,22 @@ Progress:
   `has` (csvtidy.py). `claude plugin validate --strict` passes for turn, rn and the marketplace,
   advising an install line in turn's README; turn's README lacks Requirements, Installation and
   License, which readme.md F-1 asks: to bring to the user, as the README is agreed with them.
-- Next: three acceptance trials at once on `12b95cb` (`python3 dev/turn/trials/trial.py
-  dev/turn/trials/readme <new folder>`, each its own folder), read from every JSONL against KR1.1
-  and KR1.2 and the last trials (36.6, 27.6, 36.2 minutes; none not satisfied), recorded in
-  `dev/turn/trials/readme/results.json`; then report to the user, with the README point.
-  The three were started at 08:53 on 2026-10-19, printing to /private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/0375165e-a4df-4f7b-8b73-a44b689ed59d/scratchpad/acc1.out, acc2.out and
-  acc3.out (each ends with the session, cost and minutes); where a file is missing or ends
-  without `minutes:`, run that one again.
+- Done (2026-10-19): three acceptance trials on `12b95cb`, recorded in
+  `dev/turn/trials/readme/results.json`: 68.1, 37.6 and 28.0 minutes to return; none not
+  satisfied. acc1 called turn three times, as its first check gave readme B-3 'can' from the
+  decisions' "changes nothing but" without running csvtidy, and the second check ran it and asked.
+  Each remake the first user sends back goes through the orchestrator's reading again
+  (`turn/scripts/run.py` `next_step`, `reading`), which the design puts only before the first user.
+  The user judged the send-back and read-again loops no good at all ("止めなよ／全然ダメだよ").
+- Next: from the JSONL of the three trials (sessions e0cb85a1, 8f5e05da, bed7eb0a under
+  `~/.claude/projects/-private-tmp-claude-501--Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild-0375165e-a4df-4f7b-8b73-a44b689ed59d-scratchpad-acc{1,2,3}/`,
+  each with `subagents/`), find for each send-back, remake and reading again what it changed in the
+  README and whether that moved an item the stand-in or the receiver would notice, and report the
+  facts to the user. Then the user picks the loop's shape, a change to the approved design: A, each
+  reading once (generator makes; the orchestrator and the first user read the same version once;
+  one remake with both; decide and return; no round 2), recommended; B, round 2 kept, one reading
+  and one remake a round; C, the design kept, only the orchestrator's reading taken out of the
+  first user's loop.
 
 ### [ ] #6: Each checklist finished
 
