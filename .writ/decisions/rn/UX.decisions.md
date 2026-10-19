@@ -7,12 +7,12 @@
   anything and only answer what they are asked, and their purpose is achieved.
 
 ### B-2 (key results)
-They stand from the highest priority: the user's time is never saved by letting a work pass that
-does not serve their purpose, since finding it after the merge costs them more than any answer.
-- KR1.1: The points of the merged work that, in use, do not serve the user's purpose; fewer is
-  better, and none once the goal is reached.
-  The user approves at each sign-off from the proposal alone, without reading all of it again, so a
-  work that misses their purpose shows only once it is used.
+They stand from the highest priority: the user's time is never saved by a deliverable that misses
+their purpose, since what is sent back then is made again after all of it is built.
+- KR1.1: The points the user sends back at the deliverable sign-off; fewer is better, and none once
+  the goal is reached.
+  At the plan and design sign-offs the user decides; a point sent back at the deliverable is where
+  the finished work misses the purpose they agreed, and it is made again after all is built.
 - KR1.2: The time the user spends from asking to their purpose achieved: answering, checking at the
   sign-offs, sending back and doing anything by hand; shorter is better, and once the goal is
   reached only answering what the user alone can decide is left.
