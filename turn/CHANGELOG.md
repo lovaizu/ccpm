@@ -9,6 +9,7 @@
 - The AI reading in the receiver's place has what the CCS says the receiver has, such as the whole repository, and does what they do with the work, such as running its tests — a Good that holds only on paper, or one the receiver gets from what lies beside the work, is told apart.
 - The AI that makes the work runs what it gives as the receiver would, such as the commands it tells and its tests — a work that fails on first use is made again before it reaches you.
 - The result names, for every item, its Good with the lines that give it, the question it waits on, or what the receiver gets once it has it and where it was not found, and the lessons turn took on how its own run went — you check each Good by reading its lines, and hand the lessons on to turn's makers.
+- Each AI of a run reads only what your CCS gives it and writes nothing but the work, its shell commands included — the work rests on what you decided, and the rest of your repository stays as you left it.
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
 

@@ -389,6 +389,49 @@ class TestWrites(HookTest):
             with self.subTest(command=command):
                 self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "caller")
 
+    def test_the_generator_writing_the_work_by_a_command_passes(self):
+        # Given: a generator of a run
+        # When: a command writes the work, by a redirect or in place, or writes in a folder of its
+        # own made with mktemp, or a heredoc's text holds `>`
+        # Then: it goes through
+        for command in (
+            "printf '# csvtidy\\n' > README.md",
+            "sed -i '' 's/a/b/' README.md",
+            'd=$(mktemp -d) && cd "$d" && printf x > in.csv && cp in.csv out.csv; cd / && rm -r "$d"',
+            "python3 - <<'EOF'\nif len(s) > notes: pass\nEOF",
+            "python3 csvtidy.py in.csv out.csv 2>&1 > /dev/null",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_a_command_writing_elsewhere_in_the_repository_stops(self):
+        # Given: a generator of a run
+        # When: a command writes a file of the repository that is not the work: by a redirect, by
+        # tee, cp, rm or touch, or after cd went into the repository
+        # Then: it is stopped, naming where it may write
+        for command in (
+            "echo x > checklists/readme.md",
+            "echo x | tee -a notes/readme.decisions.md",
+            "cp README.md copy.md",
+            "rm notes/readme.decisions.md",
+            "cd checklists && touch new.md",
+            "sed -i '' 's/a/b/' notes/readme.decisions.md",
+        ):
+            with self.subTest(command=command):
+                event = self.tool("turn:generator", "Bash", command=command)
+                self.stops(pretooluse, event, "README.md")
+
+    def test_any_other_of_turns_agents_writing_the_work_by_a_command_stops(self):
+        # Given: the first user of a run
+        # When: a command writes the work, or a file in a folder of its own
+        # Then: the first is stopped, saying the generator alone writes the work, and the second
+        # goes through
+        self.given_prompt(ID, self.first_user())
+        event = self.tool("turn:first-user", "Bash", command="echo x >> README.md")
+        self.stops(pretooluse, event, "generator")
+        command = 'd=$(mktemp -d); cd "$d"; printf x > in.csv; rm -r "$d"'
+        self.passes(pretooluse, self.tool("turn:first-user", "Bash", command=command))
+
     def test_other_commands_pass(self):
         # Given: one of turn's agents
         # When: it runs a command that neither commits nor pushes
@@ -571,6 +614,38 @@ class TestReads(HookTest):
         joined = f"{asked}; cat {CALL['result']}"
         self.stops(pretooluse, self.tool("turn:generator", "Bash", command=joined))
 
+    def test_a_role_asking_the_script_beside_reading_what_it_was_given_passes(self):
+        # Given: a generator of a run
+        # When: it runs turn's script, naming where the run is kept, in a command that also goes
+        # to the repository or reads the work
+        # Then: it goes through, as where the run is kept is what the script is asked of
+        for command in (
+            f"cd {self.repo}; {SCRIPT} given {CALL['result']}",
+            f"cat -n README.md && {SCRIPT} parts {CALL['result']}",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_a_command_in_a_folder_of_its_own_names_paths_from_there(self):
+        # Given: a generator of a run
+        # When: its command goes with cd to a folder outside the repository, by its path or as made
+        # by mktemp, and names `.` there; or goes back to the repository, or names a file of it by
+        # its whole path
+        # Then: the first goes through, as `.` is that folder; the others are stopped
+        outside = os.path.dirname(self.repo)
+        for command in (
+            f'd=$(mktemp -d) && cd "$d" && cp {self.repo}/README.md . && ls; cd / && rm -r "$d"',
+            f"cd {outside} && ls .",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
+        for command in (
+            f'cd "$d" && cd {self.repo} && ls .',
+            f'cd "$d" && cat {self.repo}/secret/notes.md',
+        ):
+            with self.subTest(command=command):
+                self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
     def test_a_role_asking_the_script_for_the_parts_of_the_work_passes(self):
         # Given: a generator of a run
         # When: it runs turn's script for the parts of the work, naming where the run is kept
@@ -691,6 +766,7 @@ class TestWholeReads(HookTest):
             ("Bash", {"command": "sed -n 1,2p README.md"}),
             ("Bash", {"command": "cat README.md | head -n 2"}),
             ("Bash", {"command": "cat 'README.md"}),
+            ("Bash", {"command": 'd=$(mktemp -d) && cd "$d" && cat README.md'}),
         ):
             with self.subTest(part=part):
                 uses = (part, self.read("checklists/readme.md"))

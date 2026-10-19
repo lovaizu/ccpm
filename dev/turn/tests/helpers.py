@@ -22,6 +22,7 @@ import events
 import forms  # noqa: F401  (the forms, for their own tests)
 import records
 import run
+import shell  # noqa: F401  (the hooks' reading of a command, for its own tests)
 from checks import (  # noqa: F401  (each check, for its own tests)
     call_given,
     no_commit,

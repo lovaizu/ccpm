@@ -13,7 +13,7 @@ try:
 except ImportError:
     raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
 
-from helpers import RepoTest, forms, read_in_given, read_whole, records, run
+from helpers import RepoTest, forms, records, run, shell
 
 call = run.call
 
@@ -123,15 +123,16 @@ class TestCommands(unittest.TestCase):
     @given(st.text(max_size=200))
     def test_any_command_is_read_into_words(self, command):
         # Given: any command
-        # When: the hooks read its words and the files it prints whole
-        # Then: they read it without breaking
-        event = {"tool_input": {"command": command}}
-        self.assertIsInstance(read_in_given.words(event), list)
-        self.assertIsInstance(read_whole.catted(command), list)
+        # When: the hooks read its words, and the paths it names, writes and prints whole
+        # Then: they read it without breaking, each path whole
+        self.assertIsInstance(shell.words(command), list)
+        for paths in (shell.named, shell.written, shell.printed):
+            self.assertTrue(all(os.path.isabs(p) for p in paths(command, "/r")))
 
     @given(st.lists(NAMES, min_size=1, max_size=5))
     def test_cat_reads_each_file_it_names(self, names):
         # Given: files of any plain names
         # When: a command prints them with cat
         # Then: each is taken as read whole
-        self.assertEqual(read_whole.catted("cat " + " ".join(names)), names)
+        found = shell.printed("cat " + " ".join(names), "/r")
+        self.assertEqual(found, [os.path.realpath(os.path.join("/r", n)) for n in names])

@@ -7,15 +7,14 @@ from __future__ import annotations
 import json
 import os
 import re
-import shlex
 from typing import Any
 
 import agents
 import records
 import run
+import shell
 
 READERS = ("generator", "first-user", "evaluator", "learner")
-STATEMENT = re.compile(r"&&|\|\||;|\n")
 # How Claude Code records a message from another agent: from an agent, or from the conversation
 # that started it.
 MESSAGED = ("peer", "coordinator")
@@ -193,7 +192,7 @@ def reads(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> N
 
 
 def runs(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
-    read.update(at(cwd, p) for p in catted(str(given.get("command", ""))))
+    read.update(shell.printed(str(given.get("command", "")), cwd))
 
 
 def changes(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
@@ -247,20 +246,6 @@ def printed(path: str) -> bool:
                 if agents.runs(command, "next") and "<<" not in command:
                     shown = not {"|", ">"} & set(command)
     return shown
-
-
-def catted(command: str) -> list[str]:
-    """The files a command prints whole with cat, in a statement not piped or redirected."""
-    files: list[str] = []
-    for statement in STATEMENT.split(command):
-        try:
-            words = shlex.split(statement)
-        except ValueError:
-            continue
-        head, *rest = words or [""]
-        if head == "cat" and not {"|", ">", ">>"} & set(rest) and "|" not in statement:
-            files += [w for w in rest if not w.startswith("-")]
-    return files
 
 
 def at(cwd: str, path: str) -> str:
