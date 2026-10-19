@@ -339,11 +339,18 @@ Progress:
   (decided by the user, 2026-10-19). The user set at the org: SHA pinning required, workflow
   token read-only, the GitHub recommended security configuration; not yet seen in a CI run, as
   the token here cannot rerun one: the next push shows it.
-- Next: 1. the acceptance trial on the commit after `7461cf2`, every JSONL read, reported by what
-  the caller is not satisfied by (`python3 dev/turn/trials/trial.py dev/turn/trials/readme
-  <new folder>`; a run started before a `/clear` may have been cut off); 2. consult, one at a time:
-  when reading stops; the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin validate
-  --strict`.
+- Decided by the user (2026-10-19): a key result is drawn from the user's goal: what is counted,
+  how each case is judged to count, and how the value stands once the goal is reached; ux
+  checklist step 2 and B-2, turn's KR1.1 now the items the calling AI is not satisfied by, each
+  judged by whether it can tell and fix it at once or it goes on unseen, none at the goal.
+- The acceptance trial on `ddab054` (results.json): 31.0 minutes over three calls (12.6 before),
+  one item not satisfied (two before): the file's encoding unsaid, a byte order mark giving
+  '﻿full_name'; the CRLF slip of every run before caught by the run check. Six items fixed
+  after return, each told and fixed at once. Round 2 and its learner, some 11 minutes, moved no
+  item KR1.1 counts. The generator's reply stopped five times for an empty list beside its other
+  grounds, some 2.5 minutes; an empty list now gives no grounds and asks for none.
+- Next: 1. consult, one at a time: when reading stops, from round 2 moving nothing KR1.1 counts;
+  the Y-statement; 2. CHANGELOG, the whole tried once, `claude plugin validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
