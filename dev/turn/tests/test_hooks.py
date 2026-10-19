@@ -392,13 +392,14 @@ class TestWrites(HookTest):
     def test_the_generator_writing_the_work_by_a_command_passes(self):
         # Given: a generator of a run
         # When: a command writes the work, by a redirect or in place, or writes in a folder of its
-        # own made with mktemp, or a heredoc's text holds `>`
+        # own made with mktemp, or a heredoc's text holds `>`, its end word come or not
         # Then: it goes through
         for command in (
             "printf '# csvtidy\\n' > README.md",
             "sed -i '' 's/a/b/' README.md",
             'd=$(mktemp -d) && cd "$d" && printf x > in.csv && cp in.csv out.csv; cd / && rm -r "$d"',
             "python3 - <<'EOF'\nif len(s) > notes: pass\nEOF",
+            "cat <<EOF\nx > notes/new.md",
             "python3 csvtidy.py in.csv out.csv 2>&1 > /dev/null",
         ):
             with self.subTest(command=command):
@@ -407,7 +408,8 @@ class TestWrites(HookTest):
     def test_a_command_writing_elsewhere_in_the_repository_stops(self):
         # Given: a generator of a run
         # When: a command writes a file of the repository that is not the work: by a redirect, by
-        # tee, cp, rm or touch, or after cd went into the repository
+        # tee, cp, rm or touch, after cd went into the repository, or on a heredoc's line or after
+        # its text
         # Then: it is stopped, naming where it may write
         for command in (
             "echo x > checklists/readme.md",
@@ -416,6 +418,9 @@ class TestWrites(HookTest):
             "rm notes/readme.decisions.md",
             "cd checklists && touch new.md",
             "sed -i '' 's/a/b/' notes/readme.decisions.md",
+            "cat <<'EOF' > notes/new.md\nhi\nEOF",
+            "cat <<EOF\nhi\nEOF\necho x > notes/new.md",
+            "cat <<EOF > notes/new.md",
         ):
             with self.subTest(command=command):
                 event = self.tool("turn:generator", "Bash", command=command)

@@ -69,21 +69,25 @@ def statements(command: str, cwd: str) -> Iterator[tuple[str | None, list[str], 
 def text_left_out(said: list[str]) -> list[str]:
     """The words with each heredoc's text left out, from the line after `<<` to its end word."""
     kept: list[str] = []
-    end = None
-    waiting = False
-    for i, word in enumerate(said):
-        if end is not None:
-            if waiting and word == "\n":
-                waiting = False
-            elif not waiting and word == end and said[i - 1] == "\n":
-                end = None
-            elif waiting:
-                kept.append(word)
-            continue
+    rest = iter(said)
+    for word in rest:
         kept.append(word)
-        if word in ("<<", "<<-") and i + 1 < len(said):
-            end, waiting = said[i + 1], True
-            kept.append(end)
+        if word not in ("<<", "<<-"):
+            continue
+        end = next(rest, None)
+        # The rest of the line is the command's, such as a redirect; the text runs from the next
+        # line to its end word on a line of its own.
+        line = []
+        for word in rest:
+            line.append(word)
+            if word == "\n":
+                break
+        kept += [end] + line if end else line
+        last = "\n"
+        for word in rest:
+            if word == end and last == "\n":
+                break
+            last = word
     return kept
 
 
