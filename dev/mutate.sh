@@ -7,11 +7,13 @@
 set -e
 
 copy=$(mktemp -d)
-trap 'kill $(jobs -p) 2>/dev/null; rm -rf "$copy"' EXIT
+pids=""
+trap 'kill $pids 2>/dev/null || true; rm -rf "$copy"' EXIT
 workers=$(getconf _NPROCESSORS_ONLN)
 for n in $(seq 1 "$workers"); do
   cp -R . "$copy/worker-$n"
   (cd "$copy/worker-$n" && exec cosmic-ray http-worker --port $((9875 + n))) >/dev/null 2>&1 &
+  pids="$pids $!"
 done
 python3 - "$workers" <<'EOF'
 import socket
