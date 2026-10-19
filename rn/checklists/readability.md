@@ -20,6 +20,8 @@ A document is made readable by thinking through what the reader meets, in the or
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the document follow this shape, inside the template its own kind gives?
 
 ```markdown
@@ -46,6 +48,8 @@ bold marks where to stop, and on every item it marks nothing out.
 
 ### B-9: Whether it serves their purpose
 
+Scope: its part
+
 On opening the document, can the reader tell whether it serves their purpose?
 
 Look for: the main point right under the title.
@@ -54,6 +58,8 @@ Why: a reader who cannot tell reads on to find out, or leaves a document that wo
 them; one who can reads each part knowing what it supports.
 
 ### B-12: Every term known
+
+Scope: each part
 
 Can the reader tell what each term means where they meet it, because they already know it or the
 place where it is first used, a sentence, an example or a figure, shows what it means?
@@ -68,17 +74,23 @@ from the writer's where the guess is wrong.
 
 ### B-13: One name for each thing
 
+Scope: whole
+
 Does the reader meet each thing under one name from start to end?
 
 Why: a reader takes a second name for a second thing.
 
 ### B-14: One meaning for each name
 
+Scope: whole
+
 Does each name keep one meaning for the reader from start to end?
 
 Why: a name whose meaning shifts carries its first meaning into the place where it has changed.
 
 ### B-11: Read once from the top
+
+Scope: each part
 
 Can the reader read each sentence without going back or ahead, because each word, reason and step
 it rests on comes before it?
@@ -91,6 +103,8 @@ Why: each of these stops the reader, sends them back or ahead, or lets them read
 guess, so the picture is not taken in by one reading from the top.
 
 ### B-16: Who does what, at a glance
+
+Scope: its part
 
 Where the document tells of several that act in turn, can the reader see who does what, what passes
 between them and in what order at a glance, instead of piecing it together from sentences spread
@@ -109,6 +123,8 @@ holds a description buries the name the text calls it by.
 
 ### B-20: The form that fits
 
+Scope: each part
+
 Is each thing shown in the form its reader takes in most easily for that thing, such as a directory
 tree for where files are placed, a table for values set side by side, a figure for who acts on whom,
 and sentences for a reason?
@@ -117,6 +133,8 @@ Why: a thing put in a form that does not fit it, such as files drawn as boxes, m
 turn it back into the shape they know before they can use it.
 
 ### B-4: Every part used
+
+Scope: each part
 
 Does the reader use each part toward the purpose they came for, without skipping it or reading again
 what they already took in?
@@ -132,6 +150,8 @@ they need; once the reader skims a run of repeats, they skim the one new point a
 
 ### B-19: As short as the subject allows
 
+Scope: each part
+
 Does each word the reader reads give them something they would lose without it?
 
 Why: every word beyond what the subject asks is effort spent on how the document is written instead
@@ -139,12 +159,16 @@ of on the subject.
 
 ### B-3: Each idea taken in whole
 
+Scope: whole
+
 Can the reader take in each idea the document takes up whole, without guessing any part of it?
 
 Why: an idea touched on in part is completed by a guess, and a gap covered by smooth sentences is
 acted on without the reader noticing.
 
 ### B-5: How far to rely
+
+Scope: each part
 
 Can the reader take each statement as what it is, because one that is not a checked fact, such as
 an assumption, a proposal, a decision or a check that reached only so far, says so where it stands?
@@ -157,6 +181,8 @@ so is acted on as fact, and a check whose reach is not told is taken as having c
 
 ### B-6: Still true later
 
+Scope: each part
+
 Can the reader rely on what the document says for as long as the subject's purpose and decisions
 stand?
 
@@ -167,6 +193,8 @@ Why: a document that has turned wrong is worse than none, since it is believed.
 
 ### B-7: Said in one place
 
+Scope: whole
+
 Can the reader take each thing the document says as the one account of it, because it is said in
 one place, with every case where it does not hold beside it, and not also in another place of the
 document, in another document or by the deliverable itself?
@@ -175,6 +203,8 @@ Why: two places that say one thing come to disagree as one of them changes, and 
 tell which holds; a rule read apart from the case where it does not hold is followed there too.
 
 ### B-2: The picture as meant
+
+Scope: whole
 
 After one reading from the top, does the reader hold the same picture of the subject as the writer?
 

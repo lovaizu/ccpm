@@ -30,6 +30,8 @@ tasks of step 5 are planned, the items on tasks are answered as met.
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the plan follow this template, front matter, headings and markers included?
 
 ```markdown
@@ -102,12 +104,16 @@ session, and a later version of rn goes on from it only when the form holds.
 
 ### B-1: Why the user wants the goal
 
+Scope: its part
+
 Can the reader tell, from the plan alone, the reason the user wants the goal?
 
 Why: every later decision is judged by that reason, in any conversation; without it the work aims
 at the user's first words, which can be met while what they meant is missed.
 
 ### B-2: The criteria carry the reason
+
+Scope: whole
 
 Can the reader tell that a result meeting every attractive criterion gives the user what they want
 the goal for, with nothing of that reason left out?
@@ -116,6 +122,8 @@ Why: the Deliverable sign-off judges by the criteria, so what the reason holds a
 not is never built.
 
 ### B-3: Each attractive criterion is a gain the user named
+
+Scope: its part
 
 Can the reader tell, for each attractive criterion, what the user or their users gain, in the
 user's own words?
@@ -127,6 +135,8 @@ Why: ways are built from the gain, so a gain the user did not name is a guess th
 
 ### B-4: Each fact holds at its source
 
+Scope: whole
+
 Can the reader rely on each fact the plan rests on, because it says how it was checked, or that
 the user decided it?
 
@@ -134,6 +144,8 @@ Why: a plan standing on an unchecked fact gives way in the middle of the work, a
 spent on it.
 
 ### B-5: What only the user knows is theirs or an assumption
+
+Scope: whole
 
 Can the reader tell, for each thing the plan relies on that neither the repository nor any
 documentation can show, such as what the user's records hold, whether the user told it or it is an
@@ -145,6 +157,8 @@ checks it.
 
 ### B-6: Every form an input takes
 
+Scope: whole
+
 Can the reader tell, for each kind of input the criteria speak of, such as "a user with no name",
 every form it takes where the product runs?
 
@@ -153,12 +167,16 @@ meets them all.
 
 ### B-7: Each decision is the user's
 
+Scope: whole
+
 Can the reader tell, for each point the work rests on that only the user can decide, that the user
 decided it?
 
 Why: a decision the conductor made for the user sends the work the way it guessed.
 
 ### B-8: Each criterion gets built
+
+Scope: whole
 
 Once the tasks are planned, can the reader find for each acceptance criterion a task that brings
 it to hold?
@@ -168,6 +186,8 @@ approved.
 
 ### B-9: A task's completion criteria carry its purpose
 
+Scope: its part
+
 Once the tasks are planned, can the reader tell from each task's completion criteria that meeting
 them moves the work toward the attractive criteria the task serves, not only toward their words?
 
@@ -175,6 +195,8 @@ Why: a task judged by words alone moves on without having moved toward why the u
 the result.
 
 ### B-10: Attractive quality first
+
+Scope: its part
 
 Once the tasks are planned, can the reader see that the work on must-be quality comes after the
 attractive criteria are nearly met?

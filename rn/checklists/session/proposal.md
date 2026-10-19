@@ -24,6 +24,8 @@ Each item of `readability.md` applies to a proposal with the work as it now stan
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the proposal follow this template, markers included?
 
 ```markdown
@@ -67,12 +69,16 @@ map, the IDs and the decision line by these markers.
 
 ### B-1: What comes next and why
 
+Scope: its part
+
 Can the user tell what rn proposes to do next, and why that serves the goal?
 
 Why: a report of where things stand leaves the user to work out what to do next, which is the work
 they left to rn.
 
 ### B-2: How close the work has come
+
+Scope: its part
 
 Can the user tell, for each thing they would choose the result for, how far the work now gives it?
 
@@ -81,12 +87,16 @@ has come is what lets the user decide whether it is enough.
 
 ### B-3: What came closer
 
+Scope: its part
+
 Can the user tell, for each thing they would choose the result for, what came closer since the
 last proposal?
 
 Why: the user decides whether to go on from whether the work still moves toward what they want.
 
 ### B-4: What changed without their deciding
+
+Scope: its part
 
 Can the user tell what changed without their deciding it since the last sign-off they approved?
 
@@ -95,11 +105,15 @@ the sign-off, not to find in use.
 
 ### B-5: What is no longer done
 
+Scope: its part
+
 Can the user tell what the product or rn did before that it no longer does?
 
 Why: a loss is theirs to accept at the sign-off, not to find in use.
 
 ### B-6: What was decided for them
+
+Scope: its part
 
 Can the user see first each point rn settled on its own, with the ground it settled it from?
 
@@ -108,11 +122,15 @@ left out reaches their approval unseen.
 
 ### B-7: Each shortfall left
 
+Scope: its part
+
 Can the user see each shortfall left, with why it is left?
 
 Why: the user approves the work with what it lacks, so each lack is theirs to accept.
 
 ### B-8: Assumptions stand as shortfalls
+
+Scope: its part
 
 Can the user see each assumption the work rests on as a shortfall under the criterion it puts at
 risk?
@@ -122,12 +140,16 @@ something checks it.
 
 ### B-9: Each item holds where it says
 
+Scope: whole
+
 Can the user trust each item shown met, because the lines it names give it when opened?
 
 Why: no one looks again at what is called met, so a flaw it hides reaches the user's approval
 unseen.
 
 ### B-10: Decided from the proposal alone
+
+Scope: whole
 
 Can the user say yes or no without looking anything up or asking back?
 

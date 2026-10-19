@@ -37,6 +37,8 @@ start to result; a README holds no figure of who does what, since it would say t
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the README follow this template, headings included?
 
 ```markdown
@@ -84,12 +86,16 @@ not use.
 
 ### B-2: Who it is for
 
+Scope: its part
+
 From the opening, can the reader tell whether they are someone the product is for?
 
 Why: a reader who cannot place themselves reads on to find out, or leaves a product that would have
 served them.
 
 ### B-1: What they gain
+
+Scope: its part
 
 From the opening, can the reader tell what they gain from the product, said with the kind of thing
 that gives it, such as a tool run from their editor?
@@ -100,6 +106,8 @@ instead, the reader is left to work out what they gain, and often leaves first.
 
 ### B-4: Using it on their own work
 
+Scope: its part
+
 From the example, can the reader picture using the product on their own work, from starting to the
 result, with what they do and what they get back?
 
@@ -107,6 +115,8 @@ Why: a reader who can picture it decides on what they will actually get; an exam
 another kind, or one without what the product gives back, is read as someone else's story.
 
 ### B-3: Why this one
+
+Scope: its part
 
 Can the reader tell what the product gives them that doing the work by hand, or with another tool,
 does not?
@@ -116,12 +126,16 @@ losing work, does not decide the choice, and placed first it hides what does.
 
 ### B-5: Started from the README alone
 
+Scope: whole
+
 Can a reader who has decided to use the product get what must be in place beforehand, install it,
 and repeat the example themselves, with the README alone?
 
 Why: each place the reader has to look elsewhere is a place they may stop.
 
 ### B-8: Getting ready their own way
+
+Scope: its part
 
 For each thing that must be in place beforehand, can the reader get it ready in their own way, or
 see that they already have it, because they are told what the thing is and not only one way of
@@ -132,6 +146,8 @@ steps even where they already have the thing or would get it ready another way.
 
 ### B-6: Where to go next
 
+Scope: its part
+
 Can the reader find where to go next: a user, fuller use and what changed in each version; someone
 joining those who build it, the entrance to the design and development?
 
@@ -139,6 +155,8 @@ Why: a README that holds only what a newcomer needs stays short only when the re
 reader can reach.
 
 ### B-7: Terms of use
+
+Scope: its part
 
 Can the reader tell on what terms they may use the product?
 

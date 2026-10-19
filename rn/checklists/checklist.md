@@ -28,6 +28,8 @@ its subject.
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the checklist follow this template?
 
 ```markdown
@@ -54,6 +56,8 @@ version: <x.y.z>
 
 ### B-1: <Item name>
 
+Scope: <its part, each part or whole>
+
 <Question answered yes or no>
 
 <Only what the question needs to be answered, such as a list or a template; most need nothing>
@@ -61,17 +65,29 @@ version: <x.y.z>
 Why: <what goes wrong without it>
 ```
 
+Each item, Format's included, says where in the deliverable it is answered: `its part`, at the part
+or parts that give it; `each part`, in every part of the deliverable on its own, a part being a
+section under a top heading of a document, with the title and opening as one, or a file of code;
+`whole`, of the deliverable at once, for what lies between its parts, such as one name for each
+thing.
+
 Why: every checklist in the same shape keeps their quality even, lets a tool read any of them, and
 gives the maker the purpose, then the order, then the shape, before the items, so each item is met
-inside what those already set.
+inside what those already set. An item asking of every part, answered where one part gives it,
+passes a part that does not, and one asking what lies between the parts cannot be answered part by
+part.
 
 ### F-3: Version
+
+Scope: its part
 
 Is the `version` in the front matter semver?
 
 Why: a judgment names the text it was made by in a form people and tools read the same way.
 
 ### F-4: Item IDs
+
+Scope: whole
 
 Is each item's ID its section's first letter and a number counted up within the section, such as
 `B-2`?
@@ -83,6 +99,8 @@ checklists are judged at once.
 
 ### F-5: An ID never used again
 
+Scope: whole
+
 Compared with the version last released, is every ID that a removed or moved item had left unused,
 with a moved item taking a new number in its new section?
 
@@ -92,6 +110,8 @@ under whatever name it had then. A checklist in no release yet has no such ID, a
 Why: an ID named earlier always means the same item.
 
 ### F-6: Version raised once for each release
+
+Scope: its part
 
 Is the `version` raised once for each release from the version last released, and not with each
 change on a branch?
@@ -104,12 +124,16 @@ Why: a judgment names the text it was made by, and no draft between releases tak
 
 ### B-1: User and purpose
 
+Scope: its part
+
 Can whoever makes or judges a deliverable of the kind learn, from the opening, in one or two
 sentences, who uses it and what they can then do?
 
 Why: every item is judged against the user and the purpose; without them, no item can be answered.
 
 ### B-9: The order the maker decides in
+
+Scope: its part
 
 Can whoever makes a deliverable of the kind take its decisions in the order the opening gives,
 each step drawn from the purpose and the ground of the next?
@@ -118,6 +142,8 @@ Why: a maker who decides in an order of their own decides a later thing before w
 and the deliverable is then fitted to a guess.
 
 ### B-10: A template drawn from the order
+
+Scope: its part
 
 Can whoever makes a deliverable of the kind fill the template with what every deliverable of the
 kind holds, each part drawn from a step of the order?
@@ -128,6 +154,8 @@ Why: a part only some need is added to every deliverable, and a part from no ste
 nothing the purpose asks.
 
 ### B-7: How `readability.md` applies
+
+Scope: its part
 
 Where the kind is a document, can whoever makes or judges it tell from the opening how each item of
 `readability.md` applies to the kind?
@@ -143,6 +171,8 @@ its reader, and the maker cannot tell what passes.
 
 ### B-2: Every part of the purpose checked
 
+Scope: whole
+
 For each thing the opening says the user decides or does, can whoever judges learn from some item
 whether the user can?
 
@@ -150,6 +180,8 @@ Why: items drawn from the purpose, one for each thing it names, are enough when 
 one; a thing with no item lets a deliverable that misses that part of the purpose pass.
 
 ### B-3: What the user gets
+
+Scope: whole
 
 Does a yes to each item tell whoever judges that the user gets something from the deliverable,
 rather than that something is in it?
@@ -164,6 +196,8 @@ to every deliverable of the kind, needed or not.
 
 ### B-11: The key points alone
 
+Scope: whole
+
 Does each item ask something that following the order alone may still leave unmet?
 
 Look for: an item whose yes follows from having taken a step, such as a test seen failing where the
@@ -174,6 +208,8 @@ items that matter are lost among them.
 
 ### B-4: One thing per item
 
+Scope: whole
+
 Can whoever judges tell, from each item answered no, the one thing that falls short?
 
 An item that checks two things does not.
@@ -182,12 +218,16 @@ Why: when an item checks two things, the one that falls short hides behind the o
 
 ### B-5: Answered yes or no
 
+Scope: whole
+
 Can whoever judges answer each item yes or no?
 
 Why: an answer that is neither leaves the deliverable neither passed nor failed, so no one can tell
 whether it serves its purpose.
 
 ### B-6: Same answer from anyone
+
+Scope: whole
 
 Can the maker know what passes, because each item gets the same answer whoever answers it?
 
@@ -201,6 +241,8 @@ same deliverable differ.
 
 ### B-8: Each item named by what it gives
 
+Scope: whole
+
 Can whoever makes the deliverable tell from each item's name alone what the user gets when the item
 is met?
 
@@ -211,6 +253,8 @@ Why: an item is named alone in a judgment and in the maker's mind; a name of wha
 read as a rule, and the maker writes to avoid it rather than to give the user something.
 
 ### B-12: Items in the order the maker meets them
+
+Scope: whole
 
 Can the maker take the items in the order they work, because the items stand in the order of the
 steps they are drawn from, and those that hold over the whole, such as one name for each thing,

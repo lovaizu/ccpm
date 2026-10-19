@@ -32,6 +32,8 @@ answered by the scenes.
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the UX follow this template, headings and IDs included?
 
 ```markdown
@@ -68,12 +70,16 @@ goal and key result by its ID.
 
 ### B-1: The users and their goals
 
+Scope: its part
+
 Can the reader tell the users and the goal each wants to achieve?
 
 Why: everything else in the UX is the experience of these users reaching these goals; without them,
 the builder cannot tell whom the product is for or when it has done its work.
 
 ### B-2: Results drawn from the goal
+
+Scope: its part
 
 Can the reader tell, for each key result, what is counted, how each case is judged, and how the
 value stands once the user has reached the goal, each drawn from the goal?
@@ -85,12 +91,16 @@ while the user comes no closer.
 
 ### B-4: Why each key result
 
+Scope: its part
+
 Can the reader tell, for each key result, why a better value shows the user closer to its goal?
 
 Why: a result without its why can grow better while the goal comes no closer, and no one can tell whether it
 is the right one to measure.
 
 ### B-7: The order of priority
+
+Scope: its part
 
 Can the reader tell which key result comes first, and why in that order?
 
@@ -100,12 +110,16 @@ worse off.
 
 ### B-5: The scenes to the goal
 
+Scope: its part
+
 Can the reader tell, as scenes, what the user does and gets back until they achieve the goal?
 
 Why: the builder builds what the scenes show the user doing and getting; a step no scene shows is
 built by guess, or not at all.
 
 ### B-6: The benefits
+
+Scope: its part
 
 Can the reader tell what the user gains when they achieve the goal with this product?
 

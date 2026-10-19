@@ -46,6 +46,8 @@ subject; its B-16 is answered by the logical view.
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the design document follow this template, headings included?
 
 ```markdown
@@ -100,6 +102,8 @@ realized, then how the units and the whole are checked, each the ground of the n
 
 ### B-1: The stories the scenes rest on
 
+Scope: whole
+
 Does every scene of the UX rest on a user story, each one way the user uses the product at its
 edge?
 
@@ -110,6 +114,8 @@ and a story for each step inside multiplies the components without the user doin
 
 ### B-2: Every logical component the stories need
 
+Scope: whole
+
 Is every logical component the stories need there?
 
 Why: a component left out is found only when a story it serves is built, and the architecture
@@ -117,11 +123,15 @@ must change then.
 
 ### B-3: The stories achieved by interactions
 
+Scope: whole
+
 Do the interactions between the logical components achieve every user story?
 
 Why: components that each do their part achieve no story unless their interactions do.
 
 ### B-11: Each case met by a mechanism already there
+
+Scope: whole
 
 Can the reader tell that each case the stories meet is taken by a component or a check already
 there, with no path of its own?
@@ -133,6 +143,8 @@ Why: every path of its own is one more thing for users to learn and builders to 
 
 ### B-4: No technology before it is chosen
 
+Scope: its part
+
 Are the user stories and the logical components free of technology?
 
 Why: technology brought in first shapes the stories and components to it, so they no longer
@@ -141,12 +153,16 @@ again.
 
 ### B-5: How each component is realized
 
+Scope: its part
+
 Can the reader tell how each component is realized physically, with the technology chosen for it?
 
 Why: the builder makes each component as it is realized, and each way is made and changed in its
 own way.
 
 ### B-6: Where each component is placed
+
+Scope: its part
 
 Can the reader tell where each component is placed?
 
@@ -155,11 +171,15 @@ the user.
 
 ### B-7: What each component depends on outside
 
+Scope: its part
+
 Can the reader tell what each component depends on outside the product?
 
 Why: what the product depends on is where it breaks for the user first.
 
 ### B-8: Each unit checked, and how far
+
+Scope: its part
 
 Can the reader tell what is checked of each physical unit, and the bar it must pass?
 
@@ -168,6 +188,8 @@ stated bar, breaks the whole where no check shows it.
 
 ### B-12: An AI part checked on the model it names
 
+Scope: its part
+
 Can the reader tell that each part run by an AI is checked on the model the part names, never a
 smaller one?
 
@@ -175,12 +197,16 @@ Why: a smaller model's slips are not the product's, and the product's own pass u
 
 ### B-13: An AI part judged from its records
 
+Scope: its part
+
 Can the reader tell that each part run by an AI is judged from the records of every conversation
 and agent it started, not from its outcome alone?
 
 Why: the outcome shows that something went wrong; only the records show where.
 
 ### B-14: The flow checked apart from the content
+
+Scope: its part
 
 Can the reader tell that each flow is checked apart from the content, on the smallest task that
 shows it, with stand-ins for whatever lies around the part being checked?
@@ -191,12 +217,16 @@ went wrong.
 
 ### B-9: Each story shown achieved
 
+Scope: its part
+
 Can the reader tell, from the checks of the whole, whether each user story is achieved?
 
 Why: units can each pass while a story is missed; only a check of the whole shows a story
 achieved.
 
 ### B-10: Each change shown bringing the user closer
+
+Scope: its part
 
 Can the reader tell, from the measures, whether a change brings the user closer to their goals, the
 key results weighed in the UX's order of priority?
@@ -206,6 +236,8 @@ judged by no measure, or by one key result alone, can leave the user worse off w
 looks better.
 
 ### B-15: What the user pays seen in its parts
+
+Scope: its part
 
 Can the reader tell that each key result measuring what the user pays, such as time, money or
 effort, is read from the records in its parts, not only in total?

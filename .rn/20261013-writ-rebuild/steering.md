@@ -356,7 +356,7 @@ Progress:
   and the evaluator gave none. Round 2 gave both their Goods but made the opening one sentence of
   five changes, and no role saw it. Root causes: 1. the design and the learner's step 3 have the
   learner say how the work would give a Good, against the design's own rule that the generator
-  decides how (design lines 81-82), and the learner's "put every change in the opening" did what
+  decides how (design lines 83-84), and the learner's "put every change in the opening" did what
   that rule warns of; 2. an item asking about the whole work, such as readability B-20, takes its
   Good from a part (every role gave B-20 from the code blocks, none read lines 3-9). Decided by
   the user (2026-10-19): the learner learns how the run went alone, each lesson about how a role
@@ -365,6 +365,11 @@ Progress:
   each item, the part of the work it asks about, and for one asking about the whole gives a Good
   for each part (a document's sections, a code's files), a script stopping a reply that leaves a
   part out; a part without Good leaves the item without Good, sent back with that part's place.
+  Decided by the user (2026-10-19): the scope is the checklist's, a line `Scope:` under every
+  item's heading, part of the checklist's format, not of its ID, which never changes: `its part`,
+  `each part` or `whole`, as long-document judging scores what lies between sections once over the
+  whole; every checklist marked (`checklist.md` F-1). Three acceptance trials at once, each in its
+  own clone, to see how far the AI's runs vary.
 - Next: 1. the design, prompts, scripts, hooks and tests for both; flow and roles trials; the
   acceptance trial, every JSONL read, judged from the receiver's purpose; 2. consult when reading
   stops, from that trial; the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin

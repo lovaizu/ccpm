@@ -28,6 +28,8 @@ Code is written in this order, each step the ground of the next:
 
 ### F-1: Shape
 
+Scope: each part
+
 Does the code follow this template, in the forms its language and its development rules set?
 
 ```text
@@ -46,6 +48,8 @@ same place in every file, written when the design and the tests were decided.
 
 ### B-1: Run in the environment the development rules set
 
+Scope: whole
+
 Can whoever runs the code run it with only the runtime, at the versions, and the libraries and
 tools the development rules name?
 
@@ -57,6 +61,8 @@ a reason the user was never told.
 
 ### B-2: One thing for each function and module
 
+Scope: each part
+
 Can the maintainer change one thing the code takes on by changing one function or module?
 
 Look at: each function and module, against what it takes on; one that takes on two things fails.
@@ -64,6 +70,8 @@ Look at: each function and module, against what it takes on; one that takes on t
 Why: a part that takes on two things is changed for one and breaks the other.
 
 ### B-3: Each piece of knowledge in one place
+
+Scope: whole
 
 Can the maintainer change a piece of knowledge, such as a rule or a value, by changing the one
 place it is written?
@@ -76,6 +84,8 @@ without any test failing.
 
 ### B-4: Checked before it is used
 
+Scope: whole
+
 When whoever runs the code gives it something wrong, such as a file, an argument or what another
 program hands it, are they stopped before the code uses it?
 
@@ -87,6 +97,8 @@ folder it was meant for.
 
 ### B-5: A stop says what went wrong
 
+Scope: whole
+
 When the code stops, can whoever runs it tell from what it says what went wrong?
 
 Look at: each message the code gives when it stops names the input or the condition that was wrong.
@@ -96,6 +108,8 @@ they gave wrong.
 
 ### B-6: A stop says what to do
 
+Scope: whole
+
 When the code stops, can whoever runs it tell from what it says what to do about it?
 
 Look at: each message the code gives when it stops names an action to take, such as a value to give
@@ -104,6 +118,8 @@ instead or how to install a tool that is missing.
 Why: a user who knows what went wrong but not how to put it right is left to work out the fix.
 
 ### B-15: A stop cleared by the action it names
+
+Scope: whole
 
 When the code stops, can whoever runs it always go on by taking the action it names?
 
@@ -116,6 +132,8 @@ there to keep the work right stops the work.
 
 ### B-7: A test for each behavior asked
 
+Scope: whole
+
 For each behavior the requirements ask of the code, can the maintainer learn from some test that
 the code does it?
 
@@ -125,6 +143,8 @@ and one it lets through, matched to a test whose Then checks it; a behavior left
 Why: the tests passing give trust only in the behaviors they hold.
 
 ### B-8: A test fails when its behavior breaks
+
+Scope: whole
 
 When the behavior a test checks is broken in the code, does the maintainer learn of it from that
 test failing?
@@ -138,6 +158,8 @@ a fault pass.
 
 ### B-9: A failure names the one behavior that broke
 
+Scope: whole
+
 When a test fails, can the maintainer tell from that failure alone which one behavior broke?
 
 Look at: for each test, the behaviors whose fault would make it fail; a test that would fail on two
@@ -147,6 +169,8 @@ Why: a test that holds several behaviors, failing, leaves the maintainer to read
 which of them broke.
 
 ### B-10: The same result on every run
+
+Scope: whole
 
 Can the maintainer take each test failure as a fault, because each test gives the same result
 whenever it is run, alone or with the others, in any order?
@@ -159,6 +183,8 @@ than read it, and then a real failure is rerun too.
 
 ### B-11: The development rules' checks pass
 
+Scope: whole
+
 Do the checks the development rules name, such as the tests, the formatter, the linter and the
 type checker, run with the settings kept in the repository, pass on the code and its tests?
 
@@ -166,6 +192,8 @@ Why: what a tool finds on every run needs no review spent on it, and a reader fi
 sometimes.
 
 ### B-12: Every statement and branch run
+
+Scope: whole
 
 Can the maintainer see, from the coverage of the whole test run, that every statement and every
 branch of the code is taken by some test?
@@ -177,6 +205,8 @@ Why: a line or branch no test takes may be broken without any test failing.
 
 ### B-13: Lines left out of the count say why
 
+Scope: whole
+
 For each line left out of the coverage count, can the maintainer tell from what is written beside it
 which environment, one the tests cannot make, decides whether the line runs?
 
@@ -184,6 +214,8 @@ Why: a line left out without its reason cannot be told from a line left out to m
 and the next maintainer keeps the gap.
 
 ### B-16: Each check left out, the user's decision
+
+Scope: whole
 
 For each line, branch, input or mutant left out of the coverage, the property tests or the
 mutation testing, can the maintainer tell from what is written beside it that the user decided it,
@@ -196,6 +228,8 @@ maintainer keeps the gap.
 
 ### B-17: A behavior holds for every input of its kind
 
+Scope: whole
+
 For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
 from a test that it holds for the inputs no example names?
 
@@ -207,6 +241,8 @@ input that fails reproduced from what the failure prints, not run again, and kep
 Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
 
 ### B-14: One name for one thing
+
+Scope: whole
 
 Can the maintainer find every place a thing is used by searching for its name?
 
