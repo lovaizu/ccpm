@@ -3,9 +3,8 @@
 ## ux
 
 ### B-1: The users and their goals
-- Whoever has Claude Code do work in a git repository on GitHub that takes days, and wants to spend
-  their time deciding rather than watching: from their rough words, what they really wanted reaches
-  them as a pull request ready to merge.
+- G1: Whoever wants to hand a whole piece of work to an agent: they ask for it without preparing
+  anything and only answer what they are asked, and their purpose is achieved.
 
 ### B-2: The scenes to the goal
 Before each work is made, the plan, the UX, the README, the design and each task's result, rn and
