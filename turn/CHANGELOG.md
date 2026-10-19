@@ -19,6 +19,10 @@
 - The work is made where it goes, and a run cut off leaves its writing as changes git shows — you undo or finish them and call again.
 - Where the AI reading in the receiver's place finds no Good, the work is made again aimed at where it stopped, what it did there and what it did not get, with no other reading between, up to three times a round and two rounds — each remake changes only what fell short, and a run that does not settle ends.
 
+### Fixed
+
+- turn checks each AI's reply as it hands it back, on Claude Code that ends an agent that way, as well as on one that ends it on its last message — a reply out of its form, or the orchestrator ending before its run returned, is sent back instead of passing unchecked and leaving the run unfinished.
+
 ### Removed
 
 - Asking in a conversation, the console view of each step, the questions asked while the work goes on, and the `.turn/` folder — what turn returns is the result file your step reads.

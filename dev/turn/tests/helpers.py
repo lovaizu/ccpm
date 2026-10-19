@@ -29,6 +29,8 @@ from checks import (  # noqa: F401  (each check, for its own tests)
     read_in_given,
     read_whole,
     role_given,
+    role_reply,
+    run_returned,
     start_as_called,
 )
 

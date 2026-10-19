@@ -26,6 +26,8 @@ PRETOOLUSE = (
     no_commit,
     read_in_given,
     read_whole,
+    role_reply,
+    run_returned,
 )
 SUBAGENTSTOP = (read_whole, role_reply, run_returned)
 

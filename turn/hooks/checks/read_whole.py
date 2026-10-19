@@ -33,7 +33,7 @@ def check(event: dict[str, Any]) -> list[str]:
 
 def answering(event: dict[str, Any], role: str | None) -> bool:
     """Whether a role is ending with its reply."""
-    return event["hook_event_name"] == "SubagentStop" and role in READERS
+    return role in READERS and agents.reply(event) is not None
 
 
 def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:

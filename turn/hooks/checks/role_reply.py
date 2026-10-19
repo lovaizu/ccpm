@@ -18,14 +18,14 @@ FORMS = {
 
 def check(event: dict[str, Any]) -> list[str]:
     role = agents.role(event)
-    if role not in FORMS:
+    reply = agents.reply(event)
+    if role not in FORMS or reply is None:
         return []
     result = agents.result(event)
     kept = run.running(result) if result else None
     # A reply no step waits on, such as one after a message the run did not send, is no step's.
     if result is None or kept is None or kept["next"]["agent"] != f"turn:{role}":
         return []
-    reply = str(event.get("last_assistant_message", ""))
     # Every role but the learner judges every item; the learner judges none, as its form takes no
     # items, and quotes the records it was shown.
     said = forms.check(

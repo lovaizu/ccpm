@@ -39,6 +39,17 @@ def role(event: dict[str, Any]) -> str | None:
     return kind.partition("turn:")[2] or None if event.get("agent_id") else None
 
 
+def reply(event: dict[str, Any]) -> str | None:
+    """The reply the agent of the event ends with: the message it hands back with SubagentHandback,
+    or, where Claude Code ends an agent on plain text, its last message at SubagentStop; None for
+    any other event, and at SubagentStop after a handback, which gives no last message."""
+    name = event["hook_event_name"]
+    if (name, event.get("tool_name")) == ("PreToolUse", "SubagentHandback"):
+        return str(event["tool_input"].get("message", ""))
+    last = event.get("last_assistant_message", "") if name == "SubagentStop" else None
+    return None if last is None else str(last)
+
+
 def transcript(event: dict[str, Any]) -> str:
     """Where Claude Code keeps the conversation of the agent of the event."""
     return event.get("agent_transcript_path") or os.path.join(

@@ -30,6 +30,8 @@ from helpers import (
     RepoTest,
     pretooluse,
     read_whole,
+    role_reply,
+    run_returned,
     subagentstop,
 )
 
@@ -341,6 +343,80 @@ class TestReturned(HookTest):
         # When: it ends
         # Then: it ends
         self.passes(subagentstop, self.event("SubagentStop", "Explore"))
+
+
+class TestHandback(HookTest):
+    """An agent ends by handing back its reply with SubagentHandback; then, at SubagentStop, Claude
+    Code gives no last message and keeps no agent going."""
+
+    def handback(self, agent_type, prompt, message, *tool_uses):
+        path = self.given_record(ID, prompt, *tool_uses)
+        return self.tool(agent_type, "SubagentHandback", message=message) | {
+            "agent_transcript_path": path
+        }
+
+    def stopped(self, agent_type, prompt, *tool_uses):
+        path = self.given_record(ID, prompt, *tool_uses)
+        return self.event(
+            "SubagentStop",
+            agent_type,
+            agent_transcript_path=path,
+            last_assistant_message=None,
+            stop_hook_active=False,
+        )
+
+    def test_a_role_handing_back_its_form_filled_passes_and_its_reply_is_kept(self):
+        # Given: a generator that read what it was given whole
+        # When: it hands back a reply giving a Good or a question for every item
+        # Then: it is let through, and its reply is kept for the step that takes it
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        event = self.handback("turn:generator", self.started(), json.dumps(reply), *READ_GIVEN)
+        self.passes(pretooluse, event)
+        kept = self.read_json(CALL["result"])["running"]["next"]["reply"]
+        self.assertEqual(kept, reply)
+
+    def test_a_role_handing_back_a_reply_out_of_its_form_stops(self):
+        # Given: a generator that read what it was given whole
+        # When: it hands back prose
+        # Then: it is stopped, told the form it gives
+        event = self.handback("turn:generator", self.started(), "Done.", *READ_GIVEN)
+        self.stops(pretooluse, event, '{"items": [...], "questions": [...]}')
+
+    def test_a_role_handing_back_before_reading_whole_stops(self):
+        # Given: a generator that read nothing
+        # When: it hands back its form filled
+        # Then: it is stopped, told what to read whole
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        event = self.handback("turn:generator", self.started(), json.dumps(reply))
+        self.stops(pretooluse, event, "read whole")
+
+    def test_an_orchestrator_handing_back_with_its_run_going_stops(self):
+        # Given: a run started and not returned
+        # When: the orchestrator hands back
+        # Then: it is stopped, told to record its reading until the run returns
+        self.started()
+        self.stops(pretooluse, self.handback("turn:up", json.dumps(CALL), "Done."), "turn.py next")
+
+    def test_an_agent_ending_after_it_handed_back_ends(self):
+        # Given: a run waiting on the generator, which read nothing
+        # When: the generator, then the orchestrator, ends with no last message, as after handing
+        # back
+        # Then: each ends, its reply checked when it was handed back
+        prompt = self.started()
+        for agent_type, given in (("turn:generator", prompt), ("turn:up", json.dumps(CALL))):
+            with self.subTest(agent_type=agent_type):
+                self.passes(subagentstop, self.stopped(agent_type, given))
+
+    def test_a_role_using_another_tool_is_not_held_to_a_reply(self):
+        # Given: a run waiting on the generator, which read nothing
+        # When: the generator, or the orchestrator, uses a tool other than SubagentHandback
+        # Then: neither is held to a reply nor to the run returned
+        prompt = self.started()
+        self.given_record(ID, prompt)
+        event = self.tool("turn:generator", "Read", file_path="README.md")
+        self.assertEqual((role_reply.check(event), read_whole.check(event)), ([], []))
+        self.given_record(ID, json.dumps(CALL))
+        self.assertEqual(run_returned.check(self.tool("turn:up", "Bash", command="ls")), [])
 
 
 class TestWrites(HookTest):
