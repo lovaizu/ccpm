@@ -66,10 +66,15 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
    where they need only a part, they read and change it with `jq`. CI counts the lines and branches
    on every push and fails on any not run; it breaks the code with Cosmic Ray and fails on any
    break no test catches, and runs property tests with Hypothesis, on new inputs each time. Each check
-   runs on Python 3.9 and the newest, Cosmic Ray and Hypothesis on the newest alone.
+   runs on Python 3.9 and the newest, Cosmic Ray and Hypothesis on the newest alone. While a plugin
+   is changed, the mutation testing of that plugin alone is run by hand, and CI runs every plugin's;
+   CI's job runs on every push and skips the checks on a push that changes only what no check
+   reads, such as the session records and the decisions, where the commit before it passed.
    - Rationale: python3 is wherever git is while Node.js may not be; an agent changes only the part
      it needs with a tool it already knows; a skipped check goes unnoticed; users run 3.9, and the
-     two tools need newer versions only to test, not to run.
+     two tools need newer versions only to test, not to run; the mutation testing of every plugin
+     takes long and CI runs it on every push anyway; `main` takes a pull request only when the job
+     has passed, so the job always runs, and passes on only what was checked.
 
 c. **Write each prompt, a skill or an agent, with `usability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**

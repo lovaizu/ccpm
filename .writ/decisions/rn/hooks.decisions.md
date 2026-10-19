@@ -15,6 +15,11 @@ names; each serves every unit.
 - Tests in `dev/rn/tests/`, fed the events Claude Code hands each hook in their real shape, with a
   repository made in a temporary folder where a check reads git; every line and branch run, every
   mutant caught, property tests where an input varies.
+- The property tests try every input a hook may receive. A word holding `<<` inside quotes and a
+  word of operator signs alone are read as they are, not as a heredoc's start or as operators. Left
+  out, as the user decided, since a hook never receives them: a null character, a branch name
+  beginning with `-`, a heredoc's line that is its end word, and a lone surrogate; each is written
+  beside the test with that reason, as code.md B-16 asks.
 - Mutation testing reaches the hooks as well as the scripts: `dev/rn/cosmic-ray.toml` is widened
   to both, with the type check given both folders.
 - Of `prompt.md`, the hooks answer the items a hook gives, B-6, B-8, B-10, B-12, B-20, B-25 and

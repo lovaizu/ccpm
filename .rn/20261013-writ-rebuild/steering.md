@@ -1405,6 +1405,13 @@ Progress:
     conductor stopped by a guard may try the same move another way.
   - R27 (turn's question on the hooks): prompt.md's items on a prompt's own text and on what the
     user sees are judged on the skills' runs, not the hooks', as R22 set.
+  - Decided by the user (2026-10-20): mutation testing by hand covers the plugin changed and CI
+    covers all; CI skips the checks on a push of records alone after a passed commit, its job still
+    run as main requires it; in the hooks' property tests, a quoted `<<` and a word of operator
+    signs are read right and tried, and a null character, a branch name beginning with `-`, a
+    heredoc's end-word line and a lone surrogate are left out as inputs a hook never receives.
+    The first two put into plugin.md; code.md B-16 already asks for the user's decision beside
+    each input left out.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
