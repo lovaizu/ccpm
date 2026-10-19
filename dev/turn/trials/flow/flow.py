@@ -2,9 +2,9 @@
 in for by agents of this folder that give replies set in replies.json, so the run takes every way a
 run goes: an item and a statement sent back, the evaluator differing from the findings, the learner
 after each reading with a lesson taken once and none the second time, the work made again, and the
-second reading; or, with `unanswered`, the same task with its decision taken
-out, so the run returns the question alone before any work is made. A stand-in for the calling AI calls turn on a task of one item
-in a repository made for the run. Prints the session, from whose JSONL and its agents' the trial is
+second reading; or, with `unanswered`, the same task with its decision taken out, so the run
+returns the question alone before any work is made. A stand-in for the calling AI calls turn on a
+task of two items, one answered at its part and one in each part, in a repository made for the run. Prints the session, from whose JSONL and its agents' the trial is
 judged, the order the agents were started in, the minutes and the result.
 
     python3 dev/turn/trials/flow/flow.py <new folder> [unanswered]

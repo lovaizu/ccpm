@@ -1,19 +1,278 @@
 {
  "generator": [
-  {"write": "# demo\n\ndemo prints a greeting in any language.\n", "reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "good": "The reader learns what demo does.", "lines": ["README.md:1-3"]}], "questions": [], "statements": [{"lines": ["README.md:3-3"], "kind": "decision", "quotes": [{"path": "notes/decisions.md", "quote": "demo prints a greeting."}]}]}},
-  {"write": "# demo\n\ndemo prints Hello.\n\n## License\n\nMIT\n", "reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "good": "The reader learns the license demo is under.", "lines": ["README.md:5-7"]}], "questions": [], "statements": [{"lines": ["README.md:3-3"], "kind": "behavior", "ran": [{"command": "sh demo.sh", "output": "Hello"}]}, {"lines": ["README.md:7-7"], "kind": "decision", "quotes": [{"path": "notes/decisions.md", "quote": "The license is MIT."}]}]}},
-  {"write": "# demo\n\ndemo prints Hello.\n\n## License\n\ndemo is under the MIT License.\n", "reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "good": "The reader learns the license demo is under.", "lines": ["README.md:5-7"]}], "questions": [], "statements": [{"lines": ["README.md:3-3"], "kind": "behavior", "ran": [{"command": "sh demo.sh", "output": "Hello"}]}, {"lines": ["README.md:7-7"], "kind": "decision", "quotes": [{"path": "notes/decisions.md", "quote": "The license is MIT."}]}]}}
+  {
+   "write": "# demo\n\ndemo prints a greeting in any language.\n",
+   "reply": {
+    "items": [
+     {
+      "checklist": "checklist.md",
+      "item": "B-1",
+      "good": "The reader learns what demo does.",
+      "lines": [
+       "README.md:1-3"
+      ]
+     },
+     {
+      "checklist": "checklist.md",
+      "item": "B-2",
+      "parts": [
+       {
+        "part": "README.md:1-3",
+        "good": "The reader learns what demo does.",
+        "lines": [
+         "README.md:3-3"
+        ]
+       }
+      ]
+     }
+    ],
+    "questions": [],
+    "statements": [
+     {
+      "lines": [
+       "README.md:3-3"
+      ],
+      "kind": "decision",
+      "quotes": [
+       {
+        "path": "notes/decisions.md",
+        "quote": "demo prints a greeting."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "write": "# demo\n\ndemo prints Hello.\n\n## License\n\nMIT\n",
+   "reply": {
+    "items": [
+     {
+      "checklist": "checklist.md",
+      "item": "B-1",
+      "good": "The reader learns the license demo is under.",
+      "lines": [
+       "README.md:5-7"
+      ]
+     },
+     {
+      "checklist": "checklist.md",
+      "item": "B-2",
+      "parts": [
+       {
+        "part": "README.md:1-4",
+        "good": "The reader learns what demo prints.",
+        "lines": [
+         "README.md:3-3"
+        ]
+       },
+       {
+        "part": "README.md:5-7",
+        "good": "The reader learns the license.",
+        "lines": [
+         "README.md:7-7"
+        ]
+       }
+      ]
+     }
+    ],
+    "questions": [],
+    "statements": [
+     {
+      "lines": [
+       "README.md:3-3"
+      ],
+      "kind": "behavior",
+      "ran": [
+       {
+        "command": "sh demo.sh",
+        "output": "Hello"
+       }
+      ]
+     },
+     {
+      "lines": [
+       "README.md:7-7"
+      ],
+      "kind": "decision",
+      "quotes": [
+       {
+        "path": "notes/decisions.md",
+        "quote": "The license is MIT."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "write": "# demo\n\ndemo prints Hello.\n\n## License\n\ndemo is under the MIT License.\n",
+   "reply": {
+    "items": [
+     {
+      "checklist": "checklist.md",
+      "item": "B-1",
+      "good": "The reader learns the license demo is under.",
+      "lines": [
+       "README.md:5-7"
+      ]
+     },
+     {
+      "checklist": "checklist.md",
+      "item": "B-2",
+      "parts": [
+       {
+        "part": "README.md:1-4",
+        "good": "The reader learns what demo prints.",
+        "lines": [
+         "README.md:3-3"
+        ]
+       },
+       {
+        "part": "README.md:5-7",
+        "good": "The reader learns the license.",
+        "lines": [
+         "README.md:7-7"
+        ]
+       }
+      ]
+     }
+    ],
+    "questions": [],
+    "statements": [
+     {
+      "lines": [
+       "README.md:3-3"
+      ],
+      "kind": "behavior",
+      "ran": [
+       {
+        "command": "sh demo.sh",
+        "output": "Hello"
+       }
+      ]
+     },
+     {
+      "lines": [
+       "README.md:7-7"
+      ],
+      "kind": "decision",
+      "quotes": [
+       {
+        "path": "notes/decisions.md",
+        "quote": "The license is MIT."
+       }
+      ]
+     }
+    ]
+   }
+  }
  ],
  "first-user": [
-  {"reply": {"items": []}},
-  {"reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "good": "demo is under the MIT License, said in a sentence under License.", "lines": ["README.md:5-7"]}]}}
+  {
+   "reply": {
+    "items": []
+   }
+  },
+  {
+   "reply": {
+    "items": [
+     {
+      "checklist": "checklist.md",
+      "item": "B-1",
+      "good": "demo is under the MIT License, said in a sentence under License.",
+      "lines": [
+       "README.md:5-7"
+      ]
+     },
+     {
+      "checklist": "checklist.md",
+      "item": "B-2",
+      "parts": [
+       {
+        "part": "README.md:1-4",
+        "good": "The reader learns what demo prints.",
+        "lines": [
+         "README.md:3-3"
+        ]
+       },
+       {
+        "part": "README.md:5-7",
+        "good": "The reader learns the license.",
+        "lines": [
+         "README.md:7-7"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  }
  ],
  "evaluator": [
-  {"reply": {"items": []}},
-  {"reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "good": "The reader learns demo is under the MIT License.", "lines": ["README.md:5-7"]}]}}
+  {
+   "reply": {
+    "items": []
+   }
+  },
+  {
+   "reply": {
+    "items": [
+     {
+      "checklist": "checklist.md",
+      "item": "B-1",
+      "good": "The reader learns demo is under the MIT License.",
+      "lines": [
+       "README.md:5-7"
+      ]
+     },
+     {
+      "checklist": "checklist.md",
+      "item": "B-2",
+      "parts": [
+       {
+        "part": "README.md:1-4",
+        "good": "The reader learns what demo prints.",
+        "lines": [
+         "README.md:3-3"
+        ]
+       },
+       {
+        "part": "README.md:5-7",
+        "good": "The reader learns the license.",
+        "lines": [
+         "README.md:7-7"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  }
  ],
  "learner": [
-  {"reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "learnt": "Say the license in a sentence naming demo, so it does not read as a placeholder."}], "process": [{"role": "generator", "lesson": "Write of demo only what the decisions say: the first work said it prints a greeting in any language, which no decision says, and the reading sent it back.", "grounds": [{"record": 1, "quote": "demo prints a greeting in any language."}]}], "checked": "every page of every record"}},
-  {"reply": {"items": [{"checklist": "checklist.md", "item": "B-1", "learnt": "The sentence under License names demo and MIT."}], "process": [], "checked": "every page of every record"}}
+  {
+   "reply": {
+    "process": [
+     {
+      "role": "generator",
+      "lesson": "Write of demo only what the decisions say: the first work said it prints a greeting in any language, which no decision says, and the reading sent it back.",
+      "grounds": [
+       {
+        "record": 1,
+        "quote": "demo prints a greeting in any language."
+       }
+      ]
+     }
+    ],
+    "checked": "every page of every record"
+   }
+  },
+  {
+   "reply": {
+    "process": [],
+    "checked": "every page of every record"
+   }
+  }
  ]
 }
