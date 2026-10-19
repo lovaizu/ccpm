@@ -124,6 +124,10 @@ class TestUsage(RepoTest):
         code, out = self.turn("given", result)
         self.assertEqual(code, 0, out)
         self.assertIn("はじめに.md", out)
+        self.write("はじめに.md", "# 始め\n")
+        code, out = self.turn("parts", result)
+        self.assertEqual(code, 0, out)
+        self.assertIn("はじめに.md:1-1", out)
 
 
 class TestStart(RepoTest):

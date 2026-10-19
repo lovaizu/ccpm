@@ -61,5 +61,14 @@
   "way": "every step in the order the set replies mean, with the learner after each reading; its lesson, grounded on a record's words, taken by the orchestrator, given to the second round's generator and kept in the result",
   "hooks": "two stops: an ls and a redirect, each outside what the step reads.",
   "read": "Every JSONL read. The run went on e63d09f's code but for remade(), changed while it ran from `\"remade\" not in run` to `not run.get(\"remade\")`."
+ },
+ {
+  "commit": "dad59ec",
+  "session": "73610d84-8654-4661-96e6-95139266cb7d",
+  "minutes_to_return": 7.3,
+  "cost_usd": 1.87,
+  "way": "check of two items, B-1 at its part and B-2 in each part; generator; B-1 and B-2 sent back with gets and places, B-2's the one part of the first work; generator; first user and evaluator none; decision giving both gets with places; learner, its lesson taken; generator; second reading with B-2 a Good for each of its two parts as turn.py parts printed them; first user and evaluator Good; learner; returned with both Good, B-2's Good for every part: every step in the order the set replies mean",
+  "hooks": "one stop: the orchestrator's ls outside what it was given.",
+  "read": "Every JSONL read; the unanswered run (176ac8e4-905b-4d59-9530-674d2002f815, 0.9 minutes) returned the license question alone with both items it settles, no role started."
  }
 ]

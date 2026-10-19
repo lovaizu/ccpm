@@ -192,10 +192,8 @@ class TestParts(FormTest):
                 "README.md:4-5 is not inside its part",
             ),
             ([first, dict(second, lines=["x.md:6"])], "x.md:6 is not lines of the work"),
-            (
-                [first, {"part": "README.md:5-7", "good": "x"}],
-                'must hold "part", "good" and "lines"',
-            ),
+            ([first, {"part": "README.md:5-7", "good": "x"}], 'part 2 must hold "part", "good"'),
+            ([first, dict(second, why="x")], 'part 2 must hold "part", "good"'),
             ([first, "README.md:5-7"], 'must hold "part", "good" and "lines"'),
             ([first, dict(second, good=" ")], 'must hold "part", "good" and "lines"'),
             ("README.md:1-4", "gives its parts as no list"),
@@ -205,6 +203,27 @@ class TestParts(FormTest):
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
                 self.assertTrue(said_now[0].startswith("checklists/readme.md B-2"), said_now)
+
+    def test_lines_are_inside_their_part_in_its_own_file_alone(self):
+        # Given: a work of three files, a script whose name sorts before a document of two parts
+        # and one whose name sorts after it, and an item asked of each part whose Goods name lines from each part's first
+        # line
+        # When: the document's second part names its own lines, or lines of the same numbers in
+        # either script
+        # Then: the first passes, and each other is named
+        self.write("README.md", SECTIONED)
+        self.write("0.py", "x\n" * 7)
+        self.write("z.py", "x\n" * 7)
+        work = ["README.md", "0.py", "z.py"]
+        rest = [{"part": f"{p}:1-7", "good": "x", "lines": [f"{p}:1"]} for p in ("0.py", "z.py")]
+        each = [(EACH_ITEM["checklist"], EACH_ITEM["item"])]
+        for lines, said in (("README.md:5-7", 0), ("0.py:5-7", 1), ("z.py:5-7", 1)):
+            with self.subTest(lines=lines):
+                second = dict(EACH_GOOD["parts"][1], lines=[lines])
+                item = dict(EACH_GOOD, parts=[EACH_GOOD["parts"][0], second, *rest])
+                text = json.dumps({"items": [item]})
+                found = forms.check(text, ITEMS + [EACH_ITEM], work, forms.GOOD, each=each)
+                self.assertEqual(len(found), said, found)
 
     def test_every_part_out_of_place_is_named(self):
         # Given: an item asked of each part whose two parts both name lines outside them

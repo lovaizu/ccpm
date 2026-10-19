@@ -53,11 +53,11 @@ starting from the lines you name.
 5. Read the work once from the top with `cat -n`, whole, as the receiver the CCS names, meeting it
    for the first time: a work you just wrote is not read yet, and Read gives nothing back for it.
    For every item find the lines that give its Good; for an item asked of each part, run
-   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" parts <path>` for the parts as they now stand,
-   and find each part's Good inside it, making the work again where a part gives none. Mark each
-   statement the work makes of its subject by what it says: `behavior` where it tells how the
-   product behaves, such as what a command prints or what it changes, even where a decision says
-   the same; `decision` otherwise. Then find its grounds:
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" parts <path>`, with the run's path as in step 1,
+   for the parts as they now stand, and find each part's Good inside it, making the work again where
+   a part gives none. Mark each statement the work makes of its subject by what it says: `behavior`
+   where it tells how the product behaves, such as what a command prints or what it changes, even
+   where a decision says the same; `decision` otherwise. Then find its grounds:
    - for a decision, the words of the CCS or a file it names that say it, as you read them in
      step 2, quoted as they are written, without the line numbers `cat -n` adds;
    - for how the product behaves, a command you run with Bash that shows it, in a command of its
