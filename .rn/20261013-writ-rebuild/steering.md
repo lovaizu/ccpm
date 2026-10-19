@@ -393,18 +393,28 @@ Progress:
   send-backs of each kind a round, two rounds, counted by the script and held by a hook; a messaged
   role's reply kept by the SubagentStop hook and waited for with turn.py (tried: a reply after a
   send arrives later, as a notification an orchestrator that ended its turn never gets).
-- Next: implement that design and try the generator and first user loop first, as its own part.
-  Plan: forms: the first user's form gives every item, a Good or `places`; fix `forms.unrun`
-  counting `"ran": []`. run.py: `started` (role to agent_id, set by role_reply at SubagentStop),
-  `sent` counts per round, `held` items; `ask` gives `{"agent", "message", "to"}` once started;
-  `next` with nothing waits for a messaged reply (about 100 s, then `{"waiting"}`); after the first
-  user, its stops go to the orchestrator to hold those resting on the sources, the rest to the
-  generator, whose remake is read by the orchestrator again before the first user; compare sends
-  every item to the decision; decide lets a held item take the orchestrator's Good; round 2
-  starts both anew. Hooks: role_given checks SendMessage (to, message) and stops an Agent start
-  where a message is due; hooks.json matcher adds SendMessage. Prompts: up.md, generator.md,
-  first-user.md, evaluator.md. Then the CHANGELOG, the whole tried once, `claude plugin validate
-  --strict`.
+- Done (2026-10-19, `5467de3`): that design built: run.py keeps `started` (set by role_reply at
+  SubagentStop), `sent` per kind a round (`reading`, `turn:first-user`, three each) and `held`;
+  `ask` gives `{"agent", "message", "to"}` once started; `next` with nothing waits for a messaged
+  reply (100 pauses of 1 s, then `{"waiting"}`), and for the generator prints `{"agent", "reply"}`;
+  the first user's form gives every item a Good or `places`; its stops not waiting on a question go
+  to the orchestrator as `{"hold"}`, and those not held to the generator; compare sends every item
+  to the decision, where a held item may take the orchestrator's Good; round 2 starts both anew.
+  Hooks: role_given checks SendMessage and stops an Agent start where a message is due; read_whole
+  drops the work read at a SendMessage and at a message received (origin kind `peer` or
+  `coordinator`); hooks.json matches SendMessage. `forms.unrun` no longer counts `"ran": []`.
+  Prompts up, generator, first-user, evaluator. Tests pass on 3.9 and 3.12, 100% covered.
+  Partial trial `dev/turn/trials/roles/kept.py` passed (3.8 minutes, results.json): the generator
+  remade twice without reading its sources again; the first user stopped at B-1 with places and,
+  sent the remake, gave its Good inside them. Seen: the first user put "this part says nothing
+  about the terms of use" inside a B-2 Good; not fixed, to be checked in the flow trial and the
+  earlier records for whether this change causes it.
+- Next: check CI on `5467de3` and that no mutant survives; then update the flow trial
+  (`dev/turn/trials/flow/`: stand-in roles answer a message by running stand.py again, replies.json
+  for a first user stop given at its next reading, the first user's three send-backs going on to
+  the evaluator, a held item taking the orchestrator's Good) and run it; then the CHANGELOG, the
+  whole tried once, `claude plugin validate --strict`. The user asked (2026-10-19) whether the
+  hold step matches their intent; it is the one means not written in the design, said to them.
 
 ### [ ] #6: Each checklist finished
 
