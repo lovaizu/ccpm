@@ -21,7 +21,12 @@ their purpose, since what is sent back then is made again after all of it is bui
 ### B-2: The scenes to the goal
 1. The user starts with `/rn:up <what they want>`. rn confirms each point to decide, one per
    message, with what it looked up and the answer it recommends, the points it could look up
-   included, since a point decided unasked is made again when it is wrong. The goal and the
+   included, since a point decided unasked is made again when it is wrong. Each message shows the
+   points to decide, the settled ones with their outcome and the current one marked; for the
+   current one, the conclusion, its grounds, and the options, the recommended one first, each with
+   its trade-off and whether it can be undone; and one question on that point alone, answered by
+   the option's letter or in the user's own words. Answers to the user's questions and what rn
+   fixed on its own come first, apart from the points. The goal and the
    acceptance criteria, each with an ID, go into the plan, which rn puts on a draft pull request
    of its own branch, and rn stops at the plan sign-off.
 2. At a sign-off the user reads the proposal and answers `/rn:ty` to approve or
