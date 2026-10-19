@@ -34,8 +34,11 @@ their purpose, since what is sent back then is made again after all of it is bui
    the user does not watch, and is called only for a point only they can decide, confirmed the same
    way.
 5. The finished work is used as the user would use it, for each acceptance criterion, and rn stops
-   at the deliverable sign-off; on `/rn:ty` the pull request is marked ready, and the merge is the
-   user's.
+   at the deliverable sign-off; on `/rn:ty`, rn confirms, one point at a time, what the session
+   learned that would make later work better, each with what happened and the addition to the
+   user's checklists it recommends, and whether a fault of rn's own goes to rn as an issue; the
+   additions the user takes go into the same pull request. Then the pull request is marked ready,
+   and the merge is the user's.
 6. Wherever the user stops, `/rn:up` in a fresh conversation goes on from there.
 
 Each work is made with rn's checklist for its kind and the user's addition to it, at
