@@ -14,10 +14,10 @@ SEPARATORS = {";", "|", "||", "&", "&&", "(", ")", "`", "\n"}
 WRITES = {">", ">>", ">|", "&>", "&>>"}
 # A heredoc's end word, a here-string or a file descriptor follows these, not a path.
 NOT_PATHS = {"<<", "<<-", "<<<", ">&", "<&"}
-REDIRECTS = WRITES | NOT_PATHS | {"<"}
+REDIRECTS = {*WRITES, *NOT_PATHS, "<"}
 SIGNS = "();<>|&`\n"
 # Every operator the signs make, the longest first, so `&&` is not taken for two `&`.
-OPERATORS = sorted(SEPARATORS | REDIRECTS, key=len, reverse=True)
+OPERATORS = sorted({*SEPARATORS, *REDIRECTS}, key=len, reverse=True)
 # turn's script and each step it is asked, whose next word is where the run is kept.
 STEPS = {"start", "next", "given", "parts", "record"}
 # Commands that write each path they name, and those that write the last.
@@ -35,7 +35,7 @@ def words(command: str) -> list[str]:
         said = list(lexer)
     except ValueError:
         return command.split()
-    return [w for word in said for w in (apart(word) if set(word) <= set(SIGNS) else [word])]
+    return [w for word in said for w in (apart(word) if not word.strip(SIGNS) else [word])]
 
 
 def apart(signs: str) -> list[str]:
@@ -59,7 +59,8 @@ def statements(command: str, cwd: str) -> Iterator[tuple[str | None, list[str], 
             statement.append(word)
             continue
         if statement[:1] == ["cd"]:
-            target = statement[1] if len(statement) > 1 else "~"
+            # A bare cd goes home.
+            target = (statement + ["~"])[1]
             here = None if target == "-" else path(here, target)
         elif statement:
             yield here, statement, word
@@ -107,10 +108,11 @@ def named(command: str, cwd: str) -> list[str]:
     kept, which turn's script is asked of."""
     found = []
     for here, said, _ in statements(command, cwd):
-        for i, word in enumerate(said):
-            if word in REDIRECTS or (i and said[i - 1] in NOT_PATHS):
+        # Each word with the two before it.
+        for second, first, word in zip(["", ""] + said, [""] + said, said):
+            if word in REDIRECTS or first in NOT_PATHS:
                 continue
-            if i > 1 and said[i - 2].endswith("turn.py") and said[i - 1] in STEPS:
+            if second.endswith("turn.py") and first in STEPS:
                 continue
             found.append(path(here, word))
     return [p for p in found if p]
@@ -121,8 +123,11 @@ def written(command: str, cwd: str) -> list[str]:
     in place by sed."""
     found = []
     for here, said, _ in statements(command, cwd):
-        found += [path(here, w) for i, w in enumerate(said[1:]) if said[i] in WRITES]
-        plain = [w for i, w in enumerate(said) if w not in REDIRECTS and not redirected(said, i)]
+        # Each word with the one before it.
+        pairs = list(zip([""] + said, said))
+        found += [path(here, w) for before, w in pairs if before in WRITES]
+        # A redirect's target is not an argument of the command.
+        plain = [w for before, w in pairs if w not in REDIRECTS and before not in REDIRECTS]
         # An empty word is no path, such as the suffix macOS's `sed -i ''` takes.
         args = [w for w in plain[1:] if w and not w.startswith("-")]
         head = plain[0] if plain else ""
@@ -133,11 +138,6 @@ def written(command: str, cwd: str) -> list[str]:
         elif head == "sed" and any(w.startswith(("-i", "--in-place")) for w in plain):
             found += [path(here, w) for w in args[1:]]
     return [p for p in found if p]
-
-
-def redirected(said: list[str], i: int) -> bool:
-    """Whether the word at i is a redirect's target, not an argument of the command."""
-    return bool(i) and said[i - 1] in REDIRECTS
 
 
 def printed(command: str, cwd: str) -> list[str]:

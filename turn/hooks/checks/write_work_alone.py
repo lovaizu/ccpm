@@ -17,13 +17,13 @@ def check(event: dict[str, Any]) -> list[str]:
     if kept is None:
         return []
     cwd = os.path.realpath(event["cwd"])
-    if tool == "Bash":
+    if tool in ("Write", "Edit"):
+        paths = [os.path.realpath(os.path.join(cwd, event["tool_input"].get("file_path", "")))]
+    else:
         # A command may write outside the repository, such as in a folder of its own to run what
         # the work gives.
         command = str(event["tool_input"].get("command", ""))
         paths = [p for p in shell.written(command, cwd) if p.startswith(cwd + os.sep)]
-    else:
-        paths = [os.path.realpath(os.path.join(cwd, event["tool_input"].get("file_path", "")))]
     work = [os.path.join(cwd, w) for w in kept["work"]]
     if all(role == "generator" and p in work for p in paths):
         return []
