@@ -10,7 +10,9 @@ Say your plugin has a step that writes a project's README to your checklist `che
 A checklist lists what the README's reader should get from it, one item each, asked as a question,
 such as "On opening it, can the reader tell whether the project is for them?", and says under each
 item where it is answered: `Scope: its part`, as here; `each part`, every section on its own; or
-`whole`, the README at once.
+`whole`, the README at once. Its front matter says `check: usability`, as its items ask what the
+reader gets using the README; a checklist asking whether the work says what was decided says
+`check: accuracy`, and is answered by an AI that holds what was decided.
 
 The step's AI asks the user what the items need for this project, writes what is decided to
 `notes/readme.decisions.md`, and writes its task in a CCS, `.tasks/readme.json`. A CCS is a JSON
@@ -67,7 +69,8 @@ hand on to turn's makers.
 
 turn gives your plugin's AI what it does not get by making the work and checking it itself.
 
-- The AI that reads the work did not make it, and opens only what the work's reader opens.
+- The AI that reads the work did not make it, has only what the work's reader has, and uses the
+  work as they do.
 
   The AI that made a work finds the Good it meant; an AI meeting it for the first time finds only
   the Good its lines give, which is what the work's reader gets.

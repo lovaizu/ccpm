@@ -40,7 +40,7 @@ since a work it must fix costs the user the fixing as well as the wait.
   [ACC](https://arxiv.org/abs/2601.11653) gives it: parts, each a list of entries, each entry a kind
   and its value, every name the calling AI's own.
 - The calling AI calls turn with the CCS's path, the kinds it uses in it for where the work goes, the
-  checklists, the receiver, what the receiver reads the work for and what they open with it, and
+  checklists, the receiver, what the receiver reads the work for and what they have with it, and
   where turn writes its result.
 - The calling AI gets back the work where it goes, and the result: each item's Good with its lines,
   the questions only the user can decide, each item still without Good, with what the receiver

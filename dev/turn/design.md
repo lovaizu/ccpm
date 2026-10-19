@@ -1,9 +1,9 @@
 # turn design
 
 turn is built from five AI roles, a few scripts and hooks: one role makes the work and makes it
-again until another, reading it in its receiver's place, finds every item's Good, and the rest
-decide from that reading which items get their Good and have the work made again where one does
-not. The goal, the key results, and what a
+again until the orchestrator, holding the sources, and another, using it in its receiver's place,
+find every item's Good, and the rest decide from those readings which items get their Good and have
+the work made again where one does not. The goal, the key results, and what a
 checklist, the receiver and a Good are, are in [turn's UX](ux.md).
 
 ## User stories
@@ -29,8 +29,8 @@ flowchart LR
   le["Learner"]
   caller -->|1 calls with the CCS, which the orchestrator checks can give every item its Good| orch
   orch -->|2 has the work made, and made again where no Good is found| gen
-  orch -->|3 has it read in the receiver's place, back to 2 until every item has its Good, three times at most| fu
-  orch -->|4 has every item's Good looked for, given that reading, then decides every item| ev
+  orch -->|3 has it used in the receiver's place, back to 2 until every usability item has its Good, three times at most| fu
+  orch -->|4 has every usability item's Good looked for, given that reading, then decides every item| ev
   orch -->|5 has how the run went learnt, then 2 to 4 once more where an item has none| le
   orch -->|6 returns the work and the result| caller
 ```
@@ -54,9 +54,18 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   part for another item goes unseen; what lies between the parts, such as one name for each thing,
   is found only in the whole. The checklist says it once, so every role and every run answers an
   item at the same place.
+- Each checklist says in its front matter, as `check`, what answers its items: `usability`, what the
+  receiver gets using the work with what they have; `accuracy`, whether the work says what its
+  sources decided and what the product does. The generator and the orchestrator answer both; the
+  first user and the evaluator, in the receiver's place, usability alone.
+
+  The receiver has no sources, so no reading in their place can tell whether the work matches them:
+  given such an item, the first user finds no Good, and a Good given by the one holding the sources
+  after the first user stopped is a way round a Good found by a reader that did not make the work.
+  What answers an item lies in the item itself, so its checklist says it once, not each call.
 - The calling AI hands the orchestrator the CCS's path, where the result goes, and the kinds it uses
   in the CCS for where the work goes, the checklists and the receiver, and, if it has them, what the
-  receiver reads the work for and what they open with it.
+  receiver reads the work for and what they have with it.
 
   The CCS is the calling AI's, and turn defines nothing of it: what turn needs is found by these
   kinds, and the values stay in the CCS alone, so the call and the CCS cannot differ. Where the
@@ -106,40 +115,40 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   read as the receiver, who has none, so a statement made up passes them. A maker that means a
   statement as decided grounds it in the decision, while the product may do otherwise; a second mark
   by one that did not make the work catches it.
-- The first user reads the work in the receiver's place, with what the receiver opens and the
-  checklists, and gives for each item the Good it found in the work, with its lines, and for each
-  item it finds none, the places of the work where it looked for it.
+- The first user uses the work in the receiver's place, with everything the receiver has and doing
+  all they do with it, as the CCS says of the receiver, such as the whole repository and running
+  its tests for a maintainer of code, and gives for each usability item the Good it found in the
+  work, with its lines, and for each it finds none, the places of the work where it looked for it.
 
   A reader that did not make the work finds only the Good its lines give; the maker finds the Good
-  it meant.
+  it meant. What the receiver gets lies also in what they have and do beside the work: a reader
+  with less misses a Good the receiver gets, and one that only reads passes what a run shows to
+  fail.
 - The orchestrator sends the generator each item the first user found no Good for, with its places,
-  and the first user reads the work made again, until it finds every item's Good, each item left
+  and the first user reads the work made again, until it finds every item's Good it is given, each item left
   waits on a question, or it has been sent back three times in a round. The first user, like the
   generator, stays started until then, and neither is sent anything after; the next round starts
-  both anew. An item whose Good rests on the sources, such as
-  whether a statement said as fact was checked, is the orchestrator's, from its reading of the
-  grounds, and is not sent back for the first user's reading.
+  both anew.
 
   A remake aimed at where a reader stopped gives the Good there; an item restated over the whole
   work leaves the generator nothing to aim at, and the remake changes nothing. A first user that
   stays started reads again whether the places it stopped at now give the Good, so what is left
   only shrinks; the evaluator, started anew, reads the work as the receiver first meets it. A bound
   keeps a reading that does not settle from going on without end, and what it leaves goes on to the
-  evaluator, the decision and the second round. The receiver has no sources, so no reading of
-  theirs can tell whether a statement was checked.
-- The evaluator, given the same and the last reading, looks through the whole work for every item's
-  Good, holding each Good of the reading to what its item asks, and gives every Good with its
-  lines. The orchestrator then reads the work whole and decides every item from its findings and
-  both readers' Goods, finding the Good the receiver gets, and giving none where neither reader
-  found one, but for an item whose Good rests on the sources.
+  evaluator, the decision and the second round.
+- The evaluator, given the same and the last reading, looks through the whole work for every
+  usability item's Good, holding each Good of the reading to what its item asks, and gives every
+  Good with its lines. The orchestrator then reads the work whole and decides every item, finding
+  the Good the receiver gets: a usability item from its findings and both readers' Goods, giving
+  none where neither reader found one; an accuracy item from its findings.
 
   The orchestrator's findings are recorded before the evaluator starts, as a judgment made after
   another's is pulled toward it. One reader misses a Good the work gives, and an item judged
   without it is made again for nothing; a Good held to its item is one the calling AI can rely on.
   A Good held only at the lines the reading named passes a place elsewhere that does not give it.
   Readers that agree may still carry a doubt inside a Good, so agreement is decided too. A Good only
-  the orchestrator found, on an item whose Good does not rest on the sources, would be judged by one
-  that read the work knowing what it meant, so a script stops it.
+  the orchestrator found, on a usability item, would be judged by one that read the work knowing
+  what it meant, so a script stops it.
 - Once the orchestrator has decided, the learner reads every item's finding and the record of every
   agent of the run, the orchestrator's included, and gives, from what they show, with the words it
   rests on quoted, how the run went: whether the Goods came without waste and not by chance, each
@@ -190,11 +199,11 @@ turn/                      the plugin, installed by Claude Code
 - A script checks the call and takes every entry of each kind it names from the CCS, so no AI
   copies a value; it stops a call that names a missing file or leaves where the work goes, the
   checklists or the receiver without an entry.
-- What each role is given: the generator, the whole CCS and what is sent back; the first user, the
-  work, what the receiver opens, who the receiver is and what for, and the checklists; the
-  evaluator, the same and the last first user's reading; the learner, every item's finding and the
-  JSONL of every agent of its run, the orchestrator's included; and each role of the second round,
-  the lessons taken for it.
+- What each role is given: the generator, the whole CCS, every checklist and what is sent back; the
+  first user, the work, what the receiver has with it, who the receiver is and what for, and the
+  usability checklists; the evaluator, the same and the last first user's reading; the learner,
+  every item's finding and the JSONL of every agent of its run, the orchestrator's included; and
+  each role of the second round, the lessons taken for it.
 - The orchestrator starts the generator and the first user once a round and sends each what comes
   next with SendMessage, which it loads with ToolSearch, until the first user's reading ends; the
   evaluator and the learner it starts anew each time.
@@ -225,8 +234,9 @@ turn/                      the plugin, installed by Claude Code
 
   A role that reads only what it is given is not bent by what it was not meant to see.
 - The hooks stop every role's reply, and the orchestrator's check, reading and decision, until
-  every input of its step is read whole since it last changed; a script shows the learner each
-  record page by page, as a record is too long for one read.
+  every input of its step is read whole since it last changed, and of what the receiver has, each
+  file the first user or the evaluator opens; a script shows the learner each record page by
+  page, as a record is too long for one read.
 
   An item judged on a part read is judged on a guess for the rest.
 - A script writes the result where the call says, and checks its shape as it writes.
@@ -255,21 +265,22 @@ turn/                      the plugin, installed by Claude Code
     run by [`dev/check.sh`](../check.sh) in CI on every push, with lines and branches 100%
     covered, Ruff's lint and format, and Pyrefly's types for Python 3.9.
 - The orchestrator: takes each step of the run in its order, from the call to the result.
-  - Flow: on a task of two items, one answered at its part and one in each part, with the four roles
-    stood in for by agents that read what their step reads and give a reply set beforehand, one set
-    for each way a run goes: every item Good at the first reading, an item sent back with the parts
-    where it is not found, an item the first user finds no Good for given at its next reading, an
-    item sent back three times by the reading and by the first user going on to the evaluator, the
-    evaluator differing from the
-    findings, and an item left without Good through the second reading, with the learner after
-    each reading; and, on the same task with its
-    decision taken out, the questions returned before any work is made. On Opus 5.5; passes when its
+  - Flow: on a task of two usability items, one answered at its part and one in each part, and one
+    accuracy item, with the four roles stood in for by agents that read what their step reads and
+    give a reply set beforehand, one set for each way a run goes: every item Good at the first
+    reading, an item sent back with the parts where it is not found, an item the first user finds no
+    Good for given at its next reading, an item sent back three times by the reading and by the
+    first user going on to the evaluator, the evaluator differing from the findings, an accuracy
+    item decided from the findings alone, and an item left without Good through the second reading,
+    with the learner after each reading; and, on the same task with its decision taken out, the
+    questions returned before any work is made. On Opus 5.5; passes when its
     JSONL shows each step in its order, each hook stopping where its check should, and the result as
     the set replies make it.
 - Each of the four roles: works to its aim with what it is given, giving its form.
   - Flow: started on its own with a prompt set beforehand, as the orchestrator would give it, on a
-    task of two items, one answered at its part and one in each part, on Opus 5.5; passes when its
-    JSONL shows it read only and whole what its step reads, and its reply fills its form; the
+    task of two usability items, one answered at its part and one in each part, and one accuracy
+    item, on Opus 5.5; passes when its JSONL shows it read only and whole what its step reads, and
+    its reply fills its form; the first user, given no accuracy item, runs what the receiver runs; the
     generator, sent back by message, remakes the work without reading its sources again, and the
     first user, sent the work made again, gives the places it stopped at their Good.
   - Content: what it makes in the acceptance trials below, read against its JSONL.
