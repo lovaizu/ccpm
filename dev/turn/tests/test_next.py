@@ -9,15 +9,19 @@ from helpers import (
     GOOD,
     LEARNT,
     LESSON,
+    MARKED,
     QUESTION,
+    READ_GIVEN,
     READ_SHOWN,
     SENT_BACK,
+    STATEMENT,
     UNSOURCED,
     WAITS,
     RepoTest,
 )
 
 RESULT = CALL["result"]
+RAN = {"command": "printf a", "output": "a"}
 
 
 def judged(item):
@@ -39,6 +43,14 @@ class ReadTest(RepoTest):
 
     def read_text(self, text):
         return self.turn("next", RESULT, stdin=text)
+
+    def claimed(self, *statements, ran=()):
+        """The generator started as the script printed, replying with the statements, after reading
+        what it was given and running the commands, each with what it printed."""
+        prompt = self.read_json(RESULT)["running"]["next"]["prompt"]
+        uses = tuple(("Bash", {"command": c}, o) for c, o in ran)
+        reply = {"items": [GOOD, dict(GOOD, item="B-1")], "questions": [], "statements": statements}
+        self.assertEqual(self.replied("turn:generator", prompt, reply, *READ_GIVEN, *uses), (0, ""))
 
 
 class TestCheck(RepoTest):
@@ -95,7 +107,7 @@ class TestReading(ReadTest):
         # When: the reading is recorded
         # Then: the generator is to be started again with the item sent back and what the receiver
         # gets once it has its Good
-        out = self.next({"items": [GOOD, SENT_BACK], "questions": []})
+        out = self.next({"items": [GOOD, SENT_BACK], "questions": [], "statements": [MARKED]})
         self.assertEqual(out["agent"], "turn:generator")
         self.assertEqual(self.given()["sent_back"], [SENT_BACK])
         self.assertEqual(self.read_json(RESULT)["running"]["next"]["prompt"], out["prompt"])
@@ -107,10 +119,50 @@ class TestReading(ReadTest):
         # Then: the generator is to be started again with the statement and what is wrong with it,
         # and no item sent back
         out = self.next(
-            {"items": [GOOD, dict(GOOD, item="B-1")], "questions": [], "unsourced": [UNSOURCED]}
+            {
+                "items": [GOOD, dict(GOOD, item="B-1")],
+                "questions": [],
+                "statements": [MARKED],
+                "unsourced": [UNSOURCED],
+            }
         )
         self.assertEqual(out["agent"], "turn:generator")
         self.assertEqual((self.given()["sent_back"], self.given()["unsourced"]), ([], [UNSOURCED]))
+
+    def test_a_statement_marked_how_the_product_behaves_with_no_run_is_sent_back(self):
+        # Given: a generator grounding a statement in quotes as a decision, and grounding one in a
+        # run at other lines, and a reading marking the first how the product behaves
+        # When: the reading is recorded
+        # Then: the generator is to be started again with the first, as no run shows it
+        run = {"lines": ["README.md:1-1"], "kind": "behavior", "ran": [RAN]}
+        self.claimed(STATEMENT, run, ran=[(RAN["command"], RAN["output"])])
+        behaves = dict(MARKED, kind="behavior")
+        out = self.next(
+            {
+                "items": [GOOD, dict(GOOD, item="B-1")],
+                "questions": [],
+                "statements": [behaves, dict(behaves, lines=run["lines"])],
+            }
+        )
+        self.assertEqual(out["agent"], "turn:generator")
+        gets = (
+            "it tells how the product behaves, and no command run shows it: run one that shows"
+            " it, or take it out of the work"
+        )
+        self.assertEqual(self.given()["unsourced"], [{"lines": ["README.md:3-3"], "gets": gets}])
+
+    def test_a_statement_marked_how_the_product_behaves_resting_on_a_run_passes(self):
+        # Given: a generator grounding a statement over lines 2 to 3 in a run, and a reading
+        # marking line 3 how the product behaves
+        # When: the reading is recorded
+        # Then: the first user is to be started, as a run shows it
+        run = {"lines": ["README.md:2-3"], "kind": "behavior", "ran": [RAN]}
+        self.claimed(run, ran=[(RAN["command"], RAN["output"])])
+        behaves = dict(MARKED, kind="behavior")
+        out = self.next(
+            {"items": [GOOD, dict(GOOD, item="B-1")], "questions": [], "statements": [behaves]}
+        )
+        self.assertEqual(out["agent"], "turn:first-user")
 
     def test_a_reading_with_every_item_good_or_waiting_starts_the_first_user(self):
         # Given: a call naming what the receiver reads the work for and what they open with it, and
@@ -120,7 +172,7 @@ class TestReading(ReadTest):
         # receiver is and what for, and the checklists, and not the CCS or the reading
         call = dict(CALL, kind=dict(CALL["kind"], use="purpose", opens="page"))
         self.started(call)
-        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})
         self.assertEqual(out["agent"], "turn:first-user")
         self.assertEqual(
             self.given(),
@@ -139,7 +191,9 @@ class TestReading(ReadTest):
         # When: another reading is given
         # Then: it stops, saying the run has returned and how to start one
         self.learnt(self.through(EVALUATED))
-        code, out = self.read({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        code, out = self.read(
+            {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]}
+        )
         self.assertEqual(code, 1)
         self.assertIn("no run is going", out)
         self.assertIn("turn.py start", out)
@@ -164,7 +218,7 @@ class TestReading(ReadTest):
         # Given: a reading given as JSON inside a ```json fence
         # When: it is recorded
         # Then: it is taken as the reading itself
-        reading = json.dumps({"items": [GOOD, SENT_BACK], "questions": []})
+        reading = json.dumps({"items": [GOOD, SENT_BACK], "questions": [], "statements": [MARKED]})
         code, out = self.read_text(f"```json\n{reading}\n```\n")
         self.assertEqual(code, 0, out)
         self.assertEqual(self.given()["sent_back"], [SENT_BACK])
@@ -175,7 +229,7 @@ class TestReaders(ReadTest):
         # Given: a run whose first user has replied with the Good it found for one item
         # When: the orchestrator goes on
         # Then: the evaluator is to be started with what the first user was, and its reading
-        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})
         first = self.given()
         self.replied("turn:first-user", out["prompt"], {"items": [FOUND]})
         out = self.next()
@@ -186,7 +240,7 @@ class TestReaders(ReadTest):
         # Given: a run whose first user is to be started
         # When: the orchestrator goes on before it has replied
         # Then: it stops, saying to start the first user with the prompt printed and wait
-        self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})
         self.assertIn("start turn:first-user", self.refused())
 
     def test_an_evaluator_agreeing_with_the_findings_writes_the_result(self):
@@ -223,7 +277,7 @@ class TestReaders(ReadTest):
         # When: it returns
         # Then: the result is written there
         self.started(dict(CALL, result="result.json"))
-        reading = {"items": [GOOD, WAITS], "questions": [QUESTION]}
+        reading = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]}
         _, out = self.turn("next", "result.json", stdin=json.dumps(reading))
         self.replied("turn:first-user", json.loads(out)["prompt"], {"items": []})
         _, out = self.turn("next", "result.json")
@@ -430,7 +484,7 @@ class TestLearner(ReadTest):
             (given["sent_back"], given["learnt"], given["lessons"]),
             ([SENT_BACK], LEARNT[:1], [LESSON["lesson"]]),
         )
-        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})
+        out = self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})
         self.assertEqual(out["agent"], "turn:first-user")
         self.assertEqual(self.given()["lessons"], ["read the opening first"])
 

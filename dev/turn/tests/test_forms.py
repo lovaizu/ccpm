@@ -5,6 +5,7 @@ from helpers import (
     CHECKED,
     GOOD,
     LESSON,
+    MARKED,
     QUESTION,
     SENT_BACK,
     STATEMENT,
@@ -121,7 +122,12 @@ class TestStatements(FormTest):
         short = {"lines": UNSOURCED["lines"]}
         more = dict(UNSOURCED, why="x")
         said = self.said(
-            {"items": [GOOD, SENT_BACK], "questions": [], "unsourced": [short, more]},
+            {
+                "items": [GOOD, SENT_BACK],
+                "questions": [],
+                "statements": [MARKED],
+                "unsourced": [short, more],
+            },
             forms.READING,
         )
         self.assertEqual(
@@ -137,9 +143,44 @@ class TestStatements(FormTest):
         # When: it is checked
         # Then: it is told to give them as a list
         said = self.said(
-            {"items": [GOOD, SENT_BACK], "questions": [], "unsourced": UNSOURCED}, forms.READING
+            {"items": [GOOD, SENT_BACK], "questions": [], "statements": [], "unsourced": UNSOURCED},
+            forms.READING,
         )
         self.assertEqual(said, ['"unsourced" is not a list; give it as [{"lines", "gets"}, ...]'])
+
+    def test_a_reading_marking_each_statement_passes(self):
+        # Given: a reading marking one statement a decision and one how the product behaves, and
+        # one marking none, as the work makes no statement of its subject
+        # When: it is checked
+        # Then: it passes
+        behaves = dict(MARKED, kind="behavior")
+        for marked in ([MARKED, behaves], []):
+            with self.subTest(marked=marked):
+                reading = {"items": [GOOD, SENT_BACK], "questions": [], "statements": marked}
+                self.assertEqual(self.said(reading, forms.READING), [])
+
+    def test_marks_out_of_their_form_stop(self):
+        # Given: a reading with no marks, marks that are no list, and marks of no kind, beside
+        # grounds, or with lines outside the work
+        # When: it is checked
+        # Then: each is named with the form a mark takes
+        shape = 'give "statements": [{"lines": [...], "kind": ...}, ...]'
+        held = 'must hold "lines" and "kind", "decision" or "behavior", alone'
+        for marked, said in (
+            (None, shape),
+            (MARKED, shape),
+            ([dict(MARKED, kind="fact")], f"statement 1 of statements {held}"),
+            ([STATEMENT], f"statement 1 of statements {held}"),
+            ([{"kind": "decision"}], f"statement 1 of statements {held}"),
+            ([dict(MARKED, lines=["docs/start.md:1"])], "is not lines of the work"),
+        ):
+            with self.subTest(marked=marked):
+                reading: dict = {"items": [GOOD, SENT_BACK], "questions": []}
+                if marked is not None:
+                    reading["statements"] = marked
+                said_now = self.said(reading, forms.READING)
+                self.assertEqual(len(said_now), 1, said_now)
+                self.assertIn(said, said_now[0])
 
 
 class TestGrounds(FormTest):
@@ -238,7 +279,7 @@ class TestGrounds(FormTest):
         # When: it is checked
         # Then: it passes
         ran = {"command": "printf ' a \\t' | python3 csvtidy.py", "output": "a (exit 0)"}
-        lines = {"lines": ["README.md:3-3"], "ran": [ran]}
+        lines = {"lines": ["README.md:3-3"], "kind": "behavior", "ran": [ran]}
         self.assertEqual(self.claim(lines, dict(lines, quotes=STATEMENT["quotes"])), [])
 
     def test_a_run_not_in_the_generators_record_stops(self):
@@ -255,7 +296,9 @@ class TestGrounds(FormTest):
             {"command": "ls", "output": "README.md"},
         ):
             with self.subTest(ran=ran):
-                said_now = self.claim({"lines": ["README.md:3-3"], "ran": [ran]})
+                said_now = self.claim(
+                    {"lines": ["README.md:3-3"], "kind": "behavior", "ran": [ran]}
+                )
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn("run 1 is not a command you ran with Bash", said_now[0])
 
@@ -272,7 +315,7 @@ class TestGrounds(FormTest):
             (["ls"], 'run 1 must hold "command" and "output"'),
         ):
             with self.subTest(ran=ran):
-                said_now = self.claim({"lines": ["README.md:3-3"], "ran": ran})
+                said_now = self.claim({"lines": ["README.md:3-3"], "kind": "behavior", "ran": ran})
                 self.assertEqual(len(said_now), 1, said_now)
                 self.assertIn(said, said_now[0])
 
@@ -287,7 +330,9 @@ class TestGrounds(FormTest):
             f.write(json.dumps({"type": "progress", "data": {}}) + "\n")
             f.write(json.dumps({"type": "user", "message": {"content": "go on"}}) + "\n")
         ran = {"command": "ls", "output": "a (exit 0)"}
-        self.assertEqual(self.claim({"lines": ["README.md:3-3"], "ran": [ran]}), [])
+        self.assertEqual(
+            self.claim({"lines": ["README.md:3-3"], "kind": "behavior", "ran": [ran]}), []
+        )
 
     def test_a_run_is_found_among_bash_s_own_uses_and_results_alone(self):
         # Given: a record holding, beside a Bash use and its result, parts of other types and tools
@@ -330,30 +375,54 @@ class TestGrounds(FormTest):
         ):
             with self.subTest(command=command, output=output):
                 ran = {"command": command, "output": output}
-                said_now = self.claim({"lines": ["README.md:3-3"], "ran": [ran]})
+                said_now = self.claim(
+                    {"lines": ["README.md:3-3"], "kind": "behavior", "ran": [ran]}
+                )
                 self.assertEqual(len(said_now), 1, said_now)
         ran = {"command": "cmd5", "output": "done"}
-        self.assertEqual(self.claim({"lines": ["README.md:3-3"], "ran": [ran]}), [])
+        self.assertEqual(
+            self.claim({"lines": ["README.md:3-3"], "kind": "behavior", "ran": [ran]}), []
+        )
 
     def test_a_statement_with_no_grounds_or_other_keys_stops(self):
-        # Given: a statement with lines alone, one with an old key beside its quotes, one with no
-        # lines, and one that is no object
+        # Given: a statement with lines and its mark alone, one with an old key beside its quotes,
+        # one with no lines, one with no mark or a mark of no kind, and one that is no object
         # When: it is checked
         # Then: each is named with the keys a statement holds
+        shape = ' must hold "lines", "kind", "decision" or "behavior", and "quotes", "ran" or both'
         for statement in (
-            {"lines": ["README.md:3-3"]},
+            {"lines": ["README.md:3-3"], "kind": "decision"},
             dict(STATEMENT, **{"from": ["csvtidy.py:1-1"]}),
-            {"quotes": STATEMENT["quotes"]},
+            {"kind": "decision", "quotes": STATEMENT["quotes"]},
+            {"lines": ["README.md:3-3"], "quotes": STATEMENT["quotes"]},
+            dict(STATEMENT, kind="fact"),
             "README.md:3-3",
         ):
             with self.subTest(statement=statement):
                 self.assertEqual(
                     self.claim(statement, statement),
-                    [
-                        'statement 1 of statements must hold "lines" with "quotes", "ran" or both',
-                        'statement 2 of statements must hold "lines" with "quotes", "ran" or both',
-                    ],
+                    [f"statement 1 of statements{shape}", f"statement 2 of statements{shape}"],
                 )
+
+    def test_a_statement_is_grounded_as_its_mark_asks(self):
+        # Given: a statement of how the product behaves resting on quotes alone, and a decision
+        # resting on a run alone
+        # When: it is checked
+        # Then: the first is told to give a run or be taken out, and the second to give quotes
+        ran = {"command": "printf ' a \\t' | python3 csvtidy.py", "output": "a"}
+        said = self.claim(
+            dict(STATEMENT, kind="behavior"),
+            {"lines": ["README.md:3-3"], "kind": "decision", "ran": [ran]},
+        )
+        behaves = (
+            'statement 1 of statements tells how the product behaves; give "ran", a command you'
+            " ran that shows it, or take it out of the work"
+        )
+        decided = (
+            'statement 2 of statements is a decision; give "quotes", the words of the CCS or its'
+            " files that say it, or take it out of the work"
+        )
+        self.assertEqual(said, [behaves, decided])
 
     def test_statements_given_as_no_list_stop(self):
         # Given: a claim with no statements, and one with statements that are no list
@@ -365,7 +434,7 @@ class TestGrounds(FormTest):
                 given = dict(reply, statements=statements[0]) if statements else reply
                 said = self.said(given, forms.CLAIM, self.sources, (self.record,))
                 self.assertEqual(len(said), 1, said)
-                self.assertIn('give "statements": [{"lines": [...], "quotes": [...]}', said[0])
+                self.assertIn('give "statements": [{"lines": [...], "kind": ..., "quotes"', said[0])
 
 
 class TestLessons(FormTest):

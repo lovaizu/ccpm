@@ -112,11 +112,14 @@ CAN = [
     {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
 ]
 # A statement of the work with the words of the CCS's files it rests on, as the generator quotes
-# them, and one the orchestrator sends back, its source not found.
+# them; the orchestrator's own mark of it; and one the orchestrator sends back, its source not
+# found.
 STATEMENT = {
     "lines": ["README.md:3-3"],
+    "kind": "decision",
     "quotes": [{"path": "notes/readme.decisions.md", "quote": "# Decisions"}],
 }
+MARKED = {"lines": ["README.md:3-3"], "kind": "decision"}
 UNSOURCED = {"lines": ["README.md:3-3"], "gets": "no file the CCS names says it tidies CSV files"}
 # A lesson on how the run went, for the generator, resting on words of the first record, which
 # every role's record holds.
@@ -188,7 +191,7 @@ class RepoTest(unittest.TestCase):
     def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=()):
         """The run taken through the orchestrator's findings, the first user's reply and the
         evaluator's, and what the script prints then."""
-        out = self.next({"items": list(findings), "questions": [QUESTION]})
+        out = self.next({"items": list(findings), "questions": [QUESTION], "statements": [MARKED]})
         reply = {"items": list(found)}
         self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
         out = self.next()

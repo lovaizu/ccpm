@@ -27,7 +27,7 @@ ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
     ["items", "questions", "checklist", "item", "good", "lines", "question", "gets", "can"]
-    + ["learnt", "statements", "unsourced", "quotes", "ran", "path", "quote", "command"]
+    + ["learnt", "statements", "kind", "unsourced", "quotes", "ran", "path", "quote", "command"]
     + ["output", "process", "role", "lesson", "grounds", "record", "checked", "recommended"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)

@@ -20,5 +20,6 @@ means.
    if it exists.
 3. Run `python3 "${CLAUDE_PLUGIN_ROOT}/stand/stand.py" generator`. It prints JSON with `write`, the
    work's text, and `reply`.
-4. Write `write` to the work with Write, then read the work whole with `cat -n`.
+4. Write `write` to the work with Write, run each `command` in the `ran` of `reply`'s statements
+   with Bash, as it is written, then read the work whole with `cat -n`.
 5. Reply with `reply` alone, as JSON, as it was printed.

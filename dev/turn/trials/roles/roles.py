@@ -44,6 +44,7 @@ READING = {
         }
     ],
     "questions": [],
+    "statements": [{"lines": ["README.md:7-7"], "kind": "decision"}],
 }
 UNMET = {
     "checklist": "checklist.md",

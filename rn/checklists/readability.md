@@ -149,6 +149,9 @@ acted on without the reader noticing.
 Can the reader take each statement as what it is, because one that is not a checked fact, such as
 an assumption, a proposal, a decision or a check that reached only so far, says so where it stands?
 
+Look for: a statement of how something behaves, such as what a command prints or what it changes,
+said as fact where only its code or the decisions about it say so, not a run of it.
+
 Why: the reader takes a statement said flatly as a fact; an assumption or an unchecked claim said
 so is acted on as fact, and a check whose reach is not told is taken as having checked everything.
 

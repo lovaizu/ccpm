@@ -18,7 +18,9 @@ an evaluator holds those Goods to their items and finds those it missed; where t
 your findings, you decide. Once the work is made, only you hold the sources: the first user and the
 evaluator read as the receiver, who has none, so a statement made up passes them; you check each
 statement the work makes in its grounds: the words of the CCS and its files the generator quotes,
-and, for how the product behaves, what the commands it ran printed.
+and, for how the product behaves, what the commands it ran printed. You mark on your own which
+statements tell how the product behaves, since a maker that meant one as decided grounds it in the
+decision while the product may do otherwise, and turn sends back each that no run shows.
 After every reading, a learner finds from every agent's record what gives each item's Good and how
 the run went; you decide which of its lessons hold, as you decided every step of the run. Where an
 item is still without Good after the first reading, the work is made again with what you took, and
@@ -51,8 +53,8 @@ What only the user can decide you hand back as a question, with the answer you r
    turn's hook keeps each reply in the run for turn.py.
    - Out: its reply: from `turn:generator`, `{"items": [...], "questions": [...], "statements":
      [...]}`, the Good it set for each item with the lines that give it, or the question the item
-     waits on, and each statement of the work with its grounds, `quotes` of the sources and `ran`,
-     the commands it ran with what they printed; from `turn:first-user`, the Good it found for each
+     waits on, and each statement of the work with its mark, `kind`, and its grounds, `quotes` of
+     the sources and `ran`, the commands it ran with what they printed; from `turn:first-user`, the Good it found for each
      item and its lines; from `turn:evaluator`, each item's Good with its lines; from
      `turn:learner`, what gives each item's Good and the lessons on how the run went.
 4. If the agent was `turn:generator`, read the work and go to step 5. Otherwise run
@@ -61,15 +63,20 @@ What only the user can decide you hand back as a question, with the answer you r
    that the work draws on, and the work, whole, the same way; the work again each time it changed.
    Then, for every item, read the work as the receiver the CCS names, for the use it names, and
    find its Good: what the receiver gets that gives what the item asks. The generator's Goods and
-   lines show you where to look first; the Good is yours to find in the work. Then, for each
-   statement the work makes of its subject, find in its grounds what the statement says: in each
-   of its `quotes`, and in what each of its `ran` printed. Send the statement back where they do not
-   say it, where the sources you read say otherwise, where it tells how the product behaves with no
-   run, or where the generator gave none for it. Where a decision of the CCS and a file it names
-   differ, the items it touches wait on a question, since only the user can say which holds.
+   lines show you where to look first; the Good is yours to find in the work. Then mark each
+   statement the work makes of its subject by what it says, without running anything: `behavior`
+   where it tells how the product behaves, such as what a command prints or what it changes, even
+   where a decision says the same; `decision` otherwise. Find in its grounds what the statement
+   says: in each of its `quotes`, and in what each of its `ran` printed. Send the statement back
+   where they do not say it, where the sources you read say otherwise, or where the generator gave
+   none for it; turn sends back each you mark `behavior` that no `ran` shows. Where a decision of
+   the CCS and a file it names differ, the items it touches wait on a question, since only the user
+   can say which holds.
    Run `turn.py next <the call's result> <<'EOF'` with your reading, ending with `EOF`.
    - Out: your reading, as JSON:
-     `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}]}`.
+     `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}],
+     "statements": [{"lines": [...], "kind": "..."}]}`, each statement with `"lines"`, where the
+     work makes it, and `"kind"`, `"decision"` or `"behavior"`, as you marked it.
      Each item is `{"checklist": "<path as in the CCS>", "item": "<ID, such as B-1>"}` with one of:
      - `"good"`: what the receiver gets, in plain words, and `"lines"`: the lines that give it,
        each `"<path of the work>:<from>-<to>"`, when the receiver gets what the item asks;
@@ -100,7 +107,7 @@ What only the user can decide you hand back as a question, with the answer you r
    `turn.py next <the call's result> <<'EOF'` with your decision, ending with `EOF`, and go to
    step 6.
    - Out: your decision, in the form of your reading in step 5, with the items of `decide.items`
-     alone. An item may wait on a question of `decide.questions` by its number; a new question is
+     alone and no statements. An item may wait on a question of `decide.questions` by its number; a new question is
      numbered after them.
 8. Take what holds of what the learner found, offered in `take`: `items`, what gives each item's
    Good, offered where the work is made again; `process`, each lesson on how the run went, for the

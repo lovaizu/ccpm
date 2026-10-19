@@ -60,9 +60,10 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
 - The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
   each item and where the work gives it, then makes the work to give each, and hands back each
   item's Good with its lines, each statement the work makes of its subject with its grounds, and
-  the questions only the user can decide. The grounds of a statement are the words of the CCS or
-  the files it names that say it, quoted as written, and, for one of how the product behaves, a
-  command the generator ran and what it printed; a statement with neither is taken out of the work.
+  the questions only the user can decide. It marks each statement as a decision or as how the
+  product behaves. The grounds of a decision are the words of the CCS or the files it names that
+  say it, quoted as written; of how the product behaves, a command the generator ran and what it
+  printed; a statement without its grounds is taken out of the work.
 
   A work made to Goods set first gives each where it was meant; one written first and matched to
   the items after is patched item by item. It hands back once it has read the work and found each
@@ -74,15 +75,17 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
 - The orchestrator reads the work, finding for every item the Good the receiver gets from it and,
   in each statement's grounds, what the statement says, and sends back the items whose Good it does
   not find, each said as what the receiver gets once it has it, and each statement its grounds do
-  not say, or that tells how the product behaves with no run; where a decision of the CCS and a
-  file it names differ, it is a question. Once it sends nothing back, a script records its
-  findings.
+  not say; where a decision of the CCS and a file it names differ, it is a question. It marks each
+  statement as a decision or as how the product behaves on its own, without running anything, and
+  a script sends back each statement either mark calls how the product behaves that has no run.
+  Once nothing is sent back, a script records its findings.
 
   A shortfall plain to see is sent back before the costly reading. How the work gets the Good is
   the generator's to decide, since an edit told per item broke other items. An item only the user's
   answer can give is not sent back; it is a question. Once the work is made, only the orchestrator
   holds the sources; the readers after it read as the receiver, who has none, so a statement made
-  up passes them.
+  up passes them. A maker that means a statement as decided grounds it in the decision, while the
+  product may do otherwise; a second mark by one that did not make the work catches it.
 - The first user reads the work in the receiver's place, with what the receiver opens and the
   checklists, and gives for each item the Good it found in the work, with its lines.
 

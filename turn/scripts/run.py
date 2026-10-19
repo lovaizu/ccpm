@@ -198,7 +198,9 @@ def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
         raise call.Stop("turn: the reading is not filled:\n" + "\n".join(said))
     found = json.loads(forms.unfenced(text))
     sent_back = [i for i in found["items"] if "gets" in i]
-    unsourced = found.pop("unsourced", [])
+    claim = run["next"].get("reply") or {}
+    unrun = forms.unrun(found.pop("statements"), claim.get("statements", []))
+    unsourced = found.pop("unsourced", []) + unrun
     if sent_back or unsourced:
         return ask(run, GENERATOR, generator_given(run, sent_back, unsourced))
     run["findings"] = found

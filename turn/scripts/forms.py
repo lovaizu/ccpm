@@ -17,6 +17,14 @@ FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 
 # The roles a lesson on the run may be for.
 ROLES = ("orchestrator", "generator", "first-user", "evaluator", "learner")
+# What a statement of the work is, each with the grounds it rests on: a decision on words of the
+# CCS or its files, how the product behaves on a command run, as its code and the decisions about
+# it may say otherwise than it does.
+KINDS = {"decision": "quotes", "behavior": "ran"}
+UNGROUNDED = {
+    "decision": 'is a decision; give "quotes", the words of the CCS or its files that say it',
+    "behavior": 'tells how the product behaves; give "ran", a command you ran that shows it',
+}
 
 
 class Grounds(NamedTuple):
@@ -68,18 +76,29 @@ def claimed(data: dict[str, Any], at: Grounds) -> list[str]:
     given = data.get("statements")
     if not isinstance(given, list):
         shape = (
-            'give "statements": [{"lines": [...], "quotes": [...]}, ...], each statement the work'
-            ' makes of its subject, with "ran": [...] for one of how the product behaves'
+            'give "statements": [{"lines": [...], "kind": ..., "quotes": [...]}, ...], each'
+            ' statement the work makes of its subject, "kind" "decision" with "quotes", or'
+            ' "behavior" with "ran": [...] for one of how the product behaves'
         )
         return [shape]
     said: list[str] = []
     for n, statement in enumerate(given, 1):
         name = f"statement {n} of statements"
         keys = set(statement) if isinstance(statement, dict) else set()
-        if "lines" not in keys or not keys & {"quotes", "ran"} or keys - {"lines", "quotes", "ran"}:
-            said.append(f'{name} must hold "lines" with "quotes", "ran" or both')
+        if (
+            not {"lines", "kind"} <= keys
+            or statement["kind"] not in KINDS
+            or not keys & {"quotes", "ran"}
+            or keys - {"lines", "kind", "quotes", "ran"}
+        ):
+            said.append(
+                f'{name} must hold "lines", "kind", "decision" or "behavior", and "quotes",'
+                ' "ran" or both'
+            )
             continue
         said += lines_problems(name, statement["lines"], at.work, "lines of the work")
+        if KINDS[statement["kind"]] not in keys:
+            said.append(f"{name} {UNGROUNDED[statement['kind']]}, or take it out of the work")
         if "quotes" in keys:
             said += quote_problems(name, statement["quotes"], at.sources)
         if "ran" in keys:
@@ -155,6 +174,69 @@ def unsourced(data: dict[str, Any], at: Grounds) -> list[str]:
     return said
 
 
+def marked(data: dict[str, Any], at: Grounds) -> list[str]:
+    """The orchestrator's reading marks each statement the work makes of its subject, by what it
+    says, as a decision or as how the product behaves."""
+    given = data.get("statements")
+    if not isinstance(given, list):
+        shape = (
+            'give "statements": [{"lines": [...], "kind": ...}, ...], each statement the work'
+            ' makes of its subject, "kind" "decision" or "behavior" by what it says'
+        )
+        return [shape]
+    said: list[str] = []
+    for n, statement in enumerate(given, 1):
+        name = f"statement {n} of statements"
+        if (
+            not isinstance(statement, dict)
+            or set(statement) != {"lines", "kind"}
+            or statement["kind"] not in KINDS
+        ):
+            said.append(f'{name} must hold "lines" and "kind", "decision" or "behavior", alone')
+            continue
+        said += lines_problems(name, statement["lines"], at.work, "lines of the work")
+    return said
+
+
+def read_out(data: dict[str, Any], at: Grounds) -> list[str]:
+    return marked(data, at) + unsourced(data, at)
+
+
+def unrun(marks: list[dict[str, Any]], claim: list[Any]) -> list[dict[str, Any]]:
+    """Each statement the orchestrator marks as how the product behaves where no statement the
+    generator grounds in a run lies, sent back as one no run shows."""
+    shown = [s["lines"] for s in claim if isinstance(s, dict) and "ran" in s]
+    return [
+        {
+            "lines": m["lines"],
+            "gets": "it tells how the product behaves, and no command run shows it: run one that"
+            " shows it, or take it out of the work",
+        }
+        for m in marks
+        if m["kind"] == "behavior" and not any(overlap(m["lines"], s) for s in shown)
+    ]
+
+
+def overlap(lines: list[str], others: list[str]) -> bool:
+    """Whether any of the lines lies, in part, on any of the others, in the same file."""
+    spans = [span(line) for line in lines]
+    return any(
+        path == other_path and start <= other_end and other_start <= end
+        for path, start, end in spans
+        for other_path, other_start, other_end in map(span, others)
+    )
+
+
+def span(line: str) -> tuple[str, int, int]:
+    found = LINES.match(line)
+    assert found
+    return (
+        os.path.realpath(found.group(1)),
+        int(found.group(2)),
+        int(found.group(3) or found.group(2)),
+    )
+
+
 def lessons(data: dict[str, Any], at: Grounds) -> list[str]:
     """The learner gives how the run went, each lesson for a role of turn and resting on words of
     a record it was shown, and what it checked, so that a reply of no lesson says its scope."""
@@ -211,10 +293,10 @@ def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]
     return said
 
 
-# The orchestrator's reading names each statement it sends back, as one its grounds do not say.
-# The generator claims the Good it set for every item, or the question it waits on, and grounds
-# each statement of the work.
-READING = DECISION._replace(more=unsourced)
+# The orchestrator's reading marks each statement of the work, and names each it sends back, as
+# one its grounds do not say. The generator claims the Good it set for every item, or the question
+# it waits on, and grounds each statement of the work.
+READING = DECISION._replace(more=read_out)
 CLAIM = Form((("good", "lines"), ("question",)), every=True, asks=True, more=claimed)
 # The learner says, for every item but those waiting on a question, what gives its Good or would,
 # and how the run went.

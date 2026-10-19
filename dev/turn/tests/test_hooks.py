@@ -16,6 +16,7 @@ from helpers import (
     ID,
     LEARNT,
     LESSON,
+    MARKED,
     QUESTION,
     READ_GIVEN,
     SCRIPT,
@@ -55,7 +56,9 @@ class HookTest(RepoTest):
     def first_user(self, **call):
         """A run whose first user is to be started next, and the prompt it is to be started with."""
         self.started(dict(CALL, **call))
-        return self.next({"items": [GOOD, WAITS], "questions": [QUESTION]})["prompt"]
+        return self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})[
+            "prompt"
+        ]
 
 
 class TestCall(HookTest):
@@ -302,6 +305,7 @@ class TestReplies(HookTest):
             with self.subTest(output=output):
                 statement = {
                     "lines": ["README.md:3-3"],
+                    "kind": "behavior",
                     "ran": [{"command": "python3 csvtidy.py in.csv", "output": output}],
                 }
                 reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [statement]}
@@ -321,8 +325,9 @@ class TestReplies(HookTest):
         # Then: it is kept going, told the shape each takes
         for statements, said in (
             ({"lines": ["README.md:3-3"]}, 'give "statements"'),
-            ([dict(STATEMENT, why="x")], 'must hold "lines" with "quotes", "ran" or both'),
-            (["README.md:3-3"], 'must hold "lines" with "quotes", "ran" or both'),
+            ([dict(STATEMENT, why="x")], 'must hold "lines", "kind"'),
+            (["README.md:3-3"], 'must hold "lines", "kind"'),
+            ([dict(STATEMENT, kind="behavior")], 'tells how the product behaves; give "ran"'),
         ):
             with self.subTest(statements=statements):
                 reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": statements}

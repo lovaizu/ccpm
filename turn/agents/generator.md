@@ -12,10 +12,11 @@ gives it, and then write the work to give each: a work made to Goods set first g
 was meant, while one written first and matched to the items after is patched item by item. The work
 is made from the CCS and the files it names alone, so that it says what the caller decided and does
 not stray from it; what they leave open that only the user can decide becomes a question, not a
-guess. Each statement the work makes of its subject rests on its grounds: the words of the CCS or
-its files that say it, quoted as written, and, for a statement of how the product behaves, a
-command you ran and what it printed, since its code and the decisions about it may say otherwise
-than it does; a statement with neither is taken out of the work. The readers after the
+guess. You mark each statement the work makes of its subject as a decision or as how the product
+behaves, and it rests on the grounds its mark asks: a decision on the words of the CCS or its files
+that say it, quoted as written; how the product behaves on a command you ran and what it printed,
+since its code and the decisions about it may say otherwise than it does. A statement without its
+grounds is taken out of the work. The readers after the
 orchestrator read as the receiver, who has no sources, and take a statement made from nothing as a
 fact, so the orchestrator checks each statement in its grounds. The orchestrator looks for each Good
 starting from the lines you name.
@@ -47,19 +48,21 @@ starting from the lines you name.
    - Out: the work, at its paths.
 5. Read the work once from the top with `cat -n`, whole, as the receiver the CCS names, meeting it
    for the first time: a work you just wrote is not read yet, and Read gives nothing back for it.
-   For every item find the lines that give its Good. For each statement the work makes of its
-   subject, find its grounds:
-   - the words of the CCS or a file it names that say it, as you read them in step 2, quoted as
-     they are written, without the line numbers `cat -n` adds;
-   - for a statement of how the product behaves, such as what a command prints or what it changes,
-     a command you run with Bash that shows it, in a command of its own, with any input it needs
-     made inside the command, in a folder from `mktemp -d` that the command removes at its end.
+   For every item find the lines that give its Good. Mark each statement the work makes of its
+   subject by what it says: `behavior` where it tells how the product behaves, such as what a
+   command prints or what it changes, even where a decision says the same; `decision` otherwise.
+   Then find its grounds:
+   - for a decision, the words of the CCS or a file it names that say it, as you read them in
+     step 2, quoted as they are written, without the line numbers `cat -n` adds;
+   - for how the product behaves, a command you run with Bash that shows it, in a command of its
+     own, with any input it needs made inside the command, in a folder from `mktemp -d` that the
+     command removes at its end.
    Where the grounds do not say what the statement says, make the work say what they say; where
-   no source says it and no run shows it, take the statement out of the work; then read again. A
-   statement only the user's answer can ground waits on a question.
+   they do not say it at all, take the statement out of the work; then read again. A statement
+   only the user's answer can ground waits on a question.
 6. Reply with your claim alone, as JSON:
    `{"items": [<one per item>], "questions": [{"question": "...", "recommended": "..."}],
-   "statements": [{"lines": [...], "quotes": [...], "ran": [...]}]}`.
+   "statements": [{"lines": [...], "kind": "...", "quotes": [...], "ran": [...]}]}`.
    Each item is `{"checklist": "<path as in the CCS>", "item": "<ID>"}` with one of:
    - `"good"`: the Good, what the receiver gets, in plain words, and `"lines"`: the lines that
      give it, each `"<path of the work>:<from>-<to>"`;
@@ -68,7 +71,8 @@ starting from the lines you name.
      choose and why, in one sentence.
 
    Each statement is one the work makes of its subject: `"lines"`, where the work makes it, each
-   `"<path of the work>:<from>-<to>"`, with one or both of:
+   `"<path of the work>:<from>-<to>"`; `"kind"`, `"decision"` or `"behavior"`, as you marked it;
+   and its grounds, `"quotes"` for a decision and `"ran"` for how the product behaves, or both:
    - `"quotes"`: `[{"path": "<the CCS or a file it names>", "quote": "<its words as written>"}]`;
    - `"ran"`: `[{"command": "<the command as you ran it>", "output": "<words of what it printed,
      as printed>"}]`.
