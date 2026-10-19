@@ -1400,6 +1400,11 @@ Progress:
   - B-27 of the skills (a long file read whole) fixed by hand in `/rn:up`'s Role.
   - turn fixed a third time (turn's question on the trial): a folder a CCS names with a trailing
     slash is kept without it, as every read inside such a folder was stopped.
+  - R26 (the hooks' first user found these moves let through): each guard judges git and a write
+    in the folder they act on, through `-C`, `cd`, `env`, `command`, `sh -c` and a worktree, since a
+    conductor stopped by a guard may try the same move another way.
+  - R27 (turn's question on the hooks): prompt.md's items on a prompt's own text and on what the
+    user sees are judged on the skills' runs, not the hooks', as R22 set.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit

@@ -26,6 +26,10 @@ names; each serves every unit.
 
 ## The checks
 
+- Each check judges git and a write in the folder they act on, not only the event's: through
+  `git -C <folder>`, a `cd` earlier in the same command, git led by `env`, `command` or `sh -c`,
+  and in a git worktree the branch checked out there; a conductor stopped by a guard may try the
+  same move another way, and the guard holds only if that way is stopped too.
 - The session's own branch: a `git commit` or `git push` while the default branch is checked out,
   or a push whose destination is the default branch, is stopped: the work goes on the session's
   branch and reaches the default branch only by the user's merge.
