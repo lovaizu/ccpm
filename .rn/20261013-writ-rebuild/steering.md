@@ -1386,6 +1386,15 @@ Progress:
     so every mutant of the guards is caught too.
   - R22 (turn's question on the hooks): the hooks are held to the items of prompt.md a hook gives;
     the items on a prompt's own text are the skills'.
+  - R23 (turn's question on the skills, against its recommendation): `/rn:up`'s start and feedback
+    steps stay in its SKILL.md rather than files read when needed (prompt.md B-13), since the skill
+    is read whole once per command at under 300 lines, and a step in a file of its own is lost when
+    its read is skipped.
+  - R24 (turn's question on the skills): `/rn:ty` while feedback is held approves nothing and says
+    that `/rn:up` brings the new proposal, since the plan may already differ from the one shown.
+  - R25 (turn's question on the skills): a session rn 0.9.0 left, which has no `state.json`, is
+    reported and not gone on with in the first unit; how to go on with it is for the whole check.
+  - B-27 of the skills (a long file read whole) fixed by hand in `/rn:up`'s Role.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit
