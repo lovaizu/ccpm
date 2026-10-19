@@ -42,7 +42,12 @@ with open(target, "w", encoding="utf-8") as f:
     f.write(f"[cosmic-ray.distributor.http]\nworker-urls = [{urls}]\n")
 EOF
   cosmic-ray init "$copy/config.toml" "$db"
-  cosmic-ray exec "$copy/config.toml" "$db"
+  # Cosmic Ray 8.7.0's http distributor asks asyncio for a loop that Python 3.14 no longer makes
+  # on its own (sixty-north/cosmic-ray#608, fixed after 8.7.0), so one is set first.
+  python3 -c 'import asyncio, sys
+from cosmic_ray.cli import cli
+asyncio.set_event_loop(asyncio.new_event_loop())
+sys.exit(cli())' exec "$copy/config.toml" "$db"
   cr-report --surviving-only --show-diff "$db" | tee "$copy/report.txt"
   grep -q '^surviving mutants: 0 ' "$copy/report.txt"
 done
