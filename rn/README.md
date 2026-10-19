@@ -2,8 +2,8 @@
 
 rn is a Claude Code plugin that takes a whole piece of work, asked for in your own rough words, to
 a pull request that does what you want it for, while you only answer what it asks. It is for anyone
-who has Claude Code do work in their own git repository on GitHub and would rather hand over a piece of
-work, even one that takes days, than prepare it and watch it being done.
+who has Claude Code do work in their own git repository on GitHub and would rather hand over a
+piece of work, even one that takes days, than prepare it and watch it being done.
 
 ## Example
 
