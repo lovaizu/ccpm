@@ -585,8 +585,11 @@ Progress:
   still stop, the 7 wrong pass, and none of the roles' 403 commands is stopped as a write. No trial
   run: the prompts did not change, and the design checks the hooks by unittest. turn's CHANGELOG
   says each AI reads only what the CCS gives and writes only the work.
-- Running at the `/clear` (2026-10-19): CI on 87b4fa0.
-- Next: confirm CI on 87b4fa0 (no mutant surviving); then the report to the user by how close each
+- CI on 87b4fa0 failed on Python 3.9's branch count in the heredoc reading, which also kept its end
+  word twice; rewritten and tried on a heredoc ending on its line or never ending (d49a0ee), all
+  checks green locally on 3.9.
+- Running at the `/clear` (2026-10-19): CI on d49a0ee.
+- Next: confirm CI on d49a0ee (no mutant surviving); then the report to the user by how close each
   key result came, and #5 closed on their word.
 
 ### [ ] #6: Each checklist finished
