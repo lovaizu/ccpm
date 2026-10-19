@@ -5,6 +5,7 @@ on: push
 # The tests only read the repository, so the token they are given can change nothing.
 permissions:
   contents: read
+  checks: read
 
 jobs:
   tests:
@@ -15,21 +16,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          fetch-depth: 0
+      # A push that changes only the session records, the decisions, the rules for the assistant and
+      # the root's README or licence changes nothing the checks check, so where the commit before it
+      # passed both jobs, the checks are skipped and the job still passes, as main takes a pull
+      # request only when this job has passed. A first push of a branch, one whose earlier commit is
+      # gone, or one after a commit not passed, is checked whole, so a failure is never passed on.
+      - id: changed
+        env:
+          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          passed=$(gh api "repos/$GITHUB_REPOSITORY/commits/$BEFORE/check-runs" \
+            --jq '[.check_runs[] | select(.name | startswith("tests (")) | select(.conclusion == "success")] | length' \
+            2>/dev/null || echo 0)
+          if [ "$passed" = 2 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null \
+            && ! git diff --name-only "$BEFORE" HEAD \
+              | grep -qvE '^(\.rn/|\.writ/|\.claude/rules/|README\.md$|LICENSE$)'; then
+            echo "check=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "check=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.changed.outputs.check == 'true'
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install --require-hashes -r dev/requirements.txt
-      - if: matrix.python == '3.x'
+      - if: steps.changed.outputs.check == 'true'
+        run: pip install --require-hashes -r dev/requirements.txt
+      - if: steps.changed.outputs.check == 'true' && matrix.python == '3.x'
         run: pip install --require-hashes -r dev/requirements-test-quality.txt
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - if: steps.changed.outputs.check == 'true'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
       # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
-      - working-directory: dev
+      - if: steps.changed.outputs.check == 'true'
+        working-directory: dev
         run: |
           npm ci --ignore-scripts
           node node_modules/@anthropic-ai/claude-code/install.cjs
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
-      - run: sh dev/check.sh
-      - if: matrix.python == '3.x'
+      - if: steps.changed.outputs.check == 'true'
+        run: sh dev/check.sh
+      - if: steps.changed.outputs.check == 'true' && matrix.python == '3.x'
         run: sh dev/mutate.sh
