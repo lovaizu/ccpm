@@ -83,8 +83,8 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   fact, so the one that wrote it grounds each. A quote is the words themselves, not lines that hold
   them, so it shows what was read for the statement; a product's code and the decisions about it
   may say otherwise than it does, and only a run shows what it does.
-- The generator stays started for the whole run: what is sent back reaches it as a message, and it
-  makes the work again with what it has already read.
+- The generator stays started until the first user's reading of its round ends: what is sent back
+  reaches it as a message, and it makes the work again with what it has already read.
 
   It holds the sources it read and the Good it meant at each line, so it changes only what is sent
   back, without reading the sources again.
@@ -115,7 +115,8 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
 - The orchestrator sends the generator each item the first user found no Good for, with its places,
   and the first user reads the work made again, until it finds every item's Good, each item left
   waits on a question, or it has been sent back three times in a round. The first user, like the
-  generator, stays started for the whole run. An item whose Good rests on the sources, such as
+  generator, stays started until then, and neither is sent anything after; the next round starts
+  both anew. An item whose Good rests on the sources, such as
   whether a statement said as fact was checked, is the orchestrator's, from its reading of the
   grounds, and is not sent back for the first user's reading.
 
@@ -194,9 +195,9 @@ turn/                      the plugin, installed by Claude Code
   evaluator, the same and the last first user's reading; the learner, every item's finding and the
   JSONL of every agent of its run, the orchestrator's included; and each role of the second round,
   the lessons taken for it.
-- The orchestrator starts the generator and the first user once a run and sends each what comes
-  next with SendMessage, which it loads with ToolSearch; the evaluator and the learner it starts
-  anew each time.
+- The orchestrator starts the generator and the first user once a round and sends each what comes
+  next with SendMessage, which it loads with ToolSearch, until the first user's reading ends; the
+  evaluator and the learner it starts anew each time.
 
   Tried with an agent started by an agent started in the background, as turn's roles are: sent a
   message after its reply, the same agent answered from what it had read, using no tool.
