@@ -1375,6 +1375,9 @@ Progress:
   - R18: the draft pull request opens when the session starts, not once the plan is made, so the
     plan is made with its URL in its front matter, as its checklist's form asks; the design's
     "opens with the plan" read as the pull request the plan goes on.
+  - R19 (turn's question on the skills): the skills' steps are held by the design's four guards
+    alone, not a hook for every step prompt.md B-25 and B-26 ask, since more hooks change the
+    approved design and no trial has yet shown a step the four leave out being skipped.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit

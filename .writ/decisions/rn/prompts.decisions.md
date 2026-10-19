@@ -20,6 +20,9 @@ skills.
 - Every commit's message says what it records, and holds the options weighed with their reasons
   for a decision, and each feedback with its answer, since the documents keep only what holds now.
   Every decision is committed and pushed before the work that follows it.
+- The steps are held by hooks only where the design names a guard, the four in
+  `.writ/decisions/rn/hooks.decisions.md`; every other bound and step rests on the step and its
+  reason, until a trial shows the conductor skipping one.
 
 ## `/rn:up`
 
