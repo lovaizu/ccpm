@@ -1,6 +1,5 @@
 ---
 name: code
-check: usability
 version: 0.1.0
 ---
 

@@ -17,13 +17,6 @@ KINDS = REQUIRED + ("use", "has")
 ITEM = re.compile(r"^### ([A-Z]+-\d+): ")
 SCOPES = ("its part", "each part", "whole")
 EACH = "each part"
-# A checklist's front matter says what answers its items: what the receiver has and does with the
-# work, which the first user and the evaluator have too, or the sources, which only the
-# orchestrator and the generator hold.
-CHECK = re.compile(r"\A---\n(?:.*\n)*?check: (\S+)\n(?:.*\n)*?---\n")
-CHECKS = ("usability", "accuracy")
-# The checks the first user and the evaluator answer.
-READERS = CHECKS[:1]
 
 
 class Stop(Exception):
@@ -42,10 +35,9 @@ def parse(text: str) -> dict[str, Any]:
 
 
 def check(call: dict[str, Any]) -> dict[str, Any]:
-    """The run the call asks for: the call, each kind's entries, the checklists' items, those the
-    first user and the evaluator answer, the files the orchestrator and the generator are given,
-    and those the first user and the evaluator are shown, as the receiver has them; stops at the
-    first thing turn cannot take."""
+    """The run the call asks for: the call, each kind's entries, the checklists' items, the files
+    the orchestrator and the generator are given, and those the first user and the evaluator are
+    shown, as the receiver has them; stops at the first thing turn cannot take."""
     unknown = sorted(set(call) - {"ccs", "kind", "result"})
     if unknown:
         raise Stop(
@@ -85,13 +77,11 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     for path in run["has"]:
         if not os.path.exists(path):
             raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
-    run["usability"] = [p for p in run["checklist"] if check_of(p) in READERS]
     scoped = [item for path in run["checklist"] for item in items(path)]
     run["items"] = [{"checklist": c, "item": i} for c, i, _ in scoped]
     run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope in (EACH,)]
-    run["usable"] = [i for i in run["items"] if i["checklist"] in run["usability"]]
     run["given"] = given(call["ccs"], ccs, run["work"])
-    run["shown"] = run["work"] + run["has"] + run["usability"]
+    run["shown"] = run["work"] + run["has"] + run["checklist"]
     return run
 
 
@@ -126,18 +116,6 @@ def read_ccs(path: str) -> dict[str, list[dict[str, str]]]:
 def entries(ccs: dict[str, list[dict[str, str]]], kind: str) -> list[str]:
     """Every value of the kind, in the order of the CCS."""
     return [e[kind] for part in ccs.values() for e in part if kind in e]
-
-
-def check_of(path: str) -> str:
-    """What answers the checklist's items, as its front matter says; stops when it does not say."""
-    with open(path, encoding="utf-8") as f:
-        said = CHECK.match(f.read())
-    if said is None or said.group(1) not in CHECKS:
-        raise Stop(
-            f"turn: {path} does not say what answers its items; put `check: usability` or"
-            " `check: accuracy` in its front matter, between the `---` lines at its top"
-        )
-    return said.group(1)
 
 
 def items(path: str) -> list[tuple[str, str, str]]:

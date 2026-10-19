@@ -3,6 +3,5 @@
  "goal_orientation": [{"purpose": "to tidy their own CSV file with csvtidy"}],
  "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
                          {"checklist": "checklists/usability.md"},
-                         {"checklist": "checklists/accuracy.md"},
                          {"source": "csvtidy.py"},
                          {"decisions": "notes/readme.decisions.md"}]}

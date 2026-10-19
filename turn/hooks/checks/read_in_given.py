@@ -1,6 +1,7 @@
 """turn's agents read what their run was given alone, so the work is made and judged from what the
-calling AI decided, not from what it did not give; the first user and the evaluator read what
-the receiver has alone, as the receiver would, and the learner what the roles did."""
+calling AI decided, not from what it did not give; the orchestrator reads the work only to decide,
+as its reading between would find the Good the work meant; the first user and the evaluator read
+what the receiver has alone, as the receiver would, and the learner what the roles did."""
 
 import os
 import shlex
@@ -10,10 +11,11 @@ import agents
 import run
 
 TOOLS = {"Read": "file_path", "Grep": "path", "Glob": "path"}
-# What each agent may read: the orchestrator and the generator, what the run was given; the first
-# user and the evaluator, what the receiver has; the learner, the records it is shown.
+# What each agent may read: the generator, what the run was given, and the orchestrator too, but the
+# work until it decides; the first user and the evaluator, what the receiver has; the learner, the
+# records it is shown.
 GIVEN = {
-    "up": lambda kept: kept["given"],
+    "up": lambda kept: [p for p in kept["given"] if "decide" in kept or p not in kept["work"]],
     "generator": lambda kept: kept["given"],
     "first-user": lambda kept: kept["shown"],
     "evaluator": lambda kept: kept["shown"],

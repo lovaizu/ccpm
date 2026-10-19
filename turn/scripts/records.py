@@ -1,5 +1,5 @@
-"""What Claude Code keeps of an agent's conversation, read as the learner is shown it, page by page,
-and as the commands the agent ran with what each printed."""
+"""What Claude Code keeps of an agent's conversation, read as the learner is shown it, page by
+page."""
 
 from __future__ import annotations
 
@@ -53,17 +53,3 @@ def result(part: dict[str, Any]) -> str:
     if isinstance(content, list):
         return "\n".join(str(c.get("text", "")) for c in content)
     return str(content)
-
-
-def ran(path: str) -> list[tuple[str, str]]:
-    """Each command the agent ran with Bash, with what it printed."""
-    commands: dict[str, str] = {}
-    printed: list[tuple[str, str]] = []
-    for entry in entries(path):
-        content = entry.get("message", {}).get("content")
-        for part in content if isinstance(content, list) else []:
-            if part.get("type") == "tool_use" and part.get("name") == "Bash":
-                commands[part.get("id")] = str(part.get("input", {}).get("command", ""))
-            elif part.get("type") == "tool_result" and part.get("tool_use_id") in commands:
-                printed.append((commands[part["tool_use_id"]], result(part)))
-    return printed

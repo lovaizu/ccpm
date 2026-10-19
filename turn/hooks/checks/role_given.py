@@ -1,7 +1,6 @@
 """Each role is started in its turn with the prompt the script printed last, or, once it is started,
 sent the message the script printed to the agent it names, so it is given what it is to be given
-and nothing an AI copied wrong or added, and the evaluator starts only once the orchestrator's
-findings are kept. A role replies only by ending with its form, which turn's hook keeps for the
+and nothing an AI copied wrong or added. A role replies only by ending with its form, which turn's hook keeps for the
 orchestrator, so a message of its own to the orchestrator would only stop the orchestrator's
 reading. The orchestrator's own record is kept as it starts its first role, for the
 learner, which learns from every agent of the run."""

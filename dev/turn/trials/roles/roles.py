@@ -2,9 +2,10 @@
 for the orchestrator with the prompt turn.py prints, on the flow trial's task of two items, one
 answered at its part and one in each part. Between the roles the run is set as a trial means: the
 orchestrator's check finds each item's Good in the decisions, the generator's work is replaced by a
-set README whose license is a bare word, the orchestrator's reading gives each item its Good, and
-the learner is given B-1 without Good and the records of the three roles before it. Prints, for each role, its record, from
-which the trial is judged, the minutes, each tool it used, each hook stop, and the reply kept.
+set README whose license is a bare word, the round has sent back as often as it may, so the
+evaluator follows the first user whatever it finds, and the learner is given B-1 without Good and
+the records of the three roles before it. Prints, for each role, its record, from which the trial
+is judged, the minutes, each tool it used, each hook stop, and the reply kept.
 
     python3 dev/turn/trials/roles/roles.py <new folder>
 
@@ -39,26 +40,6 @@ CHECK = {
     "questions": [],
 }
 README = "# demo\n\ndemo prints a greeting.\n\n## License\n\nMIT\n"
-READING = {
-    "items": [
-        {
-            "checklist": "checklist.md",
-            "item": "B-1",
-            "good": "The reader learns demo is under MIT.",
-            "lines": ["README.md:5-7"],
-        },
-        {
-            "checklist": "checklist.md",
-            "item": "B-2",
-            "parts": [
-                {"part": "README.md:1-4", "good": "what demo does", "lines": ["README.md:3-3"]},
-                {"part": "README.md:5-7", "good": "its license", "lines": ["README.md:7-7"]},
-            ],
-        },
-    ],
-    "questions": [],
-    "statements": [{"lines": ["README.md:7-7"], "kind": "decision"}],
-}
 UNMET = {
     "checklist": "checklist.md",
     "item": "B-1",
@@ -145,7 +126,12 @@ turn("start", json.dumps(CALL))
 records = [role(turn("next", CALL["result"], given=json.dumps(CHECK)))]
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(README)
-records.append(role(turn("next", CALL["result"], given=json.dumps(READING))))
+records.append(role(turn("next", CALL["result"])))
+kept = run.running(CALL["result"])
+if kept is None:
+    sys.exit("the run ended before the evaluator")
+kept["sent"] = run.SENDS
+run.write(CALL["result"], {"running": kept})
 records.append(role(turn("next", CALL["result"])))
 kept = run.running(CALL["result"])
 if kept is None:

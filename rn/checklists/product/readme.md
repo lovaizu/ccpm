@@ -1,6 +1,5 @@
 ---
 name: readme
-check: usability
 version: 0.2.0
 ---
 

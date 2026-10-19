@@ -11,7 +11,7 @@ class TestChecklists(RepoTest):
         # Then: it lists rn's checklist for the kind, from the folder of what the kind is for, after
         #   rn's usability checklist where the kind's opening applies it, and ends well
         expected = {
-            "usability": ["accuracy", "usability"],
+            "usability": ["usability"],
             "checklist": ["usability", "checklist"],
             "readme": ["usability", "product/readme"],
             "ux": ["usability", "product/ux"],

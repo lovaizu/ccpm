@@ -14,19 +14,6 @@ FORMS = {
     "evaluator": forms.GOOD,
     "learner": forms.LEARNT,
 }
-# The items each role judges, and the records its quotes and commands are found in: the learner
-# judges no item and quotes the records it was shown; the first user and the evaluator judge the
-# usability items; the generator judges every item; the commands of each are found in its own
-# record.
-JUDGES = {
-    "learner": lambda kept, own: ([], tuple(run.learnt_from(kept))),
-    "first-user": lambda kept, own: (kept["usable"], (own,)),
-    "evaluator": lambda kept, own: (kept["usable"], (own,)),
-}
-
-
-def everything(kept: dict[str, Any], own: str) -> tuple[list[dict[str, str]], tuple[str, ...]]:
-    return kept["items"], (own,)
 
 
 def check(event: dict[str, Any]) -> list[str]:
@@ -39,14 +26,14 @@ def check(event: dict[str, Any]) -> list[str]:
     if result is None or kept is None or kept["next"]["agent"] != f"turn:{role}":
         return []
     reply = str(event.get("last_assistant_message", ""))
-    judged, kept_records = JUDGES.get(str(role), everything)(kept, event["agent_transcript_path"])
+    # Every role but the learner judges every item; the learner judges none, as its form takes no
+    # items, and quotes the records it was shown.
     said = forms.check(
         reply,
-        judged,
+        kept["items"],
         kept["work"],
         FORMS[role],
-        sources=run.sources(kept),
-        records=kept_records,
+        records=tuple(run.learnt_from(kept)),
         each=run.each(kept),
     )
     if said:

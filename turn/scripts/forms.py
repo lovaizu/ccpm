@@ -25,23 +25,13 @@ FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 
 # The roles a lesson on the run may be for.
 ROLES = ("orchestrator", "generator", "first-user", "evaluator", "learner")
-# What a statement of the work is, each with the grounds it rests on: a decision on words of the
-# CCS or its files, how the product behaves on a command run, as its code and the decisions about
-# it may say otherwise than it does.
-KINDS = {"decision": "quotes", "behavior": "ran"}
-RUN = {"behavior"}
-UNGROUNDED = {
-    "decision": 'is a decision; give "quotes", the words of the CCS or its files that say it',
-    "behavior": 'tells how the product behaves; give "ran", a command you ran that shows it',
-}
 
 
 class Grounds(NamedTuple):
-    """What a form's lines and grounds are found in: the work, the files and folders the CCS
-    names, and the records of the agents the form's quotes and commands come from."""
+    """What a form's lines and quotes are found in: the work, and the records of the agents the
+    learner's quotes come from."""
 
     work: list[str]
-    sources: tuple[str, ...]
     records: tuple[str, ...]
 
 
@@ -59,16 +49,16 @@ class Form(NamedTuple):
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
 # its Good, or the question it waits on.
 CHECK = Form((("can",), ("question",)), every=True, asks=True)
-# The orchestrator judges, so its reading and its decision give a Good, a question or what the
-# receiver gets once it has its Good with the places of the work where it is not found; the
-# generator claims the Good it set for every item, or the question it waits on. The first user and
-# the evaluator look only for the Good the work gives, so each names only the items it finds a Good
-# for, and a script names the rest.
+# The orchestrator judges, so its decision gives a Good, a question or what the receiver gets once
+# it has its Good with the places of the work where it is not found. The evaluator looks only for
+# the Good the work gives, so it names only the items it finds a Good for, and a script names the
+# rest.
 DECISION = Form((ONE, EACH, ("question",), ("gets", "places")), every=True, asks=True)
 GOOD = Form((ONE, EACH))
-# The first user gives every item the Good it found or the places of the work where it looked for
-# it, so that the work made again is aimed at where it stopped.
-FIRST_READING = Form((ONE, EACH, ("places",)), every=True)
+# The first user gives every item the Good it found, or the places of the work where it looked for
+# it, what it did there and what it did not get, so that the work made again is aimed at where it
+# stopped and at what was missing there.
+FIRST_READING = Form((ONE, EACH, ("places", "did", "lacking")), every=True)
 
 
 def worded(value: Any) -> bool:
@@ -80,166 +70,6 @@ def spaced(words: str) -> str:
     """The words with every run of space, tab or line end as one space, so a quote across a line
     break is found as written."""
     return " ".join(words.split())
-
-
-def claimed(data: dict[str, Any], at: Grounds) -> list[str]:
-    """The generator gives each statement the work makes of its subject with its grounds: the words
-    of the CCS or its files that say it, quoted as written, and, for how the product behaves, a
-    command it ran with what it printed, both found where it says."""
-    given = data.get("statements")
-    if not isinstance(given, list):
-        shape = (
-            'give "statements": [{"lines": [...], "kind": ..., "quotes": [...]}, ...], each'
-            ' statement the work makes of its subject, "kind" "decision" with "quotes", or'
-            ' "behavior" with "ran": [...] for one of how the product behaves'
-        )
-        return [shape]
-    said: list[str] = []
-    for n, statement in enumerate(given, 1):
-        name = f"statement {n} of statements"
-        keys = set(statement) if isinstance(statement, dict) else set()
-        # An empty list gives no grounds and asks for none, as the form shows both kinds of grounds.
-        grounds = {k for k in ("quotes", "ran") if k in keys and statement[k] != []}
-        if (
-            "lines" not in keys
-            or statement.get("kind") not in KINDS
-            or not grounds
-            or keys - {"lines", "kind", "quotes", "ran"}
-        ):
-            said.append(
-                f'{name} must hold "lines", "kind", "decision" or "behavior", and "quotes",'
-                ' "ran" or both'
-            )
-            continue
-        said += lines_problems(name, statement["lines"], at.work, "lines of the work")
-        if KINDS[statement["kind"]] not in grounds:
-            said.append(f"{name} {UNGROUNDED[statement['kind']]}, or take it out of the work")
-        if "quotes" in grounds:
-            said += quote_problems(name, statement["quotes"], at.sources)
-        if "ran" in grounds:
-            said += run_problems(name, statement["ran"], at.records)
-    return said
-
-
-def quote_problems(name: str, quotes: Any, sources: tuple[str, ...]) -> list[str]:
-    if not isinstance(quotes, list):
-        return [f'{name} gives its quotes as no list; give [{{"path": ..., "quote": ...}}, ...]']
-    said: list[str] = []
-    for k, quote in enumerate(quotes, 1):
-        if (
-            not isinstance(quote, dict)
-            or set(quote) != {"path", "quote"}
-            or not all(worded(v) for v in quote.values())
-        ):
-            said.append(f'{name}: quote {k} must hold "path" and "quote", each in words')
-            continue
-        path = quote["path"]
-        if not os.path.isfile(path) or not within(path, list(sources)):
-            said.append(f"{name}: {path} is not the CCS or a file it names")
-            continue
-        with open(path, encoding="utf-8") as f:
-            whole = spaced(f.read())
-        if spaced(quote["quote"]) not in whole:
-            said.append(
-                f"{name}: quote {k} is not in {path} as written; quote its words as they are,"
-                " without line numbers"
-            )
-    return said
-
-
-def run_problems(name: str, ran: Any, kept: tuple[str, ...]) -> list[str]:
-    if not isinstance(ran, list):
-        return [f'{name} gives its runs as no list; give [{{"command": ..., "output": ...}}, ...]']
-    printed = [(c.strip(), spaced(o)) for path in kept for c, o in records.ran(path)]
-    said: list[str] = []
-    for k, run in enumerate(ran, 1):
-        if (
-            not isinstance(run, dict)
-            or set(run) != {"command", "output"}
-            or not all(worded(v) for v in run.values())
-        ):
-            said.append(f'{name}: run {k} must hold "command" and "output", each in words')
-        elif not any(
-            c == run["command"].strip() and spaced(run["output"]) in o for c, o in printed
-        ):
-            said.append(
-                f"{name}: run {k} is not a command you ran with Bash, with what it printed; give"
-                " the command as you ran it, and words of its output as it printed them"
-            )
-    return said
-
-
-def unsourced(data: dict[str, Any], at: Grounds) -> list[str]:
-    """The orchestrator's reading may send back statements, each where the work makes it and what
-    its grounds say, or that none says it."""
-    if "unsourced" not in data:
-        return []
-    given = data["unsourced"]
-    if not isinstance(given, list):
-        return ['"unsourced" is not a list; give it as [{"lines", "gets"}, ...]']
-    said: list[str] = []
-    for n, statement in enumerate(given, 1):
-        name = f"statement {n} of unsourced"
-        if not isinstance(statement, dict) or set(statement) != {"lines", "gets"}:
-            said.append(f'{name} must hold {{"lines", "gets"}} alone')
-            continue
-        said += lines_problems(name, statement["lines"], at.work, "lines of the work")
-        if not worded(statement["gets"]):
-            said.append(f'{name} has an empty "gets"; say it in words')
-    return said
-
-
-def marked(data: dict[str, Any], at: Grounds) -> list[str]:
-    """The orchestrator's reading marks each statement the work makes of its subject, by what it
-    says, as a decision or as how the product behaves."""
-    given = data.get("statements")
-    if not isinstance(given, list):
-        shape = (
-            'give "statements": [{"lines": [...], "kind": ...}, ...], each statement the work'
-            ' makes of its subject, "kind" "decision" or "behavior" by what it says'
-        )
-        return [shape]
-    said: list[str] = []
-    for n, statement in enumerate(given, 1):
-        name = f"statement {n} of statements"
-        if (
-            not isinstance(statement, dict)
-            or set(statement) != {"lines", "kind"}
-            or statement["kind"] not in KINDS
-        ):
-            said.append(f'{name} must hold "lines" and "kind", "decision" or "behavior", alone')
-            continue
-        said += lines_problems(name, statement["lines"], at.work, "lines of the work")
-    return said
-
-
-def read_out(data: dict[str, Any], at: Grounds) -> list[str]:
-    return marked(data, at) + unsourced(data, at)
-
-
-def unrun(marks: list[dict[str, Any]], claim: list[Any]) -> list[dict[str, Any]]:
-    """Each statement the orchestrator marks as how the product behaves where no statement the
-    generator grounds in a run lies, sent back as one no run shows."""
-    shown = [s["lines"] for s in claim if isinstance(s, dict) and s.get("ran")]
-    return [
-        {
-            "lines": m["lines"],
-            "gets": "it tells how the product behaves, and no command run shows it: run one that"
-            " shows it, or take it out of the work",
-        }
-        for m in marks
-        if m["kind"] in RUN and not any(overlap(m["lines"], s) for s in shown)
-    ]
-
-
-def overlap(lines: list[str], others: list[str]) -> bool:
-    """Whether any of the lines lies, in part, on any of the others, in the same file."""
-    spans = [span(line) for line in lines]
-    return any(
-        path == other_path and start <= other_end and other_start <= end
-        for path, start, end in spans
-        for other_path, other_start, other_end in map(span, others)
-    )
 
 
 def span(line: str) -> tuple[str, int, int]:
@@ -308,11 +138,8 @@ def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]
     return said
 
 
-# The orchestrator's reading marks each statement of the work, and names each it sends back, as
-# one its grounds do not say. The generator claims the Good it set for every item, or the question
-# it waits on, and grounds each statement of the work.
-READING = DECISION._replace(more=read_out)
-CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True, more=claimed)
+# The generator claims the Good it set for every item, or the question it waits on.
+CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True)
 # The learner says how the run went alone, since a lesson on what the work should say tells the
 # generator how to give a Good, which is the generator's to decide.
 LEARNT = Form((), more=lessons)
@@ -346,15 +173,13 @@ def check(
     work: list[str],
     form: Form,
     asked: int = 0,
-    sources: tuple[str, ...] = (),
     records: tuple[str, ...] = (),
     each: Iterable[tuple[str, str]] = (),
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
     The items are those the form judges; `asked` counts the questions already asked, which its
-    own questions are numbered after; `sources` are the files and folders statements rest on, and
-    `records` the records its quotes of a record and its commands are found in; `each` names the
-    items asked of each part of the work."""
+    own questions are numbered after; `records` are the records its quotes of a record are found
+    in; `each` names the items asked of each part of the work."""
     data = parse(text, form)
     if data is None:
         lists = ", ".join(f'"{k}": [...]' for k in listed(form))
@@ -363,7 +188,7 @@ def check(
     if form.asks:
         said += question_problems(data, asked)
     if form.more:
-        said += form.more(data, Grounds(work, sources, records))
+        said += form.more(data, Grounds(work, records))
     return said
 
 
@@ -446,7 +271,7 @@ def allowed(shapes: list[tuple[str, ...]]) -> str:
 
 def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
     said: list[str] = []
-    for key in ("can", "good", "gets"):
+    for key in ("can", "good", "gets", "did", "lacking"):
         if key in item and not worded(item[key]):
             said.append(f'{name} has an empty "{key}"; say it in words')
     if "question" in item and not (
@@ -531,8 +356,7 @@ def parts(work: list[str]) -> list[str]:
 
 
 def in_files(line: Any, paths: list[str]) -> bool:
-    """Whether the line names lines that are there in one of the files, or in a file inside one
-    of the folders."""
+    """Whether the line names lines that are there in one of the files."""
     found = LINES.match(line) if isinstance(line, str) else None
     if not found or not os.path.isfile(found.group(1)) or not within(found.group(1), paths):
         return False
@@ -566,9 +390,5 @@ def question_problems(data: dict[str, Any], asked: int) -> list[str]:
 
 
 def within(path: str, paths: list[str]) -> bool:
-    real = os.path.realpath(path)
-    for named in paths:
-        top = os.path.realpath(named)
-        if real == top or (os.path.isdir(top) and real.startswith(top + os.sep)):
-            return True
-    return False
+    """Whether the path is one of the files, however either is written."""
+    return os.path.realpath(path) in {os.path.realpath(p) for p in paths}

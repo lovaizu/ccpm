@@ -1,16 +1,15 @@
 """Tries the orchestrator's flow: the real orchestrator, scripts and hooks, with the four roles stood
 in for by agents of this folder that give replies set in replies.json, so the run takes every way a
-run goes: an item and a statement sent back by the reading; the first user stopping at an item sent
-back to the generator by message three times, the fourth stop going on to the evaluator, and at a
-part of another item given its Good at the next reading; the evaluator differing from the findings;
-the accuracy item, which no reader is given, decided from the findings alone; the learner after each
-reading, with a lesson taken once and none the second time; the work made again, and an item left
-without Good through the second reading; or, with `unanswered`, the same task with its decision
-taken out, so the run returns the question alone before any work is made. A stand-in for the
-calling AI calls turn on a task of two usability items, one answered at its part and one in each
-part, and one accuracy item, in a repository made for the run. Prints the session, from whose JSONL
-and its agents' the trial is judged, the order the agents were started in, the minutes and the
-result.
+run goes: the first user stopping at an item sent back to the generator by message three times, the
+fourth stop going on to the evaluator, and at a part of another item given its Good at the next
+reading; the evaluator differing from the first user; the learner after each round, with a lesson
+taken once and none the second time; the second round, whose first user gives every item a Good at
+its first reading, one at lines that do not give it, so the item is left without Good; or, with
+`unanswered`, the same task with its decision taken out, so the run returns the question alone
+before any work is made. A stand-in for the calling AI calls turn on a task of two items, one
+answered at its part and one in each part, in a repository made for the run. Prints the session,
+from whose JSONL and its agents' the trial is judged, the order the agents were started in, the
+minutes and the result.
 
     python3 dev/turn/trials/flow/flow.py <new folder> [unanswered]
 

@@ -19,13 +19,13 @@ LEARNER = "turn:learner"
 # The roles kept started until the first user's reading of their round ends, each sent what comes
 # next by message, so each works on with what it has already read.
 KEPT = (GENERATOR, FIRST_USER)
-# A reading that does not settle is bounded: each kind of send-back three times a round.
+# A reading that does not settle is bounded: the first user sends back three times a round.
 SENDS = 3
 # A messaged role's reply is waited for a second at a time, within the shell's two minutes.
 WAIT = 100
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your reading or decision as JSON>]\n"
+    "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
     "       turn.py given <result>\n"
     "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
@@ -67,12 +67,11 @@ def start(text: str) -> dict[str, Any]:
     return {"check": run["check"]}
 
 
-def generator_given(run: dict[str, Any], sent_back: list, unsourced: list) -> dict[str, Any]:
+def generator_given(run: dict[str, Any], sent_back: list) -> dict[str, Any]:
     return {
         "ccs": run["call"]["ccs"],
         "work": run["work"],
         "sent_back": sent_back,
-        "unsourced": unsourced,
         "lessons": lessons(run, "generator"),
     }
 
@@ -82,31 +81,20 @@ def lessons(run: dict[str, Any], role: str) -> list[str]:
     return [t["lesson"] for t in run.get("lessons", []) if t["role"] == role]
 
 
-def sources(run: dict[str, Any]) -> tuple[str, ...]:
-    """What a statement of the work may rest on: the CCS and the files and folders it names."""
-    return tuple(p for p in run["given"] if p not in run["work"])
-
-
 def each(run: dict[str, Any]) -> list[tuple[str, str]]:
     """The items asked of each part of the work, by their checklist and ID."""
     return [key(i) for i in run["each"]]
 
 
-def usable(run: dict[str, Any]) -> list[tuple[str, str]]:
-    """The items the first user and the evaluator answer, by their checklist and ID: those of the
-    usability checklists, as the receiver has no sources."""
-    return [key(i) for i in run["usable"]]
-
-
 def reader_given(run: dict[str, Any], role: str) -> dict[str, Any]:
-    """What the first user and the evaluator are given: what the receiver has, the usability
-    checklists, the parts of the work, and the lessons taken for the role."""
+    """What the first user and the evaluator are given: what the receiver has, the checklists, the
+    parts of the work, and the lessons taken for the role."""
     return {
         "work": run["work"],
         "has": run["has"],
         "receiver": run["receiver"],
         "use": run["use"],
-        "checklists": run["usability"],
+        "checklists": run["checklist"],
         "parts": forms.parts(run["work"]),
         "lessons": lessons(run, role),
     }
@@ -128,11 +116,10 @@ def ask(run: dict[str, Any], agent: str, given: dict[str, Any]) -> dict[str, str
     return asked
 
 
-def sending(run: dict[str, Any], kind: str) -> bool:
-    """Whether the round may send back once more of the kind, counting each time it is asked."""
-    sent = run.setdefault("sent", {})
-    sent[kind] = sent.get(kind, 0) + 1
-    return sent[kind] <= SENDS
+def sending(run: dict[str, Any]) -> bool:
+    """Whether the round may send back once more, counting each time it is asked."""
+    run["sent"] = run.get("sent", 0) + 1
+    return run["sent"] <= SENDS
 
 
 def awaited(result: str, run: dict[str, Any]) -> dict[str, Any]:
@@ -187,63 +174,64 @@ def learnt_from(run: dict[str, Any]) -> list[str]:
 
 
 def next_step(result: str, text: str) -> dict[str, Any]:
-    """Takes what the run waits on, the orchestrator's reading or decision or a role's kept reply,
-    and gives what the orchestrator does next."""
+    """Takes what the run waits on, the orchestrator's check, decision or take, or a role's kept
+    reply, and gives what the orchestrator does next."""
     run = running(result)
     if run is None:
         raise call.Stop(
             f"turn: no run is going with its result at {result}; start one with"
             " `turn.py start '<call JSON>'`"
         )
+    # Asked with nothing, what the orchestrator is to judge is shown again, so it can always see it
+    # whole.
     if "check" in run:
-        # Asked with no check, the items to check are shown again.
         return checked(run, text) if text.strip() else {"check": run["check"]}
+    if "decide" in run:
+        return decide(run, text) if text.strip() else {"decide": run["decide"]}
+    if "take" in run:
+        return taking(run, text) if text.strip() else {"take": run["take"]}
     agent = run["next"]["agent"]
-    # A role sent a message replies later, kept by the hook, so the script waits for it.
-    messaged = "to" in run["next"] and "reply" not in run["next"]
-    if messaged:
-        if text.strip():
+    # Between the check and the decision the orchestrator only starts and messages the roles, as
+    # its reading would find the Good the work meant, not the one the receiver gets.
+    if text.strip():
+        raise call.Stop(
+            f"turn: the run waits on {agent}'s reply, not on yours; run `turn.py next <the call's"
+            " result>` with nothing"
+        )
+    if "reply" not in run["next"]:
+        if "to" not in run["next"]:
             raise call.Stop(
-                f"turn: {agent} has not replied; run `turn.py next <the call's result>` with"
-                " nothing to wait for its reply"
+                f"turn: {agent} has not replied; start {agent} with the prompt turn.py printed"
+                " last, and wait for its reply"
             )
+        # A role sent a message replies later, kept by the hook, so the script waits for it.
         run = awaited(result, run)
         if "reply" not in run["next"]:
             return {"waiting": agent}
     # Each role's record is kept for the learner, which looks for what makes the Good in what the
     # roles did.
-    record = run["next"].get("record")
-    if record and record not in run.setdefault("records", []):
+    record = run["next"]["record"]
+    if record not in run.setdefault("records", []):
         run["records"].append(record)
-    if "decide" in run:
-        # Asked with no decision, the items to decide are shown again, so the orchestrator can
-        # always see them whole; and so with what the learner found, offered to take.
-        return decide(run, text) if text.strip() else {"decide": run["decide"]}
-    if "take" in run:
-        return taking(run, text) if text.strip() else {"take": run["take"]}
-    if agent == GENERATOR:
-        if messaged:
-            # The orchestrator reads the work made again from the generator's reply.
-            return {"agent": GENERATOR, "reply": run["next"]["reply"]}
-        return reading(run, text)
-    reply = run["next"].get("reply")
-    if reply is None:
-        raise call.Stop(
-            f"turn: {agent} has not replied; start {agent} with the prompt turn.py printed last,"
-            " and wait for its reply"
-        )
-    return REPLIED[agent](run, reply)
+    return REPLIED[agent](run, run["next"]["reply"])
+
+
+def made(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    """Keeps the generator's claim, for the questions it asks, and has the first user use the work
+    made, with no reading between."""
+    run["claim"] = reply
+    return ask(run, FIRST_USER, reader_given(run, "first-user"))
 
 
 def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     """Keeps the Goods of the first user's reading; sends the generator each item it stopped at,
-    with where it stopped, but those waiting on a question, while the round may send them back;
-    otherwise the evaluator holds the reading to the items."""
+    as the first user gave it, but those waiting on a question, while the round may send them
+    back; otherwise the evaluator holds the reading to the items."""
     run["read"] = [i for i in reply["items"] if good(i)]
-    asked = [named(f) for f in run["findings"]["items"] if "question" in f]
+    asked = [named(f) for f in run["claim"]["items"] if "question" in f]
     stops = [i for i in reply["items"] if "places" in i and named(i) not in asked]
-    if stops and sending(run, FIRST_USER):
-        return ask(run, GENERATOR, generator_given(run, stops, []))
+    if stops and sending(run):
+        return ask(run, GENERATOR, generator_given(run, stops))
     return evaluate(run)
 
 
@@ -264,50 +252,26 @@ def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
     if asked:
         write(run["call"]["result"], {"questions": asked})
         return {"returned": run["call"]["result"]}
-    return ask(run, GENERATOR, generator_given(run, [], []))
-
-
-def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records the orchestrator's reading: the items and the statements it sends back go to the
-    generator again; with none, the reading is kept as its findings and the first user reads the
-    work."""
-    said = forms.check(text, run["items"], run["work"], forms.READING, each=each(run))
-    if said:
-        raise call.Stop("turn: the reading is not filled:\n" + "\n".join(said))
-    found = json.loads(forms.unfenced(text))
-    sent_back = [i for i in found["items"] if "gets" in i]
-    claim = run["next"].get("reply") or {}
-    unsourced = found.pop("unsourced", [])
-    # A statement the reading sends back itself is sent back once.
-    unrun = [
-        u
-        for u in forms.unrun(found.pop("statements"), claim.get("statements", []))
-        if not any(forms.overlap(u["lines"], s["lines"]) for s in unsourced)
-    ]
-    unsourced += unrun
-    if (sent_back or unsourced) and sending(run, "reading"):
-        return ask(run, GENERATOR, generator_given(run, sent_back, unsourced))
-    run["findings"] = found
-    return ask(run, FIRST_USER, reader_given(run, "first-user"))
+    return ask(run, GENERATOR, generator_given(run, []))
 
 
 def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Sets the orchestrator's findings beside the evaluator's Goods and the first user's, for
-    the orchestrator to decide every item, as readers that agree may still carry a doubt inside a
-    Good."""
+    """Sets the evaluator's Goods beside the first user's, with the question the generator found an
+    item waits on, for the orchestrator to decide every item, as readers that agree may still carry
+    a doubt inside a Good."""
     evaluated = {key(i): judged(i) for i in reply["items"]}
     read = {key(i): judged(i) for i in run["read"]}
-    findings = run["findings"]
+    waits = {key(i): i["question"] for i in run["claim"]["items"] if "question" in i}
     every = [
         dict(
-            named(f),
-            orchestrator=judged(f),
-            evaluator=evaluated.get(key(f)),
-            first_user=read.get(key(f)),
+            named(i),
+            evaluator=evaluated.get(key(i)),
+            first_user=read.get(key(i)),
+            **({"question": waits[key(i)]} if key(i) in waits else {}),
         )
-        for f in findings["items"]
+        for i in run["items"]
     ]
-    run["decide"] = {"items": every, "questions": findings["questions"]}
+    run["decide"] = {"items": every, "questions": run["claim"]["questions"]}
     write(run["call"]["result"], {"running": run})
     return {"decide": run["decide"]}
 
@@ -321,28 +285,26 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     if said:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
     decision = json.loads(forms.unfenced(text))
-    # The calling AI is to get each Good found by a reader that did not make the work, so a
-    # usability item neither the first user nor the evaluator found Good gets none from the
-    # orchestrator alone; an accuracy item is answered against the sources, which no reader has.
-    readers = usable(run)
+    # The calling AI is to get each Good found by a reader that did not make the work, so an item
+    # neither the first user nor the evaluator found Good gets none from the orchestrator alone.
     unread = [
         f"{i['checklist']} {i['item']} has no Good a reader found; give what the receiver gets"
         " once it has it, and where it is not found"
         for i in run["decide"]["items"]
-        if not (i["evaluator"] or i["first_user"]) and key(i) in readers
+        if not (i["evaluator"] or i["first_user"])
         for d in decision["items"]
         if key(d) == key(i) and good(d)
     ]
     if unread:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(unread))
     decided = {key(i): i for i in decision["items"]}
-    items = [decided.get(key(f), f) for f in run["findings"]["items"]]
+    items = [decided[key(i)] for i in run["items"]]
     del run["decide"]
     return settle(run, items, asked + decision["questions"])
 
 
 def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) -> dict[str, str]:
-    """After every reading, the learner learns from every record of the run how the run went."""
+    """After every round, the learner learns from every record of the run how the run went."""
     run["settled"] = {"items": items, "questions": questions}
     shown = run["records"] + [run["orchestrator"]] if "orchestrator" in run else run["records"]
     learner = {"findings": items, "records": shown, "lessons": lessons(run, "learner")}
@@ -350,7 +312,7 @@ def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) ->
 
 
 def remade(run: dict[str, Any]) -> bool:
-    """Whether the work is made again: after the first reading alone, with an item without Good."""
+    """Whether the work is made again: after the first round alone, with an item without Good."""
     return not run.get("remade") and any("gets" in i for i in run["settled"]["items"])
 
 
@@ -389,7 +351,7 @@ def took(run: dict[str, Any], process: list) -> dict[str, str]:
         # The next round starts the generator and the first user anew, and counts anew.
         for anew in ("started", "sent"):
             run.pop(anew, None)
-        return ask(run, GENERATOR, generator_given(run, unmet, []))
+        return ask(run, GENERATOR, generator_given(run, unmet))
     result = run["call"]["result"]
     write(
         result,
@@ -452,5 +414,5 @@ def write(path: str, data: dict[str, Any]) -> None:
         f.write("\n")
 
 
-# What the run does after each role's reply but the generator's, which the orchestrator reads first.
-REPLIED = {FIRST_USER: first_read, EVALUATOR: compare, LEARNER: offer}
+# What the run does after each role's reply.
+REPLIED = {GENERATOR: made, FIRST_USER: first_read, EVALUATOR: compare, LEARNER: offer}

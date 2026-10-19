@@ -12,7 +12,7 @@ from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
-    "       turn.py next <result> [< <your reading or decision as JSON>]\n"
+    "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
     "       turn.py given <result>\n"
     "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
@@ -161,7 +161,6 @@ class TestStart(RepoTest):
                 "ccs": CALL["ccs"],
                 "work": ["README.md"],
                 "sent_back": [],
-                "unsourced": [],
                 "lessons": [],
             },
         )
@@ -218,32 +217,13 @@ class TestStart(RepoTest):
         )
 
     def test_the_run_keeps_what_the_readers_may_read(self):
-        # Given: a call naming the kind of what the receiver has, and a CCS naming an accuracy
-        # checklist beside the README's
+        # Given: a call naming the kind of what the receiver has
         # When: the run is started
-        # Then: the run keeps the work, what the receiver has and the usability checklists as what
-        # the first user and the evaluator may read, and not the CCS, the decisions or the
-        # accuracy checklist
-        self.with_accuracy()
+        # Then: the run keeps the work, what the receiver has and the checklists as what the first
+        # user and the evaluator may read, and not the CCS or the decisions
         self.turn("start", json.dumps(call_with(has="page")))
         running = self.read_json(CALL["result"])["running"]
         self.assertEqual(running["shown"], ["README.md", "docs/start.md", "checklists/readme.md"])
-
-    def test_the_run_keeps_the_items_the_readers_answer(self):
-        # Given: a CCS naming an accuracy checklist beside the README's, which asks one item of
-        # each part
-        # When: the run is started
-        # Then: the run keeps every item, and the README's alone as the items the first user and
-        # the evaluator answer, with its item asked of each part
-        self.with_accuracy()
-        self.write("checklists/readme.md", CHECKLIST + EACH)
-        self.turn("start", json.dumps(CALL))
-        running = self.read_json(CALL["result"])["running"]
-        readme = [{"checklist": "checklists/readme.md", "item": i} for i in ("F-1", "B-1", "B-2")]
-        accuracy = {"checklist": "checklists/accuracy.md", "item": "B-1"}
-        self.assertEqual(running["items"], readme + [accuracy])
-        self.assertEqual(running["usable"], readme)
-        self.assertEqual(running["usability"], ["checklists/readme.md"])
 
     def test_the_optional_kinds_are_taken_when_named(self):
         # Given: a call that also names the kinds of the use and of what the receiver has
@@ -382,20 +362,6 @@ class TestStartStops(RepoTest):
         # Then: it stops, naming the file
         os.remove("docs/start.md")
         self.stops(call_with(has="page"), "docs/start.md")
-
-    def test_a_checklist_that_does_not_say_what_answers_it_stops(self):
-        # Given: a checklist whose front matter gives no `check`, or one turn does not know, or
-        # that has no front matter
-        # When: the run is started
-        # Then: it stops, naming the checklist and the values `check` takes
-        for text in (
-            CHECKLIST.replace("check: usability\n", ""),
-            CHECKLIST.replace("check: usability", "check: readability"),
-            CHECKLIST.split("---\n", 2)[2],
-        ):
-            with self.subTest(text=text[:40]):
-                self.write("checklists/readme.md", text)
-                self.stops(CALL, "checklists/readme.md", "`check: usability` or `check: accuracy`")
 
     def test_kinds_that_are_not_an_object_stop(self):
         # Given: a call whose kinds are a list, not an object of names

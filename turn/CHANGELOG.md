@@ -5,10 +5,9 @@
 ### Added
 
 - Before any work is made, turn checks that what your CCS and its files say can give every item its Good, and where it cannot, returns the questions alone, each with the items it settles and the answer it recommends — you ask the user once and call again, instead of a work made on a guess.
-- Each checklist says in its front matter `check: usability`, for what the receiver gets using the work, or `check: accuracy`, for whether it says what was decided and what the product does — the AI reading in the receiver's place answers what the receiver can tell, and only the one holding the sources answers the rest, so no Good is given on what the reader could not see.
 - Each checklist item says where it is answered, `Scope: its part`, `each part` or `whole`, and an item asked of each part gets its Good only where every section or file gives it — a part that falls short is not passed because another part gives the item.
 - The AI reading in the receiver's place has what the CCS says the receiver has, such as the whole repository, and does what they do with the work, such as running its tests — a Good that holds only on paper, or one the receiver gets from what lies beside the work, is told apart.
-- Each statement the work makes is checked against what it rests on: a decision against the words of your files, how the product behaves against a command run — a statement made up or never run is sent back before the work reaches you.
+- The AI that makes the work runs what it gives as the receiver would, such as the commands it tells and its tests — a work that fails on first use is made again before it reaches you.
 - The result names, for every item, its Good with the lines that give it, the question it waits on, or what the receiver gets once it has it and where it was not found, and the lessons turn took on how its own run went — you check each Good by reading its lines, and hand the lessons on to turn's makers.
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
@@ -17,7 +16,7 @@
 
 - turn is called from your plugin's step: started in the background with `{"ccs", "kind", "result"}`, the CCS your step's own JSON file and every name in it yours, turn taking what it needs by the kinds you name — your step keeps its task in its own shape, and its context holds only what comes back.
 - The work is made where it goes, and a run cut off leaves its writing as changes git shows — you undo or finish them and call again.
-- Where a reader finds no Good, the work is made again aimed at the places it stopped, up to three times a round and two rounds — each remake changes only what fell short, and a run that does not settle ends.
+- Where the AI reading in the receiver's place finds no Good, the work is made again aimed at where it stopped, what it did there and what it did not get, with no other reading between, up to three times a round and two rounds — each remake changes only what fell short, and a run that does not settle ends.
 
 ### Removed
 

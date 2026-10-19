@@ -1,6 +1,5 @@
 ---
 name: design
-check: usability
 version: 0.3.0
 ---
 

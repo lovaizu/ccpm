@@ -24,7 +24,6 @@ settings.load_profile("ci" if os.environ.get("CI") else "default")
 
 FORMS = (
     forms.CHECK,
-    forms.READING,
     forms.DECISION,
     forms.CLAIM,
     forms.GOOD,
@@ -35,9 +34,8 @@ ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(
     ["items", "questions", "checklist", "item", "good", "lines", "question", "gets", "can"]
-    + ["learnt", "statements", "kind", "unsourced", "quotes", "ran", "path", "quote", "command"]
-    + ["output", "process", "role", "lesson", "grounds", "record", "checked", "recommended"]
-    + ["parts", "part", "places"]
+    + ["process", "role", "lesson", "grounds", "record", "quote", "checked", "recommended"]
+    + ["parts", "part", "places", "did", "lacking"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
 VALUES = st.recursive(

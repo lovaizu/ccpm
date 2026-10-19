@@ -37,7 +37,6 @@ subagentstop = events.SUBAGENTSTOP
 
 CHECKLIST = """---
 name: readme
-check: usability
 version: 0.1.0
 ---
 
@@ -61,30 +60,6 @@ Scope: its part
 
 On opening it, can the reader tell whether the project is for them?
 """
-# A checklist answered against the sources, which the first user and the evaluator are not given;
-# a CCS naming it beside the README's; and its item's Good, as the orchestrator finds it.
-ACCURACY = """---
-name: accuracy
-check: accuracy
-version: 0.1.0
----
-
-# Accuracy
-
-## Benefit
-
-### B-1: As decided
-
-Scope: whole
-
-Does the work carry out what its sources decided?
-"""
-ACCURATE = {
-    "checklist": "checklists/accuracy.md",
-    "item": "B-1",
-    "good": "it tidies CSV files, as the decisions say",
-    "lines": ["README.md:3-3"],
-}
 CCS = {
     "focal_entities": [{"deliverable": "README.md"}, {"audience": "a developer new to it"}],
     "goal_orientation": [{"purpose": "to try it on their own files"}],
@@ -137,16 +112,6 @@ CAN = [
     {"checklist": "checklists/readme.md", "item": "F-1", "can": "the template the checklist gives"},
     {"checklist": "checklists/readme.md", "item": "B-1", "can": "the receiver the CCS names"},
 ]
-# A statement of the work with the words of the CCS's files it rests on, as the generator quotes
-# them; the orchestrator's own mark of it; and one the orchestrator sends back, its source not
-# found.
-STATEMENT = {
-    "lines": ["README.md:3-3"],
-    "kind": "decision",
-    "quotes": [{"path": "notes/readme.decisions.md", "quote": "# Decisions"}],
-}
-MARKED = {"lines": ["README.md:3-3"], "kind": "decision"}
-UNSOURCED = {"lines": ["README.md:3-3"], "gets": "no file the CCS names says it tidies CSV files"}
 # A lesson on how the run went, for the generator, resting on words of the first record, which
 # every role's record holds.
 LESSON = {
@@ -161,8 +126,17 @@ SENT_BACK = {
     "gets": "the reader sees at once that it is for CSV files",
     "places": ["README.md:3-3"],
 }
-# An item the first user finds no Good for, with the places of the work where it looked for it.
-STOPPED = {"checklist": "checklists/readme.md", "item": "B-1", "places": ["README.md:3-3"]}
+# An item the first user finds no Good for, with the places of the work where it looked for it, what
+# it did there and what it did not get.
+DID = "read the opening for whom it is"
+LACKING = "whether it is for a developer"
+STOPPED = {
+    "checklist": "checklists/readme.md",
+    "item": "B-1",
+    "places": ["README.md:3-3"],
+    "did": DID,
+    "lacking": LACKING,
+}
 # A first user's reading of every item: the Good it found for one, and where it stopped at the other.
 FIRST_READ = [FOUND, STOPPED]
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
@@ -243,13 +217,13 @@ class RepoTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         return out
 
-    def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=()):
-        """The run taken through the orchestrator's findings, the first user's reading, after the
-        round has sent it back as often as it may, and the evaluator's Goods; and what the script
-        prints then."""
-        out = self.next({"items": list(findings), "questions": [QUESTION], "statements": [MARKED]})
+    def through(self, *evaluated, claim=(GOOD, WAITS), found=(FOUND,), opened=()):
+        """The run taken through the generator's claim, the first user's reading, after the round
+        has sent it back as often as it may, and the evaluator's Goods; and what the script prints
+        then."""
+        out = self.made(*claim)
         kept = self.read_json(CALL["result"])
-        kept["running"]["sent"] = {run.FIRST_USER: run.SENDS}
+        kept["running"]["sent"] = run.SENDS
         self.write_json(CALL["result"], kept)
         reply = {"items": self.reading(*found)}
         self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
@@ -259,14 +233,24 @@ class RepoTest(unittest.TestCase):
         self.assertEqual(self.replied("turn:evaluator", out["prompt"], reply), (0, ""))
         return self.next()
 
+    def made(self, *claim):
+        """The generator started as the script printed replies with its claim, by default every
+        item Good, after reading what it was given whole; and what the script prints then."""
+        claim = claim or (GOOD, dict(GOOD, item="B-1"))
+        prompt = self.read_json(CALL["result"])["running"]["next"]["prompt"]
+        asks = [QUESTION] if any("question" in i for i in claim) else []
+        reply = {"items": list(claim), "questions": asks}
+        self.assertEqual(self.replied("turn:generator", prompt, reply, *READ_GIVEN), (0, ""))
+        return self.next()
+
     def reading(self, *found):
         """A first user's reading giving the Goods found, and every other item it is given the
-        places it looked for its Good."""
+        places it looked for its Good, what it did there and what it did not get."""
         kept = self.read_json(CALL["result"])["running"]
         given = {(i["checklist"], i["item"]) for i in found}
         return list(found) + [
-            dict(i, places=["README.md:1-1"])
-            for i in kept["usable"]
+            dict(i, places=["README.md:1-1"], did=DID, lacking=LACKING)
+            for i in kept["items"]
             if (i["checklist"], i["item"]) not in given
         ]
 
@@ -345,18 +329,6 @@ class RepoTest(unittest.TestCase):
             for n, path in enumerate(paths, 1)
             for p in range(1, len(records.pages(path)) + 1)
         )
-
-    def with_accuracy(self):
-        """The task's CCS names the accuracy checklist too, after the README's."""
-        self.write("checklists/accuracy.md", ACCURACY)
-        artifacts = CCS["retrieved_artifacts"]
-        ccs = dict(
-            CCS,
-            retrieved_artifacts=artifacts[:1]
-            + [{"checklist": "checklists/accuracy.md"}]
-            + artifacts[1:],
-        )
-        self.write_json(CALL["ccs"], ccs)
 
     def write(self, path, text):
         folder = os.path.dirname(path)

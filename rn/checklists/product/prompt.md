@@ -1,6 +1,5 @@
 ---
 name: prompt
-check: usability
 version: 0.2.0
 ---
 

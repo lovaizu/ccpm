@@ -1,6 +1,5 @@
 ---
 name: usability
-check: usability
 version: 0.2.0
 ---
 
@@ -12,8 +11,7 @@ in what it holds in a short time, meeting nothing they do not need and left with
 achieve that purpose. Below, a document is either, and each file of code is one of its parts.
 
 Each item is answered by what the reader has and does with the deliverable alone, never by the
-sources it was made from, which they do not have; whether it says what those sources decided is
-asked by `accuracy.md`.
+sources it was made from, which they do not have.
 
 A deliverable is made usable by thinking through what the reader meets, in the order they read:
 

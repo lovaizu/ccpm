@@ -19,14 +19,12 @@ from helpers import (
     HOOKS,
     ID,
     LESSON,
-    MARKED,
     QUESTION,
     READ_GIVEN,
     READ_SHOWN,
     SCRIPT,
     SECTIONED,
     SENT_BACK,
-    STATEMENT,
     TURN,
     WAITS,
     RepoTest,
@@ -61,9 +59,7 @@ class HookTest(RepoTest):
     def first_user(self, **call):
         """A run whose first user is to be started next, and the prompt it is to be started with."""
         self.started(dict(CALL, **call))
-        return self.next({"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [MARKED]})[
-            "prompt"
-        ]
+        return self.made(GOOD, WAITS)["prompt"]
 
 
 class TestCall(HookTest):
@@ -219,7 +215,7 @@ class TestReplies(HookTest):
         )
 
     def test_a_learners_reply_of_lessons_on_the_run_passes_and_one_without_its_scope_stops(self):
-        # Given: a learner of a run whose first reading left an item without Good
+        # Given: a learner of a run whose first round left an item without Good
         # When: it ends with a lesson and what it checked, or with the lesson alone
         # Then: the first ends, and the second is kept going, told to say what it checked
         self.started()
@@ -239,8 +235,7 @@ class TestReplies(HookTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
         self.next({"items": CAN + [dict(CAN[0], item="B-2")], "questions": []})
-        reading = {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION]}
-        prompt = self.next(dict(reading, statements=[MARKED]))["prompt"]
+        prompt = self.made(GOOD, WAITS, EACH_GOOD)["prompt"]
         half = dict(EACH_GOOD, parts=EACH_GOOD["parts"][:1])
         code, err = self.replied("turn:first-user", prompt, {"items": FIRST_READ + [half]})
         self.assertEqual(code, 2)
@@ -266,90 +261,11 @@ class TestReplies(HookTest):
         self.assertIn('"good" with "lines"', err)
 
     def test_a_reply_giving_a_good_or_a_question_for_every_item_passes(self):
-        # Given: a generator whose reply gives the Good it set for one item, with its lines, a
-        # question for the other, and the source of each statement of the work
+        # Given: a generator whose reply gives the Good it set for one item, with its lines, and a
+        # question for the other
         # When: it ends
         # Then: it ends
-        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [STATEMENT]}
-        self.passes(subagentstop, self.reply(json.dumps(reply)))
-
-    def test_a_generators_reply_naming_no_statements_stops(self):
-        # Given: a generator whose reply names no statement of the work and its source
-        # When: it ends
-        # Then: it is kept going, told to give each statement with what it rests on
         reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
-        self.stops(subagentstop, self.reply(json.dumps(reply)), '"statements"', '"quotes"')
-
-    def test_a_statement_resting_on_what_the_ccs_does_not_name_stops(self):
-        # Given: a statement said to rest on the work itself, on a file the CCS does not name, on
-        # words a file does not hold, or on no quote
-        # When: the generator ends with it
-        # Then: it is kept going, naming the statement and what it may rest on
-        self.write("other.md", "x\n")
-        for path, quote in (
-            ("README.md", "# csvtidy"),
-            ("other.md", "x"),
-            ("docs/start.md", "# Finish"),
-            (None, None),
-        ):
-            with self.subTest(path=path):
-                quotes = [{"path": path, "quote": quote}] if path else []
-                reply = {
-                    "items": [GOOD, WAITS],
-                    "questions": [QUESTION],
-                    "statements": [dict(STATEMENT, quotes=quotes)],
-                }
-                self.stops(subagentstop, self.reply(json.dumps(reply)), "statement 1")
-
-    def test_a_statement_resting_on_a_command_the_generator_ran_passes(self):
-        # Given: a generator that ran csvtidy, and a statement resting on that run
-        # When: it ends with it, and again with words the run did not print
-        # Then: the first ends, as the run is in the generator's own record, and the second is
-        # kept going
-        ran = ("Bash", {"command": "python3 csvtidy.py in.csv"}, "full_name,email\n")
-        path = self.given_record(ID, self.started(), *READ_GIVEN, ran)
-        for output, code in (("full_name,email", 0), ("Full Name", 2)):
-            with self.subTest(output=output):
-                statement = {
-                    "lines": ["README.md:3-3"],
-                    "kind": "behavior",
-                    "ran": [{"command": "python3 csvtidy.py in.csv", "output": output}],
-                }
-                reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [statement]}
-                event = self.event(
-                    "SubagentStop",
-                    "turn:generator",
-                    agent_transcript_path=path,
-                    last_assistant_message=json.dumps(reply),
-                    stop_hook_active=False,
-                )
-                self.assertEqual(self.hook(subagentstop, event)[0], code)
-
-    def test_statements_out_of_their_form_stop(self):
-        # Given: statements that are not a list, or one holding other keys than its lines and
-        # grounds
-        # When: the generator ends with them
-        # Then: it is kept going, told the shape each takes
-        for statements, said in (
-            ({"lines": ["README.md:3-3"]}, 'give "statements"'),
-            ([dict(STATEMENT, why="x")], 'must hold "lines", "kind"'),
-            (["README.md:3-3"], 'must hold "lines", "kind"'),
-            ([dict(STATEMENT, kind="behavior")], 'tells how the product behaves; give "ran"'),
-        ):
-            with self.subTest(statements=statements):
-                reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": statements}
-                self.stops(subagentstop, self.reply(json.dumps(reply)), said)
-
-    def test_a_statement_resting_on_a_file_in_a_folder_the_ccs_names_passes(self):
-        # Given: a CCS naming a folder of code, and a statement resting on a file inside it
-        # When: the generator ends with it
-        # Then: it ends
-        ccs = self.read_json(CALL["ccs"])
-        ccs["retrieved_artifacts"].append({"code": "src"})
-        self.write_json(CALL["ccs"], ccs)
-        self.write("src/tidy.py", "def tidy():\n    pass\n")
-        statement = dict(STATEMENT, quotes=[{"path": "src/tidy.py", "quote": "def tidy():"}])
-        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [statement]}
         self.passes(subagentstop, self.reply(json.dumps(reply)))
 
     def test_a_reply_out_of_its_form_stops(self):
@@ -538,7 +454,7 @@ class TestReads(HookTest):
                 self.stops(pretooluse, event, "README.md, checklists/readme.md")
 
     def test_a_learner_reads_the_records_of_its_run_alone(self):
-        # Given: a learner of a run whose first reading left an item without Good
+        # Given: a learner of a run whose first round left an item without Good
         # When: it reads a role's record, or the work
         # Then: the record goes through, and the work is stopped, naming the records
         self.through(dict(EVALUATED, item="B-1"))
@@ -562,9 +478,9 @@ class TestReads(HookTest):
             with self.subTest(command=command):
                 self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
 
-    def test_the_orchestrator_recording_its_reading_passes(self):
+    def test_the_orchestrator_recording_with_the_script_passes(self):
         # Given: an orchestrator whose run is going
-        # When: it records its reading with the script, naming where the result goes
+        # When: it records with the script, naming where the result goes
         # Then: it goes through
         self.given_record(ID, json.dumps(CALL), *READ_GIVEN)
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
@@ -598,6 +514,18 @@ class TestReads(HookTest):
         for command in ('cat "secret/notes.md"', "cat secret/notes,old.md"):
             with self.subTest(command=command):
                 self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_the_orchestrator_reads_the_work_only_to_decide(self):
+        # Given: an orchestrator whose run waits on the generator, and one whose run waits on its
+        # decision
+        # When: each reads the work, and the first reads the CCS
+        # Then: the first is stopped at the work, as its reading between would find the Good the
+        # work meant, and goes through at the CCS; the second goes through
+        self.given_record(ID, json.dumps(CALL))
+        self.stops(pretooluse, self.tool("turn:up", "Read", file_path="README.md"), CALL["ccs"])
+        self.passes(pretooluse, self.tool("turn:up", "Read", file_path=CALL["ccs"]))
+        self.through()
+        self.passes(pretooluse, self.tool("turn:up", "Read", file_path="README.md"))
 
     def test_the_orchestrator_asking_the_script_and_naming_another_file_stops(self):
         # Given: an orchestrator whose run is going
@@ -717,7 +645,7 @@ class TestWholeReads(HookTest):
         return ("Read", dict(file_path=path, **part))
 
     def generator_ends(self, *tool_uses):
-        reply = {"items": [GOOD, WAITS], "questions": [QUESTION], "statements": [STATEMENT]}
+        reply = {"items": [GOOD, WAITS], "questions": [QUESTION]}
         path = self.given_record(ID, self.generator_prompt, *tool_uses)
         event = self.event(
             "SubagentStop",
@@ -781,38 +709,27 @@ class TestWholeReads(HookTest):
         self.assertEqual(code, 2)
         self.assertIn("README.md", err)
 
-    def test_the_orchestrator_recording_a_reading_of_part_of_the_work_stops(self):
-        # Given: an orchestrator that read what the run was given, started the generator, and
-        # after it read only some lines of the work
-        # When: it records its reading with the script
+    def test_the_orchestrator_deciding_after_reading_part_of_the_work_made_again_stops(self):
+        # Given: an orchestrator whose run waits on its decision, that saw the items to decide,
+        # read the work, sent the generator a message, and after it read only some lines of the
+        # work
+        # When: it records its decision with the script
         # Then: it is stopped, naming the work to read whole; once it reads the work whole, it
         # goes through
-        given = [
-            self.read(p)
-            for p in (CALL["ccs"], "README.md", "checklists/readme.md")
-            + ("notes/readme.decisions.md", "docs/start.md")
-        ]
-        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
+        self.through()
+        sent = ("SendMessage", {"to": ID, "message": self.generator_prompt})
         part = ("Bash", {"command": "sed -n '1,10p' README.md"})
-        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
-        self.given_record(ID, json.dumps(CALL), *given, generator, part)
-        self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "README.md")
-        self.given_record(ID, json.dumps(CALL), *given, generator, part, self.read("README.md"))
-        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+        self.assertIn("README.md", "".join(self.decided(self.read("README.md"), sent, part)))
+        self.assertEqual(self.decided(sent, part, self.read("README.md")), [])
 
     def test_the_orchestrator_shown_the_changed_work_whole_by_claude_code_goes_on(self):
-        # Given: an orchestrator that read what the run was given and started the generator, after
-        # which Claude Code put the changed work into its context, whole or in part, or put in a
-        # file since removed
-        # When: it records its reading with the script
+        # Given: an orchestrator whose run waits on its decision, that saw the items to decide and
+        # started the generator, after which Claude Code put the changed work into its context,
+        # whole or in part, or put in a file since removed
+        # When: it records its decision with the script
         # Then: with the work whole it goes through; otherwise it is stopped, naming the work
-        given = [
-            self.read(p)
-            for p in (CALL["ccs"], "README.md", "checklists/readme.md")
-            + ("notes/readme.decisions.md", "docs/start.md")
-        ]
+        self.through()
         generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
-        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         whole = "1\t# csvtidy\n2\t\n3\tTidies CSV files."
         for name, snippet, passes in (
             ("README.md", whole, True),
@@ -820,16 +737,12 @@ class TestWholeReads(HookTest):
             ("gone.md", whole, False),
         ):
             with self.subTest(name=name, snippet=snippet):
-                path = self.given_record(ID, json.dumps(CALL), *given, generator)
                 shown = {"type": "edited_text_file", "filename": f"{self.repo}/{name}"}
-                record = {"type": "attachment", "attachment": dict(shown, snippet=snippet)}
-                with open(path, "a", encoding="utf-8") as f:
-                    f.write(json.dumps(record) + "\n")
-                event = self.tool("turn:up", "Bash", command=command)
-                if passes:
-                    self.passes(pretooluse, event)
-                else:
-                    self.stops(pretooluse, event, "README.md")
+                attached = dict(shown, snippet=snippet)
+                said = self.decided(generator, attachment=attached)
+                self.assertEqual(said == [], passes, said)
+                if not passes:
+                    self.assertIn("README.md", said[0])
 
     def test_the_orchestrator_deciding_on_part_of_what_it_decides_from_stops(self):
         # Given: an orchestrator whose run waits on its decision, which saw the items to decide cut
@@ -950,40 +863,49 @@ class TestWholeReads(HookTest):
             self.replied("turn:first-user", prompt, {"items": FIRST_READ}, part), (0, "")
         )
 
-    def given_read(self):
-        """The orchestrator's reads of everything its run was given, and the generator started."""
-        given = [
-            self.read(p)
-            for p in (CALL["ccs"], "README.md", "checklists/readme.md")
-            + ("notes/readme.decisions.md", "docs/start.md")
-        ]
-        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
-        return given, generator
-
-    def recorded(self, *uses):
-        """Whether the orchestrator, having used the tools, may record its reading."""
-        self.given_record(ID, json.dumps(CALL), *uses)
+    def decided(self, *uses, attachment=None):
+        """What stops the orchestrator recording its decision, having seen the items to decide as
+        the script printed them, used the tools, and been given the attachment last."""
+        shown = ("Bash", {"command": f"{SCRIPT} next {CALL['result']}"})
+        path = self.given_record(ID, json.dumps(CALL), shown, *uses)
+        if attachment:
+            with open(path, "a", encoding="utf-8") as f:
+                f.write(json.dumps({"type": "attachment", "attachment": attachment}) + "\n")
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         return read_whole.check(self.tool("turn:up", "Bash", command=command))
 
+    def test_the_orchestrator_deciding_after_starting_the_generator_reads_the_work_again(self):
+        # Given: an orchestrator whose run waits on its decision, that read the work whole and
+        # then started the generator, as a second round does
+        # When: it records its decision, before and after reading the work again
+        # Then: it is stopped, naming the work, as the generator changes it; then it goes through
+        self.through()
+        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
+        work = self.read("README.md")
+        self.assertIn("README.md", "".join(self.decided(work, generator)))
+        self.assertEqual(self.decided(work, generator, work), [])
+
     def test_a_role_other_than_the_generator_started_leaves_the_work_read(self):
-        # Given: an orchestrator that read the work after the generator, then started roles
-        # whose names sort before and after the generator's
-        # When: it records its reading
+        # Given: an orchestrator whose run waits on its decision, that read the work after the
+        # generator, then started roles whose names sort before and after the generator's
+        # When: it records its decision
         # Then: it goes through, as only the generator changes the work
-        given, generator = self.given_read()
+        self.through()
+        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
         others = [
             ("Agent", {"subagent_type": agent, "prompt": "{}"})
             for agent in ("turn:first-user", "turn:learner")
         ]
-        self.assertEqual(self.recorded(*given, generator, self.read("README.md"), *others), [])
+        self.assertEqual(self.decided(generator, self.read("README.md"), *others), [])
 
     def test_an_attachment_other_than_a_file_shown_whole_is_no_read(self):
-        # Given: an orchestrator that started the generator, after which Claude Code attached
-        # something else holding the work's lines, or the work's first lines alone
-        # When: it records its reading
+        # Given: an orchestrator whose run waits on its decision, that started the generator,
+        # after which Claude Code attached something else holding the work's lines, or the work's
+        # first lines alone
+        # When: it records its decision
         # Then: it is stopped, naming the work
-        given, generator = self.given_read()
+        self.through()
+        generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
         whole = "1\t# csvtidy\n2\t\n3\tTidies CSV files."
         for kind, snippet in (
             ("date", whole),
@@ -991,19 +913,16 @@ class TestWholeReads(HookTest):
             ("edited_text_file", "1\t# csvtidy\n2\t"),
         ):
             with self.subTest(kind=kind, snippet=snippet):
-                path = self.given_record(ID, json.dumps(CALL), *given, generator)
                 shown = {"type": kind, "filename": f"{self.repo}/README.md", "snippet": snippet}
-                with open(path, "a", encoding="utf-8") as f:
-                    f.write(json.dumps({"type": "attachment", "attachment": shown}) + "\n")
-                command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
-                said = read_whole.check(self.tool("turn:up", "Bash", command=command))
+                said = self.decided(generator, attachment=shown)
                 self.assertEqual(len(said), 1)
                 self.assertIn("README.md;", said[0])
 
     def test_the_orchestrator_is_held_only_as_it_records_with_the_script(self):
-        # Given: an orchestrator whose reading is due and that read nothing
+        # Given: an orchestrator whose run waits on a role and that read nothing
         # When: it reads a file, or runs a heredoc that is not turn's script
-        # Then: it goes through, as only recording its reading rests on what it read
+        # Then: it is not held to read, as only recording its check or decision rests on what it
+        # read
         self.given_record(ID, json.dumps(CALL))
         for event in (
             self.tool("turn:up", "Read", file_path="README.md"),
@@ -1014,7 +933,7 @@ class TestWholeReads(HookTest):
 
     def test_only_the_orchestrator_recording_with_the_script_is_held(self):
         # Given: a generator that read nothing
-        # When: it runs turn's script with input, as the orchestrator records its reading
+        # When: it runs turn's script with input, as the orchestrator records its decision
         # Then: it is not held to read, as it is not the orchestrator
         self.given_record(ID, self.generator_prompt)
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
@@ -1092,17 +1011,6 @@ class TestWholeReads(HookTest):
             f.write(json.dumps(text) + "\n")
         self.assertEqual(self.replied("turn:learner", prompt, LEARNT_REPLY), (0, ""))
 
-    def test_the_orchestrator_that_sent_a_message_reads_the_work_again(self):
-        # Given: an orchestrator that read the work after the generator, then sent a message
-        # When: it records its reading, before and after reading the work again
-        # Then: it is stopped, naming the work, as the generator sent it may have changed it; then
-        # it goes through
-        given, generator = self.given_read()
-        sent = ("SendMessage", {"to": ID, "message": self.generator_prompt})
-        uses = (*given, generator, self.read("README.md"), sent)
-        self.assertIn("README.md", "".join(self.recorded(*uses)))
-        self.assertEqual(self.recorded(*uses, self.read("README.md")), [])
-
     def test_a_reader_sent_a_message_reads_the_work_again(self):
         # Given: a first user that read the work and the checklist whole, then was sent a message by
         # an agent or by the conversation that started it
@@ -1144,12 +1052,14 @@ class TestWholeReads(HookTest):
         # When: it runs the script with input, having read nothing whole
         # Then: it goes through
         self.learner_prompt()
-        self.assertEqual(self.recorded(), [])
+        self.given_record(ID, json.dumps(CALL))
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.assertEqual(read_whole.check(self.tool("turn:up", "Bash", command=command)), [])
 
     def test_the_orchestrator_going_on_after_a_role_needs_no_new_read(self):
         # Given: an orchestrator whose run waits on the first user, not on its own reading
         # When: it runs the script with input, having read nothing whole
-        # Then: it goes through, as only a reading of the work rests on the work read whole
+        # Then: it goes through, as only a decision rests on the work read whole
         self.first_user()
         self.given_record(ID, json.dumps(CALL))
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"

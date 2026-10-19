@@ -17,7 +17,7 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the README
 
-**Write `<plugin>/README.md` with `usability.md`, `accuracy.md` and `readme.md` open, and have the user agree to it
+**Write `<plugin>/README.md` with `usability.md` and `readme.md` open, and have the user agree to it
 before anything else is made.**
 
 - Rationale: everything after is built to what the README promises the user; built first, it would
@@ -25,7 +25,7 @@ before anything else is made.**
 
 ### 2. Write the design
 
-**Write `dev/<plugin>/design.md` with `usability.md`, `accuracy.md` and `design.md` open, and have the user agree to it.**
+**Write `dev/<plugin>/design.md` with `usability.md` and `design.md` open, and have the user agree to it.**
 Beside it, put `dev/<plugin>/README.md`, which links the design and says how to run the tests and
 trials once they exist; `dev/README.md` lists each plugin's folder and links these rules, and the
 root `README.md` leads users to each plugin's README and builders to `dev/`. Put no README deeper.
@@ -71,7 +71,7 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
      it needs with a tool it already knows; a skipped check goes unnoticed; users run 3.9, and the
      two tools need newer versions only to test, not to run.
 
-c. **Write each prompt, a skill or an agent, with `usability.md`, `accuracy.md` and `prompt.md` open, and run it to see
+c. **Write each prompt, a skill or an agent, with `usability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds
      the prompts' slips, not whether the plugin keeps its promises.

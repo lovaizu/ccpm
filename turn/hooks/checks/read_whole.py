@@ -38,9 +38,8 @@ def answering(event: dict[str, Any], role: str | None) -> bool:
 
 
 def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
-    """The orchestrator's check rests on what the work is made from, its decision on the items to
-    decide and the work, and its reading on what the run was given; going on after a role rests on
-    nothing read."""
+    """The orchestrator's check rests on what the work is made from, and its decision on the items
+    to decide and the work; going on after a role rests on nothing read."""
     if "check" in kept:
         # The check comes before the work is made, so it rests on what the work is made from.
         return unread(
@@ -65,9 +64,7 @@ def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
             " no pipe or redirect, since a lesson taken unseen is taken on a guess"
         )
         return [said]
-    if kept["next"]["agent"] != run.GENERATOR:
-        return []
-    return unread(event, kept, files(event, kept["given"]))
+    return []
 
 
 def generator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
@@ -75,13 +72,13 @@ def generator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
 
 
 def reader(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
-    """The first user and the evaluator read the work and the usability checklists, and of what
-    the receiver has with it, each file they opened, as the receiver opens only what they need."""
+    """The first user and the evaluator read the work and the checklists, and of what the receiver
+    has with it, each file they opened, as the receiver opens only what they need."""
     path = agents.transcript(event)
     cwd = os.path.realpath(event["cwd"])
     has = [at(cwd, p) for p in kept["has"]]
     seen = [p for p in opened(path, cwd) if any(p == h or p.startswith(h + os.sep) for h in has)]
-    return unread(event, kept, kept["work"] + kept["usability"] + seen)
+    return unread(event, kept, kept["work"] + kept["checklist"] + seen)
 
 
 def learner(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
@@ -143,7 +140,7 @@ def unshown(path: str, kept: dict[str, Any]) -> list[str]:
 
 
 def recording(event: dict[str, Any], role: str | None) -> bool:
-    """Whether the orchestrator is recording its check, reading or decision with the script."""
+    """Whether the orchestrator is recording its check, decision or take with the script."""
     command = str(event.get("tool_input", {}).get("command", ""))
     return (
         (role, event["hook_event_name"], event.get("tool_name")) == ("up", "PreToolUse", "Bash")
