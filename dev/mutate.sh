@@ -2,6 +2,8 @@
 # Mutation testing of each plugin that has dev/<plugin>/cosmic-ray.toml, run from the top of the
 # repository with the tools of dev/requirements.txt and dev/requirements-test-quality.txt; fails on any mutant no test catches.
 # cr-rate is not used for that: it takes a limit of 0 as no limit.
+# Given plugin names, such as `sh dev/mutate.sh rn`, it tests those alone, as while one plugin is
+# changed; CI gives none and tests every plugin.
 # Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for
 # each processor, as each mutant is tested on its own.
 set -e
@@ -28,7 +30,11 @@ for n in range(1, int(sys.argv[1]) + 1):
         except OSError:
             time.sleep(0.1)
 EOF
-for config in dev/*/cosmic-ray.toml; do
+configs=""
+for plugin in "$@"; do
+  configs="$configs dev/$plugin/cosmic-ray.toml"
+done
+for config in ${configs:-dev/*/cosmic-ray.toml}; do
   db="$copy/mutants.sqlite"
   rm -f "$db"
   python3 - "$config" "$copy/config.toml" "$workers" <<'EOF'

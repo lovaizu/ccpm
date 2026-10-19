@@ -9,6 +9,6 @@ Every check CI runs on a push, the linter, the formatter, the type checker, and 
 
 Every tool the checks install is held to the hashes of the files it was locked with, so a version replaced on PyPI or npm after it was locked does not install: each `dev/requirements*.txt` is made from its `.in` by the `pip-compile` command at its top, `requirements.txt` on Python 3.9 and `requirements-test-quality.txt` on the newest, and Claude Code comes from `dev/package-lock.json`.
 
-On the newest Python, CI also installs `dev/requirements-test-quality.txt`, which runs the property tests in `sh dev/check.sh`, and runs `sh dev/mutate.sh`, the mutation testing of each plugin with a `dev/<plugin>/cosmic-ray.toml`.
+On the newest Python, CI also installs `dev/requirements-test-quality.txt`, which runs the property tests in `sh dev/check.sh`, and runs `sh dev/mutate.sh`, the mutation testing of each plugin with a `dev/<plugin>/cosmic-ray.toml`. While changing a plugin, `sh dev/mutate.sh <plugin>` tests that plugin alone, and CI tests them all.
 
 The rules for building, testing, trying and releasing a plugin are in [.claude/rules/plugin.md](../.claude/rules/plugin.md).
