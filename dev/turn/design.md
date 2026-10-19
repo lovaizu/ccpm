@@ -2,7 +2,8 @@
 
 turn is built from five AI roles, a few scripts and hooks: one role makes the work and makes it
 again until another, reading it in its receiver's place, finds every item's Good, and the rest
-decide from that reading which items get their Good. The goal, the key results, and what a
+decide from that reading which items get their Good and have the work made again where one does
+not. The goal, the key results, and what a
 checklist, the receiver and a Good are, are in [turn's UX](ux.md).
 
 ## User stories
@@ -129,11 +130,12 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   found one, but for an item whose Good rests on the sources.
 
   The orchestrator's findings are recorded before the evaluator starts, as a judgment made after
-  another's is pulled toward it. One reader misses a Good the work gives; a Good held to its item
-  only at the lines the reading named passes a place elsewhere that does not give it. Readers that
-  agree may still carry a doubt inside a Good, so agreement is decided too. A Good only the
-  orchestrator found would be judged by one that read the work knowing what it meant, so a script
-  stops it.
+  another's is pulled toward it. One reader misses a Good the work gives, and an item judged
+  without it is made again for nothing; a Good held to its item is one the calling AI can rely on.
+  A Good held only at the lines the reading named passes a place elsewhere that does not give it.
+  Readers that agree may still carry a doubt inside a Good, so agreement is decided too. A Good only
+  the orchestrator found, on an item whose Good does not rest on the sources, would be judged by one
+  that read the work knowing what it meant, so a script stops it.
 - Once the orchestrator has decided, the learner reads every item's finding and the record of every
   agent of the run, the orchestrator's included, and gives, from what they show, with the words it
   rests on quoted, how the run went: whether the Goods came without waste and not by chance, each
