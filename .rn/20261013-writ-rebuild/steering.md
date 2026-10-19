@@ -329,7 +329,21 @@ Progress:
   item met but doc B-11, which the caller finished by writing the hand-offs by pair, as the content
   gave them, in place of a step table that pointed ahead. The five rules turn returned each say
   again what `doc.md` already asks; not taken.
-- Next: CHANGELOG, the whole tried once, and `claude plugin validate --strict`.
+- Done (2026-10-19): each statement marked a decision or how the product behaves, by the
+  generator and by the orchestrator on its own, and one either marks a behavior with no run sent
+  back by the script, once; readability B-5 asks for it (`4fe62be`, `7461cf2`). Flow trial passed
+  (5.4 minutes, the statement marked a behavior with no run sent back, then passed on `sh demo.sh`);
+  roles trial passed. CI: mutants tested by one worker per processor (newest job 8.4 minutes, 18.5
+  before; an event loop set first for Cosmic Ray 8.7.0 on Python 3.14, sixty-north/cosmic-ray#608);
+  actions pinned to commit SHAs, pip and npm installed by locked hashes, the token read-only
+  (decided by the user, 2026-10-19). The user set at the org: SHA pinning required, workflow
+  token read-only, the GitHub recommended security configuration; not yet seen in a CI run, as
+  the token here cannot rerun one: the next push shows it.
+- Next: 1. the acceptance trial on the commit after `7461cf2`, every JSONL read, reported by what
+  the caller is not satisfied by (`python3 dev/turn/trials/trial.py dev/turn/trials/readme
+  <new folder>`; a run started before a `/clear` may have been cut off); 2. consult, one at a time:
+  when reading stops; the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin validate
+  --strict`.
 
 ### [ ] #6: Each checklist finished
 
