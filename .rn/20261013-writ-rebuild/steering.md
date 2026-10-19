@@ -1345,6 +1345,12 @@ Progress:
     made in the order their checklists draw them (UX, README, design).
   - R9 (turn's question on the README): no page for fuller use; the README says the example's three
     commands are all there is to use, since the UX names no other.
+  - R10 (turn's question on the design): a fresh `/rn:up` goes on with the session whose folder
+    `.rn/<yyyymmdd>-<slug>/` the checked-out branch changed and whose plan is not finished, as rn
+    0.9.0 found it, over turn's recommendation of a folder named after the branch, so sessions 0.9.0
+    left are still found.
+  - R11: the CCS of each work is kept at `ccs/<work>.json`, not `tasks/`, since "task" names the
+    parts the work is divided into.
   - turn fixed twice on the way (ac4645a, adf992b): Claude Code now ends some agents with
     SubagentHandback, where SubagentStop gives no reply and its block is ignored.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
