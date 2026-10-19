@@ -539,6 +539,31 @@ Progress:
   for agreement; 2. build the quality of the flow and each part in: scripts, hooks, prompts and
   checklists unit by unit, tests written to the design, the flow trial judged against the design's
   order; 3. then the acceptance trials, three at once.
+- Done (2026-10-19): 1. turn's design and README for this flow (`49ad37b`), agreed by the user in
+  Japanese translation; the UX unchanged, as it held nothing grounds-based; the README given
+  Requirements, Installation, Documentation, Development and License, as readme.md F-1 asks. The
+  evaluator still gets the first user's last reading, as before. 2. built (`0e49883`): run.py takes
+  the generator's reply straight to the first user (`made`), a text given while a role's reply is
+  due stops, one send-back count a round, the decision from both readers' Goods with the question
+  the generator found, every item; forms without statements, quotes or runs, the first user's stop
+  `places`, `did` and `lacking`; call.py without `check`; read_in_given lets the orchestrator read
+  the work only at the decision; read_whole holds the orchestrator only at the check, decision and
+  take; prompts up, generator (runs what it writes), first-user, evaluator, learner; tests to the
+  design's order, 100% covered, no mutant surviving; `rn/checklists/accuracy.md` and every
+  `check:` line removed, checklist.md step 5 and B-13 now ask each item be answered by what the
+  user has and does, plugin.md no longer names accuracy.md; turn's CHANGELOG. Trials updated: flow
+  (two items; four stops of B-1, a B-2 part given its Good at the next reading, the evaluator
+  giving none, round 2's first user giving every item a Good, B-1's at lines without the license,
+  so B-1 is to end without Good), roles (the round set to have sent back three times before the
+  evaluator), kept (no reading between), acceptance without accuracy.md.
+- Running at the `/clear` (2026-10-19): CI on `0e49883`; the flow trial and its `unanswered` run,
+  the roles trial and the kept trial, each printing to
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/60cd2bc3-2224-458d-b354-ac32163ead92/scratchpad/{flow1,flow2,roles1,kept1}.log`.
+- Next: read each log and the JSONL of each session it names; judge the flow trial by the design's
+  order (no orchestrator reading between the generator's first making and the evaluator's reply;
+  B-1 without Good in the result) and record each in its `results.json`; fix at the cause what a
+  trial shows off the design; then the acceptance trials, three at once
+  (`dev/turn/trials/trial.py`), and the report to the user by how close each key result came.
 
 ### [ ] #6: Each checklist finished
 
