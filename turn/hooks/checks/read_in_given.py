@@ -48,10 +48,10 @@ def check(event: dict[str, Any]) -> list[str]:
         if orchestrator:
             places.append(os.path.join(cwd, kept["call"]["result"]))
         said = words(event)
-        # A role takes what it is given, and the learner each record, from turn's script, naming
-        # where the run is kept, in a command of that alone.
+        # A role takes what it is given, the parts of the work, and the learner each record, from
+        # turn's script, naming where the run is kept, in a command of that alone.
         command = str(event["tool_input"].get("command", ""))
-        asks = agents.runs(command, "given") or agents.runs(command, "record")
+        asks = any(agents.runs(command, c) for c in ("given", "parts", "record"))
         if not orchestrator and asks and not OPERATORS & set(said):
             return []
         named = [os.path.realpath(os.path.join(cwd, w)) for w in said]

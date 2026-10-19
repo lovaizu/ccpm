@@ -24,11 +24,11 @@ NAMED = {"up": "result"}
 
 # turn's script as the orchestrator and each role run it, its path quoted or not, and the step it
 # runs.
-SCRIPT = re.compile(r"""turn\.py["']?\s+(start|next|given|record)\b""")
+SCRIPT = re.compile(r"""turn\.py["']?\s+(start|next|given|parts|record)\b""")
 
 
 def runs(command: str, step: str) -> bool:
-    """Whether the command runs turn's script for the step, `start`, `next`, `given` or
+    """Whether the command runs turn's script for the step, `start`, `next`, `given`, `parts` or
     `record`."""
     return any(m.group(1) == step for m in SCRIPT.finditer(command))
 

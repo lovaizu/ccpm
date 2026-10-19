@@ -625,6 +625,14 @@ class TestReads(HookTest):
         joined = f"{asked}; cat {CALL['result']}"
         self.stops(pretooluse, self.tool("turn:generator", "Bash", command=joined))
 
+    def test_a_role_asking_the_script_for_the_parts_of_the_work_passes(self):
+        # Given: a generator of a run
+        # When: it runs turn's script for the parts of the work, naming where the run is kept
+        # Then: it goes through
+        self.given_prompt(ID, self.started())
+        asked = f"{SCRIPT} parts {CALL['result']}"
+        self.passes(pretooluse, self.tool("turn:generator", "Bash", command=asked))
+
     def test_a_role_reading_the_repositorys_history_stops(self):
         # Given: a generator of a run
         # When: it runs git, which reads the repository's history beyond what it was given
