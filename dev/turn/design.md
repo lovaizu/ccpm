@@ -29,7 +29,7 @@ flowchart LR
   le["Learner"]
   caller -->|1 calls with the CCS, which the orchestrator checks can give every item its Good| orch
   orch -->|2 has the work made, and made again where no Good is found| gen
-  orch -->|3 has it read in the receiver's place, by a new first user each time, back to 2 until every item has its Good| fu
+  orch -->|3 has it read in the receiver's place, back to 2 until every item has its Good, three times at most| fu
   orch -->|4 has every item's Good looked for, given that reading, then decides every item| ev
   orch -->|5 has how the run went learnt, then 2 to 4 once more where an item has none| le
   orch -->|6 returns the work and the result| caller
@@ -94,7 +94,8 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   not found, and each statement its grounds do not say; where a decision of the CCS and a file it
   names differ, it is a question. It marks each statement as a decision or as how the product
   behaves on its own, without running anything, and a script sends back each statement either mark
-  calls how the product behaves that has no run. Once nothing is sent back, a script records its
+  calls how the product behaves that has no run. Once nothing is sent back, or it has sent back
+  three times in a round, a script records its
   findings.
 
   A shortfall plain to see is sent back before the costly reading. How the work gets the Good is the
@@ -112,17 +113,19 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   A reader that did not make the work finds only the Good its lines give; the maker finds the Good
   it meant.
 - The orchestrator sends the generator each item the first user found no Good for, with its places,
-  and a new first user reads the work made again, until the first user finds every item's Good or
-  a remake leaves an item's places as they were. An item whose Good rests on the sources, such as
+  and the first user reads the work made again, until it finds every item's Good, each item left
+  waits on a question, or it has been sent back three times in a round. The first user, like the
+  generator, stays started for the whole run. An item whose Good rests on the sources, such as
   whether a statement said as fact was checked, is the orchestrator's, from its reading of the
   grounds, and is not sent back for the first user's reading.
 
   A remake aimed at where a reader stopped gives the Good there; an item restated over the whole
   work leaves the generator nothing to aim at, and the remake changes nothing. A first user that
-  has read the work before reads what changed, not the work as the receiver meets it, so each
-  reading is a new one. A remake that leaves the places as they were would meet the same reading
-  again. The receiver has no sources, so no reading of theirs can tell whether a statement was
-  checked.
+  stays started reads again whether the places it stopped at now give the Good, so what is left
+  only shrinks; the evaluator, started anew, reads the work as the receiver first meets it. A bound
+  keeps a reading that does not settle from going on without end, and what it leaves goes on to the
+  evaluator, the decision and the second round. The receiver has no sources, so no reading of
+  theirs can tell whether a statement was checked.
 - The evaluator, given the same and the last reading, looks through the whole work for every item's
   Good, holding each Good of the reading to what its item asks, and gives every Good with its
   lines. The orchestrator then reads the work whole and decides every item from its findings and
@@ -191,11 +194,18 @@ turn/                      the plugin, installed by Claude Code
   evaluator, the same and the last first user's reading; the learner, every item's finding and the
   JSONL of every agent of its run, the orchestrator's included; and each role of the second round,
   the lessons taken for it.
-- The orchestrator starts the generator once a run and sends it what is sent back with
-  SendMessage, which it loads with ToolSearch; every other role it starts anew each time.
+- The orchestrator starts the generator and the first user once a run and sends each what comes
+  next with SendMessage, which it loads with ToolSearch; the evaluator and the learner it starts
+  anew each time.
 
   Tried with an agent started by an agent started in the background, as turn's roles are: sent a
   message after its reply, the same agent answered from what it had read, using no tool.
+- A script counts the rounds and the send-backs of each round, two rounds and three send-backs of
+  each kind at most, and names the agent to start or message next with what it is given; a hook
+  lets the orchestrator start or message only that agent, with that.
+
+  A bound kept by the orchestrator's own count is broken by one slip, unseen; a script counts the
+  same every time.
 - Each role replies in a JSON form of its own, not in a file, and a hook checks each role at both
   ends.
 
@@ -242,8 +252,9 @@ turn/                      the plugin, installed by Claude Code
   - Flow: on a task of two items, one answered at its part and one in each part, with the four roles
     stood in for by agents that read what their step reads and give a reply set beforehand, one set
     for each way a run goes: every item Good at the first reading, an item sent back with the parts
-    where it is not found, an item the first user finds no Good for given at the next first user's
-    reading, a remake leaving an item's places as they were, the evaluator differing from the
+    where it is not found, an item the first user finds no Good for given at its next reading, an
+    item sent back three times by the reading and by the first user going on to the evaluator, the
+    evaluator differing from the
     findings, and an item left without Good through the second reading, with the learner after
     each reading; and, on the same task with its
     decision taken out, the questions returned before any work is made. On Opus 5.5; passes when its
@@ -253,7 +264,8 @@ turn/                      the plugin, installed by Claude Code
   - Flow: started on its own with a prompt set beforehand, as the orchestrator would give it, on a
     task of two items, one answered at its part and one in each part, on Opus 5.5; passes when its
     JSONL shows it read only and whole what its step reads, and its reply fills its form; the
-    generator, sent back by message, remakes the work without reading its sources again.
+    generator, sent back by message, remakes the work without reading its sources again, and the
+    first user, sent the work made again, gives the places it stopped at their Good.
   - Content: what it makes in the acceptance trials below, read against its JSONL.
 
 ### Acceptance
