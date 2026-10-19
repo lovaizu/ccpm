@@ -349,8 +349,23 @@ Progress:
   after return, each told and fixed at once. Round 2 and its learner, some 11 minutes, moved no
   item KR1.1 counts. The generator's reply stopped five times for an empty list beside its other
   grounds, some 2.5 minutes; an empty list now gives no grounds and asks for none.
-- Next: 1. consult, one at a time: when reading stops, from round 2 moving nothing KR1.1 counts;
-  the Y-statement; 2. CHANGELOG, the whole tried once, `claude plugin validate --strict`.
+- The `ddab054` trial read again from the receiver's purpose (2026-10-19): the six items fixed
+  after return and the encoding were polish the calling AI and the trial's judge made, not what
+  the receiver lacked. Round 1 worked as designed: the generator and the orchestrator, holding the
+  sources, gave readability B-5 and B-7 Goods the README's words do not give, and the first user
+  and the evaluator gave none. Round 2 gave both their Goods but made the opening one sentence of
+  five changes, and no role saw it. Root causes: 1. the design and the learner's step 3 have the
+  learner say how the work would give a Good, against the design's own rule that the generator
+  decides how (design lines 81-82), and the learner's "put every change in the opening" did what
+  that rule warns of; 2. an item asking about the whole work, such as readability B-20, takes its
+  Good from a part (every role gave B-20 from the code blocks, none read lines 3-9). Decided by
+  the user (2026-10-19): the learner learns how the run went alone, each lesson about how a role
+  read, checked and replied, not what the work says; the orchestrator sends back with `gets` the
+  places of the work where it found no Good, as facts, not how to fix them.
+- Next: 1. agree root cause 2 with the user; 2. the design, prompts, scripts, hooks and tests for
+  both; flow and roles trials; the acceptance trial, every JSONL read, judged from the receiver's
+  purpose; 3. consult when reading stops, from that trial; the Y-statement; 4. CHANGELOG, the whole
+  tried once, `claude plugin validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
