@@ -29,6 +29,7 @@ KEYS = st.sampled_from(
     ["items", "questions", "checklist", "item", "good", "lines", "question", "gets", "can"]
     + ["learnt", "statements", "kind", "unsourced", "quotes", "ran", "path", "quote", "command"]
     + ["output", "process", "role", "lesson", "grounds", "record", "checked", "recommended"]
+    + ["parts", "part", "places"]
 ) | st.text(max_size=5)
 LEAVES = st.none() | st.booleans() | st.integers() | st.text(max_size=20)
 VALUES = st.recursive(
@@ -42,14 +43,29 @@ NAMES = st.text(string.ascii_letters + string.digits + "._/", min_size=1, max_si
 
 
 class TestForms(RepoTest):
-    @given(VALUES, st.sampled_from(FORMS))
-    def test_any_reply_is_told_what_is_wrong_and_never_breaks_the_run(self, value, form):
-        # Given: a reply of any shape, as JSON
+    @given(VALUES, st.sampled_from(FORMS), st.booleans())
+    def test_any_reply_is_told_what_is_wrong_and_never_breaks_the_run(self, value, form, each):
+        # Given: a reply of any shape, as JSON, on an item of its part or one asked of each part
         # When: it is checked by any form
         # Then: what is wrong is said in words, and nothing else happens
-        said = forms.check(json.dumps(value), ITEMS, ["README.md"], form)
+        keys = [(i["checklist"], i["item"]) for i in ITEMS] if each else []
+        said = forms.check(json.dumps(value), ITEMS, ["README.md"], form, each=keys)
         self.assertIsInstance(said, list)
         self.assertTrue(all(isinstance(s, str) and s for s in said))
+
+    @given(st.lists(st.sampled_from(["# t", "## h", "### s", "```", "x", ""]), max_size=30))
+    def test_a_document_s_parts_take_every_line_once_in_order(self, lines):
+        # Given: a document of any lines of headings, fences and text
+        # When: it is split into its parts
+        # Then: the parts run from its first line to its last, each starting where the one before
+        # ends, and each but the first opens at a top heading
+        self.write("README.md", "".join(line + "\n" for line in lines))
+        spans = [forms.span(p)[1:] for p in forms.parts(["README.md"])]
+        starts = [a for a, _ in spans]
+        self.assertEqual(
+            [n for a, b in spans for n in range(a, b + 1)], list(range(1, len(lines) + 1))
+        )
+        self.assertTrue(all(lines[a - 1].startswith("## ") for a in starts[1:]))
 
     @given(st.dictionaries(KEYS, VALUES, max_size=4))
     def test_a_reply_in_a_json_fence_is_read_as_the_reply(self, value):

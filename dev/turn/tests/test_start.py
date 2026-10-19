@@ -8,12 +8,13 @@ import subprocess
 import sys
 from unittest import mock
 
-from helpers import CALL, CCS, SCRIPTS, RepoTest
+from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your reading or decision as JSON>]\n"
     "       turn.py given <result>\n"
+    "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
 )
 
@@ -54,6 +55,8 @@ class TestUsage(RepoTest):
             ["next", "r", "x"],
             ["given"],
             ["given", "r", "x"],
+            ["parts"],
+            ["parts", "r", "x"],
             ["record", "r", "1"],
             ["record", "r", "1", "1", "x"],
         ]:
@@ -155,7 +158,6 @@ class TestStart(RepoTest):
                 "work": ["README.md"],
                 "sent_back": [],
                 "unsourced": [],
-                "learnt": [],
                 "lessons": [],
             },
         )
@@ -173,6 +175,26 @@ class TestStart(RepoTest):
                 {"checklist": "checklists/readme.md", "item": "B-1"},
             ],
         )
+
+    def test_the_run_keeps_the_items_asked_of_each_part(self):
+        # Given: a checklist with an item asked of each part, beside one of its part and one of
+        # the whole
+        # When: the run is started
+        # Then: the run keeps the item asked of each part, by its checklist and ID, and only it
+        self.write("checklists/readme.md", CHECKLIST + EACH)
+        self.turn("start", json.dumps(CALL))
+        running = self.read_json(CALL["result"])["running"]
+        self.assertEqual(running["each"], [{"checklist": "checklists/readme.md", "item": "B-2"}])
+
+    def test_an_item_in_a_template_is_not_an_item(self):
+        # Given: a checklist whose template, in a fence, holds an item heading of its own
+        # When: the run is started
+        # Then: the run keeps the checklist's own items alone
+        fenced = "\n```markdown\n### B-7: <Item name>\n\n<Question>\n```\n"
+        self.write("checklists/readme.md", CHECKLIST.replace("## Benefit", fenced + "\n## Benefit"))
+        self.turn("start", json.dumps(CALL))
+        running = self.read_json(CALL["result"])["running"]
+        self.assertEqual([i["item"] for i in running["items"]], ["F-1", "B-1"])
 
     def test_the_run_keeps_what_the_roles_may_read(self):
         # Given: a CCS whose entries name existing files, and text that names none
@@ -298,6 +320,26 @@ class TestStartStops(RepoTest):
                     self.write("checklists/other.md", text)
                 self.write_json(CALL["ccs"], ccs)
                 self.stops(CALL, "checklists/other.md")
+
+    def test_an_item_without_its_scope_stops(self):
+        # Given: a checklist item with no Scope line under its heading, or one of no scope turn
+        # takes, or the line further down
+        # When: the run is started
+        # Then: it stops, naming the checklist, the item and the scopes it takes
+        for text in (
+            CHECKLIST.replace("Scope: its part\n\n", ""),
+            CHECKLIST.replace("Scope: its part", "Scope: some part"),
+            CHECKLIST.replace(
+                "Scope: its part\n\nOn opening it,", "On opening it,\n\nScope: its part"
+            ),
+        ):
+            with self.subTest(text=text):
+                self.write("checklists/readme.md", text)
+                self.stops(
+                    CALL,
+                    "checklists/readme.md B-1",
+                    "`Scope: its part`, `Scope: each part` or `Scope: whole`",
+                )
 
     def test_a_file_the_receiver_opens_that_is_missing_stops(self):
         # Given: a call naming the kind of what the receiver opens, whose file is not there

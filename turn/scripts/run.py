@@ -19,6 +19,7 @@ USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your reading or decision as JSON>]\n"
     "       turn.py given <result>\n"
+    "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
 )
 
@@ -26,7 +27,7 @@ USAGE = (
 def main(argv: list[str], stdin: IO[str]) -> int:
     """What turn.py runs: the call checked and the run started, each step's outcome taken, giving
     the agent to start next, the items to decide, or the result written; what each role is given,
-    and each record for the learner. Prints what comes next as JSON and gives 0, or prints what
+    the parts of the work, and each record for the learner. Prints what comes next as JSON and gives 0, or prints what
     was wrong and gives 1."""
     try:
         if argv[:1] == ["start"] and len(argv) == 2:
@@ -35,6 +36,8 @@ def main(argv: list[str], stdin: IO[str]) -> int:
             print(json.dumps(next_step(argv[1], stdin.read()), ensure_ascii=False))
         elif argv[:1] == ["given"] and len(argv) == 2:
             print(json.dumps(given(argv[1]), ensure_ascii=False))
+        elif argv[:1] == ["parts"] and len(argv) == 2:
+            print(json.dumps(parts(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["record"] and len(argv) == 4:
             print(record(argv[1], argv[2], argv[3]))
         else:
@@ -62,7 +65,6 @@ def generator_given(run: dict[str, Any], sent_back: list, unsourced: list) -> di
         "work": run["work"],
         "sent_back": sent_back,
         "unsourced": unsourced,
-        "learnt": run.get("learnt", []),
         "lessons": lessons(run, "generator"),
     }
 
@@ -77,15 +79,21 @@ def sources(run: dict[str, Any]) -> tuple[str, ...]:
     return tuple(p for p in run["given"] if p not in run["work"])
 
 
+def each(run: dict[str, Any]) -> list[tuple[str, str]]:
+    """The items asked of each part of the work, by their checklist and ID."""
+    return [key(i) for i in run["each"]]
+
+
 def reader_given(run: dict[str, Any], role: str) -> dict[str, Any]:
     """What the first user and the evaluator are given: what the receiver has, the checklists,
-    and the lessons taken for the role."""
+    the parts of the work, and the lessons taken for the role."""
     return {
         "work": run["work"],
         "opens": run["opens"],
         "receiver": run["receiver"],
         "use": run["use"],
         "checklists": run["checklist"],
+        "parts": forms.parts(run["work"]),
         "lessons": lessons(run, role),
     }
 
@@ -108,6 +116,14 @@ def given(result: str) -> dict[str, Any]:
     if "check" in run:
         raise call.Stop("turn: no role is started before the orchestrator's check is given")
     return run["next"]["given"]
+
+
+def parts(result: str) -> dict[str, list[str]]:
+    """The parts of the run's work as it stands, each as its lines."""
+    run = running(result)
+    if run is None:
+        raise call.Stop(f"turn: no run is going with its result at {result}")
+    return {"parts": forms.parts(run["work"])}
 
 
 def record(result: str, number: str, page: str) -> str:
@@ -193,7 +209,7 @@ def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
     """Records the orchestrator's reading: the items and the statements it sends back go to the
     generator again; with none, the reading is kept as its findings and the first user reads the
     work."""
-    said = forms.check(text, run["items"], run["work"], forms.READING)
+    said = forms.check(text, run["items"], run["work"], forms.READING, each=each(run))
     if said:
         raise call.Stop("turn: the reading is not filled:\n" + "\n".join(said))
     found = json.loads(forms.unfenced(text))
@@ -220,7 +236,7 @@ def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
     read = {key(i): judged(i) for i in run["read"]}
     findings = run["findings"]
     # An item is judged apart where one of the two gives it a Good and the other none.
-    found = {key(f) for f in findings["items"] if "good" in f}
+    found = {key(f) for f in findings["items"] if good(f)}
     differ = found ^ set(evaluated)
     apart = [
         dict(
@@ -242,7 +258,9 @@ def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
 def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     """Records the orchestrator's decision on the items judged apart, and returns the run."""
     asked = run["decide"]["questions"]
-    said = forms.check(text, run["decide"]["items"], run["work"], forms.DECISION, len(asked))
+    said = forms.check(
+        text, run["decide"]["items"], run["work"], forms.DECISION, len(asked), each=each(run)
+    )
     if said:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
     decision = json.loads(forms.unfenced(text))
@@ -250,11 +268,11 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
     # neither the first user nor the evaluator found Good gets none from the orchestrator alone.
     unread = [
         f"{i['checklist']} {i['item']} has no Good a reader found; give what the receiver gets"
-        " once it has it"
+        " once it has it, and where it is not found"
         for i in run["decide"]["items"]
         if not (i["evaluator"] or i["first_user"])
         for d in decision["items"]
-        if key(d) == key(i) and "good" in d
+        if key(d) == key(i) and good(d)
     ]
     if unread:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(unread))
@@ -265,11 +283,8 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
 
 
 def settle(run: dict[str, Any], items: list[dict[str, Any]], questions: list) -> dict[str, str]:
-    """After every reading, the learner learns from every record of the run what gives each item's
-    Good and how the run went."""
+    """After every reading, the learner learns from every record of the run how the run went."""
     run["settled"] = {"items": items, "questions": questions}
-    # An item waiting on a question gets its Good from the user's answer, not from the work.
-    run["learning"] = [named(i) for i in items if "question" not in i]
     shown = run["records"] + [run["orchestrator"]] if "orchestrator" in run else run["records"]
     learner = {"findings": items, "records": shown, "lessons": lessons(run, "learner")}
     return ask(run, LEARNER, learner)
@@ -281,50 +296,44 @@ def remade(run: dict[str, Any]) -> bool:
 
 
 def offer(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Offers the orchestrator what the learner found: what gives each Good where the work is made
-    again, and every lesson on how the run went; with nothing to offer, the run goes on."""
-    take = {
-        "items": reply["items"] if remade(run) else [],
-        "process": reply["process"],
-        "checked": reply["checked"],
-    }
-    if not (take["items"] or take["process"]):
-        return took(run, [], [])
+    """Offers the orchestrator every lesson the learner found on how the run went; with none to
+    offer, the run goes on."""
+    take = {"process": reply["process"], "checked": reply["checked"]}
+    if not take["process"]:
+        return took(run, [])
     run["take"] = take
     write(run["call"]["result"], {"running": run})
     return {"take": take}
 
 
 def taking(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records what the orchestrator takes of what the learner found."""
+    """Records the lessons the orchestrator takes of those the learner found."""
     said = forms.taken(text, run["take"])
     if said:
         raise call.Stop("turn: what you take is not filled:\n" + "\n".join(said))
     chosen = json.loads(forms.unfenced(text))
     take = run.pop("take")
-    keys = [key(i) for i in chosen["items"]]
-    items = [i for i in take["items"] if key(i) in keys]
-    return took(run, items, [take["process"][n - 1] for n in chosen["process"]])
+    return took(run, [take["process"][n - 1] for n in chosen["process"]])
 
 
-def took(run: dict[str, Any], items: list, process: list) -> dict[str, str]:
-    """With what is taken, the work is made again, or the run returns. The result holds each
+def took(run: dict[str, Any], process: list) -> dict[str, str]:
+    """With the lessons taken, the work is made again, or the run returns. The result holds each
     item's Good, each question an item still waits on with the items it settles, each item without
-    Good with what the receiver gets once it has it, and every lesson on the run taken."""
+    Good with what the receiver gets once it has it and where it is not found, and every lesson on
+    the run taken."""
     again = remade(run)
     run.setdefault("lessons", []).extend(process)
     settled = run.pop("settled")
     unmet = [i for i in settled["items"] if "gets" in i]
     if again:
         run["remade"] = True
-        run["learnt"] = items
         return ask(run, GENERATOR, generator_given(run, unmet, []))
     result = run["call"]["result"]
     write(
         result,
         {
             "work": run["work"],
-            "items": [i for i in settled["items"] if "good" in i],
+            "items": [i for i in settled["items"] if good(i)],
             "questions": waited(settled["items"], settled["questions"]),
             "not_good": unmet,
             "lessons": run["lessons"],
@@ -349,6 +358,11 @@ def named(item: dict[str, Any]) -> dict[str, str]:
 
 def key(item: dict[str, Any]) -> tuple[str, str]:
     return (item["checklist"], item["item"])
+
+
+def good(item: dict[str, Any]) -> bool:
+    """Whether the item is judged Good: with one Good, or with a Good for every part."""
+    return "good" in item or "parts" in item
 
 
 def judged(item: dict[str, Any]) -> dict[str, Any]:

@@ -14,10 +14,10 @@ FORMS = {
     "learner": forms.LEARNT,
 }
 # The items each role judges, and the records its quotes and commands are found in: the learner
-# judges the items not waiting on a question and quotes the records it was shown; every other role
-# judges every item, and its commands are found in its own record.
+# judges no item and quotes the records it was shown; every other role judges every item, and its
+# commands are found in its own record.
 JUDGES = {
-    "learner": lambda kept, own: (kept["learning"], tuple(run.learnt_from(kept))),
+    "learner": lambda kept, own: ([], tuple(run.learnt_from(kept))),
 }
 
 
@@ -42,6 +42,7 @@ def check(event: dict[str, Any]) -> list[str]:
         FORMS[role],
         sources=run.sources(kept),
         records=kept_records,
+        each=run.each(kept),
     )
     if said:
         return ["reply with your form alone, filled:"] + said

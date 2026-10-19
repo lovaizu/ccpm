@@ -43,11 +43,15 @@ A README is read by whoever meets the project first.
 
 ### F-1: Shape
 
+Scope: whole
+
 Does the README follow this template?
 
 ## Benefit
 
 ### B-1: Who it is for
+
+Scope: its part
 
 On opening it, can the reader tell whether the project is for them?
 """
@@ -86,14 +90,6 @@ EVALUATED = {
     "lines": ["README.md:1-3"],
 }
 ID = "a1b2c3"
-LEARNT = [
-    {
-        "checklist": "checklists/readme.md",
-        "item": "F-1",
-        "learnt": "the name and the opening first",
-    },
-    {"checklist": "checklists/readme.md", "item": "B-1", "learnt": "say whom it is for in line 3"},
-]
 # What a first user and an evaluator read whole before they reply: the work and the checklist.
 READ_SHOWN = (
     ("Read", {"file_path": "README.md"}),
@@ -133,6 +129,31 @@ SENT_BACK = {
     "checklist": "checklists/readme.md",
     "item": "B-1",
     "gets": "the reader sees at once that it is for CSV files",
+    "places": ["README.md:3-3"],
+}
+# A checklist item asked of each part of the work, added to a run's checklist where a test needs
+# one; the work's parts, as the script splits a README of a title, an opening and one section;
+# and a Good for each.
+EACH = """
+### B-2: Each part used
+
+Scope: each part
+
+Does the reader use each part toward their purpose?
+"""
+SECTIONED = "# csvtidy\n\nTidies CSV files.\n\n## Use\n\nRun it.\n"
+PARTS = ["README.md:1-4", "README.md:5-7"]
+EACH_GOOD = {
+    "checklist": "checklists/readme.md",
+    "item": "B-2",
+    "parts": [
+        {"part": "README.md:1-4", "good": "the reader learns what it is", "lines": ["README.md:3"]},
+        {
+            "part": "README.md:5-7",
+            "good": "the reader learns how to run it",
+            "lines": ["README.md:7"],
+        },
+    ],
 }
 
 
@@ -254,18 +275,16 @@ class RepoTest(unittest.TestCase):
         return self.hook(subagentstop, event)
 
     def learnt(self, out, reply=None, taken=None):
-        """The learner started as the script printed, replying with what it found, by default what
-        gives each item's Good and no lesson on the run; then what the orchestrator takes, by
-        default every item offered; and what the script prints after."""
+        """The learner started as the script printed, replying with what it found, by default no
+        lesson on the run; then what the orchestrator takes, by default every lesson offered; and
+        what the script prints after."""
         self.assertEqual(out["agent"], "turn:learner")
-        kept = run.running(CALL["result"]) or {}
-        items = [dict(i, learnt="what gives it") for i in kept["learning"]]
-        reply = reply or {"items": items, "process": [], "checked": CHECKED}
+        reply = reply or {"process": [], "checked": CHECKED}
         self.assertEqual(self.replied("turn:learner", out["prompt"], reply), (0, ""))
         out = self.next()
         if "take" in out:
-            named = [{"checklist": i["checklist"], "item": i["item"]} for i in out["take"]["items"]]
-            out = self.next(taken or {"items": named, "process": []})
+            every = list(range(1, len(out["take"]["process"]) + 1))
+            out = self.next(taken or {"process": every})
         return out
 
     def pages_shown(self, prompt):

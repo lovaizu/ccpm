@@ -6,11 +6,19 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections.abc import Iterable
 from typing import Any, Callable, NamedTuple
 
 import records
 
 LINES = re.compile(r"^(.+):(\d+)(?:-(\d+))?$")
+# A document's parts open at its top headings; any other file is one part.
+DOCUMENT = ".md"
+TOP = "## "
+# The shapes of a Good: one, with the lines that give it, or one for each part of the work, for an
+# item asked of each part.
+ONE = ("good", "lines")
+EACH = ("parts",)
 # A form given inside a ```json fence, as a model often writes JSON, is the form itself.
 FENCE = re.compile(r"^\s*```(?:json)?\s*\n(.*)\n\s*```\s*$", re.DOTALL)
 
@@ -39,24 +47,26 @@ class Grounds(NamedTuple):
 
 class Form(NamedTuple):
     """What an item may hold besides its checklist and ID, one shape of keys each; whether every
-    item is given; whether questions are asked; and what else the form holds beside its items,
-    checked against the grounds."""
+    item is given; whether questions are asked; what else the form holds beside its items, checked
+    against the grounds; and whether it gives items at all."""
 
     shapes: tuple[tuple[str, ...], ...]
     every: bool
     asks: bool
     more: Callable[[dict[str, Any], Grounds], list[str]] | None = None
+    itemized: bool = True
 
 
 # Before the work is made, the orchestrator says for every item what in the CCS and its files gives
 # its Good, or the question it waits on.
 CHECK = Form((("can",), ("question",)), every=True, asks=True)
 # The orchestrator judges, so its reading and its decision give a Good, a question or what the
-# receiver gets once it has its Good; the generator claims the Good it set for every item, or the
-# question it waits on. The first user and the evaluator look only for the Good the work gives, so
-# each names only the items it finds a Good for, and a script names the rest.
-DECISION = Form((("good", "lines"), ("question",), ("gets",)), every=True, asks=True)
-GOOD = Form((("good", "lines"),), every=False, asks=False)
+# receiver gets once it has its Good with the places of the work where it is not found; the
+# generator claims the Good it set for every item, or the question it waits on. The first user and
+# the evaluator look only for the Good the work gives, so each names only the items it finds a Good
+# for, and a script names the rest.
+DECISION = Form((ONE, EACH, ("question",), ("gets", "places")), every=True, asks=True)
+GOOD = Form((ONE, EACH), every=False, asks=False)
 
 
 def worded(value: Any) -> bool:
@@ -300,10 +310,10 @@ def ground_problems(name: str, grounds: Any, kept: tuple[str, ...]) -> list[str]
 # one its grounds do not say. The generator claims the Good it set for every item, or the question
 # it waits on, and grounds each statement of the work.
 READING = DECISION._replace(more=read_out)
-CLAIM = Form((("good", "lines"), ("question",)), every=True, asks=True, more=claimed)
-# The learner says, for every item but those waiting on a question, what gives its Good or would,
-# and how the run went.
-LEARNT = Form((("learnt",),), every=True, asks=False, more=lessons)
+CLAIM = Form((ONE, EACH, ("question",)), every=True, asks=True, more=claimed)
+# The learner says how the run went alone, since a lesson on what the work should say tells the
+# generator how to give a Good, which is the generator's to decide.
+LEARNT = Form((), every=False, asks=False, more=lessons, itemized=False)
 
 
 def parse(text: str, form: Form) -> dict[str, Any] | None:
@@ -312,10 +322,14 @@ def parse(text: str, form: Form) -> dict[str, Any] | None:
         data = json.loads(unfenced(text))
     except ValueError:
         return None
-    keys = ("items", "questions") if form.asks else ("items",)
-    if not isinstance(data, dict) or not all(isinstance(data.get(k), list) for k in keys):
+    if not isinstance(data, dict) or not all(isinstance(data.get(k), list) for k in listed(form)):
         return None
     return data
+
+
+def listed(form: Form) -> tuple[str, ...]:
+    """The lists the form takes."""
+    return (("items",) if form.itemized else ()) + (("questions",) if form.asks else ())
 
 
 def unfenced(text: str) -> str:
@@ -332,16 +346,20 @@ def check(
     asked: int = 0,
     sources: tuple[str, ...] = (),
     records: tuple[str, ...] = (),
+    each: Iterable[tuple[str, str]] = (),
 ) -> list[str]:
     """What is wrong with the form, each said with what to give instead; empty when it is filled.
     The items are those the form judges; `asked` counts the questions already asked, which its
     own questions are numbered after; `sources` are the files and folders statements rest on, and
-    `records` the records its quotes of a record and its commands are found in."""
+    `records` the records its quotes of a record and its commands are found in; `each` names the
+    items asked of each part of the work."""
     data = parse(text, form)
     if data is None:
-        shape = '{"items": [...], "questions": [...]}' if form.asks else '{"items": [...]}'
-        return [f"give it as JSON: {shape}"]
-    said = item_problems(data["items"], items, work, form)
+        lists = ", ".join(f'"{k}": [...]' for k in listed(form))
+        return ["give it as JSON: {" + (lists or '"process": [...], "checked": "..."') + "}"]
+    if not form.itemized:
+        return form.more(data, Grounds(work, sources, records)) if form.more else []
+    said = item_problems(data["items"], items, work, form, list(each))
     if form.asks:
         said += question_problems(data, asked)
     if form.more:
@@ -350,28 +368,15 @@ def check(
 
 
 def taken(text: str, offer: dict[str, Any]) -> list[str]:
-    """What is wrong with what the orchestrator takes of the learner's findings offered: the items
-    it takes by their checklist and ID, and the lessons by their number; empty when it is
-    filled."""
+    """What is wrong with what the orchestrator takes of the lessons offered, each by its number;
+    empty when it is filled."""
     try:
         data = json.loads(unfenced(text))
     except ValueError:
         data = None
-    if not isinstance(data, dict) or not all(
-        isinstance(data.get(k), list) for k in ("items", "process")
-    ):
-        return ['give it as JSON: {"items": [...], "process": [...]}']
-    offered = [(i["checklist"], i["item"]) for i in offer["items"]]
+    if not isinstance(data, dict) or not isinstance(data.get("process"), list):
+        return ['give it as JSON: {"process": [...]}']
     said: list[str] = []
-    seen: list[Any] = []
-    for item in data["items"]:
-        key = (item.get("checklist"), item.get("item")) if isinstance(item, dict) else None
-        name = f"{key[0]} {key[1]}" if key else json.dumps(item)
-        if key not in offered:
-            said.append(f"{name} is not an item offered; take each by its checklist and ID")
-        elif key in seen:
-            said.append(f"{name} is given twice; take each once")
-        seen.append(key)
     count = len(offer["process"])
     numbers: list[Any] = []
     for n in data["process"]:
@@ -394,14 +399,15 @@ def lines_problems(name: str, lines: Any, paths: list[str], what: str) -> list[s
 
 
 def item_problems(
-    given: list[Any], items: list[dict[str, str]], work: list[str], form: Form
+    given: list[Any],
+    items: list[dict[str, str]],
+    work: list[str],
+    form: Form,
+    each: list[tuple[str, str]],
 ) -> list[str]:
     keys = [(i["checklist"], i["item"]) for i in items]
     said: list[str] = []
     seen: list[tuple[str, str]] = []
-    named = [" with ".join(f'"{k}"' for k in shape) for shape in form.shapes]
-    *others, last = named
-    allowed = f"one of {', '.join(others)} or {last}" if others else last
     for item in given:
         key = (item.get("checklist"), item.get("item")) if isinstance(item, dict) else None
         name = f"{key[0]} {key[1]}" if key else json.dumps(item)
@@ -412,11 +418,14 @@ def item_problems(
             said.append(f"{name} is given twice; give each item once")
             continue
         seen.append(key)
-        held = [s for s in form.shapes if all(k in item for k in s)]
+        # An item asked of each part gives a Good for every part, and any other one Good.
+        shapes = [s for s in form.shapes if s != (ONE if key in each else EACH)]
+        held = [s for s in shapes if all(k in item for k in s)]
         shaped = [k for s in held for k in s]
         rest = [k for k in item if k not in ("checklist", "item") and k not in shaped]
         if len(held) != 1 or rest:
-            said.append(f"{name} must hold {allowed}")
+            asked = ", as it is asked of each part" if key in each else ""
+            said.append(f"{name} must hold {allowed(shapes)}{asked}")
             continue
         said += value_problems(name, item, work)
     if form.every:
@@ -428,9 +437,16 @@ def item_problems(
     return said
 
 
+def allowed(shapes: list[tuple[str, ...]]) -> str:
+    """The shapes an item may take, in words."""
+    named = [" with ".join(f'"{k}"' for k in shape) for shape in shapes]
+    *others, last = named
+    return f"one of {', '.join(others)} or {last}" if others else last
+
+
 def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str]:
     said: list[str] = []
-    for key in ("can", "good", "gets", "learnt"):
+    for key in ("can", "good", "gets"):
         if key in item and not worded(item[key]):
             said.append(f'{name} has an empty "{key}"; say it in words')
     if "question" in item and not (
@@ -439,7 +455,77 @@ def value_problems(name: str, item: dict[str, Any], work: list[str]) -> list[str
         said.append(f"{name}'s \"question\" is not a number; give the question's, from 1")
     if "lines" in item:
         said += lines_problems(name, item["lines"], work, "lines of the work")
+    if "places" in item:
+        said += lines_problems(name, item["places"], work, "lines of the work")
+    if "parts" in item:
+        said += parts_problems(name, item["parts"], work)
     return said
+
+
+def parts_problems(name: str, given: Any, work: list[str]) -> list[str]:
+    """An item asked of each part gives, for every part of the work, the Good the part gives, at
+    lines inside it."""
+    if not isinstance(given, list):
+        return [f'{name} gives its parts as no list; give [{{"part", "good", "lines"}}, ...]']
+    whole = parts(work)
+    said: list[str] = []
+    seen: list[str] = []
+    for k, part in enumerate(given, 1):
+        if (
+            not isinstance(part, dict)
+            or set(part) != {"part", "good", "lines"}
+            or not worded(part["good"])
+        ):
+            said.append(f'{name}: part {k} must hold "part", "good" and "lines", the Good in words')
+        elif part["part"] not in whole:
+            said.append(
+                f"{name}: {part['part']} is not a part of the work; give each as `turn.py parts`"
+                " prints it"
+            )
+        elif part["part"] in seen:
+            said.append(f"{name}: {part['part']} is given twice; give each part once")
+        else:
+            seen.append(part["part"])
+            inside = lines_problems(name, part["lines"], work, "lines of the work")
+            said += inside or [
+                f"{name}: {line} is not inside its part {part['part']}; name lines of the part"
+                for line in part["lines"]
+                if not within_part(line, part["part"])
+            ]
+    # A part left out has no Good, said once the parts given are in their form.
+    return said or [
+        f"{name}: {p} has no Good; give a Good for every part, as the item has its Good only where"
+        " every part gives it"
+        for p in whole
+        if p not in seen
+    ]
+
+
+def within_part(line: str, part: str) -> bool:
+    path, start, end = span(line)
+    part_path, part_start, part_end = span(part)
+    return path == part_path and part_start <= start and end <= part_end
+
+
+def parts(work: list[str]) -> list[str]:
+    """The parts of the work, each as its lines: a document's sections under its top headings,
+    with the title and opening as one, and each other file whole; an empty file has none."""
+    found: list[str] = []
+    for path in work:
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+        starts = [1] if lines else []
+        fenced = False
+        for n, line in enumerate(lines, 1):
+            if line.startswith("```"):
+                fenced = not fenced
+            elif path.endswith(DOCUMENT) and not fenced and line.startswith(TOP) and n > 1:
+                starts.append(n)
+        ends = [n - 1 for n in starts[1:]] + [len(lines)]
+        found += [f"{path}:{a}-{b}" for a, b in zip(starts, ends)]
+    return found
 
 
 def in_files(line: Any, paths: list[str]) -> bool:

@@ -8,18 +8,22 @@ from unittest import mock
 
 from helpers import (
     CALL,
+    CAN,
     CHECKED,
+    CHECKLIST,
+    EACH,
+    EACH_GOOD,
     EVALUATED,
     FOUND,
     GOOD,
     HOOKS,
     ID,
-    LEARNT,
     LESSON,
     MARKED,
     QUESTION,
     READ_GIVEN,
     SCRIPT,
+    SECTIONED,
     SENT_BACK,
     STATEMENT,
     TURN,
@@ -30,8 +34,8 @@ from helpers import (
     subagentstop,
 )
 
-# A learner's reply: what gives each item's Good, a lesson on the run, and what it checked.
-LEARNT_REPLY = {"items": LEARNT, "process": [LESSON], "checked": CHECKED}
+# A learner's reply: a lesson on the run, and what it checked.
+LEARNT_REPLY = {"process": [LESSON], "checked": CHECKED}
 
 
 class HookTest(RepoTest):
@@ -213,34 +217,34 @@ class TestReplies(HookTest):
             self.replied("turn:first-user", self.first_user(), {"items": [FOUND]}), (0, "")
         )
 
-    def test_a_learners_reply_leaving_an_item_out_stops(self):
+    def test_a_learners_reply_of_lessons_on_the_run_passes_and_one_without_its_scope_stops(self):
         # Given: a learner of a run whose first reading left an item without Good
-        # When: it ends with what makes the Good of one item alone
-        # Then: it is kept going, told the item it left out
+        # When: it ends with a lesson and what it checked, or with the lesson alone
+        # Then: the first ends, and the second is kept going, told to say what it checked
         self.started()
         self.through(dict(EVALUATED, item="B-1"))
         prompt = self.next({"items": [GOOD, SENT_BACK], "questions": []})["prompt"]
-        code, err = self.replied("turn:learner", prompt, dict(LEARNT_REPLY, items=LEARNT[:1]))
+        code, err = self.replied("turn:learner", prompt, {"process": [LESSON]})
         self.assertEqual(code, 2)
-        self.assertIn("B-1 is left out", err)
+        self.assertIn('give "checked"', err)
+        self.assertEqual(self.replied("turn:learner", prompt, LEARNT_REPLY), (0, ""))
 
-    def test_a_learner_says_nothing_of_an_item_waiting_on_a_question(self):
-        # Given: a learner of a run whose first reading left one item without Good and one
-        # waiting on the user's answer
-        # When: it ends with what makes the Good of the item without Good alone, or with the
-        # item waiting on the answer as well
-        # Then: the first ends, and the second is kept going, told that item is not its to judge
-        self.started()
-        self.through()
-        unmet = dict(SENT_BACK, item="F-1")
-        prompt = self.next({"items": [unmet], "questions": []})["prompt"]
-        learnt = {"checklist": unmet["checklist"], "item": "F-1", "learnt": "the name first"}
-        reply = dict(LEARNT_REPLY, items=[learnt])
-        self.assertEqual(self.replied("turn:learner", prompt, reply), (0, ""))
-        waits = dict(learnt, item="B-1")
-        code, err = self.replied("turn:learner", prompt, dict(reply, items=[learnt, waits]))
+    def test_a_readers_good_leaving_a_part_out_stops(self):
+        # Given: a run whose checklist holds an item asked of each part, on a work of two parts
+        # When: the first user ends with a Good for that item in one part alone, then in both
+        # Then: the first is kept going, told the part without Good, and the second ends
+        self.write("checklists/readme.md", CHECKLIST + EACH)
+        self.write("README.md", SECTIONED)
+        code, out = self.turn("start", json.dumps(CALL))
+        self.assertEqual(code, 0, out)
+        self.next({"items": CAN + [dict(CAN[0], item="B-2")], "questions": []})
+        reading = {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION]}
+        prompt = self.next(dict(reading, statements=[MARKED]))["prompt"]
+        half = dict(EACH_GOOD, parts=EACH_GOOD["parts"][:1])
+        code, err = self.replied("turn:first-user", prompt, {"items": [half]})
         self.assertEqual(code, 2)
-        self.assertIn("B-1 is not an item judged here", err)
+        self.assertIn("README.md:5-7 has no Good", err)
+        self.assertEqual(self.replied("turn:first-user", prompt, {"items": [EACH_GOOD]}), (0, ""))
 
     def test_a_readers_reply_out_of_its_form_stops(self):
         # Given: a first user replying with prose, and an evaluator replying with a Good that names

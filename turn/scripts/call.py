@@ -12,8 +12,11 @@ SHAPE = (
 )
 REQUIRED = ("work", "checklist", "receiver")
 KINDS = REQUIRED + ("use", "opens")
-# An item of a checklist is a heading of the form `### B-1: <title>`.
-ITEM = re.compile(r"^### ([A-Z]+-\d+): ", re.MULTILINE)
+# An item of a checklist is a heading of the form `### B-1: <title>`, outside a fence, with the
+# line under it saying where in the work it is answered.
+ITEM = re.compile(r"^### ([A-Z]+-\d+): ")
+SCOPES = ("its part", "each part", "whole")
+EACH = "each part"
 
 
 class Stop(Exception):
@@ -71,7 +74,9 @@ def check(call: dict[str, Any]) -> dict[str, Any]:
     for path in run["checklist"] + run["opens"]:
         if not os.path.isfile(path):
             raise Stop(f"turn: {path}, named in {call['ccs']}, is not there; fix its entry")
-    run["items"] = [item for path in run["checklist"] for item in items(path)]
+    scoped = [item for path in run["checklist"] for item in items(path)]
+    run["items"] = [{"checklist": c, "item": i} for c, i, _ in scoped]
+    run["each"] = [{"checklist": c, "item": i} for c, i, scope in scoped if scope == EACH]
     run["given"] = given(call["ccs"], ccs, run["work"])
     run["shown"] = run["work"] + run["opens"] + run["checklist"]
     return run
@@ -110,13 +115,30 @@ def entries(ccs: dict[str, list[dict[str, str]]], kind: str) -> list[str]:
     return [e[kind] for part in ccs.values() for e in part if kind in e]
 
 
-def items(path: str) -> list[dict[str, str]]:
-    """Every item of a checklist, by its path and ID; stops when it holds none."""
+def items(path: str) -> list[tuple[str, str, str]]:
+    """Every item of a checklist, by its path, ID and scope; stops when it holds none, or at an
+    item whose scope is not said."""
     with open(path, encoding="utf-8") as f:
-        found = ITEM.findall(f.read())
+        lines = f.read().splitlines()
+    found: list[tuple[str, str, str]] = []
+    fenced = False
+    for n, line in enumerate(lines):
+        if line.startswith("```"):
+            fenced = not fenced
+        heading = None if fenced else ITEM.match(line)
+        if heading is None:
+            continue
+        scope = lines[n + 2][len("Scope: ") :] if n + 2 < len(lines) else ""
+        if lines[n + 1 : n + 3] != ["", "Scope: " + scope] or scope not in SCOPES:
+            raise Stop(
+                f"turn: {path} {heading.group(1)} does not say where it is answered; put the line"
+                " `Scope: its part`, `Scope: each part` or `Scope: whole` after a blank line"
+                " under its heading"
+            )
+        found.append((path, heading.group(1), scope))
     if not found:
         raise Stop(f"turn: {path} holds no item, a heading such as `### B-1: <title>`")
-    return [{"checklist": path, "item": item} for item in found]
+    return found
 
 
 def given(ccs_path: str, ccs: dict[str, list[dict[str, str]]], work: list[str]) -> list[str]:
