@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from typing import IO, Any
 
 import call
@@ -15,6 +16,13 @@ GENERATOR = "turn:generator"
 FIRST_USER = "turn:first-user"
 EVALUATOR = "turn:evaluator"
 LEARNER = "turn:learner"
+# The roles kept started until the first user's reading of their round ends, each sent what comes
+# next by message, so each works on with what it has already read.
+KEPT = (GENERATOR, FIRST_USER)
+# A reading that does not settle is bounded: each kind of send-back three times a round.
+SENDS = 3
+# A messaged role's reply is waited for a second at a time, within the shell's two minutes.
+WAIT = 100
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your reading or decision as JSON>]\n"
@@ -99,13 +107,39 @@ def reader_given(run: dict[str, Any], role: str) -> dict[str, Any]:
 
 
 def ask(run: dict[str, Any], agent: str, given: dict[str, Any]) -> dict[str, str]:
-    """Keeps the run with the agent to start next and what it is given, and gives the agent and
-    its prompt. The prompt names the run alone, and the agent takes what it is given from the
-    script, so no AI copies it."""
+    """Keeps the run with the agent to start next, or to send a message to once it is started,
+    and what it is given, and gives the agent and its prompt, or the message and the agent it goes
+    to. Either names the run alone, and the agent takes what it is given from the script, so no AI
+    copies it."""
     prompt = json.dumps({"run": run["call"]["result"]}, ensure_ascii=False)
-    run["next"] = {"agent": agent, "prompt": prompt, "given": given}
+    to = run.get("started", {}).get(agent)
+    if to:
+        asked = {"agent": agent, "message": prompt, "to": to}
+    else:
+        asked = {"agent": agent, "prompt": prompt}
+    run["next"] = dict(asked, given=given)
     write(run["call"]["result"], {"running": run})
-    return {"agent": agent, "prompt": prompt}
+    return asked
+
+
+def sending(run: dict[str, Any], kind: str) -> bool:
+    """Whether the round may send back once more of the kind, counting this one if so."""
+    sent = run.setdefault("sent", {})
+    if sent.get(kind, 0) >= SENDS:
+        return False
+    sent[kind] = sent.get(kind, 0) + 1
+    return True
+
+
+def awaited(result: str, run: dict[str, Any]) -> dict[str, Any]:
+    """The run once the messaged role's reply is kept, or as it is after the wait. A run read as
+    the hook writes it is read again at the next pause."""
+    for _ in range(WAIT):
+        if "reply" in run["next"]:
+            return run
+        time.sleep(1)
+        run = running(result) or run
+    return run
 
 
 def given(result: str) -> dict[str, Any]:
@@ -160,6 +194,18 @@ def next_step(result: str, text: str) -> dict[str, Any]:
     if "check" in run:
         # Asked with no check, the items to check are shown again.
         return checked(run, text) if text.strip() else {"check": run["check"]}
+    agent = run["next"]["agent"]
+    # A role sent a message replies later, kept by the hook, so the script waits for it.
+    messaged = "to" in run["next"] and "reply" not in run["next"]
+    if messaged:
+        if text.strip():
+            raise call.Stop(
+                f"turn: {agent} has not replied; run `turn.py next <the call's result>` with"
+                " nothing to wait for its reply"
+            )
+        run = awaited(result, run)
+        if "reply" not in run["next"]:
+            return {"waiting": agent}
     # Each role's record is kept for the learner, which looks for what makes the Good in what the
     # roles did.
     record = run["next"].get("record")
@@ -171,8 +217,12 @@ def next_step(result: str, text: str) -> dict[str, Any]:
         return decide(run, text) if text.strip() else {"decide": run["decide"]}
     if "take" in run:
         return taking(run, text) if text.strip() else {"take": run["take"]}
-    agent = run["next"]["agent"]
+    if "hold" in run:
+        return holding(run, text) if text.strip() else {"hold": run["hold"]}
     if agent == GENERATOR:
+        if messaged:
+            # The orchestrator reads the work made again from the generator's reply.
+            return {"agent": GENERATOR, "reply": run["next"]["reply"]}
         return reading(run, text)
     reply = run["next"].get("reply")
     if reply is None:
@@ -184,9 +234,38 @@ def next_step(result: str, text: str) -> dict[str, Any]:
 
 
 def first_read(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Keeps the first user's reading, and has the evaluator hold it to the items."""
-    run["read"] = reply["items"]
-    return ask(run, EVALUATOR, dict(reader_given(run, "evaluator"), reading=reply["items"]))
+    """Keeps the Goods of the first user's reading; offers the orchestrator to hold each item it
+    stopped at, but those waiting on a question or held already; with none, the evaluator holds
+    the reading to the items."""
+    run["read"] = [i for i in reply["items"] if good(i)]
+    asked = [named(f) for f in run["findings"]["items"] if "question" in f]
+    held = asked + run.get("held", [])
+    stops = [i for i in reply["items"] if "places" in i and named(i) not in held]
+    if not stops:
+        return evaluate(run)
+    run["hold"] = {"items": stops}
+    write(run["call"]["result"], {"running": run})
+    return {"hold": run["hold"]}
+
+
+def holding(run: dict[str, Any], text: str) -> dict[str, Any]:
+    """Records the items the orchestrator holds, as their Good rests on the sources; the rest go
+    to the generator with where the first user stopped, while the round may send them back, and
+    otherwise the evaluator holds the reading to the items."""
+    stops = run["hold"]["items"]
+    said = forms.held(text, stops)
+    if said:
+        raise call.Stop("turn: what you hold is not filled:\n" + "\n".join(said))
+    run.setdefault("held", []).extend(json.loads(forms.unfenced(text))["held"])
+    del run["hold"]
+    rest = [i for i in stops if named(i) not in run["held"]]
+    if rest and sending(run, FIRST_USER):
+        return ask(run, GENERATOR, generator_given(run, rest, []))
+    return evaluate(run)
+
+
+def evaluate(run: dict[str, Any]) -> dict[str, Any]:
+    return ask(run, EVALUATOR, dict(reader_given(run, "evaluator"), reading=run["read"]))
 
 
 def checked(run: dict[str, Any], text: str) -> dict[str, Any]:
@@ -223,22 +302,20 @@ def reading(run: dict[str, Any], text: str) -> dict[str, Any]:
         if not any(forms.overlap(u["lines"], s["lines"]) for s in unsourced)
     ]
     unsourced += unrun
-    if sent_back or unsourced:
+    if (sent_back or unsourced) and sending(run, "reading"):
         return ask(run, GENERATOR, generator_given(run, sent_back, unsourced))
     run["findings"] = found
     return ask(run, FIRST_USER, reader_given(run, "first-user"))
 
 
 def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    """Sets the orchestrator's findings beside the evaluator's Goods: where they agree, the
-    learner learns from the reading; where they differ, the orchestrator decides those items."""
+    """Sets the orchestrator's findings beside the evaluator's Goods and the first user's, for
+    the orchestrator to decide every item, as readers that agree may still carry a doubt inside a
+    Good."""
     evaluated = {key(i): judged(i) for i in reply["items"]}
     read = {key(i): judged(i) for i in run["read"]}
     findings = run["findings"]
-    # An item is judged apart where one of the two gives it a Good and the other none.
-    found = {key(f) for f in findings["items"] if good(f)}
-    differ = found ^ set(evaluated)
-    apart = [
+    every = [
         dict(
             named(f),
             orchestrator=judged(f),
@@ -246,17 +323,14 @@ def compare(run: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
             first_user=read.get(key(f)),
         )
         for f in findings["items"]
-        if key(f) in differ
     ]
-    if not apart:
-        return settle(run, findings["items"], findings["questions"])
-    run["decide"] = {"items": apart, "questions": findings["questions"]}
+    run["decide"] = {"items": every, "questions": findings["questions"]}
     write(run["call"]["result"], {"running": run})
     return {"decide": run["decide"]}
 
 
 def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
-    """Records the orchestrator's decision on the items judged apart, and returns the run."""
+    """Records the orchestrator's decision on every item, and has the learner learn from the run."""
     asked = run["decide"]["questions"]
     said = forms.check(
         text, run["decide"]["items"], run["work"], forms.DECISION, len(asked), each=each(run)
@@ -265,12 +339,14 @@ def decide(run: dict[str, Any], text: str) -> dict[str, Any]:
         raise call.Stop("turn: the decision is not filled:\n" + "\n".join(said))
     decision = json.loads(forms.unfenced(text))
     # The calling AI is to get each Good found by a reader that did not make the work, so an item
-    # neither the first user nor the evaluator found Good gets none from the orchestrator alone.
+    # neither the first user nor the evaluator found Good gets none from the orchestrator alone,
+    # but one it held, whose Good rests on the sources no reader has.
+    held = run.get("held", [])
     unread = [
         f"{i['checklist']} {i['item']} has no Good a reader found; give what the receiver gets"
         " once it has it, and where it is not found"
         for i in run["decide"]["items"]
-        if not (i["evaluator"] or i["first_user"])
+        if not (i["evaluator"] or i["first_user"]) and named(i) not in held
         for d in decision["items"]
         if key(d) == key(i) and good(d)
     ]
@@ -327,6 +403,9 @@ def took(run: dict[str, Any], process: list) -> dict[str, str]:
     unmet = [i for i in settled["items"] if "gets" in i]
     if again:
         run["remade"] = True
+        # The next round starts the generator and the first user anew, and counts anew.
+        for anew in ("started", "sent", "held"):
+            run.pop(anew, None)
         return ask(run, GENERATOR, generator_given(run, unmet, []))
     result = run["call"]["result"]
     write(

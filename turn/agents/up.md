@@ -14,9 +14,15 @@ from the work what the item asks, and you name the lines that give it. You look 
 each item gives, and where none is there, for what the receiver gets once it has it: an AI that
 looks for what more a work needs finds more without end, and the work drifts from what it should
 be. A first user that did not make the work finds the Goods it gives in the receiver's place, and
-an evaluator holds those Goods to their items and finds those it missed; where they differ from
-your findings, you decide. Once the work is made, only you hold the sources: the first user and the
-evaluator read as the receiver, who has none, so a statement made up passes them; you check each
+an evaluator holds those Goods to their items and finds those it missed; you decide every item from
+your findings and both readings, as readers that agree may still carry a doubt inside a Good. The
+generator and the first user stay started until the first user's reading of their round ends: what
+you send back reaches each by message, so the generator changes only what is sent back, and the
+first user reads again whether the places it stopped at now give the Good. Once the work is made,
+only you hold the sources: the first user and the
+evaluator read as the receiver, who has none, so a statement made up passes them; an item whose
+Good rests on the sources, such as whether a statement said as fact was checked, is yours to hold,
+not sent back for the first user's reading; you check each
 statement the work makes in its grounds: the words of the CCS and its files the generator quotes,
 and, for how the product behaves, what the commands it ran printed. You mark on your own which
 statements tell how the product behaves, since a maker that meant one as decided grounds it in the
@@ -52,7 +58,11 @@ What only the user can decide you hand back as a question, with the answer you r
        what to ask the user, and `recommended` the answer you would choose and why, in one
        sentence.
 3. Start the agent printed with its `prompt` as its whole prompt, as it is, and wait for its reply.
-   turn's hook keeps each reply in the run for turn.py.
+   turn's hook keeps each reply in the run for turn.py. Where turn.py printed a `message` and `to`
+   in place of a `prompt`, the agent is started already: send it the message with SendMessage,
+   loaded with ToolSearch (`select:SendMessage`) the first time, `to` and `message` as printed,
+   then run `turn.py next <the call's result>` with nothing, which waits for its reply, and go to
+   step 6.
    - Out: its reply: from `turn:generator`, `{"items": [...], "questions": [...], "statements":
      [...]}`, the Good it set for each item with the lines that give it, or the question the item
      waits on, and each statement of the work with its mark, `kind`, and its grounds, `quotes` of
@@ -102,18 +112,26 @@ What only the user can decide you hand back as a question, with the answer you r
 6. Go on by what `turn.py` printed:
    - If it exits with 1, do what it says: fill each place it names and run it again, or start the
      agent it names.
-   - `{"agent": "...", "prompt": "..."}`: go to step 3.
+   - `{"agent": "...", "prompt": "..."}` or `{"agent": "...", "message": "...", "to": "..."}`: go to
+     step 3.
+   - `{"waiting": "..."}`: the agent sent a message has not replied yet; run `turn.py next <the
+     call's result>` with nothing again.
+   - `{"agent": "turn:generator", "reply": {...}}`: the generator sent a message has replied with
+     the work made again; go to step 5.
+   - `{"hold": {...}}`: go to step 9.
    - `{"decide": {...}}`: go to step 7.
    - `{"take": {...}}`: go to step 8.
    - `{"returned": "..."}`: the result is written; reply with that line, and end.
-7. Decide each item in `decide.items`, where your finding and the evaluator's differ: each holds
-   your finding (`orchestrator`), the evaluator's Good (`evaluator`) and the first user's Good
-   (`first_user`), `null` where there is none. See `decide.items` as `turn.py next <the call's
+7. Decide each item in `decide.items`, every item of the run: each holds your finding
+   (`orchestrator`), the evaluator's Good (`evaluator`) and the first user's Good (`first_user`),
+   `null` where there is none. See `decide.items` as `turn.py next <the call's
    result>` prints it, with no pipe or redirect, and the work whole as in step 5. Read the work at
    the lines each names, as the receiver for the use, and find there the Good: what the receiver
-   gets that gives what the item asks. Where neither the first user nor the evaluator found a Good,
-   give what the receiver gets once it has it and where it is not found: the calling AI is to get
-   each Good from a reader that did not make the work, and you read it knowing what it meant. Run
+   gets that gives what the item asks, holding each reader's Good to what its item asks. Where
+   neither the first user nor the evaluator found a Good, give what the receiver gets once it has
+   it and where it is not found: the calling AI is to get each Good from a reader that did not
+   make the work, and you read it knowing what it meant; but an item you held in step 9 takes the
+   Good you find in its grounds. Run
    `turn.py next <the call's result> <<'EOF'` with your decision, ending with `EOF`, and go to step
    6.
    - Out: your decision, in the form of your reading in step 5, with the items of `decide.items`
@@ -130,3 +148,13 @@ What only the user can decide you hand back as a question, with the answer you r
    step 6.
    - Out: what you take, as JSON: `{"process": [<the number of each lesson taken>]}`, `[]` where
      you take none.
+9. Hold each item of `hold.items` whose Good rests on the sources, such as whether a statement said
+   as fact was checked: the first user stopped at each, with `places`, where it looked for its
+   Good. The first user reads as the receiver, who has no sources, so no reading of theirs can
+   find such a Good, and you find it in the grounds as you read them in step 5. turn sends every
+   other item back to the generator with its places, since a remake aimed at where a reader
+   stopped gives the Good there. See `hold` as `turn.py next <the call's result>` prints it, with
+   no pipe or redirect. Run `turn.py next <the call's result> <<'EOF'` with what you hold, ending
+   with `EOF`, and go to step 6.
+   - Out: what you hold, as JSON: `{"held": [{"checklist": "<path>", "item": "<ID>"}, ...]}`, `[]`
+     where you hold none.

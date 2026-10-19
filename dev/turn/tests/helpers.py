@@ -131,6 +131,10 @@ SENT_BACK = {
     "gets": "the reader sees at once that it is for CSV files",
     "places": ["README.md:3-3"],
 }
+# An item the first user finds no Good for, with the places of the work where it looked for it.
+STOPPED = {"checklist": "checklists/readme.md", "item": "B-1", "places": ["README.md:3-3"]}
+# A first user's reading of every item: the Good it found for one, and where it stopped at the other.
+FIRST_READ = [FOUND, STOPPED]
 # A checklist item asked of each part of the work, added to a run's checklist where a test needs
 # one; the work's parts, as the script splits a README of a title, an opening and one section;
 # and a Good for each.
@@ -209,17 +213,34 @@ class RepoTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         return out
 
-    def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=()):
-        """The run taken through the orchestrator's findings, the first user's reply and the
-        evaluator's, and what the script prints then."""
+    def through(self, *evaluated, findings=(GOOD, WAITS), found=(FOUND,), opened=(), held=()):
+        """The run taken through the orchestrator's findings, the first user's reading, after the
+        round has sent it back as often as it may, the items the orchestrator holds, and the
+        evaluator's Goods; and what the script prints then."""
         out = self.next({"items": list(findings), "questions": [QUESTION], "statements": [MARKED]})
-        reply = {"items": list(found)}
+        kept = self.read_json(CALL["result"])
+        kept["running"]["sent"] = {run.FIRST_USER: run.SENDS}
+        self.write_json(CALL["result"], kept)
+        reply = {"items": self.reading(*found)}
         self.assertEqual(self.replied("turn:first-user", out["prompt"], reply, *opened), (0, ""))
         out = self.next()
+        if "hold" in out:
+            out = self.next({"held": list(held)})
         self.assertEqual(out["agent"], "turn:evaluator")
         reply = {"items": list(evaluated)}
         self.assertEqual(self.replied("turn:evaluator", out["prompt"], reply), (0, ""))
         return self.next()
+
+    def reading(self, *found):
+        """A first user's reading giving the Goods found, and every other item of the run the
+        places it looked for its Good."""
+        kept = self.read_json(CALL["result"])["running"]
+        given = {(i["checklist"], i["item"]) for i in found}
+        return list(found) + [
+            dict(i, places=["README.md:1-1"])
+            for i in kept["items"]
+            if (i["checklist"], i["item"]) not in given
+        ]
 
     def given_record(self, agent_id, prompt, *tool_uses):
         """Writes what Claude Code keeps of an agent's conversation: its prompt as the first record,

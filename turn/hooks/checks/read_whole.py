@@ -16,6 +16,9 @@ import run
 
 READERS = ("generator", "first-user", "evaluator", "learner")
 STATEMENT = re.compile(r"&&|\|\||;|\n")
+# How Claude Code records a message from another agent: from an agent, or from the conversation
+# that started it.
+MESSAGED = ("peer", "coordinator")
 PAGE = re.compile(r"""turn\.py["']?\s+record\s+\S+\s+(\d+)\s+(\d+)""")
 
 
@@ -54,6 +57,14 @@ def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
                 " is decided on a guess"
             )
         return said + unread(event, kept, kept["work"])
+    if "hold" in kept:
+        if printed(agents.transcript(event)):
+            return []
+        said = (
+            "see the items to hold whole: run `turn.py next <the call's result>` again with no"
+            " pipe or redirect, since an item held unseen is held on a guess"
+        )
+        return [said]
     if "take" in kept:
         if printed(agents.transcript(event)):
             return []
@@ -146,12 +157,16 @@ def recording(event: dict[str, Any], role: str | None) -> bool:
 
 def whole(path: str, cwd: str, work: list[str]) -> set[str]:
     """Each file the agent's record shows read from top to end since it last changed: by this
-    agent writing it, or, for the work, by the generator the agent started."""
+    agent writing it, or, for the work, by the generator the agent started or sent a message, or
+    by the generator before a message the agent was sent."""
     read: set[str] = set()
     seen: set[str] = set()
     with open(path, encoding="utf-8") as f:
         for line in f:
             record = json.loads(line)
+            origin = record.get("origin")
+            if isinstance(origin, dict) and origin.get("kind") in MESSAGED:
+                read.difference_update(at(cwd, w) for w in work)
             shown = shown_whole(record.get("attachment"), cwd)
             if shown:
                 read.add(shown)
@@ -184,7 +199,19 @@ def starts(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> 
         read.difference_update(at(cwd, w) for w in work)
 
 
-USES = {"Read": reads, "Bash": runs, "Write": changes, "Edit": changes, "Agent": starts}
+def sends(read: set[str], given: dict[str, Any], cwd: str, work: list[str]) -> None:
+    """A role sent a message may be the generator, which changes the work."""
+    read.difference_update(at(cwd, w) for w in work)
+
+
+USES = {
+    "Read": reads,
+    "Bash": runs,
+    "Write": changes,
+    "Edit": changes,
+    "Agent": starts,
+    "SendMessage": sends,
+}
 
 
 def shown_whole(attachment: Any, cwd: str) -> str | None:

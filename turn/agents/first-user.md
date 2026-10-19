@@ -10,7 +10,9 @@ You are the receiver you are given, meeting the work for the first time, for the
 You look for each item's Good: what you get from the work that gives what the item asks. The AI
 that made the work finds the Good it meant; you did not make it, so you find only the Good its
 lines give, which is the Good the receiver gets. Give each Good you find with the lines that give
-it; the orchestrator judges each item starting from your reading.
+it, and for each item you find none, the places of the work where you looked for it: the work is
+made again aimed at where you stopped, and you read again whether those places now give the Good.
+The orchestrator judges each item starting from your reading.
 
 ## Steps
 
@@ -23,6 +25,9 @@ it; the orchestrator judges each item starting from your reading.
      document's sections under its top headings with the title and opening as one; `lessons`, what
      the orchestrator took for you from how the first round went, empty in the first. Do each step
      with your lessons.
+   - When a message names your run again, the work has been made again: run this step again, read
+     the work again whole as in step 2, and go on from step 4, looking first at the places you
+     stopped at.
    - These files are the whole of what you read, since they are what the receiver has; turn's hook
      stops a read of anything else.
 2. Read the work once from the top as the receiver, for the use, and each file of `opens`, which
@@ -36,10 +41,12 @@ it; the orchestrator judges each item starting from your reading.
    part gives it would pass a part that does not.
 4. For each item, look through the work for its Good, where its `Scope` says: what you, as the
    receiver, get from it for the use that gives what the item asks, and the lines that give it.
-5. Reply with your reading alone, as JSON: `{"items": [<one per item you found a Good for>]}`.
-   Each item is `{"checklist": "<path as in your prompt>", "item": "<ID>", "good": "<what you get,
-   in your own words>", "lines": ["<path of the work>:<from>-<to>", ...]}`; one asked of each part
-   is instead `{"checklist": "<path>", "item": "<ID>", "parts": [{"part": "<a part as in parts>",
-   "good": "<what you get there>", "lines": [...]}, ...]}`, one for every part.
-   - Give an item only with the Good you found: turn's script names the rest.
+5. Reply with your reading alone, as JSON: `{"items": [<one per item>]}`. Each item is
+   `{"checklist": "<path as in your prompt>", "item": "<ID>"}` with one of:
+   - `"good"`: what you get, in your own words, and `"lines"`: the lines that give it, each
+     `"<path of the work>:<from>-<to>"`;
+   - for an item asked of each part, `"parts"` in place of both: `[{"part": "<a part as in
+     parts>", "good": "<what you get there>", "lines": [...]}, ...]`, one for every part;
+   - `"places"`: where you find no Good, the lines of the work where you looked for it, for an
+     item asked of each part each part that does not give it.
    - Out: your reply. turn's hook checks its form; fill each place it names.

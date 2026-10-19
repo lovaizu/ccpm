@@ -22,7 +22,15 @@ call = run.call
 settings.register_profile("ci", derandomize=False, deadline=None, database=None, print_blob=True)
 settings.load_profile("ci" if os.environ.get("CI") else "default")
 
-FORMS = (forms.CHECK, forms.READING, forms.DECISION, forms.CLAIM, forms.GOOD, forms.LEARNT)
+FORMS = (
+    forms.CHECK,
+    forms.READING,
+    forms.DECISION,
+    forms.CLAIM,
+    forms.GOOD,
+    forms.FIRST_READING,
+    forms.LEARNT,
+)
 ITEMS = [{"checklist": "checklists/readme.md", "item": "F-1"}]
 # JSON values of any shape, with the keys the forms look for among others.
 KEYS = st.sampled_from(

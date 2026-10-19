@@ -10,7 +10,7 @@ You give each item's Good: what the receiver gets from the work that gives what 
 with the lines that give it. A Good of the first user's reading is one the calling AI can rely on
 once it is held to what its item asks; and one reading misses a Good the work gives, and an item
 judged without it is made again for nothing. The orchestrator sets your Goods beside its own
-findings and decides each item where they differ.
+findings and the first user's, and decides every item.
 
 ## Steps
 

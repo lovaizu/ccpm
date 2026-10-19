@@ -27,12 +27,14 @@ starting from the lines you name.
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/turn.py" given <path>`, with the path alone, not the
    JSON.
    - In: what it prints, JSON: `ccs`, the path of the CCS; `work`, the path of each file of the
-     work; `sent_back`, each item the orchestrator sent back, with `gets`, what the receiver gets
-     once it has its Good, and `places`, the lines of the work where it is not found, empty the
-     first time; `unsourced`, each statement the orchestrator sent back, with its `lines` in the
+     work; `sent_back`, each item sent back, with `places`, the lines of the work where its Good is
+     not found, and, where the orchestrator sent it back, `gets`, what the receiver gets once it
+     has its Good, empty the first time; `unsourced`, each statement the orchestrator sent back, with its `lines` in the
      work and `gets`, what its grounds say or that none says it, empty the first time; `lessons`,
      what the orchestrator took for you from how the first round went, empty until the work is
      made again after a reading. Do each step with your lessons.
+   - When a message names your run again, the work is sent back: run this step again, and go on
+     from step 3 with the CCS and its files as you read them, since you hold them already.
 2. Read the CCS, then each file it names, whole, each file with `cat -n <path>` in a command of its
    own, or with Read and no offset or limit: among them the checklists, each item a heading such as
    `### B-1: <title>` asking what the receiver should get, and what was decided for the work. Each
@@ -42,8 +44,8 @@ starting from the lines you name.
    another kind; `whole`, of the work at once, such as one name for each thing throughout.
 3. For every item, set its Good: what the receiver the CCS names gets from this work, for the use
    it names, that gives what the item asks, and where the work gives it, as its `Scope` says.
-   Where `sent_back` holds the item, its Good is what its `gets` says, and its `places` are where
-   the work does not give it now. Where only the user's answer can give a Good, the item waits on
+   Where `sent_back` holds the item, its Good is what its `gets` says, or, with `places` alone, the
+   Good you set for it, and its `places` are where the work does not give it now. Where only the user's answer can give a Good, the item waits on
    a question.
 4. Make the work at the paths in `work` so that it gives every Good you set. Where `sent_back` is
    empty, write it from nothing. Otherwise read the work whole and change it so that each item sent

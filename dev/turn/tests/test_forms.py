@@ -106,6 +106,67 @@ class TestItems(FormTest):
         self.assertIn("question 0 is waited on but not given; add it to the questions", said)
 
 
+class TestFirstReading(FormTest):
+    def test_a_first_user_gives_every_item_a_good_or_the_places_it_looked(self):
+        # Given: a first user's reading giving one item a Good and the other places, one leaving
+        # an item out, and one giving an item asked of each part places in place of its parts
+        # When: it is checked
+        # Then: the first and the third pass, and the second is told the item left out
+        stopped = {"checklist": "checklists/readme.md", "item": "B-1", "places": ["README.md:1"]}
+        self.assertEqual(self.said({"items": [GOOD, stopped]}, forms.FIRST_READING), [])
+        said = self.said({"items": [GOOD]}, forms.FIRST_READING)
+        self.assertEqual(
+            said, ["checklists/readme.md B-1 is left out; give every item judged here"]
+        )
+        each = dict(EACH_ITEM, places=["README.md:5-7"])
+        said = self.each_said({"items": [GOOD, stopped, each]}, forms.FIRST_READING)
+        self.assertEqual(said, [])
+
+
+# An item the first user stopped at, offered to hold.
+STOPS = [{"checklist": "checklists/readme.md", "item": "B-1", "places": ["README.md:1"]}]
+
+
+class TestHeld(FormTest):
+    def test_what_is_held_of_the_items_offered_passes(self):
+        # Given: an offer of one item to hold
+        # When: the orchestrator holds it, or none, in a ```json fence or not
+        # Then: it passes
+        held = {"held": [{"checklist": "checklists/readme.md", "item": "B-1"}]}
+        for text in (
+            json.dumps(held),
+            json.dumps({"held": []}),
+            f"```json\n{json.dumps(held)}\n```",
+        ):
+            with self.subTest(text=text):
+                self.assertEqual(forms.held(text, STOPS), [])
+
+    def test_what_is_held_out_of_its_form_is_named(self):
+        # Given: an offer of one item to hold
+        # When: what is held is no object, not a list, an item of other keys, or not offered
+        # Then: each is named
+        item = {"checklist": "checklists/readme.md", "item": "B-1"}
+        for given, said in (
+            ([], ['give it as JSON: {"held": [...]}']),
+            ({"held": "B-1"}, ['give it as JSON: {"held": [...]}']),
+            (
+                {"held": [dict(item, places=[])]},
+                [
+                    '{"checklist": "checklists/readme.md", "item": "B-1", "places": []} is not an item offered; hold each by its checklist and ID'
+                ],
+            ),
+            (
+                {"held": [dict(item, item="F-1")]},
+                [
+                    "checklists/readme.md F-1 is not an item offered; hold each by its checklist and ID"
+                ],
+            ),
+            ({"held": [item, item]}, ["checklists/readme.md B-1 is given twice; hold each once"]),
+        ):
+            with self.subTest(given=given):
+                self.assertEqual(forms.held(json.dumps(given), STOPS), said)
+
+
 class TestParts(FormTest):
     """A work is split into its parts: a document's sections under its top headings, with the
     title and opening as one, and each other file whole."""

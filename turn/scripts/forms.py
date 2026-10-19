@@ -66,6 +66,9 @@ CHECK = Form((("can",), ("question",)), every=True, asks=True)
 # for, and a script names the rest.
 DECISION = Form((ONE, EACH, ("question",), ("gets", "places")), every=True, asks=True)
 GOOD = Form((ONE, EACH))
+# The first user gives every item the Good it found or the places of the work where it looked for
+# it, so that the work made again is aimed at where it stopped.
+FIRST_READING = Form((ONE, EACH, ("places",)), every=True)
 
 
 def worded(value: Any) -> bool:
@@ -217,7 +220,7 @@ def read_out(data: dict[str, Any], at: Grounds) -> list[str]:
 def unrun(marks: list[dict[str, Any]], claim: list[Any]) -> list[dict[str, Any]]:
     """Each statement the orchestrator marks as how the product behaves where no statement the
     generator grounds in a run lies, sent back as one no run shows."""
-    shown = [s["lines"] for s in claim if isinstance(s, dict) and "ran" in s]
+    shown = [s["lines"] for s in claim if isinstance(s, dict) and s.get("ran")]
     return [
         {
             "lines": m["lines"],
@@ -382,6 +385,31 @@ def taken(text: str, offer: dict[str, Any]) -> list[str]:
         elif n in numbers:
             said.append(f"lesson {n} is given twice; take each once")
         numbers.append(n)
+    return said
+
+
+def held(text: str, offer: list[dict[str, Any]]) -> list[str]:
+    """What is wrong with the items the orchestrator holds of those the first user stopped at,
+    each by its checklist and ID; empty when it is filled."""
+    try:
+        data = json.loads(unfenced(text))
+    except ValueError:
+        data = None
+    if not isinstance(data, dict) or not isinstance(data.get("held"), list):
+        return ['give it as JSON: {"held": [...]}']
+    offered = [(i["checklist"], i["item"]) for i in offer]
+    said: list[str] = []
+    seen: list[tuple[Any, Any]] = []
+    for item in data["held"]:
+        shaped = isinstance(item, dict) and set(item) == {"checklist", "item"}
+        key = (item["checklist"], item["item"]) if shaped else None
+        if key not in offered:
+            name = f"{key[0]} {key[1]}" if key else json.dumps(item)
+            said.append(f"{name} is not an item offered; hold each by its checklist and ID")
+        elif key in seen:
+            said.append(f"{key[0]} {key[1]} is given twice; hold each once")
+        else:
+            seen.append(key)
     return said
 
 

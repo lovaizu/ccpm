@@ -14,7 +14,7 @@ from helpers import (
     EACH,
     EACH_GOOD,
     EVALUATED,
-    FOUND,
+    FIRST_READ,
     GOOD,
     HOOKS,
     ID,
@@ -22,10 +22,12 @@ from helpers import (
     MARKED,
     QUESTION,
     READ_GIVEN,
+    READ_SHOWN,
     SCRIPT,
     SECTIONED,
     SENT_BACK,
     STATEMENT,
+    STOPPED,
     TURN,
     WAITS,
     RepoTest,
@@ -34,6 +36,8 @@ from helpers import (
     subagentstop,
 )
 
+# A first user's reading stopping at every item, among them one the findings gave its Good.
+FIRST_READ_ALL_STOPPED = [dict(STOPPED, item="F-1"), STOPPED]
 # A learner's reply: a lesson on the run, and what it checked.
 LEARNT_REPLY = {"process": [LESSON], "checked": CHECKED}
 
@@ -214,7 +218,7 @@ class TestReplies(HookTest):
         # When: it ends
         # Then: it ends
         self.assertEqual(
-            self.replied("turn:first-user", self.first_user(), {"items": [FOUND]}), (0, "")
+            self.replied("turn:first-user", self.first_user(), {"items": FIRST_READ}), (0, "")
         )
 
     def test_a_learners_reply_of_lessons_on_the_run_passes_and_one_without_its_scope_stops(self):
@@ -241,10 +245,12 @@ class TestReplies(HookTest):
         reading = {"items": [GOOD, WAITS, EACH_GOOD], "questions": [QUESTION]}
         prompt = self.next(dict(reading, statements=[MARKED]))["prompt"]
         half = dict(EACH_GOOD, parts=EACH_GOOD["parts"][:1])
-        code, err = self.replied("turn:first-user", prompt, {"items": [half]})
+        code, err = self.replied("turn:first-user", prompt, {"items": FIRST_READ + [half]})
         self.assertEqual(code, 2)
         self.assertIn("README.md:5-7 has no Good", err)
-        self.assertEqual(self.replied("turn:first-user", prompt, {"items": [EACH_GOOD]}), (0, ""))
+        self.assertEqual(
+            self.replied("turn:first-user", prompt, {"items": FIRST_READ + [EACH_GOOD]}), (0, "")
+        )
 
     def test_a_readers_reply_out_of_its_form_stops(self):
         # Given: a first user replying with prose, and an evaluator replying with a Good that names
@@ -255,7 +261,7 @@ class TestReplies(HookTest):
         code, err = self.replied("turn:first-user", prompt, "I read it.")
         self.assertEqual(code, 2)
         self.assertIn('{"items": [...]}', err)
-        self.replied("turn:first-user", prompt, {"items": [FOUND]})
+        self.replied("turn:first-user", prompt, {"items": FIRST_READ})
         out = self.next()
         bare = {k: v for k, v in EVALUATED.items() if k != "lines"}
         code, err = self.replied("turn:evaluator", out["prompt"], {"items": [bare]})
@@ -364,10 +370,10 @@ class TestReplies(HookTest):
         # Given: a first user whose reply is its form inside a ```json fence
         # When: it ends
         # Then: it ends, and its reply is kept as the form itself
-        reply = "```json\n" + json.dumps({"items": [FOUND]}) + "\n```"
+        reply = "```json\n" + json.dumps({"items": FIRST_READ}) + "\n```"
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply), (0, ""))
         kept = self.read_json(CALL["result"])["running"]["next"]["reply"]
-        self.assertEqual(kept, {"items": [FOUND]})
+        self.assertEqual(kept, {"items": FIRST_READ})
 
     def test_lines_without_a_good_in_the_generators_reply_stops(self):
         # Given: a generator whose reply names lines but not the Good they give
@@ -407,7 +413,8 @@ class TestReturned(HookTest):
         # When: the orchestrator ends
         # Then: it ends
         self.started()
-        self.learnt(self.through(EVALUATED))
+        self.through(EVALUATED)
+        self.learnt(self.next({"items": [GOOD, WAITS], "questions": []}))
         self.passes(subagentstop, self.end())
 
     def test_an_orchestrator_whose_call_was_refused_ends(self):
@@ -730,7 +737,7 @@ class TestWholeReads(HookTest):
         # When: it ends with its reply
         # Then: it ends
         uses = (self.read("README.md"), ("Bash", {"command": "cat checklists/readme.md"}))
-        reply = {"items": [FOUND]}
+        reply = {"items": FIRST_READ}
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
 
     def test_a_reader_that_read_part_of_the_work_is_kept_going(self):
@@ -748,7 +755,7 @@ class TestWholeReads(HookTest):
         ):
             with self.subTest(part=part):
                 uses = (part, self.read("checklists/readme.md"))
-                code, err = self.replied("turn:first-user", prompt, {"items": [FOUND]}, *uses)
+                code, err = self.replied("turn:first-user", prompt, {"items": FIRST_READ}, *uses)
                 self.assertEqual(code, 2)
                 self.assertIn("read whole", err)
                 self.assertIn("README.md", err)
@@ -908,7 +915,7 @@ class TestWholeReads(HookTest):
         # Then: it is kept going, naming the page
         os.remove(CALL["result"])
         prompt = self.first_user(kind=dict(CALL["kind"], opens="page"))
-        code, err = self.replied("turn:first-user", prompt, {"items": [FOUND]})
+        code, err = self.replied("turn:first-user", prompt, {"items": FIRST_READ})
         self.assertEqual(code, 2)
         self.assertIn("docs/start.md", err)
 
@@ -918,7 +925,9 @@ class TestWholeReads(HookTest):
         # Then: it ends, as no run waits on its reading
         prompt = json.dumps({"run": "none.json"})
         part = ("Read", {"file_path": "README.md", "offset": 2})
-        self.assertEqual(self.replied("turn:first-user", prompt, {"items": [FOUND]}, part), (0, ""))
+        self.assertEqual(
+            self.replied("turn:first-user", prompt, {"items": FIRST_READ}, part), (0, "")
+        )
 
     def given_read(self):
         """The orchestrator's reads of everything its run was given, and the generator started."""
@@ -1007,7 +1016,7 @@ class TestWholeReads(HookTest):
             ("Bash", {"command": "echo don't && cat README.md"}),
             self.read("checklists/readme.md"),
         )
-        reply = {"items": [FOUND]}
+        reply = {"items": FIRST_READ}
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
 
     def test_a_reader_printing_lines_by_another_command_than_cat_is_kept_going(self):
@@ -1016,7 +1025,7 @@ class TestWholeReads(HookTest):
         # When: it ends with its reply
         # Then: it is kept going, naming the work
         uses = (("Bash", {"command": "awk 'NR<=2' README.md"}), self.read("checklists/readme.md"))
-        code, err = self.replied("turn:first-user", self.first_user(), {"items": [FOUND]}, *uses)
+        code, err = self.replied("turn:first-user", self.first_user(), {"items": FIRST_READ}, *uses)
         self.assertEqual(code, 2)
         self.assertIn("README.md", err)
 
@@ -1061,6 +1070,68 @@ class TestWholeReads(HookTest):
             text = {"type": "user", "message": {"content": "x" * 25000}}
             f.write(json.dumps(text) + "\n")
         self.assertEqual(self.replied("turn:learner", prompt, LEARNT_REPLY), (0, ""))
+
+    def test_the_orchestrator_that_sent_a_message_reads_the_work_again(self):
+        # Given: an orchestrator that read the work after the generator, then sent a message
+        # When: it records its reading, before and after reading the work again
+        # Then: it is stopped, naming the work, as the generator sent it may have changed it; then
+        # it goes through
+        given, generator = self.given_read()
+        sent = ("SendMessage", {"to": ID, "message": self.generator_prompt})
+        uses = (*given, generator, self.read("README.md"), sent)
+        self.assertIn("README.md", "".join(self.recorded(*uses)))
+        self.assertEqual(self.recorded(*uses, self.read("README.md")), [])
+
+    def test_a_reader_sent_a_message_reads_the_work_again(self):
+        # Given: a first user that read the work and the checklist whole, then was sent a message by
+        # an agent or by the conversation that started it
+        # When: it ends with its reply, before and after reading the work again
+        # Then: it is kept going, naming the work, as the work may have been made again; then it
+        # ends
+        prompt = self.first_user()
+        for kind, after, code in (
+            ("peer", (), 2),
+            ("coordinator", (), 2),
+            ("peer", (self.read("README.md"),), 0),
+        ):
+            message = {"type": "user", "origin": {"kind": kind}, "message": {"content": prompt}}
+            with self.subTest(kind=kind, after=after):
+                path = self.given_record("first-user", prompt, *READ_SHOWN)
+                with open(path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(message) + "\n")
+                    for n, (name, tool_input) in enumerate(after):
+                        used = {
+                            "type": "tool_use",
+                            "id": f"a{n}",
+                            "name": name,
+                            "input": tool_input,
+                        }
+                        entry = {"type": "assistant", "message": {"content": [used]}}
+                        f.write(json.dumps(entry) + "\n")
+                event = self.event(
+                    "SubagentStop",
+                    "turn:first-user",
+                    agent_transcript_path=path,
+                    last_assistant_message=json.dumps({"items": FIRST_READ}),
+                    stop_hook_active=False,
+                )
+                said, err = self.hook(subagentstop, event)
+                self.assertEqual(said, code, err)
+
+    def test_the_orchestrator_holding_without_seeing_what_is_offered_stops(self):
+        # Given: an orchestrator whose run waits on the items it holds, which never ran the
+        # script to see them
+        # When: it records what it holds
+        # Then: it is stopped, told to see them whole; once it saw them, it goes through
+        prompt = self.first_user()
+        self.replied("turn:first-user", prompt, {"items": FIRST_READ_ALL_STOPPED})
+        self.assertIn("hold", self.next())
+        shown = f"{SCRIPT} next {CALL['result']}"
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        self.given_record(ID, json.dumps(CALL))
+        self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "items to hold")
+        self.given_record(ID, json.dumps(CALL), ("Bash", {"command": shown}))
+        self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
     def test_the_orchestrator_going_on_after_the_learner_needs_no_new_read(self):
         # Given: an orchestrator whose run waits on the learner
