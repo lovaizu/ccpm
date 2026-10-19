@@ -143,7 +143,8 @@ class TestHeld(FormTest):
 
     def test_what_is_held_out_of_its_form_is_named(self):
         # Given: an offer of one item to hold
-        # When: what is held is no object, not a list, an item of other keys, or not offered
+        # When: what is held is no object, not a list, an item of other keys or of its checklist
+        # alone, or not offered
         # Then: each is named
         item = {"checklist": "checklists/readme.md", "item": "B-1"}
         for given, said in (
@@ -159,6 +160,12 @@ class TestHeld(FormTest):
                 {"held": [dict(item, item="F-1")]},
                 [
                     "checklists/readme.md F-1 is not an item offered; hold each by its checklist and ID"
+                ],
+            ),
+            (
+                {"held": [{"checklist": "checklists/readme.md"}]},
+                [
+                    '{"checklist": "checklists/readme.md"} is not an item offered; hold each by its checklist and ID'
                 ],
             ),
             ({"held": [item, item]}, ["checklists/readme.md B-1 is given twice; hold each once"]),

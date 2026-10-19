@@ -1,7 +1,9 @@
 """Each role is started in its turn with the prompt the script printed last, or, once it is started,
 sent the message the script printed to the agent it names, so it is given what it is to be given
 and nothing an AI copied wrong or added, and the evaluator starts only once the orchestrator's
-findings are kept. The orchestrator's own record is kept as it starts its first role, for the
+findings are kept. A role replies only by ending with its form, which turn's hook keeps for the
+orchestrator, so a message of its own to the orchestrator would only stop the orchestrator's
+reading. The orchestrator's own record is kept as it starts its first role, for the
 learner, which learns from every agent of the run."""
 
 from __future__ import annotations
@@ -19,6 +21,10 @@ def check(event: dict[str, Any]) -> list[str]:
     tool = event["tool_input"]
     if event["tool_name"] == "SendMessage" and agents.role(event) == "up":
         return sent(event, tool)
+    if event["tool_name"] == "SendMessage" and f"turn:{agents.role(event)}" in ROLES:
+        return [
+            "reply with your form alone, as your last message; turn's hook keeps it for the orchestrator"
+        ]
     agent = tool.get("subagent_type")
     if event["tool_name"] != "Agent" or agent not in ROLES:
         return []

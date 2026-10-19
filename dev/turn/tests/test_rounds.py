@@ -306,22 +306,58 @@ class TestMessageHooks(RoundTest):
 
     def test_a_message_to_another_agent_or_of_other_words_stops(self):
         # Given: a generator to be sent an item back
-        # When: the orchestrator sends the message elsewhere, or other words
+        # When: the orchestrator sends the message elsewhere, to an agent named by part of its
+        # name, or other words
         # Then: it is stopped, saying to send what the script printed
         out = self.next(BACK)
-        for to, message in (("a9", out["message"]), (out["to"], "fix B-1"), (out["to"], "{}")):
+        for to, message in (
+            ("a9", out["message"]),
+            (out["to"][:-1], out["message"]),
+            (out["to"], "fix B-1"),
+            (out["to"], "{}"),
+        ):
             with self.subTest(to=to, message=message):
                 code, err = self.hook(pretooluse, self.send(to, message))
                 self.assertEqual(code, 2)
                 self.assertIn("send only what turn.py printed last", err)
 
     def test_a_message_when_none_is_due_stops(self):
-        # Given: a generator started, whose reply is kept, and no message printed
-        # When: the orchestrator sends it a message
+        # Given: a generator started, whose reply is kept, and no message printed; and a first
+        # user to be started next
+        # When: the orchestrator sends the generator a message
         # Then: it is stopped
         code, err = self.hook(pretooluse, self.send(ID, self.prompt))
         self.assertEqual(code, 2)
         self.assertIn("send only what turn.py printed last", err)
+        self.first_user_read()
+        code, err = self.hook(pretooluse, self.send(ID, self.prompt))
+        self.assertEqual(code, 2)
+        self.assertIn("send only what turn.py printed last", err)
+
+    def test_the_orchestrator_loading_sendmessage_passes(self):
+        # Given: a generator to be sent an item back
+        # When: the orchestrator loads SendMessage with ToolSearch
+        # Then: it goes through
+        self.next(BACK)
+        event = self.event(
+            "PreToolUse",
+            "turn:up",
+            tool_name="ToolSearch",
+            tool_input={"query": "select:SendMessage", "max_results": 1},
+        )
+        self.given_record(ID, json.dumps(CALL))
+        self.assertEqual(self.hook(pretooluse, event), (0, ""))
+
+    def test_a_message_from_a_role_stops(self):
+        # Given: a generator sent an item back by message
+        # When: it sends its reply to the orchestrator by message
+        # Then: it is stopped, saying to reply with its form
+        out = self.next(BACK)
+        for role in ("turn:generator", "turn:first-user", "turn:evaluator", "turn:learner"):
+            with self.subTest(role=role):
+                code, err = self.hook(pretooluse, self.send(ID, out["message"], role))
+                self.assertEqual(code, 2)
+                self.assertIn("reply with your form alone", err)
 
     def test_a_message_from_another_agent_or_of_no_run_passes(self):
         # Given: a message sent by an agent that is not turn's orchestrator, and one by an
@@ -350,10 +386,11 @@ class TestMessageHooks(RoundTest):
 
     def test_a_reply_of_a_role_not_waited_on_is_not_kept(self):
         # Given: a run whose first user is to be started next
-        # When: the generator replies again
-        # Then: it ends, and its reply is not kept as the first user's
-        self.first_user_read()
+        # When: the generator replies again, or an evaluator replies out of its form
+        # Then: each ends, and neither reply is kept as the first user's
+        prompt = self.first_user_read()
         self.assertEqual(self.answer("turn:generator", CLAIM), (0, ""))
+        self.assertEqual(self.replied("turn:evaluator", prompt, {}), (0, ""))
         self.assertNotIn("reply", self.read_json(RESULT)["running"]["next"])
 
     def test_only_the_generator_and_the_first_user_are_kept_started(self):

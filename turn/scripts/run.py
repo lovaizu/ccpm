@@ -123,12 +123,10 @@ def ask(run: dict[str, Any], agent: str, given: dict[str, Any]) -> dict[str, str
 
 
 def sending(run: dict[str, Any], kind: str) -> bool:
-    """Whether the round may send back once more of the kind, counting this one if so."""
+    """Whether the round may send back once more of the kind, counting each time it is asked."""
     sent = run.setdefault("sent", {})
-    if sent.get(kind, 0) >= SENDS:
-        return False
     sent[kind] = sent.get(kind, 0) + 1
-    return True
+    return sent[kind] <= SENDS
 
 
 def awaited(result: str, run: dict[str, Any]) -> dict[str, Any]:
