@@ -361,11 +361,14 @@ Progress:
   Good from a part (every role gave B-20 from the code blocks, none read lines 3-9). Decided by
   the user (2026-10-19): the learner learns how the run went alone, each lesson about how a role
   read, checked and replied, not what the work says; the orchestrator sends back with `gets` the
-  places of the work where it found no Good, as facts, not how to fix them.
-- Next: 1. agree root cause 2 with the user; 2. the design, prompts, scripts, hooks and tests for
-  both; flow and roles trials; the acceptance trial, every JSONL read, judged from the receiver's
-  purpose; 3. consult when reading stops, from that trial; the Y-statement; 4. CHANGELOG, the whole
-  tried once, `claude plugin validate --strict`.
+  places of the work where it found no Good, as facts, not how to fix them; each role names, for
+  each item, the part of the work it asks about, and for one asking about the whole gives a Good
+  for each part (a document's sections, a code's files), a script stopping a reply that leaves a
+  part out; a part without Good leaves the item without Good, sent back with that part's place.
+- Next: 1. the design, prompts, scripts, hooks and tests for both; flow and roles trials; the
+  acceptance trial, every JSONL read, judged from the receiver's purpose; 2. consult when reading
+  stops, from that trial; the Y-statement; 3. CHANGELOG, the whole tried once, `claude plugin
+  validate --strict`.
 
 ### [ ] #6: Each checklist finished
 
