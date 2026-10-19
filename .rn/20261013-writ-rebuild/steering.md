@@ -571,8 +571,23 @@ Progress:
   quote after a space) or a link, and in acc2 and acc3 their notes made Why csvtidy heavier. Seen:
   the read check stops a command that goes to a folder of its own with cd and names `.` there
   (acc2's evaluator, `cp csvtidy.py .` after `cd "$D"`), as it takes `.` for the repository's top.
-- Next: fix the read check at that cause, a path judged from where the command's cd has gone;
-  then the report to the user by how close each key result came, and #5 closed on their word.
+- Done (2026-10-19, 87b4fa0): every hook stop of the three trials read from the JSONL: 16 by the
+  read check, 9 right (git, folders not given, `ls .`) and 7 wrong, one cause each: a command going
+  to a folder of its own with cd, and turn's script asked in a command beside reads of what the
+  role was given. Read from the code, not met in the trials: the write check saw Write and Edit
+  alone, not a command writing outside the work, as design line 207 says it stops; the whole-read
+  check took a cat after cd elsewhere for a read of the work. Fixed in `turn/hooks/shell.py`, which
+  the three checks share: each path taken from where the command's cd has gone, none after a cd the
+  words do not settle; where the run is kept passed as the script's argument; a heredoc's text no
+  path; a command writing by a redirect, tee, cp, mv, rm, touch, mkdir or `sed -i` outside the work
+  stopped. Not seen: a write inside `python3 -c` or a heredoc. Tests first (12 failing), then all
+  checks green locally on 3.9 and 3.12; replayed against the trials' commands: the 9 right stops
+  still stop, the 7 wrong pass, and none of the roles' 403 commands is stopped as a write. No trial
+  run: the prompts did not change, and the design checks the hooks by unittest. turn's CHANGELOG
+  says each AI reads only what the CCS gives and writes only the work.
+- Running at the `/clear` (2026-10-19): CI on 87b4fa0.
+- Next: confirm CI on 87b4fa0 (no mutant surviving); then the report to the user by how close each
+  key result came, and #5 closed on their word.
 
 ### [ ] #6: Each checklist finished
 
