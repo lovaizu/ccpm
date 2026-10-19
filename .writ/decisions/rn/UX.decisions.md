@@ -38,6 +38,11 @@ their purpose, since what is sent back then is made again after all of it is bui
    user's.
 6. Wherever the user stops, `/rn:up` in a fresh conversation goes on from there.
 
+Each work is made with rn's checklist for its kind and the user's addition to it, at
+`.rn/checklists/<kind>.md` in their repository, which holds only what it adds; a kind rn has no
+checklist for gets one made there. rn's own checklists are not changed in place, since they sit
+outside git on the user's machine and an update of rn replaces them.
+
 ### B-3: The benefits
 - What the user gets is what they really wanted, not what their first words said, and going back
   over finished work becomes far rarer, since every point is settled with them before a work is
