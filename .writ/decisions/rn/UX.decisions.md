@@ -48,15 +48,15 @@ checklist for gets one made there. rn's own checklists are not changed in place,
 outside git on the user's machine and an update of rn replaces them.
 
 ### B-3: The benefits
-- What the user gets is what they really wanted, not what their first words said, and going back
-  over finished work becomes far rarer, since every point is settled with them before a work is
-  made.
-- Each work reaches the user only after it has been read and used in its receiver's place.
-- At each sign-off the user checks only that the work is as settled and what changed while it was
-  made, without reading it all again.
+- The user asks without preparing: rough words are enough, and rn finds the points to decide and
+  comes to confirm them.
+- The user's purpose is achieved by answering alone: each point is confirmed and each task traced
+  to the acceptance criteria, so making a finished work again becomes rare.
+- At each sign-off the user decides from the proposal alone: what they are shown has been read and
+  used in its receiver's place by an AI that did not make it, so they need not read it all again.
 - Work that takes days goes on from wherever the user stopped.
-- What was decided, and why, stays: the README and the design in the product, each decision and
-  what became of each finding in the record and the commits, so the next work, or a teammate,
-  starts from it.
-- What a session learned is put to the user one point at a time, and what they add to their
+- What was decided, and why, stays: the README and the design in the product, and what the
+  documents do not keep, the options weighed with their reasons and each feedback with its answer,
+  in the commit messages rn writes, so the next work, or a teammate, starts from it.
+- What a session learned is confirmed with the user one point at a time, and what they add to their
   checklists makes every later work better.
