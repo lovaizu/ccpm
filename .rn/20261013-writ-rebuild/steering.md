@@ -1433,15 +1433,23 @@ Progress:
   '{"enabledPlugins": {"turn@ccpm": false}}' --permission-mode auto` with
   `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`, in a fresh clone of this branch in the scratchpad, the
   CCS copied into `.tasks/`; the runner and the CCSs of the last session are in
-  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/d56e9331-379c-44c2-af13-3dfb75505571/scratchpad/`
-  (`run-turn.sh`, `tasks/hooks.json`, `tasks/trial.json`).
-  1. The hooks through turn again, the CCS naming the files `rn/hooks/hooks.json`,
-     `rn/hooks/pretooluse.py`, `rn/hooks/events.py`, `rn/hooks/shell.py`,
-     `rn/hooks/repository.py`, `rn/hooks/checks/__init__.py`, `rn/hooks/checks/own_branch.py`,
-     `rn/hooks/checks/signoff.py`, `rn/hooks/checks/plan_form.py`,
-     `rn/hooks/checks/kept_before_turn.py`, `dev/rn/tests/test_hooks.py` and
-     `dev/rn/cosmic-ray.toml`, with `.writ/decisions/rn/hooks.decisions.md` as it now stands (R26,
-     the property tests' inputs). Take it in after `sh dev/check.sh` and `sh dev/mutate.sh rn`.
+  `/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/d15a14e6-22d9-4bc5-9c12-c9ea2ab29867/scratchpad/`
+  (`run-turn.sh`, `tasks/hooks-1.json`, `tasks/trial.json`).
+  1. The hooks through turn in thin slices, each tried on its own and taken in after
+     `sh dev/check.sh` and `sh dev/mutate.sh rn` before the next starts, as the plan checklist's
+     B-8 asks (the user, 2026-10-20: the whole hooks asked at once took two hours and stopped in
+     the first round), with `.writ/decisions/rn/hooks.decisions.md` as it now stands; each CCS names
+     every file of its slice:
+     1. The own branch guard on a plain `git commit` and `git push`, with the hook's entry, the
+        repository and session finding, its tests and mutation testing widened to the hooks:
+        `rn/hooks/hooks.json`, `rn/hooks/pretooluse.py`, `rn/hooks/events.py`,
+        `rn/hooks/shell.py`, `rn/hooks/repository.py`, `rn/hooks/checks/__init__.py`,
+        `rn/hooks/checks/own_branch.py`, `dev/rn/tests/test_hooks.py`, `dev/rn/cosmic-ray.toml`.
+     2. The guard judging the folder git acts on: `git -C`, a `cd` earlier, `env`, `command`,
+        `sh -c` and a worktree, with the property tests (R26).
+     3. The sign-off guard, `rn/hooks/checks/signoff.py`.
+     4. The plan form guard, `rn/hooks/checks/plan_form.py`.
+     5. The kept-before-turn guard, `rn/hooks/checks/kept_before_turn.py`.
   2. The flow trial through turn again, the CCS naming `dev/rn/trials/flow/flow.py`,
      `dev/rn/trials/flow/stand.py` and `dev/rn/trials/flow/up.md`; then run it in
      `lovaizu/playground` and judge it from every JSONL. Remove what a run leaves in
