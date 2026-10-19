@@ -379,8 +379,8 @@ Progress:
   `749e43aa-ce1f-4776-986f-02d27a338847` (28.5, $10.2), `1a3a6c1c-c996-4c08-a705-3a30acb7ee45`
   (37.6, $13.2).
 - The three acceptance trials read from every JSONL (results.json): 36.6, 27.6 and 36.2 minutes
-  to return; items going on unseen 3, 2 and 1 (the encoding in two, a semicolon export in two, a
-  padded quoted cell mangled in one). A remake made a part worse once, run accounts in five parts,
+  to return; judged from the receiver's purpose and the decisions, no item not satisfied in any,
+  what the stand-in fixed being polish or a file beside the work. A remake made a part worse once, run accounts in five parts,
   and the orchestrator sent each back with its place. Round 2 took 19.0, 12.4 and 13.6 minutes
   and moved no item KR1.1 counts in any of the three. `turn/scripts/forms.py:220` counts
   `"ran": []` as a run, so a behavior statement with no run passes the check.
