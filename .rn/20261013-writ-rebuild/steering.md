@@ -506,6 +506,39 @@ Progress:
   F-1's template, in every first-user reading of acc1 and acc2, acc2's last remake changing nothing.
   acc1's round 2 took the README from 81 to 99 lines with edges (non-breaking spaces, vertical
   tabs, a file without a header, a BOM) and put in the one wrong statement the stand-in fixed.
+- Found (2026-10-19): the scripts do not follow the design. Every generator reply goes to the
+  orchestrator's reading (`turn/scripts/run.py:224-228`), so each remake the first user sent back
+  was read by the orchestrator before the first user again, which design lines 127-131 do not have;
+  `dev/turn/tests/test_rounds.py:153-168` expects that order, and the flow trial judged "the order
+  the set replies mean", not the design's. So the acceptance trials teach nothing of the design.
+  Across every trial in `dev/turn/trials/readme/results.json`, the first work already served the
+  receiver; the time and the fixes went to the work's statements against the sources and
+  csvtidy's edges (CRLF, whitespace kinds, BOM, UTF-8, "yet"), from 1.9 minutes to 28-68.
+- Decided by the user (2026-10-19): checks are purpose-based alone, simple; every grounds-based
+  check goes: `rn/checklists/accuracy.md` and the `check` mark, the generator's statement marks,
+  quotes and runs as grounds, the orchestrator's grounds check and `unsourced`, the script's
+  unrun send-back and the quote and run checks. Running what the work gives stays as must-be
+  quality: the generator runs what it writes as the receiver would, and the first user does all the
+  receiver does. The flow:
+  1. the orchestrator checks, before any work, that the CCS can give every item its Good, and
+     returns the questions alone where it cannot;
+  2. the generator sets each item's Good and where, makes the work, runs what it wrote;
+  3. the first user uses it as the receiver, and for each item without Good gives the places and
+     what it did there and did not get;
+  4. the same generator remakes, the same first user reads again, no reading between, three times
+     at most;
+  5. the evaluator, started anew, reads it as the receiver first meets it;
+  6. the orchestrator reads the work whole and decides every item, a Good only where a reader
+     found one, none where a doubt stays inside a Good;
+  7. the learner learns how the run went;
+  8. where an item has no Good, 2 to 7 once more (kept: purpose Goods may fall short);
+  9. return.
+  Through 2 to 5 the orchestrator only runs the flow the script names; it judges at 1 and 6.
+- Next (agreed by the user, 2026-10-19, after a `/clear`): 1. rewrite turn's design, UX and
+  README for this flow, read against their checklists, shown to the user in Japanese translation
+  for agreement; 2. build the quality of the flow and each part in: scripts, hooks, prompts and
+  checklists unit by unit, tests written to the design, the flow trial judged against the design's
+  order; 3. then the acceptance trials, three at once.
 
 ### [ ] #6: Each checklist finished
 
