@@ -1378,6 +1378,10 @@ Progress:
   - R19 (turn's question on the skills): the skills' steps are held by the design's four guards
     alone, not a hook for every step prompt.md B-25 and B-26 ask, since more hooks change the
     approved design and no trial has yet shown a step the four leave out being skipped.
+  - R20 (turn's question on the plan checklist): a task's ID is kept like a criterion's, never given
+    to another, so commit messages and earlier messages always point to one task. Also taken from
+    turn's work beyond the decisions: the plan's title naming the piece of work, and B-5 asking
+    that a task does something for each criterion it names, not only names it.
 - To take into rn's UX when it is written (asked by the user, 2026-10-17): how rn asks the user to
   decide, in #54's section "From building turn: how rn asks the user to decide".
 - rn's UX settled with the user point by point (2026-10-19, `7d90779` to `8228402`, each commit

@@ -5,26 +5,36 @@ version: 0.1.0
 
 # Plan
 
-A plan, `steering.md`, is read by the user at the Plan sign-off, to approve what they will get and
-why, and by the conductor in any later conversation, to carry the work to what the user really wants
-without asking them again.
+A plan, `steering.md` in the session's record, the folder where rn keeps one piece of work, is read
+by the user at the plan sign-off, where rn first waits for their answer, to approve what the
+finished work will do and why, or to send it back. In every later conversation the conductor, the
+AI of rn that talks with the user and decides each move, and turn, the plugin that makes for rn each
+document, each task's result and the finished work, read it to carry each of these to the user's
+purpose without asking them again.
 
 A plan is worked out in this order, each step the ground of the next:
 
-1. Find, from the user's words, why they want it, one point at a time, looking up what the
-   repository, the official documentation or best practice can answer.
-2. From that reason, set the goal, then each gain that would make the user choose the result, in
-   their words, then what they take for granted.
-3. Check what the plan rests on: each fact at its source, what only the user knows from the user,
-   and each form an input the criteria speak of takes where the product runs.
-4. Set the languages, where the documents go, and the rules the work follows that the goal does not
-   tell.
-5. Once the design is approved, plan the tasks that bring each criterion to hold, the attractive
-   ones first.
+1. Set the front matter rn reads the session by: the installed rn version, the session's pull
+   request, `running` as its status, turned to `finished` once the pull request is marked ready,
+   and the languages of what is written and of what is said to the user.
+2. From the points confirmed with the user, each a choice that changes what is made, write the goal:
+   the user's purpose, with why they want it, under a title naming the piece of work in a few
+   words. Each point, with how it was confirmed, is kept in the plan's decisions,
+   `decisions/plan.decisions.md` beside the plan in the record, and the plan holds only what was
+   decided.
+3. From the goal, write the acceptance criteria, each one thing the finished work must do for the
+   goal, checked on the finished work, together giving the whole goal.
+4. After the plan sign-off, write the documents the purpose needs, such as a UX, a README or a
+   design, each with its path, as settled with the user.
+5. After the design sign-off, where rn waits for the user's answer on those documents, write the
+   tasks, the parts the piece of work is divided into, each with the acceptance criteria its result
+   serves, and tick each once the conductor accepts its result as serving them. The sign-offs are
+   not tasks: they, and where the session stands, are kept in `state.json` beside the plan.
 
-Each item of `usability.md` applies to a plan with the goal and how it is reached as its subject;
-its B-16 is answered by the tasks in order, since a plan tells of no one acting in turn. Before the
-tasks of step 5 are planned, the items on tasks are answered as met.
+Each item of `usability.md` applies to a plan with the user's purpose and what the finished work
+must do for it as its subject. Its F-1 is answered inside the template below, with the goal as the
+main point under the title. Its B-6 is answered while the session runs: the plan is kept true as
+the piece of work moves on, `status` and each task's box included.
 
 ## Format
 
@@ -32,73 +42,47 @@ tasks of step 5 are planned, the items on tasks are answered as met.
 
 Scope: whole
 
-Does the plan follow this template, front matter, headings and markers included?
+Does the plan follow this template, front matter, headings and IDs included?
 
 ```markdown
 ---
-rn: <installed rn version>
+rn: <the installed rn version>
 pr: <the session's pull request URL>
 status: running
-artifact-language: <the language everything written to the repository is in>
-conversation-language: <the language the user is spoken to in>
-readme: <path of the README; README.md unless agreed otherwise>
-design: <path of the design document; docs/design.md unless agreed otherwise>
+artifact-language: <the language of everything rn writes into the repository>
+conversation-language: <the language rn speaks to the user in>
 ---
 
-# Goal
+# <The piece of work, in a few words>
 
-<what the user wants and why, as agreed with them>
+G1: <the user's purpose, with why they want it>
 
-# Acceptance criteria
+## Acceptance criteria
 
-## Attractive quality
+- AC1: <one thing the finished work must do for the goal>
 
-- A1: <what the user or their users gain, which would make them choose the result>
+## Documents
 
-## Must-be quality
+- <the document, such as the design>: <its path>
 
-- M1: <what the user takes for granted>
+## Tasks
 
-# Assumptions
-
-- Fact, <how it was checked, or "decided by the user">: <what the plan rests on>
-- Assumption: <what the plan rests on without having checked it>
-
-# Rules
-
-- <what the work must follow that the goal does not tell, such as this repository's conventions>
-
-# Tasks
-
-### [ ] #1: Plan sign-off
-### [ ] #2: Design sign-off
-### [ ] #3: <task name>
-
-Purpose: <what this task does for the goal>
-
-Serves: <criterion IDs>
-
-Completion criteria:
-
-- Attractive quality: <a state checked on the real thing>
-- Must-be quality: <a state checked on the real thing>
-
-### [ ] #4: Deliverable sign-off
-
-# Not yet specified
-
-- <what cannot yet be stated as a task>
+- [ ] T1: <the part of the piece of work>. Serves AC1.
 ```
 
-- Criterion IDs are `A1`, `A2`... and `M1`, `M2`..., never reused once given.
-- Until the Design sign-off is approved, the only tasks are the Plan and Design sign-offs, and what
-  the deliverable needs is under Not yet specified; the tasks planned then take the next ids, and
-  the Deliverable sign-off comes last. A task added later takes the next unused id and goes before
-  the sign-off it leads to.
-- `status` becomes `finished` when the Deliverable sign-off is approved.
+Why: a check of rn's refuses a plan kept outside this form, and rn's script reads `pr`, `status` and
+the two languages by these names, so a plan in another form halts the session.
 
-Why: the commands and checks of rn read the plan by this form, so a plan in another form stops the
-session, and a later version of rn goes on from it only when the form holds.
+### F-2: IDs that keep naming one thing
+
+Scope: whole
+
+Compared with the plan's earlier versions on the session's branch, does each ID name one and the
+same thing throughout the session: the goal always `G1`, a changed criterion or task under the ID
+it had, and a removed criterion's or task's ID given to no other?
+
+Why: later messages, commit messages and what rn shows at each sign-off refer to the goal, the
+criteria and the tasks by their IDs, so an ID given to a second thing points to two.
 
 ## Benefit
 
@@ -106,100 +90,81 @@ session, and a later version of rn goes on from it only when the form holds.
 
 Scope: its part
 
-Can the reader tell, from the plan alone, the reason the user wants the goal?
+From the goal alone, can whoever reads the plan tell why the user wants it?
 
-Why: every later decision is judged by that reason, in any conversation; without it the work aims
-at the user's first words, which can be met while what they meant is missed.
+Why: the user approves at the plan sign-off a reason they recognize as theirs, and every later
+decision, in any conversation, is judged by it; without it later decisions aim at the user's first
+words, which can be met while what they want them for is missed.
 
-### B-2: The criteria carry the reason
-
-Scope: whole
-
-Can the reader tell that a result meeting every attractive criterion gives the user what they want
-the goal for, with nothing of that reason left out?
-
-Why: the Deliverable sign-off judges by the criteria, so what the reason holds and the criteria do
-not is never built.
-
-### B-3: Each attractive criterion is a gain the user named
+### B-2: Each criterion checked on the finished work
 
 Scope: its part
 
-Can the reader tell, for each attractive criterion, what the user or their users gain, in the
-user's own words?
+Can each acceptance criterion be answered yes or no by using the finished work?
 
-Look for: a criterion that says only what must not happen, which any way that avoids it meets; a
-gain the conductor wrote for the user.
+Look for: a word whose bar depends on who checks, such as fast or easy; a criterion about how the
+piece of work went rather than what the finished work does.
 
-Why: ways are built from the gain, so a gain the user did not name is a guess they find later.
+Why: the finished work is used for every criterion before the deliverable sign-off, where rn last
+waits for the user's answer, on the finished work; a criterion that cannot be checked on it passes a
+finished work that misses it.
 
-### B-4: Each fact holds at its source
+### B-3: Each criterion a thing done for the goal
+
+Scope: its part
+
+Does each acceptance criterion say what the finished work does for the goal, rather than how it is
+built?
+
+Look for: a criterion naming a library, a file layout or a way of building that the goal does not
+ask for.
+
+Why: a criterion of how it is built fixes a way before the design is drawn, and is met by a
+finished work that does nothing for the goal.
+
+### B-4: Each criterion the user's
+
+Scope: its part
+
+For each acceptance criterion, can whoever reads the plan find in the plan's decisions every point
+it rests on, confirmed with the user?
+
+Why: a point rn decided for the user sends the piece of work the way rn guessed, and the user meets
+it at the deliverable sign-off as a change to send back; a point confirmed is never asked again.
+
+### B-5: Each task serving the criteria it names
+
+Scope: its part
+
+Does each task's part of the piece of work bring about something each acceptance criterion it names
+asks?
+
+Look for: a criterion named by a task whose result would leave that criterion exactly as unmet as
+before.
+
+Before the tasks are written, it is answered yes.
+
+Why: turn makes each task's result for the criteria it names, and the conductor accepts it by them,
+so a criterion named by a task that does nothing for it is counted as served while nothing builds
+it.
+
+### B-6: The criteria give the whole goal
 
 Scope: whole
 
-Can the reader rely on each fact the plan rests on, because it says how it was checked, or that
-the user decided it?
+Can whoever reads the plan tell that a finished work doing every acceptance criterion achieves the
+whole goal, its reason included?
 
-Why: a plan standing on an unchecked fact gives way in the middle of the work, after effort was
-spent on it.
+Why: the finished work is made and checked by the criteria alone, so a part of the goal no
+criterion gives is never built, and the user sends it back at the end.
 
-### B-5: What only the user knows is theirs or an assumption
-
-Scope: whole
-
-Can the reader tell, for each thing the plan relies on that neither the repository nor any
-documentation can show, such as what the user's records hold, whether the user told it or it is an
-assumption no one has checked?
-
-Why: a guess that holds in the repository but not where the product runs reaches the user as a
-result that does not work there; an assumption stays a shortfall in every proposal until something
-checks it.
-
-### B-6: Every form an input takes
+### B-7: Every criterion served by a task
 
 Scope: whole
 
-Can the reader tell, for each kind of input the criteria speak of, such as "a user with no name",
-every form it takes where the product runs?
+Is every acceptance criterion named by at least one task?
 
-Why: a criterion worded from the one form tried passes while the others still fail, and the user
-meets them all.
+Before the tasks are written, it is answered yes.
 
-### B-7: Each decision is the user's
-
-Scope: whole
-
-Can the reader tell, for each point the work rests on that only the user can decide, that the user
-decided it?
-
-Why: a decision the conductor made for the user sends the work the way it guessed.
-
-### B-8: Each criterion gets built
-
-Scope: whole
-
-Once the tasks are planned, can the reader find for each acceptance criterion a task that brings
-it to hold?
-
-Why: a criterion no task serves is never built, and the deliverable misses the goal the user
+Why: a criterion no task serves is never built, and the finished work misses what the user
 approved.
-
-### B-9: A task's completion criteria carry its purpose
-
-Scope: its part
-
-Once the tasks are planned, can the reader tell from each task's completion criteria that meeting
-them moves the work toward the attractive criteria the task serves, not only toward their words?
-
-Why: a task judged by words alone moves on without having moved toward why the user would choose
-the result.
-
-### B-10: Attractive quality first
-
-Scope: its part
-
-Once the tasks are planned, can the reader see that the work on must-be quality comes after the
-attractive criteria are nearly met?
-
-Why: must-be quality is easier to build and check, and started first it takes the effort while the
-reason to choose the work goes unchecked, past the time to change course.
