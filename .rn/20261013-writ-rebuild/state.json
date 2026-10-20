@@ -17,6 +17,9 @@
     },
     {
       "fact": "turn's readers could not read or run in a has of `.`, as read_in_given joined places without making them whole paths; reproduced by a test and fixed (a94184d), check.sh 100% and mutate.sh turn 0 of 1893 survivors"
+    },
+    {
+      "fact": "rn.py ccs takes --has, committed after check.sh 100% and mutate.sh rn 0 of 250; the turn run's claude -p exited before turn returned, as the runner lacked CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"
     }
   ],
   "semantic_gist": [
@@ -28,9 +31,6 @@
     }
   ],
   "focal_entities": [
-    {
-      "task": "rn.py ccs given --has through turn: CCS in the scratchpad's ccs/scripts.json, run by run-turn.sh into a fresh clone; its diff brought back, checked with dev/check.sh and dev/mutate.sh rn, committed"
-    },
     {
       "task": "/rn:up's step 4 given --has . and passing turn's messages on to the user, made through turn"
     },
@@ -60,11 +60,14 @@
     },
     {
       "environment": "the check tools are not installed on this machine; make a venv from dev/requirements.txt and dev/requirements-test-quality.txt with /opt/homebrew/bin/python3.12 and put its bin first on PATH for dev/check.sh, dev/mutate.sh and each turn run"
+    },
+    {
+      "runner": "set CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up in the background"
     }
   ],
   "predictive_cue": [
     {
-      "next": "bring rn.py's change back from the turn run, then /rn:up, then T2; report only when something ends, goes wrong or needs the user's answer"
+      "next": "/rn:up's step 4 given --has . and passing turn's messages on, through turn; then T2; then the two design topics after T2"
     }
   ],
   "uncertainty_signal": [
