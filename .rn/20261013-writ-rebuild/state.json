@@ -14,11 +14,17 @@
     },
     {
       "fact": "rn's scripts and prompts decisions now take `--has` (the plan's receiver having `.`) and passing turn's messages on (e805a30); the flow trial's code is out of mutation and property tests too, as the user chose A (2d7ab45)"
+    },
+    {
+      "fact": "turn's readers could not read or run in a has of `.`, as read_in_given joined places without making them whole paths; reproduced by a test and fixed (a94184d), check.sh 100% and mutate.sh turn 0 of 1893 survivors"
     }
   ],
   "semantic_gist": [
     {
       "gist": "before each turn run, read the CCS as its receiver: what they have, what they run, whether the environment has it; decide what the sources settle without asking"
+    },
+    {
+      "gist": "use what a run made where it holds; redo only what a fault touched"
     }
   ],
   "focal_entities": [
@@ -30,6 +36,9 @@
     },
     {
       "task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"
+    },
+    {
+      "task": "after T2: exemplars beside the checklists for documents, read whole before writing and when checking, the checklist still the measure; a change to turn's and rn's designs, agreed with the user one point at a time (the user chose to do it after T2)"
     }
   ],
   "relational_map": [
