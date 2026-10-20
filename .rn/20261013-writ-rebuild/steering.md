@@ -59,7 +59,7 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
   AC2.
 - [ ] T6: No work starts before the decision it follows is pushed, so wherever the user stops, the
   next conversation goes on from there. Serves AC2.
-- [ ] T7: A reader of rn's design can tell how the conductor replans every turn from the facts the
+- [x] T7: A reader of rn's design can tell how the conductor replans every turn from the facts the
   turn brought and keeps one state, replaced each turn, and that a missing checklist or environment
   becomes a task; agreed with the user. Serves AC1, AC2.
 - [ ] T8: The same request runs on `lovaizu/playground` with rn 0.8.0 and with this rn, and both
