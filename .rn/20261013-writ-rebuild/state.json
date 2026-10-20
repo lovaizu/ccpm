@@ -101,6 +101,9 @@
     },
     {
       "fact": "CodeQL (GitHub default setup, not in .github/workflows) fails on every push since c4a2223 (12:15): Analyze (javascript-typescript) finds no JS/TS (only dev/package.json, tests.yml) and stops; it passed at c907be8 (11:30) though no JS/TS changed between; why it passed before is not yet found; gh api code-scanning/default-setup is 403 to this token, so the setting needs the user or admin"
+    },
+    {
+      "fact": "the user chose shared/ (2026-10-20) for the shared code, the word Claude Code docs use (\"Share files within a marketplace\", ../shared); renamed after T3 and T4 are merged"
     }
   ],
   "semantic_gist": [
@@ -128,7 +131,10 @@
   ],
   "focal_entities": [
     {
-      "task": "ask the user, one at a time: 1 shared/ or common/ for the shared code (recommended shared; rename after T3 is merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md); 2 how the guards stop (T3 and T4 both): T4 main options A/B/C above, judge them first against best practice (a guard against an AI's mistakes, not an adversary)"
+      "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
+    },
+    {
+      "task": "ask the user how the guards stop (T3 and T4 both): T4 main options A allow-list / B go on / C weaken; judged against best practice (allowlist over denylist)"
     },
     {
       "task": "CodeQL: find why javascript-typescript passed at c907be8; likely fix the default setup's languages to actions and python, which the user does in repository settings"
@@ -175,7 +181,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "ask question 1 (shared or common), then question 2; read T3's result"
+      "next": "ask how the guards stop; read T3 result when it ends"
     }
   ],
   "uncertainty_signal": [
