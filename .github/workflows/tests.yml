@@ -33,7 +33,7 @@ jobs:
             2>/dev/null || echo 0)
           if [ "$passed" -gt 0 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null \
             && ! git diff --name-only "$BEFORE" HEAD \
-              | grep -qvE '^(\.rn/|\.writ/|\.claude/rules/|README\.md$|LICENSE$)'; then
+              | grep -qvE '^(\.rn/|\.claude/rules/|README\.md$|LICENSE$)'; then
             echo "check=false" >> "$GITHUB_OUTPUT"
           else
             echo "check=true" >> "$GITHUB_OUTPUT"

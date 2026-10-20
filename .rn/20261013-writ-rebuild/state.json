@@ -80,6 +80,9 @@
     },
     {
       "fact": "the first T3 and T4 runs were stopped by turn's write_work_alone: my CCS named folders (dev/common/tests, rn/hooks/checks) as works and left out rn/hooks/events.py, while the hook passes exact paths alone; T4's generator tried to get round it and was told to undo; both stopped, the CCS name each file now, run again; its records in the scratchpad t3-run1.jsonl, t4-run1.jsonl"
+    },
+    {
+      "fact": "the user asked what .writ/decisions was, writ being gone: writ's decisions folder left after writ was removed (1736fbf), all of it added on this branch; moved into the session's decisions/ as rn's design places them, the paths kept below it, and .writ/ out of what CI and pre-push skip"
     }
   ],
   "semantic_gist": [
@@ -161,7 +164,7 @@
   ],
   "retrieved_artifacts": [
     {
-      "decisions": ".writ/decisions/rn/hooks.decisions.md"
+      "decisions": ".rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md"
     },
     {
       "report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"

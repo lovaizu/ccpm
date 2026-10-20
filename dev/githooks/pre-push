@@ -25,7 +25,7 @@ while read -r _ local _ remote; do
   fi
   # What no check reads, as CI skips it: the session records, the decisions, the rules for the
   # assistant, and the root's README and licence.
-  changed=$(git diff --name-only "$base" "$local" | grep -vE '^(\.rn/|\.writ/|\.claude/rules/|README\.md$|LICENSE$)' || true)
+  changed=$(git diff --name-only "$base" "$local" | grep -vE '^(\.rn/|\.claude/rules/|README\.md$|LICENSE$)' || true)
   [ -n "$changed" ] || continue
   plugins=""
   for plugin in $all; do

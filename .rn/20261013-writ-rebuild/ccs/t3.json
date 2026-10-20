@@ -30,7 +30,7 @@
   ],
   "goal_orientation": [
     {
-      "purpose": "the guard of the session's own branch, already made and tested, holds where git reaches the default branch another way: through `git -C <folder>`, a `cd` earlier in the same command, git led by `env`, `command` or `sh -c`, and in a git worktree the branch checked out there, as .writ/decisions/rn/hooks.decisions.md says under The checks; a conductor stopped by the guard may try the same move another way, and the guard holds only if that way is stopped too; nothing else it does is stopped. The reading of a command stays in common/hooks/shell.py, which turn's hooks share, so turn's no_commit gains what it learns too. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn common turn` and `sh dev/mutate.sh --since <the commit the run starts from> rn common turn`"
+      "purpose": "the guard of the session's own branch, already made and tested, holds where git reaches the default branch another way: through `git -C <folder>`, a `cd` earlier in the same command, git led by `env`, `command` or `sh -c`, and in a git worktree the branch checked out there, as .rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md says under The checks; a conductor stopped by the guard may try the same move another way, and the guard holds only if that way is stopped too; nothing else it does is stopped. The reading of a command stays in common/hooks/shell.py, which turn's hooks share, so turn's no_commit gains what it learns too. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn common turn` and `sh dev/mutate.sh --since <the commit the run starts from> rn common turn`"
     }
   ],
   "retrieved_artifacts": [
@@ -44,7 +44,7 @@
       "checklist": "rn/checklists/usability.md"
     },
     {
-      "decisions": ".writ/decisions/rn/hooks.decisions.md"
+      "decisions": ".rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md"
     },
     {
       "reference": "dev/rn/design.md"

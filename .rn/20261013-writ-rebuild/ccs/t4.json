@@ -24,7 +24,7 @@
   ],
   "goal_orientation": [
     {
-      "purpose": "a sign-off passes only by the user: clearing the sign-off in `state.json` (`rn.py state signoff=`) is stopped unless the user's last message in the conversation is `/rn:ty`, and writing or editing `state.json` other than through `rn.py state` is stopped, so no move gets round the check, each stop naming the step and why, as .writ/decisions/rn/hooks.decisions.md says under The checks; nothing else the conductor does is stopped. It is a check of its own beside the guard of the session's own branch, run from the same entry, finding the session through rn/scripts/rn.py. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn` and `sh dev/mutate.sh --since <the commit the run starts from> rn`"
+      "purpose": "a sign-off passes only by the user: clearing the sign-off in `state.json` (`rn.py state signoff=`) is stopped unless the user's last message in the conversation is `/rn:ty`, and writing or editing `state.json` other than through `rn.py state` is stopped, so no move gets round the check, each stop naming the step and why, as .rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md says under The checks; nothing else the conductor does is stopped. It is a check of its own beside the guard of the session's own branch, run from the same entry, finding the session through rn/scripts/rn.py. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn` and `sh dev/mutate.sh --since <the commit the run starts from> rn`"
     }
   ],
   "retrieved_artifacts": [
@@ -38,7 +38,7 @@
       "checklist": "rn/checklists/usability.md"
     },
     {
-      "decisions": ".writ/decisions/rn/hooks.decisions.md"
+      "decisions": ".rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md"
     },
     {
       "reference": "dev/rn/design.md"
