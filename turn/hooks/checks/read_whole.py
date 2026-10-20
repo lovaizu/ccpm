@@ -248,16 +248,20 @@ def printed(path: str, kept: dict[str, Any], step: str) -> bool:
         for line in f:
             content = json.loads(line).get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
-                command = str(part.get("input", {}).get("command", ""))
-                if not agents.runs(command, "next") or "<<" in command:
-                    continue
-                whole = not {"|", ">"} & set(command)
-                page = SHOWN_PAGE.search(command)
-                if page is None:
-                    shown = {1} if whole else set()
-                elif whole and shown:
-                    shown.add(int(page.group(1)))
+                shown = seen(shown, str(part.get("input", {}).get("command", "")))
     return shown >= set(range(1, len(run.pages({step: kept[step]})) + 1))
+
+
+def seen(shown: set[int], command: str) -> set[int]:
+    """The pages seen whole once the command has run: printing anew starts them again, and a page
+    asked after counts where it is not piped."""
+    if not agents.runs(command, "next") or "<<" in command:
+        return shown
+    whole = not {"|", ">"} & set(command)
+    page = SHOWN_PAGE.search(command)
+    if page is None:
+        return {1} if whole else set()
+    return shown | {int(page.group(1))} if whole and shown else shown
 
 
 def at(cwd: str, path: str) -> str:
