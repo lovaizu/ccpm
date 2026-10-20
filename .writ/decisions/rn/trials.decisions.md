@@ -21,7 +21,8 @@ user stood in for, on the smallest request. Later units add their steps to the s
 - It prints each conversation's session ID, from whose JSONL the run is judged, the commits on the
   session's branch, `state.json` after each message, the minutes and the cost; it keeps no record
   in the repository.
-- Code in `dev/rn/trials/` is out of the line count, as plugin.md says; it is Python 3 with the
+- Code in `dev/rn/trials/` is out of the line count, mutation testing and property tests, its
+  run being its check, as plugin.md keeps it out of the line count; it is Python 3 with the
   standard library alone, checked by ruff and the type checker as the rest is.
 
 ## The run
