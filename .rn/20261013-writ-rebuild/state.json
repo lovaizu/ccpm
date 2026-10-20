@@ -83,6 +83,9 @@
     },
     {
       "fact": "the user asked what .writ/decisions was, writ being gone: writ's decisions folder left after writ was removed (1736fbf), all of it added on this branch; moved into the session's decisions/ as rn's design places them, the paths kept below it, and .writ/ out of what CI and pre-push skip"
+    },
+    {
+      "fact": "mutate.sh --since left out files not yet added to git, as cr-filter-git reads git diff: T4's new signoff.py went untested by it; now each is marked intent-to-add in a copy of the index, git's own index untouched; tried in a scratch worktree: an untested new file passed before (rc 0), fails now with its 3 survivors"
     }
   ],
   "semantic_gist": [
@@ -114,6 +117,9 @@
     },
     {
       "task": "merge T3 and T4 results, read each against its purpose, then T5"
+    },
+    {
+      "task": "the T3 and T4 runs used the old mutate.sh: run mutate.sh rn common turn whole on their merged result"
     }
   ],
   "relational_map": [

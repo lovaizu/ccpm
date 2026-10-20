@@ -4,7 +4,8 @@
 # cr-rate is not used for that: it takes a limit of 0 as no limit.
 # Given plugin names, such as `sh dev/mutate.sh rn`, it tests those alone, as while one plugin is
 # changed; CI gives none and tests every plugin. Given `--since <commit>` first, it tests only the
-# mutants on lines changed since that commit, by Cosmic Ray's own git filter, as before a push.
+# mutants on lines changed since that commit, files not yet added to git among them, by Cosmic
+# Ray's own git filter, as before a push.
 # The property tests take few inputs, as the tests run once for each mutant.
 # Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for
 # each processor, as each mutant is tested on its own, each on a port free when the run starts, so
@@ -72,7 +73,16 @@ with open(target, "w", encoding="utf-8") as f:
     f.write(f'\n[cosmic-ray.filters.git-filter]\nbranch = "{since}"\n')
 EOF
   cosmic-ray init "$copy/config.toml" "$db"
-  [ -z "$since" ] || cr-filter-git --config "$copy/config.toml" "$db"
+  # The git filter reads the lines changed from `git diff`, which leaves out a file not yet added to
+  # git, such as a check just written; each is marked as to be added in a copy of the index, the
+  # index git uses itself left as it is, so all its lines count as changed.
+  if [ -n "$since" ]; then
+    cp "$(git rev-parse --git-path index)" "$copy/index"
+    git ls-files --others --exclude-standard | while read -r file; do
+      GIT_INDEX_FILE="$copy/index" git add --intent-to-add -- "$file"
+    done
+    GIT_INDEX_FILE="$copy/index" cr-filter-git --config "$copy/config.toml" "$db"
+  fi
   # Cosmic Ray 8.7.0's http distributor asks asyncio for a loop that Python 3.14 no longer makes
   # on its own (sixty-north/cosmic-ray#608, fixed after 8.7.0), so one is set first.
   python3 -c 'import asyncio, sys
