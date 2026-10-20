@@ -1,16 +1,25 @@
 {
   "focal_entities": [
     {
+      "deliverable": "common/hooks/shell.py"
+    },
+    {
       "deliverable": "rn/hooks/checks/default_branch.py"
     },
     {
-      "deliverable": "common/hooks/shell.py"
+      "deliverable": "turn/hooks/checks/no_commit.py"
+    },
+    {
+      "deliverable": "dev/common/tests/test_shell.py"
+    },
+    {
+      "deliverable": "dev/common/tests/test_shell_properties.py"
     },
     {
       "deliverable": "dev/rn/tests/test_hooks.py"
     },
     {
-      "deliverable": "dev/common/tests"
+      "deliverable": "dev/turn/tests/test_checks.py"
     },
     {
       "audience": "rn's conductor, the AI in the user's Claude Code conversation running rn's skills, whose commands the hook judges and who does what a stop tells it; and whoever maintains rn's hooks, a person or an AI"

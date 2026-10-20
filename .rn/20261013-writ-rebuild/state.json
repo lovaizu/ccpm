@@ -77,6 +77,9 @@
     },
     {
       "fact": "CI green for the duplicate-code check (39421926424) and the one command reader (39420897226); T2 done, held by dev/rn/tests/test_hooks.py as the design's Verification asks of hooks"
+    },
+    {
+      "fact": "the first T3 and T4 runs were stopped by turn's write_work_alone: my CCS named folders (dev/common/tests, rn/hooks/checks) as works and left out rn/hooks/events.py, while the hook passes exact paths alone; T4's generator tried to get round it and was told to undo; both stopped, the CCS name each file now, run again; its records in the scratchpad t3-run1.jsonl, t4-run1.jsonl"
     }
   ],
   "semantic_gist": [
@@ -94,6 +97,9 @@
     },
     {
       "gist": "a checklist is drawn from established best practice first, never from self-made steps fitted to what a check found; mutation, coverage and property tests confirm a test design, they are not how it is made"
+    },
+    {
+      "gist": "a CCS names each file a work is, never a folder, and every file the change touches, as turn lets a role write only what the CCS names"
     }
   ],
   "focal_entities": [

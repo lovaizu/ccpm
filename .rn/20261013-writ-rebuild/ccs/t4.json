@@ -1,13 +1,16 @@
 {
   "focal_entities": [
     {
+      "deliverable": "rn/hooks/checks/signoff.py"
+    },
+    {
+      "deliverable": "rn/hooks/events.py"
+    },
+    {
       "deliverable": "rn/hooks/hooks.json"
     },
     {
       "deliverable": "rn/hooks/pretooluse.py"
-    },
-    {
-      "deliverable": "rn/hooks/checks"
     },
     {
       "deliverable": "dev/rn/tests/test_hooks.py"
