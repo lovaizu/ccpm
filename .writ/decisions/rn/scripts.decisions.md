@@ -28,9 +28,10 @@ plan sign-off; later units add to the same scripts.
   `${CLAUDE_PLUGIN_ROOT}/checklists/**/<kind>.md`, and the user's addition
   `.rn/checklists/<kind>.md` where it is there; stops where neither is there, saying a checklist
   for that kind is to be made first.
-- `ccs <work> <path of the work> --kind <kind> --receiver <who> --use <what for> [--decisions
-  <path>] [--reference <path>]...`: writes `<session>/ccs/<work>.json`, with the work, the
-  receiver, what it is used for, the kind's checklists, the decisions and references, and the
+- `ccs <work> <path of the work> --kind <kind> --receiver <who> --use <what for> --has <path>
+  [--has <path>]... [--decisions <path>] [--reference <path>]...`: writes
+  `<session>/ccs/<work>.json`, with the work, the receiver, what it is used for, each path of what
+  the receiver has with it, the kind's checklists, the decisions and references, and the
   conversation's and the artifacts' languages from the plan; prints the call to hand turn's
   `turn:up`, with the result at `<session>/ccs/<work>-result.json`.
 - `state [<key>=<value>]...`: prints where the session stands from `state.json`, or sets the keys

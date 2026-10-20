@@ -49,8 +49,11 @@ skills.
   is written in, English where it has none.
 - When no point is left: `rn.py state stage=plan`; `rn.py ccs plan <session>/steering.md --kind
   plan --receiver <the user at the plan sign-off, and the conductor in any later conversation>
-  --use <the goal as the decisions give it> --decisions <session>/decisions/plan.decisions.md`;
+  --use <the goal as the decisions give it> --has . --decisions
+  <session>/decisions/plan.decisions.md`, the user at the sign-off having their repository;
   start the `turn:up` agent in the background with the call it printed and wait for it.
+- While turn runs: pass each message its agents send on to the user in the conversation language,
+  judging nothing and asking nothing; when the user says to stop, stop the run.
 - When turn returns: read each Good at its lines; put each question to the user as a point, as
   above, write the answer into the decisions and call turn again; fix by hand what falls short of
   the purpose in a few lines, or, where the decisions must change much, change them and call turn
