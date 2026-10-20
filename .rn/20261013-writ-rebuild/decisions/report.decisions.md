@@ -89,3 +89,6 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   the conductor's reply, as the prompts' decisions say, since each is put into the conversation
   language, which a script cannot do.
 - B-8 of `/rn:up` (TaskStop deferred) fixed by hand: the step loads it first.
+- R30 (keeping turn's trials once): what the four trials copied is kept in
+  `dev/turn/trials/shared.py`; `roles.py` now prints, of each record, the messages and Stop hook
+  lines `kept.py` printed as well, as one reading serves both.

@@ -68,6 +68,9 @@
     },
     {
       "fact": "one command reader and one hook entry (1708074, e46f857): rn's more exact reading moved into common/hooks/shell.py (line joins, backslashes, double-quote escapes, fd digits, <>, ;;, |&), hook.py checks the event's shape; rn hooks run on them; check.sh 100%, mutate common 0 (40s), rn 0 (32s), turn 0 (141s); T2's 7 survivors gone with the copy"
+    },
+    {
+      "fact": "the user chose A (2026-10-20): a test stating its expected value again is an oracle, left out of the duplicate-code check with its reason beside it; pylint 4.1.3 duplicate-code in check.sh over every .py not a link (0.7s), on the newest Python with the test-quality tools; turn trials keep the call, the flow task, the copy of turn, claude -p and the record reading once in dev/turn/trials/shared.py, smoke-run with one claude -p; plugin.md: work made before a rule changed is read against the new one before commit; check.sh 0 copies, 100%"
     }
   ],
   "semantic_gist": [
@@ -89,16 +92,10 @@
   ],
   "focal_entities": [
     {
-      "task": "duplicate-code check: pylint 4.1.3 (GPL-2.0, dev tool only, needs Python >=3.10) in requirements-test-quality, `pylint --disable=all --enable=duplicate-code` over every .py not a link, in check.sh, pre-push and CI; it finds 151 copied lines now; ask the user, one decision: a test stating its expected value again, such as run.py USAGE in test_start.py and rn.py ENTRIES in test_rn.py, is an oracle, not a copy; leave it out of the check beside it (B-16) or not"
+      "task": "check CI of this push and the one before (run 39420897226)"
     },
     {
-      "task": "keep once what pylint finds: dev/turn/trials trial.py, flow.py, roles/kept.py, roles/roles.py copy the claude -p launch, ROOT and CALL"
-    },
-    {
-      "task": "plugin.md: work made before a rule or checklist changed is read against the new one before it is committed, as the user chose"
-    },
-    {
-      "task": "then T2 done; find out what turn cannot take a change to existing work means"
+      "task": "T2: confirm against its criterion (plain git commit/push on the default branch stopped with the step and why, nothing else stopped), then tick it; find out what turn cannot take a change to existing work means"
     }
   ],
   "relational_map": [
@@ -133,7 +130,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "push the two commits (pre-push), then the duplicate-code check"
+      "next": "CI results, then T2 confirmed"
     }
   ],
   "uncertainty_signal": [
