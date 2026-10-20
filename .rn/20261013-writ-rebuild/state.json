@@ -71,6 +71,9 @@
     },
     {
       "fact": "the user chose A (2026-10-20): a test stating its expected value again is an oracle, left out of the duplicate-code check with its reason beside it; pylint 4.1.3 duplicate-code in check.sh over every .py not a link (0.7s), on the newest Python with the test-quality tools; turn trials keep the call, the flow task, the copy of turn, claude -p and the record reading once in dev/turn/trials/shared.py, smoke-run with one claude -p; plugin.md: work made before a rule changed is read against the new one before commit; check.sh 0 copies, 100%"
+    },
+    {
+      "fact": "the user asked why not go on through turn, in parallel (2026-10-20): T3 and T4 run through turn at once, each in a clone of its own, from ccs/t3.json and ccs/t4.json; T5 after them, as it touches the same files; turn not taking a change to existing work was the 5 full mutation runs, now --since"
     }
   ],
   "semantic_gist": [
@@ -92,10 +95,16 @@
   ],
   "focal_entities": [
     {
-      "task": "check CI of this push and the one before (run 39420897226)"
+      "task": "T3 turn run: ccs/t3.json, $TURN_RUNS/t3"
     },
     {
-      "task": "T2: confirm against its criterion (plain git commit/push on the default branch stopped with the step and why, nothing else stopped), then tick it; find out what turn cannot take a change to existing work means"
+      "task": "T4 turn run: ccs/t4.json, $TURN_RUNS/t4"
+    },
+    {
+      "task": "on CI green for 464e229, tick T2"
+    },
+    {
+      "task": "merge T3 and T4 results, read each against its purpose, then T5"
     }
   ],
   "relational_map": [
@@ -130,7 +139,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "CI results, then T2 confirmed"
+      "next": "watch both runs; tick T2 on CI"
     }
   ],
   "uncertainty_signal": [
