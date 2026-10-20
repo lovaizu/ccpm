@@ -6,12 +6,13 @@ session is one piece of work from `/rn:up` to the merge, on a branch of its own;
 folder `.rn/<yyyymmdd>-<slug>/` on that branch, the slug a short name for the piece of work, holding
 the plan `steering.md` and `state.json`, where the session stands. A work, such as the plan, a
 document or the finished work, is made by turn, a plugin rn depends on, from a CCS: a JSON file
-naming the work, its receiver, what they use it for, the checklists of its kind and its decisions.
-A kind, such as readme or code, has rn's own checklists and may have the user's addition, each item
-of a checklist asking what the receiver of a work of that kind should get. turn writes, for each
-item, its Good, what the receiver gets for what the item asks, with the lines of the work that give
-it. At each of the three sign-offs, plan, design and deliverable, the conductor stops, shows the
-user a proposal, and waits for `/rn:ty`.
+naming the work, its receiver, what they use it for, each file or folder they have with it, such
+as the repository, the checklists of its kind and its decisions. A kind, such as readme or code,
+has rn's own checklists and may have the user's addition, each item of a checklist asking what the
+receiver of a work of that kind should get. turn writes, for each item, its Good, what the receiver
+gets for what the item asks, with the lines of the work that give it. At each of the three
+sign-offs, plan, design and deliverable, the conductor stops, shows the user a proposal, and waits
+for `/rn:ty`.
 
 Run from the top of the user's repository as `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/rn.py"
 <subcommand> ...`, with Python 3.9 or later and the standard library alone. It prints JSON, or the
@@ -29,7 +30,8 @@ import os
 import re
 import subprocess
 import sys
-from typing import Any, Callable, NoReturn
+from collections.abc import Callable
+from typing import Any, NoReturn
 
 # The plugin's own folder, which holds rn's checklists.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,12 +48,13 @@ SETTABLE = {"stage": STAGES, "signoff": SIGNOFFS, "feedback": None}
 # The keys an empty value clears; the stage is not among them, as a session always stands somewhere.
 CLEARABLE = ("signoff", "feedback")
 # For each role turn reads from a CCS, the key of the CCS entries that hold it; the call to turn:up
-# hands this table to turn under its own key "kind".
+# hands this table to turn.
 ENTRIES = {
     "work": "deliverable",
     "checklist": "checklist",
     "receiver": "audience",
     "use": "purpose",
+    "has": "has",
 }
 # The plan's front matter keys for the languages, which go into every CCS.
 LANGUAGES = ("artifact-language", "conversation-language")
@@ -267,6 +270,17 @@ def there(path: str, what: str) -> str:
     return path
 
 
+def held(path: str) -> str:
+    """The path of what the receiver has with the work, when a file or folder is there; stops
+    otherwise, as turn stops a call naming one that is not."""
+    if not os.path.exists(path):
+        raise Stop(
+            f"rn: what the receiver has, {path}, is not there; give the path of a file or folder"
+            " they have with the work, from the top"
+        )
+    return path
+
+
 def ccs_path(folder: str, work: str, suffix: str = "") -> str:
     """The path in the session's `ccs/` folder of the work's CCS, or, with the suffix `-result`, of
     the result turn writes for it."""
@@ -277,11 +291,19 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
     """Writes the work's CCS into the session and gives the call that hands it to turn:up; stops
     where a name, a text or a file given is wrong, or the branch holds no session."""
     work = named(args.work, "work")
+    # The session is found first, which stops below the top of the repository, since each path
+    # given is read from the top.
+    folder = current()
+    # A CCS holds its entries in four parts, the shape turn takes: focal_entities, what the work is
+    # about, the work, its receiver and what they have with it; goal_orientation, what the work is
+    # for; retrieved_artifacts, the files it is made from; and constraints, the bounds it is made
+    # in, such as the languages. turn finds each entry by its key, whichever part holds it.
     ccs = {
         "focal_entities": [
             {ENTRIES["work"]: given(args.path, "path of the work")},
             {ENTRIES["receiver"]: given(args.receiver, "receiver")},
-        ],
+        ]
+        + [{ENTRIES["has"]: held(p)} for p in args.has],
         "goal_orientation": [{ENTRIES["use"]: given(args.use, "use")}],
         "retrieved_artifacts": [
             {ENTRIES["checklist"]: path} for path in checklists(named(args.kind, "kind"), root)
@@ -292,12 +314,13 @@ def run_ccs(args: argparse.Namespace, root: str, today: datetime.date) -> Any:
         ]
         + [{"reference": there(p, "reference")} for p in args.reference],
     }
-    folder = current()
     # The plan is the first work, made before it can say the languages; its own decisions do.
     languages = front_matter(plan(folder))
     ccs["constraints"] = [{k: languages[k]} for k in LANGUAGES if k in languages]
     path = ccs_path(folder, work)
     write_json(path, ccs)
+    # turn's call takes the table of keys under "kind", a field name of turn's own that is no kind
+    # of work.
     return {"ccs": path, "kind": ENTRIES, "result": ccs_path(folder, work, "-result")}
 
 
@@ -504,6 +527,7 @@ def parser() -> Parser:
     ccs.add_argument("--kind", required=True)
     ccs.add_argument("--receiver", required=True)
     ccs.add_argument("--use", required=True)
+    ccs.add_argument("--has", required=True, action="append")
     ccs.add_argument("--decisions")
     ccs.add_argument("--reference", action="append", default=[])
     state = sub.add_parser("state")
