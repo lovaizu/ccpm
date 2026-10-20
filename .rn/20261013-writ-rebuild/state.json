@@ -152,6 +152,9 @@
     },
     {
       "fact": "turn lesson: in both runs the first user and evaluator gave Good where the stand-in, reading each Good at its lines, found bypasses and wrong citations; turn counts Good beyond what holds"
+    },
+    {
+      "fact": "the user stopped the implementation (2026-10-21 01:4x): much time and cost spent on must-be quality of no importance (T3: main is held by GitHub branch protection already); the user reviews rn's UX, README and design first, and asked whether turn has prompts or hooks beyond its core; T3 and T4 work left uncommitted in their clones, nothing merged"
     }
   ],
   "semantic_gist": [
@@ -232,7 +235,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "take up T3 and T4 results"
+      "next": "the user reviews dev/rn/ux.md, rn/README.md, dev/rn/design.md; no implementation until they say"
     }
   ],
   "uncertainty_signal": [
