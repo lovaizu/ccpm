@@ -137,6 +137,12 @@
     },
     {
       "fact": "T3 run 4 round 2: the generator's remade work left 4 survivors (0.73% of 547) before it closed them, now 0; transcript ~/.claude/projects/-tmp-…-scratchpad-t3/0feac21f-5b52-441c-a063-dc31536a18f3/subagents/agent-a637e57813d4a45e3.jsonl"
+    },
+    {
+      "fact": "T4 run 3 ended (00:4x, rc 0): 58 Good of 60, 2 questions (B-15 git checkout --/git restore of state.json, B-26 patterns inside sh -c), its stand-in found find /tmp -name '.*' stopped too; check.sh rn 100%, mutate --since 0 of 693; work uncommitted in the t4 clone"
+    },
+    {
+      "fact": "T4's 14 first survivors traced to code.md: 6 equivalent (!= [] to > [] twice, [:1] to [:2], c[0] to c[-1], [3:] to [2:], is not on a str), which code.md says nothing of; 8 killable by step 3 as written but not applied: == on a str or list mutated to <= or >= four times (3-value boundaries of a one-value partition), python3 <rn.py> with no more words (length boundary), a content block not a dict (decision table), a hidden name under a pattern twice (an equivalence partition)"
     }
   ],
   "semantic_gist": [
@@ -183,6 +189,9 @@
     },
     {
       "task": "CI mutation (turn) took 10m51s at 2e1b4d1 (run 39442675420), against 141s locally; find the cause and fix it"
+    },
+    {
+      "task": "open, asked: whether patterns (globs, parent folders) reaching the session folder are stopped; recommended A, not stopped, glob matching removed, decisions Not stopped extended; then T4 Q B-15 (git checkout --/restore), then T3 Q1 (no_commit edit refused by auto), Q2 (PR title naming git push stopped)"
     }
   ],
   "relational_map": [
