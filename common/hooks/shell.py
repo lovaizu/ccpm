@@ -5,23 +5,40 @@ not paths."""
 from __future__ import annotations
 
 import os
-import shlex
-from collections import deque
+import re
 from collections.abc import Iterator
-from typing import cast
 
 # Where one statement ends and the next begins.
-SEPARATORS = {";", "|", "||", "&", "&&", "(", ")", "`", "\n"}
+SEPARATORS = {";", ";;", "|", "|&", "||", "&", "&&", "(", ")", "`", "\n"}
 # A redirect that writes the path after it.
-WRITES = {">", ">>", ">|", "&>", "&>>"}
+WRITES = {">", ">>", ">|", "<>", "&>", "&>>"}
 # A heredoc's end word, a here-string or a file descriptor follows these, not a path.
 NOT_PATHS = {"<<", "<<-", "<<<", ">&", "<&"}
-# What each heredoc's operator takes off the start of each line of its text, before its end word.
-HEREDOCS = {"<<": "", "<<-": "\t"}
+# The redirects whose next word is a heredoc's end word, and whether each takes the tabs off the
+# start of each line of its text.
+HEREDOCS = {"<<": False, "<<-": True}
 REDIRECTS = {*WRITES, *NOT_PATHS, "<"}
-SIGNS = "();<>|&`\n"
-# Every operator the signs make, the longest first, so `&&` is not taken for two `&`.
+# Every operator, the longest first, so `&&` is not taken for two `&`.
 OPERATORS = sorted({*SEPARATORS, *REDIRECTS}, key=len, reverse=True)
+# One piece of a command as the shell reads it, tried in this order: blanks between words; a
+# backslash before a line's end, which joins the two lines; a comment, which begins only where a
+# word could; text in single or in double quotes, each closed by its quote; a quote not closed,
+# with the rest of the command; a character after a backslash; an operator; and plain text. Every
+# character begins one of them.
+PIECE = re.compile(
+    r"(?P<blank>[ \t]+)"
+    r"|(?P<join>\\\n)"
+    r"|(?P<comment>(?:^|(?<=[ \t\n;&|()<>`]))#[^\n]*)"
+    r"|'(?P<single>[^']*)'"
+    r'|"(?P<double>(?:\\.|[^"\\])*)"'
+    r"|(?P<unclosed>['\"].*)"
+    r"|\\(?P<escaped>.?)"
+    r"|(?P<operator>" + "|".join(re.escape(o) for o in OPERATORS) + ")"
+    r"|(?P<plain>[^ \t\n'\"\\;&|()<>`]+)",
+    re.DOTALL,
+)
+# In double quotes a backslash escapes only these, and before a line's end joins the two lines.
+DOUBLE_ESCAPED = re.compile(r'\\([$`"\\])|\\\n')
 # turn's script and each step it is asked, whose next word is where the run is kept.
 STEPS = {"start", "next", "given", "parts", "record"}
 # Commands that write each path they name, and those that write the last.
@@ -40,95 +57,73 @@ def sign(word: str, kinds: set[str]) -> bool:
     return isinstance(word, Operator) and word in kinds
 
 
-class Lexer(shlex.shlex):
-    """shlex, telling of each word whether it is operators, before any quote is taken off, with a
-    line's end always a word of its own, and taking `#` as a comment only where a word begins, as
-    the shell does."""
-
-    signs: bool
-    # The end words of the heredocs begun on this line, each with what is taken off its lines.
-    ends: list[tuple[str, str]]
-    # shlex keeps here the characters it has read and put back, since Python 3.6, where
-    # punctuation_chars came in; its type stubs leave it out.
-    _pushback_chars: deque[str]
-
-    def char(self) -> str:
-        return self._pushback_chars.pop() if self._pushback_chars else self.instream.read(1)
-
-    def read_token(self) -> str | None:
-        c = self.char()
-        while c and c in self.whitespace:
-            c = self.char()
-        if c == "#":
-            while c and c != "\n":
-                c = self.char()
-        self.signs = bool(c) and c in self.punctuation_chars
-        if c == "\n":
-            for end, start in self.ends:
-                self.text(end, start)
-            self.ends = []
-            return c
-        self._pushback_chars.append(c)
-        if not self.signs:
-            return super().read_token()
-        # Signs read are a word.
-        word = cast(str, super().read_token())
-        # shlex puts back the character after the signs, and `-` is no sign, as `cat -n` is one
-        # word; right after `<<`, not `<<<`, it makes `<<-`.
-        heredoc = word.endswith("<<") and not word.endswith("<<<")
-        if heredoc and list(self._pushback_chars) == ["-"]:
-            word += self._pushback_chars.pop()
-        if "\n" in word:
-            # What follows the line's end is read again, the next char first.
-            self._pushback_chars.extend(reversed(word[word.index("\n") :]))
-            word = word[: word.index("\n")]
-        return word
-
-    def text(self, end: str, start: str) -> None:
-        """Reads past a heredoc's text, to its end word on a line of its own, the characters of
-        `start` taken off the line's start first."""
-        line = None
-        while line != end:
-            line, c = "", self.char()
-            while c and c != "\n":
-                line, c = line + c, self.char()
-            line = line.lstrip(start)
-            if not c:
-                return
+def heredocs_end(command: str, pos: int, ends: list[tuple[str, bool]]) -> int:
+    """Where the command goes on after the heredocs whose text begins at pos, one after another,
+    each ended by a line holding its end word alone, after tabs where they are taken off; the end
+    of the command where a heredoc's end word never comes."""
+    for end, tabs in ends:
+        line = re.compile(("^\t*" if tabs else "^") + re.escape(end) + "$", re.MULTILINE)
+        found = line.search(command, pos)
+        pos = found.end() if found else len(command)
+    return pos
 
 
 def words(command: str) -> list[str]:
-    """The command's words, with `;`, `|`, `&&`, a line's end and the like apart from the paths
-    they follow, and from each other, as shlex joins signs that come together, such as `);`; and
-    each heredoc's text left out, from the line after `<<` to its end word."""
-    lexer = Lexer(command, posix=True, punctuation_chars=SIGNS)
-    lexer.whitespace = " \t\r"
-    lexer.whitespace_split = True
-    lexer.commenters = ""
-    lexer.ends = []
-    said: list[str] = []
-    try:
-        for word in iter(lexer.get_token, None):
-            if not lexer.signs:
-                if said and sign(said[-1], set(HEREDOCS)):
-                    lexer.ends.append((word, HEREDOCS[said[-1]]))
-                said.append(word)
+    """The command's words and operators in order, the operators as Operator: quotes and
+    backslashes taken off each word, and comments and each heredoc's text left out. A quoted `&&`
+    or `<<` is a word, and digits right before a redirect, a file descriptor, are no word. A
+    command whose quote does not close, which the shell does not run, is read word by word."""
+    found: list[str] = []
+    # The word being read, None before it begins; whether any of it was quoted; and the end words
+    # of the heredocs begun on this line.
+    word: str | None = None
+    quoted = False
+    ends: list[tuple[str, bool]] = []
+    # Each round reads what is left of the command to its end, unless it breaks off at the line
+    # after which heredocs' text begins; then what follows that text is left for the next round.
+    left: str | None = command
+    while left is not None:
+        reading, left = left, None
+        for piece in PIECE.finditer(reading):
+            # Each alternative of PIECE is a named group, so the piece has its kind. A kind is
+            # told by membership rather than `==`, since an order comparison such as `>=` would
+            # tell it from the kinds that come there too, and a mutant making it one would pass
+            # every test.
+            kind = str(piece.lastgroup)
+            text = piece.group(kind)
+            if kind in ("unclosed",):
+                return [Operator(w) if w in OPERATORS else w for w in command.split()]
+            if kind in ("single", "double", "escaped", "plain"):
+                if kind in ("double",):
+                    text = DOUBLE_ESCAPED.sub(lambda m: m.group(1) or "", text)
+                word = (word or "") + text
+                quoted = quoted or kind != "plain"
                 continue
-            said += [Operator(o) for o in apart(word)]
-    except ValueError:
-        # Read word by word, as its quoting does not close.
-        return [Operator(w) if w in OPERATORS else w for w in command.split()]
-    return said
-
-
-def apart(signs: str) -> list[str]:
-    """Signs shlex joined, each operator apart, the longest first."""
-    found = []
-    while signs:
-        operator = next(o for o in OPERATORS if signs.startswith(o))
-        found.append(operator)
-        signs = signs[len(operator) :]
+            if kind in ("join", "comment"):
+                continue
+            # Only a redirect's text begins with `<` or `>`.
+            if text[0] in "<>" and word is not None and word.isdigit() and not quoted:
+                word = None
+            if word is not None:
+                if found and sign(found[-1], set(HEREDOCS)):
+                    ends.append((word, HEREDOCS[found[-1]]))
+                found.append(word)
+            word, quoted = None, False
+            if kind in ("operator",):
+                found.append(Operator(text))
+            if text == "\n" and ends:
+                left = reading[heredocs_end(reading, piece.end(), ends) :]
+                ends = []
+                break
+    if word is not None:
+        found.append(word)
     return found
+
+
+def without_redirects(said: list[str]) -> list[str]:
+    """The words of a statement, each redirect and its target left out."""
+    pairs = zip([""] + said, said)
+    return [w for before, w in pairs if not sign(w, REDIRECTS) and not sign(before, REDIRECTS)]
 
 
 def statements(command: str, cwd: str) -> Iterator[tuple[str | None, list[str], str]]:
@@ -200,10 +195,9 @@ def written(command: str, cwd: str) -> list[str]:
     found = []
     for here, said, _ in statements(command, cwd):
         # Each word with the one before it.
-        pairs = list(zip([""] + said, said))
-        found += [path(here, w) for before, w in pairs if sign(before, WRITES)]
+        found += [path(here, w) for before, w in zip([""] + said, said) if sign(before, WRITES)]
         # A redirect's target is not an argument of the command.
-        plain = [w for before, w in pairs if not sign(w, REDIRECTS) and not sign(before, REDIRECTS)]
+        plain = without_redirects(said)
         # An empty word, such as the backup suffix of `sed -i ''`, names no path.
         args = [w for w in plain[1:] if w and not w.startswith("-")]
         head = plain[0] if plain else ""

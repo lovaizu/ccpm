@@ -58,7 +58,7 @@ class TestNamed(unittest.TestCase):
         # Given: a command naming a path after a redirect to a file
         # When: the paths it names are read
         # Then: each word but the redirect is taken, the path after it too
-        self.assertEqual(shell.named("cat a 2> err b", HERE), at("cat", "a", "2", "err", "b"))
+        self.assertEqual(shell.named("cat a 2> err b", HERE), at("cat", "a", "err", "b"))
 
     def test_only_where_the_run_is_kept_is_left_out_of_turns_script(self):
         # Given: turn's script asked a step, said by its path alone or after python3 and a flag;
@@ -202,6 +202,16 @@ class TestWritten(unittest.TestCase):
         command = "cat <<EOF \x07 > notes/new.md\nhi\nEOF"
         self.assertEqual(shell.written(command, HERE), at("notes/new.md"))
 
+    def test_a_heredoc_s_line_holds_words_after_blanks_of_either_kind(self):
+        for blank in (" ", "\t"):
+            with self.subTest(blank=blank):
+                # Given: a heredoc whose line holds a redirect after a blank
+                command = f"cat <<EOF{blank}> notes/new.md\nhi\nEOF"
+                # When: the paths it writes are read
+                # Then: the redirect's target is taken, as the heredoc's text begins on the next
+                # line
+                self.assertEqual(shell.written(command, HERE), at("notes/new.md"))
+
     def test_a_heredoc_s_end_word_ends_it_only_at_a_line_s_start(self):
         # Given: heredocs whose text holds the end word after another word, a plain one or one of
         # a control character, and then a redirect
@@ -254,6 +264,148 @@ class TestHeredoc(unittest.TestCase):
         # Then: each is read apart, word by word
         found = shell.statements("echo don't && cat a", HERE)
         self.assertEqual([w for _, w, _ in found], [["echo", "don't"], ["cat", "a"]])
+
+
+def read(command):
+    """The words of each statement of the command, each redirect and its target left out."""
+    return [shell.without_redirects(w) for _, w, _ in shell.statements(command, HERE)]
+
+
+# The command rn's /rn:up skill runs to keep a session's folder.
+KEEP = "git add .rn/s\ngit commit -F - <<'EOF'\nKeep the plan\nEOF\ngit push"
+
+
+class TestReading(unittest.TestCase):
+    def test_each_separator_ends_a_statement(self):
+        for separator in (";", ";;", "&", "&&", "|", "||", "|&", "(", ")", "`", "\n"):
+            with self.subTest(separator=separator):
+                # Given: a command of two statements with the separator between them
+                # When: it is read
+                # Then: it gives each statement's words
+                self.assertEqual(
+                    read(f"git add a{separator}git push"), [["git", "add", "a"], ["git", "push"]]
+                )
+
+    def test_quoted_operators_are_words(self):
+        # Given: a commit whose message is operator signs, quoted
+        # When: it is read
+        # Then: the signs are a word of the statement
+        self.assertEqual(read("git commit -m '&&' \"<<\""), [["git", "commit", "-m", "&&", "<<"]])
+
+    def test_a_quoted_heredoc_sign_begins_no_heredoc(self):
+        # Given: a quoted `<<` with a word after it, and a push on the next line
+        # When: it is read
+        # Then: the next line is a statement, not a heredoc's text
+        self.assertEqual(read('echo "<<" x\ngit push'), [["echo", "<<", "x"], ["git", "push"]])
+
+    def test_a_heredocs_text_is_left_out(self):
+        # Given: the keep of rn's /rn:up skill, a commit taking its message from a heredoc
+        # When: it is read
+        # Then: the heredoc's text and end word are left out
+        want = [["git", "add", ".rn/s"], ["git", "commit", "-F", "-"], ["git", "push"]]
+        self.assertEqual(read(KEEP), want)
+
+    def test_a_heredoc_ends_only_at_its_end_word_alone_on_a_line(self):
+        # Given: a heredoc whose text holds its end word inside a line, and indented
+        # When: it is read
+        # Then: its text runs to the line of its end word alone
+        self.assertEqual(read("cat <<EOF\nEOF x\n EOF\nEOF\ngit push"), [["cat"], ["git", "push"]])
+
+    def test_two_heredocs_on_a_line_are_left_out_in_turn(self):
+        # Given: two heredocs begun on one line
+        # When: it is read
+        # Then: the text of both is left out
+        command = "cat <<A <<B\ngit push\nA\ngit commit\nB\ngit add x"
+        self.assertEqual(read(command), [["cat"], ["git", "add", "x"]])
+
+    def test_a_hash_after_quotes_is_part_of_the_word(self):
+        # Given: a word whose `#` comes right after a quoted part
+        # When: it is read
+        # Then: the `#` and what follows it are part of the word
+        self.assertEqual(read("echo ''#x y"), [["echo", "#x", "y"]])
+
+    def test_a_backslash_before_a_lines_end_joins_the_lines(self):
+        # Given: a push split over two lines by a backslash
+        # When: it is read
+        # Then: it is one statement
+        self.assertEqual(read("git \\\npush"), [["git", "push"]])
+
+    def test_a_backslash_keeps_the_character_after_it(self):
+        # Given: words holding a blank and a separator, each after a backslash, and a backslash
+        # at the command's end
+        # When: it is read
+        # Then: each is part of the word, and the last backslash none
+        self.assertEqual(read("echo a\\ b c\\;d e\\"), [["echo", "a b", "c;d", "e"]])
+
+    def test_double_quotes_take_a_backslash_off_what_it_escapes_alone(self):
+        # Given: a word in double quotes holding backslashes before characters they escape there,
+        # before a line's end, and before one they do not
+        # When: it is read
+        # Then: each escape gives its character, the line's end is joined, and the other
+        # backslash is kept
+        self.assertEqual(read('echo "a\\"b\\\\c\\$d\\`e\\\nf\\g"'), [["echo", 'a"b\\c$d`ef\\g']])
+
+    def test_single_quotes_keep_every_backslash(self):
+        # Given: a word in single quotes holding backslashes before characters double quotes take
+        # them off
+        # When: it is read
+        # Then: each backslash is kept
+        self.assertEqual(read("echo '\\$\\\"'"), [["echo", '\\$\\"']])
+
+    def test_a_file_descriptor_first_in_a_statement_is_no_word(self):
+        # Given: a push whose errors are redirected before its first word
+        # When: it is read
+        # Then: the descriptor is no word of the push
+        self.assertEqual(read("2>/dev/null git push"), [["git", "push"]])
+
+    def test_an_empty_quoted_word_is_a_word(self):
+        # Given: a commit whose message is empty quotes
+        # When: it is read
+        # Then: the empty word is part of the statement
+        self.assertEqual(read("git commit -m ''"), [["git", "commit", "-m", ""]])
+
+    def test_a_redirect_and_its_target_are_left_out(self):
+        for redirect in ("<", ">", ">>", ">|", "<>", "&>", "&>>", "<<<", ">&", "<&"):
+            with self.subTest(redirect=redirect):
+                # Given: a push with a redirect
+                # When: it is read
+                # Then: the redirect and its target are no words of the push
+                self.assertEqual(read(f"git push {redirect} x origin"), [["git", "push", "origin"]])
+
+    def test_a_file_descriptor_before_a_redirect_is_no_word(self):
+        # Given: a push whose errors are redirected to its output
+        # When: it is read
+        # Then: the descriptor is no word of the push
+        self.assertEqual(read("git push 2>&1"), [["git", "push"]])
+
+    def test_digits_not_right_before_a_redirect_are_words(self):
+        commands = ("git push '2'>x", 'git push "2">x', "git push \\2>x", "git push 2 >x")
+        for command in commands + ("git push a2>x",):
+            with self.subTest(command=command):
+                # Given: digits quoted, escaped, apart from the redirect, or after a letter
+                # When: it is read
+                # Then: they are a word
+                self.assertEqual(len(read(command)[0]), 3)
+
+    def test_a_redirect_at_a_statements_end_takes_no_word_of_the_next(self):
+        # Given: a redirect with no target before a separator
+        # When: it is read
+        # Then: the next statement keeps its first word
+        self.assertEqual(read("echo >; git push"), [["echo"], ["git", "push"]])
+
+    def test_a_blank_command_has_no_statement(self):
+        # Given: a command of blanks and separators alone
+        # When: it is read
+        # Then: it has no statement
+        self.assertEqual(read(" \t;\n"), [])
+
+
+class TestWrittenByReadWrite(unittest.TestCase):
+    def test_a_read_and_write_redirect_writes_its_target(self):
+        # Given: a command opening a file to read and write with `<>`
+        # When: the paths it writes are read
+        # Then: the file is taken, as `<>` makes it where it is not there
+        self.assertEqual(shell.written("cat <> a", HERE), at("a"))
 
 
 class TestSedInPlace(unittest.TestCase):
