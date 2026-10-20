@@ -10,6 +10,9 @@ from unittest import mock
 
 from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 
+# The usage written out as the user is to read it, not taken from run.py, so a change to it in
+# run.py by mistake fails the tests; the duplicate-code check leaves it out, as the user chose.
+# pylint: disable=duplicate-code
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
@@ -18,6 +21,7 @@ USAGE = (
     "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
 )
+# pylint: enable=duplicate-code
 
 
 def call_with(**change):

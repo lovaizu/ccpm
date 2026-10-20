@@ -13,7 +13,6 @@ The repository and the copy of turn are removed when the run ends; the records s
 Code's own folder of each session.
 """
 
-import glob
 import json
 import os
 import shutil
@@ -22,30 +21,10 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
-CALL = {
-    "ccs": ".tasks/ccs.json",
-    "result": ".tasks/result.json",
-    "kind": {
-        "work": "deliverable",
-        "checklist": "checklist",
-        "receiver": "audience",
-        "use": "purpose",
-        "has": "code",
-    },
-}
-CHECK = {
-    "items": [
-        {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."},
-        {
-            "checklist": "checklist.md",
-            "item": "B-2",
-            "can": "the decisions on demo and its license",
-        },
-    ],
-    "questions": [],
-}
-README = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
+sys.path.insert(0, os.path.dirname(HERE))
+import shared
+
+CALL = shared.call("code")
 UNMET = {
     "checklist": "checklist.md",
     "item": "B-1",
@@ -54,13 +33,8 @@ UNMET = {
 }
 
 place = os.path.abspath(sys.argv[1])
-shutil.copytree(os.path.join(os.path.dirname(HERE), "flow", "task"), place)
-os.makedirs(os.path.join(place, ".tasks"))
-shutil.move(os.path.join(place, "ccs.json"), os.path.join(place, CALL["ccs"]))
-for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "task"]):
-    subprocess.run(["git", "-C", place, *args], check=True)
-plugin = place.rstrip("/") + "-turn"
-shutil.copytree(os.path.join(ROOT, "turn"), plugin)
+shared.task(place, CALL)
+plugin = shared.turn(place)
 sys.path.insert(0, os.path.join(plugin, "scripts"))
 os.chdir(place)
 
@@ -85,53 +59,21 @@ def role(step: dict) -> str:
 exactly as it is, and wait for its reply. Then reply with its reply as it is.
 {step["prompt"]}"""
     start = time.time()
-    done = subprocess.run(
-        [
-            "claude",
-            "-p",
-            ask,
-            "--output-format",
-            "json",
-            "--model",
-            "opus",
-            "--plugin-dir",
-            plugin,
-            "--settings",
-            '{"enabledPlugins": {"turn@ccpm": false}}',
-            "--permission-mode",
-            "bypassPermissions",
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    session = json.loads(done.stdout)["session_id"]
-    record = glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}/subagents/*.jsonl"))
+    session = shared.claude(ask, plugin)["session_id"]
+    record = shared.agents(session)
     print(f"=== {step['agent']}  minutes: {round((time.time() - start) / 60, 1)}")
     print("session:", session)
     for path in record:
-        print("record:", path)
-        with open(path, encoding="utf-8") as f:
-            for line in f:
-                entry = json.loads(line)
-                # Claude Code's copy of each request says again what the role did.
-                if entry.get("type") == "api-request-blob":
-                    continue
-                content = entry.get("message", {}).get("content")
-                for part in content if isinstance(content, list) else []:
-                    if part.get("type") == "tool_use":
-                        print("  use:", part["name"], json.dumps(part["input"], ensure_ascii=False))
-                    elif part.get("type") == "tool_result" and part.get("is_error"):
-                        print("  stop:", part.get("content"))
+        shared.show(path)
     kept = run.running(CALL["result"])
     print("reply kept:", json.dumps(kept["next"].get("reply") if kept else None))
     return record[0] if record else ""
 
 
 turn("start", json.dumps(CALL))
-records = [role(turn("next", CALL["result"], given=json.dumps(CHECK)))]
+records = [role(turn("next", CALL["result"], given=json.dumps(shared.CHECK)))]
 with open("README.md", "w", encoding="utf-8") as f:
-    f.write(README)
+    f.write(shared.UNLICENSED)
 records.append(role(turn("next", CALL["result"])))
 kept = run.running(CALL["result"])
 if kept is None:
@@ -144,6 +86,6 @@ if kept is None:
     sys.exit("the run ended before the learner")
 kept.update(settled={"items": [UNMET], "questions": []}, records=records)
 role(run.ask(kept, run.LEARNER, {"findings": [UNMET], "records": records, "lessons": []}))
-os.chdir(ROOT)
+os.chdir(shared.ROOT)
 shutil.rmtree(place)
 shutil.rmtree(plugin)

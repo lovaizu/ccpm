@@ -17,18 +17,9 @@ import subprocess
 import sys
 import time
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-CALL = {
-    "ccs": ".tasks/ccs.json",
-    "result": ".tasks/result.json",
-    "kind": {
-        "work": "deliverable",
-        "checklist": "checklist",
-        "receiver": "audience",
-        "use": "purpose",
-        "has": "source",
-    },
-}
+import shared
+
+CALL = shared.call("source")
 STEP = f"""Start the `turn:up` agent in the background with
 {json.dumps(CALL)}
 When it returns, check each Good against its lines, and put each question to the user.
@@ -52,38 +43,14 @@ for name in ("csvtidy.py", "notes"):
 os.makedirs(os.path.join(place, "checklists"))
 for name in ("product/readme.md", "usability.md"):
     shutil.copyfile(
-        os.path.join(ROOT, "rn", "checklists", name),
+        os.path.join(shared.ROOT, "rn", "checklists", name),
         os.path.join(place, "checklists", os.path.basename(name)),
     )
 os.makedirs(os.path.join(place, ".tasks"))
 shutil.copyfile(os.path.join(task, "ccs.json"), os.path.join(place, CALL["ccs"]))
-plugin = place.rstrip("/") + "-turn"
-shutil.copytree(os.path.join(ROOT, "turn"), plugin)
+plugin = shared.turn(place)
 start = time.time()
-done = subprocess.run(
-    [
-        "claude",
-        "-p",
-        STEP,
-        "--output-format",
-        "json",
-        "--model",
-        "opus",
-        "--plugin-dir",
-        plugin,
-        "--settings",
-        '{"enabledPlugins": {"turn@ccpm": false}}',
-        "--permission-mode",
-        "bypassPermissions",
-    ],
-    check=True,
-    cwd=place,
-    # claude -p stops waiting for turn, which runs in the background, after 10 minutes by default.
-    env={**os.environ, "CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS": str(2 * 60 * 60 * 1000)},
-    capture_output=True,
-    text=True,
-)
-end = json.loads(done.stdout)
+end = shared.claude(STEP, plugin, cwd=place, wait=120)
 print(end.get("result"))
 print("session:", end.get("session_id"), "cost:", end.get("total_cost_usd"))
 print("minutes:", round((time.time() - start) / 60, 1))

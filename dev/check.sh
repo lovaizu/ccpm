@@ -16,6 +16,15 @@ fi
 ruff check .
 ruff format --check .
 
+# Code copied between files is fixed in one and left wrong in the other, so code more than one file
+# needs is kept once (.claude/rules/plugin.md); every file is read at once, whichever plugins are
+# given, as a copy can lie in any two. A link is the file it points to, so is left out. pylint is in
+# dev/requirements-test-quality.txt, as it needs a newer Python than 3.9 only to check, not to run.
+if command -v pylint >/dev/null 2>&1; then
+  git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
+    | xargs pylint --disable=all --enable=duplicate-code --score=no
+fi
+
 # Each plugin keeps its tests in dev/<plugin>/tests/ (.claude/rules/plugin.md), and its scripts find
 # their modules by putting their own folders on sys.path; plugins share module names, such as stop,
 # so each is type-checked on its own with its folders as search paths, and the folders of common/,

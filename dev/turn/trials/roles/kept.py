@@ -21,44 +21,18 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
-CALL = {
-    "ccs": ".tasks/ccs.json",
-    "result": ".tasks/result.json",
-    "kind": {
-        "work": "deliverable",
-        "checklist": "checklist",
-        "receiver": "audience",
-        "use": "purpose",
-        "has": "code",
-    },
-}
-CHECK = {
-    "items": [
-        {"checklist": "checklist.md", "item": "B-1", "can": "notes/decisions.md:2 names MIT."},
-        {
-            "checklist": "checklist.md",
-            "item": "B-2",
-            "can": "the decisions on demo and its license",
-        },
-    ],
-    "questions": [],
-}
-# The set README the first user stops at, with no license.
-UNLICENSED = "# demo\n\ndemo prints a greeting.\n\n## Use\n\nRun `sh demo.sh`.\n"
+sys.path.insert(0, os.path.dirname(HERE))
+import shared
+
+CALL = shared.call("code")
 
 place = os.path.abspath(sys.argv[1])
-shutil.copytree(os.path.join(os.path.dirname(HERE), "flow", "task"), place)
-os.makedirs(os.path.join(place, ".tasks"))
-shutil.move(os.path.join(place, "ccs.json"), os.path.join(place, CALL["ccs"]))
-for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "task"]):
-    subprocess.run(["git", "-C", place, *args], check=True)
-plugin = place.rstrip("/") + "-turn"
-shutil.copytree(os.path.join(ROOT, "turn"), plugin)
+shared.task(place, CALL)
+plugin = shared.turn(place)
 # The set README stands beside the repository, where no role reads it.
 unlicensed = place.rstrip("/") + "-unlicensed.md"
 with open(unlicensed, "w", encoding="utf-8") as f:
-    f.write(UNLICENSED)
+    f.write(shared.UNLICENSED)
 script = f'python3 "{os.path.join(plugin, "scripts", "turn.py")}"'
 result = CALL["result"]
 
@@ -71,7 +45,7 @@ subprocess.run(
 )
 done = subprocess.run(
     ["python3", os.path.join(plugin, "scripts", "turn.py"), "next", result],
-    input=json.dumps(CHECK),
+    input=json.dumps(shared.CHECK),
     cwd=place,
     check=True,
     capture_output=True,
@@ -94,51 +68,13 @@ first time, and send the `message` turn.py printed last to its `to`, both as pri
 6. Reply with what turn.py printed last, as it is."""
 
 start = time.time()
-done = subprocess.run(
-    [
-        "claude",
-        "-p",
-        STEPS,
-        "--output-format",
-        "json",
-        "--model",
-        "opus",
-        "--plugin-dir",
-        plugin,
-        "--settings",
-        '{"enabledPlugins": {"turn@ccpm": false}}',
-        "--permission-mode",
-        "bypassPermissions",
-    ],
-    cwd=place,
-    check=True,
-    capture_output=True,
-    text=True,
-)
-end = json.loads(done.stdout)
+end = shared.claude(STEPS, plugin, cwd=place)
 session = end["session_id"]
 print("session:", session, "minutes:", round((time.time() - start) / 60, 1))
 print("last:", end.get("result"))
 main = glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}.jsonl"))
-agents = glob.glob(os.path.expanduser(f"~/.claude/projects/*/{session}/subagents/*.jsonl"))
-for path in main + sorted(agents):
-    print("record:", path)
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            entry = json.loads(line)
-            # Claude Code's copy of each request says again what the agent did.
-            if entry.get("type") == "api-request-blob":
-                continue
-            if isinstance(entry.get("origin"), dict):
-                print("  message:", entry["origin"].get("body"))
-            content = entry.get("message", {}).get("content")
-            if isinstance(content, str) and content.startswith("Stop hook feedback"):
-                print("  stop:", content)
-            for part in content if isinstance(content, list) else []:
-                if part.get("type") == "tool_use":
-                    print("  use:", part["name"], json.dumps(part["input"], ensure_ascii=False))
-                elif part.get("type") == "tool_result" and part.get("is_error"):
-                    print("  stop:", part.get("content"))
+for path in main + sorted(shared.agents(session)):
+    shared.show(path)
 shutil.rmtree(place)
 shutil.rmtree(plugin)
 os.remove(unlicensed)

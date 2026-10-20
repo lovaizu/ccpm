@@ -10,6 +10,11 @@ whichever plugin is being built, and make the work again against it.
 - Rationale: what is made with the checklist open is made right as it is made; a gap left in a
   checklist is met again by every plugin made with it.
 
+Work made before a rule or a checklist changed is read against the new one before it is committed.
+
+- Rationale: work made earlier was checked against what the rules said then; committed unread, it
+  brings back what the change was made to stop.
+
 Source: facts confirmed in the official docs (plugins-reference / plugin-marketplaces, prompting
 best practices / skill authoring best practices) and the official plugins.
 
@@ -84,11 +89,15 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
    **Look first for what the plugins already share and use it.** Code more than one plugin needs,
    such as how a hook reads a command, is kept once in `common/`, with its tests in
    `dev/common/tests/`, and each plugin takes it through a relative symbolic link; what the tests
-   share, such as a repository made once and copied for each test, is kept in `dev/common/`. A
-   plugin's whole test run takes seconds, and the time each check takes is read on every run.
+   share, such as a repository made once and copied for each test, is kept in `dev/common/`.
+   `dev/check.sh` fails on lines copied between any two files, but a test's expected value written
+   out again. A plugin's whole test run takes seconds, and the time each check takes is read on
+   every run.
    - Rationale: installing copies the target of a link within the marketplace into the plugin, so
-     each plugin carries the shared code while it is written, tested and fixed in one place; mutation
-     testing runs the tests once for each mutant, so a slow test run makes every change wait.
+     each plugin carries the shared code while it is written, tested and fixed in one place; a copy
+     is fixed in one file and left wrong in the other; a test that takes its expected value from the
+     code checks the code against itself; mutation testing runs the tests once for each mutant, so a
+     slow test run makes every change wait.
 
 c. **Write each prompt, a skill or an agent, with `usability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**

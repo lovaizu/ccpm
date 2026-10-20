@@ -462,6 +462,10 @@ class CcsTest(RepoTest):
         # When: the conductor has a work's CCS written.
         out = self.made()
         # Then: rn gives the call naming the CCS, the key of each entry and the result's path.
+        # The keys are written out as turn is to read them, not taken from rn.py, so a change to
+        # them in rn.py by mistake fails the test; the duplicate-code check leaves them out, as the
+        # user chose.
+        # pylint: disable=duplicate-code
         want = {
             "ccs": CCS,
             "kind": {
@@ -473,6 +477,7 @@ class CcsTest(RepoTest):
             },
             "result": CCS_RESULT,
         }
+        # pylint: enable=duplicate-code
         self.assertEqual(out, want)
 
     def test_ccs_names_the_work_and_its_receiver(self):
