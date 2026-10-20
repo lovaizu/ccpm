@@ -32,12 +32,16 @@ Code is written in this order, each step the ground of the next:
    in place of a comparison, or a whole list in place of a slice of one that holds one item; a
    behavior found needed while writing is added to the list and gets its failing test first.
 6. Before handing it over, name for each line changed, for each change mutation testing makes to
-   it, the example test that fails, not a property test, whose inputs change from run to run: each comparison, `==` and `!=` among them, replaced by each other one,
-   a value under its bound and one over it each tried; each number made one more, one less and 0;
+   it, the example test that fails, not a property test, whose inputs change from run to run: each
+   comparison, `==` and `!=` among them, replaced by each other one, a value under its bound and
+   one over it each tried; each number made one more, one less and 0;
    each `and` made `or` and back; each `not` added and taken off; each line taken out. A change
    with no such test is a behavior with no test, and goes back to step 5; one that gives the same
    result on every value the code can meet is a form wider than its values, and goes back too.
-7. Check it by the development rules and by how it is checked.
+7. Check it by the development rules and by how it is checked, each check, the tests, the
+   coverage, the property tests and the mutation testing alike, on what the change touches before
+   it is handed over, the property tests on few inputs, and on the whole in CI, the property tests
+   on many, so the time each change waits on grows with the change, not with the code.
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
 subject and each file a part; its F-1 is answered by this F-1, its B-7 by each piece of knowledge,
@@ -157,9 +161,9 @@ Scope: whole
 When the behavior a test checks is broken in the code, does the maintainer learn of it from that
 test failing?
 
-Look at: mutation testing, of the lines changed on every change and of the whole code in CI, which
-makes each small change to the code a fault could, such as a comparison, an operator or a value replaced, and runs the tests on each; a
-mutant no test fails on, a survivor, fails.
+Look at: mutation testing, which makes each small change to the code a fault could, such as a
+comparison, an operator or a value replaced, and runs the tests on each; a mutant no test fails on,
+a survivor, fails.
 
 Why: a test that does not fail when its behavior breaks looks the same as one that works, and lets
 a fault pass.
@@ -241,8 +245,8 @@ Scope: whole
 For each behavior over inputs of a kind, such as any text, path or list, can the maintainer learn
 from a test that it holds for the inputs no example names?
 
-Look at: property-based testing of each such behavior, on every run of the checks, few inputs on every
-change and many in CI, which makes inputs of the kind and checks a property every one must have, such as a parse giving back what was
+Look at: property-based testing of each such behavior, on every run of the checks, which makes many
+inputs of the kind and checks a property every one must have, such as a parse giving back what was
 written; with new inputs on every run, CI included, so that inputs not yet tried are met, and each
 input that fails reproduced from what the failure prints, not run again, and kept as an example.
 
