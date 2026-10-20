@@ -212,6 +212,12 @@ that:
   The scripts of rn run on them, and so do those of turn, a plugin installed with rn that rn uses
   to make the plan, each document and the finished work, and to have the first reader use each.
 
+- Recommended: Claude Code run in a [Docker Sandbox](https://docs.docker.com/ai/sandboxes/), with
+  the permission mode `bypassPermissions`.
+
+  rn hands whole pieces of work to agents that run many commands; in this mode they are not stopped
+  to ask at each one, and the sandbox keeps what they do inside it. rn is tried in the same setting.
+
 ## Installation
 
 In Claude Code, add the marketplace once, then install rn:

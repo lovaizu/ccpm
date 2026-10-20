@@ -1,6 +1,5 @@
 ---
 name: generator
-model: opus
 description: Stands in for turn's generator in a trial of turn's flow, writing the work and replying as set for this call. Called by turn:up.
 ---
 

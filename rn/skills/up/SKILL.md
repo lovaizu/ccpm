@@ -3,7 +3,6 @@ name: up
 description: Starts an rn session from a piece of work the user asks for in rough words with `/rn:up <what you want>`, confirms each point to decide with them one per message, has the plan made and stops at the plan sign-off; with `/rn:up` alone, in this conversation or a fresh one, goes on with the session on the checked-out branch from where it stands. Runs only when the user types /rn:up.
 disable-model-invocation: true
 argument-hint: "[what you want]"
-model: opus
 ---
 
 ## Role

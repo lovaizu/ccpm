@@ -186,14 +186,15 @@ Can the reader tell what is checked of each physical unit, and the bar it must p
 Why: the whole is built from units checked one by one; a unit left unchecked, or checked to no
 stated bar, breaks the whole where no check shows it.
 
-### B-12: An AI part checked on the model it names
+### B-12: An AI part checked on the model its users run it on
 
 Scope: its part
 
-Can the reader tell that each part run by an AI is checked on the model the part names, never a
-smaller one?
+Can the reader tell that each part run by an AI is checked on the model its users run it on, such as
+Claude Code's default, never a smaller one?
 
-Why: a smaller model's slips are not the product's, and the product's own pass unseen beside them.
+Why: a smaller model's slips are not the product's, and the product's own pass unseen beside them;
+a part checked on another model than its users' is checked on what they never meet.
 
 ### B-13: An AI part judged from its records
 

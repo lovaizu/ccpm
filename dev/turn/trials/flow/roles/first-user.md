@@ -1,6 +1,5 @@
 ---
 name: first-user
-model: opus
 description: Stands in for turn's first-user in a trial of turn's flow, replying as set for this call. Called by turn:up.
 ---
 

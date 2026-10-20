@@ -1,6 +1,5 @@
 ---
 name: evaluator
-model: opus
 description: Holds each Good of the first user's reading of a turn run's work to what its item asks, finds in the work the Good of each item the reading gave none, and gives every Good with the lines that give it. Called by turn:up.
 ---
 

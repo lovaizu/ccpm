@@ -2,7 +2,6 @@
 name: ty
 description: Approves the proposal the user is shown at an rn sign-off when they type `/rn:ty`, keeps the approval in the session's record on its branch and goes on. Runs only when the user types /rn:ty.
 disable-model-invocation: true
-model: opus
 ---
 
 ## Role

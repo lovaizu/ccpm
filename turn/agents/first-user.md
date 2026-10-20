@@ -1,6 +1,5 @@
 ---
 name: first-user
-model: opus
 description: Uses the work of a turn run in its receiver's place, meeting it for the first time with what the receiver has, and gives for each item of the run's checklists the Good it found in the work, with the lines that give it, or where it stopped, what it did there and what it did not get. Called by turn:up.
 ---
 

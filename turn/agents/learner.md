@@ -1,6 +1,5 @@
 ---
 name: learner
-model: opus
 description: Finds, after each round of a turn run, from every item's finding and the record of every agent of the run, how the run went, each lesson resting on the records' words. Called by turn:up.
 ---
 

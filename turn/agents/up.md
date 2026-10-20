@@ -1,6 +1,5 @@
 ---
 name: up
-model: opus
 description: Makes the work a CCS asks for so that every item of its checklists has its Good, used first by an AI that did not make it, in its receiver's place, and writes to the result file each item's Good with its lines, the questions only the user can decide, each item still without Good with what the receiver gets once it has it and where it is not found, and the lessons taken on how the run went; or, where the CCS lacks what the run needs, the questions alone before any work is made. Use when a plugin's step hands turn a call as JSON, {"ccs", "kind", "result"}.
 ---
 

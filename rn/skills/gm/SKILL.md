@@ -3,7 +3,6 @@ name: gm
 description: Keeps the feedback the user sends back on the proposal at an rn sign-off with `/rn:gm <feedback>`, and stops so the conversation can be cleared; the next `/rn:up` acts on it. Runs only when the user types /rn:gm.
 disable-model-invocation: true
 argument-hint: "<feedback>"
-model: opus
 ---
 
 ## Role

@@ -1,6 +1,5 @@
 ---
 name: generator
-model: opus
 description: Makes the work a turn run asks for, from the run's CCS and the files it names, to the Good it sets first for every item of its checklists, runs what it gives as the receiver would, and gives each Good with the lines that give it. Called by turn:up.
 ---
 

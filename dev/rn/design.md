@@ -185,7 +185,7 @@ rn/                                   the plugin, on the user's machine
   same way.
 
 - The conductor is rn's three skills, one per command, each run in the user's Claude Code
-  conversation on Opus, the model it names.
+  conversation on the model the user runs it on.
 - The maker is turn, a plugin installed with rn as its dependency; the conductor calls its `turn:up`
   agent with a work's CCS, a JSON file holding all turn's call takes, the work, its receiver, what
   they use it for and have with it, its checklists and the files it is made from, kept in the
@@ -221,8 +221,9 @@ rn/                                   the plugin, on the user's machine
 Every trial runs in `lovaizu/playground` on a branch of its own, removed with its pull requests
 after, from code kept in `dev/rn/trials/`, where the real requests the trials use are kept too, the
 same for each version compared: pieces of work asked of rn in a user's rough words, each with the
-purpose the stand-in user holds behind them. Every AI part runs on the model it names, never a
-smaller one, and is judged from the JSONL of every conversation and agent it started, not from its
+purpose the stand-in user holds behind them. Every AI part runs on Opus 5.5, the model Claude Code
+runs by default on every plan, and runs with `bypassPermissions` in a Docker Sandbox, as rn's README
+has its users run it, and is judged from the JSONL of every conversation and agent it started, not from its
 outcome alone.
 
 ### Units
