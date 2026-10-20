@@ -83,3 +83,9 @@ The user (2026-10-19): make rn whole through turn, and report what was decided a
   conductor stopped by a guard may try the same move another way.
 - R27 (turn's question on the hooks): prompt.md's items on a prompt's own text and on what the
   user sees are judged on the skills' runs, not the hooks', as R22 set.
+- R28 (turn's question on `/rn:up`'s step 4): the skill keeps saying what rn's four hooks stop,
+  as the design decides them and T2 to T5 build them next.
+- R29 (turn's question on `/rn:up`'s step 4, prompt.md B-19): turn's messages reach the user by
+  the conductor's reply, as the prompts' decisions say, since each is put into the conversation
+  language, which a script cannot do.
+- B-8 of `/rn:up` (TaskStop deferred) fixed by hand: the step loads it first.
