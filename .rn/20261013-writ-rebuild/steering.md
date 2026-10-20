@@ -49,7 +49,7 @@ only answers what they are asked, and their purpose is achieved; rn 0.10.0 bring
 
 - [x] T1: turn 0.2.0 ready to build rn on. Done when the user, shown turn's three acceptance
   trials, takes turn as the maker of rn's works. Serves AC1.
-- [ ] T2: A conductor committing or pushing on the default branch, or pushing to it, by a plain
+- [x] T2: A conductor committing or pushing on the default branch, or pushing to it, by a plain
   `git commit` or `git push`, is stopped with the step and why, and nothing else it does is
   stopped. Serves AC1.
 - [ ] T3: The same stop holds where git reaches the default branch through `-C`, a `cd`, `env`,

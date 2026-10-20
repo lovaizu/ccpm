@@ -74,6 +74,9 @@
     },
     {
       "fact": "the user asked why not go on through turn, in parallel (2026-10-20): T3 and T4 run through turn at once, each in a clone of its own, from ccs/t3.json and ccs/t4.json; T5 after them, as it touches the same files; turn not taking a change to existing work was the 5 full mutation runs, now --since"
+    },
+    {
+      "fact": "CI green for the duplicate-code check (39421926424) and the one command reader (39420897226); T2 done, held by dev/rn/tests/test_hooks.py as the design's Verification asks of hooks"
     }
   ],
   "semantic_gist": [
@@ -99,9 +102,6 @@
     },
     {
       "task": "T4 turn run: ccs/t4.json, $TURN_RUNS/t4"
-    },
-    {
-      "task": "on CI green for 464e229, tick T2"
     },
     {
       "task": "merge T3 and T4 results, read each against its purpose, then T5"
@@ -139,7 +139,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "watch both runs; tick T2 on CI"
+      "next": "watch the T3 and T4 runs"
     }
   ],
   "uncertainty_signal": [
