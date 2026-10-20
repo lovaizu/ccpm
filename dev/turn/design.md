@@ -222,7 +222,7 @@ turn/                      the plugin, installed by Claude Code
   hook lets a role start only with what it is to be given, and stops a reply that does not fill its
   form.
 - The hooks stop a read outside what a role is given, a write outside where the work goes, and a
-  commit or a push; a stop says why and names what may be read.
+  commit or a push in the repository the run works in; a stop says why and names what may be read.
 
   A role that reads only what it is given is not bent by what it was not meant to see.
 - The hooks stop every role's reply, and the orchestrator's check and decision, until every input

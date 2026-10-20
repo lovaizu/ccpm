@@ -462,11 +462,36 @@ class TestWrites(HookTest):
 
     def test_a_role_committing_or_pushing_stops(self):
         # Given: any of turn's agents
-        # When: it commits or pushes
+        # When: it commits or pushes in the repository it works in: there, after cd went into a
+        # folder of it, or with -C naming one, from there or from elsewhere
         # Then: it is stopped, saying the caller keeps the work in git
-        for command in ("git commit -m x", "git add . && git push"):
+        for command in (
+            "git commit -m x",
+            "git add . && git push",
+            "git -c user.name=t commit-tree x",
+            "cd checklists && git commit -m x",
+            "git -C notes commit -m x",
+            f"cd / && git -C {self.repo} push",
+            "git -C / -C repo commit -m x".replace("repo", self.repo.lstrip("/")),
+        ):
             with self.subTest(command=command):
                 self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "caller")
+
+    def test_a_role_committing_in_a_repository_of_its_own_passes(self):
+        # Given: any of turn's agents, which makes a repository of its own outside the one it
+        # works in to run what the work gives
+        # When: it commits or pushes there: after cd went to a folder made with mktemp, to a folder
+        # outside, or with -C naming one
+        # Then: it goes through, as the work stays uncommitted for the caller
+        outside = os.path.dirname(self.repo)
+        for command in (
+            'd=$(mktemp -d) && cd "$d" && git init -q && git commit -qm init && git push',
+            f"cd {outside} && git commit -m x",
+            f"git -C {outside} push",
+            "cd / && git commit -m x",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
 
     def test_the_generator_writing_the_work_by_a_command_passes(self):
         # Given: a generator of a run
@@ -753,11 +778,30 @@ class TestReads(HookTest):
 
     def test_a_role_reading_the_repositorys_history_stops(self):
         # Given: a generator of a run
-        # When: it runs git, which reads the repository's history beyond what it was given
+        # When: it runs git in the repository, from its top, after cd went into a folder of it, or
+        # with -C naming one, which reads the repository's history beyond what it was given
         # Then: it is stopped
-        for command in ("git log --stat | head -30", "git show HEAD:secret/notes.md"):
+        for command in (
+            "git log --stat | head -30",
+            "git show HEAD:secret/notes.md",
+            "cd notes && git log",
+            "git -C notes log",
+        ):
             with self.subTest(command=command):
                 self.stops(pretooluse, self.tool("turn:generator", "Bash", command=command))
+
+    def test_a_role_running_git_in_a_repository_of_its_own_passes(self):
+        # Given: a generator of a run
+        # When: it runs git in a repository it made outside the one it works in, after cd went to
+        # a folder made with mktemp, or with -C naming a folder outside
+        # Then: it goes through, as it reads no history of the repository
+        outside = os.path.dirname(self.repo)
+        for command in (
+            'd=$(mktemp -d) && cd "$d" && git init -q && git log',
+            f"git -C {outside} status",
+        ):
+            with self.subTest(command=command):
+                self.passes(pretooluse, self.tool("turn:generator", "Bash", command=command))
 
     def test_a_search_without_a_path_stops(self):
         # Given: a generator of a run

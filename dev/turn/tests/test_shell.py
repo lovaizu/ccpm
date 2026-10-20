@@ -129,3 +129,31 @@ class TestPrinted(unittest.TestCase):
         # When: the files it prints whole are read
         # Then: the file is taken, as only a pipe takes what cat prints
         self.assertEqual(shell.printed("cat a || echo x", HERE), at("a"))
+
+
+class TestGit(unittest.TestCase):
+    def test_each_git_statement_acts_where_c_moves_it(self):
+        # Given: git statements with options before the git command: -C with its folder, -c with
+        # its setting, options taking no word, and -C last with or without its folder
+        # When: where each acts is read
+        # Then: -C alone moves it, from where it stood, and the git command follows the options
+        for command, found in (
+            ("git -C x -C y commit -m z", [(at("x/y")[0], ["commit", "-m", "z"])]),
+            ("git -c a=b log", [(HERE, ["log"])]),
+            ("git --no-pager log", [(HERE, ["log"])]),
+            ("git -C /x", [("/x", [])]),
+            ("git -C", [(HERE, [])]),
+            ("ls && cd a && git status", [(at("a")[0], ["status"])]),
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(list(shell.git(command, HERE)), found)
+
+    def test_a_folder_is_inside_the_top_alone_or_in_it(self):
+        # Given: the top, a folder in it, one beside it whose name starts the same or sorts after,
+        # and one the words do not settle
+        # When: each is asked whether it is inside the top
+        # Then: the first two are
+        for folder, found in (("/r", True), ("/r/a", True), ("/rx", False), ("/s", False)):
+            with self.subTest(folder=folder):
+                self.assertEqual(shell.inside(folder, HERE), found)
+        self.assertFalse(shell.inside(None, HERE))

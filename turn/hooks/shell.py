@@ -23,6 +23,8 @@ STEPS = {"start", "next", "given", "parts", "record"}
 # Commands that write each path they name, and those that write the last.
 WRITE_EACH = {"rm", "rmdir", "touch", "mkdir", "tee", "truncate"}
 WRITE_LAST = {"cp", "mv", "ln", "install"}
+# git's options that take the next word.
+GIT_VALUED = {"-C", "-c"}
 
 
 def words(command: str) -> list[str]:
@@ -67,6 +69,20 @@ def statements(command: str, cwd: str) -> Iterator[tuple[str | None, list[str], 
         statement = []
 
 
+def git(command: str, cwd: str) -> Iterator[tuple[str | None, list[str]]]:
+    """Each git statement of the command: the folder it acts in, where the last cd went and each
+    `-C` moved it, or None where the words do not settle it, such as `cd "$d"` into a folder of its
+    own; and its words after git's options, the git command first."""
+    for here, said, _ in statements(command, cwd):
+        rest = said[1:] if said[0] == "git" else None
+        while rest and rest[0].startswith("-"):
+            if rest[0] == "-C" and rest[1:]:
+                here = path(here, rest[1])
+            rest = rest[2:] if rest[0] in GIT_VALUED else rest[1:]
+        if rest is not None:
+            yield here, rest
+
+
 def text_left_out(said: list[str]) -> list[str]:
     """The words with each heredoc's text left out, from the line after `<<` to its end word."""
     kept: list[str] = []
@@ -90,6 +106,11 @@ def text_left_out(said: list[str]) -> list[str]:
                 break
             last = word
     return kept
+
+
+def inside(folder: str | None, top: str) -> bool:
+    """Whether the folder is the top or in it; one the words do not settle is not."""
+    return folder is not None and (folder == top or folder.startswith(top + os.sep))
 
 
 def path(here: str | None, word: str) -> str | None:
