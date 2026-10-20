@@ -31,17 +31,27 @@ names; each serves every unit.
 
 ## The checks
 
-- Each check judges git and a write in the folder they act on, not only the event's: through
-  `git -C <folder>`, a `cd` earlier in the same command, git led by `env`, `command` or `sh -c`,
-  and in a git worktree the branch checked out there; a conductor stopped by a guard may try the
-  same move another way, and the guard holds only if that way is stopped too.
+- Each check passes only the forms it reads whole, and stops every other command that names what
+  it guards, saying the form to use instead: a conductor stopped by a guard may try the same move
+  another way, as turn's generator split the word `git` to get past `no_commit`, and the shell has
+  more ways than any list of them can hold, so a guard listing the ways round it never closes;
+  input is checked against the forms allowed, not the ones refused (OWASP Input Validation Cheat
+  Sheet, allowlist validation).
+- Git is judged in the folder it acts on, not only the event's. The forms read whole are `git …`
+  and `git -C <folder> …`, alone or after `cd <folder> &&`, with the branch checked out in the
+  folder reached, a git worktree's own; a command holding the word `git` together with `commit`
+  or `push` in any other form is stopped.
+- Not stopped: a command or a path built from variables, command substitution or a git alias, in
+  which none of the words a check guards appears; the guards keep a conductor to rn's steps, and
+  are not a security boundary.
 - The session's own branch: a `git commit` or `git push` while the default branch is checked out,
   or a push whose destination is the default branch, is stopped: the work goes on the session's
   branch and reaches the default branch only by the user's merge.
 - A sign-off passed only by the user: clearing the sign-off in `state.json` (`rn.py state
   signoff=`) is stopped unless the user's last message in the conversation is `/rn:ty`; and
-  writing or editing `state.json` other than through `rn.py state` is stopped, so no move gets
-  round the check.
+  a write or edit of `state.json`, and a shell command naming `state.json` or the session's folder
+  in a form other than those the check knows write nothing there (`python3 <rn.py> state …`,
+  `git add`, `git commit`, a command that only reads), is stopped.
 - The plan in its form: a `git commit` while the session's staged `steering.md` does not hold the
   front matter keys and the headings of the template in rn's plan checklist
   (`rn/checklists/session/plan.md`, F-1) is stopped, the template read from that checklist so the
