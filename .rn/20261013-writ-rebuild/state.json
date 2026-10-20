@@ -136,6 +136,9 @@
     },
     {
       "gist": "a CCS gives only the checklist items its work answers, the rest settled by the decisions it names"
+    },
+    {
+      "gist": "after a turn run, a fix of a few lines that changes no decision is made by hand by the caller, then the affected checks run and the fix shown apart as made by hand; a run again only where the decisions change much, as dev/rn/design.md:107-108 has the conductor do (the user, 2026-10-20)"
     }
   ],
   "focal_entities": [
