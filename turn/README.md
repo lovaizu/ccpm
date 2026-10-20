@@ -44,6 +44,15 @@ and comes back with that one question:
 ```
 
 The step's AI asks the user, adds the answer to `notes/readme.decisions.md`, and calls turn again.
+Each of turn's agents tells the step's AI, before it starts its work, what it will do, how far and
+how, and as each step ends, what is done and what comes next, and the step's AI passes each on to
+you:
+
+```
+generator: will write README.md for the seven items, as MIT licensed, and run its install and
+usage commands as a developer would
+```
+
 This time turn writes README.md and runs what it tells, and an AI that did not write it uses it as
 the developer meeting the project would, running what they would run. Each item is judged from that
 use: it gets its Good when the reader gets what the item asks, with the lines that give it. Where an item gets none, README.md is made again

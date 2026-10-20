@@ -42,6 +42,11 @@ since a work it must fix costs the user the fixing as well as the wait.
 - The calling AI calls turn with the CCS's path, the kinds it uses in it for where the work goes, the
   checklists, the receiver, what the receiver reads the work for and what they have with it, and
   where turn writes its result.
+- While turn runs, the calling AI is told by each of turn's agents, before it starts its work, what
+  it will do, how far and how, and as each step ends, what is done and what comes next; it passes
+  each on to the user, who may stop the run there.
+
+  A run going a slow or wrong way shows before its time is spent, not after the work comes back.
 - The calling AI gets back the work where it goes, and the result: each item's Good with its lines,
   the questions only the user can decide, each item still without Good, with what the receiver
   gets once it is Good and where it was not found, and the lessons turn took on how its run went, to hand on to turn's makers. Where the CCS cannot give an item its Good, it gets the questions alone,

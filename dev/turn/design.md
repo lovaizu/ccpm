@@ -136,6 +136,12 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   of five changes. What fell short often lies in what a role did, which only its record shows; a
   run where every item got its Good may still have got it by chance, or spent time for nothing, and
   what is not learnt from is met again. A lesson without the facts it rests on is a guess.
+- Every agent of the run, before it starts its work, tells the calling AI what it will do, how far
+  and how, and as each step ends, what is done and what comes next; no one answers it.
+
+  The calling AI waits in the background and gets nothing else until the run returns, so a run
+  going a slow or wrong way would show only once its time is spent. Only the agent doing the work
+  knows how it will do it, so it says so itself; it is told, not asked, so no step waits on it.
 - The orchestrator takes the lessons it finds hold: each goes to its role in the next round and into
   the result, for the calling AI to hand on to turn's makers.
 
@@ -187,6 +193,12 @@ turn/                      the plugin, installed by Claude Code
 
   Tried with an agent started by an agent started in the background, as turn's roles are: sent a
   message after its reply, the same agent answered from what it had read, using no tool.
+- Each agent tells the calling AI with SendMessage to `main`, the conversation the calling AI runs
+  in, and the hook that lets the orchestrator message only the agent the script names lets a
+  message to `main` through.
+
+  Tried with an agent started by an agent started in the background: its message to `main` reached
+  the conversation while the agent that started it was still running.
 - The reply of a role sent a message comes back later, not with the send, so the hook that checks
   each reply keeps it in the run, and the orchestrator waits for it with turn's script.
 

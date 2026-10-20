@@ -182,6 +182,12 @@ rn/                                   the plugin, on the user's machine
 
   turn's own design leaves the judging of its result to the caller, which is why the conductor
   reads each Good at its lines.
+- While turn runs, the conductor passes each message turn's agents send it on to the user in the
+  conversation's language, judging nothing and asking nothing; when the user says to stop, it
+  stops the run.
+
+  Only the agent doing the work knows whether its way is right; a conductor that judged it would
+  ask the user each time, and the user would answer more than what is theirs.
 - rn's scripts serve the conductor: they find a kind's checklists, rn's and the user's addition;
   write a work's CCS; put the proposal together from turn's result and the record; and read and
   write `state.json`.

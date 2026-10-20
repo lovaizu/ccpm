@@ -115,7 +115,9 @@ building, which rn writes into your repository on the pull request; here it is a
 move. rn asks their points one at a time, such as how the types are made strict file by file, has
 the first reader use them, and stops at the design sign-off, where you answer `/rn:ty` again. Then
 rn divides the work into tasks, such as moving the cart, each checked against the acceptance
-criteria it serves, and carries them out in the conversation without you watching. If a point to
+criteria it serves, and carries them out in the conversation without you watching. Before each
+step, rn tells you in a line what it will do, how far and how, and after it, what is done and what
+comes next, so you can stop a step going a way you do not want. If a point to
 decide comes up, rn asks it there and waits for your answer; if you close Claude Code meanwhile,
 `/rn:up` in a fresh conversation goes on from where it stopped. When the work is finished, the
 first reader uses it for each acceptance criterion, and rn stops at the deliverable sign-off:
