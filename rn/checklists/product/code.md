@@ -28,10 +28,15 @@ Code is written in this order, each step the ground of the next:
 5. Build it test first, one listed behavior at a time: write its test, see it fail, write the least
    code that passes it, then tidy it back to the design, such as putting what is written twice in
    one place. Write each condition, operator, constant and index only where a failing test needs
-   it; a behavior found needed while writing is added to the list and gets its failing test first.
-6. Before handing it over, name for each line changed the test that fails if the line is changed,
-   such as a comparison turned round or a value replaced; a line with no such test is a behavior
-   with no test, and goes back to step 5.
+   it, in a form no wider than the values it can meet, such as a lookup in a table of the values
+   in place of a comparison, or a whole list in place of a slice of one that holds one item; a
+   behavior found needed while writing is added to the list and gets its failing test first.
+6. Before handing it over, name for each line changed, for each change mutation testing makes to
+   it, the test that fails: each comparison, `==` and `!=` among them, replaced by each other one,
+   a value under its bound and one over it each tried; each number made one more, one less and 0;
+   each `and` made `or` and back; each `not` added and taken off; each line taken out. A change
+   with no such test is a behavior with no test, and goes back to step 5; one that gives the same
+   result on every value the code can meet is a form wider than its values, and goes back too.
 7. Check it by the development rules and by how it is checked.
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its

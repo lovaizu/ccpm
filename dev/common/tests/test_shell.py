@@ -33,6 +33,20 @@ class TestNamed(unittest.TestCase):
                 self.assertNotIn(os.path.join(HERE, "3"), shell.named(command, HERE))
                 self.assertIn(os.path.join(HERE, "b"), shell.named(command, HERE))
 
+    def test_a_here_string_s_text_begun_with_a_dash_is_no_path(self):
+        # Given: a command with a here-string's text right after `<<<`, begun with `-`
+        # When: the paths it names are read
+        # Then: the paths alone are taken
+        self.assertEqual(shell.named("cat a <<<-text b", HERE), at("cat", "a", "b"))
+
+    def test_a_quoted_sign_is_a_word_of_the_command(self):
+        # Given: a command with `;` and `>` in quotes before a path
+        # When: its statements and the paths it writes are read
+        # Then: it is one statement, the quoted signs its words, and it writes no path
+        found = [words for _, words, _ in shell.statements("echo ';' '>' a", HERE)]
+        self.assertEqual(found, [["echo", ";", ">", "a"]])
+        self.assertEqual(shell.written("echo '>' a", HERE), [])
+
     def test_a_word_the_shell_makes_by_running_a_command_is_no_path(self):
         # Given: a command naming a path made by a backquoted command, read word by word as its
         # quoting does not close
@@ -64,10 +78,12 @@ class TestNamed(unittest.TestCase):
         )
 
     def test_a_quoted_path_is_named_as_the_shell_takes_it(self):
-        # Given: a command naming a path in quotes, with a space in it
+        # Given: a command naming a path in single or double quotes, with a space in it
         # When: the paths it names are read
         # Then: the path is taken whole, without its quotes
-        self.assertEqual(shell.named("cat 'a b'", HERE), at("cat", "a b"))
+        for command in ("cat 'a b'", 'cat "a b"'):
+            with self.subTest(command=command):
+                self.assertEqual(shell.named(command, HERE), at("cat", "a b"))
 
     def test_a_word_the_shell_makes_from_a_variable_is_no_path(self):
         # Given: a command naming a path made from a variable
@@ -86,6 +102,36 @@ class TestNamed(unittest.TestCase):
         # When: the paths it names are read
         # Then: the words of both lines are taken
         self.assertEqual(shell.named("cat a\ncat b", HERE), at("cat", "a", "cat", "b"))
+
+    def test_a_comment_names_no_path(self):
+        # Given: a command with a comment after its words, and a `#` inside a word, and one whose
+        # comment, holding a tab, runs to the command's end
+        # When: the paths it names are read
+        # Then: the words before the comment are taken, the word with `#` among them
+        self.assertEqual(shell.named("cat a#b # c d\ncat e", HERE), at("cat", "a#b", "cat", "e"))
+        self.assertEqual(shell.named("cat a #\tc", HERE), at("cat", "a"))
+
+    def test_a_line_s_end_after_an_operator_ends_the_statement(self):
+        # Given: a statement ended by `;` and a line's end together, and one by `)` and a line's
+        # end, then a statement on the next line
+        # When: the statements are read
+        # Then: each is read apart, and the next line's words begin the next
+        for command in ("cat a;\ncat b", "(cat a)\ncat b"):
+            with self.subTest(command=command):
+                found = [words for _, words, _ in shell.statements(command, HERE)]
+                self.assertEqual(found, [["cat", "a"], ["cat", "b"]])
+
+    def test_operators_around_a_line_s_end_are_read_in_order(self):
+        # Given: a line ending in `;`, the next beginning with `;`
+        # When: the words are read
+        # Then: the operators come in the order they were written
+        self.assertEqual(shell.words("a;\n;b"), ["a", ";", "\n", ";", "b"])
+
+    def test_a_line_s_end_in_quotes_is_part_of_the_word(self):
+        # Given: a command with a word in quotes that holds a line's end
+        # When: the words are read
+        # Then: the quoted word is one word, the line's end in it
+        self.assertEqual(shell.words("echo 'a\nb'"), ["echo", "a\nb"])
 
 
 class TestCd(unittest.TestCase):
@@ -118,6 +164,12 @@ class TestWritten(unittest.TestCase):
         # Then: the redirect's target and the command's own are taken, each once
         self.assertEqual(shell.written("rm a > log", HERE), at("log", "a"))
         self.assertEqual(shell.written("cp a b > log", HERE), at("log", "b"))
+
+    def test_a_redirect_writes_a_file_whose_name_begins_with_a_dash(self):
+        # Given: a redirect right before a file whose name begins with `-`
+        # When: the paths it writes are read
+        # Then: the file is taken
+        self.assertEqual(shell.written("echo a >-b", HERE), at("-b"))
 
     def test_cp_or_mv_of_several_sources_writes_the_last_path(self):
         # Given: cp and mv of several files into a folder
@@ -158,8 +210,8 @@ class TestHeredoc(unittest.TestCase):
         # Given: a heredoc whose line has no end, and one whose text has no end word
         # When: the words are read with the text left out
         # Then: the command's words are kept and the text is left out to the command's end
-        self.assertEqual(shell.text_left_out(shell.words("cat <<EOF")), ["cat", "<<", "EOF"])
-        said = shell.text_left_out(shell.words("cat <<EOF\nhi > a"))
+        self.assertEqual(shell.words("cat <<EOF"), ["cat", "<<", "EOF"])
+        said = shell.words("cat <<EOF\nhi > a")
         self.assertEqual(said, ["cat", "<<", "EOF", "\n"])
 
     def test_the_command_after_a_heredoc_s_end_word_is_read(self):
@@ -168,6 +220,32 @@ class TestHeredoc(unittest.TestCase):
         # Then: that file is taken, as the text ends at the end word
         command = "cat <<EOF\nhi\nEOF\necho x > notes/new.md"
         self.assertEqual(shell.written(command, HERE), at("notes/new.md"))
+
+    def test_each_line_after_a_heredoc_is_read(self):
+        # Given: a heredoc, its end word on a line of its own, then two lines of commands
+        # When: the statements are read
+        # Then: the heredoc's statement and both lines after it are read
+        found = shell.statements("cat <<EOF\nhi\nEOF\necho x\ncat b", HERE)
+        self.assertEqual(
+            [w for _, w, _ in found], [["cat", "<<", "EOF"], ["echo", "x"], ["cat", "b"]]
+        )
+
+    def test_a_heredoc_begun_with_a_dash_ends_at_its_end_word_after_tabs(self):
+        # Given: heredocs after another statement, their text a line of a tab, begun with `<<-`
+        # and with `<<`, each with its end word after a tab, then a statement
+        # When: the statements are read
+        # Then: the `<<-` one ends there and the statement after it is read; the `<<` one runs on
+        found = shell.statements("ls; cat <<-EOF\n\tx\n\tEOF\necho y", HERE)
+        self.assertEqual([w for _, w, _ in found], [["ls"], ["cat", "<<-", "EOF"], ["echo", "y"]])
+        found = shell.statements("ls; cat <<EOF\n\tEOF\necho y", HERE)
+        self.assertEqual([w for _, w, _ in found], [["ls"], ["cat", "<<", "EOF"]])
+
+    def test_a_command_whose_quoting_does_not_close_is_read_word_by_word(self):
+        # Given: statements joined by `&&`, the first with a quote that does not close
+        # When: the statements are read
+        # Then: each is read apart, word by word
+        found = shell.statements("echo don't && cat a", HERE)
+        self.assertEqual([w for _, w, _ in found], [["echo", "don't"], ["cat", "a"]])
 
 
 class TestSedInPlace(unittest.TestCase):
