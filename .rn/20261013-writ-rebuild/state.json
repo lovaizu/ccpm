@@ -155,6 +155,9 @@
     },
     {
       "fact": "the user stopped the implementation (2026-10-21 01:4x): much time and cost spent on must-be quality of no importance (T3: main is held by GitHub branch protection already); the user reviews rn's UX, README and design first, and asked whether turn has prompts or hooks beyond its core; T3 and T4 work left uncommitted in their clones, nothing merged"
+    },
+    {
+      "fact": "the user (2026-10-21): main is held by GitHub settings, so why hooks; rn's default-branch guard tries to prevent every possible way; turn's hooks beyond its README promise were added by design to support its core (my calling them non-core was wrong); built so far: skills up/ty/gm, rn.py, one hook (default_branch, T2); rn not yet run end to end (T8+)"
     }
   ],
   "semantic_gist": [
@@ -184,6 +187,9 @@
     }
   ],
   "focal_entities": [
+    {
+      "task": "FIRST: the hooks discussion (predictive_cue); T3 stopped (likely dropped), T4 work in the t4 clone not merged; the queued questions (patterns, git checkout --/restore, T3 Q1-Q3) wait on its outcome"
+    },
     {
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
@@ -235,7 +241,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "the user reviews dev/rn/ux.md, rn/README.md, dev/rn/design.md; no implementation until they say"
+      "next": "discuss with the user how rn should think about hooks, before any implementation: what a guard is for, which moves are worth a stop by likelihood and harm, what GitHub settings already hold; then rewrite decisions/rn/hooks.decisions.md The checks and design.md:90-93, 205-206 as agreed"
     }
   ],
   "uncertainty_signal": [
