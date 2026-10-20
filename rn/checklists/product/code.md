@@ -9,7 +9,10 @@ Code is used by whoever runs it and whoever maintains it, a person or an AI. Who
 the behavior they asked for. Whoever maintains it trusts, from its tests passing, that the behavior
 holds, and so changes the code at once and with confidence.
 
-Code is written in this order, each step the ground of the next:
+Code is written in this order, each step the ground of the next, and judged by the items below,
+drawn from Google's "What to look for in a code review" (google/eng-practices, CC BY 3.0); its
+tests are designed by the techniques of the ISTQB Certified Tester Foundation Level syllabus
+v4.0.1, chapter 4:
 
 1. Check the inputs: the requirements, how it is made, how it is checked and the development rules
    are all there, and settle what the code needs, among it a tool for each of statement and branch
@@ -20,34 +23,27 @@ Code is written in this order, each step the ground of the next:
    alone, with each piece of knowledge in one place across the repository, what its code and tests
    already share used rather than written again; decide what each takes in and gives back, and
    where what comes from outside is checked. These are the units the tests are written for.
-3. List, from the requirements, every behavior each unit must have: for each check, a case it
-   stops and one it lets through; for each comparison, a case on each side of its bound; for each
-   behavior over inputs of a kind, such as any text, the property every input of the whole kind
-   the requirements name must have, such as a parse giving back what was written.
+3. Design the tests from the requirements, before the code, by the technique that fits what each
+   unit takes in and decides: for each input and output, its equivalence partitions, the invalid
+   among them, one test each; for each ordered partition, 3-value boundary value analysis, each
+   boundary and both its neighbors; for conditions that combine, a decision table, one test for each
+   feasible rule; for what moves between states, state transition testing, every transition, the
+   invalid ones tried; for each behavior over inputs of a kind, such as any text, the property
+   every input of the kind holds, such as a parse giving back what was written.
 4. Run the existing tests and see them pass, before changing anything.
-5. Build it test first, one listed behavior at a time: write its test, see it fail, write the least
+5. Build it test first, one designed test at a time: write the test, see it fail, write the least
    code that passes it, then tidy it back to the design, such as putting what is written twice in
-   one place. Write each condition, operator, constant and index only where a failing test needs
-   it, in a form no wider than the values it can meet, such as a lookup in a table of the values
-   in place of a comparison, or a whole list in place of a slice of one that holds one item; a
-   behavior found needed while writing is added to the list and gets its failing test first.
-6. Before handing it over, name for each line changed, for each change mutation testing makes to
-   it, the example test that fails, not a property test, whose inputs change from run to run: each
-   comparison, `==` and `!=` among them, replaced by each other one, a value under its bound and
-   one over it each tried; each number made one more, one less and 0;
-   each `and` made `or` and back; each `not` added and taken off; each line taken out. A change
-   with no such test is a behavior with no test, and goes back to step 5; one that gives the same
-   result on every value the code can meet is a form wider than its values, and goes back too.
-7. Check it by the development rules and by how it is checked, each check, the tests, the
+   one place. A behavior found needed while writing goes back to step 3 and is designed first.
+6. Check it by the development rules and by how it is checked, each check, the tests, the
    coverage, the property tests and the mutation testing alike, on what the change touches before
    it is handed over, the property tests on few inputs, and on the whole in CI, the property tests
    on many, so the time each change waits on grows with the change, not with the code.
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
-subject and each file a part; its F-1 is answered by this F-1, its B-7 by each piece of knowledge,
-such as a rule, a value or a way of reading an input, written in one place across the repository,
-and its B-13 by one name for each thing across the code and its tests, so a search for the name
-finds every place it is used.
+subject and each file a part, the tests among them; its F-1 is answered by this F-1, its B-7 by each
+piece of knowledge, such as a rule, a value or a way of reading an input, written in one place
+across the repository, and its B-13 by one name for each thing across the code and its tests, so a
+search for the name finds every place it is used.
 
 ## Format
 
@@ -93,6 +89,18 @@ Can the maintainer change one thing the code takes on by changing one function o
 Look at: each function and module, against what it takes on; one that takes on two things fails.
 
 Why: a part that takes on two things is changed for one and breaks the other.
+
+### B-19: Only what is needed now
+
+Scope: whole
+
+Does every function, parameter, branch and option serve a behavior the requirements ask now?
+
+Look for: code more general than its callers use, such as a parameter every caller gives the same
+value, or a case for a future the requirements do not name.
+
+Why: code for a need that may come is read, tested and kept by every maintainer meanwhile, and when
+the need comes it seldom has the shape that was guessed.
 
 ### B-4: Checked before it is used
 
@@ -142,15 +150,62 @@ one after which the check still stops, fails.
 Why: a stop its own action does not clear leaves the run stuck, going round or ended, and a check
 there to keep the work right stops the work.
 
-### B-7: A test for each behavior asked
+### B-20: Runs at the same time kept apart
+
+Scope: whole
+
+When two runs of the code go at once, such as two sessions or two test workers, does each get the
+result it would get alone?
+
+Look at: each file, port, folder or other place a run writes or holds, against whether another run
+at the same time could write or hold the same one.
+
+Why: runs that share a place they write overwrite each other's work, and the fault shows only when
+they happen to meet, so a test seldom finds it.
+
+### B-21: Each name says what it is or does
+
+Scope: each part
+
+Can the maintainer tell from each name of a module, function, variable and test what the thing is
+or does, without reading its body?
+
+Why: a name that says less than its thing sends the maintainer into the body at every use, and one
+that says something else is believed.
+
+### B-22: Each comment says what the code cannot
+
+Scope: each part
+
+Does each comment say something the code itself cannot, such as why it is so, or what a regular
+expression or an algorithm does?
+
+Look for: a comment that says again what the line under it does.
+
+Why: a comment that repeats the code is one more thing to read and to keep true, and the reason
+behind a decision, which only a comment can hold, is what the next maintainer needs to change it
+safely.
+
+### B-23: Written like the code around it
+
+Scope: whole
+
+Where no rule of the development rules settles a choice, is the code written as the code around it
+is, in its idioms, its error handling and its layout?
+
+Why: the maintainer reads a difference as meaning something, and looks for a reason that is not
+there.
+
+### B-7: A test for each designed test case
 
 Scope: whole
 
 For each behavior the requirements ask of the code, can the maintainer learn from some test that
 the code does it?
 
-Look at: each such behavior, among them each check on what the code takes in, both a case it stops
-and one it lets through, matched to a test whose Then checks it; a behavior left without one fails.
+Look at: the test cases the techniques of step 3 give, each equivalence partition, the invalid ones
+among them, each boundary and its neighbors, each feasible rule of each decision table and each
+transition, each matched to a test whose Then checks it; one left without a test fails.
 
 Why: the tests passing give trust only in the behaviors they hold.
 
@@ -203,17 +258,18 @@ type checker, run with the settings kept in the repository, pass on the code and
 Why: what a tool finds on every run needs no review spent on it, and a reader finds it only
 sometimes.
 
-### B-12: Every statement and branch run
+### B-12: Every statement and branch run by an example
 
 Scope: whole
 
-Can the maintainer see, from the coverage of the whole test run, that every statement and every
-branch of the code is taken by some test?
+Can the maintainer see, from the coverage of the example tests, that every statement and every
+branch of the code is taken by some test that takes it on every run?
 
-Look at: the statement coverage (C0) and the branch coverage (C1) of the whole test run, on every
-run of the checks; any statement or branch not run fails.
+Look at: the statement coverage (C0) and the branch coverage (C1) of the tests without the property
+tests, whose inputs change from run to run; any statement or branch not run fails.
 
-Why: a line or branch no test takes may be broken without any test failing.
+Why: a line or branch no test takes may be broken without any test failing, and one taken only by
+an input made at random is taken on some runs and not on others.
 
 ### B-13: Lines left out of the count say why
 
@@ -265,3 +321,15 @@ made once and copied, fails.
 
 Why: a test run that takes minutes is run less often, and mutation testing multiplies its time by
 the number of mutants, so the maintainer waits on every change, or stops running the checks.
+
+### B-24: The documents follow the change
+
+Scope: whole
+
+When the code changes how its users build, test, run or release it, do the documents that tell
+them so say the same as the code?
+
+Look at: each README and guide that names a command, an option or a step the change touches.
+
+Why: a document that names a step the code no longer takes is followed and fails, and is believed
+over the code.
