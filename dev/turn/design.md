@@ -10,7 +10,7 @@ goal, the key results, and what a checklist, the receiver and a Good are, are in
 
 - As the calling AI, I want to hand turn the path of a CCS and get the work back, with each item's
   Good and its lines, the questions only the user can decide, each item still without Good, and the
-  lessons on how the run went; or, when the CCS cannot give an item its Good, the questions alone,
+  lessons on how the run went; or, when the CCS lacks what the run needs, the questions alone,
   before any work is made.
 
   The UX's first and last scenes are the calling AI's own work around this call.
@@ -61,19 +61,24 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   is found only in the whole. The checklist says it once, so every role and every run answers an
   item at the same place.
 - The calling AI hands the orchestrator the CCS's path, where the result goes, and the kinds it uses
-  in the CCS for where the work goes, the checklists and the receiver, and, if it has them, what the
-  receiver reads the work for and what they have with it.
+  in the CCS for where the work goes, the checklists, the receiver, what the receiver uses the work
+  for and what they have with it, such as the whole repository for a maintainer of code.
 
-  The CCS is the calling AI's, and turn defines nothing of it: what turn needs is found by these
-  kinds, and the values stay in the CCS alone, so the call and the CCS cannot differ. Where the
-  result goes is this call's answer, not the task's state, so it is not in the CCS.
-- Before any work is made, the orchestrator reads the CCS, the files it names and the checklists,
-  and finds for every item what in them gives its Good; where nothing does, it returns the
-  questions alone, each with the items it settles, and no work is made.
+  The CCS is the calling AI's, and turn defines nothing of it but these: what turn needs is found by
+  these kinds, and the values stay in the CCS alone, so the call and the CCS cannot differ. Each is
+  needed, since without what the receiver uses the work for and has with it no reader can stand in
+  their place. Where the result goes is this call's answer, not the task's state, so it is not in
+  the CCS.
+- Before any work is made, the orchestrator checks that the CCS holds everything the run needs: it
+  reads the CCS, the files it names and the checklists, and finds for every item what in them gives
+  its Good, and that what the receiver has lets the first user do with the work what the receiver
+  does, such as running its tests; where something is lacking, it returns the questions alone, each
+  saying what is lacking with the items it settles, and no work is made.
 
-  A Good the CCS cannot give, the generator cannot give either, and the making and the readings
-  after it would be spent for nothing; an answer may also change how the whole work is laid out.
-  The calling AI asks the user and calls turn again with the answer in the CCS.
+  A Good the CCS cannot give, the generator cannot give either, and a reader that has less than the
+  receiver cannot find the Good they get; the making and the readings after it would be spent for
+  nothing, and an answer may also change how the whole work is laid out. The calling AI fills what
+  it can from its sources, asks the user the rest, and calls turn again with the answers in the CCS.
 - The generator first sets, from the whole CCS, the Good the receiver is to get from the work for
   each item and where the work gives it, then makes the work to give each, runs what it wrote as
   the receiver would, and hands back each item's Good with its lines and the questions only the user

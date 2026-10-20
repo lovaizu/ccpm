@@ -19,23 +19,28 @@ file of parts, each a list of entries, each entry a kind and its value, the shap
 
 ```json
 {"focal_entities": [{"deliverable": "README.md"},
-                    {"audience": "a developer meeting the project for the first time"}],
+                    {"audience": "a developer meeting the project for the first time"},
+                    {"has": "."}],
+ "goal_orientation": [{"purpose": "deciding whether to use the project, then installing it"}],
  "retrieved_artifacts": [{"checklist": "checklists/readme.md"},
                          {"decisions": "notes/readme.decisions.md"}]}
 ```
 
-The step's text then calls turn with the CCS, the kinds in it that hold the work, the checklist and
-its reader, and where to write the result:
+The step's text then calls turn with the CCS, the kinds in it that hold the work, the checklist, its
+reader, what the reader uses it for and has with it, here the whole repository, and where to write
+the result:
 
 ```
 Start the `turn:up` agent in the background with
 {"ccs": ".tasks/readme.json", "result": ".tasks/readme-result.json",
- "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience"}}
+ "kind": {"work": "deliverable", "checklist": "checklist", "receiver": "audience",
+          "use": "purpose", "has": "has"}}
 When it returns, check each Good against its lines, and put each question to the user.
 ```
 
-While the step waits, turn first checks that what the CCS and its files say can give every item its
-Good. No one had chosen under which license people may use the project, so turn writes nothing yet
+While the step waits, turn first checks that the CCS holds everything the run needs: that what it
+and its files say can give every item its Good, and that the reader has what the developer has, so
+it can do what they do with the README. No one had chosen under which license people may use the project, so turn writes nothing yet
 and comes back with that one question:
 
 ```json
