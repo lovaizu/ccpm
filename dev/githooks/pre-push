@@ -47,4 +47,6 @@ while read -r _ local _ remote; do
   # tests make would take as theirs.
   (cd "$copy" && unset $(git rev-parse --local-env-vars) && sh dev/check.sh $plugins && sh dev/mutate.sh --since "$base" $plugins)
   git worktree remove --force "$copy"
+  # Removed, so the cleanup on exit, which stops the push where it fails, has nothing left to do.
+  trap - EXIT
 done
