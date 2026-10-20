@@ -41,6 +41,9 @@
     },
     {
       "fact": "mutation times: common 38s with 19 survivors to kill (shell.py was tested through turn's hook tests), turn 271s 0, rn 213s 0"
+    },
+    {
+      "fact": "common's 19 survivors killed: tests for each behavior they changed, the hook test holding Claude Code's exit 2, and ruff F632 before the tests, as `is` against a one-character literal changes nothing CPython shows; mutate common 0 of 350 in 39s, check.sh 100% in 19s"
     }
   ],
   "semantic_gist": [
@@ -52,9 +55,6 @@
     }
   ],
   "focal_entities": [
-    {
-      "task": "kill common's 19 surviving mutants with tests in dev/common/tests, then CI green"
-    },
     {
       "task": "T2 from ccs/t2-first-run.patch, not from the start: apply it, commit, and have turn change only what common/ now holds (rn/hooks links hook.py and shell.py), with ccs/t2.json"
     },
@@ -97,7 +97,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "common's survivors; then T2 from the first run's patch through turn; then the two design topics after T2"
+      "next": "T2 from the first run's patch through turn; then the two design topics after T2"
     }
   ],
   "uncertainty_signal": [

@@ -63,6 +63,30 @@ class TestNamed(unittest.TestCase):
             at("python3", "turn.py", "other", "r.json"),
         )
 
+    def test_a_quoted_path_is_named_as_the_shell_takes_it(self):
+        # Given: a command naming a path in quotes, with a space in it
+        # When: the paths it names are read
+        # Then: the path is taken whole, without its quotes
+        self.assertEqual(shell.named("cat 'a b'", HERE), at("cat", "a b"))
+
+    def test_a_word_the_shell_makes_from_a_variable_is_no_path(self):
+        # Given: a command naming a path made from a variable
+        # When: the paths it names are read
+        # Then: that path is not taken, as the words do not settle it
+        self.assertEqual(shell.named("cat $HOME/a", HERE), at("cat"))
+
+    def test_the_words_after_where_the_run_is_kept_are_named(self):
+        # Given: turn's script asked a step, with a word after where the run is kept
+        # When: the paths it names are read
+        # Then: that word is taken
+        self.assertEqual(shell.named("turn.py next r.json x", HERE), at("turn.py", "next", "x"))
+
+    def test_each_line_s_statement_is_named(self):
+        # Given: a command of two lines, neither a heredoc
+        # When: the paths it names are read
+        # Then: the words of both lines are taken
+        self.assertEqual(shell.named("cat a\ncat b", HERE), at("cat", "a", "cat", "b"))
+
 
 class TestCd(unittest.TestCase):
     def test_a_bare_cd_goes_home(self):
@@ -138,13 +162,20 @@ class TestHeredoc(unittest.TestCase):
         said = shell.text_left_out(shell.words("cat <<EOF\nhi > a"))
         self.assertEqual(said, ["cat", "<<", "EOF", "\n"])
 
+    def test_the_command_after_a_heredoc_s_end_word_is_read(self):
+        # Given: a heredoc, its end word on a line of its own, then a command writing a file
+        # When: the paths it writes are read
+        # Then: that file is taken, as the text ends at the end word
+        command = "cat <<EOF\nhi\nEOF\necho x > notes/new.md"
+        self.assertEqual(shell.written(command, HERE), at("notes/new.md"))
+
 
 class TestSedInPlace(unittest.TestCase):
     def test_sed_in_place_writes_the_file_after_its_script(self):
         # Given: sed editing a file in place, its backup suffix given
         # When: the paths it writes are read
         # Then: the file is taken
-        self.assertIn(at("f")[0], shell.written("sed -i '' 's/a/b/' f", HERE))
+        self.assertEqual(shell.written("sed -i '' 's/a/b/' f", HERE), at("f"))
 
 
 class TestPrinted(unittest.TestCase):
@@ -153,6 +184,22 @@ class TestPrinted(unittest.TestCase):
         # When: the files it prints whole are read
         # Then: the file is taken, as only a pipe takes what cat prints
         self.assertEqual(shell.printed("cat a || echo x", HERE), at("a"))
+
+    def test_cat_alone_or_before_another_statement_prints_its_file(self):
+        # Given: cat of a file alone, and before another statement after `;`
+        # When: the files each prints whole are read
+        # Then: the file is taken
+        for command in ("cat a", "cat a; ls"):
+            with self.subTest(command=command):
+                self.assertEqual(shell.printed(command, HERE), at("a"))
+
+    def test_only_cat_prints_its_file(self):
+        # Given: commands other than cat naming a file, whose names sort before and after cat
+        # When: the files each prints whole are read
+        # Then: none is taken
+        for command in ("awk 1 a", "head a"):
+            with self.subTest(command=command):
+                self.assertEqual(shell.printed(command, HERE), [])
 
 
 class TestGit(unittest.TestCase):
@@ -168,16 +215,24 @@ class TestGit(unittest.TestCase):
             ("git -C /x", [("/x", [])]),
             ("git -C", [(HERE, [])]),
             ("ls && cd a && git status", [(at("a")[0], ["status"])]),
+            ("cat x", []),
         ):
             with self.subTest(command=command):
                 self.assertEqual(list(shell.git(command, HERE)), found)
 
     def test_a_folder_is_inside_the_top_alone_or_in_it(self):
-        # Given: the top, a folder in it, one beside it whose name starts the same or sorts after,
+        # Given: the top, a folder in it, one beside it whose name starts the same or sorts before or after,
         # and one the words do not settle
         # When: each is asked whether it is inside the top
         # Then: the first two are
-        for folder, found in (("/r", True), ("/r/a", True), ("/rx", False), ("/s", False)):
+        # Each folder as a cd or -C makes it, a path of its own.
+        for folder, found in (
+            ("/r", True),
+            ("/r/a", True),
+            ("/rx", False),
+            ("/s", False),
+            ("/a", False),
+        ):
             with self.subTest(folder=folder):
-                self.assertEqual(shell.inside(folder, HERE), found)
+                self.assertEqual(shell.inside(shell.path(HERE, folder), HERE), found)
         self.assertFalse(shell.inside(None, HERE))

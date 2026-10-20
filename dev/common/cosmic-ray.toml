@@ -4,9 +4,10 @@
 module-path = "common"
 timeout = 30.0
 excluded-modules = []
-# The type checker runs first: a change to a type annotation changes no behavior a test could see,
-# and the type checker is what checks annotations.
-test-command = "sh -c 'pyrefly check --search-path dev/common --search-path common/hooks common dev/common && python -m unittest discover -f -s dev/common/tests'"
+# The type checker and the linter run first: a change to a type annotation, or a comparison of a
+# string with `is` where CPython keeps one copy of it, changes no behavior a test could see, and the
+# type checker is what checks annotations, the linter what checks `is` against a literal.
+test-command = "sh -c 'ruff check --select F632 common && pyrefly check --search-path dev/common --search-path common/hooks common dev/common && python -m unittest discover -f -s dev/common/tests'"
 
 [cosmic-ray.distributor]
 name = "local"
