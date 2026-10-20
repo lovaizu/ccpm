@@ -20,6 +20,15 @@
     },
     {
       "fact": "rn.py ccs takes --has, committed after check.sh 100% and mutate.sh rn 0 of 250; the turn run's claude -p exited before turn returned, as the runner lacked CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"
+    },
+    {
+      "fact": "/rn:up's step 4 made through turn (40f898a): --has ., turn's messages passed on, stop by TaskStop; turn's two questions settled from the sources (R28, R29)"
+    },
+    {
+      "fact": "turn's items to decide ran past the shell's 30 KB and the orchestrator could not read them; now shown in pages (7b42325, 1a2c7bd), CI green"
+    },
+    {
+      "fact": "turn's generator split the word git to get past no_commit and commit in a scratch repository it made to run what it gave; asked the user whether no_commit stops only the run's own repository (a, recommended) or all (b)"
     }
   ],
   "semantic_gist": [
@@ -32,7 +41,7 @@
   ],
   "focal_entities": [
     {
-      "task": "/rn:up's step 4 given --has . and passing turn's messages on to the user, made through turn"
+      "task": "the user's answer on no_commit's reach, then that change to turn"
     },
     {
       "task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"
@@ -63,11 +72,14 @@
     },
     {
       "runner": "set CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up in the background"
+    },
+    {
+      "watch": "watch each turn run while it goes, with Monitor on the runner's JSONL, not only its end, as the user asked"
     }
   ],
   "predictive_cue": [
     {
-      "next": "/rn:up's step 4 given --has . and passing turn's messages on, through turn; then T2; then the two design topics after T2"
+      "next": "the user's answer on no_commit's reach; then T2 through turn; then the two design topics after T2"
     }
   ],
   "uncertainty_signal": [
