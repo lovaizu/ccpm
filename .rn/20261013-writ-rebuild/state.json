@@ -1,0 +1,21 @@
+{
+  "episodic_trace": [
+    {"fact": "rn's hooks asked of turn whole, twelve files in one run, took two hours and stopped in its first round with nothing taken; asked again as five slices, the first now running"},
+    {"fact": "the plan was rewritten from a 1,613-line log to G1, AC1, AC2 and tasks with completion criteria, as the user agreed (2026-10-20)"}
+  ],
+  "semantic_gist": [{"gist": "rn executes a plan; each turn acts, gathers facts, replans from them and replaces this state"}],
+  "focal_entities": [
+    {"task": "T2"},
+    {"run": "turn on tasks/hooks-1.json in /private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/d15a14e6-22d9-4bc5-9c12-c9ea2ab29867/scratchpad/rn-hooks, output /private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/d15a14e6-22d9-4bc5-9c12-c9ea2ab29867/scratchpad/hooks-1.out"}
+  ],
+  "relational_map": [{"T2": "AC1"}],
+  "goal_orientation": [{"plan": ".rn/20261013-writ-rebuild/steering.md"}],
+  "constraints": [{"rules": ".claude/rules/plugin.md"}, {"waits_on_user": "T1"}],
+  "predictive_cue": [{"next": "when the run returns: read its result and JSONL, check T2's completion criterion on the hooks it made, run sh dev/check.sh and sh dev/mutate.sh rn, take it in, then replan"}],
+  "uncertainty_signal": [{"open": "AC1"}, {"open": "AC2"}],
+  "retrieved_artifacts": [
+    {"decisions": ".writ/decisions/rn/hooks.decisions.md"},
+    {"report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"},
+    {"runner": "/private/tmp/claude-501/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/d15a14e6-22d9-4bc5-9c12-c9ea2ab29867/scratchpad/run-turn.sh"}
+  ]
+}
