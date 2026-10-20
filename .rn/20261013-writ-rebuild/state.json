@@ -44,6 +44,9 @@
     },
     {
       "fact": "common's 19 survivors killed: tests for each behavior they changed, the hook test holding Claude Code's exit 2, and ruff F632 before the tests, as `is` against a one-character literal changes nothing CPython shows; mutate common 0 of 350 in 39s, check.sh 100% in 19s"
+    },
+    {
+      "fact": "e343ada, the first run's patch, failed CI with 7 rn survivors, as I pushed without mutate.sh rn; the user chose a pre-push hook (A): dev/githooks/pre-push runs check.sh and the changed plugins' mutation testing on the pushed commits (e3978f7), core.hooksPath set; mutate.sh's fixed ports let two runs at once test each other's copies, now free ports"
     }
   ],
   "semantic_gist": [
@@ -93,6 +96,9 @@
     },
     {
       "measure": "read how long each check and run takes, and fix a slow one at its cause before going on, as the user asked"
+    },
+    {
+      "push": "every push runs dev/githooks/pre-push, which needs the venv bin first on PATH"
     }
   ],
   "predictive_cue": [
