@@ -104,6 +104,12 @@
     },
     {
       "fact": "the user chose shared/ (2026-10-20) for the shared code, the word Claude Code docs use (\"Share files within a marketplace\", ../shared); renamed after T3 and T4 are merged"
+    },
+    {
+      "fact": "the user chose A (2026-10-20): the guards pass only fixed forms they read whole (git …, git -C <folder> …, python3 <rn.py> state …) where a command names git, the session folder or rn.py, and stop every other, as OWASP Input Validation prefers allowlists to denylists; a path built from variables is not stopped, so the decision is rewritten to say what is stopped"
+    },
+    {
+      "fact": "T3 run stopped by me in its round 2 after the choice: its first user found 5 more bypasses (if cd /r; then git commit; fi, { cd /r; git commit; }, command cd, bash -o pipefail -c, echo \"$(git -C /r push)\"), checks all green (check.sh 5.6s, 100%, 0 of 2862 mutants); its work kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3"
     }
   ],
   "semantic_gist": [
@@ -134,7 +140,7 @@
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
     {
-      "task": "ask the user how the guards stop (T3 and T4 both): T4 main options A allow-list / B go on / C weaken; judged against best practice (allowlist over denylist)"
+      "task": "rewrite decisions/rn/hooks.decisions.md:34-37 and 41-44 to the allowlist: the forms passed, what is stopped, and that a path built from variables is not; then ccs/t3.json and ccs/t4.json again, using what the stopped runs made where it holds; run T3 and T4"
     },
     {
       "task": "CodeQL: find why javascript-typescript passed at c907be8; likely fix the default setup's languages to actions and python, which the user does in repository settings"
@@ -181,7 +187,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "ask how the guards stop; read T3 result when it ends"
+      "next": "rewrite the decision, then the CCS, run T3 and T4"
     }
   ],
   "uncertainty_signal": [
