@@ -86,6 +86,9 @@
     },
     {
       "fact": "mutate.sh --since left out files not yet added to git, as cr-filter-git reads git diff: T4's new signoff.py went untested by it; now each is marked intent-to-add in a copy of the index, git's own index untouched; tried in a scratch worktree: an untested new file passed before (rc 0), fails now with its 3 survivors"
+    },
+    {
+      "fact": "428ea38 took the execute bit off dev/githooks/pre-push, as sed -i rewrote it, so git skipped the hook on the pushes of 428ea38 and 7e49e47, saying so only as a hint; the bit is back; after editing a file with sed -i, check its mode with git diff"
     }
   ],
   "semantic_gist": [
