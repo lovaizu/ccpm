@@ -110,6 +110,9 @@
     },
     {
       "fact": "T3 run stopped by me in its round 2 after the choice: its first user found 5 more bypasses (if cd /r; then git commit; fi, { cd /r; git commit; }, command cd, bash -o pipefail -c, echo \"$(git -C /r push)\"), checks all green (check.sh 5.6s, 100%, 0 of 2862 mutants); its work kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3"
+    },
+    {
+      "fact": "decisions/rn/hooks.decisions.md rewritten to the allowlist (e564684); the workflow named Tests, as the user asked (3f379b7); T3 run again from the rewritten ccs/t3.json, its record /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3.jsonl, the stopped run kept as t3-run2"
     }
   ],
   "semantic_gist": [
@@ -140,7 +143,7 @@
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
     {
-      "task": "rewrite decisions/rn/hooks.decisions.md:34-37 and 41-44 to the allowlist: the forms passed, what is stopped, and that a path built from variables is not; then ccs/t3.json and ccs/t4.json again, using what the stopped runs made where it holds; run T3 and T4"
+      "task": "when T3 ends: read its result, check each Good at its lines, try the stopped forms myself, merge its work; then write ccs/t4.json to the allowlist (state.json touched only by python3 <rn.py> state …, git add, git commit or a command that only reads) and run T4 on T3's shell.py"
     },
     {
       "task": "CodeQL: find why javascript-typescript passed at c907be8; likely fix the default setup's languages to actions and python, which the user does in repository settings"
@@ -187,7 +190,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "rewrite the decision, then the CCS, run T3 and T4"
+      "next": "watch T3; then T4"
     }
   ],
   "uncertainty_signal": [
