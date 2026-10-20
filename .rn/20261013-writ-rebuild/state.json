@@ -143,6 +143,15 @@
     },
     {
       "fact": "T4's 14 first survivors traced to code.md: 6 equivalent (!= [] to > [] twice, [:1] to [:2], c[0] to c[-1], [3:] to [2:], is not on a str), which code.md says nothing of; 8 killable by step 3 as written but not applied: == on a str or list mutated to <= or >= four times (3-value boundaries of a one-value partition), python3 <rn.py> with no more words (length boundary), a content block not a dict (decision table), a hidden name under a pattern twice (an equivalence partition)"
+    },
+    {
+      "fact": "T3 run 4 ended (rc 0) after two rounds: turn gave 53 items, 1 not Good (usability B-7), 3 questions (Q1 no_commit edit auto refused, Q2 no_commit read by git_read_whole, Q3 rn.py state feedback naming git push); its stand-in checking each Good found more not Good: bash <<EOF git push passes (shell.py:214-216), git push --all/--mirror/refs glob pass (default_branch.py:75), the stop names git switch -c not --no-track from origin (default_branch.py:98-100), rn.py errors given without why (139-140), B-16 Cs reason, B-23, usability B-9 B-14 B-11 B-12 B-20, 9 items null yet not in not_good, prompt 17 items citing the wrong lines; work uncommitted in the t3 clone (shell.py, default_branch.py, 4 test files)"
+    },
+    {
+      "fact": "T3 run 4 per role (roletime.py): generator 27.4m + 17.8m, first user 12.7m + 11.8m, evaluator 6.8m + 5.3m, learner 6.0m + 17.9m, turn:up 118.2m in all; against run 2: generator 35.1m, first user 18.6m, evaluator 5.3m, learner 8.1m, round 2 generator 16.0m. T4 run 3: generator 36.6m, first user 15.9m, evaluator 3.6m, learner 6.0m, turn:up 70.1m"
+    },
+    {
+      "fact": "turn lesson: in both runs the first user and evaluator gave Good where the stand-in, reading each Good at its lines, found bypasses and wrong citations; turn counts Good beyond what holds"
     }
   ],
   "semantic_gist": [
@@ -172,12 +181,6 @@
     }
   ],
   "focal_entities": [
-    {
-      "task": "see whether T3 and T4 still run (ps aux | grep \"claude -p\"); watch each with Monitor on its JSONL; when each ends: read its result, check each Good at its lines, try the stopped forms myself, fix a few lines by hand where that is all, merge into writ-rebuild (the clone holds the changes uncommitted), check.sh and mutate.sh --since"
-    },
-    {
-      "task": "report each role's working minutes of T3 run 4 beside T3 run 2, as the user asked, with roletime.py"
-    },
     {
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
