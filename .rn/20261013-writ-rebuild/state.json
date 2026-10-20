@@ -47,6 +47,15 @@
     },
     {
       "fact": "e343ada, the first run's patch, failed CI with 7 rn survivors, as I pushed without mutate.sh rn; the user chose a pre-push hook (A): dev/githooks/pre-push runs check.sh and the changed plugins' mutation testing on the pushed commits (e3978f7), core.hooksPath set; mutate.sh's fixed ports let two runs at once test each other's copies, now free ports"
+    },
+    {
+      "fact": "T2 turn run stopped at 1h04m: 5 full rn mutation runs took 33 of the generator's 36 min; it was a change to existing work, which turn cannot take yet; its work is in scratchpad t2-second-run.patch (session-local, may be gone)"
+    },
+    {
+      "fact": "common/shell.py rewritten in the working tree, NOT committed: operators marked (class Operator, sign()), # comments only at a word's start, heredoc text skipped in the lexer, text_left_out removed; dev/common/tests/test_shell_properties.py added (round trip of quoted words, statements, heredoc). One test fails: `<<-` is read as `<<` and `-EOF`, as `-` is not in SIGNS (the old code had the same fault). The last mutate common reporting 0 is void: a test was failing"
+    },
+    {
+      "fact": "building shell.py myself test first still left 22 survivors, from behaviors added while writing without a test first; detecting them by mutation and patching is what the user forbids"
     }
   ],
   "semantic_gist": [
@@ -55,20 +64,23 @@
     },
     {
       "gist": "use what a run made where it holds; redo only what a fault touched"
+    },
+    {
+      "gist": "the user (2026-10-20): make a procedure under which property and mutation tests do not fail in the first place; detecting and then fixing is not allowed; improve the way of making before any trial; what is not reproducible is not needed; balance quality and method; development is far too slow"
+    },
+    {
+      "gist": "the user (2026-10-20): mutation testing in CI alone, CI running each plugin in parallel; only the survivors can be rerun locally after a test-only fix; pre-push keeps check.sh alone"
     }
   ],
   "focal_entities": [
     {
-      "task": "T2 from ccs/t2-first-run.patch, not from the start: apply it, commit, and have turn change only what common/ now holds (rn/hooks links hook.py and shell.py), with ccs/t2.json"
+      "task": "write the procedure that keeps property and mutation tests from failing by construction, into rn/checklists/product/code.md: behaviors listed from the purpose first; each condition, operator, constant and index written only for a failing test that needs it, with cases on each side of each comparison; no condition no test needs; before handing over, ask of each changed line which test fails if it changes; properties over the whole input kind, from the spec"
     },
     {
-      "task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"
+      "task": "show it reproducible: finish shell.py by that procedure, and mutate common passes 0 on its first run; then T2 by the same procedure"
     },
     {
-      "task": "after T2: exemplars beside the checklists for documents, read whole before writing and when checking, the checklist still the measure; a change to turn's and rn's designs, agreed with the user one point at a time (the user chose to do it after T2)"
-    },
-    {
-      "task": "after T2: a change to an existing work — readers judge the whole, the generator remakes only the change and what it broke, a lack found outside it returned as a task of its own for the caller, mutation testing on the changed lines; a change to turn's design, agreed with the user one point at a time"
+      "task": "pre-push: check.sh alone; CI: mutation per plugin in parallel jobs; plugin.md and dev/README.md to match"
     }
   ],
   "relational_map": [
@@ -103,7 +115,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T2 from the first run's patch through turn; then the two design topics after T2"
+      "next": "the procedure into code.md first (no trial before it); then shell.py by it"
     }
   ],
   "uncertainty_signal": [
