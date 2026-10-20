@@ -227,8 +227,8 @@ turn/                      the plugin, installed by Claude Code
   A role that reads only what it is given is not bent by what it was not meant to see.
 - The hooks stop every role's reply, and the orchestrator's check and decision, until every input
   of its step is read whole since it last changed, and of what the receiver has, each file the first
-  user or the evaluator opens; a script shows the learner each record page by page, as a record is
-  too long for one read.
+  user or the evaluator opens; a script shows the learner each record page by page, and the
+  orchestrator what it judges page by page where it runs long, as one read shows only so much.
 
   An item judged on a part read is judged on a guess for the rest.
 - A script writes the result where the call says, and checks its shape as it writes.

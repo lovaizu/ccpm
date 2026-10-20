@@ -13,6 +13,7 @@ from helpers import CALL, CCS, CHECKLIST, EACH, SCRIPTS, RepoTest
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
+    "       turn.py next <result> <page>\n"
     "       turn.py given <result>\n"
     "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
@@ -52,7 +53,7 @@ class TestUsage(RepoTest):
             ["start"],
             ["start", "{}", "x"],
             ["next"],
-            ["next", "r", "x"],
+            ["next", "r", "1", "x"],
             ["given"],
             ["given", "r", "x"],
             ["parts"],

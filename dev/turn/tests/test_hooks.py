@@ -968,6 +968,33 @@ class TestWholeReads(HookTest):
         self.given_record(ID, json.dumps(CALL), work, ("Bash", {"command": shown}))
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
+    def test_the_orchestrator_deciding_before_every_page_of_the_items_is_shown_stops(self):
+        # Given: an orchestrator whose items to decide run to two pages, which read the work whole
+        # and saw the first page, then the second cut short in a pipe, or the second before
+        # printing the items again
+        # When: it records its decision with the script
+        # Then: it is stopped, saying to see the items whole; once it saw the second page unpiped
+        # after the first, it goes through, a page asked past the last changing nothing
+        self.through(dict(EVALUATED, item="B-1", good="x" * 25000))
+        first = ("Bash", {"command": f"{SCRIPT} next {CALL['result']}"})
+        second = ("Bash", {"command": f"{SCRIPT} next {CALL['result']} 2"})
+        cut = ("Bash", {"command": f"{SCRIPT} next {CALL['result']} 2 | head -c 500"})
+        work = self.read("README.md")
+        command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
+        for uses in ((work, first), (work, first, cut), (work, second, first)):
+            with self.subTest(uses=uses):
+                self.given_record(ID, json.dumps(CALL), *uses)
+                self.stops(
+                    pretooluse,
+                    self.tool("turn:up", "Bash", command=command),
+                    "see the items to decide whole",
+                )
+        past = ("Bash", {"command": f"{SCRIPT} next {CALL['result']} 3"})
+        for uses in ((work, first, second), (work, first, second, past)):
+            with self.subTest(uses=uses):
+                self.given_record(ID, json.dumps(CALL), *uses)
+                self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
+
     def test_the_orchestrator_checking_before_reading_what_the_run_was_given_stops(self):
         # Given: a run started, whose check is not given yet, and an orchestrator that read the
         # CCS and the checklist but not the other files the CCS names

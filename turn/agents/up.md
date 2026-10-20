@@ -61,7 +61,9 @@ spent.
      - `"question"`: the number of the question it waits on, counted from 1; the question says
        what to ask the user, and `recommended` the answer you would choose and why, in one
        sentence.
-3. Go on by what `turn.py` printed:
+3. Go on by what `turn.py` printed; where it begins with `<step>, page 1 of <n>`, it is that
+   step's JSON in pages, too long for one print: see each page as its first line says, then go on
+   by the step.
    - If it exits with 1, do what it says: fill each place it names and run it again, or start the
      agent it names.
    - `{"agent": "...", "prompt": "..."}` or `{"agent": "...", "message": "...", "to": "..."}`: go to
@@ -81,8 +83,8 @@ spent.
 5. Decide each item in `decide.items`, every item of the run: each holds the evaluator's Good
    (`evaluator`) and the first user's Good (`first_user`), `null` where there is none, and, where
    the generator found it waits on one, `question`, the number of a question in
-   `decide.questions`. See `decide` as `turn.py next <the call's result>` prints it, with no pipe or
-   redirect, and read the work whole, each file as in step 2. Read the work at the lines each Good
+   `decide.questions`. See `decide` as `turn.py next <the call's result>` prints it, every page, with no
+   pipe or redirect, and read the work whole, each file as in step 2. Read the work at the lines each Good
    names, as the receiver the CCS names for the use it names, and find there the Good: what the
    receiver gets that gives what the item asks, where its `Scope` says, holding each reader's Good
    to what its item asks; for an item asked of each part, in each part `turn.py parts <the call's
@@ -110,7 +112,7 @@ spent.
 6. Take what holds of what the learner found, offered in `take`: `process`, each lesson on how the
    run went, for the role it names, with its grounds quoted from the records, numbered from 1; and
    `checked`, what the learner checked. See `take` as `turn.py next <the call's result>` prints it,
-   with no pipe or redirect. Take a lesson where its grounds, as you saw the run go, show what it
+   every page, with no pipe or redirect. Take a lesson where its grounds, as you saw the run go, show what it
    says, and the role following it brings its Goods with less waste or less chance within its
    steps, not by what the work says; each lesson taken goes to its role in the next round, and
    every one into the result, for the calling AI to hand on to turn's makers. Run

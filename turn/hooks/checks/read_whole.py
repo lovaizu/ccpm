@@ -19,6 +19,7 @@ READERS = ("generator", "first-user", "evaluator", "learner")
 # that started it.
 MESSAGED = ("peer", "coordinator")
 PAGE = re.compile(r"""turn\.py["']?\s+record\s+\S+\s+(\d+)\s+(\d+)""")
+SHOWN_PAGE = re.compile(r"""turn\.py["']?\s+next\s+\S+\s+(\d+)""")
 
 
 def check(event: dict[str, Any]) -> list[str]:
@@ -48,19 +49,20 @@ def orchestrator(event: dict[str, Any], kept: dict[str, Any]) -> list[str]:
         # The items to decide are what turn.py printed last, seen whole only when not piped or sent
         # to a file.
         said = []
-        if not printed(agents.transcript(event)):
+        if not printed(agents.transcript(event), kept, "decide"):
             said.append(
                 "see the items to decide whole: run `turn.py next <the call's result>` again with"
-                " no pipe or redirect, since an item decided without where the first user stopped"
-                " is decided on a guess"
+                " no pipe or redirect, and each page after it as it says, since an item decided"
+                " without where the first user stopped is decided on a guess"
             )
         return said + unread(event, kept, kept["work"])
     if "take" in kept:
-        if printed(agents.transcript(event)):
+        if printed(agents.transcript(event), kept, "take"):
             return []
         said = (
             "see what the learner found whole: run `turn.py next <the call's result>` again with"
-            " no pipe or redirect, since a lesson taken unseen is taken on a guess"
+            " no pipe or redirect, and each page after it as it says, since a lesson taken unseen"
+            " is taken on a guess"
         )
         return [said]
     return []
@@ -238,17 +240,24 @@ def shown_whole(attachment: Any, cwd: str) -> str | None:
     return path if numbers == [str(n) for n in range(1, count + 1)] else None
 
 
-def printed(path: str) -> bool:
-    """Whether the last `turn.py next` the agent ran without input showed its output whole."""
-    shown = False
+def printed(path: str, kept: dict[str, Any], step: str) -> bool:
+    """Whether the last `turn.py next` the agent ran without input, and each page it asked after,
+    showed whole what it judges, every page of it."""
+    shown: set[int] = set()
     with open(path, encoding="utf-8") as f:
         for line in f:
             content = json.loads(line).get("message", {}).get("content")
             for part in content if isinstance(content, list) else []:
                 command = str(part.get("input", {}).get("command", ""))
-                if agents.runs(command, "next") and "<<" not in command:
-                    shown = not {"|", ">"} & set(command)
-    return shown
+                if not agents.runs(command, "next") or "<<" in command:
+                    continue
+                whole = not {"|", ">"} & set(command)
+                page = SHOWN_PAGE.search(command)
+                if page is None:
+                    shown = {1} if whole else set()
+                elif whole and shown:
+                    shown.add(int(page.group(1)))
+    return shown >= set(range(1, len(run.pages({step: kept[step]})) + 1))
 
 
 def at(cwd: str, path: str) -> str:

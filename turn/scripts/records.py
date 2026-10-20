@@ -20,7 +20,11 @@ def entries(path: str) -> list[dict[str, Any]]:
 
 def pages(path: str) -> list[str]:
     """A record's pages: what the role was given, said, used and was shown, in order."""
-    text = shown(path)
+    return split(shown(path))
+
+
+def split(text: str) -> list[str]:
+    """A text cut into pages, each short enough for one read to show it whole."""
     return [text[i : i + PAGE] for i in range(0, len(text), PAGE)] or [""]
 
 

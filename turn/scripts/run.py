@@ -21,11 +21,14 @@ LEARNER = "turn:learner"
 KEPT = (GENERATOR, FIRST_USER)
 # A reading that does not settle is bounded: the first user sends back three times a round.
 SENDS = 3
+# What the orchestrator judges, shown again whenever it asks.
+SHOWN = ("check", "decide", "take")
 # A messaged role's reply is waited for a second at a time, within the shell's two minutes.
 WAIT = 100
 USAGE = (
     "usage: turn.py start '<call JSON>'\n"
     "       turn.py next <result> [< <your check, decision or take as JSON>]\n"
+    "       turn.py next <result> <page>\n"
     "       turn.py given <result>\n"
     "       turn.py parts <result>\n"
     "       turn.py record <result> <record number> <page>"
@@ -41,7 +44,9 @@ def main(argv: list[str], stdin: IO[str]) -> int:
         if argv[:1] == ["start"] and len(argv) == 2:
             print(json.dumps(start(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["next"] and len(argv) == 2:
-            print(json.dumps(next_step(argv[1], stdin.read()), ensure_ascii=False))
+            print(paged(argv[1], next_step(argv[1], stdin.read()), "1"))
+        elif argv[:1] == ["next"] and len(argv) == 3:
+            print(paged(argv[1], view(argv[1]), argv[2]))
         elif argv[:1] == ["given"] and len(argv) == 2:
             print(json.dumps(given(argv[1]), ensure_ascii=False))
         elif argv[:1] == ["parts"] and len(argv) == 2:
@@ -149,6 +154,40 @@ def parts(result: str) -> dict[str, list[str]]:
     if run is None:
         raise call.Stop(f"turn: no run is going with its result at {result}")
     return {"parts": forms.parts(run["work"])}
+
+
+def view(result: str) -> dict[str, Any]:
+    """What the orchestrator is to judge now, the check, the items to decide or what to take."""
+    run = running(result)
+    for step in SHOWN:
+        if run is not None and step in run:
+            return {step: run[step]}
+    raise call.Stop(
+        f"turn: nothing waits on your judgment to show in pages; run `turn.py next {result}`"
+    )
+
+
+def pages(out: dict[str, Any]) -> list[str]:
+    """What turn.py prints for the orchestrator, in pages."""
+    return records.split(json.dumps(out, ensure_ascii=False))
+
+
+def paged(result: str, out: dict[str, Any], page: str) -> str:
+    """A page of what turn.py prints, headed by its number among all where there is more than one,
+    so the orchestrator sees whole what it judges however long it is, as the shell cuts a long
+    print short."""
+    split = pages(out)
+    if not page.isdigit() or not 1 <= int(page) <= len(split):
+        raise call.Stop(f"turn: page {page} is not one of 1 to {len(split)}")
+    shown = split[int(page) - 1]
+    # A print in one page comes as it is.
+    if not split[1:]:
+        return shown
+    head = (
+        f"{next(iter(out))}, page {page} of {len(split)}: see every page, each with"
+        f" `turn.py next {result} <page>` in a command of its own with no pipe or redirect"
+    )
+    return head + "\n" + shown
 
 
 def record(result: str, number: str, page: str) -> str:

@@ -2,6 +2,7 @@ import contextlib
 import io
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -218,7 +219,15 @@ class RepoTest(unittest.TestCase):
         """What the script prints next for the run, handed the orchestrator's reading or decision."""
         code, out = self.turn("next", CALL["result"], stdin=json.dumps(given) if given else "")
         self.assertEqual(code, 0, out)
-        return json.loads(out)
+        head, _, page = out.partition("\n")
+        count = re.match(r"\w+, page 1 of (\d+): ", head)
+        if count is None:
+            return json.loads(out)
+        # A print too long for one read comes in pages, each without its head and the line end
+        # print adds.
+        for n in range(2, int(count.group(1)) + 1):
+            page = page[:-1] + self.turn("next", CALL["result"], str(n))[1].partition("\n")[2]
+        return json.loads(page)
 
     def refused(self, given=None):
         """What the script prints when it refuses to go on with the run."""

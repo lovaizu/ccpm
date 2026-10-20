@@ -384,6 +384,46 @@ class TestDecision(ReadTest):
         self.assertEqual(self.next(), {"decide": first})
         self.assertIn("decide", self.read_json(RESULT)["running"])
 
+    def test_items_to_decide_too_long_for_one_read_are_shown_page_by_page(self):
+        # Given: a run waiting on a decision whose items run past two pages
+        # When: the orchestrator runs the script with no input, then asks for each page after
+        # Then: each page is headed by its number among all and how to see the others, the pages
+        # together are the items to decide, a page past the last stops, and the run still waits
+        # on its decision
+        super().setUp()
+        self.through(dict(EVALUATED, item="B-1", good="x" * 45000))
+        decide = self.read_json(RESULT)["running"]["decide"]
+        pages = []
+        for asked in ((), ("2",), ("3",)):
+            code, out = self.turn("next", RESULT, *asked)
+            self.assertEqual(code, 0, out)
+            head, page = out.split("\n", 1)
+            self.assertTrue(head.startswith(f"decide, page {len(pages) + 1} of 3: "), head)
+            self.assertIn(f"turn.py next {RESULT} <page>", head)
+            pages.append(page[:-1])
+        self.assertEqual(json.loads("".join(pages)), {"decide": decide})
+        for page in ("0", "4"):
+            self.assertIn(f"page {page} is not one of 1 to 3", self.turn("next", RESULT, page)[1])
+        self.assertIn("decide", self.read_json(RESULT)["running"])
+
+    def test_items_to_decide_short_enough_for_one_read_are_printed_as_they_are(self):
+        # Given: a run waiting on a decision whose items fit in one page
+        # When: the orchestrator asks for the first page
+        # Then: the items to decide are printed with no head, as with no page asked
+        code, out = self.turn("next", RESULT, "1")
+        self.assertEqual((code, json.loads(out)), (0, self.next()))
+
+    def test_a_page_asked_while_the_run_waits_on_a_role_stops(self):
+        # Given: a run waiting on the generator's reply
+        # When: the orchestrator asks for a page
+        # Then: it stops, saying to go on with no page, and the run still waits on the generator
+        super().setUp()
+        self.started()
+        code, out = self.turn("next", RESULT, "2")
+        self.assertEqual(code, 1, out)
+        self.assertIn(f"run `turn.py next {RESULT}`", out)
+        self.assertEqual(self.read_json(RESULT)["running"]["next"]["agent"], "turn:generator")
+
     def test_a_good_no_reader_found_stops(self):
         # Given: an item the generator claimed Good while neither the first user nor the evaluator
         # found its Good
