@@ -11,6 +11,7 @@
 - The result names, for every item, its Good with the lines that give it, the question it waits on, or what the receiver gets once it has it and where it was not found, and the lessons turn took on how its own run went — you check each Good by reading its lines, and hand the lessons on to turn's makers.
 - Each AI of a run reads only what your CCS gives it and writes nothing but the work, its shell commands included — the work rests on what you decided, and the rest of your repository stays as you left it.
 - A work can be several files that serve one purpose, such as code and its tests — turn makes, reads and checks them together.
+- A work already at its paths is changed from what is there, not written again from nothing — what already serves its reader stays as it is.
 - Several runs go at once, each kept apart — your plugin can have several works made at the same time.
 - Each AI of a run tells your step, before it starts, what it will do, how far and how, and as each step ends, what is done and what comes next — a run going a slow or wrong way shows while it can still be stopped, not after its time is spent.
 

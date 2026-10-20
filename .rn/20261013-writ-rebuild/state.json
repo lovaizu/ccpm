@@ -116,6 +116,9 @@
     },
     {
       "fact": "turn has no way for a change to existing work: generator.md:56-57 writes the work from nothing in the first round; the earlier fix (--since) touched only the time; T3 run 3 stopped on the user's word, kept in /tmp/claude-1000/-Users-kiyo-work-lovaizu-ccpm--claude-worktrees-writ-rebuild/b596bf79-a55d-4fa9-9eb6-15b30b5af888/scratchpad/t3"
+    },
+    {
+      "fact": "the user agreed (2026-10-20): turn makes a work from the file already at its path, written from nothing only where none is; the readers still read whole and run the receiver's checks, so what a change breaks shows there, and what was Good gets its Good at once; rn's caller needs no change now, rn.py ccs taking one path is for T11"
     }
   ],
   "semantic_gist": [
@@ -145,9 +148,6 @@
     }
   ],
   "focal_entities": [
-    {
-      "task": "ask the user: turn takes a change to existing work (A, recommended: read the work whole, change only what the purpose and items need, keep what gives a Good; dev/turn/design.md agreed with the user first) or not (B)"
-    },
     {
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
@@ -199,7 +199,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "the user's answer on turn and changes; T3 and T4 wait for it"
+      "next": "run T3 again on this turn; it is also the trial of the generator change"
     }
   ],
   "uncertainty_signal": [

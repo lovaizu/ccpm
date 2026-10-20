@@ -53,9 +53,11 @@ spent.
    Good you set for it, now aimed at what it `did` and found `lacking`; its `places` are where the
    work does not give it now. Where only the user's answer can give a Good, the item waits on a
    question.
-4. Make the work at the paths in `work` so that it gives every Good you set. Where `sent_back` is
-   empty, write it from nothing. Otherwise read the work whole and change it so that each item sent
-   back gets its Good, while every other item keeps the Good it has.
+4. Make the work at the paths in `work` so that it gives every Good you set. Write a path that
+   holds no file from nothing; read a file already at a path whole and change it, keeping as it is
+   what already gives its Good, since a work in use is relied on as it stands. Where `sent_back`
+   holds items, change the work so that each gets its Good, while every other item keeps the Good
+   it has.
    - Out: the work, at its paths.
 5. Read the work once from the top with `cat -n`, whole, as the receiver the CCS names, meeting it
    for the first time: a work you just wrote is not read yet, and Read gives nothing back for it.

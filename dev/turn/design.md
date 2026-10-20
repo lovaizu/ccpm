@@ -89,6 +89,8 @@ The orchestrator and the four roles it starts are AIs, each answering the orches
   meets it failing gets nothing from the rest. It hands back once it has read the work and found
   each Good at its lines. What the CCS does not say becomes a question, not its own guess. Its Goods
   are its claim, not a judgment.
+- Where a path of the work already holds a file, the generator makes the work from it rather than
+  from nothing, so what already gives its Good stays as it is.
 - The first user uses the work in the receiver's place, with everything the receiver has and doing
   all they do with it, as the CCS says of the receiver, such as the whole repository and running
   its tests for a maintainer of code, and gives for each item the Good it found in the work, with
