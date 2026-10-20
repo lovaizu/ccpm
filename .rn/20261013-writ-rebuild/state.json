@@ -131,6 +131,9 @@
     },
     {
       "fact": "CodeQL passes since 4a29080 (2026-10-20 23:07): its runs analyze actions and python alone, javascript-typescript gone from the default setup; why it once passed is no longer needed"
+    },
+    {
+      "fact": "T4 run 3 round 1: the generator wrote signoff.py by code.md and mutate.sh --since left 12 survivors (1.69%, 41s); the generator kills them in the run, but by the user's gist the way of making failed; its transcript ~/.claude/projects/-tmp-…-scratchpad-t4/d7df36a6-d847-4077-a3fb-8dca91bb3c36/subagents/agent-af5f4165fbec1c31c.jsonl"
     }
   ],
   "semantic_gist": [
@@ -171,6 +174,9 @@
     },
     {
       "task": "after both: run mutate.sh rn common turn whole, as the runs used the old mutate.sh"
+    },
+    {
+      "task": "after T4: for each of its 12 first survivors, find which code.md test design step should have given the test that kills it, and bring a change to code.md to the user"
     }
   ],
   "relational_map": [
