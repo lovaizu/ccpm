@@ -52,10 +52,10 @@
       "fact": "T2 turn run stopped at 1h04m: 5 full rn mutation runs took 33 of the generator's 36 min; it was a change to existing work, which turn cannot take yet; its work is in scratchpad t2-second-run.patch (session-local, may be gone)"
     },
     {
-      "fact": "common/shell.py rewritten in the working tree, NOT committed: operators marked (class Operator, sign()), # comments only at a word's start, heredoc text skipped in the lexer, text_left_out removed; dev/common/tests/test_shell_properties.py added (round trip of quoted words, statements, heredoc). One test fails: `<<-` is read as `<<` and `-EOF`, as `-` is not in SIGNS (the old code had the same fault). The last mutate common reporting 0 is void: a test was failing"
+      "fact": "code.md's order now lists behaviors first, writes each condition only for a failing test, and step 6 names, for each change mutation testing makes to a changed line, the example test that fails; shell.py finished by it (ae90b2e, 0edb132): the first form of step 6 left 6 survivors, as it tried only lines taken out, and a line run only by property inputs"
     },
     {
-      "fact": "building shell.py myself test first still left 22 survivors, from behaviors added while writing without a test first; detecting them by mutation and patching is what the user forbids"
+      "fact": "the user chose A (2026-10-20): every check runs on what a change touches before a push and whole in CI; pre-push runs check.sh <plugins> and mutate.sh --since <base> (cr-filter-git), Hypothesis dev 10 / ci 1000 inputs from dev/common/testing.py, CI mutation per plugin in parallel, `tests` the gate main requires (ec8468f); code.md step 7 holds the principle once (63bb225); a push of an rn-only doc took 14s, one touching everything 62s"
     }
   ],
   "semantic_gist": [
@@ -69,18 +69,15 @@
       "gist": "the user (2026-10-20): make a procedure under which property and mutation tests do not fail in the first place; detecting and then fixing is not allowed; improve the way of making before any trial; what is not reproducible is not needed; balance quality and method; development is far too slow"
     },
     {
-      "gist": "the user (2026-10-20): mutation testing in CI alone, CI running each plugin in parallel; only the survivors can be rerun locally after a test-only fix; pre-push keeps check.sh alone"
+      "gist": "turn ends before CI: its roles check by the affected checks alone (check.sh <plugin>, mutate.sh --since <start commit> <plugin>), and I check CI's whole result after the push, a failure going back as new work"
     }
   ],
   "focal_entities": [
     {
-      "task": "write the procedure that keeps property and mutation tests from failing by construction, into rn/checklists/product/code.md: behaviors listed from the purpose first; each condition, operator, constant and index written only for a failing test that needs it, with cases on each side of each comparison; no condition no test needs; before handing over, ask of each changed line which test fails if it changes; properties over the whole input kind, from the spec"
+      "task": "T2: rn's 7 survivors in the full mutation (from e343ada) killed by code.md's procedure, so CI is green; then T2 is done"
     },
     {
-      "task": "show it reproducible: finish shell.py by that procedure, and mutate common passes 0 on its first run; then T2 by the same procedure"
-    },
-    {
-      "task": "pre-push: check.sh alone; CI: mutation per plugin in parallel jobs; plugin.md and dev/README.md to match"
+      "task": "the CCS for turn names the affected checks alone"
     }
   ],
   "relational_map": [
@@ -115,7 +112,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "the procedure into code.md first (no trial before it); then shell.py by it"
+      "next": "T2's survivors; whether turn can take a change to existing work is to be found out, not assumed"
     }
   ],
   "uncertainty_signal": [
