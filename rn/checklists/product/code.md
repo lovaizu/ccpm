@@ -20,10 +20,19 @@ Code is written in this order, each step the ground of the next:
    alone, with each piece of knowledge in one place across the repository, what its code and tests
    already share used rather than written again; decide what each takes in and gives back, and
    where what comes from outside is checked. These are the units the tests are written for.
-3. Run the existing tests and see them pass, before changing anything.
-4. Build it test first: for each behavior, write a test, see it fail, write the least code that
-   passes it, then tidy it back to the design, such as putting what is written twice in one place.
-5. Check it by the development rules and by how it is checked.
+3. List, from the requirements, every behavior each unit must have: for each check, a case it
+   stops and one it lets through; for each comparison, a case on each side of its bound; for each
+   behavior over inputs of a kind, such as any text, the property every input of the whole kind
+   the requirements name must have, such as a parse giving back what was written.
+4. Run the existing tests and see them pass, before changing anything.
+5. Build it test first, one listed behavior at a time: write its test, see it fail, write the least
+   code that passes it, then tidy it back to the design, such as putting what is written twice in
+   one place. Write each condition, operator, constant and index only where a failing test needs
+   it; a behavior found needed while writing is added to the list and gets its failing test first.
+6. Before handing it over, name for each line changed the test that fails if the line is changed,
+   such as a comparison turned round or a value replaced; a line with no such test is a behavior
+   with no test, and goes back to step 5.
+7. Check it by the development rules and by how it is checked.
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
 subject and each file a part; its F-1 is answered by this F-1, its B-7 by each piece of knowledge,
