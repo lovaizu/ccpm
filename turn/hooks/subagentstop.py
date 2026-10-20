@@ -4,5 +4,6 @@ going with what they say."""
 import sys
 
 import events
+import hook
 
-sys.exit(events.main(events.SUBAGENTSTOP, sys.stdin))
+sys.exit(hook.run("turn", events.SUBAGENTSTOP, sys.stdin, sys.stderr))

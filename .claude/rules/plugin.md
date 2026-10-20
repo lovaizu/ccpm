@@ -76,6 +76,15 @@ b. **Write the code with `code.md` open until the tests pass.** What runs on use
      takes long and CI runs it on every push anyway; `main` takes a pull request only when the job
      has passed, so the job always runs, and passes on only what was checked.
 
+   **Look first for what the plugins already share and use it.** Code more than one plugin needs,
+   such as how a hook reads a command, is kept once in `common/`, with its tests in
+   `dev/common/tests/`, and each plugin takes it through a relative symbolic link; what the tests
+   share, such as a repository made once and copied for each test, is kept in `dev/common/`. A
+   plugin's whole test run takes seconds, and the time each check takes is read on every run.
+   - Rationale: installing copies the target of a link within the marketplace into the plugin, so
+     each plugin carries the shared code while it is written, tested and fixed in one place; mutation
+     testing runs the tests once for each mutant, so a slow test run makes every change wait.
+
 c. **Write each prompt, a skill or an agent, with `usability.md` and `prompt.md` open, and run it to see
    that the AI does what its Role and Steps say.**
    - Rationale: a prompt is known by what the AI does with it; a trial on unchecked prompts finds

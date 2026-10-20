@@ -29,6 +29,18 @@
     },
     {
       "fact": "turn's generator split the word git to get past no_commit and commit in a scratch repository it made to run what it gave; asked the user whether no_commit stops only the run's own repository (a, recommended) or all (b)"
+    },
+    {
+      "fact": "turn's hooks stop a role's git only in the repository the run works in (0ee1f70), as the user chose a"
+    },
+    {
+      "fact": "T2's run was stopped: its generator wrote rn's hooks with its own command reading and hook entry, the same as turn's; what it made (check.sh 100%, mutate rn 0 survivors) is kept as ccs/t2-first-run.patch"
+    },
+    {
+      "fact": "the user asked why the plugins share nothing: common/ now holds hook.py and shell.py, linked into turn/hooks, dev/common/testing.py what the tests share (rn's tests 16s to 11s), plugin.md 5b and code.md B-18 ask for both; a link inside the marketplace is copied as the file at install, checked by installing turn from a branch"
+    },
+    {
+      "fact": "mutation times: common 38s with 19 survivors to kill (shell.py was tested through turn's hook tests), turn 271s 0, rn 213s 0"
     }
   ],
   "semantic_gist": [
@@ -41,7 +53,10 @@
   ],
   "focal_entities": [
     {
-      "task": "the user's answer on no_commit's reach, then that change to turn"
+      "task": "kill common's 19 surviving mutants with tests in dev/common/tests, then CI green"
+    },
+    {
+      "task": "T2 from ccs/t2-first-run.patch, not from the start: apply it, commit, and have turn change only what common/ now holds (rn/hooks links hook.py and shell.py), with ccs/t2.json"
     },
     {
       "task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"
@@ -71,15 +86,18 @@
       "environment": "the check tools are not installed on this machine; make a venv from dev/requirements.txt and dev/requirements-test-quality.txt with /opt/homebrew/bin/python3.12 and put its bin first on PATH for dev/check.sh, dev/mutate.sh and each turn run"
     },
     {
-      "runner": "set CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up in the background"
+      "watch": "watch each turn run while it goes, with Monitor on the runner's JSONL, not only its end, as the user asked"
     },
     {
-      "watch": "watch each turn run while it goes, with Monitor on the runner's JSONL, not only its end, as the user asked"
+      "runner": "run-turn.sh sets CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS so claude -p waits for turn:up"
+    },
+    {
+      "measure": "read how long each check and run takes, and fix a slow one at its cause before going on, as the user asked"
     }
   ],
   "predictive_cue": [
     {
-      "next": "the user's answer on no_commit's reach; then T2 through turn; then the two design topics after T2"
+      "next": "common's survivors; then T2 from the first run's patch through turn; then the two design topics after T2"
     }
   ],
   "uncertainty_signal": [
@@ -98,7 +116,7 @@
       "report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"
     },
     {
-      "runner": "run-turn.sh <ccs> <name>: clones writ-rebuild into the scratchpad, copies the CCS to .tasks/ccs.json, runs claude -p --plugin-dir <clone>/turn --permission-mode auto with the venv first on PATH; lives in the session's scratchpad and goes with it"
+      "runner": ".rn/20261013-writ-rebuild/ccs/run-turn.sh, with TURN_RUNS set to a scratch folder holding the venv"
     }
   ]
 }

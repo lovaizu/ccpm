@@ -4,5 +4,6 @@ use with what they say."""
 import sys
 
 import events
+import hook
 
-sys.exit(events.main(events.PRETOOLUSE, sys.stdin))
+sys.exit(hook.run("turn", events.PRETOOLUSE, sys.stdin, sys.stderr))

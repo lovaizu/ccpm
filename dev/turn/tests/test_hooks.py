@@ -871,7 +871,7 @@ class TestWholeReads(HookTest):
         super().setUp()
         self.generator_prompt = self.started()
 
-    def read(self, path, **part):
+    def read_use(self, path, **part):
         return ("Read", dict(file_path=path, **part))
 
     def generator_ends(self, *tool_uses):
@@ -891,7 +891,7 @@ class TestWholeReads(HookTest):
         # Read and one by a command
         # When: it ends with its reply
         # Then: it ends
-        uses = (self.read("README.md"), ("Bash", {"command": "cat checklists/readme.md"}))
+        uses = (self.read_use("README.md"), ("Bash", {"command": "cat checklists/readme.md"}))
         reply = {"items": FIRST_READ}
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
 
@@ -903,14 +903,14 @@ class TestWholeReads(HookTest):
         # Then: it is kept going, naming the work to read whole
         prompt = self.first_user()
         for part in (
-            self.read("README.md", offset=2),
+            self.read_use("README.md", offset=2),
             ("Bash", {"command": "sed -n 1,2p README.md"}),
             ("Bash", {"command": "cat README.md | head -n 2"}),
             ("Bash", {"command": "cat 'README.md"}),
             ("Bash", {"command": 'd=$(mktemp -d) && cd "$d" && cat README.md'}),
         ):
             with self.subTest(part=part):
-                uses = (part, self.read("checklists/readme.md"))
+                uses = (part, self.read_use("checklists/readme.md"))
                 code, err = self.replied("turn:first-user", prompt, {"items": FIRST_READ}, *uses)
                 self.assertEqual(code, 2)
                 self.assertIn("read whole", err)
@@ -922,21 +922,25 @@ class TestWholeReads(HookTest):
         # work again from top to end
         # When: it ends with its reply
         # Then: it ends
-        given = [self.read(p) for p in (CALL["ccs"], "notes/readme.decisions.md", "docs/start.md")]
+        given = [
+            self.read_use(p) for p in (CALL["ccs"], "notes/readme.decisions.md", "docs/start.md")
+        ]
         given.append(("Bash", {"command": "cat checklists/readme.md README.md"}))
         change = {"file_path": f"{self.repo}/README.md", "old_string": "a", "new_string": "c"}
         edit = ("Edit", change)
-        self.assertEqual(self.generator_ends(*given, edit, self.read("README.md")), (0, ""))
+        self.assertEqual(self.generator_ends(*given, edit, self.read_use("README.md")), (0, ""))
 
     def test_a_generator_that_did_not_read_the_work_after_its_last_change_is_kept_going(self):
         # Given: a generator that read everything it was given, then changed the work and read
         # only part of it after
         # When: it ends with its reply
         # Then: it is kept going, naming the work to read whole
-        given = [self.read(p) for p in (CALL["ccs"], "notes/readme.decisions.md", "docs/start.md")]
+        given = [
+            self.read_use(p) for p in (CALL["ccs"], "notes/readme.decisions.md", "docs/start.md")
+        ]
         given.append(("Bash", {"command": "cat checklists/readme.md README.md"}))
         edit = ("Write", {"file_path": "README.md", "content": "# csvtidy\n"})
-        code, err = self.generator_ends(*given, edit, self.read("README.md", offset=30))
+        code, err = self.generator_ends(*given, edit, self.read_use("README.md", offset=30))
         self.assertEqual(code, 2)
         self.assertIn("README.md", err)
 
@@ -950,8 +954,8 @@ class TestWholeReads(HookTest):
         self.through()
         sent = ("SendMessage", {"to": ID, "message": self.generator_prompt})
         part = ("Bash", {"command": "sed -n '1,10p' README.md"})
-        self.assertIn("README.md", "".join(self.decided(self.read("README.md"), sent, part)))
-        self.assertEqual(self.decided(sent, part, self.read("README.md")), [])
+        self.assertIn("README.md", "".join(self.decided(self.read_use("README.md"), sent, part)))
+        self.assertEqual(self.decided(sent, part, self.read_use("README.md")), [])
 
     def test_the_orchestrator_telling_the_calling_ai_keeps_the_work_read(self):
         # Given: an orchestrator whose run waits on its decision, that saw the items to decide and
@@ -961,7 +965,7 @@ class TestWholeReads(HookTest):
         # Then: it goes through, as a message to `main` changes no work
         self.through()
         told = ("SendMessage", {"to": "main", "message": "orchestrator: deciding every item"})
-        self.assertEqual(self.decided(self.read("README.md"), told), [])
+        self.assertEqual(self.decided(self.read_use("README.md"), told), [])
 
     def test_the_orchestrator_shown_the_changed_work_whole_by_claude_code_goes_on(self):
         # Given: an orchestrator whose run waits on its decision, that saw the items to decide and
@@ -993,7 +997,7 @@ class TestWholeReads(HookTest):
         # printed them and read the work whole, it goes through
         self.through()
         shown = f"cd {self.repo} && {SCRIPT} next {CALL['result']}"
-        work = self.read("README.md")
+        work = self.read_use("README.md")
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         for uses, said in (
             (
@@ -1004,7 +1008,7 @@ class TestWholeReads(HookTest):
                 (("Bash", {"command": shown + " > /tmp/d.json"}), work),
                 "see the items to decide whole",
             ),
-            ((("Bash", {"command": shown}), self.read("README.md", limit=5)), "README.md"),
+            ((("Bash", {"command": shown}), self.read_use("README.md", limit=5)), "README.md"),
         ):
             with self.subTest(uses=uses):
                 self.given_record(ID, json.dumps(CALL), *uses)
@@ -1023,7 +1027,7 @@ class TestWholeReads(HookTest):
         first = ("Bash", {"command": f"{SCRIPT} next {CALL['result']}"})
         second = ("Bash", {"command": f"{SCRIPT} next {CALL['result']} 2"})
         cut = ("Bash", {"command": f"{SCRIPT} next {CALL['result']} 2 | head -c 500"})
-        work = self.read("README.md")
+        work = self.read_use("README.md")
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         for uses in ((work, first), (work, first, cut), (work, second, first)):
             with self.subTest(uses=uses):
@@ -1049,13 +1053,13 @@ class TestWholeReads(HookTest):
         code, out = self.turn("start", json.dumps(CALL))
         self.assertEqual(code, 0, out)
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
-        some = [self.read(p) for p in (CALL["ccs"], "checklists/readme.md")]
+        some = [self.read_use(p) for p in (CALL["ccs"], "checklists/readme.md")]
         self.given_record(ID, json.dumps(CALL), *some)
         code, err = self.hook(pretooluse, self.tool("turn:up", "Bash", command=command))
         self.assertEqual(code, 2)
         self.assertIn("notes/readme.decisions.md, docs/start.md", err)
         self.assertNotIn("README.md", err)
-        rest = [self.read(p) for p in ("notes/readme.decisions.md", "docs/start.md")]
+        rest = [self.read_use(p) for p in ("notes/readme.decisions.md", "docs/start.md")]
         self.given_record(ID, json.dumps(CALL), *some, *rest)
         self.passes(pretooluse, self.tool("turn:up", "Bash", command=command))
 
@@ -1149,7 +1153,7 @@ class TestWholeReads(HookTest):
         # Then: it is stopped, naming the work, as the generator changes it; then it goes through
         self.through()
         generator = ("Agent", {"subagent_type": "turn:generator", "prompt": self.generator_prompt})
-        work = self.read("README.md")
+        work = self.read_use("README.md")
         self.assertIn("README.md", "".join(self.decided(work, generator)))
         self.assertEqual(self.decided(work, generator, work), [])
 
@@ -1164,7 +1168,7 @@ class TestWholeReads(HookTest):
             ("Agent", {"subagent_type": agent, "prompt": "{}"})
             for agent in ("turn:first-user", "turn:learner")
         ]
-        self.assertEqual(self.decided(generator, self.read("README.md"), *others), [])
+        self.assertEqual(self.decided(generator, self.read_use("README.md"), *others), [])
 
     def test_an_attachment_other_than_a_file_shown_whole_is_no_read(self):
         # Given: an orchestrator whose run waits on its decision, that started the generator,
@@ -1222,7 +1226,7 @@ class TestWholeReads(HookTest):
         # Then: it ends
         uses = (
             ("Bash", {"command": "echo don't && cat README.md"}),
-            self.read("checklists/readme.md"),
+            self.read_use("checklists/readme.md"),
         )
         reply = {"items": FIRST_READ}
         self.assertEqual(self.replied("turn:first-user", self.first_user(), reply, *uses), (0, ""))
@@ -1232,7 +1236,10 @@ class TestWholeReads(HookTest):
         # cat
         # When: it ends with its reply
         # Then: it is kept going, naming the work
-        uses = (("Bash", {"command": "awk 'NR<=2' README.md"}), self.read("checklists/readme.md"))
+        uses = (
+            ("Bash", {"command": "awk 'NR<=2' README.md"}),
+            self.read_use("checklists/readme.md"),
+        )
         code, err = self.replied("turn:first-user", self.first_user(), {"items": FIRST_READ}, *uses)
         self.assertEqual(code, 2)
         self.assertIn("README.md", err)
@@ -1243,7 +1250,7 @@ class TestWholeReads(HookTest):
         # When: it records its decision
         # Then: it is stopped, told to see the items whole
         self.through()
-        self.given_record(ID, json.dumps(CALL), self.read("README.md"))
+        self.given_record(ID, json.dumps(CALL), self.read_use("README.md"))
         command = f"{SCRIPT} next {CALL['result']} <<'EOF'\n{{}}\nEOF"
         self.stops(pretooluse, self.tool("turn:up", "Bash", command=command), "see the items")
 
@@ -1289,7 +1296,7 @@ class TestWholeReads(HookTest):
         for kind, after, code in (
             ("peer", (), 2),
             ("coordinator", (), 2),
-            ("peer", (self.read("README.md"),), 0),
+            ("peer", (self.read_use("README.md"),), 0),
         ):
             message = {"type": "user", "origin": {"kind": kind}, "message": {"content": prompt}}
             with self.subTest(kind=kind, after=after):

@@ -5,7 +5,7 @@ timeout = 60.0
 excluded-modules = []
 # The type checker runs first: a change to a type annotation changes no behavior a test could see,
 # and the type checker is what checks annotations.
-test-command = "sh -c 'pyrefly check --search-path dev/rn/tests --search-path rn/scripts rn/scripts dev/rn/tests && python -m unittest discover -f -s dev/rn/tests'"
+test-command = "sh -c 'pyrefly check --search-path dev/common --search-path dev/rn/tests --search-path rn/scripts rn/scripts dev/rn/tests && python -m unittest discover -f -s dev/rn/tests'"
 
 [cosmic-ray.distributor]
 name = "local"

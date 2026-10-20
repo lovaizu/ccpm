@@ -3,10 +3,7 @@ import io
 import json
 import os
 import re
-import shutil
 import sys
-import tempfile
-import unittest
 
 TURN = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "turn")
@@ -17,13 +14,16 @@ SCRIPT = f'python3 "{os.path.join(TURN, "scripts", "turn.py")}"'
 HOOKS = os.path.join(TURN, "hooks")
 sys.path.insert(0, SCRIPTS)
 sys.path.insert(0, HOOKS)
+sys.path.insert(0, os.path.join(TURN, "..", "dev", "common"))
 
 import agents  # noqa: F401  (the hooks' reading of an event, for its own tests)
 import events
 import forms  # noqa: F401  (the forms, for their own tests)
+import hook
 import records
 import run
 import shell  # noqa: F401  (the hooks' reading of a command, for its own tests)
+import testing
 from checks import (  # noqa: F401  (each check, for its own tests)
     call_given,
     no_commit,
@@ -175,15 +175,13 @@ EACH_GOOD = {
 }
 
 
-class RepoTest(unittest.TestCase):
+class RepoTest(testing.FolderTest):
     """Each test runs turn from a temporary folder standing for the user's repository, holding a
     task's CCS, its checklist, its decisions and a work already written."""
 
     def setUp(self):
-        self.repo = os.path.realpath(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, self.repo)
-        self.addCleanup(os.chdir, os.getcwd())
-        os.chdir(self.repo)
+        super().setUp()
+        self.repo = self.base
         self.write_json(CALL["ccs"], CCS)
         self.write("checklists/readme.md", CHECKLIST)
         self.write("notes/readme.decisions.md", "# Decisions\n")
@@ -304,7 +302,7 @@ class RepoTest(unittest.TestCase):
     def hook(self, checks, event):
         err = io.StringIO()
         with contextlib.redirect_stderr(err):
-            code = events.main(checks, io.StringIO(json.dumps(event)))
+            code = hook.run("turn", checks, io.StringIO(json.dumps(event)), sys.stderr)
         return code, err.getvalue()
 
     def replied(self, agent_type, prompt, reply, *tool_uses):
@@ -347,17 +345,3 @@ class RepoTest(unittest.TestCase):
             for n, path in enumerate(paths, 1)
             for p in range(1, len(records.pages(path)) + 1)
         )
-
-    def write(self, path, text):
-        folder = os.path.dirname(path)
-        if folder:
-            os.makedirs(folder, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
-
-    def write_json(self, path, data):
-        self.write(path, json.dumps(data))
-
-    def read_json(self, path):
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)

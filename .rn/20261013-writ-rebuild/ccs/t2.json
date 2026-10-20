@@ -1,0 +1,100 @@
+{
+  "focal_entities": [
+    {
+      "deliverable": "rn/hooks/hooks.json"
+    },
+    {
+      "deliverable": "rn/hooks/pretooluse.py"
+    },
+    {
+      "deliverable": "rn/hooks/hook.py"
+    },
+    {
+      "deliverable": "rn/hooks/shell.py"
+    },
+    {
+      "deliverable": "rn/hooks/checks/default_branch.py"
+    },
+    {
+      "deliverable": "dev/rn/tests/test_hooks.py"
+    },
+    {
+      "deliverable": "dev/rn/cosmic-ray.toml"
+    },
+    {
+      "audience": "rn's conductor, the AI in the user's Claude Code conversation running rn's skills, whose commands the hook judges and who does what a stop tells it; and whoever maintains rn's hooks, a person or an AI"
+    },
+    {
+      "has": "."
+    }
+  ],
+  "goal_orientation": [
+    {
+      "purpose": "a conductor committing or pushing on the default branch, or pushing to it, by a plain `git commit` or `git push`, is stopped with the step and why, and nothing else it does is stopped, so the work goes on the session's branch and reaches the default branch only by the user's merge; the ways round it through `-C`, a `cd`, `env`, `command`, `sh -c` or a worktree are the next work. The maintainer changing the hooks trusts the tests, run by dev/check.sh for coverage and dev/mutate.sh rn for mutation testing, which reaches the hooks as well as the scripts"
+    }
+  ],
+  "retrieved_artifacts": [
+    {
+      "checklist": "rn/checklists/product/code.md"
+    },
+    {
+      "checklist": "rn/checklists/product/prompt.md"
+    },
+    {
+      "checklist": "rn/checklists/usability.md"
+    },
+    {
+      "decisions": ".writ/decisions/rn/hooks.decisions.md"
+    },
+    {
+      "reference": "dev/rn/design.md"
+    },
+    {
+      "reference": "rn/scripts/rn.py"
+    },
+    {
+      "reference": "rn/skills/up/SKILL.md"
+    },
+    {
+      "reference": "common/hooks/hook.py"
+    },
+    {
+      "reference": "common/hooks/shell.py"
+    },
+    {
+      "reference": "dev/common/testing.py"
+    },
+    {
+      "reference": "turn/hooks/hooks.json"
+    },
+    {
+      "reference": "turn/hooks/pretooluse.py"
+    },
+    {
+      "reference": "turn/hooks/checks/no_commit.py"
+    },
+    {
+      "reference": "dev/rn/tests/test_rn.py"
+    },
+    {
+      "reference": ".claude/rules/plugin.md"
+    },
+    {
+      "reference": "dev/check.sh"
+    },
+    {
+      "reference": "dev/mutate.sh"
+    }
+  ],
+  "constraints": [
+    {
+      "artifact-language": "English"
+    },
+    {
+      "conversation-language": "English"
+    },
+    {
+      "environment": "the check tools are in the virtual environment first on PATH; dev/check.sh and dev/mutate.sh rn run as they are; git and a repository made in a temporary folder outside this one are free to use"
+    }
+  ]
+}

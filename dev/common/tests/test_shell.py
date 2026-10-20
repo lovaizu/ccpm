@@ -2,9 +2,15 @@
 as the shell takes it."""
 
 import os
+import sys
 import unittest
 
-from helpers import shell
+HOOKS = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "common", "hooks"
+)
+sys.path.insert(0, os.path.normpath(HOOKS))
+
+import shell
 
 # The folder each command runs in.
 HERE = "/r"
@@ -121,6 +127,24 @@ class TestWritten(unittest.TestCase):
             command = f"cat <<EOF\n{word} EOF\nx > notes/new.md\nEOF"
             with self.subTest(command=command):
                 self.assertEqual(shell.written(command, HERE), [])
+
+
+class TestHeredoc(unittest.TestCase):
+    def test_a_heredoc_cut_short_leaves_its_text_out_to_the_end(self):
+        # Given: a heredoc whose line has no end, and one whose text has no end word
+        # When: the words are read with the text left out
+        # Then: the command's words are kept and the text is left out to the command's end
+        self.assertEqual(shell.text_left_out(shell.words("cat <<EOF")), ["cat", "<<", "EOF"])
+        said = shell.text_left_out(shell.words("cat <<EOF\nhi > a"))
+        self.assertEqual(said, ["cat", "<<", "EOF", "\n"])
+
+
+class TestSedInPlace(unittest.TestCase):
+    def test_sed_in_place_writes_the_file_after_its_script(self):
+        # Given: sed editing a file in place, its backup suffix given
+        # When: the paths it writes are read
+        # Then: the file is taken
+        self.assertIn(at("f")[0], shell.written("sed -i '' 's/a/b/' f", HERE))
 
 
 class TestPrinted(unittest.TestCase):

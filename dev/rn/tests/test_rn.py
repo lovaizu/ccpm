@@ -15,7 +15,6 @@ import json
 import os
 import runpy
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -26,6 +25,9 @@ SCRIPTS = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "rn", "scripts")
 )
 sys.path.insert(0, SCRIPTS)
+sys.path.insert(0, os.path.join(SCRIPTS, "..", "..", "dev", "common"))
+
+import testing
 
 import rn
 
@@ -96,31 +98,20 @@ def ccs_argv(needed: dict[str, str]) -> list[str]:
     return ["ccs", WORK, WORK_PATH] + [part for option in needed.items() for part in option]
 
 
-class RepoTest(unittest.TestCase):
+class RepoTest(testing.GitTest):
     """A git repository whose default branch is `main` and whose checked-out branch is `work`, with
     git reading no setting of the machine it runs on; and a plugin folder with rn's checklists."""
 
     def setUp(self) -> None:
-        self.base = os.path.realpath(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, self.base)
-        self.repo = os.path.join(self.base, "repo")
+        super().setUp()
+        self.repo = self.copied("repo", self.main_and_work)
         self.plugin = os.path.join(self.base, "plugin")
-        os.makedirs(self.repo)
-        env = {
-            "GIT_CONFIG_NOSYSTEM": "1",
-            "GIT_CONFIG_GLOBAL": os.devnull,
-            "HOME": self.base,
-            "GIT_CEILING_DIRECTORIES": self.base,
-            "GIT_AUTHOR_NAME": "t",
-            "GIT_AUTHOR_EMAIL": "t@example.com",
-            "GIT_COMMITTER_NAME": "t",
-            "GIT_COMMITTER_EMAIL": "t@example.com",
-        }
-        patcher = mock.patch.dict(os.environ, env)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        self.addCleanup(os.chdir, os.getcwd())
-        os.chdir(self.repo)
+        self.checklist = os.path.join(self.plugin, "checklists", "product", f"{KIND}.md")
+        self.write(self.checklist, "# Code\n")
+
+    def main_and_work(self) -> None:
+        """The repository each test copies: `main` with a README, as origin has it, and `work`
+        checked out from it."""
         self.git("init", "-q")
         self.git("checkout", "-q", "-b", "main")
         self.write("README.md", "# app\n")
@@ -128,38 +119,6 @@ class RepoTest(unittest.TestCase):
         self.git("update-ref", "refs/remotes/origin/main", "HEAD")
         self.git("symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
         self.git("checkout", "-q", "-b", "work")
-        self.checklist = os.path.join(self.plugin, "checklists", "product", f"{KIND}.md")
-        self.write(self.checklist, "# Code\n")
-
-    def git(self, *args: str) -> None:
-        """Runs git with the arguments in the repository; fails the test where git fails."""
-        subprocess.run(["git"] + list(args), check=True, capture_output=True)
-
-    def commit(self) -> None:
-        """Commits every change in the repository on the checked-out branch."""
-        self.git("add", "-A")
-        self.git("commit", "-q", "-m", "c")
-
-    def write(self, path: str, text: str) -> None:
-        """Writes the text at the path, making its folder where it is not there."""
-        folder = os.path.dirname(path)
-        if folder:
-            os.makedirs(folder, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
-
-    def write_json(self, path: str, data: Any) -> None:
-        """Writes the data at the path as JSON on one line."""
-        self.write(path, json.dumps(data))
-
-    def read(self, path: str) -> str:
-        """The text at the path."""
-        with open(path, encoding="utf-8") as f:
-            return f.read()
-
-    def read_json(self, path: str) -> Any:
-        """The JSON at the path."""
-        return json.loads(self.read(path))
 
     def rn(self, *argv: str) -> tuple[int, str]:
         """The exit code and what rn printed for the arguments."""

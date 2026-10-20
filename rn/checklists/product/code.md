@@ -17,7 +17,8 @@ Code is written in this order, each step the ground of the next:
    is current and kept up now. What is missing, such as a stable tool for one of them, goes back to
    whoever gave it.
 2. Design it: split it into functions and modules by what each takes on, each taking on one thing
-   alone, with each piece of knowledge in one place; decide what each takes in and gives back, and
+   alone, with each piece of knowledge in one place across the repository, what its code and tests
+   already share used rather than written again; decide what each takes in and gives back, and
    where what comes from outside is checked. These are the units the tests are written for.
 3. Run the existing tests and see them pass, before changing anything.
 4. Build it test first: for each behavior, write a test, see it fail, write the least code that
@@ -26,8 +27,9 @@ Code is written in this order, each step the ground of the next:
 
 Each item of `usability.md` applies to code, read by whoever maintains it, with its behavior as its
 subject and each file a part; its F-1 is answered by this F-1, its B-7 by each piece of knowledge,
-such as a rule or a value, written in one place, and its B-13 by one name for each thing across the
-code and its tests, so a search for the name finds every place it is used.
+such as a rule, a value or a way of reading an input, written in one place across the repository,
+and its B-13 by one name for each thing across the code and its tests, so a search for the name
+finds every place it is used.
 
 ## Format
 
@@ -231,3 +233,17 @@ written; with new inputs on every run, CI included, so that inputs not yet tried
 input that fails reproduced from what the failure prints, not run again, and kept as an example.
 
 Why: examples check the inputs their writer thought of, and a fault waits in the ones they did not.
+
+### B-18: The whole test run in seconds
+
+Scope: whole
+
+Can the maintainer run every test in seconds, so that the checks run on every change and mutation
+testing, which runs the tests once for each mutant, ends in minutes?
+
+Look at: the time the whole test run takes, against what the tests do; what a test sets up by
+running other programs, such as a repository made by git commands for every test, where it could be
+made once and copied, fails.
+
+Why: a test run that takes minutes is run less often, and mutation testing multiplies its time by
+the number of mutants, so the maintainer waits on every change, or stops running the checks.
