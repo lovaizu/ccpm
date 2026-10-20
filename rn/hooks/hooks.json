@@ -1,0 +1,17 @@
+{
+  "description": "rn: stops a command of rn's conductor that breaks one of rn's rules, such as a git commit or push on the default branch, saying what to do instead and why. Without python3 the checks do not run, and every command goes on.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null 2>&1 || exit 0; PYTHONPATH=\"${CLAUDE_PLUGIN_ROOT}/scripts${PYTHONPATH:+:$PYTHONPATH}\" exec python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
