@@ -119,6 +119,9 @@
     },
     {
       "fact": "the user agreed (2026-10-20): turn makes a work from the file already at its path, written from nothing only where none is; the readers still read whole and run the receiver's checks, so what a change breaks shows there, and what was Good gets its Good at once; rn's caller needs no change now, rn.py ccs taking one path is for T11"
+    },
+    {
+      "fact": "T4 runs beside T3, not after it: on the allowlist it needs only what common/hooks/shell.py already gives, so shell.py is not its work, and its tests go to a new dev/rn/tests/test_signoff.py, so the two touch no file in common"
     }
   ],
   "semantic_gist": [
@@ -152,19 +155,16 @@
       "task": "rename common/ to shared/ after T3 and T4 are merged: common/, dev/common/, the links in turn/hooks and rn/hooks, dev/check.sh, dev/*/cosmic-ray.toml, .claude/rules/plugin.md, dev/README.md"
     },
     {
-      "task": "when T3 ends: read its result, check each Good at its lines, try the stopped forms myself, merge its work; then write ccs/t4.json to the allowlist (state.json touched only by python3 <rn.py> state …, git add, git commit or a command that only reads) and run T4 on T3's shell.py"
-    },
-    {
       "task": "CodeQL: find why javascript-typescript passed at c907be8; likely fix the default setup's languages to actions and python, which the user does in repository settings"
-    },
-    {
-      "task": "when T3 ends: read its result, check each Good at its lines, try env -C<folder> and env -S myself, settle question 3 by the decision, merge its work"
     },
     {
       "task": "T4: after the stop decision, write ccs/t4.json again naming only the prompt.md items the decision has the hooks answer, and run it on T3's shell.py"
     },
     {
       "task": "after both: run mutate.sh rn common turn whole, as the runs used the old mutate.sh"
+    },
+    {
+      "task": "when T3 and T4 end: read each result, check each Good at its lines, try the stopped forms myself, merge both; compare each role's working minutes with T3 run 2 (scratchpad roletime.py)"
     }
   ],
   "relational_map": [
@@ -199,7 +199,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "run T3 again on this turn; it is also the trial of the generator change"
+      "next": "watch T3 and T4"
     }
   ],
   "uncertainty_signal": [

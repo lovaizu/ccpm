@@ -10,10 +10,7 @@
       "deliverable": "rn/hooks/hooks.json"
     },
     {
-      "deliverable": "rn/hooks/pretooluse.py"
-    },
-    {
-      "deliverable": "dev/rn/tests/test_hooks.py"
+      "deliverable": "dev/rn/tests/test_signoff.py"
     },
     {
       "audience": "rn's conductor, the AI in the user's Claude Code conversation running rn's skills, whose commands the hook judges and who does what a stop tells it; and whoever maintains rn's hooks, a person or an AI"
@@ -24,7 +21,7 @@
   ],
   "goal_orientation": [
     {
-      "purpose": "a sign-off passes only by the user: clearing the sign-off in `state.json` (`rn.py state signoff=`) is stopped unless the user's last message in the conversation is `/rn:ty`, and writing or editing `state.json` other than through `rn.py state` is stopped, so no move gets round the check, each stop naming the step and why, as .rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md says under The checks; nothing else the conductor does is stopped. It is a check of its own beside the guard of the session's own branch, run from the same entry, finding the session through rn/scripts/rn.py. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn` and `sh dev/mutate.sh --since <the commit the run starts from> rn`"
+      "purpose": "a sign-off passes only by the user: clearing the sign-off in `state.json` (`rn.py state signoff=`) is stopped unless the user's last message in the conversation is `/rn:ty`; and a Write or Edit of `state.json`, and a shell command naming `state.json` or the session's folder in a form other than those the check reads whole and knows write nothing there (`python3 <rn.py> state …`, `git add`, `git commit`, a command that only reads), is stopped, each stop naming the step, why and the form to use, as .rn/20261013-writ-rebuild/decisions/rn/hooks.decisions.md says under The checks: the check passes only the forms it reads whole, so every other form naming them, such as `{ rm <state>; }`, `nice rm <state>`, `awk -i inplace … <state>`, `rsync`, `patch`, `git apply` or `python3 -X utf8 <rn.py> state signoff=`, is stopped without being listed; what the decisions leave unstopped is not tried, and nothing else the conductor does is stopped. Of prompt.md, the hooks answer only the items the decisions name under Form, the rest answered yes there. It is a check of its own beside the guard of the session's own branch, run from the same entry, finding the session through rn/scripts/rn.py and reading a command with what common/hooks/shell.py already gives, which another change is rewriting at the same time and so is not changed here. The maintainer changing the hooks trusts the tests, run by `sh dev/check.sh rn` and `sh dev/mutate.sh --since <the commit the run starts from> rn`"
     }
   ],
   "retrieved_artifacts": [
@@ -87,6 +84,15 @@
     },
     {
       "reference": "rn/hooks/checks/default_branch.py"
+    },
+    {
+      "reference": "dev/rn/tests/test_hooks.py"
+    },
+    {
+      "reference": "dev/rn/tests/helpers.py"
+    },
+    {
+      "reference": "rn/hooks/pretooluse.py"
     }
   ],
   "constraints": [
