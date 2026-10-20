@@ -32,7 +32,7 @@ Code is written in this order, each step the ground of the next:
    in place of a comparison, or a whole list in place of a slice of one that holds one item; a
    behavior found needed while writing is added to the list and gets its failing test first.
 6. Before handing it over, name for each line changed, for each change mutation testing makes to
-   it, the test that fails: each comparison, `==` and `!=` among them, replaced by each other one,
+   it, the example test that fails, not a property test, whose inputs change from run to run: each comparison, `==` and `!=` among them, replaced by each other one,
    a value under its bound and one over it each tried; each number made one more, one less and 0;
    each `and` made `or` and back; each `not` added and taken off; each line taken out. A change
    with no such test is a behavior with no test, and goes back to step 5; one that gives the same

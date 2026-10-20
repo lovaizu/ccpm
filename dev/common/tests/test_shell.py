@@ -121,6 +121,14 @@ class TestNamed(unittest.TestCase):
                 found = [words for _, words, _ in shell.statements(command, HERE)]
                 self.assertEqual(found, [["cat", "a"], ["cat", "b"]])
 
+    def test_spaces_before_a_word_are_skipped(self):
+        # Given: a command with two spaces before a word, a separator and a comment, and a line
+        # begun with a tab
+        # When: the statements are read
+        # Then: each statement holds its words alone, and the comment none
+        found = shell.statements("cat  a  ;  cat b  # c\n\tcat d", HERE)
+        self.assertEqual([w for _, w, _ in found], [["cat", "a"], ["cat", "b"], ["cat", "d"]])
+
     def test_operators_around_a_line_s_end_are_read_in_order(self):
         # Given: a line ending in `;`, the next beginning with `;`
         # When: the words are read
