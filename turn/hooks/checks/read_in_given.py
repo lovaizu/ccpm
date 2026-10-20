@@ -35,7 +35,7 @@ def check(event: dict[str, Any]) -> list[str]:
         return []
     given = GIVEN[role](kept)
     cwd = os.path.realpath(event["cwd"])
-    places = [os.path.join(cwd, p) for p in given] + [agents.TURN]
+    places = [os.path.realpath(os.path.join(cwd, p)) for p in given] + [agents.TURN]
     if tool in TOOLS:
         path = event["tool_input"].get(TOOLS[tool])
         if path and within(os.path.realpath(os.path.join(cwd, path)), places):
@@ -47,7 +47,7 @@ def check(event: dict[str, Any]) -> list[str]:
         # reading there, reads it, and a role names it only for turn's script to show its part;
         # git reads the history of every file.
         if role in KEEPS:
-            places.append(os.path.join(cwd, kept["call"]["result"]))
+            places.append(os.path.realpath(os.path.join(cwd, kept["call"]["result"])))
         command = str(event["tool_input"].get("command", ""))
         inside = [p for p in shell.named(command, cwd) if within(p, [cwd]) and os.path.exists(p)]
         if "git" not in shell.words(command) and all(within(p, places) for p in inside):

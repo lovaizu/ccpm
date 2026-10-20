@@ -9,6 +9,7 @@ from unittest import mock
 from helpers import (
     CALL,
     CAN,
+    CCS,
     CHECKED,
     CHECKLIST,
     EACH,
@@ -568,6 +569,19 @@ class TestReads(HookTest):
         for path in ("README.md", "docs/start.md", "checklists/readme.md"):
             with self.subTest(path=path):
                 self.passes(pretooluse, self.tool("turn:first-user", "Read", file_path=path))
+
+    def test_a_first_user_whose_receiver_has_the_whole_repository_reads_and_runs_in_it(self):
+        # Given: a first user of a run whose receiver has the whole repository, named as `.`
+        # When: it reads a file of the repository, or runs a script of it
+        # Then: it goes through
+        self.write_json(
+            CALL["ccs"], dict(CCS, focal_entities=[*CCS["focal_entities"], {"has": "."}])
+        )
+        self.given_prompt(ID, self.first_user(kind=dict(CALL["kind"], has="has")))
+        self.passes(
+            pretooluse, self.tool("turn:first-user", "Read", file_path="notes/readme.decisions.md")
+        )
+        self.passes(pretooluse, self.tool("turn:first-user", "Bash", command="sh docs/start.md"))
 
     def test_a_first_user_reading_what_the_receiver_does_not_have_stops(self):
         # Given: a first user of a run
