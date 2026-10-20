@@ -39,6 +39,9 @@
     },
     {
       "task": "after T2: exemplars beside the checklists for documents, read whole before writing and when checking, the checklist still the measure; a change to turn's and rn's designs, agreed with the user one point at a time (the user chose to do it after T2)"
+    },
+    {
+      "task": "after T2: a change to an existing work — readers judge the whole, the generator remakes only the change and what it broke, a lack found outside it returned as a task of its own for the caller, mutation testing on the changed lines; a change to turn's design, agreed with the user one point at a time"
     }
   ],
   "relational_map": [
