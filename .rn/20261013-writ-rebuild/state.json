@@ -11,6 +11,9 @@
     },
     {
       "fact": "turn now requires use and has and checks the CCS first, committed with dev/check.sh at 100% and dev/mutate.sh turn at 0 survivors; rn.py's CCS names neither, so rn's calls to turn stop at start until rn.py and /rn:up are changed"
+    },
+    {
+      "fact": "rn's scripts and prompts decisions now take `--has` (the plan's receiver having `.`) and passing turn's messages on (e805a30); the flow trial's code is out of mutation and property tests too, as the user chose A (2d7ab45)"
     }
   ],
   "semantic_gist": [
@@ -20,13 +23,13 @@
   ],
   "focal_entities": [
     {
+      "task": "rn.py ccs given --has through turn: CCS in the scratchpad's ccs/scripts.json, run by run-turn.sh into a fresh clone; its diff brought back, checked with dev/check.sh and dev/mutate.sh rn, committed"
+    },
+    {
+      "task": "/rn:up's step 4 given --has . and passing turn's messages on to the user, made through turn"
+    },
+    {
       "task": "T2 again through turn, the CCS with has \".\", use, dev/mutate.sh and dev/check.sh named, checked by reading before the run"
-    },
-    {
-      "task": "rn.py ccs and /rn:up's steps given use and has, and /rn:up passing turn's messages on to the user, made through turn"
-    },
-    {
-      "question": "the flow trial (dev/rn/trials/flow/): its code out of unit, mutation and property tests too, the trial run being its check (recommended), or tested like rn's scripts; asked, not answered"
     }
   ],
   "relational_map": [
@@ -49,7 +52,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "rn.py ccs and /rn:up given use and has through turn, then T2 through turn with a CCS read first; report to the user only when something ends, goes wrong or needs their answer"
+      "next": "bring rn.py's change back from the turn run, then /rn:up, then T2; report only when something ends, goes wrong or needs the user's answer"
     }
   ],
   "uncertainty_signal": [
@@ -68,7 +71,7 @@
       "report": ".rn/20261013-writ-rebuild/decisions/report.decisions.md"
     },
     {
-      "runner": "a script that clones writ-rebuild, copies a CCS into .tasks/ and runs `claude -p` with --plugin-dir <clone>/turn and --permission-mode auto, the tools venv first on PATH; it was in this session's scratchpad and goes with it"
+      "runner": "run-turn.sh <ccs> <name>: clones writ-rebuild into the scratchpad, copies the CCS to .tasks/ccs.json, runs claude -p --plugin-dir <clone>/turn --permission-mode auto with the venv first on PATH; lives in the session's scratchpad and goes with it"
     }
   ]
 }
