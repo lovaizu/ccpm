@@ -158,6 +158,9 @@
     },
     {
       "fact": "the user (2026-10-21): main is held by GitHub settings, so why hooks; rn's default-branch guard tries to prevent every possible way; turn's hooks beyond its README promise were added by design to support its core (my calling them non-core was wrong); built so far: skills up/ty/gm, rn.py, one hook (default_branch, T2); rn not yet run end to end (T8+)"
+    },
+    {
+      "fact": "hooks agreed with the user (2026-10-21), as the official docs hold (hooks-guide.md:9, hooks.md:434, permissions.md:252): a step and its hook are made as one pair; a step told clearly still drifts, so its hook notices the drift and says the right way, the step itself; not aiming at perfection (the forms usually written, a hard boundary left to GitHub, the sandbox, permissions); guard only what the steps want kept; start from the core. Patterns from turn (read whole, check every item, read only what is given, write only the work, leave hard-to-undo moves to their owner, pass what a script printed as it is, end only when done) to be made reusable. turn fits but two: no_commit has no step (the user chose A: generator step 4 says leave the work uncommitted, the caller keeps it in git), and shell.py reads past the usual forms"
     }
   ],
   "semantic_gist": [
@@ -241,7 +244,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "discuss with the user how rn should think about hooks, before any implementation: what a guard is for, which moves are worth a stop by likelihood and harm, what GitHub settings already hold; then rewrite decisions/rn/hooks.decisions.md The checks and design.md:90-93, 205-206 as agreed"
+      "next": "ask the user how far shell.py and the hooks reading commands are cut to the usual forms; then where the pair principle and the patterns are written (prompt.md step 4, B-25, B-26, plugin.md), then turn and rn reviewed by them"
     }
   ],
   "uncertainty_signal": [
