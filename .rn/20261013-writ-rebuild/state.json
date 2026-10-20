@@ -195,6 +195,9 @@
     },
     {
       "push": "every push runs dev/githooks/pre-push, which needs the venv bin first on PATH"
+    },
+    {
+      "trials": "rn's trials run claude -p with bypassPermissions in the Docker sandbox, as turn's do (dev/turn/trials/shared.py:84-85), the user decided (2026-10-20)"
     }
   ],
   "predictive_cue": [
