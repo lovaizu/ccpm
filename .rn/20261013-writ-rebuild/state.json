@@ -59,6 +59,15 @@
     },
     {
       "fact": "code.md rebuilt from established practice, as the user asked (2026-10-20): items from Google's 'What to look for in a code review' (CC BY 3.0), tests designed before the code by ISTQB CTFL v4.0.1 ch.4 (equivalence partitions, 3-value boundaries, decision tables, state transitions); my own steps (list behaviors, try each mutation by hand) removed; coverage counted from examples alone (B-12); existing IDs kept, new B-19..B-24"
+    },
+    {
+      "fact": "T2 survivors: 6 of 7 lie in default_branch.py tokens(), a second command reader beside common/hooks/shell.py; e343ada (18:16) committed the run's patch made before common/ (18:00) without reading it against plugin.md 5b; also rn pretooluse.py beside hook.py, test_hooks HookTest beside testing.GitTest, dev/turn/trials copies, USAGE in run.py and test_start.py (pylint symilar, 151 lines)"
+    },
+    {
+      "fact": "the user chose A (2026-10-20): rn hooks rebuilt on common/; prevention A: a duplicate-code check in check.sh, pre-push and CI, and plugin.md: work made before a rule or checklist changed is read against the new one before it is committed"
+    },
+    {
+      "fact": "one command reader and one hook entry (1708074, e46f857): rn's more exact reading moved into common/hooks/shell.py (line joins, backslashes, double-quote escapes, fd digits, <>, ;;, |&), hook.py checks the event's shape; rn hooks run on them; check.sh 100%, mutate common 0 (40s), rn 0 (32s), turn 0 (141s); T2's 7 survivors gone with the copy"
     }
   ],
   "semantic_gist": [
@@ -80,13 +89,16 @@
   ],
   "focal_entities": [
     {
-      "task": "T2: rn's 7 survivors in rn/hooks/checks/default_branch.py (e343ada, T2's own lines) fixed by designing their tests by code.md step 3; then T2 is done (CI not waited on)"
+      "task": "duplicate-code check: pylint 4.1.3 (GPL-2.0, dev tool only, needs Python >=3.10) in requirements-test-quality, `pylint --disable=all --enable=duplicate-code` over every .py not a link, in check.sh, pre-push and CI; it finds 151 copied lines now; ask the user, one decision: a test stating its expected value again, such as run.py USAGE in test_start.py and rn.py ENTRIES in test_rn.py, is an oracle, not a copy; leave it out of the check beside it (B-16) or not"
     },
     {
-      "task": "find out from turn's design and its last run's records what 'turn cannot take a change to existing work' means, before handing T2-like work to turn; report it"
+      "task": "keep once what pylint finds: dev/turn/trials trial.py, flow.py, roles/kept.py, roles/roles.py copy the claude -p launch, ROOT and CALL"
     },
     {
-      "task": "the CCS for turn names the affected checks alone: check.sh <plugin>, mutate.sh --since <start commit> <plugin>"
+      "task": "plugin.md: work made before a rule or checklist changed is read against the new one before it is committed, as the user chose"
+    },
+    {
+      "task": "then T2 done; find out what turn cannot take a change to existing work means"
     }
   ],
   "relational_map": [
@@ -104,7 +116,7 @@
       "rules": ".claude/rules/plugin.md"
     },
     {
-      "environment": "the check tools are not installed on this machine; make a venv from dev/requirements.txt and dev/requirements-test-quality.txt with /opt/homebrew/bin/python3.12 and put its bin first on PATH for dev/check.sh, dev/mutate.sh and each turn run"
+      "environment": "on this Linux sandbox: uv venv -p /usr/bin/python3 in the scratchpad, uv pip install -r dev/requirements.txt -r dev/requirements-test-quality.txt, its bin first on PATH; commit as kiyobot <kiyohito.itoh+bot@gmail.com> with git -c, as git has no identity here"
     },
     {
       "watch": "watch each turn run while it goes, with Monitor on the runner's JSONL, not only its end, as the user asked"
@@ -121,7 +133,7 @@
   ],
   "predictive_cue": [
     {
-      "next": "T2's 7 survivors by code.md's test design"
+      "next": "push the two commits (pre-push), then the duplicate-code check"
     }
   ],
   "uncertainty_signal": [
@@ -130,6 +142,9 @@
     },
     {
       "open": "AC2"
+    },
+    {
+      "open": "shell.git misses git after a redirect, as `>/dev/null git commit`, so turn's no_commit lets it through; T3's ground (git led by env, command, sh -c)"
     }
   ],
   "retrieved_artifacts": [
