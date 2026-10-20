@@ -2,7 +2,7 @@
 
 rn is one AI, the conductor, that talks with the user and decides every move, and a maker that makes
 each work the user sees, such as the plan, a document or the finished work, and has it used first by
-an AI that did not make it; a record kept before each next step lets any conversation go on from
+an AI that did not make it; a record kept before each next move lets any conversation go on from
 where the last one stopped in a session, one piece of work from `/rn:up` to the merge. It brings
 about [rn's UX](ux.md), whose goal and key results it is checked against.
 
@@ -41,7 +41,9 @@ about [rn's UX](ux.md), whose goal and key results it is checked against.
 
 ### Logical view
 
-Six components take on the stories; the user meets only the conductor and the pull request.
+Six components take on the stories; the user meets only the conductor and the pull request. A move
+is one thing rn does next, such as confirming a point, having a work made or stopping at a
+sign-off; the steps of each command are made of moves.
 
 ```mermaid
 flowchart LR
@@ -54,7 +56,7 @@ flowchart LR
   pr["pull request &lt;store&gt;"]
   user -->|asks, answers, approves or sends back, goes on| cond
   cond -->|asks each point, shows each proposal| user
-  cond -->|keeps each decision, feedback and approval, reads where the session stands| rec
+  cond -->|keeps each decision, feedback and approval and where the session stands, reads them| rec
   cond -->|has each work made and used| maker
   maker -->|makes each work from the decisions in| rec
   maker -->|makes each work to those of its kind in| cl
@@ -72,18 +74,19 @@ flowchart LR
   Each message lists the points, the settled ones with their outcome and the current one marked;
   for the current one it gives the conclusion, its grounds and the options, the recommended one
   first, each with its trade-off and whether it can be undone, then one question on that point
-  alone. The conductor alone decides each next move: what to confirm with the user, what work to
+  alone. The conductor alone decides each move: what to confirm with the user, what work to
   have made, whether a work that comes back serves the purpose, and when to stop at a sign-off. A
   decision taken without the goal and the conversation leaves a record the user cannot stand
   behind; one decider keeps the course one.
 - Each answer goes into the record, in the decisions of the work it settles, before the work that
   follows it.
 
-  The record is everything rn keeps of the session: the plan, the decisions for each work, what
-  each work was made from, and where the session stands. The decisions say what the work must say
-  or do and hold what is true now; the history of the record holds how it was reached, the options
-  weighed with their reasons and each feedback with its answer. The next conversation goes on only
-  from what was kept, so nothing is made on a decision not yet kept.
+  The record is everything rn keeps of the session: the plan, the decisions for each work, what each
+  work was made from, and the state: where the session stands and what comes next, written whole
+  after each move, the states before it kept in the history of the record. The decisions say what
+  the work must say or do and hold what is true now; the history of the record holds how it was
+  reached, the options weighed with their reasons and each feedback with its answer. The next
+  conversation goes on only from what was kept, so nothing is made on a decision not yet kept.
 - At every move a machine can judge, a guard checks it before the conductor makes it, and stops it,
   naming the step and why, where it would let a sign-off pass without the user's `/rn:ty`, keep a
   plan outside the form rn's checklist for plans gives, start a work before the decision it follows
@@ -97,14 +100,21 @@ flowchart LR
   Besides the plan, a document and the finished work, a work may be a task's result or a checklist.
   The checklists for a kind are rn's own, which say what a work of that kind must give its receiver,
   and the user's addition for that kind, which holds only what it adds; for a kind rn has none for,
-  the user's addition is made first as a work of its own, to rn's checklist for checklists, and is
-  then the whole checklist for that kind. The maker returns, for each item of the checklists, its
-  Good, what the receiver gets for what the item asks, with the lines of the work that give it; the
-  questions only the user can decide; and lessons. The conductor reads each Good at its lines, puts
-  each question to the user as a point, and fixes by hand only what falls short of the purpose in a
-  few lines; where the decisions change much, it has the work made again. The maker of a work finds
-  the Good it meant; an AI that did not make it finds the Good its lines give, which is what the
-  user gets.
+  the user's addition, made to rn's checklist for checklists, is the whole checklist for that kind.
+  The maker returns, for each item of the checklists, its Good, what the receiver gets for what the
+  item asks, with the lines of the work that give it; the questions only the user can decide; and
+  lessons. The conductor reads each Good at its lines, puts each question to the user as a point,
+  and fixes by hand only what falls short of the purpose in a few lines; where the decisions change
+  much, it has the work made again. The maker of a work finds the Good it meant; an AI that did not
+  make it finds the Good its lines give, which is what the user gets.
+- After each move, the conductor replans from the facts the move brought alone, such as the user's
+  answer, the work with what its first reader found and the output of what it ran, and replaces the
+  state before the next move; a checklist or an environment a task lacks, such as a tool to
+  install, becomes a task of its own before the task that needs it.
+
+  A plan kept from what was expected drifts from the purpose while every move looks done, and a
+  work made without the checklist or environment it needs is made to a guess and made again. A
+  change to the goal or an acceptance criterion is a point confirmed with the user.
 - The plan is the first work, and the conductor opens the pull request with it.
 
   The goal and each acceptance criterion get an ID that later messages refer to. The pull request
@@ -115,7 +125,7 @@ flowchart LR
 
   The proposal is put together from what the maker returned and the record alone, so it says
   nothing the first reader did not read.
-- On `/rn:ty`, the conductor keeps the approval in the record and goes on to the next step.
+- On `/rn:ty`, the conductor keeps the approval in the record and goes on to the next move.
 - On `/rn:gm <feedback>`, the conductor keeps the feedback in the record and stops; the next
   `/rn:up` finds the point behind it, one rn decided wrong or did not ask, confirms it, puts the
   answer into the decisions, has the work made again, and stops at the same sign-off with what
@@ -166,7 +176,7 @@ rn/                                   the plugin, on the user's machine
         ├── steering.md               the plan
         ├── decisions/<work>.decisions.md
         ├── ccs/<work>.json           what each work was made from
-        └── state.json                where the session stands
+        └── state.json                the state
 ```
 
 - A fresh `/rn:up` goes on with the session whose folder the checked-out branch changed from the
@@ -177,8 +187,9 @@ rn/                                   the plugin, on the user's machine
 - The conductor is rn's three skills, one per command, each run in the user's Claude Code
   conversation on Opus, the model it names.
 - The maker is turn, a plugin installed with rn as its dependency; the conductor calls its `turn:up`
-  agent with a work's CCS, a JSON file that names the work, its receiver, its checklists and its
-  decisions, kept in the record as `ccs/<work>.json`, and reads the result turn writes.
+  agent with a work's CCS, a JSON file holding all turn's call takes, the work, its receiver, what
+  they use it for and have with it, its checklists and the files it is made from, kept in the
+  record as `ccs/<work>.json`, and reads the result turn writes.
 
   turn's own design leaves the judging of its result to the caller, which is why the conductor
   reads each Good at its lines.
@@ -224,12 +235,15 @@ outcome alone.
   - Flow: as for the scripts, fed the tool calls and the record each check receives.
 - Each skill: takes each step of its command in this design's order.
   - Flow: on the smallest request that reaches each of the skill's steps, one of one point to
-    decide, one acceptance criterion, one document and one task, with turn stood in for by an agent
-    giving a result set beforehand and the user by answers set beforehand; passes when the JSONL
-    of the conversation shows each step in this design's order and each hook stopping where its
-    check should, and the branch holds each commit the steps make.
-  - Content: the messages, decisions and proposals it makes on the real requests; passes when each
-    message is in the form above, each decision is as the user answered, and each proposal says
+    decide, one acceptance criterion, one document and one task whose stood-in result lacks a
+    checklist, with turn stood in for by an agent giving a result set beforehand and the user by
+    answers set beforehand; passes when the JSONL of the conversation shows each step in this
+    design's order and each hook stopping where its check should, the plan gains a task for the
+    lacking checklist before the task that needs it, and the branch
+    holds each commit the steps make, a new `state.json` among them after each move.
+  - Content: the messages, decisions, plans and proposals it makes on the real requests; passes
+    when each message is in the form above, each decision is as the user answered, each replan and
+    each `state.json` rests only on the facts the move before it brought, and each proposal says
     only what turn's result and the record hold, read against the JSONL.
 - rn's checklists: what is made with them on the real requests.
   - Content: each change sent back at the deliverable sign-off is traced to the checklist or the
